@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using UnityEngine;
 
 public class MapGenerationFinalization : MapGenerationComponent {
@@ -45,4 +47,6 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			}
 		}
 	}
+	
+	
 }

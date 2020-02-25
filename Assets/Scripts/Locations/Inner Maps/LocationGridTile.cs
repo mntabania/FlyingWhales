@@ -354,7 +354,7 @@ namespace Inner_Maps {
 
         #region Structures
         public void SetStructure(LocationStructure structure) {
-            structure?.RemoveTile(this);
+            this.structure?.RemoveTile(this);
             this.structure = structure;
             this.structure.AddTile(this);
             genericTileObject.ManualInitialize(this);

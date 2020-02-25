@@ -23,7 +23,7 @@ public class BuildSpotTileObject : TileObject {
 
     #region Overrides
     public override string ToString() {
-        return $"Build Spot owned by {structureLocation.ToString()}";
+        return $"Build Spot {id.ToString()}";
     }
     public override bool CanBeDamaged() {
         return false;
