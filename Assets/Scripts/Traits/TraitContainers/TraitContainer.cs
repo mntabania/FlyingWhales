@@ -139,6 +139,13 @@ namespace Traits {
                 //    RemoveTrait(addTo, "Frozen");
                 //    shouldAddTrait = false;
                 //}
+            } else if (traitName == "Zapped") {
+                if(addTo is GenericTileObject || addTo is StructureWallObject || addTo is BlockWall) {
+                    if (!HasTrait("Wet")) {
+                        //Ground floor tiles and walls do not get Zapped by electric damage unless they are Wet.
+                        shouldAddTrait = false;
+                    }
+                }
             }
             if (shouldAddTrait) {
                 int roll = UnityEngine.Random.Range(0, 100);
