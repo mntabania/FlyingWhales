@@ -56,12 +56,18 @@ namespace Inner_Maps.Location_Structures {
                 }
             } else if (raceClass.race == RACE.KOBOLD) {
                 return SUMMON_TYPE.Kobold;
+            } else if (raceClass.race == RACE.SPIDER) {
+                if (raceClass.className == GiantSpider.ClassName) {
+                    return SUMMON_TYPE.GiantSpider;
+                }
             } 
             throw new Exception($"No summon type for monster {raceClass.ToString()}");
         }
         private int GetMonsterCapacityCost(SUMMON_TYPE summon) {
             switch (summon) {
                 case SUMMON_TYPE.Skeleton:
+                    return 1;
+                case SUMMON_TYPE.GiantSpider:
                     return 1;
                 case SUMMON_TYPE.Wolf:
                     return 2;

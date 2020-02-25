@@ -1773,6 +1773,7 @@
             <e p="SeizeComponent.cs" t="Include" />
             <e p="Summons" t="Include">
               <e p="FireElemental.cs" t="Include" />
+              <e p="GiantSpider.cs" t="Include" />
               <e p="Golem.cs" t="Include" />
               <e p="Incubus.cs" t="Include" />
               <e p="Kobold.cs" t="Include" />

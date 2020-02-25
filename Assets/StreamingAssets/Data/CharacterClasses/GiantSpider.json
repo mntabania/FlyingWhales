@@ -1,11 +1,11 @@
-{
-  "_className": "Ravager",
-  "_baseAttackPower": 80,
+﻿{
+  "_className": "GiantSpider",
+  "_baseAttackPower": 50,
   "_attackPowerPerLevel": 32,
   "_baseSpeed": 35,
   "_speedPerLevel": 14,
   "_hpPerLevel": 146,
-  "_baseHP": 295,
+  "_baseHP": 150,
   "_baseAttackSpeed": 500,
   "_attackRange": 0.800000011920929,
   "_runSpeedMod": 0.0,

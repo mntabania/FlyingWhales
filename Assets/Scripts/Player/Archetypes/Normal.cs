@@ -14,7 +14,8 @@ namespace Archetype {
                 new RaceClass(RACE.WOLF, "Ravager"), new RaceClass(RACE.GOLEM, "Golem"),
                 new RaceClass(RACE.SKELETON, "Archer"), new RaceClass(RACE.SKELETON, "Marauder"),
                 new RaceClass(RACE.ELEMENTAL, "FireElemental"), new RaceClass(RACE.DEMON, "Incubus"), 
-                new RaceClass(RACE.DEMON, "Succubus"),new RaceClass(RACE.KOBOLD, "Kobold")
+                new RaceClass(RACE.DEMON, "Succubus"), new RaceClass(RACE.KOBOLD, "Kobold"),
+                new RaceClass(RACE.SPIDER, "GiantSpider")
             };
             actions = new List<string>();
             SetCanTriggerFlaw(true);

@@ -2910,6 +2910,62 @@ MonoBehaviour:
           - {fileID: 21300000, guid: 76873cf03419a1d4ab85a2ee1f2b31f9, type: 3}
           - {fileID: 21300000, guid: d1b578a640320fd43963eeaa34521ece, type: 3}
           - {fileID: 21300000, guid: d09f3bb096f7a4a48b0fceef8ea30afa, type: 3}
+  - raceName: SPIDER
+    race: 17
+    maleAssets:
+      gender: 0
+      characterClassAssets:
+        m_keys:
+        - GiantSpider
+        m_values:
+        - defaultSprite: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: efd2fb5dc19e68743a10e6d49fabcbc4, type: 3}
+          - {fileID: 21300000, guid: 7953ad82eb8d44c429043523a1f36a34, type: 3}
+          - {fileID: 21300000, guid: 8c4711cc606fbb9439fed14af8da3b17, type: 3}
+          - {fileID: 21300000, guid: f97c8020d12c5c444ae991fdc895bd48, type: 3}
+          - {fileID: 21300000, guid: c5470271332a2df4f8c7249efacbd726, type: 3}
+          - {fileID: 21300000, guid: fb19142b0fa16a144b52e9e5ed66bb87, type: 3}
+          - {fileID: 21300000, guid: 5262d7db2828be4479594afe6769153c, type: 3}
+          - {fileID: 21300000, guid: 758fca7201dc0a046adf2c46c6eb4cc5, type: 3}
+          - {fileID: 21300000, guid: e468025532d1e9d4fa6798a90f269f80, type: 3}
+          - {fileID: 21300000, guid: ac5e5065d5314fc44b7deeedaf93d03e, type: 3}
+          - {fileID: 21300000, guid: a466ada8b7c6f764391da53b0bfdb98b, type: 3}
+          - {fileID: 21300000, guid: f6a4c388483c0d044947230273471ad6, type: 3}
+          - {fileID: 21300000, guid: 7e3ee843ec2dd0848a710a5d417c5d36, type: 3}
+          - {fileID: 21300000, guid: b84ddab4c218b1442ac24b98c236cf8b, type: 3}
+          - {fileID: 21300000, guid: 3d3aa71c01ffd244195ff753ce6f038c, type: 3}
+          - {fileID: 21300000, guid: 86d4eaba8bede0a499e201ec6aa68f9a, type: 3}
+          - {fileID: 21300000, guid: 4628346b239fda04e88bdf28fafdb25a, type: 3}
+          - {fileID: 21300000, guid: a513bbf80e5570f4b84a620a3adc072b, type: 3}
+          - {fileID: 21300000, guid: d449a016bcad4fb47bd74d14bbacdb21, type: 3}
+    femaleAssets:
+      gender: 1
+      characterClassAssets:
+        m_keys:
+        - GiantSpider
+        m_values:
+        - defaultSprite: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: ea0ddb984d002a84f9b39b373eba19cf, type: 3}
+          - {fileID: 21300000, guid: bdf376ff1d659a64c94de4cc2eb23fca, type: 3}
+          - {fileID: 21300000, guid: 2d57bdae6a6ca2742aa6e148f288175b, type: 3}
+          - {fileID: 21300000, guid: 7c90873fbf65cd14fbba5bf33a956215, type: 3}
+          - {fileID: 21300000, guid: ca0d192b7425c5444984f60a6b9d5b3a, type: 3}
+          - {fileID: 21300000, guid: a30c2726af2637e4aa9d3031e7047f75, type: 3}
+          - {fileID: 21300000, guid: 32602b8d5101b634faa9d9c6b478065c, type: 3}
+          - {fileID: 21300000, guid: 818597ebdec50074ead71bcb3584f3d0, type: 3}
+          - {fileID: 21300000, guid: 209e8734c855605469c4d43922b220db, type: 3}
+          - {fileID: 21300000, guid: 53dbc7428333dc94eb58d6cfe7861a64, type: 3}
+          - {fileID: 21300000, guid: 6ee2288804747ee41bf81ee40fbb9195, type: 3}
+          - {fileID: 21300000, guid: b9f2a30696f5da1448e17f6a65aa4908, type: 3}
+          - {fileID: 21300000, guid: 6cb4e3b7c460527409a01ee4bf7326df, type: 3}
+          - {fileID: 21300000, guid: 6ced5f8ad6f80e6419ee5e7b3e3dcbd7, type: 3}
+          - {fileID: 21300000, guid: c2680b3ab45bd674ebe42099f40f0240, type: 3}
+          - {fileID: 21300000, guid: 20c45926b980c9c44816a230eeb9acbd, type: 3}
+          - {fileID: 21300000, guid: da41444f0ba0a61488f6a1d8e802cdfa, type: 3}
+          - {fileID: 21300000, guid: 69e42783e5651e44cbb3c96cad416214, type: 3}
+          - {fileID: 21300000, guid: fcbb9be5c78e6c34781b87fa66661aa3, type: 3}
   - raceName: WOLF
     race: 10
     maleAssets:
