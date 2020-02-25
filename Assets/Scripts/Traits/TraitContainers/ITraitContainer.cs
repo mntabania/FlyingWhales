@@ -16,9 +16,9 @@ namespace Traits {
         //List<RelationshipTrait> relationshipTraits { get; }
 
         #region Adding
-        bool AddTrait(ITraitable addTo, string traitName, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null);
-        bool AddTrait(ITraitable addTo, Trait trait, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null);
-        bool AddTrait(ITraitable addTo, string traitName, out Trait trait, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null);
+        bool AddTrait(ITraitable addTo, string traitName, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null, bool bypassElementalChance = false);
+        bool AddTrait(ITraitable addTo, Trait trait, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null, bool bypassElementalChance = false);
+        bool AddTrait(ITraitable addTo, string traitName, out Trait trait, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null, bool bypassElementalChance = false);
         void AddOnCollideWithTrait(Trait trait);
         bool RemoveOnCollideWithTrait(Trait trait);
         #endregion

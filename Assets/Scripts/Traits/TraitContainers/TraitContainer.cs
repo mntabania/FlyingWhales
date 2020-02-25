@@ -34,26 +34,31 @@ namespace Traits {
         /// The main AddTrait function. All other AddTrait functions will eventually call this.
         /// </summary>
         /// <returns>If the trait was added or not.</returns>
-        public bool AddTrait(ITraitable addTo, Trait trait, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null) {
+        public bool AddTrait(ITraitable addTo, Trait trait, Character characterResponsible = null, 
+            ActualGoapNode gainedFromDoing = null, bool bypassElementalChance = false) {
             if (TraitManager.Instance.IsTraitElemental(trait.name)) {
-                return TryAddElementalTrait(addTo, trait, characterResponsible, gainedFromDoing);
+                return TryAddElementalTrait(addTo, trait, characterResponsible, gainedFromDoing, bypassElementalChance);
             }
             return TraitAddition(addTo, trait, characterResponsible, gainedFromDoing);
         }
-        public bool AddTrait(ITraitable addTo, string traitName, out Trait trait, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null) {
+        public bool AddTrait(ITraitable addTo, string traitName, out Trait trait, Character characterResponsible = null, 
+            ActualGoapNode gainedFromDoing = null, bool bypassElementalChance = false) {
             if (TraitManager.Instance.IsTraitElemental(traitName)) {
-                return TryAddElementalTrait(addTo, traitName, out trait, characterResponsible, gainedFromDoing);
+                return TryAddElementalTrait(addTo, traitName, out trait, characterResponsible, 
+                    gainedFromDoing, bypassElementalChance);
             }
             return TraitAddition(addTo, traitName, out trait, characterResponsible, gainedFromDoing);
         }
-        public bool AddTrait(ITraitable addTo, string traitName, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null) {
+        public bool AddTrait(ITraitable addTo, string traitName, Character characterResponsible = null, 
+            ActualGoapNode gainedFromDoing = null, bool bypassElementalChance = false) {
             if (TraitManager.Instance.IsTraitElemental(traitName)) {
-                return TryAddElementalTrait(addTo, traitName, characterResponsible, gainedFromDoing);
+                return TryAddElementalTrait(addTo, traitName, characterResponsible, gainedFromDoing, bypassElementalChance);
             }
             return TraitAddition(addTo, traitName, characterResponsible, gainedFromDoing);
         }
-        private bool TryAddElementalTrait(ITraitable addTo, string traitName, Character characterResponsible, ActualGoapNode gainedFromDoing) {
-            bool shouldAddTrait = ProcessBeforeAddingElementalTrait(addTo, traitName);
+        private bool TryAddElementalTrait(ITraitable addTo, string traitName, Character characterResponsible, 
+            ActualGoapNode gainedFromDoing, bool bypassElementalChance) {
+            bool shouldAddTrait = ProcessBeforeAddingElementalTrait(addTo, traitName, bypassElementalChance);
             if (shouldAddTrait) {
                 shouldAddTrait = ProcessBeforeSuccessfullyAddingElementalTrait(addTo, traitName);
                 if (shouldAddTrait) {
@@ -66,9 +71,10 @@ namespace Traits {
             }
             return shouldAddTrait;
         }
-        private bool TryAddElementalTrait(ITraitable addTo, string traitName, out Trait trait, Character characterResponsible, ActualGoapNode gainedFromDoing) {
+        private bool TryAddElementalTrait(ITraitable addTo, string traitName, out Trait trait, Character characterResponsible, 
+            ActualGoapNode gainedFromDoing, bool bypassElementalChance) {
             trait = null;
-            bool shouldAddTrait = ProcessBeforeAddingElementalTrait(addTo, traitName);
+            bool shouldAddTrait = ProcessBeforeAddingElementalTrait(addTo, traitName, bypassElementalChance);
             if (shouldAddTrait) {
                 shouldAddTrait = ProcessBeforeSuccessfullyAddingElementalTrait(addTo, traitName);
                 if (shouldAddTrait) {
@@ -80,8 +86,9 @@ namespace Traits {
             }
             return shouldAddTrait;
         }
-        private bool TryAddElementalTrait(ITraitable addTo, Trait trait, Character characterResponsible, ActualGoapNode gainedFromDoing) {
-            bool shouldAddTrait = ProcessBeforeAddingElementalTrait(addTo, trait.name);
+        private bool TryAddElementalTrait(ITraitable addTo, Trait trait, Character characterResponsible, 
+            ActualGoapNode gainedFromDoing, bool bypassElementalChance) {
+            bool shouldAddTrait = ProcessBeforeAddingElementalTrait(addTo, trait.name, bypassElementalChance);
             if (shouldAddTrait) {
                 shouldAddTrait = ProcessBeforeSuccessfullyAddingElementalTrait(addTo, trait.name);
                 if (shouldAddTrait) {
@@ -94,7 +101,7 @@ namespace Traits {
             return shouldAddTrait;
         }
         //Returns true or false, if trait should be added or not
-        private bool ProcessBeforeAddingElementalTrait(ITraitable addTo, string traitName) {
+        private bool ProcessBeforeAddingElementalTrait(ITraitable addTo, string traitName, bool bypassElementalChance) {
             bool shouldAddTrait = true;
             if (traitName == "Burning") {
                 if (HasTrait("Freezing")) {
@@ -141,6 +148,9 @@ namespace Traits {
                 //}
             }
             if (shouldAddTrait) {
+                if (bypassElementalChance) {
+                    return true;
+                }
                 int roll = UnityEngine.Random.Range(0, 100);
                 int chance = GetElementalTraitChanceToBeAdded(traitName);
                 if (roll < chance) {

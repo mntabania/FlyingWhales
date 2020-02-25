@@ -78,7 +78,7 @@ public class IgniteData : SpellData {
         BurningSource bs = new BurningSource(targetPOI.gridTileLocation.parentMap.location);
         Burning burning = new Burning();
         burning.SetSourceOfBurning(bs, targetPOI);
-        targetPOI.traitContainer.AddTrait(targetPOI, burning);
+        targetPOI.traitContainer.AddTrait(targetPOI, burning, bypassElementalChance: true);
         Log log = new Log(GameManager.Instance.Today(), "InterventionAbility", name, "activated");
         PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
     }

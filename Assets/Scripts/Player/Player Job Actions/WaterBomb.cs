@@ -25,8 +25,7 @@ public class WaterBombData : SpellData {
     }
 
     public override void ActivateAbility(LocationGridTile targetTile) {
-        List<LocationGridTile> tiles =
-            UtilityScripts.GameUtilities.GetDiamondTilesFromRadius(targetTile.parentMap, targetTile.localPlace, 2);
+        List<LocationGridTile> tiles = targetTile.GetTilesInRadius(1, includeCenterTile: true, includeTilesInDifferentStructure: true);
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile tile = tiles[i];
             tile.PerformActionOnTraitables(MakeTraitbleWet);
@@ -41,12 +40,12 @@ public class WaterBombData : SpellData {
     }
     public override void ShowRange(LocationGridTile targetTile) {
         base.ShowRange(targetTile);
-        List<LocationGridTile> tiles = UtilityScripts.GameUtilities.GetDiamondTilesFromRadius(targetTile.parentMap, targetTile.localPlace, 2);
+        List<LocationGridTile> tiles = targetTile.GetTilesInRadius(1, includeCenterTile: true, includeTilesInDifferentStructure: true);
         InnerMapManager.Instance.HighlightTiles(tiles);
     }
     public override void HideRange(LocationGridTile targetTile) {
         base.HideRange(targetTile);
-        List<LocationGridTile> tiles = UtilityScripts.GameUtilities.GetDiamondTilesFromRadius(targetTile.parentMap, targetTile.localPlace, 2);
+        List<LocationGridTile> tiles = targetTile.GetTilesInRadius(1, includeCenterTile: true, includeTilesInDifferentStructure: true);
         InnerMapManager.Instance.UnhighlightTiles(tiles);
     }
 }

@@ -1372,7 +1372,8 @@ public enum SPELL_TYPE { NONE, ACCESS_MEMORIES, LYCANTHROPY, KLEPTOMANIA, VAMPIR
         , RILE_UP, ABDUCT, PROVOKE, DESTROY, RAISE_DEAD, CLOAK_OF_INVISIBILITY, METEOR, IGNITE, LURE, CURSED_OBJECT, LULLABY, AGORAPHOBIA, SPOIL, ALCOHOLIC, PESTILENCE
         , PARALYSIS, RELEASE, ZOMBIE_VIRUS, PSYCHOPATHY, TORNADO, RAVENOUS_SPIRIT, FEEBLE_SPIRIT, FORLORN_SPIRIT, POISON_CLOUD, LIGHTNING, EARTHQUAKE,
         LOCUST_SWARM, SPAWN_BOULDER, WATER_BOMB, MANIFEST_FOOD, BRIMSTONES,
-        SPLASH_POISON
+        SPLASH_POISON,
+        BLIZZARD
 }
 public enum INTERVENTION_ABILITY_TYPE { NONE, AFFLICTION, SPELL, }
 public enum SPELL_CATEGORY { NONE, SABOTAGE, MONSTER, DEVASTATION, HEX }
@@ -1413,7 +1414,7 @@ public enum ARTIFACT_UNLOCKABLE_TYPE { Structure, Action }
 public enum COMBAT_MODE { Aggressive, Passive, Defend, }
 public enum WALL_TYPE { Stone, Flesh, Demon_Stone }
 public enum PARTICLE_EFFECT { None, Poison, Freezing, Fire, Burning, Explode, Electric, Frozen, Poison_Explosion, 
-    Frozen_Explosion, Smoke_Effect, Lightning_Strike, Meteor_Strike, Water_Bomb, Poison_Bomb 
+    Frozen_Explosion, Smoke_Effect, Lightning_Strike, Meteor_Strike, Water_Bomb, Poison_Bomb, Blizzard 
 }
 
 #region Crime Subcategories

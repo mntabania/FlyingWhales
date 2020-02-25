@@ -1147,7 +1147,7 @@ public class PlayerUI : MonoBehaviour {
         if (item == PlayerDB.Tornado || item == PlayerDB.Meteor || item == PlayerDB.Ravenous_Spirit || item == PlayerDB.Feeble_Spirit || item == PlayerDB.Forlorn_Spirit
             || item == PlayerDB.Lightning || item == PlayerDB.Poison_Cloud || item == PlayerDB.Locust_Swarm || item == PlayerDB.Earthquake
             || item == PlayerDB.Locust_Swarm || item == PlayerDB.Spawn_Boulder || item == PlayerDB.Manifest_Food
-            || item == PlayerDB.Brimstones || item == PlayerDB.Water_Bomb || item == PlayerDB.Splash_Poison) {
+            || item == PlayerDB.Brimstones || item == PlayerDB.Water_Bomb || item == PlayerDB.Splash_Poison || item == PlayerDB.Blizzard) {
             return true;
         }
         return false;

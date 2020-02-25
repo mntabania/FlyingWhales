@@ -166,6 +166,9 @@ public class DouseFireState : CharacterState {
         return false;
     }
     private void ObtainWater() {
+        //character gains 3 water buckets
+        stateComponent.character.ObtainItem(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.WATER_BUCKET));
+        stateComponent.character.ObtainItem(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.WATER_BUCKET));
         stateComponent.character.ObtainItem(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.WATER_BUCKET));
         isFetchingWater = false; 
     }
