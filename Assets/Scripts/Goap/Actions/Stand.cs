@@ -14,7 +14,7 @@ public class Stand : GoapAction {
         
         shouldAddLogs = false;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.GOLEM, RACE.DEMON, RACE.WOLF, RACE.ELEMENTAL };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.GOLEM, RACE.DEMON, RACE.WOLF, RACE.ELEMENTAL, RACE.KOBOLD };
     }
 
     #region Overrides
@@ -40,7 +40,7 @@ public class Stand : GoapAction {
 
 public class StandData : GoapActionData {
     public StandData() : base(INTERACTION_TYPE.STAND) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
         requirementAction = Requirement;
     }
 

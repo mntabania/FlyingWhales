@@ -2243,6 +2243,62 @@ MonoBehaviour:
           - {fileID: 21300000, guid: f76c86552b17bef4c8c323dfd13838f4, type: 3}
           - {fileID: 21300000, guid: bfe1fc0b406489644befa13862e5282d, type: 3}
           - {fileID: 21300000, guid: e89c694b84381334982ebe8af4c2fa44, type: 3}
+  - raceName: KOBOLD
+    race: 20
+    maleAssets:
+      gender: 0
+      characterClassAssets:
+        m_keys:
+        - Kobold
+        m_values:
+        - defaultSprite: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 13a2cf0ae130c1f40bf157f538401a01, type: 3}
+          - {fileID: 21300000, guid: a0fcbc2854eb82a4abf90d17c2a71ca8, type: 3}
+          - {fileID: 21300000, guid: e61707e2348e79f40b942df20571f1a2, type: 3}
+          - {fileID: 21300000, guid: 771a77c47aafb5841b3e5336e7673c0c, type: 3}
+          - {fileID: 21300000, guid: e0aa1efb6d72c4d42a959c6583a57edc, type: 3}
+          - {fileID: 21300000, guid: 9f453359fb2c39643b8ea1d99889ec20, type: 3}
+          - {fileID: 21300000, guid: 9ec38c6d976ace646a811f99d84a8efa, type: 3}
+          - {fileID: 21300000, guid: 87d6dda1add9d2d478e3d00c508414c3, type: 3}
+          - {fileID: 21300000, guid: 10eb4294f97b35d42bab52f613e37557, type: 3}
+          - {fileID: 21300000, guid: 7415663c37eb67d449c7e5f75c435e8f, type: 3}
+          - {fileID: 21300000, guid: 51f5bf89b7f9f2340a93758902aa89d3, type: 3}
+          - {fileID: 21300000, guid: 1515f5cf9eec94b4eb1a7914a4f52749, type: 3}
+          - {fileID: 21300000, guid: 97f46b8e485ac0742904d66d68a5df8c, type: 3}
+          - {fileID: 21300000, guid: 0701253dafe2ae14aa8eb8d320f9cdcb, type: 3}
+          - {fileID: 21300000, guid: 170aaeae776d2a7488da2980b8b74391, type: 3}
+          - {fileID: 21300000, guid: 97b902c1dff81624a94038343f671d80, type: 3}
+          - {fileID: 21300000, guid: b1ad6b80f54166742af4e5912a757d02, type: 3}
+          - {fileID: 21300000, guid: b3c7cd78247c4a748985686b0a142a15, type: 3}
+          - {fileID: 21300000, guid: cf4a8cdb9b6079841a2c57ddadcf88fe, type: 3}
+    femaleAssets:
+      gender: 1
+      characterClassAssets:
+        m_keys:
+        - Kobold
+        m_values:
+        - defaultSprite: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 5d162d40f451cdd45a2918a3d3708cd7, type: 3}
+          - {fileID: 21300000, guid: c93221c76f2c1624aa32964443962a8e, type: 3}
+          - {fileID: 21300000, guid: c66229b3dfed13747adbcbfed9caa22d, type: 3}
+          - {fileID: 21300000, guid: d49a79ad58b195940b034d26db2f0bc2, type: 3}
+          - {fileID: 21300000, guid: 0e46c141cd9e9604192c2889d227878a, type: 3}
+          - {fileID: 21300000, guid: 9e2dddce973429742bcf711b6e168fd2, type: 3}
+          - {fileID: 21300000, guid: 93fff09a326df1143ad3d1885dab90cf, type: 3}
+          - {fileID: 21300000, guid: f3a6de43d7e269842938be52611953a3, type: 3}
+          - {fileID: 21300000, guid: eec1638b2e209b64981222b566b9e44b, type: 3}
+          - {fileID: 21300000, guid: 9f403452e3f20314fba0f1dd828a949e, type: 3}
+          - {fileID: 21300000, guid: c2f6e6c68ac2df848aab55f4f919d49d, type: 3}
+          - {fileID: 21300000, guid: 0657fc54ec75d47489f4a196bc723e9f, type: 3}
+          - {fileID: 21300000, guid: 4c4a2ce6cae0eb644b2905e8df0ea988, type: 3}
+          - {fileID: 21300000, guid: 43d2fc9976c859b4c83cb64b963cc1b7, type: 3}
+          - {fileID: 21300000, guid: 4d4d28b274ea1184494045a33852e8f5, type: 3}
+          - {fileID: 21300000, guid: 6ca52f9bafecdea4b8e55c73ece7992d, type: 3}
+          - {fileID: 21300000, guid: 12231c893306007498712a4547ae5584, type: 3}
+          - {fileID: 21300000, guid: 7aa0263a221b98841bad74f2dbc7826b, type: 3}
+          - {fileID: 21300000, guid: 4850be49f09aa5e439a884a6156323db, type: 3}
   - raceName: SKELETON
     race: 13
     maleAssets:

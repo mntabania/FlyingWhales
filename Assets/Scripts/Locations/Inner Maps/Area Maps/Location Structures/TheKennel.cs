@@ -54,7 +54,9 @@ namespace Inner_Maps.Location_Structures {
                 if (raceClass.className == FireElemental.ClassName) {
                     return SUMMON_TYPE.FireElemental;
                 }
-            }
+            } else if (raceClass.race == RACE.KOBOLD) {
+                return SUMMON_TYPE.Kobold;
+            } 
             throw new Exception($"No summon type for monster {raceClass.ToString()}");
         }
         private int GetMonsterCapacityCost(SUMMON_TYPE summon) {
@@ -70,6 +72,8 @@ namespace Inner_Maps.Location_Structures {
                 case SUMMON_TYPE.Incubus:
                     return 2;
                 case SUMMON_TYPE.Succubus:
+                    return 2;
+                case SUMMON_TYPE.Kobold:
                     return 2;
                 default:
                     throw new Exception($"No capacity for monster {summon.ToString()}");

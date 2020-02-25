@@ -1775,6 +1775,7 @@
               <e p="FireElemental.cs" t="Include" />
               <e p="Golem.cs" t="Include" />
               <e p="Incubus.cs" t="Include" />
+              <e p="Kobold.cs" t="Include" />
               <e p="SeducerSummon.cs" t="Include" />
               <e p="Skeleton.cs" t="Include" />
               <e p="Succubus.cs" t="Include" />

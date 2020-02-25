@@ -117,7 +117,7 @@ public class Invite : GoapAction {
 
 public class InviteData : GoapActionData {
     public InviteData() : base(INTERACTION_TYPE.INVITE) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
         requirementAction = Requirement;
     }
 
