@@ -8,7 +8,7 @@ using UtilityScripts;
 public class MonsterGeneration : MapGenerationComponent {
 
 	public override IEnumerator Execute(MapGenerationData data) {
-		string[] monsterChoices = new[] {"Golem", "Wolves", "Seducer"};
+		string[] monsterChoices = new[] {"Golem", "Wolves", "Seducer", "Fire Elementals", "Kobolds", "Giant Spiders"};
 		List<BaseLandmark> monsterLairs = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.MONSTER_LAIR);
 		for (int i = 0; i < monsterLairs.Count; i++) {
 			BaseLandmark monsterLair = monsterLairs[i];
@@ -18,48 +18,54 @@ public class MonsterGeneration : MapGenerationComponent {
 				settlementOnTile.GetRandomStructureOfType(STRUCTURE_TYPE.MONSTER_LAIR);
 			Assert.IsTrue(monsterLairStructure.unoccupiedTiles.Count > 0, 
 				$"Monster Lair at {monsterLair.tileLocation.region.name} does not have any unoccupied tiles, but is trying to spawn monsters!");
+			int randomAmount = 0;
 			if (randomSet == "Golem") {
-				int randomAmount = Random.Range(1, 3);
+				randomAmount = Random.Range(1, 3);
 				for (int j = 0; j < randomAmount; j++) {
-					Summon summon = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Golem, FactionManager.Instance.neutralFaction, settlementOnTile);
-					CharacterManager.Instance.PlaceSummon(summon, CollectionUtilities.GetRandomElement(monsterLairStructure.unoccupiedTiles));
-					summon.AddTerritory(monsterLair.tileLocation);
+					CreateMonster(SUMMON_TYPE.Golem, settlementOnTile, monsterLair, monsterLairStructure);
 				}
 			} else if (randomSet == "Wolves") {
-				int randomAmount = Random.Range(3, 6);
+				randomAmount = Random.Range(3, 6);
 				for (int j = 0; j < randomAmount; j++) {
-					Summon summon = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Wolf, FactionManager.Instance.neutralFaction, settlementOnTile);
-					CharacterManager.Instance.PlaceSummon(summon, CollectionUtilities.GetRandomElement(monsterLairStructure.unoccupiedTiles));
-					summon.AddTerritory(monsterLair.tileLocation);
+					CreateMonster(SUMMON_TYPE.Wolf, settlementOnTile, monsterLair, monsterLairStructure);
 				}
 			} else if (randomSet == "Seducer") {
 				int random = Random.Range(0, 3);
 				if (random == 0) {
 					//incubus, succubus
-					Summon incubus = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Incubus,
-						FactionManager.Instance.neutralFaction, settlementOnTile);
-					CharacterManager.Instance.PlaceSummon(incubus, CollectionUtilities.GetRandomElement(monsterLairStructure.unoccupiedTiles));
-					incubus.AddTerritory(monsterLair.tileLocation);
-					
-					Summon succubus = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Succubus,
-						FactionManager.Instance.neutralFaction, settlementOnTile);
-					CharacterManager.Instance.PlaceSummon(succubus, CollectionUtilities.GetRandomElement(monsterLairStructure.unoccupiedTiles));
-					succubus.AddTerritory(monsterLair.tileLocation);
+					CreateMonster(SUMMON_TYPE.Incubus, settlementOnTile, monsterLair, monsterLairStructure);
+					CreateMonster(SUMMON_TYPE.Succubus, settlementOnTile, monsterLair, monsterLairStructure);
 				} else if (random == 1) {
 					//incubus
-					Summon incubus = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Incubus,
-						FactionManager.Instance.neutralFaction, settlementOnTile);
-					CharacterManager.Instance.PlaceSummon(incubus, CollectionUtilities.GetRandomElement(monsterLairStructure.unoccupiedTiles));
-					incubus.AddTerritory(monsterLair.tileLocation);
+					CreateMonster(SUMMON_TYPE.Incubus, settlementOnTile, monsterLair, monsterLairStructure);
 				} else if (random == 2) {
 					//succubus
-					Summon succubus = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Succubus,
-						FactionManager.Instance.neutralFaction, settlementOnTile);
-					CharacterManager.Instance.PlaceSummon(succubus, CollectionUtilities.GetRandomElement(monsterLairStructure.unoccupiedTiles));
-					succubus.AddTerritory(monsterLair.tileLocation);
+					CreateMonster(SUMMON_TYPE.Succubus, settlementOnTile, monsterLair, monsterLairStructure);
+				}
+			} else if (randomSet == "Fire Elementals") {
+				randomAmount = Random.Range(1, 3);
+				for (int j = 0; j < randomAmount; j++) {
+					CreateMonster(SUMMON_TYPE.FireElemental, settlementOnTile, monsterLair, monsterLairStructure);
+				}
+			} else if (randomSet == "Kobolds") {
+				randomAmount = 3;
+				for (int j = 0; j < randomAmount; j++) {
+					CreateMonster(SUMMON_TYPE.Kobold, settlementOnTile, monsterLair, monsterLairStructure);
+				}
+			} else if (randomSet == "Giant Spiders") {
+				randomAmount = Random.Range(1, 4);
+				for (int j = 0; j < randomAmount; j++) {
+					CreateMonster(SUMMON_TYPE.GiantSpider, settlementOnTile, monsterLair, monsterLairStructure);
 				}
 			}
 		}
 		yield return null;
+	}
+
+	private void CreateMonster(SUMMON_TYPE summonType, Settlement settlementOnTile, BaseLandmark monsterLair,
+		LocationStructure monsterLairStructure) {
+		Summon summon = CharacterManager.Instance.CreateNewSummon(summonType, FactionManager.Instance.neutralFaction, settlementOnTile);
+		CharacterManager.Instance.PlaceSummon(summon, CollectionUtilities.GetRandomElement(monsterLairStructure.unoccupiedTiles));
+		summon.AddTerritory(monsterLair.tileLocation);
 	}
 }
