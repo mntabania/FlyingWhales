@@ -17,8 +17,8 @@ namespace Archetype {
             minionClasses = new List<string>() { "Pride", "Envy", "Greed", "Wrath" };
             afflictions = new List<SPELL_TYPE>() { }; //No intial afflictions
             spells = new List<string>() { PlayerDB.Tornado, PlayerDB.Poison_Cloud, PlayerDB.Meteor, PlayerDB.Lightning
-                , PlayerDB.Feeble_Spirit, PlayerDB.Locust_Swarm, PlayerDB.Locust_Swarm, PlayerDB.Spawn_Boulder, PlayerDB.Landmine
-                , PlayerDB.Acid_Rain, PlayerDB.Rain, PlayerDB.Heat_Wave, PlayerDB.Earthquake, PlayerDB.Spawn_Monster_Lair };
+                , PlayerDB.Feeble_Spirit, PlayerDB.Locust_Swarm, PlayerDB.Spawn_Boulder/*, PlayerDB.Landmine*/
+                /*, PlayerDB.Acid_Rain, PlayerDB.Rain, PlayerDB.Heat_Wave*/, PlayerDB.Earthquake/*, PlayerDB.Spawn_Monster_Lair*/ };
             SetCanTriggerFlaw(false);
             SetCanRemoveTraits(false);
         }

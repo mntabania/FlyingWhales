@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="C:\Users\Mykel Abania\.Rider2019.3\system\extResources" t="IncludeRecursive" />
-    <e p="C:\Users\Mykel Abania\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_FlyingWhales.1985073317.00" t="ExcludeRecursive" />
-    <e p="C:\Users\Mykel Abania\Repositories\FlyingWhales" t="IncludeRecursive">
+    <e p="C:\Users\12myk\.Rider2019.3\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\12myk\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_FlyingWhales.-362142238.00" t="ExcludeRecursive" />
+    <e p="D:\Repositories\FlyingWhales" t="IncludeRecursive">
       <e p="Assembly-CSharp-Editor.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp-firstpass.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
@@ -1599,6 +1599,7 @@
             <e p="Region" t="Include">
               <e p="Features" t="Include">
                 <e p="ArtifactFeature.cs" t="Include" />
+                <e p="BlizzardFeature.cs" t="Include" />
                 <e p="FertileFeature.cs" t="Include" />
                 <e p="GameFeature.cs" t="Include" />
                 <e p="HallowedGroundFeature.cs" t="Include" />
@@ -1677,6 +1678,7 @@
             <e p="AutoDestroyParticle.cs" t="Include" />
             <e p="AutoDestroyParticleOnDisable.cs" t="Include" />
             <e p="BaseParticleEffect.cs" t="Include" />
+            <e p="BlizzardParticleEffect.cs" t="Include" />
             <e p="LightningParticleEffect.cs" t="Include" />
             <e p="MeteorParticleEffect.cs" t="Include" />
             <e p="ObjectPoolParticle.cs" t="Include" />
@@ -1723,6 +1725,7 @@
               <e p="AccessMemories.cs" t="Include" />
               <e p="Agoraphobia.cs" t="Include" />
               <e p="Alcoholic.cs" t="Include" />
+              <e p="Blizzard.cs" t="Include" />
               <e p="BrimstonesData.cs" t="Include" />
               <e p="Cannibalism.cs" t="Include" />
               <e p="CloakOfInvisibility.cs" t="Include" />
@@ -1770,8 +1773,10 @@
             <e p="SeizeComponent.cs" t="Include" />
             <e p="Summons" t="Include">
               <e p="FireElemental.cs" t="Include" />
+              <e p="GiantSpider.cs" t="Include" />
               <e p="Golem.cs" t="Include" />
               <e p="Incubus.cs" t="Include" />
+              <e p="Kobold.cs" t="Include" />
               <e p="SeducerSummon.cs" t="Include" />
               <e p="Skeleton.cs" t="Include" />
               <e p="Succubus.cs" t="Include" />

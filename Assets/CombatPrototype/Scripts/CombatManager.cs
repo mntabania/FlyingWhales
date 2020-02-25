@@ -43,6 +43,9 @@ public class CombatManager : MonoBehaviour {
     }
     public void CreateHitEffectAt(IDamageable poi, ELEMENTAL_TYPE elementalType) {
         ElementalDamageData elementalData = ScriptableObjectsManager.Instance.GetElementalDamageData(elementalType);
+        if (poi.gridTileLocation == null) {
+            return;
+        }
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(elementalData.hitEffectPrefab.name, Vector3.zero, Quaternion.identity, poi.gridTileLocation.parentMap.objectsParent);
         if (!poi.mapObjectVisual || !poi.projectileReceiver) {
             go.transform.localPosition = poi.gridTileLocation.centeredLocalLocation;

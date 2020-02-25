@@ -78,15 +78,26 @@ public class MinionCommandsUI : MonoBehaviour {
         }
         button.interactable = isInteractable == null || isInteractable();
     }
+    private bool CanIssueCommand() {
+        bool canIssueCommand = true;
+        Character actor = UIManager.Instance.characterInfoUI.activeCharacter;
+        if(actor.gridTileLocation == null || targetPOI.gridTileLocation == null || !PathfindingManager.Instance.HasPath(actor.gridTileLocation, targetPOI.gridTileLocation)) {
+            canIssueCommand = false;
+            PlayerUI.Instance.ShowGeneralConfirmation("Instruction Error", "Cannot instruct minion. It has no path towards the target.");
+        }
+        return canIssueCommand;
+    }
     #endregion
 
     #region Character
     public void Knockout() {
-        if (targetPOI is Character) {
-            Character actor = UIManager.Instance.characterInfoUI.activeCharacter;
-            actor.jobComponent.CreateKnockoutJob(targetPOI as Character);
-        } else {
-            Debug.LogError($"{targetPOI.name} is not a character!");
+        if (CanIssueCommand()) {
+            if (targetPOI is Character) {
+                Character actor = UIManager.Instance.characterInfoUI.activeCharacter;
+                actor.jobComponent.CreateKnockoutJob(targetPOI as Character);
+            } else {
+                Debug.LogError($"{targetPOI.name} is not a character!");
+            }
         }
         HideUI();
     }
@@ -94,11 +105,13 @@ public class MinionCommandsUI : MonoBehaviour {
         return !targetPOI.traitContainer.HasTrait("Unconscious");
     }
     public void Kill() {
-        if (targetPOI is Character) {
-            Character actor = UIManager.Instance.characterInfoUI.activeCharacter;
-            actor.jobComponent.CreateKillJob(targetPOI as Character);
-        } else {
-            Debug.LogError($"{targetPOI.name} is not a character!");
+        if (CanIssueCommand()) {
+            if (targetPOI is Character) {
+                Character actor = UIManager.Instance.characterInfoUI.activeCharacter;
+                actor.jobComponent.CreateKillJob(targetPOI as Character);
+            } else {
+                Debug.LogError($"{targetPOI.name} is not a character!");
+            }
         }
         HideUI();
     }
@@ -106,11 +119,13 @@ public class MinionCommandsUI : MonoBehaviour {
         return !(targetPOI as Character).isDead;
     }
     public void Abduct() {
-        if (targetPOI is Character) {
-            Character actor = UIManager.Instance.characterInfoUI.activeCharacter;
-            actor.jobComponent.CreateAbductJob(targetPOI as Character);
-        } else {
-            Debug.LogError($"{targetPOI.name} is not a character!");
+        if (CanIssueCommand()) {
+            if (targetPOI is Character) {
+                Character actor = UIManager.Instance.characterInfoUI.activeCharacter;
+                actor.jobComponent.CreateAbductJob(targetPOI as Character);
+            } else {
+                Debug.LogError($"{targetPOI.name} is not a character!");
+            }
         }
         HideUI();
     }
@@ -121,11 +136,13 @@ public class MinionCommandsUI : MonoBehaviour {
 
     #region Monsters
     public void LearnMonster() {
-        if (targetPOI is Character) {
-            Character actor = UIManager.Instance.characterInfoUI.activeCharacter;
-            actor.jobComponent.CreateLearnMonsterJob(targetPOI as Character);
-        } else {
-            Debug.LogError($"{targetPOI.name} is not a character!");
+        if (CanIssueCommand()) {
+            if (targetPOI is Character) {
+                Character actor = UIManager.Instance.characterInfoUI.activeCharacter;
+                actor.jobComponent.CreateLearnMonsterJob(targetPOI as Character);
+            } else {
+                Debug.LogError($"{targetPOI.name} is not a character!");
+            }
         }
         HideUI();
     }
@@ -137,11 +154,13 @@ public class MinionCommandsUI : MonoBehaviour {
 
     #region Artifacts
     public void TakeArtifact() {
-        if (targetPOI is Artifact) {
-            Character actor = UIManager.Instance.characterInfoUI.activeCharacter;
-            actor.jobComponent.CreateTakeArtifactJob(targetPOI as Artifact, PlayerManager.Instance.player.portalTile.locationGridTiles[0].structure);
-        } else {
-            Debug.LogError($"{targetPOI.name} is not an artifact!");
+        if (CanIssueCommand()) {
+            if (targetPOI is Artifact) {
+                Character actor = UIManager.Instance.characterInfoUI.activeCharacter;
+                actor.jobComponent.CreateTakeArtifactJob(targetPOI as Artifact, PlayerManager.Instance.player.portalTile.locationGridTiles[0].structure);
+            } else {
+                Debug.LogError($"{targetPOI.name} is not an artifact!");
+            }
         }
         HideUI();
     }

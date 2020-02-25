@@ -51,20 +51,20 @@ public static class PlayerDB {
     public const string Forlorn_Spirit = "Forlorn Spirit";
     public const string Locust_Swarm = "Locust Swarm";
     public const string Spawn_Boulder = "Spawn Boulder";
-    public const string Landmine = "Landmine";
+    //public const string Landmine = "Landmine";
     public const string Manifest_Food = "Manifest Food";
     public const string Brimstones = "Brimstones";
-    public const string Acid_Rain = "Acid Rain";
-    public const string Rain = "Rain";
-    public const string Heat_Wave = "Heat Wave";
-    public const string Wild_Growth = "Wild Growth";
-    public const string Spider_Rain = "Spider Rain";
+    //public const string Acid_Rain = "Acid Rain";
+    //public const string Rain = "Rain";
+    //public const string Heat_Wave = "Heat Wave";
+    //public const string Wild_Growth = "Wild Growth";
+    //public const string Spider_Rain = "Spider Rain";
     public const string Blizzard = "Blizzard";
     public const string Earthquake = "Earthquake";
-    public const string Fertility = "Fertility";
-    public const string Spawn_Bandit_Camp = "Spawn Bandit Camp";
-    public const string Spawn_Monster_Lair = "Spawn Monster Lair";
-    public const string Spawn_Haunted_Grounds = "Spawn Haunted Grounds";
+    //public const string Fertility = "Fertility";
+    //public const string Spawn_Bandit_Camp = "Spawn Bandit Camp";
+    //public const string Spawn_Monster_Lair = "Spawn Monster Lair";
+    //public const string Spawn_Haunted_Grounds = "Spawn Haunted Grounds";
     public const string Water_Bomb = "Water Bomb";
     public const string Splash_Poison = "Splash Poison";
     
@@ -72,11 +72,8 @@ public static class PlayerDB {
     public static List<string> spells = new List<string>() { 
         Tornado, Meteor, Poison_Cloud, Lightning, 
         Ravenous_Spirit, Feeble_Spirit, Forlorn_Spirit, 
-        Locust_Swarm, Spawn_Boulder, Landmine, Manifest_Food, 
-        Brimstones, Acid_Rain, Rain, Heat_Wave, Wild_Growth, 
-        Spider_Rain, Blizzard, Earthquake, Fertility, 
-        Spawn_Bandit_Camp, Spawn_Monster_Lair, Spawn_Haunted_Grounds, Water_Bomb,
-        Splash_Poison
+        Locust_Swarm, Blizzard, Spawn_Boulder, Manifest_Food, 
+        Brimstones, Earthquake, Water_Bomb, Splash_Poison, //Landmine, Acid_Rain, Rain, Heat_Wave, Wild_Growth, Spider_Rain, Fertility, Spawn_Bandit_Camp, Spawn_Monster_Lair, Spawn_Haunted_Grounds,
     };
 
     public static List<SPELL_TYPE> afflictions = new List<SPELL_TYPE>() { 

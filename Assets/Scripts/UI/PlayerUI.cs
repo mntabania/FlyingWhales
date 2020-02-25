@@ -141,8 +141,10 @@ public class PlayerUI : MonoBehaviour {
         Messenger.AddListener(Signals.ON_CLOSE_SHARE_INTEL, OnCloseShareIntelMenu);
 
         //Minion List
-        Messenger.AddListener<Minion>(Signals.PLAYER_GAINED_MINION, OnGainedMinion);
-        Messenger.AddListener<Minion>(Signals.PLAYER_LOST_MINION, OnLostMinion);
+        //Messenger.AddListener<Minion>(Signals.PLAYER_GAINED_MINION, OnGainedMinion);
+        //Messenger.AddListener<Minion>(Signals.PLAYER_LOST_MINION, OnLostMinion);
+        Messenger.AddListener<Minion>(Signals.SUMMON_MINION, OnGainedMinion);
+        Messenger.AddListener<Minion>(Signals.UNSUMMON_MINION, OnLostMinion);
 
         Messenger.AddListener<ILocation>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
         Messenger.AddListener<ILocation>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
@@ -1069,8 +1071,8 @@ public class PlayerUI : MonoBehaviour {
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(minionItemPrefab.name, Vector3.zero, Quaternion.identity, minionListScrollView.content);
         CharacterNameplateItem item = go.GetComponent<CharacterNameplateItem>();
         item.SetObject(minion.character);
-        item.AddHoverEnterAction((character) => UIManager.Instance.ShowMinionCardTooltip(character.minion, minionListCardTooltipPos));
-        item.AddHoverExitAction((character) => UIManager.Instance.HideMinionCardTooltip());
+        //item.AddHoverEnterAction((character) => UIManager.Instance.ShowMinionCardTooltip(character.minion, minionListCardTooltipPos));
+        //item.AddHoverExitAction((character) => UIManager.Instance.HideMinionCardTooltip());
         item.SetAsDefaultBehaviour();
     }
     private void DeleteMinionItem(Minion minion) {
@@ -1144,13 +1146,14 @@ public class PlayerUI : MonoBehaviour {
         customDropdownList.ShowDropdown(PlayerManager.Instance.player.archetype.spells, OnClickSpell, CanChooseItem);
     }
     private bool CanChooseItem(string item) {
-        if (item == PlayerDB.Tornado || item == PlayerDB.Meteor || item == PlayerDB.Ravenous_Spirit || item == PlayerDB.Feeble_Spirit || item == PlayerDB.Forlorn_Spirit
-            || item == PlayerDB.Lightning || item == PlayerDB.Poison_Cloud || item == PlayerDB.Locust_Swarm || item == PlayerDB.Earthquake
-            || item == PlayerDB.Locust_Swarm || item == PlayerDB.Spawn_Boulder || item == PlayerDB.Manifest_Food
-            || item == PlayerDB.Brimstones || item == PlayerDB.Water_Bomb || item == PlayerDB.Splash_Poison) {
-            return true;
-        }
-        return false;
+        //if (item == PlayerDB.Tornado || item == PlayerDB.Meteor || item == PlayerDB.Ravenous_Spirit || item == PlayerDB.Feeble_Spirit || item == PlayerDB.Forlorn_Spirit
+        //    || item == PlayerDB.Lightning || item == PlayerDB.Poison_Cloud || item == PlayerDB.Locust_Swarm || item == PlayerDB.Earthquake
+        //    || item == PlayerDB.Locust_Swarm || item == PlayerDB.Spawn_Boulder || item == PlayerDB.Manifest_Food
+        //    || item == PlayerDB.Brimstones || item == PlayerDB.Water_Bomb || item == PlayerDB.Splash_Poison || item == PlayerDB.Blizzard) {
+        //    return true;
+        //}
+        //return false;
+        return true;
     }
     private void HideSpells() {
         customDropdownList.HideDropdown();

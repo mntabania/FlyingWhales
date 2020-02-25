@@ -424,6 +424,8 @@ public static class Signals {
     public static string CREATE_CHAOS_ORBS = "CreateChaosOrbs";
 
     public static string PLAYER_ACTION_UNTOGGLE = "OnPlayerActionUntoggle";
+    public static string SUMMON_MINION = "OnSummonMinion";
+    public static string UNSUMMON_MINION = "OnUnsummonMinion";
     #endregion
 
     #region Interaction

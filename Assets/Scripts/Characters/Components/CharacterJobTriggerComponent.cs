@@ -709,4 +709,13 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    }
     }
     #endregion
+
+    #region Needs
+    public void CreateProduceFoodJob() {
+        if (!_owner.jobQueue.HasJob(JOB_TYPE.PRODUCE_FOOD)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PRODUCE_FOOD, new GoapEffect(GOAP_EFFECT_CONDITION.PRODUCE_FOOD, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), _owner, _owner);
+            _owner.jobQueue.AddJobInQueue(job);
+        }
+    }
+    #endregion
 }

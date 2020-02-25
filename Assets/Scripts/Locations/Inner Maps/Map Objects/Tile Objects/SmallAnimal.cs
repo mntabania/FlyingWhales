@@ -24,6 +24,12 @@ public class SmallAnimal : TileObject {
         //SetPOIState(POI_STATE.INACTIVE);
         //ScheduleCooldown(action);
     }
+    public override void OnDestroyPOI() {
+        if (traitContainer.HasTrait("Burning", "Burnt")) {
+            CharacterManager.Instance.CreateFoodPileForPOI(this);
+        }
+        base.OnDestroyPOI();
+    }
     //public override List<GoapAction> AdvertiseActionsToActor(Character actor, List<INTERACTION_TYPE> actorAllowedInteractions) {
     //    if (actor.GetTrait("Carnivore") != null) { //Carnivores only
     //        return base.AdvertiseActionsToActor(actor, actorAllowedInteractions);

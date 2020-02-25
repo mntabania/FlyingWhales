@@ -166,6 +166,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     }
     public virtual void OnPlacePOI() {
         // Assert.IsNull(gridTileLocation, $"Grid tile location of {this.ToString()} is null, but OnPlacePOI was called!");
+        Assert.IsTrue(gridTileLocation.structure.pointsOfInterest.Contains(this), 
+            $"{this} was placed at {gridTileLocation.structure} but was not included in the list of POI's");
         SetPOIState(POI_STATE.ACTIVE);
         if (mapVisual == null) {
             InitializeMapObject(this);

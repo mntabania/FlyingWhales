@@ -979,7 +979,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         Rotate(lookAt, true);
     }
     public void OnDeath(LocationGridTile deathTileLocation) {
-        if (character.race == RACE.SKELETON || character is Summon || character.minion != null) {
+        if (character.race == RACE.SKELETON || character is Summon || character.minion != null || character.destroyMarkerOnDeath) {
             character.DestroyMarker();
         } else {
             SetCollidersState(false);
@@ -1058,8 +1058,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
     private void UpdateHairState() {
         //TODO: Find another way to unify this
         if (character.characterClass.className == "Mage" || character.visuals.portraitSettings.hair == -1 || 
-            character.race == RACE.WOLF || character.isDead || character.race == RACE.SKELETON || 
-            character.race == RACE.GOLEM || character.race == RACE.ELEMENTAL) {
+            character.race == RACE.WOLF || character.race == RACE.SKELETON || 
+            character.race == RACE.GOLEM || character.race == RACE.ELEMENTAL || character.race == RACE.KOBOLD) {
             hairImg.gameObject.SetActive(false);
             knockedOutHairImg.gameObject.SetActive(false);
         } else {

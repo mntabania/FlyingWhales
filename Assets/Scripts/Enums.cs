@@ -52,7 +52,8 @@ public enum RACE{
     INSECT,
     SPIDER,
     GOLEM,
-    ELEMENTAL
+    ELEMENTAL,
+    KOBOLD,
 }
 public enum HEXTILE_DIRECTION {
     NORTH_WEST,
@@ -1372,7 +1373,8 @@ public enum SPELL_TYPE { NONE, ACCESS_MEMORIES, LYCANTHROPY, KLEPTOMANIA, VAMPIR
         , RILE_UP, ABDUCT, PROVOKE, DESTROY, RAISE_DEAD, CLOAK_OF_INVISIBILITY, METEOR, IGNITE, LURE, CURSED_OBJECT, LULLABY, AGORAPHOBIA, SPOIL, ALCOHOLIC, PESTILENCE
         , PARALYSIS, RELEASE, ZOMBIE_VIRUS, PSYCHOPATHY, TORNADO, RAVENOUS_SPIRIT, FEEBLE_SPIRIT, FORLORN_SPIRIT, POISON_CLOUD, LIGHTNING, EARTHQUAKE,
         LOCUST_SWARM, SPAWN_BOULDER, WATER_BOMB, MANIFEST_FOOD, BRIMSTONES,
-        SPLASH_POISON
+        SPLASH_POISON,
+        BLIZZARD
 }
 public enum INTERVENTION_ABILITY_TYPE { NONE, AFFLICTION, SPELL, }
 public enum SPELL_CATEGORY { NONE, SABOTAGE, MONSTER, DEVASTATION, HEX }
@@ -1382,7 +1384,9 @@ public enum COMBAT_ABILITY {
 
 public enum TILE_TAG { CAVE, DUNGEON, FOREST, FLATLAND, MOUNTAIN, GRASSLAND, JUNGLE, TUNDRA, SNOW, DESERT, PROTECTIVE_BARRIER, HALLOWED_GROUNDS, }
 public enum SUMMON_TYPE { None, Wolf, Skeleton, Golem, Succubus, Incubus, ThiefSummon,
-    FireElemental
+    FireElemental,
+    Kobold,
+    GiantSpider
 }
 public enum ARTIFACT_TYPE { None, Grasping_Hands, Snatching_Hands, Abominable_Heart, Dark_Matter, Looking_Glass, Black_Scripture, False_Gem, Naga_Eyes, Tormented_Chalice, Lightning_Rod }
 public enum ABILITY_TAG { NONE, MAGIC, SUPPORT, DEBUFF, CRIME, PHYSICAL, }
@@ -1413,7 +1417,7 @@ public enum ARTIFACT_UNLOCKABLE_TYPE { Structure, Action }
 public enum COMBAT_MODE { Aggressive, Passive, Defend, }
 public enum WALL_TYPE { Stone, Flesh, Demon_Stone }
 public enum PARTICLE_EFFECT { None, Poison, Freezing, Fire, Burning, Explode, Electric, Frozen, Poison_Explosion, 
-    Frozen_Explosion, Smoke_Effect, Lightning_Strike, Meteor_Strike, Water_Bomb, Poison_Bomb 
+    Frozen_Explosion, Smoke_Effect, Lightning_Strike, Meteor_Strike, Water_Bomb, Poison_Bomb, Blizzard 
 }
 
 #region Crime Subcategories

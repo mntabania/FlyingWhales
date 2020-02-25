@@ -27,12 +27,23 @@ public class BaseParticleEffect : PooledObject {
             particleSystems[i].Play();
         }
     }
+    public virtual void StopParticleEffect() {
+        for (int i = 0; i < particleSystems.Length; i++) {
+            particleSystems[i].Stop();
+        }
+    }
+    public virtual void ResetParticleEffect() {
+        for (int i = 0; i < particleSystems.Length; i++) {
+            particleSystems[i].Clear();
+        }
+    }
     protected virtual void ParticleAfterEffect(ParticleSystem particleSystem) {
     }
 
     #region Object Pool
     public override void Reset() {
         base.Reset();
+        ResetParticleEffect();
         targetTile = null;
     }
     #endregion

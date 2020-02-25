@@ -148,7 +148,7 @@ namespace Inner_Maps.Location_Structures {
                     }
                 }
                 if (poi.gridTileLocation != null) {
-                    Debug.Log("Removed " + poi.ToString() + " from " + poi.gridTileLocation.ToString() + " at " + this.ToString());
+                    // Debug.Log("Removed " + poi.ToString() + " from " + poi.gridTileLocation.ToString() + " at " + this.ToString());
                     if(poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
                         //location.areaMap.RemoveCharacter(poi.gridTileLocation, poi as Character);
                     } else {
@@ -505,9 +505,13 @@ namespace Inner_Maps.Location_Structures {
                 LocationStructure transferTo = wilderness;
             
                 tile.ClearWallObjects();
-
+                IPointOfInterest obj = tile.objHere;
+                if (obj != null) {
+                    obj.AdjustHP(-tile.objHere.maxHP, ELEMENTAL_TYPE.Normal);
+                    obj.gridTileLocation?.structure.RemovePOI(obj); //because sometimes adjusting the hp of the object to 0 does not remove it?
+                }
+                
                 tile.SetStructure(transferTo);
-                tile.objHere?.AdjustHP(-tile.objHere.maxHP, ELEMENTAL_TYPE.Normal);
                 tile.RevertToPreviousGroundVisual();
                 tile.CreateSeamlessEdgesForTile(location.innerMap);
                 tile.SetPreviousGroundVisual(null); //so that the tile will never revert to the structure tile, unless a new structure is put on it.

@@ -16,7 +16,7 @@ namespace Archetype {
             demonicStructures = new List<LANDMARK_TYPE>() { LANDMARK_TYPE.THE_PROFANE, LANDMARK_TYPE.THE_KENNEL, LANDMARK_TYPE.TORTURE_CHAMBER, LANDMARK_TYPE.DEMONIC_PRISON, LANDMARK_TYPE.THE_SPIRE, LANDMARK_TYPE.THE_CRYPT };
             minionClasses = new List<string>() { "Pride", "Sloth", "Lust", "Gluttony" };
             afflictions = new List<SPELL_TYPE>() { SPELL_TYPE.PESTILENCE, SPELL_TYPE.LYCANTHROPY, SPELL_TYPE.VAMPIRISM, SPELL_TYPE.ZOMBIE_VIRUS, SPELL_TYPE.CURSED_OBJECT, SPELL_TYPE.LULLABY, /*Befoul, Imp Seed*/ };
-            spells = new List<string>() { PlayerDB.Forlorn_Spirit, PlayerDB.Brimstones, PlayerDB.Spider_Rain, PlayerDB.Blizzard, PlayerDB.Spawn_Haunted_Grounds };
+            spells = new List<string>() { PlayerDB.Forlorn_Spirit, PlayerDB.Brimstones,/* PlayerDB.Spider_Rain,*/ PlayerDB.Blizzard/*, PlayerDB.Spawn_Haunted_Grounds*/ };
             SetCanTriggerFlaw(false);
             SetCanRemoveTraits(false);
         }

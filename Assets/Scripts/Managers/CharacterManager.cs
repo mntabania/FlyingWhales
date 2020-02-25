@@ -261,6 +261,29 @@ public class CharacterManager : MonoBehaviour {
             }
         }
     }
+    public int GetFoodAmountTakenFromDead(Character deadCharacter) {
+        if (deadCharacter != null) {
+            if (deadCharacter.race == RACE.WOLF) {
+                return 150;
+            } else if (deadCharacter.race == RACE.HUMANS) {
+                return 200;
+            } else if (deadCharacter.race == RACE.ELVES) {
+                return 200;
+            }
+        }
+        return 100;
+    }
+    public void CreateFoodPileForPOI(IPointOfInterest poi) {
+        Character deadCharacter = null;
+        if (poi is Character) {
+            deadCharacter = poi as Character;
+        }
+        int food = GetFoodAmountTakenFromDead(deadCharacter);
+        FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(TILE_OBJECT_TYPE.FOOD_PILE);
+        foodPile.SetResourceInPile(food);
+        poi.gridTileLocation.structure.AddPOI(foodPile, poi.gridTileLocation);
+        foodPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.FOOD_PILE);
+    }
     #endregion
 
     #region Character Class Manager

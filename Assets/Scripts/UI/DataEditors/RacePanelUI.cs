@@ -64,6 +64,7 @@ public class RacePanelUI : MonoBehaviour {
     public void UpdateTraitOptions() {
         traitOptions.ClearOptions();
         traitOptions.AddOptions(TraitPanelUI.Instance.allTraits);
+        traitOptions.AddOptions(TraitManager.instancedTraits.ToList());
     }
     public void LoadAllData() {
         _traitNames = new List<string>();
