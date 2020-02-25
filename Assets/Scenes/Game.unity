@@ -37375,12 +37375,12 @@ MonoBehaviour:
   rt: {fileID: 701714030}
   characterCommands:
   - {fileID: 1655534967}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 915997451}
+  - {fileID: 2066421786}
   monsterCommands:
-  - {fileID: 0}
+  - {fileID: 27168765}
   artifactCommands:
-  - {fileID: 0}
+  - {fileID: 1009368863}
 --- !u!222 &701714032
 CanvasRenderer:
   m_ObjectHideFlags: 0
