@@ -5,6 +5,7 @@ using UnityEngine;
 namespace Archetype {
     public class Lich : PlayerArchetype {
         public Lich() : base(PLAYER_ARCHETYPE.Lich) {
+            selectorDescription = "Master of monsters and calamities. Invading the world is easy for one that has access to such mayhem!";
             actions = new List<string>() { PlayerDB.Afflict_Action, PlayerDB.Poison_Action, PlayerDB.Seize_Object_Action, PlayerDB.Animate_Action, PlayerDB.Summon_Minion_Action
                     , PlayerDB.Corrupt_Action, PlayerDB.Stop_Action, PlayerDB.Return_To_Portal_Action
                     , PlayerDB.Harass_Action, PlayerDB.Raid_Action, PlayerDB.Invade_Action
@@ -16,7 +17,7 @@ namespace Archetype {
             demonicStructures = new List<LANDMARK_TYPE>() { LANDMARK_TYPE.THE_PROFANE, LANDMARK_TYPE.THE_KENNEL, LANDMARK_TYPE.TORTURE_CHAMBER, LANDMARK_TYPE.DEMONIC_PRISON, LANDMARK_TYPE.THE_SPIRE, LANDMARK_TYPE.THE_CRYPT };
             minionClasses = new List<string>() { "Pride", "Sloth", "Lust", "Gluttony" };
             afflictions = new List<SPELL_TYPE>() { SPELL_TYPE.PESTILENCE, SPELL_TYPE.LYCANTHROPY, SPELL_TYPE.VAMPIRISM, SPELL_TYPE.ZOMBIE_VIRUS, SPELL_TYPE.CURSED_OBJECT, SPELL_TYPE.LULLABY, /*Befoul, Imp Seed*/ };
-            spells = new List<string>() { PlayerDB.Forlorn_Spirit, PlayerDB.Brimstones, PlayerDB.Spider_Rain, PlayerDB.Blizzard, PlayerDB.Spawn_Haunted_Grounds };
+            spells = new List<SPELL_TYPE>() { SPELL_TYPE.FORLORN_SPIRIT, SPELL_TYPE.BRIMSTONES,/* SPELL_TYPE.SPIDER_RAIN,*/ SPELL_TYPE.BLIZZARD/*, SPELL_TYPE.SPAWN_HAUNTED_GROUNDS*/ };
             SetCanTriggerFlaw(false);
             SetCanRemoveTraits(false);
         }

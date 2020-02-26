@@ -39,7 +39,7 @@ public class LocustSwarm : PlayerSpell {
 public class LocustSwarmData : SpellData {
     public override SPELL_TYPE ability => SPELL_TYPE.LOCUST_SWARM;
     public override string name { get { return "Locust Swarm"; } }
-    public override string description { get { return "Spawn a locust swarm."; } }
+    public override string description { get { return "These starving insects will consume all edible objects in its path."; } }
     public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.DEVASTATION; } }
     public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
     public override int abilityRadius => 2;

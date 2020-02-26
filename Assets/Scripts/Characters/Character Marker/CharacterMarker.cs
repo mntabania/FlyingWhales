@@ -979,7 +979,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         Rotate(lookAt, true);
     }
     public void OnDeath(LocationGridTile deathTileLocation) {
-        if (character.race == RACE.SKELETON || character is Summon || character.minion != null) {
+        if (character.race == RACE.SKELETON || character is Summon || character.minion != null || character.destroyMarkerOnDeath) {
             character.DestroyMarker();
         } else {
             SetCollidersState(false);

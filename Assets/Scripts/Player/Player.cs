@@ -35,7 +35,7 @@ public class Player : ILeader {
     public float constructionRatePercentageModifier { get; private set; }
     //Components
     public SeizeComponent seizeComponent { get; }
-    public List<string> unlearnedSpells { get; }
+    public List<SPELL_TYPE> unlearnedSpells { get; }
     public List<SPELL_TYPE> unlearnedAfflictions { get; }
 
     #region getters/setters
@@ -56,7 +56,7 @@ public class Player : ILeader {
         interventionAbilitySlots = new PlayerJobActionSlot[PlayerDB.MAX_INTERVENTION_ABILITIES];
         //maxSummonSlots = 0;
         //maxArtifactSlots = 0;
-        unlearnedSpells = new List<string>(PlayerDB.spells);
+        unlearnedSpells = new List<SPELL_TYPE>(PlayerDB.spells);
         unlearnedAfflictions = new List<SPELL_TYPE>(PlayerDB.afflictions);
         AdjustMana(EditableValuesManager.Instance.startingMana);
         seizeComponent = new SeizeComponent();
@@ -68,7 +68,7 @@ public class Player : ILeader {
         minions = new List<Minion>();
         //maxSummonSlots = data.maxSummonSlots;
         //maxArtifactSlots = data.maxArtifactSlots;
-        unlearnedSpells = new List<string>();
+        unlearnedSpells = new List<SPELL_TYPE>();
         unlearnedAfflictions = new List<SPELL_TYPE>();
         mana = data.mana;
         SetConstructionRatePercentageModifier(data.constructionRatePercentageModifier);
@@ -248,14 +248,17 @@ public class Player : ILeader {
     #region Role Actions
     public SpellData currentActivePlayerSpell { get; private set; }
     public void SetCurrentlyActivePlayerSpell(SpellData action) {
-        SpellData previousActiveAction = currentActivePlayerSpell;
-        currentActivePlayerSpell = action;
-        if (currentActivePlayerSpell == null) {
-            Messenger.RemoveListener<KeyCode>(Signals.KEY_DOWN, OnSpellCast);
-            InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
-        } else {
-            InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Cross);
-            Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnSpellCast);
+        if(currentActivePlayerSpell != action) {
+            SpellData previousActiveAction = currentActivePlayerSpell;
+            currentActivePlayerSpell = action;
+            if (currentActivePlayerSpell == null) {
+                Messenger.RemoveListener<KeyCode>(Signals.KEY_DOWN, OnSpellCast);
+            	InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
+                Messenger.Broadcast(Signals.PLAYER_NO_ACTIVE_SPELL, previousActiveAction);
+            } else {
+            	InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Cross);
+                Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnSpellCast);
+            }
         }
     }
     private void OnSpellCast(KeyCode key) {
@@ -1406,7 +1409,7 @@ public class Player : ILeader {
     #region Archetype
     public void SetArchetype(PLAYER_ARCHETYPE type) {
         if(archetype == null || archetype.type != type) {
-            archetype = CreateNewArchetype(type);
+            archetype = PlayerManager.CreateNewArchetype(type);
             for (int i = 0; i < archetype.spells.Count; i++) {
                 unlearnedSpells.Remove(archetype.spells[i]);
             }
@@ -1415,18 +1418,9 @@ public class Player : ILeader {
             }
         }
     }
-    private PlayerArchetype CreateNewArchetype(PLAYER_ARCHETYPE archetype) {
-        string typeName = $"Archetype.{ UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(archetype.ToString()) }";
-        System.Type type = System.Type.GetType(typeName);
-        if (type != null) {
-            PlayerArchetype obj = System.Activator.CreateInstance(type) as PlayerArchetype;
-            return obj;
-        }
-        throw new System.Exception($"Could not create new archetype {archetype} because there is no data for it!");
-    }
-    public void LearnSpell(string spellName) {
-        archetype.AddSpell(spellName);
-        unlearnedSpells.Remove(spellName);
+    public void LearnSpell(SPELL_TYPE type) {
+        archetype.AddSpell(type);
+        unlearnedSpells.Remove(type);
     }
     public void LearnAffliction(SPELL_TYPE affliction) {
         archetype.AddAffliction(affliction);

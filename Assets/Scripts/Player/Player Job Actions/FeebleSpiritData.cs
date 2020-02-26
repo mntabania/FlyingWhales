@@ -6,7 +6,7 @@ using Inner_Maps;
 public class FeebleSpiritData : SpellData {
     public override SPELL_TYPE ability => SPELL_TYPE.FEEBLE_SPIRIT;
     public override string name { get { return "Feeble Spirit"; } }
-    public override string description { get { return "Feeble Spirit"; } }
+    public override string description { get { return "Roams around and then drains Energy of the first character that gets in range. Dissipates after an hour."; } }
     public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.SABOTAGE; } }
     public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
     public override int abilityRadius => 1;

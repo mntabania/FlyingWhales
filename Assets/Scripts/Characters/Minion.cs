@@ -20,6 +20,7 @@ public class Minion {
     public DeadlySin deadlySin => CharacterManager.Instance.GetDeadlySin(_assignedDeadlySinName);
     public bool isAssigned => assignedRegion != null; //true if minion is already assigned somewhere else, maybe in construction or research spells
     public int spellExtractionCount { get; private set; } //the number of times a spell was extracted from this minion.
+    public bool isSummoned { get; private set; }
 
     private string _assignedDeadlySinName;
 
@@ -397,12 +398,16 @@ public class Minion {
         
         Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
         Messenger.AddListener(Signals.TICK_STARTED, OnTickStarted);
+        SetIsSummoned(true);
+        Messenger.Broadcast(Signals.SUMMON_MINION, this);
     }
     private void Unsummon() {
         character.SetHP(0);
         Messenger.AddListener(Signals.TICK_ENDED, UnsummonedHPRecovery);
         Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
         Messenger.RemoveListener(Signals.TICK_STARTED, OnTickStarted);
+        SetIsSummoned(false);
+        Messenger.Broadcast(Signals.UNSUMMON_MINION, this);
     }
     private void UnsummonedHPRecovery() {
         this.character.AdjustHP((int)(character.maxHP * 0.02f), ELEMENTAL_TYPE.Normal);
@@ -418,6 +423,9 @@ public class Minion {
     public void OnUnseize() {
         Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
         Messenger.AddListener(Signals.TICK_STARTED, OnTickStarted);
+    }
+    public void SetIsSummoned(bool state) {
+        isSummoned = state;
     }
     #endregion
 

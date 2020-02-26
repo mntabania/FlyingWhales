@@ -35,9 +35,9 @@ namespace Archetype {
         public override bool CanBuildDemonicStructure(LANDMARK_TYPE type) {
             return true;
         }
-        public override bool CanCastSpell(string spellName) {
-            return true;
-        }
+        //public override bool CanCastSpell(string spellName) {
+        //    return true;
+        //}
         #endregion
     }
 }

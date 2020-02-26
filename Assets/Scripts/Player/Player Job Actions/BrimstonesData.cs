@@ -6,7 +6,7 @@ using Inner_Maps;
 public class BrimstonesData : SpellData {
     public override SPELL_TYPE ability => SPELL_TYPE.BRIMSTONES;
     public override string name { get { return "Brimstones"; } }
-    public override string description { get { return "Brimstones"; } }
+    public override string description { get { return "Burning meteorites will strike random tiles on the target area, dealing Fire damage."; } }
     public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.DEVASTATION; } }
     public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
     public override int abilityRadius => 1;

@@ -49,7 +49,7 @@ public class Meteor : PlayerSpell {
 public class MeteorData : SpellData {
     public override SPELL_TYPE ability => SPELL_TYPE.METEOR;
     public override string name { get { return "Meteor"; } }
-    public override string description { get { return "Destroy objects and structures within a huge radius and significantly damage characters within."; } }
+    public override string description { get { return "A huge meteor will strike the designated spot, causing major Fire damage."; } }
     public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.DEVASTATION; } }
     public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
     public override int abilityRadius => 1;

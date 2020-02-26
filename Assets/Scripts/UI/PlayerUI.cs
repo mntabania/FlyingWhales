@@ -94,6 +94,12 @@ public class PlayerUI : MonoBehaviour {
     [Header("Player Actions")]
     public StringSpriteDictionary playerActionIconDictionary;
     private List<System.Action> pendingUIToShow { get; set; }
+    [Header("Spells")]
+    public ScrollRect spellsScrollRect;
+    public GameObject spellsContainerGO;
+    public GameObject spellItemPrefab;
+    private List<SpellItem> _spellItems;
+
     private PlayerJobActionButton[] interventionAbilityBtns;
     public string harassRaidInvade { get; private set; }
     public Minion harassRaidInvadeLeaderMinion { get; private set; }
@@ -111,6 +117,7 @@ public class PlayerUI : MonoBehaviour {
 
     public void Initialize() {
         pendingUIToShow = new List<Action>();
+        _spellItems = new List<SpellItem>();
 
         Messenger.AddListener<InfoUIBase>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<InfoUIBase>(Signals.MENU_CLOSED, OnMenuClosed);
@@ -121,9 +128,13 @@ public class PlayerUI : MonoBehaviour {
         Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
         Messenger.AddListener(Signals.ON_CLOSE_SHARE_INTEL, OnCloseShareIntelMenu);
 
+        Messenger.AddListener<Minion>(Signals.SUMMON_MINION, OnGainedMinion);
+        Messenger.AddListener<Minion>(Signals.UNSUMMON_MINION, OnLostMinion);
         Messenger.AddListener<ILocation>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
         Messenger.AddListener<ILocation>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
         
+        Messenger.AddListener<SPELL_TYPE>(Signals.PLAYER_GAINED_SPELL, OnGainSpell);
+        Messenger.AddListener<SPELL_TYPE>(Signals.PLAYER_LOST_SPELL, OnLostSpell);
         minionList.Initialize();
     }
 
@@ -149,6 +160,8 @@ public class PlayerUI : MonoBehaviour {
         Messenger.AddListener(Signals.PLAYER_ADJUSTED_MANA, UpdateMana);
         InitialUpdateKillCountCharacterItems();
         UpdateIntel();
+        CreateInitialSpells();
+        
     }
 
     #region Listeners
@@ -855,31 +868,66 @@ public class PlayerUI : MonoBehaviour {
     }
     private void ShowSpells() {
         spellList.ShowDropdown(PlayerManager.Instance.player.archetype.spells, OnClickSpell, CanChooseItem);
+        //customDropdownList.ShowDropdown(PlayerManager.Instance.player.archetype.spells, OnClickSpell, CanChooseItem);
     }
-    private bool CanChooseItem(string item) {
-        if (item == PlayerDB.Tornado || item == PlayerDB.Meteor || item == PlayerDB.Ravenous_Spirit || item == PlayerDB.Feeble_Spirit || item == PlayerDB.Forlorn_Spirit
-            || item == PlayerDB.Lightning || item == PlayerDB.Poison_Cloud || item == PlayerDB.Locust_Swarm || item == PlayerDB.Earthquake
-            || item == PlayerDB.Locust_Swarm || item == PlayerDB.Spawn_Boulder || item == PlayerDB.Manifest_Food
-            || item == PlayerDB.Brimstones || item == PlayerDB.Water_Bomb || item == PlayerDB.Splash_Poison || item == PlayerDB.Blizzard) {
-            return true;
-        }
-        return false;
-    }
+    //private bool CanChooseItem(string item) {
+    //    //if (item == PlayerDB.Tornado || item == PlayerDB.Meteor || item == PlayerDB.Ravenous_Spirit || item == PlayerDB.Feeble_Spirit || item == PlayerDB.Forlorn_Spirit
+    //    //    || item == PlayerDB.Lightning || item == PlayerDB.Poison_Cloud || item == PlayerDB.Locust_Swarm || item == PlayerDB.Earthquake
+    //    //    || item == PlayerDB.Locust_Swarm || item == PlayerDB.Spawn_Boulder || item == PlayerDB.Manifest_Food
+    //    //    || item == PlayerDB.Brimstones || item == PlayerDB.Water_Bomb || item == PlayerDB.Splash_Poison || item == PlayerDB.Blizzard) {
+    //    //    return true;
+    //    //}
+    //    //return false;
+    //    return true;
+    //}
     private void HideSpells() {
-        spellList.Close();
+        spellsContainerGO.SetActive(false);
+        //customDropdownList.HideDropdown();
     }
-    private void OnClickSpell(string spellName) {
-        if(PlayerManager.Instance.player.currentActivePlayerSpell != null) {
-            PlayerManager.Instance.player.SetCurrentlyActivePlayerSpell(null);
+    public void CreateInitialSpells() {
+        for (int i = 0; i < PlayerManager.Instance.player.archetype.spells.Count; i++) {
+            CreateNewSpellItem(PlayerManager.Instance.player.archetype.spells[i]);
         }
-        SPELL_TYPE spell = SPELL_TYPE.NONE;
-        string enumSpellName = spellName.ToUpper().Replace(' ', '_');
-        if (!System.Enum.TryParse(enumSpellName, out spell)) {
-            System.Enum.TryParse(enumSpellName + "_SPELL", out spell);
-        }
-        SpellData ability = PlayerManager.Instance.GetSpellData(spell);
-        PlayerManager.Instance.player.SetCurrentlyActivePlayerSpell(ability);
     }
+    private void OnGainSpell(SPELL_TYPE spell) {
+        CreateNewSpellItem(spell);
+    }
+    private void OnLostSpell(SPELL_TYPE spell) {
+        DeleteSpellItem(spell);
+    }
+    private void CreateNewSpellItem(SPELL_TYPE spell) {
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(spellItemPrefab.name, Vector3.zero, Quaternion.identity, spellsScrollRect.content);
+        SpellItem item = go.GetComponent<SpellItem>();
+        item.SetSpell(PlayerManager.Instance.GetSpellData(spell));
+        _spellItems.Add(item);
+    }
+    private void DeleteSpellItem(SPELL_TYPE spell) {
+        SpellItem item = GetSpellItem(spell);
+        if (item != null) {
+            ObjectPoolManager.Instance.DestroyObject(item.gameObject);
+        }
+    }
+    private SpellItem GetSpellItem(SPELL_TYPE spell) {
+        for (int i = 0; i < _spellItems.Count; i++) {
+            SpellItem item = _spellItems[i];
+            if (item.spellData.ability == spell) {
+                return item;
+            }
+        }
+        return null;
+    }
+    //private void OnClickSpell(string spellName) {
+    //    if(PlayerManager.Instance.player.currentActivePlayerSpell != null) {
+    //        PlayerManager.Instance.player.SetCurrentlyActivePlayerSpell(null);
+    //    }
+    //    SPELL_TYPE spell = SPELL_TYPE.NONE;
+    //    string enumSpellName = spellName.ToUpper().Replace(' ', '_');
+    //    if (!System.Enum.TryParse(enumSpellName, out spell)) {
+    //        System.Enum.TryParse(enumSpellName + "_SPELL", out spell);
+    //    }
+    //    SpellData ability = PlayerManager.Instance.GetSpellData(spell);
+    //    PlayerManager.Instance.player.SetCurrentlyActivePlayerSpell(ability);
+    //}
     #endregion
 
     #region Faction Actions

@@ -131,7 +131,8 @@ public class GoapPlanner {
                 }
             }
         } else {
-            if (goapThread.job.jobType.IsNeedsTypeJob()) {
+            JOB_TYPE jobType = goapThread.job.jobType;
+            if (jobType.IsNeedsTypeJob()) {
                 //If unable to do a Need while in a Trapped Structure, remove Trap Structure.
                 if (owner.trapStructure.structure != null) {
                     owner.trapStructure.SetStructureAndDuration(null, 0);
@@ -139,7 +140,7 @@ public class GoapPlanner {
             }
             if (goapThread.recalculationPlan == null) {
                 //This means that the planner cannot create a new plan
-                bool logCancelJobNoPlan = !(goapThread.job.jobType == JOB_TYPE.DOUSE_FIRE && goapThread.job.targetPOI.gridTileLocation == null);
+                bool logCancelJobNoPlan = !(jobType == JOB_TYPE.DOUSE_FIRE && goapThread.job.targetPOI.gridTileLocation == null);
                 if (logCancelJobNoPlan) {
                     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "cancel_job_no_plan");
                     log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -168,6 +169,11 @@ public class GoapPlanner {
                 owner.UncarryPOI();
             }
             goapThread.job.CancelJob(false);
+
+            if(jobType == JOB_TYPE.FULLNESS_RECOVERY_URGENT) {
+                //Special case for when a character cannot do hunger recovery urgent, he/she must produce food instead
+                owner.jobComponent.CreateProduceFoodJob();
+            }
         }
         //if (goapThread.createdPlan != null) {
         //    if (goapThread.recalculationPlan == null) {
