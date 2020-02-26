@@ -68,4 +68,5 @@ public interface IRelationshipContainer {
     IRelationshipData GetOrCreateRelationshipDataWith(Relatable owner, int id, string name, GENDER gender);
     IRelationshipData GetOrCreateRelationshipDataWith(Relatable owner, Relatable relatable);
     int GetCompatibility(int targetID);
+    bool HasSpecialPositiveRelationshipWith(Character characterThatDied);
 }

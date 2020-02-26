@@ -1838,7 +1838,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             string opinionLabel = relationshipContainer.GetOpinionLabel(characterThatDied);
             if (opinionLabel == OpinionComponent.Friend) {
                 needsComponent.AdjustHope(-5f);
-            } else if (opinionLabel == OpinionComponent.Close_Friend) {
+            } else if (opinionLabel == OpinionComponent.Close_Friend
+                || (relationshipContainer.HasSpecialPositiveRelationshipWith(characterThatDied) 
+                    && relationshipContainer.IsEnemiesWith(characterThatDied) == false)) {
                 needsComponent.AdjustHope(-10f);
                 if (!traitContainer.HasTrait("Psychopath")) {
                     traitContainer.AddTrait(this, "Griefstricken");
