@@ -7,7 +7,7 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.Serialization;
 
-public class ObjectPicker : MonoBehaviour {
+public class ObjectPicker : PopupMenuBase {
 
     [Header("Object Picker")]
     [SerializeField] private ScrollRect objectPickerScrollView;
@@ -77,7 +77,7 @@ public class ObjectPicker : MonoBehaviour {
         }
         titleLbl.text = title;
         if (!gameObject.activeSelf) {
-            this.gameObject.SetActive(true);
+            base.Open();
             _isGamePausedBeforeOpeningPicker = GameManager.Instance.isPaused;
             GameManager.Instance.SetPausedState(true);
             UIManager.Instance.SetSpeedTogglesState(false);
@@ -91,9 +91,9 @@ public class ObjectPicker : MonoBehaviour {
             confirmBtn.gameObject.SetActive(true);
         }
     }
-    public void Hide() {
+    public override void Close() {
         if (gameObject.activeSelf) {
-            this.gameObject.SetActive(false);
+            base.Close();
             GameManager.Instance.SetPausedState(_isGamePausedBeforeOpeningPicker);
             UIManager.Instance.SetSpeedTogglesState(true);
         }

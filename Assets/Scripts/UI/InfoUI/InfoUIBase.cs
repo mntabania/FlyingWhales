@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using Actionables;
 
-public class UIMenu : MonoBehaviour {
+public abstract class InfoUIBase : MonoBehaviour {
     public Button backButton;
     public bool isShowing;
     private Action openMenuAction;
@@ -20,11 +20,17 @@ public class UIMenu : MonoBehaviour {
 
     #region virtuals
     internal virtual void Initialize() {
-        Messenger.AddListener<UIMenu>(Signals.BEFORE_MENU_OPENED, BeforeMenuOpens);
+        Messenger.AddListener<InfoUIBase>(Signals.BEFORE_MENU_OPENED, BeforeMenuOpens);
         Messenger.AddListener<PlayerAction>(Signals.PLAYER_ACTION_EXECUTED, OnPlayerActionExecuted);
         Messenger.AddListener<IPlayerActionTarget>(Signals.RELOAD_PLAYER_ACTIONS, ReloadPlayerActions);
         Messenger.AddListener<PlayerAction, IPlayerActionTarget>(Signals.PLAYER_ACTION_ADDED_TO_TARGET, OnPlayerActionAddedToTarget);
         Messenger.AddListener<PlayerAction, IPlayerActionTarget>(Signals.PLAYER_ACTION_REMOVED_FROM_TARGET, OnPlayerActionRemovedFromTarget);
+        Messenger.AddListener(Signals.HIDE_MENUS, OnReceiveHideMenuSignal);
+    }
+    private void OnReceiveHideMenuSignal() {
+        if (isShowing) {
+            OnClickCloseMenu();
+        }
     }
     public virtual void OpenMenu() {
         Messenger.Broadcast(Signals.BEFORE_MENU_OPENED, this);
@@ -35,13 +41,10 @@ public class UIMenu : MonoBehaviour {
             openMenuAction = null;
         }
         Messenger.Broadcast(Signals.MENU_OPENED, this);
-        UIManager.Instance.AddToUIMenuHistory(_data);
-        if (backButton != null) {
-            backButton.interactable = UIManager.Instance.GetLastUIMenuHistory() != null;    
-        }
+        
         UIManager.Instance.poiTestingUI.HideUI();
         UIManager.Instance.minionCommandsUI.HideUI();
-        UIManager.Instance.customDropdownList.HideDropdown();
+        UIManager.Instance.customDropdownList.Close();
         _playerActionTarget = _data as IPlayerActionTarget;
         if (_playerActionTarget != null) {
             LoadActions(_playerActionTarget);    
@@ -51,14 +54,6 @@ public class UIMenu : MonoBehaviour {
         isShowing = false;
         this.gameObject.SetActive(false);
         Messenger.Broadcast(Signals.MENU_CLOSED, this);
-    }
-    public virtual void GoBack() {
-        object data = UIManager.Instance.GetLastUIMenuHistory();
-        if(data != null) {
-            CloseMenu();
-            UIManager.Instance.RemoveLastUIMenuHistory();
-            GoBackToPreviousUIMenu(data);
-        }
     }
     public virtual void SetData(object data) {
         _data = data;
@@ -70,41 +65,14 @@ public class UIMenu : MonoBehaviour {
         if (_playerActionTarget != null && _playerActionTarget.actions.Contains(action)) {
             LoadActions(_playerActionTarget);
         }
-        // ActionItem actionItem = GetActionItem(action);
-        // if (actionItem != null) {
-        //     LoadActions();
-        // }
     }
     #endregion
 
     public void OnClickCloseMenu() {
         CloseMenu();
-        UIManager.Instance.ClearUIMenuHistory();
     }
-
-    private void GoBackToPreviousUIMenu(object data) {
-        if(data != null) {
-            if(data is Character) {
-                UIManager.Instance.ShowCharacterInfo(data as Character);
-            } else if (data is Settlement) {
-                UIManager.Instance.ShowRegionInfo((data as Settlement).region);
-            } else if(data is Faction) {
-                UIManager.Instance.ShowFactionInfo(data as Faction);
-            } else if (data is TileObject) {
-                UIManager.Instance.ShowTileObjectInfo(data as TileObject);
-            } else if (data is Region) {
-                UIManager.Instance.ShowRegionInfo(data as Region);
-            } else if (data is HexTile) {
-                UIManager.Instance.ShowRegionInfo((data as HexTile).region);
-            } 
-            // else if (data is SpecialToken) {
-            //     UIManager.Instance.ShowItemInfo(data as SpecialToken);
-            // }
-        }
-    }
-
-    private void BeforeMenuOpens(UIMenu menuToOpen) {
-        if (this.isShowing && menuToOpen != this) {
+    private void BeforeMenuOpens(InfoUIBase baseToOpen) {
+        if (this.isShowing && baseToOpen != this) {
             CloseMenu();
         }
     }

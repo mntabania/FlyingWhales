@@ -8,7 +8,7 @@ using UnityEngine.UI;
 using UnityEngine.UI.Extensions;
 using EZObjectPools;
 
-public class FactionInfoUI : UIMenu {
+public class FactionInfoUI : InfoUIBase {
 
     private const int MAX_HISTORY_LOGS = 60;
 
@@ -274,7 +274,5 @@ public class FactionInfoUI : UIMenu {
     private void OnOpenShareIntelMenu() {
         backButton.interactable = false;
     }
-    private void OnCloseShareIntelMenu() {
-        backButton.interactable = UIManager.Instance.GetLastUIMenuHistory() != null;
-    }
+    private void OnCloseShareIntelMenu() { }
 }

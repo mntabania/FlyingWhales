@@ -181,8 +181,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
 
     #region Listeners
     private void AddListeners() {
-        Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
-        Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
+        Messenger.AddListener<InfoUIBase>(Signals.MENU_OPENED, OnMenuOpened);
+        Messenger.AddListener<InfoUIBase>(Signals.MENU_CLOSED, OnMenuClosed);
         Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_ADDED, OnCharacterGainedTrait);
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_REMOVED, OnCharacterLostTrait);
@@ -195,8 +195,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
         Messenger.AddListener<IPointOfInterest>(Signals.REPROCESS_POI, ReprocessPOI);
     }
     private void RemoveListeners() {
-        Messenger.RemoveListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
-        Messenger.RemoveListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
+        Messenger.RemoveListener<InfoUIBase>(Signals.MENU_OPENED, OnMenuOpened);
+        Messenger.RemoveListener<InfoUIBase>(Signals.MENU_CLOSED, OnMenuClosed);
         Messenger.RemoveListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_ADDED, OnCharacterGainedTrait);
         Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_REMOVED, OnCharacterLostTrait);
@@ -372,7 +372,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     #endregion
 
     #region UI
-    private void OnMenuOpened(UIMenu menu) {
+    private void OnMenuOpened(InfoUIBase @base) {
         // if (menu is CharacterInfoUI) {
         //     if ((menu as CharacterInfoUI).activeCharacter.id == character.id) {
         //         clickedImg.gameObject.SetActive(true);
@@ -382,7 +382,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         //
         // }
     }
-    private void OnMenuClosed(UIMenu menu) {
+    private void OnMenuClosed(InfoUIBase @base) {
         // if (menu is CharacterInfoUI) {
         //     clickedImg.gameObject.SetActive(false);
         //     //UnhighlightMarker();

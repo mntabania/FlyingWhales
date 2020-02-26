@@ -6,7 +6,7 @@ using TMPro;
 using UnityEngine.UI;
 
 
-public class PartyInfoUI : UIMenu {
+public class PartyInfoInfoUi : InfoUIBase {
 
     [Space(10)]
     [Header("Content")]

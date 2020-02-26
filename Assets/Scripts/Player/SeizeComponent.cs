@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps;
+using Ruinarch;
 
 public class SeizeComponent {
     public IPointOfInterest seizedPOI { get; private set; }
@@ -92,7 +93,7 @@ public class SeizeComponent {
         Messenger.Broadcast(Signals.ON_UNSEIZE_POI, seizedPOI);
         seizedPOI = null;
         //PlayerUI.Instance.HideSeizedObjectUI();
-        CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
+        InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
         return true;
     }
     private int GetManaCost(IPointOfInterest poi) {

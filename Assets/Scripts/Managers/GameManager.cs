@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using Inner_Maps;
+using Ruinarch;
 using Traits;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -34,7 +35,6 @@ public class GameManager : MonoBehaviour {
 
 	public float progressionSpeed;
 	public bool isPaused { get; private set; }
-    public bool allowConsole = true;
     public bool displayFPS = true;
     public bool showFullDebug;
     public static bool showAllTilesTooltip = false;
@@ -77,16 +77,15 @@ public class GameManager : MonoBehaviour {
         Instance = this;
         timeElapsed = 0f;
         _gameHasStarted = false;
-        CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
+        InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
     }
-    private void Update() {
-        if (Input.GetKeyDown(KeyCode.BackQuote)) {
-            if (allowConsole) {
-#if UNITY_EDITOR
-                UIManager.Instance.ToggleConsole();
+
+    private void OnKeyDown(KeyCode keyCode) {
+        if (keyCode == KeyCode.BackQuote) {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            UIManager.Instance.ToggleConsole();
 #endif
-            }
-        } else if (Input.GetKeyDown(KeyCode.Space)) {
+        } else if (keyCode == KeyCode.Space) {
             if (!UIManager.Instance.IsConsoleShowing() && UIManager.Instance.pauseBtn.IsInteractable()) {
                 if (isPaused) {
                     UIManager.Instance.Unpause();
@@ -94,22 +93,22 @@ public class GameManager : MonoBehaviour {
                     UIManager.Instance.Pause();
                 }
             }
-        } else if (Input.GetKeyDown(KeyCode.Alpha1)) {
+        } else if (keyCode == KeyCode.Alpha1) {
             if (!UIManager.Instance.IsConsoleShowing() && UIManager.Instance.x1Btn.IsInteractable()) {
                 UIManager.Instance.SetProgressionSpeed1X();
             }
-        } else if (Input.GetKeyDown(KeyCode.Alpha2)) {
+        } else if (keyCode == KeyCode.Alpha2) {
             if (!UIManager.Instance.IsConsoleShowing() && UIManager.Instance.x2Btn.IsInteractable()) {
                 UIManager.Instance.SetProgressionSpeed2X();
             }
-        } else if (Input.GetKeyDown(KeyCode.Alpha3)) {
+        } else if (keyCode == KeyCode.Alpha3) {
             if (!UIManager.Instance.IsConsoleShowing() && UIManager.Instance.x4Btn.IsInteractable()) {
                 UIManager.Instance.SetProgressionSpeed4X();
             }
-        } else if (Input.GetKeyDown(KeyCode.Escape)) {
-            Messenger.Broadcast(Signals.KEY_DOWN, KeyCode.Escape);
         }
-
+    }
+    
+    private void Update() {
         if (_gameHasStarted && !isPaused) {
             if (Math.Abs(timeElapsed) <= 0f) {
                 TickStarted();
@@ -133,6 +132,7 @@ public class GameManager : MonoBehaviour {
         Messenger.Broadcast(Signals.DAY_STARTED); //for the first day
         Messenger.Broadcast(Signals.MONTH_START); //for the first month
         InnerMapManager.Instance.UpdateLightBasedOnTime(Today());
+        Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyDown);
         //TimerHubUI.Instance.AddItem("Until Divine Intervention", 4320, null);
     }
     public GameDate Today() {

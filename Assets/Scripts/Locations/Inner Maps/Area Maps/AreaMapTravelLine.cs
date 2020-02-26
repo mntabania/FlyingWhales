@@ -86,15 +86,15 @@ public class AreaMapTravelLine : PooledObject {
     private void AddListeners() {
         Messenger.AddListener(Signals.INSPECT_ALL, OnInspectAll);
         Messenger.AddListener(Signals.TICK_STARTED, FillProgress);
-        Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
-        Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
+        Messenger.AddListener<InfoUIBase>(Signals.MENU_OPENED, OnMenuOpened);
+        Messenger.AddListener<InfoUIBase>(Signals.MENU_CLOSED, OnMenuClosed);
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
     }
     private void RemoveListeners() {
         Messenger.RemoveListener(Signals.INSPECT_ALL, OnInspectAll);
         Messenger.RemoveListener(Signals.TICK_STARTED, FillProgress);
-        Messenger.RemoveListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
-        Messenger.RemoveListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
+        Messenger.RemoveListener<InfoUIBase>(Signals.MENU_OPENED, OnMenuOpened);
+        Messenger.RemoveListener<InfoUIBase>(Signals.MENU_CLOSED, OnMenuClosed);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
     }
     private void OnCharacterDied(Character character) {
@@ -105,13 +105,13 @@ public class AreaMapTravelLine : PooledObject {
     private void OnInspectAll() {
         UpdateVisibility();
     }
-    private void OnMenuOpened(UIMenu menu) {
-        if (menu is CharacterInfoUI) {
+    private void OnMenuOpened(InfoUIBase @base) {
+        if (@base is CharacterInfoUI) {
             UpdateVisibility();
         }
     }
-    private void OnMenuClosed(UIMenu menu) {
-        if (menu is CharacterInfoUI) {
+    private void OnMenuClosed(InfoUIBase @base) {
+        if (@base is CharacterInfoUI) {
             UpdateVisibility();
         }
     }

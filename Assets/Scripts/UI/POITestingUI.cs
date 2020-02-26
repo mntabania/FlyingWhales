@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
 using UnityEngine;
@@ -13,20 +14,32 @@ public class POITestingUI : MonoBehaviour {
     #region Utilities
     public void ShowUI(IPointOfInterest poi) {
         this.poi = poi;
+        UIManager.Instance.HideSmallInfo();
         UIManager.Instance.PositionTooltip(gameObject, rt, rt);
         gameObject.SetActive(true);
+        Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressed);
     }
     public void ShowUI(LocationGridTile gridTile) {
         if (UIManager.Instance.characterInfoUI.activeCharacter != null) {
             this.gridTile = gridTile;
+            UIManager.Instance.HideSmallInfo();
             UIManager.Instance.PositionTooltip(gameObject, rt, rt);
             gameObject.SetActive(true);
+            Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressed);
         }
     }
     public void HideUI() {
         gameObject.SetActive(false);
         this.poi = null;
         this.gridTile = null;
+        Messenger.RemoveListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressed);
+    }
+    private void OnKeyPressed(KeyCode keyCode) {
+        if (keyCode == KeyCode.Mouse0 && UIManager.Instance.IsMouseOnUI() == false) {
+            HideUI();
+        } else if (keyCode == KeyCode.Escape) {
+            HideUI();
+        }
     }
     #endregion
 

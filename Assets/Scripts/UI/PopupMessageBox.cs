@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-public class PopupMessageBox : UIMenu{
+public class PopupMessageBox : InfoUIBase{
 
     public static PopupMessageBox Instance = null;
 

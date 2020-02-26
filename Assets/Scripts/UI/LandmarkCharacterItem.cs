@@ -9,7 +9,7 @@ public class LandmarkCharacterItem : PooledObject {
 
     public CharacterPortrait portrait;
 
-    private UIMenu parentMenu;
+    private InfoUIBase _parentBase;
 
     [SerializeField] private RectTransform thisTrans;
     [SerializeField] private TextMeshProUGUI nameLbl;
@@ -20,9 +20,9 @@ public class LandmarkCharacterItem : PooledObject {
     [SerializeField] private GameObject restrainedIcon;
     [SerializeField] private GameObject coverGO;
 
-    public void SetCharacter(Character character, UIMenu parentMenu) {
+    public void SetCharacter(Character character, InfoUIBase parentBase) {
         this.character = character;
-        this.parentMenu = parentMenu;
+        this._parentBase = parentBase;
         UpdateInfo();
         UpdateLocationIcons();
     }
@@ -51,7 +51,7 @@ public class LandmarkCharacterItem : PooledObject {
     }
 
     private void UpdateLocationIcons() {
-        if (parentMenu is RegionInfoUI) {
+        if (_parentBase is RegionInfoUI) {
             if (character.traitContainer.HasTrait("Abducted", "Restrained")) {
                 restrainedIcon.SetActive(true);
                 unrestrainedGO.SetActive(false);
@@ -68,7 +68,7 @@ public class LandmarkCharacterItem : PooledObject {
                 arrivedIcon.SetActive(false);
                 coverGO.SetActive(false);
             }
-        } else if (parentMenu is TileObjectInfoUI) {
+        } else if (_parentBase is TileObjectInfoUI) {
             if (character.traitContainer.HasTrait("Abducted", "Restrained")) {
                 restrainedIcon.SetActive(true);
                 unrestrainedGO.SetActive(false);

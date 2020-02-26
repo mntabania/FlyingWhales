@@ -183,8 +183,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             gridTileLocation.buildSpotOwner.hexTileOwner.OnPlacePOIInHex(this);
         }
         SubscribeListeners();
-        Assert.IsTrue(gridTileLocation.structure.pointsOfInterest.Contains(this), 
-            $"{this} was placed at {gridTileLocation.structure} but was not included in the list of POI's");
+        // Assert.IsTrue((this is MovingTileObject) == false && gridTileLocation.structure.pointsOfInterest.Contains(this), 
+        //     $"{this} was placed at {gridTileLocation.structure} but was not included in the list of POI's");
     }
     public virtual void RemoveTileObject(Character removedBy) {
         SetGridTileLocation(null);

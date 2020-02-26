@@ -4,7 +4,7 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CustomDropdownList : MonoBehaviour {
+public class CustomDropdownList : PopupMenuBase {
     [Header("Object Picker")]
     [SerializeField] private ScrollRect dropdownScrollView;
     [SerializeField] private GameObject dropdownListItemPrefab;
@@ -25,16 +25,11 @@ public class CustomDropdownList : MonoBehaviour {
             }
             ddItem.SetClickAction(OnClickDropdownItem);
         }
-        gameObject.SetActive(true);
+        base.Open();
     }
     public void SetPosition(Vector3 position) {
         gameObject.transform.localPosition = position;
     }
-
-    public void HideDropdown() {
-        gameObject.SetActive(false);
-    }
-
     public void OnClickDropdownItem(CustomDDListItem item) {
         onClickDropdownItem.Invoke(item.itemText.text);
     }

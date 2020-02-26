@@ -115,8 +115,6 @@ namespace Inner_Maps {
                                 }
                                 objToSelect.LeftSelectAction();    
                             }
-                        } else {
-                            Messenger.Broadcast(Signals.HIDE_MENUS);    
                         }
                         lastClickedTile = clickedTile;    
                     }
@@ -318,6 +316,15 @@ namespace Inner_Maps {
         public void ShowTileData(LocationGridTile tile, Character character = null) {
             if (tile == null) {
                 return;
+            }
+            if (UIManager.Instance.poiTestingUI.gameObject.activeSelf && 
+                (UIManager.Instance.poiTestingUI.gridTile == tile || UIManager.Instance.poiTestingUI.poi == tile.objHere 
+                || UIManager.Instance.poiTestingUI.poi == character)) {
+                return; //do not show tooltip if right click menu is currently targeting the hovered object
+            } else if (UIManager.Instance.minionCommandsUI.gameObject.activeSelf && 
+                       (UIManager.Instance.minionCommandsUI.targetPOI == tile.objHere 
+                        || UIManager.Instance.minionCommandsUI.targetPOI == character)) {
+                return; //do not show tooltip if right click menu is currently targeting the hovered object
             }
             Profiler.BeginSample("Show Tile Data Sample");
 #if UNITY_EDITOR || DEVELOPMENT_BUILD

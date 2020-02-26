@@ -1,4 +1,5 @@
 ﻿using System;
+using Ruinarch;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -73,16 +74,16 @@ public class CameraMove : MonoBehaviour {
 
     public void Initialize() {
         Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
-        Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
-        Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
+        Messenger.AddListener<InfoUIBase>(Signals.MENU_OPENED, OnMenuOpened);
+        Messenger.AddListener<InfoUIBase>(Signals.MENU_CLOSED, OnMenuClosed);
         Messenger.AddListener<ILocation>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
         Messenger.AddListener<ILocation>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
     }
 
     private void RemoveListeners() {
         Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoaded);
-        Messenger.RemoveListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
-        Messenger.RemoveListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
+        Messenger.RemoveListener<InfoUIBase>(Signals.MENU_OPENED, OnMenuOpened);
+        Messenger.RemoveListener<InfoUIBase>(Signals.MENU_CLOSED, OnMenuClosed);
         Messenger.RemoveListener<ILocation>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
         Messenger.RemoveListener<ILocation>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
     }
@@ -188,7 +189,7 @@ public class CameraMove : MonoBehaviour {
                         hasReachedThreshold = true;
                     }
                     if (originMousePos != Input.mousePosition) { //check if the mouse has moved position from the origin, only then will it be considered dragging
-                        CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Drag_Clicked);
+                        InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Drag_Clicked);
                         isDragging = true;
                     }
                 }
@@ -202,7 +203,7 @@ public class CameraMove : MonoBehaviour {
             _mainCameraTransform.position = dragOrigin - difference;
             if (Input.GetMouseButtonUp(2)) {
                 ResetDragValues();
-                CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
+                InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
             }
         } else {
             if (!Input.GetMouseButton(2)) {
@@ -212,7 +213,7 @@ public class CameraMove : MonoBehaviour {
         }
     }
     private void ResetDragValues() {
-        CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
+        InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
         currDragTime = 0f;
         isDragging = false;
         startedOnUI = false;
@@ -311,8 +312,8 @@ public class CameraMove : MonoBehaviour {
     #endregion
 
     #region Listeners
-    private void OnMenuOpened(UIMenu openedMenu) { }
-    private void OnMenuClosed(UIMenu openedMenu) { }
+    private void OnMenuOpened(InfoUIBase openedBase) { }
+    private void OnMenuClosed(InfoUIBase openedBase) { }
     private void OnInnerMapOpened(ILocation location) {
         // _mainCamera.cullingMask = 0;
         _raycaster.enabled = false;

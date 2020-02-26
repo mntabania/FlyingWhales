@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 
 public class ApplyTooltipUIMenu : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
-    public UIMenu uiParent;
+    [FormerlySerializedAs("uiParent")] public InfoUIBase infoUiParent;
     public GameObject objectToCheck;
 
     private bool isHovering = false;
@@ -19,7 +20,7 @@ public class ApplyTooltipUIMenu : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     void Update() {
         if (isHovering) {
-            uiParent.ShowTooltip(objectToCheck);
+            infoUiParent.ShowTooltip(objectToCheck);
         }
     }
 }

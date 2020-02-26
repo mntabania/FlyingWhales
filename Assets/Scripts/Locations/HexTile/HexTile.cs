@@ -630,7 +630,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
             colliders[i].enabled = false;
         }
     }
-    private UIMenu GetMenuToShowWhenTileIsClicked() {
+    private InfoUIBase GetMenuToShowWhenTileIsClicked() {
         if (region != null) {
             //if region info ui is showing, show tile info ui
             if (UIManager.Instance.regionInfoUI.isShowing) {
@@ -663,15 +663,13 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
             return;
         }
         Messenger.Broadcast(Signals.TILE_LEFT_CLICKED, this);
-        UIMenu menuToShow = GetMenuToShowWhenTileIsClicked();
-        if (menuToShow != null) {
-            if (menuToShow is RegionInfoUI) {
+        InfoUIBase baseToShow = GetMenuToShowWhenTileIsClicked();
+        if (baseToShow != null) {
+            if (baseToShow is RegionInfoUI) {
                 UIManager.Instance.ShowRegionInfo(region);
-            } else if (menuToShow is HextileInfoUI) {
+            } else if (baseToShow is HextileInfoUI) {
                 UIManager.Instance.ShowHexTileInfo(this);
             }
-        } else {
-            Messenger.Broadcast(Signals.HIDE_MENUS);
         }
         MouseOver();
     }
@@ -682,22 +680,21 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         Messenger.Broadcast(Signals.TILE_RIGHT_CLICKED, this);
     }
     private void MouseOver() {
-        UIMenu menuToOpen = GetMenuToShowWhenTileIsClicked();
-        if (menuToOpen is RegionInfoUI) {
+        InfoUIBase baseToOpen = GetMenuToShowWhenTileIsClicked();
+        if (baseToOpen is RegionInfoUI) {
             region.ShowBorders(Color.red);
-        } else if (menuToOpen is HextileInfoUI) {
+        } else if (baseToOpen is HextileInfoUI) {
             SetBordersState(true, false, Color.red);
         }
         Messenger.Broadcast(Signals.TILE_HOVERED_OVER, this);
     }
     private void MouseExit() {
-        UIMenu menuToOpen = GetMenuToShowWhenTileIsClicked();
-        if (menuToOpen is RegionInfoUI) {
+        InfoUIBase baseToOpen = GetMenuToShowWhenTileIsClicked();
+        if (baseToOpen is RegionInfoUI) {
             region.HideBorders();
-        } else if (menuToOpen is HextileInfoUI) {
+        } else if (baseToOpen is HextileInfoUI) {
             SetBordersState(false, false, Color.red);
         }
-        // UIManager.Instance.HideSmallInfo();
         Messenger.Broadcast(Signals.TILE_HOVERED_OUT, this);
     }
     private void DoubleLeftClick() {

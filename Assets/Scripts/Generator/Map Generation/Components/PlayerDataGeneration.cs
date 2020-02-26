@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps.Location_Structures;
+using Ruinarch;
 using UnityEngine;
 
 public class PlayerDataGeneration : MapGenerationComponent {
 	public override IEnumerator Execute(MapGenerationData data) {
-		PlayerManager.Instance.InitializePlayer(data.portal, data.portalStructure, CursorManager.Instance.selectedArchetype);
+		PlayerManager.Instance.InitializePlayer(data.portal, data.portalStructure, InputManager.Instance.selectedArchetype);
 		yield return null;
 		yield return MapGenerator.Instance.StartCoroutine(LoadArtifacts());
 		GenerateInitialMinions();

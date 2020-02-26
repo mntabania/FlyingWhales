@@ -5,7 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ShareIntelMenu : MonoBehaviour {
+public class ShareIntelMenu : PopupMenuBase {
 
     [Header("Main")]
     [SerializeField] private ScrollRect dialogScrollView;
@@ -26,7 +26,7 @@ public class ShareIntelMenu : MonoBehaviour {
         //UIManager.Instance.SetCoverState(true);
         //UIManager.Instance.Pause();
         //UIManager.Instance.SetSpeedTogglesState(false);
-        this.gameObject.SetActive(true);
+        base.Open();
 
         wasPausedOnOpen = GameManager.Instance.isPaused;
         UIManager.Instance.Pause();
@@ -56,7 +56,7 @@ public class ShareIntelMenu : MonoBehaviour {
         //UIManager.Instance.SetCoverState(true);
         //UIManager.Instance.Pause();
         //UIManager.Instance.SetSpeedTogglesState(false);
-        this.gameObject.SetActive(true);
+        base.Open();
 
         wasPausedOnOpen = GameManager.Instance.isPaused;
         UIManager.Instance.Pause();
@@ -108,10 +108,10 @@ public class ShareIntelMenu : MonoBehaviour {
             currItem.GetComponent<Button>().interactable = state;
         }
     }
-    public void Close() {
+    public override void Close() {
         //UIManager.Instance.SetCoverState(false);
         //UIManager.Instance.SetSpeedTogglesState(true);
-        this.gameObject.SetActive(false);
+        base.Close();
         UIManager.Instance.SetSpeedTogglesState(true);
         GameManager.Instance.SetPausedState(wasPausedOnOpen);
         Messenger.Broadcast(Signals.ON_CLOSE_SHARE_INTEL);

@@ -12,7 +12,7 @@ using Inner_Maps.Location_Structures;
 using UnityEngine.Events;
 using UtilityScripts;
 
-public class ConsoleMenu : UIMenu {
+public class ConsoleBase : InfoUIBase {
 
     private Dictionary<string, Action<string[]>> _consoleActions;
 

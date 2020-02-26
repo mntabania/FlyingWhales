@@ -318,7 +318,6 @@ namespace UtilityScripts {
             if(log.logText != string.Empty) {
                 return log.logText;
             }
-            List<int> specificWordIndexes = new List<int>();
             string newText;
             if (string.IsNullOrEmpty(log.message)) {
                 newText = LocalizationManager.Instance.GetLocalizedValue(log.category, log.file, log.key);
@@ -329,7 +328,7 @@ namespace UtilityScripts {
             //bool hasPeriod = newText.EndsWith(".");
 
             if (!string.IsNullOrEmpty(newText)) {
-                string[] words = SplitAndKeepDelimiters(newText, new char[] { ' ', '.', ',', '\'', '!', '"', ':' });
+                string[] words = SplitAndKeepDelimiters(newText, ' ', '.', ',', '\'', '!', '"', ':');
                 for (int i = 0; i < words.Length; i++) {
                     var replacedWord = string.Empty;
                     if (words[i].StartsWith("%") && (words[i].EndsWith("%") || words[i].EndsWith("@"))) { //OBJECT
@@ -343,7 +342,7 @@ namespace UtilityScripts {
                 }
                 newText = string.Empty;
                 for (int i = 0; i < words.Length; i++) {
-                    newText += words[i];
+                    newText = $"{newText}{words[i]}";
                 }
                 newText = newText.Trim(' ');
             }

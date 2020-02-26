@@ -1639,9 +1639,9 @@
             <e p="CharacterClassManager.cs" t="Include" />
             <e p="CharacterManager.cs" t="Include" />
             <e p="CrimeManager.cs" t="Include" />
-            <e p="CursorManager.cs" t="Include" />
             <e p="FactionManager.cs" t="Include" />
             <e p="GameManager.cs" t="Include" />
+            <e p="InputManager.cs" t="Include" />
             <e p="JobManager.cs" t="Include" />
             <e p="LevelLoaderManager.cs" t="Include" />
             <e p="MainMenuManager.cs" t="Include" />
@@ -1889,6 +1889,7 @@
               <e p="CharacterTrait.cs" t="Include" />
               <e p="Charmed.cs" t="Include" />
               <e p="Chaste.cs" t="Include" />
+              <e p="Consumable.cs" t="Include" />
               <e p="Coward.cs" t="Include" />
               <e p="Cultist.cs" t="Include" />
               <e p="Curious.cs" t="Include" />
@@ -1983,6 +1984,7 @@
             <e p="AbilityItem.cs" t="Include" />
             <e p="ActionItem.cs" t="Include" />
             <e p="ApplyTooltipUIMenu.cs" t="Include" />
+            <e p="ArchetypeSelectorItem.cs" t="Include" />
             <e p="AreaEmblem.cs" t="Include" />
             <e p="AreaNameplate.cs" t="Include" />
             <e p="AreaPickerItem.cs" t="Include" />
@@ -2002,13 +2004,12 @@
               <e p="WeaponTypeButton.cs" t="Include" />
             </e>
             <e p="CharacterDialogChoice.cs" t="Include" />
-            <e p="CharacterInfoUI.cs" t="Include" />
             <e p="CharacterItem.cs" t="Include" />
             <e p="CharacterPickerItem.cs" t="Include" />
             <e p="CharacterRelationshipItem.cs" t="Include" />
             <e p="CombatAbilityButton.cs" t="Include" />
             <e p="Comparers.cs" t="Include" />
-            <e p="ConsoleMenu.cs" t="Include" />
+            <e p="ConsoleBase.cs" t="Include" />
             <e p="CustomDDListItem.cs" t="Include" />
             <e p="CustomDropdownList.cs" t="Include" />
             <e p="DataEditors" t="Include">
@@ -2034,15 +2035,24 @@
             <e p="EmblemBG.cs" t="Include" />
             <e p="EventLabel.cs" t="Include" />
             <e p="FactionEmblem.cs" t="Include" />
-            <e p="FactionInfoUI.cs" t="Include" />
             <e p="FactionPropertyItem.cs" t="Include" />
             <e p="FactionRelationshipItem.cs" t="Include" />
             <e p="FactionSummaryItem.cs" t="Include" />
             <e p="GameUIToggle.cs" t="Include" />
-            <e p="HextileInfoUI.cs" t="Include" />
             <e p="HiddenDesireItem.cs" t="Include" />
             <e p="IdeologyPickerUI.cs" t="Include" />
             <e p="ImportantNotificationItem.cs" t="Include" />
+            <e p="InfoUI" t="Include">
+              <e p="CharacterInfoUI.cs" t="Include" />
+              <e p="FactionInfoUI.cs" t="Include" />
+              <e p="HextileInfoUI.cs" t="Include" />
+              <e p="InfoUIBase.cs" t="Include" />
+              <e p="PartyInfoInfoUi.cs" t="Include" />
+              <e p="QuestInfoUI.cs" t="Include" />
+              <e p="RegionInfoUI.cs" t="Include" />
+              <e p="StructureInfoUI.cs" t="Include" />
+              <e p="TileObjectInfoUI.cs" t="Include" />
+            </e>
             <e p="IntelItem.cs" t="Include" />
             <e p="IntelNotificationItem.cs" t="Include" />
             <e p="InvestigationMinionDraggableItem.cs" t="Include" />
@@ -2087,7 +2097,6 @@
             <e p="ObjectPickerItem.cs" t="Include" />
             <e p="PanelDragBehaviour.cs" t="Include" />
             <e p="PartyEmblem.cs" t="Include" />
-            <e p="PartyInfoUI.cs" t="Include" />
             <e p="PingPongCanvasGroupAlpha.cs" t="Include" />
             <e p="PlayerBuildLandmarkUI.cs" t="Include" />
             <e p="PlayerCharacterItem.cs" t="Include" />
@@ -2099,12 +2108,19 @@
             <e p="PlayerUpgradeUI.cs" t="Include" />
             <e p="POITestingUI.cs" t="Include" />
             <e p="PopupMessageBox.cs" t="Include" />
+            <e p="Popups" t="Include">
+              <e p="GeneralConfirmation.cs" t="Include" />
+              <e p="GenericPopupMenu.cs" t="Include" />
+              <e p="IntelListUI.cs" t="Include" />
+              <e p="MinionListUI.cs" t="Include" />
+              <e p="OptionsMenu.cs" t="Include" />
+              <e p="PopupMenuBase.cs" t="Include" />
+              <e p="SpellListUI.cs" t="Include" />
+            </e>
             <e p="ProvokeMenu.cs" t="Include" />
             <e p="PsychopathRequirementsUI.cs" t="Include" />
             <e p="PsychopathUI.cs" t="Include" />
-            <e p="QuestInfoUI.cs" t="Include" />
             <e p="QuestJobNameplate.cs" t="Include" />
-            <e p="RegionInfoUI.cs" t="Include" />
             <e p="RegionNameplateItem.cs" t="Include" />
             <e p="ReplaceChoiceItem.cs" t="Include" />
             <e p="ReplaceUI.cs" t="Include" />
@@ -2116,17 +2132,15 @@
             <e p="ShareIntelMenu.cs" t="Include" />
             <e p="SlotItem.cs" t="Include" />
             <e p="SlotItemDraggable.cs" t="Include" />
+            <e p="SpellItem.cs" t="Include" />
             <e p="StringPickerItem.cs" t="Include" />
-            <e p="StructureInfoUI.cs" t="Include" />
             <e p="SummonSlotPickerItem.cs" t="Include" />
             <e p="TheEyeUI.cs" t="Include" />
             <e p="TheFingersUI.cs" t="Include" />
             <e p="TheNeedlesUI.cs" t="Include" />
             <e p="TheProfaneUI.cs" t="Include" />
-            <e p="TileObjectInfoUI.cs" t="Include" />
             <e p="TimerHubItem.cs" t="Include" />
             <e p="TraitItem.cs" t="Include" />
-            <e p="UIMenu.cs" t="Include" />
             <e p="UIMenuSettings.cs" t="Include" />
             <e p="UnleashSummonUI.cs" t="Include" />
             <e p="WorldEventIcon.cs" t="Include" />

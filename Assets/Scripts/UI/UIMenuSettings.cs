@@ -3,11 +3,11 @@ using System.Collections;
 
 public class UIMenuSettings {
 
-    public UIMenu menu;
+    public InfoUIBase @base;
     public object data;
 
-    public UIMenuSettings(UIMenu menu, object data) {
-        this.menu = menu;
+    public UIMenuSettings(InfoUIBase @base, object data) {
+        this.@base = @base;
         this.data = data;
     }
 }
