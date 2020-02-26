@@ -49,10 +49,15 @@ public class ArchetypeSelectorItem : MonoBehaviour {
     private void UpdateMonstersText(PlayerArchetype playerArchetype) {
         string monsters = string.Empty;
         for (int i = 0; i < playerArchetype.monsters.Count; i++) {
+            RaceClass raceClass = playerArchetype.monsters[i];
             if (i > 0) {
                 monsters += ", ";
             }
-            monsters += UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(playerArchetype.monsters[i].race.ToString());
+            if(raceClass.race == RACE.WOLF || raceClass.race == RACE.GOLEM) {
+                monsters += UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(raceClass.race.ToString());
+            } else {
+                monsters += UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(raceClass.ToString());
+            }
         }
         if (monsters != string.Empty) {
             monstersText.text = monsters;

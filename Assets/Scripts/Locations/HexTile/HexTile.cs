@@ -1113,7 +1113,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         //    OnHoverEnterMinion, OnHoverLandmarkChoice,
         //    OnHoverExitMinion, OnHoverExitLandmarkChoice,
         //    StartBuild, "Build", column2Identifier: "Landmark");
-        UIManager.Instance.ShowClickableObjectPicker(demonicLandmarksThatCanBeBuilt, StartBuildConfirmation, null, CanChooseLandmark, "Choose a structure to build", OnHoverLandmarkChoice, OnHoverExitLandmarkChoice, shouldConfirmOnPick: true, asButton: true);
+        UIManager.Instance.ShowClickableObjectPicker(demonicLandmarksThatCanBeBuilt, StartBuildConfirmation, null, CanChooseLandmark, "Choose a structure to build", OnHoverLandmarkChoice, OnHoverExitLandmarkChoice, identifier: "Landmark", shouldConfirmOnPick: true, asButton: true);
     }
     //private bool CanChooseMinion(Character character) {
     //    return !character.minion.isAssigned && character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.BUILDER);
