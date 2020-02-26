@@ -19,6 +19,7 @@ public class Artifact : TileObject {
         // TILE_OBJECT_TYPE parsed = (TILE_OBJECT_TYPE) Enum.Parse(typeof(TILE_OBJECT_TYPE), type.ToString(), true);
         advertisedActions = new List<INTERACTION_TYPE>();
         Initialize(TILE_OBJECT_TYPE.ARTIFACT);
+        RemoveAdvertisedAction(INTERACTION_TYPE.REPAIR);
     }
     //public Artifact(SaveDataArtifactSlot data) {
     //    this.type = data.type;

@@ -7,7 +7,8 @@ public class HealingPotion : TileObject {
     public HealingPotion() {
         advertisedActions = new List<INTERACTION_TYPE>();
         Initialize(TILE_OBJECT_TYPE.HEALING_POTION);
-        RemoveCommonAdvertisements();
+        //RemoveCommonAdvertisements();
+        RemoveAdvertisedAction(INTERACTION_TYPE.REPAIR);
     }
     public HealingPotion(SaveDataTileObject data) {
         advertisedActions = new List<INTERACTION_TYPE>();

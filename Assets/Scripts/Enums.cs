@@ -1296,7 +1296,7 @@ public enum JOB_TYPE { NONE, UNDERMINE, ENERGY_RECOVERY_URGENT, FULLNESS_RECOVER
         , DESTROY, TRIGGER_FLAW, CORRUPT_CULTIST, CORRUPT_CULTIST_SABOTAGE_FACTION, SCREAM, CLEANSE_CORRUPTION, CLAIM_REGION
         , BUILD_BLUEPRINT, PLACE_BLUEPRINT, COMBAT, STROLL, HAUL, OBTAIN_PERSONAL_FOOD, SNUFF_TORNADO, FLEE_TO_HOME, BURY_SERIAL_KILLER_VICTIM, KILL, GO_TO, CHECK_PARALYZED_FRIEND, VISIT_FRIEND
         , IDLE_RETURN_HOME, IDLE_NAP, IDLE_SIT, IDLE_STAND, IDLE_GO_TO_INN, COMBINE_STOCKPILE, ROAM_AROUND_TERRITORY, ROAM_AROUND_CORRUPTION, ROAM_AROUND_PORTAL, ROAM_AROUND_TILE, RETURN_TERRITORY, RETURN_PORTAL
-        , STAND, ABDUCT, LEARN_MONSTER, TAKE_ARTIFACT,
+        , STAND, ABDUCT, LEARN_MONSTER, TAKE_ARTIFACT, TAKE_ITEM,
 }
 public enum JOB_OWNER { CHARACTER, LOCATION, QUEST, }
 public enum Cardinal_Direction { North, South, East, West };
@@ -1752,6 +1752,16 @@ public static class Extensions {
                 return true;
         }
     }
+    public static bool IsTileObjectAnItem(this TILE_OBJECT_TYPE tileObjectType) {
+        switch (tileObjectType) {
+            case TILE_OBJECT_TYPE.HEALING_POTION:
+            case TILE_OBJECT_TYPE.TOOL:
+            case TILE_OBJECT_TYPE.ARTIFACT:
+                return true;
+            default:
+                return false;
+        }
+    }
     #endregion
 
     #region Jobs
@@ -1820,6 +1830,9 @@ public static class Extensions {
                 break;
             case JOB_TYPE.BURY:
                 priority = 870;
+                break;
+            case JOB_TYPE.TAKE_ITEM:
+                priority = 860;
                 break;
             case JOB_TYPE.BUILD_BLUEPRINT:
             case JOB_TYPE.PLACE_BLUEPRINT:
