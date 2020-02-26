@@ -29,8 +29,8 @@ public class Enrage : PlayerSpell {
                 Character currTarget = targets[i];
                 if (CanPerformActionTowards(currTarget)) {
                     currTarget.traitContainer.AddTrait(currTarget, "Berserked");
-                    if (UIManager.Instance.characterInfoInfoUi.isShowing) {
-                        UIManager.Instance.characterInfoInfoUi.UpdateThoughtBubble();
+                    if (UIManager.Instance.characterInfoUI.isShowing) {
+                        UIManager.Instance.characterInfoUI.UpdateThoughtBubble();
                     }
 
                     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_intervention");

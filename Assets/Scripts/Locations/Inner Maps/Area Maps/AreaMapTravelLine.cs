@@ -56,7 +56,7 @@ public class AreaMapTravelLine : PooledObject {
         //SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddDays(5), () => DestroyLine());
     }
     private void UpdateVisibility() {
-        if ((UIManager.Instance.characterInfoInfoUi.isShowing && UIManager.Instance.characterInfoInfoUi.activeCharacter.id == owner.id)) {
+        if ((UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == owner.id)) {
             this.gameObject.SetActive(true);
         } else {
             this.gameObject.SetActive(false);
@@ -106,12 +106,12 @@ public class AreaMapTravelLine : PooledObject {
         UpdateVisibility();
     }
     private void OnMenuOpened(InfoUIBase @base) {
-        if (@base is CharacterInfoInfoUi) {
+        if (@base is CharacterInfoUI) {
             UpdateVisibility();
         }
     }
     private void OnMenuClosed(InfoUIBase @base) {
-        if (@base is CharacterInfoInfoUi) {
+        if (@base is CharacterInfoUI) {
             UpdateVisibility();
         }
     }

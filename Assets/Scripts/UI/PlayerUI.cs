@@ -86,6 +86,7 @@ public class PlayerUI : MonoBehaviour {
     [Header("Top Menu")]
     [SerializeField] private Toggle[] topMenuButtons;
     [SerializeField] private SpellListUI spellList;
+    [SerializeField] private CustomDropdownList customDropdownList;
     
     [Header("Minion List")]
     [SerializeField] private MinionListUI minionList;
@@ -256,27 +257,27 @@ public class PlayerUI : MonoBehaviour {
         OnCharacterBecomesNonMinionOrSummon(character);
     }
     private void OnMenuOpened(InfoUIBase @base) {
-        if (@base is CharacterInfoInfoUi || @base is TileObjectInfoInfoUi) {
+        if (@base is CharacterInfoUI || @base is TileObjectInfoUI) {
             // HideKillSummary();
-        }else if (@base is HextileInfoInfoUi || @base is RegionInfoInfoUi) {
+        }else if (@base is HextileInfoUI || @base is RegionInfoUI) {
             UpdateRegionNameState();
         }
     }
     private void OnMenuClosed(InfoUIBase @base) {
-        if (@base is HextileInfoInfoUi || @base is RegionInfoInfoUi) {
+        if (@base is HextileInfoUI || @base is RegionInfoUI) {
             UpdateRegionNameState();
         }
     }
     #endregion
 
     private void UpdateRegionNameState() {
-        if (UIManager.Instance.regionInfoInfoUi.isShowing || UIManager.Instance.hexTileInfoInfoUi.isShowing 
+        if (UIManager.Instance.regionInfoUI.isShowing || UIManager.Instance.hexTileInfoUI.isShowing 
             || InnerMapManager.Instance.isAnInnerMapShowing) {
             Region location;
-            if (UIManager.Instance.regionInfoInfoUi.isShowing) {
-                location = UIManager.Instance.regionInfoInfoUi.activeRegion;
-            } else if (UIManager.Instance.hexTileInfoInfoUi.isShowing) {
-                location = UIManager.Instance.hexTileInfoInfoUi.currentlyShowingHexTile.region;
+            if (UIManager.Instance.regionInfoUI.isShowing) {
+                location = UIManager.Instance.regionInfoUI.activeRegion;
+            } else if (UIManager.Instance.hexTileInfoUI.isShowing) {
+                location = UIManager.Instance.hexTileInfoUI.currentlyShowingHexTile.region;
             } else {
                 location = InnerMapManager.Instance.currentlyShowingMap.location as Region;
             }
@@ -867,6 +868,7 @@ public class PlayerUI : MonoBehaviour {
     private void ShowSpells() {
         // spellList.ShowDropdown(PlayerManager.Instance.player.archetype.spells, OnClickSpell, CanChooseItem);
         //customDropdownList.ShowDropdown(PlayerManager.Instance.player.archetype.spells, OnClickSpell, CanChooseItem);
+        spellsContainerGO.SetActive(true);
     }
     //private bool CanChooseItem(string item) {
     //    //if (item == PlayerDB.Tornado || item == PlayerDB.Meteor || item == PlayerDB.Ravenous_Spirit || item == PlayerDB.Feeble_Spirit || item == PlayerDB.Forlorn_Spirit
@@ -937,7 +939,7 @@ public class PlayerUI : MonoBehaviour {
         }
     }
     private void ShowFactionActions() {
-        spellList.ShowDropdown(factionActionsList, OnClickFactionAction);
+        customDropdownList.ShowDropdown(factionActionsList, OnClickFactionAction);
     }
     private void HideFactionActions() {
         spellList.Close();

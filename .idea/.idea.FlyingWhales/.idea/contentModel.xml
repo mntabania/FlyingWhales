@@ -1889,6 +1889,7 @@
               <e p="CharacterTrait.cs" t="Include" />
               <e p="Charmed.cs" t="Include" />
               <e p="Chaste.cs" t="Include" />
+              <e p="Consumable.cs" t="Include" />
               <e p="Coward.cs" t="Include" />
               <e p="Cultist.cs" t="Include" />
               <e p="Curious.cs" t="Include" />
@@ -1983,6 +1984,7 @@
             <e p="AbilityItem.cs" t="Include" />
             <e p="ActionItem.cs" t="Include" />
             <e p="ApplyTooltipUIMenu.cs" t="Include" />
+            <e p="ArchetypeSelectorItem.cs" t="Include" />
             <e p="AreaEmblem.cs" t="Include" />
             <e p="AreaNameplate.cs" t="Include" />
             <e p="AreaPickerItem.cs" t="Include" />
@@ -2041,15 +2043,15 @@
             <e p="IdeologyPickerUI.cs" t="Include" />
             <e p="ImportantNotificationItem.cs" t="Include" />
             <e p="InfoUI" t="Include">
-              <e p="CharacterInfoInfoUi.cs" t="Include" />
-              <e p="FactionInfoInfoUi.cs" t="Include" />
-              <e p="HextileInfoInfoUi.cs" t="Include" />
+              <e p="CharacterInfoUI.cs" t="Include" />
+              <e p="FactionInfoUI.cs" t="Include" />
+              <e p="HextileInfoUI.cs" t="Include" />
               <e p="InfoUIBase.cs" t="Include" />
               <e p="PartyInfoInfoUi.cs" t="Include" />
               <e p="QuestInfoUI.cs" t="Include" />
-              <e p="RegionInfoInfoUi.cs" t="Include" />
-              <e p="StructureInfoInfoUi.cs" t="Include" />
-              <e p="TileObjectInfoInfoUi.cs" t="Include" />
+              <e p="RegionInfoUI.cs" t="Include" />
+              <e p="StructureInfoUI.cs" t="Include" />
+              <e p="TileObjectInfoUI.cs" t="Include" />
             </e>
             <e p="IntelItem.cs" t="Include" />
             <e p="IntelNotificationItem.cs" t="Include" />
@@ -2130,6 +2132,7 @@
             <e p="ShareIntelMenu.cs" t="Include" />
             <e p="SlotItem.cs" t="Include" />
             <e p="SlotItemDraggable.cs" t="Include" />
+            <e p="SpellItem.cs" t="Include" />
             <e p="StringPickerItem.cs" t="Include" />
             <e p="SummonSlotPickerItem.cs" t="Include" />
             <e p="TheEyeUI.cs" t="Include" />

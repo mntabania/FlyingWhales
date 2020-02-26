@@ -19,8 +19,8 @@ public class MinionListUI : PopupMenuBase {
         minionListToggle.isOn = true;
     }
     public void Initialize() {
-        Messenger.AddListener<Minion>(Signals.PLAYER_GAINED_MINION, OnGainedMinion);
-        Messenger.AddListener<Minion>(Signals.PLAYER_LOST_MINION, OnLostMinion);
+        Messenger.AddListener<Minion>(Signals.SUMMON_MINION, OnGainedMinion);
+        Messenger.AddListener<Minion>(Signals.UNSUMMON_MINION, OnLostMinion);
     }
     
     private void UpdateMinionList() {

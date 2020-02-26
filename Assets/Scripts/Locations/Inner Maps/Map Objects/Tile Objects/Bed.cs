@@ -30,9 +30,9 @@ public class Bed : TileObject {
     public virtual void OnClickAction() {
         //base.OnClickAction();
         //cycle through characters in bed, and show the chosen characters ui
-        if (UIManager.Instance.characterInfoInfoUi.isShowing) {
-            if (IsInThisBed(UIManager.Instance.characterInfoInfoUi.activeCharacter)) {
-                Character nextCharacter = GetNextCharacterInCycle(UIManager.Instance.characterInfoInfoUi.activeCharacter);
+        if (UIManager.Instance.characterInfoUI.isShowing) {
+            if (IsInThisBed(UIManager.Instance.characterInfoUI.activeCharacter)) {
+                Character nextCharacter = GetNextCharacterInCycle(UIManager.Instance.characterInfoUI.activeCharacter);
                 UIManager.Instance.ShowCharacterInfo(nextCharacter, true);
             } else {
                 if (GetActiveUserCount() > 0) {

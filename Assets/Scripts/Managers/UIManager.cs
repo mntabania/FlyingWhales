@@ -532,11 +532,11 @@ public class UIManager : MonoBehaviour {
         cover.GetComponent<Image>().raycastTarget = blockClicks;
     }
     private void OnInteractionMenuOpened() {
-       if (characterInfoInfoUi.isShowing) {
-            _lastOpenedInfoUI = characterInfoInfoUi;
+       if (characterInfoUI.isShowing) {
+            _lastOpenedInfoUI = characterInfoUI;
        }
-       if (characterInfoInfoUi.isShowing) {
-            characterInfoInfoUi.gameObject.SetActive(false);
+       if (characterInfoUI.isShowing) {
+            characterInfoUI.gameObject.SetActive(false);
        }
     }
     private void OnInteractionMenuClosed() {
@@ -630,45 +630,42 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     #region Faction Info
-    [FormerlySerializedAs("factionInfoUI")]
     [Space(10)]
     [Header("Faction Info")]
-    [SerializeField]
-    internal FactionInfoInfoUi factionInfoInfoUi;
+    [SerializeField] internal FactionInfoUI factionInfoUI;
     public void ShowFactionInfo(Faction faction) {
         if (tempDisableShowInfoUI) {
             SetTempDisableShowInfoUI(false);
             return;
         }
-        factionInfoInfoUi.SetData(faction);
-        factionInfoInfoUi.OpenMenu();
+        factionInfoUI.SetData(faction);
+        factionInfoUI.OpenMenu();
     }
     public void UpdateFactionInfo() {
-        if (factionInfoInfoUi.isShowing) {
-            factionInfoInfoUi.UpdateFactionInfo();
+        if (factionInfoUI.isShowing) {
+            factionInfoUI.UpdateFactionInfo();
         }
     }
     #endregion
 
     #region Character Info
-    [FormerlySerializedAs("characterInfoUI")]
     [Space(10)]
     [Header("Character Info")]
-    [SerializeField] internal CharacterInfoInfoUi characterInfoInfoUi;
+    [SerializeField] internal CharacterInfoUI characterInfoUI;
     public void ShowCharacterInfo(Character character, bool centerOnCharacter = false) {
         if (tempDisableShowInfoUI) {
             SetTempDisableShowInfoUI(false);
             return;
         }
-        characterInfoInfoUi.SetData(character);
-        characterInfoInfoUi.OpenMenu();
+        characterInfoUI.SetData(character);
+        characterInfoUI.OpenMenu();
         if (centerOnCharacter) {
             character.CenterOnCharacter();
         }
     }
     public void UpdateCharacterInfo() {
-        if (characterInfoInfoUi.isShowing) {
-            characterInfoInfoUi.UpdateCharacterInfo();
+        if (characterInfoUI.isShowing) {
+            characterInfoUI.UpdateCharacterInfo();
         }
     }
     //private void OnPartyStartedTravelling(Party party) {
@@ -682,20 +679,18 @@ public class UIManager : MonoBehaviour {
     //    }
     //}
     public void OnCameraOutOfFocus() {
-        if (characterInfoInfoUi.isShowing) {
-            characterInfoInfoUi.OnClickCloseMenu();
+        if (characterInfoUI.isShowing) {
+            characterInfoUI.OnClickCloseMenu();
         }
     }
     #endregion
 
     #region Region Info
-    [FormerlySerializedAs("regionInfoUI")]
     [Space(10)]
-    [Header("Region Info")]
-    public RegionInfoInfoUi regionInfoInfoUi;
+    [Header("Region Info")] public RegionInfoUI regionInfoUI;
     public void ShowRegionInfo(Region region, bool centerOnRegion = true) {
-        regionInfoInfoUi.SetData(region);
-        regionInfoInfoUi.OpenMenu();
+        regionInfoUI.SetData(region);
+        regionInfoUI.OpenMenu();
 
         if (centerOnRegion) {
             region.CenterCameraOnRegion();
@@ -703,29 +698,27 @@ public class UIManager : MonoBehaviour {
         }
     }
     public void UpdateRegionInfo() {
-        if (regionInfoInfoUi.isShowing) {
-            regionInfoInfoUi.UpdateInfo();
+        if (regionInfoUI.isShowing) {
+            regionInfoUI.UpdateInfo();
         }
     }
     #endregion
 
     #region Tile Object Info
-    [FormerlySerializedAs("tileObjectInfoUI")]
     [Space(10)]
     [Header("Tile Object Info")]
-    [SerializeField]
-    internal TileObjectInfoInfoUi tileObjectInfoInfoUi;
+    [SerializeField] internal TileObjectInfoUI tileObjectInfoUI;
     public void ShowTileObjectInfo(TileObject tileObject) {
         if (tempDisableShowInfoUI) {
             SetTempDisableShowInfoUI(false);
             return;
         }
-        tileObjectInfoInfoUi.SetData(tileObject);
-        tileObjectInfoInfoUi.OpenMenu();
+        tileObjectInfoUI.SetData(tileObject);
+        tileObjectInfoUI.OpenMenu();
     }
     public void UpdateTileObjectInfo() {
-        if (tileObjectInfoInfoUi.isShowing) {
-            tileObjectInfoInfoUi.UpdateTileObjectInfo();
+        if (tileObjectInfoUI.isShowing) {
+            tileObjectInfoUI.UpdateTileObjectInfo();
         }
     }
     #endregion
@@ -765,41 +758,39 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     #region Tile Info
-    [FormerlySerializedAs("hexTileInfoUI")]
     [Space(10)]
     [Header("Tile Info")]
-    [SerializeField] public HextileInfoInfoUi hexTileInfoInfoUi;
+    [SerializeField] public HextileInfoUI hexTileInfoUI;
     public void ShowHexTileInfo(HexTile item) {
         if (tempDisableShowInfoUI) {
             SetTempDisableShowInfoUI(false);
             return;
         }
-        hexTileInfoInfoUi.SetData(item);
-        hexTileInfoInfoUi.OpenMenu();
+        hexTileInfoUI.SetData(item);
+        hexTileInfoUI.OpenMenu();
     }
     public void UpdateHextileInfo() {
-        if (hexTileInfoInfoUi.isShowing) {
-            hexTileInfoInfoUi.UpdateHexTileInfo();
+        if (hexTileInfoUI.isShowing) {
+            hexTileInfoUI.UpdateHexTileInfo();
         }
     }
     #endregion
     
     #region Structure Info
-    [FormerlySerializedAs("structureInfoUI")]
     [Space(10)]
     [Header("Structure Info")]
-    [SerializeField] public StructureInfoInfoUi structureInfoInfoUi;
+    [SerializeField] public StructureInfoUI structureInfoUI;
     public void ShowStructureInfo(LocationStructure structure) {
         if (tempDisableShowInfoUI) {
             SetTempDisableShowInfoUI(false);
             return;
         }
-        structureInfoInfoUi.SetData(structure);
-        structureInfoInfoUi.OpenMenu();
+        structureInfoUI.SetData(structure);
+        structureInfoUI.OpenMenu();
     }
     public void UpdateStructureInfo() {
-        if (structureInfoInfoUi.isShowing) {
-            structureInfoInfoUi.UpdateInfo();
+        if (structureInfoUI.isShowing) {
+            structureInfoUI.UpdateInfo();
         }
     }
     #endregion
@@ -887,11 +878,11 @@ public class UIManager : MonoBehaviour {
             InnerMapManager.Instance.HideAreaMap();
             OnCameraOutOfFocus();
         } else {
-            if(regionInfoInfoUi.activeRegion != null) {
-                InnerMapManager.Instance.TryShowLocationMap(regionInfoInfoUi.activeRegion);
-            } else if(hexTileInfoInfoUi.currentlyShowingHexTile != null) {
-                InnerMapManager.Instance.TryShowLocationMap(hexTileInfoInfoUi.currentlyShowingHexTile.region);
-                InnerMapCameraMove.Instance.CenterCameraOnTile(hexTileInfoInfoUi.currentlyShowingHexTile);
+            if(regionInfoUI.activeRegion != null) {
+                InnerMapManager.Instance.TryShowLocationMap(regionInfoUI.activeRegion);
+            } else if(hexTileInfoUI.currentlyShowingHexTile != null) {
+                InnerMapManager.Instance.TryShowLocationMap(hexTileInfoUI.currentlyShowingHexTile.region);
+                InnerMapCameraMove.Instance.CenterCameraOnTile(hexTileInfoUI.currentlyShowingHexTile);
             }
         }
     }
@@ -899,10 +890,10 @@ public class UIManager : MonoBehaviour {
         if (InnerMapManager.Instance.isAnInnerMapShowing) {
             ShowSmallInfo($"Click to exit {InnerMapManager.Instance.currentlyShowingLocation.name}.", returnToWorldBtnTooltipPos);
         } else {
-            if (regionInfoInfoUi.activeRegion != null) {
-                ShowSmallInfo($"Click to enter {regionInfoInfoUi.activeRegion.name}.", returnToWorldBtnTooltipPos);
-            } else if(hexTileInfoInfoUi.currentlyShowingHexTile != null) {
-                ShowSmallInfo($"Click to enter {hexTileInfoInfoUi.currentlyShowingHexTile.region.name}.", returnToWorldBtnTooltipPos);
+            if (regionInfoUI.activeRegion != null) {
+                ShowSmallInfo($"Click to enter {regionInfoUI.activeRegion.name}.", returnToWorldBtnTooltipPos);
+            } else if(hexTileInfoUI.currentlyShowingHexTile != null) {
+                ShowSmallInfo($"Click to enter {hexTileInfoUI.currentlyShowingHexTile.region.name}.", returnToWorldBtnTooltipPos);
             }
         }
     }

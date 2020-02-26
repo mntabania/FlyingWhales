@@ -10,7 +10,7 @@ using Traits;
 using UnityEngine.Serialization;
 using Actionables;
 
-public class CharacterInfoInfoUi : InfoUIBase {
+public class CharacterInfoUI : InfoUIBase {
     
     [Space(10)]
     [Header("Basic Info")]
@@ -818,7 +818,7 @@ public class CharacterInfoInfoUi : InfoUIBase {
     }
     private void OnClickChooseCombatMode(string mode) {
         COMBAT_MODE combatMode = (COMBAT_MODE) System.Enum.Parse(typeof(COMBAT_MODE), UtilityScripts.Utilities.NotNormalizedConversionStringToEnum(mode));
-        UIManager.Instance.characterInfoInfoUi.activeCharacter.combatComponent.SetCombatMode(combatMode);
+        UIManager.Instance.characterInfoUI.activeCharacter.combatComponent.SetCombatMode(combatMode);
         Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, activeCharacter as IPlayerActionTarget);
         UIManager.Instance.customDropdownList.Close();
     }

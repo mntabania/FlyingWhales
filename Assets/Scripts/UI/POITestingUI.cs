@@ -20,7 +20,7 @@ public class POITestingUI : MonoBehaviour {
         Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressed);
     }
     public void ShowUI(LocationGridTile gridTile) {
-        if (UIManager.Instance.characterInfoInfoUi.activeCharacter != null) {
+        if (UIManager.Instance.characterInfoUI.activeCharacter != null) {
             this.gridTile = gridTile;
             UIManager.Instance.HideSmallInfo();
             UIManager.Instance.PositionTooltip(gameObject, rt, rt);
@@ -46,13 +46,13 @@ public class POITestingUI : MonoBehaviour {
     #region Character Testing
     public void KnockoutThisCharacter() {
         if(poi is Character) {
-            CreateKnockoutJob(UIManager.Instance.characterInfoInfoUi.activeCharacter, poi as Character);
+            CreateKnockoutJob(UIManager.Instance.characterInfoUI.activeCharacter, poi as Character);
         } else if (poi is Bed) {
             Bed bed = poi as Bed;
             if(bed.users[0] != null) {
-                CreateKnockoutJob(UIManager.Instance.characterInfoInfoUi.activeCharacter, bed.users[0]);
+                CreateKnockoutJob(UIManager.Instance.characterInfoUI.activeCharacter, bed.users[0]);
             }else if (bed.users[1] != null) {
-                CreateKnockoutJob(UIManager.Instance.characterInfoInfoUi.activeCharacter, bed.users[1]);
+                CreateKnockoutJob(UIManager.Instance.characterInfoUI.activeCharacter, bed.users[1]);
             }
         } else {
             Debug.LogError($"{poi.name} is not a character!");
@@ -68,7 +68,7 @@ public class POITestingUI : MonoBehaviour {
     }
     public void ChatWithThisCharacter() {
         if (poi is Character) {
-            Character source = UIManager.Instance.characterInfoInfoUi.activeCharacter;
+            Character source = UIManager.Instance.characterInfoUI.activeCharacter;
             Character target = poi as Character;
             if(!source.isConversing && !target.isConversing) {
                 source.interruptComponent.TriggerInterrupt(INTERRUPT.Chat, poi);
@@ -82,8 +82,8 @@ public class POITestingUI : MonoBehaviour {
     public void InviteToMakeLove() {
         if (poi is Character) {
             Character target = poi as Character;
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY, INTERACTION_TYPE.MAKE_LOVE, target, UIManager.Instance.characterInfoInfoUi.activeCharacter);
-            UIManager.Instance.characterInfoInfoUi.activeCharacter.jobQueue.AddJobInQueue(job);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY, INTERACTION_TYPE.MAKE_LOVE, target, UIManager.Instance.characterInfoUI.activeCharacter);
+            UIManager.Instance.characterInfoUI.activeCharacter.jobQueue.AddJobInQueue(job);
             //if (UIManager.Instance.characterInfoUI.activeCharacter.HasRelationshipOfTypeWith(target, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.AFFAIR)) {
             //    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY_FORLORN, INTERACTION_TYPE.INVITE_TO_MAKE_LOVE, target);
             //    job.SetCannotOverrideJob(true);
@@ -108,8 +108,8 @@ public class POITestingUI : MonoBehaviour {
     }
     public void DrinkBlood() {
         if (poi is Character) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FULLNESS_RECOVERY_URGENT, INTERACTION_TYPE.DRINK_BLOOD, poi, UIManager.Instance.characterInfoInfoUi.activeCharacter);
-            UIManager.Instance.characterInfoInfoUi.activeCharacter.jobQueue.AddJobInQueue(job);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FULLNESS_RECOVERY_URGENT, INTERACTION_TYPE.DRINK_BLOOD, poi, UIManager.Instance.characterInfoUI.activeCharacter);
+            UIManager.Instance.characterInfoUI.activeCharacter.jobQueue.AddJobInQueue(job);
         } else {
             Debug.LogError($"{poi.name} is not a character!");
         }
@@ -117,8 +117,8 @@ public class POITestingUI : MonoBehaviour {
     }
     public void Feed() {
         if (poi is Character) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FULLNESS_RECOVERY_URGENT, INTERACTION_TYPE.FEED, poi, UIManager.Instance.characterInfoInfoUi.activeCharacter);
-            UIManager.Instance.characterInfoInfoUi.activeCharacter.jobQueue.AddJobInQueue(job);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FULLNESS_RECOVERY_URGENT, INTERACTION_TYPE.FEED, poi, UIManager.Instance.characterInfoUI.activeCharacter);
+            UIManager.Instance.characterInfoUI.activeCharacter.jobQueue.AddJobInQueue(job);
         } else {
             Debug.LogError($"{poi.name} is not a character!");
         }
@@ -129,8 +129,8 @@ public class POITestingUI : MonoBehaviour {
     #region Tile Object Testing
     public void PoisonTable() {
         if (poi is Table) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.UNDERMINE, INTERACTION_TYPE.POISON, poi, UIManager.Instance.characterInfoInfoUi.activeCharacter);
-            UIManager.Instance.characterInfoInfoUi.activeCharacter.jobQueue.AddJobInQueue(job);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.UNDERMINE, INTERACTION_TYPE.POISON, poi, UIManager.Instance.characterInfoUI.activeCharacter);
+            UIManager.Instance.characterInfoUI.activeCharacter.jobQueue.AddJobInQueue(job);
         } else {
             Debug.LogError($"{poi.name} is not a table!");
         }
@@ -138,8 +138,8 @@ public class POITestingUI : MonoBehaviour {
     }
     public void EatAtTable() {
         if (poi is Table) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FULLNESS_RECOVERY_URGENT, INTERACTION_TYPE.EAT, poi, UIManager.Instance.characterInfoInfoUi.activeCharacter);
-            UIManager.Instance.characterInfoInfoUi.activeCharacter.jobQueue.AddJobInQueue(job);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FULLNESS_RECOVERY_URGENT, INTERACTION_TYPE.EAT, poi, UIManager.Instance.characterInfoUI.activeCharacter);
+            UIManager.Instance.characterInfoUI.activeCharacter.jobQueue.AddJobInQueue(job);
         } else {
             Debug.LogError($"{poi.name} is not a table!");
         }
@@ -147,8 +147,8 @@ public class POITestingUI : MonoBehaviour {
     }
     public void Sleep() {
         if (poi is Bed) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ENERGY_RECOVERY_NORMAL, INTERACTION_TYPE.SLEEP, poi, UIManager.Instance.characterInfoInfoUi.activeCharacter);
-            UIManager.Instance.characterInfoInfoUi.activeCharacter.jobQueue.AddJobInQueue(job);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ENERGY_RECOVERY_NORMAL, INTERACTION_TYPE.SLEEP, poi, UIManager.Instance.characterInfoUI.activeCharacter);
+            UIManager.Instance.characterInfoUI.activeCharacter.jobQueue.AddJobInQueue(job);
         } else {
             Debug.LogError($"{poi.name} is not a bed!");
         }
@@ -159,7 +159,7 @@ public class POITestingUI : MonoBehaviour {
     #region Grid Tile Testing
     public void GoHere() {
         //STRUCTURE_TYPE[] _notAllowedStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.INN, STRUCTURE_TYPE.DWELLING, STRUCTURE_TYPE.WAREHOUSE, STRUCTURE_TYPE.PRISON };
-        UIManager.Instance.characterInfoInfoUi.activeCharacter.marker.GoTo(this.poi.gridTileLocation/*, notAllowedStructures: _notAllowedStructures*/);
+        UIManager.Instance.characterInfoUI.activeCharacter.marker.GoTo(this.poi.gridTileLocation/*, notAllowedStructures: _notAllowedStructures*/);
         HideUI();
     }
     public void AddRandomArtifact() {

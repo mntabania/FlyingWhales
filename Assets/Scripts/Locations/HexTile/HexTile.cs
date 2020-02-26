@@ -633,24 +633,24 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     private InfoUIBase GetMenuToShowWhenTileIsClicked() {
         if (region != null) {
             //if region info ui is showing, show tile info ui
-            if (UIManager.Instance.regionInfoInfoUi.isShowing) {
-                if (UIManager.Instance.regionInfoInfoUi.activeRegion == region) {
-                    return UIManager.Instance.hexTileInfoInfoUi;    
+            if (UIManager.Instance.regionInfoUI.isShowing) {
+                if (UIManager.Instance.regionInfoUI.activeRegion == region) {
+                    return UIManager.Instance.hexTileInfoUI;    
                 } else {
-                    return UIManager.Instance.regionInfoInfoUi;
+                    return UIManager.Instance.regionInfoUI;
                 }
-            } else if (UIManager.Instance.hexTileInfoInfoUi.isShowing) {
-                if (UIManager.Instance.hexTileInfoInfoUi.currentlyShowingHexTile.region == region) {
-                    if (UIManager.Instance.hexTileInfoInfoUi.currentlyShowingHexTile == this) {
-                        return UIManager.Instance.regionInfoInfoUi;
+            } else if (UIManager.Instance.hexTileInfoUI.isShowing) {
+                if (UIManager.Instance.hexTileInfoUI.currentlyShowingHexTile.region == region) {
+                    if (UIManager.Instance.hexTileInfoUI.currentlyShowingHexTile == this) {
+                        return UIManager.Instance.regionInfoUI;
                     } else {
-                        return UIManager.Instance.hexTileInfoInfoUi;
+                        return UIManager.Instance.hexTileInfoUI;
                     }
                 } else {
-                    return UIManager.Instance.regionInfoInfoUi;    
+                    return UIManager.Instance.regionInfoUI;    
                 }
             } else {
-                return UIManager.Instance.regionInfoInfoUi;
+                return UIManager.Instance.regionInfoUI;
             }
         }
         return null;
@@ -665,9 +665,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         Messenger.Broadcast(Signals.TILE_LEFT_CLICKED, this);
         InfoUIBase baseToShow = GetMenuToShowWhenTileIsClicked();
         if (baseToShow != null) {
-            if (baseToShow is RegionInfoInfoUi) {
+            if (baseToShow is RegionInfoUI) {
                 UIManager.Instance.ShowRegionInfo(region);
-            } else if (baseToShow is HextileInfoInfoUi) {
+            } else if (baseToShow is HextileInfoUI) {
                 UIManager.Instance.ShowHexTileInfo(this);
             }
         }
@@ -681,18 +681,18 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     }
     private void MouseOver() {
         InfoUIBase baseToOpen = GetMenuToShowWhenTileIsClicked();
-        if (baseToOpen is RegionInfoInfoUi) {
+        if (baseToOpen is RegionInfoUI) {
             region.ShowBorders(Color.red);
-        } else if (baseToOpen is HextileInfoInfoUi) {
+        } else if (baseToOpen is HextileInfoUI) {
             SetBordersState(true, false, Color.red);
         }
         Messenger.Broadcast(Signals.TILE_HOVERED_OVER, this);
     }
     private void MouseExit() {
         InfoUIBase baseToOpen = GetMenuToShowWhenTileIsClicked();
-        if (baseToOpen is RegionInfoInfoUi) {
+        if (baseToOpen is RegionInfoUI) {
             region.HideBorders();
-        } else if (baseToOpen is HextileInfoInfoUi) {
+        } else if (baseToOpen is HextileInfoUI) {
             SetBordersState(false, false, Color.red);
         }
         Messenger.Broadcast(Signals.TILE_HOVERED_OUT, this);
@@ -1208,8 +1208,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     
     #region Selectable
     public bool IsCurrentlySelected() {
-        return UIManager.Instance.hexTileInfoInfoUi.isShowing &&
-               UIManager.Instance.hexTileInfoInfoUi.currentlyShowingHexTile == this;
+        return UIManager.Instance.hexTileInfoUI.isShowing &&
+               UIManager.Instance.hexTileInfoUI.currentlyShowingHexTile == this;
     }
     public void LeftSelectAction() {
         UIManager.Instance.ShowHexTileInfo(this);

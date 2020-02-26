@@ -32,12 +32,12 @@ public class IdeologyPickerUI : MonoBehaviour {
         dropdown.value = 0;
     }
     public void OnChangeIdeology(int index) {
-        UIManager.Instance.regionInfoInfoUi.fingersUI.ShowAppropriateIdeologyContent(GetIdeologyDropdownValue(), categoryIndex);
+        UIManager.Instance.regionInfoUI.fingersUI.ShowAppropriateIdeologyContent(GetIdeologyDropdownValue(), categoryIndex);
     }
     public void OnClickEdit() {
         FACTION_IDEOLOGY currentIdeology = GetIdeologyDropdownValue();
         if(currentIdeology == FACTION_IDEOLOGY.EXCLUSIVE) {
-            UIManager.Instance.regionInfoInfoUi.fingersUI.UpdateExclusiveIdeologyContent(exclusiveCategory, exclusiveRequirement, categoryIndex);
+            UIManager.Instance.regionInfoUI.fingersUI.UpdateExclusiveIdeologyContent(exclusiveCategory, exclusiveRequirement, categoryIndex);
         }
     }
     private FACTION_IDEOLOGY GetIdeologyDropdownValue() {

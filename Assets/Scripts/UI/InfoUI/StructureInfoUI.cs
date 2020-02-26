@@ -7,7 +7,7 @@ using System;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 
-public class StructureInfoInfoUi : InfoUIBase {
+public class StructureInfoUI : InfoUIBase {
 
     [Space(10)]
     [Header("Basic Info")]

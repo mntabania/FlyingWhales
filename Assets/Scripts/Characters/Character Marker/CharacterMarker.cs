@@ -154,7 +154,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     protected override void OnPointerRightClick(Character poi) {
         base.OnPointerRightClick(poi);
-        Character activeCharacter = UIManager.Instance.characterInfoInfoUi.activeCharacter;
+        Character activeCharacter = UIManager.Instance.characterInfoUI.activeCharacter;
         if (activeCharacter != null) {
             if (activeCharacter.minion == null) {
 #if UNITY_EDITOR
@@ -1720,8 +1720,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public override void UpdateTileObjectVisual(Character obj) { }
     public override void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) { }
     public override bool IsMapObjectMenuVisible() {
-        if (UIManager.Instance.characterInfoInfoUi.isShowing) {
-            return UIManager.Instance.characterInfoInfoUi.activeCharacter == this.character;
+        if (UIManager.Instance.characterInfoUI.isShowing) {
+            return UIManager.Instance.characterInfoUI.activeCharacter == this.character;
         }
         return false;
     }

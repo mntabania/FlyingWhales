@@ -328,8 +328,8 @@ namespace Traits {
 
 
         private void PutToLimbo(Character form) {
-            if (UIManager.Instance.characterInfoInfoUi.isShowing && UIManager.Instance.characterInfoInfoUi.activeCharacter == form) {
-                UIManager.Instance.characterInfoInfoUi.CloseMenu();
+            if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == form) {
+                UIManager.Instance.characterInfoUI.CloseMenu();
             }
             if (form.ownParty.icon.isTravelling) {
                 form.marker.StopMovement();

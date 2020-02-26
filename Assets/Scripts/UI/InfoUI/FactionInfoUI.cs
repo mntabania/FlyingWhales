@@ -8,7 +8,7 @@ using UnityEngine.UI;
 using UnityEngine.UI.Extensions;
 using EZObjectPools;
 
-public class FactionInfoInfoUi : InfoUIBase {
+public class FactionInfoUI : InfoUIBase {
 
     private const int MAX_HISTORY_LOGS = 60;
 

@@ -6,7 +6,7 @@ using TMPro;
 using UnityEngine.UI;
 
 
-public class HextileInfoInfoUi : InfoUIBase {
+public class HextileInfoUI : InfoUIBase {
 
     [Space(10)]
     [Header("Basic Info")]

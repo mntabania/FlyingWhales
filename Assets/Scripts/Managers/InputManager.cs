@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Inner_Maps;
 using UnityEngine;
 
@@ -188,7 +189,7 @@ namespace Ruinarch {
             } else {
                 if (UIManager.Instance.openedPopups.Count > 0) {
                     //close latest popup
-                    UIManager.Instance.openedPopups[0].Close();
+                    UIManager.Instance.openedPopups.Last().Close();
                 } else {
                     if (UIManager.Instance.poiTestingUI.gameObject.activeSelf ||
                         UIManager.Instance.minionCommandsUI.gameObject.activeSelf) {

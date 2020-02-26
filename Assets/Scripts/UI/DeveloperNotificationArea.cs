@@ -26,13 +26,13 @@ public class DeveloperNotificationArea : InfoUIBase {
     }
 
     private void OnMenuOpened(InfoUIBase openedBase) {
-        if (openedBase is CharacterInfoInfoUi || openedBase is FactionInfoInfoUi) {
+        if (openedBase is CharacterInfoUI || openedBase is FactionInfoUI) {
             this.transform.localPosition = otherMenuOpenedPos;
         }
         
     }
     private void OnMenuClosed(InfoUIBase openedBase) {
-        if (openedBase is CharacterInfoInfoUi || openedBase is FactionInfoInfoUi) {
+        if (openedBase is CharacterInfoUI || openedBase is FactionInfoUI) {
             this.transform.localPosition = defaultPos;
         }
     }

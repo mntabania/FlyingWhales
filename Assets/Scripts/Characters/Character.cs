@@ -4815,8 +4815,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //if (removeJobInQueue && job != null && !job.jobQueueParent.isAreaOrQuestJobQueue) {
         //    job.jobQueueParent.RemoveJobInQueue(job);
         //}
-        if (UIManager.Instance.characterInfoInfoUi.isShowing) {
-            UIManager.Instance.characterInfoInfoUi.UpdateBasicInfo();
+        if (UIManager.Instance.characterInfoUI.isShowing) {
+            UIManager.Instance.characterInfoUI.UpdateBasicInfo();
         }
         //Messenger.Broadcast<GoapAction>(Signals.STOP_ACTION, this);
         logComponent.PrintLogIfActive(
@@ -4948,8 +4948,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     //Can only be seized if poi has tile location
     public void OnSeizePOI() {
-        if (UIManager.Instance.characterInfoInfoUi.isShowing && UIManager.Instance.characterInfoInfoUi.activeCharacter == this) {
-            UIManager.Instance.characterInfoInfoUi.CloseMenu();
+        if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == this) {
+            UIManager.Instance.characterInfoUI.CloseMenu();
         }
         if (ownParty.icon.isTravelling) {
             marker.StopMovement();
@@ -5737,7 +5737,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 () => jobComponent.TriggerReturnPortal());
             PlayerAction combatModeAction = new PlayerAction(PlayerDB.Combat_Mode_Action,
                 () => true,
-                UIManager.Instance.characterInfoInfoUi.ShowSwitchCombatModeUI);
+                UIManager.Instance.characterInfoUI.ShowSwitchCombatModeUI);
             combatModeAction.SetLabelText(combatModeAction.actionName + ": " + UtilityScripts.Utilities.NotNormalizedConversionEnumToString(combatComponent.combatMode.ToString()));
 
             AddPlayerAction(stopAction);
@@ -5746,7 +5746,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         } else {
             PlayerAction afflictAction = new PlayerAction(PlayerDB.Afflict_Action, 
                 () => true,
-                UIManager.Instance.characterInfoInfoUi.ShowAfflictUI);
+                UIManager.Instance.characterInfoUI.ShowAfflictUI);
             PlayerAction zapAction = new PlayerAction(PlayerDB.Zap_Action, 
                 () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.ZAP].CanPerformAbilityTowards(this),
                 () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.ZAP].ActivateAbility(this));
@@ -5788,8 +5788,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     
     #region Selectable
     public bool IsCurrentlySelected() {
-        return UIManager.Instance.characterInfoInfoUi.isShowing &&
-               UIManager.Instance.characterInfoInfoUi.activeCharacter == this;
+        return UIManager.Instance.characterInfoUI.isShowing &&
+               UIManager.Instance.characterInfoUI.activeCharacter == this;
     }
     public void LeftSelectAction() {
         mapObjectVisual.ExecuteClickAction(PointerEventData.InputButton.Left);

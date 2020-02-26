@@ -278,17 +278,17 @@ public class PlayerManager : MonoBehaviour {
         }
     }
     private void OnMenuOpened(InfoUIBase @base) {
-        if (@base is CharacterInfoInfoUi) {
+        if (@base is CharacterInfoUI) {
             DeselectAllUnits();
-            CharacterInfoInfoUi infoInfoUi = @base as CharacterInfoInfoUi;
-            SelectUnit(infoInfoUi.activeCharacter);
+            CharacterInfoUI infoUi = @base as CharacterInfoUI;
+            SelectUnit(infoUi.activeCharacter);
             //if (infoUI.activeCharacter.CanBeInstructedByPlayer()) {
             //    SelectUnit(infoUI.activeCharacter);
             //}
         }
     }
     private void OnMenuClosed(InfoUIBase @base) {
-        if (@base is CharacterInfoInfoUi) {
+        if (@base is CharacterInfoUI) {
             DeselectAllUnits();
         }
     }

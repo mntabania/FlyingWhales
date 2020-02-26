@@ -66,7 +66,7 @@ public class TheEyeUI : MonoBehaviour {
         Character character = minionObj as Character;
         Character targetCharacter = regionObj as Character;
 
-        (UIManager.Instance.regionInfoInfoUi.activeRegion.mainLandmark as TheEye).StartInterference(targetCharacter, character);
+        (UIManager.Instance.regionInfoUI.activeRegion.mainLandmark as TheEye).StartInterference(targetCharacter, character);
     }
     #endregion
 

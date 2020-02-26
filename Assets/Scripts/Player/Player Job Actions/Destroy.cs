@@ -63,8 +63,8 @@ public class DestroyData : SpellData {
         PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
 
         GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Destroy_Explosion);
-        if (UIManager.Instance.tileObjectInfoInfoUi.isShowing && UIManager.Instance.tileObjectInfoInfoUi.activeTileObject == targetPOI) {
-            UIManager.Instance.tileObjectInfoInfoUi.CloseMenu();
+        if (UIManager.Instance.tileObjectInfoUI.isShowing && UIManager.Instance.tileObjectInfoUI.activeTileObject == targetPOI) {
+            UIManager.Instance.tileObjectInfoUI.CloseMenu();
         }
     }
     public override bool CanPerformAbilityTowards(TileObject tileObject) {

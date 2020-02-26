@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SpellListUI : CustomDropdownList {
+public class SpellListUI : PopupMenuBase {
 
     [SerializeField] private Toggle spellsToggle;
     public override void Open() {

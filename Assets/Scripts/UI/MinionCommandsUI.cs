@@ -90,7 +90,7 @@ public class MinionCommandsUI : MonoBehaviour {
     }
     private bool CanIssueCommand() {
         bool canIssueCommand = true;
-        Character actor = UIManager.Instance.characterInfoInfoUi.activeCharacter;
+        Character actor = UIManager.Instance.characterInfoUI.activeCharacter;
         if(actor.gridTileLocation == null || targetPOI.gridTileLocation == null || !PathfindingManager.Instance.HasPath(actor.gridTileLocation, targetPOI.gridTileLocation)) {
             canIssueCommand = false;
             PlayerUI.Instance.ShowGeneralConfirmation("Instruction Error", "Cannot instruct minion. It has no path towards the target.");
@@ -103,7 +103,7 @@ public class MinionCommandsUI : MonoBehaviour {
     public void Knockout() {
         if (CanIssueCommand()) {
             if (targetPOI is Character) {
-            Character actor = UIManager.Instance.characterInfoInfoUi.activeCharacter;
+            Character actor = UIManager.Instance.characterInfoUI.activeCharacter;
                 actor.jobComponent.CreateKnockoutJob(targetPOI as Character);
             } else {
                 Debug.LogError($"{targetPOI.name} is not a character!");
@@ -117,7 +117,7 @@ public class MinionCommandsUI : MonoBehaviour {
     public void Kill() {
         if (CanIssueCommand()) {
             if (targetPOI is Character) {
-            Character actor = UIManager.Instance.characterInfoInfoUi.activeCharacter;
+            Character actor = UIManager.Instance.characterInfoUI.activeCharacter;
                 actor.jobComponent.CreateKillJob(targetPOI as Character);
             } else {
                 Debug.LogError($"{targetPOI.name} is not a character!");
@@ -131,7 +131,7 @@ public class MinionCommandsUI : MonoBehaviour {
     public void Abduct() {
         if (CanIssueCommand()) {
             if (targetPOI is Character) {
-            Character actor = UIManager.Instance.characterInfoInfoUi.activeCharacter;
+            Character actor = UIManager.Instance.characterInfoUI.activeCharacter;
                 actor.jobComponent.CreateAbductJob(targetPOI as Character);
             } else {
                 Debug.LogError($"{targetPOI.name} is not a character!");
@@ -148,7 +148,7 @@ public class MinionCommandsUI : MonoBehaviour {
     public void LearnMonster() {
         if (CanIssueCommand()) {
             if (targetPOI is Character) {
-            Character actor = UIManager.Instance.characterInfoInfoUi.activeCharacter;
+            Character actor = UIManager.Instance.characterInfoUI.activeCharacter;
                 actor.jobComponent.CreateLearnMonsterJob(targetPOI as Character);
             } else {
                 Debug.LogError($"{targetPOI.name} is not a character!");
@@ -166,7 +166,7 @@ public class MinionCommandsUI : MonoBehaviour {
     public void TakeArtifact() {
         if (CanIssueCommand()) {
             if (targetPOI is Artifact) {
-            Character actor = UIManager.Instance.characterInfoInfoUi.activeCharacter;
+            Character actor = UIManager.Instance.characterInfoUI.activeCharacter;
                 actor.jobComponent.CreateTakeArtifactJob(targetPOI as Artifact, PlayerManager.Instance.player.portalTile.locationGridTiles[0].structure);
             } else {
                 Debug.LogError($"{targetPOI.name} is not an artifact!");

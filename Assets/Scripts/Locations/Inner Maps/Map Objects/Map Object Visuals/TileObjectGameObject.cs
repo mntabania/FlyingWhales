@@ -93,8 +93,8 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
 
     #region Inquiry
     private bool IsMenuShowing(TileObject obj) {
-        return UIManager.Instance.tileObjectInfoInfoUi.isShowing &&
-               UIManager.Instance.tileObjectInfoInfoUi.activeTileObject == obj;
+        return UIManager.Instance.tileObjectInfoUI.isShowing &&
+               UIManager.Instance.tileObjectInfoUI.activeTileObject == obj;
     }
     public override bool IsMapObjectMenuVisible() {
         return _isMenuShowing.Invoke();
@@ -108,7 +108,7 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
     }
     protected override void OnPointerRightClick(TileObject poi) {
         base.OnPointerRightClick(poi);
-        Character activeCharacter = UIManager.Instance.characterInfoInfoUi.activeCharacter;
+        Character activeCharacter = UIManager.Instance.characterInfoUI.activeCharacter;
         if (activeCharacter != null) {
             if(activeCharacter.minion == null) {
 #if UNITY_EDITOR

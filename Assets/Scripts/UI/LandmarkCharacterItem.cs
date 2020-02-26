@@ -51,7 +51,7 @@ public class LandmarkCharacterItem : PooledObject {
     }
 
     private void UpdateLocationIcons() {
-        if (_parentBase is RegionInfoInfoUi) {
+        if (_parentBase is RegionInfoUI) {
             if (character.traitContainer.HasTrait("Abducted", "Restrained")) {
                 restrainedIcon.SetActive(true);
                 unrestrainedGO.SetActive(false);
@@ -68,7 +68,7 @@ public class LandmarkCharacterItem : PooledObject {
                 arrivedIcon.SetActive(false);
                 coverGO.SetActive(false);
             }
-        } else if (_parentBase is TileObjectInfoInfoUi) {
+        } else if (_parentBase is TileObjectInfoUI) {
             if (character.traitContainer.HasTrait("Abducted", "Restrained")) {
                 restrainedIcon.SetActive(true);
                 unrestrainedGO.SetActive(false);
