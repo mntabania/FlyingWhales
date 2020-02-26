@@ -33,15 +33,19 @@ namespace Inner_Maps.Location_Structures {
             //    .Where(x => x.character.currentHP >= x.character.maxHP && x.character.gridTileLocation == null)
             //    .Select(x => x.character));
             UIManager.Instance.ShowClickableObjectPicker(validMinions,
-                OnSelectMinion, null, CanSummonMinion, 
-                "Choose Minion to Summon", showCover: true);
+                OnSelectMinionConfirmation, null, CanSummonMinion, 
+                "Choose Minion to Summon", showCover: true, shouldConfirmOnPick: true, asButton: true);
             //PlayerManager.Instance.player.minions.Select(x => x.character).ToList()
         }
         private bool CanSummonMinion(Character character) {
             return character.currentHP >= character.maxHP && character.gridTileLocation == null;
         }
-        private void OnSelectMinion(object obj) {
+        private void OnSelectMinionConfirmation(object obj) {
             Character character = obj as Character;
+            UIManager.Instance.ShowYesNoConfirmation("Summon Minion Confirmation", "Are you sure you want to summon " + character.name + "?", () => OnSelectMinion(character));
+        }
+        private void OnSelectMinion(Character character) {
+            //Character character = obj as Character;
             character.minion.Summon(this);
             UIManager.Instance.HideObjectPicker();
         }

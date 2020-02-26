@@ -14,7 +14,7 @@ public class Blizzard : PlayerSpell {
 public class BlizzardData : SpellData {
     public override SPELL_TYPE ability => SPELL_TYPE.BLIZZARD;
     public override string name { get { return "Blizzard"; } }
-    public override string description { get { return "Spawn a Blizzard."; } }
+    public override string description { get { return "Significantly lowers the outside temperature on the target area, which may randomly apply Freezing on affected characters."; } }
     public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.DEVASTATION; } }
     public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
     public override int abilityRadius => 1;

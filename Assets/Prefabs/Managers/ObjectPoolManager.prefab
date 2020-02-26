@@ -94,6 +94,7 @@ MonoBehaviour:
   - {fileID: 1908315790109183013, guid: 628045228f7127e47b6cbbcc4aa03a9b, type: 3}
   - {fileID: 4630698722303704620, guid: aa4d68a5c4b69114db2642838615fff2, type: 3}
   - {fileID: 4630698722303704620, guid: 1e3dde9051d9a08439978f2601812de7, type: 3}
+  - {fileID: 7346978857189099377, guid: 0610d1d3c55c69041bdf0b19d48ad3de, type: 3}
   otherPrefabs:
   - {fileID: 1000012712350628, guid: 5372250d22a51bc40a200236eee58ac2, type: 3}
   - {fileID: 1674000059252808, guid: 3030287a209452f45ba8aca3380a5e2e, type: 3}

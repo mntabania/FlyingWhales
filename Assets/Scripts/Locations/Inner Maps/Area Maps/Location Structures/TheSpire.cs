@@ -61,21 +61,21 @@ namespace Inner_Maps.Location_Structures {
             }
         }
         private void TryLearnSpell() {
-            List<string> spellChoices =
+            List<SPELL_TYPE> spellChoices =
                 CollectionUtilities.GetRandomElements(PlayerManager.Instance.player.unlearnedSpells, 2);
             UIManager.Instance.ShowClickableObjectPicker(spellChoices, LearnNewSpell, null, null, 
                 "Choose a spell to learn", OnHoverSpell, OnHoverExitSpell, showCover: true);
         }
         private void LearnNewSpell(object obj) {
-            string spellName = obj as string;
-            PlayerManager.Instance.player.LearnSpell(spellName);
+            SPELL_TYPE spellType = (SPELL_TYPE) obj;
+            PlayerManager.Instance.player.LearnSpell(spellType);
             UIManager.Instance.HideObjectPicker();
             OnSpellLearned();
         }
-        private void OnHoverSpell(string spell) {
+        private void OnHoverSpell(SPELL_TYPE spell) {
             
         }
-        private void OnHoverExitSpell(string spell) {
+        private void OnHoverExitSpell(SPELL_TYPE spell) {
             
         }
         private void TryLearnAffliction() {

@@ -42,7 +42,7 @@ public class PoisonCloud : PlayerSpell {
 public class PoisonCloudData : SpellData {
     public override SPELL_TYPE ability => SPELL_TYPE.POISON_CLOUD;
     public override string name { get { return "Poison Cloud"; } }
-    public override string description { get { return "Spawn a poison cloud that randomly moves around."; } }
+    public override string description { get { return "This noxious cloud may apply poison to objects in its path. Explodes when it gets in contact with Fire, dealing Normal damage."; } }
     public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.DEVASTATION; } }
     public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
     public override int abilityRadius => 1;

@@ -15,7 +15,7 @@ public class WaterBomb : PlayerSpell {
 public class WaterBombData : SpellData {
     public override SPELL_TYPE ability => SPELL_TYPE.WATER_BOMB;
     public override string name => "Water Bomb";
-    public override string description => "Throw a water bomb.";
+    public override string description => "Applies Wet to a 2 tile radius around the designated spot.";
     public override SPELL_CATEGORY category => SPELL_CATEGORY.DEVASTATION;
     public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
     public override int abilityRadius => 2;

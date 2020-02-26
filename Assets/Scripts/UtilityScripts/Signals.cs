@@ -426,6 +426,9 @@ public static class Signals {
     public static string PLAYER_ACTION_UNTOGGLE = "OnPlayerActionUntoggle";
     public static string SUMMON_MINION = "OnSummonMinion";
     public static string UNSUMMON_MINION = "OnUnsummonMinion";
+    public static string PLAYER_NO_ACTIVE_SPELL = "OnPlayerNoActiveSpell";
+    public static string PLAYER_GAINED_SPELL = "OnPlayerGainedSpell";
+    public static string PLAYER_LOST_SPELL = "OnPlayerLostSpell";
     #endregion
 
     #region Interaction

@@ -1107,30 +1107,31 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         for (int i = 0; i < demonicLandmarkTypes.Count; i++) {
             demonicLandmarksThatCanBeBuilt.Add(UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(demonicLandmarkTypes[i].ToString()));
         }
-        UIManager.Instance.dualObjectPicker.ShowDualObjectPicker(PlayerManager.Instance.player.minions.Select(x => x.character).ToList(), demonicLandmarksThatCanBeBuilt,
-            "Choose a minion", "Choose a structure",
-            CanChooseMinion, CanChooseLandmark,
-            OnHoverEnterMinion, OnHoverLandmarkChoice,
-            OnHoverExitMinion, OnHoverExitLandmarkChoice,
-            StartBuild, "Build", column2Identifier: "Landmark");
+        //UIManager.Instance.dualObjectPicker.ShowDualObjectPicker(PlayerManager.Instance.player.minions.Select(x => x.character).ToList(), demonicLandmarksThatCanBeBuilt,
+        //    "Choose a minion", "Choose a structure",
+        //    CanChooseMinion, CanChooseLandmark,
+        //    OnHoverEnterMinion, OnHoverLandmarkChoice,
+        //    OnHoverExitMinion, OnHoverExitLandmarkChoice,
+        //    StartBuild, "Build", column2Identifier: "Landmark");
+        UIManager.Instance.ShowClickableObjectPicker(demonicLandmarksThatCanBeBuilt, StartBuildConfirmation, null, CanChooseLandmark, "Choose a structure to build", OnHoverLandmarkChoice, OnHoverExitLandmarkChoice, shouldConfirmOnPick: true, asButton: true);
     }
-    private bool CanChooseMinion(Character character) {
-        return !character.minion.isAssigned && character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.BUILDER);
-    }
-    private void OnHoverEnterMinion(Character character) {
-        if (!CanChooseMinion(character)) {
-            string message = string.Empty;
-            if (character.minion.isAssigned) {
-                message = $"{character.name} is already doing something else.";
-            } else if (!character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.BUILDER)) {
-                message = $"{character.name} does not have the required trait: Builder";
-            }
-            UIManager.Instance.ShowSmallInfo(message);
-        }
-    }
-    private void OnHoverExitMinion(Character character) {
-        UIManager.Instance.HideSmallInfo();
-    }
+    //private bool CanChooseMinion(Character character) {
+    //    return !character.minion.isAssigned && character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.BUILDER);
+    //}
+    //private void OnHoverEnterMinion(Character character) {
+    //    if (!CanChooseMinion(character)) {
+    //        string message = string.Empty;
+    //        if (character.minion.isAssigned) {
+    //            message = $"{character.name} is already doing something else.";
+    //        } else if (!character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.BUILDER)) {
+    //            message = $"{character.name} does not have the required trait: Builder";
+    //        }
+    //        UIManager.Instance.ShowSmallInfo(message);
+    //    }
+    //}
+    //private void OnHoverExitMinion(Character character) {
+    //    UIManager.Instance.HideSmallInfo();
+    //}
     private bool CanChooseLandmark(string landmarkName) {
         if (landmarkName == "The Pit") {
             return false;
@@ -1146,22 +1147,29 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     private void OnHoverLandmarkChoice(string landmarkName) {
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkName);
         string info = landmarkData.description;
-        if (info != string.Empty) {
-            info += "\n";
-        }
-        info += $"Duration: {GameManager.Instance.GetCeilingHoursBasedOnTicks(landmarkData.buildDuration).ToString()} hours";
+        //if (info != string.Empty) {
+        //    info += "\n";
+        //}
+        //info += $"Duration: {GameManager.Instance.GetCeilingHoursBasedOnTicks(landmarkData.buildDuration).ToString()} hours";
         UIManager.Instance.ShowSmallInfo(info);
     }
     private void OnHoverExitLandmarkChoice(string landmarkName) {
         UIManager.Instance.HideSmallInfo();
     }
-    private void StartBuild(object minionObj, object landmarkObj) {
-        LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkObj as string);
+
+    private void StartBuildConfirmation(object landmarkObj) {
+        string landmarkName = landmarkObj as string;
+        LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkName);
+        UIManager.Instance.ShowYesNoConfirmation("Build Structure Confirmation", "Are you sure you want to build " + landmarkName + "?", () => StartBuild(landmarkData));
+    }
+    private void StartBuild(LandmarkData landmarkData) {
+        //LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkObj as string);
         BaseLandmark newLandmark =
             LandmarkManager.Instance.CreateNewLandmarkOnTile(this, landmarkData.landmarkType, false);
         LandmarkManager.Instance.CreateStructureObjectForLandmark(newLandmark, settlementOnTile);
         PlayerManager.Instance.player.AdjustMana(-EditableValuesManager.Instance.buildStructureManaCost);
         newLandmark.OnFinishedBuilding();
+        UIManager.Instance.HideObjectPicker();
     }
     #endregion
 

@@ -7,6 +7,7 @@ using Inner_Maps.Location_Structures;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Traits;
+using Archetype;
 
 public class PlayerManager : MonoBehaviour {
     public static PlayerManager Instance;
@@ -376,6 +377,18 @@ public class PlayerManager : MonoBehaviour {
                 character.currentRegion.innerMap);
 
         }
+    }
+    #endregion
+
+    #region Archetypes
+    public static PlayerArchetype CreateNewArchetype(PLAYER_ARCHETYPE archetype) {
+        string typeName = $"Archetype.{ UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(archetype.ToString()) }";
+        System.Type type = System.Type.GetType(typeName);
+        if (type != null) {
+            PlayerArchetype obj = System.Activator.CreateInstance(type) as PlayerArchetype;
+            return obj;
+        }
+        throw new System.Exception($"Could not create new archetype {archetype} because there is no data for it!");
     }
     #endregion
 }

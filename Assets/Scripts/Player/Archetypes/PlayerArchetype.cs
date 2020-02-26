@@ -6,9 +6,10 @@ namespace Archetype {
     public class PlayerArchetype {
         public string name { get; protected set; }
         public PLAYER_ARCHETYPE type { get; protected set; }
+        public string selectorDescription { get; protected set; }
         public List<string> actions { get; protected set; }
         public List<string> minionClasses { get; protected set; }
-        public List<string> spells { get; protected set; }
+        public List<SPELL_TYPE> spells { get; protected set; }
         public List<SPELL_TYPE> afflictions { get; protected set; }
         public List<RaceClass> monsters { get; protected set; }
         public List<LANDMARK_TYPE> demonicStructures { get; protected set; }
@@ -33,8 +34,8 @@ namespace Archetype {
         public virtual bool CanBuildDemonicStructure(LANDMARK_TYPE type) {
             return demonicStructures.Contains(type);
         }
-        public virtual bool CanCastSpell(string spellName) {
-            return spells.Contains(spellName);
+        public virtual bool CanCastSpell(SPELL_TYPE type) {
+            return spells.Contains(type);
         }
         #endregion
 
@@ -92,15 +93,20 @@ namespace Archetype {
         #endregion
 
         #region Spells
-        public void AddSpell(string name) {
+        public void AddSpell(SPELL_TYPE type) {
             if (spells == null) { return; }
-            if (!spells.Contains(name)) {
-                spells.Add(name);
+            if (!spells.Contains(type)) {
+                spells.Add(type);
+                Messenger.Broadcast(Signals.PLAYER_GAINED_SPELL, type);
             }
         }
-        public bool RemoveSpell(string name) {
+        public bool RemoveSpell(SPELL_TYPE type) {
             if (spells == null) { return false; }
-            return spells.Remove(name);
+            if (spells.Remove(type)) {
+                Messenger.Broadcast(Signals.PLAYER_LOST_SPELL, type);
+                return true;
+            }
+            return false;
         }
         #endregion
 

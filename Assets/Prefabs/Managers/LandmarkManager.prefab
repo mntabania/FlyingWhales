@@ -52,9 +52,7 @@ MonoBehaviour:
   - landmarkTypeString: The Portal
     landmarkType: 1
     buildDuration: 0
-    description: The Ruinarch may summon new demonic minions from the Portal. Assigning
-      a Minion to assist on the summoning ritual will speed up the process by a small
-      amount.
+    description: 
     connectedTileDirection: 0
     uniqueTags: 
     landmarkObjectSprite: {fileID: 0}
@@ -275,9 +273,7 @@ MonoBehaviour:
   - landmarkTypeString: The Spire
     landmarkType: 48
     buildDuration: 48
-    description: Each minion has access to three different Spells. The Ruinarch may
-      use the Spire to extract a Spell from a minion. There is a small risk that
-      the minion may perish from the process.
+    description: Unlocks new Spells and Afflictions.
     connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
@@ -296,8 +292,7 @@ MonoBehaviour:
   - landmarkTypeString: The Crypt
     landmarkType: 49
     buildDuration: 48
-    description: 'Allows the Ruinarch to use the artifact in this region. Requires:
-      Artifact Feature.'
+    description: Activate artifacts to unlock new player abilities.
     connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
@@ -316,8 +311,7 @@ MonoBehaviour:
   - landmarkTypeString: The Kennel
     landmarkType: 50
     buildDuration: 48
-    description: 'Allows the Ruinarch to command monsters in the region. Requires:
-      Summon Feature.'
+    description: Breeds new monsters.
     connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
@@ -355,7 +349,7 @@ MonoBehaviour:
   - landmarkTypeString: Goader
     landmarkType: 52
     buildDuration: 48
-    description: The Ruinarch may interfere with factions at the Fingers.
+    description: Manipulate characters into joining or leaving factions.
     connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
@@ -374,9 +368,7 @@ MonoBehaviour:
   - landmarkTypeString: The Eye
     landmarkType: 53
     buildDuration: 48
-    description: Defenders may occasionally start their own Heroic Missions. The
-      Ruinarch may assign a minion to the Eye to scout and interfere on active Heroic
-      Missions.
+    description: Notifies of significant events and allows Intel to be stored.
     connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
@@ -587,7 +579,7 @@ MonoBehaviour:
   - landmarkTypeString: Torture Chamber
     landmarkType: 60
     buildDuration: 0
-    description: 
+    description: Inflict a random painful experience on a captured character.
     connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
