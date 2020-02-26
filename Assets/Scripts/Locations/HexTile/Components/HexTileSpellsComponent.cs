@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using DG.Tweening;
 using Inner_Maps;
-using Packages.Rider.Editor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Traits;
+
+#if UNITY_EDITOR
+using Packages.Rider.Editor;
+#endif
 
 public class HexTileSpellsComponent {
     public HexTile owner { get; private set; }
