@@ -183,8 +183,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             gridTileLocation.buildSpotOwner.hexTileOwner.OnPlacePOIInHex(this);
         }
         SubscribeListeners();
-        Assert.IsTrue(gridTileLocation.structure.pointsOfInterest.Contains(this), 
-            $"{this} was placed at {gridTileLocation.structure} but was not included in the list of POI's");
+        // Assert.IsTrue((this is MovingTileObject) == false && gridTileLocation.structure.pointsOfInterest.Contains(this), 
+        //     $"{this} was placed at {gridTileLocation.structure} but was not included in the list of POI's");
     }
     public virtual void RemoveTileObject(Character removedBy) {
         SetGridTileLocation(null);
@@ -447,8 +447,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         gridTileLocation = tile;
     }
     public void OnSeizePOI() {
-        if (UIManager.Instance.tileObjectInfoUI.isShowing && UIManager.Instance.tileObjectInfoUI.activeTileObject == this) {
-            UIManager.Instance.tileObjectInfoUI.CloseMenu();
+        if (UIManager.Instance.tileObjectInfoInfoUi.isShowing && UIManager.Instance.tileObjectInfoInfoUi.activeTileObject == this) {
+            UIManager.Instance.tileObjectInfoInfoUi.CloseMenu();
         }
         Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
         //Messenger.Broadcast(Signals.ON_SEIZE_TILE_OBJECT, this);
@@ -900,8 +900,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
 
     #region Selectable
     public bool IsCurrentlySelected() {
-        return UIManager.Instance.tileObjectInfoUI.isShowing &&
-               UIManager.Instance.tileObjectInfoUI.activeTileObject == this;
+        return UIManager.Instance.tileObjectInfoInfoUi.isShowing &&
+               UIManager.Instance.tileObjectInfoInfoUi.activeTileObject == this;
     }
     public void LeftSelectAction() {
         mapObjectVisual.ExecuteClickAction(PointerEventData.InputButton.Left);

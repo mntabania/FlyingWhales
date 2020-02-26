@@ -6,7 +6,7 @@ using Traits;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ProvokeMenu : MonoBehaviour {
+public class ProvokeMenu : PopupMenuBase {
 
     [Header("Main")]
     [SerializeField] private ScrollRect dialogScrollView;
@@ -20,7 +20,7 @@ public class ProvokeMenu : MonoBehaviour {
     private bool wasPausedOnOpen;
 
     public void Open(Character actor, Character targetCharacter) {
-        this.gameObject.SetActive(true);
+        base.Open();
 
         this.targetCharacter = targetCharacter;
         this.actor = actor;
@@ -138,10 +138,10 @@ public class ProvokeMenu : MonoBehaviour {
         // }
     }
 
-    public void Close() {
+    public override void Close() {
         //UIManager.Instance.SetCoverState(false);
         //UIManager.Instance.SetSpeedTogglesState(true);
-        this.gameObject.SetActive(false);
+        base.Close();
         UIManager.Instance.SetSpeedTogglesState(true);
         GameManager.Instance.SetPausedState(wasPausedOnOpen);
     }

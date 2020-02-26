@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using System;
+using Inner_Maps;
 using Traits;
 
 public static class Signals {
@@ -252,6 +253,14 @@ public static class Signals {
     public static string SHOW_TIMER_HUB_ITEM = "ShowTimerHubItem";
     public static string REGION_INFO_UI_UPDATE_APPROPRIATE_CONTENT = "OnAreaInfoUIUpdateAppropriateContent";
     public static string UPDATE_THOUGHT_BUBBLE = "OnUpdateThoughtBubble";
+    /// <summary>
+    /// Parameters: PopupMenuBase
+    /// </summary>
+    public static string POPUP_MENU_OPENED = "OnPopupMenuOpened";
+    /// <summary>
+    /// Parameters: PopupMenuBase
+    /// </summary>
+    public static string POPUP_MENU_CLOSED = "OnPopupMenuClosed";
     #endregion
 
     #region Quest Signals
@@ -532,12 +541,12 @@ public static class Signals {
     #endregion
 
     public static Dictionary<string, SignalMethod[]> orderedSignalExecution = new Dictionary<string, SignalMethod[]>() {
-        { HOUR_STARTED, new SignalMethod[] {
+        { HOUR_STARTED, new[] {
             new SignalMethod() { methodName = "HourlyJobActions", objectType = typeof(Settlement) },
             new SignalMethod() { methodName = "DecreaseNeeds", objectType = typeof(Character) },
             new SignalMethod() { methodName = "PerHour", objectType = typeof(Infected) },
         }},
-        { TICK_STARTED, new SignalMethod[] {
+        { TICK_STARTED, new[] {
             new SignalMethod() { methodName = "CheckSupply", objectType = typeof(WoodPile) },
             new SignalMethod() { methodName = "CheckFood", objectType = typeof(FoodPile) },
             new SignalMethod() { methodName = "PerTick", objectType = typeof(TimerHubUI) },
@@ -546,7 +555,7 @@ public static class Signals {
             new SignalMethod() { methodName = "PerTickGoapPlanGeneration", objectType = typeof(Character) },
             new SignalMethod() { methodName = "PerTickInterventionAbility", objectType = typeof(Player) },
         }},
-        { TICK_ENDED, new SignalMethod[] {
+        { TICK_ENDED, new[] {
             new SignalMethod() { methodName = "CheckSchedule", objectType = typeof(SchedulingManager) },
             new SignalMethod() { methodName = string.Empty, objectType = typeof(Trait) },
             new SignalMethod() { methodName = string.Empty, objectType = typeof(Artifact) },

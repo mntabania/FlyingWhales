@@ -31,8 +31,8 @@ public class Jolt : PlayerSpell {
                     Trait newTrait = new Jolted();
                     newTrait.OverrideDuration(GameManager.Instance.GetTicksBasedOnMinutes(_durationInMinutes));
                     currTarget.traitContainer.AddTrait(currTarget, newTrait);
-                    if (UIManager.Instance.characterInfoUI.isShowing) {
-                        UIManager.Instance.characterInfoUI.UpdateThoughtBubble();
+                    if (UIManager.Instance.characterInfoInfoUi.isShowing) {
+                        UIManager.Instance.characterInfoInfoUi.UpdateThoughtBubble();
                     }
                     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_intervention");
                     log.AddToFillers(currTarget, currTarget.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

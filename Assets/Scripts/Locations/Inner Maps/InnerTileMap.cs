@@ -676,22 +676,22 @@ namespace Inner_Maps {
 
         #region Monobehaviours
         public void Update() {
-            if (UIManager.Instance.characterInfoUI.isShowing 
-                && UIManager.Instance.characterInfoUI.activeCharacter.currentRegion == location.coreTile.region
-                && !UIManager.Instance.characterInfoUI.activeCharacter.isDead
+            if (UIManager.Instance.characterInfoInfoUi.isShowing 
+                && UIManager.Instance.characterInfoInfoUi.activeCharacter.currentRegion == location.coreTile.region
+                && !UIManager.Instance.characterInfoInfoUi.activeCharacter.isDead
                 //&& UIManager.Instance.characterInfoUI.activeCharacter.isWaitingForInteraction <= 0
-                && UIManager.Instance.characterInfoUI.activeCharacter.marker
-                && UIManager.Instance.characterInfoUI.activeCharacter.marker.pathfindingAI.hasPath
-                && (UIManager.Instance.characterInfoUI.activeCharacter.stateComponent.currentState == null 
-                    || (UIManager.Instance.characterInfoUI.activeCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.PATROL 
-                        && UIManager.Instance.characterInfoUI.activeCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.STROLL
-                        && UIManager.Instance.characterInfoUI.activeCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.STROLL_OUTSIDE
-                        && UIManager.Instance.characterInfoUI.activeCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.BERSERKED))) {
+                && UIManager.Instance.characterInfoInfoUi.activeCharacter.marker
+                && UIManager.Instance.characterInfoInfoUi.activeCharacter.marker.pathfindingAI.hasPath
+                && (UIManager.Instance.characterInfoInfoUi.activeCharacter.stateComponent.currentState == null 
+                    || (UIManager.Instance.characterInfoInfoUi.activeCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.PATROL 
+                        && UIManager.Instance.characterInfoInfoUi.activeCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.STROLL
+                        && UIManager.Instance.characterInfoInfoUi.activeCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.STROLL_OUTSIDE
+                        && UIManager.Instance.characterInfoInfoUi.activeCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.BERSERKED))) {
 
-                if (UIManager.Instance.characterInfoUI.activeCharacter.marker.pathfindingAI.currentPath != null
-                    && UIManager.Instance.characterInfoUI.activeCharacter.currentParty.icon.isTravelling) {
+                if (UIManager.Instance.characterInfoInfoUi.activeCharacter.marker.pathfindingAI.currentPath != null
+                    && UIManager.Instance.characterInfoInfoUi.activeCharacter.currentParty.icon.isTravelling) {
                     //ShowPath(UIManager.Instance.characterInfoUI.activeCharacter.marker.currentPath);
-                    ShowPath(UIManager.Instance.characterInfoUI.activeCharacter);
+                    ShowPath(UIManager.Instance.characterInfoInfoUi.activeCharacter);
                     //UIManager.Instance.characterInfoUI.activeCharacter.marker.HighlightHostilesInRange();
                 } else {
                     HidePath();

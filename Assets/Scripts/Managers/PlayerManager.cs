@@ -55,8 +55,8 @@ public class PlayerManager : MonoBehaviour {
             }
         }
         //Unit Selection
-        Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
-        Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
+        Messenger.AddListener<InfoUIBase>(Signals.MENU_OPENED, OnMenuOpened);
+        Messenger.AddListener<InfoUIBase>(Signals.MENU_CLOSED, OnMenuClosed);
         // Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressedDown);
         Messenger.AddListener<Vector3, int, InnerTileMap>(Signals.CREATE_CHAOS_ORBS, CreateChaosOrbsAt);
         Messenger.AddListener<Character, ActualGoapNode>(Signals.CHARACTER_DID_ACTION_SUCCESSFULLY, OnCharacterDidActionSuccess);
@@ -276,18 +276,18 @@ public class PlayerManager : MonoBehaviour {
             DeselectUnit(units[i]);
         }
     }
-    private void OnMenuOpened(UIMenu menu) {
-        if (menu is CharacterInfoUI) {
+    private void OnMenuOpened(InfoUIBase @base) {
+        if (@base is CharacterInfoInfoUi) {
             DeselectAllUnits();
-            CharacterInfoUI infoUI = menu as CharacterInfoUI;
-            SelectUnit(infoUI.activeCharacter);
+            CharacterInfoInfoUi infoInfoUi = @base as CharacterInfoInfoUi;
+            SelectUnit(infoInfoUi.activeCharacter);
             //if (infoUI.activeCharacter.CanBeInstructedByPlayer()) {
             //    SelectUnit(infoUI.activeCharacter);
             //}
         }
     }
-    private void OnMenuClosed(UIMenu menu) {
-        if (menu is CharacterInfoUI) {
+    private void OnMenuClosed(InfoUIBase @base) {
+        if (@base is CharacterInfoInfoUi) {
             DeselectAllUnits();
         }
     }

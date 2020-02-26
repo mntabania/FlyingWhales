@@ -5,11 +5,13 @@ using System.Linq;
 using System;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Ruinarch;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.Events;
 using UnityEngine.Profiling;
+using UnityEngine.Serialization;
 using UtilityScripts;
 
 public class UIManager : MonoBehaviour {
@@ -17,7 +19,7 @@ public class UIManager : MonoBehaviour {
     public static UIManager Instance = null;
 
     public RectTransform mainRT;
-    private UIMenu[] allMenus;
+    private InfoUIBase[] allMenus;
 
     [Space(10)]
     [Header("Date Objects")]
@@ -63,11 +65,7 @@ public class UIManager : MonoBehaviour {
     [Space(10)]
     [Header("Object Picker")]
     [SerializeField] private ObjectPicker objectPicker;
-
-    [Space(10)]
-    [Header("Options")]
-    [SerializeField] private GameObject optionsGO;
-
+    
     [Space(10)]
     [Header("Right Click Commands")]
     public POITestingUI poiTestingUI;
@@ -99,64 +97,48 @@ public class UIManager : MonoBehaviour {
     public CustomDropdownList customDropdownList;
 
     public bool isShowingAreaTooltip { get; private set; } //is the tooltip for settlement double clicks showing?
-    private UIMenu lastOpenedMenu = null;
-    private List<object> _uiMenuHistory;
-
+    private InfoUIBase _lastOpenedInfoUI;
+    public List<PopupMenuBase> openedPopups { get; private set; }
+    private PointerEventData _pointer;
+    private List<RaycastResult> _raycastResults;
+    
     public bool tempDisableShowInfoUI { get; private set; }
 
     #region Monobehaviours
     private void Awake() {
         Instance = this;
-        //_menuHistory = new List<UIMenuSettings>();
     }
     private void Start() {
-        _uiMenuHistory = new List<object>();
+        openedPopups = new List<PopupMenuBase>();
         Messenger.AddListener<bool>(Signals.PAUSED, UpdateSpeedToggles);
         Messenger.AddListener(Signals.UPDATE_UI, UpdateUI);
         Messenger.AddListener(Signals.INSPECT_ALL, UpdateInteractableInfoUI);
     }
     private void Update() {
         if (isHoveringTile) {
-            // if (currentTileHovered.landmarkOnTile != null) {
-                // currentTileHovered.ShowTileInfo();
-            // }
             currentTileHovered.region?.OnHoverOverAction();
         }
     }
     #endregion
-
-    public void ExitGame() {
-        Application.Quit();
-    }
+    
     internal void InitializeUI() {
-        allMenus = this.transform.GetComponentsInChildren<UIMenu>(true);
+        _pointer = new PointerEventData(EventSystem.current);
+        _raycastResults = new List<RaycastResult>();
+        allMenus = transform.GetComponentsInChildren<InfoUIBase>(true);
         for (int i = 0; i < allMenus.Length; i++) {
             allMenus[i].Initialize();
-            //allMenus[i].ApplyUnifiedSettings(settings);
         }
         questInfoUI.Initialize();
-        //Image[] images = this.gameObject.GetComponentsInChildren<Image>();
-        //for (int i = 0; i < images.Length; i++) {
-        //    images[i].alphaHitTestMinimumThreshold = 1f;
-        //}
-        //UnifySelectables();
-        //popupMessageBox.Initialize();
         Messenger.AddListener(Signals.HIDE_MENUS, HideMenus);
         Messenger.AddListener<string, int, UnityAction>(Signals.SHOW_DEVELOPER_NOTIFICATION, ShowDeveloperNotification);
         Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
 
         Messenger.AddListener<HexTile>(Signals.TILE_HOVERED_OVER, OnHoverOverTile);
         Messenger.AddListener<HexTile>(Signals.TILE_HOVERED_OUT, OnHoverOutTile);
-
-        //Messenger.AddListener<Combat>(Signals.COMBAT_DONE, OnCombatDone);
-        //Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
-        //Messenger.AddListener<IInteractable, Interaction>(Signals.ADDED_INTERACTION, OnInteractionAdded);
-
+        
         Messenger.AddListener(Signals.INTERACTION_MENU_OPENED, OnInteractionMenuOpened);
         Messenger.AddListener(Signals.INTERACTION_MENU_CLOSED, OnInteractionMenuClosed);
-        //Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnPartyStartedTravelling);
-        //Messenger.AddListener<Party>(Signals.PARTY_DONE_TRAVELLING, OnPartyDoneTravelling);
-        //Messenger.AddListener(Signals.CAMERA_OUT_OF_FOCUS, OnCameraOutOfFocus);
+
         Messenger.AddListener<ILocation>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
         Messenger.AddListener<ILocation>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
 
@@ -167,8 +149,11 @@ public class UIManager : MonoBehaviour {
         Messenger.AddListener(Signals.ON_CLOSE_SHARE_INTEL, OnCloseShareIntelMenu);
         Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
         
-        Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnUIMenuOpened);
-        Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnUIMenuClosed);
+        Messenger.AddListener<InfoUIBase>(Signals.MENU_OPENED, OnUIMenuOpened);
+        Messenger.AddListener<InfoUIBase>(Signals.MENU_CLOSED, OnUIMenuClosed);
+        
+        Messenger.AddListener<PopupMenuBase>(Signals.POPUP_MENU_OPENED, OnPopupMenuOpened);
+        Messenger.AddListener<PopupMenuBase>(Signals.POPUP_MENU_CLOSED, OnPopupMenuClosed);
 
         UpdateUI();
     }
@@ -176,78 +161,43 @@ public class UIManager : MonoBehaviour {
         UpdateUI();
     }
     private void HideMenus() {
-        poiTestingUI.HideUI();
-        minionCommandsUI.HideUI();
-        customDropdownList.HideDropdown();
-        if (characterInfoUI.isShowing) {
-            characterInfoUI.CloseMenu();
-        }
-        if (factionInfoUI.isShowing) {
-            factionInfoUI.CloseMenu();
-        }
-        if (regionInfoUI.isShowing) {
-            regionInfoUI.CloseMenu();
-        }
-        if (tileObjectInfoUI.isShowing) {
-            tileObjectInfoUI.CloseMenu();
-        }
-        // if (itemInfoUI.isShowing) {
-        //     itemInfoUI.CloseMenu();
+        // poiTestingUI.HideUI();
+        // minionCommandsUI.HideUI();
+        // customDropdownList.Close();
+        // if (characterInfoUI.isShowing) {
+        //     characterInfoUI.CloseMenu();
         // }
-        if (objectPicker.gameObject.activeSelf) {
-            HideObjectPicker();
-        }
-        if (PlayerUI.Instance.isShowingKillSummary) {
-            PlayerUI.Instance.HideKillSummary();
-        }
-        if (PlayerUI.Instance.isShowingMinionList) {
-            PlayerUI.Instance.HideMinionList();
-        }
-        if (hexTileInfoUI.isShowing) {
-            hexTileInfoUI.CloseMenu();
-        }
-        if (structureInfoUI.isShowing) {
-            structureInfoUI.CloseMenu();
-        }
-        ClearUIMenuHistory();
-    }
-    public void AddToUIMenuHistory(object data) {
-        if(_uiMenuHistory.Count > 0 && _uiMenuHistory[_uiMenuHistory.Count - 1] == data) {
-            //This will prevent from having same consecutive objects to go back
-            return;
-        }
-        _uiMenuHistory.Add(data);
-    }
-    public void ClearUIMenuHistory() {
-        _uiMenuHistory.Clear();
-    }
-    public object GetLastUIMenuHistory() {
-        int index = _uiMenuHistory.Count - 2;
-        if(index < 0) {
-            return null;
-        } else {
-            return _uiMenuHistory[index];
-        }
-    }
-    public void RemoveLastUIMenuHistory() {
-        for (int i = 0; i < 2; i++) {
-            if (_uiMenuHistory.Count > 0) {
-                _uiMenuHistory.RemoveAt(_uiMenuHistory.Count - 1);
-            }
-        }
+        // if (factionInfoUI.isShowing) {
+        //     factionInfoUI.CloseMenu();
+        // }
+        // if (regionInfoUI.isShowing) {
+        //     regionInfoUI.CloseMenu();
+        // }
+        // if (tileObjectInfoUI.isShowing) {
+        //     tileObjectInfoUI.CloseMenu();
+        // }
+        // if (objectPicker.gameObject.activeSelf) {
+        //     HideObjectPicker();
+        // }
+        // if (PlayerUI.Instance.isShowingKillSummary) {
+        //     PlayerUI.Instance.HideKillSummary();
+        // }
+        // if (PlayerUI.Instance.isShowingMinionList) {
+        //     PlayerUI.Instance.HideMinionList();
+        // }
+        // if (hexTileInfoUI.isShowing) {
+        //     hexTileInfoUI.CloseMenu();
+        // }
+        // if (structureInfoUI.isShowing) {
+        //     structureInfoUI.CloseMenu();
+        // }
     }
     private void UpdateUI() {
-        //dateLbl.SetText(GameManager.Instance.continuousDays + "/" + GameManager.ConvertTickToTime(GameManager.Instance.tick));
         dateLbl.SetText(
-            $"Day {GameManager.Instance.continuousDays}\n{GameManager.ConvertTickToTime(GameManager.Instance.tick)}");
-        //timeLbl.SetText(GameManager.GetTimeInWordsOfTick(GameManager.Instance.tick).ToString());
-        //timeLbl.SetText("");
+            $"Day {GameManager.Instance.continuousDays.ToString()}\n{GameManager.ConvertTickToTime(GameManager.Instance.tick)}");
 
         UpdateInteractableInfoUI();
         UpdateFactionInfo();
-        //UpdateHexTileInfo();
-        //UpdateCombatLogs();
-        //UpdateQuestSummary();
         PlayerUI.Instance.UpdateUI();
     }
     private void UpdateInteractableInfoUI() {
@@ -255,7 +205,6 @@ public class UIManager : MonoBehaviour {
         UpdateTileObjectInfo();
         UpdateRegionInfo();
         UpdateQuestInfo();
-        // UpdateItemInfo();
         UpdateHextileInfo();
         UpdateStructureInfo();
     }
@@ -342,13 +291,13 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     #region Options
+    [Header("Options")]
+    [SerializeField] private OptionsMenu _optionsMenu;
     public void ToggleOptionsMenu() {
-        optionsGO.SetActive(!optionsGO.activeSelf);
-        if (optionsGO.activeSelf) {
-            Pause();
-            SetSpeedTogglesState(false);
+        if (_optionsMenu.isShowing) {
+            _optionsMenu.Close();
         } else {
-            ResumeLastProgressionSpeed();
+            _optionsMenu.Open();
         }
     }
     #endregion
@@ -366,7 +315,7 @@ public class UIManager : MonoBehaviour {
         if (!string.IsNullOrEmpty(header)) {
             message = $"<font=\"Eczar-Medium\"><line-height=100%><size=18>{header}</font>\n";
         }
-        message += $"<line-height=70%><size=16>{info}";
+        message = $"{message}<line-height=70%><size=16>{info}";
 
         message = message.Replace("\\n", "\n");
 
@@ -374,7 +323,6 @@ public class UIManager : MonoBehaviour {
         if (!IsSmallInfoShowing()) {
             smallInfoGO.transform.SetParent(this.transform);
             smallInfoGO.SetActive(true);
-            //smallInfoEnvelopContent.Execute();
         }
         PositionTooltip(smallInfoGO, smallInfoRT, smallInfoBGRT);
         Profiler.EndSample();
@@ -384,7 +332,7 @@ public class UIManager : MonoBehaviour {
         if (!string.IsNullOrEmpty(header)) {
             message = $"<font=\"Eczar-Medium\"><line-height=100%><size=18>{header}</font>\n";
         }
-        message += $"<line-height=70%><size=16>{info}";
+        message = $"{message}<line-height=70%><size=16>{info}";
 
         message = message.Replace("\\n", "\n");
 
@@ -393,10 +341,6 @@ public class UIManager : MonoBehaviour {
             smallInfoGO.SetActive(true);
         }
         PositionTooltip(pos, smallInfoGO, smallInfoRT);
-        System.Diagnostics.StackTrace stackTrace = new System.Diagnostics.StackTrace();
-        // get calling method name
-        //Debug.Log(smallInfoShownFrom);
-        //Debug.Log("Show small info " + info);
     }
     public void HideSmallInfo() {
         if (IsSmallInfoShowing()) {
@@ -425,7 +369,9 @@ public class UIManager : MonoBehaviour {
         rtToReposition.pivot = new Vector2(0f, 1f);
         smallInfoBGParentLG.childAlignment = TextAnchor.UpperLeft;
 
-        if (CursorManager.Instance.currentCursorType == CursorManager.Cursor_Type.Cross || CursorManager.Instance.currentCursorType == CursorManager.Cursor_Type.Check || CursorManager.Instance.currentCursorType == CursorManager.Cursor_Type.Link) {
+        if (InputManager.Instance.currentCursorType == InputManager.Cursor_Type.Cross 
+            || InputManager.Instance.currentCursorType == InputManager.Cursor_Type.Check 
+            || InputManager.Instance.currentCursorType == InputManager.Cursor_Type.Link) {
             v3.x += 100f;
             v3.y -= 32f;
         } else {
@@ -439,7 +385,6 @@ public class UIManager : MonoBehaviour {
         List<int> cornersOutside = new List<int>();
         boundsRT.GetWorldCorners(corners);
         for (int i = 0; i < 4; i++) {
-            // Backtransform to parent space
             Vector3 localSpacePoint = mainRT.InverseTransformPoint(corners[i]);
             // If parent (canvas) does not contain checked items any point
             if (!mainRT.rect.Contains(localSpacePoint)) {
@@ -448,11 +393,6 @@ public class UIManager : MonoBehaviour {
         }
 
         if (cornersOutside.Count != 0) {
-            string log = "Corners outside are: ";
-            for (int i = 0; i < cornersOutside.Count; i++) {
-                log += $"{cornersOutside[i]}, ";
-            }
-            //Debug.Log(log);
             if (cornersOutside.Contains(2) && cornersOutside.Contains(3)) {
                 if (cornersOutside.Contains(0)) {
                     //bottom side and right side are outside, move anchor to bottom right
@@ -533,38 +473,24 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     #region UI Utilities
-    private void OnUIMenuOpened(UIMenu menu) {
-        // if (menu is RegionInfoUI || menu is TileObjectInfoUI || menu is CharacterInfoUI || menu is ItemInfoUI ||
-        //     menu is FactionInfoUI) {
-        //     MoveNotificationMenuToModifiedPos();
-        // }
+    private void OnUIMenuOpened(InfoUIBase menu) { }
+    private void OnUIMenuClosed(InfoUIBase menu) { }
+    private void OnPopupMenuOpened(PopupMenuBase menu) {
+        openedPopups.Add(menu);
     }
-    private void OnUIMenuClosed(UIMenu menu) {
-        // if (menu is RegionInfoUI || menu is TileObjectInfoUI || menu is CharacterInfoUI || menu is ItemInfoUI ||
-        //     menu is FactionInfoUI) {
-        //     MoveNotificationMenuToDefaultPos();
-        // }
+    private void OnPopupMenuClosed(PopupMenuBase menu) {
+        openedPopups.Remove(menu);
     }
-    /*
-	 * Checker for if the mouse is currently
-	 * over a UI Object
-	 * */
+    /// <summary>
+    /// Checker for if the mouse is currently over a UI Object. 
+    /// </summary>
+    /// <returns>True or false.</returns>>
     public bool IsMouseOnUI() {
-        PointerEventData pointer = new PointerEventData(EventSystem.current);
-        pointer.position = Input.mousePosition;
-        List<RaycastResult> raycastResults = new List<RaycastResult>();
-        EventSystem.current.RaycastAll(pointer, raycastResults);
+        _pointer.position = Input.mousePosition;
+        _raycastResults.Clear();
+        EventSystem.current.RaycastAll(_pointer, _raycastResults);
 
-        if (raycastResults.Count > 0) {
-            foreach (var go in raycastResults) {
-                if (go.gameObject.layer == LayerMask.NameToLayer("UI") || go.gameObject.layer == LayerMask.NameToLayer("WorldUI")) {
-                    //Debug.Log(go.gameObject.name, go.gameObject);
-                    return true;
-                }
-
-            }
-        }
-        return false;
+        return _raycastResults.Count > 0 && _raycastResults.Any(go => go.gameObject.layer == LayerMask.NameToLayer("UI") || go.gameObject.layer == LayerMask.NameToLayer("WorldUI"));
     }
     public bool IsMouseOnMapObject() {
         PointerEventData pointer = new PointerEventData(EventSystem.current);
@@ -606,18 +532,18 @@ public class UIManager : MonoBehaviour {
         cover.GetComponent<Image>().raycastTarget = blockClicks;
     }
     private void OnInteractionMenuOpened() {
-       if (characterInfoUI.isShowing) {
-            lastOpenedMenu = characterInfoUI;
+       if (characterInfoInfoUi.isShowing) {
+            _lastOpenedInfoUI = characterInfoInfoUi;
        }
-       if (characterInfoUI.isShowing) {
-            characterInfoUI.gameObject.SetActive(false);
+       if (characterInfoInfoUi.isShowing) {
+            characterInfoInfoUi.gameObject.SetActive(false);
        }
     }
     private void OnInteractionMenuClosed() {
         //reopen last opened menu
-        if (lastOpenedMenu != null) {
-            lastOpenedMenu.OpenMenu();
-            lastOpenedMenu = null;
+        if (_lastOpenedInfoUI != null) {
+            _lastOpenedInfoUI.OpenMenu();
+            _lastOpenedInfoUI = null;
         }
     }
     public void SetTempDisableShowInfoUI(bool state) {
@@ -665,7 +591,7 @@ public class UIManager : MonoBehaviour {
     //    objectPicker.ShowDraggable(choices, comparer, validityChecker, title);
     //}
     public void HideObjectPicker() {
-        objectPicker.Hide();
+        objectPicker.Close();
         //Unpause();
         //SetSpeedTogglesState(true);
     }
@@ -704,43 +630,45 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     #region Faction Info
+    [FormerlySerializedAs("factionInfoUI")]
     [Space(10)]
     [Header("Faction Info")]
     [SerializeField]
-    internal FactionInfoUI factionInfoUI;
+    internal FactionInfoInfoUi factionInfoInfoUi;
     public void ShowFactionInfo(Faction faction) {
         if (tempDisableShowInfoUI) {
             SetTempDisableShowInfoUI(false);
             return;
         }
-        factionInfoUI.SetData(faction);
-        factionInfoUI.OpenMenu();
+        factionInfoInfoUi.SetData(faction);
+        factionInfoInfoUi.OpenMenu();
     }
     public void UpdateFactionInfo() {
-        if (factionInfoUI.isShowing) {
-            factionInfoUI.UpdateFactionInfo();
+        if (factionInfoInfoUi.isShowing) {
+            factionInfoInfoUi.UpdateFactionInfo();
         }
     }
     #endregion
 
     #region Character Info
+    [FormerlySerializedAs("characterInfoUI")]
     [Space(10)]
     [Header("Character Info")]
-    [SerializeField] internal CharacterInfoUI characterInfoUI;
+    [SerializeField] internal CharacterInfoInfoUi characterInfoInfoUi;
     public void ShowCharacterInfo(Character character, bool centerOnCharacter = false) {
         if (tempDisableShowInfoUI) {
             SetTempDisableShowInfoUI(false);
             return;
         }
-        characterInfoUI.SetData(character);
-        characterInfoUI.OpenMenu();
+        characterInfoInfoUi.SetData(character);
+        characterInfoInfoUi.OpenMenu();
         if (centerOnCharacter) {
             character.CenterOnCharacter();
         }
     }
     public void UpdateCharacterInfo() {
-        if (characterInfoUI.isShowing) {
-            characterInfoUI.UpdateCharacterInfo();
+        if (characterInfoInfoUi.isShowing) {
+            characterInfoInfoUi.UpdateCharacterInfo();
         }
     }
     //private void OnPartyStartedTravelling(Party party) {
@@ -754,19 +682,20 @@ public class UIManager : MonoBehaviour {
     //    }
     //}
     public void OnCameraOutOfFocus() {
-        if (characterInfoUI.isShowing) {
-            characterInfoUI.OnClickCloseMenu();
+        if (characterInfoInfoUi.isShowing) {
+            characterInfoInfoUi.OnClickCloseMenu();
         }
     }
     #endregion
 
     #region Region Info
+    [FormerlySerializedAs("regionInfoUI")]
     [Space(10)]
     [Header("Region Info")]
-    public RegionInfoUI regionInfoUI;
+    public RegionInfoInfoUi regionInfoInfoUi;
     public void ShowRegionInfo(Region region, bool centerOnRegion = true) {
-        regionInfoUI.SetData(region);
-        regionInfoUI.OpenMenu();
+        regionInfoInfoUi.SetData(region);
+        regionInfoInfoUi.OpenMenu();
 
         if (centerOnRegion) {
             region.CenterCameraOnRegion();
@@ -774,28 +703,29 @@ public class UIManager : MonoBehaviour {
         }
     }
     public void UpdateRegionInfo() {
-        if (regionInfoUI.isShowing) {
-            regionInfoUI.UpdateInfo();
+        if (regionInfoInfoUi.isShowing) {
+            regionInfoInfoUi.UpdateInfo();
         }
     }
     #endregion
 
     #region Tile Object Info
+    [FormerlySerializedAs("tileObjectInfoUI")]
     [Space(10)]
     [Header("Tile Object Info")]
     [SerializeField]
-    internal TileObjectInfoUI tileObjectInfoUI;
+    internal TileObjectInfoInfoUi tileObjectInfoInfoUi;
     public void ShowTileObjectInfo(TileObject tileObject) {
         if (tempDisableShowInfoUI) {
             SetTempDisableShowInfoUI(false);
             return;
         }
-        tileObjectInfoUI.SetData(tileObject);
-        tileObjectInfoUI.OpenMenu();
+        tileObjectInfoInfoUi.SetData(tileObject);
+        tileObjectInfoInfoUi.OpenMenu();
     }
     public void UpdateTileObjectInfo() {
-        if (tileObjectInfoUI.isShowing) {
-            tileObjectInfoUI.UpdateTileObjectInfo();
+        if (tileObjectInfoInfoUi.isShowing) {
+            tileObjectInfoInfoUi.UpdateTileObjectInfo();
         }
     }
     #endregion
@@ -835,39 +765,41 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     #region Tile Info
+    [FormerlySerializedAs("hexTileInfoUI")]
     [Space(10)]
     [Header("Tile Info")]
-    [SerializeField] public HextileInfoUI hexTileInfoUI;
+    [SerializeField] public HextileInfoInfoUi hexTileInfoInfoUi;
     public void ShowHexTileInfo(HexTile item) {
         if (tempDisableShowInfoUI) {
             SetTempDisableShowInfoUI(false);
             return;
         }
-        hexTileInfoUI.SetData(item);
-        hexTileInfoUI.OpenMenu();
+        hexTileInfoInfoUi.SetData(item);
+        hexTileInfoInfoUi.OpenMenu();
     }
     public void UpdateHextileInfo() {
-        if (hexTileInfoUI.isShowing) {
-            hexTileInfoUI.UpdateHexTileInfo();
+        if (hexTileInfoInfoUi.isShowing) {
+            hexTileInfoInfoUi.UpdateHexTileInfo();
         }
     }
     #endregion
     
     #region Structure Info
+    [FormerlySerializedAs("structureInfoUI")]
     [Space(10)]
     [Header("Structure Info")]
-    [SerializeField] public StructureInfoUI structureInfoUI;
+    [SerializeField] public StructureInfoInfoUi structureInfoInfoUi;
     public void ShowStructureInfo(LocationStructure structure) {
         if (tempDisableShowInfoUI) {
             SetTempDisableShowInfoUI(false);
             return;
         }
-        structureInfoUI.SetData(structure);
-        structureInfoUI.OpenMenu();
+        structureInfoInfoUi.SetData(structure);
+        structureInfoInfoUi.OpenMenu();
     }
     public void UpdateStructureInfo() {
-        if (structureInfoUI.isShowing) {
-            structureInfoUI.UpdateInfo();
+        if (structureInfoInfoUi.isShowing) {
+            structureInfoInfoUi.UpdateInfo();
         }
     }
     #endregion
@@ -875,7 +807,7 @@ public class UIManager : MonoBehaviour {
     #region Console
     [Space(10)]
     [Header("Console")]
-    [SerializeField] internal ConsoleMenu consoleUI;
+    [SerializeField] internal ConsoleBase consoleUI;
     public bool IsConsoleShowing() {
         //return false;
         return consoleUI.isShowing;
@@ -937,7 +869,7 @@ public class UIManager : MonoBehaviour {
     //private void OnCombatDone(Combat combat) {
     //    ShowDeveloperNotification($"Combat at <b>{combat.location.name}</b>!", 5, () => ShowCombatLog(combat));
     //}
-    //#endregion
+    //#endregion1
 
     #region Inner Map
     [Header("Inner Maps")]
@@ -955,11 +887,11 @@ public class UIManager : MonoBehaviour {
             InnerMapManager.Instance.HideAreaMap();
             OnCameraOutOfFocus();
         } else {
-            if(regionInfoUI.activeRegion != null) {
-                InnerMapManager.Instance.TryShowLocationMap(regionInfoUI.activeRegion);
-            } else if(hexTileInfoUI.currentlyShowingHexTile != null) {
-                InnerMapManager.Instance.TryShowLocationMap(hexTileInfoUI.currentlyShowingHexTile.region);
-                InnerMapCameraMove.Instance.CenterCameraOnTile(hexTileInfoUI.currentlyShowingHexTile);
+            if(regionInfoInfoUi.activeRegion != null) {
+                InnerMapManager.Instance.TryShowLocationMap(regionInfoInfoUi.activeRegion);
+            } else if(hexTileInfoInfoUi.currentlyShowingHexTile != null) {
+                InnerMapManager.Instance.TryShowLocationMap(hexTileInfoInfoUi.currentlyShowingHexTile.region);
+                InnerMapCameraMove.Instance.CenterCameraOnTile(hexTileInfoInfoUi.currentlyShowingHexTile);
             }
         }
     }
@@ -967,10 +899,10 @@ public class UIManager : MonoBehaviour {
         if (InnerMapManager.Instance.isAnInnerMapShowing) {
             ShowSmallInfo($"Click to exit {InnerMapManager.Instance.currentlyShowingLocation.name}.", returnToWorldBtnTooltipPos);
         } else {
-            if (regionInfoUI.activeRegion != null) {
-                ShowSmallInfo($"Click to enter {regionInfoUI.activeRegion.name}.", returnToWorldBtnTooltipPos);
-            } else if(hexTileInfoUI.currentlyShowingHexTile != null) {
-                ShowSmallInfo($"Click to enter {hexTileInfoUI.currentlyShowingHexTile.region.name}.", returnToWorldBtnTooltipPos);
+            if (regionInfoInfoUi.activeRegion != null) {
+                ShowSmallInfo($"Click to enter {regionInfoInfoUi.activeRegion.name}.", returnToWorldBtnTooltipPos);
+            } else if(hexTileInfoInfoUi.currentlyShowingHexTile != null) {
+                ShowSmallInfo($"Click to enter {hexTileInfoInfoUi.currentlyShowingHexTile.region.name}.", returnToWorldBtnTooltipPos);
             }
         }
     }
@@ -1111,19 +1043,6 @@ public class UIManager : MonoBehaviour {
     }
     private void MoveNotificationMenuToModifiedPos() {
         playerNotificationParent.anchoredPosition = new Vector2(930f, 170f);
-    }
-    #endregion
-
-    #region Audio
-    public void ToggleMute(bool state) {
-        AudioManager.Instance.SetMute(state);
-    }
-    #endregion
-
-    #region Controls
-    public void ToggleEdgePanning(bool state) {
-        CameraMove.Instance.AllowEdgePanning(state);
-        InnerMapCameraMove.Instance.AllowEdgePanning(state);
     }
     #endregion
 

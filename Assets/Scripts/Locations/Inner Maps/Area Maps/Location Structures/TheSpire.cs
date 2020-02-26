@@ -38,7 +38,8 @@ namespace Inner_Maps.Location_Structures {
             RemovePlayerAction(GetPlayerAction(PlayerDB.Learn_Spell_Action));
         }
         private bool CanLearnSpell() {
-            return _isLearnSpellInCooldown == false && PlayerManager.Instance.player.mana >= 100;
+            return _isLearnSpellInCooldown == false && PlayerManager.Instance.player.mana >= 100 &&
+                   PlayerManager.Instance.player.unlearnedSpells.Count > 0 && PlayerManager.Instance.player.unlearnedAfflictions.Count > 0;
         }
         private void TryLearnASpellOrAffliction() {
             bool canLearnSpells = PlayerManager.Instance.player.unlearnedSpells.Count > 0;

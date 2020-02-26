@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
+using Ruinarch;
 using Traits;
 using UnityEngine;
 
@@ -151,7 +152,7 @@ public class PlayerSpell {
     protected virtual void OnLevelUp() { }
     public virtual void SecondPhase() { }
     /// <summary>
-    /// If the ability has a range, override this to show that range. <see cref="CursorManager.Update"/>
+    /// If the ability has a range, override this to show that range. <see cref="InputManager.Update"/>
     /// </summary>
     public virtual void ShowRange(LocationGridTile tile) { }
     public virtual void HideRange(LocationGridTile tile) { }
@@ -226,7 +227,7 @@ public class SpellData {
     // public virtual bool CanPerformAbilityTowards(SpecialToken item) { return true; }
 
     /// <summary>
-    /// If the ability has a range, override this to show that range. <see cref="CursorManager.Update"/>
+    /// If the ability has a range, override this to show that range. <see cref="InputManager.Update"/>
     /// </summary>
     public virtual void ShowRange(LocationGridTile tile) {
         if(abilityRadius > 0) {

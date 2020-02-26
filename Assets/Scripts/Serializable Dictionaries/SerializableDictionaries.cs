@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
+using Ruinarch;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -37,7 +38,7 @@ public class TileObjectBiomeAssetDictionary : SerializableDictionary<BIOMES, Bio
 [System.Serializable]
 public class TileObjectSlotDictionary : SerializableDictionary<Sprite, List<TileObjectSlotSetting>, TileObjectSlotListStorage> { }
 [System.Serializable]
-public class CursorTextureDictionary : SerializableDictionary<CursorManager.Cursor_Type, Texture2D> { }
+public class CursorTextureDictionary : SerializableDictionary<Ruinarch.InputManager.Cursor_Type, Texture2D> { }
 [System.Serializable]
 public class AreaTypeSpriteDictionary : SerializableDictionary<LOCATION_TYPE, Sprite> { }
 [System.Serializable]

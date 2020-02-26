@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Ruinarch;
 using UnityEngine.EventSystems;
 using TMPro;
 using UnityEngine.Events;
@@ -231,13 +232,13 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
         string oldText = $"<link={'"'}{linkInfo.GetLinkID()}{'"'}>{linkInfo.GetLinkText()}</link>";
         string newText = $"<u>{oldText}</u>";
         text.text = text.text.Replace(oldText, newText);
-        CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Link);
+        InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Link);
     }
     private void UnhighlightLink(TMP_LinkInfo linkInfo) {
         string oldText = $"<link={'"'}{linkInfo.GetLinkID()}{'"'}>{linkInfo.GetLinkText()}</link>";
         string newText = $"<u>{oldText}</u>";
         text.text = text.text.Replace(newText, oldText);
-        CursorManager.Instance.RevertToPreviousCursor();
+        InputManager.Instance.RevertToPreviousCursor();
     }
     public void HoverOutAction() {
         //if (hoverOutAction == null) {

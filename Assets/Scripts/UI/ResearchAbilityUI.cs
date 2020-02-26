@@ -4,7 +4,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
-public class ResearchAbilityUI : MonoBehaviour {
+public class ResearchAbilityUI : PopupMenuBase {
     [Header("General")]
     public Button okBtn;
     public ToggleGroup toggleGroup;
@@ -43,7 +43,7 @@ public class ResearchAbilityUI : MonoBehaviour {
         ability3Toggle.isOn = false;
         okBtn.interactable = false;
 
-        gameObject.SetActive(true);
+        base.Open();
     }
     public void SetAbility1(SPELL_TYPE ability) {
         //ability1 = ability;
@@ -88,8 +88,8 @@ public class ResearchAbilityUI : MonoBehaviour {
         //chosenAbility = ability3;
         okBtn.interactable = true;
     }
-    public void OnClickOk() {
-        gameObject.SetActive(false);
+    public override void Close() {
+        base.Close();
         if (!PlayerUI.Instance.TryShowPendingUI()) {
             //if (PlayerManager.Instance.player.isNotFirstResearch) {
             UIManager.Instance.ResumeLastProgressionSpeed(); //if no other UI was shown, unpause game

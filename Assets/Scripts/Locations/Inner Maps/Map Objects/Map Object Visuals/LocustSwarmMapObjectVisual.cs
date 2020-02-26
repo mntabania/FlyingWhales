@@ -85,13 +85,15 @@ public class LocustSwarmMapObjectVisual : MovingMapObjectVisual<TileObject> {
     #region Triggers
     public void OnTriggerEnter2D(Collider2D collision) {
         IBaseCollider collidedWith = collision.gameObject.GetComponent<IBaseCollider>();
-        if (collidedWith != null && collidedWith.damageable is ITraitable traitable) { 
+        if (collidedWith != null && collidedWith.damageable is ITraitable traitable 
+            && CanBeAffectedByLocustSwarm(traitable)) { 
             AddObject(traitable);   
         }
     }
     public void OnTriggerExit2D(Collider2D collision) {
         IBaseCollider collidedWith = collision.gameObject.GetComponent<IBaseCollider>();
-        if (collidedWith != null && collidedWith.damageable is ITraitable traitable) { 
+        if (collidedWith != null && collidedWith.damageable is ITraitable traitable
+            && CanBeAffectedByLocustSwarm(traitable)) { 
             RemoveObject(traitable);   
         }
     }
@@ -111,7 +113,8 @@ public class LocustSwarmMapObjectVisual : MovingMapObjectVisual<TileObject> {
 
     #region Effects
     private void OnTraitableGainedTrait(ITraitable traitable, Trait trait) {
-        if (_objsInRange.Contains(traitable) && (trait is Burning || trait.name == "Consumable")) {
+        if (CanBeAffectedByLocustSwarm(traitable) && _objsInRange.Contains(traitable) && 
+            (trait is Burning || trait.name == "Edible")) {
             CheckObjectForEffects(traitable);
         }
     }
@@ -132,13 +135,19 @@ public class LocustSwarmMapObjectVisual : MovingMapObjectVisual<TileObject> {
         }
     }
     private void CheckObjectForEffects(ITraitable obj) {
-        if (obj.traitContainer.GetNormalTrait<Trait>("Consumable") != null) {
+        if (obj.traitContainer.GetNormalTrait<Trait>("Edible") != null) {
             obj.AdjustHP(-obj.currentHP, ELEMENTAL_TYPE.Normal, true, _locustSwarm);
         }
         if (obj.traitContainer.GetNormalTrait<Trait>("Burning") != null) {
             _locustSwarm.AdjustHP(-Mathf.FloorToInt(_locustSwarm.maxHP * 0.2f), ELEMENTAL_TYPE.Fire, true, obj);
             obj.traitContainer.RemoveTrait(obj, "Burning");
         }
+    }
+    private bool CanBeAffectedByLocustSwarm(ITraitable traitable) {
+        if (traitable is Character) {
+            return false;
+        }
+        return true;
     }
     #endregion
     

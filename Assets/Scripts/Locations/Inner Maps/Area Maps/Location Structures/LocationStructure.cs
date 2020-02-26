@@ -671,8 +671,8 @@ namespace Inner_Maps.Location_Structures {
         
         #region Selectable
         public bool IsCurrentlySelected() {
-            return UIManager.Instance.structureInfoUI.isShowing 
-                   && UIManager.Instance.structureInfoUI.activeStructure == this;
+            return UIManager.Instance.structureInfoInfoUi.isShowing 
+                   && UIManager.Instance.structureInfoInfoUi.activeStructure == this;
         }
         public void LeftSelectAction() {
             UIManager.Instance.ShowStructureInfo(this);

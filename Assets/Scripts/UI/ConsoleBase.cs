@@ -12,7 +12,7 @@ using Inner_Maps.Location_Structures;
 using UnityEngine.Events;
 using UtilityScripts;
 
-public class ConsoleMenu : UIMenu {
+public class ConsoleBase : InfoUIBase {
 
     private Dictionary<string, Action<string[]>> _consoleActions;
 
@@ -128,13 +128,13 @@ public class ConsoleMenu : UIMenu {
     private void FullDebugInfo() {
         fullDebugLbl.text = string.Empty;
         fullDebug2Lbl.text = string.Empty;
-        if (UIManager.Instance != null && UIManager.Instance.characterInfoUI.isShowing) {
+        if (UIManager.Instance != null && UIManager.Instance.characterInfoInfoUi.isShowing) {
             fullDebugLbl.text += GetMainCharacterInfo();
             fullDebug2Lbl.text += GetSecondaryCharacterInfo();
         }
     }
     private string GetMainCharacterInfo() {
-        Character character = UIManager.Instance.characterInfoUI.activeCharacter;
+        Character character = UIManager.Instance.characterInfoInfoUi.activeCharacter;
         string text = $"{character.name}'s info:";
         text += $"\n<b>Gender:</b> {character.gender}";
         text += $"\n<b>Race:</b> {character.race}";
@@ -189,7 +189,7 @@ public class ConsoleMenu : UIMenu {
         return text;
     }
     private string GetSecondaryCharacterInfo() {
-        Character character = UIManager.Instance.characterInfoUI.activeCharacter;
+        Character character = UIManager.Instance.characterInfoInfoUi.activeCharacter;
         //string text = character.name + "'s Relationships " + character.relationships.Count.ToString();
         //int counter = 0;
         //foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in character.relationships) {

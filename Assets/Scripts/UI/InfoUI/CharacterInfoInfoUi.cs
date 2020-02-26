@@ -10,7 +10,7 @@ using Traits;
 using UnityEngine.Serialization;
 using Actionables;
 
-public class CharacterInfoUI : UIMenu {
+public class CharacterInfoInfoUi : InfoUIBase {
     
     [Space(10)]
     [Header("Basic Info")]
@@ -94,8 +94,8 @@ public class CharacterInfoUI : UIMenu {
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_REMOVED, UpdateTraitsFromSignal);
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_STACKED, UpdateTraitsFromSignal);
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_UNSTACKED, UpdateTraitsFromSignal);
-        Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
-        Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
+        Messenger.AddListener<InfoUIBase>(Signals.MENU_OPENED, OnMenuOpened);
+        Messenger.AddListener<InfoUIBase>(Signals.MENU_CLOSED, OnMenuClosed);
         Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
         Messenger.AddListener(Signals.ON_CLOSE_SHARE_INTEL, OnCloseShareIntelMenu);
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
@@ -252,15 +252,15 @@ public class CharacterInfoUI : UIMenu {
         if(activeCharacter.isSettlementRuler || activeCharacter.isFactionLeader) {
             string additionalText = string.Empty;
             if (activeCharacter.isSettlementRuler) {
-                additionalText += "Settlement Ruler";
+                additionalText = $"{additionalText}Settlement Ruler";
             }
             if (activeCharacter.isFactionLeader) {
                 if(additionalText != string.Empty) {
-                    additionalText += ", ";
+                    additionalText = $"{additionalText}, ";
                 }
-                additionalText += "Faction Leader";
+                additionalText = $"{additionalText}Faction Leader";
             }
-            nameLbl.text += $" ({additionalText})";
+            nameLbl.text = $"{nameLbl.text} ({additionalText})";
         }
         UpdateThoughtBubble();
     }
@@ -510,14 +510,14 @@ public class CharacterInfoUI : UIMenu {
     #endregion   
 
     #region Listeners
-    private void OnMenuOpened(UIMenu openedMenu) {
+    private void OnMenuOpened(InfoUIBase openedBase) {
         //if (this.isShowing) {
         //    if (openedMenu is PartyInfoUI) {
         //        CheckIfMenuShouldBeHidden();
         //    }
         //}
     }
-    private void OnMenuClosed(UIMenu closedMenu) {
+    private void OnMenuClosed(InfoUIBase closedBase) {
         //if (this.isShowing) {
         //    if (closedMenu is PartyInfoUI) {
         //        CheckIfMenuShouldBeHidden();
@@ -527,9 +527,7 @@ public class CharacterInfoUI : UIMenu {
     private void OnOpenShareIntelMenu() {
         backButton.interactable = false;
     }
-    private void OnCloseShareIntelMenu() {
-        backButton.interactable = UIManager.Instance.GetLastUIMenuHistory() != null;
-    }
+    private void OnCloseShareIntelMenu() { }
     private void OnCharacterChangedAlterEgo(Character character) {
         if (isShowing && activeCharacter == character) {
             UpdateCharacterInfo();
@@ -820,9 +818,9 @@ public class CharacterInfoUI : UIMenu {
     }
     private void OnClickChooseCombatMode(string mode) {
         COMBAT_MODE combatMode = (COMBAT_MODE) System.Enum.Parse(typeof(COMBAT_MODE), UtilityScripts.Utilities.NotNormalizedConversionStringToEnum(mode));
-        UIManager.Instance.characterInfoUI.activeCharacter.combatComponent.SetCombatMode(combatMode);
+        UIManager.Instance.characterInfoInfoUi.activeCharacter.combatComponent.SetCombatMode(combatMode);
         Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, activeCharacter as IPlayerActionTarget);
-        UIManager.Instance.customDropdownList.HideDropdown();
+        UIManager.Instance.customDropdownList.Close();
     }
     #endregion
 }

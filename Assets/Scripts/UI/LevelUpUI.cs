@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class LevelUpUI : MonoBehaviour {
+public class LevelUpUI : PopupMenuBase {
 
     [Header("Minion")]
     [SerializeField] private CharacterPortrait minionPortrait;
@@ -68,7 +68,7 @@ public class LevelUpUI : MonoBehaviour {
             item.SetObject(currItem, OnSelectChoice);
         }
         levelUpBtn.interactable = false;
-        this.gameObject.SetActive(true);
+        base.Open();
     }
 
     private void UpdateMinionToLevelUp(Minion minion, string identifierToLevelUp) {
@@ -98,8 +98,8 @@ public class LevelUpUI : MonoBehaviour {
     }
 
 
-    private void Close() {
-        this.gameObject.SetActive(false);
+    public override void Close() {
+        base.Close();
         if (!PlayerUI.Instance.TryShowPendingUI()) {
             UIManager.Instance.ResumeLastProgressionSpeed(); //if no other UI was shown, unpause game
         }

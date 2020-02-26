@@ -320,7 +320,7 @@ public class Region : ILocation {
         SetAssignedMinion(null);
 
         //This is done so that when a region is invaded by the player, the showing Info UI will update appropriately
-        if (UIManager.Instance.regionInfoUI.isShowing && UIManager.Instance.regionInfoUI.activeRegion == this) {
+        if (UIManager.Instance.regionInfoInfoUi.isShowing && UIManager.Instance.regionInfoInfoUi.activeRegion == this) {
             UIManager.Instance.ShowRegionInfo(this);
         }
     }

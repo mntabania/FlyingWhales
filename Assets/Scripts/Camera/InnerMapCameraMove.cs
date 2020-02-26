@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using Inner_Maps;
+using Ruinarch;
 using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
 
@@ -277,7 +278,7 @@ public class InnerMapCameraMove : MonoBehaviour {
                         hasReachedThreshold = true;
                     }
                     if (originMousePos !=  Input.mousePosition) { //check if the mouse has moved position from the origin, only then will it be considered dragging
-                        CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Drag_Clicked);
+                        InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Drag_Clicked);
                         isDragging = true;
                     }
                 }
@@ -290,7 +291,7 @@ public class InnerMapCameraMove : MonoBehaviour {
             innerMapsCamera.transform.position = dragOrigin-difference;
             if (Input.GetMouseButtonUp(2)) {
                 ResetDragValues();
-                CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
+                InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
             }
         } else {
             if (!Input.GetMouseButton(2)) {

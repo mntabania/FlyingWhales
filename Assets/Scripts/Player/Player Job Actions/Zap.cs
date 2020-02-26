@@ -30,8 +30,8 @@ public class Zap : PlayerSpell {
                     Trait newTrait = new Zapped();
                     newTrait.OverrideDuration(_zapDuration);
                     currTarget.traitContainer.AddTrait(currTarget, newTrait);
-                    if (UIManager.Instance.characterInfoUI.isShowing) {
-                        UIManager.Instance.characterInfoUI.UpdateThoughtBubble();
+                    if (UIManager.Instance.characterInfoInfoUi.isShowing) {
+                        UIManager.Instance.characterInfoInfoUi.UpdateThoughtBubble();
                     }
                     //GameManager.Instance.CreateElectricEffectAt(currTarget);
 
@@ -132,8 +132,8 @@ public class ZapData : SpellData {
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         targetPOI.traitContainer.AddTrait(targetPOI, "Zapped");
-        if (UIManager.Instance.characterInfoUI.isShowing) {
-            UIManager.Instance.characterInfoUI.UpdateThoughtBubble();
+        if (UIManager.Instance.characterInfoInfoUi.isShowing) {
+            UIManager.Instance.characterInfoInfoUi.UpdateThoughtBubble();
         }
         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_intervention");
         log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

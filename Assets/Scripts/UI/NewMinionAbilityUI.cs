@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 
-public class NewMinionAbilityUI : MonoBehaviour {
+public class NewMinionAbilityUI : PopupMenuBase {
 
     [Header("Object To Add")]
     [SerializeField] private Image otaImage;
@@ -50,7 +50,7 @@ public class NewMinionAbilityUI : MonoBehaviour {
             item.SetMinion(currMinion, identifier);
         }
         addBtn.interactable = false;
-        this.gameObject.SetActive(true);
+        base.Open();
     }
 
     private void UpdateObjectToAdd(object obj) {
@@ -73,8 +73,8 @@ public class NewMinionAbilityUI : MonoBehaviour {
     }
 
 
-    private void Close() {
-        this.gameObject.SetActive(false);
+    public override void Close() {
+        base.Close();
         if (!PlayerUI.Instance.TryShowPendingUI()) {
             UIManager.Instance.ResumeLastProgressionSpeed(); //if no other UI was shown, unpause game
         }

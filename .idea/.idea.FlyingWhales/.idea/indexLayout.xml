@@ -32,7 +32,6 @@
       <Path>Library</Path>
       <Path>Logs</Path>
       <Path>MemoryCaptures</Path>
-      <Path>Temp</Path>
       <Path>bin</Path>
       <Path>obj</Path>
       <Path>steamworks_sdk_142</Path>

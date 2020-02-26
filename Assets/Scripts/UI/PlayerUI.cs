@@ -7,6 +7,7 @@ using TMPro;
 using System.Linq;
 using System;
 using Inner_Maps;
+using Ruinarch;
 using Traits;
 using UnityEngine.Assertions;
 using UtilityScripts;
@@ -35,20 +36,10 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI gameOverDescriptionText;
     [SerializeField] private GameObject successfulAreaCorruptionGO;
     [SerializeField] private ScrollRect killSummaryScrollView;
-    [SerializeField] private GameObject generalConfirmationGO;
-    [SerializeField] private TextMeshProUGUI generalConfirmationTitleText;
-    [SerializeField] private TextMeshProUGUI generalConfirmationBodyText;
-    [SerializeField] private Button generalConfirmationButton;
-    [SerializeField] private TextMeshProUGUI generalConfirmationButtonText;
 
-    [Header("Start Picker")]
-    [SerializeField] private GameObject startingMinionPickerGO;
-    [SerializeField] private MinionCard startingMinionCard1;
-    [SerializeField] private MinionCard startingMinionCard2;
-    private MinionLeaderPicker tempCurrentMinionLeaderPicker;
-    [SerializeField] private Image[] startingAbilityIcons;
-    [SerializeField] private TextMeshProUGUI[] startingAbilityLbls; //NOTE: This must always have the same length as startingAbilityIcons
-
+    [Header("General Confirmation")] 
+    [SerializeField] private GeneralConfirmation _generalConfirmation;
+    
     [Header("Intervention Abilities")]
     [SerializeField] private GameObject actionBtnPrefab;
     
@@ -94,25 +85,15 @@ public class PlayerUI : MonoBehaviour {
 
     [Header("Top Menu")]
     [SerializeField] private Toggle[] topMenuButtons;
-    [SerializeField] private CustomDropdownList customDropdownList;
-    //private readonly List<string> spellsList = new List<string>() {
-    //    PlayerManager.Tornado, PlayerManager.Meteor, PlayerManager.Poison_Cloud, PlayerManager.Lightning, PlayerManager.Ravenous_Spirit, PlayerManager.Feeble_Spirit
-    //    , PlayerManager.Forlorn_Spirit, PlayerManager.Locust_Swarm, PlayerManager.Spawn_Boulder, PlayerManager.Landmine, PlayerManager.Manifest_Food
-    //    , PlayerManager.Brimstones, PlayerManager.Acid_Rain, PlayerManager.Rain, PlayerManager.Heat_Wave, PlayerManager.Wild_Growth
-    //    , PlayerManager.Spider_Rain, PlayerManager.Blizzard, PlayerManager.Earthquake, PlayerManager.Fertility, PlayerManager.Spawn_Bandit_Camp
-    //    , PlayerManager.Spawn_Monster_Lair, PlayerManager.Spawn_Haunted_Grounds };
+    [SerializeField] private SpellListUI spellList;
+    
+    [Header("Minion List")]
+    [SerializeField] private MinionListUI minionList;
     private readonly List<string> factionActionsList = new List<string>() { "Manage Cult", "Meddle" };
 
     [Header("Player Actions")]
     public StringSpriteDictionary playerActionIconDictionary;
-
-    public List<System.Action> pendingUIToShow { get; private set; }
-
-    private bool _isScrollingUp;
-    private bool _isScrollingDown;
-    //public CombatGrid attackGridReference { get; private set; }
-    //public CombatGrid defenseGridReference { get; private set; }
-
+    private List<System.Action> pendingUIToShow { get; set; }
     private PlayerJobActionButton[] interventionAbilityBtns;
     public string harassRaidInvade { get; private set; }
     public Minion harassRaidInvadeLeaderMinion { get; private set; }
@@ -131,8 +112,8 @@ public class PlayerUI : MonoBehaviour {
     public void Initialize() {
         pendingUIToShow = new List<Action>();
 
-        Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
-        Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
+        Messenger.AddListener<InfoUIBase>(Signals.MENU_OPENED, OnMenuOpened);
+        Messenger.AddListener<InfoUIBase>(Signals.MENU_CLOSED, OnMenuClosed);
         Messenger.AddListener(Signals.UPDATED_CURRENCIES, UpdateUI);
         Messenger.AddListener<Intel>(Signals.PLAYER_OBTAINED_INTEL, OnIntelObtained);
         Messenger.AddListener<Intel>(Signals.PLAYER_REMOVED_INTEL, OnIntelRemoved);
@@ -140,13 +121,10 @@ public class PlayerUI : MonoBehaviour {
         Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
         Messenger.AddListener(Signals.ON_CLOSE_SHARE_INTEL, OnCloseShareIntelMenu);
 
-        //Minion List
-        Messenger.AddListener<Minion>(Signals.PLAYER_GAINED_MINION, OnGainedMinion);
-        Messenger.AddListener<Minion>(Signals.PLAYER_LOST_MINION, OnLostMinion);
-
         Messenger.AddListener<ILocation>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
         Messenger.AddListener<ILocation>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
-
+        
+        minionList.Initialize();
     }
 
     public void InitializeAfterGameLoaded() {
@@ -169,15 +147,8 @@ public class PlayerUI : MonoBehaviour {
 
         //currencies
         Messenger.AddListener(Signals.PLAYER_ADJUSTED_MANA, UpdateMana);
-        
         InitialUpdateKillCountCharacterItems();
-
         UpdateIntel();
-        
-        // for (int i = 0; i < PlayerManager.Instance.player.minions.Count; i++) {
-        //     Minion minion = PlayerManager.Instance.player.minions[i];
-        //     OnGainedMinion(minion);
-        // }
     }
 
     #region Listeners
@@ -189,13 +160,13 @@ public class PlayerUI : MonoBehaviour {
     }
     private void OnKeyPressed(KeyCode pressedKey) {
         if (pressedKey == KeyCode.Escape) {
-            if (PlayerManager.Instance.player.currentActivePlayerSpell != null) {
-                PlayerManager.Instance.player.SetCurrentlyActivePlayerSpell(null);
-                CursorManager.Instance.ClearLeftClickActions();
-            } else {
+            // if (PlayerManager.Instance.player.currentActivePlayerSpell != null) {
+            //     PlayerManager.Instance.player.SetCurrentlyActivePlayerSpell(null);
+            //     InputManager.Instance.ClearLeftClickActions();
+            // } else {
                 //only toggle options menu if doing nothing else
                 UIManager.Instance.ToggleOptionsMenu();
-            }
+            // }
         }
     }
     private void OnCharacterDied(Character character) {
@@ -273,28 +244,28 @@ public class PlayerUI : MonoBehaviour {
     private void CharacterBecomesNonMinionOrSummon(Character character) {
         OnCharacterBecomesNonMinionOrSummon(character);
     }
-    private void OnMenuOpened(UIMenu menu) {
-        if (menu is CharacterInfoUI || menu is TileObjectInfoUI) {
+    private void OnMenuOpened(InfoUIBase @base) {
+        if (@base is CharacterInfoInfoUi || @base is TileObjectInfoInfoUi) {
             // HideKillSummary();
-        }else if (menu is HextileInfoUI || menu is RegionInfoUI) {
+        }else if (@base is HextileInfoInfoUi || @base is RegionInfoInfoUi) {
             UpdateRegionNameState();
         }
     }
-    private void OnMenuClosed(UIMenu menu) {
-        if (menu is HextileInfoUI || menu is RegionInfoUI) {
+    private void OnMenuClosed(InfoUIBase @base) {
+        if (@base is HextileInfoInfoUi || @base is RegionInfoInfoUi) {
             UpdateRegionNameState();
         }
     }
     #endregion
 
     private void UpdateRegionNameState() {
-        if (UIManager.Instance.regionInfoUI.isShowing || UIManager.Instance.hexTileInfoUI.isShowing 
+        if (UIManager.Instance.regionInfoInfoUi.isShowing || UIManager.Instance.hexTileInfoInfoUi.isShowing 
             || InnerMapManager.Instance.isAnInnerMapShowing) {
             Region location;
-            if (UIManager.Instance.regionInfoUI.isShowing) {
-                location = UIManager.Instance.regionInfoUI.activeRegion;
-            } else if (UIManager.Instance.hexTileInfoUI.isShowing) {
-                location = UIManager.Instance.hexTileInfoUI.currentlyShowingHexTile.region;
+            if (UIManager.Instance.regionInfoInfoUi.isShowing) {
+                location = UIManager.Instance.regionInfoInfoUi.activeRegion;
+            } else if (UIManager.Instance.hexTileInfoInfoUi.isShowing) {
+                location = UIManager.Instance.hexTileInfoInfoUi.currentlyShowingHexTile.region;
             } else {
                 location = InnerMapManager.Instance.currentlyShowingMap.location as Region;
             }
@@ -328,7 +299,9 @@ public class PlayerUI : MonoBehaviour {
         return false;
     }
     public bool IsMajorUIShowing() {
-        return levelUpUI.gameObject.activeInHierarchy || newAbilityUI.gameObject.activeInHierarchy || newMinionAbilityUI.gameObject.activeInHierarchy || replaceUI.gameObject.activeInHierarchy || generalConfirmationGO.activeInHierarchy || newMinionUIGO.activeInHierarchy;
+        return levelUpUI.gameObject.activeInHierarchy || newAbilityUI.gameObject.activeInHierarchy || 
+               newMinionAbilityUI.gameObject.activeInHierarchy || replaceUI.gameObject.activeInHierarchy || 
+               _generalConfirmation.isShowing || newMinionUIGO.activeInHierarchy;
     }
     #endregion
 
@@ -429,191 +402,22 @@ public class PlayerUI : MonoBehaviour {
         provokeMenu.Open(actor, target);
     }
     #endregion
-
-    #region Start Picker
-    // private SPELL_TYPE[] startingAbilities;
-    // public void ShowStartingMinionPicker() {
-    //
-    //     UnsummonedMinionData minion1Data = new UnsummonedMinionData();
-    //     UnsummonedMinionData minion2Data = new UnsummonedMinionData();
-    //
-    //     //string minionName1 = string.Empty;
-    //     //string minionClassName1 = string.Empty;
-    //     //COMBAT_ABILITY minionCombatAbilityType1 = COMBAT_ABILITY.FEAR_SPELL;
-    //
-    //     //string minionName2 = string.Empty;
-    //     //string minionClassName2 = string.Empty;
-    //     //COMBAT_ABILITY minionCombatAbilityType2 = COMBAT_ABILITY.FEAR_SPELL;
-    //
-    //     RandomizeTwoStartingMinions(ref minion1Data, ref minion2Data);
-    //
-    //     startingMinionCard1.SetMinion(minion1Data);
-    //     startingMinionCard2.SetMinion(minion2Data);
-    //     //startingMinionCard3.SetMinion(PlayerManager.Instance.player.CreateNewMinionRandomClass(RACE.DEMON));
-    //     startingAbilities = new SPELL_TYPE[PlayerManager.Instance.player.MAX_INTERVENTION_ABILITIES];
-    //     RandomizeStartingAbilities();
-    //     startingMinionPickerGO.SetActive(true);
-    // }
-    // public void HideStartingMinionPicker() {
-    //     startingMinionPickerGO.SetActive(false);
-    // }
-    // public void Reroll() {
-    //     UnsummonedMinionData minion1Data = new UnsummonedMinionData();
-    //     UnsummonedMinionData minion2Data = new UnsummonedMinionData();
-    //
-    //     RandomizeTwoStartingMinions(ref minion1Data, ref minion2Data);
-    //
-    //     startingMinionCard1.SetMinion(minion1Data);
-    //     startingMinionCard2.SetMinion(minion2Data);
-    // }
-    //public void Reroll2() {
-    //    startingMinionCard2.SetMinion(PlayerManager.Instance.player.CreateNewMinionRandomClass(RACE.DEMON));
-    //}
-    //public void Reroll3() {
-    //    startingMinionCard3.SetMinion(PlayerManager.Instance.player.CreateNewMinionRandomClass(RACE.DEMON));
-    //}
-    // public void OnClickStartGame() {
-    //     HideStartingMinionPicker();
-    //
-    //     Minion minion1 = PlayerManager.Instance.player.CreateNewMinion(startingMinionCard1.minionData.className, RACE.DEMON, false);
-    //     Minion minion2 = PlayerManager.Instance.player.CreateNewMinion(startingMinionCard2.minionData.className, RACE.DEMON, false);
-    //
-    //     minion1.character.SetName(startingMinionCard1.minionData.minionName);
-    //     minion2.character.SetName(startingMinionCard2.minionData.minionName);
-    //
-    //     minion1.SetCombatAbility(startingMinionCard1.minionData.combatAbility);
-    //     minion2.SetCombatAbility(startingMinionCard2.minionData.combatAbility);
-    //
-    //     minion1.SetRandomResearchInterventionAbilities(startingMinionCard1.minionData.interventionAbilitiesToResearch);
-    //     minion2.SetRandomResearchInterventionAbilities(startingMinionCard2.minionData.interventionAbilitiesToResearch);
-    //
-    //     PlayerManager.Instance.player.AddMinion(minion1);
-    //     PlayerManager.Instance.player.AddMinion(minion2);
-    //     //PlayerManager.Instance.player.AddMinion(startingMinionCard3.minion);
-    //     PlayerManager.Instance.player.SetMinionLeader(minion1);
-    //     for (int i = 0; i < startingAbilities.Length; i++) {
-    //         PlayerManager.Instance.player.GainNewInterventionAbility(startingAbilities[i]);
-    //     }
-    //     startingAbilities = null;
-    //     UIManager.Instance.SetSpeedTogglesState(true);
-    //     //TODO:
-    //     // for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
-    //     //     Faction faction = FactionManager.Instance.allFactions[i];
-    //     //     if (faction.isMajorNonPlayer) {
-    //     //         faction.CreateAndSetActiveQuest("Divine Intervention", faction.ownedSettlements[0]);
-    //     //         break;
-    //     //     }
-    //     // }
-    //     
-    //     
-    //     // LANDMARK_TYPE[] landmarkTypes = Utilities.GetEnumValues<LANDMARK_TYPE>();
-    //     // for (int i = 0; i < landmarkTypes.Length; i++) {
-    //     //     LANDMARK_TYPE type = landmarkTypes[i];
-    //     //     if (type.IsPlayerLandmark() && type != LANDMARK_TYPE.THE_PORTAL && type != LANDMARK_TYPE.THE_SPIRE) {
-    //     //         Region region =
-    //     //             Utilities.GetRandomElement(GridMap.Instance.allRegions.Where(x => x.coreTile.isCorrupted == false && x.owner == null).ToList());
-    //     //         LandmarkManager.Instance.OwnRegion(PlayerManager.Instance.player.playerFaction, RACE.DEMON, region);
-    //     //         BaseLandmark landmark = LandmarkManager.Instance.CreateNewLandmarkOnTile(region.coreTile, type, false);
-    //     //         landmark.OnFinishedBuilding();
-    //     //     }
-    //     // }
-    //     //PlayerManager.Instance.player.StartDivineIntervention();
-    //     //PlayerManager.Instance.player.StartResearchNewInterventionAbility();
-    // }
-    // public void TemporarySetMinionLeader(MinionLeaderPicker leaderPicker) {
-    //     tempCurrentMinionLeaderPicker.imgHighlight.gameObject.SetActive(false);
-    //     leaderPicker.imgHighlight.gameObject.SetActive(true);
-    //     tempCurrentMinionLeaderPicker = leaderPicker;
-    // }
-    // private List<SPELL_TYPE> chosenAbilities;
-    // private void RandomizeStartingAbilities() {
-    //     List<SPELL_TYPE> abilitiesPool = PlayerManager.Instance.allSpellTypes.ToList();
-    //     chosenAbilities = new List<SPELL_TYPE>();
-    //
-    //     while (chosenAbilities.Count != startingAbilityIcons.Length) {
-    //         SPELL_TYPE randomAbility = abilitiesPool[UnityEngine.Random.Range(0, abilitiesPool.Count)];
-    //         chosenAbilities.Add(randomAbility);
-    //         abilitiesPool.Remove(randomAbility);
-    //     }
-    //
-    //     for (int i = 0; i < startingAbilityIcons.Length; i++) {
-    //         SPELL_TYPE randomAbility = chosenAbilities[i];
-    //         string abilityName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(randomAbility.ToString());
-    //         startingAbilityIcons[i].sprite = PlayerManager.Instance.GetJobActionSprite(abilityName);
-    //         startingAbilityLbls[i].text = abilityName;
-    //         startingAbilities[i] = randomAbility;
-    //     }
-    // }
-    // public void OnHoverStartingSpell(int index) {
-    //     SPELL_TYPE spell = chosenAbilities[index];
-    //     UIManager.Instance.ShowSmallInfo(PlayerManager.Instance.allSpellsData[spell].description, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(spell.ToString()));
-    // }
-    // public void RerollAbilities() {
-    //     RandomizeStartingAbilities();
-    // }
-    // public void RandomizeTwoStartingMinions(ref UnsummonedMinionData minion1Data, ref UnsummonedMinionData minion2Data) {
-    //
-    //     string minionName1 = RandomNameGenerator.GenerateMinionName();
-    //     string minionName2 = RandomNameGenerator.GenerateMinionName();
-    //
-    //     COMBAT_ABILITY minionCombatAbilityType1 = PlayerManager.Instance.allCombatAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allCombatAbilities.Length)];
-    //     COMBAT_ABILITY minionCombatAbilityType2 = PlayerManager.Instance.allCombatAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allCombatAbilities.Length)];
-    //
-    //     List<string> filteredDeadlySinClasses = new List<string>();
-    //     foreach (KeyValuePair<string, DeadlySin> kvp in CharacterManager.Instance.deadlySins) {
-    //         if (kvp.Value.CanDoDeadlySinAction(DEADLY_SIN_ACTION.BUILDER) || kvp.Value.CanDoDeadlySinAction(DEADLY_SIN_ACTION.INVADER)) {
-    //             filteredDeadlySinClasses.Add(kvp.Key);
-    //         }
-    //     }
-    //
-    //     int class1Index = UnityEngine.Random.Range(0, filteredDeadlySinClasses.Count);
-    //     string minionClassName1 = filteredDeadlySinClasses[class1Index];
-    //     filteredDeadlySinClasses.RemoveAt(class1Index);
-    //
-    //     string minionClassName2 = string.Empty;
-    //     if (CharacterManager.Instance.CanDoDeadlySinAction(minionClassName1, DEADLY_SIN_ACTION.INVADER)
-    //         && CharacterManager.Instance.CanDoDeadlySinAction(minionClassName1, DEADLY_SIN_ACTION.BUILDER)) {
-    //         minionClassName2 = CharacterManager.sevenDeadlySinsClassNames[UnityEngine.Random.Range(0, CharacterManager.sevenDeadlySinsClassNames.Length)];
-    //     } else {
-    //         if (CharacterManager.Instance.CanDoDeadlySinAction(minionClassName1, DEADLY_SIN_ACTION.INVADER)) {
-    //             filteredDeadlySinClasses = filteredDeadlySinClasses.Where(x => CharacterManager.Instance.CanDoDeadlySinAction(x, DEADLY_SIN_ACTION.BUILDER)).ToList();
-    //         } else if (CharacterManager.Instance.CanDoDeadlySinAction(minionClassName1, DEADLY_SIN_ACTION.BUILDER)) {
-    //             filteredDeadlySinClasses = filteredDeadlySinClasses.Where(x => CharacterManager.Instance.CanDoDeadlySinAction(x, DEADLY_SIN_ACTION.INVADER)).ToList();
-    //         }
-    //         minionClassName2 = filteredDeadlySinClasses[UnityEngine.Random.Range(0, filteredDeadlySinClasses.Count)];
-    //     }
-    //
-    //     minion1Data = new UnsummonedMinionData() {
-    //         minionName = minionName1,
-    //         className = minionClassName1,
-    //         combatAbility = minionCombatAbilityType1,
-    //         interventionAbilitiesToResearch = CharacterManager.Instance.Get3RandomResearchInterventionAbilities(CharacterManager.Instance.GetDeadlySin(minionClassName1)),
-    //     };
-    //
-    //     minion2Data = new UnsummonedMinionData() {
-    //         minionName = minionName2,
-    //         className = minionClassName2,
-    //         combatAbility = minionCombatAbilityType2,
-    //         interventionAbilitiesToResearch = CharacterManager.Instance.Get3RandomResearchInterventionAbilities(CharacterManager.Instance.GetDeadlySin(minionClassName2)),
-    //     };
-    // }
-    #endregion
-
+    
     #region Corruption and Threat
     public void HideCorruptTileConfirmation() {
         skirmishConfirmationGO.SetActive(false);
     }
     public void OnClickYesCorruption() {
         HideCorruptTileConfirmation();
-        if (tempCurrentMinionLeaderPicker != null) {
-            PlayerManager.Instance.player.SetMinionLeader(tempCurrentMinionLeaderPicker.minion);
-        } else {
-            //If story event, randomize minion leader, if not, keep current minion leader
-            //if(PlayerManager.Instance.player.currentTileBeingCorrupted.landmarkOnTile.yieldType == LANDMARK_YIELD_TYPE.STORY_EVENT) {
-            //    Minion minion = PlayerManager.Instance.player.GetRandomMinion();
-            //    PlayerManager.Instance.player.SetMinionLeader(minion);
-            //}
-        }
+        // if (tempCurrentMinionLeaderPicker != null) {
+        //     PlayerManager.Instance.player.SetMinionLeader(tempCurrentMinionLeaderPicker.minion);
+        // } else {
+        //     //If story event, randomize minion leader, if not, keep current minion leader
+        //     //if(PlayerManager.Instance.player.currentTileBeingCorrupted.landmarkOnTile.yieldType == LANDMARK_YIELD_TYPE.STORY_EVENT) {
+        //     //    Minion minion = PlayerManager.Instance.player.GetRandomMinion();
+        //     //    PlayerManager.Instance.player.SetMinionLeader(minion);
+        //     //}
+        // }
         if (PlayerManager.Instance.player.currentTileBeingCorrupted.region != null) {
             InnerMapManager.Instance.TryShowLocationMap(PlayerManager.Instance.player.currentTileBeingCorrupted.region);
         } else {
@@ -683,12 +487,6 @@ public class PlayerUI : MonoBehaviour {
         if (LandmarkManager.Instance.AreAllNonPlayerAreasCorrupted()) {
             GameOver("You have conquered all settlements! This world is now yours! Congratulations!");
         }
-    }
-    #endregion
-
-    #region Saving/Loading
-    public void SaveGame() {
-        SaveManager.Instance.SaveCurrentStateOfWorld();
     }
     #endregion
 
@@ -951,7 +749,6 @@ public class PlayerUI : MonoBehaviour {
             //player has won
             UIManager.Instance.Pause();
             UIManager.Instance.SetSpeedTogglesState(false);
-            Messenger.Broadcast(Signals.HIDE_MENUS);
             SuccessfulAreaCorruption();
         }
     }
@@ -1000,29 +797,7 @@ public class PlayerUI : MonoBehaviour {
 
     #region General Confirmation
     public void ShowGeneralConfirmation(string header, string body, string buttonText = "OK", System.Action onClickOK = null) {
-        if (IsMajorUIShowing()) {
-            AddPendingUI(() => ShowGeneralConfirmation(header, body, buttonText, onClickOK));
-            return;
-        }
-        if (!GameManager.Instance.isPaused) {
-            UIManager.Instance.Pause();
-            UIManager.Instance.SetSpeedTogglesState(false);
-        }
-        generalConfirmationTitleText.text = header.ToUpper();
-        generalConfirmationBodyText.text = body;
-        generalConfirmationButtonText.text = buttonText;
-        generalConfirmationButton.onClick.RemoveAllListeners();
-        generalConfirmationButton.onClick.AddListener(OnClickOKGeneralConfirmation);
-        if (onClickOK != null) {
-            generalConfirmationButton.onClick.AddListener(() => onClickOK.Invoke());
-        }
-        generalConfirmationGO.SetActive(true);
-    }
-    public void OnClickOKGeneralConfirmation() {
-        generalConfirmationGO.SetActive(false);
-        if (!TryShowPendingUI()) {
-            UIManager.Instance.ResumeLastProgressionSpeed(); //if no other UI was shown, unpause game
-        }
+        _generalConfirmation.ShowGeneralConfirmation(header, body, buttonText, onClickOK);
     }
     #endregion
 
@@ -1048,68 +823,6 @@ public class PlayerUI : MonoBehaviour {
     }
     #endregion
 
-    #region Minion List
-    public bool isShowingMinionList { get { return minionListGO.activeSelf; } }
-    [Header("Minion List")]
-    [SerializeField] private TextMeshProUGUI minionCountLbl;
-    [SerializeField] private GameObject minionItemPrefab;
-    [SerializeField] private ScrollRect minionListScrollView;
-    [SerializeField] private GameObject minionListGO;
-    [SerializeField] private UIHoverPosition minionListCardTooltipPos;
-    [SerializeField] private Toggle minionListToggle;
-    private void UpdateMinionList() {
-        UtilityScripts.Utilities.DestroyChildren(minionListScrollView.content);
-        for (int i = 0; i < PlayerManager.Instance.player.minions.Count; i++) {
-            Minion currMinion = PlayerManager.Instance.player.minions[i];
-            CreateNewMinionItem(currMinion);
-        }
-        UpdateMinionCount();
-    }
-    private void CreateNewMinionItem(Minion minion) {
-        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(minionItemPrefab.name, Vector3.zero, Quaternion.identity, minionListScrollView.content);
-        CharacterNameplateItem item = go.GetComponent<CharacterNameplateItem>();
-        item.SetObject(minion.character);
-        item.AddHoverEnterAction((character) => UIManager.Instance.ShowMinionCardTooltip(character.minion, minionListCardTooltipPos));
-        item.AddHoverExitAction((character) => UIManager.Instance.HideMinionCardTooltip());
-        item.SetAsDefaultBehaviour();
-    }
-    private void DeleteMinionItem(Minion minion) {
-        CharacterNameplateItem item = GetMinionItem(minion);
-        if (item != null) {
-            ObjectPoolManager.Instance.DestroyObject(item);
-        }
-    }
-    private CharacterNameplateItem GetMinionItem(Minion minion) {
-        CharacterNameplateItem[] items = UtilityScripts.GameUtilities.GetComponentsInDirectChildren<CharacterNameplateItem>(minionListScrollView.content.gameObject);
-        for (int i = 0; i < items.Length; i++) {
-            CharacterNameplateItem item = items[i];
-            if (item.character == minion.character) {
-                return item;
-            }
-        }
-        return null;
-    }
-    private void UpdateMinionCount() {
-        minionCountLbl.text = PlayerManager.Instance.player.minions.Count.ToString();
-    }
-    private void OnGainedMinion(Minion minion) {
-        CreateNewMinionItem(minion);
-        UpdateMinionCount();
-    }
-    private void OnLostMinion(Minion minion) {
-        DeleteMinionItem(minion);
-        UpdateMinionCount();
-    }
-    public void ToggleMinionList(bool isOn) {
-        minionListGO.SetActive(isOn);
-    }
-    public void HideMinionList() {
-        if (minionListToggle.isOn) {
-            minionListToggle.isOn = false;
-        }
-    }
-    #endregion
-    
     #region Seize
     private void OnSeizePOI(IPointOfInterest poi) {
         DisableTopMenuButtons();
@@ -1141,7 +854,7 @@ public class PlayerUI : MonoBehaviour {
         }
     }
     private void ShowSpells() {
-        customDropdownList.ShowDropdown(PlayerManager.Instance.player.archetype.spells, OnClickSpell, CanChooseItem);
+        spellList.ShowDropdown(PlayerManager.Instance.player.archetype.spells, OnClickSpell, CanChooseItem);
     }
     private bool CanChooseItem(string item) {
         if (item == PlayerDB.Tornado || item == PlayerDB.Meteor || item == PlayerDB.Ravenous_Spirit || item == PlayerDB.Feeble_Spirit || item == PlayerDB.Forlorn_Spirit
@@ -1153,7 +866,7 @@ public class PlayerUI : MonoBehaviour {
         return false;
     }
     private void HideSpells() {
-        customDropdownList.HideDropdown();
+        spellList.Close();
     }
     private void OnClickSpell(string spellName) {
         if(PlayerManager.Instance.player.currentActivePlayerSpell != null) {
@@ -1178,10 +891,10 @@ public class PlayerUI : MonoBehaviour {
         }
     }
     private void ShowFactionActions() {
-        customDropdownList.ShowDropdown(factionActionsList, OnClickFactionAction);
+        spellList.ShowDropdown(factionActionsList, OnClickFactionAction);
     }
     private void HideFactionActions() {
-        customDropdownList.HideDropdown();
+        spellList.Close();
     }
     private void OnClickFactionAction(string text) {
         //TODO

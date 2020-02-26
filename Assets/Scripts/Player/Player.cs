@@ -6,6 +6,7 @@ using System.Linq;
 using Inner_Maps;
 using Traits;
 using Archetype;
+using Ruinarch;
 using UtilityScripts;
 using Random = UnityEngine.Random;
 // ReSharper disable Unity.NoNullPropagation
@@ -251,19 +252,15 @@ public class Player : ILeader {
         currentActivePlayerSpell = action;
         if (currentActivePlayerSpell == null) {
             Messenger.RemoveListener<KeyCode>(Signals.KEY_DOWN, OnSpellCast);
-            CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
+            InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
         } else {
-            CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Cross);
+            InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Cross);
             Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnSpellCast);
         }
     }
     private void OnSpellCast(KeyCode key) {
         if (key == KeyCode.Mouse0) {
             TryExecuteCurrentActiveAction();
-            //SetCurrentlyActivePlayerSpell(null);
-            // Messenger.RemoveListener<KeyCode>(Signals.KEY_DOWN, OnSpellCast);
-        } else if (key == KeyCode.Mouse1) {
-            SetCurrentlyActivePlayerSpell(null);
         }
     }
 
@@ -324,7 +321,7 @@ public class Player : ILeader {
             }
         }
         
-        CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
+        InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
         //Debug.Log(GameManager.Instance.TodayLogString() + summary);
     }
     #endregion
@@ -332,12 +329,6 @@ public class Player : ILeader {
     #region Intel
     public void AddIntel(Intel newIntel) {
         if (!allIntel.Contains(newIntel)) {
-            //for (int i = 0; i < allIntel.Count; i++) {
-            //    Intel currIntel = allIntel[i];
-            //    if (currIntel.intelLog == newIntel.intelLog) {
-            //        return;
-            //    }
-            //}
             allIntel.Add(newIntel);
             if (allIntel.Count > PlayerDB.MAX_INTEL) {
                 RemoveIntel(allIntel[0]);
@@ -363,32 +354,26 @@ public class Player : ILeader {
         Intel previousIntel = currentActiveIntel;
         currentActiveIntel = intel;
         if (currentActiveIntel == null) {
-            CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
             IntelItem intelItem = PlayerUI.Instance.GetIntelItemWithIntel(previousIntel);
             intelItem?.SetClickedState(false);
-            //InteriorMapManager.Instance.UnhighlightTiles();
-            //GameManager.Instance.SetPausedState(false);
+            Messenger.RemoveListener<KeyCode>(Signals.KEY_DOWN, OnIntelCast);
+            InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
         } else {
             IntelItem intelItem = PlayerUI.Instance.GetIntelItemWithIntel(currentActiveIntel);
-            //change the cursor
-            CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Cross);
-            CursorManager.Instance.AddLeftClickAction(TryExecuteCurrentActiveIntel);
-            CursorManager.Instance.AddLeftClickAction(() => SetCurrentActiveIntel(null));
             intelItem?.SetClickedState(true);
-            //GameManager.Instance.SetPausedState(true);
+            InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Cross);
+            Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnIntelCast);
+        }
+    }
+    private void OnIntelCast(KeyCode keyCode) {
+        if (keyCode == KeyCode.Mouse0) {
+            TryExecuteCurrentActiveIntel();
         }
     }
     private void TryExecuteCurrentActiveIntel() {
         string hoverText = string.Empty;
         if (minions.Count > 0 && CanShareIntel(InnerMapManager.Instance.currentlyHoveredPoi, ref hoverText)) {
             Character targetCharacter = InnerMapManager.Instance.currentlyHoveredPoi as Character;
-            //if(currentActiveIntel is EventIntel) {
-            //    if((currentActiveIntel as EventIntel).action == null) {
-            //        //If intel has no action, do not execute intel, just remove it instead
-            //        PlayerManager.Instance.player.RemoveIntel(currentActiveIntel);
-            //        return;
-            //    }
-            //}
             UIManager.Instance.OpenShareIntelMenu(targetCharacter, minions[0].character, currentActiveIntel);
         }
     }
@@ -1199,17 +1184,15 @@ public class Player : ILeader {
         CombatAbility previousAbility = currentActiveCombatAbility;
         currentActiveCombatAbility = ability;
         if (currentActiveCombatAbility == null) {
-            CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
+            InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
             InnerMapManager.Instance.UnhighlightTiles();
-            CursorManager.Instance.ClearLeftClickActions();
-            CursorManager.Instance.ClearRightClickActions();
+            // InputManager.Instance.ClearLeftClickActions();
             //GameManager.Instance.SetPausedState(false);
         } else {
             //change the cursor
-            CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Cross);
-            CursorManager.Instance.AddLeftClickAction(TryExecuteCurrentActiveCombatAbility);
-            CursorManager.Instance.AddLeftClickAction(() => SetCurrentActiveCombatAbility(null));
-            CursorManager.Instance.AddRightClickAction(() => SetCurrentActiveCombatAbility(null));
+            InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Cross);
+            // InputManager.Instance.AddLeftClickAction(TryExecuteCurrentActiveCombatAbility);
+            // InputManager.Instance.AddLeftClickAction(() => SetCurrentActiveCombatAbility(null));
             //GameManager.Instance.SetPausedState(true);
         }
     }

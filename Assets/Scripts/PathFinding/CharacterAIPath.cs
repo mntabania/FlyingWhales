@@ -64,7 +64,7 @@ public class CharacterAIPath : AILerp {
             marker.OnFleePathComputed(newPath);
         } else {
             currentPath = newPath as CustomABPath;
-            if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == marker.character && currentPath.traversalProvider != null) { //&& marker.terrifyingCharacters.Count > 0
+            if (UIManager.Instance.characterInfoInfoUi.isShowing && UIManager.Instance.characterInfoInfoUi.activeCharacter == marker.character && currentPath.traversalProvider != null) { //&& marker.terrifyingCharacters.Count > 0
                 for (int i = 0; i < currentPath.path.Count; i++) {
                     Vector3 nodePos = (Vector3)currentPath.path[i].position;
                     uint currentCost = currentPath.traversalProvider.GetTraversalCost(newPath, currentPath.path[i]);

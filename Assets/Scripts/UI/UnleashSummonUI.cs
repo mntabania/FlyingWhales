@@ -5,7 +5,7 @@ using TMPro;
 using UnityEngine.UI;
 using Inner_Maps;
 
-public class UnleashSummonUI : MonoBehaviour {
+public class UnleashSummonUI : PopupMenuBase {
     [Header("General")]
     public ScrollRect summonsScrollRect;
     public Button summonButton;
@@ -40,7 +40,7 @@ public class UnleashSummonUI : MonoBehaviour {
         //SetSummon(summon);
         PopulateSummons();
         UpdateSummonButton();
-        gameObject.SetActive(true);
+        base.Open();
     }
     private void PopulateSummons() {
         UtilityScripts.Utilities.DestroyChildren(summonsScrollRect.content);
@@ -119,7 +119,7 @@ public class UnleashSummonUI : MonoBehaviour {
                 chosenSummons[i].behaviourComponent.SetIsInvading(true);
             }
         }
-        gameObject.SetActive(false);
+        base.Close();
         //entrances.Clear();
         //InnerTileMap innerMap = InnerMapManager.Instance.currentlyShowingMap;
         //LocationGridTile mainEntrance = innerMap.GetRandomUnoccupiedEdgeTile();
@@ -179,7 +179,7 @@ public class UnleashSummonUI : MonoBehaviour {
         Close();
     }
 
-    private void Close() {
+    public override void Close() {
         gameObject.SetActive(false);
         if (!PlayerUI.Instance.TryShowPendingUI()) {
             if (!isGamePausedOnShowUI) {

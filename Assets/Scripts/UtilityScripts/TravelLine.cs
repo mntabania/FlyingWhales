@@ -29,12 +29,12 @@ public class TravelLine : MonoBehaviour {
 
     public void Initialize() {
         _currentTick = 0;
-        Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
-        Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
+        Messenger.AddListener<InfoUIBase>(Signals.MENU_OPENED, OnMenuOpened);
+        Messenger.AddListener<InfoUIBase>(Signals.MENU_CLOSED, OnMenuClosed);
     }
     private void OnDestroy() {
-        Messenger.RemoveListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
-        Messenger.RemoveListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
+        Messenger.RemoveListener<InfoUIBase>(Signals.MENU_OPENED, OnMenuOpened);
+        Messenger.RemoveListener<InfoUIBase>(Signals.MENU_CLOSED, OnMenuClosed);
     }
     public void SetCharacter(Character character) {
         _character = character;
@@ -53,7 +53,7 @@ public class TravelLine : MonoBehaviour {
     public void OnHoverOutTravelLine() {
         if(UIManager.Instance != null) {
             UIManager.Instance.HideCharacterPortraitHoverInfo();
-            if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == _character.id) {
+            if (UIManager.Instance.characterInfoInfoUi.isShowing && UIManager.Instance.characterInfoInfoUi.activeCharacter.id == _character.id) {
                 iconImg.sprite = clickedSprite;
             } else {
                 iconImg.sprite = defaultSprite;
@@ -62,7 +62,7 @@ public class TravelLine : MonoBehaviour {
     }
     public void OnClickTravelLine() {
         if (_character != null) {
-            if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == _character.id) {
+            if (UIManager.Instance.characterInfoInfoUi.isShowing && UIManager.Instance.characterInfoInfoUi.activeCharacter.id == _character.id) {
                 iconImg.sprite = clickedSprite;
                 return;
             }
@@ -102,17 +102,17 @@ public class TravelLine : MonoBehaviour {
     }
 
     #region Listeners
-    private void OnMenuOpened(UIMenu menu) {
-        if(menu is CharacterInfoUI && UIManager.Instance.characterInfoUI.activeCharacter.id == _character.id) {
+    private void OnMenuOpened(InfoUIBase @base) {
+        if(@base is CharacterInfoInfoUi && UIManager.Instance.characterInfoInfoUi.activeCharacter.id == _character.id) {
             iconImg.sprite = clickedSprite;
-            if(UIManager.Instance.characterInfoUI.previousCharacter != null && !UIManager.Instance.characterInfoUI.previousCharacter.isDead && UIManager.Instance.characterInfoUI.previousCharacter.currentParty.icon.isTravelling 
-                && UIManager.Instance.characterInfoUI.previousCharacter.currentParty.icon.travelLine != null) {
-                UIManager.Instance.characterInfoUI.previousCharacter.currentParty.icon.travelLine.iconImg.sprite = UIManager.Instance.characterInfoUI.previousCharacter.currentParty.icon.travelLine.defaultSprite;
+            if(UIManager.Instance.characterInfoInfoUi.previousCharacter != null && !UIManager.Instance.characterInfoInfoUi.previousCharacter.isDead && UIManager.Instance.characterInfoInfoUi.previousCharacter.currentParty.icon.isTravelling 
+                && UIManager.Instance.characterInfoInfoUi.previousCharacter.currentParty.icon.travelLine != null) {
+                UIManager.Instance.characterInfoInfoUi.previousCharacter.currentParty.icon.travelLine.iconImg.sprite = UIManager.Instance.characterInfoInfoUi.previousCharacter.currentParty.icon.travelLine.defaultSprite;
             }
         }
     }
-    private void OnMenuClosed(UIMenu menu) {
-        if (menu is CharacterInfoUI && UIManager.Instance.characterInfoUI.activeCharacter.id == _character.id) {
+    private void OnMenuClosed(InfoUIBase @base) {
+        if (@base is CharacterInfoInfoUi && UIManager.Instance.characterInfoInfoUi.activeCharacter.id == _character.id) {
             iconImg.sprite = defaultSprite;
         }
     }

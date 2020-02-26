@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
-public class RegionInfoUI : UIMenu {
+public class RegionInfoInfoUi : InfoUIBase {
 
     [Header("Basic Info")]
     [SerializeField] private TextMeshProUGUI regionNameLbl;

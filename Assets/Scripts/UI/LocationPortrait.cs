@@ -18,7 +18,7 @@ public class LocationPortrait : PooledObject, IPointerClickHandler {
     public void OnPointerClick(PointerEventData eventData) {
         if (!disableInteraction && eventData.button == PointerEventData.InputButton.Left) {
             if (region != null) {
-                if (!UIManager.Instance.regionInfoUI.isShowing) {
+                if (!UIManager.Instance.regionInfoInfoUi.isShowing) {
                     UIManager.Instance.ShowRegionInfo(region);
                 } else {
                     region.CenterCameraOnRegion();

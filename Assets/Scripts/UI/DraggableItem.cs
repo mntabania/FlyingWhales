@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Ruinarch;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -32,7 +33,7 @@ public class DraggableItem : MonoBehaviour, IDragHandler, IBeginDragHandler, IEn
         if (!isDraggable) {
             return;
         }
-        CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Drag_Clicked);
+        InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Drag_Clicked);
     }
     #endregion
 
@@ -53,7 +54,7 @@ public class DraggableItem : MonoBehaviour, IDragHandler, IBeginDragHandler, IEn
     #region IEndDragHandler Members
     public virtual void OnEndDrag(PointerEventData eventData) {
         _isDragging = false;
-        CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Drag_Hover);
+        InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Drag_Hover);
         if (_draggingObject != null) {
             List<RaycastResult> newRaycastResults = new List<RaycastResult>();
             CustomDropZone customDropzone = null;
@@ -84,13 +85,13 @@ public class DraggableItem : MonoBehaviour, IDragHandler, IBeginDragHandler, IEn
     }
 
     public virtual void OnPointerEnter(PointerEventData eventData) {
-        if (isDraggable && !CursorManager.Instance.isDraggingItem) {
-            CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Drag_Hover);
+        if (isDraggable && !InputManager.Instance.isDraggingItem) {
+            InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Drag_Hover);
         }
     }
     public virtual void OnPointerExit(PointerEventData eventData) {
-        if (isDraggable && !CursorManager.Instance.isDraggingItem) {
-            CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
+        if (isDraggable && !InputManager.Instance.isDraggingItem) {
+            InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
         }
     }
 }

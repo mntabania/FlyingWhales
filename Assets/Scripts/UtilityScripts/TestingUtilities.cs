@@ -18,9 +18,9 @@ namespace UtilityScripts {
                             summary += $"\n{jqi.name}";
                         }
                         summary += $"\nAssigned Character: {jqi.assignedCharacter?.name}" ?? "None";
-                        if (UIManager.Instance.characterInfoUI.isShowing) {
+                        if (UIManager.Instance.characterInfoInfoUi.isShowing) {
                             summary +=
-                                $"\nCan character take job? {jqi.CanCharacterDoJob(UIManager.Instance.characterInfoUI.activeCharacter)}";
+                                $"\nCan character take job? {jqi.CanCharacterDoJob(UIManager.Instance.characterInfoInfoUi.activeCharacter)}";
                         }
             
                     }

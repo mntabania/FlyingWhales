@@ -6,7 +6,7 @@ using UnityEngine.UI;
 using System;
 using Inner_Maps;
 
-public class TileObjectInfoUI : UIMenu {
+public class TileObjectInfoInfoUi : InfoUIBase {
 
     [Space(10)]
     [Header("Basic Info")]

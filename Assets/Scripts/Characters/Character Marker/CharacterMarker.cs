@@ -154,7 +154,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     protected override void OnPointerRightClick(Character poi) {
         base.OnPointerRightClick(poi);
-        Character activeCharacter = UIManager.Instance.characterInfoUI.activeCharacter;
+        Character activeCharacter = UIManager.Instance.characterInfoInfoUi.activeCharacter;
         if (activeCharacter != null) {
             if (activeCharacter.minion == null) {
 #if UNITY_EDITOR
@@ -181,8 +181,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
 
     #region Listeners
     private void AddListeners() {
-        Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
-        Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
+        Messenger.AddListener<InfoUIBase>(Signals.MENU_OPENED, OnMenuOpened);
+        Messenger.AddListener<InfoUIBase>(Signals.MENU_CLOSED, OnMenuClosed);
         Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_ADDED, OnCharacterGainedTrait);
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_REMOVED, OnCharacterLostTrait);
@@ -195,8 +195,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
         Messenger.AddListener<IPointOfInterest>(Signals.REPROCESS_POI, ReprocessPOI);
     }
     private void RemoveListeners() {
-        Messenger.RemoveListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
-        Messenger.RemoveListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
+        Messenger.RemoveListener<InfoUIBase>(Signals.MENU_OPENED, OnMenuOpened);
+        Messenger.RemoveListener<InfoUIBase>(Signals.MENU_CLOSED, OnMenuClosed);
         Messenger.RemoveListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_ADDED, OnCharacterGainedTrait);
         Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_REMOVED, OnCharacterLostTrait);
@@ -372,7 +372,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     #endregion
 
     #region UI
-    private void OnMenuOpened(UIMenu menu) {
+    private void OnMenuOpened(InfoUIBase @base) {
         // if (menu is CharacterInfoUI) {
         //     if ((menu as CharacterInfoUI).activeCharacter.id == character.id) {
         //         clickedImg.gameObject.SetActive(true);
@@ -382,7 +382,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         //
         // }
     }
-    private void OnMenuClosed(UIMenu menu) {
+    private void OnMenuClosed(InfoUIBase @base) {
         // if (menu is CharacterInfoUI) {
         //     clickedImg.gameObject.SetActive(false);
         //     //UnhighlightMarker();
@@ -1720,8 +1720,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public override void UpdateTileObjectVisual(Character obj) { }
     public override void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) { }
     public override bool IsMapObjectMenuVisible() {
-        if (UIManager.Instance.characterInfoUI.isShowing) {
-            return UIManager.Instance.characterInfoUI.activeCharacter == this.character;
+        if (UIManager.Instance.characterInfoInfoUi.isShowing) {
+            return UIManager.Instance.characterInfoInfoUi.activeCharacter == this.character;
         }
         return false;
     }

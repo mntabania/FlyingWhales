@@ -630,27 +630,27 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
             colliders[i].enabled = false;
         }
     }
-    private UIMenu GetMenuToShowWhenTileIsClicked() {
+    private InfoUIBase GetMenuToShowWhenTileIsClicked() {
         if (region != null) {
             //if region info ui is showing, show tile info ui
-            if (UIManager.Instance.regionInfoUI.isShowing) {
-                if (UIManager.Instance.regionInfoUI.activeRegion == region) {
-                    return UIManager.Instance.hexTileInfoUI;    
+            if (UIManager.Instance.regionInfoInfoUi.isShowing) {
+                if (UIManager.Instance.regionInfoInfoUi.activeRegion == region) {
+                    return UIManager.Instance.hexTileInfoInfoUi;    
                 } else {
-                    return UIManager.Instance.regionInfoUI;
+                    return UIManager.Instance.regionInfoInfoUi;
                 }
-            } else if (UIManager.Instance.hexTileInfoUI.isShowing) {
-                if (UIManager.Instance.hexTileInfoUI.currentlyShowingHexTile.region == region) {
-                    if (UIManager.Instance.hexTileInfoUI.currentlyShowingHexTile == this) {
-                        return UIManager.Instance.regionInfoUI;
+            } else if (UIManager.Instance.hexTileInfoInfoUi.isShowing) {
+                if (UIManager.Instance.hexTileInfoInfoUi.currentlyShowingHexTile.region == region) {
+                    if (UIManager.Instance.hexTileInfoInfoUi.currentlyShowingHexTile == this) {
+                        return UIManager.Instance.regionInfoInfoUi;
                     } else {
-                        return UIManager.Instance.hexTileInfoUI;
+                        return UIManager.Instance.hexTileInfoInfoUi;
                     }
                 } else {
-                    return UIManager.Instance.regionInfoUI;    
+                    return UIManager.Instance.regionInfoInfoUi;    
                 }
             } else {
-                return UIManager.Instance.regionInfoUI;
+                return UIManager.Instance.regionInfoInfoUi;
             }
         }
         return null;
@@ -663,15 +663,13 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
             return;
         }
         Messenger.Broadcast(Signals.TILE_LEFT_CLICKED, this);
-        UIMenu menuToShow = GetMenuToShowWhenTileIsClicked();
-        if (menuToShow != null) {
-            if (menuToShow is RegionInfoUI) {
+        InfoUIBase baseToShow = GetMenuToShowWhenTileIsClicked();
+        if (baseToShow != null) {
+            if (baseToShow is RegionInfoInfoUi) {
                 UIManager.Instance.ShowRegionInfo(region);
-            } else if (menuToShow is HextileInfoUI) {
+            } else if (baseToShow is HextileInfoInfoUi) {
                 UIManager.Instance.ShowHexTileInfo(this);
             }
-        } else {
-            Messenger.Broadcast(Signals.HIDE_MENUS);
         }
         MouseOver();
     }
@@ -682,22 +680,21 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         Messenger.Broadcast(Signals.TILE_RIGHT_CLICKED, this);
     }
     private void MouseOver() {
-        UIMenu menuToOpen = GetMenuToShowWhenTileIsClicked();
-        if (menuToOpen is RegionInfoUI) {
+        InfoUIBase baseToOpen = GetMenuToShowWhenTileIsClicked();
+        if (baseToOpen is RegionInfoInfoUi) {
             region.ShowBorders(Color.red);
-        } else if (menuToOpen is HextileInfoUI) {
+        } else if (baseToOpen is HextileInfoInfoUi) {
             SetBordersState(true, false, Color.red);
         }
         Messenger.Broadcast(Signals.TILE_HOVERED_OVER, this);
     }
     private void MouseExit() {
-        UIMenu menuToOpen = GetMenuToShowWhenTileIsClicked();
-        if (menuToOpen is RegionInfoUI) {
+        InfoUIBase baseToOpen = GetMenuToShowWhenTileIsClicked();
+        if (baseToOpen is RegionInfoInfoUi) {
             region.HideBorders();
-        } else if (menuToOpen is HextileInfoUI) {
+        } else if (baseToOpen is HextileInfoInfoUi) {
             SetBordersState(false, false, Color.red);
         }
-        // UIManager.Instance.HideSmallInfo();
         Messenger.Broadcast(Signals.TILE_HOVERED_OUT, this);
     }
     private void DoubleLeftClick() {
@@ -1203,8 +1200,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     
     #region Selectable
     public bool IsCurrentlySelected() {
-        return UIManager.Instance.hexTileInfoUI.isShowing &&
-               UIManager.Instance.hexTileInfoUI.currentlyShowingHexTile == this;
+        return UIManager.Instance.hexTileInfoInfoUi.isShowing &&
+               UIManager.Instance.hexTileInfoInfoUi.currentlyShowingHexTile == this;
     }
     public void LeftSelectAction() {
         UIManager.Instance.ShowHexTileInfo(this);

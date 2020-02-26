@@ -15,13 +15,23 @@ public class MinionCommandsUI : MonoBehaviour {
     #region Utilities
     public void ShowUI(IPointOfInterest poi) {
         this.targetPOI = poi;
+        UIManager.Instance.HideSmallInfo();
         UIManager.Instance.PositionTooltip(gameObject, rt, rt);
         ShowButtons(poi);
         gameObject.SetActive(true);
+        Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressed);
     }
     public void HideUI() {
         gameObject.SetActive(false);
         this.targetPOI = null;
+        Messenger.RemoveListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressed);
+    }
+    private void OnKeyPressed(KeyCode keyCode) {
+        if (keyCode == KeyCode.Mouse0 && UIManager.Instance.IsMouseOnUI() == false) {
+            HideUI();
+        } else if (keyCode == KeyCode.Escape) {
+            HideUI();
+        }
     }
     private bool ShowButtons(IPointOfInterest targetPOI) {
         if (targetPOI.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
@@ -83,7 +93,7 @@ public class MinionCommandsUI : MonoBehaviour {
     #region Character
     public void Knockout() {
         if (targetPOI is Character) {
-            Character actor = UIManager.Instance.characterInfoUI.activeCharacter;
+            Character actor = UIManager.Instance.characterInfoInfoUi.activeCharacter;
             actor.jobComponent.CreateKnockoutJob(targetPOI as Character);
         } else {
             Debug.LogError($"{targetPOI.name} is not a character!");
@@ -95,7 +105,7 @@ public class MinionCommandsUI : MonoBehaviour {
     }
     public void Kill() {
         if (targetPOI is Character) {
-            Character actor = UIManager.Instance.characterInfoUI.activeCharacter;
+            Character actor = UIManager.Instance.characterInfoInfoUi.activeCharacter;
             actor.jobComponent.CreateKillJob(targetPOI as Character);
         } else {
             Debug.LogError($"{targetPOI.name} is not a character!");
@@ -107,7 +117,7 @@ public class MinionCommandsUI : MonoBehaviour {
     }
     public void Abduct() {
         if (targetPOI is Character) {
-            Character actor = UIManager.Instance.characterInfoUI.activeCharacter;
+            Character actor = UIManager.Instance.characterInfoInfoUi.activeCharacter;
             actor.jobComponent.CreateAbductJob(targetPOI as Character);
         } else {
             Debug.LogError($"{targetPOI.name} is not a character!");
@@ -122,7 +132,7 @@ public class MinionCommandsUI : MonoBehaviour {
     #region Monsters
     public void LearnMonster() {
         if (targetPOI is Character) {
-            Character actor = UIManager.Instance.characterInfoUI.activeCharacter;
+            Character actor = UIManager.Instance.characterInfoInfoUi.activeCharacter;
             actor.jobComponent.CreateLearnMonsterJob(targetPOI as Character);
         } else {
             Debug.LogError($"{targetPOI.name} is not a character!");
@@ -138,7 +148,7 @@ public class MinionCommandsUI : MonoBehaviour {
     #region Artifacts
     public void TakeArtifact() {
         if (targetPOI is Artifact) {
-            Character actor = UIManager.Instance.characterInfoUI.activeCharacter;
+            Character actor = UIManager.Instance.characterInfoInfoUi.activeCharacter;
             actor.jobComponent.CreateTakeArtifactJob(targetPOI as Artifact, PlayerManager.Instance.player.portalTile.locationGridTiles[0].structure);
         } else {
             Debug.LogError($"{targetPOI.name} is not an artifact!");
