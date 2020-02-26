@@ -65,6 +65,10 @@ namespace Inner_Maps {
 
         [Header("Other Tiles")] 
         public TileBase poisonRuleTile;
+        
+        [Header("Tile Objects")]
+        public TileObjectAssetDictionary tileObjectTiles;
+        public TileObjectAssetDictionary corruptedTileObjectAssets;
 
         public TileBase GetOutsideFloorTile(ILocation location) {
             switch (location.coreTile.biomeType) {

@@ -23,9 +23,7 @@ public class Minion {
     public bool isSummoned { get; private set; }
 
     private string _assignedDeadlySinName;
-
-    public Log busyReasonLog { get; private set; } //The reason that this minion is busy
-
+    
     public Minion(Character character, bool keepData) {
         this.character = character;
         this.exp = 0;
@@ -316,7 +314,6 @@ public class Minion {
     }
     public void SetAssignedRegion(Region region) {
         assignedRegion = region;
-        UpdateBusyReason();
         Messenger.Broadcast(Signals.MINION_CHANGED_ASSIGNED_REGION, this, assignedRegion);
     }
     #endregion
@@ -342,29 +339,6 @@ public class Minion {
     #endregion
 
     #region Utilities
-    private void UpdateBusyReason() {
-        if (assignedRegion != null) {
-            if (assignedRegion.mainLandmark.specificLandmarkType.IsPlayerLandmark() || assignedRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.NONE) {
-                //the region that this minion is assigned to is a player landmark
-                Log log = new Log(GameManager.Instance.Today(), "Character", "Minion",
-                    $"busy_{assignedRegion.mainLandmark.specificLandmarkType}");
-                log.AddToFillers(this.character, this.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                log.AddToFillers(assignedRegion, assignedRegion.name, LOG_IDENTIFIER.LANDMARK_1);
-                SetBusyReason(log);
-            } else {
-                //this minion is invading
-                Log log = new Log(GameManager.Instance.Today(), "Character", "Minion", "busy_invade");
-                log.AddToFillers(this.character, this.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                log.AddToFillers(assignedRegion, assignedRegion.name, LOG_IDENTIFIER.LANDMARK_1);
-                SetBusyReason(log);
-            }
-        } else {
-            SetBusyReason(null);
-        }
-    }
-    private void SetBusyReason(Log log) {
-        busyReasonLog = log;
-    }
     public void AdjustSpellExtractionCount(int amount) {
         spellExtractionCount += amount;
     }

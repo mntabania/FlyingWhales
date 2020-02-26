@@ -40,4 +40,8 @@ public class BlockWall : TileObject {
         base.OnPlaceTileObjectAtTile(tile);
     }
     #endregion
+
+    public void UpdateVisual(LocationGridTile tile) {
+        tile.parentMap.structureTilemap.SetTile(tile.localPlace, InnerMapManager.Instance.assetManager.GetWallAssetBasedOnWallType(wallType));
+    }
 }

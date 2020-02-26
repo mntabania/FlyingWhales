@@ -247,26 +247,12 @@ public class CharacterInfoUI : InfoUIBase {
         characterPortrait.GeneratePortrait(_activeCharacter);
     }
     public void UpdateBasicInfo() {
-        nameLbl.text = _activeCharacter.fullname;
+        nameLbl.text = _activeCharacter.visuals.GetNameplateName();
         lvlClassLbl.text = _activeCharacter.raceClassName;
-        if(activeCharacter.isSettlementRuler || activeCharacter.isFactionLeader) {
-            string additionalText = string.Empty;
-            if (activeCharacter.isSettlementRuler) {
-                additionalText = $"{additionalText}Settlement Ruler";
-            }
-            if (activeCharacter.isFactionLeader) {
-                if(additionalText != string.Empty) {
-                    additionalText = $"{additionalText}, ";
-                }
-                additionalText = $"{additionalText}Faction Leader";
-            }
-            nameLbl.text = $"{nameLbl.text} ({additionalText})";
-        }
         UpdateThoughtBubble();
     }
     public void UpdateThoughtBubble() {
-        Log log;
-        plansLbl.text = activeCharacter.GetThoughtBubble(out log);
+        plansLbl.text = activeCharacter.visuals.GetThoughtBubble(out var log);
         if (log != null) {
             plansLblLogItem.SetLog(log);
         }
@@ -629,7 +615,7 @@ public class CharacterInfoUI : InfoUIBase {
             
             relationshipNamesLbl.text += $"<link=\"{actualIndex.ToString()}\">{relationshipData.targetName}</link>\n";
             relationshipValuesLbl.text +=
-                $"<link=\"{actualIndex.ToString()}\"><color=\"{OpinionColor(activeCharacter.relationshipContainer.GetTotalOpinion(targetID))}\"> {GetOpinionText(activeCharacter.relationshipContainer.GetTotalOpinion(targetID))}</color> <color=\"{OpinionColor(opinionOfOther)}\">({opinionText})</color></link>\n";
+                $"<link=\"{actualIndex.ToString()}\"><color={BaseRelationshipContainer.OpinionColor(activeCharacter.relationshipContainer.GetTotalOpinion(targetID))}> {GetOpinionText(activeCharacter.relationshipContainer.GetTotalOpinion(targetID))}</color> <color={BaseRelationshipContainer.OpinionColor(opinionOfOther)}>({opinionText})</color></link>\n";
         }
     }
     public void OnHoverRelationshipValue(object obj) {
@@ -663,37 +649,31 @@ public class CharacterInfoUI : InfoUIBase {
         summary += "\n---------------------";
         Dictionary<string, int> opinions = activeCharacter.relationshipContainer.GetOpinionData(targetID).allOpinions;
         foreach (KeyValuePair<string, int> kvp in opinions) {
-            summary += $"\n{kvp.Key}: <color={OpinionColor(kvp.Value)}>{GetOpinionText(kvp.Value)}</color>";
+            summary += $"\n{kvp.Key}: <color={BaseRelationshipContainer.OpinionColor(kvp.Value)}>{GetOpinionText(kvp.Value)}</color>";
         }
         summary += "\n---------------------";
         summary +=
-            $"\nTotal: <color={OpinionColor(targetData.opinions.totalOpinion)}>{GetOpinionText(activeCharacter.relationshipContainer.GetTotalOpinion(targetID))}</color>";
+            $"\nTotal: <color={BaseRelationshipContainer.OpinionColor(targetData.opinions.totalOpinion)}>{GetOpinionText(activeCharacter.relationshipContainer.GetTotalOpinion(targetID))}</color>";
         if (target != null) {
             int opinionOfOther = target.relationshipContainer.GetTotalOpinion(activeCharacter);
             summary +=
-                $"\n{targetData.targetName}'s opinion of {activeCharacter.name}: <color={OpinionColor(opinionOfOther)}>{GetOpinionText(opinionOfOther)}</color>";
+                $"\n{targetData.targetName}'s opinion of {activeCharacter.name}: <color={BaseRelationshipContainer.OpinionColor(opinionOfOther)}>{GetOpinionText(opinionOfOther)}</color>";
         } else {
             summary += $"\n{targetData.targetName}'s opinion of {activeCharacter.name}: ???</color>";
         }
         
         summary +=
-            $"\n\nCompatibility: {RelationshipManager.Instance.GetCompatibilityBetween(activeCharacter, targetID)}";
+            $"\n\nCompatibility: {RelationshipManager.Instance.GetCompatibilityBetween(activeCharacter, targetID).ToString()}";
         UIManager.Instance.ShowSmallInfo(summary);
     }
     public void HideRelationshipData() {
         UIManager.Instance.HideSmallInfo();
     }
-    private string OpinionColor(int number) {
-        if(number < 0) {
-            return "red";
-        }
-        return "green";
-    }
     private string GetOpinionText(int number) {
         if (number < 0) {
-            return $"{number}";
+            return $"{number.ToString()}";
         }
-        return $"+{number}";
+        return $"+{number.ToString()}";
     }
     private void OnClickCharacter(object obj) {
         if (obj is string) {

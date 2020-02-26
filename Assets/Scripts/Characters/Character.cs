@@ -327,7 +327,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
         SetIsDead(data.isDead);
     }
-    public Character() {
+    private Character() {
         SetIsDead(false);
         _overrideThoughts = new List<string>();
         
@@ -1838,7 +1838,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             string opinionLabel = relationshipContainer.GetOpinionLabel(characterThatDied);
             if (opinionLabel == OpinionComponent.Friend) {
                 needsComponent.AdjustHope(-5f);
-            } else if (opinionLabel == OpinionComponent.Close_Friend) {
+            } else if (opinionLabel == OpinionComponent.Close_Friend
+                || (relationshipContainer.HasSpecialPositiveRelationshipWith(characterThatDied) 
+                    && relationshipContainer.IsEnemiesWith(characterThatDied) == false)) {
                 needsComponent.AdjustHope(-10f);
                 if (!traitContainer.HasTrait("Psychopath")) {
                     traitContainer.AddTrait(this, "Griefstricken");
@@ -2086,63 +2088,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void RemoveOverrideThought(string log) {
         _overrideThoughts.Remove(log);
-    }
-    public string GetThoughtBubble(out Log log) {
-        log = null;
-        if (minion != null) {
-            return string.Empty;
-        }
-        if (_overrideThoughts.Count > 0) {
-            return _overrideThoughts[0];
-        }
-        if (isDead) {
-            return $"{name} has died.";
-        }
-        if (minion != null) {
-            if (minion.busyReasonLog != null) {
-                log = minion.busyReasonLog;
-                return UtilityScripts.Utilities.LogReplacer(minion.busyReasonLog);
-            } else {
-                return $"{name} is ready to do your bidding.";
-            }
-            //return string.Empty; 
-        }
-        //Interrupt
-        if (interruptComponent.isInterrupted && interruptComponent.thoughtBubbleLog != null) {
-            log = interruptComponent.thoughtBubbleLog;
-            return UtilityScripts.Utilities.LogReplacer(interruptComponent.thoughtBubbleLog);
-        }
-
-        //Action
-        if (currentActionNode != null) {
-            Log currentLog = currentActionNode.GetCurrentLog();
-            log = currentLog;
-            return UtilityScripts.Utilities.LogReplacer(currentLog);
-        }
-
-        //Character State
-        if (stateComponent.currentState != null) {
-            log = stateComponent.currentState.thoughtBubbleLog;
-            return UtilityScripts.Utilities.LogReplacer(stateComponent.currentState.thoughtBubbleLog);
-        }
-        //fleeing
-        if (marker && marker.hasFleePath) {
-            return $"{name} is fleeing.";
-        }
-
-        //Travelling
-        if (currentParty.icon.isTravelling) {
-            if (currentParty.owner.marker.destinationTile != null) {
-                return $"{name} is going to {currentParty.owner.marker.destinationTile.structure.GetNameRelativeTo(this)}";
-            }
-        }
-
-        //Default - Do nothing/Idle
-        if (currentStructure != null) {
-            return $"{name} is in {currentStructure.GetNameRelativeTo(this)}";
-        }
-
-        return $"{name} is in {currentRegion.name}";
     }
     //Returns the list of goap actions to be witnessed by this character
     public void ThisCharacterSaw(IPointOfInterest target, bool reactToActionOnly = false) {
@@ -5725,6 +5670,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     #region Player Action Target
     public List<PlayerAction> actions { get; protected set; }
+    public List<string> overrideThoughts {
+        get { return _overrideThoughts; }
+    }
     public virtual void ConstructDefaultActions() {
         actions = new List<PlayerAction>();
 

@@ -270,6 +270,15 @@ public class BaseRelationshipContainer : IRelationshipContainer {
         }
         return string.Empty;
     }
+    public static string OpinionColor(int number) {
+        if (number > 20) {
+            return "green";    
+        } else if (number > -21 && number <= 20) {
+            return "#808080";
+        } else {
+            return "red";
+        }
+    }
     public bool IsFriendsWith(Character character) {
         string opinionLabel = GetOpinionLabel(character);
         return opinionLabel == Friend || opinionLabel == Close_Friend;
@@ -403,6 +412,22 @@ public class BaseRelationshipContainer : IRelationshipContainer {
             return relationshipData.opinions.compatibilityValue;
         }
         return -1;
+    }
+    public bool HasSpecialPositiveRelationshipWith(Character characterThatDied) {
+        if (TryGetRelationshipDataWith(characterThatDied.id, out var data)) {
+            RELATIONSHIP_TYPE relType = data.GetFirstMajorRelationship();
+            switch (relType) {
+                case RELATIONSHIP_TYPE.CHILD:
+                case RELATIONSHIP_TYPE.LOVER:
+                case RELATIONSHIP_TYPE.PARENT:
+                case RELATIONSHIP_TYPE.SIBLING:
+                case RELATIONSHIP_TYPE.AFFAIR:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+        return false;
     }
     public string GetRelationshipNameWith(Character target) {
         return GetRelationshipNameWith(target.id);

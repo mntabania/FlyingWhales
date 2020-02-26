@@ -354,28 +354,30 @@ public class PlayerManager : MonoBehaviour {
         Debug.Log($"Created {amount.ToString()} chaos orbs at {mapLocation.location.name}. Position {worldPos.ToString()}");
     }
     private void OnCharacterDidActionSuccess(Character character, ActualGoapNode actionNode) {
-        CRIME_TYPE crimeType = CrimeManager.Instance.GetCrimeTypeConsideringAction(actionNode);
-        if (crimeType != CRIME_TYPE.NONE) {
-            int orbsToCreate;
-            switch (crimeType) {
-                case CRIME_TYPE.MISDEMEANOR:
-                    orbsToCreate = 4;
-                    break;
-                case CRIME_TYPE.SERIOUS:
-                    orbsToCreate = 6;
-                    break;
-                case CRIME_TYPE.HEINOUS:
-                    orbsToCreate = 8;
-                    break;
-                default:
-                    orbsToCreate = 2;
-                    break;
-            }
-            character.logComponent.PrintLogIfActive(
-                $"{GameManager.Instance.TodayLogString()}{character.name} performed a crime of type {crimeType.ToString()}. Expelling {orbsToCreate.ToString()} Chaos Orbs.");
-            Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, character.marker.transform.position, orbsToCreate, 
-                character.currentRegion.innerMap);
+        if (character.IsNPC()) {
+            CRIME_TYPE crimeType = CrimeManager.Instance.GetCrimeTypeConsideringAction(actionNode);
+            if (crimeType != CRIME_TYPE.NONE) {
+                int orbsToCreate;
+                switch (crimeType) {
+                    case CRIME_TYPE.MISDEMEANOR:
+                        orbsToCreate = 4;
+                        break;
+                    case CRIME_TYPE.SERIOUS:
+                        orbsToCreate = 6;
+                        break;
+                    case CRIME_TYPE.HEINOUS:
+                        orbsToCreate = 8;
+                        break;
+                    default:
+                        orbsToCreate = 2;
+                        break;
+                }
+                character.logComponent.PrintLogIfActive(
+                    $"{GameManager.Instance.TodayLogString()}{character.name} performed a crime of type {crimeType.ToString()}. Expelling {orbsToCreate.ToString()} Chaos Orbs.");
+                Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, character.marker.transform.position, orbsToCreate, 
+                    character.currentRegion.innerMap);
 
+            }    
         }
     }
     #endregion

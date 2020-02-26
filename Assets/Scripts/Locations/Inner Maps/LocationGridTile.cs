@@ -876,8 +876,11 @@ namespace Inner_Maps {
                 parentMap.detailsTilemap.SetTile(localPlace, null);
             }
             if (objHere != null) {
-                if (objHere is TreeObject) {
-                    (objHere.mapObjectVisual as TileObjectGameObject).UpdateTileObjectVisual(objHere as TileObject);
+                if (objHere is TreeObject tree) {
+                    (tree.mapObjectVisual as TileObjectGameObject).UpdateTileObjectVisual(tree);
+                } else if (objHere is BlockWall blockWall) {
+                    blockWall.SetWallType(WALL_TYPE.Demon_Stone);
+                    blockWall.UpdateVisual(this);
                 } else {
                     structure.RemovePOI(objHere);
                 }

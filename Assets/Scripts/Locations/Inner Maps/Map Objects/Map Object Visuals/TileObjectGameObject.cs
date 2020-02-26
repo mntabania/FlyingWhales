@@ -61,8 +61,8 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
     
     
     public override void UpdateTileObjectVisual(TileObject tileObject) {
-        if (tileObject is Bed) {
-            UpdateBedVisual(tileObject as Bed); //TODO: Transfer this to it's own object
+        if (tileObject is Bed bed) {
+            UpdateBedVisual(bed); //TODO: Transfer this to it's own object
         } else {
             SetVisual(InnerMapManager.Instance.GetTileObjectAsset(tileObject, 
                 tileObject.state, 
