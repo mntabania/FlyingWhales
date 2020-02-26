@@ -157,6 +157,7 @@ public class Minion {
             UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(),
                 $"Minion Died: {UtilityScripts.Utilities.LogReplacer(deathLog)}", null);
             Unsummon();
+            GameManager.Instance.CreateParticleEffectAt(deathTile, PARTICLE_EFFECT.Minion_Dissipate);
         }
     }
 
