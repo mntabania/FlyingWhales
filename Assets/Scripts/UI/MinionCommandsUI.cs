@@ -90,7 +90,7 @@ public class MinionCommandsUI : MonoBehaviour {
     }
     private bool CanIssueCommand() {
         bool canIssueCommand = true;
-        Character actor = UIManager.Instance.characterInfoUI.activeCharacter;
+        Character actor = UIManager.Instance.characterInfoInfoUi.activeCharacter;
         if(actor.gridTileLocation == null || targetPOI.gridTileLocation == null || !PathfindingManager.Instance.HasPath(actor.gridTileLocation, targetPOI.gridTileLocation)) {
             canIssueCommand = false;
             PlayerUI.Instance.ShowGeneralConfirmation("Instruction Error", "Cannot instruct minion. It has no path towards the target.");

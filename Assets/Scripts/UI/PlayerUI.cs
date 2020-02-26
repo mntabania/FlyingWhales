@@ -127,9 +127,7 @@ public class PlayerUI : MonoBehaviour {
 
         Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
         Messenger.AddListener(Signals.ON_CLOSE_SHARE_INTEL, OnCloseShareIntelMenu);
-
-        Messenger.AddListener<Minion>(Signals.SUMMON_MINION, OnGainedMinion);
-        Messenger.AddListener<Minion>(Signals.UNSUMMON_MINION, OnLostMinion);
+        
         Messenger.AddListener<ILocation>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
         Messenger.AddListener<ILocation>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
         
@@ -867,7 +865,7 @@ public class PlayerUI : MonoBehaviour {
         }
     }
     private void ShowSpells() {
-        spellList.ShowDropdown(PlayerManager.Instance.player.archetype.spells, OnClickSpell, CanChooseItem);
+        // spellList.ShowDropdown(PlayerManager.Instance.player.archetype.spells, OnClickSpell, CanChooseItem);
         //customDropdownList.ShowDropdown(PlayerManager.Instance.player.archetype.spells, OnClickSpell, CanChooseItem);
     }
     //private bool CanChooseItem(string item) {
