@@ -381,36 +381,63 @@ public class CharacterInfoUI : InfoUIBase {
         UIManager.Instance.HideSmallInfo();
     }
     private void OnClickTrait(object obj) {
-        if (TraitManager.Instance.CanStillTriggerFlaws(activeCharacter)) {
-            if (obj is string) {
-                string text = (string)obj;
-                int index = int.Parse(text);
-                Trait trait = activeCharacter.traitContainer.allTraits[index];
-                string traitDescription = trait.description;
-                if (trait.canBeTriggered) {
-                    traitDescription +=
-                        $"\n{trait.GetRequirementDescription(activeCharacter)}\n\n<b>Effect</b>: {trait.GetTriggerFlawEffectDescription(activeCharacter, "flaw_effect")}";
-                }
-
-                StartCoroutine(HoverOutTraitAfterClick());//Quick fix because tooltips do not disappear. Issue with hover out action in label not being called when other collider goes over it.
-                UIManager.Instance.ShowYesNoConfirmation(trait.name, traitDescription,
-                    onClickYesAction: () => OnClickTriggerFlaw(trait),
-                    showCover: true, layer: 25, yesBtnText:
-                    $"Trigger ({EditableValuesManager.Instance.triggerFlawManaCost.ToString()} Mana)",
-                    yesBtnInteractable: trait.CanFlawBeTriggered(activeCharacter),
-                    pauseAndResume: true,
-                    noBtnActive: false,
-                    yesBtnActive: trait.canBeTriggered,
-                    yesBtnInactiveHoverAction: () => ShowCannotTriggerFlawReason(trait),
-                    yesBtnInactiveHoverExitAction: UIManager.Instance.HideSmallInfo
-                );
-                normalTraitsEventLbl.ResetHighlightValues();
+        if (obj is string) {
+            string text = (string) obj;
+            int index = int.Parse(text);
+            Trait trait = activeCharacter.traitContainer.allTraits[index];
+            string traitDescription = trait.description;
+            if (trait.canBeTriggered) {
+                traitDescription +=
+                    $"\n{trait.GetRequirementDescription(activeCharacter)}\n\n<b>Effect</b>: {trait.GetTriggerFlawEffectDescription(activeCharacter, "flaw_effect")}";
             }
-        } else {
+
             StartCoroutine(HoverOutTraitAfterClick());//Quick fix because tooltips do not disappear. Issue with hover out action in label not being called when other collider goes over it.
-            PlayerUI.Instance.ShowGeneralConfirmation("Invalid", "This character's flaws can no longer be triggered.");
+            UIManager.Instance.ShowYesNoConfirmation(trait.name, traitDescription,
+                onClickYesAction: () => OnClickTriggerFlaw(trait),
+                onClickNoAction: () => OnClickRemoveTrait(trait),
+                showCover: true, layer: 25,
+                yesBtnText: $"Trigger ({EditableValuesManager.Instance.triggerFlawManaCost.ToString()} Mana)",
+                noBtnText: "Remove Trait",
+                yesBtnInteractable: trait.canBeTriggered && trait.CanFlawBeTriggered(activeCharacter) && TraitManager.Instance.CanStillTriggerFlaws(activeCharacter),
+                noBtnInteractable: PlayerManager.Instance.player.archetype.canRemoveTraits,
+                pauseAndResume: true,
+                //noBtnActive: false,
+                //yesBtnActive: trait.canBeTriggered,
+                yesBtnInactiveHoverAction: () => ShowCannotTriggerFlawReason(trait),
+                yesBtnInactiveHoverExitAction: UIManager.Instance.HideSmallInfo
+            );
             normalTraitsEventLbl.ResetHighlightValues();
         }
+        //if (TraitManager.Instance.CanStillTriggerFlaws(activeCharacter)) {
+        //    if (obj is string) {
+        //        string text = (string)obj;
+        //        int index = int.Parse(text);
+        //        Trait trait = activeCharacter.traitContainer.allTraits[index];
+        //        string traitDescription = trait.description;
+        //        if (trait.canBeTriggered) {
+        //            traitDescription +=
+        //                $"\n{trait.GetRequirementDescription(activeCharacter)}\n\n<b>Effect</b>: {trait.GetTriggerFlawEffectDescription(activeCharacter, "flaw_effect")}";
+        //        }
+
+        //        StartCoroutine(HoverOutTraitAfterClick());//Quick fix because tooltips do not disappear. Issue with hover out action in label not being called when other collider goes over it.
+        //        UIManager.Instance.ShowYesNoConfirmation(trait.name, traitDescription,
+        //            onClickYesAction: () => OnClickTriggerFlaw(trait),
+        //            showCover: true, layer: 25, yesBtnText:
+        //            $"Trigger ({EditableValuesManager.Instance.triggerFlawManaCost.ToString()} Mana)",
+        //            yesBtnInteractable: trait.CanFlawBeTriggered(activeCharacter),
+        //            pauseAndResume: true,
+        //            noBtnActive: false,
+        //            yesBtnActive: trait.canBeTriggered,
+        //            yesBtnInactiveHoverAction: () => ShowCannotTriggerFlawReason(trait),
+        //            yesBtnInactiveHoverExitAction: UIManager.Instance.HideSmallInfo
+        //        );
+        //        normalTraitsEventLbl.ResetHighlightValues();
+        //    }
+        //} else {
+        //    StartCoroutine(HoverOutTraitAfterClick());//Quick fix because tooltips do not disappear. Issue with hover out action in label not being called when other collider goes over it.
+        //    PlayerUI.Instance.ShowGeneralConfirmation("Invalid", "This character's flaws can no longer be triggered.");
+        //    normalTraitsEventLbl.ResetHighlightValues();
+        //}
     }
     private IEnumerator HoverOutTraitAfterClick() {
         yield return new WaitForEndOfFrame();
@@ -437,6 +464,9 @@ public class CharacterInfoUI : InfoUIBase {
                 noBtnActive: false
             );
         }
+    }
+    private void OnClickRemoveTrait(Trait trait) {
+        activeCharacter.traitContainer.RemoveTrait(activeCharacter, trait);
     }
     #endregion
 

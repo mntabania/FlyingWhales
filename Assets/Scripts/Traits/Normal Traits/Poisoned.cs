@@ -61,7 +61,7 @@ namespace Traits {
             if (goapNode.action.actionCategory == ACTION_CATEGORY.CONSUME) {
                 if(traitable is IPointOfInterest poi) {
                     goapNode.actor.interruptComponent.TriggerInterrupt(INTERRUPT.Ingested_Poison, poi);
-                    poi.traitContainer.RemoveTraitAndStacks(poi, this);
+                    poi.traitContainer.RemoveTraitAndStacks(poi, this.name);
                     isRemoved = true;
                 }
             }

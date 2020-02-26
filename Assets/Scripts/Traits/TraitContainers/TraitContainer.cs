@@ -187,7 +187,7 @@ namespace Traits {
         private void ProcessAfterSuccessfulAddingElementalTrait(ITraitable traitable, Trait trait) {
             if (trait.name == "Freezing") {
                 if (stacks[trait.name] >= trait.stackLimit) {
-                    RemoveTraitAndStacks(traitable, trait);
+                    RemoveTraitAndStacks(traitable, trait.name);
                     AddTrait(traitable, "Frozen");
                 }
             }
@@ -310,7 +310,7 @@ namespace Traits {
             }
             return false;
         }
-        public void RemoveTraitAndStacks(ITraitable removeFrom, Trait trait, Character removedBy = null, bool bySchedule = false) {
+        private void RemoveTraitAndStacks(ITraitable removeFrom, Trait trait, Character removedBy = null, bool bySchedule = false) {
             int loopNum = 1;
             if (stacks.ContainsKey(trait.name)) {
                 loopNum = stacks[trait.name];
