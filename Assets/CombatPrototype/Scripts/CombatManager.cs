@@ -22,6 +22,15 @@ public class CombatManager : MonoBehaviour {
         if (target != null) {
             CreateHitEffectAt(target, elementalType);
         }
+        if (damage < 0) {
+            //Damage should awaken sleeping characters
+            if (target.traitContainer.HasTrait("Resting")) {
+                if (target is Character) {
+                    Character character = target as Character;
+                    character.jobQueue.CancelFirstJob();
+                }
+            }
+        }
         if (!string.IsNullOrEmpty(elementalDamage.addedTraitName)) {
             //Trait trait = null;
             bool hasSuccessfullyAdded = target.traitContainer.AddTrait(target, elementalDamage.addedTraitName, responsibleCharacter); //, out trait

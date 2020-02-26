@@ -5,6 +5,7 @@ using UnityEngine;
 using Traits;
 using Inner_Maps;
 using Interrupts;
+using Inner_Maps.Location_Structures;
 
 public class ReactionComponent {
     public Character owner { get; private set; }
@@ -410,14 +411,20 @@ public class ReactionComponent {
             }
         }
 
-        if(targetTileObject is TornadoTileObject) {
-            if(!owner.traitContainer.HasTrait("Elemental Master")) {
+        if (targetTileObject is TornadoTileObject) {
+            if (!owner.traitContainer.HasTrait("Elemental Master")) {
                 if (owner.combatComponent.combatMode == COMBAT_MODE.Aggressive) {
                     if (owner.traitContainer.HasTrait("Berserked")) {
                         owner.combatComponent.FightOrFlight(targetTileObject);
                     } else {
                         owner.combatComponent.Flight(targetTileObject, "saw a tornado");
                     }
+                }
+            }
+        } else {
+            if (targetTileObject.tileObjectType.IsTileObjectAnItem()) {
+                if (targetTileObject.gridTileLocation != null && targetTileObject.gridTileLocation.structure != owner.homeSettlement.mainStorage && targetTileObject.gridTileLocation.structure is Dwelling) {
+                    owner.jobComponent.CreateTakeItemJob(targetTileObject);
                 }
             }
         }

@@ -7,7 +7,8 @@ public class Tool : TileObject {
     public Tool() {
         advertisedActions = new List<INTERACTION_TYPE>();
         Initialize(TILE_OBJECT_TYPE.TOOL);
-        RemoveCommonAdvertisements();
+        //RemoveCommonAdvertisements();
+        RemoveAdvertisedAction(INTERACTION_TYPE.REPAIR);
     }
     public Tool(SaveDataTileObject data) {
         advertisedActions = new List<INTERACTION_TYPE>();

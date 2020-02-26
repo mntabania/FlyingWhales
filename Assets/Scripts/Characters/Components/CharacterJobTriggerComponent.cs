@@ -718,4 +718,11 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         }
     }
     #endregion
+
+    #region Items
+    public void CreateTakeItemJob(TileObject targetItem) {
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TAKE_ITEM, INTERACTION_TYPE.PICK_UP, targetItem, _owner);
+        _owner.jobQueue.AddJobInQueue(job);
+    }
+    #endregion
 }

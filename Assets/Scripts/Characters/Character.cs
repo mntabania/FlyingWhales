@@ -3555,7 +3555,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //    }
     //    return false;
     //}
-    public bool ObtainItem(TileObject item, bool changeCharacterOwnership = true) {
+    public bool ObtainItem(TileObject item, bool changeCharacterOwnership = false) {
         if (AddItem(item)) {
             // item.SetFactionOwner(this.faction);
             item.SetInventoryOwner(this);

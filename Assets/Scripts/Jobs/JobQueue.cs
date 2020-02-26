@@ -565,6 +565,11 @@ public class JobQueue {
             }
         }
     }
+    public void CancelFirstJob() {
+        if(jobsInQueue.Count > 0) {
+            jobsInQueue[0].CancelJob();
+        }
+    }
     public int GetJobQueueIndex(JobQueueItem job) {
         for (int i = 0; i < jobsInQueue.Count; i++) {
             if (jobsInQueue[i] == job) {
