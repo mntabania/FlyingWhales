@@ -247,26 +247,12 @@ public class CharacterInfoUI : InfoUIBase {
         characterPortrait.GeneratePortrait(_activeCharacter);
     }
     public void UpdateBasicInfo() {
-        nameLbl.text = _activeCharacter.fullname;
+        nameLbl.text = _activeCharacter.visuals.GetNameplateName();
         lvlClassLbl.text = _activeCharacter.raceClassName;
-        if(activeCharacter.isSettlementRuler || activeCharacter.isFactionLeader) {
-            string additionalText = string.Empty;
-            if (activeCharacter.isSettlementRuler) {
-                additionalText = $"{additionalText}Settlement Ruler";
-            }
-            if (activeCharacter.isFactionLeader) {
-                if(additionalText != string.Empty) {
-                    additionalText = $"{additionalText}, ";
-                }
-                additionalText = $"{additionalText}Faction Leader";
-            }
-            nameLbl.text = $"{nameLbl.text} ({additionalText})";
-        }
         UpdateThoughtBubble();
     }
     public void UpdateThoughtBubble() {
-        Log log;
-        plansLbl.text = activeCharacter.GetThoughtBubble(out log);
+        plansLbl.text = activeCharacter.visuals.GetThoughtBubble(out var log);
         if (log != null) {
             plansLblLogItem.SetLog(log);
         }

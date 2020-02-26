@@ -44,7 +44,6 @@ namespace Inner_Maps {
 
         [Header("Tilemap Assets")] 
         public InnerMapAssetManager assetManager;
-        [SerializeField] private TileObjectAssetDictionary tileObjectTiles;
         [SerializeField] private WallResourceAssetDictionary wallResourceAssets; //wall assets categorized by resource.
 
         //Settlement Map Objects
@@ -353,7 +352,8 @@ namespace Inner_Maps {
                 summary = $"{summary}None";
             }
 
-            IPointOfInterest poi = tile.objHere ?? tile.genericTileObject;
+            IPointOfInterest poi;
+            poi = tile.objHere ?? tile.genericTileObject;
             summary = $"{summary}\nContent: {poi}";
             if (poi != null) {
                 summary = $"{summary}\nHP: {poi.currentHP.ToString()}/{poi.maxHP.ToString()}";
@@ -727,62 +727,43 @@ namespace Inner_Maps {
         #endregion
 
         #region Assets
-        // public Sprite GetItemAsset(SPECIAL_TOKEN itemType) {
-        //     return itemTiles[itemType];
-        // }
         public Sprite GetTileObjectAsset(TileObject tileObject, POI_STATE state, BIOMES biome, bool corrupted = false) {
-            if (corrupted) {
-                //TODO: this is only temporary!
-                if (tileObject.tileObjectType == TILE_OBJECT_TYPE.TREE_OBJECT) {
-                    return CollectionUtilities.GetRandomElement(assetManager.corruptedTreeAssets);
-                } else if (tileObject.tileObjectType == TILE_OBJECT_TYPE.BIG_TREE_OBJECT) {
-                    return CollectionUtilities.GetRandomElement(assetManager.corruptedBigTreeAssets);
-                }
-            }
-
             if (tileObject.tileObjectType == TILE_OBJECT_TYPE.ARTIFACT) {
                 Artifact artifact = tileObject as Artifact;
                 if (ScriptableObjectsManager.Instance.artifactDataDictionary.ContainsKey(artifact.type)) {
                     return ScriptableObjectsManager.Instance.artifactDataDictionary[artifact.type].sprite;
                 }
             } else {
-                if (tileObjectTiles.ContainsKey(tileObject.tileObjectType)) {
-                    TileObjectTileSetting setting = tileObjectTiles[tileObject.tileObjectType];
+                var assetDictionary = corrupted ? assetManager.corruptedTileObjectAssets : assetManager.tileObjectTiles;
+                if (assetDictionary.ContainsKey(tileObject.tileObjectType) == false) {
+                    //if the provided asset dictionary does not have assets for the tile object, then try and use the default asset dictionary.
+                    assetDictionary = assetManager.tileObjectTiles;
+                }
+                if (assetDictionary.ContainsKey(tileObject.tileObjectType)) {
+                    TileObjectTileSetting setting = assetDictionary[tileObject.tileObjectType];
                     BiomeTileObjectTileSetting biomeSetting = setting.biomeAssets.ContainsKey(biome) ? setting.biomeAssets[biome] 
                         : setting.biomeAssets[BIOMES.NONE];
-                    if (state == POI_STATE.ACTIVE) {
-                        return biomeSetting.activeTile;
-                    } else {
-                        return biomeSetting.inactiveTile;
-                    }    
+                    return CollectionUtilities.GetRandomElement(state == POI_STATE.ACTIVE ? biomeSetting.activeTile : biomeSetting.inactiveTile);
                 }
             }
             return null;
         }
         public Sprite GetTileObjectAsset(TileObject tileObject, POI_STATE state, bool corrupted = false) {
-            if (corrupted) {
-                //TODO: this is only temporary!
-                if (tileObject.tileObjectType == TILE_OBJECT_TYPE.TREE_OBJECT) {
-                    return CollectionUtilities.GetRandomElement(assetManager.corruptedTreeAssets);
-                } else if (tileObject.tileObjectType == TILE_OBJECT_TYPE.BIG_TREE_OBJECT) {
-                    return CollectionUtilities.GetRandomElement(assetManager.corruptedBigTreeAssets);
-                }
-            }
-
             if (tileObject.tileObjectType == TILE_OBJECT_TYPE.ARTIFACT) {
                 Artifact artifact = tileObject as Artifact;
                 if (ScriptableObjectsManager.Instance.artifactDataDictionary.ContainsKey(artifact.type)) {
                     return ScriptableObjectsManager.Instance.artifactDataDictionary[artifact.type].sprite;
                 }
             } else {
-                if (tileObjectTiles.ContainsKey(tileObject.tileObjectType)) {
-                    TileObjectTileSetting setting = tileObjectTiles[tileObject.tileObjectType];
+                var assetDictionary = corrupted ? assetManager.corruptedTileObjectAssets : assetManager.tileObjectTiles;
+                if (assetDictionary.ContainsKey(tileObject.tileObjectType) == false) {
+                    //if the provided asset dictionary does not have assets for the tile object, then try and use the default asset dictionary.
+                    assetDictionary = assetManager.tileObjectTiles;
+                }
+                if (assetDictionary.ContainsKey(tileObject.tileObjectType)) {
+                    TileObjectTileSetting setting = assetDictionary[tileObject.tileObjectType];
                     BiomeTileObjectTileSetting biomeSetting = setting.biomeAssets[BIOMES.NONE];
-                    if (state == POI_STATE.ACTIVE) {
-                        return biomeSetting.activeTile;
-                    } else {
-                        return biomeSetting.inactiveTile;
-                    }    
+                    return CollectionUtilities.GetRandomElement(state == POI_STATE.ACTIVE ? biomeSetting.activeTile : biomeSetting.inactiveTile);
                 }
             }
             return null;

@@ -77,19 +77,11 @@ public class KillCountCharacterItem : CharacterNameplateItem {
                     } else {
                         text = $"\"{character.name} was resurrected into a mindless skeleton.\"";
                     }
-                } 
-                //else if (character.currentAlterEgo.name != CharacterManager.Original_Alter_Ego) {
-                //    text = "\"" + character.name + " turned into a " + character.currentAlterEgo.name + ".\"";
-                //} 
-                // else if (character.role.roleType == CHARACTER_ROLE.MINION) {
-                //     text = "\"" + character.name + " became a minion.\"";
-                // }
+                }
             }
             if (string.IsNullOrEmpty(text)) {
                 //character is not yet dead and not disabled, show current action instead
-                Log currentLog;
-                text = character.GetThoughtBubble(out currentLog);
-                
+                text = character.visuals.GetThoughtBubble(out _);
             }
             supportingLbl.text = text;
             

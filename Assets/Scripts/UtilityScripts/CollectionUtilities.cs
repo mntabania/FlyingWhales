@@ -104,6 +104,9 @@ namespace UtilityScripts {
             return list[UtilityScripts.Utilities.rng.Next(0, list.Count)];
         }
         public static T GetRandomElement<T>(T[] list) {
+            if (list.Length == 0) {
+                return default;
+            }
             return list[UtilityScripts.Utilities.rng.Next(0, list.Length)];
         }
         public static T GetRandomElement<T>(IEnumerable<T> list) {

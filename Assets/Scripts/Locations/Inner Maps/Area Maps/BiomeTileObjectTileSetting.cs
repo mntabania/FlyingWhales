@@ -4,6 +4,6 @@ using UnityEngine;
 
 [System.Serializable]
 public struct BiomeTileObjectTileSetting {
-    public Sprite activeTile;
-    public Sprite inactiveTile;
+    public Sprite[] activeTile;
+    public Sprite[] inactiveTile;
 }
