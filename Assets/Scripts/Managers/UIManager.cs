@@ -1110,7 +1110,7 @@ public class UIManager : MonoBehaviour {
         }
         if (onClickNoAction != null) {
             noBtn.onClick.AddListener(onClickNoAction.Invoke);
-            closeBtn.onClick.AddListener(onClickNoAction.Invoke);
+            //closeBtn.onClick.AddListener(onClickNoAction.Invoke);
         }
 
         yesBtnUnInteractableHoverHandler.gameObject.SetActive(!yesBtn.interactable);

@@ -164,6 +164,9 @@ namespace Traits {
         }
         public virtual List<string> GetCannotTriggerFlawReasons(Character character) {
             List<string> reasons = new List<string>();
+            if (!canBeTriggered) {
+                reasons.Add("It is not a flaw or it has no flaw effect.");
+            }
             if (PlayerManager.Instance.player.mana < EditableValuesManager.Instance.triggerFlawManaCost) {
                 reasons.Add("You do not have enough mana.");
             }
