@@ -86,7 +86,7 @@ public class InnerMapCameraMove : MonoBehaviour {
         ArrowKeysMovement();
         Dragging();
         Edging();
-        //Zooming();
+        Zooming();
         Targetting();
         ConstrainCameraBounds();
     }
@@ -226,7 +226,7 @@ public class InnerMapCameraMove : MonoBehaviour {
                 } else {
                     innerMapsCamera.orthographicSize = fov;
                 }
-                CalculateCameraBounds();
+                // CalculateCameraBounds();
             }
         }
     }

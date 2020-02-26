@@ -99405,7 +99405,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _minFov: 6
-  _maxFov: 10
+  _maxFov: 13
   zoomSensitivity: 20
   _zoomSpeed: 15
   innerMapsCamera: {fileID: 1713567858}
