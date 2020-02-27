@@ -9,7 +9,7 @@ namespace Archetype {
             minionClasses = CharacterManager.sevenDeadlySinsClassNames.ToList();
             afflictions = PlayerDB.afflictions;
             spells = PlayerDB.spells;
-            demonicStructures = new List<LANDMARK_TYPE>() { LANDMARK_TYPE.THE_ANVIL, LANDMARK_TYPE.THE_EYE, LANDMARK_TYPE.THE_KENNEL, LANDMARK_TYPE.THE_CRYPT, LANDMARK_TYPE.THE_SPIRE, LANDMARK_TYPE.THE_NEEDLES, LANDMARK_TYPE.THE_PROFANE, LANDMARK_TYPE.THE_PIT, LANDMARK_TYPE.GOADER, LANDMARK_TYPE.TORTURE_CHAMBER };
+            demonicStructures = new List<LANDMARK_TYPE>() { LANDMARK_TYPE.THE_EYE, LANDMARK_TYPE.THE_KENNEL, LANDMARK_TYPE.THE_CRYPT, LANDMARK_TYPE.THE_SPIRE, LANDMARK_TYPE.THE_PROFANE, LANDMARK_TYPE.THE_PIT, LANDMARK_TYPE.GOADER, LANDMARK_TYPE.TORTURE_CHAMBER };
             monsters = new List<RaceClass>() {
                 new RaceClass(RACE.WOLF, "Ravager"), new RaceClass(RACE.GOLEM, "Golem"),
                 new RaceClass(RACE.SKELETON, "Archer"), new RaceClass(RACE.SKELETON, "Marauder"),

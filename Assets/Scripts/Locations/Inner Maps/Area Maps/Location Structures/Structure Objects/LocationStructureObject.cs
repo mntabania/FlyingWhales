@@ -234,10 +234,14 @@ public class LocationStructureObject : PooledObject {
             if (_blockWallsTilemap != null) {
                 TileBase blockWallAsset = _blockWallsTilemap.GetTile(_blockWallsTilemap.WorldToCell(tile.worldLocation));
                 if (blockWallAsset != null) {
-                    BlockWall blockWall = InnerMapManager.Instance.CreateNewTileObject<BlockWall>(TILE_OBJECT_TYPE.BLOCK_WALL);
-                    blockWall.SetWallType(_wallType);
-                    structure.AddPOI(blockWall, tile);
-                    // innerMap.structureTilemap.SetTile(tile.localPlace, blockWallAsset);
+                    if (blockWallAsset.name.Contains("Wall")) {
+                        BlockWall blockWall = InnerMapManager.Instance.CreateNewTileObject<BlockWall>(TILE_OBJECT_TYPE.BLOCK_WALL);
+                        blockWall.SetWallType(_wallType);
+                        structure.AddPOI(blockWall, tile);
+                        // innerMap.structureTilemap.SetTile(tile.localPlace, blockWallAsset);
+                    } else {
+                      innerMap.structureTilemap.SetTile(tile.localPlace, blockWallAsset);  
+                    }    
                 }
             }
         }

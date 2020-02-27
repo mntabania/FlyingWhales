@@ -61,7 +61,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public virtual Vector2 selectableSize => Vector2Int.one;
     public bool isDead => gridTileLocation == null; //Consider the object as dead if it no longer has a tile location (has been removed)
     public ProjectileReceiver projectileReceiver => mapVisual.collisionTrigger.projectileReceiver;
-    public Transform worldObject => mapVisual.transform;
+    public Transform worldObject => mapVisual != null ? mapVisual.transform : null;
     public string nameWithID => ToString();
     public GameObject visualGO => mapVisual.gameObject;
     //public Character isBeingCarriedBy => carriedByCharacter;

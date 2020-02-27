@@ -1130,7 +1130,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     //    UIManager.Instance.HideSmallInfo();
     //}
     private bool CanChooseLandmark(string landmarkName) {
-        if (landmarkName == "The Pit") {
+        if (landmarkName == "The Pit" || landmarkName == "The Profane") {
             return false;
         }
         if (landmarkName == "The Eye" && region.HasStructure(STRUCTURE_TYPE.THE_EYE)) {

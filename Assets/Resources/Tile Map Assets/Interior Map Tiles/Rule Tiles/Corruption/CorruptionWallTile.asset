@@ -110,7 +110,7 @@ MonoBehaviour:
   - m_OriginalSprite: {fileID: 21300000, guid: f5429d3e121cd384380ee0a70d2c5b36, type: 3}
     m_OverrideSprite: {fileID: 21300000, guid: 8d5be34aa581ef048a849d0f85afe42c, type: 3}
   - m_OriginalSprite: {fileID: 21300000, guid: f2957fc859f29fd4185beb90804b9b3f, type: 3}
-    m_OverrideSprite: {fileID: 21300000, guid: f2957fc859f29fd4185beb90804b9b3f, type: 3}
+    m_OverrideSprite: {fileID: 21300000, guid: a09bf474b44652049abf9fd5005a48d4, type: 3}
   - m_OriginalSprite: {fileID: 21300000, guid: d92df7ca83975d94ca8bb44e9c6deb3e, type: 3}
     m_OverrideSprite: {fileID: 21300000, guid: 6fe177ac8ceca74498c83a2753aac270, type: 3}
   - m_OriginalSprite: {fileID: 21300000, guid: 3d389f26d927fa64588710c31bc2122a, type: 3}
