@@ -177,10 +177,11 @@ public class DouseFireState : CharacterState {
             return;
         }
         Profiler.BeginSample("DouseNearestFire");
-        ITraitable nearestFire = currentTarget;
+        ITraitable nearestFire = null;
         float nearest = 99999f;
-        if (nearestFire != null) {
+        if (currentTarget != null && currentTarget.worldObject != null) {
             nearest = Vector2.Distance(stateComponent.character.worldObject.transform.position, currentTarget.worldObject.transform.position);
+            nearestFire = currentTarget;
         }
 
         for (int i = 0; i < _fires.Count; i++) {

@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 129c2b5e0c8f0e14d9fb8b1c30296b6d, type: 3}
-    totalSpriteSurfaceArea: 3430760
+    totalSpriteSurfaceArea: 3434856
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -237,6 +237,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 86f62754c16dd1d4f83c071700cf2de2, type: 3}
   - {fileID: 21300000, guid: 5ee3c564f51ac214f8d50995ec59a2d6, type: 3}
   - {fileID: 21300000, guid: df16d5645378ccd4998308cd4d6323c3, type: 3}
+  - {fileID: 21300000, guid: a09bf474b44652049abf9fd5005a48d4, type: 3}
   - {fileID: 21300000, guid: 60df4574a51f66443a2c307f9997b005, type: 3}
   - {fileID: 21300000, guid: f0511674ea0f7c445932bb0cc31532c4, type: 3}
   - {fileID: 21300000, guid: 8e86b874bfeb274498f082b256b12120, type: 3}
@@ -964,6 +965,7 @@ SpriteAtlas:
   - caveWallA-00000000-01
   - fleshGround_h00
   - demonWallA-10001110-00
+  - demonWallA-Filled
   - demonManaRunes01
   - shore00000001-00
   - BIG_TREE_OBJECT#1
