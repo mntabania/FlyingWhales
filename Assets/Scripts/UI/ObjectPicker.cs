@@ -45,16 +45,14 @@ public class ObjectPicker : PopupMenuBase {
 
     public void ShowClickable<T>(List<T> items, Action<object> onConfirmAction, IComparer<T> comparer = null, Func<T, bool> validityChecker = null,
         string title = "", Action<T> onHoverItemAction = null, Action<T> onHoverExitItemAction = null, string identifier = "",
-        bool showCover = false, int layer = 9, bool closable = true, Func<string, Sprite> portraitGetter = null, bool asButton = false, bool shouldConfirmOnPick = false) {
+        bool showCover = false, int layer = 9, Func<string, Sprite> portraitGetter = null, bool asButton = false, bool shouldConfirmOnPick = false) {
         UtilityScripts.Utilities.DestroyChildren(objectPickerScrollView.content);
 
         _shouldConfirmOnPick = shouldConfirmOnPick;
         pickedObj = null;
         this.onConfirmAction = onConfirmAction;
 
-        List<T> validItems;
-        List<T> invalidItems;
-        OrganizeList(items, out validItems, out invalidItems, comparer, validityChecker);
+        OrganizeList(items, out var validItems, out var invalidItems, comparer, validityChecker);
         Type type = typeof(T);
         if (type == typeof(Character)) {
             ShowCharacterItems(validItems.Cast<Character>().ToList(), invalidItems.Cast<Character>().ToList(), onHoverItemAction, onHoverExitItemAction, identifier, asButton);
@@ -84,7 +82,7 @@ public class ObjectPicker : PopupMenuBase {
         }
         cover.SetActive(showCover);
         this.gameObject.transform.SetSiblingIndex(layer);
-        closeBtn.interactable = closable;
+        // closeBtn.interactable = closable;
         if (_shouldConfirmOnPick) {
             confirmBtn.gameObject.SetActive(false);
         } else {

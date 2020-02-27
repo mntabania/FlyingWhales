@@ -95,6 +95,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         UpdateSortingOrder();
         UpdateMarkerVisuals();
         UpdateActionIcon();
+        ForceUpdateMarkerVisualsBasedOnAnimation();
 
         unprocessedVisionPOIs = new List<IPointOfInterest>();
         unprocessedVisionPOIsForActionOnly = new List<IPointOfInterest>();
@@ -144,6 +145,13 @@ public class CharacterMarker : MapObjectVisual<Character> {
             Sprite newSprite = character.visuals.markerAnimations[currSpriteName];
             mainImg.sprite = newSprite;
         } 
+    }
+    private void ForceUpdateMarkerVisualsBasedOnAnimation() {
+        string currSpriteName = mainImg.sprite.name;
+        if (character.visuals.markerAnimations.ContainsKey(currSpriteName)) {
+            Sprite newSprite = character.visuals.markerAnimations[currSpriteName];
+            mainImg.sprite = newSprite;
+        }
     }
     #endregion
 

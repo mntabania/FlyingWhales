@@ -725,4 +725,11 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         _owner.jobQueue.AddJobInQueue(job);
     }
     #endregion
+
+    #region Hide At Home
+    public void CreateHideAtHomeJob() {
+	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HIDE_AT_HOME, INTERACTION_TYPE.RETURN_HOME, _owner, _owner);
+	    _owner.jobQueue.AddJobInQueue(job);
+    }
+    #endregion
 }

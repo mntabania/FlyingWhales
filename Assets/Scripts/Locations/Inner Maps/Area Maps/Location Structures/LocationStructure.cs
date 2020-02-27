@@ -12,6 +12,7 @@ namespace Inner_Maps.Location_Structures {
     public class LocationStructure : IPlayerActionTarget, ISelectable {
         public int id { get; private set; }
         public string name { get; private set; }
+        public virtual string nameplateName => name;
         public STRUCTURE_TYPE structureType { get; private set; }
         public List<Character> charactersHere { get; private set; }
         public ILocation location { get; private set; }

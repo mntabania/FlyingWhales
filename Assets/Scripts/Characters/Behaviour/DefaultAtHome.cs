@@ -29,7 +29,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                 TIME_IN_WORDS currentTimeOfDay = GameManager.GetCurrentTimeInWordsOfTick(character);
 
                 log += "\n-If it is Early Night, 35% chance to go to the current Inn and then set it as the Base Structure for 2.5 hours";
-                if (currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT) {
+                if (currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT && character.trapStructure.IsTrapped() == false) {
                     log += $"\n  -Time of Day: {currentTimeOfDay}";
                     int chance = UnityEngine.Random.Range(0, 100);
                     log += $"\n  -RNG roll: {chance}";
@@ -79,7 +79,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                     log += $"\n  -Time of Day: {currentTimeOfDay}";
                     int chance = UnityEngine.Random.Range(0, 100);
                     log += $"\n  -RNG roll: {chance}";
-                    if (chance < 30) {
+                    if (chance < 30 && character.trapStructure.IsTrapped() == false) {
                         Character chosenCharacter = character.GetDisabledCharacterToCheckOut();
                         if (chosenCharacter != null) {
                             if(chosenCharacter.homeStructure != null) {
@@ -104,7 +104,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                     log += $"\n  -Time of Day: {currentTimeOfDay}";
                     int chance = UnityEngine.Random.Range(0, 100);
                     log += $"\n  -RNG roll: {chance}";
-                    if (chance < 25) {
+                    if (chance < 25 && character.trapStructure.IsTrapped() == false) {
                         log +=
                             $"\n  -Morning, Afternoon, or Early Night: {character.name} will enter Stroll Outside Mode";
                         character.PlanIdleStrollOutside(); //character.currentStructure
@@ -118,7 +118,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                     log += $"\n  -Time of Day: {currentTimeOfDay}";
                     int chance = UnityEngine.Random.Range(0, 100);
                     log += $"\n  -RNG roll: {chance}";
-                    if (chance < 25) {
+                    if (chance < 25 && character.trapStructure.IsTrapped() == false) {
                         List<Character> positiveRelatables = character.relationshipContainer.GetFriendCharacters();
                         if (positiveRelatables.Count > 0) {
                             LocationStructure targetStructure = null;

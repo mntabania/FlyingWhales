@@ -583,7 +583,7 @@ public class UIManager : MonoBehaviour {
         string identifier = "", bool showCover = false, int layer = 9, bool closable = true, Func<string,Sprite> portraitGetter = null, bool shouldConfirmOnPick = false, bool asButton = false) {
 
         objectPicker.ShowClickable(choices, onClickAction, comparer, validityChecker, title, onHoverAction,
-            onHoverExitAction, identifier, showCover, layer, closable, portraitGetter, shouldConfirmOnPick, asButton);
+            onHoverExitAction, identifier, showCover, layer, portraitGetter, shouldConfirmOnPick, asButton);
         //Pause();
         //SetSpeedTogglesState(false);
     }

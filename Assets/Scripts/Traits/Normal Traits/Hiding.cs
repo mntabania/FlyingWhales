@@ -1,8 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Inner_Maps.Location_Structures;
-using UnityEngine;
-
+﻿using UnityEngine;
+using Random = UnityEngine.Random;
 namespace Traits {
 	public class Hiding : Trait {
 
@@ -14,26 +11,30 @@ namespace Traits {
 			type = TRAIT_TYPE.STATUS;
 			effect = TRAIT_EFFECT.NEGATIVE;
 			ticksDuration = GameManager.Instance.GetTicksBasedOnHour(12);
+			isHidden = true;
 		}
 
 		#region Overrides
 		public override void OnAddTrait(ITraitable addedTo) {
 			base.OnAddTrait(addedTo);
-			if (addedTo is Character) {
-				Character character = addedTo as Character;
+			if (addedTo is Character character) {
 				_owner = character;
 				_owner.CancelAllJobs();
-				LocationStructure targetStructure = _owner.homeStructure.GetLocationStructure();
-				Debug.Log($"{GameManager.Instance.TodayLogString()}{_owner.name} is going to hide at {targetStructure.GetNameRelativeTo(_owner)}");
-				_owner.DecreaseCanWitness();
-				_owner.marker.GoTo(targetStructure.GetRandomTile(), OnArriveAtHideStructure);
+				(_owner.jobTriggerComponent as CharacterJobTriggerComponent).CreateHideAtHomeJob();
+				// _owner.DecreaseCanWitness();
+				Messenger.AddListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJobSuccessfully);
 			}
 		}
-
-		private void OnArriveAtHideStructure() {
+		private void OnCharacterFinishedJobSuccessfully(Character character, GoapPlanJob job) {
+			if (character == _owner && job.jobType == JOB_TYPE.HIDE_AT_HOME) {
+				character.logComponent.PrintLogIfActive($"{GameManager.Instance.TodayLogString()}{character.name} has successfully finished hide at home job! Will now start cowering check...");
+				Messenger.RemoveListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJobSuccessfully);
+				OnArriveAtHome();
+			}
+		}
+		private void OnArriveAtHome() {
 			Debug.Log($"{GameManager.Instance.TodayLogString()}{_owner.name} has arrived at {_owner.currentStructure.GetNameRelativeTo(_owner)}");
-			_owner.IncreaseCanWitness();
-			//TODO: set limiter for structure.
+			// _owner.IncreaseCanWitness();
 			_owner.trapStructure.SetForcedStructure(_owner.currentStructure);
 			_owner.DecreaseCanTakeJobs();
 			StartCheckingForCowering();
@@ -41,8 +42,7 @@ namespace Traits {
 		
 		public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
 			base.OnRemoveTrait(removedFrom, removedBy);
-			if (removedFrom is Character) {
-				Character character = removedFrom as Character;
+			if (removedFrom is Character character) {
 				StopCheckingForCowering();
 				character.trapStructure.SetForcedStructure(null);
 				_owner.IncreaseCanTakeJobs();
