@@ -24,7 +24,7 @@ public class ReactionComponent {
         // else if (targetTileObject.poiType == POINT_OF_INTEREST_TYPE.ITEM) {
         //     ReactTo(targetTileObject as SpecialToken, ref debugLog);
         // }
-        if (owner.minion != null || owner is Summon) {
+        if (owner.minion != null || owner is Summon || owner.faction == FactionManager.Instance.zombieFaction) {
             //Minions or Summons cannot react to its own traits
             return;
         }
@@ -42,7 +42,7 @@ public class ReactionComponent {
         }
     }
     public string ReactTo(ActualGoapNode node, REACTION_STATUS status) {
-        if (owner.minion != null || owner is Summon) {
+        if (owner.minion != null || owner is Summon || owner.faction == FactionManager.Instance.zombieFaction) {
             //Minions or Summons cannot react to actions
             return string.Empty;
         }
@@ -57,7 +57,7 @@ public class ReactionComponent {
         if (owner.isInCombat) {
             return;
         }
-        if (owner.minion != null || owner is Summon) {
+        if (owner.minion != null || owner is Summon || owner.faction == FactionManager.Instance.zombieFaction) {
             //Minions or Summons cannot react to interrupts
             return;
         }
@@ -261,7 +261,7 @@ public class ReactionComponent {
             }
         } else if (!owner.isInCombat) {
             debugLog += "\n-Target is not hostile and Character is not in combat";
-            if (owner.minion == null && !(owner is Summon) && !IsPOICurrentlyTargetedByAPerformingAction(targetCharacter)) {
+            if (owner.minion == null && !(owner is Summon) && owner.faction != FactionManager.Instance.zombieFaction && !IsPOICurrentlyTargetedByAPerformingAction(targetCharacter)) {
                 debugLog += "\n-Character is not minion and not summon and Target is not being targeted by an action, continue reaction";
                 if (!targetCharacter.isDead) {
                     debugLog += "\n-Target is not dead";
@@ -316,8 +316,8 @@ public class ReactionComponent {
                                     owner.interruptComponent.TriggerInterrupt(INTERRUPT.Laugh_At, targetCharacter);
                                 }
                             }
-                        } else {
-                            debugLog += "\n-Character does not consider Target as Enemy or Rival";
+                        } else if (!owner.traitContainer.HasTrait("Psychopath")) {
+                            debugLog += "\n-Character is not Psychopath and does not consider Target as Enemy or Rival";
                             if (!targetCharacter.canMove/* || !targetCharacter.canWitness*/) {
                                 debugLog += "\n-Target cannot move"; // or cannot witness
                                 if (targetCharacter.needsComponent.isHungry || targetCharacter.needsComponent.isStarving) {
@@ -381,7 +381,7 @@ public class ReactionComponent {
         }
     }
     private void ReactTo(TileObject targetTileObject, ref string debugLog) {
-        if (owner.minion != null || owner is Summon) {
+        if (owner.minion != null || owner is Summon || owner.faction == FactionManager.Instance.zombieFaction) {
             //Minions or Summons cannot react to objects
             return;
         }

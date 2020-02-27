@@ -126,14 +126,15 @@ public class LocationClassManager {
                 throw new System.Exception(
                     $"Wrong location class requirement data! Removal of resident{residentClassName} {residentRemoved.name} but current number of Combatant is {characterClassGuide["Combatant"].currentNumber} (supposed number: {characterClassGuide["Combatant"].supposedNumber})");
             }
-        } else {
-            if (characterClassGuide[residentClassName].currentNumber > 0) {
-                AdjustCurrentNumberOfClass(residentClassName, -1);
-            } else {
-                throw new System.Exception(
-                    $"Wrong location class requirement data! Removal of resident{residentClassName} {residentRemoved.name} but current number of {residentClassName} is {characterClassGuide[residentClassName].currentNumber} (supposed number: {characterClassGuide[residentClassName].supposedNumber})");
-            }
         }
+        //else {
+        //    if (characterClassGuide[residentClassName].currentNumber > 0) {
+        //        AdjustCurrentNumberOfClass(residentClassName, -1);
+        //    } else {
+        //        throw new System.Exception(
+        //            $"Wrong location class requirement data! Removal of resident{residentClassName} {residentRemoved.name} but current number of {residentClassName} is {characterClassGuide[residentClassName].currentNumber} (supposed number: {characterClassGuide[residentClassName].supposedNumber})");
+        //    }
+        //}
         RevertCharacterClassOrderByOne();
     }
     public void OnResidentChangeClass(Character resident, CharacterClass previousClass, CharacterClass currentClass) {
@@ -161,11 +162,12 @@ public class LocationClassManager {
             if (characterClassGuide["Combatant"].currentNumber > 0) {
                 AdjustCurrentNumberOfClass("Combatant", -1);
             }
-        } else {
-            if (characterClassGuide[previousClassName].currentNumber > 0) {
-                AdjustCurrentNumberOfClass(previousClassName, -1);
-            }
-        }
+        } 
+        //else {
+        //    if (characterClassGuide[previousClassName].currentNumber > 0) {
+        //        AdjustCurrentNumberOfClass(previousClassName, -1);
+        //    }
+        //}
 
         if (currentClassName == "Miner") {
             AdjustCurrentNumberOfClass("Civilian", 1);
@@ -187,12 +189,13 @@ public class LocationClassManager {
             //if (characterClassGuide["Combatant"].currentNumber > 0) {
             //    AdjustCurrentNumberOfClass("Combatant", 1);
             //}
-        } else {
-            AdjustCurrentNumberOfClass(currentClassName, 1);
-            //if (characterClassGuide[previousClassName].currentNumber > 0) {
-            //    AdjustCurrentNumberOfClass(previousClassName, -1);
-            //}
-        }
+        } 
+        //else {
+        //    AdjustCurrentNumberOfClass(currentClassName, 1);
+        //    //if (characterClassGuide[previousClassName].currentNumber > 0) {
+        //    //    AdjustCurrentNumberOfClass(previousClassName, -1);
+        //    //}
+        //}
         
     }
 
@@ -270,10 +273,11 @@ public class LocationClassManager {
         } else if (charClass.IsCombatant()) {
             LocationClassNumberGuide numberGuide = characterClassGuide["Combatant"];
             return numberGuide.currentNumber > numberGuide.supposedNumber;
-        } else {
-            LocationClassNumberGuide numberGuide = characterClassGuide[className];
-            return numberGuide.currentNumber > numberGuide.supposedNumber;
-        }
+        } 
+        //else {
+        //    LocationClassNumberGuide numberGuide = characterClassGuide[className];
+        //    return numberGuide.currentNumber > numberGuide.supposedNumber;
+        //}
         return false;
     }
 
@@ -307,10 +311,11 @@ public class LocationClassManager {
         } else if (charClass.IsCombatant()) {
             LocationClassNumberGuide numberGuide = characterClassGuide["Combatant"];
             return numberGuide.currentNumber < numberGuide.supposedNumber;
-        } else {
-            LocationClassNumberGuide numberGuide = characterClassGuide[className];
-            return numberGuide.currentNumber < numberGuide.supposedNumber;
-        }
+        } 
+        //else {
+        //    LocationClassNumberGuide numberGuide = characterClassGuide[className];
+        //    return numberGuide.currentNumber < numberGuide.supposedNumber;
+        //}
         return false;
     }
 }

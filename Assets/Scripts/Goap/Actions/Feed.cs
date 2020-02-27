@@ -88,6 +88,15 @@ public class Feed : GoapAction {
         }
         return response;
     }
+    public override void OnActionStarted(ActualGoapNode node) {
+        base.OnActionStarted(node);
+        for (int i = 0; i < node.actor.items.Count; i++) {
+            if(node.actor.items[i].HasResourceAmount(RESOURCE.FOOD, 12)) {
+                node.actor.ShowItemVisualCarryingPOI(node.actor.items[i]);
+                break;
+            }
+        }
+    }
     #endregion
 
     #region Effects
@@ -202,9 +211,17 @@ public class Feed : GoapAction {
         if (poiTarget.HasResourceAmount(RESOURCE.FOOD, 12)) {
             return true;
         }
+        if(actor.items.Count > 0) {
+            for (int i = 0; i < actor.items.Count; i++) {
+                if(actor.items[i].HasResourceAmount(RESOURCE.FOOD, 12)) {
+                    return true;
+                }
+            }
+        }
         if (actor.ownParty.isCarryingAnyPOI && actor.ownParty.carriedPOI is FoodPile) {
             //ResourcePile carriedPile = actor.ownParty.carriedPOI as ResourcePile;
             //return carriedPile.resourceInPile >= 12;
+            return true;
         }
         return false;
         //return actor.supply >= 20;
