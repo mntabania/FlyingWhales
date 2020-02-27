@@ -65,6 +65,7 @@ namespace Interrupts {
                 overrideEffectLog.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 //actor.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
 
+                actor.interruptComponent.SetIdentifier(chosen);
                 if (chosen == "Reject") {
                     actor.relationshipContainer.AdjustOpinion(actor, targetCharacter, "Base", -3, "rejected sexual advances");
                     actor.traitContainer.AddTrait(actor, "Annoyed");

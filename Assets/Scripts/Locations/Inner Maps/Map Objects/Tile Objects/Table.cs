@@ -86,12 +86,12 @@ public class Table : TileObject {
         base.OnPlaceTileObjectAtTile(tile);
         if (mapVisual.usedSprite.name.Contains("Bartop")) {
             InitializeGUS(new Vector2(0f, 0.5f), new Vector2(1f, 0.5f));
-        } else {
+        } else { 
             InitializeGUS(Vector2.zero, new Vector2(0.5f, 0.5f));
         }
     }
-    protected override void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom, bool removeTraits = true, bool destroyTileSlots = true) {
-        base.OnRemoveTileObject(removedBy, removedFrom, destroyTileSlots);
+    public override void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom, bool removeTraits = true, bool destroyTileSlots = true) {
+        base.OnRemoveTileObject(removedBy, removedFrom, removeTraits, destroyTileSlots);
         DestroyExistingGUS();
     }
     protected override void ConstructMaxResources() {

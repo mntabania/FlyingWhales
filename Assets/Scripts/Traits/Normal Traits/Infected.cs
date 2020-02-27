@@ -6,7 +6,7 @@ namespace Traits {
     public class Infected : Trait {
 
         private Character owner;
-        private float pukeChance;
+        //private float pukeChance;
         private bool canBeReanimated;
         private bool willBeReanimated;
         private bool doNotCheckPerHour;
@@ -50,37 +50,37 @@ namespace Traits {
             }
             return base.OnDeath(character);
         }
-        protected override void OnChangeLevel() {
-            if (level == 1) {
-                pukeChance = 5f;
-            } else if (level == 2) {
-                pukeChance = 7f;
-            } else {
-                pukeChance = 9f;
-            }
-        }
-        public override bool PerTickOwnerMovement() {
-            float pukeRoll = Random.Range(0f, 100f);
-            if (pukeRoll < pukeChance) {
-                //do puke action
-                if (owner.characterClass.className == "Zombie"/* || (owner.currentActionNode != null && owner.currentActionNode.action.goapType == INTERACTION_TYPE.PUKE)*/) {
-                    //If current action is a roaming action like Hunting To Drink Blood, we must requeue the job after it is removed by StopCurrentAction
-                    return false;
-                }
-                //ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.PUKE], owner, owner, null, 0);
-                //GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
-                //GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE, owner, owner);
-                //goapPlan.SetDoNotRecalculate(true);
-                //job.SetCannotBePushedBack(true);
-                //job.SetAssignedPlan(goapPlan);
-                //owner.jobQueue.AddJobInQueue(job);
-                ////GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE, owner, owner);
-                ////owner.jobQueue.AddJobInQueue(job);
+        //protected override void OnChangeLevel() {
+        //    if (level == 1) {
+        //        pukeChance = 5f;
+        //    } else if (level == 2) {
+        //        pukeChance = 7f;
+        //    } else {
+        //        pukeChance = 9f;
+        //    }
+        //}
+        //public override bool PerTickOwnerMovement() {
+        //    float pukeRoll = Random.Range(0f, 100f);
+        //    if (pukeRoll < pukeChance) {
+        //        //do puke action
+        //        if (owner.characterClass.className == "Zombie"/* || (owner.currentActionNode != null && owner.currentActionNode.action.goapType == INTERACTION_TYPE.PUKE)*/) {
+        //            //If current action is a roaming action like Hunting To Drink Blood, we must requeue the job after it is removed by StopCurrentAction
+        //            return false;
+        //        }
+        //        //ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.PUKE], owner, owner, null, 0);
+        //        //GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
+        //        //GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE, owner, owner);
+        //        //goapPlan.SetDoNotRecalculate(true);
+        //        //job.SetCannotBePushedBack(true);
+        //        //job.SetAssignedPlan(goapPlan);
+        //        //owner.jobQueue.AddJobInQueue(job);
+        //        ////GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE, owner, owner);
+        //        ////owner.jobQueue.AddJobInQueue(job);
 
-                return owner.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, owner);
-            }
-            return false;
-        }
+        //        return owner.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, owner);
+        //    }
+        //    return false;
+        //}
         public override void OnTickEnded() {
             base.OnTickEnded();
             if (canBeReanimated) {

@@ -71,9 +71,11 @@ public class ForlornSpirit : TileObject {
         _spiritGO.RecalculatePathingValues();
     }
     private void OnGamePaused(bool paused) {
-        _spiritGO.SetIsRoaming(!paused);
-        if (!paused) {
-            _spiritGO.RecalculatePathingValues();
+        if (possessionTarget == null) {
+            _spiritGO.SetIsRoaming(!paused);
+            if (!paused) {
+                _spiritGO.RecalculatePathingValues();
+            }
         }
     }
     private void OnSpiritObjectNoDestination(SpiritGameObject go) {
@@ -96,18 +98,24 @@ public class ForlornSpirit : TileObject {
         while (possessionTarget.marker.transform.position != mapVisual.gameObject.transform.position && !possessionTarget.marker.IsNear(mapVisual.gameObject.transform.position)) {
             yield return new WaitForFixedUpdate();
             if (!GameManager.Instance.isPaused) {
-                if (possessionTarget != null && possessionTarget.marker && possessionTarget.gridTileLocation != null) {
+                if (possessionTarget != null && possessionTarget.marker && possessionTarget.gridTileLocation != null && !possessionTarget.isBeingSeized) {
                     iTween.MoveUpdate(mapVisual.gameObject, possessionTarget.marker.transform.position, 1f);
                 } else {
                     possessionTarget = null;
+                    iTween.Stop(mapVisual.gameObject);
                     break;
                 }
-            }
+            } 
+            //else {
+            //    iTween.Stop(mapVisual.gameObject);
+            //}
         }
         if (possessionTarget != null) {
             // SetGridTileLocation(_spiritGO.GetLocationGridTileByXy(Mathf.FloorToInt(mapVisual.transform.localPosition.x), Mathf.FloorToInt(mapVisual.transform.localPosition.y)));
             ForlornEffect();
             DonePossession();
+        } else {
+            _spiritGO.SetIsRoaming(true);
         }
     }
     public void GoToRandomTileInRadius() {

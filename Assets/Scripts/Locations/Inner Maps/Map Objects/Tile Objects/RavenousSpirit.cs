@@ -69,9 +69,11 @@ public class RavenousSpirit : TileObject {
         _spiritGO.RecalculatePathingValues();
     }
     private void OnGamePaused(bool paused) {
-        _spiritGO.SetIsRoaming(!paused);
-        if (!paused) {
-            _spiritGO.RecalculatePathingValues();
+        if(possessionTarget == null) {
+            _spiritGO.SetIsRoaming(!paused);
+            if (!paused) {
+                _spiritGO.RecalculatePathingValues();
+            }
         }
     }
     private void OnSpiritObjectNoDestination(SpiritGameObject go) {
@@ -87,6 +89,13 @@ public class RavenousSpirit : TileObject {
             possessionTarget = target;
             // mapVisual.transform.do
             GameManager.Instance.StartCoroutine(CommencePossession());
+            //mapVisual.TweenTo(possessionTarget.marker.transform, 0.5f, () => ReachTargetAction());
+        }
+    }
+    private void ReachTargetAction() {
+        if(possessionTarget != null && possessionTarget.marker && possessionTarget.gridTileLocation != null) {
+            RavenousEffect();
+            DonePossession();
         }
     }
     private IEnumerator CommencePossession() {
@@ -94,13 +103,23 @@ public class RavenousSpirit : TileObject {
         while (possessionTarget.marker.transform.position != mapVisual.gameObject.transform.position && !possessionTarget.marker.IsNear(mapVisual.gameObject.transform.position)) {
             yield return new WaitForFixedUpdate();
             if (!GameManager.Instance.isPaused) {
-                if (possessionTarget != null && possessionTarget.marker && possessionTarget.gridTileLocation != null) {
+                if (possessionTarget != null && possessionTarget.marker && possessionTarget.gridTileLocation != null && !possessionTarget.isBeingSeized) {
+                    //mapVisual.gameObject.transform.DOMove(possessionTarget.marker.transform.position, 1f);
                     iTween.MoveUpdate(mapVisual.gameObject, possessionTarget.marker.transform.position, 1f);
                 } else {
                     possessionTarget = null;
+                    iTween.Stop(mapVisual.gameObject);
                     break;
                 }
-            }
+            } 
+            //else {
+            //    iTween.Pause(mapVisual.gameObject);
+            //}
+            //else {
+            //    if(iTween.Count(mapVisual.gameObject) > 0) {
+            //        iTween.Stop(mapVisual.gameObject);
+            //    }
+            //}
         }
         if (possessionTarget != null) {
             // SetGridTileLocation(_spiritGO.GetLocationGridTileByXy(Mathf.FloorToInt(mapVisual.transform.localPosition.x), Mathf.FloorToInt(mapVisual.transform.localPosition.y)));
@@ -112,6 +131,8 @@ public class RavenousSpirit : TileObject {
             //// SetGridTileLocation(_originalGridTile);
             //// _originalGridTile.structure.RemovePOI(this);
             //possessionTarget = null;
+        } else {
+            _spiritGO.SetIsRoaming(true);
         }
     }
     public void GoToRandomTileInRadius() {

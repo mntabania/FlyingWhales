@@ -28,9 +28,18 @@ public class DrinkBlood : GoapAction {
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}:";
-        int cost = UtilityScripts.Utilities.rng.Next(50, 61);
-        costLog += $" +{cost}(Initial)";
-        if(target is Character) {
+        int cost = 0;
+        if (actor.moodComponent.moodState == MOOD_STATE.NORMAL) {
+            cost = UtilityScripts.Utilities.rng.Next(50, 61);
+            costLog += $" +{cost}(Normal Mood)";
+        } else if (actor.moodComponent.moodState == MOOD_STATE.LOW) {
+            cost = UtilityScripts.Utilities.rng.Next(20, 31);
+            costLog += $" +{cost}(Low Mood)";
+        } else if (actor.moodComponent.moodState == MOOD_STATE.CRITICAL) {
+            cost = UtilityScripts.Utilities.rng.Next(0, 11);
+            costLog += $" +{cost}(Critical Mood)";
+        }
+        if (target is Character) {
             Character targetCharacter = target as Character;
             if (targetCharacter.traitContainer.HasTrait("Vampiric")) {
                 cost += 2000;

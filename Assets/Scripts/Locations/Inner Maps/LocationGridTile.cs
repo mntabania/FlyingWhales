@@ -48,7 +48,7 @@ namespace Inner_Maps {
 
         public List<LocationGridTile> ValidTiles { get { return FourNeighbours().Where(o => o.tileType == Tile_Type.Empty).ToList(); } }
         public List<LocationGridTile> UnoccupiedNeighbours { get { return neighbours.Values.Where(o => !o.isOccupied && o.structure == structure).ToList(); } }
-        public List<LocationGridTile> UnoccupiedNeighboursWithinHex { get { return neighbours.Values.Where(o => !o.isOccupied && o.structure == structure && o.buildSpotOwner.hexTileOwner == buildSpotOwner.hexTileOwner).ToList(); } }
+        public List<LocationGridTile> UnoccupiedNeighboursWithinHex { get { return neighbours.Values.Where(o => !o.isOccupied && o.charactersHere.Count <= 0 && o.structure == structure && o.buildSpotOwner.hexTileOwner == buildSpotOwner.hexTileOwner).ToList(); } }
 
         public GenericTileObject genericTileObject { get; private set; }
         public List<StructureWallObject> walls { get; private set; }
@@ -409,9 +409,31 @@ namespace Inner_Maps {
         public IPointOfInterest RemoveObjectHereWithoutDestroying() {
             if (objHere != null) {
                 IPointOfInterest removedObj = objHere;
+                LocationGridTile gridTile = objHere.gridTileLocation;
                 objHere.SetGridTileLocation(null);
                 objHere = null;
                 SetTileState(Tile_State.Empty);
+                if (removedObj.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+                    (removedObj as TileObject).OnRemoveTileObject(null, gridTile, false, false);
+                }
+                removedObj.SetPOIState(POI_STATE.INACTIVE);
+                return removedObj;
+            }
+            return null;
+        }
+        public IPointOfInterest RemoveObjectHereDestroyVisualOnly() {
+            if (objHere != null) {
+                IPointOfInterest removedObj = objHere;
+                LocationGridTile gridTile = objHere.gridTileLocation;
+                objHere.SetGridTileLocation(null);
+                objHere = null;
+                SetTileState(Tile_State.Empty);
+                if (removedObj.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+                    TileObject removedTileObj = removedObj as TileObject;
+                    removedTileObj.OnRemoveTileObject(null, gridTile, false, false);
+                    removedTileObj.DestroyMapVisualGameObject();
+                }
+                removedObj.SetPOIState(POI_STATE.INACTIVE);
                 return removedObj;
             }
             return null;

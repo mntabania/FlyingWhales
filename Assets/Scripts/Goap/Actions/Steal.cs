@@ -133,7 +133,7 @@ public class Steal : GoapAction {
     //    //TODO: currentState.SetIntelReaction(State1Reactions);
     //}
     public void AfterStealSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.PickUpItem(goapNode.poiTarget as TileObject, false);
+        goapNode.actor.PickUpItem(goapNode.poiTarget as TileObject);
         if(goapNode.actor.traitContainer.HasTrait("Kleptomaniac")) {
             goapNode.actor.needsComponent.AdjustHappiness(10);
         }

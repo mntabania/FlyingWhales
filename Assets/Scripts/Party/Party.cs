@@ -251,9 +251,9 @@ public class Party {
             }
         } else {
             if (tileObject.gridTileLocation != null) {
-                tileObject.gridTileLocation.structure.RemovePOI(tileObject);
+                tileObject.gridTileLocation.structure.RemovePOIDestroyVisualOnly(tileObject);
             } else if (tileObject.mapVisual != null) {
-                tileObject.OnDestroyPOI();
+                tileObject.DestroyMapVisualGameObject();
             }
         }
         if(tileObject.mapVisual != null) {

@@ -263,6 +263,9 @@ public class ActualGoapNode {
                 } else if (actor.minion != null) {
                     actor.minion.NoPathToDoJob(job);
                 }
+                if (job.originalOwner.ownerType != JOB_OWNER.CHARACTER) {
+                    job.AddBlacklistedCharacter(actor);
+                }
                 job.CancelJob(false);
             }
         }

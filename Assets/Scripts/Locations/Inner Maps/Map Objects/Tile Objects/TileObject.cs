@@ -293,7 +293,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     /// <summary>
     /// Triggered when the grid tile location of this object is set to null.
     /// </summary>
-    protected virtual void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom, bool removeTraits = true, bool destroyTileSlots = true) {
+    public virtual void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom, bool removeTraits = true, bool destroyTileSlots = true) {
         // Debug.Log(GameManager.Instance.TodayLogString() + "Tile Object " + this.name + " has been removed");
         this.removedBy = removedBy;
         Messenger.Broadcast(Signals.TILE_OBJECT_REMOVED, this, removedBy, removedFrom);
@@ -452,10 +452,10 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
         Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
         //Messenger.Broadcast(Signals.ON_SEIZE_TILE_OBJECT, this);
-        OnRemoveTileObject(null, gridTileLocation, false, false);
+        //OnRemoveTileObject(null, gridTileLocation, false, false);
         gridTileLocation.structure.RemovePOIWithoutDestroying(this);
         //DestroyGameObject();
-        SetPOIState(POI_STATE.INACTIVE);
+        //SetPOIState(POI_STATE.INACTIVE);
         if (TileObjectDB.TryGetTileObjectData(tileObjectType, out var objData)) {
             if (objData.occupiedSize.X > 1 || objData.occupiedSize.Y > 1) {
                 UnoccupyTiles(objData.occupiedSize, previousTile);
@@ -528,9 +528,11 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         if (tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT && HasSlotSettings()) {
             Sprite usedAsset = mapVisual.usedSprite;
             List<TileObjectSlotSetting> slotSettings = InnerMapManager.Instance.GetTileObjectSlotSettings(usedAsset);
-            slotsParent = Object.Instantiate(InnerMapManager.Instance.tileObjectSlotsParentPrefab, mapVisual.transform);
-            slotsParent.transform.localPosition = Vector3.zero;
-            slotsParent.name = $"{ToString()} Slots";
+            if(slotsParent == null) {
+                slotsParent = Object.Instantiate(InnerMapManager.Instance.tileObjectSlotsParentPrefab, mapVisual.transform);
+                slotsParent.transform.localPosition = Vector3.zero;
+                slotsParent.name = $"{ToString()} Slots";
+            }
             slots = new TileObjectSlotItem[slotSettings.Count];
             for (int i = 0; i < slotSettings.Count; i++) {
                 TileObjectSlotSetting currSetting = slotSettings[i];
@@ -544,7 +546,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     }
     private void RepositionTileSlots(LocationGridTile tile) {
         if (ReferenceEquals(slotsParent, null) == false) {
-            slotsParent.transform.localPosition = tile.centeredLocalLocation;
+            slotsParent.transform.localPosition = Vector3.zero;
         }
     }
     protected void DestroyTileSlots() {
@@ -748,7 +750,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
         graphUpdateScene.Initialize(offset, size, this);
     }
-    protected void DestroyExistingGUS() {
+    public void DestroyExistingGUS() {
         if (graphUpdateScene == null) return;
         graphUpdateScene.Destroy();
         graphUpdateScene = null;
