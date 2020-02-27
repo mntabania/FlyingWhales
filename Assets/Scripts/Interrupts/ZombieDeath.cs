@@ -12,7 +12,7 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target, ref Log overrideEffectLog) {
+        public override bool ExecuteInterruptEndEffect(Character actor, IPointOfInterest target) {
             actor.Death("Zombie Virus");
             return true;
         }

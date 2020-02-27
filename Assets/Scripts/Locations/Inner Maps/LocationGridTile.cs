@@ -402,6 +402,7 @@ namespace Inner_Maps {
                 }
                 objHere = null;
                 SetTileState(Tile_State.Empty);
+                Messenger.Broadcast(Signals.STOP_CURRENT_ACTION_TARGETING_POI, removedObj);
                 return removedObj;
             }
             return null;
@@ -421,7 +422,7 @@ namespace Inner_Maps {
             }
             return null;
         }
-        public IPointOfInterest RemoveObjectHereDestroyVisualOnly() {
+        public IPointOfInterest RemoveObjectHereDestroyVisualOnly(Character remover = null) {
             if (objHere != null) {
                 IPointOfInterest removedObj = objHere;
                 LocationGridTile gridTile = objHere.gridTileLocation;
@@ -434,6 +435,7 @@ namespace Inner_Maps {
                     removedTileObj.DestroyMapVisualGameObject();
                 }
                 removedObj.SetPOIState(POI_STATE.INACTIVE);
+                Messenger.Broadcast(Signals.STOP_CURRENT_ACTION_TARGETING_POI_EXCEPT_ACTOR, removedObj, remover);
                 return removedObj;
             }
             return null;

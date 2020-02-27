@@ -176,7 +176,7 @@ namespace Inner_Maps.Location_Structures {
             }
             return false;
         }
-        public virtual bool RemovePOIDestroyVisualOnly(IPointOfInterest poi) {
+        public virtual bool RemovePOIDestroyVisualOnly(IPointOfInterest poi, Character remover = null) {
             if (pointsOfInterest.Remove(poi)) {
                 if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
                     TileObject tileObject = poi as TileObject;
@@ -184,7 +184,7 @@ namespace Inner_Maps.Location_Structures {
                 }
                 if (poi.gridTileLocation != null) {
                     if (poi.poiType != POINT_OF_INTEREST_TYPE.CHARACTER) {
-                        location.innerMap.RemoveObjectDestroyVisualOnly(poi.gridTileLocation);
+                        location.innerMap.RemoveObjectDestroyVisualOnly(poi.gridTileLocation, remover);
                     }
                 }
                 return true;

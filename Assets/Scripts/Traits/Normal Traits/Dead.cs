@@ -33,7 +33,7 @@ namespace Traits {
             if (addedTo is Character) {
                 Character character = addedTo as Character;
                 Settlement settlement;
-                if (character.IsNPC() && character.gridTileLocation.IsNextToOrPartOfSettlement(out settlement)) {
+                if (character.IsNPC() && character.gridTileLocation != null && character.gridTileLocation.IsNextToOrPartOfSettlement(out settlement)) {
                     LocationStructure targetStructure = settlement.GetRandomStructureOfType(STRUCTURE_TYPE.CEMETERY) ??
                                                         settlement.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
                     GoapPlanJob buryJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BURY, INTERACTION_TYPE.BURY_CHARACTER, character, settlement);

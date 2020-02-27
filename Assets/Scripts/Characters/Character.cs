@@ -474,7 +474,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.AddListener<Settlement>(Signals.SUCCESS_INVASION_AREA, OnSuccessInvadeArea);
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
-        Messenger.AddListener<Character>(Signals.SCREAM_FOR_HELP, HeardAScream);
+        //Messenger.AddListener<Character>(Signals.SCREAM_FOR_HELP, HeardAScream);
         Messenger.AddListener<ActualGoapNode>(Signals.ACTION_PERFORMED, OnActionPerformed);
         Messenger.AddListener<Character, IPointOfInterest, Interrupt>(Signals.INTERRUPT_STARTED, OnInterruptStarted);
         Messenger.AddListener<IPointOfInterest>(Signals.ON_SEIZE_POI, OnSeizePOI);
@@ -482,6 +482,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //Messenger.AddListener<TileObject>(Signals.ON_SEIZE_TILE_OBJECT, OnSeizeTileObject);
         Messenger.AddListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
         Messenger.AddListener<Character>(Signals.CHARACTER_NO_LONGER_MISSING, OnCharacterNoLongerMissing);
+        Messenger.AddListener<IPointOfInterest>(Signals.STOP_CURRENT_ACTION_TARGETING_POI, OnStopCurrentActionTargetingPOI);
+        Messenger.AddListener<IPointOfInterest, Character>(Signals.STOP_CURRENT_ACTION_TARGETING_POI_EXCEPT_ACTOR, OnStopCurrentActionTargetingPOIExceptActor);
+
         //Messenger.AddListener<ActualGoapNode>(Signals.ACTION_PERFORMED, OnCharacterPerformedAction);
         needsComponent.SubscribeToSignals();
         jobComponent.SubscribeToListeners();
@@ -499,7 +502,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.RemoveListener<Settlement>(Signals.SUCCESS_INVASION_AREA, OnSuccessInvadeArea);
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
-        Messenger.RemoveListener<Character>(Signals.SCREAM_FOR_HELP, HeardAScream);
+        //Messenger.RemoveListener<Character>(Signals.SCREAM_FOR_HELP, HeardAScream);
         Messenger.RemoveListener<ActualGoapNode>(Signals.ACTION_PERFORMED, OnActionPerformed);
         Messenger.RemoveListener<Character, IPointOfInterest, Interrupt>(Signals.INTERRUPT_STARTED, OnInterruptStarted);
         Messenger.RemoveListener<IPointOfInterest>(Signals.ON_SEIZE_POI, OnSeizePOI);
@@ -507,6 +510,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //Messenger.RemoveListener<TileObject>(Signals.ON_SEIZE_TILE_OBJECT, OnSeizeTileObject);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_NO_LONGER_MISSING, OnCharacterNoLongerMissing);
+        Messenger.RemoveListener<IPointOfInterest>(Signals.STOP_CURRENT_ACTION_TARGETING_POI, OnStopCurrentActionTargetingPOI);
+        Messenger.RemoveListener<IPointOfInterest, Character>(Signals.STOP_CURRENT_ACTION_TARGETING_POI_EXCEPT_ACTOR, OnStopCurrentActionTargetingPOIExceptActor);
         //Messenger.RemoveListener<ActualGoapNode>(Signals.ACTION_PERFORMED, OnCharacterPerformedAction);
         needsComponent.UnsubscribeToSignals();
         jobComponent.UnsubscribeListeners();
@@ -567,6 +572,16 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (marker) {
                 DestroyMarker();
             }
+        }
+    }
+    private void OnStopCurrentActionTargetingPOI(IPointOfInterest poi) {
+        if(currentActionNode != null && currentActionNode.poiTarget == poi) {
+            StopCurrentActionNode();
+        }
+    }
+    private void OnStopCurrentActionTargetingPOIExceptActor(IPointOfInterest poi, Character actor) {
+        if (currentActionNode != null && currentActionNode.poiTarget == poi && this != actor) {
+            StopCurrentActionNode();
         }
     }
     #endregion
@@ -3688,7 +3703,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         if (ObtainItem(item, changeCharacterOwnership)) {
             if (item.gridTileLocation != null) {
-                item.gridTileLocation.structure.RemovePOIDestroyVisualOnly(item);
+                item.gridTileLocation.structure.RemovePOIDestroyVisualOnly(item, this);
             }
             item.SetPOIState(POI_STATE.ACTIVE);
         }

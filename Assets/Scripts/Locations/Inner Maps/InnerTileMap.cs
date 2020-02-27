@@ -220,8 +220,8 @@ namespace Inner_Maps {
         public void RemoveObjectWithoutDestroying(LocationGridTile tile) {
             tile.RemoveObjectHereWithoutDestroying();
         }
-        public void RemoveObjectDestroyVisualOnly(LocationGridTile tile) {
-            tile.RemoveObjectHereDestroyVisualOnly();
+        public void RemoveObjectDestroyVisualOnly(LocationGridTile tile, Character remover = null) {
+            tile.RemoveObjectHereDestroyVisualOnly(remover);
         }
         private void OnPlaceCharacterOnTile(Character character, LocationGridTile tile) {
             GameObject markerGO = character.marker.gameObject; 
