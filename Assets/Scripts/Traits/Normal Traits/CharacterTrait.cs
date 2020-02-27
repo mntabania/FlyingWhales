@@ -124,7 +124,10 @@ namespace Traits {
         }
         public override bool OnStartPerformGoapAction(ActualGoapNode node, ref bool willStillContinueAction) {
             if(node.action.goapType == INTERACTION_TYPE.MAKE_LOVE) {
-                willStillContinueAction = node.actor.interruptComponent.TriggerInterrupt(INTERRUPT.Invite_To_Make_Love, node.poiTarget);
+                bool triggered = node.actor.interruptComponent.TriggerInterrupt(INTERRUPT.Invite_To_Make_Love, node.poiTarget);
+                willStillContinueAction = node.actor.interruptComponent.identifier == "Accept";
+                node.actor.interruptComponent.SetIdentifier(string.Empty);
+                return triggered;
             }
             return false;
         }

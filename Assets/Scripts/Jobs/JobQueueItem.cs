@@ -232,6 +232,9 @@ public class JobQueueItem {
     public void RemoveBlacklistedCharacter(Character character) {
         blacklistedCharacters.Remove(character);
     }
+    public void ClearBlacklist() {
+        blacklistedCharacters.Clear();
+    }
     public void SetIsStealth(bool state) {
         isStealth = state;
     }

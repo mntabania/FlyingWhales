@@ -127,9 +127,22 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
             SetVisualAlpha(255f / 255f);    
         }
     }
+    void OnEnable() {
+        Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
+    }
+    void OnDisable() {
+        Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
+    }
     #endregion
-    
+
     #region Tweening
+    private void OnGamePaused(bool state) {
+        if (state) {
+            transform.DOPause();
+        } else {
+            transform.DOPlay();
+        }
+    }
     public bool IsTweening() {
         return DOTween.IsTweening(this.transform);
     }
@@ -137,7 +150,11 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
         var position = _target.position;
         Tweener tween = transform.DOMove(position, duration).SetEase(Ease.Linear).SetAutoKill(false).OnComplete(_onReachTargetAction.Invoke);
         tween.OnUpdate (() => tween.ChangeEndValue (_target.position, true));
-
+        if (GameManager.Instance.isPaused) {
+            transform.DOPause();
+        } else {
+            transform.DOPlay();
+        }
     }
     public void OnReachTarget() {
         DOTween.Kill(this.transform);

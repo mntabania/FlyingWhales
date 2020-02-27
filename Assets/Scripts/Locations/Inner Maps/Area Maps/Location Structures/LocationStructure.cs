@@ -176,6 +176,21 @@ namespace Inner_Maps.Location_Structures {
             }
             return false;
         }
+        public virtual bool RemovePOIDestroyVisualOnly(IPointOfInterest poi) {
+            if (pointsOfInterest.Remove(poi)) {
+                if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+                    TileObject tileObject = poi as TileObject;
+                    groupedTileObjects[tileObject.tileObjectType].RemoveTileObject(tileObject);
+                }
+                if (poi.gridTileLocation != null) {
+                    if (poi.poiType != POINT_OF_INTEREST_TYPE.CHARACTER) {
+                        location.innerMap.RemoveObjectDestroyVisualOnly(poi.gridTileLocation);
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
         public List<IPointOfInterest> GetPOIsOfType(POINT_OF_INTEREST_TYPE type) {
             List<IPointOfInterest> pois = new List<IPointOfInterest>();
             for (int i = 0; i < pointsOfInterest.Count; i++) {

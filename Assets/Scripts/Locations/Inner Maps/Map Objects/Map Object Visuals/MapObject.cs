@@ -38,7 +38,7 @@ public abstract class MapObject<T> where T: IDamageable {
     protected void EnableGameObject() {
         mapVisual.SetActiveState(true);
     }
-    protected void DestroyMapVisualGameObject() {
+    public void DestroyMapVisualGameObject() {
         Assert.IsNotNull(mapVisual, $"Trying to destroy map visual of {this.ToString()} but map visual is null!");
         ObjectPoolManager.Instance.DestroyObject(mapVisual);
         mapVisual = null;

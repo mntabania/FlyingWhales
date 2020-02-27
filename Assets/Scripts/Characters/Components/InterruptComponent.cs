@@ -63,9 +63,12 @@ public class InterruptComponent {
                 EndInterrupt();
             }
         } else {
-            TriggeredSimultaneousInterrupt(triggeredInterrupt, targetPOI, identifier);
+             TriggeredSimultaneousInterrupt(triggeredInterrupt, targetPOI, identifier);
         }
         return true;
+    }
+    public void SetIdentifier(string text) {
+        identifier = text;
     }
     private bool TriggeredSimultaneousInterrupt(Interrupt interrupt, IPointOfInterest targetPOI, string identifier) {
         owner.logComponent.PrintLogIfActive($"{owner.name} triggered a simultaneous interrupt: {interrupt.name}");
