@@ -186,15 +186,20 @@ public class DouseFireState : CharacterState {
 
         for (int i = 0; i < _fires.Count; i++) {
             ITraitable currFire = _fires[i];
-            float dist = Vector2.Distance(stateComponent.character.worldObject.transform.position, currFire.worldObject.transform.position);
-            if (dist < nearest) {
-                nearestFire = currFire;
-                nearest = dist;
+            Burning burning = currFire.traitContainer.GetNormalTrait<Burning>("Burning");
+            if (burning.douser == null) {
+                //only consider dousing fire that is not yet assigned
+                float dist = Vector2.Distance(stateComponent.character.worldObject.transform.position, currFire.worldObject.transform.position);
+                if (dist < nearest) {
+                    nearestFire = currFire;
+                    nearest = dist;
+                }    
             }
         }
         if (nearestFire != null) {
             isDousingFire = true;
             currentTarget = nearestFire;
+            nearestFire.traitContainer.GetNormalTrait<Burning>("Burning").SetDouser(stateComponent.character);
             stateComponent.character.marker.GoTo(nearestFire, DouseFire);
         } 
         Profiler.EndSample();

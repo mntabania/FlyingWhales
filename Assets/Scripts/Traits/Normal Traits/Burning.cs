@@ -6,13 +6,13 @@ using UnityEngine;
 
 namespace Traits {
     public class Burning : Trait {
-
-        public ITraitable owner { get; private set; }
-        public override bool isPersistent { get { return true; } }
-        private GameObject burningEffect;
-
+        private ITraitable owner { get; set; }
         public BurningSource sourceOfBurning { get; private set; }
-        private List<ITraitable> _burningSpreadChoices;
+        public override bool isPersistent => true;
+        
+        private GameObject burningEffect;
+        private readonly List<ITraitable> _burningSpreadChoices;
+        public Character douser { get; private set; } //the character that is going to douse this fire.
 
         public Burning() {
             name = "Burning";
@@ -22,7 +22,6 @@ namespace Traits {
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(1);
             moodEffect = -25;
             _burningSpreadChoices = new List<ITraitable>();
-            //effects = new List<TraitEffect>();
         }
 
         #region Overrides
@@ -50,13 +49,13 @@ namespace Traits {
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
+            SetDouser(null); //reset douser so that any signals related to that will be removed.
             Messenger.RemoveListener(Signals.TICK_ENDED, PerTickEnded);
             if(burningEffect != null) {
                 ObjectPoolManager.Instance.DestroyObject(burningEffect);
             }
             if (removedFrom is IPointOfInterest) {
-                if (removedFrom is Character) {
-                    Character character = removedFrom as Character;
+                if (removedFrom is Character character) {
                     character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.DOUSE_FIRE);
                     character.AdjustDoNotRecoverHP(-1);
                 }
@@ -67,56 +66,32 @@ namespace Traits {
             removedFrom.traitContainer.AddTrait(removedFrom, "Burnt");
         }
         public override bool OnDeath(Character character) {
-            //base.OnDeath(character);
             return character.traitContainer.RemoveTrait(character, this);
         }
         public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
             if (traitOwner.gridTileLocation != null 
                 && traitOwner.gridTileLocation.IsPartOfSettlement(characterThatWillDoJob.homeSettlement)) {
-
                 characterThatWillDoJob.homeSettlement.settlementJobTriggerComponent.TriggerDouseFire();
             }
             
             //pyrophobic handling
             Pyrophobic pyrophobic = characterThatWillDoJob.traitContainer.GetNormalTrait<Pyrophobic>("Pyrophobic");
-            if (pyrophobic != null) {
-                //pyrophobic
-                //When he sees a fire source for the first time, reduce Happiness by 2000. Do not create Douse Fire job. It should always Flee from fire. Add log showing reason for fleeing is Pyrophobia
-                pyrophobic.AddKnownBurningSource(sourceOfBurning, traitOwner);
-                //It will trigger one of the following:
-                //if (!characterThatWillDoJob.marker.hasFleePath &&
-                //    characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Catatonic") == null) {
-                //    //if not already fleeing or catatonic
-                //    //50% gain Shellshocked and Flee from fire. Log "[Actor Name] saw a fire and fled from it."
-                //    if (UnityEngine.Random.Range(0, 100) < 50) {
-                //        pyrophobic.BeShellshocked(sourceOfBurning, characterThatWillDoJob);
-                //    }
-                //    //50% gain Catatonic. Log "[Actor Name] saw a fire and became Catatonic."
-                //    else {
-                //        pyrophobic.BeCatatonic(sourceOfBurning, characterThatWillDoJob);
-                //    }
-                //}
-            }
+            pyrophobic?.AddKnownBurningSource(sourceOfBurning, traitOwner);
+            
             return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
         }
         public override bool IsTangible() {
             return true;
         }
-        public override string GetTestingData(ITraitable traitable) {
-            if (sourceOfBurning != null) {
-                return sourceOfBurning.ToString();
-            }
-            return string.Empty;
+        public override string GetTestingData(ITraitable traitable = null) {
+            return sourceOfBurning != null ? $"Douser: {douser?.name ?? "None"}. {sourceOfBurning}" : base.GetTestingData(traitable);
         }
         public override void ExecuteActionPreEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) {
             base.ExecuteActionPreEffects(action, goapNode);
             if (goapNode.action.actionCategory == ACTION_CATEGORY.CONSUME || goapNode.action.actionCategory == ACTION_CATEGORY.DIRECT) {
                 if (Random.Range(0, 100) < 10) { //5
-                    Trait trait = null;
-                    goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Burning", out trait);
-                    if (trait != null) {
-                        (trait as Burning).SetSourceOfBurning(sourceOfBurning, goapNode.actor);
-                    }
+                    goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Burning", out var trait);
+                    (trait as Burning)?.SetSourceOfBurning(sourceOfBurning, goapNode.actor);
                 }
             }
         }
@@ -124,18 +99,11 @@ namespace Traits {
             base.ExecuteActionPerTickEffects(action, goapNode);
             if (goapNode.action.actionCategory == ACTION_CATEGORY.CONSUME || goapNode.action.actionCategory == ACTION_CATEGORY.DIRECT) {
                 if (Random.Range(0, 100) < 10) { //5
-                    Trait trait = null;
-                    goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Burning", out trait);
-                    if (trait != null) {
-                        (trait as Burning).SetSourceOfBurning(sourceOfBurning, goapNode.actor);
-                    }
+                    goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Burning", out var trait);
+                    (trait as Burning)?.SetSourceOfBurning(sourceOfBurning, goapNode.actor);
                 }
             }
         }
-        // public override void OnTickEnded() {
-        //     base.OnTickEnded();
-        //     PerTickEnded();
-        // }
         #endregion
 
         public void LoadSourceOfBurning(BurningSource source) {
@@ -175,9 +143,7 @@ namespace Traits {
             if (_burningSpreadChoices.Count > 0) {
                 ITraitable chosen = _burningSpreadChoices[Random.Range(0, _burningSpreadChoices.Count)];
                 chosen.traitContainer.AddTrait(chosen, "Burning", out var trait);
-                if (trait != null) {
-                    (trait as Burning).SetSourceOfBurning(sourceOfBurning, chosen);
-                }
+                (trait as Burning)?.SetSourceOfBurning(sourceOfBurning, chosen);
             }
 
             owner.AdjustHP(-(int)(owner.maxHP * 0.02f), ELEMENTAL_TYPE.Normal, true, this);
@@ -203,6 +169,22 @@ namespace Traits {
                 
             //}
         }
+
+        #region Douser
+        public void SetDouser(Character character) {
+            douser = character;
+            if (douser == null) {
+                Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterExitedState);
+            } else {
+                Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterExitedState);
+            }
+        }
+        private void OnCharacterExitedState(Character character, CharacterState state) {
+            if (state.characterState == CHARACTER_STATE.DOUSE_FIRE && douser == character) {
+                SetDouser(null); //character that exited douse fire state is this fires' douser, set douser to null.
+            }
+        }
+        #endregion
 
     }
 
