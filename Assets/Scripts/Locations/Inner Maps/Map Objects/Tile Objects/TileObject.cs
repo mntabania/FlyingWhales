@@ -169,6 +169,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         SetPOIState(POI_STATE.ACTIVE);
         if (mapVisual == null) {
             InitializeMapObject(this);
+            OnMapObjectStateChanged(); //update visuals based on map object state
             gridTileLocation.parentMap.location.AddAwareness(this);
         }
         PlaceMapObjectAt(gridTileLocation);
@@ -360,8 +361,10 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         if (advertisedActions == null) {
             advertisedActions = new List<INTERACTION_TYPE>();
         }
-        advertisedActions.Add(type);
-        mapVisual?.UpdateCollidersState(this);
+        if (advertisedActions.Contains(type) == false) {
+            advertisedActions.Add(type);
+            mapVisual?.UpdateCollidersState(this);    
+        }
     }
     public void RemoveAdvertisedAction(INTERACTION_TYPE type) {
         advertisedActions.Remove(type);
@@ -774,6 +777,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     }
     private INTERACTION_TYPE[] storedActions;
     protected override void OnMapObjectStateChanged() {
+        if (mapVisual == null) { return; }
         if (mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
             mapVisual.SetVisualAlpha(0f / 255f);
             SetSlotAlpha(0f / 255f);
@@ -792,8 +796,10 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             mapVisual.SetVisualAlpha(255f / 255f);
             SetSlotAlpha(255f / 255f);
             RemoveAdvertisedAction(INTERACTION_TYPE.CRAFT_TILE_OBJECT);
-            for (int i = 0; i < storedActions.Length; i++) {
-                AddAdvertisedAction(storedActions[i]);
+            if (storedActions != null) {
+                for (int i = 0; i < storedActions.Length; i++) {
+                    AddAdvertisedAction(storedActions[i]);
+                }    
             }
             storedActions = null;
             SubscribeListeners();

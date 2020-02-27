@@ -172,7 +172,7 @@ public class Settlement : IJobOwner {
     public void OnAreaSetAsActive() {
         SubscribeToSignals();
         //LocationStructure warehouse = GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
-        CheckAreaInventoryJobs(mainStorage, null);
+        // CheckAreaInventoryJobs(mainStorage, null);
         //DesignateNewRuler();
     }
     public void SetIsUnderSeige(bool state) {
@@ -648,7 +648,32 @@ public class Settlement : IJobOwner {
     //    return count;
     //}
     public void OnItemAddedToLocation(TileObject item, LocationStructure structure) {
-        CheckAreaInventoryJobs(structure, item);
+        CheckIfInventoryJobsAreStillValid(item, structure);
+    }
+    private void CheckIfInventoryJobsAreStillValid(TileObject item, LocationStructure structure) {
+        if (structure == mainStorage && (item.tileObjectType == TILE_OBJECT_TYPE.HEALING_POTION || item.tileObjectType == TILE_OBJECT_TYPE.TOOL)) {
+            if (item.tileObjectType == TILE_OBJECT_TYPE.HEALING_POTION) {
+                if (mainStorage.GetBuiltTileObjectsOfType<TileObject>(TILE_OBJECT_TYPE.HEALING_POTION).Count >= 2) {
+                    List<JobQueueItem> jobs = GetJobs(JOB_TYPE.CRAFT_OBJECT);
+                    for (int i = 0; i < jobs.Count; i++) {
+                        JobQueueItem jqi = jobs[i];
+                        if (jqi is GoapPlanJob goapPlanJob && goapPlanJob.targetPOI is TileObject tileObject && tileObject.tileObjectType == TILE_OBJECT_TYPE.HEALING_POTION) {
+                            jqi.ForceCancelJob(false, "Settlement has enough healing potions");    
+                        }
+                    }
+                }
+            } else if (item.tileObjectType == TILE_OBJECT_TYPE.TOOL) {
+                if (mainStorage.GetBuiltTileObjectsOfType<TileObject>(TILE_OBJECT_TYPE.TOOL).Count >= 2) {
+                    List<JobQueueItem> jobs = GetJobs(JOB_TYPE.CRAFT_OBJECT);
+                    for (int i = 0; i < jobs.Count; i++) {
+                        JobQueueItem jqi = jobs[i];
+                        if (jqi is GoapPlanJob goapPlanJob && goapPlanJob.targetPOI is TileObject tileObject && tileObject.tileObjectType == TILE_OBJECT_TYPE.TOOL) {
+                            jqi.ForceCancelJob(false, "Settlement has enough tools");    
+                        }
+                    }
+                }
+            }
+        }
     }
     public void OnItemRemovedFromLocation(TileObject item, LocationStructure structure) {
         CheckAreaInventoryJobs(structure, item);
@@ -1138,23 +1163,22 @@ public class Settlement : IJobOwner {
             if (affectedStructure.GetTileObjectsOfTypeCount(TILE_OBJECT_TYPE.HEALING_POTION) < 2) {
                 //create an un crafted potion and place it at the main storage structure, then use that as the target for the job.
                 TileObject item = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.HEALING_POTION);
-                affectedStructure.AddPOI(item);
                 item.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
+                affectedStructure.AddPOI(item);
 
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, item, this);
                 job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.HEALING_POTION).constructionCost });
                 job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanBrewPotion);
                 AddToAvailableJobs(job);
             }
-
-
+            
             //craft tool
             if (affectedStructure.GetTileObjectsOfTypeCount(TILE_OBJECT_TYPE.TOOL) < 2) {
                 if (!HasJob(JOB_TYPE.CRAFT_OBJECT)) {
                     //create an un crafted potion and place it at the main storage structure, then use that as the target for the job.
                     TileObject item = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.TOOL);
-                    affectedStructure.AddPOI(item);
                     item.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
+                    affectedStructure.AddPOI(item);
 
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, item, this);
                     job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.TOOL).constructionCost });

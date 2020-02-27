@@ -80,8 +80,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		}
 	}
 	private void OnTileObjectPlaced(TileObject tileObject, LocationGridTile tile) {
-		if (tileObject is ResourcePile) {
-			ResourcePile resourcePile = tileObject as ResourcePile;
+		if (tileObject is ResourcePile resourcePile) {
 			if (resourcePile.resourceInPile > 0) {
 				Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.HAUL, resourcePile as IPointOfInterest);
 				Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.COMBINE_STOCKPILE, resourcePile as IPointOfInterest);

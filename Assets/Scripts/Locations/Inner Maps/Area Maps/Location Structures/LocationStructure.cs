@@ -238,6 +238,19 @@ namespace Inner_Maps.Location_Structures {
             }
             return objs;
         }
+        public List<T> GetBuiltTileObjectsOfType<T>(TILE_OBJECT_TYPE type) where T : TileObject {
+            List<T> objs = new List<T>();
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest poi = pointsOfInterest.ElementAt(i); 
+                if (poi is TileObject) {
+                    TileObject obj = poi as TileObject;
+                    if (obj.tileObjectType == type && obj.mapObjectState == MAP_OBJECT_STATE.BUILT) {
+                        objs.Add(obj as T);
+                    }
+                }
+            }
+            return objs;
+        }
         public List<T> GetTileObjectsOfType<T>() where T : TileObject {
             List<T> objs = new List<T>();
             for (int i = 0; i < pointsOfInterest.Count; i++) {
@@ -262,13 +275,13 @@ namespace Inner_Maps.Location_Structures {
             }
             return null;
         }
-    public int GetTileObjectsOfTypeCount(TILE_OBJECT_TYPE type) {
-        int count = 0;
-        if (groupedTileObjects.ContainsKey(type)) {
-            count = groupedTileObjects[type].count;
+        public int GetTileObjectsOfTypeCount(TILE_OBJECT_TYPE type) {
+            int count = 0;
+            if (groupedTileObjects.ContainsKey(type)) {
+                count = groupedTileObjects[type].count;
+            }
+            return count;
         }
-        return count;
-    }
         public ResourcePile GetResourcePileObjectWithLowestCount(TILE_OBJECT_TYPE type, bool excludeMaximum = true) {
             ResourcePile chosenPile = null;
             int lowestCount = 0;

@@ -29,7 +29,7 @@ public class BurningSource {
     public bool HasFireInSettlement(Settlement settlement) {
         for (int i = 0; i < objectsOnFire.Count; i++) {
             ITraitable traitable = objectsOnFire[i];
-            if (traitable.gridTileLocation.IsPartOfSettlement(settlement)) {
+            if (traitable.gridTileLocation != null && traitable.gridTileLocation.IsPartOfSettlement(settlement)) {
                 return true;
             }
         }

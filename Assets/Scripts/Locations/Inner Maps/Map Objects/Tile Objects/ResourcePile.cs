@@ -59,6 +59,7 @@ public abstract class ResourcePile : TileObject {
     }
     private INTERACTION_TYPE[] storedActions;
     protected override void OnMapObjectStateChanged() {
+        if (mapVisual == null) { return; }
         if (mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
             mapVisual.SetVisualAlpha(0f / 255f);
             SetSlotAlpha(0f / 255f);
@@ -77,8 +78,10 @@ public abstract class ResourcePile : TileObject {
             mapVisual.SetVisualAlpha(255f / 255f);
             SetSlotAlpha(255f / 255f);
             RemoveAdvertisedAction(INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE);
-            for (int i = 0; i < storedActions.Length; i++) {
-                AddAdvertisedAction(storedActions[i]);
+            if (storedActions != null) {
+                for (int i = 0; i < storedActions.Length; i++) {
+                    AddAdvertisedAction(storedActions[i]);
+                }    
             }
             storedActions = null;
             SubscribeListeners();

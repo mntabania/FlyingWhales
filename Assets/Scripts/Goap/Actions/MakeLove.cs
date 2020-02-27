@@ -64,7 +64,7 @@ public class MakeLove : GoapAction {
         bed?.OnDoneActionToObject(actor.currentActionNode);
 
         //targetCharacter.traitContainer.RemoveTrait(targetCharacter, "Wooed");
-        if (targetCharacter.currentActionNode.action == this) {
+        if (targetCharacter.currentActionNode != null && targetCharacter.currentActionNode.action == this) {
             targetCharacter.SetCurrentActionNode(null, null, null);
         }
     }
@@ -78,7 +78,7 @@ public class MakeLove : GoapAction {
         targetCharacter.needsComponent.AdjustDoNotGetBored(-1);
 
         //targetCharacter.traitContainer.RemoveTrait(targetCharacter, "Wooed");
-        if (targetCharacter.currentActionNode.action == this) {
+        if (targetCharacter.currentActionNode != null && targetCharacter.currentActionNode.action == this) {
             targetCharacter.SetCurrentActionNode(null, null, null);
         }
     }
