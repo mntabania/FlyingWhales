@@ -10,7 +10,9 @@
   "_attackRange": 3.5,
   "_runSpeedMod": 0.0,
   "_walkSpeedMod": 0.0,
-  "_traitNames": [],
+  "_traitNames": [
+    "Combatant"
+  ],
   "_identifier": "Beast",
   "_isNonCombatant": false,
   "_jobType": 2,

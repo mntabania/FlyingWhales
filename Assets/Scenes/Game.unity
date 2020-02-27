@@ -99410,8 +99410,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _minFov: 6
   _maxFov: 13
-  zoomSensitivity: 20
-  _zoomSpeed: 15
+  zoomSensitivity: 15
+  _zoomSpeed: 10
   innerMapsCamera: {fileID: 1713567858}
   _target: {fileID: 0}
   MIN_X: -185.8

@@ -9522,7 +9522,7 @@ GameObject:
   - component: {fileID: 114020084204728438}
   m_Layer: 14
   m_Name: ChaosOrb
-  m_TagString: Untagged
+  m_TagString: Map_Click_Blocker
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
