@@ -490,7 +490,7 @@ public class UIManager : MonoBehaviour {
         _raycastResults.Clear();
         EventSystem.current.RaycastAll(_pointer, _raycastResults);
 
-        return _raycastResults.Count > 0 && _raycastResults.Any(go => go.gameObject.layer == LayerMask.NameToLayer("UI") || go.gameObject.layer == LayerMask.NameToLayer("WorldUI"));
+        return _raycastResults.Count > 0 && _raycastResults.Any(go => go.gameObject.layer == LayerMask.NameToLayer("UI") || go.gameObject.layer == LayerMask.NameToLayer("WorldUI") || go.gameObject.layer == LayerMask.NameToLayer("Map_Click_Blocker"));
     }
     public bool IsMouseOnMapObject() {
         PointerEventData pointer = new PointerEventData(EventSystem.current);

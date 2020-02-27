@@ -8,7 +8,9 @@
   "_baseHP": 960,
   "_baseAttackSpeed": 1400,
   "_attackRange": 0.800000011920929,
-  "_traitNames": [],
+  "_traitNames": [
+    "Combatant"
+  ],
   "_identifier": "Beast",
   "_isNonCombatant": false,
   "_jobType": 2,

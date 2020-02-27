@@ -105,7 +105,7 @@ public class MakeLove : GoapAction {
         actor.UncarryPOI(targetCharacter);
 
         //targetCharacter.traitContainer.RemoveTrait(targetCharacter, "Wooed");
-        if (targetCharacter.currentActionNode.action == this) {
+        if (targetCharacter.currentActionNode != null && targetCharacter.currentActionNode.action == this) {
             targetCharacter.SetCurrentActionNode(null, null, null);
         }
     }

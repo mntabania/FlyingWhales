@@ -1,1 +1,27 @@
-{"_className":"FireElemental","_baseAttackPower":70,"_attackPowerPerLevel":36,"_baseSpeed":30,"_speedPerLevel":4,"_hpPerLevel":384,"_baseHP":300,"_baseAttackSpeed":1100,"_attackRange":0.800000011920929,"_traitNames":[],"_identifier":"Beast","_isNonCombatant":false,"_jobType":2,"_combatPosition":0,"_combatTarget":6,"_attackType":0,"_rangeType":0,"_damageType":4,"_occupiedTileType":2,"_recruitmentCost":{"amount":150,"currency":0}}
+{
+  "_className": "FireElemental",
+  "_baseAttackPower": 70,
+  "_attackPowerPerLevel": 36,
+  "_baseSpeed": 30,
+  "_speedPerLevel": 4,
+  "_hpPerLevel": 384,
+  "_baseHP": 300,
+  "_baseAttackSpeed": 1100,
+  "_attackRange": 0.800000011920929,
+  "_traitNames": [
+    "Combatant"
+  ],
+  "_identifier": "Beast",
+  "_isNonCombatant": false,
+  "_jobType": 2,
+  "_combatPosition": 0,
+  "_combatTarget": 6,
+  "_attackType": 0,
+  "_rangeType": 0,
+  "_damageType": 4,
+  "_occupiedTileType": 2,
+  "_recruitmentCost": {
+    "amount": 150,
+    "currency": 0
+  }
+}

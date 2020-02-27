@@ -11,7 +11,8 @@
   "_runSpeedMod": 0.0,
   "_walkSpeedMod": 0.0,
   "_traitNames": [
-    "Beast"
+    "Beast",
+    "Combatant"
   ],
   "_identifier": "Beast",
   "_isNonCombatant": false,
