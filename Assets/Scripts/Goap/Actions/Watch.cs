@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;  
 using Traits;
+using Inner_Maps;
 
 public class Watch : GoapAction {
 
@@ -122,7 +123,7 @@ public class Watch : GoapAction {
 
         //Always face target when not travelling
         if (!goapNode.actor.currentParty.icon.isTravelling) {
-            goapNode.actor.FaceTarget(goapNode.poiTarget);
+            InnerMapManager.Instance.FaceTarget(goapNode.actor, goapNode.poiTarget);
         }
     }
     //public void AfterWatchSuccess(ActualGoapNode goapNode) {

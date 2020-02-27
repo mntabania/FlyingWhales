@@ -90,6 +90,7 @@ public class RavenousSpirit : TileObject {
         }
     }
     private IEnumerator CommencePossession() {
+        InnerMapManager.Instance.FaceTarget(this, possessionTarget);
         while (possessionTarget.marker.transform.position != mapVisual.gameObject.transform.position && !possessionTarget.marker.IsNear(mapVisual.gameObject.transform.position)) {
             yield return new WaitForFixedUpdate();
             if (!GameManager.Instance.isPaused) {
@@ -104,18 +105,20 @@ public class RavenousSpirit : TileObject {
         if (possessionTarget != null) {
             // SetGridTileLocation(_spiritGO.GetLocationGridTileByXy(Mathf.FloorToInt(mapVisual.transform.localPosition.x), Mathf.FloorToInt(mapVisual.transform.localPosition.y)));
             RavenousEffect();
-            iTween.Stop(mapVisual.gameObject);
-            SetGridTileLocation(null);
-            OnDestroyPOI();
-            // SetGridTileLocation(_originalGridTile);
-            // _originalGridTile.structure.RemovePOI(this);
-            possessionTarget = null;
+            DonePossession();
+            //iTween.Stop(mapVisual.gameObject);
+            //SetGridTileLocation(null);
+            //OnDestroyPOI();
+            //// SetGridTileLocation(_originalGridTile);
+            //// _originalGridTile.structure.RemovePOI(this);
+            //possessionTarget = null;
         }
     }
     public void GoToRandomTileInRadius() {
         List<LocationGridTile> tilesInRadius = gridTileLocation.GetTilesInRadius(3, includeCenterTile: false, includeTilesInDifferentStructure: true);
         LocationGridTile chosen = tilesInRadius[Random.Range(0, tilesInRadius.Count)];
         _spiritGO.SetDestinationTile(chosen);
+        InnerMapManager.Instance.FaceTarget(this, chosen);
     }
     private void UpdateSpeed() {
         _spiritGO.SetSpeed(1f);
@@ -131,17 +134,29 @@ public class RavenousSpirit : TileObject {
             _currentDuration++;
             if (_currentDuration >= _duration) {
                 _spiritGO.SetIsRoaming(false);
-                iTween.Stop(mapVisual.gameObject);
-                SetGridTileLocation(null);
-                OnDestroyPOI();
-                // SetGridTileLocation(_originalGridTile);
-                // _originalGridTile.structure.RemovePOI(this);
-                possessionTarget = null;
+                Dissipate();
             }
         }
     }
 
     private void RavenousEffect() {
         possessionTarget.needsComponent.AdjustFullness(-35);
+    }
+
+    private void DonePossession() {
+        GameManager.Instance.CreateParticleEffectAt(possessionTarget.gridTileLocation, PARTICLE_EFFECT.Minion_Dissipate);
+        DestroySpirit();
+    }
+    private void Dissipate() {
+        GameManager.Instance.CreateParticleEffectAt(gridTileLocation, PARTICLE_EFFECT.Minion_Dissipate);
+        DestroySpirit();
+    }
+    private void DestroySpirit() {
+        iTween.Stop(mapVisual.gameObject);
+        SetGridTileLocation(null);
+        OnDestroyPOI();
+        // SetGridTileLocation(_originalGridTile);
+        // _originalGridTile.structure.RemovePOI(this);
+        possessionTarget = null;
     }
 }

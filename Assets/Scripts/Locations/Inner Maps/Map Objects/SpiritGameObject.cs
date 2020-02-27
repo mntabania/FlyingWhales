@@ -209,6 +209,22 @@ public class SpiritGameObject : MapObjectVisual<TileObject> {
         _journeyLength = 0f;
         _startPosition = Vector3.zero;
         _startTime = 0f;
+        transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
     }
+    public override void LookAt(Vector3 target, bool force = false) {
+        Vector3 diff = target - transform.position;
+        diff.Normalize();
+        float rot_z = Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg;
+        Rotate(Quaternion.Euler(0f, 0f, rot_z - 90), force);
+    }
+    /// <summary>
+    /// Rotate this marker to a specific angle.
+    /// </summary>
+    /// <param name="target">The angle this character must rotate to.</param>
+    /// <param name="force">Should this object be forced to rotate?</param>
+    public override void Rotate(Quaternion target, bool force = false) {
+        transform.rotation = target;
+    }
+    
     #endregion
 }

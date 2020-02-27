@@ -778,5 +778,26 @@ namespace Inner_Maps {
             currentlyHoveredPoi = poi;
         }
         #endregion
+
+        #region POI
+        public void FaceTarget(IPointOfInterest actor, IPointOfInterest target) {
+            if (actor != target && actor.gridTileLocation != null && target.gridTileLocation != null) {
+                BaseMapObjectVisual objectToLookAt = target.mapObjectVisual;
+                if(target.isBeingCarriedBy != null) {
+                    objectToLookAt = target.isBeingCarriedBy.mapObjectVisual;
+                }
+                if (target.isBeingCarriedBy != actor && objectToLookAt != null) {
+                    actor.mapObjectVisual.LookAt(objectToLookAt.transform.position);
+                }
+            }
+        }
+        public void FaceTarget(IPointOfInterest actor, LocationGridTile target) {
+            if (actor != target && actor.gridTileLocation != null && target != null) {
+                if (target != actor.gridTileLocation) {
+                    actor.mapObjectVisual.LookAt(target.centeredWorldLocation);
+                }
+            }
+        }
+        #endregion
     }
 }

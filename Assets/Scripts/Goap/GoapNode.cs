@@ -427,7 +427,7 @@ public class ActualGoapNode {
                         targetCharacter.StopCurrentActionNode(false);
                     }
                     targetCharacter.DecreaseCanMove();
-                    targetCharacter.FaceTarget(actor);
+                    InnerMapManager.Instance.FaceTarget(targetCharacter, actor);
                 }
                 targetCharacter.AdjustIsStoppedByOtherCharacter(1);
             }

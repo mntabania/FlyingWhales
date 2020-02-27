@@ -273,16 +273,20 @@ public class CharacterManager : MonoBehaviour {
         }
         return 100;
     }
-    public void CreateFoodPileForPOI(IPointOfInterest poi) {
+    public void CreateFoodPileForPOI(IPointOfInterest poi, LocationGridTile tileOverride = null) {
+        LocationGridTile targetTile = tileOverride;
         Character deadCharacter = null;
         if (poi is Character) {
             deadCharacter = poi as Character;
         }
+        if(targetTile == null) {
+            targetTile = poi.gridTileLocation;
+        }
         int food = GetFoodAmountTakenFromDead(deadCharacter);
         FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(TILE_OBJECT_TYPE.FOOD_PILE);
         foodPile.SetResourceInPile(food);
-        poi.gridTileLocation.structure.AddPOI(foodPile, poi.gridTileLocation);
-        foodPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.FOOD_PILE);
+        targetTile.structure.AddPOI(foodPile, targetTile);
+        targetTile.SetReservedType(TILE_OBJECT_TYPE.FOOD_PILE);
     }
     #endregion
 
