@@ -34,6 +34,9 @@ public class MeteorParticleEffect : BaseParticleEffect {
         BurningSource bs = null;
         for (int i = 0; i < traitables.Count; i++) {
             ITraitable traitable = traitables[i];
+            if (traitable.gridTileLocation == null) {
+                continue; //skip
+            }
             if (traitable is TileObject obj) {
                 if (obj.tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
                     obj.AdjustHP(-obj.currentHP, ELEMENTAL_TYPE.Fire);

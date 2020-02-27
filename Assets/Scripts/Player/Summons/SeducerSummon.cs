@@ -21,7 +21,7 @@ public class SeducerSummon : Summon {
     }
 
 
-    public SeducerSummon(SUMMON_TYPE type, GENDER gender) : base(type, CharacterRole.MINION, "Lust", RACE.DEMON, gender) {
+    public SeducerSummon(SUMMON_TYPE type, GENDER gender, string className) : base(type, CharacterRole.MINION, className, RACE.DEMON, gender) {
         seduceChance = 25;
         doneCharacters = new List<Character>();
         //AddInteractionType(INTERACTION_TYPE.INVITE);

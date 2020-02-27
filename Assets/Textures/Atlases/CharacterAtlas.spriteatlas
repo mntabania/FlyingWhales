@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: da1d92a130b3f8f4bb0110cd352dca08, type: 3}
-    totalSpriteSurfaceArea: 13443292
+    totalSpriteSurfaceArea: 13459676
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -401,6 +401,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 0a8d61a2df1d41a4eaf74d4d9256cb01, type: 3}
   - {fileID: 21300000, guid: 13ee02a25fa2b064097dc29c72b486b6, type: 3}
   - {fileID: 21300000, guid: 3b2a44a2ef1130048a8312b803c7a0a8, type: 3}
+  - {fileID: 21300000, guid: 8e95d4a28b5d4474c9b68687395a0450, type: 3}
   - {fileID: 21300000, guid: 37b969a2de9ae2c41bd7d2bd11116290, type: 3}
   - {fileID: 21300000, guid: ca44b9a20743ba4429d495c2f382c727, type: 3}
   - {fileID: 21300000, guid: 344d6aa2b21a5c84c9281923a773a4bb, type: 3}
@@ -2656,6 +2657,7 @@ SpriteAtlas:
   - human_m_hit light
   - walk_4
   - idle_3
+  - CircleOutline
   - attack_4
   - walk_4
   - idle_3

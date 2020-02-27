@@ -1448,6 +1448,9 @@
                   <e p="TortureChamber.cs" t="Include" />
                 </e>
                 <e p="LocationStructureSetting.cs" t="Include" />
+                <e p="Miscellaneous" t="Include">
+                  <e p="MarkerDummy.cs" t="Include" />
+                </e>
                 <e p="Structure Template Creator" t="Include">
                   <e p="BuildingSpotData.cs" t="Include" />
                   <e p="BuildingSpotDataMonobehaviour.cs" t="Include" />

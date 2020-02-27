@@ -9,6 +9,7 @@ using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 
 public class LocationStructureObject : PooledObject {
@@ -27,7 +28,7 @@ public class LocationStructureObject : PooledObject {
     [SerializeField] protected Vector3Int _center;
 
     [Header("Objects")]
-    [SerializeField] protected Transform _objectsParent;
+    [FormerlySerializedAs("_objectsParent")] public Transform objectsParent;
 
     [Header("Furniture Spots")]
     [SerializeField] protected Transform _furnitureSpotsParent;
@@ -133,10 +134,10 @@ public class LocationStructureObject : PooledObject {
         }
     }
     private StructureTemplateObjectData[] GetPreplacedObjects() {
-        return UtilityScripts.GameUtilities.GetComponentsInDirectChildren<StructureTemplateObjectData>(_objectsParent.gameObject);
+        return UtilityScripts.GameUtilities.GetComponentsInDirectChildren<StructureTemplateObjectData>(objectsParent.gameObject);
     }
     internal void ReceiveMapObject<T>(MapObjectVisual<T> mapGameObject) where T : IDamageable {
-        mapGameObject.transform.SetParent(_objectsParent);
+        mapGameObject.transform.SetParent(objectsParent);
     }
     private void SetPreplacedObjectsState(bool state) {
         StructureTemplateObjectData[] preplacedObjs = GetPreplacedObjects();
@@ -463,7 +464,7 @@ public class LocationStructureObject : PooledObject {
 
     [ContextMenu("Convert Objects")]
     public void ConvertObjects() {
-        UtilityScripts.Utilities.DestroyChildren(_objectsParent);
+        UtilityScripts.Utilities.DestroyChildren(objectsParent);
         _detailTileMap.CompressBounds();
         // Material mat = Resources.Load<Material>("Fonts & Materials/2D Lighting");
         BoundsInt bounds = _detailTileMap.cellBounds;
@@ -479,7 +480,7 @@ public class LocationStructureObject : PooledObject {
                     
                     GameObject newGo = new GameObject("StructureTemplateObjectData");
                     newGo.layer = LayerMask.NameToLayer("Area Maps");
-                    newGo.transform.SetParent(_objectsParent);
+                    newGo.transform.SetParent(objectsParent);
                     newGo.transform.position = centeredPos;
                     newGo.transform.localRotation = m.rotation;
 

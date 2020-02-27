@@ -7,14 +7,20 @@ using UtilityScripts;
 namespace Inner_Maps.Location_Structures {
     public class TheKennel : LocationStructure{
         public override Vector2 selectableSize { get; }
-
+        public override string nameplateName => $"{name} ({MaxCapacity - _remainingCapacity}/{MaxCapacity})";
+        private const int BreedingDuration = GameManager.ticksPerHour;
+        
         private const int MaxCapacity = 10;
         private int _remainingCapacity;
         private bool _isCurrentlyBreeding;
-        private string _breedingScheduleKey;
+        private int _remainingBreedingTicks;
+        private RaceClass _currentlyBreeding;
+        private LocationGridTile targetTile;
 
-        private HashSet<Summon> _ownedSummons;
-        
+        private readonly HashSet<Summon> _ownedSummons;
+
+        private MarkerDummy _markerDummy;
+
         public TheKennel(ILocation location) : base(STRUCTURE_TYPE.THE_KENNEL, location){
             selectableSize = new Vector2(10f, 10f);
             _ownedSummons = new HashSet<Summon>();
@@ -26,11 +32,19 @@ namespace Inner_Maps.Location_Structures {
             _remainingCapacity = MaxCapacity;
             AddBreedMonsterAction();
         }
+        public override void SetStructureObject(LocationStructureObject structureObj) {
+            base.SetStructureObject(structureObj);
+            _markerDummy = ObjectPoolManager.Instance
+                .InstantiateObjectFromPool("MarkerDummy", Vector3.zero, Quaternion.identity, structureObj.objectsParent)
+                .GetComponent<MarkerDummy>();
+            _markerDummy.Deactivate();
+        }
         protected override void DestroyStructure() {
             base.DestroyStructure();
             RemoveBreedMonsterAction();
-            if (string.IsNullOrEmpty(_breedingScheduleKey) == false) {
-                SchedulingManager.Instance.RemoveSpecificEntry(_breedingScheduleKey);
+            Messenger.RemoveListener(Signals.TICK_STARTED, PerSummonTick);
+            if (_markerDummy != null) {
+                ObjectPoolManager.Instance.DestroyObject(_markerDummy.gameObject);
             }
             Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         }
@@ -110,18 +124,35 @@ namespace Inner_Maps.Location_Structures {
         }
         private void StartBreedingMonster(RaceClass raceClass) {
             _isCurrentlyBreeding = true;
-            GameDate dueDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(1));
-            _breedingScheduleKey = SchedulingManager.Instance.AddEntry(dueDate, () => SpawnMonster(raceClass), this);
+            _remainingBreedingTicks = 0;
+            _currentlyBreeding = raceClass;
+
+            //TODO: Make this better!
+            var asset = CharacterManager.Instance.GetMarkerAsset(raceClass.race, raceClass.className == Succubus.ClassName ? GENDER.FEMALE : GENDER.MALE, raceClass.className);
+
+            targetTile = CollectionUtilities.GetRandomElement(unoccupiedTiles);
+            _markerDummy.InitialSetup(asset.animationSprites[0], targetTile);
+            _markerDummy.Activate();
+            Messenger.AddListener(Signals.TICK_STARTED, PerSummonTick);
+        }
+        private void PerSummonTick() {
+            _remainingBreedingTicks++;
+            _markerDummy.SetProgress((float)_remainingBreedingTicks/(float)BreedingDuration);
+            if (_remainingBreedingTicks == BreedingDuration) {
+                SpawnMonster(_currentlyBreeding);
+                Messenger.RemoveListener(Signals.TICK_STARTED, PerSummonTick);
+            }
         }
         private void SpawnMonster(RaceClass raceClass) {
-            _breedingScheduleKey = string.Empty;
             _isCurrentlyBreeding = false;
+            _markerDummy.Deactivate();
             Summon summon = CharacterManager.Instance.CreateNewSummon(GetMonsterType(raceClass),
                 PlayerManager.Instance.player.playerFaction, settlementLocation);
-            CharacterManager.Instance.PlaceSummon(summon, CollectionUtilities.GetRandomElement(unoccupiedTiles));
+            CharacterManager.Instance.PlaceSummon(summon, targetTile);
             summon.AddTerritory(occupiedBuildSpot.spot.hexTileOwner);
             AddOwnedSummon(summon);
             PlayerManager.Instance.player.AddSummon(summon);
+            Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
         }
         private void AddOwnedSummon(Summon summon) {
             if (_ownedSummons.Contains(summon) == false) {

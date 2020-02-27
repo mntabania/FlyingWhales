@@ -7,7 +7,7 @@ public class Succubus : SeducerSummon {
 
     public const string ClassName = "Succubus";
     
-    public Succubus() : base(SUMMON_TYPE.Succubus, GENDER.FEMALE){
+    public Succubus() : base(SUMMON_TYPE.Succubus, GENDER.FEMALE, ClassName){
         combatComponent.SetElementalDamage(ELEMENTAL_TYPE.Ice);
     }
     public Succubus(SaveDataCharacter data) : base(data) {
