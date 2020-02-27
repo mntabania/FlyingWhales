@@ -4377,7 +4377,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             return;
         }
         log = $"{name} is performing goap action: {currentActionNode.action.goapName}";
-        FaceTarget(currentActionNode.poiTarget);
+        InnerMapManager.Instance.FaceTarget(this, currentActionNode.poiTarget);
         bool willStillContinueAction = true;
         OnStartPerformGoapAction(currentActionNode, ref willStillContinueAction);
         if (!willStillContinueAction) {
@@ -4632,25 +4632,25 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //    }
     //    return null;
     //}
-    public void FaceTarget(IPointOfInterest target) {
-        if (this != target && !this.isDead && gridTileLocation != null) {
-            if (target is Character) {
-                Character targetCharacter = target as Character;
-                if (targetCharacter.isDead) {
-                    return;
-                }
-                CharacterMarker lookAtMarker = targetCharacter.currentParty.owner.marker;
-                if (lookAtMarker.character != this) {
-                    marker.LookAt(lookAtMarker.transform.position);
-                }
-            } else {
-                if (target.gridTileLocation == null) {
-                    return;
-                }
-                marker.LookAt(target.gridTileLocation.centeredWorldLocation);
-            }
-        }
-    }
+    //public void FaceTarget(IPointOfInterest target) {
+    //    if (this != target && !this.isDead && gridTileLocation != null) {
+    //        if (target is Character) {
+    //            Character targetCharacter = target as Character;
+    //            if (targetCharacter.isDead) {
+    //                return;
+    //            }
+    //            CharacterMarker lookAtMarker = targetCharacter.currentParty.owner.marker;
+    //            if (lookAtMarker.character != this) {
+    //                marker.LookAt(lookAtMarker.transform.position);
+    //            }
+    //        } else {
+    //            if (target.gridTileLocation == null) {
+    //                return;
+    //            }
+    //            marker.LookAt(target.gridTileLocation.centeredWorldLocation);
+    //        }
+    //    }
+    //}
     public void SetCurrentActionNode(ActualGoapNode actionNode, JobQueueItem job, GoapPlan plan) {
         if (currentActionNode != null) {
             previousCurrentActionNode = currentActionNode;

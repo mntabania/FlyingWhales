@@ -632,7 +632,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     /// </summary>
     /// <param name="target">The target point in world space</param>
     /// <param name="force">Should this object be forced to rotate?</param>
-    public void LookAt(Vector3 target, bool force = false) {
+    public override void LookAt(Vector3 target, bool force = false) {
         if (!force) {
             if (character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
                 return;
@@ -649,7 +649,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     /// </summary>
     /// <param name="target">The angle this character must rotate to.</param>
     /// <param name="force">Should this object be forced to rotate?</param>
-    public void Rotate(Quaternion target, bool force = false) {
+    public override void Rotate(Quaternion target, bool force = false) {
         if (!force) {
             if (character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
                 return;

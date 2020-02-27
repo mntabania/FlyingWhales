@@ -66,6 +66,22 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
         return icon;
     }
     public abstract void ApplyFurnitureSettings(FurnitureSetting furnitureSetting);
+    /// <summary>
+    /// Make this marker look at a specific point (In World Space).
+    /// </summary>
+    /// <param name="target">The target point in world space</param>
+    /// <param name="force">Should this object be forced to rotate?</param>
+    public virtual void LookAt(Vector3 target, bool force = false) {
+
+    }
+    /// <summary>
+    /// Rotate this marker to a specific angle.
+    /// </summary>
+    /// <param name="target">The angle this character must rotate to.</param>
+    /// <param name="force">Should this object be forced to rotate?</param>
+    public virtual void Rotate(Quaternion target, bool force = false) {
+
+    }
     #endregion
 
     #region Inquiry

@@ -87381,17 +87381,20 @@ MonoBehaviour:
     - biomeAssets:
         m_keys: 06000000
         m_values:
-        - activeTile: []
+        - activeTile:
+          - {fileID: 21300000, guid: 01f0efcc5652ee84cb4381a9e942e3e3, type: 3}
           inactiveTile: []
     - biomeAssets:
         m_keys: 06000000
         m_values:
-        - activeTile: []
+        - activeTile:
+          - {fileID: 21300000, guid: b8674fde0a42fe146b6000c2629b387d, type: 3}
           inactiveTile: []
     - biomeAssets:
         m_keys: 06000000
         m_values:
-        - activeTile: []
+        - activeTile:
+          - {fileID: 21300000, guid: 4084bd40063b4cb44a0d52940606aa86, type: 3}
           inactiveTile: []
     - biomeAssets:
         m_keys: 06000000

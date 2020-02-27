@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Traits;
 using UnityEngine.EventSystems;
+using Inner_Maps;
 
 public class CombatState : CharacterState {
 
@@ -600,7 +601,7 @@ public class CombatState : CharacterState {
         }
 
         summary += "\nExecuting attack...";
-        stateComponent.character.FaceTarget(currentClosestHostile);
+        InnerMapManager.Instance.FaceTarget(stateComponent.character, currentClosestHostile);
         stateComponent.character.marker.SetAnimationTrigger("Attack");
         isExecutingAttack = true;
         // stateComponent.character.logComponent.PrintLogIfActive(summary);
