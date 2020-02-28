@@ -255,6 +255,11 @@ public class ActualGoapNode {
         }
     }
     private void CheckAndMoveToDoAction(JobQueueItem job) {
+        if(job.originalOwner == null) {
+            //If somehow job is no longer available or is destroyed when trying to move to do action, do not continue
+            //This happens when job is cancelled while actor is travelling to another region
+            return;
+        }
         if (!MoveToDoAction(job)) {
             if (targetTile != null) {
                 //If cannot move to do action because there is no path between two location grid tiles, handle it here

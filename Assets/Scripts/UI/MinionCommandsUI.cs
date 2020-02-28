@@ -14,12 +14,15 @@ public class MinionCommandsUI : MonoBehaviour {
 
     #region Utilities
     public void ShowUI(IPointOfInterest poi) {
-        this.targetPOI = poi;
-        UIManager.Instance.HideSmallInfo();
-        UIManager.Instance.PositionTooltip(gameObject, rt, rt);
-        ShowButtons(poi);
-        gameObject.SetActive(true);
-        Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressed);
+        targetPOI = poi;
+        if (ShowButtons(poi)) {
+            UIManager.Instance.HideSmallInfo();
+            UIManager.Instance.PositionTooltip(gameObject, rt, rt);
+            gameObject.SetActive(true);
+            Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressed);
+        } else {
+            targetPOI = null;
+        }
     }
     public void HideUI() {
         gameObject.SetActive(false);
@@ -91,7 +94,7 @@ public class MinionCommandsUI : MonoBehaviour {
     private bool CanIssueCommand() {
         bool canIssueCommand = true;
         Character actor = UIManager.Instance.characterInfoUI.activeCharacter;
-        if(actor.gridTileLocation == null || targetPOI.gridTileLocation == null || !PathfindingManager.Instance.HasPath(actor.gridTileLocation, targetPOI.gridTileLocation)) {
+        if(!PathfindingManager.Instance.HasPathEvenDiffRegion(actor.gridTileLocation, targetPOI.gridTileLocation)) {
             canIssueCommand = false;
             PlayerUI.Instance.ShowGeneralConfirmation("Instruction Error", "Cannot instruct minion. It has no path towards the target.");
         }

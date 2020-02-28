@@ -1672,7 +1672,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         LocationGridTile nearestEdgeTile = null;
         List<LocationGridTile> neighbours = gridTileLocation.neighbourList;
         for (int i = 0; i < neighbours.Count; i++) {
-            if (neighbours[i].IsAtEdgeOfWalkableMap() && neighbours[i].structure != null && !neighbours[i].isOccupied) {
+            if (neighbours[i].IsAtEdgeOfWalkableMap() && neighbours[i].structure != null /*&& !neighbours[i].isOccupied*/) {
                 nearestEdgeTile = neighbours[i];
                 break;
             }
@@ -2856,17 +2856,17 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (marker.hpBarGO.activeSelf) {
                 marker.UpdateHP();
             } else {
-                if (amount <= 0) {
-                    if (_currentHP > 0) {
-                        //only show hp bar if hp was reduced and hp is greater than 0
-                        marker.QuickShowHPBar();
-                    }
-                    Character responsibleCharacter = null;
-                    if (source is Character) {
-                        responsibleCharacter = source as Character;
-                    }
-                    CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter);
+                if (amount < 0 && _currentHP > 0) {
+                    //only show hp bar if hp was reduced and hp is greater than 0
+                    marker.QuickShowHPBar();
                 }
+            }
+            if (amount <= 0) {
+                Character responsibleCharacter = null;
+                if (source is Character) {
+                    responsibleCharacter = source as Character;
+                }
+                CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter);
             }
         }
         if (triggerDeath && previous != this._currentHP && this._currentHP <= 0) {

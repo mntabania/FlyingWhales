@@ -436,6 +436,13 @@ public class CombatState : CharacterState {
         if (isAttacking) {
             //stateComponent.character.marker.StopPerTickFlee();
             log += $"\n{stateComponent.character.name} is attacking!";
+            if (stateComponent.character.marker && stateComponent.character.marker.hasFleePath) {
+                log += $"\n-Still has flee path, force finish flee path";
+                stateComponent.character.marker.SetHasFleePath(false);
+                fleeChance = 10;
+            } else if (!stateComponent.character.marker) {
+                log += $"\n-Has no marker!";
+            }
             Trait taunted = stateComponent.character.traitContainer.GetNormalTrait<Trait>("Taunted");
             if (forcedTarget != null) {
                 log += $"\n{stateComponent.character.name} has a forced target. Setting {forcedTarget.name} as target.";

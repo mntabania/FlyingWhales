@@ -176,7 +176,7 @@ public class CharacterInfoUI : InfoUIBase {
         if (UIManager.Instance.IsObjectPickerOpen()) {
             UIManager.Instance.HideObjectPicker();
         }
-        if (_activeCharacter.marker.transform != null) {
+        if (_activeCharacter.marker && _activeCharacter.marker.transform != null) {
             Selector.Instance.Select(_activeCharacter, _activeCharacter.marker.transform);    
         }
         UpdateCharacterInfo();
