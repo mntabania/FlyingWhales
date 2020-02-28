@@ -24,34 +24,34 @@ public class Invite : GoapAction {
         object[] otherData) {
         return 1;
     }
-    public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
-        GoapActionInvalidity goapActionInvalidity = base.IsInvalid(node);
-        Character actor = node.actor;
-        IPointOfInterest poiTarget = node.poiTarget;
-        if (goapActionInvalidity.isInvalid == false) {
-            Character targetCharacter = poiTarget as Character;
-            if (actor is SeducerSummon) {
-                SeducerSummon seducer = actor as SeducerSummon;
-                if (UnityEngine.Random.Range(0, 100) > seducer.seduceChance || targetCharacter.ownParty.isCarryingAnyPOI
-                     || targetCharacter.stateComponent.currentState != null || targetCharacter.IsAvailable() == false) {
-                    goapActionInvalidity.isInvalid = true;
-                    goapActionInvalidity.stateName = "Invite Fail";
-                }
-            } else {
-                int acceptChance = 100;
-                if (targetCharacter.traitContainer.HasTrait("Chaste")) {
-                    acceptChance = 25;
-                }
-                if (UnityEngine.Random.Range(0, 100) > acceptChance || targetCharacter.needsComponent.isStarving || targetCharacter.needsComponent.isExhausted
-                || targetCharacter.traitContainer.HasTrait("Annoyed") || targetCharacter.ownParty.isCarryingAnyPOI
-                || targetCharacter.stateComponent.currentState != null || targetCharacter.IsAvailable() == false) {
-                    goapActionInvalidity.isInvalid = true;
-                    goapActionInvalidity.stateName = "Invite Fail";
-                }
-            }
-        }
-        return goapActionInvalidity;
-    }
+    //public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
+    //    GoapActionInvalidity goapActionInvalidity = base.IsInvalid(node);
+    //    Character actor = node.actor;
+    //    IPointOfInterest poiTarget = node.poiTarget;
+    //    if (goapActionInvalidity.isInvalid == false) {
+    //        Character targetCharacter = poiTarget as Character;
+    //        if (actor is SeducerSummon) {
+    //            SeducerSummon seducer = actor as SeducerSummon;
+    //            if (UnityEngine.Random.Range(0, 100) > seducer.seduceChance || targetCharacter.ownParty.isCarryingAnyPOI
+    //                 || targetCharacter.stateComponent.currentState != null || targetCharacter.IsAvailable() == false) {
+    //                goapActionInvalidity.isInvalid = true;
+    //                goapActionInvalidity.stateName = "Invite Fail";
+    //            }
+    //        } else {
+    //            int acceptChance = 100;
+    //            if (targetCharacter.traitContainer.HasTrait("Chaste")) {
+    //                acceptChance = 25;
+    //            }
+    //            if (UnityEngine.Random.Range(0, 100) > acceptChance || targetCharacter.needsComponent.isStarving || targetCharacter.needsComponent.isExhausted
+    //            || targetCharacter.traitContainer.HasTrait("Annoyed") || targetCharacter.ownParty.isCarryingAnyPOI
+    //            || targetCharacter.stateComponent.currentState != null || targetCharacter.IsAvailable() == false) {
+    //                goapActionInvalidity.isInvalid = true;
+    //                goapActionInvalidity.stateName = "Invite Fail";
+    //            }
+    //        }
+    //    }
+    //    return goapActionInvalidity;
+    //}
     public override void OnInvalidAction(ActualGoapNode node) {
         base.OnInvalidAction(node);
         if (node.actor is SeducerSummon) {

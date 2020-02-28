@@ -16,6 +16,11 @@ public class BaseParticleEffect : PooledObject {
     private void OnEnable() {
         Messenger.AddListener<ParticleSystem>(Signals.PARTICLE_EFFECT_DONE, OnParticleEffectDonePlaying);
     }
+    private void OnDisable() {
+        if (Messenger.eventTable.ContainsKey(Signals.PARTICLE_EFFECT_DONE)) {
+            Messenger.RemoveListener<ParticleSystem>(Signals.PARTICLE_EFFECT_DONE, OnParticleEffectDonePlaying);
+        }
+    }
     private void OnParticleEffectDonePlaying(ParticleSystem particleSystem) {
         if (particleSystems.Contains(particleSystem)) {
             Messenger.RemoveListener<ParticleSystem>(Signals.PARTICLE_EFFECT_DONE, OnParticleEffectDonePlaying);

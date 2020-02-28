@@ -7,6 +7,7 @@ using Inner_Maps.Location_Structures;
 using JetBrains.Annotations;
 using Traits;
 using UnityEngine;
+using Interrupts;
 
 public class Summon : Character, IWorldObject {
 
@@ -65,7 +66,7 @@ public class Summon : Character, IWorldObject {
         //ResetToFullHP();
         Death();
     }
-    public override void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null, LogFiller[] deathLogFillers = null) {
+    public override void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null, LogFiller[] deathLogFillers = null, Interrupt interrupt = null) {
         if (!_isDead) {
             Region deathLocation = currentRegion;
             LocationStructure deathStructure = currentStructure;
@@ -151,6 +152,11 @@ public class Summon : Character, IWorldObject {
             }
 
             marker?.OnDeath(deathTile);
+
+            if (interruptComponent.isInterrupted && interruptComponent.currentInterrupt != interrupt) {
+                interruptComponent.ForceEndNonSimultaneousInterrupt();
+            }
+
             Dead dead = new Dead();
             dead.AddCharacterResponsibleForTrait(responsibleCharacter);
             traitContainer.AddTrait(this, dead, gainedFromDoing: deathFromAction);

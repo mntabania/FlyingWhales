@@ -37,7 +37,14 @@ public class CombatComponent {
             owner.logComponent.PrintLogIfActive(debugLog);
             return;
         }
-        if(target is Character) {
+        if(owner.faction == FactionManager.Instance.zombieFaction) {
+            debugLog += "\n-Character is zombie";
+            debugLog += "\n-FIGHT";
+            owner.logComponent.PrintLogIfActive(debugLog);
+            Fight(target, isLethal);
+            return;
+        }
+        if (target is Character) {
             debugLog += "\n-Target is character";
             Character targetCharacter = target as Character;
             if (owner.traitContainer.HasTrait("Coward")) {
