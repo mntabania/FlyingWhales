@@ -224,7 +224,7 @@ public class Settlement : IJobOwner {
     public void AssignCharacterToDwellingInArea(Character character, IDwelling dwellingOverride = null) {
         if (structures == null) {
             Debug.LogWarning(
-                $"{this.name} doesn't have any dwellings for {character.name} because structrues have not been generated yet");
+                $"{this.name} doesn't have any dwellings for {character.name} because structures have not been generated yet");
             return;
         }
         if (!character.isFactionless && !structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {

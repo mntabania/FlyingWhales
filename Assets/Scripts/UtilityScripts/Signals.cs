@@ -537,6 +537,10 @@ public static class Signals {
     /// </summary>
     public static string FOOD_IN_DWELLING_CHANGED = "OnFoodInDwellingChanged";
     public static string NO_ABLE_CHARACTER_INSIDE_SETTLEMENT = "OnNoAbleCharacterInsideSettlement";
+    /// <summary>
+    /// Parameters: LocationStructure
+    /// </summary>
+    public static string STRUCTURE_DESTROYED = "OnStructureDestroyed";
     #endregion
 
     #region Interrupt

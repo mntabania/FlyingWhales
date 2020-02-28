@@ -23,6 +23,7 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
     public GameObject gameObjectVisual => this.gameObject;
     public Sprite usedSprite => objectVisual.sprite;
     public ISelectable selectable { get; protected set; }
+    public SpriteRenderer objectSpriteRenderer => objectVisual;
     
     #region Visuals
     public void SetRotation(float rotation) {
