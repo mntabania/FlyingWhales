@@ -19,9 +19,11 @@ namespace Inner_Maps.Location_Structures {
 
         public void AddResident(Character character) {
             //Not Applicable
+            character.SetHomeStructure(this);
         }
         public void RemoveResident(Character character) {
             //Not Applicable
+            character.SetHomeStructure(null);
         }
         public bool CanBeResidentHere(Character character) {
             return false;

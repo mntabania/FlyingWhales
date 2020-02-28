@@ -76,7 +76,15 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public int targettedByRemoveNegativeTraitActionsCounter { get; private set; }
     //public List<IPointOfInterest> terrifyingObjects { get; private set; } //list of objects that this character is terrified of and must avoid
     public bool isMoving { get; private set; }
-
+    public LocationGridTile previousGridTile {
+        get => _previousGridTile;
+        set {
+            _previousGridTile = value;
+            if (_previousGridTile == null) {
+                Debug.Log($"Previous grid tile was set to null");
+            }
+        } 
+    }
     private LocationGridTile _previousGridTile;
     private float progressionSpeedMultiplier;
     public float penaltyRadius;
@@ -494,7 +502,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         SetCollidersState(false);
         pathfindingAI.ResetThis();
         character = null;
-        _previousGridTile = null;
+        // previousGridTile = null;
         _previousHexTileLocation = null;
     }
     #endregion
@@ -911,9 +919,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
         //I'm keeping a separate field called anchoredPos instead of using the rect transform anchoredPosition directly because the multithread cannot access transform components
         anchoredPos = transform.localPosition;
 
-        if (_previousGridTile != character.gridTileLocation) {
-            character.gridTileLocation.parentMap.location.innerMap.OnCharacterMovedTo(character, character.gridTileLocation, _previousGridTile);
-            _previousGridTile = character.gridTileLocation;
+        if (previousGridTile != character.gridTileLocation) {
+            character.gridTileLocation.parentMap.location.innerMap.OnCharacterMovedTo(character, character.gridTileLocation, previousGridTile);
+            previousGridTile = character.gridTileLocation;
             if (_previousHexTileLocation == null || _previousHexTileLocation != character.gridTileLocation.buildSpotOwner.hexTileOwner) {
                 if (_previousHexTileLocation != null) {
                     Messenger.Broadcast(Signals.CHARACTER_EXITED_HEXTILE, character, _previousHexTileLocation);    
