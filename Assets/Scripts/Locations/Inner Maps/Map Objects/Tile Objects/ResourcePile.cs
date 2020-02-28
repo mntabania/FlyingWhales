@@ -77,7 +77,7 @@ public abstract class ResourcePile : TileObject {
         } else {
             mapVisual.SetVisualAlpha(255f / 255f);
             SetSlotAlpha(255f / 255f);
-            RemoveAdvertisedAction(INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE);
+            // RemoveAdvertisedAction(INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE);
             if (storedActions != null) {
                 for (int i = 0; i < storedActions.Length; i++) {
                     AddAdvertisedAction(storedActions[i]);

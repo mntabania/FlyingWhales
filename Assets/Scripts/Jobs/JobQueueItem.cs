@@ -270,6 +270,7 @@ public class JobQueueItem {
 
     #region Job Object Pool
     public virtual void Reset() {
+        Debug.Log($"{GameManager.Instance.TodayLogString()}Job {this} was reset with original owner {originalOwner}");
         id = -1;
         originalOwner = null;
         name = string.Empty;

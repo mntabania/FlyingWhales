@@ -199,20 +199,23 @@ public class DouseFireState : CharacterState {
         if (nearestFire != null) {
             isDousingFire = true;
             currentTarget = nearestFire;
-            nearestFire.traitContainer.GetNormalTrait<Burning>("Burning").SetDouser(stateComponent.character);
+            Burning burning = nearestFire.traitContainer.GetNormalTrait<Burning>("Burning"); 
+            Assert.IsNotNull(burning, $"Burning of {nearestFire} is null.");
+            burning.SetDouser(stateComponent.character);
             stateComponent.character.marker.GoTo(nearestFire, DouseFire);
         } 
         Profiler.EndSample();
     }
     private void DouseFire() {
-        currentTarget.traitContainer.RemoveTrait(currentTarget, "Burning", removedBy: this.stateComponent.character);
-        if (NeedsWater()) {
-            TileObject water = this.stateComponent.character.GetItem(TILE_OBJECT_TYPE.WATER_BUCKET);
-            if (water != null) {
-                //Reduce water count by 1.
-                this.stateComponent.character.UnobtainItem(water);
-            }
-            currentTarget.traitContainer.AddTrait(currentTarget, "Wet", this.stateComponent.character);    
+        if (currentTarget.traitContainer.RemoveTrait(currentTarget, "Burning", removedBy: this.stateComponent.character)) {
+            if (NeedsWater()) {
+                TileObject water = this.stateComponent.character.GetItem(TILE_OBJECT_TYPE.WATER_BUCKET);
+                if (water != null) {
+                    //Reduce water count by 1.
+                    this.stateComponent.character.UnobtainItem(water);
+                }
+                currentTarget.traitContainer.AddTrait(currentTarget, "Wet", this.stateComponent.character);    
+            }    
         }
         isDousingFire = false;
         currentTarget = null;

@@ -554,6 +554,7 @@ namespace Inner_Maps.Location_Structures {
             Messenger.Broadcast(Signals.STRUCTURE_OBJECT_REMOVED, this, occupiedBuildSpot.spot);
             SetOccupiedBuildSpot(null);
             _hasBeenDestroyed = true;
+            UnsubscribeListeners();
         }
         private bool CheckIfStructureDestroyed() {
             //To check if a structure is destroyed, check if 50% of its walls have been destroyed.
