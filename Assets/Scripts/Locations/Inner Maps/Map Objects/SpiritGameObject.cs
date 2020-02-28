@@ -35,27 +35,35 @@ public class SpiritGameObject : MapObjectVisual<TileObject> {
     }
 
     protected override void UpdateSortingOrders(TileObject obj) {
-        if (obj.tileObjectType == TILE_OBJECT_TYPE.TREE_OBJECT) {
-            if (objectVisual != null) {
-                objectVisual.sortingLayerName = "Area Maps";
-                objectVisual.sortingOrder = InnerMapManager.DetailsTilemapSortingOrder + 5;    
-            }
-            if (hoverObject != null) {
-                hoverObject.sortingLayerName = "Area Maps";
-                hoverObject.sortingOrder = objectVisual.sortingOrder - 1;    
-            }   
-        } else if (obj.tileObjectType == TILE_OBJECT_TYPE.BIG_TREE_OBJECT) {
-            if (objectVisual != null) {
-                objectVisual.sortingLayerName = "Area Maps";
-                objectVisual.sortingOrder = InnerMapManager.DetailsTilemapSortingOrder + 10;    
-            }
-            if (hoverObject != null) {
-                hoverObject.sortingLayerName = "Area Maps";
-                hoverObject.sortingOrder = objectVisual.sortingOrder - 1;    
-            }   
-        } else {
-            base.UpdateSortingOrders(obj);
+        if (objectVisual != null) {
+            objectVisual.sortingLayerName = "Area Maps";
+            objectVisual.sortingOrder = InnerMapManager.DefaultCharacterSortingOrder;
         }
+        if (hoverObject != null) {
+            hoverObject.sortingLayerName = "Area Maps";
+            hoverObject.sortingOrder = objectVisual.sortingOrder - 1;
+        }
+        //if (obj.tileObjectType == TILE_OBJECT_TYPE.TREE_OBJECT) {
+        //    if (objectVisual != null) {
+        //        objectVisual.sortingLayerName = "Area Maps";
+        //        objectVisual.sortingOrder = InnerMapManager.DetailsTilemapSortingOrder + 5;    
+        //    }
+        //    if (hoverObject != null) {
+        //        hoverObject.sortingLayerName = "Area Maps";
+        //        hoverObject.sortingOrder = objectVisual.sortingOrder - 1;    
+        //    }   
+        //} else if (obj.tileObjectType == TILE_OBJECT_TYPE.BIG_TREE_OBJECT) {
+        //    if (objectVisual != null) {
+        //        objectVisual.sortingLayerName = "Area Maps";
+        //        objectVisual.sortingOrder = InnerMapManager.DetailsTilemapSortingOrder + 10;    
+        //    }
+        //    if (hoverObject != null) {
+        //        hoverObject.sortingLayerName = "Area Maps";
+        //        hoverObject.sortingOrder = objectVisual.sortingOrder - 1;    
+        //    }   
+        //} else {
+        //    base.UpdateSortingOrders(obj);
+        //}
     }
     
     

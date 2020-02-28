@@ -277,38 +277,41 @@ public class HexTileSpellsComponent {
             }
             yield return new WaitForSeconds(UnityEngine.Random.Range(0.1f, 0.7f));
             LocationGridTile chosenTile = owner.locationGridTiles[UnityEngine.Random.Range(0, owner.locationGridTiles.Count)];
-            List<ITraitable> traitables = chosenTile.GetTraitablesOnTile();
-            BurningSource bs = null;
-            for (int i = 0; i < traitables.Count; i++) {
-                ITraitable traitable = traitables[i];
-                if (traitable is TileObject obj) {
-                    if (obj.tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
-                        obj.AdjustHP(-obj.currentHP, ELEMENTAL_TYPE.Fire);
-                        if (obj.gridTileLocation == null) {
-                            continue; //object was destroyed, do not add burning trait
-                        }
-                    } else {
-                        obj.AdjustHP(0, ELEMENTAL_TYPE.Fire);
-                    }
-                } else if (traitable is Character character) {
-                    character.AdjustHP(-(int)(character.maxHP * 0.4f), ELEMENTAL_TYPE.Fire, true);
-                    if (UnityEngine.Random.Range(0, 100) < 25) {
-                        character.traitContainer.AddTrait(character, "Injured");
-                    }
-                } else {
-                    traitable.AdjustHP(-traitable.currentHP, ELEMENTAL_TYPE.Fire);
-                }
-                Burning burningTrait = traitable.traitContainer.GetNormalTrait<Burning>("Burning");
-                if(burningTrait != null && burningTrait.sourceOfBurning == null) {
-                    if(bs == null) {
-                        bs = new BurningSource(traitable.gridTileLocation.parentMap.location);
-                    }
-                    burningTrait.SetSourceOfBurning(bs, traitable);
-                }
-            }
-            GameManager.Instance.CreateParticleEffectAt(chosenTile, PARTICLE_EFFECT.Brimstones);
+            GameManager.Instance.CreateParticleEffectAt(chosenTile, PARTICLE_EFFECT.Brimstones);            
         }
     }
+    //private IEnumerator CommenceBrimstoneEffect(LocationGridTile targetTile) {
+    //    yield return new WaitForSeconds(0.6f);
+    //    List<ITraitable> traitables = targetTile.GetTraitablesOnTile();
+    //    BurningSource bs = null;
+    //    for (int i = 0; i < traitables.Count; i++) {
+    //        ITraitable traitable = traitables[i];
+    //        if (traitable is TileObject obj) {
+    //            if (obj.tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
+    //                obj.AdjustHP(-obj.currentHP, ELEMENTAL_TYPE.Fire);
+    //                if (obj.gridTileLocation == null) {
+    //                    continue; //object was destroyed, do not add burning trait
+    //                }
+    //            } else {
+    //                obj.AdjustHP(0, ELEMENTAL_TYPE.Fire);
+    //            }
+    //        } else if (traitable is Character character) {
+    //            character.AdjustHP(-(int) (character.maxHP * 0.4f), ELEMENTAL_TYPE.Fire, true);
+    //            if (UnityEngine.Random.Range(0, 100) < 25) {
+    //                character.traitContainer.AddTrait(character, "Injured");
+    //            }
+    //        } else {
+    //            traitable.AdjustHP(-traitable.currentHP, ELEMENTAL_TYPE.Fire);
+    //        }
+    //        Burning burningTrait = traitable.traitContainer.GetNormalTrait<Burning>("Burning");
+    //        if (burningTrait != null && burningTrait.sourceOfBurning == null) {
+    //            if (bs == null) {
+    //                bs = new BurningSource(traitable.gridTileLocation.parentMap.location);
+    //            }
+    //            burningTrait.SetSourceOfBurning(bs, traitable);
+    //        }
+    //    }
+    //}
     private void PerTickBrimstones() {
         _currentBrimstonesDuration++;
         if (_currentBrimstonesDuration >= 12) {

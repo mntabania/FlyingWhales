@@ -13,7 +13,7 @@ namespace Interrupts {
 
         #region Overrides
         public override bool ExecuteInterruptEndEffect(Character actor, IPointOfInterest target) {
-            actor.Death("Zombie Virus");
+            actor.Death("Zombie Virus", interrupt: this);
             return true;
         }
         public override string ReactionToActor(Character witness, Character actor, IPointOfInterest target,

@@ -78,6 +78,7 @@ public class InterruptComponent {
         AddEffectLog();
         interrupt.ExecuteInterruptEndEffect(owner, currentTargetPOI);
         currentSimultaneousInterruptDuration = 0;
+        Messenger.AddListener(Signals.TICK_ENDED, PerTickSimultaneousInterrupt);
         return true;
     }
     private void ExecuteStartInterrupt(Interrupt interrupt, IPointOfInterest targetPOI) {
@@ -99,9 +100,12 @@ public class InterruptComponent {
                 EndInterrupt();
             }
         }
+    }
+    private void PerTickSimultaneousInterrupt() {
         if (hasTriggeredSimultaneousInterrupt) {
             currentSimultaneousInterruptDuration++;
             if (currentSimultaneousInterruptDuration > 2) {
+                Messenger.RemoveListener(Signals.TICK_ENDED, PerTickSimultaneousInterrupt);
                 triggeredSimultaneousInterrupt = null;
                 if (owner.marker) {
                     owner.marker.UpdateActionIcon();
@@ -109,27 +113,51 @@ public class InterruptComponent {
             }
         }
     }
+    //public void ForceEndAllInterrupt() {
+    //    ForceEndNonSimultaneousInterrupt();
+    //    ForceEndSimultaneousInterrupt();
+    //}
+    public void ForceEndNonSimultaneousInterrupt() {
+        if (isInterrupted) {
+            EndInterrupt();
+        }
+    }
+    //public void ForceEndSimultaneousInterrupt() {
+    //    if (hasTriggeredSimultaneousInterrupt) {
+    //        triggeredSimultaneousInterrupt = null;
+    //        if (owner.marker) {
+    //            owner.marker.UpdateActionIcon();
+    //        }
+    //    }
+    //}
     private void EndInterrupt() {
         bool willCheckInvision = currentInterrupt.duration > 0;
         Interrupt finishedInterrupt = currentInterrupt;
         currentInterrupt = null;
         currentDuration = 0;
-        if (owner.isInCombat) {
-            Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, owner);
-        } else {
-            if (willCheckInvision) {
-                if (owner.marker) {
-                    for (int i = 0; i < owner.marker.inVisionCharacters.Count; i++) {
-                        Character inVisionCharacter = owner.marker.inVisionCharacters[i];
-                        // owner.CreateJobsOnEnterVisionWith(inVisionCharacter);
-                        owner.marker.AddUnprocessedPOI(inVisionCharacter);
+        if(!owner.isDead && owner.canPerform) {
+            if (owner.isInCombat) {
+                Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, owner);
+            } else {
+                if (owner.combatComponent.hostilesInRange.Count > 0 || owner.combatComponent.avoidInRange.Count > 0) {
+                    CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.COMBAT, CHARACTER_STATE.COMBAT, owner);
+                    owner.jobQueue.AddJobInQueue(job);
+                } else {
+                    if (willCheckInvision) {
+                        if (owner.marker) {
+                            for (int i = 0; i < owner.marker.inVisionCharacters.Count; i++) {
+                                Character inVisionCharacter = owner.marker.inVisionCharacters[i];
+                                // owner.CreateJobsOnEnterVisionWith(inVisionCharacter);
+                                owner.marker.AddUnprocessedPOI(inVisionCharacter);
+                            }
+                        }
+                        owner.needsComponent.CheckExtremeNeeds(finishedInterrupt);
                     }
                 }
-                owner.needsComponent.CheckExtremeNeeds(finishedInterrupt);
             }
-            if (owner.marker) {
-                owner.marker.UpdateActionIcon();
-            }
+        }
+        if (owner.marker) {
+            owner.marker.UpdateActionIcon();
         }
         Messenger.Broadcast(Signals.INTERRUPT_FINISHED, finishedInterrupt.interrupt, owner);
     }

@@ -18,7 +18,7 @@ public class MakeLove : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        //AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.INVITED, target = GOAP_EFFECT_TARGET.TARGET }, IsTargetInvited);
+        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.INVITED, target = GOAP_EFFECT_TARGET.TARGET }, IsTargetInvited);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.ACTOR });
     }
     public override void Perform(ActualGoapNode goapNode) {
@@ -196,10 +196,13 @@ public class MakeLove : GoapAction {
     #region Effects
     public void PreMakeLoveSuccess(ActualGoapNode goapNode) {
         //TODO: This is unsafe, code will not work when structure has more than 1 bed
+        Character targetCharacter = goapNode.poiTarget as Character;
         Bed bed = goapNode.actor.gridTileLocation.structure.GetTileObjectsOfType(TILE_OBJECT_TYPE.BED).FirstOrDefault() as Bed;
+
+        goapNode.actor.UncarryPOI(targetCharacter, dropLocation: bed.gridTileLocation);
+
         bed.OnDoActionToObject(goapNode);
 
-        Character targetCharacter = goapNode.poiTarget as Character;
         goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
         targetCharacter.needsComponent.AdjustDoNotGetBored(1);
 
@@ -209,6 +212,7 @@ public class MakeLove : GoapAction {
         targetCharacter.SetCurrentActionNode(goapNode.actor.currentActionNode, goapNode.actor.currentJob, goapNode.actor.currentPlan);
         GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
         goapNode.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+
         //TODO: currentState.SetIntelReaction(MakeLoveSuccessReactions);
     }
     public void PerTickMakeLoveSuccess(ActualGoapNode goapNode) {

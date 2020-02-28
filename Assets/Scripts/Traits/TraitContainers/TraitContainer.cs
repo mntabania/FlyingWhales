@@ -10,7 +10,8 @@ namespace Traits {
 
         private List<Trait> _allTraits;
         public List<Trait> onCollideWithTraits { get; private set; }
-        
+        public List<Trait> onEnterGridTileTraits { get; private set; }
+
         public Dictionary<string, int> stacks { get; private set; }
         public Dictionary<string, List<string>> scheduleTickets { get; private set; }
         public Dictionary<string, bool> traitSwitches { get; private set; }
@@ -23,6 +24,7 @@ namespace Traits {
         public TraitContainer() {
             _allTraits = new List<Trait>();
             onCollideWithTraits = new List<Trait>();
+            onEnterGridTileTraits = new List<Trait>();
             stacks = new Dictionary<string, int>();
             scheduleTickets = new Dictionary<string, List<string>>();
             traitSwitches = new Dictionary<string, bool>();
@@ -119,6 +121,10 @@ namespace Traits {
                         CombatManager.Instance.PoisonExplosion(addTo as IPointOfInterest, addTo.gridTileLocation, poisonStacks);
                     }
                     shouldAddTrait = false;
+                }
+            } else if (traitName == "Poisoned") {
+                if (HasTrait("Burning")) {
+                    RemoveTrait(addTo, "Burning");
                 }
             } else if (traitName == "Overheating") {
                 if (HasTrait("Wet")) {
@@ -585,6 +591,12 @@ namespace Traits {
         }
         public bool RemoveOnCollideWithTrait(Trait trait) {
             return onCollideWithTraits.Remove(trait);
+        }
+        public void AddOnEnterGridTileTrait(Trait trait) {
+            onEnterGridTileTraits.Add(trait);
+        }
+        public bool RemoveOnEnterGridTileTrait(Trait trait) {
+            return onEnterGridTileTraits.Remove(trait);
         }
         #endregion
     }

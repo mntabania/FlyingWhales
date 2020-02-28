@@ -14,7 +14,7 @@ namespace Interrupts {
 
         #region Overrides
         public override bool ExecuteInterruptEndEffect(Character actor, IPointOfInterest target) {
-            actor.Death("Septic Shock");
+            actor.Death("Septic Shock", interrupt: this);
             return true;
         }
         public override string ReactionToActor(Character witness, Character actor, IPointOfInterest target,

@@ -34,6 +34,7 @@ namespace Traits {
         // public bool hasOnOthersSeeOverride;
         // public bool hasOnOthersSeeInDiffStructureOverride;
         public bool hasOnCollideWith;
+        public bool hasOnEnterGridTile;
         public bool isStacking;
         public int stackLimit;
         public float stackModifier;
@@ -126,6 +127,7 @@ namespace Traits {
         // public virtual bool OnOthersSeeThisEvenCannotWitness(Character characterThatSaw, IPointOfInterest owner) { return false; }
         // public virtual bool OnOthersSeeThisInDiffStructureEvenCannotWitness(Character characterThatSaw, IPointOfInterest owner) { return false; }
         public virtual bool OnCollideWith(IPointOfInterest collidedWith, IPointOfInterest owner) { return false; }
+        public virtual void OnEnterGridTile(IPointOfInterest poiWhoEntered, IPointOfInterest owner) { }
         public virtual bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) { return false; } //What jobs a character can create based on the his/her own traits, considering the target?
         public virtual void OnSeePOIEvenCannotWitness(IPointOfInterest targetPOI, Character character) { }
         protected virtual void OnChangeLevel() { }

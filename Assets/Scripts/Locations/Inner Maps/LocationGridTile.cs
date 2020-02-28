@@ -376,6 +376,11 @@ namespace Inner_Maps {
             // if (!charactersHere.Contains(character)) {
                 charactersHere.Add(character);
             // }
+            if(genericTileObject != null) {
+                for (int i = 0; i < genericTileObject.traitContainer.onEnterGridTileTraits.Count; i++) {
+                    genericTileObject.traitContainer.onEnterGridTileTraits[i].OnEnterGridTile(character, genericTileObject);
+                }
+            }
         }
         public void RemoveCharacterHere(Character character) {
             charactersHere.Remove(character);

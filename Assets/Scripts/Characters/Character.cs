@@ -724,7 +724,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             Messenger.Broadcast(Signals.CHARACTER_RETURNED_TO_LIFE, this);
         }
     }
-    public virtual void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null, LogFiller[] deathLogFillers = null) {
+    public virtual void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null, LogFiller[] deathLogFillers = null, Interrupt interrupt = null) {
         if (minion != null) {
             minion.Death(cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers);
             return;
@@ -881,6 +881,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             SetHP(0);
 
             marker.OnDeath(deathTile);
+
+            if (interruptComponent.isInterrupted && interruptComponent.currentInterrupt != interrupt) {
+                interruptComponent.ForceEndNonSimultaneousInterrupt();
+            }
 
             //SetNumWaitingForGoapThread(0); //for raise dead
             //Dead dead = new Dead();
