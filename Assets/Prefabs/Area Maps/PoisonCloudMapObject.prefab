@@ -4759,7 +4759,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1671847895874959471}
-  m_BodyType: 1
+  m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -4817,6 +4817,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 1568701386850811875}
   hoverObject: {fileID: 0}
+  statusIconsParent: {fileID: 0}
   _cloudEffect: {fileID: 8283122582522702008}
   _explosionEffect: {fileID: 201109846814245020}
 --- !u!1 &3646719542538322640
