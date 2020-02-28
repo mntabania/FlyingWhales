@@ -1088,7 +1088,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         actions.Clear();
     }
     private bool CanDoHarassRaidInvade() {
-        return settlementOnTile != null;
+        return settlementOnTile != null && (settlementOnTile.locationType == LOCATION_TYPE.ELVEN_SETTLEMENT 
+                                            || settlementOnTile.locationType == LOCATION_TYPE.HUMAN_SETTLEMENT);
     }
     #endregion
 
