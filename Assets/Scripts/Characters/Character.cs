@@ -3421,7 +3421,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return true;
     }
     public bool PlanIdleReturnHome() { //bool forceDoAction = false
-        if (homeStructure != null) {
+        if (homeStructure != null && homeStructure.tiles.Count > 0) {
             LocationGridTile tile = UtilityScripts.CollectionUtilities.GetRandomElement(homeStructure.tiles);
             if (PathfindingManager.Instance.HasPath(this.gridTileLocation, tile) || currentRegion != homeStructure.location.coreTile.region) {
                 ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RETURN_HOME], this, this, null, 0);
@@ -3433,6 +3433,16 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 jobQueue.AddJobInQueue(job);
                 return true;
             }
+        } else {
+            //NOTE: this is a temporary fix because a character sometimes cannot return home because his/her home was destroyed, but he/she was not migrated to a new home. 
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RETURN_HOME], this, this, null, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, this);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE_RETURN_HOME, INTERACTION_TYPE.RETURN_HOME, this, this);
+            goapPlan.SetDoNotRecalculate(true);
+            job.SetCannotBePushedBack(true);
+            job.SetAssignedPlan(goapPlan);
+            jobQueue.AddJobInQueue(job);
+            return true;
         }
         
         //if (GetTrait("Berserker") != null) {
