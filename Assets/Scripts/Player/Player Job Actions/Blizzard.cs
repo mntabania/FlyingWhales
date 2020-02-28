@@ -28,7 +28,7 @@ public class BlizzardData : SpellData {
     }
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
         return targetTile.buildSpotOwner.isPartOfParentRegionMap 
-               && targetTile.buildSpotOwner.hexTileOwner.biomeType == BIOMES.SNOW
+               && targetTile.buildSpotOwner.hexTileOwner.biomeType != BIOMES.DESERT
                && targetTile.buildSpotOwner.hexTileOwner.featureComponent.HasFeature(TileFeatureDB.Blizzard_Feature) == false;
     }
     public override void ShowRange(LocationGridTile targetTile) {
