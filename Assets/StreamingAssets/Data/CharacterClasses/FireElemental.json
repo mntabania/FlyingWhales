@@ -2,7 +2,7 @@
   "_className": "FireElemental",
   "_baseAttackPower": 70,
   "_attackPowerPerLevel": 36,
-  "_baseSpeed": 30,
+  "_baseSpeed": 55,
   "_speedPerLevel": 4,
   "_hpPerLevel": 384,
   "_baseHP": 300,

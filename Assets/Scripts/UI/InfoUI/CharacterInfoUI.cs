@@ -183,7 +183,8 @@ public class CharacterInfoUI : InfoUIBase {
         UpdateTraits();
         UpdateRelationships();
         UpdateInventoryInfo();
-        UpdateAllHistoryInfo();
+        UpdateHistory(_activeCharacter);
+        // UpdateAllHistoryInfo();
         ResetAllScrollPositions();
         UpdateMoodSummary();
     }

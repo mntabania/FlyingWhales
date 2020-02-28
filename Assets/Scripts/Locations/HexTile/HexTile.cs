@@ -876,7 +876,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         // isCurrentlyBeingCorrupted = false;
         
         //remove features
-        featureComponent.RemoveAllFeaturesExcept(this, TileFeatureDB.Wood_Source_Feature);
+        featureComponent.RemoveAllFeatures(this);
         
         RemovePlayerAction(GetPlayerAction(PlayerDB.Corrupt_Action));
         if (CanBuildDemonicStructure()) {
