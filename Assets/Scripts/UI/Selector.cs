@@ -24,7 +24,8 @@ public class Selector : MonoBehaviour {
         gameObject.SetActive(true);
         _selected = selectable;
         this.transform.position = _selected.worldPosition;
-
+        this.transform.localRotation = Quaternion.identity;
+        
         Vector2 fromSize = from;
         fromSize.x *= selectable.selectableSize.x;
         fromSize.y *= selectable.selectableSize.y;

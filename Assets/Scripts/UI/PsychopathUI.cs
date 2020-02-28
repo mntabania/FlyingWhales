@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using Traits;
 using TMPro;
 
-public class PsychopathUI : MonoBehaviour {
+public class PsychopathUI : PopupMenuBase {
     public PsychopathRequirementsUI requirements1UI;
     //public PsychopathRequirementsUI requirements2UI;
     public Button okButton;
@@ -24,15 +24,18 @@ public class PsychopathUI : MonoBehaviour {
         requirements1UI.ShowRequirementsUI();
         //requirements2UI.ShowRequirementsUI();
         reqDescriptionsLabel.text = "None";
-        gameObject.SetActive(true);
+        base.Open();
     }
     public void HidePsychopathUI() {
         character = null;
-        gameObject.SetActive(false);
+        base.Close();
     }
 
     public void OnClickOK() {
-        
+        if (requirements.Count == 0) {
+            PlayerUI.Instance.ShowGeneralConfirmation("Error", "Must have at least 1 requirement.");
+            return;
+        }
         Psychopath serialKillerTrait = new Psychopath();
         character.traitContainer.AddTrait(character, serialKillerTrait);
         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted");

@@ -121,7 +121,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		}
 	}
 	private void OnSettlementUnderSiegeChanged(Settlement settlement, bool siegeState) {
-		if (settlement == _owner.currentSettlement && siegeState) {
+		if (settlement == _owner.currentSettlement && siegeState && (_owner.stateComponent.currentState is CombatState) == false) {
 			//characters current settlement is under siege
 			_owner.interruptComponent.TriggerInterrupt(INTERRUPT.Stopped, _owner);
 			Messenger.AddListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, CheckIfStopInterruptFinished);

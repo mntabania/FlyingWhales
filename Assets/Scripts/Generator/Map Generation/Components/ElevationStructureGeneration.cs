@@ -139,7 +139,7 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 		int eastMost = elevationStructure.tiles.Max(t => t.localPlace.x);
 		int southMost = elevationStructure.tiles.Min(t => t.localPlace.y);
 		int northMost = elevationStructure.tiles.Max(t => t.localPlace.y);
-
+		
 		LocationGridTile northTile = CollectionUtilities.GetRandomElement(
 			elevationStructure.tiles.Where(t => t.localPlace.y == northMost && t.objHere == null));
 		CreateInvisibleWellAt(northTile);
@@ -164,6 +164,7 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 	private void SetAsWater(LocationGridTile tile, LocationStructure structure) {
 		tile.SetTileState(LocationGridTile.Tile_State.Occupied);
 		tile.SetStructure(structure);
+		tile.genericTileObject.traitContainer.AddTrait(tile.genericTileObject, "Wet");
 	}
 	private void MountainCellAutomata(List<LocationGridTile> locationGridTiles, LocationStructure elevationStructure) {
 		List<LocationGridTile> refinedTiles =

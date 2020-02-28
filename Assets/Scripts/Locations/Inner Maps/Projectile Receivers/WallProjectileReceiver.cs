@@ -5,8 +5,10 @@ using UnityEngine;
 
 public class WallProjectileReceiver : ProjectileReceiver {
     private void Awake() {
+        this.gameObject.tag = "Structure_Wall";
         if (_collider == null) {
             _collider = GetComponent<Collider2D>();
+            _collider.isTrigger = true;
         }
     }
     public override void OnTriggerEnter2D(Collider2D collision) {

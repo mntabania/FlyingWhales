@@ -602,8 +602,10 @@ public class CombatState : CharacterState {
 
         summary += "\nExecuting attack...";
         InnerMapManager.Instance.FaceTarget(stateComponent.character, currentClosestHostile);
-        stateComponent.character.marker.SetAnimationTrigger("Attack");
-        isExecutingAttack = true;
+        if (isExecutingAttack == false) {
+            stateComponent.character.marker.SetAnimationTrigger("Attack");
+            isExecutingAttack = true;    
+        }
         // stateComponent.character.logComponent.PrintLogIfActive(summary);
         //Debug.Log(summary);
     }

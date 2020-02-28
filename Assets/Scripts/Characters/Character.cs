@@ -2002,7 +2002,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     public virtual bool IsValidCombatTarget() {
-        return traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) == false;
+        return traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) == false && marker != null 
+                && gridTileLocation != null;
     }
     public void ExecutePendingActionsAfterMultithread() {
         for (int i = 0; i < pendingActionsAfterMultiThread.Count; i++) {
@@ -3420,13 +3421,20 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return true;
     }
     public bool PlanIdleReturnHome() { //bool forceDoAction = false
-        ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RETURN_HOME], this, this, null, 0);
-        GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, this);
-        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE_RETURN_HOME, INTERACTION_TYPE.RETURN_HOME, this, this);
-        goapPlan.SetDoNotRecalculate(true);
-        job.SetCannotBePushedBack(true);
-        job.SetAssignedPlan(goapPlan);
-        jobQueue.AddJobInQueue(job);
+        if (homeStructure != null) {
+            LocationGridTile tile = UtilityScripts.CollectionUtilities.GetRandomElement(homeStructure.tiles);
+            if (PathfindingManager.Instance.HasPath(this.gridTileLocation, tile) || currentRegion != homeStructure.location.coreTile.region) {
+                ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RETURN_HOME], this, this, null, 0);
+                GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, this);
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE_RETURN_HOME, INTERACTION_TYPE.RETURN_HOME, this, this);
+                goapPlan.SetDoNotRecalculate(true);
+                job.SetCannotBePushedBack(true);
+                job.SetAssignedPlan(goapPlan);
+                jobQueue.AddJobInQueue(job);
+                return true;
+            }
+        }
+        
         //if (GetTrait("Berserker") != null) {
         //    //Return home becomes stroll if the character has berserker trait
         //    PlanIdleStroll(currentStructure);
@@ -3443,7 +3451,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //}
         //PlanGoapActions(goapAction);
         //}
-        return true;
+        return false;
     }
     private string OtherIdlePlans() {
         string log = $" IDLE PLAN FOR {name}";

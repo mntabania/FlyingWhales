@@ -16,6 +16,7 @@ TagManager:
   - Invisible_Character
   - StructureColorizers
   - Map_Click_Blocker
+  - Structure_Wall
   layers:
   - Default
   - TransparentFX
