@@ -86870,7 +86870,8 @@ MonoBehaviour:
         m_values:
         - activeTile:
           - {fileID: 21300000, guid: 56be2c264d164374aa09a794d74609a5, type: 3}
-          inactiveTile: []
+          inactiveTile:
+          - {fileID: 21300000, guid: 56be2c264d164374aa09a794d74609a5, type: 3}
     - biomeAssets:
         m_keys: 06000000
         m_values:
@@ -86896,13 +86897,15 @@ MonoBehaviour:
         - activeTile:
           - {fileID: 21300000, guid: fe44eb493c3bcf5469fa584116794486, type: 3}
           - {fileID: 21300000, guid: f6a5febe714d1e446ad84ab66890939a, type: 3}
-          inactiveTile: []
+          inactiveTile:
+          - {fileID: 21300000, guid: fe44eb493c3bcf5469fa584116794486, type: 3}
     - biomeAssets:
         m_keys: 06000000
         m_values:
         - activeTile:
           - {fileID: 21300000, guid: 079ce5cc13bbd324fa99a5820bda0d54, type: 3}
-          inactiveTile: []
+          inactiveTile:
+          - {fileID: 21300000, guid: 079ce5cc13bbd324fa99a5820bda0d54, type: 3}
     - biomeAssets:
         m_keys: 06000000
         m_values:
@@ -86932,7 +86935,8 @@ MonoBehaviour:
         m_values:
         - activeTile:
           - {fileID: 21300000, guid: c236f4926fa5e114ea5b76f7125fe18a, type: 3}
-          inactiveTile: []
+          inactiveTile:
+          - {fileID: 21300000, guid: c236f4926fa5e114ea5b76f7125fe18a, type: 3}
     - biomeAssets:
         m_keys: 06000000
         m_values:

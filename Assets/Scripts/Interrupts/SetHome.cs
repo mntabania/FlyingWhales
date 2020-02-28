@@ -13,11 +13,13 @@ namespace Interrupts {
         #region Overrides
         public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target, ref Log overrideEffectLog) {
             if(actor.homeSettlement != null) {
+                Settlement settlement = actor.homeSettlement;
                 IDwelling chosenHomeStructure = null;
                 if(target != actor) {
                     chosenHomeStructure = (target as Character).homeStructure;
                 }
-                actor.homeSettlement.AssignCharacterToDwellingInArea(actor, chosenHomeStructure);
+                actor.MigrateHomeStructureTo(null);
+                settlement.AssignCharacterToDwellingInArea(actor, chosenHomeStructure);
                 //if(actor.homeStructure != null) {
                 //    Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Set Home", "set_new_home_structure");
                 //    log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

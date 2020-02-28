@@ -39,6 +39,8 @@ namespace Traits {
                     obj.SetPOIState(POI_STATE.INACTIVE);
                 }
                 Messenger.Broadcast(Signals.REPROCESS_POI, poi);
+            } else if (addedTo is StructureWallObject structureWallObject) {
+                burningEffect = GameManager.Instance.CreateParticleEffectAt(structureWallObject, PARTICLE_EFFECT.Burning);
             }
             if (sourceOfBurning != null && !sourceOfBurning.objectsOnFire.Contains(owner)) {
                 SetSourceOfBurning(sourceOfBurning, owner);

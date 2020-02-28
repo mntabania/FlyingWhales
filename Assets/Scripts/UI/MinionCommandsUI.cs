@@ -131,7 +131,7 @@ public class MinionCommandsUI : MonoBehaviour {
     public void Abduct() {
         if (CanIssueCommand()) {
             if (targetPOI is Character) {
-            Character actor = UIManager.Instance.characterInfoUI.activeCharacter;
+                Character actor = UIManager.Instance.characterInfoUI.activeCharacter;
                 actor.jobComponent.CreateAbductJob(targetPOI as Character);
             } else {
                 Debug.LogError($"{targetPOI.name} is not a character!");
@@ -148,7 +148,7 @@ public class MinionCommandsUI : MonoBehaviour {
     public void LearnMonster() {
         if (CanIssueCommand()) {
             if (targetPOI is Character) {
-            Character actor = UIManager.Instance.characterInfoUI.activeCharacter;
+                Character actor = UIManager.Instance.characterInfoUI.activeCharacter;
                 actor.jobComponent.CreateLearnMonsterJob(targetPOI as Character);
             } else {
                 Debug.LogError($"{targetPOI.name} is not a character!");

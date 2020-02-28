@@ -4709,7 +4709,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 744f5babe4f549e47ae6779a4927bdb7, type: 2}
+  - {fileID: 2100000, guid: ccbe3a0bcc721014d84198ef65421623, type: 2}
   - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -5295,7 +5295,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 7
-      m_TileSpriteIndex: 20
+      m_TileSpriteIndex: 27
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -5565,7 +5565,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 7
-      m_TileSpriteIndex: 15
+      m_TileSpriteIndex: 20
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -5709,7 +5709,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 7
-      m_TileSpriteIndex: 6
+      m_TileSpriteIndex: 15
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -5925,8 +5925,8 @@ Tilemap:
     m_Data: {fileID: 0}
   - m_RefCount: 3
     m_Data: {fileID: 21300000, guid: e04f9ca4f26d2aa4998b15509533c4c2, type: 3}
-  - m_RefCount: 1
-    m_Data: {fileID: 21300000, guid: f66da87ada28895478658e8b881663ad, type: 3}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
   - m_RefCount: 2
     m_Data: {fileID: 21300000, guid: f8c9d56218f7bac48830a4dc33fb5317, type: 3}
   - m_RefCount: 2
@@ -5944,7 +5944,7 @@ Tilemap:
   - m_RefCount: 3
     m_Data: {fileID: 21300000, guid: 1661cb45d6809ce4cbfd54c5bbef5696, type: 3}
   - m_RefCount: 1
-    m_Data: {fileID: 21300000, guid: b0b57314bf445074ab061322732b0c0f, type: 3}
+    m_Data: {fileID: 21300000, guid: f66da87ada28895478658e8b881663ad, type: 3}
   - m_RefCount: 2
     m_Data: {fileID: 21300000, guid: 6c931809f369d434a8aa5599e21383d1, type: 3}
   - m_RefCount: 1
@@ -5954,7 +5954,7 @@ Tilemap:
   - m_RefCount: 2
     m_Data: {fileID: 21300000, guid: be67f63ebd0b6324e8425c8ff8885974, type: 3}
   - m_RefCount: 1
-    m_Data: {fileID: 21300000, guid: 37de0fec9e752464dbba8d627d5d99cd, type: 3}
+    m_Data: {fileID: 21300000, guid: b0b57314bf445074ab061322732b0c0f, type: 3}
   - m_RefCount: 5
     m_Data: {fileID: 21300000, guid: 187604d53485ca74994430674e73e53f, type: 3}
   - m_RefCount: 4
@@ -5967,8 +5967,8 @@ Tilemap:
     m_Data: {fileID: 21300000, guid: 3e70e25b2d1a063438742eec374d6cff, type: 3}
   - m_RefCount: 1
     m_Data: {fileID: 21300000, guid: d4d756103c078464c9973a244a0472bf, type: 3}
-  - m_RefCount: 0
-    m_Data: {fileID: 0}
+  - m_RefCount: 1
+    m_Data: {fileID: 21300000, guid: 37de0fec9e752464dbba8d627d5d99cd, type: 3}
   m_TileMatrixArray:
   - m_RefCount: 67
     m_Data:
@@ -6209,7 +6209,7 @@ MonoBehaviour:
   _blockWallsTilemap: {fileID: 7766376355357131671}
   _size: {x: 14, y: 14}
   _center: {x: 7, y: 7, z: 0}
-  _objectsParent: {fileID: 1906028746908141923}
+  objectsParent: {fileID: 1906028746908141923}
   _furnitureSpotsParent: {fileID: 0}
   _wallType: 2
   predeterminedOccupiedCoordinates:

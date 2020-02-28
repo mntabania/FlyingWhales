@@ -42,13 +42,13 @@ namespace Inner_Maps.Location_Structures {
 
         #region Torture
         private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {
-            if (structure == this) {
+            if (structure == this && character.IsNPC()) {
                 character.trapStructure.SetForcedStructure(this);
                 character.DecreaseCanTakeJobs();
             }
         }
         private void OnCharacterLeftStructure(Character character, LocationStructure structure) {
-            if (structure == this) {
+            if (structure == this && character.IsNPC()) {
                 character.trapStructure.SetForcedStructure(null);
                 character.IncreaseCanTakeJobs();
             }
@@ -70,6 +70,7 @@ namespace Inner_Maps.Location_Structures {
             Assert.IsNotNull(ironMaiden, $"Trying to activate torture for {target.name} but there was no iron maiden available!");
             target.marker.GoToPOI(ironMaiden, OnArriveAtTortureLocation);
             UIManager.Instance.HideObjectPicker();
+            Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
         }
         private void OnArriveAtTortureLocation() {
             _currentTortureTarget.interruptComponent.TriggerInterrupt(INTERRUPT.Being_Tortured, _currentTortureTarget);

@@ -461,6 +461,25 @@ public class GameManager : MonoBehaviour {
         }
         return go;
     }
+    public GameObject CreateParticleEffectAt(StructureWallObject wallObject, PARTICLE_EFFECT particle) {
+        GameObject prefab = null;
+        GameObject go = null;
+        if (particleEffectsDictionary.ContainsKey(particle)) {
+            prefab = particleEffectsDictionary[particle];
+        } else {
+            Debug.LogError("No prefab for particle effect: " + particle.ToString());
+            return null;
+        }
+        go = ObjectPoolManager.Instance.InstantiateObjectFromPool(prefab.name, Vector3.zero, Quaternion.identity, wallObject.mapVisual.transform);
+        go.transform.localPosition = wallObject.mapVisual.objectSpriteRenderer.transform.localPosition;
+        go.SetActive(true);
+        // BaseParticleEffect particleEffectScript = go.GetComponent<BaseParticleEffect>();
+        // if (particleEffectScript) {
+        //     particleEffectScript.SetTargetTile(wallObject);
+        //     particleEffectScript.PlayParticleEffect();
+        // }
+        return go;
+    }
     public GameObject CreateParticleEffectAt(IPointOfInterest poi, PARTICLE_EFFECT particle, bool allowRotation = true) {
         GameObject prefab = null;
         GameObject go = null;
