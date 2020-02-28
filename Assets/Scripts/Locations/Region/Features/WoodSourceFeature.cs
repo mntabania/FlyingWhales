@@ -50,6 +50,11 @@ public class WoodSourceFeature : TileFeature {
             }
         }
     }
+    public override void OnRemoveFeature(HexTile tile) {
+        base.OnRemoveFeature(tile);
+        Messenger.RemoveListener(Signals.HOUR_STARTED, TryGenerateBigTreePerHour);
+        Messenger.RemoveListener(Signals.HOUR_STARTED, TryGenerateSmallTreePerHour);
+    }
     #endregion
     
     private void OnTileObjectPlaced(TileObject tileObject, LocationGridTile tile) {

@@ -180,6 +180,9 @@ namespace Ruinarch {
         /// Cancel actions based on a hardcoded process
         /// </summary>
         private void CancelActionsByPriority() {
+            if (GameManager.Instance.gameHasStarted == false) {
+                return;
+            }
             if (PlayerManager.Instance.player.currentActivePlayerSpell != null) {
                 //cancel current spell
                 PlayerManager.Instance.player.SetCurrentlyActivePlayerSpell(null);
