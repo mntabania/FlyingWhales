@@ -23,11 +23,13 @@ namespace Traits {
         }
 
         #region Overrides
-        public override void OnAddTrait(ITraitable sourceCharacter) {
-            base.OnAddTrait(sourceCharacter);
-            if (sourceCharacter is Character) {
-                owner = sourceCharacter as Character;
+        public override void OnAddTrait(ITraitable addedTo) {
+            base.OnAddTrait(addedTo);
+            if (addedTo is Character) {
+                owner = addedTo as Character;
                 owner.needsComponent.AdjustComfortDecreaseRate(10);
+            } else if (addedTo is TileObject) {
+                ticksDuration = GameManager.Instance.GetTicksBasedOnHour(12);
             }
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
@@ -87,12 +89,12 @@ namespace Traits {
         }
         public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode, ref bool isRemoved) {
             base.ExecuteActionAfterEffects(action, goapNode, ref isRemoved);
-            if (goapNode.action.actionCategory == ACTION_CATEGORY.DIRECT) {
+            if (goapNode.action.actionCategory == ACTION_CATEGORY.DIRECT || goapNode.action.actionCategory == ACTION_CATEGORY.CONSUME) {
                 IPointOfInterest target;
                 IPointOfInterest infector;
-                if (TryGetTargetAndInfector(goapNode, out target, out infector)) { //this is necessary so that this function can determine which of the characters is infecting the other
+                int chance;
+                if (TryGetTargetAndInfectorAndChance(goapNode, out target, out infector, out chance)) { //this is necessary so that this function can determine which of the characters is infecting the other
                     int roll = Random.Range(0, 100);
-                    int chance = GetInfectChanceForAction(action);
                     if (roll < chance) {
                         //target will be infected with plague
                         if (target is Character) {
@@ -100,19 +102,14 @@ namespace Traits {
                         } else {
                             target.traitContainer.AddTrait(target, "Plagued");
                         }
-                        // if (target.traitContainer.AddTrait(target, "Plagued", infector as Character)) {
-                        //     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "contracted_plague");
-                        //     log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                        //     log.AddToFillers(infector, infector.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                        //     log.AddLogToInvolvedObjects();
-                        // }
                     }
                 }
             }
         }
         #endregion
 
-        private bool TryGetTargetAndInfector(ActualGoapNode goapNode,  out IPointOfInterest target, out IPointOfInterest infector) {
+        private bool TryGetTargetAndInfectorAndChance(ActualGoapNode goapNode, out IPointOfInterest target, out IPointOfInterest infector, out int chance) {
+            chance = 25;
             if (goapNode.actor == owner) {
                 target = goapNode.poiTarget;
                 infector = goapNode.actor;
@@ -120,21 +117,28 @@ namespace Traits {
                 target = goapNode.actor;
                 infector = goapNode.poiTarget;
             }
+            if(infector.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+                if(goapNode.action.actionCategory == ACTION_CATEGORY.DIRECT) {
+                    chance = 10;
+                } else if (goapNode.action.actionCategory == ACTION_CATEGORY.CONSUME) {
+                    chance = 100;
+                }
+            }
             return true;
         }
 
-        private int GetInfectChanceForAction(INTERACTION_TYPE type) {
-            switch (type) {
-                case INTERACTION_TYPE.CHAT_CHARACTER:
-                    return GetChatInfectChance();
-                case INTERACTION_TYPE.MAKE_LOVE:
-                    return GetMakeLoveInfectChance();
-                case INTERACTION_TYPE.CARRY:
-                    return GetCarryInfectChance();
-                default:
-                    return 0;
-            }
-        }
+        //private int GetInfectChanceForAction(INTERACTION_TYPE type) {
+        //    switch (type) {
+        //        case INTERACTION_TYPE.CHAT_CHARACTER:
+        //            return GetChatInfectChance();
+        //        case INTERACTION_TYPE.MAKE_LOVE:
+        //            return GetMakeLoveInfectChance();
+        //        case INTERACTION_TYPE.CARRY:
+        //            return GetCarryInfectChance();
+        //        default:
+        //            return 0;
+        //    }
+        //}
 
         public int GetChatInfectChance() {
             if (level == 1) {
