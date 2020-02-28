@@ -99,7 +99,7 @@ public class ForlornSpirit : TileObject {
             yield return new WaitForFixedUpdate();
             if (!GameManager.Instance.isPaused) {
                 if (possessionTarget != null && possessionTarget.marker && possessionTarget.gridTileLocation != null && !possessionTarget.isBeingSeized) {
-                    iTween.MoveUpdate(mapVisual.gameObject, possessionTarget.marker.transform.position, 1f);
+                    iTween.MoveUpdate(mapVisual.gameObject, possessionTarget.marker.transform.position, 2f);
                 } else {
                     possessionTarget = null;
                     iTween.Stop(mapVisual.gameObject);

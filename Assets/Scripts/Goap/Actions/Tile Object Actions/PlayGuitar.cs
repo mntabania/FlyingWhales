@@ -142,7 +142,7 @@ public class PlayGuitar : GoapAction {
             if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
                 return false;
             }
-            if (actor.traitContainer.HasTrait("MusicHater")) {
+            if (actor.traitContainer.HasTrait("Music Hater")) {
                 return false; //music haters will never play guitar
             }
             if (poiTarget.gridTileLocation == null) {
