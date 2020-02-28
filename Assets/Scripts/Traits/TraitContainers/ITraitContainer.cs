@@ -11,6 +11,7 @@ namespace Traits {
 
         List<Trait> allTraits { get; }
         List<Trait> onCollideWithTraits { get; }
+        List<Trait> onEnterGridTileTraits { get; }
         Dictionary<string, int> stacks { get; }
         //Dictionary<Trait, int> currentDurations { get; }
         //List<RelationshipTrait> relationshipTraits { get; }
@@ -21,6 +22,8 @@ namespace Traits {
         bool AddTrait(ITraitable addTo, string traitName, out Trait trait, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null, bool bypassElementalChance = false);
         void AddOnCollideWithTrait(Trait trait);
         bool RemoveOnCollideWithTrait(Trait trait);
+        void AddOnEnterGridTileTrait(Trait trait);
+        bool RemoveOnEnterGridTileTrait(Trait trait);
         #endregion
 
         #region Removing

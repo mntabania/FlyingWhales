@@ -222,7 +222,7 @@ public class FactionManager : MonoBehaviour {
         faction2.AddNewRelationship(faction1, newRel);
         // if(faction1.isPlayerFaction || faction2.isPlayerFaction) {
             if(faction1.isPlayerFaction || faction2.isPlayerFaction || faction1 == neutralFaction || faction2 == neutralFaction
-            || faction1 == zombieFaction || faction2 == zombieFaction) {
+            || faction1 == _zombieFaction || faction2 == _zombieFaction) {
                 faction1.SetRelationshipFor(faction2, FACTION_RELATIONSHIP_STATUS.HOSTILE);
                 faction2.SetRelationshipFor(faction1, FACTION_RELATIONSHIP_STATUS.HOSTILE);
             }

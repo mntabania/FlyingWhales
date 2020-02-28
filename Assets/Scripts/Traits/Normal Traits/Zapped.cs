@@ -15,6 +15,7 @@ namespace Traits {
             hindersMovement = true;
             hindersWitness = true;
             hindersPerform = true;
+            hasOnEnterGridTile = true;
         }
 
         #region Overrides
@@ -53,6 +54,11 @@ namespace Traits {
                 }
             }
             base.OnRemoveTrait(sourcePOI, removedBy);
+        }
+        public override void OnEnterGridTile(IPointOfInterest poiWhoEntered, IPointOfInterest owner) {
+            if (!poiWhoEntered.traitContainer.HasTrait("Zapped")) {
+                poiWhoEntered.traitContainer.AddTrait(poiWhoEntered as ITraitable, "Zapped");
+            }
         }
         #endregion
     }

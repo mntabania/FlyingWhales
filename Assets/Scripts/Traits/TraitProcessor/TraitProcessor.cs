@@ -27,6 +27,9 @@ namespace Traits {
             if (trait.hasOnCollideWith) {
                 traitable.traitContainer.AddOnCollideWithTrait(trait);
             }
+            if (trait.hasOnEnterGridTile) {
+                traitable.traitContainer.AddOnEnterGridTileTrait(trait);
+            }
             Messenger.Broadcast(Signals.TRAITABLE_GAINED_TRAIT, traitable, trait);
         }
         protected void DefaultProcessOnRemoveTrait(ITraitable traitable, Trait trait, Character removedBy) {
@@ -40,6 +43,9 @@ namespace Traits {
             trait.OnRemoveTrait(traitable, removedBy);
             if (trait.hasOnCollideWith) {
                 traitable.traitContainer.RemoveOnCollideWithTrait(trait);
+            }
+            if (trait.hasOnEnterGridTile) {
+                traitable.traitContainer.RemoveOnEnterGridTileTrait(trait);
             }
             Messenger.Broadcast(Signals.TRAITABLE_LOST_TRAIT, traitable, trait, removedBy);
         }
