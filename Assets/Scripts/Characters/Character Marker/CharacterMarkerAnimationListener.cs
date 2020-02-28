@@ -12,9 +12,7 @@ public class CharacterMarkerAnimationListener : MonoBehaviour {
 
     public void OnAttackExecuted() {
         //Debug.Log(parentMarker.name + " attacked!");
-        if (parentMarker.character.stateComponent.currentState is CombatState) {
-            CombatState combatState = parentMarker.character.stateComponent.currentState as CombatState;
-            combatState.isExecutingAttack = false;
+        if (parentMarker.character.stateComponent.currentState is CombatState combatState) {
             if (parentMarker.character.characterClass.rangeType == RANGE_TYPE.RANGED) {
                 if (parentMarker.character.characterClass.attackType == ATTACK_TYPE.MAGICAL) {
                     CreateMagicalHit(combatState.currentClosestHostile, combatState);
@@ -22,6 +20,7 @@ public class CharacterMarkerAnimationListener : MonoBehaviour {
                     CreateProjectile(combatState.currentClosestHostile, combatState);
                 }
             } else {
+                combatState.isExecutingAttack = false;
                 combatState.OnAttackHit(combatState.currentClosestHostile);
             }
         }
@@ -39,7 +38,7 @@ public class CharacterMarkerAnimationListener : MonoBehaviour {
         if (currentProjectile != null) {
             return; //only 1 projectile at a time!
         }
-        if (target.currentHP <= 0) {
+        if (target == null || target.currentHP <= 0) {
             return;
         }
         //Create projectile here and set the on hit action to combat state OnAttackHit
@@ -51,6 +50,7 @@ public class CharacterMarkerAnimationListener : MonoBehaviour {
         currentProjectile = projectileGO;
     }
     private void CreateMagicalHit(IPointOfInterest target, CombatState state) {
+        state.isExecutingAttack = false;
         GameManager.Instance.CreateParticleEffectAt(target, PARTICLE_EFFECT.Fire);
         state.OnAttackHit(target);
     }
@@ -61,6 +61,7 @@ public class CharacterMarkerAnimationListener : MonoBehaviour {
     /// <param name="target">The character that was hit.</param>
     /// <param name="fromState">The projectile was created from this combat state.</param>
     private void OnProjectileHit(IDamageable target, CombatState fromState) {
+        fromState.isExecutingAttack = false;
         currentProjectile = null;
         //fromState.OnAttackHit(character);
         if (parentMarker.character.stateComponent.currentState is CombatState) {

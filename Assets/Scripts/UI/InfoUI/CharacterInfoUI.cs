@@ -730,11 +730,15 @@ public class CharacterInfoUI : InfoUIBase {
         //        afflictions.Add(abilityData.name);
         //    }
         //}
-        UIManager.Instance.ShowClickableObjectPicker(afflictions, ActivateAffliction, null, CanActivateAffliction, "Select Affliction", identifier: "Intervention Ability", showCover: true, layer: 19);
+        UIManager.Instance.ShowClickableObjectPicker(afflictions, ActivateAfflictionConfirmation, null, CanActivateAffliction,
+            "Select Affliction", identifier: "Intervention Ability", showCover: true, layer: 19, shouldConfirmOnPick: true);
     }
-    private void ActivateAffliction(object o) {
+    private void ActivateAfflictionConfirmation(object o) {
         string afflictionName = (string) o;
         SPELL_TYPE afflictionType = (SPELL_TYPE) System.Enum.Parse(typeof(SPELL_TYPE), afflictionName.ToUpper().Replace(' ', '_'));
+        UIManager.Instance.ShowYesNoConfirmation("Affliction Confirmation", "Are you sure you want to afflict " + afflictionName + "?", () => ActivateAffliction(afflictionType));
+    }
+    private void ActivateAffliction(SPELL_TYPE afflictionType) {
         PlayerManager.Instance.allSpellsData[afflictionType].ActivateAbility(activeCharacter);
 
         UIManager.Instance.HideObjectPicker();

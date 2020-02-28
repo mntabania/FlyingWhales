@@ -1643,7 +1643,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
         for (int i = 0; i < hitObjects.Length; i++) {
             RaycastHit2D hit = hitObjects[i];
             if (hit.collider != null) {
-                if(hit.collider.gameObject.name == "Structure_Tilemap" || hit.collider.gameObject.name == "Walls_Tilemap") {
+                if(hit.collider.gameObject.name == "Structure_Tilemap" || hit.collider.gameObject.name == "Walls_Tilemap" 
+                    || hit.collider.gameObject.CompareTag("Structure_Wall")) {
                     return false;
                 } else {
                     IVisibleCollider collisionTrigger = hit.collider.gameObject.GetComponent<IVisibleCollider>();
