@@ -25,7 +25,8 @@ namespace Traits {
                 }
             } else if (targetPOI is Character) {
                 Character targetCharacter = targetPOI as Character;
-                if (UnityEngine.Random.Range(0, 2) == 0 && characterThatWillDoJob.relationshipContainer.IsEnemiesWith(targetCharacter)) {
+                if (UnityEngine.Random.Range(0, 2) == 0 && characterThatWillDoJob.relationshipContainer.IsEnemiesWith(targetCharacter)
+                    && !targetCharacter.traitContainer.HasTrait("Unconscious")) {
                     characterThatWillDoJob.combatComponent.Fight(targetCharacter, isLethal: false);
                 }
             }

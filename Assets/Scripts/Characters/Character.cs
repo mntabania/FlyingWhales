@@ -2881,7 +2881,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 Death();
             }
         } else if (amount < 0 && IsHealthCriticallyLow()) {
-            combatComponent.FlightAll();
+            combatComponent.FlightAll("got scared");
             // Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, this, "critically low health");
         }
     }

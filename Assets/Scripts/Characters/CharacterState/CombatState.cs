@@ -503,7 +503,7 @@ public class CombatState : CharacterState {
 
 
             IPointOfInterest objToAvoid = stateComponent.character.combatComponent.avoidInRange[stateComponent.character.combatComponent.avoidInRange.Count - 1];
-            string avoidReason = "unknown";
+            string avoidReason = "got scared";
             if(stateComponent.character.combatComponent.avoidReason != string.Empty) {
                 avoidReason = stateComponent.character.combatComponent.avoidReason;
             }

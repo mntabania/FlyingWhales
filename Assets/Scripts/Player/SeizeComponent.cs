@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps;
 using Ruinarch;
+using DG.Tweening;
 
 public class SeizeComponent {
     public IPointOfInterest seizedPOI { get; private set; }
     public bool isPreparingToBeUnseized { get; private set; }
 
     private Vector3 followOffset;
+    private Tween tween;
 
     #region getters
     public bool hasSeizedPOI => seizedPOI != null;
@@ -120,6 +122,7 @@ public class SeizeComponent {
         }
         Vector3 targetPos = InnerMapManager.Instance.currentlyShowingMap.worldUiCanvas.worldCamera.ScreenToWorldPoint(Input.mousePosition) + followOffset;
         iTween.MoveUpdate(seizedPOI.visualGO, targetPos, 0.5f);
+        //seizedPOI.visualGO.transform.domo
     }
     public void DisableFollowMousePosition() {
         if (!seizedPOI.visualGO.activeSelf) {

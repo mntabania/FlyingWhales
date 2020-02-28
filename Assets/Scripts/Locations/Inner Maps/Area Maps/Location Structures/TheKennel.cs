@@ -150,6 +150,7 @@ namespace Inner_Maps.Location_Structures {
                 PlayerManager.Instance.player.playerFaction, settlementLocation);
             CharacterManager.Instance.PlaceSummon(summon, targetTile);
             summon.AddTerritory(occupiedBuildSpot.spot.hexTileOwner);
+            summon.combatComponent.SetCombatMode(COMBAT_MODE.Defend);
             AddOwnedSummon(summon);
             PlayerManager.Instance.player.AddSummon(summon);
             Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);

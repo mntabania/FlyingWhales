@@ -25,8 +25,9 @@ public class SmallAnimal : TileObject {
         //ScheduleCooldown(action);
     }
     public override void OnDestroyPOI() {
+        bool hasBurningOrBurnt = traitContainer.HasTrait("Burning", "Burnt");
         base.OnDestroyPOI();
-        if (traitContainer.HasTrait("Burning", "Burnt")) {
+        if (hasBurningOrBurnt) {
             CharacterManager.Instance.CreateFoodPileForPOI(this, previousTile);
         }
     }
