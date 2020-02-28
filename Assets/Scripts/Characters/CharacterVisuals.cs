@@ -123,7 +123,7 @@ public class CharacterVisuals {
         }
 
         if(_owner.minion != null && !_owner.minion.isSummoned) {
-            return $"{_owner.name} is in The Portal";
+            return $"{_owner.name} is unsummoned";
         }
         return $"{_owner.name} is in {_owner.currentRegion?.name}";
     }

@@ -14,12 +14,15 @@ public class MinionCommandsUI : MonoBehaviour {
 
     #region Utilities
     public void ShowUI(IPointOfInterest poi) {
-        this.targetPOI = poi;
-        UIManager.Instance.HideSmallInfo();
-        UIManager.Instance.PositionTooltip(gameObject, rt, rt);
-        ShowButtons(poi);
-        gameObject.SetActive(true);
-        Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressed);
+        targetPOI = poi;
+        if (ShowButtons(poi)) {
+            UIManager.Instance.HideSmallInfo();
+            UIManager.Instance.PositionTooltip(gameObject, rt, rt);
+            gameObject.SetActive(true);
+            Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressed);
+        } else {
+            targetPOI = null;
+        }
     }
     public void HideUI() {
         gameObject.SetActive(false);
