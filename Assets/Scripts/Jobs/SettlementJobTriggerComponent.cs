@@ -372,6 +372,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 			GoapEffect goapEffect = new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Food Pile", false, GOAP_EFFECT_TARGET.TARGET);
 			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.OBTAIN_PERSONAL_FOOD, goapEffect, table, _owner);
 			job.SetCanTakeThisJobChecker(CanTakeObtainPersonalFoodJob);
+			job.SetStillApplicableChecker(() => table.gridTileLocation != null);
 			job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { neededFood });
 			_owner.AddToAvailableJobs(job);
 		}

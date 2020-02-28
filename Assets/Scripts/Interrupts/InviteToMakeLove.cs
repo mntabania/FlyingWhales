@@ -13,10 +13,15 @@ namespace Interrupts {
 
         #region Overrides
         public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target, ref Log overrideEffectLog) {
-            if(target is Character) {
-                string debugLog = $"{actor.name} invite to make love interrupt with {target.name}";
+            if(target is Character targetCharacter) {
+                string debugLog = $"{actor.name} invite to make love interrupt with {targetCharacter.name}";
 
-                Character targetCharacter = target as Character;
+                if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Unconscious") != null) {
+                    debugLog += $"{targetCharacter.name} is unconscious. Invite rejected.";
+                    actor.logComponent.PrintLogIfActive(debugLog);
+                    return false;
+                }
+                
                 WeightedDictionary<string> weights = new WeightedDictionary<string>();
                 int acceptWeight = 50;
                 int rejectWeight = 10;
@@ -31,7 +36,7 @@ namespace Interrupts {
                 acceptWeight += (3 * targetOpinionToActor);
                 debugLog += $"\n-Target opinion towards Actor: +(3 x {targetOpinionToActor}) to Accept Weight";
 
-                Trait trait = target.traitContainer.GetNormalTrait<Trait>("Chaste", "Lustful");
+                Trait trait = targetCharacter.traitContainer.GetNormalTrait<Trait>("Chaste", "Lustful");
                 if(trait != null) {
                     if(trait.name == "Lustful") {
                         acceptWeight += 100;
@@ -62,7 +67,7 @@ namespace Interrupts {
 
                 overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", "Invite To Make Love", chosen);
                 overrideEffectLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                overrideEffectLog.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                overrideEffectLog.AddToFillers(target, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 //actor.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
 
                 actor.interruptComponent.SetIdentifier(chosen);

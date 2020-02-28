@@ -20,32 +20,15 @@ namespace Traits {
 			if (addedTo is Character character) {
 				_owner = character;
 				_owner.CancelAllJobs();
-				(_owner.jobTriggerComponent as CharacterJobTriggerComponent).CreateHideAtHomeJob();
-				// _owner.DecreaseCanWitness();
-				Messenger.AddListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJobSuccessfully);
+				character.behaviourComponent.AddBehaviourComponent(typeof(DesiresIsolationBehaviour));
+				StartCheckingForCowering();
 			}
 		}
-		private void OnCharacterFinishedJobSuccessfully(Character character, GoapPlanJob job) {
-			if (character == _owner && job.jobType == JOB_TYPE.HIDE_AT_HOME) {
-				character.logComponent.PrintLogIfActive($"{GameManager.Instance.TodayLogString()}{character.name} has successfully finished hide at home job! Will now start cowering check...");
-				Messenger.RemoveListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJobSuccessfully);
-				OnArriveAtHome();
-			}
-		}
-		private void OnArriveAtHome() {
-			Debug.Log($"{GameManager.Instance.TodayLogString()}{_owner.name} has arrived at {_owner.currentStructure.GetNameRelativeTo(_owner)}");
-			// _owner.IncreaseCanWitness();
-			_owner.trapStructure.SetForcedStructure(_owner.currentStructure);
-			_owner.DecreaseCanTakeJobs();
-			StartCheckingForCowering();
-		}
-		
 		public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
 			base.OnRemoveTrait(removedFrom, removedBy);
 			if (removedFrom is Character character) {
 				StopCheckingForCowering();
-				character.trapStructure.SetForcedStructure(null);
-				_owner.IncreaseCanTakeJobs();
+				character.behaviourComponent.RemoveBehaviourComponent(typeof(DesiresIsolationBehaviour));
 				character.needsComponent.CheckExtremeNeeds();
 			}
 		}

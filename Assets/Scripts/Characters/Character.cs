@@ -4222,9 +4222,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 && InteractionManager.Instance.CanSatisfyGoapActionRequirements(currentNode.action.goapType, currentNode.actor, currentNode.poiTarget, currentNode.otherData)) {
                     bool preconditionsSatisfied = plan.currentActualNode.action.CanSatisfyAllPreconditions(currentNode.actor, currentNode.poiTarget, currentNode.otherData);
                     if (!preconditionsSatisfied) {
-                        log += "\n - Action's preconditions are not all satisfied, trying to recalculate plan...";
+                        log += $"\n - {plan.currentActualNode} Action's preconditions are not all satisfied, trying to recalculate plan...";
                         if (plan.doNotRecalculate) {
-                            log += "\n - Action's plan has doNotRecalculate state set to true, dropping plan...";
+                            log += $"\n - {plan.currentActualNode} Action's plan has doNotRecalculate state set to true, dropping plan...";
                             logComponent.PrintLogIfActive(log);
                             currentTopPrioJob.CancelJob(false);
                         } else {
@@ -4275,7 +4275,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                         currentNode.DoAction(currentTopPrioJob, plan);
                     }
                 } else {
-                    log += "\n - Action did not meet current requirements and allowed actions, dropping plan...";
+                    log += $"\n - {plan.currentActualNode} Action did not meet current requirements and allowed actions, dropping plan...";
                     logComponent.PrintLogIfActive(log);
                     currentTopPrioJob.CancelJob(false);
                 }

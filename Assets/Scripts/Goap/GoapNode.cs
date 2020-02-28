@@ -793,6 +793,10 @@ public class ActualGoapNode {
     }
     #endregion
 
+    public override string ToString() {
+        return $"Action: {action?.name ?? "Null"}. Target {poiTarget?.name ?? "Null"}";
+    }
+
     //#region Crime
     //public void SetAsCrime(CRIME_TYPE crimeType) {
     //    this.crimeType = crimeType;

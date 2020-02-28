@@ -181,6 +181,9 @@ namespace Inner_Maps.Location_Structures {
                 if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
                     TileObject tileObject = poi as TileObject;
                     groupedTileObjects[tileObject.tileObjectType].RemoveTileObject(tileObject);
+                    if (poi.gridTileLocation.buildSpotOwner.isPartOfParentRegionMap) {
+                        poi.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile?.OnItemRemovedFromLocation(tileObject, this);    
+                    }
                 }
                 if (poi.gridTileLocation != null) {
                     if (poi.poiType != POINT_OF_INTEREST_TYPE.CHARACTER) {
