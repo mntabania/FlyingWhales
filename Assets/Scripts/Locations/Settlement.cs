@@ -801,7 +801,8 @@ public class Settlement : IJobOwner {
         return null;
     }
     private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {
-        if(owner != null && character.gridTileLocation.IsPartOfSettlement(this) && character.canPerform && character.canMove) {
+        if(owner != null && character.gridTileLocation != null && 
+           character.gridTileLocation.IsPartOfSettlement(this) && character.canPerform && character.canMove) {
             if (owner.IsHostileWith(character.faction)) {
                 SetIsUnderSeige(true);
             }
