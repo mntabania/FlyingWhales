@@ -81,7 +81,9 @@ namespace Traits {
                     if (character.faction.isPlayerFaction) {
                         character.combatComponent.Fight(targetCharacter, isLethal: true); //check hostility if from player faction, so as not to attack other characters that are also from the same faction.
                     } else {
-                        character.combatComponent.Fight(targetCharacter, isLethal: false);
+                        if (!targetCharacter.traitContainer.HasTrait("Unconscious")) {
+                            character.combatComponent.Fight(targetCharacter, isLethal: false);
+                        }
                     }
                 }
             } else if (targetPOI is TileObject) { // || targetPOI is SpecialToken

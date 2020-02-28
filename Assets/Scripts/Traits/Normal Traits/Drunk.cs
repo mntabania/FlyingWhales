@@ -57,11 +57,13 @@ namespace Traits {
                         //    }
                         //    //characterThatWillDoJob.combatComponent.ProcessCombatBehavior();
                         //}
-                        if(characterThatWillDoJob.combatComponent.Fight(targetCharacter, false)) {
-                            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "drunk_assault");
-                            log.AddToFillers(characterThatWillDoJob, characterThatWillDoJob.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                            log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                            characterThatWillDoJob.logComponent.RegisterLog(log, onlyClickedCharacter: false);
+                        if (!targetCharacter.traitContainer.HasTrait("Unconscious")) {
+                            if (characterThatWillDoJob.combatComponent.Fight(targetCharacter, false)) {
+                                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "drunk_assault");
+                                log.AddToFillers(characterThatWillDoJob, characterThatWillDoJob.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                                log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                                characterThatWillDoJob.logComponent.RegisterLog(log, onlyClickedCharacter: false);
+                            }
                         }
                         return true;
                     }

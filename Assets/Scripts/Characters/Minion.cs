@@ -39,6 +39,7 @@ public class Minion {
         character.needsComponent.SetFullnessForcedTick(0);
         character.needsComponent.SetTirednessForcedTick(0);
         character.behaviourComponent.AddBehaviourComponent(typeof(DefaultMinion));
+        character.combatComponent.SetCombatMode(COMBAT_MODE.Defend);
     }
     public Minion(SaveDataMinion data) {
         this.character = CharacterManager.Instance.GetCharacterByID(data.characterID);
@@ -49,6 +50,7 @@ public class Minion {
         character.ownParty.icon.SetVisualState(true);
         SetAssignedDeadlySinName(character.characterClass.className);
         spellExtractionCount = data.spellExtractionCount;
+        character.combatComponent.SetCombatMode(COMBAT_MODE.Defend);
         // RemoveInvalidPlayerActions();
     }
     public void SetAssignedDeadlySinName(string name) {

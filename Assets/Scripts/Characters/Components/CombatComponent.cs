@@ -156,7 +156,7 @@ public class CombatComponent {
         }
         return hasFled;
     }
-    public void FlightAll() {
+    public void FlightAll(string reason = "") {
         if (hostilesInRange.Count > 0) {
             if (owner.canMove) {
                 for (int i = 0; i < hostilesInRange.Count; i++) {
@@ -174,6 +174,7 @@ public class CombatComponent {
             }
             ClearHostilesInRange(false);
             willProcessCombat = true;
+            avoidReason = reason;
         }
     }
     #endregion

@@ -7,8 +7,9 @@ using UnityEngine;
 
 public class PlayerDataGeneration : MapGenerationComponent {
 	public override IEnumerator Execute(MapGenerationData data) {
-		PlayerManager.Instance.InitializePlayer(data.portal, data.portalStructure, InputManager.Instance.selectedArchetype);
-		yield return null;
+        //PlayerManager.Instance.InitializePlayer(data.portal, data.portalStructure, InputManager.Instance.selectedArchetype);
+        PlayerManager.Instance.InitializePlayer(data.portal, data.portalStructure, PLAYER_ARCHETYPE.Normal);
+        yield return null;
 		yield return MapGenerator.Instance.StartCoroutine(LoadArtifacts());
 		GenerateInitialMinions();
 		yield return null;
