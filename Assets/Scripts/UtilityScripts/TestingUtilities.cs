@@ -13,7 +13,7 @@ namespace UtilityScripts {
                         JobQueueItem jqi = settlement.availableJobs[j];
                         if (jqi is GoapPlanJob) {
                             GoapPlanJob gpj = jqi as GoapPlanJob;
-                            summary += $"\n{gpj.name} Targeting {gpj.targetPOI?.name}" ?? "None";
+                            summary += $"\n{gpj.name} Targeting {gpj.targetPOI}" ?? "None";
                         } else {
                             summary += $"\n{jqi.name}";
                         }

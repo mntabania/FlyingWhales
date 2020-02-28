@@ -1912,7 +1912,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return name;
     }
     private LocationGridTile GetLocationGridTileByXY(int x, int y, bool throwOnException = true) {
-        return currentRegion.innerMap.map[x, y];
+        if (UtilityScripts.Utilities.IsInRange(x, 0, currentRegion.innerMap.width)
+            && UtilityScripts.Utilities.IsInRange(y, 0, currentRegion.innerMap.height)) {
+            return currentRegion.innerMap.map[x, y];
+        }
+        return null;
     }
     public void UpdateCanCombatState() {
         bool combatState = traitContainer.HasTrait("Combatant") && !traitContainer.HasTrait("Injured");
