@@ -66,7 +66,11 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 				TriggerFleeHome();	
 			}
 			_owner.needsComponent.CheckExtremeNeeds();
-		}
+            for (int i = 0; i < _owner.marker.inVisionCharacters.Count; i++) {
+                Character inVisionCharacter = _owner.marker.inVisionCharacters[i];
+                _owner.marker.AddUnprocessedPOI(inVisionCharacter);
+            }
+        }
 	}
 	private void OnCharacterCanNoLongerPerform(Character character) {
 		if (character == _owner && character.isDead == false) {
