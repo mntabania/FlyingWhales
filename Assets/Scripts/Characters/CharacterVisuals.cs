@@ -122,6 +122,9 @@ public class CharacterVisuals {
             return $"{_owner.name} is in {_owner.currentStructure.GetNameRelativeTo(_owner)}";
         }
 
+        if(_owner.minion != null && !_owner.minion.isSummoned) {
+            return $"{_owner.name} is in The Portal";
+        }
         return $"{_owner.name} is in {_owner.currentRegion?.name}";
     }
     #endregion

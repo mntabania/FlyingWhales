@@ -73,6 +73,23 @@ public class PathfindingManager : MonoBehaviour {
         return PathUtilities.IsPathPossible(AstarPath.active.GetNearest(fromTile.centeredWorldLocation, NNConstraint.Default).node,
             AstarPath.active.GetNearest(toTile.centeredWorldLocation, NNConstraint.Default).node);
     }
+    public bool HasPathEvenDiffRegion(LocationGridTile fromTile, LocationGridTile toTile) {
+        if (fromTile == toTile) { return true; }
+        if (fromTile == null || toTile == null) { return false; }
+        if(fromTile.structure.location == toTile.structure.location) {
+            return PathUtilities.IsPathPossible(AstarPath.active.GetNearest(fromTile.centeredWorldLocation, NNConstraint.Default).node,
+                    AstarPath.active.GetNearest(toTile.centeredWorldLocation, NNConstraint.Default).node);
+        } else {
+            LocationGridTile nearestEdgeFrom = fromTile.GetNearestEdgeTileFromThis();
+            if(PathUtilities.IsPathPossible(AstarPath.active.GetNearest(fromTile.centeredWorldLocation, NNConstraint.Default).node,
+                    AstarPath.active.GetNearest(nearestEdgeFrom.centeredWorldLocation, NNConstraint.Default).node)) {
+                LocationGridTile nearestEdgeTo = toTile.GetNearestEdgeTileFromThis();
+                return PathUtilities.IsPathPossible(AstarPath.active.GetNearest(toTile.centeredWorldLocation, NNConstraint.Default).node,
+                    AstarPath.active.GetNearest(nearestEdgeTo.centeredWorldLocation, NNConstraint.Default).node);
+            }
+        }
+        return false;
+    }
 
     #region Map Creation
     public void CreatePathfindingGraphForLocation(InnerTileMap newMap) {

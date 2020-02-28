@@ -599,6 +599,34 @@ namespace Inner_Maps {
             }
             return null;
         }
+        public LocationGridTile GetNearestEdgeTileFromThis() {
+            if (IsAtEdgeOfWalkableMap() && structure != null) {
+                return this;
+            }
+
+            LocationGridTile nearestEdgeTile = null;
+            List<LocationGridTile> neighbours = neighbourList;
+            for (int i = 0; i < neighbours.Count; i++) {
+                if (neighbours[i].IsAtEdgeOfWalkableMap() && neighbours[i].structure != null) {
+                    nearestEdgeTile = neighbours[i];
+                    break;
+                }
+            }
+            if (nearestEdgeTile == null) {
+                float nearestDist = -999f;
+                for (int i = 0; i < parentMap.allEdgeTiles.Count; i++) {
+                    LocationGridTile currTile = parentMap.allEdgeTiles[i];
+                    float dist = Vector2.Distance(currTile.localLocation, localLocation);
+                    if (nearestDist == -999f || dist < nearestDist) {
+                        if (currTile.structure != null) {
+                            nearestEdgeTile = currTile;
+                            nearestDist = dist;
+                        }
+                    }
+                }
+            }
+            return nearestEdgeTile;
+        }
         public LocationGridTile GetRandomUnoccupiedNeighbor() {
             List<LocationGridTile> unoccupiedNeighbours = UnoccupiedNeighbours;
             if (unoccupiedNeighbours.Count > 0) {
