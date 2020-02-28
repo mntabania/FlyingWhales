@@ -305,7 +305,8 @@ public class HexTileSpellsComponent {
                     }
                     burningTrait.SetSourceOfBurning(bs, traitable);
                 }
-            }  
+            }
+            GameManager.Instance.CreateParticleEffectAt(chosenTile, PARTICLE_EFFECT.Brimstones);
         }
     }
     private void PerTickBrimstones() {
