@@ -1028,6 +1028,7 @@
               <e p="DefaultMonster.cs" t="Include" />
               <e p="DefaultOtherStructure.cs" t="Include" />
               <e p="DefaultOutside.cs" t="Include" />
+              <e p="DesiresIsolationBehaviour.cs" t="Include" />
               <e p="FactionLeaderBahaviour.cs" t="Include" />
               <e p="GluttonBehaviour.cs" t="Include" />
               <e p="HarassBehaviour.cs" t="Include" />

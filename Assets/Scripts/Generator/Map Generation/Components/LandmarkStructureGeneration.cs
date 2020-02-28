@@ -78,7 +78,7 @@ public class LandmarkStructureGeneration : MapGenerationComponent {
 		// 	locationGridTiles.Where(t => t.HasNeighbourNotInList(locationGridTiles) == false && t.IsAtEdgeOfMap() == false).ToList();
 		
 		LocationGridTile[,] tileMap = CellularAutomataGenerator.ConvertListToGridMap(locationGridTiles);
-		int[,] cellMap = CellularAutomataGenerator.GenerateMap(tileMap, locationGridTiles, 2, 30);
+		int[,] cellMap = CellularAutomataGenerator.GenerateMap(tileMap, locationGridTiles, 2, 25);
 		
 		Assert.IsNotNull(cellMap, $"There was no cellmap generated for elevation structure {structure.ToString()}");
 		
