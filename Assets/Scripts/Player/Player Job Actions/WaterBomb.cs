@@ -18,7 +18,6 @@ public class WaterBombData : SpellData {
     public override string description => "Applies Wet to a 2 tile radius around the designated spot.";
     public override SPELL_CATEGORY category => SPELL_CATEGORY.DEVASTATION;
     public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
-    public override int abilityRadius => 2;
 
     public WaterBombData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
@@ -38,15 +37,8 @@ public class WaterBombData : SpellData {
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
         return targetTile.structure != null;
     }
-    public override void ShowRange(LocationGridTile targetTile) {
-        base.ShowRange(targetTile);
-        List<LocationGridTile> tiles = targetTile.GetTilesInRadius(1, includeCenterTile: true, includeTilesInDifferentStructure: true);
-        InnerMapManager.Instance.HighlightTiles(tiles);
-    }
-    public override void HideRange(LocationGridTile targetTile) {
-        base.HideRange(targetTile);
-        List<LocationGridTile> tiles = targetTile.GetTilesInRadius(1, includeCenterTile: true, includeTilesInDifferentStructure: true);
-        InnerMapManager.Instance.UnhighlightTiles(tiles);
+    public override void HighlightAffectedTiles(LocationGridTile tile) {
+        TileHighlighter.Instance.PositionHighlight(1, tile);
     }
 }
 

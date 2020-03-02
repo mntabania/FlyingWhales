@@ -199,13 +199,12 @@ public class SpellData {
     public virtual string description { get { return string.Empty; } }
     public virtual SPELL_CATEGORY category { get { return SPELL_CATEGORY.NONE; } }
     public virtual INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.NONE;
-    public virtual int abilityRadius => 0; //0 means single target
     public SPELL_TARGET[] targetTypes { get; protected set; }
+    public int radius { get; protected set; }
 
-    public int tier { get; protected set; }
-    public int manaCost { get; protected set; }
-
-    public SpellData() {
+    public int tier { get; }
+    public int manaCost { get; }
+    protected SpellData() {
         tier = PlayerManager.Instance.GetSpellTier(ability);
         manaCost = PlayerManager.Instance.GetManaCostForSpell(tier);
     }
@@ -223,23 +222,13 @@ public class SpellData {
     public virtual bool CanPerformAbilityTowards(TileObject tileObject) { return true; }
     public virtual bool CanPerformAbilityTowards(LocationGridTile targetTile) { return true; }
     public virtual bool CanPerformAbilityTowards(HexTile targetHex) { return true; }
-
-    // public virtual bool CanPerformAbilityTowards(SpecialToken item) { return true; }
-
     /// <summary>
-    /// If the ability has a range, override this to show that range. <see cref="InputManager.Update"/>
+    /// Highlight the affected area of this spell given a tile.
     /// </summary>
-    public virtual void ShowRange(LocationGridTile tile) {
-        if(abilityRadius > 0) {
-            List<LocationGridTile> tiles = tile.GetTilesInRadius(abilityRadius, includeCenterTile: true, includeTilesInDifferentStructure: true);
-            InnerMapManager.Instance.HighlightTiles(tiles);
-        }
-    }
-    public virtual void HideRange(LocationGridTile tile) {
-        if (abilityRadius > 0) {
-            List<LocationGridTile> tiles = tile.GetTilesInRadius(abilityRadius, includeCenterTile: true, includeTilesInDifferentStructure: true);
-            InnerMapManager.Instance.UnhighlightTiles(tiles);
-        }
+    /// <param name="tile">The tile to take into consideration.</param>
+    public virtual void HighlightAffectedTiles(LocationGridTile tile) { }
+    public virtual void UnhighlightAffectedTiles() {
+        TileHighlighter.Instance.HideHighlight();
     }
     #endregion
 

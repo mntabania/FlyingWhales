@@ -9,7 +9,7 @@ public class LightningData : SpellData {
     public override string description { get { return "A lightning bolt will hit the designated spot, causing Electric damage."; } }
     public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.DEVASTATION; } }
     public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
-    public override int abilityRadius => 1;
+    public virtual int abilityRadius => 1;
 
     public LightningData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
@@ -21,5 +21,8 @@ public class LightningData : SpellData {
         for (int i = 0; i < pois.Count; i++) {
             pois[i].AdjustHP(-100, ELEMENTAL_TYPE.Electric);
         }
+    }
+    public override void HighlightAffectedTiles(LocationGridTile tile) {
+        TileHighlighter.Instance.PositionHighlight(0, tile);
     }
 }

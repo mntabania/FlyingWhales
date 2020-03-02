@@ -55,6 +55,7 @@ namespace Ruinarch {
                 } else if (PlayerManager.Instance.player.currentActivePlayerSpell != null) { 
                     if (UIManager.Instance.IsMouseOnUI() || !InnerMapManager.Instance.isAnInnerMapShowing) {
                         SetCursorTo(Cursor_Type.Default); 
+                        PlayerManager.Instance.player.currentActivePlayerSpell.UnhighlightAffectedTiles();
                     } else { 
                         LocationGridTile hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
                         bool canTarget = false; 
@@ -82,6 +83,11 @@ namespace Ruinarch {
                                     break; 
                             }
                             SetCursorTo(canTarget ? Cursor_Type.Check : Cursor_Type.Cross);
+                        }
+                        if (canTarget) {
+                            PlayerManager.Instance.player.currentActivePlayerSpell.HighlightAffectedTiles(hoveredTile);
+                        } else {
+                            PlayerManager.Instance.player.currentActivePlayerSpell.UnhighlightAffectedTiles();
                         }
                         if(hoveredPOI != null) { 
                             if (hoverText != string.Empty) { 

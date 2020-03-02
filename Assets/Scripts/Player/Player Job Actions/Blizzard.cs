@@ -13,14 +13,13 @@ public class Blizzard : PlayerSpell {
 
 public class BlizzardData : SpellData {
     public override SPELL_TYPE ability => SPELL_TYPE.BLIZZARD;
-    public override string name { get { return "Blizzard"; } }
-    public override string description { get { return "Significantly lowers the outside temperature on the target area, which may randomly apply Freezing on affected characters."; } }
-    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.DEVASTATION; } }
+    public override string name => "Blizzard";
+    public override string description => "Significantly lowers the outside temperature on the target area, which may randomly apply Freezing on affected characters.";
+    public override SPELL_CATEGORY category => SPELL_CATEGORY.DEVASTATION;
     public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
-    public override int abilityRadius => 1;
 
     public BlizzardData() : base() {
-        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
+        targetTypes = new[] { SPELL_TARGET.TILE };
     }
 
     public override void ActivateAbility(LocationGridTile targetTile) {
@@ -31,14 +30,7 @@ public class BlizzardData : SpellData {
                && targetTile.buildSpotOwner.hexTileOwner.biomeType != BIOMES.DESERT
                && targetTile.buildSpotOwner.hexTileOwner.featureComponent.HasFeature(TileFeatureDB.Blizzard_Feature) == false;
     }
-    public override void ShowRange(LocationGridTile targetTile) {
-        base.ShowRange(targetTile);
-        List<LocationGridTile> tiles = targetTile.GetTilesInRadius(abilityRadius, 0, true);
-        InnerMapManager.Instance.HighlightTiles(tiles);
-    }
-    public override void HideRange(LocationGridTile targetTile) {
-        base.HideRange(targetTile);
-        List<LocationGridTile> tiles = targetTile.GetTilesInRadius(abilityRadius, 0, true);
-        InnerMapManager.Instance.UnhighlightTiles(tiles);
+    public override void HighlightAffectedTiles(LocationGridTile tile) {
+        TileHighlighter.Instance.PositionHighlight(tile.buildSpotOwner.hexTileOwner);
     }
 }

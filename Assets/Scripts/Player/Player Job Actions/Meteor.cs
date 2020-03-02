@@ -52,7 +52,7 @@ public class MeteorData : SpellData {
     public override string description { get { return "A huge meteor will strike the designated spot, causing major Fire damage."; } }
     public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.DEVASTATION; } }
     public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
-    public override int abilityRadius => 1;
+    public virtual int abilityRadius => 1;
 
     public MeteorData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
@@ -68,14 +68,7 @@ public class MeteorData : SpellData {
     //    meteorGO.transform.position = tile.centeredWorldLocation;
     //    meteorGO.GetComponent<MeteorVisual>().MeteorStrike(tile, abilityRadius);
     //}
-    public override void ShowRange(LocationGridTile targetTile) {
-        base.ShowRange(targetTile);
-        List<LocationGridTile> tiles = targetTile.GetTilesInRadius(abilityRadius, 0, true);
-        InnerMapManager.Instance.HighlightTiles(tiles);
-    }
-    public override void HideRange(LocationGridTile targetTile) {
-        base.HideRange(targetTile);
-        List<LocationGridTile> tiles = targetTile.GetTilesInRadius(abilityRadius, 0, true);
-        InnerMapManager.Instance.UnhighlightTiles(tiles);
+    public override void HighlightAffectedTiles(LocationGridTile tile) {
+        TileHighlighter.Instance.PositionHighlight(0, tile);
     }
 }

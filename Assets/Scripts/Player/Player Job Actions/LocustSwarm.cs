@@ -42,7 +42,7 @@ public class LocustSwarmData : SpellData {
     public override string description { get { return "These starving insects will consume all edible objects in its path."; } }
     public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.DEVASTATION; } }
     public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
-    public override int abilityRadius => 2;
+    public virtual int abilityRadius => 2;
 
     public LocustSwarmData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
@@ -56,14 +56,7 @@ public class LocustSwarmData : SpellData {
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
         return targetTile.structure != null;
     }
-    public override void ShowRange(LocationGridTile targetTile) {
-        base.ShowRange(targetTile);
-        List<LocationGridTile> tiles = UtilityScripts.GameUtilities.GetDiamondTilesFromRadius(targetTile.parentMap, targetTile.localPlace, 2);
-        InnerMapManager.Instance.HighlightTiles(tiles);
-    }
-    public override void HideRange(LocationGridTile targetTile) {
-        base.HideRange(targetTile);
-        List<LocationGridTile> tiles = UtilityScripts.GameUtilities.GetDiamondTilesFromRadius(targetTile.parentMap, targetTile.localPlace, 2);
-        InnerMapManager.Instance.UnhighlightTiles(tiles);
+    public override void HighlightAffectedTiles(LocationGridTile tile) {
+        TileHighlighter.Instance.PositionHighlight(2, tile);
     }
 }

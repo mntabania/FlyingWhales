@@ -62,19 +62,17 @@ public class Tornado : PlayerSpell {
 
 public class TornadoData : SpellData {
     public override SPELL_TYPE ability => SPELL_TYPE.TORNADO;
-    public override string name { get { return "Tornado"; } }
-    public override string description { get { return "A destructive cyclone that deals heavy Normal damage to everything in its path."; } }
-    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.DEVASTATION; } }
+    public override string name => "Tornado";
+    public override string description => "A destructive cyclone that deals heavy Normal damage to everything in its path.";
+    public override SPELL_CATEGORY category => SPELL_CATEGORY.DEVASTATION;
     public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
-    public override int abilityRadius => 1;
-
     public TornadoData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
     }
 
     public override void ActivateAbility(LocationGridTile targetTile) {
         TornadoTileObject tornadoTileObject = new TornadoTileObject();
-        tornadoTileObject.SetRadius(abilityRadius);
+        tornadoTileObject.SetRadius(1);
         tornadoTileObject.SetDuration(GameManager.Instance.GetTicksBasedOnHour(Random.Range(1, 4)));
         tornadoTileObject.SetGridTileLocation(targetTile);
         tornadoTileObject.OnPlacePOI();
@@ -82,14 +80,7 @@ public class TornadoData : SpellData {
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
         return targetTile.structure != null;
     }
-    public override void ShowRange(LocationGridTile targetTile) {
-        base.ShowRange(targetTile);
-        List<LocationGridTile> tiles = targetTile.GetTilesInRadius(abilityRadius, 0, true);
-        InnerMapManager.Instance.HighlightTiles(tiles);
-    }
-    public override void HideRange(LocationGridTile targetTile) {
-        base.HideRange(targetTile);
-        List<LocationGridTile> tiles = targetTile.GetTilesInRadius(abilityRadius, 0, true);
-        InnerMapManager.Instance.UnhighlightTiles(tiles);
+    public override void HighlightAffectedTiles(LocationGridTile tile) {
+        TileHighlighter.Instance.PositionHighlight(1, tile);
     }
 }
