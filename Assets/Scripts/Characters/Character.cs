@@ -3427,7 +3427,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool PlanIdleReturnHome() { //bool forceDoAction = false
         if (homeStructure != null && homeStructure.tiles.Count > 0) {
             LocationGridTile tile = UtilityScripts.CollectionUtilities.GetRandomElement(homeStructure.tiles);
-            if (PathfindingManager.Instance.HasPath(this.gridTileLocation, tile) || currentRegion != homeStructure.location.coreTile.region) {
+            if (PathfindingManager.Instance.HasPathEvenDiffRegion(this.gridTileLocation, tile) || currentRegion != homeStructure.location.coreTile.region) {
                 ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RETURN_HOME], this, this, null, 0);
                 GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, this);
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE_RETURN_HOME, INTERACTION_TYPE.RETURN_HOME, this, this);
@@ -4005,7 +4005,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     //if this character is not available, check if the current action type can be advertised even when the character is inactive.
                     continue; //skip
                 }
-                if (PathfindingManager.Instance.HasPath(actor.gridTileLocation, gridTileLocation) && RaceManager.Instance.CanCharacterDoGoapAction(actor, currType)) {
+                if (PathfindingManager.Instance.HasPathEvenDiffRegion(actor.gridTileLocation, gridTileLocation) && RaceManager.Instance.CanCharacterDoGoapAction(actor, currType)) {
                     object[] data = null;
                     if (otherData != null) {
                         if (otherData.ContainsKey(currType)) {
@@ -4050,7 +4050,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             && advertisedActions != null && advertisedActions.Contains(action.goapType)
             && actor.trapStructure.SatisfiesForcedStructure(this)
             && RaceManager.Instance.CanCharacterDoGoapAction(actor, action.goapType)
-            && PathfindingManager.Instance.HasPath(actor.gridTileLocation, gridTileLocation)) {
+            && PathfindingManager.Instance.HasPathEvenDiffRegion(actor.gridTileLocation, gridTileLocation)) {
             object[] data = null;
             if (otherData != null) {
                 if (otherData.ContainsKey(action.goapType)) {

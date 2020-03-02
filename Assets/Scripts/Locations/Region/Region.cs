@@ -582,6 +582,17 @@ public class Region : ILocation {
         }
         return null;
     }
+    public LocationStructure GetStructureOfTypeWithoutSettlement(STRUCTURE_TYPE type) {
+        if (structures.ContainsKey(type)) {
+            List<LocationStructure> chosenStructures = structures[type];
+            for (int i = 0; i < chosenStructures.Count; i++) {
+                if(chosenStructures[i].settlementLocation == null) {
+                    return chosenStructures[i];
+                }
+            }
+        }
+        return null;
+    }
     public LocationStructure GetStructureByID(STRUCTURE_TYPE type, int id) {
         if (structures.ContainsKey(type)) {
             List<LocationStructure> locStructures = structures[type];
@@ -872,18 +883,18 @@ public class Region : ILocation {
     #region Location Grid Tiles
     public LocationGridTile GetRandomOutsideSettlementLocationGridTileWithPathTo(LocationGridTile fromTile) {
         LocationGridTile chosenTile = null;
-        while(chosenTile == null) {
+        //while(chosenTile == null) {
             for (int i = 0; i < shuffledNonMountainWaterTiles.Count; i++) {
                 if (shuffledNonMountainWaterTiles[i].settlementOnTile == null) {
                     HexTile hex = shuffledNonMountainWaterTiles[i];
                     LocationGridTile potentialTile = hex.locationGridTiles[UnityEngine.Random.Range(0, hex.locationGridTiles.Count)];
-                    if(PathfindingManager.Instance.HasPath(fromTile, potentialTile)) {
+                    if(PathfindingManager.Instance.HasPathEvenDiffRegion(fromTile, potentialTile)) {
                         chosenTile = potentialTile;
                         break;
                     }
                 }
             }
-        }
+        //}
         return chosenTile;
     }
     #endregion
