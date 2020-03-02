@@ -287,13 +287,13 @@ public class Summon : Character, IWorldObject {
     public LocationGridTile GetRandomLocationGridTileWithPath() {
         LocationGridTile chosenTile = null;
         if(territorries.Count > 0) {
-            while (chosenTile == null) {
+            //while (chosenTile == null) {
                 HexTile chosenTerritory = territorries[UnityEngine.Random.Range(0, territorries.Count)];
                 LocationGridTile chosenGridTile = chosenTerritory.locationGridTiles[UnityEngine.Random.Range(0, chosenTerritory.locationGridTiles.Count)];
-                if(PathfindingManager.Instance.HasPath(gridTileLocation, chosenGridTile)) {
+                if(PathfindingManager.Instance.HasPathEvenDiffRegion(gridTileLocation, chosenGridTile)) {
                     chosenTile = chosenGridTile;
                 }
-            }
+            //}
         }
         return chosenTile;
     }

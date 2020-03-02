@@ -13,13 +13,17 @@ public class Bed : TileObject {
     }
 
     public Bed() {
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.SLEEP, INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.NAP, INTERACTION_TYPE.REPAIR };
+        //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.SLEEP, INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.NAP, INTERACTION_TYPE.REPAIR };
         Initialize(TILE_OBJECT_TYPE.BED);
+        AddAdvertisedAction(INTERACTION_TYPE.SLEEP);
+        AddAdvertisedAction(INTERACTION_TYPE.NAP);
         bedUsers = new Character[2];
     }
     public Bed(SaveDataTileObject data) {
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.SLEEP, INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.NAP, INTERACTION_TYPE.REPAIR };
+        //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.SLEEP, INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.NAP, INTERACTION_TYPE.REPAIR };
         Initialize(data);
+        AddAdvertisedAction(INTERACTION_TYPE.SLEEP);
+        AddAdvertisedAction(INTERACTION_TYPE.NAP);
         bedUsers = new Character[2];
     }
 
