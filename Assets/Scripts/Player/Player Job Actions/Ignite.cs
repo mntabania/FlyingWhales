@@ -83,7 +83,7 @@ public class IgniteData : SpellData {
         PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
     }
     public override bool CanPerformAbilityTowards(TileObject tileObject) {
-        if (tileObject.gridTileLocation == null || tileObject.gridTileLocation.genericTileObject.traitContainer.HasTrait("Burning")) {
+        if (tileObject.gridTileLocation == null || tileObject.gridTileLocation.genericTileObject.traitContainer.HasTrait("Burning", "Wet", "Fireproof")) {
             return false;
         }
         return base.CanPerformAbilityTowards(tileObject);

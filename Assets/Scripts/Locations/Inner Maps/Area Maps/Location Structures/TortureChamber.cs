@@ -54,7 +54,7 @@ namespace Inner_Maps.Location_Structures {
             }
         }
         private void AddTortureAction() {
-            PlayerAction tortureAction = new PlayerAction(PlayerDB.Torture_Action, () => _currentTortureTarget == null, ChooseTortureTarget);
+            PlayerAction tortureAction = new PlayerAction(PlayerDB.Torture_Action, () => _currentTortureTarget == null, null, ChooseTortureTarget);
             AddPlayerAction(tortureAction);
         }
         private void ChooseTortureTarget() {

@@ -24,7 +24,7 @@ namespace Inner_Maps.Location_Structures {
 
         #region Activate
         private void AddActivateAction() {
-            PlayerAction activate = new PlayerAction(PlayerDB.Activate_Artifact_Action, CanDoActivateArtifactAction, OnClickActivateArtifact);
+            PlayerAction activate = new PlayerAction(PlayerDB.Activate_Artifact_Action, CanDoActivateArtifactAction, null, OnClickActivateArtifact);
             AddPlayerAction(activate);
         }
         private void RemoveActivateAction() {

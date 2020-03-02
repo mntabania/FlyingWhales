@@ -73,7 +73,7 @@ public class JobQueueItem {
 
     #region Virtuals
     protected virtual bool CanTakeJob(Character character) {
-        return !character.traitContainer.HasTrait("Criminal") && !character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE);
+        return !character.traitContainer.HasTrait("Criminal") && character.canPerform; //!character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
     }
     public virtual void UnassignJob(bool shouldDoAfterEffect, string reason) { }
     public virtual void OnAddJobToQueue() { }

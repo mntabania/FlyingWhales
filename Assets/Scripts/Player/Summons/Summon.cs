@@ -304,6 +304,7 @@ public class Summon : Character, IWorldObject {
         actions = new List<PlayerAction>();
         PlayerAction seizeAction = new PlayerAction(PlayerDB.Seize_Character_Action,
         () => !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && !this.traitContainer.HasTrait("Leader", "Blessed"),
+        null,
         () => PlayerManager.Instance.player.seizeComponent.SeizePOI(this));
 
         AddPlayerAction(seizeAction);

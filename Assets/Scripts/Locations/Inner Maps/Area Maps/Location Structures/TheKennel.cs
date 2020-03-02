@@ -100,7 +100,7 @@ namespace Inner_Maps.Location_Structures {
             }
         }
         private void AddBreedMonsterAction() {
-            PlayerAction action = new PlayerAction(PlayerDB.Breed_Monster_Action, CanDoBreedMonster, OnClickBreedMonster);
+            PlayerAction action = new PlayerAction(PlayerDB.Breed_Monster_Action, CanDoBreedMonster, null, OnClickBreedMonster);
             AddPlayerAction(action);
         }
         private void RemoveBreedMonsterAction() {

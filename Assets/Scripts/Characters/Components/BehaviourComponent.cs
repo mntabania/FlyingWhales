@@ -97,55 +97,64 @@ public class BehaviourComponent {
         currentBehaviourComponents.Add(component);
         return true;
     }
-    public void SetHarassInvadeRaidTarget(Settlement settlement) {
-        harassInvadeRaidTarget = settlement;
-    }
-    public void SetIsHarassing(bool state) {
+    public void SetIsHarassing(bool state, Settlement target) {
         if(isHarassing != state) {
             isHarassing = state;
+            Settlement previousTarget = harassInvadeRaidTarget;
+            harassInvadeRaidTarget = target;
             owner.CancelAllJobs();
             if (isHarassing) {
+                harassInvadeRaidTarget.IncreaseIsBeingHarassedCount();
                 combatModeBeforeHarassRaidInvade = owner.combatComponent.combatMode;
                 owner.combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
                 AddBehaviourComponent(typeof(HarassBehaviour));
                 //TODO: Optimize this to not always create new instance if playeraction, or if it can't be helped, do object pool
-                owner.AddPlayerAction(new Actionables.PlayerAction(PlayerDB.End_Harass_Action, () => true, () => owner.behaviourComponent.SetIsHarassing(false)));
+                owner.AddPlayerAction(new Actionables.PlayerAction(PlayerDB.End_Harass_Action, () => true, null, () => SetIsHarassing(false, null)));
             } else {
+                previousTarget.DecreaseIsBeingHarassedCount();
                 owner.combatComponent.SetCombatMode(combatModeBeforeHarassRaidInvade);
                 RemoveBehaviourComponent(typeof(HarassBehaviour));
                 owner.RemovePlayerAction(PlayerDB.End_Harass_Action);
             }
         }
     }
-    public void SetIsRaiding(bool state) {
+    public void SetIsRaiding(bool state, Settlement target) {
         if (isRaiding != state) {
             isRaiding = state;
+            Settlement previousTarget = harassInvadeRaidTarget;
+            harassInvadeRaidTarget = target;
             owner.CancelAllJobs();
             if (isRaiding) {
+                harassInvadeRaidTarget.IncreaseIsBeingRaidedCount();
                 combatModeBeforeHarassRaidInvade = owner.combatComponent.combatMode;
                 owner.combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
                 AddBehaviourComponent(typeof(RaidBehaviour));
                 //TODO: Optimize this to not always create new instance if playeraction, or if it can't be helped, do object pool
-                owner.AddPlayerAction(new Actionables.PlayerAction(PlayerDB.End_Raid_Action, () => true, () => owner.behaviourComponent.SetIsRaiding(false)));
+                owner.AddPlayerAction(new Actionables.PlayerAction(PlayerDB.End_Raid_Action, () => true, null, () => SetIsRaiding(false, null)));
             } else {
+                previousTarget.DecreaseIsBeingRaidedCount();
                 owner.combatComponent.SetCombatMode(combatModeBeforeHarassRaidInvade);
                 RemoveBehaviourComponent(typeof(RaidBehaviour));
                 owner.RemovePlayerAction(PlayerDB.End_Raid_Action);
             }
         }
     }
-    public void SetIsInvading(bool state) {
+    public void SetIsInvading(bool state, Settlement target) {
         if (isInvading != state) {
             isInvading = state;
+            Settlement previousTarget = harassInvadeRaidTarget;
+            harassInvadeRaidTarget = target;
             owner.CancelAllJobs();
             if (isInvading) {
+                harassInvadeRaidTarget.IncreaseIsBeingInvadedCount();
                 combatModeBeforeHarassRaidInvade = owner.combatComponent.combatMode;
                 owner.combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
                 AddBehaviourComponent(typeof(InvadeBehaviour));
                 //TODO: Optimize this to not always create new instance if playeraction, or if it can't be helped, do object pool
-                owner.AddPlayerAction(new Actionables.PlayerAction(PlayerDB.End_Invade_Action, () => true, () => owner.behaviourComponent.SetIsInvading(false)));
+                owner.AddPlayerAction(new Actionables.PlayerAction(PlayerDB.End_Invade_Action, () => true, null, () => SetIsInvading(false, null)));
                 Messenger.AddListener<Settlement>(Signals.NO_ABLE_CHARACTER_INSIDE_SETTLEMENT, OnNoLongerAbleResidentsInsideSettlement);
             } else {
+                previousTarget.DecreaseIsBeingInvadedCount();
                 owner.combatComponent.SetCombatMode(combatModeBeforeHarassRaidInvade);
                 RemoveBehaviourComponent(typeof(InvadeBehaviour));
                 owner.RemovePlayerAction(PlayerDB.End_Invade_Action);
@@ -155,7 +164,7 @@ public class BehaviourComponent {
     }
     private void OnNoLongerAbleResidentsInsideSettlement(Settlement settlement) {
         if(harassInvadeRaidTarget == settlement) {
-            SetIsInvading(false);
+            SetIsInvading(false, null);
         }
     }
     #endregion

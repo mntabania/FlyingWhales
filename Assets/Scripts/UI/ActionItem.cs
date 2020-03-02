@@ -61,7 +61,7 @@ public class ActionItem : PooledObject {
         //}
     }
     private void UpdateState() {
-        SetInteractable(playerAction.isActionValidChecker.Invoke());
+        SetInteractable(playerAction.isActionClickableChecker.Invoke());
     }
     public void OnClickThis() {
         if (playerAction != null && playerAction.actions != null) {

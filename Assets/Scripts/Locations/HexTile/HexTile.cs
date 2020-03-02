@@ -813,7 +813,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         PlayerAction existingCorruptAction = GetPlayerAction(PlayerDB.Corrupt_Action);
         if (CanBeCorrupted()) {
             if (existingCorruptAction == null) {
-                PlayerAction corruptAction = new PlayerAction(PlayerDB.Corrupt_Action, CanBeCorrupted, StartPerTickCorruption);
+                PlayerAction corruptAction = new PlayerAction(PlayerDB.Corrupt_Action, CanBeCorrupted, null, StartPerTickCorruption);
                 AddPlayerAction(corruptAction);
             }
         } else {
@@ -880,7 +880,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         
         RemovePlayerAction(GetPlayerAction(PlayerDB.Corrupt_Action));
         if (CanBuildDemonicStructure()) {
-            PlayerAction buildAction = new PlayerAction(PlayerDB.Build_Demonic_Structure_Action, CanBuildDemonicStructure, OnClickBuild);
+            PlayerAction buildAction = new PlayerAction(PlayerDB.Build_Demonic_Structure_Action, CanBuildDemonicStructure, null, OnClickBuild);
             AddPlayerAction(buildAction);
         }
     }
@@ -1047,9 +1047,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     public List<PlayerAction> actions { get; private set; }
     public void ConstructDefaultActions() {
         actions = new List<PlayerAction>();
-        PlayerAction harassAction = new PlayerAction(PlayerDB.Harass_Action, CanDoHarassRaidInvade, () => PlayerUI.Instance.OnClickHarassRaidInvade(this, "harass"));
-        PlayerAction raidAction = new PlayerAction(PlayerDB.Raid_Action, CanDoHarassRaidInvade, () => PlayerUI.Instance.OnClickHarassRaidInvade(this, "raid"));
-        PlayerAction invadeAction = new PlayerAction(PlayerDB.Invade_Action, CanDoHarassRaidInvade, () => PlayerUI.Instance.OnClickHarassRaidInvade(this, "invade"));
+        PlayerAction harassAction = new PlayerAction(PlayerDB.Harass_Action, CanDoHarass, IsHarassRaidInvadeValid, () => PlayerUI.Instance.OnClickHarassRaidInvade(this, "harass"));
+        PlayerAction raidAction = new PlayerAction(PlayerDB.Raid_Action, CanDoRaid, IsHarassRaidInvadeValid, () => PlayerUI.Instance.OnClickHarassRaidInvade(this, "raid"));
+        PlayerAction invadeAction = new PlayerAction(PlayerDB.Invade_Action, CanDoInvade, IsHarassRaidInvadeValid, () => PlayerUI.Instance.OnClickHarassRaidInvade(this, "invade"));
 
         AddPlayerAction(harassAction);
         AddPlayerAction(raidAction);
@@ -1087,8 +1087,17 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     public void ClearPlayerActions() {
         actions.Clear();
     }
-    private bool CanDoHarassRaidInvade() {
-        return settlementOnTile != null;
+    private bool CanDoHarass() {
+        return !settlementOnTile.isBeingHarassed;
+    }
+    private bool CanDoRaid() {
+        return !settlementOnTile.isBeingRaided;
+    }
+    private bool CanDoInvade() {
+        return !settlementOnTile.isBeingInvaded;
+    }
+    private bool IsHarassRaidInvadeValid(IPlayerActionTarget target) {
+        return settlementOnTile != null && settlementOnTile.owner != null && settlementOnTile.owner.isMajorNonPlayer;
     }
     #endregion
 
