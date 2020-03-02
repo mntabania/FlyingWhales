@@ -254,6 +254,7 @@ public class Player : ILeader {
             if (currentActivePlayerSpell == null) {
                 Messenger.RemoveListener<KeyCode>(Signals.KEY_DOWN, OnSpellCast);
             	InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
+                previousActiveAction.UnhighlightAffectedTiles();
                 Messenger.Broadcast(Signals.PLAYER_NO_ACTIVE_SPELL, previousActiveAction);
             } else {
             	InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Cross);

@@ -1594,6 +1594,7 @@
               <e p="Region Maps" t="Include">
                 <e p="RegionInnerTileMap.cs" t="Include" />
               </e>
+              <e p="TileHighlighter.cs" t="Include" />
             </e>
             <e p="InnerMapGeneration.cs" t="Include" />
             <e p="LandmarkManager.cs" t="Include" />

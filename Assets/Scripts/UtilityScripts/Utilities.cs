@@ -1527,6 +1527,20 @@ namespace UtilityScripts {
             
             }
         }
+        /// <summary>
+        /// Destroy all the child game objects of a given parent.
+        /// NOTE: This assumes that all children are part of the Object Pool System.
+        /// Possible side effect of using this on a non Object Pool parent is that, it's non
+        /// Object Pooled children will not be destroyed. 
+        /// </summary>
+        /// <param name="parent">The parent object to destroy the children of.</param>
+        public static void DestroyChildrenObjectPool(Transform parent) {
+            PooledObject[] children = GameUtilities.GetComponentsInDirectChildren<PooledObject>(parent.gameObject);
+            for (int i = 0; i < children.Length; i++) {
+                PooledObject pooledObject = children[i];
+                ObjectPoolManager.Instance.DestroyObject(pooledObject);
+            }
+        }
         public static bool IsUIElementInsideScreen(RectTransform uiElement, Canvas canvas) {
             Vector3[] objectCorners = new Vector3[4];
             uiElement.GetWorldCorners(objectCorners);

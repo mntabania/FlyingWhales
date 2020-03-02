@@ -56,7 +56,8 @@ public class BlizzardFeature : TileFeature {
 
     #region Listeners
     private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure, HexTile featureOwner) {
-        if (structure != null && structure.isInterior == false && character.gridTileLocation.buildSpotOwner.isPartOfParentRegionMap 
+        if (structure != null && structure.isInterior == false && character.gridTileLocation != null 
+            && character.gridTileLocation.buildSpotOwner.isPartOfParentRegionMap 
             && character.gridTileLocation.buildSpotOwner.hexTileOwner == featureOwner) {
             AddCharacterOutside(character);
         }
