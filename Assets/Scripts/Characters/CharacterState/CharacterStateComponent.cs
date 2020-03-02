@@ -56,7 +56,7 @@ public class CharacterStateComponent {
     //If the character is not in a state right now, this simply starts a new state instead of switching
     public CharacterState SwitchToState(CHARACTER_STATE state, Character targetCharacter = null, Settlement targetSettlement = null, int durationOverride = -1, int level = 1) {
         //Cannot switch state is has negative disabler
-        if(character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
+        if(!character.canPerform) { //character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
             return null;
         }
 

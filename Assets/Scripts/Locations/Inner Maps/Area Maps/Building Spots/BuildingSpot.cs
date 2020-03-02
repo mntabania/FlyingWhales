@@ -89,6 +89,27 @@ public class BuildingSpot {
             }
         }
     }
+    public HexTile GetNearestHexTile() {
+        if(hexTileOwner != null) { return hexTileOwner; }
+        //foreach (BuildingSpot buildSpot in neighbours.Values) {
+        //    HexTile nearestHex = buildSpot.GetNearestHexTile();
+        //    if (nearestHex != null) {
+        //        return nearestHex;
+        //    }
+        //}
+        foreach (BuildingSpot buildSpot in neighbours.Values) {
+            if(buildSpot.hexTileOwner != null) {
+                return buildSpot.hexTileOwner;
+            }
+        }
+        foreach (BuildingSpot buildSpot in neighbours.Values) {
+            HexTile nearestHex = buildSpot.GetNearestHexTile();
+            if (nearestHex != null) {
+                return nearestHex;
+            }
+        }
+        return null;
+    }
 
     #region Data Setting
     public void SetIsOccupied(bool isOccupied) {

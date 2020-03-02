@@ -205,12 +205,12 @@ public class CharacterInfoUI : InfoUIBase {
         activeActionItems.Clear();
         for (int i = 0; i < target.actions.Count; i++) {
             PlayerAction action = target.actions[i];
-            if (PlayerManager.Instance.player.archetype.CanDoAction(action.actionName)) {
+            if (action.IsValid(target) && PlayerManager.Instance.player.archetype.CanDoAction(action.actionName)) {
                 if (action.actionName == PlayerDB.Combat_Mode_Action) {
                     action.SetLabelText(action.actionName + ": " + UtilityScripts.Utilities.NotNormalizedConversionEnumToString(activeCharacter.combatComponent.combatMode.ToString()));
                 }
                 ActionItem actionItem = AddNewAction(action);
-                actionItem.SetInteractable(action.isActionValidChecker.Invoke() && !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI);
+                actionItem.SetInteractable(action.isActionClickableChecker.Invoke() && !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI);
             }
         }
     }

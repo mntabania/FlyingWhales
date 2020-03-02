@@ -46,10 +46,16 @@ public class Settlement : IJobOwner {
     private int newRulerDesignationChance;
     private WeightedDictionary<Character> newRulerDesignationWeights;
     private SettlementJobTriggerComponent _settlementJobTriggerComponent;
-    
+    private int _isBeingHarassedCount;
+    private int _isBeingRaidedCount;
+    private int _isBeingInvadedCount;
+
     #region getters
     public JobTriggerComponent jobTriggerComponent => settlementJobTriggerComponent;
     public SettlementJobTriggerComponent settlementJobTriggerComponent => _settlementJobTriggerComponent;
+    public bool isBeingHarassed => _isBeingHarassedCount > 0;
+    public bool isBeingRaided => _isBeingRaidedCount > 0;
+    public bool isBeingInvaded => _isBeingInvadedCount > 0;
     #endregion
 
     public Settlement(Region region, LOCATION_TYPE locationType, int citizenCount) {
@@ -87,7 +93,6 @@ public class Settlement : IJobOwner {
         SetAreaType(saveDataArea.locationType);
 
         // nameplatePos = LandmarkManager.Instance.GetNameplatePosition(this.coreTile);
-
         LoadStructures(saveDataArea);
     }
 
@@ -181,6 +186,24 @@ public class Settlement : IJobOwner {
             Debug.Log($"{GameManager.Instance.TodayLogString()}{this.name} Under Siege state changed to {isUnderSeige.ToString()}");
             Messenger.Broadcast(Signals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, this, isUnderSeige);
         }
+    }
+    public void IncreaseIsBeingHarassedCount() {
+        _isBeingHarassedCount++;
+    }
+    public void DecreaseIsBeingHarassedCount() {
+        _isBeingHarassedCount--;
+    }
+    public void IncreaseIsBeingRaidedCount() {
+        _isBeingRaidedCount++;
+    }
+    public void DecreaseIsBeingRaidedCount() {
+        _isBeingRaidedCount--;
+    }
+    public void IncreaseIsBeingInvadedCount() {
+        _isBeingInvadedCount++;
+    }
+    public void DecreaseIsBeingInvadedCount() {
+        _isBeingInvadedCount--;
     }
     private void OnTickEnded() {
         ProcessForcedCancelJobsOnTickEnded();

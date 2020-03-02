@@ -1957,9 +1957,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //    //Returns true so that it will create an impression that the character actually created a job even if he/she didn't, so that the character will not chat, etc.
         //    return false;
         //}
-        if (traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
-            return false;
-        }
+        //if (traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
+        //    return false;
+        //}
         if (targetPOI != null && targetPOI is Character) {
             Character target = targetPOI as Character;
             if (target.faction != null && target.faction.IsHostileWith(faction)) {
@@ -1971,7 +1971,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return true;
     }
     public bool IsAble() {
-        return currentHP > 0 && !isDead && !traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) && !isDead && characterClass.className != "Zombie";
+        return currentHP > 0 && !isDead && canPerform && !isDead && characterClass.className != "Zombie"; //!traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
     }
     public void SetIsFollowingPlayerInstruction(bool state) {
         isFollowingPlayerInstruction = state;
@@ -1990,7 +1990,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (stateComponent.currentState is CombatState && !(stateComponent.currentState as CombatState).isAttacking) {
             return false; //character is fleeing
         }
-        if (traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
+        if (!canPerform || !canMove) { //traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
             return false;
         }
         return true;
@@ -2006,8 +2006,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     public virtual bool IsValidCombatTarget() {
-        return traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) == false && marker != null 
-                && gridTileLocation != null;
+        return canPerform && marker != null 
+                && gridTileLocation != null; //traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) == false
     }
     public void ExecutePendingActionsAfterMultithread() {
         for (int i = 0; i < pendingActionsAfterMultiThread.Count; i++) {
@@ -5726,12 +5726,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (race == RACE.DEMON) {
             PlayerAction stopAction = new PlayerAction(PlayerDB.Stop_Action, 
                 () => true,
+                null,
                 jobComponent.TriggerStopJobs);
             PlayerAction returnAction = new PlayerAction(PlayerDB.Return_To_Portal_Action, 
                 () => true,
+                null,
                 () => jobComponent.TriggerReturnPortal());
             PlayerAction combatModeAction = new PlayerAction(PlayerDB.Combat_Mode_Action,
                 () => true,
+                null,
                 UIManager.Instance.characterInfoUI.ShowSwitchCombatModeUI);
             combatModeAction.SetLabelText(combatModeAction.actionName + ": " + UtilityScripts.Utilities.NotNormalizedConversionEnumToString(combatComponent.combatMode.ToString()));
 
@@ -5741,12 +5744,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         } else {
             PlayerAction afflictAction = new PlayerAction(PlayerDB.Afflict_Action, 
                 () => true,
+                null,
                 UIManager.Instance.characterInfoUI.ShowAfflictUI);
             PlayerAction zapAction = new PlayerAction(PlayerDB.Zap_Action, 
                 () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.ZAP].CanPerformAbilityTowards(this),
+                null,
                 () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.ZAP].ActivateAbility(this));
             PlayerAction seizeAction = new PlayerAction(PlayerDB.Seize_Character_Action, 
-                () => !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && !this.traitContainer.HasTrait("Leader", "Blessed"), 
+                () => !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && !this.traitContainer.HasTrait("Leader", "Blessed"),
+                null,
                 () => PlayerManager.Instance.player.seizeComponent.SeizePOI(this));
             // PlayerAction shareIntelAction = new PlayerAction("Share Intel", () => false, null);
 

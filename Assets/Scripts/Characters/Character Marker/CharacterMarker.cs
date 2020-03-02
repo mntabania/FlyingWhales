@@ -642,7 +642,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     /// <param name="force">Should this object be forced to rotate?</param>
     public override void LookAt(Vector3 target, bool force = false) {
         if (!force) {
-            if (character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
+            if (!character.canPerform || !character.canMove) { //character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
                 return;
             }
         }
@@ -659,7 +659,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     /// <param name="force">Should this object be forced to rotate?</param>
     public override void Rotate(Quaternion target, bool force = false) {
         if (!force) {
-            if (character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
+            if (!character.canPerform || !character.canMove) { //character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
                 return;
             }
         }
@@ -1487,7 +1487,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     public void OnFleePathComputed(Path path) {
         //|| character.stateComponent.currentState == null || character.stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT 
-        if (character == null || character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
+        if (character == null || !character.canPerform || !character.canMove) { //character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
             return; //this is for cases that the character is no longer in a combat state, but the pathfinding thread returns a flee path
         }
         //Debug.Log(character.name + " computed flee path");

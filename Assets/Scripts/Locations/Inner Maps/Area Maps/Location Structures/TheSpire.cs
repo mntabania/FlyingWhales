@@ -31,7 +31,7 @@ namespace Inner_Maps.Location_Structures {
 
         #region Learn Spell
         private void AddLearnSpell() {
-            PlayerAction learnSpellAction = new PlayerAction(PlayerDB.Learn_Spell_Action, CanLearnSpell, TryLearnASpellOrAffliction);
+            PlayerAction learnSpellAction = new PlayerAction(PlayerDB.Learn_Spell_Action, CanLearnSpell, null, TryLearnASpellOrAffliction);
             AddPlayerAction(learnSpellAction);
         }
         private void RemoveLearnSpell() {

@@ -96,7 +96,7 @@ public class Invite : GoapAction {
             //if (target.currentAlterEgoName != CharacterManager.Original_Alter_Ego) { //do not woo characters that have transformed to other alter egos
             //    return false;
             //}
-            if (target.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
+            if (!target.canPerform) { //target.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
                 return false;
             }
             if (target.stateComponent.currentState is CombatState) { //do not invite characters that are currently in combat
@@ -132,7 +132,7 @@ public class InviteData : GoapActionData {
         //if (target.currentAlterEgoName != CharacterManager.Original_Alter_Ego) {
         //    return false;
         //}
-        if (target.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
+        if (!target.canPerform) { //target.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
             return false;
         }
         if (target.stateComponent.currentState is CombatState) { //do not invite characters that are currently in combat

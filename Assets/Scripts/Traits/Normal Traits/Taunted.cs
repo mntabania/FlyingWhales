@@ -47,8 +47,8 @@ namespace Traits {
 
         private void OnCharacterGainedTrait(Character character, Trait trait) {
             if (responsibleCharacter.id == character.id) {
-                if (character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) || character.isDead) {
-                    _sourceCharacter.traitContainer.RemoveTrait(_sourceCharacter, this); //if the character that taunted this character becomes dead or negatively disabled, remove this trait.
+                if (!character.canPerform || character.isDead) { //character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
+                _sourceCharacter.traitContainer.RemoveTrait(_sourceCharacter, this); //if the character that taunted this character becomes dead or negatively disabled, remove this trait.
                 }
             }
         }

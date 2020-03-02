@@ -979,13 +979,13 @@ public class PlayerUI : MonoBehaviour {
         if(PlayerManager.Instance.player.summons.Count > 0) {
             unleashSummonUI.ShowUnleashSummonUI();
         } else {
-            harassRaidInvadeLeaderMinion.character.behaviourComponent.SetHarassInvadeRaidTarget(harassRaidInvadeTargetSettlement);
+            //harassRaidInvadeLeaderMinion.character.behaviourComponent.SetHarassInvadeRaidTarget(harassRaidInvadeTargetSettlement);
             if (harassRaidInvade == "harass") {
-                harassRaidInvadeLeaderMinion.character.behaviourComponent.SetIsHarassing(true);
+                harassRaidInvadeLeaderMinion.character.behaviourComponent.SetIsHarassing(true, harassRaidInvadeTargetSettlement);
             } else if (harassRaidInvade == "raid") {
-                harassRaidInvadeLeaderMinion.character.behaviourComponent.SetIsRaiding(true);
+                harassRaidInvadeLeaderMinion.character.behaviourComponent.SetIsRaiding(true, harassRaidInvadeTargetSettlement);
             } else if (harassRaidInvade == "invade") {
-                harassRaidInvadeLeaderMinion.character.behaviourComponent.SetIsInvading(true);
+                harassRaidInvadeLeaderMinion.character.behaviourComponent.SetIsInvading(true, harassRaidInvadeTargetSettlement);
             }
         }
     }

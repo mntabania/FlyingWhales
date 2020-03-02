@@ -130,7 +130,7 @@ public class CombatState : CharacterState {
     public override void AfterExitingState() {
         base.AfterExitingState();
         if (!stateComponent.character.isDead) {
-            if (isBeingApprehended && stateComponent.character.traitContainer.HasTrait("Criminal") && !stateComponent.character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
+            if (isBeingApprehended && stateComponent.character.traitContainer.HasTrait("Criminal") && stateComponent.character.canPerform && stateComponent.character.canMove) { //!stateComponent.character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
                 //If this criminal character is being apprehended and survived (meaning he did not die, or is not unconscious or restrained)
                 if (!stateComponent.character.isFactionless) {
                     //Leave current faction
@@ -455,12 +455,17 @@ public class CombatState : CharacterState {
                 log +=
                     $"\nCurrent closest hostile: {currentClosestHostile.name} is no longer in hostile list, setting another closest hostile...";
                 SetClosestHostile();
-            } else if(currentClosestHostile == null) {
+            } else if (currentClosestHostile != null && !currentClosestHostile.mapObjectVisual) {
+                log +=
+                    $"\nCurrent closest hostile: {currentClosestHostile.name} is no longer has a map object visual, setting another closest hostile...";
+                stateComponent.character.combatComponent.RemoveHostileInRange(currentClosestHostile, false);
+                SetClosestHostile();
+            } else if (currentClosestHostile == null) {
                 log += "\nNo current closest hostile, setting one...";
                 SetClosestHostile();
             } else {
                 log += "\nChecking if the current closest hostile is still the closest hostile, if not, set new closest hostile...";
-                IPointOfInterest newClosestHostile =  stateComponent.character.combatComponent.GetNearestValidHostile();
+                IPointOfInterest newClosestHostile = stateComponent.character.combatComponent.GetNearestValidHostile();
                 if(newClosestHostile != null && currentClosestHostile != newClosestHostile) {
                     SetClosestHostile(newClosestHostile);
                 } else if (currentClosestHostile != null && stateComponent.character.currentParty.icon.isTravelling && stateComponent.character.marker.targetPOI == currentClosestHostile) {
