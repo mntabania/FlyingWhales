@@ -715,11 +715,11 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             return false;
         }
         if (characterOwner == null) {
-            //Patrollers should not pick up items from their main storage structure
-            if (gridTileLocation != null && character.homeSettlement != null && 
-                gridTileLocation.structure == character.homeSettlement.mainStorage) { //&& token.currentRegion == characterThatWillDoJob.homeRegion
+            //if the item is at a tile that is part of a settlement and that tile is part of that settlements main storage, do not allow pick up
+            if (gridTileLocation != null && gridTileLocation.IsPartOfSettlement(out var settlement) && gridTileLocation.structure == settlement.mainStorage) {
                 return false;
             }
+            
             //characters should not pick up items if that item is the target of it's current action
             if (character.currentActionNode != null && character.currentActionNode.poiTarget == this) {
                 return false;

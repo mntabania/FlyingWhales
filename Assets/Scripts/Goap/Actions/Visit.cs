@@ -18,7 +18,7 @@ public class Visit : GoapAction {
     #region Overrides
     public override LocationStructure GetTargetStructure(ActualGoapNode node) {
         object[] otherData = node.otherData;
-        if (otherData != null && otherData.Length == 1) {
+        if (otherData != null && otherData.Length >= 1) {
             //if (otherData[0] is Dwelling) {
             //    return otherData[0] as Dwelling;
             //} else 
@@ -31,7 +31,7 @@ public class Visit : GoapAction {
     public override void AddFillersToLog(Log log, ActualGoapNode node) {
         base.AddFillersToLog(log, node);
         object[] otherData = node.otherData;
-        if (otherData != null && otherData.Length == 1) {
+        if (otherData != null && otherData.Length >= 1) {
             if (otherData[0] is LocationStructure) {
                 LocationStructure structure = otherData[0] as LocationStructure; 
                 log.AddToFillers(structure, structure.GetNameRelativeTo(node.actor), LOG_IDENTIFIER.LANDMARK_1);
@@ -54,7 +54,14 @@ public class Visit : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
-            return actor == poiTarget;
+            if (otherData.Length == 2) {
+              //if provided other data is 2, assume that the second data is the target character, and check that the poi target is the same as that object
+              IPointOfInterest targetObj = otherData[1] as IPointOfInterest;
+              return poiTarget == targetObj;
+            } else {
+                return actor == poiTarget;    
+            }
+            
         }
         return false;
     }

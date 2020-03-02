@@ -66,7 +66,7 @@ public class SuicidalBehaviour : CharacterBehaviourComponent {
                         if (chosenCharacter != null) {
                             if (chosenCharacter.homeStructure != null) {
                                 log += $"\n  -Will visit house of Disabled Character {chosenCharacter.name}";
-                                character.PlanIdle(JOB_TYPE.CHECK_PARALYZED_FRIEND, INTERACTION_TYPE.VISIT, character, new object[] { chosenCharacter.homeStructure });
+                                character.PlanIdle(JOB_TYPE.CHECK_PARALYZED_FRIEND, INTERACTION_TYPE.VISIT, character, new object[] { chosenCharacter.homeStructure, chosenCharacter });
                             } else {
                                 log += $"\n  -{chosenCharacter.name} has no house. Will check out character instead";
                                 character.PlanIdle(JOB_TYPE.CHECK_PARALYZED_FRIEND,  new GoapEffect(GOAP_EFFECT_CONDITION.IN_VISION, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), chosenCharacter);
@@ -102,9 +102,11 @@ public class SuicidalBehaviour : CharacterBehaviourComponent {
                         List<Character> positiveRelatables = character.relationshipContainer.GetFriendCharacters();
                         if (positiveRelatables.Count > 0) {
                             LocationStructure targetStructure = null;
+                            Character targetCharacter = null;
                             while (positiveRelatables.Count > 0 && targetStructure == null) {
                                 int index = UnityEngine.Random.Range(0, positiveRelatables.Count);
                                 Character chosenRelatable = positiveRelatables[index];
+                                targetCharacter = chosenRelatable;
                                 targetStructure = chosenRelatable.homeStructure.GetLocationStructure();
                                 if (targetStructure == null) {
                                     positiveRelatables.RemoveAt(index);
@@ -119,7 +121,7 @@ public class SuicidalBehaviour : CharacterBehaviourComponent {
                             if (targetStructure != null) {
                                 log +=
                                     $"\n  -Morning or Afternoon: {character.name} will go to dwelling of character with positive relationship and set Base Structure for 2.5 hours";
-                                character.PlanIdle(JOB_TYPE.VISIT_FRIEND,  INTERACTION_TYPE.VISIT, character, new object[] { targetStructure });
+                                character.PlanIdle(JOB_TYPE.VISIT_FRIEND,  INTERACTION_TYPE.VISIT, character, new object[] { targetStructure, targetCharacter });
                                 return true;
                             } else {
                                 log += "\n  -No positive relationship with home structure";
