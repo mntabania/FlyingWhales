@@ -187,7 +187,7 @@ public class DouseFireState : CharacterState {
         for (int i = 0; i < _fires.Count; i++) {
             ITraitable currFire = _fires[i];
             Burning burning = currFire.traitContainer.GetNormalTrait<Burning>("Burning");
-            if (burning.douser == null) {
+            if (burning != null && burning.douser == null) {
                 //only consider dousing fire that is not yet assigned
                 float dist = Vector2.Distance(stateComponent.character.worldObject.transform.position, currFire.worldObject.transform.position);
                 if (dist < nearest) {

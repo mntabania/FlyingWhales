@@ -1,14 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using Inner_Maps.Location_Structures;
-using Traits;
 using UnityEngine;
 
 public class DefaultAtHome : CharacterBehaviourComponent {
     public DefaultAtHome() {
         priority = 50;
-        attributes = new BEHAVIOUR_COMPONENT_ATTRIBUTE[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.WITHIN_HOME_SETTLEMENT_ONLY };
+        attributes = new[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.WITHIN_HOME_SETTLEMENT_ONLY };
     }
     public override bool TryDoBehaviour(Character character, ref string log) {
         if (character.currentStructure == character.homeStructure) {
@@ -32,8 +29,8 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                 log += "\n-If it is Early Night, 35% chance to go to the current Inn and then set it as the Base Structure for 2.5 hours";
                 if (currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT && character.trapStructure.IsTrapped() == false) {
                     log += $"\n  -Time of Day: {currentTimeOfDay}";
-                    int chance = UnityEngine.Random.Range(0, 100);
-                    log += $"\n  -RNG roll: {chance}";
+                    int chance = Random.Range(0, 100);
+                    log += $"\n  -RNG roll: {chance.ToString()}";
                     if (chance < 35) {
                         if (character.traitContainer.HasTrait("Agoraphobic")) {
                             log += "\n  -Character is agoraphobic, not going to inn";
@@ -45,9 +42,8 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                                     $"\n  -Early Night: {character.name} will go to Inn and set Base Structure for 2.5 hours";
                                 character.PlanIdle(JOB_TYPE.VISIT_FRIEND, INTERACTION_TYPE.VISIT, character, new object[] { structure });
                                 return true;
-                            } else {
-                                log += "\n  -No Inn Structure in the settlement";
                             }
+                            log += "\n  -No Inn Structure in the settlement";
                         }
                     }
                 } else {
@@ -56,8 +52,8 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                 log += "\n-Otherwise, if it is Lunch Time or Afternoon, 25% chance to nap if there is still an unoccupied Bed in the house";
                 if (currentTimeOfDay == TIME_IN_WORDS.LUNCH_TIME || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON) {
                     log += $"\n  -Time of Day: {currentTimeOfDay}";
-                    int chance = UnityEngine.Random.Range(0, 100);
-                    log += $"\n  -RNG roll: {chance}";
+                    int chance = Random.Range(0, 100);
+                    log += $"\n  -RNG roll: {chance.ToString()}";
                     if (chance < 25) {
                         TileObject bed = character.currentStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.BED);
                         if (bed != null) {
@@ -78,8 +74,8 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                 log += "\n-Otherwise, if it is Morning or Afternoon or Early Night, and the character has a positive relationship with someone currently Paralyzed or Catatonic, 30% chance to Check Out one at random";
                 if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON || currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT) {
                     log += $"\n  -Time of Day: {currentTimeOfDay}";
-                    int chance = UnityEngine.Random.Range(0, 100);
-                    log += $"\n  -RNG roll: {chance}";
+                    int chance = Random.Range(0, 100);
+                    log += $"\n  -RNG roll: {chance.ToString()}";
                     if (chance < 30 && character.trapStructure.IsTrapped() == false) {
                         Character chosenCharacter = character.GetDisabledCharacterToCheckOut();
                         if (chosenCharacter != null) {
@@ -91,9 +87,8 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                                 character.PlanIdle(JOB_TYPE.CHECK_PARALYZED_FRIEND,  new GoapEffect(GOAP_EFFECT_CONDITION.IN_VISION, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), chosenCharacter);
                             }
                             return true;
-                        } else {
-                            log += "\n  -No available character to check out ";
                         }
+                        log += "\n  -No available character to check out ";
                     }
                 } else {
                     log += $"\n  -Time of Day: {currentTimeOfDay}";
@@ -103,8 +98,8 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                      currentTimeOfDay == TIME_IN_WORDS.AFTERNOON || currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT) 
                     && character.trapStructure.forcedStructure == null) {
                     log += $"\n  -Time of Day: {currentTimeOfDay}";
-                    int chance = UnityEngine.Random.Range(0, 100);
-                    log += $"\n  -RNG roll: {chance}";
+                    int chance = Random.Range(0, 100);
+                    log += $"\n  -RNG roll: {chance.ToString()}";
                     if (chance < 25 && character.trapStructure.IsTrapped() == false) {
                         log +=
                             $"\n  -Morning, Afternoon, or Early Night: {character.name} will enter Stroll Outside Mode";
@@ -117,17 +112,15 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                 log += "\n-Otherwise, if it is Morning or Afternoon, 25% chance to someone with a positive relationship in current location and then set it as the Base Structure for 2.5 hours";
                 if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.LUNCH_TIME || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON) {
                     log += $"\n  -Time of Day: {currentTimeOfDay}";
-                    int chance = UnityEngine.Random.Range(0, 100);
-                    log += $"\n  -RNG roll: {chance}";
+                    int chance = Random.Range(0, 100);
+                    log += $"\n  -RNG roll: {chance.ToString()}";
                     if (chance < 25 && character.trapStructure.IsTrapped() == false) {
-                        List<Character> positiveRelatables = character.relationshipContainer.GetFriendCharacters()
-                            .Where(x => x.homeRegion != character.homeRegion).ToList();
-                        
+                        List<Character> positiveRelatables = character.relationshipContainer.GetFriendCharacters();
                         if (positiveRelatables.Count > 0) {
                             Character targetCharacter = null;
                             LocationStructure targetStructure = null;
                             while (positiveRelatables.Count > 0 && targetStructure == null) {
-                                int index = UnityEngine.Random.Range(0, positiveRelatables.Count);
+                                int index = Random.Range(0, positiveRelatables.Count);
                                 Character chosenRelatable = positiveRelatables[index];
                                 targetCharacter = chosenRelatable;
                                 targetStructure = chosenRelatable.homeStructure.GetLocationStructure();
@@ -146,9 +139,8 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                                     $"\n  -Morning or Afternoon: {character.name} will go to dwelling of character with positive relationship, {targetCharacter.name} and set Base Structure for 2.5 hours";
                                 character.PlanIdle(JOB_TYPE.VISIT_FRIEND, INTERACTION_TYPE.VISIT, targetCharacter, new object[] { targetStructure, targetCharacter });
                                 return true;
-                            } else {
-                                log += "\n  -No positive relationship with home structure";
                             }
+                            log += "\n  -No positive relationship with home structure";
                         } else {
                             log += "\n  -No character with positive relationship";
                         }
@@ -162,9 +154,8 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                     log += $"\n  -{character.name} will do action Sit on {deskOrTable}";
                     character.PlanIdle(JOB_TYPE.IDLE_SIT, INTERACTION_TYPE.SIT, deskOrTable);
                     return true;
-                } else {
-                    log += "\n  -No unoccupied Table or Desk";
                 }
+                log += "\n  -No unoccupied Table or Desk";
 
                 log += "\n-Otherwise, stand idle";
                 log += $"\n  -{character.name} will do action Stand";
