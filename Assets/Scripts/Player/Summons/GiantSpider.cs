@@ -7,7 +7,7 @@ public class GiantSpider : Summon {
     
     public override string raceClassName => $"Giant Spider";
     
-    public GiantSpider() : base(SUMMON_TYPE.GiantSpider, CharacterRole.SOLDIER, ClassName, RACE.SPIDER,
+    public GiantSpider() : base(SUMMON_TYPE.GiantSpider, ClassName, RACE.SPIDER,
         UtilityScripts.Utilities.GetRandomGender()) {
         combatComponent.SetElementalDamage(ELEMENTAL_TYPE.Poison);
     }

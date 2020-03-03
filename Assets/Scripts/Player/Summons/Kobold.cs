@@ -7,7 +7,7 @@ public class Kobold : Summon {
     
     public override string raceClassName => "Kobold";
     
-    public Kobold() : base(SUMMON_TYPE.Kobold, CharacterRole.SOLDIER, ClassName, RACE.KOBOLD,
+    public Kobold() : base(SUMMON_TYPE.Kobold, ClassName, RACE.KOBOLD,
         UtilityScripts.Utilities.GetRandomGender()) {
 		combatComponent.SetElementalDamage(ELEMENTAL_TYPE.Ice);
     }

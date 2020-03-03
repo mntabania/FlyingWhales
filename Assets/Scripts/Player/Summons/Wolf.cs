@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Wolf : Summon {
 
-	public Wolf() : base(SUMMON_TYPE.Wolf, CharacterRole.BEAST, "Ravager", RACE.WOLF,
+	public Wolf() : base(SUMMON_TYPE.Wolf, "Ravager", RACE.WOLF,
 		UtilityScripts.Utilities.GetRandomGender()) {
 		
 	}

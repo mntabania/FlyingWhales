@@ -711,12 +711,11 @@ public class CharacterManager : MonoBehaviour {
                                 string classAssetPath = classFiles[l];
                                 Sprite loadedSprite = (Sprite)UnityEditor.AssetDatabase.LoadAssetAtPath(classAssetPath, typeof(Sprite));
                                 if (loadedSprite != null) {
-                                    if (loadedSprite.name.Contains("_body")) {
+                                    if (loadedSprite.name.Contains("idle_1")) {
                                         characterClassAsset.defaultSprite = loadedSprite;
-                                    } else {
-                                        //assume that sprite is for animation
-                                        characterClassAsset.animationSprites.Add(loadedSprite);
                                     }
+                                    //assume that sprite is for animation
+                                    characterClassAsset.animationSprites.Add(loadedSprite);
                                 }
 
                             }

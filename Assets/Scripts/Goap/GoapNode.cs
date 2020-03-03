@@ -692,8 +692,7 @@ public class ActualGoapNode {
         if (GoapActionStateDB.GetStateResult(action.goapType, currentStateName) != InteractionManager.Goap_State_Success) {
             return;
         }
-        if (poiTarget is TileObject) {
-            TileObject target = poiTarget as TileObject;
+        if (poiTarget is TileObject target) {
             target.OnDoActionToObject(this);
         }
         //else if (poiTarget is Character) {

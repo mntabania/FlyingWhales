@@ -37,9 +37,7 @@ namespace Traits {
 
         #region Overrides
         public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
-
-            if (targetPOI is TileObject) {
-                TileObject tileObj = targetPOI as TileObject;
+            if (targetPOI is TileObject tileObj) {
                 if (tileObj.isSummonedByPlayer && !characterThatWillDoJob.traitContainer.HasTrait("Suspicious") && !alreadyInspectedTileObjects.Contains(tileObj)) {
                     if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.INSPECT, tileObj)) {
                         GoapPlanJob inspectJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.INSPECT, INTERACTION_TYPE.INSPECT, tileObj, characterThatWillDoJob);
@@ -48,11 +46,10 @@ namespace Traits {
                     }
                 }
             }
-            if (targetPOI is TileObject) {
+            if (targetPOI is TileObject item) {
                 if (!characterThatWillDoJob.traitContainer.HasTrait("Beast") /*characterThatWillDoJob.role.roleType != CHARACTER_ROLE.BEAST*/) {
-                    TileObject item = targetPOI as TileObject;
                     if (item.CanBePickedUpNormallyUponVisionBy(characterThatWillDoJob)
-                    && !characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.PICK_UP)) {
+                        && !characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.PICK_UP)) {
                         characterThatWillDoJob.jobComponent.CreatePickUpJob(item);
                         return true;
                     }
@@ -60,8 +57,8 @@ namespace Traits {
             }
             if (targetPOI is Character || targetPOI is Tombstone) {
                 Character targetCharacter = null;
-                if (targetPOI is Character) {
-                    targetCharacter = targetPOI as Character;
+                if (targetPOI is Character character) {
+                    targetCharacter = character;
                 } else {
                     targetCharacter = (targetPOI as Tombstone).character;
                 }

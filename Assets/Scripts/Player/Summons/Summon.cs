@@ -29,11 +29,11 @@ public class Summon : Character, IWorldObject {
     //     this.summonType = summonType;
     //     territorries = new List<HexTile>();
     // }
-    public Summon(SUMMON_TYPE summonType, CharacterRole role, string className, RACE race, GENDER gender) : base(className, race, gender) {
+    protected Summon(SUMMON_TYPE summonType, string className, RACE race, GENDER gender) : base(className, race, gender) {
         this.summonType = summonType;
         territorries = new List<HexTile>();
     }
-    public Summon(SaveDataCharacter data) : base(data) {
+    protected Summon(SaveDataCharacter data) : base(data) {
         this.summonType = data.summonType;
         territorries = new List<HexTile>();
     }

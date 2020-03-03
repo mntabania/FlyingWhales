@@ -412,8 +412,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             // CombatManager.Instance.CreateHitEffectAt(this, elementalDamageType);
             // if(currentHP > 0) {
             Character responsibleCharacter = null;
-            if (source is Character) {
-                responsibleCharacter = source as Character;
+            if (source is Character character) {
+                responsibleCharacter = character;
             }
             CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter);
             // }
@@ -424,7 +424,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             if (source is Character character) {
                 removed = character;
             }
-            gridTileLocation.structure.RemovePOI(this, removed);
+            gridTileLocation?.structure.RemovePOI(this, removed);
         }
         if (amount < 0) {
             Messenger.Broadcast(Signals.OBJECT_DAMAGED, this as IPointOfInterest);    
@@ -702,7 +702,10 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         this.isBeingCarriedBy = character;
     }
     public bool CanBePickedUpNormallyUponVisionBy(Character character) {
-        if (tileObjectType != TILE_OBJECT_TYPE.HEALING_POTION && tileObjectType != TILE_OBJECT_TYPE.TOOL) {
+        // if (tileObjectType != TILE_OBJECT_TYPE.HEALING_POTION && tileObjectType != TILE_OBJECT_TYPE.TOOL) {
+        //     return false;
+        // }
+        if (tileObjectType.IsTileObjectAnItem() == false) {
             return false;
         }
         if (UtilityScripts.GameUtilities.IsRaceBeast(character.race)) {

@@ -7,7 +7,7 @@ public class FireElemental : Summon {
     
     public override string raceClassName => $"Fire Elemental";
     
-    public FireElemental() : base(SUMMON_TYPE.FireElemental, CharacterRole.SOLDIER, "FireElemental", RACE.ELEMENTAL,
+    public FireElemental() : base(SUMMON_TYPE.FireElemental, "FireElemental", RACE.ELEMENTAL,
         UtilityScripts.Utilities.GetRandomGender()) {
 		combatComponent.SetElementalDamage(ELEMENTAL_TYPE.Fire);
     }

@@ -54,6 +54,7 @@ public enum RACE{
     GOLEM,
     ELEMENTAL,
     KOBOLD,
+    MIMIC
 }
 public enum HEXTILE_DIRECTION {
     NORTH_WEST,
@@ -1269,6 +1270,7 @@ public enum TILE_OBJECT_TYPE {
     FORLORN_SPIRIT,
     POISON_CLOUD,
     LOCUST_SWARM,
+    MIMIC_TILE_OBJECT
 }
 public enum POI_STATE {
     ACTIVE,
@@ -1386,7 +1388,8 @@ public enum TILE_TAG { CAVE, DUNGEON, FOREST, FLATLAND, MOUNTAIN, GRASSLAND, JUN
 public enum SUMMON_TYPE { None, Wolf, Skeleton, Golem, Succubus, Incubus, ThiefSummon,
     FireElemental,
     Kobold,
-    GiantSpider
+    GiantSpider,
+    Mimic
 }
 public enum ARTIFACT_TYPE { None, Grasping_Hands, Snatching_Hands, Abominable_Heart, Dark_Matter, Looking_Glass, Black_Scripture, False_Gem, Naga_Eyes, Tormented_Chalice, Lightning_Rod }
 public enum ABILITY_TAG { NONE, MAGIC, SUPPORT, DEBUFF, CRIME, PHYSICAL, }
@@ -1757,6 +1760,7 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.HEALING_POTION:
             case TILE_OBJECT_TYPE.TOOL:
             case TILE_OBJECT_TYPE.ARTIFACT:
+            case TILE_OBJECT_TYPE.MIMIC_TILE_OBJECT:
                 return true;
             default:
                 return false;

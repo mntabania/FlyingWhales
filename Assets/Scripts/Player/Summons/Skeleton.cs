@@ -8,7 +8,7 @@ using UnityEngine;
 /// </summary>
 public class Skeleton : Summon {
 
-    public Skeleton() : base(SUMMON_TYPE.Skeleton, CharacterRole.BANDIT, CharacterManager.Instance.GetRandomClassByIdentifier("Normal"), RACE.SKELETON, UtilityScripts.Utilities.GetRandomGender()) { }
+    public Skeleton() : base(SUMMON_TYPE.Skeleton, CharacterManager.Instance.GetRandomClassByIdentifier("Normal"), RACE.SKELETON, UtilityScripts.Utilities.GetRandomGender()) { }
     public Skeleton(SaveDataCharacter data) : base(data) { }
 
     #region Overrides
