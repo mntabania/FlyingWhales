@@ -183,6 +183,8 @@ public class Summon : Character, IWorldObject {
             } else {
                 deathLog = _deathLog;
             }
+
+            AfterDeath(deathTile);
         }
     }
     protected override void OnTickStarted() {
@@ -239,6 +241,7 @@ public class Summon : Character, IWorldObject {
         //}
         marker.UpdateSpeed();
     }
+    protected virtual void AfterDeath(LocationGridTile deathTileLocation) { }
     #endregion
 
     public void Reset() {

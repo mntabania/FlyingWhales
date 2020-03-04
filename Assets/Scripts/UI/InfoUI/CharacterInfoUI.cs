@@ -584,6 +584,9 @@ public class CharacterInfoUI : InfoUIBase {
         summary = $"{summary}{("\nIgnore Hostiles: " + activeCharacter.ignoreHostility.ToString())}";
         summary = $"{summary}{("\nAttack Range: " + activeCharacter.characterClass.attackRange.ToString())}";
         summary = $"{summary}{("\nAttack Speed: " + activeCharacter.attackSpeed.ToString())}";
+        summary = $"{summary}{("\nCombat Mode: " + activeCharacter.combatComponent.combatMode.ToString())}";
+        summary = $"{summary}{("\nElemental Type: " + activeCharacter.combatComponent.elementalDamage.name)}";
+
         if (activeCharacter.stateComponent.currentState != null) {
             summary = $"{summary}{$"\nCurrent State: {activeCharacter.stateComponent.currentState}"}";
             summary = $"{summary}{$"\n\tDuration in state: {activeCharacter.stateComponent.currentState.currentDuration}/{activeCharacter.stateComponent.currentState.duration}"}";

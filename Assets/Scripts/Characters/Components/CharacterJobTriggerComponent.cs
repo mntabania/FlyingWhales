@@ -751,4 +751,20 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    _owner.jobQueue.AddJobInQueue(job);
     }
     #endregion
+
+    #region Idle
+    public bool TriggerStandStill() {
+        if (!_owner.jobQueue.HasJob(JOB_TYPE.STAND_STILL)) {
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.STAND_STILL], _owner, _owner, null, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.STAND_STILL, INTERACTION_TYPE.STAND_STILL, _owner, _owner);
+            goapPlan.SetDoNotRecalculate(true);
+            job.SetCannotBePushedBack(true);
+            job.SetAssignedPlan(goapPlan);
+            _owner.jobQueue.AddJobInQueue(job);
+            return true;
+        }
+        return false;
+    }
+    #endregion
 }

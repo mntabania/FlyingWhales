@@ -149,6 +149,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.STAND, new[]{
             new StateNameAndDuration(){ name = "Stand Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
         } },
+        {INTERACTION_TYPE.STAND_STILL, new[]{
+            new StateNameAndDuration(){ name = "Stand Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(24) },
+        } },
         {INTERACTION_TYPE.SIT, new[]{
             new StateNameAndDuration(){ name = "Sit Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
         } },

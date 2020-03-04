@@ -282,6 +282,9 @@ public class CharacterManager : MonoBehaviour {
         if(targetTile == null) {
             targetTile = poi.gridTileLocation;
         }
+        if (targetTile.objHere != null) {
+            targetTile = targetTile.GetNearestUnoccupiedTileFromThis();
+        }
         int food = GetFoodAmountTakenFromDead(deadCharacter);
         FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(TILE_OBJECT_TYPE.FOOD_PILE);
         foodPile.SetResourceInPile(food);
@@ -423,7 +426,7 @@ public class CharacterManager : MonoBehaviour {
         return null;
     }
     private object CreateNewSummonClassFromType(SUMMON_TYPE summonType) {
-        var typeName = summonType.ToString();
+        var typeName = UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(summonType.ToString());
         return System.Activator.CreateInstance(System.Type.GetType(typeName) ?? throw new Exception($"provided summon type was invalid! {typeName}"));
     }
     public SummonSettings GetSummonSettings(SUMMON_TYPE type) {

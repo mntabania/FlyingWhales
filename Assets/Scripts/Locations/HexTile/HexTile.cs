@@ -792,12 +792,12 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         if(_isCorrupted != state) {
             _isCorrupted = state;
             Biomes.Instance.UpdateTileSprite(this, spriteRenderer.sortingOrder);
-            for (int i = 0; i < AllNeighbours.Count; i++) {
-                HexTile neighbour = AllNeighbours[i];
-                if (neighbour.isCorrupted == false && neighbour.isCurrentlyBeingCorrupted == false) {
-                    neighbour.CheckForCorruptAction();
-                }
-            }
+            //for (int i = 0; i < AllNeighbours.Count; i++) {
+            //    HexTile neighbour = AllNeighbours[i];
+            //    if (neighbour.isCorrupted == false && neighbour.isCurrentlyBeingCorrupted == false) {
+            //        neighbour.CheckForCorruptAction();
+            //    }
+            //}
         }
     }
     public void AdjustUncorruptibleLandmarkNeighbors(int amount) {
@@ -813,7 +813,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         PlayerAction existingCorruptAction = GetPlayerAction(PlayerDB.Corrupt_Action);
         if (CanBeCorrupted()) {
             if (existingCorruptAction == null) {
-                PlayerAction corruptAction = new PlayerAction(PlayerDB.Corrupt_Action, CanBeCorrupted, null, StartPerTickCorruption);
+                PlayerAction corruptAction = new PlayerAction(PlayerDB.Corrupt_Action, CanBeCorrupted, null, StartCorruption);
                 AddPlayerAction(corruptAction);
             }
         } else {
@@ -842,16 +842,17 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
                 return false;
             }
         }
-        for (int i = 0; i < AllNeighbours.Count; i++) {
-            HexTile neighbour = AllNeighbours[i];
-            if (neighbour.isCorrupted) {
-                return true;
-            }
-        }
-        return false;
+        return true;
+        //for (int i = 0; i < AllNeighbours.Count; i++) {
+        //    HexTile neighbour = AllNeighbours[i];
+        //    if (neighbour.isCorrupted) {
+        //        return true;
+        //    }
+        //}
+        //return false;
     }
-    private void StartPerTickCorruption() {
-        PlayerManager.Instance.player.AdjustMana(-EditableValuesManager.Instance.corruptTileManaCost);
+    private void StartCorruption() {
+        //PlayerManager.Instance.player.AdjustMana(-EditableValuesManager.Instance.corruptTileManaCost);
         InstantlyCorruptAllOwnedInnerMapTiles();
         OnCorruptSuccess();
     }
@@ -878,11 +879,11 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         //remove features
         featureComponent.RemoveAllFeatures(this);
         
-        RemovePlayerAction(GetPlayerAction(PlayerDB.Corrupt_Action));
-        if (CanBuildDemonicStructure()) {
-            PlayerAction buildAction = new PlayerAction(PlayerDB.Build_Demonic_Structure_Action, CanBuildDemonicStructure, null, OnClickBuild);
-            AddPlayerAction(buildAction);
-        }
+        //RemovePlayerAction(GetPlayerAction(PlayerDB.Corrupt_Action));
+        //if (CanBuildDemonicStructure()) {
+        //    PlayerAction buildAction = new PlayerAction(PlayerDB.Build_Demonic_Structure_Action, CanBuildDemonicStructure, null, OnClickBuild);
+        //    AddPlayerAction(buildAction);
+        //}
     }
     #endregion
 
@@ -890,7 +891,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     public void SetSettlementOnTile(Settlement settlement) {
         settlementOnTile = settlement;
         landmarkOnTile?.nameplate.UpdateVisuals();
-        CheckForCorruptAction();
+        //CheckForCorruptAction();
     }
     #endregion
 
@@ -1050,7 +1051,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         PlayerAction harassAction = new PlayerAction(PlayerDB.Harass_Action, CanDoHarass, IsHarassRaidInvadeValid, () => PlayerUI.Instance.OnClickHarassRaidInvade(this, "harass"));
         PlayerAction raidAction = new PlayerAction(PlayerDB.Raid_Action, CanDoRaid, IsHarassRaidInvadeValid, () => PlayerUI.Instance.OnClickHarassRaidInvade(this, "raid"));
         PlayerAction invadeAction = new PlayerAction(PlayerDB.Invade_Action, CanDoInvade, IsHarassRaidInvadeValid, () => PlayerUI.Instance.OnClickHarassRaidInvade(this, "invade"));
+        PlayerAction buildAction = new PlayerAction(PlayerDB.Build_Demonic_Structure_Action, () => true, CanBuildDemonicStructure, OnClickBuild);
 
+        AddPlayerAction(buildAction);
         AddPlayerAction(harassAction);
         AddPlayerAction(raidAction);
         AddPlayerAction(invadeAction);
@@ -1102,10 +1105,22 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     #endregion
 
     #region Demonic Structure Building
-    private bool CanBuildDemonicStructure() {
-        return isCorrupted && isCurrentlyBeingCorrupted == false && landmarkOnTile == null 
+    private bool CanBuildDemonicStructure(IPlayerActionTarget target) {
+        //Cannot build on settlements and hextiles with blueprints right now
+        if(/*isCorrupted && isCurrentlyBeingCorrupted == false &&*/ settlementOnTile == null && landmarkOnTile == null 
                && elevationType != ELEVATION.WATER && elevationType != ELEVATION.MOUNTAIN &&
-            PlayerManager.Instance.player.mana >= EditableValuesManager.Instance.buildStructureManaCost;
+            PlayerManager.Instance.player.mana >= EditableValuesManager.Instance.buildStructureManaCost) {
+
+            //if it has any build spots that have a blueprint on them, do not allow
+            for (int i = 0; i < ownedBuildSpots.Length; i++) {
+                BuildingSpot spot = ownedBuildSpots[i];
+                if (spot.hasBlueprint) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
     }
     private void OnClickBuild() {
         demonicLandmarksThatCanBeBuilt.Clear();
@@ -1169,6 +1184,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         UIManager.Instance.ShowYesNoConfirmation("Build Structure Confirmation", "Are you sure you want to build " + landmarkName + "?", () => StartBuild(landmarkData));
     }
     private void StartBuild(LandmarkData landmarkData) {
+        StartCorruption();
         //LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkObj as string);
         BaseLandmark newLandmark =
             LandmarkManager.Instance.CreateNewLandmarkOnTile(this, landmarkData.landmarkType, false);

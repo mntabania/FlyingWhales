@@ -39,15 +39,9 @@ public class CombatManager : MonoBehaviour {
                     ChainElectricDamage(target, damage);
                 }
             }
-
-            //if (shouldSetBurningSource && elementalDamage.addedTraitName == "Burning" && trait != null) {
-            //    if(target.gridTileLocation != null) {
-            //        Burning burning = trait as Burning;
-            //        if(burning.sourceOfBurning == null) {
-            //            burning.SetSourceOfBurning(new BurningSource(target.gridTileLocation.structure.location), target);
-            //        }
-            //    }
-            //}
+        }
+        if(elementalType == ELEMENTAL_TYPE.Earth) {
+            EarthElementProcess(target);
         }
     }
     public void CreateHitEffectAt(IDamageable poi, ELEMENTAL_TYPE elementalType) {
@@ -179,6 +173,32 @@ public class CombatManager : MonoBehaviour {
             if (!traitables[i].traitContainer.HasTrait("Zapped")) {
                 traitables[i].AdjustHP(damage, ELEMENTAL_TYPE.Electric, true);
             }
+        }
+    }
+    #endregion
+
+    #region Elemental Type Processes
+    private void EarthElementProcess(ITraitable target) {
+        string elements = string.Empty;
+        if (target.traitContainer.HasTrait("Zapped")) {
+            elements += " Zapped";
+        }
+        if (target.traitContainer.HasTrait("Burning")) {
+            elements += " Burning";
+        }
+        if (target.traitContainer.HasTrait("Poisoned")) {
+            elements += " Poisoned";
+        }
+        if (target.traitContainer.HasTrait("Wet")) {
+            elements += " Wet";
+        }
+        if (target.traitContainer.HasTrait("Freezing")) {
+            elements += " Freezing";
+        }
+        if(elements != string.Empty) {
+            elements = elements.TrimStart(' ');
+            string[] elementsArray = elements.Split(' ');
+            target.traitContainer.RemoveTrait(target, elementsArray[UnityEngine.Random.Range(0, elementsArray.Length)]);
         }
     }
     #endregion

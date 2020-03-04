@@ -54,7 +54,8 @@ public enum RACE{
     GOLEM,
     ELEMENTAL,
     KOBOLD,
-    MIMIC
+    MIMIC,
+    ENT,
 }
 public enum HEXTILE_DIRECTION {
     NORTH_WEST,
@@ -952,6 +953,7 @@ public enum INTERACTION_TYPE {
     ROAM,
     STUDY_MONSTER,
     DESTROY_RESOURCE_AMOUNT,
+    STAND_STILL,
 }
 
 public enum INTERACTION_CATEGORY {
@@ -1298,7 +1300,7 @@ public enum JOB_TYPE { NONE, UNDERMINE, ENERGY_RECOVERY_URGENT, FULLNESS_RECOVER
         , DESTROY, TRIGGER_FLAW, CORRUPT_CULTIST, CORRUPT_CULTIST_SABOTAGE_FACTION, SCREAM, CLEANSE_CORRUPTION, CLAIM_REGION
         , BUILD_BLUEPRINT, PLACE_BLUEPRINT, COMBAT, STROLL, HAUL, OBTAIN_PERSONAL_FOOD, SNUFF_TORNADO, FLEE_TO_HOME, BURY_SERIAL_KILLER_VICTIM, KILL, GO_TO, CHECK_PARALYZED_FRIEND, VISIT_FRIEND
         , IDLE_RETURN_HOME, IDLE_NAP, IDLE_SIT, IDLE_STAND, IDLE_GO_TO_INN, COMBINE_STOCKPILE, ROAM_AROUND_TERRITORY, ROAM_AROUND_CORRUPTION, ROAM_AROUND_PORTAL, ROAM_AROUND_TILE, RETURN_TERRITORY, RETURN_PORTAL
-        , STAND, ABDUCT, LEARN_MONSTER, TAKE_ARTIFACT, TAKE_ITEM, HIDE_AT_HOME,
+        , STAND, ABDUCT, LEARN_MONSTER, TAKE_ARTIFACT, TAKE_ITEM, HIDE_AT_HOME, STAND_STILL,
 }
 public enum JOB_OWNER { CHARACTER, LOCATION, QUEST, }
 public enum Cardinal_Direction { North, South, East, West };
@@ -1388,7 +1390,9 @@ public enum SUMMON_TYPE { None, Wolf, Skeleton, Golem, Succubus, Incubus, ThiefS
     FireElemental,
     Kobold,
     GiantSpider,
-    Mimic
+    Mimic,
+    Ent,
+    Small_Spider,
 }
 public enum ARTIFACT_TYPE { None, Grasping_Hands, Snatching_Hands, Abominable_Heart, Dark_Matter, Looking_Glass, Black_Scripture, False_Gem, Naga_Eyes, Tormented_Chalice, Lightning_Rod }
 public enum ABILITY_TAG { NONE, MAGIC, SUPPORT, DEBUFF, CRIME, PHYSICAL, }
@@ -1407,7 +1411,7 @@ public enum BEHAVIOUR_COMPONENT_ATTRIBUTE { WITHIN_HOME_SETTLEMENT_ONLY, ONCE_PE
 public enum EXCLUSIVE_IDEOLOGY_CATEGORIES { RACE, GENDER, TRAIT, }
 public enum EMOTION { None, Fear, Approval, Embarassment, Disgust, Anger, Betrayal, Concern, Disappointment, Scorn, Sadness, Threatened, Arousal, Disinterest, Despair, Shock, Resentment, Disapproval, Gratefulness, }
 public enum PLAYER_ARCHETYPE { Normal, Ravager, Lich, Puppet_Master, }
-public enum ELEMENTAL_TYPE { Normal, Fire, Poison, Water, Ice, Electric }
+public enum ELEMENTAL_TYPE { Normal, Fire, Poison, Water, Ice, Electric, Earth }
 /// <summary>
 /// STARTED - actor is moving towards the target but is not yet performing action
 /// PERFORMING - actor arrived at the target and is performing action
@@ -1910,6 +1914,7 @@ public static class Extensions {
             case JOB_TYPE.RETURN_TERRITORY:
             case JOB_TYPE.RETURN_PORTAL:
             case JOB_TYPE.STAND:
+            case JOB_TYPE.STAND_STILL:
                 priority = 250;
                 break;
             case JOB_TYPE.COMBINE_STOCKPILE:

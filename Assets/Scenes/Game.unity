@@ -5976,7 +5976,7 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 943582b399ad3274f9f983cab86a91f9, type: 2}
     - {fileID: 11400000, guid: e17be985790aeb8409fe8431d4d9cbbe, type: 2}
   elementalDamageDataDictionary:
-    m_keys: 000000000100000002000000030000000400000005000000
+    m_keys: 00000000010000000200000003000000040000000500000006000000
     m_values:
     - {fileID: 11400000, guid: c3311b4608dbc5e4c9cc382b94fffac2, type: 2}
     - {fileID: 11400000, guid: 243c943bbf756b446adc7051bb3dad7d, type: 2}
@@ -5984,6 +5984,7 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 34df11d6a91aaa44ba4f49bad94418dc, type: 2}
     - {fileID: 11400000, guid: 024d1a90138f86846a83a25a945cbe90, type: 2}
     - {fileID: 11400000, guid: ab104bcda031bc24bb22004759076609, type: 2}
+    - {fileID: 11400000, guid: 1cf5310562667674da3c09b37fa39424, type: 2}
 --- !u!1 &118894249
 GameObject:
   m_ObjectHideFlags: 0

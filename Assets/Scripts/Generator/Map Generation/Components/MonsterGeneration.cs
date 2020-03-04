@@ -8,8 +8,8 @@ using UtilityScripts;
 public class MonsterGeneration : MapGenerationComponent {
 
 	public override IEnumerator Execute(MapGenerationData data) {
-		string[] monsterChoices = new[] {"Golem", "Wolves", "Seducer", "Fire Elementals", "Kobolds", "Giant Spiders"};
-		List<BaseLandmark> monsterLairs = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.MONSTER_LAIR);
+		string[] monsterChoices = new[] {"Small Spiders"}; //"Golem", "Wolves", "Seducer", "Fire Elementals", "Kobolds", "Giant Spiders", "Ent"
+        List<BaseLandmark> monsterLairs = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.MONSTER_LAIR);
 		for (int i = 0; i < monsterLairs.Count; i++) {
 			BaseLandmark monsterLair = monsterLairs[i];
 			string randomSet = CollectionUtilities.GetRandomElement(monsterChoices);
@@ -57,15 +57,37 @@ public class MonsterGeneration : MapGenerationComponent {
 				for (int j = 0; j < randomAmount; j++) {
 					CreateMonster(SUMMON_TYPE.GiantSpider, settlementOnTile, monsterLair, monsterLairStructure);
 				}
-			}
-		}
+            } else if (randomSet == "Ent") {
+                randomAmount = Random.Range(1, 4);
+                for (int j = 0; j < randomAmount; j++) {
+                    Summon summon = CreateMonster(SUMMON_TYPE.Ent, settlementOnTile, monsterLair, monsterLairStructure);
+                    if(monsterLair.tileLocation.biomeType == BIOMES.DESERT) {
+                        summon.AssignClass("Desert Ent");
+                    } else if (monsterLair.tileLocation.biomeType == BIOMES.FOREST) {
+                        summon.AssignClass("Forest Ent");
+                    } else if (monsterLair.tileLocation.biomeType == BIOMES.SNOW) {
+                        summon.AssignClass("Snow Ent");
+                    } else if (monsterLair.tileLocation.biomeType == BIOMES.GRASSLAND) {
+                        summon.AssignClass("Grass Ent");
+                    } else if (monsterLair.tileLocation.isCorrupted) {
+                        summon.AssignClass("Corrupt Ent");
+                    }
+                }
+            } else if (randomSet == "Small Spiders") {
+                randomAmount = Random.Range(1, 4);
+                for (int j = 0; j < randomAmount; j++) {
+                    CreateMonster(SUMMON_TYPE.Small_Spider, settlementOnTile, monsterLair, monsterLairStructure);
+                }
+            }
+        }
 		yield return null;
 	}
 
-	private void CreateMonster(SUMMON_TYPE summonType, Settlement settlementOnTile, BaseLandmark monsterLair,
+	private Summon CreateMonster(SUMMON_TYPE summonType, Settlement settlementOnTile, BaseLandmark monsterLair,
 		LocationStructure monsterLairStructure) {
 		Summon summon = CharacterManager.Instance.CreateNewSummon(summonType, FactionManager.Instance.neutralFaction, settlementOnTile);
 		CharacterManager.Instance.PlaceSummon(summon, CollectionUtilities.GetRandomElement(monsterLairStructure.unoccupiedTiles));
 		summon.AddTerritory(monsterLair.tileLocation);
+        return summon;
 	}
 }
