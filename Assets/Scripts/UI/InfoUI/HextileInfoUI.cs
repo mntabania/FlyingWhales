@@ -43,7 +43,7 @@ public class HextileInfoUI : InfoUIBase {
     }
     private void UpdateBasicInfo() {
         if (currentlyShowingHexTile.landmarkOnTile != null) {
-            _locationPortrait.SetPortrait(currentlyShowingHexTile.landmarkOnTile.specificLandmarkType);    
+            _locationPortrait.SetPortrait(currentlyShowingHexTile.landmarkOnTile.landmarkPortrait);    
         } else {
             _locationPortrait.SetPortrait(LANDMARK_TYPE.NONE);
         }

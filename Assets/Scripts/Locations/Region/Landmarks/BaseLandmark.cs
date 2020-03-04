@@ -8,34 +8,29 @@ using System.Collections.Generic;
 using System.Linq;
 
 public class BaseLandmark {
-
-    protected int _id;
-    protected string _landmarkName;
-    protected LANDMARK_TYPE _specificLandmarkType;
-    protected HexTile _location;
-    protected HexTile _connectedTile;
-    protected LandmarkVisual _landmarkVisual;
+    public int id { get; }
     public LandmarkNameplate nameplate { get; }
     public List<LANDMARK_TAG> landmarkTags { get; private set; }
-    public Vector2 nameplatePos { get; private set; }
-    //public int invasionTicks { get { return GetInvasionTicks(); } }
+    public Vector2 nameplatePos { get; }
     public int invasionTicks { get; private set; }
-    //private int _invasionTicks; //how many ticks until this landmark is invaded. NOTE: This is in raw ticks so if the landmark should be invaded in 1 hour, this should be set to the number of ticks in an hour.
+    public Sprite landmarkPortrait { get; private set; }
 
+    private string _landmarkName;
+    private LANDMARK_TYPE _specificLandmarkType;
+    private HexTile _location;
+    private LandmarkVisual _landmarkVisual;
+    
     #region getters/setters
-    public int id => _id;
     public string landmarkName => _landmarkName;
-    public string urlName => $"<link=\"{this._id.ToString()}_landmark\">{_landmarkName}</link>";
     public LANDMARK_TYPE specificLandmarkType => _specificLandmarkType;
     public LandmarkVisual landmarkVisual => _landmarkVisual;
     public HexTile tileLocation => _location;
-    public HexTile connectedTile => _connectedTile;
     #endregion
 
     private BaseLandmark() { }
     public BaseLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) : this() {
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
-        _id = UtilityScripts.Utilities.SetID(this);
+        id = UtilityScripts.Utilities.SetID(this);
         _location = location;
         _specificLandmarkType = specificLandmarkType;
         SetName(RandomNameGenerator.GetLandmarkName(specificLandmarkType));
@@ -45,10 +40,9 @@ public class BaseLandmark {
         SetInvasionTicks(GameManager.Instance.GetTicksBasedOnHour(4));
     }
     public BaseLandmark(HexTile location, SaveDataLandmark data) : this() {
-        _id = UtilityScripts.Utilities.SetID(this, data.id);
+        id = UtilityScripts.Utilities.SetID(this, data.id);
         _location = location;
         if(data.connectedTileID != -1) {
-            _connectedTile = GridMap.Instance.normalHexTiles[data.connectedTileID];
         }
         _specificLandmarkType = data.landmarkType;
         SetName(data.landmarkName);
@@ -73,7 +67,7 @@ public class BaseLandmark {
             return;
         }
         _specificLandmarkType = type;
-        tileLocation.UpdateStructureVisuals(type);
+        tileLocation.UpdateLandmarkVisuals();
         tileLocation.UpdateBuildSprites();
         //if (type == LANDMARK_TYPE.NONE) {
         //    ObjectPoolManager.Instance.DestroyObject(nameplate.gameObject);
@@ -237,5 +231,11 @@ public class BaseLandmark {
     //         tileLocation.region.AddFeature(LandmarkManager.Instance.CreateRegionFeature(TileFeatureDB.Hallowed_Ground_Feature));
     //     }
     // }
+    #endregion
+
+    #region Visuals
+    public void SetLandmarkPortrait(Sprite sprite) {
+        landmarkPortrait = sprite;
+    }
     #endregion
 }

@@ -18,6 +18,7 @@ public class SettlementGeneration : MapGenerationComponent {
 			if (region.HasTileWithFeature(TileFeatureDB.Inhabited_Feature)) {
 				yield return MapGenerator.Instance.StartCoroutine(CreateSettlement(region, data));
 			}
+			region.innerMap.PlaceBuildSpotTileObjects();
 		}
 		ApplyPreGeneratedRelationships(data);
 		yield return null;

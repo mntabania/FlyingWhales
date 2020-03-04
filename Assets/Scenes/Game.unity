@@ -83968,11 +83968,6 @@ PrefabInstance:
       propertyPath: innerMapsParent
       value: 
       objectReference: {fileID: 1536722383}
-    - target: {fileID: 114602191139862856, guid: 5265a95405071234ca6e83f73bf3868d,
-        type: 3}
-      propertyPath: landmarkData.Array.data[10].description
-      value: Unlocks new Spells and Afflictions.
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5265a95405071234ca6e83f73bf3868d, type: 3}
 --- !u!1 &1493958318

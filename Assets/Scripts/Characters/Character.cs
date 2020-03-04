@@ -3679,7 +3679,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return false;
     }
-    public void DropItem(TileObject item, LocationGridTile gridTile = null, bool clearOwner = true) {
+    public void DropItem(TileObject item, LocationGridTile gridTile = null) {
         if (UnobtainItem(item)) {
             //if (item.specialTokenType.CreatesObjectWhenDropped()) {
             //    structure.AddItem(item, gridTile);
@@ -3691,9 +3691,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
             if (targetTile != null) {
                 targetTile.structure.AddPOI(item, targetTile);
-                if (clearOwner) {
-                    item.SetCharacterOwner(null);
-                }
             } else {
                 logComponent.PrintLogErrorIfActive(
                     $"Cannot drop {item.nameWithID} of {name} because there is no target tile.");
@@ -3717,7 +3714,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     logComponent.PrintLogErrorIfActive(
                         $"Cannot drop {item.nameWithID} of {name} because there is no target tile.");
                 }
-                item.SetCharacterOwner(null);
                 //if (item.specialTokenType.CreatesObjectWhenDropped()) {
                 //    LocationGridTile targetTile = tile.GetNearestUnoccupiedTileFromThis();
                 //    targetTile.structure.AddItem(item, targetTile);
@@ -3733,13 +3729,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     public void PickUpItem(TileObject item, bool changeCharacterOwnership = false) {
-        if (item.isBeingCarriedBy != null) {
-            item.isBeingCarriedBy.UnobtainItem(item);
-        }
+        item.isBeingCarriedBy?.UnobtainItem(item);
         if (ObtainItem(item, changeCharacterOwnership)) {
-            if (item.gridTileLocation != null) {
-                item.gridTileLocation.structure.RemovePOIDestroyVisualOnly(item, this);
-            }
+            item.gridTileLocation?.structure.RemovePOIDestroyVisualOnly(item, this);
             item.SetPOIState(POI_STATE.ACTIVE);
         }
     }

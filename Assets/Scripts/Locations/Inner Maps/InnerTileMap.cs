@@ -455,6 +455,25 @@ namespace Inner_Maps {
             }
             return false;
         }
+        public void PlaceBuildSpotTileObjects() {
+            for (int x = 0; x <= buildingSpots.GetUpperBound(0); x++) {
+                for (int y = 0; y <= buildingSpots.GetUpperBound(1); y++) {
+                    BuildingSpot spot = buildingSpots[x, y];
+                    if (spot.canBeBuiltOnByNPC) {
+                        BuildSpotTileObject tileObj =
+                            InnerMapManager.Instance.CreateNewTileObject<BuildSpotTileObject>(TILE_OBJECT_TYPE
+                                .BUILD_SPOT_TILE_OBJECT);
+                        tileObj.SetBuildingSpot(spot);
+                        LocationGridTile tileLocation = map[spot.location.x, spot.location.y];
+                        tileLocation.structure.AddPOI(tileObj, tileLocation, false);
+                        tileObj.SetGridTileLocation(tileLocation); //manually placed so that only the data of the build spot will be set, and the tile will not consider the build spot as objHere
+                        if (tileLocation.structure.structureType != STRUCTURE_TYPE.WORK_AREA && tileLocation.structure.structureType != STRUCTURE_TYPE.WILDERNESS) {
+                            tileLocation.structure.SetOccupiedBuildSpot(tileObj);
+                        }    
+                    }
+                }
+            }
+        }
         #endregion
 
         #region Structures

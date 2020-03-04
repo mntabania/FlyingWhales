@@ -10,9 +10,9 @@ using UtilityScripts;
 
 public class Settlement : IJobOwner {
 
-    public int id { get; private set; }
+    public int id { get; }
     public LOCATION_TYPE locationType { get; private set; }
-    public Region region { get; private set; }
+    public Region region { get; }
     public LocationStructure prison { get; private set; }
     public LocationStructure mainStorage { get; private set; }
     public int citizenCount { get; private set; }
@@ -23,9 +23,9 @@ public class Settlement : IJobOwner {
     public Faction owner { get; private set; }
     public Faction previousOwner { get; private set; }
     public Character ruler { get; private set; }
-    public List<HexTile> tiles { get; private set; }
-    public List<Character> residents { get; private set; }
-    public List<JobQueueItem> forcedCancelJobsOnTickEnded { get; private set; }
+    public List<HexTile> tiles { get; }
+    public List<Character> residents { get; }
+    public List<JobQueueItem> forcedCancelJobsOnTickEnded { get; }
     public bool isUnderSeige { get; private set; }
 
     //structures
@@ -33,15 +33,13 @@ public class Settlement : IJobOwner {
     public InnerTileMap innerMap => region.innerMap;
 
     //misc
-    public Sprite locationPortrait { get; private set; }
     public Vector2 nameplatePos { get; private set; }
 
-    public List<JobQueueItem> availableJobs { get; protected set; }
-    public JOB_OWNER ownerType { get { return JOB_OWNER.QUEST; } }
-
-    public LocationClassManager classManager { get; private set; }
-    public LocationEventManager eventManager { get; private set; }
-    public LocationJobManager jobManager { get; private set; }
+    public List<JobQueueItem> availableJobs { get; }
+    public JOB_OWNER ownerType => JOB_OWNER.QUEST;
+    public LocationClassManager classManager { get; }
+    public LocationEventManager eventManager { get; }
+    public LocationJobManager jobManager { get; }
 
     private int newRulerDesignationChance;
     private WeightedDictionary<Character> newRulerDesignationWeights;
@@ -63,14 +61,12 @@ public class Settlement : IJobOwner {
         SetName(RandomNameGenerator.GenerateCityName(RACE.HUMANS));
         id = UtilityScripts.Utilities.SetID(this);
         this.citizenCount = citizenCount;
-        new List<Character>();
         tiles = new List<HexTile>();
         residents = new List<Character>();
         newRulerDesignationWeights = new WeightedDictionary<Character>();
         forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
         ResetNewRulerDesignationChance();
         SetAreaType(locationType);
-        // nameplatePos = LandmarkManager.Instance.GetNameplatePosition(this.coreTile);
         availableJobs = new List<JobQueueItem>();
         classManager = new LocationClassManager();
         eventManager = new LocationEventManager(this);
@@ -83,16 +79,12 @@ public class Settlement : IJobOwner {
         SetName(RandomNameGenerator.GenerateCityName(RACE.HUMANS));
         id = UtilityScripts.Utilities.SetID(this, saveDataArea.id);
         citizenCount = saveDataArea.citizenCount;
-        //charactersAtLocation = new List<Character>();
         tiles = new List<HexTile>();
         residents = new List<Character>();
         newRulerDesignationWeights = new WeightedDictionary<Character>();
-        //itemsInArea = new List<SpecialToken>();
-        //jobQueue = new JobQueue(null);
         ResetNewRulerDesignationChance();
         SetAreaType(saveDataArea.locationType);
 
-        // nameplatePos = LandmarkManager.Instance.GetNameplatePosition(this.coreTile);
         LoadStructures(saveDataArea);
     }
 
@@ -142,25 +134,6 @@ public class Settlement : IJobOwner {
         //    HexTile currTile = tiles[i];
         //    OnTileAddedToArea(currTile);
         //}
-    }
-    #endregion
-
-    #region Visuals
-    public void TintStructures(Color color) {
-        for (int i = 0; i < tiles.Count; i++) {
-            HexTile tile = tiles[i];
-            tile.SetStructureTint(color);
-
-        }
-    }
-    public void SetLocationPortrait(Sprite portrait) {
-        locationPortrait = portrait;
-    }
-    private void CreateNameplate() {
-        //GameObject nameplateGO = UIManager.Instance.InstantiateUIObject("AreaNameplate", coreTile.tileLocation.landmarkOnTile.landmarkVisual.landmarkCanvas.transform);
-        ////nameplateGO.transform.position = coreTile.transform.position;
-        //nameplateGO.GetComponent<AreaNameplate>().SetArea(this);
-        UIManager.Instance.CreateAreaNameplate(this);
     }
     #endregion
 
@@ -846,39 +819,8 @@ public class Settlement : IJobOwner {
             }
         }
 
-        //place build spots
-        PlaceBuildSpots();
-        yield return null;
-        
         PlaceResourcePiles();
         yield return null;
-        
-
-        //magic circle
-        // if (structures.ContainsKey(STRUCTURE_TYPE.WILDERNESS)) {
-        //     LocationStructure structure = structures[STRUCTURE_TYPE.WILDERNESS][0];
-        //     structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.MAGIC_CIRCLE));
-        // }
-    }
-    private void PlaceBuildSpots() {
-        for (int x = 0; x <= innerMap.buildingSpots.GetUpperBound(0); x++) {
-            for (int y = 0; y <= innerMap.buildingSpots.GetUpperBound(1); y++) {
-                BuildingSpot spot = innerMap.buildingSpots[x, y];
-                if (spot.canBeBuiltOnByNPC) {
-                    BuildSpotTileObject tileObj = new BuildSpotTileObject();
-                    tileObj.SetBuildingSpot(spot);
-                    LocationGridTile tileLocation = innerMap.map[spot.location.x, spot.location.y];
-                    //if (tileLocation.objHere != null) {
-                    //    tileLocation.structure.RemovePOI(tileLocation.objHere);
-                    //}
-                    tileLocation.structure.AddPOI(tileObj, tileLocation, false);
-                    tileObj.SetGridTileLocation(tileLocation); //manually placed so that only the data of the build spot will be set, and the tile will not consider the build spot as objHere
-                    if (tileLocation.structure.structureType != STRUCTURE_TYPE.WORK_AREA && tileLocation.structure.structureType != STRUCTURE_TYPE.WILDERNESS) {
-                        tileLocation.structure.SetOccupiedBuildSpot(tileObj);
-                    }    
-                }
-            }
-        }
     }
     private void PlaceResourcePiles() {
         if (structures.ContainsKey(STRUCTURE_TYPE.WAREHOUSE)) {
@@ -1305,22 +1247,16 @@ public class Settlement : IJobOwner {
     public void SetOwner(Faction owner) {
         SetPreviousOwner(this.owner);
         this.owner = owner;
-        /*Whenever a location is occupied, 
-            all items in structures Inside Settlement will be owned by the occupying faction.*/
-        // List<LocationStructure> insideStructures = GetStructuresAtLocation();
-        // for (int i = 0; i < insideStructures.Count; i++) {
-        //     insideStructures[i].OwnItemsInLocation(owner);
-        // }
         Messenger.Broadcast(Signals.AREA_OWNER_CHANGED, this);
         
         bool isCorrupted = this.owner != null && this.owner.isPlayerFaction;
         for (int i = 0; i < tiles.Count; i++) {
             HexTile tile = tiles[i];
             tile.SetCorruption(isCorrupted);
+            if (tile.landmarkOnTile != null) {
+                tile.UpdateLandmarkVisuals();
+            }
         }
-        //TODO:
-        // mainLandmark.landmarkNameplate.UpdateFactionEmblem();
-        // regionTileObject?.UpdateAdvertisements(this);
     }
     public void SetPreviousOwner(Faction faction) {
         previousOwner = faction;
@@ -1335,10 +1271,9 @@ public class Settlement : IJobOwner {
             if (locationType == LOCATION_TYPE.DEMONIC_INTRUSION) {
                 tile.SetCorruption(true);
             }
-            if (owner != null) {
-                TintStructures(owner.factionColor);    
+            if (tile.landmarkOnTile != null) {
+                tile.UpdateLandmarkVisuals();    
             }
-            // tile.UpdateLandmarkVisuals();
         }
     }
     public void AddTileToSettlement(params HexTile[] tiles) {
