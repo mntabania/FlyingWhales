@@ -73,7 +73,7 @@ public static class PlayerDB {
         SPELL_TYPE.TORNADO, SPELL_TYPE.METEOR, SPELL_TYPE.POISON_CLOUD, SPELL_TYPE.LIGHTNING,
         SPELL_TYPE.RAVENOUS_SPIRIT, SPELL_TYPE.FEEBLE_SPIRIT, SPELL_TYPE.FORLORN_SPIRIT,
         SPELL_TYPE.LOCUST_SWARM, SPELL_TYPE.BLIZZARD, SPELL_TYPE.SPAWN_BOULDER, SPELL_TYPE.MANIFEST_FOOD,
-        SPELL_TYPE.BRIMSTONES, SPELL_TYPE.EARTHQUAKE, SPELL_TYPE.WATER_BOMB, SPELL_TYPE.SPLASH_POISON, //Landmine, Acid_Rain, Rain, Heat_Wave, Wild_Growth, Spider_Rain, Fertility, Spawn_Bandit_Camp, Spawn_Monster_Lair, Spawn_Haunted_Grounds,
+        SPELL_TYPE.BRIMSTONES, SPELL_TYPE.EARTHQUAKE, SPELL_TYPE.WATER_BOMB, SPELL_TYPE.SPLASH_POISON, SPELL_TYPE.RAIN, //Landmine, Acid_Rain, Rain, Heat_Wave, Wild_Growth, Spider_Rain, Fertility, Spawn_Bandit_Camp, Spawn_Monster_Lair, Spawn_Haunted_Grounds,
     };
 
     public static List<SPELL_TYPE> afflictions = new List<SPELL_TYPE>() { 

@@ -61,7 +61,7 @@ GameObject:
   - component: {fileID: 8546225715878752556}
   - component: {fileID: 8636510887836854968}
   m_Layer: 14
-  m_Name: Rocks
+  m_Name: Ice Shards
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

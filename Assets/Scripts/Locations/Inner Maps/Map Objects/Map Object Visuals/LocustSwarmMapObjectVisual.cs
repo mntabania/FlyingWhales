@@ -4,6 +4,7 @@ using Inner_Maps;
 using Traits;
 using UnityEngine;
 using Random = UnityEngine.Random;
+using System.Collections;
 
 public class LocustSwarmMapObjectVisual : MovingMapObjectVisual<TileObject> {
 
@@ -12,6 +13,8 @@ public class LocustSwarmMapObjectVisual : MovingMapObjectVisual<TileObject> {
     private Tweener _movement;
     private List<ITraitable> _objsInRange;
     private LocustSwarmTileObject _locustSwarm;
+
+    public ParticleSystem locustSwarmParticle;
 
     #region Abstract Members Implementation
     public override void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) { }
@@ -44,11 +47,19 @@ public class LocustSwarmMapObjectVisual : MovingMapObjectVisual<TileObject> {
         base.PlaceObjectAt(tile);
         isSpawned = true;
         RandomizeDirection();
-        OnGamePaused(GameManager.Instance.isPaused);
+        //OnGamePaused(GameManager.Instance.isPaused);
         _expiryKey = SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(6)), Expire, this);
         Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
         Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         Messenger.AddListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
+
+        if (GameManager.Instance.isPaused) {
+            _movement.Pause();
+            StartCoroutine(PlayParticleCoroutineWhenGameIsPaused());
+        } else {
+            _movement.Play();
+            locustSwarmParticle.Play();
+        }
     }
     public override void Reset() {
         base.Reset();
@@ -66,9 +77,11 @@ public class LocustSwarmMapObjectVisual : MovingMapObjectVisual<TileObject> {
     #region Movement
     private void OnGamePaused(bool isPaused) {
         if (isPaused) {
-            _movement.Pause();    
+            _movement.Pause();
+            locustSwarmParticle.Pause();
         } else {
             _movement.Play();
+            locustSwarmParticle.Play();
         }
     }
     private void RandomizeDirection() {
@@ -163,6 +176,14 @@ public class LocustSwarmMapObjectVisual : MovingMapObjectVisual<TileObject> {
         ObjectPoolManager.Instance.DestroyObject(this);
     }
     #endregion
-    
-        
+
+    #region Particles
+    private IEnumerator PlayParticleCoroutineWhenGameIsPaused() {
+        //Playing particle effect is done in a coroutine so that it will wait one frame before pausing the particles if the game is paused when the particle is activated
+        //This will make sure that the particle effect will show but it will be paused right away
+        locustSwarmParticle.Play();
+        yield return new WaitForSeconds(0.1f);
+        locustSwarmParticle.Pause();
+    }
+    #endregion
 }

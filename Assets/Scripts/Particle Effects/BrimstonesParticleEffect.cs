@@ -7,8 +7,8 @@ using Traits;
 using Inner_Maps;
 
 public class BrimstonesParticleEffect : BaseParticleEffect {
-    public override void PlayParticleEffect() {
-        base.PlayParticleEffect();
+    protected override void PlayParticle() {
+        base.PlayParticle();
         StartCoroutine(BrimstoneEffect());
     }
     private IEnumerator BrimstoneEffect() {

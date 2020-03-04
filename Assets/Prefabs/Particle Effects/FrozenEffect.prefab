@@ -4763,6 +4763,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3393275890963497862}
+  - component: {fileID: 3845322598826111875}
   m_Layer: 14
   m_Name: FrozenEffect
   m_TagString: Untagged
@@ -4785,6 +4786,23 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3845322598826111875
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3386764851797304384}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af49abe683bd31f4a9c471199b4375bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ParentPool: {fileID: 0}
+  particleSystems:
+  - {fileID: 4932779106276457861}
+  - {fileID: 51064514632914192}
+  pauseOnGamePaused: 1
 --- !u!1 &4668371409608883262
 GameObject:
   m_ObjectHideFlags: 0

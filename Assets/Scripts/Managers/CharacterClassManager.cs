@@ -23,6 +23,7 @@ public class CharacterClassManager : MonoBehaviour {
                 typeof(DefaultBaseStructure),
                 typeof(DefaultOtherStructure),
                 typeof(DefaultExtraCatcher),
+                typeof(MovementProcessing),
             }
         },
         {"Lust", new []{typeof(MinionBehaviour)}},
