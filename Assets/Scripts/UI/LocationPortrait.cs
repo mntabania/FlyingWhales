@@ -37,7 +37,10 @@ public class LocationPortrait : PooledObject, IPointerClickHandler {
         
     }
     public void SetPortrait(LANDMARK_TYPE landmarkType) {
-        portrait.sprite = LandmarkManager.Instance.GetLandmarkData(landmarkType).landmarkPortrait;
+        portrait.sprite = LandmarkManager.Instance.GetLandmarkData(landmarkType).defaultLandmarkPortrait;
+    }
+    public void SetPortrait(Sprite sprite) {
+        portrait.sprite = sprite;
     }
     //public void SetLocation(BaseLandmark landmark) {
     //    this.landmark = landmark;

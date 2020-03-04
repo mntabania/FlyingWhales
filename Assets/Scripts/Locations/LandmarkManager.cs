@@ -295,7 +295,6 @@ public partial class LandmarkManager : MonoBehaviour {
     public Settlement CreateNewSettlement(Region region, LOCATION_TYPE locationType, int citizenCount, params HexTile[] tiles) {
         Settlement newSettlement = new Settlement(region, locationType, citizenCount);
         if (locationPortraits.ContainsKey(newSettlement.locationType)) {
-            newSettlement.SetLocationPortrait(locationPortraits[newSettlement.locationType]);
         }
         newSettlement.AddTileToSettlement(tiles);
         Messenger.Broadcast(Signals.AREA_CREATED, newSettlement);
@@ -312,7 +311,6 @@ public partial class LandmarkManager : MonoBehaviour {
         Settlement newSettlement = new Settlement(saveDataArea);
 
         if (locationPortraits.ContainsKey(newSettlement.locationType)) {
-            newSettlement.SetLocationPortrait(locationPortraits[newSettlement.locationType]);
         }
         Messenger.Broadcast(Signals.AREA_CREATED, newSettlement);
         allSetttlements.Add(newSettlement);
@@ -346,12 +344,10 @@ public partial class LandmarkManager : MonoBehaviour {
         }
         newOwner.AddToOwnedSettlements(settlement);
         settlement.SetOwner(newOwner);
-        settlement.TintStructures(newOwner.factionColor);
     }
     public void UnownSettlement(Settlement settlement) {
         settlement.owner?.RemoveFromOwnedSettlements(settlement);
         settlement.SetOwner(null);
-        settlement.TintStructures(Color.white);
     }
     public void LoadAdditionalAreaData() {
         for (int i = 0; i < allSetttlements.Count; i++) {
@@ -466,10 +462,10 @@ public partial class LandmarkManager : MonoBehaviour {
             return parsed;
         } else {
             switch (structureType) {
-                case STRUCTURE_TYPE.DWELLING:
-                    return LANDMARK_TYPE.HOUSES;
-                default:
+                case STRUCTURE_TYPE.CITY_CENTER:
                     return LANDMARK_TYPE.VILLAGE;
+                default:
+                    return LANDMARK_TYPE.HOUSES;
             }
         }
     }

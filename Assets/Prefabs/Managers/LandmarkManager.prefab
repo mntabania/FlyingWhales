@@ -53,11 +53,10 @@ MonoBehaviour:
     landmarkType: 1
     buildDuration: 0
     description: 
-    connectedTileDirection: 0
     uniqueTags: 
     landmarkObjectSprite: {fileID: 0}
-    landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
-    landmarkPortrait: {fileID: 21300000, guid: 4f117727fece67040a6c3082f72b0111, type: 3}
+    defaultLandmarkPortrait: {fileID: 21300000, guid: 4f117727fece67040a6c3082f72b0111,
+      type: 3}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -65,6 +64,7 @@ MonoBehaviour:
     - mainSprite: {fileID: 21300000, guid: e51888dfb7058024aa3d4cc54418c6cd, type: 3}
       tintSprite: {fileID: 0}
       animation: {fileID: 9100000, guid: 6edecdf346129b14d8e8f55a9d5c59b5, type: 2}
+      overrideLandmarkPortrait: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
   - landmarkTypeString: Workshop
@@ -72,11 +72,10 @@ MonoBehaviour:
     buildDuration: 0
     description: A Workshop has the tools to craft a variety of objects. Characters
       may visit this place to craft items.
-    connectedTileDirection: 0
     uniqueTags: 
     landmarkObjectSprite: {fileID: 0}
-    landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
-    landmarkPortrait: {fileID: 21300000, guid: e41ec74344b1b3b44899f7ed500eeeff, type: 3}
+    defaultLandmarkPortrait: {fileID: 21300000, guid: 979f19abab120f448b94e1eba0687db2,
+      type: 3}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -84,17 +83,17 @@ MonoBehaviour:
     - mainSprite: {fileID: 21300000, guid: 23f3d7870a4751946bf7b45c49fc2000, type: 3}
       tintSprite: {fileID: 0}
       animation: {fileID: 0}
+      overrideLandmarkPortrait: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
   - landmarkTypeString: Mines
     landmarkType: 8
     buildDuration: 0
     description: The Mines provide Supply.
-    connectedTileDirection: 0
     uniqueTags: 
     landmarkObjectSprite: {fileID: 0}
-    landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
-    landmarkPortrait: {fileID: 21300000, guid: 8b69e1c43d456b1479f998800d8a6f31, type: 3}
+    defaultLandmarkPortrait: {fileID: 21300000, guid: 04d161f6df0c0ea4a9a3268c50b2df70,
+      type: 3}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -102,21 +101,22 @@ MonoBehaviour:
     - mainSprite: {fileID: 21300000, guid: 0b1a6dfee21888942b79f0008084a2b8, type: 3}
       tintSprite: {fileID: 21300000, guid: f16e449c34192234bb171cc4f9bc300d, type: 3}
       animation: {fileID: 0}
+      overrideLandmarkPortrait: {fileID: 0}
     humansLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 0b1a6dfee21888942b79f0008084a2b8, type: 3}
       tintSprite: {fileID: 21300000, guid: f16e449c34192234bb171cc4f9bc300d, type: 3}
       animation: {fileID: 0}
+      overrideLandmarkPortrait: {fileID: 0}
     elvenLandmarkTileSprites: []
   - landmarkTypeString: Farm
     landmarkType: 17
     buildDuration: 0
     description: The Farm provides Food.
-    connectedTileDirection: 0
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300046, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
-    landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
-    landmarkPortrait: {fileID: 21300000, guid: 070434e37543e004d98c623ba8080920, type: 3}
+    defaultLandmarkPortrait: {fileID: 21300000, guid: 10016f4795fb3014ab06f390beeb256d,
+      type: 3}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -124,21 +124,18 @@ MonoBehaviour:
     - mainSprite: {fileID: 21300000, guid: 897345c9564591c4697a148359e3dc3b, type: 3}
       tintSprite: {fileID: 21300000, guid: 455f303fb578b4841ae48fd16107beb2, type: 3}
       animation: {fileID: 0}
-    humansLandmarkTileSprites:
-    - mainSprite: {fileID: 21300000, guid: 897345c9564591c4697a148359e3dc3b, type: 3}
-      tintSprite: {fileID: 21300000, guid: 455f303fb578b4841ae48fd16107beb2, type: 3}
-      animation: {fileID: 0}
+      overrideLandmarkPortrait: {fileID: 0}
+    humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
   - landmarkTypeString: Village
     landmarkType: 20
     buildDuration: 0
     description: A Settlement full of characters.
-    connectedTileDirection: 0
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
-    landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
-    landmarkPortrait: {fileID: 21300000, guid: 8f57444b93359594096b1dd546244094, type: 3}
+    defaultLandmarkPortrait: {fileID: 21300000, guid: 8f57444b93359594096b1dd546244094,
+      type: 3}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -146,25 +143,29 @@ MonoBehaviour:
     - mainSprite: {fileID: 21300000, guid: 6b15ab4e0c664d94f906a2b783906619, type: 3}
       tintSprite: {fileID: 21300000, guid: d25eaa8dbe14ebb4e96d58aabf1b978f, type: 3}
       animation: {fileID: 0}
+      overrideLandmarkPortrait: {fileID: 0}
     humansLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 25ad2f1445b44a44780267f577682fc6, type: 3}
       tintSprite: {fileID: 21300000, guid: 2509d8d1c25f61343a7e20c936950617, type: 3}
       animation: {fileID: 0}
+      overrideLandmarkPortrait: {fileID: 21300000, guid: 8f57444b93359594096b1dd546244094,
+        type: 3}
     elvenLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: a35ec4294aacc5d45a5062db0a45d55d, type: 3}
       tintSprite: {fileID: 21300000, guid: 2676d8f62a64675408e6e640dfdf1a5c, type: 3}
       animation: {fileID: 0}
+      overrideLandmarkPortrait: {fileID: 21300000, guid: 260ac1cf6a5dd774cadc8d2a36da5d74,
+        type: 3}
   - landmarkTypeString: Bandit Camp
     landmarkType: 24
     buildDuration: 0
     description: A Bandit Camp is home to a group of bandits. You may be able to
       interact with some bandits here.
-    connectedTileDirection: 0
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
-    landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
-    landmarkPortrait: {fileID: 21300000, guid: 070434e37543e004d98c623ba8080920, type: 3}
+    defaultLandmarkPortrait: {fileID: 21300000, guid: 070434e37543e004d98c623ba8080920,
+      type: 3}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -172,25 +173,27 @@ MonoBehaviour:
     - mainSprite: {fileID: 21300000, guid: ebcba59080457654da75859e60efaed2, type: 3}
       tintSprite: {fileID: 0}
       animation: {fileID: 0}
+      overrideLandmarkPortrait: {fileID: 0}
     humansLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: ebcba59080457654da75859e60efaed2, type: 3}
       tintSprite: {fileID: 0}
       animation: {fileID: 0}
+      overrideLandmarkPortrait: {fileID: 0}
     elvenLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: ebcba59080457654da75859e60efaed2, type: 3}
       tintSprite: {fileID: 0}
       animation: {fileID: 0}
+      overrideLandmarkPortrait: {fileID: 0}
   - landmarkTypeString: Mage Tower
     landmarkType: 25
     buildDuration: 0
     description: A Mage Tower is a place of magic. You may be able to obtain a Spell
       here.
-    connectedTileDirection: 0
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
-    landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
-    landmarkPortrait: {fileID: 21300000, guid: e41ec74344b1b3b44899f7ed500eeeff, type: 3}
+    defaultLandmarkPortrait: {fileID: 21300000, guid: 08c367eceabab164f855614e3d479213,
+      type: 3}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -198,6 +201,7 @@ MonoBehaviour:
     - mainSprite: {fileID: 21300000, guid: 228ea757cdc15b14ab93bba87d0237ac, type: 3}
       tintSprite: {fileID: 0}
       animation: {fileID: 0}
+      overrideLandmarkPortrait: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
   - landmarkTypeString: Temple
@@ -205,12 +209,11 @@ MonoBehaviour:
     buildDuration: 0
     description: A Temple is a place of worship. You may be able to obtain an Artifact
       here.
-    connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
-    landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
-    landmarkPortrait: {fileID: 21300000, guid: 4ceb2b47beb2817498a263252bf1e68f, type: 3}
+    defaultLandmarkPortrait: {fileID: 21300000, guid: b3d93f5810379404ea6a2f6cb30a8235,
+      type: 3}
     biomeTileSprites:
       m_keys: 07000000
       m_values:
@@ -218,29 +221,32 @@ MonoBehaviour:
         - mainSprite: {fileID: 21300000, guid: e9cd431bb2d682049b8fad85cd585e21, type: 3}
           tintSprite: {fileID: 0}
           animation: {fileID: 0}
+          overrideLandmarkPortrait: {fileID: 0}
     neutralTileSprites:
     - mainSprite: {fileID: 21300000, guid: e9cd431bb2d682049b8fad85cd585e21, type: 3}
       tintSprite: {fileID: 0}
       animation: {fileID: 0}
+      overrideLandmarkPortrait: {fileID: 0}
     humansLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: e9cd431bb2d682049b8fad85cd585e21, type: 3}
       tintSprite: {fileID: 0}
       animation: {fileID: 0}
+      overrideLandmarkPortrait: {fileID: 0}
     elvenLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: e9cd431bb2d682049b8fad85cd585e21, type: 3}
       tintSprite: {fileID: 0}
       animation: {fileID: 0}
+      overrideLandmarkPortrait: {fileID: 0}
   - landmarkTypeString: Barracks
     landmarkType: 34
     buildDuration: 0
     description: A Barracks is a military training ground. Characters may visit this
       place to improve.
-    connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
-    landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
-    landmarkPortrait: {fileID: 21300000, guid: 8f57444b93359594096b1dd546244094, type: 3}
+    defaultLandmarkPortrait: {fileID: 21300000, guid: 1f3c2670e05cb234982eca885421ecb9,
+      type: 3}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -248,19 +254,30 @@ MonoBehaviour:
     - mainSprite: {fileID: 21300000, guid: 97be908950d991c49b0092d3a14acceb, type: 3}
       tintSprite: {fileID: 21300000, guid: 36bb9c87d942a0747a60b417b0cd79e2, type: 3}
       animation: {fileID: 0}
-    humansLandmarkTileSprites: []
-    elvenLandmarkTileSprites: []
+      overrideLandmarkPortrait: {fileID: 21300000, guid: 1f3c2670e05cb234982eca885421ecb9,
+        type: 3}
+    humansLandmarkTileSprites:
+    - mainSprite: {fileID: 21300000, guid: 97be908950d991c49b0092d3a14acceb, type: 3}
+      tintSprite: {fileID: 21300000, guid: 36bb9c87d942a0747a60b417b0cd79e2, type: 3}
+      animation: {fileID: 0}
+      overrideLandmarkPortrait: {fileID: 21300000, guid: 1f3c2670e05cb234982eca885421ecb9,
+        type: 3}
+    elvenLandmarkTileSprites:
+    - mainSprite: {fileID: 21300000, guid: a35ec4294aacc5d45a5062db0a45d55d, type: 3}
+      tintSprite: {fileID: 21300000, guid: 2676d8f62a64675408e6e640dfdf1a5c, type: 3}
+      animation: {fileID: 0}
+      overrideLandmarkPortrait: {fileID: 21300000, guid: 85b13cb308265cb469234ed163504cde,
+        type: 3}
   - landmarkTypeString: Monster Lair
     landmarkType: 42
     buildDuration: 0
     description: A Monster Lair is home to many different monsters. You may be able
       to obtain a Summon here.
-    connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
-    landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
-    landmarkPortrait: {fileID: 21300000, guid: de2218b3503e67748a7bb0a94e722a5b, type: 3}
+    defaultLandmarkPortrait: {fileID: 21300000, guid: de2218b3503e67748a7bb0a94e722a5b,
+      type: 3}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -268,18 +285,18 @@ MonoBehaviour:
     - mainSprite: {fileID: 21300000, guid: e25182124429402469751b740445d966, type: 3}
       tintSprite: {fileID: 0}
       animation: {fileID: 9100000, guid: 5e52831c99093c9429a7012fe80475b7, type: 2}
+      overrideLandmarkPortrait: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
   - landmarkTypeString: The Spire
     landmarkType: 48
     buildDuration: 48
     description: Unlocks new Spells and Afflictions.
-    connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
-    landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
-    landmarkPortrait: {fileID: 21300000, guid: bda1deac126da4548966400b0d9c047c, type: 3}
+    defaultLandmarkPortrait: {fileID: 21300000, guid: bda1deac126da4548966400b0d9c047c,
+      type: 3}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -287,18 +304,18 @@ MonoBehaviour:
     - mainSprite: {fileID: 21300000, guid: 73eecfc9a4b9f1d4395846aa3a37d4bf, type: 3}
       tintSprite: {fileID: 0}
       animation: {fileID: 9100000, guid: b3c9bdb6b8e51ef40a10c83c58900ee0, type: 2}
+      overrideLandmarkPortrait: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
   - landmarkTypeString: The Crypt
     landmarkType: 49
     buildDuration: 48
     description: Activate artifacts to unlock new player abilities.
-    connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
-    landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
-    landmarkPortrait: {fileID: 21300000, guid: e75228975f41e16418cd32f509cf4709, type: 3}
+    defaultLandmarkPortrait: {fileID: 21300000, guid: e75228975f41e16418cd32f509cf4709,
+      type: 3}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -306,18 +323,18 @@ MonoBehaviour:
     - mainSprite: {fileID: 21300000, guid: caaaf5c9190312245a0a80dd4a509cc1, type: 3}
       tintSprite: {fileID: 0}
       animation: {fileID: 9100000, guid: a1649f5a5d0c6b8439c71ef58887d9a0, type: 2}
+      overrideLandmarkPortrait: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
   - landmarkTypeString: The Kennel
     landmarkType: 50
     buildDuration: 48
     description: Breeds new monsters.
-    connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
-    landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
-    landmarkPortrait: {fileID: 21300000, guid: 76a9cddf689f36d4badf9b72c00f1406, type: 3}
+    defaultLandmarkPortrait: {fileID: 21300000, guid: 76a9cddf689f36d4badf9b72c00f1406,
+      type: 3}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -325,18 +342,18 @@ MonoBehaviour:
     - mainSprite: {fileID: 21300000, guid: bc0fdc68227150c488e1d5988e09871d, type: 3}
       tintSprite: {fileID: 0}
       animation: {fileID: 9100000, guid: b711fb2f50735fc4aa46d89f72021d88, type: 2}
+      overrideLandmarkPortrait: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
   - landmarkTypeString: The Anvil
     landmarkType: 51
     buildDuration: 48
     description: The Ruinarch may assign a minion to research upgrades on the Anvil.
-    connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
-    landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
-    landmarkPortrait: {fileID: 21300000, guid: 3446cbb2f691a6e459dede63d06ba416, type: 3}
+    defaultLandmarkPortrait: {fileID: 21300000, guid: 3446cbb2f691a6e459dede63d06ba416,
+      type: 3}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -344,18 +361,18 @@ MonoBehaviour:
     - mainSprite: {fileID: 21300000, guid: 566392069dbffc6409998f9359704001, type: 3}
       tintSprite: {fileID: 0}
       animation: {fileID: 9100000, guid: a62da718639c1c54c952d8b0cf78d36d, type: 2}
+      overrideLandmarkPortrait: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
   - landmarkTypeString: Goader
     landmarkType: 52
     buildDuration: 48
     description: Manipulate characters into joining or leaving factions.
-    connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
-    landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
-    landmarkPortrait: {fileID: 21300000, guid: a198e138445896d4eaf0cfbb73874723, type: 3}
+    defaultLandmarkPortrait: {fileID: 21300000, guid: a198e138445896d4eaf0cfbb73874723,
+      type: 3}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -363,18 +380,18 @@ MonoBehaviour:
     - mainSprite: {fileID: 21300000, guid: 373c75d3584925743ac4245df8a2bbcb, type: 3}
       tintSprite: {fileID: 0}
       animation: {fileID: 9100000, guid: ba45c35fc4e3c8d48b66c100d61ef5b2, type: 2}
+      overrideLandmarkPortrait: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
   - landmarkTypeString: The Eye
     landmarkType: 53
     buildDuration: 48
     description: Notifies of significant events and allows Intel to be stored.
-    connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
-    landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
-    landmarkPortrait: {fileID: 21300000, guid: fa84bfdc8ef46db48925a710fb46e9f1, type: 3}
+    defaultLandmarkPortrait: {fileID: 21300000, guid: fa84bfdc8ef46db48925a710fb46e9f1,
+      type: 3}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -382,18 +399,18 @@ MonoBehaviour:
     - mainSprite: {fileID: 21300000, guid: 3a6d947b034203946aab2f02724b66c2, type: 3}
       tintSprite: {fileID: 0}
       animation: {fileID: 9100000, guid: 7cd39483f9be2bf4baa2bc7211149480, type: 2}
+      overrideLandmarkPortrait: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
   - landmarkTypeString: The Profane
     landmarkType: 54
     buildDuration: 48
     description: The Ruinarch may assign a minion to delay Heroic Quests on the Profane.
-    connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
-    landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
-    landmarkPortrait: {fileID: 21300000, guid: 382cdf824169deb4b93c92af23186e93, type: 3}
+    defaultLandmarkPortrait: {fileID: 21300000, guid: 382cdf824169deb4b93c92af23186e93,
+      type: 3}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -401,18 +418,18 @@ MonoBehaviour:
     - mainSprite: {fileID: 21300000, guid: 0919fe3d152887f46a5152e78ab4f9dd, type: 3}
       tintSprite: {fileID: 0}
       animation: {fileID: 9100000, guid: b447470680d718740b7ffef6eda52099, type: 2}
+      overrideLandmarkPortrait: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
   - landmarkTypeString: None
     landmarkType: 0
     buildDuration: 0
     description: 
-    connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
-    landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
-    landmarkPortrait: {fileID: 21300000, guid: e41ec74344b1b3b44899f7ed500eeeff, type: 3}
+    defaultLandmarkPortrait: {fileID: 21300000, guid: e41ec74344b1b3b44899f7ed500eeeff,
+      type: 3}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -420,18 +437,18 @@ MonoBehaviour:
     - mainSprite: {fileID: 0}
       tintSprite: {fileID: 0}
       animation: {fileID: 0}
+      overrideLandmarkPortrait: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
   - landmarkTypeString: The Needles
     landmarkType: 55
     buildDuration: 48
     description: The Ruinarch may sacrifice a minion to The Needles to gain resources.
-    connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
-    landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
-    landmarkPortrait: {fileID: 21300000, guid: 6bacb8bd4f3ec954a940598485382ad0, type: 3}
+    defaultLandmarkPortrait: {fileID: 21300000, guid: 6bacb8bd4f3ec954a940598485382ad0,
+      type: 3}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -439,18 +456,18 @@ MonoBehaviour:
     - mainSprite: {fileID: 21300000, guid: 234e6925ebef61f49b0f4cd54e1b3959, type: 3}
       tintSprite: {fileID: 0}
       animation: {fileID: 9100000, guid: a515eaf954edb284ab7ba81ddf31a0a3, type: 2}
+      overrideLandmarkPortrait: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
   - landmarkTypeString: The Pit
     landmarkType: 56
     buildDuration: 48
     description: The Pit provides a slow but steady supply of resources.
-    connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
-    landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
-    landmarkPortrait: {fileID: 21300000, guid: 3d96e7795e6fabd45a0d7baad843c9d1, type: 3}
+    defaultLandmarkPortrait: {fileID: 21300000, guid: 3d96e7795e6fabd45a0d7baad843c9d1,
+      type: 3}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -458,18 +475,18 @@ MonoBehaviour:
     - mainSprite: {fileID: 21300000, guid: e9cd431bb2d682049b8fad85cd585e21, type: 3}
       tintSprite: {fileID: 0}
       animation: {fileID: 0}
+      overrideLandmarkPortrait: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
   - landmarkTypeString: Cave
     landmarkType: 31
     buildDuration: 0
     description: 
-    connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
-    landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
-    landmarkPortrait: {fileID: 21300000, guid: 8b69e1c43d456b1479f998800d8a6f31, type: 3}
+    defaultLandmarkPortrait: {fileID: 21300000, guid: 8b69e1c43d456b1479f998800d8a6f31,
+      type: 3}
     biomeTileSprites:
       m_keys: 00000000010000000300000002000000
       m_values:
@@ -477,77 +494,100 @@ MonoBehaviour:
         - mainSprite: {fileID: 21300000, guid: 98dbae7ea4933304e99ce222fa122a1c, type: 3}
           tintSprite: {fileID: 0}
           animation: {fileID: 0}
+          overrideLandmarkPortrait: {fileID: 0}
         - mainSprite: {fileID: 21300000, guid: 26a960b077921124b9e61433b11d623d, type: 3}
           tintSprite: {fileID: 0}
           animation: {fileID: 0}
+          overrideLandmarkPortrait: {fileID: 0}
         - mainSprite: {fileID: 21300000, guid: a41a24867a6731e4f9bf372de50136f4, type: 3}
           tintSprite: {fileID: 0}
           animation: {fileID: 0}
+          overrideLandmarkPortrait: {fileID: 0}
       - data:
         - mainSprite: {fileID: 21300000, guid: f0bb285e50b7c2e4ba3d8b9df4663978, type: 3}
           tintSprite: {fileID: 0}
           animation: {fileID: 0}
+          overrideLandmarkPortrait: {fileID: 0}
         - mainSprite: {fileID: 21300000, guid: a71eb5f8bfc5e6d45922bd4c922cee98, type: 3}
           tintSprite: {fileID: 0}
           animation: {fileID: 0}
+          overrideLandmarkPortrait: {fileID: 0}
         - mainSprite: {fileID: 21300000, guid: 6899b2833b4dd2e4ab31a5f2361aea7b, type: 3}
           tintSprite: {fileID: 0}
           animation: {fileID: 0}
+          overrideLandmarkPortrait: {fileID: 0}
       - data:
         - mainSprite: {fileID: 21300000, guid: 671a2939fda30b34898a8299cebcfcd7, type: 3}
           tintSprite: {fileID: 0}
           animation: {fileID: 0}
+          overrideLandmarkPortrait: {fileID: 0}
         - mainSprite: {fileID: 21300000, guid: dce980df86557994483727bab006f16d, type: 3}
           tintSprite: {fileID: 0}
           animation: {fileID: 0}
+          overrideLandmarkPortrait: {fileID: 0}
         - mainSprite: {fileID: 21300000, guid: acc889bc0bb3df849a1a42ac1261b064, type: 3}
           tintSprite: {fileID: 0}
           animation: {fileID: 0}
+          overrideLandmarkPortrait: {fileID: 0}
       - data:
         - mainSprite: {fileID: 21300000, guid: f0bb285e50b7c2e4ba3d8b9df4663978, type: 3}
           tintSprite: {fileID: 0}
           animation: {fileID: 0}
+          overrideLandmarkPortrait: {fileID: 0}
         - mainSprite: {fileID: 21300000, guid: a71eb5f8bfc5e6d45922bd4c922cee98, type: 3}
           tintSprite: {fileID: 0}
           animation: {fileID: 0}
+          overrideLandmarkPortrait: {fileID: 0}
         - mainSprite: {fileID: 21300000, guid: 6899b2833b4dd2e4ab31a5f2361aea7b, type: 3}
           tintSprite: {fileID: 0}
           animation: {fileID: 0}
+          overrideLandmarkPortrait: {fileID: 0}
     neutralTileSprites:
     - mainSprite: {fileID: 21300000, guid: 98dbae7ea4933304e99ce222fa122a1c, type: 3}
       tintSprite: {fileID: 0}
       animation: {fileID: 0}
+      overrideLandmarkPortrait: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
   - landmarkTypeString: Lumberyard
     landmarkType: 57
     buildDuration: 0
     description: 
-    connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
-    landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
-    landmarkPortrait: {fileID: 21300000, guid: 8b69e1c43d456b1479f998800d8a6f31, type: 3}
+    defaultLandmarkPortrait: {fileID: 21300000, guid: 570ccff55171ccc4baaed36deacc95a0,
+      type: 3}
     biomeTileSprites:
       m_keys: 
       m_values: []
     neutralTileSprites:
+    - mainSprite: {fileID: 21300000, guid: e05e2e554b638b14b85ab59342c8e0b0, type: 3}
+      tintSprite: {fileID: 21300000, guid: 24721027853fdc643b1b4fe0c8c1d5cd, type: 3}
+      animation: {fileID: 0}
+      overrideLandmarkPortrait: {fileID: 21300000, guid: 570ccff55171ccc4baaed36deacc95a0,
+        type: 3}
+    humansLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 3f5f539ec1c81814e972d6b0b4903932, type: 3}
       tintSprite: {fileID: 21300000, guid: 59980d3c50e9c3c4e8c869029a0ccc2e, type: 3}
       animation: {fileID: 0}
-    humansLandmarkTileSprites: []
-    elvenLandmarkTileSprites: []
+      overrideLandmarkPortrait: {fileID: 21300000, guid: 979f19abab120f448b94e1eba0687db2,
+        type: 3}
+    elvenLandmarkTileSprites:
+    - mainSprite: {fileID: 21300000, guid: e05e2e554b638b14b85ab59342c8e0b0, type: 3}
+      tintSprite: {fileID: 21300000, guid: 24721027853fdc643b1b4fe0c8c1d5cd, type: 3}
+      animation: {fileID: 0}
+      overrideLandmarkPortrait: {fileID: 21300000, guid: 570ccff55171ccc4baaed36deacc95a0,
+        type: 3}
   - landmarkTypeString: Quarry
     landmarkType: 58
     buildDuration: 0
     description: 
-    connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
-    landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
-    landmarkPortrait: {fileID: 21300000, guid: 8b69e1c43d456b1479f998800d8a6f31, type: 3}
+    defaultLandmarkPortrait: {fileID: 21300000, guid: 8b69e1c43d456b1479f998800d8a6f31,
+      type: 3}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -555,18 +595,18 @@ MonoBehaviour:
     - mainSprite: {fileID: 21300000, guid: 0b1a6dfee21888942b79f0008084a2b8, type: 3}
       tintSprite: {fileID: 21300000, guid: f16e449c34192234bb171cc4f9bc300d, type: 3}
       animation: {fileID: 0}
+      overrideLandmarkPortrait: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
   - landmarkTypeString: Houses
     landmarkType: 59
     buildDuration: 0
     description: 
-    connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
-    landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
-    landmarkPortrait: {fileID: 21300000, guid: 8f57444b93359594096b1dd546244094, type: 3}
+    defaultLandmarkPortrait: {fileID: 21300000, guid: 8f57444b93359594096b1dd546244094,
+      type: 3}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -574,18 +614,48 @@ MonoBehaviour:
     - mainSprite: {fileID: 21300000, guid: 6b15ab4e0c664d94f906a2b783906619, type: 3}
       tintSprite: {fileID: 21300000, guid: d25eaa8dbe14ebb4e96d58aabf1b978f, type: 3}
       animation: {fileID: 0}
-    humansLandmarkTileSprites: []
-    elvenLandmarkTileSprites: []
+      overrideLandmarkPortrait: {fileID: 0}
+    humansLandmarkTileSprites:
+    - mainSprite: {fileID: 21300000, guid: 6b15ab4e0c664d94f906a2b783906619, type: 3}
+      tintSprite: {fileID: 21300000, guid: d25eaa8dbe14ebb4e96d58aabf1b978f, type: 3}
+      animation: {fileID: 0}
+      overrideLandmarkPortrait: {fileID: 21300000, guid: 8f57444b93359594096b1dd546244094,
+        type: 3}
+    - mainSprite: {fileID: 21300000, guid: 0f6fa99d125714942961d8e54adf43b1, type: 3}
+      tintSprite: {fileID: 21300000, guid: 59ba8e34d3c07e84784432fc9e1c45bb, type: 3}
+      animation: {fileID: 0}
+      overrideLandmarkPortrait: {fileID: 21300000, guid: 8f57444b93359594096b1dd546244094,
+        type: 3}
+    - mainSprite: {fileID: 21300000, guid: 56d159c582f9df74381d04ab1e663d9c, type: 3}
+      tintSprite: {fileID: 21300000, guid: d17f26b8defdee446a0719c4630d3ef2, type: 3}
+      animation: {fileID: 0}
+      overrideLandmarkPortrait: {fileID: 21300000, guid: 8f57444b93359594096b1dd546244094,
+        type: 3}
+    elvenLandmarkTileSprites:
+    - mainSprite: {fileID: 21300000, guid: fcf1353cbcd1f08478171177da44e53a, type: 3}
+      tintSprite: {fileID: 21300000, guid: ab7ea309573094a46aefe91b9d263e85, type: 3}
+      animation: {fileID: 0}
+      overrideLandmarkPortrait: {fileID: 21300000, guid: 260ac1cf6a5dd774cadc8d2a36da5d74,
+        type: 3}
+    - mainSprite: {fileID: 21300000, guid: be64a1ec7b8543a49abda954ba47586a, type: 3}
+      tintSprite: {fileID: 21300000, guid: 85a0cd260bc3a304ea9c12fa4c06c78e, type: 3}
+      animation: {fileID: 0}
+      overrideLandmarkPortrait: {fileID: 21300000, guid: 260ac1cf6a5dd774cadc8d2a36da5d74,
+        type: 3}
+    - mainSprite: {fileID: 21300000, guid: 3a45dae052a768e45b88c6a722e03f8d, type: 3}
+      tintSprite: {fileID: 21300000, guid: 9f89551edef6d6743a2486dea9f60a21, type: 3}
+      animation: {fileID: 0}
+      overrideLandmarkPortrait: {fileID: 21300000, guid: 260ac1cf6a5dd774cadc8d2a36da5d74,
+        type: 3}
   - landmarkTypeString: Torture Chamber
     landmarkType: 60
     buildDuration: 0
     description: Inflict a random painful experience on a captured character.
-    connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
-    landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
-    landmarkPortrait: {fileID: 21300000, guid: 8f57444b93359594096b1dd546244094, type: 3}
+    defaultLandmarkPortrait: {fileID: 21300000, guid: 8f57444b93359594096b1dd546244094,
+      type: 3}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -593,18 +663,18 @@ MonoBehaviour:
     - mainSprite: {fileID: 21300000, guid: 6b15ab4e0c664d94f906a2b783906619, type: 3}
       tintSprite: {fileID: 21300000, guid: d25eaa8dbe14ebb4e96d58aabf1b978f, type: 3}
       animation: {fileID: 0}
+      overrideLandmarkPortrait: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
   - landmarkTypeString: Demonic Prison
     landmarkType: 61
     buildDuration: 0
     description: 
-    connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
-    landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
-    landmarkPortrait: {fileID: 21300000, guid: 3446cbb2f691a6e459dede63d06ba416, type: 3}
+    defaultLandmarkPortrait: {fileID: 21300000, guid: 3446cbb2f691a6e459dede63d06ba416,
+      type: 3}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -612,6 +682,7 @@ MonoBehaviour:
     - mainSprite: {fileID: 21300000, guid: 0919fe3d152887f46a5152e78ab4f9dd, type: 3}
       tintSprite: {fileID: 0}
       animation: {fileID: 9100000, guid: b447470680d718740b7ffef6eda52099, type: 2}
+      overrideLandmarkPortrait: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
   areaData:

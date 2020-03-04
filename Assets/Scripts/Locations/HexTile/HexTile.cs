@@ -146,78 +146,52 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         this.landmarkOnTile = landmarkOnTile;
     }
     public BaseLandmark CreateLandmarkOfType(LANDMARK_TYPE landmarkType) {
-        LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkType);
-        //SetLandmarkOnTile(new BaseLandmark(this, landmarkType));
         SetLandmarkOnTile(LandmarkManager.Instance.CreateNewLandmarkInstance(this, landmarkType));
         //Create Landmark Game Object on tile
-        GameObject landmarkGO = CreateLandmarkVisual(landmarkType, landmarkOnTile, landmarkData);
-        if (landmarkGO != null) {
-            landmarkGO.transform.localPosition = Vector3.zero;
-            landmarkGO.transform.localScale = Vector3.one;
-            landmarkOnTile.SetLandmarkObject(landmarkGO.GetComponent<LandmarkVisual>());
-        }
-        if (landmarkType == LANDMARK_TYPE.CAVE) {
-            SetElevation(ELEVATION.MOUNTAIN);
-        } else {
-            SetElevation(ELEVATION.PLAIN);
-        }
+        CreateLandmarkVisual(landmarkType);
+        SetElevation(landmarkType == LANDMARK_TYPE.CAVE ? ELEVATION.MOUNTAIN : ELEVATION.PLAIN);
         Biomes.Instance.UpdateTileVisuals(this);
         return landmarkOnTile;
     }
     public BaseLandmark CreateLandmarkOfType(SaveDataLandmark saveData) {
-        LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(saveData.landmarkType);
-        //SetLandmarkOnTile(new BaseLandmark(this, saveData));
         SetLandmarkOnTile(LandmarkManager.Instance.CreateNewLandmarkInstance(this, saveData));
         //Create Landmark Game Object on tile
-        GameObject landmarkGO = CreateLandmarkVisual(saveData.landmarkType, landmarkOnTile, landmarkData);
-        if (landmarkGO != null) {
-            landmarkGO.transform.localPosition = Vector3.zero;
-            landmarkGO.transform.localScale = Vector3.one;
-            landmarkOnTile.SetLandmarkObject(landmarkGO.GetComponent<LandmarkVisual>());
-        }
+        CreateLandmarkVisual(saveData.landmarkType);
         return landmarkOnTile;
     }
-    private GameObject CreateLandmarkVisual(LANDMARK_TYPE landmarkType, BaseLandmark landmark, LandmarkData data) {
+    private void CreateLandmarkVisual(LANDMARK_TYPE landmarkType) {
         GameObject landmarkGO = Instantiate(LandmarkManager.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
-        RACE race = RACE.NONE;
-        if (region != null) {
-            if (region.locationType == LOCATION_TYPE.ELVEN_SETTLEMENT) {
-                race = RACE.ELVES;
-            } else if (region.locationType == LOCATION_TYPE.HUMAN_SETTLEMENT) {
-                race = RACE.HUMANS;
-            }
-        }
-        List<LandmarkStructureSprite> landmarkTileSprites = LandmarkManager.Instance.GetLandmarkTileSprites(this, landmarkType, race);
-        if (landmarkTileSprites == null || landmarkTileSprites.Count == 0) {
-            //DeactivateCenterPiece();
-            HideLandmarkTileSprites();
-            landmarkGO.GetComponent<LandmarkVisual>().SetIconState(true);
-        } else {
-            SetLandmarkTileSprite(landmarkTileSprites[Random.Range(0, landmarkTileSprites.Count)]);
-            landmarkGO.GetComponent<LandmarkVisual>().SetIconState(false);
-        }
-        if (settlementOnTile != null && settlementOnTile.owner != null) {
-            settlementOnTile.TintStructures(settlementOnTile.owner.factionColor);    
-        }
-        return landmarkGO;
+        landmarkGO.transform.localPosition = Vector3.zero;
+        landmarkGO.transform.localScale = Vector3.one;
+        landmarkOnTile.SetLandmarkObject(landmarkGO.GetComponent<LandmarkVisual>());
+        UpdateLandmarkVisuals();
     }
-    public void UpdateStructureVisuals(LANDMARK_TYPE landmarkType) {
-        LandmarkData _data = LandmarkManager.Instance.GetLandmarkData(landmarkType);
-        List<LandmarkStructureSprite> landmarkTileSprites = LandmarkManager.Instance.GetLandmarkTileSprites(this, landmarkOnTile.specificLandmarkType);
+    /// <summary>
+    /// Update the structure assets of this tile based on the landmark that is on this tile.
+    /// </summary>
+    public void UpdateLandmarkVisuals() {
+        RACE race = RACE.NONE;
+        if (settlementOnTile?.owner != null) {
+            race = settlementOnTile.owner.race;
+        }
+        LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkOnTile.specificLandmarkType);
+        List<LandmarkStructureSprite> landmarkTileSprites = LandmarkManager.Instance.GetLandmarkTileSprites(this, landmarkOnTile.specificLandmarkType, race);
         if (landmarkTileSprites == null || landmarkTileSprites.Count == 0) {
-            //DeactivateCenterPiece();
             HideLandmarkTileSprites();
             landmarkOnTile.landmarkVisual.SetIconState(true);
+            landmarkOnTile.SetLandmarkPortrait(landmarkData.defaultLandmarkPortrait);
         } else {
-            SetLandmarkTileSprite(landmarkTileSprites[Random.Range(0, landmarkTileSprites.Count)]);
+            LandmarkStructureSprite chosenAssets =
+                UtilityScripts.CollectionUtilities.GetRandomElement(landmarkTileSprites); 
+            SetLandmarkTileSprite(chosenAssets);
             landmarkOnTile.landmarkVisual.SetIconState(false);
+            landmarkOnTile.SetLandmarkPortrait(chosenAssets.overrideLandmarkPortrait != null ? chosenAssets.overrideLandmarkPortrait : landmarkData.defaultLandmarkPortrait);
         }
-        
+        SetStructureTint(settlementOnTile?.owner?.factionColor ?? Color.white);
     }
     public BaseLandmark LoadLandmark(BaseLandmark landmark) {
-        GameObject landmarkGO = null;
         //Create Landmark Game Object on tile
-        landmarkGO = Instantiate(LandmarkManager.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
+        var landmarkGO = Instantiate(LandmarkManager.Instance.GetLandmarkGO(), structureParentGO.transform);
         landmarkGO.transform.localPosition = Vector3.zero;
         landmarkGO.transform.localScale = Vector3.one;
         landmarkOnTile = landmark;
@@ -254,7 +228,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     }
     public void SetStructureTint(Color color) {
         structureTint.color = color;
-        Debug.Log($"Tinted structure on {ToString()}");
     }
     #endregion
 
