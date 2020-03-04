@@ -12,13 +12,13 @@ public class BrimstonesData : SpellData {
     public virtual int abilityRadius => 1;
 
     public BrimstonesData() : base() {
-        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.HEX };
+        targetTypes = new[]{ SPELL_TARGET.HEX };
     }
     public override void ActivateAbility(HexTile targetHex) {
         targetHex.spellsComponent.SetHasBrimstones(true);
     }
     public override bool CanPerformAbilityTowards(HexTile targetHex) {
-        return !targetHex.spellsComponent.hasBrimstones;
+        return targetHex != null && !targetHex.spellsComponent.hasBrimstones;
     }
     public override void HighlightAffectedTiles(LocationGridTile tile) {
         TileHighlighter.Instance.PositionHighlight(tile.buildSpotOwner.hexTileOwner);

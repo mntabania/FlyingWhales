@@ -9520,6 +9520,7 @@ GameObject:
   - component: {fileID: 58516186383752776}
   - component: {fileID: 114119409515135768}
   - component: {fileID: 114020084204728438}
+  - component: {fileID: 960753056005893041}
   m_Layer: 14
   m_Name: ChaosOrb
   m_TagString: Map_Click_Blocker
@@ -9602,6 +9603,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ParentPool: {fileID: 0}
   _collider: {fileID: 58516186383752776}
+--- !u!114 &960753056005893041
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1969525015451714}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af49abe683bd31f4a9c471199b4375bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ParentPool: {fileID: 0}
+  particleSystems:
+  - {fileID: 198715718027889056}
+  - {fileID: 198703888690118190}
+  - {fileID: 198362934188665778}
+  pauseOnGamePaused: 1
 --- !u!1 &1986772819220624
 GameObject:
   m_ObjectHideFlags: 0

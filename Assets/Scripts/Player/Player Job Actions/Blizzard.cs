@@ -6,7 +6,7 @@ public class Blizzard : PlayerSpell {
 
     public Blizzard() : base(SPELL_TYPE.BLIZZARD) {
         SetDefaultCooldownTime(24);
-        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
+        targetTypes = new[] { SPELL_TARGET.HEX };
         tier = 1;
     }
 }
@@ -19,16 +19,16 @@ public class BlizzardData : SpellData {
     public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
 
     public BlizzardData() : base() {
-        targetTypes = new[] { SPELL_TARGET.TILE };
+        targetTypes = new[] { SPELL_TARGET.HEX };
     }
 
-    public override void ActivateAbility(LocationGridTile targetTile) {
-        targetTile.buildSpotOwner.hexTileOwner.featureComponent.AddFeature(TileFeatureDB.Blizzard_Feature, targetTile.buildSpotOwner.hexTileOwner);
+    public override void ActivateAbility(HexTile targetHex) {
+        targetHex.featureComponent.AddFeature(TileFeatureDB.Blizzard_Feature, targetHex);
     }
-    public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
-        return targetTile.buildSpotOwner.isPartOfParentRegionMap 
-               && targetTile.buildSpotOwner.hexTileOwner.biomeType != BIOMES.DESERT
-               && targetTile.buildSpotOwner.hexTileOwner.featureComponent.HasFeature(TileFeatureDB.Blizzard_Feature) == false;
+    public override bool CanPerformAbilityTowards(HexTile targetHex) {
+        return targetHex != null
+               && targetHex.biomeType != BIOMES.DESERT
+               && targetHex.featureComponent.HasFeature(TileFeatureDB.Blizzard_Feature) == false;
     }
     public override void HighlightAffectedTiles(LocationGridTile tile) {
         TileHighlighter.Instance.PositionHighlight(tile.buildSpotOwner.hexTileOwner);

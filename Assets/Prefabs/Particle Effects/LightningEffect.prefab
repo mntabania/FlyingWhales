@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 8595698516575688961}
   - component: {fileID: 3888844504515795593}
   - component: {fileID: 3025289859220335030}
-  - component: {fileID: 1258144617096154222}
   m_Layer: 14
   m_Name: Lightning
   m_TagString: Untagged
@@ -41,15 +40,15 @@ ParticleSystem:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3997161133727731657}
   serializedVersion: 6
-  lengthInSec: 1
+  lengthInSec: 0.5
   simulationSpeed: 1
-  stopAction: 3
+  stopAction: 0
   cullingMode: 3
   ringBufferMode: 0
   ringBufferLoopRange: {x: 0, y: 1}
   looping: 0
   prewarm: 0
-  playOnAwake: 0
+  playOnAwake: 1
   useUnscaledTime: 0
   autoRandomSeed: 1
   useRigidbodyForVelocity: 0
@@ -4831,19 +4830,6 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
---- !u!114 &1258144617096154222
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3997161133727731657}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 00b9b97dfc833d8448726e2248419b29, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  particleSystem: {fileID: 3888844504515795593}
 --- !u!1 &8128764208438249840
 GameObject:
   m_ObjectHideFlags: 0
@@ -4853,7 +4839,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5374498631743289346}
-  - component: {fileID: 5991176861842963770}
+  - component: {fileID: 1480418909585459000}
   m_Layer: 14
   m_Name: LightningEffect
   m_TagString: Untagged
@@ -4876,7 +4862,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5991176861842963770
+--- !u!114 &1480418909585459000
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4885,8 +4871,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 8128764208438249840}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d2fb9ad7cd7a60145b2e27faaa5aa144, type: 3}
+  m_Script: {fileID: 11500000, guid: ade06471550ac4d4f876e7b4585ab8bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ParentPool: {fileID: 0}
   particleSystems:
   - {fileID: 3888844504515795593}

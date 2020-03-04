@@ -34,12 +34,44 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
         selectable = tileObject;
         _tornado = tileObject as TornadoTileObject;
         _radius = _tornado.radius;
-        for (int i = 0; i < particles.Length; i++) {
-            ParticleSystem p = particles[i];
-            p.Play();    
-        }
+        //PlayTornadoParticle();
         _damagablesInTornado = new List<IDamageable>();
     }
+
+    #region Particles
+    private IEnumerator PlayParticleCoroutineWhenGameIsPaused() {
+        //Playing particle effect is done in a coroutine so that it will wait one frame before pausing the particles if the game is paused when the particle is activated
+        //This will make sure that the particle effect will show but it will be paused right away
+        PlayTornadoParticle();
+        yield return null;
+        PauseTornadoParticle();
+    }
+    private void PlayTornadoParticle() {
+        for (int i = 0; i < particles.Length; i++) {
+            ParticleSystem p = particles[i];
+            p.Play();
+        }
+    }
+    private void PauseTornadoParticle() {
+        for (int i = 0; i < particles.Length; i++) {
+            ParticleSystem p = particles[i];
+            p.Pause();
+        }
+    }
+    private void StopTornadoParticle() {
+        for (int i = 0; i < particles.Length; i++) {
+            ParticleSystem p = particles[i];
+            p.Stop();
+        }
+    }
+    private void ClearTornadoParticle() {
+        for (int i = 0; i < particles.Length; i++) {
+            ParticleSystem p = particles[i];
+            p.Clear();
+        }
+    }
+    #endregion
+
     private void GoToRandomTileInRadius() {
         List<LocationGridTile> tilesInRadius = gridTileLocation.GetTilesInRadius(8, 6, false, true);
         LocationGridTile chosen = tilesInRadius[Random.Range(0, tilesInRadius.Count)];
@@ -61,6 +93,12 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
         Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemovedFromTile);
         // Messenger.AddListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
         isSpawned = true;
+
+        if (GameManager.Instance.isPaused) {
+            StartCoroutine(PlayParticleCoroutineWhenGameIsPaused());
+        } else {
+            PlayTornadoParticle();
+        }
     }
 
     #region Pathfinding
@@ -91,16 +129,18 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
         RecalculatePathingValues();
     }
     private void OnGamePaused(bool paused) {
+        if (paused) {
+            PauseTornadoParticle();
+        } else {
+            PlayTornadoParticle();
+        }
         UpdateSpeed();
         RecalculatePathingValues();
     }
     #endregion
 
     public void Expire() {
-        for (int i = 0; i < particles.Length; i++) {
-            ParticleSystem p = particles[i];
-            p.Stop();
-        }
+        StopTornadoParticle();
         SchedulingManager.Instance.RemoveSpecificEntry(_expiryKey);
         GameManager.Instance.StartCoroutine(ExpireCoroutine());
     }
@@ -118,10 +158,7 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
         _journeyLength = 0f;
         _startPosition = Vector3.zero;
         _startTime = 0f;
-        for (int i = 0; i < particles.Length; i++) {
-            ParticleSystem p = particles[i];
-            p.Clear();    
-        }
+        ClearTornadoParticle();
         Messenger.RemoveListener(Signals.TICK_ENDED, PerTick);
         Messenger.RemoveListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);

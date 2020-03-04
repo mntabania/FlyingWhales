@@ -7,8 +7,9 @@ using Traits;
 using Inner_Maps;
 
 public class MeteorParticleEffect : BaseParticleEffect {
-    //public ParticleSystem meteorParticle;
-    public ParticleSystem[] meteorExplosionParticles;
+    public ParticleSystem meteorParticle;
+    private bool hasMeteorFell;
+    //public ParticleSystem[] meteorExplosionParticles;
 
     //private LocationGridTile targetTile;
     //private int radius;
@@ -17,13 +18,31 @@ public class MeteorParticleEffect : BaseParticleEffect {
     //    //this.radius = radius;
     //    meteorParticle.Play();
     //}
-    protected override void ParticleAfterEffect(ParticleSystem particleSystem) {
-        OnMeteorFell();
-    }
-    public void OnMeteorFell() {
-        for (int i = 0; i < meteorExplosionParticles.Length; i++) {
-            meteorExplosionParticles[i].Play();
+    //protected override void PlayParticle() {
+    //    base.PlayParticle();
+    //    OnMeteorFell();
+    //}
+    //protected override void ParticleAfterEffect(ParticleSystem particleSystem) {
+    //    OnMeteorFell();
+    //}
+    protected override IEnumerator PlayParticleCoroutine() {
+        //Playing particle effect is done in a coroutine so that it will wait one frame before pausing the particles if the game is paused when the particle is activated
+        //This will make sure that the particle effect will show but it will be paused right away
+        PlayParticle();
+        yield return new WaitForSeconds(0.1f);
+        if (pauseOnGamePaused && GameManager.Instance.isPaused) {
+            PauseParticle();
         }
+    }
+    protected override void ResetParticle() {
+        base.ResetParticle();
+        hasMeteorFell = false;
+    }
+    private void OnMeteorFell() {
+        hasMeteorFell = true;
+        //for (int i = 0; i < meteorExplosionParticles.Length; i++) {
+        //    meteorExplosionParticles[i].Play();
+        //}
         List<ITraitable> traitables = new List<ITraitable>();
         List<LocationGridTile> tiles = targetTile.GetTilesInRadius(1, 0, true); //radius
         for (int i = 0; i < tiles.Count; i++) {
@@ -77,5 +96,13 @@ public class MeteorParticleEffect : BaseParticleEffect {
     private IEnumerator ExpireCoroutine(GameObject go) {
         yield return new WaitForSeconds(2f);
         ObjectPoolManager.Instance.DestroyObject(go);
+    }
+
+    private void Update() {
+        if (!hasMeteorFell) {
+            if (meteorParticle.isStopped) {
+                OnMeteorFell();
+            }
+        }
     }
 }

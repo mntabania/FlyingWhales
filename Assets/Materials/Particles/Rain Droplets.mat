@@ -7,10 +7,10 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Fog
+  m_Name: Rain Droplets
   m_Shader: {fileID: 4800000, guid: 18cc8fe7d50c89741b56c1ae6a5baa66, type: 3}
-  m_ShaderKeywords: BlendAlpha Clip_OFF FrameBlend_ON SoftParticles_ON VertLight4Normal_ON
-    _ALPHABLEND_ON _BLENDMODE_BLEND _FADING_ON _FLIPBOOK_BLENDING
+  m_ShaderKeywords: BlendAlpha Clip_OFF FrameBlend_OFF SoftParticles_OFF VertLight_OFF
+    _ALPHABLEND_ON _BLENDMODE_BLEND
   m_LightmapFlags: 5
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
@@ -45,7 +45,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: b5ab355519cc0b84fba42a9ce8c4ace4, type: 3}
+        m_Texture: {fileID: 2800000, guid: 44f47db5199ce90438b38b64a3bcdce3, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -81,7 +81,7 @@ Material:
     - _FresnelPow: 5
     - _FresnelR0: 0.04
     - _Glossiness: 0.5
-    - _InvFade: 2
+    - _InvFade: 1
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
@@ -93,12 +93,12 @@ Material:
     - _UseCutout: 0
     - _UseCutoutTex: 0
     - _UseCutoutThreshold: 0
-    - _UseFrameBlending: 1
+    - _UseFrameBlending: 0
     - _UseFresnel: 0
     - _UseFresnelFading: 0
     - _UseNoiseDistortion: 0
     - _UseParticlesAlphaCutout: 0
-    - _UseSoft: 1
+    - _UseSoft: 0
     - _UseSoftCutout: 0
     - _UseVertexStreamRandom: 0
     - _ZWrite: 0
@@ -111,4 +111,4 @@ Material:
     - _FogColorMultiplier: {r: 0, g: 0, b: 0, a: 0}
     - _FresnelColor: {r: 1, g: 1, b: 1, a: 1}
     - _Tiling: {r: 800, g: 800, b: 8, a: 8}
-    - _TintColor: {r: 0.49470156, g: 0.64732, b: 0.89705884, a: 0.1}
+    - _TintColor: {r: 3.3376963, g: 3.3376963, b: 3.3376963, a: 0.06}

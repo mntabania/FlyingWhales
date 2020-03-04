@@ -7,6 +7,8 @@ using EZObjectPools;
 
 public class BaseParticleEffect : PooledObject {
     public ParticleSystem[] particleSystems;
+    public bool pauseOnGamePaused;
+
     public LocationGridTile targetTile { get; protected set; }
 
     public void SetTargetTile(LocationGridTile tile) {
@@ -14,35 +16,80 @@ public class BaseParticleEffect : PooledObject {
     }
 
     private void OnEnable() {
-        Messenger.AddListener<ParticleSystem>(Signals.PARTICLE_EFFECT_DONE, OnParticleEffectDonePlaying);
+        if (pauseOnGamePaused) {
+            Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
+        }
+        //Messenger.AddListener<ParticleSystem>(Signals.PARTICLE_EFFECT_DONE, OnParticleEffectDonePlaying);
     }
     private void OnDisable() {
-        if (Messenger.eventTable.ContainsKey(Signals.PARTICLE_EFFECT_DONE)) {
-            Messenger.RemoveListener<ParticleSystem>(Signals.PARTICLE_EFFECT_DONE, OnParticleEffectDonePlaying);
+        //if (Messenger.eventTable.ContainsKey(Signals.PARTICLE_EFFECT_DONE)) {
+        //    Messenger.RemoveListener<ParticleSystem>(Signals.PARTICLE_EFFECT_DONE, OnParticleEffectDonePlaying);
+        //}
+        if (pauseOnGamePaused) {
+            Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
         }
     }
-    private void OnParticleEffectDonePlaying(ParticleSystem particleSystem) {
-        if (particleSystems.Contains(particleSystem)) {
-            Messenger.RemoveListener<ParticleSystem>(Signals.PARTICLE_EFFECT_DONE, OnParticleEffectDonePlaying);
-            ParticleAfterEffect(particleSystem);
+    //private void OnParticleEffectDonePlaying(ParticleSystem particleSystem) {
+    //    if (particleSystems.Contains(particleSystem)) {
+    //        Messenger.RemoveListener<ParticleSystem>(Signals.PARTICLE_EFFECT_DONE, OnParticleEffectDonePlaying);
+    //        ParticleAfterEffect(particleSystem);
+    //    }
+    //}
+    public void PlayParticleEffect() {
+        StartCoroutine(PlayParticleCoroutine());
+    }
+    public void StopParticleEffect() {
+        StopParticle();
+    }
+    public void ResetParticleEffect() {
+        ResetParticle();
+    }
+    protected virtual IEnumerator PlayParticleCoroutine() {
+        //Playing particle effect is done in a coroutine so that it will wait one frame before pausing the particles if the game is paused when the particle is activated
+        //This will make sure that the particle effect will show but it will be paused right away
+        PlayParticle();
+        yield return null;
+        if (pauseOnGamePaused && GameManager.Instance.isPaused) {
+            PauseParticle();
         }
     }
-    public virtual void PlayParticleEffect() {
+    protected virtual void PlayParticle() {
         for (int i = 0; i < particleSystems.Length; i++) {
             particleSystems[i].Play();
         }
     }
-    public virtual void StopParticleEffect() {
+    protected virtual void PauseParticle() {
+        for (int i = 0; i < particleSystems.Length; i++) {
+            particleSystems[i].Pause();
+        }
+    }
+    protected virtual void StopParticle() {
         for (int i = 0; i < particleSystems.Length; i++) {
             particleSystems[i].Stop();
         }
     }
-    public virtual void ResetParticleEffect() {
+    protected virtual void ResetParticle() {
         for (int i = 0; i < particleSystems.Length; i++) {
             particleSystems[i].Clear();
         }
     }
     protected virtual void ParticleAfterEffect(ParticleSystem particleSystem) {
+    }
+
+    protected virtual void OnGamePaused(bool state) {
+        if (state) {
+            for (int i = 0; i < particleSystems.Length; i++) {
+                if (particleSystems[i].isPlaying) {
+                    particleSystems[i].Pause();
+                }
+            }
+        } else {
+            for (int i = 0; i < particleSystems.Length; i++) {
+                if (particleSystems[i].isPaused || !particleSystems[i].isPlaying) {
+                    particleSystems[i].Play();
+                }
+            }
+        }
     }
 
     #region Object Pool

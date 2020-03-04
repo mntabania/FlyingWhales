@@ -8,8 +8,9 @@ public class BlizzardFeature : TileFeature {
 
     private List<Character> _charactersOutside;
     private string _currentFreezingCheckSchedule;
-    private BlizzardParticleEffect _effect;
-    
+    //private BlizzardParticleEffect _effect;
+    private GameObject _effect;
+
     public BlizzardFeature() {
         name = "Blizzard";
         description = "There is a blizzard in this location.";
@@ -34,7 +35,7 @@ public class BlizzardFeature : TileFeature {
         GameDate expiryDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(4));
         SchedulingManager.Instance.AddEntry(expiryDate, () => tile.featureComponent.RemoveFeature(this, tile), this);
         GameObject go = GameManager.Instance.CreateParticleEffectAt(tile.GetCenterLocationGridTile(), PARTICLE_EFFECT.Blizzard);
-        _effect = go.GetComponent<BlizzardParticleEffect>();
+        _effect = go; //go.GetComponent<BlizzardParticleEffect>()
 
     }
     public override void OnRemoveFeature(HexTile tile) {
@@ -50,7 +51,8 @@ public class BlizzardFeature : TileFeature {
         if (string.IsNullOrEmpty(_currentFreezingCheckSchedule) == false) {
             SchedulingManager.Instance.RemoveSpecificEntry(_currentFreezingCheckSchedule); //this will stop the freezing check loop 
         }
-        _effect.StopParticleEffect();
+        //_effect.StopParticleEffect();
+        ObjectPoolManager.Instance.DestroyObject(_effect);
     }
     #endregion
 

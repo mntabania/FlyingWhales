@@ -29,9 +29,6 @@ Transform:
   m_LocalScale: {x: 3, y: 3, z: 1}
   m_Children:
   - {fileID: 4340570045539078}
-  - {fileID: 4144535858930736}
-  - {fileID: 4409777841725164}
-  - {fileID: 4066206960296098}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -49.405003, y: -47.644, z: 11.902}
@@ -47,12 +44,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94389e5109cfd1644936293a5c25cb98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ParentPool: {fileID: 0}
   particleSystems:
   - {fileID: 198760902726515906}
-  meteorExplosionParticles:
-  - {fileID: 198214053134175420}
-  - {fileID: 198864120204851028}
-  - {fileID: 198362718951467256}
+  pauseOnGamePaused: 1
+  meteorParticle: {fileID: 198760902726515906}
 --- !u!1 &1365760026082454
 GameObject:
   m_ObjectHideFlags: 0
@@ -78,14 +74,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1365760026082454}
-  m_LocalRotation: {x: 0.000000014901159, y: -2.220446e-16, z: 0.000000014901163,
-    w: 1}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 4112025895718102}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 270, y: 0, z: 0}
+  m_Father: {fileID: 4340570045539078}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!198 &198214053134175420
 ParticleSystem:
   m_ObjectHideFlags: 0
@@ -4711,14 +4706,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1601505645224912}
-  m_LocalRotation: {x: 0.000000119209275, y: -1.2434498e-14, z: 0.00000010430814,
-    w: 1}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 4112025895718102}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Father: {fileID: 4340570045539078}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!198 &198864120204851028
 ParticleSystem:
   m_ObjectHideFlags: 0
@@ -6155,7 +6149,7 @@ ParticleSystem:
     sprites:
     - sprite: {fileID: 0}
     flipU: 0
-    flipV: 0.5
+    flipV: 0
   VelocityModule:
     enabled: 0
     x:
@@ -9416,7 +9410,7 @@ ParticleSystemRenderer:
   m_ShadowBias: 0
   m_RenderAlignment: 0
   m_Pivot: {x: 0, y: 0, z: 0}
-  m_Flip: {x: 0, y: 0, z: 0}
+  m_Flip: {x: 0, y: 0.5, z: 0}
   m_UseCustomVertexStreams: 1
   m_EnableGPUInstancing: 0
   m_ApplyActiveColorSpace: 0
@@ -9438,7 +9432,6 @@ GameObject:
   - component: {fileID: 4340570045539078}
   - component: {fileID: 198760902726515906}
   - component: {fileID: 199529302966566812}
-  - component: {fileID: 2974680748568249965}
   m_Layer: 15
   m_Name: Meteor
   m_TagString: Untagged
@@ -9454,9 +9447,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1703068008380560}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3, y: -3, z: -2}
+  m_LocalPosition: {x: 1, y: -1, z: -2}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 4144535858930736}
+  - {fileID: 4409777841725164}
+  - {fileID: 4066206960296098}
   m_Father: {fileID: 4112025895718102}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -9470,7 +9466,7 @@ ParticleSystem:
   serializedVersion: 6
   lengthInSec: 1
   simulationSpeed: 1
-  stopAction: 3
+  stopAction: 0
   cullingMode: 3
   ringBufferMode: 0
   ringBufferLoopRange: {x: 0, y: 1}
@@ -9596,7 +9592,7 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 10
+      scalar: 3.5
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -13182,11 +13178,21 @@ ParticleSystem:
     radiusScale: 1
   SubModule:
     serializedVersion: 2
-    enabled: 0
+    enabled: 1
     subEmitters:
     - serializedVersion: 3
-      emitter: {fileID: 0}
-      type: 0
+      emitter: {fileID: 198214053134175420}
+      type: 2
+      properties: 0
+      emitProbability: 1
+    - serializedVersion: 3
+      emitter: {fileID: 198864120204851028}
+      type: 2
+      properties: 0
+      emitProbability: 1
+    - serializedVersion: 3
+      emitter: {fileID: 198362718951467256}
+      type: 2
       properties: 0
       emitProbability: 1
   LightsModule:
@@ -14182,19 +14188,6 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
---- !u!114 &2974680748568249965
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1703068008380560}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 00b9b97dfc833d8448726e2248419b29, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  particleSystem: {fileID: 198760902726515906}
 --- !u!1 &1791320157405006
 GameObject:
   m_ObjectHideFlags: 0
@@ -14221,13 +14214,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1791320157405006}
-  m_LocalRotation: {x: -0.00000035762787, y: 0, z: 0, w: -1}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 4112025895718102}
-  m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Father: {fileID: 4340570045539078}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!198 &198362718951467256
 ParticleSystem:
   m_ObjectHideFlags: 0

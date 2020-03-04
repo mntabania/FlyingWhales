@@ -8,9 +8,9 @@ using Inner_Maps;
 
 public class LightningParticleEffect : BaseParticleEffect {
 
-    protected override void ParticleAfterEffect(ParticleSystem particleSystem) {
-        OnLightningStrike();
-    }
+    //protected override void ParticleAfterEffect(ParticleSystem particleSystem) {
+    //    OnLightningStrike();
+    //}
     private void OnLightningStrike() {
         //List<IPointOfInterest> pois = targetTile.GetPOIsOnTile();
         //for (int i = 0; i < pois.Count; i++) {

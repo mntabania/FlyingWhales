@@ -47,13 +47,22 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
         _cloudEffect.gameObject.SetActive(true);
         _cloudEffect.Play();
         MoveToRandomDirection();
-        OnGamePaused(GameManager.Instance.isPaused);
+        //OnGamePaused(GameManager.Instance.isPaused);
         _expiryKey = SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(Random.Range(2, 6))), Expire, this);
         Messenger.AddListener(Signals.TICK_ENDED, PerTick);
         Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
         Messenger.AddListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
         Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         isSpawned = true;
+
+        if (GameManager.Instance.isPaused) {
+            _movement.Pause();
+            StartCoroutine(PlayParticleCoroutineWhenGameIsPaused());
+        } else {
+            _movement.Play();
+            _cloudEffect.Play();
+            _explosionEffect.Play();
+        }
     }
     public override void Reset() {
         base.Reset();
@@ -74,9 +83,13 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
     }
     private void OnGamePaused(bool isPaused) {
         if (isPaused) {
-            _movement.Pause();    
+            _movement.Pause();
+            _cloudEffect.Pause();
+            _explosionEffect.Pause();
         } else {
             _movement.Play();
+            _cloudEffect.Play();
+            _explosionEffect.Play();
         }
     }
     private void OnProgressionSpeedChanged(PROGRESSION_SPEED progression) {
@@ -196,6 +209,16 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
         ObjectPoolManager.Instance.DestroyObject(this);
     }
     #endregion
-    
-        
+
+    #region Particles
+    private IEnumerator PlayParticleCoroutineWhenGameIsPaused() {
+        //Playing particle effect is done in a coroutine so that it will wait one frame before pausing the particles if the game is paused when the particle is activated
+        //This will make sure that the particle effect will show but it will be paused right away
+        _cloudEffect.Play();
+        _explosionEffect.Play();
+        yield return new WaitForSeconds(0.1f);
+        _cloudEffect.Pause();
+        _explosionEffect.Pause();
+    }
+    #endregion
 }

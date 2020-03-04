@@ -53,6 +53,7 @@ MonoBehaviour:
   objectVisual: {fileID: 3530449603676801492}
   hoverObject: {fileID: 0}
   statusIconsParent: {fileID: 0}
+  locustSwarmParticle: {fileID: 2210633008740798494}
 --- !u!58 &4002699566689528138
 CircleCollider2D:
   m_ObjectHideFlags: 0
