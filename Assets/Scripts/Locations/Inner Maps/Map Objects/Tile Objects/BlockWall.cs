@@ -8,16 +8,14 @@ public class BlockWall : TileObject {
     public WALL_TYPE wallType { get; private set; }
     
     public BlockWall() {
-        advertisedActions = new List<INTERACTION_TYPE>();
         Initialize(TILE_OBJECT_TYPE.BLOCK_WALL);
-        RemoveCommonAdvertisements();
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
         traitContainer.RemoveTrait(this, "Flammable");
         traitContainer.AddTrait(this, "Immovable");
     }
     public BlockWall(SaveDataTileObject data) {
-        advertisedActions = new List<INTERACTION_TYPE>();
         Initialize(data);
-        RemoveCommonAdvertisements();
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
         traitContainer.RemoveTrait(this, "Flammable");
         traitContainer.AddTrait(this, "Immovable");
     }

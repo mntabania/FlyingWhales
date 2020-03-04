@@ -27,11 +27,10 @@ public class SeizeComponent {
         //     return;
         // }
         if (seizedPOI == null) {
-            if(poi.isBeingCarriedBy != null) {
-                poi.isBeingCarriedBy.UncarryPOI();
-            }
+            poi.isBeingCarriedBy?.UncarryPOI();
             if (poi.gridTileLocation != null) {
                 poi.OnSeizePOI();
+                if (poi is BaseMapObject baseMapObject) { baseMapObject.OnManipulatedBy(PlayerManager.Instance.player); }
                 Messenger.Broadcast(Signals.ON_SEIZE_POI, poi);
                 //if(poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
                 //} else {

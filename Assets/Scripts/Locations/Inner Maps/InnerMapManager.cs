@@ -353,32 +353,18 @@ namespace Inner_Maps {
                 summary = $"{summary}None";
             }
 
-            IPointOfInterest poi;
-            poi = tile.objHere ?? tile.genericTileObject;
+            IPointOfInterest poi = tile.objHere ?? tile.genericTileObject;
             summary = $"{summary}\nContent: {poi}";
             if (poi != null) {
                 summary = $"{summary}\nHP: {poi.currentHP.ToString()}/{poi.maxHP.ToString()}";
                 summary = $"{summary}\n\tObject State: {poi.state.ToString()}";
                 summary = $"{summary}\n\tIs Available: {poi.IsAvailable().ToString()}";
-
                 if (poi is TileObject tileObject) {
                     summary = $"{summary}\n\tCharacter Owner: {tileObject.characterOwner?.name}" ?? "None";
                     summary = $"{summary}\n\tFaction Owner: {tileObject.factionOwner?.name}" ?? "None";
-                    
-                    switch (tileObject) {
-                        case TreeObject treeObject:
-                            summary = $"{summary}\n\tYield: {treeObject.yield.ToString()}";
-                            break;
-                        case Ore ore:
-                            summary = $"{summary}\n\tYield: {ore.yield.ToString()}";
-                            break;
-                        case ResourcePile pile:
-                            summary = $"{summary}\n\tResource in Pile: {pile.resourceInPile.ToString()}";
-                            break;
-                        case Table table:
-                            summary = $"{summary}\n\tFood in Table: {table.food.ToString()}";
-                            break;
-                    }
+                }
+                if (poi is BaseMapObject baseMapObject) {
+                    summary = $"{summary}{baseMapObject.GetAdditionalTestingData()}";
                 }
                 summary = $"{summary}\n\tAdvertised Actions: ";
                 summary = poi.advertisedActions.Count > 0 ? poi.advertisedActions.Aggregate(summary, (current, t) => $"{current}|{t.ToString()}|") : $"{summary}None";
@@ -407,15 +393,6 @@ namespace Inner_Maps {
                 } else {
                     summary = $"{summary}None";
                 }
-                // summary = $"{summary}\nPOI's at {tile.structure}: \n";
-                // if (tile.structure.pointsOfInterest.Count > 0) {
-                //     for (int i = 0; i < tile.structure.pointsOfInterest.Count; i++) {
-                //         IPointOfInterest currPOI = tile.structure.pointsOfInterest.ElementAt(i);
-                //         summary = $"{summary}{currPOI.ToString()}, ";
-                //     }
-                // } else {
-                //     summary = $"{summary}None";
-                // }
             } else {
                 summary = $"{summary}\nStructure: None";
             }

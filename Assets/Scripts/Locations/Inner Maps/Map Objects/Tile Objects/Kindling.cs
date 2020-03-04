@@ -4,12 +4,11 @@ using UnityEngine;
 
 public class Kindling : TileObject{
 	public Kindling() {
-		advertisedActions = new List<INTERACTION_TYPE>();
 		Initialize(TILE_OBJECT_TYPE.KINDLING);
-		RemoveCommonAdvertisements();
+		advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
 	}
 	public Kindling(SaveDataTileObject data) {
-		advertisedActions = new List<INTERACTION_TYPE>();
+		advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
 		Initialize(data);
 	}
 }

@@ -20,7 +20,6 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public Character characterOwner { get; private set; }
     public List<INTERACTION_TYPE> advertisedActions { get; protected set; }
     public Region currentRegion => gridTileLocation.structure.location.coreTile.region;
-    private List<string> actionHistory { get; set; } //list of actions that was done to this object
     public LocationStructure structureLocation => gridTileLocation.structure;
     public bool isDisabledByPlayer { get; private set; }
     public bool isSummonedByPlayer { get; private set; }
@@ -39,7 +38,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public int maxHP { get; private set; }
     public int currentHP { get; protected set; }
 
-    ///this is null by default. This is responsible for updating the pathfinding graph when a tileobject that should be unapassable is placed <see cref="LocationGridTileGUS.Initialize(Vector3[])"/>, this should also destroyed when the object is removed. <see cref="LocationGridTileGUS.Destroy"/>
+    ///this is null by default. This is responsible for updating the pathfinding graph when a tileobject that should be unapassable is placed
+    /// <see cref="LocationGridTileGUS.Initialize(Vector2,Vector2,IPointOfInterest)"/>,
+    /// this should also destroyed when the object is removed. <see cref="LocationGridTileGUS.Destroy"/>
     private LocationGridTileGUS graphUpdateScene { get; set; } 
 
     //tile slots
@@ -49,8 +50,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
 
     public virtual LocationGridTile gridTileLocation { get; protected set; }
     public POI_STATE state { get; private set; }
-    public LocationGridTile previousTile { get; protected set; }
-    public Dictionary<RESOURCE, int> storedResources { get; protected set; }
+    public LocationGridTile previousTile { get; private set; }
+    public Dictionary<RESOURCE, int> storedResources { get; private set; }
     protected Dictionary<RESOURCE, int> maxResourceValues { get; set; }
 
     private bool hasSubscribedToListeners;
@@ -72,7 +73,6 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         id = UtilityScripts.Utilities.SetID(this);
         this.tileObjectType = tileObjectType;
         name = GenerateName();
-        actionHistory = new List<string>();
         allJobsTargetingThis = new List<JobQueueItem>();
         owners = new List<Character>();
         hasCreatedSlots = false;
@@ -89,7 +89,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     protected void Initialize(SaveDataTileObject data) {
         id = UtilityScripts.Utilities.SetID(this, data.id);
         tileObjectType = data.tileObjectType;
-        actionHistory = new List<string>();
+        new List<string>();
         allJobsTargetingThis = new List<JobQueueItem>();
         owners = new List<Character>();
         hasCreatedSlots = false;
@@ -345,7 +345,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             isSummonedByPlayer = state;
             if (isSummonedByPlayer) {
                 if(advertisedActions == null) {
-                    advertisedActions = new List<INTERACTION_TYPE>();
+                    advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
                 }
                 if (!advertisedActions.Contains(INTERACTION_TYPE.INSPECT)) {
                     advertisedActions.Add(INTERACTION_TYPE.INSPECT);
@@ -359,15 +359,17 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     }
     public void AddAdvertisedAction(INTERACTION_TYPE type) {
         if (advertisedActions == null) {
-            advertisedActions = new List<INTERACTION_TYPE>();
+            advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
         }
         if (advertisedActions.Contains(type) == false) {
             advertisedActions.Add(type);
+            // ReSharper disable once Unity.NoNullPropagation
             mapVisual?.UpdateCollidersState(this);    
         }
     }
     public void RemoveAdvertisedAction(INTERACTION_TYPE type) {
         advertisedActions.Remove(type);
+        // ReSharper disable once Unity.NoNullPropagation
         mapVisual?.UpdateCollidersState(this);
     }
     public void AddJobTargetingThis(JobQueueItem job) {
@@ -439,9 +441,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             return; //if hp is already 0, do not deal damage
         }
         AdjustHP(-characterThatAttacked.attackPower, elementalType, source: characterThatAttacked);
-        attackSummary += $"\nDealt damage {characterThatAttacked.attackPower}";
+        attackSummary = $"{attackSummary}\nDealt damage {characterThatAttacked.attackPower.ToString()}";
         if (currentHP <= 0) {
-            attackSummary += $"\n{name}'s hp has reached 0.";
+            attackSummary = $"{attackSummary}\n{name}'s hp has reached 0.";
         }
         //Messenger.Broadcast(Signals.CHARACTER_WAS_HIT, this, characterThatAttacked);
     }

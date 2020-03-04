@@ -4,17 +4,10 @@ using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UnityEngine;
-using UnityEngine.Tilemaps;
 using UtilityScripts;
 
 public class Table : TileObject {
-    //private Character[] users;
-    public TileBase usedAsset { get; private set; }
-    public int food { get { return storedResources[RESOURCE.FOOD]; } }
-    //private int slots {
-    //    get { return users.Length;}
-    //}
-
+    public int food => storedResources[RESOURCE.FOOD];
     public Table() {
         advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.DRINK, INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.DROP_RESOURCE, INTERACTION_TYPE.REPAIR, INTERACTION_TYPE.SIT };
         Initialize(TILE_OBJECT_TYPE.TABLE);
@@ -27,9 +20,6 @@ public class Table : TileObject {
         advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.DRINK, INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.DROP_RESOURCE, INTERACTION_TYPE.REPAIR, INTERACTION_TYPE.SIT };
         Initialize(data);
         traitContainer.AddTrait(this, "Edible");
-    }
-    public void SetUsedAsset(TileBase usedAsset) {
-        this.usedAsset = usedAsset;
     }
 
     #region Overrides
@@ -101,6 +91,11 @@ public class Table : TileObject {
             RESOURCE resourceType = resourceTypes[i];
             maxResourceValues.Add(resourceType, resourceType == RESOURCE.FOOD ? 100 : 0);
         }
+    }
+    public override string GetAdditionalTestingData() {
+        string data = base.GetAdditionalTestingData();
+        data = $"{data}\n\tFood in Table: {food.ToString()}";
+        return data;
     }
     #endregion
 

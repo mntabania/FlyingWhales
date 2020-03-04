@@ -417,12 +417,10 @@ public class ActualGoapNode {
             return;
         }
         actionStatus = ACTION_STATUS.PERFORMING;
-        //actorAlterEgo = actor.currentAlterEgo;
         actor.marker.UpdateAnimation();
 
         if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             Character targetCharacter = poiTarget as Character;
-            //poiTargetAlterEgo = targetCharacter.currentAlterEgo;
             if (!action.doesNotStopTargetCharacter && actor != poiTarget) {
                 if (!targetCharacter.isDead) {
                     if (targetCharacter.currentParty.icon.isTravelling) {
@@ -439,6 +437,9 @@ public class ActualGoapNode {
                 }
                 targetCharacter.AdjustIsStoppedByOtherCharacter(1);
             }
+        }
+        if (action.actionCategory != ACTION_CATEGORY.INDIRECT && poiTarget is BaseMapObject baseMapObject) {
+            baseMapObject.OnManipulatedBy(actor);
         }
         action.Perform(this);
         Messenger.Broadcast(Signals.ACTION_PERFORMED, this);

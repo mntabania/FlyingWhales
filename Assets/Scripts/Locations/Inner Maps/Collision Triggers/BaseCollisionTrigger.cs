@@ -15,7 +15,7 @@ public abstract class BaseCollisionTrigger<T> : MonoBehaviour, IBaseCollider whe
     public IDamageable damageable { get; private set; }
     public virtual void Initialize(T owner) {
         this.owner = owner;
-        this.name = $"{owner} collision trigger";
+        this.name = $"{owner.ToString()} collision trigger";
         damageable = owner;
         _projectileReceiver.gameObject.SetActive(true);
         _projectileReceiver.Initialize(owner);

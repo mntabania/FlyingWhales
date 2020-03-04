@@ -49,6 +49,11 @@ public class Ore : TileObject {
     public void SetYield(int amount) {
         yield = amount;
     }
+    public override string GetAdditionalTestingData() {
+        string data = base.GetAdditionalTestingData();
+        data = $"{data}\n\tYield: {yield.ToString()}";
+        return data;
+    }
 }
 
 public class SaveDataOre : SaveDataTileObject {

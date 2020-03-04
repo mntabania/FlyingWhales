@@ -7,10 +7,9 @@ public sealed class PoisonCloudTileObject : MovingTileObject {
     private PoisonCloudMapObjectVisual _poisonCloudVisual;
     
     public PoisonCloudTileObject() {
-        advertisedActions = new List<INTERACTION_TYPE>();
         Initialize(TILE_OBJECT_TYPE.POISON_CLOUD);
         traitContainer.RemoveTrait(this, "Flammable");
-        RemoveCommonAdvertisements();
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
     }
     
     protected override void CreateMapObjectVisual() {
