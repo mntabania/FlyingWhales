@@ -179,7 +179,9 @@ namespace Inner_Maps {
             Assert.IsTrue(targetRegion != this.region, $"target region passed is same as owning region! {targetRegion.name}");
             Vector3 coordinates = GetClosestPointToRegion(targetRegion);
             Debug.Log($"Getting target tile to go to {targetRegion.name} from {this.region.name}. Result was {coordinates.ToString()}");
-            LocationGridTile targetTile = map[(int)coordinates.x, (int)coordinates.y];
+            int xCoordinate = Mathf.Clamp((int)coordinates.x, 0, width - 1);
+            int yCoordinate = Mathf.Clamp((int)coordinates.y, 0, height - 1);
+            LocationGridTile targetTile = map[xCoordinate, yCoordinate];
             return targetTile;
         }
         #endregion
