@@ -1007,6 +1007,7 @@
             <e p="CharacterAvatar.cs" t="Include" />
             <e p="SmoothMovement.cs" t="Include" />
           </e>
+          <e p="BoundsTester.cs" t="Include" />
           <e p="Camera" t="Include">
             <e p="CameraMove.cs" t="Include" />
             <e p="InnerMapCameraMove.cs" t="Include" />

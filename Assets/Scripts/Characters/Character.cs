@@ -1663,6 +1663,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return null;
     }
+    public LocationGridTile GetTargetTileToGoToRegion(Region region) {
+        return (gridTileLocation.parentMap as RegionInnerTileMap).GetTileToGoToRegion(region);
+    }
     public LocationGridTile GetNearestUnoccupiedEdgeTileFromThis() {
         LocationGridTile currentGridTile = gridTileLocation;
         if (currentGridTile.IsAtEdgeOfWalkableMap() && currentGridTile.structure != null) {

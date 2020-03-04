@@ -58,7 +58,7 @@ namespace Inner_Maps {
         
         [Header("For Testing")]
         [SerializeField] protected LineRenderer pathLineRenderer;
-
+        [SerializeField] protected BoundDrawer _boundDrawer;
         //properties
         public int width { get; set; }
         public int height { get; set; }
@@ -305,8 +305,10 @@ namespace Inner_Maps {
         }
         public void Open() { }
         public void Close() { }
-        public void OnMapGenerationFinished() {
+        public virtual void OnMapGenerationFinished() {
             name = $"{location.name}'s Inner Map";
+            groundTilemap.CompressBounds();
+            _boundDrawer.ManualUpdateBounds(groundTilemap.localBounds);
             worldUiCanvas.worldCamera = InnerMapCameraMove.Instance.innerMapsCamera;
             var orthographicSize = InnerMapCameraMove.Instance.innerMapsCamera.orthographicSize;
             cameraBounds = new Vector4 {x = -185.8f}; //x - minX, y - minY, z - maxX, w - maxY 
@@ -317,7 +319,8 @@ namespace Inner_Maps {
         }
         private void SpawnCenterGo() {
             centerGo = Instantiate<GameObject>(centerGoPrefab, transform);
-            centerGo.transform.position = new Vector3((cameraBounds.x + cameraBounds.z) * 0.5f, (cameraBounds.y + cameraBounds.w) * 0.5f);
+            Vector3 centerPosition = new Vector3(width/2f, height/2f); //new Vector3((cameraBounds.x + cameraBounds.z) * 0.5f, (cameraBounds.y + cameraBounds.w) * 0.5f);
+            centerGo.transform.localPosition = centerPosition;
         }
         private void ShowPath(List<Vector3> points) {
             pathLineRenderer.gameObject.SetActive(true);

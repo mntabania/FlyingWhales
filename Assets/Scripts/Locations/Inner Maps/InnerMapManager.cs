@@ -325,6 +325,7 @@ namespace Inner_Maps {
                         || UIManager.Instance.minionCommandsUI.targetPOI == character)) {
                 return; //do not show tooltip if right click menu is currently targeting the hovered object
             }
+
             Profiler.BeginSample("Show Tile Data Sample");
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             HexTile hexTile = tile.buildSpotOwner.hexTileOwner;
