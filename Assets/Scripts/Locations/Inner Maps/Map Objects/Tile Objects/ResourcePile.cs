@@ -87,32 +87,10 @@ public abstract class ResourcePile : TileObject {
             SubscribeListeners();
         }
     }
+    public override string GetAdditionalTestingData() {
+        string data = base.GetAdditionalTestingData();
+        data = $"{data}\n\tResource in Pile: {resourceInPile.ToString()}";
+        return data;
+    }
     #endregion
-
-    protected bool IsDepositResourcePileStillApplicable() {
-        return gridTileLocation != null && gridTileLocation.structure != gridTileLocation.structure.location.mainStorage;
-    }
-    // protected void OnRegionChangeStorage(Region regionOfMainStorage) {
-    //     if(gridTileLocation != null && structureLocation.location.IsSameCoreLocationAs(regionOfMainStorage) && structureLocation != structureLocation.location.mainStorage) {
-    //         CreateHaulJob();
-    //     }
-    // }
-    // protected void CreateHaulJob() {
-    //     if (!structureLocation.settlementLocation.HasJob(JOB_TYPE.HAUL, this)) {
-    //         ResourcePile chosenPileToBeDeposited = structureLocation.settlementLocation.mainStorage.GetResourcePileObjectWithLowestCount(tileObjectType);
-    //         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAUL, new GoapEffect(GOAP_EFFECT_CONDITION.DEPOSIT_RESOURCE, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), this, structureLocation.settlementLocation);
-    //         if (chosenPileToBeDeposited != null) {
-    //             job.AddOtherData(INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE, new object[] { chosenPileToBeDeposited });
-    //         }
-    //         job.SetStillApplicableChecker(IsDepositResourcePileStillApplicable);
-    //         job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoObtainSupplyJob);
-    //         structureLocation.settlementLocation.AddToAvailableJobs(job);
-    //     }
-    // }
-    protected void ForceCancelNotAssignedProduceJob(JOB_TYPE jobType) {
-        JobQueueItem job = structureLocation.settlementLocation.GetJob(jobType);
-        if (job != null && job.assignedCharacter == null) {
-            structureLocation.settlementLocation.ForceCancelJob(job);
-        }
-    }
 }

@@ -1007,6 +1007,7 @@
             <e p="CharacterAvatar.cs" t="Include" />
             <e p="SmoothMovement.cs" t="Include" />
           </e>
+          <e p="BoundsTester.cs" t="Include" />
           <e p="Camera" t="Include">
             <e p="CameraMove.cs" t="Include" />
             <e p="InnerMapCameraMove.cs" t="Include" />
@@ -1488,6 +1489,7 @@
               <e p="LocationGridTileGUS.cs" t="Include" />
               <e p="Map Objects" t="Include">
                 <e p="Map Object Visuals" t="Include">
+                  <e p="BaseMapObject.cs" t="Include" />
                   <e p="BaseMapObjectVisual.cs" t="Include" />
                   <e p="BedObjectGameObject.cs" t="Include" />
                   <e p="LocustSwarmMapObjectVisual.cs" t="Include" />
@@ -1673,6 +1675,7 @@
             <e p="IDwelling.cs" t="Include" />
             <e p="IJobOwner.cs" t="Include" />
             <e p="ILeader.cs" t="Include" />
+            <e p="IObjectManipulator.cs" t="Include" />
             <e p="IParty.cs" t="Include" />
             <e p="IPointOfInterest.cs" t="Include" />
             <e p="IReactable.cs" t="Include" />

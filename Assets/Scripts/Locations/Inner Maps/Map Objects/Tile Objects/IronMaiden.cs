@@ -3,12 +3,11 @@
 public class IronMaiden : TileObject {
     
     public IronMaiden() {
-        advertisedActions = new List<INTERACTION_TYPE>();
         Initialize(TILE_OBJECT_TYPE.IRON_MAIDEN);
-        RemoveCommonAdvertisements();
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
     }
     public IronMaiden(SaveDataTileObject data) {
-        advertisedActions = new List<INTERACTION_TYPE>();
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
         Initialize(data);
     }
     public override bool CanBeDamaged() {

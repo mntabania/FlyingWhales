@@ -161,4 +161,14 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
         DOTween.Kill(this.transform);
     }
     #endregion
+
+    #region Placement
+    public virtual void PlaceObjectAt(LocationGridTile tile) {
+        Transform thisTransform = transform;
+        thisTransform.SetParent(tile.parentMap.structureParent);
+        Vector3 worldPos = tile.centeredWorldLocation;
+        thisTransform.position = worldPos;
+    }
+    #endregion
+    
 }

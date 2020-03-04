@@ -2,12 +2,11 @@
 
 public class TableMetalworkingTools : TileObject{
     public TableMetalworkingTools() {
-        advertisedActions = new List<INTERACTION_TYPE>();
         Initialize(TILE_OBJECT_TYPE.TABLE_METALWORKING_TOOLS);
-        RemoveCommonAdvertisements();
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
     }
     public TableMetalworkingTools(SaveDataTileObject data) {
-        advertisedActions = new List<INTERACTION_TYPE>();
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
         Initialize(data);
     }
 }

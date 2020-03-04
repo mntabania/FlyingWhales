@@ -3,11 +3,11 @@
 public class RegionTileObject : TileObject {
 
     public RegionTileObject() {
-        advertisedActions = new List<INTERACTION_TYPE>();
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
         Initialize(TILE_OBJECT_TYPE.REGION_TILE_OBJECT);
     }
     public RegionTileObject(SaveDataTileObject data) {
-        advertisedActions = new List<INTERACTION_TYPE>();
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
         Initialize(data);
     }
     public void SetName(Region region) {

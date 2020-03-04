@@ -11,7 +11,7 @@ using UtilityScripts;
 using Random = UnityEngine.Random;
 // ReSharper disable Unity.NoNullPropagation
 
-public class Player : ILeader {
+public class Player : ILeader, IObjectManipulator {
     public PlayerArchetype archetype { get; private set; }
     public Faction playerFaction { get; private set; }
     public Settlement playerSettlement { get; private set; }

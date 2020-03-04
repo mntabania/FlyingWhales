@@ -309,12 +309,10 @@ public class Party {
         }
         if (owner.currentRegion.IsSameCoreLocationAs(targetLocation)) {
             //action doer is already at the target location
-            if (doneAction != null) {
-                doneAction();
-            }
+            doneAction?.Invoke();
         } else {
             //_icon.SetActionOnTargetReached(doneAction);
-            LocationGridTile exitTile = owner.GetNearestUnoccupiedEdgeTileFromThis();
+            LocationGridTile exitTile = owner.GetTargetTileToGoToRegion(targetLocation.coreTile.region);
             owner.marker.GoTo(exitTile, () => MoveToAnotherLocation(targetLocation.coreTile.region, pathfindingMode, targetStructure, doneAction, actionOnStartOfMovement, targetPOI, targetTile));
         }
     }

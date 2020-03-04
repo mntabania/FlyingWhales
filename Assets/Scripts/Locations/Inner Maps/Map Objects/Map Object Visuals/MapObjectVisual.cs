@@ -15,20 +15,6 @@ public abstract class MapObjectVisual<T> : BaseMapObjectVisual where T : IDamage
         onRightClickAction = () => OnPointerRightClick(obj);
     }
 
-    #region Placement
-    public virtual void PlaceObjectAt(LocationGridTile tile) {
-        // if (ReferenceEquals(tile.structure.structureObj, null) == false) {
-        //     tile.structure.structureObj.ReceiveMapObject(this);
-        // } else {
-        //     //TODO: Make it so that work settlement and wilderness can also have a structure object to prevent this checking.
-        //     this.transform.SetParent(tile.parentMap.structureParent);
-        // }
-        this.transform.SetParent(tile.parentMap.structureParent);
-        Vector3 worldPos = tile.centeredWorldLocation;
-        this.transform.position = worldPos;
-    }
-    #endregion
-    
     #region Visuals
     public abstract void UpdateTileObjectVisual(T obj);
     protected virtual void UpdateSortingOrders(T obj) {

@@ -21,13 +21,13 @@ public class FeebleSpirit : TileObject {
     
     public FeebleSpirit() {
         _duration = GameManager.Instance.GetTicksBasedOnHour(1);
-        advertisedActions = new List<INTERACTION_TYPE>();
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
         Initialize(TILE_OBJECT_TYPE.FEEBLE_SPIRIT);
         traitContainer.AddTrait(this, "Feeble");
     }
     public FeebleSpirit(SaveDataTileObject data) {
         _duration = GameManager.Instance.GetTicksBasedOnHour(1);
-        advertisedActions = new List<INTERACTION_TYPE>();
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
         Initialize(data);
         traitContainer.AddTrait(this, "Feeble");
     }

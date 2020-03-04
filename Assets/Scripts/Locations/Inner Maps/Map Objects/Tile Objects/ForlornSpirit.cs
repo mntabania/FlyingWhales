@@ -21,13 +21,13 @@ public class ForlornSpirit : TileObject {
     
     public ForlornSpirit() {
         _duration = GameManager.Instance.GetTicksBasedOnHour(1);
-        advertisedActions = new List<INTERACTION_TYPE>();
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
         Initialize(TILE_OBJECT_TYPE.FORLORN_SPIRIT);
         traitContainer.AddTrait(this, "Forlorn");
     }
     public ForlornSpirit(SaveDataTileObject data) {
         _duration = GameManager.Instance.GetTicksBasedOnHour(1);
-        advertisedActions = new List<INTERACTION_TYPE>();
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
         Initialize(data);
         traitContainer.AddTrait(this, "Forlorn");
     }

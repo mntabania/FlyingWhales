@@ -8,9 +8,8 @@ public class Rock : TileObject{
     public int yield { get; private set; }
 
     public Rock() {
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.MINE_STONE, INTERACTION_TYPE.ASSAULT, };
         Initialize(TILE_OBJECT_TYPE.ROCK);
-        RemoveCommonAdvertisements();
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.MINE_STONE, INTERACTION_TYPE.ASSAULT, };
         SetYield(50);
     }
     public Rock(SaveDataTileObject data) {

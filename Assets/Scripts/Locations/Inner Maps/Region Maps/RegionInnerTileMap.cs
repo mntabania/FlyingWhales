@@ -3,14 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using Inner_Maps.Location_Structures;
+using JetBrains.Annotations;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.Tilemaps;
 
 namespace Inner_Maps {
     public class RegionInnerTileMap : InnerTileMap {
-        public virtual bool isSettlementMap => false;
         private Region region { get; set; }
+        public Dictionary<Region, Transform> otherRegionObjects { get; private set; } //dictionary of objects to show which direction other regions are from this one.
+
+        [SerializeField] private GameObject regionDirectionPrefab;
         
         public override void Initialize(ILocation location) {
             base.Initialize(location);
@@ -26,27 +29,9 @@ namespace Inner_Maps {
             yield return StartCoroutine(GenerateGrid(tileMapWidth, tileMapHeight, mapGenerationComponent));
             InitializeBuildingSpots(mapGenerationComponent);
             ConnectHexTilesToBuildSpots(mapGenerationComponent);
-            // AssignWilderness(mapGenerationComponent);
             yield return StartCoroutine(GenerateDetails(mapGenerationComponent));
         }
-        private void AssignWilderness(MapGenerationComponent mapGenerationComponent) {
-            System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
-            stopwatch.Start();
-            LocationStructure structure = location.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-            for (int i = 0; i < allTiles.Count; i++) {
-                LocationGridTile tile = allTiles[i];
-                bool isAtEdges = UtilityScripts.Utilities.IsInRange(tile.localPlace.x, 0, WestEdge) ||
-                                 UtilityScripts.Utilities.IsInRange(tile.localPlace.x, width - EastEdge, width) ||
-                                 UtilityScripts.Utilities.IsInRange(tile.localPlace.y, 0, SouthEdge) ||
-                                 UtilityScripts.Utilities.IsInRange(tile.localPlace.y, height - NorthEdge, width);
-                if (isAtEdges == false) { //&& tile.buildSpotOwner.isPartOfParentRegionMap
-                    tile.CreateGenericTileObject();
-                    tile.SetStructure(structure);
-                }
-            }
-            stopwatch.Stop();
-            mapGenerationComponent.AddLog($"{location.name} AssignWilderness took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
-        }
+
         #region Build Spots
         private Vector2Int CreateBuildSpotGrid(MapGenerationComponent mapGenerationComponent) {
             System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
@@ -147,9 +132,9 @@ namespace Inner_Maps {
             mapGenerationComponent.AddLog($"{location.name} ConnectHexTilesToBuildSpots took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
         }
         private void AssignBuildSpotsToHexTile(HexTile tile, int column1, int column2, int row1, int row2) {
-            int width = (column2 - column1) + 1;
-            int height = (row2 - row1) + 1;
-            BuildingSpot[] spots = new BuildingSpot[width * height];
+            int w = (column2 - column1) + 1;
+            int h = (row2 - row1) + 1;
+            BuildingSpot[] spots = new BuildingSpot[w * h];
             int index = 0;
             for (int column = column1; column <= column2; column++) {
                 for (int row = row1; row <= row2; row++) {
@@ -160,6 +145,44 @@ namespace Inner_Maps {
                 }
             }
             tile.SetOwnedBuildSpot(spots);
+        }
+        #endregion
+
+        #region Overrides
+        public override void OnMapGenerationFinished() {
+            base.OnMapGenerationFinished();
+            GenerateRegionDirectionObjects();
+        }
+        #endregion
+
+        #region Other Regions
+        public void GenerateRegionDirectionObjects() {
+            otherRegionObjects = new Dictionary<Region, Transform>();
+            for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+                Region otherRegion = GridMap.Instance.allRegions[i];
+                if (otherRegion != region) {
+                    Vector3 directionToRegion = (otherRegion.coreTile.transform.position - region.coreTile.transform.position).normalized * 60f;
+                    GameObject regionDirectionGO = Instantiate(regionDirectionPrefab, centerGo.transform, true);
+                    regionDirectionGO.name = $"{otherRegion.name} direction";
+                    regionDirectionGO.transform.localPosition = directionToRegion;
+                    otherRegionObjects.Add(otherRegion, regionDirectionGO.transform);
+                }
+            }
+        }
+        private Vector3 GetClosestPointToRegion(Region targetRegion) {
+            Bounds bounds = groundTilemap.localBounds;
+            bounds.center = groundTilemap.localBounds.center + groundTilemap.transform.position;
+            Vector3 closestPoint = bounds.ClosestPoint(otherRegionObjects[targetRegion].position);
+            return transform.InverseTransformPoint(closestPoint);
+        }
+        public LocationGridTile GetTileToGoToRegion([NotNull]Region targetRegion) {
+            Assert.IsTrue(targetRegion != this.region, $"target region passed is same as owning region! {targetRegion.name}");
+            Vector3 coordinates = GetClosestPointToRegion(targetRegion);
+            Debug.Log($"Getting target tile to go to {targetRegion.name} from {this.region.name}. Result was {coordinates.ToString()}");
+            int xCoordinate = Mathf.Clamp((int)coordinates.x, 0, width - 1);
+            int yCoordinate = Mathf.Clamp((int)coordinates.y, 0, height - 1);
+            LocationGridTile targetTile = map[xCoordinate, yCoordinate];
+            return targetTile;
         }
         #endregion
     }

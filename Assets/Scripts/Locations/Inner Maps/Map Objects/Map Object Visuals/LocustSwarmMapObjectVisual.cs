@@ -85,7 +85,7 @@ public class LocustSwarmMapObjectVisual : MovingMapObjectVisual<TileObject> {
         }
     }
     private void RandomizeDirection() {
-        Vector3 direction = (new Vector3(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f), 0f)).normalized * 10f;
+        Vector3 direction = (new Vector3(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f), 0f)).normalized * 50f;
         direction += transform.position;
         _movement = transform.DOMove(direction, 0.3f).SetSpeedBased(true);
         OnGamePaused(GameManager.Instance.isPaused);

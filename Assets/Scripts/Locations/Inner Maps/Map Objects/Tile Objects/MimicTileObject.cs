@@ -9,12 +9,12 @@ public class MimicTileObject : TileObject {
     private bool _hasBeenAwakened;
     
     public MimicTileObject() {
-        advertisedActions = new List<INTERACTION_TYPE>();
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
         Initialize(TILE_OBJECT_TYPE.MIMIC_TILE_OBJECT);
         RemoveAdvertisedAction(INTERACTION_TYPE.REPAIR);
     }
     public MimicTileObject(SaveDataTileObject data) {
-        advertisedActions = new List<INTERACTION_TYPE>();
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
         Initialize(data);
     }
     public override void OnDoActionToObject(ActualGoapNode action) {

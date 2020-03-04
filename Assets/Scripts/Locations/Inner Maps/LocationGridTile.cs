@@ -32,7 +32,8 @@ namespace Inner_Maps {
         public Tile_State tileState { get; private set; }
         public Ground_Type groundType { get; private set; }
         public LocationStructure structure { get; private set; }
-        public Dictionary<GridNeighbourDirection, LocationGridTile> neighbours { get; private set; }
+        private Dictionary<GridNeighbourDirection, LocationGridTile> neighbours { get; set; }
+        private Dictionary<GridNeighbourDirection, LocationGridTile> fourNeighbours { get; set; }
         public List<LocationGridTile> neighbourList { get; private set; }
         public IPointOfInterest objHere { get; private set; }
         public List<Character> charactersHere { get; private set; }
@@ -96,23 +97,14 @@ namespace Inner_Maps {
         }
         public List<LocationGridTile> FourNeighbours() {
             List<LocationGridTile> fn = new List<LocationGridTile>();
-            foreach (KeyValuePair<GridNeighbourDirection, LocationGridTile> keyValuePair in neighbours) {
-                if (keyValuePair.Key.IsCardinalDirection()) {
-                    fn.Add(keyValuePair.Value);
-                }
+            foreach (KeyValuePair<GridNeighbourDirection, LocationGridTile> keyValuePair in fourNeighbours) {
+                fn.Add(keyValuePair.Value);
             }
             return fn;
         }
-        private Dictionary<GridNeighbourDirection, LocationGridTile> FourNeighboursDictionary() {
-            Dictionary<GridNeighbourDirection, LocationGridTile> fn = new Dictionary<GridNeighbourDirection, LocationGridTile>();
-            foreach (KeyValuePair<GridNeighbourDirection, LocationGridTile> keyValuePair in neighbours) {
-                if (keyValuePair.Key.IsCardinalDirection()) {
-                    fn.Add(keyValuePair.Key, keyValuePair.Value);
-                }
-            }
-            return fn;
-        }
+        private Dictionary<GridNeighbourDirection, LocationGridTile> FourNeighboursDictionary() { return fourNeighbours; }
         public void FindNeighbours(LocationGridTile[,] map) {
+            fourNeighbours = new Dictionary<GridNeighbourDirection, LocationGridTile>();
             neighbours = new Dictionary<GridNeighbourDirection, LocationGridTile>();
             neighbourList = new List<LocationGridTile>();
             int mapUpperBoundX = map.GetUpperBound(0);
@@ -124,8 +116,12 @@ namespace Inner_Maps {
                 Point result = exit.Sum(thisPoint);
                 if (UtilityScripts.Utilities.IsInRange(result.X, 0, mapUpperBoundX + 1) &&
                     UtilityScripts.Utilities.IsInRange(result.Y, 0, mapUpperBoundY + 1)) {
-                    neighbours.Add(currDir, map[result.X, result.Y]);
-                    neighbourList.Add(map[result.X, result.Y]);
+                    LocationGridTile tile = map[result.X, result.Y];
+                    neighbours.Add(currDir, tile);
+                    neighbourList.Add(tile);
+                    if (currDir.IsCardinalDirection()) {
+                        fourNeighbours.Add(currDir, tile);
+                    }
                 }
 
             }

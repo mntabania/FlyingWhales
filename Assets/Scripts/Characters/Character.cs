@@ -12,7 +12,7 @@ using Interrupts;
 using UnityEngine.EventSystems;
 using UtilityScripts;
 
-public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlayerActionTarget {
+public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlayerActionTarget, IObjectManipulator {
 
     protected string _name;
     protected string _firstName;
@@ -90,7 +90,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public LycanthropeData lycanData { get; protected set; }
     public List<JobQueueItem> forcedCancelJobsOnTickEnded { get; private set; }
 
-    private List<System.Action> onLeaveAreaActions;
+    private List<Action> onLeaveAreaActions;
     private POI_STATE _state;
     // public Dictionary<int, Combat> combatHistory;
 
@@ -150,9 +150,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public virtual string name => _firstName;
     public string fullname => $"{_firstName} {_surName}";
     public string nameWithID => name;
-    public virtual string raceClassName => $"{UtilityScripts.GameUtilities.GetNormalizedRaceAdjective(race)} {characterClass.className}";
+    public virtual string raceClassName => $"{GameUtilities.GetNormalizedRaceAdjective(race)} {characterClass.className}";
     public override int id => _id;
-    public bool isDead => this._isDead;
+    public bool isDead => _isDead;
     public bool isFactionless { //is the character part of the neutral faction? or no faction?
         get {
             if (faction == null || FactionManager.Instance.neutralFaction == faction) {
@@ -217,7 +217,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     public int maxHP => _maxHP;
-    public int currentHP => this._currentHP;
+    public int currentHP => _currentHP;
     public int attackSpeed => _characterClass.baseAttackSpeed; //in milliseconds, The lower the amount the faster the attack rate
     public Minion minion => _minion;
     public POINT_OF_INTEREST_TYPE poiType => POINT_OF_INTEREST_TYPE.CHARACTER;
@@ -235,7 +235,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public Vector2Int gridTilePosition {
         get {
             if (!marker) {
-                throw new Exception($"{this.name} marker is null!");
+                throw new Exception($"{name} marker is null!");
             }
             return new Vector2Int(Mathf.FloorToInt(marker.anchoredPos.x), Mathf.FloorToInt(marker.anchoredPos.y));
         }
@@ -522,12 +522,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     #region Listeners
     private void OnCharacterExitedArea(Settlement settlement, Character character) {
-        if (character.id == this.id) {
+        if (character.id == id) {
             //Clear terrifying characters of this character if he/she leaves the settlement
             //marker.ClearTerrifyingObjects();
         } else {
             if (!marker) {
-                throw new Exception($"Marker of {this.name} is null!");
+                throw new Exception($"Marker of {name} is null!");
             }
             //remove the character that left the settlement from anyone elses list of terrifying characters.
             //if (marker.terrifyingObjects.Count > 0) {
@@ -590,7 +590,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     #region Sexuality
     private void GenerateSexuality() {
-        if (UtilityScripts.GameUtilities.IsRaceBeast(race)) {
+        if (GameUtilities.IsRaceBeast(race)) {
             //For beasts:
             //100 % straight
             sexuality = SEXUALITY.STRAIGHT;
@@ -649,7 +649,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void PerTickDuringMovement() {
         for (int i = 0; i < traitContainer.allTraits.Count; i++) {
-            Traits.Trait trait = traitContainer.allTraits[i];
+            Trait trait = traitContainer.allTraits[i];
             if (trait.PerTickOwnerMovement()) {
                 break;
             }
@@ -665,14 +665,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void SetIsDead(bool isDead) {
         _isDead = isDead;
     }
-    public void RaiseFromDeath(int level = 1, System.Action<Character> onReturnToLifeAction = null, Faction faction = null, RACE race = RACE.SKELETON, string className = "") {
+    public void RaiseFromDeath(int level = 1, Action<Character> onReturnToLifeAction = null, Faction faction = null, RACE race = RACE.SKELETON, string className = "") {
         if (faction == null) {
             GameManager.Instance.StartCoroutine(Raise(this, level, onReturnToLifeAction, FactionManager.Instance.neutralFaction, race, className));
         } else {
             GameManager.Instance.StartCoroutine(Raise(this, level, onReturnToLifeAction, faction, race, className));
         }
     }
-    private IEnumerator Raise(Character target, int level, System.Action<Character> onReturnToLifeAction, Faction faction, RACE race, string className) {
+    private IEnumerator Raise(Character target, int level, Action<Character> onReturnToLifeAction, Faction faction, RACE race, string className) {
         target.marker.PlayAnimation("Raise Dead");
         yield return new WaitForSeconds(0.7f);
         target.ReturnToLife(faction, race, className);
@@ -759,7 +759,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
             if (currentRegion == null) {
                 throw new Exception(
-                    $"Current Region Location of {this.name} is null! Please use command /l_character_location_history [Character Name/ID] in console menu to log character's location history. (Use '~' to show console menu)");
+                    $"Current Region Location of {name} is null! Please use command /l_character_location_history [Character Name/ID] in console menu to log character's location history. (Use '~' to show console menu)");
             }
             if (stateComponent.currentState != null) {
                 stateComponent.ExitCurrentState();
@@ -953,7 +953,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #region Character Class
     public virtual string GetClassForRole(CharacterRole role) {
         if (role == CharacterRole.BEAST) {
-            return UtilityScripts.GameUtilities.GetRespectiveBeastClassNameFromByRace(race);
+            return GameUtilities.GetRespectiveBeastClassNameFromByRace(race);
         } else {
             string className = CharacterManager.Instance.GetRandomClassByIdentifier(role.classNameOrIdentifier);
             if (className != string.Empty) {
@@ -972,7 +972,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (CharacterManager.Instance.HasCharacterClass(className)) {
             AssignClass(CharacterManager.Instance.CreateNewCharacterClass(className), isInitial);
         } else {
-            throw new Exception($"There is no class named {className} but it is being assigned to {this.name}");
+            throw new Exception($"There is no class named {className} but it is being assigned to {name}");
         }
     }
     protected void OnUpdateCharacterClass() {
@@ -1261,7 +1261,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         // }
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.UNDERMINE, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, "Negative", false, GOAP_EFFECT_TARGET.TARGET), targetCharacter, this);
         logComponent.PrintLogIfActive(
-            $"Added an UNDERMINE ENEMY Job: negative trait to {this.name} with target {targetCharacter.name}");
+            $"Added an UNDERMINE ENEMY Job: negative trait to {name} with target {targetCharacter.name}");
         jobQueue.AddJobInQueue(job);
 
         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", $"{reason}_and_undermine");
@@ -1449,7 +1449,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     public bool ChangeFactionTo(Faction newFaction) {
-        if (this.faction == newFaction) {
+        if (faction == newFaction) {
             return false; //if the new faction is the same, ignore change
         }
         if (faction != null) {
@@ -1583,10 +1583,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     #region Location
     public void SetCurrentStructureLocation(LocationStructure newStructure, bool broadcast = true) {
-        if (newStructure == this.currentStructure) {
+        if (newStructure == currentStructure) {
             return; //ignore change;
         }
-        LocationStructure previousStructure = this.currentStructure;
+        LocationStructure previousStructure = currentStructure;
         _currentStructure = newStructure;
         //if (marker && currentStructure != null) {
         //    marker.RevalidatePOIsInVisionRange(); //when the character changes structures, revalidate pois in range
@@ -1662,6 +1662,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
         return null;
+    }
+    public LocationGridTile GetTargetTileToGoToRegion(Region region) {
+        return (gridTileLocation.parentMap as RegionInnerTileMap).GetTileToGoToRegion(region);
     }
     public LocationGridTile GetNearestUnoccupiedEdgeTileFromThis() {
         LocationGridTile currentGridTile = gridTileLocation;
@@ -1739,7 +1742,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         currentParty.icon.SetTarget(null, null, null, null);
         currentParty.icon.SetOnPathFinished(null);
     }
-    public void AddOnLeaveAreaAction(System.Action onLeaveAreaAction) {
+    public void AddOnLeaveAreaAction(Action onLeaveAreaAction) {
         onLeaveAreaActions.Add(onLeaveAreaAction);
     }
     private void ExecuteLeaveAreaActions() {
@@ -1816,7 +1819,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (split.Length > 1) {
             _surName = split[1];    
         }
-        RandomNameGenerator.RemoveNameAsAvailable(this.gender, this.race, newName);
+        RandomNameGenerator.RemoveNameAsAvailable(gender, race, newName);
     }
     public void CenterOnCharacter() {
         if (marker) {
@@ -1855,7 +1858,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     private void OnOtherCharacterDied(Character characterThatDied) {
-        if (characterThatDied.id != this.id) {
+        if (characterThatDied.id != id) {
             string opinionLabel = relationshipContainer.GetOpinionLabel(characterThatDied);
             if (opinionLabel == OpinionComponent.Friend) {
                 needsComponent.AdjustHope(-5f);
@@ -1886,7 +1889,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     private void OnSeizeCharacter(Character character) {
-        if (character.id != this.id) {
+        if (character.id != id) {
             //RemoveRelationship(characterThatDied); //do not remove relationships when dying
             marker.OnSeizeOtherCharacter(character);
         }
@@ -2050,7 +2053,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             return;
         }
         Log addLog = new Log(GameManager.Instance.Today(), "Character", fileName, key, node);
-        addLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        addLog.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         if (targetName != "") {
             addLog.AddToFillers(target, targetName, LOG_IDENTIFIER.TARGET_CHARACTER);
         }
@@ -2371,10 +2374,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                                                 //Because if not, it means that this character is already in combat with someone else, and thus
                                                 //should not product join combat log anymore
                                                 Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat");
-                                                joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                                                joinLog.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                                                 joinLog.AddToFillers(targetCombatState.currentClosestHostile, targetCombatState.currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                                                 joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.CHARACTER_3);
-                                                joinLog.AddToFillers(null, this.relationshipContainer.GetRelationshipNameWith(targetCharacter), LOG_IDENTIFIER.STRING_1);
+                                                joinLog.AddToFillers(null, relationshipContainer.GetRelationshipNameWith(targetCharacter), LOG_IDENTIFIER.STRING_1);
                                                 joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
                                                 // PlayerManager.Instance.player.ShowNotificationFrom(this, joinLog);
                                             //}
@@ -2414,7 +2417,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                                         //Because if not, it means that this character is already in combat with someone else, and thus
                                         //should not product join combat log anymore
                                         Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat_faction");
-                                        joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                                        joinLog.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                                         joinLog.AddToFillers(targetCombatState.currentClosestHostile, targetCombatState.currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                                         joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.CHARACTER_3);
                                         joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -2523,7 +2526,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     /// <param name="attackSummary">reference log of what happened.</param>
     public void OnHitByAttackFrom(Character characterThatAttacked, CombatState state, ref string attackSummary) {
         // CombatManager.Instance.CreateHitEffectAt(this, elementalType);
-        if (this.currentHP <= 0) {
+        if (currentHP <= 0) {
             return; //if hp is already 0, do not deal damage
         }
 
@@ -2542,11 +2545,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
         ELEMENTAL_TYPE elementalType = characterThatAttacked.combatComponent.elementalDamage.type;
-        this.AdjustHP(-characterThatAttacked.attackPower, elementalType, source: characterThatAttacked);
+        AdjustHP(-characterThatAttacked.attackPower, elementalType, source: characterThatAttacked);
         attackSummary += $"\nDealt damage {stateComponent.character.attackPower}";
         //If the hostile reaches 0 hp, evalueate if he/she dies, get knock out, or get injured
-        if (this.currentHP <= 0) {
-            attackSummary += $"\n{this.name}'s hp has reached 0.";
+        if (currentHP <= 0) {
+            attackSummary += $"\n{name}'s hp has reached 0.";
             if (!characterThatAttacked.combatComponent.IsLethalCombatForTarget(this)) {
                 traitContainer.AddTrait(this, "Unconscious", responsibleCharacter);
             } else {
@@ -2564,7 +2567,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 string rollLog =
                     $"{characterThatAttacked.name} attacked {name}, death weight: {deathWeight}, unconscious weight: {unconsciousWeight}, isLethal: {characterThatAttacked.combatComponent.IsLethalCombatForTarget(this)}";
 
-                if (minion == null && !this.traitContainer.HasTrait("Unconscious")) {
+                if (minion == null && !traitContainer.HasTrait("Unconscious")) {
                     combatResultWeights.AddElement("Unconscious", unconsciousWeight);
                     rollLog += "\n- Unconscious weight will be added";
                 }
@@ -2595,7 +2598,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                             if (!characterThatAttacked.combatComponent.IsLethalCombatForTarget(this)) {
                                 deathReason = "accidental_attacked";
                             }
-                            this.Death(deathReason, responsibleCharacter: responsibleCharacter);
+                            Death(deathReason, responsibleCharacter: responsibleCharacter);
                             break;
                     }
                 } else {
@@ -2844,13 +2847,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //    return compPower;
     //}
     public void SetHP(int amount) {
-        this._currentHP = amount;
+        _currentHP = amount;
     }
     //Adjust current HP based on specified paramater, but HP must not go below 0
     public virtual void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false, object source = null) {
-        int previous = this._currentHP;
-        this._currentHP += amount;
-        this._currentHP = Mathf.Clamp(this._currentHP, 0, maxHP);
+        int previous = _currentHP;
+        _currentHP += amount;
+        _currentHP = Mathf.Clamp(_currentHP, 0, maxHP);
         Messenger.Broadcast(Signals.ADJUSTED_HP, this);
         if (marker) {
             if (marker.hpBarGO.activeSelf) {
@@ -2869,7 +2872,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter);
             }
         }
-        if (triggerDeath && previous != this._currentHP && this._currentHP <= 0) {
+        if (triggerDeath && previous != _currentHP && _currentHP <= 0) {
             if(source != null) {
                 if (source is Character) {
                     Character character = source as Character;
@@ -3044,12 +3047,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return false;
     }
     public void MigrateHomeStructureTo(IDwelling dwelling) {
-        if (this.homeStructure != null) {
-            if (this.homeStructure == dwelling) {
+        if (homeStructure != null) {
+            if (homeStructure == dwelling) {
                 return; //ignore change
             }
             //remove character from his/her old home
-            this.homeStructure.RemoveResident(this);
+            homeStructure.RemoveResident(this);
         }
         if (dwelling != null) {
             //Added checking, because character can sometimes change home from dwelling to nothing.
@@ -3426,8 +3429,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public bool PlanIdleReturnHome() { //bool forceDoAction = false
         if (homeStructure != null && homeStructure.tiles.Count > 0) {
-            LocationGridTile tile = UtilityScripts.CollectionUtilities.GetRandomElement(homeStructure.tiles);
-            if (PathfindingManager.Instance.HasPathEvenDiffRegion(this.gridTileLocation, tile) || currentRegion != homeStructure.location.coreTile.region) {
+            LocationGridTile tile = CollectionUtilities.GetRandomElement(homeStructure.tiles);
+            if (PathfindingManager.Instance.HasPathEvenDiffRegion(gridTileLocation, tile) || currentRegion != homeStructure.location.coreTile.region) {
                 ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RETURN_HOME], this, this, null, 0);
                 GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, this);
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE_RETURN_HOME, INTERACTION_TYPE.RETURN_HOME, this, this);
@@ -3470,7 +3473,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     private string OtherIdlePlans() {
         string log = $" IDLE PLAN FOR {name}";
         if (isDead) {
-            log += $"{this.name} is already dead not planning other idle plans.";
+            log += $"{name} is already dead not planning other idle plans.";
             return log;
         }
         if (!isFactionless) { }
@@ -4445,8 +4448,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 currentJob.CancelJob(false);
             } else {
                 logComponent.PrintLogIfActive(log);
-                UnityEngine.Assertions.Assert.IsNotNull(currentJob);
-                UnityEngine.Assertions.Assert.IsTrue(currentJob is GoapPlanJob);
+                Assert.IsNotNull(currentJob);
+                Assert.IsTrue(currentJob is GoapPlanJob);
                 planner.RecalculateJob(currentJob as GoapPlanJob);
             }
             SetCurrentActionNode(null, null, null);
@@ -4705,7 +4708,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         currentActionNode = actionNode;
         if (currentActionNode != null) {
             logComponent.PrintLogIfActive(
-                $"{this.name} will do action {actionNode.action.goapType} to {actionNode.poiTarget}");
+                $"{name} will do action {actionNode.action.goapType} to {actionNode.poiTarget}");
             if (currentActionNode.action.goapType.IsHostileAction()) { //if the character will do a combat action, remove all ignore hostilities value
                 ClearIgnoreHostilities();
             }
@@ -5058,7 +5061,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     /// <param name="character">Character in question.</param>
     public bool IsHostileWith(Character character, bool checkIgnoreHostility = true) {
         //return true;
-        if (character.isDead || this.isDead) {
+        if (character.isDead || isDead) {
             return false;
         }
 
@@ -5070,14 +5073,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //    }
         //}
 
-        if (checkIgnoreHostility && (character.ignoreHostility > 0 || this.ignoreHostility > 0)) {
+        if (checkIgnoreHostility && (character.ignoreHostility > 0 || ignoreHostility > 0)) {
             //if either the character in question or this character should ignore hostility, return false.
             return false;
         }
         if (isFactionless || character.isFactionless) {
             //this character is unaligned
             //if unaligned, hostile to all other characters, except those of same race
-            return character.race != this.race;
+            return character.race != race;
         } else {
             //this character has a faction
             //if has a faction, is hostile to characters of every other faction
@@ -5116,10 +5119,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     /// <returns></returns>
     public bool IsHostileOutsider(Character otherCharacter) {
         //return true;
-        if (otherCharacter.isDead || this.isDead) {
+        if (otherCharacter.isDead || isDead) {
             return false;
         }
-        return this.faction.id != otherCharacter.faction.id;
+        return faction.id != otherCharacter.faction.id;
     }
     #endregion
 
@@ -5751,7 +5754,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 null,
                 () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.ZAP].ActivateAbility(this));
             PlayerAction seizeAction = new PlayerAction(PlayerDB.Seize_Character_Action, 
-                () => !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && !this.traitContainer.HasTrait("Leader", "Blessed"),
+                () => !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && !traitContainer.HasTrait("Leader", "Blessed"),
                 null,
                 () => PlayerManager.Instance.player.seizeComponent.SeizePOI(this));
             // PlayerAction shareIntelAction = new PlayerAction("Share Intel", () => false, null);
