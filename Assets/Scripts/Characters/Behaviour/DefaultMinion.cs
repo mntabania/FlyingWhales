@@ -14,7 +14,7 @@ public class DefaultMinion : CharacterBehaviourComponent {
 				HexTile portal = PlayerManager.Instance.player.portalTile;
 				List<HexTile> playerTiles = PlayerManager.Instance.player.playerSettlement.tiles;
 				if (playerTiles.Contains(character.gridTileLocation.buildSpotOwner.hexTileOwner)) {
-					bool hasAddedJob = false;
+					//bool hasAddedJob = false;
 					log += "\n-Inside corruption";
 					if (character.gridTileLocation.buildSpotOwner.hexTileOwner != portal) {
 						log += "\n-Inside portal hex tile";

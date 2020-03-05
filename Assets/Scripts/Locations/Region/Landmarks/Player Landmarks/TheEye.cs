@@ -81,13 +81,13 @@ public class SaveDataTheEye : SaveDataLandmark {
 
     public override void Save(BaseLandmark landmark) {
         base.Save(landmark);
-        TheEye eye = landmark as TheEye;
+        //TheEye eye = landmark as TheEye;
         // currentCooldownTick = eye.currentCooldownTick;
     }
     public override void LoadSpecificLandmarkData(BaseLandmark landmark) {
         base.LoadSpecificLandmarkData(landmark);
-        TheEye eye = landmark as TheEye;
-        eye.LoadSavedData(this);
+        //TheEye eye = landmark as TheEye;
+        //eye.LoadSavedData(this);
     }
 }
 

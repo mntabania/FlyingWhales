@@ -65,7 +65,7 @@ public class SlayCharacter : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
-            return actor != poiTarget;
+            return actor != poiTarget && !(poiTarget as Character).canPerform;
         }
         return false;
     }
@@ -261,6 +261,6 @@ public class SlayCharacterData : GoapActionData {
     }
 
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor != poiTarget && (poiTarget as Character).traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER);
+        return actor != poiTarget && !(poiTarget as Character).canPerform;
     }
 }

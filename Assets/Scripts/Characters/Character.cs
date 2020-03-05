@@ -821,7 +821,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //    wasOutsideSettlement = true;
             //    currentRegion.RemoveCharacterFromLocation(this);
             //}
-
+            UncarryPOI();
             Character carrier = isBeingCarriedBy;
             if (carrier != null) {
                 carrier.UncarryPOI(this);

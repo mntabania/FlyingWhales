@@ -28,11 +28,11 @@ public class SaveDataTheSpire: SaveDataLandmark {
 
     public override void Save(BaseLandmark landmark) {
         base.Save(landmark);
-        TheSpire spire = landmark as TheSpire;
+        //TheSpire spire = landmark as TheSpire;
     }
     public override void LoadSpecificLandmarkData(BaseLandmark landmark) {
         base.LoadSpecificLandmarkData(landmark);
-        TheSpire spire = landmark as TheSpire;
-        spire.LoadSavedData(this);
+        //TheSpire spire = landmark as TheSpire;
+        //spire.LoadSavedData(this);
     }
 }

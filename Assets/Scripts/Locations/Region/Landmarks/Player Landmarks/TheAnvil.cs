@@ -161,14 +161,14 @@ public class SaveDataTheAnvil : SaveDataLandmark {
 
     public override void Save(BaseLandmark landmark) {
         base.Save(landmark);
-        TheAnvil anvil = landmark as TheAnvil;
-        dynamicResearchDataKeys = anvil.dynamicResearchData.Keys.ToList();
-        dynamicResearchDataValues = anvil.dynamicResearchData.Values.ToList();
+        //TheAnvil anvil = landmark as TheAnvil;
+        //dynamicResearchDataKeys = anvil.dynamicResearchData.Keys.ToList();
+        //dynamicResearchDataValues = anvil.dynamicResearchData.Values.ToList();
         //currentCooldownTick = eye.currentCooldownTick;
     }
     public override void LoadSpecificLandmarkData(BaseLandmark landmark) {
         base.LoadSpecificLandmarkData(landmark);
-        TheAnvil anvil = landmark as TheAnvil;
+        //TheAnvil anvil = landmark as TheAnvil;
         // anvil.LoadSavedData(this);
     }
 }

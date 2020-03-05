@@ -8,7 +8,7 @@ namespace Traits {
         public Nocturnal() {
             name = "Nocturnal";
             description = "Nocturnals are awake at night and asleep during the day.";
-            type = TRAIT_TYPE.PERSONALITY;
+            type = TRAIT_TYPE.NEUTRAL;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
             //effects = new List<TraitEffect>();

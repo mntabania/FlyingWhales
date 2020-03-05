@@ -192,11 +192,7 @@ public class MinionInfoUI : InfoUIBase {
             if (currTrait.isHidden) {
                 continue; //skip
             }
-            if (currTrait.type == TRAIT_TYPE.ABILITY || currTrait.type == TRAIT_TYPE.ATTACK || currTrait.type == TRAIT_TYPE.COMBAT_POSITION
-                || currTrait.name == "Herbivore" || currTrait.name == "Carnivore") {
-                continue; //hide combat traits
-            }
-            if (currTrait.type == TRAIT_TYPE.STATUS || currTrait.type == TRAIT_TYPE.DISABLER || currTrait.type == TRAIT_TYPE.ENCHANTMENT || currTrait.type == TRAIT_TYPE.EMOTION) {
+            if (currTrait.type == TRAIT_TYPE.STATUS) {
                 string color = UIManager.normalTextColor;
                 if (currTrait.type == TRAIT_TYPE.BUFF) {
                     color = UIManager.buffTextColor;

@@ -85,7 +85,10 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			}
 			character.marker.StopMovement();
 			character.marker.pathfindingAI.ClearAllCurrentPathData();
-		}
+
+            character.UncarryPOI();
+            character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.KNOCKOUT);
+        }
 	}
 	private void OnCharacterCanNoLongerMove(Character character) {
 		if (character == _owner) {

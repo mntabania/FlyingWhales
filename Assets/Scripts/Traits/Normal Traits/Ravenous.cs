@@ -9,7 +9,7 @@ namespace Traits {
         public Ravenous() {
             name = "Ravenous";
             description = "This is ravenous.";
-            type = TRAIT_TYPE.PERSONALITY;
+            type = TRAIT_TYPE.NEUTRAL;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
             isHidden = true;

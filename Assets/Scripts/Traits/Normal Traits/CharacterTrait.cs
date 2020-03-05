@@ -16,7 +16,7 @@ namespace Traits {
 
         public CharacterTrait() {
             name = "Character Trait";
-            type = TRAIT_TYPE.PERSONALITY;
+            type = TRAIT_TYPE.NEUTRAL;
             effect = TRAIT_EFFECT.NEUTRAL;
             
             

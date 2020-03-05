@@ -5,12 +5,12 @@ using TMPro;
 using System.Linq;
 
 public class PlayerResearchUI : MonoBehaviour {
-    private TheSpire spire { get; set; }
+    //private TheSpire spire { get; set; }
     private Minion chosenMinion;
 
     #region General
     public void OnClickResearch(BaseLandmark landmark) {
-        spire = landmark as TheSpire;
+        //spire = landmark as TheSpire;
         // UIManager.Instance.dualObjectPicker.ShowDualObjectPicker(PlayerManager.Instance.player.minions
         //     .Select(x => x.character).ToList(), "Select minion", CanChooseMinion, OnHoverEnterMinion,
         //     OnHoverExitMinion, OnChooseMinion, OnConfirmExtract, "Extract");

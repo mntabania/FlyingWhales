@@ -4,9 +4,9 @@ using UnityEngine;
 using EZObjectPools;
 
 public class ParticleEffectCallback : PooledObject {
-    public ParticleSystem particleSystem;
+    public ParticleSystem particle;
 
     public void OnParticleSystemStopped() {
-        Messenger.Broadcast(Signals.PARTICLE_EFFECT_DONE, particleSystem);
+        Messenger.Broadcast(Signals.PARTICLE_EFFECT_DONE, particle);
     }
 }

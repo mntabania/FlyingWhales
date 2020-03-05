@@ -7,8 +7,8 @@ namespace Traits {
 
         private Character owner;
         //private float pukeChance;
-        private bool canBeReanimated;
-        private bool willBeReanimated;
+        //private bool canBeReanimated;
+        //private bool willBeReanimated;
         private bool doNotCheckPerHour;
 
         public override bool isPersistent { get { return true; } }
@@ -20,8 +20,8 @@ namespace Traits {
             ticksDuration = 0;
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CURE_CHARACTER, };
             mutuallyExclusive = new string[] { "Robust" };
-            canBeReanimated = false;
-            willBeReanimated = false;
+            //canBeReanimated = false;
+            //willBeReanimated = false;
             doNotCheckPerHour = false;
             moodEffect = -5;
         }
@@ -119,7 +119,7 @@ namespace Traits {
         }
 
         private void StartReanimationCheck() {
-            canBeReanimated = true;
+            //canBeReanimated = true;
             Messenger.AddListener(Signals.TICK_ENDED, RollForReanimation);
             //RollForReanimation(); //called this so, check will run immediately after the first 30 mins of being dead.
         }
@@ -128,20 +128,20 @@ namespace Traits {
             //string summary = owner.name + " will roll for reanimation...";
             if(!owner.marker && owner.grave == null) {
                 Messenger.RemoveListener(Signals.TICK_ENDED, RollForReanimation);
-                canBeReanimated = false;
+                //canBeReanimated = false;
                 return;
             }
             int roll = Random.Range(0, 100);
             //summary += "\nRoll is: " + roll.ToString(); 
             if (roll < 15) { //15
                 Messenger.RemoveListener(Signals.TICK_ENDED, RollForReanimation);
-                canBeReanimated = false;
+                //canBeReanimated = false;
                 //reanimate
                 //summary += "\n" + owner.name + " is being reanimated.";
                 if (!owner.IsInOwnParty() || owner.isBeingSeized) {
                     //character is being carried, check per tick if it is dropped or buried, then reanimate
                     Messenger.AddListener(Signals.TICK_ENDED, CheckIfCanReanimate);
-                    willBeReanimated = true;
+                    //willBeReanimated = true;
                 } else {
                     Reanimate();
                 }
@@ -153,7 +153,7 @@ namespace Traits {
         private void CheckIfCanReanimate() {
             if (owner.IsInOwnParty() && !owner.isBeingSeized) {
                 Reanimate();
-                willBeReanimated = false;
+                //willBeReanimated = false;
                 Messenger.RemoveListener(Signals.TICK_ENDED, CheckIfCanReanimate);
             }
         }

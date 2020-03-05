@@ -10,7 +10,7 @@ namespace Traits {
         public Consumable() {
             name = "Consumable";
             description = "This is consumable.";
-            type = TRAIT_TYPE.PERSONALITY;
+            type = TRAIT_TYPE.NEUTRAL;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
             isHidden = true;

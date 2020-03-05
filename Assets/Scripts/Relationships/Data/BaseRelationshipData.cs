@@ -45,10 +45,13 @@ public class BaseRelationshipData : IRelationshipData {
         return false;
     }
     public RELATIONSHIP_TYPE GetFirstMajorRelationship() {
-        for (int i = 0; i < relationships.Count; i++) {
-            RELATIONSHIP_TYPE rel = relationships[i];
-            return rel;
+        if(relationships.Count > 0) {
+            return relationships[0];
         }
+        //for (int i = 0; i < relationships.Count; i++) {
+        //    RELATIONSHIP_TYPE rel = relationships[i];
+        //    return rel;
+        //}
         return RELATIONSHIP_TYPE.NONE;
     }
     #endregion

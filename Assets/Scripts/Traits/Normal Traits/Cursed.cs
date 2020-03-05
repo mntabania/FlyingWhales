@@ -10,7 +10,7 @@ namespace Traits {
         public Cursed() {
             name = "Cursed";
             description = "This character has been afflicted by a magical curse.";
-            type = TRAIT_TYPE.ENCHANTMENT;
+            type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = GameManager.ticksPerDay;
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.DISPEL_MAGIC, };

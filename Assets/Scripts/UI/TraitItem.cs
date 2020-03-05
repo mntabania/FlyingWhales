@@ -19,22 +19,14 @@ public class TraitItem : MonoBehaviour {
         this.trait = trait;
         nameText.text = this.trait.name;
 
-        if (this.trait is RelationshipTrait relTrait) {
-            portrait.GeneratePortrait(relTrait.targetCharacter);
-            portrait.gameObject.SetActive(true);
-            iconImg.gameObject.SetActive(false);
-            //portrait.SetClickButton(UnityEngine.EventSystems.PointerEventData.InputButton.Left);
+        portrait.gameObject.SetActive(false);
+        Sprite icon = TraitManager.Instance.GetTraitPortrait(trait.name);
+        if (icon != null) {
+            iconImg.sprite = icon;
+            iconImg.gameObject.SetActive(true);
         } else {
-            portrait.gameObject.SetActive(false);
-            Sprite icon = TraitManager.Instance.GetTraitPortrait(trait.name);
-            if (icon != null) {
-                iconImg.sprite = icon;
-                iconImg.gameObject.SetActive(true);
-            } else {
-                iconImg.gameObject.SetActive(false);
-            }
+            iconImg.gameObject.SetActive(false);
         }
-
 
         descriptionText.text = this.trait.description;
         this.gameObject.SetActive(true);

@@ -1019,21 +1019,10 @@ public enum INTERRUPT {
 }
 
 public enum TRAIT_TYPE {
-    ILLNESS,
-    ATTACK,
-    ABILITY,
     STATUS,
-    COMBAT_POSITION,
-    ENCHANTMENT,
-    DISABLER,
-    RACIAL,
-    EMOTION,
-    CRIMINAL,
-    SPECIAL,
-    RELATIONSHIP,
     BUFF,
     FLAW,
-    PERSONALITY,
+    NEUTRAL,
 }
 public enum TRAIT_EFFECT {
     NEUTRAL,
@@ -1373,11 +1362,11 @@ public enum RELATIONSHIP_EFFECT {
     NEGATIVE,
 }
 public enum REACTION_STATUS { WITNESSED, INFORMED,}
-public enum SPELL_TYPE { NONE, ACCESS_MEMORIES, LYCANTHROPY, KLEPTOMANIA, VAMPIRISM, UNFAITHFULNESS, CANNIBALISM, ZAP, JOLT, SPOOK, ENRAGE, DISABLE,
-        RILE_UP, ABDUCT, PROVOKE, DESTROY, RAISE_DEAD, CLOAK_OF_INVISIBILITY, METEOR, IGNITE, LURE, CURSED_OBJECT, LULLABY, AGORAPHOBIA, SPOIL, ALCOHOLIC, PESTILENCE,
-        PARALYSIS, RELEASE, ZOMBIE_VIRUS, PSYCHOPATHY, TORNADO, RAVENOUS_SPIRIT, FEEBLE_SPIRIT, FORLORN_SPIRIT, POISON_CLOUD, LIGHTNING, EARTHQUAKE,
+public enum SPELL_TYPE { NONE, LYCANTHROPY, KLEPTOMANIA, VAMPIRISM, UNFAITHFULNESS, CANNIBALISM, ZAP,
+        DESTROY, RAISE_DEAD, METEOR, IGNITE, CURSED_OBJECT, AGORAPHOBIA, ALCOHOLIC, PESTILENCE,
+        PARALYSIS, ZOMBIE_VIRUS, PSYCHOPATHY, TORNADO, RAVENOUS_SPIRIT, FEEBLE_SPIRIT, FORLORN_SPIRIT, POISON_CLOUD, LIGHTNING, EARTHQUAKE,
         LOCUST_SWARM, SPAWN_BOULDER, WATER_BOMB, MANIFEST_FOOD, BRIMSTONES,
-        SPLASH_POISON, BLIZZARD, RAIN,
+        SPLASH_POISON, BLIZZARD, RAIN, SPOIL,
 }
 public enum INTERVENTION_ABILITY_TYPE { NONE, AFFLICTION, SPELL, }
 public enum SPELL_CATEGORY { NONE, SABOTAGE, MONSTER, DEVASTATION, HEX }
@@ -2110,21 +2099,21 @@ public static class Extensions {
             case SPELL_TYPE.ZAP:
                 tags.Add(ABILITY_TAG.MAGIC);
                 break;
-            case SPELL_TYPE.JOLT:
-                tags.Add(ABILITY_TAG.MAGIC);
-                break;
-            case SPELL_TYPE.ENRAGE:
-                tags.Add(ABILITY_TAG.MAGIC);
-                break;
-            case SPELL_TYPE.PROVOKE:
-                tags.Add(ABILITY_TAG.MAGIC);
-                break;
+            //case SPELL_TYPE.JOLT:
+            //    tags.Add(ABILITY_TAG.MAGIC);
+            //    break;
+            //case SPELL_TYPE.ENRAGE:
+            //    tags.Add(ABILITY_TAG.MAGIC);
+            //    break;
+            //case SPELL_TYPE.PROVOKE:
+            //    tags.Add(ABILITY_TAG.MAGIC);
+            //    break;
             case SPELL_TYPE.RAISE_DEAD:
                 tags.Add(ABILITY_TAG.MAGIC);
                 break;
-            case SPELL_TYPE.CLOAK_OF_INVISIBILITY:
-                tags.Add(ABILITY_TAG.MAGIC);
-                break;
+            //case SPELL_TYPE.CLOAK_OF_INVISIBILITY:
+            //    tags.Add(ABILITY_TAG.MAGIC);
+            //    break;
         }
         return tags;
     }

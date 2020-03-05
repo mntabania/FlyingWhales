@@ -336,7 +336,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         //    pathfindingAI.AdjustDoNotMove(1);
         //    gainTraitSummary += "\nGained trait is a disabler trait, adjusting do not move value.";
         //}
-        if (trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
+        if (!characterThatGainedTrait.canPerform) { //trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE
             //if the character gained an unconscious trait, exit current state if it is flee
             if (character.isInCombat) {
                 characterThatGainedTrait.stateComponent.ExitCurrentState();
@@ -356,10 +356,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
             character.combatComponent.RemoveHostileInRange(otherCharacter);
             character.combatComponent.RemoveAvoidInRange(otherCharacter);
             RemovePOIFromInVisionRange(otherCharacter);
-            //if (character.currentAction != null && character.currentAction.poiTarget == otherCharacter) {
-            //    //If current action target is invisible and it is moving towards target stop it
-            //    character.currentAction.StopAction(true);
-            //}
         } else {
             //if (inVisionCharacters.Contains(otherCharacter)) {
             //    character.CreateJobsOnEnterVisionWith(otherCharacter);
@@ -367,7 +363,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             if (inVisionCharacters.Contains(otherCharacter)) {
                 character.CreateJobsOnTargetGainTrait(otherCharacter, trait);
             }
-            if (trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
+            if (!otherCharacter.canPerform) {
                 character.combatComponent.RemoveHostileInRange(otherCharacter); //removed hostile because he/she became unconscious.
                 character.combatComponent.RemoveAvoidInRange(otherCharacter);
             }

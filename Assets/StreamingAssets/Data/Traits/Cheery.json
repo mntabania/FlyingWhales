@@ -1,1 +1,0 @@
-{"name":"Cheery","description":"This character is cheery.","thoughtText":"","type":3,"effect":0,"advertisedInteractions":[],"ticksDuration":288,"level":0,"moodEffect":5,"effects":[],"isHidden":false,"mutuallyExclusive":[""],"canBeTriggered":false,"hindersWitness":false,"hindersMovement":false,"hindersAttackTarget":false,"isStacking":true,"stackLimit":5,"stackModifier":0.5}

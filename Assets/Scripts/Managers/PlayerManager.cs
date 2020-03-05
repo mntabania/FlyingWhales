@@ -35,14 +35,15 @@ public class PlayerManager : MonoBehaviour {
         // SPELL_TYPE[] allSpellTypes = UtilityScripts.CollectionUtilities.GetEnumValues<SPELL_TYPE>();
         SPELL_TYPE[] allSpellTypes = { SPELL_TYPE.ZAP, SPELL_TYPE.RAISE_DEAD, SPELL_TYPE.CANNIBALISM
             , SPELL_TYPE.LYCANTHROPY, SPELL_TYPE.VAMPIRISM, SPELL_TYPE.KLEPTOMANIA
-            , SPELL_TYPE.UNFAITHFULNESS, SPELL_TYPE.ENRAGE, SPELL_TYPE.PROVOKE, SPELL_TYPE.METEOR
-            , SPELL_TYPE.IGNITE, SPELL_TYPE.LURE, SPELL_TYPE.CURSED_OBJECT, SPELL_TYPE.SPOIL, SPELL_TYPE.ALCOHOLIC
-            , SPELL_TYPE.LULLABY, SPELL_TYPE.AGORAPHOBIA, SPELL_TYPE.PARALYSIS, SPELL_TYPE.RELEASE, SPELL_TYPE.ZOMBIE_VIRUS
+            , SPELL_TYPE.UNFAITHFULNESS, SPELL_TYPE.METEOR
+            , SPELL_TYPE.IGNITE, SPELL_TYPE.CURSED_OBJECT, SPELL_TYPE.ALCOHOLIC
+            , SPELL_TYPE.AGORAPHOBIA, SPELL_TYPE.PARALYSIS, SPELL_TYPE.ZOMBIE_VIRUS
             , SPELL_TYPE.PESTILENCE, SPELL_TYPE.PSYCHOPATHY, SPELL_TYPE.TORNADO, SPELL_TYPE.DESTROY
             , SPELL_TYPE.RAVENOUS_SPIRIT, SPELL_TYPE.FEEBLE_SPIRIT, SPELL_TYPE.FORLORN_SPIRIT
             , SPELL_TYPE.LIGHTNING, SPELL_TYPE.POISON_CLOUD, SPELL_TYPE.EARTHQUAKE
             , SPELL_TYPE.SPAWN_BOULDER, SPELL_TYPE.WATER_BOMB, SPELL_TYPE.MANIFEST_FOOD
             , SPELL_TYPE.BRIMSTONES, SPELL_TYPE.SPLASH_POISON, SPELL_TYPE.LOCUST_SWARM, SPELL_TYPE.BLIZZARD, SPELL_TYPE.RAIN
+            , SPELL_TYPE.SPOIL, 
         };
 
         allSpellsData = new Dictionary<SPELL_TYPE, SpellData>();
@@ -142,16 +143,16 @@ public class PlayerManager : MonoBehaviour {
     #region Intervention Ability
     public PlayerSpell CreateNewInterventionAbility(SPELL_TYPE abilityType) {
         switch (abilityType) {
-            case SPELL_TYPE.ABDUCT:
-                return new Abduct();
-            case SPELL_TYPE.ACCESS_MEMORIES:
-                return new AccessMemories();
+            //case SPELL_TYPE.ABDUCT:
+            //    return new Abduct();
+            //case SPELL_TYPE.ACCESS_MEMORIES:
+            //    return new AccessMemories();
             case SPELL_TYPE.DESTROY:
                 return new Destroy();
-            case SPELL_TYPE.DISABLE:
-                return new Disable();
-            case SPELL_TYPE.ENRAGE:
-                return new Enrage();
+            //case SPELL_TYPE.DISABLE:
+            //    return new Disable();
+            //case SPELL_TYPE.ENRAGE:
+            //    return new Enrage();
             case SPELL_TYPE.KLEPTOMANIA:
                 return new Kleptomania();
             case SPELL_TYPE.LYCANTHROPY:
@@ -160,44 +161,44 @@ public class PlayerManager : MonoBehaviour {
                 return new Unfaithfulness();
             case SPELL_TYPE.VAMPIRISM:
                 return new Vampirism();
-            case SPELL_TYPE.JOLT:
-                return new Jolt();
-            case SPELL_TYPE.PROVOKE:
-                return new Provoke();
+            //case SPELL_TYPE.JOLT:
+            //    return new Jolt();
+            //case SPELL_TYPE.PROVOKE:
+            //    return new Provoke();
             case SPELL_TYPE.RAISE_DEAD:
                 return new RaiseDead();
             //case INTERVENTION_ABILITY.SHARE_INTEL:
             //    return new ShareIntel();
-            case SPELL_TYPE.SPOOK:
-                return new Spook();
+            //case SPELL_TYPE.SPOOK:
+            //    return new Spook();
             case SPELL_TYPE.ZAP:
                 return new Zap();
             case SPELL_TYPE.CANNIBALISM:
                 return new Cannibalism();
-            case SPELL_TYPE.CLOAK_OF_INVISIBILITY:
-                return new CloakOfInvisibility();
-            case SPELL_TYPE.LURE:
-                return new Lure();
+            //case SPELL_TYPE.CLOAK_OF_INVISIBILITY:
+            //    return new CloakOfInvisibility();
+            //case SPELL_TYPE.LURE:
+            //    return new Lure();
             case SPELL_TYPE.METEOR:
                 return new Meteor();
             case SPELL_TYPE.IGNITE:
                 return new Ignite();
             case SPELL_TYPE.CURSED_OBJECT:
                 return new CursedObject();
-            case SPELL_TYPE.SPOIL:
-                return new Spoil();
+            //case SPELL_TYPE.SPOIL:
+            //    return new Spoil();
             case SPELL_TYPE.ALCOHOLIC:
                 return new Alcoholic();
-            case SPELL_TYPE.LULLABY:
-                return new Lullaby();
+            //case SPELL_TYPE.LULLABY:
+            //    return new Lullaby();
             case SPELL_TYPE.PESTILENCE:
                 return new Pestilence();
             case SPELL_TYPE.AGORAPHOBIA:
                 return new Agoraphobia();
             case SPELL_TYPE.PARALYSIS:
                 return new Paralysis();
-            case SPELL_TYPE.RELEASE:
-                return new Release();
+            //case SPELL_TYPE.RELEASE:
+            //    return new Release();
             case SPELL_TYPE.ZOMBIE_VIRUS:
                 return new ZombieVirus();
             case SPELL_TYPE.PSYCHOPATHY:

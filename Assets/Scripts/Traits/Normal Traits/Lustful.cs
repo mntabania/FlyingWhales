@@ -8,7 +8,7 @@ namespace Traits {
         public Lustful() {
             name = "Lustful";
             description = "Lustful characters enjoy frequent lovemaking.";
-            type = TRAIT_TYPE.PERSONALITY;
+            type = TRAIT_TYPE.NEUTRAL;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
             mutuallyExclusive = new string[] { "Chaste" };

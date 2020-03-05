@@ -28,14 +28,14 @@ public class TheFingersUI : MonoBehaviour {
     public GameObject exclusiveIdeologyHolder;
     public TMP_Dropdown exclusiveIdeologyCategoryDropdown;
     public TMP_Dropdown exclusiveIdeologyRequirementDropdown;
-    private Goader fingers { get; set; }
+    //private Goader fingers { get; set; }
     private Character chosenLeader { get; set; }
     //private List<FactionIdeology> ideologies = new List<FactionIdeology>();
     private string[] criteriaRaces = new string[] { "HUMANS", "ELVES" };
 
     #region General
     public void OnClickCreate(BaseLandmark landmark) {
-        fingers = landmark as Goader;
+        //fingers = landmark as Goader;
         if(characterNameplateItems == null) {
             characterNameplateItems = new Dictionary<Character, CharacterNameplateItem>();
         }
@@ -87,7 +87,7 @@ public class TheFingersUI : MonoBehaviour {
 
             //chosenLeader.interruptComponent.TriggerInterrupt(INTERRUPT.Become_Faction_Leader, chosenLeader);
 
-            fingers.Activate();
+            //fingers.Activate();
 
             HideCreateNewFactionUI();
             UpdateSelectMinionBtn();

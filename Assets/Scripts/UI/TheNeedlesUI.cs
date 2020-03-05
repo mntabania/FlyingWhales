@@ -11,11 +11,11 @@ public class TheNeedlesUI : MonoBehaviour {
     public Button convertBtn;
     public Image cooldownProgress;
 
-    public TheNeedles needles { get; private set; }
+    //public TheNeedles needles { get; private set; }
 
     #region General
     public void OnClickConvert(BaseLandmark landmark) {
-        needles = landmark as TheNeedles;
+        //needles = landmark as TheNeedles;
         UIManager.Instance.dualObjectPicker.ShowDualObjectPicker<Character>(PlayerManager.Instance.player.minions.Select(x => x.character).ToList(), "Choose Minion to Convert to Mana", CanChooseMinion, OnHoverEnterMinion, OnHoverExitMinion, null, OnConfirmConvert, "Convert", column2Optional: true);
     }
     private void OnHoverEnterMinion(Character character) {
@@ -32,8 +32,8 @@ public class TheNeedlesUI : MonoBehaviour {
     }
     private void OnConfirmConvert(object minionObj, object obj) {
         Minion minion = (minionObj as Character).minion;
-        needles.tileLocation.region.SetAssignedMinion(minion);
-        minion.SetAssignedRegion(needles.tileLocation.region);
+        //needles.tileLocation.region.SetAssignedMinion(minion);
+        //minion.SetAssignedRegion(needles.tileLocation.region);
         // needles.Activate();
     }
     #endregion

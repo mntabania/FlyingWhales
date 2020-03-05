@@ -9,7 +9,7 @@ namespace Traits {
         public Feeble() {
             name = "Feeble";
             description = "This is feeble.";
-            type = TRAIT_TYPE.PERSONALITY;
+            type = TRAIT_TYPE.NEUTRAL;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
             isHidden = true;

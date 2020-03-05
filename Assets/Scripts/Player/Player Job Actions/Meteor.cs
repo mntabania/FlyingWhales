@@ -7,7 +7,7 @@ using Traits;
 
 public class Meteor : PlayerSpell {
 
-    private int abilityRadius;
+    //private int abilityRadius;
 
     public Meteor() : base(SPELL_TYPE.METEOR) {
         SetDefaultCooldownTime(24);

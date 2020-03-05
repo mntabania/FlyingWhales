@@ -8,11 +8,11 @@ using System.Linq;
 using Traits;
 
 public class TheProfaneUI : MonoBehaviour {
-    private TheProfane profane { get; set; }
+    //private TheProfane profane { get; set; }
     private Character chosenCultist;
 
     public void OnClickCorrupt(BaseLandmark landmark) {
-        profane = landmark as TheProfane;
+        //profane = landmark as TheProfane;
         DualObjectPickerTabSetting[] tabs = new DualObjectPickerTabSetting[] {
             //convert
             new DualObjectPickerTabSetting() {
@@ -31,7 +31,7 @@ public class TheProfaneUI : MonoBehaviour {
 
     private void OnClickConvert(bool isOn) {
         if (isOn) {
-            List<Character> convertibleCharacters = new List<Character>(CharacterManager.Instance.allCharacters.Where(x => !x.returnedToLife && !x.isDead && x.traitContainer.HasTrait("Disillusioned", "Evil", "Treacherous") && !x.traitContainer.HasTrait("Blessed") && !x.traitContainer.HasTrait("Cultist")));
+            List<Character> convertibleCharacters = new List<Character>(CharacterManager.Instance.allCharacters.Where(x => !x.returnedToLife && !x.isDead && x.traitContainer.HasTrait("Evil", "Treacherous") && !x.traitContainer.HasTrait("Blessed") && !x.traitContainer.HasTrait("Cultist"))); //"Disillusioned", 
             UIManager.Instance.dualObjectPicker.ShowDualObjectPicker<Character, Character>(PlayerManager.Instance.player.minions.Select(x => x.character).ToList(), convertibleCharacters,
                 "Choose a Minion", "Choose a character to turn to Cultist",
                 null, CanBeConvertedToCultist,
@@ -99,7 +99,7 @@ public class TheProfaneUI : MonoBehaviour {
         UIManager.Instance.dualObjectPicker.PopulateColumn(actions, null, ShowActionTooltip, HideActionTooltip, UIManager.Instance.dualObjectPicker.column2ScrollView, UIManager.Instance.dualObjectPicker.column2ToggleGroup, "Choose Ability");
     }
     private void OnChooseCharacterToConvert(Character character) {
-        string chosenAction = "Convert to cultist";
+        //string chosenAction = "Convert to cultist";
         // if (profane.isInCooldown) {
         //     PlayerUI.Instance.ShowGeneralConfirmation("In Cooldown", "The profane is currently on cooldown. Action will not proceed.");
         // } else {

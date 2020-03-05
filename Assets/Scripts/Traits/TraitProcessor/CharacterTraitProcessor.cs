@@ -63,15 +63,13 @@ namespace Traits {
             if (trait.hindersPerform) {
                 character.DecreaseCanPerform();
             }
-            if (trait.type == TRAIT_TYPE.DISABLER) {
-                //character.AdjustCanPerform(1);
-                if (trait.effect == TRAIT_EFFECT.NEGATIVE) {
-                    character.AdjustIgnoreHostilities(1);
-                    //character.CancelAllJobsAndPlansExceptNeedsRecovery();
-                }
-                character.UncarryPOI();
-                character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.KNOCKOUT);
-            }
+            //if (trait.type == TRAIT_TYPE.DISABLER) {
+            //    //character.AdjustCanPerform(1);
+            //    if (trait.effect == TRAIT_EFFECT.NEGATIVE) {
+            //        character.AdjustIgnoreHostilities(1);
+            //        //character.CancelAllJobsAndPlansExceptNeedsRecovery();
+            //    }
+            //}
             if (trait.name == "Abducted" || trait.name == "Restrained") {
                 character.needsComponent.AdjustDoNotGetTired(1);
             } else if (trait.name == "Packaged" || trait.name == "Hibernating" || trait.name == "Reanimated") {
@@ -123,9 +121,9 @@ namespace Traits {
             //} else if (trait.name == "Griefstricken") {
             //    character.AdjustMoodValue(-20, trait, trait.gainedFromDoing);
             //} 
-            else if (trait.name == "Encumbered") {
-                character.AdjustSpeedModifier(-0.5f);
-            } 
+            //else if (trait.name == "Encumbered") {
+            //    character.AdjustSpeedModifier(-0.5f);
+            //} 
             //else if (trait.name == "Vampiric") {
             //    character.needsComponent.AdjustDoNotGetTired(1);
             //} 
@@ -186,12 +184,12 @@ namespace Traits {
             if (trait.hindersPerform) {
                 character.IncreaseCanPerform();
             }
-            if (trait.type == TRAIT_TYPE.DISABLER) {
-                //character.AdjustCanPerform(-1);
-                if (trait.effect == TRAIT_EFFECT.NEGATIVE) {
-                    character.AdjustIgnoreHostilities(-1);
-                }
-            }
+            //if (trait.type == TRAIT_TYPE.DISABLER) {
+            //    //character.AdjustCanPerform(-1);
+            //    if (trait.effect == TRAIT_EFFECT.NEGATIVE) {
+            //        character.AdjustIgnoreHostilities(-1);
+            //    }
+            //}
             if (trait.name == "Abducted" || trait.name == "Restrained") {
                 character.needsComponent.AdjustDoNotGetTired(-1);
             } else if (trait.name == "Packaged" || trait.name == "Hibernating" || trait.name == "Reanimated") {
@@ -239,9 +237,9 @@ namespace Traits {
             //} else if (trait.name == "Lethargic") {
             //    character.AdjustMoodValue(20, trait, trait.gainedFromDoing);
             //} 
-            else if (trait.name == "Encumbered") {
-                character.AdjustSpeedModifier(0.5f);
-            } 
+            //else if (trait.name == "Encumbered") {
+            //    character.AdjustSpeedModifier(0.5f);
+            //} 
             //else if (trait.name == "Vampiric") {
             //    character.needsComponent.AdjustDoNotGetTired(-1);
             //} 

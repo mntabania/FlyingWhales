@@ -106,12 +106,12 @@ public class SaveDataTheProfane : SaveDataLandmark {
 
     public override void Save(BaseLandmark landmark) {
         base.Save(landmark);
-        TheProfane profane = landmark as TheProfane;
+        //TheProfane profane = landmark as TheProfane;
         // currentCooldownTick = profane.currentCooldownTick;
     }
     public override void LoadSpecificLandmarkData(BaseLandmark landmark) {
         base.LoadSpecificLandmarkData(landmark);
-        TheProfane profane = landmark as TheProfane;
-        profane.LoadSavedData(this);
+        //TheProfane profane = landmark as TheProfane;
+        //profane.LoadSavedData(this);
     }
 }

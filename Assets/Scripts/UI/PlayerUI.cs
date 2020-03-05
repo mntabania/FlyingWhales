@@ -186,16 +186,16 @@ public class PlayerUI : MonoBehaviour {
         UpdateKillCount();
     }
     private void OnCharacterGainedTrait(Character character, Trait trait) {
-        if (trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
-            TransferCharacterFromActiveToInactive(character);
-            UpdateKillCount();
-        }
+        //if (trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
+        //    TransferCharacterFromActiveToInactive(character);
+        //    UpdateKillCount();
+        //}
     }
     private void OnCharacterLostTrait(Character character, Trait trait) {
-        if (trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
-            TransferCharacterFromInactiveToActive(character);
-            UpdateKillCount();
-        }
+        //if (trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
+        //    TransferCharacterFromInactiveToActive(character);
+        //    UpdateKillCount();
+        //}
     }
     private void OnCharacterRemovedFromFaction(Character character, Faction faction) {
         //UpdateKillCount();

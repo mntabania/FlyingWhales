@@ -48,7 +48,7 @@ public class SaveManager : MonoBehaviour {
     }
 
     public static SaveDataTrait ConvertTraitToSaveDataTrait(Trait trait) {
-        if (trait.isNotSavable || trait is RelationshipTrait) {
+        if (trait.isNotSavable) {
             return null;
         }
         SaveDataTrait saveDataTrait = null;

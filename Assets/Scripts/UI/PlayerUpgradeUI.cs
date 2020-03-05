@@ -7,11 +7,11 @@ using UnityEngine.UI;
 
 public class PlayerUpgradeUI : MonoBehaviour {
     
-    private TheAnvil theAnvil;
+    //private TheAnvil theAnvil;
 
     #region General
     public void OnClickUpgrade(BaseLandmark landmark) {
-        theAnvil = landmark as TheAnvil;
+        //theAnvil = landmark as TheAnvil;
         // UIManager.Instance.dualObjectPicker.ShowDualObjectPicker<Character, string>(PlayerManager.Instance.player.minions.Select(x => x.character).ToList(), LandmarkManager.Instance.anvilResearchData.Keys.ToList(),
         //     "Choose Minion", "Choose Upgrade",
         //     CanChooseMinion, CanChooseUpgrade,
@@ -37,8 +37,8 @@ public class PlayerUpgradeUI : MonoBehaviour {
         Minion minion = (minionObj as Character).minion;
         string upgrade = upgradeObj as string;
 
-        minion.SetAssignedRegion(theAnvil.tileLocation.region);
-        theAnvil.tileLocation.region.SetAssignedMinion(minion);
+        //minion.SetAssignedRegion(theAnvil.tileLocation.region);
+        //theAnvil.tileLocation.region.SetAssignedMinion(minion);
         // theAnvil.SetUpgradeIdentifier(upgrade);
         // theAnvil.StartUpgradeProcess();
     }

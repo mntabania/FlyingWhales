@@ -107,11 +107,11 @@ public class SaveDataThePortal : SaveDataLandmark {
 
     public override void Save(BaseLandmark landmark) {
         base.Save(landmark);
-        ThePortal portal = landmark as ThePortal;
+        //ThePortal portal = landmark as ThePortal;
     }
     public override void LoadSpecificLandmarkData(BaseLandmark landmark) {
         base.LoadSpecificLandmarkData(landmark);
-        ThePortal portal = landmark as ThePortal;
+        //ThePortal portal = landmark as ThePortal;
         // portal.LoadSummonMinion(this);
     }
 }

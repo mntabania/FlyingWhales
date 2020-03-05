@@ -7,12 +7,12 @@ using UnityEngine.UI;
 
 public class TheEyeUI : MonoBehaviour {
 
-    private TheEye theEye;
+    //private TheEye theEye;
 
     #region General
     private Minion minionToInterfere; 
     public void OnClickInterfere(BaseLandmark landmark) {
-        theEye = landmark as TheEye;
+        //theEye = landmark as TheEye;
         minionToInterfere = null;
         UIManager.Instance.dualObjectPicker.ShowDualObjectPicker<Character>(PlayerManager.Instance.player.minions.Select(x => x.character).ToList(), "Choose Minion",
             CanChooseMinion, OnHoverEnterMinion, OnHoverExitMinion, OnPickFirstObject, ConfirmInterfere, "Interfere");

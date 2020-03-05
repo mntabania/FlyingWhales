@@ -42,19 +42,19 @@ public class PlayerJobData {
                 jobActions.Add(new Unfaithfulness());
                 break;
             case JOB.DIPLOMAT:
-                jobActions.Add(new ShareIntel());
+                //jobActions.Add(new ShareIntel());
                 break;
             case JOB.DEBILITATOR:
                 //jobActions.Add(new Intervene());
                 jobActions.Add(new Zap());
-                jobActions.Add(new Jolt());
-                jobActions.Add(new Spook());
-                jobActions.Add(new Enrage());
-                jobActions.Add(new Disable());
+                //jobActions.Add(new Jolt());
+                //jobActions.Add(new Spook());
+                //jobActions.Add(new Enrage());
+                //jobActions.Add(new Disable());
                 break;
             case JOB.INSTIGATOR:
-                jobActions.Add(new Abduct());
-                jobActions.Add(new Provoke());
+                //jobActions.Add(new Abduct());
+                //jobActions.Add(new Provoke());
                 jobActions.Add(new Destroy());
                 jobActions.Add(new RaiseDead());
                 break;

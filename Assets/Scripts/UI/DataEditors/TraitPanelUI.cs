@@ -262,6 +262,7 @@ public class TraitPanelUI : MonoBehaviour {
         stackLimitInput.text = trait.stackLimit.ToString();
         stackModInput.text = trait.stackModifier.ToString();
         UpdateAdvertisedInteractionsText();
+        _isHidden.isOn = trait.isHidden;
 
         //for (int i = 0; i < trait.effects.Count; i++) {
         //    TraitEffect traitEffect = trait.effects[i];

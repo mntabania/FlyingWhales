@@ -12,7 +12,7 @@ namespace Traits {
         public Resting() {
             name = "Resting";
             description = "This character is resting.";
-            type = TRAIT_TYPE.DISABLER;
+            type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
             //hindersMovement = true;

@@ -6,11 +6,11 @@ using UnityEngine.UI;
 using TMPro;
 
 public class PlayerSummonMinionUI : MonoBehaviour {
-    public ThePortal portal { get; private set; }
+    //public ThePortal portal { get; private set; }
     
-    #region Genera
+    #region General
     public void OnClickSummon(BaseLandmark landmark) {
-        portal = landmark as ThePortal;
+        //portal = landmark as ThePortal;
         //show dual object picker, and allow only 1 object to be picked
         //column 1 should contain all minions to be summoned and column 2 should contain the players minions
         // UIManager.Instance.dualObjectPicker.ShowDualObjectPicker(PlayerManager.Instance.player.minions.Select(x => x.character).ToList(), PlayerManager.Instance.player.minionsToSummon.ToList(),
@@ -45,10 +45,10 @@ public class PlayerSummonMinionUI : MonoBehaviour {
             summonDuration -= speedUpDuration;
         }
 
-        if (minion != null) {
-            minion.SetAssignedRegion(portal.tileLocation.region);
-            portal.tileLocation.region.SetAssignedMinion(minion);
-        }
+        //if (minion != null) {
+        //    minion.SetAssignedRegion(portal.tileLocation.region);
+        //    portal.tileLocation.region.SetAssignedMinion(minion);
+        //}
         // portal.StartSummon(System.Array.IndexOf(PlayerManager.Instance.player.minionsToSummon, data), 0, summonDuration);
         
     }

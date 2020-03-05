@@ -72,12 +72,12 @@ public class SaveDataTheNeedles : SaveDataLandmark {
 
     public override void Save(BaseLandmark landmark) {
         base.Save(landmark);
-        TheNeedles needles = landmark as TheNeedles;
+        //TheNeedles needles = landmark as TheNeedles;
         // currentCooldownTick = needles.currentCooldownTick;
     }
     public override void LoadSpecificLandmarkData(BaseLandmark landmark) {
         base.LoadSpecificLandmarkData(landmark);
-        TheNeedles needles = landmark as TheNeedles;
-        needles.LoadSavedData(this);
+        //TheNeedles needles = landmark as TheNeedles;
+        //needles.LoadSavedData(this);
     }
 }
