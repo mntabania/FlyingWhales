@@ -206,10 +206,10 @@ public class CombatManager : MonoBehaviour {
     #endregion
 
     #region Projectiles
-    public Projectile CreateNewProjectile(ELEMENTAL_TYPE elementalType, Transform parent) {
+    public Projectile CreateNewProjectile(ELEMENTAL_TYPE elementalType, Transform parent, Vector3 worldPos) {
         GameObject projectileGO =
             ObjectPoolManager.Instance.InstantiateObjectFromPool(_projectileDictionary[elementalType].name,
-                Vector3.zero, Quaternion.identity, parent);
+                worldPos, Quaternion.identity, parent, true);
         return projectileGO.GetComponent<Projectile>();
     }
     #endregion

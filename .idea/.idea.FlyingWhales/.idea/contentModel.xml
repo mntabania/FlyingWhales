@@ -1995,7 +1995,6 @@
             <e p="TraitProcessor" t="Include">
               <e p="CharacterTraitProcessor.cs" t="Include" />
               <e p="DefaultTraitProcessor.cs" t="Include" />
-              <e p="SpecialTokenTraitProcessor.cs" t="Include" />
               <e p="TileObjectTraitProcessor.cs" t="Include" />
               <e p="TraitProcessor.cs" t="Include" />
             </e>
@@ -2070,6 +2069,7 @@
               <e p="FactionInfoUI.cs" t="Include" />
               <e p="HextileInfoUI.cs" t="Include" />
               <e p="InfoUIBase.cs" t="Include" />
+              <e p="MinionInfoUI.cs" t="Include" />
               <e p="PartyInfoInfoUi.cs" t="Include" />
               <e p="QuestInfoUI.cs" t="Include" />
               <e p="RegionInfoUI.cs" t="Include" />

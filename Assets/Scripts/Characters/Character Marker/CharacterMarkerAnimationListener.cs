@@ -42,7 +42,7 @@ public class CharacterMarkerAnimationListener : MonoBehaviour {
             return;
         }
         //Create projectile here and set the on hit action to combat state OnAttackHit
-        Projectile projectile = CombatManager.Instance.CreateNewProjectile(parentMarker.character.combatComponent.elementalDamage.type, parentMarker.projectileParent);
+        Projectile projectile = CombatManager.Instance.CreateNewProjectile(parentMarker.character.combatComponent.elementalDamage.type, parentMarker.character.currentRegion.innerMap.objectsParent, parentMarker.projectileParent.transform.position);
         projectile.SetTarget(target.projectileReceiver.transform, target, state);
         projectile.onHitAction = OnProjectileHit;
         currentProjectile = projectile.gameObject;

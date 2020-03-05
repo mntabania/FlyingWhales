@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using EZObjectPools;
 using Inner_Maps;
 using UnityEngine;
@@ -21,6 +22,7 @@ public class Projectile : PooledObject {
     private Vector3 _pausedVelocity;
     private float _pausedAngularVelocity;
     private CombatState createdBy;
+    private Tweener tween;
 
     #region Monobehaviours
     private void OnDestroy() {
@@ -33,10 +35,11 @@ public class Projectile : PooledObject {
     #endregion
 
     public void SetTarget(Transform target, IDamageable targetObject, CombatState createdBy) {
-        Vector3 diff = target.position - transform.position;
-        diff.Normalize();
-        float rot_z = Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(0f, 0f, rot_z - 90);
+        // Vector3 diff = target.position - transform.position;
+        // diff.Normalize();
+        // float rot_z = Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg;
+        // transform.rotation = Quaternion.Euler(0f, 0f, rot_z - 90);
+        name = $"Projectile from {createdBy.stateComponent.character.name} targeting {targetObject.name}";
         this.targetTransform = target;
         this.targetObject = targetObject;
         this.createdBy = createdBy;
@@ -51,28 +54,30 @@ public class Projectile : PooledObject {
         }
         Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
         collisionParticleCallback.SetAction(DestroyProjectile); //when the collision particles have successfully stopped. Destroy this object.
+        
+        tween = transform.DOMove(target.position, 25f).SetSpeedBased(true).SetEase(Ease.Linear).SetAutoKill(false);
+        tween.OnUpdate (() => tween.ChangeEndValue (target.position, true));
     }
 
-    private void FixedUpdate() {
-        if (targetTransform == null) {
-            return;
-        }
-        if (GameManager.Instance != null && GameManager.Instance.isPaused) {
-            return;
-        }
-        Vector2 direction = (Vector2)targetTransform.position - rigidBody.position;
-        direction.Normalize();
-        float rotateAmount = Vector3.Cross(direction, transform.up).z;
-        rigidBody.angularVelocity = -rotateAmount * rotateSpeed;
-        rigidBody.velocity = transform.up * speed;
-    }
+    // private void FixedUpdate() {
+    //     if (targetTransform == null) {
+    //         return;
+    //     }
+    //     if (GameManager.Instance != null && GameManager.Instance.isPaused) {
+    //         return;
+    //     }
+    //     Vector2 direction = (Vector2)targetTransform.position - rigidBody.position;
+    //     direction.Normalize();
+    //     float rotateAmount = Vector3.Cross(direction, transform.up).z;
+    //     rigidBody.angularVelocity = -rotateAmount * rotateSpeed;
+    //     rigidBody.velocity = transform.up * speed;
+    // }
 
     public void OnProjectileHit(IDamageable poi) {
-        rigidBody.velocity = Vector2.zero;
-        rigidBody.angularVelocity = 0f;
-        if (projectileParticles != null) {
-            projectileParticles.Stop();    
-        }
+        // rigidBody.velocity = Vector2.zero;
+        // rigidBody.angularVelocity = 0f;
+        tween.Kill();
+        if (projectileParticles != null) { projectileParticles.Stop(); }
         onHitAction?.Invoke(poi, createdBy);
         targetTransform = null;
         _collider.enabled = false;
@@ -80,8 +85,8 @@ public class Projectile : PooledObject {
     }
 
     private void DestroyProjectile() {
-        GameObject.Destroy(this.gameObject);
-        // ObjectPoolManager.Instance.DestroyObject(this);
+        // GameObject.Destroy(this.gameObject);
+        ObjectPoolManager.Instance.DestroyObject(this);
     }
 
     #region Object Pool
@@ -92,8 +97,10 @@ public class Projectile : PooledObject {
         Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
         Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
         _collider.enabled = true;
-        rigidBody.velocity = Vector2.zero;
-        rigidBody.angularVelocity = 0f;
+        // rigidBody.velocity = Vector2.zero;
+        // rigidBody.angularVelocity = 0f;
+        tween?.Kill();
+        tween = null;
         if (projectileParticles != null) {
             projectileParticles.Stop();
             projectileParticles.Clear();
@@ -107,15 +114,17 @@ public class Projectile : PooledObject {
     #region Listeners
     private void OnGamePaused(bool isPaused) {
         if (isPaused) {
-            _pausedVelocity = rigidBody.velocity;
-            _pausedAngularVelocity = rigidBody.angularVelocity;
-            rigidBody.velocity = Vector2.zero;
-            rigidBody.angularVelocity = 0f;
-            rigidBody.isKinematic = true;
+            // _pausedVelocity = rigidBody.velocity;
+            // _pausedAngularVelocity = rigidBody.angularVelocity;
+            // rigidBody.velocity = Vector2.zero;
+            // rigidBody.angularVelocity = 0f;
+            // rigidBody.isKinematic = true;
+            tween.Pause();
         } else {
-            rigidBody.isKinematic = false;
-            rigidBody.velocity = _pausedVelocity;
-            rigidBody.angularVelocity = _pausedAngularVelocity;
+            // rigidBody.isKinematic = false;
+            // rigidBody.velocity = _pausedVelocity;
+            // rigidBody.angularVelocity = _pausedAngularVelocity;
+            tween.Play();
         }
     }
     private void OnCharacterAreaTravelling(Party party) {

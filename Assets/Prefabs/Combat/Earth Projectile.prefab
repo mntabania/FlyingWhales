@@ -9542,7 +9542,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.05
+  m_Radius: 0.1
 --- !u!1 &2984732840408037782
 GameObject:
   m_ObjectHideFlags: 0
@@ -19031,5 +19031,5 @@ TrailRenderer:
     shadowBias: 0.5
     generateLightingData: 0
   m_MinVertexDistance: 0.1
-  m_Autodestruct: 1
+  m_Autodestruct: 0
   m_Emitting: 1
