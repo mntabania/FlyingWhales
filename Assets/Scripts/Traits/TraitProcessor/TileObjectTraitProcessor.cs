@@ -23,7 +23,7 @@ namespace Traits {
         }
         public override void OnTraitUnstack(ITraitable traitable, Trait trait, Character removedBy = null) {
             DefaultProcessOnUnstackTrait(traitable, trait, removedBy);
-            Messenger.Broadcast(Signals.CHARACTER_TRAIT_UNSTACKED, traitable as TileObject, trait);
+            Messenger.Broadcast(Signals.TILE_OBJECT_TRAIT_UNSTACKED, traitable as TileObject, trait);
         }
     }
 

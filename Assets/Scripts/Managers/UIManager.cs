@@ -206,6 +206,7 @@ public class UIManager : MonoBehaviour {
     }
     private void UpdateInteractableInfoUI() {
         UpdateCharacterInfo();
+        UpdateMinionInfo();
         UpdateTileObjectInfo();
         UpdateRegionInfo();
         UpdateQuestInfo();
@@ -657,14 +658,18 @@ public class UIManager : MonoBehaviour {
     [Header("Character Info")]
     [SerializeField] internal CharacterInfoUI characterInfoUI;
     public void ShowCharacterInfo(Character character, bool centerOnCharacter = false) {
-        if (tempDisableShowInfoUI) {
-            SetTempDisableShowInfoUI(false);
-            return;
-        }
-        characterInfoUI.SetData(character);
-        characterInfoUI.OpenMenu();
-        if (centerOnCharacter) {
-            character.CenterOnCharacter();
+        if(character.minion != null) {
+            ShowMinionInfo(character.minion, centerOnCharacter);
+        } else {
+            if (tempDisableShowInfoUI) {
+                SetTempDisableShowInfoUI(false);
+                return;
+            }
+            characterInfoUI.SetData(character);
+            characterInfoUI.OpenMenu();
+            if (centerOnCharacter) {
+                character.CenterOnCharacter();
+            }
         }
     }
     public void UpdateCharacterInfo() {
@@ -685,6 +690,31 @@ public class UIManager : MonoBehaviour {
     public void OnCameraOutOfFocus() {
         if (characterInfoUI.isShowing) {
             characterInfoUI.OnClickCloseMenu();
+        }
+        if (minionInfoUI.isShowing) {
+            minionInfoUI.OnClickCloseMenu();
+        }
+    }
+    #endregion
+
+    #region Minion Info
+    [Space(10)]
+    [Header("Minion Info")]
+    [SerializeField] internal MinionInfoUI minionInfoUI;
+    private void ShowMinionInfo(Minion minion, bool centerOnCharacter = false) {
+        if (tempDisableShowInfoUI) {
+            SetTempDisableShowInfoUI(false);
+            return;
+        }
+        minionInfoUI.SetData(minion);
+        minionInfoUI.OpenMenu();
+        if (centerOnCharacter) {
+            minion.character.CenterOnCharacter();
+        }
+    }
+    private void UpdateMinionInfo() {
+        if (minionInfoUI.isShowing) {
+            minionInfoUI.UpdateMinionInfo();
         }
     }
     #endregion

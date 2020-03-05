@@ -94,11 +94,11 @@ public class CharacterInfoUI : InfoUIBase {
         Messenger.AddListener<InfoUIBase>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<InfoUIBase>(Signals.MENU_CLOSED, OnMenuClosed);
         Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
-        Messenger.AddListener(Signals.ON_CLOSE_SHARE_INTEL, OnCloseShareIntelMenu);
+        //Messenger.AddListener(Signals.ON_CLOSE_SHARE_INTEL, OnCloseShareIntelMenu);
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.AddListener<TileObject, Character>(Signals.CHARACTER_OBTAINED_ITEM, UpdateInventoryInfoFromSignal);
         Messenger.AddListener<TileObject, Character>(Signals.CHARACTER_LOST_ITEM, UpdateInventoryInfoFromSignal);
-        Messenger.AddListener<Character>(Signals.CHARACTER_SWITCHED_ALTER_EGO, OnCharacterChangedAlterEgo);
+        //Messenger.AddListener<Character>(Signals.CHARACTER_SWITCHED_ALTER_EGO, OnCharacterChangedAlterEgo);
         Messenger.AddListener<Relatable, Relatable>(Signals.RELATIONSHIP_ADDED, OnRelationshipAdded);
         //Messenger.AddListener<Relatable, RELATIONSHIP_TRAIT, Relatable>(Signals.RELATIONSHIP_REMOVED, OnRelationshipRemoved);
         Messenger.AddListener<Character, Character>(Signals.OPINION_ADDED, OnOpinionChanged);
@@ -459,17 +459,18 @@ public class CharacterInfoUI : InfoUIBase {
     #region History
     private void UpdateHistory(IPointOfInterest poi) {
         if (isShowing && poi == _activeCharacter) {
-            if (_activeCharacter.minion != null) {
-                ClearHistory();
-            } else if (poi != null && _activeCharacter != null && poi == _activeCharacter) {
-                UpdateAllHistoryInfo();
-            }    
+            UpdateAllHistoryInfo();
+            //if (_activeCharacter.minion != null) {
+            //    ClearHistory();
+            //} else if (poi != null && _activeCharacter != null && poi == _activeCharacter) {
+            //    UpdateAllHistoryInfo();
+            //}    
         }
     }
     private void UpdateAllHistoryInfo() {
-        if (_activeCharacter.minion != null) {
-            return;
-        }
+        //if (_activeCharacter.minion != null) {
+        //    return;
+        //}
         //List<Log> characterHistory = new List<Log>(_activeCharacter.history.OrderByDescending(x => x.date.year).ThenByDescending(x => x.date.month).ThenByDescending(x => x.date.day).ThenByDescending(x => x.date.tick));
         int historyCount = _activeCharacter.logComponent.history.Count;
         int historyLastIndex = historyCount - 1;
@@ -510,13 +511,13 @@ public class CharacterInfoUI : InfoUIBase {
     private void OnOpenShareIntelMenu() {
         backButton.interactable = false;
     }
-    private void OnCloseShareIntelMenu() { }
-    private void OnCharacterChangedAlterEgo(Character character) {
-        if (isShowing && activeCharacter == character) {
-            UpdateCharacterInfo();
-            UpdateTraits();
-        }
-    }
+    //private void OnCloseShareIntelMenu() { }
+    //private void OnCharacterChangedAlterEgo(Character character) {
+    //    if (isShowing && activeCharacter == character) {
+    //        UpdateCharacterInfo();
+    //        UpdateTraits();
+    //    }
+    //}
     private void OnCharacterDied(Character character) {
         if (this.isShowing && activeCharacter.id == character.id) {
             InnerMapCameraMove.Instance.CenterCameraOn(null);

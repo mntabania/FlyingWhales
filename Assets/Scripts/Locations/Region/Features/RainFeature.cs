@@ -142,6 +142,7 @@ public class RainFeature : TileFeature {
                 }
             }
         }
+        RescheduleRainCheck(hex);
     }
     //private void CheckForRain() {
     //    string summary = $"{GameManager.Instance.TodayLogString()}Starting rain check...";
