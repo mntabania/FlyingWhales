@@ -185,8 +185,8 @@ public class LandmarkCharacterItem : PooledObject {
         Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnPartyStartedTravelling);
         Messenger.AddListener<Party>(Signals.PARTY_DONE_TRAVELLING, OnPartyDoneTravelling);
         Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);
-        Messenger.AddListener<Character, Trait>(Signals.TRAIT_ADDED, OnTraitAdded);
-        Messenger.AddListener<Character, Trait>(Signals.TRAIT_REMOVED, OnTraitRemoved);
+        Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_ADDED, OnTraitAdded);
+        Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_REMOVED, OnTraitRemoved);
     }
 
     private void OnDisable() {
@@ -199,7 +199,7 @@ public class LandmarkCharacterItem : PooledObject {
         if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_CHANGED_RACE)) {
             Messenger.RemoveListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);
         }
-        Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_ADDED, OnTraitAdded);
-        Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_REMOVED, OnTraitRemoved);
+        Messenger.RemoveListener<Character, Trait>(Signals.CHARACTER_TRAIT_ADDED, OnTraitAdded);
+        Messenger.RemoveListener<Character, Trait>(Signals.CHARACTER_TRAIT_REMOVED, OnTraitRemoved);
     }
 }

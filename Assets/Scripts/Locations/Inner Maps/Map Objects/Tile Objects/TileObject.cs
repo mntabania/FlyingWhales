@@ -55,6 +55,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     protected Dictionary<RESOURCE, int> maxResourceValues { get; set; }
 
     private bool hasSubscribedToListeners;
+
+    public LogComponent logComponent { get; protected set; }
     
     #region getters
     public POINT_OF_INTEREST_TYPE poiType => POINT_OF_INTEREST_TYPE.TILE_OBJECT;
@@ -83,6 +85,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         ConstructResources();
         AddCommonAdvertisements();
         ConstructDefaultActions();
+        logComponent = new LogComponent(this);
         InnerMapManager.Instance.AddTileObject(this);
         SubscribeListeners();
     }
@@ -97,6 +100,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         AddCommonAdvertisements();
         ConstructResources();
         ConstructDefaultActions();
+        logComponent = new LogComponent(this);
         InnerMapManager.Instance.AddTileObject(this);
         SubscribeListeners();
     }
@@ -637,6 +641,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             if (!HasUnoccupiedSlot()) {
                 SetPOIState(POI_STATE.INACTIVE);
             }
+            Messenger.Broadcast(Signals.ADD_TILE_OBJECT_USER, this, newUser);
         }
     }
     public virtual bool RemoveUser(Character user) {
@@ -645,6 +650,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             user.SetTileObjectLocation(null);
             slot.StopUsing();
             SetPOIState(POI_STATE.ACTIVE);
+            Messenger.Broadcast(Signals.REMOVE_TILE_OBJECT_USER, this, user);
             return true;
         }
         return false;
@@ -735,6 +741,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             return true;
         }
         return false;
+    }
+    protected TileObject GetBase() {
+        return this;
     }
     #endregion
 

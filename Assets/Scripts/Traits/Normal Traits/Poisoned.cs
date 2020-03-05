@@ -37,9 +37,10 @@ namespace Traits {
             if(traitable is Character character) {
                 characterOwner = character;
                 characterOwner.AdjustDoNotRecoverHP(1);
-            } else if (addedTo is TileObject) {
-                ticksDuration = GameManager.Instance.GetTicksBasedOnHour(24);
-            }
+            } 
+            //else if (addedTo is TileObject) {
+            //    ticksDuration = GameManager.Instance.GetTicksBasedOnHour(24);
+            //}
         }
         public override void OnStackTrait(ITraitable addedTo) {
             base.OnStackTrait(addedTo);

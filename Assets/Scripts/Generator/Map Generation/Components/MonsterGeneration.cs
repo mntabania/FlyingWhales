@@ -8,7 +8,7 @@ using UtilityScripts;
 public class MonsterGeneration : MapGenerationComponent {
 
 	public override IEnumerator Execute(MapGenerationData data) {
-		string[] monsterChoices = new[] {"Small Spiders"}; //"Golem", "Wolves", "Seducer", "Fire Elementals", "Kobolds", "Giant Spiders", "Ent"
+		string[] monsterChoices = new[] { "Golem", "Wolves", "Seducer", "Fire Elementals", "Kobolds", "Giant Spiders", "Ent", "Small Spiders" };
         List<BaseLandmark> monsterLairs = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.MONSTER_LAIR);
 		for (int i = 0; i < monsterLairs.Count; i++) {
 			BaseLandmark monsterLair = monsterLairs[i];

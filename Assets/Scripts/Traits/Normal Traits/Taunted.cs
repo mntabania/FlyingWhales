@@ -25,13 +25,13 @@ namespace Traits {
             } else {
                 Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, _sourceCharacter);
             }
-            Messenger.AddListener<Character, Trait>(Signals.TRAIT_ADDED, OnCharacterGainedTrait);
+            Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
             Messenger.AddListener<Character, Character>(Signals.CHARACTER_REMOVED_FROM_VISION, OnCharacterRemovedFromVision);
         }
         public override void OnRemoveTrait(ITraitable sourcePOI, Character removedBy) {
             base.OnRemoveTrait(sourcePOI, removedBy);
             //Character character = sourcePOI as Character;
-            Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_ADDED, OnCharacterGainedTrait);
+            Messenger.RemoveListener<Character, Trait>(Signals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
             Messenger.RemoveListener<Character, Character>(Signals.CHARACTER_REMOVED_FROM_VISION, OnCharacterRemovedFromVision);
             //if (!character.isDead && character.stateComponent.currentState is CombatState) {
             //    Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, character);
@@ -39,7 +39,7 @@ namespace Traits {
         }
         public override bool OnDeath(Character character) {
             //base.OnDeath(character);
-            Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_ADDED, OnCharacterGainedTrait);
+            Messenger.RemoveListener<Character, Trait>(Signals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
             Messenger.RemoveListener<Character, Character>(Signals.CHARACTER_REMOVED_FROM_VISION, OnCharacterRemovedFromVision);
             return _sourceCharacter.traitContainer.RemoveTrait(_sourceCharacter, this);
         }

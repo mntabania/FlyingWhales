@@ -137,6 +137,7 @@ public class Bed : TileObject {
                 }
                 //disable the character's marker
                 character.marker.SetVisualState(false);
+                Messenger.Broadcast(Signals.ADD_TILE_OBJECT_USER, GetBase(), character);
                 break;
             }
         }
@@ -157,6 +158,7 @@ public class Bed : TileObject {
                     LocationGridTile gridTile = character.gridTileLocation.GetNearestUnoccupiedTileFromThis();
                     character.marker.PlaceMarkerAt(gridTile);
                 }
+                Messenger.Broadcast(Signals.REMOVE_TILE_OBJECT_USER, GetBase(), character);
                 return true;
             }
         }

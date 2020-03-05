@@ -28,9 +28,10 @@ namespace Traits {
             if (addedTo is Character) {
                 owner = addedTo as Character;
                 owner.needsComponent.AdjustComfortDecreaseRate(10);
-            } else if (addedTo is TileObject) {
-                ticksDuration = GameManager.Instance.GetTicksBasedOnHour(12);
-            }
+            } 
+            //else if (addedTo is TileObject) {
+            //    ticksDuration = GameManager.Instance.GetTicksBasedOnHour(12);
+            //}
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             owner.needsComponent.AdjustComfortDecreaseRate(-10);
@@ -97,11 +98,14 @@ namespace Traits {
                     int roll = Random.Range(0, 100);
                     if (roll < chance) {
                         //target will be infected with plague
-                        if (target is Character) {
+                        if (target.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
                             (target as Character).interruptComponent.TriggerInterrupt(INTERRUPT.Plagued, target);
-                        } else {
-                            target.traitContainer.AddTrait(target, "Plagued");
+                        } else if (target.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+                            target.traitContainer.AddTrait(target, "Plagued", overrideDuration: GameManager.Instance.GetTicksBasedOnHour(12));
                         }
+                        //else {
+                        //    target.traitContainer.AddTrait(target, "Plagued");
+                        //}
                     }
                 }
             }

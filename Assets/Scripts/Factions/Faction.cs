@@ -828,7 +828,7 @@ public class Faction {
             //if (log.node != null) {
             //    log.node.AdjustReferenceCount(1);
             //}
-            Messenger.Broadcast(Signals.HISTORY_ADDED, this as object);
+            //Messenger.Broadcast(Signals.HISTORY_ADDED, this as object);
         }
     }
     #endregion
