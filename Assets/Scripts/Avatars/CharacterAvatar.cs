@@ -77,17 +77,17 @@ public class CharacterAvatar : MonoBehaviour {
     public virtual void Init(Party party) {
         _party = party;
         //SetPosition(_party.specificLocation.tileLocation.transform.position);
-        this.smoothMovement.avatarGO = this.gameObject;
-        this.smoothMovement.onMoveFinished += OnMoveFinished;
+        smoothMovement.avatarGO = gameObject;
+        smoothMovement.onMoveFinished += OnMoveFinished;
         _isInitialized = true;
         _hasArrived = true;
         SetVisualState(true);
         // SetSprite(_party.owner.role.roleType);
         SetIsPlaceCharacterAsTileObject(true);
 
-        this.name = $"{party.owner.name}'s Avatar";
+        name = $"{party.owner.name}'s Avatar";
         
-        GameObject portraitGO = UIManager.Instance.InstantiateUIObject(CharacterManager.Instance.characterPortraitPrefab.name, this.transform);
+        GameObject portraitGO = UIManager.Instance.InstantiateUIObject(CharacterManager.Instance.characterPortraitPrefab.name, transform);
         characterPortrait = portraitGO.GetComponent<CharacterPortrait>();
         characterPortrait.GeneratePortrait(_party.owner);
         portraitGO.SetActive(false);
@@ -159,7 +159,7 @@ public class CharacterAvatar : MonoBehaviour {
         _travelLine.SetActiveMeter(isVisualShowing);
         _party.owner.marker.gameObject.SetActive(false);
         Messenger.AddListener(Signals.TICK_STARTED, TraverseCurveLine);
-        Messenger.Broadcast(Signals.PARTY_STARTED_TRAVELLING, this.party);
+        Messenger.Broadcast(Signals.PARTY_STARTED_TRAVELLING, party);
     }
     private void TraverseCurveLine() {
         if (_travelLine == null) {
@@ -190,7 +190,7 @@ public class CharacterAvatar : MonoBehaviour {
             SetIsTravelling(false);
             _isTravelCancelled = false;
             _travelLine.travelLineParent.RemoveChild(_travelLine);
-            GameObject.Destroy(_travelLine.gameObject);
+            Destroy(_travelLine.gameObject);
             _travelLine = null;
         }
     }
@@ -198,17 +198,21 @@ public class CharacterAvatar : MonoBehaviour {
         SetIsTravelling(false);
         SetIsTravellingOutside(false);
         _travelLine.travelLineParent.RemoveChild(_travelLine);
-        GameObject.Destroy(_travelLine.gameObject);
+        Destroy(_travelLine.gameObject);
         _travelLine = null;
         SetHasArrivedState(true);
-        _party.owner.currentRegion.RemoveCharacterFromLocation(_party.owner);
+        
+        Region fromRegion = _party.owner.currentRegion; 
+        
+        fromRegion.RemoveCharacterFromLocation(_party.owner);
         targetLocation.AddCharacterToLocation(_party.owner);
 
         _party.owner.combatComponent.ClearHostilesInRange();
         _party.owner.combatComponent.ClearAvoidInRange();
         _party.owner.marker.ClearPOIsInVisionRange();
 
-        LocationGridTile entrance = targetLocation.innerMap.GetRandomUnoccupiedEdgeTile();
+        //character must arrive at the direction that it came from.
+        LocationGridTile entrance = (targetLocation.innerMap as RegionInnerTileMap).GetTileToGoToRegion(fromRegion);//targetLocation.innerMap.GetRandomUnoccupiedEdgeTile();
         _party.owner.marker.PlaceMarkerAt(entrance);
 
         _party.owner.marker.pathfindingAI.SetIsStopMovement(true);
@@ -227,7 +231,7 @@ public class CharacterAvatar : MonoBehaviour {
             PlayerManager.Instance.player.ShowNotificationFrom(_party.owner, arriveLog);    
         }
 
-        Messenger.Broadcast(Signals.PARTY_DONE_TRAVELLING, this.party);
+        Messenger.Broadcast(Signals.PARTY_DONE_TRAVELLING, party);
         if(onArriveAction != null) {
             onArriveAction();
             SetOnArriveAction(null);
@@ -271,8 +275,8 @@ public class CharacterAvatar : MonoBehaviour {
         }
     }
     public virtual void NewMove() {
-        if (this.targetLocation != null && this.path != null) {
-            if (this.path.Count > 0) {
+        if (targetLocation != null && path != null) {
+            if (path.Count > 0) {
 				//this.MakeCitizenMove(_party.specificLocation.tileLocation, this.path[0]);
     //            if(_party.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
     //                RemoveCharactersFromLocation(_party.specificLocation);
@@ -287,7 +291,7 @@ public class CharacterAvatar : MonoBehaviour {
      saved path.
          */
     public virtual void OnMoveFinished() {
-		if(this.path == null){
+		if(path == null){
 			Debug.LogError (GameManager.Instance.Today ().ToStringDate());
 			Debug.LogError ($"Location: {_party.owner.currentRegion.name}");
 		}
@@ -297,18 +301,18 @@ public class CharacterAvatar : MonoBehaviour {
         //        return;
         //    }
         //}
-        if (this.path.Count > 0) {
+        if (path.Count > 0) {
             //if(_party.specificLocation.locIdentifier == LOCATION_IDENTIFIER.HEXTILE) {
             //    RemoveCharactersFromLocation(_party.specificLocation);
             //}
             //AddCharactersToLocation(this.path[0]);
-            this.path.RemoveAt(0);
+            path.RemoveAt(0);
         }
         HasArrivedAtTargetLocation();
     }
     public virtual void HasArrivedAtTargetLocation() {
 		if (_party.owner.currentRegion == targetLocation) {
-            if (!this._hasArrived) {
+            if (!_hasArrived) {
                 SetIsTravelling(false);
                 //_trackTarget = null;
                 SetHasArrivedState(true);
@@ -377,7 +381,7 @@ public class CharacterAvatar : MonoBehaviour {
         _avatarHighlight.SetActive(state);
     }
     public void SetPosition(Vector3 position) {
-        this.transform.position = position;
+        transform.position = position;
     }
     public void SetFrameOrderLayer(int layer) {
         _frameSpriteRenderer.sortingOrder = layer;
