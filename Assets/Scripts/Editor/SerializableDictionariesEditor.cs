@@ -55,6 +55,8 @@ public class WallResourceAssetDictionaryPropertyDrawer : SerializableDictionaryP
 public class WallAssetDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(ParticleEffectAssetDictionary))]
 public class ParticleEffectAssetDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(ProjectileDictionary))]
+public class ProjectileDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 
 //list storage
 [CustomPropertyDrawer(typeof(LandmarkSpriteListStorage))]

@@ -31198,6 +31198,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4e631494c371c340b0d0ad164ee4ffd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _projectileDictionary:
+    m_keys: 00000000010000000200000003000000040000000500000006000000
+    m_values:
+    - {fileID: 1068136125598788, guid: 52f8ac223adcd7d48a832e3082c0a62a, type: 3}
+    - {fileID: 8396677212207567120, guid: e030ac980b5db9243a5ec90c7bea4955, type: 3}
+    - {fileID: 6081573443640258152, guid: 8ec1b1c3de901364394dd2e7d35f7997, type: 3}
+    - {fileID: 5354500756295275459, guid: b801ba0b27a57f2409498bb5d8fa4300, type: 3}
+    - {fileID: 3163541286078371774, guid: dab7247156c3ce44e82d8953649b262d, type: 3}
+    - {fileID: 1970271027120799597, guid: 537d01bf41ad81c4286db798ccc98af3, type: 3}
+    - {fileID: 2885898774159402217, guid: 95b2f355d9c46644abc3a4fef3275a2f, type: 3}
 --- !u!1 &587501500
 GameObject:
   m_ObjectHideFlags: 0
@@ -99835,7 +99845,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
-  m_RenderPostProcessing: 0
+  m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0

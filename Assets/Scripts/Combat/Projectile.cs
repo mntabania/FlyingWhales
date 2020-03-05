@@ -1,17 +1,21 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using EZObjectPools;
 using Inner_Maps;
 using UnityEngine;
 
-public class Projectile : MonoBehaviour {
+public class Projectile : PooledObject {
 
-    public Transform targetTransform;
-    public Rigidbody2D rigidBody;
-    public float rotateSpeed = 200f;
-    public float speed = 5f;
-
+    [SerializeField] private Transform targetTransform;
+    [SerializeField] private Rigidbody2D rigidBody;
+    [SerializeField] private float rotateSpeed = 200f;
+    [SerializeField] private float speed = 5f;
+    [SerializeField] private Collider2D _collider;
+    [SerializeField] private ParticleSystem projectileParticles;
+    [SerializeField] private ParticleSystem collisionParticles;
+    [SerializeField] private ParticleCallback collisionParticleCallback;
+    
     public IDamageable targetObject { get; private set; }
-
     public System.Action<IDamageable, CombatState> onHitAction;
 
     private Vector3 _pausedVelocity;
@@ -36,24 +40,24 @@ public class Projectile : MonoBehaviour {
         this.targetTransform = target;
         this.targetObject = targetObject;
         this.createdBy = createdBy;
+        if (projectileParticles != null) {
+            projectileParticles.Play();    
+        }
         if (targetObject is Character) {
             Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
             Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         } else if (targetObject is TileObject) {
             Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
-        } 
-        // else if (targetObject is SpecialToken) {
-        //     Messenger.AddListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
-        // }
-
+        }
         Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
+        collisionParticleCallback.SetAction(DestroyProjectile); //when the collision particles have successfully stopped. Destroy this object.
     }
 
     private void FixedUpdate() {
         if (targetTransform == null) {
             return;
         }
-        if (GameManager.Instance.isPaused) {
+        if (GameManager.Instance != null && GameManager.Instance.isPaused) {
             return;
         }
         Vector2 direction = (Vector2)targetTransform.position - rigidBody.position;
@@ -64,15 +68,42 @@ public class Projectile : MonoBehaviour {
     }
 
     public void OnProjectileHit(IDamageable poi) {
-        //Debug.Log("Hit character " + character?.name);
+        rigidBody.velocity = Vector2.zero;
+        rigidBody.angularVelocity = 0f;
+        if (projectileParticles != null) {
+            projectileParticles.Stop();    
+        }
         onHitAction?.Invoke(poi, createdBy);
-        DestroyProjectile();
+        targetTransform = null;
+        _collider.enabled = false;
+        collisionParticles.Play(true);
     }
 
     private void DestroyProjectile() {
         GameObject.Destroy(this.gameObject);
+        // ObjectPoolManager.Instance.DestroyObject(this);
     }
 
+    #region Object Pool
+    public override void Reset() {
+        base.Reset();
+        Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
+        Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
+        Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
+        _collider.enabled = true;
+        rigidBody.velocity = Vector2.zero;
+        rigidBody.angularVelocity = 0f;
+        if (projectileParticles != null) {
+            projectileParticles.Stop();
+            projectileParticles.Clear();
+        }
+        collisionParticles.Clear();
+        onHitAction = null;
+        targetTransform = null;
+    }
+    #endregion
+    
     #region Listeners
     private void OnGamePaused(bool isPaused) {
         if (isPaused) {
@@ -104,11 +135,6 @@ public class Projectile : MonoBehaviour {
             DestroyProjectile();
         }
     }
-    // private void OnItemRemovedFromTile(SpecialToken item, LocationGridTile removedFrom) {
-    //     if (item == targetObject) {
-    //         DestroyProjectile();
-    //     }
-    // }
     #endregion
 
 

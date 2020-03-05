@@ -61,6 +61,8 @@ public class WallResourceAssetDictionary : SerializableDictionary<RESOURCE, Wall
 public class WallAssetDictionary : SerializableDictionary<string, WallAsset> { }
 [System.Serializable]
 public class ParticleEffectAssetDictionary : SerializableDictionary<PARTICLE_EFFECT, GameObject> { }
+[System.Serializable]
+public class ProjectileDictionary : SerializableDictionary<ELEMENTAL_TYPE, GameObject> { }
 
 //List storage
 [System.Serializable]

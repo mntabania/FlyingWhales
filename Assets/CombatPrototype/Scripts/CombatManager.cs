@@ -8,10 +8,11 @@ using Inner_Maps;
 using UnityEngine.Assertions;
 
 public class CombatManager : MonoBehaviour {
-    public static CombatManager Instance = null;
+    public static CombatManager Instance;
 
     public const int pursueDuration = 10;
-    // private List<ITraitable> traitables;
+
+    [SerializeField] private ProjectileDictionary _projectileDictionary;
 
     private void Awake() {
         Instance = this;
@@ -59,6 +60,7 @@ public class CombatManager : MonoBehaviour {
         go.SetActive(true);
 
     }
+    
     #region Explosion
     public void PoisonExplosion(IPointOfInterest target, LocationGridTile targetTile, int stacks) {
         StartCoroutine(PoisonExplosionCoroutine(target, targetTile, stacks));
@@ -200,6 +202,15 @@ public class CombatManager : MonoBehaviour {
             string[] elementsArray = elements.Split(' ');
             target.traitContainer.RemoveTrait(target, elementsArray[UnityEngine.Random.Range(0, elementsArray.Length)]);
         }
+    }
+    #endregion
+
+    #region Projectiles
+    public Projectile CreateNewProjectile(ELEMENTAL_TYPE elementalType, Transform parent) {
+        GameObject projectileGO =
+            ObjectPoolManager.Instance.InstantiateObjectFromPool(_projectileDictionary[elementalType].name,
+                Vector3.zero, Quaternion.identity, parent);
+        return projectileGO.GetComponent<Projectile>();
     }
     #endregion
 }
