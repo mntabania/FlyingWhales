@@ -7,7 +7,7 @@ namespace Traits {
     /// Functions to be used to determine what happens when a trait is added/removed to a character
     /// </summary>
     public class CharacterTraitProcessor : TraitProcessor {
-        public override void OnTraitAdded(ITraitable traitable, Trait trait, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null) {
+        public override void OnTraitAdded(ITraitable traitable, Trait trait, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration) {
             Character character = traitable as Character;
             ApplyTraitEffects(character, trait);
             //ApplyPOITraitInteractions(character, trait);
@@ -26,8 +26,8 @@ namespace Traits {
                 //when a character gains a negative disabler trait, drop all location jobs that this character is assigned to
                 //TODO: //character.jobQueue.UnassignAllJobsTakenBy(character);
             }
-            DefaultProcessOnAddTrait(traitable, trait, characterResponsible, gainedFromDoing);
-            Messenger.Broadcast(Signals.TRAIT_ADDED, character, trait);
+            DefaultProcessOnAddTrait(traitable, trait, characterResponsible, gainedFromDoing, overrideDuration);
+            Messenger.Broadcast(Signals.CHARACTER_TRAIT_ADDED, character, trait);
         }
         public override void OnTraitRemoved(ITraitable traitable, Trait trait, Character removedBy) {
             Character character = traitable as Character;
@@ -36,18 +36,18 @@ namespace Traits {
             //character.currentAlterEgo.RemoveTrait(trait);
 
             DefaultProcessOnRemoveTrait(traitable, trait, removedBy);
-            Messenger.Broadcast(Signals.TRAIT_REMOVED, character, trait);
+            Messenger.Broadcast(Signals.CHARACTER_TRAIT_REMOVED, character, trait);
         }
-        public override void OnTraitStacked(ITraitable traitable, Trait trait, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null) {
+        public override void OnTraitStacked(ITraitable traitable, Trait trait, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration) {
             Character character = traitable as Character;
-            if(DefaultProcessOnStackTrait(traitable, trait, characterResponsible, gainedFromDoing)) {
-                Messenger.Broadcast(Signals.TRAIT_STACKED, character, trait);
+            if(DefaultProcessOnStackTrait(traitable, trait, characterResponsible, gainedFromDoing, overrideDuration)) {
+                Messenger.Broadcast(Signals.CHARACTER_TRAIT_STACKED, character, trait);
             }
         }
         public override void OnTraitUnstack(ITraitable traitable, Trait trait, Character removedBy = null) {
             Character character = traitable as Character;
             DefaultProcessOnUnstackTrait(traitable, trait, removedBy);
-            Messenger.Broadcast(Signals.TRAIT_UNSTACKED, character, trait);
+            Messenger.Broadcast(Signals.CHARACTER_TRAIT_UNSTACKED, character, trait);
         }
 
         private void ApplyTraitEffects(Character character, Trait trait) {

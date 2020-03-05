@@ -81,19 +81,16 @@ public class CharacterInfoUI : InfoUIBase {
 
     public Character activeCharacter => _activeCharacter;
     public Character previousCharacter => _previousCharacter;
-    private string normalTextColor = "#CEB67C";
-    private string buffTextColor = "#39FF14";
-    private string flawTextColor = "#FF073A";
     private List<string> afflictions;
     private List<string> combatModes;
 
     internal override void Initialize() {
         base.Initialize();
-        Messenger.AddListener<object>(Signals.HISTORY_ADDED, UpdateHistory);
-        Messenger.AddListener<Character, Trait>(Signals.TRAIT_ADDED, UpdateTraitsFromSignal);
-        Messenger.AddListener<Character, Trait>(Signals.TRAIT_REMOVED, UpdateTraitsFromSignal);
-        Messenger.AddListener<Character, Trait>(Signals.TRAIT_STACKED, UpdateTraitsFromSignal);
-        Messenger.AddListener<Character, Trait>(Signals.TRAIT_UNSTACKED, UpdateTraitsFromSignal);
+        Messenger.AddListener<IPointOfInterest>(Signals.LOG_ADDED, UpdateHistory);
+        Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_ADDED, UpdateTraitsFromSignal);
+        Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_REMOVED, UpdateTraitsFromSignal);
+        Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_STACKED, UpdateTraitsFromSignal);
+        Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_UNSTACKED, UpdateTraitsFromSignal);
         Messenger.AddListener<InfoUIBase>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<InfoUIBase>(Signals.MENU_CLOSED, OnMenuClosed);
         Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
@@ -334,22 +331,22 @@ public class CharacterInfoUI : InfoUIBase {
                 continue; //hide combat traits
             }
             if (currTrait.type == TRAIT_TYPE.STATUS || currTrait.type == TRAIT_TYPE.DISABLER || currTrait.type == TRAIT_TYPE.ENCHANTMENT || currTrait.type == TRAIT_TYPE.EMOTION) {
-                string color = normalTextColor;
+                string color = UIManager.normalTextColor;
                 if (currTrait.type == TRAIT_TYPE.BUFF) {
-                    color = buffTextColor;
+                    color = UIManager.buffTextColor;
                 } else if (currTrait.type == TRAIT_TYPE.FLAW) {
-                    color = flawTextColor;
+                    color = UIManager.flawTextColor;
                 }
                 if (!string.IsNullOrEmpty(statusTraits)) {
                     statusTraits = $"{statusTraits}, ";
                 }
                 statusTraits = $"{statusTraits}<b><color={color}><link=\"{i}\">{currTrait.GetNameInUI(activeCharacter)}</link></color></b>";
             } else {
-                string color = normalTextColor;
+                string color = UIManager.normalTextColor;
                 if (currTrait.type == TRAIT_TYPE.BUFF) {
-                    color = buffTextColor;
+                    color = UIManager.buffTextColor;
                 } else if (currTrait.type == TRAIT_TYPE.FLAW) {
-                    color = flawTextColor;
+                    color = UIManager.flawTextColor;
                 }
                 if (!string.IsNullOrEmpty(normalTraits)) {
                     normalTraits = $"{normalTraits}, ";
@@ -409,36 +406,6 @@ public class CharacterInfoUI : InfoUIBase {
             );
             normalTraitsEventLbl.ResetHighlightValues();
         }
-        //if (TraitManager.Instance.CanStillTriggerFlaws(activeCharacter)) {
-        //    if (obj is string) {
-        //        string text = (string)obj;
-        //        int index = int.Parse(text);
-        //        Trait trait = activeCharacter.traitContainer.allTraits[index];
-        //        string traitDescription = trait.description;
-        //        if (trait.canBeTriggered) {
-        //            traitDescription +=
-        //                $"\n{trait.GetRequirementDescription(activeCharacter)}\n\n<b>Effect</b>: {trait.GetTriggerFlawEffectDescription(activeCharacter, "flaw_effect")}";
-        //        }
-
-        //        StartCoroutine(HoverOutTraitAfterClick());//Quick fix because tooltips do not disappear. Issue with hover out action in label not being called when other collider goes over it.
-        //        UIManager.Instance.ShowYesNoConfirmation(trait.name, traitDescription,
-        //            onClickYesAction: () => OnClickTriggerFlaw(trait),
-        //            showCover: true, layer: 25, yesBtnText:
-        //            $"Trigger ({EditableValuesManager.Instance.triggerFlawManaCost.ToString()} Mana)",
-        //            yesBtnInteractable: trait.CanFlawBeTriggered(activeCharacter),
-        //            pauseAndResume: true,
-        //            noBtnActive: false,
-        //            yesBtnActive: trait.canBeTriggered,
-        //            yesBtnInactiveHoverAction: () => ShowCannotTriggerFlawReason(trait),
-        //            yesBtnInactiveHoverExitAction: UIManager.Instance.HideSmallInfo
-        //        );
-        //        normalTraitsEventLbl.ResetHighlightValues();
-        //    }
-        //} else {
-        //    StartCoroutine(HoverOutTraitAfterClick());//Quick fix because tooltips do not disappear. Issue with hover out action in label not being called when other collider goes over it.
-        //    PlayerUI.Instance.ShowGeneralConfirmation("Invalid", "This character's flaws can no longer be triggered.");
-        //    normalTraitsEventLbl.ResetHighlightValues();
-        //}
     }
     private IEnumerator HoverOutTraitAfterClick() {
         yield return new WaitForEndOfFrame();
@@ -490,12 +457,11 @@ public class CharacterInfoUI : InfoUIBase {
     #endregion
 
     #region History
-    private void UpdateHistory(object obj) {
-        var character = obj as Character;
-        if (isShowing && character == _activeCharacter) {
+    private void UpdateHistory(IPointOfInterest poi) {
+        if (isShowing && poi == _activeCharacter) {
             if (_activeCharacter.minion != null) {
                 ClearHistory();
-            } else if (character != null && _activeCharacter != null && character.id == _activeCharacter.id) {
+            } else if (poi != null && _activeCharacter != null && poi == _activeCharacter) {
                 UpdateAllHistoryInfo();
             }    
         }

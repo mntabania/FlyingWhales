@@ -4,12 +4,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class LogComponent  {
-    public Character owner { get; private set; }
+    public IPointOfInterest owner { get; private set; }
     public List<Log> history { get; private set; }
 
     private string _planCostLog;
 
-    public LogComponent(Character owner) {
+    public LogComponent(IPointOfInterest owner) {
         this.owner = owner;
         history = new List<Log>();
         ClearCostLog();
@@ -22,9 +22,12 @@ public class LogComponent  {
             if (history.Count > 300) {
                 history.RemoveAt(0);
             }
-            Messenger.Broadcast(Signals.HISTORY_ADDED, owner as object);
-            if (owner.isLycanthrope) {
-                owner.lycanData.limboForm.logComponent.AddHistory(log);
+            Messenger.Broadcast(Signals.LOG_ADDED, owner);
+            if (owner.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+                Character character = owner as Character;
+                if (character.isLycanthrope) {
+                    character.lycanData.limboForm.logComponent.AddHistory(log);
+                }
             }
             return true;
         }

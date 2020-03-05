@@ -203,9 +203,9 @@ namespace Traits {
         public void SetGainedFromDoing(ActualGoapNode action) {
             gainedFromDoing = action;
         }
-        public void OverrideDuration(int newDuration) {
-            ticksDuration = newDuration;
-        }
+        //public void OverrideDuration(int newDuration) {
+        //    ticksDuration = newDuration;
+        //}
         public void AddCharacterResponsibleForTrait(Character character) {
             if (character != null) {
                 if (responsibleCharacters == null) {

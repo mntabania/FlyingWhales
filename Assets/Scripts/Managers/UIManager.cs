@@ -18,6 +18,10 @@ public class UIManager : MonoBehaviour {
 
     public static UIManager Instance = null;
 
+    public const string normalTextColor = "#CEB67C";
+    public const string buffTextColor = "#39FF14";
+    public const string flawTextColor = "#FF073A";
+
     public RectTransform mainRT;
     private InfoUIBase[] allMenus;
 

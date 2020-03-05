@@ -164,7 +164,7 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 	private void SetAsWater(LocationGridTile tile, LocationStructure structure) {
 		tile.SetTileState(LocationGridTile.Tile_State.Occupied);
 		tile.SetStructure(structure);
-		tile.genericTileObject.traitContainer.AddTrait(tile.genericTileObject, "Wet");
+		tile.genericTileObject.traitContainer.AddTrait(tile.genericTileObject, "Wet", overrideDuration: 0);
 	}
 	private void MountainCellAutomata(List<LocationGridTile> locationGridTiles, LocationStructure elevationStructure) {
 		List<LocationGridTile> refinedTiles =

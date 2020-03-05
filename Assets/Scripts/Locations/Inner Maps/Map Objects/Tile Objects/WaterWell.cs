@@ -8,8 +8,8 @@ public class WaterWell : TileObject {
     public WaterWell() {
         Initialize(TILE_OBJECT_TYPE.WATER_WELL);
         traitContainer.RemoveTrait(this, "Flammable");
-        Wet wet = new Wet {ticksDuration = 0};
-        traitContainer.AddTrait(this, wet);
+        //Wet wet = new Wet {ticksDuration = 0};
+        traitContainer.AddTrait(this, "Wet", overrideDuration: 0);
     }
     public WaterWell(SaveDataTileObject data) {
         Initialize(data);

@@ -130,10 +130,10 @@ public static class Signals {
     public static string CHARACTER_OBTAINED_ITEM = "OnCharacterObtainItem"; //Parameters (SpecialToken obtainedItem, Character characterThatObtainedItem)
     public static string CHARACTER_LOST_ITEM = "OnCharacterLostItem"; //Parameters (SpecialToken unobtainedItem, Character character)
     public static string CHARACTER_LEVEL_CHANGED = "OnCharacterLevelChange"; //Parameters (Character character)
-    public static string TRAIT_ADDED = "OnTraitAdded";
-    public static string TRAIT_REMOVED = "OnTraitRemoved"; //Parameters (Character character, Trait)
-    public static string TRAIT_STACKED = "OnTraitStacked";
-    public static string TRAIT_UNSTACKED = "OnTraitUnstacked";
+    public static string CHARACTER_TRAIT_ADDED = "OnCharacterTraitAdded";
+    public static string CHARACTER_TRAIT_REMOVED = "OnCharacterTraitRemoved"; //Parameters (Character character, Trait)
+    public static string CHARACTER_TRAIT_STACKED = "OnCharacterTraitStacked";
+    public static string CHARACTER_TRAIT_UNSTACKED = "OnCharacterTraitUnstacked";
     public static string ADJUSTED_HP = "OnAdjustedHP";
     public static string PARTY_STARTED_TRAVELLING = "OnPartyStartedTravelling"; //Parameters (Party travellingParty)
     public static string PARTY_DONE_TRAVELLING = "OnPartyDoneTravelling"; //Parameters (Party travellingParty)
@@ -235,7 +235,7 @@ public static class Signals {
     /// </summary>
     public static string SHOW_DEVELOPER_NOTIFICATION = "ShowNotification";
     public static string SHOW_CHARACTER_DIALOG = "ShowCharacterDialog"; //Parameters(Character character, string text, List<CharacterDialogChoice> choices)
-    public static string HISTORY_ADDED = "OnHistoryAdded"; //Parameters (object itemThatHadHistoryAdded) either a character or a landmark
+    public static string LOG_ADDED = "OnLogAdded"; //Parameters (object itemThatHadHistoryAdded) either a character or a landmark
     public static string PAUSED = "OnPauseChanged"; //Parameters (bool isGamePaused)
     public static string PROGRESSION_SPEED_CHANGED = "OnProgressionSpeedChanged"; //Parameters (PROGRESSION_SPEED progressionSpeed)
     public static string BEFORE_MENU_OPENED = "BeforeMenuOpened"; //Parameters (UIMenu openedMenu)
@@ -549,6 +549,18 @@ public static class Signals {
 
     #region Particle System
     public static string PARTICLE_EFFECT_DONE = "OnParticleEffectDone";
+    #endregion
+
+    #region Tile Objects
+    public static string TILE_OBJECT_TRAIT_ADDED = "OnTileObjectTraitAdded";
+    public static string TILE_OBJECT_TRAIT_REMOVED = "OnTileObjectTraitRemoved"; //Parameters (Character character, Trait)
+    public static string TILE_OBJECT_TRAIT_STACKED = "OnTileObjectTraitStacked";
+    public static string TILE_OBJECT_TRAIT_UNSTACKED = "OnTileObjectTraitUnstacked";
+    #endregion
+
+    #region Tile Object
+    public static string ADD_TILE_OBJECT_USER = "OnAddTileObjectUser";
+    public static string REMOVE_TILE_OBJECT_USER = "OnAddTileObjectUser";
     #endregion
 
     public static Dictionary<string, SignalMethod[]> orderedSignalExecution = new Dictionary<string, SignalMethod[]>() {

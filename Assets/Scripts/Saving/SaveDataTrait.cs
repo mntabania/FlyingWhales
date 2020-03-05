@@ -57,7 +57,7 @@ public class SaveDataTrait {
             trait = TraitManager.Instance.allTraits[name];
         }
         trait.SetLevel(level);
-        trait.OverrideDuration(daysDuration);
+        //trait.OverrideDuration(daysDuration);
         //trait.SetTraitEffects(effects);
         trait.SetDateEstablished(new GameDate(month, day, year, tick));
         for (int i = 0; i < responsibleCharacterIDs.Count; i++) {
@@ -84,7 +84,7 @@ public class SaveDataTrait {
             trait = TraitManager.Instance.allTraits[name];
         }
         trait.SetLevel(level);
-        trait.OverrideDuration(daysDuration);
+        //trait.OverrideDuration(daysDuration);
         //trait.SetTraitEffects(effects);
         trait.SetDateEstablished(new GameDate(month, day, year, tick));
         for (int i = 0; i < responsibleCharacterIDs.Count; i++) {

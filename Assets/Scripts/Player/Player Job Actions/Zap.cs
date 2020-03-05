@@ -28,7 +28,7 @@ public class Zap : PlayerSpell {
                 Character currTarget = targets[i];
                 if (CanPerformActionTowards(currTarget)) {
                     Trait newTrait = new Zapped();
-                    newTrait.OverrideDuration(_zapDuration);
+                    //newTrait.OverrideDuration(_zapDuration);
                     currTarget.traitContainer.AddTrait(currTarget, newTrait);
                     if (UIManager.Instance.characterInfoUI.isShowing) {
                         UIManager.Instance.characterInfoUI.UpdateThoughtBubble();

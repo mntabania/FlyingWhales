@@ -4,22 +4,25 @@ using UnityEngine;
 
 namespace Traits {
     public abstract class TraitProcessor {
-        public abstract void OnTraitAdded(ITraitable traitable, Trait trait, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null);
+        public abstract void OnTraitAdded(ITraitable traitable, Trait trait, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration);
         public abstract void OnTraitRemoved(ITraitable traitable, Trait trait, Character removedBy = null);
-        public abstract void OnTraitStacked(ITraitable traitable, Trait trait, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null);
+        public abstract void OnTraitStacked(ITraitable traitable, Trait trait, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration);
         public abstract void OnTraitUnstack(ITraitable traitable, Trait trait, Character removedBy = null);
 
-        protected void DefaultProcessOnAddTrait(ITraitable traitable, Trait trait, Character characterResponsible, ActualGoapNode gainedFromDoing) {
+        protected void DefaultProcessOnAddTrait(ITraitable traitable, Trait trait, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration) {
             trait.SetGainedFromDoing(gainedFromDoing);
             //trait.SetOnRemoveAction(onRemoveAction);
             trait.AddCharacterResponsibleForTrait(characterResponsible);
             ApplyPOITraitInteractions(traitable, trait);
             traitable.traitContainer.SwitchOnTrait(trait.name);
             trait.OnAddTrait(traitable);
-            if (trait.ticksDuration > 0) {
+
+            int duration = overrideDuration;
+            if (duration == -1) { duration = trait.ticksDuration; }
+            if (duration > 0) {
                 //traitable.traitContainer.currentDurations.Add(trait, 0);
                 GameDate removeDate = GameManager.Instance.Today();
-                removeDate.AddTicks(trait.ticksDuration);
+                removeDate.AddTicks(duration);
                 string ticket = SchedulingManager.Instance.AddEntry(removeDate, () => traitable.traitContainer.RemoveTraitOnSchedule(traitable, trait), this);
                 traitable.traitContainer.AddScheduleTicket(trait.name, ticket);
                 //trait.SetExpiryTicket(traitable, ticket);
@@ -49,11 +52,13 @@ namespace Traits {
             }
             Messenger.Broadcast(Signals.TRAITABLE_LOST_TRAIT, traitable, trait, removedBy);
         }
-        protected bool DefaultProcessOnStackTrait(ITraitable traitable, Trait trait, Character characterResponsible, ActualGoapNode gainedFromDoing) {
-            if (trait.ticksDuration > 0) {
+        protected bool DefaultProcessOnStackTrait(ITraitable traitable, Trait trait, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration) {
+            int duration = overrideDuration;
+            if(duration == -1) { duration = trait.ticksDuration; }
+            if (duration > 0) {
                 //traitable.traitContainer.currentDurations[trait] = 0;
                 GameDate removeDate = GameManager.Instance.Today();
-                removeDate.AddTicks(trait.ticksDuration);
+                removeDate.AddTicks(duration);
                 string ticket = SchedulingManager.Instance.AddEntry(removeDate, () => traitable.traitContainer.RemoveTraitOnSchedule(traitable, trait), this);
                 traitable.traitContainer.AddScheduleTicket(trait.name, ticket);
                 //trait.SetExpiryTicket(traitable, ticket);

@@ -21,6 +21,8 @@ public interface IPointOfInterest : ITraitable, ISelectable {
     Vector3 worldPosition { get; }
     bool isDead { get; }
     Character isBeingCarriedBy { get; }
+    LogComponent logComponent { get; }
+
     void SetGridTileLocation(LocationGridTile tile);
     void AddJobTargetingThis(JobQueueItem job);
     bool RemoveJobTargetingThis(JobQueueItem job);

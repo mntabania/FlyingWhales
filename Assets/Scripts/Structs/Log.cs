@@ -121,9 +121,9 @@ public class Log {
             LogFiller currFiller = fillers[i];
             object obj = currFiller.obj;
             if (obj != null) {
-                if (obj is Character) {
-                    (obj as Character).logComponent.AddHistory(this);
-                } 
+                if (obj is IPointOfInterest) {
+                    (obj as IPointOfInterest).logComponent.AddHistory(this);
+                }
                 //else if (obj is Settlement) {
                 //    (obj as Settlement).AddHistory(this);
                 //} 
@@ -142,8 +142,8 @@ public class Log {
             LogFiller currFiller = fillers[i];
             object obj = currFiller.obj;
             if (obj != null && identifiers.Contains(currFiller.identifier)) {
-                if (obj is Character) {
-                    (obj as Character).logComponent.AddHistory(this);
+                if (obj is IPointOfInterest) {
+                    (obj as IPointOfInterest).logComponent.AddHistory(this);
                 } 
                 //else if (obj is Settlement) {
                 //    (obj as Settlement).AddHistory(this);
