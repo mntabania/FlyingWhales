@@ -804,7 +804,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         animator.speed = 1;
     }
     public void SetAnimationTrigger(string triggerName) {
-        if (triggerName == "Attack" && character.stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT) {
+        if (triggerName == "Attack" && (character.stateComponent.currentState is CombatState) == false) {
             return; //because sometime trigger is set even though character is no longer in combat state.
         }
         if (animator.runtimeAnimatorController != null) {

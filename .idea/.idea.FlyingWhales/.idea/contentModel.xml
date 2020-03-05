@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="C:\Users\12myk\.Rider2019.3\system\extResources" t="IncludeRecursive" />
-    <e p="C:\Users\12myk\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_FlyingWhales.-362142238.00" t="ExcludeRecursive" />
-    <e p="D:\Repositories\FlyingWhales" t="IncludeRecursive">
+    <e p="C:\Users\Mykel Abania\.Rider2019.3\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\Mykel Abania\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_FlyingWhales.1985073317.00" t="ExcludeRecursive" />
+    <e p="C:\Users\Mykel Abania\Repositories\FlyingWhales" t="IncludeRecursive">
       <e p="Assembly-CSharp-Editor.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp-firstpass.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
@@ -1030,11 +1030,13 @@
               <e p="DefaultOtherStructure.cs" t="Include" />
               <e p="DefaultOutside.cs" t="Include" />
               <e p="DesiresIsolationBehaviour.cs" t="Include" />
+              <e p="EntBehaviour.cs" t="Include" />
               <e p="FactionLeaderBahaviour.cs" t="Include" />
               <e p="GluttonBehaviour.cs" t="Include" />
               <e p="HarassBehaviour.cs" t="Include" />
               <e p="InvadeBehaviour.cs" t="Include" />
               <e p="MinionBehaviour.cs" t="Include" />
+              <e p="MovementProcessing.cs" t="Include" />
               <e p="RaidBehaviour.cs" t="Include" />
               <e p="SerialKillerBehaviour.cs" t="Include" />
               <e p="SettlementRulerBehaviour.cs" t="Include" />
@@ -1294,6 +1296,7 @@
               <e p="SlayCharacter.cs" t="Include" />
               <e p="SleepOutside.cs" t="Include" />
               <e p="Stand.cs" t="Include" />
+              <e p="StandStill.cs" t="Include" />
               <e p="Steal.cs" t="Include" />
               <e p="StealthTransform.cs" t="Include" />
               <e p="Strangle.cs" t="Include" />
@@ -1613,6 +1616,7 @@
                 <e p="HallowedGroundFeature.cs" t="Include" />
                 <e p="InhabitedFeature.cs" t="Include" />
                 <e p="MetalSourceFeature.cs" t="Include" />
+                <e p="RainFeature.cs" t="Include" />
                 <e p="StoneSourceFeature.cs" t="Include" />
                 <e p="SummonsFeature.cs" t="Include" />
                 <e p="TileFeature.cs" t="Include" />
@@ -1692,7 +1696,9 @@
             <e p="LightningParticleEffect.cs" t="Include" />
             <e p="MeteorParticleEffect.cs" t="Include" />
             <e p="ObjectPoolParticle.cs" t="Include" />
+            <e p="ParticleCallback.cs" t="Include" />
             <e p="ParticleEffectCallback.cs" t="Include" />
+            <e p="RainParticleEffect.cs" t="Include" />
           </e>
           <e p="Party" t="Include">
             <e p="Party.cs" t="Include" />
@@ -1762,6 +1768,7 @@
               <e p="PoisonCloud.cs" t="Include" />
               <e p="Provoke.cs" t="Include" />
               <e p="Psychopathy.cs" t="Include" />
+              <e p="RainData.cs" t="Include" />
               <e p="RaiseDead.cs" t="Include" />
               <e p="RavenousSpiritData.cs" t="Include" />
               <e p="Release.cs" t="Include" />
@@ -1782,6 +1789,7 @@
             <e p="PlayerJobData.cs" t="Include" />
             <e p="SeizeComponent.cs" t="Include" />
             <e p="Summons" t="Include">
+              <e p="Ent.cs" t="Include" />
               <e p="FireElemental.cs" t="Include" />
               <e p="GiantSpider.cs" t="Include" />
               <e p="Golem.cs" t="Include" />
@@ -1790,6 +1798,7 @@
               <e p="Mimic.cs" t="Include" />
               <e p="SeducerSummon.cs" t="Include" />
               <e p="Skeleton.cs" t="Include" />
+              <e p="SmallSpider.cs" t="Include" />
               <e p="Succubus.cs" t="Include" />
               <e p="Summon.cs" t="Include" />
               <e p="ThiefSummon.cs" t="Include" />
@@ -1863,6 +1872,9 @@
             <e p="PortraitAssetCollection.cs" t="Include" />
             <e p="RaceMarkerAssets.cs" t="Include" />
             <e p="RacePortraitAssets.cs" t="Include" />
+          </e>
+          <e p="Testing Scripts" t="Include">
+            <e p="ProjectileTester.cs" t="Include" />
           </e>
           <e p="Threads" t="Include">
             <e p="GoapThread.cs" t="Include" />
@@ -1983,7 +1995,6 @@
             <e p="TraitProcessor" t="Include">
               <e p="CharacterTraitProcessor.cs" t="Include" />
               <e p="DefaultTraitProcessor.cs" t="Include" />
-              <e p="SpecialTokenTraitProcessor.cs" t="Include" />
               <e p="TileObjectTraitProcessor.cs" t="Include" />
               <e p="TraitProcessor.cs" t="Include" />
             </e>
@@ -2058,6 +2069,7 @@
               <e p="FactionInfoUI.cs" t="Include" />
               <e p="HextileInfoUI.cs" t="Include" />
               <e p="InfoUIBase.cs" t="Include" />
+              <e p="MinionInfoUI.cs" t="Include" />
               <e p="PartyInfoInfoUi.cs" t="Include" />
               <e p="QuestInfoUI.cs" t="Include" />
               <e p="RegionInfoUI.cs" t="Include" />

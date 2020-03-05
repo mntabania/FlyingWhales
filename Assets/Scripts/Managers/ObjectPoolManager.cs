@@ -38,7 +38,7 @@ public class ObjectPoolManager : MonoBehaviour {
         ConstructOpinionDataPool();
     }
 
-    public GameObject InstantiateObjectFromPool(string poolName, Vector3 position, Quaternion rotation, Transform parent = null) {
+    public GameObject InstantiateObjectFromPool(string poolName, Vector3 position, Quaternion rotation, Transform parent = null, bool isWorldPosition = false) {
         poolName = poolName.ToUpper();
         if (!allObjectPools.ContainsKey(poolName)) {
             throw new Exception($"Object Pool does not have key {poolName}");
@@ -53,7 +53,12 @@ public class ObjectPoolManager : MonoBehaviour {
                 if(ReferenceEquals(parent, null) == false) {
                     instantiatedObj.transform.SetParent(parent, false);
                 }
-                instantiatedObj.transform.localPosition = position;
+                if (isWorldPosition) {
+                    instantiatedObj.transform.position = position;
+                } else {
+                    instantiatedObj.transform.localPosition = position;    
+                }
+                
             }
         }
         instantiatedObj.SetActive(true);
