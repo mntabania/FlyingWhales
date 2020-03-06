@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="C:\Users\Mykel Abania\.Rider2019.3\system\extResources" t="IncludeRecursive" />
-    <e p="C:\Users\Mykel Abania\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_FlyingWhales.1985073317.00" t="ExcludeRecursive" />
-    <e p="C:\Users\Mykel Abania\Repositories\FlyingWhales" t="IncludeRecursive">
+    <e p="C:\Users\12myk\.Rider2019.3\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\12myk\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_FlyingWhales.-362142238.00" t="ExcludeRecursive" />
+    <e p="D:\Repositories\FlyingWhales" t="IncludeRecursive">
       <e p="Assembly-CSharp-Editor.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp-firstpass.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
@@ -1737,28 +1737,20 @@
               <e p="Taunt.cs" t="Include" />
             </e>
             <e p="Player Job Actions" t="Include">
-              <e p="Abduct.cs" t="Include" />
-              <e p="AccessMemories.cs" t="Include" />
               <e p="Agoraphobia.cs" t="Include" />
               <e p="Alcoholic.cs" t="Include" />
               <e p="Blizzard.cs" t="Include" />
               <e p="BrimstonesData.cs" t="Include" />
               <e p="Cannibalism.cs" t="Include" />
-              <e p="CloakOfInvisibility.cs" t="Include" />
               <e p="CursedObject.cs" t="Include" />
               <e p="Destroy.cs" t="Include" />
-              <e p="Disable.cs" t="Include" />
               <e p="EarthquakeData.cs" t="Include" />
-              <e p="Enrage.cs" t="Include" />
               <e p="FeebleSpiritData.cs" t="Include" />
               <e p="ForlornSpiritData.cs" t="Include" />
               <e p="Ignite.cs" t="Include" />
-              <e p="Jolt.cs" t="Include" />
               <e p="Kleptomania.cs" t="Include" />
               <e p="LightningData.cs" t="Include" />
               <e p="LocustSwarm.cs" t="Include" />
-              <e p="Lullaby.cs" t="Include" />
-              <e p="Lure.cs" t="Include" />
               <e p="Lycanthropy.cs" t="Include" />
               <e p="ManifestFoodData.cs" t="Include" />
               <e p="Meteor.cs" t="Include" />
@@ -1766,17 +1758,13 @@
               <e p="Pestilence.cs" t="Include" />
               <e p="PlayerSpell.cs" t="Include" />
               <e p="PoisonCloud.cs" t="Include" />
-              <e p="Provoke.cs" t="Include" />
               <e p="Psychopathy.cs" t="Include" />
               <e p="RainData.cs" t="Include" />
               <e p="RaiseDead.cs" t="Include" />
               <e p="RavenousSpiritData.cs" t="Include" />
-              <e p="Release.cs" t="Include" />
-              <e p="ShareIntel.cs" t="Include" />
               <e p="SpawnBoulder.cs" t="Include" />
               <e p="SplashPoison.cs" t="Include" />
               <e p="Spoil.cs" t="Include" />
-              <e p="Spook.cs" t="Include" />
               <e p="Tornado.cs" t="Include" />
               <e p="Unfaithfulness.cs" t="Include" />
               <e p="Vampirism.cs" t="Include" />
@@ -1888,21 +1876,10 @@
             <e p="StructureFloorTile.cs" t="Include" />
           </e>
           <e p="Traits" t="Include">
-            <e p="CrimeTraits" t="Include">
-              <e p="Aberration.cs" t="Include" />
-              <e p="Assaulter.cs" t="Include" />
-              <e p="AttemptedMurderer.cs" t="Include" />
-              <e p="Criminal.cs" t="Include" />
-              <e p="Heretic.cs" t="Include" />
-              <e p="Murderer.cs" t="Include" />
-              <e p="Thief.cs" t="Include" />
-            </e>
             <e p="Normal Traits" t="Include">
-              <e p="Abducted.cs" t="Include" />
               <e p="AccidentProne.cs" t="Include" />
               <e p="Agoraphobic.cs" t="Include" />
               <e p="Angry.cs" t="Include" />
-              <e p="BerserkBuff.cs" t="Include" />
               <e p="Berserked.cs" t="Include" />
               <e p="Bored.cs" t="Include" />
               <e p="Burning.cs" t="Include" />
@@ -1910,18 +1887,15 @@
               <e p="Cannibal.cs" t="Include" />
               <e p="Catatonic.cs" t="Include" />
               <e p="CharacterTrait.cs" t="Include" />
-              <e p="Charmed.cs" t="Include" />
               <e p="Chaste.cs" t="Include" />
               <e p="Consumable.cs" t="Include" />
               <e p="Coward.cs" t="Include" />
+              <e p="Criminal.cs" t="Include" />
               <e p="Cultist.cs" t="Include" />
-              <e p="Curious.cs" t="Include" />
               <e p="Cursed.cs" t="Include" />
               <e p="Dazed.cs" t="Include" />
               <e p="Dead.cs" t="Include" />
               <e p="Diplomatic.cs" t="Include" />
-              <e p="Disabled.cs" t="Include" />
-              <e p="Disillusioned.cs" t="Include" />
               <e p="Disoriented.cs" t="Include" />
               <e p="Drunk.cs" t="Include" />
               <e p="Drunkard.cs" t="Include" />
@@ -1933,7 +1907,6 @@
               <e p="Frozen.cs" t="Include" />
               <e p="Glutton.cs" t="Include" />
               <e p="Griefstricken.cs" t="Include" />
-              <e p="Grudge.cs" t="Include" />
               <e p="Hardworking.cs" t="Include" />
               <e p="Heartbroken.cs" t="Include" />
               <e p="Herbalist.cs" t="Include" />
@@ -1942,43 +1915,31 @@
               <e p="Infected.cs" t="Include" />
               <e p="Injured.cs" t="Include" />
               <e p="Inspiring.cs" t="Include" />
-              <e p="Invisible.cs" t="Include" />
-              <e p="Jolted.cs" t="Include" />
               <e p="Kleptomaniac.cs" t="Include" />
               <e p="Lazy.cs" t="Include" />
               <e p="Lethargic.cs" t="Include" />
-              <e p="Lover.cs" t="Include" />
               <e p="Lustful.cs" t="Include" />
               <e p="Lycanthrope.cs" t="Include" />
               <e p="Malnourished.cs" t="Include" />
-              <e p="Master.cs" t="Include" />
               <e p="MusicHater.cs" t="Include" />
               <e p="MusicLover.cs" t="Include" />
               <e p="Narcoleptic.cs" t="Include" />
               <e p="Nocturnal.cs" t="Include" />
               <e p="Overheating.cs" t="Include" />
               <e p="Paralyzed.cs" t="Include" />
-              <e p="Paramour.cs" t="Include" />
-              <e p="PatrollingCharacter.cs" t="Include" />
               <e p="Pessimist.cs" t="Include" />
               <e p="Plagued.cs" t="Include" />
               <e p="Poisoned.cs" t="Include" />
               <e p="Pyrophobic.cs" t="Include" />
               <e p="Ravenous.cs" t="Include" />
               <e p="Reanimated.cs" t="Include" />
-              <e p="RelationshipTrait.cs" t="Include" />
-              <e p="Relative.cs" t="Include" />
               <e p="Resting.cs" t="Include" />
               <e p="Restrained.cs" t="Include" />
-              <e p="Saver.cs" t="Include" />
-              <e p="SaveTarget.cs" t="Include" />
               <e p="SerialKiller.cs" t="Include" />
-              <e p="Servant.cs" t="Include" />
               <e p="Sick.cs" t="Include" />
               <e p="Spooked.cs" t="Include" />
               <e p="Suicidal.cs" t="Include" />
               <e p="Suspicious.cs" t="Include" />
-              <e p="Taunted.cs" t="Include" />
               <e p="Trait.cs" t="Include" />
               <e p="Unconscious.cs" t="Include" />
               <e p="Unfaithful.cs" t="Include" />

@@ -548,6 +548,19 @@ namespace Inner_Maps {
             }
             return false;
         }
+        public bool HasDifferentStructureNeighbour(bool useFourNeighbours = false) {
+            Dictionary<GridNeighbourDirection, LocationGridTile> n = neighbours;
+            if (useFourNeighbours) {
+                n = FourNeighboursDictionary();
+            }
+            for (int i = 0; i < n.Values.Count; i++) {
+                LocationGridTile tile = n.Values.ElementAt(i);
+                if (tile.structure != structure) {
+                    return true;
+                }
+            }
+            return false;
+        }
         public bool IsNeighbour(LocationGridTile tile) {
             foreach (KeyValuePair<GridNeighbourDirection, LocationGridTile> keyValuePair in neighbours) {
                 if (keyValuePair.Value == tile) {
