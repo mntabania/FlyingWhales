@@ -19,12 +19,12 @@ public class StructureWallObject : MapObject<StructureWallObject>, ITraitable {
     public BaseMapObjectVisual mapObjectVisual => mapVisual;
     private readonly WallVisual _visual;
 
-    public StructureWallObject(LocationStructure structure, WallVisual visual) {
+    public StructureWallObject(LocationStructure structure, WallVisual visual, RESOURCE madeOf) {
         name = $"Wall of {structure}";
         _visual = visual;
         maxHP = 500;
         currentHP = maxHP;
-        madeOf = RESOURCE.WOOD;
+        this.madeOf = madeOf;
         CreateTraitContainer();
         traitContainer.AddTrait(this, "Flammable");
         visual.Initialize(this);

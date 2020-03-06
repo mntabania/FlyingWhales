@@ -2,13 +2,23 @@
 using System.Collections.Generic;
 using Inner_Maps;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public class WallVisual : MapObjectVisual<StructureWallObject> {
 
-    private SpriteRenderer[] spriteRenderers;
+    private SpriteRenderer[] _spriteRenderers;
 
-    void Awake() {
-        spriteRenderers = this.transform.GetComponentsInChildren<SpriteRenderer>();
+    public SpriteRenderer[] spriteRenderers {
+        get {
+            if (_spriteRenderers == null) {
+                _spriteRenderers = transform.GetComponentsInChildren<SpriteRenderer>(); 
+            }
+            return _spriteRenderers;
+        }
+    }
+    
+    private void Awake() {
+        _spriteRenderers = transform.GetComponentsInChildren<SpriteRenderer>();
         collisionTrigger = transform.GetComponentInChildren<WallObjectCollisionTrigger>();
         collisionTrigger.gameObject.SetActive(false);
     }
@@ -18,10 +28,16 @@ public class WallVisual : MapObjectVisual<StructureWallObject> {
         collisionTrigger.gameObject.SetActive(true);
         UpdateWallAssets(obj);
     }
+    /// <summary>
+    /// Update wall assets based on the structure wall object.
+    /// This considers the objects resource as well as if it is damaged or not.
+    /// </summary>
+    /// <param name="structureWallObject">The structure wall object.</param>
     public void UpdateWallAssets(StructureWallObject structureWallObject) {
         for (int i = 0; i < spriteRenderers.Length; i++) {
             SpriteRenderer spriteRenderer = spriteRenderers[i];
             //update the sprite given the wall objects material, and if it is damaged or not.
+            Assert.IsFalse(structureWallObject.madeOf == RESOURCE.FOOD, $"{structureWallObject.name} has food as it's wall!");
             WallAsset wallAsset = InnerMapManager.Instance.GetWallAsset(structureWallObject.madeOf, spriteRenderer.sprite.name);
             if (structureWallObject.currentHP == structureWallObject.maxHP) {
                 spriteRenderer.sprite = wallAsset.undamaged;
@@ -29,6 +45,17 @@ public class WallVisual : MapObjectVisual<StructureWallObject> {
                 spriteRenderer.sprite = wallAsset.damaged;
             }
             
+        }
+    }
+    /// <summary>
+    /// Update wall asset based only on the resource that the wall is made of.
+    /// </summary>
+    /// <param name="madeOf">The resource this wall is made of</param>
+    public void UpdateWallAssets(RESOURCE madeOf) {
+        for (int i = 0; i < spriteRenderers.Length; i++) {
+            SpriteRenderer spriteRenderer = spriteRenderers[i];
+            WallAsset wallAsset = InnerMapManager.Instance.GetWallAsset(madeOf, spriteRenderer.sprite.name);
+            spriteRenderer.sprite = wallAsset.undamaged;
         }
     }
     public void UpdateSortingOrders(int sortingOrder) {

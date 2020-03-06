@@ -445,6 +445,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212053905385112828}
   hoverObject: {fileID: 0}
+  statusIconsParent: {fileID: 0}
 --- !u!1 &1138836054366994
 GameObject:
   m_ObjectHideFlags: 0
@@ -1274,6 +1275,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212646825334552496}
   hoverObject: {fileID: 0}
+  statusIconsParent: {fileID: 0}
 --- !u!1 &1358688952754448
 GameObject:
   m_ObjectHideFlags: 0
@@ -1322,6 +1324,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212033998978110574}
   hoverObject: {fileID: 0}
+  statusIconsParent: {fileID: 0}
 --- !u!1 &1377025570620946
 GameObject:
   m_ObjectHideFlags: 0
@@ -2000,6 +2003,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212052050988344116}
   hoverObject: {fileID: 0}
+  statusIconsParent: {fileID: 0}
 --- !u!1 &1473379448106874
 GameObject:
   m_ObjectHideFlags: 0
@@ -2048,6 +2052,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212653764219182822}
   hoverObject: {fileID: 0}
+  statusIconsParent: {fileID: 0}
 --- !u!1 &1491285267417422
 GameObject:
   m_ObjectHideFlags: 0
@@ -2142,6 +2147,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212223645914052582}
   hoverObject: {fileID: 0}
+  statusIconsParent: {fileID: 0}
 --- !u!1 &1515741410553338
 GameObject:
   m_ObjectHideFlags: 0
@@ -2416,6 +2422,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212808208553911788}
   hoverObject: {fileID: 0}
+  statusIconsParent: {fileID: 0}
 --- !u!1 &1595504873714110
 GameObject:
   m_ObjectHideFlags: 0
@@ -3538,10 +3545,13 @@ MonoBehaviour:
   _detailTileMap: {fileID: 8195094279792387054}
   _groundTileMapRenderer: {fileID: 3664157345540741650}
   _detailTileMapRenderer: {fileID: 3664157343626766894}
+  _blockWallsTilemap: {fileID: 0}
   _size: {x: 5, y: 5}
   _center: {x: 2, y: 2, z: 0}
-  _objectsParent: {fileID: 4983723039646042}
+  objectsParent: {fileID: 4983723039646042}
   _furnitureSpotsParent: {fileID: 0}
+  _wallType: 0
+  _wallResource: 1
   predeterminedOccupiedCoordinates: []
   wallTileMap: {fileID: 8195094282840132256}
   leftWall: {fileID: 1585498277213060, guid: 2e2e9509b5333aa4bbbeeabbd9cbec70, type: 3}

@@ -299,8 +299,13 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 
 	#region Haul
 	private void TryCreateHaulJob(ResourcePile target) {
-		if ((target.gridTileLocation.IsPartOfSettlement(_owner) == false || target.gridTileLocation.structure != _owner.mainStorage) 
-		    && _owner.HasJob(JOB_TYPE.HAUL, target) == false && target.gridTileLocation.parentMap.location == _owner.region) {
+		//if target is in this settlement and is not in the main storage, then create a haul job.
+		//if target is not in this settlement, check if it is in the wilderness, if it is, then create haul job
+		bool isInValidLocation = (target.gridTileLocation.IsPartOfSettlement(_owner) &&
+		                          target.gridTileLocation.structure != _owner.mainStorage)
+		                         || (target.gridTileLocation.IsPartOfSettlement(_owner) == false &&
+		                             target.gridTileLocation.structure.isInterior == false);
+		if (isInValidLocation && _owner.HasJob(JOB_TYPE.HAUL, target) == false && target.gridTileLocation.parentMap.location == _owner.region) {
 			ResourcePile chosenPileToBeDeposited = _owner.mainStorage.GetResourcePileObjectWithLowestCount(target.tileObjectType);
 			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAUL, 
 				new GoapEffect(GOAP_EFFECT_CONDITION.DEPOSIT_RESOURCE, string.Empty, 

@@ -212,12 +212,12 @@ public enum LANDMARK_TYPE {
     NONE = 0,
     THE_PORTAL = 1,
     WORKSHOP = 4,
-    ABANDONED_MINE = 8,
+    MINE = 8,
     FARM = 17,
     VILLAGE = 20,
     BANDIT_CAMP = 24,
     MAGE_TOWER = 25,
-    TEMPLE = 30,
+    ANCIENT_RUIN = 30,
     CAVE = 31,
     BARRACKS = 34,
     MONSTER_LAIR = 42,
@@ -1138,8 +1138,8 @@ public enum STRUCTURE_TYPE {
     MAGE_QUARTERS = 20,
     NONE = 21,
     MONSTER_LAIR = 22,
-    ABANDONED_MINE = 23,
-    TEMPLE = 24,
+    MINE = 23,
+    ANCIENT_RUIN = 24,
     MAGE_TOWER = 25,
     THE_PORTAL = 26,
     CAVE = 27,
@@ -1261,7 +1261,9 @@ public enum TILE_OBJECT_TYPE {
     FORLORN_SPIRIT,
     POISON_CLOUD,
     LOCUST_SWARM,
-    MIMIC_TILE_OBJECT
+    MIMIC_TILE_OBJECT,
+    SAWHORSE,
+    OBELISK
 }
 public enum POI_STATE {
     ACTIVE,
@@ -1583,6 +1585,8 @@ public static class Extensions {
             case STRUCTURE_TYPE.ASSASSIN_GUILD:
             case STRUCTURE_TYPE.DEMONIC_PRISON:
             case STRUCTURE_TYPE.TORTURE_CHAMBER:
+            case STRUCTURE_TYPE.MAGE_TOWER:
+            case STRUCTURE_TYPE.MINE:
                 return true;
             default:
                 return false;

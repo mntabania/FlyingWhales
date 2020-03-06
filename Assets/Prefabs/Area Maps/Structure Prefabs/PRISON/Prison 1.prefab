@@ -191,6 +191,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212184965731649504}
   hoverObject: {fileID: 0}
+  statusIconsParent: {fileID: 0}
 --- !u!1 &1005068031102726
 GameObject:
   m_ObjectHideFlags: 0
@@ -641,6 +642,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212317830765086968}
   hoverObject: {fileID: 0}
+  statusIconsParent: {fileID: 0}
 --- !u!1 &1034313593635314
 GameObject:
   m_ObjectHideFlags: 0
@@ -1505,6 +1507,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212070100366236272}
   hoverObject: {fileID: 0}
+  statusIconsParent: {fileID: 0}
 --- !u!1 &1082354476453056
 GameObject:
   m_ObjectHideFlags: 0
@@ -2461,6 +2464,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212435871776054204}
   hoverObject: {fileID: 0}
+  statusIconsParent: {fileID: 0}
 --- !u!1 &1129753194197318
 GameObject:
   m_ObjectHideFlags: 0
@@ -2556,6 +2560,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212824062096167296}
   hoverObject: {fileID: 0}
+  statusIconsParent: {fileID: 0}
 --- !u!1 &1141731401406568
 GameObject:
   m_ObjectHideFlags: 0
@@ -2838,6 +2843,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212052779812611054}
   hoverObject: {fileID: 0}
+  statusIconsParent: {fileID: 0}
 --- !u!1 &1157125297421954
 GameObject:
   m_ObjectHideFlags: 0
@@ -2886,6 +2892,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212091368500897518}
   hoverObject: {fileID: 0}
+  statusIconsParent: {fileID: 0}
 --- !u!1 &1163693741168174
 GameObject:
   m_ObjectHideFlags: 0
@@ -3153,6 +3160,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212657767243211838}
   hoverObject: {fileID: 0}
+  statusIconsParent: {fileID: 0}
 --- !u!1 &1192696812892734
 GameObject:
   m_ObjectHideFlags: 0
@@ -3589,6 +3597,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212936632825631414}
   hoverObject: {fileID: 0}
+  statusIconsParent: {fileID: 0}
 --- !u!1 &1208655282562986
 GameObject:
   m_ObjectHideFlags: 0
@@ -4087,6 +4096,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212536029003042294}
   hoverObject: {fileID: 0}
+  statusIconsParent: {fileID: 0}
 --- !u!1 &1231763469952694
 GameObject:
   m_ObjectHideFlags: 0
@@ -4136,6 +4146,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212163534607661174}
   hoverObject: {fileID: 0}
+  statusIconsParent: {fileID: 0}
 --- !u!1 &1236494276830142
 GameObject:
   m_ObjectHideFlags: 0
@@ -4509,6 +4520,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212360124915728870}
   hoverObject: {fileID: 0}
+  statusIconsParent: {fileID: 0}
 --- !u!1 &1250477186665904
 GameObject:
   m_ObjectHideFlags: 0
@@ -4796,6 +4808,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212275812328642568}
   hoverObject: {fileID: 0}
+  statusIconsParent: {fileID: 0}
 --- !u!1 &1280513638282908
 GameObject:
   m_ObjectHideFlags: 0
@@ -5435,6 +5448,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212589035885053598}
   hoverObject: {fileID: 0}
+  statusIconsParent: {fileID: 0}
 --- !u!1 &1330974405805330
 GameObject:
   m_ObjectHideFlags: 0
@@ -5795,7 +5809,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 34f9b3db99247e14c82054ed5b39c5a8, type: 2}
   - {fileID: 11400000, guid: 6b086f52f77704c46a54b33f4dffaedd, type: 2}
   - {fileID: 11400000, guid: 4c0a1b3069ff1ab4eba18e4b8362b997, type: 2}
-  - {fileID: 11400000, guid: a98c76a6fefd17e45ac02993d53ec714, type: 2}
+  - {fileID: 0}
   - {fileID: 11400000, guid: 5ced3c3493bf7c242ab908010caa8f14, type: 2}
   - {fileID: 11400000, guid: eb3f0a06db068d04f86d266316b14e08, type: 2}
   - {fileID: 11400000, guid: 9a1c438dfdf8358469ee6162915febde, type: 2}
@@ -5807,9 +5821,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 9730174dcd21daf4f9643570dea4e144, type: 2}
   - {fileID: 11400000, guid: 1eadf98aa5a55484f8390f237ea1f0f4, type: 2}
   - {fileID: 11400000, guid: 2e58fd5b2fae6c04d9113fc8182a44ae, type: 2}
-  - {fileID: 11400000, guid: e032f61ee534a5840adefbac37ee9379, type: 2}
+  - {fileID: 0}
   - {fileID: 11400000, guid: b980e9be30d67fc4b9a27e8f82835d35, type: 2}
-  - {fileID: 11400000, guid: 04286a618bd418a4383f64faeb657fea, type: 2}
+  - {fileID: 0}
   - {fileID: 11400000, guid: a355a998929a7e44a92743b605e77f54, type: 2}
   - {fileID: 11400000, guid: 5409e79fb4b2c7444aee567133a3dda2, type: 2}
   - {fileID: 11400000, guid: 5feee36b7595b4b43b002f0537da2a11, type: 2}
@@ -5944,6 +5958,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212618485319052524}
   hoverObject: {fileID: 0}
+  statusIconsParent: {fileID: 0}
 --- !u!1 &1354682917309036
 GameObject:
   m_ObjectHideFlags: 0
@@ -6088,6 +6103,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212892315427000174}
   hoverObject: {fileID: 0}
+  statusIconsParent: {fileID: 0}
 --- !u!1 &1366348993535722
 GameObject:
   m_ObjectHideFlags: 0
@@ -6137,6 +6153,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212204305559541604}
   hoverObject: {fileID: 0}
+  statusIconsParent: {fileID: 0}
 --- !u!1 &1368445949309848
 GameObject:
   m_ObjectHideFlags: 0
@@ -6295,6 +6312,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212599729604393174}
   hoverObject: {fileID: 0}
+  statusIconsParent: {fileID: 0}
 --- !u!1 &1376633579125386
 GameObject:
   m_ObjectHideFlags: 0
@@ -6888,6 +6906,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212598391740785188}
   hoverObject: {fileID: 0}
+  statusIconsParent: {fileID: 0}
 --- !u!1 &1394716214983334
 GameObject:
   m_ObjectHideFlags: 0
@@ -7428,6 +7447,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212823370301815280}
   hoverObject: {fileID: 0}
+  statusIconsParent: {fileID: 0}
 --- !u!1 &1439213001720062
 GameObject:
   m_ObjectHideFlags: 0
@@ -9214,6 +9234,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212636151748703342}
   hoverObject: {fileID: 0}
+  statusIconsParent: {fileID: 0}
 --- !u!1 &1481753517898022
 GameObject:
   m_ObjectHideFlags: 0
@@ -9441,6 +9462,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212885136623263612}
   hoverObject: {fileID: 0}
+  statusIconsParent: {fileID: 0}
 --- !u!1 &1495401291008042
 GameObject:
   m_ObjectHideFlags: 0
@@ -10019,6 +10041,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212003026275297304}
   hoverObject: {fileID: 0}
+  statusIconsParent: {fileID: 0}
 --- !u!1 &1531042243686242
 GameObject:
   m_ObjectHideFlags: 0
@@ -10067,6 +10090,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212659244291460684}
   hoverObject: {fileID: 0}
+  statusIconsParent: {fileID: 0}
 --- !u!1 &1537649319961046
 GameObject:
   m_ObjectHideFlags: 0
@@ -10232,6 +10256,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212886045142667352}
   hoverObject: {fileID: 0}
+  statusIconsParent: {fileID: 0}
 --- !u!1 &1568502771850436
 GameObject:
   m_ObjectHideFlags: 0
@@ -11212,6 +11237,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212917254938257434}
   hoverObject: {fileID: 0}
+  statusIconsParent: {fileID: 0}
 --- !u!1 &1697137195186238
 GameObject:
   m_ObjectHideFlags: 0
@@ -11982,6 +12008,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212347865200796374}
   hoverObject: {fileID: 0}
+  statusIconsParent: {fileID: 0}
 --- !u!1 &1746419433405842
 GameObject:
   m_ObjectHideFlags: 0
@@ -12185,6 +12212,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212710810700271858}
   hoverObject: {fileID: 0}
+  statusIconsParent: {fileID: 0}
 --- !u!1 &1760396565512090
 GameObject:
   m_ObjectHideFlags: 0
@@ -12557,6 +12585,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212602303125593520}
   hoverObject: {fileID: 0}
+  statusIconsParent: {fileID: 0}
 --- !u!1 &1777469687251174
 GameObject:
   m_ObjectHideFlags: 0
@@ -12758,10 +12787,13 @@ MonoBehaviour:
   _detailTileMap: {fileID: 8195094280333546976}
   _groundTileMapRenderer: {fileID: 3664157345951207862}
   _detailTileMapRenderer: {fileID: 3664157346289748506}
+  _blockWallsTilemap: {fileID: 0}
   _size: {x: 5, y: 6}
   _center: {x: 2, y: 3, z: 0}
-  _objectsParent: {fileID: 4790574438238760}
+  objectsParent: {fileID: 4790574438238760}
   _furnitureSpotsParent: {fileID: 0}
+  _wallType: 0
+  _wallResource: 1
   predeterminedOccupiedCoordinates: []
   wallTileMap: {fileID: 8195094280963221432}
   leftWall: {fileID: 1585498277213060, guid: 2e2e9509b5333aa4bbbeeabbd9cbec70, type: 3}
@@ -12820,6 +12852,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212311377290524722}
   hoverObject: {fileID: 0}
+  statusIconsParent: {fileID: 0}
 --- !u!1 &1801935771258468
 GameObject:
   m_ObjectHideFlags: 0
@@ -12940,6 +12973,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212758671367709978}
   hoverObject: {fileID: 0}
+  statusIconsParent: {fileID: 0}
 --- !u!1 &1821076576836858
 GameObject:
   m_ObjectHideFlags: 0
@@ -13426,6 +13460,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212413318592239106}
   hoverObject: {fileID: 0}
+  statusIconsParent: {fileID: 0}
 --- !u!1 &1861432184908554
 GameObject:
   m_ObjectHideFlags: 0
@@ -13617,6 +13652,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212470190172431378}
   hoverObject: {fileID: 0}
+  statusIconsParent: {fileID: 0}
 --- !u!1 &1880641853155338
 GameObject:
   m_ObjectHideFlags: 0
@@ -13711,6 +13747,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212752930082969720}
   hoverObject: {fileID: 0}
+  statusIconsParent: {fileID: 0}
 --- !u!1 &1892045576504018
 GameObject:
   m_ObjectHideFlags: 0
@@ -14128,6 +14165,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212692577295211352}
   hoverObject: {fileID: 0}
+  statusIconsParent: {fileID: 0}
 --- !u!1 &1904893097835124
 GameObject:
   m_ObjectHideFlags: 0
@@ -14394,6 +14432,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212938028456672050}
   hoverObject: {fileID: 0}
+  statusIconsParent: {fileID: 0}
 --- !u!1 &1915150230729562
 GameObject:
   m_ObjectHideFlags: 0
@@ -14610,6 +14649,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212925972697013902}
   hoverObject: {fileID: 0}
+  statusIconsParent: {fileID: 0}
 --- !u!1 &1942296757948158
 GameObject:
   m_ObjectHideFlags: 0
