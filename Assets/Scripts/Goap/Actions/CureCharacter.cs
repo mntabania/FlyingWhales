@@ -81,9 +81,9 @@ public class CureCharacter : GoapAction {
     public void AfterCureSuccess(ActualGoapNode goapNode) {
         Character targetCharacter = goapNode.poiTarget as Character;
         targetCharacter.relationshipContainer.AdjustOpinion(targetCharacter, goapNode.actor, "Base", 3);
-        goapNode.poiTarget.traitContainer.RemoveTraitAndStacks(goapNode.poiTarget, "Poisoned", goapNode.actor);
-        goapNode.poiTarget.traitContainer.RemoveTraitAndStacks(goapNode.poiTarget, "Plagued", goapNode.actor);
-        goapNode.poiTarget.traitContainer.RemoveTraitAndStacks(goapNode.poiTarget, "Infected", goapNode.actor);
+        goapNode.poiTarget.traitContainer.RemoveStatusAndStacks(goapNode.poiTarget, "Poisoned", goapNode.actor);
+        goapNode.poiTarget.traitContainer.RemoveStatusAndStacks(goapNode.poiTarget, "Plagued", goapNode.actor);
+        goapNode.poiTarget.traitContainer.RemoveStatusAndStacks(goapNode.poiTarget, "Infected", goapNode.actor);
         //**After Effect 2**: Remove Healing Potion from Actor's Inventory
         goapNode.actor.UnobtainItem(TILE_OBJECT_TYPE.HEALING_POTION);
         //**After Effect 3**: Allow movement of Target

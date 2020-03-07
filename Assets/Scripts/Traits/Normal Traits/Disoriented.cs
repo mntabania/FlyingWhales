@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Traits {
-    public class Disoriented : Trait {
+    public class Disoriented : Status {
 
         public Disoriented() {
             name = "Disoriented";

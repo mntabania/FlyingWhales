@@ -165,8 +165,8 @@ public class SaveDataCharacter {
         isStoppedByOtherCharacter = character.isStoppedByOtherCharacter;
 
         normalTraits = new List<SaveDataTrait>();
-        for (int i = 0; i < character.traitContainer.allTraits.Count; i++) {
-            Trait trait = character.traitContainer.allTraits[i];
+        for (int i = 0; i < character.traitContainer.allTraitsAndStatuses.Count; i++) {
+            Trait trait = character.traitContainer.allTraitsAndStatuses[i];
 
             SaveDataTrait saveDataTrait = SaveManager.ConvertTraitToSaveDataTrait(trait);
             if (saveDataTrait != null) {

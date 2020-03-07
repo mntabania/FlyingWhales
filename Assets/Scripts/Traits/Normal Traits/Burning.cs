@@ -5,7 +5,7 @@ using Inner_Maps;
 using UnityEngine;
 
 namespace Traits {
-    public class Burning : Trait {
+    public class Burning : Status {
         private ITraitable owner { get; set; }
         public BurningSource sourceOfBurning { get; private set; }
         public override bool isPersistent => true;
@@ -63,8 +63,8 @@ namespace Traits {
                 }
             } 
         }
-        public override void OnRemoveTraitBySchedule(ITraitable removedFrom) {
-            base.OnRemoveTraitBySchedule(removedFrom);
+        public override void OnRemoveStatusBySchedule(ITraitable removedFrom) {
+            base.OnRemoveStatusBySchedule(removedFrom);
             removedFrom.traitContainer.AddTrait(removedFrom, "Burnt");
         }
         public override bool OnDeath(Character character) {

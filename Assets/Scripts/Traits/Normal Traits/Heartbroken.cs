@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Traits {
-    public class Heartbroken : Trait {
+    public class Heartbroken : Status {
         public Character owner { get; private set; }
 
         public Heartbroken() {

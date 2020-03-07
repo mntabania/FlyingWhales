@@ -4,7 +4,7 @@ using Inner_Maps;
 using UnityEngine;
 
 namespace Traits {
-    public class Catatonic : Trait {
+    public class Catatonic : Status {
 
         public Character owner { get; private set; }
 

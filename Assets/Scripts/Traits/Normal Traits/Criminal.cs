@@ -4,7 +4,7 @@ using UnityEngine;
 using Interrupts;
 
 namespace Traits {
-    public class Criminal : Trait {
+    public class Criminal : Status {
 
         public CrimeData crimeData { get; protected set; }
         public Character owner { get; private set; }

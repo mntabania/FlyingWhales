@@ -47,7 +47,7 @@ public class TraitManager : MonoBehaviour {
     public readonly string[] traitPool = new string[] { "Vigilant", "Diplomatic",
         "Fireproof", "Accident Prone", "Unfaithful", "Drunkard", "Music Lover", "Music Hater", "Ugly", "Blessed", "Nocturnal",
         "Herbalist", "Optimist", "Pessimist", "Fast", "Chaste", "Lustful", "Coward", "Lazy", "Hardworking", "Glutton", "Robust", "Suspicious" , "Inspiring", "Pyrophobic",
-        "Narcoleptic", "Hothead", "Evil", "Treacherous", "Ambitious", "Authoritative", "Healer"
+        "Narcoleptic", "Hothead", "Evil", "Treacherous", "Ambitious", "Authoritative", "Healer", "Fire Prone", "Electric", "Venomous"
     };
     //"Kleptomaniac","Curious", "Craftsman", "Disillusioned",
     public List<string> buffTraitPool { get; private set; }
@@ -70,8 +70,11 @@ public class TraitManager : MonoBehaviour {
         string path = $"{UtilityScripts.Utilities.dataPath}Traits/";
         string[] files = Directory.GetFiles(path, "*.json");
         for (int i = 0; i < files.Length; i++) {
-            Trait attribute = JsonUtility.FromJson<Trait>(System.IO.File.ReadAllText(files[i]));
-            _allTraits.Add(attribute.name, attribute);
+            Trait trait = JsonUtility.FromJson<Trait>(System.IO.File.ReadAllText(files[i]));
+            if (trait.type == TRAIT_TYPE.STATUS) {
+                trait = JsonUtility.FromJson<Status>(System.IO.File.ReadAllText(files[i]));
+            }
+            _allTraits.Add(trait.name, trait);
         }
         
         AddInstancedTraits(); //Traits with their own classes
@@ -145,8 +148,8 @@ public class TraitManager : MonoBehaviour {
     }
     public List<string> GetAllBuffTraitsThatCharacterCanHave(Character character) {
         List<string> allBuffs = new List<string>(buffTraitPool);
-        for (int i = 0; i < character.traitContainer.allTraits.Count; i++) {
-            Trait trait = character.traitContainer.allTraits[i];
+        for (int i = 0; i < character.traitContainer.traits.Count; i++) {
+            Trait trait = character.traitContainer.traits[i];
             if (trait.mutuallyExclusive != null) {
                 allBuffs = CollectionUtilities.RemoveElements(ref allBuffs, trait.mutuallyExclusive);
             }

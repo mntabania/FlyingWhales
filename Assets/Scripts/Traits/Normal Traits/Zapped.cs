@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Traits {
-    public class Zapped : Trait {
+    public class Zapped : Status {
 
         private GameObject electricEffectGO;
         public Zapped() {

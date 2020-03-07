@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Traits {
-    public class Reanimated : Trait {
+    public class Reanimated : Status {
 
         public Reanimated() {
             name = "Reanimated";

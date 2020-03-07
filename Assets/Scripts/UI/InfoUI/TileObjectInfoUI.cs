@@ -133,34 +133,32 @@ public class TileObjectInfoUI : InfoUIBase {
         string statusTraits = string.Empty;
         string normalTraits = string.Empty;
 
-        for (int i = 0; i < activeTileObject.traitContainer.allTraits.Count; i++) {
-            Trait currTrait = activeTileObject.traitContainer.allTraits[i];
+        for (int i = 0; i < activeTileObject.traitContainer.statuses.Count; i++) {
+            Status currStatus = activeTileObject.traitContainer.statuses[i];
+            if (currStatus.isHidden) {
+                continue; //skip
+            }
+            string color = UIManager.normalTextColor;
+            if (!string.IsNullOrEmpty(statusTraits)) {
+                statusTraits = $"{statusTraits}, ";
+            }
+            statusTraits = $"{statusTraits}<b><color={color}><link=\"{i}\">{currStatus.GetNameInUI(activeTileObject)}</link></color></b>";
+        }
+        for (int i = 0; i < activeTileObject.traitContainer.traits.Count; i++) {
+            Trait currTrait = activeTileObject.traitContainer.traits[i];
             if (currTrait.isHidden) {
                 continue; //skip
             }
-            if (currTrait.type == TRAIT_TYPE.STATUS) {
-                string color = UIManager.normalTextColor;
-                if (currTrait.type == TRAIT_TYPE.BUFF) {
-                    color = UIManager.buffTextColor;
-                } else if (currTrait.type == TRAIT_TYPE.FLAW) {
-                    color = UIManager.flawTextColor;
-                }
-                if (!string.IsNullOrEmpty(statusTraits)) {
-                    statusTraits = $"{statusTraits}, ";
-                }
-                statusTraits = $"{statusTraits}<b><color={color}><link=\"{i}\">{currTrait.GetNameInUI(activeTileObject)}</link></color></b>";
-            } else {
-                string color = UIManager.normalTextColor;
-                if (currTrait.type == TRAIT_TYPE.BUFF) {
-                    color = UIManager.buffTextColor;
-                } else if (currTrait.type == TRAIT_TYPE.FLAW) {
-                    color = UIManager.flawTextColor;
-                }
-                if (!string.IsNullOrEmpty(normalTraits)) {
-                    normalTraits = $"{normalTraits}, ";
-                }
-                normalTraits = $"{normalTraits}<b><color={color}><link=\"{i}\">{currTrait.GetNameInUI(activeTileObject)}</link></color></b>";
+            string color = UIManager.normalTextColor;
+            if (currTrait.type == TRAIT_TYPE.BUFF) {
+                color = UIManager.buffTextColor;
+            } else if (currTrait.type == TRAIT_TYPE.FLAW) {
+                color = UIManager.flawTextColor;
             }
+            if (!string.IsNullOrEmpty(normalTraits)) {
+                normalTraits = $"{normalTraits}, ";
+            }
+            normalTraits = $"{normalTraits}<b><color={color}><link=\"{i}\">{currTrait.GetNameInUI(activeTileObject)}</link></color></b>";
         }
 
         statusTraitsLbl.text = string.Empty;
@@ -238,10 +236,17 @@ public class TileObjectInfoUI : InfoUIBase {
         if (obj is string) {
             string text = (string) obj;
             int index = int.Parse(text);
-            Trait trait = activeTileObject.traitContainer.allTraits[index];
+            Trait trait = activeTileObject.traitContainer.traits[index];
             UIManager.Instance.ShowSmallInfo(trait.description);
         }
-
+    }
+    public void OnHoverStatus(object obj) {
+        if (obj is string) {
+            string text = (string) obj;
+            int index = int.Parse(text);
+            Trait trait = activeTileObject.traitContainer.statuses[index];
+            UIManager.Instance.ShowSmallInfo(trait.description);
+        }
     }
     public void OnHoverOutTrait() {
         UIManager.Instance.HideSmallInfo();

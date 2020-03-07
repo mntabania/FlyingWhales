@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Traits {
-    public class Malnourished : Trait {
+    public class Malnourished : Status {
 
         private Character owner;
         private int deathDuration;

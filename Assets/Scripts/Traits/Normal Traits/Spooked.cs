@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Traits {
-    public class Spooked : Trait {
+    public class Spooked : Status {
         //public List<Character> terrifyingCharacters { get; private set; }
         public Character owner { get; private set; }
 

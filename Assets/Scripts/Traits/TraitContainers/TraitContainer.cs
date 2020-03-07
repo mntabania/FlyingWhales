@@ -8,7 +8,9 @@ using Inner_Maps;
 namespace Traits {
     public class TraitContainer : ITraitContainer {
 
-        private List<Trait> _allTraits;
+        public List<Trait> allTraitsAndStatuses { get; private set; }
+        public List<Trait> traits { get; private set; }
+        public List<Status> statuses { get; private set; }
         public List<Trait> onCollideWithTraits { get; private set; }
         public List<Trait> onEnterGridTileTraits { get; private set; }
 
@@ -18,11 +20,12 @@ namespace Traits {
         //public Dictionary<Trait, int> currentDurations { get; private set; } //Temporary only, fix this by making all traits instanced based and just object pool them
 
         #region getters/setters
-        public List<Trait> allTraits { get { return _allTraits; } }
         #endregion
 
         public TraitContainer() {
-            _allTraits = new List<Trait>();
+            allTraitsAndStatuses = new List<Trait>();
+            statuses = new List<Status>();
+            traits = new List<Trait>();
             onCollideWithTraits = new List<Trait>();
             onEnterGridTileTraits = new List<Trait>();
             stacks = new Dictionary<string, int>();
@@ -39,14 +42,14 @@ namespace Traits {
         public bool AddTrait(ITraitable addTo, Trait trait, Character characterResponsible = null, 
             ActualGoapNode gainedFromDoing = null, bool bypassElementalChance = false, int overrideDuration = -1) {
             if (TraitManager.Instance.IsTraitElemental(trait.name)) {
-                return TryAddElementalTrait(addTo, trait, characterResponsible, gainedFromDoing, bypassElementalChance, overrideDuration);
+                return TryAddElementalStatus(addTo, trait, characterResponsible, gainedFromDoing, bypassElementalChance, overrideDuration);
             }
             return TraitAddition(addTo, trait, characterResponsible, gainedFromDoing, overrideDuration);
         }
         public bool AddTrait(ITraitable addTo, string traitName, out Trait trait, Character characterResponsible = null, 
             ActualGoapNode gainedFromDoing = null, bool bypassElementalChance = false, int overrideDuration = -1) {
             if (TraitManager.Instance.IsTraitElemental(traitName)) {
-                return TryAddElementalTrait(addTo, traitName, out trait, characterResponsible, 
+                return TryAddElementalStatus(addTo, traitName, out trait, characterResponsible, 
                     gainedFromDoing, bypassElementalChance, overrideDuration);
             }
             return TraitAddition(addTo, traitName, out trait, characterResponsible, gainedFromDoing, overrideDuration);
@@ -54,56 +57,56 @@ namespace Traits {
         public bool AddTrait(ITraitable addTo, string traitName, Character characterResponsible = null, 
             ActualGoapNode gainedFromDoing = null, bool bypassElementalChance = false, int overrideDuration = -1) {
             if (TraitManager.Instance.IsTraitElemental(traitName)) {
-                return TryAddElementalTrait(addTo, traitName, characterResponsible, gainedFromDoing, bypassElementalChance, overrideDuration);
+                return TryAddElementalStatus(addTo, traitName, characterResponsible, gainedFromDoing, bypassElementalChance, overrideDuration);
             }
             return TraitAddition(addTo, traitName, characterResponsible, gainedFromDoing, overrideDuration);
         }
-        private bool TryAddElementalTrait(ITraitable addTo, string traitName, Character characterResponsible, 
+        private bool TryAddElementalStatus(ITraitable addTo, string traitName, Character characterResponsible, 
             ActualGoapNode gainedFromDoing, bool bypassElementalChance, int overrideDuration) {
-            bool shouldAddTrait = ProcessBeforeAddingElementalTrait(addTo, traitName, bypassElementalChance);
+            bool shouldAddTrait = ProcessBeforeAddingElementalStatus(addTo, traitName, bypassElementalChance);
             if (shouldAddTrait) {
-                shouldAddTrait = ProcessBeforeSuccessfullyAddingElementalTrait(addTo, traitName, ref overrideDuration);
+                shouldAddTrait = ProcessBeforeSuccessfullyAddingElementalStatus(addTo, traitName, ref overrideDuration);
                 if (shouldAddTrait) {
                     Trait trait = null;
                     shouldAddTrait = TraitAddition(addTo, traitName, out trait, characterResponsible, gainedFromDoing, overrideDuration);
                     if (shouldAddTrait) {
-                        ProcessAfterSuccessfulAddingElementalTrait(addTo, trait);
+                        ProcessAfterSuccessfulAddingElementalTrait(addTo, trait as Status);
                     }
                 }
             }
             return shouldAddTrait;
         }
-        private bool TryAddElementalTrait(ITraitable addTo, string traitName, out Trait trait, Character characterResponsible, 
+        private bool TryAddElementalStatus(ITraitable addTo, string traitName, out Trait trait, Character characterResponsible, 
             ActualGoapNode gainedFromDoing, bool bypassElementalChance, int overrideDuration) {
             trait = null;
-            bool shouldAddTrait = ProcessBeforeAddingElementalTrait(addTo, traitName, bypassElementalChance);
+            bool shouldAddTrait = ProcessBeforeAddingElementalStatus(addTo, traitName, bypassElementalChance);
             if (shouldAddTrait) {
-                shouldAddTrait = ProcessBeforeSuccessfullyAddingElementalTrait(addTo, traitName, ref overrideDuration);
+                shouldAddTrait = ProcessBeforeSuccessfullyAddingElementalStatus(addTo, traitName, ref overrideDuration);
                 if (shouldAddTrait) {
                     shouldAddTrait = TraitAddition(addTo, traitName, out trait, characterResponsible, gainedFromDoing, overrideDuration);
                     if (shouldAddTrait) {
-                        ProcessAfterSuccessfulAddingElementalTrait(addTo, trait);
+                        ProcessAfterSuccessfulAddingElementalTrait(addTo, trait as Status);
                     }
                 }
             }
             return shouldAddTrait;
         }
-        private bool TryAddElementalTrait(ITraitable addTo, Trait trait, Character characterResponsible, 
+        private bool TryAddElementalStatus(ITraitable addTo, Trait trait, Character characterResponsible, 
             ActualGoapNode gainedFromDoing, bool bypassElementalChance, int overrideDuration) {
-            bool shouldAddTrait = ProcessBeforeAddingElementalTrait(addTo, trait.name, bypassElementalChance);
+            bool shouldAddTrait = ProcessBeforeAddingElementalStatus(addTo, trait.name, bypassElementalChance);
             if (shouldAddTrait) {
-                shouldAddTrait = ProcessBeforeSuccessfullyAddingElementalTrait(addTo, trait.name, ref overrideDuration);
+                shouldAddTrait = ProcessBeforeSuccessfullyAddingElementalStatus(addTo, trait.name, ref overrideDuration);
                 if (shouldAddTrait) {
                     shouldAddTrait = TraitAddition(addTo, trait, characterResponsible, gainedFromDoing, overrideDuration);
                     if (shouldAddTrait) {
-                        ProcessAfterSuccessfulAddingElementalTrait(addTo, trait);
+                        ProcessAfterSuccessfulAddingElementalTrait(addTo, trait as Status);
                     }
                 }
             }
             return shouldAddTrait;
         }
         //Returns true or false, if trait should be added or not
-        private bool ProcessBeforeAddingElementalTrait(ITraitable addTo, string traitName, bool bypassElementalChance) {
+        private bool ProcessBeforeAddingElementalStatus(ITraitable addTo, string traitName, bool bypassElementalChance) {
             bool shouldAddTrait = true;
             if (traitName == "Burning") {
                 if (HasTrait("Freezing")) {
@@ -116,7 +119,7 @@ namespace Traits {
                 }
                 if (HasTrait("Poisoned")) {
                     int poisonStacks = stacks["Poisoned"];
-                    RemoveTraitAndStacks(addTo, "Poisoned");
+                    RemoveStatusAndStacks(addTo, "Poisoned");
                     if (addTo is IPointOfInterest) {
                         CombatManager.Instance.PoisonExplosion(addTo as IPointOfInterest, addTo.gridTileLocation, poisonStacks);
                     }
@@ -128,7 +131,7 @@ namespace Traits {
                 }
             } else if (traitName == "Overheating") {
                 if (HasTrait("Wet")) {
-                    RemoveTraitAndStacks(addTo, "Wet");
+                    RemoveStatusAndStacks(addTo, "Wet");
                     shouldAddTrait = false;
                 }
                 if (HasTrait("Freezing")) {
@@ -153,7 +156,9 @@ namespace Traits {
                 //    shouldAddTrait = false;
                 //}
             } else if (traitName == "Zapped") {
-                if(addTo is GenericTileObject || addTo is StructureWallObject || addTo is BlockWall) {
+                if (HasTrait("Electric")) {
+                    shouldAddTrait = false;
+                } else if(addTo is GenericTileObject || addTo is StructureWallObject || addTo is BlockWall) {
                     if (!HasTrait("Wet")) {
                         //Ground floor tiles and walls do not get Zapped by electric damage unless they are Wet.
                         shouldAddTrait = false;
@@ -172,7 +177,7 @@ namespace Traits {
             }
             return false;
         }
-        private bool ProcessBeforeSuccessfullyAddingElementalTrait(ITraitable addTo, string traitName, ref int overrideDuration) {
+        private bool ProcessBeforeSuccessfullyAddingElementalStatus(ITraitable addTo, string traitName, ref int overrideDuration) {
             bool shouldAddTrait = true;
             if (traitName == "Freezing") {
                 if (HasTrait("Frozen")) {
@@ -194,10 +199,10 @@ namespace Traits {
             }
             return shouldAddTrait;
         }
-        private void ProcessAfterSuccessfulAddingElementalTrait(ITraitable traitable, Trait trait) {
-            if (trait.name == "Freezing") {
-                if (stacks[trait.name] >= trait.stackLimit) {
-                    RemoveTraitAndStacks(traitable, trait.name);
+        private void ProcessAfterSuccessfulAddingElementalTrait(ITraitable traitable, Status status) {
+            if (status.name == "Freezing") {
+                if (stacks[status.name] >= status.stackLimit) {
+                    RemoveStatusAndStacks(traitable, status.name);
                     AddTrait(traitable, "Frozen");
                 }
             }
@@ -224,35 +229,32 @@ namespace Traits {
         private bool AddTraitRoot(ITraitable addTo, Trait trait, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration) {
             //TODO: Either move or totally remove validation from inside this container
             if (TraitValidator.CanAddTrait(addTo, trait, this) == false) {
-                //if (trait.IsUnique()) {
-                //    Trait oldTrait = GetNormalTrait<Trait>(trait.name);
-                //    if (oldTrait != null) {
-                //        oldTrait.AddCharacterResponsibleForTrait(characterResponsible);
-                //        oldTrait.AddCharacterResponsibleForTrait(characterResponsible);
-                //        //if (oldTrait.broadcastDuplicates) {
-                //        //    Messenger.Broadcast(Signals.TRAIT_ADDED, this, oldTrait);
-                //        //}
-                //    }
-                //}
                 return false;
             }
-
-            if (trait.isStacking) {
-                if (stacks.ContainsKey(trait.name)) {
-                    stacks[trait.name]++;
-                    if (TraitManager.Instance.IsInstancedTrait(trait.name)) {
-                        Trait existingTrait = GetNormalTrait<Trait>(trait.name);
-                        addTo.traitProcessor.OnTraitStacked(addTo, existingTrait, characterResponsible, gainedFromDoing, overrideDuration);
+            if(trait is Status) {
+                Status status = trait as Status;
+                if (status.isStacking) {
+                    if (stacks.ContainsKey(status.name)) {
+                        stacks[status.name]++;
+                        if (TraitManager.Instance.IsInstancedTrait(status.name)) {
+                            Status existingStatus = GetNormalTrait<Status>(status.name);
+                            addTo.traitProcessor.OnStatusStacked(addTo, existingStatus, characterResponsible, gainedFromDoing, overrideDuration);
+                        } else {
+                            addTo.traitProcessor.OnStatusStacked(addTo, status, characterResponsible, gainedFromDoing, overrideDuration);
+                        }
                     } else {
-                        addTo.traitProcessor.OnTraitStacked(addTo, trait, characterResponsible, gainedFromDoing, overrideDuration);
+                        stacks.Add(status.name, 1);
+                        statuses.Add(status);
+                        addTo.traitProcessor.OnTraitAdded(addTo, status, characterResponsible, gainedFromDoing, overrideDuration);
                     }
                 } else {
-                    stacks.Add(trait.name, 1);
-                    _allTraits.Add(trait);
-                    addTo.traitProcessor.OnTraitAdded(addTo, trait, characterResponsible, gainedFromDoing, overrideDuration);
+                    statuses.Add(status);
+                    allTraitsAndStatuses.Add(trait);
+                    addTo.traitProcessor.OnTraitAdded(addTo, status, characterResponsible, gainedFromDoing, overrideDuration);
                 }
             } else {
-                _allTraits.Add(trait);
+                traits.Add(trait);
+                allTraitsAndStatuses.Add(trait);
                 addTo.traitProcessor.OnTraitAdded(addTo, trait, characterResponsible, gainedFromDoing, overrideDuration);
             }
             return true;
@@ -285,31 +287,40 @@ namespace Traits {
         /// <returns>If the trait was removed or not.</returns>
         public bool RemoveTrait(ITraitable removeFrom, Trait trait, Character removedBy = null, bool bySchedule = false) {
             bool removedOrUnstacked = false;
-            if (!trait.isStacking) {
-                removedOrUnstacked = _allTraits.Remove(trait);
-                if (removedOrUnstacked) {
-                    removeFrom.traitProcessor.OnTraitRemoved(removeFrom, trait, removedBy);
-                    RemoveScheduleTicket(trait.name, bySchedule);
-                }
-            } else {
-                if (stacks.ContainsKey(trait.name)) {
-                    if(stacks[trait.name] > 1) {
-                        stacks[trait.name]--;
-                        removeFrom.traitProcessor.OnTraitUnstack(removeFrom, trait, removedBy);
-                        RemoveScheduleTicket(trait.name, bySchedule);
-                        removedOrUnstacked = true;
-                    } else {
-                        removedOrUnstacked = _allTraits.Remove(trait);
-                        if (removedOrUnstacked) {
-                            stacks.Remove(trait.name);
-                            removeFrom.traitProcessor.OnTraitRemoved(removeFrom, trait, removedBy);
-                            RemoveScheduleTicket(trait.name, bySchedule);
+            if(trait is Status) {
+                Status status = trait as Status;
+                if (!status.isStacking) {
+                    removedOrUnstacked = statuses.Remove(status);
+                    if (removedOrUnstacked) {
+                        allTraitsAndStatuses.Remove(status);
+                        removeFrom.traitProcessor.OnTraitRemoved(removeFrom, status, removedBy);
+                        RemoveScheduleTicket(status.name, bySchedule);
+                    }
+                } else {
+                    if (stacks.ContainsKey(status.name)) {
+                        if (stacks[status.name] > 1) {
+                            stacks[status.name]--;
+                            removeFrom.traitProcessor.OnStatusUnstack(removeFrom, status, removedBy);
+                            RemoveScheduleTicket(status.name, bySchedule);
+                            removedOrUnstacked = true;
+                        } else {
+                            removedOrUnstacked = statuses.Remove(status);
+                            if (removedOrUnstacked) {
+                                allTraitsAndStatuses.Remove(status);
+                                stacks.Remove(status.name);
+                                removeFrom.traitProcessor.OnTraitRemoved(removeFrom, status, removedBy);
+                                RemoveScheduleTicket(status.name, bySchedule);
+                            }
                         }
                     }
                 }
-                //else {
-                //    throw new Exception("Removing stack of " + trait.name + " trait from " + removeFrom.name + " but there is not stack, this should not happen...");
-                //}
+            } else {
+                removedOrUnstacked = traits.Remove(trait);
+                if (removedOrUnstacked) {
+                    allTraitsAndStatuses.Remove(trait);
+                    removeFrom.traitProcessor.OnTraitRemoved(removeFrom, trait, removedBy);
+                    RemoveScheduleTicket(trait.name, bySchedule);
+                }
             }
             return removedOrUnstacked;
         }
@@ -320,48 +331,60 @@ namespace Traits {
             }
             return false;
         }
-        private void RemoveTraitAndStacks(ITraitable removeFrom, Trait trait, Character removedBy = null, bool bySchedule = false) {
+        private void RemoveStatusAndStacks(ITraitable removeFrom, Status status, Character removedBy = null, bool bySchedule = false) {
             int loopNum = 1;
-            if (stacks.ContainsKey(trait.name)) {
-                loopNum = stacks[trait.name];
+            if (stacks.ContainsKey(status.name)) {
+                loopNum = stacks[status.name];
             }
             for (int i = 0; i < loopNum; i++) {
-                RemoveTrait(removeFrom, trait, removedBy, bySchedule);
+                RemoveTrait(removeFrom, status, removedBy, bySchedule);
             }
         }
-        public void RemoveTraitAndStacks(ITraitable removeFrom, string name, Character removedBy = null, bool bySchedule = false) {
-            Trait trait = GetNormalTrait<Trait>(name);
+        public void RemoveStatusAndStacks(ITraitable removeFrom, string name, Character removedBy = null, bool bySchedule = false) {
+            Status trait = GetNormalTrait<Status>(name);
             if (trait != null) {
-                RemoveTraitAndStacks(removeFrom, trait, removedBy, bySchedule);
+                RemoveStatusAndStacks(removeFrom, trait, removedBy, bySchedule);
             }
+        }
+        public bool RemoveStatus(ITraitable removeFrom, int index, Character removedBy = null) {
+            bool removedOrUnstacked = true;
+            if (index < 0 || index >= statuses.Count) {
+                removedOrUnstacked = false;
+            } else {
+                Status status = statuses[index];
+                if (!status.isStacking) {
+                    statuses.RemoveAt(index);
+                    allTraitsAndStatuses.Remove(status);
+                    removeFrom.traitProcessor.OnTraitRemoved(removeFrom, status, removedBy);
+                    RemoveScheduleTicket(status.name);
+                } else {
+                    if (stacks.ContainsKey(status.name)) {
+                        if (stacks[status.name] > 1) {
+                            stacks[status.name]--;
+                            removeFrom.traitProcessor.OnStatusUnstack(removeFrom, status, removedBy);
+                            RemoveScheduleTicket(status.name);
+                        } else {
+                            stacks.Remove(status.name);
+                            statuses.RemoveAt(index);
+                            allTraitsAndStatuses.Remove(status);
+                            removeFrom.traitProcessor.OnTraitRemoved(removeFrom, status, removedBy);
+                            RemoveScheduleTicket(status.name);
+                        }
+                    }
+                }
+            }
+            return removedOrUnstacked;
         }
         public bool RemoveTrait(ITraitable removeFrom, int index, Character removedBy = null) {
             bool removedOrUnstacked = true;
-            if(index < 0 || index >= _allTraits.Count) {
+            if(index < 0 || index >= allTraitsAndStatuses.Count) {
                 removedOrUnstacked = false;
             } else {
-                Trait trait = _allTraits[index];
-                if (!trait.isStacking) {
-                    _allTraits.RemoveAt(index);
-                    removeFrom.traitProcessor.OnTraitRemoved(removeFrom, trait, removedBy);
-                    RemoveScheduleTicket(trait.name);
-                } else {
-                    if (stacks.ContainsKey(trait.name)) {
-                        if (stacks[trait.name] > 1) {
-                            stacks[trait.name]--;
-                            removeFrom.traitProcessor.OnTraitUnstack(removeFrom, trait, removedBy);
-                            RemoveScheduleTicket(trait.name);
-                        } else {
-                            stacks.Remove(trait.name);
-                            _allTraits.RemoveAt(index);
-                            removeFrom.traitProcessor.OnTraitRemoved(removeFrom, trait, removedBy);
-                            RemoveScheduleTicket(trait.name);
-                        }
-                    } 
-                    //else {
-                    //    throw new Exception("Removing stack of " + trait.name + " trait from " + removeFrom.name + " but there is not stack, this should not happen...");
-                    //}
-                }
+                Trait trait = traits[index];
+                traits.RemoveAt(index);
+                allTraitsAndStatuses.Remove(trait);
+                removeFrom.traitProcessor.OnTraitRemoved(removeFrom, trait, removedBy);
+                RemoveScheduleTicket(trait.name);
             }
             return removedOrUnstacked;
         }
@@ -370,25 +393,43 @@ namespace Traits {
                 RemoveTrait(removeFrom, traits[i]);
             }
         }
-        public List<Trait> RemoveAllTraitsByType(ITraitable removeFrom, TRAIT_TYPE traitType) {
+        public List<Trait> RemoveAllTraitsAndStatusesByType(ITraitable removeFrom, TRAIT_TYPE traitType) {
             List<Trait> removedTraits = new List<Trait>();
             //List<Trait> all = new List<Trait>(allTraits);
-            for (int i = 0; i < allTraits.Count; i++) {
-                Trait trait = allTraits[i];
+            for (int i = 0; i < statuses.Count; i++) {
+                Trait trait = statuses[i];
                 if (trait.type == traitType) {
-                    removedTraits.Add(trait);
+                    if (RemoveStatus(removeFrom, i)) {
+                        removedTraits.Add(trait);
+                        i--;
+                    }
+                }
+            }
+            for (int i = 0; i < traits.Count; i++) {
+                Trait trait = traits[i];
+                if (trait.type == traitType) {
                     if(RemoveTrait(removeFrom, i)) {
+                        removedTraits.Add(trait);
                         i--;
                     }
                 }
             }
             return removedTraits;
         }
-        public void RemoveAllTraitsByName(ITraitable removeFrom, string name) {
+        public void RemoveAllTraitsAndStatusesByName(ITraitable removeFrom, string name) {
             //List<Trait> removedTraits = new List<Trait>();
             //List<Trait> all = new List<Trait>(allTraits);
-            for (int i = 0; i < allTraits.Count; i++) {
-                Trait trait = allTraits[i];
+            for (int i = 0; i < statuses.Count; i++) {
+                Trait trait = statuses[i];
+                if (trait.name == name) {
+                    //removedTraits.Add(trait);
+                    if (RemoveStatus(removeFrom, i)) {
+                        i--;
+                    }
+                }
+            }
+            for (int i = 0; i < traits.Count; i++) {
+                Trait trait = traits[i];
                 if (trait.name == name) {
                     //removedTraits.Add(trait);
                     if (RemoveTrait(removeFrom, i)) {
@@ -400,7 +441,7 @@ namespace Traits {
         }
         public bool RemoveTraitOnSchedule(ITraitable removeFrom, Trait trait) {
             if(RemoveTrait(removeFrom, trait, bySchedule: true)) {
-                trait.OnRemoveTraitBySchedule(removeFrom);
+                trait.OnRemoveStatusBySchedule(removeFrom);
                 return true;
             }
             return false;
@@ -408,10 +449,18 @@ namespace Traits {
         /// <summary>
         /// Remove all traits that are not persistent.
         /// </summary>
-        public void RemoveAllNonPersistentTraits(ITraitable traitable) {
+        public void RemoveAllNonPersistentTraitAndStatuses(ITraitable traitable) {
             //List<Trait> allTraits = new List<Trait>(this.allTraits);
-            for (int i = 0; i < allTraits.Count; i++) {
-                Trait currTrait = allTraits[i];
+            for (int i = 0; i < statuses.Count; i++) {
+                Trait currTrait = statuses[i];
+                if (!currTrait.isPersistent) {
+                    if (RemoveStatus(traitable, i)) {
+                        i--;
+                    }
+                }
+            }
+            for (int i = 0; i < traits.Count; i++) {
+                Trait currTrait = traits[i];
                 if (!currTrait.isPersistent) {
                     if(RemoveTrait(traitable, i)) {
                         i--;
@@ -419,9 +468,14 @@ namespace Traits {
                 }
             }
         }
-        public void RemoveAllTraits(ITraitable traitable) {
+        public void RemoveAllTraitsAndStatuses(ITraitable traitable) {
             //List<Trait> allTraits = new List<Trait>(this.allTraits);
-            for (int i = 0; i < allTraits.Count; i++) {
+            for (int i = 0; i < statuses.Count; i++) {
+                if (RemoveStatus(traitable, i)) { //remove all traits
+                    i--;
+                }
+            }
+            for (int i = 0; i < traits.Count; i++) {
                 if (RemoveTrait(traitable, i)) { //remove all traits
                     i--;
                 }
@@ -431,8 +485,8 @@ namespace Traits {
 
         #region Getting
         public T GetNormalTrait<T>(params string[] traitNames) where T : Trait {
-            for (int i = 0; i < allTraits.Count; i++) {
-                Trait trait = allTraits[i];
+            for (int i = 0; i < allTraitsAndStatuses.Count; i++) {
+                Trait trait = allTraitsAndStatuses[i];
                 for (int j = 0; j < traitNames.Length; j++) {
                     if (trait.name == traitNames[j]) { // || trait.GetType().ToString() == traitNames[j]
                         return trait as T;
@@ -443,8 +497,8 @@ namespace Traits {
         }
         public List<T> GetNormalTraits<T>(params string[] traitNames) where T : Trait {
             List<T> traits = new List<T>();
-            for (int i = 0; i < allTraits.Count; i++) {
-                Trait trait = allTraits[i];
+            for (int i = 0; i < allTraitsAndStatuses.Count; i++) {
+                Trait trait = allTraitsAndStatuses[i];
                 if (traitNames.Contains(trait.name)) {
                     traits.Add(trait as T);
                 }
@@ -452,16 +506,16 @@ namespace Traits {
             return traits;
         }
         public bool HasTraitOf(TRAIT_TYPE traitType) {
-            for (int i = 0; i < allTraits.Count; i++) {
-                if (allTraits[i].type == traitType) {
+            for (int i = 0; i < allTraitsAndStatuses.Count; i++) {
+                if (allTraitsAndStatuses[i].type == traitType) {
                     return true;
                 }
             }
             return false;
         }
         public bool HasTraitOf(TRAIT_TYPE type, TRAIT_EFFECT effect) {
-            for (int i = 0; i < allTraits.Count; i++) {
-                Trait currTrait = allTraits[i];
+            for (int i = 0; i < allTraitsAndStatuses.Count; i++) {
+                Trait currTrait = allTraitsAndStatuses[i];
                 if (currTrait.effect == effect && currTrait.type == type) {
                     return true;
                 }
@@ -469,8 +523,8 @@ namespace Traits {
             return false;
         }
         public bool HasTraitOf(TRAIT_EFFECT traitEffect) {
-            for (int i = 0; i < allTraits.Count; i++) {
-                Trait currTrait = allTraits[i];
+            for (int i = 0; i < allTraitsAndStatuses.Count; i++) {
+                Trait currTrait = allTraitsAndStatuses[i];
                 if (currTrait.effect == traitEffect) {
                     return true;
                 }
@@ -479,8 +533,8 @@ namespace Traits {
         }
         public List<Trait> GetAllTraitsOf(TRAIT_TYPE type) {
             List<Trait> traits = new List<Trait>();
-            for (int i = 0; i < allTraits.Count; i++) {
-                Trait currTrait = allTraits[i];
+            for (int i = 0; i < allTraitsAndStatuses.Count; i++) {
+                Trait currTrait = allTraitsAndStatuses[i];
                 if (currTrait.type == type) {
                     traits.Add(currTrait);
                 }
@@ -489,8 +543,8 @@ namespace Traits {
         }
         public List<Trait> GetAllTraitsOf(TRAIT_TYPE type, TRAIT_EFFECT effect) {
             List<Trait> traits = new List<Trait>();
-            for (int i = 0; i < allTraits.Count; i++) {
-                Trait currTrait = allTraits[i];
+            for (int i = 0; i < allTraitsAndStatuses.Count; i++) {
+                Trait currTrait = allTraitsAndStatuses[i];
                 if (currTrait.effect == effect && currTrait.type == type) {
                     traits.Add(currTrait);
                 }
@@ -501,16 +555,16 @@ namespace Traits {
 
         #region Processes
         public void ProcessOnTickStarted(ITraitable owner) {
-            if(allTraits != null) {
-                for (int i = 0; i < allTraits.Count; i++) {
-                    allTraits[i].OnTickStarted();
+            if(allTraitsAndStatuses != null) {
+                for (int i = 0; i < allTraitsAndStatuses.Count; i++) {
+                    allTraitsAndStatuses[i].OnTickStarted();
                 }
             }
         }
         public void ProcessOnTickEnded(ITraitable owner) {
-            if (allTraits != null) {
-                for (int i = 0; i < allTraits.Count; i++) {
-                    Trait trait = allTraits[i];
+            if (allTraitsAndStatuses != null) {
+                for (int i = 0; i < allTraitsAndStatuses.Count; i++) {
+                    Trait trait = allTraitsAndStatuses[i];
                     trait.OnTickEnded();
                     //if (currentDurations.ContainsKey(trait)) {
                     //    currentDurations[trait]++;
@@ -528,9 +582,9 @@ namespace Traits {
             }
         }
         public void ProcessOnHourStarted(ITraitable owner) {
-            if (allTraits != null) {
-                for (int i = 0; i < allTraits.Count; i++) {
-                    allTraits[i].OnHourStarted();
+            if (allTraitsAndStatuses != null) {
+                for (int i = 0; i < allTraitsAndStatuses.Count; i++) {
+                    allTraitsAndStatuses[i].OnHourStarted();
                 }
             }
         }

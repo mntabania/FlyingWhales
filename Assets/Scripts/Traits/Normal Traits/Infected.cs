@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Traits {
-    public class Infected : Trait {
+    public class Infected : Status {
 
         private Character owner;
         //private float pukeChance;

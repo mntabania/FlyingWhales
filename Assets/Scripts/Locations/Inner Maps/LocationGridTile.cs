@@ -42,7 +42,7 @@ namespace Inner_Maps {
         public TILE_OBJECT_TYPE reservedObjectType { get; private set; } //the only type of tile object that can be placed here
         public FurnitureSpot furnitureSpot { get; private set; }
         public bool hasFurnitureSpot { get; private set; }
-        public List<Trait> normalTraits => genericTileObject.traitContainer.allTraits;
+        public List<Trait> normalTraits => genericTileObject.traitContainer.allTraitsAndStatuses;
         public bool hasBlueprint { get; private set; }
 
         private Color defaultTileColor;

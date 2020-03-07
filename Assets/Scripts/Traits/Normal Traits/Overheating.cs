@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Traits {
-    public class Overheating : Trait {
+    public class Overheating : Status {
 
         public Overheating() {
             name = "Overheating";

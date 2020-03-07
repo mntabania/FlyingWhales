@@ -573,12 +573,12 @@ public class ActualGoapNode {
         } else {
             CreateDescriptionLog(currentState);
             currentState.preEffect?.Invoke(this);
-            for (int i = 0; i < actor.traitContainer.allTraits.Count; i++) {
-                Trait currTrait = actor.traitContainer.allTraits[i];
+            for (int i = 0; i < actor.traitContainer.allTraitsAndStatuses.Count; i++) {
+                Trait currTrait = actor.traitContainer.allTraitsAndStatuses[i];
                 currTrait.ExecuteActionPreEffects(action.goapType, this);
             }
-            for (int i = 0; i < poiTarget.traitContainer.allTraits.Count; i++) {
-                Trait currTrait = poiTarget.traitContainer.allTraits[i];
+            for (int i = 0; i < poiTarget.traitContainer.allTraitsAndStatuses.Count; i++) {
+                Trait currTrait = poiTarget.traitContainer.allTraitsAndStatuses[i];
                 currTrait.ExecuteActionPreEffects(action.goapType, this);
             }
         }
@@ -642,14 +642,14 @@ public class ActualGoapNode {
         if (shouldDoAfterEffect && !(isStealth && target.traitContainer.HasTrait("Vigilant"))) {
             currentState.afterEffect?.Invoke(this);
             bool isRemoved = false;
-            for (int i = 0; i < actor.traitContainer.allTraits.Count; i++) {
-                Trait currTrait = actor.traitContainer.allTraits[i];
+            for (int i = 0; i < actor.traitContainer.statuses.Count; i++) {
+                Trait currTrait = actor.traitContainer.statuses[i];
                 isRemoved = false;
                 currTrait.ExecuteActionAfterEffects(action.goapType, this, ref isRemoved);
                 if (isRemoved) { i--; }
             }
-            for (int i = 0; i < poiTarget.traitContainer.allTraits.Count; i++) {
-                Trait currTrait = poiTarget.traitContainer.allTraits[i];
+            for (int i = 0; i < poiTarget.traitContainer.statuses.Count; i++) {
+                Trait currTrait = poiTarget.traitContainer.statuses[i];
                 isRemoved = false;
                 currTrait.ExecuteActionAfterEffects(action.goapType, this, ref isRemoved);
                 if (isRemoved) { i--; }
@@ -676,12 +676,12 @@ public class ActualGoapNode {
         }
         if (!(isStealth && target.traitContainer.HasTrait("Vigilant"))) {
             currentState.perTickEffect?.Invoke(this);
-            for (int i = 0; i < actor.traitContainer.allTraits.Count; i++) {
-                Trait currTrait = actor.traitContainer.allTraits[i];
+            for (int i = 0; i < actor.traitContainer.allTraitsAndStatuses.Count; i++) {
+                Trait currTrait = actor.traitContainer.allTraitsAndStatuses[i];
                 currTrait.ExecuteActionPerTickEffects(action.goapType, this);
             }
-            for (int i = 0; i < poiTarget.traitContainer.allTraits.Count; i++) {
-                Trait currTrait = poiTarget.traitContainer.allTraits[i];
+            for (int i = 0; i < poiTarget.traitContainer.allTraitsAndStatuses.Count; i++) {
+                Trait currTrait = poiTarget.traitContainer.allTraitsAndStatuses[i];
                 currTrait.ExecuteActionPerTickEffects(action.goapType, this);
             }
         }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Traits {
-    public class Sick : Trait {
+    public class Sick : Status {
         private Character owner;
         private float pukeChance;
         //public override bool isRemovedOnSwitchAlterEgo {

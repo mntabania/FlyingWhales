@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Traits {
-    public class Paralyzed : Trait {
+    public class Paralyzed : Status {
 
         public Character owner { get; private set; }
         //public List<Character> charactersThatKnow { get; private set; }

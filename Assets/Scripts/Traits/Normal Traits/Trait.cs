@@ -23,27 +23,25 @@ namespace Traits {
         public int ticksDuration; //Zero (0) means Permanent
         public int level;
         public int moodEffect;
-        //public List<TraitEffect> effects;
         public bool isHidden;
         public string[] mutuallyExclusive; //list of traits that this trait cannot be with.
         public bool canBeTriggered;
-        public bool hindersWitness; //if a character has this trait, and this is true, then he/she cannot witness events
-        public bool hindersMovement; //if a character has this trait, and this is true, then he/she cannot move
-        public bool hindersAttackTarget; //if a character has this trait, and this is true, then he/she cannot be attacked
-        public bool hindersPerform; //if a character has this trait, and this is true, then he/she cannot be attacked
-        // public bool hasOnOthersSeeOverride;
-        // public bool hasOnOthersSeeInDiffStructureOverride;
+        //public bool hindersWitness; //if a character has this trait, and this is true, then he/she cannot witness events
+        //public bool hindersMovement; //if a character has this trait, and this is true, then he/she cannot move
+        //public bool hindersAttackTarget; //if a character has this trait, and this is true, then he/she cannot be attacked
+        //public bool hindersPerform; //if a character has this trait, and this is true, then he/she cannot be attacked
         public bool hasOnCollideWith;
         public bool hasOnEnterGridTile;
-        public bool isStacking;
-        public int stackLimit;
-        public float stackModifier;
+        //public bool isStacking;
+        //public int stackLimit;
+        //public float stackModifier;
+        public ELEMENTAL_TYPE elementalType;
         //public bool isNonRemovable; //determines if trait can be removed through natural process (ie. RemoveTrait, etc.), if this is set to true, it means that it can only be removed by certain functions
 
         public Character responsibleCharacter { get { return responsibleCharacters != null ? responsibleCharacters.FirstOrDefault() : null; } }
         public List<Character> responsibleCharacters { get; protected set; }
         //public Dictionary<ITraitable, string> expiryTickets { get; private set; } //this is the key for the scheduled removal of this trait for each object
-        public ActualGoapNode gainedFromDoing { get; private set; } //what action was this poi involved in that gave it this trait.
+        public ActualGoapNode gainedFromDoing { get; protected set; } //what action was this poi involved in that gave it this trait.
         public GameDate dateEstablished { get; protected set; }
         //public virtual bool isRemovedOnSwitchAlterEgo { get { return false; } }
         public string moodModificationDescription => name;
@@ -63,6 +61,9 @@ namespace Traits {
                 if (string.IsNullOrEmpty(thoughtText) == false) {
                     character.AddOverrideThought(thoughtText);
                 }
+                if (elementalType != ELEMENTAL_TYPE.Normal) {
+                    character.combatComponent.SetElementalDamage(elementalType);
+                }
             }
             if (level == 0) {
                 SetLevel(1);
@@ -81,27 +82,23 @@ namespace Traits {
                 if (string.IsNullOrEmpty(thoughtText) == false) {
                     character.RemoveOverrideThought(thoughtText);
                 }
+                if (elementalType != ELEMENTAL_TYPE.Normal) {
+                    bool hasSetElementalTrait = false;
+                    for (int i = 0; i < character.traitContainer.traits.Count; i++) {
+                        Trait currTrait = character.traitContainer.traits[i];
+                        if(currTrait.elementalType != ELEMENTAL_TYPE.Normal) {
+                            character.combatComponent.SetElementalDamage(elementalType);
+                            hasSetElementalTrait = true;
+                            break;
+                        }
+                    }
+                    if (!hasSetElementalTrait) {
+                        character.combatComponent.SetElementalDamage(ELEMENTAL_TYPE.Normal);
+                    }
+                }
             }
         }
-        public virtual void OnRemoveTraitBySchedule(ITraitable removedFrom) {
-        }
-        public virtual void OnStackTrait(ITraitable addedTo) {
-            if (addedTo is Character) {
-                Character character = addedTo as Character;
-                character.moodComponent.AddMoodEffect(Mathf.RoundToInt(moodEffect * stackModifier), this);
-            }
-            SetDateEstablished(GameManager.Instance.Today());
-        }
-        /// <summary>
-        /// Called when a stacking trait is added but the max stacks have been reached.
-        /// </summary>
-        public virtual void OnStackTraitAddedButStackIsAtLimit(ITraitable traitable){ }
-        public virtual void OnUnstackTrait(ITraitable addedTo) {
-            if (addedTo is Character) {
-                Character character = addedTo as Character;
-                character.moodComponent.RemoveMoodEffect(-Mathf.RoundToInt(moodEffect * stackModifier), this);
-            }
-        }
+        public virtual void OnRemoveStatusBySchedule(ITraitable removedFrom) { }
         public virtual string GetToolTipText() { return string.Empty; }
         public virtual bool IsUnique() { return true; }
         /// <summary>
@@ -118,9 +115,6 @@ namespace Traits {
         /// <param name="character">The character that returned to life.</param>
         public virtual void OnReturnToLife(Character character) { }
         public virtual string GetTestingData(ITraitable traitable = null) {
-            if (traitable != null && traitable.traitContainer.stacks.ContainsKey(this.name)) {
-                return $"Stacks: {traitable.traitContainer.stacks[this.name].ToString()}/{stackLimit.ToString()}";
-            }
             return string.Empty;
         }
         public virtual bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) { return false; } //What jobs a character can create based on the target's traits?
@@ -129,10 +123,8 @@ namespace Traits {
         public virtual bool OnCollideWith(IPointOfInterest collidedWith, IPointOfInterest owner) { return false; }
         public virtual void OnEnterGridTile(IPointOfInterest poiWhoEntered, IPointOfInterest owner) { }
         public virtual bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) { return false; } //What jobs a character can create based on the his/her own traits, considering the target?
-        public virtual void OnSeePOIEvenCannotWitness(IPointOfInterest targetPOI, Character character) { }
         protected virtual void OnChangeLevel() { }
         public virtual void OnOwnerInitiallyPlaced(Character owner) { }
-        public virtual bool IsTangible() { return false; } //is this trait tangible? Only used for traits on tiles, so that the tile's tile object will be activated when it has a tangible trait
         public virtual bool PerTickOwnerMovement() { return false; } //returns true or false if it created a job/action, once a job/action is created must not check others anymore to avoid conflicts
         public virtual bool OnStartPerformGoapAction(ActualGoapNode node, ref bool willStillContinueAction) { return false; } //returns true or false if it created a job/action, once a job/action is created must not check others anymore to avoid conflicts
         //Returns the string of the log key that's supposed to be logged
@@ -189,6 +181,9 @@ namespace Traits {
         }
         public virtual void OnTickEnded() { }
         public virtual void OnHourStarted() { }
+        public virtual string GetNameInUI(ITraitable traitable) {
+            return name;
+        }
         #endregion
 
         #region Utilities
@@ -276,14 +271,8 @@ namespace Traits {
             }
             return false;
         }
-        public virtual string GetNameInUI(ITraitable traitable) {
-            Dictionary<string, int> stacks = traitable.traitContainer.stacks;
-            if (isStacking && stacks.ContainsKey(name) && stacks[name] > 1) {
-                int num = stacks[name];
-                if(num > stackLimit) { num = stackLimit; }
-                return $"{name} (x{num})";
-            }
-            return name;
+        public Trait GetBase() {
+            return this;
         }
         #endregion
 

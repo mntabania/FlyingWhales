@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Traits {
-    public class Resting : Trait {
+    public class Resting : Status {
         public override bool isNotSavable {
             get { return true; }
         }

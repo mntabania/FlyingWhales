@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Traits {
-    public class Angry : Trait {
+    public class Angry : Status {
         public Angry() {
             name = "Angry";
             description = "This character will often argue with others and may destroy objects.";

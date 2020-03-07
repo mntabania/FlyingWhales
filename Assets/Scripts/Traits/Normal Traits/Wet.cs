@@ -4,7 +4,7 @@ using Inner_Maps;
 using UnityEngine;
 
 namespace Traits {
-    public class Wet : Trait {
+    public class Wet : Status {
 
         private StatusIcon _statusIcon;
         
@@ -24,18 +24,18 @@ namespace Traits {
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
             addedTo.traitContainer.RemoveTrait(addedTo, "Burning");
-            addedTo.traitContainer.RemoveTraitAndStacks(addedTo, "Overheating");
+            addedTo.traitContainer.RemoveStatusAndStacks(addedTo, "Overheating");
             if (addedTo is Character character) {
                 character.needsComponent.AdjustComfortDecreaseRate(2f);
             }
             UpdateVisualsOnAdd(addedTo);
         }
-        public override void OnStackTrait(ITraitable addedTo) {
-            base.OnStackTrait(addedTo);
+        public override void OnStackStatus(ITraitable addedTo) {
+            base.OnStackStatus(addedTo);
             UpdateVisualsOnAdd(addedTo);
         }
-        public override void OnStackTraitAddedButStackIsAtLimit(ITraitable addedTo) {
-            base.OnStackTraitAddedButStackIsAtLimit(addedTo);
+        public override void OnStackStatusAddedButStackIsAtLimit(ITraitable addedTo) {
+            base.OnStackStatusAddedButStackIsAtLimit(addedTo);
             UpdateVisualsOnAdd(addedTo);
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {

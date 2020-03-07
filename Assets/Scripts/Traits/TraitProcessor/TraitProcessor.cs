@@ -6,8 +6,8 @@ namespace Traits {
     public abstract class TraitProcessor {
         public abstract void OnTraitAdded(ITraitable traitable, Trait trait, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration);
         public abstract void OnTraitRemoved(ITraitable traitable, Trait trait, Character removedBy = null);
-        public abstract void OnTraitStacked(ITraitable traitable, Trait trait, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration);
-        public abstract void OnTraitUnstack(ITraitable traitable, Trait trait, Character removedBy = null);
+        public abstract void OnStatusStacked(ITraitable traitable, Status status, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration);
+        public abstract void OnStatusUnstack(ITraitable traitable, Status status, Character removedBy = null);
 
         protected void DefaultProcessOnAddTrait(ITraitable traitable, Trait trait, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration) {
             trait.SetGainedFromDoing(gainedFromDoing);
@@ -52,33 +52,33 @@ namespace Traits {
             }
             Messenger.Broadcast(Signals.TRAITABLE_LOST_TRAIT, traitable, trait, removedBy);
         }
-        protected bool DefaultProcessOnStackTrait(ITraitable traitable, Trait trait, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration) {
+        protected bool DefaultProcessOnStackStatus(ITraitable traitable, Status status, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration) {
             int duration = overrideDuration;
-            if(duration == -1) { duration = trait.ticksDuration; }
+            if(duration == -1) { duration = status.ticksDuration; }
             if (duration > 0) {
                 //traitable.traitContainer.currentDurations[trait] = 0;
                 GameDate removeDate = GameManager.Instance.Today();
                 removeDate.AddTicks(duration);
-                string ticket = SchedulingManager.Instance.AddEntry(removeDate, () => traitable.traitContainer.RemoveTraitOnSchedule(traitable, trait), this);
-                traitable.traitContainer.AddScheduleTicket(trait.name, ticket);
+                string ticket = SchedulingManager.Instance.AddEntry(removeDate, () => traitable.traitContainer.RemoveTraitOnSchedule(traitable, status), this);
+                traitable.traitContainer.AddScheduleTicket(status.name, ticket);
                 //trait.SetExpiryTicket(traitable, ticket);
             }
-            if(traitable.traitContainer.stacks[trait.name] <= trait.stackLimit) {
-                trait.SetGainedFromDoing(gainedFromDoing);
-                trait.AddCharacterResponsibleForTrait(characterResponsible);
-                trait.AddCharacterResponsibleForTrait(characterResponsible);
-                trait.OnStackTrait(traitable);
+            if(traitable.traitContainer.stacks[status.name] <= status.stackLimit) {
+                status.SetGainedFromDoing(gainedFromDoing);
+                status.AddCharacterResponsibleForTrait(characterResponsible);
+                status.AddCharacterResponsibleForTrait(characterResponsible);
+                status.OnStackStatus(traitable);
                 return true;
             } else {
-                trait.OnStackTraitAddedButStackIsAtLimit(traitable);
+                status.OnStackStatusAddedButStackIsAtLimit(traitable);
             }
             return false;
         }
-        protected void DefaultProcessOnUnstackTrait(ITraitable traitable, Trait trait, Character removedBy) {
+        protected void DefaultProcessOnUnstackStatus(ITraitable traitable, Status status, Character removedBy) {
             //trait.RemoveExpiryTicket(traitable);
             // traitable.traitContainer.RemoveScheduleTicket(trait.name, bySchedule);
-            if (traitable.traitContainer.stacks[trait.name] < trait.stackLimit) {
-                trait.OnUnstackTrait(traitable);
+            if (traitable.traitContainer.stacks[status.name] < status.stackLimit) {
+                status.OnUnstackStatus(traitable);
             }
         }
         private void ApplyPOITraitInteractions(ITraitable traitable, Trait trait) {

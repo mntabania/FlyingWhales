@@ -46,8 +46,8 @@ public class MimicTileObject : TileObject {
                            $"{gridTileLocation.localPlace.ToString()} is not linked to a hextile, so its territory was " +
                            $"set to a random hextile inside the region {summon.territorries[0]}.");  
         }
-        for (int i = 0; i < traitContainer.allTraits.Count; i++) {
-            Trait trait = traitContainer.allTraits[i];
+        for (int i = 0; i < traitContainer.allTraitsAndStatuses.Count; i++) {
+            Trait trait = traitContainer.allTraitsAndStatuses[i];
             summon.traitContainer.AddTrait(summon, trait.name);
         }
         gridTileLocation.structure.RemovePOI(this);

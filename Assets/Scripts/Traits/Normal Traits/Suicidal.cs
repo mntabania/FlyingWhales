@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Traits {
-	public class Suicidal : Trait {
+	public class Suicidal : Status {
 
 		private Character _owner;
 		

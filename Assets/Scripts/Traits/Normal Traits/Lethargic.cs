@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Traits {
-    public class Lethargic : Trait {
+    public class Lethargic : Status {
         public Lethargic() {
             name = "Lethargic";
             description = "This character is feeling sluggish and apathetic.";

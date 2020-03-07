@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Traits {
-    public class Drunk : Trait {
+    public class Drunk : Status {
 
         public Drunk() {
             name = "Drunk";

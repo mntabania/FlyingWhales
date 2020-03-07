@@ -6331,7 +6331,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 114933447515422220}
-        m_MethodName: OnHoverTrait
+        m_MethodName: OnHoverStatus
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

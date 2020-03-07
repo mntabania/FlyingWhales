@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using Random = UnityEngine.Random;
 namespace Traits {
-	public class Hiding : Trait {
+	public class Hiding : Status {
 
 		private Character _owner;
 		

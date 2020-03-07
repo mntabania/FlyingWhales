@@ -340,8 +340,8 @@ public class GoapAction : IReactable {
         List<GoapEffect> effects = new List<GoapEffect>(baseExpectedEffects);
         //TODO: Might be a more optimized way to do this
         //modify expected effects depending on actor's traits
-        for (int i = 0; i < actor.traitContainer.allTraits.Count; i++) {
-            Trait currTrait = actor.traitContainer.allTraits[i];
+        for (int i = 0; i < actor.traitContainer.traits.Count; i++) {
+            Trait currTrait = actor.traitContainer.traits[i];
             currTrait.ExecuteExpectedEffectModification(goapType, actor, target, otherData, ref effects);
         }
         return effects;

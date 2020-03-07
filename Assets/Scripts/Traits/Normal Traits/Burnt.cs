@@ -4,7 +4,7 @@ using Inner_Maps;
 using UnityEngine;
 
 namespace Traits {
-    public class Burnt : Trait {
+    public class Burnt : Status {
 
         private Color burntColor {
             get {

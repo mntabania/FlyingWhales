@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Traits {
-    public class Cursed : Trait {
+    public class Cursed : Status {
         public ITraitable sourcePOI { get; private set; }
         public List<CursedInteraction> cursedInteractions { get; private set; }
 

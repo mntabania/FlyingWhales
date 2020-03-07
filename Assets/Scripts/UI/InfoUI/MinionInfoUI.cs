@@ -187,34 +187,32 @@ public class MinionInfoUI : InfoUIBase {
         string statusTraits = string.Empty;
         string normalTraits = string.Empty;
 
-        for (int i = 0; i < _activeMinion.character.traitContainer.allTraits.Count; i++) {
-            Trait currTrait = _activeMinion.character.traitContainer.allTraits[i];
+        for (int i = 0; i < _activeMinion.character.traitContainer.statuses.Count; i++) {
+            Trait currTrait = _activeMinion.character.traitContainer.statuses[i];
             if (currTrait.isHidden) {
                 continue; //skip
             }
-            if (currTrait.type == TRAIT_TYPE.STATUS) {
-                string color = UIManager.normalTextColor;
-                if (currTrait.type == TRAIT_TYPE.BUFF) {
-                    color = UIManager.buffTextColor;
-                } else if (currTrait.type == TRAIT_TYPE.FLAW) {
-                    color = UIManager.flawTextColor;
-                }
-                if (!string.IsNullOrEmpty(statusTraits)) {
-                    statusTraits = $"{statusTraits}, ";
-                }
-                statusTraits = $"{statusTraits}<b><color={color}><link=\"{i}\">{currTrait.GetNameInUI(activeMinion.character)}</link></color></b>";
-            } else {
-                string color = UIManager.normalTextColor;
-                if (currTrait.type == TRAIT_TYPE.BUFF) {
-                    color = UIManager.buffTextColor;
-                } else if (currTrait.type == TRAIT_TYPE.FLAW) {
-                    color = UIManager.flawTextColor;
-                }
-                if (!string.IsNullOrEmpty(normalTraits)) {
-                    normalTraits = $"{normalTraits}, ";
-                }
-                normalTraits = $"{normalTraits}<b><color={color}><link=\"{i}\">{currTrait.GetNameInUI(activeMinion.character)}</link></color></b>";
+            string color = UIManager.normalTextColor;
+            if (!string.IsNullOrEmpty(normalTraits)) {
+                normalTraits = $"{normalTraits}, ";
             }
+            normalTraits = $"{normalTraits}<b><color={color}><link=\"{i}\">{currTrait.GetNameInUI(activeMinion.character)}</link></color></b>";
+        }
+        for (int i = 0; i < _activeMinion.character.traitContainer.traits.Count; i++) {
+            Trait currTrait = _activeMinion.character.traitContainer.traits[i];
+            if (currTrait.isHidden) {
+                continue; //skip
+            }
+            string color = UIManager.normalTextColor;
+            if (currTrait.type == TRAIT_TYPE.BUFF) {
+                color = UIManager.buffTextColor;
+            } else if (currTrait.type == TRAIT_TYPE.FLAW) {
+                color = UIManager.flawTextColor;
+            }
+            if (!string.IsNullOrEmpty(statusTraits)) {
+                statusTraits = $"{statusTraits}, ";
+            }
+            statusTraits = $"{statusTraits}<b><color={color}><link=\"{i}\">{currTrait.GetNameInUI(activeMinion.character)}</link></color></b>";
         }
 
         statusTraitsLbl.text = string.Empty;
@@ -232,10 +230,17 @@ public class MinionInfoUI : InfoUIBase {
         if (obj is string) {
             string text = (string) obj;
             int index = int.Parse(text);
-            Trait trait = activeMinion.character.traitContainer.allTraits[index];
+            Trait trait = activeMinion.character.traitContainer.traits[index];
             UIManager.Instance.ShowSmallInfo(trait.description);
         }
-
+    }
+    public void OnHoverStatus(object obj) {
+        if (obj is string) {
+            string text = (string) obj;
+            int index = int.Parse(text);
+            Trait trait = activeMinion.character.traitContainer.statuses[index];
+            UIManager.Instance.ShowSmallInfo(trait.description);
+        }
     }
     public void OnHoverOutTrait() {
         UIManager.Instance.HideSmallInfo();

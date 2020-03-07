@@ -84,8 +84,8 @@ public class FirstAidCharacter : GoapAction {
     public void AfterFirstAidSuccess(ActualGoapNode goapNode) {
         Character targetCharacter = goapNode.poiTarget as Character;
         targetCharacter.relationshipContainer.AdjustOpinion(targetCharacter, goapNode.actor, "Base", 3);
-        goapNode.poiTarget.traitContainer.RemoveTraitAndStacks(goapNode.poiTarget, "Injured", goapNode.actor);
-        goapNode.poiTarget.traitContainer.RemoveTraitAndStacks(goapNode.poiTarget, "Unconscious", goapNode.actor);
+        goapNode.poiTarget.traitContainer.RemoveStatusAndStacks(goapNode.poiTarget, "Injured", goapNode.actor);
+        goapNode.poiTarget.traitContainer.RemoveStatusAndStacks(goapNode.poiTarget, "Unconscious", goapNode.actor);
         TileObject potion = goapNode.actor.GetItem(TILE_OBJECT_TYPE.HEALING_POTION);
         if (potion != null) {
             goapNode.actor.UnobtainItem(potion);

@@ -438,8 +438,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         marker.InitialPlaceMarkerAt(tile, false); //since normal characters are already placed in their areas.
         //AddInitialAwareness();
         SubscribeToSignals();
-        for (int i = 0; i < traitContainer.allTraits.Count; i++) {
-            traitContainer.allTraits[i].OnOwnerInitiallyPlaced(this);
+        for (int i = 0; i < traitContainer.allTraitsAndStatuses.Count; i++) {
+            traitContainer.allTraitsAndStatuses[i].OnOwnerInitiallyPlaced(this);
         }
     }
     public void LoadInitialCharacterPlacement(LocationGridTile tile) {
@@ -452,8 +452,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         marker.InitialPlaceMarkerAt(tile, false); //since normal characters are already placed in their areas.
         //AddInitialAwareness();
         SubscribeToSignals();
-        for (int i = 0; i < traitContainer.allTraits.Count; i++) {
-            traitContainer.allTraits[i].OnOwnerInitiallyPlaced(this);
+        for (int i = 0; i < traitContainer.allTraitsAndStatuses.Count; i++) {
+            traitContainer.allTraitsAndStatuses[i].OnOwnerInitiallyPlaced(this);
         }
     }
 
@@ -567,7 +567,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //marker.ClearPOIsInVisionRange();
 
             UnsubscribeSignals();
-            traitContainer.RemoveAllNonPersistentTraits(this);
+            traitContainer.RemoveAllNonPersistentTraitAndStatuses(this);
             //ClearAllAwareness();
             CancelAllJobs();
             SchedulingManager.Instance.ClearAllSchedulesBy(this);
@@ -648,8 +648,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     public void PerTickDuringMovement() {
-        for (int i = 0; i < traitContainer.allTraits.Count; i++) {
-            Trait trait = traitContainer.allTraits[i];
+        for (int i = 0; i < traitContainer.allTraitsAndStatuses.Count; i++) {
+            Trait trait = traitContainer.allTraitsAndStatuses[i];
             if (trait.PerTickOwnerMovement()) {
                 break;
             }
@@ -707,8 +707,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 SetGrave(null);
             }
             traitContainer.RemoveTrait(this, "Dead");
-            for (int i = 0; i < traitContainer.allTraits.Count; i++) {
-                traitContainer.allTraits[i].OnReturnToLife(this);
+            for (int i = 0; i < traitContainer.traits.Count; i++) {
+                traitContainer.traits[i].OnReturnToLife(this);
             }
             //RemoveAllNonPersistentTraits();
             //ClearAllAwareness();
@@ -738,8 +738,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             Region deathLocation = currentRegion;
             LocationStructure deathStructure = currentStructure;
             LocationGridTile deathTile = gridTileLocation;
-            for (int i = 0; i < traitContainer.allTraits.Count; i++) {
-                if (traitContainer.allTraits[i].OnDeath(this)) {
+            for (int i = 0; i < traitContainer.allTraitsAndStatuses.Count; i++) {
+                if (traitContainer.allTraitsAndStatuses[i].OnDeath(this)) {
                     i--;
                 }
             }
@@ -1149,73 +1149,73 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //    }
         //}
     }
-    private bool CreateJobsOnEnterVisionWithCharacter(Character targetCharacter) {
-        string log = $"{name} saw {targetCharacter.name}, will try to create jobs on enter vision...";
-        if (!CanCharacterReact(targetCharacter)) {
-            log += "\nCharacter cannot react!";
-            logComponent.PrintLogIfActive(log);
-            return true;
-        }
-        bool hasCreatedJob = false;
-        log += "\nChecking source character traits...";
-        for (int i = 0; i < traitContainer.allTraits.Count; i++) {
-            log += $"\n- {traitContainer.allTraits[i].name}";
-            if (traitContainer.allTraits[i].OnSeePOI(targetCharacter, this)) {
-                log += ": created a job!";
-                hasCreatedJob = true;
-            } else {
-                log += ": did not create a job!";
-            }
-        }
+    //private bool CreateJobsOnEnterVisionWithCharacter(Character targetCharacter) {
+    //    string log = $"{name} saw {targetCharacter.name}, will try to create jobs on enter vision...";
+    //    if (!CanCharacterReact(targetCharacter)) {
+    //        log += "\nCharacter cannot react!";
+    //        logComponent.PrintLogIfActive(log);
+    //        return true;
+    //    }
+    //    bool hasCreatedJob = false;
+    //    log += "\nChecking source character traits...";
+    //    for (int i = 0; i < traitContainer.allTraitsAndStatuses.Count; i++) {
+    //        log += $"\n- {traitContainer.allTraitsAndStatuses[i].name}";
+    //        if (traitContainer.allTraitsAndStatuses[i].OnSeePOI(targetCharacter, this)) {
+    //            log += ": created a job!";
+    //            hasCreatedJob = true;
+    //        } else {
+    //            log += ": did not create a job!";
+    //        }
+    //    }
 
-        log += "\nChecking target character traits...";
-        for (int i = 0; i < targetCharacter.traitContainer.allTraits.Count; i++) {
-            log += $"\n- {targetCharacter.traitContainer.allTraits[i].name}";
-            if (targetCharacter.traitContainer.allTraits[i].CreateJobsOnEnterVisionBasedOnTrait(targetCharacter, this)) {
-                hasCreatedJob = true;
-                log += ": created a job!";
-            } else {
-                log += ": did not create a job!";
-            }
-        }
-        logComponent.PrintLogIfActive(log);
-        return hasCreatedJob;
-    }
-    public bool CreateJobsOnEnterVisionWith(IPointOfInterest targetPOI) {
-        if (targetPOI is Character) {
-            return CreateJobsOnEnterVisionWithCharacter(targetPOI as Character);
-        }
-        string log = $"{name} saw {targetPOI.name}, will try to create jobs on enter vision...";
-        if (!CanCharacterReact(targetPOI)) {
-            log += "\nCharacter cannot react!";
-            logComponent.PrintLogIfActive(log);
-            return true;
-        }
-        bool hasCreatedJob = false;
-        log += "\nChecking source character traits...";
-        for (int i = 0; i < traitContainer.allTraits.Count; i++) {
-            log += $"\n- {traitContainer.allTraits[i].name}";
-            if (traitContainer.allTraits[i].OnSeePOI(targetPOI, this)) {
-                log += ": created a job!";
-                hasCreatedJob = true;
-            } else {
-                log += ": did not create a job!";
-            }
-        }
-        log += "\nChecking target poi traits...";
-        for (int i = 0; i < targetPOI.traitContainer.allTraits.Count; i++) {
-            log += $"\n- {targetPOI.traitContainer.allTraits[i].name}";
-            if (targetPOI.traitContainer.allTraits[i].CreateJobsOnEnterVisionBasedOnTrait(targetPOI, this)) {
-                log += ": created a job!";
-                hasCreatedJob = true;
-            } else {
-                log += ": did not create a job!";
-            }
-        }
+    //    log += "\nChecking target character traits...";
+    //    for (int i = 0; i < targetCharacter.traitContainer.allTraitsAndStatuses.Count; i++) {
+    //        log += $"\n- {targetCharacter.traitContainer.allTraitsAndStatuses[i].name}";
+    //        if (targetCharacter.traitContainer.allTraitsAndStatuses[i].CreateJobsOnEnterVisionBasedOnTrait(targetCharacter, this)) {
+    //            hasCreatedJob = true;
+    //            log += ": created a job!";
+    //        } else {
+    //            log += ": did not create a job!";
+    //        }
+    //    }
+    //    logComponent.PrintLogIfActive(log);
+    //    return hasCreatedJob;
+    //}
+    //public bool CreateJobsOnEnterVisionWith(IPointOfInterest targetPOI) {
+    //    if (targetPOI is Character) {
+    //        return CreateJobsOnEnterVisionWithCharacter(targetPOI as Character);
+    //    }
+    //    string log = $"{name} saw {targetPOI.name}, will try to create jobs on enter vision...";
+    //    if (!CanCharacterReact(targetPOI)) {
+    //        log += "\nCharacter cannot react!";
+    //        logComponent.PrintLogIfActive(log);
+    //        return true;
+    //    }
+    //    bool hasCreatedJob = false;
+    //    log += "\nChecking source character traits...";
+    //    for (int i = 0; i < traitContainer.allTraitsAndStatuses.Count; i++) {
+    //        log += $"\n- {traitContainer.allTraitsAndStatuses[i].name}";
+    //        if (traitContainer.allTraitsAndStatuses[i].OnSeePOI(targetPOI, this)) {
+    //            log += ": created a job!";
+    //            hasCreatedJob = true;
+    //        } else {
+    //            log += ": did not create a job!";
+    //        }
+    //    }
+    //    log += "\nChecking target poi traits...";
+    //    for (int i = 0; i < targetPOI.traitContainer.allTraitsAndStatuses.Count; i++) {
+    //        log += $"\n- {targetPOI.traitContainer.allTraitsAndStatuses[i].name}";
+    //        if (targetPOI.traitContainer.allTraitsAndStatuses[i].CreateJobsOnEnterVisionBasedOnTrait(targetPOI, this)) {
+    //            log += ": created a job!";
+    //            hasCreatedJob = true;
+    //        } else {
+    //            log += ": did not create a job!";
+    //        }
+    //    }
 
-        logComponent.PrintLogIfActive(log);
-        return hasCreatedJob;
-    }
+    //    logComponent.PrintLogIfActive(log);
+    //    return hasCreatedJob;
+    //}
     public bool CreateJobsOnTargetGainTrait(IPointOfInterest targetPOI, Trait traitGained) {
         string log = $"{targetPOI.name} gained trait {traitGained.name}, will try to create jobs based on it...";
         if (!CanCharacterReact(targetPOI)) {
@@ -2124,8 +2124,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //    return;
         //}
 
-        for (int i = 0; i < traitContainer.allTraits.Count; i++) {
-            traitContainer.allTraits[i].OnSeePOIEvenCannotWitness(target, this);
+        for (int i = 0; i < traitContainer.statuses.Count; i++) {
+            traitContainer.statuses[i].OnSeePOIEvenCannotWitness(target, this);
         }
         // for (int i = 0; i < target.traitContainer.onOthersSeeEvenCannotWitnessTraits.Count; i++) {
         //     target.traitContainer.onOthersSeeEvenCannotWitnessTraits[i].OnOthersSeeThisEvenCannotWitness(this, target);
@@ -2851,6 +2851,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     //Adjust current HP based on specified paramater, but HP must not go below 0
     public virtual void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false, object source = null) {
+        CombatManager.Instance.DamageModifierByElements(ref amount, elementalDamageType, this);
         int previous = _currentHP;
         _currentHP += amount;
         _currentHP = Mathf.Clamp(_currentHP, 0, maxHP);
@@ -4858,8 +4859,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //}
     public void OnStartPerformGoapAction(ActualGoapNode node, ref bool willStillContinueAction) {
         bool stillContinueCurrentAction = true;
-        for (int i = 0; i < traitContainer.allTraits.Count; i++) {
-            Trait trait = traitContainer.allTraits[i];
+        for (int i = 0; i < traitContainer.traits.Count; i++) {
+            Trait trait = traitContainer.traits[i];
             if (trait.OnStartPerformGoapAction(node, ref stillContinueCurrentAction)) {
                 willStillContinueAction = stillContinueCurrentAction;
                 break;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Traits {
-    public class Restrained : Trait {
+    public class Restrained : Status {
         private Character owner;
         //private bool _createdFeedJob;
 

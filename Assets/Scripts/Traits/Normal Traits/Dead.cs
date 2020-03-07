@@ -4,7 +4,7 @@ using Inner_Maps.Location_Structures;
 using UnityEngine;
 
 namespace Traits {
-    public class Dead : Trait {
+    public class Dead : Status {
         public List<Character> charactersThatSawThisDead { get; private set; }
         public Dead() {
             name = "Dead";

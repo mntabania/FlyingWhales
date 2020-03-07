@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Traits {
-    public class Withdrawal : Trait {
+    public class Withdrawal : Status {
         public Withdrawal() {
             name = "Withdrawal";
             description = "This character is in withdrawal.";

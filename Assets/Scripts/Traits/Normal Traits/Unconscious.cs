@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Traits {
-    public class Unconscious : Trait {
+    public class Unconscious : Status {
         private Character _sourceCharacter;
         //public override bool isRemovedOnSwitchAlterEgo {
         //    get { return true; }

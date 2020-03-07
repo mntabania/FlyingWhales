@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Traits {
-    public class Edible : Trait {
+    public class Edible : Status {
 
         private IPointOfInterest owner;
         //private int fullnessProvided;

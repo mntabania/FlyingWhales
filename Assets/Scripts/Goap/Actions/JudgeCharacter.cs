@@ -246,7 +246,7 @@ public class JudgeCharacter : GoapAction {
         //if (goapNode.poiTarget.factionOwner == FactionManager.Instance.neutralFaction || goapNode.poiTarget.factionOwner != goapNode.actor.faction) {
         //    ForceTargetReturnHome(goapNode);
         //}
-        goapNode.poiTarget.traitContainer.RemoveAllTraitsByName(goapNode.poiTarget, "Criminal");
+        goapNode.poiTarget.traitContainer.RemoveAllTraitsAndStatusesByName(goapNode.poiTarget, "Criminal");
         if (!targetCharacter.isAtHomeRegion) {
             ForceTargetReturnHome(goapNode);
         }
@@ -276,7 +276,7 @@ public class JudgeCharacter : GoapAction {
         ForceTargetReturnHome(goapNode);
 
         //**Effect 4**: Remove any Criminal type trait from him.
-        goapNode.poiTarget.traitContainer.RemoveAllTraitsByName(goapNode.poiTarget, "Criminal");
+        goapNode.poiTarget.traitContainer.RemoveAllTraitsAndStatusesByName(goapNode.poiTarget, "Criminal");
 
         //**Effect 1**: Remove target's Restrained trait
         goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Restrained", goapNode.actor);
@@ -285,7 +285,7 @@ public class JudgeCharacter : GoapAction {
         goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, "Injured");
         goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, "Lethargic");
         //**Effect 4**: Remove any Criminal type trait from him.
-        goapNode.poiTarget.traitContainer.RemoveAllTraitsByName(goapNode.poiTarget, "Criminal");
+        goapNode.poiTarget.traitContainer.RemoveAllTraitsAndStatusesByName(goapNode.poiTarget, "Criminal");
         //**Effect 1**: Remove target's Restrained trait
         goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Restrained", goapNode.actor);
     }

@@ -306,7 +306,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             DestroyTileSlots();
         }
         if (removeTraits) {
-            traitContainer.RemoveAllTraits(this);
+            traitContainer.RemoveAllTraitsAndStatuses(this);
         }
     }
     public virtual bool CanBeReplaced() {
@@ -408,6 +408,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         if (currentHP == 0 && amount < 0) {
             return; //hp is already at minimum, do not allow any more negative adjustments
         }
+        CombatManager.Instance.DamageModifierByElements(ref amount, elementalDamageType, this);
         currentHP += amount;
         currentHP = Mathf.Clamp(currentHP, 0, maxHP);
         if (amount <= 0) {
@@ -659,7 +660,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
 
     #region Utilities
     public void DoCleanup() {
-        traitContainer.RemoveAllTraits(this);
+        traitContainer.RemoveAllTraitsAndStatuses(this);
     }
     public void UpdateOwners() {
         if (gridTileLocation.structure is Dwelling) {
@@ -1006,10 +1007,10 @@ public class SaveDataTileObject {
         }
 
         traits = new List<SaveDataTrait>();
-        for (int i = 0; i < tileObject.traitContainer.allTraits.Count; i++) {
-            SaveDataTrait saveDataTrait = SaveManager.ConvertTraitToSaveDataTrait(tileObject.traitContainer.allTraits[i]);
+        for (int i = 0; i < tileObject.traitContainer.allTraitsAndStatuses.Count; i++) {
+            SaveDataTrait saveDataTrait = SaveManager.ConvertTraitToSaveDataTrait(tileObject.traitContainer.allTraitsAndStatuses[i]);
             if (saveDataTrait != null) {
-                saveDataTrait.Save(tileObject.traitContainer.allTraits[i]);
+                saveDataTrait.Save(tileObject.traitContainer.allTraitsAndStatuses[i]);
                 traits.Add(saveDataTrait);
             }
         }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Traits {
-    public class Dazed : Trait {
+    public class Dazed : Status {
 
         // private List<CharacterBehaviourComponent> _behaviourComponentsBeforeDazed;
         

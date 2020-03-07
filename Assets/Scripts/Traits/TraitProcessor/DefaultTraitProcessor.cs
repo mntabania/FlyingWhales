@@ -10,11 +10,11 @@ namespace Traits {
         public override void OnTraitRemoved(ITraitable traitable, Trait trait, Character removedBy) {
             DefaultProcessOnRemoveTrait(traitable, trait, removedBy);
         }
-        public override void OnTraitStacked(ITraitable traitable, Trait trait, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration) {
-            DefaultProcessOnStackTrait(traitable, trait, characterResponsible, gainedFromDoing, overrideDuration);
+        public override void OnStatusStacked(ITraitable traitable, Status status, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration) {
+            DefaultProcessOnStackStatus(traitable, status, characterResponsible, gainedFromDoing, overrideDuration);
         }
-        public override void OnTraitUnstack(ITraitable traitable, Trait trait, Character removedBy = null) {
-            DefaultProcessOnUnstackTrait(traitable, trait, removedBy);
+        public override void OnStatusUnstack(ITraitable traitable, Status status, Character removedBy = null) {
+            DefaultProcessOnUnstackStatus(traitable, status, removedBy);
         }
     }
 

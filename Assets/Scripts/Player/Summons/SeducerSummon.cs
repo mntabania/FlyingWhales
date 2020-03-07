@@ -118,7 +118,7 @@ public class SeducerSummon : Summon {
         //ownParty.SetSpecificLocation(PlayerManager.Instance.player.playerSettlement);
         //ClearAllAwareness();
         CancelAllJobs();
-        traitContainer.RemoveAllNonPersistentTraits(this);
+        traitContainer.RemoveAllNonPersistentTraitAndStatuses(this);
         ResetToFullHP();
         UnsubscribeSignals();
         DestroyMarker(disappearTile);

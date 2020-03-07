@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Traits {
-    public class Freezing : Trait {
+    public class Freezing : Status {
 
         //public ITraitable traitable { get; private set; }
         private GameObject _freezingGO;
@@ -33,15 +33,15 @@ namespace Traits {
                 character.AdjustSpeedModifier(-0.15f);
             }
         }
-        public override void OnStackTrait(ITraitable addedTo) {
-            base.OnStackTrait(addedTo);
+        public override void OnStackStatus(ITraitable addedTo) {
+            base.OnStackStatus(addedTo);
             if (addedTo is Character) {
                 Character character = addedTo as Character;
                 character.AdjustSpeedModifier(-0.15f);
             }
         }
-        public override void OnUnstackTrait(ITraitable addedTo) {
-            base.OnUnstackTrait(addedTo);
+        public override void OnUnstackStatus(ITraitable addedTo) {
+            base.OnUnstackStatus(addedTo);
             if (addedTo is Character) {
                 Character character = addedTo as Character;
                 character.AdjustSpeedModifier(0.15f);

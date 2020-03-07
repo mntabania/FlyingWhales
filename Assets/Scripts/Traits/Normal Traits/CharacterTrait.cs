@@ -18,8 +18,6 @@ namespace Traits {
             name = "Character Trait";
             type = TRAIT_TYPE.NEUTRAL;
             effect = TRAIT_EFFECT.NEUTRAL;
-            
-            
             ticksDuration = 0;
             isHidden = true;
             alreadyInspectedTileObjects = new List<TileObject>();

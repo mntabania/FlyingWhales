@@ -110,7 +110,7 @@ public class CharacterInfoUI : InfoUIBase {
         Messenger.AddListener<MoodComponent>(Signals.MOOD_SUMMARY_MODIFIED, OnMoodModified);
 
         normalTraitsEventLbl.SetOnClickAction(OnClickTrait);
-        statusTraitsEventLbl.SetOnClickAction(OnClickTrait);
+        //statusTraitsEventLbl.SetOnClickAction(OnClickTrait);
         relationshipNamesEventLbl.SetOnClickAction(OnClickCharacter);
         
         factionEventLbl.SetOnClickAction(OnClickFaction);
@@ -321,34 +321,32 @@ public class CharacterInfoUI : InfoUIBase {
         string statusTraits = string.Empty;
         string normalTraits = string.Empty;
 
-        for (int i = 0; i < _activeCharacter.traitContainer.allTraits.Count; i++) {
-            Trait currTrait = _activeCharacter.traitContainer.allTraits[i];
+        for (int i = 0; i < _activeCharacter.traitContainer.statuses.Count; i++) {
+            Status currStatus = _activeCharacter.traitContainer.statuses[i];
+            if (currStatus.isHidden) {
+                continue; //skip
+            }
+            string color = UIManager.normalTextColor;
+            if (!string.IsNullOrEmpty(statusTraits)) {
+                statusTraits = $"{statusTraits}, ";
+            }
+            statusTraits = $"{statusTraits}<b><color={color}><link=\"{i}\">{currStatus.GetNameInUI(activeCharacter)}</link></color></b>";
+        }
+        for (int i = 0; i < _activeCharacter.traitContainer.traits.Count; i++) {
+            Trait currTrait = _activeCharacter.traitContainer.traits[i];
             if (currTrait.isHidden) {
                 continue; //skip
             }
-            if (currTrait.type == TRAIT_TYPE.STATUS) {
-                string color = UIManager.normalTextColor;
-                if (currTrait.type == TRAIT_TYPE.BUFF) {
-                    color = UIManager.buffTextColor;
-                } else if (currTrait.type == TRAIT_TYPE.FLAW) {
-                    color = UIManager.flawTextColor;
-                }
-                if (!string.IsNullOrEmpty(statusTraits)) {
-                    statusTraits = $"{statusTraits}, ";
-                }
-                statusTraits = $"{statusTraits}<b><color={color}><link=\"{i}\">{currTrait.GetNameInUI(activeCharacter)}</link></color></b>";
-            } else {
-                string color = UIManager.normalTextColor;
-                if (currTrait.type == TRAIT_TYPE.BUFF) {
-                    color = UIManager.buffTextColor;
-                } else if (currTrait.type == TRAIT_TYPE.FLAW) {
-                    color = UIManager.flawTextColor;
-                }
-                if (!string.IsNullOrEmpty(normalTraits)) {
-                    normalTraits = $"{normalTraits}, ";
-                }
-                normalTraits = $"{normalTraits}<b><color={color}><link=\"{i}\">{currTrait.GetNameInUI(activeCharacter)}</link></color></b>";
+            string color = UIManager.normalTextColor;
+            if (currTrait.type == TRAIT_TYPE.BUFF) {
+                color = UIManager.buffTextColor;
+            } else if (currTrait.type == TRAIT_TYPE.FLAW) {
+                color = UIManager.flawTextColor;
             }
+            if (!string.IsNullOrEmpty(normalTraits)) {
+                normalTraits = $"{normalTraits}, ";
+            }
+            normalTraits = $"{normalTraits}<b><color={color}><link=\"{i}\">{currTrait.GetNameInUI(activeCharacter)}</link></color></b>";
         }
 
         statusTraitsLbl.text = string.Empty;
@@ -366,10 +364,17 @@ public class CharacterInfoUI : InfoUIBase {
         if (obj is string) {
             string text = (string) obj;
             int index = int.Parse(text);
-            Trait trait = activeCharacter.traitContainer.allTraits[index];
+            Trait trait = activeCharacter.traitContainer.traits[index];
             UIManager.Instance.ShowSmallInfo(trait.description);
         }
-
+    }
+    public void OnHoverStatus(object obj) {
+        if (obj is string) {
+            string text = (string) obj;
+            int index = int.Parse(text);
+            Trait trait = activeCharacter.traitContainer.statuses[index];
+            UIManager.Instance.ShowSmallInfo(trait.description);
+        }
     }
     public void OnHoverOutTrait() {
         UIManager.Instance.HideSmallInfo();
@@ -378,7 +383,7 @@ public class CharacterInfoUI : InfoUIBase {
         if (obj is string) {
             string text = (string) obj;
             int index = int.Parse(text);
-            Trait trait = activeCharacter.traitContainer.allTraits[index];
+            Trait trait = activeCharacter.traitContainer.traits[index];
             string traitDescription = trait.description;
             if (trait.canBeTriggered) {
                 traitDescription +=

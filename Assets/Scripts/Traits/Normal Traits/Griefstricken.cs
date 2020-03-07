@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Traits {
-    public class Griefstricken : Trait {
+    public class Griefstricken : Status {
         public Character owner { get; private set; }
 
         public Griefstricken() {

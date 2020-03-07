@@ -17,14 +17,22 @@ namespace Traits {
                     }
                 }
             }
-            if (!trait.isStacking) {
-                //Cannot add trait if it is unique and the character already has that type of trait.
+
+            bool checkUniqueness = true;
+            if(trait is Status) {
+                Status status = trait as Status;
+                checkUniqueness = !status.isStacking;
+            }
+
+            //Cannot add trait if it is unique and the character already has that type of trait.
+            if (checkUniqueness) {
                 if (trait.IsUnique()) {
                     if (obj.traitContainer.HasTrait(trait.name)) {
                         return false;
                     }
                 }
             }
+
             //if (trait.isStacking) {
             //    if (traitContainer.stacks.ContainsKey(trait)) {
             //        if (traitContainer.stacks[trait] >= trait.stackLimit) {

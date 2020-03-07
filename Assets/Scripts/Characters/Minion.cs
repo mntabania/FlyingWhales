@@ -115,15 +115,15 @@ public class Minion {
             character.SetCurrentStructureLocation(deathStructure, false);
 
             // character.role?.OnDeath(character);
-            character.traitContainer.RemoveAllTraitsByName(character, "Criminal"); //remove all criminal type traits
+            character.traitContainer.RemoveAllTraitsAndStatusesByName(character, "Criminal"); //remove all criminal type traits
 
-            for (int i = 0; i < character.traitContainer.allTraits.Count; i++) {
-                if (character.traitContainer.allTraits[i].OnDeath(character)) {
+            for (int i = 0; i < character.traitContainer.allTraitsAndStatuses.Count; i++) {
+                if (character.traitContainer.allTraitsAndStatuses[i].OnDeath(character)) {
                     i--;
                 }
             }
 
-            character.traitContainer.RemoveAllNonPersistentTraits(character);
+            character.traitContainer.RemoveAllNonPersistentTraitAndStatuses(character);
             character.marker?.OnDeath(deathTile);
             
             // Dead dead = new Dead();

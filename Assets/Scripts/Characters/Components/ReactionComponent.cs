@@ -32,9 +32,9 @@ public class ReactionComponent {
             return;
         }
         debugLog += "\n-Character will loop through all his/her traits to react to Target";
-        for (int i = 0; i < owner.traitContainer.allTraits.Count; i++) {
-            debugLog += $"\n - {owner.traitContainer.allTraits[i].name}";
-            if (owner.traitContainer.allTraits[i].OnSeePOI(targetTileObject, owner)) {
+        for (int i = 0; i < owner.traitContainer.allTraitsAndStatuses.Count; i++) {
+            debugLog += $"\n - {owner.traitContainer.allTraitsAndStatuses[i].name}";
+            if (owner.traitContainer.allTraitsAndStatuses[i].OnSeePOI(targetTileObject, owner)) {
                 debugLog += ": triggered";
             } else {
                 debugLog += ": not triggered";

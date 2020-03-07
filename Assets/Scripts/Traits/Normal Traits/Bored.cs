@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Traits {
-	public class Bored : Trait {
+	public class Bored : Status {
 		private Character owner;
 		public Bored() {
 			name = "Bored";

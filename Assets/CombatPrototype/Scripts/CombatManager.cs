@@ -45,6 +45,19 @@ public class CombatManager : MonoBehaviour {
             EarthElementProcess(target);
         }
     }
+    public void DamageModifierByElements(ref int damage, ELEMENTAL_TYPE elementalType, ITraitable target) {
+        if(damage < 0) {
+            if(elementalType == ELEMENTAL_TYPE.Fire) {
+                if (target.traitContainer.HasTrait("Fire Prone")) {
+                    damage *= 2;
+                }
+            } else if (elementalType == ELEMENTAL_TYPE.Electric) {
+                if (target.traitContainer.HasTrait("Electric")) {
+                    damage = 0;
+                }
+            }
+        }
+    }
     public void CreateHitEffectAt(IDamageable poi, ELEMENTAL_TYPE elementalType) {
         ElementalDamageData elementalData = ScriptableObjectsManager.Instance.GetElementalDamageData(elementalType);
         if (poi.gridTileLocation == null) {

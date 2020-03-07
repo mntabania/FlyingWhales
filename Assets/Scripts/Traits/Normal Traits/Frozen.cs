@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Traits {
-    public class Frozen : Trait {
+    public class Frozen : Status {
         private GameObject _frozenEffect;
 
         public Frozen() {

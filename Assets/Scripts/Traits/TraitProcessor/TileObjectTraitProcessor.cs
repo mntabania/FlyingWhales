@@ -16,14 +16,14 @@ namespace Traits {
             obj.OnTileObjectLostTrait(trait);
             Messenger.Broadcast(Signals.TILE_OBJECT_TRAIT_REMOVED, obj, trait);
         }
-        public override void OnTraitStacked(ITraitable traitable, Trait trait, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration) {
-            if(DefaultProcessOnStackTrait(traitable, trait, characterResponsible, gainedFromDoing, overrideDuration)) {
-                Messenger.Broadcast(Signals.TILE_OBJECT_TRAIT_STACKED, traitable as TileObject, trait);
+        public override void OnStatusStacked(ITraitable traitable, Status status, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration) {
+            if(DefaultProcessOnStackStatus(traitable, status, characterResponsible, gainedFromDoing, overrideDuration)) {
+                Messenger.Broadcast(Signals.TILE_OBJECT_TRAIT_STACKED, traitable as TileObject, status.GetBase());
             }
         }
-        public override void OnTraitUnstack(ITraitable traitable, Trait trait, Character removedBy = null) {
-            DefaultProcessOnUnstackTrait(traitable, trait, removedBy);
-            Messenger.Broadcast(Signals.TILE_OBJECT_TRAIT_UNSTACKED, traitable as TileObject, trait); 
+        public override void OnStatusUnstack(ITraitable traitable, Status status, Character removedBy = null) {
+            DefaultProcessOnUnstackStatus(traitable, status, removedBy);
+            Messenger.Broadcast(Signals.TILE_OBJECT_TRAIT_UNSTACKED, traitable as TileObject, status.GetBase()); 
         }
     }
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Traits {
-    public class Plagued : Trait {
+    public class Plagued : Status {
 
         public Character owner { get; private set; } //poi that has the poison
 

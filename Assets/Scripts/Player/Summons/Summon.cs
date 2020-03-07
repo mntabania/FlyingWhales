@@ -143,10 +143,10 @@ public class Summon : Character, IWorldObject {
             //    SetHomeStructure(homeStructure); //keep this data with character to prevent errors
             //}
 
-            traitContainer.RemoveAllTraitsByName(this, "Criminal"); //remove all criminal type traits
+            traitContainer.RemoveAllTraitsAndStatusesByName(this, "Criminal"); //remove all criminal type traits
 
-            for (int i = 0; i < traitContainer.allTraits.Count; i++) {
-                if (traitContainer.allTraits[i].OnDeath(this)) {
+            for (int i = 0; i < traitContainer.allTraitsAndStatuses.Count; i++) {
+                if (traitContainer.allTraitsAndStatuses[i].OnDeath(this)) {
                     i--;
                 }
             }
@@ -251,7 +251,7 @@ public class Summon : Character, IWorldObject {
             CreateOwnParty();
             ownParty.CreateIcon();
         }
-        traitContainer.RemoveAllNonPersistentTraits(this);
+        traitContainer.RemoveAllNonPersistentTraitAndStatuses(this);
         //ClearAllAwareness();
         CancelAllJobs();
         ResetToFullHP();

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Traits {
-    public class Injured : Trait {
+    public class Injured : Status {
         private Character _sourceCharacter;
         //private GoapPlanJob _removeTraitJob;
 

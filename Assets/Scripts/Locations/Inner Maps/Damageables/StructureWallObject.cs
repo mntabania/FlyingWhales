@@ -35,6 +35,7 @@ public class StructureWallObject : MapObject<StructureWallObject>, ITraitable {
         if (currentHP <= 0 && amount < 0) {
             return; //ignore
         }
+        CombatManager.Instance.DamageModifierByElements(ref amount, elementalDamageType, this);
         currentHP += amount;
         currentHP = Mathf.Clamp(currentHP, 0, maxHP);
         if (amount <= 0) {

@@ -9,7 +9,11 @@ namespace Traits {
     public class CharacterTraitProcessor : TraitProcessor {
         public override void OnTraitAdded(ITraitable traitable, Trait trait, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration) {
             Character character = traitable as Character;
+            if(trait is Status) {
+                ApplyStatusEffects(character, trait as Status);
+            }
             ApplyTraitEffects(character, trait);
+            Messenger.Broadcast(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, character as IPointOfInterest);
             //ApplyPOITraitInteractions(character, trait);
             //character.currentAlterEgo.AddTrait(trait);
 
@@ -32,37 +36,40 @@ namespace Traits {
         public override void OnTraitRemoved(ITraitable traitable, Trait trait, Character removedBy) {
             Character character = traitable as Character;
             UnapplyTraitEffects(character, trait);
+            Messenger.Broadcast(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, character as IPointOfInterest);
             //UnapplyPOITraitInteractions(character, trait);
             //character.currentAlterEgo.RemoveTrait(trait);
 
             DefaultProcessOnRemoveTrait(traitable, trait, removedBy);
             Messenger.Broadcast(Signals.CHARACTER_TRAIT_REMOVED, character, trait);
         }
-        public override void OnTraitStacked(ITraitable traitable, Trait trait, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration) {
+        public override void OnStatusStacked(ITraitable traitable, Status status, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration) {
             Character character = traitable as Character;
-            if(DefaultProcessOnStackTrait(traitable, trait, characterResponsible, gainedFromDoing, overrideDuration)) {
-                Messenger.Broadcast(Signals.CHARACTER_TRAIT_STACKED, character, trait);
+            if(DefaultProcessOnStackStatus(traitable, status, characterResponsible, gainedFromDoing, overrideDuration)) {
+                Messenger.Broadcast(Signals.CHARACTER_TRAIT_STACKED, character, status.GetBase());
             }
         }
-        public override void OnTraitUnstack(ITraitable traitable, Trait trait, Character removedBy = null) {
+        public override void OnStatusUnstack(ITraitable traitable, Status status, Character removedBy = null) {
             Character character = traitable as Character;
-            DefaultProcessOnUnstackTrait(traitable, trait, removedBy);
-            Messenger.Broadcast(Signals.CHARACTER_TRAIT_UNSTACKED, character, trait);
+            DefaultProcessOnUnstackStatus(traitable, status, removedBy);
+            Messenger.Broadcast(Signals.CHARACTER_TRAIT_UNSTACKED, character, status.GetBase());
         }
 
-        private void ApplyTraitEffects(Character character, Trait trait) {
-            if (trait.hindersWitness) {
+        private void ApplyStatusEffects(Character character, Status status) {
+            if (status.hindersWitness) {
                 character.DecreaseCanWitness();
             }
-            if (trait.hindersMovement) {
+            if (status.hindersMovement) {
                 character.DecreaseCanMove();
             }
-            if (trait.hindersAttackTarget) {
+            if (status.hindersAttackTarget) {
                 character.DecreaseCanBeAttacked();
             }
-            if (trait.hindersPerform) {
+            if (status.hindersPerform) {
                 character.DecreaseCanPerform();
             }
+        }
+        private void ApplyTraitEffects(Character character, Trait trait) {
             //if (trait.type == TRAIT_TYPE.DISABLER) {
             //    //character.AdjustCanPerform(1);
             //    if (trait.effect == TRAIT_EFFECT.NEGATIVE) {
@@ -168,22 +175,23 @@ namespace Traits {
             //        }
             //    }
             //}
-            Messenger.Broadcast(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, character as IPointOfInterest);
         }
 
-        public void UnapplyTraitEffects(Character character, Trait trait) {
-            if (trait.hindersWitness) {
+        private void UnapplyStatusEffects(Character character, Status status) {
+            if (status.hindersWitness) {
                 character.IncreaseCanWitness();
             }
-            if (trait.hindersMovement) {
+            if (status.hindersMovement) {
                 character.IncreaseCanMove();
             }
-            if (trait.hindersAttackTarget) {
+            if (status.hindersAttackTarget) {
                 character.IncreaseCanBeAttacked();
             }
-            if (trait.hindersPerform) {
+            if (status.hindersPerform) {
                 character.IncreaseCanPerform();
             }
+        }
+        public void UnapplyTraitEffects(Character character, Trait trait) {
             //if (trait.type == TRAIT_TYPE.DISABLER) {
             //    //character.AdjustCanPerform(-1);
             //    if (trait.effect == TRAIT_EFFECT.NEGATIVE) {
@@ -284,9 +292,7 @@ namespace Traits {
             //            }
             //        }
             //    }
-            //}
-            
-            Messenger.Broadcast(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, character as IPointOfInterest);
+            //}            
         }
     }
 }

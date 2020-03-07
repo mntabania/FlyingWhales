@@ -2,8 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using Random = UnityEngine.Random;
+
 namespace Traits {
-    public class Berserked : Trait {
+    public class Berserked : Status {
 
         public override bool isNotSavable {
             get { return true; }

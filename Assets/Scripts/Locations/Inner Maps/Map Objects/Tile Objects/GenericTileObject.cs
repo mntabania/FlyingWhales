@@ -48,16 +48,18 @@ public class GenericTileObject : TileObject {
     }
     public override void OnTileObjectGainedTrait(Trait trait) {
         base.OnTileObjectGainedTrait(trait);
-        if (trait.IsTangible()) {
-            // EnableGameObject();
-            //create map object visual
-            if (ReferenceEquals(mapVisual, null)) {
-                InitializeMapObject(this);
+        if (trait is Status) {
+            if((trait as Status).IsTangible()) {
+                // EnableGameObject();
+                //create map object visual
+                if (ReferenceEquals(mapVisual, null)) {
+                    InitializeMapObject(this);
+                }
+                PlaceMapObjectAt(gridTileLocation);
+                OnPlaceTileObjectAtTile(gridTileLocation);
+
+                SubscribeListeners();
             }
-            PlaceMapObjectAt(gridTileLocation);
-            OnPlaceTileObjectAtTile(gridTileLocation);
-            
-            SubscribeListeners();
         }
     }
     public override void OnTileObjectLostTrait(Trait trait) {
@@ -77,6 +79,7 @@ public class GenericTileObject : TileObject {
         if (currentHP == 0 && amount < 0) {
             return; //hp is already at minimum, do not allow any more negative adjustments
         }
+        CombatManager.Instance.DamageModifierByElements(ref amount, elementalDamageType, this);
         this.currentHP += amount;
         this.currentHP = Mathf.Clamp(this.currentHP, 0, maxHP);
         if (amount <= 0) {
@@ -107,8 +110,8 @@ public class GenericTileObject : TileObject {
     #endregion
 
     private bool HasTangibleTrait() {
-        for (int i = 0; i < traitContainer.allTraits.Count; i++) {
-            Trait currTrait = traitContainer.allTraits[i];
+        for (int i = 0; i < traitContainer.statuses.Count; i++) {
+            Status currTrait = traitContainer.statuses[i];
             if (currTrait.IsTangible()) {
                 return true;
             }
