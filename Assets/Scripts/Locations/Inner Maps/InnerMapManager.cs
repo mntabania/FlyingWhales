@@ -11,6 +11,7 @@ using UnityEngine.Profiling;
 using UnityEngine.Serialization;
 using UtilityScripts;
 namespace Inner_Maps {
+    // [ExecuteInEditMode]
     public class InnerMapManager : MonoBehaviour {
 
         public static InnerMapManager Instance;
@@ -49,9 +50,6 @@ namespace Inner_Maps {
 
         //Settlement Map Objects
         [FormerlySerializedAs("areaMapObjectFactory")] public MapVisualFactory mapObjectFactory;
-
-        //structure templates
-        private string templatePath;
         
         //this specifies what light intensity is to be used while inside the specific range in ticks
         private readonly Dictionary<int, float> lightSettings = new Dictionary<int, float>() {
@@ -72,7 +70,6 @@ namespace Inner_Maps {
         #region Monobehaviours
         private void Awake() {
             Instance = this;
-            templatePath = $"{Application.dataPath}/StreamingAssets/Structure Templates/";
         }
         public void LateUpdate() {
             if (GameManager.showAllTilesTooltip) {

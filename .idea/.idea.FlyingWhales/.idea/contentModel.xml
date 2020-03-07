@@ -1542,6 +1542,7 @@
                   <e p="MimicTileObject.cs" t="Include" />
                   <e p="MovingTileObject.cs" t="Include" />
                   <e p="Mushroom.cs" t="Include" />
+                  <e p="Obelisk.cs" t="Include" />
                   <e p="Ore.cs" t="Include" />
                   <e p="Plant.cs" t="Include" />
                   <e p="PlinthBook.cs" t="Include" />
@@ -1555,6 +1556,7 @@
                   <e p="ResourcePile.cs" t="Include" />
                   <e p="Rock.cs" t="Include" />
                   <e p="Rug.cs" t="Include" />
+                  <e p="Sawhorse.cs" t="Include" />
                   <e p="Shelf.cs" t="Include" />
                   <e p="ShelfArmor.cs" t="Include" />
                   <e p="ShelfBooks.cs" t="Include" />

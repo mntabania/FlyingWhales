@@ -18,7 +18,8 @@ namespace Inner_Maps {
         public enum Tile_Type { Empty, Wall, Structure_Entrance }
         public enum Tile_State { Empty, Occupied }
         public enum Ground_Type { Soil, Grass, Stone, Snow, Tundra, Cobble, Wood, Snow_Dirt, Water, Cave, Corrupted, 
-            Desert_Grass, Sand, Desert_Stone, Bone, Demon_Stone, Flesh
+            Desert_Grass, Sand, Desert_Stone, Bone, Demon_Stone, Flesh, Structure_Stone,
+            Ruined_Stone
         }
         public bool hasDetail { get; set; }
         public InnerTileMap parentMap { get; private set; }
@@ -215,9 +216,13 @@ namespace Inner_Maps {
                 } else if (assetName.Contains("stone") || assetName.Contains("road")) {
                     if (assetName.Contains("demon")) {
                         SetGroundType(Ground_Type.Demon_Stone);   
+                    } else if (assetName.Contains("floor")) {
+                        SetGroundType(Ground_Type.Structure_Stone);
                     } else {
                         SetGroundType(Ground_Type.Stone);    
                     }
+                } else if (assetName.Contains("ruins")) {
+                    SetGroundType(Ground_Type.Ruined_Stone);
                 } else if (assetName.Contains("grass")) {
                     SetGroundType(Ground_Type.Grass);
                 } else if (assetName.Contains("tundra")) {
@@ -311,6 +316,9 @@ namespace Inner_Maps {
                     } else if (groundType == Ground_Type.Sand && currNeighbour.groundType == Ground_Type.Desert_Stone) {
                         createEdge = true;
                     } else if (groundType == Ground_Type.Sand && currNeighbour.groundType == Ground_Type.Stone) {
+                        createEdge = true;
+                    } else if ((groundType != Ground_Type.Ruined_Stone && groundType != Ground_Type.Structure_Stone) 
+                               && currNeighbour.groundType == Ground_Type.Ruined_Stone) {
                         createEdge = true;
                     }
                     // summary += $"\n\tWill create edge? {createEdge.ToString()}. At {keyValuePair.Key.ToString()}";

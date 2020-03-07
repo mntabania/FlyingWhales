@@ -9,6 +9,7 @@ public class MetalPile : ResourcePile {
         Initialize(TILE_OBJECT_TYPE.METAL_PILE);
         //SetResourceInPile(50);
         traitContainer.RemoveTrait(this, "Flammable");
+        SetResourceInPile(100);
     }
     public MetalPile(SaveDataTileObject data) : base(RESOURCE.METAL) {
         Initialize(data);

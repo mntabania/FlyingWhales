@@ -19,8 +19,8 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 
 	private void CreateMonsterLairs() {
 		int createdCount = 0;
-		for (int i = 0; i < 3; i++) {
-			if (Random.Range(0, 100) < 75) {
+		for (int i = 0; i < 3; i++) { //3
+			if (Random.Range(0, 100) < 75) { //75
 				List<HexTile> choices = GridMap.Instance.normalHexTiles
 					.Where(x => x.elevationType == ELEVATION.PLAIN && x.featureComponent.features.Count == 0 && x.landmarkOnTile == null)
 					.ToList();
@@ -41,14 +41,14 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 	private void CreateAbandonedMines() {
 		int createdCount = 0;
 		for (int i = 0; i < 2; i++) {
-			if (Random.Range(0, 100) < 50) {
+			if (Random.Range(0, 100) < 50) { //50
 				List<HexTile> choices = GridMap.Instance.normalHexTiles
 					.Where(x => x.elevationType == ELEVATION.PLAIN && x.featureComponent.features.Count == 0
 					            && x.HasNeighbourWithElevation(ELEVATION.MOUNTAIN) && x.landmarkOnTile == null)
 					.ToList();
 				if (choices.Count > 0) {
 					HexTile chosenTile = CollectionUtilities.GetRandomElement(choices);
-					LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.ABANDONED_MINE, false);
+					LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.MINE, false);
 					Settlement settlement =
 						LandmarkManager.Instance.CreateNewSettlement(chosenTile.region, LOCATION_TYPE.DUNGEON, 0,
 							chosenTile);
@@ -63,13 +63,13 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 	private void CreateTemples() {
 		int createdCount = 0;
 		for (int i = 0; i < 2; i++) {
-			if (Random.Range(0, 100) < 35) {
+			if (Random.Range(0, 100) < 35) { //35
 				List<HexTile> choices = GridMap.Instance.normalHexTiles
 					.Where(x => x.elevationType == ELEVATION.PLAIN && x.featureComponent.features.Count == 0 && x.landmarkOnTile == null)
 					.ToList();
 				if (choices.Count > 0) {
 					HexTile chosenTile = CollectionUtilities.GetRandomElement(choices);
-					LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.TEMPLE, false);
+					LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.ANCIENT_RUIN, false);
 					Settlement settlement =
 						LandmarkManager.Instance.CreateNewSettlement(chosenTile.region, LOCATION_TYPE.DUNGEON, 0,
 							chosenTile);
@@ -84,7 +84,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 	private void CreateMageTowers() {
 		int createdCount = 0;
 		for (int i = 0; i < 2; i++) {
-			if (Random.Range(0, 100) < 35) {
+			if (Random.Range(0, 100) < 35) { //35
 				List<HexTile> choices = GridMap.Instance.normalHexTiles
 					.Where(x => x.elevationType == ELEVATION.PLAIN && x.featureComponent.features.Count == 0 && x.landmarkOnTile == null)
 					.ToList();

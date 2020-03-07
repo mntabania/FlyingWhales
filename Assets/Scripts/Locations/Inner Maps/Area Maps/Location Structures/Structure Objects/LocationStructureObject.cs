@@ -36,6 +36,8 @@ public class LocationStructureObject : PooledObject {
     [Header("Walls")] 
     [Tooltip("This is only relevant if blockWallsTilemap is not null.")]
     [SerializeField] private WALL_TYPE _wallType;
+    [Tooltip("This is only relevant if structure uses thin walls.")]
+    [SerializeField] private RESOURCE _wallResource;
     
     [Header("Helpers")]
     [Tooltip("If this has elements, then only the provided coordinates will be set as part of the actual structure. Otherwise all the tiles inside the ground tilemap will be considered as part of the structure.")]
@@ -55,8 +57,8 @@ public class LocationStructureObject : PooledObject {
 
     #region Monobehaviours
     void Awake() {
-        allTilemaps = this.transform.GetComponentsInChildren<Tilemap>();
-        wallVisuals = this.transform.GetComponentsInChildren<WallVisual>();
+        allTilemaps = transform.GetComponentsInChildren<Tilemap>();
+        wallVisuals = transform.GetComponentsInChildren<WallVisual>();
         // _groundTileMap.CompressBounds();
     }
     #endregion
@@ -231,7 +233,8 @@ public class LocationStructureObject : PooledObject {
             ApplyGroundTileAssetForTile(tile);
             tile.CreateSeamlessEdgesForTile(innerMap);
             tile.parentMap.detailsTilemap.SetTile(tile.localPlace, null);
-
+            
+            //block walls
             if (_blockWallsTilemap != null) {
                 TileBase blockWallAsset = _blockWallsTilemap.GetTile(_blockWallsTilemap.WorldToCell(tile.worldLocation));
                 if (blockWallAsset != null) {
@@ -239,7 +242,6 @@ public class LocationStructureObject : PooledObject {
                         BlockWall blockWall = InnerMapManager.Instance.CreateNewTileObject<BlockWall>(TILE_OBJECT_TYPE.BLOCK_WALL);
                         blockWall.SetWallType(_wallType);
                         structure.AddPOI(blockWall, tile);
-                        // innerMap.structureTilemap.SetTile(tile.localPlace, blockWallAsset);
                     } else {
                       innerMap.structureTilemap.SetTile(tile.localPlace, blockWallAsset);  
                     }    
@@ -283,7 +285,7 @@ public class LocationStructureObject : PooledObject {
             }    
         }
 
-        var localPosition = this.transform.localPosition;
+        var localPosition = transform.localPosition;
         Vector3Int actualLocation = new Vector3Int(Mathf.FloorToInt(localPosition.x), Mathf.FloorToInt(localPosition.y), 0);
         for (int i = 0; i < occupiedCoordinates.Count; i++) {
             Vector3Int currCoordinate = occupiedCoordinates[i];
@@ -330,7 +332,10 @@ public class LocationStructureObject : PooledObject {
         }
     }
     public void ApplyGroundTileAssetForTile(LocationGridTile tile) {
-        tile.SetGroundTilemapVisual(GetGroundTileAssetForTile(tile));
+        TileBase tileBase = GetGroundTileAssetForTile(tile);
+        if (tileBase != null) {
+            tile.SetGroundTilemapVisual(tileBase);    
+        }
     }
     private TileBase GetGroundTileAssetForTile(LocationGridTile tile) {
         return _groundTileMap.GetTile(_groundTileMap.WorldToCell(tile.worldLocation));
@@ -351,7 +356,7 @@ public class LocationStructureObject : PooledObject {
         walls = new StructureWallObject[wallVisuals.Length];
         for (int i = 0; i < wallVisuals.Length; i++) {
             WallVisual wallVisual = wallVisuals[i];
-            StructureWallObject structureWallObject = new StructureWallObject(structure, wallVisual);
+            StructureWallObject structureWallObject = new StructureWallObject(structure, wallVisual, _wallResource);
             Vector3Int tileLocation = map.groundTilemap.WorldToCell(wallVisual.transform.position);
             LocationGridTile tile = map.map[tileLocation.x, tileLocation.y];
             tile.SetTileType(LocationGridTile.Tile_Type.Wall);
@@ -392,7 +397,7 @@ public class LocationStructureObject : PooledObject {
 
     #region Interaction
     public void OnPointerClick(BaseEventData data) {
-        Debug.Log($"Player clicked {this.name}");
+        Debug.Log($"Player clicked {name}");
     }
     #endregion
 
@@ -421,45 +426,49 @@ public class LocationStructureObject : PooledObject {
                     if (tile.name.Contains("Door")) {
                         continue; //skip
                     }
-
+                    WallVisual wallVisual = null;
                     if (tile.name.Contains("Left")) {
-                        wallGO = GameObject.Instantiate(leftWall, wallTileMap.transform);
-                        wallGO.transform.position = centeredPos;
+                        wallVisual = InstantiateWall(leftWall, centeredPos, wallTileMap.transform);
                     } 
                     if (tile.name.Contains("Right")) {
-                        wallGO = GameObject.Instantiate(rightWall, centeredPos, Quaternion.identity, wallTileMap.transform);
-                        wallGO.transform.position = centeredPos;
+                        wallVisual = InstantiateWall(rightWall, centeredPos, wallTileMap.transform);
                     }
                     if (tile.name.Contains("Bot")) {
-                        wallGO = GameObject.Instantiate(bottomWall, centeredPos, Quaternion.identity, wallTileMap.transform);
-                        wallGO.transform.position = centeredPos;
+                        wallVisual = InstantiateWall(bottomWall, centeredPos, wallTileMap.transform);
                     }
                     if (tile.name.Contains("Top")) {
-                        wallGO = GameObject.Instantiate(topWall, centeredPos, Quaternion.identity, wallTileMap.transform);
-                        wallGO.transform.position = centeredPos;
+                        wallVisual = InstantiateWall(topWall, centeredPos, wallTileMap.transform);
                     }
 
                     Vector3 cornerPos = centeredPos;
                     if (tile.name.Contains("BotLeft")) {
                         cornerPos.x -= 0.5f;
                         cornerPos.y -= 0.5f;
-                        GameObject.Instantiate(cornerPrefab, cornerPos, Quaternion.identity, wallGO.transform);
+                        Instantiate(cornerPrefab, cornerPos, Quaternion.identity, wallVisual.transform);
                     } else if (tile.name.Contains("BotRight")) {
                         cornerPos.x += 0.5f;
                         cornerPos.y -= 0.5f;
-                        GameObject.Instantiate(cornerPrefab, cornerPos, Quaternion.identity, wallGO.transform);
+                        Instantiate(cornerPrefab, cornerPos, Quaternion.identity, wallVisual.transform);
                     } else if (tile.name.Contains("TopLeft")) {
                         cornerPos.x -= 0.5f;
                         cornerPos.y += 0.5f;
-                        GameObject.Instantiate(cornerPrefab, cornerPos, Quaternion.identity, wallGO.transform);
+                        Instantiate(cornerPrefab, cornerPos, Quaternion.identity, wallVisual.transform);
                     } else if (tile.name.Contains("TopRight")) {
                         cornerPos.x += 0.5f;
                         cornerPos.y += 0.5f;
-                        GameObject.Instantiate(cornerPrefab, cornerPos, Quaternion.identity, wallGO.transform);
+                        Instantiate(cornerPrefab, cornerPos, Quaternion.identity, wallVisual.transform);
                     }
+                    wallVisual.UpdateWallAssets(_wallResource);
                 }
             }
         }
+    }
+    private WallVisual InstantiateWall(GameObject wallPrefab, Vector3 centeredPos, Transform parent) {
+        GameObject wallGO = Instantiate(wallPrefab, parent);
+        wallGO.transform.position = centeredPos;
+        WallVisual wallVisual = wallGO.GetComponent<WallVisual>();
+        wallVisual.UpdateWallAssets(_wallResource);
+        return wallVisual;
     }
 
     [ContextMenu("Convert Objects")]
@@ -496,8 +505,8 @@ public class LocationStructureObject : PooledObject {
                     if (index != -1) {
                         tileObjectName = tile.name.Substring(0, index);    
                     }
-
-                    TILE_OBJECT_TYPE tileObjectType = (TILE_OBJECT_TYPE) System.Enum.Parse(typeof(TILE_OBJECT_TYPE), tileObjectName);
+                    tileObjectName = tileObjectName.ToUpper();
+                    TILE_OBJECT_TYPE tileObjectType = (TILE_OBJECT_TYPE) Enum.Parse(typeof(TILE_OBJECT_TYPE), tileObjectName);
                     stod.tileObjectType = tileObjectType;
                     stod.spriteRenderer = spriteRenderer;
                     spriteRenderer.sprite = _detailTileMap.GetSprite(pos);
@@ -509,7 +518,7 @@ public class LocationStructureObject : PooledObject {
     }
 
     [Header("Predetermine Structure Tiles")] 
-    [SerializeField] private TileBase assetToConsiderAsStructure;
+    [SerializeField] private TileBase[] assetsToConsiderAsStructure;
     [ContextMenu("Predetermine Structure Tiles")]
     public void PredetermineOccupiedCoordinates() {
         BoundsInt bounds = _groundTileMap.cellBounds;
@@ -519,9 +528,9 @@ public class LocationStructureObject : PooledObject {
             for (int y = bounds.yMin; y < bounds.yMax; y++) {
                 Vector3Int pos = new Vector3Int(x, y, 0);
                 TileBase tb = _groundTileMap.GetTile(pos);
-                if (tb != null && tb == assetToConsiderAsStructure) {
+                if (tb != null && assetsToConsiderAsStructure.Contains(tb)) {
                     predeterminedOccupiedCoordinates.Add(pos);
-                    _groundTileMap.SetColor(pos, Color.red);
+                    // _groundTileMap.SetColor(pos, Color.red);
                 }
             }
         }    

@@ -45,6 +45,7 @@ public class LandmarkStructureGeneration : MapGenerationComponent {
 			LocationStructureObject lso = chosenStructurePrefab.GetComponent<LocationStructureObject>();
 			if (LandmarkManager.Instance.PlayerTryGetBuildSpotForStructureInTile(lso, tile, innerTileMap, out var chosenBuildingSpot)) {
 				innerTileMap.PlaceStructureObjectAt(chosenBuildingSpot, chosenStructurePrefab, structure);
+				structure.structureObj.RegisterPreplacedObjects(structure, innerTileMap);
 			} else {
 				throw new System.Exception(
 					$"Could not find valid building spot for {structure.ToString()} using prefab {chosenStructurePrefab.name}");
@@ -108,7 +109,7 @@ public class LandmarkStructureGeneration : MapGenerationComponent {
 				            && t.GetCountNeighboursOfType(LocationGridTile.Tile_Type.Empty, true) == 2).ToList();
 			if (targetChoices.Count > 0) {
 				LocationGridTile target = CollectionUtilities.GetRandomElement(targetChoices);
-				Debug.Log($"Chosen target tile to clear is {target.ToString()} for monster lair at {region.name}");
+				// Debug.Log($"Chosen target tile to clear is {target.ToString()} for monster lair at {region.name}");
 				target.SetStructureTilemapVisual(null);
 				target.SetTileType(LocationGridTile.Tile_Type.Empty);
 				target.SetStructure(wilderness);
@@ -159,7 +160,7 @@ public class LandmarkStructureGeneration : MapGenerationComponent {
 			float yCoord = (float) currTile.localPlace.y / ySize * 11f + offsetY;
 
 			float floorSample = Mathf.PerlinNoise(xCoord, yCoord);
-			if (floorSample <= 0.47f) {
+			if (floorSample <= 0.45f) {
 				SetAsWall(currTile, structure);
 			}
 		}
