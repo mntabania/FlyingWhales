@@ -245,11 +245,12 @@ namespace Traits {
                     } else {
                         stacks.Add(status.name, 1);
                         statuses.Add(status);
+                        allTraitsAndStatuses.Add(status);
                         addTo.traitProcessor.OnTraitAdded(addTo, status, characterResponsible, gainedFromDoing, overrideDuration);
                     }
                 } else {
                     statuses.Add(status);
-                    allTraitsAndStatuses.Add(trait);
+                    allTraitsAndStatuses.Add(status);
                     addTo.traitProcessor.OnTraitAdded(addTo, status, characterResponsible, gainedFromDoing, overrideDuration);
                 }
             } else {
