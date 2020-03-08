@@ -33,6 +33,7 @@ public class TraitManager : MonoBehaviour {
         //"Disillusioned",
         "Chaste", "Lustful", "Edible", "Elemental Master", "Paralyzed", "Malnourished", "Withdrawal", "Suicidal", "Criminal", "Dazed", "Hiding", "Bored", "Overheating",
         "Freezing", "Frozen", "Ravenous", "Feeble", "Forlorn", "Accident Prone", "Disoriented", "Consumable",
+        "Fire Prone", "Electric", "Venomous",
         };
     [FormerlySerializedAs("traitIconDictionary")] [SerializeField] private StringSpriteDictionary traitPortraitDictionary;
     [SerializeField] private StringSpriteDictionary traitIconDictionary;

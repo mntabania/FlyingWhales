@@ -21,7 +21,9 @@ namespace Traits {
             base.OnAddTrait(addedTo);
             _traitable = addedTo;
             Poisoned poisoned = addedTo.traitContainer.GetNormalTrait<Poisoned>("Poisoned");
-            poisoned.SetIsVenomous();
+            if(poisoned != null) {
+                poisoned.SetIsVenomous();
+            }
         }
         public override void OnTickStarted() {
             base.OnTickStarted();
