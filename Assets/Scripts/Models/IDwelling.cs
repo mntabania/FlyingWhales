@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Locations.Settlements;
 
 public interface IDwelling {
     int id { get; }
@@ -12,7 +13,7 @@ public interface IDwelling {
     List<Character> charactersHere { get; }
     List<Character> residents { get; }
     ILocation location { get; }
-    Settlement settlementLocation { get; }
+    BaseSettlement settlementLocation { get; }
     // List<SpecialToken> itemsInStructure { get; }
     HashSet<IPointOfInterest> pointsOfInterest { get; }
     POI_STATE state { get; }

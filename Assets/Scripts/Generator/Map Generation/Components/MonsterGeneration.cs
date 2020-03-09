@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps.Location_Structures;
+using Locations.Settlements;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UtilityScripts;
@@ -13,7 +14,7 @@ public class MonsterGeneration : MapGenerationComponent {
 		for (int i = 0; i < monsterLairs.Count; i++) {
 			BaseLandmark monsterLair = monsterLairs[i];
 			string randomSet = CollectionUtilities.GetRandomElement(monsterChoices);
-			Settlement settlementOnTile = monsterLair.tileLocation.settlementOnTile;
+			BaseSettlement settlementOnTile = monsterLair.tileLocation.settlementOnTile;
 			LocationStructure monsterLairStructure =
 				settlementOnTile.GetRandomStructureOfType(STRUCTURE_TYPE.MONSTER_LAIR);
 			Assert.IsTrue(monsterLairStructure.unoccupiedTiles.Count > 0, 
@@ -83,9 +84,9 @@ public class MonsterGeneration : MapGenerationComponent {
 		yield return null;
 	}
 
-	private Summon CreateMonster(SUMMON_TYPE summonType, Settlement settlementOnTile, BaseLandmark monsterLair,
+	private Summon CreateMonster(SUMMON_TYPE summonType, BaseSettlement settlementOnTile, BaseLandmark monsterLair,
 		LocationStructure monsterLairStructure) {
-		Summon summon = CharacterManager.Instance.CreateNewSummon(summonType, FactionManager.Instance.neutralFaction, settlementOnTile);
+		Summon summon = CharacterManager.Instance.CreateNewSummon(summonType, FactionManager.Instance.neutralFaction, settlementOnTile, monsterLair.tileLocation.region);
 		CharacterManager.Instance.PlaceSummon(summon, CollectionUtilities.GetRandomElement(monsterLairStructure.unoccupiedTiles));
 		summon.AddTerritory(monsterLair.tileLocation);
         return summon;

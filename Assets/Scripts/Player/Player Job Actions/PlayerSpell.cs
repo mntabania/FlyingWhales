@@ -82,7 +82,7 @@ public class PlayerSpell {
     public virtual void ActivateAction(IPointOfInterest targetPOI) { //this is called when the actions button is pressed
         ActivateAction();
     }
-    public virtual void ActivateAction(Settlement targetSettlement) { //this is called when the actions button is pressed
+    public virtual void ActivateAction(NPCSettlement targetNpcSettlement) { //this is called when the actions button is pressed
         ActivateAction();
     }
     public virtual void ActivateAction(LocationGridTile targetTile) { 
@@ -166,7 +166,7 @@ public class PlayerSpell {
     private void ActivateCooldown() {
         ticksInCooldown = 0;
         //parentData.SetLockedState(true);
-        //Messenger.AddListener(Signals.TICK_ENDED, CheckForCooldown); //IMPORTANT NOTE: Cooldown will start but will not actually finish because this line of code is removed. This is removed this so that the ability can only be used once. Upon every enter of the settlement map, all cooldowns of intervention abilities must be reset
+        //Messenger.AddListener(Signals.TICK_ENDED, CheckForCooldown); //IMPORTANT NOTE: Cooldown will start but will not actually finish because this line of code is removed. This is removed this so that the ability can only be used once. Upon every enter of the npcSettlement map, all cooldowns of intervention abilities must be reset
         Messenger.Broadcast(Signals.JOB_ACTION_COOLDOWN_ACTIVATED, this);
     }
     private void CheckForCooldown() {

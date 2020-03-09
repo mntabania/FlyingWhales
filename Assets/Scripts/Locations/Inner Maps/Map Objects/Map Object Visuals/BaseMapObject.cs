@@ -1,7 +1,7 @@
 ﻿using UnityEngine.Assertions;
 
 /// <summary>
-/// Base class for anything in the settlement map that can be damaged and has a physical object to be shown.
+/// Base class for anything in the npcSettlement map that can be damaged and has a physical object to be shown.
 /// </summary>
 public abstract class BaseMapObject {
     

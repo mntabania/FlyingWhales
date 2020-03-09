@@ -19,7 +19,7 @@ public abstract class MovingTileObject : TileObject {
 
     #region Override Methods
     protected override void CreateMapObjectVisual() {
-        GameObject obj = InnerMapManager.Instance.mapObjectFactory.CreateNewTileObjectAreaMapObject(this.tileObjectType);
+        GameObject obj = InnerMapManager.Instance.mapObjectFactory.CreateNewTileObjectMapVisual(this.tileObjectType);
         _mapVisual = obj.GetComponent<MovingMapObjectVisual<TileObject>>();
     }
     #endregion

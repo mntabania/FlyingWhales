@@ -44,9 +44,9 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
         return false;
     }
 
-    private bool HasCharacterWithPlaceBlueprintJobInSettlement(Settlement settlement) {
-        for (int i = 0; i < settlement.residents.Count; i++) {
-            Character resident = settlement.residents[i];
+    private bool HasCharacterWithPlaceBlueprintJobInSettlement(NPCSettlement npcSettlement) {
+        for (int i = 0; i < npcSettlement.residents.Count; i++) {
+            Character resident = npcSettlement.residents[i];
             if (resident.jobQueue.HasJob(JOB_TYPE.PLACE_BLUEPRINT)) {
                 return true;
             }

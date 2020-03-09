@@ -32,7 +32,7 @@ public class WorkBehaviour : CharacterBehaviourComponent {
     }
     private bool PlanWorkActions(Character character) {
         if (character.isAtHomeRegion && character.homeSettlement != null && character.canTakeJobs) { //&& this.faction.id != FactionManager.Instance.neutralFaction.id
-            //check settlement job queue, if it has any jobs that target an object that is in view of the character
+            //check npcSettlement job queue, if it has any jobs that target an object that is in view of the character
             JobQueueItem jobToAssign = character.homeSettlement.GetFirstJobBasedOnVision(character);
             if (jobToAssign == null) {
                 //if there are none, check the characters faction job queue under the same conditions.
@@ -57,7 +57,7 @@ public class WorkBehaviour : CharacterBehaviourComponent {
                 //took job based from vision
                 return true;
             } else {
-                //if none of the jobs targets can be seen by the character, try and get a job from the settlement or faction
+                //if none of the jobs targets can be seen by the character, try and get a job from the npcSettlement or faction
                 //regardless of vision instead.
                 jobToAssign = character.homeSettlement.GetFirstUnassignedJobToCharacterJob(character);
                 if (jobToAssign == null) {

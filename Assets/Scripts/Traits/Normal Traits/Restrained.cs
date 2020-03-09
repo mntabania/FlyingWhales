@@ -119,10 +119,10 @@ namespace Traits {
         
         // private void CreateJudgementJob() {
         //     if (!owner.HasJobTargetingThis(JOB_TYPE.JUDGE_PRISONER)) {
-        //         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.JUDGE_PRISONER, INTERACTION_TYPE.JUDGE_CHARACTER, owner, owner.currentSettlement);
+        //         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.JUDGE_PRISONER, INTERACTION_TYPE.JUDGE_CHARACTER, owner, owner.currentNpcSettlement);
         //         job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoJudgementJob);
         //         job.SetStillApplicableChecker(() => InteractionManager.Instance.IsJudgementJobStillApplicable(owner));
-        //         owner.currentSettlement.AddToAvailableJobs(job);
+        //         owner.currentNpcSettlement.AddToAvailableJobs(job);
         //     }
         // }
         public void SetIsPrisoner(bool state) {

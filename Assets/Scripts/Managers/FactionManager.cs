@@ -121,7 +121,7 @@ public class FactionManager : MonoBehaviour {
     }
     public void DeleteFaction(Faction faction) {
         //for (int i = 0; i < faction.ownedRegions.Count; i++) {
-        //    Settlement ownedArea = faction.ownedRegions[i];
+        //    NPCSettlement ownedArea = faction.ownedRegions[i];
         //    LandmarkManager.Instance.UnownArea(ownedArea);
         //}
         //RemoveRelationshipsWith(faction);

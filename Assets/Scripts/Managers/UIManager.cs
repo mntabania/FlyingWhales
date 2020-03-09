@@ -49,12 +49,12 @@ public class UIManager : MonoBehaviour {
     public RectTransform characterPortraitHoverInfoRT;
 
     [Space(10)]
-    [Header("Other Settlement Info")]
+    [Header("Other NPCSettlement Info")]
     public Sprite[] areaCenterSprites;
     public GameObject portalPopup;
     
     [Space(10)]
-    [Header("Notification Settlement")]
+    [Header("Notification NPCSettlement")]
     public DeveloperNotificationArea developerNotificationArea;
 
     [Space(10)]
@@ -100,7 +100,7 @@ public class UIManager : MonoBehaviour {
     [Header("Custom Dropdown List")]
     public CustomDropdownList customDropdownList;
 
-    public bool isShowingAreaTooltip { get; private set; } //is the tooltip for settlement double clicks showing?
+    public bool isShowingAreaTooltip { get; private set; } //is the tooltip for npcSettlement double clicks showing?
     private InfoUIBase _lastOpenedInfoUI;
     public List<PopupMenuBase> openedPopups { get; private set; }
     private PointerEventData _pointer;
@@ -457,7 +457,7 @@ public class UIManager : MonoBehaviour {
     }
     #endregion
 
-    #region Developer Notifications Settlement
+    #region Developer Notifications NPCSettlement
     private void ShowDeveloperNotification(string text, int expirationTicks, UnityAction onClickAction) {
         developerNotificationArea.ShowNotification(text, expirationTicks, onClickAction);
     }
@@ -568,11 +568,6 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     #region Nameplate
-    public void CreateAreaNameplate(Settlement settlement) {
-        GameObject nameplateGO = UIManager.Instance.InstantiateUIObject("AreaNameplate", worldUIParent);
-        //nameplateGO.transform.localScale = new Vector3(0.02f, 0.02f, 1f);
-        nameplateGO.GetComponent<AreaNameplate>().SetArea(settlement);
-    }
     public LandmarkNameplate CreateLandmarkNameplate(BaseLandmark landmark) {
         GameObject nameplateGO = UIManager.Instance.InstantiateUIObject("LandmarkNameplate", worldUIParent);
         nameplateGO.transform.localScale = Vector3.one;
@@ -623,7 +618,7 @@ public class UIManager : MonoBehaviour {
     }
     #endregion
 
-    #region Settlement Info
+    #region NPCSettlement Info
     public Sprite GetAreaCenterSprite(string name) {
         for (int i = 0; i < areaCenterSprites.Length; i++) {
             if (areaCenterSprites[i].name.ToLower() == name.ToLower()) {

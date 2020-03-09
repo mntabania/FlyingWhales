@@ -51,7 +51,7 @@ public class CharacterCreator : Editor {
 
         characterComponent.itemFoldout = EditorGUILayout.Foldout(characterComponent.itemFoldout, "Pre-equipped Items");
 
-		//Add Item Settlement
+		//Add Item NPCSettlement
 		GUILayout.Space(10);
 		GUILayout.BeginVertical(EditorStyles.helpBox);
 		GUILayout.Label("Add Items ", EditorStyles.boldLabel);

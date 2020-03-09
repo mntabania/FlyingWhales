@@ -38,7 +38,7 @@ public class BuryCharacter : GoapAction {
                 List<LocationGridTile> validTiles = targetStructure.unoccupiedTiles
                     .Where(tile => tile.IsNextToSettlement(goapNode.actor.homeSettlement)).ToList();
                 // List<LocationGridTile> validTiles = new List<LocationGridTile>();
-                // goapNode.actor.homeSettlement.tiles.ForEach(t => 
+                // goapNode.actor.homeNpcSettlement.tiles.ForEach(t => 
                 //     validTiles.AddRange(
                 //         t.locationGridTiles.Where(x => targetStructure.unoccupiedTiles.Contains(x))
                 //     )

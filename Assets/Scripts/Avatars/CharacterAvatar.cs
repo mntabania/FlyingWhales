@@ -54,14 +54,14 @@ public class CharacterAvatar : MonoBehaviour {
         get { return _isTravelling; }
     }
     public bool isTravellingOutside {
-        get { return _isTravellingOutside; } //if the character is travelling from settlement to settlement, as oppose to only travelling inside settlement map
+        get { return _isTravellingOutside; } //if the character is travelling from npcSettlement to npcSettlement, as oppose to only travelling inside npcSettlement map
     }
     public bool isVisualShowing {
         get {
             //if (_isVisualShowing) {
             //    return _isVisualShowing;
             //} else {
-            //    //check if this characters current location settlement is being tracked
+            //    //check if this characters current location npcSettlement is being tracked
             //    if (party.specificLocation != null ) { //&& party.specificLocation.isBeingTracked
             //        return true;
             //    }

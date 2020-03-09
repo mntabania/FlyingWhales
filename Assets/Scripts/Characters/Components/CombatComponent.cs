@@ -248,7 +248,7 @@ public class CombatComponent {
     public IPointOfInterest GetNearestValidHostile() {
         IPointOfInterest nearest = null;
         float nearestDist = 9999f;
-        //first check only the hostiles that are in the same settlement as this character
+        //first check only the hostiles that are in the same npcSettlement as this character
         for (int i = 0; i < hostilesInRange.Count; i++) {
             IPointOfInterest poi = hostilesInRange[i];
             if (poi.IsValidCombatTarget()) {
@@ -260,7 +260,7 @@ public class CombatComponent {
             }
 
         }
-        //if no character was returned, choose at random from the list, since we are sure that all characters in the list are not in the same settlement as this character
+        //if no character was returned, choose at random from the list, since we are sure that all characters in the list are not in the same npcSettlement as this character
         if (nearest == null) {
             //List<Character> hostileCharacters = hostilesInRange.Where(x => x.poiType == POINT_OF_INTEREST_TYPE.CHARACTER).Select(x => x as Character).ToList();
             //if (hostileCharacters.Count > 0) {

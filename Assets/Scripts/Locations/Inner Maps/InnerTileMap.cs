@@ -226,7 +226,7 @@ namespace Inner_Maps {
         private void OnPlaceCharacterOnTile(Character character, LocationGridTile tile) {
             GameObject markerGO = character.marker.gameObject; 
             if (markerGO.transform.parent != objectsParent) {
-                //This means that the character travelled to a different settlement
+                //This means that the character travelled to a different npcSettlement
                 markerGO.transform.SetParent(objectsParent);
                 markerGO.transform.localPosition = tile.centeredLocalLocation;
                 // character.marker.UpdatePosition();
@@ -361,8 +361,8 @@ namespace Inner_Maps {
         #endregion
 
         #region Building Spots
-        public bool TryGetValidBuildSpotTileObjectForStructure(LocationStructureObject structureObject, Settlement settlement, out BuildSpotTileObject buildingSpot) {
-            List<BuildSpotTileObject> openSpots = GetOpenBuildSpotTileObjects(settlement);
+        public bool TryGetValidBuildSpotTileObjectForStructure(LocationStructureObject structureObject, NPCSettlement npcSettlement, out BuildSpotTileObject buildingSpot) {
+            List<BuildSpotTileObject> openSpots = GetOpenBuildSpotTileObjects(npcSettlement);
             if (structureObject.IsBiggerThanBuildSpot()) {
                 if (openSpots.Count > 0) {
                     List<BuildSpotTileObject> choices = new List<BuildSpotTileObject>();
@@ -391,12 +391,12 @@ namespace Inner_Maps {
                 return buildingSpot != null;
             }
         }
-        private List<BuildSpotTileObject> GetOpenBuildSpotTileObjects(Settlement settlement) {
+        private List<BuildSpotTileObject> GetOpenBuildSpotTileObjects(NPCSettlement npcSettlement) {
             List<BuildSpotTileObject> spots = location.coreTile.region.GetTileObjectsOfType(TILE_OBJECT_TYPE.BUILD_SPOT_TILE_OBJECT).Select(x => x as BuildSpotTileObject).ToList();
             List<BuildSpotTileObject> open = new List<BuildSpotTileObject>();
             for (int i = 0; i < spots.Count; i++) {
                 BuildSpotTileObject buildSpotTileObject = spots[i];
-                if (buildSpotTileObject.spot.IsOpenFor(settlement)) {
+                if (buildSpotTileObject.spot.IsOpenFor(npcSettlement)) {
                     open.Add(buildSpotTileObject);
                 }
             }

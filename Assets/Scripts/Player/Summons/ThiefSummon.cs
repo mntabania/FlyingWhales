@@ -24,11 +24,11 @@ public class ThiefSummon : Summon {
     #region Overrides
     public override void OnPlaceSummon(LocationGridTile tile) {
         base.OnPlaceSummon(tile);
-        //AddInitialAwareness(tile.parentAreaMap.settlement);
+        //AddInitialAwareness(tile.parentAreaMap.npcSettlement);
         //Messenger.AddListener(Signals.TICK_STARTED, PerTickGoapPlanGeneration);
         ////add all characters that are not part of the player faction to this character's terrifying characters list, so this character can avoid them.
-        //for (int i = 0; i < tile.parentAreaMap.settlement.charactersAtLocation.Count; i++) {
-        //    Character currCharacter = tile.parentAreaMap.settlement.charactersAtLocation[i];
+        //for (int i = 0; i < tile.parentAreaMap.npcSettlement.charactersAtLocation.Count; i++) {
+        //    Character currCharacter = tile.parentAreaMap.npcSettlement.charactersAtLocation[i];
         //    if (currCharacter.faction != this.faction) {
         //        marker.AddTerrifyingObject(currCharacter);
         //    }
@@ -51,7 +51,7 @@ public class ThiefSummon : Summon {
         //}
         //SetHasAlreadyAskedForPlan(true);
         //if (items.Count >= itemsToSteal) {
-        //    //if the thief has already reached his/her max number of stolen items, exit the settlement.
+        //    //if the thief has already reached his/her max number of stolen items, exit the npcSettlement.
         //    LocationGridTile targetTile = GetNearestUnoccupiedEdgeTileFromThis();
         //    marker.GoTo(targetTile, OnReachExitAction);
         //} else {
@@ -92,8 +92,8 @@ public class ThiefSummon : Summon {
 
     private void OnReachExitAction() {
         //remove character from other character's awareness
-        //for (int i = 0; i < gridTileLocation.parentAreaMap.settlement.charactersAtLocation.Count; i++) {
-        //    Character currCharacter = gridTileLocation.parentAreaMap.settlement.charactersAtLocation[i];
+        //for (int i = 0; i < gridTileLocation.parentAreaMap.npcSettlement.charactersAtLocation.Count; i++) {
+        //    Character currCharacter = gridTileLocation.parentAreaMap.npcSettlement.charactersAtLocation[i];
         //    currCharacter.RemoveAwareness(this);
         //}
 

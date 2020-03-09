@@ -105,8 +105,8 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
             } else {
                 if (obj is Character) {
                     UIManager.Instance.ShowCharacterInfo(obj as Character, true);
-                } else if (obj is Settlement) {
-                    UIManager.Instance.ShowRegionInfo((obj as Settlement).region);
+                } else if (obj is NPCSettlement) {
+                    UIManager.Instance.ShowRegionInfo((obj as NPCSettlement).region);
                 } else if (obj is Faction) {
                     UIManager.Instance.ShowFactionInfo((obj as Faction));
                 } else if (obj is Minion) {

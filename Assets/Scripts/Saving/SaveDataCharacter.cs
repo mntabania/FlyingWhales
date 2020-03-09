@@ -149,7 +149,7 @@ public class SaveDataCharacter {
         if (character.homeStructure != null) {
             homeStructureID = character.homeStructure.id;
             homeStructureType = character.homeStructure.structureType;
-            homeStructureAreaID = character.homeStructure.location.id; //TODO: Refactor this, because structure location is no longer guaranteed to be an settlement.
+            homeStructureAreaID = character.homeStructure.location.id; //TODO: Refactor this, because structure location is no longer guaranteed to be an npcSettlement.
         } else {
             homeStructureID = -1;
         }
@@ -237,7 +237,7 @@ public class SaveDataCharacter {
 
         if (character.gridTileLocation != null) {
             gridTileLocation = new Vector3Save(character.gridTileLocation.localPlace.x, character.gridTileLocation.localPlace.y, 0f);
-            gridTileLocationAreaID = character.gridTileLocation.structure.location.id; //TODO: Refactor this, because structure location is no longer guaranteed to be an settlement.
+            gridTileLocationAreaID = character.gridTileLocation.structure.location.id; //TODO: Refactor this, because structure location is no longer guaranteed to be an npcSettlement.
         } else {
             gridTileLocation = new Vector3Save(0f, 0f, -1f);
         }
@@ -337,38 +337,38 @@ public class SaveDataCharacter {
 
     public void LoadHomeStructure(Character character) {
         if (homeStructureID != -1) {
-            Settlement settlement = LandmarkManager.Instance.GetAreaByID(homeStructureAreaID);
-            LocationStructure structure = settlement.GetStructureByID(homeStructureType, homeStructureID);
-            character.MigrateHomeStructureTo(structure as IDwelling);
+            // NPCSettlement npcSettlement = LandmarkManager.Instance.GetAreaByID(homeStructureAreaID);
+            // LocationStructure structure = npcSettlement.GetStructureByID(homeStructureType, homeStructureID);
+            // character.MigrateHomeStructureTo(structure as IDwelling);
         }
     }
 
     public void LoadCharacterGridTileLocation(Character character) {
         if (gridTileLocation.z != -1f) {
-            Settlement settlement = LandmarkManager.Instance.GetAreaByID(gridTileLocationAreaID);
-            LocationGridTile gridTile = settlement.innerMap.map[(int) gridTileLocation.x, (int) gridTileLocation.y];
-
-            if (!character.marker) {
-                character.CreateMarker();
-            }
-            character.LoadInitialCharacterPlacement(gridTile);
-
-            for (int i = 0; i < lethalHostilesInRangeIDs.Count; i++) {
-                Character target = CharacterManager.Instance.GetCharacterByID(lethalHostilesInRangeIDs[i]);
-                character.combatComponent.Fight(target, isLethal: true);
-            }
-            for (int i = 0; i < nonLethalHostilesInRangeIDs.Count; i++) {
-                Character target = CharacterManager.Instance.GetCharacterByID(nonLethalHostilesInRangeIDs[i]);
-                character.combatComponent.Fight(target, isLethal: false);
-            }
-            for (int i = 0; i < avoidInRangeIDs.Count; i++) {
-                Character target = CharacterManager.Instance.GetCharacterByID(avoidInRangeIDs[i]);
-                character.combatComponent.Flight(target);
-            }
-
-            if (character.isDead) {
-                character.marker.OnDeath(gridTile);
-            }
+            // NPCSettlement npcSettlement = LandmarkManager.Instance.GetAreaByID(gridTileLocationAreaID);
+            // LocationGridTile gridTile = npcSettlement.innerMap.map[(int) gridTileLocation.x, (int) gridTileLocation.y];
+            //
+            // if (!character.marker) {
+            //     character.CreateMarker();
+            // }
+            // character.LoadInitialCharacterPlacement(gridTile);
+            //
+            // for (int i = 0; i < lethalHostilesInRangeIDs.Count; i++) {
+            //     Character target = CharacterManager.Instance.GetCharacterByID(lethalHostilesInRangeIDs[i]);
+            //     character.combatComponent.Fight(target, isLethal: true);
+            // }
+            // for (int i = 0; i < nonLethalHostilesInRangeIDs.Count; i++) {
+            //     Character target = CharacterManager.Instance.GetCharacterByID(nonLethalHostilesInRangeIDs[i]);
+            //     character.combatComponent.Fight(target, isLethal: false);
+            // }
+            // for (int i = 0; i < avoidInRangeIDs.Count; i++) {
+            //     Character target = CharacterManager.Instance.GetCharacterByID(avoidInRangeIDs[i]);
+            //     character.combatComponent.Flight(target);
+            // }
+            //
+            // if (character.isDead) {
+            //     character.marker.OnDeath(gridTile);
+            // }
         }
     }
 
@@ -379,14 +379,14 @@ public class SaveDataCharacter {
     public void LoadCharacterCurrentState(Character character) {
         if (hasCurrentState) {
             Character targetCharacter = null;
-            Settlement targetSettlement = null;
+            NPCSettlement targetNpcSettlement = null;
             if (currentState.targetCharacterID != -1) {
                 targetCharacter = CharacterManager.Instance.GetCharacterByID(currentState.targetCharacterID);
             }
             //if (currentState.targetAreaID != -1) {
-            //    targetSettlement = LandmarkManager.Instance.GetAreaByID(currentState.targetAreaID);
+            //    targetNpcSettlement = LandmarkManager.Instance.GetAreaByID(currentState.targetAreaID);
             //}
-            CharacterState loadedState = character.stateComponent.SwitchToState(currentState.characterState, targetCharacter, targetSettlement, currentState.duration, currentState.level);
+            CharacterState loadedState = character.stateComponent.SwitchToState(currentState.characterState, targetCharacter, targetNpcSettlement, currentState.duration, currentState.level);
             loadedState.SetCurrentDuration(currentState.currentDuration);
             //loadedState.SetIsUnending(currentState.isUnending);
 
@@ -407,7 +407,7 @@ public class SaveDataCharacter {
             //    if (dataStateJob.assignedCharacterID != -1) {
             //        Character assignedCharacter = CharacterManager.Instance.GetCharacterByID(dataStateJob.assignedCharacterID);
             //        stateJob.SetAssignedCharacter(assignedCharacter);
-            //        CharacterState newState = assignedCharacter.stateComponent.SwitchToState(stateJob.targetState, null, stateJob.targetSettlement);
+            //        CharacterState newState = assignedCharacter.stateComponent.SwitchToState(stateJob.targetState, null, stateJob.targetNpcSettlement);
             //        if (newState != null) {
             //            stateJob.SetAssignedState(newState);
             //        } else {

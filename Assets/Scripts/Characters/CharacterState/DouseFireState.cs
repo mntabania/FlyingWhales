@@ -26,18 +26,6 @@ public class DouseFireState : CharacterState {
     }
 
     #region Overrides
-    public override void Load(SaveDataCharacterState saveData) {
-        base.Load(saveData);
-        DouseFireStateSaveDataCharacterState dfSaveData = saveData as DouseFireStateSaveDataCharacterState;
-        for (int i = 0; i < dfSaveData.fires.Length; i++) {
-            POIData poiData = dfSaveData.fires[i];
-            IPointOfInterest poi = SaveUtilities.GetPOIFromData(poiData);
-            if (poi == null) {
-                throw new System.Exception($"No POI found: {poiData}");
-            }
-            AddFire(poi);
-        }
-    }
     protected override void StartState() {
         //add initial objects on fire
         for (int i = 0; i < stateComponent.character.currentRegion.innerMap.activeBurningSources.Count; i++) {

@@ -32,9 +32,9 @@ public class LandmarkNameplate : PooledObject {
     }
 
     private void UpdatePosition() {
-        //Vector2 originalPos = settlement.coreTile.transform.position;
+        //Vector2 originalPos = npcSettlement.coreTile.transform.position;
         //originalPos.y -= 1f;
-        //Vector2 ScreenPosition = Camera.main.WorldToScreenPoint(settlement.nameplatePos);
+        //Vector2 ScreenPosition = Camera.main.WorldToScreenPoint(npcSettlement.nameplatePos);
         this.transform.position = landmark.nameplatePos;
     }
     private void UpdateFactionEmblem() {

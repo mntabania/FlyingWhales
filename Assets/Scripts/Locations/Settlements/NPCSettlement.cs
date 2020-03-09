@@ -1,90 +1,63 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using System;
 using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Locations.Settlements;
 using UnityEngine;
-using Traits;
+using UnityEngine.Assertions;
 using UtilityScripts;
+using Random = UnityEngine.Random;
 
-public class Settlement : IJobOwner {
-
-    public int id { get; }
-    public LOCATION_TYPE locationType { get; private set; }
+public class NPCSettlement : BaseSettlement, IJobOwner {
     public Region region { get; }
     public LocationStructure prison { get; private set; }
     public LocationStructure mainStorage { get; private set; }
-    public int citizenCount { get; private set; }
 
-    //Data that are only referenced from this settlement's region
+    //Data that are only referenced from this npcSettlement's region
     //These are only getter data, meaning it cannot be stored
-    public string name { get; private set; }
-    public Faction owner { get; private set; }
-    public Faction previousOwner { get; private set; }
     public Character ruler { get; private set; }
-    public List<HexTile> tiles { get; }
-    public List<Character> residents { get; }
     public List<JobQueueItem> forcedCancelJobsOnTickEnded { get; }
-    public bool isUnderSeige { get; private set; }
+    public bool isUnderSiege { get; private set; }
 
     //structures
-    public Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures { get; private set; }
-    public InnerTileMap innerMap => region.innerMap;
-
-    //misc
-    public Vector2 nameplatePos { get; private set; }
-
     public List<JobQueueItem> availableJobs { get; }
     public JOB_OWNER ownerType => JOB_OWNER.QUEST;
     public LocationClassManager classManager { get; }
     public LocationEventManager eventManager { get; }
     public LocationJobManager jobManager { get; }
 
+    private readonly WeightedDictionary<Character> newRulerDesignationWeights;
     private int newRulerDesignationChance;
-    private WeightedDictionary<Character> newRulerDesignationWeights;
-    private SettlementJobTriggerComponent _settlementJobTriggerComponent;
     private int _isBeingHarassedCount;
     private int _isBeingRaidedCount;
     private int _isBeingInvadedCount;
 
     #region getters
     public JobTriggerComponent jobTriggerComponent => settlementJobTriggerComponent;
-    public SettlementJobTriggerComponent settlementJobTriggerComponent => _settlementJobTriggerComponent;
+    public SettlementJobTriggerComponent settlementJobTriggerComponent { get; }
     public bool isBeingHarassed => _isBeingHarassedCount > 0;
     public bool isBeingRaided => _isBeingRaidedCount > 0;
     public bool isBeingInvaded => _isBeingInvadedCount > 0;
     #endregion
 
-    public Settlement(Region region, LOCATION_TYPE locationType, int citizenCount) {
+    public NPCSettlement(Region region, LOCATION_TYPE locationType, int citizenCount) : base(locationType, citizenCount)  {
         this.region = region;
-        SetName(RandomNameGenerator.GenerateCityName(RACE.HUMANS));
-        id = UtilityScripts.Utilities.SetID(this);
-        this.citizenCount = citizenCount;
-        tiles = new List<HexTile>();
-        residents = new List<Character>();
         newRulerDesignationWeights = new WeightedDictionary<Character>();
         forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
         ResetNewRulerDesignationChance();
-        SetAreaType(locationType);
         availableJobs = new List<JobQueueItem>();
         classManager = new LocationClassManager();
         eventManager = new LocationEventManager(this);
         jobManager = new LocationJobManager(this);
-        _settlementJobTriggerComponent = new SettlementJobTriggerComponent(this);
+        settlementJobTriggerComponent = new SettlementJobTriggerComponent(this);
 
     }
-    public Settlement(SaveDataArea saveDataArea) {
+    public NPCSettlement(SaveDataArea saveDataArea) : base (saveDataArea){
         region = GridMap.Instance.GetRegionByID(saveDataArea.regionID);
-        SetName(RandomNameGenerator.GenerateCityName(RACE.HUMANS));
-        id = UtilityScripts.Utilities.SetID(this, saveDataArea.id);
-        citizenCount = saveDataArea.citizenCount;
-        tiles = new List<HexTile>();
-        residents = new List<Character>();
         newRulerDesignationWeights = new WeightedDictionary<Character>();
         ResetNewRulerDesignationChance();
-        SetAreaType(saveDataArea.locationType);
-
         LoadStructures(saveDataArea);
     }
 
@@ -119,45 +92,15 @@ public class Settlement : IJobOwner {
     }
     #endregion
 
-    #region Settlement Type
-    public void SetAreaType(LOCATION_TYPE locationType) {
-        this.locationType = locationType;
-        OnAreaTypeSet();
-    }
-    public BASE_AREA_TYPE GetBaseAreaType() {
-        AreaData data = LandmarkManager.Instance.GetAreaData(locationType);
-        return data.baseAreaType;
-    }
-    private void OnAreaTypeSet() {
-        //update tile visuals
-        //for (int i = 0; i < tiles.Count; i++) {
-        //    HexTile currTile = tiles[i];
-        //    OnTileAddedToArea(currTile);
-        //}
-    }
-    #endregion
-
     #region Utilities
-    public void SetName(string name) {
-        this.name = name;
-    }
-    public void LoadAdditionalData() {
-        // CreateNameplate();
-    }
-    /// <summary>
-    /// Called when this settlement is set as the current active settlement.
-    /// </summary>
     public void OnAreaSetAsActive() {
         SubscribeToSignals();
-        //LocationStructure warehouse = GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
-        // CheckAreaInventoryJobs(mainStorage, null);
-        //DesignateNewRuler();
     }
-    public void SetIsUnderSeige(bool state) {
-        if(isUnderSeige != state) {
-            isUnderSeige = state;
-            Debug.Log($"{GameManager.Instance.TodayLogString()}{this.name} Under Siege state changed to {isUnderSeige.ToString()}");
-            Messenger.Broadcast(Signals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, this, isUnderSeige);
+    private void SetIsUnderSiege(bool state) {
+        if(isUnderSiege != state) {
+            isUnderSiege = state;
+            Debug.Log($"{GameManager.Instance.TodayLogString()}{name} Under Siege state changed to {isUnderSiege.ToString()}");
+            Messenger.Broadcast(Signals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, this, isUnderSiege);
         }
     }
     public void IncreaseIsBeingHarassedCount() {
@@ -186,99 +129,9 @@ public class Settlement : IJobOwner {
     }
     #endregion
 
-    #region Supplies
-    //public void AdjustSuppliesInBank(int amount) {
-    //    if (supplyPile == null) {
-    //        return;
-    //    }
-    //    supplyPile.AdjustResourceInPile(amount);
-    //    Messenger.Broadcast(Signals.AREA_SUPPLIES_CHANGED, this);
-    //    //suppliesInBank = Mathf.Clamp(suppliesInBank, 0, supplyCapacity);
-    //}
-    #endregion
-
-    #region Food
-    //public void SetFoodInBank(int amount) {
-    //    FoodPile currFoodPile = foodPile;
-    //    if (currFoodPile == null) {
-    //        return;
-    //    }
-    //    currFoodPile.SetResourceInPile(amount);
-    //    Messenger.Broadcast(Signals.AREA_FOOD_CHANGED, this);
-    //}
-    //public void AdjustFoodInBank(int amount) {
-    //    FoodPile currFoodPile = foodPile;
-    //    if (currFoodPile == null) {
-    //        return;
-    //    }
-    //    currFoodPile.AdjustResourceInPile(amount);
-    //    Messenger.Broadcast(Signals.AREA_FOOD_CHANGED, this);
-    //}
-    #endregion
-
     #region Characters
-    public void AssignCharacterToDwellingInArea(Character character, IDwelling dwellingOverride = null) {
-        if (structures == null) {
-            Debug.LogWarning(
-                $"{this.name} doesn't have any dwellings for {character.name} because structures have not been generated yet");
-            return;
-        }
-        if (!character.isFactionless && !structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
-            Debug.LogWarning($"{this.name} doesn't have any dwellings for {character.name}");
-            return;
-        }
-        if (character.isFactionless) {
-            character.SetHomeStructure(null);
-            return;
-        }
-        IDwelling chosenDwelling = dwellingOverride;
-        if (chosenDwelling == null) {
-            if (PlayerManager.Instance != null && PlayerManager.Instance.player != null && this.id == PlayerManager.Instance.player.playerSettlement.id) {
-                chosenDwelling = structures[STRUCTURE_TYPE.DWELLING][0] as Dwelling; //to avoid errors, residents in player settlement will all share the same dwelling
-            } else {
-                Character lover = CharacterManager.Instance.GetCharacterByID(character.relationshipContainer
-                    .GetFirstRelatableIDWithRelationship(RELATIONSHIP_TYPE.LOVER));
-                if (lover != null && lover.faction.id == character.faction.id && residents.Contains(lover)) { //check if the character has a lover that lives in the settlement
-                    chosenDwelling = lover.homeStructure;
-                }
-            }
-            if (chosenDwelling == null && (character.homeStructure == null || character.homeStructure.location.id != this.id)) { //else, find an unoccupied dwelling (also check if the character doesn't already live in this settlement)
-                List<LocationStructure> structureList = structures[STRUCTURE_TYPE.DWELLING];
-                for (int i = 0; i < structureList.Count; i++) {
-                    Dwelling currDwelling = structureList[i] as Dwelling;
-                    if (currDwelling.CanBeResidentHere(character)) {
-                        chosenDwelling = currDwelling;
-                        break;
-                    }
-                }
-            }
-        }
-
-        if (chosenDwelling == null) {
-            //if the code reaches here, it means that the settlement could not find a dwelling for the character
-            Debug.LogWarning(
-                $"{GameManager.Instance.TodayLogString()}Could not find a dwelling for {character.name} at {this.name}, setting home to Town Center");
-            chosenDwelling = GetRandomStructureOfType(STRUCTURE_TYPE.CITY_CENTER) as CityCenter;
-        }
-        character.MigrateHomeStructureTo(chosenDwelling);
-    }
-    public bool IsResidentsFull() {
-        if (PlayerManager.Instance.player != null && PlayerManager.Instance.player.playerSettlement.id == this.id) {
-            return false; //resident capacity is never full for player settlement
-        }
-        if (structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
-            List<LocationStructure> dwellings = structures[STRUCTURE_TYPE.DWELLING];
-            for (int i = 0; i < dwellings.Count; i++) {
-                if (!dwellings[i].IsOccupied()) {
-                    return false;
-                }
-            }
-        }
-        return true;
-        //return structures[STRUCTURE_TYPE.DWELLING].Where(x => !x.IsOccupied()).Count() == 0; //check if there are still unoccupied dwellings
-    }
     public int GetNumberOfUnoccupiedStructure(STRUCTURE_TYPE structureType) {
-        if (PlayerManager.Instance.player != null && PlayerManager.Instance.player.playerSettlement.id == this.id) {
+        if (PlayerManager.Instance.player != null && PlayerManager.Instance.player.playerSettlement.id == id) {
             return 0;
         }
         int num = 0;
@@ -292,98 +145,25 @@ public class Settlement : IJobOwner {
         }
         return num;
     }
-    public void SetInitialResidentCount(int count) {
-        citizenCount = count;
-    }
     private void OnCharacterClassChange(Character character, CharacterClass previousClass, CharacterClass currentClass) {
         if (character.homeSettlement == this) {
             classManager.OnResidentChangeClass(character, previousClass, currentClass);
         }
     }
-    public Character AddNewResident(RACE race, Faction faction) {
-        string className = classManager.GetCurrentClassToCreate();
-        Character citizen = CharacterManager.Instance.CreateNewCharacter(className, race, UtilityScripts.Utilities.GetRandomGender(), faction, this);
-        PlaceNewResidentInInnerMap(citizen);
-        //citizen.CenterOnCharacter();
-        return citizen;
-
-        //if (className == "Leader") {
-        //    citizen.LevelUp(leaderLevel - 1);
-        //    SetLeader(leader);
-        //} else {
-        //    citizen.LevelUp(citizensLevel - 1);
-        //}
-    }
-    public Character AddNewResident(RACE race, GENDER gender, Faction faction) {
-        string className = classManager.GetCurrentClassToCreate();
-        Character citizen = CharacterManager.Instance.CreateNewCharacter(className, race, gender, faction, this);
-        PlaceNewResidentInInnerMap(citizen);
-        //citizen.CenterOnCharacter();
-        return citizen;
-    }
-    public Character AddNewResident(RACE race, GENDER gender, SEXUALITY sexuality, Faction faction) {
-        string className = classManager.GetCurrentClassToCreate();
-        Character citizen = CharacterManager.Instance.CreateNewCharacter(className, race, gender, sexuality, faction, this);
-        PlaceNewResidentInInnerMap(citizen);
-        //citizen.CenterOnCharacter();
-        return citizen;
-    }
-    public Character CreateNewResidentNoLocation(RACE race, string className, Faction faction) {
-        Character citizen = CharacterManager.Instance.CreateNewCharacter(className, race, UtilityScripts.Utilities.GetRandomGender(), faction);
-        return citizen;
-    }
-    public void PlaceNewResidentInInnerMap(Character newResident) {
-        LocationGridTile mainEntrance = innerMap.GetRandomUnoccupiedEdgeTile();
-        newResident.CreateMarker();
-        newResident.InitialCharacterPlacement(mainEntrance);
-    }
-    public bool AddResident(Character character, IDwelling chosenHome = null, bool ignoreCapacity = true) {
-        if (!residents.Contains(character)) {
-            if (!ignoreCapacity) {
-                if (IsResidentsFull()) {
-                    Debug.LogWarning(
-                        $"{GameManager.Instance.TodayLogString()}Cannot add {character.name} as resident of {this.name} because residency is already full!");
-                    return false; //settlement is at capacity
-                }
-            }
-            if (!CanCharacterBeAddedAsResidentBasedOnFaction(character)) {
-                character.logComponent.PrintLogIfActive(
-                    $"{character.name} tried to become a resident of {name} but their factions conflicted");
-                return false;
-            }
-            region.AddResident(character);
-            residents.Add(character);
-            if (character.race != RACE.DEMON && (character is Summon) == false) {
-                classManager.OnAddResident(character);
-            }
-            // if(!coreTile.isCorrupted) {
-            //     classManager.OnAddResident(character);
-            // }
-            AssignCharacterToDwellingInArea(character, chosenHome);
+    public override bool AddResident(Character character, IDwelling chosenHome = null, bool ignoreCapacity = true) {
+        if (base.AddResident(character, chosenHome, ignoreCapacity)) {
+            if (character.race == RACE.DEMON || character is Summon) { return true; }
+            classManager.OnAddResident(character);
             return true;
         }
         return false;
     }
-    public void RemoveResident(Character character) {
-        if (residents.Remove(character)) {
-            region.RemoveResident(character);
-            if (character.homeStructure != null && character.homeSettlement == this) {
-                character.homeStructure.RemoveResident(character);
-            }
-            if (character.race != RACE.DEMON) {
-                classManager.OnRemoveResident(character);
-            }
+    public override bool RemoveResident(Character character) {
+        if (base.RemoveResident(character)) {
+            classManager.OnRemoveResident(character);
+            return true;
         }
-    }
-    private bool CanCharacterBeAddedAsResidentBasedOnFaction(Character character) {
-        if (owner != null && character.faction != null) {
-            //If character's faction is hostile with region's ruling faction, character cannot be a resident
-            return !owner.IsHostileWith(character.faction);
-        } else if (owner != null && character.faction == null) {
-            //If character has no faction and region has faction, character cannot be a resident
-            return false;
-        }
-        return true;
+        return false;
     }
     private void OnCharacterMissing(Character missingCharacter) {
         if (ruler != null && missingCharacter == ruler) {
@@ -401,9 +181,7 @@ public class Settlement : IJobOwner {
         }
     }
     public void SetRuler(Character newRuler) {
-        if(ruler != null) {
-            ruler.SetIsSettlementRuler(false);
-        }
+        ruler?.SetIsSettlementRuler(false);
         ruler = newRuler;
         if(ruler != null) {
             ruler.SetIsSettlementRuler(true);
@@ -418,9 +196,9 @@ public class Settlement : IJobOwner {
     }
     private void CheckForNewRulerDesignation() {
         string debugLog =
-            $"{GameManager.Instance.TodayLogString()}Checking for new settlement ruler designation for {name}";
+            $"{GameManager.Instance.TodayLogString()}Checking for new npcSettlement ruler designation for {name}";
         debugLog += $"\n-Chance: {newRulerDesignationChance}";
-        int chance = UnityEngine.Random.Range(0, 100);
+        int chance = Random.Range(0, 100);
         debugLog += $"\n-Roll: {chance}";
         Debug.Log(debugLog);
         if (chance < newRulerDesignationChance) {
@@ -431,7 +209,7 @@ public class Settlement : IJobOwner {
     }
     public void DesignateNewRuler(bool willLog = true) {
         string log =
-            $"{GameManager.Instance.TodayLogString()}Designating a new settlement ruler for: {region.name}(chance it triggered: {newRulerDesignationChance})";
+            $"{GameManager.Instance.TodayLogString()}Designating a new npcSettlement ruler for: {region.name}(chance it triggered: {newRulerDesignationChance})";
         newRulerDesignationWeights.Clear();
         for (int i = 0; i < residents.Count; i++) {
             Character resident = residents[i];
@@ -465,7 +243,7 @@ public class Settlement : IJobOwner {
             if(numberOfFriends > 0) {
                 weight += (numberOfFriends * 20);
                 log +=
-                    $"\n  -Num of Friend/Close Friend in the Settlement: {numberOfFriends}, +{(numberOfFriends * 20)}";
+                    $"\n  -Num of Friend/Close Friend in the NPCSettlement: {numberOfFriends}, +{(numberOfFriends * 20)}";
             }
             if (resident.traitContainer.HasTrait("Inspiring")) {
                 weight += 25;
@@ -479,7 +257,7 @@ public class Settlement : IJobOwner {
 
             if (numberOfEnemies > 0) {
                 weight += (numberOfEnemies * -10);
-                log += $"\n  -Num of Enemies/Rivals in the Settlement: {numberOfEnemies}, +{(numberOfEnemies * -10)}";
+                log += $"\n  -Num of Enemies/Rivals in the NPCSettlement: {numberOfEnemies}, +{(numberOfEnemies * -10)}";
             }
             if (resident.traitContainer.HasTrait("Ugly")) {
                 weight += -20;
@@ -527,16 +305,6 @@ public class Settlement : IJobOwner {
     private void ResetNewRulerDesignationChance() {
         newRulerDesignationChance = 5;
     }
-    // private void OnCharacterEnteredHexTile(Character character, HexTile enteredTile) {
-    //     if (enteredTile.settlementOnTile == this) {
-    //         //character has entered settlement
-    //     }
-    // }
-    // private void OnCharacterExitedHexTile(Character character, HexTile exitedTile) {
-    //     if (exitedTile.settlementOnTile == this) {
-    //         //character has entered settlement
-    //     }
-    // }
     public List<Character> GetHostileCharactersInSettlement() {
         List<Character> hostileCharacters = new List<Character>();
         for (int i = 0; i < region.charactersAtLocation.Count; i++) {
@@ -565,7 +333,7 @@ public class Settlement : IJobOwner {
                     } else if (rel2Data.opinions.compatibilityValue != -1) {
                         compatibilityValue = rel2Data.opinions.compatibilityValue;
                     } else {
-                        compatibilityValue = UnityEngine.Random.Range(OpinionComponent.MinCompatibility,
+                        compatibilityValue = Random.Range(OpinionComponent.MinCompatibility,
                             OpinionComponent.MaxCompatibility);  
                     }
                     rel1Data.opinions.SetCompatibilityValue(compatibilityValue);
@@ -596,6 +364,17 @@ public class Settlement : IJobOwner {
         }
         return false;
     }
+    protected override bool IsResidentsFull() {
+        if (structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
+            List<LocationStructure> dwellings = structures[STRUCTURE_TYPE.DWELLING];
+            for (int i = 0; i < dwellings.Count; i++) {
+                if (!dwellings[i].IsOccupied()) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
     #endregion
 
     #region Tile Objects
@@ -603,7 +382,7 @@ public class Settlement : IJobOwner {
     //    if (!itemsInArea.Contains(token)) {
     //        itemsInArea.Add(token);
     //        token.SetOwner(this.owner);
-    //        if (areaMap != null) { //if the settlement map of this settlement has already been created.
+    //        if (areaMap != null) { //if the npcSettlement map of this npcSettlement has already been created.
     //            //Debug.Log(GameManager.Instance.TodayLogString() + "Added " + token.name + " at " + name);
     //            if (structure != null) {
     //                structure.AddItem(token, gridLocation);
@@ -654,7 +433,7 @@ public class Settlement : IJobOwner {
                     for (int i = 0; i < jobs.Count; i++) {
                         JobQueueItem jqi = jobs[i];
                         if (jqi is GoapPlanJob goapPlanJob && goapPlanJob.targetPOI is TileObject tileObject && tileObject.tileObjectType == TILE_OBJECT_TYPE.HEALING_POTION) {
-                            jqi.ForceCancelJob(false, "Settlement has enough healing potions");    
+                            jqi.ForceCancelJob(false, "NPCSettlement has enough healing potions");    
                         }
                     }
                 }
@@ -664,7 +443,7 @@ public class Settlement : IJobOwner {
                     for (int i = 0; i < jobs.Count; i++) {
                         JobQueueItem jqi = jobs[i];
                         if (jqi is GoapPlanJob goapPlanJob && goapPlanJob.targetPOI is TileObject tileObject && tileObject.tileObjectType == TILE_OBJECT_TYPE.TOOL) {
-                            jqi.ForceCancelJob(false, "Settlement has enough tools");    
+                            jqi.ForceCancelJob(false, "NPCSettlement has enough tools");    
                         }
                     }
                 }
@@ -678,7 +457,8 @@ public class Settlement : IJobOwner {
         if (item.gridTileLocation != null && item.gridTileLocation.structure == mainStorage) {
             if (item.tileObjectType == TILE_OBJECT_TYPE.HEALING_POTION) {
                 return mainStorage.GetTileObjectsOfTypeCount(TILE_OBJECT_TYPE.HEALING_POTION) <= 2; //item is required by warehouse.
-            } else if (item.tileObjectType == TILE_OBJECT_TYPE.TOOL) {
+            }
+            if (item.tileObjectType == TILE_OBJECT_TYPE.TOOL) {
                 return mainStorage.GetTileObjectsOfTypeCount(TILE_OBJECT_TYPE.TOOL) <= 2; //item is required by warehouse.
             }
         }
@@ -687,120 +467,19 @@ public class Settlement : IJobOwner {
     #endregion
 
     #region Structures
-    public void GenerateStructures(int citizenCount) {
-        structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
-        //LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.CITY_CENTER, false);
-        //LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.WORK_AREA, false);
-        //LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.WILDERNESS, false);
-        //LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.POND, false);
-        
-        // LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.APOTHECARY, true);
-        // LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.ASSASSIN_GUILD, true);
-        // LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.BARRACKS, true);
-        // LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.HUNTER_LODGE, true);
-        // LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.MAGE_QUARTERS, true);
-        // LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.MINER_CAMP, true);
-        // LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.RAIDER_CAMP, true);
-        // LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.SMITHY, true);
-
-        LandmarkManager.Instance.CreateNewStructureAt(region, STRUCTURE_TYPE.CITY_CENTER, this);
-        for (int i = 0; i < citizenCount; i++) {
-            LandmarkManager.Instance.CreateNewStructureAt(region, STRUCTURE_TYPE.DWELLING, this);
-        }
+    public override void GenerateStructures(int citizenCount, Region region) {
+        base.GenerateStructures(citizenCount, region);
         AssignPrison();
     }
-    public void GenerateStructures(params LocationStructure[] preCreatedStructures) {
-        structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
-        for (int i = 0; i < preCreatedStructures.Length; i++) {
-            LocationStructure structure = preCreatedStructures[i];
-            AddStructure(structure);
-        }
-    }
-    private void LoadStructures(SaveDataArea data) {
-        structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
-
-        // for (int i = 0; i < data.structures.Count; i++) {
-        //     LandmarkManager.Instance.LoadStructureAt(this, data.structures[i]);
-        // }
+    protected override void LoadStructures(SaveDataArea data) {
+        base.LoadStructures(data);
         AssignPrison();
-    }
-    public void AddStructure(LocationStructure structure) {
-        if (!structures.ContainsKey(structure.structureType)) {
-            structures.Add(structure.structureType, new List<LocationStructure>());
-        }
-
-        if (!structures[structure.structureType].Contains(structure)) {
-            structures[structure.structureType].Add(structure);
-        }
-    }
-    public void RemoveStructure(LocationStructure structure) {
-        if (structures.ContainsKey(structure.structureType)) {
-            if (structures[structure.structureType].Remove(structure)) {
-
-                if (structures[structure.structureType].Count == 0) { //this is only for optimization
-                    structures.Remove(structure.structureType);
-                }
-            }
-        }
-    }
-    public LocationStructure GetRandomStructureOfType(STRUCTURE_TYPE type) {
-        if (structures.ContainsKey(type)) {
-            return structures[type][UtilityScripts.Utilities.rng.Next(0, structures[type].Count)];
-        }
-        return null;
-    }
-    public LocationStructure GetRandomStructure() {
-        Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structuresDictionary = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>(this.structures);
-        int dictIndex = UnityEngine.Random.Range(0, structuresDictionary.Count);
-        int count = 0;
-        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in structuresDictionary) {
-            if (count == dictIndex) {
-                return kvp.Value[UnityEngine.Random.Range(0, kvp.Value.Count)];
-            }
-            count++;
-        }
-        return null;
-    }
-    public LocationStructure GetStructureByID(STRUCTURE_TYPE type, int id) {
-        if (structures.ContainsKey(type)) {
-            List<LocationStructure> locStructures = structures[type];
-            for (int i = 0; i < locStructures.Count; i++) {
-                if(locStructures[i].id == id) {
-                    return locStructures[i];
-                }
-            }
-        }
-        return null;
-    }
-    public List<LocationStructure> GetStructuresAtLocation() {
-        List<LocationStructure> structuresAtLocation = new List<LocationStructure>();
-        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in this.structures) {
-            for (int i = 0; i < kvp.Value.Count; i++) {
-                LocationStructure currStructure = kvp.Value[i];
-                structuresAtLocation.Add(currStructure);
-            }
-        }
-        return structuresAtLocation;
-    }
-    public bool HasStructure(STRUCTURE_TYPE type) {
-        return structures.ContainsKey(type);
-    }
-    public LocationStructure GetStructureOccupyingSpot(BuildingSpot spot) {
-        foreach (KeyValuePair<STRUCTURE_TYPE,List<LocationStructure>> pair in structures) {
-            for (int i = 0; i < pair.Value.Count; i++) {
-                LocationStructure structure = pair.Value[i];
-                if (structure.occupiedBuildSpot.spot == spot) {
-                    return structure;
-                }
-            }
-        }
-        return null;
     }
     private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {
         if(owner != null && character.gridTileLocation != null && 
            character.gridTileLocation.IsPartOfSettlement(this) && character.canPerform && character.canMove) {
             if (owner.IsHostileWith(character.faction)) {
-                SetIsUnderSeige(true);
+                SetIsUnderSiege(true);
             }
         }
     }
@@ -813,7 +492,7 @@ public class Settlement : IJobOwner {
             for (int i = 0; i < keyValuePair.Value.Count; i++) {
                 LocationStructure structure = keyValuePair.Value[i];
                 if (structure.structureObj != null) {
-                    structure.structureObj.RegisterPreplacedObjects(structure, this.innerMap);    
+                    structure.structureObj.RegisterPreplacedObjects(structure, structure.location.innerMap);    
                 }
                 yield return null;
             }
@@ -867,7 +546,7 @@ public class Settlement : IJobOwner {
     }
     public void OnLocationStructureObjectPlaced(LocationStructure structure) {
         if (structure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
-            //if a warehouse was placed, and this settlement does not yet have a main storage structure, or is using the city center as their main storage structure, then use the new warehouse instead.
+            //if a warehouse was placed, and this npcSettlement does not yet have a main storage structure, or is using the city center as their main storage structure, then use the new warehouse instead.
             if (mainStorage == null || mainStorage.structureType == STRUCTURE_TYPE.CITY_CENTER) {
                 SetMainStorage(structure);
             }
@@ -916,9 +595,9 @@ public class Settlement : IJobOwner {
         }
         jobManager.OnAddToAvailableJobs(job);
         if (job is GoapPlanJob goapJob) {
-            Debug.Log($"{GameManager.Instance.TodayLogString()}{goapJob.ToString()} targeting {goapJob.targetPOI?.ToString()} was added to {this.name}'s available jobs");
+            Debug.Log($"{GameManager.Instance.TodayLogString()}{goapJob} targeting {goapJob.targetPOI} was added to {name}'s available jobs");
         } else {
-            Debug.Log($"{GameManager.Instance.TodayLogString()}{job.ToString()} was added to {this.name}'s available jobs");    
+            Debug.Log($"{GameManager.Instance.TodayLogString()}{job} was added to {name}'s available jobs");    
         }
         
     }
@@ -926,24 +605,15 @@ public class Settlement : IJobOwner {
         if (availableJobs.Remove(job)) {
             if (job is GoapPlanJob) {
                 GoapPlanJob goapJob = job as GoapPlanJob;
-                Debug.Log($"{GameManager.Instance.TodayLogString()}{goapJob.ToString()} targeting {goapJob.targetPOI?.name} was removed from {this.name}'s available jobs");
+                Debug.Log($"{GameManager.Instance.TodayLogString()}{goapJob} targeting {goapJob.targetPOI?.name} was removed from {name}'s available jobs");
             } else {
-                Debug.Log($"{GameManager.Instance.TodayLogString()}{job.ToString()} was removed from {this.name}'s available jobs");    
+                Debug.Log($"{GameManager.Instance.TodayLogString()}{job} was removed from {name}'s available jobs");    
             }
             OnJobRemovedFromAvailableJobs(job);
             return true;
         }
         return false;
     }
-    //public bool RemoveFromAvailableJobs(JOB_TYPE jobType) {
-    //    for (int i = 0; i < availableJobs.Count; i++) {
-    //        if(availableJobs[i].jobType == jobType) {
-    //            availableJobs.RemoveAt(i);
-    //            return true;
-    //        }
-    //    }
-    //    return false;
-    //}
     public int GetNumberOfJobsWith(CHARACTER_STATE state) {
         int count = 0;
         for (int i = 0; i < availableJobs.Count; i++) {
@@ -965,7 +635,7 @@ public class Settlement : IJobOwner {
         }
         return count;
     }
-    public int GetNumberOfJobsWith(System.Func<JobQueueItem, bool> checker) {
+    public int GetNumberOfJobsWith(Func<JobQueueItem, bool> checker) {
         int count = 0;
         for (int i = 0; i < availableJobs.Count; i++) {
             if (checker.Invoke(availableJobs[i])) {
@@ -1224,109 +894,7 @@ public class Settlement : IJobOwner {
     }
     #endregion
 
-    #region Settlement Map
-    //public void OnMapGenerationFinished() {
-    //    //place tokens in settlement to actual structures.
-    //    //get structure for token
-    //    for (int i = 0; i < itemsInArea.Count; i++) {
-    //        SpecialToken token = itemsInArea[i];
-    //        LocationStructure chosen = InnerMapManager.Instance.GetRandomStructureToPlaceItem(this, token);
-    //        chosen.AddItem(token);
-    //        if (chosen.isInside) {
-    //            token.SetOwner(this.owner);
-    //        }
-    //    }
-    //}
-    #endregion
-    
-    #region Faction
-    public void SetOwner(Faction owner) {
-        SetPreviousOwner(this.owner);
-        this.owner = owner;
-        Messenger.Broadcast(Signals.AREA_OWNER_CHANGED, this);
-        
-        bool isCorrupted = this.owner != null && this.owner.isPlayerFaction;
-        for (int i = 0; i < tiles.Count; i++) {
-            HexTile tile = tiles[i];
-            tile.SetCorruption(isCorrupted);
-            if (tile.landmarkOnTile != null) {
-                tile.UpdateLandmarkVisuals();
-            }
-        }
-    }
-    public void SetPreviousOwner(Faction faction) {
-        previousOwner = faction;
-    }
-    #endregion
-
-    #region Tiles
-    public void AddTileToSettlement(HexTile tile) {
-        if (tiles.Contains(tile) == false) {
-            tiles.Add(tile);
-            tile.SetSettlementOnTile(this);
-            if (locationType == LOCATION_TYPE.DEMONIC_INTRUSION) {
-                tile.SetCorruption(true);
-            }
-            if (tile.landmarkOnTile != null) {
-                tile.UpdateLandmarkVisuals();    
-            }
-        }
-    }
-    public void AddTileToSettlement(params HexTile[] tiles) {
-        for (int i = 0; i < tiles.Length; i++) {
-            HexTile tile = tiles[i];
-            AddTileToSettlement(tile);
-        }
-    }
-    public void RemoveTileFromSettlement(HexTile tile) {
-        if (tiles.Remove(tile)) {
-            tile.SetSettlementOnTile(null);
-            if (locationType == LOCATION_TYPE.DEMONIC_INTRUSION) {
-                tile.SetCorruption(false);
-            }
-        }
-    }
-    #endregion
-    
     public override string ToString() {
         return name;
-    }
-}
-
-[System.Serializable]
-public struct IntRange {
-    public int lowerBound;
-    public int upperBound;
-    
-    public IntRange(int low, int high) {
-        lowerBound = low;
-        upperBound = high;
-    }
-
-    public void SetLower(int lower) {
-        lowerBound = lower;
-    }
-    public void SetUpper(int upper) {
-        upperBound = upper;
-    }
-
-    public int Random() {
-        return UnityEngine.Random.Range(lowerBound, upperBound + 1);
-    }
-
-    public bool IsInRange(int value) {
-        if (value >= lowerBound && value <= upperBound) {
-            return true;
-        }
-        return false;
-    }
-
-    public bool IsNearUpperBound(int value) {
-        int lowerBoundDifference = Mathf.Abs(value - lowerBound);
-        int upperBoundDifference = Mathf.Abs(value - upperBound);
-        if (upperBoundDifference < lowerBoundDifference) {
-            return true;
-        }
-        return false;
     }
 }

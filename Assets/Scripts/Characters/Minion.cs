@@ -16,7 +16,7 @@ public class Minion {
     public int indexDefaultSort { get; private set; }
     public CombatAbility combatAbility { get; private set; }
     public List<string> traitsToAdd { get; private set; }
-    public Region assignedRegion { get; private set; } //the landmark that this minion is currently invading. NOTE: This is set on both settlement and non settlement landmarks
+    public Region assignedRegion { get; private set; } //the landmark that this minion is currently invading. NOTE: This is set on both npcSettlement and non npcSettlement landmarks
     public DeadlySin deadlySin => CharacterManager.Instance.GetDeadlySin(_assignedDeadlySinName);
     public bool isAssigned => assignedRegion != null; //true if minion is already assigned somewhere else, maybe in construction or research spells
     public int spellExtractionCount { get; private set; } //the number of times a spell was extracted from this minion.
@@ -134,7 +134,7 @@ public class Minion {
 
             Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, character as IPointOfInterest, "target is already dead");
             character.CancelAllJobs();
-            // StopInvasionProtocol(PlayerManager.Instance.player.currentSettlementBeingInvaded);
+            // StopInvasionProtocol(PlayerManager.Instance.player.currentNpcSettlementBeingInvaded);
 
             Log deathLog;
             if (_deathLog == null) {
@@ -261,22 +261,22 @@ public class Minion {
     #endregion
 
     #region Invasion
-    public void StartInvasionProtocol(Settlement settlement) {
+    public void StartInvasionProtocol(NPCSettlement npcSettlement) {
         //TODO:
         // AddPendingTraits();
         // Messenger.AddListener(Signals.TICK_STARTED, PerTickInvasion);
         // Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
-        // Messenger.AddListener<Settlement>(Signals.SUCCESS_INVASION_AREA, OnSucceedInvadeArea);
+        // Messenger.AddListener<NPCSettlement>(Signals.SUCCESS_INVASION_AREA, OnSucceedInvadeArea);
         // Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, character.OnOtherCharacterDied);
         // Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, character.OnCharacterEndedState);
-        // SetAssignedRegion(settlement.region);
+        // SetAssignedRegion(npcSettlement.region);
     }
-    public void StopInvasionProtocol(Settlement settlement) {
+    public void StopInvasionProtocol(NPCSettlement npcSettlement) {
         //TODO:
-        // if(settlement != null && assignedRegion != null && assignedRegion.settlement == settlement) {
+        // if(npcSettlement != null && assignedRegion != null && assignedRegion.npcSettlement == npcSettlement) {
         //     Messenger.RemoveListener(Signals.TICK_STARTED, PerTickInvasion);
         //     Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
-        //     Messenger.RemoveListener<Settlement>(Signals.SUCCESS_INVASION_AREA, OnSucceedInvadeArea);
+        //     Messenger.RemoveListener<NPCSettlement>(Signals.SUCCESS_INVASION_AREA, OnSucceedInvadeArea);
         //     Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, character.OnOtherCharacterDied);
         //     Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, character.OnCharacterEndedState);
         //     SetAssignedRegion(null);
@@ -322,7 +322,7 @@ public class Minion {
 
     #region Traits
     /// <summary>
-    /// Add trait function for minions. Added handling for when a minion gains a trait while outside of an settlement map. All traits are stored and will be added once the minion is placed at an settlement map.
+    /// Add trait function for minions. Added handling for when a minion gains a trait while outside of an npcSettlement map. All traits are stored and will be added once the minion is placed at an npcSettlement map.
     /// </summary>
     public bool AddTrait(string traitName, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null) {
         if (InnerMapManager.Instance.isAnInnerMapShowing) {

@@ -7,13 +7,13 @@ using UnityEngine.Tilemaps;
 namespace Inner_Maps {
     public class AreaInnerTileMap : InnerTileMap {
         //Building spots
-        public Settlement settlement { get; private set; }
+        public NPCSettlement npcSettlement { get; private set; }
         public TownMapSettings generatedTownMapSettings { get; private set; }
         public string usedTownCenterTemplateName { get; private set; }
 
         #region Map Generation
-        public void Initialize(Settlement settlement) {
-            this.settlement = settlement;
+        public void Initialize(NPCSettlement npcSettlement) {
+            this.npcSettlement = npcSettlement;
 
             //set tile map sorting orders
             TilemapRenderer ground = groundTilemap.gameObject.GetComponent<TilemapRenderer>();
@@ -41,7 +41,7 @@ namespace Inner_Maps {
             //Vector3Int startPoint = new Vector3Int(eastOutsideTiles, southOutsideTiles, 0);
             //DrawTownMap(data.generatedTownMapSettings, startPoint);
             //No need to Place Structures since structure of tile is loaded upon loading grid tile
-            //AssignOuterAreas(insideTiles, outsideTiles); //no need for this because structure reference is already saved per location grid tile, and this only assigns the tile to either the wilderness or work settlement structure
+            //AssignOuterAreas(insideTiles, outsideTiles); //no need for this because structure reference is already saved per location grid tile, and this only assigns the tile to either the wilderness or work npcSettlement structure
         }
         // private IEnumerator GenerateGrid(TownMapSettings settings) {
         //     Point determinedSize = GetWidthAndHeightForSettings(settings);
@@ -58,17 +58,17 @@ namespace Inner_Maps {
         //             if (x < _eastOutsideTiles || x >= width - _westOutsideTiles || y < _southOutsideTiles || y >= height - _northOutsideTiles) {
         //                 //outside
         //                 currTile.SetIsInside(false);
-        //                 //GetOutsideFloorTileForArea(settlement)
+        //                 //GetOutsideFloorTileForArea(npcSettlement)
         //                 if (changeFloorAssets) {
-        //                     groundTilemap.SetTile(currTile.localPlace, GetOutsideFloorTile(settlement));
+        //                     groundTilemap.SetTile(currTile.localPlace, GetOutsideFloorTile(npcSettlement));
         //                 }
         //                 outsideTiles.Add(currTile);
         //             } else {
         //                 //inside
         //                 currTile.SetIsInside(true);
-        //                 //GetOutsideFloorTileForArea(settlement)
+        //                 //GetOutsideFloorTileForArea(npcSettlement)
         //                 if (changeFloorAssets) {
-        //                     groundTilemap.SetTile(currTile.localPlace, GetOutsideFloorTile(settlement));
+        //                     groundTilemap.SetTile(currTile.localPlace, GetOutsideFloorTile(npcSettlement));
         //                 }
         //                 insideTiles.Add(currTile);
         //             }
@@ -91,7 +91,7 @@ namespace Inner_Maps {
         public void Save(AreaInnerTileMap innerMap) {
             width = innerMap.width;
             height = innerMap.height;
-            areaID = innerMap.settlement.id;
+            areaID = innerMap.npcSettlement.id;
             usedTownCenterTemplateName = innerMap.usedTownCenterTemplateName;
             generatedTownMapSettings = innerMap.generatedTownMapSettings;
 
@@ -114,10 +114,10 @@ namespace Inner_Maps {
             }
         }
         public void Load(AreaInnerTileMap innerMap) {
-            innerMap.width = width;
-            innerMap.height = height;
-            innerMap.Initialize(LandmarkManager.Instance.GetAreaByID(areaID));
-            innerMap.LoadMap(this);
+            // innerMap.width = width;
+            // innerMap.height = height;
+            // innerMap.Initialize(LandmarkManager.Instance.GetAreaByID(areaID));
+            // innerMap.LoadMap(this);
         }
 
         public void LoadTileTraits() {

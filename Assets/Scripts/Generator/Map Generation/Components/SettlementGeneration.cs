@@ -26,30 +26,30 @@ public class SettlementGeneration : MapGenerationComponent {
 	
 	private IEnumerator CreateSettlement(Region region, MapGenerationData data) {
 		List<HexTile> settlementTiles = region.GetTilesWithFeature(TileFeatureDB.Inhabited_Feature);
-		Settlement settlement = LandmarkManager.Instance.CreateNewSettlement
+		NPCSettlement npcSettlement = LandmarkManager.Instance.CreateNewSettlement
 			(region, LOCATION_TYPE.HUMAN_SETTLEMENT, 1, settlementTiles.ToArray());
 		int totalRemainingBuildSpots = settlementTiles.Count * 4; //*4 because each hex tile = 4 build spots
 		totalRemainingBuildSpots -= 1; //to accomodate for city center
 
 		int dwellingCount = totalRemainingBuildSpots;
 		Faction faction = FactionManager.Instance.CreateNewFaction(CollectionUtilities.GetRandomElement(raceChoices));
-		settlement.GenerateStructures(dwellingCount);
-		settlement.AddStructure(region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
-		LandmarkManager.Instance.OwnSettlement(faction, settlement);
+		npcSettlement.GenerateStructures(dwellingCount, region);
+		npcSettlement.AddStructure(region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
+		LandmarkManager.Instance.OwnSettlement(faction, npcSettlement);
 		
-		yield return MapGenerator.Instance.StartCoroutine(PlaceInitialStructures(settlement, region.innerMap));
-		yield return MapGenerator.Instance.StartCoroutine(settlement.PlaceObjects());
+		yield return MapGenerator.Instance.StartCoroutine(PlaceInitialStructures(npcSettlement, region.innerMap));
+		yield return MapGenerator.Instance.StartCoroutine(npcSettlement.PlaceObjects());
 
-		GenerateSettlementResidents(dwellingCount, settlement, faction, data);
+		GenerateSettlementResidents(dwellingCount, npcSettlement, faction, data);
 
-		CharacterManager.Instance.PlaceInitialCharacters(faction.characters, settlement);
-		settlement.OnAreaSetAsActive();
+		CharacterManager.Instance.PlaceInitialCharacters(faction.characters, npcSettlement);
+		npcSettlement.OnAreaSetAsActive();
 	}
 
-	#region Settlement Structures
-	private IEnumerator PlaceInitialStructures(Settlement settlement, InnerTileMap innerTileMap) {
+	#region NPCSettlement Structures
+	private IEnumerator PlaceInitialStructures(NPCSettlement npcSettlement, InnerTileMap innerTileMap) {
 		//order the structures based on their priorities
-		Dictionary<STRUCTURE_TYPE, List<LocationStructure>> ordered = settlement.structures
+		Dictionary<STRUCTURE_TYPE, List<LocationStructure>> ordered = npcSettlement.structures
 			.OrderBy(x => x.Key.StructureGenerationPriority())
 			.ToDictionary(x => x.Key, x => x.Value);
 
@@ -61,8 +61,7 @@ public class SettlementGeneration : MapGenerationComponent {
 						InnerMapManager.Instance.GetStructurePrefabsForStructure(keyValuePair.Key);
 					GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
 					LocationStructureObject lso = chosenStructurePrefab.GetComponent<LocationStructureObject>();
-					BuildingSpot chosenBuildingSpot;
-					if (TryGetBuildSpotForStructureInSettlement(lso, settlement, out chosenBuildingSpot)) {
+					if (TryGetBuildSpotForStructureInSettlement(lso, npcSettlement, innerTileMap, out var chosenBuildingSpot)) {
 						innerTileMap.PlaceStructureObjectAt(chosenBuildingSpot, chosenStructurePrefab, structure);
 					} else {
 						throw new System.Exception(
@@ -73,12 +72,12 @@ public class SettlementGeneration : MapGenerationComponent {
 			}
 		}
 	}
-	private bool TryGetBuildSpotForStructureInSettlement(LocationStructureObject structureObject, Settlement settlement, out BuildingSpot spot) {
-		for (int i = 0; i < settlement.tiles.Count; i++) {
-			HexTile currTile = settlement.tiles[i];
+	private bool TryGetBuildSpotForStructureInSettlement(LocationStructureObject structureObject, NPCSettlement npcSettlement, InnerTileMap innerMap, out BuildingSpot spot) {
+		for (int i = 0; i < npcSettlement.tiles.Count; i++) {
+			HexTile currTile = npcSettlement.tiles[i];
 			for (int j = 0; j < currTile.ownedBuildSpots.Length; j++) {
 				BuildingSpot currSpot = currTile.ownedBuildSpots[j];
-				if (currSpot.isOccupied == false && currSpot.CanFitStructureOnSpot(structureObject, settlement.innerMap, "Player")) {
+				if (currSpot.isOccupied == false && currSpot.CanFitStructureOnSpot(structureObject, innerMap, "Player")) {
 					spot = currSpot;
 					return true;
 				}
@@ -112,11 +111,11 @@ public class SettlementGeneration : MapGenerationComponent {
 	#endregion
 
 	#region Residents
-	private void GenerateSettlementResidents(int dwellingCount, Settlement settlement, Faction faction, MapGenerationData data) {
+	private void GenerateSettlementResidents(int dwellingCount, NPCSettlement npcSettlement, Faction faction, MapGenerationData data) {
 		int citizenCount = 0;
 		for (int i = 0; i < dwellingCount; i++) {
 			int roll = Random.Range(0, 100);
-			List<Dwelling> availableDwellings = GetAvailableDwellingsAtSettlement(settlement);
+			List<Dwelling> availableDwellings = GetAvailableDwellingsAtSettlement(npcSettlement);
 			if (availableDwellings.Count == 0) {
 				break; //no more dwellings
 			}
@@ -126,32 +125,32 @@ public class SettlementGeneration : MapGenerationComponent {
 				List<Couple> couples = GetAvailableCouplesToBeSpawned(faction.race, data);
 				if (couples.Count > 0) {
 					Couple couple = CollectionUtilities.GetRandomElement(couples);
-					SpawnCouple(couple, dwelling, faction, settlement);
+					SpawnCouple(couple, dwelling, faction, npcSettlement);
 					citizenCount += 2;
 				} else {
 					//no more couples left	
 					List<Couple> siblingCouples = GetAvailableSiblingCouplesToBeSpawned(faction.race, data);
 					if (siblingCouples.Count > 0) {
 						Couple couple = CollectionUtilities.GetRandomElement(siblingCouples);
-						SpawnCouple(couple, dwelling, faction, settlement);
+						SpawnCouple(couple, dwelling, faction, npcSettlement);
 						citizenCount += 2;
 					} else {
 						//no more sibling Couples	
 						PreCharacterData singleCharacter =
-							GetAvailableSingleCharacterForSettlement(faction.race, data, settlement);
+							GetAvailableSingleCharacterForSettlement(faction.race, data, npcSettlement);
 						if (singleCharacter != null) {
-							SpawnCharacter(singleCharacter, settlement.classManager.GetCurrentClassToCreate(), 
-								dwelling, faction, settlement);
+							SpawnCharacter(singleCharacter, npcSettlement.classManager.GetCurrentClassToCreate(), 
+								dwelling, faction, npcSettlement);
 							citizenCount += 1;
 						} else {
 							//no more characters to spawn
 							Debug.LogWarning("Could not find any more characters to spawn. Generating a new family tree.");
 							FamilyTree newFamily = FamilyTreeGenerator.GenerateFamilyTree(faction.race);
 							data.familyTreeDatabase.AddFamilyTree(newFamily);
-							singleCharacter = GetAvailableSingleCharacterForSettlement(faction.race, data, settlement);
+							singleCharacter = GetAvailableSingleCharacterForSettlement(faction.race, data, npcSettlement);
 							Assert.IsNotNull(singleCharacter, $"Generation tried to generate a new family for spawning a needed citizen. But still could not find a single character!");
-							SpawnCharacter(singleCharacter, settlement.classManager.GetCurrentClassToCreate(), 
-								dwelling, faction, settlement);
+							SpawnCharacter(singleCharacter, npcSettlement.classManager.GetCurrentClassToCreate(), 
+								dwelling, faction, npcSettlement);
 							citizenCount += 1;
 						}
 					}
@@ -159,25 +158,25 @@ public class SettlementGeneration : MapGenerationComponent {
 			} else {
 				//single
 				PreCharacterData singleCharacter =
-					GetAvailableSingleCharacterForSettlement(faction.race, data, settlement);
+					GetAvailableSingleCharacterForSettlement(faction.race, data, npcSettlement);
 				if (singleCharacter != null) {
-					SpawnCharacter(singleCharacter, settlement.classManager.GetCurrentClassToCreate(), 
-						dwelling, faction, settlement);
+					SpawnCharacter(singleCharacter, npcSettlement.classManager.GetCurrentClassToCreate(), 
+						dwelling, faction, npcSettlement);
 					citizenCount += 1;
 				} else {
 					//no more characters to spawn
 					Debug.LogWarning("Could not find any more characters to spawn");
 					FamilyTree newFamily = FamilyTreeGenerator.GenerateFamilyTree(faction.race);
 					data.familyTreeDatabase.AddFamilyTree(newFamily);
-					singleCharacter = GetAvailableSingleCharacterForSettlement(faction.race, data, settlement);
+					singleCharacter = GetAvailableSingleCharacterForSettlement(faction.race, data, npcSettlement);
 					Assert.IsNotNull(singleCharacter, $"Generation tried to generate a new family for spawning a needed citizen. But still could not find a single character!");
-					SpawnCharacter(singleCharacter, settlement.classManager.GetCurrentClassToCreate(), 
-						dwelling, faction, settlement);
+					SpawnCharacter(singleCharacter, npcSettlement.classManager.GetCurrentClassToCreate(), 
+						dwelling, faction, npcSettlement);
 					citizenCount += 1;
 				}
 			}
 		}
-		settlement.SetInitialResidentCount(citizenCount);
+		npcSettlement.SetInitialResidentCount(citizenCount);
 	}
 	private List<Couple> GetAvailableCouplesToBeSpawned(RACE race, MapGenerationData data) {
 		List<Couple> couples = new List<Couple>();
@@ -219,7 +218,7 @@ public class SettlementGeneration : MapGenerationComponent {
 		}
 		return couples;
 	}
-	private PreCharacterData GetAvailableSingleCharacterForSettlement(RACE race, MapGenerationData data, Settlement settlement) {
+	private PreCharacterData GetAvailableSingleCharacterForSettlement(RACE race, MapGenerationData data, NPCSettlement npcSettlement) {
 		List<PreCharacterData> availableCharacters = new List<PreCharacterData>();
 		List<FamilyTree> familyTrees = data.familyTreesDictionary[race];
 		for (int i = 0; i < familyTrees.Count; i++) {
@@ -228,9 +227,9 @@ public class SettlementGeneration : MapGenerationComponent {
 				PreCharacterData familyMember = familyTree.allFamilyMembers[j];
 				if (familyMember.hasBeenSpawned == false) {
 					PreCharacterData lover = familyMember.GetCharacterWithRelationship(RELATIONSHIP_TYPE.LOVER, data.familyTreeDatabase);
-					//check if the character has a lover, if it does, check if its lover has been spawned, if it has, check that the lover was spawned in a different settlement
+					//check if the character has a lover, if it does, check if its lover has been spawned, if it has, check that the lover was spawned in a different npcSettlement
 					if (lover == null || lover.hasBeenSpawned == false || 
-					    CharacterManager.Instance.GetCharacterByID(lover.id).homeSettlement != settlement) {
+					    CharacterManager.Instance.GetCharacterByID(lover.id).homeSettlement != npcSettlement) {
 						availableCharacters.Add(familyMember);
 					}
 				}
@@ -242,10 +241,10 @@ public class SettlementGeneration : MapGenerationComponent {
 		}
 		return null;
 	}
-	private List<Dwelling> GetAvailableDwellingsAtSettlement(Settlement settlement) {
+	private List<Dwelling> GetAvailableDwellingsAtSettlement(NPCSettlement npcSettlement) {
 		List<Dwelling> dwellings = new List<Dwelling>();
-		if (settlement.structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
-			List<LocationStructure> locationStructures = settlement.structures[STRUCTURE_TYPE.DWELLING];
+		if (npcSettlement.structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
+			List<LocationStructure> locationStructures = npcSettlement.structures[STRUCTURE_TYPE.DWELLING];
 			for (int i = 0; i < locationStructures.Count; i++) {
 				LocationStructure currStructure = locationStructures[i];
 				Dwelling dwelling = currStructure as Dwelling;
@@ -256,12 +255,12 @@ public class SettlementGeneration : MapGenerationComponent {
 		}
 		return dwellings;
 	}
-	private void SpawnCouple(Couple couple, Dwelling dwelling, Faction faction, Settlement settlement) {
-		SpawnCharacter(couple.character1, settlement.classManager.GetCurrentClassToCreate(), dwelling, faction, settlement);
-		SpawnCharacter(couple.character2, settlement.classManager.GetCurrentClassToCreate(), dwelling, faction, settlement);
+	private void SpawnCouple(Couple couple, Dwelling dwelling, Faction faction, NPCSettlement npcSettlement) {
+		SpawnCharacter(couple.character1, npcSettlement.classManager.GetCurrentClassToCreate(), dwelling, faction, npcSettlement);
+		SpawnCharacter(couple.character2, npcSettlement.classManager.GetCurrentClassToCreate(), dwelling, faction, npcSettlement);
 	}
-	private void SpawnCharacter(PreCharacterData data, string className, Dwelling dwelling, Faction faction, Settlement settlement) {
-		CharacterManager.Instance.CreateNewCharacter(data, className, faction, settlement, dwelling);
+	private void SpawnCharacter(PreCharacterData data, string className, Dwelling dwelling, Faction faction, NPCSettlement npcSettlement) {
+		CharacterManager.Instance.CreateNewCharacter(data, className, faction, npcSettlement, dwelling);
 	}
 	#endregion
 

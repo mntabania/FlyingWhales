@@ -74,7 +74,7 @@ public class RevertToNormalForm : GoapAction {
     //            actor.AddCriminalTrait(CRIME.ABERRATION, this);
     //            recipient.CreateApprehendJobFor(actor);
     //            //if (job != null) {
-    //            //    recipient.homeSettlement.jobQueue.AssignCharacterToJob(job, this);
+    //            //    recipient.homeNpcSettlement.jobQueue.AssignCharacterToJob(job, this);
     //            //}
     //        } else {
     //            recipient.CreateReportCrimeJob(committedCrime, this, actorAlterEgo);
@@ -89,7 +89,7 @@ public class RevertToNormalForm : GoapAction {
     //            actor.AddCriminalTrait(CRIME.ABERRATION, this);
     //            recipient.CreateApprehendJobFor(actor);
     //            //if (job != null) {
-    //            //    recipient.homeSettlement.jobQueue.AssignCharacterToJob(job, this);
+    //            //    recipient.homeNpcSettlement.jobQueue.AssignCharacterToJob(job, this);
     //            //}
     //        } else {
     //            recipient.CreateReportCrimeJob(committedCrime, this, actorAlterEgo);

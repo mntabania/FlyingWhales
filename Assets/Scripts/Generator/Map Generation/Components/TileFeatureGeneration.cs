@@ -176,7 +176,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		}
 		
 		
-		// string log = "Determining settlement tiles";
+		// string log = "Determining npcSettlement tiles";
 		// List<Region> settlementChoices = new List<Region>(GridMap.Instance.allRegions);
 		// for (int i = 0; i < count; i++) {
 		// 	Region chosenRegion = CollectionUtilities.GetRandomElement(settlementChoices);
@@ -184,7 +184,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		// 	randomTile.SetElevation(ELEVATION.PLAIN);
 		// 	randomTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, randomTile);
 		// 	LandmarkManager.Instance.CreateNewLandmarkOnTile(randomTile, LANDMARK_TYPE.VILLAGE, false);
-		// 	log += $"\nChose {randomTile.ToString()} to be a settlement";
+		// 	log += $"\nChose {randomTile.ToString()} to be a npcSettlement";
 		// 	if (Random.Range(0, 2) == 1) {
 		// 		//2 tiles are settlements
 		// 		HexTile adjacentTile = CollectionUtilities.GetRandomElement(randomTile.AllNeighbours
@@ -193,7 +193,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		// 		adjacentTile.SetElevation(ELEVATION.PLAIN);
 		// 		adjacentTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, adjacentTile);
 		// 		LandmarkManager.Instance.CreateNewLandmarkOnTile(adjacentTile, LANDMARK_TYPE.VILLAGE, false);
-		// 		log += $"\nChose {adjacentTile.ToString()} next to {randomTile.ToString()} to be a settlement";
+		// 		log += $"\nChose {adjacentTile.ToString()} next to {randomTile.ToString()} to be a npcSettlement";
 		// 	}
 		// 	settlementChoices.Remove(chosenRegion);
 		// }

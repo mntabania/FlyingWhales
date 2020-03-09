@@ -65,9 +65,9 @@ public class BuildSpotTileObject : TileObject {
             Debug.LogWarning($"Could not find a prefab for structure {structureType.ToString()} on build spot {spot.ToString()}");
         }
     }
-    public LocationStructure BuildBlueprint(Settlement settlement) {
+    public LocationStructure BuildBlueprint(NPCSettlement npcSettlement) {
         spot.blueprint.SetVisualMode(LocationStructureObject.Structure_Visual_Mode.Built);
-        LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(gridTileLocation.structure.location, spot.blueprintType, settlement);
+        LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(gridTileLocation.structure.location, spot.blueprintType, npcSettlement);
 
         spot.blueprint.ClearOutUnimportantObjectsBeforePlacement();
 
@@ -76,21 +76,20 @@ public class BuildSpotTileObject : TileObject {
             tile.SetStructure(structure);
         }
         structure.SetStructureObject(spot.blueprint);
-        spot.blueprint.PlacePreplacedObjectsAsBlueprints(structure, settlement.innerMap, settlement);
+        spot.blueprint.PlacePreplacedObjectsAsBlueprints(structure, gridTileLocation.parentMap, npcSettlement);
         
         structure.SetOccupiedBuildSpot(this);
-        spot.blueprint.OnStructureObjectPlaced(settlement.innerMap, structure);
+        spot.blueprint.OnStructureObjectPlaced(gridTileLocation.parentMap, structure);
         spot.ClearBlueprints();
 
-        settlement.AddTileToSettlement(spot.hexTileOwner);
+        npcSettlement.AddTileToSettlement(spot.hexTileOwner);
 
         return structure;
         
     }
     public void RemoveOccupyingStructure(LocationStructure structure) {
-        Settlement settlement = structure.settlementLocation;
         spot.SetIsOccupied(false);
-        spot.UpdateAdjacentSpotsOccupancy(settlement.innerMap);
+        spot.UpdateAdjacentSpotsOccupancy(structure.location.innerMap);
     }
 
 }

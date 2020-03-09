@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Inner_Maps;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.Experimental.Rendering.Universal;
 
 public class WallVisual : MapObjectVisual<StructureWallObject> {
 

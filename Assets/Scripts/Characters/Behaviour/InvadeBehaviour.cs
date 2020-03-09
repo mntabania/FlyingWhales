@@ -10,11 +10,11 @@ public class InvadeBehaviour : CharacterBehaviourComponent {
     public override bool TryDoBehaviour(Character character, ref string log) {
         log += $"\n-{character.name} will invade";
         if (character.gridTileLocation.buildSpotOwner.hexTileOwner && character.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile == character.behaviourComponent.harassInvadeRaidTarget) {
-            log += "\n-Already in the target settlement";
+            log += "\n-Already in the target npcSettlement";
             log += "\n-Roam";
             character.jobComponent.TriggerRoamAroundTile();
         } else {
-            log += "\n-Is not in the target settlement";
+            log += "\n-Is not in the target npcSettlement";
             log += "\n-Roam there";
             HexTile targetHex = character.behaviourComponent.harassInvadeRaidTarget.tiles[UnityEngine.Random.Range(0, character.behaviourComponent.harassInvadeRaidTarget.tiles.Count)];
             LocationGridTile targetTile = targetHex.locationGridTiles[UnityEngine.Random.Range(0, targetHex.locationGridTiles.Count)];

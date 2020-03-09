@@ -45,7 +45,7 @@ public class RoleSlotItemDraggable : DraggableItem {
         _draggingObject = clone.GetComponent<RectTransform>();
         _draggingObject.gameObject.AddComponent<DragObject>().parentItem = roleSlotItem;
 
-        //Put _dragging object into the dragging settlement
+        //Put _dragging object into the dragging npcSettlement
         _draggingObject.sizeDelta = portrait.gameObject.GetComponent<RectTransform>().rect.size;
         _draggingObject.SetParent(UIManager.Instance.gameObject.GetComponent<RectTransform>(), true);
         _isDragging = true;

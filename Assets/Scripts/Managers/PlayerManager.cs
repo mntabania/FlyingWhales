@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using Traits;
 using Archetype;
+using Locations.Settlements;
 
 public class PlayerManager : MonoBehaviour {
     public static PlayerManager Instance;
@@ -68,10 +69,10 @@ public class PlayerManager : MonoBehaviour {
         player.CreatePlayerFaction();
         player.SetPortalTile(portal.tileLocation);
         player.SetArchetype(archeType);
-        Settlement existingPlayerSettlement = player.CreatePlayerSettlement(portal);
-        existingPlayerSettlement.GenerateStructures(portalStructure);
+        PlayerSettlement existingPlayerNpcSettlement = player.CreatePlayerSettlement(portal);
+        existingPlayerNpcSettlement.GenerateStructures(portalStructure);
         
-        LandmarkManager.Instance.OwnSettlement(player.playerFaction, existingPlayerSettlement);
+        LandmarkManager.Instance.OwnSettlement(player.playerFaction, existingPlayerNpcSettlement);
         
         player.AddArtifact(CreateNewArtifact(ARTIFACT_TYPE.Grasping_Hands));
         player.AddArtifact(CreateNewArtifact(ARTIFACT_TYPE.Snatching_Hands));
@@ -89,8 +90,8 @@ public class PlayerManager : MonoBehaviour {
     public void InitializePlayer(SaveDataPlayer data) {
         player = new Player(data);
         player.CreatePlayerFaction(data);
-        Settlement existingPlayerSettlement = LandmarkManager.Instance.GetAreaByID(data.playerAreaID);
-        player.SetPlayerArea(existingPlayerSettlement);
+        // NPCSettlement existingPlayerNpcSettlement = LandmarkManager.Instance.GetAreaByID(data.playerAreaID);
+        // player.SetPlayerArea(existingPlayerNpcSettlement);
         //PlayerUI.Instance.UpdateUI();
         //PlayerUI.Instance.InitializeThreatMeter();
         //PlayerUI.Instance.UpdateThreatMeter();

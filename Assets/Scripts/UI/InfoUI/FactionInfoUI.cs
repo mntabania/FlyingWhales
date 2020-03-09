@@ -7,6 +7,7 @@ using UnityEngine.UI;
 
 using UnityEngine.UI.Extensions;
 using EZObjectPools;
+using Locations.Settlements;
 
 public class FactionInfoUI : InfoUIBase {
 
@@ -45,8 +46,8 @@ public class FactionInfoUI : InfoUIBase {
         Messenger.AddListener(Signals.INSPECT_ALL, OnInspectAll);
         Messenger.AddListener<Character, Faction>(Signals.CHARACTER_ADDED_TO_FACTION, OnCharacterAddedToFaction);
         Messenger.AddListener<Character, Faction>(Signals.CHARACTER_REMOVED_FROM_FACTION, OnCharacterRemovedFromFaction);
-        Messenger.AddListener<Faction, Settlement>(Signals.FACTION_OWNED_REGION_ADDED, OnFactionRegionAdded);
-        Messenger.AddListener<Faction, Settlement>(Signals.FACTION_OWNED_REGION_REMOVED, OnFactionRegionRemoved);
+        Messenger.AddListener<Faction, BaseSettlement>(Signals.FACTION_OWNED_REGION_ADDED, OnFactionRegionAdded);
+        Messenger.AddListener<Faction, BaseSettlement>(Signals.FACTION_OWNED_REGION_REMOVED, OnFactionRegionRemoved);
         Messenger.AddListener<FactionRelationship>(Signals.FACTION_RELATIONSHIP_CHANGED, OnFactionRelationshipChanged);
         Messenger.AddListener<Faction>(Signals.FACTION_ACTIVE_CHANGED, OnFactionActiveChanged);
         Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
@@ -193,13 +194,13 @@ public class FactionInfoUI : InfoUIBase {
             ObjectPoolManager.Instance.DestroyObject(item);
         }
     }
-    private void OnFactionRegionAdded(Faction faction, Settlement region) {
+    private void OnFactionRegionAdded(Faction faction, BaseSettlement region) {
         if (isShowing && activeFaction.id == faction.id) {
             //TODO:
             // CreateNewRegionItem(region);
         }
     }
-    private void OnFactionRegionRemoved(Faction faction, Settlement region) {
+    private void OnFactionRegionRemoved(Faction faction, BaseSettlement region) {
         if (isShowing && activeFaction.id == faction.id) {
             //TODO:
             // DestroyLocationItem(region);

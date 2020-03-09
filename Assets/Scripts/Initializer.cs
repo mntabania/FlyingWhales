@@ -32,5 +32,6 @@ public class Initializer : MonoBehaviour {
 
     public void InitializeDataAfterWorldCreation() {
         PlayerUI.Instance.InitializeAfterGameLoaded();
+        LightingManager.Instance.Initialize();
     }
 }

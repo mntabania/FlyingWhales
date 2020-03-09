@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="C:\Users\12myk\.Rider2019.3\system\extResources" t="IncludeRecursive" />
-    <e p="C:\Users\12myk\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_FlyingWhales.-362142238.00" t="ExcludeRecursive" />
-    <e p="D:\Repositories\FlyingWhales" t="IncludeRecursive">
+    <e p="C:\Users\Mykel Abania\.Rider2019.3\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\Mykel Abania\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_FlyingWhales.1985073317.00" t="ExcludeRecursive" />
+    <e p="C:\Users\Mykel Abania\Repositories\FlyingWhales" t="IncludeRecursive">
       <e p="Assembly-CSharp-Editor.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp-firstpass.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
@@ -1488,6 +1488,9 @@
               <e p="InnerMapAssetManager.cs" t="Include" />
               <e p="InnerMapManager.cs" t="Include" />
               <e p="InnerTileMap.cs" t="Include" />
+              <e p="Lights" t="Include">
+                <e p="InnerMapLight.cs" t="Include" />
+              </e>
               <e p="LocationGridTile.cs" t="Include" />
               <e p="LocationGridTileGUS.cs" t="Include" />
               <e p="Map Objects" t="Include">
@@ -1606,6 +1609,7 @@
             </e>
             <e p="InnerMapGeneration.cs" t="Include" />
             <e p="LandmarkManager.cs" t="Include" />
+            <e p="LightingManager.cs" t="Include" />
             <e p="LocationClassManager.cs" t="Include" />
             <e p="LocationEventManager.cs" t="Include" />
             <e p="LocationJobManager.cs" t="Include" />
@@ -1644,7 +1648,11 @@
               <e p="Region.cs" t="Include" />
               <e p="RegionConnectionData.cs" t="Include" />
             </e>
-            <e p="Settlement.cs" t="Include" />
+            <e p="Settlements" t="Include">
+              <e p="BaseSettlement.cs" t="Include" />
+              <e p="NPCSettlement.cs" t="Include" />
+              <e p="PlayerSettlement.cs" t="Include" />
+            </e>
           </e>
           <e p="Managers" t="Include">
             <e p="AchievementManager.cs" t="Include" />
@@ -1902,8 +1910,10 @@
               <e p="Drunk.cs" t="Include" />
               <e p="Drunkard.cs" t="Include" />
               <e p="Edible.cs" t="Include" />
+              <e p="Electric.cs" t="Include" />
               <e p="ElementalMaster.cs" t="Include" />
               <e p="Feeble.cs" t="Include" />
+              <e p="FireProne.cs" t="Include" />
               <e p="Forlorn.cs" t="Include" />
               <e p="Freezing.cs" t="Include" />
               <e p="Frozen.cs" t="Include" />
@@ -1946,10 +1956,14 @@
               <e p="Unconscious.cs" t="Include" />
               <e p="Unfaithful.cs" t="Include" />
               <e p="Vampiric.cs" t="Include" />
+              <e p="Venomous.cs" t="Include" />
               <e p="Vigilant.cs" t="Include" />
               <e p="Wet.cs" t="Include" />
               <e p="Withdrawal.cs" t="Include" />
               <e p="Zapped.cs" t="Include" />
+            </e>
+            <e p="Status Traits" t="Include">
+              <e p="Status.cs" t="Include" />
             </e>
             <e p="TraitContainers" t="Include">
               <e p="ITraitContainer.cs" t="Include" />
@@ -1971,7 +1985,6 @@
             <e p="ApplyTooltipUIMenu.cs" t="Include" />
             <e p="ArchetypeSelectorItem.cs" t="Include" />
             <e p="AreaEmblem.cs" t="Include" />
-            <e p="AreaNameplate.cs" t="Include" />
             <e p="AreaPickerItem.cs" t="Include" />
             <e p="ArtifactPickerItem.cs" t="Include" />
             <e p="AttackPickerItem.cs" t="Include" />
@@ -2151,6 +2164,7 @@
             <e p="HexTileComparer.cs" t="Include" />
             <e p="HoverHandler.cs" t="Include" />
             <e p="IMG2Sprite.cs" t="Include" />
+            <e p="IntRange.cs" t="Include" />
             <e p="LandmarkConnection.cs" t="Include" />
             <e p="LockRotation.cs" t="Include" />
             <e p="MinionDraggable.cs" t="Include" />

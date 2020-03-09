@@ -149,11 +149,11 @@ public class BaseLandmark {
     //     if (specificLandmarkType == LANDMARK_TYPE.NONE) {
     //         return; //do not
     //     }
-    //     if (tileLocation.isCorrupted || tileLocation.region.settlement != null) {
-    //         //Do not add feature is region is part of player or is a settlement region
+    //     if (tileLocation.isCorrupted || tileLocation.region.npcSettlement != null) {
+    //         //Do not add feature is region is part of player or is a npcSettlement region
     //         return;
     //     }
-    //     //if(tileLocation.region != null && tileLocation.region.settlement != null/* && tileLocation.region.settlement.areaMap.isSettlementMap*/) {
+    //     //if(tileLocation.region != null && tileLocation.region.npcSettlement != null/* && tileLocation.region.npcSettlement.areaMap.isSettlementMap*/) {
     //     //    return; //do not
     //     //}
     //

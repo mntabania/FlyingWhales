@@ -33,8 +33,7 @@ public class MimicTileObject : TileObject {
         if (_hasBeenAwakened) { return; }
         _hasBeenAwakened = true;
         Assert.IsNotNull(gridTileLocation, $"{gridTileLocation.localPlace.ToString()} of mimic to awaken was null!");
-        Summon summon = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Mimic, FactionManager.Instance.neutralFaction);
-        (gridTileLocation.parentMap.location as Region).AddResident(summon);
+        Summon summon = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Mimic, FactionManager.Instance.neutralFaction, homeRegion: gridTileLocation.parentMap.location as Region);
         CharacterManager.Instance.PlaceSummon(summon, gridTileLocation);
         if (gridTileLocation.buildSpotOwner.isPartOfParentRegionMap) {
             summon.AddTerritory(gridTileLocation.buildSpotOwner.hexTileOwner);    

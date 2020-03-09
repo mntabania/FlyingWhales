@@ -128,7 +128,7 @@ public class PlayerJobActionButton : MonoBehaviour {
         UpdateInteractableState();
     }
     private void OnInnerMapClosed(ILocation location) {
-        //Upon closing of settlement map reset intervention ability cooldowns
+        //Upon closing of npcSettlement map reset intervention ability cooldowns
         //action.InstantCooldown();
         UpdateInteractableState();
     }

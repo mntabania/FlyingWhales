@@ -25,8 +25,8 @@ public class DefaultFactionRelated : CharacterBehaviourComponent {
                             }
                         }
                     }
-                    //Settlement potentialSettlement = character.currentSettlement;
-                    //log += "\n-" + character.name + " is factionless and in a settlement: " + potentialSettlement.name + ", will try to join a faction...";
+                    //NPCSettlement potentialSettlement = character.currentNpcSettlement;
+                    //log += "\n-" + character.name + " is factionless and in a npcSettlement: " + potentialSettlement.name + ", will try to join a faction...";
                     //Faction potentialFaction = potentialSettlement.owner;
                     //if (!potentialFaction.isPlayerFaction && !potentialFaction.isDestroyed
                     //    && !potentialSettlement.owner.IsCharacterBannedFromJoining(character) 

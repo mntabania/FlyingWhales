@@ -348,7 +348,7 @@ public class ActualGoapNode {
     //            targetTile = actor.gridTileLocation;
     //            actor.PerformGoapAction();
     //        } else if (action.actionLocationType == ACTION_LOCATION_TYPE.NEARBY) {
-    //            List<LocationGridTile> choices = actor.currentSettlement.areaMap.GetTilesInRadius(actor.gridTileLocation, 3);
+    //            List<LocationGridTile> choices = actor.currentNpcSettlement.areaMap.GetTilesInRadius(actor.gridTileLocation, 3);
     //            if (choices.Count > 0) {
     //                targetTile = choices[Utilities.rng.Next(0, choices.Count)];
     //                actor.marker.GoTo(targetTile, OnArriveAtTargetLocation);
@@ -521,7 +521,7 @@ public class ActualGoapNode {
                 OnCancelActionTowardsTarget();
                 //ReturnToActorTheActionResult(InteractionManager.Goap_State_Fail);
                 EndPerTickEffect(shouldDoAfterEffect);
-            } else { //If action has duration and interrupted in the middle of the duration then do ActionInterruptedWhilePerforming (this will not call the action result, instead it will call the cancel job so it can be brought back to the settlement list if it is a settlement job)
+            } else { //If action has duration and interrupted in the middle of the duration then do ActionInterruptedWhilePerforming (this will not call the action result, instead it will call the cancel job so it can be brought back to the npcSettlement list if it is a npcSettlement job)
                 ActionInterruptedWhilePerforming();
             }
             ////when the action is ended prematurely, make sure to readjust the target character's do not move values

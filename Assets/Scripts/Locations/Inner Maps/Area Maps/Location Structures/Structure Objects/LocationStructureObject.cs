@@ -111,7 +111,7 @@ public class LocationStructureObject : PooledObject {
         }
         SetPreplacedObjectsState(false);
     }
-    public void PlacePreplacedObjectsAsBlueprints(LocationStructure structure, InnerTileMap areaMap, Settlement settlement) {
+    public void PlacePreplacedObjectsAsBlueprints(LocationStructure structure, InnerTileMap areaMap, NPCSettlement npcSettlement) {
         StructureTemplateObjectData[] preplacedObjs = GetPreplacedObjects();
         for (int i = 0; i < preplacedObjs.Length; i++) {
             StructureTemplateObjectData preplacedObj = preplacedObjs[i];
@@ -127,10 +127,10 @@ public class LocationStructureObject : PooledObject {
             
             if (newTileObject.tileObjectType.IsPreBuilt() == false) { //non-prebuilt items should create a craft job targeting themselves
                 newTileObject.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, newTileObject, settlement);
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, newTileObject, npcSettlement);
                 job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(newTileObject.tileObjectType).constructionCost });
                 job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoCraftFurnitureJob);
-                settlement.AddToAvailableJobs(job);    
+                npcSettlement.AddToAvailableJobs(job);    
             }
             
         }
@@ -229,7 +229,7 @@ public class LocationStructureObject : PooledObject {
                 tile.SetTileState(LocationGridTile.Tile_State.Occupied);
             }
 
-            //set the ground asset of the parent settlement map to what this objects ground map uses, then clear this objects ground map
+            //set the ground asset of the parent npcSettlement map to what this objects ground map uses, then clear this objects ground map
             ApplyGroundTileAssetForTile(tile);
             tile.CreateSeamlessEdgesForTile(innerMap);
             tile.parentMap.detailsTilemap.SetTile(tile.localPlace, null);
@@ -255,8 +255,8 @@ public class LocationStructureObject : PooledObject {
         RegisterWalls(innerMap, structure);
         _groundTileMap.gameObject.SetActive(false);
         RegisterFurnitureSpots(innerMap);
-        if (structure.settlementLocation != null) {
-            structure.settlementLocation.OnLocationStructureObjectPlaced(structure);
+        if (structure.settlementLocation is NPCSettlement npcSettlement) {
+            npcSettlement.OnLocationStructureObjectPlaced(structure);
         } else {
             innerMap.location.OnLocationStructureObjectPlaced(structure);    
         }

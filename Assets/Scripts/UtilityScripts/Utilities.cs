@@ -89,7 +89,7 @@ namespace UtilityScripts {
         //     lastItemID += 1;
         //     return lastItemID;
         // } 
-        else if (obj is Settlement) {
+        else if (obj is NPCSettlement) {
                 lastAreaID += 1;
                 return lastAreaID;
             } else if (obj is Party) {
@@ -142,7 +142,7 @@ namespace UtilityScripts {
         // else if (obj is SpecialToken) {
         //     if (lastItemID <= idToUse) { lastItemID = idToUse; }
         // } 
-        else if (obj is Settlement) {
+        else if (obj is NPCSettlement) {
                 if (lastAreaID <= idToUse) { lastAreaID = idToUse; }
             } else if (obj is Party) {
                 if (lastPartyID <= idToUse) { lastPartyID = idToUse; }

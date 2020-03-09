@@ -3,14 +3,14 @@ namespace UtilityScripts {
     public static class TestingUtilities {
         
         public static void ShowLocationInfo(Region region) {
-            List<Settlement> settlements = GetSettlementsInRegion(region);
+            List<NPCSettlement> settlements = GetSettlementsInRegion(region);
             string summary = "Locations Job Queue";
             for (int i = 0; i < settlements.Count; i++) {
-                Settlement settlement = settlements[i];
-                summary += $"\n{settlement.name} Location Job Queue: ";
-                if (settlement.availableJobs.Count > 0) {
-                    for (int j = 0; j < settlement.availableJobs.Count; j++) {
-                        JobQueueItem jqi = settlement.availableJobs[j];
+                NPCSettlement npcSettlement = settlements[i];
+                summary += $"\n{npcSettlement.name} Location Job Queue: ";
+                if (npcSettlement.availableJobs.Count > 0) {
+                    for (int j = 0; j < npcSettlement.availableJobs.Count; j++) {
+                        JobQueueItem jqi = npcSettlement.availableJobs[j];
                         if (jqi is GoapPlanJob) {
                             GoapPlanJob gpj = jqi as GoapPlanJob;
                             summary += $"\n{gpj.name} Targeting {gpj.targetPOI}" ?? "None";
@@ -28,8 +28,8 @@ namespace UtilityScripts {
                     summary += "\nNone";
                 }
                 summary += "\nActive Quest: ";
-                if (settlement.owner != null && settlement.owner.activeQuest != null) {
-                    summary += settlement.owner.activeQuest.name;
+                if (npcSettlement.owner != null && npcSettlement.owner.activeQuest != null) {
+                    summary += npcSettlement.owner.activeQuest.name;
                 } else {
                     summary += "None";
                 }
@@ -41,12 +41,12 @@ namespace UtilityScripts {
             UIManager.Instance.HideSmallInfo();
         }
 
-        private static List<Settlement> GetSettlementsInRegion(Region region) {
-            List<Settlement> settlements = new List<Settlement>();
-            for (int i = 0; i < LandmarkManager.Instance.allSetttlements.Count; i++) {
-                Settlement settlement = LandmarkManager.Instance.allSetttlements[i];
-                if (settlement.region == region) {
-                    settlements.Add(settlement);
+        private static List<NPCSettlement> GetSettlementsInRegion(Region region) {
+            List<NPCSettlement> settlements = new List<NPCSettlement>();
+            for (int i = 0; i < LandmarkManager.Instance.allNonPlayerSettlements.Count; i++) {
+                NPCSettlement npcSettlement = LandmarkManager.Instance.allNonPlayerSettlements[i];
+                if (npcSettlement.HasTileInRegion(region)) {
+                    settlements.Add(npcSettlement);
                 }
             }
             return settlements;

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
@@ -37,10 +36,7 @@ namespace Inner_Maps {
         [SerializeField] private TileObjectSlotDictionary tileObjectSlotSettings;
         public GameObject tileObjectSlotsParentPrefab;
         public GameObject tileObjectSlotPrefab;
-    
-        [Header("Lighting")]
-        [SerializeField] private Light areaMapLight;
-
+        
         [Header("Structures")]
         [SerializeField] private LocationStructurePrefabDictionary structurePrefabs;
 
@@ -48,7 +44,7 @@ namespace Inner_Maps {
         public InnerMapAssetManager assetManager;
         [SerializeField] private WallResourceAssetDictionary wallResourceAssets; //wall assets categorized by resource.
 
-        //Settlement Map Objects
+        //NPCSettlement Map Objects
         [FormerlySerializedAs("areaMapObjectFactory")] public MapVisualFactory mapObjectFactory;
         
         //this specifies what light intensity is to be used while inside the specific range in ticks
@@ -65,7 +61,6 @@ namespace Inner_Maps {
         public IPointOfInterest currentlyHoveredPoi { get; private set; }
         public List<LocationGridTile> currentlyHighlightedTiles { get; private set; }
         private LocationGridTile lastClickedTile;
-        private LocationGridTile lastHoveredTile;
 
         #region Monobehaviours
         private void Awake() {
@@ -80,7 +75,6 @@ namespace Inner_Maps {
                 if (hoveredTile != null && hoveredTile.objHere == null) {
                     ShowTileData(hoveredTile);
                 }
-                lastHoveredTile = hoveredTile;
             }
         }
         private void OnClickMapObject(KeyCode keyCode) {
@@ -149,8 +143,8 @@ namespace Inner_Maps {
             if (tile.structure != null && ReferenceEquals(tile.structure.structureObj, null) == false) {
                 return tile.structure;
             }
-            // if (tile.IsPartOfSettlement(out var settlement)) {
-            //     selectables.Add(settlement);
+            // if (tile.IsPartOfSettlement(out var npcSettlement)) {
+            //     selectables.Add(npcSettlement);
             // }
             if (tile.buildSpotOwner.isPartOfParentRegionMap) {
                 return tile.buildSpotOwner.hexTileOwner;
@@ -186,8 +180,8 @@ namespace Inner_Maps {
             if (tile.structure != null && ReferenceEquals(tile.structure.structureObj, null) == false) {
                 selectables.Add(tile.structure);
             }
-            // if (tile.IsPartOfSettlement(out var settlement)) {
-            //     selectables.Add(settlement);
+            // if (tile.IsPartOfSettlement(out var npcSettlement)) {
+            //     selectables.Add(npcSettlement);
             // }
             if (tile.buildSpotOwner.isPartOfParentRegionMap) {
                 selectables.Add(tile.buildSpotOwner.hexTileOwner);
@@ -207,11 +201,10 @@ namespace Inner_Maps {
             innerMaps = new List<InnerTileMap>();
             mapObjectFactory = new MapVisualFactory();
             InnerMapCameraMove.Instance.Initialize();
-            Messenger.AddListener(Signals.TICK_ENDED, CheckForChangeLight);
             Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnClickMapObject);
         }
         /// <summary>
-        /// Try and show the settlement map of an settlement. If it does not have one, this will generate one instead.
+        /// Try and show the npcSettlement map of an npcSettlement. If it does not have one, this will generate one instead.
         /// </summary>
         /// <param name="location"></param>
         public void TryShowLocationMap(ILocation location) {
@@ -265,7 +258,7 @@ namespace Inner_Maps {
             location.innerMap.CleanUp();
             innerMaps.Remove(location.innerMap);
             GameObject.Destroy(location.innerMap.gameObject);
-            Debug.LogError($"Settlement map of {location.name} is destroyed!");
+            Debug.LogError($"NPCSettlement map of {location.name} is destroyed!");
         }
         #endregion
 
@@ -653,45 +646,14 @@ namespace Inner_Maps {
             TILE_OBJECT_TYPE tileObjectType = (TILE_OBJECT_TYPE) System.Enum.Parse(typeof(TILE_OBJECT_TYPE), tileObjectName);
             return tileObjectType;
         }
-        public void LoadInitialSettlementItems(Settlement settlement) {
+        public void LoadInitialSettlementItems(NPCSettlement npcSettlement) {
             ////Reference: https://trello.com/c/Kuqt3ZSP/2610-put-2-healing-potions-in-the-warehouse-at-start-of-the-game
-            LocationStructure mainStorage = settlement.mainStorage;
+            LocationStructure mainStorage = npcSettlement.mainStorage;
             for (int i = 0; i < 4; i++) {
                 mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.HEALING_POTION));
             }
             for (int i = 0; i < 2; i++) {
                 mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.TOOL));
-            }
-        }
-        #endregion
-
-        #region Lighting
-        public void UpdateLightBasedOnTime(GameDate date) {
-            foreach (KeyValuePair<int, float> keyValuePair in lightSettings) {
-                if (date.tick > keyValuePair.Key) {
-                    areaMapLight.intensity = keyValuePair.Value;
-                }
-            }
-        }
-        private void CheckForChangeLight() {
-            if (lightSettings.ContainsKey(GameManager.Instance.tick)) {
-                StartCoroutine(TransitionLightTo(lightSettings[GameManager.Instance.tick]));
-            }
-        }
-        private IEnumerator TransitionLightTo(float intensity) {
-            while (true) {
-                if (GameManager.Instance.isPaused) {
-                    yield return null;
-                }
-                if (intensity > areaMapLight.intensity) {
-                    areaMapLight.intensity += 0.05f;
-                } else if (intensity < areaMapLight.intensity) {
-                    areaMapLight.intensity -= 0.05f;
-                }
-                if (Mathf.Approximately(areaMapLight.intensity, intensity)) {
-                    break;
-                }
-                yield return new WaitForSeconds(0.1f);
             }
         }
         #endregion

@@ -54,7 +54,7 @@ public class CharacterStateComponent {
 
     //This switches from one state to another
     //If the character is not in a state right now, this simply starts a new state instead of switching
-    public CharacterState SwitchToState(CHARACTER_STATE state, Character targetCharacter = null, Settlement targetSettlement = null, int durationOverride = -1, int level = 1) {
+    public CharacterState SwitchToState(CHARACTER_STATE state, Character targetCharacter = null, NPCSettlement targetNpcSettlement = null, int durationOverride = -1, int level = 1) {
         //Cannot switch state is has negative disabler
         if(!character.canPerform) { //character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
             return null;
@@ -112,7 +112,7 @@ public class CharacterStateComponent {
         //newState.SetEndStateAction(endStateAction);
         //newState.SetOtherDataOnStartState(otherData);
         //newState.SetTargetCharacter(targetCharacter);
-        //newState.SetTargetArea(targetSettlement);
+        //newState.SetTargetArea(targetNpcSettlement);
         newState.EnterState();
         return newState;
     }

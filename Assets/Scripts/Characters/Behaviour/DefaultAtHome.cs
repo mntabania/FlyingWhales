@@ -43,7 +43,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                                 character.PlanIdle(JOB_TYPE.VISIT_FRIEND, INTERACTION_TYPE.VISIT, character, new object[] { structure });
                                 return true;
                             }
-                            log += "\n  -No Inn Structure in the settlement";
+                            log += "\n  -No Inn Structure in the npcSettlement";
                         }
                     }
                 } else {

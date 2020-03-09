@@ -303,7 +303,7 @@ public class ReactionComponent {
                     }
 
                     if (owner.faction == targetCharacter.faction || owner.homeSettlement == targetCharacter.homeSettlement) {
-                        debugLog += "\n-Character and Target are with the same faction or settlement";
+                        debugLog += "\n-Character and Target are with the same faction or npcSettlement";
                         if (owner.relationshipContainer.IsEnemiesWith(targetCharacter)) {
                             debugLog += "\n-Character considers Target as Enemy or Rival";
                             if (!targetCharacter.canMove || !targetCharacter.canPerform) {
@@ -359,7 +359,7 @@ public class ReactionComponent {
                             }
                         }
                     } else {
-                        debugLog += "\n-Character and Target are not with the same faction and settlement";
+                        debugLog += "\n-Character and Target are not with the same faction and npcSettlement";
                         if (owner.relationshipContainer.IsEnemiesWith(targetCharacter)) {
                             debugLog += "\n-Character considers Target as Enemy or Rival, will trigger Fight or Flight response";
                             //Fight or Flight
@@ -438,13 +438,13 @@ public class ReactionComponent {
     //     if (!owner.hasSeenFire) {
     //         if (targetItem.traitContainer.HasTrait("Burning")
     //             && targetItem.gridTileLocation != null
-    //             && targetItem.gridTileLocation.IsPartOfSettlement(owner.homeSettlement)
+    //             && targetItem.gridTileLocation.IsPartOfSettlement(owner.homeNpcSettlement)
     //             && !owner.traitContainer.HasTrait("Pyrophobic")) {
     //             debugLog += "\n-Target is Burning and Character is not Pyrophobic";
     //             owner.SetHasSeenFire(true);
-    //             owner.homeSettlement.settlementJobTriggerComponent.TriggerDouseFire();
-    //             for (int i = 0; i < owner.homeSettlement.availableJobs.Count; i++) {
-    //                 JobQueueItem job = owner.homeSettlement.availableJobs[i];
+    //             owner.homeNpcSettlement.settlementJobTriggerComponent.TriggerDouseFire();
+    //             for (int i = 0; i < owner.homeNpcSettlement.availableJobs.Count; i++) {
+    //                 JobQueueItem job = owner.homeNpcSettlement.availableJobs[i];
     //                 if (job.jobType == JOB_TYPE.DOUSE_FIRE) {
     //                     if (job.assignedCharacter == null && owner.jobQueue.CanJobBeAddedToQueue(job)) {
     //                         owner.jobQueue.AddJobInQueue(job);

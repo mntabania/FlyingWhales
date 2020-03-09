@@ -26,14 +26,14 @@ public abstract class CharacterBehaviourComponent {
     }
     public bool CanDoBehaviour(Character character) {
         if(HasAttribute(BEHAVIOUR_COMPONENT_ATTRIBUTE.WITHIN_HOME_SETTLEMENT_ONLY)) { //character.specificLocation.region.area.areaMap - will be changed after specificLocation rework
-            //if character is not at a settlement map, and the current behaviour requires the character to be at a settlement map, then character cannot do this behaviour
+            //if character is not at a npcSettlement map, and the current behaviour requires the character to be at a npcSettlement map, then character cannot do this behaviour
             //EDIT: New mechanic for INSIDE_SETTLEMENT_ONLY - now this attribute simply means "whenever the character is inside his/her home"
             if (!character.IsInHomeSettlement()) {
                 return false;
             }
         }
         //else if (character.isAtHomeRegion && HasAttribute(BEHAVIOUR_COMPONENT_ATTRIBUTE.OUTSIDE_SETTLEMENT_ONLY)) {
-        //    //if character is at a settlement map, and the current behaviour requires the character to NOT be at a settlement map, then character cannot do this behaviour
+        //    //if character is at a npcSettlement map, and the current behaviour requires the character to NOT be at a npcSettlement map, then character cannot do this behaviour
         //    //EDIT: New mechanic for OUTSIDE_SETTLEMENT_ONLY - now this attribute simply means "whenever the character is outside his/her home"
         //    return false;
         //}

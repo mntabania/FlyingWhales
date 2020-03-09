@@ -17,6 +17,11 @@ PrefabInstance:
       propertyPath: ShapeModule.m_Rotation.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1552468523861572549, guid: 718b05db747040e44b82f46db4b35ea7,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2985070517525934494, guid: 718b05db747040e44b82f46db4b35ea7,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -71,6 +76,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5162948364945863417, guid: 718b05db747040e44b82f46db4b35ea7,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7750821511636610292, guid: 718b05db747040e44b82f46db4b35ea7,
         type: 3}

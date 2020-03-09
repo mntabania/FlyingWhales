@@ -28,7 +28,7 @@ public class SaveManager : MonoBehaviour {
         save.SaveHextiles(GridMap.Instance.normalHexTiles);
         // save.SaveOuterHextiles(GridMap.Instance.outerGridList);
         save.SaveRegions(GridMap.Instance.allRegions);
-        save.SavePlayerArea(PlayerManager.Instance.player.playerSettlement);
+        // save.SavePlayerArea(PlayerManager.Instance.player.playerSettlement);
         save.SaveNonPlayerAreas();
         save.SaveFactions(FactionManager.Instance.allFactions);
         save.SaveCharacters(CharacterManager.Instance.allCharacters);

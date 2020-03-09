@@ -102,7 +102,7 @@ public class StructureWallObject : MapObject<StructureWallObject>, ITraitable {
     }
     #endregion
 
-    #region Settlement Map Object
+    #region NPCSettlement Map Object
     protected override void CreateMapObjectVisual() {
         mapVisual = _visual;
     }

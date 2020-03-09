@@ -136,7 +136,7 @@ public partial class InteractionManager {
             // && character.faction.GetRelationshipWith(targetCharacter.faction).relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE 
             character.faction.IsHostileWith(targetCharacter.faction)
             && character.isAtHomeRegion
-            && character.isPartOfHomeFaction && character.currentSettlement.prison != null
+            && character.isPartOfHomeFaction && character.currentSettlement is NPCSettlement
             //&& (character.role.roleType == CHARACTER_ROLE.SOLDIER ||
             //character.role.roleType == CHARACTER_ROLE.CIVILIAN ||
             //character.role.roleType == CHARACTER_ROLE.ADVENTURER)
@@ -203,7 +203,8 @@ public partial class InteractionManager {
             //Character is dead
             return false;
         }
-        if (criminal.currentStructure != criminal.currentSettlement.prison) {
+        if (criminal.currentSettlement is NPCSettlement npcSettlement && 
+            criminal.currentStructure != npcSettlement.prison) {
             //Character is no longer in jail
             return false;
         }

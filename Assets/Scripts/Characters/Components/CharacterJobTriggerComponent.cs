@@ -6,6 +6,7 @@ using Traits;
 using UnityEngine;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Locations.Settlements;
 using UtilityScripts;
 using Random = UnityEngine.Random;
 
@@ -39,7 +40,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		Messenger.AddListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJob);
 		Messenger.AddListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
 		Messenger.AddListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
-		Messenger.AddListener<Settlement, bool>(Signals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, OnSettlementUnderSiegeChanged);
+		Messenger.AddListener<NPCSettlement, bool>(Signals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, OnSettlementUnderSiegeChanged);
 		Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
 		Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_EXITED_HEXTILE, OnCharacterExitedHexTile);
         Messenger.AddListener<IPointOfInterest>(Signals.ON_SEIZE_POI, OnSeizePOI);
@@ -53,7 +54,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		Messenger.RemoveListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJob);
 		Messenger.RemoveListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
 		Messenger.RemoveListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
-		Messenger.RemoveListener<Settlement, bool>(Signals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, OnSettlementUnderSiegeChanged);
+		Messenger.RemoveListener<NPCSettlement, bool>(Signals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, OnSettlementUnderSiegeChanged);
 		Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
 		Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_EXITED_HEXTILE, OnCharacterExitedHexTile);
         Messenger.RemoveListener<IPointOfInterest>(Signals.ON_SEIZE_POI, OnSeizePOI);
@@ -62,7 +63,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	}
 	private void OnCharacterCanPerformAgain(Character character) {
 		if (character == _owner) {
-			if (_owner.currentSettlement != null && _owner.currentSettlement.isUnderSeige) {
+			if (_owner.currentSettlement is NPCSettlement npcSettlement && npcSettlement.isUnderSiege) {
 				TriggerFleeHome();	
 			}
 			_owner.needsComponent.CheckExtremeNeeds();
@@ -123,9 +124,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			}
 		}
 	}
-	private void OnSettlementUnderSiegeChanged(Settlement settlement, bool siegeState) {
-		if (settlement == _owner.currentSettlement && siegeState && (_owner.stateComponent.currentState is CombatState) == false) {
-			//characters current settlement is under siege
+	private void OnSettlementUnderSiegeChanged(NPCSettlement npcSettlement, bool siegeState) {
+		if (npcSettlement == _owner.currentSettlement && siegeState && (_owner.stateComponent.currentState is CombatState) == false) {
+			//characters current npcSettlement is under siege
 			_owner.interruptComponent.TriggerInterrupt(INTERRUPT.Stopped, _owner);
 			Messenger.AddListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, CheckIfStopInterruptFinished);
 		}
@@ -221,11 +222,11 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 12 });
 		_owner.jobQueue.AddJobInQueue(job);
 	}
-	private void TriggerRestrain(Settlement settlement) {
-		GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RESTRAIN, INTERACTION_TYPE.RESTRAIN_CHARACTER, _owner, settlement);
+	private void TriggerRestrain(NPCSettlement npcSettlement) {
+		GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RESTRAIN, INTERACTION_TYPE.RESTRAIN_CHARACTER, _owner, npcSettlement);
 		job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRestrainJob);
-		job.SetStillApplicableChecker(() => IsRestrainApplicable(_owner, settlement));
-		settlement.AddToAvailableJobs(job);
+		job.SetStillApplicableChecker(() => IsRestrainApplicable(_owner, npcSettlement));
+		npcSettlement.AddToAvailableJobs(job);
 	}
 	//private bool TriggerMoveCharacterToBed(Character target) {
 	//	if (target.homeStructure != null && target.HasJobTargetingThis(JOB_TYPE.MOVE_CHARACTER) == false) {
@@ -264,7 +265,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		if (target.gridTileLocation == null || target.isDead) {
 			return false;
 		}
-		if (target.gridTileLocation.IsNextToOrPartOfSettlement(job.originalOwner as Settlement) == false) {
+		if (target.gridTileLocation.IsNextToOrPartOfSettlement(job.originalOwner as NPCSettlement) == false) {
 			return false;
 		}
 		if (target.traitContainer.HasTrait("Criminal")) {
@@ -275,9 +276,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		}
 		return true;
 	}
-	private bool IsRestrainApplicable(Character target, Settlement settlement) {
+	private bool IsRestrainApplicable(Character target, NPCSettlement npcSettlement) {
 		return target.canMove == false && target.gridTileLocation != null &&
-		       target.gridTileLocation.IsNextToOrPartOfSettlement(settlement);
+		       target.gridTileLocation.IsNextToOrPartOfSettlement(npcSettlement);
 	}
 	#endregion
 
@@ -413,15 +414,16 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
 	#region Restrain
 	private void TryTriggerRestrain() {
-		Settlement nearSettlement;
+		BaseSettlement nearSettlement;
 		if (_owner.gridTileLocation.IsPartOfSettlement(out nearSettlement) 
 		    || _owner.gridTileLocation.IsNextToSettlement(out nearSettlement)) {
-			if (nearSettlement.owner != null && _owner.faction != nearSettlement.owner) {
+			if (nearSettlement is NPCSettlement npcSettlement && nearSettlement.owner != null 
+			    && _owner.faction != nearSettlement.owner) {
 				// bool isHostileWithFaction =
-				// 	_owner.faction.GetRelationshipWith(nearSettlement.owner).relationshipStatus ==
+				// 	_owner.faction.GetRelationshipWith(nearNpcSettlement.owner).relationshipStatus ==
 				// 	FACTION_RELATIONSHIP_STATUS.HOSTILE;
 				if (_owner.faction.IsHostileWith(nearSettlement.owner)) {
-					TriggerRestrain(nearSettlement);
+					TriggerRestrain(npcSettlement);
 				}
 			}	
 		}
@@ -449,7 +451,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	}
 	// public bool TryTriggerMoveCharacterTirednessRecovery(Character target) {
 	// 	if (target.traitContainer.GetNormalTrait<Trait>("Tired", "Exhausted") != null) {
-	// 		bool isSameHome = target.homeSettlement == _owner.homeSettlement;
+	// 		bool isSameHome = target.homeNpcSettlement == _owner.homeNpcSettlement;
 	// 		bool isNotHostileFaction = target.faction == _owner.faction
 	// 			|| target.faction.GetRelationshipWith(_owner.faction).relationshipStatus
 	// 			!= FACTION_RELATIONSHIP_STATUS.HOSTILE;
@@ -464,7 +466,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	// }
 	// public bool TryTriggerMoveCharacterHappinessRecovery(Character target) {
 	// 	if (target.traitContainer.GetNormalTrait<Trait>("Bored", "Sulking", "Forlorn", "Lonely") != null) {
-	// 		bool isSameHome = target.homeSettlement == _owner.homeSettlement;
+	// 		bool isSameHome = target.homeNpcSettlement == _owner.homeNpcSettlement;
 	// 		bool isNotHostileFaction = target.faction == _owner.faction
 	// 		                           || target.faction.GetRelationshipWith(_owner.faction).relationshipStatus
 	// 		                           != FACTION_RELATIONSHIP_STATUS.HOSTILE;

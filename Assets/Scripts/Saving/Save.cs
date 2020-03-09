@@ -146,9 +146,9 @@ public class Save {
             data.LoadRegionAdditionalData(GridMap.Instance.normalHexTiles[data.coreTileID].region);
         }
     }
-    public void SavePlayerArea(Settlement settlement) {
+    public void SavePlayerArea(NPCSettlement npcSettlement) {
         playerAreaSave = new SaveDataArea();
-        playerAreaSave.Save(settlement);
+        playerAreaSave.Save(npcSettlement);
     }
     public void LoadPlayerArea() {
         playerAreaSave.Load();
@@ -158,13 +158,11 @@ public class Save {
     }
     public void SaveNonPlayerAreas() {
         nonPlayerAreaSaves = new List<SaveDataArea>();
-        for (int i = 0; i < LandmarkManager.Instance.allSetttlements.Count; i++) {
-            Settlement settlement = LandmarkManager.Instance.allSetttlements[i];
-            if(settlement != PlayerManager.Instance.player.playerSettlement) {
-                SaveDataArea saveDataArea = new SaveDataArea();
-                saveDataArea.Save(settlement);
-                nonPlayerAreaSaves.Add(saveDataArea);
-            }
+        for (int i = 0; i < LandmarkManager.Instance.allNonPlayerSettlements.Count; i++) {
+            NPCSettlement npcSettlement = LandmarkManager.Instance.allNonPlayerSettlements[i];
+            SaveDataArea saveDataArea = new SaveDataArea();
+            saveDataArea.Save(npcSettlement);
+            nonPlayerAreaSaves.Add(saveDataArea);
         }
     }
     public void LoadNonPlayerAreas() {
@@ -256,17 +254,6 @@ public class Save {
     public void LoadCharacterHistories() {
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
             characterSaves[i].LoadCharacterHistory(CharacterManager.Instance.allCharacters[i]);
-        }
-    }
-    public void LoadCharactersDousingFire() {
-        for (int i = 0; i < LandmarkManager.Instance.allSetttlements.Count; i++) {
-            Settlement currSettlement = LandmarkManager.Instance.allSetttlements[i];
-            if (currSettlement.innerMap != null) {
-                for (int j = 0; j < currSettlement.innerMap.activeBurningSources.Count; j++) {
-                    BurningSource currBurningSource = currSettlement.innerMap.activeBurningSources[j];
-                    //currBurningSource.ActivateCharactersDousingFire();
-                }
-            }
         }
     }
 

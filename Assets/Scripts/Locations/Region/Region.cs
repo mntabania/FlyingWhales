@@ -31,7 +31,7 @@ public class Region : ILocation {
     public bool canShowNotifications { get; private set; }
     public Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness { get; }
 
-    private RegionInnerTileMap _regionInnerTileMap; //inner map of the region, this should only be used if this region does not have an settlement. 
+    private RegionInnerTileMap _regionInnerTileMap; //inner map of the region, this should only be used if this region does not have an npcSettlement. 
     private string _activeEventAfterEffectScheduleId;
     private List<Border> _borders;
     private Dictionary<STRUCTURE_TYPE, List<LocationStructure>> _structures;
@@ -265,8 +265,8 @@ public class Region : ILocation {
 
     #region Invasion
     public bool CanBeInvaded() {
-        // if (settlement != null) {
-        //     return settlement.CanInvadeSettlement();
+        // if (npcSettlement != null) {
+        //     return npcSettlement.CanInvadeSettlement();
         // }
         //return HasCorruptedConnection() &&!coreTile.isCorrupted && !demonicInvasionData.beingInvaded;
         return  !coreTile.isCorrupted; //HasCorruptedConnection() && TODO:
@@ -631,7 +631,7 @@ public class Region : ILocation {
     }
     public void OnLocationStructureObjectPlaced(LocationStructure structure) {
         if (structure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
-            //if a warehouse was placed, and this settlement does not yet have a main storage structure, or is using the city center as their main storage structure, then use the new warehouse instead.
+            //if a warehouse was placed, and this npcSettlement does not yet have a main storage structure, or is using the city center as their main storage structure, then use the new warehouse instead.
             if (mainStorage == null || mainStorage.structureType == STRUCTURE_TYPE.CITY_CENTER) {
                 SetMainStorage(structure);
             }
@@ -656,7 +656,7 @@ public class Region : ILocation {
     }
     //public bool AddSpecialTokenToLocation(SpecialToken token, LocationStructure structure = null, LocationGridTile gridLocation = null) {
     //    token.SetOwner(this.owner);
-    //    if (innerMap != null) { //if the settlement map of this settlement has already been created.
+    //    if (innerMap != null) { //if the npcSettlement map of this npcSettlement has already been created.
     //        if (structure != null) {
     //            structure.AddItem(token, gridLocation);
     //        } else {

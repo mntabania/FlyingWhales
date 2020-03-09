@@ -201,8 +201,8 @@ namespace Traits {
 
         public override Trait Load(ref Character responsibleCharacter) {
             Trait trait = base.Load(ref responsibleCharacter);
-            Burning derivedTrait = trait as Burning;
-            derivedTrait.LoadSourceOfBurning(LandmarkManager.Instance.GetBurningSourceByID(burningSourceID));
+            // Burning derivedTrait = trait as Burning;
+            // derivedTrait.LoadSourceOfBurning(LandmarkManager.Instance.GetBurningSourceByID(burningSourceID));
             return trait;
         }
     }

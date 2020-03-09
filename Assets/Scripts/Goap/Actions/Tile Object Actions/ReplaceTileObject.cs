@@ -69,8 +69,8 @@ public class ReplaceTileObject : GoapAction {
         tileObjectToReplace.AdjustHP(tileObjectToReplace.maxHP, ELEMENTAL_TYPE.Normal);
         goapNode.actor.AdjustSupply(-TileObjectDB.GetTileObjectData(tileObjectToReplace.tileObjectType).constructionCost);
         //make all residents aware of supply pile, just in case it was ever removed because of ghost collision
-        //for (int i = 0; i < whereToPlace.parentAreaMap.settlement.region.residents.Count; i++) {
-        //    whereToPlace.parentAreaMap.settlement.region.residents[i].AddAwareness(tileObjectToReplace);
+        //for (int i = 0; i < whereToPlace.parentAreaMap.npcSettlement.region.residents.Count; i++) {
+        //    whereToPlace.parentAreaMap.npcSettlement.region.residents[i].AddAwareness(tileObjectToReplace);
         //}
     }
     #endregion

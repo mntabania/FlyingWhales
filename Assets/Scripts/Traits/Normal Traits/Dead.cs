@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps.Location_Structures;
+using Locations.Settlements;
 using UnityEngine;
 
 namespace Traits {
@@ -30,22 +31,21 @@ namespace Traits {
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
-            if (addedTo is Character) {
-                Character character = addedTo as Character;
-                Settlement settlement;
-                if (character.IsNPC() && character.gridTileLocation != null && character.gridTileLocation.IsNextToOrPartOfSettlement(out settlement)) {
-                    LocationStructure targetStructure = settlement.GetRandomStructureOfType(STRUCTURE_TYPE.CEMETERY) ??
-                                                        settlement.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-                    GoapPlanJob buryJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BURY, INTERACTION_TYPE.BURY_CHARACTER, character, settlement);
+            if (addedTo is Character character) {
+                if (character.IsNPC() && character.gridTileLocation != null && character.gridTileLocation.IsNextToOrPartOfSettlement(out var settlement)
+                    && settlement is NPCSettlement npcSettlement) {
+                    LocationStructure targetStructure = npcSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.CEMETERY) ??
+                                                        npcSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+                    GoapPlanJob buryJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BURY, INTERACTION_TYPE.BURY_CHARACTER, character, npcSettlement);
                     buryJob.SetCanTakeThisJobChecker(InteractionManager.Instance.CanTakeBuryJob);
                     buryJob.AddOtherData(INTERACTION_TYPE.BURY_CHARACTER, new object[]{ targetStructure });
-                    buryJob.SetStillApplicableChecker(() => IsBuryJobStillApplicable(character, settlement));
-                    settlement.AddToAvailableJobs(buryJob);
+                    buryJob.SetStillApplicableChecker(() => IsBuryJobStillApplicable(character, npcSettlement));
+                    npcSettlement.AddToAvailableJobs(buryJob);
                 }
             }
         }
-        private bool IsBuryJobStillApplicable(Character target, Settlement settlement) {
-            return target.gridTileLocation != null && target.gridTileLocation.IsNextToOrPartOfSettlement(settlement);
+        private bool IsBuryJobStillApplicable(Character target, NPCSettlement npcSettlement) {
+            return target.gridTileLocation != null && target.gridTileLocation.IsNextToOrPartOfSettlement(npcSettlement);
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);

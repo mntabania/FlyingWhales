@@ -17,9 +17,9 @@ namespace Traits {
             if (targetPOI is Character) {
                 Character targetCharacter = targetPOI as Character;
                 string debugLog = $"{characterThatWillDoJob.name} saw {targetPOI.name} and has {name}";
-                debugLog += "\n-20% chance to trigger Inspired interrupt if Target is part of Faction or Settlement";
+                debugLog += "\n-20% chance to trigger Inspired interrupt if Target is part of Faction or NPCSettlement";
                 if (characterThatWillDoJob.faction == targetCharacter.faction || characterThatWillDoJob.homeSettlement == targetCharacter.homeSettlement) {
-                    debugLog += "\n-Target is part of Faction or Settlement";
+                    debugLog += "\n-Target is part of Faction or NPCSettlement";
                     int chance = UnityEngine.Random.Range(0, 100);
                     debugLog += $"\n-Roll: {chance}";
                     if (chance < 8) {
@@ -29,7 +29,7 @@ namespace Traits {
                         return true;
                     }
                 } else {
-                    debugLog += "\n-Target is part of Faction or Settlement";
+                    debugLog += "\n-Target is part of Faction or NPCSettlement";
                 }
                 characterThatWillDoJob.logComponent.PrintLogIfActive(debugLog);
             }

@@ -6,19 +6,19 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class AreaPickerItem : ObjectPickerItem<Settlement>, IPointerClickHandler {
+public class AreaPickerItem : ObjectPickerItem<NPCSettlement>, IPointerClickHandler {
 
-    public Action<Settlement> onClickAction;
+    public Action<NPCSettlement> onClickAction;
 
-    private Settlement _settlement;
+    private NPCSettlement _npcSettlement;
 
     [SerializeField] private LocationPortrait portrait;
     public GameObject portraitCover;
 
-    public override Settlement obj { get { return _settlement; } }
+    public override NPCSettlement obj { get { return _npcSettlement; } }
 
-    public void SetArea(Settlement settlement) {
-        this._settlement = settlement;
+    public void SetArea(NPCSettlement npcSettlement) {
+        this._npcSettlement = npcSettlement;
         UpdateVisuals();
     }
 
@@ -28,14 +28,14 @@ public class AreaPickerItem : ObjectPickerItem<Settlement>, IPointerClickHandler
     }
 
     private void UpdateVisuals() {
-        portrait.SetLocation(_settlement.region);
-        mainLbl.text = _settlement.name;
-        //subLbl.text = Utilities.GetNormalizedSingularRace(settlement.race) + " " + settlement.characterClass.className;
+        portrait.SetLocation(_npcSettlement.region);
+        mainLbl.text = _npcSettlement.name;
+        //subLbl.text = Utilities.GetNormalizedSingularRace(npcSettlement.race) + " " + npcSettlement.characterClass.className;
     }
 
     private void OnClick() {
         if (onClickAction != null) {
-            onClickAction.Invoke(_settlement);
+            onClickAction.Invoke(_npcSettlement);
         }
     }
 
@@ -43,7 +43,7 @@ public class AreaPickerItem : ObjectPickerItem<Settlement>, IPointerClickHandler
         if (eventData.button == PointerEventData.InputButton.Right) {
             //Debug.Log("Right clicked character portrait!");
             //portrait.OnClick();
-            UIManager.Instance.ShowRegionInfo(_settlement.region);
+            UIManager.Instance.ShowRegionInfo(_npcSettlement.region);
         } else {
             OnClick();
         }

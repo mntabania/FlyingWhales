@@ -155,7 +155,7 @@ public class TakeResource : GoapAction {
         if (takenResource > resourcePile.resourceInPile) {
             takenResource = resourcePile.resourceInPile;
         }
-        //I think possible errors with this is going to be on the part where the settlement doesn't know that this new pile exist because we directly add the new pile to the actor's party, we don't add the new pile to the structure, thus, it won't be added to the list of poi
+        //I think possible errors with this is going to be on the part where the npcSettlement doesn't know that this new pile exist because we directly add the new pile to the actor's party, we don't add the new pile to the structure, thus, it won't be added to the list of poi
         //Hence, if it becomes a complication to the game, what we must do is add the new pile to the structure without actually placing the object to the tile, so I think we will have to create a new function wherein we don't actually place the poi on the tile but it will still be added to the list of poi in the structure
         //EDIT: Taking resource does not mean that the character must not be carrying any poi, when the actor takes a resource and it is the same type as the one he/she is carrying, just add the amount, if it is not the same type, replace the carried one with the new type
         //If the actor is not carrying anything, create new object to be carried

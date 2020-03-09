@@ -220,10 +220,10 @@ public class RegionInfoUI : InfoUIBase {
 //        }
 //    }
     public void OnClickInvade() {
-        // if (activeRegion.settlement != null) {
+        // if (activeRegion.npcSettlement != null) {
         //     //simulate as if clicking the invade button while inside the are map
         //     InnerMapManager.Instance.ShowInnerMap(activeRegion);
-        //     StartSettlementInvasion(activeRegion.settlement);
+        //     StartSettlementInvasion(activeRegion.npcSettlement);
         //     LoadActions();
         // } else {
         //     chosenMinionToInvade = null;
@@ -266,10 +266,6 @@ public class RegionInfoUI : InfoUIBase {
     public void HideStartInvasionConfirmation() {
         chosenMinionToInvade = null;
         invConfirmationGO.SetActive(false);
-    }
-    private void StartSettlementInvasion(Settlement settlement) {
-        PlayerManager.Instance.player.StartInvasion(settlement);
-        //ShowCombatAbilityUI();
     }
     public void StopSettlementInvasion() {
         
@@ -586,7 +582,7 @@ public class RegionInfoUI : InfoUIBase {
     //     //             item.SetAsUninteractableUntil(remaining);
     //     //         } 
     //     //         //else {
-    //     //         //    item.SetInteractable(PlayerManager.Instance.player.currentSettlementBeingInvaded != null);
+    //     //         //    item.SetInteractable(PlayerManager.Instance.player.currentNpcSettlementBeingInvaded != null);
     //     //         //}
     //     //     }
     //     // }

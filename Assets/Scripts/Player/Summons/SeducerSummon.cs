@@ -113,9 +113,9 @@ public class SeducerSummon : Summon {
         //StopCurrentAction(false);
         //AdjustIsWaitingForInteraction(-1);
         currentRegion.RemoveCharacterFromLocation(this);
-        PlayerManager.Instance.player.playerSettlement.region.AddCharacterToLocation(this);
-        SetRegionLocation(PlayerManager.Instance.player.playerSettlement.region);
-        //ownParty.SetSpecificLocation(PlayerManager.Instance.player.playerSettlement);
+        PlayerManager.Instance.player.portalTile.region.AddCharacterToLocation(this);
+        SetRegionLocation(PlayerManager.Instance.player.portalTile.region);
+        //ownParty.SetSpecificLocation(PlayerManager.Instance.player.playerNpcSettlement);
         //ClearAllAwareness();
         CancelAllJobs();
         traitContainer.RemoveAllNonPersistentTraitAndStatuses(this);

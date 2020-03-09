@@ -19,13 +19,13 @@ using UnityEngine;
 
 //    public PoisonTableIntel(SaveDataPoisonTableIntel data) : base(data) {
 //        if (data.poisonedTableID != -1) {
-//            //Settlement settlement = LandmarkManager.Instance.GetAreaByID(data.poisonedTableAreaID);
+//            //NPCSettlement npcSettlement = LandmarkManager.Instance.GetAreaByID(data.poisonedTableAreaID);
 //            poisonedTable = InnerMapManager.Instance.GetTileObject(TILE_OBJECT_TYPE.TABLE, data.poisonedTableID) as Table;
 //        }
 
 //        if (data.targetDwellingID != -1) {
-//            Settlement settlement = LandmarkManager.Instance.GetAreaByID(data.targetDwellingAreaID);
-//            targetDwelling = settlement.GetStructureByID(STRUCTURE_TYPE.DWELLING, data.targetDwellingID) as Dwelling;
+//            NPCSettlement npcSettlement = LandmarkManager.Instance.GetAreaByID(data.targetDwellingAreaID);
+//            targetDwelling = npcSettlement.GetStructureByID(STRUCTURE_TYPE.DWELLING, data.targetDwellingID) as Dwelling;
 //        }
 //    }
 

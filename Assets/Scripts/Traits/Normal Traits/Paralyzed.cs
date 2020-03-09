@@ -55,7 +55,7 @@ namespace Traits {
         //    }
         //}
         //private bool CanPlanGoap() {
-        //    //If there is no settlement, it means that there is no inner map, so character must not do goap actions, jobs, and plans
+        //    //If there is no npcSettlement, it means that there is no inner map, so character must not do goap actions, jobs, and plans
         //    //characters that cannot witness, cannot plan actions.
         //    return character.minion == null && !character.isDead && character.isStoppedByOtherCharacter <= 0 && character.canWitness
         //        && character.currentActionNode == null && character.planner.status == GOAP_PLANNING_STATUS.NONE && character.jobQueue.jobsInQueue.Count <= 0

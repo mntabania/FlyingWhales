@@ -6,6 +6,7 @@ using System.Linq;
 using Inner_Maps;
 using Traits;
 using Archetype;
+using Locations.Settlements;
 using Ruinarch;
 using UtilityScripts;
 using Random = UnityEngine.Random;
@@ -14,7 +15,7 @@ using Random = UnityEngine.Random;
 public class Player : ILeader, IObjectManipulator {
     public PlayerArchetype archetype { get; private set; }
     public Faction playerFaction { get; private set; }
-    public Settlement playerSettlement { get; private set; }
+    public PlayerSettlement playerSettlement { get; private set; }
     public int mana { get; private set; }
     public List<Intel> allIntel { get; private set; }
     public List<Minion> minions { get; private set; }
@@ -25,7 +26,7 @@ public class Player : ILeader, IObjectManipulator {
     private bool isTileCurrentlyBeingCorrupted { get; set; }
     public HexTile currentTileBeingCorrupted { get; private set; }
     public Minion currentMinionLeader { get; private set; }
-    public Settlement currentSettlementBeingInvaded { get; private set; }
+    public NPCSettlement currentNpcSettlementBeingInvaded { get; private set; }
     public CombatAbility currentActiveCombatAbility { get; private set; }
     public Intel currentActiveIntel { get; private set; }
     //public int maxSummonSlots { get; private set; } //how many summons can the player have
@@ -113,30 +114,29 @@ public class Player : ILeader, IObjectManipulator {
     public void LevelUp() { }
     #endregion
 
-    #region Settlement
-    public Settlement CreatePlayerSettlement(BaseLandmark portal) {
-        Settlement settlement = LandmarkManager.Instance.CreateNewSettlement(portal.tileLocation.region, LOCATION_TYPE.DEMONIC_INTRUSION, 0, portal.tileLocation);
-        settlement.LoadAdditionalData();
-        settlement.SetName("Demonic Intrusion");
-        SetPlayerArea(settlement);
+    #region NPCSettlement
+    public PlayerSettlement CreatePlayerSettlement(BaseLandmark portal) {
+        PlayerSettlement npcSettlement = LandmarkManager.Instance.CreateNewPlayerSettlement(portal.tileLocation);
+        npcSettlement.SetName("Demonic Intrusion");
+        SetPlayerArea(npcSettlement);
         // portal.tileLocation.InstantlyCorruptAllOwnedInnerMapTiles();
-        return settlement;
+        return npcSettlement;
     }
-    public void LoadPlayerArea(Settlement settlement) {
-        //Biomes.Instance.CorruptTileVisuals(settlement.coreTile);
-        //settlement.coreTile.tileLocation.SetCorruption(true);
-        SetPlayerArea(settlement);
+    public void LoadPlayerArea(PlayerSettlement npcSettlement) {
+        //Biomes.Instance.CorruptTileVisuals(npcSettlement.coreTile);
+        //npcSettlement.coreTile.tileLocation.SetCorruption(true);
+        SetPlayerArea(npcSettlement);
         //_demonicPortal.tileLocation.ScheduleCorruption();
     }
-    public void SetPlayerArea(Settlement settlement) {
-        playerSettlement = settlement;
+    public void SetPlayerArea(PlayerSettlement npcSettlement) {
+        playerSettlement = npcSettlement;
     }
     private void OnInnerMapOpened(ILocation area) {
         //for (int i = 0; i < minions.Count; i++) {
         //    minions[i].ResetCombatAbilityCD();
         //}
         //ResetInterventionAbilitiesCD();
-        //currentTargetFaction = settlement.owner;
+        //currentTargetFaction = npcSettlement.owner;
     }
     private void OnInnerMapClosed(ILocation area) {
         //currentTargetFaction = null;
@@ -177,7 +177,7 @@ public class Player : ILeader, IObjectManipulator {
         return minion;
     }
     public Minion CreateNewMinion(string className, RACE race, bool initialize = true) {
-        Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter(className, race, GENDER.MALE, playerFaction, playerSettlement), false);
+        Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter(className, race, GENDER.MALE, playerFaction, playerSettlement, portalTile.region), false);
         if (initialize) {
             InitializeMinion(minion);
         }
@@ -530,12 +530,12 @@ public class Player : ILeader, IObjectManipulator {
     }
     #endregion
 
-    #region Settlement Corruption
-    private Settlement AreaIsCorrupted() {
+    #region NPCSettlement Corruption
+    private NPCSettlement AreaIsCorrupted() {
         //TODO:
         // isTileCurrentlyBeingCorrupted = false;
         // GameManager.Instance.SetPausedState(true);
-        // Settlement corruptedSettlement = currentTileBeingCorrupted.settlementOfTile;
+        // NPCSettlement corruptedSettlement = currentTileBeingCorrupted.settlementOfTile;
         // LandmarkManager.Instance.OwnRegion(PlayerManager.Instance.player.playerFaction, RACE.DEMON, currentTileBeingCorrupted.region);
         // //PlayerManager.Instance.AddTileToPlayerArea(currentTileBeingCorrupted);
         // return corruptedSettlement;
@@ -639,7 +639,7 @@ public class Player : ILeader, IObjectManipulator {
         //for (int i = 0; i < summons.Count; i++) {
         //    if (summons[i].summon == null) {
         //        summons[i].SetSummon(newSummon);
-        //        playerSettlement.AddResident(newSummon, ignoreCapacity:true);
+        //        playerNpcSettlement.AddResident(newSummon, ignoreCapacity:true);
         //        Messenger.Broadcast(Signals.PLAYER_GAINED_SUMMON, newSummon);
         //        if (showNewSummonUI) {
         //            PlayerUI.Instance.newAbilityUI.ShowNewAbilityUI(currentMinionLeader, newSummon);
@@ -687,12 +687,6 @@ public class Player : ILeader, IObjectManipulator {
                 return
                     $"Summon a {UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(currentlySelectedSummon.ToString())}";
         }
-    }
-    private void ClearSummonData(Summon summon) {
-        PlayerManager.Instance.player.playerFaction.LeaveFaction(summon);
-        PlayerManager.Instance.player.playerSettlement.region.RemoveCharacterFromLocation(summon);
-        PlayerManager.Instance.player.playerSettlement.region.RemoveResident(summon);
-        CharacterManager.Instance.RemoveCharacter(summon);
     }
     //public Summon GetAvailableSummonOfType(SUMMON_TYPE type) {
     //    List<SummonSlot> choices = summons.Where(x => x.summon != null && !x.summon.hasBeenUsed && x.summon.summonType == type).ToList();
@@ -971,15 +965,15 @@ public class Player : ILeader, IObjectManipulator {
     // public string GetArtifactDescription(ARTIFACT_TYPE type) {
     //     switch (type) {
     //         case ARTIFACT_TYPE.Necronomicon:
-    //             return "Raises all dead characters in the settlement to attack residents.";
+    //             return "Raises all dead characters in the npcSettlement to attack residents.";
     //         case ARTIFACT_TYPE.Chaos_Orb_Artifact:
     //             return "Characters that inspect the Chaos Orb may be permanently berserked.";
     //         case ARTIFACT_TYPE.Hermes_Statue:
-    //             return "Characters that inspect this will be teleported to a different settlement. If no other settlement exists, this will be useless.";
+    //             return "Characters that inspect this will be teleported to a different npcSettlement. If no other npcSettlement exists, this will be useless.";
     //         case ARTIFACT_TYPE.Ankh_Of_Anubis:
     //             return "All characters that moves through here may slowly sink and perish. Higher agility means higher chance of escaping. Sand pit has a limited duration upon placing the artifact.";
     //         case ARTIFACT_TYPE.Miasma_Emitter:
-    //             return "Characters will avoid the settlement. If any character gets caught within, they will gain Poisoned status effect. Any objects inside the radius are disabled.";
+    //             return "Characters will avoid the npcSettlement. If any character gets caught within, they will gain Poisoned status effect. Any objects inside the radius are disabled.";
     //         default:
     //             return "Summon a " + UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(type.ToString());
     //     }
@@ -1052,131 +1046,9 @@ public class Player : ILeader, IObjectManipulator {
     #endregion
 
     #region Invasion
-    public void StartInvasion(Settlement settlement) {
-        List<LocationGridTile> entrances = new List<LocationGridTile>();
-        List<Minion> currentMinions = new List<Minion>();
-        for (int i = 0; i < minions.Count; i++) {
-            Minion currMinion = minions[i];
-            if (currMinion.assignedRegion == null) { //only include minions that are not currently invading another landmark
-                currMinion.character.CreateMarker();
-                currMinion.character.marker.SetActiveState(false);
-                currentMinions.Add(currMinion);
-            }
-        }
-
-        if(currentMinions.Count > 0) {
-            LocationGridTile mainEntrance = settlement.innerMap.GetRandomUnoccupiedEdgeTile();
-            entrances.Add(mainEntrance);
-            //int neededEntrances = currentMinions.Count - 1;
-
-            for (int i = 0; i < entrances.Count; i++) {
-                if (entrances.Count == currentMinions.Count) {
-                    break;
-                }
-                for (int j = 0; j < entrances[i].neighbourList.Count; j++) {
-                    LocationGridTile newEntrance = entrances[i].neighbourList[j];
-                    //if (newEntrance.objHere == null && newEntrance.charactersHere.Count == 0 && newEntrance.structure != null) {
-                    if (newEntrance.IsAtEdgeOfWalkableMap() && !entrances.Contains(newEntrance)) {
-                        entrances.Add(newEntrance);
-                        if (entrances.Count == currentMinions.Count) {
-                            break;
-                        }
-                    }
-                }
-            }
-            for (int i = 0; i < entrances.Count; i++) {
-                currentMinions[i].character.marker.InitialPlaceMarkerAt(entrances[i]);
-            }
-            for (int i = 0; i < currentMinions.Count; i++) {
-                Minion currMinion = currentMinions[i];
-                if (!currMinion.character.marker.gameObject.activeInHierarchy) {
-                    throw new System.Exception($"{currMinion.character.name} was not placed!");
-                }
-                currMinion.StartInvasionProtocol(settlement);
-            }
-            //PlayerUI.Instance.startInvasionButton.interactable = false;
-            currentSettlementBeingInvaded = settlement;
-            currentMinions[0].character.CenterOnCharacter();
-            Messenger.AddListener(Signals.TICK_ENDED, PerTickInvasion);
-        }
-        //else {
-        //    Debug.LogError("Can't invade! No more minions!");
-        //}
-    }
-    private void PerTickInvasion() {
-        bool stillHasMinions = false;
-        for (int i = 0; i < minions.Count; i++) {
-            Minion currMinion = minions[i];
-            if (currMinion.assignedRegion != currentSettlementBeingInvaded.region) {
-                continue; //do not include minions that are not invading the main settlement.
-            }
-            if(currMinion.character.currentHP > 0 && !currMinion.character.isDead && currMinion.character.canPerform) {
-                stillHasMinions = true;
-                break;
-            }
-        }
-        if (!stillHasMinions) {
-            StopInvasion(false);
-            return;
-        }
-
-        bool stillHasResidents = false;
-        for (int i = 0; i < currentSettlementBeingInvaded.region.residents.Count; i++) { //Changed checking to faction members, because some characters may still consider the settlement as their home, but are no longer part of the faction
-            Character currCharacter = currentSettlementBeingInvaded.region.residents[i];
-            if (currCharacter.currentSettlement == currentSettlementBeingInvaded && currCharacter.IsAble()) {
-                stillHasResidents = true;
-                break;
-            }
-        }
-        //for (int i = 0; i < currentSettlementBeingInvaded.areaResidents.Count; i++) {
-        //    Character currCharacter = currentSettlementBeingInvaded.areaResidents[i];
-        //    if (currCharacter.IsAble() && currCharacter.specificLocation == currentSettlementBeingInvaded) {
-        //        stillHasResidents = true;
-        //        break;
-        //    }
-        //}
-        if (!stillHasResidents) {
-            StopInvasion(true);
-            return;
-        }
-    }
-    private void StopInvasion(bool playerWon) {
-        //TODO:
-        // Messenger.RemoveListener(Signals.TICK_ENDED, PerTickInvasion);
-        // if (playerWon) {
-        //     PlayerUI.Instance.SuccessfulAreaCorruption();
-        //     Settlement corruptedSettlement = AreaIsCorrupted();
-        //     ResetThreat();
-        //     for (int i = 0; i < corruptedSettlement.charactersAtLocation.Count; i++) {
-        //         corruptedSettlement.charactersAtLocation[i].combatComponent.ClearAvoidInRange(false);
-        //         corruptedSettlement.charactersAtLocation[i].combatComponent.ClearHostilesInRange(false);
-        //         corruptedSettlement.charactersAtLocation[i].marker.ClearPOIsInVisionRange();
-        //         corruptedSettlement.charactersAtLocation[i].marker.ClearTerrifyingObjects();
-        //     }
-        //     Messenger.Broadcast(Signals.SUCCESS_INVASION_AREA, corruptedSettlement);
-        //     //ResetSummons();
-        //     //ResetArtifacts();
-        //     //LevelUpAllMinions();
-        // } else {
-        //     HexTile tile = currentSettlementBeingInvaded.coreTile;
-        //     UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "You failed to invade " + currentSettlementBeingInvaded.name + ".", () => UIManager.Instance.ShowRegionInfo(tile.region));
-        // }
-        // for (int i = 0; i < minions.Count; i++) {
-        //     Minion currMinion = minions[i];
-        //     currMinion.StopInvasionProtocol(currentSettlementBeingInvaded);
-        // }
-        // currentSettlementBeingInvaded = null;
-        // UIManager.Instance.regionInfoUI.StopSettlementInvasion();
-    }
-    //public void SetInvadingRegion(Region region) {
-    //    invadingRegion = region;
-    //}
     public void SetConstructionRatePercentageModifier(float amount) {
         constructionRatePercentageModifier = amount;
     }
-    //public void AdjustInvasionRatePercentageModifier(float amount) {
-    //    invasionRatePercentageModifier += amount;
-    //}
     #endregion
 
     #region Combat Ability

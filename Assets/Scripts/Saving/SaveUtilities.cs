@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using Inner_Maps;
 using UnityEngine;
 
 public static class SaveUtilities {
@@ -20,26 +19,6 @@ public static class SaveUtilities {
             return System.Activator.CreateInstance(systemType) as SaveDataCharacterState;
         } else {
             return new SaveDataCharacterState();
-        }
-    }
-    #endregion
-
-    #region POI's
-    public static IPointOfInterest GetPOIFromData(POIData data) {
-        switch (data.poiType) {
-            // case POINT_OF_INTEREST_TYPE.ITEM:
-            //     return TokenManager.Instance.GetSpecialTokenByID(data.poiID);
-            case POINT_OF_INTEREST_TYPE.CHARACTER:
-                return CharacterManager.Instance.GetCharacterByID(data.poiID);
-            case POINT_OF_INTEREST_TYPE.TILE_OBJECT:
-                if (data.tileObjectType == TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
-                    Settlement settlement = LandmarkManager.Instance.GetAreaByID(data.areaID);
-                    return settlement.innerMap.map[(int)data.genericTileObjectPlace.x, (int)data.genericTileObjectPlace.y].genericTileObject;
-                } else {
-                    return InnerMapManager.Instance.GetTileObject(data.tileObjectType, data.poiID);
-                }
-            default:
-                return null;
         }
     }
     #endregion

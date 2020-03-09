@@ -305,7 +305,7 @@ public class JobQueue {
         if (job.originalOwner.ownerType == JOB_OWNER.CHARACTER) {
             return job.originalOwner == owner;
         } else {
-            //Only add settlement/quest jobs if character it is the top priority and the owner of this job queue can do the job
+            //Only add npcSettlement/quest jobs if character it is the top priority and the owner of this job queue can do the job
             if (jobsInQueue.Count > 0) {
                 if (job.priority > jobsInQueue[0].priority) {
                     return job.CanCharacterDoJob(owner);

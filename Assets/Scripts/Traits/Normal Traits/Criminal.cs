@@ -26,7 +26,7 @@ namespace Traits {
                 //Log addLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "add_criminal");
                 //addLog.AddToFillers(sourceCharacter, sourceCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 //sourceCharacter.AddHistory(addLog);
-                //TODO: sourceCharacter.homeSettlement.jobQueue.UnassignAllJobsTakenBy(sourceCharacter);
+                //TODO: sourceCharacter.homeNpcSettlement.jobQueue.UnassignAllJobsTakenBy(sourceCharacter);
                 owner.CancelOrUnassignRemoveTraitRelatedJobs();
             }
 

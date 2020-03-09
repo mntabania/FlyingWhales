@@ -26,10 +26,10 @@ public class BurningSource {
             }
         }
     }
-    public bool HasFireInSettlement(Settlement settlement) {
+    public bool HasFireInSettlement(NPCSettlement npcSettlement) {
         for (int i = 0; i < objectsOnFire.Count; i++) {
             ITraitable traitable = objectsOnFire[i];
-            if (traitable.gridTileLocation != null && traitable.gridTileLocation.IsPartOfSettlement(settlement)) {
+            if (traitable.gridTileLocation != null && traitable.gridTileLocation.IsPartOfSettlement(npcSettlement)) {
                 return true;
             }
         }

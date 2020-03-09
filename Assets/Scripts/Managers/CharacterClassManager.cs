@@ -211,7 +211,7 @@ public class CharacterClassManager : MonoBehaviour {
     //                        //marker.GoTo(gridTile, () => trapStructure.SetStructureAndDuration(structure, GameManager.Instance.GetTicksBasedOnHour(2) + GameManager.Instance.GetTicksBasedOnMinutes(30)));
     //                        return log;
     //                    } else {
-    //                        log += "\n  -No Inn Structure in the settlement";
+    //                        log += "\n  -No Inn Structure in the npcSettlement";
     //                    }
     //                }
     //            } else {
@@ -341,8 +341,8 @@ public class CharacterClassManager : MonoBehaviour {
     //            character.PlanIdle(INTERACTION_TYPE.STAND, character);
     //            //PlanIdleStroll(currentStructure);
     //            return log;
-    //        } else if ((character.currentStructure.structureType == STRUCTURE_TYPE.WORK_AREA || character.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS || character.currentStructure.structureType == STRUCTURE_TYPE.CEMETERY || character.currentStructure.structureType == STRUCTURE_TYPE.CITY_CENTER) && character.specificLocation == character.homeSettlement) {
-    //            log += "\n-" + character.name + " is in the Work Settlement/Wilderness/Cemetery/City Center of home location";
+    //        } else if ((character.currentStructure.structureType == STRUCTURE_TYPE.WORK_AREA || character.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS || character.currentStructure.structureType == STRUCTURE_TYPE.CEMETERY || character.currentStructure.structureType == STRUCTURE_TYPE.CITY_CENTER) && character.specificLocation == character.homeNpcSettlement) {
+    //            log += "\n-" + character.name + " is in the Work NPCSettlement/Wilderness/Cemetery/City Center of home location";
 
     //            log += "\n-If it is Morning or Afternoon, 25% chance to enter Stroll Outside Mode";
     //            TIME_IN_WORDS currentTimeOfDay = GameManager.GetCurrentTimeInWordsOfTick(character);
@@ -429,8 +429,8 @@ public class CharacterClassManager : MonoBehaviour {
     //            log += "\n-100% chance to return home";
     //            character.PlanIdleReturnHome();
     //            return log;
-    //        } else if (character.specificLocation != character.homeSettlement && character.trapStructure.structure == null) {
-    //            log += "\n-" + character.name + " is in another settlement and Base Structure is empty";
+    //        } else if (character.specificLocation != character.homeNpcSettlement && character.trapStructure.structure == null) {
+    //            log += "\n-" + character.name + " is in another npcSettlement and Base Structure is empty";
     //            log += "\n-100% chance to return home";
     //            character.PlanIdleReturnHome();
     //            return log;
@@ -439,12 +439,12 @@ public class CharacterClassManager : MonoBehaviour {
     //        //Unaligned NPC Idle
     //        log += "\n-" + character.name + " has no faction";
     //        if (!character.isAtHomeRegion) {
-    //            log += "\n-" + character.name + " is in another settlement";
+    //            log += "\n-" + character.name + " is in another npcSettlement";
     //            log += "\n-100% chance to return home";
     //            character.PlanIdleReturnHome();
     //            return log;
     //        } else {
-    //            log += "\n-" + character.name + " is in home settlement";
+    //            log += "\n-" + character.name + " is in home npcSettlement";
     //            log += "\n-If it is Morning or Afternoon, 25% chance to play";
     //            TIME_IN_WORDS currentTimeOfDay = GameManager.GetCurrentTimeInWordsOfTick(character);
     //            if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.LUNCH_TIME || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON) {

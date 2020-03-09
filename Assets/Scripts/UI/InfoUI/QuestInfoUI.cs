@@ -42,7 +42,7 @@ public class QuestInfoUI : MonoBehaviour {
         descriptionText.text = quest.description;
 
         //string factionText = "<link=" + '"' + quest.factionOwner.id.ToString() + "_faction" + '"' + ">Faction Owner: <b>" + quest.factionOwner.name + "</b></link>";
-        //string regionText = "<link=" + '"' + quest.region.coreTile.id.ToString() + "_hextile" + '"' + ">Region: <b>" + (quest.region.settlement != null ? quest.region.settlement.name : quest.region.name) + "</b></link>";
+        //string regionText = "<link=" + '"' + quest.region.coreTile.id.ToString() + "_hextile" + '"' + ">Region: <b>" + (quest.region.npcSettlement != null ? quest.region.npcSettlement.name : quest.region.name) + "</b></link>";
 
         string remainingDaysText = string.Empty;
         if(quest is DivineInterventionQuest) {

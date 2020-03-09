@@ -14,9 +14,9 @@ public class WorldConfigManager : MonoBehaviour {
     public int maxRegionHeightCount;
 
     [Header("Settlements")]
-    [Tooltip("Minimum number of citizens to generate on the first settlement")]
+    [Tooltip("Minimum number of citizens to generate on the first npcSettlement")]
     public int minCitizenCount;
-    [Tooltip("Maximum number of citizens to generate on the first settlement")]
+    [Tooltip("Maximum number of citizens to generate on the first npcSettlement")]
     public int maxCitizenCount;
 
     private void Awake() {

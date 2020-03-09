@@ -23,7 +23,7 @@
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
-            //**Requirement:** Actor is in a non-settlement region.
+            //**Requirement:** Actor is in a non-npcSettlement region.
             var region = poiTarget.gridTileLocation.parentMap.location.coreTile.region;
             return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null &&
                    region.locationType.IsSettlementType() == false;

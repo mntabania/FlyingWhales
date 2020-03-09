@@ -38,9 +38,9 @@ public interface ICharacter {
     GENDER gender { get; }
     ICHARACTER_TYPE icharacterType { get; }
     RACE race { get; }
-    Settlement specificLocation { get; }
+    NPCSettlement specificLocation { get; }
     Faction faction { get; }
-    Settlement homeSettlement { get; }
+    NPCSettlement homeNpcSettlement { get; }
     CharacterRole role { get; } //Character only
     CharacterClass characterClass { get; } //Character only
     //Job job { get; } //Character only
@@ -72,7 +72,7 @@ public interface ICharacter {
     void SetLevel(int amount);
     void SetOwnedParty(Party party);
     void SetCurrentParty(Party party);
-    void SetHome(Settlement newHome);
+    void SetHome(NPCSettlement newHome);
     void AddHistory(Log log); //Character only
     void SetMinion(Minion minion);
     bool AddTrait(Trait combatAttribute, Character responsibleCharacter = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null, bool triggerOnAdd = true);

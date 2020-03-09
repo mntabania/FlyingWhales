@@ -62,7 +62,6 @@ public class ConsoleBase : InfoUIBase {
             {"/add_rel", AddRelationship },
             {"/rel_deg", ForcedRelationshipDegradation },
             {"/set_hp", SetHP },
-            {"/kill_res",  KillResidents},
             {"/gain_summon",  GainSummon},
             //{"/gain_summon_slot",  GainSummonSlot},
             {"/gain_artifact",  GainArtifact},
@@ -74,7 +73,6 @@ public class ConsoleBase : InfoUIBase {
             {"/set_hope", SetHope },
             {"/gain_i_ability", GainInterventionAbility },
             {"/destroy_tile_obj", DestroyTileObj },
-            {"/add_hostile", AddHostile },
             {"/force_update_animation", ForceUpdateAnimation },
             {"/highlight_structure_tiles", HighlightStructureTiles },
             {"/log_obj_advertisements", LogObjectAdvertisements },
@@ -281,21 +279,21 @@ public class ConsoleBase : InfoUIBase {
     }
     //private void CheckForWrongCharacterData() {
     //    for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
-    //        Settlement currSettlement = LandmarkManager.Instance.allAreas[i];
-    //        if (currSettlement == PlayerManager.Instance.player.playerSettlement) {
+    //        NPCSettlement currNpcSettlement = LandmarkManager.Instance.allAreas[i];
+    //        if (currNpcSettlement == PlayerManager.Instance.player.playerNpcSettlement) {
     //            continue;
     //        }
-    //        for (int j = 0; j < currSettlement.charactersAtLocation.Count; j++) {
-    //            Character character = currSettlement.charactersAtLocation[j];
+    //        for (int j = 0; j < currNpcSettlement.charactersAtLocation.Count; j++) {
+    //            Character character = currNpcSettlement.charactersAtLocation[j];
     //            if (character.isDead) {
-    //                Debug.LogWarning("There is still a dead character at " + currSettlement.name + " : " + character.name);
+    //                Debug.LogWarning("There is still a dead character at " + currNpcSettlement.name + " : " + character.name);
     //                //UIManager.Instance.Pause();
     //            }
     //        }
-    //        //for (int j = 0; j < currSettlement.possibleSpecialTokenSpawns.Count; j++) {
-    //        //    SpecialToken token = currSettlement.possibleSpecialTokenSpawns[j];
+    //        //for (int j = 0; j < currNpcSettlement.possibleSpecialTokenSpawns.Count; j++) {
+    //        //    SpecialToken token = currNpcSettlement.possibleSpecialTokenSpawns[j];
     //        //    if (token.structureLocation == null) {
-    //        //        Debug.LogWarning("There is token at " + currSettlement.name + " that doesn't have a structure location : " + token.name);
+    //        //        Debug.LogWarning("There is token at " + currNpcSettlement.name + " that doesn't have a structure location : " + token.name);
     //        //        //UIManager.Instance.Pause();
     //        //    }
     //        //}
@@ -473,36 +471,6 @@ public class ConsoleBase : InfoUIBase {
         }
 
         character.Death(causeString);
-    }
-    private void KillResidents(string[] parameters) {
-        if (parameters.Length < 1) {
-            AddCommandHistory(consoleLbl.text);
-            AddErrorMessage("There was an error in the command format of /kill_res");
-            return;
-        }
-        string areaParameterString = parameters[0];
-        int areaID;
-
-        bool isAreaParameterNumeric = int.TryParse(areaParameterString, out areaID);
-
-        Settlement settlement = null;
-
-        if (isAreaParameterNumeric) {
-            settlement = LandmarkManager.Instance.GetAreaByID(areaID);
-        } else {
-            settlement = LandmarkManager.Instance.GetAreaByName(areaParameterString);
-        }
-
-        if (settlement == null) {
-            AddCommandHistory(consoleLbl.text);
-            AddErrorMessage("There was an error in the command format of /kill_res");
-            return;
-        }
-
-        List<Character> characters = new List<Character>(settlement.region.residents);
-        for (int i = 0; i < characters.Count; i++) {
-            characters[i].Death();
-        }
     }
     private void CenterOnCharacter(string[] parameters) {
         if (parameters.Length != 1) {
@@ -907,46 +875,6 @@ public class ConsoleBase : InfoUIBase {
         AddSuccessMessage($"Set HP of {character.name} to {amount}");
 
     }
-    private void AddHostile(string[] parameters) {
-        if (parameters.Length != 4) { //character that will attack, POI type to attack, Tile object type, id of poi to attack
-            AddCommandHistory(consoleLbl.text);
-            AddErrorMessage("There was an error in the command format of Attack");
-            return;
-        }
-        string characterParameterString = parameters[0];
-        string poiTypeString = parameters[1];
-        string tileObjectTypeString = parameters[2];
-        string targetIDString = parameters[3];
-
-        Character character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
-        if (character == null) {
-            AddErrorMessage($"There is no character with name {characterParameterString}");
-            return;
-        }
-        POINT_OF_INTEREST_TYPE targetType;
-        if (!System.Enum.TryParse(poiTypeString, out targetType)) {
-            AddErrorMessage($"There is no poi type of {poiTypeString}");
-            return;
-        }
-        TILE_OBJECT_TYPE targetTileObjectType;
-        if (!System.Enum.TryParse(tileObjectTypeString, out targetTileObjectType)) {
-            AddErrorMessage($"There is no tile object type of {tileObjectTypeString}");
-            return;
-        }
-        int targetID;
-        if (!int.TryParse(targetIDString, out targetID)) {
-            AddErrorMessage($"ID parameter is not an integer: {targetIDString}");
-            return;
-        }
-
-        IPointOfInterest targetPOI = SaveUtilities.GetPOIFromData(new POIData{ poiType = targetType, poiID = targetID, tileObjectType = targetTileObjectType });
-        if (targetPOI == null) {
-            AddErrorMessage($"Could not find POI of type {targetType} with id {targetID}");
-            return;
-        }
-
-        character.combatComponent.Fight(targetPOI);
-    }
     private void ForceUpdateAnimation(string[] parameters) {
         if (parameters.Length != 1) {
             AddCommandHistory(consoleLbl.text);
@@ -1106,7 +1034,7 @@ public class ConsoleBase : InfoUIBase {
     //}
     #endregion
 
-    #region Settlement
+    #region NPCSettlement
     private void LogAreaCharactersHistory(string[] parameters) {
         if (parameters.Length != 1) {
             AddCommandHistory(consoleLbl.text);
@@ -1118,16 +1046,16 @@ public class ConsoleBase : InfoUIBase {
         //int areaID;
         //bool isAreaParameterNumeric = int.TryParse(areaParameterString, out areaID);
 
-        //Settlement settlement = null;
+        //NPCSettlement npcSettlement = null;
         //if (isAreaParameterNumeric) {
-        //    settlement = LandmarkManager.Instance.GetAreaByID(areaID);
+        //    npcSettlement = LandmarkManager.Instance.GetAreaByID(areaID);
         //} else {
-        //    settlement = LandmarkManager.Instance.GetAreaByName(areaParameterString);
+        //    npcSettlement = LandmarkManager.Instance.GetAreaByName(areaParameterString);
         //}
 
-        //string text = settlement.name + "'s Characters History: ";
-        //for (int i = 0; i < settlement.charactersAtLocationHistory.Count; i++) {
-        //    text += "\n" + settlement.charactersAtLocationHistory[i];
+        //string text = npcSettlement.name + "'s Characters History: ";
+        //for (int i = 0; i < npcSettlement.charactersAtLocationHistory.Count; i++) {
+        //    text += "\n" + npcSettlement.charactersAtLocationHistory[i];
         //}
         //AddSuccessMessage(text);
     }
@@ -1352,7 +1280,7 @@ public class ConsoleBase : InfoUIBase {
     }
     #endregion
 
-    #region Settlement Map
+    #region NPCSettlement Map
     private void HighlightStructureTiles(string[] parameters) {
         if (parameters.Length != 3) {
             AddCommandHistory(consoleLbl.text);

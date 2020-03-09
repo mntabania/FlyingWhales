@@ -727,8 +727,10 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             return false;
         }
         if (characterOwner == null) {
-            //if the item is at a tile that is part of a settlement and that tile is part of that settlements main storage, do not allow pick up
-            if (gridTileLocation != null && gridTileLocation.IsPartOfSettlement(out var settlement) && gridTileLocation.structure == settlement.mainStorage) {
+            //if the item is at a tile that is part of a npcSettlement and that tile is part of that settlements main storage, do not allow pick up
+            if (gridTileLocation != null && gridTileLocation.IsPartOfSettlement(out var settlement) 
+                && settlement is NPCSettlement npcSettlement
+                && gridTileLocation.structure == npcSettlement.mainStorage) {
                 return false;
             }
             
@@ -787,7 +789,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
 
     #region Map Object
     protected override void CreateMapObjectVisual() {
-        GameObject obj = InnerMapManager.Instance.mapObjectFactory.CreateNewTileObjectAreaMapObject(tileObjectType);
+        GameObject obj = InnerMapManager.Instance.mapObjectFactory.CreateNewTileObjectMapVisual(tileObjectType);
         mapVisual = obj.GetComponent<TileObjectGameObject>();
     }
     private INTERACTION_TYPE[] storedActions;
@@ -991,7 +993,7 @@ public class SaveDataTileObject {
 
         if(tileObject.structureLocation != null) {
             structureLocationID = tileObject.structureLocation.id;
-            structureLocationAreaID = tileObject.structureLocation.location.id; //TODO: Refactor, because location is no longer guaranteed to be an settlement.
+            structureLocationAreaID = tileObject.structureLocation.location.id; //TODO: Refactor, because location is no longer guaranteed to be an npcSettlement.
             structureLocationType = tileObject.structureLocation.structureType;
         } else {
             structureLocationID = -1;
@@ -1026,8 +1028,8 @@ public class SaveDataTileObject {
         TileObject tileObject = System.Activator.CreateInstance(System.Type.GetType(tileObjectName), this) as TileObject;
 
         //if(structureLocationID != -1 && structureLocationAreaID != -1) {
-        //    Settlement settlement = LandmarkManager.Instance.GetAreaByID(structureLocationAreaID);
-        //    tileObject.SetStructureLocation(settlement.GetStructureByID(structureLocationType, structureLocationID));
+        //    NPCSettlement npcSettlement = LandmarkManager.Instance.GetAreaByID(structureLocationAreaID);
+        //    tileObject.SetStructureLocation(npcSettlement.GetStructureByID(structureLocationType, structureLocationID));
         //}
         //for (int i = 0; i < awareCharactersIDs.Count; i++) {
         //    tileObject.AddAwareCharacter(CharacterManager.Instance.GetCharacterByID(awareCharactersIDs[i]));
@@ -1048,12 +1050,12 @@ public class SaveDataTileObject {
 
     public void LoadPreviousTileAndCurrentTile() {
         if (previousTileAreaID != -1 && previousTileID.z != -1) {
-            Settlement settlement = LandmarkManager.Instance.GetAreaByID(previousTileAreaID);
-            LocationGridTile tile = settlement.innerMap.map[(int)previousTileID.x, (int)previousTileID.y];
-            tile.structure.AddPOI(loadedTileObject, tile);
-            if (!hasCurrentTile) {
-                tile.structure.RemovePOI(loadedTileObject);
-            }
+            // NPCSettlement npcSettlement = LandmarkManager.Instance.GetAreaByID(previousTileAreaID);
+            // LocationGridTile tile = npcSettlement.innerMap.map[(int)previousTileID.x, (int)previousTileID.y];
+            // tile.structure.AddPOI(loadedTileObject, tile);
+            // if (!hasCurrentTile) {
+            //     tile.structure.RemovePOI(loadedTileObject);
+            // }
         }
     }
 

@@ -202,6 +202,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212905389457727492}
   hoverObject: {fileID: 0}
+  statusIconsParent: {fileID: 0}
 --- !u!1 &1983251176026668
 GameObject:
   m_ObjectHideFlags: 0

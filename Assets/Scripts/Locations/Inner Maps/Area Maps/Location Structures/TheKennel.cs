@@ -147,7 +147,7 @@ namespace Inner_Maps.Location_Structures {
             _isCurrentlyBreeding = false;
             _markerDummy.Deactivate();
             Summon summon = CharacterManager.Instance.CreateNewSummon(GetMonsterType(raceClass),
-                PlayerManager.Instance.player.playerFaction, settlementLocation);
+                PlayerManager.Instance.player.playerFaction, settlementLocation, location as Region);
             CharacterManager.Instance.PlaceSummon(summon, targetTile);
             summon.AddTerritory(occupiedBuildSpot.spot.hexTileOwner);
             summon.combatComponent.SetCombatMode(COMBAT_MODE.Defend);

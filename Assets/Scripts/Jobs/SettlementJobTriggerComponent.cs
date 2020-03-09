@@ -11,14 +11,14 @@ using UnityEngine.Assertions;
 
 public class SettlementJobTriggerComponent : JobTriggerComponent {
 
-	private readonly Settlement _owner;
+	private readonly NPCSettlement _owner;
 
 	private const int MinimumFood = 100;
 	private const int MinimumMetal = 100;
 	private const int MinimumStone = 100;
 	private const int MinimumWood = 100;
 	
-	public SettlementJobTriggerComponent(Settlement owner) {
+	public SettlementJobTriggerComponent(NPCSettlement owner) {
 		_owner = owner;
 	}
 	
@@ -34,10 +34,10 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		Messenger.AddListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
 		Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
 		Messenger.AddListener<Table>(Signals.FOOD_IN_DWELLING_CHANGED, OnFoodInDwellingChanged);
-		Messenger.AddListener<Settlement, bool>(Signals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, OnSettlementUnderSiegeChanged);
+		Messenger.AddListener<NPCSettlement, bool>(Signals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, OnSettlementUnderSiegeChanged);
 		Messenger.AddListener<Character, IPointOfInterest>(Signals.CHARACTER_SAW, OnCharacterSaw);
 		Messenger.AddListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJobSuccessfully);
-		Messenger.AddListener<Settlement>(Signals.SETTLEMENT_CHANGE_STORAGE, OnSettlementChangedStorage);
+		Messenger.AddListener<NPCSettlement>(Signals.SETTLEMENT_CHANGE_STORAGE, OnSettlementChangedStorage);
 		Messenger.AddListener<BurningSource>(Signals.BURNING_SOURCE_INACTIVE, OnBurningSourceInactive);
 	}
 	public void UnsubscribeListeners() {
@@ -51,9 +51,9 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		Messenger.RemoveListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
 		Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
 		Messenger.RemoveListener<Table>(Signals.FOOD_IN_DWELLING_CHANGED, OnFoodInDwellingChanged);
-		Messenger.RemoveListener<Settlement, bool>(Signals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, OnSettlementUnderSiegeChanged);
+		Messenger.RemoveListener<NPCSettlement, bool>(Signals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, OnSettlementUnderSiegeChanged);
 		Messenger.RemoveListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJobSuccessfully);
-		Messenger.RemoveListener<Settlement>(Signals.SETTLEMENT_CHANGE_STORAGE, OnSettlementChangedStorage);
+		Messenger.RemoveListener<NPCSettlement>(Signals.SETTLEMENT_CHANGE_STORAGE, OnSettlementChangedStorage);
 		Messenger.RemoveListener<BurningSource>(Signals.BURNING_SOURCE_INACTIVE, OnBurningSourceInactive);
 	}
 	private void HourlyJobActions() {
@@ -131,15 +131,15 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 			TryTriggerObtainPersonalFood(table);
 		}
 	}
-	private void OnSettlementUnderSiegeChanged(Settlement settlement, bool isUnderSiege) {
-		if (settlement == _owner) {
+	private void OnSettlementUnderSiegeChanged(NPCSettlement npcSettlement, bool isUnderSiege) {
+		if (npcSettlement == _owner) {
 			if (isUnderSiege) {
 				TryCreateKnockoutJobs();
 			}	
 		}
 	}
 	private void OnCharacterSaw(Character character, IPointOfInterest seenPOI) {
-		if (character.homeSettlement == _owner && character.homeSettlement.isUnderSeige 
+		if (character.homeSettlement == _owner && character.homeSettlement.isUnderSiege 
 		                                       && character.currentSettlement == character.homeSettlement) {
 			if (seenPOI is Character) {
 				Character target = seenPOI as Character;
@@ -156,8 +156,8 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 			}
 		}
 	}
-	private void OnSettlementChangedStorage(Settlement settlement) {
-		if (settlement == _owner) {
+	private void OnSettlementChangedStorage(NPCSettlement npcSettlement) {
+		if (npcSettlement == _owner) {
 			List<ResourcePile> resourcePiles = _owner.region.GetTileObjectsOfType<ResourcePile>();
 			for (int i = 0; i < resourcePiles.Count; i++) {
 				ResourcePile resourcePile = resourcePiles[i];
@@ -299,13 +299,13 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 
 	#region Haul
 	private void TryCreateHaulJob(ResourcePile target) {
-		//if target is in this settlement and is not in the main storage, then create a haul job.
-		//if target is not in this settlement, check if it is in the wilderness, if it is, then create haul job
-		bool isInValidLocation = (target.gridTileLocation.IsPartOfSettlement(_owner) &&
+		//if target is in this npcSettlement and is not in the main storage, then create a haul job.
+		//if target is not in this npcSettlement, check if it is in the wilderness, if it is, then create haul job
+		bool isAtValidLocation = (target.gridTileLocation.IsPartOfSettlement(_owner) &&
 		                          target.gridTileLocation.structure != _owner.mainStorage)
 		                         || (target.gridTileLocation.IsPartOfSettlement(_owner) == false &&
 		                             target.gridTileLocation.structure.isInterior == false);
-		if (isInValidLocation && _owner.HasJob(JOB_TYPE.HAUL, target) == false && target.gridTileLocation.parentMap.location == _owner.region) {
+		if (isAtValidLocation && _owner.HasJob(JOB_TYPE.HAUL, target) == false && target.gridTileLocation.parentMap.location == _owner.region) {
 			ResourcePile chosenPileToBeDeposited = _owner.mainStorage.GetResourcePileObjectWithLowestCount(target.tileObjectType);
 			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAUL, 
 				new GoapEffect(GOAP_EFFECT_CONDITION.DEPOSIT_RESOURCE, string.Empty, 
@@ -423,13 +423,13 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 			_owner.AddToAvailableJobs(job);
 		}
 	}
-	private bool IsCombineStockpileStillApplicable(ResourcePile targetPile, ResourcePile pileToDeposit, Settlement settlement) {
+	private bool IsCombineStockpileStillApplicable(ResourcePile targetPile, ResourcePile pileToDeposit, NPCSettlement npcSettlement) {
 		return targetPile.gridTileLocation != null
-		       && targetPile.gridTileLocation.IsPartOfSettlement(settlement)
-		       && targetPile.structureLocation == settlement.mainStorage
+		       && targetPile.gridTileLocation.IsPartOfSettlement(npcSettlement)
+		       && targetPile.structureLocation == npcSettlement.mainStorage
 		       && pileToDeposit.gridTileLocation != null
-		       && pileToDeposit.gridTileLocation.IsPartOfSettlement(settlement)
-		       && pileToDeposit.structureLocation == settlement.mainStorage
+		       && pileToDeposit.gridTileLocation.IsPartOfSettlement(npcSettlement)
+		       && pileToDeposit.structureLocation == npcSettlement.mainStorage
 		       && targetPile.HasEnoughSpaceFor(pileToDeposit.providedResource, pileToDeposit.resourceInPile);
 	}
 	#endregion

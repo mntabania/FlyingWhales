@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Locations.Settlements;
 using UnityEngine;
 
 public class MapGenerationFinalization : MapGenerationComponent {
@@ -39,10 +40,10 @@ public class MapGenerationFinalization : MapGenerationComponent {
 	}
 
 	private IEnumerator LoadItems() {
-		for (int i = 0; i < LandmarkManager.Instance.allSetttlements.Count; i++) {
-			Settlement settlement = LandmarkManager.Instance.allSetttlements[i];
-			if (settlement.locationType != LOCATION_TYPE.DUNGEON) {
-				InnerMapManager.Instance.LoadInitialSettlementItems(settlement);
+		for (int i = 0; i < LandmarkManager.Instance.allNonPlayerSettlements.Count; i++) {
+			NPCSettlement npcSettlement = LandmarkManager.Instance.allNonPlayerSettlements[i];
+			if (npcSettlement.locationType != LOCATION_TYPE.DUNGEON) {
+				InnerMapManager.Instance.LoadInitialSettlementItems(npcSettlement);
 				yield return null;	
 			}
 		}

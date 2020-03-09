@@ -9,8 +9,8 @@ namespace Traits {
     public class CharacterTraitProcessor : TraitProcessor {
         public override void OnTraitAdded(ITraitable traitable, Trait trait, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration) {
             Character character = traitable as Character;
-            if(trait is Status) {
-                ApplyStatusEffects(character, trait as Status);
+            if(trait is Status status) {
+                ApplyStatusEffects(character, status);
             }
             ApplyTraitEffects(character, trait);
             Messenger.Broadcast(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, character as IPointOfInterest);
@@ -35,6 +35,9 @@ namespace Traits {
         }
         public override void OnTraitRemoved(ITraitable traitable, Trait trait, Character removedBy) {
             Character character = traitable as Character;
+            if(trait is Status status) {
+                UnapplyStatusEffects(character, status);
+            }
             UnapplyTraitEffects(character, trait);
             Messenger.Broadcast(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, character as IPointOfInterest);
             //UnapplyPOITraitInteractions(character, trait);

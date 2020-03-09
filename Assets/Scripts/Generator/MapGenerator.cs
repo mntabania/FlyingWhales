@@ -84,11 +84,11 @@ public class MapGenerator : MonoBehaviour {
                         && tile.landmarkOnTile != null
                         && (tile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.VILLAGE
                             || tile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.HOUSES)
-                        && tile.settlementOnTile != null) {
-                        if(tile.settlementOnTile.ruler == null) {
-                            tile.settlementOnTile.DesignateNewRuler(false);
+                        && tile.settlementOnTile is NPCSettlement npcSettlement) {
+                        if(npcSettlement.ruler == null) {
+                            npcSettlement.DesignateNewRuler(false);
                         }
-                        tile.settlementOnTile.GenerateInitialOpinionBetweenResidents();
+                        npcSettlement.GenerateInitialOpinionBetweenResidents();
                     }
                 }
             }
@@ -124,7 +124,6 @@ public class MapGenerator : MonoBehaviour {
         data.LoadPlayerArea();
         data.LoadNonPlayerAreas();
         data.LoadFactions();
-        LandmarkManager.Instance.LoadAdditionalAreaData();
         data.LoadCharacters();
         // data.LoadSpecialObjects();
         data.LoadTileObjects();
@@ -161,7 +160,7 @@ public class MapGenerator : MonoBehaviour {
         data.LoadAllJobs();
         data.LoadTileObjectsDataAfterLoadingAreaMap();
 
-        //Note: Loading settlement items is after loading the inner map because LocationStructure and LocationGridTile is required
+        //Note: Loading npcSettlement items is after loading the inner map because LocationStructure and LocationGridTile is required
         data.LoadPlayerAreaItems();
         data.LoadNonPlayerAreaItems();
         yield return null;
@@ -177,7 +176,7 @@ public class MapGenerator : MonoBehaviour {
         Debug.Log($"Total loading time is {loadingWatch.ElapsedMilliseconds.ToString()} ms");
         LevelLoaderManager.Instance.SetLoadingState(false);
         //TODO:
-        // CameraMove.Instance.CenterCameraOn(PlayerManager.Instance.player.playerSettlement.coreTile.gameObject);
+        // CameraMove.Instance.CenterCameraOn(PlayerManager.Instance.player.playerNpcSettlement.coreTile.gameObject);
         AudioManager.Instance.TransitionTo("World Music", 10);
         yield return new WaitForSeconds(1f);
         GameManager.Instance.StartProgression();

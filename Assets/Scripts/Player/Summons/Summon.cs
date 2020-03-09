@@ -55,14 +55,14 @@ public class Summon : Character, IWorldObject {
         needsComponent.SetFullnessForcedTick(0);
         needsComponent.SetTirednessForcedTick(0);
         behaviourComponent.AddBehaviourComponent(typeof(DefaultMonster));
-        //SubscribeToSignals(); //NOTE: Only made characters subscribe to signals when their settlement is the one that is currently active. TODO: Also make sure to unsubscribe a character when the player has completed their map.
+        //SubscribeToSignals(); //NOTE: Only made characters subscribe to signals when their npcSettlement is the one that is currently active. TODO: Also make sure to unsubscribe a character when the player has completed their map.
     }
     public override void OnActionPerformed(ActualGoapNode node) { } //overridden OnActionStateSet so that summons cannot witness other events.
-    protected override void OnSuccessInvadeArea(Settlement settlement) {
-        base.OnSuccessInvadeArea(settlement);
+    protected override void OnSuccessInvadeArea(NPCSettlement npcSettlement) {
+        base.OnSuccessInvadeArea(npcSettlement);
         //clean up
         Reset();
-        //PlayerManager.Instance.player.playerSettlement.AddCharacterToLocation(this);
+        //PlayerManager.Instance.player.playerNpcSettlement.AddCharacterToLocation(this);
         //ResetToFullHP();
         Death();
     }
@@ -135,10 +135,10 @@ public class Summon : Character, IWorldObject {
                 SetHomeRegion(home); //keep this data with character to prevent errors
                 SetHomeStructure(homeStructure); //keep this data with character to prevent errors
             }
-            //if (homeSettlement != null) {
-            //    Settlement home = homeSettlement;
+            //if (homeNpcSettlement != null) {
+            //    NPCSettlement home = homeNpcSettlement;
             //    Dwelling homeStructure = this.homeStructure;
-            //    homeSettlement.RemoveResident(this);
+            //    homeNpcSettlement.RemoveResident(this);
             //    SetHome(home); //keep this data with character to prevent errors
             //    SetHomeStructure(homeStructure); //keep this data with character to prevent errors
             //}

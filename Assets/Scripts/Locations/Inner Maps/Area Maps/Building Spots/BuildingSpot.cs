@@ -170,11 +170,11 @@ public class BuildingSpot {
         return map.CanBuildSpotFit(obj, this, builderIdentifier);
     }
     /// <summary>
-    /// Is this build spot open for the given settlement.
+    /// Is this build spot open for the given npcSettlement.
     /// </summary>
-    /// <param name="settlement">The provided settlement</param>
+    /// <param name="npcSettlement">The provided npcSettlement</param>
     /// <returns>True or false</returns>
-    public bool IsOpenFor(Settlement settlement) {
+    public bool IsOpenFor(NPCSettlement npcSettlement) {
         if (canBeBuiltOnByNPC == false) {
             return false;
         }
@@ -184,15 +184,15 @@ public class BuildingSpot {
         if (hasBlueprint) {
             return false;
         }
-        //to check if this spot is open for the given settlement
-        //    -First check if the hex tile that this spot belongs to is part of the settlement, if it is, then consider this spot as open.
+        //to check if this spot is open for the given npcSettlement
+        //    -First check if the hex tile that this spot belongs to is part of the npcSettlement, if it is, then consider this spot as open.
         //    -If the first check fails, then check if this spots hex tile owner is next to any tiles that are part of the given 
-        //    settlement, if it is, then consider this spot as open.
-        bool open = settlement.tiles.Contains(hexTileOwner);
+        //    npcSettlement, if it is, then consider this spot as open.
+        bool open = npcSettlement.tiles.Contains(hexTileOwner);
         if (open == false) {
             for (int i = 0; i < hexTileOwner.AllNeighbours.Count; i++) {
                 HexTile neighbour = hexTileOwner.AllNeighbours[i];
-                if (settlement.tiles.Contains(neighbour)) {
+                if (npcSettlement.tiles.Contains(neighbour)) {
                     open = true;
                     break;
                 }

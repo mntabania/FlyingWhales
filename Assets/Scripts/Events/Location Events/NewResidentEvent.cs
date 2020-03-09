@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using UnityEngine;
 
 public class NewResidentEvent : LocationEvent {
@@ -11,14 +12,14 @@ public class NewResidentEvent : LocationEvent {
         triggerCondition = Condition;
     }
 
-    private bool Condition(Settlement location) {
+    private bool Condition(NPCSettlement location) {
         return false;
         //TODO:
         // return !location.region.coreTile.isCorrupted && !location.IsResidentsFull();
     }
 
     #region Overrides
-    public override void TriggerEvent(Settlement location) {
+    public override void TriggerEvent(NPCSettlement location) {
         base.TriggerEvent(location);
         //List<LocationStructure> structures = location.structures[STRUCTURE_TYPE.DWELLING];
         //int numberOfUnoccupiedDwellings = 0;
@@ -48,17 +49,17 @@ public class NewResidentEvent : LocationEvent {
         PlayerUI.Instance.ShowGeneralConfirmation("New Residents", $"New residents have arrived at {location.name}");
     }
     #endregion
-    private void GenerateSingleResident(Settlement location) {
+    private void GenerateSingleResident(NPCSettlement location) {
         RACE race = GetRaceForNewResident(location);
-        Character newResident = location.AddNewResident(race, location.owner);
+        Character newResident = AddNewResident(location, race, location.owner);
         Debug.Log(
             $"{GameManager.Instance.TodayLogString()}Generated new Single Resident {newResident} from New Resident Event");
         //CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, race, Utilities.GetRandomGender(), location.region.owner, location.region);
     }
-    private void GenerateCoupleResidents(Settlement location) {
+    private void GenerateCoupleResidents(NPCSettlement location) {
         RACE race = GetRaceForNewResident(location);
         //string className = location.locationClassManager.GetCurrentClassToCreate();
-        Character spouse1 = location.AddNewResident(race, location.owner);
+        Character spouse1 = AddNewResident(location, race, location.owner);
 
         race = GetRaceForNewResident(location);
         SEXUALITY sexuality = UtilityScripts.Utilities.GetCompatibleSexuality(spouse1.sexuality);
@@ -77,7 +78,7 @@ public class NewResidentEvent : LocationEvent {
             }
         }
         //className = location.locationClassManager.GetNextClassToCreate();
-        Character spouse2 = location.AddNewResident(race, gender, sexuality, location.owner);
+        Character spouse2 = AddNewResident(location, race, gender, sexuality, location.owner);
 
         RelationshipManager.Instance.CreateNewRelationshipBetween(spouse1, spouse2, RELATIONSHIP_TYPE.LOVER);
 
@@ -97,7 +98,7 @@ public class NewResidentEvent : LocationEvent {
         Debug.Log(
             $"{GameManager.Instance.TodayLogString()}Generated new Couple Resident {spouse1} and {spouse2} from New Resident Event");
     }
-    private RACE GetRaceForNewResident(Settlement location) {
+    private RACE GetRaceForNewResident(NPCSettlement location) {
         if(location.owner != null && location.owner.leader != null) {
             int chance = UnityEngine.Random.Range(0, 100);
             if(chance < 75) {
@@ -106,4 +107,22 @@ public class NewResidentEvent : LocationEvent {
         }
         return UnityEngine.Random.Range(0, 2) == 0 ? RACE.HUMANS : RACE.ELVES;
     }
+    
+    public Character AddNewResident(NPCSettlement location, RACE race, Faction faction) {
+        string className = location.classManager.GetCurrentClassToCreate();
+        Character citizen = CharacterManager.Instance.CreateNewCharacter(className, race, UtilityScripts.Utilities.GetRandomGender(), faction, location);
+        // PlaceNewResidentInInnerMap(citizen);
+        return citizen;
+    }
+    public Character AddNewResident(NPCSettlement location, RACE race, GENDER gender, SEXUALITY sexuality, Faction faction) {
+        string className = location.classManager.GetCurrentClassToCreate();
+        Character citizen = CharacterManager.Instance.CreateNewCharacter(className, race, gender, sexuality, faction, location);
+        // PlaceNewResidentInInnerMap(citizen);
+        return citizen;
+    }
+    // public void PlaceNewResidentInInnerMap(Character newResident) {
+    //     LocationGridTile mainEntrance = innerMap.GetRandomUnoccupiedEdgeTile();
+    //     newResident.CreateMarker();
+    //     newResident.InitialCharacterPlacement(mainEntrance);
+    // }
 }

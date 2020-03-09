@@ -78,7 +78,7 @@ public class HextileInfoUI : InfoUIBase {
 
     #region For Testing
     public void ShowTestingInfo() {
-        string summary = $"Settlement Ruler: {currentlyShowingHexTile.settlementOnTile?.ruler?.name}" ?? "None";
+        string summary = $"Settlement Ruler: {(currentlyShowingHexTile.settlementOnTile as NPCSettlement)?.ruler?.name}" ?? "None";
         UIManager.Instance.ShowSmallInfo(summary);
     }
     public void HideTestingInfo() {

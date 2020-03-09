@@ -32,7 +32,7 @@ public class KnockoutCharacter : GoapAction {
             if (opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend || opinionLabel == OpinionComponent.Acquaintance
                 || actor.faction == targetCharacter.faction || actor.homeSettlement == targetCharacter.homeSettlement) {
                 cost += 15;
-                costLog += " +15(Friend/Close/Acquaintance/Same Faction/Settlement)";
+                costLog += " +15(Friend/Close/Acquaintance/Same Faction/NPCSettlement)";
             } else if (job.jobType == JOB_TYPE.UNDERMINE) {
                 cost += UtilityScripts.Utilities.rng.Next(80, 121);
                 costLog += $" +{cost}(Undermine)";

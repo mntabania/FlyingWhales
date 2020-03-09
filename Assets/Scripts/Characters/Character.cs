@@ -9,6 +9,7 @@ using UnityEngine;
 using Traits;
 using UnityEngine.Assertions;
 using Interrupts;
+using Locations.Settlements;
 using UnityEngine.EventSystems;
 using UtilityScripts;
 
@@ -51,7 +52,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public int speedPercentMod { get; protected set; }
     public int maxHPPercentMod { get; protected set; }
     public Region homeRegion { get; protected set; }
-    public Settlement homeSettlement => homeStructure?.settlementLocation ?? null;
+    public NPCSettlement homeSettlement => homeStructure?.settlementLocation as NPCSettlement;
     public IDwelling homeStructure { get; protected set; }
     //public IRelationshipContainer relationshipContainer => currentAlterEgo.relationshipContainer;
     //public IRelationshipValidator relationshipValidator => currentAlterEgo.relationshipValidator;
@@ -127,8 +128,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     private readonly List<string> _overrideThoughts;
 
     //For Testing
-    public List<string> locationHistory { get; private set; }
-    public List<string> actionHistory { get; private set; }
+    public List<string> locationHistory { get; }
+    public List<string> actionHistory { get; }
+    private string _currentPlanStackTrace;
 
     //Components / Managers
     public GoapPlanner planner { get; private set; }
@@ -174,7 +176,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool isFactionLeader => faction != null && faction.leader == this;
     public bool isHoldingItem => items.Count > 0;
     public bool isAtHomeRegion => currentRegion == homeRegion && !currentParty.icon.isTravellingOutside;
-    public bool isPartOfHomeFaction => homeRegion != null && faction != null && homeRegion.IsFactionHere(faction); //is this character part of the faction that owns his home settlement
+    public bool isPartOfHomeFaction => homeRegion != null && faction != null && homeRegion.IsFactionHere(faction); //is this character part of the faction that owns his home npcSettlement
     //public bool isFlirting => _isFlirting;
     public override GENDER gender => _gender;
     public RACE race => _raceSetting.race;
@@ -183,7 +185,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     // public CharacterRole role => _role;
     public Faction faction => _faction;
     public Faction factionOwner => _faction;
-    //public Settlement currentArea => currentSettlement;
+    //public NPCSettlement currentArea => currentNpcSettlement;
     public Region currentRegion {
         get {
             if (!IsInOwnParty()) {
@@ -192,7 +194,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             return _currentRegion;
         }
     }
-    public Settlement currentSettlement => gridTileLocation != null 
+    public BaseSettlement currentSettlement => gridTileLocation != null 
         && gridTileLocation.buildSpotOwner.hexTileOwner ? 
         gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile : null;
     public int level => _level;
@@ -471,7 +473,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.AddListener<Party>(Signals.PARTY_DONE_TRAVELLING, OnArrivedAtArea);
         Messenger.AddListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, ForceCancelAllJobsTargetingPOI);
         //Messenger.AddListener<IPointOfInterest, string, JOB_TYPE>(Signals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, ForceCancelJobTypesTargetingPOI);
-        Messenger.AddListener<Settlement>(Signals.SUCCESS_INVASION_AREA, OnSuccessInvadeArea);
+        Messenger.AddListener<NPCSettlement>(Signals.SUCCESS_INVASION_AREA, OnSuccessInvadeArea);
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
         //Messenger.AddListener<Character>(Signals.SCREAM_FOR_HELP, HeardAScream);
@@ -500,7 +502,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.RemoveListener<Party>(Signals.PARTY_DONE_TRAVELLING, OnArrivedAtArea);
         Messenger.RemoveListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, ForceCancelAllJobsTargetingPOI);
         //Messenger.RemoveListener<IPointOfInterest, string, JOB_TYPE>(Signals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, ForceCancelJobTypesTargetingPOI);
-        Messenger.RemoveListener<Settlement>(Signals.SUCCESS_INVASION_AREA, OnSuccessInvadeArea);
+        Messenger.RemoveListener<NPCSettlement>(Signals.SUCCESS_INVASION_AREA, OnSuccessInvadeArea);
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
         //Messenger.RemoveListener<Character>(Signals.SCREAM_FOR_HELP, HeardAScream);
@@ -521,15 +523,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #endregion
 
     #region Listeners
-    private void OnCharacterExitedArea(Settlement settlement, Character character) {
+    private void OnCharacterExitedArea(NPCSettlement npcSettlement, Character character) {
         if (character.id == id) {
-            //Clear terrifying characters of this character if he/she leaves the settlement
+            //Clear terrifying characters of this character if he/she leaves the npcSettlement
             //marker.ClearTerrifyingObjects();
         } else {
             if (!marker) {
                 throw new Exception($"Marker of {name} is null!");
             }
-            //remove the character that left the settlement from anyone elses list of terrifying characters.
+            //remove the character that left the npcSettlement from anyone elses list of terrifying characters.
             //if (marker.terrifyingObjects.Count > 0) {
             //    if (character.IsInOwnParty()) {
             //        marker.RemoveTerrifyingObject(character);
@@ -549,11 +551,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     /// <summary>
-    /// Listener for when the player successfully invades an settlement. And this character is still alive.
+    /// Listener for when the player successfully invades an npcSettlement. And this character is still alive.
     /// </summary>
-    /// <param name="settlementinvaded settlement.</param>
-    protected virtual void OnSuccessInvadeArea(Settlement settlement) {
-        if (currentSettlement == settlement && minion == null) {
+    /// <param name="settlementinvaded npcSettlement.</param>
+    protected virtual void OnSuccessInvadeArea(NPCSettlement npcSettlement) {
+        if (currentSettlement == npcSettlement && minion == null) {
             StopCurrentActionNode(false);
             if (stateComponent.currentState != null) {
                 stateComponent.ExitCurrentState();
@@ -712,7 +714,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
             //RemoveAllNonPersistentTraits();
             //ClearAllAwareness();
-            //Settlement gloomhollow = LandmarkManager.Instance.GetAreaByName("Gloomhollow");
+            //NPCSettlement gloomhollow = LandmarkManager.Instance.GetAreaByName("Gloomhollow");
             MigrateHomeStructureTo(null);
             needsComponent.SetTirednessForcedTick(0);
             needsComponent.SetFullnessForcedTick(0);
@@ -854,10 +856,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 SetHomeRegion(home); //keep this data with character to prevent errors
                 SetHomeStructure(homeStructure); //keep this data with character to prevent errors
             }
-            //if (homeSettlement != null) {
-            //    Settlement home = homeSettlement;
+            //if (homeNpcSettlement != null) {
+            //    NPCSettlement home = homeNpcSettlement;
             //    Dwelling homeStructure = this.homeStructure;
-            //    homeSettlement.RemoveResident(this);
+            //    homeNpcSettlement.RemoveResident(this);
             //    SetHome(home); //keep this data with character to prevent errors
             //    SetHomeStructure(homeStructure); //keep this data with character to prevent errors
             //}
@@ -1281,8 +1283,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 i--;
             }
         }
-        //if (homeSettlement != null) {
-        //    homeSettlement.jobQueue.UnassignAllJobsTakenBy(this);
+        //if (homeNpcSettlement != null) {
+        //    homeNpcSettlement.jobQueue.UnassignAllJobsTakenBy(this);
         //}
 
         //StopCurrentAction(false, reason: reason);
@@ -1608,7 +1610,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     /// <summary>
-    /// Move this character to another structure in the same settlement.
+    /// Move this character to another structure in the same npcSettlement.
     /// </summary>
     /// <param name="newStructure">New structure the character is going to.</param>
     /// <param name="destinationTile">LocationGridTile where the character will go to (Must be inside the new structure).</param>
@@ -1756,10 +1758,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public bool IsInHomeSettlement() {
         if (isAtHomeRegion) {
-            Settlement currentSettlement = this.currentSettlement;
-            Settlement home = homeSettlement;
-            if(home != null) {
-                return currentSettlement == home;
+            if(homeSettlement != null) {
+                return currentSettlement == homeSettlement;
             }
         }
         return false;
@@ -1872,7 +1872,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
 
             if (characterThatDied.currentRegion == homeRegion) {
-                //if a hostile character has been killed within the character's home settlement, Hope increases by XX amount.
+                //if a hostile character has been killed within the character's home npcSettlement, Hope increases by XX amount.
                 if (IsHostileWith(characterThatDied)) {
                     needsComponent.AdjustHope(5f);
                 }
@@ -2999,7 +2999,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     #region Home
     /// <summary>
-    /// Set this character's home settlement data.(Does nothing else)
+    /// Set this character's home npcSettlement data.(Does nothing else)
     /// </summary>
     /// <param name="newHome">The character's new home</param>
     public void SetHomeRegion(Region newHome) {
@@ -3033,8 +3033,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         this.homeStructure = homeStructure;
         //currentAlterEgo.SetHomeStructure(homeStructure);
     }
-    public bool MigrateHomeTo(Settlement newHomeSettlement, IDwelling homeStructure = null, bool broadcast = true) {
-        Settlement previousHome = null;
+    public bool MigrateHomeTo(BaseSettlement newHomeSettlement, IDwelling homeStructure = null, bool broadcast = true) {
+        BaseSettlement previousHome = null;
         if (homeSettlement != null) {
             previousHome = homeSettlement;
             previousHome.RemoveResident(this);
@@ -3055,10 +3055,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //remove character from his/her old home
             homeStructure.RemoveResident(this);
         }
-        if (dwelling != null) {
-            //Added checking, because character can sometimes change home from dwelling to nothing.
-            dwelling.AddResident(this);
-        }
+        //Added checking, because character can sometimes change home from dwelling to nothing.
+        dwelling?.AddResident(this);
     }
     private void OnStructureDestroyed(LocationStructure structure) {
         //character's home was destroyed.
@@ -3209,57 +3207,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         _minion = minion;
         visuals.CreateWholeImageMaterial();
     }
-    public void RecruitAsMinion(UnsummonedMinionData minionData) {
-        if (stateComponent.currentState != null) {
-            stateComponent.ExitCurrentState();
-        }
-        //else if (stateComponent.stateToDo != null) {
-        //    stateComponent.SetStateToDo(null);
-        //}
-
-        //ForceCancelAllJobsTargettingCharacter(false, "target became a minion");
-        //StopCurrentActionNode(reason: "Became a minion");
-        //if (currentActionNode != null && !currentActionNode.cannotCancelAction) {
-        //    currentActionNode.StopAction(reason: "Became a minion");
-        //}
-        Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "target became a minion");
-        CancelAllJobs();
-
-        Character carrier = isBeingCarriedBy;
-        if (carrier != null) {
-            carrier.UncarryPOI(this);
-        }
-        // if (ownParty.isCarryingAnyPOI) {
-        //     ownParty.RemovePOI();
-        // }
-        ChangeFactionTo(PlayerManager.Instance.player.playerFaction);
-        MigrateHomeTo(PlayerManager.Instance.player.playerSettlement);
-
-        //currentArea.RemoveCharacterFromLocation(this.currentParty);
-        currentRegion?.RemoveCharacterFromLocation(this);
-
-        needsComponent.ResetFullnessMeter();
-        needsComponent.ResetHappinessMeter();
-        needsComponent.ResetTirednessMeter();
-        //PlayerManager.Instance.player.demonicPortal.AddCharacterToLocation(this.currentParty);
-
-        Minion newMinion = PlayerManager.Instance.player.CreateNewMinion(this, false);
-        newMinion.character.SetName(minionData.minionName);
-        ChangeRace(RACE.DEMON);
-        ChangeClass(minionData.className);
-        // AssignRole(CharacterRole.MINION);
-        newMinion.SetCombatAbility(minionData.combatAbility);
-
-
-        PlayerManager.Instance.player.playerSettlement.region.AddCharacterToLocation(this);
-
-        if (PlayerManager.Instance.player.minions.Count < PlayerDB.MAX_MINIONS) {
-            PlayerManager.Instance.player.AddMinion(newMinion);
-            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Gained new Minion!", null);
-        } else {
-            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Gained new Minion!", () => PlayerManager.Instance.player.AddMinion(newMinion, true));
-        }
-    }
     #endregion
 
     #region Interaction
@@ -3316,7 +3263,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     public bool CanPlanGoap() {
-        //If there is no settlement, it means that there is no inner map, so character must not do goap actions, jobs, and plans
+        //If there is no npcSettlement, it means that there is no inner map, so character must not do goap actions, jobs, and plans
         //characters that cannot witness, cannot plan actions.
         //minion == null &&
         return !isDead && isStoppedByOtherCharacter <= 0 && canPerform
@@ -3492,7 +3439,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //    } else {
         //        int chance = UnityEngine.Random.Range(0, 100);
         //        int returnHomeChance = 0;
-        //        if (specificLocation == homeSettlement && currentStructure.structureType == STRUCTURE_TYPE.WORK_AREA) {
+        //        if (specificLocation == homeNpcSettlement && currentStructure.structureType == STRUCTURE_TYPE.WORK_AREA) {
         //            returnHomeChance = 25;
         //        } else {
         //            returnHomeChance = 80;
@@ -3781,8 +3728,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     // public List<TileObject> GetItemsOwned() {
     //     List<TileObject> itemsOwned = new List<TileObject>();
-    //     //for (int i = 0; i < homeSettlement.possibleSpecialTokenSpawns.Count; i++) {
-    //     //    SpecialToken token = homeSettlement.possibleSpecialTokenSpawns[i];
+    //     //for (int i = 0; i < homeNpcSettlement.possibleSpecialTokenSpawns.Count; i++) {
+    //     //    SpecialToken token = homeNpcSettlement.possibleSpecialTokenSpawns[i];
     //     //    if (token.characterOwner == this) {
     //     //        itemsOwned.Add(token);
     //     //    }
@@ -3806,8 +3753,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     // }
     // public int GetNumOfItemsOwned() {
     //     int count = 0;
-    //     //for (int i = 0; i < homeSettlement.possibleSpecialTokenSpawns.Count; i++) {
-    //     //    SpecialToken token = homeSettlement.possibleSpecialTokenSpawns[i];
+    //     //for (int i = 0; i < homeNpcSettlement.possibleSpecialTokenSpawns.Count; i++) {
+    //     //    SpecialToken token = homeNpcSettlement.possibleSpecialTokenSpawns[i];
     //     //    if (token.characterOwner == this) {
     //     //        count++;
     //     //    }
@@ -4202,7 +4149,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     //            if (plan.job != null && (plan.job.jobType.IsNeedsTypeJob() || plan.job.jobType.IsEmergencyTypeJob())) {
     //                //Unassign Location Job if character decides to rest, eat or have fun.
-    //                homeSettlement.jobQueue.UnassignAllJobsTakenBy(this);
+    //                homeNpcSettlement.jobQueue.UnassignAllJobsTakenBy(this);
     //                faction.activeQuest?.jobQueue.UnassignAllJobsTakenBy(this);
     //            }
     //        }
@@ -4506,7 +4453,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void GoapActionResult(string result, ActualGoapNode actionNode) {
         string log = $"{name} is done performing goap action: {actionNode.action.goapName}";
-        //Debug.Log(log);
+        Assert.IsNotNull(currentPlan, $"{name} has finished action {actionNode.action.name} with result {result} but currentPlan is null! \nCurrent plan was set to null call stack {_currentPlanStackTrace}");
         GoapPlan plan = currentPlan;
         GoapPlanJob job = currentJob as GoapPlanJob;
 
@@ -4528,12 +4475,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (plan.currentNode == null) {
                 log += "\nThis action is the end of plan.";
                 //if (job.originalOwner.ownerType != JOB_OWNER.CHARACTER && traitContainer.GetNormalTrait<Trait>("Hardworking") != null) {
-                //    log += "\nFinished a settlement job and character is hardworking, increase happiness by 3000...";
+                //    log += "\nFinished a npcSettlement job and character is hardworking, increase happiness by 3000...";
                 //    needsComponent.AdjustHappiness(3000); //TODO: Move this to hardworking trait.
                 //}
                 logComponent.PrintLogIfActive(log);
                 //bool forceRemoveJobInQueue = true;
-                ////If an action is stopped as current action (meaning it was cancelled) and it is a settlement/faction job, do not remove it from the queue
+                ////If an action is stopped as current action (meaning it was cancelled) and it is a npcSettlement/faction job, do not remove it from the queue
                 //if (actionNode.isStoppedAsCurrentAction && plan != null && plan.job != null && plan.job.jobQueueParent.isAreaOrQuestJobQueue) {
                 //    forceRemoveJobInQueue = false;
                 //}
@@ -4727,6 +4674,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void SetCurrentPlan(GoapPlan plan) {
         currentPlan = plan;
+        _currentPlanStackTrace = StackTraceUtility.ExtractStackTrace();
     }
     //Only stop an action node if it is the current action node
     ///Stopping action node does not mean that the job will be cancelled, if you want to cancel job at the same time call <see cref="StopCurrentActionNodeAndCancelItsJob">
@@ -4766,7 +4714,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 //This means that the actor currently travelling to another tile in tilemap
                 marker.StopMovement();
             } else {
-                //This means that the actor is currently travelling to another settlement
+                //This means that the actor is currently travelling to another npcSettlement
                 currentParty.icon.SetOnArriveAction(() => OnArriveAtAreaStopMovement());
             }
         }
@@ -5154,9 +5102,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //public void ReactToCrime(CRIME committedCrime, ActualGoapNode crimeAction, Character criminal, ref bool hasRelationshipDegraded, ActualGoapNode witnessedCrime = null, ActualGoapNode informedCrime = null) {
     //    //NOTE: Moved this to be per action specific. See GoapAction.IsConsideredACrimeBy and GoapAction.CanReactToThisCrime for necessary mechanics.
     //    //if (witnessedCrime != null) {
-    //    //    //if the action that should be considered a crime is part of a job from this character's settlement, do not consider it a crime
+    //    //    //if the action that should be considered a crime is part of a job from this character's npcSettlement, do not consider it a crime
     //    //    if (witnessedCrime.parentPlan.job != null
-    //    //        && homeSettlement.jobQueue.jobsInQueue.Contains(witnessedCrime.parentPlan.job)) {
+    //    //        && homeNpcSettlement.jobQueue.jobsInQueue.Contains(witnessedCrime.parentPlan.job)) {
     //    //        return;
     //    //    }
     //    //    //if the witnessed crime is targetting this character, this character should not react to the crime if the crime's doesNotStopTargetCharacter is true
@@ -5294,10 +5242,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //                criminal.AddCriminalTrait(committedCrime, crimeAction);
     //                // CreateApprehendJobFor(criminal);
     //                //crimeAction.OnReportCrime();
-    //                //job = JobManager.Instance.CreateNewGoapPlanJob("Apprehend", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeSettlement, targetPOI = actor });
+    //                //job = JobManager.Instance.CreateNewGoapPlanJob("Apprehend", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeNpcSettlement, targetPOI = actor });
     //                //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = actor }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
     //                //job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
-    //                //homeSettlement.jobQueue.AddJobInQueue(job);
+    //                //homeNpcSettlement.jobQueue.AddJobInQueue(job);
     //            }
 
     //            break;
@@ -5308,13 +5256,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //                //only add apprehend job if the criminal is part of this characters faction
     //                criminal.AddCriminalTrait(committedCrime, crimeAction);
     //                //- If the character is a Soldier, he will also create an Apprehend Job Type in his personal job queue.
-    //                //job = JobManager.Instance.CreateNewGoapPlanJob("Apprehend", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeSettlement, targetPOI = actor });
+    //                //job = JobManager.Instance.CreateNewGoapPlanJob("Apprehend", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeNpcSettlement, targetPOI = actor });
     //                //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = actor }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
     //                //job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
-    //                //homeSettlement.jobQueue.AddJobInQueue(job);
+    //                //homeNpcSettlement.jobQueue.AddJobInQueue(job);
     //                // CreateApprehendJobFor(criminal, true); //job =
     //                //if (job != null) {
-    //                //    homeSettlement.jobQueue.ForceAssignCharacterToJob(job, this);
+    //                //    homeNpcSettlement.jobQueue.ForceAssignCharacterToJob(job, this);
     //                //}
     //                //crimeAction.OnReportCrime();
     //            }
@@ -5373,10 +5321,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     #region Pathfinding
     public List<LocationGridTile> GetTilesInRadius(int radius, int radiusLimit = 0, bool includeCenterTile = false, bool includeTilesInDifferentStructure = false) {
-        if(currentSettlement == null) { return null; }
+        if(currentRegion == null) { return null; }
         List<LocationGridTile> tiles = new List<LocationGridTile>();
-        int mapSizeX = currentSettlement.innerMap.map.GetUpperBound(0);
-        int mapSizeY = currentSettlement.innerMap.map.GetUpperBound(1);
+        int mapSizeX = currentRegion.innerMap.map.GetUpperBound(0);
+        int mapSizeY = currentRegion.innerMap.map.GetUpperBound(1);
         int x = gridTileLocation.localPlace.x;
         int y = gridTileLocation.localPlace.y;
         if (includeCenterTile) {
@@ -5397,7 +5345,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     if (radiusLimit > 0 && dx > xLimitLower && dx < xLimitUpper && dy > yLimitLower && dy < yLimitUpper) {
                         continue;
                     }
-                    LocationGridTile result = currentSettlement.innerMap.map[dx, dy];
+                    LocationGridTile result = currentRegion.innerMap.map[dx, dy];
                     if (!includeTilesInDifferentStructure && result.structure != gridTileLocation.structure) { continue; }
                     tiles.Add(result);
                 }

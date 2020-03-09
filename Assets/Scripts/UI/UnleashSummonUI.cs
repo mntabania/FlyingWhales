@@ -98,25 +98,25 @@ public class UnleashSummonUI : PopupMenuBase {
         return item;
     }
     private void HarassRaidInvade() {
-        Settlement targetSettlement = PlayerUI.Instance.harassRaidInvadeTargetSettlement;
-        //PlayerUI.Instance.harassRaidInvadeLeaderMinion.character.behaviourComponent.SetHarassInvadeRaidTarget(targetSettlement);
+        NPCSettlement targetNpcSettlement = PlayerUI.Instance.harassRaidInvadeTargetNpcSettlement;
+        //PlayerUI.Instance.harassRaidInvadeLeaderMinion.character.behaviourComponent.SetHarassInvadeRaidTarget(targetNpcSettlement);
         if (PlayerUI.Instance.harassRaidInvade == "harass") {
-            PlayerUI.Instance.harassRaidInvadeLeaderMinion.character.behaviourComponent.SetIsHarassing(true, targetSettlement);
+            PlayerUI.Instance.harassRaidInvadeLeaderMinion.character.behaviourComponent.SetIsHarassing(true, targetNpcSettlement);
             for (int i = 0; i < chosenSummons.Count; i++) {
-                //chosenSummons[i].behaviourComponent.SetHarassInvadeRaidTarget(targetSettlement);
-                chosenSummons[i].behaviourComponent.SetIsHarassing(true, targetSettlement);
+                //chosenSummons[i].behaviourComponent.SetHarassInvadeRaidTarget(targetNpcSettlement);
+                chosenSummons[i].behaviourComponent.SetIsHarassing(true, targetNpcSettlement);
             }
         } else if (PlayerUI.Instance.harassRaidInvade == "raid") {
-            PlayerUI.Instance.harassRaidInvadeLeaderMinion.character.behaviourComponent.SetIsRaiding(true, targetSettlement);
+            PlayerUI.Instance.harassRaidInvadeLeaderMinion.character.behaviourComponent.SetIsRaiding(true, targetNpcSettlement);
             for (int i = 0; i < chosenSummons.Count; i++) {
-                //chosenSummons[i].behaviourComponent.SetHarassInvadeRaidTarget(targetSettlement);
-                chosenSummons[i].behaviourComponent.SetIsRaiding(true, targetSettlement);
+                //chosenSummons[i].behaviourComponent.SetHarassInvadeRaidTarget(targetNpcSettlement);
+                chosenSummons[i].behaviourComponent.SetIsRaiding(true, targetNpcSettlement);
             }
         } else if (PlayerUI.Instance.harassRaidInvade == "invade") {
-            PlayerUI.Instance.harassRaidInvadeLeaderMinion.character.behaviourComponent.SetIsInvading(true, targetSettlement);
+            PlayerUI.Instance.harassRaidInvadeLeaderMinion.character.behaviourComponent.SetIsInvading(true, targetNpcSettlement);
             for (int i = 0; i < chosenSummons.Count; i++) {
-                //chosenSummons[i].behaviourComponent.SetHarassInvadeRaidTarget(targetSettlement);
-                chosenSummons[i].behaviourComponent.SetIsInvading(true, targetSettlement);
+                //chosenSummons[i].behaviourComponent.SetHarassInvadeRaidTarget(targetNpcSettlement);
+                chosenSummons[i].behaviourComponent.SetIsInvading(true, targetNpcSettlement);
             }
         }
         base.Close();

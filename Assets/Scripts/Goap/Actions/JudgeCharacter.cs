@@ -261,11 +261,11 @@ public class JudgeCharacter : GoapAction {
         //**Effect 2**: Target becomes unaligned and will have his Home Location set to a random different location
         Character target = goapNode.poiTarget as Character;
         target.ChangeFactionTo(FactionManager.Instance.neutralFaction);
-        //List<Settlement> choices = new List<Settlement>(LandmarkManager.Instance.allNonPlayerAreas.Where(x => x.owner == null)); //limited choices to only use un owned areas
+        //List<NPCSettlement> choices = new List<NPCSettlement>(LandmarkManager.Instance.allNonPlayerAreas.Where(x => x.owner == null)); //limited choices to only use un owned areas
         List<Region> choices = GridMap.Instance.allRegions.Where(x => !x.coreTile.isCorrupted).ToList();
         //TODO:
         // if (choices == null || choices.Count <= 0) {
-        //     choices = GridMap.Instance.allRegions.Where(x => x != PlayerManager.Instance.player.playerSettlement.region).ToList();
+        //     choices = GridMap.Instance.allRegions.Where(x => x != PlayerManager.Instance.player.playerNpcSettlement.region).ToList();
         // }
         choices.Remove(target.homeRegion);
         //TODO:

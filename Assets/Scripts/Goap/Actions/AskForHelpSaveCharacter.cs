@@ -25,7 +25,7 @@ public class AskForHelpSaveCharacter : GoapAction {
    //     _requirementAction = Requirement;
    // }
    // //protected override void ConstructPreconditionsAndEffects() {
-   // //    AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = actor.homeSettlement, targetPOI = poiTarget });
+   // //    AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = actor.homeNpcSettlement, targetPOI = poiTarget });
    // //}
    // public override void Perform(ActualGoapNode goapNode) {
    //     base.Perform(goapNode);

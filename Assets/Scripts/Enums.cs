@@ -1272,7 +1272,7 @@ public enum POI_STATE {
 
 public enum TARGET_POI { ACTOR, TARGET, }
 public enum GridNeighbourDirection { North, South, West, East, North_West,  North_East, South_West, South_East }
-public enum TIME_IN_WORDS { AFTER_MIDNIGHT, AFTER_MIDNIGHT_1, AFTER_MIDNIGHT_2, MORNING, MORNING_1, MORNING_2, AFTERNOON, AFTERNOON_1, AFTERNOON_2, EARLY_NIGHT, LATE_NIGHT, NIGHT_1, NIGHT_2, LUNCH_TIME, NONE }
+public enum TIME_IN_WORDS { AFTER_MIDNIGHT, MORNING, AFTERNOON, EARLY_NIGHT, LATE_NIGHT, LUNCH_TIME, NONE }
 //public enum CRIME_SEVERITY { NONE, INFRACTION, MISDEMEANOUR, SERIOUS_CRIME, }
 public enum Food { BERRY, MUSHROOM, RABBIT, RAT }
 public enum GOAP_EFFECT_CONDITION { NONE, REMOVE_TRAIT, HAS_TRAIT, FULLNESS_RECOVERY, TIREDNESS_RECOVERY, HAPPINESS_RECOVERY, COMFORT_RECOVERY, CANNOT_MOVE, REMOVE_FROM_PARTY, DESTROY, DEATH, PATROL, EXPLORE, REMOVE_ITEM, HAS_TRAIT_EFFECT, HAS_PLAN
@@ -2191,11 +2191,11 @@ public static class Extensions {
             case COMBAT_ABILITY.SINGLE_HEAL:
                 return "Heals a friendly unit by a percentage of its max HP.";
             case COMBAT_ABILITY.FLAMESTRIKE:
-                return "Deal AOE damage in the surrounding settlement.";
+                return "Deal AOE damage in the surrounding npcSettlement.";
             case COMBAT_ABILITY.FEAR_SPELL:
                 return "Makes a character fear any other character.";
             case COMBAT_ABILITY.SACRIFICE:
-                return "Sacrifice a friendly unit to deal AOE damage in the surrounding settlement.";
+                return "Sacrifice a friendly unit to deal AOE damage in the surrounding npcSettlement.";
             case COMBAT_ABILITY.TAUNT:
                 return "Taunts enemies into attacking this character.";
             default:

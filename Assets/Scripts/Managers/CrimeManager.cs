@@ -201,9 +201,9 @@ public class CrimeData {
     //#region Prisoner
     //private void CreateJudgementJob() {
     //    if (!criminal.HasJobTargetingThis(JOB_TYPE.JUDGEMENT)) {
-    //        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.JUDGEMENT, INTERACTION_TYPE.JUDGE_CHARACTER, criminal, criminal.currentSettlement);
+    //        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.JUDGEMENT, INTERACTION_TYPE.JUDGE_CHARACTER, criminal, criminal.currentNpcSettlement);
     //        job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoJudgementJob);
-    //        criminal.currentSettlement.AddToAvailableJobs(job);
+    //        criminal.currentNpcSettlement.AddToAvailableJobs(job);
     //    }
     //}
     //#endregion

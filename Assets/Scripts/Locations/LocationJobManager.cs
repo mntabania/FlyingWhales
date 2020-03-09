@@ -6,13 +6,13 @@ using UtilityScripts;
 using Random = UnityEngine.Random;
 
 public class LocationJobManager {
-    private Settlement location { get; set; }
+    private NPCSettlement location { get; set; }
 
     private int _createJobsTriggerTick;
     private int currentExistingJobsCount;
     private List<string> _jobNames;
 
-    public LocationJobManager(Settlement location) {
+    public LocationJobManager(NPCSettlement location) {
         this.location = location;
         _jobNames = new List<string>();
         _createJobsTriggerTick = GameManager.Instance.GetTicksBasedOnHour(9); //150
@@ -150,7 +150,7 @@ public class LocationJobManager {
         // List<RegionConnectionData> connectedRegions = location.region.connections;
         // for (int i = 0; i < connectedRegions.Count; i++) {
         //     Region region = connectedRegions[i].region;
-        //     if (!region.coreTile.isCorrupted && region.settlement == null && region.owner != null
+        //     if (!region.coreTile.isCorrupted && region.npcSettlement == null && region.owner != null
         //         && region.residents.Count <= 0 && region.owner.HasRelationshipStatusWith(FACTION_RELATIONSHIP_STATUS.HOSTILE, location.region.owner)) {
         //         validRegion = region;
         //         return true;
@@ -213,7 +213,7 @@ public class LocationJobManager {
         // Region[] regions = GridMap.Instance.allRegions;
         // for (int i = 0; i < regions.Length; i++) {
         //     Region region = regions[i];
-        //     if (region.residents.Count > 0 && region.settlement == null && region.owner.HasRelationshipStatusWith(FACTION_RELATIONSHIP_STATUS.HOSTILE, location.region.owner)) {
+        //     if (region.residents.Count > 0 && region.npcSettlement == null && region.owner.HasRelationshipStatusWith(FACTION_RELATIONSHIP_STATUS.HOSTILE, location.region.owner)) {
         //         validRegion = region;
         //         return true;
         //     }
@@ -368,7 +368,7 @@ public class LocationJobManager {
         }
 
         // if (choices.Count == 0) {
-        //     return PlayerManager.Instance.player.playerSettlement.region;
+        //     return PlayerManager.Instance.player.playerNpcSettlement.region;
         // }
         if (choices.Count > 0) {
             return CollectionUtilities.GetRandomElement(choices);    

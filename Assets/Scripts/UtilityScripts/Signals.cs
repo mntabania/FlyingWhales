@@ -9,17 +9,11 @@ using Traits;
 public static class Signals {
 
     public static string TICK_STARTED = "OnTickStart";
-    //public static string TICK_STARTED_2 = "OnTickStart2";
     public static string TICK_ENDED = "OnTickEnd";
-    //public static string TICK_ENDED_2 = "OnTickEnd2";
     public static string HOUR_STARTED = "OnHourStart";
     public static string DAY_STARTED = "OnDayStart";
     public static string MONTH_START = "OnMonthStart";
-    public static string MONTH_END = "OnMonthEnd";
-    public static string FOUND_ITEM = "OnItemFound"; //Parameters (Character characterThatFoundItem, Item foundItem)
-    public static string FOUND_TRACE = "OnTraceFound"; //Parameters (Character characterThatFoundTrace, string traceFound)
     public static string GAME_LOADED = "OnGameLoaded";
-    public static string TOGGLE_CHARACTERS_VISIBILITY = "OnToggleCharactersVisibility";
     public static string INSPECT_ALL = "InspectAll";
     /// <summary>
     /// Parameters: KeyCode (Pressed Key)
@@ -43,72 +37,23 @@ public static class Signals {
     #endregion
 
     #region Areas/Regions
-    public static string AREA_CREATED = "OnAreaCreated"; //Parameters (Settlement newSettlement)
-    public static string AREA_DELETED = "OnAreaDeleted"; //Parameters (Settlement deletedArea)
-    public static string AREA_TILE_REMOVED = "OnAreaTileRemoved"; //Parameters (Settlement affectedArea)
-    public static string AREA_TILE_ADDED = "OnAreaTileAdded"; //Parameters (Settlement affectedArea)
-    public static string AREA_SUPPLIES_CHANGED = "OnAreaSuppliesSet"; //Parameters (Settlement affectedArea)
-    public static string AREA_FOOD_CHANGED = "OnAreaFoodSet"; //Parameters (Settlement affectedArea)
-    public static string AREA_OCCUPANY_CHANGED = "OnAreaOccupancyChanged"; //Parameters (Settlement affectedArea)
-    public static string AREA_TOKEN_COLLECTION_CHANGED = "OnAreaTokenCollectionChanged"; //Parameters (Settlement affectedArea)
-    public static string AREA_DEFENDERS_CHANGED = "OnAreaDefendersChanged"; //Parameters (Settlement affectedArea)
-    public static string AREA_OWNER_CHANGED = "OnAreaOwnerChanged"; //Parameters (Settlement affectedArea)
-    public static string AREA_RESIDENT_ADDED = "OnAreaResidentAdded"; //Parameters (Settlement affectedArea, Character newResident)
-    public static string AREA_RESIDENT_REMOVED = "OnAreaResidentRemoved"; //Parameters (Settlement affectedArea, Character removedResident)
-    public static string CHARACTER_ENTERED_AREA = "OnCharacterEnteredArea"; //Parameters (Settlement affectedArea, Character character)
-    public static string CHARACTER_EXITED_AREA = "OnCharacterExitedArea"; //Parameters (Settlement affectedArea, Character character)
-    public static string ITEM_REMOVED_FROM_AREA = "OnItemRemovedFromArea"; //Parameters (Settlement affectedArea, SpecialToken token)
-    public static string ITEM_ADDED_TO_AREA = "OnItemAddedToArea"; //Parameters (Settlement affectedArea, SpecialToken token)
-    public static string ITEM_BUILT = "OnItemBuilt"; //Parameters (SpecialToken token)
-    public static string LOCATION_MAP_OPENED = "OnAreaMapOpened"; //parameters (Settlement settlement)
-    public static string LOCATION_MAP_CLOSED = "OnAreaMapClosed"; //parameters (Settlement settlement)
+    public static string AREA_CREATED = "OnAreaCreated"; //Parameters (NPCSettlement newNpcSettlement)
+    public static string LOCATION_MAP_OPENED = "OnAreaMapOpened"; //parameters (NPCSettlement npcSettlement)
+    public static string LOCATION_MAP_CLOSED = "OnAreaMapClosed"; //parameters (NPCSettlement npcSettlement)
     public static string REGION_CHANGE_STORAGE = "OnRegionChangeStorage";
     /// <summary>
-    /// Parameters (Settlement)
+    /// Parameters (NPCSettlement)
     /// </summary>
     public static string SETTLEMENT_CHANGE_STORAGE = "OnSettlementChangeStorage";
     /// <summary>
-    /// Parameters: Food Pile (affected food pile)
+    /// Parameters: TIME_IN_WORDS (current time of day)
     /// </summary>
-    public static string FOOD_IN_PILE_REDUCED = "OnFoodInPileReduced";
-    /// <summary>
-    /// Parameters: Supply Pile (affected supply pile)
-    /// </summary>
-    public static string WOOD_IN_PILE_REDUCED = "OnWoodInPileReduced";
-    public static string STONE_IN_PILE_REDUCED = "OnStoneInPileReduced";
-    public static string METAL_IN_PILE_REDUCED = "OnMetalInPileReduced";
+    public static string UPDATE_INNER_MAP_LIGHT = "UpdateInnerMapLight";
     #endregion
 
     #region Landmarks
-    public static string ITEM_PLACED_AT_LANDMARK = "OnItemPlacedAtLandmark"; //Parameters (Item item, BaseLandmark landmark)
-    public static string ITEM_REMOVED_FROM_LANDMARK = "OnItemRemovedFromLandmark"; //Parameters (Item item, BaseLandmark landmark)
-    public static string STRUCTURE_STATE_CHANGED = "OnStructureStateChanged"; //Parameters (StructureObj obj, ObjectState newState)
-    public static string LANDMARK_ATTACK_TARGET_SELECTED = "OnLandmarkAttackTargetSelected"; //Parameters (BaseLandmark target)
     public static string CHARACTER_ENTERED_REGION = "OnCharacterEnteredRegion"; //Parameters (Character, Region)
     public static string CHARACTER_EXITED_REGION = "OnCharacterExitedRegion"; //Parameters (Characte, Region)
-    public static string DESTROY_LANDMARK = "OnDestroyLandmark"; //Parameteres (BaseLandmark destroyedLandmark)
-    public static string LANDMARK_UNDER_ATTACK = "OnLandmarkUnderAttack"; //Parameters (BaseLandmark underAttackedLandmark, GameEvent associatedEvent = null)
-    public static string LANDMARK_INSPECTED = "OnLandmarkInspected"; //Parameters (BaseLandmark inspectedLandmark)
-    public static string LANDMARK_RESIDENT_ADDED = "OnLandmarkResidentAdded"; //Parameters (BaseLandmark affectedLandmark, ICharacter character)
-    public static string LANDMARK_RESIDENT_REMOVED = "OnLandmarkResidentRemoved"; //Parameters (BaseLandmark affectedLandmark, ICharacter character)
-    public static string LANDMARK_INVESTIGATION_ACTIVATED = "OnLandmarkInvestigationActivated"; //Parameters (BaseLandmark investigatedLandmark)
-    public static string UPDATE_RITUAL_CIRCLE_TRAIT = "OnUpdateRitualCircleTrait";
-    /// <summary>
-    /// Parameters: Region, WorldEvent
-    /// </summary>
-    public static string WORLD_EVENT_SPAWNED = "OnWorldEventSpawnedAtLandmark";
-    /// <summary>
-    /// Parameters: Region, WorldEvent
-    /// </summary>
-    public static string WORLD_EVENT_FINISHED_NORMAL = "OnWorldEventFinishedNormallyAtLandmark";
-    /// <summary>
-    /// Parameters: Region, WorldEvent
-    /// </summary>
-    public static string WORLD_EVENT_DESPAWNED = "OnWorldEventDespawnedAtLandmark";
-    /// <summary>
-    /// Parameters: Region, WorldEvent
-    /// </summary>
-    public static string WORLD_EVENT_FAILED = "OnWorldEventFailed";
     /// <summary>
     /// Parameters: BaseLandmark
     /// </summary>
@@ -123,9 +68,6 @@ public static class Signals {
     public static string CHARACTER_DEATH = "OnCharacterDied"; //Parameters (Character characterThatDied)
     public static string CHARACTER_CREATED = "OnCharacterCreated"; //Parameters (Character createdCharacter)
     public static string ROLE_CHANGED = "OnCharacterRoleChanged"; //Parameters (Character characterThatChangedRole)
-    //public static string RELATIONSHIP_CREATED = "OnRelationshipCreated"; //Parameters (Relationship createdRelationship)
-    //public static string RELATIONSHIP_REMOVED = "OnRelationshipRemoved"; //Parameters (Relationship removedRelationship)
-    public static string GENDER_CHANGED = "OnGenderChanged"; //Parameters (Character characterThatChangedGender, GENDER newGender)
     public static string CHARACTER_REMOVED = "OnCharacterRemoved"; //Parameters (Character removedCharacter)
     public static string CHARACTER_OBTAINED_ITEM = "OnCharacterObtainItem"; //Parameters (SpecialToken obtainedItem, Character characterThatObtainedItem)
     public static string CHARACTER_LOST_ITEM = "OnCharacterLostItem"; //Parameters (SpecialToken unobtainedItem, Character character)
@@ -137,7 +79,7 @@ public static class Signals {
     public static string ADJUSTED_HP = "OnAdjustedHP";
     public static string PARTY_STARTED_TRAVELLING = "OnPartyStartedTravelling"; //Parameters (Party travellingParty)
     public static string PARTY_DONE_TRAVELLING = "OnPartyDoneTravelling"; //Parameters (Party travellingParty)
-    public static string CHARACTER_MIGRATED_HOME = "OnCharacterChangedHome"; //Parameters (Character, Settlement previousHome, Settlement newHome); 
+    public static string CHARACTER_MIGRATED_HOME = "OnCharacterChangedHome"; //Parameters (Character, NPCSettlement previousHome, NPCSettlement newHome); 
     public static string CHARACTER_CHANGED_RACE = "OnCharacterChangedRace"; //Parameters (Character); 
     public static string CHARACTER_ARRIVED_AT_STRUCTURE = "OnCharacterArrivedAtStructure"; //Parameters (Character, LocationStructure); 
     public static string CHARACTER_LEFT_STRUCTURE = "OnCharacterLeftStructure"; //Parameters (Character, LocationStructure);
@@ -146,16 +88,11 @@ public static class Signals {
     public static string FORCE_CANCEL_ALL_JOBS_TARGETING_POI = "OnForceCancelAllJobsTargetingPOI"; //Parameters (Character target, string cause)
     public static string STOP_CURRENT_ACTION_TARGETING_POI = "OnStopCurrentActionTargetingPOI";
     public static string STOP_CURRENT_ACTION_TARGETING_POI_EXCEPT_ACTOR = "OnStopCurrentActionTargetingPOIExceptActor";
-    //public static string FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI = "OnForceCancelAllJobTypesTargetingPOI"; //Parameters (Character target, string cause)
     public static string CHARACTER_STARTED_STATE = "OnCharacterStartedState"; //Parameters (Character character, CharacterState state)
     public static string CHARACTER_ENDED_STATE = "OnCharacterEndedState"; //Parameters (Character character, CharacterState state)
     public static string CHARACTER_SWITCHED_ALTER_EGO = "OnCharacterSwitchedAlterEgo"; //Parameters (Character character)
     public static string DETERMINE_COMBAT_REACTION = "DetermineCombatReaction"; //Parameters (Character character)
-    public static string TRANSFER_ENGAGE_TO_FLEE_LIST = "TransferEngageToFleeList"; //Parameters (Character character)
     public static string CHARACTER_CLASS_CHANGE = "CharacterClassChange";
-    //public static string ON_SEIZE_CHARACTER = "OnSeizeCharacter";
-    //public static string ON_UNSEIZE_CHARACTER = "OnUnseizeCharacter";
-    //public static string ON_SEIZE_TILE_OBJECT = "OnSeizeTileObject";
     public static string ON_SEIZE_POI = "OnSeizePOI";
     public static string ON_UNSEIZE_POI = "OnUnseizePOI";
     public static string CHARACTER_MISSING = "OnCharacterMissing";
@@ -173,14 +110,6 @@ public static class Signals {
     /// Parameters (Character characterWithVision, Character characterRemovedFromVision)
     /// </summary>
     public static string CHARACTER_REMOVED_FROM_VISION = "OnCharacterRemovedFromVision";
-    /// <summary>
-    /// Parameters (Character)
-    /// </summary>
-    public static string CHARACTER_STARTED_MOVING = "OnCharacterStartedMoving";
-    /// <summary>
-    /// Parameters (Character)
-    /// </summary>
-    public static string CHARACTER_STOPPED_MOVING = "OnCharacterStoppedMoving";
     /// <summary>
     /// Parameters (Character characterHit, Character chaarcterHitBy)
     /// </summary>
@@ -221,7 +150,7 @@ public static class Signals {
     public static string CHARACTER_CAN_NO_LONGER_PERFORM = "OnCharacterCannotPerform";
     public static string CHARACTER_CAN_PERFORM_AGAIN = "OnCharacterCanPerform";
     /// <summary>
-    /// parameters (IPointofInterest poiToReprocess)
+    /// parameters (IPointOfInterest poiToReprocess)
     /// </summary>
     public static string REPROCESS_POI = "ReprocessPOI";
     #endregion
@@ -288,8 +217,8 @@ public static class Signals {
     public static string FACTION_SET = "OnFactionSet"; //Parameters (Character characterThatSetFaction)
     public static string FACTION_LEADER_DIED = "OnFactionLeaderDied"; //Parameters (Faction affectedFaction)
     public static string FACTION_DIED = "OnFactionDied"; //Parameters (Faction affectedFaction)
-    public static string FACTION_OWNED_REGION_ADDED = "OnFactionOwnedAreaAdded"; //Parameters (Faction affectedFaction, Settlement addedArea)
-    public static string FACTION_OWNED_REGION_REMOVED = "OnFactionOwnedAreaRemoved"; //Parameters (Faction affectedFaction, Settlement removedArea)
+    public static string FACTION_OWNED_REGION_ADDED = "OnFactionOwnedAreaAdded"; //Parameters (Faction affectedFaction, NPCSettlement addedArea)
+    public static string FACTION_OWNED_REGION_REMOVED = "OnFactionOwnedAreaRemoved"; //Parameters (Faction affectedFaction, NPCSettlement removedArea)
     public static string FACTION_RELATIONSHIP_CHANGED = "OnFactionRelationshipChanged"; //Parameters (FactionRelationship rel)
     public static string FACTION_ACTIVE_CHANGED = "OnFactionActiveChanged"; //Parameters (Faction affectedFaction)
     public static string CHANGE_FACTION_RELATIONSHIP = "OnChangeFactionRelationship";
@@ -379,7 +308,7 @@ public static class Signals {
     public static string PLAYER_LOST_ARTIFACT_SLOT = "OnPlayerLostArtifactSlot";
     public static string PLAYER_USED_ARTIFACT = "OnPlayerUsedArtifact";
     /// <summary>
-    /// Parameters (Settlement invadedArea)
+    /// Parameters (NPCSettlement invadedArea)
     /// </summary>
     public static string SUCCESS_INVASION_AREA = "OnPlayerSuccessInvadeArea";
     /// <summary>
@@ -448,7 +377,7 @@ public static class Signals {
     public static string ADDED_INTERACTION = "OnAddedInteraction"; //Parameters (Interaction interaction)
     public static string REMOVED_INTERACTION = "OnRemovedInteraction"; //Parameters (Interaction interaction)
     public static string INTERACTION_ENDED = "OnInteractionEnded"; //Parameters (Interaction interaction)
-    public static string MINION_STARTS_INVESTIGATING_AREA = "OnMinionStartInvestigateArea"; //Parameters (Minion minion, Settlement settlement)
+    public static string MINION_STARTS_INVESTIGATING_AREA = "OnMinionStartInvestigateArea"; //Parameters (Minion minion, NPCSettlement npcSettlement)
     public static string INTERACTION_INITIALIZED = "OnInteractionInitialized"; //Parameters (Interaction interaction)
     public static string EVENT_POPPED_UP = "OnEventPopup"; //Parameters (EventPopup)
     #endregion
@@ -525,7 +454,7 @@ public static class Signals {
 
     #region Settlements
     /// <summary>
-    /// Parameters (Settlement affectedSettlement, bool siegeState)
+    /// Parameters (NPCSettlement affectedSettlement, bool siegeState)
     /// </summary>
     public static string SETTLEMENT_UNDER_SIEGE_STATE_CHANGED = "OnSettlementSiegeStateChanged";
     /// <summary>
@@ -565,7 +494,7 @@ public static class Signals {
 
     public static Dictionary<string, SignalMethod[]> orderedSignalExecution = new Dictionary<string, SignalMethod[]>() {
         { HOUR_STARTED, new[] {
-            new SignalMethod() { methodName = "HourlyJobActions", objectType = typeof(Settlement) },
+            new SignalMethod() { methodName = "HourlyJobActions", objectType = typeof(NPCSettlement) },
             new SignalMethod() { methodName = "DecreaseNeeds", objectType = typeof(Character) },
             new SignalMethod() { methodName = "PerHour", objectType = typeof(Infected) },
         }},

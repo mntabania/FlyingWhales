@@ -4,6 +4,7 @@ using System.Linq;
 using BayatGames.SaveGameFree.Types;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Locations.Settlements;
 using PathFind;
 using Traits;
 using UnityEngine;
@@ -771,7 +772,7 @@ namespace Inner_Maps {
             }
             return count;
         }
-        public bool IsPartOfSettlement(out Settlement settlement) {
+        public bool IsPartOfSettlement(out BaseSettlement settlement) {
             if (buildSpotOwner.isPartOfParentRegionMap && buildSpotOwner.hexTileOwner.settlementOnTile != null) {
                 settlement = buildSpotOwner.hexTileOwner.settlementOnTile;
                 return true;
@@ -779,13 +780,13 @@ namespace Inner_Maps {
             settlement = null;
             return false;
         }
-        public bool IsPartOfSettlement(Settlement settlement) {
+        public bool IsPartOfSettlement(BaseSettlement settlement) {
             return buildSpotOwner.isPartOfParentRegionMap && buildSpotOwner.hexTileOwner.settlementOnTile == settlement;
         }
         public bool IsPartOfSettlement() {
             return buildSpotOwner.isPartOfParentRegionMap && buildSpotOwner.hexTileOwner.settlementOnTile != null;
         }
-        public bool IsNextToSettlement(out Settlement settlement) {
+        public bool IsNextToSettlement(out BaseSettlement settlement) {
             for (int i = 0; i < neighbourList.Count; i++) {
                 LocationGridTile tile = neighbourList[i];
                 if (tile.IsPartOfSettlement(out settlement)) {
@@ -795,7 +796,7 @@ namespace Inner_Maps {
             settlement = null;
             return false;
         }
-        public bool IsNextToSettlement(Settlement settlement) {
+        public bool IsNextToSettlement(BaseSettlement settlement) {
             for (int i = 0; i < neighbourList.Count; i++) {
                 LocationGridTile tile = neighbourList[i];
                 if (tile.IsPartOfSettlement(settlement)) {
@@ -804,10 +805,10 @@ namespace Inner_Maps {
             }
             return false;
         }
-        public bool IsNextToOrPartOfSettlement(out Settlement settlement) {
-            return IsPartOfSettlement( out settlement) || IsNextToSettlement(out settlement);
+        public bool IsNextToOrPartOfSettlement(out BaseSettlement settlement) {
+            return IsPartOfSettlement(out settlement) || IsNextToSettlement(out settlement);
         }
-        public bool IsNextToOrPartOfSettlement(Settlement settlement) {
+        public bool IsNextToOrPartOfSettlement(BaseSettlement settlement) {
             return IsPartOfSettlement(settlement) || IsNextToSettlement(settlement);
         }
         public List<LocationGridTile> GetTilesInRadius(int radius, int radiusLimit = 0, bool includeCenterTile = false, bool includeTilesInDifferentStructure = false) {
@@ -1085,7 +1086,7 @@ namespace Inner_Maps {
             LocationGridTile tile = new LocationGridTile(this, tilemap, parentAreaMap);
 
             if(structureID != -1) {
-                LocationStructure structure = (parentAreaMap.location as Settlement).GetStructureByID(structureType, structureID);
+                LocationStructure structure = (parentAreaMap.location as NPCSettlement).GetStructureByID(structureType, structureID);
                 tile.SetStructure(structure);
             }
 

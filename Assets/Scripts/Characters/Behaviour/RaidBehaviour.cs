@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Inner_Maps;
+using Locations.Settlements;
+using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
 
 public class RaidBehaviour : CharacterBehaviourComponent {
@@ -12,11 +14,12 @@ public class RaidBehaviour : CharacterBehaviourComponent {
     public override bool TryDoBehaviour(Character character, ref string log) {
         log += $"\n-{character.name} will raid";
         if (character.gridTileLocation.buildSpotOwner.hexTileOwner && character.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile == character.behaviourComponent.harassInvadeRaidTarget) {
-            log += "\n-Already in the target settlement";
+            log += "\n-Already in the target npcSettlement";
             TileObject targetTileObject = null;
-            Settlement settlement = character.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile;
-            for (int i = 0; i < settlement.mainStorage.pointsOfInterest.Count; i++) {
-                IPointOfInterest poi = settlement.mainStorage.pointsOfInterest.ElementAt(i);
+            Assert.IsTrue(character.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile is NPCSettlement, $"{character.name} is trying to raid a settlement that is not an NPC Settlement");
+            NPCSettlement npcSettlement = character.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile as NPCSettlement;
+            for (int i = 0; i < npcSettlement.mainStorage.pointsOfInterest.Count; i++) {
+                IPointOfInterest poi = npcSettlement.mainStorage.pointsOfInterest.ElementAt(i);
                 if (poi is Artifact || poi is ResourcePile) {
                     targetTileObject = poi as TileObject;
                     break;
@@ -83,7 +86,7 @@ public class RaidBehaviour : CharacterBehaviourComponent {
             //     character.jobComponent.TriggerRoamAroundTile();
             // }
         } else {
-            log += "\n-Is not in the target settlement";
+            log += "\n-Is not in the target npcSettlement";
             log += "\n-Roam there";
             HexTile targetHex = character.behaviourComponent.harassInvadeRaidTarget.tiles[UnityEngine.Random.Range(0, character.behaviourComponent.harassInvadeRaidTarget.tiles.Count)];
             LocationGridTile targetTile = targetHex.locationGridTiles[UnityEngine.Random.Range(0, targetHex.locationGridTiles.Count)];

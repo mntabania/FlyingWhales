@@ -106,8 +106,8 @@ public class JobQueueItem {
     //Returns true or false if job was really removed in queue
     //reason parameter only applies if the job that is being cancelled is the currentActionNode's job
     public virtual bool CancelJob(bool shouldDoAfterEffect = true, string reason = "") {
-        //When cancelling a job, we must check if it's personal or not because if it is a faction/settlement job it cannot be removed from queue
-        //The only way for a faction/settlement job to be removed is if it is forced or it is actually finished
+        //When cancelling a job, we must check if it's personal or not because if it is a faction/npcSettlement job it cannot be removed from queue
+        //The only way for a faction/npcSettlement job to be removed is if it is forced or it is actually finished
         if(assignedCharacter == null) {
             //Can only cancel jobs that are in character job queue
             return false;
@@ -151,7 +151,7 @@ public class JobQueueItem {
             // }
             assignedCharacter?.StopCurrentActionNode(false, stopText);
             //if (originalOwner.ownerType != JOB_OWNER.CHARACTER) {
-            //    //NOTE! This is temporary only! All jobs, even settlement jobs are just pushed back right now
+            //    //NOTE! This is temporary only! All jobs, even npcSettlement jobs are just pushed back right now
             //    //assignedCharacter.jobQueue.RemoveJobInQueue(this, false, "Have something important to do");
             //    assignedCharacter.StopCurrentActionNode(false, stopText);
             //} else {

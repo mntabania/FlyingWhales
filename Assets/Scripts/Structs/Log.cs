@@ -124,8 +124,8 @@ public class Log {
                 if (obj is IPointOfInterest) {
                     (obj as IPointOfInterest).logComponent.AddHistory(this);
                 }
-                //else if (obj is Settlement) {
-                //    (obj as Settlement).AddHistory(this);
+                //else if (obj is NPCSettlement) {
+                //    (obj as NPCSettlement).AddHistory(this);
                 //} 
                 //else if (obj is Minion) {
                 //    (obj as Minion).character.AddHistory(this);
@@ -145,8 +145,8 @@ public class Log {
                 if (obj is IPointOfInterest) {
                     (obj as IPointOfInterest).logComponent.AddHistory(this);
                 } 
-                //else if (obj is Settlement) {
-                //    (obj as Settlement).AddHistory(this);
+                //else if (obj is NPCSettlement) {
+                //    (obj as NPCSettlement).AddHistory(this);
                 //} 
                 //else if (obj is Minion) {
                 //    (obj as Minion).character.AddHistory(this);

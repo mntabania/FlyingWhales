@@ -6,7 +6,7 @@ public class BehaviourComponent {
 
 	public Character owner { get; private set; }
     public List<CharacterBehaviourComponent> currentBehaviourComponents { get; private set; }
-    public Settlement harassInvadeRaidTarget { get; private set; }
+    public NPCSettlement harassInvadeRaidTarget { get; private set; }
     public bool isHarassing { get; private set; }
     public bool isRaiding { get; private set; }
     public bool isInvading { get; private set; }
@@ -97,10 +97,10 @@ public class BehaviourComponent {
         currentBehaviourComponents.Add(component);
         return true;
     }
-    public void SetIsHarassing(bool state, Settlement target) {
+    public void SetIsHarassing(bool state, NPCSettlement target) {
         if(isHarassing != state) {
             isHarassing = state;
-            Settlement previousTarget = harassInvadeRaidTarget;
+            NPCSettlement previousTarget = harassInvadeRaidTarget;
             harassInvadeRaidTarget = target;
             owner.CancelAllJobs();
             if (isHarassing) {
@@ -118,10 +118,10 @@ public class BehaviourComponent {
             }
         }
     }
-    public void SetIsRaiding(bool state, Settlement target) {
+    public void SetIsRaiding(bool state, NPCSettlement target) {
         if (isRaiding != state) {
             isRaiding = state;
-            Settlement previousTarget = harassInvadeRaidTarget;
+            NPCSettlement previousTarget = harassInvadeRaidTarget;
             harassInvadeRaidTarget = target;
             owner.CancelAllJobs();
             if (isRaiding) {
@@ -139,10 +139,10 @@ public class BehaviourComponent {
             }
         }
     }
-    public void SetIsInvading(bool state, Settlement target) {
+    public void SetIsInvading(bool state, NPCSettlement target) {
         if (isInvading != state) {
             isInvading = state;
-            Settlement previousTarget = harassInvadeRaidTarget;
+            NPCSettlement previousTarget = harassInvadeRaidTarget;
             harassInvadeRaidTarget = target;
             owner.CancelAllJobs();
             if (isInvading) {
@@ -152,18 +152,18 @@ public class BehaviourComponent {
                 AddBehaviourComponent(typeof(InvadeBehaviour));
                 //TODO: Optimize this to not always create new instance if playeraction, or if it can't be helped, do object pool
                 owner.AddPlayerAction(new Actionables.PlayerAction(PlayerDB.End_Invade_Action, () => true, null, () => SetIsInvading(false, null)));
-                Messenger.AddListener<Settlement>(Signals.NO_ABLE_CHARACTER_INSIDE_SETTLEMENT, OnNoLongerAbleResidentsInsideSettlement);
+                Messenger.AddListener<NPCSettlement>(Signals.NO_ABLE_CHARACTER_INSIDE_SETTLEMENT, OnNoLongerAbleResidentsInsideSettlement);
             } else {
                 previousTarget.DecreaseIsBeingInvadedCount();
                 owner.combatComponent.SetCombatMode(combatModeBeforeHarassRaidInvade);
                 RemoveBehaviourComponent(typeof(InvadeBehaviour));
                 owner.RemovePlayerAction(PlayerDB.End_Invade_Action);
-                Messenger.RemoveListener<Settlement>(Signals.NO_ABLE_CHARACTER_INSIDE_SETTLEMENT, OnNoLongerAbleResidentsInsideSettlement);
+                Messenger.RemoveListener<NPCSettlement>(Signals.NO_ABLE_CHARACTER_INSIDE_SETTLEMENT, OnNoLongerAbleResidentsInsideSettlement);
             }
         }
     }
-    private void OnNoLongerAbleResidentsInsideSettlement(Settlement settlement) {
-        if(harassInvadeRaidTarget == settlement) {
+    private void OnNoLongerAbleResidentsInsideSettlement(NPCSettlement npcSettlement) {
+        if(harassInvadeRaidTarget == npcSettlement) {
             SetIsInvading(false, null);
         }
     }

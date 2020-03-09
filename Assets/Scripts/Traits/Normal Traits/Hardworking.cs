@@ -9,7 +9,7 @@ namespace Traits {
 
         public Hardworking() {
             name = "Hardworking";
-            description = "Hardworking characters enjoy taking on settlement tasks.";
+            description = "Hardworking characters enjoy taking on npcSettlement tasks.";
             type = TRAIT_TYPE.BUFF;
             effect = TRAIT_EFFECT.NEUTRAL;
             
@@ -38,8 +38,8 @@ namespace Traits {
             if (jobID == 0) {
                 if (UnityEngine.Random.Range(0, 100) < 35) { //20
                     //string log = GameManager.Instance.TodayLogString() + character.name + " will do a task instead of happiness recovery because he is hardworking!";
-                    //If there is no replacement settlement job for happiness recovery, process one
-                    //Only get the first settlement job if it will be the highest priority in your personal jobs and it can override the current job
+                    //If there is no replacement npcSettlement job for happiness recovery, process one
+                    //Only get the first npcSettlement job if it will be the highest priority in your personal jobs and it can override the current job
                     //TODO:
                     //JobQueueItem jobToReplace = character.specificLocation.jobQueue.GetFirstUnassignedJobInQueue(character);
                     //if (jobToReplace != null) {
@@ -50,7 +50,7 @@ namespace Traits {
                     //                + character.jobQueue.jobsInQueue[0].jobType.ToString() + ":" + character.jobQueue.jobsInQueue[0].priority
                     //                + " VS " + jobToReplace.jobType.ToString() + ":" + jobToReplace.priority;
                     //            character.PrintLogIfActive(log);
-                    //            //This checks if the settlement job will become the highest priority job than any personal job this character currently has
+                    //            //This checks if the npcSettlement job will become the highest priority job than any personal job this character currently has
                     //            //If it is, get it as replacement for happiness recovery job
                     //            if (jobToReplace.priority < character.jobQueue.jobsInQueue[0].priority) {
                     //                character.specificLocation.jobQueue.ForceAssignCharacterToJob(jobToReplace, character);
@@ -59,9 +59,9 @@ namespace Traits {
                     //                return true;
                     //            }
                     //        } else {
-                    //            log += "\nNo personal jobs, automatically get settlement job...";
+                    //            log += "\nNo personal jobs, automatically get npcSettlement job...";
                     //            character.PrintLogIfActive(log);
-                    //            //Since there are no personal jobs, automatically get the settlement job
+                    //            //Since there are no personal jobs, automatically get the npcSettlement job
                     //            character.specificLocation.jobQueue.ForceAssignCharacterToJob(jobToReplace, character);
                     //            SetJobIDReplacementForHappinessRecovery(jobToReplace.id);
                     //            isPlanningHappinessRecoveryProcessed = true;
@@ -69,7 +69,7 @@ namespace Traits {
                     //        }
                     //    }
                     //} else {
-                    //    log += "\nNo personal jobs, automatically get settlement job...";
+                    //    log += "\nNo personal jobs, automatically get npcSettlement job...";
                     //    character.PrintLogIfActive(log);
                     //    isPlanningHappinessRecoveryProcessed = false;
                     //    return false;

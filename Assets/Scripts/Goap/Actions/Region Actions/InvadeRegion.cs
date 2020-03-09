@@ -29,7 +29,7 @@
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
-            //**Requirements:** Region is owned by Faction different from Actor's Faction. Region is not Corrupted. Region is non-settlement type.
+            //**Requirements:** Region is owned by Faction different from Actor's Faction. Region is not Corrupted. Region is non-npcSettlement type.
             var region = poiTarget.gridTileLocation.parentMap.location.coreTile.region;
             // return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null && region.owner != null 
             //        && region.owner != actor.faction && region.coreTile.isCorrupted == false 

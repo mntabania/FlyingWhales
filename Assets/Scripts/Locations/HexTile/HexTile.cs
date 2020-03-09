@@ -7,6 +7,7 @@ using Actionables;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using JetBrains.Annotations;
+using Locations.Settlements;
 using SpriteGlow;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -14,7 +15,7 @@ using UnityEngine.UI;
 public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarget, ISelectable {
 
     public HexTileData data;
-    private Settlement _settlementOfTile;
+    private NPCSettlement _npcSettlementOfTile;
     public SpriteRenderer spriteRenderer;
     private bool _isCorrupted = false;
     
@@ -62,7 +63,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     public BaseLandmark landmarkOnTile { get; private set; }
     public Region region { get; private set; }
     public TileFeatureComponent featureComponent { get; private set; }
-    public Settlement settlementOnTile { get; private set; }
+    public BaseSettlement settlementOnTile { get; private set; }
     public BuildingSpot[] ownedBuildSpots { get; private set; }
     public List<HexTile> AllNeighbours { get; set; }
     public List<HexTile> ValidTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && o.elevationType != ELEVATION.MOUNTAIN).ToList(); } }
@@ -860,11 +861,10 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     }
     #endregion
 
-    #region Settlement
-    public void SetSettlementOnTile(Settlement settlement) {
+    #region NPCSettlement
+    public void SetSettlementOnTile(BaseSettlement settlement) {
         settlementOnTile = settlement;
         landmarkOnTile?.nameplate.UpdateVisuals();
-        //CheckForCorruptAction();
     }
     #endregion
 
@@ -1064,13 +1064,22 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         actions.Clear();
     }
     private bool CanDoHarass() {
-        return !settlementOnTile.isBeingHarassed;
+        if (settlementOnTile is NPCSettlement npcSettlement) {
+            return !npcSettlement.isBeingHarassed;    
+        }
+        return false;
     }
     private bool CanDoRaid() {
-        return !settlementOnTile.isBeingRaided;
+        if (settlementOnTile is NPCSettlement npcSettlement) {
+            return !npcSettlement.isBeingRaided;    
+        }
+        return false;
     }
     private bool CanDoInvade() {
-        return !settlementOnTile.isBeingInvaded;
+        if (settlementOnTile is NPCSettlement npcSettlement) {
+            return !npcSettlement.isBeingInvaded;    
+        }
+        return false;
     }
     private bool IsHarassRaidInvadeValid(IPlayerActionTarget target) {
         return settlementOnTile != null && settlementOnTile.owner != null && settlementOnTile.owner.isMajorNonPlayer;

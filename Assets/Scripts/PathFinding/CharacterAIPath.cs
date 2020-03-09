@@ -112,7 +112,7 @@ public class CharacterAIPath : AILerp {
         //         }
         //     }
         // }
-        // if (marker.character != null && marker.character.currentActionNode != null && marker.character.currentSettlement != null) {//&& marker.character.currentActionNode.willAvoidCharactersWhileMoving
+        // if (marker.character != null && marker.character.currentActionNode != null && marker.character.currentNpcSettlement != null) {//&& marker.character.currentActionNode.willAvoidCharactersWhileMoving
         //     for (int i = 0; i < marker.character.currentRegion.charactersAtLocation.Count; i++) {
         //         Character terrifyingCharacter = marker.character.currentRegion.charactersAtLocation[i];
         //         if(terrifyingCharacter.marker) {
@@ -307,7 +307,7 @@ public class CharacterAIPath : AILerp {
             Vector3 newNodePos = new Vector3(Mathf.Floor(nodePos.x), Mathf.Floor(nodePos.y), Mathf.Floor(nodePos.z));
             Vector3 localPos = customPath.region.innerMap.worldPos - newNodePos;
             Vector3Int localPlace = new Vector3Int(localPos.x < 0f ? Mathf.FloorToInt(localPos.x) * -1 : Mathf.FloorToInt(localPos.x), localPos.y < 0f ? Mathf.FloorToInt(localPos.y) * -1 : Mathf.FloorToInt(localPos.y), 0);
-            //Vector3Int localPlace = customPath.settlement.areaMap.groundTilemap.WorldToCell(newNodePos);
+            //Vector3Int localPlace = customPath.npcSettlement.areaMap.groundTilemap.WorldToCell(newNodePos);
             LocationGridTile nodeGridTile = null;
             if (UtilityScripts.Utilities.IsInRange(localPlace.x, 0, customPath.region.innerMap.map.GetUpperBound(0) + 1) &&
                     UtilityScripts.Utilities.IsInRange(localPlace.y, 0, customPath.region.innerMap.map.GetUpperBound(1) + 1)) {

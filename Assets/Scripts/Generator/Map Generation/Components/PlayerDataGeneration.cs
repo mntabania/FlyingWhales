@@ -22,7 +22,7 @@ public class PlayerDataGeneration : MapGenerationComponent {
             Minion minion = PlayerManager.Instance.player.CreateNewMinion(className, RACE.DEMON, false);
             minion.SetCombatAbility(COMBAT_ABILITY.FLAMESTRIKE);
             PlayerManager.Instance.player.AddMinion(minion);
-            PlayerManager.Instance.player.playerSettlement.region.RemoveCharacterFromLocation(minion.character);
+            PlayerManager.Instance.player.portalTile.region.RemoveCharacterFromLocation(minion.character);
         }
     }
 	
@@ -30,19 +30,19 @@ public class PlayerDataGeneration : MapGenerationComponent {
 		List<ARTIFACT_TYPE> artifactChoices = UtilityScripts.CollectionUtilities.GetEnumValues<ARTIFACT_TYPE>().ToList();
 		artifactChoices.Remove(ARTIFACT_TYPE.None);
 		
-		//place 2 within storage of the settlement
-		List<Settlement> settlementChoices = new List<Settlement>(LandmarkManager.Instance.allSetttlements.Where(
+		//place 2 within storage of the npcSettlement
+		List<NPCSettlement> settlementChoices = new List<NPCSettlement>(LandmarkManager.Instance.allNonPlayerSettlements.Where(
 			x => x.locationType == LOCATION_TYPE.ELVEN_SETTLEMENT || x.locationType == LOCATION_TYPE.HUMAN_SETTLEMENT));
 		for (int i = 0; i < 2; i++) {
 			if (settlementChoices.Count > 0) {
-				Settlement chosenSettlement = UtilityScripts.CollectionUtilities.GetRandomElement(settlementChoices);
+				NPCSettlement chosenNpcSettlement = UtilityScripts.CollectionUtilities.GetRandomElement(settlementChoices);
 				ARTIFACT_TYPE artifactType = UtilityScripts.CollectionUtilities.GetRandomElement(artifactChoices);
 				Artifact artifact = PlayerManager.Instance.CreateNewArtifact(artifactType);
-				chosenSettlement.mainStorage.AddPOI(artifact);
+				chosenNpcSettlement.mainStorage.AddPOI(artifact);
 				artifactChoices.Remove(artifactType);
-				settlementChoices.Remove(chosenSettlement);
+				settlementChoices.Remove(chosenNpcSettlement);
 			} else {
-				Debug.LogWarning($"Could no longer find a valid settlement to place an artifact");
+				Debug.LogWarning($"Could no longer find a valid npcSettlement to place an artifact");
 				break;
 			}
 		}

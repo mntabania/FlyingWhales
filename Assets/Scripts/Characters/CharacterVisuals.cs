@@ -64,7 +64,7 @@ public class CharacterVisuals {
         if(_owner.isSettlementRuler || _owner.isFactionLeader) {
             string additionalText = string.Empty;
             if (_owner.isSettlementRuler) {
-                additionalText = $"{additionalText}Settlement Ruler";
+                additionalText = $"{additionalText}NPCSettlement Ruler";
             }
             if (_owner.isFactionLeader) {
                 if(additionalText != string.Empty) {

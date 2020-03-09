@@ -17,7 +17,7 @@ public class CombatState : CharacterState {
     public List<Character> allCharactersThatDegradedRel { get; private set; }
 
     //Is this character fighting another character or has a character in hostile range list who is trying to apprehend him/her because he/she is a criminal?
-    //See: https://trello.com/c/uCZfbCSa/2819-criminals-should-eventually-flee-settlement-and-leave-faction
+    //See: https://trello.com/c/uCZfbCSa/2819-criminals-should-eventually-flee-npcSettlement-and-leave-faction
     public bool isBeingApprehended { get; private set; }
     private int fleeChance;
     private bool isFleeToHome;
@@ -54,11 +54,11 @@ public class CombatState : CharacterState {
         //    return;
         //}
         //if the character is away from home and is at an edge tile, go to home location
-        //if (!isAttacking && stateComponent.character.homeSettlement != null && stateComponent.character.homeSettlement != stateComponent.character.specificLocation && stateComponent.character.gridTileLocation.IsAtEdgeOfWalkableMap()) {
+        //if (!isAttacking && stateComponent.character.homeNpcSettlement != null && stateComponent.character.homeNpcSettlement != stateComponent.character.specificLocation && stateComponent.character.gridTileLocation.IsAtEdgeOfWalkableMap()) {
         //    StopStatePerTick();
         //    OnExitThisState();
         //    //stateComponent.character.PlanIdleReturnHome();
-        //    stateComponent.character.currentParty.GoToLocation(stateComponent.character.homeSettlement, PATHFINDING_MODE.NORMAL, stateComponent.character.homeSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS), null, null, null, null);
+        //    stateComponent.character.currentParty.GoToLocation(stateComponent.character.homeNpcSettlement, PATHFINDING_MODE.NORMAL, stateComponent.character.homeNpcSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS), null, null, null, null);
         //    return;
         //}
         if (_hasTimerStarted) {
@@ -180,7 +180,7 @@ public class CombatState : CharacterState {
         // } else {
         //     for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
         //         Region region = GridMap.Instance.allRegions[i];
-        //         if (stateComponent.character.homeRegion != region && region != PlayerManager.Instance.player.playerSettlement.region) {
+        //         if (stateComponent.character.homeRegion != region && region != PlayerManager.Instance.player.playerNpcSettlement.region) {
         //             potentialRegions.Add(region);
         //         }
         //     }

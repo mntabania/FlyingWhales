@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Inner_Maps.Location_Structures;
+using Locations.Settlements;
 using UnityEngine;
 using UtilityScripts;
 
@@ -75,7 +76,7 @@ public class CharacterManager : MonoBehaviour {
 
     #region Characters
     public Character CreateNewLimboCharacter(RACE race, string className, GENDER gender, Faction faction = null,
-    Settlement homeLocation = null, IDwelling homeStructure = null) {
+    NPCSettlement homeLocation = null, IDwelling homeStructure = null) {
         Character newCharacter = new Character(className, race, gender);
         newCharacter.SetIsLimboCharacter(true);
         newCharacter.Initialize();
@@ -96,8 +97,8 @@ public class CharacterManager : MonoBehaviour {
         AddNewLimboCharacter(newCharacter);
         return newCharacter;
     }
-    public Character CreateNewCharacter(string className, RACE race, GENDER gender, Faction faction = null, 
-        Settlement homeLocation = null, IDwelling homeStructure = null) {
+    public Character CreateNewCharacter(string className, RACE race, GENDER gender, Faction faction = null,
+        BaseSettlement homeLocation = null, Region homeRegion = null, IDwelling homeStructure = null) {
         Character newCharacter = new Character(className, race, gender);
         newCharacter.Initialize();
         if (faction != null) {
@@ -110,14 +111,15 @@ public class CharacterManager : MonoBehaviour {
         newCharacter.ownParty.CreateIcon();
         if (homeLocation != null) {
             newCharacter.MigrateHomeTo(homeLocation, homeStructure, false);
-            homeLocation.region.AddCharacterToLocation(newCharacter);
+            homeRegion.AddResident(newCharacter);
+            homeRegion.AddCharacterToLocation(newCharacter);
         }
         newCharacter.CreateInitialTraitsByClass();
         AddNewCharacter(newCharacter);
         return newCharacter;
     }
     public Character CreateNewCharacter(string className, RACE race, GENDER gender, SEXUALITY sexuality, Faction faction = null,
-        Settlement homeLocation = null, IDwelling homeStructure = null) {
+        NPCSettlement homeLocation = null, IDwelling homeStructure = null) {
         Character newCharacter = new Character(className, race, gender, sexuality);
         newCharacter.Initialize();
         if (faction != null) {
@@ -130,6 +132,7 @@ public class CharacterManager : MonoBehaviour {
         newCharacter.ownParty.CreateIcon();
         if (homeLocation != null) {
             newCharacter.MigrateHomeTo(homeLocation, homeStructure, false);
+            homeLocation.region.AddResident(newCharacter);
             homeLocation.region.AddCharacterToLocation(newCharacter);
         }
         newCharacter.CreateInitialTraitsByClass();
@@ -187,7 +190,7 @@ public class CharacterManager : MonoBehaviour {
         return newCharacter;
     }
     public Character CreateNewCharacter(PreCharacterData data, string className, Faction faction = null,
-        Settlement homeLocation = null, IDwelling homeStructure = null) {
+        NPCSettlement homeLocation = null, IDwelling homeStructure = null) {
         Character newCharacter = new Character(className, data.race, data.gender, data.sexuality, data.id);
         newCharacter.SetName(data.name);
         
@@ -202,6 +205,7 @@ public class CharacterManager : MonoBehaviour {
         newCharacter.ownParty.CreateIcon();
         if (homeLocation != null) {
             newCharacter.MigrateHomeTo(homeLocation, homeStructure, false);
+            homeLocation.region.AddResident(newCharacter);
             homeLocation.region.AddCharacterToLocation(newCharacter);
         }
         newCharacter.CreateInitialTraitsByClass();
@@ -241,20 +245,20 @@ public class CharacterManager : MonoBehaviour {
     public void RemoveCharacterAvatar(CharacterAvatar characterAvatar) {
         _allCharacterAvatars.Remove(characterAvatar);
     }
-    public void PlaceInitialCharacters(List<Character> characters, Settlement settlement) {
+    public void PlaceInitialCharacters(List<Character> characters, NPCSettlement npcSettlement) {
         for (int i = 0; i < characters.Count; i++) {
             Character character = characters[i];
             if (!character.marker) {
                 character.CreateMarker();
             }
-            if (character.homeStructure != null && character.homeStructure.settlementLocation == settlement) {
+            if (character.homeStructure != null && character.homeStructure.settlementLocation == npcSettlement) {
                 //place the character at a random unoccupied tile in his/her home
                 List<LocationGridTile> choices = character.homeStructure.unoccupiedTiles.Where(x => x.charactersHere.Count == 0).ToList();
                 LocationGridTile chosenTile = choices[UnityEngine.Random.Range(0, choices.Count)];
                 character.InitialCharacterPlacement(chosenTile);
             } else {
-                //place the character at a random unoccupied tile in the settlement's wilderness
-                LocationStructure wilderness = settlement.region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+                //place the character at a random unoccupied tile in the npcSettlement's wilderness
+                LocationStructure wilderness = npcSettlement.region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
                 List<LocationGridTile> choices = wilderness.unoccupiedTiles.Where(x => x.charactersHere.Count == 0).ToList();
                 LocationGridTile chosenTile = choices[UnityEngine.Random.Range(0, choices.Count)];
                 character.InitialCharacterPlacement(chosenTile);
@@ -330,7 +334,8 @@ public class CharacterManager : MonoBehaviour {
     #endregion
 
     #region Summons
-    public Summon CreateNewSummon(SUMMON_TYPE summonType, Faction faction = null, Settlement homeLocation = null, IDwelling homeStructure = null) {
+    public Summon CreateNewSummon(SUMMON_TYPE summonType, Faction faction = null, BaseSettlement homeLocation = null,
+        Region homeRegion = null, IDwelling homeStructure = null) {
         Summon newCharacter = CreateNewSummonClassFromType(summonType) as Summon;
         newCharacter.Initialize();
         if (faction != null) {
@@ -341,7 +346,10 @@ public class CharacterManager : MonoBehaviour {
         newCharacter.ownParty.CreateIcon();
         if (homeLocation != null) {
             newCharacter.MigrateHomeTo(homeLocation, homeStructure, false);
-            homeLocation.region.AddCharacterToLocation(newCharacter.ownParty.owner);
+        }
+        if (homeRegion != null) {
+            homeRegion.AddResident(newCharacter);
+            homeRegion.AddCharacterToLocation(newCharacter.ownParty.owner);
         }
         newCharacter.CreateInitialTraitsByClass();
         AddNewCharacter(newCharacter);
@@ -365,7 +373,7 @@ public class CharacterManager : MonoBehaviour {
         }
 
         newCharacter.ownParty.CreateIcon();
-        // Settlement home = null;
+        // NPCSettlement home = null;
         //TODO:
         // if (data.homeID != -1) {
         //     home = GridMap.Instance.GetRegionByID(data.homeID);

@@ -27,7 +27,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 				if (choices.Count > 0) {
 					HexTile chosenTile = CollectionUtilities.GetRandomElement(choices);
 					LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.MONSTER_LAIR, false);
-					Settlement settlement =
+					NPCSettlement npcSettlement =
 						LandmarkManager.Instance.CreateNewSettlement(chosenTile.region, LOCATION_TYPE.DUNGEON, 0,
 							chosenTile);
 					createdCount++;
@@ -49,7 +49,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 				if (choices.Count > 0) {
 					HexTile chosenTile = CollectionUtilities.GetRandomElement(choices);
 					LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.MINE, false);
-					Settlement settlement =
+					NPCSettlement npcSettlement =
 						LandmarkManager.Instance.CreateNewSettlement(chosenTile.region, LOCATION_TYPE.DUNGEON, 0,
 							chosenTile);
 					createdCount++;
@@ -70,7 +70,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 				if (choices.Count > 0) {
 					HexTile chosenTile = CollectionUtilities.GetRandomElement(choices);
 					LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.ANCIENT_RUIN, false);
-					Settlement settlement =
+					NPCSettlement npcSettlement =
 						LandmarkManager.Instance.CreateNewSettlement(chosenTile.region, LOCATION_TYPE.DUNGEON, 0,
 							chosenTile);
 					createdCount++;
@@ -91,7 +91,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 				if (choices.Count > 0) {
 					HexTile chosenTile = CollectionUtilities.GetRandomElement(choices);
 					LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.MAGE_TOWER, false);
-					Settlement settlement =
+					NPCSettlement npcSettlement =
 						LandmarkManager.Instance.CreateNewSettlement(chosenTile.region, LOCATION_TYPE.DUNGEON, 0,
 							chosenTile);
 					createdCount++;

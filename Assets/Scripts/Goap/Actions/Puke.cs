@@ -250,7 +250,7 @@ public class Puke : GoapAction {
     //private bool CanCharacterTakeRemoveIllnessesJob(Character character, Character targetCharacter, JobQueueItem job) {
     //    if (character != targetCharacter && character.faction == targetCharacter.faction && character.isAtHomeArea) {
     //        if (character.faction.id == FactionManager.Instance.neutralFaction.id) {
-    //            return character.race == targetCharacter.race && character.homeSettlement == targetCharacter.homeSettlement && !targetCharacter.HasRelationshipOfTypeWith(character, RELATIONSHIP_TRAIT.ENEMY);
+    //            return character.race == targetCharacter.race && character.homeNpcSettlement == targetCharacter.homeNpcSettlement && !targetCharacter.HasRelationshipOfTypeWith(character, RELATIONSHIP_TRAIT.ENEMY);
     //        }
     //        return !character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.ENEMY) && character.traitContainer.GetNormalTrait<Trait>("Healer") != null;
     //    }

@@ -104,7 +104,7 @@ public class PlayerUI : MonoBehaviour {
     private PlayerJobActionButton[] interventionAbilityBtns;
     public string harassRaidInvade { get; private set; }
     public Minion harassRaidInvadeLeaderMinion { get; private set; }
-    public Settlement harassRaidInvadeTargetSettlement { get; private set; }
+    public NPCSettlement harassRaidInvadeTargetNpcSettlement { get; private set; }
 
     void Awake() {
         Instance = this;
@@ -477,7 +477,7 @@ public class PlayerUI : MonoBehaviour {
     }
     #endregion
 
-    #region Settlement Corruption
+    #region NPCSettlement Corruption
     public void SuccessfulAreaCorruption() {
         successfulAreaCorruptionGO.SetActive(true);
         //Utilities.DestroyChildren(killSummaryScrollView.content);
@@ -962,9 +962,9 @@ public class PlayerUI : MonoBehaviour {
     }
     #endregion
 
-    #region Settlement Actions
+    #region NPCSettlement Actions
     public void OnClickHarassRaidInvade(HexTile targetHex, string identifier) {
-        harassRaidInvadeTargetSettlement = targetHex.settlementOnTile;
+        harassRaidInvadeTargetNpcSettlement = targetHex.settlementOnTile as NPCSettlement;
         harassRaidInvade = identifier;
         UIManager.Instance.ShowClickableObjectPicker(PlayerManager.Instance.player.minions.Where(x => x.character.gridTileLocation != null).Select(x => x.character).ToList(), HarassRaidInvade
             , null, CanChooseMinion, "Choose Leader Minion", showCover: true);
@@ -979,13 +979,13 @@ public class PlayerUI : MonoBehaviour {
         if(PlayerManager.Instance.player.summons.Count > 0) {
             unleashSummonUI.ShowUnleashSummonUI();
         } else {
-            //harassRaidInvadeLeaderMinion.character.behaviourComponent.SetHarassInvadeRaidTarget(harassRaidInvadeTargetSettlement);
+            //harassRaidInvadeLeaderMinion.character.behaviourComponent.SetHarassInvadeRaidTarget(harassRaidInvadeTargetNpcSettlement);
             if (harassRaidInvade == "harass") {
-                harassRaidInvadeLeaderMinion.character.behaviourComponent.SetIsHarassing(true, harassRaidInvadeTargetSettlement);
+                harassRaidInvadeLeaderMinion.character.behaviourComponent.SetIsHarassing(true, harassRaidInvadeTargetNpcSettlement);
             } else if (harassRaidInvade == "raid") {
-                harassRaidInvadeLeaderMinion.character.behaviourComponent.SetIsRaiding(true, harassRaidInvadeTargetSettlement);
+                harassRaidInvadeLeaderMinion.character.behaviourComponent.SetIsRaiding(true, harassRaidInvadeTargetNpcSettlement);
             } else if (harassRaidInvade == "invade") {
-                harassRaidInvadeLeaderMinion.character.behaviourComponent.SetIsInvading(true, harassRaidInvadeTargetSettlement);
+                harassRaidInvadeLeaderMinion.character.behaviourComponent.SetIsInvading(true, harassRaidInvadeTargetNpcSettlement);
             }
         }
     }
