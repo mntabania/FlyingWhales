@@ -18,13 +18,15 @@ namespace Traits {
             moodEffect = -5;
             stackLimit = 5;
             stackModifier = 1f;
+            AddTraitOverrideFunctionIdentifier(TraitManager.Initiate_Map_Visual_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Destroy_Map_Visual_Trait);
         }
 
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
-            if(addedTo is IPointOfInterest) {
-                _freezingGO = GameManager.Instance.CreateParticleEffectAt(addedTo as IPointOfInterest, PARTICLE_EFFECT.Freezing);
+            if(addedTo is IPointOfInterest poi) {
+                _freezingGO = GameManager.Instance.CreateParticleEffectAt(poi, PARTICLE_EFFECT.Freezing);
             }
             if(addedTo is Character) {
                 Character character = addedTo as Character;
@@ -51,12 +53,28 @@ namespace Traits {
             base.OnRemoveTrait(removedFrom, removedBy);
             if (_freezingGO) {
                 ObjectPoolManager.Instance.DestroyObject(_freezingGO);
+                _freezingGO = null;
             }
             if (removedFrom is Character) {
                 Character character = removedFrom as Character;
                 character.needsComponent.AdjustComfortDecreaseRate(-1f);
                 character.needsComponent.AdjustTirednessDecreaseRate(-1f);
                 character.AdjustSpeedModifier(0.15f);
+            }
+        }
+        public override void OnInitiateMapObjectVisual(ITraitable traitable) {
+            if (traitable is IPointOfInterest poi) {
+                if (_freezingGO) {
+                    ObjectPoolManager.Instance.DestroyObject(_freezingGO);
+                    _freezingGO = null;
+                }
+                _freezingGO = GameManager.Instance.CreateParticleEffectAt(poi, PARTICLE_EFFECT.Freezing);
+            }
+        }
+        public override void OnDestroyMapObjectVisual(ITraitable traitable) {
+            if (_freezingGO) {
+                ObjectPoolManager.Instance.DestroyObject(_freezingGO);
+                _freezingGO = null;
             }
         }
         #endregion

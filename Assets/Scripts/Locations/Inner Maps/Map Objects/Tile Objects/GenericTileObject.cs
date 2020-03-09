@@ -48,8 +48,8 @@ public class GenericTileObject : TileObject {
     }
     public override void OnTileObjectGainedTrait(Trait trait) {
         base.OnTileObjectGainedTrait(trait);
-        if (trait is Status) {
-            if((trait as Status).IsTangible()) {
+        if (trait is Status status) {
+            if(status.IsTangible()) {
                 // EnableGameObject();
                 //create map object visual
                 if (ReferenceEquals(mapVisual, null)) {

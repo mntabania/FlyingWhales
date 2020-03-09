@@ -11,11 +11,12 @@ namespace Traits {
         public List<Trait> allTraitsAndStatuses { get; private set; }
         public List<Trait> traits { get; private set; }
         public List<Status> statuses { get; private set; }
-        public List<Trait> onCollideWithTraits { get; private set; }
-        public List<Trait> onEnterGridTileTraits { get; private set; }
+        public Dictionary<string, List<Trait>> traitOverrideFunctions { get; private set; }
+        //public List<Trait> onCollideWithTraits { get; private set; }
+        //public List<Trait> onEnterGridTileTraits { get; private set; }
 
         public Dictionary<string, int> stacks { get; private set; }
-        public Dictionary<string, List<string>> scheduleTickets { get; private set; }
+        public Dictionary<string, List<TraitRemoveSchedule>> scheduleTickets { get; private set; }
         public Dictionary<string, bool> traitSwitches { get; private set; }
         //public Dictionary<Trait, int> currentDurations { get; private set; } //Temporary only, fix this by making all traits instanced based and just object pool them
 
@@ -26,10 +27,11 @@ namespace Traits {
             allTraitsAndStatuses = new List<Trait>();
             statuses = new List<Status>();
             traits = new List<Trait>();
-            onCollideWithTraits = new List<Trait>();
-            onEnterGridTileTraits = new List<Trait>();
+            //onCollideWithTraits = new List<Trait>();
+            //onEnterGridTileTraits = new List<Trait>();
+            traitOverrideFunctions = new Dictionary<string, List<Trait>>();
             stacks = new Dictionary<string, int>();
-            scheduleTickets = new Dictionary<string, List<string>>();
+            scheduleTickets = new Dictionary<string, List<TraitRemoveSchedule>>();
             traitSwitches = new Dictionary<string, bool>();
             //currentDurations = new Dictionary<Trait, int>();
         }
@@ -288,8 +290,7 @@ namespace Traits {
         /// <returns>If the trait was removed or not.</returns>
         public bool RemoveTrait(ITraitable removeFrom, Trait trait, Character removedBy = null, bool bySchedule = false) {
             bool removedOrUnstacked = false;
-            if(trait is Status) {
-                Status status = trait as Status;
+            if(trait is Status status) {
                 if (!status.isStacking) {
                     removedOrUnstacked = statuses.Remove(status);
                     if (removedOrUnstacked) {
@@ -592,22 +593,31 @@ namespace Traits {
         #endregion
         
         #region Schedule Tickets
-        public void AddScheduleTicket(string traitName, string ticket) {
+        public void AddScheduleTicket(string traitName, string ticket, GameDate removeDate) {
+            TraitRemoveSchedule traitRemoveSchedule = ObjectPoolManager.Instance.CreateNewTraitRemoveSchedule();
+            traitRemoveSchedule.removeDate = removeDate;
+            traitRemoveSchedule.ticket = ticket;
+
             if (scheduleTickets.ContainsKey(traitName)) {
-                scheduleTickets[traitName].Add(ticket);
+                scheduleTickets[traitName].Add(traitRemoveSchedule);
             } else {
-                scheduleTickets.Add(traitName, new List<string>() { ticket });
+                scheduleTickets.Add(traitName, new List<TraitRemoveSchedule>() { traitRemoveSchedule });
             }
         }
         public void RemoveScheduleTicket(string traitName, bool bySchedule = false) {
             if (scheduleTickets.ContainsKey(traitName)) {
-                if (!bySchedule) {
-                    SchedulingManager.Instance.RemoveSpecificEntry(scheduleTickets[traitName][0]);
+                TraitRemoveSchedule traitRemoveSchedule = null;
+                if(scheduleTickets[traitName].Count > 0) {
+                    traitRemoveSchedule = scheduleTickets[traitName][0];
+                }
+                if (!bySchedule && traitRemoveSchedule != null) {
+                    SchedulingManager.Instance.RemoveSpecificEntry(traitRemoveSchedule.ticket);
                 }
                 if (scheduleTickets[traitName].Count <= 0) {
                     scheduleTickets.Remove(traitName);
                 } else {
                     scheduleTickets[traitName].RemoveAt(0);
+                    ObjectPoolManager.Instance.ReturnTraitRemoveScheduleToPool(traitRemoveSchedule);
                 }
             } 
         }
@@ -645,18 +655,49 @@ namespace Traits {
         #endregion
         
         #region Trait Override Functions
-        public void AddOnCollideWithTrait(Trait trait) {
-            onCollideWithTraits.Add(trait);
+        public void AddTraitOverrideFunction(string identifier, Trait trait) {
+            if (traitOverrideFunctions.ContainsKey(identifier)) {
+                traitOverrideFunctions[identifier].Add(trait);
+            } else {
+                traitOverrideFunctions.Add(identifier, new List<Trait>() { trait });
+            }
         }
-        public bool RemoveOnCollideWithTrait(Trait trait) {
-            return onCollideWithTraits.Remove(trait);
+        public void RemoveTraitOverrideFunction(string identifier, Trait trait) {
+            if (traitOverrideFunctions.ContainsKey(identifier)) {
+                traitOverrideFunctions[identifier].Remove(trait);
+            }
         }
-        public void AddOnEnterGridTileTrait(Trait trait) {
-            onEnterGridTileTraits.Add(trait);
+        public List<Trait> GetTraitOverrideFunctions(string identifier) {
+            if (traitOverrideFunctions.ContainsKey(identifier)) {
+                return traitOverrideFunctions[identifier];
+            }
+            return null;
         }
-        public bool RemoveOnEnterGridTileTrait(Trait trait) {
-            return onEnterGridTileTraits.Remove(trait);
-        }
+        //public void AddOnCollideWithTrait(Trait trait) {
+        //    onCollideWithTraits.Add(trait);
+        //}
+        //public bool RemoveOnCollideWithTrait(Trait trait) {
+        //    return onCollideWithTraits.Remove(trait);
+        //}
+        //public void AddOnEnterGridTileTrait(Trait trait) {
+        //    onEnterGridTileTraits.Add(trait);
+        //}
+        //public bool RemoveOnEnterGridTileTrait(Trait trait) {
+        //    return onEnterGridTileTraits.Remove(trait);
+        //}
         #endregion
+    }
+}
+
+public class TraitRemoveSchedule {
+    public GameDate removeDate;
+    public string ticket;
+
+    public void Initialize() {
+        //ticket = string.Empty;
+    }
+    public void Reset() {
+        removeDate = new GameDate();
+        ticket = string.Empty;
     }
 }

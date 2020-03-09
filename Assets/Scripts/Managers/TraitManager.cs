@@ -12,6 +12,13 @@ public class TraitManager : MonoBehaviour {
     public static TraitManager Instance;
 
     private Dictionary<string, Trait> _allTraits;
+
+    //Trait Override Function Identifiers
+    public const string Collision_Trait = "Collision_Trait";
+    public const string Enter_Grid_Tile_Trait = "Enter_Grid_Tile_Trait";
+    public const string Initiate_Map_Visual_Trait = "Initiate_Map_Visual_Trait";
+    public const string Destroy_Map_Visual_Trait = "Destroy_Map_Visual_Trait";
+
     public static string[] instancedTraits = new string[] {
         //"Builder",
         //"Grudge", "Patrolling Character",
@@ -170,6 +177,46 @@ public class TraitManager : MonoBehaviour {
         //    return false;
         //}
         return true;
+    }
+    public void CopyTraitOrStatus(Trait trait, ITraitable from, ITraitable to) {
+        if (from.traitContainer.HasTrait(trait.name)) {
+            int numOfStacks = from.traitContainer.stacks[trait.name];
+            //In the loop, override duration to zero so that it will not reset the trait's timer
+            Trait duplicateTrait = null;
+            for (int i = 0; i < numOfStacks; i++) {
+                to.traitContainer.AddTrait(to, trait.name, out duplicateTrait, overrideDuration: 0);
+            }
+            if(duplicateTrait != null) {
+                //Copy the trait's responsible characters and gainedFromDoing
+                if(trait.responsibleCharacters != null && trait.responsibleCharacters.Count > 0) {
+                    for (int i = 0; i < trait.responsibleCharacters.Count; i++) {
+                        duplicateTrait.AddCharacterResponsibleForTrait(trait.responsibleCharacters[i]);
+                    }
+                }
+                duplicateTrait.SetGainedFromDoing(trait.gainedFromDoing);
+
+                //Copy the trait's timer
+                if (from.traitContainer.scheduleTickets.ContainsKey(trait.name)) {
+                    List<TraitRemoveSchedule> traitRemoveSchedules = from.traitContainer.scheduleTickets[trait.name];
+                    for (int i = 0; i < traitRemoveSchedules.Count; i++) {
+                        TraitRemoveSchedule removeSchedule = traitRemoveSchedules[i];
+                        string ticket = SchedulingManager.Instance.AddEntry(removeSchedule.removeDate, () => to.traitContainer.RemoveTraitOnSchedule(to, duplicateTrait), to.traitProcessor);
+                        to.traitContainer.AddScheduleTicket(trait.name, ticket, removeSchedule.removeDate);
+                    }
+                }
+            }
+
+        } else {
+            throw new Exception("Trying to copy trait " + trait.name + " of " + from.name + " to " + to.name + " but " + from.name + " does not have the trait!");
+        }
+    }
+    public void CopyStatuses(ITraitable from, ITraitable to) {
+        for (int i = 0; i < from.traitContainer.statuses.Count; i++) {
+            Status status = from.traitContainer.statuses[i];
+            if (!to.traitContainer.HasTrait(status.name)) {
+                CopyTraitOrStatus(status, from, to);
+            }
+        }
     }
     #endregion
 

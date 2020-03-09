@@ -30,8 +30,8 @@ namespace Traits {
         //public bool hindersMovement; //if a character has this trait, and this is true, then he/she cannot move
         //public bool hindersAttackTarget; //if a character has this trait, and this is true, then he/she cannot be attacked
         //public bool hindersPerform; //if a character has this trait, and this is true, then he/she cannot be attacked
-        public bool hasOnCollideWith;
-        public bool hasOnEnterGridTile;
+        //public bool hasOnCollideWith;
+        //public bool hasOnEnterGridTile;
         //public bool isStacking;
         //public int stackLimit;
         //public float stackModifier;
@@ -43,6 +43,7 @@ namespace Traits {
         //public Dictionary<ITraitable, string> expiryTickets { get; private set; } //this is the key for the scheduled removal of this trait for each object
         public ActualGoapNode gainedFromDoing { get; protected set; } //what action was this poi involved in that gave it this trait.
         public GameDate dateEstablished { get; protected set; }
+        public List<string> traitOverrideFunctionIdentifiers { get; protected set; }
         //public virtual bool isRemovedOnSwitchAlterEgo { get { return false; } }
         public string moodModificationDescription => name;
         public int moodModifier => moodEffect;
@@ -122,6 +123,8 @@ namespace Traits {
         // public virtual bool OnOthersSeeThisInDiffStructureEvenCannotWitness(Character characterThatSaw, IPointOfInterest owner) { return false; }
         public virtual bool OnCollideWith(IPointOfInterest collidedWith, IPointOfInterest owner) { return false; }
         public virtual void OnEnterGridTile(IPointOfInterest poiWhoEntered, IPointOfInterest owner) { }
+        public virtual void OnInitiateMapObjectVisual(ITraitable traitable) { }
+        public virtual void OnDestroyMapObjectVisual(ITraitable traitable) { }
         public virtual bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) { return false; } //What jobs a character can create based on the his/her own traits, considering the target?
         protected virtual void OnChangeLevel() { }
         public virtual void OnOwnerInitiallyPlaced(Character owner) { }
@@ -176,9 +179,7 @@ namespace Traits {
             return reasons;
 
         }
-        public virtual void OnTickStarted() {
-
-        }
+        public virtual void OnTickStarted() { }
         public virtual void OnTickEnded() { }
         public virtual void OnHourStarted() { }
         public virtual string GetNameInUI(ITraitable traitable) {
@@ -273,6 +274,14 @@ namespace Traits {
         }
         public Trait GetBase() {
             return this;
+        }
+        public void AddTraitOverrideFunctionIdentifier(string identifier) {
+            if(traitOverrideFunctionIdentifiers == null) {
+                traitOverrideFunctionIdentifiers = new List<string>();
+            }
+            if (!traitOverrideFunctionIdentifiers.Contains(identifier)) {
+                traitOverrideFunctionIdentifiers.Add(identifier);
+            }
         }
         #endregion
 

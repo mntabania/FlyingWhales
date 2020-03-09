@@ -57,10 +57,14 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
             if (collidedWith.poi.gridTileLocation == null) {
                 return; //ignore, Usually happens if an item is picked up just as this character sees it.
             }
-            for (int i = 0; i < collidedWith.poi.traitContainer.onCollideWithTraits.Count; i++) {
-                Trait trait = collidedWith.poi.traitContainer.onCollideWithTraits[i];
-                trait.OnCollideWith(parentMarker.character, collidedWith.poi);
+            List<Trait> traitOverrideFunctions = collidedWith.poi.traitContainer.GetTraitOverrideFunctions(TraitManager.Collision_Trait);
+            if(traitOverrideFunctions != null) {
+                for (int i = 0; i < traitOverrideFunctions.Count; i++) {
+                    Trait trait = traitOverrideFunctions[i];
+                    trait.OnCollideWith(parentMarker.character, collidedWith.poi);
+                }
             }
+
             //when this collides with a poi trigger
             //check if the poi trigger is in the same structure as this
             if (collidedWith.poi.gridTileLocation.structure == parentMarker.character.gridTileLocation.structure || collidedWith.IgnoresStructureDifference()) {

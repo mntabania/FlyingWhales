@@ -5800,7 +5800,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   logItem: {fileID: 0}
   text: {fileID: 566517695369441822}
-  allowClickAction: 0
+  allowClickAction: 1
   hoverAction:
     m_PersistentCalls:
       m_Calls:
@@ -6495,7 +6495,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   logItem: {fileID: 0}
   text: {fileID: 3708341314893532759}
-  allowClickAction: 0
+  allowClickAction: 1
   hoverAction:
     m_PersistentCalls:
       m_Calls:

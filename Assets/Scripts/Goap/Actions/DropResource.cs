@@ -154,6 +154,7 @@ public class DropResource : GoapAction {
             ResourcePile resourcePile = goapNode.poiTarget as ResourcePile;
             resourcePile.AdjustResourceInPile(pile.resourceInPile);
         }
+        TraitManager.Instance.CopyStatuses(pile, goapNode.poiTarget);
         pile.AdjustResourceInPile(-pile.resourceInPile);
 
         //goapNode.actor.ownParty.RemoveCarriedPOI(false);

@@ -17,6 +17,7 @@ public class ObjectPoolManager : MonoBehaviour {
 
     public List<GoapNode> goapNodesPool { get; private set; }
     public List<OpinionData> opinionDataPool { get; private set; }
+    public List<TraitRemoveSchedule> traitRemoveSchedulePool { get; private set; }
 
     private void Awake() {
         Instance = this;
@@ -36,6 +37,7 @@ public class ObjectPoolManager : MonoBehaviour {
 
         ConstructGoapNodes();
         ConstructOpinionDataPool();
+        ConstructTraitRemoveSchedulePool();
     }
 
     public GameObject InstantiateObjectFromPool(string poolName, Vector3 position, Quaternion rotation, Transform parent = null, bool isWorldPosition = false) {
@@ -146,6 +148,29 @@ public class ObjectPoolManager : MonoBehaviour {
             return data;
         }
         return new OpinionData();
+    }
+    #endregion
+
+    #region Trait Remove Schedule
+    private void ConstructTraitRemoveSchedulePool() {
+        traitRemoveSchedulePool = new List<TraitRemoveSchedule>();
+    }
+    public TraitRemoveSchedule CreateNewTraitRemoveSchedule() {
+        TraitRemoveSchedule data = GetTraitRemoveScheduleFromPool();
+        data.Initialize();
+        return data;
+    }
+    public void ReturnTraitRemoveScheduleToPool(TraitRemoveSchedule data) {
+        data.Reset();
+        traitRemoveSchedulePool.Add(data);
+    }
+    private TraitRemoveSchedule GetTraitRemoveScheduleFromPool() {
+        if (traitRemoveSchedulePool.Count > 0) {
+            TraitRemoveSchedule data = traitRemoveSchedulePool[0];
+            traitRemoveSchedulePool.RemoveAt(0);
+            return data;
+        }
+        return new TraitRemoveSchedule();
     }
     #endregion
 }

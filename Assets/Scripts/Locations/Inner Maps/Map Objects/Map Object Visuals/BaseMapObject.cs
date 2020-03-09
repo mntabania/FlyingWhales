@@ -1,4 +1,6 @@
 ﻿using UnityEngine.Assertions;
+using Traits;
+using System.Collections.Generic;
 
 /// <summary>
 /// Base class for anything in the settlement map that can be damaged and has a physical object to be shown.
@@ -38,6 +40,15 @@ public abstract class BaseMapObject {
     }
     public virtual void DestroyMapVisualGameObject() {
         Assert.IsNotNull(baseMapObjectVisual, $"Trying to destroy map visual of {this.ToString()} but map visual is null!");
+        if(baseMapObjectVisual.selectable is TileObject tileObject) {
+            List<Trait> traitOverrideFunctions = tileObject.traitContainer.GetTraitOverrideFunctions(TraitManager.Destroy_Map_Visual_Trait);
+            if (traitOverrideFunctions != null) {
+                for (int i = 0; i < traitOverrideFunctions.Count; i++) {
+                    Trait trait = traitOverrideFunctions[i];
+                    trait.OnDestroyMapObjectVisual(tileObject);
+                }
+            }
+        }
         ObjectPoolManager.Instance.DestroyObject(baseMapObjectVisual);
     }
     #endregion

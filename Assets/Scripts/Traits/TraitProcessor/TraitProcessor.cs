@@ -24,15 +24,21 @@ namespace Traits {
                 GameDate removeDate = GameManager.Instance.Today();
                 removeDate.AddTicks(duration);
                 string ticket = SchedulingManager.Instance.AddEntry(removeDate, () => traitable.traitContainer.RemoveTraitOnSchedule(traitable, trait), this);
-                traitable.traitContainer.AddScheduleTicket(trait.name, ticket);
+                traitable.traitContainer.AddScheduleTicket(trait.name, ticket, removeDate);
                 //trait.SetExpiryTicket(traitable, ticket);
             }
-            if (trait.hasOnCollideWith) {
-                traitable.traitContainer.AddOnCollideWithTrait(trait);
+            if(trait.traitOverrideFunctionIdentifiers != null && trait.traitOverrideFunctionIdentifiers.Count > 0) {
+                for (int i = 0; i < trait.traitOverrideFunctionIdentifiers.Count; i++) {
+                    string identifier = trait.traitOverrideFunctionIdentifiers[i];
+                    traitable.traitContainer.AddTraitOverrideFunction(identifier, trait);
+                }
             }
-            if (trait.hasOnEnterGridTile) {
-                traitable.traitContainer.AddOnEnterGridTileTrait(trait);
-            }
+            //if (trait.hasOnCollideWith) {
+            //    traitable.traitContainer.AddOnCollideWithTrait(trait);
+            //}
+            //if (trait.hasOnEnterGridTile) {
+            //    traitable.traitContainer.AddOnEnterGridTileTrait(trait);
+            //}
             Messenger.Broadcast(Signals.TRAITABLE_GAINED_TRAIT, traitable, trait);
         }
         protected void DefaultProcessOnRemoveTrait(ITraitable traitable, Trait trait, Character removedBy) {
@@ -44,12 +50,20 @@ namespace Traits {
             traitable.traitContainer.SwitchOffTrait(trait.name);
             UnapplyPOITraitInteractions(traitable, trait);
             trait.OnRemoveTrait(traitable, removedBy);
-            if (trait.hasOnCollideWith) {
-                traitable.traitContainer.RemoveOnCollideWithTrait(trait);
+
+            if (trait.traitOverrideFunctionIdentifiers != null && trait.traitOverrideFunctionIdentifiers.Count > 0) {
+                for (int i = 0; i < trait.traitOverrideFunctionIdentifiers.Count; i++) {
+                    string identifier = trait.traitOverrideFunctionIdentifiers[i];
+                    traitable.traitContainer.RemoveTraitOverrideFunction(identifier, trait);
+                }
             }
-            if (trait.hasOnEnterGridTile) {
-                traitable.traitContainer.RemoveOnEnterGridTileTrait(trait);
-            }
+
+            //if (trait.hasOnCollideWith) {
+            //    traitable.traitContainer.RemoveOnCollideWithTrait(trait);
+            //}
+            //if (trait.hasOnEnterGridTile) {
+            //    traitable.traitContainer.RemoveOnEnterGridTileTrait(trait);
+            //}
             Messenger.Broadcast(Signals.TRAITABLE_LOST_TRAIT, traitable, trait, removedBy);
         }
         protected bool DefaultProcessOnStackStatus(ITraitable traitable, Status status, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration) {
@@ -60,12 +74,11 @@ namespace Traits {
                 GameDate removeDate = GameManager.Instance.Today();
                 removeDate.AddTicks(duration);
                 string ticket = SchedulingManager.Instance.AddEntry(removeDate, () => traitable.traitContainer.RemoveTraitOnSchedule(traitable, status), this);
-                traitable.traitContainer.AddScheduleTicket(status.name, ticket);
+                traitable.traitContainer.AddScheduleTicket(status.name, ticket, removeDate);
                 //trait.SetExpiryTicket(traitable, ticket);
             }
             if(traitable.traitContainer.stacks[status.name] <= status.stackLimit) {
                 status.SetGainedFromDoing(gainedFromDoing);
-                status.AddCharacterResponsibleForTrait(characterResponsible);
                 status.AddCharacterResponsibleForTrait(characterResponsible);
                 status.OnStackStatus(traitable);
                 return true;

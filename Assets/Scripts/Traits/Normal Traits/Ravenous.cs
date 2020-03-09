@@ -13,7 +13,8 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
             isHidden = true;
-            hasOnCollideWith = true;
+            //hasOnCollideWith = true;
+            AddTraitOverrideFunctionIdentifier(TraitManager.Collision_Trait);
         }
 
         #region Overrides

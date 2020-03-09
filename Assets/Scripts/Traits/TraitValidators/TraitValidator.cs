@@ -19,8 +19,7 @@ namespace Traits {
             }
 
             bool checkUniqueness = true;
-            if(trait is Status) {
-                Status status = trait as Status;
+            if(trait is Status status) {
                 checkUniqueness = !status.isStacking;
             }
 
