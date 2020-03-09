@@ -35,6 +35,9 @@ namespace Traits {
         }
         public override void OnTraitRemoved(ITraitable traitable, Trait trait, Character removedBy) {
             Character character = traitable as Character;
+            if (trait is Status) {
+                UnapplyStatusEffects(character, trait as Status);
+            }
             UnapplyTraitEffects(character, trait);
             Messenger.Broadcast(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, character as IPointOfInterest);
             //UnapplyPOITraitInteractions(character, trait);

@@ -29,6 +29,7 @@ public class TileObjectInfoUI : InfoUIBase {
     [Space(10)]
     [Header("Characters")]
     [SerializeField] private Toggle charactersToggle;
+    [SerializeField] private TextMeshProUGUI charactersToggleLbl;
     [SerializeField] private GameObject characterItemPrefab;
     [SerializeField] private ScrollRect charactersScrollView;
     [SerializeField] private GameObject charactersGO;
@@ -88,6 +89,7 @@ public class TileObjectInfoUI : InfoUIBase {
         base.OpenMenu();
         Selector.Instance.Select(activeTileObject);
         UIManager.Instance.HideObjectPicker();
+        UpdateTabs();
         UpdateBasicInfo();
         UpdateInfo();
         UpdateTraits();
@@ -103,6 +105,17 @@ public class TileObjectInfoUI : InfoUIBase {
         }
         UpdateBasicInfo();
         UpdateInfo();
+    }
+    private void UpdateTabs() {
+        //Do not show Characters tab is Tile Object cannot have users/characters
+        if(activeTileObject.tileObjectType == TILE_OBJECT_TYPE.BED || activeTileObject.tileObjectType == TILE_OBJECT_TYPE.TABLE) {
+            charactersToggle.interactable = true;
+            charactersToggleLbl.gameObject.SetActive(true);
+        } else {
+            charactersToggle.isOn = false;
+            charactersToggle.interactable = false;
+            charactersToggleLbl.gameObject.SetActive(false);
+        }
     }
     private void UpdateBasicInfo() {
         nameLbl.text = activeTileObject.name;

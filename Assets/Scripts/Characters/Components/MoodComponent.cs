@@ -20,6 +20,8 @@ public class MoodComponent {
 	private bool _executeMoodChangeEffects;
 	private bool _isInMajorMentalBreak;
 	private bool _isInMinorMentalBreak;
+
+    private bool _hasMoodChanged;
 	
 	public Dictionary<string, int> moodModificationsSummary { get; }
 	public string mentalBreakName { get; private set; }
@@ -66,7 +68,8 @@ public class MoodComponent {
 	}
 	public void SetMoodValue(int amount) {
 		moodValue = amount;
-		OnMoodChanged();	
+        _hasMoodChanged = true;
+        //OnMoodChanged();
 	}
 	public void AddMoodEffect(int amount, IMoodModifier modifier) {
 		if (amount == 0) {
@@ -74,7 +77,8 @@ public class MoodComponent {
 		}
 		moodValue += amount;
 		AddModificationToSummary(modifier.moodModificationDescription, amount);
-		OnMoodChanged();	
+        _hasMoodChanged = true;
+        //OnMoodChanged();
 	}
 	public void RemoveMoodEffect(int amount, IMoodModifier modifier) {
 		if (amount == 0) {
@@ -82,8 +86,15 @@ public class MoodComponent {
 		}
 		moodValue += amount;
 		RemoveModificationFromSummary(modifier.moodModificationDescription, amount);
-		OnMoodChanged();	
+        _hasMoodChanged = true;
+        //OnMoodChanged();
 	}
+    public void OnTickEnded() {
+        if (_hasMoodChanged) {
+            _hasMoodChanged = false;
+            OnMoodChanged();
+        }
+    }
 
 	#region Loading
 	public void Load(SaveDataCharacter saveDataCharacter) {
