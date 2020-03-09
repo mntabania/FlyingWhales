@@ -1276,6 +1276,7 @@ MonoBehaviour:
   statusTraitsEventLbl: {fileID: 6563408774682569686}
   normalTraitsEventLbl: {fileID: 4998512069228996805}
   charactersToggle: {fileID: 114418289278751442}
+  charactersToggleLbl: {fileID: 114114885151453852}
   characterItemPrefab: {fileID: 1716271878575152, guid: 192605b2e90f468409baf06dedf19376,
     type: 3}
   charactersScrollView: {fileID: 114499114964743830}
@@ -5799,7 +5800,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   logItem: {fileID: 0}
   text: {fileID: 566517695369441822}
-  allowClickAction: 0
+  allowClickAction: 1
   hoverAction:
     m_PersistentCalls:
       m_Calls:
@@ -6494,7 +6495,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   logItem: {fileID: 0}
   text: {fileID: 3708341314893532759}
-  allowClickAction: 0
+  allowClickAction: 1
   hoverAction:
     m_PersistentCalls:
       m_Calls:

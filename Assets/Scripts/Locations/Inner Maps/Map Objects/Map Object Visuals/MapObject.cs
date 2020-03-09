@@ -1,5 +1,7 @@
 ﻿using Inner_Maps;
 using UnityEngine.Assertions;
+using System.Collections.Generic;
+using Traits;
 
 public abstract class MapObject<T> : BaseMapObject where T: IDamageable {
     public BaseCollisionTrigger<T> collisionTrigger {
@@ -18,6 +20,15 @@ public abstract class MapObject<T> : BaseMapObject where T: IDamageable {
         CreateMapObjectVisual();
         mapVisual.Initialize(obj);
         InitializeCollisionTrigger(obj);
+        if (mapVisual.selectable is TileObject tileObject) {
+            List<Trait> traitOverrideFunctions = tileObject.traitContainer.GetTraitOverrideFunctions(TraitManager.Initiate_Map_Visual_Trait);
+            if (traitOverrideFunctions != null) {
+                for (int i = 0; i < traitOverrideFunctions.Count; i++) {
+                    Trait trait = traitOverrideFunctions[i];
+                    trait.OnInitiateMapObjectVisual(tileObject);
+                }
+            }
+        }
     }
     #endregion
 

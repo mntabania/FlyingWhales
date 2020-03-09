@@ -29,6 +29,8 @@ namespace Traits {
             stackLimit = 5;
             stackModifier = 0.5f;
             SetLevel(1);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Initiate_Map_Visual_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Destroy_Map_Visual_Trait);
         }
 
         #region Overrides
@@ -81,6 +83,21 @@ namespace Traits {
                 ELEMENTAL_TYPE.Normal, true);
             }
         }
+        public override void OnInitiateMapObjectVisual(ITraitable traitable) {
+            if (traitable is IPointOfInterest poi) {
+                if (_poisonedEffect) {
+                    ObjectPoolManager.Instance.DestroyObject(_poisonedEffect);
+                    _poisonedEffect = null;
+                }
+                _poisonedEffect = GameManager.Instance.CreateParticleEffectAt(poi, PARTICLE_EFFECT.Poison, false);
+            }
+        }
+        public override void OnDestroyMapObjectVisual(ITraitable traitable) {
+            if (_poisonedEffect) {
+                ObjectPoolManager.Instance.DestroyObject(_poisonedEffect);
+                _poisonedEffect = null;
+            }
+        }
         #endregion
 
         #region Aware Characters
@@ -108,14 +125,14 @@ namespace Traits {
             }
             if (addedTo is TileObject tileObject) {
                 if (tileObject is GenericTileObject) {
-                    tileObject.gridTileLocation.parentMap.SetUpperGroundVisual(tileObject.gridTileLocation.localPlace, 
-                        InnerMapManager.Instance.assetManager.poisonRuleTile);
+                    tileObject.gridTileLocation.parentMap.SetUpperGroundVisual(tileObject.gridTileLocation.localPlace, InnerMapManager.Instance.assetManager.poisonRuleTile);
                 }
             }
         }
         private void UpdateVisualsOnRemove(ITraitable removedFrom) {
             if(_poisonedEffect != null) {
                 ObjectPoolManager.Instance.DestroyObject(_poisonedEffect);
+                _poisonedEffect = null;
             }
             if (removedFrom is TileObject tileObject) {
                 if (tileObject is GenericTileObject) {

@@ -167,7 +167,7 @@ namespace EZObjectPools
         /// <returns>Returns true if an object was successfully retrieved, False if not.</returns>
         public bool TryGetNextObject(Vector3 pos, Quaternion rot, out GameObject obj)
         {
-            if (ObjectList.Count == 0)
+            if (ObjectList == null) //ObjectList.Count == 0
             {
                 throw new Exception(
                     $"EZ Object Pool {PoolName}, the pool has not been instantiated but you are trying to retrieve an object!");
@@ -254,10 +254,12 @@ namespace EZObjectPools
             GameObject g = (GameObject)Instantiate(Template);
             g.transform.SetParent(transform);
 
-            PooledObject p = g.GetComponent<PooledObject>();
+            PooledObject[] p = g.GetComponents<PooledObject>();
 
-            if (p)
-                p.ParentPool = this;
+            if (p != null && p.Length > 0)
+                for (int i = 0; i < p.Length; i++) {
+                    p[i].ParentPool = this;
+                } 
             else
                 g.AddComponent<PooledObject>().ParentPool = this;
 

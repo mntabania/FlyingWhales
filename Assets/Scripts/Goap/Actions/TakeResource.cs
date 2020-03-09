@@ -197,6 +197,7 @@ public class TakeResource : GoapAction {
             // carrier.ownParty.AddPOI(newPile);
             carrier.CarryPOI(newPile);
             carrier.ShowItemVisualCarryingPOI(newPile);
+            TraitManager.Instance.CopyStatuses(pile, newPile);
             pile.AdjustResourceInPile(-amount);
         } else {
             carrier.ShowItemVisualCarryingPOI(pile);

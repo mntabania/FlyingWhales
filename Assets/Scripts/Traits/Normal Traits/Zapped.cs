@@ -15,13 +15,16 @@ namespace Traits {
             hindersMovement = true;
             hindersWitness = true;
             hindersPerform = true;
-            hasOnEnterGridTile = true;
+            //hasOnEnterGridTile = true;
+            AddTraitOverrideFunctionIdentifier(TraitManager.Enter_Grid_Tile_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Initiate_Map_Visual_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Destroy_Map_Visual_Trait);
         }
 
         #region Overrides
         public override void OnAddTrait(ITraitable sourcePOI) {
-            if(sourcePOI is IPointOfInterest) {
-                electricEffectGO = GameManager.Instance.CreateParticleEffectAt(sourcePOI as IPointOfInterest, PARTICLE_EFFECT.Electric);
+            if(sourcePOI is IPointOfInterest poi) {
+                electricEffectGO = GameManager.Instance.CreateParticleEffectAt(poi, PARTICLE_EFFECT.Electric);
             }
             if (sourcePOI is Character) {
                 Character character = sourcePOI as Character;
@@ -44,6 +47,7 @@ namespace Traits {
         public override void OnRemoveTrait(ITraitable sourcePOI, Character removedBy) {
             if (electricEffectGO != null) {
                 ObjectPoolManager.Instance.DestroyObject(electricEffectGO);
+                electricEffectGO = null;
             }
             if (sourcePOI is Character) {
                 Character character = sourcePOI as Character;
@@ -58,6 +62,21 @@ namespace Traits {
         public override void OnEnterGridTile(IPointOfInterest poiWhoEntered, IPointOfInterest owner) {
             if (!poiWhoEntered.traitContainer.HasTrait("Zapped")) {
                 poiWhoEntered.traitContainer.AddTrait(poiWhoEntered as ITraitable, "Zapped");
+            }
+        }
+        public override void OnInitiateMapObjectVisual(ITraitable traitable) {
+            if (traitable is IPointOfInterest poi) {
+                if (electricEffectGO) {
+                    ObjectPoolManager.Instance.DestroyObject(electricEffectGO);
+                    electricEffectGO = null;
+                }
+                electricEffectGO = GameManager.Instance.CreateParticleEffectAt(poi, PARTICLE_EFFECT.Electric);
+            }
+        }
+        public override void OnDestroyMapObjectVisual(ITraitable traitable) {
+            if (electricEffectGO) {
+                ObjectPoolManager.Instance.DestroyObject(electricEffectGO);
+                electricEffectGO = null;
             }
         }
         #endregion

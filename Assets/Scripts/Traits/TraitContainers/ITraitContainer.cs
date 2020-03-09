@@ -12,8 +12,10 @@ namespace Traits {
         List<Trait> allTraitsAndStatuses { get; }
         List<Status> statuses { get; }
         List<Trait> traits { get; }
-        List<Trait> onCollideWithTraits { get; }
-        List<Trait> onEnterGridTileTraits { get; }
+        //List<Trait> onCollideWithTraits { get; }
+        //List<Trait> onEnterGridTileTraits { get; }
+        Dictionary<string, List<Trait>> traitOverrideFunctions { get; }
+        Dictionary<string, List<TraitRemoveSchedule>> scheduleTickets { get; }
         Dictionary<string, int> stacks { get; }
         //Dictionary<Trait, int> currentDurations { get; }
         //List<RelationshipTrait> relationshipTraits { get; }
@@ -22,17 +24,18 @@ namespace Traits {
         bool AddTrait(ITraitable addTo, string traitName, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null, bool bypassElementalChance = false, int overrideDuration = -1);
         bool AddTrait(ITraitable addTo, Trait trait, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null, bool bypassElementalChance = false, int overrideDuration = -1);
         bool AddTrait(ITraitable addTo, string traitName, out Trait trait, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null, bool bypassElementalChance = false, int overrideDuration = -1);
-        void AddOnCollideWithTrait(Trait trait);
-        bool RemoveOnCollideWithTrait(Trait trait);
-        void AddOnEnterGridTileTrait(Trait trait);
-        bool RemoveOnEnterGridTileTrait(Trait trait);
+        void AddTraitOverrideFunction(string identifier, Trait trait);
+        void RemoveTraitOverrideFunction(string identifier, Trait trait);
+        //void AddOnCollideWithTrait(Trait trait);
+        //bool RemoveOnCollideWithTrait(Trait trait);
+        //void AddOnEnterGridTileTrait(Trait trait);
+        //bool RemoveOnEnterGridTileTrait(Trait trait);
         #endregion
 
         #region Removing
         bool RemoveTrait(ITraitable removeFrom, Trait trait, Character removedBy = null, bool bySchedule = false);
         //void RemoveTraitAndStacks(ITraitable removeFrom, Trait trait, Character removedBy = null, bool bySchedule = false);
         void RemoveStatusAndStacks(ITraitable removeFrom, string name, Character removedBy = null, bool bySchedule = false);
-
         bool RemoveTrait(ITraitable removeFrom, string traitName, Character removedBy = null, bool bySchedule = false);
         bool RemoveTrait(ITraitable removeFrom, int index, Character removedBy = null);
         void RemoveTrait(ITraitable removeFrom, List<Trait> traits);
@@ -52,6 +55,7 @@ namespace Traits {
         bool HasTraitOf(TRAIT_EFFECT traitEffect);
         List<Trait> GetAllTraitsOf(TRAIT_TYPE type);
         List<Trait> GetAllTraitsOf(TRAIT_TYPE type, TRAIT_EFFECT effect);
+        List<Trait> GetTraitOverrideFunctions(string identifier);
         #endregion
 
         #region Processes
@@ -61,7 +65,7 @@ namespace Traits {
         #endregion
         
         #region Schedule Ticket
-        void AddScheduleTicket(string traitName, string ticket);
+        void AddScheduleTicket(string traitName, string ticket, GameDate removeDate);
         void RemoveScheduleTicket(string traitName, bool bySchedule);
         #endregion
         

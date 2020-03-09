@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Traits {
-    public class Edible : Status {
+    public class Edible : Trait {
 
         private IPointOfInterest owner;
         //private int fullnessProvided;
@@ -11,7 +11,7 @@ namespace Traits {
         public Edible() {
             name = "Edible";
             description = "This can be eaten.";
-            type = TRAIT_TYPE.STATUS;
+            type = TRAIT_TYPE.NEUTRAL;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT };

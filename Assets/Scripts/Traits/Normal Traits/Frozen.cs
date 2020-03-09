@@ -19,13 +19,15 @@ namespace Traits {
             hindersMovement = true;
             hindersPerform = true;
             hindersWitness = true;
+            AddTraitOverrideFunctionIdentifier(TraitManager.Initiate_Map_Visual_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Destroy_Map_Visual_Trait);
         }
 
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
-            if(addedTo is IPointOfInterest) {
-                _frozenEffect = GameManager.Instance.CreateParticleEffectAt(addedTo as IPointOfInterest, PARTICLE_EFFECT.Frozen, false);
+            if(addedTo is IPointOfInterest poi) {
+                _frozenEffect = GameManager.Instance.CreateParticleEffectAt(poi, PARTICLE_EFFECT.Frozen, false);
             }
             if (addedTo is Character) {
                 Character character = addedTo as Character;
@@ -39,6 +41,7 @@ namespace Traits {
             base.OnRemoveTrait(removedFrom, removedBy);
             if(_frozenEffect) {
                 ObjectPoolManager.Instance.DestroyObject(_frozenEffect);
+                _frozenEffect = null;
             }
             if (removedFrom is Character) {
                 Character character = removedFrom as Character;
@@ -46,6 +49,21 @@ namespace Traits {
                 character.needsComponent.AdjustDoNotGetHungry(-1);
                 character.needsComponent.AdjustDoNotGetTired(-1);
                 character.needsComponent.AdjustDoNotGetUncomfortable(-1);
+            }
+        }
+        public override void OnInitiateMapObjectVisual(ITraitable traitable) {
+            if (traitable is IPointOfInterest poi) {
+                if (_frozenEffect) {
+                    ObjectPoolManager.Instance.DestroyObject(_frozenEffect);
+                    _frozenEffect = null;
+                }
+                _frozenEffect = GameManager.Instance.CreateParticleEffectAt(poi, PARTICLE_EFFECT.Frozen, false);
+            }
+        }
+        public override void OnDestroyMapObjectVisual(ITraitable traitable) {
+            if (_frozenEffect) {
+                ObjectPoolManager.Instance.DestroyObject(_frozenEffect);
+                _frozenEffect = null;
             }
         }
         #endregion

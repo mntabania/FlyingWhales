@@ -3243,6 +3243,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     protected virtual void OnTickEnded() {
         ProcessForcedCancelJobsOnTickEnded();
+        moodComponent.OnTickEnded();
         interruptComponent.OnTickEnded();
         stateComponent.OnTickEnded();
         ProcessTraitsOnTickEnded();

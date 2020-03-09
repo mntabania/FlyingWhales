@@ -382,8 +382,12 @@ namespace Inner_Maps {
                 charactersHere.Add(character);
             // }
             if(genericTileObject != null) {
-                for (int i = 0; i < genericTileObject.traitContainer.onEnterGridTileTraits.Count; i++) {
-                    genericTileObject.traitContainer.onEnterGridTileTraits[i].OnEnterGridTile(character, genericTileObject);
+                List<Trait> traitOverrideFunctions = genericTileObject.traitContainer.GetTraitOverrideFunctions(TraitManager.Enter_Grid_Tile_Trait);
+                if (traitOverrideFunctions != null) {
+                    for (int i = 0; i < traitOverrideFunctions.Count; i++) {
+                        Trait trait = traitOverrideFunctions[i];
+                        trait.OnEnterGridTile(character, genericTileObject);
+                    }
                 }
             }
         }

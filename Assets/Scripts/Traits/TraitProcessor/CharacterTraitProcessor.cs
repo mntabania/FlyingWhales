@@ -35,7 +35,7 @@ namespace Traits {
         }
         public override void OnTraitRemoved(ITraitable traitable, Trait trait, Character removedBy) {
             Character character = traitable as Character;
-            if(trait is Status status) {
+            if (trait is Status status) {
                 UnapplyStatusEffects(character, status);
             }
             UnapplyTraitEffects(character, trait);

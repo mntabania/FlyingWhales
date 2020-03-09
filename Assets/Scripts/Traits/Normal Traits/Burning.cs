@@ -22,6 +22,8 @@ namespace Traits {
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(1);
             moodEffect = -25;
             _burningSpreadChoices = new List<ITraitable>();
+            AddTraitOverrideFunctionIdentifier(TraitManager.Initiate_Map_Visual_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Destroy_Map_Visual_Trait);
         }
 
         #region Overrides
@@ -53,8 +55,9 @@ namespace Traits {
             base.OnRemoveTrait(removedFrom, removedBy);
             SetDouser(null); //reset douser so that any signals related to that will be removed.
             Messenger.RemoveListener(Signals.TICK_ENDED, PerTickEnded);
-            if(burningEffect != null) {
+            if (burningEffect) {
                 ObjectPoolManager.Instance.DestroyObject(burningEffect);
+                burningEffect = null;
             }
             if (removedFrom is IPointOfInterest) {
                 if (removedFrom is Character character) {
@@ -104,6 +107,21 @@ namespace Traits {
                     goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Burning", out var trait);
                     (trait as Burning)?.SetSourceOfBurning(sourceOfBurning, goapNode.actor);
                 }
+            }
+        }
+        public override void OnInitiateMapObjectVisual(ITraitable traitable) {
+            if (traitable is IPointOfInterest poi) {
+                if (burningEffect) {
+                    ObjectPoolManager.Instance.DestroyObject(burningEffect);
+                    burningEffect = null;
+                }
+                burningEffect = GameManager.Instance.CreateParticleEffectAt(poi, PARTICLE_EFFECT.Burning, false);
+            }
+        }
+        public override void OnDestroyMapObjectVisual(ITraitable traitable) {
+            if (burningEffect) {
+                ObjectPoolManager.Instance.DestroyObject(burningEffect);
+                burningEffect = null;
             }
         }
         #endregion

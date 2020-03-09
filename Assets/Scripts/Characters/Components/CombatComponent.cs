@@ -32,8 +32,8 @@ public class CombatComponent {
     #region Fight or Flight
     public void FightOrFlight(IPointOfInterest target, bool isLethal = true) {
         string debugLog = $"FIGHT or FLIGHT response of {owner.name} against {target.nameWithID}";
-        if (!owner.canMove) {
-            debugLog += "\n-Character cannot move, will not fight or flight";
+        if (!owner.canPerform || !owner.canMove) {
+            debugLog += "\n-Character cannot move/perform, will not fight or flight";
             owner.logComponent.PrintLogIfActive(debugLog);
             return;
         }

@@ -206,6 +206,7 @@ public class DepositResourcePile : GoapAction {
                     pileToBeDepositTo.SetMapObjectState(MAP_OBJECT_STATE.BUILT);
                 }
                 pileToBeDepositTo.AdjustResourceInPile(poiTarget.resourceInPile);
+                TraitManager.Instance.CopyStatuses(poiTarget, pileToBeDepositTo);
                 actor.UncarryPOI(poiTarget, addToLocation: false);
             } else {
                 actor.UncarryPOI(poiTarget);

@@ -17,6 +17,7 @@ public class ObjectPoolManager : MonoBehaviour {
 
     public List<GoapNode> goapNodesPool { get; private set; }
     public List<OpinionData> opinionDataPool { get; private set; }
+    public List<TraitRemoveSchedule> traitRemoveSchedulePool { get; private set; }
 
     private void Awake() {
         Instance = this;
@@ -25,17 +26,18 @@ public class ObjectPoolManager : MonoBehaviour {
     public void InitializeObjectPools() {
         for (int i = 0; i < UIPrefabs.Length; i++) {
             GameObject currPrefab = UIPrefabs[i];
-            EZObjectPool newUIPool = CreateNewPool(currPrefab, currPrefab.name, 1, true, true, false); //100
+            EZObjectPool newUIPool = CreateNewPool(currPrefab, currPrefab.name, 0, true, true, false); //100
             newUIPool.transform.SetParent(UIObjectPoolParent.transform, false);
         }
 
         for (int i = 0; i < otherPrefabs.Length; i++) {
             GameObject currPrefab = otherPrefabs[i];
-            CreateNewPool(currPrefab, currPrefab.name, 1, true, true, false); //50
+            CreateNewPool(currPrefab, currPrefab.name, 0, true, true, false); //50
         }
 
         ConstructGoapNodes();
         ConstructOpinionDataPool();
+        ConstructTraitRemoveSchedulePool();
     }
 
     public GameObject InstantiateObjectFromPool(string poolName, Vector3 position, Quaternion rotation, Transform parent = null, bool isWorldPosition = false) {
@@ -66,17 +68,22 @@ public class ObjectPoolManager : MonoBehaviour {
     }
 
     public void DestroyObject(PooledObject pooledObject) {
+        PooledObject[] pooledObjects = pooledObject.GetComponents<PooledObject>();
         Messenger.Broadcast(Signals.POOLED_OBJECT_DESTROYED, pooledObject.gameObject);
         pooledObject.SendObjectBackToPool();
-        pooledObject.Reset();
+        for (int i = 0; i < pooledObjects.Length; i++) {
+            pooledObjects[i].Reset();
+        }
         pooledObject.transform.SetParent(pooledObject.ParentPool.transform);
     }
     public void DestroyObject(GameObject gameObject) {
-        PooledObject pooledObject = gameObject.GetComponent<PooledObject>(); 
-        Messenger.Broadcast(Signals.POOLED_OBJECT_DESTROYED, pooledObject.gameObject);
-        pooledObject.SendObjectBackToPool();
-        pooledObject.Reset();
-        pooledObject.transform.SetParent(pooledObject.ParentPool.transform);
+        PooledObject[] pooledObjects = gameObject.GetComponents<PooledObject>();
+        Messenger.Broadcast(Signals.POOLED_OBJECT_DESTROYED, gameObject);
+        pooledObjects[0].SendObjectBackToPool();
+        for (int i = 0; i < pooledObjects.Length; i++) {
+            pooledObjects[i].Reset();
+        }
+        pooledObjects[0].transform.SetParent(pooledObjects[0].ParentPool.transform);
     }
 
     public EZObjectPool CreateNewPool(GameObject template, string poolName, int size, bool autoResize, bool instantiateImmediate, bool shared) {
@@ -141,6 +148,29 @@ public class ObjectPoolManager : MonoBehaviour {
             return data;
         }
         return new OpinionData();
+    }
+    #endregion
+
+    #region Trait Remove Schedule
+    private void ConstructTraitRemoveSchedulePool() {
+        traitRemoveSchedulePool = new List<TraitRemoveSchedule>();
+    }
+    public TraitRemoveSchedule CreateNewTraitRemoveSchedule() {
+        TraitRemoveSchedule data = GetTraitRemoveScheduleFromPool();
+        data.Initialize();
+        return data;
+    }
+    public void ReturnTraitRemoveScheduleToPool(TraitRemoveSchedule data) {
+        data.Reset();
+        traitRemoveSchedulePool.Add(data);
+    }
+    private TraitRemoveSchedule GetTraitRemoveScheduleFromPool() {
+        if (traitRemoveSchedulePool.Count > 0) {
+            TraitRemoveSchedule data = traitRemoveSchedulePool[0];
+            traitRemoveSchedulePool.RemoveAt(0);
+            return data;
+        }
+        return new TraitRemoveSchedule();
     }
     #endregion
 }
