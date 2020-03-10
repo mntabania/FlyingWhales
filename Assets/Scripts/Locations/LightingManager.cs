@@ -29,18 +29,20 @@ public class LightingManager : MonoBehaviour {
         float targetLight;
         switch (timeInWords) {
             case TIME_IN_WORDS.MORNING:
+                targetLight = 0.7f;
+                break;
             case TIME_IN_WORDS.AFTERNOON:
             case TIME_IN_WORDS.LUNCH_TIME:
                 targetLight = 1f;
                 break;
             case TIME_IN_WORDS.EARLY_NIGHT:
-                targetLight = 0.8f;
-                break;
-            case TIME_IN_WORDS.LATE_NIGHT:
                 targetLight = 0.4f;
                 break;
+            case TIME_IN_WORDS.LATE_NIGHT:
+                targetLight = 0.2f;
+                break;
             case TIME_IN_WORDS.AFTER_MIDNIGHT:
-                targetLight = 0.6f;
+                targetLight = 0.4f;
                 break;
             default:
                 throw new System.Exception($"There was no light setting for time of day {timeInWords.ToString()}");

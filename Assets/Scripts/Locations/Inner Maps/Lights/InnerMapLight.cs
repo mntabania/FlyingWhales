@@ -1,6 +1,7 @@
 ﻿using System;
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.Experimental.Rendering.Universal;
 using Random = UnityEngine.Random;
 
@@ -8,7 +9,9 @@ using Random = UnityEngine.Random;
 public class InnerMapLight : MonoBehaviour{
 
     [SerializeField] private Light2D _light;
+    [SerializeField] private TimeOfDayLightDictionary _timeOfDayLightDictionary;
     private Tweener _flickerTweener;
+    
     
     private void OnEnable() {
         Messenger.AddListener<TIME_IN_WORDS>(Signals.UPDATE_INNER_MAP_LIGHT, UpdateLightBasedOnTimeOfDay);
@@ -19,23 +22,9 @@ public class InnerMapLight : MonoBehaviour{
     }
     
     private void UpdateLightBasedOnTimeOfDay(TIME_IN_WORDS timeInWords) {
-        float targetLight;
-        switch (timeInWords) {
-            case TIME_IN_WORDS.MORNING:
-            case TIME_IN_WORDS.AFTERNOON:
-            case TIME_IN_WORDS.LUNCH_TIME:
-                targetLight = 0f;
-                break;
-            case TIME_IN_WORDS.EARLY_NIGHT:
-                targetLight = 0.5f;
-                break;
-            case TIME_IN_WORDS.LATE_NIGHT:
-            case TIME_IN_WORDS.AFTER_MIDNIGHT:
-                targetLight = 0.7f;
-                break;
-            default:
-                throw new System.Exception($"There was no light setting for time of day {timeInWords.ToString()}");
-        }
+        Assert.IsTrue(_timeOfDayLightDictionary.ContainsKey(timeInWords), 
+            $"There was no light setting for time of day {timeInWords.ToString()} for {name}");
+        float targetLight = _timeOfDayLightDictionary[timeInWords];
         Tweener lightTween = DOTween.To(SetLightIntensity, _light.intensity, targetLight, 1f);
         // if (timeInWords == TIME_IN_WORDS.EARLY_NIGHT || timeInWords == TIME_IN_WORDS.LATE_NIGHT || timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
         //     lightTween.OnComplete(StartFlicker);
@@ -53,4 +42,25 @@ public class InnerMapLight : MonoBehaviour{
     private void SetLightIntensity(float intensity) {
         _light.intensity = intensity;
     }
+    
+    /*
+     * 
+        
+        switch (timeInWords) {
+            case TIME_IN_WORDS.MORNING:
+            case TIME_IN_WORDS.AFTERNOON:
+            case TIME_IN_WORDS.LUNCH_TIME:
+                targetLight = 0f;
+                break;
+            case TIME_IN_WORDS.EARLY_NIGHT:
+                targetLight = 0.5f;
+                break;
+            case TIME_IN_WORDS.LATE_NIGHT:
+            case TIME_IN_WORDS.AFTER_MIDNIGHT:
+                targetLight = 0.7f;
+                break;
+            default:
+                throw new System.Exception(");
+        }
+     */
 }

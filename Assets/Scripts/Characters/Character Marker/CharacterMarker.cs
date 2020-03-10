@@ -901,11 +901,11 @@ public class CharacterMarker : MapObjectVisual<Character> {
     private void UpdateHairVisuals() {
         Sprite hair = CharacterManager.Instance.GetMarkerHairSprite(character.gender);
         hairImg.sprite = hair;
-        hairImg.materials = new Material[] { CharacterManager.Instance.spriteLightingMaterial, character.visuals.hairMaterial };
-        
+        hairImg.materials = new[] { CharacterManager.Instance.spriteLightingMaterial, character.visuals.hairMaterial };
+
         Sprite knockoutHair = CharacterManager.Instance.GetMarkerKnockedOutHairSprite(character.gender);
         knockedOutHairImg.sprite = knockoutHair;
-        knockedOutHairImg.materials = new Material[] { CharacterManager.Instance.spriteLightingMaterial, character.visuals.hairMaterial };
+        knockedOutHairImg.materials = new[] { CharacterManager.Instance.spriteLightingMaterial, character.visuals.hairMaterial };
     }
     public void UpdateMarkerVisuals() {
         UpdateHairVisuals();

@@ -63,6 +63,8 @@ public class WallAssetDictionary : SerializableDictionary<string, WallAsset> { }
 public class ParticleEffectAssetDictionary : SerializableDictionary<PARTICLE_EFFECT, GameObject> { }
 [System.Serializable]
 public class ProjectileDictionary : SerializableDictionary<ELEMENTAL_TYPE, GameObject> { }
+[System.Serializable]
+public class TimeOfDayLightDictionary : SerializableDictionary<TIME_IN_WORDS, float> { }
 
 //List storage
 [System.Serializable]

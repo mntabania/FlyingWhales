@@ -29,26 +29,7 @@ public class Bed : TileObject {
 
     #region Overrides
     public override string ToString() {
-        return $"Bed {id}";
-    }
-    public virtual void OnClickAction() {
-        //base.OnClickAction();
-        //cycle through characters in bed, and show the chosen characters ui
-        if (UIManager.Instance.characterInfoUI.isShowing) {
-            if (IsInThisBed(UIManager.Instance.characterInfoUI.activeCharacter)) {
-                Character nextCharacter = GetNextCharacterInCycle(UIManager.Instance.characterInfoUI.activeCharacter);
-                UIManager.Instance.ShowCharacterInfo(nextCharacter, true);
-            } else {
-                if (GetActiveUserCount() > 0) {
-                    UIManager.Instance.ShowCharacterInfo(GetNextCharacterInCycle(null), true);
-                }
-            }
-        } else {
-            if (GetActiveUserCount() > 0) {
-                UIManager.Instance.ShowCharacterInfo(GetNextCharacterInCycle(null), true);
-            }
-        }
-
+        return $"Bed {id.ToString()}";
     }
     public override void SetPOIState(POI_STATE state) {
         base.SetPOIState(state);
