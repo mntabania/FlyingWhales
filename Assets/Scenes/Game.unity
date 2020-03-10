@@ -81359,6 +81359,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1921633473}
     m_Modifications:
+    - target: {fileID: 3114202025907171022, guid: a5e38a1c0f4cf764698c91f21e0b770b,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 058fa73248a1d0748b4e5e7a604f0db6, type: 2}
     - target: {fileID: 3859612406367583784, guid: a5e38a1c0f4cf764698c91f21e0b770b,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -81443,6 +81448,21 @@ PrefabInstance:
         type: 3}
       propertyPath: ShapeModule.m_Scale.x
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6636118774457748660, guid: a5e38a1c0f4cf764698c91f21e0b770b,
+        type: 3}
+      propertyPath: InitialModule.startColor.maxColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6636118774457748660, guid: a5e38a1c0f4cf764698c91f21e0b770b,
+        type: 3}
+      propertyPath: InitialModule.startColor.maxColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6636118774457748660, guid: a5e38a1c0f4cf764698c91f21e0b770b,
+        type: 3}
+      propertyPath: InitialModule.startColor.maxColor.b
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9083413578797307271, guid: a5e38a1c0f4cf764698c91f21e0b770b,
         type: 3}
@@ -89103,6 +89123,14 @@ MonoBehaviour:
   _particleSystems:
   - {fileID: 1454975115}
   - {fileID: 1454975116}
+  _biomeHighlightColor:
+    m_keys: 0000000001000000030000000400000002000000
+    m_values:
+    - {fileID: 2100000, guid: f363f8a6d07fd3c40a74ba0fc2dddfbd, type: 2}
+    - {fileID: 2100000, guid: 058fa73248a1d0748b4e5e7a604f0db6, type: 2}
+    - {fileID: 2100000, guid: f4ab649cc0ed0884c8aa05051c6dea4a, type: 2}
+    - {fileID: 2100000, guid: f363f8a6d07fd3c40a74ba0fc2dddfbd, type: 2}
+    - {fileID: 2100000, guid: 058fa73248a1d0748b4e5e7a604f0db6, type: 2}
 --- !u!1 &1564374992
 GameObject:
   m_ObjectHideFlags: 0
