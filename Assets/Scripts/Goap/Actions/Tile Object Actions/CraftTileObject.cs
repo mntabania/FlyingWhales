@@ -28,9 +28,11 @@ public class CraftTileObject : GoapAction {
         log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(obj.tileObjectType.ToString()), LOG_IDENTIFIER.ITEM_1);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
-        string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
+        string costLog = $"\n{name} {target.nameWithID}:";
+        int cost = UtilityScripts.Utilities.rng.Next(150, 201);
+        costLog += $" +{cost}(Initial)";
         actor.logComponent.AppendCostLog(costLog);
-        return 10;
+        return cost;
     }
     public override void OnStopWhileStarted(ActualGoapNode node) {
         base.OnStopWhileStarted(node);

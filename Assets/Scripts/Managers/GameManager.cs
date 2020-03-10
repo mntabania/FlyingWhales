@@ -502,13 +502,13 @@ public class GameManager : MonoBehaviour {
             go.transform.localPosition = Vector3.zero;
             go.SetActive(true);
         } else {
-            if (poi.gridTileLocation == null) { // || poi.mapObjectVisual == null
-                return null;
-            }
             if (poi.mapObjectVisual) {
                 go = ObjectPoolManager.Instance.InstantiateObjectFromPool(prefab.name, Vector3.zero, Quaternion.identity, poi.mapObjectVisual.transform);
                 go.transform.localPosition = Vector3.zero;
             } else {
+                if (poi.gridTileLocation == null) { // || poi.mapObjectVisual == null
+                    return null;
+                }
                 go = ObjectPoolManager.Instance.InstantiateObjectFromPool(prefab.name, Vector3.zero, Quaternion.identity, poi.gridTileLocation.parentMap.objectsParent);
                 go.transform.localPosition = poi.gridTileLocation.centeredLocalLocation;
             }
