@@ -6,17 +6,13 @@ using UnityEngine.EventSystems;
 
 public class TileObjectGameObject : MapObjectVisual<TileObject> {
     
-    [SerializeField] private Sprite bed1Sleeping;
-    [SerializeField] private Sprite bed2Sleeping;
-    
     private System.Func<bool> _isMenuShowing;
 
     public override void Initialize(TileObject tileObject) {
         base.Initialize(tileObject);
         this.name = tileObject.ToString();
-        bool isCorrupted = false;
         if (tileObject.gridTileLocation != null) {
-            isCorrupted = tileObject.gridTileLocation.isCorrupted;
+            var isCorrupted = tileObject.gridTileLocation.isCorrupted;
             SetVisual(InnerMapManager.Instance.GetTileObjectAsset(tileObject, 
                 tileObject.state, 
                 tileObject.structureLocation.location.coreTile.biomeType,
@@ -24,12 +20,12 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
         } else {
             SetVisual(InnerMapManager.Instance.GetTileObjectAsset(tileObject,
                 tileObject.state,
-                isCorrupted));
+                false));
         }
 
         collisionTrigger = this.transform.GetComponentInChildren<TileObjectCollisionTrigger>();
         if (collisionTrigger == null) {
-            Debug.LogError("NO COLLISION TRIGGER FOR " + tileObject.nameWithID);
+            Debug.LogError($"NO COLLISION TRIGGER FOR {tileObject.nameWithID}");
         }
         _isMenuShowing = () => IsMenuShowing(tileObject);
         UpdateSortingOrders(tileObject);
@@ -61,34 +57,14 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
     
     
     public override void UpdateTileObjectVisual(TileObject tileObject) {
-        if (tileObject is Bed bed) {
-            UpdateBedVisual(bed); //TODO: Transfer this to it's own object
-        } else {
-            SetVisual(InnerMapManager.Instance.GetTileObjectAsset(tileObject, 
-                tileObject.state, 
-                tileObject.structureLocation.location.coreTile.biomeType,
-                tileObject.gridTileLocation?.isCorrupted ?? false));
-        }
-        
-    }
-
-    private void UpdateBedVisual(Bed bed) {
-        int userCount = bed.GetActiveUserCount();
-        if (userCount == 0) {
-            SetVisual(InnerMapManager.Instance.GetTileObjectAsset(bed, 
-                bed.state, 
-                bed.structureLocation.location.coreTile.biomeType,
-                bed.gridTileLocation?.isCorrupted ?? false));
-        } else if (userCount == 1) {
-            SetVisual(bed1Sleeping);
-        } else if (userCount == 2) {
-            SetVisual(bed2Sleeping);
-        }
+        SetVisual(InnerMapManager.Instance.GetTileObjectAsset(tileObject, 
+            tileObject.state, 
+            tileObject.structureLocation.location.coreTile.biomeType,
+            tileObject.gridTileLocation?.isCorrupted ?? false));
     }
 
     public override void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) {
         this.SetRotation(furnitureSetting.rotation.z);
-        //this.OverrideVisual(furnitureSetting.assetToUse);
     }
 
     #region Inquiry

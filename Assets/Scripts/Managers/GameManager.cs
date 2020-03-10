@@ -133,12 +133,13 @@ public class GameManager : MonoBehaviour {
         Messenger.Broadcast(Signals.MONTH_START); //for the first month
         Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyDown);
         //TimerHubUI.Instance.AddItem("Until Divine Intervention", 4320, null);
+        Messenger.Broadcast(Signals.UPDATE_INNER_MAP_LIGHT, GetCurrentTimeInWordsOfTick());
     }
     public GameDate Today() {
         return new GameDate(month, days, year, tick);
     }
     public string TodayLogString() {
-        return $"[{continuousDays} - {ConvertTickToTime(tick)}] ";
+        return $"[{continuousDays.ToString()} - {ConvertTickToTime(tick)}] ";
     }
     public GameDate EndOfTheMonth() {
         return new GameDate(month, daysPerMonth, year, ticksPerDay);

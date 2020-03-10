@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class CharacterVisuals {
-    private static readonly int HsvaAdjust = Shader.PropertyToID("_HSVAAdjust");
+    public static readonly int HsvaAdjust = Shader.PropertyToID("_HSVAAdjust");
 
     private Character _owner;
     
