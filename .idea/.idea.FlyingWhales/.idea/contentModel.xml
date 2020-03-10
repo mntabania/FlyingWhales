@@ -1787,6 +1787,7 @@
             <e p="PlayerJobData.cs" t="Include" />
             <e p="SeizeComponent.cs" t="Include" />
             <e p="Summons" t="Include">
+              <e p="Abomination.cs" t="Include" />
               <e p="Ent.cs" t="Include" />
               <e p="FireElemental.cs" t="Include" />
               <e p="GiantSpider.cs" t="Include" />

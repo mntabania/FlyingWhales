@@ -708,23 +708,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
             knockedOutHairImg.color = Color.white;
         }
     }
-    // [Header("Chaos Orb Tester")]
-    // [SerializeField] private GameObject chaosOrbPrefab;
-    // [SerializeField] private int chaosOrbQuantity;
-    // [ContextMenu("Spew Chaos Orb")]
-    // public void SpewChaosOrb() {
-    //     CreateChaosOrbsAt(this.transform.position, chaosOrbQuantity);
-    // }
-    // private void CreateChaosOrbsAt(Vector3 worldPos, int amount) {
-    //     for (int i = 0; i < amount; i++) {
-    //         GameObject chaosOrbGO = GameObject.Instantiate(chaosOrbPrefab, Vector3.zero, 
-    //             Quaternion.identity, this.transform);
-    //         chaosOrbGO.transform.position = worldPos;
-    //         ChaosOrb chaosOrb = chaosOrbGO.GetComponent<ChaosOrb>();
-    //         chaosOrb.Initialize();    
-    //     }
-    //     // Debug.Log($"Created {amount.ToString()} chaos orbs at {mapLocation.location.name}. Position {worldPos.ToString()}");
-    // }
+    [ContextMenu("Force Update Visuals")]
+    public void ForceUpdateVisuals() {
+        character.visuals.UpdateAllVisuals(character);
+    }
     #endregion
 
     #region Animation

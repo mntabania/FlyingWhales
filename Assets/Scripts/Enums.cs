@@ -56,6 +56,7 @@ public enum RACE{
     KOBOLD,
     MIMIC,
     ENT,
+    ABOMINATION
 }
 public enum HEXTILE_DIRECTION {
     NORTH_WEST,
@@ -1384,6 +1385,7 @@ public enum SUMMON_TYPE { None, Wolf, Skeleton, Golem, Succubus, Incubus, ThiefS
     Mimic,
     Ent,
     Small_Spider,
+    Abomination
 }
 public enum ARTIFACT_TYPE { None, Grasping_Hands, Snatching_Hands, Abominable_Heart, Dark_Matter, Looking_Glass, Black_Scripture, False_Gem, Naga_Eyes, Tormented_Chalice, Lightning_Rod }
 public enum ABILITY_TAG { NONE, MAGIC, SUPPORT, DEBUFF, CRIME, PHYSICAL, }
