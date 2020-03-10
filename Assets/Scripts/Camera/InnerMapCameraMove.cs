@@ -4,6 +4,7 @@ using Inner_Maps;
 using Ruinarch;
 using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
+using DG.Tweening;
 
 public class InnerMapCameraMove : MonoBehaviour {
 
@@ -49,12 +50,7 @@ public class InnerMapCameraMove : MonoBehaviour {
     [SerializeField] private bool cameraControlEnabled = false;
     [SerializeField] private float xSeeLimit;
 
-    public float shakeTime;
-    public float shakeStrengthX;
-    public float shakeStrengthY;
-    public float shakeStrengthZ;
-    public int shakeVibrato;
-    public float shakeRandomness;
+    public Tweener innerMapCameraShakeMeteorTween { get; private set; }
 
     #region getters/setters
     public Transform target {
@@ -452,6 +448,24 @@ public class InnerMapCameraMove : MonoBehaviour {
     }
     public void ShakeCamera() {
         cameraShake.PlayShake();
+    }
+    #endregion
+
+    #region Meteor
+    public void MeteorShake() {
+        if (!DOTween.IsTweening(innerMapsCamera)) {
+            innerMapCameraShakeMeteorTween = innerMapsCamera.DOShakeRotation(0.8f, new Vector3(8f, 8f, 0f), 35, fadeOut: false);
+            innerMapCameraShakeMeteorTween.OnComplete(OnTweenComplete);
+        } else {
+            //if(innerMapCameraShakeMeteorTween != null) {
+            //    innerMapCameraShakeMeteorTween.ChangeEndValue(new Vector3(8f, 8f, 0f), 0.8f);
+            //}
+        }
+    }
+    private void OnTweenComplete() {
+        //InnerMapCameraMove.Instance.innerMapsCamera.transform.rotation = Quaternion.Euler(new Vector3(0f,0f,0f));
+        innerMapsCamera.transform.DORotate(new Vector3(0f, 0f, 0f), 0.2f);
+        innerMapCameraShakeMeteorTween = null;
     }
     #endregion
 }

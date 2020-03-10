@@ -86,12 +86,19 @@ public class MeteorParticleEffect : BaseParticleEffect {
             //    }
             //}
         }
-        Tweener tween = InnerMapCameraMove.Instance.innerMapsCamera.DOShakeRotation(0.8f, new Vector3(7f, 7f, 7f), 25);
-        tween.OnComplete(OnTweenComplete);
+        //if (!DOTween.IsTweening(InnerMapCameraMove.Instance.innerMapsCamera)) {
+        //    Tweener tween = InnerMapCameraMove.Instance.innerMapsCamera.DOShakeRotation(0.8f, new Vector3(8f, 8f, 0f), 25);
+        //    tween.OnComplete(OnTweenComplete);
+        //}
+        //else {
+
+        //}
+        InnerMapCameraMove.Instance.MeteorShake();
         GameManager.Instance.StartCoroutine(ExpireCoroutine(gameObject));
     }
     private void OnTweenComplete() {
-        InnerMapCameraMove.Instance.innerMapsCamera.transform.rotation = Quaternion.Euler(new Vector3(0f,0f,0f));
+        //InnerMapCameraMove.Instance.innerMapsCamera.transform.rotation = Quaternion.Euler(new Vector3(0f,0f,0f));
+        InnerMapCameraMove.Instance.innerMapsCamera.transform.DORotate(new Vector3(0f, 0f, 0f), 0.2f);
     }
     private IEnumerator ExpireCoroutine(GameObject go) {
         yield return new WaitForSeconds(2f);
