@@ -63,7 +63,7 @@ namespace Traits {
                     character.AddOverrideThought(thoughtText);
                 }
                 if (elementalType != ELEMENTAL_TYPE.Normal) {
-                    character.combatComponent.SetElementalDamage(elementalType);
+                    character.combatComponent.SetElementalType(elementalType);
                 }
             }
             if (level == 0) {
@@ -84,18 +84,19 @@ namespace Traits {
                     character.RemoveOverrideThought(thoughtText);
                 }
                 if (elementalType != ELEMENTAL_TYPE.Normal) {
-                    bool hasSetElementalTrait = false;
-                    for (int i = 0; i < character.traitContainer.traits.Count; i++) {
-                        Trait currTrait = character.traitContainer.traits[i];
-                        if(currTrait.elementalType != ELEMENTAL_TYPE.Normal) {
-                            character.combatComponent.SetElementalDamage(elementalType);
-                            hasSetElementalTrait = true;
-                            break;
-                        }
-                    }
-                    if (!hasSetElementalTrait) {
-                        character.combatComponent.SetElementalDamage(ELEMENTAL_TYPE.Normal);
-                    }
+                    character.combatComponent.UpdateElementalType();
+                    //bool hasSetElementalTrait = false;
+                    //for (int i = 0; i < character.traitContainer.traits.Count; i++) {
+                    //    Trait currTrait = character.traitContainer.traits[i];
+                    //    if(currTrait.elementalType != ELEMENTAL_TYPE.Normal) {
+                    //        character.combatComponent.SetElementalType(elementalType);
+                    //        hasSetElementalTrait = true;
+                    //        break;
+                    //    }
+                    //}
+                    //if (!hasSetElementalTrait) {
+                    //    character.combatComponent.SetElementalType(ELEMENTAL_TYPE.Normal);
+                    //}
                 }
             }
         }

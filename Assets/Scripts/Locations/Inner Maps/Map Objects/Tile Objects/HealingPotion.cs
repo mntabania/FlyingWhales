@@ -5,13 +5,15 @@ using UnityEngine;
 public class HealingPotion : TileObject {
 
     public HealingPotion() {
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
-        Initialize(TILE_OBJECT_TYPE.HEALING_POTION);
-        //RemoveCommonAdvertisements();
-        RemoveAdvertisedAction(INTERACTION_TYPE.REPAIR);
+        Initialize(TILE_OBJECT_TYPE.HEALING_POTION, false);
+        AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
+        AddAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
+        AddAdvertisedAction(INTERACTION_TYPE.SCRAP);
     }
     public HealingPotion(SaveDataTileObject data) {
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
-        Initialize(data);
+        Initialize(data, false);
+        AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
+        AddAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
+        AddAdvertisedAction(INTERACTION_TYPE.SCRAP);
     }
 }

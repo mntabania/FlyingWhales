@@ -8,13 +8,15 @@ public class TreeObject : TileObject {
     public int yield { get; private set; }
     
     public TreeObject() {
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CHOP_WOOD, INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.REPAIR };
-        Initialize(TILE_OBJECT_TYPE.TREE_OBJECT);
+        Initialize(TILE_OBJECT_TYPE.TREE_OBJECT, false);
+        AddAdvertisedAction(INTERACTION_TYPE.CHOP_WOOD);
+        AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         SetYield(100);
     }
     public TreeObject(SaveDataTileObject data) {
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CHOP_WOOD, INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.REPAIR };
-        Initialize(data);
+        Initialize(data, false);
+        AddAdvertisedAction(INTERACTION_TYPE.CHOP_WOOD);
+        AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
     }
 
     public override string ToString() {

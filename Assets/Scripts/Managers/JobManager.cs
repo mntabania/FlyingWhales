@@ -78,6 +78,11 @@ public class JobManager : MonoBehaviour {
         job.Initialize(jobType, state, targetRegion, owner);
         return job;
     }
+    public CharacterStateJob CreateNewCharacterStateJob(JOB_TYPE jobType, CHARACTER_STATE state, IPointOfInterest targetPOI, IJobOwner owner) {
+        CharacterStateJob job = GetCharacterStateJobFromPool();
+        job.Initialize(jobType, state, targetPOI, owner);
+        return job;
+    }
     public CharacterStateJob CreateNewCharacterStateJob(JOB_TYPE jobType, CHARACTER_STATE state, IJobOwner owner) {
         CharacterStateJob job = GetCharacterStateJobFromPool();
         job.Initialize(jobType, state, owner);

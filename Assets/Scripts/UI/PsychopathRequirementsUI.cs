@@ -19,11 +19,11 @@ public class PsychopathRequirementsUI : MonoBehaviour {
     private List<string> criteriaClasses = new List<string>() { "Peasant", "Miner", "Craftsman", "Archer", "Stalker", "Hunter", "Druid", "Shaman"
         , "Mage", "Knight", "Barbarian", "Marauder", "Noble" };
     private List<string> criteriaTraits = new List<string>() { "Accident Prone", "Agoraphobic", "Drunkard", "Ambitious", "Authoritative", "Cannibal"
-        , "Chaste", "Coward", "Diplomatic", "Healer", "Elemental Master", "Evil"
+        , "Chaste", "Coward", "Diplomatic", "Healing Expert", "Evil"
         , "Fast", "Fireproof", "Glutton", "Hothead", "Inspiring", "Kleptomaniac"
         , "Lazy", "Lustful", "Lycanthrope", "Music Hater", "Music Lover", "Narcoleptic"
         , "Nocturnal", "Optimist", "Pessimist", "Psychopath", "Purifier", "Pyrophobic"
-        , "Robust", "Suspicious", "Treacherous", "Ugly", "Unfaithful", "Vampiric", "Vigilant" };
+        , "Robust", "Suspicious", "Treacherous", "Ugly", "Unfaithful", "Vampiric", "Vigilant" }; //, "Elemental Master"
 
 
     public void ShowRequirementsUI() {

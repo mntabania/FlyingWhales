@@ -13,23 +13,23 @@ namespace Traits {
 		}
 
 		#region Overrides
-		public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
-			if (targetPOI is TornadoTileObject) {
-				if (characterThatWillDoJob.stateComponent.currentState is CombatState 
-				    && characterThatWillDoJob.combatComponent.avoidInRange.Count > 0) {
-					if (characterThatWillDoJob.combatComponent.combatMode == COMBAT_MODE.Aggressive) {
-						characterThatWillDoJob.combatComponent.Flight(targetPOI, "saw a tornado");
-					}
-				} else {
-					if(!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.SNUFF_TORNADO, targetPOI)) {
-						GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SNUFF_TORNADO,
-							INTERACTION_TYPE.SNUFF_TORNADO, targetPOI, characterThatWillDoJob);
-						characterThatWillDoJob.jobQueue.AddJobInQueue(job);
-					}	
-				}
-			}
-			return base.OnSeePOI(targetPOI, characterThatWillDoJob);
-		}
+		//public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
+		//	if (targetPOI is TornadoTileObject) {
+		//		if (characterThatWillDoJob.stateComponent.currentState is CombatState 
+		//		    && characterThatWillDoJob.combatComponent.avoidInRange.Count > 0) {
+		//			if (characterThatWillDoJob.combatComponent.combatMode == COMBAT_MODE.Aggressive) {
+		//				characterThatWillDoJob.combatComponent.Flight(targetPOI, "saw a tornado");
+		//			}
+		//		} else {
+		//			if(!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.NEUTRALIZE_DANGER, targetPOI)) {
+		//				GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.NEUTRALIZE_DANGER,
+		//					INTERACTION_TYPE.NEUTRALIZE, targetPOI, characterThatWillDoJob);
+		//				characterThatWillDoJob.jobQueue.AddJobInQueue(job);
+		//			}
+		//		}
+		//	}
+		//	return base.OnSeePOI(targetPOI, characterThatWillDoJob);
+		//}
 		#endregion
 		
 	}

@@ -118,7 +118,7 @@ public class Puke : GoapAction {
     //                this.recipient = recipient;
     //            }
     //            if (status == SHARE_INTEL_STATUS.INFORMED) {
-    //                if(recipient.traitContainer.GetNormalTrait<Trait>("Healer") != null) {
+    //                if(recipient.traitContainer.GetNormalTrait<Trait>("Healing Expert") != null) {
     //                    //- if informed: "I'm a doctor. I should help [Actor Name]."
     //                    reactions.Add(string.Format("I'm a doctor. I should help {0}.", recipient.name));
     //                } else {
@@ -252,7 +252,7 @@ public class Puke : GoapAction {
     //        if (character.faction.id == FactionManager.Instance.neutralFaction.id) {
     //            return character.race == targetCharacter.race && character.homeNpcSettlement == targetCharacter.homeNpcSettlement && !targetCharacter.HasRelationshipOfTypeWith(character, RELATIONSHIP_TRAIT.ENEMY);
     //        }
-    //        return !character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.ENEMY) && character.traitContainer.GetNormalTrait<Trait>("Healer") != null;
+    //        return !character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.ENEMY) && character.traitContainer.GetNormalTrait<Trait>("Healing Expert") != null;
     //    }
     //    return false;
     //}

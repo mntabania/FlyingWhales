@@ -1007,6 +1007,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             OnUpdateCharacterClass();
             Messenger.Broadcast(Signals.CHARACTER_CLASS_CHANGE, this, previousClass, _characterClass);
         }
+        combatComponent.UpdateElementalType();
     }
     #endregion
 

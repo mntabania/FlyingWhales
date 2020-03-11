@@ -358,7 +358,7 @@ namespace Inner_Maps {
                     summary = $"{summary}{baseMapObject.GetAdditionalTestingData()}";
                 }
                 summary = $"{summary}\n\tAdvertised Actions: ";
-                summary = poi.advertisedActions.Count > 0 ? poi.advertisedActions.Aggregate(summary, (current, t) => $"{current}|{t.ToString()}|") : $"{summary}None";
+                summary = poi.advertisedActions != null && poi.advertisedActions.Count > 0 ? poi.advertisedActions.Aggregate(summary, (current, t) => $"{current}|{t.ToString()}|") : $"{summary}None";
                 
                 summary = $"{summary}\n\tObject Traits: ";
                 summary = poi.traitContainer.allTraitsAndStatuses.Count > 0 ? poi.traitContainer.allTraitsAndStatuses.Aggregate(summary, (current, t) => $"{current}\n\t\t- {t.name} - {t.GetTestingData(poi)}") : $"{summary}None";

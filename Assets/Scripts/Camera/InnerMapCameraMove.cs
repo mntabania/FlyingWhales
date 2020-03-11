@@ -456,11 +456,12 @@ public class InnerMapCameraMove : MonoBehaviour {
         if (!DOTween.IsTweening(innerMapsCamera)) {
             innerMapCameraShakeMeteorTween = innerMapsCamera.DOShakeRotation(0.8f, new Vector3(8f, 8f, 0f), 35, fadeOut: false);
             innerMapCameraShakeMeteorTween.OnComplete(OnTweenComplete);
-        } else {
+        } 
+        //else {
             //if(innerMapCameraShakeMeteorTween != null) {
             //    innerMapCameraShakeMeteorTween.ChangeEndValue(new Vector3(8f, 8f, 0f), 0.8f);
             //}
-        }
+        //}
     }
     private void OnTweenComplete() {
         //InnerMapCameraMove.Instance.innerMapsCamera.transform.rotation = Quaternion.Euler(new Vector3(0f,0f,0f));

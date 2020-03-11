@@ -8,13 +8,18 @@ public class EdiblePlant : TileObject {
     private const int Replenishment_Countdown = 96;
 
     public EdiblePlant() {
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.HARVEST_PLANT };
-        Initialize(TILE_OBJECT_TYPE.EDIBLE_PLANT);
+        //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.HARVEST_PLANT };
+        Initialize(TILE_OBJECT_TYPE.EDIBLE_PLANT, false);
+        AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
+        AddAdvertisedAction(INTERACTION_TYPE.HARVEST_PLANT);
+
         traitContainer.AddTrait(this, "Edible");
     }
     public EdiblePlant(SaveDataTileObject data) {
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.HARVEST_PLANT };
-        Initialize(data);
+        //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.HARVEST_PLANT };
+        Initialize(data, false);
+        AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
+        AddAdvertisedAction(INTERACTION_TYPE.HARVEST_PLANT);
         traitContainer.AddTrait(this, "Edible");
     }
 

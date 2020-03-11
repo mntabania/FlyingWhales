@@ -6,15 +6,17 @@ using UnityEngine;
 public class MetalPile : ResourcePile {
 
     public MetalPile() : base(RESOURCE.METAL) {
-        Initialize(TILE_OBJECT_TYPE.METAL_PILE);
+        Initialize(TILE_OBJECT_TYPE.METAL_PILE, false);
+        AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         //SetResourceInPile(50);
         traitContainer.RemoveTrait(this, "Flammable");
         SetResourceInPile(100);
     }
     public MetalPile(SaveDataTileObject data) : base(RESOURCE.METAL) {
-        Initialize(data);
+        Initialize(data, false);
+        AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
     }
-    
+
     //public override void AdjustResourceInPile(int adjustment) {
     //    base.AdjustResourceInPile(adjustment);
     //    if (adjustment < 0) {

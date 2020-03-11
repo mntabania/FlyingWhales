@@ -7,9 +7,10 @@ public sealed class PoisonCloudTileObject : MovingTileObject {
     private PoisonCloudMapObjectVisual _poisonCloudVisual;
     
     public PoisonCloudTileObject() {
-        Initialize(TILE_OBJECT_TYPE.POISON_CLOUD);
+        Initialize(TILE_OBJECT_TYPE.POISON_CLOUD, false);
+        AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         traitContainer.RemoveTrait(this, "Flammable");
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
+        traitContainer.AddTrait(this, "Dangerous");
     }
     
     protected override void CreateMapObjectVisual() {
@@ -25,5 +26,8 @@ public sealed class PoisonCloudTileObject : MovingTileObject {
         }
         tile = null;
         return false;
+    }
+    public override void Neutralize() {
+        _poisonCloudVisual.Expire();
     }
 }

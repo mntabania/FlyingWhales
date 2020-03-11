@@ -54,7 +54,7 @@ public class CharacterStateComponent {
 
     //This switches from one state to another
     //If the character is not in a state right now, this simply starts a new state instead of switching
-    public CharacterState SwitchToState(CHARACTER_STATE state, Character targetCharacter = null, NPCSettlement targetNpcSettlement = null, int durationOverride = -1, int level = 1) {
+    public CharacterState SwitchToState(CHARACTER_STATE state, IPointOfInterest targetPOI = null, int durationOverride = -1) {
         //Cannot switch state is has negative disabler
         if(!character.canPerform) { //character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
             return null;
@@ -108,6 +108,7 @@ public class CharacterStateComponent {
         if (durationOverride != -1) {
             newState.ChangeDuration(durationOverride);
         }
+        newState.SetTargetPOI(targetPOI);
         //newState.SetStartStateAction(startStateAction);
         //newState.SetEndStateAction(endStateAction);
         //newState.SetOtherDataOnStartState(otherData);
@@ -283,6 +284,9 @@ public class CharacterStateComponent {
                 break;
             case CHARACTER_STATE.DOUSE_FIRE:
                 newState = new DouseFireState(this);
+                break;
+            case CHARACTER_STATE.FOLLOW:
+                newState = new FollowState(this);
                 break;
         }
         return newState;

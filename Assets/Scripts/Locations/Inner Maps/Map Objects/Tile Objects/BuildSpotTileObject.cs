@@ -9,14 +9,18 @@ public class BuildSpotTileObject : TileObject {
     public BuildingSpot spot { get; private set; }
 
     public BuildSpotTileObject() {
-        Initialize(TILE_OBJECT_TYPE.BUILD_SPOT_TILE_OBJECT);
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PLACE_BLUEPRINT, INTERACTION_TYPE.BUILD_STRUCTURE, };
+        Initialize(TILE_OBJECT_TYPE.BUILD_SPOT_TILE_OBJECT, false);
+        AddAdvertisedAction(INTERACTION_TYPE.PLACE_BLUEPRINT);
+        AddAdvertisedAction(INTERACTION_TYPE.BUILD_STRUCTURE);
+        //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PLACE_BLUEPRINT, INTERACTION_TYPE.BUILD_STRUCTURE, };
         traitContainer.RemoveTrait(this, "Flammable");
     }
     public BuildSpotTileObject(SaveDataTileObject data) {
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PLACE_BLUEPRINT, INTERACTION_TYPE.BUILD_STRUCTURE, };
-        Initialize(data);
-        RemoveCommonAdvertisements();
+        //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PLACE_BLUEPRINT, INTERACTION_TYPE.BUILD_STRUCTURE, };
+        Initialize(data, false);
+        AddAdvertisedAction(INTERACTION_TYPE.PLACE_BLUEPRINT);
+        AddAdvertisedAction(INTERACTION_TYPE.BUILD_STRUCTURE);
+        //RemoveCommonAdvertisements();
         traitContainer.RemoveTrait(this, "Flammable");
     }
 

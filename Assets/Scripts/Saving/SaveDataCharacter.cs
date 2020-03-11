@@ -386,13 +386,13 @@ public class SaveDataCharacter {
             //if (currentState.targetAreaID != -1) {
             //    targetNpcSettlement = LandmarkManager.Instance.GetAreaByID(currentState.targetAreaID);
             //}
-            CharacterState loadedState = character.stateComponent.SwitchToState(currentState.characterState, targetCharacter, targetNpcSettlement, currentState.duration, currentState.level);
-            loadedState.SetCurrentDuration(currentState.currentDuration);
-            //loadedState.SetIsUnending(currentState.isUnending);
+            //CharacterState loadedState = character.stateComponent.SwitchToState(currentState.characterState, targetCharacter, targetNpcSettlement, currentState.duration, currentState.level);
+            //loadedState.SetCurrentDuration(currentState.currentDuration);
+            ////loadedState.SetIsUnending(currentState.isUnending);
 
-            if (currentState.isPaused) {
-                loadedState.PauseState();
-            }
+            //if (currentState.isPaused) {
+            //    loadedState.PauseState();
+            //}
         }
     }
 

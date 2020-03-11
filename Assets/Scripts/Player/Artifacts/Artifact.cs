@@ -17,9 +17,11 @@ public class Artifact : TileObject {
     public Artifact(ARTIFACT_TYPE type) {
         data = ScriptableObjectsManager.Instance.GetArtifactData(type);
         // TILE_OBJECT_TYPE parsed = (TILE_OBJECT_TYPE) Enum.Parse(typeof(TILE_OBJECT_TYPE), type.ToString(), true);
-        advertisedActions = new List<INTERACTION_TYPE>();
-        Initialize(TILE_OBJECT_TYPE.ARTIFACT);
-        RemoveAdvertisedAction(INTERACTION_TYPE.REPAIR);
+        //advertisedActions = new List<INTERACTION_TYPE>();
+        Initialize(TILE_OBJECT_TYPE.ARTIFACT, false);
+        AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
+        AddAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
+        //RemoveAdvertisedAction(INTERACTION_TYPE.REPAIR);
     }
     //public Artifact(SaveDataArtifactSlot data) {
     //    this.type = data.type;
@@ -30,8 +32,10 @@ public class Artifact : TileObject {
     //}
     public Artifact(SaveDataArtifact data) {
         this.data = ScriptableObjectsManager.Instance.GetArtifactData(data.artifactType);
-        advertisedActions = new List<INTERACTION_TYPE>();
-        Initialize(data);
+        //advertisedActions = new List<INTERACTION_TYPE>();
+        Initialize(data, false);
+        AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
+        AddAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
     }
 
     #region Overrides

@@ -36,6 +36,7 @@ public class ClassPanelUI : MonoBehaviour {
     public Dropdown accessoriesOptions;
     public Dropdown traitOptions;
 
+    public Dropdown elementalTypeOptions;
     public Dropdown combatPositionOptions;
     public Dropdown combatTargetOptions;
     public Dropdown attackTypeOptions;
@@ -125,6 +126,7 @@ public class ClassPanelUI : MonoBehaviour {
         _traitNames = new List<string>();
 
         recruitmentCostInput.text = "0";
+        elementalTypeOptions.ClearOptions();
         combatPositionOptions.ClearOptions();
         combatTargetOptions.ClearOptions();
         attackTypeOptions.ClearOptions();
@@ -135,6 +137,7 @@ public class ClassPanelUI : MonoBehaviour {
         jobTypeOptions.ClearOptions();
         recruitmentCostOptions.ClearOptions();
 
+        string[] elementalTypes = System.Enum.GetNames(typeof(ELEMENTAL_TYPE));
         string[] combatPositions = System.Enum.GetNames(typeof(COMBAT_POSITION));
         string[] combatTargets = System.Enum.GetNames(typeof(COMBAT_TARGET));
         string[] attackTypes = System.Enum.GetNames(typeof(ATTACK_TYPE));
@@ -145,6 +148,7 @@ public class ClassPanelUI : MonoBehaviour {
         string[] jobs = System.Enum.GetNames(typeof(JOB));
         string[] cost = System.Enum.GetNames(typeof(CURRENCY));
 
+        elementalTypeOptions.AddOptions(elementalTypes.ToList());
         combatPositionOptions.AddOptions(combatPositions.ToList());
         combatTargetOptions.AddOptions(combatTargets.ToList());
         attackTypeOptions.AddOptions(attackTypes.ToList());
@@ -184,6 +188,7 @@ public class ClassPanelUI : MonoBehaviour {
         armorsOptions.value = 0;
         accessoriesOptions.value = 0;
         traitOptions.value = 0;
+        elementalTypeOptions.value = 0;
         combatPositionOptions.value = 0;
         combatTargetOptions.value = 0;
         attackTypeOptions.value = 0;
@@ -281,6 +286,7 @@ public class ClassPanelUI : MonoBehaviour {
         runSpeedModInput.text = characterClass.runSpeedMod.ToString();
         walkSpeedModInput.text = characterClass.walkSpeedMod.ToString();
 
+        elementalTypeOptions.value = GetDropdownIndex(elementalTypeOptions, characterClass.elementalType.ToString());
         combatPositionOptions.value = GetDropdownIndex(combatPositionOptions, characterClass.combatPosition.ToString());
         combatTargetOptions.value = GetDropdownIndex(combatTargetOptions, characterClass.combatTarget.ToString());
         attackTypeOptions.value = GetDropdownIndex(attackTypeOptions, characterClass.attackType.ToString());

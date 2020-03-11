@@ -37,8 +37,8 @@ public class TraitManager : MonoBehaviour {
         // "AccidentProne",
         "Wet", "Character Trait", "Nocturnal", "Herbalist", "Hardworking", "Glutton", "Suspicious", "Narcoleptic", "Hothead",
         "Inspiring", "Pyrophobic", "Angry", "Drunkard", "Pessimist", "Lazy", "Coward", "Berserked", "Catatonic", "Griefstricken", "Heartbroken", "Cultist",
-        //"Disillusioned",
-        "Chaste", "Lustful", "Edible", "Elemental Master", "Paralyzed", "Malnourished", "Withdrawal", "Suicidal", "Criminal", "Dazed", "Hiding", "Bored", "Overheating",
+        //"Disillusioned", "Elemental Master"
+        "Chaste", "Lustful", "Edible", "Paralyzed", "Malnourished", "Withdrawal", "Suicidal", "Criminal", "Dazed", "Hiding", "Bored", "Overheating",
         "Freezing", "Frozen", "Ravenous", "Feeble", "Forlorn", "Accident Prone", "Disoriented", "Consumable",
         "Fire Prone", "Electric", "Venomous",
         };
@@ -55,7 +55,7 @@ public class TraitManager : MonoBehaviour {
     public readonly string[] traitPool = new string[] { "Vigilant", "Diplomatic",
         "Fireproof", "Accident Prone", "Unfaithful", "Drunkard", "Music Lover", "Music Hater", "Ugly", "Blessed", "Nocturnal",
         "Herbalist", "Optimist", "Pessimist", "Fast", "Chaste", "Lustful", "Coward", "Lazy", "Hardworking", "Glutton", "Robust", "Suspicious" , "Inspiring", "Pyrophobic",
-        "Narcoleptic", "Hothead", "Evil", "Treacherous", "Ambitious", "Authoritative", "Healer", "Fire Prone", "Electric", "Venomous"
+        "Narcoleptic", "Hothead", "Evil", "Treacherous", "Ambitious", "Authoritative", "Fire Prone", "Electric", "Venomous"
     };
     //"Kleptomaniac","Curious", "Craftsman", "Disillusioned",
     public List<string> buffTraitPool { get; private set; }
@@ -217,6 +217,16 @@ public class TraitManager : MonoBehaviour {
                 CopyTraitOrStatus(status, from, to);
             }
         }
+    }
+    public string GetNeutralizingTraitFor(TileObject tileObject) {
+        if(tileObject is TornadoTileObject) {
+            return "Wind Master";
+        } else if (tileObject is LocustSwarmTileObject) {
+            return "Beastmaster";
+        } else if (tileObject is PoisonCloudTileObject) {
+            return "Poison Expert";
+        }
+        return string.Empty;
     }
     #endregion
 

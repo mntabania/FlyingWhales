@@ -4,10 +4,10 @@ public class WaterBasin : TileObject{
     
     public WaterBasin() {
         Initialize(TILE_OBJECT_TYPE.WATER_BASIN);
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
+        //AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
     }
     public WaterBasin(SaveDataTileObject data) {
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
         Initialize(data);
+        //AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
     }
 }

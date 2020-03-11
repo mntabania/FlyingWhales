@@ -298,7 +298,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 						       OpinionComponent.Rival, OpinionComponent.Enemy) == false 
 					       && isResponsibleForTrait == false
                            && !character.traitContainer.HasTrait("Psychopath")
-                           && character.traitContainer.HasTrait("Healer");	
+                           && character.traitContainer.HasTrait("Healing Expert");	
 				}
 				
 				return isHostile == false &&

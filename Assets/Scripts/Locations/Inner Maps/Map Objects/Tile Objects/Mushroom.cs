@@ -8,14 +8,14 @@ public class Mushroom : TileObject {
     private const int Replenishment_Countdown = 96;
 
     public Mushroom() {
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT, };
-        Initialize(TILE_OBJECT_TYPE.MUSHROOM);
+        Initialize(TILE_OBJECT_TYPE.MUSHROOM, false);
+        AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         traitContainer.AddTrait(this, "Edible");
     }
 
     public Mushroom(SaveDataTileObject data) {
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT, };
-        Initialize(data);
+        Initialize(data, false);
+        AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         traitContainer.AddTrait(this, "Edible");
     }
 

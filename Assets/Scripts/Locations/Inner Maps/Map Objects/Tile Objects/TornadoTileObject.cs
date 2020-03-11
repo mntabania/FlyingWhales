@@ -11,8 +11,10 @@ public class TornadoTileObject : MovingTileObject {
     private TornadoMapObjectVisual _tornadoMapObjectVisual;
     
     public TornadoTileObject() {
-        advertisedActions = new List<INTERACTION_TYPE>(){ INTERACTION_TYPE.SNUFF_TORNADO };
-        Initialize(TILE_OBJECT_TYPE.TORNADO);
+        //advertisedActions = new List<INTERACTION_TYPE>(){ INTERACTION_TYPE.NEUTRALIZE };
+        Initialize(TILE_OBJECT_TYPE.TORNADO, false);
+        AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
+        traitContainer.AddTrait(this, "Dangerous");
         traitContainer.RemoveTrait(this, "Flammable");
     }
     protected override void CreateMapObjectVisual() {
@@ -20,15 +22,14 @@ public class TornadoTileObject : MovingTileObject {
         _tornadoMapObjectVisual = mapVisual as TornadoMapObjectVisual;
         Assert.IsNotNull(_tornadoMapObjectVisual, $"Map Object Visual of {this} is null!");
     }
-
+    public override void Neutralize() {
+        _tornadoMapObjectVisual.Expire();
+    }
     public void SetRadius(int radius) {
         this.radius = radius;
     }
     public void SetDuration(int duration) {
         this.durationInTicks = duration;
-    }
-    public void ForceExpire() {
-        _tornadoMapObjectVisual.Expire();
     }
     public void OnExpire() {
         Messenger.Broadcast<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, this, null, base.gridTileLocation);

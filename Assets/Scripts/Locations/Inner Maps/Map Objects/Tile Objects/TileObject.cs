@@ -71,7 +71,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public Faction factionOwner => characterOwner?.faction;
     #endregion
 
-    protected void Initialize(TILE_OBJECT_TYPE tileObjectType) {
+    protected void Initialize(TILE_OBJECT_TYPE tileObjectType, bool shouldAddCommonAdvertisements = true) {
         id = UtilityScripts.Utilities.SetID(this);
         this.tileObjectType = tileObjectType;
         name = GenerateName();
@@ -83,13 +83,15 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         CreateTraitContainer();
         traitContainer.AddTrait(this, "Flammable");
         ConstructResources();
-        AddCommonAdvertisements();
+        if (shouldAddCommonAdvertisements) {
+            AddCommonAdvertisements();
+        }
         ConstructDefaultActions();
         logComponent = new LogComponent(this);
         InnerMapManager.Instance.AddTileObject(this);
         SubscribeListeners();
     }
-    protected void Initialize(SaveDataTileObject data) {
+    protected void Initialize(SaveDataTileObject data, bool shouldAddCommonAdvertisements = true) {
         id = UtilityScripts.Utilities.SetID(this, data.id);
         tileObjectType = data.tileObjectType;
         new List<string>();
@@ -97,7 +99,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         owners = new List<Character>();
         hasCreatedSlots = false;
         CreateTraitContainer();
-        AddCommonAdvertisements();
+        if (shouldAddCommonAdvertisements) {
+            AddCommonAdvertisements();
+        }
         ConstructResources();
         ConstructDefaultActions();
         logComponent = new LogComponent(this);
@@ -106,21 +110,21 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     }
     private void AddCommonAdvertisements() {
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
-        AddAdvertisedAction(INTERACTION_TYPE.POISON);
-        AddAdvertisedAction(INTERACTION_TYPE.REMOVE_POISON);
+        //AddAdvertisedAction(INTERACTION_TYPE.POISON);
+        //AddAdvertisedAction(INTERACTION_TYPE.REMOVE_POISON);
         AddAdvertisedAction(INTERACTION_TYPE.REPAIR);
-        AddAdvertisedAction(INTERACTION_TYPE.SCRAP);
-        AddAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
-        AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
+        //AddAdvertisedAction(INTERACTION_TYPE.SCRAP);
+        //AddAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
+        //AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
     }
     protected void RemoveCommonAdvertisements() {
         RemoveAdvertisedAction(INTERACTION_TYPE.ASSAULT);
-        RemoveAdvertisedAction(INTERACTION_TYPE.POISON);
-        RemoveAdvertisedAction(INTERACTION_TYPE.REMOVE_POISON);
+        //RemoveAdvertisedAction(INTERACTION_TYPE.POISON);
+        //RemoveAdvertisedAction(INTERACTION_TYPE.REMOVE_POISON);
         RemoveAdvertisedAction(INTERACTION_TYPE.REPAIR);
-        RemoveAdvertisedAction(INTERACTION_TYPE.SCRAP);
-        RemoveAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
-        RemoveAdvertisedAction(INTERACTION_TYPE.PICK_UP);
+        //RemoveAdvertisedAction(INTERACTION_TYPE.SCRAP);
+        //RemoveAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
+        //RemoveAdvertisedAction(INTERACTION_TYPE.PICK_UP);
     }
 
     #region Listeners
@@ -329,6 +333,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         return false;
     }
     protected virtual string GenerateName() { return UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(tileObjectType.ToString()); }
+    public virtual void Neutralize() { }
     #endregion
 
     #region IPointOfInterest
@@ -363,7 +368,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     }
     public void AddAdvertisedAction(INTERACTION_TYPE type) {
         if (advertisedActions == null) {
-            advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
+            advertisedActions = new List<INTERACTION_TYPE>(); //{ INTERACTION_TYPE.ASSAULT }
         }
         if (advertisedActions.Contains(type) == false) {
             advertisedActions.Add(type);

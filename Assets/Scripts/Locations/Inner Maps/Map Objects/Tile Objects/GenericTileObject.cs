@@ -9,11 +9,11 @@ public class GenericTileObject : TileObject {
     public bool hasBeenInitialized { get; private set; }
 
     public GenericTileObject() {
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
+        //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
     }
     public GenericTileObject(SaveDataTileObject data) {
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
-        Initialize(data);
+        //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
+        Initialize(data, false);
     }
 
     #region Override
@@ -125,7 +125,7 @@ public class GenericTileObject : TileObject {
             return;
         }
         hasBeenInitialized = true;
-        Initialize(TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT);
+        Initialize(TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT, false);
         SetGridTileLocation(tile);
         // OnPlacePOI();
         // DisableGameObject();

@@ -29730,7 +29730,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   month: 1
   year: 80
-  tick: 144
+  tick: 96
   continuousDays: 1
   startYear: 80
   currProgressionSpeed: 0
@@ -99794,12 +99794,6 @@ MonoBehaviour:
   cameraShake: {fileID: 1713567862}
   cameraControlEnabled: 0
   xSeeLimit: 0.931
-  shakeTime: 1
-  shakeStrengthX: 0
-  shakeStrengthY: 0
-  shakeStrengthZ: 5
-  shakeVibrato: 25
-  shakeRandomness: 90
 --- !u!114 &1713567860
 MonoBehaviour:
   m_ObjectHideFlags: 0

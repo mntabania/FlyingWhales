@@ -558,10 +558,15 @@ public class CharacterMarker : MapObjectVisual<Character> {
             default:
                 if (targetPOI == null) {
                     throw new Exception($"{character.name} is trying to go to a null object");
-                } else if (targetPOI.gridTileLocation == null) {
-                    throw new Exception($"{character.name} is trying to go to a {targetPOI.ToString()} but its tile location is null");
                 }
-                SetDestination(targetPOI.gridTileLocation.centeredWorldLocation);
+                if(targetPOI is MovingTileObject) {
+                    SetTargetTransform(targetPOI.mapObjectVisual.transform);
+                } else {
+                    if (targetPOI.gridTileLocation == null) {
+                        throw new Exception($"{character.name} is trying to go to a {targetPOI.ToString()} but its tile location is null");
+                    }
+                    SetDestination(targetPOI.gridTileLocation.centeredWorldLocation);
+                }
                 break;
         }
         StartMovement();

@@ -9,10 +9,10 @@ public class Kobold : Summon {
     
     public Kobold() : base(SUMMON_TYPE.Kobold, ClassName, RACE.KOBOLD,
         UtilityScripts.Utilities.GetRandomGender()) {
-		combatComponent.SetElementalDamage(ELEMENTAL_TYPE.Ice);
+		//combatComponent.SetElementalType(ELEMENTAL_TYPE.Ice);
     }
     public Kobold(SaveDataCharacter data) : base(data) {
-        combatComponent.SetElementalDamage(ELEMENTAL_TYPE.Ice);
+        //combatComponent.SetElementalType(ELEMENTAL_TYPE.Ice);
     }
     public override void Initialize() {
         base.Initialize();

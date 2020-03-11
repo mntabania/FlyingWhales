@@ -9,9 +9,9 @@ public class SmallSpider : Summon {
     
     public SmallSpider() : base(SUMMON_TYPE.Small_Spider, ClassName, RACE.SPIDER,
         UtilityScripts.Utilities.GetRandomGender()) {
-        combatComponent.SetElementalDamage(ELEMENTAL_TYPE.Poison);
+        //combatComponent.SetElementalType(ELEMENTAL_TYPE.Poison);
     }
     public SmallSpider(SaveDataCharacter data) : base(data) {
-        combatComponent.SetElementalDamage(ELEMENTAL_TYPE.Poison);
+        //combatComponent.SetElementalType(ELEMENTAL_TYPE.Poison);
     }
 }

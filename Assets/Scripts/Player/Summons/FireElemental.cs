@@ -9,10 +9,10 @@ public class FireElemental : Summon {
     
     public FireElemental() : base(SUMMON_TYPE.FireElemental, "FireElemental", RACE.ELEMENTAL,
         UtilityScripts.Utilities.GetRandomGender()) {
-		combatComponent.SetElementalDamage(ELEMENTAL_TYPE.Fire);
+		//combatComponent.SetElementalType(ELEMENTAL_TYPE.Fire);
     }
     public FireElemental(SaveDataCharacter data) : base(data) {
-        combatComponent.SetElementalDamage(ELEMENTAL_TYPE.Fire);
+        //combatComponent.SetElementalType(ELEMENTAL_TYPE.Fire);
     }
     public override void Initialize() {
         base.Initialize();

@@ -5,14 +5,15 @@ using UnityEngine;
 public class GoddessStatue : TileObject {
 
     public GoddessStatue() {
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PRAY_TILE_OBJECT };
-
+        //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PRAY_TILE_OBJECT };
         Initialize(TILE_OBJECT_TYPE.GODDESS_STATUE);
+        AddAdvertisedAction(INTERACTION_TYPE.PRAY_TILE_OBJECT);
         traitContainer.RemoveTrait(this, "Flammable");
     }
     public GoddessStatue(SaveDataTileObject data) {
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PRAY_TILE_OBJECT };
+        //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PRAY_TILE_OBJECT };
         Initialize(data);
+        AddAdvertisedAction(INTERACTION_TYPE.PRAY_TILE_OBJECT);
     }
 
     public override void SetPOIState(POI_STATE state) {

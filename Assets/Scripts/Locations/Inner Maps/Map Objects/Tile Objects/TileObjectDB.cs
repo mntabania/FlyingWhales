@@ -70,7 +70,7 @@ public static class TileObjectDB {
             constructionCost = 25,
             constructionTime = 12,
             maxHP = 1000,
-            neededTraitTypes = new string[] { "Healer", "Herbalist" },
+            neededTraitTypes = new string[] { "Healing Expert", "Herbalist" },
         } },
         { TILE_OBJECT_TYPE.LOCUST_SWARM, new TileObjectData() {
             maxHP = 100,

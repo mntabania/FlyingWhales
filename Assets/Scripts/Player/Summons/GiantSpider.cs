@@ -9,9 +9,9 @@ public class GiantSpider : Summon {
     
     public GiantSpider() : base(SUMMON_TYPE.GiantSpider, ClassName, RACE.SPIDER,
         UtilityScripts.Utilities.GetRandomGender()) {
-        combatComponent.SetElementalDamage(ELEMENTAL_TYPE.Poison);
+        //combatComponent.SetElementalType(ELEMENTAL_TYPE.Poison);
     }
     public GiantSpider(SaveDataCharacter data) : base(data) {
-        combatComponent.SetElementalDamage(ELEMENTAL_TYPE.Poison);
+        //combatComponent.SetElementalType(ELEMENTAL_TYPE.Poison);
     }
 }

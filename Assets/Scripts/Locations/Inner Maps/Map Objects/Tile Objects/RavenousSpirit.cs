@@ -21,14 +21,14 @@ public class RavenousSpirit : TileObject {
     
     public RavenousSpirit() {
         _duration = GameManager.Instance.GetTicksBasedOnHour(1);
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
-        Initialize(TILE_OBJECT_TYPE.RAVENOUS_SPIRIT);
+        Initialize(TILE_OBJECT_TYPE.RAVENOUS_SPIRIT, false);
+        //AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         traitContainer.AddTrait(this, "Ravenous");
     }
     public RavenousSpirit(SaveDataTileObject data) {
         _duration = GameManager.Instance.GetTicksBasedOnHour(1);
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
-        Initialize(data);
+        Initialize(data, false);
+        //AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         traitContainer.AddTrait(this, "Ravenous");
     }
 

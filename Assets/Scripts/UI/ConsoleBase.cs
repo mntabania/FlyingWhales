@@ -993,7 +993,7 @@ public class ConsoleBase : InfoUIBase {
             return;
         }
 
-        character.combatComponent.SetElementalDamage(elementalType);
+        character.combatComponent.SetElementalType(elementalType);
         AddSuccessMessage($"Changed {character.name} elemental damage to {elementalParameterString}");
     }
     #endregion

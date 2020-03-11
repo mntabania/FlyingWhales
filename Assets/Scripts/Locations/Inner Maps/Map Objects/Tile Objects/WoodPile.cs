@@ -6,13 +6,15 @@ using UnityEngine;
 public class WoodPile : ResourcePile {
 
     public WoodPile() : base(RESOURCE.WOOD) {
-        Initialize(TILE_OBJECT_TYPE.WOOD_PILE);
+        Initialize(TILE_OBJECT_TYPE.WOOD_PILE, false);
+        AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         //SetResourceInPile(50);
         traitContainer.RemoveTrait(this, "Flammable");
         SetResourceInPile(100);
     }
     public WoodPile(SaveDataTileObject data) : base(RESOURCE.WOOD) {
-        Initialize(data);
+        Initialize(data, false);
+        AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
     }
     //public override void AdjustResourceInPile(int adjustment) {
     //    base.AdjustResourceInPile(adjustment);

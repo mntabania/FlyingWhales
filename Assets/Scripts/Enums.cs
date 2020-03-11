@@ -948,7 +948,7 @@ public enum INTERACTION_TYPE {
     OUTSIDE_SETTLEMENT_IDLE,
     ATTACK_REGION,
     SEARCHING,
-    SNUFF_TORNADO,
+    NEUTRALIZE,
     MINE_STONE,
     ROAM,
     STUDY_MONSTER,
@@ -1289,9 +1289,9 @@ public enum JOB_TYPE { NONE, UNDERMINE, ENERGY_RECOVERY_URGENT, FULLNESS_RECOVER
         , PRODUCE_WOOD, PRODUCE_FOOD, PRODUCE_STONE, PRODUCE_METAL, FEED, KNOCKOUT, APPREHEND, BURY, CRAFT_OBJECT, JUDGE_PRISONER
         , PATROL, OBTAIN_PERSONAL_ITEM, MOVE_CHARACTER, HUNT_SERIAL_KILLER_VICTIM, INSPECT, DOUSE_FIRE, MISC, COMMIT_SUICIDE, SEDUCE, REPAIR
         , DESTROY, TRIGGER_FLAW, CORRUPT_CULTIST, CORRUPT_CULTIST_SABOTAGE_FACTION, SCREAM, CLEANSE_CORRUPTION, CLAIM_REGION
-        , BUILD_BLUEPRINT, PLACE_BLUEPRINT, COMBAT, STROLL, HAUL, OBTAIN_PERSONAL_FOOD, SNUFF_TORNADO, FLEE_TO_HOME, BURY_SERIAL_KILLER_VICTIM, KILL, GO_TO, CHECK_PARALYZED_FRIEND, VISIT_FRIEND
+        , BUILD_BLUEPRINT, PLACE_BLUEPRINT, COMBAT, STROLL, HAUL, OBTAIN_PERSONAL_FOOD, NEUTRALIZE_DANGER, FLEE_TO_HOME, BURY_SERIAL_KILLER_VICTIM, KILL, GO_TO, CHECK_PARALYZED_FRIEND, VISIT_FRIEND
         , IDLE_RETURN_HOME, IDLE_NAP, IDLE_SIT, IDLE_STAND, IDLE_GO_TO_INN, COMBINE_STOCKPILE, ROAM_AROUND_TERRITORY, ROAM_AROUND_CORRUPTION, ROAM_AROUND_PORTAL, ROAM_AROUND_TILE, RETURN_TERRITORY, RETURN_PORTAL
-        , STAND, ABDUCT, LEARN_MONSTER, TAKE_ARTIFACT, TAKE_ITEM, HIDE_AT_HOME, STAND_STILL,
+        , STAND, ABDUCT, LEARN_MONSTER, TAKE_ARTIFACT, TAKE_ITEM, HIDE_AT_HOME, STAND_STILL, SUICIDE_FOLLOW,
 }
 public enum JOB_OWNER { CHARACTER, LOCATION, QUEST, }
 public enum Cardinal_Direction { North, South, East, West };
@@ -1308,7 +1308,7 @@ public enum ACTION_LOCATION_TYPE {
 }
 public enum CHARACTER_STATE_CATEGORY { MAJOR, MINOR,}
 //public enum MOVEMENT_MODE { NORMAL, FLEE, ENGAGE }
-public enum CHARACTER_STATE { NONE, PATROL, HUNT, STROLL, BERSERKED, STROLL_OUTSIDE, COMBAT, DOUSE_FIRE }
+public enum CHARACTER_STATE { NONE, PATROL, HUNT, STROLL, BERSERKED, STROLL_OUTSIDE, COMBAT, DOUSE_FIRE, FOLLOW, }
 public enum CRIME_TYPE {
     NONE,
     INFRACTION,
@@ -1402,7 +1402,7 @@ public enum BEHAVIOUR_COMPONENT_ATTRIBUTE { WITHIN_HOME_SETTLEMENT_ONLY, ONCE_PE
 public enum EXCLUSIVE_IDEOLOGY_CATEGORIES { RACE, GENDER, TRAIT, }
 public enum EMOTION { None, Fear, Approval, Embarassment, Disgust, Anger, Betrayal, Concern, Disappointment, Scorn, Sadness, Threatened, Arousal, Disinterest, Despair, Shock, Resentment, Disapproval, Gratefulness, }
 public enum PLAYER_ARCHETYPE { Normal, Ravager, Lich, Puppet_Master, }
-public enum ELEMENTAL_TYPE { Normal, Fire, Poison, Water, Ice, Electric, Earth }
+public enum ELEMENTAL_TYPE { Normal, Fire, Poison, Water, Ice, Electric, Earth, Wind, }
 /// <summary>
 /// STARTED - actor is moving towards the target but is not yet performing action
 /// PERFORMING - actor arrived at the target and is performing action
@@ -1785,7 +1785,7 @@ public static class Extensions {
             case JOB_TYPE.MISC:
                 priority = 1200;
                 break;
-            case JOB_TYPE.SNUFF_TORNADO:
+            case JOB_TYPE.NEUTRALIZE_DANGER:
                 priority = 1100;
                 break;
             case JOB_TYPE.COMBAT:
@@ -1813,6 +1813,7 @@ public static class Extensions {
                 priority = 970;
                 break;
             case JOB_TYPE.DOUSE_FIRE:
+            case JOB_TYPE.SUICIDE_FOLLOW:
                 priority = 950;
                 break;
             case JOB_TYPE.DESTROY:

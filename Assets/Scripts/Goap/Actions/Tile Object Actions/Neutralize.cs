@@ -1,10 +1,9 @@
-﻿public class SnuffTornado : GoapAction {
+﻿public class Neutralize : GoapAction {
 
     public override ACTION_CATEGORY actionCategory => ACTION_CATEGORY.INDIRECT;
     
-    public SnuffTornado() : base(INTERACTION_TYPE.SNUFF_TORNADO) {
+    public Neutralize() : base(INTERACTION_TYPE.NEUTRALIZE) {
         actionIconString = GoapActionStateDB.Hostile_Icon;
-        
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
         actionLocationType = ACTION_LOCATION_TYPE.TARGET_IN_VISION;
@@ -17,7 +16,7 @@
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
-        SetState("Snuff Success", goapNode);
+        SetState("Neutralize Success", goapNode);
            
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
@@ -38,9 +37,9 @@
     #endregion
 
     #region State Effects
-    public void AfterSnuffSuccess(ActualGoapNode goapNode) {
-        TornadoTileObject tornado = goapNode.poiTarget as TornadoTileObject;
-        tornado.ForceExpire();
+    public void AfterNeutralizeSuccess(ActualGoapNode goapNode) {
+        TileObject dangerousTileObject = goapNode.poiTarget as TileObject;
+        dangerousTileObject.Neutralize();
     }
     #endregion
 }

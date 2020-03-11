@@ -8,11 +8,11 @@ public class Ent : Summon {
     
     public Ent() : base(SUMMON_TYPE.Ent, "Grass Ent", RACE.ENT,
         UtilityScripts.Utilities.GetRandomGender()) {
-		combatComponent.SetElementalDamage(ELEMENTAL_TYPE.Earth);
+		//combatComponent.SetElementalType(ELEMENTAL_TYPE.Earth);
         combatComponent.SetCombatMode(COMBAT_MODE.Passive);
     }
     public Ent(SaveDataCharacter data) : base(data) {
-        combatComponent.SetElementalDamage(ELEMENTAL_TYPE.Earth);
+        //combatComponent.SetElementalType(ELEMENTAL_TYPE.Earth);
         combatComponent.SetCombatMode(COMBAT_MODE.Passive);
     }
     public override void Initialize() {

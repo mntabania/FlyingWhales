@@ -124,7 +124,7 @@ public class DouseFireState : CharacterState {
         return stateComponent.character.HasItem(TILE_OBJECT_TYPE.WATER_BUCKET);
     }
     private bool NeedsWater() {
-        return !stateComponent.character.traitContainer.HasTrait("Elemental Master");
+        return true; //!stateComponent.character.traitContainer.HasTrait("Elemental Master");
     }
     private bool StillHasFire() {
         return _fires.Count > 0;

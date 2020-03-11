@@ -11,12 +11,18 @@ public class Tombstone : TileObject {
 
     public Character character { get; private set; }
     public Tombstone() {
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.REMEMBER_FALLEN, INTERACTION_TYPE.SPIT, INTERACTION_TYPE.BUTCHER };
-        //Initialize(TILE_OBJECT_TYPE.TOMBSTONE);
+        //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.REMEMBER_FALLEN, INTERACTION_TYPE.SPIT, INTERACTION_TYPE.BUTCHER };
+        ////Initialize(TILE_OBJECT_TYPE.TOMBSTONE);
+        AddAdvertisedAction(INTERACTION_TYPE.REMEMBER_FALLEN);
+        AddAdvertisedAction(INTERACTION_TYPE.SPIT);
+        AddAdvertisedAction(INTERACTION_TYPE.BUTCHER);
     }
     public Tombstone(SaveDataTileObject data) {
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.REMEMBER_FALLEN, INTERACTION_TYPE.SPIT, INTERACTION_TYPE.BUTCHER };
-        //Initialize(data);
+        //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.REMEMBER_FALLEN, INTERACTION_TYPE.SPIT, INTERACTION_TYPE.BUTCHER };
+        ////Initialize(data);
+        AddAdvertisedAction(INTERACTION_TYPE.REMEMBER_FALLEN);
+        AddAdvertisedAction(INTERACTION_TYPE.SPIT);
+        AddAdvertisedAction(INTERACTION_TYPE.BUTCHER);
     }
     public override void OnPlacePOI() {
         base.OnPlacePOI();
@@ -33,11 +39,11 @@ public class Tombstone : TileObject {
 
     public void SetCharacter(Character character) {
         this.character = character;
-        Initialize(TILE_OBJECT_TYPE.TOMBSTONE);
+        Initialize(TILE_OBJECT_TYPE.TOMBSTONE, false);
     }
     public void SetCharacter(Character character, SaveDataTileObject data) {
         this.character = character;
-        Initialize(data);
+        Initialize(data, false);
     }
 }
 

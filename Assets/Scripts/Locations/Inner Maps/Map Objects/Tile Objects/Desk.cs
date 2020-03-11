@@ -6,13 +6,15 @@ using UnityEngine;
 public class Desk : TileObject {
     //private Character[] users;
     public Desk() {
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.REPAIR, INTERACTION_TYPE.SIT };
+        //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.REPAIR, INTERACTION_TYPE.SIT };
         Initialize(TILE_OBJECT_TYPE.DESK);
+        AddAdvertisedAction(INTERACTION_TYPE.SIT);
         //users = new Character[1];
     }
     public Desk(SaveDataTileObject data) {
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.REPAIR, INTERACTION_TYPE.SIT };
+        //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.REPAIR, INTERACTION_TYPE.SIT };
         Initialize(data);
+        AddAdvertisedAction(INTERACTION_TYPE.SIT);
     }
 
     #region Overrides

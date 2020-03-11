@@ -9,13 +9,15 @@ public class MimicTileObject : TileObject {
     private bool _hasBeenAwakened;
     
     public MimicTileObject() {
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
-        Initialize(TILE_OBJECT_TYPE.MIMIC_TILE_OBJECT);
-        RemoveAdvertisedAction(INTERACTION_TYPE.REPAIR);
+        //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
+        Initialize(TILE_OBJECT_TYPE.MIMIC_TILE_OBJECT, false);
+        AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
+        //RemoveAdvertisedAction(INTERACTION_TYPE.REPAIR);
     }
     public MimicTileObject(SaveDataTileObject data) {
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
-        Initialize(data);
+        //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
+        Initialize(data, false);
+        AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
     }
     public override void OnDoActionToObject(ActualGoapNode action) {
         if (action.action.actionCategory == ACTION_CATEGORY.DIRECT || action.action.actionCategory == ACTION_CATEGORY.CONSUME) {

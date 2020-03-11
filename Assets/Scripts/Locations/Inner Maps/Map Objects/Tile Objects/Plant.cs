@@ -2,11 +2,11 @@
 
 public class Plant : TileObject{
     public Plant() {
-        Initialize(TILE_OBJECT_TYPE.PLANT);
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
+        Initialize(TILE_OBJECT_TYPE.PLANT, false);
+        AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
     }
     public Plant(SaveDataTileObject data) {
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
-        Initialize(data);
+        Initialize(data, false);
+        AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
     }
 }

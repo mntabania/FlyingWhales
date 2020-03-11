@@ -8,8 +8,9 @@ public class LocustSwarmTileObject : MovingTileObject {
     private LocustSwarmMapObjectVisual _locustSwarmMapObjectVisual;
     
     public LocustSwarmTileObject() {
-        Initialize(TILE_OBJECT_TYPE.LOCUST_SWARM);
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
+        Initialize(TILE_OBJECT_TYPE.LOCUST_SWARM, false);
+        AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
+        traitContainer.AddTrait(this, "Dangerous");
     }
     protected override void CreateMapObjectVisual() {
         base.CreateMapObjectVisual();
@@ -43,5 +44,7 @@ public class LocustSwarmTileObject : MovingTileObject {
         }
         Debug.Log($"{GameManager.Instance.TodayLogString()}HP of {this} was adjusted by {amount}. New HP is {currentHP}.");
     }
-    
+    public override void Neutralize() {
+        _locustSwarmMapObjectVisual.Expire();
+    }
 }

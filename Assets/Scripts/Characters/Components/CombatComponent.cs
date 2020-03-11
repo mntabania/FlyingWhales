@@ -26,7 +26,7 @@ public class CombatComponent {
         avoidInRange = new List<IPointOfInterest>();
         lethalCharacters = new Dictionary<Character, bool>();
         SetCombatMode(COMBAT_MODE.Aggressive);
-        SetElementalDamage(ELEMENTAL_TYPE.Normal);
+        SetElementalType(ELEMENTAL_TYPE.Normal);
 	}
 
     #region Fight or Flight
@@ -368,8 +368,22 @@ public class CombatComponent {
     public void SetCombatMode(COMBAT_MODE mode) {
         combatMode = mode;
     }
-    public void SetElementalDamage(ELEMENTAL_TYPE elementalType) {
+    public void SetElementalType(ELEMENTAL_TYPE elementalType) {
         elementalDamage = ScriptableObjectsManager.Instance.GetElementalDamageData(elementalType);
+    }
+    public void UpdateElementalType() {
+        bool hasSetElementalType = false;
+        for (int i = (owner.traitContainer.traits.Count - 1); i >= 0; i--) {
+            Trait currTrait = owner.traitContainer.traits[i];
+            if(currTrait.elementalType != ELEMENTAL_TYPE.Normal) {
+                SetElementalType(currTrait.elementalType);
+                hasSetElementalType = true;
+                break;
+            }
+        }
+        if (!hasSetElementalType) {
+            SetElementalType(owner.characterClass.elementalType);
+        }
     }
     // public void SetCombatConnectedActionNode(ActualGoapNode node) {
     //     combatConnectedActionNode = node;

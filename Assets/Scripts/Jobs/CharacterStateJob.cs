@@ -7,6 +7,7 @@ public class CharacterStateJob : JobQueueItem {
     public CHARACTER_STATE targetState { get; protected set; }
     public CharacterState assignedState { get; protected set; }
     public Region targetRegion { get; protected set; }
+    public IPointOfInterest targetPOI { get; protected set; }
     public List<System.Action<Character>> onUnassignActions { get; private set; }
 
     public CharacterStateJob() : base() {
@@ -16,6 +17,12 @@ public class CharacterStateJob : JobQueueItem {
         Initialize(jobType, owner);
         this.targetState = state;
         this.targetRegion = targetRegion;
+        //onUnassignActions = new List<System.Action<Character>>();
+    }
+    public void Initialize(JOB_TYPE jobType, CHARACTER_STATE state, IPointOfInterest targetPOI, IJobOwner owner) {
+        Initialize(jobType, owner);
+        this.targetState = state;
+        this.targetPOI = targetPOI;
         //onUnassignActions = new List<System.Action<Character>>();
     }
     public void Initialize(JOB_TYPE jobType, CHARACTER_STATE state, IJobOwner owner) {
@@ -37,7 +44,7 @@ public class CharacterStateJob : JobQueueItem {
     #region Overrides
     public override bool ProcessJob() {
         if (assignedState == null) {
-            CharacterState newState = assignedCharacter.stateComponent.SwitchToState(targetState);
+            CharacterState newState = assignedCharacter.stateComponent.SwitchToState(targetState, targetPOI);
             if (newState != null) {
                 SetAssignedState(newState);
                 assignedCharacter.SetCurrentJob(this);
@@ -123,6 +130,7 @@ public class CharacterStateJob : JobQueueItem {
         targetState = CHARACTER_STATE.NONE;
         assignedState = null;
         targetRegion = null;
+        targetPOI = null;
         onUnassignActions.Clear();
     }
     #endregion

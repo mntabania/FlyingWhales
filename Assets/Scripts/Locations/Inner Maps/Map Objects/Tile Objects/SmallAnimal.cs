@@ -8,13 +8,17 @@ public class SmallAnimal : TileObject {
     private const int Replenishment_Countdown = 96;
 
     public SmallAnimal() {
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.BUTCHER };
-        Initialize(TILE_OBJECT_TYPE.SMALL_ANIMAL);
+        //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.BUTCHER };
+        Initialize(TILE_OBJECT_TYPE.SMALL_ANIMAL, false);
+        AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
+        AddAdvertisedAction(INTERACTION_TYPE.BUTCHER);
         traitContainer.AddTrait(this, "Edible");
     }
     public SmallAnimal(SaveDataTileObject data) {
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.BUTCHER };
-        Initialize(data);
+        //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.BUTCHER };
+        Initialize(data, false);
+        AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
+        AddAdvertisedAction(INTERACTION_TYPE.BUTCHER);
         traitContainer.AddTrait(this, "Edible");
     }
 

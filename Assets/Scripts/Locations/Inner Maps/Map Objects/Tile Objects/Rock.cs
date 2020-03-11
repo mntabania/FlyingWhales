@@ -8,13 +8,18 @@ public class Rock : TileObject{
     public int yield { get; private set; }
 
     public Rock() {
-        Initialize(TILE_OBJECT_TYPE.ROCK);
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.MINE_STONE, INTERACTION_TYPE.ASSAULT, };
+        Initialize(TILE_OBJECT_TYPE.ROCK, false);
+        //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.MINE_STONE, INTERACTION_TYPE.ASSAULT, };
+        AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
+        AddAdvertisedAction(INTERACTION_TYPE.MINE_STONE);
+
         SetYield(50);
     }
     public Rock(SaveDataTileObject data) {
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.MINE_STONE, INTERACTION_TYPE.ASSAULT, };
-        Initialize(data);
+        //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.MINE_STONE, INTERACTION_TYPE.ASSAULT, };
+        Initialize(data, false);
+        AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
+        AddAdvertisedAction(INTERACTION_TYPE.MINE_STONE);
     }
 
     public void AdjustYield(int amount) {

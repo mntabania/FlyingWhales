@@ -191,7 +191,7 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
     #endregion
     
     #region Expiration
-    private void Expire() {
+    public void Expire() {
         Debug.Log($"{this.name} expired!");
         _cloudEffect.Stop();
         isSpawned = false;

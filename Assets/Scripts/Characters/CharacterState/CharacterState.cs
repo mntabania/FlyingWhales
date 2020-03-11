@@ -7,7 +7,7 @@ public class CharacterState {
     public string stateName { get; protected set; }
     public CHARACTER_STATE characterState { get; protected set; }
     //public CHARACTER_STATE_CATEGORY stateCategory { get; protected set; }
-    public int duration { get; protected set; } // 0 means no duration - end state immediately
+    public int duration { get; protected set; } // 0 means no duration - permanent
     public int currentDuration { get; protected set; }
     //public int level { get; protected set; } //Right now, only used in berserk to know what level BerserkBuff will be
     public bool isDone { get; protected set; }
@@ -16,6 +16,7 @@ public class CharacterState {
     public Log thoughtBubbleLog { get; protected set; }
     public CharacterStateJob job { get; protected set; }
     public string actionIconString { get; protected set; }
+    public IPointOfInterest targetPOI { get; protected set; }
     //public GoapAction currentlyDoingAction { get; protected set; }
     //public Character targetCharacter { get; protected set; } //Target character of current state
     //public NPCSettlement targetNpcSettlement { get; protected set; }
@@ -156,9 +157,9 @@ public class CharacterState {
         if (LocalizationManager.Instance.HasLocalizedValue("CharacterState", stateName, "thought_bubble")) {
             thoughtBubbleLog = new Log(GameManager.Instance.Today(), "CharacterState", stateName, "thought_bubble");
             thoughtBubbleLog.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            //if (targetCharacter != null) {
-            //    thoughtBubbleLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
-            //}
+            if (targetPOI != null) {
+                thoughtBubbleLog.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
+            }
         }
     }
     #endregion
@@ -256,9 +257,9 @@ public class CharacterState {
         if (LocalizationManager.Instance.HasLocalizedValue("CharacterState", stateName, "start")) {
             Log log = new Log(GameManager.Instance.Today(), "CharacterState", stateName, "start");
             log.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            //if (targetCharacter != null) {
-            //    log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
-            //}
+            if (targetPOI != null) {
+                log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
+            }
             //if(targetNpcSettlement != null) {
             //    log.AddToFillers(targetNpcSettlement, targetNpcSettlement.name, LOG_IDENTIFIER.LANDMARK_1);
             //}
@@ -273,6 +274,9 @@ public class CharacterState {
             thoughtBubbleLog.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             thoughtBubbleLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
         }
+    }
+    public void SetTargetPOI(IPointOfInterest poi) {
+        targetPOI = poi;
     }
     //public void SetStartStateAction(System.Action action) {
     //    startStateAction = action;
