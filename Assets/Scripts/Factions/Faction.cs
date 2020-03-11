@@ -764,12 +764,11 @@ public class Faction {
         }
     }
     public bool HasOwnedRegionWithLandmarkType(LANDMARK_TYPE type) {
-        //TODO:
-        // for (int i = 0; i < ownedSettlements.Count; i++) {
-        //     if (ownedSettlements[i].mainLandmark != null && ownedSettlements[i].mainLandmark.specificLandmarkType == type) {
-        //         return true;
-        //     }
-        // }
+        for (int i = 0; i < ownedSettlements.Count; i++) {
+            if (ownedSettlements[i].HasStructure(type.GetStructureType())) {
+                return true;
+            }
+        }
         return false;
     }
     #endregion

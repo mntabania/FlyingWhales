@@ -28,7 +28,7 @@ public class Poison : GoapAction {
         SetState("Poison Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
-        int cost = UtilityScripts.Utilities.rng.Next(80, 121);
+        int cost = UtilityScripts.Utilities.Rng.Next(80, 121);
         string costLog = $"\n{name} {target.nameWithID}: +{cost}(RNG)";
         actor.logComponent.AppendCostLog(costLog);
         return cost;

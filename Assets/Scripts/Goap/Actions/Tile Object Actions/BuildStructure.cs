@@ -87,11 +87,8 @@ public class BuildStructure : GoapAction {
     }
     public void AfterBuildSuccess(ActualGoapNode goapNode) {
         BuildSpotTileObject spot = goapNode.poiTarget as BuildSpotTileObject;
-        LocationStructure structure = spot.BuildBlueprint(goapNode.actor.homeSettlement);
-        goapNode.poiTarget.AdjustResource(RESOURCE.WOOD, -50);
-        //ResourcePile carriedPile = goapNode.actor.ownParty.carriedPOI as ResourcePile;
-        //carriedPile.AdjustResourceInPile(-50);
-        //goapNode.actor.AdjustResource(RESOURCE.WOOD, -50);//TODO: Change this to be per structure
+        // LocationStructure structure = spot.BuildBlueprint(goapNode.actor.homeSettlement);
+        // goapNode.poiTarget.AdjustResource(RESOURCE.WOOD, -50);
 
         //PlayerUI.Instance.ShowGeneralConfirmation("New Structure", $"A new {structure.name} has been built at {spot.gridTileLocation.structure.location.name}");
     }

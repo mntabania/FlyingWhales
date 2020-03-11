@@ -45,12 +45,14 @@ public class GameFeature : TileFeature {
 
 
     private void OnTileObjectPlaced(TileObject tileObject, LocationGridTile tile) {
-        if (tile.buildSpotOwner.hexTileOwner == owner && tileObject.tileObjectType == TILE_OBJECT_TYPE.SMALL_ANIMAL) {
+        if (tile.collectionOwner.isPartOfParentRegionMap && 
+            tile.collectionOwner.partOfHextile.hexTileOwner == owner && tileObject.tileObjectType == TILE_OBJECT_TYPE.SMALL_ANIMAL) {
             AdjustAnimalCount(1);
         }
     }
     private void OnTileObjectRemoved(TileObject tileObject, Character character, LocationGridTile tile) {
-        if (tile.buildSpotOwner.hexTileOwner == owner && tileObject.tileObjectType == TILE_OBJECT_TYPE.SMALL_ANIMAL) {
+        if (tile.collectionOwner.isPartOfParentRegionMap &&
+            tile.collectionOwner.partOfHextile.hexTileOwner == owner && tileObject.tileObjectType == TILE_OBJECT_TYPE.SMALL_ANIMAL) {
             AdjustAnimalCount(-1);
         }
     }

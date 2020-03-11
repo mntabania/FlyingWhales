@@ -86,6 +86,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4683094118133424}
   - component: {fileID: 114948120894855464}
+  - component: {fileID: 1591386462335554715}
   m_Layer: 14
   m_Name: Cemetery 1
   m_TagString: Untagged
@@ -121,14 +122,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ParentPool: {fileID: 0}
+  structureType: 8
   _groundTileMap: {fileID: 8195094281167293576}
   _detailTileMap: {fileID: 8195094280387262964}
   _groundTileMapRenderer: {fileID: 3664157343485351330}
   _detailTileMapRenderer: {fileID: 3664157343434896788}
+  _blockWallsTilemap: {fileID: 0}
   _size: {x: 7, y: 5}
   _center: {x: 3, y: 2, z: 0}
-  _objectsParent: {fileID: 4400068709814564}
+  objectsParent: {fileID: 4400068709814564}
   _furnitureSpotsParent: {fileID: 0}
+  _wallType: 0
+  _wallResource: 0
   predeterminedOccupiedCoordinates: []
   wallTileMap: {fileID: 0}
   leftWall: {fileID: 0}
@@ -136,7 +141,21 @@ MonoBehaviour:
   topWall: {fileID: 0}
   bottomWall: {fileID: 0}
   cornerPrefab: {fileID: 0}
-  assetToConsiderAsStructure: {fileID: 0}
+  assetsToConsiderAsStructure: []
+--- !u!114 &1591386462335554715
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1320005381273642}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6ecdc22d03840dea1e8820cae0652b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  structureObjects:
+  - {fileID: 114948120894855464}
 --- !u!1 &1433982978144030
 GameObject:
   m_ObjectHideFlags: 0

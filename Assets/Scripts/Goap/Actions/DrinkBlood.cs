@@ -30,13 +30,13 @@ public class DrinkBlood : GoapAction {
         string costLog = $"\n{name} {target.nameWithID}:";
         int cost = 0;
         if (actor.moodComponent.moodState == MOOD_STATE.NORMAL) {
-            cost = UtilityScripts.Utilities.rng.Next(50, 61);
+            cost = UtilityScripts.Utilities.Rng.Next(50, 61);
             costLog += $" +{cost}(Normal Mood)";
         } else if (actor.moodComponent.moodState == MOOD_STATE.LOW) {
-            cost = UtilityScripts.Utilities.rng.Next(20, 31);
+            cost = UtilityScripts.Utilities.Rng.Next(20, 31);
             costLog += $" +{cost}(Low Mood)";
         } else if (actor.moodComponent.moodState == MOOD_STATE.CRITICAL) {
-            cost = UtilityScripts.Utilities.rng.Next(0, 11);
+            cost = UtilityScripts.Utilities.Rng.Next(0, 11);
             costLog += $" +{cost}(Critical Mood)";
         }
         if (target is Character) {
@@ -207,7 +207,6 @@ public class DrinkBlood : GoapAction {
     #region Effects
     public void PreDrinkSuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustDoNotGetHungry(1);
-        //TODO: currentState.SetIntelReaction(DrinkBloodSuccessIntelReaction);
     }
     public void PerTickDrinkSuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustFullness(17f);

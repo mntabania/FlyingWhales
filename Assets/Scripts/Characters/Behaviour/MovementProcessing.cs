@@ -9,9 +9,9 @@ public class MovementProcessing : CharacterBehaviourComponent {
     }
 
     public override bool TryDoBehaviour(Character character, ref string log) {
-        if(character.gridTileLocation != null && character.gridTileLocation.buildSpotOwner.hexTileOwner == null) {
+        if(character.gridTileLocation != null && character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == null) {
             log += $"\n-{character.name} is in a grid tile location with no hex tile, must go to nearest hex tile";
-            HexTile nearestHex = character.gridTileLocation.buildSpotOwner.GetNearestHexTile();
+            HexTile nearestHex = character.gridTileLocation.collectionOwner.GetNearestHexTile();
             character.jobComponent.TriggerMoveToHex(nearestHex);
             return true;
         }

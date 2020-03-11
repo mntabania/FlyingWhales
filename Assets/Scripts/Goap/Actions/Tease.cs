@@ -24,9 +24,9 @@ public class Tease : GoapAction {
         object[] otherData) {
         Character targetCharacter = poiTarget as Character;
         if (actor.relationshipContainer.IsFriendsWith(targetCharacter)) {
-            return UtilityScripts.Utilities.rng.Next(40, 61);
+            return UtilityScripts.Utilities.Rng.Next(40, 61);
         } else {
-            return UtilityScripts.Utilities.rng.Next(50, 71);
+            return UtilityScripts.Utilities.Rng.Next(50, 71);
         }
     }
     #endregion

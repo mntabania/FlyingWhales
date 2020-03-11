@@ -29,7 +29,7 @@ public class CraftTileObject : GoapAction {
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}:";
-        int cost = UtilityScripts.Utilities.rng.Next(150, 201);
+        int cost = UtilityScripts.Utilities.Rng.Next(150, 201);
         costLog += $" +{cost}(Initial)";
         actor.logComponent.AppendCostLog(costLog);
         return cost;

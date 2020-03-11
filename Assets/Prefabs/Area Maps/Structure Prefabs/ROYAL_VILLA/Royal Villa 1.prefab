@@ -7708,6 +7708,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4866218871550682}
   - component: {fileID: 114113069155367762}
+  - component: {fileID: 6750869821131439891}
   m_Layer: 14
   m_Name: Royal Villa 1
   m_TagString: Untagged
@@ -7743,6 +7744,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ParentPool: {fileID: 0}
+  structureType: 0
   _groundTileMap: {fileID: 8195094279661156082}
   _detailTileMap: {fileID: 8195094280615983586}
   _groundTileMapRenderer: {fileID: 3664157344005968786}
@@ -7762,7 +7764,21 @@ MonoBehaviour:
   bottomWall: {fileID: 1947783289032522, guid: b5a4337534668834fa79811d98de8ed6, type: 3}
   cornerPrefab: {fileID: 1038175435304820, guid: 551abd56996a3a749b77d74c5832fe15,
     type: 3}
-  assetToConsiderAsStructure: {fileID: 0}
+  assetsToConsiderAsStructure: []
+--- !u!114 &6750869821131439891
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1683394201891824}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6ecdc22d03840dea1e8820cae0652b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  structureObjects:
+  - {fileID: 114113069155367762}
 --- !u!1 &1686021159574904
 GameObject:
   m_ObjectHideFlags: 0

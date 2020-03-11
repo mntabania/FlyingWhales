@@ -1154,7 +1154,9 @@ public enum STRUCTURE_TYPE {
     THE_EYE = 35,
     THE_NEEDLES = 36,
     TORTURE_CHAMBER = 37,
-    DEMONIC_PRISON = 38
+    DEMONIC_PRISON = 38,
+    FARM,
+    LUMBERYARD
 }
 public enum RELATIONSHIP_TYPE {
     NONE = 0,
@@ -1592,6 +1594,19 @@ public static class Extensions {
                 return true;
             default:
                 return false;
+        }
+    }
+    public static LANDMARK_TYPE GetLandmarkType(this STRUCTURE_TYPE structureType) {
+        LANDMARK_TYPE parsed;
+        if (System.Enum.TryParse(structureType.ToString(), out parsed)) {
+            return parsed;
+        } else {
+            switch (structureType) {
+                case STRUCTURE_TYPE.CITY_CENTER:
+                    return LANDMARK_TYPE.VILLAGE;
+                default:
+                    return LANDMARK_TYPE.HOUSES;
+            }
         }
     }
     #endregion
@@ -2142,13 +2157,21 @@ public static class Extensions {
                 return false;
         }
     }
-    public static string LandmarkToString(this LANDMARK_TYPE type) {
-        switch (type) {
-            case LANDMARK_TYPE.NONE:
-                return "Empty";
+    public static STRUCTURE_TYPE GetStructureType(this LANDMARK_TYPE landmarkType) {
+        switch (landmarkType) {
+            case LANDMARK_TYPE.HOUSES:
+                return STRUCTURE_TYPE.DWELLING;
+            case LANDMARK_TYPE.VILLAGE:
+                return STRUCTURE_TYPE.CITY_CENTER;
             default:
-                return UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(type.ToString());
+                STRUCTURE_TYPE parsed;
+                if (System.Enum.TryParse(landmarkType.ToString(), out parsed)) {
+                    return parsed;
+                } else {
+                    throw new System.Exception($"There is no corresponding structure type for {landmarkType.ToString()}");
+                }
         }
+        
     }
     #endregion
 

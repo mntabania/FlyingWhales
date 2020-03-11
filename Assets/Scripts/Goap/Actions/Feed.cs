@@ -109,7 +109,6 @@ public class Feed : GoapAction {
             targetCharacter.AdjustResource(RESOURCE.FOOD, 12);
         }
         //goapNode.actor.AdjustFood(-20);
-        //TODO: goapNode.action.states[goapNode.currentStateName].SetIntelReaction(FeedSuccessReactions);
     }
     public void PerTickFeedSuccess(ActualGoapNode goapNode) {
         Character targetCharacter = goapNode.poiTarget as Character;

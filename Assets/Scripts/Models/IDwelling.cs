@@ -18,7 +18,7 @@ public interface IDwelling {
     HashSet<IPointOfInterest> pointsOfInterest { get; }
     POI_STATE state { get; }
     LocationStructureObject structureObj { get; }
-    BuildSpotTileObject occupiedBuildSpot { get; }
+    InnerMapHexTile occupiedHexTile { get; }
 
     //Inner Map
     List<LocationGridTile> tiles { get; }

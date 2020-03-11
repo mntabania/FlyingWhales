@@ -158,7 +158,6 @@ public class DropResource : GoapAction {
         pile.AdjustResourceInPile(-pile.resourceInPile);
 
         //goapNode.actor.ownParty.RemoveCarriedPOI(false);
-        //TODO: Moved to Drop Resource action
         //else if (poiTarget is FoodPile) {
         //    FoodPile foodPile = poiTarget as FoodPile;
         //    actor.AdjustFood(-givenFood);

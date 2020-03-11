@@ -276,7 +276,7 @@ public class CharacterClassManager : MonoBehaviour {
     //                int chance = UnityEngine.Random.Range(0, 100);
     //                log += "\n  -RNG roll: " + chance;
     //                if (chance < 25) {
-    //                    List<Relatable> positiveRelatables = character.relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_EFFECT.POSITIVE); //TODO: Improve this.
+    //                    List<Relatable> positiveRelatables = character.relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_EFFECT.POSITIVE);
     //                    if (positiveRelatables.Count > 0) {
     //                        LocationStructure targetStructure = null;
     //                        while (positiveRelatables.Count > 0 && targetStructure == null) {

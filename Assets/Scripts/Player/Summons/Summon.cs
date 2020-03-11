@@ -285,7 +285,7 @@ public class Summon : Character, IWorldObject {
         return territorries.Count > 0;
     }
     public bool IsInTerritory() {
-        return territorries.Contains(gridTileLocation.buildSpotOwner.hexTileOwner);
+        return territorries.Contains(gridTileLocation.collectionOwner.partOfHextile.hexTileOwner);
     }
     public LocationGridTile GetRandomLocationGridTileWithPath() {
         LocationGridTile chosenTile = null;

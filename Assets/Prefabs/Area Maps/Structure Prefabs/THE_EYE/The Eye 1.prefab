@@ -2582,6 +2582,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4009366239828700}
   - component: {fileID: 114520684233025900}
+  - component: {fileID: 6377359249272920264}
   m_Layer: 14
   m_Name: The Eye 1
   m_TagString: Untagged
@@ -2617,6 +2618,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ParentPool: {fileID: 0}
+  structureType: 0
   _groundTileMap: {fileID: 8195094280897768460}
   _detailTileMap: {fileID: 8195094282726245286}
   _groundTileMapRenderer: {fileID: 3664157343861086866}
@@ -2624,9 +2626,10 @@ MonoBehaviour:
   _blockWallsTilemap: {fileID: 0}
   _size: {x: 14, y: 14}
   _center: {x: 7, y: 7, z: 0}
-  _objectsParent: {fileID: 4947364616982008}
+  objectsParent: {fileID: 4947364616982008}
   _furnitureSpotsParent: {fileID: 0}
   _wallType: 0
+  _wallResource: 0
   predeterminedOccupiedCoordinates:
   - {x: 0, y: 7, z: 0}
   - {x: 1, y: 3, z: 0}
@@ -2750,8 +2753,21 @@ MonoBehaviour:
   bottomWall: {fileID: 1947783289032522, guid: b5a4337534668834fa79811d98de8ed6, type: 3}
   cornerPrefab: {fileID: 1038175435304820, guid: 551abd56996a3a749b77d74c5832fe15,
     type: 3}
-  assetToConsiderAsStructure: {fileID: 11400000, guid: 3598feca78e8e20478c97ac4a89257f4,
-    type: 2}
+  assetsToConsiderAsStructure: []
+--- !u!114 &6377359249272920264
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1052932554014340}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6ecdc22d03840dea1e8820cae0652b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  structureObjects:
+  - {fileID: 114520684233025900}
 --- !u!1 &1401363751003234
 GameObject:
   m_ObjectHideFlags: 0

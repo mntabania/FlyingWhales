@@ -5,7 +5,7 @@ using Inner_Maps;
 using TMPro;
 using UnityEngine;
 
-public class BuildingSpotItem : MonoBehaviour {
+public class TileCollectionItem : MonoBehaviour {
 
     private BuildingSpot buildingSpot;
 

@@ -171,7 +171,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			for (int j = 0; j < chosenTiles.Count; j++) {
 				HexTile settlementTile = chosenTiles[j];
 				settlementTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, settlementTile);
-				LandmarkManager.Instance.CreateNewLandmarkOnTile(settlementTile, LANDMARK_TYPE.VILLAGE, false);
+				LandmarkManager.Instance.CreateNewLandmarkOnTile(settlementTile, LANDMARK_TYPE.VILLAGE);
 			}
 		}
 		

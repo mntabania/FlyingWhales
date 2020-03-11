@@ -93,7 +93,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     #endregion
 
     #region Utilities
-    public void OnAreaSetAsActive() {
+    public void Initialize() {
         SubscribeToSignals();
     }
     private void SetIsUnderSiege(bool state) {
@@ -357,8 +357,8 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             Character resident = residents[i];
             if((resident.canPerform || !resident.isDead) 
                 && resident.gridTileLocation != null 
-                && resident.gridTileLocation.buildSpotOwner.hexTileOwner
-                && resident.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile == this) {
+                && resident.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner
+                && resident.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile == this) {
                 return true;
             }
         }
@@ -467,8 +467,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     #endregion
 
     #region Structures
-    public override void GenerateStructures(int citizenCount, Region region) {
-        base.GenerateStructures(citizenCount, region);
+    public virtual void GenerateStructures(int citizenCount, Region region) {
         AssignPrison();
     }
     protected override void LoadStructures(SaveDataArea data) {
@@ -488,15 +487,15 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     #region Inner Map
     public IEnumerator PlaceObjects() {
         //pre placed objects
-        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in structures) {
-            for (int i = 0; i < keyValuePair.Value.Count; i++) {
-                LocationStructure structure = keyValuePair.Value[i];
-                if (structure.structureObj != null) {
-                    structure.structureObj.RegisterPreplacedObjects(structure, structure.location.innerMap);    
-                }
-                yield return null;
-            }
-        }
+        // foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in structures) {
+        //     for (int i = 0; i < keyValuePair.Value.Count; i++) {
+        //         LocationStructure structure = keyValuePair.Value[i];
+        //         if (structure.structureObj != null) {
+        //             structure.structureObj.RegisterPreplacedObjects(structure, structure.location.innerMap);    
+        //         }
+        //         yield return null;
+        //     }
+        // }
 
         PlaceResourcePiles();
         yield return null;

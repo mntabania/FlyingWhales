@@ -17,7 +17,7 @@ public class BuildingSpot {
     public Vector2Int locationInBuildSpotGrid { get; private set; }
     public Dictionary<GridNeighbourDirection, BuildingSpot> neighbours { get; private set; }
     public HexTile hexTileOwner { get; private set; } //if this is null then it means that this build spot belongs to a hex tile that is not in this build spots region
-    public BuildingSpotItem spotItem { get; private set; }
+    public TileCollectionItem spotItem { get; private set; }
 
     //Building
     public LocationStructureObject blueprint { get; private set; }
@@ -49,10 +49,9 @@ public class BuildingSpot {
 
     public void Initialize(InnerTileMap tileMap) {
         //get the tiles in this spots territory.
-        spotItem = spotItem;
-        DetermineTilesInnTerritory(tileMap);
+        // DetermineTilesInnTerritory(tileMap);
     }
-    public void SetBuildSpotItem(BuildingSpotItem spotItem) {
+    public void SetBuildSpotItem(TileCollectionItem spotItem) {
         this.spotItem = spotItem;
     }
     private void DetermineTilesInnTerritory(InnerTileMap tileMap) {
@@ -65,7 +64,7 @@ public class BuildingSpot {
             for (int y = startingPos.y; y <= endPos.y; y++) {
                 LocationGridTile tile = tileMap.map[x, y];
                 tilesInTerritory[tileCount] = tile;
-                tile.SetBuildSpotOwner(this);
+                // tile.SetBuildSpotOwner(this);
                 tileCount++;
             }
         }
@@ -76,8 +75,8 @@ public class BuildingSpot {
         }
         //Debug.Log("Finding neighbours for build spot " + id.ToString());
         neighbours = new Dictionary<GridNeighbourDirection, BuildingSpot>();
-        int mapUpperBoundX = map.buildingSpots.GetUpperBound(0);
-        int mapUpperBoundY = map.buildingSpots.GetUpperBound(1);
+        int mapUpperBoundX = map.locationGridTileCollections.GetUpperBound(0);
+        int mapUpperBoundY = map.locationGridTileCollections.GetUpperBound(1);
         Point thisPoint = new Point(locationInBuildSpotGrid.x, locationInBuildSpotGrid.y);
         foreach (KeyValuePair<GridNeighbourDirection, Point> kvp in possibleExits) {
             GridNeighbourDirection direction = kvp.Key;
@@ -85,7 +84,7 @@ public class BuildingSpot {
             Point result = exit.Sum(thisPoint);
             if (UtilityScripts.Utilities.IsInRange(result.X, 0, mapUpperBoundX + 1) &&
                 UtilityScripts.Utilities.IsInRange(result.Y, 0, mapUpperBoundY + 1)) {
-                neighbours.Add(direction, map.buildingSpots[result.X, result.Y]);
+                // neighbours.Add(direction, map.locationGridTileCollections[result.X, result.Y]);
             }
         }
     }
@@ -165,9 +164,6 @@ public class BuildingSpot {
         } else {
             SetIsOccupied(false);
         }
-    }
-    public bool CanFitStructureOnSpot(LocationStructureObject obj, InnerTileMap map, string builderIdentifier) {
-        return map.CanBuildSpotFit(obj, this, builderIdentifier);
     }
     /// <summary>
     /// Is this build spot open for the given npcSettlement.

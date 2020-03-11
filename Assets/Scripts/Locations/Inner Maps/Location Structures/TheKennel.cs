@@ -149,7 +149,7 @@ namespace Inner_Maps.Location_Structures {
             Summon summon = CharacterManager.Instance.CreateNewSummon(GetMonsterType(raceClass),
                 PlayerManager.Instance.player.playerFaction, settlementLocation, location as Region);
             CharacterManager.Instance.PlaceSummon(summon, targetTile);
-            summon.AddTerritory(occupiedBuildSpot.spot.hexTileOwner);
+            summon.AddTerritory(occupiedHexTile.hexTileOwner);
             summon.combatComponent.SetCombatMode(COMBAT_MODE.Defend);
             AddOwnedSummon(summon);
             PlayerManager.Instance.player.AddSummon(summon);

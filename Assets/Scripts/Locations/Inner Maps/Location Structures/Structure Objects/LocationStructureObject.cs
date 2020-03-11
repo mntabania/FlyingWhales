@@ -16,6 +16,8 @@ public class LocationStructureObject : PooledObject {
 
     public enum Structure_Visual_Mode { Blueprint, Built }
 
+    public STRUCTURE_TYPE structureType;
+    
     [Header("Tilemaps")]
     [SerializeField] protected Tilemap _groundTileMap;
     [SerializeField] protected Tilemap _detailTileMap;
@@ -43,6 +45,8 @@ public class LocationStructureObject : PooledObject {
     [Tooltip("If this has elements, then only the provided coordinates will be set as part of the actual structure. Otherwise all the tiles inside the ground tilemap will be considered as part of the structure.")]
     [SerializeField] private List<Vector3Int> predeterminedOccupiedCoordinates;
 
+    private StructureTemplate _parentTemplate;
+
     #region Properties
     private Tilemap[] allTilemaps;
     private WallVisual[] wallVisuals;
@@ -59,6 +63,7 @@ public class LocationStructureObject : PooledObject {
     void Awake() {
         allTilemaps = transform.GetComponentsInChildren<Tilemap>();
         wallVisuals = transform.GetComponentsInChildren<WallVisual>();
+        _parentTemplate = GetComponentInParent<StructureTemplate>();
         // _groundTileMap.CompressBounds();
     }
     #endregion
@@ -216,11 +221,11 @@ public class LocationStructureObject : PooledObject {
 
     #region Events
     /// <summary>
-    /// Actions to do when a structure object has been placed.
+    /// Actions to do when a BUILT structure object has been placed.
     /// </summary>
     /// <param name="innerMap">The map where the structure was placed.</param>
     /// <param name="structure">The structure that was placed.</param>
-    public void OnStructureObjectPlaced(InnerTileMap innerMap, LocationStructure structure) {
+    public void OnBuiltStructureObjectPlaced(InnerTileMap innerMap, LocationStructure structure) {
         for (int i = 0; i < tiles.Length; i++) {
             LocationGridTile tile = tiles[i];
             //check if the template has details at this tiles location
@@ -228,33 +233,16 @@ public class LocationStructureObject : PooledObject {
             if (tile.hasDetail) { //if it does then set that tile as occupied
                 tile.SetTileState(LocationGridTile.Tile_State.Occupied);
             }
-
             //set the ground asset of the parent npcSettlement map to what this objects ground map uses, then clear this objects ground map
             ApplyGroundTileAssetForTile(tile);
             tile.CreateSeamlessEdgesForTile(innerMap);
             tile.parentMap.detailsTilemap.SetTile(tile.localPlace, null);
-            
-            //block walls
-            if (_blockWallsTilemap != null) {
-                TileBase blockWallAsset = _blockWallsTilemap.GetTile(_blockWallsTilemap.WorldToCell(tile.worldLocation));
-                if (blockWallAsset != null) {
-                    if (blockWallAsset.name.Contains("Wall")) {
-                        BlockWall blockWall = InnerMapManager.Instance.CreateNewTileObject<BlockWall>(TILE_OBJECT_TYPE.BLOCK_WALL);
-                        blockWall.SetWallType(_wallType);
-                        structure.AddPOI(blockWall, tile);
-                    } else {
-                      innerMap.structureTilemap.SetTile(tile.localPlace, blockWallAsset);  
-                    }    
-                }
-            }
-        }
-        if (_blockWallsTilemap != null) {
-            //disable block walls tilemap
-            _blockWallsTilemap.gameObject.SetActive(false);
         }
         RegisterWalls(innerMap, structure);
         _groundTileMap.gameObject.SetActive(false);
         RegisterFurnitureSpots(innerMap);
+        RegisterPreplacedObjects(structure, innerMap);
+        RescanPathfindingGridOfStructure();
         if (structure.settlementLocation is NPCSettlement npcSettlement) {
             npcSettlement.OnLocationStructureObjectPlaced(structure);
         } else {
@@ -262,6 +250,10 @@ public class LocationStructureObject : PooledObject {
         }
         UpdateSortingOrders();
         Messenger.Broadcast(Signals.STRUCTURE_OBJECT_PLACED, structure);
+    }
+    public void OnOwnerStructureDestroyed() {
+        gameObject.SetActive(false); //disable this object.
+        _parentTemplate.CheckForDestroy(); //check if whole structure template has been destroyed.
     }
     #endregion
 
@@ -285,7 +277,7 @@ public class LocationStructureObject : PooledObject {
             }    
         }
 
-        var localPosition = transform.localPosition;
+        var localPosition = map.transform.InverseTransformPoint(transform.position);
         Vector3Int actualLocation = new Vector3Int(Mathf.FloorToInt(localPosition.x), Mathf.FloorToInt(localPosition.y), 0);
         for (int i = 0; i < occupiedCoordinates.Count; i++) {
             Vector3Int currCoordinate = occupiedCoordinates[i];
@@ -347,24 +339,53 @@ public class LocationStructureObject : PooledObject {
         base.Reset();
         SetPreplacedObjectsState(true);
         _groundTileMap.gameObject.SetActive(true);
+        _blockWallsTilemap.gameObject.SetActive(true);
         tiles = null;
     }
     #endregion
 
     #region Walls
+    /// <summary>
+    /// Create necessary objects for this structure objects walls.
+    /// This takes into account what type of wall this structure object has (Block walls or Thin structure walls)
+    /// </summary>
+    /// <param name="map">The inner tile map this structure is part of.</param>
+    /// <param name="structure">The structure instance this object is connected to.</param>
     private void RegisterWalls(InnerTileMap map, LocationStructure structure) {
-        walls = new StructureWallObject[wallVisuals.Length];
-        for (int i = 0; i < wallVisuals.Length; i++) {
-            WallVisual wallVisual = wallVisuals[i];
-            StructureWallObject structureWallObject = new StructureWallObject(structure, wallVisual, _wallResource);
-            Vector3Int tileLocation = map.groundTilemap.WorldToCell(wallVisual.transform.position);
-            LocationGridTile tile = map.map[tileLocation.x, tileLocation.y];
-            tile.SetTileType(LocationGridTile.Tile_Type.Wall);
-            structureWallObject.SetGridTileLocation(tile);
-            tile.AddWallObject(structureWallObject);
-            walls[i] = structureWallObject;
-        }    
-        
+        if (_blockWallsTilemap != null) {
+            for (int i = 0; i < tiles.Length; i++) {
+                LocationGridTile tile = tiles[i];
+                //block walls
+                TileBase blockWallAsset = 
+                    _blockWallsTilemap.GetTile(_blockWallsTilemap.WorldToCell(tile.worldLocation));
+                if (blockWallAsset != null) {
+                    if (blockWallAsset.name.Contains("Wall")) {
+                        BlockWall blockWall =
+                            InnerMapManager.Instance.CreateNewTileObject<BlockWall>(TILE_OBJECT_TYPE.BLOCK_WALL);
+                        blockWall.SetWallType(_wallType);
+                        structure.AddPOI(blockWall, tile);
+                    }
+                    else {
+                        map.structureTilemap.SetTile(tile.localPlace, blockWallAsset);
+                    }
+                }
+            }
+            //disable block walls tilemap
+            _blockWallsTilemap.gameObject.SetActive(false);
+        } else if (wallVisuals != null && wallVisuals.Length > 0) {
+            //structure walls
+            walls = new StructureWallObject[wallVisuals.Length];
+            for (int i = 0; i < wallVisuals.Length; i++) {
+                WallVisual wallVisual = wallVisuals[i];
+                StructureWallObject structureWallObject = new StructureWallObject(structure, wallVisual, _wallResource);
+                Vector3Int tileLocation = map.groundTilemap.WorldToCell(wallVisual.transform.position);
+                LocationGridTile tile = map.map[tileLocation.x, tileLocation.y];
+                tile.SetTileType(LocationGridTile.Tile_Type.Wall);
+                structureWallObject.SetGridTileLocation(tile);
+                tile.AddWallObject(structureWallObject);
+                walls[i] = structureWallObject;
+            }    
+        }
     }
     internal void ChangeResourceMadeOf(RESOURCE resource) {
         for (int i = 0; i < walls.Length; i++) {

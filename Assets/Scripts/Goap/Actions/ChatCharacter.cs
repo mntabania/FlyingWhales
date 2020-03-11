@@ -228,7 +228,6 @@ public class ChatCharacter : GoapAction {
         goapNode.actor.relationshipContainer.AdjustOpinion(goapNode.actor, target, "Argument", -2);
     }
     private void Flirt(ActualGoapNode goapNode, Character targetCharacter) {
-        //TODO: currentState.SetIntelReaction(FlirtIntelReaction);
         // if (!goapNode.actor.relationshipContainer.HasRelationshipWith(targetCharacter)) {
         //     goapNode.actor.relationshipContainer.CreateNewRelationship(targetCharacter);
         // }

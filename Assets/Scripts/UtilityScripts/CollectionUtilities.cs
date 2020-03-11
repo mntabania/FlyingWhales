@@ -34,7 +34,7 @@ namespace UtilityScripts {
             int n = newList.Count;
             while (n > 1) {
                 n--;
-                int k = UtilityScripts.Utilities.rng.Next(n + 1);
+                int k = UtilityScripts.Utilities.Rng.Next(n + 1);
                 T value = newList[k];
                 newList[k] = newList[n];
                 newList[n] = value;
@@ -98,20 +98,23 @@ namespace UtilityScripts {
             if (list.Count == 0) {
                 return -1;
             }
-            return UtilityScripts.Utilities.rng.Next(0, list.Count);
+            return UtilityScripts.Utilities.Rng.Next(0, list.Count);
         }
         public static T GetRandomElement<T>(List<T> list) {
-            return list[UtilityScripts.Utilities.rng.Next(0, list.Count)];
+            if (list.Count == 0) {
+                return default;
+            }
+            return list[UtilityScripts.Utilities.Rng.Next(0, list.Count)];
         }
         public static T GetRandomElement<T>(T[] list) {
             if (list.Length == 0) {
                 return default;
             }
-            return list[UtilityScripts.Utilities.rng.Next(0, list.Length)];
+            return list[UtilityScripts.Utilities.Rng.Next(0, list.Length)];
         }
         public static T GetRandomElement<T>(IEnumerable<T> list) {
             var enumerable = list.ToList();
-            return enumerable.ElementAt(UtilityScripts.Utilities.rng.Next(0, enumerable.Count()));
+            return enumerable.ElementAt(UtilityScripts.Utilities.Rng.Next(0, enumerable.Count()));
         }
         public static List<T> GetRandomElements<T>(List<T> list, int count) {
             int elementsToGet = count;

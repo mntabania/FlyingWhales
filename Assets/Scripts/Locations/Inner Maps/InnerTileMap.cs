@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Inner_Maps.Location_Structures;
+using Locations.Settlements;
 using Pathfinding;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
-using UtilityScripts;
 using Random = UnityEngine.Random;
 namespace Inner_Maps {
     public abstract class InnerTileMap : MonoBehaviour {
@@ -49,8 +49,9 @@ namespace Inner_Maps {
         [FormerlySerializedAs("centerGOPrefab")] public GameObject centerGoPrefab;
         public Vector4 cameraBounds;
         
+        [FormerlySerializedAs("buildSpotPrefab")]
         [Header("Structures")]
-        [SerializeField] protected GameObject buildSpotPrefab;
+        [SerializeField] protected GameObject tileCollectionPrefab;
         
         [Header("Perlin Noise")]
         [SerializeField] protected float offsetX;
@@ -70,7 +71,7 @@ namespace Inner_Maps {
         public Vector3 worldPos { get; private set; }
         public GameObject centerGo { get; private set; }
         public List<BurningSource> activeBurningSources { get; private set; }
-        public BuildingSpot[,] buildingSpots { get; protected set; }
+        public LocationGridTileCollection[,] locationGridTileCollections { get; protected set; }
         public bool isShowing => InnerMapManager.Instance.currentlyShowingMap == this;
 
         #region Generation
@@ -255,12 +256,12 @@ namespace Inner_Maps {
                         throw new Exception($"{character.name} is going to tile {to} which does not have a structure!");
                     }
                 }
-                if (from.buildSpotOwner.hexTileOwner != to.buildSpotOwner.hexTileOwner) {
-                    if (from.buildSpotOwner.hexTileOwner) {
-                        from.buildSpotOwner.hexTileOwner.OnRemovePOIInHex(character);
+                if (from.collectionOwner.partOfHextile != to.collectionOwner.partOfHextile) {
+                    if (from.collectionOwner.isPartOfParentRegionMap) {
+                        from.collectionOwner.partOfHextile.hexTileOwner.OnRemovePOIInHex(character);
                     }
-                    if (to.buildSpotOwner.hexTileOwner) {
-                        to.buildSpotOwner.hexTileOwner.OnPlacePOIInHex(character);
+                    if (to.collectionOwner.isPartOfParentRegionMap) {
+                        to.collectionOwner.partOfHextile.hexTileOwner.OnPlacePOIInHex(character);
                     }
                 }
                 Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.REMOVE_STATUS, character as IPointOfInterest);
@@ -360,151 +361,33 @@ namespace Inner_Maps {
         }
         #endregion
 
-        #region Building Spots
-        public bool TryGetValidBuildSpotTileObjectForStructure(LocationStructureObject structureObject, NPCSettlement npcSettlement, out BuildSpotTileObject buildingSpot) {
-            List<BuildSpotTileObject> openSpots = GetOpenBuildSpotTileObjects(npcSettlement);
-            if (structureObject.IsBiggerThanBuildSpot()) {
-                if (openSpots.Count > 0) {
-                    List<BuildSpotTileObject> choices = new List<BuildSpotTileObject>();
-                    for (int i = 0; i < openSpots.Count; i++) {
-                        BuildSpotTileObject buildSpot = openSpots[i];
-                        if (buildSpot.spot.CanFitStructureOnSpot(structureObject, this, "NPC")) {
-                            choices.Add(buildSpot);
-                        }
-                    }
-                    if (choices.Count > 0) {
-                        buildingSpot = CollectionUtilities.GetRandomElement(choices);
-                        return true;
-                    }
-                }
-                //could not find any spots
-                buildingSpot = null;
-                return false;
-            } else {
-                //if the object does not exceed the size of a build spot, then just give it a random open build spot
-                if (openSpots.Count > 0) {
-                    buildingSpot = CollectionUtilities.GetRandomElement(openSpots);    
-                } else {
-                    buildingSpot = null;
-                }
-                
-                return buildingSpot != null;
-            }
-        }
-        private List<BuildSpotTileObject> GetOpenBuildSpotTileObjects(NPCSettlement npcSettlement) {
-            List<BuildSpotTileObject> spots = location.coreTile.region.GetTileObjectsOfType(TILE_OBJECT_TYPE.BUILD_SPOT_TILE_OBJECT).Select(x => x as BuildSpotTileObject).ToList();
-            List<BuildSpotTileObject> open = new List<BuildSpotTileObject>();
-            for (int i = 0; i < spots.Count; i++) {
-                BuildSpotTileObject buildSpotTileObject = spots[i];
-                if (buildSpotTileObject.spot.IsOpenFor(npcSettlement)) {
-                    open.Add(buildSpotTileObject);
-                }
-            }
-            return open;
-        }
-        public BuildSpotTileObject GetBuildSpotTileObject(BuildingSpot spot) {
-            List<BuildSpotTileObject> spots = location.coreTile.region.GetTileObjectsOfType(TILE_OBJECT_TYPE.BUILD_SPOT_TILE_OBJECT).Select(x => x as BuildSpotTileObject).ToList();
-            for (int i = 0; i < spots.Count; i++) {
-                BuildSpotTileObject buildSpotTileObject = spots[i];
-                if (buildSpotTileObject.spot == spot) {
-                    return buildSpotTileObject;
-                }
-            }
-            return null;
-        }
-        public bool CanBuildSpotFit(LocationStructureObject structureObject, BuildingSpot spot, string builderIdentifier = "NPC") {
-            bool isHorizontallyBig = structureObject.IsHorizontallyBig();
-            bool isVerticallyBig = structureObject.IsVerticallyBig();
-            BuildingSpot currSpot = spot;
-            if (isHorizontallyBig && isVerticallyBig) {
-                //if it is bigger both horizontally and vertically
-                //only get build spots that do not have any occupied adjacent spots at their top and right
-                bool hasUnoccupiedNorth = currSpot.neighbours.ContainsKey(GridNeighbourDirection.North)
-                                          && currSpot.neighbours[GridNeighbourDirection.North].isOccupied == false
-                                          && currSpot.neighbours[GridNeighbourDirection.North].CanBeBuiltOnBy(builderIdentifier);
-                bool hasUnoccupiedEast = currSpot.neighbours.ContainsKey(GridNeighbourDirection.East)
-                                         && currSpot.neighbours[GridNeighbourDirection.East].isOccupied == false
-                                         && currSpot.neighbours[GridNeighbourDirection.East].CanBeBuiltOnBy(builderIdentifier);
-                bool hasUnoccupiedNorthEast = currSpot.neighbours.ContainsKey(GridNeighbourDirection.North_East)
-                                         && currSpot.neighbours[GridNeighbourDirection.North_East].isOccupied == false
-                                         && currSpot.neighbours[GridNeighbourDirection.North_East].CanBeBuiltOnBy(builderIdentifier);
-                if (hasUnoccupiedNorth && hasUnoccupiedEast && hasUnoccupiedNorthEast) {
-                    return true;
-                }
-            } else if (isHorizontallyBig) {
-                //if it is bigger horizontally
-                //only get build spots that do not have any occupied adjacent spots at their right
-                bool hasUnoccupiedEast = currSpot.neighbours.ContainsKey(GridNeighbourDirection.East) 
-                                         && currSpot.neighbours[GridNeighbourDirection.East].isOccupied == false
-                                         && currSpot.neighbours[GridNeighbourDirection.East].CanBeBuiltOnBy(builderIdentifier);
-                if (hasUnoccupiedEast) {
-                    return true;
-                }
-            } else if (isVerticallyBig) {
-                //if it is bigger vertically
-                //only get build spots that do not have any occupied adjacent spots at their top
-                bool hasUnoccupiedNorth = currSpot.neighbours.ContainsKey(GridNeighbourDirection.North) 
-                                          && currSpot.neighbours[GridNeighbourDirection.North].isOccupied == false
-                                          && currSpot.neighbours[GridNeighbourDirection.North].CanBeBuiltOnBy(builderIdentifier);
-                if (hasUnoccupiedNorth) {
-                    return true;
-                }
-            } else {
-                //object is not big
-                return true;
-            }
-            return false;
-        }
-        public void PlaceBuildSpotTileObjects() {
-            for (int x = 0; x <= buildingSpots.GetUpperBound(0); x++) {
-                for (int y = 0; y <= buildingSpots.GetUpperBound(1); y++) {
-                    BuildingSpot spot = buildingSpots[x, y];
-                    if (spot.canBeBuiltOnByNPC) {
-                        BuildSpotTileObject tileObj =
-                            InnerMapManager.Instance.CreateNewTileObject<BuildSpotTileObject>(TILE_OBJECT_TYPE
-                                .BUILD_SPOT_TILE_OBJECT);
-                        tileObj.SetBuildingSpot(spot);
-                        LocationGridTile tileLocation = map[spot.location.x, spot.location.y];
-                        tileLocation.structure.AddPOI(tileObj, tileLocation, false);
-                        tileObj.SetGridTileLocation(tileLocation); //manually placed so that only the data of the build spot will be set, and the tile will not consider the build spot as objHere
-                        if (tileLocation.structure.structureType != STRUCTURE_TYPE.WORK_AREA && tileLocation.structure.structureType != STRUCTURE_TYPE.WILDERNESS) {
-                            tileLocation.structure.SetOccupiedBuildSpot(tileObj);
-                        }    
-                    }
-                }
-            }
-        }
-        #endregion
-
         #region Structures
-        public void PlaceStructureObjectAt(BuildingSpot chosenBuildingSpot, GameObject structurePrefab, 
-            LocationStructure structure, BuildSpotTileObject buildSpotTileObject = null) {
-            
-            GameObject structureGo = ObjectPoolManager.Instance.InstantiateObjectFromPool(structurePrefab.name, Vector3.zero, Quaternion.identity, structureParent);
-            LocationStructureObject structureObjectPrefab = structureGo.GetComponent<LocationStructureObject>();
-            structureGo.transform.localPosition = chosenBuildingSpot.GetPositionToPlaceStructure(structureObjectPrefab);
+        public void PlaceBuiltStructureTemplateAt(GameObject structurePrefab, HexTile hexTile, BaseSettlement settlement) {
+            GameObject structureTemplateGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(
+                structurePrefab.name, hexTile.GetCenterLocationGridTile().centeredLocalLocation,
+                Quaternion.identity, structureParent);
         
-            LocationStructureObject structureObject = structureGo.GetComponent<LocationStructureObject>();
-            structureObject.RefreshAllTilemaps();
-            List<LocationGridTile> occupiedTiles = structureObject.GetTilesOccupiedByStructure(this);
-            structureObject.SetTilesInStructure(occupiedTiles.ToArray());
+            StructureTemplate structureTemplate = structureTemplateGO.GetComponent<StructureTemplate>();
 
-            structureObject.ClearOutUnimportantObjectsBeforePlacement();
-
-            for (int j = 0; j < occupiedTiles.Count; j++) {
-                LocationGridTile tile = occupiedTiles[j];
-                tile.SetStructure(structure);
-            }
-            chosenBuildingSpot.SetIsOccupied(true);
-            // chosenBuildingSpot.SetAllAdjacentSpotsAsOpen(this);
-            chosenBuildingSpot.UpdateAdjacentSpotsOccupancy(this);
-
-            structure.SetStructureObject(structureObject);
-            if (buildSpotTileObject != null) {
-                structure.SetOccupiedBuildSpot(buildSpotTileObject);    
+            for (int i = 0; i < structureTemplate.structureObjects.Length; i++) {
+                LocationStructureObject structureObject = structureTemplate.structureObjects[i];
+                structureObject.RefreshAllTilemaps();
+                List<LocationGridTile> occupiedTiles = structureObject.GetTilesOccupiedByStructure(this);
+                structureObject.SetTilesInStructure(occupiedTiles.ToArray());
+                structureObject.ClearOutUnimportantObjectsBeforePlacement();
+                LocationStructure structure =
+                    LandmarkManager.Instance.CreateNewStructureAt(hexTile.region, structureObject.structureType,
+                        settlement);
+                for (int j = 0; j < occupiedTiles.Count; j++) {
+                    LocationGridTile tile = occupiedTiles[j];
+                    tile.SetStructure(structure);
+                }
+                structure.SetStructureObject(structureObject);
+                structure.SetOccupiedHexTile(hexTile.innerMapHexTile);
+                structureObject.OnBuiltStructureObjectPlaced(this, structure);
             }
             
-            structureObject.OnStructureObjectPlaced(this, structure);
+            hexTile.innerMapHexTile.Occupy();
         }
         #endregion
 
@@ -599,13 +482,13 @@ namespace Inner_Maps {
             for (int i = 0; i < tiles.Count; i++) {
                 LocationGridTile currTile = tiles[i];
                 
-                if (ReferenceEquals(currTile.buildSpotOwner.hexTileOwner, null) == false) {
-                    if ((currTile.buildSpotOwner.hexTileOwner.elevationType == ELEVATION.MOUNTAIN 
-                         || currTile.buildSpotOwner.hexTileOwner.elevationType == ELEVATION.WATER)) {
+                if (ReferenceEquals(currTile.collectionOwner.partOfHextile, null) == false) {
+                    if ((currTile.collectionOwner.partOfHextile.hexTileOwner.elevationType == ELEVATION.MOUNTAIN 
+                         || currTile.collectionOwner.partOfHextile.hexTileOwner.elevationType == ELEVATION.WATER)) {
                         continue; //skip other details generation for tiles belonging to mountain or water tiles, since they will be overwritten after ElevationStructureGeneration anyway.    
                     }
-                    if (currTile.buildSpotOwner.hexTileOwner.landmarkOnTile != null 
-                        && currTile.buildSpotOwner.hexTileOwner.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.MONSTER_LAIR) {
+                    if (currTile.collectionOwner.partOfHextile.hexTileOwner.landmarkOnTile != null 
+                        && currTile.collectionOwner.partOfHextile.hexTileOwner.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.MONSTER_LAIR) {
                         continue; //skip other details generation for tiles belonging to monster lair, since they will be overwritten anyway.    
                     }
                 }
@@ -683,7 +566,6 @@ namespace Inner_Maps {
                 && (x.structure == null || x.structure.structureType == STRUCTURE_TYPE.WILDERNESS ||
                     x.structure.structureType == STRUCTURE_TYPE.WORK_AREA)
                 && x.tileType != LocationGridTile.Tile_Type.Wall
-                && !x.isLocked
                 && !x.IsAdjacentTo(typeof(MagicCircle))
             ).ToList();
             yield return StartCoroutine(MapPerlinDetails(tilesToPerlin));

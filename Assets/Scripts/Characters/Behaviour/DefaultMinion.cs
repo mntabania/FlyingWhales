@@ -13,10 +13,10 @@ public class DefaultMinion : CharacterBehaviourComponent {
 			if (character.gridTileLocation != null) {
 				HexTile portal = PlayerManager.Instance.player.portalTile;
 				List<HexTile> playerTiles = PlayerManager.Instance.player.playerSettlement.tiles;
-				if (playerTiles.Contains(character.gridTileLocation.buildSpotOwner.hexTileOwner)) {
+				if (playerTiles.Contains(character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner)) {
 					//bool hasAddedJob = false;
 					log += "\n-Inside corruption";
-					if (character.gridTileLocation.buildSpotOwner.hexTileOwner != portal) {
+					if (character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner != portal) {
 						log += "\n-Inside portal hex tile";
 						log += "\n-Roam Around Portal";
 						character.jobComponent.TriggerRoamAroundPortal();

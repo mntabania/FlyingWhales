@@ -41,7 +41,8 @@ public class Artifact : TileObject {
     protected override string GenerateName() { return UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(type.ToString()); }
     public override void OnPlacePOI() {
         base.OnPlacePOI();
-        if (gridTileLocation.buildSpotOwner.hexTileOwner == PlayerManager.Instance.player.portalTile) {
+        if (gridTileLocation.collectionOwner.isPartOfParentRegionMap && 
+            gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == PlayerManager.Instance.player.portalTile) {
             PlayerManager.Instance.player.AddArtifact(this);
         }
     }

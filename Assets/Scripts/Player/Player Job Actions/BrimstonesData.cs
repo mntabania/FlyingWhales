@@ -21,6 +21,6 @@ public class BrimstonesData : SpellData {
         return targetHex != null && !targetHex.spellsComponent.hasBrimstones;
     }
     public override void HighlightAffectedTiles(LocationGridTile tile) {
-        TileHighlighter.Instance.PositionHighlight(tile.buildSpotOwner.hexTileOwner);
+        TileHighlighter.Instance.PositionHighlight(tile.collectionOwner.partOfHextile.hexTileOwner);
     }
 }

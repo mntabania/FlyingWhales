@@ -9,6 +9,7 @@ using UnityEngine.Serialization;
 using Traits;
 using Archetype;
 using Locations.Settlements;
+using UnityEngine.Assertions;
 
 public class PlayerManager : MonoBehaviour {
     public static PlayerManager Instance;
@@ -69,8 +70,9 @@ public class PlayerManager : MonoBehaviour {
         player.CreatePlayerFaction();
         player.SetPortalTile(portal.tileLocation);
         player.SetArchetype(archeType);
-        PlayerSettlement existingPlayerNpcSettlement = player.CreatePlayerSettlement(portal);
-        existingPlayerNpcSettlement.GenerateStructures(portalStructure);
+        PlayerSettlement existingPlayerNpcSettlement = portal.tileLocation.settlementOnTile as PlayerSettlement;
+        Assert.IsNotNull(existingPlayerNpcSettlement, $"Portal does not have a player settlement on its tile");
+        player.SetPlayerArea(existingPlayerNpcSettlement);
         
         LandmarkManager.Instance.OwnSettlement(player.playerFaction, existingPlayerNpcSettlement);
         

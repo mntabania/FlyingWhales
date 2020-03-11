@@ -235,7 +235,7 @@ public class DouseFireStateSaveDataCharacterState : SaveDataCharacterState {
         // foreach (KeyValuePair<BurningSource, List<ITraitable>> kvp in dfState.fires) {
         //     for (int i = 0; i < kvp.Value.Count; i++) {
         //         ITraitable poi = kvp.Value[i];
-        //         //TODO: fires[count] = new POIData(poi);
+        //         fires[count] = new POIData(poi);
         //         count++;
         //     }
         // }

@@ -309,9 +309,9 @@ public class Player : ILeader, IObjectManipulator {
                     break;
                 case SPELL_TARGET.HEX:
                     hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
-                    if (hoveredTile != null && hoveredTile.buildSpotOwner.hexTileOwner) {
-                        if (currentActivePlayerSpell.CanPerformAbilityTowards(hoveredTile.buildSpotOwner.hexTileOwner)) {
-                            currentActivePlayerSpell.ActivateAbility(hoveredTile.buildSpotOwner.hexTileOwner);
+                    if (hoveredTile != null && hoveredTile.collectionOwner.partOfHextile.hexTileOwner) {
+                        if (currentActivePlayerSpell.CanPerformAbilityTowards(hoveredTile.collectionOwner.partOfHextile.hexTileOwner)) {
+                            currentActivePlayerSpell.ActivateAbility(hoveredTile.collectionOwner.partOfHextile.hexTileOwner);
                             activatedAction = true;
                         } 
                         UIManager.Instance.SetTempDisableShowInfoUI(true);

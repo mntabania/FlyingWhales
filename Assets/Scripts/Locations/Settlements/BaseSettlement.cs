@@ -19,6 +19,7 @@ namespace Locations.Settlements {
             this.citizenCount = citizenCount;
             tiles = new List<HexTile>();
             residents = new List<Character>();
+            structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
             SetLocationType(locationType);
         }
         protected BaseSettlement(SaveDataArea saveDataArea) {
@@ -27,6 +28,7 @@ namespace Locations.Settlements {
             citizenCount = saveDataArea.citizenCount;
             tiles = new List<HexTile>();
             residents = new List<Character>();
+            structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
             SetLocationType(saveDataArea.locationType);
         }
 
@@ -160,15 +162,7 @@ namespace Locations.Settlements {
         #endregion
 
         #region Structures
-        public virtual void GenerateStructures(int citizenCount, Region region) {
-            structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
-            LandmarkManager.Instance.CreateNewStructureAt(region, STRUCTURE_TYPE.CITY_CENTER, this);
-            for (int i = 0; i < citizenCount; i++) {
-                LandmarkManager.Instance.CreateNewStructureAt(region, STRUCTURE_TYPE.DWELLING, this);
-            }
-        }
         public void GenerateStructures(params LocationStructure[] preCreatedStructures) {
-            structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
             for (int i = 0; i < preCreatedStructures.Length; i++) {
                 LocationStructure structure = preCreatedStructures[i];
                 AddStructure(structure);
@@ -200,7 +194,7 @@ namespace Locations.Settlements {
         }
         public LocationStructure GetRandomStructureOfType(STRUCTURE_TYPE type) {
             if (structures.ContainsKey(type)) {
-                return structures[type][UtilityScripts.Utilities.rng.Next(0, structures[type].Count)];
+                return structures[type][UtilityScripts.Utilities.Rng.Next(0, structures[type].Count)];
             }
             return null;
         }
@@ -255,6 +249,16 @@ namespace Locations.Settlements {
                 }
             }
             return false;
+        }
+        public HexTile GetRandomUnoccupiedHexTile() {
+            List<HexTile> choices = new List<HexTile>();
+            for (int i = 0; i < tiles.Count; i++) {
+                HexTile tile = tiles[i];
+                if (tile.innerMapHexTile.isOccupied == false) {
+                    choices.Add(tile);
+                }
+            }
+            return UtilityScripts.CollectionUtilities.GetRandomElement(choices);
         }
         #endregion
     }

@@ -23,7 +23,7 @@ namespace Inner_Maps.Location_Structures {
         public Dictionary<TILE_OBJECT_TYPE, TileObjectsAndCount> groupedTileObjects { get; private set; }
         public POI_STATE state { get; private set; }
         public LocationStructureObject structureObj {get; private set;}
-        public BuildSpotTileObject occupiedBuildSpot { get; private set; }
+        public InnerMapHexTile occupiedHexTile { get; private set; }
         //Inner Map
         public List<LocationGridTile> tiles { get; private set; }
         public LinkedList<LocationGridTile> unoccupiedTiles { get; private set; }
@@ -130,8 +130,8 @@ namespace Inner_Maps.Location_Structures {
                         toac.AddTileObject(tileObject);
                         groupedTileObjects.Add(tileObject.tileObjectType, toac);
                     }
-                    if (tileObject.gridTileLocation != null && tileObject.gridTileLocation.buildSpotOwner.isPartOfParentRegionMap
-                    && tileObject.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile is NPCSettlement npcSettlement) {
+                    if (tileObject.gridTileLocation != null && tileObject.gridTileLocation.collectionOwner.isPartOfParentRegionMap
+                    && tileObject.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile is NPCSettlement npcSettlement) {
                         npcSettlement.OnItemAddedToLocation(tileObject, this);
                     }
                 }
@@ -145,8 +145,8 @@ namespace Inner_Maps.Location_Structures {
                     TileObject tileObject = poi as TileObject;
                     groupedTileObjects[tileObject.tileObjectType].RemoveTileObject(tileObject);
                     
-                    if (poi.gridTileLocation.buildSpotOwner.isPartOfParentRegionMap 
-                        && poi.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile is NPCSettlement npcSettlement) {
+                    if (poi.gridTileLocation.collectionOwner.isPartOfParentRegionMap 
+                        && poi.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile is NPCSettlement npcSettlement) {
                         npcSettlement.OnItemRemovedFromLocation(tileObject, this);    
                     }
                 }
@@ -183,8 +183,8 @@ namespace Inner_Maps.Location_Structures {
                 if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
                     TileObject tileObject = poi as TileObject;
                     groupedTileObjects[tileObject.tileObjectType].RemoveTileObject(tileObject);
-                    if (poi.gridTileLocation.buildSpotOwner.isPartOfParentRegionMap
-                    && poi.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile is NPCSettlement npcSettlement) {
+                    if (poi.gridTileLocation.collectionOwner.isPartOfParentRegionMap
+                    && poi.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile is NPCSettlement npcSettlement) {
                         npcSettlement.OnItemRemovedFromLocation(tileObject, this);    
                     }
                 }
@@ -337,8 +337,8 @@ namespace Inner_Maps.Location_Structures {
                         return unoccupiedTiles.Where(x => !x.HasOccupiedNeighbour()
                                                           && x.groundType != LocationGridTile.Ground_Type.Cave 
                                                           && x.groundType != LocationGridTile.Ground_Type.Water
-                                                          && x.buildSpotOwner.hexTileOwner 
-                                                          && x.buildSpotOwner.hexTileOwner.elevationType == ELEVATION.PLAIN
+                                                          && x.collectionOwner.partOfHextile.hexTileOwner 
+                                                          && x.collectionOwner.partOfHextile.hexTileOwner.elevationType == ELEVATION.PLAIN
                                                           && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Wall) 
                                                           && !x.HasNeighbourOfType(LocationGridTile.Ground_Type.Cave)
                                                           && !x.HasNeighbourOfType(LocationGridTile.Ground_Type.Water)
@@ -511,8 +511,12 @@ namespace Inner_Maps.Location_Structures {
             position.y -= 0.5f;
             worldPosition = position;
         }
-        public void SetOccupiedBuildSpot(BuildSpotTileObject buildSpotTileObject) {
-            occupiedBuildSpot = buildSpotTileObject;
+        public void SetOccupiedHexTile(InnerMapHexTile hexTile) {
+            InnerMapHexTile previousOccupiedHexTile = occupiedHexTile;
+            occupiedHexTile = hexTile;
+            if (previousOccupiedHexTile != null) {
+                previousOccupiedHexTile.CheckIfVacated();
+            }
         }
         private void OnClickStructure() {
             Selector.Instance.Select(this);
@@ -526,12 +530,13 @@ namespace Inner_Maps.Location_Structures {
             }
             Debug.Log($"{GameManager.Instance.TodayLogString()}{ToString()} was destroyed!");
         
-            if (settlementLocation is NPCSettlement npcSettlement) {
-                JobQueueItem existingRepairJob = npcSettlement.GetJob(JOB_TYPE.REPAIR, occupiedBuildSpot);
-                if (existingRepairJob != null) {
-                    npcSettlement.RemoveFromAvailableJobs(existingRepairJob);
-                }    
-            }
+            //TODO: Each structure should still have it's own build spot tile object
+            // if (settlementLocation is NPCSettlement npcSettlement) {
+            //     JobQueueItem existingRepairJob = npcSettlement.GetJob(JOB_TYPE.REPAIR, occupiedHexTile);
+            //     if (existingRepairJob != null) {
+            //         npcSettlement.RemoveFromAvailableJobs(existingRepairJob);
+            //     }    
+            // }
         
             //transfer tiles to either the wilderness or work npcSettlement
             List<LocationGridTile> tilesInStructure = new List<LocationGridTile>(tiles);
@@ -554,12 +559,13 @@ namespace Inner_Maps.Location_Structures {
                 tile.genericTileObject.AdjustHP(tile.genericTileObject.maxHP, ELEMENTAL_TYPE.Normal);
             }
         
-            occupiedBuildSpot.RemoveOccupyingStructure(this);
-            ObjectPoolManager.Instance.DestroyObject(structureObj);
+            // occupiedBuildSpot.RemoveOccupyingStructure(this);
+            //disable game object. Destruction of structure game object is handled by it's parent structure template.
+            structureObj.OnOwnerStructureDestroyed(); 
             location.RemoveStructure(this);
             settlementLocation.RemoveStructure(this);
-            Messenger.Broadcast(Signals.STRUCTURE_OBJECT_REMOVED, this, occupiedBuildSpot.spot);
-            SetOccupiedBuildSpot(null);
+            Messenger.Broadcast(Signals.STRUCTURE_OBJECT_REMOVED, this, occupiedHexTile);
+            SetOccupiedHexTile(null);
             _hasBeenDestroyed = true;
             UnsubscribeListeners();
             Messenger.Broadcast(Signals.STRUCTURE_DESTROYED, this);
@@ -618,15 +624,17 @@ namespace Inner_Maps.Location_Structures {
             if (structureType.IsOpenSpace() || structureType.IsSettlementStructure() == false) {
                 return; //do not check for damage if structure is open space (Wilderness, Work NPCSettlement, Cemetery, etc.)
             }
-            if (occupiedBuildSpot.advertisedActions.Contains(INTERACTION_TYPE.REPAIR_STRUCTURE) == false) {
-                occupiedBuildSpot.AddAdvertisedAction(INTERACTION_TYPE.REPAIR_STRUCTURE);
-            }
+            //TODO:
+            // if (occupiedHexTile.advertisedActions.Contains(INTERACTION_TYPE.REPAIR_STRUCTURE) == false) {
+            //     occupiedHexTile.AddAdvertisedAction(INTERACTION_TYPE.REPAIR_STRUCTURE);
+            // }
             CheckInteriorState();
-            if (settlementLocation is NPCSettlement npcSettlement) {
-                if (npcSettlement.HasJob(JOB_TYPE.REPAIR, occupiedBuildSpot) == false) {
-                    CreateRepairJob();
-                }    
-            }
+            //TODO:
+            // if (settlementLocation is NPCSettlement npcSettlement) {
+            //     if (npcSettlement.HasJob(JOB_TYPE.REPAIR, occupiedHexTile) == false) {
+            //         CreateRepairJob();
+            //     }    
+            // }
             
         }
         private bool StillHasObjectsToRepair() {
@@ -653,9 +661,10 @@ namespace Inner_Maps.Location_Structures {
         #region Repair
         private void CreateRepairJob() {
             if (settlementLocation is NPCSettlement npcSettlement) {
-                GoapPlanJob repairJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REPAIR, INTERACTION_TYPE.REPAIR_STRUCTURE, occupiedBuildSpot, npcSettlement);
-                repairJob.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRepairStructureJob);
-                npcSettlement.AddToAvailableJobs(repairJob);    
+                //TODO:
+                // GoapPlanJob repairJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REPAIR, INTERACTION_TYPE.REPAIR_STRUCTURE, occupiedHexTile, npcSettlement);
+                // repairJob.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRepairStructureJob);
+                // npcSettlement.AddToAvailableJobs(repairJob);    
             }
         }
         #endregion
@@ -667,7 +676,7 @@ namespace Inner_Maps.Location_Structures {
         #endregion
 
         public override string ToString() {
-            return $"{structureType} {id} at {location.name}";
+            return $"{structureType.ToString()} {id.ToString()} at {location.name}";
         }
 
         #region Player Action Target

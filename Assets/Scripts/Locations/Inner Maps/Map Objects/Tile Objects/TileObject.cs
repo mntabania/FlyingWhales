@@ -184,8 +184,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
                 OccupyTiles(objData.occupiedSize, gridTileLocation);
             }
         }
-        if (gridTileLocation.buildSpotOwner.hexTileOwner) {
-            gridTileLocation.buildSpotOwner.hexTileOwner.OnPlacePOIInHex(this);
+        if (gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+            gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.OnPlacePOIInHex(this);
         }
         SubscribeListeners();
         // Assert.IsTrue((this is MovingTileObject) == false && gridTileLocation.structure.pointsOfInterest.Contains(this), 
@@ -198,8 +198,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         //OnRemoveTileObject(removedBy, previousTile);
         //SetPOIState(POI_STATE.INACTIVE);
         OnDestroyPOI();
-        if (previousTile != null && previousTile.buildSpotOwner.hexTileOwner) {
-            previousTile.buildSpotOwner.hexTileOwner.OnRemovePOIInHex(this);
+        if (previousTile != null && previousTile.collectionOwner.partOfHextile.hexTileOwner) {
+            previousTile.collectionOwner.partOfHextile.hexTileOwner.OnRemovePOIInHex(this);
         }
     }
     public virtual LocationGridTile GetNearestUnoccupiedTileFromThis() {
@@ -485,9 +485,6 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public TraitProcessor traitProcessor => TraitManager.tileObjectTraitProcessor;
     public void CreateTraitContainer() {
         traitContainer = new TraitContainer();
-    }
-    public LocationGridTile GetGridTileLocation(AreaInnerTileMap map) {
-        return gridTileLocation;
     }
     #endregion
 

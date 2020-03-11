@@ -22,6 +22,6 @@ public class EarthquakeData : SpellData {
         return targetHex != null && !targetHex.spellsComponent.hasEarthquake;
     }
     public override void HighlightAffectedTiles(LocationGridTile tile) {
-        TileHighlighter.Instance.PositionHighlight(tile.buildSpotOwner.hexTileOwner);
+        TileHighlighter.Instance.PositionHighlight(tile.collectionOwner.partOfHextile.hexTileOwner);
     }
 }

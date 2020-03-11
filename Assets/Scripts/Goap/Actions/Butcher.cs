@@ -52,21 +52,21 @@ public class Butcher : GoapAction {
                 }
             }
             if(deadCharacter.race == RACE.HUMANS) {
-                cost += UtilityScripts.Utilities.rng.Next(40, 51);
+                cost += UtilityScripts.Utilities.Rng.Next(40, 51);
                 costLog += $" +{cost}(Human)";
             } else if (deadCharacter.race == RACE.ELVES) {
-                cost += UtilityScripts.Utilities.rng.Next(40, 51);
+                cost += UtilityScripts.Utilities.Rng.Next(40, 51);
                 costLog += $" +{cost}(Elf)";
             } else if (deadCharacter.race == RACE.WOLF) {
-                cost += UtilityScripts.Utilities.rng.Next(20, 31);
+                cost += UtilityScripts.Utilities.Rng.Next(20, 31);
                 costLog += $" +{cost}(Wolf)";
             } else if (deadCharacter.race == RACE.DEMON) {
-                cost += UtilityScripts.Utilities.rng.Next(80, 91);
+                cost += UtilityScripts.Utilities.Rng.Next(80, 91);
                 costLog += $" +{cost}(Demon)";
             }
         }
         if(target is SmallAnimal) {
-            cost += UtilityScripts.Utilities.rng.Next(60, 71);
+            cost += UtilityScripts.Utilities.Rng.Next(60, 71);
             costLog += $" +{cost}(Small Animal)";
         }
         actor.logComponent.AppendCostLog(costLog);
@@ -183,7 +183,6 @@ public class Butcher : GoapAction {
         LocationGridTile tileLocation = poiTarget.gridTileLocation;
         Character deadCharacter = GetDeadCharacter(poiTarget);
         int transformedFood = CharacterManager.Instance.GetFoodAmountTakenFromDead(deadCharacter);
-        //TODO: deadCharacter.CancelAllJobsTargettingThisCharacter(JOB_TYPE.BURY);
         //goapNode.actor.AdjustFood(transformedFood);
 
         if (poiTarget is Character) {
