@@ -83,7 +83,7 @@ namespace UnityEngine.UI.Extensions
                     return MenuScreens[i].gameObject;
                 }
             }
-            throw new MissingReferenceException("Prefab not found for " + PrefabName);
+            throw new MissingReferenceException($"Prefab not found for {PrefabName}");
         }
 
         private T GetPrefab<T>() where T : Menu
@@ -100,7 +100,7 @@ namespace UnityEngine.UI.Extensions
                 }
             }
 
-            throw new MissingReferenceException("Prefab not found for type " + typeof(T));
+            throw new MissingReferenceException($"Prefab not found for type {typeof(T)}");
         }
 
         public void CloseMenu(Menu menu)

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections.Generic;
 
 namespace EZObjectPools
@@ -50,7 +51,7 @@ namespace EZObjectPools
         /// <returns>A reference to the created pool.</returns>
         public static EZObjectPool CreateObjectPool(GameObject template, string name, int size, bool autoResize, bool instantiateImmediate, bool shared)
         {
-            if (Marker == null)
+            if (!Marker)
             {
                 Marker = new GameObject("EZ Object Pools Container");
                 SharedPools.Clear();
@@ -94,7 +95,7 @@ namespace EZObjectPools
 
         void Awake()
         {
-            if (Marker == null)
+            if (!Marker)
             {
                 Marker = new GameObject("EZ Object Pools Container");
                 SharedPools.Clear();
@@ -141,7 +142,8 @@ namespace EZObjectPools
         {
             if (Template == null)
             {
-                Debug.LogError("EZ Object Pool: " + name + ": Template GameObject is null! Make sure you assigned a template either in the inspector or in your scripts.");
+                Debug.LogError(
+                    $"EZ Object Pool: {name}: Template GameObject is null! Make sure you assigned a template either in the inspector or in your scripts.");
                 return;
             }
 
@@ -165,20 +167,22 @@ namespace EZObjectPools
         /// <returns>Returns true if an object was successfully retrieved, False if not.</returns>
         public bool TryGetNextObject(Vector3 pos, Quaternion rot, out GameObject obj)
         {
-            if (ObjectList.Count == 0)
+            if (ObjectList == null) //ObjectList.Count == 0
             {
-                Debug.LogError("EZ Object Pool " + PoolName + ", the pool has not been instantiated but you are trying to retrieve an object!");
+                throw new Exception(
+                    $"EZ Object Pool {PoolName}, the pool has not been instantiated but you are trying to retrieve an object!");
             }
 
             int lastIndex = AvailableObjects.Count - 1;
 
             if (AvailableObjects.Count > 0)
             {
-                if (AvailableObjects[lastIndex] == null)
+                if (ReferenceEquals(AvailableObjects[lastIndex], null))
                 {
-                    Debug.LogError("EZObjectPool " + PoolName + " has missing objects in its pool! Are you accidentally destroying any GameObjects retrieved from the pool?");
                     obj = null;
-                    return false;
+                    throw new Exception(
+                        $"EZObjectPool {PoolName} has missing objects in its pool! Are you accidentally destroying any GameObjects retrieved from the pool?");
+                    // return false;
                 }
 
                 AvailableObjects[lastIndex].transform.position = pos;
@@ -214,7 +218,8 @@ namespace EZObjectPools
         {
             if (ObjectList.Count == 0)
             {
-                Debug.LogError("EZ Object Pool " + PoolName + ", the pool has not been instantiated but you are trying to retrieve an object!");
+                Debug.LogError(
+                    $"EZ Object Pool {PoolName}, the pool has not been instantiated but you are trying to retrieve an object!");
             }
 
             int lastIndex = AvailableObjects.Count - 1;
@@ -223,7 +228,8 @@ namespace EZObjectPools
             {
                 if (AvailableObjects[lastIndex] == null)
                 {
-                    Debug.LogError("EZObjectPool " + PoolName + " has missing objects in its pool! Are you accidentally destroying any GameObjects retrieved from the pool?");
+                    Debug.LogError(
+                        $"EZObjectPool {PoolName} has missing objects in its pool! Are you accidentally destroying any GameObjects retrieved from the pool?");
                     return;
                 }
 
@@ -248,10 +254,12 @@ namespace EZObjectPools
             GameObject g = (GameObject)Instantiate(Template);
             g.transform.SetParent(transform);
 
-            PooledObject p = g.GetComponent<PooledObject>();
+            PooledObject[] p = g.GetComponents<PooledObject>();
 
-            if (p)
-                p.ParentPool = this;
+            if (p != null && p.Length > 0)
+                for (int i = 0; i < p.Length; i++) {
+                    p[i].ParentPool = this;
+                } 
             else
                 g.AddComponent<PooledObject>().ParentPool = this;
 

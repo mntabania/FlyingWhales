@@ -16,9 +16,9 @@ public class Scrap : GoapAction {
             TIME_IN_WORDS.EARLY_NIGHT,
         };
         actionIconString = GoapActionStateDB.Work_Icon;
-        isNotificationAnIntel = false;
+        
         //actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.ITEM };
+        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
     }
 
@@ -36,8 +36,8 @@ public class Scrap : GoapAction {
         base.Perform(goapNode);
         SetState("Scrap Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        return Utilities.rng.Next(15, 31);
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+        return UtilityScripts.Utilities.rng.Next(15, 31);
     }
     #endregion
 
@@ -45,15 +45,19 @@ public class Scrap : GoapAction {
    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
-            if (poiTarget is SpecialToken) {
-                SpecialToken token = poiTarget as SpecialToken;
-                if(token.characterOwner != null && token.characterOwner != actor) {
+            if (poiTarget is TileObject) {
+                TileObject item = poiTarget as TileObject;
+                if (item.tileObjectType != TILE_OBJECT_TYPE.HEALING_POTION &&
+                    item.tileObjectType != TILE_OBJECT_TYPE.TOOL) {
                     return false;
                 }
-                if (token.gridTileLocation == null) {
+                if(item.characterOwner != null && item.characterOwner != actor) {
                     return false;
                 }
-                if (token.gridTileLocation.structure.location.IsRequiredByLocation(token)) {
+                if (item.gridTileLocation == null) {
+                    return false;
+                }
+                if (item.gridTileLocation.structure.location.IsRequiredByLocation(item)) {
                     return false;
                 }
                 return true;
@@ -81,11 +85,11 @@ public class Scrap : GoapAction {
     //    goapNode.descriptionLog.AddToFillers(null, TokenManager.Instance.itemData[item.specialTokenType].supplyValue.ToString(), LOG_IDENTIFIER.STRING_1);
     //}
     public void AfterScrapSuccess(ActualGoapNode goapNode) {
-        SpecialToken item = goapNode.poiTarget as SpecialToken;
+        TileObject item = goapNode.poiTarget as TileObject;
         LocationGridTile tile = item.gridTileLocation;
-        int craftCost = item.craftCost;
+        int craftCost = TileObjectDB.GetTileObjectData(item.tileObjectType).constructionCost;
         //goapNode.actor.AdjustSupply(TokenManager.Instance.itemData[item.specialTokenType].supplyValue);
-        goapNode.actor.DestroyToken(item);
+        goapNode.actor.DestroyItem(item);
 
         StonePile stonePile = InnerMapManager.Instance.CreateNewTileObject<StonePile>(TILE_OBJECT_TYPE.STONE_PILE);
         stonePile.SetResourceInPile(Mathf.CeilToInt(craftCost * 0.5f));
@@ -102,9 +106,9 @@ public class ScrapData : GoapActionData {
     }
 
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        if (poiTarget is SpecialToken) {
-            SpecialToken token = poiTarget as SpecialToken;
-            if (token.gridTileLocation != null && token.gridTileLocation.structure.location.IsRequiredByLocation(token)) {
+        if (poiTarget is TileObject) {
+            TileObject item = poiTarget as TileObject;
+            if (item.gridTileLocation != null && item.gridTileLocation.structure.location.IsRequiredByLocation(item)) {
                 return false;
             }
         }

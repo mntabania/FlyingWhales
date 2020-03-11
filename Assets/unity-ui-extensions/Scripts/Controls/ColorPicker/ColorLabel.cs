@@ -66,7 +66,7 @@ public class ColorLabel : MonoBehaviour
     {
         if (picker == null)
         {
-            label.text = prefix + "-";
+            label.text = $"{prefix}-";
         }
         else
         {
@@ -79,7 +79,7 @@ public class ColorLabel : MonoBehaviour
     private string ConvertToDisplayString(float value)
     {
         if (precision > 0)
-            return value.ToString("f " + precision);
+            return value.ToString($"f {precision}");
         else
             return Mathf.FloorToInt(value).ToString();
     }

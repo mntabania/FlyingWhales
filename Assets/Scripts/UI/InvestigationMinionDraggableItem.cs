@@ -20,7 +20,7 @@ public class InvestigationMinionDraggableItem : DraggableItem {
         _draggingObject = clone.GetComponent<RectTransform>();
         _draggingObject.gameObject.AddComponent<DragObject>().parentItem = gameObject.GetComponent<PlayerCharacterItem>();
 
-        //Put _dragging object into the dragging settlement
+        //Put _dragging object into the dragging npcSettlement
         _draggingObject.sizeDelta = _portrait.gameObject.GetComponent<RectTransform>().rect.size;
         _draggingObject.SetParent(UIManager.Instance.gameObject.GetComponent<RectTransform>(), true);
         _isDragging = true;

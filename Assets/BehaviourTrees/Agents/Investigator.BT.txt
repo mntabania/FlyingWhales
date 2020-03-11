@@ -1,9 +1,0 @@
-tree("Root")
-	fallback
-		HasDiedOfOtherReasons
-		tree("Move")
-
-tree("Move")
-	fallback
-		HasArrivedAtTargetHextile
-		MoveToNextTile

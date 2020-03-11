@@ -27,13 +27,13 @@ public class EquatorGenerator : MonoBehaviour {
 
         if (this.equatorLine == EQUATOR_LINE.HORIZONTAL) {
             for (int i = xy[0]; i < width; i++) {
-                listEquator.Add(GetHex(i + "," + xy[1], tiles));
+                listEquator.Add(GetHex($"{i},{xy[1]}", tiles));
                 yield return null;
             }
         }
         if (this.equatorLine == EQUATOR_LINE.VERTICAL) {
             for (int i = xy[1]; i < height; i++) {
-                listEquator.Add(GetHex(xy[0] + "," + i, tiles));
+                listEquator.Add(GetHex($"{xy[0]},{i}", tiles));
                 yield return null;
             }
         }
@@ -41,7 +41,7 @@ public class EquatorGenerator : MonoBehaviour {
             if (xy[1] == 0) {
                 int x = xy[0];
                 for (int y = xy[1]; y < height; y++) {
-                    listEquator.Add(GetHex(x + "," + y, tiles));
+                    listEquator.Add(GetHex($"{x},{y}", tiles));
                     if (y % 2 == 1) {
                         x += 1;
                     }
@@ -54,7 +54,7 @@ public class EquatorGenerator : MonoBehaviour {
             } else {
                 int x = xy[0];
                 for (int y = xy[1]; y >= 0; y--) {
-                    listEquator.Add(GetHex(x + "," + y, tiles));
+                    listEquator.Add(GetHex($"{x},{y}", tiles));
                     if (y % 2 == 0) {
                         x -= 1;
                     }
@@ -71,7 +71,7 @@ public class EquatorGenerator : MonoBehaviour {
             if (xy[1] == 0) {
                 int x = xy[0];
                 for (int y = xy[1]; y < height; y++) {
-                    listEquator.Add(GetHex(x + "," + y, tiles));
+                    listEquator.Add(GetHex($"{x},{y}", tiles));
                     if (y % 2 == 0) {
                         x -= 1;
                     }
@@ -84,7 +84,7 @@ public class EquatorGenerator : MonoBehaviour {
             } else {
                 int x = xy[0];
                 for (int y = xy[1]; y >= 0; y--) {
-                    listEquator.Add(GetHex(x + "," + y, tiles));
+                    listEquator.Add(GetHex($"{x},{y}", tiles));
                     if (y % 2 == 1) {
                         x += 1;
                     }
@@ -109,19 +109,19 @@ public class EquatorGenerator : MonoBehaviour {
 
 		if(this.equatorLine == EQUATOR_LINE.HORIZONTAL){
 			for(int i = xy[0]; i < width; i++){
-				listEquator.Add(GetHex(i + "," + xy[1], tiles));
+				listEquator.Add(GetHex($"{i},{xy[1]}", tiles));
 			}
 		}
 		if(this.equatorLine == EQUATOR_LINE.VERTICAL){
 			for(int i = xy[1]; i < height; i++){
-				listEquator.Add(GetHex(xy[0] + "," + i, tiles));
+				listEquator.Add(GetHex($"{xy[0]},{i}", tiles));
 			}
 		}
 		if(this.equatorLine == EQUATOR_LINE.DIAGONAL_LEFT){
 			if(xy[1] == 0){
 				int x = xy[0];
 				for(int y = xy[1]; y < height; y++){
-					listEquator.Add(GetHex(x + "," + y, tiles));
+					listEquator.Add(GetHex($"{x},{y}", tiles));
 					if(y % 2 == 1){
 						x+=1;
 					}
@@ -133,7 +133,7 @@ public class EquatorGenerator : MonoBehaviour {
 			}else{
 				int x = xy[0];
 				for(int y = xy[1]; y >= 0; y--){
-					listEquator.Add(GetHex(x + "," + y, tiles));
+					listEquator.Add(GetHex($"{x},{y}", tiles));
 					if(y % 2 == 0){
 						x-=1;
 					}
@@ -149,7 +149,7 @@ public class EquatorGenerator : MonoBehaviour {
 			if(xy[1] == 0){
 				int x = xy[0];
 				for(int y = xy[1]; y < height; y++){
-					listEquator.Add(GetHex(x + "," + y, tiles));
+					listEquator.Add(GetHex($"{x},{y}", tiles));
 					if(y % 2 == 0){
 						x-=1;
 					}
@@ -161,7 +161,7 @@ public class EquatorGenerator : MonoBehaviour {
 			}else{
 				int x = xy[0];
 				for(int y = xy[1]; y >= 0; y--){
-					listEquator.Add(GetHex(x + "," + y, tiles));
+					listEquator.Add(GetHex($"{x},{y}", tiles));
 					if(y % 2 == 1){
 						x+=1;
 					}
@@ -188,7 +188,7 @@ public class EquatorGenerator : MonoBehaviour {
     }
 
     internal string GetHexEquatorName(int height){
-        return 0 + "," + (height / 2);
+        return $"{0},{(height / 2)}";
         //if(this.equatorLine == EQUATOR_LINE.HORIZONTAL){
         //	int randomY = UnityEngine.Random.Range(0, (int)GridMap.Instance.height);
         //	return 0 + "," + randomY;

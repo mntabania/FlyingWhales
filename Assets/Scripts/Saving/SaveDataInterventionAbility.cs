@@ -4,22 +4,22 @@ using UnityEngine;
 
 [System.Serializable]
 public class SaveDataInterventionAbility {
-    public INTERVENTION_ABILITY abilityType;
+    public SPELL_TYPE abilityType;
     public int level;
 
     public void Save(PlayerJobActionSlot slot) {
         if(slot.ability != null) {
-            abilityType = slot.ability.abilityType;
+            abilityType = slot.ability.spellType;
         } else {
-            abilityType = INTERVENTION_ABILITY.NONE;
+            abilityType = SPELL_TYPE.NONE;
         }
         level = slot.level;
     }
     public PlayerJobActionSlot Load() {
         PlayerJobActionSlot slot = new PlayerJobActionSlot();
         slot.SetLevel(level);
-        if (abilityType != INTERVENTION_ABILITY.NONE) {
-            PlayerJobAction ability = PlayerManager.Instance.CreateNewInterventionAbility(abilityType);
+        if (abilityType != SPELL_TYPE.NONE) {
+            PlayerSpell ability = PlayerManager.Instance.CreateNewInterventionAbility(abilityType);
             slot.SetAbility(ability);
         }
         return slot;

@@ -21,12 +21,12 @@ public class LogReplacerDictionaryPropertyDrawer : SerializableDictionaryPropert
 public class LocationPortraitDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(FactionEmblemDictionary))]
 public class FactionEmblemDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
-[CustomPropertyDrawer(typeof(ItemAsseteDictionary))]
-public class ItemTileBaseDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+// [CustomPropertyDrawer(typeof(ItemAsseteDictionary))]
+// public class ItemTileBaseDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(TileObjectAssetDictionary))]
 public class TileObjectTileBaseDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
-[CustomPropertyDrawer(typeof(ItemSpriteDictionary))]
-public class ItemSpriteDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+// [CustomPropertyDrawer(typeof(ItemSpriteDictionary))]
+// public class ItemSpriteDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(TileObjectBiomeAssetDictionary))]
 public class TileObjectBiomeAssetDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(TileObjectSlotDictionary))]
@@ -53,6 +53,14 @@ public class LocationStructurePrefabDictionaryPropertyDrawer : SerializableDicti
 public class WallResourceAssetDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(WallAssetDictionary))]
 public class WallAssetDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(ParticleEffectAssetDictionary))]
+public class ParticleEffectAssetDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(ProjectileDictionary))]
+public class ProjectileDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(TimeOfDayLightDictionary))]
+public class TimeOfDayLightDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(BiomeHighlightColorDictionary))]
+public class BiomeHighlightColorDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 
 //list storage
 [CustomPropertyDrawer(typeof(LandmarkSpriteListStorage))]
@@ -67,5 +75,7 @@ public class TileBaseListStoragePropertyDrawer : SerializableDictionaryStoragePr
 public class LandmarkTypeListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
 [CustomPropertyDrawer(typeof(GameObjectListStorage))]
 public class GameObjectListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
-
-
+[CustomPropertyDrawer(typeof(ArtifactDataDictionary))]
+public class ArtifactDataDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(ElementalDamageDataDictionary))]
+public class ElementalDamageDataDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }

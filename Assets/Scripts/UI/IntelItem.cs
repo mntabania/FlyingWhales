@@ -28,10 +28,11 @@ public class IntelItem : MonoBehaviour {
         SetClickedState(false);
         if (intel != null) {
             iconImg.sprite = objectIntelIcon;
-            if (intel is EventIntel) {
-                iconImg.sprite = eventIntelIcon;
-            } 
-            infoLbl.text = Utilities.LogReplacer(intel.intelLog);
+            //if (intel is EventIntel) {
+            //    iconImg.sprite = eventIntelIcon;
+            //} 
+            //infoLbl.text = Utilities.LogReplacer(intel.intelLog);
+            infoLbl.text = UtilityScripts.Utilities.LogReplacer(intel.node.descriptionLog);
             mainBtn.interactable = true;
             iconImg.gameObject.SetActive(true);
         } else {

@@ -3,15 +3,19 @@ using System.Collections;
 using System.Collections.Generic;
 using PathFind;
 using System.Linq;
+using Actionables;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
+using JetBrains.Annotations;
+using Locations.Settlements;
 using SpriteGlow;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
+public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarget, ISelectable {
 
     public HexTileData data;
-    private Settlement _settlementOfTile;
+    private NPCSettlement _npcSettlementOfTile;
     public SpriteRenderer spriteRenderer;
     private bool _isCorrupted = false;
     
@@ -32,6 +36,12 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
     [SerializeField] private SpriteRenderer botRightBorder;
     [SerializeField] private SpriteRenderer rightBorder;
     [SerializeField] private SpriteRenderer topRightBorder;
+    [SerializeField] private SpriteGlowEffect topLeftBorderGlow;
+    [SerializeField] private SpriteGlowEffect leftBorderGlow;
+    [SerializeField] private SpriteGlowEffect botLeftBorderGlow;
+    [SerializeField] private SpriteGlowEffect botRightBorderGlow;
+    [SerializeField] private SpriteGlowEffect rightBorderGlow;
+    [SerializeField] private SpriteGlowEffect topRightBorderGlow;
 
     [Space(10)]
     [Header("Structure Objects")]
@@ -39,16 +49,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
     [SerializeField] private SpriteRenderer mainStructure;
     [SerializeField] private SpriteRenderer structureTint;
     [SerializeField] private Animator structureAnimation;
-
-    [Space(10)]
-    [Header("Biome Details")]
-    [SerializeField] private Transform biomeDetailsParent;
-
-    [Space(10)]
-    [Header("Corruption")]
-    [SerializeField] private GameObject[] defaultCorruptionObjects;
-    [SerializeField] private GameObject[] particleEffects;
-    [SerializeField] private TileSpriteCorruptionListDictionary tileCorruptionObjects;
 
     [Space(10)]
     [Header("Beaches")]
@@ -63,16 +63,22 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
     public BaseLandmark landmarkOnTile { get; private set; }
     public Region region { get; private set; }
     public TileFeatureComponent featureComponent { get; private set; }
-    public Settlement settlementOnTile { get; private set; }
+    public BaseSettlement settlementOnTile { get; private set; }
     public BuildingSpot[] ownedBuildSpots { get; private set; }
     public List<HexTile> AllNeighbours { get; set; }
     public List<HexTile> ValidTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && o.elevationType != ELEVATION.MOUNTAIN).ToList(); } }
+    public bool isCurrentlyBeingCorrupted { get; private set; }
     public List<LocationGridTile> locationGridTiles { get; private set; }
+    public Sprite baseSprite { get; private set; }
+    public Vector2 selectableSize { get; private set; }
+
+    private List<LocationGridTile> corruptedTiles;
     private int _uncorruptibleLandmarkNeighbors = 0; //if 0, can be corrupted, otherwise, cannot be corrupted
     private Dictionary<HEXTILE_DIRECTION, HexTile> _neighbourDirections;
-    private GameObject _spawnedTendril = null;
-
-    public Sprite baseSprite { get; private set; }
+    private List<string> demonicLandmarksThatCanBeBuilt;
+    
+    //Components
+    public HexTileSpellsComponent spellsComponent { get; private set; }
 
     #region getters/setters
     public int id => data.id;
@@ -85,26 +91,43 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
     public float temperature => data.temperature;
     public BIOMES biomeType => data.biomeType;
     public ELEVATION elevationType => data.elevationType;
-    public string locationName => $"({xCoordinate.ToString()}, {yCoordinate.ToString()})";
-    private GameObject centerPiece => this._centerPiece;
-    private GameObject highlightGO => this._highlightGO;
+    private string locationName => $"({xCoordinate.ToString()}, {yCoordinate.ToString()})";
+    private GameObject centerPiece => _centerPiece;
+    private GameObject highlightGO => _highlightGO;
     private Dictionary<HEXTILE_DIRECTION, HexTile> neighbourDirections => _neighbourDirections;
     public bool isCorrupted => _isCorrupted;
+    public Vector3 worldPosition {
+        get {
+            Vector2 pos = ownedBuildSpots[0].spotItem.transform.position;
+            pos.x += 3.5f;
+            pos.y += 3.5f;
+            return pos;
+        }
+    }
     #endregion
 
     private void Awake() {
+        _highlightSpriteRenderer = _highlightGO.GetComponent<SpriteRenderer>();
         _structureAnimatorSpriteRenderer = structureAnimation.gameObject.GetComponent<SpriteRenderer>();
         _highlightGOSpriteRenderer = highlightGO.GetComponent<SpriteRenderer>();
         _hoverHighlightSpriteRenderer = _hoverHighlightGO.GetComponent<SpriteRenderer>();
         Random.ColorHSV();
+        ConstructDefaultActions();
     }
     public void Initialize() {
         featureComponent = new TileFeatureComponent();
+        spellsComponent = new HexTileSpellsComponent(this);
+        demonicLandmarksThatCanBeBuilt = new List<string>();
+        selectableSize = new Vector2Int(12, 12);
         Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
     }
     private void OnGameLoaded() {
         Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoaded);
         SubscribeListeners();
+        SetBordersState(false, false, Color.red);
+        if (landmarkOnTile != null && landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.VILLAGE) {
+            CheckIfStructureVisualsAreStillValid();    
+        }
     }
 
     #region Elevation Functions
@@ -122,98 +145,54 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
     #region Landmarks
     private void SetLandmarkOnTile(BaseLandmark landmarkOnTile) {
         this.landmarkOnTile = landmarkOnTile;
-        region.OnMainLandmarkChanged();
     }
     public BaseLandmark CreateLandmarkOfType(LANDMARK_TYPE landmarkType) {
-        LandmarkData data = LandmarkManager.Instance.GetLandmarkData(landmarkType);
-        //SetLandmarkOnTile(new BaseLandmark(this, landmarkType));
         SetLandmarkOnTile(LandmarkManager.Instance.CreateNewLandmarkInstance(this, landmarkType));
-        if (data.minimumTileCount > 1) {
-            if (neighbourDirections.ContainsKey(data.connectedTileDirection) && neighbourDirections[data.connectedTileDirection] != null) {
-                HexTile tileToConnect = neighbourDirections[data.connectedTileDirection];
-                landmarkOnTile.SetConnectedTile(tileToConnect);
-                tileToConnect.SetElevation(ELEVATION.PLAIN);
-                tileToConnect.SetLandmarkOnTile(this.landmarkOnTile); //set the landmark of the connected tile to the same landmark on this tile
-                Biomes.Instance.UpdateTileVisuals(tileToConnect);
-            }
-        }
         //Create Landmark Game Object on tile
-        GameObject landmarkGO = CreateLandmarkVisual(landmarkType, this.landmarkOnTile, data);
-        if (landmarkGO != null) {
-            landmarkGO.transform.localPosition = Vector3.zero;
-            landmarkGO.transform.localScale = Vector3.one;
-            landmarkOnTile.SetLandmarkObject(landmarkGO.GetComponent<LandmarkVisual>());
-        }
-        if (landmarkType == LANDMARK_TYPE.CAVE) {
-            SetElevation(ELEVATION.MOUNTAIN);
-        } else {
-            SetElevation(ELEVATION.PLAIN);
-        }
+        CreateLandmarkVisual(landmarkType);
+        SetElevation(landmarkType == LANDMARK_TYPE.CAVE ? ELEVATION.MOUNTAIN : ELEVATION.PLAIN);
         Biomes.Instance.UpdateTileVisuals(this);
         return landmarkOnTile;
     }
     public BaseLandmark CreateLandmarkOfType(SaveDataLandmark saveData) {
-        LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(saveData.landmarkType);
-        //SetLandmarkOnTile(new BaseLandmark(this, saveData));
         SetLandmarkOnTile(LandmarkManager.Instance.CreateNewLandmarkInstance(this, saveData));
         //Create Landmark Game Object on tile
-        GameObject landmarkGO = CreateLandmarkVisual(saveData.landmarkType, this.landmarkOnTile, landmarkData);
-        if (landmarkGO != null) {
-            landmarkGO.transform.localPosition = Vector3.zero;
-            landmarkGO.transform.localScale = Vector3.one;
-            landmarkOnTile.SetLandmarkObject(landmarkGO.GetComponent<LandmarkVisual>());
-        }
+        CreateLandmarkVisual(saveData.landmarkType);
         return landmarkOnTile;
     }
-    private GameObject CreateLandmarkVisual(LANDMARK_TYPE landmarkType, BaseLandmark landmark, LandmarkData data) {
-        GameObject landmarkGO = GameObject.Instantiate(LandmarkManager.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
-        RACE race = RACE.NONE;
-        if (region != null) {
-            if (region.locationType == LOCATION_TYPE.ELVEN_SETTLEMENT) {
-                race = RACE.ELVES;
-            } else if (region.locationType == LOCATION_TYPE.HUMAN_SETTLEMENT) {
-                race = RACE.HUMANS;
-            }
-        }
-        List<LandmarkStructureSprite> landmarkTileSprites = LandmarkManager.Instance.GetLandmarkTileSprites(this, landmarkType, race);
-        if (data.minimumTileCount > 1) {
-            SetLandmarkTileSprite(landmarkTileSprites[0]);
-            landmark.connectedTile.SetLandmarkTileSprite(landmarkTileSprites[1]);
-            landmarkGO.GetComponent<LandmarkVisual>().SetIconState(false);
-        } else {
-            if (landmarkTileSprites == null || landmarkTileSprites.Count == 0) {
-                //DeactivateCenterPiece();
-                HideLandmarkTileSprites();
-                landmarkGO.GetComponent<LandmarkVisual>().SetIconState(true);
-            } else {
-                SetLandmarkTileSprite(landmarkTileSprites[Random.Range(0, landmarkTileSprites.Count)]);
-                landmarkGO.GetComponent<LandmarkVisual>().SetIconState(false);
-            }
-        }
-        return landmarkGO;
+    private void CreateLandmarkVisual(LANDMARK_TYPE landmarkType) {
+        GameObject landmarkGO = Instantiate(LandmarkManager.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
+        landmarkGO.transform.localPosition = Vector3.zero;
+        landmarkGO.transform.localScale = Vector3.one;
+        landmarkOnTile.SetLandmarkObject(landmarkGO.GetComponent<LandmarkVisual>());
+        UpdateLandmarkVisuals();
     }
-    public void UpdateStructureVisuals(LANDMARK_TYPE landmarkType) {
-        LandmarkData _data = LandmarkManager.Instance.GetLandmarkData(landmarkType);
-        List<LandmarkStructureSprite> landmarkTileSprites = LandmarkManager.Instance.GetLandmarkTileSprites(this, landmarkOnTile.specificLandmarkType);
-        if (_data.minimumTileCount > 1) {
-            SetLandmarkTileSprite(landmarkTileSprites[0]);
-            landmarkOnTile.connectedTile.SetLandmarkTileSprite(landmarkTileSprites[1]);
-            landmarkOnTile.landmarkVisual.SetIconState(false);
-        } else {
-            if (landmarkTileSprites == null || landmarkTileSprites.Count == 0) {
-                //DeactivateCenterPiece();
-                HideLandmarkTileSprites();
-                landmarkOnTile.landmarkVisual.SetIconState(true);
-            } else {
-                SetLandmarkTileSprite(landmarkTileSprites[Random.Range(0, landmarkTileSprites.Count)]);
-                landmarkOnTile.landmarkVisual.SetIconState(false);
-            }
+    /// <summary>
+    /// Update the structure assets of this tile based on the landmark that is on this tile.
+    /// </summary>
+    public void UpdateLandmarkVisuals() {
+        RACE race = RACE.NONE;
+        if (settlementOnTile?.owner != null) {
+            race = settlementOnTile.owner.race;
         }
+        LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkOnTile.specificLandmarkType);
+        List<LandmarkStructureSprite> landmarkTileSprites = LandmarkManager.Instance.GetLandmarkTileSprites(this, landmarkOnTile.specificLandmarkType, race);
+        if (landmarkTileSprites == null || landmarkTileSprites.Count == 0) {
+            HideLandmarkTileSprites();
+            landmarkOnTile.landmarkVisual.SetIconState(true);
+            landmarkOnTile.SetLandmarkPortrait(landmarkData.defaultLandmarkPortrait);
+        } else {
+            LandmarkStructureSprite chosenAssets =
+                UtilityScripts.CollectionUtilities.GetRandomElement(landmarkTileSprites); 
+            SetLandmarkTileSprite(chosenAssets);
+            landmarkOnTile.landmarkVisual.SetIconState(false);
+            landmarkOnTile.SetLandmarkPortrait(chosenAssets.overrideLandmarkPortrait != null ? chosenAssets.overrideLandmarkPortrait : landmarkData.defaultLandmarkPortrait);
+        }
+        SetStructureTint(settlementOnTile?.owner?.factionColor ?? Color.white);
     }
     public BaseLandmark LoadLandmark(BaseLandmark landmark) {
-        GameObject landmarkGO = null;
         //Create Landmark Game Object on tile
-        landmarkGO = GameObject.Instantiate(LandmarkManager.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
+        var landmarkGO = Instantiate(LandmarkManager.Instance.GetLandmarkGO(), structureParentGO.transform);
         landmarkGO.transform.localPosition = Vector3.zero;
         landmarkGO.transform.localScale = Vector3.one;
         landmarkOnTile = landmark;
@@ -224,24 +203,17 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
     }
     public void RemoveLandmarkOnTile() {
         landmarkOnTile = null;
-        region.OnMainLandmarkChanged();
     }
     public void RemoveLandmarkVisuals() {
         HideLandmarkTileSprites();
-        GameObject.Destroy(landmarkOnTile.landmarkVisual.gameObject);
+        Destroy(landmarkOnTile.landmarkVisual.gameObject);
     }
     public void SetLandmarkTileSprite(LandmarkStructureSprite sprites) {
         mainStructure.sprite = sprites.mainSprite;
         structureTint.sprite = sprites.tintSprite;
         mainStructure.gameObject.SetActive(true);
         structureTint.gameObject.SetActive(true);
-
-        if (structureTint.sprite != null) {
-            SetStructureTint(Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f));
-        } else {
-            structureTint.color = Color.white;
-        }
-
+        
         if (sprites.animation == null) {
             mainStructure.enabled = true;
             structureAnimation.gameObject.SetActive(false);
@@ -256,18 +228,11 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
         structureTint.gameObject.SetActive(false);
     }
     public void SetStructureTint(Color color) {
-        color.a = 150f/255f;
         structureTint.color = color;
     }
     #endregion
 
     #region Tile Utilities
-    public void SetData(HexTileData data) {
-        this.data = data;
-    }
-    /*
-	 * Returns all Hex tiles gameobjects within a radius
-	 * */
     public List<HexTile> GetTilesInRange(int range, bool isOnlyOuter) {
         List<HexTile> tilesInRange = new List<HexTile>();
         List<HexTile> checkedTiles = new List<HexTile>();
@@ -293,14 +258,11 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
                             }
                         }
                         tilesInRange.AddRange(tilesToAdd);
-                        //						tilesToAdd.AddRange (tilesInRange[j].AllNeighbours.Where(x => !tilesInRange.Contains(x)).ToList());
                     }
                 }
                 if (i == range - 1 && isOnlyOuter) {
                     return tilesToAdd;
                 }
-
-                //				tilesInRange = tilesInRange.Distinct ().ToList ();
             }
         }
         return tilesInRange;
@@ -323,18 +285,22 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
         }
         return tilesInRange;
     }
-    public int GetTileDistanceTo(HexTile target) {
-        float distance = Vector3.Distance(this.transform.position, target.transform.position);
-        int distanceAsTiles = Mathf.CeilToInt(distance / 2.315188f);
-        return distanceAsTiles;
-    }
     public bool IsAtEdgeOfMap() {
         return AllNeighbours.Count < 6; //if this tile has less than 6 neighbours, it is at the edge of the map
+    }
+    public bool HasNeighbourAtEdgeOfMap() {
+        for (int i = 0; i < AllNeighbours.Count; i++) {
+            HexTile currNeighbour = AllNeighbours[i];
+            if (currNeighbour.IsAtEdgeOfMap()) {
+                return true;
+            }
+        }
+        return false;
     }
     public bool HasNeighbourFromOtherRegion() {
         for (int i = 0; i < AllNeighbours.Count; i++) {
             HexTile currNeighbour = AllNeighbours[i];
-            if (currNeighbour.region != this.region) {
+            if (currNeighbour.region != region) {
                 return true;
             }
         }
@@ -344,7 +310,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
         regions = new List<Region>();
         for (int i = 0; i < AllNeighbours.Count; i++) {
             HexTile currNeighbour = AllNeighbours[i];
-            if (currNeighbour.region != this.region) {
+            if (currNeighbour.region != region) {
                 regions.Add(currNeighbour.region);
             }
         }
@@ -359,6 +325,27 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
         }
         return false;
     }
+    public string GetDisplayName() {
+        if (settlementOnTile != null) {
+            return settlementOnTile.name;
+        } else if (landmarkOnTile != null) {
+            return landmarkOnTile.landmarkName;
+        } else {
+            string displayName = string.Empty;
+            if (isCorrupted) {
+                displayName = "Corrupted ";
+            }
+            displayName +=
+                $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(biomeType.ToString())} {UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(elevationType.ToString())}";
+            return displayName;
+        }
+    }
+    public string GetSubName() {
+        if (landmarkOnTile != null) {
+            return UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(landmarkOnTile.specificLandmarkType.ToString());
+        }
+        return string.Empty;
+    }
     #endregion
 
     #region Pathfinding
@@ -369,9 +356,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
         List<Point> possibleExits;
 
         if ((yCoordinate % 2) == 0) {
-            possibleExits = Utilities.EvenNeighbours;
+            possibleExits = UtilityScripts.Utilities.EvenNeighbours;
         } else {
-            possibleExits = Utilities.OddNeighbours;
+            possibleExits = UtilityScripts.Utilities.OddNeighbours;
         }
 
         for (int i = 0; i < possibleExits.Count; i++) {
@@ -381,22 +368,11 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
                 HexTile currNeighbour = gameBoard[neighbourCoordinateX, neighbourCoordinateY];
                 if (currNeighbour != null) {
                     neighbours.Add(currNeighbour);
-                } 
-                //else {
-                //    //This part is for outerGridTiles only!
-                //    try {
-                //        neighbourCoordinateX -= GridMap.Instance._borderThickness;
-                //        neighbourCoordinateY -= GridMap.Instance._borderThickness;
-                //        currNeighbour = GridMap.Instance.map[neighbourCoordinateX, neighbourCoordinateY];
-                //        neighbours.Add(currNeighbour);
-                //    } catch {
-                //        //No Handling
-                //    }
-                //}
+                }
             }
 
         }
-        this.AllNeighbours = neighbours;
+        AllNeighbours = neighbours;
 
         for (int i = 0; i < neighbours.Count; i++) {
             HexTile currNeighbour = neighbours[i];
@@ -416,26 +392,21 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
         List<Point> possibleExits;
 
         if ((yCoordinate % 2) == 0) {
-            possibleExits = Utilities.EvenNeighbours;
+            possibleExits = UtilityScripts.Utilities.EvenNeighbours;
         } else {
-            possibleExits = Utilities.OddNeighbours;
+            possibleExits = UtilityScripts.Utilities.OddNeighbours;
         }
 
         for (int i = 0; i < possibleExits.Count; i++) {
             int neighbourCoordinateX = xCoordinate + possibleExits[i].X;
             int neighbourCoordinateY = yCoordinate + possibleExits[i].Y;
-#if WORLD_CREATION_TOOL
-            HexTile neighbour = WorldCreatorManager.Instance.GetTileFromCoordinates(neighbourCoordinateX, neighbourCoordinateY);
-#else
             HexTile neighbour = GridMap.Instance.GetTileFromCoordinates(neighbourCoordinateX, neighbourCoordinateY);
-#endif
-
             if (neighbour != null) {
                 neighbours.Add(neighbour);
             }
 
         }
-        this.AllNeighbours = neighbours;
+        AllNeighbours = neighbours;
 
         for (int i = 0; i < neighbours.Count; i++) {
             HexTile currNeighbour = neighbours[i];
@@ -448,29 +419,16 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
             }
         }
     }
-    internal HEXTILE_DIRECTION GetNeighbourDirection(HexTile neighbour) {
+    private HEXTILE_DIRECTION GetNeighbourDirection(HexTile neighbour) {
         if (neighbour == null) {
             return HEXTILE_DIRECTION.NONE;
         }
         if (!AllNeighbours.Contains(neighbour)) {
-            throw new System.Exception(neighbour.name + " is not a neighbour of " + this.name);
+            throw new System.Exception($"{neighbour.name} is not a neighbour of {name}");
         }
-        int thisXCoordinate = this.xCoordinate;
-        int thisYCoordinate = this.yCoordinate;
-//        if (isForOuterGrid) {
-//#if WORLD_CREATION_TOOL
-//            if (!worldcreator.WorldCreatorManager.Instance.outerGridList.Contains(neighbour)) {
-//                thisXCoordinate -= worldcreator.WorldCreatorManager.Instance._borderThickness;
-//                thisYCoordinate -= worldcreator.WorldCreatorManager.Instance._borderThickness;
-//            }
-//#else
-//            if (!GridMap.Instance.outerGridList.Contains(neighbour)) {
-//                thisXCoordinate -= GridMap.Instance._borderThickness;
-//                thisYCoordinate -= GridMap.Instance._borderThickness;
-//            }
-//#endif
-//        }
-            Point difference = new Point((neighbour.xCoordinate - thisXCoordinate),
+        int thisXCoordinate = xCoordinate;
+        int thisYCoordinate = yCoordinate;
+        Point difference = new Point((neighbour.xCoordinate - thisXCoordinate),
                     (neighbour.yCoordinate - thisYCoordinate));
         if (thisYCoordinate % 2 == 0) { //even
             if (difference.X == -1 && difference.Y == 1) {
@@ -541,19 +499,18 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
         rightBeach.sortingOrder = sortingOrder + 1;
         topRightBeach.sortingOrder = sortingOrder + 1;
 
-        topLeftBorder.sortingOrder = sortingOrder + 12;
-        topRightBorder.sortingOrder = sortingOrder + 12;
-        leftBorder.sortingOrder = sortingOrder + 12;
-        botLeftBorder.sortingOrder = sortingOrder + 12;
-        botRightBorder.sortingOrder = sortingOrder + 12;
-        rightBorder.sortingOrder = sortingOrder + 12;
+        topLeftBorder.sortingOrder = sortingOrder + 2;
+        topRightBorder.sortingOrder = sortingOrder + 2;
+        leftBorder.sortingOrder = sortingOrder + 2;
+        botLeftBorder.sortingOrder = sortingOrder + 2;
+        botRightBorder.sortingOrder = sortingOrder + 2;
+        rightBorder.sortingOrder = sortingOrder + 2;
 
         emptyBuildingSpotGO.sortingOrder = sortingOrder + 1;
-        //currentlyBuildingSpotGO.sortingOrder = sortingOrder + 1;
 
-        mainStructure.sortingOrder = sortingOrder + 3;
-        structureTint.sortingOrder = sortingOrder + 4;
-        _structureAnimatorSpriteRenderer.sortingOrder = sortingOrder + 5;
+        mainStructure.sortingOrder = sortingOrder + 5;
+        structureTint.sortingOrder = sortingOrder + 6;
+        _structureAnimatorSpriteRenderer.sortingOrder = sortingOrder + 7;
     }
     public SpriteRenderer GetBorder(HEXTILE_DIRECTION direction) {
         SpriteRenderer border = null;
@@ -581,19 +538,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
         }
         return border;
     }
-    private SpriteRenderer[] GetAllBorders() {
-        SpriteRenderer[] border = new[] {
-            topLeftBorder, topRightBorder, rightBorder, botRightBorder, botLeftBorder, leftBorder
-        };
-        return border;
-    }
-    public void SetOutlineState(bool state) {
-        SpriteRenderer[] borders = GetAllBorders();
-        for (int i = 0; i < borders.Length; i++) {
-            SpriteRenderer _renderer = borders[i];
-            _renderer.gameObject.SetActive(state);
-        }
-    }
     internal void DeactivateCenterPiece() {
         centerPiece.SetActive(false);
     }
@@ -608,29 +552,37 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
             baseTileAnimator.enabled = false;
         }
     }
-    public void HighlightTile(Color color, float alpha) {
-        color.a = alpha;
-        _highlightGO.SetActive(true);
-        _highlightGO.GetComponent<SpriteRenderer>().color = color;
+    public void SetBordersState(bool state, bool glowState, Color color) {
+        topLeftBorder.gameObject.SetActive(state);
+        botLeftBorder.gameObject.SetActive(state);
+        topRightBorder.gameObject.SetActive(state);
+        botRightBorder.gameObject.SetActive(state);
+        leftBorder.gameObject.SetActive(state);
+        rightBorder.gameObject.SetActive(state);
+        
+        topLeftBorderGlow.enabled = glowState;
+        botLeftBorderGlow.enabled = glowState;
+        topRightBorderGlow.enabled = glowState;
+        botRightBorderGlow.enabled = glowState;
+        leftBorderGlow.enabled = glowState;
+        rightBorderGlow.enabled = glowState;
+        
+        SetBorderColor(color);
     }
-    public void UnHighlightTile() {
-            _highlightGO.SetActive(false);
-        }
-    public void SetBordersState(bool stat) {
-        topLeftBorder.gameObject.SetActive(stat);
-        botLeftBorder.gameObject.SetActive(stat);
-        topRightBorder.gameObject.SetActive(stat);
-        botRightBorder.gameObject.SetActive(stat);
-        leftBorder.gameObject.SetActive(stat);
-        rightBorder.gameObject.SetActive(stat);
-    }
-    public void SetBorderColor(Color color) {
+    private void SetBorderColor(Color color) {
         topLeftBorder.color = color;
         botLeftBorder.color = color;
         topRightBorder.color = color;
         botRightBorder.color = color;
         leftBorder.color = color;
         rightBorder.color = color;
+        
+        topLeftBorderGlow.GlowColor = color;
+        botLeftBorderGlow.GlowColor = color;
+        topRightBorderGlow.GlowColor = color;
+        botRightBorderGlow.GlowColor = color;
+        leftBorderGlow.GlowColor = color;
+        rightBorderGlow.GlowColor = color;
     }
     public void UpdateBuildSprites() {
         if (region.demonicBuildingData.landmarkType != LANDMARK_TYPE.NONE) {
@@ -646,87 +598,101 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
 
     #region Tile Functions
     public void DisableColliders() {
-        this.GetComponent<Collider2D>().enabled = false;
-        Collider[] colliders = this.GetComponentsInChildren<Collider>();
+        GetComponent<Collider2D>().enabled = false;
+        Collider[] colliders = GetComponentsInChildren<Collider>();
         for (int i = 0; i < colliders.Length; i++) {
             colliders[i].enabled = false;
         }
     }
-    /*
-        * Reset all values for this tile.
-        * NOTE: This will set the structure to ruined.
-        * To force destroy structure, call DestroyStructure
-        * in StructureObject instead.
-        * */
-    public void ResetTile() {
-    }
-    public void Occupy() {
-    }
-    public void Unoccupy() {
+    private InfoUIBase GetMenuToShowWhenTileIsClicked() {
+        if (region != null) {
+            //if region info ui is showing, show tile info ui
+            if (UIManager.Instance.regionInfoUI.isShowing) {
+                if (UIManager.Instance.regionInfoUI.activeRegion == region) {
+                    return UIManager.Instance.hexTileInfoUI;    
+                } else {
+                    return UIManager.Instance.regionInfoUI;
+                }
+            } else if (UIManager.Instance.hexTileInfoUI.isShowing) {
+                if (UIManager.Instance.hexTileInfoUI.currentlyShowingHexTile.region == region) {
+                    if (UIManager.Instance.hexTileInfoUI.currentlyShowingHexTile == this) {
+                        return UIManager.Instance.regionInfoUI;
+                    } else {
+                        return UIManager.Instance.hexTileInfoUI;
+                    }
+                } else {
+                    return UIManager.Instance.regionInfoUI;    
+                }
+            } else {
+                return UIManager.Instance.regionInfoUI;
+            }
+        }
+        return null;
     }
     #endregion
 
     #region Monobehaviour Functions
-    public void LeftClick() {
+    private void LeftClick() {
         if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing() || CameraMove.Instance.isDragging) {
             return;
         }
-        //StartCorruptionAnimation();
         Messenger.Broadcast(Signals.TILE_LEFT_CLICKED, this);
-        if (PlayerManager.Instance.isChoosingStartingTile) {
-            return;
+        InfoUIBase baseToShow = GetMenuToShowWhenTileIsClicked();
+        if (baseToShow != null) {
+            if (baseToShow is RegionInfoUI) {
+                UIManager.Instance.ShowRegionInfo(region);
+            } else if (baseToShow is HextileInfoUI) {
+                UIManager.Instance.ShowHexTileInfo(this);
+            }
         }
-        // if (region.coreTile == this) {
-        //     UIManager.Instance.ShowRegionInfo(this.region);
-        // } else {
-        //     Messenger.Broadcast(Signals.HIDE_MENUS);
-        // }
-        Messenger.Broadcast(Signals.HIDE_MENUS);
+        MouseOver();
     }
-    public void RightClick() {
+    private void RightClick() {
         if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing()) {
             return;
         }
         Messenger.Broadcast(Signals.TILE_RIGHT_CLICKED, this);
     }
     private void MouseOver() {
-        if (this.landmarkOnTile != null) {
-            _hoverHighlightGO.SetActive(true);
+        InfoUIBase baseToOpen = GetMenuToShowWhenTileIsClicked();
+        if (baseToOpen is RegionInfoUI) {
+            region.ShowBorders(Color.red);
+        } else if (baseToOpen is HextileInfoUI) {
+            SetBordersState(true, false, Color.red);
         }
         Messenger.Broadcast(Signals.TILE_HOVERED_OVER, this);
     }
     private void MouseExit() {
-        if (this.landmarkOnTile != null) {
-            _hoverHighlightGO.SetActive(false);
+        InfoUIBase baseToOpen = GetMenuToShowWhenTileIsClicked();
+        if (baseToOpen is RegionInfoUI) {
+            region.HideBorders();
+        } else if (baseToOpen is HextileInfoUI) {
+            SetBordersState(false, false, Color.red);
         }
-        UIManager.Instance.HideSmallInfo();
         Messenger.Broadcast(Signals.TILE_HOVERED_OUT, this);
     }
     private void DoubleLeftClick() {
         if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing()) {
             return;
         }
-        // if(region.settlement != null && region.settlement != PlayerManager.Instance.player.playerSettlement) {
-        //     InnerMapManager.Instance.TryShowLocationMap(region.settlement);
-        // }
         if (region != null) {
             InnerMapManager.Instance.TryShowLocationMap(region);
-            InnerMapCameraMove.Instance.CenterCameraOn(ownedBuildSpots[3].spotItem.gameObject, true);
+            InnerMapCameraMove.Instance.CenterCameraOnTile(this);
         }
     }
     public void PointerClick(BaseEventData bed) {
         PointerEventData ped = bed as PointerEventData;
-        if (ped.clickCount == 1) {
+        if (ped.clickCount >= 2) {
+            if (ped.button == PointerEventData.InputButton.Left) {
+                DoubleLeftClick();
+            }
+        } else if (ped.clickCount == 1) {
             if (ped.button == PointerEventData.InputButton.Left) {
                 LeftClick();
             } else if (ped.button == PointerEventData.InputButton.Right) {
                 RightClick();
             }
-        } else if (ped.clickCount == 2) {
-            if (ped.button == PointerEventData.InputButton.Left) {
-                DoubleLeftClick();
-            }
-        }
+        } 
     }
     public void OnPointerEnter(BaseEventData bed) {
         PointerEventData ped = bed as PointerEventData;
@@ -756,24 +722,42 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
     private SpriteRenderer _hoverHighlightSpriteRenderer;
     private SpriteRenderer _highlightGOSpriteRenderer;
     private SpriteRenderer _structureAnimatorSpriteRenderer;
+    private SpriteRenderer _highlightSpriteRenderer;
     [ContextMenu("Show Tiles In Range")]
     public void ShowTilesInRange() {
         for (int i = 0; i < tiles.Count; i++) {
             tiles[i].spriteRenderer.color = Color.white;
         }
         tiles.Clear();
-        tiles.AddRange(this.GetTilesInRange(range));
+        tiles.AddRange(GetTilesInRange(range));
         for (int i = 0; i < tiles.Count; i++) {
             tiles[i].spriteRenderer.color = Color.magenta;
         }
     }
     public override string ToString() {
-        return $"{this.locationName} - {landmarkOnTile?.specificLandmarkType.ToString() ?? "No Landmark"} - {region?.name ?? "No Region"}";
+        return $"{locationName} - {landmarkOnTile?.specificLandmarkType.ToString() ?? "No Landmark"} - {region?.name ?? "No Region"}";
     }
     public void ShowTileInfo() {
-        if (region != null) {
-            UIManager.Instance.ShowSmallInfo("Double click to view.", region.name);
+        string summary = $"{ToString()}";
+        summary += $"\nLeft Most: {(region.GetLeftMostTile()?.ToString() ?? "Null")}";
+        summary += $"\nRight Most: {(region.GetRightMostTile()?.ToString() ?? "Null")}";
+        summary += "\nFeatures:";
+        for (int i = 0; i < featureComponent.features.Count; i++) {
+            TileFeature feature = featureComponent.features[i];
+            summary += $"{feature.name}, ";
         }
+        summary += "\nLeft Most Rows:";
+        List<int> leftMostRows = region.GetLeftMostRows();
+        for (int i = 0; i < leftMostRows.Count; i++) {
+            summary += $"{leftMostRows[i].ToString()}, ";
+        }
+        summary += "\nRight Most Rows:";
+        List<int> rightMostRows = region.GetRightMostRows();
+        for (int i = 0; i < rightMostRows.Count; i++) {
+            summary += $"{rightMostRows[i].ToString()}, ";
+        }
+        UIManager.Instance.ShowSmallInfo(summary);
+        
     }
     #endregion
 
@@ -782,6 +766,12 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
         if(_isCorrupted != state) {
             _isCorrupted = state;
             Biomes.Instance.UpdateTileSprite(this, spriteRenderer.sortingOrder);
+            //for (int i = 0; i < AllNeighbours.Count; i++) {
+            //    HexTile neighbour = AllNeighbours[i];
+            //    if (neighbour.isCorrupted == false && neighbour.isCurrentlyBeingCorrupted == false) {
+            //        neighbour.CheckForCorruptAction();
+            //    }
+            //}
         }
     }
     public void AdjustUncorruptibleLandmarkNeighbors(int amount) {
@@ -793,65 +783,86 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
             _uncorruptibleLandmarkNeighbors = 1;
         }
     }
-    public void StartCorruptionAnimation() {
-        GameObject tendril = null;
-        if (tileCorruptionObjects.ContainsKey(spriteRenderer.sprite)) {
-            List<GameObject> choices = tileCorruptionObjects[spriteRenderer.sprite];
-            tendril = choices[Random.Range(0, choices.Count)];
+    private void CheckForCorruptAction() {
+        PlayerAction existingCorruptAction = GetPlayerAction(PlayerDB.Corrupt_Action);
+        if (CanBeCorrupted()) {
+            if (existingCorruptAction == null) {
+                PlayerAction corruptAction = new PlayerAction(PlayerDB.Corrupt_Action, CanBeCorrupted, null, StartCorruption);
+                AddPlayerAction(corruptAction);
+            }
         } else {
-            tendril = defaultCorruptionObjects[Random.Range(0, defaultCorruptionObjects.Length)];
-        }
-        //if (this.biomeType == BIOMES.DESERT && spriteRenderer.sprite.name.Contains("mountains")) {
-        //    tendril = desertTendrils[0];
-        //    //if (spriteRenderer.sprite.name.Contains("1")) {
-        //    //    tendril = desertTendrils[0];
-        //    //} else if (spriteRenderer.sprite.name.Contains("2")) {
-        //    //    tendril = desertTendrils[1];
-        //    //} else if (spriteRenderer.sprite.name.Contains("3")) {
-        //    //    tendril = desertTendrils[2];
-        //    //}
-        //} else {
-        //    tendril = defaultCorruptionObjects[Random.Range(0, defaultCorruptionObjects.Length)];
-        //}
-        _spawnedTendril = GameObject.Instantiate(tendril, biomeDetailsParent);
-        SpriteRenderer[] srs = Utilities.GetComponentsInDirectChildren<SpriteRenderer>(_spawnedTendril);
-        for (int i = 0; i < srs.Length; i++) {
-            SpriteRenderer currRenderer = srs[i];
-            currRenderer.sortingLayerName = "Default";
-            currRenderer.sortingOrder = spriteRenderer.sortingOrder + 5;
-        }
-        //for (int i = 0; i < particleEffects.Length; i++) {
-        //    particleEffects[i].gameObject.SetActive(true);
-        //}
-    }
-    public void StopCorruptionAnimation() {
-        if(_spawnedTendril != null) {
-            GameObject.Destroy(_spawnedTendril);
-            _spawnedTendril = null;
-        }
-        for (int i = 0; i < particleEffects.Length; i++) {
-            particleEffects[i].gameObject.SetActive(false);
+            if (existingCorruptAction != null) {
+                RemovePlayerAction(existingCorruptAction);    
+            }
         }
     }
-    public bool CanBeCorrupted() {
+    private bool CanBeCorrupted() {
+        if (isCorrupted) {
+            return false; //already corrupted.
+        }
+        if (isCurrentlyBeingCorrupted) {
+            return false; //already being corrupted.
+        }
+        if (settlementOnTile != null) {
+            return false; //disabled corruption of NPC settlements for now.
+        }
+        if (PlayerManager.Instance.player.mana < EditableValuesManager.Instance.corruptTileManaCost) {
+            return false;
+        }
+        //if it has any build spots that have a blueprint on them, do not allow
+        for (int i = 0; i < ownedBuildSpots.Length; i++) {
+            BuildingSpot spot = ownedBuildSpots[i];
+            if (spot.hasBlueprint) {
+                return false;
+            }
+        }
         return true;
-
-        //bool canBeCorrupted = false;
-        //if (landmarkOnTile != null && landmarkOnTile.connections != null) {
-        //    for (int i = 0; i < landmarkOnTile.connections.Count; i++) {
-        //        BaseLandmark connection = landmarkOnTile.connections[i];
-        //        if (connection.tileLocation.isCorrupted) {
-        //            canBeCorrupted = true;
-        //            break;
-        //        }
+        //for (int i = 0; i < AllNeighbours.Count; i++) {
+        //    HexTile neighbour = AllNeighbours[i];
+        //    if (neighbour.isCorrupted) {
+        //        return true;
         //    }
         //}
-        //return region.CanBeInvaded();
+        //return false;
+    }
+    private void StartCorruption() {
+        //PlayerManager.Instance.player.AdjustMana(-EditableValuesManager.Instance.corruptTileManaCost);
+        InstantlyCorruptAllOwnedInnerMapTiles();
+        OnCorruptSuccess();
+    }
+    public void InstantlyCorruptAllOwnedInnerMapTiles() {
+        for (int i = 0; i < locationGridTiles.Count; i++) {
+            LocationGridTile tile = locationGridTiles[i];
+            tile.CorruptTile();
+        }
+    }
+    private HexTile GetCorruptedNeighbour() {
+        for (int i = 0; i < AllNeighbours.Count; i++) {
+            HexTile tile = AllNeighbours[i];
+            if (tile.isCorrupted) {
+                return tile;
+            }
+        }
+        return null;
+    }
+    private void OnCorruptSuccess() {
+        PlayerManager.Instance.player.playerSettlement.AddTileToSettlement(this);
+        // Messenger.RemoveListener(Signals.TICK_STARTED, PerTickCorruption);
+        // isCurrentlyBeingCorrupted = false;
+        
+        //remove features
+        featureComponent.RemoveAllFeatures(this);
+        
+        //RemovePlayerAction(GetPlayerAction(PlayerDB.Corrupt_Action));
+        //if (CanBuildDemonicStructure()) {
+        //    PlayerAction buildAction = new PlayerAction(PlayerDB.Build_Demonic_Structure_Action, CanBuildDemonicStructure, null, OnClickBuild);
+        //    AddPlayerAction(buildAction);
+        //}
     }
     #endregion
 
-    #region Settlement
-    public void SetSettlementOnTile(Settlement settlement) {
+    #region NPCSettlement
+    public void SetSettlementOnTile(BaseSettlement settlement) {
         settlementOnTile = settlement;
         landmarkOnTile?.nameplate.UpdateVisuals();
     }
@@ -861,11 +872,11 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
     public TravelLine CreateTravelLine(HexTile target, int numOfTicks, Character character) {
         TravelLineParent lineParent = BezierCurveManager.Instance.GetTravelLineParent(this, target);
         if (lineParent == null) {
-            GameObject goParent = GameObject.Instantiate(GameManager.Instance.travelLineParentPrefab);
+            GameObject goParent = Instantiate(GameManager.Instance.travelLineParentPrefab);
             lineParent = goParent.GetComponent<TravelLineParent>();
             lineParent.SetStartAndEndPositions(this, target, numOfTicks);
         }
-        GameObject go = GameObject.Instantiate(GameManager.Instance.travelLinePrefab, lineParent.transform);
+        GameObject go = Instantiate(GameManager.Instance.travelLinePrefab, lineParent.transform);
         go.transform.SetParent(lineParent.transform);
         TravelLine travelLine = go.GetComponent<TravelLine>();
         travelLine.SetCharacter(character);
@@ -884,7 +895,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
         if (_neighbourDirections == null) {
             return;
         }
-        if (this.elevationType != ELEVATION.WATER) {
+        if (elevationType != ELEVATION.WATER) {
             topLeftBeach.gameObject.SetActive(false);
             topRightBeach.gameObject.SetActive(false);
             rightBeach.gameObject.SetActive(false);
@@ -935,13 +946,15 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
     #endregion
 
     #region Inner Map
-    public void SetOwnedBuildSpot(BuildingSpot[] spot) {
+    public void SetOwnedBuildSpot([NotNull]BuildingSpot[] spot) {
         ownedBuildSpots = spot;
         
         locationGridTiles = new List<LocationGridTile>();
         for (int i = 0; i < ownedBuildSpots.Length; i++) {
             BuildingSpot currSpot = ownedBuildSpots[i];
-            locationGridTiles.AddRange(currSpot.tilesInTerritory);
+            if (currSpot != null) {
+                locationGridTiles.AddRange(currSpot.tilesInTerritory);    
+            }
         }
     }
     public List<TileObject> GetTileObjectsInHexTile(TILE_OBJECT_TYPE type) {
@@ -972,22 +985,282 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
         }
     }
     private STRUCTURE_TYPE GetMostImportantStructureOnTile() {
-        foreach (KeyValuePair<STRUCTURE_TYPE,List<LocationStructure>> pair in settlementOnTile.structures) {
-            if (pair.Value.Count > 0 && pair.Key.IsOpenSpace() == false) {
-                return pair.Key;
+        STRUCTURE_TYPE mostImportant = STRUCTURE_TYPE.WILDERNESS;
+        foreach (KeyValuePair<STRUCTURE_TYPE,List<LocationStructure>> pair in region.structures) {
+            for (int i = 0; i < pair.Value.Count; i++) {
+                LocationStructure structure = pair.Value[i];
+                if (structure.occupiedBuildSpot != null && structure.occupiedBuildSpot.spot.hexTileOwner == this) {
+                    int value = pair.Key.StructurePriority(); 
+                    if (value > mostImportant.StructurePriority()) {
+                        mostImportant = pair.Key;
+                    }    
+                }
             }
         }
-        return STRUCTURE_TYPE.INN;
+        
+        return mostImportant;
     }
     private void CheckIfStructureVisualsAreStillValid() {
+        string log = $"Checking {ToString()} to check if landmark on it is still valid";
         STRUCTURE_TYPE mostImportantStructure = GetMostImportantStructureOnTile();
         LANDMARK_TYPE landmarkType = LandmarkManager.Instance.GetLandmarkTypeFor(mostImportantStructure);
+        log += $"\nMost important structure is {mostImportantStructure.ToString()}";
+        log += $"\nLandmark to create is {landmarkType.ToString()}";
         if (landmarkOnTile == null) {
             LandmarkManager.Instance.CreateNewLandmarkOnTile(this, landmarkType, false);
         } else {
-            landmarkOnTile.ChangeLandmarkType(landmarkType);    
+            if (landmarkOnTile.specificLandmarkType != landmarkType) {
+                landmarkOnTile.ChangeLandmarkType(landmarkType);    
+            }
         }
-        
+        Debug.Log(log);
+    }
+    #endregion
+    
+    #region Player Action Target
+    public List<PlayerAction> actions { get; private set; }
+    public void ConstructDefaultActions() {
+        actions = new List<PlayerAction>();
+        PlayerAction harassAction = new PlayerAction(PlayerDB.Harass_Action, CanDoHarass, IsHarassRaidInvadeValid, () => PlayerUI.Instance.OnClickHarassRaidInvade(this, "harass"));
+        PlayerAction raidAction = new PlayerAction(PlayerDB.Raid_Action, CanDoRaid, IsHarassRaidInvadeValid, () => PlayerUI.Instance.OnClickHarassRaidInvade(this, "raid"));
+        PlayerAction invadeAction = new PlayerAction(PlayerDB.Invade_Action, CanDoInvade, IsHarassRaidInvadeValid, () => PlayerUI.Instance.OnClickHarassRaidInvade(this, "invade"));
+        PlayerAction buildAction = new PlayerAction(PlayerDB.Build_Demonic_Structure_Action, () => true, CanBuildDemonicStructure, OnClickBuild);
+
+        AddPlayerAction(buildAction);
+        AddPlayerAction(harassAction);
+        AddPlayerAction(raidAction);
+        AddPlayerAction(invadeAction);
+    }
+    public void AddPlayerAction(PlayerAction action) {
+        if (actions.Contains(action) == false) {
+            actions.Add(action);
+            Messenger.Broadcast(Signals.PLAYER_ACTION_ADDED_TO_TARGET, action, this as IPlayerActionTarget);    
+        }
+    }
+    public void RemovePlayerAction(PlayerAction action) {
+        if (actions.Remove(action)) {
+            Messenger.Broadcast(Signals.PLAYER_ACTION_REMOVED_FROM_TARGET, action, this as IPlayerActionTarget);
+        }
+    }
+    public void RemovePlayerAction(string actionName) {
+        for (int i = 0; i < actions.Count; i++) {
+            PlayerAction action = actions[i];
+            if (action.actionName == actionName) {
+                actions.RemoveAt(i);
+                Messenger.Broadcast(Signals.PLAYER_ACTION_REMOVED_FROM_TARGET, action, this as IPlayerActionTarget);
+            }
+        }
+    }
+    private PlayerAction GetPlayerAction(string actionName) {
+        for (int i = 0; i < actions.Count; i++) {
+            PlayerAction playerAction = actions[i];
+            if (playerAction.actionName == actionName) {
+                return playerAction;
+            }
+        }
+        return null;
+    }
+    public void ClearPlayerActions() {
+        actions.Clear();
+    }
+    private bool CanDoHarass() {
+        if (settlementOnTile is NPCSettlement npcSettlement) {
+            return !npcSettlement.isBeingHarassed;    
+        }
+        return false;
+    }
+    private bool CanDoRaid() {
+        if (settlementOnTile is NPCSettlement npcSettlement) {
+            return !npcSettlement.isBeingRaided;    
+        }
+        return false;
+    }
+    private bool CanDoInvade() {
+        if (settlementOnTile is NPCSettlement npcSettlement) {
+            return !npcSettlement.isBeingInvaded;    
+        }
+        return false;
+    }
+    private bool IsHarassRaidInvadeValid(IPlayerActionTarget target) {
+        return settlementOnTile != null && settlementOnTile.owner != null && settlementOnTile.owner.isMajorNonPlayer;
+    }
+    #endregion
+
+    #region Demonic Structure Building
+    private bool CanBuildDemonicStructure(IPlayerActionTarget target) {
+        //Cannot build on settlements and hextiles with blueprints right now
+        if(/*isCorrupted && isCurrentlyBeingCorrupted == false &&*/ settlementOnTile == null && landmarkOnTile == null 
+               && elevationType != ELEVATION.WATER && elevationType != ELEVATION.MOUNTAIN &&
+            PlayerManager.Instance.player.mana >= EditableValuesManager.Instance.buildStructureManaCost) {
+
+            //if it has any build spots that have a blueprint on them, do not allow
+            for (int i = 0; i < ownedBuildSpots.Length; i++) {
+                BuildingSpot spot = ownedBuildSpots[i];
+                if (spot.hasBlueprint) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+    private void OnClickBuild() {
+        demonicLandmarksThatCanBeBuilt.Clear();
+        List<LANDMARK_TYPE> demonicLandmarkTypes = PlayerManager.Instance.player.archetype.demonicStructures;
+        for (int i = 0; i < demonicLandmarkTypes.Count; i++) {
+            demonicLandmarksThatCanBeBuilt.Add(UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(demonicLandmarkTypes[i].ToString()));
+        }
+        //UIManager.Instance.dualObjectPicker.ShowDualObjectPicker(PlayerManager.Instance.player.minions.Select(x => x.character).ToList(), demonicLandmarksThatCanBeBuilt,
+        //    "Choose a minion", "Choose a structure",
+        //    CanChooseMinion, CanChooseLandmark,
+        //    OnHoverEnterMinion, OnHoverLandmarkChoice,
+        //    OnHoverExitMinion, OnHoverExitLandmarkChoice,
+        //    StartBuild, "Build", column2Identifier: "Landmark");
+        UIManager.Instance.ShowClickableObjectPicker(demonicLandmarksThatCanBeBuilt, StartBuildConfirmation, null, CanChooseLandmark, "Choose a structure to build", OnHoverLandmarkChoice, OnHoverExitLandmarkChoice, identifier: "Landmark", shouldConfirmOnPick: true, asButton: true);
+    }
+    //private bool CanChooseMinion(Character character) {
+    //    return !character.minion.isAssigned && character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.BUILDER);
+    //}
+    //private void OnHoverEnterMinion(Character character) {
+    //    if (!CanChooseMinion(character)) {
+    //        string message = string.Empty;
+    //        if (character.minion.isAssigned) {
+    //            message = $"{character.name} is already doing something else.";
+    //        } else if (!character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.BUILDER)) {
+    //            message = $"{character.name} does not have the required trait: Builder";
+    //        }
+    //        UIManager.Instance.ShowSmallInfo(message);
+    //    }
+    //}
+    //private void OnHoverExitMinion(Character character) {
+    //    UIManager.Instance.HideSmallInfo();
+    //}
+    private bool CanChooseLandmark(string landmarkName) {
+        if (landmarkName == "The Pit" || landmarkName == "The Profane") {
+            return false;
+        }
+        if (landmarkName == "The Eye" && region.HasStructure(STRUCTURE_TYPE.THE_EYE)) {
+            return false; //only 1 eye per region.
+        }
+        if (landmarkName == "Goader" && PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.GOADER)) {
+            return false; //only 1 finger at a time.
+        }
+        return true;
+    }
+    private void OnHoverLandmarkChoice(string landmarkName) {
+        LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkName);
+        string info = landmarkData.description;
+        //if (info != string.Empty) {
+        //    info += "\n";
+        //}
+        //info += $"Duration: {GameManager.Instance.GetCeilingHoursBasedOnTicks(landmarkData.buildDuration).ToString()} hours";
+        UIManager.Instance.ShowSmallInfo(info);
+    }
+    private void OnHoverExitLandmarkChoice(string landmarkName) {
+        UIManager.Instance.HideSmallInfo();
+    }
+
+    private void StartBuildConfirmation(object landmarkObj) {
+        string landmarkName = landmarkObj as string;
+        LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkName);
+        UIManager.Instance.ShowYesNoConfirmation("Build Structure Confirmation", "Are you sure you want to build " + landmarkName + "?", () => StartBuild(landmarkData));
+    }
+    private void StartBuild(LandmarkData landmarkData) {
+        StartCorruption();
+        //LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkObj as string);
+        BaseLandmark newLandmark =
+            LandmarkManager.Instance.CreateNewLandmarkOnTile(this, landmarkData.landmarkType, false);
+        LandmarkManager.Instance.CreateStructureObjectForLandmark(newLandmark, settlementOnTile);
+        PlayerManager.Instance.player.AdjustMana(-EditableValuesManager.Instance.buildStructureManaCost);
+        newLandmark.OnFinishedBuilding();
+        UIManager.Instance.HideObjectPicker();
+    }
+    #endregion
+
+    #region Border Tester
+    [Header("Border Tester")]
+    [SerializeField] private LineRenderer borderLine;
+    [SerializeField] private Transform[] vertices;
+    public Transform[] GetVertices(HEXTILE_DIRECTION direction) {
+        Transform[] _vertices = new Transform[2];
+        switch (direction) {
+            case HEXTILE_DIRECTION.NORTH_WEST:
+                _vertices[0] = vertices[1];
+                _vertices[1] = vertices[0];
+                break;
+            case HEXTILE_DIRECTION.NORTH_EAST:
+                _vertices[0] = vertices[5];
+                _vertices[1] = vertices[0];
+                break;
+            case HEXTILE_DIRECTION.EAST:
+                _vertices[0] = vertices[5];
+                _vertices[1] = vertices[4];
+                break;
+            case HEXTILE_DIRECTION.SOUTH_EAST:
+                _vertices[0] = vertices[4];
+                _vertices[1] = vertices[3];
+                break;
+            case HEXTILE_DIRECTION.SOUTH_WEST:
+                _vertices[0] = vertices[3];
+                _vertices[1] = vertices[2];
+                break;
+            case HEXTILE_DIRECTION.WEST:
+                _vertices[0] = vertices[2];
+                _vertices[1] = vertices[1];
+                break;
+        }
+        return _vertices;
+    }
+    #endregion
+    
+    #region Selectable
+    public bool IsCurrentlySelected() {
+        return UIManager.Instance.hexTileInfoUI.isShowing &&
+               UIManager.Instance.hexTileInfoUI.currentlyShowingHexTile == this;
+    }
+    public void LeftSelectAction() {
+        UIManager.Instance.ShowHexTileInfo(this);
+    }
+    public void RightSelectAction() {
+        //Nothing happens
+    }
+    #endregion
+    
+    #region POI
+    public void OnPlacePOIInHex(IPointOfInterest poi) {
+        spellsComponent.OnPlacePOIInHex(poi);
+    }
+    public void OnRemovePOIInHex(IPointOfInterest poi) {
+        spellsComponent.OnRemovePOIInHex(poi);
+    }
+    #endregion
+
+    #region Characters
+    public List<Character> GetAllCharactersInsideHex() {
+        List<Character> characters = null;
+        LocationGridTile lowerLeftCornerTile = ownedBuildSpots[0].tilesInTerritory[0];
+        int xMin = lowerLeftCornerTile.localPlace.x;
+        int yMin = lowerLeftCornerTile.localPlace.y;
+        int xMax = xMin + (InnerMapManager.BuildingSpotSize.x * 2);
+        int yMax = yMin + (InnerMapManager.BuildingSpotSize.y * 2);
+
+        for (int i = 0; i < region.charactersAtLocation.Count; i++) {
+            Character character = region.charactersAtLocation[i];
+            if (character.gridTileLocation.localPlace.x >= xMin && character.gridTileLocation.localPlace.x <= xMax
+                && character.gridTileLocation.localPlace.y >= yMin && character.gridTileLocation.localPlace.y <= yMax) {
+                if (characters == null) { characters = new List<Character>(); }
+                characters.Add(character);
+            }
+        }
+        return characters;
+    }
+    public LocationGridTile GetCenterLocationGridTile() {
+        LocationGridTile lowerLeftCornerTile = ownedBuildSpots[0].tilesInTerritory[0];
+        int xMin = lowerLeftCornerTile.localPlace.x;
+        int yMin = lowerLeftCornerTile.localPlace.y;
+        int xMax = xMin + InnerMapManager.BuildingSpotSize.x;
+        int yMax = yMin + InnerMapManager.BuildingSpotSize.y;
+        return region.innerMap.map[xMax, yMax];
     }
     #endregion
 }

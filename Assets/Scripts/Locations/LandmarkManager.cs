@@ -2,11 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using JetBrains.Annotations;
+using Locations.Settlements;
 using UnityEngine.Tilemaps;
 using Unity.Jobs;
 using Unity.Collections;
+using UtilityScripts;
 using Debug = System.Diagnostics.Debug;
+using ThePortal = Inner_Maps.Location_Structures.ThePortal;
 
 public partial class LandmarkManager : MonoBehaviour {
 
@@ -15,26 +19,19 @@ public partial class LandmarkManager : MonoBehaviour {
     public const int DELAY_DIVINE_INTERVENTION_DURATION = 144;
     public const int SUMMON_MINION_DURATION = 96;
     public const int MAX_RESOURCE_PILE = 500;
-
-    public int initialLandmarkCount;
-
+    
     [SerializeField] private List<LandmarkData> landmarkData;
     public List<AreaData> areaData;
 
-    public int corruptedLandmarksCount;
-
     public List<BaseLandmark> allLandmarks;
-    public List<Settlement> allSetttlements;
-    public List<Settlement> allNonPlayerSettlements;
+    public List<BaseSettlement> allSettlements;
+    public List<NPCSettlement> allNonPlayerSettlements;
 
     [SerializeField] private GameObject landmarkGO;
 
     private Dictionary<LANDMARK_TYPE, LandmarkData> landmarkDataDict;
 
     public AreaTypeSpriteDictionary locationPortraits;
-    [Header("Connections")]
-    [SerializeField] private GameObject landmarkConnectionPrefab;
-
     public List<LocationEvent> locationEventsData { get; private set; }
 
     public STRUCTURE_TYPE[] humanSurvivalStructures { get; private set; }
@@ -48,12 +45,10 @@ public partial class LandmarkManager : MonoBehaviour {
     public Dictionary<string, AnvilResearchData> anvilResearchData;
 
     public void Initialize() {
-        corruptedLandmarksCount = 0;
-        allSetttlements = new List<Settlement>();
-        allNonPlayerSettlements = new List<Settlement>();
+        allSettlements = new List<BaseSettlement>();
+        allNonPlayerSettlements = new List<NPCSettlement>();
         ConstructLandmarkData();
         LoadLandmarkTypeDictionary();
-        ConstructAnvilResearchData();
         ConstructLocationEventsData();
         ConstructRaceStructureRequirements();
     }
@@ -104,11 +99,11 @@ public partial class LandmarkManager : MonoBehaviour {
         tile.RemoveLandmarkVisuals();
         tile.RemoveLandmarkOnTile();
         Messenger.Broadcast(Signals.LANDMARK_DESTROYED, landmarkOnTile, tile);
-        if (landmarkOnTile.specificLandmarkType.IsPlayerLandmark() && tile.region.locationType.IsSettlementType() == false) {
-            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, 
-                tile.region.regionTileObject as IPointOfInterest, 
-                "target has been destroyed", JOB_TYPE.ATTACK_DEMONIC_REGION);    
-        }
+        // if (landmarkOnTile.specificLandmarkType.IsPlayerLandmark() && tile.region.locationType.IsSettlementType() == false) {
+        //     Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, 
+        //         tile.region.regionTileObject as IPointOfInterest, 
+        //         "target has been destroyed", JOB_TYPE.ATTACK_DEMONIC_REGION);    
+        // }
     }
     public BaseLandmark LoadLandmarkOnTile(HexTile location, BaseLandmark landmark) {
         BaseLandmark newLandmark = location.LoadLandmark(landmark);
@@ -118,11 +113,11 @@ public partial class LandmarkManager : MonoBehaviour {
         return this.landmarkGO;
     }
     public bool AreAllNonPlayerAreasCorrupted() {
-        List<Settlement> areas = allNonPlayerSettlements;
+        List<NPCSettlement> areas = allNonPlayerSettlements;
         for (int i = 0; i < areas.Count; i++) {
-            Settlement settlement = areas[i];
-            for (int j = 0; j < settlement.tiles.Count; j++) {
-                HexTile currTile = settlement.tiles[j];
+            NPCSettlement npcSettlement = areas[i];
+            for (int j = 0; j < npcSettlement.tiles.Count; j++) {
+                HexTile currTile = npcSettlement.tiles[j];
                 if (!currTile.isCorrupted) {
                     return false;
                 }    
@@ -132,20 +127,20 @@ public partial class LandmarkManager : MonoBehaviour {
         return true;
     }
     public BaseLandmark CreateNewLandmarkInstance(HexTile location, LANDMARK_TYPE type) {
-        if (type.IsPlayerLandmark()) {
-            var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(type.ToString());
-            System.Type systemType = System.Type.GetType(typeName);
-            if (systemType != null) {
-                return System.Activator.CreateInstance(systemType, location, type) as BaseLandmark;
-            }
-            return null;
-        } else {
+        // if (type.IsPlayerLandmark()) {
+        //     var typeName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(type.ToString());
+        //     System.Type systemType = System.Type.GetType(typeName);
+        //     if (systemType != null) {
+        //         return System.Activator.CreateInstance(systemType, location, type) as BaseLandmark;
+        //     }
+        //     return null;
+        // } else {
             return new BaseLandmark(location, type);
-        }
+        // }
     }
     public BaseLandmark CreateNewLandmarkInstance(HexTile location, SaveDataLandmark data) {
         if (data.landmarkType.IsPlayerLandmark()) {
-            var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(data.landmarkType.ToString());
+            var typeName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(data.landmarkType.ToString());
             System.Type systemType = System.Type.GetType(typeName);
             if (systemType != null) {
                 return System.Activator.CreateInstance(systemType, location, data) as BaseLandmark;
@@ -162,7 +157,7 @@ public partial class LandmarkManager : MonoBehaviour {
         if (landmarkDataDict.ContainsKey(landmarkType)) {
             return landmarkDataDict[landmarkType];
         }
-        throw new System.Exception("There is no landmark data for " + landmarkType.ToString());
+        throw new System.Exception($"There is no landmark data for {landmarkType}");
     }
     public LandmarkData GetLandmarkData(string landmarkName) {
         for (int i = 0; i < landmarkData.Count; i++) {
@@ -171,7 +166,7 @@ public partial class LandmarkManager : MonoBehaviour {
                 return currData;
             }
         }
-        throw new System.Exception("There is no landmark data for " + landmarkName);
+        throw new System.Exception($"There is no landmark data for {landmarkName}");
     }
     public Island GetIslandOfRegion(Region region, List<Island> islands) {
         for (int i = 0; i < islands.Count; i++) {
@@ -222,14 +217,25 @@ public partial class LandmarkManager : MonoBehaviour {
         return null;
     }
     public BaseLandmark GetLandmarkOfType(LANDMARK_TYPE landmarkType) {
-        List<BaseLandmark> allLandmarks = GetAllLandmarks();
-        for (int i = 0; i < allLandmarks.Count; i++) {
-            BaseLandmark currLandmark = allLandmarks[i];
+        List<BaseLandmark> _allLandmarks = GetAllLandmarks();
+        for (int i = 0; i < _allLandmarks.Count; i++) {
+            BaseLandmark currLandmark = _allLandmarks[i];
             if (currLandmark.specificLandmarkType == landmarkType) {
                 return currLandmark;
             }
         }
         return null;
+    }
+    public List<BaseLandmark> GetLandmarksOfType(LANDMARK_TYPE landmarkType) {
+        List<BaseLandmark> landmarks = new List<BaseLandmark>();
+        List<BaseLandmark> _allLandmarks = GetAllLandmarks();
+        for (int i = 0; i < _allLandmarks.Count; i++) {
+            BaseLandmark currLandmark = _allLandmarks[i];
+            if (currLandmark.specificLandmarkType == landmarkType) {
+                landmarks.Add(currLandmark);
+            }
+        }
+        return landmarks;
     }
     public List<BaseLandmark> GetAllLandmarks() {
         List<BaseLandmark> landmarks = new List<BaseLandmark>();
@@ -267,7 +273,7 @@ public partial class LandmarkManager : MonoBehaviour {
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
             Character character = CharacterManager.Instance.allCharacters[i];
             if(character.isDead && character.currentRegion.IsSameCoreLocationAs(location) && !(character is Summon)) {
-                if(character.marker != null || character.grave != null) { //Only resurrect characters who are in the tombstone or still has a marker in the settlement
+                if(character.marker || character.grave != null) { //Only resurrect characters who are in the tombstone or still has a marker in the npcSettlement
                     characters.Add(character);
                 }
             }
@@ -284,74 +290,69 @@ public partial class LandmarkManager : MonoBehaviour {
                 return currData;
             }
         }
-        throw new System.Exception("No settlement data for type " + locationType);
+        throw new System.Exception($"No npcSettlement data for type {locationType}");
     }
-    public Settlement CreateNewSettlement(Region region, LOCATION_TYPE locationType, int citizenCount, params HexTile[] tiles) {
-        Settlement newSettlement = new Settlement(region, locationType, citizenCount);
-        if (locationPortraits.ContainsKey(newSettlement.locationType)) {
-            newSettlement.SetLocationPortrait(locationPortraits[newSettlement.locationType]);
-        }
-        newSettlement.AddTileToSettlement(tiles);
-        Messenger.Broadcast(Signals.AREA_CREATED, newSettlement);
-        allSetttlements.Add(newSettlement);
+    public NPCSettlement CreateNewSettlement(Region region, LOCATION_TYPE locationType, int citizenCount, params HexTile[] tiles) {
+        NPCSettlement newNpcSettlement = new NPCSettlement(region, locationType, citizenCount);
+        newNpcSettlement.AddTileToSettlement(tiles);
+        Messenger.Broadcast(Signals.AREA_CREATED, newNpcSettlement);
+        allSettlements.Add(newNpcSettlement);
         if(locationType != LOCATION_TYPE.DEMONIC_INTRUSION) {
-            allNonPlayerSettlements.Add(newSettlement);
+            allNonPlayerSettlements.Add(newNpcSettlement);
         }
-        return newSettlement;
+        return newNpcSettlement;
     }
-    public void RemoveArea(Settlement settlement) {
-        allSetttlements.Remove(settlement);
+    public PlayerSettlement CreateNewPlayerSettlement(params HexTile[] tiles) {
+        PlayerSettlement newPlayerSettlement = new PlayerSettlement();
+        newPlayerSettlement.AddTileToSettlement(tiles);
+        Messenger.Broadcast(Signals.AREA_CREATED, newPlayerSettlement);
+        allSettlements.Add(newPlayerSettlement);
+        return newPlayerSettlement;
     }
-    public Settlement CreateNewArea(SaveDataArea saveDataArea) {
-        Settlement newSettlement = new Settlement(saveDataArea);
+    public void RemoveArea(NPCSettlement npcSettlement) {
+        allSettlements.Remove(npcSettlement);
+    }
+    public NPCSettlement CreateNewArea(SaveDataArea saveDataArea) {
+        NPCSettlement newNpcSettlement = new NPCSettlement(saveDataArea);
 
-        if (locationPortraits.ContainsKey(newSettlement.locationType)) {
-            newSettlement.SetLocationPortrait(locationPortraits[newSettlement.locationType]);
+        if (locationPortraits.ContainsKey(newNpcSettlement.locationType)) {
         }
-        Messenger.Broadcast(Signals.AREA_CREATED, newSettlement);
-        allSetttlements.Add(newSettlement);
+        Messenger.Broadcast(Signals.AREA_CREATED, newNpcSettlement);
+        allSettlements.Add(newNpcSettlement);
         if (saveDataArea.locationType != LOCATION_TYPE.DEMONIC_INTRUSION) {
-            allNonPlayerSettlements.Add(newSettlement);
+            allNonPlayerSettlements.Add(newNpcSettlement);
         }
-        return newSettlement;
+        return newNpcSettlement;
     }
 
-    public Settlement GetAreaByID(int id) {
-        for (int i = 0; i < allSetttlements.Count; i++) {
-            Settlement settlement = allSetttlements[i];
+    public BaseSettlement GetAreaByID(int id) {
+        for (int i = 0; i < allSettlements.Count; i++) {
+            BaseSettlement settlement = allSettlements[i];
             if (settlement.id == id) {
                 return settlement;
             }
         }
         return null;
     }
-    public Settlement GetAreaByName(string name) {
-        for (int i = 0; i < allSetttlements.Count; i++) {
-            Settlement settlement = allSetttlements[i];
+    public BaseSettlement GetAreaByName(string name) {
+        for (int i = 0; i < allSettlements.Count; i++) {
+            BaseSettlement settlement = allSettlements[i];
             if (settlement.name.Equals(name)) {
                 return settlement;
             }
         }
         return null;
     }
-    public void OwnSettlement(Faction newOwner, Settlement settlement) {
+    public void OwnSettlement(Faction newOwner, BaseSettlement settlement) {
         if (settlement.owner != null) {
             UnownSettlement(settlement);
         }
         newOwner.AddToOwnedSettlements(settlement);
         settlement.SetOwner(newOwner);
-        settlement.TintStructures(newOwner.factionColor);
     }
-    public void UnownSettlement(Settlement settlement) {
+    public void UnownSettlement(BaseSettlement settlement) {
         settlement.owner?.RemoveFromOwnedSettlements(settlement);
         settlement.SetOwner(null);
-        settlement.TintStructures(Color.white);
-    }
-    public void LoadAdditionalAreaData() {
-        for (int i = 0; i < allSetttlements.Count; i++) {
-            Settlement currSettlement = allSetttlements[i];
-            currSettlement.LoadAdditionalData();
-        }
     }
     public Vector2 GetNameplatePosition(HexTile tile) {
         Vector2 defaultPos = tile.transform.position;
@@ -360,29 +361,39 @@ public partial class LandmarkManager : MonoBehaviour {
     }
     #endregion
 
-    #region Burning Source
-    public BurningSource GetBurningSourceByID(int id) {
-        for (int i = 0; i < allSetttlements.Count; i++) {
-            Settlement currSettlement = allSetttlements[i];
-            if (currSettlement.innerMap != null) {
-                for (int j = 0; j < currSettlement.innerMap.activeBurningSources.Count; j++) {
-                    BurningSource source = currSettlement.innerMap.activeBurningSources[j];
-                    if (source.id == id) {
-                        return source;
-                    }
-                }
-            }
-        }
-        return null;
-    }
-    #endregion
-
     #region Location Structures
-    public LocationStructure CreateNewStructureAt(ILocation location, STRUCTURE_TYPE type, Settlement settlement = null) {
+    public LocationStructure CreateNewStructureAt(ILocation location, STRUCTURE_TYPE type, BaseSettlement settlement = null) {
         LocationStructure createdStructure = null;
         switch (type) {
             case STRUCTURE_TYPE.DWELLING:
                 createdStructure = new Dwelling(location);
+                break;
+            case STRUCTURE_TYPE.CITY_CENTER:
+                createdStructure = new CityCenter(location);
+                break;
+            case STRUCTURE_TYPE.THE_PORTAL:
+                createdStructure = new Inner_Maps.Location_Structures.ThePortal(location);
+                break;
+            case STRUCTURE_TYPE.THE_SPIRE:
+                createdStructure = new Inner_Maps.Location_Structures.TheSpire(location);
+                break;
+            case STRUCTURE_TYPE.TORTURE_CHAMBER:
+                createdStructure = new TortureChamber(location);
+                break;
+            case STRUCTURE_TYPE.THE_EYE:
+                createdStructure = new Inner_Maps.Location_Structures.TheEye(location);
+                break;
+            case STRUCTURE_TYPE.GOADER:
+                createdStructure = new Inner_Maps.Location_Structures.Goader(location);
+                break;
+            case STRUCTURE_TYPE.DEMONIC_PRISON:
+                createdStructure = new DemonicPrison(location);
+                break;
+            case STRUCTURE_TYPE.THE_KENNEL:
+                createdStructure = new Inner_Maps.Location_Structures.TheKennel(location);
+                break;
+            case STRUCTURE_TYPE.THE_CRYPT:
+                createdStructure = new Inner_Maps.Location_Structures.TheCrypt(location);
                 break;
             default:
                 createdStructure = new LocationStructure(type, location);
@@ -390,6 +401,7 @@ public partial class LandmarkManager : MonoBehaviour {
         }
         location.AddStructure(createdStructure);
         settlement?.AddStructure(createdStructure);
+        createdStructure.Initialize();
         return createdStructure;
     }
     public LocationStructure LoadStructureAt(ILocation location, SaveDataLocationStructure data) {
@@ -427,46 +439,78 @@ public partial class LandmarkManager : MonoBehaviour {
         return null;
     }
     public LANDMARK_TYPE GetLandmarkTypeFor(STRUCTURE_TYPE structureType) {
-        switch (structureType) {
-            case STRUCTURE_TYPE.DWELLING:
-                return LANDMARK_TYPE.HOUSES;
-            case STRUCTURE_TYPE.MONSTER_LAIR:
-                return LANDMARK_TYPE.MONSTER_LAIR;
-            case STRUCTURE_TYPE.ABANDONED_MINE:
-                return LANDMARK_TYPE.MINES;
-            case STRUCTURE_TYPE.TEMPLE:
-                return LANDMARK_TYPE.TEMPLE;
-            case STRUCTURE_TYPE.MAGE_TOWER:
-                return LANDMARK_TYPE.MAGE_TOWER;
-            default:
-                return LANDMARK_TYPE.VILLAGE;
+        LANDMARK_TYPE parsed;
+        if (System.Enum.TryParse(structureType.ToString(), out parsed)) {
+            return parsed;
+        } else {
+            switch (structureType) {
+                case STRUCTURE_TYPE.CITY_CENTER:
+                    return LANDMARK_TYPE.VILLAGE;
+                default:
+                    return LANDMARK_TYPE.HOUSES;
+            }
         }
     }
-    public STRUCTURE_TYPE GetLandmarkTypeFor(LANDMARK_TYPE landmarkType) {
+    public STRUCTURE_TYPE GetStructureTypeFor(LANDMARK_TYPE landmarkType) {
         switch (landmarkType) {
             case LANDMARK_TYPE.HOUSES:
                 return STRUCTURE_TYPE.DWELLING;
-            case LANDMARK_TYPE.MONSTER_LAIR:
-                return STRUCTURE_TYPE.MONSTER_LAIR;
-            case LANDMARK_TYPE.MINES:
-                return STRUCTURE_TYPE.ABANDONED_MINE;
-            case LANDMARK_TYPE.TEMPLE:
-                return STRUCTURE_TYPE.TEMPLE;
-            case LANDMARK_TYPE.MAGE_TOWER:
-                return STRUCTURE_TYPE.MAGE_TOWER;
+            case LANDMARK_TYPE.VILLAGE:
+                return STRUCTURE_TYPE.CITY_CENTER;
             default:
-                return STRUCTURE_TYPE.INN;
+                STRUCTURE_TYPE parsed;
+                if (System.Enum.TryParse(landmarkType.ToString(), out parsed)) {
+                    return parsed;
+                } else {
+                    throw new System.Exception($"There is no corresponding structure type for {landmarkType.ToString()}");
+                }
         }
+        
+    }
+    public void CreateStructureObjectForLandmark(BaseLandmark landmark, BaseSettlement settlement) {
+        LocationStructure structure = CreateNewStructureAt(landmark.tileLocation.region,
+            GetStructureTypeFor(landmark.specificLandmarkType), settlement);
+        PlayerPlaceStructureObject(structure, landmark.tileLocation.region.innerMap, landmark.tileLocation);
+    }
+    private void PlayerPlaceStructureObject(LocationStructure structure, InnerTileMap innerTileMap, HexTile tile) {
+        if (structure.structureType.ShouldBeGeneratedFromTemplate()) {
+            List<GameObject> choices =
+                InnerMapManager.Instance.GetStructurePrefabsForStructure(structure.structureType);
+            GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
+            LocationStructureObject lso = chosenStructurePrefab.GetComponent<LocationStructureObject>();
+            BuildingSpot chosenBuildingSpot;
+            if (PlayerTryGetBuildSpotForStructureInTile(lso, tile, innerTileMap, out chosenBuildingSpot)) {
+                BuildSpotTileObject buildSpotTileObject = innerTileMap.GetBuildSpotTileObject(chosenBuildingSpot);
+                innerTileMap.PlaceStructureObjectAt(chosenBuildingSpot, chosenStructurePrefab, structure, buildSpotTileObject);
+                structure.structureObj.RegisterPreplacedObjects(structure, innerTileMap);
+                structure.structureObj.RescanPathfindingGridOfStructure();
+            } else {
+                throw new System.Exception(
+                    $"Could not find valid building spot for {structure.ToString()} using prefab {chosenStructurePrefab.name}");
+            }
+        }
+    }
+    public bool PlayerTryGetBuildSpotForStructureInTile(LocationStructureObject structureObject, HexTile currTile, 
+        InnerTileMap innerTileMap, out BuildingSpot spot) {
+        for (int j = 0; j < currTile.ownedBuildSpots.Length; j++) {
+            BuildingSpot currSpot = currTile.ownedBuildSpots[j];
+            if (currSpot.isOccupied == false && currSpot.CanFitStructureOnSpot(structureObject, innerTileMap, "Player")) {
+                spot = currSpot;
+                return true;
+            }
+        }
+        spot = null;
+        return false;
     }
     #endregion
 
     #region Regions
     public TileFeature CreateTileFeature([NotNull] string featureName) {
         try {
-            Debug.Assert(featureName != null, nameof(featureName) + " != null");
+            Debug.Assert(featureName != null, $"{nameof(featureName)} != null");
             return System.Activator.CreateInstance(System.Type.GetType(featureName)) as TileFeature;
         } catch {
-            throw new System.Exception("Cannot create region feature with name " + featureName);
+            throw new System.Exception($"Cannot create region feature with name {featureName}");
         }
         
     }
@@ -479,116 +523,9 @@ public partial class LandmarkManager : MonoBehaviour {
             }
         }
         if (choices.Count > 0) {
-            return Utilities.GetRandomElement(choices);
+            return CollectionUtilities.GetRandomElement(choices);
         }
         return null;
-    }
-    #endregion
-
-    #region The Anvil
-    private void ConstructAnvilResearchData() {
-        anvilResearchData = new Dictionary<string, AnvilResearchData>() {
-            { TheAnvil.Improved_Spells_1,
-                new AnvilResearchData() {
-                    effect = 2,
-                    description = "Increase Spell level to 2.",
-                    manaCost = 150,
-                    durationInHours = 8,
-                    preRequisiteResearch = string.Empty,
-                    researchDoneNotifText = "Spell Level increased!",
-                }
-            },
-            { TheAnvil.Improved_Spells_2,
-                new AnvilResearchData() {
-                    effect = 3,
-                    description = "Increase Spell level to 3.",
-                    manaCost = 300,
-                    durationInHours = 24,
-                    preRequisiteResearch = TheAnvil.Improved_Spells_1,
-                    researchDoneNotifText = "Spell Level increased!",
-                }
-            },
-            { TheAnvil.Improved_Artifacts_1,
-                new AnvilResearchData() {
-                    effect = 2,
-                    description = "Increase Artifact level to 2.",
-                    manaCost = 100,
-                    durationInHours = 4,
-                    preRequisiteResearch = string.Empty,
-                    researchDoneNotifText = "Artifact Level increased!",
-                }
-            },
-            { TheAnvil.Improved_Artifacts_2,
-                new AnvilResearchData() {
-                    effect = 3,
-                    description = "Increase Artifact level to 3.",
-                    manaCost = 200,
-                    durationInHours = 12,
-                    preRequisiteResearch = TheAnvil.Improved_Artifacts_1,
-                    researchDoneNotifText = "Artifact Level increased!",
-                }
-            },
-            { TheAnvil.Improved_Summoning_1,
-                new AnvilResearchData() {
-                    effect = 2,
-                    description = "Increase Summon level to 2.",
-                    manaCost = 100,
-                    durationInHours = 4,
-                    preRequisiteResearch = string.Empty,
-                    researchDoneNotifText = "Summon Level increased!",
-                }
-            },
-            { TheAnvil.Improved_Summoning_2,
-                new AnvilResearchData() {
-                    effect = 3,
-                    description = "Increase Summon level to 3.",
-                    manaCost = 200,
-                    durationInHours = 12,
-                    preRequisiteResearch = TheAnvil.Improved_Summoning_1,
-                    researchDoneNotifText = "Summon Level increased!",
-                }
-            },
-            { TheAnvil.Faster_Invasion,
-                new AnvilResearchData() {
-                    effect = 20,
-                    description = "Invasion is 20% faster.",
-                    manaCost = 200,
-                    durationInHours = 12,
-                    preRequisiteResearch = string.Empty,
-                    researchDoneNotifText = "Invasion rate increased!",
-                }
-            },
-            { TheAnvil.Improved_Construction,
-                new AnvilResearchData() {
-                    effect = 20,
-                    description = "Construction is 20% faster.",
-                    manaCost = 200,
-                    durationInHours = 12,
-                    preRequisiteResearch = string.Empty,
-                    researchDoneNotifText = "Construction rate increased!",
-                }
-            },
-            { TheAnvil.Increased_Mana_Capacity,
-                new AnvilResearchData() {
-                    effect = 600,
-                    description = "Maximum Mana increased to 600.",
-                    manaCost = 200,
-                    durationInHours = 12,
-                    preRequisiteResearch = string.Empty,
-                    researchDoneNotifText = "Maximum mana increased!",
-                }
-            },
-            { TheAnvil.Increased_Mana_Regen,
-                new AnvilResearchData() {
-                    effect = 5,
-                    description = "Mana Regen increased by 5.",
-                    manaCost = 200,
-                    durationInHours = 24,
-                    preRequisiteResearch = string.Empty,
-                    researchDoneNotifText = "Mana regeneration rate increased!",
-                }
-            },
-        };
     }
     #endregion
 }

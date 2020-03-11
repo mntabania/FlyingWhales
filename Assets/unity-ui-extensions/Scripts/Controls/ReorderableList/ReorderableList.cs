@@ -73,7 +73,7 @@ namespace UnityEngine.UI.Extensions
 
             if (ContentLayout == null)
             {
-                Debug.LogError("You need to have a child LayoutGroup content set for the list: " + name, gameObject);
+                Debug.LogError($"You need to have a child LayoutGroup content set for the list: {name}", gameObject);
                 return;
             }
             if (DraggableArea == null)
@@ -82,7 +82,8 @@ namespace UnityEngine.UI.Extensions
             }
             if (IsDropable && !GetComponent<Graphic>())
             {
-                Debug.LogError("You need to have a Graphic control (such as an Image) for the list [" + name + "] to be droppable", gameObject);
+                Debug.LogError(
+                    $"You need to have a Graphic control (such as an Image) for the list [{name}] to be droppable", gameObject);
                 return;
             }
 
@@ -121,7 +122,7 @@ namespace UnityEngine.UI.Extensions
         public void TestReOrderableListTarget(ReorderableListEventStruct item)
         {
             Debug.Log("Event Received");
-            Debug.Log("Hello World, is my item a clone? [" + item.IsAClone + "]");
+            Debug.Log($"Hello World, is my item a clone? [{item.IsAClone}]");
         }
 
         #endregion

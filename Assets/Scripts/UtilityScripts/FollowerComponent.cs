@@ -38,7 +38,7 @@ public class FollowerComponent : MonoBehaviour {
     }
 
     private void OnReachTarget() {
-        Debug.Log(this.name + " has reached target");
+        Debug.Log($"{this.name} has reached target");
         onReachTarget?.Invoke();
         targetTransform = null;
         GameObject.Destroy(this);

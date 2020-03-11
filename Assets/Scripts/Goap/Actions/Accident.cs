@@ -9,7 +9,6 @@ public class Accident : GoapAction {
     public Accident() : base(INTERACTION_TYPE.ACCIDENT) {
         actionIconString = GoapActionStateDB.No_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
-        isNotificationAnIntel = false;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON };
     }
@@ -22,7 +21,9 @@ public class Accident : GoapAction {
         base.Perform(actionNode);
         SetState("Accident Success", actionNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+        string costLog = $"\n{name} {target.nameWithID}: +5(Constant)";
+        actor.logComponent.AppendCostLog(costLog);
         return 5;
     }
     #endregion
@@ -48,8 +49,9 @@ public class Accident : GoapAction {
         int randomHpToLose = UnityEngine.Random.Range(5, 26);
         float percentMaxHPToLose = randomHpToLose / 100f;
         int actualHPToLose = Mathf.CeilToInt(goapNode.actor.maxHP * percentMaxHPToLose);
-        Debug.Log("Accident of " + goapNode.actor.name + " percent: " + percentMaxHPToLose + ", max hp: " + goapNode.actor.maxHP + ", lost hp: " + actualHPToLose);
-        goapNode.actor.AdjustHP(-actualHPToLose);
+        Debug.Log(
+            $"Accident of {goapNode.actor.name} percent: {percentMaxHPToLose}, max hp: {goapNode.actor.maxHP}, lost hp: {actualHPToLose}");
+        goapNode.actor.AdjustHP(-actualHPToLose, ELEMENTAL_TYPE.Normal);
         if (goapNode.actor.currentHP <= 0) {
             goapNode.actor.Death(deathFromAction: goapNode);
         }

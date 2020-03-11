@@ -1,63 +1,101 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using UnityEngine;
 
 namespace Traits {
-    public class Poisoned : Trait {
+    public class Poisoned : Status {
 
-        public List<Character> awareCharacters { get; private set; } //characters that know about this trait
+        public List<Character> awareCharacters { get; } //characters that know about this trait
+        private ITraitable traitable { get; set; } //poi that has the poison
+        private Character characterOwner;
+        private StatusIcon _statusIcon;
+        private GameObject _poisonedEffect;
 
-        public ITraitable traitable { get; private set; } //poi that has the poison
+        private bool _isVenomous;
+
         public Poisoned() {
             name = "Poisoned";
             description = "This object is poisoned.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
-            ticksDuration = 0;
+            ticksDuration = GameManager.Instance.GetTicksBasedOnHour(4);
             //effects = new List<TraitEffect>();
+            advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CURE_CHARACTER, };
             awareCharacters = new List<Character>();
             mutuallyExclusive = new string[] { "Robust" };
-            SetLevel(2);
+            moodEffect = -12;
+            isStacking = true;
+            stackLimit = 5;
+            stackModifier = 0.5f;
+            SetLevel(1);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Initiate_Map_Visual_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Destroy_Map_Visual_Trait);
         }
 
         #region Overrides
-        public override void OnAddTrait(ITraitable sourceCharacter) {
-            base.OnAddTrait(sourceCharacter);
-            traitable = sourceCharacter;
+        public override void OnAddTrait(ITraitable addedTo) {
+            base.OnAddTrait(addedTo);
+            traitable = addedTo;
+            _isVenomous = addedTo.traitContainer.HasTrait("Venomous");
+            UpdateVisualsOnAdd(addedTo);
+            if(traitable is Character character) {
+                characterOwner = character;
+                if (!_isVenomous) {
+                    characterOwner.AdjustDoNotRecoverHP(1);
+                }
+            } 
+            //else if (addedTo is TileObject) {
+            //    ticksDuration = GameManager.Instance.GetTicksBasedOnHour(24);
+            //}
         }
-        public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
-            base.OnRemoveTrait(sourceCharacter, removedBy);
-            awareCharacters.Clear();
-            responsibleCharacters.Clear(); //Cleared list, for garbage collection
-                                           //Messenger.Broadcast(Signals.OLD_NEWS_TRIGGER, sourceCharacter, gainedFromDoing);
+        public override void OnStackStatus(ITraitable addedTo) {
+            base.OnStackStatus(addedTo);
+            UpdateVisualsOnAdd(addedTo);
         }
-        public override string GetTestingData() {
-            string summary = string.Empty;
-            WeightedDictionary<string> weights = GetResultWeights();
-            foreach (KeyValuePair<string, int> kvp in weights.dictionary) {
-                summary += "(" + kvp.Key + "-" + kvp.Value.ToString() + ")";
+        public override void OnStackStatusAddedButStackIsAtLimit(ITraitable traitable) {
+            base.OnStackStatusAddedButStackIsAtLimit(traitable);
+            UpdateVisualsOnAdd(traitable);
+        }
+        public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
+            base.OnRemoveTrait(removedFrom, removedBy);
+            UpdateVisualsOnRemove(removedFrom);
+            if (!_isVenomous) {
+                characterOwner?.AdjustDoNotRecoverHP(-1);
             }
-            return summary;
+            awareCharacters.Clear();
+            responsibleCharacters?.Clear(); //Cleared list, for garbage collection
         }
         public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode, ref bool isRemoved) {
             base.ExecuteActionAfterEffects(action, goapNode, ref isRemoved);
             if (goapNode.action.actionCategory == ACTION_CATEGORY.CONSUME) {
-                WeightedDictionary<string> result = GetResultWeights();
-                string res = result.PickRandomElementGivenWeights();
-                if (res == "Sick") {
-                    Sick sick = new Sick();
-                    for (int i = 0; i < responsibleCharacters.Count; i++) {
-                        sick.AddCharacterResponsibleForTrait(responsibleCharacters[i]);
-                    }
-                    goapNode.actor.traitContainer.AddTrait(goapNode.actor, sick);
-                } else { //if (res == "Death")
-                    goapNode.actor.Death("poisoned", deathFromAction: goapNode);
-                }
-                if(traitable is IPointOfInterest) {
-                    IPointOfInterest poi = traitable as IPointOfInterest;
-                    poi.traitContainer.RemoveTrait(traitable, this);
+                if(traitable is IPointOfInterest poi) {
+                    goapNode.actor.interruptComponent.TriggerInterrupt(INTERRUPT.Ingested_Poison, poi);
+                    poi.traitContainer.RemoveStatusAndStacks(poi, this.name);
                     isRemoved = true;
                 }
+            }
+        }
+        public override void OnTickStarted() {
+            base.OnTickStarted();
+            if (!_isVenomous) {
+                characterOwner?.AdjustHP(-Mathf.RoundToInt(characterOwner.maxHP * (0.005f * characterOwner.traitContainer.stacks[name])),
+                ELEMENTAL_TYPE.Normal, true);
+            }
+        }
+        public override void OnInitiateMapObjectVisual(ITraitable traitable) {
+            if (traitable is IPointOfInterest poi) {
+                if (_poisonedEffect) {
+                    ObjectPoolManager.Instance.DestroyObject(_poisonedEffect);
+                    _poisonedEffect = null;
+                }
+                _poisonedEffect = GameManager.Instance.CreateParticleEffectAt(poi, PARTICLE_EFFECT.Poison, false);
+            }
+        }
+        public override void OnDestroyMapObjectVisual(ITraitable traitable) {
+            if (_poisonedEffect) {
+                ObjectPoolManager.Instance.DestroyObject(_poisonedEffect);
+                _poisonedEffect = null;
             }
         }
         #endregion
@@ -73,19 +111,35 @@ namespace Traits {
         }
         #endregion
 
-        public WeightedDictionary<string> GetResultWeights() {
-            WeightedDictionary<string> weights = new WeightedDictionary<string>();
-            if (level == 1) {
-                weights.AddElement("Sick", 80);
-                weights.AddElement("Death", 20);
-            } else if (level == 2) {
-                weights.AddElement("Sick", 50);
-                weights.AddElement("Death", 50);
-            } else {
-                weights.AddElement("Sick", 20);
-                weights.AddElement("Death", 80);
+        //This is only called if there is already a Poisoned status before adding the Venomous trait
+        public void SetIsVenomous() {
+            if (!_isVenomous) {
+                _isVenomous = true;
+                characterOwner.AdjustDoNotRecoverHP(1);
             }
-            return weights;
+        }
+
+        private void UpdateVisualsOnAdd(ITraitable addedTo) {
+            if(addedTo is IPointOfInterest pointOfInterest && _poisonedEffect == null) {
+                _poisonedEffect = GameManager.Instance.CreateParticleEffectAt(pointOfInterest, PARTICLE_EFFECT.Poison, false);
+            }
+            if (addedTo is TileObject tileObject) {
+                if (tileObject is GenericTileObject) {
+                    tileObject.gridTileLocation.parentMap.SetUpperGroundVisual(tileObject.gridTileLocation.localPlace, InnerMapManager.Instance.assetManager.poisonRuleTile);
+                }
+            }
+        }
+        private void UpdateVisualsOnRemove(ITraitable removedFrom) {
+            if(_poisonedEffect != null) {
+                ObjectPoolManager.Instance.DestroyObject(_poisonedEffect);
+                _poisonedEffect = null;
+            }
+            if (removedFrom is TileObject tileObject) {
+                if (tileObject is GenericTileObject) {
+                    tileObject.gridTileLocation.parentMap.SetUpperGroundVisual(tileObject.gridTileLocation.localPlace, 
+                        null);
+                }
+            }
         }
     }
 

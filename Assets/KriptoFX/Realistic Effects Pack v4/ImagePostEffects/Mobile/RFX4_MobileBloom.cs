@@ -28,7 +28,7 @@ public class RFX4_MobileBloom : MonoBehaviour
             if (_bloomMaterial == null)
             {
                 var shader = Shader.Find(shaderName);
-                if (shader == null) Debug.LogError("Can't find shader " + shaderName);
+                if (shader == null) Debug.LogError($"Can't find shader {shaderName}");
                 _bloomMaterial = new Material(shader);
             }
 

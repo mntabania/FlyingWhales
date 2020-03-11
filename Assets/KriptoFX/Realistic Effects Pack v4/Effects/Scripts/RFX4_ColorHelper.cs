@@ -157,7 +157,7 @@ public static class RFX4_ColorHelper
             if (mat == null)
                 continue;
 
-            mat = new Material(mat) { name = mat.name + " (Instance)" };
+            mat = new Material(mat) { name = $"{mat.name} (Instance)"};
             rend.trailMaterial = mat;
             foreach (var colorProperty in colorProperties)
             {

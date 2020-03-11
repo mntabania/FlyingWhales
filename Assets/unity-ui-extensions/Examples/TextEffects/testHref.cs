@@ -24,7 +24,7 @@ namespace UnityEngine.UI.Extensions.Examples
 
         private void OnHrefClick(string hrefName)
         {
-            Debug.Log("Click on the " + hrefName);
+            Debug.Log($"Click on the {hrefName}");
         }
     }
 }

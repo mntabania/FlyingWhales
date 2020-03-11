@@ -1,15 +1,16 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
+using UnityEngine.Profiling;
 using UnityEngine.Serialization;
-using UnityEngine.Tilemaps;
-
+using UtilityScripts;
 namespace Inner_Maps {
+    // [ExecuteInEditMode]
     public class InnerMapManager : MonoBehaviour {
 
         public static InnerMapManager Instance;
@@ -23,6 +24,7 @@ namespace Inner_Maps {
         public const int DefaultCharacterSortingOrder = 82;
         public const int GroundTilemapSortingOrder = 10;
         public const int DetailsTilemapSortingOrder = 40;
+        public const int Big_Tree_Yield = 300;
    
         private Vector3 _nextMapPos = Vector3.zero;
         public GameObject characterCollisionTriggerPrefab;
@@ -34,34 +36,22 @@ namespace Inner_Maps {
         [SerializeField] private TileObjectSlotDictionary tileObjectSlotSettings;
         public GameObject tileObjectSlotsParentPrefab;
         public GameObject tileObjectSlotPrefab;
-    
-        [Header("Lighting")]
-        [SerializeField] private Light areaMapLight;
-
+        
         [Header("Structures")]
         [SerializeField] private LocationStructurePrefabDictionary structurePrefabs;
 
         [Header("Tilemap Assets")] 
         public InnerMapAssetManager assetManager;
-        [SerializeField] private ItemAsseteDictionary itemTiles;
-        [SerializeField] private TileObjectAssetDictionary tileObjectTiles;
         [SerializeField] private WallResourceAssetDictionary wallResourceAssets; //wall assets categorized by resource.
-        [SerializeField] private List<TileBase> allTileAssets;
 
-        //Settlement Map Objects
+        //NPCSettlement Map Objects
         [FormerlySerializedAs("areaMapObjectFactory")] public MapVisualFactory mapObjectFactory;
-
-        //structure templates
-        private string templatePath;
         
         //this specifies what light intensity is to be used while inside the specific range in ticks
-        private readonly Dictionary<int, float> lightSettings = new Dictionary<int, float>() { 
-#if UNITY_EDITOR
-            { 228, 1f }, { 61, 1.8f }
-#else
+        private readonly Dictionary<int, float> lightSettings = new Dictionary<int, float>() {
             { 228, 0.3f }, { 61, 0.8f }
-#endif
         };
+        private readonly List<RaycastResult> raycastResults = new List<RaycastResult>();
         public Dictionary<TILE_OBJECT_TYPE, List<TileObject>> allTileObjects { get; private set; }
         public InnerTileMap currentlyShowingMap { get; private set; }
         public ILocation currentlyShowingLocation { get; private set; }
@@ -70,34 +60,136 @@ namespace Inner_Maps {
 
         public IPointOfInterest currentlyHoveredPoi { get; private set; }
         public List<LocationGridTile> currentlyHighlightedTiles { get; private set; }
+        private LocationGridTile lastClickedTile;
 
         #region Monobehaviours
         private void Awake() {
             Instance = this;
-            templatePath = Application.dataPath + "/StreamingAssets/Structure Templates/";
         }
         public void LateUpdate() {
             if (GameManager.showAllTilesTooltip) {
-                if (UIManager.Instance.IsMouseOnUI() || IsMouseOnMapObject() || currentlyShowingMap == null) {
-                    // if (UIManager.Instance.IsSmallInfoShowing() && UIManager.Instance.smallInfoShownFrom == "ShowTileData") {
-                    //     UIManager.Instance.HideSmallInfo();
-                    // }
+                if (UIManager.Instance.IsMouseOnUI() || currentlyShowingMap == null) {
                     return;
                 }
                 LocationGridTile hoveredTile = GetTileFromMousePosition();
-                if (hoveredTile.objHere == null) {
+                if (hoveredTile != null && hoveredTile.objHere == null) {
                     ShowTileData(hoveredTile);
                 }
             }
-
-            if (Input.GetMouseButtonDown(0)) {
-                if (UIManager.Instance.IsMouseOnUI() == false && IsMouseOnMapObject() == false && currentlyShowingMap != null) {
-                    Messenger.Broadcast(Signals.HIDE_MENUS);    
+        }
+        private void OnClickMapObject(KeyCode keyCode) {
+            if (keyCode == KeyCode.Mouse0) {
+                //TODO: Create system that disables normal clicks.
+                if (UIManager.Instance.IsMouseOnUI() == false 
+                    && ReferenceEquals(currentlyShowingMap, null) == false 
+                    && PlayerManager.Instance.player.currentActivePlayerSpell == null
+                    && PlayerManager.Instance.player.seizeComponent.hasSeizedPOI == false) {
+                    LocationGridTile clickedTile = GetTileFromMousePosition();
+                    if (clickedTile != null && TryGetSelectablesOnTile(clickedTile, out var selectables)) {
+                        if (selectables.Count > 0) {
+                            if (lastClickedTile != clickedTile) {
+                                //if last tile that was clicked is not the tile that has been clicked, then instead of 
+                                //looping through the selectables, just select the first one.
+                                selectables[0].LeftSelectAction();  
+                            } else {
+                                ISelectable objToSelect = null;
+                                for (int i = 0; i < selectables.Count; i++) {
+                                    ISelectable currentSelectable = selectables[i];
+                                    if (currentSelectable.IsCurrentlySelected()) {
+                                        //set next selectable in list to be selected.
+                                        objToSelect = CollectionUtilities.GetNextElementCyclic(selectables, i);
+                                        break;
+                                    }
+                                }
+                                if (objToSelect == null) {
+                                    objToSelect = selectables[0];
+                                }
+                                objToSelect.LeftSelectAction();    
+                            }
+                        }
+                        lastClickedTile = clickedTile;    
+                    }
+                }
+            } else if (keyCode == KeyCode.Mouse1) {
+                if (UIManager.Instance.IsMouseOnUI() == false && ReferenceEquals(currentlyShowingMap, null) == false) {
+                    LocationGridTile clickedTile = GetTileFromMousePosition();
+                    ISelectable selectable = GetFirstSelectableOnTile(clickedTile);
+                    selectable?.RightSelectAction();
                 }
             }
         }
+        
+        private ISelectable GetFirstSelectableOnTile(LocationGridTile tile) {
+            PointerEventData pointer = new PointerEventData(EventSystem.current) {position = Input.mousePosition};
+
+            raycastResults.Clear();
+            EventSystem.current.RaycastAll(pointer, raycastResults);
+
+            if (raycastResults.Count > 0) { 
+                foreach (var go in raycastResults) {
+                    if (go.gameObject.CompareTag("Character Marker") || go.gameObject.CompareTag("Map Object")) {
+                        BaseMapObjectVisual visual = go.gameObject.GetComponent<BaseMapObjectVisual>();
+                        if (visual.IsInvisible()) {
+                            continue; //skip
+                        }
+                        //assume that all objects that have the specified tags have the BaseMapObjectVisual class
+                        if (visual.selectable != null) {
+                            return visual.selectable;
+                        }
+                    }
+                }
+            }
+            
+            if (tile.structure != null && ReferenceEquals(tile.structure.structureObj, null) == false) {
+                return tile.structure;
+            }
+            // if (tile.IsPartOfSettlement(out var npcSettlement)) {
+            //     selectables.Add(npcSettlement);
+            // }
+            if (tile.buildSpotOwner.isPartOfParentRegionMap) {
+                return tile.buildSpotOwner.hexTileOwner;
+            }
+            return null;
+        }
+        private bool TryGetSelectablesOnTile(LocationGridTile tile, out List<ISelectable> selectables) {
+            selectables = new List<ISelectable>();
+            
+            PointerEventData pointer = new PointerEventData(EventSystem.current);
+            pointer.position = Input.mousePosition;
+
+            raycastResults.Clear();
+            EventSystem.current.RaycastAll(pointer, raycastResults);
+
+            if (raycastResults.Count > 0) { 
+                foreach (var go in raycastResults) {
+                    if (go.gameObject.CompareTag("Character Marker") || go.gameObject.CompareTag("Map Object")) {
+                        BaseMapObjectVisual visual = go.gameObject.GetComponent<BaseMapObjectVisual>();
+                        if (visual.IsInvisible()) {
+                            continue; //skip
+                        }
+                        //assume that all objects that have the specified tags have the BaseMapObjectVisual class
+                        if (visual.selectable != null) {
+                            selectables.Add(visual.selectable);    
+                        }
+                    } else if (go.gameObject.CompareTag("Map_Click_Blocker")) {
+                        return false; //click was blocked
+                    }
+                }
+            }
+            
+            if (tile.structure != null && ReferenceEquals(tile.structure.structureObj, null) == false) {
+                selectables.Add(tile.structure);
+            }
+            // if (tile.IsPartOfSettlement(out var npcSettlement)) {
+            //     selectables.Add(npcSettlement);
+            // }
+            if (tile.buildSpotOwner.isPartOfParentRegionMap) {
+                selectables.Add(tile.buildSpotOwner.hexTileOwner);
+            }
+            return true;
+        }
         private void Update() {
-            if (currentlyHoveredPoi != null && currentlyHoveredPoi.mapObjectVisual != null) {
+            if (currentlyHoveredPoi != null && ReferenceEquals(currentlyHoveredPoi.mapObjectVisual, null) == false) {
                 currentlyHoveredPoi.mapObjectVisual.ExecuteHoverEnterAction();    
             }
         }
@@ -109,19 +201,15 @@ namespace Inner_Maps {
             innerMaps = new List<InnerTileMap>();
             mapObjectFactory = new MapVisualFactory();
             InnerMapCameraMove.Instance.Initialize();
-            Messenger.AddListener(Signals.TICK_ENDED, CheckForChangeLight);
+            Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnClickMapObject);
         }
         /// <summary>
-        /// Try and show the settlement map of an settlement. If it does not have one, this will generate one instead.
+        /// Try and show the npcSettlement map of an npcSettlement. If it does not have one, this will generate one instead.
         /// </summary>
         /// <param name="location"></param>
         public void TryShowLocationMap(ILocation location) {
-            if (location.innerMap != null) {
-                //show existing map
-                ShowInnerMap(location);
-            } else {
-                throw new System.Exception($"{location.name} does not have a generated inner map");
-            }
+            Assert.IsNotNull(location.innerMap, $"{location.name} does not have a generated inner map");
+            ShowInnerMap(location);
         }
         public void ShowInnerMap(ILocation location, bool centerCameraOnMapCenter = true, bool instantCenter = true) {
             if (location.locationType == LOCATION_TYPE.DEMONIC_INTRUSION) {
@@ -170,7 +258,7 @@ namespace Inner_Maps {
             location.innerMap.CleanUp();
             innerMaps.Remove(location.innerMap);
             GameObject.Destroy(location.innerMap.gameObject);
-            Debug.LogError("Settlement map of " + location.name + " is destroyed!");
+            Debug.LogError($"NPCSettlement map of {location.name} is destroyed!");
         }
         #endregion
 
@@ -191,24 +279,6 @@ namespace Inner_Maps {
         #endregion
 
         #region UI
-        private bool IsMouseOnMapObject() {
-            PointerEventData pointer = new PointerEventData(EventSystem.current);
-            pointer.position = Input.mousePosition;
-
-            List<RaycastResult> raycastResults = new List<RaycastResult>();
-            EventSystem.current.RaycastAll(pointer, raycastResults);
-
-            if (raycastResults.Count > 0) {
-                foreach (var go in raycastResults) {
-                    if (go.gameObject.CompareTag("Character Marker") || go.gameObject.CompareTag("Map Object")) {
-                        //Debug.Log(go.gameObject.name, go.gameObject);
-                        return true;
-                    }
-
-                }
-            }
-            return false;
-        }
         public void HighlightTiles(List<LocationGridTile> tiles) {
             if (tiles != null) {
                 for (int i = 0; i < tiles.Count; i++) {
@@ -232,192 +302,92 @@ namespace Inner_Maps {
         }
         #endregion
 
-        #region Structure Templates
-        public List<StructureTemplate> GetStructureTemplates(STRUCTURE_TYPE structure) {
-            List<StructureTemplate> templates = new List<StructureTemplate>();
-            string path = templatePath + structure.ToString() + "/";
-            if (Directory.Exists(path)) {
-                DirectoryInfo info = new DirectoryInfo(path);
-                FileInfo[] files = info.GetFiles();
-                for (int i = 0; i < files.Length; i++) {
-                    FileInfo currInfo = files[i];
-                    if (currInfo.Extension.Equals(".json")) {
-                        string dataAsJson = File.ReadAllText(currInfo.FullName);
-                        StructureTemplate loaded = JsonUtility.FromJson<StructureTemplate>(dataAsJson);
-                        loaded.name = currInfo.Name;
-                        templates.Add(loaded);
-                    }
-                }
-            }
-            return templates;
-        }
-        public List<StructureTemplate> GetStructureTemplates(string folderName, List<string> except = null) {
-            List<StructureTemplate> templates = new List<StructureTemplate>();
-            string path = templatePath + folderName + "/";
-            if (Directory.Exists(path)) {
-                DirectoryInfo info = new DirectoryInfo(path);
-                FileInfo[] files = info.GetFiles();
-                for (int i = 0; i < files.Length; i++) {
-                    FileInfo currInfo = files[i];
-                    if (currInfo.Extension.Equals(".json")) {
-                        string dataAsJson = File.ReadAllText(currInfo.FullName);
-                        StructureTemplate loaded = JsonUtility.FromJson<StructureTemplate>(dataAsJson);
-                        loaded.name = currInfo.Name;
-                        if (except != null && except.Contains(loaded.name)) {
-                            continue; //skip
-                        }
-                        templates.Add(loaded);
-                    }
-                }
-            }
-            return templates;
-        }
-        /// <summary>
-        /// Get Tile asset based on name. NOTE: Should only be used on the start of the game when building the settlement maps.
-        /// </summary>
-        /// <param name="name">Name of the asset</param>
-        public TileBase GetTileAsset(string name, bool logMissing = false) {
-            //List<TileBase> allTileAssets = LoadAllTilesAssets();
-            for (int i = 0; i < allTileAssets.Count; i++) {
-                TileBase currTile = allTileAssets[i];
-                if (currTile.name == name) {
-                    return currTile;
-                }
-            }
-            if (logMissing) {
-                Debug.LogWarning("There is no tilemap asset with name " + name);
-            }
-            return null;
-        }
-        /// <summary>
-        /// Convert all tile list to a dictionary for easier accessing of data. Meant to be used when a function is expected to 
-        /// heavily use the tile database, to prevent constant looping of tile database list.
-        /// </summary>
-        /// <returns></returns>
-        public Dictionary<string, TileBase> GetTileAssetDatabase() {
-            Dictionary<string, TileBase> tileDB = new Dictionary<string, TileBase>();
-            for (int i = 0; i < allTileAssets.Count; i++) {
-                TileBase currTile = allTileAssets[i];
-                tileDB.Add(currTile.name, currTile);
-            }
-            return tileDB;
-        }
-        public TileBase TryGetTileAsset(string name, Dictionary<string, TileBase> assets) {
-            if (assets.ContainsKey(name)) {
-                return assets[name];
-            }
-            return null;
-        }
-        private List<TileBase> LoadAllTilesAssets() {
-            return Resources.LoadAll("Tile Map Assets", typeof(TileBase)).Cast<TileBase>().ToList();
-        }
-        [ContextMenu("Load Assets")]
-        public void LoadTileAssets() {
-            allTileAssets = LoadAllTilesAssets().Distinct().ToList();
-            allTileAssets.Sort((x, y) => string.Compare(x.name, y.name));
-        }
-        #endregion
-
         #region For Testing
         public void ShowTileData(LocationGridTile tile, Character character = null) {
             if (tile == null) {
                 return;
             }
+            if (UIManager.Instance.poiTestingUI.gameObject.activeSelf && 
+                (UIManager.Instance.poiTestingUI.gridTile == tile || UIManager.Instance.poiTestingUI.poi == tile.objHere 
+                || UIManager.Instance.poiTestingUI.poi == character)) {
+                return; //do not show tooltip if right click menu is currently targeting the hovered object
+            } else if (UIManager.Instance.minionCommandsUI.gameObject.activeSelf && 
+                       (UIManager.Instance.minionCommandsUI.targetPOI == tile.objHere 
+                        || UIManager.Instance.minionCommandsUI.targetPOI == character)) {
+                return; //do not show tooltip if right click menu is currently targeting the hovered object
+            }
+
+            Profiler.BeginSample("Show Tile Data Sample");
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             HexTile hexTile = tile.buildSpotOwner.hexTileOwner;
             string summary = tile.localPlace.ToString();
-            summary += "\n<b>HexTile:</b>" + (hexTile?.ToString() ?? "None");
-            summary += "\n<b>Local Location:</b>" + tile.localLocation;
-            summary += " <b>World Location:</b>" + tile.worldLocation;
-            summary += " <b>Centered World Location:</b>" + tile.centeredWorldLocation;
-            summary += " <b>Ground Type:</b>" + tile.groundType;
-            summary += " <b>Is Occupied:</b>" + tile.isOccupied;
-            summary += " <b>Tile Type:</b>" + tile.tileType;
-            summary += " <b>Tile State:</b>" + tile.tileState;
-            summary += " <b>Reserved Tile Object Type:</b>" + tile.reservedObjectType;
-            summary += " <b>Previous Tile Asset:</b>" + (tile.previousGroundVisual?.name ?? "Null");
-            summary += " <b>Current Tile Asset:</b>" + (tile.parentTileMap.GetSprite(tile.localPlace)?.name ?? "Null");
+            summary = $"{summary}\n<b>HexTile:</b>{(hexTile?.ToString() ?? "None")}";
+            summary = $"{summary}\n<b>Local Location:</b>{tile.localLocation.ToString()}";
+            summary = $"{summary} <b>World Location:</b>{tile.worldLocation.ToString()}";
+            summary = $"{summary} <b>Centered World Location:</b>{tile.centeredWorldLocation.ToString()}";
+            summary = $"{summary} <b>Ground Type:</b>{tile.groundType.ToString()}";
+            summary = $"{summary} <b>Is Occupied:</b>{tile.isOccupied.ToString()}";
+            summary = $"{summary} <b>Tile Type:</b>{tile.tileType.ToString()}";
+            summary = $"{summary} <b>Tile State:</b>{tile.tileState.ToString()}";
+            summary = $"{summary} <b>Reserved Tile Object Type:</b>{tile.reservedObjectType.ToString()}";
+            summary = $"{summary} <b>Previous Tile Asset:</b>{(tile.previousGroundVisual?.name ?? "Null")}";
+            summary =
+                $"{summary} <b>Current Tile Asset:</b>{(tile.parentTileMap.GetSprite(tile.localPlace)?.name ?? "Null")}";
             if (tile.hasFurnitureSpot) {
-                summary += " <b>Furniture Spot:</b>" + tile.furnitureSpot;
+                summary = $"{summary} <b>Furniture Spot:</b>{tile.furnitureSpot.ToString()}";
             }
-            summary += "\nTile Traits: ";
+            summary = $"{summary}\nTile Traits: ";
             if (tile.genericTileObject != null && tile.normalTraits.Count > 0) {
-                summary += "\n";
-                for (int i = 0; i < tile.normalTraits.Count; i++) {
-                    summary += "|" + tile.normalTraits[i].name + "|";
-                }
-
+                summary = $"{summary}\n";
+                summary = tile.normalTraits.Aggregate(summary, (current, t) => $"{current}|{t.name}|");
             } else {
-                summary += "None";
+                summary = $"{summary}None";
             }
 
-            IPointOfInterest poi = tile.objHere;
-            if (poi == null) {
-                poi = tile.genericTileObject;
-            }
-            summary += "\nContent: " + poi ?? "None";
+            IPointOfInterest poi = tile.objHere ?? tile.genericTileObject;
+            summary = $"{summary}\nContent: {poi}";
             if (poi != null) {
-                summary += "\nHP: " + poi.currentHP + "/" + poi.maxHP;
-                summary += "\n\tObject State: " + poi.state;
-                summary += "\n\tIs Available: " + poi.IsAvailable();
-
-                if (poi is TreeObject) {
-                    summary += "\n\tYield: " + (poi as TreeObject).yield;
-                } else if (poi is Ore) {
-                    summary += "\n\tYield: " + (poi as Ore).yield;
-                } else if (poi is ResourcePile) {
-                    summary += "\n\tResource in Pile: " + (poi as ResourcePile).resourceInPile;
-                }  else if (poi is Table) {
-                    summary += "\n\tFood in Table: " + (poi as Table).food;
-                } else if (poi is SpecialToken) {
-                    summary += "\n\tCharacter Owner: " + (poi as SpecialToken).characterOwner?.name ?? "None";
-                    summary += "\n\tFaction Owner: " + (poi as SpecialToken).factionOwner?.name ?? "None";
+                summary = $"{summary}\nHP: {poi.currentHP.ToString()}/{poi.maxHP.ToString()}";
+                summary = $"{summary}\n\tObject State: {poi.state.ToString()}";
+                summary = $"{summary}\n\tIs Available: {poi.IsAvailable().ToString()}";
+                if (poi is TileObject tileObject) {
+                    summary = $"{summary}\n\tCharacter Owner: {tileObject.characterOwner?.name}" ?? "None";
+                    summary = $"{summary}\n\tFaction Owner: {tileObject.factionOwner?.name}" ?? "None";
                 }
-                summary += "\n\tAdvertised Actions: ";
-                if (poi.advertisedActions.Count > 0) {
-                    for (int i = 0; i < poi.advertisedActions.Count; i++) {
-                        summary += "|" + poi.advertisedActions[i] + "|";
-                    }
-                } else {
-                    summary += "None";
+                if (poi is BaseMapObject baseMapObject) {
+                    summary = $"{summary}{baseMapObject.GetAdditionalTestingData()}";
                 }
-                summary += "\n\tObject Traits: ";
-                if (poi.traitContainer.allTraits.Count > 0) {
-                    for (int i = 0; i < poi.traitContainer.allTraits.Count; i++) {
-                        summary += "\n\t\t- " + poi.traitContainer.allTraits[i].name + " - " + poi.traitContainer.allTraits[i].GetTestingData();
-                    }
-                } else {
-                    summary += "None";
-                }
-                summary += "\n\tJobs Targeting this: ";
-                if (poi.allJobsTargetingThis.Count > 0) {
-                    for (int i = 0; i < poi.allJobsTargetingThis.Count; i++) {
-                        summary += "\n\t\t- " + poi.allJobsTargetingThis[i];
-                    }
-                } else {
-                    summary += "None";
-                }
+                summary = $"{summary}\n\tAdvertised Actions: ";
+                summary = poi.advertisedActions.Count > 0 ? poi.advertisedActions.Aggregate(summary, (current, t) => $"{current}|{t.ToString()}|") : $"{summary}None";
+                
+                summary = $"{summary}\n\tObject Traits: ";
+                summary = poi.traitContainer.allTraitsAndStatuses.Count > 0 ? poi.traitContainer.allTraitsAndStatuses.Aggregate(summary, (current, t) => $"{current}\n\t\t- {t.name} - {t.GetTestingData(poi)}") : $"{summary}None";
+                
+                summary = $"{summary}\n\tJobs Targeting this: ";
+                summary = poi.allJobsTargetingThis.Count > 0 ? poi.allJobsTargetingThis.Aggregate(summary, (current, t) => $"{current}\n\t\t- {t}") : $"{summary}None";
             }
             if (tile.structure != null) {
-                summary += "\nStructure: " + tile.structure + ", Has Owner: " + tile.structure.IsOccupied();
-                summary += "\nCharacters at " + tile.structure + ": ";
+                summary =
+                    $"{summary}\nStructure: {tile.structure}, Occupied Build Spot: {tile.structure?.occupiedBuildSpot} " +
+                    $"Tiles: {tile.structure.tiles.Count.ToString()}, Has Owner: {tile.structure.IsOccupied().ToString()}, Is Interior: {tile.structure.isInterior.ToString()}";
+                summary = $"{summary}\nCharacters at {tile.structure}: ";
                 if (tile.structure.charactersHere.Count > 0) {
                     for (int i = 0; i < tile.structure.charactersHere.Count; i++) {
                         Character currCharacter = tile.structure.charactersHere[i];
                         if (character == currCharacter) {
-                            summary += "\n<b>" + currCharacter.name + "</b>";
-                            summary += "\n\t" + GetCharacterHoverData(currCharacter) + "\n";
+                            summary = $"{summary}\n<b>{currCharacter.name}</b>";
+                            summary = $"{summary}\n\t{GetCharacterHoverData(currCharacter)}\n";
                         } else {
-                            summary += currCharacter.name + ",";
+                            summary = $"{summary}{currCharacter.name},";
                         }
                     }
                 } else {
-                    summary += "None";
+                    summary = $"{summary}None";
                 }
-            
             } else {
-                summary += "\nStructure: None";
+                summary = $"{summary}\nStructure: None";
             }
+            Profiler.EndSample();
             UIManager.Instance.ShowSmallInfo(summary);
 #else
          //For build only
@@ -427,103 +397,44 @@ namespace Inner_Maps {
 #endif
         }
         public void ShowCharacterData(Character character) {
-            string summary = "<b>" + character.name + "</b>";
-            summary += "\n\t" + GetCharacterHoverData(character) + "\n";
+            string summary = $"<b>{character.name}</b>";
+            summary = $"{summary}\n\t{GetCharacterHoverData(character)}\n";
             UIManager.Instance.ShowSmallInfo(summary);
         }
         private string GetCharacterHoverData(Character character) {
-            Character activeCharacter = UIManager.Instance.characterInfoUI.activeCharacter;
-            string summary = "Character: " + character.name;
-            summary += "\n<b>Mood:</b>" + character.currentMoodType;
-            summary += " <b>Supply:</b>" + character.supply;
-            summary += " <b>Can Move:</b>" + character.canMove;
-            summary += " <b>Can Witness:</b>" + character.canWitness;
-            summary += " <b>Can Be Attacked:</b>" + character.canBeAtttacked;
-            summary += " <b>Move Speed:</b>" + character.marker.pathfindingAI.speed;
-            summary += " <b>Attack Range:</b>" + character.characterClass.attackRange;
-            summary += " <b>Attack Speed:</b>" + character.attackSpeed;
-            summary += " <b>Target POI:</b>" + (character.marker.targetPOI?.name ?? "None");
-            summary += " <b>Base Structure:</b>" + (character.trapStructure.structure != null ? character.trapStructure.structure.ToString() : "None");
-            //if (activeCharacter != null && activeCharacter != character) {
-            //    summary += "\n\tOpinion of " + activeCharacter.name + ":";
-            //    if (activeCharacter.opinionComponent.HasOpinion(character)) {
-            //        Dictionary<string, int> opinion = activeCharacter.opinionComponent.GetOpinion(character);
-            //        foreach (KeyValuePair<string, int> kvp in opinion) {
-            //            summary += "\n\t\t" + kvp.Key + ": " + kvp.Value;
-            //        }
-            //    } else {
-            //        summary += " None";
-            //    }
-            //}
-            summary += "\n\tDestination Tile: ";
-            if (character.marker.destinationTile == null) {
-                summary += "None";
-            } else {
-                summary += character.marker.destinationTile + " at " + character.marker.destinationTile.parentMap.location.name;
-            }
-            summary += "\n\tPOI's in Vision: ";
-            if (character.marker.inVisionPOIs.Count > 0) {
-                for (int i = 0; i < character.marker.inVisionPOIs.Count; i++) {
-                    IPointOfInterest poi = character.marker.inVisionPOIs[i];
-                    summary += poi.ToString() + ", ";
-                }
-            } else {
-                summary += "None";
-            }
-            summary += "\n\tCharacters in Vision: ";
-            if (character.marker.inVisionCharacters.Count > 0) {
-                for (int i = 0; i < character.marker.inVisionCharacters.Count; i++) {
-                    Character poi = character.marker.inVisionCharacters.ElementAt(i);
-                    summary += poi.name + ", ";
-                }
-            } else {
-                summary += "None";
-            }
-            summary += "\n\tPOI's in Range but different structures: ";
-            if (character.marker.visionCollision.poisInRangeButDiffStructure.Count > 0) {
-                for (int i = 0; i < character.marker.visionCollision.poisInRangeButDiffStructure.Count; i++) {
-                    IPointOfInterest poi = character.marker.visionCollision.poisInRangeButDiffStructure[i];
-                    summary += poi.ToString() + ", ";
-                }
-            } else {
-                summary += "None";
-            }
-            summary += "\n\tHostiles in Range: ";
-            if (character.marker.hostilesInRange.Count > 0) {
-                for (int i = 0; i < character.marker.hostilesInRange.Count; i++) {
-                    IPointOfInterest poi = character.marker.hostilesInRange[i];
-                    summary += poi.name + ", ";
-                }
-            } else {
-                summary += "None";
-            }
-            summary += "\n\tAvoid in Range: ";
-            if (character.marker.avoidInRange.Count > 0) {
-                for (int i = 0; i < character.marker.avoidInRange.Count; i++) {
-                    IPointOfInterest poi = character.marker.avoidInRange[i];
-                    summary += poi.name + ", ";
-                }
-            } else {
-                summary += "None";
-            }
-            summary += "\n\tTerrifying Characters: ";
-            if (character.marker.terrifyingObjects.Count > 0) {
-                for (int i = 0; i < character.marker.terrifyingObjects.Count; i++) {
-                    IPointOfInterest currObj = character.marker.terrifyingObjects[i];
-                    summary += currObj.name + ", ";
-                }
-            } else {
-                summary += "None";
-            }
-            summary += "\n\tPersonal Job Queue: ";
-            if (character.jobQueue.jobsInQueue.Count > 0) {
-                for (int i = 0; i < character.jobQueue.jobsInQueue.Count; i++) {
-                    JobQueueItem poi = character.jobQueue.jobsInQueue[i];
-                    summary += poi + ", ";
-                }
-            } else {
-                summary += "None";
-            }
+            string summary = $"Character: {character.name}";
+            summary = $"{summary}\n<b>Mood:</b>{character.moodComponent.moodState.ToString()}";
+            summary = $"{summary} <b>Supply:</b>{character.supply.ToString()}";
+            summary = $"{summary} <b>Can Move:</b>{character.canMove.ToString()}";
+            summary = $"{summary} <b>Can Witness:</b>{character.canWitness.ToString()}";
+            summary = $"{summary} <b>Can Be Attacked:</b>{character.canBeAtttacked.ToString()}";
+            summary = $"{summary} <b>Move Speed:</b>{character.marker.pathfindingAI.speed.ToString()}";
+            summary = $"{summary} <b>Attack Range:</b>{character.characterClass.attackRange.ToString()}";
+            summary = $"{summary} <b>Attack Speed:</b>{character.attackSpeed.ToString()}";
+            summary = $"{summary} <b>Target POI:</b>{(character.marker.targetPOI?.name ?? "None")}";
+            summary =
+                $"{summary} <b>Base Structure:</b>{(character.trapStructure.structure != null ? character.trapStructure.structure.ToString() : "None")}";
+
+            summary = $"{summary}\n\tDestination Tile: ";
+            summary = character.marker.destinationTile == null ? $"{summary}None" : $"{summary}{character.marker.destinationTile} at {character.marker.destinationTile.parentMap.location.name}";
+            
+            summary = $"{summary}\n\tPOI's in Vision: ";
+            summary = character.marker.inVisionPOIs.Count > 0 ? character.marker.inVisionPOIs.Aggregate(summary, (current, poi) => $"{current}{poi}, ") : $"{summary}None";
+            
+            summary = $"{summary}\n\tCharacters in Vision: ";
+            summary = character.marker.inVisionCharacters.Count > 0 ? character.marker.inVisionCharacters.Select((t, i) => (Character) character.marker.inVisionCharacters.ElementAt(i)).Aggregate(summary, (current, poi) => $"{current}{poi.name}, ") : $"{summary}None";
+            
+            summary = $"{summary}\n\tPOI's in Range but different structures: ";
+            summary = character.marker.visionCollision.poisInRangeButDiffStructure.Count > 0 ? character.marker.visionCollision.poisInRangeButDiffStructure.Aggregate(summary, (current, poi) => $"{current}{poi}, ") : $"{summary}None";
+            
+            summary = $"{summary}\n\tHostiles in Range: ";
+            summary = character.combatComponent.hostilesInRange.Count > 0 ? character.combatComponent.hostilesInRange.Aggregate(summary, (current, poi) => $"{current}{poi.name}, ") : $"{summary}None";
+            
+            summary = $"{summary}\n\tAvoid in Range: ";
+            summary = character.combatComponent.avoidInRange.Count > 0 ? character.combatComponent.avoidInRange.Aggregate(summary, (current, poi) => $"{current}{poi.name}, ") : $"{summary}None";
+            
+            summary = $"{summary}\n\tPersonal Job Queue: ";
+            summary = character.jobQueue.jobsInQueue.Count > 0 ? character.jobQueue.jobsInQueue.Aggregate(summary, (current, poi) => $"{current}{poi}, ") : $"{summary}None";
             return summary;
         }
         #endregion
@@ -545,7 +456,8 @@ namespace Inner_Maps {
             GetBounds(shiftedSettings, out minX, out maxX, out minY, out maxY);
 
             if (minX < 0 || minY < 0) {
-                throw new System.Exception("Minimum bounds of shifted settings has negative value! X: " + minX.ToString() + ", Y: " + minY.ToString());
+                throw new System.Exception(
+                    $"Minimum bounds of shifted settings has negative value! X: {minX}, Y: {minY}");
             }
             s.size = new Point(maxX, maxY);
 
@@ -583,7 +495,8 @@ namespace Inner_Maps {
             }
 
             if (count != (maxX * maxY)) {
-                throw new System.Exception("Total tiles are inconsistent with size! Count is: " + count.ToString() + ". MaxX is: " + maxX.ToString() + ". MaxY is: " + maxY.ToString());
+                throw new System.Exception(
+                    $"Total tiles are inconsistent with size! Count is: {count}. MaxX is: {maxX}. MaxY is: {maxY}");
             }
 
             foreach (KeyValuePair<int, Dictionary<int, LocationGridTileSettings>> kvp in shiftedSettings) {
@@ -715,13 +628,13 @@ namespace Inner_Maps {
             return null;
         }
         public T CreateNewTileObject<T>(TILE_OBJECT_TYPE tileObjectType) where T : TileObject {
-            var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(tileObjectType.ToString());
+            var typeName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(tileObjectType.ToString());
             System.Type type = System.Type.GetType(typeName);
             if (type != null) {
                 T obj = System.Activator.CreateInstance(type) as T;
                 return obj;
             }
-            throw new System.Exception("Could not create new instance of tile object of type " + tileObjectType.ToString());
+            throw new System.Exception($"Could not create new instance of tile object of type {tileObjectType}");
         }
         public TILE_OBJECT_TYPE GetTileObjectTypeFromTileAsset(Sprite sprite) {
             int index = sprite.name.IndexOf("#", StringComparison.Ordinal);
@@ -733,35 +646,14 @@ namespace Inner_Maps {
             TILE_OBJECT_TYPE tileObjectType = (TILE_OBJECT_TYPE) System.Enum.Parse(typeof(TILE_OBJECT_TYPE), tileObjectName);
             return tileObjectType;
         }
-        #endregion
-
-        #region Lighting
-        public void UpdateLightBasedOnTime(GameDate date) {
-            foreach (KeyValuePair<int, float> keyValuePair in lightSettings) {
-                if (date.tick > keyValuePair.Key) {
-                    areaMapLight.intensity = keyValuePair.Value;
-                }
+        public void LoadInitialSettlementItems(NPCSettlement npcSettlement) {
+            ////Reference: https://trello.com/c/Kuqt3ZSP/2610-put-2-healing-potions-in-the-warehouse-at-start-of-the-game
+            LocationStructure mainStorage = npcSettlement.mainStorage;
+            for (int i = 0; i < 4; i++) {
+                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.HEALING_POTION));
             }
-        }
-        private void CheckForChangeLight() {
-            if (lightSettings.ContainsKey(GameManager.Instance.tick)) {
-                StartCoroutine(TransitionLightTo(lightSettings[GameManager.Instance.tick]));
-            }
-        }
-        private IEnumerator TransitionLightTo(float intensity) {
-            while (true) {
-                if (GameManager.Instance.isPaused) {
-                    yield return null;
-                }
-                if (intensity > areaMapLight.intensity) {
-                    areaMapLight.intensity += 0.05f;
-                } else if (intensity < areaMapLight.intensity) {
-                    areaMapLight.intensity -= 0.05f;
-                }
-                if (Mathf.Approximately(areaMapLight.intensity, intensity)) {
-                    break;
-                }
-                yield return new WaitForSeconds(0.1f);
+            for (int i = 0; i < 2; i++) {
+                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.TOOL));
             }
         }
         #endregion
@@ -773,23 +665,44 @@ namespace Inner_Maps {
         #endregion
 
         #region Assets
-        public Sprite GetItemAsset(SPECIAL_TOKEN itemType) {
-            return itemTiles[itemType];
-        }
-        public Sprite GetTileObjectAsset(TILE_OBJECT_TYPE objectType, POI_STATE state, BIOMES biome) {
-            if (tileObjectTiles.ContainsKey(objectType)) {
-                TileObjectTileSetting setting = tileObjectTiles[objectType];
-                BiomeTileObjectTileSetting biomeSetting;
-                if (setting.biomeAssets.ContainsKey(biome)) {
-                    biomeSetting = setting.biomeAssets[biome];
-                } else {
-                    biomeSetting = setting.biomeAssets[BIOMES.NONE];
+        public Sprite GetTileObjectAsset(TileObject tileObject, POI_STATE state, BIOMES biome, bool corrupted = false) {
+            if (tileObject.tileObjectType == TILE_OBJECT_TYPE.ARTIFACT) {
+                Artifact artifact = tileObject as Artifact;
+                if (ScriptableObjectsManager.Instance.artifactDataDictionary.ContainsKey(artifact.type)) {
+                    return ScriptableObjectsManager.Instance.artifactDataDictionary[artifact.type].sprite;
                 }
-                if (state == POI_STATE.ACTIVE) {
-                    return biomeSetting.activeTile;
-                } else {
-                    return biomeSetting.inactiveTile;
-                }    
+            } else {
+                var assetDictionary = corrupted ? assetManager.corruptedTileObjectAssets : assetManager.tileObjectTiles;
+                if (assetDictionary.ContainsKey(tileObject.tileObjectType) == false) {
+                    //if the provided asset dictionary does not have assets for the tile object, then try and use the default asset dictionary.
+                    assetDictionary = assetManager.tileObjectTiles;
+                }
+                if (assetDictionary.ContainsKey(tileObject.tileObjectType)) {
+                    TileObjectTileSetting setting = assetDictionary[tileObject.tileObjectType];
+                    BiomeTileObjectTileSetting biomeSetting = setting.biomeAssets.ContainsKey(biome) ? setting.biomeAssets[biome] 
+                        : setting.biomeAssets[BIOMES.NONE];
+                    return CollectionUtilities.GetRandomElement(state == POI_STATE.ACTIVE ? biomeSetting.activeTile : biomeSetting.inactiveTile);
+                }
+            }
+            return null;
+        }
+        public Sprite GetTileObjectAsset(TileObject tileObject, POI_STATE state, bool corrupted = false) {
+            if (tileObject.tileObjectType == TILE_OBJECT_TYPE.ARTIFACT) {
+                Artifact artifact = tileObject as Artifact;
+                if (ScriptableObjectsManager.Instance.artifactDataDictionary.ContainsKey(artifact.type)) {
+                    return ScriptableObjectsManager.Instance.artifactDataDictionary[artifact.type].sprite;
+                }
+            } else {
+                var assetDictionary = corrupted ? assetManager.corruptedTileObjectAssets : assetManager.tileObjectTiles;
+                if (assetDictionary.ContainsKey(tileObject.tileObjectType) == false) {
+                    //if the provided asset dictionary does not have assets for the tile object, then try and use the default asset dictionary.
+                    assetDictionary = assetManager.tileObjectTiles;
+                }
+                if (assetDictionary.ContainsKey(tileObject.tileObjectType)) {
+                    TileObjectTileSetting setting = assetDictionary[tileObject.tileObjectType];
+                    BiomeTileObjectTileSetting biomeSetting = setting.biomeAssets[BIOMES.NONE];
+                    return CollectionUtilities.GetRandomElement(state == POI_STATE.ACTIVE ? biomeSetting.activeTile : biomeSetting.inactiveTile);
+                }
             }
             return null;
         }
@@ -801,6 +714,27 @@ namespace Inner_Maps {
         #region Data Setting
         public void SetCurrentlyHoveredPOI(IPointOfInterest poi) {
             currentlyHoveredPoi = poi;
+        }
+        #endregion
+
+        #region POI
+        public void FaceTarget(IPointOfInterest actor, IPointOfInterest target) {
+            if (actor != target && actor.gridTileLocation != null && target.gridTileLocation != null) {
+                BaseMapObjectVisual objectToLookAt = target.mapObjectVisual;
+                if(target.isBeingCarriedBy != null) {
+                    objectToLookAt = target.isBeingCarriedBy.mapObjectVisual;
+                }
+                if (target.isBeingCarriedBy != actor && objectToLookAt != null) {
+                    actor.mapObjectVisual.LookAt(objectToLookAt.transform.position);
+                }
+            }
+        }
+        public void FaceTarget(IPointOfInterest actor, LocationGridTile target) {
+            if (actor != target && actor.gridTileLocation != null && target != null) {
+                if (target != actor.gridTileLocation) {
+                    actor.mapObjectVisual.LookAt(target.centeredWorldLocation);
+                }
+            }
         }
         #endregion
     }

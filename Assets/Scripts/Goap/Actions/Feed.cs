@@ -9,39 +9,35 @@ public class Feed : GoapAction {
 
     public Feed() : base(INTERACTION_TYPE.FEED) {
         actionIconString = GoapActionStateDB.FirstAid_Icon;
-        validTimeOfDays = new TIME_IN_WORDS[] {
-            TIME_IN_WORDS.MORNING,
-            TIME_IN_WORDS.LUNCH_TIME,
-            TIME_IN_WORDS.AFTERNOON,
-            TIME_IN_WORDS.EARLY_NIGHT,
-            TIME_IN_WORDS.LATE_NIGHT,
-        };
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
+        isNotificationAnIntel = true;
     }
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TAKE_FOOD, conditionKey = "0", isKeyANumber = true, target = GOAP_EFFECT_TARGET.ACTOR }, ActorHasFood);
+        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TAKE_POI, conditionKey = "Food Pile", isKeyANumber = false, target = GOAP_EFFECT_TARGET.ACTOR }, ActorHasFood);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.TARGET });
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
         SetState("Feed Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        return 1;
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+        string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
+        actor.logComponent.AppendCostLog(costLog);
+        return 10;
     }
     public override void OnStopWhileStarted(ActualGoapNode node) {
         base.OnStopWhileStarted(node);
         Character actor = node.actor;
-        actor.ownParty.RemoveCarriedPOI();
+        actor.UncarryPOI();
     }
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
-        actor.ownParty.RemoveCarriedPOI();
+        actor.UncarryPOI();
         (poiTarget as Character).needsComponent.AdjustDoNotGetHungry(-1);
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
@@ -54,6 +50,53 @@ public class Feed : GoapAction {
         }
         return goapActionInvalidity;
     }
+    public override string ReactionToActor(Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionToActor(witness, node, status);
+        Character actor = node.actor;
+        IPointOfInterest target = node.poiTarget;
+        if(target is Character) {
+            Character targetCharacter = target as Character;
+            string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
+            if (opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
+                if (!witness.traitContainer.HasTrait("Psychopath")) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Gratefulness, witness, actor, status);
+                }
+            } else if (opinionLabel == OpinionComponent.Rival) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status);
+            }
+        }
+        return response;
+    }
+    public override string ReactionOfTarget(ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionOfTarget(node, status);
+        Character actor = node.actor;
+        IPointOfInterest target = node.poiTarget;
+        if (target is Character) {
+            Character targetCharacter = target as Character;
+            if (!targetCharacter.traitContainer.HasTrait("Psychopath")) {
+                if (targetCharacter.relationshipContainer.IsEnemiesWith(actor)) {
+                    if (UnityEngine.Random.Range(0, 100) < 30) {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Gratefulness, targetCharacter, actor, status);
+                    }
+                    if (UnityEngine.Random.Range(0, 100) < 30) {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Embarassment, targetCharacter, actor, status);
+                    }
+                } else {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Gratefulness, targetCharacter, actor, status);
+                }
+            }
+        }
+        return response;
+    }
+    public override void OnActionStarted(ActualGoapNode node) {
+        base.OnActionStarted(node);
+        for (int i = 0; i < node.actor.items.Count; i++) {
+            if(node.actor.items[i].HasResourceAmount(RESOURCE.FOOD, 12)) {
+                node.actor.ShowItemVisualCarryingPOI(node.actor.items[i]);
+                break;
+            }
+        }
+    }
     #endregion
 
     #region Effects
@@ -62,20 +105,21 @@ public class Feed : GoapAction {
         targetCharacter.needsComponent.AdjustDoNotGetHungry(1);
         if(goapNode.actor.ownParty.carriedPOI != null) {
             ResourcePile carriedPile = goapNode.actor.ownParty.carriedPOI as ResourcePile;
-            carriedPile.AdjustResourceInPile(-20);
-            targetCharacter.AdjustResource(RESOURCE.FOOD, 20);
+            carriedPile.AdjustResourceInPile(-12);
+            targetCharacter.AdjustResource(RESOURCE.FOOD, 12);
         }
         //goapNode.actor.AdjustFood(-20);
         //TODO: goapNode.action.states[goapNode.currentStateName].SetIntelReaction(FeedSuccessReactions);
     }
     public void PerTickFeedSuccess(ActualGoapNode goapNode) {
         Character targetCharacter = goapNode.poiTarget as Character;
-        targetCharacter.needsComponent.AdjustFullness(585);
+        targetCharacter.needsComponent.AdjustFullness(8.5f);
+        targetCharacter.AdjustResource(RESOURCE.FOOD, -1);
     }
     public void AfterFeedSuccess(ActualGoapNode goapNode) {
         Character targetCharacter = goapNode.poiTarget as Character;
         targetCharacter.needsComponent.AdjustDoNotGetHungry(-1);
-        targetCharacter.AdjustResource(RESOURCE.FOOD, -20);
+        targetCharacter.relationshipContainer.AdjustOpinion(targetCharacter, goapNode.actor, "Base", 3);
     }
     #endregion
 
@@ -164,12 +208,20 @@ public class Feed : GoapAction {
 
     #region Preconditions
     private bool ActorHasFood(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        if (poiTarget.HasResourceAmount(RESOURCE.FOOD, 20)) {
+        if (poiTarget.HasResourceAmount(RESOURCE.FOOD, 12)) {
             return true;
         }
-        if (actor.ownParty.isCarryingAnyPOI && actor.ownParty.carriedPOI is ResourcePile) {
-            ResourcePile carriedPile = actor.ownParty.carriedPOI as ResourcePile;
-            return carriedPile.resourceInPile >= 20;
+        if(actor.items.Count > 0) {
+            for (int i = 0; i < actor.items.Count; i++) {
+                if(actor.items[i].HasResourceAmount(RESOURCE.FOOD, 12)) {
+                    return true;
+                }
+            }
+        }
+        if (actor.ownParty.isCarryingAnyPOI && actor.ownParty.carriedPOI is FoodPile) {
+            //ResourcePile carriedPile = actor.ownParty.carriedPOI as ResourcePile;
+            //return carriedPile.resourceInPile >= 12;
+            return true;
         }
         return false;
         //return actor.supply >= 20;

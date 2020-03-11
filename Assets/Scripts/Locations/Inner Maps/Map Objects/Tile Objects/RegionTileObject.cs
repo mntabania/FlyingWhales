@@ -3,20 +3,20 @@
 public class RegionTileObject : TileObject {
 
     public RegionTileObject() {
-        advertisedActions = new List<INTERACTION_TYPE>();
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
         Initialize(TILE_OBJECT_TYPE.REGION_TILE_OBJECT);
     }
     public RegionTileObject(SaveDataTileObject data) {
-        advertisedActions = new List<INTERACTION_TYPE>();
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
         Initialize(data);
     }
     public void SetName(Region region) {
-        this.name = region.name + " Region tile object";
+        this.name = $"{region.name} Region tile object";
     }
 
     #region Overrides
     public override string ToString() {
-        return this.name + " " + this.id.ToString();
+        return $"{this.name} {this.id}";
     }
     #endregion
 

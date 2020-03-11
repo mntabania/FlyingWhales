@@ -62,7 +62,7 @@ public class CharacterAttribute {
     public CharacterAttribute(ATTRIBUTE_CATEGORY category, ATTRIBUTE attribute) {
         _attribute = attribute;
         _category = category;
-        _name = Utilities.NormalizeStringUpperCaseFirstLetters(_attribute.ToString());
+        _name = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(_attribute.ToString());
     }
     public void SetDataFromAttributePanelUI() {
         _name = AttributePanelUI.Instance.nameInput.text;

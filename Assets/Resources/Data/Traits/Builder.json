@@ -1,1 +1,0 @@
-{"name":"Builder","description":"Allows character to build and repair structures and objects.","thoughtText":"","type":12,"effect":0,"advertisedInteractions":[6,52],"daysDuration":0,"level":0,"effects":[],"isHidden":false,"mutuallyExclusive":[""],"canBeTriggered":false,"hindersWitness":false,"hindersMovement":false,"hindersAttackTarget":false}

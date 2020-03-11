@@ -2,33 +2,61 @@
 using System.Collections.Generic;
 using Inner_Maps;
 using UnityEngine;
+using UnityEngine.Assertions;
+using UnityEngine.Experimental.Rendering.Universal;
 
-public class WallVisual : MapObjectVisual<WallObject> {
+public class WallVisual : MapObjectVisual<StructureWallObject> {
 
-    private SpriteRenderer[] spriteRenderers;
+    private SpriteRenderer[] _spriteRenderers;
 
-    void Awake() {
-        spriteRenderers = this.transform.GetComponentsInChildren<SpriteRenderer>();
+    public SpriteRenderer[] spriteRenderers {
+        get {
+            if (_spriteRenderers == null) {
+                _spriteRenderers = transform.GetComponentsInChildren<SpriteRenderer>(); 
+            }
+            return _spriteRenderers;
+        }
+    }
+    
+    private void Awake() {
+        _spriteRenderers = transform.GetComponentsInChildren<SpriteRenderer>();
         collisionTrigger = transform.GetComponentInChildren<WallObjectCollisionTrigger>();
         collisionTrigger.gameObject.SetActive(false);
     }
 
-    public override void Initialize(WallObject obj) {
+    public override void Initialize(StructureWallObject obj) {
         collisionTrigger.Initialize(obj);
         collisionTrigger.gameObject.SetActive(true);
         UpdateWallAssets(obj);
     }
-    public void UpdateWallAssets(WallObject wallObject) {
+    /// <summary>
+    /// Update wall assets based on the structure wall object.
+    /// This considers the objects resource as well as if it is damaged or not.
+    /// </summary>
+    /// <param name="structureWallObject">The structure wall object.</param>
+    public void UpdateWallAssets(StructureWallObject structureWallObject) {
         for (int i = 0; i < spriteRenderers.Length; i++) {
             SpriteRenderer spriteRenderer = spriteRenderers[i];
             //update the sprite given the wall objects material, and if it is damaged or not.
-            WallAsset wallAsset = InnerMapManager.Instance.GetWallAsset(wallObject.madeOf, spriteRenderer.sprite.name);
-            if (wallObject.currentHP == wallObject.maxHP) {
+            Assert.IsFalse(structureWallObject.madeOf == RESOURCE.FOOD, $"{structureWallObject.name} has food as it's wall!");
+            WallAsset wallAsset = InnerMapManager.Instance.GetWallAsset(structureWallObject.madeOf, spriteRenderer.sprite.name);
+            if (structureWallObject.currentHP == structureWallObject.maxHP) {
                 spriteRenderer.sprite = wallAsset.undamaged;
             } else {
                 spriteRenderer.sprite = wallAsset.damaged;
             }
             
+        }
+    }
+    /// <summary>
+    /// Update wall asset based only on the resource that the wall is made of.
+    /// </summary>
+    /// <param name="madeOf">The resource this wall is made of</param>
+    public void UpdateWallAssets(RESOURCE madeOf) {
+        for (int i = 0; i < spriteRenderers.Length; i++) {
+            SpriteRenderer spriteRenderer = spriteRenderers[i];
+            WallAsset wallAsset = InnerMapManager.Instance.GetWallAsset(madeOf, spriteRenderer.sprite.name);
+            spriteRenderer.sprite = wallAsset.undamaged;
         }
     }
     public void UpdateSortingOrders(int sortingOrder) {
@@ -43,8 +71,8 @@ public class WallVisual : MapObjectVisual<WallObject> {
             
         }
     }
-    public void UpdateWallState(WallObject wallObject) {
-        if (wallObject.currentHP == 0) {
+    public void UpdateWallState(StructureWallObject structureWallObject) {
+        if (structureWallObject.currentHP == 0) {
             //wall is destroyed disable gameobject
             this.gameObject.SetActive(false);
         } else {
@@ -64,7 +92,7 @@ public class WallVisual : MapObjectVisual<WallObject> {
         collisionTrigger.gameObject.SetActive(false);
     }
 
-    public override void UpdateTileObjectVisual(WallObject obj) {
+    public override void UpdateTileObjectVisual(StructureWallObject obj) {
         throw new System.NotImplementedException();
     }
     public override void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) {
@@ -73,5 +101,5 @@ public class WallVisual : MapObjectVisual<WallObject> {
     public override bool IsMapObjectMenuVisible() {
         return true; //always true so that this is skipped
     }
-    public override void UpdateCollidersState(WallObject obj) { }
+    public override void UpdateCollidersState(StructureWallObject obj) { }
 }

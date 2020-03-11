@@ -14,7 +14,7 @@ public class BuildingSpot {
     public Vector3Int location { get; }
     private Vector3 centeredLocation { get; }
     public LocationGridTile[] tilesInTerritory { get; private set; }
-    private Vector2Int locationInBuildSpotGrid { get; }
+    public Vector2Int locationInBuildSpotGrid { get; private set; }
     public Dictionary<GridNeighbourDirection, BuildingSpot> neighbours { get; private set; }
     public HexTile hexTileOwner { get; private set; } //if this is null then it means that this build spot belongs to a hex tile that is not in this build spots region
     public BuildingSpotItem spotItem { get; private set; }
@@ -25,6 +25,13 @@ public class BuildingSpot {
 
     #region getters
     public bool hasBlueprint => blueprint != null;
+    /// <summary>
+    /// Is this build spot to be considered as part of it's region map ("part" meaning if this spots tiles are valid)
+    /// </summary>
+    public bool isPartOfParentRegionMap => hexTileOwner;
+    public bool canBeBuiltOnByNPC => isPartOfParentRegionMap && hexTileOwner.isCurrentlyBeingCorrupted == false 
+                                    && HasCorruptedTile() == false;
+    public bool canBeBuiltOnByPlayer => isPartOfParentRegionMap && hexTileOwner.isCurrentlyBeingCorrupted == false;
     #endregion
 
     public BuildingSpot(BuildingSpotData data) {
@@ -34,7 +41,7 @@ public class BuildingSpot {
         centeredLocation = new Vector3(location.x + 0.5f, location.y + 0.5f);
     }
     public BuildingSpot(Vector3Int tileLocation, Vector2Int locationInBuildSpotGrid) {
-        id = Utilities.SetID(this);
+        id = UtilityScripts.Utilities.SetID(this);
         location = tileLocation;
         this.locationInBuildSpotGrid = locationInBuildSpotGrid;
         centeredLocation = new Vector3(location.x + 0.5f, location.y + 0.5f);
@@ -76,11 +83,32 @@ public class BuildingSpot {
             GridNeighbourDirection direction = kvp.Key;
             Point exit = kvp.Value;
             Point result = exit.Sum(thisPoint);
-            if (Utilities.IsInRange(result.X, 0, mapUpperBoundX + 1) &&
-                Utilities.IsInRange(result.Y, 0, mapUpperBoundY + 1)) {
+            if (UtilityScripts.Utilities.IsInRange(result.X, 0, mapUpperBoundX + 1) &&
+                UtilityScripts.Utilities.IsInRange(result.Y, 0, mapUpperBoundY + 1)) {
                 neighbours.Add(direction, map.buildingSpots[result.X, result.Y]);
             }
         }
+    }
+    public HexTile GetNearestHexTile() {
+        if(hexTileOwner != null) { return hexTileOwner; }
+        //foreach (BuildingSpot buildSpot in neighbours.Values) {
+        //    HexTile nearestHex = buildSpot.GetNearestHexTile();
+        //    if (nearestHex != null) {
+        //        return nearestHex;
+        //    }
+        //}
+        foreach (BuildingSpot buildSpot in neighbours.Values) {
+            if(buildSpot.hexTileOwner != null) {
+                return buildSpot.hexTileOwner;
+            }
+        }
+        foreach (BuildingSpot buildSpot in neighbours.Values) {
+            HexTile nearestHex = buildSpot.GetNearestHexTile();
+            if (nearestHex != null) {
+                return nearestHex;
+            }
+        }
+        return null;
     }
 
     #region Data Setting
@@ -138,16 +166,16 @@ public class BuildingSpot {
             SetIsOccupied(false);
         }
     }
-    public bool CanFitStructureOnSpot(LocationStructureObject obj, InnerTileMap map) {
-        return map.CanBuildSpotFit(obj, this);
+    public bool CanFitStructureOnSpot(LocationStructureObject obj, InnerTileMap map, string builderIdentifier) {
+        return map.CanBuildSpotFit(obj, this, builderIdentifier);
     }
     /// <summary>
-    /// Is this build spot open for the given settlement.
+    /// Is this build spot open for the given npcSettlement.
     /// </summary>
-    /// <param name="settlement">The provided settlement</param>
+    /// <param name="npcSettlement">The provided npcSettlement</param>
     /// <returns>True or false</returns>
-    public bool IsOpenFor(Settlement settlement) {
-        if (hexTileOwner == null) {
+    public bool IsOpenFor(NPCSettlement npcSettlement) {
+        if (canBeBuiltOnByNPC == false) {
             return false;
         }
         if (isOccupied) {
@@ -156,21 +184,30 @@ public class BuildingSpot {
         if (hasBlueprint) {
             return false;
         }
-        //to check if this spot is open for the given settlement
-        //    -First check if the hex tile that this spot belongs to is part of the settlement, if it is, then consider this spot as open.
+        //to check if this spot is open for the given npcSettlement
+        //    -First check if the hex tile that this spot belongs to is part of the npcSettlement, if it is, then consider this spot as open.
         //    -If the first check fails, then check if this spots hex tile owner is next to any tiles that are part of the given 
-        //    settlement, if it is, then consider this spot as open.
-        bool open = settlement.tiles.Contains(hexTileOwner);
+        //    npcSettlement, if it is, then consider this spot as open.
+        bool open = npcSettlement.tiles.Contains(hexTileOwner);
         if (open == false) {
             for (int i = 0; i < hexTileOwner.AllNeighbours.Count; i++) {
                 HexTile neighbour = hexTileOwner.AllNeighbours[i];
-                if (settlement.tiles.Contains(neighbour)) {
+                if (npcSettlement.tiles.Contains(neighbour)) {
                     open = true;
                     break;
                 }
             }    
         }
         return open;
+    }
+    private bool HasCorruptedTile() {
+        for (int i = 0; i < tilesInTerritory.Length; i++) {
+            LocationGridTile tile = tilesInTerritory[i];
+            if (tile.isCorrupted) {
+                return true;
+            }
+        }
+        return false;
     }
     #endregion
 
@@ -182,13 +219,19 @@ public class BuildingSpot {
     public void ClearBlueprints() {
         blueprint = null;
     }
-    public Vector3 GetPositionToPlaceStructure(LocationStructureObject structureObj, STRUCTURE_TYPE structureType) {
-        int borderSize = InnerMapManager.BuildingSpotBorderSize;
-
-        if (structureType == STRUCTURE_TYPE.OCEAN) {
-            borderSize = 0;
+    public Vector3 GetPositionToPlaceStructure(LocationStructureObject structureObj) {
+        if (structureObj.IsHorizontallyBig() && structureObj.IsVerticallyBig()) {
+            Vector3 pos = location;
+            pos.x += Mathf.Ceil(structureObj.center.x / 2f) + 0.5f;
+            pos.y += Mathf.Ceil(structureObj.center.y / 2f) + 0.5f;
+            if (structureObj.name.Contains("Portal")) {
+                Debug.Log($"Placing portal at {pos.ToString()}. Location of build spot is {location.ToString()}");
+            }
+            return pos;
         }
         
+        int borderSize = InnerMapManager.BuildingSpotBorderSize;
+
         int maxSizeX = InnerMapManager.BuildingSpotSize.x - (borderSize * 2);
         int maxSizeY = InnerMapManager.BuildingSpotSize.y - (borderSize * 2);
         
@@ -198,8 +241,7 @@ public class BuildingSpot {
         //i.e (if structure occupies 2 spots horizontally then its max size X) = (Building_Spot_Size.x * 2) - (Building_Spot_Border_Size * 2)
         if (structureObj.IsHorizontallyBig()) {
             maxSizeX = (InnerMapManager.BuildingSpotSize.x * 2) - (borderSize * 2);
-        }
-        if (structureObj.IsVerticallyBig()) {
+        } else if (structureObj.IsVerticallyBig()) {
             maxSizeY = (InnerMapManager.BuildingSpotSize.y * 2) - (borderSize * 2);
         }
 
@@ -220,12 +262,17 @@ public class BuildingSpot {
         }
 
         Vector3 randomPos = new Vector3(xPos, yPos, 0);
-        if (structureType == STRUCTURE_TYPE.OCEAN) {
-            randomPos = Vector3.zero;
-        }
         randomPos += centeredLocation;
 
         return randomPos;
+    }
+    public bool CanBeBuiltOnBy(string builderIdentifier) {
+        if (builderIdentifier == "NPC") {
+            return canBeBuiltOnByNPC;
+        } else if (builderIdentifier == "Player") {
+            return canBeBuiltOnByPlayer;
+        }
+        return false;
     }
     #endregion
 

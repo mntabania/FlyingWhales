@@ -335,7 +335,8 @@ namespace UnityEngine.UI.Extensions
                 {
                     if (icon.name != null && icon.name != "")
                     {
-                        fixedString = fixedString.Replace(icon.name, "<quad name=" + icon.name + " size=" + fontSize + " width=1 />");
+                        fixedString = fixedString.Replace(icon.name,
+                            $"<quad name={icon.name} size={fontSize} width=1 />");
                     }
                 }
             }
@@ -343,7 +344,7 @@ namespace UnityEngine.UI.Extensions
             foreach (Match match in s_HrefRegex.Matches(fixedString))
             {
                 s_TextBuilder.Append(fixedString.Substring(indexText, match.Index - indexText));
-                s_TextBuilder.Append("<color=" + hyperlinkColor + ">");  // Hyperlink color
+                s_TextBuilder.Append($"<color={hyperlinkColor}>");  // Hyperlink color
 
                 var group = match.Groups[1];
                 if(isCreating_m_HrefInfos) {

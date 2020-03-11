@@ -94,7 +94,7 @@ public class ClassPanelUI : MonoBehaviour {
     #region Utilities
     private void UpdateClassList() {
         allClasses.Clear();
-        string path = Utilities.dataPath + "CharacterClasses/";
+        string path = $"{UtilityScripts.Utilities.dataPath}CharacterClasses/";
         foreach (string file in Directory.GetFiles(path, "*.json")) {
             allClasses.Add(Path.GetFileNameWithoutExtension(file));
         }
@@ -199,10 +199,10 @@ public class ClassPanelUI : MonoBehaviour {
         _armorTiers.Clear();
         _accessoryTiers.Clear();
         _traitNames.Clear();
-        weaponsContentTransform.DestroyChildren();
-        armorsContentTransform.DestroyChildren();
-        accessoriesContentTransform.DestroyChildren();
-        traitsScrollRect.content.DestroyChildren();
+        UtilityScripts.Utilities.DestroyChildren(weaponsContentTransform);
+        UtilityScripts.Utilities.DestroyChildren(armorsContentTransform);
+        UtilityScripts.Utilities.DestroyChildren(accessoriesContentTransform);
+        UtilityScripts.Utilities.DestroyChildren(traitsScrollRect.content);
     }
     private void SaveClass() {
         if (string.IsNullOrEmpty(classNameInput.text)) {
@@ -217,10 +217,11 @@ public class ClassPanelUI : MonoBehaviour {
             return;
 #endif
         }
-        string path = Utilities.dataPath + "CharacterClasses/" + classNameInput.text + ".json";
-        if (Utilities.DoesFileExist(path)) {
+        string path = $"{UtilityScripts.Utilities.dataPath}CharacterClasses/{classNameInput.text}.json";
+        if (UtilityScripts.Utilities.DoesFileExist(path)) {
 #if UNITY_EDITOR
-            if (EditorUtility.DisplayDialog("Overwrite Class", "A class with name " + classNameInput.text + " already exists. Replace with this class?", "Yes", "No")) {
+            if (EditorUtility.DisplayDialog("Overwrite Class",
+                $"A class with name {classNameInput.text} already exists. Replace with this class?", "Yes", "No")) {
                 File.Delete(path);
                 SaveClassJson(path);
             }
@@ -244,14 +245,15 @@ public class ClassPanelUI : MonoBehaviour {
         //Re-import the file to update the reference in the editor
         UnityEditor.AssetDatabase.ImportAsset(path);
 #endif
-        Debug.Log("Successfully saved class at " + path);
+        Debug.Log($"Successfully saved class at {path}");
 
         UpdateClassList();
     }
 
     private void LoadClass() {
 #if UNITY_EDITOR
-        string filePath = EditorUtility.OpenFilePanel("Select Class", Utilities.dataPath + "CharacterClasses/", "json");
+        string filePath = EditorUtility.OpenFilePanel("Select Class",
+            $"{UtilityScripts.Utilities.dataPath}CharacterClasses/", "json");
 
         if (!string.IsNullOrEmpty(filePath)) {
             string dataAsJson = File.ReadAllText(filePath);
@@ -266,7 +268,7 @@ public class ClassPanelUI : MonoBehaviour {
     private void LoadClassDataToUI(CharacterClass characterClass) {
         classNameInput.text = characterClass.className;
         identifierInput.text = characterClass.identifier;
-        nonCombatantToggle.isOn = characterClass.isNonCombatant;
+        nonCombatantToggle.isOn = characterClass.isNormalNonCombatant;
         baseAttackPowerInput.text = characterClass.baseAttackPower.ToString();
         attackPowerPerLevelInput.text = characterClass.attackPowerPerLevel.ToString();
         baseSpeedInput.text = characterClass.baseSpeed.ToString();

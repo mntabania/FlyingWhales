@@ -9,12 +9,12 @@ public class Tantrum : GoapAction {
     private string reason;
 
     public Tantrum() : base(INTERACTION_TYPE.TANTRUM) {
-        //shouldIntelNotificationOnlyIfActorIsActive = true;
+        //showNotification = false;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         actionIconString = GoapActionStateDB.Hostile_Icon;
-        //isNotificationAnIntel = false;
+        //
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
     }
 
     #region Overrides
@@ -25,9 +25,9 @@ public class Tantrum : GoapAction {
         base.Perform(goapNode);
         SetState("Tantrum Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         //**Cost**: randomize between 3-10
-        return Utilities.rng.Next(3, 11);
+        return UtilityScripts.Utilities.rng.Next(3, 11);
     }
     #endregion
 
@@ -53,7 +53,7 @@ public class Tantrum : GoapAction {
 
 public class TantrumData : GoapActionData {
     public TantrumData() : base(INTERACTION_TYPE.TANTRUM) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
         requirementAction = Requirement;
     }
 

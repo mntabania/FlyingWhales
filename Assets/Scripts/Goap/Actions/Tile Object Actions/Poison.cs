@@ -13,12 +13,13 @@ public class Poison : GoapAction {
         //_isStealthAction = true;
         //SetIsStealth(true);
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
+        isNotificationAnIntel = true;
     }
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = SPECIAL_TOKEN.TOOL.ToString(), target = GOAP_EFFECT_TARGET.TARGET }, HasTool);
+        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_POI, conditionKey = "Tool", target = GOAP_EFFECT_TARGET.ACTOR }, HasTool);
         //**Effect 1**: Table - Add Trait (Poisoned)
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Poisoned", target = GOAP_EFFECT_TARGET.TARGET });
     }
@@ -26,8 +27,71 @@ public class Poison : GoapAction {
         base.Perform(goapNode);
         SetState("Poison Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        return 4;
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+        int cost = UtilityScripts.Utilities.rng.Next(80, 121);
+        string costLog = $"\n{name} {target.nameWithID}: +{cost}(RNG)";
+        actor.logComponent.AppendCostLog(costLog);
+        return cost;
+    }
+    public override string ReactionToActor(Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionToActor(witness, node, status);
+        Character actor = node.actor;
+        IPointOfInterest target = node.poiTarget;
+        List<Character> targetObjectOwners = null;
+        if (target is TileObject) {
+            TileObject tileObject = target as TileObject;
+            targetObjectOwners = tileObject.GetOwners();
+        } 
+        // else if (target is SpecialToken) {
+        //     SpecialToken item = target as SpecialToken;
+        //     if (item.characterOwner != null) {
+        //         targetObjectOwners = new List<Character>() { item.characterOwner };
+        //     }
+        // }
+
+        if (targetObjectOwners != null && targetObjectOwners.Contains(witness)) {
+            if (witness.traitContainer.HasTrait("Coward")) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor, status);
+            } else {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, actor, status);
+            }
+
+            if (witness.relationshipContainer.IsFriendsWith(actor) || witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.RELATIVE)) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor, status);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status);
+            }
+        } else {
+            bool isTargetObjectOwnedByFriend = false;
+            if(targetObjectOwners != null) {
+                for (int i = 0; i < targetObjectOwners.Count; i++) {
+                    Character objectOwner = targetObjectOwners[i];
+                    if (witness.relationshipContainer.IsFriendsWith(objectOwner) || witness.relationshipContainer.HasRelationshipWith(objectOwner, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.RELATIVE)) {
+                        isTargetObjectOwnedByFriend = true;
+                        break;
+                    }
+                }
+            }
+            if (isTargetObjectOwnedByFriend) {
+                if (witness.traitContainer.HasTrait("Coward")) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor, status);
+                } else {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status);
+                    if (witness.relationshipContainer.IsFriendsWith(actor) || witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.RELATIVE)) {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor, status);
+                    }
+                }
+            } else {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status);
+                if (witness.relationshipContainer.IsFriendsWith(actor) || witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.RELATIVE)) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor, status);
+                }
+            }
+        }
+        CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.MISDEMEANOR);
+        return response;
     }
     #endregion
 
@@ -39,9 +103,9 @@ public class Poison : GoapAction {
         //goapNode.descriptionLog.AddToFillers(goapNode.poiTarget.gridTileLocation.structure.location, goapNode.poiTarget.gridTileLocation.structure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
         //TODO: currentState.SetIntelReaction(PoisonSuccessReactions);
     }
-    public void AfterPoisonSuccess(ActualGoapNode goapNode) {
-        
-    }
+    // public void AfterPoisonSuccess(ActualGoapNode goapNode) {
+    //     
+    // }
     #endregion
 
     #region Requirement
@@ -52,12 +116,12 @@ public class Poison : GoapAction {
                 return false;
             }
             LocationGridTile knownLoc = poiTarget.gridTileLocation;
-            if (knownLoc.structure is Dwelling) {
-                Dwelling d = knownLoc.structure as Dwelling;
-                if (d.residents.Count == 0) {
+            if (knownLoc.structure.isDwelling) {
+                IDwelling d = knownLoc.structure as IDwelling;
+                if (!d.IsOccupied()) {
                     return false;
                 }
-                Poisoned poisonedTrait = poiTarget.traitContainer.GetNormalTrait<Trait>("Poisoned") as Poisoned;
+                Poisoned poisonedTrait = poiTarget.traitContainer.GetNormalTrait<Poisoned>("Poisoned");
                 if (poisonedTrait != null && poisonedTrait.responsibleCharacters.Contains(actor)) {
                     return false; //to prevent poisoning a table that has been already poisoned by this character
                 }
@@ -70,7 +134,7 @@ public class Poison : GoapAction {
 
     #region Precondition
     private bool HasTool(Character character, IPointOfInterest poiTarget, object[] otherData) {
-        return character.HasTokenInInventory(SPECIAL_TOKEN.TOOL);
+        return character.HasItem(TILE_OBJECT_TYPE.TOOL);
     }
     #endregion
 
@@ -482,7 +546,7 @@ public class Poison : GoapAction {
 
 public class PoisonTableData : GoapActionData {
     public PoisonTableData() : base(INTERACTION_TYPE.POISON) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
         requirementAction = Requirement;
     }
 
@@ -492,12 +556,12 @@ public class PoisonTableData : GoapActionData {
         }
         LocationGridTile knownLoc = poiTarget.gridTileLocation;
         //LocationGridTile knownLoc = actor.GetAwareness(poiTarget).knownGridLocation;
-        if (knownLoc.structure is Dwelling) {
-            Dwelling d = knownLoc.structure as Dwelling;
-            if (d.residents.Count == 0) {
+        if (knownLoc.structure.isDwelling) {
+            IDwelling d = knownLoc.structure as IDwelling;
+            if (!d.IsOccupied()) {
                 return false;
             }
-            Poisoned poisonedTrait = poiTarget.traitContainer.GetNormalTrait<Trait>("Poisoned") as Poisoned;
+            Poisoned poisonedTrait = poiTarget.traitContainer.GetNormalTrait<Poisoned>("Poisoned");
             if (poisonedTrait != null && poisonedTrait.responsibleCharacters.Contains(actor)) {
                 return false; //to prevent poisoning a table that has been already poisoned by this character
             }

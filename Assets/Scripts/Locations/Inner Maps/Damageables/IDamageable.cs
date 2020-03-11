@@ -12,7 +12,7 @@ public interface IDamageable {
     LocationGridTile gridTileLocation { get; }
     BaseMapObjectVisual mapObjectVisual { get; }
 
-    void AdjustHP(int amount, bool triggerDeath = false, object source = null);
+    void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false, object source = null);
     void OnHitByAttackFrom(Character characterThatAttacked, CombatState state, ref string attackSummary);
     bool CanBeDamaged();
 }

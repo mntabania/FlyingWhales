@@ -17,7 +17,7 @@ public class FactionIdeologyComponent {
     //    currentIdeologies.SetRequirements(owner);
     //    ReEvaluateFactionMembers();
     //}
-    public void RerollIdeologies() {
+    public void RerollIdeologies(bool willLog = true) {
         FACTION_IDEOLOGY[][] categorizedIdeologies = FactionManager.Instance.categorizedFactionIdeologies;
         for (int i = 0; i < currentIdeologies.Length; i++) {
             FactionIdeology ideology = currentIdeologies[i];
@@ -25,7 +25,7 @@ public class FactionIdeologyComponent {
             ideology.SetRequirements(owner);
             currentIdeologies[i] = ideology;
         }
-        ReEvaluateFactionMembers();
+        ReEvaluateFactionMembers(willLog);
     }
     public void SetCurrentIdeology(int index, FactionIdeology ideology) {
         currentIdeologies[index] = ideology;
@@ -42,11 +42,13 @@ public class FactionIdeologyComponent {
         //return currentIdeologies.DoesCharacterFitIdeology(character);
     }
 
-    private void ReEvaluateFactionMembers() {
+    private void ReEvaluateFactionMembers(bool willLog = true) {
         for (int i = 0; i < owner.characters.Count; i++) {
             Character member = owner.characters[i];
             if(member == owner.leader) { continue; }
-            owner.CheckIfCharacterStillFitsIdeology(member);
+            if (owner.CheckIfCharacterStillFitsIdeology(member, willLog)) {
+                i--;
+            }
         }
     }
 }

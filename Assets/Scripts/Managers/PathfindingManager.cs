@@ -45,19 +45,6 @@ public class PathfindingManager : MonoBehaviour {
         mainGraph.collision.mask = LayerMask.GetMask("Unpassable");
         RescanGrid();
     }
-    public void LoadSettings(byte[] bytes) {
-        AstarPath.active.data.DeserializeGraphs(bytes);
-        if (AstarPath.active.graphs.Length > 0) {
-            mainGraph = AstarPath.active.graphs[0] as GridGraph;
-        }
-        
-        //RescanGrid();
-    }
-    public void ClearGraphs() {
-        if (mainGraph != null) {
-            aStarPath.data.RemoveGraph(mainGraph);
-        }
-    }
     public void RescanGrid() {
         AstarPath.active.Scan(mainGraph);
     }
@@ -69,6 +56,39 @@ public class PathfindingManager : MonoBehaviour {
     }
     public void RemoveAgent(CharacterAIPath agent) {
         _allAgents.Remove(agent);
+    }
+    public void UpdatePathfindingGraphPartialCoroutine(Bounds bounds) {
+        StartCoroutine(UpdatePathfindingGraphPartial(bounds));
+    }
+    private IEnumerator UpdatePathfindingGraphPartial(Bounds bounds) {
+        yield return null;
+        AstarPath.active.UpdateGraphs(bounds);
+    }
+    public void UpdatePathfindingGraphPartial(GraphUpdateObject guo) {
+        AstarPath.active.UpdateGraphs(guo);
+    }
+    public bool HasPath(LocationGridTile fromTile, LocationGridTile toTile) {
+        if (fromTile == toTile) { return true; }
+        if (fromTile == null || toTile == null) { return false; }
+        return PathUtilities.IsPathPossible(AstarPath.active.GetNearest(fromTile.centeredWorldLocation, NNConstraint.Default).node,
+            AstarPath.active.GetNearest(toTile.centeredWorldLocation, NNConstraint.Default).node);
+    }
+    public bool HasPathEvenDiffRegion(LocationGridTile fromTile, LocationGridTile toTile) {
+        if (fromTile == toTile) { return true; }
+        if (fromTile == null || toTile == null) { return false; }
+        if(fromTile.structure.location == toTile.structure.location) {
+            return PathUtilities.IsPathPossible(AstarPath.active.GetNearest(fromTile.centeredWorldLocation, NNConstraint.Default).node,
+                    AstarPath.active.GetNearest(toTile.centeredWorldLocation, NNConstraint.Default).node);
+        } else {
+            LocationGridTile nearestEdgeFrom = fromTile.GetNearestEdgeTileFromThis();
+            if(PathUtilities.IsPathPossible(AstarPath.active.GetNearest(fromTile.centeredWorldLocation, NNConstraint.Default).node,
+                    AstarPath.active.GetNearest(nearestEdgeFrom.centeredWorldLocation, NNConstraint.Default).node)) {
+                LocationGridTile nearestEdgeTo = toTile.GetNearestEdgeTileFromThis();
+                return PathUtilities.IsPathPossible(AstarPath.active.GetNearest(toTile.centeredWorldLocation, NNConstraint.Default).node,
+                    AstarPath.active.GetNearest(nearestEdgeTo.centeredWorldLocation, NNConstraint.Default).node);
+            }
+        }
+        return false;
     }
 
     #region Map Creation
@@ -114,6 +134,7 @@ public class PathfindingManager : MonoBehaviour {
             }
         }
     }
+    
     #region Monobehaviours
 #if !WORLD_CREATION_TOOL
     private void Update() {
@@ -126,5 +147,18 @@ public class PathfindingManager : MonoBehaviour {
         }
     }
 #endif
+    #endregion
+
+    #region Graph Updates
+    public void ApplyGraphUpdateSceneCoroutine(GraphUpdateScene gus) {
+        StartCoroutine(UpdateGraph(gus));
+    }
+    public void ApplyGraphUpdateScene(GraphUpdateScene gus) {
+        gus.Apply();
+    }
+    private IEnumerator UpdateGraph(GraphUpdateScene gus) {
+        yield return null;
+        gus.Apply();
+    }
     #endregion
 }

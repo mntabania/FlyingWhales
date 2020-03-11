@@ -155,11 +155,11 @@ public class BezierCurveManager : MonoBehaviour {
         normalUp *= dir.magnitude * 0.1f;
 
 
-        Debug.LogWarning("Distance: " + Vector3.Distance(startPoint.position, endPoint.position));
-        Debug.LogWarning("Dir: " + dir);
-        Debug.LogWarning("Up: " + Vector3.up);
-        Debug.LogWarning("Normal: " + normal);
-        Debug.LogWarning("NormalUp: " + normalUp);
+        Debug.LogWarning($"Distance: {Vector3.Distance(startPoint.position, endPoint.position)}");
+        Debug.LogWarning($"Dir: {dir}");
+        Debug.LogWarning($"Up: {Vector3.up}");
+        Debug.LogWarning($"Normal: {normal}");
+        Debug.LogWarning($"NormalUp: {normalUp}");
     }
 
     #region Travel Lines

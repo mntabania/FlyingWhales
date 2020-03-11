@@ -20,7 +20,9 @@ public class RFX4_UVScroll : MonoBehaviour {
             if (projector != null)
             {
                 if (!projector.material.name.EndsWith("(Instance)"))
-                    projector.material = new Material(projector.material) { name = projector.material.name + " (Instance)" };
+                    projector.material = new Material(projector.material) { name =
+                        $"{projector.material.name} (Instance)"
+                    };
                 mat = projector.material;
             }
         }

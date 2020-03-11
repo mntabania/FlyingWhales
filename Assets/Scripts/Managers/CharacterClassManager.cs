@@ -9,43 +9,65 @@ public class CharacterClassManager : MonoBehaviour {
     public Dictionary<string, CharacterClass> classesDictionary { get; private set; }
     public Dictionary<string, List<CharacterClass>> identifierClasses { get; private set; }
     public List<CharacterClass> normalCombatantClasses { get; private set; }
+    public List<CharacterClass> allClasses { get; private set; }
 
     private Dictionary<System.Type, CharacterBehaviourComponent> behaviourComponents;
 
     private Dictionary<string, System.Type[]> classIdlePlans = new Dictionary<string, Type[]>() {
         { "Default",
             new Type[]{
+                typeof(DefaultFactionRelated),
                 typeof(WorkBehaviour),
-                typeof(DefaultJoinFaction),
-                typeof(DefaultJustReturnedHome),
                 typeof(DefaultAtHome),
                 typeof(DefaultOutside),
                 typeof(DefaultBaseStructure),
                 typeof(DefaultOtherStructure),
                 typeof(DefaultExtraCatcher),
+                typeof(MovementProcessing),
             }
         },
-        { "Leader",
-            new Type[]{
-                typeof(WorkBehaviour),
-                typeof(DefaultJustReturnedHome),
-                typeof(BlueprintBehaviour),
-                typeof(DefaultAtHome),
-                typeof(DefaultOutside),
-                typeof(DefaultBaseStructure),
-                typeof(DefaultOtherStructure),
-                typeof(DefaultExtraCatcher),
-            }
-        },
+        {"Lust", new []{typeof(MinionBehaviour)}},
+        {"Greed", new []{typeof(MinionBehaviour)}},
+        {"Wrath", new []{typeof(MinionBehaviour)}},
+        {"Gluttony", new []{typeof(MinionBehaviour)}},
+        {"Sloth", new []{typeof(MinionBehaviour)}},
+        {"Pride", new []{typeof(MinionBehaviour)}},
+        {"Envy", new []{typeof(MinionBehaviour)}},
+        //{ "Leader",
+        //    new Type[]{
+        //        typeof(WorkBehaviour),
+        //        typeof(BlueprintBehaviour),
+        //        typeof(DefaultAtHome),
+        //        typeof(DefaultOutside),
+        //        typeof(DefaultBaseStructure),
+        //        typeof(DefaultOtherStructure),
+        //        typeof(DefaultExtraCatcher),
+        //    }
+        //},
     };
 
-    private Dictionary<string, System.Type[]> traitIdlePlans = new Dictionary<string, Type[]>() {
-        { "Berserked",
-            new Type[]{
-                typeof(BerserkBehaviour),
-            }
-        },
-    };
+    //private Dictionary<string, System.Type[]> traitIdlePlans = new Dictionary<string, Type[]>() {
+    //    { "Berserked",
+    //        new Type[]{
+    //            typeof(BerserkBehaviour),
+    //        }
+    //    },
+    //    { "Glutton",
+    //        new Type[]{
+    //            typeof(GluttonBehaviour),
+    //        }
+    //    },
+    //    { "SerialKiller",
+    //        new Type[]{
+    //            typeof(SerialKillerBehaviour),
+    //        }
+    //    },
+    //    { "Suicidal",
+    //        new Type[]{
+    //            typeof(SuicidalBehaviour),
+    //        }
+    //    },
+    //};
 
     public void Initialize() {
         ConstructAllClasses();
@@ -55,6 +77,7 @@ public class CharacterClassManager : MonoBehaviour {
     #region Classes
     private void ConstructAllClasses() {
         classesDictionary = new Dictionary<string, CharacterClass>();
+        allClasses = new List<CharacterClass>();
         //normalClasses = new Dictionary<string, CharacterClass>();
         //uniqueClasses = new Dictionary<string, CharacterClass>();
         //beastClasses = new Dictionary<string, CharacterClass>();
@@ -62,12 +85,13 @@ public class CharacterClassManager : MonoBehaviour {
         normalCombatantClasses = new List<CharacterClass>();
         identifierClasses = new Dictionary<string, List<CharacterClass>>();
         identifierClasses.Add("All", new List<CharacterClass>());
-        string path = Utilities.dataPath + "CharacterClasses/";
+        string path = $"{UtilityScripts.Utilities.dataPath}CharacterClasses/";
         string[] classes = System.IO.Directory.GetFiles(path, "*.json");
         for (int i = 0; i < classes.Length; i++) {
             CharacterClass currentClass = JsonUtility.FromJson<CharacterClass>(System.IO.File.ReadAllText(classes[i]));
             //currentClass.ConstructData();
             classesDictionary.Add(currentClass.className, currentClass);
+            allClasses.Add(currentClass);
             //if(currentClass.identifier == "Normal") {
             //    normalClasses.Add(currentClass.className, currentClass);
             //    //if (!identifierClasses.ContainsKey(currentClass.identifier)) {
@@ -96,7 +120,7 @@ public class CharacterClassManager : MonoBehaviour {
             }
             identifierClasses["All"].Add(currentClass);
 
-            if (!currentClass.isNonCombatant && currentClass.identifier == "Normal") {
+            if (currentClass.IsCombatant() && currentClass.identifier == "Normal") {
                 normalCombatantClasses.Add(currentClass);
             }
         }
@@ -126,42 +150,30 @@ public class CharacterClassManager : MonoBehaviour {
             behaviourComponents.Add(behaviour.GetType(), behaviour);
         }
     }
-    public string RunIdlePlanForCharacter(Character character) {
-        System.Type[] actions = GetIdlePlansForCharacter(character);
-        string log = $"{GameManager.Instance.TodayLogString()}{character.name} Idle Plan Decision Making:";
-        for (int i = 0; i < actions.Length; i++) {
-            System.Type type = actions[i];
-            CharacterBehaviourComponent component = behaviourComponents[type];
-            if (component.IsDisabledFor(character)) {
-                log += $"\nBehaviour Component: {component.ToString()} is disabled for {character.name} skipping it...";
-                continue; //skip component
-            }
-            if (!component.CanDoBehaviour(character)) {
-                log += $"\nBehaviour Component: {component.ToString()} cannot be done by {character.name} skipping it...";
-                continue; //skip component
-            }
-            if (component.TryDoBehaviour(character, ref log)) {
-                component.PostProcessAfterSucessfulDoBehaviour(character);
-                if (!component.WillContinueProcess()) { break; }
-            }
-        }
-        return log;
-    }
-    private System.Type[] GetIdlePlansForCharacter(Character character) {
-        //In getting an idle plan for a character, check for idle plans given by traits, once an idle plan for a trait has bee found, disregard class idle plan and just do the trait idle plan
-        for (int i = 0; i < character.traitContainer.allTraits.Count; i++) {
-            Traits.Trait trait = character.traitContainer.allTraits[i];
-            if (traitIdlePlans.ContainsKey(trait.name)) {
-                return traitIdlePlans[trait.name];
-            }
-        }
-
-        string className = character.characterClass.className;
+    public System.Type[] GetClassBehaviourComponents(string className) {
         if (classIdlePlans.ContainsKey(className)) {
             return classIdlePlans[className];
         } else {
             return classIdlePlans["Default"];
         }
+    }
+    //public System.Type[] GetTraitBehaviourComponents(string traitName) {
+    //    if (traitIdlePlans.ContainsKey(traitName)) {
+    //        return traitIdlePlans[traitName];
+    //    }
+    //    return null;
+    //}
+    public CharacterBehaviourComponent GetCharacterBehaviourComponent(System.Type type) {
+        if (behaviourComponents.ContainsKey(type)) {
+            return behaviourComponents[type];
+        }
+        return null;
+    }
+    public string GetClassBehaviourComponentKey(string className) {
+        if (classIdlePlans.ContainsKey(className)) {
+            return className;
+        }
+        return "Default";
     }
     //private string DefaultClassIdlePlan(Character character) {
     //    string log = "Default Class Idle Plan for " + character.name;
@@ -199,7 +211,7 @@ public class CharacterClassManager : MonoBehaviour {
     //                        //marker.GoTo(gridTile, () => trapStructure.SetStructureAndDuration(structure, GameManager.Instance.GetTicksBasedOnHour(2) + GameManager.Instance.GetTicksBasedOnMinutes(30)));
     //                        return log;
     //                    } else {
-    //                        log += "\n  -No Inn Structure in the settlement";
+    //                        log += "\n  -No Inn Structure in the npcSettlement";
     //                    }
     //                }
     //            } else {
@@ -329,8 +341,8 @@ public class CharacterClassManager : MonoBehaviour {
     //            character.PlanIdle(INTERACTION_TYPE.STAND, character);
     //            //PlanIdleStroll(currentStructure);
     //            return log;
-    //        } else if ((character.currentStructure.structureType == STRUCTURE_TYPE.WORK_AREA || character.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS || character.currentStructure.structureType == STRUCTURE_TYPE.CEMETERY || character.currentStructure.structureType == STRUCTURE_TYPE.CITY_CENTER) && character.specificLocation == character.homeSettlement) {
-    //            log += "\n-" + character.name + " is in the Work Settlement/Wilderness/Cemetery/City Center of home location";
+    //        } else if ((character.currentStructure.structureType == STRUCTURE_TYPE.WORK_AREA || character.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS || character.currentStructure.structureType == STRUCTURE_TYPE.CEMETERY || character.currentStructure.structureType == STRUCTURE_TYPE.CITY_CENTER) && character.specificLocation == character.homeNpcSettlement) {
+    //            log += "\n-" + character.name + " is in the Work NPCSettlement/Wilderness/Cemetery/City Center of home location";
 
     //            log += "\n-If it is Morning or Afternoon, 25% chance to enter Stroll Outside Mode";
     //            TIME_IN_WORDS currentTimeOfDay = GameManager.GetCurrentTimeInWordsOfTick(character);
@@ -417,8 +429,8 @@ public class CharacterClassManager : MonoBehaviour {
     //            log += "\n-100% chance to return home";
     //            character.PlanIdleReturnHome();
     //            return log;
-    //        } else if (character.specificLocation != character.homeSettlement && character.trapStructure.structure == null) {
-    //            log += "\n-" + character.name + " is in another settlement and Base Structure is empty";
+    //        } else if (character.specificLocation != character.homeNpcSettlement && character.trapStructure.structure == null) {
+    //            log += "\n-" + character.name + " is in another npcSettlement and Base Structure is empty";
     //            log += "\n-100% chance to return home";
     //            character.PlanIdleReturnHome();
     //            return log;
@@ -427,12 +439,12 @@ public class CharacterClassManager : MonoBehaviour {
     //        //Unaligned NPC Idle
     //        log += "\n-" + character.name + " has no faction";
     //        if (!character.isAtHomeRegion) {
-    //            log += "\n-" + character.name + " is in another settlement";
+    //            log += "\n-" + character.name + " is in another npcSettlement";
     //            log += "\n-100% chance to return home";
     //            character.PlanIdleReturnHome();
     //            return log;
     //        } else {
-    //            log += "\n-" + character.name + " is in home settlement";
+    //            log += "\n-" + character.name + " is in home npcSettlement";
     //            log += "\n-If it is Morning or Afternoon, 25% chance to play";
     //            TIME_IN_WORDS currentTimeOfDay = GameManager.GetCurrentTimeInWordsOfTick(character);
     //            if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.LUNCH_TIME || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON) {

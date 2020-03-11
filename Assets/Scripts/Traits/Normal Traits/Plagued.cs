@@ -3,83 +3,52 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Traits {
-    public class Plagued : Trait {
+    public class Plagued : Status {
 
         public Character owner { get; private set; } //poi that has the poison
 
-        private float pukeChance;
-        private float septicChance;
+        private float pukeChance = 5f;
+        private float septicChance = 0.5f;
 
         public Plagued() {
             name = "Plagued";
             description = "This character has a terrible disease.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
-            ticksDuration = GameManager.ticksPerDay * 3;
+            ticksDuration = 0;
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CURE_CHARACTER, };
             mutuallyExclusive = new string[] { "Robust" };
+            moodEffect = -4;
+            // moodEffect = -30;
         }
 
         #region Overrides
-        public override void OnAddTrait(ITraitable sourceCharacter) {
-            base.OnAddTrait(sourceCharacter);
-            if (sourceCharacter is Character) {
-                owner = sourceCharacter as Character;
-            }
+        public override void OnAddTrait(ITraitable addedTo) {
+            base.OnAddTrait(addedTo);
+            if (addedTo is Character) {
+                owner = addedTo as Character;
+                owner.needsComponent.AdjustComfortDecreaseRate(10);
+            } 
+            //else if (addedTo is TileObject) {
+            //    ticksDuration = GameManager.Instance.GetTicksBasedOnHour(12);
+            //}
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
+            owner.needsComponent.AdjustComfortDecreaseRate(-10);
             base.OnRemoveTrait(removedFrom, removedBy);
-            owner.ForceCancelAllJobsTargettingThisCharacterExcept(JOB_TYPE.REMOVE_TRAIT, name, removedBy);
         }
-        protected override void OnChangeLevel() {
-            if (level == 1) {
-                pukeChance = 5f;
-                septicChance = 0.5f;
-            } else if (level == 2) {
-                pukeChance = 7f;
-                septicChance = 1f;
-            } else {
-                pukeChance = 9f;
-                septicChance = 1.5f;
-            }
-        }
-        public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
-            if (traitOwner is Character) {
-                Character targetCharacter = traitOwner as Character;
-                if (!targetCharacter.isDead && !targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
-                    GoapPlanJob currentJob = targetCharacter.GetJobTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, name);
-                    if (currentJob == null) {
-                        if (!IsResponsibleForTrait(characterThatWillDoJob) && InteractionManager.Instance.CanCharacterTakeRemoveSpecialIllnessesJob(characterThatWillDoJob, targetCharacter)) {
-                            GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = name, target = GOAP_EFFECT_TARGET.TARGET };
-                            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect, targetCharacter, characterThatWillDoJob);
-                            job.AddOtherData(INTERACTION_TYPE.CRAFT_ITEM, new object[] { SPECIAL_TOKEN.HEALING_POTION });
-                            job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TokenManager.Instance.itemData[SPECIAL_TOKEN.HEALING_POTION].craftCost });
-                            characterThatWillDoJob.jobQueue.AddJobInQueue(job);
-                            return true;
-                        }
-                    }
-                }
-                //    if (!targetCharacter.isDead && !targetCharacter.HasJobTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, name) && !targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL)
-                //        && !IsResponsibleForTrait(characterThatWillDoJob)) {
-                //        if (InteractionManager.Instance.CanCharacterTakeRemoveSpecialIllnessesJob(characterThatWillDoJob, targetCharacter)) {
-                //            GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = name, target = GOAP_EFFECT_TARGET.TARGET };
-                //            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect, targetCharacter, characterThatWillDoJob);
-                //            job.AddOtherData(INTERACTION_TYPE.CRAFT_ITEM, new object[] { SPECIAL_TOKEN.HEALING_POTION });
-                //            job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TokenManager.Instance.itemData[SPECIAL_TOKEN.HEALING_POTION].craftCost });
-                //            characterThatWillDoJob.jobQueue.AddJobInQueue(job);
-                //        } else {
-                //            GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = name, target = GOAP_EFFECT_TARGET.TARGET };
-                //            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect, targetCharacter, characterThatWillDoJob.currentSettlement);
-                //            job.AddOtherData(INTERACTION_TYPE.CRAFT_ITEM, new object[] { SPECIAL_TOKEN.HEALING_POTION });
-                //            job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TokenManager.Instance.itemData[SPECIAL_TOKEN.HEALING_POTION].craftCost });
-                //            job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRemoveSpecialIllnessesJob);
-                //            characterThatWillDoJob.currentSettlement.AddToAvailableJobs(job);
-                //        }
-                //        return true;
-                //    }
-            }
-            return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
-        }
+        // protected override void OnChangeLevel() {
+        //     if (level == 1) {
+        //         pukeChance = 5f;
+        //         septicChance = 0.5f;
+        //     } else if (level == 2) {
+        //         pukeChance = 7f;
+        //         septicChance = 1f;
+        //     } else {
+        //         pukeChance = 9f;
+        //         septicChance = 1.5f;
+        //     }
+        // }
         public override bool PerTickOwnerMovement() {
             //string summary = owner.name + " is rolling for plagued chances....";
             float pukeRoll = Random.Range(0f, 100f);
@@ -87,59 +56,64 @@ namespace Traits {
             bool hasCreatedJob = false;
             if (pukeRoll < pukeChance) {
                 //do puke action
-                if (owner.characterClass.className == "Zombie" || (owner.currentActionNode != null && owner.currentActionNode.action.goapType == INTERACTION_TYPE.PUKE)) {
+                if (owner.characterClass.className == "Zombie"/* || (owner.currentActionNode != null && owner.currentActionNode.action.goapType == INTERACTION_TYPE.PUKE)*/) {
                     return hasCreatedJob;
                 }
-                ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.PUKE], owner, owner, null, 0);
-                GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE, owner, owner);
-                goapPlan.SetDoNotRecalculate(true);
-                job.SetCannotBePushedBack(true);
-                job.SetAssignedPlan(goapPlan);
-                owner.jobQueue.AddJobInQueue(job);
+                //ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.PUKE], owner, owner, null, 0);
+                //GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
                 //GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE, owner, owner);
+                //goapPlan.SetDoNotRecalculate(true);
+                //job.SetCannotBePushedBack(true);
+                //job.SetAssignedPlan(goapPlan);
                 //owner.jobQueue.AddJobInQueue(job);
-                hasCreatedJob = true;
+                ////GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE, owner, owner);
+                ////owner.jobQueue.AddJobInQueue(job);
+
+                return owner.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, owner);
             } else if (septicRoll < septicChance) {
-                if (owner.characterClass.className == "Zombie" || (owner.currentActionNode != null && owner.currentActionNode.action.goapType == INTERACTION_TYPE.SEPTIC_SHOCK)) {
+                if (owner.characterClass.className == "Zombie"/* || (owner.currentActionNode != null && owner.currentActionNode.action.goapType == INTERACTION_TYPE.SEPTIC_SHOCK)*/) {
                     return hasCreatedJob;
                 }
-                ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.SEPTIC_SHOCK], owner, owner, null, 0);
-                GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.SEPTIC_SHOCK, owner, owner);
-                goapPlan.SetDoNotRecalculate(true);
-                job.SetCannotBePushedBack(true);
-                job.SetAssignedPlan(goapPlan);
-                owner.jobQueue.AddJobInQueue(job);
+                //ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.SEPTIC_SHOCK], owner, owner, null, 0);
+                //GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
                 //GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.SEPTIC_SHOCK, owner, owner);
+                //goapPlan.SetDoNotRecalculate(true);
+                //job.SetCannotBePushedBack(true);
+                //job.SetAssignedPlan(goapPlan);
                 //owner.jobQueue.AddJobInQueue(job);
-                hasCreatedJob = true;
+                ////GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.SEPTIC_SHOCK, owner, owner);
+                ////owner.jobQueue.AddJobInQueue(job);
+
+                return owner.interruptComponent.TriggerInterrupt(INTERRUPT.Septic_Shock, owner);
             }
             return hasCreatedJob;
         }
         public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode, ref bool isRemoved) {
             base.ExecuteActionAfterEffects(action, goapNode, ref isRemoved);
-            if (goapNode.action.actionCategory == ACTION_CATEGORY.DIRECT) {
+            if (goapNode.action.actionCategory == ACTION_CATEGORY.DIRECT || goapNode.action.actionCategory == ACTION_CATEGORY.CONSUME) {
                 IPointOfInterest target;
                 IPointOfInterest infector;
-                if (TryGetTargetAndInfector(goapNode, out target, out infector)) { //this is necessary so that this function can determine which of the characters is infecting the other
+                int chance;
+                if (TryGetTargetAndInfectorAndChance(goapNode, out target, out infector, out chance)) { //this is necessary so that this function can determine which of the characters is infecting the other
                     int roll = Random.Range(0, 100);
-                    int chance = GetInfectChanceForAction(action);
                     if (roll < chance) {
                         //target will be infected with plague
-                        if (target.traitContainer.AddTrait(target, "Plagued", infector as Character)) {
-                            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "contracted_plague");
-                            log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                            log.AddToFillers(infector, infector.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                            log.AddLogToInvolvedObjects();
+                        if (target.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+                            (target as Character).interruptComponent.TriggerInterrupt(INTERRUPT.Plagued, target);
+                        } else if (target.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+                            target.traitContainer.AddTrait(target, "Plagued", overrideDuration: GameManager.Instance.GetTicksBasedOnHour(12));
                         }
+                        //else {
+                        //    target.traitContainer.AddTrait(target, "Plagued");
+                        //}
                     }
                 }
             }
         }
         #endregion
 
-        private bool TryGetTargetAndInfector(ActualGoapNode goapNode,  out IPointOfInterest target, out IPointOfInterest infector) {
+        private bool TryGetTargetAndInfectorAndChance(ActualGoapNode goapNode, out IPointOfInterest target, out IPointOfInterest infector, out int chance) {
+            chance = 25;
             if (goapNode.actor == owner) {
                 target = goapNode.poiTarget;
                 infector = goapNode.actor;
@@ -147,21 +121,28 @@ namespace Traits {
                 target = goapNode.actor;
                 infector = goapNode.poiTarget;
             }
+            if(infector.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+                if(goapNode.action.actionCategory == ACTION_CATEGORY.DIRECT) {
+                    chance = 10;
+                } else if (goapNode.action.actionCategory == ACTION_CATEGORY.CONSUME) {
+                    chance = 100;
+                }
+            }
             return true;
         }
 
-        private int GetInfectChanceForAction(INTERACTION_TYPE type) {
-            switch (type) {
-                case INTERACTION_TYPE.CHAT_CHARACTER:
-                    return GetChatInfectChance();
-                case INTERACTION_TYPE.MAKE_LOVE:
-                    return GetMakeLoveInfectChance();
-                case INTERACTION_TYPE.CARRY:
-                    return GetCarryInfectChance();
-                default:
-                    return 0;
-            }
-        }
+        //private int GetInfectChanceForAction(INTERACTION_TYPE type) {
+        //    switch (type) {
+        //        case INTERACTION_TYPE.CHAT_CHARACTER:
+        //            return GetChatInfectChance();
+        //        case INTERACTION_TYPE.MAKE_LOVE:
+        //            return GetMakeLoveInfectChance();
+        //        case INTERACTION_TYPE.CARRY:
+        //            return GetCarryInfectChance();
+        //        default:
+        //            return 0;
+        //    }
+        //}
 
         public int GetChatInfectChance() {
             if (level == 1) {
@@ -173,22 +154,24 @@ namespace Traits {
             }
         }
         public int GetMakeLoveInfectChance() {
-            if (level == 1) {
-                return 50;
-            } else if (level == 2) {
-                return 75;
-            } else {
-                return 100;
-            }
+            return 50;
+            // if (level == 1) {
+            //     return 50;
+            // } else if (level == 2) {
+            //     return 75;
+            // } else {
+            //     return 100;
+            // }
         }
         public int GetCarryInfectChance() {
-            if (level == 1) {
-                return 50;
-            } else if (level == 2) {
-                return 75;
-            } else {
-                return 100;
-            }
+            return 50;
+            // if (level == 1) {
+            //     return 50;
+            // } else if (level == 2) {
+            //     return 75;
+            // } else {
+            //     return 100;
+            // }
         }
     }
 

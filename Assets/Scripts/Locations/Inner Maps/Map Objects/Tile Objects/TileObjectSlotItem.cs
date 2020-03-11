@@ -18,7 +18,7 @@ public class TileObjectSlotItem : MonoBehaviour {
     public void ApplySettings(TileObject parentObj, TileObjectSlotSetting settings) {
         this.parentObj = parentObj;
         this.settings = settings;
-        this.name = parentObj.ToString() + " - " + settings.slotName;
+        this.name = $"{parentObj} - {settings.slotName}";
         slotVisual.sprite = settings.slotAsset;
         slotVisual.sortingOrder = InnerMapManager.DetailsTilemapSortingOrder - 1;
         transform.localRotation = Quaternion.Euler(settings.assetRotation);

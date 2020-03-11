@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Ruinarch;
 using UnityEngine.EventSystems;
 using TMPro;
 using UnityEngine.Events;
@@ -75,13 +76,15 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
                 } else if (linkText.Contains("_hextile")) {
                     HexTile tile = GridMap.Instance.allTiles[idToUse];
                     obj = tile;
-                } else if (linkText.Contains("_combat")) {
-                    if (UIManager.Instance.characterInfoUI.activeCharacter != null) {
-                        if (UIManager.Instance.characterInfoUI.activeCharacter.combatHistory.ContainsKey(idToUse)) {
-                            UIManager.Instance.ShowCombatLog(UIManager.Instance.characterInfoUI.activeCharacter.combatHistory[idToUse]);
-                        }
-                    }
-                } else {
+                } 
+                // else if (linkText.Contains("_combat")) {
+                //     if (UIManager.Instance.characterInfoUI.activeCharacter != null) {
+                //         if (UIManager.Instance.characterInfoUI.activeCharacter.combatHistory.ContainsKey(idToUse)) {
+                //             UIManager.Instance.ShowCombatLog(UIManager.Instance.characterInfoUI.activeCharacter.combatHistory[idToUse]);
+                //         }
+                //     }
+                // } 
+                else {
                     obj = linkInfo.GetLinkID();
                 }
             } else if (logItem.log != null) {
@@ -102,15 +105,17 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
             } else {
                 if (obj is Character) {
                     UIManager.Instance.ShowCharacterInfo(obj as Character, true);
-                } else if (obj is Settlement) {
-                    UIManager.Instance.ShowRegionInfo((obj as Settlement).region);
+                } else if (obj is NPCSettlement) {
+                    UIManager.Instance.ShowRegionInfo((obj as NPCSettlement).region);
                 } else if (obj is Faction) {
                     UIManager.Instance.ShowFactionInfo((obj as Faction));
                 } else if (obj is Minion) {
                     UIManager.Instance.ShowCharacterInfo((obj as Minion).character, true);
-                } else if (obj is Combat) {
-                    UIManager.Instance.ShowCombatLog(obj as Combat);
-                } else if (obj is Party) {
+                } 
+                //else if (obj is Combat) {
+                //    UIManager.Instance.ShowCombatLog(obj as Combat);
+                //} 
+                else if (obj is Party) {
                     Party party = obj as Party;
                     UIManager.Instance.ShowCharacterInfo(party.owner, true);
                 } else if (obj is IPointOfInterest) {
@@ -224,16 +229,16 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
         }
     }
     private void HighlightLink(TMP_LinkInfo linkInfo) {
-        string oldText = "<link=" + '"' + linkInfo.GetLinkID().ToString() + '"' + ">" + linkInfo.GetLinkText().ToString() + "</link>";
-        string newText = "<u>" + oldText + "</u>";
+        string oldText = $"<link={'"'}{linkInfo.GetLinkID()}{'"'}>{linkInfo.GetLinkText()}</link>";
+        string newText = $"<u>{oldText}</u>";
         text.text = text.text.Replace(oldText, newText);
-        CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Link);
+        InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Link);
     }
     private void UnhighlightLink(TMP_LinkInfo linkInfo) {
-        string oldText = "<link=" + '"' + linkInfo.GetLinkID().ToString() + '"' + ">" + linkInfo.GetLinkText().ToString() + "</link>";
-        string newText = "<u>" + oldText + "</u>";
+        string oldText = $"<link={'"'}{linkInfo.GetLinkID()}{'"'}>{linkInfo.GetLinkText()}</link>";
+        string newText = $"<u>{oldText}</u>";
         text.text = text.text.Replace(newText, oldText);
-        CursorManager.Instance.RevertToPreviousCursor();
+        InputManager.Instance.RevertToPreviousCursor();
     }
     public void HoverOutAction() {
         //if (hoverOutAction == null) {

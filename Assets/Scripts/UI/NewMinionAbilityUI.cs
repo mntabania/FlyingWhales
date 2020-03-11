@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 
-public class NewMinionAbilityUI : MonoBehaviour {
+public class NewMinionAbilityUI : PopupMenuBase {
 
     [Header("Object To Add")]
     [SerializeField] private Image otaImage;
@@ -32,12 +32,12 @@ public class NewMinionAbilityUI : MonoBehaviour {
             UIManager.Instance.Pause();
             UIManager.Instance.SetSpeedTogglesState(false);
         }
-        Utilities.DestroyChildren(choicesParent);
+        UtilityScripts.Utilities.DestroyChildren(choicesParent);
         string identifier = string.Empty;
         if (objectToAdd is CombatAbility) {
             titleText.text = "New Combat Ability";
             identifier = "combat";
-        }else if(objectToAdd is PlayerJobAction) {
+        }else if(objectToAdd is PlayerSpell) {
             titleText.text = "New Spell";
             identifier = "intervention";
         }
@@ -50,31 +50,31 @@ public class NewMinionAbilityUI : MonoBehaviour {
             item.SetMinion(currMinion, identifier);
         }
         addBtn.interactable = false;
-        this.gameObject.SetActive(true);
+        base.Open();
     }
 
     private void UpdateObjectToAdd(object obj) {
         objToAdd = obj;
-        if (obj is PlayerJobAction) {
-            PlayerJobAction action = obj as PlayerJobAction;
+        if (obj is PlayerSpell) {
+            PlayerSpell action = obj as PlayerSpell;
             string text = action.name;
-            text += "\nLevel: " + action.level;
-            text += "\nDescription: " + action.description;
+            text += $"\nLevel: {action.level}";
+            text += $"\nDescription: {action.description}";
             otaText.text = text;
             otaImage.sprite = PlayerManager.Instance.GetJobActionSprite(action.name);
         } else if (obj is CombatAbility) {
             CombatAbility ability = obj as CombatAbility;
             string text = ability.name;
-            text += "\nLevel: " + ability.lvl;
-            text += "\nDescription: " + ability.description;
+            text += $"\nLevel: {ability.lvl}";
+            text += $"\nDescription: {ability.description}";
             otaText.text = text;
             otaImage.sprite = PlayerManager.Instance.GetCombatAbilitySprite(ability.name);
         }
     }
 
 
-    private void Close() {
-        this.gameObject.SetActive(false);
+    public override void Close() {
+        base.Close();
         if (!PlayerUI.Instance.TryShowPendingUI()) {
             UIManager.Instance.ResumeLastProgressionSpeed(); //if no other UI was shown, unpause game
         }

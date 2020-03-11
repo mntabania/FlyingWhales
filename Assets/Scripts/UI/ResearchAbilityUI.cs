@@ -4,7 +4,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
-public class ResearchAbilityUI : MonoBehaviour {
+public class ResearchAbilityUI : PopupMenuBase {
     [Header("General")]
     public Button okBtn;
     public ToggleGroup toggleGroup;
@@ -43,32 +43,32 @@ public class ResearchAbilityUI : MonoBehaviour {
         ability3Toggle.isOn = false;
         okBtn.interactable = false;
 
-        gameObject.SetActive(true);
+        base.Open();
     }
-    public void SetAbility1(INTERVENTION_ABILITY ability) {
+    public void SetAbility1(SPELL_TYPE ability) {
         //ability1 = ability;
-        string name = Utilities.NormalizeStringUpperCaseFirstLetters(ability.ToString());
+        string name = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(ability.ToString());
         ability1Icon.sprite = PlayerManager.Instance.GetJobActionSprite(name);
         string text = name;
-        text += "\n" + PlayerManager.Instance.allInterventionAbilitiesData[ability].description;
+        text += $"\n{PlayerManager.Instance.allSpellsData[ability].description}";
         //text += "\nTier: " + PlayerManager.Instance.GetInterventionAbilityTier(ability);
         ability1Text.text = text;
     }
-    public void SetAbility2(INTERVENTION_ABILITY ability) {
+    public void SetAbility2(SPELL_TYPE ability) {
         //ability2 = ability;
-        string name = Utilities.NormalizeStringUpperCaseFirstLetters(ability.ToString());
+        string name = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(ability.ToString());
         ability2Icon.sprite = PlayerManager.Instance.GetJobActionSprite(name);
         string text = name;
-        text += "\n" + PlayerManager.Instance.allInterventionAbilitiesData[ability].description;
+        text += $"\n{PlayerManager.Instance.allSpellsData[ability].description}";
         //text += "\nTier: " + PlayerManager.Instance.GetInterventionAbilityTier(ability);
         ability2Text.text = text;
     }
-    public void SetAbility3(INTERVENTION_ABILITY ability) {
+    public void SetAbility3(SPELL_TYPE ability) {
         //ability3 = ability;
-        string name = Utilities.NormalizeStringUpperCaseFirstLetters(ability.ToString());
+        string name = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(ability.ToString());
         ability3Icon.sprite = PlayerManager.Instance.GetJobActionSprite(name);
         string text = name;
-        text += "\n" + PlayerManager.Instance.allInterventionAbilitiesData[ability].description;
+        text += $"\n{PlayerManager.Instance.allSpellsData[ability].description}";
         //text += "\nTier: " + PlayerManager.Instance.GetInterventionAbilityTier(ability);
         ability3Text.text = text;
     }
@@ -88,8 +88,8 @@ public class ResearchAbilityUI : MonoBehaviour {
         //chosenAbility = ability3;
         okBtn.interactable = true;
     }
-    public void OnClickOk() {
-        gameObject.SetActive(false);
+    public override void Close() {
+        base.Close();
         if (!PlayerUI.Instance.TryShowPendingUI()) {
             //if (PlayerManager.Instance.player.isNotFirstResearch) {
             UIManager.Instance.ResumeLastProgressionSpeed(); //if no other UI was shown, unpause game

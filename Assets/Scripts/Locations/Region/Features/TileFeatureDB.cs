@@ -14,4 +14,6 @@ public static class TileFeatureDB {
     public static string Game_Feature = "GameFeature";
     public static string Summons_Feature = "SummonsFeature";
     public static string Inhabited_Feature = "InhabitedFeature";
+    public static string Blizzard_Feature = "BlizzardFeature";
+    public static string Rain_Feature = "RainFeature";
 }

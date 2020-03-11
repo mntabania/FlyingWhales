@@ -27,9 +27,9 @@ public struct SaveDataLogFiller {
             if(filler.obj is Character) {
                 objID = (filler.obj as Character).id;
                 objIdentifier = "character";
-            }else if (filler.obj is Settlement) {
-                objID = (filler.obj as Settlement).id;
-                objIdentifier = "settlement";
+            }else if (filler.obj is NPCSettlement) {
+                objID = (filler.obj as NPCSettlement).id;
+                objIdentifier = "npcSettlement";
             } else if (filler.obj is Region) {
                 objID = (filler.obj as Region).id;
                 objIdentifier = "region";
@@ -39,13 +39,16 @@ public struct SaveDataLogFiller {
             } else if (filler.obj is Faction) {
                 objID = (filler.obj as Faction).id;
                 objIdentifier = "faction";
-            } else if (filler.obj is SpecialToken) {
-                objID = (filler.obj as SpecialToken).id;
-                objIdentifier = "item";
-            } else if (filler.obj is SpecialObject) {
-                objID = (filler.obj as SpecialObject).id;
-                objIdentifier = "special object";
-            } else if (filler.obj is TileObject) {
+            } 
+            // else if (filler.obj is SpecialToken) {
+            //     objID = (filler.obj as SpecialToken).id;
+            //     objIdentifier = "item";
+            // }
+            // else if (filler.obj is SpecialObject) {
+            //     objID = (filler.obj as SpecialObject).id;
+            //     objIdentifier = "special object";
+            // } 
+            else if (filler.obj is TileObject) {
                 objID = (filler.obj as TileObject).id;
                 objIdentifier = "tile object";
                 objTileObjectType = (filler.obj as TileObject).tileObjectType;
@@ -69,7 +72,7 @@ public struct SaveDataLogFiller {
             LogFiller tempFiller = filler;
             if (objIdentifier == "character") {
                 tempFiller.obj = CharacterManager.Instance.GetCharacterByID(objID);
-            } else if (objIdentifier == "settlement") {
+            } else if (objIdentifier == "npcSettlement") {
                 tempFiller.obj = LandmarkManager.Instance.GetAreaByID(objID);
             } else if (objIdentifier == "region") {
                 tempFiller.obj = GridMap.Instance.GetRegionByID(objID);
@@ -77,11 +80,13 @@ public struct SaveDataLogFiller {
                 tempFiller.obj = LandmarkManager.Instance.GetLandmarkByID(objID);
             } else if (objIdentifier == "faction") {
                 tempFiller.obj = FactionManager.Instance.GetFactionBasedOnID(objID);
-            } else if (objIdentifier == "item") {
-                tempFiller.obj = TokenManager.Instance.GetSpecialTokenByID(objID);
-            } else if (objIdentifier == "special object") {
-                tempFiller.obj = TokenManager.Instance.GetSpecialObjectByID(objID);
-            } else if (objIdentifier == "tile object") {
+            } 
+            // else if (objIdentifier == "item") {
+            //     tempFiller.obj = TokenManager.Instance.GetSpecialTokenByID(objID);
+            // } else if (objIdentifier == "special object") {
+            //     tempFiller.obj = TokenManager.Instance.GetSpecialObjectByID(objID);
+            // }
+            else if (objIdentifier == "tile object") {
                 tempFiller.obj = InnerMapManager.Instance.GetTileObject(objTileObjectType, objID);
             }
             filler = tempFiller;

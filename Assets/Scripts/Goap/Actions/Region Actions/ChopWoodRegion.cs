@@ -5,7 +5,7 @@ public class ChopWoodRegion : GoapAction {
     
     public ChopWoodRegion() : base(INTERACTION_TYPE.CHOP_WOOD_REGION) {
         actionIconString = GoapActionStateDB.Work_Icon;
-        isNotificationAnIntel = false;
+        
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
@@ -19,7 +19,7 @@ public class ChopWoodRegion : GoapAction {
         base.Perform(goapNode);
         SetState("Chop Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 25;
     }
     #endregion

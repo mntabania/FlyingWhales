@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class LevelUpUI : MonoBehaviour {
+public class LevelUpUI : PopupMenuBase {
 
     [Header("Minion")]
     [SerializeField] private CharacterPortrait minionPortrait;
@@ -37,7 +37,7 @@ public class LevelUpUI : MonoBehaviour {
             UIManager.Instance.Pause();
             UIManager.Instance.SetSpeedTogglesState(false);
         }
-        Utilities.DestroyChildren(choicesParent);
+        UtilityScripts.Utilities.DestroyChildren(choicesParent);
         UpdateMinionToLevelUp(minionToLevelUp, identifierToLevelUp);
 
         List<object> choices = new List<object>();
@@ -52,12 +52,12 @@ public class LevelUpUI : MonoBehaviour {
          //    }
          //} 
          else if (identifierToLevelUp.ToLower() == "summon_slot") {
-            for (int i = 0; i < PlayerManager.Instance.player.summonSlots.Count; i++) {
-                choices.Add(PlayerManager.Instance.player.summonSlots[i]);
+            for (int i = 0; i < PlayerManager.Instance.player.summons.Count; i++) {
+                choices.Add(PlayerManager.Instance.player.summons[i]);
             }
         } else if (identifierToLevelUp.ToLower() == "artifact_slot") {
-            for (int i = 0; i < PlayerManager.Instance.player.artifactSlots.Count; i++) {
-                choices.Add(PlayerManager.Instance.player.artifactSlots[i]);
+            for (int i = 0; i < PlayerManager.Instance.player.artifacts.Count; i++) {
+                choices.Add(PlayerManager.Instance.player.artifacts[i]);
             }
         }
         for (int i = 0; i < choices.Count; i++) {
@@ -68,7 +68,7 @@ public class LevelUpUI : MonoBehaviour {
             item.SetObject(currItem, OnSelectChoice);
         }
         levelUpBtn.interactable = false;
-        this.gameObject.SetActive(true);
+        base.Open();
     }
 
     private void UpdateMinionToLevelUp(Minion minion, string identifierToLevelUp) {
@@ -79,7 +79,7 @@ public class LevelUpUI : MonoBehaviour {
             minionToLevelUp = minion;
             minionPortrait.GeneratePortrait(minionToLevelUp.character);
             string text = minionToLevelUp.character.name;
-            text += "\nLvl. " + minionToLevelUp.character.level + " " + minionToLevelUp.character.raceClassName;
+            text += $"\nLvl. {minionToLevelUp.character.level} {minionToLevelUp.character.raceClassName}";
             minionText.text = text;
             minionPortrait.gameObject.SetActive(true);
             minionText.gameObject.SetActive(true);
@@ -98,8 +98,8 @@ public class LevelUpUI : MonoBehaviour {
     }
 
 
-    private void Close() {
-        this.gameObject.SetActive(false);
+    public override void Close() {
+        base.Close();
         if (!PlayerUI.Instance.TryShowPendingUI()) {
             UIManager.Instance.ResumeLastProgressionSpeed(); //if no other UI was shown, unpause game
         }
@@ -115,8 +115,8 @@ public class LevelUpUI : MonoBehaviour {
         if(selectedObj != null) {
             if (selectedObj is CombatAbility) {
                 (selectedObj as CombatAbility).LevelUp();
-            } else if (selectedObj is PlayerJobAction) {
-                (selectedObj as PlayerJobAction).LevelUp();
+            } else if (selectedObj is PlayerSpell) {
+                (selectedObj as PlayerSpell).LevelUp();
             } else if (selectedObj is SummonSlot) {
                 SummonSlot summonSlot = selectedObj as SummonSlot;
                 //if (summonSlot.isLocked) {

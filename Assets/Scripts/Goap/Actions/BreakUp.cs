@@ -10,7 +10,7 @@ public class BreakUp : GoapAction {
     public BreakUp() : base(INTERACTION_TYPE.BREAK_UP) {
         actionIconString = GoapActionStateDB.Social_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
     }
 
     #region Overrides
@@ -26,7 +26,7 @@ public class BreakUp : GoapAction {
         base.Perform(goapNode);
         SetState("Break Up Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 1;
     }
     #endregion
@@ -34,18 +34,19 @@ public class BreakUp : GoapAction {
     #region Effects
     public void PreBreakUpSuccess(ActualGoapNode goapNode) {
         Character target = goapNode.poiTarget as Character;
-        if (goapNode.actor.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TYPE.LOVER)) {
+        if (goapNode.actor.relationshipContainer.HasRelationshipWith(target, RELATIONSHIP_TYPE.LOVER)) {
             //**Effect 1**: Actor - Remove Lover relationship with Character 2
             RelationshipManager.Instance.RemoveRelationshipBetween(goapNode.actor, target, RELATIONSHIP_TYPE.LOVER);
             //if the relationship that was removed is lover, change home to a random unoccupied dwelling,
             //otherwise, no home. Reference: https://trello.com/c/JUSt9bEa/1938-broken-up-characters-should-live-in-separate-house
             goapNode.actor.MigrateHomeStructureTo(null);
-            if(goapNode.actor.currentSettlement != null) {
-                goapNode.actor.currentSettlement.AssignCharacterToDwellingInArea(goapNode.actor);
-            }
+            goapNode.actor.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, goapNode.actor);
+            //if (goapNode.actor.currentRegion.area != null) {
+            //    goapNode.actor.currentRegion.area.AssignCharacterToDwellingInArea(goapNode.actor);
+            //}
         } else {
             //**Effect 2**: Actor - Remove Paramour relationship with Character 2
-            RelationshipManager.Instance.RemoveRelationshipBetween(goapNode.actor, target, RELATIONSHIP_TYPE.PARAMOUR);
+            RelationshipManager.Instance.RemoveRelationshipBetween(goapNode.actor, target, RELATIONSHIP_TYPE.AFFAIR);
         }
         //**Effect 3**: Target gains Heartbroken trait
         goapNode.poiTarget.traitContainer.AddTrait(target, "Heartbroken", goapNode.actor);
@@ -64,13 +65,13 @@ public class BreakUp : GoapAction {
             if (target == actor) {
                 return false;
             }
-            if (target.currentAlterEgoName != CharacterManager.Original_Alter_Ego) {
+            //if (target.currentAlterEgoName != CharacterManager.Original_Alter_Ego) {
+            //    return false;
+            //}
+            if (!target.canPerform) { //target.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
                 return false;
             }
-            if (target.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
-                return false;
-            }
-            if (!actor.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TYPE.LOVER) && !actor.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TYPE.PARAMOUR)) {
+            if (!actor.relationshipContainer.HasRelationshipWith(target, RELATIONSHIP_TYPE.LOVER) && !actor.relationshipContainer.HasRelationshipWith(target, RELATIONSHIP_TYPE.AFFAIR)) {
                 return false; //**Advertised To**: All characters with Lover or Paramour relationship with the character
             }
             return target.IsInOwnParty();
@@ -83,8 +84,8 @@ public class BreakUp : GoapAction {
     //private List<string> BreakupSuccessIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
     //    List<string> reactions = new List<string>();
     //    Character targetCharacter = poiTarget as Character;
-    //    bool isRecipientLoverOrParamourOfActor = actor.relationshipContainer.HasRelationshipWith(recipient.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER) || actor.relationshipContainer.HasRelationshipWith(recipient.currentAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR);
-    //    bool isRecipientLoverOrParamourOfTarget = targetCharacter.relationshipContainer.HasRelationshipWith(recipient.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER) || targetCharacter.relationshipContainer.HasRelationshipWith(recipient.currentAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR);
+    //    bool isRecipientLoverOrParamourOfActor = actor.relationshipContainer.HasRelationshipWith(recipient.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER) || actor.relationshipContainer.HasRelationshipWith(recipient.currentAlterEgo, RELATIONSHIP_TRAIT.AFFAIR);
+    //    bool isRecipientLoverOrParamourOfTarget = targetCharacter.relationshipContainer.HasRelationshipWith(recipient.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER) || targetCharacter.relationshipContainer.HasRelationshipWith(recipient.currentAlterEgo, RELATIONSHIP_TRAIT.AFFAIR);
 
     //    bool isRecipientInLoveWithActor = recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER);
     //    bool isRecipientInLoveWithTarget = recipient.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER);
@@ -158,7 +159,7 @@ public class BreakUp : GoapAction {
 
 public class BreakUpData : GoapActionData {
     public BreakUpData() : base(INTERACTION_TYPE.BREAK_UP) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
         requirementAction = Requirement;
     }
 
@@ -170,13 +171,13 @@ public class BreakUpData : GoapActionData {
         if (target == actor) {
             return false;
         }
-        if (target.currentAlterEgoName != CharacterManager.Original_Alter_Ego) {
+        //if (target.currentAlterEgoName != CharacterManager.Original_Alter_Ego) {
+        //    return false;
+        //}
+        if (!target.canPerform) { //target.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
             return false;
         }
-        if (target.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
-            return false;
-        }
-        if (!actor.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TYPE.LOVER) && !actor.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TYPE.PARAMOUR)) {
+        if (!actor.relationshipContainer.HasRelationshipWith(target, RELATIONSHIP_TYPE.LOVER) && !actor.relationshipContainer.HasRelationshipWith(target, RELATIONSHIP_TYPE.AFFAIR)) {
             return false; //**Advertised To**: All characters with Lover or Paramour relationship with the character
         }
         return target.IsInOwnParty();

@@ -2,12 +2,11 @@
 
 public class Bandages : TileObject {
     public Bandages() {
-        advertisedActions = new List<INTERACTION_TYPE>();
         Initialize(TILE_OBJECT_TYPE.BANDAGES);
-        RemoveCommonAdvertisments();
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
     }
     public Bandages(SaveDataTileObject data) {
-        advertisedActions = new List<INTERACTION_TYPE>();
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
         Initialize(data);
     }
 }

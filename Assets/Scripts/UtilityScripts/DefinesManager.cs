@@ -22,21 +22,21 @@ public class DefinesManager : MonoBehaviour {
             if (activeScene.Equals("Main")) {
                 for (int i = 0; i < mainSceneDefines.Length; i++) {
                     string currDefine = mainSceneDefines[i];
-                    defines += currDefine + ";";
+                    defines += $"{currDefine};";
                 }
             } else if (activeScene.Equals("WorldCreationTool")) {
                 for (int i = 0; i < worldCreationDefines.Length; i++) {
                     string currDefine = worldCreationDefines[i];
-                    defines += currDefine + ";";
+                    defines += $"{currDefine};";
                 }
             } else if (activeScene.Equals("MainMenu")) {
                 for (int i = 0; i < mainMenuSceneDefines.Length; i++) {
                     string currDefine = mainMenuSceneDefines[i];
-                    defines += currDefine + ";";
+                    defines += $"{currDefine};";
                 }
             }
             PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.Standalone, defines);
-            Debug.Log("Set Defines to: " + defines);
+            Debug.Log($"Set Defines to: {defines}");
         }
     }
 #endif

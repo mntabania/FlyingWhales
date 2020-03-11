@@ -16,7 +16,7 @@ public class BuildingSpotDataMonobehaviour : MonoBehaviour {
     private void Update() {
         id = transform.GetSiblingIndex();
         idText.text = id.ToString();
-        string summary = id + " - " + this.transform.localPosition.ToString();
+        string summary = $"{id} - {this.transform.localPosition}";
         this.name = summary;
     }
 

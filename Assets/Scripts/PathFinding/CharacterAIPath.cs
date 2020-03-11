@@ -55,7 +55,9 @@ public class CharacterAIPath : AILerp {
             return;
         }
         if (newPath.CompleteState == PathCompleteState.Error) {
-            Debug.LogWarning(marker.character.name + " path request returned a path with errors! Arrival action is: " + marker.arrivalAction?.Method.Name ?? "None" + "Destination is " + destination.ToString());
+            Debug.LogWarning(
+                $"{marker.character.name} path request returned a path with errors! Arrival action is: {marker.arrivalAction?.Method.Name}" ??
+                $"NoneDestination is {destination}");
         }
         if (newPath is FleeMultiplePath) {
             currentPath = newPath;
@@ -63,8 +65,6 @@ public class CharacterAIPath : AILerp {
         } else {
             currentPath = newPath as CustomABPath;
             if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == marker.character && currentPath.traversalProvider != null) { //&& marker.terrifyingCharacters.Count > 0
-                string costLog = "PATH FOR " + marker.character.name;
-                uint totalCost = 0;
                 for (int i = 0; i < currentPath.path.Count; i++) {
                     Vector3 nodePos = (Vector3)currentPath.path[i].position;
                     uint currentCost = currentPath.traversalProvider.GetTraversalCost(newPath, currentPath.path[i]);
@@ -73,16 +73,7 @@ public class CharacterAIPath : AILerp {
                     //float distSqr = dx * dx + dz * dz;
                     //costLog += "\n-> " + nodePos + "(" + currentCost + ")" + "[" + distSqr + "]";
                     Vector3 newNodePos = new Vector3((Mathf.Floor(nodePos.x)) + 0.5f, (Mathf.Floor(nodePos.y)) + 0.5f, Mathf.Floor(nodePos.z));
-                    costLog += "\n-> " + newNodePos + "(" + currentCost + ")";
-                    totalCost += currentCost;
                 }
-                costLog += "\nTOTAL COST: " + totalCost;
-
-                costLog += "\n\nVECTOR PATH";
-                for (int i = 0; i < currentPath.vectorPath.Count; i++) {
-                    costLog += "\n-> " + currentPath.vectorPath[i] + "(" + GetNodePenalty(currentPath.vectorPath[i]) + GetNodePenaltyForStructures(currentPath, currentPath.vectorPath[i]) + ")";
-                }
-                //Debug.LogWarning(costLog);
             }
         }
         base.OnPathComplete(newPath);
@@ -95,7 +86,7 @@ public class CharacterAIPath : AILerp {
         if (onSearchPath != null) onSearchPath();
 
         lastRepath = Time.time;
-
+    
         // This is where the path should start to search from
         var currentPosition = GetFeetPosition();
 
@@ -112,28 +103,28 @@ public class CharacterAIPath : AILerp {
 
         canSearchAgain = false;
 
-        for (int i = 0; i < marker.terrifyingObjects.Count; i++) {
-            IPointOfInterest poi = marker.terrifyingObjects[i];
-            if (poi is Character) {
-                Character currCharacter = poi as Character;
-                if (!currCharacter.isDead && currCharacter.marker != null) {
-                    currCharacter.marker.UpdateCenteredWorldPos();
-                }
-            }
-        }
-        if (marker.character != null && marker.character.currentActionNode != null && marker.character.currentSettlement != null) {//&& marker.character.currentActionNode.willAvoidCharactersWhileMoving
-            for (int i = 0; i < marker.character.currentRegion.charactersAtLocation.Count; i++) {
-                Character terrifyingCharacter = marker.character.currentRegion.charactersAtLocation[i];
-                if(terrifyingCharacter.marker != null) {
-                    terrifyingCharacter.marker.UpdateCenteredWorldPos();
-                }
-            }
-        }
+        // for (int i = 0; i < marker.terrifyingObjects.Count; i++) {
+        //     IPointOfInterest poi = marker.terrifyingObjects[i];
+        //     if (poi is Character) {
+        //         Character currCharacter = poi as Character;
+        //         if (!currCharacter.isDead && currCharacter.marker) {
+        //             currCharacter.marker.UpdateCenteredWorldPos();
+        //         }
+        //     }
+        // }
+        // if (marker.character != null && marker.character.currentActionNode != null && marker.character.currentNpcSettlement != null) {//&& marker.character.currentActionNode.willAvoidCharactersWhileMoving
+        //     for (int i = 0; i < marker.character.currentRegion.charactersAtLocation.Count; i++) {
+        //         Character terrifyingCharacter = marker.character.currentRegion.charactersAtLocation[i];
+        //         if(terrifyingCharacter.marker) {
+        //             terrifyingCharacter.marker.UpdateCenteredWorldPos();
+        //         }
+        //     }
+        // }
 
         // Alternative way of requesting the path
         CustomABPath p = CustomABPath.Construct(currentPosition, destination, null);
         p.traversalProvider = blockerTraversalProvider;
-        p.SetArea(marker.character.currentSettlement);
+        p.SetRegion(marker.character.currentRegion);
         p.SetNotAllowedStructures(notAllowedStructures);
         p.SetOnlyAllowedStructures(onlyAllowedStructures);
         seeker.StartPath(p);
@@ -199,35 +190,35 @@ public class CharacterAIPath : AILerp {
         this.notAllowedStructures = notAllowedStructures;
     }
     public bool IsNodeWalkable(Vector3 nodePos) {
-        if (marker.terrifyingObjects.Count > 0) {
-            for (int i = 0; i < marker.terrifyingObjects.Count; i++) {
-                IPointOfInterest currPOI = marker.terrifyingObjects.ElementAtOrDefault(i);
-                if (currPOI is Character) {
-                    Character terrifyingCharacter = currPOI as Character;
-                    if (terrifyingCharacter.currentParty.icon.isTravelling && terrifyingCharacter.currentParty.icon.travelLine != null && marker.character.currentStructure != terrifyingCharacter.currentStructure) {
-                        continue;
-                    }
-                    if (!terrifyingCharacter.isDead) {
-                        //float dx = (terrifyingCharacter.marker.character.gridTileLocation.centeredWorldLocation.x - nodePos.x);
-                        //float dz = (terrifyingCharacter.marker.character.gridTileLocation.centeredWorldLocation.y - nodePos.y);
-                        //float distSqr = dx * dx + dz * dz;
-                        //if (distSqr <= marker.penaltyRadius) {
-                        //    return false;
-                        //}
-                        Vector3 newNodePos = new Vector3((Mathf.Floor(nodePos.x)) + 0.5f, (Mathf.Floor(nodePos.y)) + 0.5f, Mathf.Floor(nodePos.z));
-                        if (Vector3.Distance(newNodePos, terrifyingCharacter.marker.character.gridTileLocation.centeredWorldLocation) <= marker.penaltyRadius) {
-                            return false;
-                        }
-                    }
-                } else {
-                    Vector3 newNodePos = new Vector3((Mathf.Floor(nodePos.x)) + 0.5f, (Mathf.Floor(nodePos.y)) + 0.5f, Mathf.Floor(nodePos.z));
-                    if (Vector3.Distance(newNodePos, currPOI.gridTileLocation.centeredWorldLocation) <= marker.penaltyRadius) {
-                        return false;
-                    }
-                }
+        //if (marker.terrifyingObjects.Count > 0) {
+        //    for (int i = 0; i < marker.terrifyingObjects.Count; i++) {
+        //        IPointOfInterest currPOI = marker.terrifyingObjects.ElementAtOrDefault(i);
+        //        if (currPOI is Character) {
+        //            Character terrifyingCharacter = currPOI as Character;
+        //            if (terrifyingCharacter.currentParty.icon.isTravelling && terrifyingCharacter.currentParty.icon.travelLine != null && marker.character.currentStructure != terrifyingCharacter.currentStructure) {
+        //                continue;
+        //            }
+        //            if (!terrifyingCharacter.isDead) {
+        //                //float dx = (terrifyingCharacter.marker.character.gridTileLocation.centeredWorldLocation.x - nodePos.x);
+        //                //float dz = (terrifyingCharacter.marker.character.gridTileLocation.centeredWorldLocation.y - nodePos.y);
+        //                //float distSqr = dx * dx + dz * dz;
+        //                //if (distSqr <= marker.penaltyRadius) {
+        //                //    return false;
+        //                //}
+        //                Vector3 newNodePos = new Vector3((Mathf.Floor(nodePos.x)) + 0.5f, (Mathf.Floor(nodePos.y)) + 0.5f, Mathf.Floor(nodePos.z));
+        //                if (Vector3.Distance(newNodePos, terrifyingCharacter.marker.character.gridTileLocation.centeredWorldLocation) <= marker.penaltyRadius) {
+        //                    return false;
+        //                }
+        //            }
+        //        } else {
+        //            Vector3 newNodePos = new Vector3((Mathf.Floor(nodePos.x)) + 0.5f, (Mathf.Floor(nodePos.y)) + 0.5f, Mathf.Floor(nodePos.z));
+        //            if (Vector3.Distance(newNodePos, currPOI.gridTileLocation.centeredWorldLocation) <= marker.penaltyRadius) {
+        //                return false;
+        //            }
+        //        }
                 
-            }
-        }
+        //    }
+        //}
         return true;
     }
     public uint GetNodePenalty(Vector3 nodePos) {
@@ -237,7 +228,7 @@ public class CharacterAIPath : AILerp {
         //        IPointOfInterest currPOI = marker.terrifyingObjects.ElementAtOrDefault(i);
         //        if (currPOI is Character) {
         //            Character terrifyingCharacter = currPOI as Character;
-        //            if (terrifyingCharacter.marker == null) {
+        //            if (terrifyingCharacter.!marker) {
         //                continue;
         //            }
         //            if (terrifyingCharacter.currentParty == null || terrifyingCharacter.currentParty.icon == null || (terrifyingCharacter.currentParty.icon.isTravelling && terrifyingCharacter.currentParty.icon.travelLine != null && marker.character.currentStructure != terrifyingCharacter.currentStructure)) {
@@ -281,7 +272,7 @@ public class CharacterAIPath : AILerp {
         //if(marker.character != null && marker.character.currentActionNode != null && marker.character.currentActionNode.action.goapType.WillAvoidCharactersWhileMoving()) {
         //    for (int i = 0; i < marker.character.currentRegion.charactersAtLocation.Count; i++) {
         //        Character terrifyingCharacter = marker.character.currentRegion.charactersAtLocation[i];
-        //        if (terrifyingCharacter.marker == null || terrifyingCharacter == marker.character) {
+        //        if (terrifyingCharacter.!marker || terrifyingCharacter == marker.character) {
         //            continue;
         //        }
         //        if (terrifyingCharacter.currentParty == null || terrifyingCharacter.currentParty.icon == null || (terrifyingCharacter.currentParty.icon.isTravelling && terrifyingCharacter.currentParty.icon.travelLine != null && marker.character.currentStructure != terrifyingCharacter.currentStructure)) {
@@ -310,17 +301,17 @@ public class CharacterAIPath : AILerp {
             if (customPath.notAllowedStructures == null && customPath.onlyAllowedStructures == null) {
                 return 0;
             }
-            if (customPath.settlement == null) {
+            if (customPath.region == null) {
                 return 0;
             }
             Vector3 newNodePos = new Vector3(Mathf.Floor(nodePos.x), Mathf.Floor(nodePos.y), Mathf.Floor(nodePos.z));
-            Vector3 localPos = customPath.settlement.innerMap.worldPos - newNodePos;
+            Vector3 localPos = customPath.region.innerMap.worldPos - newNodePos;
             Vector3Int localPlace = new Vector3Int(localPos.x < 0f ? Mathf.FloorToInt(localPos.x) * -1 : Mathf.FloorToInt(localPos.x), localPos.y < 0f ? Mathf.FloorToInt(localPos.y) * -1 : Mathf.FloorToInt(localPos.y), 0);
-            //Vector3Int localPlace = customPath.settlement.areaMap.groundTilemap.WorldToCell(newNodePos);
+            //Vector3Int localPlace = customPath.npcSettlement.areaMap.groundTilemap.WorldToCell(newNodePos);
             LocationGridTile nodeGridTile = null;
-            if (Utilities.IsInRange(localPlace.x, 0, customPath.settlement.innerMap.map.GetUpperBound(0) + 1) &&
-                    Utilities.IsInRange(localPlace.y, 0, customPath.settlement.innerMap.map.GetUpperBound(1) + 1)) {
-                nodeGridTile = customPath.settlement.innerMap.map[localPlace.x, localPlace.y];
+            if (UtilityScripts.Utilities.IsInRange(localPlace.x, 0, customPath.region.innerMap.map.GetUpperBound(0) + 1) &&
+                    UtilityScripts.Utilities.IsInRange(localPlace.y, 0, customPath.region.innerMap.map.GetUpperBound(1) + 1)) {
+                nodeGridTile = customPath.region.innerMap.map[localPlace.x, localPlace.y];
             }
             if (nodeGridTile != null && nodeGridTile.structure != null) {
                 if (customPath.notAllowedStructures != null) {

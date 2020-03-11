@@ -78,11 +78,13 @@ Shader "Custom/HSVRangeShader"
 			   #pragma multi_compile DUMMY PIXELSNAP_ON
 
 			   sampler2D _MainTex;
+			   CBUFFER_START(UnityPerMaterial)
 			   float4 _Color;
 			   float _HSVRangeMin;
 			   float _HSVRangeMax;
 			   float4 _HSVAAdjust;
-
+               CBUFFER_END
+               
 			   struct Vertex
 			   {
 				   float4 vertex : POSITION;

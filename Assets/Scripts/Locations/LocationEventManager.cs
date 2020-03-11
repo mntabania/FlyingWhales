@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class LocationEventManager {
-    public Settlement location { get; private set; }
+    public NPCSettlement location { get; private set; }
 
-    public LocationEventManager(Settlement location) {
+    public LocationEventManager(NPCSettlement location) {
         this.location = location;
-        Messenger.AddListener(Signals.TICK_STARTED, ProcessEvents);
+        // Messenger.AddListener(Signals.TICK_STARTED, ProcessEvents);
     }
 
     private void ProcessEvents() {

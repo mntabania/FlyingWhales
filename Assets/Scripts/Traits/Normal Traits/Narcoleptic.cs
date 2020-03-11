@@ -11,10 +11,7 @@ namespace Traits {
             description = "Narcoleptics may sometimes suddenly fall asleep.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEUTRAL;
-            
-            
-            advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.NARCOLEPTIC_NAP };
-            
+            //advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.NARCOLEPTIC_NAP };
             ticksDuration = 0;
             canBeTriggered = true;
         }
@@ -28,23 +25,25 @@ namespace Traits {
         }
         public override bool PerTickOwnerMovement() {
             int napChance = UnityEngine.Random.Range(0, 100);
-            bool hasCreatedJob = false;
-            if (napChance < 1) {
-                if (owner.currentActionNode == null || (owner.currentActionNode.action.goapType != INTERACTION_TYPE.NARCOLEPTIC_NAP)) {
-                    DoNarcolepticNap();
+            //bool hasCreatedJob = false;
+            if (napChance < 4) {
+                return DoNarcolepticNap();
+                //if (owner.currentActionNode == null || (owner.currentActionNode.action.goapType != INTERACTION_TYPE.NARCOLEPTIC_NAP)) {
+                //    DoNarcolepticNap();
 
-                    hasCreatedJob = true;
-                }
+                //    hasCreatedJob = true;
+                //}
             }
-            return hasCreatedJob;
+            return false;
         }
         public override string TriggerFlaw(Character character) {
             DoNarcolepticNap();
             return base.TriggerFlaw(character);
         }
-        private void DoNarcolepticNap() {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.INTERRUPTION, INTERACTION_TYPE.NARCOLEPTIC_NAP, owner, owner);
-            owner.jobQueue.AddJobInQueue(job);
+        private bool DoNarcolepticNap() {
+            //GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.INTERRUPTION, INTERACTION_TYPE.NARCOLEPTIC_NAP, owner, owner);
+            //owner.jobQueue.AddJobInQueue(job);
+            return owner.interruptComponent.TriggerInterrupt(INTERRUPT.Narcoleptic_Attack, owner);
         }
         #endregion
     }

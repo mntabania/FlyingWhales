@@ -36,10 +36,10 @@ public class FearSpellAbility : CombatAbility {
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         if (targetPOI is Character) {
             Character character = targetPOI as Character;
-            Spooked spooked = character.traitContainer.GetNormalTrait<Trait>("Spooked") as Spooked;
+            Spooked spooked = character.traitContainer.GetNormalTrait<Spooked>("Spooked");
             if(spooked == null) {
                 Spooked newTrait = new Spooked();
-                newTrait.OverrideDuration(GameManager.Instance.GetTicksBasedOnMinutes(_fearDurationInMinutes));
+                //newTrait.OverrideDuration(GameManager.Instance.GetTicksBasedOnMinutes(_fearDurationInMinutes));
                 character.traitContainer.AddTrait(character, newTrait);
             }
         }

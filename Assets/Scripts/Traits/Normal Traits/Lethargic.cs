@@ -3,17 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Traits {
-    public class Lethargic : Trait {
+    public class Lethargic : Status {
         public Lethargic() {
             name = "Lethargic";
             description = "This character is feeling sluggish and apathetic.";
-            thoughtText = "[Character] lost a lot of blood.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
-            
-            
-            
-            ticksDuration = GameManager.ticksPerDay;
+            ticksDuration = GameManager.Instance.GetTicksBasedOnHour(12);
+            moodEffect = -4;
             //effects = new List<TraitEffect>();
             //advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.TRANSFORM_TO_WOLF, INTERACTION_TYPE.REVERT_TO_NORMAL };
         }

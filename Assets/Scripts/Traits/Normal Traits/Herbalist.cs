@@ -10,7 +10,7 @@ namespace Traits {
             type = TRAIT_TYPE.BUFF;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
-            advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CRAFT_ITEM };
+            advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CRAFT_TILE_OBJECT };
         }
     }
 }

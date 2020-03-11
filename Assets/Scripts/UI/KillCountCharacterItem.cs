@@ -11,8 +11,8 @@ public class KillCountCharacterItem : CharacterNameplateItem {
         base.SetObject(character);
         Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
-        Messenger.AddListener<Character, Trait>(Signals.TRAIT_ADDED, OnCharacterGainedTrait);
-        Messenger.AddListener<Character, Trait>(Signals.TRAIT_REMOVED, OnCharacterRemovedTrait);
+        Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
+        Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_REMOVED, OnCharacterRemovedTrait);
         Messenger.AddListener<Character>(Signals.CHARACTER_RETURNED_TO_LIFE, OnCharacterReturnedToLife);
         Messenger.AddListener<Character>(Signals.CHARACTER_SWITCHED_ALTER_EGO, OnCharacterSwitchedAlterEgo);
         Messenger.AddListener<Character, Faction>(Signals.CHARACTER_ADDED_TO_FACTION, OnCharacterChangedFaction);
@@ -24,12 +24,17 @@ public class KillCountCharacterItem : CharacterNameplateItem {
         SetSupportingLabelState(true);
         UpdateInfo();
     }
+    public override void UpdateObject(Character character) {
+        base.UpdateObject(character);
+        SetSupportingLabelState(true);
+        UpdateInfo();
+    }
     public override void Reset() {
         base.Reset();
         Messenger.RemoveListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
-        Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_ADDED, OnCharacterGainedTrait);
-        Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_REMOVED, OnCharacterRemovedTrait);
+        Messenger.RemoveListener<Character, Trait>(Signals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
+        Messenger.RemoveListener<Character, Trait>(Signals.CHARACTER_TRAIT_REMOVED, OnCharacterRemovedTrait);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_RETURNED_TO_LIFE, OnCharacterReturnedToLife);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_SWITCHED_ALTER_EGO, OnCharacterSwitchedAlterEgo);
         Messenger.RemoveListener<Character, Faction>(Signals.CHARACTER_ADDED_TO_FACTION, OnCharacterChangedFaction);
@@ -42,43 +47,42 @@ public class KillCountCharacterItem : CharacterNameplateItem {
     }
     private void UpdateInfo() {
         if (character.isDead) {
-            supportingLbl.text = "\"" + character.deathStr + "\"";
+            supportingLbl.text = $"\"{character.deathStr}\"";
         } else {
             string text = string.Empty;
-            Trait negDisTrait = character.traitContainer.GetAllTraitsOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE).FirstOrDefault();
-            if (negDisTrait != null) {
-                if (negDisTrait is Unconscious) {
-                    text = "\"" + character.name + " was knocked out";
-                } else if (negDisTrait is Restrained) {
-                    text = "\"" + character.name + " was restrained by " + negDisTrait.responsibleCharacter.name + ".\"";
-                } else if (negDisTrait is Paralyzed) {
-                    text = "\"" + character.name + " became paralyzed.\"";
-                }
-                if(negDisTrait.responsibleCharacter != null) {
-                    text += " by " + negDisTrait.responsibleCharacter.name + ".\"";
-                } else {
-                    text += ".\"";
-                }
-            } else {
-                if (character.returnedToLife) {
-                    if (character.characterClass.className == "Zombie") {
-                        text = "\"" + character.name + " turned into a zombie.\"";
-                    } else {
-                        text = "\"" + character.name + " was resurrected into a mindless skeleton.\"";
-                    }
-                } else if (character.currentAlterEgo.name != CharacterManager.Original_Alter_Ego) {
-                    text = "\"" + character.name + " turned into a " + character.currentAlterEgo.name + ".\"";
-                } 
-                // else if (character.role.roleType == CHARACTER_ROLE.MINION) {
-                //     text = "\"" + character.name + " became a minion.\"";
-                // }
-            }
-            if (string.IsNullOrEmpty(text)) {
-                //character is not yet dead and not disabled, show current action instead
-                Log currentLog;
-                text = character.GetThoughtBubble(out currentLog);
-                
-            }
+            //Trait negDisTrait = character.traitContainer.GetAllTraitsOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE).FirstOrDefault();
+            //if (negDisTrait != null) {
+            //    if (negDisTrait is Unconscious) {
+            //        text = $"\"{character.name} was knocked out";
+            //    } else if (negDisTrait is Restrained) {
+            //        Character responsibleCharacter = negDisTrait.responsibleCharacter;
+            //        if (responsibleCharacter != null) {
+            //            text = $"\"{character.name} was restrained by {responsibleCharacter.name}.\"";    
+            //        } else {
+            //            text = $"\"{character.name} was restrained by something.\"";
+            //        }
+                    
+            //    } else if (negDisTrait is Paralyzed) {
+            //        text = $"\"{character.name} became paralyzed.\"";
+            //    }
+            //    if(negDisTrait.responsibleCharacter != null) {
+            //        text += $" by {negDisTrait.responsibleCharacter.name}.\"";
+            //    } else {
+            //        text += ".\"";
+            //    }
+            //} else {
+            //    if (character.returnedToLife) {
+            //        if (character.characterClass.className == "Zombie") {
+            //            text = $"\"{character.name} turned into a zombie.\"";
+            //        } else {
+            //            text = $"\"{character.name} was resurrected into a mindless skeleton.\"";
+            //        }
+            //    }
+            //}
+            //if (string.IsNullOrEmpty(text)) {
+            //    //character is not yet dead and not disabled, show current action instead
+            //    text = character.visuals.GetThoughtBubble(out _);
+            //}
             supportingLbl.text = text;
             
         }
@@ -106,14 +110,14 @@ public class KillCountCharacterItem : CharacterNameplateItem {
         }
     }
     private void OnCharacterGainedTrait(Character character, Trait trait) {
-        if (character.id == this.character.id && trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
-            UpdateInfo();
-        }
+        //if (character.id == this.character.id && trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
+        //    UpdateInfo();
+        //}
     }
     private void OnCharacterRemovedTrait(Character character, Trait trait) {
-        if (character.id == this.character.id && trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
-            UpdateInfo();
-        }
+        //if (character.id == this.character.id && trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
+        //    UpdateInfo();
+        //}
     }
     private void OnCharacterReturnedToLife(Character character) {
         if (character.id == this.character.id) {

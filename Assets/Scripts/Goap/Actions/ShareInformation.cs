@@ -9,7 +9,7 @@ public class ShareInformation : GoapAction {
     public ShareInformation() : base(INTERACTION_TYPE.SHARE_INFORMATION) {
         actionIconString = GoapActionStateDB.Work_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
     }
 
     #region Overrides
@@ -17,7 +17,7 @@ public class ShareInformation : GoapAction {
         base.Perform(goapNode);
         SetState("Share Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 3;
     }
     public override void AddFillersToLog(Log log, ActualGoapNode node) {
@@ -66,7 +66,7 @@ public class ShareInformation : GoapAction {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             Character target = poiTarget as Character;
-            return actor != target && target.role.roleType != CHARACTER_ROLE.BEAST;
+            return actor != target && !UtilityScripts.GameUtilities.IsRaceBeast(target.race); // target.role.roleType != CHARACTER_ROLE.BEAST
         }
         return false;
     }
@@ -75,12 +75,12 @@ public class ShareInformation : GoapAction {
 
 public class ShareInformationData : GoapActionData {
     public ShareInformationData() : base(INTERACTION_TYPE.SHARE_INFORMATION) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
         requirementAction = Requirement;
     }
 
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         Character target = poiTarget as Character;
-        return actor != target && target.role.roleType != CHARACTER_ROLE.BEAST;
+        return actor != target && !UtilityScripts.GameUtilities.IsRaceBeast(target.race); // target.role.roleType != CHARACTER_ROLE.BEAST
     }
 }

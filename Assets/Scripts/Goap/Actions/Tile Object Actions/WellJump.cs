@@ -10,7 +10,8 @@ public class WellJump : GoapAction {
     public WellJump() : base(INTERACTION_TYPE.WELL_JUMP) {
         actionIconString = GoapActionStateDB.Sleep_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
+        validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.MORNING, TIME_IN_WORDS.LUNCH_TIME, TIME_IN_WORDS.AFTERNOON, };
     }
 
     #region Overrides
@@ -21,7 +22,9 @@ public class WellJump : GoapAction {
         base.Perform(goapNode);
         SetState("Well Jump Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+        string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
+        actor.logComponent.AppendCostLog(costLog);
         return 10;
     }
     #endregion
@@ -38,14 +41,14 @@ public class WellJump : GoapAction {
 
     #region State Effects
     public void AfterWellJumpSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.Death("suicide", goapNode, _deathLog: goapNode.action.states[goapNode.currentStateName].descriptionLog);
+        goapNode.actor.Death("suicide", goapNode, _deathLog: goapNode.descriptionLog);
     }
     #endregion
 }
 
 public class WellJumpData : GoapActionData {
     public WellJumpData() : base(INTERACTION_TYPE.WELL_JUMP) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
         requirementAction = Requirement;
     }
 

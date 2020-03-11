@@ -4,9 +4,9 @@
     
     public SnuffTornado() : base(INTERACTION_TYPE.SNUFF_TORNADO) {
         actionIconString = GoapActionStateDB.Hostile_Icon;
-        isNotificationAnIntel = false;
+        
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
         actionLocationType = ACTION_LOCATION_TYPE.TARGET_IN_VISION;
     }
 
@@ -20,8 +20,10 @@
         SetState("Snuff Success", goapNode);
            
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        return 1;
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+        string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
+        actor.logComponent.AppendCostLog(costLog);
+        return 10;
     }
     #endregion
 

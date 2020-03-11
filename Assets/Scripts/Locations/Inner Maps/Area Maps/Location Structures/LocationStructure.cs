@@ -1,562 +1,726 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Actionables;
 using UnityEngine;
 using BayatGames.SaveGameFree.Types;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
+using Locations.Settlements;
+using UnityEngine.Assertions;
+namespace Inner_Maps.Location_Structures {
+    [System.Serializable]
+    public class LocationStructure : IPlayerActionTarget, ISelectable {
+        public int id { get; private set; }
+        public string name { get; private set; }
+        public virtual string nameplateName => name;
+        public STRUCTURE_TYPE structureType { get; private set; }
+        public List<Character> charactersHere { get; private set; }
+        public ILocation location { get; private set; }
+        public BaseSettlement settlementLocation { get; private set; }
+        // public List<SpecialToken> itemsInStructure { get; private set; }
+        public HashSet<IPointOfInterest> pointsOfInterest { get; private set; }
+        public Dictionary<TILE_OBJECT_TYPE, TileObjectsAndCount> groupedTileObjects { get; private set; }
+        public POI_STATE state { get; private set; }
+        public LocationStructureObject structureObj {get; private set;}
+        public BuildSpotTileObject occupiedBuildSpot { get; private set; }
+        //Inner Map
+        public List<LocationGridTile> tiles { get; private set; }
+        public LinkedList<LocationGridTile> unoccupiedTiles { get; private set; }
+        public bool isInterior { get; private set; }
+        private bool _hasBeenDestroyed;
 
-[System.Serializable]
-public class LocationStructure {
-    public int id { get; private set; }
-    public string name { get; private set; }
-    public STRUCTURE_TYPE structureType { get; private set; }
-    public List<Character> charactersHere { get; private set; }
-    public ILocation location { get; private set; }
-    public Settlement settlementLocation => tiles.First().buildSpotOwner.hexTileOwner.settlementOnTile;
-    public List<SpecialToken> itemsInStructure { get; private set; }
-    public List<IPointOfInterest> pointsOfInterest { get; private set; }
-    public POI_STATE state { get; private set; }
-    public LocationStructureObject structureObj {get; private set;}
-    public BuildSpotTileObject occupiedBuildSpot { get; private set; }
+        #region getters
+        public virtual bool isDwelling => false;
+        public Vector3 worldPosition { get; protected set; }
+        public virtual Vector2 selectableSize => structureObj.size;
+        #endregion
 
-    //Inner Map
-    public List<LocationGridTile> tiles { get; private set; }
-    public List<LocationGridTile> unoccupiedTiles { get; private set; }
-    public LocationGridTile entranceTile { get; private set; }
-
-    public LocationStructure(STRUCTURE_TYPE structureType, ILocation location) {
-        id = Utilities.SetID(this);
-        this.structureType = structureType;
-        this.name = $"{Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString())} {id.ToString()}";
-        this.location = location;
-        charactersHere = new List<Character>();
-        itemsInStructure = new List<SpecialToken>();
-        pointsOfInterest = new List<IPointOfInterest>();
-        tiles = new List<LocationGridTile>();
-        unoccupiedTiles = new List<LocationGridTile>();
-        SubscribeListeners();
-    }
-    public LocationStructure(ILocation location, SaveDataLocationStructure data) {
-        this.location = location;
-        id = Utilities.SetID(this, data.id);
-        this.structureType = data.structureType;
-        this.name = data.name;
-        charactersHere = new List<Character>();
-        itemsInStructure = new List<SpecialToken>();
-        pointsOfInterest = new List<IPointOfInterest>();
-        tiles = new List<LocationGridTile>();
-        SubscribeListeners();
-    }
-
-    #region Listeners
-    private void SubscribeListeners() {
-        if (structureType.IsOpenSpace() == false) {
-            Messenger.AddListener<WallObject>(Signals.WALL_DAMAGED, OnWallDamaged);
-            Messenger.AddListener<WallObject>(Signals.WALL_DESTROYED, OnWallDestroyed);
-            Messenger.AddListener<WallObject>(Signals.WALL_REPAIRED, OnWallRepaired);
+        public LocationStructure(STRUCTURE_TYPE structureType, ILocation location) {
+            id = UtilityScripts.Utilities.SetID(this);
+            this.structureType = structureType;
+            name = $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString())} {id.ToString()}";
+            this.location = location;
+            charactersHere = new List<Character>();
+            // itemsInStructure = new List<SpecialToken>();
+            pointsOfInterest = new HashSet<IPointOfInterest>();
+            groupedTileObjects = new Dictionary<TILE_OBJECT_TYPE, TileObjectsAndCount>();
+            tiles = new List<LocationGridTile>();
+            unoccupiedTiles = new LinkedList<LocationGridTile>();
+            SetInteriorState(structureType.IsInterior());
         }
-    }
-    private void UnsubscribeListeners() {
-        if (structureType.IsOpenSpace() == false) {
-            Messenger.RemoveListener<WallObject>(Signals.WALL_DAMAGED, OnWallDamaged);
-            Messenger.RemoveListener<WallObject>(Signals.WALL_DESTROYED, OnWallDestroyed);
-            Messenger.RemoveListener<WallObject>(Signals.WALL_REPAIRED, OnWallRepaired);
+        public LocationStructure(ILocation location, SaveDataLocationStructure data) {
+            this.location = location;
+            id = UtilityScripts.Utilities.SetID(this, data.id);
+            structureType = data.structureType;
+            name = data.name;
+            charactersHere = new List<Character>();
+            // itemsInStructure = new List<SpecialToken>();
+            pointsOfInterest = new HashSet<IPointOfInterest>();
+            groupedTileObjects = new Dictionary<TILE_OBJECT_TYPE, TileObjectsAndCount>();
+            tiles = new List<LocationGridTile>();
+            SetInteriorState(structureType.IsInterior());
         }
-    }
-    #endregion
 
-    #region Residents
-    public virtual bool IsOccupied() {
-        return false; //will only ever use this in dwellings, to prevent need for casting
-    }
-    #endregion
-
-    #region Characters
-    public void AddCharacterAtLocation(Character character, LocationGridTile tile = null) {
-        if (!charactersHere.Contains(character)) {
-            charactersHere.Add(character);
-            //location.AddCharacterToLocation(character);
-            AddPOI(character, tile);
-        } else {
-            //Debug.LogWarning(GameManager.Instance.TodayLogString() + " " + character.name + " can't be added to " + ToString() + " because it is already there!");
+        #region Initialization
+        public virtual void Initialize() {
+            SubscribeListeners();
+            ConstructDefaultActions();
         }
-        character.SetCurrentStructureLocation(this);
-    }
-    public void RemoveCharacterAtLocation(Character character) {
-        if (charactersHere.Remove(character)) {
-            character.SetCurrentStructureLocation(null);
-            RemovePOI(character);
-        } else {
-            //Debug.LogWarning(GameManager.Instance.TodayLogString() + " " + character.name + " can't be removed from " + ToString() + " because it is not there!");
-        }
-    }
-    #endregion
+        #endregion
 
-    #region Items/Special Tokens
-    public void AddItem(SpecialToken token, LocationGridTile gridLocation = null) {
-        if (!itemsInStructure.Contains(token)) {
-            itemsInStructure.Add(token);
-            token.SetStructureLocation(this);
-            if(AddPOI(token, gridLocation)) {
-                token.SetOwner(token.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile.owner);
-                token.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile?.OnItemAddedToLocation(token, this);
+        #region Listeners
+        protected virtual void SubscribeListeners() {
+            if (structureType.HasWalls()) {
+                Messenger.AddListener<StructureWallObject>(Signals.WALL_DAMAGED, OnWallDamaged);
+                Messenger.AddListener<StructureWallObject>(Signals.WALL_DESTROYED, OnWallDestroyed);
+                Messenger.AddListener<StructureWallObject>(Signals.WALL_REPAIRED, OnWallRepaired);
             }
         }
-    }
-    public void RemoveItem(SpecialToken token, Character removedBy = null) {
-        if (itemsInStructure.Remove(token)) {
-            token.SetStructureLocation(null);
-            LocationGridTile removedFrom = token.gridTileLocation;
-            if (RemovePOI(token, removedBy)) {
-                removedFrom.buildSpotOwner.hexTileOwner.settlementOnTile?.OnItemRemovedFromLocation(token, this);
+        protected virtual void UnsubscribeListeners() {
+            if (structureType.HasWalls()) {
+                Messenger.RemoveListener<StructureWallObject>(Signals.WALL_DAMAGED, OnWallDamaged);
+                Messenger.RemoveListener<StructureWallObject>(Signals.WALL_DESTROYED, OnWallDestroyed);
+                Messenger.RemoveListener<StructureWallObject>(Signals.WALL_REPAIRED, OnWallRepaired);
             }
         }
-    }
-    public void OwnItemsInLocation(Faction owner) {
-        for (int i = 0; i < itemsInStructure.Count; i++) {
-            itemsInStructure[i].SetOwner(owner);
-        }
-    }
-    public int GetItemsOfTypeCount(SPECIAL_TOKEN type) {
-        int count = 0;
-        for (int i = 0; i < itemsInStructure.Count; i++) {
-            if (itemsInStructure[i].specialTokenType == type) {
-                count++;
-            }
-        }
-        return count;
-    }
-    #endregion
+        #endregion
 
-    #region Points Of Interest
-    public virtual bool AddPOI(IPointOfInterest poi, LocationGridTile tileLocation = null, bool placeObject = true) {
-        if (!pointsOfInterest.Contains(poi)) {
-            if (placeObject) {
-                if (poi.poiType != POINT_OF_INTEREST_TYPE.CHARACTER) {
-                    if (!PlaceAreaObjectAtAppropriateTile(poi, tileLocation)) { return false; }
+        #region Residents
+        public virtual bool IsOccupied() {
+            return false; //will only ever use this in dwellings, to prevent need for casting
+        }
+        #endregion
+
+        #region Characters
+        public void AddCharacterAtLocation(Character character, LocationGridTile tile = null) {
+            if (!charactersHere.Contains(character)) {
+                charactersHere.Add(character);
+                //location.AddCharacterToLocation(character);
+                AddPOI(character, tile);
+            }
+            character.SetCurrentStructureLocation(this);
+        }
+        public void RemoveCharacterAtLocation(Character character) {
+            if (charactersHere.Remove(character)) {
+                character.SetCurrentStructureLocation(null);
+                RemovePOI(character);
+            }
+        }
+        #endregion
+
+        #region Points Of Interest
+        public virtual bool AddPOI(IPointOfInterest poi, LocationGridTile tileLocation = null, bool placeObject = true) {
+            if (!pointsOfInterest.Contains(poi)) {
+                pointsOfInterest.Add(poi);
+                if (placeObject) {
+                    if (poi.poiType != POINT_OF_INTEREST_TYPE.CHARACTER) {
+                        if (!PlaceAreaObjectAtAppropriateTile(poi, tileLocation)) {
+                            pointsOfInterest.Remove(poi);
+                            return false;
+                        }
+                    }
+                }
+                if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+                    TileObject tileObject = poi as TileObject;
+                    if (groupedTileObjects.ContainsKey(tileObject.tileObjectType)) {
+                        groupedTileObjects[tileObject.tileObjectType].AddTileObject(tileObject);
+                    } else {
+                        TileObjectsAndCount toac = new TileObjectsAndCount();
+                        toac.AddTileObject(tileObject);
+                        groupedTileObjects.Add(tileObject.tileObjectType, toac);
+                    }
+                    if (tileObject.gridTileLocation != null && tileObject.gridTileLocation.buildSpotOwner.isPartOfParentRegionMap
+                    && tileObject.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile is NPCSettlement npcSettlement) {
+                        npcSettlement.OnItemAddedToLocation(tileObject, this);
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+        public virtual bool RemovePOI(IPointOfInterest poi, Character removedBy = null) {
+            if (pointsOfInterest.Remove(poi)) {
+                if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+                    TileObject tileObject = poi as TileObject;
+                    groupedTileObjects[tileObject.tileObjectType].RemoveTileObject(tileObject);
+                    
+                    if (poi.gridTileLocation.buildSpotOwner.isPartOfParentRegionMap 
+                        && poi.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile is NPCSettlement npcSettlement) {
+                        npcSettlement.OnItemRemovedFromLocation(tileObject, this);    
+                    }
+                }
+                if (poi.gridTileLocation != null) {
+                    // Debug.Log("Removed " + poi.ToString() + " from " + poi.gridTileLocation.ToString() + " at " + this.ToString());
+                    if(poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+                        //location.areaMap.RemoveCharacter(poi.gridTileLocation, poi as Character);
+                    } else {
+                        location.innerMap.RemoveObject(poi.gridTileLocation, removedBy);
+                    }
+                    //throw new System.Exception("Provided tile of " + poi.ToString() + " is null!");
+                }
+                return true;
+            }
+            return false;
+        }
+        public virtual bool RemovePOIWithoutDestroying(IPointOfInterest poi) {
+            if (pointsOfInterest.Remove(poi)) {
+                if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+                    TileObject tileObject = poi as TileObject;
+                    groupedTileObjects[tileObject.tileObjectType].RemoveTileObject(tileObject);
+                }
+                if (poi.gridTileLocation != null) {
+                    if (poi.poiType != POINT_OF_INTEREST_TYPE.CHARACTER) {
+                        location.innerMap.RemoveObjectWithoutDestroying(poi.gridTileLocation);
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+        public virtual bool RemovePOIDestroyVisualOnly(IPointOfInterest poi, Character remover = null) {
+            if (pointsOfInterest.Remove(poi)) {
+                if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+                    TileObject tileObject = poi as TileObject;
+                    groupedTileObjects[tileObject.tileObjectType].RemoveTileObject(tileObject);
+                    if (poi.gridTileLocation.buildSpotOwner.isPartOfParentRegionMap
+                    && poi.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile is NPCSettlement npcSettlement) {
+                        npcSettlement.OnItemRemovedFromLocation(tileObject, this);    
+                    }
+                }
+                if (poi.gridTileLocation != null) {
+                    if (poi.poiType != POINT_OF_INTEREST_TYPE.CHARACTER) {
+                        location.innerMap.RemoveObjectDestroyVisualOnly(poi.gridTileLocation, remover);
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+        public List<IPointOfInterest> GetPOIsOfType(POINT_OF_INTEREST_TYPE type) {
+            List<IPointOfInterest> pois = new List<IPointOfInterest>();
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest poi = pointsOfInterest.ElementAt(i); 
+                if (poi.poiType == type) {
+                    pois.Add(poi);
                 }
             }
-            pointsOfInterest.Add(poi);
-            return true;
+            return pois;
         }
-        return false;
-    }
-    public virtual bool RemovePOI(IPointOfInterest poi, Character removedBy = null) {
-        if (pointsOfInterest.Remove(poi)) {
-            if (poi.gridTileLocation != null) {
-                //Debug.Log("Removed " + poi.ToString() + " from " + poi.gridTileLocation.ToString() + " at " + this.ToString());
-                if(poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-                    //location.areaMap.RemoveCharacter(poi.gridTileLocation, poi as Character);
-                } else {
-                    location.innerMap.RemoveObject(poi.gridTileLocation, removedBy);
-                }
-                //throw new System.Exception("Provided tile of " + poi.ToString() + " is null!");
-            }
-            return true;
-        }
-        return false;
-    }
-    public virtual bool RemovePOIWithoutDestroying(IPointOfInterest poi) {
-        if (pointsOfInterest.Remove(poi)) {
-            if (poi.gridTileLocation != null) {
-                if (poi.poiType != POINT_OF_INTEREST_TYPE.CHARACTER) {
-                    location.innerMap.RemoveObjectWithoutDestroying(poi.gridTileLocation);
-                }
-            }
-            return true;
-        }
-        return false;
-    }
-    public List<IPointOfInterest> GetPOIsOfType(POINT_OF_INTEREST_TYPE type) {
-        List<IPointOfInterest> pois = new List<IPointOfInterest>();
-        for (int i = 0; i < pointsOfInterest.Count; i++) {
-            if (pointsOfInterest[i].poiType == type) {
-                pois.Add(pointsOfInterest[i]);
-            }
-        }
-        return pois;
-    }
-    public List<TileObject> GetTileObjectsOfType(TILE_OBJECT_TYPE type) {
-        List<TileObject> objs = new List<TileObject>();
-        for (int i = 0; i < pointsOfInterest.Count; i++) {
-            if (pointsOfInterest[i] is TileObject) {
-                TileObject obj = pointsOfInterest[i] as TileObject;
-                if (obj.tileObjectType == type) {
-                    objs.Add(obj);
-                }
-            }
-        }
-        return objs;
-    }
-    public T GetTileObjectOfType<T>(TILE_OBJECT_TYPE type) where T : TileObject{
-        List<TileObject> objs = new List<TileObject>();
-        for (int i = 0; i < pointsOfInterest.Count; i++) {
-            if (pointsOfInterest[i] is TileObject) {
-                TileObject obj = pointsOfInterest[i] as TileObject;
-                if (obj.tileObjectType == type) {
-                    return obj as T;
-                }
-            }
-        }
-        return null;
-    }
-    public ResourcePile GetResourcePileObjectWithLowestCount(TILE_OBJECT_TYPE type) {
-        ResourcePile chosenPile = null;
-        int lowestCount = 0;
-        for (int i = 0; i < pointsOfInterest.Count; i++) {
-            if (pointsOfInterest[i] is ResourcePile) {
-                ResourcePile obj = pointsOfInterest[i] as ResourcePile;
-                if (obj.tileObjectType == type) {
-                    if(chosenPile == null || obj.resourceInPile < lowestCount) {
-                        chosenPile = obj;
-                        lowestCount = obj.resourceInPile;
+        public List<TileObject> GetTileObjectsOfType(TILE_OBJECT_TYPE type) {
+            List<TileObject> objs = new List<TileObject>();
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest poi = pointsOfInterest.ElementAt(i); 
+                if (poi is TileObject obj) {
+                    if (obj.tileObjectType == type) {
+                        objs.Add(obj);
                     }
                 }
             }
+            return objs;
         }
-        return chosenPile;
-    }
-    private bool PlaceAreaObjectAtAppropriateTile(IPointOfInterest poi, LocationGridTile tile) {
-        if (tile != null) {
-            location.innerMap.PlaceObject(poi, tile);
-            return true;
-        } else {
-            List<LocationGridTile> tilesToUse;
-            if (location.locationType == LOCATION_TYPE.DEMONIC_INTRUSION) { //player settlement
-                tilesToUse = tiles;
-            } else {
-                tilesToUse = GetValidTilesToPlace(poi);
-            }
-            if (tilesToUse.Count > 0) {
-                LocationGridTile chosenTile = tilesToUse[Random.Range(0, tilesToUse.Count)];
-                location.innerMap.PlaceObject(poi, chosenTile);
-                return true;
-            } 
-            // else {
-            //     Debug.LogWarning("There are no tiles at " + structureType.ToString() + " at " + location.name + " for " + poi.ToString());
-            // }
-        }
-        return false;
-    }
-    private List<LocationGridTile> GetValidTilesToPlace(IPointOfInterest poi) {
-        switch (poi.poiType) {
-            case POINT_OF_INTEREST_TYPE.TILE_OBJECT:
-                if (poi is MagicCircle) {
-                    return unoccupiedTiles.Where(x => !x.HasOccupiedNeighbour() && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Wall)).ToList();
-                } else if (poi is WaterWell) {
-                    return unoccupiedTiles.Where(x => !x.HasOccupiedNeighbour() && x.parentMap.GetTilesInRadius(x, 3).Where(y => y.objHere is WaterWell).Count() == 0 && !x.HasNeighbouringWalledStructure()).ToList();
-                } else if (poi is GoddessStatue) {
-                    return unoccupiedTiles.Where(x => !x.HasOccupiedNeighbour() && x.parentMap.GetTilesInRadius(x, 3).Where(y => y.objHere is GoddessStatue).Count() == 0 && !x.HasNeighbouringWalledStructure()).ToList();
-                } else if (poi is Guitar || poi is Bed || poi is Table) {
-                    return GetOuterTiles().Where(x => unoccupiedTiles.Contains(x) && x.tileType != LocationGridTile.Tile_Type.Structure_Entrance).ToList();
-                } else {
-                    return unoccupiedTiles.Where(x => x.tileType != LocationGridTile.Tile_Type.Structure_Entrance).ToList(); ;
+        public bool HasTileObjectOfType(TILE_OBJECT_TYPE type) {
+            List<TileObject> objs = new List<TileObject>();
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest poi = pointsOfInterest.ElementAt(i); 
+                if (poi is TileObject obj) {
+                    if (obj.tileObjectType == type) {
+                        return true;
+                    }
                 }
-            case POINT_OF_INTEREST_TYPE.CHARACTER:
-                return unoccupiedTiles;
-            default:
-                return unoccupiedTiles.Where(x => !x.IsAdjacentTo(typeof(MagicCircle)) && x.tileType != LocationGridTile.Tile_Type.Structure_Entrance).ToList();
-        }
-    }
-    #endregion   
-    
-    #region Tiles
-    public void AddTile(LocationGridTile tile) {
-        if (!tiles.Contains(tile)) {
-            tiles.Add(tile);
-            if(tile.tileState == LocationGridTile.Tile_State.Empty) {
-                AddUnoccupiedTile(tile);
-            } else {
-                RemoveUnoccupiedTile(tile);
             }
+            return false;
         }
-    }
-    public void RemoveTile(LocationGridTile tile) {
-        tiles.Remove(tile);
-        RemoveUnoccupiedTile(tile);
-    }
-    public void AddUnoccupiedTile(LocationGridTile tile) {
-        unoccupiedTiles.Add(tile);
-    }
-    public void RemoveUnoccupiedTile(LocationGridTile tile) {
-        unoccupiedTiles.Remove(tile);
-    }
-    public LocationGridTile GetRandomTile() {
-        if (tiles.Count <= 0) {
-            return null;
-        }
-        return tiles[Random.Range(0, tiles.Count)];
-    }
-    public void SetEntranceTile(LocationGridTile tile) {
-        entranceTile = tile;
-    }
-    #endregion
-
-    #region Utilities
-    /// <summary>
-    /// Get the structure's name based on specified rules.
-    /// Rules are at - https://trello.com/c/mRzzH9BE/1432-location-naming-convention
-    /// </summary>
-    /// <param name="character">The character requesting the name</param>
-    public virtual string GetNameRelativeTo(Character character) {
-        switch (structureType) {
-            case STRUCTURE_TYPE.INN:
-                return "the inn";
-            case STRUCTURE_TYPE.WAREHOUSE:
-                return "the " + location.name + " warehouse";
-            case STRUCTURE_TYPE.PRISON:
-                return "the " + location.name + " prison";
-            case STRUCTURE_TYPE.WILDERNESS:
-                return "the outskirts of " + location.name;
-            case STRUCTURE_TYPE.CEMETERY:
-                return "the cemetery of " + location.name;
-            case STRUCTURE_TYPE.DUNGEON:
-            case STRUCTURE_TYPE.WORK_AREA:
-            case STRUCTURE_TYPE.EXPLORE_AREA:
-            case STRUCTURE_TYPE.POND:
-                return location.name;
-            case STRUCTURE_TYPE.CITY_CENTER:
-                return "the " + location.name + " city center";
-            default:
-                return "the " + Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString());
-        }
-    }
-    public List<LocationGridTile> GetOuterTiles() {
-        List<LocationGridTile> outerTiles = new List<LocationGridTile>();
-        for (int i = 0; i < tiles.Count; i++) {
-            LocationGridTile currTile = tiles[i];
-            if (currTile.HasDifferentDwellingOrOutsideNeighbour()) {
-                outerTiles.Add(currTile);
+        public List<T> GetTileObjectsOfType<T>(TILE_OBJECT_TYPE type) where T : TileObject {
+            List<T> objs = new List<T>();
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest poi = pointsOfInterest.ElementAt(i); 
+                if (poi is TileObject) {
+                    TileObject obj = poi as TileObject;
+                    if (obj.tileObjectType == type) {
+                        objs.Add(obj as T);
+                    }
+                }
             }
+            return objs;
         }
-        return outerTiles;
-    }
-    public void DoCleanup() {
-        for (int i = 0; i < pointsOfInterest.Count; i++) {
-            IPointOfInterest poi = pointsOfInterest[i];
-            if (poi is TileObject) {
-                (poi as TileObject).DoCleanup();
-            } else if (poi is SpecialToken) {
-                (poi as SpecialToken).DoCleanup();
+        public List<T> GetBuiltTileObjectsOfType<T>(TILE_OBJECT_TYPE type) where T : TileObject {
+            List<T> objs = new List<T>();
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest poi = pointsOfInterest.ElementAt(i); 
+                if (poi is TileObject) {
+                    TileObject obj = poi as TileObject;
+                    if (obj.tileObjectType == type && obj.mapObjectState == MAP_OBJECT_STATE.BUILT) {
+                        objs.Add(obj as T);
+                    }
+                }
             }
+            return objs;
         }
-    }
-    #endregion
-
-    #region Tile Objects
-    protected List<TileObject> GetTileObjects() {
-        List<TileObject> objs = new List<TileObject>();
-        for (int i = 0; i < pointsOfInterest.Count; i++) {
-            IPointOfInterest currPOI = pointsOfInterest[i];
-            if (currPOI is TileObject) {
-                objs.Add(currPOI as TileObject);
-            }
-        }
-        return objs;
-    }
-    public List<TileObject> GetTileObjectsThatAdvertise(params INTERACTION_TYPE[] types) {
-        List<TileObject> objs = new List<TileObject>();
-        for (int i = 0; i < pointsOfInterest.Count; i++) {
-            IPointOfInterest currPOI = pointsOfInterest[i];
-            if (currPOI is TileObject) {
-                TileObject obj = currPOI as TileObject;
-                if (obj.IsAvailable() && obj.AdvertisesAll(types)) {
+        public List<T> GetTileObjectsOfType<T>() where T : TileObject {
+            List<T> objs = new List<T>();
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest poi = pointsOfInterest.ElementAt(i); 
+                if (poi is T) {
+                    T obj = poi as T;
                     objs.Add(obj);
                 }
             }
+            return objs;
         }
-        for (int i = 0; i < tiles.Count; i++) {
-            LocationGridTile currTile = tiles[i];
-            if (currTile.genericTileObject.IsAvailable() && currTile.genericTileObject.AdvertisesAll(types)) {
-                objs.Add(currTile.genericTileObject);
-            }
-        }
-        return objs;
-    }
-    public TileObject GetUnoccupiedTileObject(params TILE_OBJECT_TYPE[] type) {
-        for (int i = 0; i < pointsOfInterest.Count; i++) {
-            if (pointsOfInterest[i].IsAvailable() && pointsOfInterest[i] is TileObject) {
-                TileObject tileObj = pointsOfInterest[i] as TileObject;
-                if (type.Contains(tileObj.tileObjectType) && tileObj.mapObjectState == MAP_OBJECT_STATE.BUILT) {
-                    return tileObj;
+        public T GetTileObjectOfType<T>(TILE_OBJECT_TYPE type) where T : TileObject{
+            List<TileObject> objs = new List<TileObject>();
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest poi = pointsOfInterest.ElementAt(i); 
+                if (poi is TileObject) {
+                    TileObject obj = poi as TileObject;
+                    if (obj.tileObjectType == type) {
+                        return obj as T;
+                    }
                 }
             }
+            return null;
         }
-        return null;
-    }
-    #endregion
-
-    #region Structure Objects
-    public void SetStructureObject(LocationStructureObject structureObj) {
-        this.structureObj = structureObj;
-    }
-    public void SetOccupiedBuildSpot(BuildSpotTileObject buildSpotTileObject) {
-        this.occupiedBuildSpot = buildSpotTileObject;
-    }
-    #endregion
-
-    #region Destroy
-    private void DestroyStructure() {
-        Debug.Log($"{GameManager.Instance.TodayLogString()}{this.ToString()} was destroyed!");
-        //transfer tiles to either the wilderness or work settlement
-        List<LocationGridTile> tiles = new List<LocationGridTile>(this.tiles);
-        LocationStructure workArea = location.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA);
-        LocationStructure wilderness = location.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-        for (int i = 0; i < tiles.Count; i++) {
-            LocationGridTile tile = tiles[i];
-            LocationStructure transferTo;
-            if (tile.isInside) {
-                transferTo = workArea;
+        public int GetTileObjectsOfTypeCount(TILE_OBJECT_TYPE type) {
+            int count = 0;
+            if (groupedTileObjects.ContainsKey(type)) {
+                count = groupedTileObjects[type].count;
+            }
+            return count;
+        }
+        public ResourcePile GetResourcePileObjectWithLowestCount(TILE_OBJECT_TYPE type, bool excludeMaximum = true) {
+            ResourcePile chosenPile = null;
+            int lowestCount = 0;
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest poi = pointsOfInterest.ElementAt(i); 
+                if (poi is ResourcePile) {
+                    ResourcePile obj = poi as ResourcePile;
+                    if (excludeMaximum && obj.IsAtMaxResource(obj.providedResource)) {
+                        continue; //skip
+                    }
+                    if (obj.tileObjectType == type) {
+                        if(chosenPile == null || obj.resourceInPile <= lowestCount) {
+                            chosenPile = obj;
+                            lowestCount = obj.resourceInPile;
+                        }
+                    }
+                }
+            }
+            return chosenPile;
+        }
+        private bool PlaceAreaObjectAtAppropriateTile(IPointOfInterest poi, LocationGridTile tile) {
+            if (tile != null) {
+                location.innerMap.PlaceObject(poi, tile);
+                return true;
             } else {
-                transferTo = wilderness;
-            }
-
-            tile.ClearWallObjects();
-
-            tile.SetStructure(transferTo);
-            if (tile.objHere != null) {
-                if (tile.objHere is SpecialToken) {
-                    AddItem(tile.objHere as SpecialToken, tile);
+                List<LocationGridTile> tilesToUse;
+                if (location.locationType == LOCATION_TYPE.DEMONIC_INTRUSION) { //player npcSettlement
+                    tilesToUse = tiles;
                 } else {
-                    AddPOI(tile.objHere, tile);
+                    tilesToUse = GetValidTilesToPlace(poi);
+                }
+                if (tilesToUse.Count > 0) {
+                    LocationGridTile chosenTile = tilesToUse[Random.Range(0, tilesToUse.Count)];
+                    location.innerMap.PlaceObject(poi, chosenTile);
+                    return true;
+                } 
+                // else {
+                //     Debug.LogWarning("There are no tiles at " + structureType.ToString() + " at " + location.name + " for " + poi.ToString());
+                // }
+            }
+            return false;
+        }
+        private List<LocationGridTile> GetValidTilesToPlace(IPointOfInterest poi) {
+            switch (poi.poiType) {
+                case POINT_OF_INTEREST_TYPE.TILE_OBJECT:
+                    if (poi is MagicCircle) {
+                        return unoccupiedTiles.Where(x => !x.HasOccupiedNeighbour()
+                                                          && x.groundType != LocationGridTile.Ground_Type.Cave 
+                                                          && x.groundType != LocationGridTile.Ground_Type.Water
+                                                          && x.buildSpotOwner.hexTileOwner 
+                                                          && x.buildSpotOwner.hexTileOwner.elevationType == ELEVATION.PLAIN
+                                                          && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Wall) 
+                                                          && !x.HasNeighbourOfType(LocationGridTile.Ground_Type.Cave)
+                                                          && !x.HasNeighbourOfType(LocationGridTile.Ground_Type.Water)
+                                                          && !x.HasNeighbourOfElevation(ELEVATION.MOUNTAIN)
+                                                          && !x.HasNeighbourOfElevation(ELEVATION.WATER)
+                        ).ToList();
+                    } else if (poi is WaterWell) {
+                        return unoccupiedTiles.Where(x => !x.HasOccupiedNeighbour() && !x.GetTilesInRadius(3).Any(y => y.objHere is WaterWell) && !x.HasNeighbouringWalledStructure()).ToList();
+                    } else if (poi is GoddessStatue) {
+                        return unoccupiedTiles.Where(x => !x.HasOccupiedNeighbour() && !x.GetTilesInRadius(3).Any(y => y.objHere is GoddessStatue) && !x.HasNeighbouringWalledStructure()).ToList();
+                    } else if (poi is MimicTileObject) {
+                        return unoccupiedTiles.Where(x => x.IsPartOfSettlement() == false).ToList();
+                    } else if (poi is Guitar || poi is Bed || poi is Table) {
+                        return GetOuterTiles().Where(x => unoccupiedTiles.Contains(x) && x.tileType != LocationGridTile.Tile_Type.Structure_Entrance).ToList();
+                    } else {
+                        return unoccupiedTiles.Where(x => x.tileType != LocationGridTile.Tile_Type.Structure_Entrance).ToList(); ;
+                    }
+                case POINT_OF_INTEREST_TYPE.CHARACTER:
+                    return unoccupiedTiles.ToList();
+                default:
+                    return unoccupiedTiles.Where(x => !x.IsAdjacentTo(typeof(MagicCircle)) && x.tileType != LocationGridTile.Tile_Type.Structure_Entrance).ToList();
+            }
+        }
+        // public void OwnTileObjectsInLocation(Faction owner) {
+        //     for (int i = 0; i < pointsOfInterest.Count; i++) {
+        //         if (pointsOfInterest[i].poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+        //             (pointsOfInterest[i] as TileObject).SetFactionOwner(owner);
+        //         }
+        //     }
+        // }
+        #endregion   
+    
+        #region Tiles
+        public void AddTile(LocationGridTile tile) {
+            if (!tiles.Contains(tile)) {
+                tiles.Add(tile);
+                if(tile.tileState == LocationGridTile.Tile_State.Empty) {
+                    AddUnoccupiedTile(tile);
+                } else {
+                    RemoveUnoccupiedTile(tile);
+                }
+                if (structureType != STRUCTURE_TYPE.WILDERNESS && tile.IsPartOfSettlement(out var settlement)) {
+                    SetSettlementLocation(settlement);
                 }
             }
-            tile.SetPreviousGroundVisual(null); //so that the tile will never revert to the structure tile, unless a new structure is put on it.
-            tile.genericTileObject.AdjustHP(tile.genericTileObject.maxHP);
         }
-        if (settlementLocation != null) {
-            Settlement settlement = settlementLocation;
-            JobQueueItem existingRepairJob = settlement.GetJob(JOB_TYPE.REPAIR, occupiedBuildSpot);
-            if (existingRepairJob != null) {
-                settlement.RemoveFromAvailableJobs(existingRepairJob);
-            }    
+        public void RemoveTile(LocationGridTile tile) {
+            tiles.Remove(tile);
+            RemoveUnoccupiedTile(tile);
         }
-        
-        occupiedBuildSpot.RemoveOccupyingStructure(this);
-        ObjectPoolManager.Instance.DestroyObject(structureObj.gameObject);
-        location.RemoveStructure(this);
-        settlementLocation.RemoveStructure(this);
-        Messenger.Broadcast(Signals.STRUCTURE_OBJECT_REMOVED, this, occupiedBuildSpot);
-        SetOccupiedBuildSpot(null);
-    }
-    private bool CheckIfStructureDestroyed() {
-        string summary = $"Checking if {this.ToString()} has been destroyed...";
-        //check walls and floors, if all of them are destroyed consider this structure as destroyed
-        bool allObjectsDestroyed = true;
-        for (int i = 0; i < structureObj.walls.Length; i++) {
-            WallObject wall = structureObj.walls[i];
-            if (wall.currentHP > 0) {
-                //wall is not yet destroyed
-                summary += $"\n{this.ToString()} still has an intact wall. Not yet destroyed.";
-                allObjectsDestroyed = false;
-                break;
+        public void AddUnoccupiedTile(LocationGridTile tile) {
+            unoccupiedTiles.AddLast(tile);
+        }
+        public void RemoveUnoccupiedTile(LocationGridTile tile) {
+            unoccupiedTiles.Remove(tile);
+        }
+        public LocationGridTile GetRandomTile() {
+            if (tiles.Count <= 0) {
+                return null;
+            }
+            return tiles[Random.Range(0, tiles.Count)];
+        }
+        #endregion
+
+        #region Utilities
+        /// <summary>
+        /// Get the structure's name based on specified rules.
+        /// Rules are at - https://trello.com/c/mRzzH9BE/1432-location-naming-convention
+        /// </summary>
+        /// <param name="character">The character requesting the name</param>
+        public virtual string GetNameRelativeTo(Character character) {
+            switch (structureType) {
+                case STRUCTURE_TYPE.INN:
+                    return "the inn";
+                case STRUCTURE_TYPE.WAREHOUSE:
+                    return $"the {location.name} warehouse";
+                case STRUCTURE_TYPE.PRISON:
+                    return $"the {location.name} prison";
+                case STRUCTURE_TYPE.WILDERNESS:
+                    return $"the outskirts of {location.name}";
+                case STRUCTURE_TYPE.CEMETERY:
+                    return $"the cemetery of {location.name}";
+                case STRUCTURE_TYPE.DUNGEON:
+                case STRUCTURE_TYPE.WORK_AREA:
+                case STRUCTURE_TYPE.EXPLORE_AREA:
+                case STRUCTURE_TYPE.POND:
+                    return location.name;
+                case STRUCTURE_TYPE.CITY_CENTER:
+                    return $"the {location.name} city center";
+                default:
+                    return
+                        $"the {UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString())}";
             }
         }
-
-        if (allObjectsDestroyed) {
-            //check floor tiles
+        public List<LocationGridTile> GetOuterTiles() {
+            List<LocationGridTile> outerTiles = new List<LocationGridTile>();
             for (int i = 0; i < tiles.Count; i++) {
-                LocationGridTile tile = tiles[i];
-                if (tile.genericTileObject.currentHP > 0) {
-                    summary += $"\n{this.ToString()} still has an intact floor. Not yet destroyed.";
-                    allObjectsDestroyed = false;
-                    break;
+                LocationGridTile currTile = tiles[i];
+                if (currTile.HasDifferentDwellingOrOutsideNeighbour()) {
+                    outerTiles.Add(currTile);
+                }
+            }
+            return outerTiles;
+        }
+        public void DoCleanup() {
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest poi = pointsOfInterest.ElementAt(i);
+                if (poi is TileObject) {
+                    (poi as TileObject).DoCleanup();
                 }
             }
         }
+        public void SetSettlementLocation(BaseSettlement npcSettlement) {
+            settlementLocation = npcSettlement;
+        }
+        public void SetInteriorState(bool _isInterior) {
+            isInterior = _isInterior;
+        }
+        #endregion
 
-        //if at end of checking, all objects are destroyed, then consider this structure as destroyed
-        if (allObjectsDestroyed) {
-            summary += $"\n{this.ToString()} has no intact walls or floors. It has been destroyed.";
-            DestroyStructure();
+        #region Tile Objects
+        protected List<TileObject> GetTileObjects() {
+            List<TileObject> objs = new List<TileObject>();
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest currPOI = pointsOfInterest.ElementAt(i);
+                if (currPOI is TileObject poi) {
+                    objs.Add(poi);
+                }
+            }
+            return objs;
         }
-        Debug.Log(summary);
-        return allObjectsDestroyed;
-    }
-    #endregion
+        public List<TileObject> GetTileObjectsThatAdvertise(params INTERACTION_TYPE[] types) {
+            List<TileObject> objs = new List<TileObject>();
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest currPOI = pointsOfInterest.ElementAt(i);
+                if (currPOI is TileObject) {
+                    TileObject obj = currPOI as TileObject;
+                    if (obj.IsAvailable() && obj.AdvertisesAll(types)) {
+                        objs.Add(obj);
+                    }
+                }
+            }
+            for (int i = 0; i < tiles.Count; i++) {
+                LocationGridTile currTile = tiles[i];
+                if (currTile.genericTileObject.IsAvailable() && currTile.genericTileObject.AdvertisesAll(types)) {
+                    objs.Add(currTile.genericTileObject);
+                }
+            }
+            return objs;
+        }
+        public TileObject GetUnoccupiedTileObject(params TILE_OBJECT_TYPE[] type) {
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest poi = pointsOfInterest.ElementAt(i); 
+                if (poi.IsAvailable() && poi is TileObject) {
+                    TileObject tileObj = poi as TileObject;
+                    if (type.Contains(tileObj.tileObjectType) && tileObj.mapObjectState == MAP_OBJECT_STATE.BUILT) {
+                        return tileObj;
+                    }
+                }
+            }
+            return null;
+        }
+        #endregion
 
-    #region Walls
-    public void OnWallDestroyed(WallObject wall) {
-        //check if structure destroyed
-        if (structureObj.walls.Contains(wall)) {
-            wall.gridTileLocation.SetTileType(LocationGridTile.Tile_Type.Empty);
-            structureObj.RescanPathfindingGridOfStructure();
-            CheckIfStructureDestroyed();
+        #region Structure Objects
+        public virtual void SetStructureObject(LocationStructureObject structureObj) {
+            this.structureObj = structureObj;
+            Vector3 position = structureObj.transform.position;
+            position.x -= 0.5f;
+            position.y -= 0.5f;
+            worldPosition = position;
         }
-    }
-    public void OnWallRepaired(WallObject wall) {
-        if (structureObj.walls.Contains(wall)) {
-            wall.gridTileLocation.SetTileType(LocationGridTile.Tile_Type.Wall);
+        public void SetOccupiedBuildSpot(BuildSpotTileObject buildSpotTileObject) {
+            occupiedBuildSpot = buildSpotTileObject;
         }
-    }
-    public void OnWallDamaged(WallObject wall) {
-        if (structureObj.walls.Contains(wall)) {
-            //create repair job
-            OnStructureDamaged();
+        private void OnClickStructure() {
+            Selector.Instance.Select(this);
         }
-    }
-    public void OnTileDamaged(LocationGridTile tile) {
-        OnStructureDamaged();
-    }
-    public void OnTileRepaired(LocationGridTile tile) {
-        structureObj?.ApplyGroundTileAssetForTile(tile);
-    }
-    public void OnTileDestroyed(LocationGridTile tile) {
-        if (structureType.IsOpenSpace()) {
-            return; //do not check for destruction if structure is open space (Wilderness, Work Settlement, Cemetery, etc.)
-        }
-        CheckIfStructureDestroyed();
-    }
-    private void OnStructureDamaged() {
-        if (structureType.IsOpenSpace()) {
-            return; //do not check for damage if structure is open space (Wilderness, Work Settlement, Cemetery, etc.)
-        }
-        if (occupiedBuildSpot.advertisedActions.Contains(INTERACTION_TYPE.REPAIR_STRUCTURE) == false) {
-            occupiedBuildSpot.AddAdvertisedAction(INTERACTION_TYPE.REPAIR_STRUCTURE);
-        }
-        if (location is Settlement) {
-            if ((location as Settlement).HasJob(JOB_TYPE.REPAIR, occupiedBuildSpot) == false) {
-                CreateRepairJob();
-            }    
-        }
+        #endregion
+
+        #region Destroy
+        protected virtual void DestroyStructure() {
+            if (_hasBeenDestroyed) {
+                return;
+            }
+            Debug.Log($"{GameManager.Instance.TodayLogString()}{ToString()} was destroyed!");
         
-    }
-    private bool StillHasObjectsToRepair() {
-        for (int i = 0; i < tiles.Count; i++) {
-            LocationGridTile tile = tiles[i];
-            if (tile.genericTileObject.currentHP < tile.genericTileObject.maxHP) {
+            if (settlementLocation is NPCSettlement npcSettlement) {
+                JobQueueItem existingRepairJob = npcSettlement.GetJob(JOB_TYPE.REPAIR, occupiedBuildSpot);
+                if (existingRepairJob != null) {
+                    npcSettlement.RemoveFromAvailableJobs(existingRepairJob);
+                }    
+            }
+        
+            //transfer tiles to either the wilderness or work npcSettlement
+            List<LocationGridTile> tilesInStructure = new List<LocationGridTile>(tiles);
+            LocationStructure wilderness = location.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+            for (int i = 0; i < tilesInStructure.Count; i++) {
+                LocationGridTile tile = tilesInStructure[i];
+                LocationStructure transferTo = wilderness;
+            
+                tile.ClearWallObjects();
+                IPointOfInterest obj = tile.objHere;
+                if (obj != null) {
+                    obj.AdjustHP(-tile.objHere.maxHP, ELEMENTAL_TYPE.Normal);
+                    obj.gridTileLocation?.structure.RemovePOI(obj); //because sometimes adjusting the hp of the object to 0 does not remove it?
+                }
+                
+                tile.SetStructure(transferTo);
+                tile.RevertToPreviousGroundVisual();
+                tile.CreateSeamlessEdgesForTile(location.innerMap);
+                tile.SetPreviousGroundVisual(null); //so that the tile will never revert to the structure tile, unless a new structure is put on it.
+                tile.genericTileObject.AdjustHP(tile.genericTileObject.maxHP, ELEMENTAL_TYPE.Normal);
+            }
+        
+            occupiedBuildSpot.RemoveOccupyingStructure(this);
+            ObjectPoolManager.Instance.DestroyObject(structureObj);
+            location.RemoveStructure(this);
+            settlementLocation.RemoveStructure(this);
+            Messenger.Broadcast(Signals.STRUCTURE_OBJECT_REMOVED, this, occupiedBuildSpot.spot);
+            SetOccupiedBuildSpot(null);
+            _hasBeenDestroyed = true;
+            UnsubscribeListeners();
+            Messenger.Broadcast(Signals.STRUCTURE_DESTROYED, this);
+        }
+        private bool CheckIfStructureDestroyed() {
+            //To check if a structure is destroyed, check if 50% of its walls have been destroyed.
+            int neededWallsToBeConsideredValid = Mathf.FloorToInt(structureObj.walls.Length * 0.5f);
+            int intactWalls = structureObj.walls.Count(wall => wall.currentHP > 0);
+            if (intactWalls < neededWallsToBeConsideredValid) {
+                //consider structure as destroyed
+                DestroyStructure();
                 return true;
             }
-            for (int j = 0; j < tile.walls.Count; j++) {
-                WallObject wall = tile.walls[j];
-                if (wall.currentHP < wall.maxHP) {
+            return false;
+        }
+        #endregion
+
+        #region Walls
+        public void OnWallDestroyed(StructureWallObject structureWall) {
+            //check if structure destroyed
+            if (structureObj.walls.Contains(structureWall)) {
+                structureWall.gridTileLocation.SetTileType(LocationGridTile.Tile_Type.Empty);
+                structureObj.RescanPathfindingGridOfStructure();
+                CheckInteriorState();
+                CheckIfStructureDestroyed();
+            }
+        }
+        public void OnWallRepaired(StructureWallObject structureWall) {
+            if (structureObj.walls.Contains(structureWall)) {
+                structureWall.gridTileLocation.SetTileType(LocationGridTile.Tile_Type.Wall);
+                structureObj.RescanPathfindingGridOfStructure();
+                CheckInteriorState();
+            }
+        }
+        public void OnWallDamaged(StructureWallObject structureWall) {
+            Assert.IsNotNull(structureObj, $"Wall of {this.ToString()} was damaged, but it has no structure object");
+            if (structureObj.walls.Contains(structureWall)) {
+                //create repair job
+                OnStructureDamaged();
+            }
+        }
+        public void OnTileDamaged(LocationGridTile tile) {
+            OnStructureDamaged();
+        }
+        public void OnTileRepaired(LocationGridTile tile) {
+            // ReSharper disable once Unity.NoNullPropagation
+            structureObj?.ApplyGroundTileAssetForTile(tile);
+        }
+        public void OnTileDestroyed(LocationGridTile tile) {
+            if (structureType.IsOpenSpace()) {
+                return; //do not check for destruction if structure is open space (Wilderness, Work NPCSettlement, Cemetery, etc.)
+            }
+            // CheckIfStructureDestroyed();
+        }
+        private void OnStructureDamaged() {
+            if (structureType.IsOpenSpace() || structureType.IsSettlementStructure() == false) {
+                return; //do not check for damage if structure is open space (Wilderness, Work NPCSettlement, Cemetery, etc.)
+            }
+            if (occupiedBuildSpot.advertisedActions.Contains(INTERACTION_TYPE.REPAIR_STRUCTURE) == false) {
+                occupiedBuildSpot.AddAdvertisedAction(INTERACTION_TYPE.REPAIR_STRUCTURE);
+            }
+            CheckInteriorState();
+            if (settlementLocation is NPCSettlement npcSettlement) {
+                if (npcSettlement.HasJob(JOB_TYPE.REPAIR, occupiedBuildSpot) == false) {
+                    CreateRepairJob();
+                }    
+            }
+            
+        }
+        private bool StillHasObjectsToRepair() {
+            for (int i = 0; i < tiles.Count; i++) {
+                LocationGridTile tile = tiles[i];
+                if (tile.genericTileObject.currentHP < tile.genericTileObject.maxHP) {
+                    return true;
+                }
+                if (tile.walls.Any(wall => wall.currentHP < wall.maxHP)) {
                     return true;
                 }
             }
+            return false;
         }
-        return false;
-    }
-    #endregion
-
-    #region Repair
-    private void CreateRepairJob() {
-        if (location is Settlement) {
-            Settlement settlement = location as Settlement;
-            GoapPlanJob repairJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REPAIR, INTERACTION_TYPE.REPAIR_STRUCTURE, occupiedBuildSpot, settlement);
-            repairJob.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRepairStructureJob);
-            settlement.AddToAvailableJobs(repairJob);    
+        private void CheckInteriorState() {
+            //if structure object only has 70% or less of walls intact, set it as exterior
+            //else, set it as interior
+            int neededWallsToBeConsideredExterior = Mathf.FloorToInt(structureObj.walls.Length * 0.7f);
+            int intactWalls = structureObj.walls.Count(wall => wall.currentHP > 0);
+            SetInteriorState(intactWalls > neededWallsToBeConsideredExterior);
         }
-    }
-    #endregion
+        #endregion
 
-    #region Resource
-    public void ChangeResourceMadeOf(RESOURCE resource) {
-        structureObj.ChangeResourceMadeOf(resource);
-    }
-    #endregion
+        #region Repair
+        private void CreateRepairJob() {
+            if (settlementLocation is NPCSettlement npcSettlement) {
+                GoapPlanJob repairJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REPAIR, INTERACTION_TYPE.REPAIR_STRUCTURE, occupiedBuildSpot, npcSettlement);
+                repairJob.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRepairStructureJob);
+                npcSettlement.AddToAvailableJobs(repairJob);    
+            }
+        }
+        #endregion
 
-    public override string ToString() {
-        return structureType.ToString() + " " + id.ToString() + " at " + location.name;
+        #region Resource
+        public void ChangeResourceMadeOf(RESOURCE resource) {
+            structureObj.ChangeResourceMadeOf(resource);
+        }
+        #endregion
+
+        public override string ToString() {
+            return $"{structureType} {id} at {location.name}";
+        }
+
+        #region Player Action Target
+        public List<PlayerAction> actions { get; private set; }
+        public virtual void ConstructDefaultActions() {
+            actions = new List<PlayerAction>();
+        }
+        public void AddPlayerAction(PlayerAction action) {
+            if (actions.Contains(action) == false) {
+                actions.Add(action);
+                Messenger.Broadcast(Signals.PLAYER_ACTION_ADDED_TO_TARGET, action, this as IPlayerActionTarget);    
+            }
+        }
+        public void RemovePlayerAction(PlayerAction action) {
+            if (actions.Remove(action)) {
+                Messenger.Broadcast(Signals.PLAYER_ACTION_REMOVED_FROM_TARGET, action, this as IPlayerActionTarget);
+            }
+        }
+        public void RemovePlayerAction(string actionName) {
+            for (int i = 0; i < actions.Count; i++) {
+                PlayerAction action = actions[i];
+                if (action.actionName == actionName) {
+                    actions.RemoveAt(i);
+                    Messenger.Broadcast(Signals.PLAYER_ACTION_REMOVED_FROM_TARGET, action, this as IPlayerActionTarget);
+                }
+            }
+        }
+        public PlayerAction GetPlayerAction(string actionName) {
+            for (int i = 0; i < actions.Count; i++) {
+                PlayerAction playerAction = actions[i];
+                if (playerAction.actionName == actionName) {
+                    return playerAction;
+                }
+            }
+            return null;
+        }
+        public void ClearPlayerActions() {
+            actions.Clear();
+        }
+        #endregion
+        
+        #region Selectable
+        public bool IsCurrentlySelected() {
+            return UIManager.Instance.structureInfoUI.isShowing 
+                   && UIManager.Instance.structureInfoUI.activeStructure == this;
+        }
+        public void LeftSelectAction() {
+            UIManager.Instance.ShowStructureInfo(this);
+        }
+        public void RightSelectAction() {
+            //Nothing happens
+        }
+        #endregion
     }
 }
 
@@ -577,12 +741,6 @@ public class SaveDataLocationStructure {
         name = structure.name;
         structureType = structure.structureType;
         state = structure.state;
-
-        if(structure.entranceTile != null) {
-            entranceTile = new Vector3Save(structure.entranceTile.localPlace.x, structure.entranceTile.localPlace.y, 0);
-        } else {
-            entranceTile = new Vector3Save(0f,0f,-1f);
-        }
     }
 
     public LocationStructure Load(ILocation location) {
@@ -605,11 +763,29 @@ public class SaveDataLocationStructure {
             for (int i = 0; i < loadedStructure.tiles.Count; i++) {
                 LocationGridTile tile = loadedStructure.tiles[i];
                 if(tile.localPlace.x == (int)entranceTile.x && tile.localPlace.y == (int) entranceTile.y) {
-                    loadedStructure.SetEntranceTile(tile);
                     break;
                 }
             }
         }
         loadedStructure = null;
+    }
+}
+
+public class TileObjectsAndCount {
+    public int count;
+    public List<TileObject> tileObjects;
+    
+    public TileObjectsAndCount() {
+        tileObjects = new List<TileObject>();
+    }
+
+    public void AddTileObject(TileObject tileObject) {
+        tileObjects.Add(tileObject);
+        count = tileObjects.Count;
+    }
+    public void RemoveTileObject(TileObject tileObject) {
+        if (tileObjects.Remove(tileObject)) {
+            count = tileObjects.Count;
+        }
     }
 }

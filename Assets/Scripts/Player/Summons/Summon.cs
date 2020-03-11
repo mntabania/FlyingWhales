@@ -1,64 +1,87 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Actionables;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
+using JetBrains.Annotations;
 using Traits;
 using UnityEngine;
+using Interrupts;
 
 public class Summon : Character, IWorldObject {
 
 	public SUMMON_TYPE summonType { get; private set; }
     public bool hasBeenUsed { get; private set; } //has this summon been used in the current map. TODO: Set this to false at end of invasion of map.
 
+    public List<HexTile> territorries { get; private set; }
+    
     #region getters/setters
     public virtual string worldObjectName {
-        get { return name + " (" + Utilities.NormalizeStringUpperCaseFirstLetters(summonType.ToString()) + ")"; }
+        get { return $"{name} ({UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(summonType.ToString())})"; }
     }
     public WORLD_OBJECT_TYPE worldObjectType {
         get { return WORLD_OBJECT_TYPE.SUMMON; }
     }
     #endregion
 
-    public Summon(SUMMON_TYPE summonType, CharacterRole role, RACE race, GENDER gender) : base(role, race, gender) {
+    // public Summon(SUMMON_TYPE summonType, CharacterRole role, RACE race, GENDER gender) : base(role, race, gender) {
+    //     this.summonType = summonType;
+    //     territorries = new List<HexTile>();
+    // }
+    protected Summon(SUMMON_TYPE summonType, string className, RACE race, GENDER gender) : base(className, race, gender) {
         this.summonType = summonType;
+        territorries = new List<HexTile>();
     }
-    public Summon(SUMMON_TYPE summonType, CharacterRole role, string className, RACE race, GENDER gender) : base(role, className, race, gender) {
-        this.summonType = summonType;
-    }
-    public Summon(SaveDataCharacter data) : base(data) {
+    protected Summon(SaveDataCharacter data) : base(data) {
         this.summonType = data.summonType;
+        territorries = new List<HexTile>();
     }
 
     #region Overrides
     public override void Initialize() {
+        ConstructDefaultActions();
         OnUpdateRace();
         OnUpdateCharacterClass();
 
-        SetMoodValue(90);
+        moodComponent.OnCharacterBecomeMinionOrSummon();
+        moodComponent.SetMoodValue(50);
 
         CreateOwnParty();
         
         needsComponent.Initialize();
         
         ConstructInitialGoapAdvertisementActions();
-        //SubscribeToSignals(); //NOTE: Only made characters subscribe to signals when their settlement is the one that is currently active. TODO: Also make sure to unsubscribe a character when the player has completed their map.
+        needsComponent.SetFullnessForcedTick(0);
+        needsComponent.SetTirednessForcedTick(0);
+        behaviourComponent.AddBehaviourComponent(typeof(DefaultMonster));
+        //SubscribeToSignals(); //NOTE: Only made characters subscribe to signals when their npcSettlement is the one that is currently active. TODO: Also make sure to unsubscribe a character when the player has completed their map.
     }
-    public override void OnAfterActionStateSet(string stateName, ActualGoapNode node) { } //overriddn OnActionStateSet so that summons cannot witness other events.
-    protected override void OnSuccessInvadeArea(Settlement settlement) {
-        base.OnSuccessInvadeArea(settlement);
+    public override void OnActionPerformed(ActualGoapNode node) { } //overridden OnActionStateSet so that summons cannot witness other events.
+    protected override void OnSuccessInvadeArea(NPCSettlement npcSettlement) {
+        base.OnSuccessInvadeArea(npcSettlement);
         //clean up
         Reset();
-        //PlayerManager.Instance.player.playerSettlement.AddCharacterToLocation(this);
+        //PlayerManager.Instance.player.playerNpcSettlement.AddCharacterToLocation(this);
         //ResetToFullHP();
         Death();
     }
-    public override void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null, LogFiller[] deathLogFillers = null) {
+    public override void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null, LogFiller[] deathLogFillers = null, Interrupt interrupt = null) {
         if (!_isDead) {
             Region deathLocation = currentRegion;
             LocationStructure deathStructure = currentStructure;
             LocationGridTile deathTile = gridTileLocation;
 
+            if (lycanData != null) {
+                lycanData.LycanDies(this, cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers);
+            }
+            
             SetIsDead(true);
+            if (isLimboCharacter && isInLimbo) {
+                //If a limbo character dies while in limbo, that character should not process death, instead he/she will be removed from the list
+                CharacterManager.Instance.RemoveLimboCharacter(this);
+                return;
+            }
             UnsubscribeSignals();
 
             //if (currentParty.specificLocation == null) {
@@ -83,7 +106,7 @@ public class Summon : Character, IWorldObject {
             //    currentActionNode.StopActionNode(false);
             //}
             if (currentSettlement != null && isHoldingItem) {
-                DropAllTokens(currentStructure, deathTile, true);
+                DropAllItems(deathTile);
             }
             //if (ownParty.specificLocation != null && isHoldingItem) {
             //    DropAllTokens(ownParty.specificLocation, currentStructure, deathTile, true);
@@ -92,40 +115,48 @@ public class Summon : Character, IWorldObject {
             //clear traits that need to be removed
             traitsNeededToBeRemoved.Clear();
 
-            if (!IsInOwnParty()) {
-                currentParty.RemovePOI(this);
+            Character carrier = isBeingCarriedBy;
+            if (carrier != null) {
+                carrier.UncarryPOI(this);
             }
             ownParty.PartyDeath();
             currentRegion?.RemoveCharacterFromLocation(this);
             SetRegionLocation(deathLocation); //set the specific location of this party, to the location it died at
             SetCurrentStructureLocation(deathStructure, false);
 
-            if (_role != null) {
-                _role.OnDeath(this);
-            }
+            // if (_role != null) {
+            //     _role.OnDeath(this);
+            // }
 
             if (homeRegion != null) {
                 Region home = homeRegion;
-                Dwelling homeStructure = this.homeStructure;
+                IDwelling homeStructure = this.homeStructure;
                 homeRegion.RemoveResident(this);
                 SetHomeRegion(home); //keep this data with character to prevent errors
                 SetHomeStructure(homeStructure); //keep this data with character to prevent errors
             }
-            //if (homeSettlement != null) {
-            //    Settlement home = homeSettlement;
+            //if (homeNpcSettlement != null) {
+            //    NPCSettlement home = homeNpcSettlement;
             //    Dwelling homeStructure = this.homeStructure;
-            //    homeSettlement.RemoveResident(this);
+            //    homeNpcSettlement.RemoveResident(this);
             //    SetHome(home); //keep this data with character to prevent errors
             //    SetHomeStructure(homeStructure); //keep this data with character to prevent errors
             //}
 
-            traitContainer.RemoveAllTraitsByType(this, TRAIT_TYPE.CRIMINAL); //remove all criminal type traits
+            traitContainer.RemoveAllTraitsAndStatusesByName(this, "Criminal"); //remove all criminal type traits
 
-            for (int i = 0; i < traitContainer.allTraits.Count; i++) {
-                traitContainer.allTraits[i].OnDeath(this);
+            for (int i = 0; i < traitContainer.allTraitsAndStatuses.Count; i++) {
+                if (traitContainer.allTraitsAndStatuses[i].OnDeath(this)) {
+                    i--;
+                }
             }
 
             marker?.OnDeath(deathTile);
+
+            if (interruptComponent.isInterrupted && interruptComponent.currentInterrupt != interrupt) {
+                interruptComponent.ForceEndNonSimultaneousInterrupt();
+            }
+
             Dead dead = new Dead();
             dead.AddCharacterResponsibleForTrait(responsibleCharacter);
             traitContainer.AddTrait(this, dead, gainedFromDoing: deathFromAction);
@@ -136,7 +167,7 @@ public class Summon : Character, IWorldObject {
             //Debug.Log(GameManager.Instance.TodayLogString() + this.name + " died of " + cause);
             Log deathLog;
             if (_deathLog == null) {
-                deathLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "death_" + cause);
+                deathLog = new Log(GameManager.Instance.Today(), "Character", "Generic", $"death_{cause}");
                 deathLog.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 if (responsibleCharacter != null) {
                     deathLog.AddToFillers(responsibleCharacter, responsibleCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -147,11 +178,13 @@ public class Summon : Character, IWorldObject {
                     }
                 }
                 //will only add death log to history if no death log is provided. NOTE: This assumes that if a death log is provided, it has already been added to this characters history.
-                AddHistory(deathLog);
-                PlayerManager.Instance.player.ShowNotification(deathLog);
+                logComponent.AddHistory(deathLog);
+                PlayerManager.Instance.player.ShowNotificationFrom(this, deathLog);
             } else {
                 deathLog = _deathLog;
             }
+
+            AfterDeath(deathTile);
         }
     }
     protected override void OnTickStarted() {
@@ -161,10 +194,11 @@ public class Summon : Character, IWorldObject {
         if (!isDead && !isInCombat) {
             HPRecovery(0.0025f);
         }
-
-        if (!ownParty.icon.isTravelling && !isInCombat) {
-            GoToWorkArea();
-        }
+        ProcessTraitsOnTickStarted();
+        StartTickGoapPlanGeneration();
+        // if (!ownParty.icon.isTravelling && !isInCombat) {
+        //     GoToWorkArea();
+        // }
 
         //StartTickGoapPlanGeneration();
 
@@ -207,6 +241,7 @@ public class Summon : Character, IWorldObject {
         //}
         marker.UpdateSpeed();
     }
+    protected virtual void AfterDeath(LocationGridTile deathTileLocation) { }
     #endregion
 
     public void Reset() {
@@ -216,7 +251,7 @@ public class Summon : Character, IWorldObject {
             CreateOwnParty();
             ownParty.CreateIcon();
         }
-        traitContainer.RemoveAllNonPersistentTraits(this);
+        traitContainer.RemoveAllNonPersistentTraitAndStatuses(this);
         //ClearAllAwareness();
         CancelAllJobs();
         ResetToFullHP();
@@ -237,13 +272,67 @@ public class Summon : Character, IWorldObject {
     }
     #endregion
 
+    #region Territorries
+    public void AddTerritory([NotNull]HexTile tile) {
+        if (territorries.Contains(tile) == false) {
+            territorries.Add(tile);
+        }
+    }
+    public void RemoveTerritory(HexTile tile) {
+        territorries.Remove(tile);
+    }
+    public bool HasTerritory() {
+        return territorries.Count > 0;
+    }
+    public bool IsInTerritory() {
+        return territorries.Contains(gridTileLocation.buildSpotOwner.hexTileOwner);
+    }
+    public LocationGridTile GetRandomLocationGridTileWithPath() {
+        LocationGridTile chosenTile = null;
+        if(territorries.Count > 0) {
+            //while (chosenTile == null) {
+                HexTile chosenTerritory = territorries[UnityEngine.Random.Range(0, territorries.Count)];
+                LocationGridTile chosenGridTile = chosenTerritory.locationGridTiles[UnityEngine.Random.Range(0, chosenTerritory.locationGridTiles.Count)];
+                if(PathfindingManager.Instance.HasPathEvenDiffRegion(gridTileLocation, chosenGridTile)) {
+                    chosenTile = chosenGridTile;
+                }
+            //}
+        }
+        return chosenTile;
+    }
+    #endregion
+
+    #region Player Action Target
+    public override void ConstructDefaultActions() {
+        actions = new List<PlayerAction>();
+        PlayerAction seizeAction = new PlayerAction(PlayerDB.Seize_Character_Action,
+        () => !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && !this.traitContainer.HasTrait("Leader", "Blessed"),
+        null,
+        () => PlayerManager.Instance.player.seizeComponent.SeizePOI(this));
+
+        AddPlayerAction(seizeAction);
+    }
+    #endregion
+    
+    #region Jobs
+    public void NoPathToDoJob(JobQueueItem job) {
+        if (job.jobType == JOB_TYPE.ROAM_AROUND_TERRITORY) {
+            jobComponent.TriggerRoamAroundTile();
+        } else if (job.jobType == JOB_TYPE.RETURN_PORTAL) {
+            jobComponent.TriggerRoamAroundTile();
+        } else if (job.jobType == JOB_TYPE.ROAM_AROUND_TILE) {
+            jobComponent.TriggerMonsterStand();
+        }
+    }
+    #endregion
 }
 
 public class SummonSlot {
     public int level;
     public Summon summon;
     public bool isLocked {
-        get { return PlayerManager.Instance.player.GetIndexForSummonSlot(this) >= PlayerManager.Instance.player.maxSummonSlots; }
+        get { return false; }
+        //get { return PlayerManager.Instance.player.GetIndexForSummonSlot(this) >= PlayerManager.Instance.player.maxSummonSlots; }
     }
 
     public SummonSlot() {
@@ -260,7 +349,7 @@ public class SummonSlot {
 
     public void LevelUp() {
         level++;
-        level = Mathf.Clamp(level, 1, PlayerManager.MAX_LEVEL_SUMMON);
+        level = Mathf.Clamp(level, 1, PlayerDB.MAX_LEVEL_SUMMON);
         if (this.summon != null) {
             this.summon.SetLevel(level);
         }
@@ -268,7 +357,7 @@ public class SummonSlot {
     }
     public void SetLevel(int amount) {
         level = amount;
-        level = Mathf.Clamp(level, 1, PlayerManager.MAX_LEVEL_SUMMON);
+        level = Mathf.Clamp(level, 1, PlayerDB.MAX_LEVEL_SUMMON);
         if (this.summon != null) {
             this.summon.SetLevel(level);
         }

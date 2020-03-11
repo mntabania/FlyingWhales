@@ -11,7 +11,8 @@ public class KnockoutCharacter : GoapAction {
         doesNotStopTargetCharacter = true;
         actionIconString = GoapActionStateDB.Stealth_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
+        isNotificationAnIntel = true;
     }
 
     #region Overrides
@@ -22,8 +23,53 @@ public class KnockoutCharacter : GoapAction {
         base.Perform(goapNode);
         SetState("Knockout Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        return 1;
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+        string costLog = $"\n{name} {target.nameWithID}:";
+        int cost = 0;
+        if (target is Character) {
+            Character targetCharacter = target as Character;
+            string opinionLabel = actor.relationshipContainer.GetOpinionLabel(targetCharacter);
+            if (opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend || opinionLabel == OpinionComponent.Acquaintance
+                || actor.faction == targetCharacter.faction || actor.homeSettlement == targetCharacter.homeSettlement) {
+                cost += 15;
+                costLog += " +15(Friend/Close/Acquaintance/Same Faction/NPCSettlement)";
+            } else if (job.jobType == JOB_TYPE.UNDERMINE) {
+                cost += UtilityScripts.Utilities.rng.Next(80, 121);
+                costLog += $" +{cost}(Undermine)";
+            } else {
+                cost += 2000;
+                costLog += " +2000(Else)";
+            }
+        }
+        actor.logComponent.AppendCostLog(costLog);
+        return cost;
+    }
+    public override string ReactionToActor(Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionToActor(witness, node, status);
+        Character actor = node.actor;
+        IPointOfInterest target = node.poiTarget;
+        if (target is Character) {
+            Character targetCharacter = target as Character;
+            string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
+            if (opinionLabel == OpinionComponent.Rival) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status);
+            } else {
+                if(node.associatedJobType != JOB_TYPE.APPREHEND) {
+                    if (witness.homeSettlement == targetCharacter.homeSettlement || witness.faction == targetCharacter.faction
+                        || witness.relationshipContainer.HasRelationshipWith(targetCharacter)) {
+                        CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.MISDEMEANOR);
+                    }
+                }
+            }
+
+            if (opinionLabel == OpinionComponent.Acquaintance) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status);
+            } else if (opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status);
+            }
+        }
+        return response;
     }
     #endregion
 
@@ -31,7 +77,7 @@ public class KnockoutCharacter : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
-            return actor != poiTarget && actor.traitContainer.GetNormalTrait<Trait>("Serial Killer") != null;
+            return actor != poiTarget && (actor.traitContainer.HasTrait("Psychopath") || actor.traitContainer.HasTrait("Vampiric"));
         }
         return false;
     }
@@ -53,7 +99,7 @@ public class KnockoutCharacter : GoapAction {
     //        Character targetCharacter = poiTarget as Character;
     //        if (!targetCharacter.ReactToCrime(committedCrime, this, actorAlterEgo, SHARE_INTEL_STATUS.WITNESSED)) {
     //            RelationshipManager.Instance.RelationshipDegradation(actor, targetCharacter, this);
-    //            targetCharacter.marker.AddHostileInRange(actor, false);
+    //            targetCharacter.combatComponent.AddHostileInRange(actor, false);
     //            //NOTE: Adding hostile in range is done after the action is done processing fully, See OnResultReturnedToActor
     //        }
     //    }
@@ -111,7 +157,7 @@ public class KnockoutCharacter : GoapAction {
     //                } else if (relationshipWithTarget == RELATIONSHIP_EFFECT.NEGATIVE) {
     //                    recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
     //                    if (status == SHARE_INTEL_STATUS.WITNESSED) {
-    //                        recipient.marker.AddAvoidInRange(actor, reason: "saw something shameful");
+    //                        recipient.combatComponent.AddAvoidInRange(actor, reason: "saw something shameful");
     //                    }
     //                    reactions.Add("My enemies fighting each other. What a happy day!");
     //                } else {
@@ -136,12 +182,12 @@ public class KnockoutCharacter : GoapAction {
     //                } else if (relationshipWithTarget == RELATIONSHIP_EFFECT.NEGATIVE) {
     //                    recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
     //                    if (status == SHARE_INTEL_STATUS.WITNESSED) {
-    //                        recipient.marker.AddAvoidInRange(actor, reason: "saw something shameful");
+    //                        recipient.combatComponent.AddAvoidInRange(actor, reason: "saw something shameful");
     //                    }
     //                    reactions.Add(string.Format("{0} shouldn't have done that to {1}!", actor.name, targetCharacter.name));
     //                } else {
     //                    if (status == SHARE_INTEL_STATUS.WITNESSED) {
-    //                        recipient.marker.AddAvoidInRange(actor, reason: "saw something shameful");
+    //                        recipient.combatComponent.AddAvoidInRange(actor, reason: "saw something shameful");
     //                    }
     //                    reactions.Add(string.Format("I am not fond of {0} at all so I don't care what happens to {1}.", targetCharacter.name, Utilities.GetPronounString(targetCharacter.gender, PRONOUN_TYPE.OBJECTIVE, false)));
     //                }
@@ -201,7 +247,7 @@ public class KnockoutCharacter : GoapAction {
     //                } else if (relationshipWithTarget == RELATIONSHIP_EFFECT.NEGATIVE) {
     //                    recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
     //                    if (status == SHARE_INTEL_STATUS.WITNESSED) {
-    //                        recipient.marker.AddAvoidInRange(actor, reason: "saw something shameful");
+    //                        recipient.combatComponent.AddAvoidInRange(actor, reason: "saw something shameful");
     //                    }
     //                    reactions.Add("My enemies fighting each other. What a happy day!");
     //                } else {
@@ -226,12 +272,12 @@ public class KnockoutCharacter : GoapAction {
     //                } else if (relationshipWithTarget == RELATIONSHIP_EFFECT.NEGATIVE) {
     //                    recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
     //                    if (status == SHARE_INTEL_STATUS.WITNESSED) {
-    //                        recipient.marker.AddAvoidInRange(actor, reason: "saw something shameful");
+    //                        recipient.combatComponent.AddAvoidInRange(actor, reason: "saw something shameful");
     //                    }
     //                    reactions.Add(string.Format("{0} shouldn't have done that to {1}!", actor.name, targetCharacter.name));
     //                } else {
     //                    if (status == SHARE_INTEL_STATUS.WITNESSED) {
-    //                        recipient.marker.AddAvoidInRange(actor, reason: "saw something shameful");
+    //                        recipient.combatComponent.AddAvoidInRange(actor, reason: "saw something shameful");
     //                    }
     //                    reactions.Add(string.Format("I am not fond of {0} at all so I don't care what happens to {1}.", targetCharacter.name, Utilities.GetPronounString(targetCharacter.gender, PRONOUN_TYPE.OBJECTIVE, false)));
     //                }
@@ -245,11 +291,11 @@ public class KnockoutCharacter : GoapAction {
 
 public class KnockoutCharacterData : GoapActionData {
     public KnockoutCharacterData() : base(INTERACTION_TYPE.KNOCKOUT_CHARACTER) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
         requirementAction = Requirement;
     }
 
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor != poiTarget && actor.traitContainer.GetNormalTrait<Trait>("Serial Killer") != null;
+        return actor != poiTarget && actor.traitContainer.HasTrait("Psychopath");
     }
 }

@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Traits {
-    public class Reanimated : Trait {
+    public class Reanimated : Status {
 
         public Reanimated() {
             name = "Reanimated";
             description = "Brought back to life by some unholy magic.";
-            type = TRAIT_TYPE.ENCHANTMENT;
+            type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.POSITIVE;
             
             ticksDuration = 0;

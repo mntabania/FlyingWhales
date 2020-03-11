@@ -16,7 +16,7 @@ public class SaveDataPlayer {
     public List<SaveDataSummonSlot> summonSlots;
     public List<SaveDataArtifactSlot> artifactSlots;
     public List<SaveDataInterventionAbility> interventionAbilitySlots;
-    public List<SaveDataIntel> allIntel;
+    //public List<SaveDataIntel> allIntel;
     public UnsummonedMinionData[] minionsToSummon;
 
 
@@ -38,15 +38,12 @@ public class SaveDataPlayer {
     public void Save(Player player) {
         playerFactionID = player.playerFaction.id;
         playerAreaID = player.playerSettlement.id;
-        threat = player.threat;
         mana = player.mana;
-        maxSummonSlots = player.maxSummonSlots;
-        maxArtifactSlots = player.maxArtifactSlots;
+        //maxSummonSlots = player.maxSummonSlots;
+        //maxArtifactSlots = player.maxArtifactSlots;
         //currentDivineInterventionTick = player.currentDivineInterventionTick;
-        minionsToSummon = player.minionsToSummon;
+        // minionsToSummon = player.minionsToSummon;
         constructionRatePercentageModifier = player.constructionRatePercentageModifier;
-        maxMana = player.maxMana;
-        manaRegen = player.manaRegen;
         //isNotFirstResearch = player.isNotFirstResearch;
 
         minions = new List<SaveDataMinion>();
@@ -56,19 +53,19 @@ public class SaveDataPlayer {
             minions.Add(saveDataMinion);
         }
 
-        summonSlots = new List<SaveDataSummonSlot>();
-        for (int i = 0; i < player.summonSlots.Count; i++) {
-            SaveDataSummonSlot data = new SaveDataSummonSlot();
-            data.Save(player.summonSlots[i]);
-            summonSlots.Add(data);
-        }
+        //summonSlots = new List<SaveDataSummonSlot>();
+        //for (int i = 0; i < player.summons.Count; i++) {
+        //    SaveDataSummonSlot data = new SaveDataSummonSlot();
+        //    data.Save(player.summons[i]);
+        //    summonSlots.Add(data);
+        //}
 
-        artifactSlots = new List<SaveDataArtifactSlot>();
-        for (int i = 0; i < player.artifactSlots.Count; i++) {
-            SaveDataArtifactSlot saveDataArtifact = new SaveDataArtifactSlot();
-            saveDataArtifact.Save(player.artifactSlots[i]);
-            artifactSlots.Add(saveDataArtifact);
-        }
+        // artifactSlots = new List<SaveDataArtifactSlot>();
+        // for (int i = 0; i < player.artifacts.Count; i++) {
+        //     SaveDataArtifactSlot saveDataArtifact = new SaveDataArtifactSlot();
+        //     saveDataArtifact.Save(player.artifacts[i]);
+        //     artifactSlots.Add(saveDataArtifact);
+        // }
 
         //currentMinionLeaderID = player.currentMinionLeader.character.id;
 
@@ -79,13 +76,13 @@ public class SaveDataPlayer {
             interventionAbilitySlots.Add(saveDataInterventionAbility);
         }
 
-        allIntel = new List<SaveDataIntel>();
-        for (int i = 0; i < player.allIntel.Count; i++) {
-            Intel intel = player.allIntel[i];
-            SaveDataIntel data = System.Activator.CreateInstance(System.Type.GetType("SaveData" + intel.GetType().ToString())) as SaveDataIntel;
-            data.Save(intel);
-            allIntel.Add(data);
-        }
+        //allIntel = new List<SaveDataIntel>();
+        //for (int i = 0; i < player.allIntel.Count; i++) {
+        //    Intel intel = player.allIntel[i];
+        //    SaveDataIntel data = System.Activator.CreateInstance(System.Type.GetType("SaveData" + intel.GetType().ToString())) as SaveDataIntel;
+        //    data.Save(intel);
+        //    allIntel.Add(data);
+        //}
         //if(player.isInvadingRegion) {
         //    invadingRegionID = player.invadingRegion.id;
         //} else {

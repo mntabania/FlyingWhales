@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -148,9 +147,9 @@ public class RoleSlotItem : MonoBehaviour, IDragParentItem {
     private void ShowActionBtnTooltip(string message, string header) {
         string m = string.Empty;   
         if (!string.IsNullOrEmpty(header)) {
-            m = "<font=\"Eczar-Medium\"><line-height=100%><size=18>" + header + "</font>\n";
+            m = $"<font=\"Eczar-Medium\"><line-height=100%><size=18>{header}</font>\n";
         }
-        m += "<line-height=70%><size=16>" + message;
+        m += $"<line-height=70%><size=16>{message}";
 
         m = m.Replace("\\n", "\n");
 
@@ -161,10 +160,4 @@ public class RoleSlotItem : MonoBehaviour, IDragParentItem {
         //actionBtnTooltipGO.gameObject.SetActive(false);
     }
     #endregion
-}
-
-public class CharacterLevelComparer : IComparer<Character> {
-    public int Compare(Character x, Character y) {
-        return x.level.CompareTo(y.level);
-    }
 }

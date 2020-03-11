@@ -18,7 +18,7 @@ public class LogHistoryItem : LogItem {
         this.name = log.id.ToString();
         dateLbl.text = log.date.ConvertToContinuousDaysWithTime();
         if (_log.fillers.Count > 0) {
-            this.logLbl.text = Utilities.LogReplacer(_log);
+            this.logLbl.text = UtilityScripts.Utilities.LogReplacer(_log);
         } else {
             this.logLbl.text = LocalizationManager.Instance.GetLocalizedValue(_log.category, _log.file, _log.key);
         }

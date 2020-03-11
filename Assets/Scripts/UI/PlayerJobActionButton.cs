@@ -25,15 +25,15 @@ public class PlayerJobActionButton : MonoBehaviour {
     private object target;
 
     private void OnEnable() {
-        Messenger.AddListener<PlayerJobAction>(Signals.JOB_ACTION_COOLDOWN_ACTIVATED, OnJobActionCooldownActivated);
-        Messenger.AddListener<PlayerJobAction>(Signals.JOB_ACTION_COOLDOWN_DONE, OnJobActionCooldownDone);
+        Messenger.AddListener<PlayerSpell>(Signals.JOB_ACTION_COOLDOWN_ACTIVATED, OnJobActionCooldownActivated);
+        Messenger.AddListener<PlayerSpell>(Signals.JOB_ACTION_COOLDOWN_DONE, OnJobActionCooldownDone);
         Messenger.AddListener<ILocation>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
         Messenger.AddListener<ILocation>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
         Messenger.AddListener<PlayerJobActionSlot>(Signals.PLAYER_GAINED_INTERVENE_LEVEL, OnJobActionGainLevel);
     }
     private void OnDisable() {
-        Messenger.RemoveListener<PlayerJobAction>(Signals.JOB_ACTION_COOLDOWN_ACTIVATED, OnJobActionCooldownActivated);
-        Messenger.RemoveListener<PlayerJobAction>(Signals.JOB_ACTION_COOLDOWN_DONE, OnJobActionCooldownDone);
+        Messenger.RemoveListener<PlayerSpell>(Signals.JOB_ACTION_COOLDOWN_ACTIVATED, OnJobActionCooldownActivated);
+        Messenger.RemoveListener<PlayerSpell>(Signals.JOB_ACTION_COOLDOWN_DONE, OnJobActionCooldownDone);
         Messenger.RemoveListener<ILocation>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
         Messenger.RemoveListener<ILocation>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
         Messenger.RemoveListener<PlayerJobActionSlot>(Signals.PLAYER_GAINED_INTERVENE_LEVEL, OnJobActionGainLevel);
@@ -64,7 +64,7 @@ public class PlayerJobActionButton : MonoBehaviour {
             //!action.parentData.hasActionInCooldown &&
             InnerMapManager.Instance.isAnInnerMapShowing 
             && actionSlot.ability != null
-            && PlayerManager.Instance.player.currentActivePlayerJobAction != this.actionSlot.ability && !actionSlot.ability.isInCooldown
+            && /*PlayerManager.Instance.player.currentActivePlayerSpell != this.actionSlot.ability &&*/ !actionSlot.ability.isInCooldown
         );
     }
     private void SetInteractableState(bool state) {
@@ -109,13 +109,13 @@ public class PlayerJobActionButton : MonoBehaviour {
     #endregion
 
     #region Listeners
-    private void OnJobActionCooldownActivated(PlayerJobAction jobAction) {
-        if (jobAction == this.actionSlot.ability) {
+    private void OnJobActionCooldownActivated(PlayerSpell spell) {
+        if (spell == this.actionSlot.ability) {
             UpdateInteractableState();
         }
     }
-    private void OnJobActionCooldownDone(PlayerJobAction jobAction) {
-        if (jobAction == this.actionSlot.ability) {
+    private void OnJobActionCooldownDone(PlayerSpell spell) {
+        if (spell == this.actionSlot.ability) {
             UpdateInteractableState();
         }
     }
@@ -128,7 +128,7 @@ public class PlayerJobActionButton : MonoBehaviour {
         UpdateInteractableState();
     }
     private void OnInnerMapClosed(ILocation location) {
-        //Upon closing of settlement map reset intervention ability cooldowns
+        //Upon closing of npcSettlement map reset intervention ability cooldowns
         //action.InstantCooldown();
         UpdateInteractableState();
     }

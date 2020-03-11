@@ -28,14 +28,14 @@ public class TheFingersUI : MonoBehaviour {
     public GameObject exclusiveIdeologyHolder;
     public TMP_Dropdown exclusiveIdeologyCategoryDropdown;
     public TMP_Dropdown exclusiveIdeologyRequirementDropdown;
-    private Goader fingers { get; set; }
+    //private Goader fingers { get; set; }
     private Character chosenLeader { get; set; }
     //private List<FactionIdeology> ideologies = new List<FactionIdeology>();
     private string[] criteriaRaces = new string[] { "HUMANS", "ELVES" };
 
     #region General
     public void OnClickCreate(BaseLandmark landmark) {
-        fingers = landmark as Goader;
+        //fingers = landmark as Goader;
         if(characterNameplateItems == null) {
             characterNameplateItems = new Dictionary<Character, CharacterNameplateItem>();
         }
@@ -48,19 +48,20 @@ public class TheFingersUI : MonoBehaviour {
     }
     private void UpdateCreateButton() {
         createProgress.gameObject.SetActive(false);
-        createBtn.interactable = /*chosenMinion != null &&*/ !fingers.hasBeenActivated && !createNewFactionGO.activeSelf;
-        if (!createBtn.interactable) {
-            if (fingers.hasBeenActivated) {
-                createProgress.gameObject.SetActive(true);
-                createProgress.fillAmount = 0;
-            }
-        }
+        // createBtn.interactable = /*chosenMinion != null &&*/ !fingers.hasBeenActivated && !createNewFactionGO.activeSelf;
+        // if (!createBtn.interactable) {
+        //     if (fingers.hasBeenActivated) {
+        //         createProgress.gameObject.SetActive(true);
+        //         createProgress.fillAmount = 0;
+        //     }
+        // }
     }
     public void OnClickCreateNewFaction() {
         if (CanCreateNewFaction()) {
-            Faction newFaction = FactionManager.Instance.CreateNewFaction(factionName: factionNameInput.text);
+            Faction newFaction = FactionManager.Instance.CreateNewFaction(RACE.NONE, factionName: factionNameInput.text);
             chosenLeader.ChangeFactionTo(newFaction);
             newFaction.SetLeader(chosenLeader, false);
+
             //for (int i = 0; i < ideologies.Count; i++) {
             //    newFaction.ideologyComponent.SetCurrentIdeology(i, ideologies[i]);
             //}
@@ -77,14 +78,16 @@ public class TheFingersUI : MonoBehaviour {
             //    regionLocation = chosenLeader.currentArea.region;
             //}
 
-            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "character_create_faction");
+            Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Create Faction", "character_create_faction");
             log.AddToFillers(chosenLeader, chosenLeader.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(newFaction, newFaction.name, LOG_IDENTIFIER.FACTION_1);
             log.AddToFillers(regionLocation, regionLocation.name, LOG_IDENTIFIER.LANDMARK_1);
             log.AddLogToInvolvedObjects();
-            PlayerManager.Instance.player.ShowNotification(log);
+            // PlayerManager.Instance.player.ShowNotificationFrom(log);
 
-            fingers.Activate();
+            //chosenLeader.interruptComponent.TriggerInterrupt(INTERRUPT.Become_Faction_Leader, chosenLeader);
+
+            //fingers.Activate();
 
             HideCreateNewFactionUI();
             UpdateSelectMinionBtn();
@@ -168,11 +171,11 @@ public class TheFingersUI : MonoBehaviour {
         //exclusiveIdeologyHolder.SetActive(false);
     }
     private void PopulateCharactersToChooseFrom() {
-        Utilities.DestroyChildren(characterScrollRect.content);
+        UtilityScripts.Utilities.DestroyChildren(characterScrollRect.content);
         characterNameplateItems.Clear();
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
             Character character = CharacterManager.Instance.allCharacters[i];
-            if(character.isFriendlyFactionless && character.faction.leader != character) {
+            if(character.isFriendlyFactionless /*&& character.faction.leader != character*/) {
                 CharacterNameplateItem item = CreateNewCharacterNameplateItem();
                 item.SetObject(character);
                 item.SetAsToggle();
@@ -211,7 +214,7 @@ public class TheFingersUI : MonoBehaviour {
         if(chosenLeader == null) {
             leaderNameLbl.text = string.Empty;
         } else {
-            leaderNameLbl.text = character.name + ", " + character.raceClassName;
+            leaderNameLbl.text = $"{character.name}, {character.raceClassName}";
         }
     }
     private void PopulateIdeologiesPickerUI() {
@@ -331,15 +334,16 @@ public class TheFingersUI : MonoBehaviour {
         Faction faction = obj1 as Faction;
         Character character = obj2 as Character;
 
-        character.ChangeFactionTo(FactionManager.Instance.friendlyNeutralFaction);
-        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "left_faction_normal");
-        log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        log.AddToFillers(faction, faction.name, LOG_IDENTIFIER.FACTION_1);
-        character.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+        character.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Faction, character, "left_faction_normal");
+        //character.ChangeFactionTo(FactionManager.Instance.friendlyNeutralFaction);
+        //Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "left_faction_normal");
+        //log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        //log.AddToFillers(faction, faction.name, LOG_IDENTIFIER.FACTION_1);
+        //character.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
     }
     #endregion
 
-    #region Action: Force Leave Faction
+    #region Action: Force Join Faction
     public void OnClickForceJoinFaction() {
         List<Character> viableCharacters = new List<Character>();
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
@@ -365,17 +369,18 @@ public class TheFingersUI : MonoBehaviour {
         UIManager.Instance.dualObjectPicker.PopulateColumn(viableFactions, (faction) => CanChooseFactionToJoin(faction, character), null, null, UIManager.Instance.dualObjectPicker.column2ScrollView, UIManager.Instance.dualObjectPicker.column2ToggleGroup, "Choose Faction");
     }
     private bool CanChooseFactionToJoin(Faction faction, Character character) {
-        return faction.ideologyComponent.DoesCharacterFitCurrentIdeologies(character);
+        return !faction.isDestroyed && faction.ideologyComponent.DoesCharacterFitCurrentIdeologies(character);
     }
     private void ConfirmJoin(object obj1, object obj2) {
         Character character = obj1 as Character;
         Faction faction = obj2 as Faction;
 
-        character.ChangeFactionTo(faction);
-        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_faction_normal");
-        log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        log.AddToFillers(faction, faction.name, LOG_IDENTIFIER.FACTION_1);
-        character.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+        character.interruptComponent.TriggerInterrupt(INTERRUPT.Join_Faction, faction.characters[0], "join_faction_normal");
+        //character.ChangeFactionTo(faction);
+        //Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_faction_normal");
+        //log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        //log.AddToFillers(faction, faction.name, LOG_IDENTIFIER.FACTION_1);
+        //character.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
     }
     #endregion
 }

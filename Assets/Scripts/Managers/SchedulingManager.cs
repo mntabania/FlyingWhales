@@ -33,7 +33,8 @@ public class SchedulingManager : MonoBehaviour {
         }
         string newID = GenerateScheduleID();
         this.schedules[gameDate].Add(new ScheduledAction() { scheduleID = newID, action = act, scheduler = adder });
-        Debug.Log(GameManager.Instance.TodayLogString() + "Created new schedule on " + gameDate.ConvertToContinuousDaysWithTime() + ". Action is " + act.Method.Name + ", by " + adder.ToString());
+        Debug.Log(
+            $"{GameManager.Instance.TodayLogString()}Created new schedule on {gameDate.ConvertToContinuousDaysWithTime()}. Action is {act.Method.Name}, by {adder}");
         return newID;
 	}
 	internal void RemoveEntry(GameDate gameDate){
@@ -62,14 +63,14 @@ public class SchedulingManager : MonoBehaviour {
             }
         }
     }
-    public bool RemoveSpecificEntry(GameDate date, string id) {
+    private bool RemoveSpecificEntry(GameDate date, string id) {
         if (this.schedules.ContainsKey(date)) {
             List<ScheduledAction> acts = this.schedules[date];
             for (int i = 0; i < acts.Count; i++) {
                 ScheduledAction action = acts[i];
                 if (action.scheduleID == id) {
                     this.schedules[date].RemoveAt(i);
-                    Debug.Log("Removed scheduled item " + action.ToString());
+                    Debug.Log($"Removed scheduled item {action}");
                     return true;
                 }
             }
@@ -146,14 +147,15 @@ public struct ScheduledAction {
         } else if (scheduler is TileObject) {
             TileObject tileObject = scheduler as TileObject;
             return tileObject.gridTileLocation != null;
-        } else if (scheduler is SpecialToken) {
-            SpecialToken token = scheduler as SpecialToken;
-            return token.gridTileLocation != null;
-        }
+        } 
+        // else if (scheduler is SpecialToken) {
+        //     SpecialToken token = scheduler as SpecialToken;
+        //     return token.gridTileLocation != null;
+        // }
         return true;
     }
 
     public override string ToString() {
-        return scheduleID + " - " + action.Method.Name + " by " + scheduler.ToString();
+        return $"{scheduleID} - {action.Method.Name} by {scheduler}";
     }
 }

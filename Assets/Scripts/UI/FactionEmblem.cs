@@ -19,9 +19,9 @@ public class FactionEmblem : MonoBehaviour, IPointerClickHandler{
         if (this.faction == null) {
             return;
         }
-        string text = this.faction.name + "\nRelationship Summary:";
+        string text = $"{this.faction.name}\nRelationship Summary:";
         foreach (KeyValuePair<Faction, FactionRelationship> kvp in faction.relationships) {
-            text += "\n" + kvp.Key.name + " - " + kvp.Value.relationshipStatus.ToString();
+            text += $"\n{kvp.Key.name} - {kvp.Value.relationshipStatus}";
         }
         UIManager.Instance.ShowSmallInfo(text);
     }

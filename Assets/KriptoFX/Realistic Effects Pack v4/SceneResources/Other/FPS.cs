@@ -21,7 +21,7 @@ public class FPS : MonoBehaviour
         if (frames < 30) text.color = Color.red;
         if(frames >= 30 && frames <= 50) text.color = Color.yellow;
         else text.color = Color.green;
-        text.text = "FPS: " + frames ;
+        text.text = $"FPS: {frames}";
         frames = 0;
     }
 	

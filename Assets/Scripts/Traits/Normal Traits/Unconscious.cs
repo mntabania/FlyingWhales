@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Traits {
-    public class Unconscious : Trait {
+    public class Unconscious : Status {
         private Character _sourceCharacter;
         //public override bool isRemovedOnSwitchAlterEgo {
         //    get { return true; }
@@ -12,13 +12,13 @@ namespace Traits {
         public Unconscious() {
             name = "Unconscious";
             description = "This character is unconscious.";
-            thoughtText = "[Character] is unconscious.";
-            type = TRAIT_TYPE.DISABLER;
+            type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
-            ticksDuration = 24; //144
+            ticksDuration = GameManager.Instance.GetTicksBasedOnHour(3); //144
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.FIRST_AID_CHARACTER };
-            hindersMovement = true;
+            //hindersMovement = true;
             hindersWitness = true;
+            hindersPerform = true;
         }
 
         #region Overrides
@@ -26,12 +26,13 @@ namespace Traits {
             if (responsibleCharacter == null) {
                 return description;
             }
-            return "This character has been knocked out by " + responsibleCharacter.name;
+            return $"This character has been knocked out by {responsibleCharacter.name}";
         }
         public override void OnAddTrait(ITraitable sourceCharacter) {
             base.OnAddTrait(sourceCharacter);
             if (sourceCharacter is Character) {
                 _sourceCharacter = sourceCharacter as Character;
+                _sourceCharacter.needsComponent.AdjustDoNotGetTired(1);
                 if (_sourceCharacter.currentHP <= 0) {
                     _sourceCharacter.SetHP(1);
                 }
@@ -39,7 +40,7 @@ namespace Traits {
                 //_sourceCharacter.CreateRemoveTraitJob(name);
                 _sourceCharacter.AddTraitNeededToBeRemoved(this);
                 if (gainedFromDoing == null) { //TODO: || gainedFromDoing.poiTarget != _sourceCharacter
-                    _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, name.ToLower());
+                    _sourceCharacter.RegisterLog("NonIntel", "add_trait", null, name.ToLower());
                 } else {
                     Log addLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "add_trait");
                     addLog.AddToFillers(_sourceCharacter, _sourceCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -53,67 +54,34 @@ namespace Traits {
             }
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
-            //if (_restrainJob != null) {
-            //    _restrainJob.jobQueueParent.CancelJob(_restrainJob);
-            //}
-            //if (_removeTraitJob != null) {
-            //    _removeTraitJob.jobQueueParent.CancelJob(_removeTraitJob);
-            //}
-            //_sourceCharacter.CancelAllJobsTargettingThisCharacterExcept(JOB_TYPE.RESTRAIN, removedBy); //so that the character that restrained him will not cancel his job.
-            _sourceCharacter.ForceCancelAllJobsTargettingThisCharacterExcept(JOB_TYPE.REMOVE_TRAIT, name, removedBy); //so that the character that cured him will not cancel his job.
+            _sourceCharacter.AdjustHP(1, ELEMENTAL_TYPE.Normal);
+            _sourceCharacter.needsComponent.AdjustDoNotGetTired(-1);
             _sourceCharacter.RemoveTraitNeededToBeRemoved(this);
-            _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, name.ToLower());
+            _sourceCharacter.RegisterLog("NonIntel", "remove_trait", null, name.ToLower());
             base.OnRemoveTrait(sourceCharacter, removedBy);
         }
-        public override void OnDeath(Character character) {
-            base.OnDeath(character);
-            character.traitContainer.RemoveTrait(character, this);
+        public override bool OnDeath(Character character) {
+            //base.OnDeath(character);
+            return character.traitContainer.RemoveTrait(character, this);
         }
-        public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
-            if (traitOwner is Character) {
-                Character targetCharacter = traitOwner as Character;
-                if (!targetCharacter.isDead && targetCharacter.faction == characterThatWillDoJob.faction && !targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
-                    SerialKiller serialKiller = characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Serial Killer") as SerialKiller;
-                    if (serialKiller != null) {
-                        serialKiller.SerialKillerSawButWillNotAssist(targetCharacter, this);
-                        return false;
-                    }
-                    GoapPlanJob currentJob = targetCharacter.GetJobTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, name);
-                    if (currentJob == null) {
-                        if (!IsResponsibleForTrait(characterThatWillDoJob) && InteractionManager.Instance.CanCharacterTakeRemoveIllnessesJob(characterThatWillDoJob, targetCharacter)) {
-                            GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = name, target = GOAP_EFFECT_TARGET.TARGET };
-                            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect, targetCharacter, characterThatWillDoJob);
-                            job.AddOtherData(INTERACTION_TYPE.CRAFT_ITEM, new object[] { SPECIAL_TOKEN.HEALING_POTION });
-                            job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TokenManager.Instance.itemData[SPECIAL_TOKEN.HEALING_POTION].craftCost });
-                            characterThatWillDoJob.jobQueue.AddJobInQueue(job);
-                            return true;
-                        }
-                    } 
-                    //else {
-                    //    if (InteractionManager.Instance.CanCharacterTakeRemoveIllnessesJob(characterThatWillDoJob, targetCharacter, currentJob)) {
-                    //        TryTransferJob(currentJob, characterThatWillDoJob);
-                    //    }
-                    //}
-                }
-                if (!targetCharacter.isDead && targetCharacter.faction != characterThatWillDoJob.faction) {
-                    GoapPlanJob currentJob = targetCharacter.GetJobTargettingThisCharacter(JOB_TYPE.RESTRAIN);
-                    if (currentJob == null) {
-                        if (InteractionManager.Instance.CanCharacterTakeRestrainJob(characterThatWillDoJob, targetCharacter)) {
-                            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RESTRAIN, INTERACTION_TYPE.RESTRAIN_CHARACTER, targetCharacter, characterThatWillDoJob);
-                            //job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { characterThatWillDoJob.currentArea.prison });
-                            //job.SetCanBeDoneInLocation(true);
-                            characterThatWillDoJob.jobQueue.AddJobInQueue(job);
-                            return true;
-                        }
-                    } 
-                    //else {
-                    //    if (InteractionManager.Instance.CanCharacterTakeRestrainJob(characterThatWillDoJob, targetCharacter, currentJob)) {
-                    //        TryTransferJob(currentJob, characterThatWillDoJob);
-                    //    }
-                    //}
-                }
-            }
-            return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
+        //public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
+        //    if (traitOwner is Character) {
+        //        Character targetCharacter = traitOwner as Character;
+        //        if (!targetCharacter.isDead && targetCharacter.faction == characterThatWillDoJob.faction && !targetCharacter.isCriminal && characterThatWillDoJob.isSerialKiller) {
+        //            SerialKiller serialKiller = characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Psychopath") as SerialKiller;
+        //            serialKiller.SerialKillerSawButWillNotAssist(targetCharacter, this);
+        //            return false;
+        //            //if (serialKiller != null) {
+        //            //    serialKiller.SerialKillerSawButWillNotAssist(targetCharacter, this);
+        //            //    return false;
+        //            //}
+        //        }
+        //    }
+        //    return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
+        //}
+        public override void OnTickStarted() {
+            base.OnTickStarted();
+            _sourceCharacter.needsComponent.AdjustTiredness(1.4f);
         }
         #endregion
     }

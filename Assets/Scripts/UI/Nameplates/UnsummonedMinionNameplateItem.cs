@@ -16,7 +16,7 @@ public class UnsummonedMinionNameplateItem : NameplateItem<UnsummonedMinionData>
         base.SetObject(o);
         minionData = o;
         mainLbl.text = o.minionName;
-        subLbl.text = "Demon " +  o.className;
+        subLbl.text = $"Demon {o.className}";
         Sprite classPortrait = CharacterManager.Instance.GetWholeImagePortraitSprite(minionData.className);
         this.classPortrait.sprite = classPortrait;
     }

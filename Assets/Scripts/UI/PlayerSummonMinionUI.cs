@@ -6,26 +6,26 @@ using UnityEngine.UI;
 using TMPro;
 
 public class PlayerSummonMinionUI : MonoBehaviour {
-    public ThePortal portal { get; private set; }
+    //public ThePortal portal { get; private set; }
     
-    #region Genera
+    #region General
     public void OnClickSummon(BaseLandmark landmark) {
-        portal = landmark as ThePortal;
+        //portal = landmark as ThePortal;
         //show dual object picker, and allow only 1 object to be picked
         //column 1 should contain all minions to be summoned and column 2 should contain the players minions
-        UIManager.Instance.dualObjectPicker.ShowDualObjectPicker(PlayerManager.Instance.player.minions.Select(x => x.character).ToList(), PlayerManager.Instance.player.minionsToSummon.ToList(),
-            "Choose Minion to Help (Optional)", "Choose Minion to Summon",
-            CanChooseMinion, null,
-            OnHoverEnterMinion, OnHoverMinionToSummonChoice,
-            OnHoverExitMinion, OnHoverExitMinionToSummonChoice,
-            ConfirmSummon, "Summon", column1Optional: true
-        );
+        // UIManager.Instance.dualObjectPicker.ShowDualObjectPicker(PlayerManager.Instance.player.minions.Select(x => x.character).ToList(), PlayerManager.Instance.player.minionsToSummon.ToList(),
+        //     "Choose Minion to Help (Optional)", "Choose Minion to Summon",
+        //     CanChooseMinion, null,
+        //     OnHoverEnterMinion, OnHoverMinionToSummonChoice,
+        //     OnHoverExitMinion, OnHoverExitMinionToSummonChoice,
+        //     ConfirmSummon, "Summon", column1Optional: true
+        // );
     }
     private void OnHoverEnterMinion(Character character) {
         if (!CanChooseMinion(character)) {
             string message = string.Empty;
             if (character.minion.isAssigned) {
-                message = character.name + " is already doing something else.";
+                message = $"{character.name} is already doing something else.";
             }
             UIManager.Instance.ShowSmallInfo(message);
         }
@@ -37,7 +37,7 @@ public class PlayerSummonMinionUI : MonoBehaviour {
         UnsummonedMinionData data = (UnsummonedMinionData)summonObj;
         Minion minion = (minionObj as Character)?.minion ?? null;
 
-        Debug.Log("Will summon " + data.className + " helped by " + (minion?.character.name ?? "No one"));
+        Debug.Log($"Will summon {data.className} helped by {(minion?.character.name ?? "No one")}");
 
         int summonDuration = LandmarkManager.SUMMON_MINION_DURATION;
         if (minion != null) {
@@ -45,11 +45,11 @@ public class PlayerSummonMinionUI : MonoBehaviour {
             summonDuration -= speedUpDuration;
         }
 
-        if (minion != null) {
-            minion.SetAssignedRegion(portal.tileLocation.region);
-            portal.tileLocation.region.SetAssignedMinion(minion);
-        }
-        portal.StartSummon(System.Array.IndexOf(PlayerManager.Instance.player.minionsToSummon, data), 0, summonDuration);
+        //if (minion != null) {
+        //    minion.SetAssignedRegion(portal.tileLocation.region);
+        //    portal.tileLocation.region.SetAssignedMinion(minion);
+        //}
+        // portal.StartSummon(System.Array.IndexOf(PlayerManager.Instance.player.minionsToSummon, data), 0, summonDuration);
         
     }
     #endregion

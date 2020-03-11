@@ -1,9 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using EZObjectPools;
 using Inner_Maps;
 using UnityEngine;
 
-public class AOEParticle : MonoBehaviour {
+public class AOEParticle : PooledObject {
 
     [SerializeField] private ParticleSystem[] particles;
 

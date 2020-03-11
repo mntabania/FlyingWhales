@@ -6,7 +6,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DualObjectPicker : MonoBehaviour {
+public class DualObjectPicker : PopupMenuBase {
 
     [Header("Main")]
     [SerializeField] private Button confirmBtn;
@@ -83,8 +83,8 @@ public class DualObjectPicker : MonoBehaviour {
         UIManager.Instance.SetSpeedTogglesState(false);
 
         //destroy existing items
-        Utilities.DestroyChildren(column1ScrollView.content);
-        Utilities.DestroyChildren(column2ScrollView.content);
+        UtilityScripts.Utilities.DestroyChildren(column1ScrollView.content);
+        UtilityScripts.Utilities.DestroyChildren(column2ScrollView.content);
 
         //set titles
         column1TitleLbl.text = string.Empty;
@@ -112,7 +112,7 @@ public class DualObjectPicker : MonoBehaviour {
         //populate column 2
         PopulateColumn(column2Items, column2ValidityChecker, column2ItemHoverEnterAction, column2ItemHoverExitAction, column2ScrollView, column2ToggleGroup, column2Title, column2Identifier);
 
-        this.gameObject.SetActive(true);
+        base.Open();
     }
 
     /// <summary>
@@ -134,8 +134,8 @@ public class DualObjectPicker : MonoBehaviour {
         UIManager.Instance.SetSpeedTogglesState(false);
 
         //destroy existing items
-        Utilities.DestroyChildren(column1ScrollView.content);
-        Utilities.DestroyChildren(column2ScrollView.content);
+        UtilityScripts.Utilities.DestroyChildren(column1ScrollView.content);
+        UtilityScripts.Utilities.DestroyChildren(column2ScrollView.content);
 
         //set titles
         column1TitleLbl.text = string.Empty;
@@ -160,7 +160,7 @@ public class DualObjectPicker : MonoBehaviour {
         //populate column 1
         PopulateColumn(column1Items, column1ValidityChecker, column1ItemHoverEnterAction, column1ItemHoverExitAction, column1ScrollView, column1ToggleGroup, column1Title);
 
-        this.gameObject.SetActive(true);
+        base.Open();
     }
     
     public void ShowDualObjectPicker(DualObjectPickerTabSetting[] tabs) {
@@ -168,9 +168,9 @@ public class DualObjectPicker : MonoBehaviour {
         UIManager.Instance.SetSpeedTogglesState(false);
 
         //destroy existing items
-        Utilities.DestroyChildren(column1ScrollView.content);
-        Utilities.DestroyChildren(column2ScrollView.content);
-        Utilities.DestroyChildren(tabsParent);
+        UtilityScripts.Utilities.DestroyChildren(column1ScrollView.content);
+        UtilityScripts.Utilities.DestroyChildren(column2ScrollView.content);
+        UtilityScripts.Utilities.DestroyChildren(tabsParent);
 
         for (int i = 0; i < tabs.Length; i++) {
             DualObjectPickerTabSetting currTab = tabs[i];
@@ -178,22 +178,22 @@ public class DualObjectPicker : MonoBehaviour {
             DualObjectPickerTab tab = tabGO.GetComponent<DualObjectPickerTab>();
             tab.Initialize(currTab, tabToggleGroup);
         }
-        this.gameObject.SetActive(true);
+        base.Open();
     }
 
-    public void Hide() {
-        Utilities.DestroyChildren(tabsParent);
+    public override void Close() {
+        UtilityScripts.Utilities.DestroyChildren(tabsParent);
         UIManager.Instance.ResumeLastProgressionSpeed();
-        this.gameObject.SetActive(false);
+        base.Close();
     }
 
     public void OnClickConfirm() {
         onConfirmAction?.Invoke(pickedObj1, pickedObj2);
-        Hide();
+        Close();
     }
 
     public void PopulateColumn<T>(List<T> items, Func<T, bool> validityChecker, Action<T> hoverEnterAction, Action<T> hoverExitAction, ScrollRect column, ToggleGroup toggleGroup, string columnTitle, string identifier = "") {
-        Utilities.DestroyChildren(column.content);
+        UtilityScripts.Utilities.DestroyChildren(column.content);
         List<T> validItems;
         List<T> invalidItems;
 

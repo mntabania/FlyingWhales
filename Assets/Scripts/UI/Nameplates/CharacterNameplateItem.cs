@@ -12,15 +12,33 @@ public class CharacterNameplateItem : NameplateItem<Character> {
     [SerializeField] private GameObject restrainedIcon;
 
     public Character character { get; private set; }
+    public bool isActive { get; private set; }
 
+    private void OnEnable() {
+        Messenger.AddListener(Signals.TICK_ENDED, UpdateText);
+    }
+    private void OnDisable() {
+        Messenger.RemoveListener(Signals.TICK_ENDED, UpdateText);
+    }
+    
     #region Overrides
     public override void SetObject(Character character) {
         base.SetObject(character);
         this.character = character;
-        mainLbl.text = character.name;
+        mainLbl.text = character.visuals.GetNameplateName();
         subLbl.text = character.raceClassName;
         portrait.GeneratePortrait(character);
         UpdateStatusIcons();
+        UpdateText();
+    }
+    public override void UpdateObject(Character character) {
+        base.UpdateObject(character);
+        this.character = character;
+        mainLbl.text = character.visuals.GetNameplateName();
+        subLbl.text = character.raceClassName;
+        portrait.GeneratePortrait(character);
+        UpdateStatusIcons();
+        UpdateText();
     }
     public override void OnHoverEnter() {
         portrait.SetHoverHighlightState(true);
@@ -41,6 +59,10 @@ public class CharacterNameplateItem : NameplateItem<Character> {
         SetPortraitInteractableState(true);
     }
     #endregion
+
+    public void SetIsActive(bool state) {
+        isActive = state;
+    }
 
     /// <summary>
     /// Set this nameplate to behave in the default settings (button, onclick shows character UI, etc.)
@@ -63,7 +85,7 @@ public class CharacterNameplateItem : NameplateItem<Character> {
             travellingIcon.SetActive(false);
             arrivedIcon.SetActive(true);
             restrainedIcon.SetActive(false);
-        } else if (character.traitContainer.GetNormalTrait<Trait>("Restrained") != null) {
+        } else if (character.traitContainer.HasTrait("Restrained")) {
             //character is restrained
             travellingIcon.SetActive(false);
             arrivedIcon.SetActive(false);
@@ -78,4 +100,12 @@ public class CharacterNameplateItem : NameplateItem<Character> {
     public void SetPortraitInteractableState(bool state) {
         portrait.ignoreInteractions = !state;
     }
+
+    #region Sub Text
+    private void UpdateText() {
+        mainLbl.text = character.visuals.GetNameplateName();
+        supportingLbl.text = character.visuals.GetThoughtBubble(out _);
+        SetSupportingLabelState(true);
+    }
+    #endregion
 }

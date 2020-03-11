@@ -13,38 +13,23 @@ public class Bed : TileObject {
     }
 
     public Bed() {
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.SLEEP, INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.NAP, INTERACTION_TYPE.REPAIR };
+        //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.SLEEP, INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.NAP, INTERACTION_TYPE.REPAIR };
         Initialize(TILE_OBJECT_TYPE.BED);
+        AddAdvertisedAction(INTERACTION_TYPE.SLEEP);
+        AddAdvertisedAction(INTERACTION_TYPE.NAP);
         bedUsers = new Character[2];
     }
     public Bed(SaveDataTileObject data) {
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.SLEEP, INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.NAP, INTERACTION_TYPE.REPAIR };
+        //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.SLEEP, INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.NAP, INTERACTION_TYPE.REPAIR };
         Initialize(data);
+        AddAdvertisedAction(INTERACTION_TYPE.SLEEP);
+        AddAdvertisedAction(INTERACTION_TYPE.NAP);
         bedUsers = new Character[2];
     }
 
     #region Overrides
     public override string ToString() {
-        return "Bed " + id.ToString();
-    }
-    public override void OnClickAction() {
-        //base.OnClickAction();
-        //cycle through characters in bed, and show the chosen characters ui
-        if (UIManager.Instance.characterInfoUI.isShowing) {
-            if (IsInThisBed(UIManager.Instance.characterInfoUI.activeCharacter)) {
-                Character nextCharacter = GetNextCharacterInCycle(UIManager.Instance.characterInfoUI.activeCharacter);
-                UIManager.Instance.ShowCharacterInfo(nextCharacter, true);
-            } else {
-                if (GetActiveUserCount() > 0) {
-                    UIManager.Instance.ShowCharacterInfo(GetNextCharacterInCycle(null), true);
-                }
-            }
-        } else {
-            if (GetActiveUserCount() > 0) {
-                UIManager.Instance.ShowCharacterInfo(GetNextCharacterInCycle(null), true);
-            }
-        }
-
+        return $"Bed {id.ToString()}";
     }
     public override void SetPOIState(POI_STATE state) {
         base.SetPOIState(state);
@@ -114,7 +99,7 @@ public class Bed : TileObject {
     #endregion
 
     #region Users
-    private bool IsSlotAvailable() {
+    public bool IsSlotAvailable() {
         for (int i = 0; i < bedUsers.Length; i++) {
             if (bedUsers[i] == null) {
                 return true; //there is an available slot
@@ -133,6 +118,7 @@ public class Bed : TileObject {
                 }
                 //disable the character's marker
                 character.marker.SetVisualState(false);
+                Messenger.Broadcast(Signals.ADD_TILE_OBJECT_USER, GetBase(), character);
                 break;
             }
         }
@@ -148,11 +134,12 @@ public class Bed : TileObject {
                 }
                 //enable the character's marker
                 character.marker.SetVisualState(true);
-                if (character.gridTileLocation != null && character.traitContainer.GetNormalTrait<Trait>("Paralyzed") != null) {
+                if (character.gridTileLocation != null && character.traitContainer.HasTrait("Paralyzed")) {
                     //When a paralyzed character awakens, place it on a nearby adjacent empty tile in the same Structure
                     LocationGridTile gridTile = character.gridTileLocation.GetNearestUnoccupiedTileFromThis();
                     character.marker.PlaceMarkerAt(gridTile);
                 }
+                Messenger.Broadcast(Signals.REMOVE_TILE_OBJECT_USER, GetBase(), character);
                 return true;
             }
         }
@@ -199,7 +186,23 @@ public class Bed : TileObject {
             }
             currIndex++;
         }
+    }
+    #endregion
 
+    #region Inquiry
+    public bool CanSleepInBed(Character character) {
+        for (int i = 0; i < users.Length; i++) {
+            if (users[i] != null) {
+                Character user = users[i];
+                RELATIONSHIP_EFFECT relEffect = character.relationshipContainer.GetRelationshipEffectWith(user);
+                if(character.relationshipContainer.HasRelationshipWith(user) == false 
+                   || character.relationshipContainer.IsEnemiesWith(user) 
+                   || character.relationshipContainer.HasOpinionLabelWithCharacter(user, OpinionComponent.Acquaintance)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
     #endregion
 

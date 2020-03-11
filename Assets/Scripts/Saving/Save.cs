@@ -16,7 +16,7 @@ public class Save {
     public List<SaveDataFaction> factionSaves;
     public List<SaveDataCharacter> characterSaves;
     public List<SaveDataTileObject> tileObjectSaves;
-    public List<SaveDataSpecialObject> specialObjectSaves;
+    // public List<SaveDataSpecialObject> specialObjectSaves;
     public List<SaveDataAreaInnerTileMap> areaMapSaves;
     public List<SaveDataNotification> notificationSaves;
 
@@ -60,7 +60,7 @@ public class Save {
         if(landmarkSaves == null) {
             landmarkSaves = new List<SaveDataLandmark>();
         }
-        var typeName = "SaveData" + landmark.GetType().ToString();
+        var typeName = $"SaveData{landmark.GetType()}";
         System.Type type = System.Type.GetType(typeName);
         SaveDataLandmark newSaveData = null;
         if (type != null) {
@@ -132,7 +132,7 @@ public class Save {
         for (int i = 0; i < regionSaves.Count; i++) {
             regions[i] = regionSaves[i].Load();
         }
-        GridMap.Instance.LoadRegions(regions);
+        GridMap.Instance.SetRegions(regions);
     }
     public void LoadRegionCharacters() {
         for (int i = 0; i < regionSaves.Count; i++) {
@@ -146,9 +146,9 @@ public class Save {
             data.LoadRegionAdditionalData(GridMap.Instance.normalHexTiles[data.coreTileID].region);
         }
     }
-    public void SavePlayerArea(Settlement settlement) {
+    public void SavePlayerArea(NPCSettlement npcSettlement) {
         playerAreaSave = new SaveDataArea();
-        playerAreaSave.Save(settlement);
+        playerAreaSave.Save(npcSettlement);
     }
     public void LoadPlayerArea() {
         playerAreaSave.Load();
@@ -158,13 +158,11 @@ public class Save {
     }
     public void SaveNonPlayerAreas() {
         nonPlayerAreaSaves = new List<SaveDataArea>();
-        for (int i = 0; i < LandmarkManager.Instance.allSetttlements.Count; i++) {
-            Settlement settlement = LandmarkManager.Instance.allSetttlements[i];
-            if(settlement != PlayerManager.Instance.player.playerSettlement) {
-                SaveDataArea saveDataArea = new SaveDataArea();
-                saveDataArea.Save(settlement);
-                nonPlayerAreaSaves.Add(saveDataArea);
-            }
+        for (int i = 0; i < LandmarkManager.Instance.allNonPlayerSettlements.Count; i++) {
+            NPCSettlement npcSettlement = LandmarkManager.Instance.allNonPlayerSettlements[i];
+            SaveDataArea saveDataArea = new SaveDataArea();
+            saveDataArea.Save(npcSettlement);
+            nonPlayerAreaSaves.Add(saveDataArea);
         }
     }
     public void LoadNonPlayerAreas() {
@@ -258,17 +256,6 @@ public class Save {
             characterSaves[i].LoadCharacterHistory(CharacterManager.Instance.allCharacters[i]);
         }
     }
-    public void LoadCharactersDousingFire() {
-        for (int i = 0; i < LandmarkManager.Instance.allSetttlements.Count; i++) {
-            Settlement currSettlement = LandmarkManager.Instance.allSetttlements[i];
-            if (currSettlement.innerMap != null) {
-                for (int j = 0; j < currSettlement.innerMap.activeBurningSources.Count; j++) {
-                    BurningSource currBurningSource = currSettlement.innerMap.activeBurningSources[j];
-                    //currBurningSource.ActivateCharactersDousingFire();
-                }
-            }
-        }
-    }
 
     public void SavePlayer(Player player) {
         playerSave = new SaveDataPlayer();
@@ -287,7 +274,7 @@ public class Save {
             for (int i = 0; i < kvp.Value.Count; i++) {
                 TileObject currTileObject = kvp.Value[i];
                 SaveDataTileObject data = null;
-                System.Type type = System.Type.GetType("SaveData" + currTileObject.GetType().ToString());
+                System.Type type = System.Type.GetType($"SaveData{currTileObject.GetType()}");
                 if (type != null) {
                     data = System.Activator.CreateInstance(type) as SaveDataTileObject;
                 } else {
@@ -323,26 +310,26 @@ public class Save {
         }
     }
 
-    public void SaveSpecialObjects(List<SpecialObject> specialObjects) {
-        specialObjectSaves = new List<SaveDataSpecialObject>();
-        for (int i = 0; i < specialObjects.Count; i++) {
-            SpecialObject currSpecialObject = specialObjects[i];
-            SaveDataSpecialObject data = null;
-            System.Type type = System.Type.GetType("SaveData" + currSpecialObject.GetType().ToString());
-            if (type != null) {
-                data = System.Activator.CreateInstance(type) as SaveDataSpecialObject;
-            } else {
-                data = new SaveDataSpecialObject();
-            }
-            data.Save(currSpecialObject);
-            specialObjectSaves.Add(data);
-        }
-    }
-    public void LoadSpecialObjects() {
-        for (int i = 0; i < specialObjectSaves.Count; i++) {
-            specialObjectSaves[i].Load();
-        }
-    }
+    // public void SaveSpecialObjects(List<SpecialObject> specialObjects) {
+    //     specialObjectSaves = new List<SaveDataSpecialObject>();
+    //     for (int i = 0; i < specialObjects.Count; i++) {
+    //         SpecialObject currSpecialObject = specialObjects[i];
+    //         SaveDataSpecialObject data = null;
+    //         System.Type type = System.Type.GetType("SaveData" + currSpecialObject.GetType().ToString());
+    //         if (type != null) {
+    //             data = System.Activator.CreateInstance(type) as SaveDataSpecialObject;
+    //         } else {
+    //             data = new SaveDataSpecialObject();
+    //         }
+    //         data.Save(currSpecialObject);
+    //         specialObjectSaves.Add(data);
+    //     }
+    // }
+    // public void LoadSpecialObjects() {
+    //     for (int i = 0; i < specialObjectSaves.Count; i++) {
+    //         specialObjectSaves[i].Load();
+    //     }
+    // }
 
     public void SaveAreaMaps(List<AreaInnerTileMap> areaMaps) {
         areaMapSaves = new List<SaveDataAreaInnerTileMap>();

@@ -5,12 +5,12 @@ using UnityEngine;
 
 public class FactionPropertyItem : MonoBehaviour {
 
-    //private Settlement settlement;
+    //private NPCSettlement npcSettlement;
 
     [SerializeField] private TextMeshProUGUI areaNameLbl;
 
-    public void SetArea(Settlement settlement) {
-        //this.settlement = settlement;
-        areaNameLbl.text = settlement.name;
+    public void SetArea(NPCSettlement npcSettlement) {
+        //this.npcSettlement = npcSettlement;
+        areaNameLbl.text = npcSettlement.name;
     }
 }

@@ -11,10 +11,10 @@ public class PrayTileObject : GoapAction {
         this.goapName = "Pray";
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
         actionIconString = GoapActionStateDB.Pray_Icon;
-        shouldIntelNotificationOnlyIfActorIsActive = true;
-        isNotificationAnIntel = false;
+        showNotification = false;
+        
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
     }
 
     #region Overrides
@@ -22,22 +22,22 @@ public class PrayTileObject : GoapAction {
         base.Perform(goapNode);
         SetState("Pray Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         //**Cost**: randomize between 15 - 55
-        return Utilities.rng.Next(15, 56);
+        return UtilityScripts.Utilities.rng.Next(15, 56);
     }
     public override void AddFillersToLog(Log log, ActualGoapNode node) {
         base.AddFillersToLog(log, node);
         IPointOfInterest poiTarget = node.poiTarget;
         TileObject obj = poiTarget as TileObject;
-        log.AddToFillers(poiTarget, Utilities.NormalizeStringUpperCaseFirstLetters(obj.tileObjectType.ToString()), LOG_IDENTIFIER.TARGET_CHARACTER);
+        log.AddToFillers(poiTarget, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(obj.tileObjectType.ToString()), LOG_IDENTIFIER.TARGET_CHARACTER);
     }
     #endregion
 
     #region State Effects
     public void PrePraySuccess(ActualGoapNode goapNode) {
         TileObject obj = goapNode.poiTarget as TileObject;
-        goapNode.descriptionLog.AddToFillers(goapNode.poiTarget, Utilities.NormalizeStringUpperCaseFirstLetters(obj.tileObjectType.ToString()), LOG_IDENTIFIER.TARGET_CHARACTER);
+        goapNode.descriptionLog.AddToFillers(goapNode.poiTarget, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(obj.tileObjectType.ToString()), LOG_IDENTIFIER.TARGET_CHARACTER);
     }
     public void AfterPraySuccess(ActualGoapNode goapNode) {
         if (goapNode.poiTarget is GoddessStatue) {
@@ -65,7 +65,7 @@ public class PrayTileObject : GoapAction {
 
 public class PrayTileObjectData : GoapActionData {
     public PrayTileObjectData() : base(INTERACTION_TYPE.PRAY_TILE_OBJECT) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
         requirementAction = Requirement;
     }
 

@@ -9,25 +9,21 @@ using Inner_Maps;
 public class MapGenerator : MonoBehaviour {
 
     public static MapGenerator Instance;
-
-    private bool isCoroutineRunning;
-
+    
     private void Awake() {
         Instance = this;
     }
 
-    internal void InitializeWorld() {
+    internal IEnumerator InitializeWorld() {
         MapGenerationComponent[] mapGenerationComponents = {
             new WorldMapGridGeneration(), new WorldMapElevationGeneration(), new SupportingFactionGeneration(), 
             new WorldMapRegionGeneration(), new WorldMapBiomeGeneration(), new WorldMapOuterGridGeneration(),
-            new TileFeatureGeneration(), new PortalLandmarkGeneration(), new WorldMapLandmarkGeneration(), 
-            new RegionInnerMapGeneration(), new SettlementGeneration(), new LandmarkStructureGeneration(), 
-            new ElevationStructureGeneration(), new MapGenerationFinalization(), new PlayerDataGeneration(), 
-             
-            // new MainSettlementMapGeneration(), new SuppotingSettlementMapGeneration(), new RegionDataGeneration(), 
-            // new PlayerDataGeneration(), 
+            new TileFeatureGeneration(), new PortalLandmarkGeneration(), new WorldMapLandmarkGeneration(),
+            new FamilyTreeGeneration(), new RegionInnerMapGeneration(), new SettlementGeneration(), 
+            new LandmarkStructureGeneration(), new ElevationStructureGeneration(), new MonsterGeneration(), 
+            new MapGenerationFinalization(), new PlayerDataGeneration(),
         };
-        StartCoroutine(InitializeWorldCoroutine(mapGenerationComponents));
+        yield return StartCoroutine(InitializeWorldCoroutine(mapGenerationComponents));
     }
     public void InitializeWorld(Save data) {
         StartCoroutine(InitializeWorldCoroutine(data));
@@ -36,33 +32,81 @@ public class MapGenerator : MonoBehaviour {
         System.Diagnostics.Stopwatch loadingWatch = new System.Diagnostics.Stopwatch();
         loadingWatch.Start();
 
+        string loadingDetails = "Loading details";
+
+        bool componentFailed = false;
+        
         MapGenerationData data = new MapGenerationData();
+        System.Diagnostics.Stopwatch componentWatch = new System.Diagnostics.Stopwatch();
         for (int i = 0; i < components.Length; i++) {
             MapGenerationComponent currComponent = components[i];
+            componentWatch.Start();
             yield return StartCoroutine(currComponent.Execute(data));
+            componentWatch.Stop();
+            loadingDetails += $"\n{currComponent.ToString()} took {componentWatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.";
+            if (string.IsNullOrEmpty(currComponent.log) == false) {
+                loadingDetails += $"\n{currComponent.log}";
+            }
+            componentWatch.Reset();
+            
+            componentFailed = currComponent.succeess == false;
+            if (componentFailed) {
+                break;
+            }
         }
-        
-        loadingWatch.Stop();
-        Debug.Log($"Total loading time is {loadingWatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
- 
-        LevelLoaderManager.SetLoadingState(false);
-        CameraMove.Instance.CenterCameraOn(data.portal.tileLocation.gameObject);
-        AudioManager.Instance.TransitionTo("World Music", 10);
-        Messenger.Broadcast(Signals.GAME_LOADED);
-        yield return new WaitForSeconds(1f);
-        PlayerManager.Instance.player.IncreaseArtifactSlot();
-        PlayerManager.Instance.player.IncreaseSummonSlot();
-        GameManager.Instance.StartProgression();
-        UIManager.Instance.SetSpeedTogglesState(false);
-        PlayerUI.Instance.ShowStartingMinionPicker();
+        if (componentFailed) {
+            //reload scene
+            Debug.LogWarning("A component in world generation failed! Reloading scene...");
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        } else {
+            loadingWatch.Stop();
+            Debug.Log(
+                $"{loadingDetails}\nTotal loading time is {loadingWatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
 
+            LevelLoaderManager.Instance.SetLoadingState(false);
+            CameraMove.Instance.CenterCameraOn(data.portal.tileLocation.gameObject);
+            InnerMapManager.Instance.TryShowLocationMap(data.portal.tileLocation.region);
+            InnerMapCameraMove.Instance.CenterCameraOnTile(data.portal.tileLocation);
+            AudioManager.Instance.TransitionTo("World Music", 10);
+
+            for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
+                Faction faction = FactionManager.Instance.allFactions[i];
+                if (faction.isMajorNonPlayer) {
+                    faction.DesignateNewLeader(false);
+                    faction.GenerateInitialOpinionBetweenMembers();
+                }
+            }
+            for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+                Region region = GridMap.Instance.allRegions[i];
+                for (int j = 0; j < region.tiles.Count; j++) {
+                    HexTile tile = region.tiles[j];
+                    if (!tile.isCorrupted
+                        && tile.landmarkOnTile != null
+                        && (tile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.VILLAGE
+                            || tile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.HOUSES)
+                        && tile.settlementOnTile is NPCSettlement npcSettlement) {
+                        if(npcSettlement.ruler == null) {
+                            npcSettlement.DesignateNewRuler(false);
+                        }
+                        npcSettlement.GenerateInitialOpinionBetweenResidents();
+                    }
+                }
+            }
+            Messenger.Broadcast(Signals.GAME_LOADED);
+            yield return new WaitForSeconds(1f);
+            // PlayerManager.Instance.player.IncreaseArtifactSlot();
+            //PlayerManager.Instance.player.IncreaseSummonSlot();
+            GameManager.Instance.StartProgression();
+            //UIManager.Instance.SetSpeedTogglesState(false);
+            //PlayerUI.Instance.ShowStartingMinionPicker();
+        }
     }
     private IEnumerator InitializeWorldCoroutine(Save data) {
         System.Diagnostics.Stopwatch loadingWatch = new System.Diagnostics.Stopwatch();
         //System.Diagnostics.Stopwatch st = new System.Diagnostics.Stopwatch();
         loadingWatch.Start();
 
-        LevelLoaderManager.UpdateLoadingInfo("Loading Map...");
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Map...");
         GridMap.Instance.SetupInitialData(data.width, data.height);
         yield return null;
         CameraMove.Instance.Initialize();
@@ -80,9 +124,8 @@ public class MapGenerator : MonoBehaviour {
         data.LoadPlayerArea();
         data.LoadNonPlayerAreas();
         data.LoadFactions();
-        LandmarkManager.Instance.LoadAdditionalAreaData();
         data.LoadCharacters();
-        data.LoadSpecialObjects();
+        // data.LoadSpecialObjects();
         data.LoadTileObjects();
         yield return null;
         data.LoadCharacterRelationships();
@@ -93,12 +136,12 @@ public class MapGenerator : MonoBehaviour {
         data.LoadRegionAdditionalData();
         yield return null;
 
-        CameraMove.Instance.CalculateCameraBounds();
+        // CameraMove.Instance.CalculateCameraBounds();
         UIManager.Instance.InitializeUI();
-        LevelLoaderManager.UpdateLoadingInfo("Starting Game...");
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Starting Game...");
         yield return null;
 
-        TokenManager.Instance.Initialize();
+        // TokenManager.Instance.Initialize();
         //CharacterManager.Instance.GenerateRelationships();
 
         yield return null;
@@ -117,7 +160,7 @@ public class MapGenerator : MonoBehaviour {
         data.LoadAllJobs();
         data.LoadTileObjectsDataAfterLoadingAreaMap();
 
-        //Note: Loading settlement items is after loading the inner map because LocationStructure and LocationGridTile is required
+        //Note: Loading npcSettlement items is after loading the inner map because LocationStructure and LocationGridTile is required
         data.LoadPlayerAreaItems();
         data.LoadNonPlayerAreaItems();
         yield return null;
@@ -130,10 +173,10 @@ public class MapGenerator : MonoBehaviour {
         data.LoadNotifications();
 
         loadingWatch.Stop();
-        Debug.Log(string.Format("Total loading time is {0} ms", loadingWatch.ElapsedMilliseconds.ToString()));
-        LevelLoaderManager.SetLoadingState(false);
+        Debug.Log($"Total loading time is {loadingWatch.ElapsedMilliseconds.ToString()} ms");
+        LevelLoaderManager.Instance.SetLoadingState(false);
         //TODO:
-        // CameraMove.Instance.CenterCameraOn(PlayerManager.Instance.player.playerSettlement.coreTile.gameObject);
+        // CameraMove.Instance.CenterCameraOn(PlayerManager.Instance.player.playerNpcSettlement.coreTile.gameObject);
         AudioManager.Instance.TransitionTo("World Music", 10);
         yield return new WaitForSeconds(1f);
         GameManager.Instance.StartProgression();
@@ -148,52 +191,5 @@ public class MapGenerator : MonoBehaviour {
         //PlayerManager.Instance.player.LoadResearchNewInterventionAbility(data.playerSave);
 
     }
-
-    private void GenerateMapWidthAndHeightFromRegionCount(int regionCount, out int width, out int height) {
-        width = 0;
-        height = 0;
-
-        int maxColumns = 6;
-        int currColumn = 0;
-
-        int currentRowWidth = 0;
-
-        string summary = "Map Size Generation: ";
-        for (int i = 0; i < regionCount; i++) {
-            int regionWidth = Random.Range(WorldConfigManager.Instance.minRegionWidthCount, WorldConfigManager.Instance.maxRegionWidthCount + 1);
-            int regionHeight = Random.Range(WorldConfigManager.Instance.minRegionHeightCount, WorldConfigManager.Instance.maxRegionHeightCount + 1);
-            if (currColumn < maxColumns) {
-                //only directly add to width
-                currentRowWidth += regionWidth;
-                if (currentRowWidth > width) {
-                    width = currentRowWidth;
-                }
-                if (regionHeight > height) {
-                    height = regionHeight;
-                }
-                currColumn++;
-            } else {
-                //place next set into next row
-                currColumn = 1;
-                currentRowWidth = 0;
-                height += regionHeight;
-            }
-            
-            //if (Utilities.IsEven(i)) {
-            //    width += regionWidth;
-            //} else {
-            //    height += regionHeight;
-            //}
-            
-            //totalTiles += regionWidth * regionHeight;
-            summary += "\n" + i + " - Width: " + regionWidth + " Height: " + regionHeight;
-        }
-        //summary += "\nComputed total tiles : " + totalTiles.ToString();
-        summary += "\nTotal tiles : " + (width * height).ToString();
-
-        Debug.Log(summary);
-    }
-    public void SetIsCoroutineRunning(bool state) {
-        isCoroutineRunning = state;
-    }
+    public void SetIsCoroutineRunning(bool state) { }
 }

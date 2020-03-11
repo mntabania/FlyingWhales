@@ -1,107 +1,97 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using UnityEngine;
-
+using UnityEngine.Serialization;
+using Traits;
+using Archetype;
+using Locations.Settlements;
 
 public class PlayerManager : MonoBehaviour {
-    public static PlayerManager Instance = null;
-
-    public const int MAX_LEVEL_SUMMON = 3;
-    public const int MAX_LEVEL_ARTIFACT = 3;
-    public const int MAX_LEVEL_COMBAT_ABILITY = 3;
-    public const int MAX_LEVEL_INTERVENTION_ABILITY = 3;
-    public const int DIVINE_INTERVENTION_DURATION = 2880; //4320;
-
-    public bool isChoosingStartingTile = false;
-    public Player player = null;
-    public INTERVENTION_ABILITY[] allInterventionAbilities;
-    public Dictionary<INTERVENTION_ABILITY, PlayerJobActionData> allInterventionAbilitiesData;
+    public static PlayerManager Instance;
+    public Player player;
+    
+    public Dictionary<SPELL_TYPE, SpellData> allSpellsData;
     public COMBAT_ABILITY[] allCombatAbilities;
-    public LANDMARK_TYPE[] allLandmarksThatCanBeBuilt;
-
-    [SerializeField] private Sprite[] _playerAreaFloorSprites;
-    [SerializeField] private LandmarkStructureSprite[] _playerAreaDefaultStructureSprites;
 
     [Header("Job Action Icons")]
-    [SerializeField] private StringSpriteDictionary jobActionIcons;
+    [FormerlySerializedAs("jobActionIcons")] [SerializeField] private StringSpriteDictionary spellIcons;
 
     [Header("Combat Ability Icons")]
     [SerializeField] private StringSpriteDictionary combatAbilityIcons;
-
+    
     [Header("Intervention Ability Tiers")]
-    [SerializeField] private InterventionAbilityTierDictionary interventionAbilityTiers;
+    [FormerlySerializedAs("interventionAbilityTiers")] [SerializeField] private InterventionAbilityTierDictionary spellTiers;
 
-    #region getters/setters
-    public Sprite[] playerAreaFloorSprites {
-        get { return _playerAreaFloorSprites; }
-    }
-    public LandmarkStructureSprite[] playerAreaDefaultStructureSprites {
-        get { return _playerAreaDefaultStructureSprites; }
-    }
-    #endregion
-
+    [Header("Chaos Orbs")] 
+    [SerializeField] private GameObject chaosOrbPrefab;
+    
     private void Awake() {
         Instance = this;
     }
     public void Initialize() {
-        // , INTERVENTION_ABILITY.CLOAK_OF_INVISIBILITY
-        allInterventionAbilities = new INTERVENTION_ABILITY[] { INTERVENTION_ABILITY.ZAP, INTERVENTION_ABILITY.RAISE_DEAD, INTERVENTION_ABILITY.CANNIBALISM
-            , INTERVENTION_ABILITY.LYCANTHROPY, INTERVENTION_ABILITY.VAMPIRISM, INTERVENTION_ABILITY.KLEPTOMANIA
-            , INTERVENTION_ABILITY.UNFAITHFULNESS, INTERVENTION_ABILITY.ENRAGE, INTERVENTION_ABILITY.PROVOKE, INTERVENTION_ABILITY.EXPLOSION
-            , INTERVENTION_ABILITY.IGNITE, INTERVENTION_ABILITY.LURE, INTERVENTION_ABILITY.CURSED_OBJECT, INTERVENTION_ABILITY.SPOIL, INTERVENTION_ABILITY.ALCOHOLIC
-            , INTERVENTION_ABILITY.LULLABY, INTERVENTION_ABILITY.AGORAPHOBIA, INTERVENTION_ABILITY.PARALYSIS, INTERVENTION_ABILITY.RELEASE, INTERVENTION_ABILITY.ZOMBIE_VIRUS
-            , INTERVENTION_ABILITY.PESTILENCE, INTERVENTION_ABILITY.PSYCHOPATHY, INTERVENTION_ABILITY.TORNADO }; //INTERVENTION_ABILITY.JOLT, , INTERVENTION_ABILITY.CLOAK_OF_INVISIBILITY//
-        allCombatAbilities = (COMBAT_ABILITY[]) System.Enum.GetValues(typeof(COMBAT_ABILITY));
+        // SPELL_TYPE[] allSpellTypes = UtilityScripts.CollectionUtilities.GetEnumValues<SPELL_TYPE>();
+        SPELL_TYPE[] allSpellTypes = { SPELL_TYPE.ZAP, SPELL_TYPE.RAISE_DEAD, SPELL_TYPE.CANNIBALISM
+            , SPELL_TYPE.LYCANTHROPY, SPELL_TYPE.VAMPIRISM, SPELL_TYPE.KLEPTOMANIA
+            , SPELL_TYPE.UNFAITHFULNESS, SPELL_TYPE.METEOR
+            , SPELL_TYPE.IGNITE, SPELL_TYPE.CURSED_OBJECT, SPELL_TYPE.ALCOHOLIC
+            , SPELL_TYPE.AGORAPHOBIA, SPELL_TYPE.PARALYSIS, SPELL_TYPE.ZOMBIE_VIRUS
+            , SPELL_TYPE.PESTILENCE, SPELL_TYPE.PSYCHOPATHY, SPELL_TYPE.TORNADO, SPELL_TYPE.DESTROY
+            , SPELL_TYPE.RAVENOUS_SPIRIT, SPELL_TYPE.FEEBLE_SPIRIT, SPELL_TYPE.FORLORN_SPIRIT
+            , SPELL_TYPE.LIGHTNING, SPELL_TYPE.POISON_CLOUD, SPELL_TYPE.EARTHQUAKE
+            , SPELL_TYPE.SPAWN_BOULDER, SPELL_TYPE.WATER_BOMB, SPELL_TYPE.MANIFEST_FOOD
+            , SPELL_TYPE.BRIMSTONES, SPELL_TYPE.SPLASH_POISON, SPELL_TYPE.LOCUST_SWARM, SPELL_TYPE.BLIZZARD, SPELL_TYPE.RAIN
+            , SPELL_TYPE.SPOIL, 
+        };
 
-        allInterventionAbilitiesData = new Dictionary<INTERVENTION_ABILITY, PlayerJobActionData>();
-        for (int i = 0; i < allInterventionAbilities.Length; i++) {
-            var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(allInterventionAbilities[i].ToString()) + "Data";
-            allInterventionAbilitiesData.Add(allInterventionAbilities[i], System.Activator.CreateInstance(System.Type.GetType(typeName)) as PlayerJobActionData);
+        allSpellsData = new Dictionary<SPELL_TYPE, SpellData>();
+        for (int i = 0; i < allSpellTypes.Length; i++) {
+            SPELL_TYPE spellType = allSpellTypes[i];
+            if (spellType != SPELL_TYPE.NONE) {
+                var typeName =
+                    $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(spellType.ToString())}Data";
+                allSpellsData.Add(spellType, System.Activator.CreateInstance(System.Type.GetType(typeName) ?? 
+                   throw new Exception($"Problem with creating spell data for {typeName}")) as SpellData);    
+            }
         }
-
-        allLandmarksThatCanBeBuilt = new LANDMARK_TYPE[] { LANDMARK_TYPE.THE_ANVIL, LANDMARK_TYPE.THE_EYE , LANDMARK_TYPE.THE_KENNEL, LANDMARK_TYPE.THE_CRYPT, LANDMARK_TYPE.THE_SPIRE, LANDMARK_TYPE.THE_NEEDLES, LANDMARK_TYPE.THE_PROFANE, LANDMARK_TYPE.THE_PIT, LANDMARK_TYPE.GOADER };
         //Unit Selection
-        Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
-        Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
-        Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressedDown);
+        Messenger.AddListener<InfoUIBase>(Signals.MENU_OPENED, OnMenuOpened);
+        Messenger.AddListener<InfoUIBase>(Signals.MENU_CLOSED, OnMenuClosed);
+        // Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressedDown);
+        Messenger.AddListener<Vector3, int, InnerTileMap>(Signals.CREATE_CHAOS_ORBS, CreateChaosOrbsAt);
+        Messenger.AddListener<Character, ActualGoapNode>(Signals.CHARACTER_DID_ACTION_SUCCESSFULLY, OnCharacterDidActionSuccess);
     }
-    public void InitializePlayer(BaseLandmark portal) {
+    public void InitializePlayer(BaseLandmark portal, LocationStructure portalStructure, PLAYER_ARCHETYPE archeType) {
         player = new Player();
-        PlayerUI.Instance.Initialize();
         player.CreatePlayerFaction();
+        player.SetPortalTile(portal.tileLocation);
+        player.SetArchetype(archeType);
+        PlayerSettlement existingPlayerNpcSettlement = player.CreatePlayerSettlement(portal);
+        existingPlayerNpcSettlement.GenerateStructures(portalStructure);
         
-        Settlement existingPlayerSettlement = player.CreatePlayerSettlement(portal);
-        existingPlayerSettlement.GenerateStructures(0);
+        LandmarkManager.Instance.OwnSettlement(player.playerFaction, existingPlayerNpcSettlement);
         
-        // Settlement existingPlayerSettlement = LandmarkManager.Instance.GetAreaByName("Portal");
-        // if (existingPlayerSettlement == null) {
-        //     player.CreatePlayerArea(portal);
-        // } else {
-        //     player.LoadPlayerArea(existingPlayerSettlement);
-        // }
-
-        LandmarkManager.Instance.OwnSettlement(player.playerFaction, existingPlayerSettlement);
+        player.AddArtifact(CreateNewArtifact(ARTIFACT_TYPE.Grasping_Hands));
+        player.AddArtifact(CreateNewArtifact(ARTIFACT_TYPE.Snatching_Hands));
+        player.AddArtifact(CreateNewArtifact(ARTIFACT_TYPE.Abominable_Heart));
+        player.AddArtifact(CreateNewArtifact(ARTIFACT_TYPE.Dark_Matter));
+        player.AddArtifact(CreateNewArtifact(ARTIFACT_TYPE.Looking_Glass));
+        player.AddArtifact(CreateNewArtifact(ARTIFACT_TYPE.Black_Scripture));
+        player.AddArtifact(CreateNewArtifact(ARTIFACT_TYPE.False_Gem));
+        player.AddArtifact(CreateNewArtifact(ARTIFACT_TYPE.Naga_Eyes));
+        player.AddArtifact(CreateNewArtifact(ARTIFACT_TYPE.Tormented_Chalice));
+        player.AddArtifact(CreateNewArtifact(ARTIFACT_TYPE.Lightning_Rod));
         
         PlayerUI.Instance.UpdateUI();
-
-        //Add an adjacent region to the player at the start of the game.
-        //Ref: https://trello.com/c/cQKzEx06/2699-one-additional-empty-region-owned-by-the-player-at-the-start-of-game
-        //TODO:
-        // List<RegionConnectionData> choices = portal.tileLocation.region.connections;
-        // Region chosenRegion = Utilities.GetRandomElement(choices).region;
-        // LandmarkManager.Instance.OwnRegion(player.playerFaction, RACE.DEMON, chosenRegion);
-        // //Pre-build a Spire in the second initial empty corrupted region and ensure that it does not have a Hallowed Ground trait.
-        // // chosenRegion.RemoveAllFeatures();
-        // LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenRegion.coreTile, LANDMARK_TYPE.THE_SPIRE, false);
     }
     public void InitializePlayer(SaveDataPlayer data) {
         player = new Player(data);
-        //PlayerUI.Instance.Initialize();
         player.CreatePlayerFaction(data);
-        Settlement existingPlayerSettlement = LandmarkManager.Instance.GetAreaByID(data.playerAreaID);
-        player.SetPlayerArea(existingPlayerSettlement);
+        // NPCSettlement existingPlayerNpcSettlement = LandmarkManager.Instance.GetAreaByID(data.playerAreaID);
+        // player.SetPlayerArea(existingPlayerNpcSettlement);
         //PlayerUI.Instance.UpdateUI();
         //PlayerUI.Instance.InitializeThreatMeter();
         //PlayerUI.Instance.UpdateThreatMeter();
@@ -126,11 +116,20 @@ public class PlayerManager : MonoBehaviour {
         }
         //player.SetPlayerTargetFaction(LandmarkManager.Instance.enemyOfPlayerArea.owner);
     }
+    public int GetManaCostForSpell(int tier) {
+        if (tier == 1) {
+            return 150;
+        } else if (tier == 2) {
+            return 100;
+        } else {
+            return 50;
+        }
+    }
 
     #region Utilities
     public Sprite GetJobActionSprite(string actionName) {
-        if (jobActionIcons.ContainsKey(actionName)) {
-            return jobActionIcons[actionName];
+        if (spellIcons.ContainsKey(actionName)) {
+            return spellIcons[actionName];
         }
         return null;
     }
@@ -143,123 +142,84 @@ public class PlayerManager : MonoBehaviour {
     #endregion
 
     #region Intervention Ability
-    public PlayerJobAction CreateNewInterventionAbility(INTERVENTION_ABILITY abilityType) {
+    public PlayerSpell CreateNewInterventionAbility(SPELL_TYPE abilityType) {
         switch (abilityType) {
-            case INTERVENTION_ABILITY.ABDUCT:
-                return new Abduct();
-            case INTERVENTION_ABILITY.ACCESS_MEMORIES:
-                return new AccessMemories();
-            case INTERVENTION_ABILITY.DESTROY:
+            //case SPELL_TYPE.ABDUCT:
+            //    return new Abduct();
+            //case SPELL_TYPE.ACCESS_MEMORIES:
+            //    return new AccessMemories();
+            case SPELL_TYPE.DESTROY:
                 return new Destroy();
-            case INTERVENTION_ABILITY.DISABLE:
-                return new Disable();
-            case INTERVENTION_ABILITY.ENRAGE:
-                return new Enrage();
-            case INTERVENTION_ABILITY.KLEPTOMANIA:
+            //case SPELL_TYPE.DISABLE:
+            //    return new Disable();
+            //case SPELL_TYPE.ENRAGE:
+            //    return new Enrage();
+            case SPELL_TYPE.KLEPTOMANIA:
                 return new Kleptomania();
-            case INTERVENTION_ABILITY.LYCANTHROPY:
+            case SPELL_TYPE.LYCANTHROPY:
                 return new Lycanthropy();
-            case INTERVENTION_ABILITY.UNFAITHFULNESS:
+            case SPELL_TYPE.UNFAITHFULNESS:
                 return new Unfaithfulness();
-            case INTERVENTION_ABILITY.VAMPIRISM:
+            case SPELL_TYPE.VAMPIRISM:
                 return new Vampirism();
-            case INTERVENTION_ABILITY.JOLT:
-                return new Jolt();
-            case INTERVENTION_ABILITY.PROVOKE:
-                return new Provoke();
-            case INTERVENTION_ABILITY.RAISE_DEAD:
+            //case SPELL_TYPE.JOLT:
+            //    return new Jolt();
+            //case SPELL_TYPE.PROVOKE:
+            //    return new Provoke();
+            case SPELL_TYPE.RAISE_DEAD:
                 return new RaiseDead();
             //case INTERVENTION_ABILITY.SHARE_INTEL:
             //    return new ShareIntel();
-            case INTERVENTION_ABILITY.SPOOK:
-                return new Spook();
-            case INTERVENTION_ABILITY.ZAP:
+            //case SPELL_TYPE.SPOOK:
+            //    return new Spook();
+            case SPELL_TYPE.ZAP:
                 return new Zap();
-            case INTERVENTION_ABILITY.CANNIBALISM:
+            case SPELL_TYPE.CANNIBALISM:
                 return new Cannibalism();
-            case INTERVENTION_ABILITY.CLOAK_OF_INVISIBILITY:
-                return new CloakOfInvisibility();
-            case INTERVENTION_ABILITY.LURE:
-                return new Lure();
-            case INTERVENTION_ABILITY.EXPLOSION:
-                return new Explosion();
-            case INTERVENTION_ABILITY.IGNITE:
+            //case SPELL_TYPE.CLOAK_OF_INVISIBILITY:
+            //    return new CloakOfInvisibility();
+            //case SPELL_TYPE.LURE:
+            //    return new Lure();
+            case SPELL_TYPE.METEOR:
+                return new Meteor();
+            case SPELL_TYPE.IGNITE:
                 return new Ignite();
-            case INTERVENTION_ABILITY.CURSED_OBJECT:
+            case SPELL_TYPE.CURSED_OBJECT:
                 return new CursedObject();
-            case INTERVENTION_ABILITY.SPOIL:
-                return new Spoil();
-            case INTERVENTION_ABILITY.ALCOHOLIC:
+            //case SPELL_TYPE.SPOIL:
+            //    return new Spoil();
+            case SPELL_TYPE.ALCOHOLIC:
                 return new Alcoholic();
-            case INTERVENTION_ABILITY.LULLABY:
-                return new Lullaby();
-            case INTERVENTION_ABILITY.PESTILENCE:
+            //case SPELL_TYPE.LULLABY:
+            //    return new Lullaby();
+            case SPELL_TYPE.PESTILENCE:
                 return new Pestilence();
-            case INTERVENTION_ABILITY.AGORAPHOBIA:
+            case SPELL_TYPE.AGORAPHOBIA:
                 return new Agoraphobia();
-            case INTERVENTION_ABILITY.PARALYSIS:
+            case SPELL_TYPE.PARALYSIS:
                 return new Paralysis();
-            case INTERVENTION_ABILITY.RELEASE:
-                return new Release();
-            case INTERVENTION_ABILITY.ZOMBIE_VIRUS:
+            //case SPELL_TYPE.RELEASE:
+            //    return new Release();
+            case SPELL_TYPE.ZOMBIE_VIRUS:
                 return new ZombieVirus();
-            case INTERVENTION_ABILITY.PSYCHOPATHY:
+            case SPELL_TYPE.PSYCHOPATHY:
                 return new Psychopathy();
-            case INTERVENTION_ABILITY.TORNADO:
+            case SPELL_TYPE.TORNADO:
                 return new Tornado();
         }
         return null;
     }
-    public List<INTERVENTION_ABILITY> GetInterventionAbilitiesWithTag(ABILITY_TAG tag) {
-        List<INTERVENTION_ABILITY> valid = new List<INTERVENTION_ABILITY>();
-        INTERVENTION_ABILITY[] abilities = allInterventionAbilities;
-        for (int i = 0; i < abilities.Length; i++) {
-            INTERVENTION_ABILITY currAbility = abilities[i];
-            List<ABILITY_TAG> tags = currAbility.GetAbilityTags();
-            if (tags.Contains(tag)) {
-                valid.Add(currAbility);
-            }
+    public SpellData GetSpellData(SPELL_TYPE type) {
+        if (allSpellsData.ContainsKey(type)) {
+            return allSpellsData[type];
         }
-        return valid;
+        throw new System.Exception($"No spell data for {type}");
     }
-    public int GetInterventionAbilityTier(INTERVENTION_ABILITY abilityType) {
-        if (interventionAbilityTiers.ContainsKey(abilityType)) {
-            return interventionAbilityTiers[abilityType];
+    public int GetSpellTier(SPELL_TYPE abilityType) {
+        if (spellTiers.ContainsKey(abilityType)) {
+            return spellTiers[abilityType];
         }
         return 3;
-    }
-    public INTERVENTION_ABILITY GetRandomAbilityByTier(int tier) {
-        List<INTERVENTION_ABILITY> abilityTiers = new List<INTERVENTION_ABILITY>();
-        for (int i = 0; i < allInterventionAbilities.Length; i++) {
-            INTERVENTION_ABILITY ability = allInterventionAbilities[i];
-            if (GetInterventionAbilityTier(ability) == tier) {
-                abilityTiers.Add(ability);
-            }
-        }
-        if (abilityTiers.Count > 0) {
-            return abilityTiers[UnityEngine.Random.Range(0, abilityTiers.Count)];
-        }
-        return INTERVENTION_ABILITY.ABDUCT;
-    }
-    public List<INTERVENTION_ABILITY> GetAbilitiesByTier(int tier) {
-        List<INTERVENTION_ABILITY> abilityTiers = new List<INTERVENTION_ABILITY>();
-        for (int i = 0; i < allInterventionAbilities.Length; i++) {
-            INTERVENTION_ABILITY ability = allInterventionAbilities[i];
-            if (GetInterventionAbilityTier(ability) == tier) {
-                abilityTiers.Add(ability);
-            }
-        }
-        return abilityTiers;
-    }
-    public List<INTERVENTION_ABILITY> GetAllInterventionAbilityByCategory(INTERVENTION_ABILITY_CATEGORY category) {
-        List<INTERVENTION_ABILITY> abilities = new List<INTERVENTION_ABILITY>();
-        for (int i = 0; i < allInterventionAbilities.Length; i++) {
-            INTERVENTION_ABILITY ability = allInterventionAbilities[i];
-            if (allInterventionAbilitiesData[ability].category == category) {
-                abilities.Add(ability);
-            }
-        }
-        return abilities;
     }
     #endregion
 
@@ -283,41 +243,22 @@ public class PlayerManager : MonoBehaviour {
 
     #region Artifacts
     public Artifact CreateNewArtifact(ARTIFACT_TYPE artifactType) {
-        Artifact newArtifact = CreateNewArtifactClassFromType(artifactType) as Artifact;
-        return newArtifact;
+        // Artifact newArtifact = CreateNewArtifactClassFromType(artifactType) as Artifact;
+        // return newArtifact;
+        return new Artifact(artifactType);
     }
-    //public Artifact CreateNewArtifact(SaveDataArtifactSlot data) {
-    //    Artifact newArtifact = CreateNewArtifactClassFromType(data);
-    //    newArtifact.SetLevel(data.level);
-    //    return newArtifact;
-    //}
     public Artifact CreateNewArtifact(SaveDataArtifact data) {
         Artifact newArtifact = CreateNewArtifactClassFromType(data) as Artifact;
         return newArtifact;
     }
     private object CreateNewArtifactClassFromType(ARTIFACT_TYPE artifactType) {
-        var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(artifactType.ToString());
+        var typeName = UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(artifactType.ToString());
         return System.Activator.CreateInstance(System.Type.GetType(typeName));
     }
     private object CreateNewArtifactClassFromType(SaveDataArtifact data) {
-        var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(data.artifactType.ToString());
+        var typeName = UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(data.artifactType.ToString());
         return System.Activator.CreateInstance(System.Type.GetType(typeName), data);
     }
-    //private Artifact CreateNewArtifactClassFromType(SaveDataArtifactSlot data) {
-    //    switch (data.type) {
-    //        case ARTIFACT_TYPE.Ankh_Of_Anubis:
-    //            return new Ankh_Of_Anubis(data);
-    //        case ARTIFACT_TYPE.Chaos_Orb:
-    //            return new Chaos_Orb(data);
-    //        case ARTIFACT_TYPE.Hermes_Statue:
-    //            return new Hermes_Statue(data);
-    //        case ARTIFACT_TYPE.Miasma_Emitter:
-    //            return new Miasma_Emitter(data);
-    //        case ARTIFACT_TYPE.Necronomicon:
-    //            return new Necronomicon(data);
-    //    }
-    //    return null;
-    //}
     #endregion
 
     #region Unit Selection
@@ -338,70 +279,120 @@ public class PlayerManager : MonoBehaviour {
             DeselectUnit(units[i]);
         }
     }
-    private void OnMenuOpened(UIMenu menu) {
-        if (menu is CharacterInfoUI) {
+    private void OnMenuOpened(InfoUIBase @base) {
+        if (@base is CharacterInfoUI) {
             DeselectAllUnits();
-            CharacterInfoUI infoUI = menu as CharacterInfoUI;
-            SelectUnit(infoUI.activeCharacter);
+            CharacterInfoUI infoUi = @base as CharacterInfoUI;
+            SelectUnit(infoUi.activeCharacter);
             //if (infoUI.activeCharacter.CanBeInstructedByPlayer()) {
             //    SelectUnit(infoUI.activeCharacter);
             //}
         }
     }
-    private void OnMenuClosed(UIMenu menu) {
-        if (menu is CharacterInfoUI) {
+    private void OnMenuClosed(InfoUIBase @base) {
+        if (@base is CharacterInfoUI) {
             DeselectAllUnits();
         }
     }
-    private void OnKeyPressedDown(KeyCode keyCode) {
-        if (selectedUnits.Count > 0) {
-            if (keyCode == KeyCode.Mouse1) {
-                //right click
-                for (int i = 0; i < selectedUnits.Count; i++) {
-                    Character character = selectedUnits[i];
-                    if (!character.CanBeInstructedByPlayer()) {
-                        continue;
-                    }
-                    IPointOfInterest hoveredPOI = InnerMapManager.Instance.currentlyHoveredPoi;
-                    character.StopCurrentActionNode(false, "Stopped by the player");
-                    if (character.stateComponent.currentState != null) {
-                        character.stateComponent.ExitCurrentState();
-                    }
-                    character.marker.ClearHostilesInRange();
-                    character.marker.ClearAvoidInRange();
-                    character.SetIsFollowingPlayerInstruction(false); //need to reset before giving commands
-                    if (hoveredPOI is Character) {
-                        Character target = hoveredPOI as Character;
-                        if (character.IsHostileWith(target) && character.IsCombatReady()) {
-                            character.marker.AddHostileInRange(target);
-                            character.marker.AddOnProcessCombatAction((combatState) => combatState.SetForcedTarget(target));
-                            //CombatState cs = character.stateComponent.currentState as CombatState;
-                            //if (cs != null) {
-                            //    cs.SetForcedTarget(target);
-                            //} else {
-                            //    throw new System.Exception(character.name + " was instructed to attack " + target.name + " but did not enter combat state!");
-                            //}
-                        } else {
-                            Debug.Log(character.name + " is not combat ready or is not hostile with " + target.name + ". Ignoring command.");
-                        }
-                    } else {
-                        character.marker.GoTo(InnerMapManager.Instance.currentlyShowingMap.worldUiCanvas.worldCamera.ScreenToWorldPoint(Input.mousePosition), () => OnFinishInstructionFromPlayer(character));
-                    }
-                    character.SetIsFollowingPlayerInstruction(true);
-                }
-            } else if (keyCode == KeyCode.Mouse0) {
-                DeselectAllUnits();
-            }
-        }
-    }
+    // private void OnKeyPressedDown(KeyCode keyCode) {
+    //     if (selectedUnits.Count > 0) {
+    //         if (keyCode == KeyCode.Mouse1) {
+    //             //right click
+    //             for (int i = 0; i < selectedUnits.Count; i++) {
+    //                 Character character = selectedUnits[i];
+    //                 if (!character.CanBeInstructedByPlayer()) {
+    //                     continue;
+    //                 }
+    //                 IPointOfInterest hoveredPOI = InnerMapManager.Instance.currentlyHoveredPoi;
+    //                 character.StopCurrentActionNode(false, "Stopped by the player");
+    //                 if (character.stateComponent.currentState != null) {
+    //                     character.stateComponent.ExitCurrentState();
+    //                 }
+    //                 character.combatComponent.ClearHostilesInRange();
+    //                 character.combatComponent.ClearAvoidInRange();
+    //                 character.SetIsFollowingPlayerInstruction(false); //need to reset before giving commands
+    //                 if (hoveredPOI is Character) {
+    //                     Character target = hoveredPOI as Character;
+    //                     if (character.IsHostileWith(target) && character.IsCombatReady()) {
+    //                         character.combatComponent.Fight(target);
+    //                         character.combatComponent.AddOnProcessCombatAction((combatState) => combatState.SetForcedTarget(target));
+    //                         //CombatState cs = character.stateComponent.currentState as CombatState;
+    //                         //if (cs != null) {
+    //                         //    cs.SetForcedTarget(target);
+    //                         //} else {
+    //                         //    throw new System.Exception(character.name + " was instructed to attack " + target.name + " but did not enter combat state!");
+    //                         //}
+    //                     } else {
+    //                         Debug.Log(character.name + " is not combat ready or is not hostile with " + target.name + ". Ignoring command.");
+    //                     }
+    //                 } else {
+    //                     character.marker.GoTo(InnerMapManager.Instance.currentlyShowingMap.worldUiCanvas.worldCamera.ScreenToWorldPoint(Input.mousePosition), () => OnFinishInstructionFromPlayer(character));
+    //                 }
+    //                 character.SetIsFollowingPlayerInstruction(true);
+    //             }
+    //         } else if (keyCode == KeyCode.Mouse0) {
+    //             DeselectAllUnits();
+    //         }
+    //     }
+    // }
     private void OnFinishInstructionFromPlayer(Character character) {
         character.SetIsFollowingPlayerInstruction(false);
     }
     #endregion
 
-    #region Special Objects
-    public SpecialObject CreateNewSpecialObject(string typeName) {
-        return System.Activator.CreateInstance(System.Type.GetType(typeName)) as SpecialObject;
+    #region Chaos Orbs
+    private void CreateChaosOrbsAt(Vector3 worldPos, int amount, InnerTileMap mapLocation) {
+        StartCoroutine(ChaosOrbCreationCoroutine(worldPos, amount, mapLocation));
+    }
+    private IEnumerator ChaosOrbCreationCoroutine(Vector3 worldPos, int amount, InnerTileMap mapLocation) {
+        for (int i = 0; i < amount; i++) {
+            GameObject chaosOrbGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(chaosOrbPrefab.name, Vector3.zero, 
+                Quaternion.identity, mapLocation.objectsParent);
+            chaosOrbGO.transform.position = worldPos;
+            ChaosOrb chaosOrb = chaosOrbGO.GetComponent<ChaosOrb>();
+            chaosOrb.Initialize();
+            yield return null;
+        }
+        Debug.Log($"Created {amount.ToString()} chaos orbs at {mapLocation.location.name}. Position {worldPos.ToString()}");
+    }
+    private void OnCharacterDidActionSuccess(Character character, ActualGoapNode actionNode) {
+        if (character.IsNPC()) {
+            CRIME_TYPE crimeType = CrimeManager.Instance.GetCrimeTypeConsideringAction(actionNode);
+            if (crimeType != CRIME_TYPE.NONE) {
+                int orbsToCreate;
+                switch (crimeType) {
+                    case CRIME_TYPE.MISDEMEANOR:
+                        orbsToCreate = 4;
+                        break;
+                    case CRIME_TYPE.SERIOUS:
+                        orbsToCreate = 6;
+                        break;
+                    case CRIME_TYPE.HEINOUS:
+                        orbsToCreate = 8;
+                        break;
+                    default:
+                        orbsToCreate = 2;
+                        break;
+                }
+                character.logComponent.PrintLogIfActive(
+                    $"{GameManager.Instance.TodayLogString()}{character.name} performed a crime of type {crimeType.ToString()}. Expelling {orbsToCreate.ToString()} Chaos Orbs.");
+                Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, character.marker.transform.position, orbsToCreate, 
+                    character.currentRegion.innerMap);
+
+            }    
+        }
+    }
+    #endregion
+
+    #region Archetypes
+    public static PlayerArchetype CreateNewArchetype(PLAYER_ARCHETYPE archetype) {
+        string typeName = $"Archetype.{ UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(archetype.ToString()) }";
+        System.Type type = System.Type.GetType(typeName);
+        if (type != null) {
+            PlayerArchetype obj = System.Activator.CreateInstance(type) as PlayerArchetype;
+            return obj;
+        }
+        throw new System.Exception($"Could not create new archetype {archetype} because there is no data for it!");
     }
     #endregion
 }

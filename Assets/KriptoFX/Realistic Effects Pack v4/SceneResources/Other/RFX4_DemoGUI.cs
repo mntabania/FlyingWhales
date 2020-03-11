@@ -76,7 +76,7 @@ public class RFX4_DemoGUI : MonoBehaviour
         GUI.Label(new Rect(350 * dpiScale, 15 * dpiScale + offset / 2, 500 * dpiScale, 20 * dpiScale),
             "press left mouse button for the camera rotating and scroll wheel for zooming", guiStyleHeader);
         GUI.Label(new Rect(350*dpiScale, 35*dpiScale + offset / 2, 160*dpiScale, 20*dpiScale),
-            "prefab name is: " + Prefabs[currentNomber].name, guiStyleHeader);
+            $"prefab name is: {Prefabs[currentNomber].name}", guiStyleHeader);
         
 
        // GUI.DrawTexture(new Rect(12*dpiScale, 120*dpiScale + offset, 285*dpiScale, 15*dpiScale), HUETexture, ScaleMode.StretchToFill, false, 0);

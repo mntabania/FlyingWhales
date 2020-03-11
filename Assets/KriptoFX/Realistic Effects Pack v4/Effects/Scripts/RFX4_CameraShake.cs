@@ -1,5 +1,7 @@
+using System;
 using UnityEngine;
 using System.Collections;
+using Random = UnityEngine.Random;
 
 public class RFX4_CameraShake : MonoBehaviour
 {
@@ -15,23 +17,26 @@ public class RFX4_CameraShake : MonoBehaviour
     [HideInInspector]
     public bool canUpdate;
 
-    void PlayShake()
+    private Camera cameraToShake;
+    
+    public void PlayShake()
     {
-        StopAllCoroutines();
+        // StopAllCoroutines();
+        StopCoroutine(Shake());
         StartCoroutine(Shake());
     }
 
-    void Update()
-    {
-        if (isPlaying && IsEnabled) {
-            isPlaying = false;
-            PlayShake();
-        }
-    }
+    // void Update()
+    // {
+    //     if (isPlaying && IsEnabled) {
+    //         isPlaying = false;
+    //         PlayShake();
+    //     }
+    // }
 
     void OnEnable()
     {
-        isPlaying = true;
+        // isPlaying = true;
         var shakes = FindObjectsOfType(typeof(RFX4_CameraShake)) as RFX4_CameraShake[];
         if(shakes!=null)
         foreach (var shake in shakes)
@@ -39,12 +44,15 @@ public class RFX4_CameraShake : MonoBehaviour
             shake.canUpdate = false;
         }
         canUpdate = true;
+        if (cameraToShake == null) {
+            cameraToShake = GetComponent<Camera>();
+        }
     }
 
     IEnumerator Shake()
     {
         var elapsed = 0.0f;
-        var camT = Camera.main.transform;
+        var camT = cameraToShake != null ? cameraToShake.transform : Camera.main.transform;
         var originalCamRotation = camT.rotation.eulerAngles;
         var direction = (transform.position - camT.position).normalized;
         var time = 0f;
@@ -70,5 +78,7 @@ public class RFX4_CameraShake : MonoBehaviour
 
             yield return null;
         }
+        camT.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
+        // isPlaying = true;
     }
 }

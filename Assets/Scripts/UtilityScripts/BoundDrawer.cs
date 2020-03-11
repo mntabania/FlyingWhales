@@ -1,8 +1,9 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
+using UnityEngine.Tilemaps;
 
 [ExecuteInEditMode()]
-
 public class BoundDrawer : MonoBehaviour {
 
     public Bounds bounds;
@@ -17,7 +18,15 @@ public class BoundDrawer : MonoBehaviour {
     private Vector3 v3BackTopRight;
     private Vector3 v3BackBottomLeft;
     private Vector3 v3BackBottomRight;
-
+    private void Awake() {
+        Tilemap tilemap = GetComponent<Tilemap>();
+        if (tilemap != null) {
+            bounds = tilemap.localBounds;    
+        }
+    }
+    public void ManualUpdateBounds(Bounds bounds) {
+        this.bounds = bounds;
+    }
     void Update() {
         CalcPositons();
         DrawBox();

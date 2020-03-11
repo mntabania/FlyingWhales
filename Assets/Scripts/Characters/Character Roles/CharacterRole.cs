@@ -28,11 +28,11 @@ public class CharacterRole {
     public INTERACTION_CATEGORY[] interactionCategories { get; protected set; }
     //public INTERACTION_TYPE[] allowedInteractions { get; protected set; }
     public virtual int reservedSupply { get { return 0; } }
-    public SPECIAL_TOKEN[] requiredItems { get; protected set; }//this is the list of items that the character must own.
+    // public SPECIAL_TOKEN[] requiredItems { get; protected set; }//this is the list of items that the character must own.
 
     protected CharacterRole(CHARACTER_ROLE roleType, string classNameOrIdentifier, INTERACTION_CATEGORY[] interactionCategories) {
         this.roleType = roleType;
-        this.name = Utilities.NormalizeStringUpperCaseFirstLetters(roleType.ToString());
+        this.name = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(roleType.ToString());
         this.classNameOrIdentifier = classNameOrIdentifier;
         this.interactionCategories = interactionCategories;
     }
@@ -43,7 +43,7 @@ public class CharacterRole {
                 return ALL[i];
             }
         }
-        throw new Exception("There's no character role instance for " + roleType.ToString());
+        throw new Exception($"There's no character role instance for {roleType}");
     }
 
     #region Virtuals
@@ -58,63 +58,63 @@ public class CharacterRole {
     /// <param name="character">The character in question.</param>
     /// <param name="neededItem">The item that this character needs.</param>
     /// <returns>If there is an item that the character needs.</returns>
-    public virtual bool TryGetNeededItem(Character character, out SPECIAL_TOKEN neededItem) {
-        if (requiredItems != null) {
-            for (int i = 0; i < requiredItems.Length; i++) {
-                SPECIAL_TOKEN currReqItem = requiredItems[i];
-                if (!character.OwnsItemOfType(currReqItem)) {
-                    neededItem = currReqItem;
-                    return true;
-                }
-            }
-        }
-        neededItem = SPECIAL_TOKEN.ACID_FLASK;
-        return false;
-    }
+    // public virtual bool TryGetNeededItem(Character character, out SPECIAL_TOKEN neededItem) {
+    //     if (requiredItems != null) {
+    //         for (int i = 0; i < requiredItems.Length; i++) {
+    //             SPECIAL_TOKEN currReqItem = requiredItems[i];
+    //             if (!character.OwnsItemOfType(currReqItem)) {
+    //                 neededItem = currReqItem;
+    //                 return true;
+    //             }
+    //         }
+    //     }
+    //     neededItem = SPECIAL_TOKEN.ACID_FLASK;
+    //     return false;
+    // }
     #endregion
 
-    #region Items
-    public bool IsRequiredItem(SPECIAL_TOKEN token) {
-        for (int i = 0; i < requiredItems.Length; i++) {
-            SPECIAL_TOKEN currReqItem = requiredItems[i];
-            if (currReqItem == token) {
-                return true;
-            }
-        }
-        return false;
-    }
-    public int GetRequiredItemAmount(SPECIAL_TOKEN token) {
-        int count = 0;
-        for (int i = 0; i < requiredItems.Length; i++) {
-            SPECIAL_TOKEN currReqItem = requiredItems[i];
-            if (currReqItem == token) {
-                count++;
-            }
-        }
-        return count;
-    }
-    public bool HasNeededItems(Character character) {
-        if (requiredItems != null) {
-            List<SpecialToken> ownedItems = character.GetItemsOwned();
-            for (int i = 0; i < requiredItems.Length; i++) {
-                SPECIAL_TOKEN itemType = requiredItems[i];
-                bool hasItem = false;
-                for (int j = 0; j < ownedItems.Count; j++) {
-                    SpecialToken currItem = ownedItems[j];
-                    if (currItem.specialTokenType == itemType) {
-                        hasItem = true;
-                        ownedItems.RemoveAt(j);
-                        break;
-                    }
-                }
-                if (!hasItem) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-    #endregion
+    // #region Items
+    // public bool IsRequiredItem(SPECIAL_TOKEN token) {
+    //     for (int i = 0; i < requiredItems.Length; i++) {
+    //         SPECIAL_TOKEN currReqItem = requiredItems[i];
+    //         if (currReqItem == token) {
+    //             return true;
+    //         }
+    //     }
+    //     return false;
+    // }
+    // public int GetRequiredItemAmount(SPECIAL_TOKEN token) {
+    //     int count = 0;
+    //     for (int i = 0; i < requiredItems.Length; i++) {
+    //         SPECIAL_TOKEN currReqItem = requiredItems[i];
+    //         if (currReqItem == token) {
+    //             count++;
+    //         }
+    //     }
+    //     return count;
+    // }
+    // public bool HasNeededItems(Character character) {
+    //     if (requiredItems != null) {
+    //         List<SpecialToken> ownedItems = character.GetItemsOwned();
+    //         for (int i = 0; i < requiredItems.Length; i++) {
+    //             SPECIAL_TOKEN itemType = requiredItems[i];
+    //             bool hasItem = false;
+    //             for (int j = 0; j < ownedItems.Count; j++) {
+    //                 SpecialToken currItem = ownedItems[j];
+    //                 if (currItem.specialTokenType == itemType) {
+    //                     hasItem = true;
+    //                     ownedItems.RemoveAt(j);
+    //                     break;
+    //                 }
+    //             }
+    //             if (!hasItem) {
+    //                 return false;
+    //             }
+    //         }
+    //     }
+    //     return true;
+    // }
+    // #endregion
     //protected Character _character;
     //   protected CHARACTER_ROLE _roleType;
     //protected bool _isRemoved;

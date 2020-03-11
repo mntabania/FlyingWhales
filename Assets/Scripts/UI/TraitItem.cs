@@ -17,25 +17,16 @@ public class TraitItem : MonoBehaviour {
 
     public void SetCombatAttribute(Trait trait) {
         this.trait = trait;
-        nameText.text = this.trait.nameInUI;
+        nameText.text = this.trait.name;
 
-        if (this.trait is RelationshipTrait) {
-            RelationshipTrait relTrait = this.trait as RelationshipTrait;
-            portrait.GeneratePortrait(relTrait.targetCharacter);
-            portrait.gameObject.SetActive(true);
-            iconImg.gameObject.SetActive(false);
-            //portrait.SetClickButton(UnityEngine.EventSystems.PointerEventData.InputButton.Left);
+        portrait.gameObject.SetActive(false);
+        Sprite icon = TraitManager.Instance.GetTraitPortrait(trait.name);
+        if (icon != null) {
+            iconImg.sprite = icon;
+            iconImg.gameObject.SetActive(true);
         } else {
-            portrait.gameObject.SetActive(false);
-            Sprite icon = TraitManager.Instance.GetTraitIcon(trait.name);
-            if (icon != null) {
-                iconImg.sprite = icon;
-                iconImg.gameObject.SetActive(true);
-            } else {
-                iconImg.gameObject.SetActive(false);
-            }
+            iconImg.gameObject.SetActive(false);
         }
-
 
         descriptionText.text = this.trait.description;
         this.gameObject.SetActive(true);
@@ -43,8 +34,8 @@ public class TraitItem : MonoBehaviour {
 
     public void OnHover() {
         if(trait != null) {
-            string summary = trait.nameInUI;
-            summary += "\n" + trait.GetTestingData();
+            string summary = trait.name;
+            summary += $"\n{trait.GetTestingData()}";
             if(summary != string.Empty) {
                 UIManager.Instance.ShowSmallInfo(summary);
             }

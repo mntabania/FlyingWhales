@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Traits {
-    public class Spooked : Trait {
+    public class Spooked : Status {
         //public List<Character> terrifyingCharacters { get; private set; }
         public Character owner { get; private set; }
 
@@ -12,8 +12,11 @@ namespace Traits {
             description = "This character is too scared and may refuse to sleep.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
-            
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(12);
+            moodEffect = -3;
+            isStacking = true;
+            stackLimit = 5;
+            stackModifier = 0.5f;
             //effects = new List<TraitEffect>();
             //terrifyingCharacters = new List<Character>();
         }
@@ -22,7 +25,7 @@ namespace Traits {
         public override void OnAddTrait(ITraitable sourcePOI) {
             if (sourcePOI is Character) {
                 owner = sourcePOI as Character;
-                owner.AdjustMoodValue(-10, this);
+                //owner.AdjustMoodValue(-10, this);
             }
             base.OnAddTrait(sourcePOI);
         }
@@ -36,21 +39,22 @@ namespace Traits {
         //    base.OnSeePOI(targetPOI, character);
         //    if (targetPOI is Character) {
         //        Character targetCharacter = targetPOI as Character;
-        //        if (character.marker.AddAvoidInRange(targetCharacter)) {
+        //        if (character.combatComponent.AddAvoidInRange(targetCharacter)) {
         //            AddTerrifyingCharacter(targetCharacter);
         //        }
         //    }
         //}
         #endregion
 
-        public GoapPlanJob TriggerFeelingSpooked() {
-            owner.needsComponent.SetHasCancelledSleepSchedule(false);
-            owner.needsComponent.ResetSleepTicks();
-            owner.jobQueue.CancelAllJobs(JOB_TYPE.TIREDNESS_RECOVERY, JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED);
+        public bool TriggerFeelingSpooked() {
+            //owner.needsComponent.SetHasCancelledSleepSchedule(false);
+            //owner.needsComponent.ResetSleepTicks();
+            //owner.jobQueue.CancelAllJobs(JOB_TYPE.TIREDNESS_RECOVERY, JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED);
 
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.FEELING_SPOOKED, owner, owner);
-            owner.jobQueue.AddJobInQueue(job);
-            return job;
+            //GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.FEELING_SPOOKED, owner, owner);
+            //owner.jobQueue.AddJobInQueue(job);
+            //return job;
+            return owner.interruptComponent.TriggerInterrupt(INTERRUPT.Feeling_Spooked, owner);
         }
     }
 

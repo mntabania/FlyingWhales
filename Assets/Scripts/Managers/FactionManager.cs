@@ -44,7 +44,7 @@ public class FactionManager : MonoBehaviour {
 
     #region Faction Generation
     public void CreateNeutralFaction() {
-        Faction newFaction = new Faction();
+        Faction newFaction = new Faction(RACE.NONE);
         newFaction.SetName("Neutral");
         newFaction.SetFactionActiveState(false);
         newFaction.SetEmblem(GetFactionEmblem(4));
@@ -55,7 +55,7 @@ public class FactionManager : MonoBehaviour {
         Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
     }
     public void CreateFriendlyNeutralFaction() {
-        Faction newFaction = new Faction();
+        Faction newFaction = new Faction(RACE.HUMANS);
         newFaction.SetName("Friendly Neutral");
         newFaction.SetFactionActiveState(false);
         newFaction.SetEmblem(GetFactionEmblem(4));
@@ -66,7 +66,7 @@ public class FactionManager : MonoBehaviour {
         Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
     }
     public void CreateDisguisedFaction() {
-        Faction newFaction = new Faction();
+        Faction newFaction = new Faction(RACE.NONE);
         newFaction.SetName("Disguised");
         newFaction.SetFactionActiveState(false);
         newFaction.SetEmblem(GetFactionEmblem(4));
@@ -85,8 +85,8 @@ public class FactionManager : MonoBehaviour {
     public void SetDisguisedFaction(Faction faction) {
         disguisedFaction = faction;
     }
-    public Faction CreateNewFaction(bool isPlayerFaction = false, string factionName = "") {
-        Faction newFaction = new Faction(isPlayerFaction);
+    public Faction CreateNewFaction(RACE race, bool isPlayerFaction = false, string factionName = "") {
+        Faction newFaction = new Faction(race, isPlayerFaction);
         allFactions.Add(newFaction);
         CreateRelationshipsForFaction(newFaction);
         //CreateFavorsForFaction(newFaction);
@@ -102,7 +102,7 @@ public class FactionManager : MonoBehaviour {
         return newFaction;
     }
     private Faction CreateZombieFaction() {
-        Faction zombies = CreateNewFaction(factionName: "Zombies");
+        Faction zombies = CreateNewFaction(RACE.NONE, factionName: "Zombies");
         foreach (KeyValuePair<Faction,FactionRelationship> pair in zombies.relationships) {
             zombies.SetRelationshipFor(pair.Key, FACTION_RELATIONSHIP_STATUS.HOSTILE);
         }
@@ -121,7 +121,7 @@ public class FactionManager : MonoBehaviour {
     }
     public void DeleteFaction(Faction faction) {
         //for (int i = 0; i < faction.ownedRegions.Count; i++) {
-        //    Settlement ownedArea = faction.ownedRegions[i];
+        //    NPCSettlement ownedArea = faction.ownedRegions[i];
         //    LandmarkManager.Instance.UnownArea(ownedArea);
         //}
         //RemoveRelationshipsWith(faction);
@@ -148,7 +148,7 @@ public class FactionManager : MonoBehaviour {
             usedEmblems.Add(currSprite);
             return currSprite;
         }
-        throw new System.Exception("There are no more emblems for faction: " + faction.name);
+        throw new System.Exception($"There are no more emblems for faction: {faction.name}");
     }
     public Sprite GetFactionEmblem(int emblemIndex) {
         return _factionEmblems[emblemIndex];
@@ -193,21 +193,6 @@ public class FactionManager : MonoBehaviour {
         }
         return null;
     }
-    public List<Character> GetViableRulers(Character previousRuler, GENDER gender, params RELATIONSHIP_TYPE[] type) {
-        List<Character> characters = new List<Character>();
-        List<Relatable> relatables = previousRuler.relationshipContainer.GetRelatablesWithRelationship(type);
-        for (int i = 0; i < relatables.Count; i++) {
-            Relatable r = relatables[i];
-            if (r is AlterEgoData) {
-                Character character = (r as AlterEgoData).owner;
-                if (character.isDead || character.gender != gender || character.faction.IsHostileWith(previousRuler.faction) || character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) || character.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL) || characters.Contains(character)) {
-                    continue;
-                }
-                characters.Add(character);
-            }
-        }
-        return characters;
-    }
     #endregion
 
     #region Relationships
@@ -235,13 +220,13 @@ public class FactionManager : MonoBehaviour {
         FactionRelationship newRel = new FactionRelationship(faction1, faction2);
         faction1.AddNewRelationship(faction2, newRel);
         faction2.AddNewRelationship(faction1, newRel);
-        if(faction1.isPlayerFaction || faction2.isPlayerFaction) {
-            if(faction1 != friendlyNeutralFaction && faction2 != friendlyNeutralFaction
-                && faction1 != disguisedFaction && faction2 != disguisedFaction) {
+        // if(faction1.isPlayerFaction || faction2.isPlayerFaction) {
+            if(faction1.isPlayerFaction || faction2.isPlayerFaction || faction1 == neutralFaction || faction2 == neutralFaction
+            || faction1 == _zombieFaction || faction2 == _zombieFaction) {
                 faction1.SetRelationshipFor(faction2, FACTION_RELATIONSHIP_STATUS.HOSTILE);
                 faction2.SetRelationshipFor(faction1, FACTION_RELATIONSHIP_STATUS.HOSTILE);
             }
-        }
+        // }
         return newRel;
     }
     /*
@@ -257,7 +242,7 @@ public class FactionManager : MonoBehaviour {
         if (faction1Rel == faction2Rel) {
             return faction1Rel;
         }
-        throw new System.Exception(faction1.name + " does not have the same relationship object as " + faction2.name + "!");
+        throw new System.Exception($"{faction1.name} does not have the same relationship object as {faction2.name}!");
     }
     public int GetAverageFactionLevel() {
         int activeFactionsCount = allFactions.Where(x => x.isActive).Count();
@@ -269,13 +254,13 @@ public class FactionManager : MonoBehaviour {
     #region Faction Ideologies
     public FactionIdeology CreateIdeology(FACTION_IDEOLOGY ideologyType) {
         string ideologyStr = ideologyType.ToString();
-        var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(ideologyStr);
+        var typeName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(ideologyStr);
         System.Type type = System.Type.GetType(typeName);
         if (type != null) {
             FactionIdeology data = System.Activator.CreateInstance(type) as FactionIdeology;
             return data;
         } else {
-            throw new System.Exception(ideologyStr + " has no data!");
+            throw new System.Exception($"{ideologyStr} has no data!");
         }
     }
     #endregion

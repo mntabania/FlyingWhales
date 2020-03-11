@@ -5,13 +5,16 @@ using UnityEngine;
 
 public class Succubus : SeducerSummon {
 
-    public Succubus() : base(SUMMON_TYPE.Succubus, GENDER.FEMALE){
-
+    public const string ClassName = "Succubus";
+    
+    public Succubus() : base(SUMMON_TYPE.Succubus, GENDER.FEMALE, ClassName){
+        combatComponent.SetElementalDamage(ELEMENTAL_TYPE.Ice);
     }
     public Succubus(SaveDataCharacter data) : base(data) {
+        combatComponent.SetElementalDamage(ELEMENTAL_TYPE.Ice);
     }
     
     public override string GetClassForRole(CharacterRole role) {
-        return "Succubus";
+        return ClassName;
     }
 }

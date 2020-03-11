@@ -18,13 +18,15 @@ public class SaveDataWorldObject {
     }
 
     public IWorldObject Load() {
-        if(type == WORLD_OBJECT_TYPE.ARTIFACT) {
-             return InnerMapManager.Instance.GetTileObject(tileObjectType, id) as Artifact;
-        } else if (type == WORLD_OBJECT_TYPE.SUMMON) {
+        // if(type == WORLD_OBJECT_TYPE.ARTIFACT) {
+        //      return InnerMapManager.Instance.GetTileObject(tileObjectType, id) as Artifact;
+        // } else
+        if (type == WORLD_OBJECT_TYPE.SUMMON) {
             return CharacterManager.Instance.GetCharacterByID(id) as Summon;
-        } else if (type == WORLD_OBJECT_TYPE.SPECIAL_OBJECT) {
-            return TokenManager.Instance.GetSpecialObjectByID(id);
-        }
+        } 
+        // else if (type == WORLD_OBJECT_TYPE.SPECIAL_OBJECT) {
+        //     return TokenManager.Instance.GetSpecialObjectByID(id);
+        // }
         return null;
     }
 }

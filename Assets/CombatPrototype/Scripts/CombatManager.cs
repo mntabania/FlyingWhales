@@ -4,406 +4,226 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using Traits;
+using Inner_Maps;
+using UnityEngine.Assertions;
 
 public class CombatManager : MonoBehaviour {
-    public static CombatManager Instance = null;
-
-    public float updateIntervals;
-    public int numOfCombatActionPerDay;
-
-    public Combat combat;
-    public NewCombat newCombat;
-
-    public CharacterSetup[] baseCharacters;
-	public Color[] characterColors;
-
-	private List<Color> unusedColors;
-	private List<Color> usedColors;
+    public static CombatManager Instance;
 
     public const int pursueDuration = 10;
+
+    [SerializeField] private ProjectileDictionary _projectileDictionary;
 
     private void Awake() {
         Instance = this;
     }
-	internal void Initialize(){
-        unusedColors = new List<Color>();
-        usedColors = new List<Color>();
-        newCombat.Initialize();
-    }
-    private void ConstructBaseCharacters() {
-        string path = Utilities.dataPath + "CharacterSetups/";
-        string[] baseCharacterJsons = System.IO.Directory.GetFiles(path, "*.json");
-        baseCharacters = new CharacterSetup[baseCharacterJsons.Length];
-        for (int i = 0; i < baseCharacterJsons.Length; i++) {
-            string file = baseCharacterJsons[i];
-            string dataAsJson = System.IO.File.ReadAllText(file);
-            CharacterSetup charSetup = JsonUtility.FromJson<CharacterSetup>(dataAsJson);
-            baseCharacters[i] = charSetup;
+
+    public void ApplyElementalDamage(int damage, ELEMENTAL_TYPE elementalType, ITraitable target, Character responsibleCharacter = null) { //, bool shouldSetBurningSource = true
+        ElementalDamageData elementalDamage = ScriptableObjectsManager.Instance.GetElementalDamageData(elementalType);
+        if (target != null) {
+            CreateHitEffectAt(target, elementalType);
         }
-    }
-
-    /*
-        * Create a new character given a base character setup.
-        * */
-    //internal Character CreateNewCharacter(CharacterSetup baseCharacter) {
-    //    return new Character(baseCharacter, Utilities.GetRandomGender());
-    //}
-
-	private void ConstructCharacterColors(){
-		unusedColors = characterColors.ToList (); 
-	}
-
-	internal Color UseRandomCharacterColor(){
-		Color chosenColor = Color.black;
-		if(unusedColors.Count > 0){
-			chosenColor = unusedColors [UnityEngine.Random.Range (0, unusedColors.Count)];
-			unusedColors.Remove (chosenColor);
-			usedColors.Add (chosenColor);
-		}else{
-			if(characterColors != null && characterColors.Length > 0){
-				chosenColor = characterColors [UnityEngine.Random.Range (0, characterColors.Length)];
-			}
-		}
-		return chosenColor;
-	}
-
-	internal void ReturnCharacterColorToPool(Color color){
-		if(usedColors.Remove(color)){
-			unusedColors.Add (color);
-		}
-	}
-
-    internal CharacterSetup GetBaseCharacterSetup(string className) {
-        for (int i = 0; i < this.baseCharacters.Length; i++) {
-            CharacterSetup currBase = this.baseCharacters[i];
-            if (currBase.characterClassName.ToLower() == className.ToLower()) {
-                return currBase;
+        if (damage < 0) {
+            //Damage should awaken sleeping characters
+            if (target.traitContainer.HasTrait("Resting")) {
+                if (target is Character) {
+                    Character character = target as Character;
+                    character.jobQueue.CancelFirstJob();
+                }
             }
         }
-        return null;
+        if (!string.IsNullOrEmpty(elementalDamage.addedTraitName)) {
+            //Trait trait = null;
+            bool hasSuccessfullyAdded = target.traitContainer.AddTrait(target, elementalDamage.addedTraitName, responsibleCharacter); //, out trait
+            if (hasSuccessfullyAdded) {
+                if (elementalType == ELEMENTAL_TYPE.Electric) {
+                    ChainElectricDamage(target, damage);
+                }
+            }
+        }
+        if(elementalType == ELEMENTAL_TYPE.Earth) {
+            EarthElementProcess(target);
+        }
     }
-
-    #region Chance Combat
-    public void GetCombatChanceOfTwoLists(List<Character> allies, List<Character> enemies, out float allyChance, out float enemyChance) {
-        int sideAWeight = 0;
-        int sideBWeight = 0;
-        GetCombatWeightsOfTwoLists(allies, enemies, out sideAWeight, out sideBWeight);
-        int totalWeight = sideAWeight + sideBWeight;
-        
-        allyChance = (sideAWeight / (float) totalWeight) * 100f;
-        enemyChance = (sideBWeight / (float) totalWeight) * 100f;
-
-        //Debug.Log("COMBAT " + allies[0].name + ": " + allyChance + "! " + enemies[0].name + ": " + enemyChance);
+    public void DamageModifierByElements(ref int damage, ELEMENTAL_TYPE elementalType, ITraitable target) {
+        if(damage < 0) {
+            if(elementalType == ELEMENTAL_TYPE.Fire) {
+                if (target.traitContainer.HasTrait("Fire Prone")) {
+                    damage *= 2;
+                }
+            } else if (elementalType == ELEMENTAL_TYPE.Electric) {
+                if (target.traitContainer.HasTrait("Electric")) {
+                    damage = 0;
+                }
+            }
+        }
     }
-    public void GetCombatWeightsOfTwoLists(List<Character> allies, List<Character> enemies, out int allyWeight, out int enemyWeight) {
-        if(allies == null) {
-            allyWeight = 0;
-            enemyWeight = 1;
+    public void CreateHitEffectAt(IDamageable poi, ELEMENTAL_TYPE elementalType) {
+        ElementalDamageData elementalData = ScriptableObjectsManager.Instance.GetElementalDamageData(elementalType);
+        if (poi.gridTileLocation == null) {
             return;
         }
-        if (enemies == null) {
-            allyWeight = 1;
-            enemyWeight = 0;
-            return;
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(elementalData.hitEffectPrefab.name, Vector3.zero, Quaternion.identity, poi.gridTileLocation.parentMap.objectsParent);
+        if (!poi.mapObjectVisual || !poi.projectileReceiver) {
+            go.transform.localPosition = poi.gridTileLocation.centeredLocalLocation;
+        } else {
+            go.transform.position = poi.projectileReceiver.transform.position;
         }
-        //int pairCombatCount = allies.Count;
-        //if (enemies.Count > allies.Count) {
-        //    pairCombatCount = enemies.Count;
-        //}
-        //for (int i = 0; i < allies.Count; i++) {
-        //    allies[i].pairCombatStats = new PairCombatStats[pairCombatCount];
-        //}
-        //for (int i = 0; i < enemies.Count; i++) {
-        //    enemies[i].pairCombatStats = new PairCombatStats[pairCombatCount];
-        //}
+        // go.transform.position = poi.gridTileLocation.centeredWorldLocation;
+        go.SetActive(true);
 
-        allyWeight = GetTotalWinWeight(allies, enemies);
-        enemyWeight = GetTotalWinWeight(enemies, allies);
     }
-    private int GetTotalWinWeight(List<Character> characters1, List<Character> characters2) {
-        int totalWeight = 0;
-        for (int i = 0; i < characters1.Count; i++) {
-            Character character = characters1[i];
-
-            float speedFormula = 1f + (character.speed / 200f);
-            float totalPower = ((character.attackPower / 10f) * speedFormula) + ((character.maxHP / 30f) * speedFormula);
-
-            if (characters2.Count == 1) {
-                if (character.race == RACE.DRAGON) {
-                    totalPower *= 1.25f;
-                }
-                if (character.isLeader) {
-                    totalPower *= 1.25f;
-                }
-
-                if (character.race == RACE.HUMANS) {
-                    if(characters2[0].role.roleType == CHARACTER_ROLE.BEAST) {
-                        totalPower *= 1.25f;
-                    }
-                } else if (character.race == RACE.ELVES) {
-                    if (characters2[0].characterClass.attackType == ATTACK_TYPE.MAGICAL) {
-                        totalPower *= 1.25f;
-                    }
-                } else if (character.race == RACE.GOBLIN) {
-                    if (characters2[0].characterClass.attackType == ATTACK_TYPE.PHYSICAL) {
-                        totalPower *= 0.85f;
-                    }
-                } else if (character.race == RACE.FAERY) {
-                    if (characters2[0].characterClass.rangeType == RANGE_TYPE.MELEE) {
-                        totalPower *= 1.25f;
-                    }
-                } else if (character.race == RACE.SKELETON) {
-                    if (characters2[0].characterClass.rangeType == RANGE_TYPE.RANGED && characters2[0].characterClass.attackType == ATTACK_TYPE.PHYSICAL) {
-                        totalPower *= 0.75f;
-                    }
-                } else if (character.race == RACE.SPIDER) {
-                    if (characters2[0].race == RACE.FAERY) {
-                        totalPower *= 1.25f;
-                    }
-                } else if (character.race == RACE.WOLF) {
-                    if (characters2[0].race == RACE.GOBLIN) {
-                        totalPower *= 1.25f;
-                    }
-                } else if (character.race == RACE.GOLEM) {
-                    if (characters2[0].race == RACE.ELVES) {
-                        totalPower *= 1.25f;
-                    }
-                }
-
-                if (character.characterClass.rangeType == RANGE_TYPE.MELEE && character.characterClass.attackType == ATTACK_TYPE.PHYSICAL) {
-                    if (characters2[0].characterClass.rangeType == RANGE_TYPE.RANGED && characters2[0].characterClass.attackType == ATTACK_TYPE.PHYSICAL) {
-                        totalPower *= 1.25f;
-                    }
-                } else if (character.characterClass.rangeType == RANGE_TYPE.RANGED && character.characterClass.attackType == ATTACK_TYPE.PHYSICAL) {
-                    if (characters2[0].characterClass.rangeType == RANGE_TYPE.RANGED && characters2[0].characterClass.attackType == ATTACK_TYPE.MAGICAL) {
-                        totalPower *= 1.25f;
-                    }
-                } else if (character.characterClass.rangeType == RANGE_TYPE.RANGED && character.characterClass.attackType == ATTACK_TYPE.MAGICAL) {
-                    if (characters2[0].characterClass.rangeType == RANGE_TYPE.MELEE && characters2[0].characterClass.attackType == ATTACK_TYPE.PHYSICAL) {
-                        totalPower *= 1.25f;
-                    }
-                }
-            }
-
-            totalWeight += (int) totalPower;
+    
+    #region Explosion
+    public void PoisonExplosion(IPointOfInterest target, LocationGridTile targetTile, int stacks) {
+        StartCoroutine(PoisonExplosionCoroutine(target, targetTile, stacks));
+    }
+    private IEnumerator PoisonExplosionCoroutine(IPointOfInterest target, LocationGridTile targetTile, int stacks) {
+        while (GameManager.Instance.isPaused) {
+            //Pause coroutine while game is paused
+            //Might be performance heavy, needs testing
+            yield return null;
         }
-        return totalWeight;
-    }
-    //private void ApplyWinWeightOfCharacter(Character icharacter, List<Character> allies, List<Character> enemies) {
-    //    for (int j = 0; j < icharacter.traits.Count; j++) {
-    //        for (int k = 0; k < icharacter.traits[j].effects.Count; k++) {
-    //            TraitEffect traitEffect = icharacter.traits[j].effects[k];
-    //            ApplyTraitEffectPrePairing(icharacter, allies, enemies, traitEffect);
-    //            ApplyTraitEffectPairing(icharacter, enemies, traitEffect);
-    //        }
-    //    }
-    //}
-    //private void ApplyBaseStats(Character character) {
-    //    character.combatBaseAttack = character.attackPower;
-    //    character.combatBaseSpeed = character.speed;
-    //    character.combatBaseHP = character.maxHP;
-    //}
-
-    //private void ApplyTraitEffectPairing(Character icharacter, List<Character> enemies, TraitEffect traitEffect) {
-        //if there is no more enemy but there is still a pair slot, the values are zero
-        //for (int i = 0; i < icharacter.pairCombatStats.Length; i++) {
-        //    if (i < enemies.Count) {
-        //        Character enemy = enemies[i];
-        //        if (traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF) {
-        //            if (traitEffect.hasRequirement) {
-        //                if (CharacterFitsTraitCriteria(enemy, traitEffect)) {
-        //                    if (traitEffect.isPercentage) {
-        //                        if (traitEffect.stat == STAT.ATTACK) {
-        //                            icharacter.pairCombatStats[i].attackMultiplier += (int) traitEffect.amount;
-        //                        } else if (traitEffect.stat == STAT.SPEED) {
-        //                            icharacter.pairCombatStats[i].speedMultiplier += (int) traitEffect.amount;
-        //                        } else if (traitEffect.stat == STAT.HP) {
-        //                            icharacter.pairCombatStats[i].hpMultiplier += (int) traitEffect.amount;
-        //                        } else if (traitEffect.stat == STAT.POWER) {
-        //                            icharacter.pairCombatStats[i].powerMultiplier += (int) traitEffect.amount;
-        //                        }
-        //                    } else {
-        //                        if (traitEffect.stat == STAT.ATTACK) {
-        //                            icharacter.pairCombatStats[i].attackFlat += (int) traitEffect.amount;
-        //                        } else if (traitEffect.stat == STAT.SPEED) {
-        //                            icharacter.pairCombatStats[i].speedFlat += (int) traitEffect.amount;
-        //                        } else if (traitEffect.stat == STAT.HP) {
-        //                            icharacter.pairCombatStats[i].hpFlat += (int) traitEffect.amount;
-        //                        } else if (traitEffect.stat == STAT.POWER) {
-        //                            icharacter.pairCombatStats[i].powerFlat += (int) traitEffect.amount;
-        //                        }
-        //                    }
-        //                }
-        //            } else if (traitEffect.target == TRAIT_REQUIREMENT_TARGET.ENEMY) {
-        //                if (traitEffect.hasRequirement) {
-        //                    if (CharacterFitsTraitCriteria(enemy, traitEffect)) {
-        //                        if (traitEffect.isPercentage) {
-        //                            if (traitEffect.stat == STAT.ATTACK) {
-        //                                enemy.pairCombatStats[i].attackMultiplier += (int) traitEffect.amount;
-        //                            } else if (traitEffect.stat == STAT.SPEED) {
-        //                                enemy.pairCombatStats[i].speedMultiplier += (int) traitEffect.amount;
-        //                            } else if (traitEffect.stat == STAT.HP) {
-        //                                enemy.pairCombatStats[i].hpMultiplier += (int) traitEffect.amount;
-        //                            } else if (traitEffect.stat == STAT.POWER) {
-        //                                enemy.pairCombatStats[i].powerMultiplier += (int) traitEffect.amount;
-        //                            }
-        //                        } else {
-        //                            if (traitEffect.stat == STAT.ATTACK) {
-        //                                enemy.pairCombatStats[i].attackFlat += (int) traitEffect.amount;
-        //                            } else if (traitEffect.stat == STAT.SPEED) {
-        //                                enemy.pairCombatStats[i].speedFlat += (int) traitEffect.amount;
-        //                            } else if (traitEffect.stat == STAT.HP) {
-        //                                enemy.pairCombatStats[i].hpFlat += (int) traitEffect.amount;
-        //                            } else if (traitEffect.stat == STAT.POWER) {
-        //                                enemy.pairCombatStats[i].powerFlat += (int) traitEffect.amount;
-        //                            }
-        //                        }
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
-    //}
-    //private void ModifyStat(Character icharacter, TraitEffect traitEffect) {
-    //    if (traitEffect.isPercentage) {
-    //        if (traitEffect.stat == STAT.ATTACK) {
-    //            icharacter.combatAttackMultiplier += (int) traitEffect.amount;
-    //        } else if (traitEffect.stat == STAT.SPEED) {
-    //            icharacter.combatSpeedMultiplier += (int) traitEffect.amount;
-    //        } else if (traitEffect.stat == STAT.HP) {
-    //            icharacter.combatHPMultiplier += (int) traitEffect.amount;
-    //        } else if (traitEffect.stat == STAT.POWER) {
-    //            icharacter.combatPowerMultiplier += (int) traitEffect.amount;
-    //        }
-    //    } else {
-    //        if (traitEffect.stat == STAT.ATTACK) {
-    //            icharacter.combatAttackFlat += (int) traitEffect.amount;
-    //        } else if (traitEffect.stat == STAT.SPEED) {
-    //            icharacter.combatSpeedFlat += (int) traitEffect.amount;
-    //        } else if (traitEffect.stat == STAT.HP) {
-    //            icharacter.combatHPFlat += (int) traitEffect.amount;
-    //        } else if (traitEffect.stat == STAT.POWER) {
-    //            icharacter.combatPowerFlat += (int) traitEffect.amount;
-    //        }
-    //    }
-    //}
-    private List<Character> GetCharactersToBeChecked(TRAIT_REQUIREMENT_CHECKER checker, Character sourceCharacter,
-       List<Character> allies, List<Character> enemies, List<Character> targets = null) {
-
-        List<Character> checkerCharacters = new List<Character>();
-        if (checker == TRAIT_REQUIREMENT_CHECKER.SELF) {
-            checkerCharacters.Add(sourceCharacter);
-        } else if (checker == TRAIT_REQUIREMENT_CHECKER.ENEMY) {
-            checkerCharacters.AddRange(targets);
-        } else if (checker == TRAIT_REQUIREMENT_CHECKER.OTHER_PARTY_MEMBERS) {
-            checkerCharacters = allies.Where(x => x != sourceCharacter).ToList();
-        } else if (checker == TRAIT_REQUIREMENT_CHECKER.ALL_PARTY_MEMBERS) {
-            checkerCharacters.AddRange(allies);
-        } else if (checker == TRAIT_REQUIREMENT_CHECKER.ALL_IN_COMBAT) {
-            checkerCharacters.AddRange(allies);
-            checkerCharacters.AddRange(enemies);
-        } else if (checker == TRAIT_REQUIREMENT_CHECKER.ALL_ENEMIES) {
-            checkerCharacters.AddRange(enemies);
+        yield return new WaitForSeconds(0.2f);
+        GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Poison_Explosion);
+        List<ITraitable> traitables = new List<ITraitable>();
+        List<LocationGridTile> affectedTiles = targetTile.GetTilesInRadius(1, includeTilesInDifferentStructure: true);
+        float damagePercentage = 0.1f * stacks;
+        if (damagePercentage > 1) {
+            damagePercentage = 1;
         }
-        return checkerCharacters;
-    }
-    private bool CharacterFitsTraitCriteria(Character icharacter, TraitEffect traitEffect) {
-        if (traitEffect.requirementType == TRAIT_REQUIREMENT.TRAIT) {
-            if (traitEffect.requirementSeparator == TRAIT_REQUIREMENT_SEPARATOR.AND) {
-                //if there is one mismatch, return false already because the separator is AND, otherwise, return true
-                if (traitEffect.isNot) {
-                    for (int i = 0; i < traitEffect.requirements.Count; i++) {
-                        if (icharacter.traitContainer.GetNormalTrait<Trait>(traitEffect.requirements[i]) != null) {
-                            return false;
-                        }
-                    }
-                    return true;
-                } else {
-                    for (int i = 0; i < traitEffect.requirements.Count; i++) {
-                        if (icharacter.traitContainer.GetNormalTrait<Trait>(traitEffect.requirements[i]) == null) {
-                            return false;
-                        }
-                    }
-                    return true;
+        for (int i = 0; i < affectedTiles.Count; i++) {
+            LocationGridTile tile = affectedTiles[i];
+            traitables.AddRange(tile.GetTraitablesOnTile());
+        }
+        // flammables = flammables.Where(x => !x.traitContainer.HasTrait("Burning", "Burnt", "Wet", "Fireproof")).ToList();
+        BurningSource bs = null;
+        for (int i = 0; i < traitables.Count; i++) {
+            ITraitable traitable = traitables[i];
+            int damage = Mathf.RoundToInt(traitable.maxHP * damagePercentage);
+            traitable.AdjustHP(-damage, ELEMENTAL_TYPE.Fire);
+            Burning burningTrait = traitable.traitContainer.GetNormalTrait<Burning>("Burning");
+            if (burningTrait != null && burningTrait.sourceOfBurning == null) {
+                if (bs == null) {
+                    bs = new BurningSource(traitable.gridTileLocation.parentMap.location);
                 }
-            } else if (traitEffect.requirementSeparator == TRAIT_REQUIREMENT_SEPARATOR.OR) {
-                //if there is one match, return true already because the separator is OR, otherwise, return false   
-                if (traitEffect.isNot) {
-                    for (int i = 0; i < traitEffect.requirements.Count; i++) {
-                        if (icharacter.traitContainer.GetNormalTrait<Trait>(traitEffect.requirements[i]) == null) {
-                            return true;
-                        }
-                    }
-                    return false;
-                } else {
-                    for (int i = 0; i < traitEffect.requirements.Count; i++) {
-                        if (icharacter.traitContainer.GetNormalTrait<Trait>(traitEffect.requirements[i]) != null) {
-                            return true;
-                        }
-                    }
-                    return false;
-                }
-            }
-        } else if (traitEffect.requirementType == TRAIT_REQUIREMENT.RACE) {
-            if (traitEffect.requirementSeparator == TRAIT_REQUIREMENT_SEPARATOR.AND) {
-                //if there is one mismatch, return false already because the separator is AND, otherwise, return true
-                if (traitEffect.isNot) {
-                    for (int i = 0; i < traitEffect.requirements.Count; i++) {
-                        if (traitEffect.requirements[i].ToLower() == icharacter.race.ToString().ToLower()) {
-                            return false;
-                        }
-                    }
-                    return true;
-                } else {
-                    for (int i = 0; i < traitEffect.requirements.Count; i++) {
-                        if (traitEffect.requirements[i].ToLower() != icharacter.race.ToString().ToLower()) {
-                            return false;
-                        }
-                    }
-                    return true;
-                }
-            } else if (traitEffect.requirementSeparator == TRAIT_REQUIREMENT_SEPARATOR.OR) {
-                //if there is one match, return true already because the separator is OR, otherwise, return false   
-                if (traitEffect.isNot) {
-                    for (int i = 0; i < traitEffect.requirements.Count; i++) {
-                        if (traitEffect.requirements[i].ToLower() != icharacter.race.ToString().ToLower()) {
-                            return true;
-                        }
-                    }
-                    return false;
-                } else {
-                    for (int i = 0; i < traitEffect.requirements.Count; i++) {
-                        if (traitEffect.requirements[i].ToLower() == icharacter.race.ToString().ToLower()) {
-                            return true;
-                        }
-                    }
-                    return false;
-                }
+                burningTrait.SetSourceOfBurning(bs, traitable);
+                Assert.IsNotNull(burningTrait.sourceOfBurning, $"Burning source of {traitable.ToString()} was set to null");
             }
         }
-        return false;
-    }
-    public int GetAdjacentIndexGrid(int index) {
-        if(index == 0) {
-            return 1;
-        }else if (index == 1) {
-            return 0;
-        }else if (index == 2) {
-            return 3;
-        }else if (index == 3) {
-            return 2;
+
+        if(!(target is GenericTileObject)) {
+            Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Poison Explosion", "effect");
+            log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+            log.AddLogToInvolvedObjects();
         }
-        return index;
+    }
+    public void FrozenExplosion(IPointOfInterest target, LocationGridTile targetTile, int stacks) {
+        StartCoroutine(FrozenExplosionCoroutine(target, targetTile, stacks));
+    }
+    private IEnumerator FrozenExplosionCoroutine(IPointOfInterest target, LocationGridTile targetTile, int stacks) {
+        while (GameManager.Instance.isPaused) {
+            //Pause coroutine while game is paused
+            //Might be performance heavy, needs testing
+            yield return null;
+        }
+        yield return new WaitForSeconds(0.2f);
+        GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Frozen_Explosion);
+        List<ITraitable> traitables = new List<ITraitable>();
+        List<LocationGridTile> affectedTiles = targetTile.GetTilesInRadius(2, includeTilesInDifferentStructure: true);
+        float damagePercentage = 0.2f * stacks;
+        if (damagePercentage > 1) {
+            damagePercentage = 1;
+        }
+        for (int i = 0; i < affectedTiles.Count; i++) {
+            LocationGridTile tile = affectedTiles[i];
+            traitables.AddRange(tile.GetTraitablesOnTile());
+        }
+        // flammables = flammables.Where(x => !x.traitContainer.HasTrait("Burning", "Burnt", "Wet", "Fireproof")).ToList();
+        // BurningSource bs = null;
+        for (int i = 0; i < traitables.Count; i++) {
+            ITraitable traitable = traitables[i];
+            int damage = Mathf.RoundToInt(traitable.maxHP * damagePercentage);
+            traitable.AdjustHP(-damage, ELEMENTAL_TYPE.Water);
+            // Burning burningTrait = traitable.traitContainer.GetNormalTrait<Burning>();
+            // if (burningTrait != null && burningTrait.sourceOfBurning == null) {
+            //     if (bs == null) {
+            //         bs = new BurningSource(InnerMapManager.Instance.currentlyShowingLocation);
+            //     }
+            //     burningTrait.SetSourceOfBurning(bs, traitable);
+            // }
+        }
+
+        if (!(target is GenericTileObject)) {
+            Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Frozen Explosion", "effect");
+            log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+            log.AddLogToInvolvedObjects();
+        }
+    }
+    public void ChainElectricDamage(ITraitable traitable, int damage) {
+        List<ITraitable> traitables = new List<ITraitable>();
+        if (traitable.gridTileLocation != null) {
+            List<LocationGridTile> tiles = traitable.gridTileLocation.GetTilesInRadius(1, includeTilesInDifferentStructure: true);
+            traitables.Clear();
+            for (int i = 0; i < tiles.Count; i++) {
+                if (tiles[i].genericTileObject.traitContainer.HasTrait("Wet")) {
+                    traitables.AddRange(tiles[i].GetTraitablesOnTile());
+                }
+            }
+            if (traitables.Count > 0) {
+                StartCoroutine(ChainElectricDamageCoroutine(traitables, damage));
+            }
+        }
+    }
+    private IEnumerator ChainElectricDamageCoroutine(List<ITraitable> traitables, int damage) {
+        for (int i = 0; i < traitables.Count; i++) {
+            while (GameManager.Instance.isPaused) {
+                //Pause coroutine while game is paused
+                //Might be performance heavy, needs testing
+                yield return null;
+            }
+            yield return new WaitForSeconds(0.1f);
+            if (!traitables[i].traitContainer.HasTrait("Zapped")) {
+                traitables[i].AdjustHP(damage, ELEMENTAL_TYPE.Electric, true);
+            }
+        }
     }
     #endregion
 
-    #region Roads Combat
-    public SIDES GetOppositeSide(SIDES side) {
-        if(side == SIDES.A) {
-            return SIDES.B;
+    #region Elemental Type Processes
+    private void EarthElementProcess(ITraitable target) {
+        string elements = string.Empty;
+        if (target.traitContainer.HasTrait("Zapped")) {
+            elements += " Zapped";
         }
-        return SIDES.A;
+        if (target.traitContainer.HasTrait("Burning")) {
+            elements += " Burning";
+        }
+        if (target.traitContainer.HasTrait("Poisoned")) {
+            elements += " Poisoned";
+        }
+        if (target.traitContainer.HasTrait("Wet")) {
+            elements += " Wet";
+        }
+        if (target.traitContainer.HasTrait("Freezing")) {
+            elements += " Freezing";
+        }
+        if(elements != string.Empty) {
+            elements = elements.TrimStart(' ');
+            string[] elementsArray = elements.Split(' ');
+            target.traitContainer.RemoveTrait(target, elementsArray[UnityEngine.Random.Range(0, elementsArray.Length)]);
+        }
+    }
+    #endregion
+
+    #region Projectiles
+    public Projectile CreateNewProjectile(ELEMENTAL_TYPE elementalType, Transform parent, Vector3 worldPos) {
+        GameObject projectileGO =
+            ObjectPoolManager.Instance.InstantiateObjectFromPool(_projectileDictionary[elementalType].name,
+                worldPos, Quaternion.identity, parent, true);
+        return projectileGO.GetComponent<Projectile>();
     }
     #endregion
 }

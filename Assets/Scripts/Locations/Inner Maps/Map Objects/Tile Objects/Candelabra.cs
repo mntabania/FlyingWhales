@@ -3,12 +3,11 @@
 public class Candelabra : TileObject{
     
     public Candelabra() {
-        advertisedActions = new List<INTERACTION_TYPE>();
         Initialize(TILE_OBJECT_TYPE.CANDELABRA);
-        RemoveCommonAdvertisments();
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
     }
     public Candelabra(SaveDataTileObject data) {
-        advertisedActions = new List<INTERACTION_TYPE>();
         Initialize(data);
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
     }
 }

@@ -33,7 +33,7 @@ public class STCManager : MonoBehaviour {
 
     private void Awake() {
 #if UNITY_EDITOR
-        templatePath = Application.dataPath + "/StreamingAssets/Structure Templates/";
+        templatePath = $"{Application.dataPath}/StreamingAssets/Structure Templates/";
 #endif
     }
 
@@ -93,7 +93,7 @@ public class STCManager : MonoBehaviour {
         }
 
         Vector3Int shiftBy = new Vector3Int(shiftXBy, shiftYBy, 0);
-        Debug.Log("Shifting map by " + shiftBy.ToString());
+        Debug.Log($"Shifting map by {shiftBy}");
         Tilemap[] tilemaps = GetComponentsInChildren<Tilemap>();
         for (int i = 0; i < tilemaps.Length; i++) {
             ShiftTilemapPosition(tilemaps[i], bounds);
@@ -139,8 +139,8 @@ public class STCManager : MonoBehaviour {
         TileTemplateData[] objectTiles = GetTileData(objectsTilemap, groundTilemap.cellBounds);
         TileTemplateData[] detailTiles = GetTileData(detailsTilemap, groundTilemap.cellBounds);
 
-        BuildingSpotDataMonobehaviour[] buildingSpotMonos = Utilities.GetComponentsInDirectChildren<BuildingSpotDataMonobehaviour>(connectorsParent.gameObject);
-        FurnitureSpotMono[] furnitureSpotMonos = Utilities.GetComponentsInDirectChildren<FurnitureSpotMono>(furnitureParent.gameObject);
+        BuildingSpotDataMonobehaviour[] buildingSpotMonos = UtilityScripts.GameUtilities.GetComponentsInDirectChildren<BuildingSpotDataMonobehaviour>(connectorsParent.gameObject);
+        FurnitureSpotMono[] furnitureSpotMonos = UtilityScripts.GameUtilities.GetComponentsInDirectChildren<FurnitureSpotMono>(furnitureParent.gameObject);
 
         BuildingSpotData[] connectors = new BuildingSpotData[buildingSpotMonos.Length];
         for (int i = 0; i < buildingSpotMonos.Length; i++) {
@@ -154,7 +154,7 @@ public class STCManager : MonoBehaviour {
             furnitureSpots[i] = currMono.GetFurnitureSpot();
         }
 
-        Debug.Log("Got " + groundTiles.Length + " tiles");
+        Debug.Log($"Got {groundTiles.Length} tiles");
 
         StructureTemplate newTemplate = new StructureTemplate("Structure_Template", groundTiles, groundWallTiles, wallTiles, objectTiles, detailTiles,
             new Point(groundTilemap.cellBounds.size.x, groundTilemap.cellBounds.size.y), connectors, furnitureSpots);
@@ -176,7 +176,7 @@ public class STCManager : MonoBehaviour {
             string dataAsJson = File.ReadAllText(path);
             StructureTemplate loaded = JsonUtility.FromJson<StructureTemplate>(dataAsJson);
             LoadTemplate(loaded);
-            Debug.Log("Loaded " + path);
+            Debug.Log($"Loaded {path}");
         }
 #endif
     }
@@ -187,7 +187,7 @@ public class STCManager : MonoBehaviour {
                 return currSpot;
             }
         }
-        throw new System.Exception("There is no building spot with id " + id.ToString());
+        throw new System.Exception($"There is no building spot with id {id}");
     }
     private void LoadTemplate(StructureTemplate st) {
         ClearTiles();
@@ -198,7 +198,7 @@ public class STCManager : MonoBehaviour {
         DrawTiles(detailsTilemap, st.detailTiles);
 
         //connectors
-        Utilities.DestroyChildren(connectorsParent);
+        UtilityScripts.Utilities.DestroyChildren(connectorsParent);
         if (st.connectors != null) {
             BuildingSpotDataMonobehaviour[] createdConnectors = new BuildingSpotDataMonobehaviour[st.connectors.Length];
             BuildingSpotData[] ordered = st.connectors.ToList().OrderBy(x => x.id).ToArray();
@@ -226,7 +226,7 @@ public class STCManager : MonoBehaviour {
         }
 
         //furniture spots
-        Utilities.DestroyChildren(furnitureParent);
+        UtilityScripts.Utilities.DestroyChildren(furnitureParent);
         if (st.furnitureSpots != null) {
             for (int i = 0; i < st.furnitureSpots.Length; i++) {
                 FurnitureSpot spot = st.furnitureSpots[i];
@@ -265,7 +265,7 @@ public class STCManager : MonoBehaviour {
         objectsTilemap.ClearAllTiles();
         detailsTilemap.ClearAllTiles();
 
-        Utilities.DestroyChildren(connectorsParent);
+        UtilityScripts.Utilities.DestroyChildren(connectorsParent);
     }
     public void LoadAllTilesAssets() {
         allTileAssets = Resources.LoadAll("Tile Map Assets", typeof(TileBase)).Cast<TileBase>().ToList();
@@ -328,7 +328,7 @@ public class STCManager : MonoBehaviour {
     };
     public List<StructureTemplate> GetStructureTemplates(string folderName) {
         List<StructureTemplate> templates = new List<StructureTemplate>();
-        string path = templatePath + folderName + "/";
+        string path = $"{templatePath}{folderName}/";
         if (Directory.Exists(path)) {
             DirectoryInfo info = new DirectoryInfo(path);
             FileInfo[] files = info.GetFiles();
@@ -375,8 +375,8 @@ public class StructureTemplate {
 
 
     #region Building Spots
-    public bool HasEnoughBuildSpotsForArea(Settlement settlement) {
-        return connectors.Length >= settlement.structures.Count;
+    public bool HasEnoughBuildSpotsForArea(NPCSettlement npcSettlement) {
+        return connectors.Length >= npcSettlement.structures.Count;
     }
     public bool TryGetOpenBuildingSpot(out BuildingSpotData spot) {
         for (int i = 0; i < connectors.Length; i++) {
@@ -398,7 +398,7 @@ public class StructureTemplate {
                 return currSpot;
             }
         }
-        throw new System.Exception("There is no building spot with id " + id.ToString());
+        throw new System.Exception($"There is no building spot with id {id}");
     }
     public bool TryGetBuildingSpotDataAtLocation(Vector3 location, out BuildingSpotData spot) {
         for (int i = 0; i < connectors.Length; i++) {

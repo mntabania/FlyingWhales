@@ -16,5 +16,7 @@ namespace Traits {
         void AddAdvertisedAction(INTERACTION_TYPE actionType);
         void RemoveAdvertisedAction(INTERACTION_TYPE actionType);
     }
+    
+    public delegate void TraitableCallback(ITraitable traitable);
 }
 

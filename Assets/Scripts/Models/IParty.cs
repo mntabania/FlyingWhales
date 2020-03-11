@@ -15,8 +15,8 @@ public interface IParty {
     Faction attackedByFaction { get; set; }
     Faction faction { get; }
     CharacterAvatar icon { get; }
-    //Settlement home { get; }
-    Combat currentCombat { get; set; }
+    //NPCSettlement home { get; }
+    //Combat currentCombat { get; set; }
     BaseLandmark landmarkLocation { get; }
     BaseLandmark homeLandmark { get; }
     Character mainCharacter { get; }

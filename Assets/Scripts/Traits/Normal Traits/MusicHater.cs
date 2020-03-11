@@ -10,7 +10,7 @@ namespace Traits {
         public MusicHater() {
             name = "Music Hater";
             description = "Music Haters dislike playing instruments and hearing any music.";
-            type = TRAIT_TYPE.FLAW;
+            type = TRAIT_TYPE.NEUTRAL;
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = 0;
             mutuallyExclusive = new string[] { "Music Lover" };
@@ -28,7 +28,7 @@ namespace Traits {
         //public override void OnAddTrait(ITraitable addedTo) {
         //    base.OnAddTrait(addedTo);
         //    owner = addedTo as Character;
-        //    if (owner.marker != null) {
+        //    if (owner.marker) {
         //        Messenger.AddListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
         //    }
         //}
@@ -44,12 +44,19 @@ namespace Traits {
         //    base.OnReturnToLife(character);
         //    Messenger.AddListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
         //}
+        public override void ExecuteCostModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, object[] otherData, ref int cost) {
+            if (action == INTERACTION_TYPE.SING) {
+                cost += 2000;
+            } else if (action == INTERACTION_TYPE.PLAY_GUITAR) {
+                cost += 2000;
+            }
+        }
         #endregion
 
         //private void OnHearGuitarPlaying(Character guitarPlayer) {
         //    //The character will gain Annoyed trait whenever it gets within vision of someone playing music. If Actor has a Lover or Paramour relationship with the target, create a Break Up job for the Actor:
         //    owner.AddTrait("Annoyed");
-        //    if (owner.HasRelationshipOfTypeWith(guitarPlayer, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
+        //    if (owner.HasRelationshipOfTypeWith(guitarPlayer, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.AFFAIR)) {
         //        if (owner.CreateBreakupJob(guitarPlayer) != null) {
         //            Log log = new Log(GameManager.Instance.Today(), "Trait", "MusicHater", "break_up");
         //            log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

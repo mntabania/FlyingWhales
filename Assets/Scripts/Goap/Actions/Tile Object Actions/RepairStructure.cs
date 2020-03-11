@@ -1,15 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using UnityEngine;
 
 public class RepairStructure : GoapAction {
 
     public RepairStructure() : base(INTERACTION_TYPE.REPAIR_STRUCTURE) {
         actionIconString = GoapActionStateDB.Work_Icon;
-        isNotificationAnIntel = false;
+        
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
     }
 
     #region Overrides
@@ -33,7 +34,7 @@ public class RepairStructure : GoapAction {
         base.Perform(goapNode);
         SetState("Repair Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 2;
     }
     #endregion
@@ -46,12 +47,12 @@ public class RepairStructure : GoapAction {
         LocationStructure structure = goapNode.poiTarget.gridTileLocation.structure;
         for (int i = 0; i < structure.tiles.Count; i++) {
             LocationGridTile tile = structure.tiles[i];
-            tile.genericTileObject.AdjustHP(tile.genericTileObject.maxHP);
+            tile.genericTileObject.AdjustHP(tile.genericTileObject.maxHP, ELEMENTAL_TYPE.Normal);
             tile.genericTileObject.traitContainer.RemoveTrait(tile.genericTileObject, "Burnt");
             for (int j = 0; j < tile.walls.Count; j++) {
-                WallObject wall = tile.walls[j];
-                wall.traitContainer.RemoveTrait(wall, "Burnt");
-                wall.AdjustHP(wall.maxHP);
+                StructureWallObject structureWall = tile.walls[j];
+                structureWall.traitContainer.RemoveTrait(structureWall, "Burnt");
+                structureWall.AdjustHP(structureWall.maxHP, ELEMENTAL_TYPE.Normal);
             }
         }
     }

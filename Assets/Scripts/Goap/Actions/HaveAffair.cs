@@ -10,7 +10,7 @@ public class HaveAffair : GoapAction {
     public HaveAffair() : base(INTERACTION_TYPE.HAVE_AFFAIR) {
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
         actionIconString = GoapActionStateDB.Flirt_Icon;
-        shouldIntelNotificationOnlyIfActorIsActive = true;
+        showNotification = false;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES };
     }
@@ -20,11 +20,11 @@ public class HaveAffair : GoapAction {
         base.Perform(goapNode);
         SetState("Affair Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         Character otherCharacter = target as Character;
         Character currCharacter = actor;
-        List<RELATIONSHIP_TYPE> existingRelsOfCurrentCharacter = currCharacter.relationshipContainer.GetRelationshipDataWith(otherCharacter.currentAlterEgo)?.relationships ?? null;
-        List<RELATIONSHIP_TYPE> existingRelsOfOtherCharacter = otherCharacter.relationshipContainer.GetRelationshipDataWith(currCharacter.currentAlterEgo)?.relationships ?? null;
+        List<RELATIONSHIP_TYPE> existingRelsOfCurrentCharacter = currCharacter.relationshipContainer.GetRelationshipDataWith(otherCharacter)?.relationships ?? null;
+        List<RELATIONSHIP_TYPE> existingRelsOfOtherCharacter = otherCharacter.relationshipContainer.GetRelationshipDataWith(currCharacter)?.relationships ?? null;
         int cost = 1;
         if (existingRelsOfCurrentCharacter != null) {
             if (existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TYPE.RELATIVE)) {
@@ -32,13 +32,13 @@ public class HaveAffair : GoapAction {
                 cost += 50;
             }
             if (existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TYPE.LOVER)
-                || currCharacter.opinionComponent.IsEnemiesWith(otherCharacter)) {
+                || currCharacter.relationshipContainer.IsEnemiesWith(otherCharacter)) {
                 //- character is a lover: Weight x0
                 //- character is an enemy: Weight x0
                 cost *= 0;
             }
         }
-        if (otherCharacter.role.roleType == CHARACTER_ROLE.BEAST) {
+        if (UtilityScripts.GameUtilities.IsRaceBeast(otherCharacter.race)) {
             //- character is beast 0 out weight
             cost *= 0;
         }
@@ -51,7 +51,7 @@ public class HaveAffair : GoapAction {
         //currentState.SetIntelReaction(AffairSuccessReactions);
     }
     public void AfterAffairSuccess(ActualGoapNode goapNode) {
-        RelationshipManager.Instance.CreateNewRelationshipBetween(goapNode.actor, goapNode.poiTarget as Character, RELATIONSHIP_TYPE.PARAMOUR);
+        RelationshipManager.Instance.CreateNewRelationshipBetween(goapNode.actor, goapNode.poiTarget as Character, RELATIONSHIP_TYPE.AFFAIR);
     }
     #endregion
 
@@ -66,7 +66,12 @@ public class HaveAffair : GoapAction {
                 return false;
             }
             Character targetCharacter = poiTarget as Character;
-            if (RelationshipManager.Instance.IsSexuallyCompatible(actor, targetCharacter) && RelationshipManager.Instance.GetValidator(actor.currentAlterEgo).CanHaveRelationship(actor.currentAlterEgo, targetCharacter.currentAlterEgo, RELATIONSHIP_TYPE.PARAMOUR)) {
+            SEXUALITY sexuality1 = actor.sexuality;
+            SEXUALITY sexuality2 = targetCharacter.sexuality;
+            GENDER gender1 = actor.gender;
+            GENDER gender2 = targetCharacter.gender;
+            if (RelationshipManager.IsSexuallyCompatible(sexuality1, sexuality2, gender1, gender2) 
+                && RelationshipManager.Instance.GetValidator(actor).CanHaveRelationship(actor, targetCharacter, RELATIONSHIP_TYPE.AFFAIR)) {
                 return true;
             }
         }
@@ -82,8 +87,8 @@ public class HaveAffair : GoapAction {
     //    //RELATIONSHIP_EFFECT recipientRelationshipWithTarget = recipient.GetRelationshipEffectWith(target);
     //    Character actorLover = (actor.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.LOVER) as AlterEgoData)?.owner ?? null;
     //    Character targetLover = (target.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.LOVER) as AlterEgoData)?.owner ?? null;
-    //    Character actorParamour = (actor.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR) as AlterEgoData)?.owner ?? null;
-    //    Character targetParamour = (target.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR) as AlterEgoData)?.owner ?? null;
+    //    Character actorParamour = (actor.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.AFFAIR) as AlterEgoData)?.owner ?? null;
+    //    Character targetParamour = (target.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.AFFAIR) as AlterEgoData)?.owner ?? null;
 
 
     //    bool hasFled = false;
@@ -91,7 +96,7 @@ public class HaveAffair : GoapAction {
     //        reactions.Add("This is old news.");
     //        if (status == SHARE_INTEL_STATUS.WITNESSED) {
     //            hasFled = true;
-    //            recipient.marker.AddAvoidInRange(actor, reason: "saw something shameful");
+    //            recipient.combatComponent.AddAvoidInRange(actor, reason: "saw something shameful");
     //        }
     //    } else {
     //        //- Recipient is the Actor
@@ -120,10 +125,10 @@ public class HaveAffair : GoapAction {
     //                response = string.Format("I'm still the one {0} comes home to.", actor.name);
     //                if (status == SHARE_INTEL_STATUS.WITNESSED) {
     //                    hasFled = true;
-    //                    recipient.marker.AddAvoidInRange(actor, reason: "saw something shameful");
+    //                    recipient.combatComponent.AddAvoidInRange(actor, reason: "saw something shameful");
     //                }
     //            }
-    //            if (recipient.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)) {
+    //            if (recipient.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.AFFAIR)) {
     //                if (RelationshipManager.Instance.RelationshipDegradation(target, recipient, this)) {
     //                    response += string.Format(" {0} seduced both of us. {1} must pay for this.", target.name, Utilities.GetPronounString(target.gender, PRONOUN_TYPE.SUBJECTIVE, true));
     //                    recipient.CreateUndermineJobOnly(target, "informed", status);
@@ -131,7 +136,7 @@ public class HaveAffair : GoapAction {
     //                    response += string.Format(" I already know that {0} is a harlot.", target.name);
     //                    if (status == SHARE_INTEL_STATUS.WITNESSED) {
     //                        hasFled = true;
-    //                        recipient.marker.AddAvoidInRange(actor, reason: "saw something shameful");
+    //                        recipient.combatComponent.AddAvoidInRange(actor, reason: "saw something shameful");
     //                    }
     //                }
     //            } else if (recipient.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.RELATIVE)) {
@@ -142,7 +147,7 @@ public class HaveAffair : GoapAction {
     //                    response += string.Format(" {0} is my blood. Blood is thicker than water.", target.name);
     //                    if (status == SHARE_INTEL_STATUS.WITNESSED) {
     //                        hasFled = true;
-    //                        recipient.marker.AddAvoidInRange(actor, reason: "saw something shameful");
+    //                        recipient.combatComponent.AddAvoidInRange(actor, reason: "saw something shameful");
     //                    }
     //                }
     //            } else if (recipient.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.FRIEND)) {
@@ -153,7 +158,7 @@ public class HaveAffair : GoapAction {
     //                    response += string.Format(" My friendship with {0} is much stronger than this incident.", target.name);
     //                    if (status == SHARE_INTEL_STATUS.WITNESSED) {
     //                        hasFled = true;
-    //                        recipient.marker.AddAvoidInRange(actor, reason: "saw something shameful");
+    //                        recipient.combatComponent.AddAvoidInRange(actor, reason: "saw something shameful");
     //                    }
     //                }
     //            } else if (recipient.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
@@ -167,7 +172,7 @@ public class HaveAffair : GoapAction {
     //                    response += string.Format(" I'm not even going to bother myself with {0}.", target.name);
     //                    if (status == SHARE_INTEL_STATUS.WITNESSED) {
     //                        hasFled = true;
-    //                        recipient.marker.AddAvoidInRange(actor, reason: "saw something shameful");
+    //                        recipient.combatComponent.AddAvoidInRange(actor, reason: "saw something shameful");
     //                    }
     //                }
     //            }
@@ -183,10 +188,10 @@ public class HaveAffair : GoapAction {
     //                response = string.Format("I'm still the one {0} comes home to.", target.name);
     //                if (status == SHARE_INTEL_STATUS.WITNESSED) {
     //                    hasFled = true;
-    //                    recipient.marker.AddAvoidInRange(target, reason: "saw something shameful");
+    //                    recipient.combatComponent.AddAvoidInRange(target, reason: "saw something shameful");
     //                }
     //            }
-    //            if (recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)) {
+    //            if (recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.AFFAIR)) {
     //                if (RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this)) {
     //                    response += string.Format(" {0} seduced both of us. {1} must pay for this.", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, true));
     //                    recipient.CreateUndermineJobOnly(actor, "informed", status);
@@ -194,7 +199,7 @@ public class HaveAffair : GoapAction {
     //                    response += string.Format(" I already know that {0} is a harlot.", actor.name);
     //                    if (status == SHARE_INTEL_STATUS.WITNESSED) {
     //                        hasFled = true;
-    //                        recipient.marker.AddAvoidInRange(target, reason: "saw something shameful");
+    //                        recipient.combatComponent.AddAvoidInRange(target, reason: "saw something shameful");
     //                    }
     //                }
     //            } else if (recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.RELATIVE)) {
@@ -205,7 +210,7 @@ public class HaveAffair : GoapAction {
     //                    response += string.Format(" {0} is my blood. Blood is thicker than water.", actor.name);
     //                    if (status == SHARE_INTEL_STATUS.WITNESSED) {
     //                        hasFled = true;
-    //                        recipient.marker.AddAvoidInRange(target, reason: "saw something shameful");
+    //                        recipient.combatComponent.AddAvoidInRange(target, reason: "saw something shameful");
     //                    }
     //                }
     //            } else if (recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.FRIEND)) {
@@ -216,7 +221,7 @@ public class HaveAffair : GoapAction {
     //                    response += string.Format(" My friendship with {0} is much stronger than this incident.", actor.name);
     //                    if (status == SHARE_INTEL_STATUS.WITNESSED) {
     //                        hasFled = true;
-    //                        recipient.marker.AddAvoidInRange(target, reason: "saw something shameful");
+    //                        recipient.combatComponent.AddAvoidInRange(target, reason: "saw something shameful");
     //                    }
     //                }
     //            } else if (recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
@@ -230,7 +235,7 @@ public class HaveAffair : GoapAction {
     //                    response += string.Format(" I'm not even going to bother myself with {0}.", actor.name);
     //                    if (status == SHARE_INTEL_STATUS.WITNESSED) {
     //                        hasFled = true;
-    //                        recipient.marker.AddAvoidInRange(target, reason: "saw something shameful");
+    //                        recipient.combatComponent.AddAvoidInRange(target, reason: "saw something shameful");
     //                    }
     //                }
     //            }
@@ -250,7 +255,7 @@ public class HaveAffair : GoapAction {
     //                reactions.Add(string.Format("{0} is cheating on {1}? I don't want to get involved.", actor.name, actorLover.name));
     //                if (status == SHARE_INTEL_STATUS.WITNESSED) {
     //                    hasFled = true;
-    //                    recipient.marker.AddAvoidInRange(actor, reason: "saw something shameful");
+    //                    recipient.combatComponent.AddAvoidInRange(actor, reason: "saw something shameful");
     //                }
     //            }
     //        }
@@ -263,7 +268,7 @@ public class HaveAffair : GoapAction {
     //                reactions.Add(string.Format("{0} is cheating on {1}? I don't want to get involved.", target.name, targetLover.name));
     //                if (status == SHARE_INTEL_STATUS.WITNESSED) {
     //                    hasFled = true;
-    //                    recipient.marker.AddAvoidInRange(target, reason: "saw something shameful");
+    //                    recipient.combatComponent.AddAvoidInRange(target, reason: "saw something shameful");
     //                }
     //            }
     //        }
@@ -272,7 +277,7 @@ public class HaveAffair : GoapAction {
     //            reactions.Add(string.Format("{0} is cheating on {1}? {2} got what {3} deserves.", actor.name, actorLover.name, Utilities.GetPronounString(actorLover.gender, PRONOUN_TYPE.SUBJECTIVE, true), Utilities.GetPronounString(actorLover.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
     //            if (status == SHARE_INTEL_STATUS.WITNESSED) {
     //                hasFled = true;
-    //                recipient.marker.AddAvoidInRange(actor, reason: "saw something shameful");
+    //                recipient.combatComponent.AddAvoidInRange(actor, reason: "saw something shameful");
     //            }
     //        }
     //        //- Recipient has a negative relationship with Target's Lover and Target's Lover is not the Actor
@@ -280,7 +285,7 @@ public class HaveAffair : GoapAction {
     //            reactions.Add(string.Format("{0} is cheating on {1}? {2} got what {3} deserves.", target.name, targetLover.name, Utilities.GetPronounString(targetLover.gender, PRONOUN_TYPE.SUBJECTIVE, true), Utilities.GetPronounString(targetLover.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
     //            if (status == SHARE_INTEL_STATUS.WITNESSED) {
     //                hasFled = true;
-    //                recipient.marker.AddAvoidInRange(target, reason: "saw something shameful");
+    //                recipient.combatComponent.AddAvoidInRange(target, reason: "saw something shameful");
     //            }
     //        }
     //        //- Recipient has a no relationship with Actor's Lover and Actor's Lover is not the Target
@@ -298,17 +303,17 @@ public class HaveAffair : GoapAction {
     //            reactions.Add("That is none of my business.");
     //            if (status == SHARE_INTEL_STATUS.WITNESSED) {
     //                hasFled = true;
-    //                recipient.marker.AddAvoidInRange(actor, reason: "saw something shameful");
+    //                recipient.combatComponent.AddAvoidInRange(actor, reason: "saw something shameful");
     //            }
     //        }
     //    }
 
     //    if (status == SHARE_INTEL_STATUS.WITNESSED && !hasFled) {
     //        if (recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER)
-    //            || recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)) {
+    //            || recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.AFFAIR)) {
     //            recipient.CreateWatchEvent(this, null, actor);
     //        } else if (recipient.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER)
-    //            || recipient.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)) {
+    //            || recipient.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.AFFAIR)) {
     //            recipient.CreateWatchEvent(this, null, target);
     //        }
     //    }
@@ -330,10 +335,10 @@ public class HaveAffairData : GoapActionData {
         if (actor == poiTarget) {
             return false;
         }
-        Character targetCharacter = poiTarget as Character;
-        if (RelationshipManager.Instance.IsSexuallyCompatible(actor, targetCharacter) && RelationshipManager.Instance.GetValidator(actor.currentAlterEgo).CanHaveRelationship(actor.currentAlterEgo, targetCharacter.currentAlterEgo, RELATIONSHIP_TYPE.PARAMOUR)) {
-            return true;
-        }
+        // Character targetCharacter = poiTarget as Character;
+        // if (RelationshipManager.Instance.IsSexuallyCompatible(actor, targetCharacter, TODO, TODO) && RelationshipManager.Instance.GetValidator(actor).CanHaveRelationship(actor, targetCharacter, RELATIONSHIP_TYPE.AFFAIR)) {
+        //     return true;
+        // }
         return false;
     }
 }

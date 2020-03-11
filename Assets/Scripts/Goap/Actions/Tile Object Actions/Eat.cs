@@ -10,8 +10,7 @@ public class Eat : GoapAction {
     public Eat() : base(INTERACTION_TYPE.EAT) {
         //actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
         actionIconString = GoapActionStateDB.Eat_Icon;
-        shouldIntelNotificationOnlyIfActorIsActive = true;
-        isNotificationAnIntel = false;
+        showNotification = false;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON };
     }
@@ -19,13 +18,60 @@ public class Eat : GoapAction {
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.ACTOR });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.COMFORT_RECOVERY, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.ACTOR });
+    }
+    public override List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, object[] otherData) {
+        if (target is Table) { // || target is FoodPile
+            List<Precondition> p = new List<Precondition>(base.GetPreconditions(actor, target, otherData));
+            p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Food Pile" /*+ (int)otherData[0]*/, false, GOAP_EFFECT_TARGET.TARGET), HasFood));
+            return p;
+        }
+        return base.GetPreconditions(actor, target, otherData);
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
         SetState("Eat Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        return 50;
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+        string costLog = $"\n{name} {target.nameWithID}:";
+        int cost = 0;
+        if (target is Table) {
+            Table table = target as Table;
+            if (table.IsOwnedBy(actor)) {
+                cost = UtilityScripts.Utilities.rng.Next(20, 36);
+                costLog += $" +{cost}(Owned)";
+            } else {
+                List<Character> tableOwners = table.GetOwners();
+                bool isTargetObjectOwnedByFriend = false;
+                bool isTargetObjectOwnedByEnemy = false;
+                if (tableOwners != null) {
+                    for (int i = 0; i < tableOwners.Count; i++) {
+                        Character objectOwner = tableOwners[i];
+                        if (actor.relationshipContainer.IsFriendsWith(objectOwner)) {
+                            isTargetObjectOwnedByFriend = true;
+                            break;
+                        } else if (actor.relationshipContainer.IsEnemiesWith(objectOwner)) {
+                            isTargetObjectOwnedByEnemy = true;
+                        }
+                    }
+                }
+                if (isTargetObjectOwnedByFriend) {
+                    cost = UtilityScripts.Utilities.rng.Next(45, 66);
+                    costLog += $" +{cost}(Owned by Friend)";
+                } else if (isTargetObjectOwnedByEnemy) {
+                    cost = 2000;
+                    costLog += " +2000(Owned by Enemy)";
+                } else {
+                    cost = UtilityScripts.Utilities.rng.Next(60, 81);
+                    costLog += $" +{cost}(Otherwise)";
+                }
+            }
+        } else if (target is FoodPile) {
+            cost = UtilityScripts.Utilities.rng.Next(400, 451);
+            costLog += $" +{cost}(Food Pile)";
+        }
+        actor.logComponent.AppendCostLog(costLog);
+        return cost;
     }
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);
@@ -83,16 +129,23 @@ public class Eat : GoapAction {
                 if(actor.homeStructure != null) {
                     return false;
                 }
-            } else if(poiTarget is Table) {
-                if(poiTarget.storedResources[RESOURCE.FOOD] < 20) {
-                    return false;
-                }
-            }
+            } 
+            // else {
+            //     if(poiTarget.storedResources[RESOURCE.FOOD] < 12) {
+            //         return false;
+            //     }
+            // }
             if (poiTarget.gridTileLocation != null) {
                 return true;
             }
         }
         return false;
+    }
+    #endregion
+    
+    #region Preconditions
+    private bool HasFood(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        return poiTarget.HasResourceAmount(RESOURCE.FOOD, 12);
     }
     #endregion
 }

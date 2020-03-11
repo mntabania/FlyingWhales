@@ -8,7 +8,7 @@ public class FactionIdeology {
 
     public FactionIdeology(FACTION_IDEOLOGY ideology) {
         ideologyType = ideology;
-        name = Utilities.NormalizeStringUpperCaseFirstLetters(ideology.ToString());
+        name = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(ideology.ToString());
     }
 
     #region Virtuals

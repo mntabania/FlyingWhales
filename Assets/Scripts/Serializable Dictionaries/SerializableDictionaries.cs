@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
+using Ruinarch;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -21,17 +22,23 @@ public class StringSpriteDictionary : SerializableDictionary<string, Sprite> { }
 [System.Serializable]
 public class FactionEmblemDictionary : SerializableDictionary<int, Sprite> { }
 [System.Serializable]
-public class ItemAsseteDictionary : SerializableDictionary<SPECIAL_TOKEN, Sprite> { }
+public class CombatModeSpriteDictionary : SerializableDictionary<COMBAT_MODE, Sprite> { }
+// [System.Serializable]
+// public class ItemAsseteDictionary : SerializableDictionary<SPECIAL_TOKEN, Sprite> { }
 [System.Serializable]
 public class TileObjectAssetDictionary : SerializableDictionary<TILE_OBJECT_TYPE, TileObjectTileSetting> { }
 [System.Serializable]
-public class ItemSpriteDictionary : SerializableDictionary<SPECIAL_TOKEN, Sprite> { }
+public class ArtifactDataDictionary : SerializableDictionary<ARTIFACT_TYPE, ArtifactData> { }
+[System.Serializable]
+public class ElementalDamageDataDictionary : SerializableDictionary<ELEMENTAL_TYPE, ElementalDamageData> { }
+// [System.Serializable]
+// public class ItemSpriteDictionary : SerializableDictionary<SPECIAL_TOKEN, Sprite> { }
 [System.Serializable]
 public class TileObjectBiomeAssetDictionary : SerializableDictionary<BIOMES, BiomeTileObjectTileSetting> { }
 [System.Serializable]
 public class TileObjectSlotDictionary : SerializableDictionary<Sprite, List<TileObjectSlotSetting>, TileObjectSlotListStorage> { }
 [System.Serializable]
-public class CursorTextureDictionary : SerializableDictionary<CursorManager.Cursor_Type, Texture2D> { }
+public class CursorTextureDictionary : SerializableDictionary<Ruinarch.InputManager.Cursor_Type, Texture2D> { }
 [System.Serializable]
 public class AreaTypeSpriteDictionary : SerializableDictionary<LOCATION_TYPE, Sprite> { }
 [System.Serializable]
@@ -43,7 +50,7 @@ public class SeamlessEdgeAssetsDictionary : SerializableDictionary<LocationGridT
 [System.Serializable]
 public class YieldTypeLandmarksDictionary : SerializableDictionary<LANDMARK_YIELD_TYPE, List<LANDMARK_TYPE>, LandmarkTypeListStorage> { }
 [System.Serializable]
-public class InterventionAbilityTierDictionary : SerializableDictionary<INTERVENTION_ABILITY, int> { }
+public class InterventionAbilityTierDictionary : SerializableDictionary<SPELL_TYPE, int> { }
 [System.Serializable]
 public class CharacterClassAssetDictionary : SerializableDictionary<string, CharacterClassAsset> { }
 [System.Serializable]
@@ -52,6 +59,14 @@ public class LocationStructurePrefabDictionary : SerializableDictionary<STRUCTUR
 public class WallResourceAssetDictionary : SerializableDictionary<RESOURCE, WallResouceAssets> { }
 [System.Serializable]
 public class WallAssetDictionary : SerializableDictionary<string, WallAsset> { }
+[System.Serializable]
+public class ParticleEffectAssetDictionary : SerializableDictionary<PARTICLE_EFFECT, GameObject> { }
+[System.Serializable]
+public class ProjectileDictionary : SerializableDictionary<ELEMENTAL_TYPE, GameObject> { }
+[System.Serializable]
+public class TimeOfDayLightDictionary : SerializableDictionary<TIME_IN_WORDS, float> { }
+[System.Serializable]
+public class BiomeHighlightColorDictionary : SerializableDictionary<BIOMES, Material> { }
 
 //List storage
 [System.Serializable]

@@ -41,14 +41,14 @@ namespace UnityEngine.UI.Extensions
                 BaseEventData data = new BaseEventData(_singleton.eventSystem);
                 data.selectedObject = targetObject;
                 ExecuteEvents.Execute(targetObject, data, ExecuteEvents.submitHandler);
-                print("clicked " + targetObject.name);
+                print($"clicked {targetObject.name}");
                 mouseClicked = false;
             }
         }
 
         public static void PointerExit(GameObject obj)
         {
-            print("PointerExit " + obj.name);
+            print($"PointerExit {obj.name}");
             PointerEventData pEvent = new PointerEventData(_singleton.eventSystem);
             ExecuteEvents.Execute(obj, pEvent, ExecuteEvents.pointerExitHandler);
             ExecuteEvents.Execute(obj, pEvent, ExecuteEvents.deselectHandler); //This fixes the problem
@@ -56,7 +56,7 @@ namespace UnityEngine.UI.Extensions
 
         public static void PointerEnter(GameObject obj)
         {
-            print("PointerEnter " + obj.name);
+            print($"PointerEnter {obj.name}");
             PointerEventData pEvent = new PointerEventData(_singleton.eventSystem);
             pEvent.pointerEnter = obj;
             RaycastResult rcr = new RaycastResult() { worldPosition = cursorPosition };

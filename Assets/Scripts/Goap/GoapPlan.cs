@@ -136,7 +136,7 @@ public class GoapPlan {
     //}
     public void SetPlanState(GOAP_PLAN_STATE state) {
         this.state = state;
-        setPlanStateCallStack = state.ToString() + " " + StackTraceUtility.ExtractStackTrace();
+        setPlanStateCallStack = $"{state} {StackTraceUtility.ExtractStackTrace()}";
     }
     public void OnAttachPlanToJob(GoapPlanJob job) {
         for (int i = 0; i < allNodes.Count; i++) {
@@ -151,17 +151,17 @@ public class GoapPlan {
             if(i > 0) {
                 log += "\n";
             }
-            log += (i + 1) + ".";
+            log += $"{(i + 1)}.";
             if (jobNode.singleNode != null) {
                 ActualGoapNode node = jobNode.singleNode;
-                log += " (" + node.cost + ") " + node.action.goapName + " - " + node.poiTarget.name;
+                log += $" ({node.cost}) {node.action.goapName} - {node.poiTarget.name}";
             } else {
                 for (int j = 0; j < jobNode.multiNode.Length; j++) {
                     ActualGoapNode node = jobNode.multiNode[j];
                     if (j > 0) {
                         log += ",";
                     }
-                    log += " (" + node.cost + ") " + node.action.goapName + " - " + node.poiTarget.name;
+                    log += $" ({node.cost}) {node.action.goapName} - {node.poiTarget.name}";
                 }
             }
         }
@@ -177,7 +177,7 @@ public class GoapPlan {
         string summary = "Goal: ";
         for (int i = 0; i < endNode.singleNode.action.baseExpectedEffects.Count; i++) {
             GoapEffect effect = endNode.singleNode.action.baseExpectedEffects[i];
-            summary += effect.ToString() + ", ";
+            summary += $"{effect}, ";
         }
         return summary;
     }

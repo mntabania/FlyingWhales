@@ -15,17 +15,13 @@ namespace Traits {
         }
 
         #region Overrides
-        public override bool CreateJobsOnEnterVisionBasedOnOwnerTrait(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
-            if (targetPOI is TileObject) {
-                TileObject objectToBeInspected = targetPOI as TileObject;
-                if (objectToBeInspected.isSummonedByPlayer) {
-                    if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.DESTROY, objectToBeInspected)) {
-                        GoapPlanJob destroyJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DESTROY, INTERACTION_TYPE.ASSAULT, objectToBeInspected, characterThatWillDoJob);
-                        characterThatWillDoJob.jobQueue.AddJobInQueue(destroyJob);
-                    }
+        public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
+            if (targetPOI is TileObject objectToBeInspected) {
+                if (objectToBeInspected.lastManipulatedBy is Player) {
+                    characterThatWillDoJob.jobComponent.TriggerDestroy(objectToBeInspected);
                 }
             }
-            return base.CreateJobsOnEnterVisionBasedOnOwnerTrait(targetPOI, characterThatWillDoJob);
+            return base.OnSeePOI(targetPOI, characterThatWillDoJob);
         }
         #endregion
     }

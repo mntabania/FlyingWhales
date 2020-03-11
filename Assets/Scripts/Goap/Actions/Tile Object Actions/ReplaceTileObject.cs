@@ -11,9 +11,9 @@ public class ReplaceTileObject : GoapAction {
     public ReplaceTileObject() : base(INTERACTION_TYPE.REPLACE_TILE_OBJECT) {
         //actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
         actionIconString = GoapActionStateDB.Work_Icon;
-        isNotificationAnIntel = false;
+        
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
     }
 
     #region Overrides
@@ -21,7 +21,7 @@ public class ReplaceTileObject : GoapAction {
         base.AddFillersToLog(log, node);
         object[] otherData = node.otherData;
         TileObject tileObjectToReplace = otherData[0] as TileObject;
-        log.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(tileObjectToReplace.tileObjectType.ToString()), LOG_IDENTIFIER.STRING_1);
+        log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(tileObjectToReplace.tileObjectType.ToString()), LOG_IDENTIFIER.STRING_1);
     }
     protected override void ConstructBasePreconditionsAndEffects() {
         //if (tileObjectToReplace != null) {
@@ -35,7 +35,7 @@ public class ReplaceTileObject : GoapAction {
         SetState("Replace Success", goapNode);
         
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 1;
     }
     //public override bool InitializeOtherData(object[] otherData) {
@@ -59,18 +59,18 @@ public class ReplaceTileObject : GoapAction {
     #region State Effects
     public void PreReplaceSuccess(ActualGoapNode goapNode) {
         TileObject tileObjectToReplace = goapNode.otherData[0] as TileObject;
-        goapNode.descriptionLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(tileObjectToReplace.ToString()), LOG_IDENTIFIER.STRING_1);
+        goapNode.descriptionLog.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(tileObjectToReplace.ToString()), LOG_IDENTIFIER.STRING_1);
     }
     public void AfterReplaceSuccess(ActualGoapNode goapNode) {
         TileObject tileObjectToReplace = goapNode.otherData[0] as TileObject;
         LocationGridTile whereToPlace = goapNode.otherData[1] as LocationGridTile;
         //place the tile object at the specified location.
         goapNode.targetStructure.AddPOI(tileObjectToReplace, whereToPlace);
-        tileObjectToReplace.AdjustHP(tileObjectToReplace.maxHP);
+        tileObjectToReplace.AdjustHP(tileObjectToReplace.maxHP, ELEMENTAL_TYPE.Normal);
         goapNode.actor.AdjustSupply(-TileObjectDB.GetTileObjectData(tileObjectToReplace.tileObjectType).constructionCost);
         //make all residents aware of supply pile, just in case it was ever removed because of ghost collision
-        //for (int i = 0; i < whereToPlace.parentAreaMap.settlement.region.residents.Count; i++) {
-        //    whereToPlace.parentAreaMap.settlement.region.residents[i].AddAwareness(tileObjectToReplace);
+        //for (int i = 0; i < whereToPlace.parentAreaMap.npcSettlement.region.residents.Count; i++) {
+        //    whereToPlace.parentAreaMap.npcSettlement.region.residents[i].AddAwareness(tileObjectToReplace);
         //}
     }
     #endregion
@@ -89,7 +89,7 @@ public class ReplaceTileObject : GoapAction {
 
 public class ReplaceTileObjectData : GoapActionData {
     public ReplaceTileObjectData() : base(INTERACTION_TYPE.REPLACE_TILE_OBJECT) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
         requirementAction = Requirement;
     }
 

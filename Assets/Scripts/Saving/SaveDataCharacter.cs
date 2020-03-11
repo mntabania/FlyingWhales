@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using BayatGames.SaveGameFree.Types;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using Traits;
 
 [System.Serializable]
@@ -58,7 +59,7 @@ public class SaveDataCharacter {
 
     //public List<INTERACTION_TYPE> currentInteractionTypes;
     public int supply;
-    public List<SaveDataItem> items;
+    // public List<SaveDataItem> items;
     public int moodValue;
     public bool isCombatant;
     public bool isDisabledByPlayer;
@@ -69,12 +70,12 @@ public class SaveDataCharacter {
     public POI_STATE state;
 
     //Needs
-    public int tiredness;
-    public int fullness;
-    public int happiness;
-    public int fullnessDecreaseRate;
-    public int tirednessDecreaseRate;
-    public int happinessDecreaseRate;
+    public float tiredness;
+    public float fullness;
+    public float happiness;
+    public float fullnessDecreaseRate;
+    public float tirednessDecreaseRate;
+    public float happinessDecreaseRate;
 
     //portrait
     public float hSkinColor;
@@ -86,7 +87,7 @@ public class SaveDataCharacter {
 
     //alter egos
     public string currentAlterEgoName;
-    public List<SaveDataAlterEgo> alterEgos;
+    //public List<SaveDataAlterEgo> alterEgos;
 
     public string originalClassName;
     public bool isMinion;
@@ -131,7 +132,7 @@ public class SaveDataCharacter {
         //doNotGetTired = character.doNotGetTired;
         if (character.faction != null) {
             factionID = character.faction.id;
-            isFactionLeader = character.faction.leader == character;
+            isFactionLeader = character.isFactionLeader;
         } else {
             factionID = -1;
         }
@@ -148,7 +149,7 @@ public class SaveDataCharacter {
         if (character.homeStructure != null) {
             homeStructureID = character.homeStructure.id;
             homeStructureType = character.homeStructure.structureType;
-            homeStructureAreaID = character.homeStructure.location.id; //TODO: Refactor this, because structure location is no longer guaranteed to be an settlement.
+            homeStructureAreaID = character.homeStructure.location.id; //TODO: Refactor this, because structure location is no longer guaranteed to be an npcSettlement.
         } else {
             homeStructureID = -1;
         }
@@ -158,14 +159,14 @@ public class SaveDataCharacter {
         sexuality = character.sexuality;
         className = character.characterClass.className;
         race = character.race;
-        roleType = character.role.roleType;
+        // roleType = character.role.roleType;
         portraitSettings = character.visuals.portraitSettings;
         //characterColor = character.characterColor;
         isStoppedByOtherCharacter = character.isStoppedByOtherCharacter;
 
         normalTraits = new List<SaveDataTrait>();
-        for (int i = 0; i < character.traitContainer.allTraits.Count; i++) {
-            Trait trait = character.traitContainer.allTraits[i];
+        for (int i = 0; i < character.traitContainer.allTraitsAndStatuses.Count; i++) {
+            Trait trait = character.traitContainer.allTraitsAndStatuses[i];
 
             SaveDataTrait saveDataTrait = SaveManager.ConvertTraitToSaveDataTrait(trait);
             if (saveDataTrait != null) {
@@ -188,7 +189,7 @@ public class SaveDataCharacter {
 
         //currentInteractionTypes = character.currentInteractionTypes;
         supply = character.supply;
-        moodValue = character.moodValue;
+        moodValue = character.moodComponent.moodValue;
         isCombatant = character.canCombat;
         isDisabledByPlayer = character.isDisabledByPlayer;
         speedModifier = character.speedModifier;
@@ -196,12 +197,12 @@ public class SaveDataCharacter {
 
         state = character.state;
 
-        items = new List<SaveDataItem>();
-        for (int i = 0; i < character.items.Count; i++) {
-            SaveDataItem newSaveDataItem = new SaveDataItem();
-            newSaveDataItem.Save(character.items[i]);
-            items.Add(newSaveDataItem);
-        }
+        // items = new List<SaveDataItem>();
+        // for (int i = 0; i < character.items.Count; i++) {
+        //     SaveDataItem newSaveDataItem = new SaveDataItem();
+        //     newSaveDataItem.Save(character.items[i]);
+        //     items.Add(newSaveDataItem);
+        // }
 
         tiredness = character.needsComponent.tiredness;
         fullness = character.needsComponent.fullness;
@@ -211,7 +212,7 @@ public class SaveDataCharacter {
         happinessDecreaseRate = character.needsComponent.happinessDecreaseRate;
 
         ignoreHostility = character.ignoreHostility;
-        originalClassName = character.originalClassName;
+        //originalClassName = character.originalClassName;
         isMinion = character.minion != null;
         isSummon = character is Summon;
         if (isSummon) {
@@ -219,13 +220,13 @@ public class SaveDataCharacter {
             summonType = summon.summonType;
         }
 
-        currentAlterEgoName = character.currentAlterEgoName;
-        alterEgos = new List<SaveDataAlterEgo>();
-        foreach (AlterEgoData alterEgo in character.alterEgos.Values) {
-            SaveDataAlterEgo saveDataAlterEgo = new SaveDataAlterEgo();
-            saveDataAlterEgo.Save(alterEgo);
-            alterEgos.Add(saveDataAlterEgo);
-        }
+        //currentAlterEgoName = character.currentAlterEgoName;
+        //alterEgos = new List<SaveDataAlterEgo>();
+        //foreach (AlterEgoData alterEgo in character.alterEgos.Values) {
+        //    SaveDataAlterEgo saveDataAlterEgo = new SaveDataAlterEgo();
+        //    saveDataAlterEgo.Save(alterEgo);
+        //    alterEgos.Add(saveDataAlterEgo);
+        //}
 
         fullnessForcedTick = character.needsComponent.fullnessForcedTick;
         tirednessForcedTick = character.needsComponent.tirednessForcedTick;
@@ -236,29 +237,29 @@ public class SaveDataCharacter {
 
         if (character.gridTileLocation != null) {
             gridTileLocation = new Vector3Save(character.gridTileLocation.localPlace.x, character.gridTileLocation.localPlace.y, 0f);
-            gridTileLocationAreaID = character.gridTileLocation.structure.location.id; //TODO: Refactor this, because structure location is no longer guaranteed to be an settlement.
+            gridTileLocationAreaID = character.gridTileLocation.structure.location.id; //TODO: Refactor this, because structure location is no longer guaranteed to be an npcSettlement.
         } else {
             gridTileLocation = new Vector3Save(0f, 0f, -1f);
         }
 
-        if (character.marker != null) {
+        if (character.marker) {
             lethalHostilesInRangeIDs = new List<int>();
             nonLethalHostilesInRangeIDs = new List<int>();
             avoidInRangeIDs = new List<int>();
 
-            for (int i = 0; i < character.marker.hostilesInRange.Count; i++) {
-                IPointOfInterest poi = character.marker.hostilesInRange[i];
+            for (int i = 0; i < character.combatComponent.hostilesInRange.Count; i++) {
+                IPointOfInterest poi = character.combatComponent.hostilesInRange[i];
                 if (poi is Character) {
                     Character hostile = poi as Character;
-                    if (character.marker.IsLethalCombatForTarget(hostile)) {
+                    if (character.combatComponent.IsLethalCombatForTarget(hostile)) {
                         lethalHostilesInRangeIDs.Add(hostile.id);
                     } else {
                         nonLethalHostilesInRangeIDs.Add(hostile.id);
                     }
                 }
             }
-            for (int i = 0; i < character.marker.avoidInRange.Count; i++) {
-                avoidInRangeIDs.Add(character.marker.avoidInRange[i].id);
+            for (int i = 0; i < character.combatComponent.avoidInRange.Count; i++) {
+                avoidInRangeIDs.Add(character.combatComponent.avoidInRange[i].id);
             }
         }
 
@@ -290,9 +291,9 @@ public class SaveDataCharacter {
         hasCancelledSleepSchedule = character.needsComponent.hasCancelledSleepSchedule;
 
         history = new List<SaveDataLog>();
-        for (int i = 0; i < character.history.Count; i++) {
+        for (int i = 0; i < character.logComponent.history.Count; i++) {
             SaveDataLog data = new SaveDataLog();
-            data.Save(character.history[i]);
+            data.Save(character.logComponent.history[i]);
             history.Add(data);
         }
     }
@@ -313,9 +314,9 @@ public class SaveDataCharacter {
             character.SetRegionLocation(deathLocation); //set the specific location of this party, to the location it died at
             character.SetCurrentStructureLocation(deathStructure, false);
 
-            if (character.role != null) {
-                character.role.OnDeath(character);
-            }
+            // if (character.role != null) {
+            //     character.role.OnDeath(character);
+            // }
         }
     }
 
@@ -329,45 +330,45 @@ public class SaveDataCharacter {
     }
 
     public void LoadRelationships(Character character) {
-        for (int i = 0; i < alterEgos.Count; i++) {
-            alterEgos[i].LoadRelationships(character);
-        }
+        //for (int i = 0; i < alterEgos.Count; i++) {
+        //    alterEgos[i].LoadRelationships(character);
+        //}
     }
 
     public void LoadHomeStructure(Character character) {
         if (homeStructureID != -1) {
-            Settlement settlement = LandmarkManager.Instance.GetAreaByID(homeStructureAreaID);
-            LocationStructure structure = settlement.GetStructureByID(homeStructureType, homeStructureID);
-            character.MigrateHomeStructureTo(structure as Dwelling);
+            // NPCSettlement npcSettlement = LandmarkManager.Instance.GetAreaByID(homeStructureAreaID);
+            // LocationStructure structure = npcSettlement.GetStructureByID(homeStructureType, homeStructureID);
+            // character.MigrateHomeStructureTo(structure as IDwelling);
         }
     }
 
     public void LoadCharacterGridTileLocation(Character character) {
         if (gridTileLocation.z != -1f) {
-            Settlement settlement = LandmarkManager.Instance.GetAreaByID(gridTileLocationAreaID);
-            LocationGridTile gridTile = settlement.innerMap.map[(int) gridTileLocation.x, (int) gridTileLocation.y];
-
-            if (character.marker == null) {
-                character.CreateMarker();
-            }
-            character.LoadInitialCharacterPlacement(gridTile);
-
-            for (int i = 0; i < lethalHostilesInRangeIDs.Count; i++) {
-                Character target = CharacterManager.Instance.GetCharacterByID(lethalHostilesInRangeIDs[i]);
-                character.marker.AddHostileInRange(target, isLethal: true);
-            }
-            for (int i = 0; i < nonLethalHostilesInRangeIDs.Count; i++) {
-                Character target = CharacterManager.Instance.GetCharacterByID(nonLethalHostilesInRangeIDs[i]);
-                character.marker.AddHostileInRange(target, isLethal: false);
-            }
-            for (int i = 0; i < avoidInRangeIDs.Count; i++) {
-                Character target = CharacterManager.Instance.GetCharacterByID(avoidInRangeIDs[i]);
-                character.marker.AddAvoidInRange(target);
-            }
-
-            if (character.isDead) {
-                character.marker.OnDeath(gridTile);
-            }
+            // NPCSettlement npcSettlement = LandmarkManager.Instance.GetAreaByID(gridTileLocationAreaID);
+            // LocationGridTile gridTile = npcSettlement.innerMap.map[(int) gridTileLocation.x, (int) gridTileLocation.y];
+            //
+            // if (!character.marker) {
+            //     character.CreateMarker();
+            // }
+            // character.LoadInitialCharacterPlacement(gridTile);
+            //
+            // for (int i = 0; i < lethalHostilesInRangeIDs.Count; i++) {
+            //     Character target = CharacterManager.Instance.GetCharacterByID(lethalHostilesInRangeIDs[i]);
+            //     character.combatComponent.Fight(target, isLethal: true);
+            // }
+            // for (int i = 0; i < nonLethalHostilesInRangeIDs.Count; i++) {
+            //     Character target = CharacterManager.Instance.GetCharacterByID(nonLethalHostilesInRangeIDs[i]);
+            //     character.combatComponent.Fight(target, isLethal: false);
+            // }
+            // for (int i = 0; i < avoidInRangeIDs.Count; i++) {
+            //     Character target = CharacterManager.Instance.GetCharacterByID(avoidInRangeIDs[i]);
+            //     character.combatComponent.Flight(target);
+            // }
+            //
+            // if (character.isDead) {
+            //     character.marker.OnDeath(gridTile);
+            // }
         }
     }
 
@@ -378,14 +379,14 @@ public class SaveDataCharacter {
     public void LoadCharacterCurrentState(Character character) {
         if (hasCurrentState) {
             Character targetCharacter = null;
-            Settlement targetSettlement = null;
+            NPCSettlement targetNpcSettlement = null;
             if (currentState.targetCharacterID != -1) {
                 targetCharacter = CharacterManager.Instance.GetCharacterByID(currentState.targetCharacterID);
             }
             //if (currentState.targetAreaID != -1) {
-            //    targetSettlement = LandmarkManager.Instance.GetAreaByID(currentState.targetAreaID);
+            //    targetNpcSettlement = LandmarkManager.Instance.GetAreaByID(currentState.targetAreaID);
             //}
-            CharacterState loadedState = character.stateComponent.SwitchToState(currentState.characterState, targetCharacter, targetSettlement, currentState.duration, currentState.level);
+            CharacterState loadedState = character.stateComponent.SwitchToState(currentState.characterState, targetCharacter, targetNpcSettlement, currentState.duration, currentState.level);
             loadedState.SetCurrentDuration(currentState.currentDuration);
             //loadedState.SetIsUnending(currentState.isUnending);
 
@@ -406,7 +407,7 @@ public class SaveDataCharacter {
             //    if (dataStateJob.assignedCharacterID != -1) {
             //        Character assignedCharacter = CharacterManager.Instance.GetCharacterByID(dataStateJob.assignedCharacterID);
             //        stateJob.SetAssignedCharacter(assignedCharacter);
-            //        CharacterState newState = assignedCharacter.stateComponent.SwitchToState(stateJob.targetState, null, stateJob.targetSettlement);
+            //        CharacterState newState = assignedCharacter.stateComponent.SwitchToState(stateJob.targetState, null, stateJob.targetNpcSettlement);
             //        if (newState != null) {
             //            stateJob.SetAssignedState(newState);
             //        } else {
@@ -419,7 +420,7 @@ public class SaveDataCharacter {
 
     public void LoadCharacterHistory(Character character) {
         for (int i = 0; i < history.Count; i++) {
-            character.AddHistory(history[i].Load());
+            character.logComponent.AddHistory(history[i].Load());
         }
     }
 }

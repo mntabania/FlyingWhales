@@ -29,8 +29,8 @@ public class LocalizationManager : MonoBehaviour {
         }
     }
 	internal void Initialize(){
-		this.language = Utilities.defaultLanguage;
-		this.filePath = Application.streamingAssetsPath + "/" + this.language.ToString();
+		this.language = UtilityScripts.Utilities.defaultLanguage;
+		this.filePath = $"{Application.streamingAssetsPath}/{this.language}";
 		LoadLocalizedTexts ();
 	}
 	/*
@@ -59,7 +59,7 @@ public class LocalizationManager : MonoBehaviour {
 
 					for (int k = 0; k < loadedData.items.Count; k++) {
                         if (this._localizedText[categoryName][fileName].ContainsKey(loadedData.items[k].key)) {
-                            throw new System.Exception("Duplicate key " + loadedData.items[k].key + " in " + fileName);
+                            throw new System.Exception($"Duplicate key {loadedData.items[k].key} in {fileName}");
                         }
 						this._localizedText[categoryName][fileName].Add(loadedData.items [k].key, loadedData.items [k].value);   
 					}
@@ -79,13 +79,13 @@ public class LocalizationManager : MonoBehaviour {
 	public string GetLocalizedValue(string category, string file, string key){
 		string result = string.Empty;
         if (!this._localizedText.ContainsKey(category)) {
-            Debug.LogWarning("Localization error! " + category + "/");
+            Debug.LogWarning($"Localization error! {category}/");
             //throw new System.Exception("Localization error! " + category + "/");
         } else if (!this._localizedText[category].ContainsKey(file)) {
-            Debug.LogWarning("Localization error! " + category + "/" + file + "/");
+            Debug.LogWarning($"Localization error! {category}/{file}/");
             //throw new System.Exception("Localization error! " + category + "/" + file + "/");
         } else if (!this._localizedText[category][file].ContainsKey(key)) {
-            Debug.LogWarning("Localization error! " + category + "/" + file + "/" + key);
+            Debug.LogWarning($"Localization error! {category}/{file}/{key}");
             //throw new System.Exception("Localization error! " + category + "/" + file + "/" + key);
         } else {
             result = this._localizedText[category][file][key];
@@ -106,10 +106,10 @@ public class LocalizationManager : MonoBehaviour {
     public List<string> GetKeysLike(string category, string file, string keyLike, string[] except = null) {
         List<string> keys = new List<string>();
         if (!this._localizedText.ContainsKey(category)) {
-            Debug.LogWarning("Localization error! " + category + "/");
+            Debug.LogWarning($"Localization error! {category}/");
             //throw new System.Exception("Localization error! " + category + "/");
         } else if (!this._localizedText[category].ContainsKey(file)) {
-            Debug.LogWarning("Localization error! " + category + "/" + file + "/");
+            Debug.LogWarning($"Localization error! {category}/{file}/");
             //throw new System.Exception("Localization error! " + category + "/" + file + "/");
         }
         Dictionary<string, string> logs = this.localizedText[category][file];
@@ -136,10 +136,10 @@ public class LocalizationManager : MonoBehaviour {
     }
     public bool HasKeysLike(string category, string file, string keyLike, string[] except = null) {
         if (!this._localizedText.ContainsKey(category)) {
-            Debug.LogWarning("Localization error! " + category + "/");
+            Debug.LogWarning($"Localization error! {category}/");
             //throw new System.Exception("Localization error! " + category + "/");
         } else if (!this._localizedText[category].ContainsKey(file)) {
-            Debug.LogWarning("Localization error! " + category + "/" + file + "/");
+            Debug.LogWarning($"Localization error! {category}/{file}/");
             //throw new System.Exception("Localization error! " + category + "/" + file + "/");
         }
         Dictionary<string, string> logs = this.localizedText[category][file];

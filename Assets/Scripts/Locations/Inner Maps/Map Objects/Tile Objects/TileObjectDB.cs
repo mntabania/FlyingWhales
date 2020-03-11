@@ -11,14 +11,14 @@ public static class TileObjectDB {
             constructionCost = 10,
             constructionTime = 12,
             maxHP = 10000,
-            neededTraitType = "Builder"
+            neededTraitTypes =  new string[] { "Builder" },
         } },
 
         { TILE_OBJECT_TYPE.BED, new TileObjectData() {
             constructionCost = 10,
             constructionTime = 12,
             maxHP = 1000,
-            neededTraitType = "Builder",
+            neededTraitTypes =  new string[] { "Builder" },
             providedFacilities = new ProvidedFacility[] {
                 new ProvidedFacility() { type = FACILITY_TYPE.TIREDNESS_RECOVERY, value = 20 }
             }
@@ -28,7 +28,7 @@ public static class TileObjectDB {
             constructionCost = 10,
             constructionTime = 12,
             maxHP = 1000,
-            neededTraitType = "Builder",
+            neededTraitTypes =  new string[] { "Builder" },
             providedFacilities = new ProvidedFacility[] {
                  new ProvidedFacility() { type = FACILITY_TYPE.SIT_DOWN_SPOT, value = 10 }
             }
@@ -38,7 +38,7 @@ public static class TileObjectDB {
             constructionCost = 10,
             constructionTime = 12,
             maxHP = 1000,
-            neededTraitType = "Builder",
+            neededTraitTypes =  new string[] { "Builder" },
             providedFacilities = new ProvidedFacility[] {
                 new ProvidedFacility() { type = FACILITY_TYPE.HAPPINESS_RECOVERY, value = 10 }
             }
@@ -47,7 +47,7 @@ public static class TileObjectDB {
             constructionCost = 10,
             constructionTime = 12,
             maxHP = 1000,
-            neededTraitType = "Builder",
+            neededTraitTypes =  new string[] { "Builder" },
             providedFacilities = new ProvidedFacility[] {
                 new ProvidedFacility() { type = FACILITY_TYPE.FULLNESS_RECOVERY, value = 20 },
                 new ProvidedFacility() { type = FACILITY_TYPE.SIT_DOWN_SPOT, value = 5 }
@@ -57,8 +57,30 @@ public static class TileObjectDB {
             constructionCost = 10,
             constructionTime = 12,
             maxHP = 1000,
-            neededTraitType = "Builder",
+            neededTraitTypes =  new string[] { "Builder" },
         } },
+        { TILE_OBJECT_TYPE.BIG_TREE_OBJECT, new TileObjectData() {
+            constructionCost = 10,
+            constructionTime = 12,
+            maxHP = 1000,
+            neededTraitTypes =  new string[] { "Builder" },
+            occupiedSize =  new Point(2, 2),
+        } },
+        { TILE_OBJECT_TYPE.HEALING_POTION, new TileObjectData() {
+            constructionCost = 25,
+            constructionTime = 12,
+            maxHP = 1000,
+            neededTraitTypes = new string[] { "Healer", "Herbalist" },
+        } },
+        { TILE_OBJECT_TYPE.LOCUST_SWARM, new TileObjectData() {
+            maxHP = 100,
+        } },
+        //{ TILE_OBJECT_TYPE.WATER_BUCKET, new TileObjectData() {
+        //    constructionCost = 25,
+        //    constructionTime = 12,
+        //    maxHP = 1000,
+        //    neededTraitTypes =  new string[] { "Builder" },
+        //} },
     };
 
     public static bool HasTileObjectData(TILE_OBJECT_TYPE objType) {
@@ -85,8 +107,10 @@ public struct TileObjectData {
     public int constructionCost;
     public int constructionTime; //in ticks
     public int maxHP;
-    public string neededTraitType;
+    public string[] neededTraitTypes;
     public ProvidedFacility[] providedFacilities;
+    //when this object is placed, how many tiles does it occupy? (Default is 0,0) meaning this object only occupies 1 tile.
+    public Point occupiedSize; 
 
     public bool CanProvideFacility(FACILITY_TYPE type) {
         if (providedFacilities != null) {
@@ -105,8 +129,9 @@ public struct TileObjectData {
                 constructionCost = 10,
                 constructionTime = 12,
                 maxHP = 1000,
-                neededTraitType = "Builder",
-                providedFacilities = null
+                neededTraitTypes = new string[] { "Builder" },
+                providedFacilities = null,
+                occupiedSize = new Point(1, 1),
             };
         }
     }

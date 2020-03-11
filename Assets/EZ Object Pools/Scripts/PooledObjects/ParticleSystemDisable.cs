@@ -16,7 +16,7 @@ public class ParticleSystemDisable : PooledObject
     {
         if (Particles == null)
         {
-            Debug.LogError("ParticleSystemDisable " + gameObject.name +  " could not find any particle systems!");
+            Debug.LogError($"ParticleSystemDisable {gameObject.name} could not find any particle systems!");
         }
     }
 

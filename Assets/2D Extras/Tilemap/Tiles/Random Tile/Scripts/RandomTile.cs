@@ -71,7 +71,7 @@ namespace UnityEngine.Tilemaps
 
 			for (int i = 0; i < count; i++)
 			{
-				tile.m_Sprites[i] = (Sprite) EditorGUILayout.ObjectField("Sprite " + (i+1), tile.m_Sprites[i], typeof(Sprite), false, null);
+				tile.m_Sprites[i] = (Sprite) EditorGUILayout.ObjectField($"Sprite {(i + 1)}", tile.m_Sprites[i], typeof(Sprite), false, null);
 			}		
 			if (EditorGUI.EndChangeCheck())
 				EditorUtility.SetDirty(tile);

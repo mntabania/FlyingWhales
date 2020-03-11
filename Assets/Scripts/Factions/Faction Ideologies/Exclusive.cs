@@ -39,10 +39,10 @@ public class Exclusive : FactionIdeology {
         } else if (category == EXCLUSIVE_IDEOLOGY_CATEGORIES.RACE) {
             return character.race == raceRequirement;
         }
-        return character.traitContainer.GetNormalTrait<Trait>(traitRequirement) != null;
+        return character.traitContainer.HasTrait(traitRequirement);
     }
     public override string GetRequirementsForJoiningAsString() {
-        return category + ": " + GetRequirementAsString();
+        return $"{category}: {GetRequirementAsString()}";
     }
     #endregion
 

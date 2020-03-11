@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RaiseDead : PlayerJobAction {
+public class RaiseDead : PlayerSpell {
 
     private int _level;
 
-    public RaiseDead() : base(INTERVENTION_ABILITY.RAISE_DEAD) {
+    public RaiseDead() : base(SPELL_TYPE.RAISE_DEAD) {
         tier = 2;
         SetDefaultCooldownTime(24);
-        targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER, JOB_ACTION_TARGET.TILE_OBJECT };
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER, SPELL_TARGET.TILE_OBJECT };
         //abilityTags.Add(ABILITY_TAG.MAGIC);
     }
 
@@ -29,7 +29,7 @@ public class RaiseDead : PlayerJobAction {
         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_raise_dead");
         log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddLogToInvolvedObjects();
-        PlayerManager.Instance.player.ShowNotification(log);
+        PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
     }
 
     protected override bool CanPerformActionTowards(Character targetCharacter) {
@@ -40,14 +40,6 @@ public class RaiseDead : PlayerJobAction {
             return false;
         }
         return base.CanPerformActionTowards(targetCharacter);
-    }
-    protected override bool CanPerformActionTowards(IPointOfInterest targetPOI) {
-        if(targetPOI is Character) {
-            return CanPerformActionTowards(targetPOI as Character);
-        }else if (targetPOI is Tombstone) {
-            return CanPerformActionTowards((targetPOI as Tombstone).character);
-        }
-        return base.CanPerformActionTowards(targetPOI);
     }
     public override bool CanTarget(IPointOfInterest targetPOI, ref string hoverText) {
         if (!(targetPOI is Character) && !(targetPOI is Tombstone)) {
@@ -80,8 +72,13 @@ public class RaiseDead : PlayerJobAction {
     #endregion
 }
 
-public class RaiseDeadData : PlayerJobActionData {
+public class RaiseDeadData : SpellData {
+    public override SPELL_TYPE ability => SPELL_TYPE.RAISE_DEAD;
     public override string name { get { return "Raise Dead"; } }
     public override string description { get { return "Returns a character to life."; } }
-    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.MONSTER; } }
+    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.MONSTER; } }
+
+    public RaiseDeadData() : base() {
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER, SPELL_TARGET.TILE_OBJECT };
+    }
 }

@@ -7,32 +7,32 @@ using UnityEngine.UI;
 public class VerticalScroller : MonoBehaviour {
 
     private ScrollRect scrollView;
-    private TweenPosition tweener;
+    // private TweenPosition tweener;
     [SerializeField] private Button scrollUpBtn;
     [SerializeField] private Button scrollDownBtn;
     [SerializeField] private float elementHeight;
 
     private void Awake() {
         scrollView = this.GetComponent<ScrollRect>();
-        tweener = scrollView.content.gameObject.GetComponent<TweenPosition>();
+        // tweener = scrollView.content.gameObject.GetComponent<TweenPosition>();
     }
 
     public void ScrollUp() {
-        tweener.from = scrollView.content.transform.localPosition;
-        tweener.to = scrollView.content.transform.localPosition;
-        tweener.to.y -= elementHeight;
-        tweener.ResetToBeginning();
-        tweener.enabled = true;
-        tweener.PlayForward();
+        // tweener.from = scrollView.content.transform.localPosition;
+        // tweener.to = scrollView.content.transform.localPosition;
+        // tweener.to.y -= elementHeight;
+        // tweener.ResetToBeginning();
+        // tweener.enabled = true;
+        // tweener.PlayForward();
     }
 
     public void ScrollDown() {
-        tweener.from = scrollView.content.transform.localPosition;
-        tweener.to = scrollView.content.transform.localPosition;
-        tweener.to.y += elementHeight;
-        tweener.ResetToBeginning();
-        tweener.enabled = true;
-        tweener.PlayForward();
+        // tweener.from = scrollView.content.transform.localPosition;
+        // tweener.to = scrollView.content.transform.localPosition;
+        // tweener.to.y += elementHeight;
+        // tweener.ResetToBeginning();
+        // tweener.enabled = true;
+        // tweener.PlayForward();
     }
 
     public void OnScroll(Vector2 scrollPos) {

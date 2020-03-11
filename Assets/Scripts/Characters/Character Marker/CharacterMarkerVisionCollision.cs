@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using UnityEngine;
 using Traits;
 
@@ -16,11 +17,11 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
         if (parentMarker.inVisionPOIs != null) {
             parentMarker.ClearPOIsInVisionRange();
         }
-        if (parentMarker.hostilesInRange != null) {
-            parentMarker.ClearHostilesInRange();
+        if (parentMarker.character != null && parentMarker.character.combatComponent.hostilesInRange != null) {
+            parentMarker.character.combatComponent.ClearHostilesInRange();
         }
-        if (parentMarker.avoidInRange != null) {
-            parentMarker.ClearAvoidInRange();
+        if (parentMarker.character != null && parentMarker.character.combatComponent.avoidInRange != null) {
+            parentMarker.character.combatComponent.ClearAvoidInRange();
         }
     }
 
@@ -52,15 +53,23 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
                 }
             }
             
-            string collisionSummary = parentMarker.name + " collided with " + collidedWith.poi.name;
+            string collisionSummary = $"{parentMarker.name} collided with {collidedWith.poi.name}";
             if (collidedWith.poi.gridTileLocation == null) {
                 return; //ignore, Usually happens if an item is picked up just as this character sees it.
             }
+            List<Trait> traitOverrideFunctions = collidedWith.poi.traitContainer.GetTraitOverrideFunctions(TraitManager.Collision_Trait);
+            if(traitOverrideFunctions != null) {
+                for (int i = 0; i < traitOverrideFunctions.Count; i++) {
+                    Trait trait = traitOverrideFunctions[i];
+                    trait.OnCollideWith(parentMarker.character, collidedWith.poi);
+                }
+            }
+
             //when this collides with a poi trigger
             //check if the poi trigger is in the same structure as this
             if (collidedWith.poi.gridTileLocation.structure == parentMarker.character.gridTileLocation.structure || collidedWith.IgnoresStructureDifference()) {
                 //if it is, just follow the normal procedure when a poi becomes in range
-                collisionSummary += "\n-has same structure as " + parentMarker.character.name + " adding as in range";
+                collisionSummary += $"\n-has same structure as {parentMarker.character.name} adding as in range";
                 NormalEnterHandling(collidedWith.poi);
             } else {
                 //if it is not, check both character's structure types
@@ -69,14 +78,15 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
                 if (collidedWith.poi.gridTileLocation != null && collidedWith.poi.gridTileLocation.structure != null 
                     && parentMarker.character.gridTileLocation != null && parentMarker.character.gridTileLocation.structure != null
                     && collidedWith.poi.gridTileLocation.structure.structureType.IsOpenSpace() && parentMarker.character.gridTileLocation.structure.structureType.IsOpenSpace()) {
-                    collisionSummary += "\n-has different structure with " + parentMarker.character.name + " but both are in open space, allowing vision collision.";
+                    collisionSummary +=
+                        $"\n-has different structure with {parentMarker.character.name} but both are in open space, allowing vision collision.";
                     NormalEnterHandling(collidedWith.poi);
                 }
                 //if not, add the poi to the list of pois in different structures instead
                 //once there, it can only be removed from there if the poi exited this trigger or the poi moved 
                 //to the same structure that this character is in
                 else {
-                    collisionSummary += "\n-has different structure with " + parentMarker.character.name + " queuing...";
+                    collisionSummary += $"\n-has different structure with {parentMarker.character.name} queuing...";
                     AddPOIAsInRangeButDifferentStructure(collidedWith.poi);
                 }
             }
@@ -105,11 +115,14 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
             targetCharacter = poi as Character;
         }
         parentMarker.AddPOIAsInVisionRange(poi);
-        if(targetCharacter != null && parentMarker.character.traitContainer.GetNormalTrait<Trait>("Resting", "Unconscious") == null) {
-            parentMarker.AddHostileInRange(targetCharacter);
-        } else if (poi is TornadoTileObject && parentMarker.character.traitContainer.GetNormalTrait<Trait>("Elemental Master") == null) {
-            parentMarker.AddAvoidInRange(poi);
-        }
+        // if (targetCharacter != null && parentMarker.character.IsHostileWith(targetCharacter)) {
+        //     parentMarker.character.combatComponent.FightOrFlight(targetCharacter);
+        // }
+        //if (targetCharacter != null && parentMarker.character.traitContainer.GetNormalTrait<Trait>("Resting", "Unconscious") == null) {
+        //    parentMarker.character.combatComponent.AddHostileInRange(targetCharacter);
+        //} else if (poi is TornadoTileObject && parentMarker.character.traitContainer.GetNormalTrait<Trait>("Elemental Master") == null) {
+        //    parentMarker.character.combatComponent.AddAvoidInRange(poi);
+        //}
     }
 
     #region Different Structure Handling
@@ -122,7 +135,7 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
     private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {
          //if the character that arrived at the new structure is in this character different structure list
          //check if that character now has the same structure as this character,
-        if (poisInRangeButDiffStructure.Contains(character) && structure == parentMarker.character.currentStructure) {
+        if (poisInRangeButDiffStructure.Contains(character) && (structure == parentMarker.character.currentStructure || (structure.structureType.IsOpenSpace() && parentMarker.character.currentStructure.structureType.IsOpenSpace()))) {
             //if it does, add as normal
             NormalEnterHandling(character);
             RemovePOIAsInRangeButDifferentStructure(character);
@@ -135,8 +148,8 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
             }
             //remove from vision and hostile range
             parentMarker.RemovePOIFromInVisionRange(character);
-            //parentMarker.RemoveHostileInRange(character);
-            //parentMarker.RemoveAvoidInRange(character);
+            //parentcombatComponent.RemoveHostileInRange(character);
+            //parentcombatComponent.RemoveAvoidInRange(character);
             AddPOIAsInRangeButDifferentStructure(character);
         }
         //if the character that changed structures is this character
@@ -160,16 +173,16 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
                 if (poi.gridTileLocation == null || poi.gridTileLocation.structure == null) {
                     parentMarker.RemovePOIFromInVisionRange(poi);
                     //if (poi is Character) {
-                    //    //parentMarker.RemoveHostileInRange(poi as Character);
-                    //    parentMarker.RemoveAvoidInRange(poi as Character);
+                    //    //parentcombatComponent.RemoveHostileInRange(poi as Character);
+                    //    parentcombatComponent.RemoveAvoidInRange(poi as Character);
                     //}
                 } else if (poi.gridTileLocation.structure != parentMarker.character.currentStructure 
                     && (!poi.gridTileLocation.structure.structureType.IsOpenSpace() || !parentMarker.character.currentStructure.structureType.IsOpenSpace())) {
                     //if the character in vision no longer has the same structure as the character, and at least one of them is not in an open space structure
                     parentMarker.RemovePOIFromInVisionRange(poi);
                     //if (poi is Character) {
-                    //    //parentMarker.RemoveHostileInRange(poi as Character);
-                    //    parentMarker.RemoveAvoidInRange(poi as Character);
+                    //    //parentcombatComponent.RemoveHostileInRange(poi as Character);
+                    //    parentcombatComponent.RemoveAvoidInRange(poi as Character);
                     //}
                     AddPOIAsInRangeButDifferentStructure(poi);
                 }
@@ -180,9 +193,9 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
 
     [ContextMenu("Log Diff Struct")]
     public void LogCharactersInDifferentStructures() {
-        string summary = parentMarker.character.name + "'s diff structure pois";
+        string summary = $"{parentMarker.character.name}'s diff structure pois";
         for (int i = 0; i < poisInRangeButDiffStructure.Count; i++) {
-            summary += "\n" + poisInRangeButDiffStructure[i].name;
+            summary += $"\n{poisInRangeButDiffStructure[i].name}";
         }
         Debug.Log(summary);
     }

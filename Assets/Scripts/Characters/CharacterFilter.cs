@@ -20,15 +20,15 @@ public class CharacterFilter {
                 return false;
             }
         }
-        if (allowedRoles != null) {
-            if (character.role == null) {
-                return false;
-            } else {
-                if (!allowedRoles.Contains(character.role.roleType)) {
-                    return false;
-                }
-            }
-        }
+        // if (allowedRoles != null) {
+        //     if (character.role == null) {
+        //         return false;
+        //     } else {
+        //         if (!allowedRoles.Contains(character.role.roleType)) {
+        //             return false;
+        //         }
+        //     }
+        // }
         if (allowedClasses != null) {
             if (character.characterClass == null) {
                 return false;

@@ -2,29 +2,29 @@
 using System.Collections.Generic;
 using Inner_Maps;
 using UnityEngine;
+using System.Linq;
+using Inner_Maps.Location_Structures;
 
 namespace Traits {
-    public class SerialKiller : Trait {
+    public class Psychopath : Trait {
 
         public SerialVictim victim1Requirement { get; private set; }
         //public SerialVictim victim2Requirement { get; private set; }
         public Character character { get; private set; }
 
         public Character targetVictim { get; private set; }
-        public bool isFollowing { get; private set; }
-        public bool hasStartedFollowing { get; private set; }
+        //public bool isFollowing { get; private set; }
+        //public bool hasStartedFollowing { get; private set; }
+        private Dictionary<Character, OpinionData> opinionCopy;
 
-        public SerialKiller() {
-            name = "Serial Killer";
+        public Psychopath() {
+            name = "Psychopath";
             description = "Serial killers have a specific subset of target victims that they may kidnap and then kill.";
-            thoughtText = "[Character] is a serial killer.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEUTRAL;
-            
-            
-            
             ticksDuration = 0;
             canBeTriggered = true;
+            opinionCopy = new Dictionary<Character, OpinionData>();
         }
 
         #region Overrides
@@ -32,47 +32,87 @@ namespace Traits {
             base.OnAddTrait(sourceCharacter);
             if (sourceCharacter is Character) {
                 character = sourceCharacter as Character;
-                if (victim1Requirement == null) { // || victim2Requirement == null
-                    GenerateSerialVictims();
-                }
-                Messenger.AddListener(Signals.TICK_STARTED, CheckSerialKiller);
-                Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+                character.needsComponent.SetHappiness(50f);
+                character.needsComponent.AdjustDoNotGetBored(1);
+                CopyOpinionAndSetAllOpinionToZero();
+                //if (victim1Requirement == null) { // || victim2Requirement == null
+                //    GenerateSerialVictims();
+                //}
+                //Messenger.AddListener(Signals.TICK_STARTED, CheckSerialKiller);
+                //Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+                //Messenger.AddListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
+                character.behaviourComponent.AddBehaviourComponent(typeof(SerialKillerBehaviour));
             }
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
             if (character != null) {
-                Messenger.RemoveListener(Signals.TICK_STARTED, CheckSerialKiller);
-                Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+                character.needsComponent.AdjustDoNotGetBored(-1);
+                BringBackOpinion();
+                //Messenger.RemoveListener(Signals.TICK_STARTED, CheckSerialKiller);
+                //Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+                //Messenger.RemoveListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
+                character.behaviourComponent.RemoveBehaviourComponent(typeof(SerialKillerBehaviour));
             }
             base.OnRemoveTrait(sourceCharacter, removedBy);
         }
-        public override void OnSeePOI(IPointOfInterest targetPOI, Character character) {
-            base.OnSeePOI(targetPOI, character);
+        public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
             if (targetPOI is Character) {
                 Character potentialVictim = targetPOI as Character;
                 CheckTargetVictimIfStillAvailable();
                 if (targetVictim == null) {
-                    if (DoesCharacterFitAnyVictimRequirements(potentialVictim)) {
+                    if (!potentialVictim.isDead && DoesCharacterFitAnyVictimRequirements(potentialVictim)) {
                         SetTargetVictim(potentialVictim);
 
                         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "serial_killer_new_victim");
                         log.AddToFillers(this.character, this.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                         log.AddToFillers(targetVictim, targetVictim.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                        this.character.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+                        this.character.logComponent.RegisterLog(log, onlyClickedCharacter: false);
+                        return true;
                     }
                 }
             }
+            return base.OnSeePOI(targetPOI, characterThatWillDoJob);
         }
         public override string TriggerFlaw(Character character) {
-            if (!ForceHuntVictim()) {
+            if (targetVictim == null) {
+                for (int i = 0; i < character.currentRegion.charactersAtLocation.Count; i++) {
+                    Character potentialVictim = character.currentRegion.charactersAtLocation[i];
+                    if (IsCharacterApplicableAsVictim(potentialVictim)) {
+                        continue;
+                    }
+                    if (!potentialVictim.isDead && DoesCharacterFitAnyVictimRequirements(potentialVictim)) {
+                        SetTargetVictim(potentialVictim);
+
+                        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "serial_killer_new_victim");
+                        log.AddToFillers(this.character, this.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                        log.AddToFillers(targetVictim, targetVictim.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                        this.character.logComponent.RegisterLog(log, onlyClickedCharacter: false);
+                        break;
+                    }
+                }
+            }
+            if (targetVictim == null || !CreateHuntVictimJob()) {
                 return "fail";
             }
             return base.TriggerFlaw(character);
         }
+        public override void OnTickStarted() {
+            base.OnTickStarted();
+            CheckSerialKiller();
+        }
         #endregion
 
-        public void SetVictim1Requirement(SerialVictim serialVictim) {
+        public void SetVictimRequirements(SerialVictim serialVictim) {
             victim1Requirement = serialVictim;
+            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "became_serial_killer");
+            log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddToFillers(null, victim1Requirement.text, LOG_IDENTIFIER.STRING_1);
+            log.AddLogToInvolvedObjects();
+            // PlayerManager.Instance.player.ShowNotification(log);
+        }
+        public void SetVictimRequirements(SERIAL_VICTIM_TYPE victimFirstType, List<string> victimFirstDesc, SERIAL_VICTIM_TYPE victimSecondType, List<string> victimSecondDesc) {
+            SetVictimRequirements(new SerialVictim(victimFirstType, victimFirstDesc, victimSecondType, victimSecondDesc));
+
         }
         //public void SetVictim2Requirement(SerialVictim serialVictim) {
         //    victim2Requirement = serialVictim;
@@ -87,155 +127,177 @@ namespace Traits {
             }
             targetVictim = victim;
         }
-        public void SetIsFollowing(bool state) {
-            isFollowing = state;
-        }
-        public void SetHasStartedFollowing(bool state) {
-            if (hasStartedFollowing != state) {
-                hasStartedFollowing = state;
-            }
-        }
-
+        //public void SetIsFollowing(bool state) {
+        //    isFollowing = state;
+        //}
+        //public void SetHasStartedFollowing(bool state) {
+        //    if (hasStartedFollowing != state) {
+        //        hasStartedFollowing = state;
+        //    }
+        //}
         private void OnCharacterDied(Character deadCharacter) {
             if (deadCharacter == targetVictim) {
-                CheckTargetVictimIfStillAvailable();
+                //CheckTargetVictimIfStillAvailable();
+                SetTargetVictim(null);
             }
         }
-
+        private void OnCharacterMissing(Character missingCharacter) {
+            if (missingCharacter == targetVictim) {
+                SetTargetVictim(null);
+            }
+        }
         private void CheckSerialKiller() {
-            if (character.isDead || character.doNotDisturb || !character.canMove) { //character.doNotDisturb > 0 || !character.canMove //character.currentArea != InnerMapManager.Instance.currentlyShowingArea
-                if (hasStartedFollowing) {
-                    StopFollowing();
-                    SetHasStartedFollowing(false);
-                }
-                return;
-            }
-            if (character.jobQueue.HasJob(JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM)) {
-                return;
-            }
-            if (!hasStartedFollowing) {
-                HuntVictim();
-            } else {
-                CheckerWhileFollowingTargetVictim();
-            }
-        }
-
-
-        private void HuntVictim() {
-            if (character.needsComponent.isForlorn || character.needsComponent.isLonely) {
-                int chance = UnityEngine.Random.Range(0, 100);
-                if (chance < 20) {
-                    CheckTargetVictimIfStillAvailable();
-                    if (targetVictim != null) {
-                        character.CancelAllJobs();
-                        if (character.stateComponent.currentState != null) {
-                            character.stateComponent.ExitCurrentState();
-                            //if (character.stateComponent.currentState != null) {
-                            //    character.stateComponent.currentState.OnExitThisState();
-                            //}
-                        }
-                        FollowTargetVictim();
-                        SetHasStartedFollowing(true);
-                    }
-                }
-            }
-        }
-        private bool ForceHuntVictim() {
             CheckTargetVictimIfStillAvailable();
-            if (hasStartedFollowing && targetVictim != null) {
-                return true;
-            }
-            if (targetVictim == null) {
-                for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
-                    Character potentialVictim = CharacterManager.Instance.allCharacters[i];
-                    if (potentialVictim.currentRegion != this.character.currentRegion || potentialVictim.isDead || potentialVictim is Summon) {
-                        continue;
-                    }
-                    if (DoesCharacterFitAnyVictimRequirements(potentialVictim)) {
-                        SetTargetVictim(potentialVictim);
+            //if (character.isDead || !character.canPerform || !character.canMove) { //character.doNotDisturb > 0 || !character.canMove //character.currentArea != InnerMapManager.Instance.currentlyShowingArea
+            //    if (hasStartedFollowing) {
+            //        StopFollowing();
+            //        SetHasStartedFollowing(false);
+            //    }
+            //    return;
+            //}
+            //if (character.jobQueue.HasJob(JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM)) {
+            //    return;
+            //}
+            //if (!hasStartedFollowing) {
+            //    HuntVictim();
+            //} else {
+            //    CheckerWhileFollowingTargetVictim();
+            //}
+        }
+        //private void HuntVictim() {
+        //    if (character.needsComponent.isSulking || character.needsComponent.isBored) {
+        //        int chance = UnityEngine.Random.Range(0, 100);
+        //        if (chance < 20) {
+        //            //CheckTargetVictimIfStillAvailable();
+        //            if (targetVictim != null) {
+        //                character.CancelAllJobs();
+        //                if (character.stateComponent.currentState != null) {
+        //                    character.stateComponent.ExitCurrentState();
+        //                    //if (character.stateComponent.currentState != null) {
+        //                    //    character.stateComponent.currentState.OnExitThisState();
+        //                    //}
+        //                }
+        //                FollowTargetVictim();
+        //                SetHasStartedFollowing(true);
+        //            }
+        //        }
+        //    }
+        //}
+        //private bool ForceHuntVictim() {
+        //    CheckTargetVictimIfStillAvailable();
+        //    if (hasStartedFollowing && targetVictim != null) {
+        //        return true;
+        //    }
+        //    if (targetVictim == null) {
+        //        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+        //            Character potentialVictim = CharacterManager.Instance.allCharacters[i];
+        //            if (potentialVictim.currentRegion != this.character.currentRegion || potentialVictim.isDead || potentialVictim is Summon) {
+        //                continue;
+        //            }
+        //            if (DoesCharacterFitAnyVictimRequirements(potentialVictim)) {
+        //                SetTargetVictim(potentialVictim);
 
-                        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "serial_killer_new_victim");
-                        log.AddToFillers(this.character, this.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                        log.AddToFillers(targetVictim, targetVictim.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                        this.character.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
-                        break;
-                    }
-                }
-            }
+        //                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "serial_killer_new_victim");
+        //                log.AddToFillers(this.character, this.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        //                log.AddToFillers(targetVictim, targetVictim.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        //                this.character.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+        //                break;
+        //            }
+        //        }
+        //    }
+        //    if (targetVictim != null) {
+        //        character.CancelAllJobs();
+        //        if (character.stateComponent.currentState != null) {
+        //            character.stateComponent.ExitCurrentState();
+        //            //if (character.stateComponent.currentState != null) {
+        //            //    character.stateComponent.currentState.OnExitThisState();
+        //            //}
+        //        }
+        //        FollowTargetVictim();
+        //        SetHasStartedFollowing(true);
+        //        return true;
+        //    }
+        //    return false;
+        //}
+        //private void CheckerWhileFollowingTargetVictim() {
+        //    if (isFollowing) {
+        //        if (!character.currentParty.icon.isTravelling || character.marker.targetPOI != targetVictim) {
+        //            SetIsFollowing(false);
+        //            if (character.marker.targetPOI != targetVictim) {
+        //                SetHasStartedFollowing(false);
+        //            }
+        //            return;
+        //        }
+
+        //        CheckTargetVictimIfStillAvailable();
+        //        if (targetVictim != null) {
+        //            if (character.marker.inVisionCharacters.Contains(targetVictim)) {
+        //                StopFollowing();
+        //            }
+        //            if (character.marker.CanDoStealthActionToTarget(targetVictim)) {
+        //                CreateHuntVictimJob();
+        //            }
+        //        }
+        //    } else {
+        //        CheckTargetVictimIfStillAvailable();
+        //        if (targetVictim != null) {
+        //            if (!character.marker.inVisionCharacters.Contains(targetVictim)) {
+        //                FollowTargetVictim();
+        //            } else if (character.marker.CanDoStealthActionToTarget(targetVictim)) {
+        //                CreateHuntVictimJob();
+        //            }
+        //        } else {
+        //            SetHasStartedFollowing(false);
+        //        }
+        //    }
+        //}
+        //private void StopFollowing() {
+        //    if (isFollowing) {
+        //        SetIsFollowing(false);
+        //        character.marker.StopMovement();
+        //    }
+        //}
+        //private void FollowTargetVictim() {
+        //    if (!isFollowing) {
+        //        SetIsFollowing(true);
+        //        character.marker.GoToPOI(targetVictim);
+        //    }
+        //}
+        public void CheckTargetVictimIfStillAvailable() {
             if (targetVictim != null) {
-                character.CancelAllJobs();
-                if (character.stateComponent.currentState != null) {
-                    character.stateComponent.ExitCurrentState();
-                    //if (character.stateComponent.currentState != null) {
-                    //    character.stateComponent.currentState.OnExitThisState();
+                if (IsCharacterApplicableAsVictim(targetVictim)) {
+                    SetTargetVictim(null);
+                    //if (hasStartedFollowing) {
+                    //    StopFollowing();
+                    //    SetHasStartedFollowing(false);
                     //}
                 }
-                FollowTargetVictim();
-                SetHasStartedFollowing(true);
-                return true;
-            }
-            return false;
-        }
-        private void CheckerWhileFollowingTargetVictim() {
-            if (isFollowing) {
-                if (!character.currentParty.icon.isTravelling || character.marker.targetPOI != targetVictim) {
-                    SetIsFollowing(false);
-                    if (character.marker.targetPOI != targetVictim) {
-                        SetHasStartedFollowing(false);
-                    }
-                    return;
-                }
-
-                CheckTargetVictimIfStillAvailable();
-                if (targetVictim != null) {
-                    if (character.marker.inVisionCharacters.Contains(targetVictim)) {
-                        StopFollowing();
-                    }
-                    if (character.marker.CanDoStealthActionToTarget(targetVictim)) {
-                        CreateHuntVictimJob();
-                    }
-                }
-            } else {
-                CheckTargetVictimIfStillAvailable();
-                if (targetVictim != null) {
-                    if (!character.marker.inVisionCharacters.Contains(targetVictim)) {
-                        FollowTargetVictim();
-                    } else if (character.marker.CanDoStealthActionToTarget(targetVictim)) {
-                        CreateHuntVictimJob();
-                    }
-                } else {
-                    SetHasStartedFollowing(false);
-                }
             }
         }
-        private void StopFollowing() {
-            if (isFollowing) {
-                SetIsFollowing(false);
-                character.marker.StopMovement();
-            }
+        private bool IsCharacterApplicableAsVictim(Character target) {
+            return target.currentRegion != character.currentRegion || target.isBeingSeized || target.isDead || target.isMissing;
         }
-        private void FollowTargetVictim() {
-            if (!isFollowing) {
-                SetIsFollowing(true);
-                character.marker.GoToPOI(targetVictim);
-            }
-        }
-        private void CheckTargetVictimIfStillAvailable() {
-            if (targetVictim != null) {
-                if (targetVictim.currentRegion != this.character.currentRegion || targetVictim.isDead || targetVictim is Summon) {
-                    SetTargetVictim(null);
-                    if (hasStartedFollowing) {
-                        StopFollowing();
-                        SetHasStartedFollowing(false);
-                    }
-                }
-            }
-        }
-        public void CreateHuntVictimJob() {
+        public bool CreateHuntVictimJob() {
             if (character.jobQueue.HasJob(JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM)) {
-                return;
+                return false;
             }
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM, INTERACTION_TYPE.RITUAL_KILLING, targetVictim, character);
+            if (character.homeStructure == null || character.homeStructure.residents.Count > 1) {
+                LocationGridTile outsideSettlementTile = character.currentRegion.GetRandomOutsideSettlementLocationGridTileWithPathTo(character.gridTileLocation);
+                if(outsideSettlementTile != null) {
+                    job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { outsideSettlementTile.structure, outsideSettlementTile });
+                } else if (character.homeStructure != null) {
+                    job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { character.homeStructure });
+                } else {
+                    LocationStructure structure = character.currentRegion.GetStructureOfTypeWithoutSettlement(STRUCTURE_TYPE.WILDERNESS);
+                    job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { structure });
+                }
+            } else {
+                job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { character.homeStructure });
+            }
+            job.SetIsStealth(true);
+            character.jobQueue.AddJobInQueue(job);
+            return true;
             //GoapAction goapAction6 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.BURY_CHARACTER, character, targetVictim);
             //GoapAction goapAction5 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.CARRY_CORPSE, character, targetVictim);
             //GoapAction goapAction4 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.RITUAL_KILLING, character, targetVictim);
@@ -247,12 +309,6 @@ namespace Traits {
             ////goapAction3.SetWillAvoidCharactersWhileMoving(true);
             ////goapAction6.SetWillAvoidCharactersWhileMoving(true);
 
-            //LocationStructure wilderness = character.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-            //if (character.homeStructure.residents.Count > 1) {
-            //    goapAction3.InitializeOtherData(new object[] { wilderness });
-            //} else {
-            //    goapAction3.InitializeOtherData(new object[] { character.homeStructure });
-            //}
             //goapAction6.InitializeOtherData(new object[] { wilderness });
 
             //GoapNode goalNode = new GoapNode(null, goapAction6.cost, goapAction6);
@@ -272,7 +328,6 @@ namespace Traits {
             //job.SetAssignedCharacter(character);
             //job.SetCancelOnFail(true);
 
-            character.jobQueue.AddJobInQueue(job);
 
             //character.AdjustIsWaitingForInteraction(1);
             //if (character.stateComponent.currentState != null) {
@@ -300,49 +355,49 @@ namespace Traits {
             //    SetHasStartedFollowing(false);
             //}
         }
-        private void GenerateSerialVictims() {
-            SetVictim1Requirement(new SerialVictim(RandomizeVictimType(true), RandomizeVictimType(false)));
+        //private void GenerateSerialVictims() {
+        //    SetVictim1Requirement(new SerialVictim(RandomizeVictimType(true), RandomizeVictimType(false)));
 
-            //bool hasCreatedRequirement = false;
-            //while (!hasCreatedRequirement) {
-            //    SERIAL_VICTIM_TYPE victim2FirstType = RandomizeVictimType(true);
-            //    SERIAL_VICTIM_TYPE victim2SecondType = RandomizeVictimType(false);
+        //    //bool hasCreatedRequirement = false;
+        //    //while (!hasCreatedRequirement) {
+        //    //    SERIAL_VICTIM_TYPE victim2FirstType = RandomizeVictimType(true);
+        //    //    SERIAL_VICTIM_TYPE victim2SecondType = RandomizeVictimType(false);
 
-            //    string victim2FirstDesc = victim1Requirement.GenerateVictimDescription(victim2FirstType);
-            //    string victim2SecondDesc = victim1Requirement.GenerateVictimDescription(victim2SecondType);
+        //    //    string victim2FirstDesc = victim1Requirement.GenerateVictimDescription(victim2FirstType);
+        //    //    string victim2SecondDesc = victim1Requirement.GenerateVictimDescription(victim2SecondType);
 
-            //    if(victim1Requirement.victimFirstType == victim2FirstType && victim1Requirement.victimSecondType == victim2SecondType
-            //        && victim1Requirement.victimFirstDescription == victim2FirstDesc && victim1Requirement.victimSecondDescription == victim2SecondDesc) {
-            //        continue;
-            //    } else {
-            //        SetVictim2Requirement(new SerialVictim(victim2FirstType, victim2FirstDesc, victim2SecondType, victim2SecondDesc));
-            //        hasCreatedRequirement = true;
-            //        break;
-            //    }
-            //}
+        //    //    if(victim1Requirement.victimFirstType == victim2FirstType && victim1Requirement.victimSecondType == victim2SecondType
+        //    //        && victim1Requirement.victimFirstDescription == victim2FirstDesc && victim1Requirement.victimSecondDescription == victim2SecondDesc) {
+        //    //        continue;
+        //    //    } else {
+        //    //        SetVictim2Requirement(new SerialVictim(victim2FirstType, victim2FirstDesc, victim2SecondType, victim2SecondDesc));
+        //    //        hasCreatedRequirement = true;
+        //    //        break;
+        //    //    }
+        //    //}
 
-            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "became_serial_killer");
-            log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            log.AddToFillers(null, victim1Requirement.text, LOG_IDENTIFIER.STRING_1);
-            //log.AddToFillers(null, victim2Requirement.text, LOG_IDENTIFIER.STRING_2);
-            log.AddLogToInvolvedObjects();
-            PlayerManager.Instance.player.ShowNotification(log);
-        }
+        //    Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "became_serial_killer");
+        //    log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        //    log.AddToFillers(null, victim1Requirement.text, LOG_IDENTIFIER.STRING_1);
+        //    //log.AddToFillers(null, victim2Requirement.text, LOG_IDENTIFIER.STRING_2);
+        //    log.AddLogToInvolvedObjects();
+        //    PlayerManager.Instance.player.ShowNotification(log);
+        //}
 
-        private SERIAL_VICTIM_TYPE RandomizeVictimType(bool isPrefix) {
-            int chance = UnityEngine.Random.Range(0, 2);
-            if (isPrefix) {
-                if (chance == 0) {
-                    return SERIAL_VICTIM_TYPE.GENDER;
-                }
-                return SERIAL_VICTIM_TYPE.ROLE;
-            } else {
-                //if (chance == 0) {
-                //    return SERIAL_VICTIM_TYPE.TRAIT;
-                //}
-                return SERIAL_VICTIM_TYPE.STATUS;
-            }
-        }
+        //private SERIAL_VICTIM_TYPE RandomizeVictimType(bool isPrefix) {
+        //    int chance = UnityEngine.Random.Range(0, 2);
+        //    if (isPrefix) {
+        //        if (chance == 0) {
+        //            return SERIAL_VICTIM_TYPE.GENDER;
+        //        }
+        //        return SERIAL_VICTIM_TYPE.ROLE;
+        //    } else {
+        //        //if (chance == 0) {
+        //        //    return SERIAL_VICTIM_TYPE.TRAIT;
+        //        //}
+        //        return SERIAL_VICTIM_TYPE.STATUS;
+        //    }
+        //}
 
         private bool DoesCharacterFitAnyVictimRequirements(Character target) {
             return victim1Requirement.DoesCharacterFitVictimRequirements(target); //|| victim2Requirement.DoesCharacterFitVictimRequirements(target)
@@ -353,25 +408,71 @@ namespace Traits {
             log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             log.AddToFillers(null, negativeTrait.name, LOG_IDENTIFIER.STRING_1);
-            character.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+            character.logComponent.RegisterLog(log, onlyClickedCharacter: false);
         }
+
+        #region Opinion
+        private void CopyOpinionAndSetAllOpinionToZero() {
+            foreach (KeyValuePair<int, IRelationshipData> kvp in character.relationshipContainer.relationships) {
+                Character targetCharacter = CharacterManager.Instance.GetCharacterByID(kvp.Key);
+                if (targetCharacter == null) {
+                    //means that character has not been spawned yet. skip.
+                    continue;
+                }
+                OpinionData originalData = kvp.Value.opinions;
+                OpinionData data = ObjectPoolManager.Instance.CreateNewOpinionData();
+                data.SetCompatibilityValue(originalData.compatibilityValue);
+                List<string> keys = originalData.allOpinions.Keys.ToList();
+                for (int i = 0; i < keys.Count; i++) {
+                    string key = keys[i];
+                    data.SetOpinion(key, originalData.allOpinions[key]);
+                    originalData.allOpinions[key] = 0;
+                }
+                opinionCopy.Add(targetCharacter, data);
+            }
+        }
+        private void BringBackOpinion() {
+            foreach (KeyValuePair<Character, OpinionData> kvp in opinionCopy) {
+                if (character.relationshipContainer.HasRelationshipWith(kvp.Key)) {
+                    foreach (KeyValuePair<string, int> dataKvp in kvp.Value.allOpinions) {
+                        if(dataKvp.Key == "Base") { continue; }
+                        if (character.relationshipContainer.HasOpinion(kvp.Key, dataKvp.Key)) {
+                            character.relationshipContainer.SetOpinion(character, kvp.Key, dataKvp.Key, dataKvp.Value);
+                        }
+                    }
+                }
+                ObjectPoolManager.Instance.ReturnOpinionDataToPool(kvp.Value);
+            }
+            opinionCopy.Clear();
+        }
+        public void AdjustOpinion(Character target, string opinionText, int opinionValue) {
+            if (opinionText == "Base") {
+                //Do not copy Base opinion
+                return;
+            }
+            if (!opinionCopy.ContainsKey(target)) {
+                opinionCopy.Add(target, ObjectPoolManager.Instance.CreateNewOpinionData());
+            }
+            opinionCopy[target].AdjustOpinion(opinionText, opinionValue);
+        }
+        #endregion
     }
 
     [System.Serializable]
     public class SerialVictim {
         public SERIAL_VICTIM_TYPE victimFirstType;
         public SERIAL_VICTIM_TYPE victimSecondType;
-        public string victimFirstDescription;
-        public string victimSecondDescription;
+        public List<string> victimFirstDescription;
+        public List<string> victimSecondDescription;
 
         public string text { get; private set; }
 
-        public SerialVictim(SERIAL_VICTIM_TYPE victimFirstType, SERIAL_VICTIM_TYPE victimSecondType) {
-            this.victimFirstType = victimFirstType;
-            this.victimSecondType = victimSecondType;
-            GenerateVictim();
-        }
-        public SerialVictim(SERIAL_VICTIM_TYPE victimFirstType, string victimFirstDesc, SERIAL_VICTIM_TYPE victimSecondType, string victimSecondDesc) {
+        //public SerialVictim(SERIAL_VICTIM_TYPE victimFirstType, SERIAL_VICTIM_TYPE victimSecondType) {
+        //    this.victimFirstType = victimFirstType;
+        //    this.victimSecondType = victimSecondType;
+        //    GenerateVictim();
+        //}
+        public SerialVictim(SERIAL_VICTIM_TYPE victimFirstType, List<string> victimFirstDesc, SERIAL_VICTIM_TYPE victimSecondType, List<string> victimSecondDesc) {
             this.victimFirstType = victimFirstType;
             this.victimSecondType = victimSecondType;
             victimFirstDescription = victimFirstDesc;
@@ -379,66 +480,133 @@ namespace Traits {
             GenerateText();
         }
 
-        private void GenerateVictim() {
-            victimFirstDescription = GenerateVictimDescription(victimFirstType);
-            victimSecondDescription = GenerateVictimDescription(victimSecondType);
-            GenerateText();
-        }
-        public string GenerateVictimDescription(SERIAL_VICTIM_TYPE victimType) {
-            if (victimType == SERIAL_VICTIM_TYPE.GENDER) {
-                GENDER gender = Utilities.GetRandomEnumValue<GENDER>();
-                return gender.ToString();
-            } else if (victimType == SERIAL_VICTIM_TYPE.ROLE) {
-                //CHARACTER_ROLE[] roles = new CHARACTER_ROLE[] { CHARACTER_ROLE.CIVILIAN, CHARACTER_ROLE.SOLDIER, CHARACTER_ROLE.ADVENTURER };
-                string[] roles = new string[] { "Worker", "Combatant", "Royalty" };
-                return roles[UnityEngine.Random.Range(0, roles.Length)];
-            } 
-            else if (victimType == SERIAL_VICTIM_TYPE.TRAIT) {
-                string[] traits = new string[] { "Builder", "Criminal", "Drunk", "Sick", "Lazy", "Hardworking" }; //, "Curious"
-                return traits[UnityEngine.Random.Range(0, traits.Length)];
-            }
-            else if (victimType == SERIAL_VICTIM_TYPE.STATUS) {
-                string[] statuses = new string[] { "Hungry", "Tired", "Lonely" };
-                return statuses[UnityEngine.Random.Range(0, statuses.Length)];
-            }
-            return string.Empty;
-        }
+        //private void GenerateVictim() {
+        //    victimFirstDescription = GenerateVictimDescription(victimFirstType);
+        //    victimSecondDescription = GenerateVictimDescription(victimSecondType);
+        //    GenerateText();
+        //}
+        //public string GenerateVictimDescription(SERIAL_VICTIM_TYPE victimType) {
+        //    if (victimType == SERIAL_VICTIM_TYPE.GENDER) {
+        //        GENDER gender = Utilities.GetRandomEnumValue<GENDER>();
+        //        return gender.ToString();
+        //    } else if (victimType == SERIAL_VICTIM_TYPE.ROLE) {
+        //        //CHARACTER_ROLE[] roles = new CHARACTER_ROLE[] { CHARACTER_ROLE.CIVILIAN, CHARACTER_ROLE.SOLDIER, CHARACTER_ROLE.ADVENTURER };
+        //        string[] roles = new string[] { "Worker", "Combatant", "Royalty" };
+        //        return roles[UnityEngine.Random.Range(0, roles.Length)];
+        //    } 
+        //    else if (victimType == SERIAL_VICTIM_TYPE.TRAIT) {
+        //        string[] traits = new string[] { "Builder", "Criminal", "Drunk", "Sick", "Lazy", "Hardworking" }; //, "Curious"
+        //        return traits[UnityEngine.Random.Range(0, traits.Length)];
+        //    }
+        //    else if (victimType == SERIAL_VICTIM_TYPE.STATUS) {
+        //        string[] statuses = new string[] { "Hungry", "Tired", "Lonely" };
+        //        return statuses[UnityEngine.Random.Range(0, statuses.Length)];
+        //    }
+        //    return string.Empty;
+        //}
         private void GenerateText() {
             string firstText = string.Empty;
             string secondText = string.Empty;
-            if (victimSecondDescription != "Builder" && victimSecondDescription != "Criminal") {
-                firstText = victimSecondDescription;
-                secondText = PluralizeText(Utilities.NormalizeStringUpperCaseFirstLetters(victimFirstDescription));
-            } else {
-                firstText = Utilities.NormalizeStringUpperCaseFirstLetters(victimFirstDescription);
-                secondText = PluralizeText(victimSecondDescription);
-            }
-            this.text = firstText + " " + secondText;
-        }
+            bool isFirstTypeProcessed = true;
+            //if (victimSecondDescription != "Builder" && victimSecondDescription != "Criminal") {
+            //    firstText = victimSecondDescription;
+            //    secondText = PluralizeText(Utilities.NormalizeStringUpperCaseFirstLetters(victimFirstDescription));
+            //} else {
+            //    firstText = Utilities.NormalizeStringUpperCaseFirstLetters(victimFirstDescription);
+            //    secondText = PluralizeText(victimSecondDescription);
+            //}
 
-        private string PluralizeText(string text) {
-            string newText = text + "s";
-            if (text.EndsWith("man")) {
-                newText = text.Replace("man", "men");
-            }else if (text.EndsWith("ty")) {
-                newText = text.Replace("ty", "ties");
+            //If there is a Gender, it is always the first text
+            if(victimFirstType == SERIAL_VICTIM_TYPE.GENDER) {
+                isFirstTypeProcessed = true;
+                firstText = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(victimFirstDescription[0]);
+            } else if (victimSecondType == SERIAL_VICTIM_TYPE.GENDER) {
+                isFirstTypeProcessed = false;
+                firstText = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(victimSecondDescription[0]);
             }
-            return newText;
+            if(firstText == string.Empty) {
+                //If there is no Gender, the first text must be Race
+                if (victimFirstType == SERIAL_VICTIM_TYPE.RACE) {
+                    isFirstTypeProcessed = true;
+                    firstText = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(victimFirstDescription[0]);
+                } else if (victimSecondType == SERIAL_VICTIM_TYPE.RACE) {
+                    isFirstTypeProcessed = false;
+                    firstText = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(victimSecondDescription[0]);
+                }
+                if (firstText == string.Empty) {
+                    //If there is no Race or Gender victim type, generate description normally
+                    firstText = GetDescriptionText(false);
+                    secondText = GetDescriptionText(true);
+                    if (firstText != string.Empty && secondText != string.Empty) {
+                        secondText = secondText.Insert(0, "and ");
+                    }
+                } else {
+                    secondText = GetDescriptionText(isFirstTypeProcessed);
+                }
+
+            } else {
+                secondText = GetDescriptionText(isFirstTypeProcessed);
+            }
+            this.text = $"{firstText} {secondText}";
         }
+        private string GetDescriptionText(bool fromSecondType) {
+            List<string> secondDescriptions = victimSecondDescription;
+            if (!fromSecondType) {
+                secondDescriptions = victimFirstDescription;
+            }
+            string newDesc = string.Empty;
+            if(secondDescriptions != null) {
+                for (int i = 0; i < secondDescriptions.Count; i++) {
+                    if (i > 0) {
+                        newDesc += ", ";
+                    }
+                    newDesc += UtilityScripts.Utilities.PluralizeString(UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(secondDescriptions[i]));
+                }
+            }
+            return newDesc;
+        }
+        //private string PluralizeText(string text) {
+        //    string newText = text + "s";
+        //    if (text.EndsWith("man")) {
+        //        newText = text.Replace("man", "men");
+        //    }else if (text.EndsWith("ty")) {
+        //        newText = text.Replace("ty", "ties");
+        //    }
+        //    return newText;
+        //}
 
         public bool DoesCharacterFitVictimRequirements(Character character) {
             return DoesCharacterFitVictimTypeDescription(victimFirstType, victimFirstDescription, character)
                 && DoesCharacterFitVictimTypeDescription(victimSecondType, victimSecondDescription, character);
         }
-        private bool DoesCharacterFitVictimTypeDescription(SERIAL_VICTIM_TYPE victimType, string victimDesc, Character character) {
+        private bool DoesCharacterFitVictimTypeDescription(SERIAL_VICTIM_TYPE victimType, List<string> victimDesc, Character character) {
+            if(victimType == SERIAL_VICTIM_TYPE.NONE) {
+                return true;
+            }
+            string comparer = string.Empty;
             if (victimType == SERIAL_VICTIM_TYPE.GENDER) {
-                return victimDesc == character.gender.ToString();
-            } else if (victimType == SERIAL_VICTIM_TYPE.ROLE) {
-                return character.traitContainer.GetNormalTrait<Trait>(victimDesc) != null;
+                comparer = character.gender.ToString();
+                //return victimDesc == character.gender.ToString();
+            } else if (victimType == SERIAL_VICTIM_TYPE.RACE) {
+                comparer = character.race.ToString();
+                //return character.traitContainer.GetNormalTrait<Trait>(victimDesc) != null;
+            } else if (victimType == SERIAL_VICTIM_TYPE.CLASS) {
+                comparer = character.characterClass.className;
+                //return character.traitContainer.GetNormalTrait<Trait>(victimDesc) != null;
             } else if (victimType == SERIAL_VICTIM_TYPE.TRAIT) {
-                return character.traitContainer.GetNormalTrait<Trait>(victimDesc) != null;
-            } else if (victimType == SERIAL_VICTIM_TYPE.STATUS) {
-                return character.traitContainer.GetNormalTrait<Trait>(victimDesc) != null;
+                for (int i = 0; i < victimDesc.Count; i++) {
+                    if(character.traitContainer.HasTrait(victimDesc[i])) {
+                        return true;
+                    }
+                }
+                //return character.traitContainer.GetNormalTrait<Trait>(victimDesc) != null;
+            }
+            if(comparer != string.Empty) {
+                for (int i = 0; i < victimDesc.Count; i++) {
+                    if (victimDesc[i] == comparer) {
+                        return true;
+                    }
+                }
             }
             return false;
         }
@@ -454,12 +622,12 @@ namespace Traits {
 
         public override void Save(Trait trait) {
             base.Save(trait);
-            SerialKiller derivedTrait = trait as SerialKiller;
+            Psychopath derivedTrait = trait as Psychopath;
             victim1Requirement = derivedTrait.victim1Requirement;
             //victim2Requirement = derivedTrait.victim2Requirement;
 
-            isFollowing = derivedTrait.isFollowing;
-            hasStartedFollowing = derivedTrait.hasStartedFollowing;
+            //isFollowing = derivedTrait.isFollowing;
+            //hasStartedFollowing = derivedTrait.hasStartedFollowing;
 
             if (derivedTrait.targetVictim != null) {
                 targetVictimID = derivedTrait.targetVictim.id;
@@ -470,12 +638,12 @@ namespace Traits {
 
         public override Trait Load(ref Character responsibleCharacter) {
             Trait trait = base.Load(ref responsibleCharacter);
-            SerialKiller derivedTrait = trait as SerialKiller;
-            derivedTrait.SetVictim1Requirement(victim1Requirement);
+            Psychopath derivedTrait = trait as Psychopath;
+            derivedTrait.SetVictimRequirements(victim1Requirement);
             //derivedTrait.SetVictim2Requirement(victim2Requirement);
 
-            derivedTrait.SetIsFollowing(isFollowing);
-            derivedTrait.SetHasStartedFollowing(hasStartedFollowing);
+            //derivedTrait.SetIsFollowing(isFollowing);
+            //derivedTrait.SetHasStartedFollowing(hasStartedFollowing);
 
             if (targetVictimID != -1) {
                 derivedTrait.SetTargetVictim(CharacterManager.Instance.GetCharacterByID(targetVictimID));

@@ -21,7 +21,7 @@ namespace UnityEngine.UI.Extensions
         {
             if (label != null)
             {
-                label.text = "PPI: " + Screen.dpi.ToString();
+                label.text = $"PPI: {Screen.dpi}";
             }
         }
     }

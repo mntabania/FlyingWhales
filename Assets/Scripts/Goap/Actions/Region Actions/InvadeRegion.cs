@@ -2,7 +2,7 @@
     
     public InvadeRegion() : base(INTERACTION_TYPE.INVADE_REGION) {
         actionIconString = GoapActionStateDB.Work_Icon;
-        isNotificationAnIntel = false;
+        
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
@@ -16,7 +16,7 @@
         base.Perform(goapNode);
         SetState("Invade Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 1;
     }
     public override void AddFillersToLog(Log log, ActualGoapNode node) {
@@ -29,7 +29,7 @@
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
-            //**Requirements:** Region is owned by Faction different from Actor's Faction. Region is not Corrupted. Region is non-settlement type.
+            //**Requirements:** Region is owned by Faction different from Actor's Faction. Region is not Corrupted. Region is non-npcSettlement type.
             var region = poiTarget.gridTileLocation.parentMap.location.coreTile.region;
             // return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null && region.owner != null 
             //        && region.owner != actor.faction && region.coreTile.isCorrupted == false 

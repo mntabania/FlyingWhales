@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
 using UnityEngine;
+using UtilityScripts;
 
 public class GameFeature : TileFeature {
 
@@ -22,6 +23,9 @@ public class GameFeature : TileFeature {
     #region Overrides
     public override void GameStartActions(HexTile tile) {
         owner = tile;
+        Messenger.AddListener<TileObject, LocationGridTile>(Signals.TILE_OBJECT_PLACED, OnTileObjectPlaced);
+        Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
+        
         List<TileObject> animals = tile.GetTileObjectsInHexTile(TILE_OBJECT_TYPE.SMALL_ANIMAL);
         currentAnimalCount = animals.Count;
         if (animals.Count <= MaxAnimals) {
@@ -32,8 +36,10 @@ public class GameFeature : TileFeature {
                 }
             }
         }
-        Messenger.AddListener<TileObject, LocationGridTile>(Signals.TILE_OBJECT_PLACED, OnTileObjectPlaced);
-        Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
+    }
+    public override void OnRemoveFeature(HexTile tile) {
+        base.OnRemoveFeature(tile);
+        Messenger.RemoveListener(Signals.HOUR_STARTED, TryGeneratePerHour);
     }
     #endregion
 
@@ -77,7 +83,7 @@ public class GameFeature : TileFeature {
         List<LocationGridTile> choices = owner.locationGridTiles.Where(x => x.isOccupied == false 
                                                                             && x.structure.structureType.IsOpenSpace()).ToList();
         if (choices.Count > 0) {
-            LocationGridTile chosenTile = Utilities.GetRandomElement(choices);
+            LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(choices);
             chosenTile.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.SMALL_ANIMAL),
                 chosenTile);
             return true;

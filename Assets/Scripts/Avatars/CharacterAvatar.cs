@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using EZObjectPools;
 using System;
 using Inner_Maps;
-
+using Inner_Maps.Location_Structures;
 
 public class CharacterAvatar : MonoBehaviour {
 
@@ -54,14 +54,14 @@ public class CharacterAvatar : MonoBehaviour {
         get { return _isTravelling; }
     }
     public bool isTravellingOutside {
-        get { return _isTravellingOutside; } //if the character is travelling from settlement to settlement, as oppose to only travelling inside settlement map
+        get { return _isTravellingOutside; } //if the character is travelling from npcSettlement to npcSettlement, as oppose to only travelling inside npcSettlement map
     }
     public bool isVisualShowing {
         get {
             //if (_isVisualShowing) {
             //    return _isVisualShowing;
             //} else {
-            //    //check if this characters current location settlement is being tracked
+            //    //check if this characters current location npcSettlement is being tracked
             //    if (party.specificLocation != null ) { //&& party.specificLocation.isBeingTracked
             //        return true;
             //    }
@@ -77,17 +77,17 @@ public class CharacterAvatar : MonoBehaviour {
     public virtual void Init(Party party) {
         _party = party;
         //SetPosition(_party.specificLocation.tileLocation.transform.position);
-        this.smoothMovement.avatarGO = this.gameObject;
-        this.smoothMovement.onMoveFinished += OnMoveFinished;
+        smoothMovement.avatarGO = gameObject;
+        smoothMovement.onMoveFinished += OnMoveFinished;
         _isInitialized = true;
         _hasArrived = true;
         SetVisualState(true);
-        SetSprite(_party.owner.role.roleType);
+        // SetSprite(_party.owner.role.roleType);
         SetIsPlaceCharacterAsTileObject(true);
 
-        this.name = party.owner.name + "'s Avatar";
+        name = $"{party.owner.name}'s Avatar";
         
-        GameObject portraitGO = UIManager.Instance.InstantiateUIObject(CharacterManager.Instance.characterPortraitPrefab.name, this.transform);
+        GameObject portraitGO = UIManager.Instance.InstantiateUIObject(CharacterManager.Instance.characterPortraitPrefab.name, transform);
         characterPortrait = portraitGO.GetComponent<CharacterPortrait>();
         characterPortrait.GeneratePortrait(_party.owner);
         portraitGO.SetActive(false);
@@ -159,7 +159,7 @@ public class CharacterAvatar : MonoBehaviour {
         _travelLine.SetActiveMeter(isVisualShowing);
         _party.owner.marker.gameObject.SetActive(false);
         Messenger.AddListener(Signals.TICK_STARTED, TraverseCurveLine);
-        Messenger.Broadcast(Signals.PARTY_STARTED_TRAVELLING, this.party);
+        Messenger.Broadcast(Signals.PARTY_STARTED_TRAVELLING, party);
     }
     private void TraverseCurveLine() {
         if (_travelLine == null) {
@@ -190,7 +190,7 @@ public class CharacterAvatar : MonoBehaviour {
             SetIsTravelling(false);
             _isTravelCancelled = false;
             _travelLine.travelLineParent.RemoveChild(_travelLine);
-            GameObject.Destroy(_travelLine.gameObject);
+            Destroy(_travelLine.gameObject);
             _travelLine = null;
         }
     }
@@ -198,22 +198,25 @@ public class CharacterAvatar : MonoBehaviour {
         SetIsTravelling(false);
         SetIsTravellingOutside(false);
         _travelLine.travelLineParent.RemoveChild(_travelLine);
-        GameObject.Destroy(_travelLine.gameObject);
+        Destroy(_travelLine.gameObject);
         _travelLine = null;
         SetHasArrivedState(true);
-        _party.owner.currentRegion.RemoveCharacterFromLocation(_party.owner);
+        
+        Region fromRegion = _party.owner.currentRegion; 
+        
+        fromRegion.RemoveCharacterFromLocation(_party.owner);
         targetLocation.AddCharacterToLocation(_party.owner);
 
-        _party.owner.marker.ClearHostilesInRange();
-        _party.owner.marker.ClearAvoidInRange();
+        _party.owner.combatComponent.ClearHostilesInRange();
+        _party.owner.combatComponent.ClearAvoidInRange();
         _party.owner.marker.ClearPOIsInVisionRange();
 
-        //place marker at edge tile of target location
-        LocationGridTile entrance = targetLocation.innerMap.GetRandomUnoccupiedEdgeTile();
+        //character must arrive at the direction that it came from.
+        LocationGridTile entrance = (targetLocation.innerMap as RegionInnerTileMap).GetTileToGoToRegion(fromRegion);//targetLocation.innerMap.GetRandomUnoccupiedEdgeTile();
         _party.owner.marker.PlaceMarkerAt(entrance);
 
         _party.owner.marker.pathfindingAI.SetIsStopMovement(true);
-        //Debug.Log(GameManager.Instance.TodayLogString() + _party.name + " has arrived at " + targetLocation.name + " on " + _party.owner.gridTileLocation.ToString());
+        
         Log arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location");
         _party.owner.SetPOIState(POI_STATE.ACTIVE);
         arriveLog.AddToFillers(_party.owner, _party.owner.name, LOG_IDENTIFIER.CHARACTER_LIST_1, false);
@@ -222,18 +225,13 @@ public class CharacterAvatar : MonoBehaviour {
         }
         arriveLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
         arriveLog.AddLogToInvolvedObjects();
-        //if (_party.characters.Count > 0) {
-        //    for (int i = 0; i < _party.characters.Count; i++) {
-        //        Character character = party.characters[i];
-        //        character.SetPOIState(POI_STATE.ACTIVE);
-        //        //character.SetDailyInteractionGenerationTick();
-        //        arriveLog.AddToFillers(character, character.name, LOG_IDENTIFIER.CHARACTER_LIST_1, false);
-        //    }
-        //    arriveLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
-        //    arriveLog.AddLogToInvolvedObjects();
-        //}
 
-        Messenger.Broadcast(Signals.PARTY_DONE_TRAVELLING, this.party);
+        if (UtilityScripts.GameUtilities.IsRaceBeast(_party.owner.race) == false || (_party.carriedPOI is Character carriedCharacter 
+            && UtilityScripts.GameUtilities.IsRaceBeast(carriedCharacter.race) == false )) {
+            PlayerManager.Instance.player.ShowNotificationFrom(_party.owner, arriveLog);    
+        }
+
+        Messenger.Broadcast(Signals.PARTY_DONE_TRAVELLING, party);
         if(onArriveAction != null) {
             onArriveAction();
             SetOnArriveAction(null);
@@ -259,7 +257,8 @@ public class CharacterAvatar : MonoBehaviour {
             }
         }
         if (path == null) {
-            Debug.LogError(_party.name + ". There is no path from " + _party.owner.currentRegion.name + " to " + targetLocation.name, this);
+            Debug.LogError(
+                $"{_party.name}. There is no path from {_party.owner.currentRegion.name} to {targetLocation.name}", this);
             return;
         }
         if (path.Count > 0) {
@@ -276,8 +275,8 @@ public class CharacterAvatar : MonoBehaviour {
         }
     }
     public virtual void NewMove() {
-        if (this.targetLocation != null && this.path != null) {
-            if (this.path.Count > 0) {
+        if (targetLocation != null && path != null) {
+            if (path.Count > 0) {
 				//this.MakeCitizenMove(_party.specificLocation.tileLocation, this.path[0]);
     //            if(_party.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
     //                RemoveCharactersFromLocation(_party.specificLocation);
@@ -292,9 +291,9 @@ public class CharacterAvatar : MonoBehaviour {
      saved path.
          */
     public virtual void OnMoveFinished() {
-		if(this.path == null){
+		if(path == null){
 			Debug.LogError (GameManager.Instance.Today ().ToStringDate());
-			Debug.LogError ("Location: " + _party.owner.currentRegion.name);
+			Debug.LogError ($"Location: {_party.owner.currentRegion.name}");
 		}
         //if (_trackTarget != null) {
         //    if(_trackTarget.currentParty.specificLocation.id != targetLocation.id) {
@@ -302,18 +301,18 @@ public class CharacterAvatar : MonoBehaviour {
         //        return;
         //    }
         //}
-        if (this.path.Count > 0) {
+        if (path.Count > 0) {
             //if(_party.specificLocation.locIdentifier == LOCATION_IDENTIFIER.HEXTILE) {
             //    RemoveCharactersFromLocation(_party.specificLocation);
             //}
             //AddCharactersToLocation(this.path[0]);
-            this.path.RemoveAt(0);
+            path.RemoveAt(0);
         }
         HasArrivedAtTargetLocation();
     }
     public virtual void HasArrivedAtTargetLocation() {
 		if (_party.owner.currentRegion == targetLocation) {
-            if (!this._hasArrived) {
+            if (!_hasArrived) {
                 SetIsTravelling(false);
                 //_trackTarget = null;
                 SetHasArrivedState(true);
@@ -382,14 +381,8 @@ public class CharacterAvatar : MonoBehaviour {
         _avatarHighlight.SetActive(state);
     }
     public void SetPosition(Vector3 position) {
-        this.transform.position = position;
+        transform.position = position;
     }
-    public void SetSprite(CHARACTER_ROLE role){
-		Sprite sprite = CharacterManager.Instance.GetSpriteByRole (role);
-		if(sprite != null){
-			_avatarSpriteRenderer.sprite = sprite;
-		}
-	}
     public void SetFrameOrderLayer(int layer) {
         _frameSpriteRenderer.sortingOrder = layer;
     }

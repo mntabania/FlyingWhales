@@ -27,7 +27,7 @@ public class RaceManager : MonoBehaviour {
 
     private void ConstructAllRaces() {
         _racesDictionary = new Dictionary<string, RaceSetting>();
-        string path = Utilities.dataPath + "RaceSettings/";
+        string path = $"{UtilityScripts.Utilities.dataPath}RaceSettings/";
         string[] races = System.IO.Directory.GetFiles(path, "*.json");
         for (int i = 0; i < races.Length; i++) {
             RaceSetting currentRace = JsonUtility.FromJson<RaceSetting>(System.IO.File.ReadAllText(races[i]));

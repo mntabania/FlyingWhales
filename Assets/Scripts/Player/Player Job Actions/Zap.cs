@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using Traits;
 using UnityEngine;
 
-public class Zap : PlayerJobAction {
+public class Zap : PlayerSpell {
 
     private int _zapDuration;
-    public Zap() : base(INTERVENTION_ABILITY.ZAP) {
+    public Zap() : base(SPELL_TYPE.ZAP) {
         SetDefaultCooldownTime(24);
-        targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER, JOB_ACTION_TARGET.TILE_OBJECT };
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER, SPELL_TARGET.TILE_OBJECT };
         //abilityTags.Add(ABILITY_TAG.MAGIC);
     }
 
@@ -28,24 +28,24 @@ public class Zap : PlayerJobAction {
                 Character currTarget = targets[i];
                 if (CanPerformActionTowards(currTarget)) {
                     Trait newTrait = new Zapped();
-                    newTrait.OverrideDuration(_zapDuration);
+                    //newTrait.OverrideDuration(_zapDuration);
                     currTarget.traitContainer.AddTrait(currTarget, newTrait);
                     if (UIManager.Instance.characterInfoUI.isShowing) {
                         UIManager.Instance.characterInfoUI.UpdateThoughtBubble();
                     }
-                    GameManager.Instance.CreateElectricEffectAt(currTarget);
+                    //GameManager.Instance.CreateElectricEffectAt(currTarget);
 
                     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_intervention");
                     log.AddToFillers(currTarget, currTarget.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(null, "zapped", LOG_IDENTIFIER.STRING_1);
                     log.AddLogToInvolvedObjects();
-                    PlayerManager.Instance.player.ShowNotification(log);
+                    PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
                 }
             }
             base.ActivateAction(targets[0]);
         }
     }
-    protected override bool CanPerformActionTowards(IPointOfInterest targetPOI) {
+    protected virtual bool CanPerformActionTowards(IPointOfInterest targetPOI) {
         if (targetPOI is TileObject) {
             TileObject to = targetPOI as TileObject;
             if (to.users != null) {
@@ -65,7 +65,7 @@ public class Zap : PlayerJobAction {
         if (!targetCharacter.IsInOwnParty()) {
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Zapped") != null) {
+        if (targetCharacter.traitContainer.HasTrait("Zapped")) {
             return false;
         }
         //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
@@ -109,7 +109,7 @@ public class Zap : PlayerJobAction {
         if (!targetCharacter.IsInOwnParty()) {
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Zapped") != null) {
+        if (targetCharacter.traitContainer.HasTrait("Zapped")) {
             return false;
         }
         //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
@@ -119,8 +119,33 @@ public class Zap : PlayerJobAction {
     }
 }
 
-public class ZapData : PlayerJobActionData {
+public class ZapData : SpellData {
+    public override SPELL_TYPE ability => SPELL_TYPE.ZAP;
     public override string name { get { return "Zap"; } }
     public override string description { get { return "Stops a character from his/her action and temporarily paralyzes him/her."; } }
-    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.SABOTAGE; } }
+    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.SABOTAGE; } }
+
+    public ZapData() : base() {
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER, SPELL_TARGET.TILE_OBJECT };
+    }
+
+    #region Overrides
+    public override void ActivateAbility(IPointOfInterest targetPOI) {
+        targetPOI.traitContainer.AddTrait(targetPOI, "Zapped");
+        if (UIManager.Instance.characterInfoUI.isShowing) {
+            UIManager.Instance.characterInfoUI.UpdateThoughtBubble();
+        }
+        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_intervention");
+        log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddToFillers(null, "zapped", LOG_IDENTIFIER.STRING_1);
+        log.AddLogToInvolvedObjects();
+        PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+    }
+    public override bool CanPerformAbilityTowards(Character targetCharacter) {
+        if (targetCharacter.isDead || !targetCharacter.IsInOwnParty() || targetCharacter.traitContainer.HasTrait("Zapped")) {
+            return false;
+        }
+        return base.CanPerformAbilityTowards(targetCharacter);
+    }
+    #endregion
 }

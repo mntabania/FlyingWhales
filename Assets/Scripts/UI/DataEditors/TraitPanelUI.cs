@@ -18,6 +18,7 @@ public class TraitPanelUI : MonoBehaviour {
     public InputField nameInput;
     public InputField descriptionInput;
     public InputField thoughtInput;
+    public InputField moodInput;
     public InputField durationInput;
     public Dropdown traitTypeOptions;
     public Dropdown traitEffectOptions;
@@ -49,6 +50,12 @@ public class TraitPanelUI : MonoBehaviour {
     [NonSerialized] public TraitEffectButton currentSelectedTraitEffectButton;
     [NonSerialized] public RequirementButton currentSelectedRequirementButton;
 
+    //Stack
+    public Toggle isStackingToggle;
+    public GameObject stackGroupGO;
+    public InputField stackLimitInput;
+    public InputField stackModInput;
+
     private List<string> _allTraits;
     private List<TraitEffect> _effects;
     private List<string> _requirements;
@@ -64,7 +71,7 @@ public class TraitPanelUI : MonoBehaviour {
     }
     private void UpdateTraits() {
         _allTraits.Clear();
-        string path = Utilities.dataPath + "Traits/";
+        string path = $"{UtilityScripts.Utilities.dataPath}Traits/";
         foreach (string file in Directory.GetFiles(path, "*.json")) {
             _allTraits.Add(Path.GetFileNameWithoutExtension(file));
         }
@@ -98,7 +105,7 @@ public class TraitPanelUI : MonoBehaviour {
         string[] traitEffects = System.Enum.GetNames(typeof(TRAIT_EFFECT));
         string[] traitTriggers = System.Enum.GetNames(typeof(TRAIT_TRIGGER));
         string[] actions = System.Enum.GetNames(typeof(INTERACTION_TYPE));
-        string[] crimeSeverities = System.Enum.GetNames(typeof(CRIME_CATEGORY));
+        string[] crimeSeverities = System.Enum.GetNames(typeof(CRIME_TYPE));
         string[] requirementTypes = System.Enum.GetNames(typeof(TRAIT_REQUIREMENT));
         string[] requirementTargets = System.Enum.GetNames(typeof(TRAIT_REQUIREMENT_TARGET));
         string[] requirementCheckers = System.Enum.GetNames(typeof(TRAIT_REQUIREMENT_CHECKER));
@@ -146,19 +153,22 @@ public class TraitPanelUI : MonoBehaviour {
         mutuallyExclusiveInput.text = string.Empty;
         amountInput.text = "0";
         durationInput.text = "0";
+        stackLimitInput.text = "0";
+        stackModInput.text = "0";
 
         percentageToggle.isOn = false;
         hasRequirementToggle.isOn = false;
         isNotToggle.isOn = false;
         _isHidden.isOn = false;
+        isStackingToggle.isOn = false;
 
         _effects.Clear();
         _requirements.Clear();
         _advertisedInteractions.Clear();
         UpdateAdvertisedInteractionsText();
 
-        effectsScrollRect.content.DestroyChildren();
-        requirementsScrollRect.content.DestroyChildren();
+        UtilityScripts.Utilities.DestroyChildren(effectsScrollRect.content);
+        UtilityScripts.Utilities.DestroyChildren(requirementsScrollRect.content);
     }
     private void UpdateAdvertisedInteractionsText() {
         if(_advertisedInteractions.Count > 0) {
@@ -166,7 +176,7 @@ public class TraitPanelUI : MonoBehaviour {
             for (int i = 0; i < _advertisedInteractions.Count; i++) {
                 interactionsAsString[i] = _advertisedInteractions[i].ToString();
             }
-            advertisedInteractionsText.text = Utilities.ConvertArrayToString(interactionsAsString, ',');
+            advertisedInteractionsText.text = UtilityScripts.Utilities.ConvertArrayToString(interactionsAsString, ',');
         } else {
             advertisedInteractionsText.text = string.Empty;
         }
@@ -178,9 +188,10 @@ public class TraitPanelUI : MonoBehaviour {
             EditorUtility.DisplayDialog("Error", "Please specify a Trait Name", "OK");
             return;
         }
-        string path = Utilities.dataPath + "Traits/" + nameInput.text + ".json";
-        if (Utilities.DoesFileExist(path)) {
-            if (EditorUtility.DisplayDialog("Overwrite Trait", "A trait with name " + nameInput.text + " already exists. Replace with this trait?", "Yes", "No")) {
+        string path = $"{UtilityScripts.Utilities.dataPath}Traits/{nameInput.text}.json";
+        if (UtilityScripts.Utilities.DoesFileExist(path)) {
+            if (EditorUtility.DisplayDialog("Overwrite Trait",
+                $"A trait with name {nameInput.text} already exists. Replace with this trait?", "Yes", "No")) {
                 File.Delete(path);
                 SaveTraitJson(path);
             }
@@ -195,41 +206,71 @@ public class TraitPanelUI : MonoBehaviour {
         //if (!string.IsNullOrEmpty(amountInput.text)) {
         //    amountInp = float.Parse(amountInput.text);
         //}
-        Trait newTrait = new Trait {
-            name = nameInput.text,
-            description = descriptionInput.text,
-            thoughtText = thoughtInput.text,
-            type = (TRAIT_TYPE)System.Enum.Parse(typeof(TRAIT_TYPE), traitTypeOptions.options[traitTypeOptions.value].text),
-            effect = (TRAIT_EFFECT)System.Enum.Parse(typeof(TRAIT_EFFECT), traitEffectOptions.options[traitEffectOptions.value].text),
-            ticksDuration = int.Parse(durationInput.text),
-            effects = _effects,
-            isHidden = _isHidden.isOn,
-            mutuallyExclusive = GetMutuallyExclusiveTraits(),
-            advertisedInteractions = _advertisedInteractions,
-        };
-        string jsonString = JsonUtility.ToJson(newTrait);
+        string jsonString = string.Empty;
+        TRAIT_TYPE traitType = (TRAIT_TYPE) System.Enum.Parse(typeof(TRAIT_TYPE), traitTypeOptions.options[traitTypeOptions.value].text);
+        if(traitType == TRAIT_TYPE.STATUS) {
+            Status newTrait = new Status {
+                name = nameInput.text,
+                description = descriptionInput.text,
+                thoughtText = thoughtInput.text,
+                type = traitType,
+                effect = (TRAIT_EFFECT) System.Enum.Parse(typeof(TRAIT_EFFECT), traitEffectOptions.options[traitEffectOptions.value].text),
+                ticksDuration = int.Parse(durationInput.text),
+                //effects = _effects,
+                isHidden = _isHidden.isOn,
+                mutuallyExclusive = GetMutuallyExclusiveTraits(),
+                advertisedInteractions = _advertisedInteractions,
+                moodEffect = int.Parse(moodInput.text),
+                isStacking = isStackingToggle.isOn,
+                stackLimit = int.Parse(stackLimitInput.text),
+                stackModifier = float.Parse(stackModInput.text),
+            };
 
+            jsonString = JsonUtility.ToJson(newTrait);
+        } else {
+            Trait newTrait = new Trait {
+                name = nameInput.text,
+                description = descriptionInput.text,
+                thoughtText = thoughtInput.text,
+                type = traitType,
+                effect = (TRAIT_EFFECT) System.Enum.Parse(typeof(TRAIT_EFFECT), traitEffectOptions.options[traitEffectOptions.value].text),
+                ticksDuration = int.Parse(durationInput.text),
+                //effects = _effects,
+                isHidden = _isHidden.isOn,
+                mutuallyExclusive = GetMutuallyExclusiveTraits(),
+                advertisedInteractions = _advertisedInteractions,
+                moodEffect = int.Parse(moodInput.text),
+            };
+
+            jsonString = JsonUtility.ToJson(newTrait);
+        }
         System.IO.StreamWriter writer = new System.IO.StreamWriter(path, false);
         writer.WriteLine(jsonString);
         writer.Close();
+
 
 #if UNITY_EDITOR
         //Re-import the file to update the reference in the editor
         UnityEditor.AssetDatabase.ImportAsset(path);
 #endif
-        Debug.Log("Successfully saved trait at " + path);
+        Debug.Log($"Successfully saved trait at {path}");
 
         UpdateTraits();
     }
 
     private void LoadTrait() {
 #if UNITY_EDITOR
-        string filePath = EditorUtility.OpenFilePanel("Select Trait", Utilities.dataPath + "Traits/", "json");
+        string filePath = EditorUtility.OpenFilePanel("Select Trait", $"{UtilityScripts.Utilities.dataPath}Traits/", "json");
         if (!string.IsNullOrEmpty(filePath)) {
-            string dataAsJson = File.ReadAllText(filePath);
-            Trait attribute = JsonUtility.FromJson<Trait>(dataAsJson);
             ClearData();
-            LoadTraitToUI(attribute);
+            string dataAsJson = File.ReadAllText(filePath);
+            Trait trait = JsonUtility.FromJson<Trait>(dataAsJson);
+            if(trait.type == TRAIT_TYPE.STATUS) {
+                Status status = JsonUtility.FromJson<Status>(dataAsJson);
+                LoadStatusToUI(status);
+            } else {
+                LoadTraitToUI(trait);
+            }
         }
 #endif
     }
@@ -242,14 +283,25 @@ public class TraitPanelUI : MonoBehaviour {
         durationInput.text = trait.ticksDuration.ToString();
         mutuallyExclusiveInput.text = ConvertMutuallyExclusiveTraitsToText(trait);
         _advertisedInteractions = trait.advertisedInteractions;
+        moodInput.text = trait.moodEffect.ToString();
+        _isHidden.isOn = trait.isHidden;
         UpdateAdvertisedInteractionsText();
-
-        for (int i = 0; i < trait.effects.Count; i++) {
-            TraitEffect traitEffect = trait.effects[i];
-            _effects.Add(traitEffect);
-            GameObject go = GameObject.Instantiate(traitEffectBtnGO, effectsScrollRect.content);
-            go.GetComponent<TraitEffectButton>().SetTraitEffect(traitEffect);
-        }
+    }
+    private void LoadStatusToUI(Status status) {
+        nameInput.text = status.name;
+        descriptionInput.text = status.description;
+        thoughtInput.text = status.thoughtText;
+        traitTypeOptions.value = GetOptionIndex(status.type.ToString(), traitTypeOptions);
+        traitEffectOptions.value = GetOptionIndex(status.effect.ToString(), traitEffectOptions);
+        durationInput.text = status.ticksDuration.ToString();
+        mutuallyExclusiveInput.text = ConvertMutuallyExclusiveTraitsToText(status);
+        _advertisedInteractions = status.advertisedInteractions;
+        moodInput.text = status.moodEffect.ToString();
+        _isHidden.isOn = status.isHidden;
+        isStackingToggle.isOn = status.isStacking;
+        stackLimitInput.text = status.stackLimit.ToString();
+        stackModInput.text = status.stackModifier.ToString();
+        UpdateAdvertisedInteractionsText();
     }
     private void PopulateRequirements(List<string> requirements) {
         if(requirements != null) {
@@ -371,10 +423,10 @@ public class TraitPanelUI : MonoBehaviour {
     private string[] GetMutuallyExclusiveTraits() {
         string text = mutuallyExclusiveInput.text;
         //string[] words = text.Split(',').Where(x => !string.IsNullOrEmpty(x)).ToArray();
-        return Utilities.ConvertStringToArray(text, ',');
+        return UtilityScripts.Utilities.ConvertStringToArray(text, ',');
     }
     private string ConvertMutuallyExclusiveTraitsToText(Trait trait) {
-        return Utilities.ConvertArrayToString(trait.mutuallyExclusive, ',');
+        return UtilityScripts.Utilities.ConvertArrayToString(trait.mutuallyExclusive, ',');
         //string text = string.Empty;
         //if (trait.mutuallyExclusive != null) {
         //    for (int i = 0; i < trait.mutuallyExclusive.Length; i++) {
@@ -385,6 +437,12 @@ public class TraitPanelUI : MonoBehaviour {
         //    }
         //}
         //return text;
+    }
+    #endregion
+
+    #region Stack
+    public void OnToggleIsStacking(bool state) {
+        stackGroupGO.SetActive(state);
     }
     #endregion
 }

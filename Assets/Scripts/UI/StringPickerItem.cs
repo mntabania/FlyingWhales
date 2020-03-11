@@ -36,14 +36,14 @@ public class StringPickerItem : ObjectPickerItem<string>, IPointerClickHandler {
         if(identifier != string.Empty) {
             if (identifier == "trait") {
                 if (TraitManager.Instance.HasTraitIcon(str)) {
-                    iconImg.sprite = TraitManager.Instance.GetTraitIcon(str);
+                    iconImg.sprite = TraitManager.Instance.GetTraitPortrait(str);
                     iconImg.gameObject.SetActive(true);
                 } else {
                     iconImg.gameObject.SetActive(false);
                 }
             } else if(identifier == "landmark") {
                 LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(str);
-                iconImg.sprite = landmarkData.landmarkPortrait;
+                iconImg.sprite = landmarkData.defaultLandmarkPortrait;
                 iconImg.gameObject.SetActive(true);
             } else if (identifier == "intervention ability") {
                 iconImg.sprite = PlayerManager.Instance.GetJobActionSprite(str);

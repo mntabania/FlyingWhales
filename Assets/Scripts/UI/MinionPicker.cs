@@ -16,7 +16,7 @@ public class MinionPicker : MonoBehaviour {
     public void ShowMinionPicker(List<Minion> minionsToShow, System.Func<Minion, bool> shouldItemBeActiveChecker, System.Action<Character, bool> onClickMinionItemAction) {
         this.onClickMinionItemAction = onClickMinionItemAction;
         //this.shouldItemBeActiveChecker = shouldItemBeActiveChecker;
-        Utilities.DestroyChildren(minonsScrollView.content);
+        UtilityScripts.Utilities.DestroyChildren(minonsScrollView.content);
         List<MinionCharacterItem> inactiveItems = new List<MinionCharacterItem>();
         for (int i = 0; i < minionsToShow.Count; i++) {
             Minion currMinion = minionsToShow[i];

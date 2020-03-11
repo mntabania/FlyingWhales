@@ -17,7 +17,7 @@ public class ChatCharacter : GoapAction {
         actionIconString = GoapActionStateDB.Social_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
     }
 
     #region Overrides
@@ -25,7 +25,7 @@ public class ChatCharacter : GoapAction {
         base.Perform(goapNode);
         SetState("Chat Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 1;
     }
     #endregion
@@ -34,67 +34,67 @@ public class ChatCharacter : GoapAction {
     public void PreChatSuccess(ActualGoapNode goapNode) {
         Character targetCharacter = goapNode.poiTarget as Character;
 
-        CHARACTER_MOOD thisCharacterMood = goapNode.actor.currentMoodType;
-        CHARACTER_MOOD targetCharacterMood = targetCharacter.currentMoodType;
+        // CHARACTER_MOOD thisCharacterMood = goapNode.actor.currentMoodType;
+        // CHARACTER_MOOD targetCharacterMood = targetCharacter.currentMoodType;
 
         WeightedFloatDictionary<string> weights = new WeightedFloatDictionary<string>();
         weights.AddElement("Quick Chat", 250);
 
-        IRelationshipData relData = goapNode.actor.relationshipContainer.GetRelationshipDataWith(targetCharacter.currentAlterEgo);
-        RELATIONSHIP_EFFECT relationshipEffectWithTarget = goapNode.actor.opinionComponent.GetRelationshipEffectWith(targetCharacter);
+        IRelationshipData relData = goapNode.actor.relationshipContainer.GetRelationshipDataWith(targetCharacter);
+        RELATIONSHIP_EFFECT relationshipEffectWithTarget = goapNode.actor.relationshipContainer.GetRelationshipEffectWith(targetCharacter);
         //**if no relationship yet, may become friends**
         if (relData == null) {
-            if (goapNode.actor.traitContainer.GetNormalTrait<Trait>("Serial Killer") == null && targetCharacter.traitContainer.GetNormalTrait<Trait>("Serial Killer") == null) {
+            if (!goapNode.actor.traitContainer.HasTrait("Psychopath") && !targetCharacter.traitContainer.HasTrait("Psychopath")) {
                 int weight = 0;
-                if (thisCharacterMood == CHARACTER_MOOD.DARK) {
-                    weight += -30;
-                } else if (thisCharacterMood == CHARACTER_MOOD.BAD) {
-                    weight += -10;
-                } else if (thisCharacterMood == CHARACTER_MOOD.GOOD) {
-                    weight += 10;
-                } else if (thisCharacterMood == CHARACTER_MOOD.GREAT) {
-                    weight += 30;
-                }
-                if (targetCharacterMood == CHARACTER_MOOD.DARK) {
-                    weight += -30;
-                } else if (targetCharacterMood == CHARACTER_MOOD.BAD) {
-                    weight += -10;
-                } else if (targetCharacterMood == CHARACTER_MOOD.GOOD) {
-                    weight += 10;
-                } else if (targetCharacterMood == CHARACTER_MOOD.GREAT) {
-                    weight += 30;
-                }
+                // if (thisCharacterMood == CHARACTER_MOOD.DARK) {
+                //     weight += -30;
+                // } else if (thisCharacterMood == CHARACTER_MOOD.BAD) {
+                //     weight += -10;
+                // } else if (thisCharacterMood == CHARACTER_MOOD.GOOD) {
+                //     weight += 10;
+                // } else if (thisCharacterMood == CHARACTER_MOOD.GREAT) {
+                //     weight += 30;
+                // }
+                // if (targetCharacterMood == CHARACTER_MOOD.DARK) {
+                //     weight += -30;
+                // } else if (targetCharacterMood == CHARACTER_MOOD.BAD) {
+                //     weight += -10;
+                // } else if (targetCharacterMood == CHARACTER_MOOD.GOOD) {
+                //     weight += 10;
+                // } else if (targetCharacterMood == CHARACTER_MOOD.GREAT) {
+                //     weight += 30;
+                // }
                 if (weight > 0) {
                     weights.AddElement("Become Friends", weight);
                 }
             }
         } else {
             //**if no relationship other than relative, may become enemies**
-            List<RELATIONSHIP_TYPE> relTraits = goapNode.actor.relationshipContainer.GetRelationshipDataWith(targetCharacter.currentAlterEgo)?.relationships ?? null;
+            List<RELATIONSHIP_TYPE> relTraits = goapNode.actor.relationshipContainer.GetRelationshipDataWith(targetCharacter)?.relationships ?? null;
             if (relTraits != null && relTraits.Count == 1 && relTraits[0] == RELATIONSHIP_TYPE.RELATIVE) {
                 int weight = 0;
-                if (thisCharacterMood == CHARACTER_MOOD.DARK) {
-                    weight += 30;
-                } else if (thisCharacterMood == CHARACTER_MOOD.BAD) {
-                    weight += 10;
-                } else if (thisCharacterMood == CHARACTER_MOOD.GOOD) {
-                    weight += -10;
-                } else if (thisCharacterMood == CHARACTER_MOOD.GREAT) {
-                    weight += -30;
-                }
-                if (targetCharacterMood == CHARACTER_MOOD.DARK) {
-                    weight += 30;
-                } else if (targetCharacterMood == CHARACTER_MOOD.BAD) {
-                    weight += 10;
-                } else if (targetCharacterMood == CHARACTER_MOOD.GOOD) {
-                    weight += -10;
-                } else if (targetCharacterMood == CHARACTER_MOOD.GREAT) {
-                    weight += -30;
-                }
-                if (goapNode.actor.traitContainer.GetNormalTrait<Trait>("Hothead") != null) {
+                // if (thisCharacterMood == CHARACTER_MOOD.DARK) {
+                //     weight += 30;
+                // } else if (thisCharacterMood == CHARACTER_MOOD.BAD) {
+                //     weight += 10;
+                // } else if (thisCharacterMood == CHARACTER_MOOD.GOOD) {
+                //     weight += -10;
+                // } else if (thisCharacterMood == CHARACTER_MOOD.GREAT) {
+                //     weight += -30;
+                // }
+                // if (targetCharacterMood == CHARACTER_MOOD.DARK) {
+                //     weight += 30;
+                // } else if (targetCharacterMood == CHARACTER_MOOD.BAD) {
+                //     weight += 10;
+                // } else if (targetCharacterMood == CHARACTER_MOOD.GOOD) {
+                //     weight += -10;
+                // } else if (targetCharacterMood == CHARACTER_MOOD.GREAT) {
+                //     weight += -30;
+                // }
+                if (goapNode.actor.traitContainer.HasTrait("Hothead")) {
                     weight += 200;
                 }
-                if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Hothead") != null) {
+                if (targetCharacter.traitContainer.HasTrait("Hothead")) {
                     weight += 200;
                 }
                 if (weight > 0) {
@@ -113,28 +113,28 @@ public class ChatCharacter : GoapAction {
 
                 //**if already has a negative relationship, relationship may be Resolve Enmityd**
                 int weight = 0;
-                if (thisCharacterMood == CHARACTER_MOOD.DARK) {
-                    weight += -50;
-                } else if (thisCharacterMood == CHARACTER_MOOD.BAD) {
-                    weight += -20;
-                } else if (thisCharacterMood == CHARACTER_MOOD.GOOD) {
-                    weight += 20;
-                } else if (thisCharacterMood == CHARACTER_MOOD.GREAT) {
-                    weight += 50;
-                }
-                if (targetCharacterMood == CHARACTER_MOOD.DARK) {
-                    weight += -50;
-                } else if (targetCharacterMood == CHARACTER_MOOD.BAD) {
-                    weight += -20;
-                } else if (targetCharacterMood == CHARACTER_MOOD.GOOD) {
-                    weight += 20;
-                } else if (targetCharacterMood == CHARACTER_MOOD.GREAT) {
-                    weight += 50;
-                }
-                if (goapNode.actor.traitContainer.GetNormalTrait<Trait>("Hothead") != null) {
+                // if (thisCharacterMood == CHARACTER_MOOD.DARK) {
+                //     weight += -50;
+                // } else if (thisCharacterMood == CHARACTER_MOOD.BAD) {
+                //     weight += -20;
+                // } else if (thisCharacterMood == CHARACTER_MOOD.GOOD) {
+                //     weight += 20;
+                // } else if (thisCharacterMood == CHARACTER_MOOD.GREAT) {
+                //     weight += 50;
+                // }
+                // if (targetCharacterMood == CHARACTER_MOOD.DARK) {
+                //     weight += -50;
+                // } else if (targetCharacterMood == CHARACTER_MOOD.BAD) {
+                //     weight += -20;
+                // } else if (targetCharacterMood == CHARACTER_MOOD.GOOD) {
+                //     weight += 20;
+                // } else if (targetCharacterMood == CHARACTER_MOOD.GREAT) {
+                //     weight += 50;
+                // }
+                if (goapNode.actor.traitContainer.HasTrait("Hothead")) {
                     weight -= 40;
                 }
-                if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Hothead") != null) {
+                if (targetCharacter.traitContainer.HasTrait("Hothead")) {
                     weight -= 40;
                 }
                 if (weight > 0) {
@@ -144,38 +144,38 @@ public class ChatCharacter : GoapAction {
         }
 
         //Flirtation
-        float flirtationWeight = goapNode.actor.GetFlirtationWeightWith(targetCharacter, relData, thisCharacterMood, targetCharacterMood);
-        if (flirtationWeight > 0f) {
-            weights.AddElement("Flirt", flirtationWeight);
-        }
+        // float flirtationWeight = goapNode.actor.GetFlirtationWeightWith(targetCharacter, relData, thisCharacterMood, targetCharacterMood);
+        // if (flirtationWeight > 0f) {
+        //     weights.AddElement("Flirt", flirtationWeight);
+        // }
 
         //Become Lovers weight
-        float becomeLoversWeight = goapNode.actor.GetBecomeLoversWeightWith(targetCharacter, relData, thisCharacterMood, targetCharacterMood);
-        if (becomeLoversWeight > 0f) {
-            weights.AddElement("Become Lovers", becomeLoversWeight);
-        }
+        // float becomeLoversWeight = goapNode.actor.GetBecomeLoversWeightWith(targetCharacter, relData, thisCharacterMood, targetCharacterMood);
+        // if (becomeLoversWeight > 0f) {
+        //     weights.AddElement("Become Lovers", becomeLoversWeight);
+        // }
 
-        //Become Paramours
-        float becomeParamoursWeight = goapNode.actor.GetBecomeParamoursWeightWith(targetCharacter, relData, thisCharacterMood, targetCharacterMood);
-        if (becomeParamoursWeight > 0f) {
-            weights.AddElement("Become Paramours", becomeParamoursWeight);
-        }
+        //Become Affairs
+        // float becomeAffairsWeight = goapNode.actor.GetBecomeAffairsWeightWith(targetCharacter, relData, thisCharacterMood, targetCharacterMood);
+        // if (becomeAffairsWeight > 0f) {
+        //     weights.AddElement("Become Affairs", becomeAffairsWeight);
+        // }
 
-        if (goapNode.actor.traitContainer.GetNormalTrait<Trait>("Angry") != null || targetCharacter.traitContainer.GetNormalTrait<Trait>("Angry") != null) {
+        if (goapNode.actor.traitContainer.HasTrait("Angry") || targetCharacter.traitContainer.HasTrait("Angry")) {
             weights.RemoveElement("Quick Chat");
             weights.RemoveElement("Become Friends");
             weights.RemoveElement("Share Information");
             weights.RemoveElement("Resolve Enmity");
             weights.RemoveElement("Flirt");
             weights.RemoveElement("Become Lovers");
-            weights.RemoveElement("Become Paramours");
+            weights.RemoveElement("Become Affairs");
             weights.AddWeightToElement("Become Enemies", 100);
             weights.AddWeightToElement("Argument", 100);
         }
 
         string chatResult = weights.PickRandomElementGivenWeights();
 
-        weights.LogDictionaryValues("Chat Weights of " + goapNode.actor.name + " and " + targetCharacter.name);
+        weights.LogDictionaryValues($"Chat Weights of {goapNode.actor.name} and {targetCharacter.name}");
 
         CreateChatLog(goapNode, chatResult);
 
@@ -187,8 +187,8 @@ public class ChatCharacter : GoapAction {
             Flirt(goapNode, targetCharacter);
         } else if (chatResult == "Become Lovers") {
             BecomeLovers(goapNode, targetCharacter);
-        } else if (chatResult == "Become Paramours") {
-            BecomeParamours(goapNode, targetCharacter);
+        } else if (chatResult == "Become Affairs") {
+            BecomeAffairs(goapNode, targetCharacter);
         } else if (chatResult == "Argument") {
             Argument(goapNode, targetCharacter);
         }
@@ -197,48 +197,48 @@ public class ChatCharacter : GoapAction {
         //GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
         //adjust opinion +2 both ways
         Character target = goapNode.poiTarget as Character;
-        goapNode.actor.opinionComponent.AdjustOpinion(target, "Good Chat", 2);
-        goapNode.actor.opinionComponent.AdjustOpinion(target, "Good Chat", 2);
+        goapNode.actor.relationshipContainer.AdjustOpinion(goapNode.actor, target, "Good Chat", 2);
+        goapNode.actor.relationshipContainer.AdjustOpinion(goapNode.actor, target, "Good Chat", 2);
         
     }
     private void ShareInformation(ActualGoapNode goapNode) { }
     private void Argument(ActualGoapNode goapNode, Character targetCharacter) {
         GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
-        if (goapNode.actor.traitContainer.GetNormalTrait<Trait>("Angry") != null) {
+        if (goapNode.actor.traitContainer.HasTrait("Angry")) {
             Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "angry_chat");
             log.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            goapNode.actor.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+            goapNode.actor.logComponent.RegisterLog(log, onlyClickedCharacter: false);
         }
-        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Angry") != null) {
+        if (targetCharacter.traitContainer.HasTrait("Angry")) {
             Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "angry_chat");
             log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            targetCharacter.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+            targetCharacter.logComponent.RegisterLog(log, onlyClickedCharacter: false);
         }
 
-        if (goapNode.actor.traitContainer.GetNormalTrait<Trait>("Hothead") != null) {
-            goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Angry");
-        }
-        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Hothead") != null) {
-            targetCharacter.traitContainer.AddTrait(targetCharacter, "Angry");
-        }
+        //if (goapNode.actor.traitContainer.GetNormalTrait<Trait>("Hothead") != null) {
+        //    goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Angry");
+        //}
+        //if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Hothead") != null) {
+        //    targetCharacter.traitContainer.AddTrait(targetCharacter, "Angry");
+        //}
         
         //adjust opinion -2 both ways
         Character target = goapNode.poiTarget as Character;
-        goapNode.actor.opinionComponent.AdjustOpinion(target, "Argument", -2);
-        goapNode.actor.opinionComponent.AdjustOpinion(target, "Argument", -2);
+        goapNode.actor.relationshipContainer.AdjustOpinion(goapNode.actor, target, "Argument", -2);
+        goapNode.actor.relationshipContainer.AdjustOpinion(goapNode.actor, target, "Argument", -2);
     }
     private void Flirt(ActualGoapNode goapNode, Character targetCharacter) {
         //TODO: currentState.SetIntelReaction(FlirtIntelReaction);
-        if (!goapNode.actor.relationshipContainer.HasRelationshipWith(targetCharacter)) {
-            goapNode.actor.relationshipContainer.CreateNewRelationship(targetCharacter);
-        }
-        (goapNode.actor.relationshipContainer.GetRelationshipDataWith(targetCharacter) as POIRelationshipData).IncreaseFlirtationCount();
+        // if (!goapNode.actor.relationshipContainer.HasRelationshipWith(targetCharacter)) {
+        //     goapNode.actor.relationshipContainer.CreateNewRelationship(targetCharacter);
+        // }
+        // (goapNode.actor.relationshipContainer.GetRelationshipDataWith(targetCharacter) as BaseRelationshipData).IncreaseFlirtationCount();
     }
     private void BecomeLovers(ActualGoapNode goapNode, Character targetCharacter) {
         RelationshipManager.Instance.CreateNewRelationshipBetween(goapNode.actor, targetCharacter, RELATIONSHIP_TYPE.LOVER);
     }
-    private void BecomeParamours(ActualGoapNode goapNode, Character targetCharacter) {
-        RelationshipManager.Instance.CreateNewRelationshipBetween(goapNode.actor, targetCharacter, RELATIONSHIP_TYPE.PARAMOUR);
+    private void BecomeAffairs(ActualGoapNode goapNode, Character targetCharacter) {
+        RelationshipManager.Instance.CreateNewRelationshipBetween(goapNode.actor, targetCharacter, RELATIONSHIP_TYPE.AFFAIR);
     }
     #endregion
 
@@ -260,7 +260,7 @@ public class ChatCharacter : GoapAction {
     //            reactions.Add("I know what I did.");
     //            //-**Recipient Effect * *: no effect
     //        } 
-    //        else if(recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR) || recipient.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)) {
+    //        else if(recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.AFFAIR) || recipient.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.AFFAIR)) {
     //            reactions.Add("Wait what?! What were they talking about?!");
     //        } 
     //        else if (recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER) || recipient.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER)) {
@@ -329,9 +329,9 @@ public class ChatCharacter : GoapAction {
     //        List<string> reactions = new List<string>();
     //        Character target = poiTarget as Character;
     //        Relatable actorLover = actor.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.LOVER);
-    //        Relatable actorParamour = actor.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR);
+    //        Relatable actorParamour = actor.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.AFFAIR);
     //        Relatable targetLover = target.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.LOVER);
-    //        Relatable targetParamour = target.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR);
+    //        Relatable targetParamour = target.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.AFFAIR);
 
     //#if TRAILER_BUILD
     //        if (recipient.name == "Audrey" && actor.name == "Jamie" && target.name == "Fiona") {
@@ -383,8 +383,8 @@ public class ChatCharacter : GoapAction {
     //    private List<string> BecomeLoversIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
     //        List<string> reactions = new List<string>();
     //        Character target = poiTarget as Character;
-    //        Relatable actorParamour = actor.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR);
-    //        Relatable targetParamour = target.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR);
+    //        Relatable actorParamour = actor.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.AFFAIR);
+    //        Relatable targetParamour = target.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.AFFAIR);
     //        if (recipient == actor) {
     //            if(recipient.currentAlterEgo == targetParamour) {
     //                reactions.Add(string.Format("Yes that's true! I am so happy {0} finally chose me. This is what I've been dreaming for and at last, it came true!", target.name));
@@ -424,7 +424,7 @@ public class ChatCharacter : GoapAction {
     //        }
     //        return reactions;
     //    }
-    //    private List<string> BecomeParamoursIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
+    //    private List<string> BecomeAffairsIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
     //        List<string> reactions = new List<string>();
     //        Character target = poiTarget as Character;
     //        Relatable actorLover = actor.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.LOVER);
@@ -498,8 +498,8 @@ public class ChatCharacter : GoapAction {
     //    private List<string> ResolveEnmityIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
     //        List<string> reactions = new List<string>();
     //        Character target = poiTarget as Character;
-    //        //Character actorParamour = actor.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR);
-    //        //Character targetParamour = target.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR);
+    //        //Character actorParamour = actor.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.AFFAIR);
+    //        //Character targetParamour = target.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.AFFAIR);
 
     //        //Recipient and Actor is the same or Recipient and Target is the same:
     //        if (recipient == actor || recipient == target) {
@@ -526,6 +526,6 @@ public class ChatCharacter : GoapAction {
 
 public class ChatCharacterData : GoapActionData {
     public ChatCharacterData() : base(INTERACTION_TYPE.CHAT_CHARACTER) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
     }
 }

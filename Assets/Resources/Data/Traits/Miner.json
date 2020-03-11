@@ -1,1 +1,0 @@
-{"name":"Miner","description":"Allows character to mine from Stones and Ores, and spawn Mine events in owned Quarries and Mines. ","thoughtText":"","type":12,"effect":0,"advertisedInteractions":[],"daysDuration":0,"level":0,"effects":[],"isHidden":false,"mutuallyExclusive":[""],"canBeTriggered":false,"hindersWitness":false,"hindersMovement":false,"hindersAttackTarget":false}

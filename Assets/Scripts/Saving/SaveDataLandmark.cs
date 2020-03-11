@@ -17,11 +17,6 @@ public class SaveDataLandmark {
         landmarkName = landmark.landmarkName;
         landmarkType = landmark.specificLandmarkType;
         locationID = landmark.tileLocation.id;
-        if(landmark.connectedTile != null) {
-            connectedTileID = landmark.connectedTile.id;
-        } else {
-            connectedTileID = -1;
-        }
         landmarkTags = landmark.landmarkTags;
         invasionTicks = landmark.invasionTicks;
     }

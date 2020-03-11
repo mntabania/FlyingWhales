@@ -22,7 +22,7 @@ public class CombatAbility {
 
     public CombatAbility(COMBAT_ABILITY type) {
         this.type = type;
-        name = Utilities.NormalizeStringUpperCaseFirstLetters(this.type.ToString());
+        name = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(this.type.ToString());
         lvl = 1;
         tier = 3;
         OnLevelUp();
@@ -33,12 +33,12 @@ public class CombatAbility {
 
     public void LevelUp() {
         lvl++;
-        lvl = Mathf.Clamp(lvl, 1, PlayerManager.MAX_LEVEL_COMBAT_ABILITY);
+        lvl = Mathf.Clamp(lvl, 1, PlayerDB.MAX_LEVEL_COMBAT_ABILITY);
         OnLevelUp();
     }
     public void SetLevel(int amount) {
         lvl = amount;
-        lvl = Mathf.Clamp(lvl, 1, PlayerManager.MAX_LEVEL_COMBAT_ABILITY);
+        lvl = Mathf.Clamp(lvl, 1, PlayerDB.MAX_LEVEL_COMBAT_ABILITY);
         OnLevelUp();
     }
 

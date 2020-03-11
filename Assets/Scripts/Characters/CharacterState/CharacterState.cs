@@ -18,7 +18,7 @@ public class CharacterState {
     public string actionIconString { get; protected set; }
     //public GoapAction currentlyDoingAction { get; protected set; }
     //public Character targetCharacter { get; protected set; } //Target character of current state
-    //public Settlement targetSettlement { get; protected set; }
+    //public NPCSettlement targetNpcSettlement { get; protected set; }
     //public bool isUnending { get; protected set; } //is this state unending?
     //public CharacterState parentMajorState { get; protected set; }
 
@@ -41,8 +41,8 @@ public class CharacterState {
         //    this.SetTargetCharacter(targetCharacter);
         //}
         //if (saveData.targetAreaID != -1) {
-        //    Settlement targetSettlement = LandmarkManager.Instance.GetAreaByID(saveData.targetAreaID);
-        //    this.SetTargetArea(targetSettlement);
+        //    NPCSettlement targetNpcSettlement = LandmarkManager.Instance.GetAreaByID(saveData.targetAreaID);
+        //    this.SetTargetArea(targetNpcSettlement);
         //}
     }
     //Starts a state and its movement behavior, can be overridden
@@ -129,7 +129,8 @@ public class CharacterState {
     /// Pauses this state, used in switching states if this is a major state
     /// </summary>
     public virtual void PauseState() {
-        stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Pausing " + stateName + " for " + stateComponent.character.name);
+        stateComponent.character.logComponent.PrintLogIfActive(
+            $"Pausing {stateName} for {stateComponent.character.name}");
         isPaused = true;
         //StopStatePerTick();
     }
@@ -143,7 +144,8 @@ public class CharacterState {
         if (!isPaused) {
             return; //if this state is not paused then do not resume.
         }
-        stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Resuming " + stateName + " for " + stateComponent.character.name);
+        stateComponent.character.logComponent.PrintLogIfActive(
+            $"Resuming {stateName} for {stateComponent.character.name}");
         isPaused = false;
         stateComponent.SetCurrentState(this);
         //StartStatePerTick();
@@ -182,9 +184,9 @@ public class CharacterState {
     //public void SetTargetCharacter(Character target) {
     //    targetCharacter = target;
     //}
-    ////Sets the target settlement of this state, if there's any
-    //public void SetTargetArea(Settlement target) {
-    //    targetSettlement = target;
+    ////Sets the target npcSettlement of this state, if there's any
+    //public void SetTargetArea(NPCSettlement target) {
+    //    targetNpcSettlement = target;
     //}
     //This is the action that is currently being done while in this state, ex. pick up item
     //public void SetCurrentlyDoingAction(GoapAction action) {
@@ -201,20 +203,20 @@ public class CharacterState {
         //stateComponent.SetStateToDo(this, stopMovement: false);
         //stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Entering " + stateName + " for " + stateComponent.character.name + " targetting " + targetCharacter?.name);
         StartState();
-        ////targetSettlement = settlement;
-        //if (targetSettlement == null || targetSettlement == stateComponent.character.specificLocation) {
+        ////targetNpcSettlement = npcSettlement;
+        //if (targetNpcSettlement == null || targetNpcSettlement == stateComponent.character.specificLocation) {
         //    stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Entering " + stateName + " for " + stateComponent.character.name + " targetting " + targetCharacter?.name);
         //    StartState();
         //} else {
         //    //GameDate dueDate = GameManager.Instance.Today().AddTicks(30);
-        //    //SchedulingManager.Instance.AddEntry(dueDate, () => GoToLocation(targetSettlement));
-        //    CreateTravellingThoughtBubbleLog(targetSettlement);
-        //    stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Travelling to " + targetSettlement.name + " before entering " + stateName + " for " + stateComponent.character.name);
-        //    stateComponent.character.currentParty.GoToLocation(targetSettlement.region, PATHFINDING_MODE.NORMAL, null, () => StartState());
+        //    //SchedulingManager.Instance.AddEntry(dueDate, () => GoToLocation(targetNpcSettlement));
+        //    CreateTravellingThoughtBubbleLog(targetNpcSettlement);
+        //    stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Travelling to " + targetNpcSettlement.name + " before entering " + stateName + " for " + stateComponent.character.name);
+        //    stateComponent.character.currentParty.GoToLocation(targetNpcSettlement.region, PATHFINDING_MODE.NORMAL, null, () => StartState());
         //}
         //if(characterState == CHARACTER_STATE.EXPLORE) {
-        //    //There is a special case for explore state, character must travel to a dungeon-type settlement first
-        //    Settlement dungeon = LandmarkManager.Instance.GetRandomAreaOfType(AREA_TYPE.DUNGEON);
+        //    //There is a special case for explore state, character must travel to a dungeon-type npcSettlement first
+        //    NPCSettlement dungeon = LandmarkManager.Instance.GetRandomAreaOfType(AREA_TYPE.DUNGEON);
         //    if(dungeon == stateComponent.character.specificLocation) {
         //        Debug.Log(GameManager.Instance.TodayLogString() + "Entering " + stateName + " for " + stateComponent.character.name);
         //        StartState();
@@ -228,14 +230,15 @@ public class CharacterState {
         //    StartState();
         //}
     }
-    //private void GoToLocation(Settlement targetSettlement) {
-    //    CreateTravellingThoughtBubbleLog(targetSettlement);
-    //    Debug.Log(GameManager.Instance.TodayLogString() + "Travelling to " + targetSettlement.name + " before entering " + stateName + " for " + stateComponent.character.name);
-    //    stateComponent.character.currentParty.GoToLocation(targetSettlement, PATHFINDING_MODE.NORMAL, null, () => StartState());
+    //private void GoToLocation(NPCSettlement targetNpcSettlement) {
+    //    CreateTravellingThoughtBubbleLog(targetNpcSettlement);
+    //    Debug.Log(GameManager.Instance.TodayLogString() + "Travelling to " + targetNpcSettlement.name + " before entering " + stateName + " for " + stateComponent.character.name);
+    //    stateComponent.character.currentParty.GoToLocation(targetNpcSettlement, PATHFINDING_MODE.NORMAL, null, () => StartState());
     //}
     //This is the one must be called to exit and end this state
     public void ExitState() {
-        stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Exiting " + stateName + " for " + stateComponent.character.name /*+ " targetting " + targetCharacter?.name ?? "No One"*/);
+        stateComponent.character.logComponent.PrintLogIfActive(
+            $"Exiting {stateName} for {stateComponent.character.name}" /*+ " targetting " + targetCharacter?.name ?? "No One"*/);
         EndState();
     }
     public void SetJob(CharacterStateJob job) {
@@ -243,7 +246,7 @@ public class CharacterState {
         if (job != null) {
             OnJobSet();
         } else {
-            Debug.Log(GameManager.Instance.TodayLogString() + this.ToString() + " Set job to null!");
+            Debug.Log($"{GameManager.Instance.TodayLogString()}{this} Set job to null!");
         }
     }
     /// <summary>
@@ -256,15 +259,15 @@ public class CharacterState {
             //if (targetCharacter != null) {
             //    log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
             //}
-            //if(targetSettlement != null) {
-            //    log.AddToFillers(targetSettlement, targetSettlement.name, LOG_IDENTIFIER.LANDMARK_1);
+            //if(targetNpcSettlement != null) {
+            //    log.AddToFillers(targetNpcSettlement, targetNpcSettlement.name, LOG_IDENTIFIER.LANDMARK_1);
             //}
             log.AddLogToInvolvedObjects();
 
-            PlayerManager.Instance.player.ShowNotificationFrom(log, stateComponent.character, false);
+            // PlayerManager.Instance.player.ShowNotificationFrom(log, stateComponent.character, false);
         }
     }
-    private void CreateTravellingThoughtBubbleLog(Settlement targetLocation) {
+    private void CreateTravellingThoughtBubbleLog(NPCSettlement targetLocation) {
         if (LocalizationManager.Instance.HasLocalizedValue("CharacterState", stateName, "thought_bubble_m")) {
             thoughtBubbleLog = new Log(GameManager.Instance.Today(), "CharacterState", stateName, "thought_bubble_m");
             thoughtBubbleLog.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -309,7 +312,7 @@ public class CharacterState {
     //    isUnending = state;
     //}
     public override string ToString() {
-        return stateName + " by " + stateComponent.character.name + " with job : " + (job?.name ?? "None");
+        return $"{stateName} by {stateComponent.character.name} with job : {(job?.name ?? "None")}";
     }
     #endregion
 }
@@ -343,8 +346,8 @@ public class SaveDataCharacterState {
         //} else {
         //    targetCharacterID = -1;
         //}
-        //if (state.targetSettlement != null) {
-        //    targetAreaID = state.targetSettlement.id;
+        //if (state.targetNpcSettlement != null) {
+        //    targetAreaID = state.targetNpcSettlement.id;
         //} else {
         //    targetAreaID = -1;
         //}

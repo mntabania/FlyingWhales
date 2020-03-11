@@ -56,7 +56,7 @@ public class SettingsManager : MonoBehaviour {
         }
         List<string> options = new List<string>();
         for (int i = 0; i < resolutions.Count; i++) {
-            options.Add(resolutions[i].width + " x " + resolutions[i].height);
+            options.Add($"{resolutions[i].width} x {resolutions[i].height}");
         }
         resolutionsDropdown.AddOptions(options);
     }

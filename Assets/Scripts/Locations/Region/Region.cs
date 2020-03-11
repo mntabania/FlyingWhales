@@ -2,113 +2,130 @@
 using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using PathFind;
+using SpriteGlow;
 using UnityEngine;
+using UtilityScripts;
 using Random = UnityEngine.Random;
 
 public class Region : ILocation {
-
-    private const float HoveredBorderAlpha = 255f / 255f;
-    private const float UnhoveredBorderAlpha = 128f / 255f;
-
-    public int id { get; private set; }
+    public int id { get; }
     public string name { get; private set; }
     public string description => GetDescription();
-    public List<HexTile> tiles { get; private set; }
+    public List<HexTile> tiles { get; }
+    public List<HexTile> shuffledNonMountainWaterTiles { get; private set; }
     public HexTile coreTile { get; private set; }
     public LOCATION_TYPE locationType => LOCATION_TYPE.EMPTY;
-    public Color regionColor { get; private set; }
+    public Color regionColor { get; }
     public Minion assignedMinion { get; private set; }
-    public List<Faction> factionsHere { get; private set; }
-    public List<Character> residents { get; private set; }
+    public List<Faction> factionsHere { get; }
+    public List<Character> residents { get; }
     public DemonicLandmarkBuildingData demonicBuildingData { get; private set; }
     public DemonicLandmarkInvasionData demonicInvasionData { get; private set; }
     public GameObject eventIconGo { get; private set; }
-    public List<Character> charactersAtLocation { get; private set; }
-    public InnerTileMap innerMap => _regionInnerTileMap;
+    public List<Character> charactersAtLocation { get; }
     public RegionTileObject regionTileObject { get; private set; }
-
-    private RegionInnerTileMap _regionInnerTileMap; //inner map of the region, this should only be used if this region does not have an settlement. 
-    private string _activeEventAfterEffectScheduleId;
-    private List<SpriteRenderer> _borderSprites;
-    private Dictionary<STRUCTURE_TYPE, List<LocationStructure>> _structures;
     public HexTile[,] hexTileMap { get; private set; }
     public LocationStructure mainStorage { get; private set; }
-    
-    public Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness { get; private set; }
+    public bool canShowNotifications { get; private set; }
+    public Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness { get; }
 
+    private RegionInnerTileMap _regionInnerTileMap; //inner map of the region, this should only be used if this region does not have an npcSettlement. 
+    private string _activeEventAfterEffectScheduleId;
+    private List<Border> _borders;
+    private Dictionary<STRUCTURE_TYPE, List<LocationStructure>> _structures;
+    
     #region getter/setter
     public BaseLandmark mainLandmark => coreTile.landmarkOnTile;
     public Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures => _structures;
+    public InnerTileMap innerMap => _regionInnerTileMap;
     #endregion
 
     private Region() {
         charactersAtLocation = new List<Character>();
-        new List<System.Action>();
         factionsHere = new List<Faction>();
         residents = new List<Character>();
         awareness = new Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>>();
     }
     public Region(HexTile coreTile) : this() {
-        id = Utilities.SetID(this);
-        name = RandomNameGenerator.Instance.GetRegionName();
+        id = UtilityScripts.Utilities.SetID(this);
+        name = RandomNameGenerator.GetRegionName();
         this.coreTile = coreTile;
         tiles = new List<HexTile>();
+        shuffledNonMountainWaterTiles = new List<HexTile>();
         AddTile(coreTile);
-        if (id == 1) {
-            regionColor = Color.blue;
-        } else if (id == 2) {
-            regionColor = Color.yellow;
-        } else if (id == 3) {
-            regionColor = Color.green;
-        } else if (id == 4) {
-            regionColor = Color.red;
-        } else if (id == 5) {
-            regionColor = Color.yellow;
-        }
-        // regionColor = Random.ColorHSV();
+        regionColor = GenerateRandomRegionColor();
+        Debug.Log($"Created region {this.name} with core tile {coreTile.ToString()}");
     }
     public Region(SaveDataRegion data) : this() {
-        id = Utilities.SetID(this, data.id);
+        id = UtilityScripts.Utilities.SetID(this, data.id);
         name = data.name;
         coreTile = GridMap.Instance.normalHexTiles[data.coreTileID];
         tiles = new List<HexTile>();
+        shuffledNonMountainWaterTiles = new List<HexTile>();
         regionColor = data.regionColor;
     }
 
-    public void SetName(string name) {
-        this.name = name;
-    }
+    #region Tiles
     public void AddTile(HexTile tile) {
         if (!tiles.Contains(tile)) {
             tiles.Add(tile);
+            if(tile.elevationType != ELEVATION.MOUNTAIN && tile.elevationType != ELEVATION.WATER) {
+                if(shuffledNonMountainWaterTiles.Count > 1) {
+                    int index = UnityEngine.Random.Range(0, shuffledNonMountainWaterTiles.Count + 1);
+                    if(index == shuffledNonMountainWaterTiles.Count) {
+                        shuffledNonMountainWaterTiles.Add(tile);
+                    } else {
+                        shuffledNonMountainWaterTiles.Insert(index, tile);
+                    }
+                } else {
+                    shuffledNonMountainWaterTiles.Add(tile);
+                }
+            }
             tile.SetRegion(this);
-            // tile.spriteRenderer.color = regionColor;
         }
     }
     private void RemoveTile(HexTile tile) {
         if (tiles.Remove(tile)) {
+            shuffledNonMountainWaterTiles.Remove(tile);
             tile.SetRegion(null);
-            // tile.spriteRenderer.color = Color.white;
         }
     }
-    public void OnMainLandmarkChanged() {
-        regionTileObject?.UpdateAdvertisements(this);
-    }
+    #endregion
 
     #region Utilities
-    private string GetDescription() {
-        if (coreTile.isCorrupted) {
-            if (mainLandmark.specificLandmarkType == LANDMARK_TYPE.NONE) {
-                return "This region is empty. You may assign a minion to build a demonic landmark here.";
-            }
+    public void SetName(string name) {
+        this.name = name;
+    }
+    private Color GenerateRandomRegionColor() {
+        if (id == 1) {
+            return Color.cyan;
+        } else if (id == 2) {
+            return Color.yellow;
+        } else if (id == 3) {
+            return Color.green;
+        } else if (id == 4) {
+            return Color.red;
+        } else if (id == 5) {
+            return Color.magenta;
         }
-        return LandmarkManager.Instance.GetLandmarkData(mainLandmark.specificLandmarkType).description;
+        return Random.ColorHSV();
+    }
+    private string GetDescription() {
+        // if (coreTile.isCorrupted) {
+        //     if (mainLandmark.specificLandmarkType == LANDMARK_TYPE.NONE) {
+        //         return "This region is empty. You may assign a minion to build a demonic landmark here.";
+        //     }
+        // }
+        // return LandmarkManager.Instance.GetLandmarkData(mainLandmark.specificLandmarkType).description;
+        return string.Empty;
     }
     public void FinalizeData() {
-        //outerTiles = GetOuterTiles();
-        _borderSprites = GetOuterBorders();
         DetermineHexTileMap();
+    }
+    public void GenerateOuterBorders() {
+        _borders = GetOuterBorders();
     }
     public void RedetermineCore() {
         int maxX = tiles.Max(t => t.data.xCoordinate);
@@ -119,13 +136,10 @@ public class Region : ILocation {
         int x = (minX + maxX) / 2;
         int y = (minY + maxY) / 2;
 
-        coreTile = GridMap.Instance.map[x, y];
-
-        // while (tiles.Contains(coreTile) == false) {
-        //     x++;
-        //     y++;
-        //     coreTile = GridMap.Instance.map[x, y];
-        // }
+        HexTile newCoreTile = GridMap.Instance.map[x, y];
+        if (newCoreTile.IsAtEdgeOfMap() == false) {
+            coreTile = newCoreTile;
+        }
         
         //clear all tiles again after redetermining core
         List<HexTile> allTiles = new List<HexTile>(tiles);
@@ -137,10 +151,6 @@ public class Region : ILocation {
         }
         
     }
-    /// <summary>
-    /// Get the outer tiles of this region. NOTE: Made this into a getter instead of saving it in a variable, to save memory.
-    /// </summary>
-    /// <returns>List of outer tiles.</returns>
     private List<HexTile> GetOuterTiles() {
         List<HexTile> outerTiles = new List<HexTile>();
         for (int i = 0; i < tiles.Count; i++) {
@@ -151,10 +161,14 @@ public class Region : ILocation {
         }
         return outerTiles;
     }
-    private List<SpriteRenderer> GetOuterBorders() {
+    private List<Border> GetOuterBorders() {
         List<HexTile> outerTiles = GetOuterTiles();
-        List<SpriteRenderer> borders = new List<SpriteRenderer>();
-        HEXTILE_DIRECTION[] dirs = Utilities.GetEnumValues<HEXTILE_DIRECTION>();
+        List<Border> borders = new List<Border>();
+        HEXTILE_DIRECTION[] dirs = CollectionUtilities.GetEnumValues<HEXTILE_DIRECTION>();
+        
+        GameObject borderParent = new GameObject($"{this.name} Borders");
+        borderParent.transform.SetParent(GridMap.Instance.transform);
+        
         for (int i = 0; i < outerTiles.Count; i++) {
             HexTile currTile = outerTiles[i];
             for (int j = 0; j < dirs.Length; j++) {
@@ -163,8 +177,24 @@ public class Region : ILocation {
                 HexTile neighbour = currTile.GetNeighbour(dir);
                 if (neighbour == null || neighbour.region != currTile.region) {
                     SpriteRenderer border = currTile.GetBorder(dir);
-                    //currTile.SetBorderColor(regionColor);
-                    borders.Add(border);
+                    
+                    GameObject borderGO = new GameObject("Region Border");
+                    borderGO.transform.SetParent(borderParent.transform);
+                    borderGO.transform.localScale = border.transform.localScale;
+                    borderGO.transform.position = border.gameObject.transform.position;
+                    
+                    SpriteRenderer regionBorder = borderGO.AddComponent<SpriteRenderer>();
+                    regionBorder.sprite = border.sprite;
+                    regionBorder.sortingOrder = border.sortingOrder;
+                    regionBorder.sortingLayerName = border.sortingLayerName;
+                    regionBorder.color = this.regionColor;
+
+                    SpriteGlowEffect glowEffect = borderGO.AddComponent<SpriteGlowEffect>();
+                    glowEffect.GlowColor = regionColor;
+                    glowEffect.GlowBrightness = 1.5f;
+                    glowEffect.OutlineWidth = 2;
+
+                    borders.Add(new Border(regionBorder, glowEffect));
                 }
             }
         }
@@ -186,35 +216,27 @@ public class Region : ILocation {
         }
         return adjacent;
     }
-    public void OnHoverOverAction() {
-        ShowSolidBorder();
-    }
-    public void OnHoverOutAction() {
-        if (UIManager.Instance.regionInfoUI.isShowing) {
-            if (UIManager.Instance.regionInfoUI.activeRegion != this) {
-                ShowTransparentBorder();
-            }
-        } else {
-            ShowTransparentBorder();
-        }
-
-    }
-    public void ShowSolidBorder() {
-        for (int i = 0; i < _borderSprites.Count; i++) {
-            SpriteRenderer s = _borderSprites[i];
-            Color color = s.color;
-            color.a = HoveredBorderAlpha;
-            s.color = color;
-            s.gameObject.SetActive(true);
+    public void OnHoverOverAction() { }
+    public void OnHoverOutAction() { }
+    public void ShowBorders(Color color, bool showGlow = false) {
+        for (int i = 0; i < _borders.Count; i++) {
+            Border s = _borders[i];
+            s.SetBorderState(true);
+            s.SetColor(color);
+            s.SetGlowState(showGlow);
         }
     }
-    public void ShowTransparentBorder() {
-        for (int i = 0; i < _borderSprites.Count; i++) {
-            SpriteRenderer s = _borderSprites[i];
-            Color color = s.color;
-            color.a = UnhoveredBorderAlpha;
-            s.color = color;
-            s.gameObject.SetActive(true);
+    public void HideBorders(bool glowState = false) {
+        for (int i = 0; i < _borders.Count; i++) {
+            Border s = _borders[i];
+            s.SetBorderState(false);
+            s.SetGlowState(glowState);
+        }
+    }
+    public void SetBorderGlowEffectState(bool state) {
+        for (int i = 0; i < _borders.Count; i++) {
+            Border s = _borders[i];
+            s.SetGlowState(state);
         }
     }
     public void CenterCameraOnRegion() {
@@ -243,8 +265,8 @@ public class Region : ILocation {
 
     #region Invasion
     public bool CanBeInvaded() {
-        // if (settlement != null) {
-        //     return settlement.CanInvadeSettlement();
+        // if (npcSettlement != null) {
+        //     return npcSettlement.CanInvadeSettlement();
         // }
         //return HasCorruptedConnection() &&!coreTile.isCorrupted && !demonicInvasionData.beingInvaded;
         return  !coreTile.isCorrupted; //HasCorruptedConnection() && TODO:
@@ -281,7 +303,8 @@ public class Region : ILocation {
         if (demonicInvasionData.currentDuration > mainLandmark.invasionTicks) {
             //invaded.
             Invade();
-            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "You have successfully invaded " + this.name, () => UIManager.Instance.ShowRegionInfo(this));
+            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(),
+                $"You have successfully invaded {this.name}", () => UIManager.Instance.ShowRegionInfo(this));
             Messenger.RemoveListener(Signals.TICK_STARTED, PerInvasionTick);
         }
     }
@@ -326,13 +349,13 @@ public class Region : ILocation {
             currentDuration = 0,
         };
         coreTile.UpdateBuildSprites();
-        TimerHubUI.Instance.AddItem("Building " + demonicBuildingData.landmarkName + " at " + name, demonicBuildingData.buildDuration, () => UIManager.Instance.ShowRegionInfo(this));
+        TimerHubUI.Instance.AddItem($"Building {demonicBuildingData.landmarkName} at {name}", demonicBuildingData.buildDuration, () => UIManager.Instance.ShowRegionInfo(this));
         Messenger.AddListener(Signals.TICK_STARTED, PerTickBuilding);
     }
     public void LoadBuildingStructure(SaveDataRegion data) {
         demonicBuildingData = data.demonicBuildingData;
         if (demonicBuildingData.landmarkType != LANDMARK_TYPE.NONE) {
-            TimerHubUI.Instance.AddItem("Building " + demonicBuildingData.landmarkName + " at " + name, demonicBuildingData.buildDuration - demonicBuildingData.currentDuration, () => UIManager.Instance.ShowRegionInfo(this));
+            TimerHubUI.Instance.AddItem($"Building {demonicBuildingData.landmarkName} at {name}", demonicBuildingData.buildDuration - demonicBuildingData.currentDuration, () => UIManager.Instance.ShowRegionInfo(this));
             Messenger.AddListener(Signals.TICK_STARTED, PerTickBuilding);
         }
     }
@@ -352,7 +375,8 @@ public class Region : ILocation {
         BaseLandmark newLandmark = LandmarkManager.Instance.CreateNewLandmarkOnTile(coreTile, demonicBuildingData.landmarkType, false);
         //newLandmark.OverrideID(previousID);
 
-        UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Finished building " + Utilities.NormalizeStringUpperCaseFirstLetters(newLandmark.specificLandmarkType.ToString()) + " at " + this.name, () => UIManager.Instance.ShowRegionInfo(this));
+        UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(),
+            $"Finished building {UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(newLandmark.specificLandmarkType.ToString())} at {this.name}", () => UIManager.Instance.ShowRegionInfo(this));
         demonicBuildingData = new DemonicLandmarkBuildingData();
         //assignedMinion.SetAssignedRegion(null);
         //SetAssignedMinion(null);
@@ -364,7 +388,7 @@ public class Region : ILocation {
     private void StopBuildingStructure() {
         if (demonicBuildingData.landmarkType != LANDMARK_TYPE.NONE) {
             Messenger.RemoveListener(Signals.TICK_STARTED, PerTickBuilding);
-            TimerHubUI.Instance.RemoveItem("Building " + demonicBuildingData.landmarkName + " at " + name);
+            TimerHubUI.Instance.RemoveItem($"Building {demonicBuildingData.landmarkName} at {name}");
             Messenger.Broadcast(Signals.REGION_INFO_UI_UPDATE_APPROPRIATE_CONTENT, this);
             demonicBuildingData = new DemonicLandmarkBuildingData();
             coreTile.UpdateBuildSprites();
@@ -436,7 +460,7 @@ public class Region : ILocation {
 
     #region Faction
     public void AddFactionHere(Faction faction) {
-        if (!IsFactionHere(faction)) {
+        if (!IsFactionHere(faction) && faction.isMajorFaction) {
             factionsHere.Add(faction);
             //Once a faction is added and there is no ruling faction yet, automatically let the added faction own the region
             //TODO:
@@ -525,6 +549,7 @@ public class Region : ILocation {
 
         if (!structures[structure.structureType].Contains(structure)) {
             structures[structure.structureType].Add(structure);
+            // Debug.Log($"New structure {structure.name} was added to region {name}" );
         }
     }
     public void RemoveStructure(LocationStructure structure) {
@@ -539,20 +564,32 @@ public class Region : ILocation {
     }
     public LocationStructure GetRandomStructureOfType(STRUCTURE_TYPE type) {
         if (structures.ContainsKey(type)) {
-            return structures[type][Utilities.rng.Next(0, structures[type].Count)];
+            return structures[type][UtilityScripts.Utilities.rng.Next(0, structures[type].Count)];
         }
         return null;
     }
     public LocationStructure GetRandomStructure() {
-        Dictionary<STRUCTURE_TYPE, List<LocationStructure>> _structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>(this.structures);
-        _structures.Remove(STRUCTURE_TYPE.EXIT);
-        int dictIndex = UnityEngine.Random.Range(0, _structures.Count);
+        Dictionary<STRUCTURE_TYPE, List<LocationStructure>> _allStructures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>(this.structures);
+        _allStructures.Remove(STRUCTURE_TYPE.CAVE);
+        _allStructures.Remove(STRUCTURE_TYPE.OCEAN);
+        int dictIndex = UnityEngine.Random.Range(0, _allStructures.Count);
         int count = 0;
-        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in _structures) {
+        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in _allStructures) {
             if (count == dictIndex) {
                 return kvp.Value[UnityEngine.Random.Range(0, kvp.Value.Count)];
             }
             count++;
+        }
+        return null;
+    }
+    public LocationStructure GetStructureOfTypeWithoutSettlement(STRUCTURE_TYPE type) {
+        if (structures.ContainsKey(type)) {
+            List<LocationStructure> chosenStructures = structures[type];
+            for (int i = 0; i < chosenStructures.Count; i++) {
+                if(chosenStructures[i].settlementLocation == null) {
+                    return chosenStructures[i];
+                }
+            }
         }
         return null;
     }
@@ -568,35 +605,33 @@ public class Region : ILocation {
         return null;
     }
     public List<LocationStructure> GetStructuresAtLocation() {
-        List<LocationStructure> _structures = new List<LocationStructure>();
+        List<LocationStructure> structuresAtLocation = new List<LocationStructure>();
         foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in this.structures) {
             for (int i = 0; i < kvp.Value.Count; i++) {
                 LocationStructure currStructure = kvp.Value[i];
-                if (currStructure.structureType != STRUCTURE_TYPE.EXIT) {
-                    _structures.Add(currStructure);
-                }
+                structuresAtLocation.Add(currStructure);
             }
         }
-        return _structures;
+        return structuresAtLocation;
     }
     public List<T> GetStructuresAtLocation<T>(STRUCTURE_TYPE type) where T : LocationStructure{
-        List<T> _structures = new List<T>();
+        List<T> structuresAtLocation = new List<T>();
         foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in this.structures) {
             for (int i = 0; i < kvp.Value.Count; i++) {
                 LocationStructure currStructure = kvp.Value[i];
                 if (currStructure.structureType == type) {
-                    _structures.Add(currStructure as T);
+                    structuresAtLocation.Add(currStructure as T);
                 }
             }
         }
-        return _structures;
+        return structuresAtLocation;
     }
     public bool HasStructure(STRUCTURE_TYPE type) {
         return structures.ContainsKey(type);
     }
     public void OnLocationStructureObjectPlaced(LocationStructure structure) {
         if (structure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
-            //if a warehouse was placed, and this settlement does not yet have a main storage structure, or is using the city center as their main storage structure, then use the new warehouse instead.
+            //if a warehouse was placed, and this npcSettlement does not yet have a main storage structure, or is using the city center as their main storage structure, then use the new warehouse instead.
             if (mainStorage == null || mainStorage.structureType == STRUCTURE_TYPE.CITY_CENTER) {
                 SetMainStorage(structure);
             }
@@ -621,7 +656,7 @@ public class Region : ILocation {
     }
     //public bool AddSpecialTokenToLocation(SpecialToken token, LocationStructure structure = null, LocationGridTile gridLocation = null) {
     //    token.SetOwner(this.owner);
-    //    if (innerMap != null) { //if the settlement map of this settlement has already been created.
+    //    if (innerMap != null) { //if the npcSettlement map of this npcSettlement has already been created.
     //        if (structure != null) {
     //            structure.AddItem(token, gridLocation);
     //        } else {
@@ -638,8 +673,14 @@ public class Region : ILocation {
     //        takenFrom.RemoveItem(token);
     //    }
     //}
-    public bool IsRequiredByLocation(SpecialToken token) {
+    public bool IsRequiredByLocation(TileObject item) {
         return false;
+    }
+    public void AllowNotifications() {
+        canShowNotifications = true;
+    }
+    public void BlockNotifications() {
+        canShowNotifications = false;
     }
     public bool IsSameCoreLocationAs(ILocation location) {
         return location.coreTile == this.coreTile;
@@ -652,6 +693,35 @@ public class Region : ILocation {
         foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in structures) {
             for (int i = 0; i < keyValuePair.Value.Count; i++) {
                 objs.AddRange(keyValuePair.Value[i].GetTileObjectsOfType(type));
+            }
+        }
+        return objs;
+    }
+    public int GetTileObjectsOfTypeCount(TILE_OBJECT_TYPE type) {
+        int count = 0;
+        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in structures) {
+            for (int i = 0; i < keyValuePair.Value.Count; i++) {
+                count += keyValuePair.Value[i].GetTileObjectsOfTypeCount(type);
+            }
+        }
+        return count;
+    }
+    public bool HasTileObjectOfType(TILE_OBJECT_TYPE type) {
+        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in structures) {
+            for (int i = 0; i < keyValuePair.Value.Count; i++) {
+                LocationStructure structure = keyValuePair.Value[i];
+                if (structure.HasTileObjectOfType(type)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    public List<T> GetTileObjectsOfType<T>() where T : TileObject{
+        List<T> objs = new List<T>();
+        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in structures) {
+            for (int i = 0; i < keyValuePair.Value.Count; i++) {
+                objs.AddRange(keyValuePair.Value[i].GetTileObjectsOfType<T>());
             }
         }
         return objs;
@@ -675,11 +745,11 @@ public class Region : ILocation {
                 int mapYIndex = y - minY;
 
                 HexTile tile = GridMap.Instance.map[x, y];
-                if (tiles.Contains(tile)) {
+                // if (tiles.Contains(tile)) {
                     hexTileMap[mapXIndex, mapYIndex] = tile;
-                } else {
-                    hexTileMap[mapXIndex, mapYIndex] = null;
-                }
+                // } else {
+                //     hexTileMap[mapXIndex, mapYIndex] = null;
+                // }
             }
         }
     }
@@ -690,8 +760,8 @@ public class Region : ILocation {
         for (int x = 0; x <= hexTileMap.GetUpperBound(0); x++) {
             for (int y = 0; y <= hexTileMap.GetUpperBound(1); y++) {
                 HexTile tile = hexTileMap[x, y];
-                if (tile != null
-                    && Utilities.IsEven(tile.yCoordinate)
+                if (tile.region == this
+                    && UtilityScripts.Utilities.IsEven(tile.yCoordinate)
                     && tile.xCoordinate == leftMostXCoordinate) {
                     return tile;
                 }
@@ -702,7 +772,7 @@ public class Region : ILocation {
         for (int x = 0; x <= hexTileMap.GetUpperBound(0); x++) {
             for (int y = 0; y <= hexTileMap.GetUpperBound(1); y++) {
                 HexTile tile = hexTileMap[x, y];
-                if (tile != null && tile.xCoordinate == leftMostXCoordinate) {
+                if (tile.region == this && tile.xCoordinate == leftMostXCoordinate) {
                     return tile;
                 }
             }    
@@ -717,8 +787,8 @@ public class Region : ILocation {
         for (int x = 0; x <= hexTileMap.GetUpperBound(0); x++) {
             for (int y = 0; y <= hexTileMap.GetUpperBound(1); y++) {
                 HexTile tile = hexTileMap[x, y];
-                if (tile != null 
-                    && Utilities.IsEven(tile.yCoordinate) == false 
+                if (tile.region == this 
+                    && UtilityScripts.Utilities.IsEven(tile.yCoordinate) == false 
                     && tile.xCoordinate == rightMostXCoordinate) {
                     return tile;
                 }
@@ -729,7 +799,7 @@ public class Region : ILocation {
         for (int x = 0; x <= hexTileMap.GetUpperBound(0); x++) {
             for (int y = 0; y <= hexTileMap.GetUpperBound(1); y++) {
                 HexTile tile = hexTileMap[x, y];
-                if (tile != null && tile.xCoordinate == rightMostXCoordinate) {
+                if (tile.region == this && tile.xCoordinate == rightMostXCoordinate) {
                     return tile;
                 }
             }    
@@ -749,9 +819,9 @@ public class Region : ILocation {
         for (int x = 0; x <= hexTileMap.GetUpperBound(0); x++) {
             for (int y = 0; y <= hexTileMap.GetUpperBound(1); y++) {
                 HexTile tile = hexTileMap[x, y];
-                if (tile != null 
+                if (tile.region == this
                     && tile.xCoordinate == leftMostTile.xCoordinate
-                    && Utilities.IsEven(leftMostTile.yCoordinate) == Utilities.IsEven(tile.yCoordinate) //only include tiles that are on the same row type as the left most tile (odd/even)
+                    && UtilityScripts.Utilities.IsEven(leftMostTile.yCoordinate) == UtilityScripts.Utilities.IsEven(tile.yCoordinate) //only include tiles that are on the same row type as the left most tile (odd/even)
                     && rows.Contains(y) == false) {
                     rows.Add(y);
                 }
@@ -765,9 +835,9 @@ public class Region : ILocation {
         for (int x = 0; x <= hexTileMap.GetUpperBound(0); x++) {
             for (int y = 0; y <= hexTileMap.GetUpperBound(1); y++) {
                 HexTile tile = hexTileMap[x, y];
-                if (tile != null 
+                if (tile.region == this
                     && tile.xCoordinate == rightMostTile.xCoordinate
-                    && Utilities.IsEven(rightMostTile.yCoordinate) == Utilities.IsEven(tile.yCoordinate) //only include tiles that are on the same row type as the right most tile (odd/even)
+                    && UtilityScripts.Utilities.IsEven(rightMostTile.yCoordinate) == UtilityScripts.Utilities.IsEven(tile.yCoordinate) //only include tiles that are on the same row type as the right most tile (odd/even)
                     && rows.Contains(y) == false) {
                     rows.Add(y);
                 }
@@ -784,10 +854,10 @@ public class Region : ILocation {
                 //left most rows and right most rows have at least 1 row in common
                 return true;
             } else {
-                bool isLeftRowEven = Utilities.IsEven(currLeftRow);
+                bool isLeftRowEven = UtilityScripts.Utilities.IsEven(currLeftRow);
                 for (int j = 0; j < rightMostRows.Count; j++) {
                     int currRightRow = rightMostRows[j];
-                    bool isRightRowEven = Utilities.IsEven(currRightRow);
+                    bool isRightRowEven = UtilityScripts.Utilities.IsEven(currRightRow);
                     if (isLeftRowEven == isRightRowEven) {
                         return true;
                     }
@@ -796,5 +866,59 @@ public class Region : ILocation {
         }
         return false;
     }
+    public int GetDifferentRegionTilesInRow(int row) {
+        int count = 0;
+        for (int x = 0; x <= hexTileMap.GetUpperBound(0); x++) {
+            for (int y = 0; y <= hexTileMap.GetUpperBound(1); y++) {
+                HexTile tile = hexTileMap[x, y];
+                if (y == row && tile.region != this) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
     #endregion
+
+    #region Location Grid Tiles
+    public LocationGridTile GetRandomOutsideSettlementLocationGridTileWithPathTo(LocationGridTile fromTile) {
+        LocationGridTile chosenTile = null;
+        //while(chosenTile == null) {
+            for (int i = 0; i < shuffledNonMountainWaterTiles.Count; i++) {
+                if (shuffledNonMountainWaterTiles[i].settlementOnTile == null) {
+                    HexTile hex = shuffledNonMountainWaterTiles[i];
+                    LocationGridTile potentialTile = hex.locationGridTiles[UnityEngine.Random.Range(0, hex.locationGridTiles.Count)];
+                    if(PathfindingManager.Instance.HasPathEvenDiffRegion(fromTile, potentialTile)) {
+                        chosenTile = potentialTile;
+                        break;
+                    }
+                }
+            }
+        //}
+        return chosenTile;
+    }
+    #endregion
+}
+
+public class Border {
+    private SpriteRenderer borderSprite { get; }
+    private SpriteGlowEffect glowEffect { get; }
+
+    public Border(SpriteRenderer _borderSprite, SpriteGlowEffect _glowEffect) {
+        borderSprite = _borderSprite;
+        glowEffect = _glowEffect;
+        SetGlowState(false);
+    }
+    
+    public void SetBorderState(bool state) {
+        borderSprite.gameObject.SetActive(state);
+    }
+    public void SetGlowState(bool state) {
+        glowEffect.enabled = state;
+    }
+
+    public void SetColor(Color color) {
+        borderSprite.color = color;
+        glowEffect.GlowColor = color;
+    }
 }

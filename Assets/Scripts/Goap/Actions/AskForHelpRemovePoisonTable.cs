@@ -18,14 +18,14 @@ public class AskForHelpRemovePoisonTable : GoapAction {
             TIME_IN_WORDS.EARLY_NIGHT,
             TIME_IN_WORDS.LATE_NIGHT,
         };
-        //isNotificationAnIntel = false;
+        //
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
     }
 
    // #region Overrides
    // //protected override void ConstructPreconditionsAndEffects() {
-   // //    AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = actor.homeSettlement, targetPOI = poiTarget });
+   // //    AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = actor.homeNpcSettlement, targetPOI = poiTarget });
    // //}
    // public override void Perform(ActualGoapNode goapNode) {
    //     base.Perform(goapNode);

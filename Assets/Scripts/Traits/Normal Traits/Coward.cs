@@ -11,8 +11,6 @@ namespace Traits {
             description = "Cowards always flee from combat.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEUTRAL;
-            
-            
             ticksDuration = 0;
             canBeTriggered = true;
             //effects = new List<TraitEffect>();

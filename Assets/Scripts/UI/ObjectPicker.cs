@@ -5,8 +5,9 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.Serialization;
 
-public class ObjectPicker : MonoBehaviour {
+public class ObjectPicker : PopupMenuBase {
 
     [Header("Object Picker")]
     [SerializeField] private ScrollRect objectPickerScrollView;
@@ -14,9 +15,11 @@ public class ObjectPicker : MonoBehaviour {
     [SerializeField] private GameObject objectPickerAreaItemPrefab;
     [SerializeField] private GameObject objectPickerRegionItemPrefab;
     [SerializeField] private GameObject objectPickerStringItemPrefab;
+    [SerializeField] private GameObject objectPickerRaceClassItemPrefab;
+    [SerializeField] private GameObject objectPickerEnumItemPrefab;
     [SerializeField] private GameObject objectPickerAttackItemPrefab;
     [SerializeField] private GameObject objectPickerSummonSlotItemPrefab;
-    [SerializeField] private GameObject objectPickerArtifactSlotItemPrefab;
+    [FormerlySerializedAs("objectPickerArtifactSlotItemPrefab")] [SerializeField] private GameObject objectPickerArtifactItemPrefab;
     [SerializeField] private TextMeshProUGUI titleLbl;
     [SerializeField] private GameObject cover;
     [SerializeField] private Button closeBtn;
@@ -30,6 +33,7 @@ public class ObjectPicker : MonoBehaviour {
 
     private object _pickedObj;
     private System.Action<object> onConfirmAction;
+    private bool _shouldConfirmOnPick;
 
     public object pickedObj {
         get { return _pickedObj; }
@@ -39,46 +43,55 @@ public class ObjectPicker : MonoBehaviour {
         }
     }
 
-    public void ShowClickable<T>(List<T> items, Action<object> onConfirmAction, IComparer<T> comparer = null, Func<T, bool> validityChecker = null, 
-        string title = "", Action<T> onHoverItemAction = null, Action<T> onHoverExitItemAction = null, string identifier = "", bool showCover = false, int layer = 9, bool closable = true) {
-        Utilities.DestroyChildren(objectPickerScrollView.content);
+    public void ShowClickable<T>(List<T> items, Action<object> onConfirmAction, IComparer<T> comparer = null, Func<T, bool> validityChecker = null,
+        string title = "", Action<T> onHoverItemAction = null, Action<T> onHoverExitItemAction = null, string identifier = "",
+        bool showCover = false, int layer = 9, Func<string, Sprite> portraitGetter = null, bool asButton = false, bool shouldConfirmOnPick = false) {
+        UtilityScripts.Utilities.DestroyChildren(objectPickerScrollView.content);
 
+        _shouldConfirmOnPick = shouldConfirmOnPick;
         pickedObj = null;
         this.onConfirmAction = onConfirmAction;
 
-        List<T> validItems;
-        List<T> invalidItems;
-        OrganizeList(items, out validItems, out invalidItems, comparer, validityChecker);
+        OrganizeList(items, out var validItems, out var invalidItems, comparer, validityChecker);
         Type type = typeof(T);
         if (type == typeof(Character)) {
-            ShowCharacterItems(validItems.Cast<Character>().ToList(), invalidItems.Cast<Character>().ToList(), onHoverItemAction, onHoverExitItemAction, identifier);
+            ShowCharacterItems(validItems.Cast<Character>().ToList(), invalidItems.Cast<Character>().ToList(), onHoverItemAction, onHoverExitItemAction, identifier, asButton);
         }
-        //else if (type == typeof(Settlement)) {
-        //    ShowAreaItems(validItems.Cast<Settlement>().ToList(), invalidItems.Cast<Settlement>().ToList(), onHoverItemAction, onHoverExitItemAction);
+        //else if (type == typeof(NPCSettlement)) {
+        //    ShowAreaItems(validItems.Cast<NPCSettlement>().ToList(), invalidItems.Cast<NPCSettlement>().ToList(), onHoverItemAction, onHoverExitItemAction);
         //} 
         else if (type == typeof(Region)) {
-            ShowRegionItems(validItems.Cast<Region>().ToList(), invalidItems.Cast<Region>().ToList(), onHoverItemAction, onHoverExitItemAction);
+            ShowRegionItems(validItems.Cast<Region>().ToList(), invalidItems.Cast<Region>().ToList(), onHoverItemAction, onHoverExitItemAction, asButton);
         } else if (type == typeof(string)) {
-            ShowStringItems(validItems.Cast<string>().ToList(), invalidItems.Cast<string>().ToList(), onHoverItemAction, onHoverExitItemAction, identifier);
+            ShowStringItems(validItems.Cast<string>().ToList(), invalidItems.Cast<string>().ToList(), onHoverItemAction, onHoverExitItemAction, identifier, asButton);
         } else if (type == typeof(SummonSlot)) {
-            ShowSummonItems(validItems.Cast<SummonSlot>().ToList(), invalidItems.Cast<SummonSlot>().ToList(), onHoverItemAction, onHoverExitItemAction, identifier);
-        } else if (type == typeof(ArtifactSlot)) {
-            ShowArtifactSlotItems(validItems.Cast<ArtifactSlot>().ToList(), invalidItems.Cast<ArtifactSlot>().ToList(), onHoverItemAction, onHoverExitItemAction, identifier);
+            ShowSummonItems(validItems.Cast<SummonSlot>().ToList(), invalidItems.Cast<SummonSlot>().ToList(), onHoverItemAction, onHoverExitItemAction, identifier, asButton);
+        } else if (type == typeof(Artifact)) {
+            ShowArtifactItems(validItems.Cast<Artifact>().ToList(), invalidItems.Cast<Artifact>().ToList(), onHoverItemAction, onHoverExitItemAction, identifier, asButton);
+        } else if (type.IsEnum) {
+            ShowEnumItems(validItems.Cast<Enum>().ToList(), invalidItems.Cast<Enum>().ToList(), onHoverItemAction, onHoverExitItemAction, identifier, portraitGetter, asButton);
+        } else if (type == typeof(RaceClass)) {
+            ShowRaceClassItems(validItems.Cast<RaceClass>().ToList(), invalidItems.Cast<RaceClass>().ToList(), onHoverItemAction, onHoverExitItemAction, identifier, asButton);
         }
         titleLbl.text = title;
         if (!gameObject.activeSelf) {
-            this.gameObject.SetActive(true);
+            base.Open();
             _isGamePausedBeforeOpeningPicker = GameManager.Instance.isPaused;
             GameManager.Instance.SetPausedState(true);
             UIManager.Instance.SetSpeedTogglesState(false);
         }
         cover.SetActive(showCover);
         this.gameObject.transform.SetSiblingIndex(layer);
-        closeBtn.interactable = closable;
+        // closeBtn.interactable = closable;
+        if (_shouldConfirmOnPick) {
+            confirmBtn.gameObject.SetActive(false);
+        } else {
+            confirmBtn.gameObject.SetActive(true);
+        }
     }
-    public void Hide() {
+    public override void Close() {
         if (gameObject.activeSelf) {
-            this.gameObject.SetActive(false);
+            base.Close();
             GameManager.Instance.SetPausedState(_isGamePausedBeforeOpeningPicker);
             UIManager.Instance.SetSpeedTogglesState(true);
         }
@@ -107,7 +120,7 @@ public class ObjectPicker : MonoBehaviour {
     }
 
     #region Instantiators
-    private void ShowCharacterItems<T>(List<Character> validItems, List<Character> invalidItems, Action<T> onHoverItemAction, Action<T> onHoverExitItemAction, string identifier) {
+    private void ShowCharacterItems<T>(List<Character> validItems, List<Character> invalidItems, Action<T> onHoverItemAction, Action<T> onHoverExitItemAction, string identifier, bool asButton) {
         Action<Character> convertedHoverAction = null;
         if (onHoverItemAction != null) {
             convertedHoverAction = Convert(onHoverItemAction);
@@ -122,7 +135,6 @@ public class ObjectPicker : MonoBehaviour {
             CharacterNameplateItem characterItem = characterItemGO.GetComponent<CharacterNameplateItem>();
             characterItem.SetObject(currCharacter);
             characterItem.ClearAllOnClickActions();
-            characterItem.AddOnToggleAction(OnPickObject);
 
             characterItem.ClearAllHoverEnterActions();
             if (convertedHoverAction != null) {
@@ -138,8 +150,15 @@ public class ObjectPicker : MonoBehaviour {
                 characterItem.AddHoverEnterAction((character) => UIManager.Instance.ShowMinionCardTooltip(currCharacter.minion, minionCardPos));
                 characterItem.AddHoverExitAction((character) => UIManager.Instance.HideMinionCardTooltip());
             }
-            characterItem.SetAsToggle();
-            characterItem.SetToggleGroup(toggleGroup);
+            if (asButton) {
+                characterItem.AddOnClickAction(OnPickObject);
+                characterItem.SetAsButton();
+            } else {
+                characterItem.AddOnToggleAction(OnPickObject);
+                characterItem.SetAsToggle();
+                characterItem.SetToggleGroup(toggleGroup);
+            }
+
             characterItem.SetPortraitInteractableState(false);
         }
         for (int i = 0; i < invalidItems.Count; i++) {
@@ -163,42 +182,46 @@ public class ObjectPicker : MonoBehaviour {
                 characterItem.AddHoverEnterAction((character) => UIManager.Instance.ShowMinionCardTooltip(currCharacter.minion, minionCardPos));
                 characterItem.AddHoverExitAction((character) => UIManager.Instance.HideMinionCardTooltip());
             }
-            characterItem.SetAsToggle();
+            if (asButton) {
+                characterItem.SetAsButton();
+            } else {
+                characterItem.SetAsToggle();
+            }
             characterItem.SetInteractableState(false);
             characterItem.SetPortraitInteractableState(true);
         }
     }
-    //private void ShowAreaItems<T>(List<Settlement> validItems, List<Settlement> invalidItems, Action<T> onHoverItemAction, Action<T> onHoverExitItemAction) {
-    //    Action<Settlement> convertedHoverAction = null;
+    //private void ShowAreaItems<T>(List<NPCSettlement> validItems, List<NPCSettlement> invalidItems, Action<T> onHoverItemAction, Action<T> onHoverExitItemAction) {
+    //    Action<NPCSettlement> convertedHoverAction = null;
     //    if (onHoverItemAction != null) {
     //        convertedHoverAction = ConvertToArea(onHoverItemAction);
     //    }
-    //    Action<Settlement> convertedHoverExitAction = null;
+    //    Action<NPCSettlement> convertedHoverExitAction = null;
     //    if (onHoverExitItemAction != null) {
     //        convertedHoverExitAction = ConvertToArea(onHoverExitItemAction);
     //    }
     //    for (int i = 0; i < validItems.Count; i++) {
-    //        Settlement currSettlement = validItems[i];
+    //        NPCSettlement currNpcSettlement = validItems[i];
     //        GameObject areaItemGO = UIManager.Instance.InstantiateUIObject(objectPickerAreaItemPrefab.name, objectPickerScrollView.content);
     //        AreaPickerItem areaItem = areaItemGO.GetComponent<AreaPickerItem>();
-    //        areaItem.SetArea(currSettlement);
+    //        areaItem.SetArea(currNpcSettlement);
     //        areaItem.onClickAction = convertedAction;
     //        areaItem.onHoverEnterAction = convertedHoverAction;
     //        areaItem.onHoverExitAction = convertedHoverExitAction;
     //        areaItem.SetButtonState(true);
     //    }
     //    for (int i = 0; i < invalidItems.Count; i++) {
-    //        Settlement currSettlement = invalidItems[i];
+    //        NPCSettlement currNpcSettlement = invalidItems[i];
     //        GameObject areaItemGO = UIManager.Instance.InstantiateUIObject(objectPickerAreaItemPrefab.name, objectPickerScrollView.content);
     //        AreaPickerItem areaItem = areaItemGO.GetComponent<AreaPickerItem>();
-    //        areaItem.SetArea(currSettlement);
+    //        areaItem.SetArea(currNpcSettlement);
     //        areaItem.onClickAction = null;
     //        areaItem.onHoverEnterAction = convertedHoverAction;
     //        areaItem.onHoverExitAction = convertedHoverExitAction;
     //        areaItem.SetButtonState(false);
     //    }
     //}
-    private void ShowRegionItems<T>(List<Region> validItems, List<Region> invalidItems, Action<T> onHoverItemAction, Action<T> onHoverExitItemAction) {
+    private void ShowRegionItems<T>(List<Region> validItems, List<Region> invalidItems, Action<T> onHoverItemAction, Action<T> onHoverExitItemAction, bool asButton) {
         Action<Region> convertedHoverAction = null;
         if (onHoverItemAction != null) {
             convertedHoverAction = ConvertToRegion(onHoverItemAction);
@@ -213,7 +236,6 @@ public class ObjectPicker : MonoBehaviour {
             RegionNameplateItem item = areaItemGO.GetComponent<RegionNameplateItem>();
             item.SetObject(currRegion);
             item.ClearAllOnClickActions();
-            item.AddOnToggleAction(OnPickObject);
 
             item.ClearAllHoverEnterActions();
             if (convertedHoverAction != null) {
@@ -224,8 +246,15 @@ public class ObjectPicker : MonoBehaviour {
             if (convertedHoverExitAction != null) {
                 item.AddHoverExitAction(convertedHoverExitAction.Invoke);
             }
-            item.SetAsToggle();
-            item.SetToggleGroup(toggleGroup);
+            if (asButton) {
+                item.AddOnClickAction(OnPickObject);
+                item.SetAsButton();
+            } else {
+                item.AddOnToggleAction(OnPickObject);
+                item.SetAsToggle();
+                item.SetToggleGroup(toggleGroup);
+            }
+
         }
         for (int i = 0; i < invalidItems.Count; i++) {
             Region currRegion = invalidItems[i];
@@ -243,11 +272,15 @@ public class ObjectPicker : MonoBehaviour {
             if (convertedHoverExitAction != null) {
                 item.AddHoverExitAction(convertedHoverExitAction.Invoke);
             }
-            item.SetAsToggle();
+            if (asButton) {
+                item.SetAsButton();
+            } else {
+                item.SetAsToggle();
+            }
             item.SetInteractableState(false);
         }
     }
-    private void ShowStringItems<T>(List<string> validItems, List<string> invalidItems, Action<T> onHoverItemAction, Action<T> onHoverExitItemAction, string identifier) {
+    private void ShowStringItems<T>(List<string> validItems, List<string> invalidItems, Action<T> onHoverItemAction, Action<T> onHoverExitItemAction, string identifier, bool asButton) {
         Action<string> convertedHoverAction = null;
         if (onHoverItemAction != null) {
             convertedHoverAction = ConvertToString(onHoverItemAction);
@@ -263,7 +296,6 @@ public class ObjectPicker : MonoBehaviour {
             stringItem.SetObject(currString);
             stringItem.SetIdentifier(identifier);
             stringItem.ClearAllOnClickActions();
-            stringItem.AddOnToggleAction(OnPickObject);
 
             stringItem.ClearAllHoverEnterActions();
             if (convertedHoverAction != null) {
@@ -274,8 +306,14 @@ public class ObjectPicker : MonoBehaviour {
             if (convertedHoverExitAction != null) {
                 stringItem.AddHoverExitAction(convertedHoverExitAction.Invoke);
             }
-            stringItem.SetAsToggle();
-            stringItem.SetToggleGroup(toggleGroup);
+            if (asButton) {
+                stringItem.AddOnClickAction(OnPickObject);
+                stringItem.SetAsButton();
+            } else {
+                stringItem.AddOnToggleAction(OnPickObject);
+                stringItem.SetAsToggle();
+                stringItem.SetToggleGroup(toggleGroup);
+            }
         }
         for (int i = 0; i < invalidItems.Count; i++) {
             string currString = invalidItems[i];
@@ -294,11 +332,15 @@ public class ObjectPicker : MonoBehaviour {
             if (convertedHoverExitAction != null) {
                 stringItem.AddHoverExitAction(convertedHoverExitAction.Invoke);
             }
-            stringItem.SetAsToggle();
+            if (asButton) {
+                stringItem.SetAsButton();
+            } else {
+                stringItem.SetAsToggle();
+            }
             stringItem.SetInteractableState(false);
         }
     }
-    private void ShowSummonItems<T>(List<SummonSlot> validItems, List<SummonSlot> invalidItems, Action<T> onHoverItemAction, Action<T> onHoverExitItemAction, string identifier) {
+    private void ShowSummonItems<T>(List<SummonSlot> validItems, List<SummonSlot> invalidItems, Action<T> onHoverItemAction, Action<T> onHoverExitItemAction, string identifier, bool asButton) {
         Action<SummonSlot> convertedHoverAction = null;
         if (onHoverItemAction != null) {
             convertedHoverAction = ConvertToSummonSlot(onHoverItemAction);
@@ -314,7 +356,6 @@ public class ObjectPicker : MonoBehaviour {
             item.SetObject(currSummonSlot);
 
             item.ClearAllOnClickActions();
-            item.AddOnToggleAction(OnPickObject);
 
             item.ClearAllHoverEnterActions();
             if (convertedHoverAction != null) {
@@ -325,9 +366,15 @@ public class ObjectPicker : MonoBehaviour {
             if (convertedHoverExitAction != null) {
                 item.AddHoverExitAction(convertedHoverExitAction.Invoke);
             }
+            if (asButton) {
+                item.AddOnClickAction(OnPickObject);
+                item.SetAsButton();
+            } else {
+                item.AddOnToggleAction(OnPickObject);
+                item.SetAsToggle();
+                item.SetToggleGroup(toggleGroup);
+            }
 
-            item.SetAsToggle();
-            item.SetToggleGroup(toggleGroup);
         }
         for (int i = 0; i < invalidItems.Count; i++) {
             SummonSlot currSummonSlot = invalidItems[i];
@@ -345,28 +392,30 @@ public class ObjectPicker : MonoBehaviour {
             if (convertedHoverExitAction != null) {
                 item.AddHoverExitAction(convertedHoverExitAction.Invoke);
             }
-
-            item.SetAsToggle();
+            if (asButton) {
+                item.SetAsButton();
+            } else {
+                item.SetAsToggle();
+            }
             item.SetInteractableState(false);
         }
     }
-    private void ShowArtifactSlotItems<T>(List<ArtifactSlot> validItems, List<ArtifactSlot> invalidItems, Action<T> onHoverItemAction, Action<T> onHoverExitItemAction, string identifier) {
-        Action<ArtifactSlot> convertedHoverAction = null;
+    private void ShowArtifactItems<T>(List<Artifact> validItems, List<Artifact> invalidItems, Action<T> onHoverItemAction, Action<T> onHoverExitItemAction, string identifier, bool asButton) {
+        Action<Artifact> convertedHoverAction = null;
         if (onHoverItemAction != null) {
-            convertedHoverAction = ConvertToArtifactSlot(onHoverItemAction);
+            convertedHoverAction = ConvertToArtifact(onHoverItemAction);
         }
-        Action<ArtifactSlot> convertedHoverExitAction = null;
+        Action<Artifact> convertedHoverExitAction = null;
         if (onHoverExitItemAction != null) {
-            convertedHoverExitAction = ConvertToArtifactSlot(onHoverExitItemAction);
+            convertedHoverExitAction = ConvertToArtifact(onHoverExitItemAction);
         }
         for (int i = 0; i < validItems.Count; i++) {
-            ArtifactSlot currSlot = validItems[i];
-            GameObject slotItemGO = UIManager.Instance.InstantiateUIObject(objectPickerArtifactSlotItemPrefab.name, objectPickerScrollView.content);
-            ArtifactSlotPickerItem item = slotItemGO.GetComponent<ArtifactSlotPickerItem>();
+            Artifact currSlot = validItems[i];
+            GameObject slotItemGO = UIManager.Instance.InstantiateUIObject(objectPickerArtifactItemPrefab.name, objectPickerScrollView.content);
+            ArtifactPickerItem item = slotItemGO.GetComponent<ArtifactPickerItem>();
             item.SetObject(currSlot);
 
             item.ClearAllOnClickActions();
-            item.AddOnToggleAction(OnPickObject);
 
             item.ClearAllHoverEnterActions();
             if (convertedHoverAction != null) {
@@ -377,14 +426,19 @@ public class ObjectPicker : MonoBehaviour {
             if (convertedHoverExitAction != null) {
                 item.AddHoverExitAction(convertedHoverExitAction.Invoke);
             }
-
-            item.SetAsToggle();
-            item.SetToggleGroup(toggleGroup);
+            if (asButton) {
+                item.AddOnClickAction(OnPickObject);
+                item.SetAsButton();
+            } else {
+                item.AddOnToggleAction(OnPickObject);
+                item.SetAsToggle();
+                item.SetToggleGroup(toggleGroup);
+            }
         }
         for (int i = 0; i < invalidItems.Count; i++) {
-            ArtifactSlot currSlot = invalidItems[i];
-            GameObject slotItemGO = UIManager.Instance.InstantiateUIObject(objectPickerArtifactSlotItemPrefab.name, objectPickerScrollView.content);
-            ArtifactSlotPickerItem item = slotItemGO.GetComponent<ArtifactSlotPickerItem>();
+            Artifact currSlot = invalidItems[i];
+            GameObject slotItemGO = UIManager.Instance.InstantiateUIObject(objectPickerArtifactItemPrefab.name, objectPickerScrollView.content);
+            ArtifactPickerItem item = slotItemGO.GetComponent<ArtifactPickerItem>();
             item.SetObject(currSlot);
             item.ClearAllOnClickActions();
 
@@ -397,8 +451,131 @@ public class ObjectPicker : MonoBehaviour {
             if (convertedHoverExitAction != null) {
                 item.AddHoverExitAction(convertedHoverExitAction.Invoke);
             }
+            if (asButton) {
+                item.SetAsButton();
+            } else {
+                item.SetAsToggle();
+            }
+            item.SetInteractableState(false);
+        }
+    }
+    private void ShowEnumItems<T>(List<Enum> validItems, List<Enum> invalidItems, Action<T> onHoverItemAction, Action<T> onHoverExitItemAction, string identifier, Func<string, Sprite> portraitGetter, bool asButton) {
+        Action<Enum> convertedHoverAction = null;
+        if (onHoverItemAction != null) {
+            convertedHoverAction = ConvertToEnum(onHoverItemAction);
+        }
+        Action<Enum> convertedHoverExitAction = null;
+        if (onHoverExitItemAction != null) {
+            convertedHoverExitAction = ConvertToEnum(onHoverExitItemAction);
+        }
+        for (int i = 0; i < validItems.Count; i++) {
+            Enum enumerator = validItems[i];
+            GameObject itemGO = UIManager.Instance.InstantiateUIObject(objectPickerEnumItemPrefab.name, objectPickerScrollView.content);
+            EnumNameplateItem item = itemGO.GetComponent<EnumNameplateItem>();
+            item.SetObject(enumerator);
+            item.ClearAllOnClickActions();
 
-            item.SetAsToggle();
+            item.SetPortrait(portraitGetter?.Invoke(enumerator.ToString()));
+
+            item.ClearAllHoverEnterActions();
+            if (convertedHoverAction != null) {
+                item.AddHoverEnterAction(convertedHoverAction.Invoke);
+            }
+
+            item.ClearAllHoverExitActions();
+            if (convertedHoverExitAction != null) {
+                item.AddHoverExitAction(convertedHoverExitAction.Invoke);
+            }
+            if (asButton) {
+                item.AddOnClickAction(OnPickObject);
+                item.SetAsButton();
+            } else {
+                item.AddOnToggleAction(OnPickObject);
+                item.SetAsToggle();
+                item.SetToggleGroup(toggleGroup);
+            }
+        }
+        for (int i = 0; i < invalidItems.Count; i++) {
+            Enum enumerator = invalidItems[i];
+            GameObject itemGO = UIManager.Instance.InstantiateUIObject(objectPickerStringItemPrefab.name, objectPickerScrollView.content);
+            EnumNameplateItem item = itemGO.GetComponent<EnumNameplateItem>();
+            item.SetObject(enumerator);
+            item.ClearAllOnClickActions();
+
+            item.SetPortrait(portraitGetter?.Invoke(enumerator.ToString()));
+            
+            item.ClearAllHoverEnterActions();
+            if (convertedHoverAction != null) {
+                item.AddHoverEnterAction(convertedHoverAction.Invoke);
+            }
+
+            item.ClearAllHoverExitActions();
+            if (convertedHoverExitAction != null) {
+                item.AddHoverExitAction(convertedHoverExitAction.Invoke);
+            }
+            if (asButton) {
+                item.SetAsButton();
+            } else {
+                item.SetAsToggle();
+            }
+            item.SetInteractableState(false);
+        }
+    }
+    private void ShowRaceClassItems<T>(List<RaceClass> validItems, List<RaceClass> invalidItems, Action<T> onHoverItemAction, Action<T> onHoverExitItemAction, string identifier, bool asButton) {
+        Action<RaceClass> convertedHoverAction = null;
+        if (onHoverItemAction != null) {
+            convertedHoverAction = ConvertToRaceClass(onHoverItemAction);
+        }
+        Action<RaceClass> convertedHoverExitAction = null;
+        if (onHoverExitItemAction != null) {
+            convertedHoverExitAction = ConvertToRaceClass(onHoverExitItemAction);
+        }
+        for (int i = 0; i < validItems.Count; i++) {
+            RaceClass obj = validItems[i];
+            GameObject itemGO = UIManager.Instance.InstantiateUIObject(objectPickerRaceClassItemPrefab.name, objectPickerScrollView.content);
+            RaceClassNameplate item = itemGO.GetComponent<RaceClassNameplate>();
+            item.SetObject(obj);
+            item.ClearAllOnClickActions();
+
+            item.ClearAllHoverEnterActions();
+            if (convertedHoverAction != null) {
+                item.AddHoverEnterAction(convertedHoverAction.Invoke);
+            }
+
+            item.ClearAllHoverExitActions();
+            if (convertedHoverExitAction != null) {
+                item.AddHoverExitAction(convertedHoverExitAction.Invoke);
+            }
+            if (asButton) {
+                item.AddOnClickAction(OnPickObject);
+                item.SetAsButton();
+            } else {
+                item.AddOnToggleAction(OnPickObject);
+                item.SetAsToggle();
+                item.SetToggleGroup(toggleGroup);
+            }
+        }
+        for (int i = 0; i < invalidItems.Count; i++) {
+            RaceClass obj = invalidItems[i];
+            GameObject itemGO = UIManager.Instance.InstantiateUIObject(objectPickerStringItemPrefab.name, objectPickerScrollView.content);
+            RaceClassNameplate item = itemGO.GetComponent<RaceClassNameplate>();
+            item.SetObject(obj);
+            item.ClearAllOnClickActions();
+
+            item.ClearAllHoverEnterActions();
+            if (convertedHoverAction != null) {
+                item.AddHoverEnterAction(convertedHoverAction.Invoke);
+            }
+
+            item.ClearAllHoverExitActions();
+            if (convertedHoverExitAction != null) {
+                item.AddHoverExitAction(convertedHoverExitAction.Invoke);
+            }
+            if (asButton) {
+                item.SetAsButton();
+            } else {
+                item.SetAsToggle();
+            }
             item.SetInteractableState(false);
         }
     }
@@ -411,8 +588,35 @@ public class ObjectPicker : MonoBehaviour {
     public void OnPickObject(object obj, bool isOn) {
         if (isOn) {
             pickedObj = obj;
+            if (_shouldConfirmOnPick) {
+                OnClickConfirm();
+            }
         } else {
             if (pickedObj == obj) {
+                pickedObj = null;
+            }
+        }
+    }
+    public void OnPickObject(object obj) {
+        pickedObj = obj;
+        if (pickedObj != null && _shouldConfirmOnPick) {
+            OnClickConfirm();
+        }
+    }
+    public void OnPickObject(RaceClass obj) {
+        pickedObj = obj;
+        if (pickedObj != null && _shouldConfirmOnPick) {
+            OnClickConfirm();
+        }
+    }
+    public void OnPickObject(RaceClass obj, bool isOn) {
+        if (isOn) {
+            pickedObj = obj;
+            if (_shouldConfirmOnPick) {
+                OnClickConfirm();
+            }
+        } else {
+            if (obj.Equals(pickedObj)) {
                 pickedObj = null;
             }
         }
@@ -432,17 +636,17 @@ public class ObjectPicker : MonoBehaviour {
         if (myActionT == null) return null;
         else return new Action<SummonSlot>(o => myActionT((T)(object)o));
     }
-    public Action<ArtifactSlot> ConvertToArtifactSlot<T>(Action<T> myActionT) {
+    public Action<Artifact> ConvertToArtifact<T>(Action<T> myActionT) {
         if (myActionT == null) return null;
-        else return new Action<ArtifactSlot>(o => myActionT((T)(object)o));
+        else return new Action<Artifact>(o => myActionT((T)(object)o));
     }
     public Action<Minion> ConvertToMinion<T>(Action<T> myActionT) {
         if (myActionT == null) return null;
         else return new Action<Minion>(o => myActionT((T)(object)o));
     }
-    public Action<Settlement> ConvertToArea<T>(Action<T> myActionT) {
+    public Action<NPCSettlement> ConvertToArea<T>(Action<T> myActionT) {
         if (myActionT == null) return null;
-        else return new Action<Settlement>(o => myActionT((T)(object)o));
+        else return new Action<NPCSettlement>(o => myActionT((T)(object)o));
     }
     public Action<Region> ConvertToRegion<T>(Action<T> myActionT) {
         if (myActionT == null) return null;
@@ -451,6 +655,14 @@ public class ObjectPicker : MonoBehaviour {
     public Action<string> ConvertToString<T>(Action<T> myActionT) {
         if (myActionT == null) return null;
         else return new Action<string>(o => myActionT((T)(object)o));
+    }
+    public Action<Enum> ConvertToEnum<T>(Action<T> myActionT) {
+        if (myActionT == null) return null;
+        else return new Action<Enum>(o => myActionT((T)(object)o));
+    }
+    public Action<RaceClass> ConvertToRaceClass<T>(Action<T> myActionT) {
+        if (myActionT == null) return null;
+        else return new Action<RaceClass>(o => myActionT((T)(object)o));
     }
     #endregion
 }

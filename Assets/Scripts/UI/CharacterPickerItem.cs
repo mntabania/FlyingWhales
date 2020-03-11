@@ -30,7 +30,8 @@ public class CharacterPickerItem : ObjectPickerItem<Character>, IPointerClickHan
     private void UpdateVisuals() {
         portrait.GeneratePortrait(character);
         mainLbl.text = character.name;
-        subLbl.text = Utilities.GetNormalizedSingularRace(character.race) + " " + character.characterClass.className;
+        subLbl.text =
+            $"{UtilityScripts.GameUtilities.GetNormalizedSingularRace(character.race)} {character.characterClass.className}";
     }
 
     private void OnClick() {

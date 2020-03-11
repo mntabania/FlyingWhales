@@ -13,6 +13,7 @@ public class DrinkBlood : GoapAction {
         doesNotStopTargetCharacter = true;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
+        isNotificationAnIntel = true;
     }
 
     #region Overrides
@@ -25,12 +26,92 @@ public class DrinkBlood : GoapAction {
         base.Perform(goapNode);
         SetState("Drink Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        if (actor.needsComponent.isStarving)
-        {
-            return Utilities.rng.Next(20, 35);
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+        string costLog = $"\n{name} {target.nameWithID}:";
+        int cost = 0;
+        if (actor.moodComponent.moodState == MOOD_STATE.NORMAL) {
+            cost = UtilityScripts.Utilities.rng.Next(50, 61);
+            costLog += $" +{cost}(Normal Mood)";
+        } else if (actor.moodComponent.moodState == MOOD_STATE.LOW) {
+            cost = UtilityScripts.Utilities.rng.Next(20, 31);
+            costLog += $" +{cost}(Low Mood)";
+        } else if (actor.moodComponent.moodState == MOOD_STATE.CRITICAL) {
+            cost = UtilityScripts.Utilities.rng.Next(0, 11);
+            costLog += $" +{cost}(Critical Mood)";
         }
-        return Utilities.rng.Next(45, 60);
+        if (target is Character) {
+            Character targetCharacter = target as Character;
+            if (targetCharacter.traitContainer.HasTrait("Vampiric")) {
+                cost += 2000;
+                costLog += " +2000(Vampire)";
+                actor.logComponent.AppendCostLog(costLog);
+                //Skip further cost processing
+                return cost;
+            }
+            if (targetCharacter.canPerform) {
+                cost += 30;
+                costLog += " +30(Can Perform)";
+            }
+            if (actor.needsComponent.isHungry || (!actor.needsComponent.isHungry && !actor.needsComponent.isStarving)) {
+                if(actor.currentRegion != targetCharacter.currentRegion) {
+                    cost += 2000;
+                    costLog += " +2000(Hungry, Diff Region)";
+                    actor.logComponent.AppendCostLog(costLog);
+                    //Skip further cost processing
+                    return cost;
+                }
+                string opinionLabel = actor.relationshipContainer.GetOpinionLabel(targetCharacter);
+                if (opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
+                    cost += 2000;
+                    costLog += " +2000(Hungry, Friend/Close)";
+                    actor.logComponent.AppendCostLog(costLog);
+                    //Skip further cost processing
+                    return cost;
+                } else if (opinionLabel == OpinionComponent.Rival) {
+                    cost += 0;
+                    costLog += " +0(Hungry, Rival)";
+                } else if (opinionLabel == OpinionComponent.Enemy) {
+                    cost += 15;
+                    costLog += " +15(Hungry, Enemy)";
+                } else if (opinionLabel == OpinionComponent.Acquaintance) {
+                    cost += 65;
+                    costLog += " +65(Hungry, Acquaintance)";
+                } else {
+                    cost += 35;
+                    costLog += " +35(Hungry, Other)";
+                }
+            } else if (actor.needsComponent.isStarving) {
+                if (actor.currentRegion != targetCharacter.currentRegion) {
+                    cost += 2000;
+                    costLog += " +2000(Starving, Diff Region)";
+                    actor.logComponent.AppendCostLog(costLog);
+                    //Skip further cost processing
+                    return cost;
+                }
+                string opinionLabel = actor.relationshipContainer.GetOpinionLabel(targetCharacter);
+                if (opinionLabel == OpinionComponent.Close_Friend) {
+                    cost += 60;
+                    costLog += " +60(Starving, Close Friend)";
+                } else if (opinionLabel == OpinionComponent.Friend) {
+                    cost += 45;
+                    costLog += " +45(Starving, Friend)";
+                } else if (opinionLabel == OpinionComponent.Rival) {
+                    cost += 0;
+                    costLog += " +0(Starving, Rival)";
+                } else if (opinionLabel == OpinionComponent.Enemy) {
+                    cost += 5;
+                    costLog += " +5(Starving, Enemy)";
+                } else if (opinionLabel == OpinionComponent.Acquaintance) {
+                    cost += 10;
+                    costLog += " +10(Starving, Acquaintance)";
+                } else {
+                    cost += 5;
+                    costLog += " +5(Starving, Other)";
+                }
+            }
+        }
+        actor.logComponent.AppendCostLog(costLog);
+        return cost;
     }
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);
@@ -43,12 +124,63 @@ public class DrinkBlood : GoapAction {
         IPointOfInterest poiTarget = node.poiTarget;
         if (actionInvalidity.isInvalid == false) {
             Character targetCharacter = poiTarget as Character;
-            if (targetCharacter.canMove || targetCharacter.canWitness || targetCharacter.IsAvailable() == false) {
+            if (targetCharacter.canMove /*|| targetCharacter.canWitness || targetCharacter.IsAvailable() == false*/) {
                 actionInvalidity.isInvalid = true;
                 actionInvalidity.stateName = "Drink Fail";
             }
         }
         return actionInvalidity;
+    }
+    public override string ReactionToActor(Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionToActor(witness, node, status);
+        Character actor = node.actor;
+        IPointOfInterest target = node.poiTarget;
+        if (!witness.traitContainer.HasTrait("Vampiric")) {
+            CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.HEINOUS);
+            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status);
+
+            string opinionLabel = witness.relationshipContainer.GetOpinionLabel(actor);
+            if (opinionLabel == OpinionComponent.Acquaintance || opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Despair, witness, actor, status);
+            }
+            if(witness.traitContainer.HasTrait("Coward")) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor, status);
+            } else if (!witness.traitContainer.HasTrait("Psychopath")) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, actor, status);
+            }
+        }
+        if(target is Character) {
+            Character targetCharacter = target as Character;
+            string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
+            if (opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status);
+            } else if (opinionLabel == OpinionComponent.Acquaintance || witness.faction == targetCharacter.faction || witness.homeSettlement == targetCharacter.homeSettlement) {
+                if (!witness.traitContainer.HasTrait("Psychopath")) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status);
+                }
+            }
+        }
+        return response;
+    }
+    public override string ReactionOfTarget(ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionOfTarget(node, status);
+        Character actor = node.actor;
+        IPointOfInterest target = node.poiTarget;
+        if (target is Character) {
+            Character targetCharacter = target as Character;
+            CrimeManager.Instance.ReactToCrime(targetCharacter, actor, node, node.associatedJobType, CRIME_TYPE.HEINOUS);
+            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, targetCharacter, actor, status);
+            if (targetCharacter.traitContainer.HasTrait("Coward")) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, targetCharacter, actor, status);
+            } else {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, targetCharacter, actor, status);
+            }
+            if (targetCharacter.relationshipContainer.IsFriendsWith(actor)) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, targetCharacter, actor, status);
+            }
+        }
+        return response;
     }
     #endregion
 
@@ -59,7 +191,7 @@ public class DrinkBlood : GoapAction {
             //if (actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
             //    return false;
             //}
-            return actor != poiTarget;
+            return actor != poiTarget && actor.traitContainer.HasTrait("Vampiric");
         }
         return false;
     }
@@ -68,7 +200,7 @@ public class DrinkBlood : GoapAction {
     #region Preconditions
     private bool HasUnconsciousOrRestingTarget(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         Character target = poiTarget as Character;
-        return target.traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting") != null;
+        return target.traitContainer.HasTrait("Unconscious", "Resting");
     }
     #endregion
 
@@ -78,7 +210,7 @@ public class DrinkBlood : GoapAction {
         //TODO: currentState.SetIntelReaction(DrinkBloodSuccessIntelReaction);
     }
     public void PerTickDrinkSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustFullness(1100);
+        goapNode.actor.needsComponent.AdjustFullness(17f);
     }
     public void AfterDrinkSuccess(ActualGoapNode goapNode) {
         //poiTarget.SetPOIState(POI_STATE.ACTIVE);
@@ -94,7 +226,7 @@ public class DrinkBlood : GoapAction {
             log.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             log.AddToFillers(goapNode.poiTarget, goapNode.poiTarget.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddLogToInvolvedObjects();
-            PlayerManager.Instance.player.ShowNotification(log);
+            // PlayerManager.Instance.player.ShowNotification(log);
         }
     }
     #endregion
@@ -195,7 +327,7 @@ public class DrinkBlood : GoapAction {
     //                    //- Recipient is a Vampire
     //                    if (status == SHARE_INTEL_STATUS.WITNESSED) {
     //                        if (recipient.marker.inVisionCharacters.Contains(actor)) {
-    //                            recipient.marker.AddAvoidInRange(actor, reason: "saw something shameful");
+    //                            recipient.combatComponent.AddAvoidInRange(actor, reason: "saw something shameful");
     //                        }
     //                    }
     //                    RELATIONSHIP_EFFECT relationshipWithActor = recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo);

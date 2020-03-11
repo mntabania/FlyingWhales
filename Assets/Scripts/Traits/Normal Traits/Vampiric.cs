@@ -8,67 +8,66 @@ namespace Traits {
         //private Character _character;
 
         //private int _flatAttackMod;
-        private int _flatHPMod;
+        //private int _flatHPMod;
         //private int _flatSpeedMod;
 
         public Vampiric() {
             name = "Vampiric";
             description = "Vampires drink other character's blood for sustenance.";
-            thoughtText = "[Character] sucks blood.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
-            _flatHPMod = 500;
+            //_flatHPMod = 500;
             canBeTriggered = true;
         }
 
-        public void VamipiricLevel(int level) {
-            //_flatAttackMod *= level;
-            //_flatHPMod *= level;
-            //_flatSpeedMod *= level;
-            if (level == 1) {
-                _flatHPMod *= 1;
-            } else if (level == 2) {
-                _flatHPMod = Mathf.RoundToInt(_flatHPMod * 1.5f);
-            } else if (level == 3) {
-                _flatHPMod *= 2;
-            }
-        }
+        //public void VamipiricLevel(int level) {
+        //    //_flatAttackMod *= level;
+        //    //_flatHPMod *= level;
+        //    //_flatSpeedMod *= level;
+        //    if (level == 1) {
+        //        _flatHPMod *= 1;
+        //    } else if (level == 2) {
+        //        _flatHPMod = Mathf.RoundToInt(_flatHPMod * 1.5f);
+        //    } else if (level == 3) {
+        //        _flatHPMod *= 2;
+        //    }
+        //}
 
         #region Overrides
         public override void OnAddTrait(ITraitable sourceCharacter) {
             base.OnAddTrait(sourceCharacter);
             if (sourceCharacter is Character) {
                 Character character = sourceCharacter as Character;
-                character.jobQueue.CancelAllJobs(JOB_TYPE.HUNGER_RECOVERY, JOB_TYPE.HUNGER_RECOVERY_STARVING, JOB_TYPE.TIREDNESS_RECOVERY, JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED);
+                character.jobQueue.CancelAllJobs(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT, JOB_TYPE.ENERGY_RECOVERY_NORMAL, JOB_TYPE.ENERGY_RECOVERY_URGENT);
                 character.needsComponent.SetTirednessForcedTick(0);
                 character.needsComponent.SetForcedFullnessRecoveryTimeInWords(TIME_IN_WORDS.LATE_NIGHT);
                 character.needsComponent.SetFullnessForcedTick();
                 character.needsComponent.AdjustDoNotGetTired(1);
                 character.needsComponent.ResetTirednessMeter();
                 //character.AdjustAttackMod(_flatAttackMod);
-                character.AdjustMaxHPMod(_flatHPMod);
+                //character.AdjustMaxHPMod(_flatHPMod);
                 //character.AdjustSpeedMod(_flatSpeedMod);
             }
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
             if (sourceCharacter is Character) {
                 Character character = sourceCharacter as Character;
-                character.jobQueue.CancelAllJobs(JOB_TYPE.HUNGER_RECOVERY, JOB_TYPE.HUNGER_RECOVERY_STARVING);
+                character.jobQueue.CancelAllJobs(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT);
                 character.needsComponent.SetTirednessForcedTick();
                 character.needsComponent.SetForcedFullnessRecoveryTimeInWords(TIME_IN_WORDS.LUNCH_TIME);
                 character.needsComponent.SetFullnessForcedTick();
                 character.needsComponent.AdjustDoNotGetTired(-1);
                 //character.AdjustAttackMod(-_flatAttackMod);
-                character.AdjustMaxHPMod(-_flatHPMod);
+                //character.AdjustMaxHPMod(-_flatHPMod);
                 //character.AdjustSpeedMod(-_flatSpeedMod);
             }
             base.OnRemoveTrait(sourceCharacter, removedBy);
         }
-        protected override void OnChangeLevel() {
-            base.OnChangeLevel();
-            VamipiricLevel(level);
-        }
+        //protected override void OnChangeLevel() {
+        //    base.OnChangeLevel();
+        //    VamipiricLevel(level);
+        //}
         //public override bool CreateJobsOnEnterVisionBasedOnOwnerTrait(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
         //    if (targetPOI is Character) {
         //        //In Vampiric, the parameter traitOwner is the target character, that's why you must pass the target character in this parameter not the actual owner of the trait, the actual owner of the trait is the characterThatWillDoJob
@@ -89,16 +88,18 @@ namespace Traits {
         public override string TriggerFlaw(Character character) {
             //The character will begin Hunt for Blood.
             if (!character.jobQueue.HasJob(JOB_TYPE.TRIGGER_FLAW)) {
-                if (character.jobQueue.HasJob(JOB_TYPE.HUNGER_RECOVERY, JOB_TYPE.HUNGER_RECOVERY_STARVING)) {
-                    character.jobQueue.CancelAllJobs(JOB_TYPE.HUNGER_RECOVERY, JOB_TYPE.HUNGER_RECOVERY_STARVING);
+                if (character.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT)) {
+                    character.jobQueue.CancelAllJobs(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT);
                 }
                 bool triggerGrieving = false;
-                Griefstricken griefstricken = character.traitContainer.GetNormalTrait<Trait>("Griefstricken") as Griefstricken;
+                Griefstricken griefstricken = character.traitContainer.GetNormalTrait<Griefstricken>("Griefstricken");
                 if (griefstricken != null) {
-                    triggerGrieving = UnityEngine.Random.Range(0, 100) < 20;
+                    triggerGrieving = UnityEngine.Random.Range(0, 100) < (25 * character.traitContainer.stacks[griefstricken.name]);
                 }
                 if (!triggerGrieving) {
-                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), character, character);
+                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.DRINK_BLOOD, character, character);
+                    // GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), character, character);
+                    // job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 12 });
                     character.jobQueue.AddJobInQueue(job);
                 } else {
                     griefstricken.TriggerGrieving();

@@ -12,16 +12,15 @@ public class CharacterMarkerAnimationListener : MonoBehaviour {
 
     public void OnAttackExecuted() {
         //Debug.Log(parentMarker.name + " attacked!");
-        if (parentMarker.character.stateComponent.currentState is CombatState) {
-            CombatState combatState = parentMarker.character.stateComponent.currentState as CombatState;
-            combatState.isExecutingAttack = false;
+        if (parentMarker.character.stateComponent.currentState is CombatState combatState) {
             if (parentMarker.character.characterClass.rangeType == RANGE_TYPE.RANGED) {
-                if (parentMarker.character.characterClass.attackType == ATTACK_TYPE.MAGICAL) {
-                    CreateMagicalHit(combatState.currentClosestHostile, combatState);
-                } else {
+                // if (parentMarker.character.characterClass.attackType == ATTACK_TYPE.MAGICAL) {
+                //     CreateMagicalHit(combatState.currentClosestHostile, combatState);
+                // } else {
                     CreateProjectile(combatState.currentClosestHostile, combatState);
-                }
+                // }
             } else {
+                combatState.isExecutingAttack = false;
                 combatState.OnAttackHit(combatState.currentClosestHostile);
             }
         }
@@ -39,19 +38,18 @@ public class CharacterMarkerAnimationListener : MonoBehaviour {
         if (currentProjectile != null) {
             return; //only 1 projectile at a time!
         }
-        if (target.currentHP <= 0) {
+        if (target == null || target.currentHP <= 0) {
             return;
         }
         //Create projectile here and set the on hit action to combat state OnAttackHit
-        GameObject projectileGO = GameObject.Instantiate(projectilePrefab, Vector3.zero, Quaternion.identity, parentMarker.projectileParent);
-        projectileGO.transform.localPosition = Vector3.zero;
-        Projectile projectile = projectileGO.GetComponent<Projectile>();
+        Projectile projectile = CombatManager.Instance.CreateNewProjectile(parentMarker.character.combatComponent.elementalDamage.type, parentMarker.character.currentRegion.innerMap.objectsParent, parentMarker.projectileParent.transform.position);
         projectile.SetTarget(target.projectileReceiver.transform, target, state);
         projectile.onHitAction = OnProjectileHit;
-        currentProjectile = projectileGO;
+        currentProjectile = projectile.gameObject;
     }
     private void CreateMagicalHit(IPointOfInterest target, CombatState state) {
-        GameManager.Instance.CreateFireEffectAt(target);
+        state.isExecutingAttack = false;
+        GameManager.Instance.CreateParticleEffectAt(target, PARTICLE_EFFECT.Fire);
         state.OnAttackHit(target);
     }
 
@@ -61,15 +59,16 @@ public class CharacterMarkerAnimationListener : MonoBehaviour {
     /// <param name="target">The character that was hit.</param>
     /// <param name="fromState">The projectile was created from this combat state.</param>
     private void OnProjectileHit(IDamageable target, CombatState fromState) {
+        fromState.isExecutingAttack = false;
         currentProjectile = null;
         //fromState.OnAttackHit(character);
         if (parentMarker.character.stateComponent.currentState is CombatState) {
             CombatState combatState = parentMarker.character.stateComponent.currentState as CombatState;
             combatState.OnAttackHit(target);
         } else {
-            string attackSummary = GameManager.Instance.TodayLogString() + parentMarker.character.name + " hit " + target.name + ", outside of combat state";
+            string attackSummary = $"{parentMarker.character.name} hit {target.name}, outside of combat state";
             target.OnHitByAttackFrom(parentMarker.character, fromState, ref attackSummary);
-            parentMarker.character.PrintLogIfActive(attackSummary);
+            parentMarker.character.logComponent.PrintLogIfActive(attackSummary);
         }
     }
 }

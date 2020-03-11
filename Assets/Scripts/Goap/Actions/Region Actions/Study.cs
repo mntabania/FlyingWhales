@@ -1,12 +1,13 @@
 ﻿
 using System.Collections.Generic;
 using UnityEngine;
+using UtilityScripts;
 
 public class Study : GoapAction {
     
     public Study() : base(INTERACTION_TYPE.STUDY) {
         actionIconString = GoapActionStateDB.Work_Icon;
-        isNotificationAnIntel = false;
+        
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
@@ -20,7 +21,7 @@ public class Study : GoapAction {
         base.Perform(goapNode);
         SetState("Study Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 1;
     }
     public override void AddFillersToLog(Log log, ActualGoapNode node) {
@@ -48,7 +49,7 @@ public class Study : GoapAction {
     public void AfterStudySuccess(ActualGoapNode goapNode) {
         List<string> buffs = TraitManager.Instance.GetAllBuffTraitsThatCharacterCanHave(goapNode.actor);
         if (buffs.Count > 0) {
-            string chosenBuff = Utilities.GetRandomElement(buffs);
+            string chosenBuff = CollectionUtilities.GetRandomElement(buffs);
             goapNode.actor.traitContainer.AddTrait(goapNode.actor, chosenBuff);
             goapNode.descriptionLog.AddToFillers(null, chosenBuff, LOG_IDENTIFIER.STRING_1);
         } else {

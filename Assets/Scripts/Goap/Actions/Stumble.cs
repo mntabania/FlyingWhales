@@ -10,7 +10,7 @@ public class Stumble : GoapAction {
     public Stumble() : base(INTERACTION_TYPE.STUMBLE) {
         actionIconString = GoapActionStateDB.No_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
-        isNotificationAnIntel = false;
+        
         animationName = "Sleep Ground";
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON };
@@ -21,7 +21,7 @@ public class Stumble : GoapAction {
         base.Perform(goapNode);
         SetState("Stumble Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 10;
     }
     #endregion
@@ -44,8 +44,9 @@ public class Stumble : GoapAction {
         int randomHpToLose = UnityEngine.Random.Range(1, 6);
         float percentMaxHPToLose = randomHpToLose / 100f;
         int actualHPToLose = Mathf.CeilToInt(goapNode.actor.maxHP * percentMaxHPToLose);
-        Debug.Log("Stumble of " + goapNode.actor.name + " percent: " + percentMaxHPToLose + ", max hp: " + goapNode.actor.maxHP + ", lost hp: " + actualHPToLose);
-        goapNode.actor.AdjustHP(-actualHPToLose);
+        Debug.Log(
+            $"Stumble of {goapNode.actor.name} percent: {percentMaxHPToLose}, max hp: {goapNode.actor.maxHP}, lost hp: {actualHPToLose}");
+        goapNode.actor.AdjustHP(-actualHPToLose, ELEMENTAL_TYPE.Normal);
     }
     public void AfterStumbleSuccess(ActualGoapNode goapNode) {
         if (goapNode.actor.currentHP <= 0) {
@@ -64,9 +65,9 @@ public class Stumble : GoapAction {
     //                CreateLaughAtJob(recipient, actor);
     //            }
     //        } else if (relWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
-    //            if (recipient.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)
+    //            if (recipient.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TRAIT.AFFAIR)
     //                || recipient.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TRAIT.LOVER)) {
-    //                //If they are lovers, paramours or relatives and they saw the other: -stumbled
+    //                //If they are lovers, affairs or relatives and they saw the other: -stumbled
     //                //They will trigger a personal https://trello.com/c/iDsfwQ7d/2845-character-feeling-concerned job
     //                CreateFeelingConcernedJob(recipient, actor);
     //            } else if (recipient.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TRAIT.FRIEND)) {

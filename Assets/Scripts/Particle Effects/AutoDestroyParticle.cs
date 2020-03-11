@@ -11,13 +11,13 @@ public class AutoDestroyParticle : PooledObject {
         bool allInactive = true;
         for (int i = 0; i < particleSystems.Length; i++) {
             ParticleSystem currPS = particleSystems[i];
-            if (currPS.IsAlive()) {
+            if (currPS.IsAlive()) { //!currPS.isStopped
                 allInactive = false;
                 break;
             }
         }
         if (allInactive) {
-            ObjectPoolManager.Instance.DestroyObject(this.gameObject);
+            ObjectPoolManager.Instance.DestroyObject(gameObject);
         }
     }
 

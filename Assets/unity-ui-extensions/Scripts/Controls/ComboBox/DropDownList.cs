@@ -173,7 +173,7 @@ namespace UnityEngine.UI.Extensions
 			while (_panelItems.Count < Items.Count)
 			{
 				GameObject newItem = Instantiate(_itemTemplate) as GameObject;
-				newItem.name = "Item " + indx;
+				newItem.name = $"Item {indx}";
 				newItem.transform.SetParent(_itemsPanelRT, false);
 
 				_panelItems.Add(new DropDownListButton(newItem));

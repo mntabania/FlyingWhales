@@ -95,9 +95,10 @@ public class SkillPanelUI : MonoBehaviour {
             EditorUtility.DisplayDialog("Error", "Please specify a Skill Name", "OK");
             return;
         }
-        string path = Utilities.dataPath + "Skills/" + skillNameInput.text + ".json";
-        if (Utilities.DoesFileExist(path)) {
-            if (EditorUtility.DisplayDialog("Overwrite Skill", "A skill with name " + skillNameInput.text + " already exists. Replace with this skill?", "Yes", "No")) {
+        string path = $"{UtilityScripts.Utilities.dataPath}Skills/{skillNameInput.text}.json";
+        if (UtilityScripts.Utilities.DoesFileExist(path)) {
+            if (EditorUtility.DisplayDialog("Overwrite Skill",
+                $"A skill with name {skillNameInput.text} already exists. Replace with this skill?", "Yes", "No")) {
                 File.Delete(path);
                 SaveSkillJson(path);
             }
@@ -128,7 +129,7 @@ public class SkillPanelUI : MonoBehaviour {
     }
     private void UpdateSkillList() {
         allSkills.Clear();
-        string path = Utilities.dataPath + "Skills/";
+        string path = $"{UtilityScripts.Utilities.dataPath}Skills/";
         foreach (string file in Directory.GetFiles(path, "*.json")) {
             allSkills.Add(Path.GetFileNameWithoutExtension(file));
         }

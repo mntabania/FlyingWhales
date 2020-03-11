@@ -126,7 +126,7 @@ public class CharacterPanelUI : MonoBehaviour {
         //}
 
         List<string> races = new List<string>();
-        string path3 = Utilities.dataPath + "RaceSettings/";
+        string path3 = $"{UtilityScripts.Utilities.dataPath}RaceSettings/";
         foreach (string file in Directory.GetFiles(path3, "*.json")) {
             races.Add(Path.GetFileNameWithoutExtension(file));
         }
@@ -196,9 +196,10 @@ public class CharacterPanelUI : MonoBehaviour {
             EditorUtility.DisplayDialog("Error", "Please specify a Character Name", "OK");
             return;
         }
-        string path = Utilities.dataPath + "CharacterSims/" + nameInput.text + ".json";
-        if (Utilities.DoesFileExist(path)) {
-            if (EditorUtility.DisplayDialog("Overwrite Character", "A character with name " + nameInput.text + " already exists. Replace with this character?", "Yes", "No")) {
+        string path = $"{UtilityScripts.Utilities.dataPath}CharacterSims/{nameInput.text}.json";
+        if (UtilityScripts.Utilities.DoesFileExist(path)) {
+            if (EditorUtility.DisplayDialog("Overwrite Character",
+                $"A character with name {nameInput.text} already exists. Replace with this character?", "Yes", "No")) {
                 File.Delete(path);
                 SaveCharacterJson(path);
             }
@@ -208,72 +209,73 @@ public class CharacterPanelUI : MonoBehaviour {
 #endif
     }
     private void SaveCharacterJson(string path) {
-        CharacterSim newCharacter = new CharacterSim();
+//        CharacterSim newCharacter = new CharacterSim();
 
-        newCharacter.SetDataFromCharacterPanelUI();
+//        newCharacter.SetDataFromCharacterPanelUI();
 
-        string jsonString = JsonUtility.ToJson(newCharacter);
+//        string jsonString = JsonUtility.ToJson(newCharacter);
 
-        System.IO.StreamWriter writer = new System.IO.StreamWriter(path, false);
-        writer.WriteLine(jsonString);
-        writer.Close();
+//        System.IO.StreamWriter writer = new System.IO.StreamWriter(path, false);
+//        writer.WriteLine(jsonString);
+//        writer.Close();
 
-#if UNITY_EDITOR
-        //Re-import the file to update the reference in the editor
-        UnityEditor.AssetDatabase.ImportAsset(path);
-#endif
-        Debug.Log("Successfully saved character at " + path);
+//#if UNITY_EDITOR
+//        //Re-import the file to update the reference in the editor
+//        UnityEditor.AssetDatabase.ImportAsset(path);
+//#endif
+//        Debug.Log($"Successfully saved character at {path}");
 
-        CombatSimManager.Instance.UpdateAllCharacters();
+        //CombatSimManager.Instance.UpdateAllCharacters();
     }
     private void LoadCharacter() {
 #if UNITY_EDITOR
-        string filePath = EditorUtility.OpenFilePanel("Select Character", Utilities.dataPath + "CharacterSims/", "json");
+        //string filePath = EditorUtility.OpenFilePanel("Select Character",
+        //    $"{UtilityScripts.Utilities.dataPath}CharacterSims/", "json");
 
-        if (!string.IsNullOrEmpty(filePath)) {
-            string dataAsJson = File.ReadAllText(filePath);
+        //if (!string.IsNullOrEmpty(filePath)) {
+        //    string dataAsJson = File.ReadAllText(filePath);
 
-            CharacterSim character = JsonUtility.FromJson<CharacterSim>(dataAsJson);
-            ClearData();
-            LoadCharacterDataToUI(character);
-        }
+        //    //CharacterSim character = JsonUtility.FromJson<CharacterSim>(dataAsJson);
+        //    //ClearData();
+        //    //LoadCharacterDataToUI(character);
+        //}
 #endif
     }
 
-    private void LoadCharacterDataToUI(CharacterSim character) {
-        nameInput.text = character.name;
-        levelInput.text = character.level.ToString();
-        armyInput.text = character.armyCount.ToString();
+    //private void LoadCharacterDataToUI(CharacterSim character) {
+    //    nameInput.text = character.name;
+    //    levelInput.text = character.level.ToString();
+    //    armyInput.text = character.armyCount.ToString();
 
-        classOptions.value = GetDropdownIndex(character.className, classOptions);
-        genderOptions.value = GetDropdownIndex(character.gender.ToString(), genderOptions);
-        raceOptions.value = GetDropdownIndex(character.raceName, raceOptions);
+    //    classOptions.value = GetDropdownIndex(character.className, classOptions);
+    //    genderOptions.value = GetDropdownIndex(character.gender.ToString(), genderOptions);
+    //    raceOptions.value = GetDropdownIndex(character.raceName, raceOptions);
 
-        toggleArmy.isOn = character.isArmy;
-        //weaponOptions.value = GetDropdownIndex(character.weaponName, weaponOptions);
-        //armorOptions.value = GetDropdownIndex(character.armorName, armorOptions);
-        //accessoryOptions.value = GetDropdownIndex(character.accessoryName, accessoryOptions);
-        //consumableOptions.value = GetDropdownIndex(character.consumableName, consumableOptions);
+    //    toggleArmy.isOn = character.isArmy;
+    //    //weaponOptions.value = GetDropdownIndex(character.weaponName, weaponOptions);
+    //    //armorOptions.value = GetDropdownIndex(character.armorName, armorOptions);
+    //    //accessoryOptions.value = GetDropdownIndex(character.accessoryName, accessoryOptions);
+    //    //consumableOptions.value = GetDropdownIndex(character.consumableName, consumableOptions);
 
-        //dHeadInput.text = character.defHead.ToString();
-        //dBodyInput.text = character.defBody.ToString();
-        //dLegsInput.text = character.defLegs.ToString();
-        //dHandsInput.text = character.defHands.ToString();
-        //dFeetInput.text = character.defFeet.ToString();
+    //    //dHeadInput.text = character.defHead.ToString();
+    //    //dBodyInput.text = character.defBody.ToString();
+    //    //dLegsInput.text = character.defLegs.ToString();
+    //    //dHandsInput.text = character.defHands.ToString();
+    //    //dFeetInput.text = character.defFeet.ToString();
 
-        //_singleHP = character.maxHP;
-        //_sp = character.maxSP;
-        //_singleAttackPower = character.attackPower;
-        //_singleSpeed = character.speed;
+    //    //_singleHP = character.maxHP;
+    //    //_sp = character.maxSP;
+    //    //_singleAttackPower = character.attackPower;
+    //    //_singleSpeed = character.speed;
 
-        //_skillNames.Clear();
-        //for (int i = 0; i < character.skillNames.Count; i++) {
-        //    string skillName = character.skillNames[i];
-        //    _skillNames.Add(skillName);
-        //}
+    //    //_skillNames.Clear();
+    //    //for (int i = 0; i < character.skillNames.Count; i++) {
+    //    //    string skillName = character.skillNames[i];
+    //    //    _skillNames.Add(skillName);
+    //    //}
 
-        UpdateUI();
-    }
+    //    UpdateUI();
+    //}
     private int GetDropdownIndex(string armorName, Dropdown ddOptions) {
         for (int i = 0; i < ddOptions.options.Count; i++) {
             if (ddOptions.options[i].text == armorName) {
@@ -283,12 +285,12 @@ public class CharacterPanelUI : MonoBehaviour {
         return 0;
     }
     private CharacterClass GetClass(string className) {
-        string path = Utilities.dataPath + "CharacterClasses/" + className + ".json";
+        string path = $"{UtilityScripts.Utilities.dataPath}CharacterClasses/{className}.json";
         CharacterClass currentClass = JsonUtility.FromJson<CharacterClass>(System.IO.File.ReadAllText(path));
         return currentClass;
     }
     private RaceSetting GetRace(string raceName) {
-        string path = Utilities.dataPath + "RaceSettings/" + raceName + ".json";
+        string path = $"{UtilityScripts.Utilities.dataPath}RaceSettings/{raceName}.json";
         RaceSetting currentRace = JsonUtility.FromJson<RaceSetting>(System.IO.File.ReadAllText(path));
         return currentRace;
     }
@@ -369,7 +371,7 @@ public class CharacterPanelUI : MonoBehaviour {
         if (_allCombatAttributeNames != null && _allCombatAttributeNames.Count > 0) {
             combatAttributesLbl.text += _allCombatAttributeNames[0];
             for (int i = 1; i < _allCombatAttributeNames.Count; i++) {
-                combatAttributesLbl.text +=  ", " + _allCombatAttributeNames[i];
+                combatAttributesLbl.text += $", {_allCombatAttributeNames[i]}";
             }
         }
         if(string.IsNullOrEmpty(combatAttributesLbl.text)) {

@@ -77,16 +77,16 @@ public class HexColorField : MonoBehaviour
             }
             else if (hex.Length == startIndex + 4) //#RGBA
             {
-                color = new Color32(byte.Parse("" + hex[startIndex] + hex[startIndex], NumberStyles.AllowHexSpecifier),
-                    byte.Parse("" + hex[startIndex + 1] + hex[startIndex + 1], NumberStyles.AllowHexSpecifier),
-                    byte.Parse("" + hex[startIndex + 2] + hex[startIndex + 2], NumberStyles.AllowHexSpecifier),
-                    byte.Parse("" + hex[startIndex + 3] + hex[startIndex + 3], NumberStyles.AllowHexSpecifier));
+                color = new Color32(byte.Parse($"{hex[startIndex]}{hex[startIndex]}", NumberStyles.AllowHexSpecifier),
+                    byte.Parse($"{hex[startIndex + 1]}{hex[startIndex + 1]}", NumberStyles.AllowHexSpecifier),
+                    byte.Parse($"{hex[startIndex + 2]}{hex[startIndex + 2]}", NumberStyles.AllowHexSpecifier),
+                    byte.Parse($"{hex[startIndex + 3]}{hex[startIndex + 3]}", NumberStyles.AllowHexSpecifier));
             }
             else  //#RGB
             {
-                color = new Color32(byte.Parse("" + hex[startIndex] + hex[startIndex], NumberStyles.AllowHexSpecifier),
-                    byte.Parse("" + hex[startIndex + 1] + hex[startIndex + 1], NumberStyles.AllowHexSpecifier),
-                    byte.Parse("" + hex[startIndex + 2] + hex[startIndex + 2], NumberStyles.AllowHexSpecifier),
+                color = new Color32(byte.Parse($"{hex[startIndex]}{hex[startIndex]}", NumberStyles.AllowHexSpecifier),
+                    byte.Parse($"{hex[startIndex + 1]}{hex[startIndex + 1]}", NumberStyles.AllowHexSpecifier),
+                    byte.Parse($"{hex[startIndex + 2]}{hex[startIndex + 2]}", NumberStyles.AllowHexSpecifier),
                     255);
             }
             return true;

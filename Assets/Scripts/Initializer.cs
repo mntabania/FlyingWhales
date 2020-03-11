@@ -4,12 +4,12 @@ using Inner_Maps;
 using UnityEngine;
 
 public class Initializer : MonoBehaviour {
-    public void InitializeDataBeforeWorldCreation() {
+    public IEnumerator InitializeDataBeforeWorldCreation() {
         LocalizationManager.Instance.Initialize();
         CharacterManager.Instance.Initialize();
         RaceManager.Instance.Initialize();
         TraitManager.Instance.Initialize();
-        SecretManager.Instance.Initialize();
+        // SecretManager.Instance.Initialize();
         LandmarkManager.Instance.Initialize();
         //CombatManager.Instance.Initialize();
         PlayerManager.Instance.Initialize();
@@ -23,12 +23,15 @@ public class Initializer : MonoBehaviour {
 
         InteractionManager.Instance.Initialize();
 
-        TokenManager.Instance.Initialize();
+        // TokenManager.Instance.Initialize();
         JobManager.Instance.Initialize();
+        PlayerUI.Instance.Initialize();
+        RandomNameGenerator.Initialize();
+        yield return null;
     }
 
     public void InitializeDataAfterWorldCreation() {
-        PlayerUI.Instance.Initialize();
         PlayerUI.Instance.InitializeAfterGameLoaded();
+        LightingManager.Instance.Initialize();
     }
 }

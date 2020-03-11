@@ -19,7 +19,7 @@ public class ZombieDeath : GoapAction {
         base.Perform(goapNode);
         SetState("Zombie Death Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 10;
     }
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest target, object[] otherData) {

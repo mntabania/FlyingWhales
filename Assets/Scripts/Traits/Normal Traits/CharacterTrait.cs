@@ -10,18 +10,18 @@ namespace Traits {
         //IMPORTANT NOTE: When the owner of this trait changed its alter ego, this trait will not be present in the alter ego anymore
         //Meaning that he/she cannot do the things specified in here anymore unless he/she switch to the ego which this trait is present
         public List<TileObject> alreadyInspectedTileObjects { get; private set; }
+        public List<Character> charactersAlreadySawForHope { get; private set; }
         public bool hasSurvivedApprehension { get; private set; } //If a criminal character (is in original alter ego), and survived being apprehended, this must be turned on
         public Character owner { get; private set; }
 
         public CharacterTrait() {
             name = "Character Trait";
-            type = TRAIT_TYPE.PERSONALITY;
+            type = TRAIT_TYPE.NEUTRAL;
             effect = TRAIT_EFFECT.NEUTRAL;
-            
-            
             ticksDuration = 0;
             isHidden = true;
             alreadyInspectedTileObjects = new List<TileObject>();
+            charactersAlreadySawForHope = new List<Character>();
         }
         public void AddAlreadyInspectedObject(TileObject to) {
             if (!alreadyInspectedTileObjects.Contains(to)) {
@@ -34,150 +34,108 @@ namespace Traits {
         }
 
         #region Overrides
-        //public override void OnSeePOI(IPointOfInterest targetPOI, Character character) {
-        //    base.OnSeePOI(targetPOI, character);
-        //    if (targetPOI is Character) {
-        //        Character targetCharacter = targetPOI as Character;
-        //        Paralyzed paralyzed = targetCharacter.traitContainer.GetNormalTrait<Trait>("Paralyzed") as Paralyzed;
-        //        Catatonic catatonic = targetCharacter.traitContainer.GetNormalTrait<Trait>("Catatonic") as Catatonic;
-        //        if (paralyzed != null) {
-        //            paralyzed.AddCharacterThatKnows(character);
-        //        }
-        //        if (catatonic != null) {
-        //            catatonic.AddCharacterThatKnows(character);
-        //        }
-        //    }
-        //}
-        public override bool CreateJobsOnEnterVisionBasedOnOwnerTrait(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
-            if (targetPOI is Table) {
-                Table targetTable = targetPOI as Table;
-                if (targetTable.food < 20 && targetTable.structureLocation is Dwelling) {
-                    Dwelling dwelling = targetTable.structureLocation as Dwelling;
-                    if (dwelling.IsResident(characterThatWillDoJob)) {
-                        if (!targetTable.HasJobTargetingThis(JOB_TYPE.TAKE_PERSONAL_FOOD)) {
-                            int neededFood = 60 - targetTable.food;
-                            GoapEffect effect = new GoapEffect(GOAP_EFFECT_CONDITION.HAS_FOOD, "0", true, GOAP_EFFECT_TARGET.TARGET);
-                            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TAKE_PERSONAL_FOOD, effect, targetTable, characterThatWillDoJob);
-                            //job.AddOtherData(INTERACTION_TYPE.DROP_RESOURCE, new object[] { neededFood });
-                            job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { neededFood });
-                            characterThatWillDoJob.jobQueue.AddJobInQueue(job);
-                            return true;
-                        }
-                    }
-                }
-            }
-            if (targetPOI is TileObject) {
-                TileObject tileObj = targetPOI as TileObject;
-                if (tileObj.isSummonedByPlayer && characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Suspicious") == null && !alreadyInspectedTileObjects.Contains(tileObj)) {
+        public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
+            if (targetPOI is TileObject tileObj) {
+                if (tileObj.isSummonedByPlayer && !characterThatWillDoJob.traitContainer.HasTrait("Suspicious") && !alreadyInspectedTileObjects.Contains(tileObj)) {
                     if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.INSPECT, tileObj)) {
                         GoapPlanJob inspectJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.INSPECT, INTERACTION_TYPE.INSPECT, tileObj, characterThatWillDoJob);
                         characterThatWillDoJob.jobQueue.AddJobInQueue(inspectJob);
                         return true;
                     }
-                } else if (tileObj is GoddessStatue) {
-                    if (Random.Range(0, 100) < 15 && !characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.PRAY_GODDESS_STATUE, tileObj) && tileObj.state == POI_STATE.ACTIVE) {
-                        GoapPlanJob prayJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PRAY_GODDESS_STATUE, INTERACTION_TYPE.PRAY_TILE_OBJECT, tileObj, characterThatWillDoJob);
-                        characterThatWillDoJob.jobQueue.AddJobInQueue(prayJob);
-                        return true;
-                    }
-                } 
-                //else {
-                //    if (tileObj.mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
-                //        GoapPlanJob buildJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BUILD_TILE_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, tileObj, characterThatWillDoJob);
-                //        characterThatWillDoJob.jobQueue.AddJobInQueue(buildJob);
-                //        return true;
-                //    }
-                //}
+                }
             }
-            if (targetPOI is SpecialToken) {
-                if (characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Beast") == null /*characterThatWillDoJob.role.roleType != CHARACTER_ROLE.BEAST*/) {
-                    SpecialToken token = targetPOI as SpecialToken;
-                    if (token.CanBePickedUpNormallyUponVisionBy(characterThatWillDoJob)
-                    && !characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.PICK_UP)) {
-                        GoapPlanJob pickUpJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.PICK_UP, token, characterThatWillDoJob);
-                        characterThatWillDoJob.jobQueue.AddJobInQueue(pickUpJob);
+            if (targetPOI is TileObject item) {
+                if (!characterThatWillDoJob.traitContainer.HasTrait("Beast") /*characterThatWillDoJob.role.roleType != CHARACTER_ROLE.BEAST*/) {
+                    if (item.CanBePickedUpNormallyUponVisionBy(characterThatWillDoJob)
+                        && !characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.PICK_UP)) {
+                        characterThatWillDoJob.jobComponent.CreatePickUpJob(item);
                         return true;
                     }
                 }
             }
             if (targetPOI is Character || targetPOI is Tombstone) {
                 Character targetCharacter = null;
-                if (targetPOI is Character) {
-                    targetCharacter = targetPOI as Character;
-                } else if (targetPOI is Tombstone) {
+                if (targetPOI is Character character) {
+                    targetCharacter = character;
+                } else {
                     targetCharacter = (targetPOI as Tombstone).character;
                 }
                 if (targetCharacter.isDead) {
-                    Dead deadTrait = targetCharacter.traitContainer.GetNormalTrait<Trait>("Dead") as Dead;
-                    if (deadTrait.responsibleCharacter != characterThatWillDoJob && !deadTrait.charactersThatSawThisDead.Contains(characterThatWillDoJob)) {
+                    Dead deadTrait = targetCharacter.traitContainer.GetNormalTrait<Dead>("Dead");
+                    if (deadTrait != null && deadTrait.responsibleCharacter != characterThatWillDoJob 
+                                          && !deadTrait.charactersThatSawThisDead.Contains(characterThatWillDoJob)) {
                         deadTrait.AddCharacterThatSawThisDead(characterThatWillDoJob);
-
-                        Log sawDeadLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "saw_dead");
-                        sawDeadLog.AddToFillers(characterThatWillDoJob, characterThatWillDoJob.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                        sawDeadLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                        characterThatWillDoJob.AddHistory(sawDeadLog);
-                        PlayerManager.Instance.player.ShowNotificationFrom(sawDeadLog, characterThatWillDoJob, false);
-
-
-                        if (characterThatWillDoJob.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TYPE.LOVER)) {
-                            characterThatWillDoJob.traitContainer.AddTrait(characterThatWillDoJob, "Heartbroken");
-                            bool hasCreatedJob = RandomizeBetweenShockAndCryJob(characterThatWillDoJob);
-                            characterThatWillDoJob.needsComponent.AdjustHappiness(-6000);
-                            return hasCreatedJob;
-                        } else if (characterThatWillDoJob.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TYPE.RELATIVE)) {
-                            characterThatWillDoJob.traitContainer.AddTrait(characterThatWillDoJob, "Griefstricken");
-                            bool hasCreatedJob = RandomizeBetweenShockAndCryJob(characterThatWillDoJob);
-                            characterThatWillDoJob.needsComponent.AdjustHappiness(-4000);
-                            return hasCreatedJob;
-                        } else if (characterThatWillDoJob.opinionComponent.IsFriendsWith(targetCharacter)) {
-                            characterThatWillDoJob.traitContainer.AddTrait(characterThatWillDoJob, "Griefstricken");
-                            bool hasCreatedJob = CreatePrioritizedShockJob(characterThatWillDoJob);
-                            characterThatWillDoJob.needsComponent.AdjustHappiness(-2000);
-                            return hasCreatedJob;
-                        }
+                    
+                        // Log sawDeadLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "saw_dead");
+                        // sawDeadLog.AddToFillers(characterThatWillDoJob, characterThatWillDoJob.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                        // sawDeadLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                        // characterThatWillDoJob.logComponent.AddHistory(sawDeadLog);
+                        // PlayerManager.Instance.player.ShowNotificationFrom(sawDeadLog, characterThatWillDoJob, false);
+                        //
+                        //
+                        // if (characterThatWillDoJob.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER)) {
+                        //     characterThatWillDoJob.traitContainer.AddTrait(characterThatWillDoJob, "Heartbroken");
+                        //     bool hasCreatedJob = RandomizeBetweenShockAndCryJob(characterThatWillDoJob);
+                        //     //characterThatWillDoJob.needsComponent.AdjustHappiness(-6000);
+                        //     return hasCreatedJob;
+                        // } else if (characterThatWillDoJob.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.RELATIVE)) {
+                        //     characterThatWillDoJob.traitContainer.AddTrait(characterThatWillDoJob, "Griefstricken");
+                        //     bool hasCreatedJob = RandomizeBetweenShockAndCryJob(characterThatWillDoJob);
+                        //     //characterThatWillDoJob.needsComponent.AdjustHappiness(-4000);
+                        //     return hasCreatedJob;
+                        // } else if (characterThatWillDoJob.opinionComponent.IsFriendsWith(targetCharacter)) {
+                        //     characterThatWillDoJob.traitContainer.AddTrait(characterThatWillDoJob, "Griefstricken");
+                        //     bool hasCreatedJob = CreatePrioritizedShockJob(characterThatWillDoJob);
+                        //     //characterThatWillDoJob.needsComponent.AdjustHappiness(-2000);
+                        //     return hasCreatedJob;
+                        // }
                     }
                 } else { 
                     //character is not dead
-                     //When someone sees another character carrying a character that is unconscious or restrained, and that character is not a branded criminal, and not the carrier's lover or relative, the carrier will be branded as Assaulter and Crime Handling will take place.
-                     //if (targetCharacter.IsInOwnParty() && targetCharacter.currentParty.characters.Count > 1 && !targetCharacter.HasTraitOf(TRAIT_TYPE.CRIMINAL)) { //This means that this character is carrrying another character
-                     //    Character carriedCharacter = targetCharacter.currentParty.characters[1];
-                     //    if (characterThatWillDoJob != carriedCharacter && !carriedCharacter.isDead && carriedcharacter.traitContainer.GetNormalTrait<Trait>("Unconscious", "Restrained") != null) {
-                     //        if (!targetCharacter.HasRelationshipOfTypeWith(carriedCharacter, false, RELATIONSHIP_TRAIT.RELATIVE, RELATIONSHIP_TRAIT.LOVER)) {
-                     //            if (targetCharacter.currentActionNode.action != null && !targetCharacter.currentActionNode.action.hasCrimeBeenReported) {
-                     //                characterThatWillDoJob.ReactToCrime(CRIME.ASSAULT, targetCharacter.currentActionNode.action, targetCharacter.currentAlterEgo, SHARE_INTEL_STATUS.WITNESSED);
-                     //            }
-                     //        }
-                     //    }
-                     //}
-
-                    #region Check Up
-                    //If a character cannot assist a character in vision, they may stay with it and check up on it for a bit. Reference: https://trello.com/c/hW7y6d5W/2841-if-a-character-cannot-assist-a-character-in-vision-they-may-stay-with-it-and-check-up-on-it-for-a-bit
-                    //If they are enemies and the character in vision has any of the following:
-                    //- unconscious, catatonic, restrained, puked, stumbled
-                    ///NOTE: Puke and Stumble Reactions can be found at <see cref="Puke.SuccessReactions(Character, Intel, SHARE_INTEL_STATUS)"/> and <see cref="Stumble.SuccessReactions(Character, Intel, SHARE_INTEL_STATUS)"/> respectively
-                    //They will trigger a personal https://trello.com/c/uCbLBXsF/2846-character-laugh-at job
-                    if (characterThatWillDoJob.opinionComponent.IsEnemiesWith(targetCharacter) && targetCharacter.traitContainer.GetNormalTrait<Trait>("Unconscious", "Catatonic", "Restrained") != null && characterThatWillDoJob.faction == targetCharacter.faction
-                        && (characterThatWillDoJob.currentActionNode == null || characterThatWillDoJob.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING)) {
-                        return CreateLaughAtJob(characterThatWillDoJob, targetCharacter);
+                    // if (targetCharacter.canMove == false || targetCharacter.canWitness == false) {
+                    //     if (characterThatWillDoJob.jobComponent.TryTriggerFeed(targetCharacter) == false) {
+                    //         if (characterThatWillDoJob.jobComponent.TryTriggerMoveCharacterTirednessRecovery(targetCharacter) == false) {
+                    //             characterThatWillDoJob.jobComponent.TryTriggerMoveCharacterHappinessRecovery(targetCharacter);
+                    //         }    
+                    //     }
+                    // }
+                    if (targetCharacter.race == RACE.SKELETON || targetCharacter.characterClass.className == "Zombie") {
+                        string opinionLabel = characterThatWillDoJob.relationshipContainer.GetOpinionLabel(targetCharacter);
+                        if (opinionLabel == OpinionComponent.Friend) {
+                            if (!charactersAlreadySawForHope.Contains(targetCharacter)) {
+                                charactersAlreadySawForHope.Add(targetCharacter);
+                                characterThatWillDoJob.needsComponent.AdjustHope(-5f);
+                            }
+                        } else if (opinionLabel == OpinionComponent.Close_Friend) {
+                            if (!charactersAlreadySawForHope.Contains(targetCharacter)) {
+                                charactersAlreadySawForHope.Add(targetCharacter);
+                                characterThatWillDoJob.needsComponent.AdjustHope(-10f);
+                            }
+                        }
                     }
-
-                    //If they have a positive relationship but the character cannot perform the necessary job to remove the following traits:
-                    //catatonic, unconscious, restrained, puked
-                    ///NOTE: Puke Reactions can be found at <see cref="Puke.SuccessReactions(Character, Intel, SHARE_INTEL_STATUS)"/>
-                    //They will trigger a personal https://trello.com/c/iDsfwQ7d/2845-character-feeling-concerned job
-                    else if (characterThatWillDoJob.opinionComponent.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.POSITIVE && targetCharacter.traitContainer.GetNormalTrait<Trait>("Unconscious", "Catatonic", "Restrained") != null
-                        && !characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.REMOVE_TRAIT, targetCharacter) && characterThatWillDoJob.faction == targetCharacter.faction
-                         && (characterThatWillDoJob.currentActionNode == null || characterThatWillDoJob.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING)) {
-                        return CreateFeelingConcernedJob(characterThatWillDoJob, targetCharacter);
-                    }
-                    #endregion
                 }
             }
-            return base.CreateJobsOnEnterVisionBasedOnOwnerTrait(targetPOI, characterThatWillDoJob);
+            return base.OnSeePOI(targetPOI, characterThatWillDoJob);
+        }
+        public override bool OnStartPerformGoapAction(ActualGoapNode node, ref bool willStillContinueAction) {
+            if(node.action.goapType == INTERACTION_TYPE.MAKE_LOVE) {
+                bool triggered = node.actor.interruptComponent.TriggerInterrupt(INTERRUPT.Invite_To_Make_Love, node.poiTarget);
+                willStillContinueAction = node.actor.interruptComponent.identifier == "Accept";
+                node.actor.interruptComponent.SetIdentifier(string.Empty);
+                return triggered;
+            }
+            return false;
+        }
+        public override void OnTickStarted() {
+            base.OnTickStarted();
+            if (hasSurvivedApprehension) {
+                CheckAsCriminal();
+            }
         }
         #endregion
+
         private void CheckAsCriminal() {
-            if (owner.stateComponent.currentState == null && !owner.isAtHomeRegion && !owner.jobQueue.HasJob(JOB_TYPE.RETURN_HOME)) {
+            if (owner.stateComponent.currentState == null && !owner.isAtHomeRegion && !owner.jobQueue.HasJob(JOB_TYPE.IDLE_RETURN_HOME, INTERACTION_TYPE.RETURN_HOME)) {
                 if (owner.jobQueue.jobsInQueue.Count > 0) {
                     owner.CancelAllJobs();
                 }
@@ -192,13 +150,13 @@ namespace Traits {
         public void SetHasSurvivedApprehension(bool state) {
             if (hasSurvivedApprehension != state) {
                 hasSurvivedApprehension = state;
-                if (hasSurvivedApprehension) {
-                    Messenger.AddListener(Signals.TICK_STARTED, CheckAsCriminal);
-                } else {
-                    if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
-                        Messenger.RemoveListener(Signals.TICK_STARTED, CheckAsCriminal);
-                    }
-                }
+                //if (hasSurvivedApprehension) {
+                //    Messenger.AddListener(Signals.TICK_STARTED, CheckAsCriminal);
+                //} else {
+                //    if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
+                //        Messenger.RemoveListener(Signals.TICK_STARTED, CheckAsCriminal);
+                //    }
+                //}
             }
         }
 
@@ -210,12 +168,13 @@ namespace Traits {
             }
         }
         private bool CreatePrioritizedShockJob(Character characterThatWillDoJob) {
-            if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.SHOCK)) {
-                GoapPlanJob shockJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.SHOCK, characterThatWillDoJob, characterThatWillDoJob);
-                characterThatWillDoJob.jobQueue.AddJobInQueue(shockJob);
-                return true;
-            }
-            return false;
+            //if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.SHOCK)) {
+            //    GoapPlanJob shockJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.SHOCK, characterThatWillDoJob, characterThatWillDoJob);
+            //    characterThatWillDoJob.jobQueue.AddJobInQueue(shockJob);
+            //    return true;
+            //}
+            //return false;
+            return characterThatWillDoJob.interruptComponent.TriggerInterrupt(INTERRUPT.Shocked, characterThatWillDoJob);
         }
         private bool CreatePrioritizedCryJob(Character characterThatWillDoJob) {
             if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.CRY)) {
@@ -226,20 +185,25 @@ namespace Traits {
             return false;
         }
         private bool CreateLaughAtJob(Character characterThatWillDoJob, Character target) {
-            if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.LAUGH_AT)) {
-                GoapPlanJob laughJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.LAUGH_AT, target, characterThatWillDoJob);
-                characterThatWillDoJob.jobQueue.AddJobInQueue(laughJob);
-                return true;
-            }
-            return false;
+            //if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.LAUGH_AT)) {
+            //    GoapPlanJob laughJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.LAUGH_AT, target, characterThatWillDoJob);
+            //    characterThatWillDoJob.jobQueue.AddJobInQueue(laughJob);
+            //    return true;
+            //}
+            //return false;
+            return characterThatWillDoJob.interruptComponent.TriggerInterrupt(INTERRUPT.Laugh_At, target);
         }
         private bool CreateFeelingConcernedJob(Character characterThatWillDoJob, Character target) {
-            if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.FEELING_CONCERNED)) {
-                GoapPlanJob laughJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.FEELING_CONCERNED, target, characterThatWillDoJob);
-                characterThatWillDoJob.jobQueue.AddJobInQueue(laughJob);
-                return true;
-            }
-            return false;
+            return characterThatWillDoJob.interruptComponent.TriggerInterrupt(INTERRUPT.Feeling_Concerned, target);
+            //if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.FEELING_CONCERNED)) {
+            //    GoapPlanJob laughJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.FEELING_CONCERNED, target, characterThatWillDoJob);
+            //    characterThatWillDoJob.jobQueue.AddJobInQueue(laughJob);
+            //    return true;
+            //}
+            //return false;
+        }
+        private bool CreateMockJob(Character characterThatWillDoJob, Character target) {
+            return characterThatWillDoJob.interruptComponent.TriggerInterrupt(INTERRUPT.Mock, target);
         }
     }
 

@@ -7,7 +7,7 @@ using System.Linq;
 public class CustomABPath : ABPath {
     public STRUCTURE_TYPE[] onlyAllowedStructures { get; private set; }
     public STRUCTURE_TYPE[] notAllowedStructures { get; private set; }
-    public Settlement settlement { get; private set; }
+    public Region region { get; private set; }
 
     public new static CustomABPath Construct(Vector3 start, Vector3 end, OnPathDelegate callback = null) {
         var p = PathPool.GetPath<CustomABPath>();
@@ -16,8 +16,8 @@ public class CustomABPath : ABPath {
         return p;
     }
 
-    public void SetArea(Settlement settlement) {
-        this.settlement = settlement;
+    public void SetRegion(Region region) {
+        this.region = region;
     }
     public void SetNotAllowedStructures(STRUCTURE_TYPE[] notAllowedStructures) {
         if(notAllowedStructures != null) {

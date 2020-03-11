@@ -9,15 +9,14 @@ public class CraftFurniture : GoapAction {
     public CraftFurniture() : base(INTERACTION_TYPE.CRAFT_FURNITURE) {
         actionLocationType = ACTION_LOCATION_TYPE.OVERRIDE;
         actionIconString = GoapActionStateDB.Work_Icon;
-        showIntelNotification = false;
-        isNotificationAnIntel = false;
+        showNotification = false;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER, POINT_OF_INTEREST_TYPE.TILE_OBJECT };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
     }
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TAKE_WOOD, conditionKey = "0", isKeyANumber = true, target = GOAP_EFFECT_TARGET.ACTOR }, HasSupply);
+        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TAKE_POI, conditionKey = "Wood Pile", isKeyANumber = false, target = GOAP_EFFECT_TARGET.ACTOR }, HasSupply);
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
@@ -26,25 +25,24 @@ public class CraftFurniture : GoapAction {
     public override LocationGridTile GetOverrideTargetTile(ActualGoapNode goapNode) {
         return goapNode.otherData[0] as LocationGridTile;
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 2;
     }
     public override void AddFillersToLog(Log log, ActualGoapNode node) {
         base.AddFillersToLog(log, node);
         TILE_OBJECT_TYPE furnitureToCreate = (TILE_OBJECT_TYPE)node.otherData[1];
-        log.AddToFillers(null, Utilities.GetArticleForWord(furnitureToCreate.ToString()), LOG_IDENTIFIER.STRING_1);
-        log.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(furnitureToCreate.ToString()), LOG_IDENTIFIER.ITEM_1);
+        log.AddToFillers(null, UtilityScripts.Utilities.GetArticleForWord(furnitureToCreate.ToString()), LOG_IDENTIFIER.STRING_1);
+        log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(furnitureToCreate.ToString()), LOG_IDENTIFIER.ITEM_1);
     }
     public override void OnStopWhileStarted(ActualGoapNode node) {
         base.OnStopWhileStarted(node);
         Character actor = node.actor;
-        actor.ownParty.RemoveCarriedPOI();
+        actor.UncarryPOI();
     }
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);
         Character actor = node.actor;
-        IPointOfInterest poiTarget = node.poiTarget;
-        actor.ownParty.RemoveCarriedPOI();
+        actor.UncarryPOI();
     }
     #endregion
 
@@ -74,9 +72,10 @@ public class CraftFurniture : GoapAction {
         if (poiTarget.HasResourceAmount(RESOURCE.WOOD, cost)) {
             return true;
         }
-        if (actor.ownParty.isCarryingAnyPOI && actor.ownParty.carriedPOI is ResourcePile) {
-            ResourcePile carriedPile = actor.ownParty.carriedPOI as ResourcePile;
-            return carriedPile.resourceInPile >= cost;
+        if (actor.ownParty.isCarryingAnyPOI && actor.ownParty.carriedPOI is WoodPile) {
+            //ResourcePile carriedPile = actor.ownParty.carriedPOI as ResourcePile;
+            //return carriedPile.resourceInPile >= cost;
+            return true;
         }
         return false;
         //return actor.supply >= TileObjectDB.GetTileObjectData(furnitureToCreate).constructionCost;
@@ -93,8 +92,8 @@ public class CraftFurniture : GoapAction {
             goapNode.poiTarget.AdjustResource(RESOURCE.WOOD, cost);
         }
 
-        goapNode.descriptionLog.AddToFillers(null, Utilities.GetArticleForWord(furnitureToCreate.ToString()), LOG_IDENTIFIER.STRING_1);
-        goapNode.descriptionLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(furnitureToCreate.ToString()), LOG_IDENTIFIER.ITEM_1);
+        goapNode.descriptionLog.AddToFillers(null, UtilityScripts.Utilities.GetArticleForWord(furnitureToCreate.ToString()), LOG_IDENTIFIER.STRING_1);
+        goapNode.descriptionLog.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(furnitureToCreate.ToString()), LOG_IDENTIFIER.ITEM_1);
     }
     public void AfterCraftSuccess(ActualGoapNode goapNode) {
         LocationGridTile targetSpot = goapNode.otherData[0] as LocationGridTile;
@@ -111,7 +110,7 @@ public class CraftFurniture : GoapAction {
 
 public class CraftFurnitureData : GoapActionData {
     public CraftFurnitureData() : base(INTERACTION_TYPE.CRAFT_FURNITURE) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
         requirementAction = Requirement;
     }
 

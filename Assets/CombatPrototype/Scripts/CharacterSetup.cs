@@ -22,7 +22,7 @@ public class CharacterSetup {
             if (_charClass == null) {
                 _charClass = CharacterManager.Instance.GetCharacterClass(characterClassName);
                 if(_charClass == null) {
-                    throw new Exception("There is no class with the name " + characterClassName);
+                    throw new Exception($"There is no class with the name {characterClassName}");
                 }
             }
             return _charClass;

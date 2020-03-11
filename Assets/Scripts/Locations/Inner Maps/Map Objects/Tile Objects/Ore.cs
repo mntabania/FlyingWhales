@@ -10,18 +10,18 @@ public class Ore : TileObject {
     //private const int Supply_Per_Mine = 50;
 
     public Ore() {
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.MINE, INTERACTION_TYPE.ASSAULT, };
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.MINE_METAL, INTERACTION_TYPE.ASSAULT, };
         Initialize(TILE_OBJECT_TYPE.ORE);
-        yield = 50;
+        SetYield(50);
     }
     public Ore(SaveDataTileObject data) {
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.MINE, INTERACTION_TYPE.ASSAULT, };
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.MINE_METAL, INTERACTION_TYPE.ASSAULT, };
         Initialize(data);
     }
 
     #region Overrides
     public override string ToString() {
-        return "Ore " + id.ToString();
+        return $"Ore {id}";
     }
     public override void SetPOIState(POI_STATE state) {
         base.SetPOIState(state);
@@ -48,6 +48,11 @@ public class Ore : TileObject {
     }
     public void SetYield(int amount) {
         yield = amount;
+    }
+    public override string GetAdditionalTestingData() {
+        string data = base.GetAdditionalTestingData();
+        data = $"{data}\n\tYield: {yield.ToString()}";
+        return data;
     }
 }
 

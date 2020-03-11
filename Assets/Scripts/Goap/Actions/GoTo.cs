@@ -8,7 +8,6 @@ public class GoTo : GoapAction {
     public GoTo() : base(INTERACTION_TYPE.GO_TO) {
         actionLocationType = ACTION_LOCATION_TYPE.TARGET_IN_VISION;
         actionIconString = GoapActionStateDB.Work_Icon;
-        isNotificationAnIntel = false;
         doesNotStopTargetCharacter = true;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON };
@@ -22,8 +21,10 @@ public class GoTo : GoapAction {
         base.Perform(goapNode);
         SetState("Goto Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        return 15;
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+        string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
+        actor.logComponent.AppendCostLog(costLog);
+        return 10;
     }
     #endregion
 

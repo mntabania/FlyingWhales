@@ -4,26 +4,22 @@ using System.Collections.Generic;
 using Inner_Maps;
 using UnityEngine;
 
-public class Artifact : TileObject, IWorldObject {
-    public ARTIFACT_TYPE type { get; private set; }
-    public int level { get; private set; }
-    public bool hasBeenUsed { get; private set; }
-
+public class Artifact : TileObject {
+    public ArtifactData data { get; private set; }
+    public bool hasBeenActivated { get; private set; }
+    
     #region getters/setters
-    public string worldObjectName {
-        get { return name; }
-    }
-    public WORLD_OBJECT_TYPE worldObjectType {
-        get { return WORLD_OBJECT_TYPE.ARTIFACT; }
-    }
+    public string worldObjectName => name;
+    public WORLD_OBJECT_TYPE worldObjectType => WORLD_OBJECT_TYPE.ARTIFACT;
+    public ARTIFACT_TYPE type => data.type;
     #endregion
 
     public Artifact(ARTIFACT_TYPE type) {
-        this.type = type;
-        level = 1;
-        TILE_OBJECT_TYPE parsed = (TILE_OBJECT_TYPE) Enum.Parse(typeof(TILE_OBJECT_TYPE), type.ToString(), true);
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
-        Initialize(parsed);
+        data = ScriptableObjectsManager.Instance.GetArtifactData(type);
+        // TILE_OBJECT_TYPE parsed = (TILE_OBJECT_TYPE) Enum.Parse(typeof(TILE_OBJECT_TYPE), type.ToString(), true);
+        advertisedActions = new List<INTERACTION_TYPE>();
+        Initialize(TILE_OBJECT_TYPE.ARTIFACT);
+        RemoveAdvertisedAction(INTERACTION_TYPE.REPAIR);
     }
     //public Artifact(SaveDataArtifactSlot data) {
     //    this.type = data.type;
@@ -33,84 +29,87 @@ public class Artifact : TileObject, IWorldObject {
     //    Initialize(data, parsed);
     //}
     public Artifact(SaveDataArtifact data) {
-        this.type = data.artifactType;
-        level = 1;
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
+        this.data = ScriptableObjectsManager.Instance.GetArtifactData(data.artifactType);
+        advertisedActions = new List<INTERACTION_TYPE>();
         Initialize(data);
     }
 
     #region Overrides
-    //public override void SetGridTileLocation(LocationGridTile tile) {
-    //    base.SetGridTileLocation(tile);
-    //    if (tile != null) {
-    //        //Debug.Log("Placed artifact " + type.ToString() + " at " + tile.ToString());
-    //        OnPlaceArtifactOn(tile);
-    //    } else {
-    //        OnRemoveArtifact();
-    //    }
-    //}
-    protected override void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom) {
-        base.OnRemoveTileObject(removedBy, removedFrom);
-        OnRemoveArtifact();
-    }
-    protected override void OnPlaceObjectAtTile(LocationGridTile tile) {
-        base.OnPlaceObjectAtTile(tile);
-        OnPlaceArtifactOn(tile);
-    }
     public override string ToString() {
-        return Utilities.NormalizeStringUpperCaseFirstLetters(type.ToString());
+        return name;
+    }
+    protected override string GenerateName() { return UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(type.ToString()); }
+    public override void OnPlacePOI() {
+        base.OnPlacePOI();
+        if (gridTileLocation.buildSpotOwner.hexTileOwner == PlayerManager.Instance.player.portalTile) {
+            PlayerManager.Instance.player.AddArtifact(this);
+        }
     }
     #endregion
 
-    #region Virtuals
-    protected virtual void OnPlaceArtifactOn(LocationGridTile tile) {
-        hasBeenUsed = true;
-        Messenger.AddListener<Settlement>(Signals.SUCCESS_INVASION_AREA, OnSuccessInvadeArea);
+    public virtual void Activate() {
+        hasBeenActivated = true;
+        for (int i = 0; i < data.unlocks.Length; i++) {
+            ArtifactUnlockable unlockable = data.unlocks[i];
+            Unlock(unlockable);    
+        }
     }
-    protected virtual void OnRemoveArtifact() {
-        Messenger.RemoveListener<Settlement>(Signals.SUCCESS_INVASION_AREA, OnSuccessInvadeArea);
-        Debug.Log(GameManager.Instance.TodayLogString() + "Artifact " + name + " has been removed");
+    public virtual void Deactivate() {
+        hasBeenActivated = false;
+        for (int i = 0; i < data.unlocks.Length; i++) {
+            ArtifactUnlockable unlockable = data.unlocks[i];
+            Relock(unlockable);    
+        }
     }
-    public override void OnInspect(Character inspectedBy) { //, out Log result
-        //if (LocalizationManager.Instance.HasLocalizedValue("Artifact", this.GetType().ToString(), "on_inspect")) {
-        //    result = new Log(GameManager.Instance.Today(), "Artifact", this.GetType().ToString(), "on_inspect");
-        //} else {
-        //    result = null;
-        //}
+    public bool CanGainSomethingNewByActivating() {
+        for (int i = 0; i < data.unlocks.Length; i++) {
+            ArtifactUnlockable unlockable = data.unlocks[i];
+            if (CanGainSomethingNewByActivating(unlockable)) {
+                return true;
+            }
+        }
+        return false;
     }
-    public virtual void LevelUp() {
-        level++;
+    private bool CanGainSomethingNewByActivating(ArtifactUnlockable unlockable) {
+        switch (unlockable.unlockableType) {
+            case ARTIFACT_UNLOCKABLE_TYPE.Action:
+                return PlayerManager.Instance.player.archetype.actions.Contains(unlockable.identifier) == false;
+            case ARTIFACT_UNLOCKABLE_TYPE.Structure:
+                LANDMARK_TYPE landmarkType = (LANDMARK_TYPE)Enum.Parse(typeof(LANDMARK_TYPE), unlockable.identifier);
+                return PlayerManager.Instance.player.archetype.demonicStructures.Contains(landmarkType) == false;
+            default:
+                return false;
+        }
     }
-    public virtual void SetLevel(int amount) {
-        level = amount;
-    } 
-    #endregion
-
-    private void OnSuccessInvadeArea(Settlement settlement) {
-        hasBeenUsed = false;
-        gridTileLocation.structure.RemovePOI(this);
+    private void Unlock(ArtifactUnlockable unlockable) {
+        switch (unlockable.unlockableType) {
+            case ARTIFACT_UNLOCKABLE_TYPE.Action:
+                PlayerManager.Instance.player.archetype.AddAction(unlockable.identifier);
+                break;
+            case ARTIFACT_UNLOCKABLE_TYPE.Structure:
+                LANDMARK_TYPE landmarkType = (LANDMARK_TYPE)Enum.Parse(typeof(LANDMARK_TYPE), unlockable.identifier);
+                PlayerManager.Instance.player.archetype.AddDemonicStructure(landmarkType);
+                break;
+        }
     }
-
-    public void Reset() {
-        hasBeenUsed = false;
+    private void Relock(ArtifactUnlockable unlockable) {
+        switch (unlockable.unlockableType) {
+            case ARTIFACT_UNLOCKABLE_TYPE.Action:
+                PlayerManager.Instance.player.archetype.RemoveAction(unlockable.identifier);
+                break;
+            case ARTIFACT_UNLOCKABLE_TYPE.Structure:
+                LANDMARK_TYPE landmarkType = (LANDMARK_TYPE)Enum.Parse(typeof(LANDMARK_TYPE), unlockable.identifier);
+                PlayerManager.Instance.player.archetype.RemoveDemonicStructure(landmarkType);
+                break;
+        }
     }
-
-    #region World Object
-    public void Obtain() {
-        //- invading a region with an artifact will obtain that artifact for the player
-        //UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Gained new artifact: " + this.name + "!", () => PlayerManager.Instance.player.GainArtifact(this, true));
-    }
-    #endregion
-
+    
 }
 
 public class ArtifactSlot {
     public int level;
     public Artifact artifact;
-    public bool isLocked {
-        get { return PlayerManager.Instance.player.GetIndexForArtifactSlot(this) >= PlayerManager.Instance.player.maxArtifactSlots; }
-    }
-
+    public bool isLocked => false; //PlayerManager.Instance.player.GetIndexForArtifactSlot(this) >= PlayerManager.Instance.player.maxArtifactSlots
     public ArtifactSlot() {
         level = 1;
         artifact = null;
@@ -118,25 +117,25 @@ public class ArtifactSlot {
 
     public void SetArtifact(Artifact artifact) {
         this.artifact = artifact;
-        if(this.artifact != null) {
-            this.artifact.SetLevel(level);
-        }
+        // if(this.artifact != null) {
+        //     this.artifact.SetLevel(level);
+        // }
     }
     
     public void LevelUp() {
         level++;
-        level = Mathf.Clamp(level, 1, PlayerManager.MAX_LEVEL_ARTIFACT);
-        if (this.artifact != null) {
-            this.artifact.SetLevel(level);
-        }
+        level = Mathf.Clamp(level, 1, PlayerDB.MAX_LEVEL_ARTIFACT);
+        // if (this.artifact != null) {
+        //     this.artifact.SetLevel(level);
+        // }
         Messenger.Broadcast(Signals.PLAYER_GAINED_ARTIFACT_LEVEL, this);
     }
     public void SetLevel(int amount) {
         level = amount;
-        level = Mathf.Clamp(level, 1, PlayerManager.MAX_LEVEL_ARTIFACT);
-        if (this.artifact != null) {
-            this.artifact.SetLevel(level);
-        }
+        level = Mathf.Clamp(level, 1, PlayerDB.MAX_LEVEL_ARTIFACT);
+        // if (this.artifact != null) {
+        //     this.artifact.SetLevel(level);
+        // }
         Messenger.Broadcast(Signals.PLAYER_GAINED_ARTIFACT_LEVEL, this);
     }
 }

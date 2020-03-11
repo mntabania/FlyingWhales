@@ -19,7 +19,7 @@ public class CharacterClass {
 
     [SerializeField] private string[] _traitNames;
     [SerializeField] private string _identifier;
-    [SerializeField] private bool _isNonCombatant;
+    [SerializeField] private bool _isNormalNonCombatant;
     //[SerializeField] private CHARACTER_ROLE _roleType;
     [SerializeField] private JOB _jobType;
     [SerializeField] private COMBAT_POSITION _combatPosition;
@@ -41,8 +41,8 @@ public class CharacterClass {
     public string identifier {
         get { return _identifier; }
     }
-    public bool isNonCombatant {
-        get { return _isNonCombatant; }
+    public bool isNormalNonCombatant {
+        get { return _isNormalNonCombatant; }
     }
     public int baseAttackPower {
         get { return _baseAttackPower; }
@@ -110,7 +110,7 @@ public class CharacterClass {
         CharacterClass newClass = new CharacterClass();
         newClass._className = this._className;
         newClass._identifier = this._identifier;
-        newClass._isNonCombatant = this._isNonCombatant;
+        newClass._isNormalNonCombatant = this._isNormalNonCombatant;
         newClass._baseAttackPower = this._baseAttackPower;
         newClass._baseSpeed = this._baseSpeed;
         newClass._baseHP = this._baseHP;
@@ -154,7 +154,7 @@ public class CharacterClass {
     public void SetDataFromClassPanelUI() {
         this._className = ClassPanelUI.Instance.classNameInput.text;
         this._identifier = ClassPanelUI.Instance.identifierInput.text;
-        this._isNonCombatant = ClassPanelUI.Instance.nonCombatantToggle.isOn;
+        this._isNormalNonCombatant = ClassPanelUI.Instance.nonCombatantToggle.isOn;
         this._baseAttackPower = int.Parse(ClassPanelUI.Instance.baseAttackPowerInput.text);
         this._attackPowerPerLevel = int.Parse(ClassPanelUI.Instance.attackPowerPerLevelInput.text);
         this._baseSpeed = int.Parse(ClassPanelUI.Instance.baseSpeedInput.text);
@@ -176,7 +176,16 @@ public class CharacterClass {
         this._traitNames = ClassPanelUI.Instance.traitNames.ToArray();
         this._jobType = (JOB) System.Enum.Parse(typeof(JOB), ClassPanelUI.Instance.jobTypeOptions.options[ClassPanelUI.Instance.jobTypeOptions.value].text);
     }
-
+    public bool IsCombatant() {
+        if(_traitNames != null) {
+            for (int i = 0; i < _traitNames.Length; i++) {
+                if(_traitNames[i] == "Combatant") {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     //public void ConstructData() {
     //    ConstructSkills();
     //}

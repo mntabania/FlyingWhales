@@ -50,8 +50,10 @@ public class UnderlineHyperlink : MonoBehaviour, IPointerEnterHandler, IPointerE
             //int lastIndex = linkInfo.linkTextfirstCharacterIndex + linkInfo.linkTextLength;
             for (int i = 0; i < linkInfo.linkTextLength; i++) {
                 tmPro.textInfo.characterInfo[linkInfo.linkTextfirstCharacterIndex + i].style = FontStyles.Underline;
-                Debug.LogWarning("CHAR: " + tmPro.textInfo.characterInfo[linkInfo.linkTextfirstCharacterIndex + i].character);
-                Debug.LogWarning("STYLE: " + tmPro.textInfo.characterInfo[linkInfo.linkTextfirstCharacterIndex + i].style.ToString());
+                Debug.LogWarning(
+                    $"CHAR: {tmPro.textInfo.characterInfo[linkInfo.linkTextfirstCharacterIndex + i].character}");
+                Debug.LogWarning(
+                    $"STYLE: {tmPro.textInfo.characterInfo[linkInfo.linkTextfirstCharacterIndex + i].style}");
             }
 
 

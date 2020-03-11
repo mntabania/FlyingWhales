@@ -39,7 +39,7 @@ public class Log {
     }
 
     public Log(GameDate date, string category, string file, string key, ActualGoapNode node = null) {
-        this.id = Utilities.SetID<Log>(this);
+        this.id = UtilityScripts.Utilities.SetID<Log>(this);
         this.month = (MONTH)date.month;
         this.day = date.day;
         this.year = date.year;
@@ -55,7 +55,7 @@ public class Log {
     }
 
     public Log(GameDate date, string message, ActualGoapNode goapAction = null) {
-        this.id = Utilities.SetID<Log>(this);
+        this.id = UtilityScripts.Utilities.SetID<Log>(this);
         this.month = (MONTH)date.month;
         this.day = date.day;
         this.year = date.year;
@@ -69,7 +69,7 @@ public class Log {
     }
 
     public Log(SaveDataLog data) {
-        id = Utilities.SetID(this, data.id);
+        id = UtilityScripts.Utilities.SetID(this, data.id);
         month = data.month;
         day = data.day;
         year = data.year;
@@ -121,11 +121,11 @@ public class Log {
             LogFiller currFiller = fillers[i];
             object obj = currFiller.obj;
             if (obj != null) {
-                if (obj is Character) {
-                    (obj as Character).AddHistory(this);
-                } 
-                //else if (obj is Settlement) {
-                //    (obj as Settlement).AddHistory(this);
+                if (obj is IPointOfInterest) {
+                    (obj as IPointOfInterest).logComponent.AddHistory(this);
+                }
+                //else if (obj is NPCSettlement) {
+                //    (obj as NPCSettlement).AddHistory(this);
                 //} 
                 //else if (obj is Minion) {
                 //    (obj as Minion).character.AddHistory(this);
@@ -142,11 +142,11 @@ public class Log {
             LogFiller currFiller = fillers[i];
             object obj = currFiller.obj;
             if (obj != null && identifiers.Contains(currFiller.identifier)) {
-                if (obj is Character) {
-                    (obj as Character).AddHistory(this);
+                if (obj is IPointOfInterest) {
+                    (obj as IPointOfInterest).logComponent.AddHistory(this);
                 } 
-                //else if (obj is Settlement) {
-                //    (obj as Settlement).AddHistory(this);
+                //else if (obj is NPCSettlement) {
+                //    (obj as NPCSettlement).AddHistory(this);
                 //} 
                 //else if (obj is Minion) {
                 //    (obj as Minion).character.AddHistory(this);

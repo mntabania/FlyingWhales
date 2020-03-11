@@ -54,8 +54,8 @@ namespace UnityEngine.UI.Extensions.Examples
                 GameObject clone = (GameObject)Instantiate(yearsButtonPrefab, new Vector3(0, i * 80, 0), Quaternion.Euler(new Vector3(0, 0, 0))) as GameObject;
                 clone.transform.SetParent(yearsScrollingPanel, false);
                 clone.transform.localScale = new Vector3(1, 1, 1);
-                clone.GetComponentInChildren<Text>().text = "" + arrayYears[i];
-                clone.name = "Year_" + arrayYears[i];
+                clone.GetComponentInChildren<Text>().text = $"{arrayYears[i]}";
+                clone.name = $"Year_{arrayYears[i]}";
                 clone.AddComponent<CanvasGroup>();
                 yearsButtons[i] = clone;
 
@@ -119,7 +119,7 @@ namespace UnityEngine.UI.Extensions.Examples
                 }
 
                 clone.GetComponentInChildren<Text>().text = month;
-                clone.name = "Month_" + months[i];
+                clone.name = $"Month_{months[i]}";
                 clone.AddComponent<CanvasGroup>();
                 monthsButtons[i] = clone;
             }
@@ -136,8 +136,8 @@ namespace UnityEngine.UI.Extensions.Examples
                 GameObject clone = (GameObject)Instantiate(daysButtonPrefab, new Vector3(0, i * 80, 0), Quaternion.Euler(new Vector3(0, 0, 0))) as GameObject;
                 clone.transform.SetParent(daysScrollingPanel, false);
                 clone.transform.localScale = new Vector3(1, 1, 1);
-                clone.GetComponentInChildren<Text>().text = "" + days[i];
-                clone.name = "Day_" + days[i];
+                clone.GetComponentInChildren<Text>().text = $"{days[i]}";
+                clone.name = $"Day_{days[i]}";
                 clone.AddComponent<CanvasGroup>();
                 daysButtons[i] = clone;
             }
@@ -182,15 +182,15 @@ namespace UnityEngine.UI.Extensions.Examples
             string yearsString = yearsVerticalScroller.GetResults();
 
             if (dayString.EndsWith("1") && dayString != "11")
-                dayString = dayString + "st";
+                dayString = $"{dayString}st";
             else if (dayString.EndsWith("2") && dayString != "12")
-                dayString = dayString + "nd";
+                dayString = $"{dayString}nd";
             else if (dayString.EndsWith("3") && dayString != "13")
-                dayString = dayString + "rd";
+                dayString = $"{dayString}rd";
             else
-                dayString = dayString + "th";
+                dayString = $"{dayString}th";
 
-            dateText.text = monthString + " " + dayString + " " + yearsString;
+            dateText.text = $"{monthString} {dayString} {yearsString}";
         }
 
         public void DaysScrollUp()

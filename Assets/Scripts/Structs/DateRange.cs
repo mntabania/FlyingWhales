@@ -33,7 +33,7 @@ public struct DateRange {
     }
 
     public override string ToString() {
-        return startDate.ConvertToContinuousDaysWithTime() + " - " + endDate.ConvertToContinuousDaysWithTime();
+        return $"{startDate.ConvertToContinuousDaysWithTime()} - {endDate.ConvertToContinuousDaysWithTime()}";
     }
 
     private int GetRangeInTicks() {

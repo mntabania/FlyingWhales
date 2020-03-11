@@ -20,42 +20,43 @@ public class Invite : GoapAction {
         base.Perform(goapNode);
         SetState("Invite Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest poiTarget, JobQueueItem job,
+        object[] otherData) {
         return 1;
     }
-    public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
-        GoapActionInvalidity goapActionInvalidity = base.IsInvalid(node);
-        Character actor = node.actor;
-        IPointOfInterest poiTarget = node.poiTarget;
-        if (goapActionInvalidity.isInvalid == false) {
-            Character targetCharacter = poiTarget as Character;
-            if (actor is SeducerSummon) {
-                SeducerSummon seducer = actor as SeducerSummon;
-                if (UnityEngine.Random.Range(0, 100) > seducer.seduceChance || targetCharacter.ownParty.isCarryingAnyPOI
-                     || targetCharacter.stateComponent.currentState != null || targetCharacter.IsAvailable() == false) {
-                    goapActionInvalidity.isInvalid = true;
-                    goapActionInvalidity.stateName = "Invite Fail";
-                }
-            } else {
-                int acceptChance = 100;
-                if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Chaste") != null) {
-                    acceptChance = 25;
-                }
-                if (UnityEngine.Random.Range(0, 100) > acceptChance || targetCharacter.needsComponent.isStarving || targetCharacter.needsComponent.isExhausted
-                || targetCharacter.traitContainer.GetNormalTrait<Trait>("Annoyed") != null || targetCharacter.ownParty.isCarryingAnyPOI
-                || targetCharacter.stateComponent.currentState != null || targetCharacter.IsAvailable() == false) {
-                    goapActionInvalidity.isInvalid = true;
-                    goapActionInvalidity.stateName = "Invite Fail";
-                }
-            }
-        }
-        return goapActionInvalidity;
-    }
+    //public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
+    //    GoapActionInvalidity goapActionInvalidity = base.IsInvalid(node);
+    //    Character actor = node.actor;
+    //    IPointOfInterest poiTarget = node.poiTarget;
+    //    if (goapActionInvalidity.isInvalid == false) {
+    //        Character targetCharacter = poiTarget as Character;
+    //        if (actor is SeducerSummon) {
+    //            SeducerSummon seducer = actor as SeducerSummon;
+    //            if (UnityEngine.Random.Range(0, 100) > seducer.seduceChance || targetCharacter.ownParty.isCarryingAnyPOI
+    //                 || targetCharacter.stateComponent.currentState != null || targetCharacter.IsAvailable() == false) {
+    //                goapActionInvalidity.isInvalid = true;
+    //                goapActionInvalidity.stateName = "Invite Fail";
+    //            }
+    //        } else {
+    //            int acceptChance = 100;
+    //            if (targetCharacter.traitContainer.HasTrait("Chaste")) {
+    //                acceptChance = 25;
+    //            }
+    //            if (UnityEngine.Random.Range(0, 100) > acceptChance || targetCharacter.needsComponent.isStarving || targetCharacter.needsComponent.isExhausted
+    //            || targetCharacter.traitContainer.HasTrait("Annoyed") || targetCharacter.ownParty.isCarryingAnyPOI
+    //            || targetCharacter.stateComponent.currentState != null || targetCharacter.IsAvailable() == false) {
+    //                goapActionInvalidity.isInvalid = true;
+    //                goapActionInvalidity.stateName = "Invite Fail";
+    //            }
+    //        }
+    //    }
+    //    return goapActionInvalidity;
+    //}
     public override void OnInvalidAction(ActualGoapNode node) {
         base.OnInvalidAction(node);
         if (node.actor is SeducerSummon) {
             Character target = node.poiTarget as Character;
-            target.marker.AddHostileInRange(node.actor, false);
+            target.combatComponent.Fight(node.actor);
         }
     }
     #endregion
@@ -63,7 +64,8 @@ public class Invite : GoapAction {
     #region Effects
     public void PreInviteSuccess(ActualGoapNode goapNode) {
         goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, "Wooed", goapNode.actor);
-        goapNode.actor.ownParty.AddPOI(goapNode.poiTarget);
+        // goapNode.actor.ownParty.AddPOI(goapNode.poiTarget);
+        goapNode.actor.CarryPOI(goapNode.poiTarget);
     }
     //public void PreInviteFail(ActualGoapNode goapNode) {
     //    currentState.SetIntelReaction(InviteFailReactions);
@@ -72,7 +74,7 @@ public class Invite : GoapAction {
         if (goapNode.actor is SeducerSummon) {
             //Start Combat between actor and target
             Character target = goapNode.poiTarget as Character;
-            target.marker.AddHostileInRange(goapNode.actor, false);
+            target.combatComponent.Fight(goapNode.actor);
         } else {
             //**After Effect 1**: Actor gains Annoyed trait.
             goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Annoyed");
@@ -91,10 +93,10 @@ public class Invite : GoapAction {
             if (target == actor) {
                 return false;
             }
-            if (target.currentAlterEgoName != CharacterManager.Original_Alter_Ego) { //do not woo characters that have transformed to other alter egos
-                return false;
-            }
-            if (target.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
+            //if (target.currentAlterEgoName != CharacterManager.Original_Alter_Ego) { //do not woo characters that have transformed to other alter egos
+            //    return false;
+            //}
+            if (!target.canPerform) { //target.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
                 return false;
             }
             if (target.stateComponent.currentState is CombatState) { //do not invite characters that are currently in combat
@@ -115,7 +117,7 @@ public class Invite : GoapAction {
 
 public class InviteData : GoapActionData {
     public InviteData() : base(INTERACTION_TYPE.INVITE) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
         requirementAction = Requirement;
     }
 
@@ -127,10 +129,10 @@ public class InviteData : GoapActionData {
         if (target == actor) {
             return false;
         }
-        if (target.currentAlterEgoName != CharacterManager.Original_Alter_Ego) {
-            return false;
-        }
-        if (target.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
+        //if (target.currentAlterEgoName != CharacterManager.Original_Alter_Ego) {
+        //    return false;
+        //}
+        if (!target.canPerform) { //target.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
             return false;
         }
         if (target.stateComponent.currentState is CombatState) { //do not invite characters that are currently in combat

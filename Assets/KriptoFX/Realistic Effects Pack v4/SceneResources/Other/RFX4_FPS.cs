@@ -18,7 +18,7 @@ public class RFX4_FPS : MonoBehaviour
 
   private void OnGUI()
   {
-     GUI.Label(new Rect(0, 0, 30, 30), "FPS: " + (int) fps, guiStyleHeader);
+     GUI.Label(new Rect(0, 0, 30, 30), $"FPS: {(int) fps}", guiStyleHeader);
   }
 	 
   private void Update()

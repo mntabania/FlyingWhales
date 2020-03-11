@@ -8,7 +8,7 @@ public class ItemDropBtn : MonoBehaviour {
 
     public void Set(string name, float rate) {
         this.name = name;
-        buttonText.text = name + " (" + rate + "%)";
+        buttonText.text = $"{name} ({rate}%)";
     }
 	public void OnClickItemDrop() {
         MonsterPanelUI.Instance.SetItemDropBn(this);

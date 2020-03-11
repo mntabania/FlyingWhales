@@ -5,9 +5,10 @@ using UnityEngine;
 using System.Reflection;
 using System.Linq;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using Traits;
 
-public class GoapAction {
+public class GoapAction : IReactable {
 
     public INTERACTION_TYPE goapType { get; private set; }
     public virtual ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
@@ -18,9 +19,9 @@ public class GoapAction {
     public RACE[] racesThatCanDoAction { get; protected set; }
     public Dictionary<string, GoapActionState> states { get; protected set; }
     public ACTION_LOCATION_TYPE actionLocationType { get; protected set; } //This is set in every action's constructor
-    public bool showIntelNotification { get; protected set; } //should this action show a notification when it is done by its actor or when it recieves a plan with this action as it's end node?
+    public bool showNotification { get; protected set; } //should this action show a notification when it is done by its actor or when it receives a plan with this action as it's end node?
     public bool shouldAddLogs { get; protected set; } //should this action add logs to it's actor?
-    public bool shouldIntelNotificationOnlyIfActorIsActive { get; protected set; }
+    // public bool shouldIntelNotificationOnlyIfActorIsActive { get; protected set; }
     public bool isNotificationAnIntel { get; protected set; }
     public string actionIconString { get; protected set; }
     public string animationName { get; protected set; } //what animation should the character be playing while doing this action
@@ -29,10 +30,14 @@ public class GoapAction {
     protected TIME_IN_WORDS[] validTimeOfDays;
     public POINT_OF_INTEREST_TYPE[] advertisedBy { get; protected set; } //list of poi types that can advertise this action
 
+    #region getters
+    public string name => goapName;
+    #endregion
+
     public GoapAction(INTERACTION_TYPE goapType) { //, INTERACTION_ALIGNMENT alignment, Character actor, IPointOfInterest poiTarget
         this.goapType = goapType;
-        this.goapName = Utilities.NormalizeStringUpperCaseFirstLetters(goapType.ToString());
-        showIntelNotification = true;
+        this.goapName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(goapType.ToString());
+        showNotification = true;
         shouldAddLogs = true;
         basePreconditions = new List<Precondition>();
         baseExpectedEffects = new List<GoapEffect>();
@@ -55,18 +60,18 @@ public class GoapAction {
 
     #region Virtuals
     private void CreateStates() {
-        string summary = "Creating states for goap action (Dynamic) " + goapType.ToString();
+        string summary = $"Creating states for goap action (Dynamic) {goapType}";
         states = new Dictionary<string, GoapActionState>();
         if (GoapActionStateDB.goapActionStates.ContainsKey(this.goapType)) {
             StateNameAndDuration[] statesSetup = GoapActionStateDB.goapActionStates[this.goapType];
             for (int i = 0; i < statesSetup.Length; i++) {
                 StateNameAndDuration state = statesSetup[i];
-                summary += "\nCreating " + state.name;
-                string trimmedState = Utilities.RemoveAllWhiteSpace(state.name);
+                summary += $"\nCreating {state.name}";
+                string trimmedState = UtilityScripts.Utilities.RemoveAllWhiteSpace(state.name);
                 Type thisType = this.GetType();
-                string estimatedPreMethodName = "Pre" + trimmedState;
-                string estimatedPerTickMethodName = "PerTick" + trimmedState;
-                string estimatedAfterMethodName = "After" + trimmedState;
+                string estimatedPreMethodName = $"Pre{trimmedState}";
+                string estimatedPerTickMethodName = $"PerTick{trimmedState}";
+                string estimatedAfterMethodName = $"After{trimmedState}";
 
                 MethodInfo preMethod = thisType.GetMethod(estimatedPreMethodName, new Type[] { typeof(ActualGoapNode) }); //
                 MethodInfo perMethod = thisType.GetMethod(estimatedPerTickMethodName, new Type[] { typeof(ActualGoapNode) });
@@ -76,19 +81,19 @@ public class GoapAction {
                 Action<ActualGoapNode> afterAction = null;
                 if (preMethod != null) {
                     preAction = (Action<ActualGoapNode>) Delegate.CreateDelegate(typeof(Action<ActualGoapNode>), this, preMethod, false);
-                    summary += "\n\tPre Method is " + preMethod.ToString();
+                    summary += $"\n\tPre Method is {preMethod}";
                 } else {
                     summary += "\n\tPre Method is null";
                 }
                 if (perMethod != null) {
                     perAction = (Action<ActualGoapNode>) Delegate.CreateDelegate(typeof(Action<ActualGoapNode>), this, perMethod, false);
-                    summary += "\n\tPer Tick Method is " + perAction.ToString();
+                    summary += $"\n\tPer Tick Method is {perAction}";
                 } else {
                     summary += "\n\tPer Tick Method is null";
                 }
                 if (afterMethod != null) {
                     afterAction = (Action<ActualGoapNode>) Delegate.CreateDelegate(typeof(Action<ActualGoapNode>), this, afterMethod, false);
-                    summary += "\n\tAfter Method is " + afterAction.ToString();
+                    summary += $"\n\tAfter Method is {afterAction}";
                 } else {
                     summary += "\n\tAfter Method is null";
                 }
@@ -102,7 +107,7 @@ public class GoapAction {
     protected virtual void ConstructBasePreconditionsAndEffects() { }
     public virtual void Perform(ActualGoapNode actionNode) { }
     protected virtual bool AreRequirementsSatisfied(Character actor, IPointOfInterest target, object[] otherData) { return true; }
-    protected virtual int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected virtual int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 0;
     }
     public virtual void AddFillersToLog(Log log, ActualGoapNode node) {
@@ -123,15 +128,15 @@ public class GoapAction {
         string stateName = "Target Missing";
         bool defaultTargetMissing = IsTargetMissing(node);
         GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(defaultTargetMissing, stateName);
-        if (defaultTargetMissing == false) {
-            //check the target's traits, if any of them can make this action invalid
-            for (int i = 0; i < poiTarget.traitContainer.allTraits.Count; i++) {
-                Trait trait = poiTarget.traitContainer.allTraits[i];
-                if (trait.TryStopAction(goapType, actor, poiTarget, ref goapActionInvalidity)) {
-                    break; //a trait made this action invalid, stop loop
-                }
-            }
-        }
+        //if (defaultTargetMissing == false) {
+        //    //check the target's traits, if any of them can make this action invalid
+        //    for (int i = 0; i < poiTarget.traitContainer.allTraits.Count; i++) {
+        //        Trait trait = poiTarget.traitContainer.allTraits[i];
+        //        if (trait.TryStopAction(goapType, actor, poiTarget, ref goapActionInvalidity)) {
+        //            break; //a trait made this action invalid, stop loop
+        //        }
+        //    }
+        //}
         return goapActionInvalidity;
     }
     public virtual void OnInvalidAction(ActualGoapNode node) { }
@@ -165,20 +170,24 @@ public class GoapAction {
     public virtual LocationGridTile GetOverrideTargetTile(ActualGoapNode goapNode) {
         return null;
     }
+    public virtual string ReactionToActor(Character witness, ActualGoapNode node, REACTION_STATUS status) { return string.Empty; }
+    public virtual string ReactionToTarget(Character witness, ActualGoapNode node, REACTION_STATUS status) { return string.Empty; }
+    public virtual string ReactionOfTarget(ActualGoapNode node, REACTION_STATUS status) { return string.Empty; }
+    public virtual void OnActionStarted(ActualGoapNode node) { }
     #endregion
 
     #region Utilities
-    public int GetCost(Character actor, IPointOfInterest target, object[] otherData) {
-        int baseCost = GetBaseCost(actor, target, otherData);
+    public int GetCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+        int baseCost = GetBaseCost(actor, target, job, otherData);
         //modify costs based on actor's and target's traits
-        for (int i = 0; i < actor.traitContainer.allTraits.Count; i++) {
-            Trait trait = actor.traitContainer.allTraits[i];
-            trait.ExecuteCostModification(goapType, actor, target, otherData, ref baseCost);
-        }
-        for (int i = 0; i < target.traitContainer.allTraits.Count; i++) {
-            Trait trait = target.traitContainer.allTraits[i];
-            trait.ExecuteCostModification(goapType, actor, target, otherData, ref baseCost);
-        }
+        //for (int i = 0; i < actor.traitContainer.allTraits.Count; i++) {
+        //    Trait trait = actor.traitContainer.allTraits[i];
+        //    trait.ExecuteCostModification(goapType, actor, target, otherData, ref baseCost);
+        //}
+        //for (int i = 0; i < target.traitContainer.allTraits.Count; i++) {
+        //    Trait trait = target.traitContainer.allTraits[i];
+        //    trait.ExecuteCostModification(goapType, actor, target, otherData, ref baseCost);
+        //}
         return (baseCost * TimeOfDaysCostMultiplier(actor) * PreconditionCostMultiplier()) + GetDistanceCost(actor, target);
     }
     private bool IsTargetMissing(ActualGoapNode node) {
@@ -205,10 +214,15 @@ public class GoapAction {
         return false;
     }
     public bool CanSatisfyRequirements(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        bool requirementActionSatisfied = AreRequirementsSatisfied(actor, poiTarget, otherData);
+        bool requirementActionSatisfied = !(poiTarget.poiType != POINT_OF_INTEREST_TYPE.CHARACTER 
+                                            && poiTarget.traitContainer.HasTrait("Frozen") 
+                                            && (actionCategory == ACTION_CATEGORY.DIRECT || actionCategory == ACTION_CATEGORY.CONSUME));
         if (requirementActionSatisfied) {
-            if (goapType.IsDirectCombatAction()) { //Reference: https://trello.com/c/uxZxcOEo/2343-critical-characters-shouldnt-attempt-hostile-actions
-                requirementActionSatisfied = actor.IsCombatReady();
+            requirementActionSatisfied = AreRequirementsSatisfied(actor, poiTarget, otherData);
+            if (requirementActionSatisfied) {
+                if (goapType.IsDirectCombatAction()) { //Reference: https://trello.com/c/uxZxcOEo/2343-critical-characters-shouldnt-attempt-hostile-actions
+                    requirementActionSatisfied = actor.IsCombatReady();
+                }
             }
         }
         return requirementActionSatisfied; //&& (validTimeOfDays == null || validTimeOfDays.Contains(GameManager.GetCurrentTimeInWordsOfTick()));
@@ -220,9 +234,9 @@ public class GoapAction {
         return false;
     }
     private int GetDistanceCost(Character actor, IPointOfInterest poiTarget) {
-        if (actor.currentSettlement == null) {
-            return 1;
-        }
+        // if (actor.currentNpcSettlement == null) {
+        //     return 1;
+        // }
         LocationGridTile tile = poiTarget.gridTileLocation;
         if (actor.gridTileLocation != null && tile != null) {
             int distance = Mathf.RoundToInt(Vector2.Distance(actor.gridTileLocation.centeredWorldLocation, tile.centeredWorldLocation));
@@ -247,9 +261,9 @@ public class GoapAction {
         Log log = new Log(GameManager.Instance.Today(), "GoapAction", "Generic", "Invalid");
         log.AddToFillers(node.actor, node.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(node.poiTarget, node.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        log.AddToFillers(null, Utilities.NormalizeString(goapType.ToString()), LOG_IDENTIFIER.STRING_1);
+        log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(goapType.ToString()), LOG_IDENTIFIER.STRING_1);
         log.AddLogToInvolvedObjects();
-        PlayerManager.Instance.player.ShowNotificationFrom(node.actor, log);
+        // PlayerManager.Instance.player.ShowNotificationFrom(node.actor, log);
     }
     #endregion
 
@@ -258,7 +272,7 @@ public class GoapAction {
         basePreconditions.Add(new Precondition(effect, condition));
     }
     public bool CanSatisfyAllPreconditions(Character actor, IPointOfInterest target, object[] otherData) {
-        List<Precondition> preconditions = GetPreconditions(target, otherData);
+        List<Precondition> preconditions = GetPreconditions(actor, target, otherData);
         for (int i = 0; i < preconditions.Count; i++) {
             if (!preconditions[i].CanSatisfyCondition(actor, target, otherData)) {
                 return false;
@@ -266,7 +280,7 @@ public class GoapAction {
         }
         return true;
     }
-    public virtual List<Precondition> GetPreconditions(IPointOfInterest target, object[] otherData) {
+    public virtual List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, object[] otherData) {
         return basePreconditions;
     }
     #endregion
@@ -326,8 +340,8 @@ public class GoapAction {
         List<GoapEffect> effects = new List<GoapEffect>(baseExpectedEffects);
         //TODO: Might be a more optimized way to do this
         //modify expected effects depending on actor's traits
-        for (int i = 0; i < actor.traitContainer.allTraits.Count; i++) {
-            Trait currTrait = actor.traitContainer.allTraits[i];
+        for (int i = 0; i < actor.traitContainer.traits.Count; i++) {
+            Trait currTrait = actor.traitContainer.traits[i];
             currTrait.ExecuteExpectedEffectModification(goapType, actor, target, otherData, ref effects);
         }
         return effects;
@@ -369,7 +383,7 @@ public struct GoapEffect {
     }
 
     public override string ToString() {
-        return conditionType.ToString() + " - " + conditionKey + " - " + target.ToString();
+        return $"{conditionType} - {conditionKey} - {target}";
     }
     //public string conditionString() {
     //    if(conditionKey is string) {
@@ -378,8 +392,8 @@ public struct GoapEffect {
     //        return conditionKey.ToString();
     //    } else if (conditionKey is Character) {
     //        return (conditionKey as Character).name;
-    //    } else if (conditionKey is Settlement) {
-    //        return (conditionKey as Settlement).name;
+    //    } else if (conditionKey is NPCSettlement) {
+    //        return (conditionKey as NPCSettlement).name;
     //    } else if (conditionKey is Region) {
     //        return (conditionKey as Region).name;
     //    } else if (conditionKey is SpecialToken) {
@@ -396,8 +410,8 @@ public struct GoapEffect {
     //        return ((int)conditionKey).ToString();
     //    } else if (conditionKey is Character) {
     //        return (conditionKey as Character).id.ToString();
-    //    } else if (conditionKey is Settlement) {
-    //        return (conditionKey as Settlement).id.ToString();
+    //    } else if (conditionKey is NPCSettlement) {
+    //        return (conditionKey as NPCSettlement).id.ToString();
     //    } else if (conditionKey is Region) {
     //        return (conditionKey as Region).id.ToString();
     //    } else if (conditionKey is SpecialToken) {
@@ -414,8 +428,8 @@ public struct GoapEffect {
     //        return "int";
     //    } else if (conditionKey is Character) {
     //        return "character";
-    //    } else if (conditionKey is Settlement) {
-    //        return "settlement";
+    //    } else if (conditionKey is NPCSettlement) {
+    //        return "npcSettlement";
     //    } else if (conditionKey is Region) {
     //        return "region";
     //    } else if (conditionKey is SpecialToken) {
@@ -505,7 +519,7 @@ public class SaveDataGoapEffect {
         //        tempEffect.conditionKey = int.Parse(conditionKey);
         //    } else if (conditionKey == "character") {
         //        tempEffect.conditionKey = CharacterManager.Instance.GetCharacterByID(int.Parse(conditionKey));
-        //    } else if (conditionKey == "settlement") {
+        //    } else if (conditionKey == "npcSettlement") {
         //        tempEffect.conditionKey = LandmarkManager.Instance.GetAreaByID(int.Parse(conditionKey));
         //    } else if (conditionKey == "region") {
         //        tempEffect.conditionKey = GridMap.Instance.GetRegionByID(int.Parse(conditionKey));

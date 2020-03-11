@@ -15,14 +15,14 @@ public class ReleaseCharacter : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = SPECIAL_TOKEN.TOOL.ToString(), target = GOAP_EFFECT_TARGET.ACTOR }, HasItemTool);
+        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_POI, conditionKey = "Tool", target = GOAP_EFFECT_TARGET.ACTOR }, HasItemTool);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Restrained", target = GOAP_EFFECT_TARGET.TARGET });
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
         SetState("Release Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 1;
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
@@ -39,7 +39,7 @@ public class ReleaseCharacter : GoapAction {
 
     #region Preconditions
     private bool HasItemTool(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor.isHoldingItem && actor.GetToken("Tool") != null;
+        return actor.HasItem(TILE_OBJECT_TYPE.TOOL);
     }
     #endregion
 
@@ -48,7 +48,7 @@ public class ReleaseCharacter : GoapAction {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             Character target = poiTarget as Character;
-            return target.traitContainer.GetNormalTrait<Trait>("Restrained") != null;
+            return target.traitContainer.HasTrait("Restrained");
         }
         return false;
     }
@@ -121,7 +121,7 @@ public class ReleaseCharacterData : GoapActionData {
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         if (poiTarget is Character) {
             Character target = poiTarget as Character;
-            return target.traitContainer.GetNormalTrait<Trait>("Restrained") != null;
+            return target.traitContainer.HasTrait("Restrained");
         }
         return false;
     }

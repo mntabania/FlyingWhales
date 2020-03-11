@@ -18,11 +18,11 @@ public class MinionLeaderPicker : MonoBehaviour {
     }
 
     public void OnClickSetMinionLeader() {
-        PlayerUI.Instance.TemporarySetMinionLeader(this);
+        // PlayerUI.Instance.TemporarySetMinionLeader(this);
     }
     public void OnHover() {
         string text = minion.character.name;
-        text += "\nLvl." + minion.character.level + " " + minion.character.raceClassName;
+        text += $"\nLvl.{minion.character.level} {minion.character.raceClassName}";
         UIManager.Instance.ShowSmallInfo(text);
     }
     public void OnHoverOut() {

@@ -51,6 +51,8 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         Messenger.AddListener<Character>(Signals.FACTION_SET, OnFactionSet);
         Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);
         Messenger.AddListener<Character>(Signals.ROLE_CHANGED, OnCharacterChangedRole);
+        Messenger.AddListener<Character>(Signals.ON_SET_AS_FACTION_LEADER, OnCharacterSetAsFactionLeader);
+        Messenger.AddListener<Character>(Signals.ON_SET_AS_SETTLEMENT_RULER, OnCharacterSetAsSettlementRuler);
     }
 
     public void GeneratePortrait(Character character, bool makePixelPerfect = true) {
@@ -129,8 +131,14 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         return hair.color;
     }
     private void UpdateFrame() {
-        if (_character != null && _character.role.roleType != CHARACTER_ROLE.NONE) {
-            PortraitFrame frame = CharacterManager.Instance.GetPortraitFrame(_character.role.roleType);
+        if (_character != null) {
+            PortraitFrame frame = null;
+            if (_character.isFactionLeader || _character.isSettlementRuler) {
+                frame = CharacterManager.Instance.GetPortraitFrame(CHARACTER_ROLE.LEADER);
+            } else { //if(character)
+                frame = CharacterManager.Instance.GetPortraitFrame(CHARACTER_ROLE.SOLDIER);
+                // frame = CharacterManager.Instance.GetPortraitFrame(_character.role.roleType);
+            }
             baseBG.sprite = frame.baseBG;
             lockedFrame.sprite = frame.frameOutline;
             SetBaseBGState(true);
@@ -253,6 +261,8 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         Messenger.RemoveListener<Character>(Signals.FACTION_SET, OnFactionSet);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);
         Messenger.RemoveListener<Character>(Signals.ROLE_CHANGED, OnCharacterChangedRole);
+        Messenger.RemoveListener<Character>(Signals.ON_SET_AS_FACTION_LEADER, OnCharacterSetAsFactionLeader);
+        Messenger.RemoveListener<Character>(Signals.ON_SET_AS_SETTLEMENT_RULER, OnCharacterSetAsSettlementRuler);
     }
     #endregion
 
@@ -297,7 +307,14 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
             GeneratePortrait(character, isPixelPerfect);
         }
     }
-
-
-
+    private void OnCharacterSetAsFactionLeader(Character character) {
+        if (_character != null && _character == character) {
+            UpdateFrame();
+        }
+    }
+    private void OnCharacterSetAsSettlementRuler(Character character) {
+        if (_character != null && _character == character) {
+            UpdateFrame();
+        }
+    }
 }

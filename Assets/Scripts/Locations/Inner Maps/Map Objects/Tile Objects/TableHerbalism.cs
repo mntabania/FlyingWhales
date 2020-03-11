@@ -2,12 +2,11 @@
 
 public class TableHerbalism : TileObject{
     public TableHerbalism() {
-        advertisedActions = new List<INTERACTION_TYPE>();
         Initialize(TILE_OBJECT_TYPE.TABLE_HERBALISM);
-        RemoveCommonAdvertisments();
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
     }
     public TableHerbalism(SaveDataTileObject data) {
-        advertisedActions = new List<INTERACTION_TYPE>();
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
         Initialize(data);
     }
 }

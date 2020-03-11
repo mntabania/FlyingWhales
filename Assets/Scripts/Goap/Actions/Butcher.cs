@@ -10,7 +10,9 @@ public class Butcher : GoapAction {
         actionIconString = GoapActionStateDB.Work_Icon;
         canBeAdvertisedEvenIfActorIsUnavailable = true;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER, POINT_OF_INTEREST_TYPE.TILE_OBJECT };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
+        validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.MORNING, TIME_IN_WORDS.LUNCH_TIME, TIME_IN_WORDS.AFTERNOON, };
+        isNotificationAnIntel = true;
     }
 
     #region Overrides
@@ -22,8 +24,53 @@ public class Butcher : GoapAction {
         base.Perform(goapNode);
         SetState("Transform Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        return Utilities.rng.Next(15, 26);
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+        string costLog = $"\n{name} {target.nameWithID}:";
+        Character deadCharacter = GetDeadCharacter(target);
+        int cost = 0;
+        //int cost = GetFoodAmountTakenFromDead(deadCharacter);
+        //costLog += " +" + cost + "(Initial)";
+        if(deadCharacter != null) {
+            if (actor == deadCharacter) {
+                cost += 2000;
+                costLog += " +2000(Actor/Target Same)";
+            } else {
+                if (actor.traitContainer.HasTrait("Cannibal")) {
+                    if (actor.relationshipContainer.IsFriendsWith(deadCharacter)) {
+                        cost += 2000;
+                        costLog += " +2000(Cannibal, Friend/Close)";
+                    } else if ((deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES) &&
+                               !actor.needsComponent.isStarving) {
+                        cost += 2000;
+                        costLog += " +2000(Cannibal, Human/Elf, not Starving)";
+                    }
+                } else {
+                    if (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES) {
+                        cost += 2000;
+                        costLog += " +2000(not Cannibal, Human/Elf)";
+                    }
+                }
+            }
+            if(deadCharacter.race == RACE.HUMANS) {
+                cost += UtilityScripts.Utilities.rng.Next(40, 51);
+                costLog += $" +{cost}(Human)";
+            } else if (deadCharacter.race == RACE.ELVES) {
+                cost += UtilityScripts.Utilities.rng.Next(40, 51);
+                costLog += $" +{cost}(Elf)";
+            } else if (deadCharacter.race == RACE.WOLF) {
+                cost += UtilityScripts.Utilities.rng.Next(20, 31);
+                costLog += $" +{cost}(Wolf)";
+            } else if (deadCharacter.race == RACE.DEMON) {
+                cost += UtilityScripts.Utilities.rng.Next(80, 91);
+                costLog += $" +{cost}(Demon)";
+            }
+        }
+        if(target is SmallAnimal) {
+            cost += UtilityScripts.Utilities.rng.Next(60, 71);
+            costLog += $" +{cost}(Small Animal)";
+        }
+        actor.logComponent.AppendCostLog(costLog);
+        return cost;
     }
     public override void AddFillersToLog(Log log, ActualGoapNode node) {
         base.AddFillersToLog(log, node);
@@ -44,6 +91,36 @@ public class Butcher : GoapAction {
         return poiTarget.gridTileLocation == null || actor.currentRegion != poiTarget.currentRegion
               || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) || (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER && !(poiTarget as Character).isDead);
     }
+    public override string ReactionToActor(Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionToActor(witness, node, status);
+        Character actor = node.actor;
+        IPointOfInterest target = node.poiTarget;
+        Character targetCharacter = GetDeadCharacter(target);
+        if (targetCharacter != null) {
+            if (!witness.traitContainer.HasTrait("Cannibal") &&
+                (targetCharacter.race == RACE.HUMANS || targetCharacter.race == RACE.ELVES)) {
+                CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.HEINOUS);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disgust, witness, actor, status);
+            
+                string opinionLabel = witness.relationshipContainer.GetOpinionLabel(actor);
+                if (opinionLabel == OpinionComponent.Acquaintance || opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor, status);
+                }
+                if (!witness.traitContainer.HasTrait("Psychopath")) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor, status);
+                }
+            }
+            string witnessOpinionToTarget = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
+            if (witnessOpinionToTarget == OpinionComponent.Friend || witnessOpinionToTarget == OpinionComponent.Close_Friend || witnessOpinionToTarget == OpinionComponent.Acquaintance 
+                || witness.faction == targetCharacter.faction || witness.homeSettlement == targetCharacter.homeSettlement) {
+                if (!witness.traitContainer.HasTrait("Psychopath")) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status);
+                }
+            }
+        }
+        return response;
+    }
     #endregion
 
     #region Requirements
@@ -53,14 +130,18 @@ public class Butcher : GoapAction {
             if (poiTarget.gridTileLocation == null) {
                 return false;
             }
-            Character deadCharacter = GetDeadCharacter(poiTarget);
-            if (deadCharacter != null && (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES)) {
-                if (actor.traitContainer.GetNormalTrait<Trait>("Cannibal") != null) {
-                    return true;
+            if(poiTarget is SmallAnimal) {
+                return true;
+            } else {
+                Character deadCharacter = GetDeadCharacter(poiTarget);
+                if (deadCharacter != null && (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES)
+                    && actor.faction != deadCharacter.faction && actor.homeSettlement != deadCharacter.homeSettlement) {
+                    if (actor.traitContainer.HasTrait("Cannibal")) {
+                        return true;
+                    }
+                    return false;
                 }
-                return false;
             }
-            return true;
         }
         return false;
     }
@@ -86,19 +167,8 @@ public class Butcher : GoapAction {
 
     #region State Effects
     public void PreTransformSuccess(ActualGoapNode goapNode) {
-        int transformedFood = 0;
         Character deadCharacter = GetDeadCharacter(goapNode.poiTarget);
-        if (deadCharacter != null) {
-            if (deadCharacter.race == RACE.WOLF) {
-                transformedFood = 150;
-            } else if (deadCharacter.race == RACE.HUMANS) {
-                transformedFood = 200;
-            } else if (deadCharacter.race == RACE.ELVES) {
-                transformedFood = 200;
-            }
-        } else {
-            transformedFood = 100;
-        }
+        int transformedFood = CharacterManager.Instance.GetFoodAmountTakenFromDead(deadCharacter);
 
         //if (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES) {
         //    currentState.SetIntelReaction(CannibalTransformSuccessIntelReaction);
@@ -111,19 +181,8 @@ public class Butcher : GoapAction {
     public void AfterTransformSuccess(ActualGoapNode goapNode) {
         IPointOfInterest poiTarget = goapNode.poiTarget;
         LocationGridTile tileLocation = poiTarget.gridTileLocation;
-        int transformedFood = 0;
         Character deadCharacter = GetDeadCharacter(poiTarget);
-        if (deadCharacter != null) {
-            if (deadCharacter.race == RACE.WOLF) {
-                transformedFood = 150;
-            } else if (deadCharacter.race == RACE.HUMANS) {
-                transformedFood = 200;
-            } else if (deadCharacter.race == RACE.ELVES) {
-                transformedFood = 200;
-            }
-        } else {
-            transformedFood = 100;
-        }
+        int transformedFood = CharacterManager.Instance.GetFoodAmountTakenFromDead(deadCharacter);
         //TODO: deadCharacter.CancelAllJobsTargettingThisCharacter(JOB_TYPE.BURY);
         //goapNode.actor.AdjustFood(transformedFood);
 
@@ -142,7 +201,6 @@ public class Butcher : GoapAction {
     //    goapNode.descriptionLog.AddToFillers(deadCharacter, deadCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     //}
     #endregion
-
     //#region Intel Reactions
     //private List<string> NormalTransformSuccessIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
     //    List<string> reactions = new List<string>();
@@ -185,7 +243,7 @@ public class Butcher : GoapAction {
     //            else if (relWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
     //                recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
     //                if (status == SHARE_INTEL_STATUS.WITNESSED) {
-    //                    recipient.marker.AddAvoidInRange(actor, reason: "saw something shameful");
+    //                    recipient.combatComponent.AddAvoidInRange(actor, reason: "saw something shameful");
     //                }
     //                reactions.Add(string.Format("What a sick monster! {0} should be restrained!", actor.name));
     //            }
@@ -202,7 +260,7 @@ public class Butcher : GoapAction {
     //                } else if (relWithTarget == RELATIONSHIP_EFFECT.NEGATIVE) {
     //                    recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
     //                    if (status == SHARE_INTEL_STATUS.WITNESSED) {
-    //                        recipient.marker.AddAvoidInRange(actor, reason: "saw something shameful");
+    //                        recipient.combatComponent.AddAvoidInRange(actor, reason: "saw something shameful");
     //                    }
     //                    reactions.Add(string.Format("What a sick monster! {0} should be restrained!", actor.name));
     //                } else {
@@ -228,13 +286,13 @@ public class Butcher : GoapAction {
     //                } else if (relWithTarget == RELATIONSHIP_EFFECT.NEGATIVE) {
     //                    recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
     //                    if (status == SHARE_INTEL_STATUS.WITNESSED) {
-    //                        recipient.marker.AddAvoidInRange(actor, reason: "saw something shameful");
+    //                        recipient.combatComponent.AddAvoidInRange(actor, reason: "saw something shameful");
     //                    }
     //                    reactions.Add(string.Format("What a sick monster! {0} should be restrained!", actor.name));
     //                } else {
     //                    recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
     //                    if (status == SHARE_INTEL_STATUS.WITNESSED) {
-    //                        recipient.marker.AddAvoidInRange(actor, reason: "saw something shameful");
+    //                        recipient.combatComponent.AddAvoidInRange(actor, reason: "saw something shameful");
     //                    }
     //                    reactions.Add(string.Format("What a sick monster! {0} should be restrained!", actor.name));
     //                }
@@ -248,7 +306,7 @@ public class Butcher : GoapAction {
 
 public class ButcherData : GoapActionData {
     public ButcherData() : base(INTERACTION_TYPE.BUTCHER) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
         requirementAction = Requirement;
     }
 
@@ -265,7 +323,7 @@ public class ButcherData : GoapActionData {
         if (targetCharacter != null) {
             if (targetCharacter.race == RACE.HUMANS || targetCharacter.race == RACE.ELVES) {
                 //return true;
-                if (actor.traitContainer.GetNormalTrait<Trait>("Cannibal") != null) {
+                if (actor.traitContainer.HasTrait("Cannibal")) {
                     return true;
                 }
                 return false;

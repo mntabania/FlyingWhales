@@ -9,7 +9,7 @@ public class TransformToWolfForm : GoapAction {
         actionIconString = GoapActionStateDB.No_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
     }
 
     #region Overrides
@@ -20,7 +20,7 @@ public class TransformToWolfForm : GoapAction {
         base.Perform(goapNode);
         SetState("Transform Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 5;
     }
     #endregion
@@ -28,8 +28,8 @@ public class TransformToWolfForm : GoapAction {
     #region State Effects
     public void PreTransformSuccess(ActualGoapNode goapNode) { }
     public void AfterTransformSuccess(ActualGoapNode goapNode) {
-        Lycanthrope lycanthropy = goapNode.actor.traitContainer.GetNormalTrait<Trait>("Lycanthrope") as Lycanthrope;
-        lycanthropy.TurnToWolf();
+        //Lycanthrope lycanthropy = goapNode.actor.traitContainer.GetNormalTrait<Trait>("Lycanthrope") as Lycanthrope;
+        //lycanthropy.TurnToWolf();
     }
     #endregion
 
@@ -45,8 +45,8 @@ public class TransformToWolfForm : GoapAction {
     //        reactions.Add("Please do not tell anyone else about this. I beg you!");
     //        //-**Recipient Effect * *: no effect
     //    }
-    //    //Recipient and Actor are from the same faction and are lovers or paramours
-    //    else if (actorAlterEgo.faction == recipient.faction && (recipient.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TRAIT.LOVER) || recipient.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR))) {
+    //    //Recipient and Actor are from the same faction and are lovers or affairs
+    //    else if (actorAlterEgo.faction == recipient.faction && (recipient.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TRAIT.LOVER) || recipient.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TRAIT.AFFAIR))) {
     //        //- **Recipient Response Text**: [Actor Name] may be a monster, but I love [him/her] still!
     //        reactions.Add(string.Format("{0} may be a monster, but I love {1} still!", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.OBJECTIVE, false)));
     //        //- **Recipient Effect**: no effect
@@ -68,7 +68,7 @@ public class TransformToWolfForm : GoapAction {
     //            actor.AddCriminalTrait(CRIME.ABERRATION, this);
     //            recipient.CreateApprehendJobFor(actor);
     //            //if (job != null) {
-    //            //    recipient.homeSettlement.jobQueue.AssignCharacterToJob(job, this);
+    //            //    recipient.homeNpcSettlement.jobQueue.AssignCharacterToJob(job, this);
     //            //}
     //        } else {
     //            recipient.CreateReportCrimeJob(committedCrime, this, actorAlterEgo);
@@ -83,7 +83,7 @@ public class TransformToWolfForm : GoapAction {
     //            actor.AddCriminalTrait(CRIME.ABERRATION, this);
     //            recipient.CreateApprehendJobFor(actor);
     //            //if (job != null) {
-    //            //    recipient.homeSettlement.jobQueue.AssignCharacterToJob(job, this);
+    //            //    recipient.homeNpcSettlement.jobQueue.AssignCharacterToJob(job, this);
     //            //}
     //        } else {
     //            recipient.CreateReportCrimeJob(committedCrime, this, actorAlterEgo);
@@ -109,6 +109,6 @@ public class TransformToWolfForm : GoapAction {
 
 public class TransformToWolfFormData : GoapActionData {
     public TransformToWolfFormData() : base(INTERACTION_TYPE.TRANSFORM_TO_WOLF_FORM) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
     }
 }

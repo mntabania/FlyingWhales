@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WallObjectCollisionTrigger : BaseCollisionTrigger<WallObject> {
+public class WallObjectCollisionTrigger : BaseCollisionTrigger<StructureWallObject> {
     
     void Awake() {
         mainCollider = gameObject.AddComponent<BoxCollider2D>();

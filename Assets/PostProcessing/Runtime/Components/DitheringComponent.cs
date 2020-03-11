@@ -33,7 +33,7 @@ namespace UnityEngine.PostProcessing
             noiseTextures = new Texture2D[k_TextureCount];
 
             for (int i = 0; i < k_TextureCount; i++)
-                noiseTextures[i] = Resources.Load<Texture2D>("Bluenoise64/LDR_LLL1_" + i);
+                noiseTextures[i] = Resources.Load<Texture2D>($"Bluenoise64/LDR_LLL1_{i}");
         }
 
         public override void Prepare(Material uberMaterial)

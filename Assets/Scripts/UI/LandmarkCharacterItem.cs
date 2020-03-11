@@ -9,7 +9,7 @@ public class LandmarkCharacterItem : PooledObject {
 
     public CharacterPortrait portrait;
 
-    private UIMenu parentMenu;
+    private InfoUIBase _parentBase;
 
     [SerializeField] private RectTransform thisTrans;
     [SerializeField] private TextMeshProUGUI nameLbl;
@@ -20,9 +20,9 @@ public class LandmarkCharacterItem : PooledObject {
     [SerializeField] private GameObject restrainedIcon;
     [SerializeField] private GameObject coverGO;
 
-    public void SetCharacter(Character character, UIMenu parentMenu) {
+    public void SetCharacter(Character character, InfoUIBase parentBase) {
         this.character = character;
-        this.parentMenu = parentMenu;
+        this._parentBase = parentBase;
         UpdateInfo();
         UpdateLocationIcons();
     }
@@ -51,8 +51,8 @@ public class LandmarkCharacterItem : PooledObject {
     }
 
     private void UpdateLocationIcons() {
-        if (parentMenu is RegionInfoUI) {
-            if (character.traitContainer.GetNormalTrait<Trait>("Abducted", "Restrained") != null) {
+        if (_parentBase is RegionInfoUI) {
+            if (character.traitContainer.HasTrait("Abducted", "Restrained")) {
                 restrainedIcon.SetActive(true);
                 unrestrainedGO.SetActive(false);
             } else {
@@ -68,8 +68,8 @@ public class LandmarkCharacterItem : PooledObject {
                 arrivedIcon.SetActive(false);
                 coverGO.SetActive(false);
             }
-        } else if (parentMenu is TileObjectInfoUI) {
-            if (character.traitContainer.GetNormalTrait<Trait>("Abducted", "Restrained") != null) {
+        } else if (_parentBase is TileObjectInfoUI) {
+            if (character.traitContainer.HasTrait("Abducted", "Restrained")) {
                 restrainedIcon.SetActive(true);
                 unrestrainedGO.SetActive(false);
             } else {
@@ -165,7 +165,7 @@ public class LandmarkCharacterItem : PooledObject {
     private void OnTraitRemoved(Character character, Trait trait) {
         if (character.id == this.character.id) {
             if (trait.name == "Abducted" || trait.name == "Restrained") {
-                if(character.traitContainer.GetNormalTrait<Trait>("Abducted", "Restrained") == null) {
+                if(!character.traitContainer.HasTrait("Abducted", "Restrained")) {
                     restrainedIcon.SetActive(false);
                     unrestrainedGO.SetActive(true);
                 }
@@ -185,8 +185,8 @@ public class LandmarkCharacterItem : PooledObject {
         Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnPartyStartedTravelling);
         Messenger.AddListener<Party>(Signals.PARTY_DONE_TRAVELLING, OnPartyDoneTravelling);
         Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);
-        Messenger.AddListener<Character, Trait>(Signals.TRAIT_ADDED, OnTraitAdded);
-        Messenger.AddListener<Character, Trait>(Signals.TRAIT_REMOVED, OnTraitRemoved);
+        Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_ADDED, OnTraitAdded);
+        Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_REMOVED, OnTraitRemoved);
     }
 
     private void OnDisable() {
@@ -199,7 +199,7 @@ public class LandmarkCharacterItem : PooledObject {
         if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_CHANGED_RACE)) {
             Messenger.RemoveListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);
         }
-        Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_ADDED, OnTraitAdded);
-        Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_REMOVED, OnTraitRemoved);
+        Messenger.RemoveListener<Character, Trait>(Signals.CHARACTER_TRAIT_ADDED, OnTraitAdded);
+        Messenger.RemoveListener<Character, Trait>(Signals.CHARACTER_TRAIT_REMOVED, OnTraitRemoved);
     }
 }

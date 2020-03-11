@@ -9,16 +9,11 @@ public class Play : GoapAction {
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
 
     public Play() : base(INTERACTION_TYPE.PLAY) {
-        shouldIntelNotificationOnlyIfActorIsActive = true;
+        showNotification = false;
         actionLocationType = ACTION_LOCATION_TYPE.NEARBY;
-        validTimeOfDays = new TIME_IN_WORDS[] {
-            TIME_IN_WORDS.MORNING,
-            TIME_IN_WORDS.LUNCH_TIME,
-            TIME_IN_WORDS.AFTERNOON,
-            //TIME_IN_WORDS.EARLY_NIGHT,
-        };
+        validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.MORNING, TIME_IN_WORDS.LUNCH_TIME, TIME_IN_WORDS.AFTERNOON, TIME_IN_WORDS.EARLY_NIGHT, };
         actionIconString = GoapActionStateDB.Entertain_Icon;
-        isNotificationAnIntel = false;
+        
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON, };
     }
@@ -31,28 +26,28 @@ public class Play : GoapAction {
         base.Perform(goapNode);
         SetState("Play Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         //**Cost**: randomize between 6-15
-        return Utilities.rng.Next(6, 16);
+        return UtilityScripts.Utilities.rng.Next(6, 16);
     }
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);
         Character actor = node.actor;
-        actor.needsComponent.AdjustDoNotGetLonely(-1);
+        actor.needsComponent.AdjustDoNotGetBored(-1);
         actor.needsComponent.AdjustDoNotGetTired(-1);
     }
     #endregion
 
     #region Effects
     public void PrePlaySuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustDoNotGetLonely(1);
+        goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
         goapNode.actor.needsComponent.AdjustDoNotGetTired(1);
     }
     public void PerTickPlaySuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustHappiness(500);
+        goapNode.actor.needsComponent.AdjustHappiness(4f);
     }
     public void AfterPlaySuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustDoNotGetLonely(-1);
+        goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
         goapNode.actor.needsComponent.AdjustDoNotGetTired(-1);
     }
     #endregion

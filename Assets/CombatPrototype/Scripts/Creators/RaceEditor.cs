@@ -49,9 +49,10 @@ public class RaceEditor : Editor {
     }
     #region Saving
     private void SaveRaceSettings() {
-		string path = Utilities.dataPath + "RaceSettings/" + raceComponent.race.ToString() + ".json";
-        if (Utilities.DoesFileExist(path)) {
-			if (EditorUtility.DisplayDialog("Overwrite Race Setting", "A race setting with name " + raceComponent.race.ToString() + " already exists. Replace with these settings?", "Yes", "No")) {
+		string path = $"{UtilityScripts.Utilities.dataPath}RaceSettings/{raceComponent.race}.json";
+        if (UtilityScripts.Utilities.DoesFileExist(path)) {
+			if (EditorUtility.DisplayDialog("Overwrite Race Setting",
+				$"A race setting with name {raceComponent.race} already exists. Replace with these settings?", "Yes", "No")) {
                 File.Delete(path);
                 SaveRaceJson(path);
             }
@@ -64,7 +65,7 @@ public class RaceEditor : Editor {
         System.IO.StreamWriter writer = new System.IO.StreamWriter(path, false);
         writer.WriteLine(jsonString);
         writer.Close();
-        Debug.Log("Successfully saved file at " + path);
+        Debug.Log($"Successfully saved file at {path}");
     }
     #endregion
 }

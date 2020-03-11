@@ -3,10 +3,12 @@
 --- !u!687078895 &4343727234628468602
 SpriteAtlas:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_Name: TileAtlas
   m_EditorData:
+    serializedVersion: 2
     textureSettings:
       serializedVersion: 2
       anisoLevel: 1
@@ -18,10 +20,22 @@ SpriteAtlas:
       readable: 0
       crunchedCompression: 0
       sRGB: 1
-    platformSettings: []
-    packingParameters:
+    platformSettings:
+    - serializedVersion: 3
+      m_BuildTarget: DefaultTexturePlatform
+      m_MaxTextureSize: 2048
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: -1
+      m_TextureCompression: 0
+      m_CompressionQuality: 50
+      m_CrunchedCompression: 0
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 0
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
+    packingSettings:
       serializedVersion: 2
-      padding: 8
+      padding: 4
       blockOffset: 1
       allowAlphaSplitting: 0
       enableRotation: 0
@@ -29,6 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: ed414988c527684488f0005322ba1e14, type: 3}
+    totalSpriteSurfaceArea: 12154012
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -54,6 +69,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: dd7ea591f798b6843b7141a7e23e5bbb, type: 3}
   - {fileID: 21300000, guid: 0a5aeb9107c2cfe40a9bc4a306f0272e, type: 3}
   - {fileID: 21300000, guid: dd52f9a16da7341408773dc6b3d29c0f, type: 3}
+  - {fileID: 21300000, guid: 02c219d1d58c55f448c01d4a4a728376, type: 3}
   - {fileID: 21300000, guid: 129325e1b1385e446a5b5c1843c64246, type: 3}
   - {fileID: 21300000, guid: 14c656e1d5231ab44ab032113a5b2f1c, type: 3}
   - {fileID: 21300000, guid: 5d566bf120721a74cae0cf931e7369b3, type: 3}
@@ -102,6 +118,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: ee1d19d5ccd82ed449837e58a5c6f5a2, type: 3}
   - {fileID: 21300000, guid: 68cba546241ccd44eb90c8e5f2253305, type: 3}
   - {fileID: 21300000, guid: cd176c56cdc08c640b59bf062fc0bb4d, type: 3}
+  - {fileID: 21300000, guid: 317f44669e96da6428cacf53a51495cc, type: 3}
   - {fileID: 21300000, guid: 8aff6f768d5052546a6a192c3312cdfa, type: 3}
   - {fileID: 21300000, guid: 79f46286008cddf4584f9e6e67d537ab, type: 3}
   - {fileID: 21300000, guid: f4f6ac864136fdd46b3d13a107ca8311, type: 3}
@@ -125,6 +142,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: f033cac73d979d34297a5766224b2a63, type: 3}
   - {fileID: 21300000, guid: d43124d75ece70a4bb727137082ded72, type: 3}
   - {fileID: 21300000, guid: 084958d70af9f584db832a1515566d76, type: 3}
+  - {fileID: 21300000, guid: 4c7889d78d231784eb2657a021f9db56, type: 3}
   - {fileID: 21300000, guid: cdd3f5e79b1ba6443b090b6d33fd2927, type: 3}
   - {fileID: 21300000, guid: 7aa25c18c9fb30849a829fa762e843c5, type: 3}
   - {fileID: 21300000, guid: ef97774840e24e743bb345feda51a7d0, type: 3}
@@ -186,10 +204,12 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 3c199d9d485904d488fffcd121f415b7, type: 3}
   - {fileID: 21300000, guid: 87f638bdd6557db4dae214e33f0a65bd, type: 3}
   - {fileID: 21300000, guid: 1824d50e92226a8428284955865e952d, type: 3}
+  - {fileID: 21300000, guid: f090f24e36b3de94b88e97751a3b9d89, type: 3}
   - {fileID: 21300000, guid: 7a90554ea0c8ff34d95dcc57363c2704, type: 3}
   - {fileID: 21300000, guid: 1b3d416e2b93b89409b31237666c2cee, type: 3}
   - {fileID: 21300000, guid: fcec837ee7e3fca42adf9d39ff3269be, type: 3}
   - {fileID: 21300000, guid: f7ee977ef823ff34fa4044d4721b1d07, type: 3}
+  - {fileID: 21300000, guid: 7250997ee789b924a9e2e451c67d0860, type: 3}
   - {fileID: 21300000, guid: d8e4ec9e25af57f4d859cf04fdbd39b0, type: 3}
   - {fileID: 21300000, guid: 2a68a5aed646c7344acf167dfd38d1da, type: 3}
   - {fileID: 21300000, guid: e22e82eefb9f8e0488ff25b4d3efe60c, type: 3}
@@ -231,6 +251,7 @@ SpriteAtlas:
   - TileHighlight
   - Tundra Forest_00000
   - Desert Forest_00001
+  - Hexagon_South_East_Border
   - woodland forest_00005
   - mountains_desert3
   - woodland2
@@ -279,6 +300,7 @@ SpriteAtlas:
   - desert1
   - woodland forest_00012
   - Jungle Forest_00003
+  - Hexagon_North_East_Border
   - beachNW
   - woodland forest_00015
   - snow_forest1
@@ -302,6 +324,7 @@ SpriteAtlas:
   - TileTransition
   - demonic_mountains2
   - desert2
+  - Hexagon_North_West_Border
   - Snow forest_00012
   - tundra3
   - Tundra Forest_00005
@@ -363,10 +386,12 @@ SpriteAtlas:
   - Tundra Forest_00004
   - tundra_forest1
   - demonic_forest1
+  - Hexagon_South_West_Border
   - woodland forest_00003
   - Tundra Forest_00008
   - Jungle Forest_00006
   - Tundra Forest_00013
+  - Hexagon_Side_Border
   - Jungle Forest_00009
   - woodland forest_00011
   - Snow forest_00008

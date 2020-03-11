@@ -5,27 +5,59 @@ using System;
 using UnityEngine;
 using System.Linq;
 using Traits;
+using UnityEngine.Serialization;
+using UtilityScripts;
 
 public class TraitManager : MonoBehaviour {
     public static TraitManager Instance;
 
     private Dictionary<string, Trait> _allTraits;
-    private Trait[] instancedTraits { get; set; }
-    [SerializeField] private StringSpriteDictionary traitIconDictionary;
 
+    //Trait Override Function Identifiers
+    public const string Collision_Trait = "Collision_Trait";
+    public const string Enter_Grid_Tile_Trait = "Enter_Grid_Tile_Trait";
+    public const string Initiate_Map_Visual_Trait = "Initiate_Map_Visual_Trait";
+    public const string Destroy_Map_Visual_Trait = "Destroy_Map_Visual_Trait";
+
+    public static string[] instancedTraits = new string[] {
+        //"Builder",
+        //"Grudge", "Patrolling Character",
+        "Reanimated", "Restrained",
+        //"Assaulter",
+        //"AttemptedMurderer",
+        "Cursed", "Injured", "Kleptomaniac", "Lycanthrope", "Vampiric",
+        //"Murderer",
+        "Poisoned", "Resting", "Sick",
+        //"Thief", "Jolted", "Taunted", "Berserk Buff",
+        "Unconscious", "Zapped", "Spooked", "Cannibal", "Lethargic",
+        //"Aberration", "Disabled", "Invisible", "Curious",
+        "Dead", "Unfaithful", "Drunk", "Burning", "Burnt", "Agoraphobic", "Infected", "Music Lover", "Music Hater", "Psychopath", "Plagued", "Vigilant",
+        //"Healer",
+        "Diplomatic",
+        // "AccidentProne",
+        "Wet", "Character Trait", "Nocturnal", "Herbalist", "Hardworking", "Glutton", "Suspicious", "Narcoleptic", "Hothead",
+        "Inspiring", "Pyrophobic", "Angry", "Drunkard", "Pessimist", "Lazy", "Coward", "Berserked", "Catatonic", "Griefstricken", "Heartbroken", "Cultist",
+        //"Disillusioned",
+        "Chaste", "Lustful", "Edible", "Elemental Master", "Paralyzed", "Malnourished", "Withdrawal", "Suicidal", "Criminal", "Dazed", "Hiding", "Bored", "Overheating",
+        "Freezing", "Frozen", "Ravenous", "Feeble", "Forlorn", "Accident Prone", "Disoriented", "Consumable",
+        "Fire Prone", "Electric", "Venomous",
+        };
+    [FormerlySerializedAs("traitIconDictionary")] [SerializeField] private StringSpriteDictionary traitPortraitDictionary;
+    [SerializeField] private StringSpriteDictionary traitIconDictionary;
+    public GameObject traitIconPrefab;
+    
     //Trait Processors
     public static TraitProcessor characterTraitProcessor;
     public static TraitProcessor tileObjectTraitProcessor;
-    public static TraitProcessor specialTokenTraitProcessor;
     public static TraitProcessor defaultTraitProcessor;
     
     //list of traits that a character can gain on their own
     public readonly string[] traitPool = new string[] { "Vigilant", "Diplomatic",
         "Fireproof", "Accident Prone", "Unfaithful", "Drunkard", "Music Lover", "Music Hater", "Ugly", "Blessed", "Nocturnal",
         "Herbalist", "Optimist", "Pessimist", "Fast", "Chaste", "Lustful", "Coward", "Lazy", "Hardworking", "Glutton", "Robust", "Suspicious" , "Inspiring", "Pyrophobic",
-        "Narcoleptic", "Hothead", "Evil", "Treacherous", "Disillusioned", "Ambitious", "Authoritative", "Healer"
+        "Narcoleptic", "Hothead", "Evil", "Treacherous", "Ambitious", "Authoritative", "Healer", "Fire Prone", "Electric", "Venomous"
     };
-    //"Kleptomaniac","Curious", "Craftsman"
+    //"Kleptomaniac","Curious", "Craftsman", "Disillusioned",
     public List<string> buffTraitPool { get; private set; }
     public List<string> flawTraitPool { get; private set; }
     public List<string> neutralTraitPool { get; private set; }
@@ -43,11 +75,14 @@ public class TraitManager : MonoBehaviour {
 
     public void Initialize() {
         _allTraits = new Dictionary<string, Trait>();
-        string path = Utilities.dataPath + "Traits/";
+        string path = $"{UtilityScripts.Utilities.dataPath}Traits/";
         string[] files = Directory.GetFiles(path, "*.json");
         for (int i = 0; i < files.Length; i++) {
-            Trait attribute = JsonUtility.FromJson<Trait>(System.IO.File.ReadAllText(files[i]));
-            _allTraits.Add(attribute.name, attribute);
+            Trait trait = JsonUtility.FromJson<Trait>(System.IO.File.ReadAllText(files[i]));
+            if (trait.type == TRAIT_TYPE.STATUS) {
+                trait = JsonUtility.FromJson<Status>(System.IO.File.ReadAllText(files[i]));
+            }
+            _allTraits.Add(trait.name, trait);
         }
         
         AddInstancedTraits(); //Traits with their own classes
@@ -59,8 +94,8 @@ public class TraitManager : MonoBehaviour {
         //Categorize traits from trait pool
         for (int i = 0; i < traitPool.Length; i++) {
             string currTraitName = traitPool[i];
-            if (TraitManager.Instance.allTraits.ContainsKey(currTraitName)) {
-                Trait trait = TraitManager.Instance.allTraits[currTraitName];
+            if (allTraits.ContainsKey(currTraitName)) {
+                Trait trait = allTraits[currTraitName];
                 if (trait.type == TRAIT_TYPE.BUFF) {
                     buffTraitPool.Add(currTraitName);
                 } else if (trait.type == TRAIT_TYPE.FLAW) {
@@ -69,111 +104,43 @@ public class TraitManager : MonoBehaviour {
                     neutralTraitPool.Add(currTraitName);
                 }
             } else {
-                throw new Exception("There is no trait named: " + currTraitName);
+                throw new Exception($"There is no trait named: {currTraitName}");
             }
         }
     }
 
     #region Utilities
     private void AddInstancedTraits() {
-        instancedTraits = new Trait[] {
-            //new Builder(),
-            new Grudge(),
-            new PatrollingCharacter(),
-            new Reanimated(),
-            new Restrained(),
-            new Assaulter(),
-            new AttemptedMurderer(),
-            new Cursed(),
-            new Injured(),
-            new Kleptomaniac(),
-            new Lycanthrope(),
-            new Vampiric(),
-            new Murderer(),
-            new Poisoned(),
-            new Resting(),
-            new Sick(),
-            new Thief(),
-            new Unconscious(),
-            new Betrayed(),
-            new Zapped(),
-            new Spooked(),
-            new Jolted(),
-            new Taunted(),
-            new Cannibal(),
-            new Lethargic(),
-            new BerserkBuff(),
-            new Aberration(),
-            new Dead(),
-            new Disabled(),
-            new Invisible(),
-            new Unfaithful(),
-            new Drunk(),
-            new Burning(),
-            new Burnt(),
-            new Agoraphobic(),
-            new Infected(),
-            new MusicLover(),
-            new MusicHater(),
-            new SerialKiller(),
-            new Plagued(),
-            new Vigilant(),
-            new Curious(),
-            //new Healer(),
-            new Diplomatic(),
-            new AccidentProne(),
-            new Wet(),
-            new CharacterTrait(),
-            new Nocturnal(),
-            new Herbalist(),
-            new Hardworking(),
-            new Glutton(),
-            new Suspicious(),
-            new Narcoleptic(),
-            new Hothead(),
-            new Inspiring(),
-            new Pyrophobic(),
-            new Angry(),
-            new Drunkard(),
-            new Pessimist(),
-            new Lazy(),
-            new Coward(),
-            new Berserked(),
-            new Catatonic(),
-            new Griefstricken(),
-            new Heartbroken(),
-            new Cultist(),
-            new Disillusioned(),
-            new Chaste(),
-            new Lustful(),
-            new Edible(),
-            new ElementalMaster(), 
-        };
+        //TODO: REDO INSTANCED TRAITS, USE SCRIPTABLE OBJECTS for FIXED DATA
         for (int i = 0; i < instancedTraits.Length; i++) {
-            Trait trait = instancedTraits[i];
+            Trait trait = CreateNewInstancedTraitClass(instancedTraits[i]);
             _allTraits.Add(trait.name, trait);
         }
     }
+    public Sprite GetTraitPortrait(string traitName) {
+        return traitPortraitDictionary.ContainsKey(traitName) ? traitPortraitDictionary[traitName] 
+            : traitPortraitDictionary.Values.First();
+    }
     public Sprite GetTraitIcon(string traitName) {
-        if (traitIconDictionary.ContainsKey(traitName)) {
-            return traitIconDictionary[traitName];
-        }
-        return traitIconDictionary.Values.First();
+        return traitIconDictionary.ContainsKey(traitName) ? traitIconDictionary[traitName] 
+            : traitIconDictionary.Values.First();
     }
     public bool HasTraitIcon(string traitName) {
-        return traitIconDictionary.ContainsKey(traitName);
+        return traitPortraitDictionary.ContainsKey(traitName);
     }
     public bool IsInstancedTrait(string traitName) {
         for (int i = 0; i < instancedTraits.Length; i++) {
-            Trait currTrait = instancedTraits[i];
-            if (string.Equals(currTrait.name, traitName, StringComparison.OrdinalIgnoreCase)) { //|| string.Equals(currTrait.GetType().ToString(), traitName, StringComparison.OrdinalIgnoreCase)
+            if (string.Equals(instancedTraits[i], traitName, StringComparison.OrdinalIgnoreCase)) { //|| string.Equals(currTrait.GetType().ToString(), traitName, StringComparison.OrdinalIgnoreCase)
                 return true;
             }
         }
         return false;
     }
+    public bool IsTraitElemental(string traitName) {
+        return traitName == "Burning" || traitName == "Freezing" || traitName == "Poisoned" || traitName == "Wet" || traitName == "Zapped" || traitName == "Overheating";
+    }
     public Trait CreateNewInstancedTraitClass(string traitName) {
-        string noSpacesTraitName = Utilities.RemoveAllWhiteSpace(traitName);
+        string noSpacesTraitName = UtilityScripts.Utilities.RemoveAllWhiteSpace(traitName);
         string typeName = $"Traits.{ noSpacesTraitName }";
         Type type = System.Type.GetType(typeName);
         return System.Activator.CreateInstance(type) as Trait;
@@ -187,30 +154,12 @@ public class TraitManager : MonoBehaviour {
         }
         return traits;
     }
-    public List<string> GetAllBuffTraits() {
-        List<string> buffTraits = new List<string>();
-        foreach (KeyValuePair<string, Trait> kvp in allTraits) {
-            if (kvp.Value.type == TRAIT_TYPE.BUFF) {
-                buffTraits.Add(kvp.Key);
-            }
-        }
-        return buffTraits;
-    }
-    public List<string> GetAllFlawTraits() {
-        List<string> flawTraits = new List<string>();
-        foreach (KeyValuePair<string, Trait> kvp in allTraits) {
-            if (kvp.Value.type == TRAIT_TYPE.FLAW) {
-                flawTraits.Add(kvp.Key);
-            }
-        }
-        return flawTraits;
-    }
     public List<string> GetAllBuffTraitsThatCharacterCanHave(Character character) {
         List<string> allBuffs = new List<string>(buffTraitPool);
-        for (int i = 0; i < character.traitContainer.allTraits.Count; i++) {
-            Trait trait = character.traitContainer.allTraits[i];
+        for (int i = 0; i < character.traitContainer.traits.Count; i++) {
+            Trait trait = character.traitContainer.traits[i];
             if (trait.mutuallyExclusive != null) {
-                allBuffs = Utilities.RemoveElements(allBuffs, trait.mutuallyExclusive);
+                allBuffs = CollectionUtilities.RemoveElements(ref allBuffs, trait.mutuallyExclusive);
             }
         }
         return allBuffs;
@@ -220,19 +169,8 @@ public class TraitManager : MonoBehaviour {
     /// </summary>
     /// <returns></returns>
     public bool CanStillTriggerFlaws(Character character) {
-        if (character.isDead) {
-            return false;
-        }
-        if (character.faction.isPlayerFaction) {
-            return false;
-        }
-        if (character.role.roleType == CHARACTER_ROLE.BEAST) {
-            return false;
-        }
-        if (character is Summon) {
-            return false;
-        }
-        if (character.returnedToLife) {
+        if (!PlayerManager.Instance.player.archetype.canTriggerFlaw || character.isDead || character.faction.isPlayerFaction || UtilityScripts.GameUtilities.IsRaceBeast(character.race) || character is Summon 
+            || character.returnedToLife) {
             return false;
         }
         //if(doNotDisturb > 0) {
@@ -240,13 +178,52 @@ public class TraitManager : MonoBehaviour {
         //}
         return true;
     }
+    public void CopyTraitOrStatus(Trait trait, ITraitable from, ITraitable to) {
+        if (from.traitContainer.HasTrait(trait.name)) {
+            int numOfStacks = from.traitContainer.stacks[trait.name];
+            //In the loop, override duration to zero so that it will not reset the trait's timer
+            Trait duplicateTrait = null;
+            for (int i = 0; i < numOfStacks; i++) {
+                to.traitContainer.AddTrait(to, trait.name, out duplicateTrait, overrideDuration: 0);
+            }
+            if(duplicateTrait != null) {
+                //Copy the trait's responsible characters and gainedFromDoing
+                if(trait.responsibleCharacters != null && trait.responsibleCharacters.Count > 0) {
+                    for (int i = 0; i < trait.responsibleCharacters.Count; i++) {
+                        duplicateTrait.AddCharacterResponsibleForTrait(trait.responsibleCharacters[i]);
+                    }
+                }
+                duplicateTrait.SetGainedFromDoing(trait.gainedFromDoing);
+
+                //Copy the trait's timer
+                if (from.traitContainer.scheduleTickets.ContainsKey(trait.name)) {
+                    List<TraitRemoveSchedule> traitRemoveSchedules = from.traitContainer.scheduleTickets[trait.name];
+                    for (int i = 0; i < traitRemoveSchedules.Count; i++) {
+                        TraitRemoveSchedule removeSchedule = traitRemoveSchedules[i];
+                        string ticket = SchedulingManager.Instance.AddEntry(removeSchedule.removeDate, () => to.traitContainer.RemoveTraitOnSchedule(to, duplicateTrait), to.traitProcessor);
+                        to.traitContainer.AddScheduleTicket(trait.name, ticket, removeSchedule.removeDate);
+                    }
+                }
+            }
+
+        } else {
+            throw new Exception("Trying to copy trait " + trait.name + " of " + from.name + " to " + to.name + " but " + from.name + " does not have the trait!");
+        }
+    }
+    public void CopyStatuses(ITraitable from, ITraitable to) {
+        for (int i = 0; i < from.traitContainer.statuses.Count; i++) {
+            Status status = from.traitContainer.statuses[i];
+            if (!to.traitContainer.HasTrait(status.name)) {
+                CopyTraitOrStatus(status, from, to);
+            }
+        }
+    }
     #endregion
 
     #region Trait Processors
     private void CreateTraitProcessors() {
         characterTraitProcessor = new CharacterTraitProcessor();
         tileObjectTraitProcessor = new TileObjectTraitProcessor();
-        specialTokenTraitProcessor = new SpecialTokenTraitProcessor();
         defaultTraitProcessor = new DefaultTraitProcessor();
     }
     #endregion

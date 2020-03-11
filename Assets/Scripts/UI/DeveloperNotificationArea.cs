@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-public class DeveloperNotificationArea : UIMenu {
+public class DeveloperNotificationArea : InfoUIBase {
 
     [SerializeField] private GameObject notificationItemPrefab;
     [SerializeField] private ScrollRect notificationsScrollView;
@@ -14,8 +14,8 @@ public class DeveloperNotificationArea : UIMenu {
 
     internal override void Initialize() {
         base.Initialize();
-        Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
-        Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
+        Messenger.AddListener<InfoUIBase>(Signals.MENU_OPENED, OnMenuOpened);
+        Messenger.AddListener<InfoUIBase>(Signals.MENU_CLOSED, OnMenuClosed);
     }
 
     public void ShowNotification(string text, int expirationTicks, UnityAction onClickAction = null) {
@@ -25,14 +25,14 @@ public class DeveloperNotificationArea : UIMenu {
         notificationItem.SetNotification(text, expirationTicks, onClickAction);
     }
 
-    private void OnMenuOpened(UIMenu openedMenu) {
-        if (openedMenu is CharacterInfoUI || openedMenu is FactionInfoUI) {
+    private void OnMenuOpened(InfoUIBase openedBase) {
+        if (openedBase is CharacterInfoUI || openedBase is FactionInfoUI) {
             this.transform.localPosition = otherMenuOpenedPos;
         }
         
     }
-    private void OnMenuClosed(UIMenu openedMenu) {
-        if (openedMenu is CharacterInfoUI || openedMenu is FactionInfoUI) {
+    private void OnMenuClosed(InfoUIBase openedBase) {
+        if (openedBase is CharacterInfoUI || openedBase is FactionInfoUI) {
             this.transform.localPosition = defaultPos;
         }
     }

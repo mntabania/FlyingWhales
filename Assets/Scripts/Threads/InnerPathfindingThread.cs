@@ -27,7 +27,8 @@ public class InnerPathfindingThread : Multithread {
         try {
             FindPath();
         } catch (System.Exception e) {
-            Debug.LogError("Problem with " + character.name + "'s " + pathfindingMode.ToString() + " Pathfinding from " + startingTile.ToString() + " to " + destinationTile.ToString() + "!\n" + e.Message + "\n" + e.StackTrace);
+            Debug.LogError(
+                $"Problem with {character.name}'s {pathfindingMode} Pathfinding from {startingTile} to {destinationTile}!\n{e.Message}\n{e.StackTrace}");
         }
     }
     public override void FinishMultithread() {

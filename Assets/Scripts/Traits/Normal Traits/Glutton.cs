@@ -12,8 +12,6 @@ namespace Traits {
             description = "Gluttons consume more food than normal.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEUTRAL;
-            
-            
             ticksDuration = 0;
             canBeTriggered = true;
         }
@@ -22,10 +20,11 @@ namespace Traits {
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
             if (addedTo is Character) {
-                additionalFullnessDecreaseRate = Mathf.CeilToInt(CharacterManager.FULLNESS_DECREASE_RATE * 0.5f);
+                additionalFullnessDecreaseRate = Mathf.CeilToInt(EditableValuesManager.Instance.baseFullnessDecreaseRate * 0.5f);
                 Character character = addedTo as Character;
                 character.needsComponent.SetFullnessForcedTick(0);
                 character.needsComponent.AdjustFullnessDecreaseRate(additionalFullnessDecreaseRate);
+                character.behaviourComponent.AddBehaviourComponent(typeof(GluttonBehaviour));
             }
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
@@ -34,6 +33,7 @@ namespace Traits {
                 Character character = removedFrom as Character;
                 character.needsComponent.SetFullnessForcedTick();
                 character.needsComponent.AdjustFullnessDecreaseRate(-additionalFullnessDecreaseRate);
+                character.behaviourComponent.RemoveBehaviourComponent(typeof(GluttonBehaviour));
             }
         }
         public override string TriggerFlaw(Character character) {

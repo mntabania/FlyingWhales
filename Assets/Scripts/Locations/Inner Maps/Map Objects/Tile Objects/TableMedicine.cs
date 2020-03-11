@@ -3,12 +3,11 @@
 public class TableMedicine : TileObject {
  
     public TableMedicine() {
-        advertisedActions = new List<INTERACTION_TYPE>();
         Initialize(TILE_OBJECT_TYPE.TABLE_MEDICINE);
-        RemoveCommonAdvertisments();
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
     }
     public TableMedicine(SaveDataTileObject data) {
-        advertisedActions = new List<INTERACTION_TYPE>();
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
         Initialize(data);
     }
 }

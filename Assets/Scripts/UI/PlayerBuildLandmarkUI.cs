@@ -13,9 +13,9 @@ public class PlayerBuildLandmarkUI : MonoBehaviour {
     public void OnClickBuild(Region region) {
         targetRegion = region;
         List<string> landmarkNames = new List<string>();
-        for (int i = 0; i < PlayerManager.Instance.allLandmarksThatCanBeBuilt.Length; i++) {
-            landmarkNames.Add(Utilities.NormalizeStringUpperCaseFirstLetters(PlayerManager.Instance.allLandmarksThatCanBeBuilt[i].ToString()));
-        }
+        //for (int i = 0; i < PlayerManager.Instance.allLandmarksThatCanBeBuilt.Length; i++) {
+        //    landmarkNames.Add(UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(PlayerManager.Instance.allLandmarksThatCanBeBuilt[i].ToString()));
+        //}
         UIManager.Instance.dualObjectPicker.ShowDualObjectPicker(PlayerManager.Instance.player.minions.Select(x => x.character).ToList(), landmarkNames,
             "Choose a minion", "Choose a structure",
             CanChooseMinion, CanChooseLandmark,
@@ -30,9 +30,9 @@ public class PlayerBuildLandmarkUI : MonoBehaviour {
         if (!CanChooseMinion(character)) {
             string message = string.Empty;
             if (character.minion.isAssigned) {
-                message = character.name + " is already doing something else.";
+                message = $"{character.name} is already doing something else.";
             } else if (!character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.BUILDER)) {
-                message = character.name + " does not have the required trait: Builder";
+                message = $"{character.name} does not have the required trait: Builder";
             }
             UIManager.Instance.ShowSmallInfo(message);
         }
@@ -65,10 +65,12 @@ public class PlayerBuildLandmarkUI : MonoBehaviour {
         UIManager.Instance.HideSmallInfo();
     }
     private void StartBuild(object minionObj, object landmarkObj) {
-        LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkObj as string);
-        targetRegion.StartBuildingStructure(landmarkData.landmarkType, (minionObj as Character).minion);
-        UIManager.Instance.regionInfoUI.UpdateInfo();
-        Messenger.Broadcast<Region>(Signals.REGION_INFO_UI_UPDATE_APPROPRIATE_CONTENT, targetRegion);
+        string landmarkTypeName = landmarkObj as string;
+        Debug.Log($"Chose to build {landmarkTypeName}");
+        // LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkObj as string);
+        // targetRegion.StartBuildingStructure(landmarkData.landmarkType, (minionObj as Character).minion);
+        // UIManager.Instance.regionInfoUI.UpdateInfo();
+        // Messenger.Broadcast<Region>(Signals.REGION_INFO_UI_UPDATE_APPROPRIATE_CONTENT, targetRegion);
     }
     #endregion
 }

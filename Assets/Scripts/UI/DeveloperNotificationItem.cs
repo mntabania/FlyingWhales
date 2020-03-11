@@ -42,7 +42,7 @@ public class DeveloperNotificationItem : PooledObject, IPointerClickHandler {
 
     private void DestroyObject() {
         //SchedulingManager.Instance.RemoveSpecificEntry(expirationDate, DestroyObject);
-        ObjectPoolManager.Instance.DestroyObject(this.gameObject);
+        ObjectPoolManager.Instance.DestroyObject(this);
     }
 
     private void CheckForExpiration() {

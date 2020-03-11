@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using BayatGames.SaveGameFree.Types;
+using Inner_Maps.Location_Structures;
 using UnityEngine.Serialization;
 
 [System.Serializable]
@@ -28,45 +29,45 @@ public class SaveDataArea {
     public List<SaveDataLocationStructure> structures;
     public List<SaveDataJobQueueItem> jobs;
 
-    public void Save(Settlement settlement) {
-        id = settlement.id;
-        //isDead = settlement.isDead;
-        locationType = settlement.locationType;
-        citizenCount = settlement.citizenCount;
-        regionID = settlement.region.id;
-        //coreTileID = settlement.coreTile.id;
-        //areaColor = settlement.areaColor;
-        //ownerID = settlement.owner.id;
-        //if(settlement.previousOwner != null) {
-        //    previousOwnerID = settlement.previousOwner.id;
+    public void Save(NPCSettlement npcSettlement) {
+        id = npcSettlement.id;
+        //isDead = npcSettlement.isDead;
+        locationType = npcSettlement.locationType;
+        citizenCount = npcSettlement.citizenCount;
+        regionID = npcSettlement.region.id;
+        //coreTileID = npcSettlement.coreTile.id;
+        //areaColor = npcSettlement.areaColor;
+        //ownerID = npcSettlement.owner.id;
+        //if(npcSettlement.previousOwner != null) {
+        //    previousOwnerID = npcSettlement.previousOwner.id;
         //} else {
         //    previousOwnerID = -1;
         //}
 
         //tileIDs = new List<int>();
-        //for (int i = 0; i < settlement.tiles.Count; i++) {
-        //    tileIDs.Add(settlement.tiles[i].id);
+        //for (int i = 0; i < npcSettlement.tiles.Count; i++) {
+        //    tileIDs.Add(npcSettlement.tiles[i].id);
         //}
 
         //residentIDs = new List<int>();
-        //for (int i = 0; i < settlement.areaResidents.Count; i++) {
-        //    residentIDs.Add(settlement.areaResidents[i].id);
+        //for (int i = 0; i < npcSettlement.areaResidents.Count; i++) {
+        //    residentIDs.Add(npcSettlement.areaResidents[i].id);
         //}
 
         //charactersAtLocationIDs = new List<int>();
-        //for (int i = 0; i < settlement.charactersAtLocation.Count; i++) {
-        //    charactersAtLocationIDs.Add(settlement.charactersAtLocation[i].id);
+        //for (int i = 0; i < npcSettlement.charactersAtLocation.Count; i++) {
+        //    charactersAtLocationIDs.Add(npcSettlement.charactersAtLocation[i].id);
         //}
 
         //itemsInArea = new List<SaveDataItem>();
-        //for (int i = 0; i < settlement.itemsInArea.Count; i++) {
+        //for (int i = 0; i < npcSettlement.itemsInArea.Count; i++) {
         //    SaveDataItem newSaveDataItem = new SaveDataItem();
-        //    newSaveDataItem.Save(settlement.itemsInArea[i]);
+        //    newSaveDataItem.Save(npcSettlement.itemsInArea[i]);
         //    itemsInArea.Add(newSaveDataItem);
         //}
 
         structures = new List<SaveDataLocationStructure>();
-        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in settlement.structures) {
+        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in npcSettlement.structures) {
             for (int i = 0; i < kvp.Value.Count; i++) {
                 SaveDataLocationStructure data = new SaveDataLocationStructure();
                 data.Save(kvp.Value[i]);
@@ -75,8 +76,8 @@ public class SaveDataArea {
         }
 
         jobs = new List<SaveDataJobQueueItem>();
-        for (int i = 0; i < settlement.availableJobs.Count; i++) {
-            JobQueueItem job = settlement.availableJobs[i];
+        for (int i = 0; i < npcSettlement.availableJobs.Count; i++) {
+            JobQueueItem job = npcSettlement.availableJobs[i];
             if (job.isNotSavable) {
                 continue;
             }
@@ -93,20 +94,20 @@ public class SaveDataArea {
     }
 
     public void Load() {
-        Settlement newSettlement = LandmarkManager.Instance.CreateNewArea(this);
-        // newSettlement.region.SetArea(newSettlement); //Set settlement of region here not on SaveDataRegion because SaveDataRegion will be the first to load, there will be no areas there yet
+        NPCSettlement newNpcSettlement = LandmarkManager.Instance.CreateNewArea(this);
+        // newNpcSettlement.region.SetArea(newNpcSettlement); //Set npcSettlement of region here not on SaveDataRegion because SaveDataRegion will be the first to load, there will be no areas there yet
         
-        //if(newSettlement.areaType != AREA_TYPE.DEMONIC_INTRUSION) {
-        //    LandmarkManager.Instance.SetEnemyPlayerArea(newSettlement);
+        //if(newNpcSettlement.areaType != AREA_TYPE.DEMONIC_INTRUSION) {
+        //    LandmarkManager.Instance.SetEnemyPlayerArea(newNpcSettlement);
         //}
     }
-    //Loading settlement items is called separately because of sequencing issues
+    //Loading npcSettlement items is called separately because of sequencing issues
     //Since loading an item requires faction owner, if this is called in Load(), there is still no faction owner yet, so it will be an issue
-    //The sequence for loading save data is LoadAreas -> LoadFactions -> LoadAreaItems, so as to ensure that the settlement already has a faction owner when loading the items and by that logic the items loaded will also have a faction owner
+    //The sequence for loading save data is LoadAreas -> LoadFactions -> LoadAreaItems, so as to ensure that the npcSettlement already has a faction owner when loading the items and by that logic the items loaded will also have a faction owner
     public void LoadAreaItems() {
-        Settlement settlement = LandmarkManager.Instance.GetAreaByID(id);
+        // NPCSettlement npcSettlement = LandmarkManager.Instance.GetAreaByID(id);
         //for (int i = 0; i < itemsInArea.Count; i++) {
-        //    itemsInArea[i].Load(settlement);
+        //    itemsInArea[i].Load(npcSettlement);
         //}
     }
 
@@ -117,24 +118,24 @@ public class SaveDataArea {
     }
 
     public void LoadAreaJobs() {
-        Settlement settlement = LandmarkManager.Instance.GetAreaByID(id);
-        for (int i = 0; i < jobs.Count; i++) {
-            JobQueueItem job = jobs[i].Load();
-            settlement.AddToAvailableJobs(job);
-            //if (jobs[i] is SaveDataCharacterStateJob) {
-            //    SaveDataCharacterStateJob dataStateJob = jobs[i] as SaveDataCharacterStateJob;
-            //    CharacterStateJob stateJob = job as CharacterStateJob;
-            //    if (dataStateJob.assignedCharacterID != -1) {
-            //        Character assignedCharacter = CharacterManager.Instance.GetCharacterByID(dataStateJob.assignedCharacterID);
-            //        stateJob.SetAssignedCharacter(assignedCharacter);
-            //        CharacterState newState = assignedCharacter.stateComponent.SwitchToState(stateJob.targetState, null, stateJob.targetSettlement);
-            //        if (newState != null) {
-            //            stateJob.SetAssignedState(newState);
-            //        } else {
-            //            throw new System.Exception(assignedCharacter.name + " tried doing state " + stateJob.targetState.ToString() + " but was unable to do so! This must not happen!");
-            //        }
-            //    }
-            //}
-        }
+        // NPCSettlement npcSettlement = LandmarkManager.Instance.GetAreaByID(id);
+        // for (int i = 0; i < jobs.Count; i++) {
+        //     JobQueueItem job = jobs[i].Load();
+        //     npcSettlement.AddToAvailableJobs(job);
+        //     //if (jobs[i] is SaveDataCharacterStateJob) {
+        //     //    SaveDataCharacterStateJob dataStateJob = jobs[i] as SaveDataCharacterStateJob;
+        //     //    CharacterStateJob stateJob = job as CharacterStateJob;
+        //     //    if (dataStateJob.assignedCharacterID != -1) {
+        //     //        Character assignedCharacter = CharacterManager.Instance.GetCharacterByID(dataStateJob.assignedCharacterID);
+        //     //        stateJob.SetAssignedCharacter(assignedCharacter);
+        //     //        CharacterState newState = assignedCharacter.stateComponent.SwitchToState(stateJob.targetState, null, stateJob.targetNpcSettlement);
+        //     //        if (newState != null) {
+        //     //            stateJob.SetAssignedState(newState);
+        //     //        } else {
+        //     //            throw new System.Exception(assignedCharacter.name + " tried doing state " + stateJob.targetState.ToString() + " but was unable to do so! This must not happen!");
+        //     //        }
+        //     //    }
+        //     //}
+        // }
     }
 }

@@ -3,14 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public interface IRelationshipData {
-
-    /// <summary>
-    /// Value from -100 to 100
-    /// </summary>
-	int relationshipValue { get; }
     List<RELATIONSHIP_TYPE> relationships { get; }
-
-    void AdjustRelationshipValue(int amount);
+    OpinionData opinions { get; }
+    string targetName { get; }
+    GENDER targetGender { get; }
     void AddRelationship(RELATIONSHIP_TYPE relType);
     void RemoveRelationship(RELATIONSHIP_TYPE relType);
     RELATIONSHIP_TYPE GetFirstMajorRelationship();
@@ -21,4 +17,6 @@ public interface IRelationshipData {
     /// <param name="rels">The relationships to watch out for.</param>
     /// <returns>True or false</returns>
     bool HasRelationship(params RELATIONSHIP_TYPE[] rels);
+    void SetTargetName(string name);
+    void SetTargetGender(GENDER gender);
 }

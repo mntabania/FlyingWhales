@@ -26,7 +26,7 @@ public class SaveDataRelationship {
     //    flirtationCount = relationship.flirtationCount;
     //}
 
-    public void Load(AlterEgoData ownerAlterEgo) {
+    // public void Load(AlterEgoData ownerAlterEgo) {
         //TODO:
         //Character targetCharacter = CharacterManager.Instance.GetCharacterByID(targetCharacterID);
         //AlterEgoData targetAlterEgoData = targetCharacter.GetAlterEgoData(targetCharacterAlterEgo);
@@ -39,5 +39,5 @@ public class SaveDataRelationship {
         //}
 
         //ownerAlterEgo.AddRelationship(relationshipData);
-    }
+    // }
 }

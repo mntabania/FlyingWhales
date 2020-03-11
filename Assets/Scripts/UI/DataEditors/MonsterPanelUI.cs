@@ -120,9 +120,10 @@ public class MonsterPanelUI : MonoBehaviour {
             EditorUtility.DisplayDialog("Error", "Please specify a Monster Name", "OK");
             return;
         }
-        string path = Utilities.dataPath + "Monsters/" + nameInput.text + ".json";
-        if (Utilities.DoesFileExist(path)) {
-            if (EditorUtility.DisplayDialog("Overwrite Monster", "A monster with name " + nameInput.text + " already exists. Replace with this monster?", "Yes", "No")) {
+        string path = $"{UtilityScripts.Utilities.dataPath}Monsters/{nameInput.text}.json";
+        if (UtilityScripts.Utilities.DoesFileExist(path)) {
+            if (EditorUtility.DisplayDialog("Overwrite Monster",
+                $"A monster with name {nameInput.text} already exists. Replace with this monster?", "Yes", "No")) {
                 File.Delete(path);
             }
         } 

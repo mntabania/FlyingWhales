@@ -10,7 +10,9 @@ public class Spit : GoapAction {
     public Spit() : base(INTERACTION_TYPE.SPIT) {
         actionIconString = GoapActionStateDB.Entertain_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
+        validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.MORNING, TIME_IN_WORDS.LUNCH_TIME, TIME_IN_WORDS.AFTERNOON, };
+        isNotificationAnIntel = true;
     }
 
     #region Overrides
@@ -21,9 +23,47 @@ public class Spit : GoapAction {
         base.Perform(goapNode);
         SetState("Spit Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        //**Cost**: randomize between 5-35
-        return Utilities.rng.Next(5, 36);
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+        string costLog = $"\n{name} {target.nameWithID}:";
+        int cost = UtilityScripts.Utilities.rng.Next(80, 121);
+        costLog += $" +{cost}(Initial)";
+        int numOfTimesActionDone = actor.jobComponent.GetNumOfTimesActionDone(this);
+        if (numOfTimesActionDone > 5) {
+            cost += 2000;
+            costLog += " +2000(Times Spat > 5)";
+        } else {
+            int timesCost = 10 * numOfTimesActionDone;
+            cost += timesCost;
+            costLog += $" +{timesCost}(10 x Times Spat)";
+        }
+        if (actor.traitContainer.HasTrait("Evil")) {
+            cost += -15;
+            costLog += " -15(Evil)";
+        }
+        if (actor.traitContainer.HasTrait("Treacherous")) {
+            cost += -10;
+            costLog += " -10(Treacherous)";
+        }
+        actor.logComponent.AppendCostLog(costLog);
+        return cost;
+    }
+    public override string ReactionToActor(Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionToActor(witness, node, status);
+        Character actor = node.actor;
+        IPointOfInterest target = node.poiTarget;
+        if (target is Tombstone) {
+            Character targetCharacter = (target as Tombstone).character;
+            string witnessOpinionLabelToDead = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
+            if (witnessOpinionLabelToDead == OpinionComponent.Friend || witnessOpinionLabelToDead == OpinionComponent.Close_Friend) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status);
+            } else if (witnessOpinionLabelToDead == OpinionComponent.Rival) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status);
+            } else {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status);
+            }
+        }
+        return response;
     }
     #endregion
 
@@ -40,7 +80,7 @@ public class Spit : GoapAction {
             if (poiTarget is Tombstone) {
                 Tombstone tombstone = poiTarget as Tombstone;
                 Character target = tombstone.character;
-                return actor.opinionComponent.GetRelationshipEffectWith(target) == RELATIONSHIP_EFFECT.NEGATIVE;
+                return actor.relationshipContainer.GetRelationshipEffectWith(target) == RELATIONSHIP_EFFECT.NEGATIVE;
             }
             return false;
         }
@@ -49,18 +89,14 @@ public class Spit : GoapAction {
     #endregion
 
     #region Effects
-    //public void PreSpitSuccess(ActualGoapNode goapNode) {
-    //    //Tombstone tombstone = goapNode.poiTarget as Tombstone;
-    //    //goapNode.descriptionLog.AddToFillers(null, tombstone.character.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-    //    //currentState.SetIntelReaction(SpitSuccessReactions);
-    //}
-    public void AfterSpitSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustHappiness(5000);
+    public void PreSpitSuccess(ActualGoapNode goapNode) {
+        goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
     }
-    //public void PreTargetMissing(ActualGoapNode goapNode) {
-    //    Tombstone tombstone = poiTarget as Tombstone;
-    //    goapNode.descriptionLog.AddToFillers(null, tombstone.character.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-    //}
+    public void AfterSpitSuccess(ActualGoapNode goapNode) {
+        goapNode.actor.needsComponent.AdjustHappiness(20f);
+        Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, goapNode.actor.marker.transform.position, 
+            4, goapNode.actor.currentRegion.innerMap);
+    }
     #endregion
 
     //#region Intel Reactions
@@ -117,7 +153,7 @@ public class Spit : GoapAction {
 
 public class SpitData : GoapActionData {
     public SpitData() : base(INTERACTION_TYPE.SPIT) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
         requirementAction = Requirement;
     }
 
@@ -131,7 +167,7 @@ public class SpitData : GoapActionData {
         if (poiTarget is Tombstone) {
             Tombstone tombstone = poiTarget as Tombstone;
             Character target = tombstone.character;
-            return actor.opinionComponent.GetRelationshipEffectWith(target) == RELATIONSHIP_EFFECT.NEGATIVE;
+            return actor.relationshipContainer.GetRelationshipEffectWith(target) == RELATIONSHIP_EFFECT.NEGATIVE;
         }
         return false;
     }

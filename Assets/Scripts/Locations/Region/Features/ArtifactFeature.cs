@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UtilityScripts;
 
 public class ArtifactFeature : TileFeature {
     //This is only temporary since we cannot actually add artifacts to the region this feature is added because if the artifact is added there, it will be activated, and we don't want that
@@ -30,7 +31,7 @@ public class ArtifactFeature : TileFeature {
     public override void OnAddFeature(HexTile tile) {
         base.OnAddFeature(tile);
         homeRegionOfArtifact = tile.region;
-        ARTIFACT_TYPE[] artifactTypes = Utilities.GetEnumValues<ARTIFACT_TYPE>().Where(x => !x.CanBeSummoned()).ToArray();
+        ARTIFACT_TYPE[] artifactTypes = CollectionUtilities.GetEnumValues<ARTIFACT_TYPE>().Where(x => !x.CanBeSummoned()).ToArray();
         artifact = PlayerManager.Instance.CreateNewArtifact(artifactTypes[Random.Range(0, artifactTypes.Length)]);
         Messenger.AddListener<Artifact>(Signals.PLAYER_USED_ARTIFACT, OnUsedArtifact);
     }

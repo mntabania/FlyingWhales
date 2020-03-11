@@ -10,8 +10,6 @@ namespace Traits {
             description = "This character eats his own kind.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEGATIVE;
-            
-            
             ticksDuration = 0;
             canBeTriggered = true;
             //effects = new List<TraitEffect>();
@@ -22,7 +20,7 @@ namespace Traits {
             base.OnAddTrait(sourcePOI);
             if (sourcePOI is Character) {
                 Character owner = sourcePOI as Character;
-                GoapPlanJob job = owner.jobQueue.GetJob(JOB_TYPE.HUNGER_RECOVERY, JOB_TYPE.HUNGER_RECOVERY_STARVING) as GoapPlanJob;
+                GoapPlanJob job = owner.jobQueue.GetJob(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT) as GoapPlanJob;
                 if (job != null) {
                     job.CancelJob(false);
                 }
@@ -71,7 +69,7 @@ namespace Traits {
             if (chosenPOI == null) {
                 for (int i = 0; i < characterThatWillDoJob.currentRegion.charactersAtLocation.Count; i++) {
                     Character character = characterThatWillDoJob.currentRegion.charactersAtLocation[i];
-                    if (characterThatWillDoJob != character && characterThatWillDoJob.opinionComponent.GetRelationshipEffectWith(character) == RELATIONSHIP_EFFECT.NEGATIVE) {
+                    if (characterThatWillDoJob != character && characterThatWillDoJob.relationshipContainer.GetRelationshipEffectWith(character) == RELATIONSHIP_EFFECT.NEGATIVE) {
                         chosenPOI = character;
                         break;
                     }
@@ -81,7 +79,7 @@ namespace Traits {
             if (chosenPOI == null) {
                 for (int i = 0; i < characterThatWillDoJob.currentRegion.charactersAtLocation.Count; i++) {
                     Character character = characterThatWillDoJob.currentRegion.charactersAtLocation[i];
-                    if (characterThatWillDoJob != character && characterThatWillDoJob.opinionComponent.GetRelationshipEffectWith(character) == RELATIONSHIP_EFFECT.NONE) {
+                    if (characterThatWillDoJob != character && characterThatWillDoJob.relationshipContainer.GetRelationshipEffectWith(character) == RELATIONSHIP_EFFECT.NONE) {
                         chosenPOI = character;
                         break;
                     }

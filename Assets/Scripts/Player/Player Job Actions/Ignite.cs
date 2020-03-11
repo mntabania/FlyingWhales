@@ -5,14 +5,14 @@ using Inner_Maps;
 using UnityEngine;
 using Traits;
 
-public class Ignite : PlayerJobAction {
+public class Ignite : PlayerSpell {
 
     private List<LocationGridTile> highlightedTiles;
 
-    public Ignite() : base(INTERVENTION_ABILITY.IGNITE) {
+    public Ignite() : base(SPELL_TYPE.IGNITE) {
         tier = 1;
         SetDefaultCooldownTime(24);
-        targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.TILE };
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
         highlightedTiles = new List<LocationGridTile>();
     }
 
@@ -21,7 +21,7 @@ public class Ignite : PlayerJobAction {
         base.ActivateAction(targetTile);
         List<LocationGridTile> tiles = GetTargetTiles(targetTile);
         if (tiles.Count > 0) {
-            BurningSource bs = new BurningSource(InnerMapManager.Instance.currentlyShowingLocation);
+            BurningSource bs = new BurningSource(targetTile.parentMap.location);
             for (int i = 0; i < tiles.Count; i++) {
                 LocationGridTile tile = tiles[i];
                 Burning burning = new Burning();
@@ -29,13 +29,13 @@ public class Ignite : PlayerJobAction {
                 tile.genericTileObject.traitContainer.AddTrait(tile.genericTileObject, burning);
             }
             Log log = new Log(GameManager.Instance.Today(), "InterventionAbility", name, "activated");
-            PlayerManager.Instance.player.ShowNotification(log);
+            PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
         }
     }
-    public override bool CanTarget(LocationGridTile tile) {
+    public virtual bool CanTarget(LocationGridTile tile) {
         return GetTargetTiles(tile).Count > 0;
     }
-    protected override bool CanPerformActionTowards(LocationGridTile tile) {
+    protected virtual bool CanPerformActionTowards(LocationGridTile tile) {
         return GetTargetTiles(tile).Count > 0;
     }
     public override void ShowRange(LocationGridTile targetTile) {
@@ -58,12 +58,41 @@ public class Ignite : PlayerJobAction {
         } else if (level >= 3) {
             tiles.AddRange(origin.neighbourList);
         }
-        return tiles.Where(x => x.genericTileObject.traitContainer.GetNormalTrait<Trait>("Burning", "Burnt", "Wet", "Fireproof") == null && x.genericTileObject.traitContainer.GetNormalTrait<Trait>("Flammable") != null).ToList();
+        return tiles.Where(x => x.genericTileObject != null && !x.genericTileObject.traitContainer.HasTrait("Burning", "Burnt", "Wet", "Fireproof") && x.genericTileObject.traitContainer.HasTrait("Flammable")).ToList();
     }
 }
 
-public class IgniteData : PlayerJobActionData {
+public class IgniteData : SpellData {
+    public override SPELL_TYPE ability => SPELL_TYPE.IGNITE;
     public override string name { get { return "Ignite"; } }
     public override string description { get { return "Targets a spot. Target will ignite and start spreading fire."; } }
-    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.DEVASTATION; } }
+    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.DEVASTATION; } }
+
+    public IgniteData() : base() {
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
+    }
+
+    #region Overrides
+    public override void ActivateAbility(IPointOfInterest targetPOI) {
+        // LocationGridTile tile = targetPOI.gridTileLocation;
+        BurningSource bs = new BurningSource(targetPOI.gridTileLocation.parentMap.location);
+        Burning burning = new Burning();
+        burning.SetSourceOfBurning(bs, targetPOI);
+        targetPOI.traitContainer.AddTrait(targetPOI, burning, bypassElementalChance: true);
+        Log log = new Log(GameManager.Instance.Today(), "InterventionAbility", name, "activated");
+        PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+    }
+    public override bool CanPerformAbilityTowards(TileObject tileObject) {
+        if (tileObject.gridTileLocation == null || tileObject.gridTileLocation.genericTileObject.traitContainer.HasTrait("Burning", "Wet", "Fireproof")) {
+            return false;
+        }
+        return base.CanPerformAbilityTowards(tileObject);
+    }
+    // public override bool CanPerformAbilityTowards(SpecialToken item) {
+    //     if (item.gridTileLocation == null || item.gridTileLocation.genericTileObject.traitContainer.HasTrait("Burning")) {
+    //         return false;
+    //     }
+    //     return base.CanPerformAbilityTowards(item);
+    // }
+    #endregion
 }

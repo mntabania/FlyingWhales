@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using Inner_Maps.Location_Structures;
 using Pathfinding;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
+using UtilityScripts;
 using Random = UnityEngine.Random;
 namespace Inner_Maps {
     public abstract class InnerTileMap : MonoBehaviour {
@@ -16,15 +19,25 @@ namespace Inner_Maps {
         public static int EastEdge = 0;
         
         [Header("Tile Maps")]
+        [SerializeField] private Tilemap[] _allTilemaps;
         public Tilemap groundTilemap;
+        public TilemapRenderer groundTilemapRenderer;
         public Tilemap detailsTilemap;
+        public TilemapRenderer detailsTilemapRenderer;
         public Tilemap structureTilemap;
+        public TilemapCollider2D structureTilemapCollider;
+        public Tilemap upperGroundTilemap;
+        public TilemapRenderer upperGroundTilemapRenderer;
         
         [Header("Seamless Edges")]
         public Tilemap northEdgeTilemap;
+        public TilemapRenderer northEdgeTilemapRenderer;
         public Tilemap southEdgeTilemap;
+        public TilemapRenderer southEdgeTilemapRenderer;
         public Tilemap westEdgeTilemap;
+        public TilemapRenderer westEdgeTilemapRenderer;
         public Tilemap eastEdgeTilemap;
+        public TilemapRenderer eastEdgeTilemapRenderer;
         
         [Header("Parents")]
         public Transform objectsParent;
@@ -45,7 +58,7 @@ namespace Inner_Maps {
         
         [Header("For Testing")]
         [SerializeField] protected LineRenderer pathLineRenderer;
-        
+        [SerializeField] protected BoundDrawer _boundDrawer;
         //properties
         public int width { get; set; }
         public int height { get; set; }
@@ -66,21 +79,19 @@ namespace Inner_Maps {
             activeBurningSources = new List<BurningSource>();
             
             //set tile map sorting orders
-            TilemapRenderer ground = groundTilemap.gameObject.GetComponent<TilemapRenderer>();
-            ground.sortingOrder = InnerMapManager.GroundTilemapSortingOrder;
-            TilemapRenderer details = detailsTilemap.gameObject.GetComponent<TilemapRenderer>();
-            details.sortingOrder = InnerMapManager.DetailsTilemapSortingOrder;
-
-            TilemapRenderer northEdge = northEdgeTilemap.gameObject.GetComponent<TilemapRenderer>();
-            northEdge.sortingOrder = InnerMapManager.GroundTilemapSortingOrder + 1;
-            TilemapRenderer southEdge = southEdgeTilemap.gameObject.GetComponent<TilemapRenderer>();
-            southEdge.sortingOrder = InnerMapManager.GroundTilemapSortingOrder + 1;
-            TilemapRenderer westEdge = westEdgeTilemap.gameObject.GetComponent<TilemapRenderer>();
-            westEdge.sortingOrder = InnerMapManager.GroundTilemapSortingOrder + 2;
-            TilemapRenderer eastEdge = eastEdgeTilemap.gameObject.GetComponent<TilemapRenderer>();
-            eastEdge.sortingOrder = InnerMapManager.GroundTilemapSortingOrder + 2;
+            groundTilemapRenderer.sortingOrder = InnerMapManager.GroundTilemapSortingOrder;
+            detailsTilemapRenderer.sortingOrder = InnerMapManager.DetailsTilemapSortingOrder;
+            
+            northEdgeTilemapRenderer.sortingOrder = InnerMapManager.GroundTilemapSortingOrder + 1;
+            southEdgeTilemapRenderer.sortingOrder = InnerMapManager.GroundTilemapSortingOrder + 1;
+            westEdgeTilemapRenderer.sortingOrder = InnerMapManager.GroundTilemapSortingOrder + 2;
+            eastEdgeTilemapRenderer.sortingOrder = InnerMapManager.GroundTilemapSortingOrder + 2;
+            
+            upperGroundTilemapRenderer.sortingOrder = InnerMapManager.GroundTilemapSortingOrder + 3;
         }
-        protected IEnumerator GenerateGrid(int width, int height) {
+        protected IEnumerator GenerateGrid(int width, int height, MapGenerationComponent mapGenerationComponent) {
+            System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+            stopwatch.Start();
             this.width = width;
             this.height = height;
 
@@ -88,10 +99,13 @@ namespace Inner_Maps {
             allTiles = new List<LocationGridTile>();
             allEdgeTiles = new List<LocationGridTile>();
             int batchCount = 0;
+            LocationStructure wilderness = location.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
-                    groundTilemap.SetTile(new Vector3Int(x, y, 0), GetOutsideFloorTile(location));
+                    groundTilemap.SetTile(new Vector3Int(x, y, 0), InnerMapManager.Instance.assetManager.GetOutsideFloorTile(location));
                     LocationGridTile tile = new LocationGridTile(x, y, groundTilemap, this);
+                    tile.CreateGenericTileObject();
+                    tile.SetStructure(wilderness);
                     allTiles.Add(tile);
                     if (tile.IsAtEdgeOfWalkableMap()) {
                         allEdgeTiles.Add(tile);
@@ -105,92 +119,24 @@ namespace Inner_Maps {
                 }
             }
             allTiles.ForEach(x => x.FindNeighbours(map));
+            stopwatch.Stop();
+            mapGenerationComponent.AddLog($"{location.name} GenerateGrid took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
         }
 
         #endregion
-        
-        #region Loading
-        protected void LoadGrid(SaveDataAreaInnerTileMap data) {
-            map = new LocationGridTile[width, height];
-            allTiles = new List<LocationGridTile>();
-            allEdgeTiles = new List<LocationGridTile>();
 
-            Dictionary<string, TileBase> tileDb = InnerMapManager.Instance.GetTileAssetDatabase();
-
-            for (int x = 0; x < width; x++) {
-                for (int y = 0; y < height; y++) {
-                    //groundTilemap.SetTile(new Vector3Int(x, y, 0), GetOutsideFloorTileForArea(settlement));
-                    LocationGridTile tile = data.map[x][y].Load(groundTilemap, this, tileDb);
-                    allTiles.Add(tile);
-                    if (tile.IsAtEdgeOfWalkableMap()) {
-                        allEdgeTiles.Add(tile);
-                    }
-                    map[x, y] = tile;
-                }
-            }
-            allTiles.ForEach(x => x.FindNeighbours(map));
-
-            groundTilemap.RefreshAllTiles();
-        }
-        #endregion
-        
         #region Visuals
         public void ClearAllTilemaps() {
-            Tilemap[] maps = GetComponentsInChildren<Tilemap>();
-            for (var i = 0; i < maps.Length; i++) {
-                maps[i].ClearAllTiles();
+            for (var i = 0; i < _allTilemaps.Length; i++) {
+                _allTilemaps[i].ClearAllTiles();
             }
         }
-        protected TileBase GetOutsideFloorTile(ILocation location) {
-            switch (location.coreTile.biomeType) {
-                case BIOMES.SNOW:
-                case BIOMES.TUNDRA:
-                    return InnerMapManager.Instance.assetManager.snowOutsideTile;
-                default:
-                    return InnerMapManager.Instance.assetManager.outsideTile;
-            }
-        }
-        protected TileBase GetBigTreeTile(ILocation location) {
-            switch (location.coreTile.biomeType) {
-                case BIOMES.SNOW:
-                case BIOMES.TUNDRA:
-                    return InnerMapManager.Instance.assetManager.snowBigTreeTile;
-                default:
-                    return InnerMapManager.Instance.assetManager.bigTreeTile;
-            }
-        }
-        protected TileBase GetTreeTile(ILocation location) {
-            switch (location.coreTile.biomeType) {
-                case BIOMES.SNOW:
-                case BIOMES.TUNDRA:
-                    return InnerMapManager.Instance.assetManager.snowTreeTile;
-                default:
-                    return InnerMapManager.Instance.assetManager.treeTile;
-            }
-        }
-        protected TileBase GetFlowerTile(ILocation location) {
-            switch (location.coreTile.biomeType) {
-                case BIOMES.SNOW:
-                case BIOMES.TUNDRA:
-                    return InnerMapManager.Instance.assetManager.snowFlowerTile;
-                default:
-                    return InnerMapManager.Instance.assetManager.flowerTile;
-            }
-        }
-        protected TileBase GetGarbTile(ILocation location) {
-            switch (location.coreTile.biomeType) {
-                case BIOMES.SNOW:
-                case BIOMES.TUNDRA:
-                    return InnerMapManager.Instance.assetManager.snowGarbTile;
-                default:
-                    return InnerMapManager.Instance.assetManager.randomGarbTile;
-            }
-        }
-        protected IEnumerator CreateSeamlessEdges() {
+        public IEnumerator CreateSeamlessEdges() {
             int batchCount = 0;
             for (int i = 0; i < allTiles.Count; i++) {
                 LocationGridTile tile = allTiles[i];
-                if (tile.structure != null && !tile.structure.structureType.IsOpenSpace()) { continue; } //skip non open space structure tiles.
+                if (tile.structure != null && !tile.structure.structureType.IsOpenSpace() 
+                    && tile.structure.structureType != STRUCTURE_TYPE.MONSTER_LAIR) { continue; } //skip non open space structure tiles.
                 tile.CreateSeamlessEdgesForTile(this);
                 batchCount++;
                 if (batchCount == MapGenerationData.InnerMapSeamlessEdgeBatches) {
@@ -198,6 +144,15 @@ namespace Inner_Maps {
                     yield return null;
                 }
             }
+        }
+        public void SetUpperGroundVisual(Vector3Int location, TileBase asset, float alpha = 1f) {
+            upperGroundTilemap.SetTile(location, asset);
+            Color color = upperGroundTilemap.GetColor(location);
+            color.a = alpha;
+            upperGroundTilemap.SetColor(location, color);
+        }
+        public void SetUpperGroundVisual(Vector3Int[] locations, TileBase[] assets) {
+            upperGroundTilemap.SetTiles(locations, assets);
         }
         #endregion
 
@@ -228,39 +183,6 @@ namespace Inner_Maps {
                         }
                         LocationGridTile result = map[dx, dy];
                         if ((!includeTilesInDifferentStructure && result.structure != centerTile.structure) || result.isOccupied || result.charactersHere.Count > 0) { continue; }
-                        tiles.Add(result);
-                    }
-                }
-            }
-            return tiles;
-        }
-        public List<LocationGridTile> GetTilesInRadius(LocationGridTile centerTile, int radius, int radiusLimit = 0, bool includeCenterTile = false, bool includeTilesInDifferentStructure = false) {
-            List<LocationGridTile> tiles = new List<LocationGridTile>();
-            int mapSizeX = map.GetUpperBound(0);
-            int mapSizeY = map.GetUpperBound(1);
-            int x = centerTile.localPlace.x;
-            int y = centerTile.localPlace.y;
-            if (includeCenterTile) {
-                tiles.Add(centerTile);
-            }
-            int xLimitLower = x - radiusLimit;
-            int xLimitUpper = x + radiusLimit;
-            int yLimitLower = y - radiusLimit;
-            int yLimitUpper = y + radiusLimit;
-
-
-            for (int dx = x - radius; dx <= x + radius; dx++) {
-                for (int dy = y - radius; dy <= y + radius; dy++) {
-                    if(dx >= 0 && dx <= mapSizeX && dy >= 0 && dy <= mapSizeY) {
-                        if(dx == x && dy == y) {
-                            continue;
-                        }
-                        if(radiusLimit > 0 && dx > xLimitLower && dx < xLimitUpper && dy > yLimitLower && dy < yLimitUpper) {
-                            continue;
-                        }
-                        LocationGridTile result = map[dx, dy];
-                        if(result.structure == null) { continue; } //do not include tiles with no structures
-                        if(!includeTilesInDifferentStructure && result.structure != centerTile.structure) { continue; }
                         tiles.Add(result);
                     }
                 }
@@ -298,10 +220,13 @@ namespace Inner_Maps {
         public void RemoveObjectWithoutDestroying(LocationGridTile tile) {
             tile.RemoveObjectHereWithoutDestroying();
         }
+        public void RemoveObjectDestroyVisualOnly(LocationGridTile tile, Character remover = null) {
+            tile.RemoveObjectHereDestroyVisualOnly(remover);
+        }
         private void OnPlaceCharacterOnTile(Character character, LocationGridTile tile) {
             GameObject markerGO = character.marker.gameObject; 
             if (markerGO.transform.parent != objectsParent) {
-                //This means that the character travelled to a different settlement
+                //This means that the character travelled to a different npcSettlement
                 markerGO.transform.SetParent(objectsParent);
                 markerGO.transform.localPosition = tile.centeredLocalLocation;
                 // character.marker.UpdatePosition();
@@ -323,14 +248,24 @@ namespace Inner_Maps {
                 from.RemoveCharacterHere(character);
                 to.AddCharacterHere(character);
                 if (from.structure != to.structure) {
-                    @from.structure?.RemoveCharacterAtLocation(character);
+                    from.structure?.RemoveCharacterAtLocation(character);
                     if (to.structure != null) {
                         to.structure.AddCharacterAtLocation(character);
                     } else {
-                        throw new Exception(character.name + " is going to tile " + to.ToString() + " which does not have a structure!");
+                        throw new Exception($"{character.name} is going to tile {to} which does not have a structure!");
                     }
-                
                 }
+                if (from.buildSpotOwner.hexTileOwner != to.buildSpotOwner.hexTileOwner) {
+                    if (from.buildSpotOwner.hexTileOwner) {
+                        from.buildSpotOwner.hexTileOwner.OnRemovePOIInHex(character);
+                    }
+                    if (to.buildSpotOwner.hexTileOwner) {
+                        to.buildSpotOwner.hexTileOwner.OnPlacePOIInHex(character);
+                    }
+                }
+                Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.REMOVE_STATUS, character as IPointOfInterest);
+                Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.APPREHEND, character as IPointOfInterest);
+                Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.KNOCKOUT, character as IPointOfInterest);
             }
         
         }
@@ -354,6 +289,9 @@ namespace Inner_Maps {
         public void AddActiveBurningSource(BurningSource bs) {
             if (!activeBurningSources.Contains(bs)) {
                 activeBurningSources.Add(bs);
+                Log log = new Log(GameManager.Instance.Today(), "General", "Location", "Fire");
+                log.AddToFillers(location, location.name, LOG_IDENTIFIER.LANDMARK_1);
+                PlayerManager.Instance.player.ShowNotificationFrom(location, log);
             }
         }
         public void RemoveActiveBurningSources(BurningSource bs) {
@@ -363,12 +301,14 @@ namespace Inner_Maps {
 
         #region Utilities
         public void CleanUp() {
-            Utilities.DestroyChildren(objectsParent);
+            UtilityScripts.Utilities.DestroyChildren(objectsParent);
         }
         public void Open() { }
         public void Close() { }
-        public void OnMapGenerationFinished() {
-            name = location.name + "'s Inner Map";
+        public virtual void OnMapGenerationFinished() {
+            name = $"{location.name}'s Inner Map";
+            groundTilemap.CompressBounds();
+            _boundDrawer.ManualUpdateBounds(groundTilemap.localBounds);
             worldUiCanvas.worldCamera = InnerMapCameraMove.Instance.innerMapsCamera;
             var orthographicSize = InnerMapCameraMove.Instance.innerMapsCamera.orthographicSize;
             cameraBounds = new Vector4 {x = -185.8f}; //x - minX, y - minY, z - maxX, w - maxY 
@@ -379,7 +319,8 @@ namespace Inner_Maps {
         }
         private void SpawnCenterGo() {
             centerGo = Instantiate<GameObject>(centerGoPrefab, transform);
-            centerGo.transform.position = new Vector3((cameraBounds.x + cameraBounds.z) * 0.5f, (cameraBounds.y + cameraBounds.w) * 0.5f);
+            Vector3 centerPosition = new Vector3(width/2f, height/2f); //new Vector3((cameraBounds.x + cameraBounds.z) * 0.5f, (cameraBounds.y + cameraBounds.w) * 0.5f);
+            centerGo.transform.localPosition = centerPosition;
         }
         private void ShowPath(List<Vector3> points) {
             pathLineRenderer.gameObject.SetActive(true);
@@ -420,19 +361,19 @@ namespace Inner_Maps {
         #endregion
 
         #region Building Spots
-        public bool TryGetValidBuildSpotTileObjectForStructure(LocationStructureObject structureObject, Settlement settlement, out BuildSpotTileObject buildingSpot) {
-            List<BuildSpotTileObject> openSpots = GetOpenBuildSpotTileObjects(settlement);
+        public bool TryGetValidBuildSpotTileObjectForStructure(LocationStructureObject structureObject, NPCSettlement npcSettlement, out BuildSpotTileObject buildingSpot) {
+            List<BuildSpotTileObject> openSpots = GetOpenBuildSpotTileObjects(npcSettlement);
             if (structureObject.IsBiggerThanBuildSpot()) {
                 if (openSpots.Count > 0) {
                     List<BuildSpotTileObject> choices = new List<BuildSpotTileObject>();
                     for (int i = 0; i < openSpots.Count; i++) {
                         BuildSpotTileObject buildSpot = openSpots[i];
-                        if (buildSpot.spot.CanFitStructureOnSpot(structureObject, this)) {
+                        if (buildSpot.spot.CanFitStructureOnSpot(structureObject, this, "NPC")) {
                             choices.Add(buildSpot);
                         }
                     }
                     if (choices.Count > 0) {
-                        buildingSpot = Utilities.GetRandomElement(choices);
+                        buildingSpot = CollectionUtilities.GetRandomElement(choices);
                         return true;
                     }
                 }
@@ -441,22 +382,37 @@ namespace Inner_Maps {
                 return false;
             } else {
                 //if the object does not exceed the size of a build spot, then just give it a random open build spot
-                buildingSpot = Utilities.GetRandomElement(openSpots);
+                if (openSpots.Count > 0) {
+                    buildingSpot = CollectionUtilities.GetRandomElement(openSpots);    
+                } else {
+                    buildingSpot = null;
+                }
+                
                 return buildingSpot != null;
             }
         }
-        private List<BuildSpotTileObject> GetOpenBuildSpotTileObjects(Settlement settlement) {
+        private List<BuildSpotTileObject> GetOpenBuildSpotTileObjects(NPCSettlement npcSettlement) {
             List<BuildSpotTileObject> spots = location.coreTile.region.GetTileObjectsOfType(TILE_OBJECT_TYPE.BUILD_SPOT_TILE_OBJECT).Select(x => x as BuildSpotTileObject).ToList();
             List<BuildSpotTileObject> open = new List<BuildSpotTileObject>();
             for (int i = 0; i < spots.Count; i++) {
                 BuildSpotTileObject buildSpotTileObject = spots[i];
-                if (buildSpotTileObject.spot.IsOpenFor(settlement)) {
+                if (buildSpotTileObject.spot.IsOpenFor(npcSettlement)) {
                     open.Add(buildSpotTileObject);
                 }
             }
             return open;
         }
-        public bool CanBuildSpotFit(LocationStructureObject structureObject, BuildingSpot spot) {
+        public BuildSpotTileObject GetBuildSpotTileObject(BuildingSpot spot) {
+            List<BuildSpotTileObject> spots = location.coreTile.region.GetTileObjectsOfType(TILE_OBJECT_TYPE.BUILD_SPOT_TILE_OBJECT).Select(x => x as BuildSpotTileObject).ToList();
+            for (int i = 0; i < spots.Count; i++) {
+                BuildSpotTileObject buildSpotTileObject = spots[i];
+                if (buildSpotTileObject.spot == spot) {
+                    return buildSpotTileObject;
+                }
+            }
+            return null;
+        }
+        public bool CanBuildSpotFit(LocationStructureObject structureObject, BuildingSpot spot, string builderIdentifier = "NPC") {
             bool isHorizontallyBig = structureObject.IsHorizontallyBig();
             bool isVerticallyBig = structureObject.IsVerticallyBig();
             BuildingSpot currSpot = spot;
@@ -465,13 +421,13 @@ namespace Inner_Maps {
                 //only get build spots that do not have any occupied adjacent spots at their top and right
                 bool hasUnoccupiedNorth = currSpot.neighbours.ContainsKey(GridNeighbourDirection.North)
                                           && currSpot.neighbours[GridNeighbourDirection.North].isOccupied == false
-                                          && currSpot.neighbours[GridNeighbourDirection.North].hexTileOwner != null;
+                                          && currSpot.neighbours[GridNeighbourDirection.North].CanBeBuiltOnBy(builderIdentifier);
                 bool hasUnoccupiedEast = currSpot.neighbours.ContainsKey(GridNeighbourDirection.East)
                                          && currSpot.neighbours[GridNeighbourDirection.East].isOccupied == false
-                                         && currSpot.neighbours[GridNeighbourDirection.East].hexTileOwner != null;
+                                         && currSpot.neighbours[GridNeighbourDirection.East].CanBeBuiltOnBy(builderIdentifier);
                 bool hasUnoccupiedNorthEast = currSpot.neighbours.ContainsKey(GridNeighbourDirection.North_East)
                                          && currSpot.neighbours[GridNeighbourDirection.North_East].isOccupied == false
-                                         && currSpot.neighbours[GridNeighbourDirection.North_East].hexTileOwner != null;
+                                         && currSpot.neighbours[GridNeighbourDirection.North_East].CanBeBuiltOnBy(builderIdentifier);
                 if (hasUnoccupiedNorth && hasUnoccupiedEast && hasUnoccupiedNorthEast) {
                     return true;
                 }
@@ -480,7 +436,7 @@ namespace Inner_Maps {
                 //only get build spots that do not have any occupied adjacent spots at their right
                 bool hasUnoccupiedEast = currSpot.neighbours.ContainsKey(GridNeighbourDirection.East) 
                                          && currSpot.neighbours[GridNeighbourDirection.East].isOccupied == false
-                                         && currSpot.neighbours[GridNeighbourDirection.East].hexTileOwner != null;
+                                         && currSpot.neighbours[GridNeighbourDirection.East].CanBeBuiltOnBy(builderIdentifier);
                 if (hasUnoccupiedEast) {
                     return true;
                 }
@@ -489,7 +445,7 @@ namespace Inner_Maps {
                 //only get build spots that do not have any occupied adjacent spots at their top
                 bool hasUnoccupiedNorth = currSpot.neighbours.ContainsKey(GridNeighbourDirection.North) 
                                           && currSpot.neighbours[GridNeighbourDirection.North].isOccupied == false
-                                          && currSpot.neighbours[GridNeighbourDirection.North].hexTileOwner != null;
+                                          && currSpot.neighbours[GridNeighbourDirection.North].CanBeBuiltOnBy(builderIdentifier);
                 if (hasUnoccupiedNorth) {
                     return true;
                 }
@@ -499,13 +455,34 @@ namespace Inner_Maps {
             }
             return false;
         }
+        public void PlaceBuildSpotTileObjects() {
+            for (int x = 0; x <= buildingSpots.GetUpperBound(0); x++) {
+                for (int y = 0; y <= buildingSpots.GetUpperBound(1); y++) {
+                    BuildingSpot spot = buildingSpots[x, y];
+                    if (spot.canBeBuiltOnByNPC) {
+                        BuildSpotTileObject tileObj =
+                            InnerMapManager.Instance.CreateNewTileObject<BuildSpotTileObject>(TILE_OBJECT_TYPE
+                                .BUILD_SPOT_TILE_OBJECT);
+                        tileObj.SetBuildingSpot(spot);
+                        LocationGridTile tileLocation = map[spot.location.x, spot.location.y];
+                        tileLocation.structure.AddPOI(tileObj, tileLocation, false);
+                        tileObj.SetGridTileLocation(tileLocation); //manually placed so that only the data of the build spot will be set, and the tile will not consider the build spot as objHere
+                        if (tileLocation.structure.structureType != STRUCTURE_TYPE.WORK_AREA && tileLocation.structure.structureType != STRUCTURE_TYPE.WILDERNESS) {
+                            tileLocation.structure.SetOccupiedBuildSpot(tileObj);
+                        }    
+                    }
+                }
+            }
+        }
         #endregion
 
         #region Structures
-        public void PlaceStructureObjectAt(BuildingSpot chosenBuildingSpot, GameObject structurePrefab, LocationStructure structure) {
+        public void PlaceStructureObjectAt(BuildingSpot chosenBuildingSpot, GameObject structurePrefab, 
+            LocationStructure structure, BuildSpotTileObject buildSpotTileObject = null) {
+            
             GameObject structureGo = ObjectPoolManager.Instance.InstantiateObjectFromPool(structurePrefab.name, Vector3.zero, Quaternion.identity, structureParent);
             LocationStructureObject structureObjectPrefab = structureGo.GetComponent<LocationStructureObject>();
-            structureGo.transform.localPosition = chosenBuildingSpot.GetPositionToPlaceStructure(structureObjectPrefab, structure.structureType);
+            structureGo.transform.localPosition = chosenBuildingSpot.GetPositionToPlaceStructure(structureObjectPrefab);
         
             LocationStructureObject structureObject = structureGo.GetComponent<LocationStructureObject>();
             structureObject.RefreshAllTilemaps();
@@ -523,6 +500,10 @@ namespace Inner_Maps {
             chosenBuildingSpot.UpdateAdjacentSpotsOccupancy(this);
 
             structure.SetStructureObject(structureObject);
+            if (buildSpotTileObject != null) {
+                structure.SetOccupiedBuildSpot(buildSpotTileObject);    
+            }
+            
             structureObject.OnStructureObjectPlaced(this, structure);
         }
         #endregion
@@ -535,49 +516,15 @@ namespace Inner_Maps {
             obj.mapVisual.SetVisual(sprite);
             detailsTilemap.SetTile(tile.localPlace, null);
         }
-        /// <summary>
-        /// Generate details for the work settlement (Crates, Barrels, etc.)
-        /// </summary>
-        /// <param name="insideTiles">Tiles included in the work settlement</param>
-        private IEnumerator WorkAreaDetails(List<LocationGridTile> insideTiles) {
-            //5% of tiles that are adjacent to thin and thick walls should have crates or barrels
-            List<LocationGridTile> tilesForBarrels = new List<LocationGridTile>();
-            for (int i = 0; i < insideTiles.Count; i++) {
-                LocationGridTile currTile = insideTiles[i];
-                if (currTile.IsAdjacentToWall()) {
-                    tilesForBarrels.Add(currTile);
-                }
-            }
-
-            for (int i = 0; i < tilesForBarrels.Count; i++) {
-                LocationGridTile currTile = tilesForBarrels[i];
-                if (Random.Range(0, 100) < 5) {
-                    currTile.hasDetail = true;
-                    detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.crateBarrelTile);
-                    currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
-                    //place tile object
-                    ConvertDetailToTileObject(currTile);
-                    yield return null;
-                }
-            }
-
-            for (int i = 0; i < insideTiles.Count; i++) {
-                LocationGridTile currTile = insideTiles[i];
-                if (!currTile.hasDetail && currTile.HasNeighbouringWalledStructure() == false && currTile.structure.structureType.IsOpenSpace() && Random.Range(0, 100) < 3) {
-                    //3% of tiles should have random garbage
-                    currTile.hasDetail = true;
-                    detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.randomGarbTile);
-                    //place tile object
-                    ConvertDetailToTileObject(currTile);
-                    yield return null;
-                }
-            }
-        }
-        private List<LocationGridTile> GetTiles(Point size, LocationGridTile startingTile, List<LocationGridTile> mustBeIn = null) {
+        public List<LocationGridTile> GetTiles(Point size, LocationGridTile startingTile, List<LocationGridTile> mustBeIn = null) {
             List<LocationGridTile> tiles = new List<LocationGridTile>();
+
+            // int upperBoundX = map.GetUpperBound(0);
+            // int upperBoundY = map.GetUpperBound(1);
+            
             for (int x = startingTile.localPlace.x; x < startingTile.localPlace.x + size.X; x++) {
                 for (int y = startingTile.localPlace.y; y < startingTile.localPlace.y + size.Y; y++) {
-                    if (x > map.GetUpperBound(0) || y > map.GetUpperBound(1)) {
+                    if (x >= width || y >= height) {
                         continue; //skip
                     }
                     if (mustBeIn != null && !mustBeIn.Contains(map[x, y])) {
@@ -600,112 +547,101 @@ namespace Inner_Maps {
             int ySize = maxY - minY;
 
             int batchCount = 0;
+            Vector3Int[] positionArray = new Vector3Int[tiles.Count];
+            TileBase[] groundTilesArray = new TileBase[tiles.Count];
             
             for (int i = 0; i < tiles.Count; i++) {
                 LocationGridTile currTile = tiles[i];
                 float xCoord = (float)currTile.localPlace.x / xSize * 11f + offsetX;
                 float yCoord = (float)currTile.localPlace.y / ySize * 11f + offsetY;
 
-                float xCoordDetail = (float)currTile.localPlace.x / xSize * 8f + offsetX;
-                float yCoordDetail = (float)currTile.localPlace.y / ySize * 8f + offsetY;
-
-                float sample = Mathf.PerlinNoise(xCoord, yCoord);
-                float sampleDetail = Mathf.PerlinNoise(xCoordDetail, yCoordDetail);
+                float floorSample = Mathf.PerlinNoise(xCoord, yCoord);
+                positionArray[i] = currTile.localPlace;
                 //ground
                 if (location.coreTile.biomeType == BIOMES.SNOW || location.coreTile.biomeType == BIOMES.TUNDRA) {
-                    if (sample < 0.5f) {
-                        currTile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.snowTile);
-                    } else if (sample >= 0.5f && sample < 0.8f) {
-                        currTile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.stoneTile);
+                    if (floorSample < 0.5f) {
+                        groundTilesArray[i] = InnerMapManager.Instance.assetManager.snowTile;
+                    } else if (floorSample >= 0.5f && floorSample < 0.8f) {
+                        groundTilesArray[i] = InnerMapManager.Instance.assetManager.snowDirt;
                     } else {
-                        currTile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.snowDirt);
+                        groundTilesArray[i] = InnerMapManager.Instance.assetManager.stoneTile;
+                    }
+                } else if (location.coreTile.biomeType == BIOMES.DESERT) {
+                    if (floorSample < 0.5f) {
+                        groundTilesArray[i] = InnerMapManager.Instance.assetManager.desertGrassTile;
+                    } else if (floorSample >= 0.5f && floorSample < 0.8f) {
+                        groundTilesArray[i] = InnerMapManager.Instance.assetManager.desertSandTile;
+                    } else {
+                        groundTilesArray[i] = InnerMapManager.Instance.assetManager.desertStoneGroundTile;
                     }
                 } else {
-                    if (sample < 0.5f) {
-                        currTile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.grassTile);
-                    } else if (sample >= 0.5f && sample < 0.8f) {
-                        currTile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.soilTile);
+                    if (floorSample < 0.5f) {
+                        groundTilesArray[i] = InnerMapManager.Instance.assetManager.grassTile;
+                    } else if (floorSample >= 0.5f && floorSample < 0.8f) {
+                        groundTilesArray[i] = InnerMapManager.Instance.assetManager.soilTile;
                     } else {
-                        currTile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.stoneTile);
+                        groundTilesArray[i] = InnerMapManager.Instance.assetManager.stoneTile;
                     }
-               
                 }
                 currTile.SetPreviousGroundVisual(null);
-
-                //trees and shrubs
-                if (!currTile.hasDetail && currTile.HasNeighbouringWalledStructure() == false) {
-                    if (sampleDetail < 0.5f) {
-                        if (currTile.groundType == LocationGridTile.Ground_Type.Grass || currTile.groundType == LocationGridTile.Ground_Type.Snow) {
-                            List<LocationGridTile> overlappedTiles = GetTiles(new Point(2, 2), currTile, tiles);
-                            int invalidOverlap = overlappedTiles.Count(t => t.hasDetail || !tiles.Contains(t) || t.objHere != null);
-                            if (!currTile.IsAtEdgeOfMap() 
-                                && !currTile.HasNeighborAtEdgeOfMap() && invalidOverlap == 0 
-                                && overlappedTiles.Count == 4 && Random.Range(0, 100) < 5) {
-                                //big tree
-                                for (int j = 0; j < overlappedTiles.Count; j++) {
-                                    LocationGridTile ovTile = overlappedTiles[j];
-                                    ovTile.hasDetail = true;
-                                    detailsTilemap.SetTile(ovTile.localPlace, null);
-                                    ovTile.SetTileState(LocationGridTile.Tile_State.Occupied);
-                                    //ovTile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
-                                }
-                                detailsTilemap.SetTile(currTile.localPlace, GetBigTreeTile(location));
-                                currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
-                                ConvertDetailToTileObject(currTile);
-                                //currTile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
-                            } else {
-                                if (Random.Range(0, 100) < 50) {
-                                    //shrubs
-                                    if (location.coreTile.biomeType != BIOMES.SNOW && location.coreTile.biomeType != BIOMES.TUNDRA) {
-                                        currTile.hasDetail = true;
-                                        detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.shrubTile);
-                                        if (currTile.structure != null) {
-                                            //place tile object
-                                            ConvertDetailToTileObject(currTile);
-                                        } else {
-                                            //place detail instead
-                                            currTile.SetTileState(LocationGridTile.Tile_State.Empty);
-                                            Matrix4x4 m = Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(0f, 0f, Random.Range(0f, 360f)), Vector3.one);
-                                            detailsTilemap.RemoveTileFlags(currTile.localPlace, TileFlags.LockTransform);
-                                            detailsTilemap.SetTransformMatrix(currTile.localPlace, m);
-                                        }
-                                    }
-                                } else {
-                                    currTile.hasDetail = true;
-                                    detailsTilemap.SetTile(currTile.localPlace, GetTreeTile(location));
-                                    if (currTile.structure != null) {
-                                        ConvertDetailToTileObject(currTile);
-                                    } else {
-                                        //this is for details on tiles on the border.
-                                        //normal tree
-                                        currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
-                                        Matrix4x4 m = Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(0f, 0f, Random.Range(0f, 360f)), Vector3.one);
-                                        detailsTilemap.RemoveTileFlags(currTile.localPlace, TileFlags.LockTransform);
-                                        detailsTilemap.SetTransformMatrix(currTile.localPlace, m);
-                                    }
-                                }
-                            }
-                        }
-                    } else {
-                        currTile.hasDetail = false;
-                        detailsTilemap.SetTile(currTile.localPlace, null);
-                    }
-                }
-                batchCount++;
-                if (batchCount == MapGenerationData.InnerMapDetailBatches) {
-                    batchCount = 0;
-                    yield return null;    
-                }
+                
+                // batchCount++;
+                // if (batchCount == MapGenerationData.InnerMapDetailBatches) {
+                //     batchCount = 0;
+                //     yield return null;    
+                // }
             }
 
+            MassSetGroundTileMapVisuals(positionArray, groundTilesArray);
+            
             batchCount = 0;
             //flower, rock and garbage
             for (int i = 0; i < tiles.Count; i++) {
                 LocationGridTile currTile = tiles[i];
+                
+                if (ReferenceEquals(currTile.buildSpotOwner.hexTileOwner, null) == false) {
+                    if ((currTile.buildSpotOwner.hexTileOwner.elevationType == ELEVATION.MOUNTAIN 
+                         || currTile.buildSpotOwner.hexTileOwner.elevationType == ELEVATION.WATER)) {
+                        continue; //skip other details generation for tiles belonging to mountain or water tiles, since they will be overwritten after ElevationStructureGeneration anyway.    
+                    }
+                    if (currTile.buildSpotOwner.hexTileOwner.landmarkOnTile != null 
+                        && currTile.buildSpotOwner.hexTileOwner.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.MONSTER_LAIR) {
+                        continue; //skip other details generation for tiles belonging to monster lair, since they will be overwritten anyway.    
+                    }
+                }
+                
+                float xCoordDetail = (float)currTile.localPlace.x / xSize * 8f + offsetX;
+                float yCoordDetail = (float)currTile.localPlace.y / ySize * 8f + offsetY;
+                float sampleDetail = Mathf.PerlinNoise(xCoordDetail, yCoordDetail);
+                
+                //trees and shrubs
                 if (!currTile.hasDetail && currTile.HasNeighbouringWalledStructure() == false) {
+                    if (sampleDetail < 0.5f) {
+                        if (currTile.groundType == LocationGridTile.Ground_Type.Grass || currTile.groundType == LocationGridTile.Ground_Type.Snow) {
+                            if (Random.Range(0, 100) < 50) {
+                                //shrubs
+                                if (location.coreTile.biomeType != BIOMES.SNOW && location.coreTile.biomeType != BIOMES.TUNDRA) {
+                                    currTile.hasDetail = true;
+                                    detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.shrubTile);
+                                    if (currTile.structure != null) {
+                                        //place tile object
+                                        ConvertDetailToTileObject(currTile);
+                                    } else {
+                                        //place detail instead
+                                        currTile.SetTileState(LocationGridTile.Tile_State.Empty);
+                                        Matrix4x4 m = Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(0f, 0f, Random.Range(0f, 360f)), Vector3.one);
+                                        detailsTilemap.RemoveTileFlags(currTile.localPlace, TileFlags.LockTransform);
+                                        detailsTilemap.SetTransformMatrix(currTile.localPlace, m);
+                                    }
+                                    continue; //go to next tile.
+                                }
+                            }
+                        }
+                    } 
+                    
                     if (Random.Range(0, 100) < 3) {
                         currTile.hasDetail = true;
-                        detailsTilemap.SetTile(currTile.localPlace, GetFlowerTile(location));
+                        detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.GetFlowerTile(location));
                         if (currTile.structure != null) {
                             ConvertDetailToTileObject(currTile);
                         } else {
@@ -714,7 +650,7 @@ namespace Inner_Maps {
                         
                     } else if (Random.Range(0, 100) < 4) {
                         currTile.hasDetail = true;
-                        detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.rockTile);
+                        detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.GetRockTile(location));
                         if (currTile.structure != null) {
                             ConvertDetailToTileObject(currTile);
                         } else {
@@ -722,7 +658,7 @@ namespace Inner_Maps {
                         }
                     } else if (Random.Range(0, 100) < 3) {
                         currTile.hasDetail = true;
-                        detailsTilemap.SetTile(currTile.localPlace, GetGarbTile(location));
+                        detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.GetGarbTile(location));
                         if (currTile.structure != null) {
                             ConvertDetailToTileObject(currTile);
                         } else {
@@ -730,6 +666,7 @@ namespace Inner_Maps {
                         }
                     }
                 }
+                
                 batchCount++;
                 if (batchCount == MapGenerationData.InnerMapDetailBatches) {
                     batchCount = 0;
@@ -737,44 +674,28 @@ namespace Inner_Maps {
                 }
             }
         }
-        public IEnumerator GenerateDetails() {
+        protected IEnumerator GenerateDetails(MapGenerationComponent mapGenerationComponent) {
+            System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+            stopwatch.Start();
             //Generate details for the outside map
-            yield return StartCoroutine(MapPerlinDetails(
-                allTiles.Where(x =>
-                    x.objHere == null
-                    && x.buildSpotOwner.hexTileOwner != null
-                    && (x.structure == null || x.structure.structureType == STRUCTURE_TYPE.WILDERNESS || x.structure.structureType == STRUCTURE_TYPE.WORK_AREA)
-                    && x.tileType != LocationGridTile.Tile_Type.Wall
-                    && !x.isLocked
-                    && !x.IsAdjacentTo(typeof(MagicCircle))
-                ).ToList()
-            ));
-
-            if (location.locationType != LOCATION_TYPE.DUNGEON) {
-                if (location.structures.ContainsKey(STRUCTURE_TYPE.WORK_AREA)) {
-                    //only put details on tiles that
-                    //  - do not already have details
-                    //  - is not a road
-                    //  - does not have an object place there (Point of Interest)
-                    //  - is not near the gate (so as not to block path going outside)
-
-                    //Generate details for inside map (Trees, shrubs, etc.)
-                    yield return StartCoroutine(MapPerlinDetails(location.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA).tiles
-                        .Where(x => 
-                            !x.hasDetail
-                            && x.objHere == null 
-                            && !x.isLocked).ToList()));
-
-                    //Generate details for work settlement (crates, barrels)
-                    yield return StartCoroutine(WorkAreaDetails(location.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA).tiles
-                        .Where(x => 
-                            !x.hasDetail 
-                            && x.objHere == null 
-                            && !x.isLocked
-                            && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Structure_Entrance)).ToList()));
-                }
+            List<LocationGridTile> tilesToPerlin = allTiles.Where(x =>
+                x.objHere == null
+                && (x.structure == null || x.structure.structureType == STRUCTURE_TYPE.WILDERNESS ||
+                    x.structure.structureType == STRUCTURE_TYPE.WORK_AREA)
+                && x.tileType != LocationGridTile.Tile_Type.Wall
+                && !x.isLocked
+                && !x.IsAdjacentTo(typeof(MagicCircle))
+            ).ToList();
+            yield return StartCoroutine(MapPerlinDetails(tilesToPerlin));
+            stopwatch.Stop();
+            mapGenerationComponent.AddLog($"{location.name} GenerateDetails took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
+        }
+        private void MassSetGroundTileMapVisuals(Vector3Int[] tilePositions, TileBase[] groundAssets) {
+            groundTilemap.SetTiles(tilePositions, groundAssets);
+            for (int i = 0; i < tilePositions.Length; i++) {
+                LocationGridTile tile = map[tilePositions[i].x, tilePositions[i].y];
+                tile.UpdateGroundTypeBasedOnAsset();
             }
-            yield return StartCoroutine(CreateSeamlessEdges());
         }
         #endregion
 
@@ -784,7 +705,7 @@ namespace Inner_Maps {
                 && UIManager.Instance.characterInfoUI.activeCharacter.currentRegion == location.coreTile.region
                 && !UIManager.Instance.characterInfoUI.activeCharacter.isDead
                 //&& UIManager.Instance.characterInfoUI.activeCharacter.isWaitingForInteraction <= 0
-                && UIManager.Instance.characterInfoUI.activeCharacter.marker != null
+                && UIManager.Instance.characterInfoUI.activeCharacter.marker
                 && UIManager.Instance.characterInfoUI.activeCharacter.marker.pathfindingAI.hasPath
                 && (UIManager.Instance.characterInfoUI.activeCharacter.stateComponent.currentState == null 
                     || (UIManager.Instance.characterInfoUI.activeCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.PATROL 

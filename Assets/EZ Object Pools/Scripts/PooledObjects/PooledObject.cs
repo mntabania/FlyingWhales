@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace EZObjectPools
 {
@@ -26,7 +27,8 @@ namespace EZObjectPools
             if (ParentPool) {
                 ParentPool.AddToAvailableObjects(this.gameObject);
             } else {
-                Debug.LogWarning("PooledObject " + gameObject.name + " does not have a parent pool. If this occurred during a scene transition, ignore this. Otherwise reoprt to developer.");
+                throw new Exception(
+                    $"PooledObject {gameObject.name} does not have a parent pool. If this occurred during a scene transition, ignore this. Otherwise report to developer.");
             }
         }
 

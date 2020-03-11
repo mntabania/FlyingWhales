@@ -1,42 +1,44 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Inner_Maps;
 using UnityEngine;
 
-public class BigTreeObject : TileObject {
-	public int yield { get; private set; }
-	
+public class BigTreeObject : TreeObject {
+	public override Vector2 selectableSize => new Vector2(1.7f, 1.7f);
 	public BigTreeObject() {
 		advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CHOP_WOOD, INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.REPAIR };
 		Initialize(TILE_OBJECT_TYPE.BIG_TREE_OBJECT);
-		SetYield(100);
+		SetYield(InnerMapManager.Big_Tree_Yield);
+		traitContainer.AddTrait(this, "Immovable");
 	}
 	public BigTreeObject(SaveDataTileObject data) {
 		advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CHOP_WOOD, INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.REPAIR };
 		Initialize(data);
+		traitContainer.AddTrait(this, "Immovable");
 	}
 
 	public override string ToString() {
-		return "Big Tree " + id.ToString();
+		return $"Big Tree {id.ToString()}";
 	}
 
-	//public int GetSupplyPerMine() {
-	//    if (yield < Supply_Per_Mine) {
-	//        return yield;
-	//    }
-	//    return Supply_Per_Mine;
-	//}
-	public void AdjustYield(int amount) {
-		yield += amount;
-		yield = Mathf.Max(0, yield);
-		if (yield == 0) {
-			LocationGridTile loc = gridTileLocation;
-			structureLocation.RemovePOI(this);
-			SetGridTileLocation(loc); //so that it can still be targetted by aware characters.
+	public static bool CanBePlacedOnTile(LocationGridTile tile) {
+		if (tile.isOccupied) {
+			return false;
 		}
-	}
-	private void SetYield(int amount) {
-		yield = amount;
+		if (tile.groundType == LocationGridTile.Ground_Type.Bone) {
+			return false;
+		}
+		if (tile.structure != null && tile.structure.structureType.IsOpenSpace() == false) {
+			return false;
+		}
+		if (tile.HasNeighbourOfType(LocationGridTile.Tile_Type.Wall)) {
+			return false;
+		}
+		List<LocationGridTile> overlappedTiles = tile.parentMap.GetTiles(new Point(2, 2), tile);
+		int invalidOverlap = overlappedTiles.Count(t => t.hasDetail || t.objHere != null|| t.buildSpotOwner.canBeBuiltOnByNPC == false || t.tileType == LocationGridTile.Tile_Type.Wall);
+
+		return invalidOverlap <= 0;
 	}
 }
 

@@ -16,9 +16,8 @@ public class AskForHelpSaveCharacter : GoapAction {
             TIME_IN_WORDS.EARLY_NIGHT,
             TIME_IN_WORDS.LATE_NIGHT,
         };
-        isNotificationAnIntel = false;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
     }
 
    // #region Overrides
@@ -26,7 +25,7 @@ public class AskForHelpSaveCharacter : GoapAction {
    //     _requirementAction = Requirement;
    // }
    // //protected override void ConstructPreconditionsAndEffects() {
-   // //    AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = actor.homeSettlement, targetPOI = poiTarget });
+   // //    AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = actor.homeNpcSettlement, targetPOI = poiTarget });
    // //}
    // public override void Perform(ActualGoapNode goapNode) {
    //     base.Perform(goapNode);
@@ -70,7 +69,7 @@ public class AskForHelpSaveCharacter : GoapAction {
 
 public class AskForHelpSaveCharacterData : GoapActionData {
     public AskForHelpSaveCharacterData() : base(INTERACTION_TYPE.ASK_FOR_HELP_SAVE_CHARACTER) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
         requirementAction = Requirement;
     }
 

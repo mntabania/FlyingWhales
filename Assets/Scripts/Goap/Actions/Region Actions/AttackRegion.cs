@@ -2,7 +2,7 @@
     
     public AttackRegion() : base(INTERACTION_TYPE.ATTACK_REGION) {
         actionIconString = GoapActionStateDB.Hostile_Icon;
-        isNotificationAnIntel = false;
+        
         advertisedBy = new[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
@@ -16,7 +16,7 @@
         base.Perform(goapNode);
         SetState("Attack Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 1;
     }
     public override void AddFillersToLog(Log log, ActualGoapNode node) {
@@ -43,7 +43,7 @@
     public void PreAttackSuccess(ActualGoapNode goapNode) {
         goapNode.descriptionLog.AddToFillers(goapNode.poiTarget.gridTileLocation.structure.location, goapNode.poiTarget.gridTileLocation.structure.location.name, LOG_IDENTIFIER.LANDMARK_1);
         goapNode.descriptionLog.AddToFillers(goapNode.poiTarget.gridTileLocation.structure.location.coreTile.region, 
-            Utilities.NormalizeString(goapNode.poiTarget.gridTileLocation.structure.location.coreTile.region.mainLandmark.specificLandmarkType.ToString()),
+            UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(goapNode.poiTarget.gridTileLocation.structure.location.coreTile.region.mainLandmark.specificLandmarkType.ToString()),
             LOG_IDENTIFIER.STRING_1);
         goapNode.poiTarget.RemoveAdvertisedAction(INTERACTION_TYPE.ATTACK_REGION); //this is so that other characters cannot attack this region when another character is already attacking it.
     }

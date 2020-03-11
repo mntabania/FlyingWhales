@@ -113,8 +113,8 @@ public class AchievementManager : MonoBehaviour {
         GUILayout.BeginArea(new Rect(Screen.width - 300, 0, 300, 800));
         foreach (SteamAchievement ach in m_Achievements) {
             GUILayout.Label(ach.m_eAchievementID.ToString());
-            GUILayout.Label(ach.m_strName + " - " + ach.m_strDescription);
-            GUILayout.Label("Achieved: " + ach.m_bAchieved);
+            GUILayout.Label($"{ach.m_strName} - {ach.m_strDescription}");
+            GUILayout.Label($"Achieved: {ach.m_bAchieved}");
             GUILayout.Space(20);
         }
 
@@ -153,14 +153,15 @@ public class AchievementManager : MonoBehaviour {
                         ach.m_strName = SteamUserStats.GetAchievementDisplayAttribute(ach.m_eAchievementID.ToString(), "name");
                         ach.m_strDescription = SteamUserStats.GetAchievementDisplayAttribute(ach.m_eAchievementID.ToString(), "desc");
                     } else {
-                        Debug.LogWarning("SteamUserStats.GetAchievement failed for Achievement " + ach.m_eAchievementID + "\nIs it registered in the Steam Partner site?");
+                        Debug.LogWarning(
+                            $"SteamUserStats.GetAchievement failed for Achievement {ach.m_eAchievementID}\nIs it registered in the Steam Partner site?");
                     }
                 }
 
                 // load stats
                 SteamUserStats.GetStat("snatched_characters", out charactersSnatched);
             } else {
-                Debug.Log("RequestStats - failed, " + val.m_eResult);
+                Debug.Log($"RequestStats - failed, {val.m_eResult}");
             }
         }
     }
@@ -179,7 +180,7 @@ public class AchievementManager : MonoBehaviour {
                 callback.m_nGameID = (ulong)_gameID;
                 OnUserStatsReceived(callback);
             } else {
-                Debug.Log("StoreStats - failed, " + val.m_eResult);
+                Debug.Log($"StoreStats - failed, {val.m_eResult}");
             }
         }
     }
@@ -187,9 +188,10 @@ public class AchievementManager : MonoBehaviour {
         // We may get callbacks for other games' stats arriving, ignore them
         if ((ulong)_gameID == val.m_nGameID) {
             if (0 == val.m_nMaxProgress) {
-                Debug.Log("Achievement '" + val.m_rgchAchievementName + "' unlocked!");
+                Debug.Log($"Achievement '{val.m_rgchAchievementName}' unlocked!");
             } else {
-                Debug.Log("Achievement '" + val.m_rgchAchievementName + "' progress callback, (" + val.m_nCurProgress + "," + val.m_nMaxProgress + ")");
+                Debug.Log(
+                    $"Achievement '{val.m_rgchAchievementName}' progress callback, ({val.m_nCurProgress},{val.m_nMaxProgress})");
             }
         }
     }
@@ -216,7 +218,7 @@ public class AchievementManager : MonoBehaviour {
     private void OnCharacterSnatched(Character snatchedCharacter) {
         charactersSnatched++;
         shouldStoreStats = true;
-        Debug.Log("Incremented snatched characters to " + charactersSnatched.ToString());
+        Debug.Log($"Incremented snatched characters to {charactersSnatched}");
     }
     #endregion
 

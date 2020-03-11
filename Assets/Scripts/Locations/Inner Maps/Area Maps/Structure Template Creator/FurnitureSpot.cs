@@ -13,7 +13,7 @@ public struct FurnitureSpot {
         string summary = string.Empty;
         if (allowedFurnitureTypes != null) {
             for (int i = 0; i < allowedFurnitureTypes.Length; i++) {
-                summary += "|" + allowedFurnitureTypes[i].ToString() + "|";
+                summary += $"|{allowedFurnitureTypes[i]}|";
             }
         }
         return summary;

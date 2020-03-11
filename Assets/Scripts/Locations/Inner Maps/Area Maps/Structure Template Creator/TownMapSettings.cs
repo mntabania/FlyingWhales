@@ -18,11 +18,11 @@ public class TownMapSettings {
     }
 
     public void LogInfo() {
-        string info = "Town Map Info: " + size.ToString();
-        info += "\nGround tiles: " + groundTiles.Length.ToString();
-        info += "\nStructure tiles: " + structureTiles.Length.ToString();
-        info += "\nObejct tiles: " + objectTiles.Length.ToString();
-        info += "\nDetail tiles: " + detailTiles.Length.ToString();
+        string info = $"Town Map Info: {size}";
+        info += $"\nGround tiles: {groundTiles.Length}";
+        info += $"\nStructure tiles: {structureTiles.Length}";
+        info += $"\nObejct tiles: {objectTiles.Length}";
+        info += $"\nDetail tiles: {detailTiles.Length}";
         //Debug.Log(info);
     }
 

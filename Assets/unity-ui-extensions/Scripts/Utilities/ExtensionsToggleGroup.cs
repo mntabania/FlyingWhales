@@ -99,12 +99,12 @@ namespace UnityEngine.UI
 
         public void HasTheGroupToggle(bool value)
         {
-            Debug.Log("Testing, the group has toggled [" + value + "]");
+            Debug.Log($"Testing, the group has toggled [{value}]");
         }
 
         public void HasAToggleFlipped(bool value)
         {
-            Debug.Log("Testing, a toggle has toggled [" + value + "]");
+            Debug.Log($"Testing, a toggle has toggled [{value}]");
         }
     }
 }

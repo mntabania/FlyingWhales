@@ -5,7 +5,7 @@ public class ForageFoodRegion : GoapAction {
     
     public ForageFoodRegion() : base(INTERACTION_TYPE.FORAGE_FOOD_REGION) {
         actionIconString = GoapActionStateDB.Work_Icon;
-        isNotificationAnIntel = false;
+        
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
@@ -19,7 +19,7 @@ public class ForageFoodRegion : GoapAction {
         base.Perform(goapNode);
         SetState("Forage Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 25;
     }
     #endregion
@@ -31,7 +31,7 @@ public class ForageFoodRegion : GoapAction {
             //**Requirements:** Actor is a Hunter. Region has a Game feature.
             var region = poiTarget.gridTileLocation.parentMap.location.coreTile.region;
             return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null &&
-                   actor.traitContainer.GetNormalTrait<Trait>("Hunter") != null && 
+                   actor.traitContainer.HasTrait("Hunter") && 
                    region.HasTileWithFeature(TileFeatureDB.Game_Feature);
         }
         return false;

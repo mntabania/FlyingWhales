@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d1514134bc4fbd41bb739b1b9a49231, type: 3}
+  m_Name: CorruptionDetailRuleTile
+  m_EditorClassIdentifier: 
+  m_DefaultSprite: {fileID: 0}
+  m_DefaultColliderType: 1
+  m_TilingRules:
+  - m_Neighbors: 0000000000000000000000000000000000000000000000000000000000000000
+    m_Sprites:
+    - {fileID: 21300000, guid: 13f726f15ee6ea34cbd60eca21aad16e, type: 3}
+    - {fileID: 21300000, guid: c2c6bbeed0739774a8fc8398abfee8d7, type: 3}
+    - {fileID: 21300000, guid: db212fbf853dc1e44b4726b914e182cb, type: 3}
+    - {fileID: 21300000, guid: 0e2ded400141bfc4191c94c755f516ab, type: 3}
+    - {fileID: 21300000, guid: d9851b7c1e52b5143a5706d460ba9f86, type: 3}
+    - {fileID: 21300000, guid: aa784f94479752e439311348522f0da2, type: 3}
+    - {fileID: 21300000, guid: 4d7baa1150d01a3489537ecae01fea5b, type: 3}
+    - {fileID: 21300000, guid: 22becd511f8a28743a56f5b6dd9610f8, type: 3}
+    - {fileID: 21300000, guid: d294a7b6319977843a85eb1a556f432e, type: 3}
+    m_AnimationSpeed: 1
+    m_PerlinScale: 0.5
+    m_RuleTransform: 0
+    m_Output: 1
+    m_ColliderType: 1
+    m_RandomTransform: 0

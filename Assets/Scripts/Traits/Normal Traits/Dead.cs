@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps.Location_Structures;
+using Locations.Settlements;
 using UnityEngine;
 
 namespace Traits {
-    public class Dead : Trait {
+    public class Dead : Status {
         public List<Character> charactersThatSawThisDead { get; private set; }
         public Dead() {
             name = "Dead";
@@ -17,6 +19,7 @@ namespace Traits {
             hindersMovement = true;
             hindersWitness = true;
             hindersAttackTarget = true;
+            hindersPerform = true;
         }
 
         #region General
@@ -26,47 +29,36 @@ namespace Traits {
         #endregion
 
         #region Overrides
+        public override void OnAddTrait(ITraitable addedTo) {
+            base.OnAddTrait(addedTo);
+            if (addedTo is Character character) {
+                if (character.IsNPC() && character.gridTileLocation != null && character.gridTileLocation.IsNextToOrPartOfSettlement(out var settlement)
+                    && settlement is NPCSettlement npcSettlement) {
+                    LocationStructure targetStructure = npcSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.CEMETERY) ??
+                                                        npcSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+                    GoapPlanJob buryJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BURY, INTERACTION_TYPE.BURY_CHARACTER, character, npcSettlement);
+                    buryJob.SetCanTakeThisJobChecker(InteractionManager.Instance.CanTakeBuryJob);
+                    buryJob.AddOtherData(INTERACTION_TYPE.BURY_CHARACTER, new object[]{ targetStructure });
+                    buryJob.SetStillApplicableChecker(() => IsBuryJobStillApplicable(character, npcSettlement));
+                    npcSettlement.AddToAvailableJobs(buryJob);
+                }
+            }
+        }
+        private bool IsBuryJobStillApplicable(Character target, NPCSettlement npcSettlement) {
+            return target.gridTileLocation != null && target.gridTileLocation.IsNextToOrPartOfSettlement(npcSettlement);
+        }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
-            if (removedFrom is ITraitable) {
+            if (removedFrom is Character) {
                 Character owner = removedFrom as Character;
                 owner.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.BURY);
             }
-        }
-        public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
-            if (traitOwner is Character) {
-                Character targetCharacter = traitOwner as Character;
-                if (responsibleCharacter != characterThatWillDoJob && targetCharacter.race != RACE.SKELETON && !(targetCharacter is Summon) 
-                    && characterThatWillDoJob.currentRegion.HasStructure(STRUCTURE_TYPE.CEMETERY)) { //Do not create bury job if there is no cemetery
-                    GoapPlanJob currentJob = targetCharacter.GetJobTargettingThisCharacter(JOB_TYPE.BURY);
-                    if (currentJob == null) {
-                        //buryJob.AllowDeadTargets();
-                        //buryJob.SetCanBeDoneInLocation(true);
-                        if (InteractionManager.Instance.CanTakeBuryJob(characterThatWillDoJob)) {
-                            GoapPlanJob buryJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BURY, INTERACTION_TYPE.BURY_CHARACTER, targetCharacter, characterThatWillDoJob);
-                            characterThatWillDoJob.jobQueue.AddJobInQueue(buryJob);
-                            return true;
-                        }
-                        //else {
-                        //    buryJob.SetCanTakeThisJobChecker(InteractionManager.Instance.CanTakeBuryJob);
-                        //    characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(buryJob);
-                        //    return false;
-                        //}
-                    } 
-                    //else {
-                    //    if (InteractionManager.Instance.CanTakeBuryJob(characterThatWillDoJob, currentJob)) {
-                    //        return TryTransferJob(currentJob, characterThatWillDoJob);
-                    //    }
-                    //}
-                }
-            }
-            return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
         }
         public override string GetToolTipText() {
             if (responsibleCharacter == null) {
                 return description;
             }
-            return "This character was killed by " + responsibleCharacter.name;
+            return $"This character was killed by {responsibleCharacter.name}";
         }
         #endregion
     }

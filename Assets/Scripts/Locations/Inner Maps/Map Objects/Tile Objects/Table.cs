@@ -2,21 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using UnityEngine;
-using UnityEngine.Tilemaps;
+using UtilityScripts;
 
 public class Table : TileObject {
-    //private Character[] users;
-    public TileBase usedAsset { get; private set; }
-    public int food { get { return storedResources[RESOURCE.FOOD]; } }
-    //private int slots {
-    //    get { return users.Length;}
-    //}
-
+    public int food => storedResources[RESOURCE.FOOD];
     public Table() {
         advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.DRINK, INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.DROP_RESOURCE, INTERACTION_TYPE.REPAIR, INTERACTION_TYPE.SIT };
         Initialize(TILE_OBJECT_TYPE.TABLE);
-        SetFood(UnityEngine.Random.Range(20, 81));
+        SetFood(UnityEngine.Random.Range(20, 81)); //20
         //SetFood(0);
         traitContainer.AddTrait(this, "Edible");
     }
@@ -25,9 +20,6 @@ public class Table : TileObject {
         advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.DRINK, INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.DROP_RESOURCE, INTERACTION_TYPE.REPAIR, INTERACTION_TYPE.SIT };
         Initialize(data);
         traitContainer.AddTrait(this, "Edible");
-    }
-    public void SetUsedAsset(TileBase usedAsset) {
-        this.usedAsset = usedAsset;
     }
 
     #region Overrides
@@ -42,7 +34,7 @@ public class Table : TileObject {
         //}
     }
     public override string ToString() {
-        return "Table " + id.ToString();
+        return $"Table {id}";
     }
     public override void OnDoActionToObject(ActualGoapNode action) {
         base.OnDoActionToObject(action);
@@ -80,17 +72,30 @@ public class Table : TileObject {
     public override bool CanBeReplaced() {
         return true;
     }
-    protected override void OnPlaceObjectAtTile(LocationGridTile tile) {
-        base.OnPlaceObjectAtTile(tile);
+    protected override void OnPlaceTileObjectAtTile(LocationGridTile tile) {
+        base.OnPlaceTileObjectAtTile(tile);
         if (mapVisual.usedSprite.name.Contains("Bartop")) {
-            CreateNewGUS(new Vector2(0f, 0.5f), new Vector2(1f, 0.5f));
-        } else {
-            CreateNewGUS(Vector2.zero, new Vector2(0.5f, 0.5f));
+            InitializeGUS(new Vector2(0f, 0.5f), new Vector2(1f, 0.5f));
+        } else { 
+            InitializeGUS(Vector2.zero, new Vector2(0.5f, 0.5f));
         }
     }
-    protected override void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom) {
-        base.OnRemoveTileObject(removedBy, removedFrom);
+    public override void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom, bool removeTraits = true, bool destroyTileSlots = true) {
+        base.OnRemoveTileObject(removedBy, removedFrom, removeTraits, destroyTileSlots);
         DestroyExistingGUS();
+    }
+    protected override void ConstructMaxResources() {
+        maxResourceValues = new Dictionary<RESOURCE, int>();
+        RESOURCE[] resourceTypes = CollectionUtilities.GetEnumValues<RESOURCE>();
+        for (int i = 0; i < resourceTypes.Length; i++) {
+            RESOURCE resourceType = resourceTypes[i];
+            maxResourceValues.Add(resourceType, resourceType == RESOURCE.FOOD ? 100 : 0);
+        }
+    }
+    public override string GetAdditionalTestingData() {
+        string data = base.GetAdditionalTestingData();
+        data = $"{data}\n\tFood in Table: {food.ToString()}";
+        return data;
     }
     #endregion
 
@@ -270,24 +275,16 @@ public class Table : TileObject {
     #region Food
     public void AdjustFood(int amount) {
         storedResources[RESOURCE.FOOD] += amount;
-        //if (food < 20) {
-        //    traitContainer.RemoveTrait(this, "Edible"); //to stop advertising eat
-        //} else {
-        //    traitContainer.AddTrait(this, "Edible"); //to advertise eat
-        //}
-        if (food < 0) {
-            storedResources[RESOURCE.FOOD] = 0;
+        storedResources[RESOURCE.FOOD] = Mathf.Clamp(storedResources[RESOURCE.FOOD], 0, maxResourceValues[RESOURCE.FOOD]);
+        if (gridTileLocation != null && structureLocation is Dwelling) {
+            Messenger.Broadcast(Signals.FOOD_IN_DWELLING_CHANGED, this);   
         }
     }
     public void SetFood(int amount) {
         storedResources[RESOURCE.FOOD] = amount;
-        //if (food < 20) {
-        //    traitContainer.RemoveTrait(this, "Edible"); //to stop advertising eat
-        //} else {
-        //    traitContainer.AddTrait(this, "Edible"); //to advertise eat
-        //}
-        if (food < 0) {
-            storedResources[RESOURCE.FOOD] = 0;
+        storedResources[RESOURCE.FOOD] = Mathf.Clamp(storedResources[RESOURCE.FOOD], 0, maxResourceValues[RESOURCE.FOOD]);
+        if (gridTileLocation != null && structureLocation is Dwelling) {
+            Messenger.Broadcast(Signals.FOOD_IN_DWELLING_CHANGED, this);   
         }
     }
     #endregion

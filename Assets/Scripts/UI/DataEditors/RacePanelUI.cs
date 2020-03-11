@@ -64,6 +64,7 @@ public class RacePanelUI : MonoBehaviour {
     public void UpdateTraitOptions() {
         traitOptions.ClearOptions();
         traitOptions.AddOptions(TraitPanelUI.Instance.allTraits);
+        traitOptions.AddOptions(TraitManager.instancedTraits.ToList());
     }
     public void LoadAllData() {
         _traitNames = new List<string>();
@@ -105,9 +106,9 @@ public class RacePanelUI : MonoBehaviour {
         _traitNames.Clear();
         _hpPerLevel.Clear();
         _attackPerLevel.Clear();
-        traitsScrollRect.content.DestroyChildren();
-        hpPerLevelScrollRect.content.DestroyChildren();
-        attackPerLevelScrollRect.content.DestroyChildren();
+        UtilityScripts.Utilities.DestroyChildren(traitsScrollRect.content);
+        UtilityScripts.Utilities.DestroyChildren(hpPerLevelScrollRect.content);
+        UtilityScripts.Utilities.DestroyChildren(attackPerLevelScrollRect.content);
     }
     private void SaveRace() {
         if (raceOptions.value == 0) {
@@ -116,10 +117,12 @@ public class RacePanelUI : MonoBehaviour {
             return;
 #endif
         }
-        string path = Utilities.dataPath + "RaceSettings/" + raceOptions.options[raceOptions.value].text + ".json";
-        if (Utilities.DoesFileExist(path)) {
+        string path =
+            $"{UtilityScripts.Utilities.dataPath}RaceSettings/{raceOptions.options[raceOptions.value].text}.json";
+        if (UtilityScripts.Utilities.DoesFileExist(path)) {
 #if UNITY_EDITOR
-            if (EditorUtility.DisplayDialog("Overwrite Race", "A race with name " + raceOptions.options[raceOptions.value].text + " already exists. Replace with this race?", "Yes", "No")) {
+            if (EditorUtility.DisplayDialog("Overwrite Race",
+                $"A race with name {raceOptions.options[raceOptions.value].text} already exists. Replace with this race?", "Yes", "No")) {
                 File.Delete(path);
                 SaveRaceJson(path);
             }
@@ -143,12 +146,13 @@ public class RacePanelUI : MonoBehaviour {
         //Re-import the file to update the reference in the editor
         UnityEditor.AssetDatabase.ImportAsset(path);
 #endif
-        Debug.Log("Successfully saved race at " + path);
+        Debug.Log($"Successfully saved race at {path}");
     }
 
     private void LoadRace() {
 #if UNITY_EDITOR
-        string filePath = EditorUtility.OpenFilePanel("Select Race", Utilities.dataPath + "RaceSettings/", "json");
+        string filePath = EditorUtility.OpenFilePanel("Select Race",
+            $"{UtilityScripts.Utilities.dataPath}RaceSettings/", "json");
 
         if (!string.IsNullOrEmpty(filePath)) {
             string dataAsJson = File.ReadAllText(filePath);

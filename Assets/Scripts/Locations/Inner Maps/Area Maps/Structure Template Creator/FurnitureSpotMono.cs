@@ -5,9 +5,7 @@ using UnityEngine;
 
 [ExecuteInEditMode]
 public class FurnitureSpotMono : MonoBehaviour {
-
-    [SerializeField] private TextMeshPro furnitureSummary;
-
+    
     public FURNITURE_TYPE[] allowedFurnitureTypes;
     public List<FurnitureSetting> furnitureSettings;
 

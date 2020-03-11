@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using UnityEngine;
 using Traits;
 
@@ -16,7 +17,7 @@ public class Party {
     protected CharacterAvatar _icon;
     protected Faction _attackedByFaction;
     //protected Combat _currentCombat;
-    //protected Settlement _specificLocation;
+    //protected NPCSettlement _specificLocation;
     protected Character _owner;
     //protected int _maxCharacters;
 
@@ -54,7 +55,7 @@ public class Party {
     //public Character mainCharacter {
     //    get { return _characters[0]; }
     //}
-    //public Settlement specificLocation {
+    //public NPCSettlement specificLocation {
     //    get { return _specificLocation; }
     //}
     public virtual Character owner {
@@ -86,9 +87,9 @@ public class Party {
     public Party(Character owner) {
         _owner = owner;
         if (owner != null) {
-            _partyName = owner.name + "'s Party";
+            _partyName = $"{owner.name}'s Party";
         }
-        _id = Utilities.SetID(this);
+        _id = UtilityScripts.Utilities.SetID(this);
         _isDead = false;
         //_characters = new List<Character>();
         //specificLocationHistory = new List<string>();
@@ -123,8 +124,8 @@ public class Party {
         }
         _isDead = true;
         //For now, when a party dies and there still members besides the owner of this party, kick them out of the party first before applying death
-        RemoveCarriedPOI();
-        //Settlement deathLocation = this.specificLocation;
+        owner.UncarryPOI();
+        //NPCSettlement deathLocation = this.specificLocation;
         //LocationStructure deathStructure = owner.currentStructure;
         //this.specificLocation?.RemoveCharacterFromLocation(this);
         //SetSpecificLocation(deathLocation); //set the specific location of this party, to the location it died at
@@ -145,7 +146,7 @@ public class Party {
     #endregion
 
     #region Interface
-    //public void SetSpecificLocation(Settlement location) {
+    //public void SetSpecificLocation(NPCSettlement location) {
     //    if (_specificLocation == location) {
     //        return; //ignore change
     //    }
@@ -165,9 +166,12 @@ public class Party {
     private bool AddTileObject(TileObject tileObject) {
         if (carriedPOI == null) {
             carriedPOI = tileObject;
-            tileObject.SetIsBeingCarriedBy(owner);
+            // tileObject.SetIsBeingCarriedBy(owner);
             if (tileObject.gridTileLocation != null) {
                 tileObject.gridTileLocation.structure.RemovePOIWithoutDestroying(tileObject);
+            }
+            if (tileObject.mapVisual == null) {
+                tileObject.InitializeMapObject(tileObject);
             }
             //tileObject.SetGridTileLocation(owner.gridTileLocation);
             tileObject.collisionTrigger.SetCollidersState(false);
@@ -192,20 +196,21 @@ public class Party {
             character.marker.transform.eulerAngles = Vector3.zero;
             character.marker.nameLbl.gameObject.SetActive(false);
 
-            Plagued targetPlagued = character.traitContainer.GetNormalTrait<Trait>("Plagued") as Plagued;
+            Plagued targetPlagued = character.traitContainer.GetNormalTrait<Plagued>("Plagued");
             if (targetPlagued != null) {
-                string plaguedSummary = owner.name + " carried a plagued character. Rolling for infection.";
+                string plaguedSummary = $"{owner.name} carried a plagued character. Rolling for infection.";
                 int roll = UnityEngine.Random.Range(0, 100);
-                plaguedSummary += "\nRoll is: " + roll.ToString() + ", Chance is: " + targetPlagued.GetCarryInfectChance().ToString();
+                plaguedSummary += $"\nRoll is: {roll}, Chance is: {targetPlagued.GetCarryInfectChance()}";
                 if (roll < targetPlagued.GetCarryInfectChance()) {
                     //carrier will be infected with plague
-                    plaguedSummary += "\nWill infect " + owner.name + " with plague!";
-                    if (owner.traitContainer.AddTrait(owner, "Plagued", character)) {
-                        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "contracted_plague");
-                        log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                        log.AddToFillers(character, character.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                        log.AddLogToInvolvedObjects();
-                    }
+                    plaguedSummary += $"\nWill infect {owner.name} with plague!";
+                    owner.interruptComponent.TriggerInterrupt(INTERRUPT.Plagued, owner);
+                    // if (owner.traitContainer.AddTrait(owner, "Plagued", character)) {
+                    //     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "contracted_plague");
+                    //     log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    //     log.AddToFillers(character, character.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    //     log.AddLogToInvolvedObjects();
+                    // }
                 }
                 Debug.Log(GameManager.Instance.TodayLogString() + plaguedSummary);
             }
@@ -215,94 +220,78 @@ public class Party {
         return false;
     }
     public void RemovePOI(IPointOfInterest poi, bool addToLocation = true, LocationGridTile dropLocation = null) {
-        if (poi is Character) {
-            RemoveCharacter(poi as Character, addToLocation, dropLocation);
-        } else if (poi is TileObject) {
-            RemoveTileObject(poi as TileObject, addToLocation, dropLocation);
+        if (IsPOICarried(poi)) {
+            if (poi is Character) {
+                RemoveCharacter(poi as Character, addToLocation, dropLocation);
+            } else if (poi is TileObject) {
+                RemoveTileObject(poi as TileObject, addToLocation, dropLocation);
+            }
         }
     }
     private void RemoveTileObject(TileObject tileObject, bool addToLocation, LocationGridTile dropLocation) {
-        if (IsPOICarried(tileObject)) {
-            carriedPOI = null;
-            tileObject.SetIsBeingCarriedBy(null);
-            if (addToLocation) {
-                //tileObject.areaMapVisual.collisionTrigger.SetMainColliderState(true);
-                if (dropLocation == null) {
-                    if (_owner.gridTileLocation.isOccupied) {
-                        LocationGridTile chosenTile = _owner.gridTileLocation.GetRandomUnoccupiedNeighbor();
-                        if (chosenTile != null) {
-                            _owner.gridTileLocation.structure.AddPOI(tileObject, chosenTile);
-                        } else {
-                            Debug.LogWarning(GameManager.Instance.TodayLogString() + tileObject.name + " is being dropped by " + _owner.name + " but there is no unoccupied neighbor tile including the tile he/she is standing on. Default behavior is to drop character on the tile he/she is standing on regardless if it is unoccupied or not.");
-                            _owner.gridTileLocation.structure.AddPOI(tileObject);
-                        }
+        carriedPOI = null;
+        // tileObject.SetIsBeingCarriedBy(null);
+        if (addToLocation) {
+            //tileObject.areaMapVisual.collisionTrigger.SetMainColliderState(true);
+            if (dropLocation == null) {
+                if (_owner.gridTileLocation.isOccupied) {
+                    LocationGridTile chosenTile = _owner.gridTileLocation.GetRandomUnoccupiedNeighbor();
+                    if (chosenTile != null) {
+                        _owner.gridTileLocation.structure.AddPOI(tileObject, chosenTile);
                     } else {
-                        _owner.gridTileLocation.structure.AddPOI(tileObject, _owner.gridTileLocation);
+                        Debug.LogWarning(
+                            $"{GameManager.Instance.TodayLogString()}{tileObject.name} is being dropped by {_owner.name} but there is no unoccupied neighbor tile including the tile he/she is standing on. Default behavior is to drop character on the tile he/she is standing on regardless if it is unoccupied or not.");
+                        _owner.gridTileLocation.structure.AddPOI(tileObject);
                     }
                 } else {
-                    _owner.gridTileLocation.structure.AddPOI(tileObject, dropLocation);
+                    _owner.gridTileLocation.structure.AddPOI(tileObject, _owner.gridTileLocation);
                 }
             } else {
-                if (tileObject.gridTileLocation != null) {
-                    tileObject.gridTileLocation.structure.RemovePOI(tileObject);
-                } else if (tileObject.mapVisual != null) {
-                    tileObject.OnDestroyPOI();
-                }
+                _owner.gridTileLocation.structure.AddPOI(tileObject, dropLocation);
             }
-            if(tileObject.mapVisual != null) {
-                tileObject.mapVisual.transform.eulerAngles = Vector3.zero;
+        } else {
+            if (tileObject.gridTileLocation != null) {
+                tileObject.gridTileLocation.structure.RemovePOIDestroyVisualOnly(tileObject, owner);
+            } else if (tileObject.mapVisual != null) {
+                tileObject.DestroyMapVisualGameObject();
             }
-            //character.ownParty.icon.transform.position = this.specificLocation.coreTile.transform.position;
-            //Messenger.Broadcast(Signals.CHARACTER_LEFT_PARTY, character, this);
         }
+        if(tileObject.mapVisual != null) {
+            tileObject.mapVisual.transform.eulerAngles = Vector3.zero;
+        }
+        //character.ownParty.icon.transform.position = this.specificLocation.coreTile.transform.position;
+        //Messenger.Broadcast(Signals.CHARACTER_LEFT_PARTY, character, this);
     }
     private void RemoveCharacter(Character character, bool addToLocation, LocationGridTile dropLocation) {
         if(_owner == character) {
             return;
         }
-        if (IsPOICarried(character)) {
-            //LocationGridTile gridTile = _owner.gridTileLocation.GetNearestUnoccupiedTileFromThis();
-            //_owner.specificLocation.AddCharacterToLocation(character);
-            carriedPOI = null;
-            character.OnRemovedFromParty();
-            if (dropLocation == null) {
-                if (_owner.gridTileLocation.isOccupied) {
-                    LocationGridTile chosenTile = _owner.gridTileLocation.GetRandomUnoccupiedNeighbor();
-                    if (chosenTile != null) {
-                        character.marker.PlaceMarkerAt(chosenTile, addToLocation);
-                    } else {
-                        Debug.LogWarning(GameManager.Instance.TodayLogString() + character.name + " is being dropped by " + _owner.name + " but there is no unoccupied neighbor tile including the tile he/she is standing on. Default behavior is to drop character on the tile he/she is standing on regardless if it is unoccupied or not.");
-                        character.marker.PlaceMarkerAt(_owner.gridTileLocation, addToLocation);
-                    }
+        //LocationGridTile gridTile = _owner.gridTileLocation.GetNearestUnoccupiedTileFromThis();
+        //_owner.specificLocation.AddCharacterToLocation(character);
+        carriedPOI = null;
+        character.OnRemovedFromParty();
+        if (dropLocation == null) {
+            if (_owner.gridTileLocation.isOccupied) {
+                LocationGridTile chosenTile = _owner.gridTileLocation.GetRandomUnoccupiedNeighbor();
+                if (chosenTile != null) {
+                    character.marker.PlaceMarkerAt(chosenTile, addToLocation);
                 } else {
+                    Debug.LogWarning(
+                        $"{GameManager.Instance.TodayLogString()}{character.name} is being dropped by {_owner.name} but there is no unoccupied neighbor tile including the tile he/she is standing on. Default behavior is to drop character on the tile he/she is standing on regardless if it is unoccupied or not.");
                     character.marker.PlaceMarkerAt(_owner.gridTileLocation, addToLocation);
                 }
             } else {
-                character.marker.PlaceMarkerAt(dropLocation, addToLocation);
+                character.marker.PlaceMarkerAt(_owner.gridTileLocation, addToLocation);
             }
-
-            character.marker.transform.eulerAngles = Vector3.zero;
-            character.marker.nameLbl.gameObject.SetActive(true);
-
-            character.ownParty.icon.transform.position = owner.currentRegion.coreTile.transform.position;
-            Messenger.Broadcast(Signals.CHARACTER_LEFT_PARTY, character, this);
+        } else {
+            character.marker.PlaceMarkerAt(dropLocation, addToLocation);
         }
-    }
-    /// <summary>
-    /// Remove every character from this party, except the owner.
-    /// </summary>
-    public void RemoveCarriedPOI(bool addToLocation = true, LocationGridTile dropLocation = null) {
-        if(carriedPOI != null) {
-            RemovePOI(carriedPOI, addToLocation, dropLocation);
-        }
-        //if (_characters.Count > 1) {
-        //    for (int i = 0; i < _characters.Count; i++) {
-        //        if (_characters[i].id != _owner.id) {
-        //            RemoveCharacter(_characters[i]);
-        //            i--;
-        //        }
-        //    }
-        //}
+
+        character.marker.transform.eulerAngles = Vector3.zero;
+        character.marker.nameLbl.gameObject.SetActive(true);
+
+        character.ownParty.icon.transform.position = owner.currentRegion.coreTile.transform.position;
+        Messenger.Broadcast(Signals.CHARACTER_LEFT_PARTY, character, this);
     }
     public bool IsPOICarried(IPointOfInterest poi) {
         return carriedPOI == poi;
@@ -320,12 +309,10 @@ public class Party {
         }
         if (owner.currentRegion.IsSameCoreLocationAs(targetLocation)) {
             //action doer is already at the target location
-            if (doneAction != null) {
-                doneAction();
-            }
+            doneAction?.Invoke();
         } else {
             //_icon.SetActionOnTargetReached(doneAction);
-            LocationGridTile exitTile = owner.GetNearestUnoccupiedEdgeTileFromThis();
+            LocationGridTile exitTile = owner.GetTargetTileToGoToRegion(targetLocation.coreTile.region);
             owner.marker.GoTo(exitTile, () => MoveToAnotherLocation(targetLocation.coreTile.region, pathfindingMode, targetStructure, doneAction, actionOnStartOfMovement, targetPOI, targetTile));
         }
     }

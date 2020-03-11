@@ -14,6 +14,6 @@ public class MagicCircle : TileObject {
     }
 
     public override string ToString() {
-        return "Magic Circle " + id.ToString();
+        return $"Magic Circle {id}";
     }
 }

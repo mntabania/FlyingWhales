@@ -58,7 +58,7 @@ public class AttributePanelUI : MonoBehaviour {
     #region Utilities
     private void UpdateItemAttributes() {
         _allItemAttributes.Clear();
-        string path = Utilities.dataPath + "Attributes/ITEM/";
+        string path = $"{UtilityScripts.Utilities.dataPath}Attributes/ITEM/";
         foreach (string file in Directory.GetFiles(path, "*.json")) {
             _allItemAttributes.Add(Path.GetFileNameWithoutExtension(file));
         }
@@ -114,9 +114,11 @@ public class AttributePanelUI : MonoBehaviour {
             EditorUtility.DisplayDialog("Error", "Please specify an Attribute Name", "OK");
             return;
         }
-        string path = Utilities.dataPath + "Attributes/" + categoryOptions.options[categoryOptions.value].text + "/" + nameInput.text + ".json";
-        if (Utilities.DoesFileExist(path)) {
-            if (EditorUtility.DisplayDialog("Overwrite Attribute", "An attribute with name " + nameInput.text + " already exists. Replace with this attribute?", "Yes", "No")) {
+        string path =
+            $"{UtilityScripts.Utilities.dataPath}Attributes/{categoryOptions.options[categoryOptions.value].text}/{nameInput.text}.json";
+        if (UtilityScripts.Utilities.DoesFileExist(path)) {
+            if (EditorUtility.DisplayDialog("Overwrite Attribute",
+                $"An attribute with name {nameInput.text} already exists. Replace with this attribute?", "Yes", "No")) {
                 File.Delete(path);
                 SaveAttributeJson(path);
             }
@@ -145,7 +147,8 @@ public class AttributePanelUI : MonoBehaviour {
     }
     private void LoadAttribute() {
 #if UNITY_EDITOR
-        string filePath = EditorUtility.OpenFilePanel("Select Attribute", Utilities.dataPath + "Attributes/", "json");
+        string filePath = EditorUtility.OpenFilePanel("Select Attribute",
+            $"{UtilityScripts.Utilities.dataPath}Attributes/", "json");
         if (!string.IsNullOrEmpty(filePath)) {
             string dataAsJson = File.ReadAllText(filePath);
             CharacterAttribute attribute = JsonUtility.FromJson<CharacterAttribute>(dataAsJson);

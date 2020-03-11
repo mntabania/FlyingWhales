@@ -89,7 +89,7 @@ static internal class Messenger {
 		Debug.Log("\t\t\t=== MESSENGER PrintEventTable ===");
  
 		foreach (KeyValuePair<string, Delegate> pair in eventTable) {
-			Debug.Log("\t\t\t" + pair.Key + "\t\t" + pair.Value);
+			Debug.Log($"\t\t\t{pair.Key}\t\t{pair.Value}");
 		}
  
 		Debug.Log("\n");
@@ -100,7 +100,7 @@ static internal class Messenger {
             System.Diagnostics.Stopwatch orderWatch = new System.Diagnostics.Stopwatch();
             orderWatch.Start();
             Delegate[] actions = eventTable[eventType].GetInvocationList();
-            string summary = "Ordering events for signal " + eventType + " with " + actions.Length + " events.";
+            string summary = $"Ordering events for signal {eventType} with {actions.Length} events.";
             Delegate ordered = null;
             SignalMethod[] orderedEvents = Signals.orderedSignalExecution[eventType];
             for (int i = 0; i < orderedEvents.Length; i++) {
@@ -126,7 +126,7 @@ static internal class Messenger {
 
             eventTable[eventType] = ordered;
             orderWatch.Stop();
-            summary += "\nFinished ordering events. Time elapsed is " + orderWatch.ElapsedMilliseconds.ToString() + "ms";
+            summary += $"\nFinished ordering events. Time elapsed is {orderWatch.ElapsedMilliseconds}ms";
             //Debug.Log(summary);
         }
     }

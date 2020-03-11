@@ -9,11 +9,11 @@ public class Sit : GoapAction {
 
     public Sit() : base(INTERACTION_TYPE.SIT) {
         actionIconString = GoapActionStateDB.No_Icon;
-        shouldIntelNotificationOnlyIfActorIsActive = true;
-        isNotificationAnIntel = false;
+        showNotification = false;
+        
         shouldAddLogs = false;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
     }
 
     #region Overrides
@@ -22,8 +22,10 @@ public class Sit : GoapAction {
         SetState("Sit Success", goapNode);
        
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        return 8;
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+        string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
+        actor.logComponent.AppendCostLog(costLog);
+        return 10;
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
         GoapActionInvalidity goapActionInvalidity = base.IsInvalid(node);
@@ -39,6 +41,9 @@ public class Sit : GoapAction {
     #endregion
 
     #region Effects
+    public void PerTickSitSuccess(ActualGoapNode goapNode) {
+        goapNode.actor.needsComponent.AdjustComfort(0.3f);
+    }
     //public void PreSitFail(ActualGoapNode goapNode) {
     //    goapNode.descriptionLog.AddToFillers(null, goapNode.poiTarget.name, LOG_IDENTIFIER.STRING_1);
     //}
@@ -62,7 +67,7 @@ public class Sit : GoapAction {
 
 public class SitData : GoapActionData {
     public SitData() : base(INTERACTION_TYPE.SIT) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
         requirementAction = Requirement;
     }
 

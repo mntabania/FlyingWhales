@@ -29,7 +29,7 @@ public class RFX4_ParticleLight : MonoBehaviour
 
         for (int i = 0; i < lights.Length; i++)
         {
-            var lightGO = new GameObject("ParticleLight" + i);
+            var lightGO = new GameObject($"ParticleLight{i}");
             lightGO.hideFlags = HideFlags.DontSave;
             lights[i] = lightGO.AddComponent<Light>();
             lights[i].transform.parent = transform;

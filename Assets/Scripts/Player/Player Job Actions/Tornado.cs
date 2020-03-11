@@ -4,14 +4,14 @@ using System.Linq;
 using Inner_Maps;
 using UnityEngine;
 
-public class Tornado : PlayerJobAction {
+public class Tornado : PlayerSpell {
 
     private int radius;
     private int durationInTicks;
 
-    public Tornado() : base(INTERVENTION_ABILITY.TORNADO) {
+    public Tornado() : base(SPELL_TYPE.TORNADO) {
         SetDefaultCooldownTime(24);
-        targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.TILE };
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
         radius = 1;
         tier = 1;
         durationInTicks = GameManager.Instance.GetTicksBasedOnHour(2);
@@ -22,7 +22,7 @@ public class Tornado : PlayerJobAction {
         base.ActivateAction(targetTile);
         TornadoTileObject tornadoTileObject = new TornadoTileObject();
         tornadoTileObject.SetRadius(radius);
-        tornadoTileObject.SetDuration(durationInTicks);
+        tornadoTileObject.SetDuration(GameManager.Instance.GetTicksBasedOnHour(Random.Range(1, 4)));
         tornadoTileObject.SetGridTileLocation(targetTile);
         tornadoTileObject.OnPlacePOI();
         //targetTile.structure.AddPOI(tornadoTileObject, targetTile);
@@ -43,25 +43,44 @@ public class Tornado : PlayerJobAction {
     }
     public override void ShowRange(LocationGridTile targetTile) {
         base.ShowRange(targetTile);
-        List<LocationGridTile> tiles = targetTile.parentMap.GetTilesInRadius(targetTile, radius, 0, true);
+        List<LocationGridTile> tiles = targetTile.GetTilesInRadius(radius, 0, true);
         InnerMapManager.Instance.HighlightTiles(tiles);
     }
     public override void HideRange(LocationGridTile targetTile) {
         base.HideRange(targetTile);
-        List<LocationGridTile> tiles = targetTile.parentMap.GetTilesInRadius(targetTile, radius, 0, true);
+        List<LocationGridTile> tiles = targetTile.GetTilesInRadius(radius, 0, true);
         InnerMapManager.Instance.UnhighlightTiles(tiles);
     }
-    public override bool CanTarget(LocationGridTile tile) {
+    public virtual bool CanTarget(LocationGridTile tile) {
         return tile.structure != null;
     }
-    protected override bool CanPerformActionTowards(LocationGridTile tile) {
+    protected virtual bool CanPerformActionTowards(LocationGridTile tile) {
         return tile.structure != null;
     }
     #endregion
 }
 
-public class TornadoData : PlayerJobActionData {
-    public override string name { get { return "Tornado"; } }
-    public override string description { get { return "Spawn a tornado that randomly moves around dealing heavy damage to objects and characters caught in its path."; } }
-    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.DEVASTATION; } }
+public class TornadoData : SpellData {
+    public override SPELL_TYPE ability => SPELL_TYPE.TORNADO;
+    public override string name => "Tornado";
+    public override string description => "A destructive cyclone that deals heavy Normal damage to everything in its path.";
+    public override SPELL_CATEGORY category => SPELL_CATEGORY.DEVASTATION;
+    public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
+    public TornadoData() : base() {
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
+    }
+
+    public override void ActivateAbility(LocationGridTile targetTile) {
+        TornadoTileObject tornadoTileObject = new TornadoTileObject();
+        tornadoTileObject.SetRadius(1);
+        tornadoTileObject.SetDuration(GameManager.Instance.GetTicksBasedOnHour(Random.Range(1, 4)));
+        tornadoTileObject.SetGridTileLocation(targetTile);
+        tornadoTileObject.OnPlacePOI();
+    }
+    public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
+        return targetTile.structure != null;
+    }
+    public override void HighlightAffectedTiles(LocationGridTile tile) {
+        TileHighlighter.Instance.PositionHighlight(1, tile);
+    }
 }

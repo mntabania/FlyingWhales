@@ -24,7 +24,7 @@ public class EditorPanelUI : MonoBehaviour {
         ClassPanelUI.Instance.LoadAllData();
         RacePanelUI.Instance.LoadAllData();
         TraitPanelUI.Instance.LoadAllData();
-        AttributePanelUI.Instance.LoadAllData();
+        //AttributePanelUI.Instance.LoadAllData();
         ItemPanelUI.Instance.LoadAllData();
     }
     public void OnClickPage1() {

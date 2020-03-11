@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using UnityEngine;
 
 public class HuntState : CharacterState {
@@ -31,7 +32,7 @@ public class HuntState : CharacterState {
                 //    Debug.LogWarning(GameManager.Instance.TodayLogString() + " " + stateComponent.character.name + " can't eat corpse " + targetPOI.name + " because there is no tile to go to!");
                 //}
             } else {
-                stateComponent.character.marker.AddHostileInRange(targetCharacter);
+                //stateComponent.character.combatComponent.AddHostileInRange(targetCharacter);
             }
            
             return true;
@@ -76,7 +77,8 @@ public class HuntState : CharacterState {
         if (chosenTile != null) {
             return chosenTile;
         } else {
-            throw new System.Exception("No tile in " + chosenStructure.name + " for " + stateComponent.character.name + " to go to in " + stateName);
+            throw new System.Exception(
+                $"No tile in {chosenStructure.name} for {stateComponent.character.name} to go to in {stateName}");
         }
     }
 }

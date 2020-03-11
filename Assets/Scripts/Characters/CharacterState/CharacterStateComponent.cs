@@ -16,8 +16,7 @@ public class CharacterStateComponent {
     //public CharacterState previousMajorState { get; private set; }
     //This is the character's current state
     public CharacterState currentState { get; private set; }
-    //Right now this is only for Explore State so that we can store the state even when the character is still moving to the settlement that will be explored
-    //public CharacterState stateToDo { get; private set; }
+    
     public CharacterStateComponent(Character character) {
         this.character = character;
     }
@@ -55,9 +54,9 @@ public class CharacterStateComponent {
 
     //This switches from one state to another
     //If the character is not in a state right now, this simply starts a new state instead of switching
-    public CharacterState SwitchToState(CHARACTER_STATE state, Character targetCharacter = null, Settlement targetSettlement = null, int durationOverride = -1, int level = 1) {
+    public CharacterState SwitchToState(CHARACTER_STATE state, Character targetCharacter = null, NPCSettlement targetNpcSettlement = null, int durationOverride = -1, int level = 1) {
         //Cannot switch state is has negative disabler
-        if(character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
+        if(!character.canPerform) { //character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
             return null;
         }
 
@@ -113,7 +112,7 @@ public class CharacterStateComponent {
         //newState.SetEndStateAction(endStateAction);
         //newState.SetOtherDataOnStartState(otherData);
         //newState.SetTargetCharacter(targetCharacter);
-        //newState.SetTargetArea(targetSettlement);
+        //newState.SetTargetArea(targetNpcSettlement);
         newState.EnterState();
         return newState;
     }
@@ -138,7 +137,7 @@ public class CharacterStateComponent {
     /// <param name="stopMovement">Should this character stop his/her current movement when exiting his/her current state?/param>
     public void ExitCurrentState() {
         if (currentState == null) {
-            throw new System.Exception(character.name + " is trying to exit his/her current state but it is null");
+            throw new System.Exception($"{character.name} is trying to exit his/her current state but it is null");
         }
 
         //if(!(this.currentState != null && character.currentActionNode != null)) { //&& character.currentActionNode.parentPlan == null -- removed this?
@@ -155,7 +154,12 @@ public class CharacterStateComponent {
         SetCurrentState(null);
         currState.AfterExitingState();
 
-        if(stateJob != null) {
+        //Note: Original owner is checked here because there are times that the job for this state is already cancelled in AfterExitingState
+        //So if we do not check here it will result in Null Ref since there is no more job at this point
+        if(stateJob != null && stateJob.originalOwner != null) {
+            if(stateJob == character.currentJob) {
+                character.SetCurrentJob(null);
+            }
             stateJob.ForceCancelJob();
         }
 
@@ -235,7 +239,7 @@ public class CharacterStateComponent {
     }
     private void PerTickCurrentState() {
         if(currentState != null && !currentState.isPaused && !currentState.isDone) {
-            if(character.doNotDisturb) {
+            if(!character.canPerform) {
                 ExitCurrentState();
                 return;
             }

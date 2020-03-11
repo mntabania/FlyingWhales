@@ -34,15 +34,16 @@ public class CharacterRelationshipItem : PooledObject {
         //for (int i = 0; i < data.relationships.Count; i++) {
         //    summary += $"\n- {data.relationships[i].ToString()}";
         //}
-        int opinionOfOther = target.opinionComponent.GetTotalOpinion(owner);
+        int opinionOfOther = target.relationshipContainer.GetTotalOpinion(owner);
         string summary = target.name;
         summary += "\n---------------------";
-        Dictionary<string, int> opinions = owner.opinionComponent.GetOpinion(target);
+        Dictionary<string, int> opinions = owner.relationshipContainer.GetOpinionData(target).allOpinions;
         foreach (KeyValuePair<string, int> kvp in opinions) {
-            summary += "\n" + kvp.Key + ": " + "<color=" + OpinionColor(kvp.Value) + ">" + GetOpinionText(kvp.Value) + "</color>";
+            summary += $"\n{kvp.Key}: <color={OpinionColor(kvp.Value)}>{GetOpinionText(kvp.Value)}</color>";
         }
         summary += "\n---------------------";
-        summary += "\nTotal: <color=" + OpinionColor(opinionOfOther) + ">" + GetOpinionText(owner.opinionComponent.GetTotalOpinion(target)) + "</color> <color=" + OpinionColor(opinionOfOther) + ">(" + GetOpinionText(opinionOfOther) + ")</color>";
+        summary +=
+            $"\nTotal: <color={OpinionColor(opinionOfOther)}>{GetOpinionText(owner.relationshipContainer.GetTotalOpinion(target))}</color> <color={OpinionColor(opinionOfOther)}>({GetOpinionText(opinionOfOther)})</color>";
         UIManager.Instance.ShowSmallInfo(summary);
     }
     public void HideSmallInfo() {
@@ -56,8 +57,8 @@ public class CharacterRelationshipItem : PooledObject {
     }
     private string GetOpinionText(int number) {
         if (number < 0) {
-            return "" + number;
+            return $"{number}";
         }
-        return "+" + number;
+        return $"+{number}";
     }
 }

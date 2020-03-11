@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Ruinarch;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -20,21 +21,21 @@ public class NewMinionDraggable : DraggableItem {
         if (!_isDraggable) {
             return;
         }
-        CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Drag_Clicked);
+        InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Drag_Clicked);
         //_characterItem = gameObject.GetComponent<PlayerCharacterItem>();
         CharacterPortrait portrait = _characterItem.portrait;
         GameObject clone = (GameObject)Instantiate(portrait.gameObject);
         _draggingObject = clone.GetComponent<RectTransform>();
         _draggingObject.gameObject.AddComponent<DragObject>().parentItem = _characterItem;
 
-        //Put _dragging object into the dragging settlement
+        //Put _dragging object into the dragging npcSettlement
         _draggingObject.sizeDelta = portrait.gameObject.GetComponent<RectTransform>().rect.size;
         _draggingObject.SetParent(UIManager.Instance.gameObject.GetComponent<RectTransform>(), true);
         _isDragging = true;
     }
     public override void OnEndDrag(PointerEventData eventData) {
         _isDragging = false;
-        CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Drag_Hover);
+        InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Drag_Hover);
         if (_characterItem != null && _draggingObject != null) {
             List<RaycastResult> newRaycastResults = new List<RaycastResult>();
             CustomDropZone customDropzone = null;
@@ -47,7 +48,7 @@ public class NewMinionDraggable : DraggableItem {
             }
 
             if (customDropzone != null) {
-                CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
+                InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
                 customDropzone.OnDrop(_draggingObject.gameObject);
                 Destroy(_draggingObject.gameObject);
             } else {

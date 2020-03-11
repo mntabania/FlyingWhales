@@ -15,7 +15,7 @@ public class ImportantNotificationItem : PooledObject {
     private System.Action onClickAction;
 
     public void Initialize(GameDate date, string message, System.Action onClickAction) {
-        messageLbl.text = "[" + GameManager.ConvertTickToTime(date.tick) + "] "+ message;
+        messageLbl.text = $"[{GameManager.ConvertTickToTime(date.tick)}] {message}";
         this.onClickAction = onClickAction;
         tween.OpenCloseObjectAnimation();
     }
@@ -23,7 +23,7 @@ public class ImportantNotificationItem : PooledObject {
     public void OnPointerClick(BaseEventData eventData) {
         onClickAction?.Invoke();
         //destroy on click
-        ObjectPoolManager.Instance.DestroyObject(this.gameObject);
+        ObjectPoolManager.Instance.DestroyObject(this);
     }
 
     public override void Reset() {

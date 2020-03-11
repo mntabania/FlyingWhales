@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ReplaceUI : MonoBehaviour {
+public class ReplaceUI : PopupMenuBase {
 
     [Header("Object To Add")]
     [SerializeField] private Image otaImage;
@@ -44,11 +44,12 @@ public class ReplaceUI : MonoBehaviour {
             UIManager.Instance.Pause();
             UIManager.Instance.SetSpeedTogglesState(false);
         }
-        Utilities.DestroyChildren(choicesParent);
+        UtilityScripts.Utilities.DestroyChildren(choicesParent);
         if(objectToAdd is Minion) {
             newObjectLbl.text = "New Minion!";
         } else {
-            newObjectLbl.text = "New " + Utilities.NormalizeNoSpaceString(objectToAdd.GetType().BaseType.ToString()) + "!";
+            newObjectLbl.text =
+                $"New {UtilityScripts.Utilities.NormalizeNoSpaceString(objectToAdd.GetType().BaseType.ToString())}!";
         }
         UpdateObjectToAdd(objectToAdd);
         for (int i = 0; i < choices.Count; i++) {
@@ -61,7 +62,7 @@ public class ReplaceUI : MonoBehaviour {
         replaceBtn.interactable = false;
         this.onClickReplace = onClickReplace;
         this.onClickCancel = onClickCancel;
-        this.gameObject.SetActive(true);
+        base.Open();
     }
 
     private void UpdateObjectToAdd(object obj) {
@@ -71,37 +72,39 @@ public class ReplaceUI : MonoBehaviour {
         if (obj is Summon) {
             Summon summon = obj as Summon;
             otaImage.sprite = CharacterManager.Instance.GetSummonSettings(summon.summonType).summonPortrait;
-            string text = summon.name + " (" + summon.summonType.SummonName() + ")";
-            text += "\nLevel: " + summon.level.ToString();
-            text += "\nDescription: " + PlayerManager.Instance.player.GetSummonDescription(summon.summonType);
+            string text = $"{summon.name} ({summon.summonType.SummonName()})";
+            text += $"\nLevel: {summon.level}";
+            text += $"\nDescription: {PlayerManager.Instance.player.GetSummonDescription(summon.summonType)}";
             otaText.text = text;
             otaImage.gameObject.SetActive(true);
-        } else if (obj is Artifact) {
-            Artifact artifact = obj as Artifact;
-            string text = artifact.name;
-            text += "\nLevel: " + artifact.level.ToString();
-            text += "\nDescription: " + PlayerManager.Instance.player.GetArtifactDescription(artifact.type);
-            otaText.text = text;
-            otaImage.sprite = CharacterManager.Instance.GetArtifactSettings(artifact.type).artifactPortrait;
-            otaImage.gameObject.SetActive(true);
-        } else if (obj is PlayerJobAction) {
-            PlayerJobAction action = obj as PlayerJobAction;
+        } 
+        // else if (obj is Artifact) {
+        //     Artifact artifact = obj as Artifact;
+        //     string text = artifact.name;
+        //     text += "\nLevel: " + artifact.level.ToString();
+        //     text += "\nDescription: " + PlayerManager.Instance.player.GetArtifactDescription(artifact.type);
+        //     otaText.text = text;
+        //     otaImage.sprite = CharacterManager.Instance.GetArtifactSettings(artifact.type).artifactPortrait;
+        //     otaImage.gameObject.SetActive(true);
+        // } 
+        else if (obj is PlayerSpell) {
+            PlayerSpell action = obj as PlayerSpell;
             string text = action.name;
-            text += "\nDescription: " + action.description;
+            text += $"\nDescription: {action.description}";
             otaText.text = text;
             otaImage.sprite = PlayerManager.Instance.GetJobActionSprite(action.name);
             otaImage.gameObject.SetActive(true);
         } else if (obj is CombatAbility) {
             CombatAbility ability = obj as CombatAbility;
             string text = ability.name;
-            text += "\nDescription: " + ability.description;
+            text += $"\nDescription: {ability.description}";
             otaText.text = text;
             otaImage.sprite = PlayerManager.Instance.GetCombatAbilitySprite(ability.name);
             otaImage.gameObject.SetActive(true);
         } else if (obj is Minion) {
             Minion minion = obj as Minion;
             string text = minion.character.name;
-            text += "\nLvl. " + minion.character.level + " " + minion.character.raceClassName;
+            text += $"\nLvl. {minion.character.level} {minion.character.raceClassName}";
             otaText.text = text;
             portrait.GeneratePortrait(minion.character);
             portrait.gameObject.SetActive(true);
@@ -109,8 +112,8 @@ public class ReplaceUI : MonoBehaviour {
     }
 
 
-    private void Close() {
-        this.gameObject.SetActive(false);
+    public override void Close() {
+        base.Close();
         if (!PlayerUI.Instance.TryShowPendingUI()) {
             UIManager.Instance.ResumeLastProgressionSpeed(); //if no other UI was shown, unpause game
         }

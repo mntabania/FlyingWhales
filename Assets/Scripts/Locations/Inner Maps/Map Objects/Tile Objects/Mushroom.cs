@@ -39,7 +39,7 @@ public class Mushroom : TileObject {
 
     }
     public override string ToString() {
-        return "Mushroom " + id.ToString();
+        return $"Mushroom {id}";
     }
     #endregion
 

@@ -4,21 +4,23 @@ using Inner_Maps;
 using UnityEngine;
 
 namespace Traits {
-    public class Catatonic : Trait {
+    public class Catatonic : Status {
 
         public Character owner { get; private set; }
-        //public List<Character> charactersThatKnow { get; private set; }
 
+        private float chanceToRemove;
+        private const int MaxDays = 4;
+        
         public Catatonic() {
             name = "Catatonic";
             description = "This character is catatonic.";
-            type = TRAIT_TYPE.DISABLER;
+            type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
-            ticksDuration = GameManager.ticksPerDay;
+            ticksDuration = GameManager.Instance.GetTicksBasedOnHour(12);
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.FEED };
-            //charactersThatKnow = new List<Character>();
             hindersMovement = true;
             hindersWitness = true;
+            hindersPerform = true;
         }
 
         #region Overrides
@@ -26,55 +28,26 @@ namespace Traits {
             base.OnAddTrait(addedTo);
             if (addedTo is Character) {
                 owner = addedTo as Character;
-                owner.AdjustMoodValue(-15, this);
-                owner.needsComponent.AdjustDoNotGetLonely(1);
-                Messenger.AddListener(Signals.TICK_STARTED, CheckTrait);
+                //owner.AdjustMoodValue(-15, this);
+                // owner.needsComponent.AdjustDoNotGetBored(1);
+                Messenger.AddListener(Signals.HOUR_STARTED, CheckRemovalChance);
                 Messenger.AddListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
             }
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
             if (owner != null) {
-                owner.needsComponent.AdjustDoNotGetLonely(1);
-                Messenger.RemoveListener(Signals.TICK_STARTED, CheckTrait);
+                // owner.needsComponent.AdjustDoNotGetBored(-1);
+                Messenger.RemoveListener(Signals.HOUR_STARTED, CheckRemovalChance);
                 Messenger.RemoveListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
             }
             base.OnRemoveTrait(sourceCharacter, removedBy);
         }
-        public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
-            if (traitOwner is Character) {
-                Character targetCharacter = traitOwner as Character;
-                if (!targetCharacter.isDead) {
-                    if (characterThatWillDoJob.faction != targetCharacter.faction) {
-                        GoapPlanJob currentJob = targetCharacter.GetJobTargettingThisCharacter(JOB_TYPE.RESTRAIN);
-                        if (currentJob == null) {
-                            if (InteractionManager.Instance.CanCharacterTakeRestrainJob(characterThatWillDoJob, targetCharacter)) {
-                                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RESTRAIN, INTERACTION_TYPE.RESTRAIN_CHARACTER, targetCharacter, characterThatWillDoJob);
-                                //job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { characterThatWillDoJob.currentArea.prison });
-                                //job.SetCanBeDoneInLocation(true);
-                                characterThatWillDoJob.jobQueue.AddJobInQueue(job);
-                                return true;
-                            }
-                        }
-                    } else {
-                        if (characterThatWillDoJob.opinionComponent.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.NEGATIVE) {
-                            if (owner.CanPlanGoap() && !owner.HasJobTargetingThis(JOB_TYPE.DROP, JOB_TYPE.FEED)) {
-                                if (!PlanFullnessRecovery(characterThatWillDoJob)) {
-                                    CreateDropJobForTirednessRecovery(characterThatWillDoJob);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
+        public override void OnTickStarted() {
+            base.OnTickStarted();
+            CheckTrait();
+            CheckForChaosOrb();
         }
         #endregion
-
-        //public void AddCharacterThatKnows(Character character) {
-        //    if (!charactersThatKnow.Contains(character)) {
-        //        charactersThatKnow.Add(character);
-        //    }
-        //}
 
         private void CheckTrait() {
             if (!owner.CanPlanGoap()) {
@@ -83,7 +56,7 @@ namespace Traits {
             if (!owner.IsInOwnParty()) {
                 return;
             }
-            if (owner.HasJobTargetingThis(JOB_TYPE.DROP, JOB_TYPE.FEED)) {
+            if (owner.HasJobTargetingThis(JOB_TYPE.MOVE_CHARACTER)) {
                 return;
             }
             if (owner.jobQueue.jobsInQueue.Count > 0) {
@@ -94,20 +67,6 @@ namespace Traits {
         }
 
         #region Carry/Drop
-        private bool CreateActualDropJob(Character characterThatWillDoJob, LocationStructure dropLocationStructure) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DROP, INTERACTION_TYPE.DROP, owner, characterThatWillDoJob);
-            //job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeDropJob);
-            job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { dropLocationStructure });
-            characterThatWillDoJob.jobQueue.AddJobInQueue(job);
-            return true;
-        }
-        private bool CreateActualDropJob(Character characterThatWillDoJob, LocationStructure dropLocationStructure, LocationGridTile dropGridTile) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DROP, INTERACTION_TYPE.DROP, owner, characterThatWillDoJob);
-            //job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeDropJob);
-            job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { dropLocationStructure, dropGridTile });
-            characterThatWillDoJob.jobQueue.AddJobInQueue(job);
-            return true;
-        }
         private void OnCharacterFinishedAction(ActualGoapNode node) {
             if (node.action.goapType == INTERACTION_TYPE.DROP && node.poiTarget == owner) {
                 if (owner.gridTileLocation.objHere != null && owner.gridTileLocation.objHere is Bed) {
@@ -117,40 +76,9 @@ namespace Traits {
         }
         #endregion
 
-        #region Fullness Recovery
-        private bool PlanFullnessRecovery(Character characterThatWillDoJob) {
-            if (owner.needsComponent.isStarving || owner.needsComponent.isHungry) {
-                return CreateFeedJob(characterThatWillDoJob);
-            }
-            return false;
-        }
-        private bool CreateFeedJob(Character characterThatWillDoJob) {
-            if (characterThatWillDoJob.currentRegion.IsResident(owner)) {
-                GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.TARGET };
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FEED, goapEffect, owner, characterThatWillDoJob);
-                job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 20 });
-                //job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeParalyzedFeedJob);
-                characterThatWillDoJob.jobQueue.AddJobInQueue(job);
-                return true;
-            }
-            return false;
-        }
-        #endregion
-
         #region Tiredness Recovery
-        private bool CreateDropJobForTirednessRecovery(Character characterThatWillDoJob) {
-            if (owner.needsComponent.isExhausted || owner.needsComponent.isTired) {
-                if (owner.homeStructure != null && (owner.gridTileLocation.objHere == null || !(owner.gridTileLocation.objHere is Bed))) {
-                    TileObject bed = owner.homeStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.BED);
-                    if (bed != null) {
-                        return CreateActualDropJob(characterThatWillDoJob, owner.homeStructure, bed.gridTileLocation);
-                    }
-                }
-            }
-            return false;
-        }
         private bool PlanTirednessRecovery() {
-            if ((owner.needsComponent.isExhausted || owner.needsComponent.isTired) && !owner.HasJobTargetingThis(JOB_TYPE.TIREDNESS_RECOVERY, JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED)) {
+            if ((owner.needsComponent.isExhausted || owner.needsComponent.isTired) && !owner.HasJobTargetingThis(JOB_TYPE.ENERGY_RECOVERY_NORMAL, JOB_TYPE.ENERGY_RECOVERY_URGENT)) {
                 return CreateSleepJob();
             }
             return false;
@@ -171,14 +99,14 @@ namespace Traits {
             return false;
         }
         private void CreateActualSleepJob(Bed bed) {
-            JOB_TYPE jobType = JOB_TYPE.TIREDNESS_RECOVERY;
+            JOB_TYPE jobType = JOB_TYPE.ENERGY_RECOVERY_NORMAL;
             if (owner.needsComponent.isExhausted) {
-                jobType = JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED;
+                jobType = JOB_TYPE.ENERGY_RECOVERY_URGENT;
             }
             bool triggerSpooked = false;
-            Spooked spooked = owner.traitContainer.GetNormalTrait<Trait>("Spooked") as Spooked;
+            Spooked spooked = owner.traitContainer.GetNormalTrait<Spooked>("Spooked");
             if (spooked != null) {
-                triggerSpooked = UnityEngine.Random.Range(0, 100) < 20;
+                triggerSpooked = UnityEngine.Random.Range(0, 100) < (25 * owner.traitContainer.stacks[spooked.name]);
             }
             if (!triggerSpooked) {
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.SLEEP, bed, owner);
@@ -187,6 +115,35 @@ namespace Traits {
             } else {
                spooked.TriggerFeelingSpooked();
             }
+        }
+        #endregion
+
+        #region Removal
+        private void CheckRemovalChance() {
+            chanceToRemove += GetChanceIncreasePerHour();
+            float roll = Random.Range(0f, 100f);
+            Debug.Log(
+                $"{GameManager.Instance.TodayLogString()} {owner.name} is rolling for chance to remove catatonic. Roll is {roll.ToString()}. Chance is {chanceToRemove.ToString()}");
+            if (roll <= chanceToRemove) {
+                owner.traitContainer.RemoveTrait(owner, this);
+            }
+        }
+        private float GetChanceIncreasePerHour() {
+            return 100f / (MaxDays * 24f);
+        }
+        #endregion
+
+        #region Chaos Orb
+        private void CheckForChaosOrb() {
+            string summary = $"{owner.name} is rolling for chaos orb in catatonic trait";
+            int roll = Random.Range(0, 100);
+            int chance = 5;
+            summary += $"\nRoll is {roll.ToString()}. Chance is {chance.ToString()}";
+            if (roll < chance) {
+                Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, owner.marker.transform.position, 
+                    1, owner.currentRegion.innerMap);
+            }
+            owner.logComponent.PrintLogIfActive(summary);
         }
         #endregion
     }

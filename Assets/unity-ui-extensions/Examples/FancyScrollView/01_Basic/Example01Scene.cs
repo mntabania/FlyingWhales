@@ -10,7 +10,7 @@ namespace UnityEngine.UI.Extensions.Examples
         void Start()
         {
             var cellData = Enumerable.Range(0, 20)
-                .Select(i => new Example01CellDto { Message = "Cell " + i })
+                .Select(i => new Example01CellDto { Message = $"Cell {i}"})
                 .ToList();
 
             scrollView.UpdateData(cellData);

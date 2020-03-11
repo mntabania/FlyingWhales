@@ -10,11 +10,11 @@ public class Stand : GoapAction {
     public Stand() : base(INTERACTION_TYPE.STAND) {
         actionLocationType = ACTION_LOCATION_TYPE.NEARBY;
         actionIconString = GoapActionStateDB.No_Icon;
-        shouldIntelNotificationOnlyIfActorIsActive = true;
-        isNotificationAnIntel = false;
+        showNotification = false;
+        
         shouldAddLogs = false;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.GOLEM, RACE.DEMON, RACE.WOLF, RACE.ELEMENTAL, RACE.KOBOLD, RACE.MIMIC };
     }
 
     #region Overrides
@@ -22,7 +22,7 @@ public class Stand : GoapAction {
         base.Perform(goapNode);
         SetState("Stand Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 4;
     }
     #endregion
@@ -40,7 +40,7 @@ public class Stand : GoapAction {
 
 public class StandData : GoapActionData {
     public StandData() : base(INTERACTION_TYPE.STAND) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
         requirementAction = Requirement;
     }
 

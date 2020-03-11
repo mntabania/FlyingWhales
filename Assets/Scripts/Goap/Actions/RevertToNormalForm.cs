@@ -17,28 +17,28 @@ public class RevertToNormalForm : GoapAction {
         base.Perform(goapNode);
         SetState("Transform Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 5;
     }
     public override void AddFillersToLog(Log log, ActualGoapNode node) {
         base.AddFillersToLog(log, node);
         Character actor = node.actor;
-        AlterEgoData ogData = actor.GetAlterEgoData(CharacterManager.Original_Alter_Ego);
-        log.AddToFillers(null, Utilities.GetNormalizedSingularRace(ogData.race), LOG_IDENTIFIER.STRING_1);
+        //AlterEgoData ogData = actor.GetAlterEgoData(CharacterManager.Original_Alter_Ego);
+        //log.AddToFillers(null, Utilities.GetNormalizedSingularRace(ogData.race), LOG_IDENTIFIER.STRING_1);
     }
 
     #endregion
 
     #region State Effects
     public void PreTransformSuccess(ActualGoapNode goapNode) {
-        AlterEgoData ogData = goapNode.actor.GetAlterEgoData(CharacterManager.Original_Alter_Ego);
-        GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
-        goapNode.descriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(ogData.race), LOG_IDENTIFIER.STRING_1);
+        //AlterEgoData ogData = goapNode.actor.GetAlterEgoData(CharacterManager.Original_Alter_Ego);
+        //GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
+        //goapNode.descriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(ogData.race), LOG_IDENTIFIER.STRING_1);
         //TODO: currentState.SetIntelReaction(TransformSuccessIntelReaction);
     }
     public void AfterTransformSuccess(ActualGoapNode goapNode) {
-        Lycanthrope lycanthropy = goapNode.actor.traitContainer.GetNormalTrait<Trait>("Lycanthrope") as Lycanthrope;
-        lycanthropy.RevertToNormal();
+        //Lycanthrope lycanthropy = goapNode.actor.traitContainer.GetNormalTrait<Trait>("Lycanthrope") as Lycanthrope;
+        //lycanthropy.RevertToNormal();
     }
     #endregion
 
@@ -51,8 +51,8 @@ public class RevertToNormalForm : GoapAction {
     //        reactions.Add("Please do not tell anyone else about this. I beg you!");
     //        //-**Recipient Effect * *: no effect
     //    }
-    //    //Recipient and Actor are from the same faction and are lovers or paramours
-    //    else if (actor.faction == recipient.faction && (recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER) || recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR))) {
+    //    //Recipient and Actor are from the same faction and are lovers or affairs
+    //    else if (actor.faction == recipient.faction && (recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER) || recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.AFFAIR))) {
     //        //- **Recipient Response Text**: [Actor Name] may be a monster, but I love [him/her] still!
     //        reactions.Add(string.Format("{0} may be a monster, but I love {1} still!", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.OBJECTIVE, false)));
     //        //- **Recipient Effect**: no effect
@@ -74,7 +74,7 @@ public class RevertToNormalForm : GoapAction {
     //            actor.AddCriminalTrait(CRIME.ABERRATION, this);
     //            recipient.CreateApprehendJobFor(actor);
     //            //if (job != null) {
-    //            //    recipient.homeSettlement.jobQueue.AssignCharacterToJob(job, this);
+    //            //    recipient.homeNpcSettlement.jobQueue.AssignCharacterToJob(job, this);
     //            //}
     //        } else {
     //            recipient.CreateReportCrimeJob(committedCrime, this, actorAlterEgo);
@@ -89,7 +89,7 @@ public class RevertToNormalForm : GoapAction {
     //            actor.AddCriminalTrait(CRIME.ABERRATION, this);
     //            recipient.CreateApprehendJobFor(actor);
     //            //if (job != null) {
-    //            //    recipient.homeSettlement.jobQueue.AssignCharacterToJob(job, this);
+    //            //    recipient.homeNpcSettlement.jobQueue.AssignCharacterToJob(job, this);
     //            //}
     //        } else {
     //            recipient.CreateReportCrimeJob(committedCrime, this, actorAlterEgo);

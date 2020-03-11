@@ -189,7 +189,7 @@ public struct GameDate {
     }
 
     public string ToStringDate(){
-		return ((MONTH)this.month).ToString() + " " + this.day + ", " + this.year + " T: " + this.tick;
+		return $"{((MONTH) this.month)} {this.day}, {this.year} T: {this.tick}";
 	}
 
     public int ConvertToContinuousDays() {
@@ -208,9 +208,9 @@ public struct GameDate {
 
     public string ConvertToContinuousDaysWithTime(bool nextLineTime = false) {
         if (nextLineTime) {
-            return "Day " + ConvertToContinuousDays().ToString() + "\n" + GameManager.ConvertTickToTime(this.tick);
+            return $"Day {ConvertToContinuousDays()}\n{GameManager.ConvertTickToTime(this.tick)}";
         }
-        return "Day " + ConvertToContinuousDays().ToString() + " " + GameManager.ConvertTickToTime(this.tick);
+        return $"Day {ConvertToContinuousDays()} {GameManager.ConvertTickToTime(this.tick)}";
     }
 
     //public override bool Equals(object obj) {

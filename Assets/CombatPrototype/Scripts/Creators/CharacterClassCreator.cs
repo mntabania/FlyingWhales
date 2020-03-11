@@ -53,9 +53,10 @@ public class CharacterClassCreator : Editor {
             EditorUtility.DisplayDialog("Error", "Please specify a Class Name", "OK");
             return;
         }
-        string path = Utilities.dataPath + "CharacterClasses/" + currCharacterClass.className + ".json";
-        if (Utilities.DoesFileExist(path)) {
-            if (EditorUtility.DisplayDialog("Overwrite Class", "A class with name " + currCharacterClass.className + " already exists. Replace with this class?", "Yes", "No")) {
+        string path = $"{UtilityScripts.Utilities.dataPath}CharacterClasses/{currCharacterClass.className}.json";
+        if (UtilityScripts.Utilities.DoesFileExist(path)) {
+            if (EditorUtility.DisplayDialog("Overwrite Class",
+                $"A class with name {currCharacterClass.className} already exists. Replace with this class?", "Yes", "No")) {
                 File.Delete(path);
                 SaveCharacterClassJson(currCharacterClass, path);
             }
@@ -83,7 +84,7 @@ public class CharacterClassCreator : Editor {
         writer.WriteLine(jsonString);
         writer.Close();
         UnityEditor.AssetDatabase.ImportAsset(path);
-        Debug.Log("Successfully saved class " + characterClass.className + " at " + path);
+        Debug.Log($"Successfully saved class {characterClass.className} at {path}");
     }
     #endregion
 

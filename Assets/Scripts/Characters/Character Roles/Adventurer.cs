@@ -10,9 +10,9 @@ public class Adventurer : CharacterRole {
         //    INTERACTION_TYPE.OBTAIN_RESOURCE,
         //    INTERACTION_TYPE.ASSAULT,
         //};
-        requiredItems = new SPECIAL_TOKEN[] {
-            SPECIAL_TOKEN.TOOL,
-            SPECIAL_TOKEN.HEALING_POTION
-        };
+        // requiredItems = new SPECIAL_TOKEN[] {
+        //     SPECIAL_TOKEN.TOOL,
+        //     SPECIAL_TOKEN.HEALING_POTION
+        // };
     }
 }

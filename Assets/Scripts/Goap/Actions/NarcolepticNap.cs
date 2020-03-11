@@ -9,7 +9,7 @@ public class NarcolepticNap : GoapAction {
     public NarcolepticNap() : base(INTERACTION_TYPE.NARCOLEPTIC_NAP) {
         actionIconString = GoapActionStateDB.Sleep_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
-        isNotificationAnIntel = false;
+        
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON };
     }
@@ -19,7 +19,7 @@ public class NarcolepticNap : GoapAction {
         base.Perform(goapNode);
         SetState("Nap Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 1;
     }
     public override void OnStopWhilePerforming(ActualGoapNode node) {
@@ -44,7 +44,7 @@ public class NarcolepticNap : GoapAction {
         goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Resting");
     }
     public void PerTickNapSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustTiredness(30);
+        goapNode.actor.needsComponent.AdjustTiredness(1.1f);
     }
     public void AfterNapSuccess(ActualGoapNode goapNode) {
         goapNode.actor.traitContainer.RemoveTrait(goapNode.actor, "Resting");

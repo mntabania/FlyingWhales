@@ -6,6 +6,7 @@ public abstract class CharacterBehaviourComponent {
 
     private List<Character> _isDisabledFor;
     protected BEHAVIOUR_COMPONENT_ATTRIBUTE[] attributes;
+    public int priority { get; protected set; }
 
     public abstract bool TryDoBehaviour(Character character, ref string log);
 
@@ -24,13 +25,18 @@ public abstract class CharacterBehaviourComponent {
         return false;
     }
     public bool CanDoBehaviour(Character character) {
-        if(character.isAtHomeRegion == false && HasAttribute(BEHAVIOUR_COMPONENT_ATTRIBUTE.INSIDE_SETTLEMENT_ONLY)) { //character.specificLocation.region.settlement.areaMap - will be changed after specificLocation rework
-            //if character is not at a settlement map, and the current behaviour requires the character to be at a settlement map, then character cannot do this behaviour
-            return false;
-        }else if (character.isAtHomeRegion && HasAttribute(BEHAVIOUR_COMPONENT_ATTRIBUTE.OUTSIDE_SETTLEMENT_ONLY)) {
-            //if character is at a settlement map, and the current behaviour requires the character to NOT be at a settlement map, then character cannot do this behaviour
-            return false;
+        if(HasAttribute(BEHAVIOUR_COMPONENT_ATTRIBUTE.WITHIN_HOME_SETTLEMENT_ONLY)) { //character.specificLocation.region.area.areaMap - will be changed after specificLocation rework
+            //if character is not at a npcSettlement map, and the current behaviour requires the character to be at a npcSettlement map, then character cannot do this behaviour
+            //EDIT: New mechanic for INSIDE_SETTLEMENT_ONLY - now this attribute simply means "whenever the character is inside his/her home"
+            if (!character.IsInHomeSettlement()) {
+                return false;
+            }
         }
+        //else if (character.isAtHomeRegion && HasAttribute(BEHAVIOUR_COMPONENT_ATTRIBUTE.OUTSIDE_SETTLEMENT_ONLY)) {
+        //    //if character is at a npcSettlement map, and the current behaviour requires the character to NOT be at a npcSettlement map, then character cannot do this behaviour
+        //    //EDIT: New mechanic for OUTSIDE_SETTLEMENT_ONLY - now this attribute simply means "whenever the character is outside his/her home"
+        //    return false;
+        //}
         return true;
     }
     public bool WillContinueProcess() {

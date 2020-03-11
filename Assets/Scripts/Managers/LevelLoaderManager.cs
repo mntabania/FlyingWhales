@@ -29,7 +29,7 @@ public class LevelLoaderManager : MonoBehaviour {
     IEnumerator LoadLevelAsynchronously(string sceneName) {
         _progress = 0f;
         SetLoadingState(true);
-        UpdateLoadingInfo("Loading " + sceneName + "...");
+        UpdateLoadingInfo($"Loading {sceneName}...");
         yield return null;
         AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(sceneName);
         asyncOperation.allowSceneActivation = false;
@@ -57,14 +57,10 @@ public class LevelLoaderManager : MonoBehaviour {
         //loaderText.text = (100f * amount).ToString("F0") + " %";
         //loaderProgressBar.value = amount;
     }
-    public static void UpdateLoadingInfo(string info) {
-        if(LevelLoaderManager.Instance != null) {
-            LevelLoaderManager.Instance.loaderInfoText.text = info;
-        }
+    public void UpdateLoadingInfo(string info) {
+        loaderInfoText.text = info;
     }
-    public static void SetLoadingState(bool state) {
-        if (LevelLoaderManager.Instance != null) {
-            LevelLoaderManager.Instance.loaderGO.SetActive(state);
-        } 
+    public void SetLoadingState(bool state) {
+        loaderGO.SetActive(state);
     }
 }

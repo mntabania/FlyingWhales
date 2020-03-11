@@ -35,18 +35,18 @@ MonoBehaviour:
   m_ColliderType: 1
   Sprites:
   - Sprite: {fileID: 21300000, guid: 5754c683be215e54f989dea775f3d717, type: 3}
-    Weight: 10
+    Weight: 5
   - Sprite: {fileID: 21300000, guid: 8c52fab61c7d6d8478dad9cda239a048, type: 3}
-    Weight: 10
+    Weight: 5
   - Sprite: {fileID: 21300000, guid: 4982222acd0a30a4ba1007f2fd963b8c, type: 3}
-    Weight: 10
+    Weight: 5
   - Sprite: {fileID: 21300000, guid: ee29e4c8b11a88c449a51aacc7c063b3, type: 3}
-    Weight: 10
+    Weight: 5
   - Sprite: {fileID: 21300000, guid: 96edce1485823af4ea68bfb95ce288a2, type: 3}
-    Weight: 10
+    Weight: 20
   - Sprite: {fileID: 21300000, guid: b37b76423ce4fdc4996d0357ef065cbe, type: 3}
-    Weight: 10
+    Weight: 20
   - Sprite: {fileID: 21300000, guid: 807c776b946f27248a5ed8719ddf076e, type: 3}
-    Weight: 10
+    Weight: 20
   - Sprite: {fileID: 21300000, guid: 636c786b50377ae45bca7927bc3e2494, type: 3}
-    Weight: 10
+    Weight: 20

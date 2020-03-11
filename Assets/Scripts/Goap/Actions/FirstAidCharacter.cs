@@ -10,20 +10,14 @@ public class FirstAidCharacter : GoapAction {
     public FirstAidCharacter() : base(INTERACTION_TYPE.FIRST_AID_CHARACTER) {
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
         actionIconString = GoapActionStateDB.FirstAid_Icon;
-        validTimeOfDays = new TIME_IN_WORDS[] {
-            TIME_IN_WORDS.MORNING,
-            TIME_IN_WORDS.LUNCH_TIME,
-            TIME_IN_WORDS.AFTERNOON,
-            TIME_IN_WORDS.EARLY_NIGHT,
-            TIME_IN_WORDS.LATE_NIGHT,
-        };
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, };
+        isNotificationAnIntel = true;
     }
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_ITEM, SPECIAL_TOKEN.HEALING_POTION.ToString(), false, GOAP_EFFECT_TARGET.ACTOR), HasHealingPotion);
+        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Healing Potion", false, GOAP_EFFECT_TARGET.ACTOR), HasHealingPotion);
         AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.REMOVE_TRAIT, "Injured", false, GOAP_EFFECT_TARGET.TARGET));
         AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.REMOVE_TRAIT, "Unconscious", false, GOAP_EFFECT_TARGET.TARGET));
     }
@@ -31,8 +25,10 @@ public class FirstAidCharacter : GoapAction {
         base.Perform(goapNode);
         SetState("First Aid Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        return 12;
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+        string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
+        actor.logComponent.AppendCostLog(costLog);
+        return 10;
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
         GoapActionInvalidity goapActionInvalidity = base.IsInvalid(node);
@@ -44,17 +40,59 @@ public class FirstAidCharacter : GoapAction {
         }
         return goapActionInvalidity;
     }
+    public override string ReactionToActor(Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionToActor(witness, node, status);
+        Character actor = node.actor;
+        IPointOfInterest target = node.poiTarget;
+        if (target is Character) {
+            Character targetCharacter = target as Character;
+            string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
+            if (opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
+                if (!witness.traitContainer.HasTrait("Psychopath")) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Gratefulness, witness, actor, status);
+                }
+            } else if (opinionLabel == OpinionComponent.Rival) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status);
+            }
+        }
+        return response;
+    }
+    public override string ReactionOfTarget(ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionOfTarget(node, status);
+        Character actor = node.actor;
+        IPointOfInterest target = node.poiTarget;
+        if (target is Character) {
+            Character targetCharacter = target as Character;
+            if (!targetCharacter.traitContainer.HasTrait("Psychopath")) {
+                if (targetCharacter.relationshipContainer.IsEnemiesWith(actor)) {
+                    if(UnityEngine.Random.Range(0, 100) < 30) {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Gratefulness, targetCharacter, actor, status);
+                    }
+                    if (UnityEngine.Random.Range(0, 100) < 20) {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Embarassment, targetCharacter, actor, status);
+                    }
+                } else {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Gratefulness, targetCharacter, actor, status);
+                }
+            }
+        }
+        return response;
+    }
     #endregion
 
     #region State Effects
     public void AfterFirstAidSuccess(ActualGoapNode goapNode) {
-        goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Injured", goapNode.actor);
-        goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Unconscious", goapNode.actor);
-        if (goapNode.actor.HasTokenInInventory(SPECIAL_TOKEN.HEALING_POTION)) {
-            goapNode.actor.ConsumeToken(goapNode.actor.GetToken(SPECIAL_TOKEN.HEALING_POTION));
+        Character targetCharacter = goapNode.poiTarget as Character;
+        targetCharacter.relationshipContainer.AdjustOpinion(targetCharacter, goapNode.actor, "Base", 3);
+        goapNode.poiTarget.traitContainer.RemoveStatusAndStacks(goapNode.poiTarget, "Injured", goapNode.actor);
+        goapNode.poiTarget.traitContainer.RemoveStatusAndStacks(goapNode.poiTarget, "Unconscious", goapNode.actor);
+        TileObject potion = goapNode.actor.GetItem(TILE_OBJECT_TYPE.HEALING_POTION);
+        if (potion != null) {
+            goapNode.actor.UnobtainItem(potion);
         } else {
-            //the actor does not have a tool, log for now
-            Debug.LogWarning(goapNode.actor.name + " does not have a tool for removing poison! Poison was still removed, but thought you should know.");
+            //the actor does not have a healing potion, log for now
+            goapNode.actor.logComponent.PrintLogErrorIfActive(
+                $"{goapNode.actor.name} does not have a healing potion for first aid! Injured and Unconscious was still removed, but thought you should know.");
         }
         //**After Effect 3**: Allow movement of Target
         //(poiTarget as Character).marker.pathfindingAI.AdjustDoNotMove(-1);
@@ -63,7 +101,7 @@ public class FirstAidCharacter : GoapAction {
 
     #region Precondition
     private bool HasHealingPotion(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor.HasTokenInInventory(SPECIAL_TOKEN.HEALING_POTION);
+        return actor.HasItem(TILE_OBJECT_TYPE.HEALING_POTION);
     }
     #endregion
 
@@ -114,6 +152,6 @@ public class FirstAidCharacterData : GoapActionData {
         requirementAction = Requirement;
     }
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return poiTarget.traitContainer.GetNormalTrait<Trait>("Injured", "Unconscious") != null;
+        return poiTarget.traitContainer.HasTrait("Injured", "Unconscious");
     }
 }

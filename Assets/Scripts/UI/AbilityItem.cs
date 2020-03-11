@@ -13,8 +13,8 @@ public class AbilityItem : MonoBehaviour {
         if(this.ability != null) {
             if(this.ability is CombatAbility) {
                 img.sprite = PlayerManager.Instance.GetCombatAbilitySprite((this.ability as CombatAbility).name);
-            }else if (this.ability is PlayerJobAction) {
-                img.sprite = PlayerManager.Instance.GetJobActionSprite((this.ability as PlayerJobAction).name);
+            }else if (this.ability is PlayerSpell) {
+                img.sprite = PlayerManager.Instance.GetJobActionSprite((this.ability as PlayerSpell).name);
             }
         }
     }
@@ -23,8 +23,8 @@ public class AbilityItem : MonoBehaviour {
         if (this.ability != null) {
             if (this.ability is CombatAbility) {
                 UIManager.Instance.ShowSmallInfo((this.ability as CombatAbility).name);
-            } else if (this.ability is PlayerJobAction) {
-                UIManager.Instance.ShowSmallInfo((this.ability as PlayerJobAction).name);
+            } else if (this.ability is PlayerSpell) {
+                UIManager.Instance.ShowSmallInfo((this.ability as PlayerSpell).name);
             }
         }
     }

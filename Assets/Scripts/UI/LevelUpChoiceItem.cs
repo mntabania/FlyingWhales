@@ -24,7 +24,7 @@ public class LevelUpChoiceItem : PooledObject {
         img.sprite = defaultSprite;
         if (obj is SummonSlot) {
             SummonSlot summonSlot = obj as SummonSlot;
-            toggle.interactable = summonSlot.level < PlayerManager.MAX_LEVEL_SUMMON;
+            toggle.interactable = summonSlot.level < PlayerDB.MAX_LEVEL_SUMMON;
             if (summonSlot.isLocked) {
                 img.sprite = lockedSprite;
             } else if (summonSlot.summon != null) {
@@ -32,19 +32,19 @@ public class LevelUpChoiceItem : PooledObject {
             }
         } else if (obj is ArtifactSlot) {
             ArtifactSlot artifactSlot = obj as ArtifactSlot;
-            toggle.interactable = artifactSlot.level < PlayerManager.MAX_LEVEL_ARTIFACT;
+            toggle.interactable = artifactSlot.level < PlayerDB.MAX_LEVEL_ARTIFACT;
             if (artifactSlot.isLocked) {
                 img.sprite = lockedSprite;
             } else if (artifactSlot.artifact != null) {
                 img.sprite = CharacterManager.Instance.GetArtifactSettings(artifactSlot.artifact.type).artifactPortrait;
             }
-        } else if (obj is PlayerJobAction) {
-            PlayerJobAction interventionAbility = obj as PlayerJobAction;
-            toggle.interactable = interventionAbility.level < PlayerManager.MAX_LEVEL_INTERVENTION_ABILITY;
+        } else if (obj is PlayerSpell) {
+            PlayerSpell interventionAbility = obj as PlayerSpell;
+            toggle.interactable = interventionAbility.level < PlayerDB.MAX_LEVEL_INTERVENTION_ABILITY;
             img.sprite = PlayerManager.Instance.GetJobActionSprite(interventionAbility.name);
         } else if (obj is CombatAbility) {
             CombatAbility combatAbility = obj as CombatAbility;
-            toggle.interactable = combatAbility.lvl < PlayerManager.MAX_LEVEL_COMBAT_ABILITY;
+            toggle.interactable = combatAbility.lvl < PlayerDB.MAX_LEVEL_COMBAT_ABILITY;
             img.sprite = PlayerManager.Instance.GetCombatAbilitySprite(combatAbility.name);
         }
         UpdateTextInfo();
@@ -60,9 +60,9 @@ public class LevelUpChoiceItem : PooledObject {
         if (obj is SummonSlot) {
             SummonSlot summonSlot = obj as SummonSlot;
             string text = "Summon Slot";
-            text += "\nLevel: " + summonSlot.level.ToString();
+            text += $"\nLevel: {summonSlot.level}";
             if (summonSlot.summon != null) {
-                text += "\nAttached Summon: " + summonSlot.summon.summonType.SummonName();
+                text += $"\nAttached Summon: {summonSlot.summon.summonType.SummonName()}";
             } else {
                 text += "\nAttached Summon: None";
             }
@@ -70,22 +70,22 @@ public class LevelUpChoiceItem : PooledObject {
         } else if (obj is ArtifactSlot) {
             ArtifactSlot artifactSlot = obj as ArtifactSlot;
             string text = "Artifact Slot";
-            text += "\nLevel: " + artifactSlot.level.ToString();
+            text += $"\nLevel: {artifactSlot.level}";
             if(artifactSlot.artifact != null) {
-                text += "\nAttached Artifact: " + artifactSlot.artifact.name;
+                text += $"\nAttached Artifact: {artifactSlot.artifact.name}";
             } else {
                 text += "\nAttached Artifact: None";
             }
             info.text = text;
-        } else if (obj is PlayerJobAction) {
-            PlayerJobAction action = obj as PlayerJobAction;
+        } else if (obj is PlayerSpell) {
+            PlayerSpell action = obj as PlayerSpell;
             string text = action.name;
-            text += "\nDescription: " + action.description;
+            text += $"\nDescription: {action.description}";
             info.text = text;
         } else if (obj is CombatAbility) {
             CombatAbility ability = obj as CombatAbility;
             string text = ability.name;
-            text += "\nDescription: " + ability.description;
+            text += $"\nDescription: {ability.description}";
             info.text = text;
         }
     }

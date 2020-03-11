@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Linq;
+using Actionables;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using Traits;
 
 public class Minion {
@@ -13,16 +16,14 @@ public class Minion {
     public int indexDefaultSort { get; private set; }
     public CombatAbility combatAbility { get; private set; }
     public List<string> traitsToAdd { get; private set; }
-    public Region assignedRegion { get; private set; } //the landmark that this minion is currently invading. NOTE: This is set on both settlement and non settlement landmarks
-    public DeadlySin deadlySin { get { return CharacterManager.Instance.GetDeadlySin(_assignedDeadlySinName); } }
-    public bool isAssigned { get { return assignedRegion != null; } } //true if minion is already assigned somewhere else, maybe in construction or research spells
-    public List<INTERVENTION_ABILITY> interventionAbilitiesToResearch { get; private set; } //This is a list not array because the abilities here are consumable
+    public Region assignedRegion { get; private set; } //the landmark that this minion is currently invading. NOTE: This is set on both npcSettlement and non npcSettlement landmarks
+    public DeadlySin deadlySin => CharacterManager.Instance.GetDeadlySin(_assignedDeadlySinName);
+    public bool isAssigned => assignedRegion != null; //true if minion is already assigned somewhere else, maybe in construction or research spells
     public int spellExtractionCount { get; private set; } //the number of times a spell was extracted from this minion.
+    public bool isSummoned { get; private set; }
 
     private string _assignedDeadlySinName;
-
-    public Log busyReasonLog { get; private set; } //The reason that this minion is busy
-
+    
     public Minion(Character character, bool keepData) {
         this.character = character;
         this.exp = 0;
@@ -32,50 +33,29 @@ public class Minion {
         SetAssignedDeadlySinName(character.characterClass.className);
         character.ownParty.icon.SetVisualState(true);
         if (!keepData) {
-            character.SetName(RandomNameGenerator.Instance.GenerateMinionName());
+            character.SetName(RandomNameGenerator.GenerateMinionName());
         }
+        // RemoveInvalidPlayerActions();
+        character.needsComponent.SetFullnessForcedTick(0);
+        character.needsComponent.SetTirednessForcedTick(0);
+        character.behaviourComponent.AddBehaviourComponent(typeof(DefaultMinion));
+        character.combatComponent.SetCombatMode(COMBAT_MODE.Defend);
+        character.visuals.UpdateAllVisuals(character);
     }
     public Minion(SaveDataMinion data) {
         this.character = CharacterManager.Instance.GetCharacterByID(data.characterID);
         this.exp = data.exp;
         traitsToAdd = data.traitsToAdd;
-        interventionAbilitiesToResearch = data.interventionAbilitiesToResearch;
         SetIndexDefaultSort(data.indexDefaultSort);
         character.SetMinion(this);
         character.ownParty.icon.SetVisualState(true);
         SetAssignedDeadlySinName(character.characterClass.className);
         spellExtractionCount = data.spellExtractionCount;
+        character.combatComponent.SetCombatMode(COMBAT_MODE.Defend);
+        // RemoveInvalidPlayerActions();
     }
     public void SetAssignedDeadlySinName(string name) {
         _assignedDeadlySinName = name;
-    }
-    //public void SetEnabledState(bool state) {
-    //    if (character.IsInOwnParty()) {
-    //        //also set enabled state of other party members
-    //        for (int i = 0; i < character.ownParty.characters.Count; i++) {
-    //            Character otherChar = character.ownParty.characters[i];
-    //            if (otherChar.id != character.id && otherChar.minion != null) {
-    //                otherChar.minion.SetEnabledState(state);
-    //                if (state) {
-    //                    //Since the otherChar will be removed from the party when he is not the owner and state is true, reduce loop count so no argument exception error will be called
-    //                    i--;
-    //                }
-    //            }
-    //        }
-    //    } else {
-    //        //If character is not own party and is enabled, automatically put him in his own party so he can be used again
-    //        if (state) {
-    //            character.currentParty.RemoveCharacter(character);
-    //        }
-    //    }
-    //    _isEnabled = state;
-    //    minionItem.SetEnabledState(state);
-    //}
-    public void SetRandomResearchInterventionAbilities(List<INTERVENTION_ABILITY> abilities) {
-        interventionAbilitiesToResearch = abilities;
-    }
-    public void RemoveInterventionAbilityToResearch(INTERVENTION_ABILITY abilityType) {
-        interventionAbilitiesToResearch.Remove(abilityType);
     }
     public void SetPlayerCharacterItem(PlayerCharacterItem item) {
         //character.SetPlayerCharacterItem(item);
@@ -102,7 +82,8 @@ public class Minion {
     public void SetIndexDefaultSort(int index) {
         indexDefaultSort = index;
     }
-    public void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null, LogFiller[] deathLogFillers = null) {
+    public void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, 
+        Log _deathLog = null, LogFiller[] deathLogFillers = null) {
         if (!character.isDead) {
             Region deathLocation = character.currentRegion;
             LocationStructure deathStructure = character.currentStructure;
@@ -110,72 +91,55 @@ public class Minion {
 
             character.SetIsDead(true);
             character.SetPOIState(POI_STATE.INACTIVE);
-            //CombatManager.Instance.ReturnCharacterColorToPool(character.characterColor);
 
             if (character.currentRegion == null) {
-                throw new Exception("Specific location of " + character.name + " is null! Please use command /l_character_location_history [Character Name/ID] in console menu to log character's location history. (Use '~' to show console menu)");
+                throw new Exception(
+                    $"Specific location of {character.name} is null! Please use command /l_character_location_history [Character Name/ID] in console menu to log character's location history. (Use '~' to show console menu)");
             }
             if (character.stateComponent.currentState != null) {
                 character.stateComponent.ExitCurrentState();
-            } 
-            //else if (character.stateComponent.stateToDo != null) {
-            //    character.stateComponent.SetStateToDo(null);
-            //}
-            //character.ForceCancelAllJobsTargettingCharacter(false, "target is already dead");
-            //if (character.currentActionNode != null) {
-            //    character.currentActionNode.StopActionNode(false);
-            //}
+            }
             if (character.currentSettlement != null && character.isHoldingItem) {
-                character.DropAllTokens(character.currentStructure, deathTile, true);
+                character.DropAllItems(deathTile);
             }
 
             //clear traits that need to be removed
             character.traitsNeededToBeRemoved.Clear();
 
-            bool wasOutsideSettlement = character.currentSettlement == null;
-            //bool wasOutsideSettlement = false;
-            //if (character.currentRegion != null) {
-            //    wasOutsideSettlement = true;
-            //    character.currentRegion.RemoveCharacterFromLocation(this.character);
-            //}
-
-            if (!character.IsInOwnParty()) {
-                character.currentParty.RemovePOI(character);
+            Character carrier = character.isBeingCarriedBy;
+            if (carrier != null) {
+                carrier.UncarryPOI(character);
             }
             character.ownParty.PartyDeath();
             character.currentRegion?.RemoveCharacterFromLocation(character);
             character.SetRegionLocation(deathLocation); //set the specific location of this party, to the location it died at
             character.SetCurrentStructureLocation(deathStructure, false);
 
+            // character.role?.OnDeath(character);
+            character.traitContainer.RemoveAllTraitsAndStatusesByName(character, "Criminal"); //remove all criminal type traits
 
-            if (character.role != null) {
-                character.role.OnDeath(character);
+            for (int i = 0; i < character.traitContainer.allTraitsAndStatuses.Count; i++) {
+                if (character.traitContainer.allTraitsAndStatuses[i].OnDeath(character)) {
+                    i--;
+                }
             }
 
-            character.traitContainer.RemoveAllTraitsByType(character, TRAIT_TYPE.CRIMINAL); //remove all criminal type traits
-
-            for (int i = 0; i < character.traitContainer.allTraits.Count; i++) {
-                character.traitContainer.allTraits[i].OnDeath(character);
-            }
-
-            character.traitContainer.RemoveAllNonPersistentTraits(character);
-
-            character.marker?.OnDeath(deathTile, wasOutsideSettlement);
-            //character.SetNumWaitingForGoapThread(0); //for raise dead
-            Dead dead = new Dead();
-            dead.AddCharacterResponsibleForTrait(responsibleCharacter);
-            character.traitContainer.AddTrait(character, dead, gainedFromDoing: deathFromAction);
-            PlayerManager.Instance.player.RemoveMinion(this);
+            character.traitContainer.RemoveAllNonPersistentTraitAndStatuses(character);
+            character.marker?.OnDeath(deathTile);
+            
+            // Dead dead = new Dead();
+            // dead.AddCharacterResponsibleForTrait(responsibleCharacter);
+            // character.traitContainer.AddTrait(character, dead, gainedFromDoing: deathFromAction);
+            // PlayerManager.Instance.player.RemoveMinion(this);
             Messenger.Broadcast(Signals.CHARACTER_DEATH, character);
 
             Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, character as IPointOfInterest, "target is already dead");
             character.CancelAllJobs();
-            StopInvasionProtocol(PlayerManager.Instance.player.currentSettlementBeingInvaded);
+            // StopInvasionProtocol(PlayerManager.Instance.player.currentNpcSettlementBeingInvaded);
 
-            //Debug.Log(GameManager.Instance.TodayLogString() + character.name + " died of " + cause);
             Log deathLog;
             if (_deathLog == null) {
-                deathLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "death_" + cause);
+                deathLog = new Log(GameManager.Instance.Today(), "Character", "Generic", $"death_{cause}");
                 deathLog.AddToFillers(this, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 if (responsibleCharacter != null) {
                     deathLog.AddToFillers(responsibleCharacter, responsibleCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -186,12 +150,15 @@ public class Minion {
                     }
                 }
                 //will only add death log to history if no death log is provided. NOTE: This assumes that if a death log is provided, it has already been added to this characters history.
-                character.AddHistory(deathLog);
-                PlayerManager.Instance.player.ShowNotification(deathLog);
+                character.logComponent.AddHistory(deathLog);
+                PlayerManager.Instance.player.ShowNotificationFrom(character, deathLog);
             } else {
                 deathLog = _deathLog;
             }
-            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Minion Died: " +  Utilities.LogReplacer(deathLog), null);
+            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(),
+                $"Minion Died: {UtilityScripts.Utilities.LogReplacer(deathLog)}", null);
+            Unsummon();
+            GameManager.Instance.CreateParticleEffectAt(deathTile, PARTICLE_EFFECT.Minion_Dissipate);
         }
     }
 
@@ -295,22 +262,22 @@ public class Minion {
     #endregion
 
     #region Invasion
-    public void StartInvasionProtocol(Settlement settlement) {
+    public void StartInvasionProtocol(NPCSettlement npcSettlement) {
         //TODO:
         // AddPendingTraits();
         // Messenger.AddListener(Signals.TICK_STARTED, PerTickInvasion);
         // Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
-        // Messenger.AddListener<Settlement>(Signals.SUCCESS_INVASION_AREA, OnSucceedInvadeArea);
+        // Messenger.AddListener<NPCSettlement>(Signals.SUCCESS_INVASION_AREA, OnSucceedInvadeArea);
         // Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, character.OnOtherCharacterDied);
         // Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, character.OnCharacterEndedState);
-        // SetAssignedRegion(settlement.region);
+        // SetAssignedRegion(npcSettlement.region);
     }
-    public void StopInvasionProtocol(Settlement settlement) {
+    public void StopInvasionProtocol(NPCSettlement npcSettlement) {
         //TODO:
-        // if(settlement != null && assignedRegion != null && assignedRegion.settlement == settlement) {
+        // if(npcSettlement != null && assignedRegion != null && assignedRegion.npcSettlement == npcSettlement) {
         //     Messenger.RemoveListener(Signals.TICK_STARTED, PerTickInvasion);
         //     Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
-        //     Messenger.RemoveListener<Settlement>(Signals.SUCCESS_INVASION_AREA, OnSucceedInvadeArea);
+        //     Messenger.RemoveListener<NPCSettlement>(Signals.SUCCESS_INVASION_AREA, OnSucceedInvadeArea);
         //     Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, character.OnOtherCharacterDied);
         //     Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, character.OnCharacterEndedState);
         //     SetAssignedRegion(null);
@@ -322,14 +289,14 @@ public class Minion {
         }
         if (!character.isInCombat) {
             character.HPRecovery(0.0025f);
-            if (character.IsInOwnParty() && character.marker != null && !character.doNotDisturb && !character.ownParty.icon.isTravelling) {
+            if (character.IsInOwnParty() && character.marker && character.canPerform && !character.ownParty.icon.isTravelling) {
                 GoToWorkArea();
             }
         }
         //if (!character.IsInOwnParty() || character.ownParty.icon.isTravelling || character.doNotDisturb) {
         //    return; //if this character is not in own party, is a defender or is travelling or cannot be disturbed, do not generate interaction
         //}
-        //if (character.stateComponent.currentState != null /*|| character.stateComponent.stateToDo != null*/ || character.marker == null) {
+        //if (character.stateComponent.currentState != null /*|| character.stateComponent.stateToDo != null*/ || character.!marker) {
         //    return;
         //}
         //GoToWorkArea();
@@ -338,59 +305,25 @@ public class Minion {
         character.stateComponent.OnTickEnded();
         character.EndTickPerformJobs();
     }
+    private void OnTickStarted() {
+        if (character.CanPlanGoap()) {
+            character.PerStartTickActionPlanning();
+        }
+    }
     private void GoToWorkArea() {
         LocationStructure structure = character.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA);
         LocationGridTile tile = structure.GetRandomTile();
         character.marker.GoTo(tile);
     }
-    private void OnSucceedInvadeArea(Settlement settlement) {
-        if (character.stateComponent.currentState != null) {
-            character.stateComponent.ExitCurrentState();
-            //This call is doubled so that it will also exit the previous major state if there's any
-            //if (character.stateComponent.currentState != null) {
-            //    character.stateComponent.currentState.OnExitThisState();
-            //}
-        }
-        //else if (character.stateComponent.currentState != null) {
-        //    character.stateComponent.SetStateToDo(null);
-        //}
-
-        if (character.currentParty.icon.isTravelling) {
-            character.marker.StopMovement();
-        }
-        character.StopCurrentActionNode(false);
-
-        character.currentRegion.RemoveCharacterFromLocation(character);
-        //character.marker.ClearAvoidInRange(false);
-        //character.marker.ClearHostilesInRange(false);
-        //character.marker.ClearPOIsInVisionRange();
-        PlayerManager.Instance.player.playerSettlement.AddCharacterToLocation(character);
-        //character.ClearAllAwareness();
-        character.CancelAllJobs();
-        character.traitContainer.RemoveAllNonPersistentTraits(character);
-        character.ResetToFullHP();
-        if (character.isDead) {
-            character.SetIsDead(false);
-            character.SetPOIState(POI_STATE.ACTIVE);
-            if (character.ownParty == null) {
-                character.CreateOwnParty();
-                character.ownParty.CreateIcon();
-            }
-            character.traitContainer.RemoveTrait(character, "Dead");
-        }
-        character.DestroyMarker();
-        SchedulingManager.Instance.ClearAllSchedulesBy(this.character);
-    }
     public void SetAssignedRegion(Region region) {
         assignedRegion = region;
-        UpdateBusyReason();
         Messenger.Broadcast(Signals.MINION_CHANGED_ASSIGNED_REGION, this, assignedRegion);
     }
     #endregion
 
     #region Traits
     /// <summary>
-    /// Add trait function for minions. Added handling for when a minion gains a trait while outside of an settlement map. All traits are stored and will be added once the minion is placed at an settlement map.
+    /// Add trait function for minions. Added handling for when a minion gains a trait while outside of an npcSettlement map. All traits are stored and will be added once the minion is placed at an npcSettlement map.
     /// </summary>
     public bool AddTrait(string traitName, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null) {
         if (InnerMapManager.Instance.isAnInnerMapShowing) {
@@ -409,30 +342,94 @@ public class Minion {
     #endregion
 
     #region Utilities
-    private void UpdateBusyReason() {
-        if (assignedRegion != null) {
-            if (assignedRegion.mainLandmark.specificLandmarkType.IsPlayerLandmark() || assignedRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.NONE) {
-                //the region that this minion is assigned to is a player landmark
-                Log log = new Log(GameManager.Instance.Today(), "Character", "Minion", "busy_" + assignedRegion.mainLandmark.specificLandmarkType.ToString());
-                log.AddToFillers(this.character, this.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                log.AddToFillers(assignedRegion, assignedRegion.name, LOG_IDENTIFIER.LANDMARK_1);
-                SetBusyReason(log);
-            } else {
-                //this minion is invading
-                Log log = new Log(GameManager.Instance.Today(), "Character", "Minion", "busy_invade");
-                log.AddToFillers(this.character, this.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                log.AddToFillers(assignedRegion, assignedRegion.name, LOG_IDENTIFIER.LANDMARK_1);
-                SetBusyReason(log);
-            }
-        } else {
-            SetBusyReason(null);
-        }
-    }
-    private void SetBusyReason(Log log) {
-        busyReasonLog = log;
-    }
     public void AdjustSpellExtractionCount(int amount) {
         spellExtractionCount += amount;
+    }
+    #endregion
+
+    #region Summoning
+    public void Summon(Inner_Maps.Location_Structures.ThePortal portalStructure) {
+        character.CreateMarker();
+
+        int minX = portalStructure.tiles.Min(t => t.localPlace.x);
+        int maxX = portalStructure.tiles.Max(t => t.localPlace.x);
+        int minY = portalStructure.tiles.Min(t => t.localPlace.y);
+        int maxY = portalStructure.tiles.Max(t => t.localPlace.y);
+
+        int differenceX = (maxX - minX) + 1;
+        int differenceY = (maxY - minY) + 1;
+
+        int centerX = minX + (differenceX / 2);
+        int centerY = minY + (differenceY / 2);
+
+        LocationGridTile centerTile = portalStructure.location.innerMap.map[centerX, centerY];
+        // Vector3 pos = centerTile.worldLocation;
+
+        character.marker.InitialPlaceMarkerAt(centerTile);
+        character.SetIsDead(false);
+
+        Vector2Int tileToGoToCoords = new Vector2Int(character.gridTileLocation.localPlace.x, character.gridTileLocation.localPlace.y - 3);
+        LocationGridTile tileToGoTo = portalStructure.location.innerMap.map[tileToGoToCoords.x, tileToGoToCoords.y];
+        character.marker.GoTo(tileToGoTo);
+        
+        PlayerManager.Instance.player.AdjustMana(-EditableValuesManager.Instance.summonMinionManaCost);
+        
+        Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
+        Messenger.AddListener(Signals.TICK_STARTED, OnTickStarted);
+        SetIsSummoned(true);
+        Messenger.Broadcast(Signals.SUMMON_MINION, this);
+    }
+    private void Unsummon() {
+        character.SetHP(0);
+        Messenger.AddListener(Signals.TICK_ENDED, UnsummonedHPRecovery);
+        Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
+        Messenger.RemoveListener(Signals.TICK_STARTED, OnTickStarted);
+        SetIsSummoned(false);
+        Messenger.Broadcast(Signals.UNSUMMON_MINION, this);
+    }
+    private void UnsummonedHPRecovery() {
+        this.character.AdjustHP((int)(character.maxHP * 0.02f), ELEMENTAL_TYPE.Normal);
+        if (character.currentHP >= character.maxHP) {
+            //minion can be summoned again
+            Messenger.RemoveListener(Signals.TICK_ENDED, UnsummonedHPRecovery);
+        }
+    }
+    public void OnSeize() {
+        Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
+        Messenger.RemoveListener(Signals.TICK_STARTED, OnTickStarted);
+    }
+    public void OnUnseize() {
+        Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
+        Messenger.AddListener(Signals.TICK_STARTED, OnTickStarted);
+    }
+    public void SetIsSummoned(bool state) {
+        isSummoned = state;
+    }
+    #endregion
+
+    #region Player Action Target
+    private void RemoveInvalidPlayerActions() {
+        List<PlayerAction> currentActions = new List<PlayerAction>(character.actions); 
+        for (int i = 0; i < currentActions.Count; i++) {
+            PlayerAction action = currentActions[i];
+            if (action.actionName != "Seize") {
+                character.RemovePlayerAction(action);    
+            }
+        }
+    }
+    #endregion
+    
+    #region Jobs
+    public void NoPathToDoJob(JobQueueItem job) {
+        if (job.jobType == JOB_TYPE.ROAM_AROUND_CORRUPTION) {
+            character.jobComponent.TriggerRoamAroundTile();
+        } else if (job.jobType == JOB_TYPE.ROAM_AROUND_PORTAL) {
+            character.jobComponent.TriggerRoamAroundTile();
+        } else if (job.jobType == JOB_TYPE.RETURN_PORTAL) {
+            character.jobComponent.TriggerRoamAroundTile();
+        } else if (job.jobType == JOB_TYPE.ROAM_AROUND_TILE) {
+            character.jobComponent.TriggerMonsterStand();
+        }
     }
     #endregion
 }
@@ -442,7 +439,7 @@ public struct UnsummonedMinionData {
     public string minionName;
     public string className;
     public COMBAT_ABILITY combatAbility;
-    public List<INTERVENTION_ABILITY> interventionAbilitiesToResearch;
+    public List<SPELL_TYPE> interventionAbilitiesToResearch;
 
     public override bool Equals(object obj) {
         if (obj is UnsummonedMinionData) {

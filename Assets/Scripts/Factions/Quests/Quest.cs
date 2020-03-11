@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UtilityScripts;
 
 public class Quest : IJobOwner {
     public JOB_OWNER ownerType { get { return JOB_OWNER.QUEST; } }
@@ -13,12 +15,16 @@ public class Quest : IJobOwner {
     public int duration { get; protected set; }
     public int currentDuration { get; protected set; }
     public List<JobQueueItem> availableJobs { get; protected set; }
-
+    public List<JobQueueItem> forcedCancelJobsOnTickEnded { get; private set; }
+    
+    public JobTriggerComponent jobTriggerComponent { get; }
+    
     public Quest(Faction factionOwner, Region region) {
         this.factionOwner = factionOwner;
         this.region = region;
         name = "Quest";
         availableJobs = new List<JobQueueItem>();
+        forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
         //jobQueue = new JobQueue(this);
         //jobQueue.SetQuest(this);
     }
@@ -54,6 +60,15 @@ public class Quest : IJobOwner {
         }
         return false;
     }
+    public JobQueueItem GetFirstUnassignedJobToCharacterJob(Character character) {
+        for (int i = 0; i < availableJobs.Count; i++) {
+            JobQueueItem job = availableJobs[i];
+            if (job.assignedCharacter == null && character.jobQueue.CanJobBeAddedToQueue(job)) {
+                return job;
+            }
+        }
+        return null;
+    }
     public bool AssignCharacterToJobBasedOnVision(Character character) {
         List<JobQueueItem> choices = new List<JobQueueItem>();
         for (int i = 0; i < availableJobs.Count; i++) {
@@ -66,10 +81,23 @@ public class Quest : IJobOwner {
             }
         }
         if (choices.Count > 0) {
-            JobQueueItem job = Utilities.GetRandomElement(choices);
+            JobQueueItem job = CollectionUtilities.GetRandomElement(choices);
             return character.jobQueue.AddJobInQueue(job);
         }
         return false;
+    }
+    public JobQueueItem GetFirstJobBasedOnVision(Character character) {
+        for (int i = 0; i < availableJobs.Count; i++) {
+            JobQueueItem job = availableJobs[i];
+            if (job.assignedCharacter == null && job is GoapPlanJob) {
+                GoapPlanJob goapJob = job as GoapPlanJob;
+                if (goapJob.targetPOI != null && character.marker.inVisionPOIs.Contains(goapJob.targetPOI) &&
+                    character.jobQueue.CanJobBeAddedToQueue(job)) {
+                    return job;
+                }
+            }
+        }
+        return null;
     }
     public bool HasJob(JOB_TYPE jobType) {
         for (int i = 0; i < availableJobs.Count; i++) {
@@ -88,13 +116,15 @@ public class Quest : IJobOwner {
         isActivated = true;
         Messenger.AddListener(Signals.TICK_STARTED, PerTickOnQuest);
         Messenger.AddListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, ForceCancelAllJobsTargettingCharacter);
-        Messenger.AddListener<IPointOfInterest, string, JOB_TYPE>(Signals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, ForceCancelJobTypesTargetingPOI);
+        //Messenger.AddListener<IPointOfInterest, string, JOB_TYPE>(Signals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, ForceCancelJobTypesTargetingPOI);
+        Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
     }
     public virtual void FinishQuest() {
         isActivated = false;
         Messenger.RemoveListener(Signals.TICK_STARTED, PerTickOnQuest);
         Messenger.RemoveListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, ForceCancelAllJobsTargettingCharacter);
-        Messenger.RemoveListener<IPointOfInterest, string, JOB_TYPE>(Signals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, ForceCancelJobTypesTargetingPOI);
+        //Messenger.RemoveListener<IPointOfInterest, string, JOB_TYPE>(Signals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, ForceCancelJobTypesTargetingPOI);
+        Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
     }
     protected virtual void PerTickOnQuest() {
         if(duration > 0) {
@@ -158,6 +188,19 @@ public class Quest : IJobOwner {
             }
         }
     }
+    public void AddForcedCancelJobsOnTickEnded(JobQueueItem job) {
+        if (!forcedCancelJobsOnTickEnded.Contains(job)) {
+            forcedCancelJobsOnTickEnded.Add(job);
+        }
+    }
+    public void ProcessForcedCancelJobsOnTickEnded() {
+        if (forcedCancelJobsOnTickEnded.Count > 0) {
+            for (int i = 0; i < forcedCancelJobsOnTickEnded.Count; i++) {
+                forcedCancelJobsOnTickEnded[i].ForceCancelJob(false);
+            }
+            forcedCancelJobsOnTickEnded.Clear();
+        }
+    }
     #endregion
 
     #region General
@@ -166,6 +209,9 @@ public class Quest : IJobOwner {
     }
     public void SetDuration(int amount) {
         duration = amount;
+    }
+    private void OnTickEnded() {
+        ProcessForcedCancelJobsOnTickEnded();
     }
     #endregion
 }
@@ -206,7 +252,7 @@ public class SaveDataQuest {
     }
 
     public virtual Quest Load() {
-        string noSpacesName = Utilities.RemoveAllWhiteSpace(name);
+        string noSpacesName = UtilityScripts.Utilities.RemoveAllWhiteSpace(name);
         Quest quest = System.Activator.CreateInstance(System.Type.GetType(noSpacesName), this) as Quest;
         //for (int i = 0; i < jobs.Count; i++) {
         //    JobQueueItem job = jobs[i].Load();
@@ -217,7 +263,7 @@ public class SaveDataQuest {
         //    //    if (dataStateJob.assignedCharacterID != -1) {
         //    //        Character assignedCharacter = CharacterManager.Instance.GetCharacterByID(dataStateJob.assignedCharacterID);
         //    //        stateJob.SetAssignedCharacter(assignedCharacter);
-        //    //        CharacterState newState = assignedCharacter.stateComponent.SwitchToState(stateJob.targetState, null, stateJob.targetSettlement);
+        //    //        CharacterState newState = assignedCharacter.stateComponent.SwitchToState(stateJob.targetState, null, stateJob.targetNpcSettlement);
         //    //        if (newState != null) {
         //    //            stateJob.SetAssignedState(newState);
         //    //        } else {

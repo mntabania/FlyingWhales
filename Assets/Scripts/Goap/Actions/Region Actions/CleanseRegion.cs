@@ -4,7 +4,7 @@ public class CleanseRegion : GoapAction {
     
     public CleanseRegion() : base(INTERACTION_TYPE.CLEANSE_REGION) {
         actionIconString = GoapActionStateDB.Work_Icon;
-        isNotificationAnIntel = false;
+        
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
@@ -19,7 +19,7 @@ public class CleanseRegion : GoapAction {
         base.Perform(goapNode);
         SetState("Cleanse Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 1;
     }
     public override void AddFillersToLog(Log log, ActualGoapNode node) {
@@ -34,7 +34,7 @@ public class CleanseRegion : GoapAction {
         if (satisfied) {
             //**Requirements:** Actor has Purifier trait. Region is corrupted. Region does not have a landmark.
             var region = poiTarget.gridTileLocation.parentMap.location.coreTile.region;
-            return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null && actor.traitContainer.GetNormalTrait<Trait>("Purifier") != null
+            return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null && actor.traitContainer.HasTrait("Purifier")
                    && region.coreTile.isCorrupted && region.mainLandmark.specificLandmarkType == LANDMARK_TYPE.NONE;
         }
         return false;

@@ -28,7 +28,7 @@ public class CurseCharacter : GoapAction {
         base.Perform(goapNode);
         SetState("Curse Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 3;
     }
     #endregion
@@ -48,7 +48,7 @@ public class CurseCharacter : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
-            return actor != poiTarget && actor.currentRegion.GetTileObjectsOfType(TILE_OBJECT_TYPE.MAGIC_CIRCLE).Count > 0;
+            return actor != poiTarget && actor.currentRegion.GetTileObjectsOfTypeCount(TILE_OBJECT_TYPE.MAGIC_CIRCLE) > 0;
         }
         return false;
     }

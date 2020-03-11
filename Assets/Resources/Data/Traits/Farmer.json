@@ -1,1 +1,0 @@
-{"name":"Farmer","description":"Allows character to spawn Harvest events in owned Farm regions.","thoughtText":"","type":12,"effect":0,"advertisedInteractions":[],"daysDuration":0,"level":0,"effects":[],"isHidden":false,"mutuallyExclusive":[""],"canBeTriggered":false,"hindersWitness":false,"hindersMovement":false,"hindersAttackTarget":false}

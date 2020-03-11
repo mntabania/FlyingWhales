@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
 using UnityEngine;
+using UtilityScripts;
 
 public class WoodSourceFeature : TileFeature {
     private const int MaxBigTrees = 4;
@@ -24,6 +25,9 @@ public class WoodSourceFeature : TileFeature {
     #region Overrides
     public override void GameStartActions(HexTile tile) {
         owner = tile;
+        Messenger.AddListener<TileObject, LocationGridTile>(Signals.TILE_OBJECT_PLACED, OnTileObjectPlaced);
+        Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
+        
         List<TileObject> bigTrees = tile.GetTileObjectsInHexTile(TILE_OBJECT_TYPE.BIG_TREE_OBJECT);
         currentBigTreeCount = bigTrees.Count;
         if (bigTrees.Count < MaxBigTrees) {
@@ -36,6 +40,7 @@ public class WoodSourceFeature : TileFeature {
         }
         
         List<TileObject> smallTrees = tile.GetTileObjectsInHexTile(TILE_OBJECT_TYPE.TREE_OBJECT);
+        currentSmallTreeCount = smallTrees.Count;
         if (smallTrees.Count < MaxSmallTrees) {
             int missingTrees = MaxSmallTrees - smallTrees.Count;
             for (int i = 0; i <= missingTrees; i++) {
@@ -44,9 +49,11 @@ public class WoodSourceFeature : TileFeature {
                 }
             }
         }
-        
-        Messenger.AddListener<TileObject, LocationGridTile>(Signals.TILE_OBJECT_PLACED, OnTileObjectPlaced);
-        Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
+    }
+    public override void OnRemoveFeature(HexTile tile) {
+        base.OnRemoveFeature(tile);
+        Messenger.RemoveListener(Signals.HOUR_STARTED, TryGenerateBigTreePerHour);
+        Messenger.RemoveListener(Signals.HOUR_STARTED, TryGenerateSmallTreePerHour);
     }
     #endregion
     
@@ -93,9 +100,9 @@ public class WoodSourceFeature : TileFeature {
     }
     private bool CreateNewBigTree() {
         List<LocationGridTile> choices = owner.locationGridTiles.Where(x => x.isOccupied == false 
-                                                                            && x.structure.structureType.IsOpenSpace()).ToList();
+                                && x.structure.structureType.IsOpenSpace() && BigTreeObject.CanBePlacedOnTile(x)).ToList();
         if (choices.Count > 0) {
-            LocationGridTile chosenTile = Utilities.GetRandomElement(choices);
+            LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(choices);
             chosenTile.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.BIG_TREE_OBJECT),
                 chosenTile);
             return true;
@@ -127,9 +134,10 @@ public class WoodSourceFeature : TileFeature {
     }
     private bool CreateNewSmallTree() {
         List<LocationGridTile> choices = owner.locationGridTiles.Where(x => x.isOccupied == false 
-                                                                            && x.structure.structureType.IsOpenSpace()).ToList();
+                                                                            && x.structure.structureType.IsOpenSpace()
+                                                                            && x.groundType != LocationGridTile.Ground_Type.Bone).ToList();
         if (choices.Count > 0) {
-            LocationGridTile chosenTile = Utilities.GetRandomElement(choices);
+            LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(choices);
             chosenTile.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.TREE_OBJECT),
                 chosenTile);
             return true;

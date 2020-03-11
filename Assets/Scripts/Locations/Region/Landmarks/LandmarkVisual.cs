@@ -39,9 +39,9 @@ public class LandmarkVisual : MonoBehaviour {
         if (landmarkLbl != null) {
             //Landmark object is an empty city
             if (!string.IsNullOrEmpty(_landmark.landmarkName)) {
-                landmarkLbl.text = Utilities.NormalizeString(_landmark.landmarkName);
+                landmarkLbl.text = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(_landmark.landmarkName);
             } else {
-                landmarkLbl.text = Utilities.NormalizeString(_landmark.specificLandmarkType.ToString());
+                landmarkLbl.text = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(_landmark.specificLandmarkType.ToString());
             }
         }
     }

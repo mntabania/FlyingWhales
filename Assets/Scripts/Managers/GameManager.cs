@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using Inner_Maps;
+using Ruinarch;
 using Traits;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -34,7 +35,6 @@ public class GameManager : MonoBehaviour {
 
 	public float progressionSpeed;
 	public bool isPaused { get; private set; }
-    public bool allowConsole = true;
     public bool displayFPS = true;
     public bool showFullDebug;
     public static bool showAllTilesTooltip = false;
@@ -43,12 +43,16 @@ public class GameManager : MonoBehaviour {
     public GameObject travelLinePrefab;
 
     [Header("Particle Effects")]
-    [SerializeField] private GameObject electricEffectPrefab;
-    [SerializeField] private GameObject hitEffectPrefab;
-    [SerializeField] private GameObject fireEffectPrefab;
+    //[SerializeField] private GameObject electricEffectPrefab;
+    //[SerializeField] private GameObject explodeEffectPrefab;
+    //[SerializeField] private GameObject fireEffectPrefab;
     [SerializeField] private GameObject aoeParticlesPrefab;
     [SerializeField] private GameObject aoeParticlesAutoDestroyPrefab;
-    [SerializeField] private GameObject burningEffectPrefab;
+    //[SerializeField] private GameObject burningEffectPrefab;
+    [SerializeField] private GameObject bloodPuddleEffectPrefab;
+    //[SerializeField] private GameObject freezingEffectPrefab;
+    //[SerializeField] private GameObject poisonEffectPrefab;
+    [SerializeField] private ParticleEffectAssetDictionary particleEffectsDictionary;
 
     private const float X1_SPEED = 0.75f;
     private const float X2_SPEED = 0.5f;
@@ -73,16 +77,15 @@ public class GameManager : MonoBehaviour {
         Instance = this;
         timeElapsed = 0f;
         _gameHasStarted = false;
-        CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
+        InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
     }
-    private void Update() {
-        if (Input.GetKeyDown(KeyCode.BackQuote)) {
-            if (allowConsole) {
-#if UNITY_EDITOR
-                UIManager.Instance.ToggleConsole();
+
+    private void OnKeyDown(KeyCode keyCode) {
+        if (keyCode == KeyCode.BackQuote) {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            UIManager.Instance.ToggleConsole();
 #endif
-            }
-        } else if (Input.GetKeyDown(KeyCode.Space)) {
+        } else if (keyCode == KeyCode.Space) {
             if (!UIManager.Instance.IsConsoleShowing() && UIManager.Instance.pauseBtn.IsInteractable()) {
                 if (isPaused) {
                     UIManager.Instance.Unpause();
@@ -90,22 +93,22 @@ public class GameManager : MonoBehaviour {
                     UIManager.Instance.Pause();
                 }
             }
-        } else if (Input.GetKeyDown(KeyCode.Alpha1)) {
+        } else if (keyCode == KeyCode.Alpha1) {
             if (!UIManager.Instance.IsConsoleShowing() && UIManager.Instance.x1Btn.IsInteractable()) {
                 UIManager.Instance.SetProgressionSpeed1X();
             }
-        } else if (Input.GetKeyDown(KeyCode.Alpha2)) {
+        } else if (keyCode == KeyCode.Alpha2) {
             if (!UIManager.Instance.IsConsoleShowing() && UIManager.Instance.x2Btn.IsInteractable()) {
                 UIManager.Instance.SetProgressionSpeed2X();
             }
-        } else if (Input.GetKeyDown(KeyCode.Alpha3)) {
+        } else if (keyCode == KeyCode.Alpha3) {
             if (!UIManager.Instance.IsConsoleShowing() && UIManager.Instance.x4Btn.IsInteractable()) {
                 UIManager.Instance.SetProgressionSpeed4X();
             }
-        } else if (Input.GetKeyDown(KeyCode.Escape)) {
-            Messenger.Broadcast(Signals.KEY_DOWN, KeyCode.Escape);
         }
-
+    }
+    
+    private void Update() {
         if (_gameHasStarted && !isPaused) {
             if (Math.Abs(timeElapsed) <= 0f) {
                 TickStarted();
@@ -128,14 +131,15 @@ public class GameManager : MonoBehaviour {
         SchedulingManager.Instance.StartScheduleCalls ();
         Messenger.Broadcast(Signals.DAY_STARTED); //for the first day
         Messenger.Broadcast(Signals.MONTH_START); //for the first month
-        InnerMapManager.Instance.UpdateLightBasedOnTime(Today());
+        Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyDown);
         //TimerHubUI.Instance.AddItem("Until Divine Intervention", 4320, null);
+        Messenger.Broadcast(Signals.UPDATE_INNER_MAP_LIGHT, GetCurrentTimeInWordsOfTick());
     }
     public GameDate Today() {
         return new GameDate(month, days, year, tick);
     }
     public string TodayLogString() {
-        return "[" + continuousDays + " - " + ConvertTickToTime(tick) + "] ";
+        return $"[{continuousDays.ToString()} - {ConvertTickToTime(tick)}] ";
     }
     public GameDate EndOfTheMonth() {
         return new GameDate(month, daysPerMonth, year, ticksPerDay);
@@ -281,7 +285,7 @@ public class GameManager : MonoBehaviour {
         if(hour == 0) {
             hour = 12;
         }
-        return hour + ":" + minutes.ToString("D2") + " " + timeOfDay;
+        return $"{hour}:{minutes:D2} {timeOfDay}";
     }
     public static TIME_IN_WORDS GetTimeInWordsOfTick(int tick) {
         if ((tick >= 265 && tick <= 288) || (tick >= 1 && tick <= 60)) {
@@ -322,7 +326,7 @@ public class GameManager : MonoBehaviour {
         } else if (Instance.tick >= 241 && Instance.tick <= 264) {
             time = TIME_IN_WORDS.LATE_NIGHT;
         }
-        if(relativeTo != null && relativeTo.traitContainer.GetNormalTrait<Trait>("Nocturnal") != null) {
+        if(relativeTo != null && relativeTo.traitContainer.HasTrait("Nocturnal")) {
             time = ConvertTimeInWordsWhenNocturnal(time);
         }
         return time;
@@ -361,7 +365,7 @@ public class GameManager : MonoBehaviour {
         if (timeInWords == TIME_IN_WORDS.LATE_NIGHT) {
             return Random.Range(241, 265);
         }
-        throw new Exception(timeInWords + " time in words has no tick!");
+        throw new Exception($"{timeInWords} time in words has no tick!");
     }
     public static int GetRandomTickFromTimeInWords(TIME_IN_WORDS timeInWords, int minimumThreshold) {
         if (timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
@@ -387,7 +391,7 @@ public class GameManager : MonoBehaviour {
         if (timeInWords == TIME_IN_WORDS.LATE_NIGHT) {
             return Random.Range(minimumThreshold, 265);
         }
-        throw new Exception(timeInWords + " time in words has no tick!");
+        throw new Exception($"{timeInWords} time in words has no tick!");
     }
     public static TIME_IN_WORDS[] ConvertTimeInWordsWhenNocturnal(TIME_IN_WORDS[] currentTimeInWords) {
         TIME_IN_WORDS[] convertedTimeInWords = new TIME_IN_WORDS[currentTimeInWords.Length];
@@ -438,42 +442,163 @@ public class GameManager : MonoBehaviour {
     //}
 
     #region Particle Effects
-    public void CreateElectricEffectAt(Character character) {
-        //StartCoroutine(ElectricEffect(character));
-        if (character.marker == null) {
-            return;
-        }
-        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(electricEffectPrefab.name, Vector3.zero, Quaternion.identity, character.marker.transform);
-        go.transform.localPosition = Vector3.zero;
-        go.SetActive(true);
-    }
-    public void CreateHitEffectAt(IDamageable poi) {
-        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(hitEffectPrefab.name, Vector3.zero, Quaternion.identity, poi.gridTileLocation.parentMap.objectsParent);
-        go.transform.position = poi.projectileReceiver.transform.position;
-        go.SetActive(true);
-       
-    }
-    public void CreateFireEffectAt(IPointOfInterest poi) {
-        if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-            CreateFireEffectAt(poi as Character);
+    public GameObject CreateParticleEffectAt(LocationGridTile tile, PARTICLE_EFFECT particle) {
+        GameObject prefab = null;
+        GameObject go = null;
+        if (particleEffectsDictionary.ContainsKey(particle)) {
+            prefab = particleEffectsDictionary[particle];
         } else {
-            if (poi.gridTileLocation == null) {
-                return;
+            Debug.LogError("No prefab for particle effect: " + particle.ToString());
+            return prefab;
+        }
+        go = ObjectPoolManager.Instance.InstantiateObjectFromPool(prefab.name, Vector3.zero, Quaternion.identity, tile.parentMap.objectsParent);
+        go.transform.localPosition = tile.centeredLocalLocation;
+        go.SetActive(true);
+        BaseParticleEffect particleEffectScript = go.GetComponent<BaseParticleEffect>();
+        if (particleEffectScript) {
+            particleEffectScript.SetTargetTile(tile);
+            particleEffectScript.PlayParticleEffect();
+        }
+        return go;
+    }
+    public GameObject CreateParticleEffectAt(StructureWallObject wallObject, PARTICLE_EFFECT particle) {
+        GameObject prefab = null;
+        GameObject go = null;
+        if (particleEffectsDictionary.ContainsKey(particle)) {
+            prefab = particleEffectsDictionary[particle];
+        } else {
+            Debug.LogError("No prefab for particle effect: " + particle.ToString());
+            return null;
+        }
+        go = ObjectPoolManager.Instance.InstantiateObjectFromPool(prefab.name, Vector3.zero, Quaternion.identity, wallObject.mapVisual.transform);
+        go.transform.localPosition = wallObject.mapVisual.objectSpriteRenderer.transform.localPosition;
+        go.SetActive(true);
+        // BaseParticleEffect particleEffectScript = go.GetComponent<BaseParticleEffect>();
+        // if (particleEffectScript) {
+        //     particleEffectScript.SetTargetTile(wallObject);
+        //     particleEffectScript.PlayParticleEffect();
+        // }
+        return go;
+    }
+    public GameObject CreateParticleEffectAt(IPointOfInterest poi, PARTICLE_EFFECT particle, bool allowRotation = true) {
+        GameObject prefab = null;
+        GameObject go = null;
+        if (particleEffectsDictionary.ContainsKey(particle)) {
+            prefab = particleEffectsDictionary[particle];
+        } else {
+            Debug.LogError("No prefab for particle effect: " + particle.ToString());
+            return null;
+        }
+        if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+            Character character = poi as Character;
+            if (!character.marker) {
+                return null;
             }
-            GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(fireEffectPrefab.name, Vector3.zero, Quaternion.identity, poi.gridTileLocation.parentMap.objectsParent);
-            go.transform.localPosition = poi.gridTileLocation.centeredLocalLocation;
+            Transform parent = character.marker.visualsParent.transform;
+            if (!allowRotation) {
+                parent = character.marker.transform;
+            }
+            go = ObjectPoolManager.Instance.InstantiateObjectFromPool(prefab.name, Vector3.zero, Quaternion.identity, parent);
+            go.transform.localPosition = Vector3.zero;
+            go.SetActive(true);
+        } else {
+            if (poi.mapObjectVisual) {
+                go = ObjectPoolManager.Instance.InstantiateObjectFromPool(prefab.name, Vector3.zero, Quaternion.identity, poi.mapObjectVisual.transform);
+                go.transform.localPosition = Vector3.zero;
+            } else {
+                if (poi.gridTileLocation == null) { // || poi.mapObjectVisual == null
+                    return null;
+                }
+                go = ObjectPoolManager.Instance.InstantiateObjectFromPool(prefab.name, Vector3.zero, Quaternion.identity, poi.gridTileLocation.parentMap.objectsParent);
+                go.transform.localPosition = poi.gridTileLocation.centeredLocalLocation;
+            }
             go.SetActive(true);
         }
+        return go;
     }
-    public void CreateFireEffectAt(Character character) {
-        if (character.marker == null) {
-            return;
-        }
-        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(fireEffectPrefab.name, Vector3.zero, Quaternion.identity, character.marker.transform);
-        go.transform.localPosition = Vector3.zero;
-        go.SetActive(true);
-        //StartCoroutine(FireEffect(character));
-    }
+
+    //public GameObject CreateElectricEffectAt(IPointOfInterest poi) {
+    //    GameObject go = null;
+    //    if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+    //        go = CreateElectricEffectAt(poi as Character);
+    //    } else {
+    //        if (poi.gridTileLocation == null) {
+    //            return go;
+    //        }
+    //        go = ObjectPoolManager.Instance.InstantiateObjectFromPool(electricEffectPrefab.name, Vector3.zero, Quaternion.identity, poi.gridTileLocation.parentMap.objectsParent);
+    //        go.transform.localPosition = poi.gridTileLocation.centeredLocalLocation;
+    //        go.SetActive(true);
+    //    }
+    //    return go;
+    //}
+    //private GameObject CreateElectricEffectAt(Character character) {
+    //    //StartCoroutine(ElectricEffect(character));
+    //    GameObject go = null;
+    //    if (!character.marker) {
+    //        return go;
+    //    }
+    //    go = ObjectPoolManager.Instance.InstantiateObjectFromPool(electricEffectPrefab.name, Vector3.zero, Quaternion.identity, character.marker.transform);
+    //    go.transform.localPosition = Vector3.zero;
+    //    go.SetActive(true);
+    //    return go;
+    //}
+    //public void CreateFireEffectAt(LocationGridTile tile) {
+    //    GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(fireEffectPrefab.name, Vector3.zero, Quaternion.identity, tile.parentMap.objectsParent);
+    //    go.transform.localPosition = tile.centeredLocalLocation;
+    //    go.SetActive(true);
+    //}
+    //public void CreateFireEffectAt(IPointOfInterest poi) {
+    //    if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+    //        CreateFireEffectAt(poi as Character);
+    //    } else {
+    //        if (poi.gridTileLocation == null) {
+    //            return;
+    //        }
+    //        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(fireEffectPrefab.name, Vector3.zero, Quaternion.identity, poi.gridTileLocation.parentMap.objectsParent);
+    //        go.transform.localPosition = poi.gridTileLocation.centeredLocalLocation;
+    //        go.SetActive(true);
+    //    }
+    //}
+    //private void CreateFireEffectAt(Character character) {
+    //    if (!character.marker) {
+    //        return;
+    //    }
+    //    GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(fireEffectPrefab.name, Vector3.zero, Quaternion.identity, character.marker.transform);
+    //    go.transform.localPosition = Vector3.zero;
+    //    go.SetActive(true);
+    //    //StartCoroutine(FireEffect(character));
+    //}
+    //public GameObject CreateFreezingEffectAt(LocationGridTile tile) {
+    //    GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(freezingEffectPrefab.name, Vector3.zero, Quaternion.identity, tile.parentMap.objectsParent);
+    //    go.transform.localPosition = tile.centeredLocalLocation;
+    //    go.SetActive(true);
+    //    return go;
+    //}
+    //public GameObject CreateFreezingEffectAt(IPointOfInterest poi) {
+    //    GameObject go = null;
+    //    if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+    //        go = CreateFreezingEffectAt(poi as Character);
+    //    } else {
+    //        if (poi.gridTileLocation == null) {
+    //            return go;
+    //        }
+    //        go = ObjectPoolManager.Instance.InstantiateObjectFromPool(freezingEffectPrefab.name, Vector3.zero, Quaternion.identity, poi.gridTileLocation.parentMap.objectsParent);
+    //        go.transform.localPosition = poi.gridTileLocation.centeredLocalLocation;
+    //        go.SetActive(true);
+    //    }
+    //    return go;
+    //}
+    //private GameObject CreateFreezingEffectAt(Character character) {
+    //    GameObject go = null;
+    //    if (!character.marker) {
+    //        return go;
+    //    }
+    //    go = ObjectPoolManager.Instance.InstantiateObjectFromPool(freezingEffectPrefab.name, Vector3.zero, Quaternion.identity, character.marker.visualsParent);
+    //    go.transform.localPosition = Vector3.zero;
+    //    go.SetActive(true);
+    //    return go;
+    //    //StartCoroutine(FireEffect(character));
+    //}
     public AOEParticle CreateAOEEffectAt(LocationGridTile tile, int range, bool autoDestroy = false) {
         GameObject go;
         if (autoDestroy) {
@@ -485,29 +610,34 @@ public class GameManager : MonoBehaviour {
         particle.PlaceParticleEffect(tile, range, autoDestroy);
         return particle;
     }
-    public GameObject CreateBurningEffectAt(LocationGridTile tile) {
-        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(burningEffectPrefab.name, Vector3.zero, Quaternion.identity, tile.parentMap.objectsParent);
-        go.transform.localPosition = tile.centeredLocalLocation;
-        go.SetActive(true);
-        return go;
-    }
-    public GameObject CreateBurningEffectAt(ITraitable obj) {
-        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(burningEffectPrefab.name, Vector3.zero, Quaternion.identity, obj.worldObject);
-        go.transform.position = obj.worldObject.position;
-        go.SetActive(true);
-        return go;
-    }
-    public void CreateExplodeEffectAt(Character character) {
-        if (character.marker == null) {
-            return;
-        }
-        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(hitEffectPrefab.name, Vector3.zero, Quaternion.identity, character.marker.transform);
-        go.transform.localPosition = Vector3.zero;
-        go.SetActive(true);
-    }
-    public void CreateExplodeEffectAt(LocationGridTile tile) {
-        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(hitEffectPrefab.name, Vector3.zero, Quaternion.identity, tile.parentMap.objectsParent);
-        go.transform.localPosition = tile.centeredLocalLocation;
+    //public GameObject CreateBurningEffectAt(LocationGridTile tile) {
+    //    GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(burningEffectPrefab.name, Vector3.zero, Quaternion.identity, tile.parentMap.objectsParent);
+    //    go.transform.localPosition = tile.centeredLocalLocation;
+    //    go.SetActive(true);
+    //    return go;
+    //}
+    //public GameObject CreateBurningEffectAt(ITraitable obj) {
+    //    GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(burningEffectPrefab.name, Vector3.zero, Quaternion.identity, obj.worldObject);
+    //    go.transform.position = obj.worldObject.position;
+    //    go.SetActive(true);
+    //    return go;
+    //}
+    //public void CreateExplodeEffectAt(Character character) {
+    //    if (!character.marker) {
+    //        return;
+    //    }
+    //    GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(hitEffectPrefab.name, Vector3.zero, Quaternion.identity, character.marker.transform);
+    //    go.transform.localPosition = Vector3.zero;
+    //    go.SetActive(true);
+    //}
+    //public void CreateExplodeEffectAt(LocationGridTile tile) {
+    //    GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(hitEffectPrefab.name, Vector3.zero, Quaternion.identity, tile.parentMap.objectsParent);
+    //    go.transform.localPosition = tile.centeredLocalLocation;
+    //    go.SetActive(true);
+    //}
+    public void CreateBloodEffectAt(Character character) {
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(bloodPuddleEffectPrefab.name, Vector3.zero, Quaternion.identity, InnerMapManager.Instance.transform);
+        go.transform.position = character.marker.transform.position;
         go.SetActive(true);
     }
     #endregion

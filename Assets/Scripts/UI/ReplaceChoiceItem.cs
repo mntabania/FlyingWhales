@@ -27,8 +27,8 @@ public class ReplaceChoiceItem : PooledObject {
         } else if (obj is Artifact) {
             img.sprite = CharacterManager.Instance.GetArtifactSettings((obj as Artifact).type).artifactPortrait;
             img.gameObject.SetActive(true);
-        } else if (obj is PlayerJobAction) {
-            img.sprite = PlayerManager.Instance.GetJobActionSprite((obj as PlayerJobAction).name);
+        } else if (obj is PlayerSpell) {
+            img.sprite = PlayerManager.Instance.GetJobActionSprite((obj as PlayerSpell).name);
             img.gameObject.SetActive(true);
         } else if (obj is CombatAbility) {
             img.sprite = PlayerManager.Instance.GetCombatAbilitySprite((obj as CombatAbility).name);
@@ -50,30 +50,32 @@ public class ReplaceChoiceItem : PooledObject {
     private void UpdateTextInfo() {
         if (obj is Summon) {
             Summon summon = obj as Summon;
-            string text = summon.name + " (" + summon.summonType.SummonName() + ")";
-            text += "\nLevel: " + summon.level.ToString();
-            text += "\nDescription: " + PlayerManager.Instance.player.GetSummonDescription(summon.summonType);
+            string text = $"{summon.name} ({summon.summonType.SummonName()})";
+            text += $"\nLevel: {summon.level}";
+            text += $"\nDescription: {PlayerManager.Instance.player.GetSummonDescription(summon.summonType)}";
             info.text = text;
-        } else if (obj is Artifact) {
-            Artifact artifact = obj as Artifact;
-            string text = artifact.name;
-            text += "\nLevel: " + artifact.level.ToString();
-            text += "\nDescription: " + PlayerManager.Instance.player.GetArtifactDescription(artifact.type);
-            info.text = text;
-        } else if (obj is PlayerJobAction) {
-            PlayerJobAction action = obj as PlayerJobAction;
+        } 
+        // else if (obj is Artifact) {
+        //     Artifact artifact = obj as Artifact;
+        //     string text = artifact.name;
+        //     text += "\nLevel: " + artifact.level.ToString();
+        //     text += "\nDescription: " + PlayerManager.Instance.player.GetArtifactDescription(artifact.type);
+        //     info.text = text;
+        // } 
+        else if (obj is PlayerSpell) {
+            PlayerSpell action = obj as PlayerSpell;
             string text = action.name;
-            text += "\nSlot Level: " + action.level;
+            text += $"\nSlot Level: {action.level}";
             info.text = text;
         } else if (obj is CombatAbility) {
             CombatAbility ability = obj as CombatAbility;
             string text = ability.name;
-            text += "\nDescription: " + ability.description;
+            text += $"\nDescription: {ability.description}";
             info.text = text;
         } else if (obj is Minion) {
             Minion minion = obj as Minion;
             string text = minion.character.name;
-            text += "\nLvl. " + minion.character.level + " " + minion.character.raceClassName;
+            text += $"\nLvl. {minion.character.level} {minion.character.raceClassName}";
             info.text = text;
         }
     }

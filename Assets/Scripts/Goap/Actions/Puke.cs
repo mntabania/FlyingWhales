@@ -9,7 +9,7 @@ public class Puke : GoapAction {
         actionIconString = GoapActionStateDB.No_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
     }
 
     #region Overrides
@@ -17,7 +17,7 @@ public class Puke : GoapAction {
         base.Perform(goapNode);
         SetState("Puke Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 5;
     }
     #endregion
@@ -48,7 +48,7 @@ public class Puke : GoapAction {
     //private void CreateRemoveTraitJob(Character characterThatWillDoJob) {
     //    Trait trait = actor.traitContainer.GetNormalTrait<Trait>("Plagued", "Infected", "Sick");
     //    if (trait != null && !actor.isDead && !actor.HasJobTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, trait.name) && !actor.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
-    //        SerialKiller serialKiller = characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Serial Killer") as SerialKiller;
+    //        SerialKiller serialKiller = characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Psychopath") as SerialKiller;
     //        if (serialKiller != null) {
     //            serialKiller.SerialKillerSawButWillNotAssist(actor, trait);
     //            return;
@@ -89,7 +89,7 @@ public class Puke : GoapAction {
     //        if (!isPuking) {
     //            Trait trait = actor.traitContainer.GetNormalTrait<Trait>("Plagued", "Infected", "Sick");
     //            if (trait != null && !actor.isDead && !actor.HasJobTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, trait.name) && !actor.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
-    //                SerialKiller serialKiller = recipient.traitContainer.GetNormalTrait<Trait>("Serial Killer") as SerialKiller;
+    //                SerialKiller serialKiller = recipient.traitContainer.GetNormalTrait<Trait>("Psychopath") as SerialKiller;
     //                if (serialKiller != null) {
     //                    serialKiller.SerialKillerSawButWillNotAssist(actor, trait);
     //                } else {
@@ -250,7 +250,7 @@ public class Puke : GoapAction {
     //private bool CanCharacterTakeRemoveIllnessesJob(Character character, Character targetCharacter, JobQueueItem job) {
     //    if (character != targetCharacter && character.faction == targetCharacter.faction && character.isAtHomeArea) {
     //        if (character.faction.id == FactionManager.Instance.neutralFaction.id) {
-    //            return character.race == targetCharacter.race && character.homeSettlement == targetCharacter.homeSettlement && !targetCharacter.HasRelationshipOfTypeWith(character, RELATIONSHIP_TRAIT.ENEMY);
+    //            return character.race == targetCharacter.race && character.homeNpcSettlement == targetCharacter.homeNpcSettlement && !targetCharacter.HasRelationshipOfTypeWith(character, RELATIONSHIP_TRAIT.ENEMY);
     //        }
     //        return !character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.ENEMY) && character.traitContainer.GetNormalTrait<Trait>("Healer") != null;
     //    }
@@ -260,6 +260,6 @@ public class Puke : GoapAction {
 
 public class PukeData : GoapActionData {
     public PukeData() : base(INTERACTION_TYPE.PUKE) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
     }
 }

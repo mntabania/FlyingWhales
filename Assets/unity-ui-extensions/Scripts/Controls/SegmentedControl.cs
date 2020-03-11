@@ -209,9 +209,9 @@ namespace UnityEngine.UI.Extensions
 
                 if (separator && i > 0)
                 {
-                    var sepTransform = gameObject.transform.Find("Separator " + i);
+                    var sepTransform = gameObject.transform.Find($"Separator {i}");
                     Graphic sep = (sepTransform != null) ? sepTransform.GetComponent<Graphic>() : (GameObject.Instantiate(separator.gameObject) as GameObject).GetComponent<Graphic>();
-                    sep.gameObject.name = "Separator " + i;
+                    sep.gameObject.name = $"Separator {i}";
                     sep.gameObject.SetActive(true);
                     sep.rectTransform.SetParent(this.transform, false);
                     sep.rectTransform.anchorMin = Vector2.zero;

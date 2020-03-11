@@ -8,13 +8,13 @@ using UnityEngine;
 /// </summary>
 public class Skeleton : Summon {
 
-    public Skeleton() : base(SUMMON_TYPE.Skeleton, CharacterRole.BANDIT, RACE.SKELETON, Utilities.GetRandomGender()) { }
+    public Skeleton() : base(SUMMON_TYPE.Skeleton, CharacterManager.Instance.GetRandomClassByIdentifier("Normal"), RACE.SKELETON, UtilityScripts.Utilities.GetRandomGender()) { }
     public Skeleton(SaveDataCharacter data) : base(data) { }
 
     #region Overrides
     //public override void OnPlaceSummon(LocationGridTile tile) {
     //    base.OnPlaceSummon(tile);
-    //    //CharacterState state = stateComponent.SwitchToState(CHARACTER_STATE.STROLL, null, tile.parentAreaMap.settlement);
+    //    //CharacterState state = stateComponent.SwitchToState(CHARACTER_STATE.STROLL, null, tile.parentAreaMap.npcSettlement);
     //    //state.SetIsUnending(true);
     //    GoToWorkArea();
     //}
@@ -24,23 +24,23 @@ public class Skeleton : Summon {
     //    //state.SetIsUnending(true);
     //    GoToWorkArea();
     //}
-    public override List<ActualGoapNode> ThisCharacterSaw(IPointOfInterest target) {
-        if (traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting") != null) {
-            return null;
-        }
-        for (int i = 0; i < traitContainer.allTraits.Count; i++) {
-            traitContainer.allTraits[i].OnSeePOI(target, this);
-        }
-        return null;
-    }
-    protected override void OnSeenBy(Character character) {
-        if (traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting") != null) {
-            return;
-        }
-        //if (character.role.roleType == CHARACTER_ROLE.CIVILIAN && character.traitContainer.GetNormalTrait<Trait>("Spooked") == null) {
-        //    character.AddTrait("Spooked", this);
-        //}
-    }
+    //public override List<ActualGoapNode> ThisCharacterSaw(IPointOfInterest target) {
+    //    if (traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting") != null) {
+    //        return null;
+    //    }
+    //    for (int i = 0; i < traitContainer.allTraits.Count; i++) {
+    //        traitContainer.allTraits[i].OnSeePOI(target, this);
+    //    }
+    //    return null;
+    //}
+    //protected override void OnSeenBy(Character character) {
+    //    if (traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting") != null) {
+    //        return;
+    //    }
+    //    //if (character.role.roleType == CHARACTER_ROLE.CIVILIAN && character.traitContainer.GetNormalTrait<Trait>("Spooked") == null) {
+    //    //    character.AddTrait("Spooked", this);
+    //    //}
+    //}
     #endregion
 }
 

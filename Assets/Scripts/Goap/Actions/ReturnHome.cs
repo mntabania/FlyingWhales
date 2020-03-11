@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps.Location_Structures;
 using UnityEngine;  
 using Traits;
 
@@ -8,7 +9,7 @@ public class ReturnHome : GoapAction {
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
 
     public ReturnHome() : base(INTERACTION_TYPE.RETURN_HOME) {
-        showIntelNotification = false;
+        showNotification = false;
         shouldAddLogs = false;
         actionLocationType = ACTION_LOCATION_TYPE.RANDOM_LOCATION;
         actionIconString = GoapActionStateDB.No_Icon;
@@ -21,13 +22,13 @@ public class ReturnHome : GoapAction {
         base.Perform(goapNode);
         SetState("Return Home Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 3;
     }
     public override LocationStructure GetTargetStructure(ActualGoapNode node) {
         Character actor = node.actor;
         if (actor.homeStructure != null) {
-            return actor.homeStructure;
+            return actor.homeStructure.GetLocationStructure();
         } else {
             return actor.homeRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
         }

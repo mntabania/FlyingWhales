@@ -10,17 +10,21 @@ public class StartupManager : MonoBehaviour {
     }
     void Start(){
         Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
-        LevelLoaderManager.SetLoadingState(true);
-        LevelLoaderManager.UpdateLoadingInfo("Initializing Data...");
-        initializer.InitializeDataBeforeWorldCreation();
+        StartCoroutine(PerformStartup());
+    }
 
-        LevelLoaderManager.UpdateLoadingInfo("Initializing World...");
+    private IEnumerator PerformStartup() {
+        LevelLoaderManager.Instance.SetLoadingState(true);
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Initializing Data...");
+        yield return StartCoroutine(initializer.InitializeDataBeforeWorldCreation());
+
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Initializing World...");
         if (SaveManager.Instance.currentSave != null) {
             Debug.Log("Loading world from current saved data...");
             this.mapGenerator.InitializeWorld(SaveManager.Instance.currentSave);
         } else {
             Debug.Log("Generating random world...");
-            this.mapGenerator.InitializeWorld();
+            yield return StartCoroutine(this.mapGenerator.InitializeWorld());
         }
     }
 

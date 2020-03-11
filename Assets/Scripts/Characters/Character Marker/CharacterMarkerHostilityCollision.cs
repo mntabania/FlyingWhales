@@ -13,7 +13,7 @@ public class CharacterMarkerHostilityCollision : MonoBehaviour {
     //        && collidedWith.poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER
     //        && collidedWith.poi != parentMarker.character) {
     //        //&& collidedWith.gridTileLocation.structure == parentMarker.character.currentStructure
-    //        parentMarker.AddHostileInRange(collidedWith.poi as Character);
+    //        parentcombatComponent.AddHostileInRange(collidedWith.poi as Character);
     //    }
     //}
     public void OnTriggerExit2D(Collider2D collision) {
@@ -29,8 +29,8 @@ public class CharacterMarkerHostilityCollision : MonoBehaviour {
         //    //if (!target.IsInOwnParty()) {
         //    //    return;
         //    //}
-        //    //parentMarker.RemoveHostileInRange(collidedWith.poi as Character);
-        //    parentMarker.RemoveAvoidInRange(collidedWith.poi as Character);
+        //    //parentcombatComponent.RemoveHostileInRange(collidedWith.poi as Character);
+        //    parentcombatComponent.RemoveAvoidInRange(collidedWith.poi as Character);
         //}
     }
     //public void OnTriggerStay2D(Collider2D collision) {
@@ -41,9 +41,9 @@ public class CharacterMarkerHostilityCollision : MonoBehaviour {
     //        && collidedWith.poi != parentMarker.character) {
 
     //        if (collidedWith.gridTileLocation.structure == parentMarker.character.currentStructure) {
-    //            parentMarker.AddHostileInRange(collidedWith.poi as Character);
+    //            parentcombatComponent.AddHostileInRange(collidedWith.poi as Character);
     //        } else if (collidedWith.gridTileLocation.structure != parentMarker.character.currentStructure) {
-    //            parentMarker.RemoveHostileInRange(collidedWith.poi as Character);
+    //            parentcombatComponent.RemoveHostileInRange(collidedWith.poi as Character);
     //        }
 
     //    }
@@ -61,8 +61,8 @@ public class CharacterMarkerHostilityCollision : MonoBehaviour {
     //            charactersInRange.Add(cct.poi as Character);
     //        }
     //    }
-    //    for (int i = 0; i < parentMarker.hostilesInRange.Count; i++) {
-    //        Character hostileInRange = parentMarker.hostilesInRange[i];
+    //    for (int i = 0; i < parentcombatComponent.hostilesInRange.Count; i++) {
+    //        Character hostileInRange = parentcombatComponent.hostilesInRange[i];
     //        if (!charactersInRange.Contains(hostileInRange)) { //there is a hostile in range that is not actually in range
     //            Debug.LogWarning("Inconsistent characters in range for " + parentMarker.name + " (" + hostileInRange.name + ").");
     //            UIManager.Instance.Pause();

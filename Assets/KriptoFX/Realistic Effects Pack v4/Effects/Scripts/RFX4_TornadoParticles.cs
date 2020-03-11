@@ -27,7 +27,7 @@ public class RFX4_TornadoParticles : MonoBehaviour
         if (TornadoMaterial.HasProperty("_TwistScale"))
 	        materialID = Shader.PropertyToID("_TwistScale");
 	    else {
-            Debug.Log(TornadoMaterial.name + " not have property twist");
+            Debug.Log($"{TornadoMaterial.name} not have property twist");
 	    }
         if (materialID != -1)
             _twistScale = TornadoMaterial.GetVector(materialID);

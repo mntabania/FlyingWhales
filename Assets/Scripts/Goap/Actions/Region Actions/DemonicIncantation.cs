@@ -4,7 +4,7 @@ public class DemonicIncantation : GoapAction {
     
     public DemonicIncantation() : base(INTERACTION_TYPE.DEMONIC_INCANTATION) {
         actionIconString = GoapActionStateDB.Work_Icon;
-        isNotificationAnIntel = false;
+        
         advertisedBy = new[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
@@ -18,7 +18,7 @@ public class DemonicIncantation : GoapAction {
         base.Perform(goapNode);
         SetState("Incantation Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 1;
     }
     #endregion
@@ -29,7 +29,7 @@ public class DemonicIncantation : GoapAction {
         if (satisfied) {
             //**Requirements:** Actor is a Cultist. Region is Hallowed Ground.
             var region = poiTarget.gridTileLocation.parentMap.location.coreTile.region;
-            return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null && actor.traitContainer.GetNormalTrait<Trait>("Cultist") != null 
+            return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null && actor.traitContainer.HasTrait("Cultist")
                    && region.HasTileWithFeature(TileFeatureDB.Hallowed_Ground_Feature);
         }
         return false;

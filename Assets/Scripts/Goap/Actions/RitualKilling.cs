@@ -7,15 +7,19 @@ public class RitualKilling : GoapAction {
 
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
 
+    //TODO: This is one of the ways to optimize actions, situational preconditions can be cached at the beginning so that we will not call new Precondition every time
+    //TODO: This also applies to expected effects
+    //CREATE A SYSTEM FOR THIS
+    private Precondition atHomePrecondition;
+    private Precondition notAtHomePrecondition;
+    
     public RitualKilling() : base(INTERACTION_TYPE.RITUAL_KILLING) {
         actionIconString = GoapActionStateDB.Hostile_Icon;
-        validTimeOfDays = new TIME_IN_WORDS[] {
-                TIME_IN_WORDS.AFTER_MIDNIGHT,
-                TIME_IN_WORDS.EARLY_NIGHT,
-                TIME_IN_WORDS.LATE_NIGHT,
-        };
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
+        isNotificationAnIntel = true;
+        atHomePrecondition = new Precondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", target = GOAP_EFFECT_TARGET.TARGET }, HasRestrained);
+        notAtHomePrecondition = new Precondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, target = GOAP_EFFECT_TARGET.TARGET }, IsTargetInWildernessOrHome);
     }
 
     #region Overrides
@@ -26,8 +30,23 @@ public class RitualKilling : GoapAction {
         base.Perform(goapNode);
         SetState("Killing Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        return 1;
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+        string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
+        actor.logComponent.AppendCostLog(costLog);
+        return 10;
+    }
+    public override List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, object[] otherData) {
+        if (target is Character) {
+            Character targetCharacter = target as Character;
+            List<Precondition> p = new List<Precondition>();
+            if (actor.homeStructure == targetCharacter.currentStructure) {
+                p.Add(atHomePrecondition);
+            } else {
+                p.Add(notAtHomePrecondition);
+            }
+            return p;
+        }
+        return base.GetPreconditions(actor, target, otherData);
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
         GoapActionInvalidity goapActionInvalidity = base.IsInvalid(node);
@@ -41,15 +60,86 @@ public class RitualKilling : GoapAction {
         }
         return goapActionInvalidity;
     }
+    public override string ReactionToActor(Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionToActor(witness, node, status);
+        Character actor = node.actor;
+        IPointOfInterest target = node.poiTarget;
+        if (target is Character) {
+            if (witness.traitContainer.HasTrait("Coward")) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor, status);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status);
+            } else {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, actor, status);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disgust, witness, actor, status);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status);
+
+                Character targetCharacter = target as Character;
+                if (witness.relationshipContainer.IsFriendsWith(actor) && !witness.traitContainer.HasTrait("Psychopath")) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor, status);
+                }
+                if (witness.relationshipContainer.IsFriendsWith(targetCharacter)) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status);
+                }
+            }
+        }
+        CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.SERIOUS);
+        return response;
+    }
+    public override string ReactionToTarget(Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionToTarget(witness, node, status);
+        Character actor = node.actor;
+        IPointOfInterest target = node.poiTarget;
+        if (target is Character) {
+            Character targetCharacter = target as Character;
+            if (!witness.traitContainer.HasTrait("Psychopath")) {
+                string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
+                if (opinionLabel == OpinionComponent.Acquaintance || opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, target, status);
+                }
+            }
+        }
+        return response;
+    }
+    public override string ReactionOfTarget(ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionOfTarget(node, status);
+        Character actor = node.actor;
+        IPointOfInterest target = node.poiTarget;
+        if (target is Character) {
+            Character targetCharacter = target as Character;
+            if (targetCharacter.traitContainer.HasTrait("Coward")) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, targetCharacter, actor, status);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, targetCharacter, actor, status);
+            } else {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, targetCharacter, actor, status);
+
+                if (targetCharacter.relationshipContainer.IsFriendsWith(actor) && !targetCharacter.traitContainer.HasTrait("Psychopath")) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, targetCharacter, actor, status);
+                }
+            }
+            CrimeManager.Instance.ReactToCrime(targetCharacter, actor, node, node.associatedJobType, CRIME_TYPE.SERIOUS);
+        }
+        return response;
+    }
     #endregion
 
     #region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
-            return actor != poiTarget && actor.traitContainer.GetNormalTrait<Trait>("Serial Killer") != null;
+            return actor != poiTarget && actor.traitContainer.HasTrait("Psychopath");
         }
         return false;
+    }
+    private bool IsTargetInWildernessOrHome(Character actor, IPointOfInterest target, object[] otherData) {
+        if(target is Character) {
+            Character targetCharacter = target as Character;
+            return targetCharacter.IsInOwnParty() && (targetCharacter.currentStructure == actor.homeStructure || targetCharacter.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile == null); //targetCharacter.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS || 
+        }
+        return false;
+    }
+    private bool HasRestrained(Character actor, IPointOfInterest target, object[] otherData) {
+        return target.traitContainer.HasTrait("Restrained");
     }
     #endregion
 
@@ -58,10 +148,11 @@ public class RitualKilling : GoapAction {
         
     }
     public void AfterKillingSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustHappiness(10000);
+        //goapNode.actor.needsComponent.AdjustHappiness(10000);
         if (goapNode.poiTarget is Character) {
             Character targetCharacter = goapNode.poiTarget as Character;
             targetCharacter.Death(deathFromAction: goapNode, responsibleCharacter: goapNode.actor);
+            goapNode.actor.jobComponent.TriggerBurySerialKillerVictim(targetCharacter);
         }
     }
     #endregion
@@ -69,12 +160,12 @@ public class RitualKilling : GoapAction {
 
 public class RitualKillingData : GoapActionData {
     public RitualKillingData() : base(INTERACTION_TYPE.RITUAL_KILLING) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
         requirementAction = Requirement;
     }
 
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor != poiTarget && actor.traitContainer.GetNormalTrait<Trait>("Serial Killer") != null;
+        return actor != poiTarget && actor.traitContainer.HasTrait("Psychopath");
     }
 }
 

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps.Location_Structures;
 using UnityEngine;
 
 public class Visit : GoapAction {
@@ -10,16 +11,18 @@ public class Visit : GoapAction {
         actionLocationType = ACTION_LOCATION_TYPE.RANDOM_LOCATION;
         actionIconString = GoapActionStateDB.Entertain_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
+        validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.MORNING, TIME_IN_WORDS.LUNCH_TIME, TIME_IN_WORDS.AFTERNOON, TIME_IN_WORDS.EARLY_NIGHT };
     }
 
     #region Overrides
     public override LocationStructure GetTargetStructure(ActualGoapNode node) {
         object[] otherData = node.otherData;
-        if (otherData != null && otherData.Length == 1) {
-            if (otherData[0] is Dwelling) {
-                return otherData[0] as Dwelling;
-            } else if (otherData[0] is LocationStructure) {
+        if (otherData != null && otherData.Length >= 1) {
+            //if (otherData[0] is Dwelling) {
+            //    return otherData[0] as Dwelling;
+            //} else 
+            if (otherData[0] is LocationStructure) {
                 return otherData[0] as LocationStructure;
             } 
         }
@@ -28,7 +31,7 @@ public class Visit : GoapAction {
     public override void AddFillersToLog(Log log, ActualGoapNode node) {
         base.AddFillersToLog(log, node);
         object[] otherData = node.otherData;
-        if (otherData != null && otherData.Length == 1) {
+        if (otherData != null && otherData.Length >= 1) {
             if (otherData[0] is LocationStructure) {
                 LocationStructure structure = otherData[0] as LocationStructure; 
                 log.AddToFillers(structure, structure.GetNameRelativeTo(node.actor), LOG_IDENTIFIER.LANDMARK_1);
@@ -40,8 +43,10 @@ public class Visit : GoapAction {
         base.Perform(goapNode);
         SetState("Visit Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        return 1;
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+        string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
+        actor.logComponent.AppendCostLog(costLog);
+        return 10;
     }
     #endregion
 
@@ -49,7 +54,14 @@ public class Visit : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
-            return actor == poiTarget;
+            if (otherData.Length == 2) {
+              //if provided other data is 2, assume that the second data is the target character, and check that the poi target is the same as that object
+              IPointOfInterest targetObj = otherData[1] as IPointOfInterest;
+              return poiTarget == targetObj;
+            } else {
+                return actor == poiTarget;    
+            }
+            
         }
         return false;
     }

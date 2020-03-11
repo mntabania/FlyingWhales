@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using Traits;
 
-public class CursedObject : PlayerJobAction {
-    public CursedObject() : base(INTERVENTION_ABILITY.CURSED_OBJECT) {
+public class CursedObject : PlayerSpell {
+    public CursedObject() : base(SPELL_TYPE.CURSED_OBJECT) {
         tier = 2;
         SetDefaultCooldownTime(24);
-        targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.TILE_OBJECT };
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE_OBJECT };
         //abilityTags.Add(ABILITY_TAG.NONE);
     }
 
@@ -21,15 +21,15 @@ public class CursedObject : PlayerJobAction {
             Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "cursed_object");
             log.AddToFillers(to, to.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddLogToInvolvedObjects();
-            PlayerManager.Instance.player.ShowNotification(log);
+            PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
 
             base.ActivateAction(targetPOI);
         }
     }
-    protected override bool CanPerformActionTowards(IPointOfInterest targetPOI) {
+    protected virtual bool CanPerformActionTowards(IPointOfInterest targetPOI) {
         if (targetPOI is TileObject) {
             TileObject to = targetPOI as TileObject;
-            if(to.traitContainer.GetNormalTrait<Trait>("Cursed") == null){
+            if(!to.traitContainer.HasTrait("Cursed")){
                 return true;
             }
         }
@@ -38,7 +38,7 @@ public class CursedObject : PlayerJobAction {
     public override bool CanTarget(IPointOfInterest targetPOI, ref string hoverText) {
         if (targetPOI is TileObject) {
             TileObject to = targetPOI as TileObject;
-            if (to.traitContainer.GetNormalTrait<Trait>("Cursed") == null) {
+            if (!to.traitContainer.HasTrait("Cursed")) {
                 return true;
             }
         }
@@ -47,8 +47,13 @@ public class CursedObject : PlayerJobAction {
     #endregion
 }
 
-public class CursedObjectData : PlayerJobActionData {
+public class CursedObjectData : SpellData {
+    public override SPELL_TYPE ability => SPELL_TYPE.CURSED_OBJECT;
     public override string name { get { return "Cursed Object"; } }
     public override string description { get { return "Put a curse on an object"; } }
-    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.HEX; } }
+    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.HEX; } }
+
+    public CursedObjectData() : base() {
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE_OBJECT };
+    }
 }

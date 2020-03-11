@@ -9,7 +9,7 @@ public class SepticShock : GoapAction {
         actionIconString = GoapActionStateDB.No_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
     }
 
     #region Overrides
@@ -17,7 +17,7 @@ public class SepticShock : GoapAction {
         base.Perform(goapNode);
         SetState("Septic Shock Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 5;
     }
     #endregion
@@ -28,7 +28,7 @@ public class SepticShock : GoapAction {
     }
     public void AfterSepticShockSuccess(ActualGoapNode goapNode) {
         goapNode.actor.SetPOIState(POI_STATE.ACTIVE);
-        goapNode.actor.Death("Septic Shock", goapNode, _deathLog: goapNode.action.states[goapNode.currentStateName].descriptionLog);
+        goapNode.actor.Death("Septic Shock", goapNode, _deathLog: goapNode.descriptionLog);
     }
     #endregion
 
@@ -45,6 +45,6 @@ public class SepticShock : GoapAction {
 
 public class SepticShockData : GoapActionData {
     public SepticShockData() : base(INTERACTION_TYPE.SEPTIC_SHOCK) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
     }
 }

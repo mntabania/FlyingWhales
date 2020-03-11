@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps.Location_Structures;
 using UnityEngine;
 
 //This class is for characters
@@ -9,7 +10,11 @@ public class TrapStructure {
     public LocationStructure structure { get; private set; }
     public int duration { get; private set; }
     public int currentDuration { get; private set; }
-
+    
+    //when this is set the character that owns this, will not include objects not in this structure to his/her plans.
+    //setting this is manual, and is in no way related to the trap structures duration
+    public LocationStructure forcedStructure { get; private set; } 
+    
     //This will set the structure and its duration, as well as reset the current duration
     public void SetStructureAndDuration(LocationStructure structure, int duration) {
         this.structure = structure;
@@ -26,4 +31,22 @@ public class TrapStructure {
             }
         }
     }
+
+    #region Forced Structure
+    public void SetForcedStructure(LocationStructure structure) {
+        forcedStructure = structure;
+    }
+    public bool SatisfiesForcedStructure(IPointOfInterest target) {
+        if (forcedStructure == null) {
+            return true;
+        }
+        return target.gridTileLocation != null && target.gridTileLocation.structure == forcedStructure;
+    }
+    #endregion
+
+    #region Utilities
+    public bool IsTrapped() {
+        return forcedStructure != null || structure != null;
+    }
+    #endregion
 }

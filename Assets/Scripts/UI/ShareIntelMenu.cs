@@ -5,7 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ShareIntelMenu : MonoBehaviour {
+public class ShareIntelMenu : PopupMenuBase {
 
     [Header("Main")]
     [SerializeField] private ScrollRect dialogScrollView;
@@ -26,7 +26,7 @@ public class ShareIntelMenu : MonoBehaviour {
         //UIManager.Instance.SetCoverState(true);
         //UIManager.Instance.Pause();
         //UIManager.Instance.SetSpeedTogglesState(false);
-        this.gameObject.SetActive(true);
+        base.Open();
 
         wasPausedOnOpen = GameManager.Instance.isPaused;
         UIManager.Instance.Pause();
@@ -36,11 +36,11 @@ public class ShareIntelMenu : MonoBehaviour {
 
         this.targetCharacter = targetCharacter;
         this.actor = PlayerManager.Instance.player.minions.FirstOrDefault()?.character ?? null;
-        instructionLbl.text = "Share Intel with " + targetCharacter.name;
+        instructionLbl.text = $"Share Intel with {targetCharacter.name}";
         endOfConversationLbl.transform.SetParent(this.transform);
         endOfConversationLbl.gameObject.SetActive(false);
 
-        Utilities.DestroyChildren(dialogScrollView.content);
+        UtilityScripts.Utilities.DestroyChildren(dialogScrollView.content);
 
         GameObject targetDialog = ObjectPoolManager.Instance.InstantiateObjectFromPool(dialogItemPrefab.name, Vector3.zero, Quaternion.identity, dialogScrollView.content);
         DialogItem item = targetDialog.GetComponent<DialogItem>();
@@ -56,7 +56,7 @@ public class ShareIntelMenu : MonoBehaviour {
         //UIManager.Instance.SetCoverState(true);
         //UIManager.Instance.Pause();
         //UIManager.Instance.SetSpeedTogglesState(false);
-        this.gameObject.SetActive(true);
+        base.Open();
 
         wasPausedOnOpen = GameManager.Instance.isPaused;
         UIManager.Instance.Pause();
@@ -66,11 +66,11 @@ public class ShareIntelMenu : MonoBehaviour {
 
         this.targetCharacter = targetCharacter;
         this.actor = actor;
-        instructionLbl.text = "Share Intel with " + targetCharacter.name;
+        instructionLbl.text = $"Share Intel with {targetCharacter.name}";
         endOfConversationLbl.transform.SetParent(this.transform);
         endOfConversationLbl.gameObject.SetActive(false);
 
-        Utilities.DestroyChildren(dialogScrollView.content);
+        UtilityScripts.Utilities.DestroyChildren(dialogScrollView.content);
 
         GameObject targetDialog = ObjectPoolManager.Instance.InstantiateObjectFromPool(dialogItemPrefab.name, Vector3.zero, Quaternion.identity, dialogScrollView.content);
         DialogItem item = targetDialog.GetComponent<DialogItem>();
@@ -78,7 +78,7 @@ public class ShareIntelMenu : MonoBehaviour {
 
         GameObject actorDialog = ObjectPoolManager.Instance.InstantiateObjectFromPool(dialogItemPrefab.name, Vector3.zero, Quaternion.identity, dialogScrollView.content);
         DialogItem actorItem = actorDialog.GetComponent<DialogItem>();
-        actorItem.SetData(actor, "I am here to share information with you.", DialogItem.Position.Right);
+        actorItem.SetData(actor, UtilityScripts.Utilities.LogReplacer(intelToShare.node.descriptionLog), DialogItem.Position.Right);
 
         DirectlyShowIntelReaction(intelToShare);
     }
@@ -108,10 +108,10 @@ public class ShareIntelMenu : MonoBehaviour {
             currItem.GetComponent<Button>().interactable = state;
         }
     }
-    public void Close() {
+    public override void Close() {
         //UIManager.Instance.SetCoverState(false);
         //UIManager.Instance.SetSpeedTogglesState(true);
-        this.gameObject.SetActive(false);
+        base.Close();
         UIManager.Instance.SetSpeedTogglesState(true);
         GameManager.Instance.SetPausedState(wasPausedOnOpen);
         Messenger.Broadcast(Signals.ON_CLOSE_SHARE_INTEL);
@@ -124,14 +124,19 @@ public class ShareIntelMenu : MonoBehaviour {
         //intelItems[0].SetClickedState(true);
         //SetIntelButtonsInteractable(false);
 
-        GameObject actorDialog = ObjectPoolManager.Instance.InstantiateObjectFromPool(dialogItemPrefab.name, Vector3.zero, Quaternion.identity, dialogScrollView.content);
-        DialogItem actorItem = actorDialog.GetComponent<DialogItem>();
-        actorItem.SetData(actor, Utilities.LogReplacer(intel.intelLog), DialogItem.Position.Right);
+        //GameObject actorDialog = ObjectPoolManager.Instance.InstantiateObjectFromPool(dialogItemPrefab.name, Vector3.zero, Quaternion.identity, dialogScrollView.content);
+        //DialogItem actorItem = actorDialog.GetComponent<DialogItem>();
+        //actorItem.SetData(actor, Utilities.LogReplacer(intel.intelLog), DialogItem.Position.Right);
 
         //ShareIntel share = PlayerManager.Instance.player.shareIntelAbility;
         //share.BaseActivate(targetCharacter);
-        List<string> reactions = targetCharacter.ShareIntel(intel);
-        StartCoroutine(ShowReactions(reactions));
+        //List<string> reactions = targetCharacter.ShareIntel(intel);
+        //StartCoroutine(ShowReactions(reactions));
+        string response = targetCharacter.ShareIntel(intel);
+        if (string.IsNullOrEmpty(response) || string.IsNullOrWhiteSpace(response)) {
+            response = CharacterManager.Instance.TriggerEmotion(EMOTION.Disinterest, targetCharacter, intel.node.actor, REACTION_STATUS.INFORMED);
+        }
+        StartCoroutine(ShowReaction(response, intel));
     }
     string[] randomNothings = new string[] {
         "I really don't care",
@@ -141,7 +146,7 @@ public class ShareIntelMenu : MonoBehaviour {
         "And the point of sharing this with me is...?"
     };
     private IEnumerator ShowReactions(List<string> reactions) {
-        Debug.Log("Showing Reactions of " + targetCharacter.name + ": " + reactions.Count.ToString());
+        Debug.Log($"Showing Reactions of {targetCharacter.name}: {reactions.Count}");
         if (reactions.Count == 0) {
             //character had no reaction
             reactions.Add(randomNothings[Random.Range(0, randomNothings.Length)]);
@@ -165,8 +170,59 @@ public class ShareIntelMenu : MonoBehaviour {
         closeBtn.interactable = true;
         dialogScrollView.verticalNormalizedPosition = 0f;
         yield return null;
-        
-
+        //ShareIntel share = PlayerManager.Instance.player.shareIntelAbility;
+        //share.DeactivateAction();
+    }
+    private IEnumerator ShowReaction(string reaction, Intel intel) {
+        if (reaction == string.Empty) {
+            //character had no reaction
+            if (intel.node.actor == targetCharacter) {
+                reaction = "I know what I did.";
+            } else {
+                reaction = "A proper response to this information has not been implemented yet.";
+            }
+        } else {
+            if (reaction == "aware") {
+                reaction = "I already know this.";
+            } else {
+                string[] emotionsToActorAndTarget = reaction.Split('/');
+                string finalReaction = string.Empty;
+                for (int i = 0; i < emotionsToActorAndTarget.Length; i++) {
+                    string[] words = emotionsToActorAndTarget[i].Split(' ');
+                    if(words != null) {
+                        string responses = string.Empty;
+                        for (int j = 0; j < words.Length; j++) {
+                            string currWord = words[j];
+                            if(string.IsNullOrEmpty(currWord) || string.IsNullOrWhiteSpace(currWord)){ continue; }
+                            if(responses != string.Empty) {
+                                responses += ", ";
+                            }
+                            responses += currWord;
+                        }
+                        if (responses != string.Empty) {
+                            if (finalReaction != string.Empty && i > 0) {
+                                finalReaction += "\n";
+                            }
+                            finalReaction +=
+                                $"I feel {responses} towards {(i == 0 ? intel.node.actor.name : intel.node.poiTarget.name)}.";
+                        }
+                    }
+                }
+                if (finalReaction != string.Empty) {
+                    reaction = finalReaction;
+                } else {
+                    reaction = "I processed no emotions. I am a rock, I am an i-i-i-island.";
+                }
+            }
+        }
+        GameObject targetDialog = ObjectPoolManager.Instance.InstantiateObjectFromPool(dialogItemPrefab.name, Vector3.zero, Quaternion.identity, dialogScrollView.content);
+        DialogItem item = targetDialog.GetComponent<DialogItem>();
+        item.SetData(targetCharacter, reaction);
+        endOfConversationLbl.transform.SetParent(dialogScrollView.content);
+        endOfConversationLbl.gameObject.SetActive(true);
+        closeBtn.interactable = true;
+        dialogScrollView.verticalNormalizedPosition = 0f;
+        yield return null;
         //ShareIntel share = PlayerManager.Instance.player.shareIntelAbility;
         //share.DeactivateAction();
     }

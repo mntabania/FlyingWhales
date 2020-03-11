@@ -9,7 +9,7 @@ public class ResolveConflict : GoapAction {
     public ResolveConflict() : base(INTERACTION_TYPE.RESOLVE_CONFLICT) {
         actionIconString = GoapActionStateDB.Work_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
     }
 
     #region Overrides
@@ -20,7 +20,7 @@ public class ResolveConflict : GoapAction {
         base.Perform(goapNode);
         SetState("Resolve Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 4;
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
@@ -28,7 +28,7 @@ public class ResolveConflict : GoapAction {
         IPointOfInterest poiTarget = node.poiTarget;
         if (goapActionInvalidity.isInvalid == false) {
             Character targetCharacter = poiTarget as Character;
-            if ((targetCharacter.traitContainer.GetNormalTrait<Trait>("Hothead") != null && UnityEngine.Random.Range(0, 2) == 0)
+            if ((targetCharacter.traitContainer.HasTrait("Hothead") && UnityEngine.Random.Range(0, 2) == 0)
                 || targetCharacter.isInCombat
                 || (targetCharacter.stateComponent.currentState != null && targetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.BERSERKED)) {
                 goapActionInvalidity.isInvalid = true;
@@ -46,9 +46,9 @@ public class ResolveConflict : GoapAction {
             bool hasEnemy = false;
             if (poiTarget is Character) {
                 Character targetCharacter = poiTarget as Character;
-                hasEnemy = targetCharacter.opinionComponent.GetEnemyCharacters().Count > 0;
+                hasEnemy = targetCharacter.relationshipContainer.GetEnemyCharacters().Count > 0;
             }
-            return actor != poiTarget && hasEnemy && actor.traitContainer.GetNormalTrait<Trait>("Diplomatic") != null;
+            return actor != poiTarget && hasEnemy && actor.traitContainer.HasTrait("Diplomatic");
         }
         return false;
     }
@@ -59,11 +59,12 @@ public class ResolveConflict : GoapAction {
         if (goapNode.poiTarget is Character) {
             Character targetCharacter = goapNode.poiTarget as Character;
             //List<Relatable> allEnemyTraits = targetCharacter.relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TRAIT.ENEMY);
-            Character target = targetCharacter.opinionComponent.GetEnemyCharacters().First();
+            Character target = targetCharacter.relationshipContainer.GetEnemyCharacters().First();
             if (target != null) {
                 goapNode.descriptionLog.AddToFillers(target, target.name, LOG_IDENTIFIER.CHARACTER_3);
             } else {
-                throw new System.Exception("Cannot resolve conflict for " + targetCharacter.name + " because he/she does not have enemies!");
+                throw new System.Exception(
+                    $"Cannot resolve conflict for {targetCharacter.name} because he/she does not have enemies!");
             }
         }
     }
@@ -84,7 +85,7 @@ public class ResolveConflict : GoapAction {
 
 public class ResolveConflictData : GoapActionData {
     public ResolveConflictData() : base(INTERACTION_TYPE.RESOLVE_CONFLICT) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
         requirementAction = Requirement;
     }
 
@@ -94,6 +95,6 @@ public class ResolveConflictData : GoapActionData {
             Character targetCharacter = poiTarget as Character;
             // hasEnemy = targetCharacter.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.ENEMY) != null;
         }
-        return actor != poiTarget && hasEnemy && actor.traitContainer.GetNormalTrait<Trait>("Diplomatic") != null;
+        return actor != poiTarget && hasEnemy && actor.traitContainer.HasTrait("Diplomatic");
     }
 }

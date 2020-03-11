@@ -54,6 +54,9 @@ public class NameplateItem<T> : PooledObject {
     public virtual void SetObject(T o) {
         obj = o;
     }
+    public virtual void UpdateObject(T o) {
+        obj = o;
+    }
     #endregion
 
     #region Object Pooling

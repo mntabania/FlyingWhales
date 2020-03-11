@@ -14,19 +14,19 @@ public class IntelNotificationItem : PlayerNotificationItem {
 
     public void Initialize(Intel intel, bool hasExpiry = true, System.Action<PlayerNotificationItem> onDestroyAction = null) {
         this.intel = intel;
-        base.Initialize(intel.intelLog, hasExpiry, onDestroyAction);
+        base.Initialize(intel.node.descriptionLog, hasExpiry, onDestroyAction);
     }
    
     public void GetIntel() {
         PlayerManager.Instance.player.AddIntel(intel);
-        PlayerManager.Instance.player.ShowNotification(new Log(GameManager.Instance.Today(), "Character", "Generic", "intel_stored"));
+        // PlayerManager.Instance.player.ShowNotificationFrom(new Log(GameManager.Instance.Today(), "Character", "Generic", "intel_stored"));
         DeleteNotification();
     }
 
-    protected override void OnExpire() {
-        base.OnExpire();
-        intel.OnIntelExpire();
-    }
+    //protected override void OnExpire() {
+    //    base.OnExpire();
+    //    intel.OnIntelExpire();
+    //}
     public override void Reset() {
         base.Reset();
         convertTooltip.SetActive(false);

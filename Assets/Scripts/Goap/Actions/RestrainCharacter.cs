@@ -9,13 +9,15 @@ public class RestrainCharacter : GoapAction {
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
         actionIconString = GoapActionStateDB.Restrain_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.DEMON };
+        isNotificationAnIntel = true;
     }
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.CANNOT_MOVE, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.TARGET }, CannotMove);
+        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Unconscious", target = GOAP_EFFECT_TARGET.TARGET }, CannotMove);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", target = GOAP_EFFECT_TARGET.TARGET });
+        AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.CANNOT_MOVE, string.Empty, false, GOAP_EFFECT_TARGET.TARGET));
         //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = poiTarget });
     }
     public override void Perform(ActualGoapNode goapNode) {
@@ -23,8 +25,10 @@ public class RestrainCharacter : GoapAction {
         //TODO: isForCriminal = parentPlan != null && parentPlan.job != null && (parentPlan.job.jobType == JOB_TYPE.APPREHEND || parentPlan.job.jobType == JOB_TYPE.RESTRAIN);
         SetState("Restrain Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        return 1;
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+        string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
+        actor.logComponent.AppendCostLog(costLog);
+        return 10;
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
         GoapActionInvalidity goapActionInvalidity = base.IsInvalid(node);
@@ -37,6 +41,76 @@ public class RestrainCharacter : GoapAction {
         }
         return goapActionInvalidity;
     }
+    public override string ReactionToActor(Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionToActor(witness, node, status);
+        Character actor = node.actor;
+        IPointOfInterest target = node.poiTarget;
+        if(target is Character) {
+            Character targetCharacter = target as Character;
+            if (targetCharacter.traitContainer.HasTrait("Criminal")) {
+                if (witness.relationshipContainer.IsFriendsWith(targetCharacter)) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Sadness, witness, actor, status);
+                } else {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status);
+                }
+            } else {
+                if (!witness.relationshipContainer.IsEnemiesWith(targetCharacter) && !witness.IsHostileWith(targetCharacter)) {
+                    CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.MISDEMEANOR);
+                    if (!witness.traitContainer.HasTrait("Psychopath") && witness.relationshipContainer.IsFriendsWith(targetCharacter)) {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, actor, status);
+                        if(UnityEngine.Random.Range(0, 100) < 20) {
+                            if (!witness.traitContainer.HasTrait("Diplomatic")) {
+                                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return response;
+    }
+    public override string ReactionToTarget(Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionToTarget(witness, node, status);
+        Character actor = node.actor;
+        IPointOfInterest target = node.poiTarget;
+        if (target is Character) {
+            Character targetCharacter = target as Character;
+            if (targetCharacter.traitContainer.HasTrait("Criminal")) {
+                if (!witness.traitContainer.HasTrait("Psychopath") && witness.relationshipContainer.IsFriendsWith(targetCharacter)) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, targetCharacter, status);
+                } else if (UnityEngine.Random.Range(0, 100) < 30 && !witness.traitContainer.HasTrait("Diplomatic")) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, targetCharacter, status);
+                }
+            } else {
+                string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
+                if(opinionLabel == OpinionComponent.Acquaintance) {
+                    if (!witness.traitContainer.HasTrait("Psychopath") && UnityEngine.Random.Range(0, 2) == 0) {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, targetCharacter, status);
+                    }
+                } else if (opinionLabel == OpinionComponent.Enemy || opinionLabel == OpinionComponent.Rival) {
+                    if (!witness.traitContainer.HasTrait("Diplomatic")) {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, targetCharacter, status);
+                    }
+                }
+            }
+        }
+        return response;
+    }
+    public override string ReactionOfTarget(ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionOfTarget(node, status);
+        Character actor = node.actor;
+        IPointOfInterest target = node.poiTarget;
+        if (target is Character) {
+            Character targetCharacter = target as Character;
+            if (!targetCharacter.IsHostileWith(actor)) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, targetCharacter, actor, status);
+                if (targetCharacter.traitContainer.HasTrait("Hothead") || UnityEngine.Random.Range(0, 100) < 35) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, targetCharacter, actor, status);
+                }
+            }
+        }
+        return response;
+    }
     #endregion
 
     #region Requirements
@@ -45,7 +119,7 @@ public class RestrainCharacter : GoapAction {
         if (satisfied) {
             if (actor != poiTarget) {
                 Character target = poiTarget as Character;
-                return target.traitContainer.GetNormalTrait<Trait>("Restrained") == null;
+                return !target.traitContainer.HasTrait("Restrained");
             }
             return false;
         }
@@ -65,7 +139,7 @@ public class RestrainCharacter : GoapAction {
 
     #region Preconditions
     private bool CannotMove(Character actor, IPointOfInterest target, object[] otherData) {
-        return (target as Character).canMove == false;
+        return target.traitContainer.HasTrait("Unconscious");
     }
     #endregion
 
@@ -152,7 +226,7 @@ public class RestrainCharacter : GoapAction {
     //                recipient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, status);
     //                if (status == SHARE_INTEL_STATUS.WITNESSED) {
     //                    //- If witnessed: Temporarily add Actor to Avoid List
-    //                    recipient.marker.AddAvoidInRange(actor, reason: "saw something shameful");
+    //                    recipient.combatComponent.AddAvoidInRange(actor, reason: "saw something shameful");
     //                } else if (status == SHARE_INTEL_STATUS.INFORMED) {
     //                    //- If informed: "[Actor Name] shouldn't have done that to [Target Name]!"
     //                    reactions.Add(string.Format("{0} shouldn't have done that to {1}!", actor.name, target.name));
@@ -160,7 +234,7 @@ public class RestrainCharacter : GoapAction {
     //            } else if (relWithTarget == RELATIONSHIP_EFFECT.NEGATIVE) {
     //                if (status == SHARE_INTEL_STATUS.WITNESSED) {
     //                    //- If witnessed: Temporarily add Actor to Avoid List
-    //                    recipient.marker.AddAvoidInRange(actor, reason: "saw something shameful");
+    //                    recipient.combatComponent.AddAvoidInRange(actor, reason: "saw something shameful");
     //                } else if (status == SHARE_INTEL_STATUS.INFORMED) {
     //                    //- If informed: "I am not fond of [Target Name] at all so I don't care what happens to [him/her]."
     //                    reactions.Add(string.Format("I am not fond of {0} at all so I don't care what happens to {1}.", target.name, Utilities.GetPronounString(target.gender, PRONOUN_TYPE.OBJECTIVE, false)));
@@ -198,7 +272,7 @@ public class RestrainCharacter : GoapAction {
     //                recipient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, status);
     //                if (status == SHARE_INTEL_STATUS.WITNESSED) {
     //                    //- If witnessed: Temporarily add Actor to Avoid List
-    //                    recipient.marker.AddAvoidInRange(actor, reason: "saw something shameful");
+    //                    recipient.combatComponent.AddAvoidInRange(actor, reason: "saw something shameful");
     //                } else if (status == SHARE_INTEL_STATUS.INFORMED) {
     //                    //- If informed: "My enemies fighting each other. What a happy day!"
     //                    reactions.Add("My enemies fighting each other. What a happy day!");
@@ -213,14 +287,14 @@ public class RestrainCharacter : GoapAction {
 
 public class RestrainCharacterData : GoapActionData {
     public RestrainCharacterData() : base(INTERACTION_TYPE.RESTRAIN_CHARACTER) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
         requirementAction = Requirement;
     }
 
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         if (actor != poiTarget) {
             Character target = poiTarget as Character;
-            return target.traitContainer.GetNormalTrait<Trait>("Restrained") == null;
+            return !target.traitContainer.HasTrait("Restrained");
         }
         return false;
     }

@@ -78,8 +78,8 @@ namespace UnityEngine.Tilemaps {
             EditorGUILayout.Space();
 
             for (int i = 0; i < count; i++) {
-                Tile.Sprites[i].Sprite = (Sprite) EditorGUILayout.ObjectField("Sprite " + (i + 1), Tile.Sprites[i].Sprite, typeof(Sprite), false, null);
-                Tile.Sprites[i].Weight = EditorGUILayout.IntField("Weight " + (i + 1), Tile.Sprites[i].Weight);
+                Tile.Sprites[i].Sprite = (Sprite) EditorGUILayout.ObjectField($"Sprite {(i + 1)}", Tile.Sprites[i].Sprite, typeof(Sprite), false, null);
+                Tile.Sprites[i].Weight = EditorGUILayout.IntField($"Weight {(i + 1)}", Tile.Sprites[i].Weight);
             }
 
             if (EditorGUI.EndChangeCheck()) EditorUtility.SetDirty(Tile);

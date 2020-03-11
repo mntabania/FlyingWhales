@@ -199,7 +199,7 @@ namespace UnityEngine.UI.Extensions.ColorPicker
 
         public override string ToString()
         {
-            return "{" + H.ToString("f2") + "," + S.ToString("f2") + "," + V.ToString("f2") + "}";
+            return $"{{{H:f2},{S:f2},{V:f2}}}";
         }
     }
     #endregion HsvColor

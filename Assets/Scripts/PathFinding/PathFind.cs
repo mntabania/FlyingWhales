@@ -82,6 +82,13 @@ namespace PathFind {
                                          queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
                                      }
                                      break;
+                                 case GRID_PATHFINDING_MODE.UNCONSTRAINED:
+                                     foreach (Node n in path.LastStep.FourNeighbours()) {
+                                         d = distance(path.LastStep, n);
+                                         newPath = path.AddStep(n, d);
+                                         queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
+                                     }
+                                     break;
                                  default:
                                      foreach (Node n in path.LastStep.ValidTiles) {
                                          d = distance(path.LastStep, n);

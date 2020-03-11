@@ -3,21 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Traits {
-    public class Cursed : Trait {
+    public class Cursed : Status {
         public ITraitable sourcePOI { get; private set; }
         public List<CursedInteraction> cursedInteractions { get; private set; }
 
         public Cursed() {
             name = "Cursed";
             description = "This character has been afflicted by a magical curse.";
-            type = TRAIT_TYPE.ENCHANTMENT;
+            type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
-            
-            
             ticksDuration = GameManager.ticksPerDay;
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.DISPEL_MAGIC, };
             cursedInteractions = new List<CursedInteraction>();
             //effects = new List<TraitEffect>();
+            moodEffect = -7;
         }
 
         public void SetCursedInteractions(List<CursedInteraction> cursedInteractions) {
@@ -32,7 +31,8 @@ namespace Traits {
                 Character character = sourcePOI as Character;
                 //_sourceCharacter.CreateRemoveTraitJob(name);
                 character.AddTraitNeededToBeRemoved(this);
-                character.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, name.ToLower());
+                character.RegisterLog("NonIntel", "add_trait", null, name.ToLower());
+                character.needsComponent.AdjustComfortDecreaseRate(20);
             } else if (sourcePOI is TileObject) {
                 Messenger.AddListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedInteraction);
             }
@@ -42,37 +42,13 @@ namespace Traits {
                 Character character = sourcePOI as Character;
                 //character.CancelAllJobsTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, name);
                 character.RemoveTraitNeededToBeRemoved(this);
-                character.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, name.ToLower());
+                character.RegisterLog("NonIntel", "remove_trait", null, name.ToLower());
+                character.needsComponent.AdjustComfortDecreaseRate(-20);
             } else if (sourceCharacter is TileObject) {
                 Messenger.RemoveListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedInteraction);
             }
             base.OnRemoveTrait(sourceCharacter, removedBy);
         }
-        public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
-            if (traitOwner is Character) {
-                Character targetCharacter = traitOwner as Character;
-                if (!targetCharacter.isDead && !targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
-                    GoapPlanJob currentJob = targetCharacter.GetJobTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, name);
-                    if (currentJob == null) {
-                        if (!IsResponsibleForTrait(characterThatWillDoJob) && InteractionManager.Instance.CanCharacterTakeRemoveTraitJob(characterThatWillDoJob, targetCharacter)) {
-                            GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = name, isKeyANumber = false, target = GOAP_EFFECT_TARGET.TARGET };
-                            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect, targetCharacter, characterThatWillDoJob);
-                            job.AddOtherData(INTERACTION_TYPE.CRAFT_ITEM, new object[] { SPECIAL_TOKEN.HEALING_POTION });
-                            job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TokenManager.Instance.itemData[SPECIAL_TOKEN.HEALING_POTION].craftCost });
-                            characterThatWillDoJob.jobQueue.AddJobInQueue(job);
-                            return true;
-                        }
-                    } 
-                    //else {
-                    //    if (InteractionManager.Instance.CanCharacterTakeRemoveTraitJob(characterThatWillDoJob, targetCharacter, currentJob)) {
-                    //        return TryTransferJob(currentJob, characterThatWillDoJob);
-                    //    }
-                    //}
-                }
-            }
-            return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
-        }
-
         #endregion
 
         public void Interact(Character characterThatInteracted, GoapAction actionDone) {
@@ -132,7 +108,7 @@ namespace Traits {
             log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(sourcePOI, sourcePOI.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             //log.AddLogToInvolvedObjects();
-            character.RegisterLogAndShowNotifToThisCharacterOnly(log, null, false);
+            character.logComponent.RegisterLog(log, null, false);
         }
         private void DeathCharacter(Character character) {
             character.Death();
@@ -140,7 +116,7 @@ namespace Traits {
             log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(sourcePOI, sourcePOI.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             //log.AddLogToInvolvedObjects();
-            character.RegisterLogAndShowNotifToThisCharacterOnly(log, null, false);
+            character.logComponent.RegisterLog(log, null, false);
         }
         private void FlawCharacter(Character character) {
             List<Trait> flawTraits = TraitManager.Instance.GetAllTraitsOfType(TRAIT_TYPE.FLAW);
@@ -153,7 +129,7 @@ namespace Traits {
             log.AddToFillers(sourcePOI, sourcePOI.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             log.AddToFillers(null, chosenFlawTraitName, LOG_IDENTIFIER.STRING_1);
             //log.AddLogToInvolvedObjects();
-            character.RegisterLogAndShowNotifToThisCharacterOnly(log, null, false);
+            character.logComponent.RegisterLog(log, null, false);
 
             character.traitContainer.AddTrait(character, chosenFlawTraitName);
         }
@@ -167,7 +143,7 @@ namespace Traits {
                 log.AddToFillers(sourcePOI, sourcePOI.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 log.AddToFillers(null, chosenBuffTrait.name, LOG_IDENTIFIER.STRING_1);
                 //log.AddLogToInvolvedObjects();
-                character.RegisterLogAndShowNotifToThisCharacterOnly(log, null, false);
+                character.logComponent.RegisterLog(log, null, false);
 
                 character.traitContainer.RemoveTrait(character, chosenBuffTrait);
             } else {

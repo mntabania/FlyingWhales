@@ -4,13 +4,16 @@ using UnityEngine;
 
 public class Wolf : Summon {
 
-	public Wolf() : base(SUMMON_TYPE.Wolf, CharacterRole.BEAST, RACE.WOLF, Utilities.GetRandomGender()) { }
+	public Wolf() : base(SUMMON_TYPE.Wolf, "Ravager", RACE.WOLF,
+		UtilityScripts.Utilities.GetRandomGender()) {
+		
+	}
     public Wolf(SaveDataCharacter data) : base(data) { }
 
     #region Overrides
     //public override void OnPlaceSummon(LocationGridTile tile) {
     //    base.OnPlaceSummon(tile);
-    //    //CharacterState state = stateComponent.SwitchToState(CHARACTER_STATE.BERSERKED, null, tile.parentAreaMap.settlement);
+    //    //CharacterState state = stateComponent.SwitchToState(CHARACTER_STATE.BERSERKED, null, tile.parentAreaMap.npcSettlement);
     //    //state.SetIsUnending(true);
     //    //Messenger.AddListener(Signals.TICK_STARTED, PerTickGoapPlanGeneration);
     //    GoToWorkArea();

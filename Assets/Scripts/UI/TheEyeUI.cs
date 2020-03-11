@@ -7,12 +7,12 @@ using UnityEngine.UI;
 
 public class TheEyeUI : MonoBehaviour {
 
-    private TheEye theEye;
+    //private TheEye theEye;
 
     #region General
     private Minion minionToInterfere; 
     public void OnClickInterfere(BaseLandmark landmark) {
-        theEye = landmark as TheEye;
+        //theEye = landmark as TheEye;
         minionToInterfere = null;
         UIManager.Instance.dualObjectPicker.ShowDualObjectPicker<Character>(PlayerManager.Instance.player.minions.Select(x => x.character).ToList(), "Choose Minion",
             CanChooseMinion, OnHoverEnterMinion, OnHoverExitMinion, OnPickFirstObject, ConfirmInterfere, "Interfere");
@@ -52,9 +52,9 @@ public class TheEyeUI : MonoBehaviour {
         if (!CanChooseMinion(character)) {
             string message = string.Empty;
             if (character.minion.isAssigned) {
-                message = character.name + " is already doing something else.";
+                message = $"{character.name} is already doing something else.";
             } else if (!character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.SABOTEUR) && !character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.FIGHTER)) {
-                message = character.name + " does not have the required trait: Saboteur or Fighter";
+                message = $"{character.name} does not have the required trait: Saboteur or Fighter";
             }
             UIManager.Instance.ShowSmallInfo(message);
         }

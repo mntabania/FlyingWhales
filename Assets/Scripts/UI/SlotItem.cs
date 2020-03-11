@@ -96,13 +96,14 @@ public class SlotItem : MonoBehaviour {
             image.gameObject.SetActive(false);
             portrait.GeneratePortrait((associatedObj as Character));
             hoverInfo = (associatedObj as Character).name;
-        } else if (associatedObj is SpecialToken) {
-            factionEmblem.gameObject.SetActive(false);
-            areaEmblem.gameObject.SetActive(false);
-            portrait.gameObject.SetActive(false);
-            hoverInfo = (associatedObj as SpecialToken).name;
-            image.gameObject.SetActive(true);
-        }
+        } 
+        // else if (associatedObj is SpecialToken) {
+        //     factionEmblem.gameObject.SetActive(false);
+        //     areaEmblem.gameObject.SetActive(false);
+        //     portrait.gameObject.SetActive(false);
+        //     hoverInfo = (associatedObj as SpecialToken).name;
+        //     image.gameObject.SetActive(true);
+        // }
     }
     public void ClearSlot(bool keepType = false) {
         if (!keepType) {

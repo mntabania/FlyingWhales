@@ -33,8 +33,8 @@ public class FPSDisplay : MonoBehaviour {
             //text += "\nCharacters: " + CharacterManager.Instance.allCharacters.Count.ToString();
             if (SteamManager.Initialized) {
                 string name = SteamFriends.GetPersonaName();
-                text += "\nSteam Name: " + name;
-                text += "\nCharacters Snatched: " + AchievementManager.Instance.charactersSnatched;
+                text += $"\nSteam Name: {name}";
+                text += $"\nCharacters Snatched: {AchievementManager.Instance.charactersSnatched}";
             }
             GUI.Label(rect, text, style);
         }

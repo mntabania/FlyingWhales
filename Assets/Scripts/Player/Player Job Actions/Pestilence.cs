@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using Traits;
 using UnityEngine;
 
-public class Pestilence : PlayerJobAction {
+public class Pestilence : PlayerSpell {
 
-    public Pestilence() : base(INTERVENTION_ABILITY.PESTILENCE) {
+    public Pestilence() : base(SPELL_TYPE.PESTILENCE) {
         tier = 1;
         SetDefaultCooldownTime(24);
-        targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER, JOB_ACTION_TARGET.TILE_OBJECT };
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER, SPELL_TARGET.TILE_OBJECT };
         //abilityTags.Add(ABILITY_TAG.MAGIC);
     }
 
@@ -34,13 +34,13 @@ public class Pestilence : PlayerJobAction {
                     log.AddToFillers(currTarget, currTarget.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(newTrait, newTrait.name, LOG_IDENTIFIER.STRING_1);
                     log.AddLogToInvolvedObjects();
-                    PlayerManager.Instance.player.ShowNotification(log);
+                    PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
                 }
             }
             base.ActivateAction(targets[0]);
         }
     }
-    protected override bool CanPerformActionTowards(IPointOfInterest targetPOI) {
+    protected virtual bool CanPerformActionTowards(IPointOfInterest targetPOI) {
         if (targetPOI is TileObject) {
             TileObject to = targetPOI as TileObject;
             if (to.users != null) {
@@ -57,10 +57,10 @@ public class Pestilence : PlayerJobAction {
         if (targetCharacter.isDead) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
             return false;
         }
-        if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.race == RACE.SKELETON) {
+        if (UtilityScripts.GameUtilities.IsRaceBeast(targetCharacter.race) || targetCharacter.race == RACE.SKELETON) {
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Plagued", "Robust") != null) {
+        if (targetCharacter.traitContainer.HasTrait("Plagued", "Robust")) {
             return false;
         }
         //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
@@ -91,10 +91,10 @@ public class Pestilence : PlayerJobAction {
         if (targetCharacter.isDead) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
             return false;
         }
-        if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.race == RACE.SKELETON) {
+        if (UtilityScripts.GameUtilities.IsRaceBeast(targetCharacter.race) || targetCharacter.race == RACE.SKELETON) {
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Plagued", "Robust") != null) {
+        if (targetCharacter.traitContainer.HasTrait("Plagued", "Robust")) {
 
             return false;
         }
@@ -105,8 +105,34 @@ public class Pestilence : PlayerJobAction {
     }
 }
 
-public class PestilenceData : PlayerJobActionData {
+public class PestilenceData : SpellData {
+    public override SPELL_TYPE ability => SPELL_TYPE.PESTILENCE;
     public override string name { get { return "Pestilence"; } }
     public override string description { get { return "Afflict a character with a virulent and deadly disease. Disease is spread through chatting and sexual contact."; } }
-    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.DEVASTATION; } }
+    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.DEVASTATION; } }
+    public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.AFFLICTION;
+
+    public PestilenceData() : base() {
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER, SPELL_TARGET.TILE_OBJECT };
+    }
+
+    #region Overrides
+    public override void ActivateAbility(IPointOfInterest targetPOI) {
+        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted");
+        log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddToFillers(null, "Plagued", LOG_IDENTIFIER.STRING_1);
+        log.AddLogToInvolvedObjects();
+        PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+        if (targetPOI is Character) {
+            (targetPOI as Character).interruptComponent.TriggerInterrupt(INTERRUPT.Plagued, targetPOI);
+        }
+        // targetPOI.traitContainer.AddTrait(targetPOI, "Plagued");
+    }
+    public override bool CanPerformAbilityTowards(Character targetCharacter) {
+        if (targetCharacter.isDead || targetCharacter.race == RACE.SKELETON || targetCharacter.traitContainer.HasTrait("Plagued", "Robust", "Beast")) {
+            return false;
+        }
+        return base.CanPerformAbilityTowards(targetCharacter);
+    }
+    #endregion
 }

@@ -10,7 +10,7 @@ public class FeelingBrokenhearted : GoapAction {
     public FeelingBrokenhearted() : base(INTERACTION_TYPE.FEELING_BROKENHEARTED) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         actionIconString = GoapActionStateDB.Hostile_Icon;
-        isNotificationAnIntel = false;
+        
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
     }
@@ -20,7 +20,7 @@ public class FeelingBrokenhearted : GoapAction {
         base.Perform(goapNode);
         SetState("Brokenhearted Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 10;
     }
     #endregion

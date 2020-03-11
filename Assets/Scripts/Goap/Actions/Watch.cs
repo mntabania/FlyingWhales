@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;  
 using Traits;
+using Inner_Maps;
 
 public class Watch : GoapAction {
 
@@ -11,9 +12,9 @@ public class Watch : GoapAction {
         actionIconString = GoapActionStateDB.Watch_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         doesNotStopTargetCharacter = true;
-        isNotificationAnIntel = false;
+        
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
     }
 
     #region Overrides
@@ -21,7 +22,7 @@ public class Watch : GoapAction {
         base.Perform(goapNode);
         SetState("Watch Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 10;
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
@@ -122,7 +123,7 @@ public class Watch : GoapAction {
 
         //Always face target when not travelling
         if (!goapNode.actor.currentParty.icon.isTravelling) {
-            goapNode.actor.FaceTarget(goapNode.poiTarget);
+            InnerMapManager.Instance.FaceTarget(goapNode.actor, goapNode.poiTarget);
         }
     }
     //public void AfterWatchSuccess(ActualGoapNode goapNode) {
@@ -140,7 +141,7 @@ public class Watch : GoapAction {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             Character target = poiTarget as Character;
-            return actor != target && target.traitContainer.GetNormalTrait<Trait>("Beast") == null; // target.role.roleType != CHARACTER_ROLE.BEAST;
+            return actor != target && !target.traitContainer.HasTrait("Beast"); // target.role.roleType != CHARACTER_ROLE.BEAST;
         }
         return false;
     }
@@ -149,12 +150,12 @@ public class Watch : GoapAction {
 
 public class WatchData : GoapActionData {
     public WatchData() : base(INTERACTION_TYPE.WATCH) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
         requirementAction = Requirement;
     }
 
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         Character target = poiTarget as Character;
-        return actor != target && target.role.roleType != CHARACTER_ROLE.BEAST;
+        return actor != target && !UtilityScripts.GameUtilities.IsRaceBeast(target.race); // target.role.roleType != CHARACTER_ROLE.BEAST
     }
 }

@@ -1,36 +1,27 @@
-﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using Traits;
-using System.IO;
-using System;
+﻿using System;
 using Inner_Maps;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Inner_Maps.Location_Structures;
+using Locations.Settlements;
+using UnityEngine;
+using UtilityScripts;
 
 public class CharacterManager : MonoBehaviour {
 
-    public static CharacterManager Instance = null;
+    public static CharacterManager Instance;
 
     [Header("Sub Managers")]
     [SerializeField] private CharacterClassManager classManager;
 
     public static readonly string[] sevenDeadlySinsClassNames = { "Lust", "Gluttony", "Greed", "Sloth", "Wrath", "Envy", "Pride" };
     public const int MAX_HISTORY_LOGS = 300;
-    public const int CHARACTER_MAX_MEMORY = 20;
-    public const int FULLNESS_DECREASE_RATE = 380;
-    public const int TIREDNESS_DECREASE_RATE = 340;
-    public const int HAPPINESS_DECREASE_RATE = 640;
-    public const string Original_Alter_Ego = "Original";
-
     public GameObject characterIconPrefab;
     public Transform characterIconsParent;
 
     public int maxLevel;
-    private List<Character> _allCharacters;
     private List<CharacterAvatar> _allCharacterAvatars;
-
-    public Sprite heroSprite;
-
     [Header("Character Portrait Assets")]
     [SerializeField] private GameObject _characterPortraitPrefab;
     [SerializeField] private List<RacePortraitAssets> portraitAssets;
@@ -47,79 +38,68 @@ public class CharacterManager : MonoBehaviour {
     
     [Header("Character Marker Assets")]
     [SerializeField] private List<RaceMarkerAsset> markerAssets;
-    [SerializeField] private RuntimeAnimatorController baseAnimator;
-    public Sprite corpseSprite;
-
     [Header("Summon Settings")]
     [SerializeField] private SummonSettingDictionary summonSettings;
-
     [Header("Artifact Settings")]
     [SerializeField] private ArtifactSettingDictionary artifactSettings;
-
-    public Dictionary<Character, List<string>> allCharacterLogs { get; private set; }
-    public Dictionary<CHARACTER_ROLE, INTERACTION_TYPE[]> characterRoleInteractions { get; private set; }
-    public Dictionary<string, DeadlySin> deadlySins { get; private set; }
-
     
-    private List<string> deadlySinsRotation = new List<string>();
-
+    public Dictionary<string, DeadlySin> deadlySins { get; private set; }
+    public Dictionary<EMOTION, Emotion> emotionData { get; private set; }
+    public List<Emotion> allEmotions { get; private set; }
     public int defaultSleepTicks { get; private set; } //how many ticks does a character must sleep per day?
     public SUMMON_TYPE[] summonsPool { get; private set; }
+    public int CHARACTER_MISSING_THRESHOLD { get; private set; }
+    public COMBAT_MODE[] combatModes { get; private set; }
 
     #region getters/setters
-    public List<Character> allCharacters {
-        get { return _allCharacters; }
-    }
-    public GameObject characterPortraitPrefab {
-        get { return _characterPortraitPrefab; }
-    }
+    public List<Character> allCharacters => characterDatabase.allCharactersList;
+    public GameObject characterPortraitPrefab => _characterPortraitPrefab;
+    private CharacterDatabase characterDatabase { get; set; }
     #endregion
 
     private void Awake() {
         Instance = this;
-        _allCharacters = new List<Character>();
         _allCharacterAvatars = new List<CharacterAvatar>();
-        allCharacterLogs = new Dictionary<Character, List<string>>();
     }
 
     public void Initialize() {
         classManager.Initialize();
         CreateDeadlySinsData();
         defaultSleepTicks = GameManager.Instance.GetTicksBasedOnHour(8);
-        summonsPool = new SUMMON_TYPE[] { SUMMON_TYPE.Wolf, SUMMON_TYPE.Golem, SUMMON_TYPE.Incubus, SUMMON_TYPE.Succubus };
+        CHARACTER_MISSING_THRESHOLD = GameManager.Instance.GetTicksBasedOnHour(72);
+        summonsPool = new[] { SUMMON_TYPE.Wolf, SUMMON_TYPE.Golem, SUMMON_TYPE.Incubus, SUMMON_TYPE.Succubus };
+        combatModes = new COMBAT_MODE[] { COMBAT_MODE.Aggressive, COMBAT_MODE.Passive, COMBAT_MODE.Defend };
+        characterDatabase = new CharacterDatabase();
+        ConstructEmotionData();
         Messenger.AddListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
     }
 
     #region Characters
-    /*
-     Create a new character, given a role, class and race.
-         */
-    public Character CreateNewCharacter(CharacterRole role, RACE race, GENDER gender, Faction faction = null, 
-        Settlement homeLocation = null, Dwelling homeStructure = null) {
-        Character newCharacter = new Character(role, race, gender);
-
+    public Character CreateNewLimboCharacter(RACE race, string className, GENDER gender, Faction faction = null,
+    NPCSettlement homeLocation = null, IDwelling homeStructure = null) {
+        Character newCharacter = new Character(className, race, gender);
+        newCharacter.SetIsLimboCharacter(true);
         newCharacter.Initialize();
         if (faction != null) {
-            if (!faction.JoinFaction(newCharacter)) {
-                FactionManager.Instance.friendlyNeutralFaction.JoinFaction(newCharacter);
+            if (!faction.JoinFaction(newCharacter, false)) {
+                FactionManager.Instance.friendlyNeutralFaction.JoinFaction(newCharacter, false);
             }
-        }
-        else {
-            FactionManager.Instance.neutralFaction.JoinFaction(newCharacter);
+        } else {
+            FactionManager.Instance.neutralFaction.JoinFaction(newCharacter, false);
         }
         newCharacter.ownParty.CreateIcon();
-        if(homeLocation != null) {
+        if (homeLocation != null) {
             newCharacter.MigrateHomeTo(homeLocation, homeStructure, false);
-            homeLocation.AddCharacterToLocation(newCharacter);
+            homeLocation.region.AddCharacterToLocation(newCharacter);
         }
         newCharacter.CreateInitialTraitsByClass();
         //newCharacter.CreateInitialTraitsByRace();
-        AddNewCharacter(newCharacter);
+        AddNewLimboCharacter(newCharacter);
         return newCharacter;
     }
-    public Character CreateNewCharacter(CharacterRole role, string className, RACE race, GENDER gender, Faction faction = null, 
-        Settlement homeLocation = null, Dwelling homeStructure = null) {
-        Character newCharacter = new Character(role, className, race, gender);
+    public Character CreateNewCharacter(string className, RACE race, GENDER gender, Faction faction = null,
+        BaseSettlement homeLocation = null, Region homeRegion = null, IDwelling homeStructure = null) {
+        Character newCharacter = new Character(className, race, gender);
         newCharacter.Initialize();
         if (faction != null) {
             if (!faction.JoinFaction(newCharacter)) {
@@ -131,15 +111,16 @@ public class CharacterManager : MonoBehaviour {
         newCharacter.ownParty.CreateIcon();
         if (homeLocation != null) {
             newCharacter.MigrateHomeTo(homeLocation, homeStructure, false);
-            homeLocation.AddCharacterToLocation(newCharacter);
+            homeRegion.AddResident(newCharacter);
+            homeRegion.AddCharacterToLocation(newCharacter);
         }
         newCharacter.CreateInitialTraitsByClass();
         AddNewCharacter(newCharacter);
         return newCharacter;
     }
-    public Character CreateNewCharacter(CharacterRole role, string className, RACE race, GENDER gender, SEXUALITY sexuality, Faction faction = null,
-        Settlement homeLocation = null, Dwelling homeStructure = null) {
-        Character newCharacter = new Character(role, className, race, gender, sexuality);
+    public Character CreateNewCharacter(string className, RACE race, GENDER gender, SEXUALITY sexuality, Faction faction = null,
+        NPCSettlement homeLocation = null, IDwelling homeStructure = null) {
+        Character newCharacter = new Character(className, race, gender, sexuality);
         newCharacter.Initialize();
         if (faction != null) {
             if (!faction.JoinFaction(newCharacter)) {
@@ -151,7 +132,8 @@ public class CharacterManager : MonoBehaviour {
         newCharacter.ownParty.CreateIcon();
         if (homeLocation != null) {
             newCharacter.MigrateHomeTo(homeLocation, homeStructure, false);
-            homeLocation.AddCharacterToLocation(newCharacter);
+            homeLocation.region.AddResident(newCharacter);
+            homeLocation.region.AddCharacterToLocation(newCharacter);
         }
         newCharacter.CreateInitialTraitsByClass();
         AddNewCharacter(newCharacter);
@@ -160,9 +142,9 @@ public class CharacterManager : MonoBehaviour {
     public Character CreateNewCharacter(SaveDataCharacter data) {
         Character newCharacter = new Character(data);
         newCharacter.CreateOwnParty();
-        for (int i = 0; i < data.alterEgos.Count; i++) {
-            data.alterEgos[i].Load(newCharacter);
-        }
+        //for (int i = 0; i < data.alterEgos.Count; i++) {
+        //    data.alterEgos[i].Load(newCharacter);
+        //}
 
         Faction faction = FactionManager.Instance.GetFactionBasedOnID(data.factionID);
         if(faction != null) {
@@ -173,7 +155,6 @@ public class CharacterManager : MonoBehaviour {
         }
         newCharacter.ownParty.CreateIcon();
 
-        Settlement home = null;
         //TODO:
         // if (data.homeID != -1) {
         //     home = GridMap.Instance.GetRegionByID(data.homeID);
@@ -201,28 +182,58 @@ public class CharacterManager : MonoBehaviour {
         //         currRegion.AddCharacterToLocation(newCharacter.ownParty.owner, null, false);
         //     }
         // }
-        for (int i = 0; i < data.items.Count; i++) {
-            data.items[i].Load(newCharacter);
-        }
+        // for (int i = 0; i < data.items.Count; i++) {
+        //     data.items[i].Load(newCharacter);
+        // }
 
         AddNewCharacter(newCharacter);
         return newCharacter;
     }
-    public void AddNewCharacter(Character character) {
-        _allCharacters.Add(character);
-        Messenger.Broadcast(Signals.CHARACTER_CREATED, character);
-    }
-    public void RemoveCharacter(Character character) {
-        _allCharacters.Remove(character);
-        Messenger.Broadcast<Character>(Signals.CHARACTER_REMOVED, character);
-    }
-    public string GetDeadlySinsClassNameFromRotation() {
-        if (deadlySinsRotation.Count == 0) {
-            deadlySinsRotation.AddRange(sevenDeadlySinsClassNames);
+    public Character CreateNewCharacter(PreCharacterData data, string className, Faction faction = null,
+        NPCSettlement homeLocation = null, IDwelling homeStructure = null) {
+        Character newCharacter = new Character(className, data.race, data.gender, data.sexuality, data.id);
+        newCharacter.SetName(data.name);
+        
+        newCharacter.Initialize();
+        if (faction != null) {
+            if (!faction.JoinFaction(newCharacter)) {
+                FactionManager.Instance.friendlyNeutralFaction.JoinFaction(newCharacter);
+            }
+        } else {
+            FactionManager.Instance.neutralFaction.JoinFaction(newCharacter);
         }
-        string nextClass = deadlySinsRotation[0];
-        deadlySinsRotation.RemoveAt(0);
-        return nextClass;
+        newCharacter.ownParty.CreateIcon();
+        if (homeLocation != null) {
+            newCharacter.MigrateHomeTo(homeLocation, homeStructure, false);
+            homeLocation.region.AddResident(newCharacter);
+            homeLocation.region.AddCharacterToLocation(newCharacter);
+        }
+        newCharacter.CreateInitialTraitsByClass();
+        AddNewCharacter(newCharacter);
+        data.SetHasBeenSpawned();
+        return newCharacter;
+    }
+    public void AddNewCharacter(Character character, bool broadcastSignal = true) {
+        characterDatabase.AddCharacter(character);
+        if (broadcastSignal) {
+            Messenger.Broadcast(Signals.CHARACTER_CREATED, character);
+        }
+    }
+    public void RemoveCharacter(Character character, bool broadcastSignal = true) {
+        if (characterDatabase.RemoveCharacter(character)) {
+            if (broadcastSignal) {
+                Messenger.Broadcast(Signals.CHARACTER_REMOVED, character);
+            }
+        }
+    }
+    public void AddNewLimboCharacter(Character character) {
+        characterDatabase.AddLimboCharacter(character);
+        character.SetIsInLimbo(true);
+    }
+    public void RemoveLimboCharacter(Character character) {
+        if (characterDatabase.RemoveLimboCharacter(character)) {
+            character.SetIsInLimbo(false);
+        }
     }
     public void AddCharacterAvatar(CharacterAvatar characterAvatar) {
         int centerOrderLayer = (_allCharacterAvatars.Count * 2) + 1;
@@ -234,60 +245,63 @@ public class CharacterManager : MonoBehaviour {
     public void RemoveCharacterAvatar(CharacterAvatar characterAvatar) {
         _allCharacterAvatars.Remove(characterAvatar);
     }
-    //public void GenerateInitialAwareness() {
-    //    for (int i = 0; i < allCharacters.Count; i++) {
-    //        Character character = allCharacters[i];
-    //        character.AddInitialAwareness();
-    //    }
-    //}
-    public void PlaceInitialCharacters(Settlement settlement) {
-        for (int i = 0; i < settlement.charactersAtLocation.Count; i++) {
-            Character character = settlement.charactersAtLocation[i];
-            if (character.marker == null) {
+    public void PlaceInitialCharacters(List<Character> characters, NPCSettlement npcSettlement) {
+        for (int i = 0; i < characters.Count; i++) {
+            Character character = characters[i];
+            if (!character.marker) {
                 character.CreateMarker();
             }
-            if (character.homeStructure != null && character.homeStructure.settlementLocation == settlement) {
+            if (character.homeStructure != null && character.homeStructure.settlementLocation == npcSettlement) {
                 //place the character at a random unoccupied tile in his/her home
                 List<LocationGridTile> choices = character.homeStructure.unoccupiedTiles.Where(x => x.charactersHere.Count == 0).ToList();
                 LocationGridTile chosenTile = choices[UnityEngine.Random.Range(0, choices.Count)];
                 character.InitialCharacterPlacement(chosenTile);
             } else {
-                //place the character at a random unoccupied tile in the settlement's wilderness
-                LocationStructure wilderness = settlement.region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+                //place the character at a random unoccupied tile in the npcSettlement's wilderness
+                LocationStructure wilderness = npcSettlement.region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
                 List<LocationGridTile> choices = wilderness.unoccupiedTiles.Where(x => x.charactersHere.Count == 0).ToList();
                 LocationGridTile chosenTile = choices[UnityEngine.Random.Range(0, choices.Count)];
                 character.InitialCharacterPlacement(chosenTile);
             }
         }
     }
-    public void GiveInitialItems() {
-        List<SPECIAL_TOKEN> choices = Utilities.GetEnumValues<SPECIAL_TOKEN>().ToList();
-        choices.Remove(SPECIAL_TOKEN.HEALING_POTION);
-        choices.Remove(SPECIAL_TOKEN.TOOL);
-        for (int i = 0; i < allCharacters.Count; i++) {
-            Character character = allCharacters[i];
-            if (character.minion == null) {
-                if (UnityEngine.Random.Range(0, 2) == 0) {
-                    SPECIAL_TOKEN randomItem = choices[UnityEngine.Random.Range(0, choices.Count)];
-                    SpecialToken token = TokenManager.Instance.CreateSpecialToken(randomItem);
-                    character.ObtainToken(token);
-                }
+    public int GetFoodAmountTakenFromDead(Character deadCharacter) {
+        if (deadCharacter != null) {
+            if (deadCharacter.race == RACE.WOLF) {
+                return 150;
+            } else if (deadCharacter.race == RACE.HUMANS) {
+                return 200;
+            } else if (deadCharacter.race == RACE.ELVES) {
+                return 200;
             }
         }
+        return 100;
+    }
+    public void CreateFoodPileForPOI(IPointOfInterest poi, LocationGridTile tileOverride = null) {
+        LocationGridTile targetTile = tileOverride;
+        Character deadCharacter = null;
+        if (poi is Character) {
+            deadCharacter = poi as Character;
+        }
+        if(targetTile == null) {
+            targetTile = poi.gridTileLocation;
+        }
+        if (targetTile.objHere != null) {
+            targetTile = targetTile.GetNearestUnoccupiedTileFromThis();
+        }
+        int food = GetFoodAmountTakenFromDead(deadCharacter);
+        FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(TILE_OBJECT_TYPE.FOOD_PILE);
+        foodPile.SetResourceInPile(food);
+        targetTile.structure.AddPOI(foodPile, targetTile);
+        targetTile.SetReservedType(TILE_OBJECT_TYPE.FOOD_PILE);
     }
     #endregion
 
     #region Character Class Manager
-    public string RunCharacterIdlePlan(Character character) {
-        return classManager.RunIdlePlanForCharacter(character);
-    }
     public CharacterClass CreateNewCharacterClass(string className) {
         return classManager.CreateNewCharacterClass(className);
     }
     public string GetRandomClassByIdentifier(string identifier) {
-        if (identifier == "Demon") {
-            return GetDeadlySinsClassNameFromRotation();
-        }
         return classManager.GetRandomClassByIdentifier(identifier);
     }
     public bool HasCharacterClass(string className) {
@@ -302,10 +316,26 @@ public class CharacterManager : MonoBehaviour {
     public List<CharacterClass> GetNormalCombatantClasses() {
         return classManager.normalCombatantClasses;
     }
+    public System.Type[] GetClassBehaviourComponents(string className) {
+        return classManager.GetClassBehaviourComponents(className);
+    }
+    //public System.Type[] GetTraitBehaviourComponents(string traitName) {
+    //    return classManager.GetTraitBehaviourComponents(traitName);
+    //}
+    public CharacterBehaviourComponent GetCharacterBehaviourComponent(System.Type type) {
+        return classManager.GetCharacterBehaviourComponent(type);
+    }
+    public string GetClassBehaviourComponentKey(string className) {
+        return classManager.GetClassBehaviourComponentKey(className);
+    }
+    public List<CharacterClass> GetAllClasses() {
+        return classManager.allClasses;
+    }
     #endregion
 
     #region Summons
-    public Summon CreateNewSummon(SUMMON_TYPE summonType, Faction faction = null, Settlement homeLocation = null, Dwelling homeStructure = null) {
+    public Summon CreateNewSummon(SUMMON_TYPE summonType, Faction faction = null, BaseSettlement homeLocation = null,
+        Region homeRegion = null, IDwelling homeStructure = null) {
         Summon newCharacter = CreateNewSummonClassFromType(summonType) as Summon;
         newCharacter.Initialize();
         if (faction != null) {
@@ -316,7 +346,10 @@ public class CharacterManager : MonoBehaviour {
         newCharacter.ownParty.CreateIcon();
         if (homeLocation != null) {
             newCharacter.MigrateHomeTo(homeLocation, homeStructure, false);
-            homeLocation.AddCharacterToLocation(newCharacter.ownParty.owner);
+        }
+        if (homeRegion != null) {
+            homeRegion.AddResident(newCharacter);
+            homeRegion.AddCharacterToLocation(newCharacter.ownParty.owner);
         }
         newCharacter.CreateInitialTraitsByClass();
         AddNewCharacter(newCharacter);
@@ -327,9 +360,9 @@ public class CharacterManager : MonoBehaviour {
         newCharacter.CreateOwnParty();
         newCharacter.ConstructInitialGoapAdvertisementActions();
 
-        for (int i = 0; i < data.alterEgos.Count; i++) {
-            data.alterEgos[i].Load(newCharacter);
-        }
+        //for (int i = 0; i < data.alterEgos.Count; i++) {
+        //    data.alterEgos[i].Load(newCharacter);
+        //}
 
         Faction faction = FactionManager.Instance.GetFactionBasedOnID(data.factionID);
         if (faction != null) {
@@ -340,7 +373,7 @@ public class CharacterManager : MonoBehaviour {
         }
 
         newCharacter.ownParty.CreateIcon();
-        Settlement home = null;
+        // NPCSettlement home = null;
         //TODO:
         // if (data.homeID != -1) {
         //     home = GridMap.Instance.GetRegionByID(data.homeID);
@@ -370,9 +403,9 @@ public class CharacterManager : MonoBehaviour {
         //     }
         // }
 
-        for (int i = 0; i < data.items.Count; i++) {
-            data.items[i].Load(newCharacter);
-        }
+        // for (int i = 0; i < data.items.Count; i++) {
+        //     data.items[i].Load(newCharacter);
+        // }
         //for (int i = 0; i < data.normalTraits.Count; i++) {
         //    Character responsibleCharacter = null;
         //    Trait trait = data.normalTraits[i].Load(ref responsibleCharacter);
@@ -383,7 +416,7 @@ public class CharacterManager : MonoBehaviour {
         AddNewCharacter(newCharacter);
         return newCharacter;
     }
-    public Summon CreateNewSummonClassFromType(SaveDataCharacter data) {
+    private Summon CreateNewSummonClassFromType(SaveDataCharacter data) {
         switch (data.summonType) {
             case SUMMON_TYPE.Wolf:
                 return new Wolf(data);
@@ -400,9 +433,9 @@ public class CharacterManager : MonoBehaviour {
         }
         return null;
     }
-    public object CreateNewSummonClassFromType(SUMMON_TYPE summonType) {
-        var typeName = summonType.ToString();
-        return System.Activator.CreateInstance(System.Type.GetType(typeName));
+    private object CreateNewSummonClassFromType(SUMMON_TYPE summonType) {
+        var typeName = UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(summonType.ToString());
+        return System.Activator.CreateInstance(System.Type.GetType(typeName) ?? throw new Exception($"provided summon type was invalid! {typeName}"));
     }
     public SummonSettings GetSummonSettings(SUMMON_TYPE type) {
         return summonSettings[type];
@@ -410,51 +443,40 @@ public class CharacterManager : MonoBehaviour {
     public ArtifactSettings GetArtifactSettings(ARTIFACT_TYPE type) {
         return artifactSettings[type];
     }
+    public void PlaceSummon(Summon summon, LocationGridTile locationTile) {
+        summon.homeRegion.RemoveCharacterFromLocation(summon);
+        summon.CreateMarker();
+        summon.marker.InitialPlaceMarkerAt(locationTile);
+        summon.OnPlaceSummon(locationTile);
+    }
     #endregion
 
     #region Utilities
     public Character GetCharacterByID(int id) {
-        for (int i = 0; i < _allCharacters.Count; i++) {
-            Character currChar = _allCharacters[i];
-            if (currChar.id == id) {
-                return currChar;
-            }
+        if (characterDatabase.allCharacters.TryGetValue(id, out Character character)) {
+            return character;
+        } else if (characterDatabase.limboCharacters.TryGetValue(id, out character)) {
+            return character;
         }
         return null;
     }
     public Character GetCharacterByName(string name) {
-        for (int i = 0; i < _allCharacters.Count; i++) {
-            Character currChar = _allCharacters[i];
+        for (int i = 0; i < characterDatabase.allCharactersList.Count; i++) {
+            Character currChar = characterDatabase.allCharactersList[i];
             if (currChar.name.Equals(name, System.StringComparison.CurrentCultureIgnoreCase)) {
                 return currChar;
             }
         }
         return null;
     }
-    public List<string> GetCharacterLogs(Character character) {
-        if (allCharacterLogs.ContainsKey(character)) {
-            return allCharacterLogs[character];
+    public Character GetLimboCharacterByName(string name) {
+        for (int i = 0; i < characterDatabase.limboCharacters.Count; i++) {
+            Character currChar = characterDatabase.limboCharacters[i];
+            if (currChar.name.Equals(name, System.StringComparison.CurrentCultureIgnoreCase)) {
+                return currChar;
+            }
         }
         return null;
-    }
-    #endregion
-
-    #region Avatars
-    public Sprite GetSpriteByRole(CHARACTER_ROLE role){
-        return heroSprite;
-        //switch(role){
-        //case CHARACTER_ROLE.HERO:
-        //	return heroSprite;
-        //case CHARACTER_ROLE.VILLAIN:
-        //	return villainSprite;
-        //      case CHARACTER_ROLE.BEAST:
-        //          return beastSprite;
-        //      case CHARACTER_ROLE.BANDIT:
-        //          return banditSprite;
-        //      case CHARACTER_ROLE.LEADER:
-        //          return chieftainSprite;
-        //      }
-        //return null;
     }
     #endregion
 
@@ -495,26 +517,26 @@ public class CharacterManager : MonoBehaviour {
             ps.hairColor = 0f;
             ps.wholeImageColor = UnityEngine.Random.Range(-144f, 144f);
         } else {
-            ps.head = Utilities.GetRandomIndexInList(pac.head);
-            ps.brows = Utilities.GetRandomIndexInList(pac.brows);
-            ps.eyes = Utilities.GetRandomIndexInList(pac.eyes);
-            ps.mouth = Utilities.GetRandomIndexInList(pac.mouth);
-            ps.nose = Utilities.GetRandomIndexInList(pac.nose);
+            ps.head = CollectionUtilities.GetRandomIndexInList(pac.head);
+            ps.brows = CollectionUtilities.GetRandomIndexInList(pac.brows);
+            ps.eyes = CollectionUtilities.GetRandomIndexInList(pac.eyes);
+            ps.mouth = CollectionUtilities.GetRandomIndexInList(pac.mouth);
+            ps.nose = CollectionUtilities.GetRandomIndexInList(pac.nose);
 
             if (UnityEngine.Random.Range(0, 100) < 10 && gender != GENDER.FEMALE) { //females have no chance to be bald
                 ps.hair = -1; //chance to have no hair
             } else {
-                ps.hair = Utilities.GetRandomIndexInList(pac.hair);
+                ps.hair = CollectionUtilities.GetRandomIndexInList(pac.hair);
             }
             if (UnityEngine.Random.Range(0, 100) < 20) {
                 ps.mustache = -1; //chance to have no mustache
             } else {
-                ps.mustache = Utilities.GetRandomIndexInList(pac.mustache);
+                ps.mustache = CollectionUtilities.GetRandomIndexInList(pac.mustache);
             }
             if (UnityEngine.Random.Range(0, 100) < 10) {
                 ps.beard = -1; //chance to have no beard
             } else {
-                ps.beard = Utilities.GetRandomIndexInList(pac.beard);
+                ps.beard = CollectionUtilities.GetRandomIndexInList(pac.beard);
             }
             ps.hairColor = UnityEngine.Random.Range(-720f, 720f);
             ps.wholeImageColor = 0f;
@@ -525,7 +547,7 @@ public class CharacterManager : MonoBehaviour {
         if (portraitFrames.ContainsKey(role)) {
             return portraitFrames[role];
         }
-        throw new System.Exception("There is no frame for role " + role.ToString());
+        throw new System.Exception($"There is no frame for role {role}");
     }
     public Sprite GetWholeImagePortraitSprite(string className) {
         if (classPortraits.ContainsKey(className)) {
@@ -700,12 +722,11 @@ public class CharacterManager : MonoBehaviour {
                                 string classAssetPath = classFiles[l];
                                 Sprite loadedSprite = (Sprite)UnityEditor.AssetDatabase.LoadAssetAtPath(classAssetPath, typeof(Sprite));
                                 if (loadedSprite != null) {
-                                    if (loadedSprite.name.Contains("_body")) {
+                                    if (loadedSprite.name.Contains("idle_1")) {
                                         characterClassAsset.defaultSprite = loadedSprite;
-                                    } else {
-                                        //assume that sprite is for animation
-                                        characterClassAsset.animationSprites.Add(loadedSprite);
                                     }
+                                    //assume that sprite is for animation
+                                    characterClassAsset.animationSprites.Add(loadedSprite);
                                 }
 
                             }
@@ -764,31 +785,60 @@ public class CharacterManager : MonoBehaviour {
     public bool CanDoDeadlySinAction(string deadlySinName, DEADLY_SIN_ACTION action) {
         return deadlySins[deadlySinName].CanDoDeadlySinAction(action);
     }
-    public List<INTERVENTION_ABILITY> Get3RandomResearchInterventionAbilities(DeadlySin deadlySin) {
-        List<INTERVENTION_ABILITY> interventionAbilitiesToResearch = new List<INTERVENTION_ABILITY>();
-        INTERVENTION_ABILITY_CATEGORY category = deadlySin.GetInterventionAbilityCategory();
-        if (category != INTERVENTION_ABILITY_CATEGORY.NONE) {
-            List<INTERVENTION_ABILITY> possibleAbilities = PlayerManager.Instance.GetAllInterventionAbilityByCategory(category);
-            if (possibleAbilities.Count > 0) {
-
-                int index1 = UnityEngine.Random.Range(0, possibleAbilities.Count);
-                interventionAbilitiesToResearch.Add(possibleAbilities[index1]);
-                possibleAbilities.RemoveAt(index1);
-
-                int index2 = UnityEngine.Random.Range(0, possibleAbilities.Count);
-                interventionAbilitiesToResearch.Add(possibleAbilities[index2]);
-                possibleAbilities.RemoveAt(index2);
-
-                interventionAbilitiesToResearch.Add(possibleAbilities[UnityEngine.Random.Range(0, possibleAbilities.Count)]);
-            }
-        }
-        return interventionAbilitiesToResearch;
-    }
     #endregion
 
     #region POI
     public bool POIValueTypeMatching(POIValueType poi1, POIValueType poi2) {
         return poi1.id == poi2.id && poi1.poiType == poi2.poiType && poi1.tileObjectType == poi2.tileObjectType;
+    }
+    #endregion
+
+    #region Emotions
+    private void ConstructEmotionData() {
+        emotionData = new Dictionary<EMOTION, Emotion>();
+        this.allEmotions = new List<Emotion>();
+        EMOTION[] enumValues = CollectionUtilities.GetEnumValues<EMOTION>();
+        for (int i = 0; i < enumValues.Length; i++) {
+            EMOTION emotion = enumValues[i];
+            var typeName = UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(emotion.ToString());
+            System.Type type = System.Type.GetType(typeName);
+            if (type != null) {
+                Emotion data = System.Activator.CreateInstance(type) as Emotion;
+                emotionData.Add(emotion, data);
+                this.allEmotions.Add(data);
+            } else {
+                Debug.LogWarning($"{typeName} has no data!");
+            }
+        }
+    }
+    public string TriggerEmotion(EMOTION emotionType, Character emoter, IPointOfInterest target, REACTION_STATUS status) {
+        return $" {GetEmotion(emotionType).ProcessEmotion(emoter, target, status)}";
+    }
+    public Emotion GetEmotion(string name) {
+        for (int i = 0; i < allEmotions.Count; i++) {
+            if(allEmotions[i].name == name) {
+                return allEmotions[i];
+            }
+        }
+        return null;
+    }
+    public Emotion GetEmotion(EMOTION emotionType) {
+        return emotionData[emotionType];
+    }
+    public bool EmotionsChecker(string emotion) {
+        //NOTE: This is only temporary since in the future, we will not have the name of the emotion as the response
+        string[] emotions = emotion.Split(' ');
+        for (int i = 0; i < emotions.Length; i++) {
+            Emotion _emotionData = GetEmotion(emotions[i]);
+            if (_emotionData != null) {
+                for (int j = 0; j < emotions.Length; j++) {
+                    if(i != j && (emotions[i] == emotions[j] || !_emotionData.IsEmotionCompatibleWithThis(emotions[j]))){
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
     #endregion
 }

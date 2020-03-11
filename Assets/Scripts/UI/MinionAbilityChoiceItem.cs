@@ -22,7 +22,7 @@ public class MinionAbilityChoiceItem : MonoBehaviour {
             portrait.GeneratePortrait(minion.character);
 
             string text = minion.character.name;
-            text += "\nLvl." + minion.character.level + " " + minion.character.raceClassName;
+            text += $"\nLvl.{minion.character.level} {minion.character.raceClassName}";
             minionText.text = text;
 
             UpdateAbilityItems();
@@ -30,7 +30,7 @@ public class MinionAbilityChoiceItem : MonoBehaviour {
     }
 
     private void UpdateAbilityItems() {
-        Utilities.DestroyChildren(abilityGrid.transform);
+        UtilityScripts.Utilities.DestroyChildren(abilityGrid.transform);
         if(abilityIdentifier == "combat") {
             GameObject go = GameObject.Instantiate(abilityItemPrefab, abilityGrid.transform);
             AbilityItem item = go.GetComponent<AbilityItem>();
