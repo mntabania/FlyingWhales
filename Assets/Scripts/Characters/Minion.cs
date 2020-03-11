@@ -40,6 +40,7 @@ public class Minion {
         character.needsComponent.SetTirednessForcedTick(0);
         character.behaviourComponent.AddBehaviourComponent(typeof(DefaultMinion));
         character.combatComponent.SetCombatMode(COMBAT_MODE.Defend);
+        character.visuals.UpdateAllVisuals(character);
     }
     public Minion(SaveDataMinion data) {
         this.character = CharacterManager.Instance.GetCharacterByID(data.characterID);

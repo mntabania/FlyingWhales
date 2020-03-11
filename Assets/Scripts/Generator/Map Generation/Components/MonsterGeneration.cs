@@ -9,7 +9,7 @@ using UtilityScripts;
 public class MonsterGeneration : MapGenerationComponent {
 
 	public override IEnumerator Execute(MapGenerationData data) {
-		string[] monsterChoices = new[] { "Golem", "Wolves", "Seducer", "Fire Elementals", "Kobolds", "Giant Spiders", "Ent", "Small Spiders" };
+		string[] monsterChoices = new[] { "Golem", "Wolves", "Seducer", "Fire Elementals", "Kobolds", "Giant Spiders", "Ent", "Small Spiders", "Abomination" };
         List<BaseLandmark> monsterLairs = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.MONSTER_LAIR);
 		for (int i = 0; i < monsterLairs.Count; i++) {
 			BaseLandmark monsterLair = monsterLairs[i];
@@ -19,7 +19,7 @@ public class MonsterGeneration : MapGenerationComponent {
 				settlementOnTile.GetRandomStructureOfType(STRUCTURE_TYPE.MONSTER_LAIR);
 			Assert.IsTrue(monsterLairStructure.unoccupiedTiles.Count > 0, 
 				$"Monster Lair at {monsterLair.tileLocation.region.name} does not have any unoccupied tiles, but is trying to spawn monsters!");
-			int randomAmount = 0;
+			int randomAmount;
 			if (randomSet == "Golem") {
 				randomAmount = Random.Range(1, 3);
 				for (int j = 0; j < randomAmount; j++) {
@@ -79,7 +79,12 @@ public class MonsterGeneration : MapGenerationComponent {
                 for (int j = 0; j < randomAmount; j++) {
                     CreateMonster(SUMMON_TYPE.Small_Spider, settlementOnTile, monsterLair, monsterLairStructure);
                 }
-            }
+            } else if (randomSet == "Abomination") {
+				randomAmount = Random.Range(1, 2);
+				for (int j = 0; j < randomAmount; j++) {
+					CreateMonster(SUMMON_TYPE.Abomination, settlementOnTile, monsterLair, monsterLairStructure);
+				}
+			}
         }
 		yield return null;
 	}

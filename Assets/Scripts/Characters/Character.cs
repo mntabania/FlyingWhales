@@ -41,7 +41,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     protected int _sp;
 
     //visuals
-    public CharacterVisuals visuals { get; private set; }
+    public CharacterVisuals visuals { get; }
     public BaseMapObjectVisual mapObjectVisual => marker;
     public int doNotRecoverHP { get; protected set; }
     public SEXUALITY sexuality { get; private set; }
@@ -649,7 +649,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             marker.UpdateSpeed();
         }
     }
-    public void PerTickDuringMovement() {
+    public virtual void PerTickDuringMovement() {
         for (int i = 0; i < traitContainer.allTraitsAndStatuses.Count; i++) {
             Trait trait = traitContainer.allTraitsAndStatuses[i];
             if (trait.PerTickOwnerMovement()) {
