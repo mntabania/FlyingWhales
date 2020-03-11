@@ -33,6 +33,9 @@ public class MapVisualFactory {
             case TILE_OBJECT_TYPE.BED:
                 obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("BedGameObject", Vector3.zero, Quaternion.identity);
                 break;
+            case TILE_OBJECT_TYPE.BALL_LIGHTNING:
+                obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("BallLightningMapObjectVisual", Vector3.zero, Quaternion.identity);
+                break;
             default:
                 obj = ObjectPoolManager.Instance.InstantiateObjectFromPool(Tile_Object_Prefab_Name, Vector3.zero, Quaternion.identity);
                 break;

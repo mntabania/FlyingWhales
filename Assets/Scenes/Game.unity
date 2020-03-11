@@ -29730,7 +29730,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   month: 1
   year: 80
-  tick: 96
+  tick: 144
   continuousDays: 1
   startYear: 80
   currProgressionSpeed: 0

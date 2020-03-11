@@ -62,3 +62,27 @@ public class PoisonCloudData : SpellData {
         TileHighlighter.Instance.PositionHighlight(2, tile);
     }
 }
+
+public class BallLightningData : SpellData {
+    public override SPELL_TYPE ability => SPELL_TYPE.BALL_LIGHTNING;
+    public override string name => "Ball Lightning";
+    public override string description => "Ball Lightning";
+    public override SPELL_CATEGORY category => SPELL_CATEGORY.DEVASTATION;
+    public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
+
+    public BallLightningData() : base() {
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
+    }
+
+    public override void ActivateAbility(LocationGridTile targetTile) {
+        BallLightningTileObject ballLightning = new BallLightningTileObject();
+        ballLightning.SetGridTileLocation(targetTile);
+        ballLightning.OnPlacePOI();
+    }
+    public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
+        return targetTile.structure != null;
+    }
+    public override void HighlightAffectedTiles(LocationGridTile tile) {
+        TileHighlighter.Instance.PositionHighlight(2, tile);
+    }
+}

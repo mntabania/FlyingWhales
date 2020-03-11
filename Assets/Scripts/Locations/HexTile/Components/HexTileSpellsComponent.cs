@@ -27,7 +27,12 @@ public class HexTileSpellsComponent {
     public bool hasBrimstones { get; private set; }
     private int _currentBrimstonesDuration;
     #endregion
-    
+
+    #region Electric Storm Variables
+    public bool hasElectricStorm { get; private set; }
+    private int _currentElectricStormDuration;
+    #endregion
+
     public HexTileSpellsComponent(HexTile owner) {
         this.owner = owner;
         earthquakeTileObjects = new List<IPointOfInterest>();
@@ -316,6 +321,48 @@ public class HexTileSpellsComponent {
         _currentBrimstonesDuration++;
         if (_currentBrimstonesDuration >= 12) {
             SetHasBrimstones(false);
+        }
+    }
+    #endregion
+
+    #region Electric Storm
+    public void SetHasElectricStorm(bool state) {
+        if (hasElectricStorm != state) {
+            hasElectricStorm = state;
+            if (hasElectricStorm) {
+                StartElectricStorm();
+            } else {
+                StopElectricStorm();
+            }
+        }
+    }
+    private void StartElectricStorm() {
+        _currentElectricStormDuration = 0;
+        owner.StartCoroutine(CommenceElectricStorm());
+        Messenger.AddListener(Signals.TICK_STARTED, PerTickElectricStorm);
+    }
+    private void StopElectricStorm() {
+        owner.StopCoroutine(CommenceElectricStorm());
+        Messenger.RemoveListener(Signals.TICK_STARTED, PerTickElectricStorm);
+    }
+    private IEnumerator CommenceElectricStorm() {
+        while (hasElectricStorm) {
+            while (GameManager.Instance.isPaused) {
+                yield return null;
+            }
+            yield return new WaitForSeconds(UnityEngine.Random.Range(0.1f, 0.7f));
+            LocationGridTile chosenTile = owner.locationGridTiles[UnityEngine.Random.Range(0, owner.locationGridTiles.Count)];
+            GameManager.Instance.CreateParticleEffectAt(chosenTile, PARTICLE_EFFECT.Lightning_Strike);
+            List<IPointOfInterest> pois = chosenTile.GetPOIsOnTile();
+            for (int i = 0; i < pois.Count; i++) {
+                pois[i].AdjustHP(-100, ELEMENTAL_TYPE.Electric);
+            }
+        }
+    }
+    private void PerTickElectricStorm() {
+        _currentElectricStormDuration++;
+        if (_currentElectricStormDuration >= 12) {
+            SetHasElectricStorm(false);
         }
     }
     #endregion
