@@ -357,7 +357,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             Character resident = residents[i];
             if((resident.canPerform || !resident.isDead) 
                 && resident.gridTileLocation != null 
-                && resident.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner
+                && resident.gridTileLocation.collectionOwner.isPartOfParentRegionMap
                 && resident.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile == this) {
                 return true;
             }
