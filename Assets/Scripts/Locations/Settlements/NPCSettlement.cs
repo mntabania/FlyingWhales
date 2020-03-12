@@ -42,7 +42,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public bool isBeingInvaded => _isBeingInvadedCount > 0;
     #endregion
 
-    public NPCSettlement(Region region, LOCATION_TYPE locationType, int citizenCount) : base(locationType, citizenCount)  {
+    public NPCSettlement(Region region, LOCATION_TYPE locationType, int citizenCount) : base(locationType, citizenCount) {
         this.region = region;
         newRulerDesignationWeights = new WeightedDictionary<Character>();
         forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
@@ -477,6 +477,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             case STRUCTURE_TYPE.LUMBERYARD:
                 classManager.AddCombatantClass("Archer");
                 break;
+            case STRUCTURE_TYPE.CEMETERY:
+                classManager.AddCombatantClass("Stalker");
+                break;
         }
     }
     protected override void OnStructureRemoved(LocationStructure structure) {
@@ -488,6 +491,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                 break;
             case STRUCTURE_TYPE.LUMBERYARD:
                 classManager.RemoveCombatantClass("Archer");
+                break;
+            case STRUCTURE_TYPE.CEMETERY:
+                classManager.RemoveCombatantClass("Stalker");
                 break;
         }
     }
