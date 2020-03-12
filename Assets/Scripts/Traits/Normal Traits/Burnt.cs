@@ -73,7 +73,7 @@ namespace Traits {
         public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
             if (traitOwner is TileObject) {
                 TileObject targetPOI = traitOwner as TileObject;
-                if (targetPOI.advertisedActions.Contains(INTERACTION_TYPE.REPAIR)) {
+                if (targetPOI.Advertises(INTERACTION_TYPE.REPAIR)) {
                     GoapPlanJob currentJob = targetPOI.GetJobTargetingThisCharacter(JOB_TYPE.REPAIR);
                     if (currentJob == null) {
                         //job.SetCanBeDoneInLocation(true);

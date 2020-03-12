@@ -1342,9 +1342,14 @@ public class ConsoleBase : InfoUIBase {
 
             TileObject tileObj = InnerMapManager.Instance.GetTileObject(tileObjType, id);
             string log = $"Advertised actions of {tileObj.name}:";
-            for (int i = 0; i < tileObj.advertisedActions.Count; i++) {
-                log += $"\n{tileObj.advertisedActions[i]}";
+            if(tileObj.advertisedActions != null && tileObj.advertisedActions.Count > 0) {
+                for (int i = 0; i < tileObj.advertisedActions.Count; i++) {
+                    log += $"\n{tileObj.advertisedActions[i]}";
+                }
+            } else {
+                log += $"\nNone";
             }
+
             AddSuccessMessage(log);
         } 
         // else if (poiType == POINT_OF_INTEREST_TYPE.ITEM) {

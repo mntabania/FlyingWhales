@@ -618,7 +618,7 @@ namespace Inner_Maps.Location_Structures {
             if (structureType.IsOpenSpace() || structureType.IsSettlementStructure() == false) {
                 return; //do not check for damage if structure is open space (Wilderness, Work NPCSettlement, Cemetery, etc.)
             }
-            if (occupiedBuildSpot.advertisedActions.Contains(INTERACTION_TYPE.REPAIR_STRUCTURE) == false) {
+            if (occupiedBuildSpot.Advertises(INTERACTION_TYPE.REPAIR_STRUCTURE) == false) {
                 occupiedBuildSpot.AddAdvertisedAction(INTERACTION_TYPE.REPAIR_STRUCTURE);
             }
             CheckInteriorState();

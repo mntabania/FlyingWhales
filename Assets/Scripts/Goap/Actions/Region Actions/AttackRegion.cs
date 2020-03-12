@@ -33,7 +33,7 @@
             var region = poiTarget.gridTileLocation.parentMap.location.coreTile.region;
             return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null &&
                    region.mainLandmark.specificLandmarkType != LANDMARK_TYPE.NONE && 
-                   region.regionTileObject.advertisedActions.Contains(INTERACTION_TYPE.ATTACK_REGION);
+                   region.regionTileObject.Advertises(INTERACTION_TYPE.ATTACK_REGION);
         }
         return false;
     }

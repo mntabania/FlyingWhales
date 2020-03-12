@@ -506,7 +506,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     /// <param name="type">The action type that need to be advertised.</param>
     /// <returns>If this tile object advertises the given action.</returns>
     public bool Advertises(INTERACTION_TYPE type) {
-        return advertisedActions.Contains(type);
+        return advertisedActions != null && advertisedActions.Contains(type);
     }
     /// <summary>
     /// Does this tile object advertise all of the given actions.
@@ -743,7 +743,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             if (character.currentActionNode != null && character.currentActionNode.poiTarget == this) {
                 return false;
             }
-            if (advertisedActions.Contains(INTERACTION_TYPE.PICK_UP) == false) {
+            if (Advertises(INTERACTION_TYPE.PICK_UP) == false) {
                 return false;
             }
             return true;
@@ -804,11 +804,13 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             mapVisual.SetVisualAlpha(0f / 255f);
             SetSlotAlpha(0f / 255f);
             //store advertised actions
-            storedActions = new INTERACTION_TYPE[advertisedActions.Count];
-            for (int i = 0; i < advertisedActions.Count; i++) {
-                storedActions[i] = advertisedActions[i];
+            if(advertisedActions != null && advertisedActions.Count > 0) {
+                storedActions = new INTERACTION_TYPE[advertisedActions.Count];
+                for (int i = 0; i < advertisedActions.Count; i++) {
+                    storedActions[i] = advertisedActions[i];
+                }
+                advertisedActions.Clear();
             }
-            advertisedActions.Clear();
             AddAdvertisedAction(INTERACTION_TYPE.CRAFT_TILE_OBJECT);
             UnsubscribeListeners();
         } else if (mapObjectState == MAP_OBJECT_STATE.BUILDING) {
@@ -817,11 +819,13 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         } else {
             mapVisual.SetVisualAlpha(255f / 255f);
             SetSlotAlpha(255f / 255f);
-            RemoveAdvertisedAction(INTERACTION_TYPE.CRAFT_TILE_OBJECT);
+            if (advertisedActions != null && advertisedActions.Count > 0) {
+                RemoveAdvertisedAction(INTERACTION_TYPE.CRAFT_TILE_OBJECT);
+            }
             if (storedActions != null) {
                 for (int i = 0; i < storedActions.Length; i++) {
                     AddAdvertisedAction(storedActions[i]);
-                }    
+                }
             }
             storedActions = null;
             SubscribeListeners();

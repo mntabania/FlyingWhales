@@ -21,6 +21,7 @@ public class Artifact : TileObject {
         Initialize(TILE_OBJECT_TYPE.ARTIFACT, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         AddAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
+        AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
         //RemoveAdvertisedAction(INTERACTION_TYPE.REPAIR);
     }
     //public Artifact(SaveDataArtifactSlot data) {
@@ -36,6 +37,7 @@ public class Artifact : TileObject {
         Initialize(data, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         AddAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
+        AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
     }
 
     #region Overrides
