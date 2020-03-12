@@ -271,6 +271,76 @@ public class SpellData {
     #endregion
 }
 
+public class BallLightningData : SpellData {
+    public override SPELL_TYPE ability => SPELL_TYPE.BALL_LIGHTNING;
+    public override string name => "Ball Lightning";
+    public override string description => "Ball Lightning";
+    public override SPELL_CATEGORY category => SPELL_CATEGORY.DEVASTATION;
+    public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
+
+    public BallLightningData() : base() {
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
+    }
+
+    public override void ActivateAbility(LocationGridTile targetTile) {
+        BallLightningTileObject ballLightning = new BallLightningTileObject();
+        ballLightning.SetGridTileLocation(targetTile);
+        ballLightning.OnPlacePOI();
+    }
+    public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
+        return targetTile.structure != null;
+    }
+    public override void HighlightAffectedTiles(LocationGridTile tile) {
+        TileHighlighter.Instance.PositionHighlight(2, tile);
+    }
+}
+
+public class ElectricStormData : SpellData {
+    public override SPELL_TYPE ability => SPELL_TYPE.ELECTRIC_STORM;
+    public override string name { get { return "Electric Storm"; } }
+    public override string description { get { return "Electric Storm"; } }
+    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.DEVASTATION; } }
+    public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
+    public virtual int abilityRadius => 1;
+
+    public ElectricStormData() : base() {
+        targetTypes = new[] { SPELL_TARGET.HEX };
+    }
+    public override void ActivateAbility(HexTile targetHex) {
+        targetHex.spellsComponent.SetHasElectricStorm(true);
+    }
+    public override bool CanPerformAbilityTowards(HexTile targetHex) {
+        return targetHex != null && !targetHex.spellsComponent.hasElectricStorm;
+    }
+    public override void HighlightAffectedTiles(LocationGridTile tile) {
+        TileHighlighter.Instance.PositionHighlight(tile.buildSpotOwner.hexTileOwner);
+    }
+}
+
+public class FrostyFogData : SpellData {
+    public override SPELL_TYPE ability => SPELL_TYPE.FROSTY_FOG;
+    public override string name { get { return "Frosty Fog"; } }
+    public override string description { get { return "Frosty Fog"; } }
+    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.DEVASTATION; } }
+    public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
+    public virtual int abilityRadius => 1;
+
+    public FrostyFogData() : base() {
+        targetTypes = new[] { SPELL_TARGET.TILE };
+    }
+    public override void ActivateAbility(LocationGridTile targetTile) {
+        FrostyFogTileObject frostyFog = new FrostyFogTileObject();
+        frostyFog.SetGridTileLocation(targetTile);
+        frostyFog.OnPlacePOI();
+    }
+    public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
+        return targetTile.structure != null;
+    }
+    public override void HighlightAffectedTiles(LocationGridTile tile) {
+        TileHighlighter.Instance.PositionHighlight(1, tile);
+    }
+}
+
 public class PlayerJobActionSlot {
     public int level;
     public PlayerSpell ability;

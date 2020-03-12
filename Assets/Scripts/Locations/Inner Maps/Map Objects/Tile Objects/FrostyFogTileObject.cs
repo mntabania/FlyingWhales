@@ -4,29 +4,28 @@ using Inner_Maps;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-public class BallLightningTileObject : MovingTileObject {
+public class FrostyFogTileObject : MovingTileObject {
 
-    private BallLightningMapObjectVisual _ballLightningMapVisual;
+    private FrostyFogMapObjectVisual _frostyFogMapVisual;
     
-    public BallLightningTileObject() {
-        Initialize(TILE_OBJECT_TYPE.BALL_LIGHTNING, false);
+    public FrostyFogTileObject() {
+        Initialize(TILE_OBJECT_TYPE.FROSTY_FOG, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
-        traitContainer.AddTrait(this, "Dangerous");
         traitContainer.RemoveTrait(this, "Flammable");
     }
     protected override void CreateMapObjectVisual() {
         base.CreateMapObjectVisual();
-        _ballLightningMapVisual = mapVisual as BallLightningMapObjectVisual;
-        Assert.IsNotNull(_ballLightningMapVisual, $"Map Object Visual of {this} is null!");
+        _frostyFogMapVisual = mapVisual as FrostyFogMapObjectVisual;
+        Assert.IsNotNull(_frostyFogMapVisual, $"Map Object Visual of {this} is null!");
     }
     public override void Neutralize() {
-        _ballLightningMapVisual.Expire();
+        _frostyFogMapVisual.Expire();
     }
     public void OnExpire() {
         Messenger.Broadcast<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, this, null, base.gridTileLocation);
     }
     public override string ToString() {
-        return "Ball Lightning";
+        return "Frosty Fog";
     }
     public override void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false, object source = null) {
         if (currentHP == 0 && amount < 0) {
@@ -43,29 +42,33 @@ public class BallLightningTileObject : MovingTileObject {
             }
             CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter);
         }
-        if (currentHP > 0 && elementalDamageType == ELEMENTAL_TYPE.Ice && amount < 0) {
-            //Electric Storm
-            if (gridTileLocation.buildSpotOwner.hexTileOwner != null) {
-                gridTileLocation.buildSpotOwner.hexTileOwner.spellsComponent.SetHasElectricStorm(true);
+        if (elementalDamageType == ELEMENTAL_TYPE.Fire && amount < 0) {
+            //Wet
+            List<LocationGridTile> tiles = gridTileLocation.GetTilesInRadius(1, includeCenterTile: true, includeTilesInDifferentStructure: true);
+            for (int i = 0; i < tiles.Count; i++) {
+                tiles[i].AddTraitToAllPOIsOnTile("Wet");
             }
-            _ballLightningMapVisual.Expire();
+            _frostyFogMapVisual.Expire();
+        } else if (elementalDamageType == ELEMENTAL_TYPE.Electric && amount < 0) {
+            //2 Ball Lightnings
+            for (int i = 0; i < 2; i++) {
+                BallLightningTileObject ballLightning = new BallLightningTileObject();
+                ballLightning.SetGridTileLocation(gridTileLocation);
+                ballLightning.OnPlacePOI();
+            }
+            _frostyFogMapVisual.Expire();
         } else if (currentHP == 0) {
             //object has been destroyed
-            _ballLightningMapVisual.Expire();
+            _frostyFogMapVisual.Expire();
         }
-        //if (amount < 0) {
-        //    Messenger.Broadcast(Signals.OBJECT_DAMAGED, this as IPointOfInterest);
-        //} else if (currentHP == maxHP) {
-        //    Messenger.Broadcast(Signals.OBJECT_REPAIRED, this as IPointOfInterest);
-        //}
         Debug.Log($"{GameManager.Instance.TodayLogString()}HP of {this} was adjusted by {amount}. New HP is {currentHP}.");
     }
 
     #region Moving Tile Object
     protected override bool TryGetGridTileLocation(out LocationGridTile tile) {
-        if (_ballLightningMapVisual != null) {
-            if (_ballLightningMapVisual.isSpawned) {
-                tile = _ballLightningMapVisual.gridTileLocation;
+        if (_frostyFogMapVisual != null) {
+            if (_frostyFogMapVisual.isSpawned) {
+                tile = _frostyFogMapVisual.gridTileLocation;
                 return true;
             }
         }

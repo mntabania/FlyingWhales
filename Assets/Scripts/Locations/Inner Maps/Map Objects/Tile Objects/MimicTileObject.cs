@@ -12,12 +12,14 @@ public class MimicTileObject : TileObject {
         //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
         Initialize(TILE_OBJECT_TYPE.MIMIC_TILE_OBJECT, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
+        AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
         //RemoveAdvertisedAction(INTERACTION_TYPE.REPAIR);
     }
     public MimicTileObject(SaveDataTileObject data) {
         //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
         Initialize(data, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
+        AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
     }
     public override void OnDoActionToObject(ActualGoapNode action) {
         if (action.action.actionCategory == ACTION_CATEGORY.DIRECT || action.action.actionCategory == ACTION_CATEGORY.CONSUME) {

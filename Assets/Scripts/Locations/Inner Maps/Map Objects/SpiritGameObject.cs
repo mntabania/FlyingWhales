@@ -129,20 +129,10 @@ public class SpiritGameObject : MapObjectVisual<TileObject> {
 
     #region Colliders
     public override void UpdateCollidersState(TileObject obj) {
-        if (obj is GenericTileObject) {
-            //Generic tile object is always visible
-            SetAsVisibleToCharacters();
-        } else {
-            if (obj.advertisedActions.Count > 0) {
-                SetAsVisibleToCharacters();
-            } else {
-                SetAsInvisibleToCharacters();
-            }    
-        }
-        
+        SetAsVisibleToCharacters();
     }
     #endregion
-    
+
     #region Spirit
     public void SetIsRoaming(bool state) {
         isRoaming = state;

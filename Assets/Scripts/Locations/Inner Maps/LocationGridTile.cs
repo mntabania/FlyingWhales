@@ -763,6 +763,18 @@ namespace Inner_Maps {
             }
             return pois;
         }
+        public void AddTraitToAllPOIsOnTile(string traitName) {
+            genericTileObject.traitContainer.AddTrait(genericTileObject, traitName);
+            if (objHere != null) {
+                if ((objHere is TileObject && (objHere as TileObject).mapObjectState == MAP_OBJECT_STATE.BUILT)) {
+                    objHere.traitContainer.AddTrait(objHere, traitName);
+                }
+            }
+            for (int i = 0; i < charactersHere.Count; i++) {
+                Character character = charactersHere[i];
+                character.traitContainer.AddTrait(character, traitName);
+            }
+        }
         public int GetNeighbourOfTypeCount(Ground_Type type, bool useFourNeighbours = false) {
             int count = 0;
             Dictionary<GridNeighbourDirection, LocationGridTile> n = neighbours;

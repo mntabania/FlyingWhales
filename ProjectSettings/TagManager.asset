@@ -17,6 +17,7 @@ TagManager:
   - StructureColorizers
   - Map_Click_Blocker
   - Structure_Wall
+  - Spell
   layers:
   - Default
   - TransparentFX

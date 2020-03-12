@@ -121,7 +121,7 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
             //Generic tile object is always visible
             SetAsVisibleToCharacters();
         } else {
-            if (obj.advertisedActions.Count > 0) {
+            if (obj.advertisedActions != null && obj.advertisedActions.Count > 0) {
                 SetAsVisibleToCharacters();
             } else {
                 SetAsInvisibleToCharacters();

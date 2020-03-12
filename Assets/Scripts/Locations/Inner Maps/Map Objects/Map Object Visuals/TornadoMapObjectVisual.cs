@@ -197,6 +197,7 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
 
     #region Triggers
     public void OnTriggerEnter2D(Collider2D collision) {
+        if(collision.tag == "Spell") { return; }
         IBaseCollider collidedWith = collision.gameObject.GetComponent<IBaseCollider>();
         if (collidedWith != null) {
             if (collidedWith.damageable == null) {
@@ -205,9 +206,9 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
             // Debug.Log($"Tornado collision enter with {collidedWith.damageable.name}");
             AddDamageable(collidedWith.damageable);
         }
-
     }
     public void OnTriggerExit2D(Collider2D collision) {
+        if (collision.tag == "Spell") { return; }
         IBaseCollider collidedWith = collision.gameObject.GetComponent<IBaseCollider>();
         if (collidedWith != null) {
             // Debug.Log($"Tornado collision exit with {collidedWith.damageable.name}");
