@@ -4679,7 +4679,7 @@ GameObject:
   - component: {fileID: 2158167358507671494}
   m_Layer: 15
   m_Name: PoisonCloudMapObject
-  m_TagString: Spell
+  m_TagString: Moving Object
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

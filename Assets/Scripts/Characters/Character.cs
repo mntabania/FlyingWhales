@@ -2866,7 +2866,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     marker.QuickShowHPBar();
                 }
             }
-            if (amount <= 0) {
+            if (amount < 0) {
                 Character responsibleCharacter = null;
                 if (source is Character) {
                     responsibleCharacter = source as Character;

@@ -41,6 +41,8 @@ public class EditableValuesManager : MonoBehaviour {
 
 	[Header("Visuals")] 
 	[SerializeField] private int _sortingOrdersInBetweenHexTileRows = 20; //this is the number of sorting orders in between rows of the world map.
+
+    public int vaporStacks;
 		
 	//getters
 	//mood

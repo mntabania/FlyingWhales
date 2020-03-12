@@ -47,6 +47,11 @@ public class CombatManager : MonoBehaviour {
     }
     public void DamageModifierByElements(ref int damage, ELEMENTAL_TYPE elementalType, ITraitable target) {
         if(damage < 0) {
+            if(target is VaporTileObject && elementalType != ELEMENTAL_TYPE.Ice) {
+                //Vapors are immune to all other damage types except Ice
+                damage = 0;
+                return;
+            }
             if(elementalType == ELEMENTAL_TYPE.Fire) {
                 if (target.traitContainer.HasTrait("Fire Prone")) {
                     damage *= 2;

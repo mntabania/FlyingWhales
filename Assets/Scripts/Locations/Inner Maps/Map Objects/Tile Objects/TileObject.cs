@@ -416,7 +416,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         CombatManager.Instance.DamageModifierByElements(ref amount, elementalDamageType, this);
         currentHP += amount;
         currentHP = Mathf.Clamp(currentHP, 0, maxHP);
-        if (amount <= 0) {
+        if (amount < 0) {
             //ELEMENTAL_TYPE elementalType = ELEMENTAL_TYPE.Normal;
             //if (source is Character) {
             //    elementalType = (source as Character).combatComponent.elementalDamage.type;

@@ -43,8 +43,6 @@ public class BallLightningMapObjectVisual : MovingMapObjectVisual<TileObject> {
     }
     public override void PlaceObjectAt(LocationGridTile tile) {
         base.PlaceObjectAt(tile);
-        _ballLightningEffect.gameObject.SetActive(true);
-        _ballLightningEffect.Play();
         MoveToRandomDirection();
         //OnGamePaused(GameManager.Instance.isPaused);
         _expiryKey = SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(2)), Expire, this);

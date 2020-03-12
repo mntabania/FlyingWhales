@@ -32,10 +32,11 @@ public class BallLightningTileObject : MovingTileObject {
         if (currentHP == 0 && amount < 0) {
             return; //hp is already at minimum, do not allow any more negative adjustments
         }
+        LocationGridTile tileLocation = gridTileLocation;
         CombatManager.Instance.DamageModifierByElements(ref amount, elementalDamageType, this);
         currentHP += amount;
         currentHP = Mathf.Clamp(currentHP, 0, maxHP);
-        if (amount <= 0) { //&& source != null
+        if (amount < 0) { //&& source != null
             //CombatManager.Instance.CreateHitEffectAt(this, elementalDamageType);
             Character responsibleCharacter = null;
             if (source is Character character) {
@@ -43,10 +44,10 @@ public class BallLightningTileObject : MovingTileObject {
             }
             CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter);
         }
-        if (currentHP > 0 && elementalDamageType == ELEMENTAL_TYPE.Ice && amount < 0) {
+        if (amount < 0 && elementalDamageType == ELEMENTAL_TYPE.Ice) {
             //Electric Storm
-            if (gridTileLocation.buildSpotOwner.hexTileOwner != null) {
-                gridTileLocation.buildSpotOwner.hexTileOwner.spellsComponent.SetHasElectricStorm(true);
+            if (tileLocation.buildSpotOwner.hexTileOwner != null) {
+                tileLocation.buildSpotOwner.hexTileOwner.spellsComponent.SetHasElectricStorm(true);
             }
             _ballLightningMapVisual.Expire();
         } else if (currentHP == 0) {

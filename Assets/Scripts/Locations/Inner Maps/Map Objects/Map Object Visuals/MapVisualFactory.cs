@@ -39,6 +39,12 @@ public class MapVisualFactory {
             case TILE_OBJECT_TYPE.FROSTY_FOG:
                 obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("FrostyFogMapObjectVisual", Vector3.zero, Quaternion.identity);
                 break;
+            case TILE_OBJECT_TYPE.VAPOR:
+                obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("VaporMapObjectVisual", Vector3.zero, Quaternion.identity);
+                break;
+            case TILE_OBJECT_TYPE.FIRE_BALL:
+                obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("FireBallMapObjectVisual", Vector3.zero, Quaternion.identity);
+                break;
             default:
                 obj = ObjectPoolManager.Instance.InstantiateObjectFromPool(Tile_Object_Prefab_Name, Vector3.zero, Quaternion.identity);
                 break;

@@ -6,14 +6,13 @@ using Traits;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class FrostyFogMapObjectVisual : MovingMapObjectVisual<TileObject> {
+public class VaporMapObjectVisual : MovingMapObjectVisual<TileObject> {
     
-    [SerializeField] private ParticleSystem _frostyFogEffect;
+    [SerializeField] private ParticleSystem _vaporEffect;
     
     private string _expiryKey;
     private Tweener _movement;
-    private List<ITraitable> _objsInRange;
-    
+    private int _size;
     
     #region Abstract Members Implementation
     public override void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) { }
@@ -37,16 +36,10 @@ public class FrostyFogMapObjectVisual : MovingMapObjectVisual<TileObject> {
     #endregion
 
     #region Overrides
-    public override void Initialize(TileObject obj) {
-        base.Initialize(obj);
-        _objsInRange = new List<ITraitable>();
-    }
     public override void PlaceObjectAt(LocationGridTile tile) {
         base.PlaceObjectAt(tile);
         MoveToRandomDirection();
-        //OnGamePaused(GameManager.Instance.isPaused);
         _expiryKey = SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(2)), Expire, this);
-        Messenger.AddListener(Signals.TICK_ENDED, PerTick);
         Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
         Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         isSpawned = true;
@@ -56,7 +49,7 @@ public class FrostyFogMapObjectVisual : MovingMapObjectVisual<TileObject> {
             StartCoroutine(PlayParticleCoroutineWhenGameIsPaused());
         } else {
             _movement.Play();
-            _frostyFogEffect.Play();
+            _vaporEffect.Play();
         }
     }
     public override void Reset() {
@@ -64,8 +57,7 @@ public class FrostyFogMapObjectVisual : MovingMapObjectVisual<TileObject> {
         _expiryKey = string.Empty;
         _movement?.Kill();
         _movement = null;
-        _objsInRange = null;
-        _frostyFogEffect.Clear();
+        _vaporEffect.Clear();
     }
     #endregion
 
@@ -78,10 +70,10 @@ public class FrostyFogMapObjectVisual : MovingMapObjectVisual<TileObject> {
     private void OnGamePaused(bool isPaused) {
         if (isPaused) {
             _movement.Pause();
-            _frostyFogEffect.Pause();
+            _vaporEffect.Pause();
         } else {
             _movement.Play();
-            _frostyFogEffect.Play();
+            _vaporEffect.Play();
         }
     }
     private void OnProgressionSpeedChanged(PROGRESSION_SPEED progression) {
@@ -102,54 +94,52 @@ public class FrostyFogMapObjectVisual : MovingMapObjectVisual<TileObject> {
     }
     #endregion
 
-    #region Effects
-    private void PerTick() {
-        if (isSpawned == false) {
-            return;
-        }
-        for (int i = 0; i < _objsInRange.Count; i++) {
-            _objsInRange[i].traitContainer.AddTrait(_objsInRange[i], "Freezing");
-        }
+    #region Utilities
+    public void SetSize(int size) {
+        _size = size;
+        ChangeScaleBySize();
     }
-    #endregion
-    
-    #region Triggers
-    public void OnTriggerEnter2D(Collider2D collision) {
-        if (isSpawned == false) { return; }
-        IBaseCollider collidedWith = collision.gameObject.GetComponent<IBaseCollider>();
-        if (collidedWith != null && collidedWith.damageable is ITraitable traitable) { 
-            AddObject(traitable);   
-        }
+    private void ChangeScaleBySize() {
+        //int scaleSize = 1;
+        //if(_size > 1) {
+        //    scaleSize = _size + 1;
+        //}
+        this.gameObject.transform.localScale = new Vector3(_size, _size, 1f);
+        _vaporEffect.transform.localScale = new Vector3(_size, _size, 1f);
     }
-    public void OnTriggerExit2D(Collider2D collision) {
-        if (isSpawned == false) { return; }
-        IBaseCollider collidedWith = collision.gameObject.GetComponent<IBaseCollider>();
-        if (collidedWith != null && collidedWith.damageable is ITraitable traitable) { 
-            RemoveObject(traitable);   
+    private void Effect() {
+        if (gridTileLocation != null) {
+            int radius = 0;
+            if (UtilityScripts.Utilities.IsEven(_size)) {
+                //-3 because (-1 + -2), wherein -1 is the lower odd number, and -2 is the radius
+                //So if size is 4, that means that 4-3 is 1, the radius for the 4x4 is 1 meaning we will get the neighbours of the tile.
+                radius = _size - 3;
+            } else {
+                //-2 because we will not need to get the lower odd number since this is already an odd number, just get the radius, hence, -2
+                radius = _size - 2;
+            }
+            //If the radius is less than or equal to zero this means we will only get the gridTileLocation itself
+            if (radius <= 0) {
+                gridTileLocation.genericTileObject.traitContainer.AddTrait(gridTileLocation.genericTileObject, "Wet");
+            } else {
+                List<LocationGridTile> tiles = gridTileLocation.GetTilesInRadius(radius, includeCenterTile: true, includeTilesInDifferentStructure: true);
+                for (int i = 0; i < tiles.Count; i++) {
+                    tiles[i].genericTileObject.traitContainer.AddTrait(tiles[i].genericTileObject, "Wet");
+                }
+            }
         }
-    }
-    #endregion
-    
-    #region POI's
-    private void AddObject(ITraitable obj) {
-        if (!_objsInRange.Contains(obj)) {
-            _objsInRange.Add(obj);
-        }
-    }
-    private void RemoveObject(ITraitable obj) {
-        _objsInRange.Remove(obj);
     }
     #endregion
     
     #region Expiration
     public void Expire() {
         Debug.Log($"{this.name} expired!");
-        _frostyFogEffect.Stop();
+        Effect();
+        _vaporEffect.Stop();
         isSpawned = false;
         if (string.IsNullOrEmpty(_expiryKey) == false) {
             SchedulingManager.Instance.RemoveSpecificEntry(_expiryKey);
         }
-        Messenger.RemoveListener(Signals.TICK_ENDED, PerTick);
         Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
         Messenger.RemoveListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         StartCoroutine(DestroyCoroutine());
@@ -164,9 +154,9 @@ public class FrostyFogMapObjectVisual : MovingMapObjectVisual<TileObject> {
     private IEnumerator PlayParticleCoroutineWhenGameIsPaused() {
         //Playing particle effect is done in a coroutine so that it will wait one frame before pausing the particles if the game is paused when the particle is activated
         //This will make sure that the particle effect will show but it will be paused right away
-        _frostyFogEffect.Play();
+        _vaporEffect.Play();
         yield return new WaitForSeconds(0.1f);
-        _frostyFogEffect.Pause();
+        _vaporEffect.Pause();
     }
     #endregion
 }

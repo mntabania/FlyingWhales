@@ -76796,6 +76796,7 @@ MonoBehaviour:
   _unlockWorldMapManaCost: 0
   _unlockRegionManaCost: 0
   _sortingOrdersInBetweenHexTileRows: 20
+  vaporStacks: 1
 --- !u!1 &1382697469
 GameObject:
   m_ObjectHideFlags: 0

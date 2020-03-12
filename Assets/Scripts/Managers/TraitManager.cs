@@ -225,6 +225,10 @@ public class TraitManager : MonoBehaviour {
             return "Beastmaster";
         } else if (tileObject is PoisonCloudTileObject) {
             return "Poison Expert";
+        } else if (tileObject is BallLightningTileObject) {
+            return "Thunder Master";
+        } else if (tileObject is FireBallTileObject) {
+            return "Fire Master";
         }
         return string.Empty;
     }

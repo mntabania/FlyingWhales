@@ -30,7 +30,7 @@ public class BrimstonesParticleEffect : BaseParticleEffect {
                         continue; //object was destroyed, do not add burning trait
                     }
                 } else {
-                    obj.AdjustHP(0, ELEMENTAL_TYPE.Fire);
+                    CombatManager.Instance.ApplyElementalDamage(0, ELEMENTAL_TYPE.Fire, obj);
                 }
             } else if (traitable is Character character) {
                 character.AdjustHP(-(int) (character.maxHP * 0.4f), ELEMENTAL_TYPE.Fire, true);

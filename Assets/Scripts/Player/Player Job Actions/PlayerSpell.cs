@@ -341,6 +341,55 @@ public class FrostyFogData : SpellData {
     }
 }
 
+public class VaporData : SpellData {
+    public override SPELL_TYPE ability => SPELL_TYPE.VAPOR;
+    public override string name => "Vapor";
+    public override string description => "Vapor";
+    public override SPELL_CATEGORY category => SPELL_CATEGORY.DEVASTATION;
+    public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
+
+    public VaporData() : base() {
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
+    }
+
+    public override void ActivateAbility(LocationGridTile targetTile) {
+        VaporTileObject vaporTileObject = new VaporTileObject();
+        vaporTileObject.SetStacks(EditableValuesManager.Instance.vaporStacks);
+        vaporTileObject.SetGridTileLocation(targetTile);
+        vaporTileObject.OnPlacePOI();
+    }
+    public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
+        return targetTile.structure != null;
+    }
+    public override void HighlightAffectedTiles(LocationGridTile tile) {
+        TileHighlighter.Instance.PositionHighlight(2, tile);
+    }
+}
+
+public class FireBallData : SpellData {
+    public override SPELL_TYPE ability => SPELL_TYPE.FIRE_BALL;
+    public override string name => "Fire Ball";
+    public override string description => "Fire Ball";
+    public override SPELL_CATEGORY category => SPELL_CATEGORY.DEVASTATION;
+    public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
+
+    public FireBallData() : base() {
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
+    }
+
+    public override void ActivateAbility(LocationGridTile targetTile) {
+        FireBallTileObject fireBallTileObject = new FireBallTileObject();
+        fireBallTileObject.SetGridTileLocation(targetTile);
+        fireBallTileObject.OnPlacePOI();
+    }
+    public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
+        return targetTile.structure != null;
+    }
+    public override void HighlightAffectedTiles(LocationGridTile tile) {
+        TileHighlighter.Instance.PositionHighlight(2, tile);
+    }
+}
+
 public class PlayerJobActionSlot {
     public int level;
     public PlayerSpell ability;

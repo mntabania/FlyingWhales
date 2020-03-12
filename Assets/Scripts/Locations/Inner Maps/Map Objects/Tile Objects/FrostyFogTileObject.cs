@@ -31,10 +31,11 @@ public class FrostyFogTileObject : MovingTileObject {
         if (currentHP == 0 && amount < 0) {
             return; //hp is already at minimum, do not allow any more negative adjustments
         }
+        LocationGridTile tileLocation = gridTileLocation;
         CombatManager.Instance.DamageModifierByElements(ref amount, elementalDamageType, this);
         currentHP += amount;
         currentHP = Mathf.Clamp(currentHP, 0, maxHP);
-        if (amount <= 0) { //&& source != null
+        if (amount < 0) { //&& source != null
             //CombatManager.Instance.CreateHitEffectAt(this, elementalDamageType);
             Character responsibleCharacter = null;
             if (source is Character character) {
@@ -42,18 +43,18 @@ public class FrostyFogTileObject : MovingTileObject {
             }
             CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter);
         }
-        if (elementalDamageType == ELEMENTAL_TYPE.Fire && amount < 0) {
+        if (elementalDamageType == ELEMENTAL_TYPE.Fire) {
             //Wet
-            List<LocationGridTile> tiles = gridTileLocation.GetTilesInRadius(1, includeCenterTile: true, includeTilesInDifferentStructure: true);
+            List<LocationGridTile> tiles = tileLocation.GetTilesInRadius(1, includeCenterTile: true, includeTilesInDifferentStructure: true);
             for (int i = 0; i < tiles.Count; i++) {
                 tiles[i].AddTraitToAllPOIsOnTile("Wet");
             }
             _frostyFogMapVisual.Expire();
-        } else if (elementalDamageType == ELEMENTAL_TYPE.Electric && amount < 0) {
+        } else if (elementalDamageType == ELEMENTAL_TYPE.Electric) {
             //2 Ball Lightnings
             for (int i = 0; i < 2; i++) {
                 BallLightningTileObject ballLightning = new BallLightningTileObject();
-                ballLightning.SetGridTileLocation(gridTileLocation);
+                ballLightning.SetGridTileLocation(tileLocation);
                 ballLightning.OnPlacePOI();
             }
             _frostyFogMapVisual.Expire();

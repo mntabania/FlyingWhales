@@ -6,10 +6,11 @@ using Traits;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class FrostyFogMapObjectVisual : MovingMapObjectVisual<TileObject> {
+public class FireBallMapObjectVisual : MovingMapObjectVisual<TileObject> {
     
-    [SerializeField] private ParticleSystem _frostyFogEffect;
-    
+    [SerializeField] private ParticleSystem _coreEffect;
+    [SerializeField] private ParticleSystem _flareEffect;
+
     private string _expiryKey;
     private Tweener _movement;
     private List<ITraitable> _objsInRange;
@@ -56,7 +57,8 @@ public class FrostyFogMapObjectVisual : MovingMapObjectVisual<TileObject> {
             StartCoroutine(PlayParticleCoroutineWhenGameIsPaused());
         } else {
             _movement.Play();
-            _frostyFogEffect.Play();
+            _coreEffect.Play();
+            _flareEffect.Play();
         }
     }
     public override void Reset() {
@@ -65,7 +67,8 @@ public class FrostyFogMapObjectVisual : MovingMapObjectVisual<TileObject> {
         _movement?.Kill();
         _movement = null;
         _objsInRange = null;
-        _frostyFogEffect.Clear();
+        _coreEffect.Clear();
+        _flareEffect.Clear();
     }
     #endregion
 
@@ -78,10 +81,12 @@ public class FrostyFogMapObjectVisual : MovingMapObjectVisual<TileObject> {
     private void OnGamePaused(bool isPaused) {
         if (isPaused) {
             _movement.Pause();
-            _frostyFogEffect.Pause();
+            _coreEffect.Pause();
+            _flareEffect.Pause();
         } else {
             _movement.Play();
-            _frostyFogEffect.Play();
+            _coreEffect.Play();
+            _flareEffect.Play();
         }
     }
     private void OnProgressionSpeedChanged(PROGRESSION_SPEED progression) {
@@ -107,8 +112,17 @@ public class FrostyFogMapObjectVisual : MovingMapObjectVisual<TileObject> {
         if (isSpawned == false) {
             return;
         }
+        BurningSource bs = null;
         for (int i = 0; i < _objsInRange.Count; i++) {
-            _objsInRange[i].traitContainer.AddTrait(_objsInRange[i], "Freezing");
+            ITraitable traitable = _objsInRange[i];
+            traitable.AdjustHP(-10, ELEMENTAL_TYPE.Fire, true);
+            Burning burningTrait = traitable.traitContainer.GetNormalTrait<Burning>("Burning");
+            if (burningTrait != null && burningTrait.sourceOfBurning == null) {
+                if (bs == null) {
+                    bs = new BurningSource(traitable.gridTileLocation.parentMap.location);
+                }
+                burningTrait.SetSourceOfBurning(bs, traitable);
+            }
         }
     }
     #endregion
@@ -144,7 +158,8 @@ public class FrostyFogMapObjectVisual : MovingMapObjectVisual<TileObject> {
     #region Expiration
     public void Expire() {
         Debug.Log($"{this.name} expired!");
-        _frostyFogEffect.Stop();
+        _coreEffect.Stop();
+        _flareEffect.Stop();
         isSpawned = false;
         if (string.IsNullOrEmpty(_expiryKey) == false) {
             SchedulingManager.Instance.RemoveSpecificEntry(_expiryKey);
@@ -164,9 +179,11 @@ public class FrostyFogMapObjectVisual : MovingMapObjectVisual<TileObject> {
     private IEnumerator PlayParticleCoroutineWhenGameIsPaused() {
         //Playing particle effect is done in a coroutine so that it will wait one frame before pausing the particles if the game is paused when the particle is activated
         //This will make sure that the particle effect will show but it will be paused right away
-        _frostyFogEffect.Play();
+        _coreEffect.Play();
+        _flareEffect.Play();
         yield return new WaitForSeconds(0.1f);
-        _frostyFogEffect.Pause();
+        _coreEffect.Pause();
+        _flareEffect.Pause();
     }
     #endregion
 }
