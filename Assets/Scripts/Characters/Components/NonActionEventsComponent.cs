@@ -333,25 +333,54 @@ public class NonActionEventsComponent {
         }
         owner.relationshipContainer.AdjustOpinion(owner, target, "Base", 2);
         target.relationshipContainer.AdjustOpinion(target, owner, "Base", 4);
-
-        int value = 0;
+        
         string opinionLabel = owner.relationshipContainer.GetOpinionLabel(target);
-        if(opinionLabel == OpinionComponent.Acquaintance) {
-            value = 1;
-        }else if (opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
-            value = 2;
+
+        // If Opinion of Target towards Actor is already in Acquaintance range
+        if (opinionLabel == OpinionComponent.Acquaintance)
+        {
+            // 15% chance to develop Lover relationship if both characters have no Lover yet
+            if (UnityEngine.Random.Range(0, 100) < 15)
+            {
+                if (owner.relationshipValidator.CanHaveRelationship(owner, target, RELATIONSHIP_TYPE.LOVER)
+                    && target.relationshipValidator.CanHaveRelationship(target, owner, RELATIONSHIP_TYPE.LOVER))
+                {
+                    RelationshipManager.Instance.CreateNewRelationshipBetween(owner, target, RELATIONSHIP_TYPE.LOVER);
+                }
+
+            }
+            // 20% chance to develop Affair if at least one of the characters already have a Lover 
+            else if (UnityEngine.Random.Range(0, 100) < 25)
+            {
+                if (owner.relationshipValidator.CanHaveRelationship(owner, target, RELATIONSHIP_TYPE.AFFAIR)
+                    && target.relationshipValidator.CanHaveRelationship(target, owner, RELATIONSHIP_TYPE.AFFAIR))
+                {
+                    RelationshipManager.Instance.CreateNewRelationshipBetween(owner, target, RELATIONSHIP_TYPE.AFFAIR);
+                }
+            }
         }
-        if (value != 0
-            && UnityEngine.Random.Range(0, 10) < value
-            && owner.relationshipValidator.CanHaveRelationship(owner, target, RELATIONSHIP_TYPE.LOVER)
-            && target.relationshipValidator.CanHaveRelationship(target, owner, RELATIONSHIP_TYPE.LOVER)) {
-            RelationshipManager.Instance.CreateNewRelationshipBetween(owner, target, RELATIONSHIP_TYPE.LOVER);
-        } else if (value != 0
-            && UnityEngine.Random.Range(0, 10) < value
-            && owner.relationshipValidator.CanHaveRelationship(owner, target, RELATIONSHIP_TYPE.AFFAIR)
-            && target.relationshipValidator.CanHaveRelationship(target, owner, RELATIONSHIP_TYPE.AFFAIR)) {
-            RelationshipManager.Instance.CreateNewRelationshipBetween(owner, target, RELATIONSHIP_TYPE.AFFAIR);
-            return "flirted_back";
+        // If Opinion of Target towards Actor is already in Friend or Close Friend range
+        else if (opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend)
+        {
+            // 25 % chance to develop Lover relationship if both characters have no Lover yet
+            if (UnityEngine.Random.Range(0, 100) < 25)
+            {
+                if (owner.relationshipValidator.CanHaveRelationship(owner, target, RELATIONSHIP_TYPE.LOVER)
+                    && target.relationshipValidator.CanHaveRelationship(target, owner, RELATIONSHIP_TYPE.LOVER))
+                {
+                    RelationshipManager.Instance.CreateNewRelationshipBetween(owner, target, RELATIONSHIP_TYPE.LOVER);
+                }
+
+            }
+            // 35% chance to develop Affair if at least one of the characters already have a Lover 
+            else if (UnityEngine.Random.Range(0, 100) < 35)
+            {
+                if (owner.relationshipValidator.CanHaveRelationship(owner, target, RELATIONSHIP_TYPE.AFFAIR)
+                    && target.relationshipValidator.CanHaveRelationship(target, owner, RELATIONSHIP_TYPE.AFFAIR))
+                {
+                    RelationshipManager.Instance.CreateNewRelationshipBetween(owner, target, RELATIONSHIP_TYPE.AFFAIR);
+                }
+            }
         }
         return "flirted_back";
     }
