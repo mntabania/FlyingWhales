@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="C:\Users\12myk\.Rider2019.3\system\extResources" t="IncludeRecursive" />
-    <e p="C:\Users\12myk\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_FlyingWhales.-362142238.00" t="ExcludeRecursive" />
-    <e p="D:\Repositories\FlyingWhales" t="IncludeRecursive">
+    <e p="C:\Users\Ian Chy\.Rider2019.3\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\Ian Chy\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_FlyingWhales.1495046791.00" t="ExcludeRecursive" />
+    <e p="C:\Users\Ian Chy\Documents\FlyingWhales" t="IncludeRecursive">
       <e p="Assembly-CSharp-Editor.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp-firstpass.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
@@ -1463,6 +1463,7 @@
                 <e p="CityCenter.cs" t="Include" />
                 <e p="DemonicPrison.cs" t="Include" />
                 <e p="Dwelling.cs" t="Include" />
+                <e p="Farm.cs" t="Include" />
                 <e p="Goader.cs" t="Include" />
                 <e p="LocationStructure.cs" t="Include" />
                 <e p="Structure Objects" t="Include">
@@ -1485,6 +1486,7 @@
                   <e p="BaseMapObject.cs" t="Include" />
                   <e p="BaseMapObjectVisual.cs" t="Include" />
                   <e p="BedObjectGameObject.cs" t="Include" />
+                  <e p="CropGameObject.cs" t="Include" />
                   <e p="LocustSwarmMapObjectVisual.cs" t="Include" />
                   <e p="MapObject.cs" t="Include" />
                   <e p="MapObjectVisual.cs" t="Include" />
@@ -1510,7 +1512,9 @@
                   <e p="Candelabra.cs" t="Include" />
                   <e p="Cauldron.cs" t="Include" />
                   <e p="Chains.cs" t="Include" />
+                  <e p="CornCrop.cs" t="Include" />
                   <e p="Crate.cs" t="Include" />
+                  <e p="Crops.cs" t="Include" />
                   <e p="Desk.cs" t="Include" />
                   <e p="EdiblePlant.cs" t="Include" />
                   <e p="FeebleSpirit.cs" t="Include" />

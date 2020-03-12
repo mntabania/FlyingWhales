@@ -1155,8 +1155,8 @@ public enum STRUCTURE_TYPE {
     THE_NEEDLES = 36,
     TORTURE_CHAMBER = 37,
     DEMONIC_PRISON = 38,
-    FARM,
-    LUMBERYARD
+    FARM = 39,
+    LUMBERYARD = 40
 }
 public enum RELATIONSHIP_TYPE {
     NONE = 0,
@@ -1266,7 +1266,8 @@ public enum TILE_OBJECT_TYPE {
     LOCUST_SWARM,
     MIMIC_TILE_OBJECT,
     SAWHORSE,
-    OBELISK
+    OBELISK,
+    CORN_CROP,
 }
 public enum POI_STATE {
     ACTIVE,

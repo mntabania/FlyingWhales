@@ -467,8 +467,23 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     #endregion
 
     #region Structures
-    public virtual void GenerateStructures(int citizenCount, Region region) {
+    protected override void OnStructureAdded(LocationStructure structure) {
+        base.OnStructureAdded(structure);
         AssignPrison();
+        switch (structure.structureType) {
+            case STRUCTURE_TYPE.FARM:
+                classManager.AddCombatantClass("Druid");
+                break;
+        }
+    }
+    protected override void OnStructureRemoved(LocationStructure structure) {
+        base.OnStructureRemoved(structure);
+        AssignPrison();
+        switch (structure.structureType) {
+            case STRUCTURE_TYPE.FARM:
+                classManager.RemoveCombatantClass("Druid");
+                break;
+        }
     }
     protected override void LoadStructures(SaveDataArea data) {
         base.LoadStructures(data);

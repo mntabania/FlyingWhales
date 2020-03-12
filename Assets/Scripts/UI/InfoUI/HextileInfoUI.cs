@@ -78,7 +78,14 @@ public class HextileInfoUI : InfoUIBase {
 
     #region For Testing
     public void ShowTestingInfo() {
-        string summary = $"Settlement Ruler: {(currentlyShowingHexTile.settlementOnTile as NPCSettlement)?.ruler?.name}" ?? "None";
+        string summary = string.Empty;
+        if (currentlyShowingHexTile.settlementOnTile is NPCSettlement npcSettlement) {
+            summary = $"Settlement Ruler: {npcSettlement.ruler?.name ?? "None"}";
+            summary += "\nUnlocked classes:";
+            foreach (var combatantClass in npcSettlement.classManager.combatantClasses) {
+                summary += $"\n\t {combatantClass.Key} - {combatantClass.Value.ToString()}";
+            }
+        }
         UIManager.Instance.ShowSmallInfo(summary);
     }
     public void HideTestingInfo() {

@@ -61,6 +61,8 @@ public class ProjectileDictionaryPropertyDrawer : SerializableDictionaryProperty
 public class TimeOfDayLightDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(BiomeHighlightColorDictionary))]
 public class BiomeHighlightColorDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(SpriteSpriteDictionary))]
+public class SpriteSpriteDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 
 //list storage
 [CustomPropertyDrawer(typeof(LandmarkSpriteListStorage))]

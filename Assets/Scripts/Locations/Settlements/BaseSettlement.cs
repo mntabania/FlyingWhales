@@ -180,18 +180,21 @@ namespace Locations.Settlements {
             }
             if (!structures[structure.structureType].Contains(structure)) {
                 structures[structure.structureType].Add(structure);
+                OnStructureAdded(structure);
             }
         }
         public void RemoveStructure(LocationStructure structure) {
             if (structures.ContainsKey(structure.structureType)) {
                 if (structures[structure.structureType].Remove(structure)) {
-
                     if (structures[structure.structureType].Count == 0) { //this is only for optimization
                         structures.Remove(structure.structureType);
                     }
+                    OnStructureRemoved(structure);
                 }
             }
         }
+        protected virtual void OnStructureAdded(LocationStructure structure) { }
+        protected virtual void OnStructureRemoved(LocationStructure structure) { }
         public LocationStructure GetRandomStructureOfType(STRUCTURE_TYPE type) {
             if (structures.ContainsKey(type)) {
                 return structures[type][UtilityScripts.Utilities.Rng.Next(0, structures[type].Count)];

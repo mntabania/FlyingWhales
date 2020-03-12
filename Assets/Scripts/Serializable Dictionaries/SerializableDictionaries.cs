@@ -67,6 +67,8 @@ public class ProjectileDictionary : SerializableDictionary<ELEMENTAL_TYPE, GameO
 public class TimeOfDayLightDictionary : SerializableDictionary<TIME_IN_WORDS, float> { }
 [System.Serializable]
 public class BiomeHighlightColorDictionary : SerializableDictionary<BIOMES, Material> { }
+[System.Serializable]
+public class SpriteSpriteDictionary : SerializableDictionary<Sprite, Sprite> { }
 
 //List storage
 [System.Serializable]

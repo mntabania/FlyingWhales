@@ -75,6 +75,7 @@ namespace Traits {
         }
         public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
             if (traitOwner.gridTileLocation != null 
+                
                 && traitOwner.gridTileLocation.IsPartOfSettlement(characterThatWillDoJob.homeSettlement)) {
                 characterThatWillDoJob.homeSettlement.settlementJobTriggerComponent.TriggerDouseFire();
             }

@@ -60,38 +60,38 @@ public class SettlementGeneration : MapGenerationComponent {
 	}
 	private WeightedDictionary<STRUCTURE_TYPE> GetStructureWeights(HexTile tile, List<STRUCTURE_TYPE> structureTypes) {
 		WeightedDictionary<STRUCTURE_TYPE> structureWeights = new WeightedDictionary<STRUCTURE_TYPE>();
-		if (structureTypes.Contains(STRUCTURE_TYPE.MAGE_QUARTERS) == false) {
-			//Mage Quarter: +6 (disable if already selected from previous hex tile)
-			structureWeights.AddElement(STRUCTURE_TYPE.MAGE_QUARTERS, 6);
-		}
-		if (structureTypes.Contains(STRUCTURE_TYPE.PRISON) == false) {
-			//Prison: +3 (disable if already selected from previous hex tile)
-			structureWeights.AddElement(STRUCTURE_TYPE.PRISON, 3);
-		}
-		if (structureTypes.Contains(STRUCTURE_TYPE.APOTHECARY) == false) {
-			//Apothecary: +6 (disable if already selected from previous hex tile)
-			structureWeights.AddElement(STRUCTURE_TYPE.APOTHECARY, 6);
-		}
-		// structureWeights.AddElement(STRUCTURE_TYPE.FARM, 1); //Farm: +1
-		if (structureTypes.Contains(STRUCTURE_TYPE.BARRACKS) == false) {
-			//Barracks: +6 (disable if already selected from previous hex tile)
-			structureWeights.AddElement(STRUCTURE_TYPE.BARRACKS, 6);
-		}
-		// if (tile.featureComponent.HasFeature(TileFeatureDB.Fertile_Feature)) {
-		// 	structureWeights.AddElement(STRUCTURE_TYPE.FARM, 15);
+		// if (structureTypes.Contains(STRUCTURE_TYPE.MAGE_QUARTERS) == false) {
+		// 	//Mage Quarter: +6 (disable if already selected from previous hex tile)
+		// 	structureWeights.AddElement(STRUCTURE_TYPE.MAGE_QUARTERS, 6);
 		// }
-		if (tile.HasNeighbourWithFeature(TileFeatureDB.Metal_Source_Feature)) {
-			structureWeights.AddElement(STRUCTURE_TYPE.MINE, 15);
-		}
-		// if (tile.HasNeighbourWithFeature(TileFeatureDB.Wood_Source_Feature)) {
-		// 	structureWeights.AddElement(STRUCTURE_TYPE.LUMBERYARD, 15);
+		// if (structureTypes.Contains(STRUCTURE_TYPE.PRISON) == false) {
+		// 	//Prison: +3 (disable if already selected from previous hex tile)
+		// 	structureWeights.AddElement(STRUCTURE_TYPE.PRISON, 3);
 		// }
-		if (tile.HasNeighbourWithFeature(TileFeatureDB.Game_Feature) 
-		    && structureTypes.Contains(STRUCTURE_TYPE.HUNTER_LODGE) == false) {
-			//Hunter's Lodge: +0 (disable if already selected from previous hex tile)
-			//if tile is adjacent to Game 
-			structureWeights.AddElement(STRUCTURE_TYPE.HUNTER_LODGE, 15);
+		// if (structureTypes.Contains(STRUCTURE_TYPE.APOTHECARY) == false) {
+		// 	//Apothecary: +6 (disable if already selected from previous hex tile)
+		// 	structureWeights.AddElement(STRUCTURE_TYPE.APOTHECARY, 6);
+		// }
+		structureWeights.AddElement(STRUCTURE_TYPE.FARM, 1); //Farm: +1
+		// if (structureTypes.Contains(STRUCTURE_TYPE.BARRACKS) == false) {
+		// 	//Barracks: +6 (disable if already selected from previous hex tile)
+		// 	structureWeights.AddElement(STRUCTURE_TYPE.BARRACKS, 6);
+		// }
+		if (tile.featureComponent.HasFeature(TileFeatureDB.Fertile_Feature)) {
+			structureWeights.AddElement(STRUCTURE_TYPE.FARM, 15);
 		}
+		// if (tile.HasNeighbourWithFeature(TileFeatureDB.Metal_Source_Feature)) {
+		// 	structureWeights.AddElement(STRUCTURE_TYPE.MINE, 15);
+		// }
+		// // if (tile.HasNeighbourWithFeature(TileFeatureDB.Wood_Source_Feature)) {
+		// // 	structureWeights.AddElement(STRUCTURE_TYPE.LUMBERYARD, 15);
+		// // }
+		// if (tile.HasNeighbourWithFeature(TileFeatureDB.Game_Feature) 
+		//     && structureTypes.Contains(STRUCTURE_TYPE.HUNTER_LODGE) == false) {
+		// 	//Hunter's Lodge: +0 (disable if already selected from previous hex tile)
+		// 	//if tile is adjacent to Game 
+		// 	structureWeights.AddElement(STRUCTURE_TYPE.HUNTER_LODGE, 15);
+		// }
 		return structureWeights;
 	}
 	#endregion

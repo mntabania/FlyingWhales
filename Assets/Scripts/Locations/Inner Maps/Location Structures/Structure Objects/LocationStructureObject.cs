@@ -141,7 +141,10 @@ public class LocationStructureObject : PooledObject {
         }
     }
     private StructureTemplateObjectData[] GetPreplacedObjects() {
-        return UtilityScripts.GameUtilities.GetComponentsInDirectChildren<StructureTemplateObjectData>(objectsParent.gameObject);
+        if (objectsParent != null) {
+            return UtilityScripts.GameUtilities.GetComponentsInDirectChildren<StructureTemplateObjectData>(objectsParent.gameObject);    
+        }
+        return null;
     }
     internal void ReceiveMapObject<T>(MapObjectVisual<T> mapGameObject) where T : IDamageable {
         mapGameObject.transform.SetParent(objectsParent);

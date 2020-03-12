@@ -18,7 +18,6 @@ namespace Inner_Maps.Location_Structures {
         public List<Character> charactersHere { get; private set; }
         public ILocation location { get; private set; }
         public BaseSettlement settlementLocation { get; private set; }
-        // public List<SpecialToken> itemsInStructure { get; private set; }
         public HashSet<IPointOfInterest> pointsOfInterest { get; private set; }
         public Dictionary<TILE_OBJECT_TYPE, TileObjectsAndCount> groupedTileObjects { get; private set; }
         public POI_STATE state { get; private set; }

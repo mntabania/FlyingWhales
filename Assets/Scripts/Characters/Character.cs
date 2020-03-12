@@ -195,7 +195,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     public BaseSettlement currentSettlement => gridTileLocation != null 
-        && gridTileLocation.collectionOwner.partOfHextile.hexTileOwner ? 
+        && gridTileLocation.collectionOwner.isPartOfParentRegionMap ? 
         gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile : null;
     public int level => _level;
     public int experience => _experience;

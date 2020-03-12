@@ -158,9 +158,9 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		}
 
 		WeightedDictionary<int> tileCountWeights = new WeightedDictionary<int>();
-		tileCountWeights.AddElement(1, 25);
 		tileCountWeights.AddElement(2, 25);
-		tileCountWeights.AddElement(3, 50);
+		tileCountWeights.AddElement(3, 25);
+		tileCountWeights.AddElement(4, 50);
 		
 		for (int i = 0; i < settlementRegions.Count; i++) {
 			Region region = settlementRegions[i];

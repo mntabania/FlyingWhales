@@ -399,6 +399,9 @@ public partial class LandmarkManager : MonoBehaviour {
             case STRUCTURE_TYPE.THE_CRYPT:
                 createdStructure = new Inner_Maps.Location_Structures.TheCrypt(location);
                 break;
+            case STRUCTURE_TYPE.FARM:
+                createdStructure = new Inner_Maps.Location_Structures.Farm(location);
+                break;
             default:
                 createdStructure = new LocationStructure(type, location);
                 break;
