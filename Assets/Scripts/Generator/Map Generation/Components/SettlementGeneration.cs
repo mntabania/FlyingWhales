@@ -83,9 +83,9 @@ public class SettlementGeneration : MapGenerationComponent {
 		// if (tile.HasNeighbourWithFeature(TileFeatureDB.Metal_Source_Feature)) {
 		// 	structureWeights.AddElement(STRUCTURE_TYPE.MINE, 15);
 		// }
-		// // if (tile.HasNeighbourWithFeature(TileFeatureDB.Wood_Source_Feature)) {
-		// // 	structureWeights.AddElement(STRUCTURE_TYPE.LUMBERYARD, 15);
-		// // }
+		if (tile.HasNeighbourWithFeature(TileFeatureDB.Wood_Source_Feature)) {
+			structureWeights.AddElement(STRUCTURE_TYPE.LUMBERYARD, 15);
+		}
 		// if (tile.HasNeighbourWithFeature(TileFeatureDB.Game_Feature) 
 		//     && structureTypes.Contains(STRUCTURE_TYPE.HUNTER_LODGE) == false) {
 		// 	//Hunter's Lodge: +0 (disable if already selected from previous hex tile)

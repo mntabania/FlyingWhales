@@ -275,7 +275,7 @@ namespace Inner_Maps {
                     LocationGridTile currNeighbour = keyValuePair.Value;
                     bool createEdge = false;
                     // summary += $"\n\tChecking {currNeighbour.ToString()}. Ground type is {groundType.ToString()}. Neighbour Ground Type is {currNeighbour.groundType.ToString()}";
-                    if (this.groundType != Ground_Type.Cave && currNeighbour.groundType == Ground_Type.Cave) {
+                    if (this.groundType != Ground_Type.Cave && groundType != Ground_Type.Structure_Stone && currNeighbour.groundType == Ground_Type.Cave) {
                         createEdge = true;
                     } else if (currNeighbour.tileType == Tile_Type.Wall || currNeighbour.tileType == Tile_Type.Structure_Entrance) {
                         createEdge = false;

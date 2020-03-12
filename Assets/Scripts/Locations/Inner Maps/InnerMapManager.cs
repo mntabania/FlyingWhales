@@ -10,7 +10,7 @@ using UnityEngine.Profiling;
 using UnityEngine.Serialization;
 using UtilityScripts;
 namespace Inner_Maps {
-    // [ExecuteInEditMode]
+    [ExecuteInEditMode]
     public class InnerMapManager : MonoBehaviour {
 
         public static InnerMapManager Instance;

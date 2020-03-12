@@ -293,9 +293,13 @@ public class LocationStructureObject : PooledObject {
             gridTileLocation.x += xDiffFromCenter;
             gridTileLocation.y += yDiffFromCenter;
 
-
-            LocationGridTile tile = map.map[gridTileLocation.x, gridTileLocation.y];
-            occupiedTiles.Add(tile);
+            if (UtilityScripts.Utilities.IsInRange(gridTileLocation.x, 0, map.width) 
+                && UtilityScripts.Utilities.IsInRange(gridTileLocation.y, 0, map.height)) {
+                LocationGridTile tile = map.map[gridTileLocation.x, gridTileLocation.y];
+                occupiedTiles.Add(tile);    
+            } else {
+                throw new Exception($"IndexOutOfRangeException when trying to place structure object {name} at {map.location.name}");
+            }
         }
         return occupiedTiles;
     }

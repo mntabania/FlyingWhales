@@ -474,6 +474,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             case STRUCTURE_TYPE.FARM:
                 classManager.AddCombatantClass("Druid");
                 break;
+            case STRUCTURE_TYPE.LUMBERYARD:
+                classManager.AddCombatantClass("Archer");
+                break;
         }
     }
     protected override void OnStructureRemoved(LocationStructure structure) {
@@ -482,6 +485,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         switch (structure.structureType) {
             case STRUCTURE_TYPE.FARM:
                 classManager.RemoveCombatantClass("Druid");
+                break;
+            case STRUCTURE_TYPE.LUMBERYARD:
+                classManager.RemoveCombatantClass("Archer");
                 break;
         }
     }
