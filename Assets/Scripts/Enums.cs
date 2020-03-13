@@ -1269,6 +1269,7 @@ public enum TILE_OBJECT_TYPE {
     FROSTY_FOG,
     VAPOR,
     FIRE_BALL,
+    HERB_PLANT,
 }
 public enum POI_STATE {
     ACTIVE,

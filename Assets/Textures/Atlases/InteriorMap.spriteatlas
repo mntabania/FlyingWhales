@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 129c2b5e0c8f0e14d9fb8b1c30296b6d, type: 3}
-    totalSpriteSurfaceArea: 3459432
+    totalSpriteSurfaceArea: 3463528
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -500,6 +500,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: acd979997eb35524b8cb032c7c3dd425, type: 3}
   - {fileID: 21300000, guid: 1a09cc99941292d42813666ec6ae7dc4, type: 3}
   - {fileID: 21300000, guid: bb6c7d99fbe813540b4db17b53cb32ef, type: 3}
+  - {fileID: 21300000, guid: c33470a9e405d094aa1aa8cadf3524a2, type: 3}
   - {fileID: 21300000, guid: 2a30a1a97f1dfa947a9d78809407e79a, type: 3}
   - {fileID: 21300000, guid: 190bc7a952a5df04b9806c1ad69a4a35, type: 3}
   - {fileID: 21300000, guid: e85247b9c5ad0ba48b54c98a216a9cff, type: 3}
@@ -1234,6 +1235,7 @@ SpriteAtlas:
   - wood_floorA01
   - laidWallA11101011-00
   - demonThrone00
+  - HERB PLANT#1
   - BRAZIER#1
   - table_armor
   - supplies

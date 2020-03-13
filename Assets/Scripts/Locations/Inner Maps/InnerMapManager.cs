@@ -642,7 +642,7 @@ namespace Inner_Maps {
             if (index != -1) {
                 tileObjectName = sprite.name.Substring(0, index);    
             }
-
+            tileObjectName = UtilityScripts.Utilities.NotNormalizedConversionStringToEnum(tileObjectName);
             TILE_OBJECT_TYPE tileObjectType = (TILE_OBJECT_TYPE) System.Enum.Parse(typeof(TILE_OBJECT_TYPE), tileObjectName);
             return tileObjectType;
         }

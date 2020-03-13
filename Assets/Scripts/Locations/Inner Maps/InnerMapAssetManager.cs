@@ -11,6 +11,7 @@ namespace Inner_Maps {
         public TileBase soilTile;
         public TileBase stoneTile;
         public TileBase shrubTile;
+        public TileBase herbPlantTile;
         public TileBase flowerTile;
         public TileBase rockTile;
         public TileBase randomGarbTile;
