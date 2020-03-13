@@ -18,6 +18,7 @@ TagManager:
   - Map_Click_Blocker
   - Structure_Wall
   - Spell
+  - Moving Object
   layers:
   - Default
   - TransparentFX

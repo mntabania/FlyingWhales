@@ -622,7 +622,14 @@ namespace Inner_Maps {
                                 //shrubs
                                 if (location.coreTile.biomeType != BIOMES.SNOW && location.coreTile.biomeType != BIOMES.TUNDRA) {
                                     currTile.hasDetail = true;
-                                    detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.shrubTile);
+                                    TileBase tileBase = null;
+                                    //plant or herb plant
+                                    if(UnityEngine.Random.Range(0, 2) == 0) {
+                                        tileBase = InnerMapManager.Instance.assetManager.shrubTile;
+                                    } else {
+                                        tileBase = InnerMapManager.Instance.assetManager.herbPlantTile;
+                                    }
+                                    detailsTilemap.SetTile(currTile.localPlace, tileBase);
                                     if (currTile.structure != null) {
                                         //place tile object
                                         ConvertDetailToTileObject(currTile);

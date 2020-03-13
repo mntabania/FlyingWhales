@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 129c2b5e0c8f0e14d9fb8b1c30296b6d, type: 3}
-    totalSpriteSurfaceArea: 3479848
+    totalSpriteSurfaceArea: 3463528
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -96,7 +96,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 87b945e00034a9c49972da0e995636b4, type: 3}
   - {fileID: 21300000, guid: 444357e077b45094780b2347661492a0, type: 3}
   - {fileID: 21300000, guid: 4ec559e07f877604ab0df35d151ac010, type: 3}
-  - {fileID: 21300000, guid: 7dcd4be0175214f46913254eb8a78af8, type: 3}
   - {fileID: 21300000, guid: 09936ce0479897e418e2e7290978495b, type: 3}
   - {fileID: 21300000, guid: 59587af055f0b7944ae33d95adc83957, type: 3}
   - {fileID: 21300000, guid: 0055a2017efc0894aab2c627d9d18254, type: 3}
@@ -161,11 +160,9 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 3df2cb8251a3bf34086a03df1ee59150, type: 3}
   - {fileID: 21300000, guid: 378bbd827eaf0224ebdfff90a3564477, type: 3}
   - {fileID: 21300000, guid: 81df5e8222d54164d913903c035bc8cf, type: 3}
-  - {fileID: 21300000, guid: 760ca0925ac4df049937e3d0a7e430e9, type: 3}
   - {fileID: 21300000, guid: cb013192df2d8e44e9140e8f63c50dac, type: 3}
   - {fileID: 21300000, guid: c236f4926fa5e114ea5b76f7125fe18a, type: 3}
   - {fileID: 21300000, guid: d51a16924eb09e241bad4446e2292281, type: 3}
-  - {fileID: 21300000, guid: ae40eb92eb4f1ec429a90d1bec4f48c8, type: 3}
   - {fileID: 21300000, guid: e4afae924d3638a48929ce4ed9c475c8, type: 3}
   - {fileID: 21300000, guid: e94b30a2fd325964bbf14fe81b0cd71f, type: 3}
   - {fileID: 21300000, guid: 41dd6ea24235fe24d905aa79a806c686, type: 3}
@@ -275,7 +272,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: bd4076f458db38740abbd837e950bea8, type: 3}
   - {fileID: 21300000, guid: 574c76f4f63d95e4d804bc83e472e29f, type: 3}
   - {fileID: 21300000, guid: 46f659f42ddd53d41b5f80f4435ad787, type: 3}
-  - {fileID: 21300000, guid: c9970af481f449e49b064d9530a763ca, type: 3}
   - {fileID: 21300000, guid: 24f8dbf4b2ec8af4aa01db0d86dca732, type: 3}
   - {fileID: 21300000, guid: c1398cf4b5804b14aabdfc524d608d4c, type: 3}
   - {fileID: 21300000, guid: 5f35fcf4b6818ec40bc4535281e82363, type: 3}
@@ -498,13 +494,13 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 4aae22799ddcf37429e6268d9f13e95b, type: 3}
   - {fileID: 21300000, guid: 2f82f9790a9c8d44ea9f052678a65e14, type: 3}
   - {fileID: 21300000, guid: ffd7ab79c60f4bd48a80b50626c56326, type: 3}
-  - {fileID: 21300000, guid: c81f16893bd90234d99eaa828db43579, type: 3}
   - {fileID: 21300000, guid: 688fc689dc158df4e9760d5e9750ca42, type: 3}
   - {fileID: 21300000, guid: afe79789199a0594281c2a41b70ce2fa, type: 3}
   - {fileID: 21300000, guid: a0928a890c785c64faa0cd3b3baef349, type: 3}
   - {fileID: 21300000, guid: acd979997eb35524b8cb032c7c3dd425, type: 3}
   - {fileID: 21300000, guid: 1a09cc99941292d42813666ec6ae7dc4, type: 3}
   - {fileID: 21300000, guid: bb6c7d99fbe813540b4db17b53cb32ef, type: 3}
+  - {fileID: 21300000, guid: c33470a9e405d094aa1aa8cadf3524a2, type: 3}
   - {fileID: 21300000, guid: 2a30a1a97f1dfa947a9d78809407e79a, type: 3}
   - {fileID: 21300000, guid: 190bc7a952a5df04b9806c1ad69a4a35, type: 3}
   - {fileID: 21300000, guid: e85247b9c5ad0ba48b54c98a216a9cff, type: 3}
@@ -835,7 +831,6 @@ SpriteAtlas:
   - skullPile00
   - poison00011111-00
   - demonStone02
-  - poison_crystal
   - demonCircleLarge01
   - snow01
   - ROCK#1
@@ -900,11 +895,9 @@ SpriteAtlas:
   - TREE_OBJECT#2
   - demonCircle00
   - shore11111111-00
-  - ice_crystal
   - demonDeskScrolls00
   - table00
   - dirtSnow01
-  - water_crystal
   - demonRackEmpty00
   - PLANT#3
   - BRAZIER#1_LIT
@@ -1014,7 +1007,6 @@ SpriteAtlas:
   - woodpile00
   - laidWallA10000010-00
   - laidWallA00001010-00
-  - lightning_crystal
   - laidWallA11100011-00
   - STATUE#1_BROKEN
   - shore00010000-00
@@ -1237,13 +1229,13 @@ SpriteAtlas:
   - necronomicon_open
   - STATUE#2
   - TRASH#5
-  - fire_crystal
   - demonPewLongLeft00
   - FLOWER#1
   - ROCK#4
   - wood_floorA01
   - laidWallA11101011-00
   - demonThrone00
+  - HERB PLANT#1
   - BRAZIER#1
   - table_armor
   - supplies
