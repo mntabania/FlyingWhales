@@ -213,7 +213,7 @@ public enum LANDMARK_TYPE {
     NONE = 0,
     THE_PORTAL = 1,
     WORKSHOP = 4,
-    MINE = 8,
+    ABANDONED_MINE = 8,
     FARM = 17,
     VILLAGE = 20,
     BANDIT_CAMP = 24,
@@ -236,6 +236,7 @@ public enum LANDMARK_TYPE {
     HOUSES,
     TORTURE_CHAMBER,
     DEMONIC_PRISON,
+    MINE,
 }
 public enum TECHNOLOGY {
     //Weapon Production
@@ -1139,7 +1140,7 @@ public enum STRUCTURE_TYPE {
     MAGE_QUARTERS = 20,
     NONE = 21,
     MONSTER_LAIR = 22,
-    MINE = 23,
+    ABANDONED_MINE = 23,
     ANCIENT_RUIN = 24,
     MAGE_TOWER = 25,
     THE_PORTAL = 26,
@@ -1156,7 +1157,8 @@ public enum STRUCTURE_TYPE {
     TORTURE_CHAMBER = 37,
     DEMONIC_PRISON = 38,
     FARM = 39,
-    LUMBERYARD = 40
+    LUMBERYARD = 40,
+    MINE = 41,
 }
 public enum RELATIONSHIP_TYPE {
     NONE = 0,
@@ -1268,6 +1270,7 @@ public enum TILE_OBJECT_TYPE {
     SAWHORSE,
     OBELISK,
     CORN_CROP,
+    CAGE
 }
 public enum POI_STATE {
     ACTIVE,
@@ -1591,23 +1594,17 @@ public static class Extensions {
             case STRUCTURE_TYPE.DEMONIC_PRISON:
             case STRUCTURE_TYPE.TORTURE_CHAMBER:
             case STRUCTURE_TYPE.MAGE_TOWER:
-            case STRUCTURE_TYPE.MINE:
+            case STRUCTURE_TYPE.ABANDONED_MINE:
                 return true;
             default:
                 return false;
         }
     }
     public static LANDMARK_TYPE GetLandmarkType(this STRUCTURE_TYPE structureType) {
-        LANDMARK_TYPE parsed;
-        if (System.Enum.TryParse(structureType.ToString(), out parsed)) {
+        if (System.Enum.TryParse(structureType.ToString(), out LANDMARK_TYPE parsed)) {
             return parsed;
         } else {
-            switch (structureType) {
-                case STRUCTURE_TYPE.CITY_CENTER:
-                    return LANDMARK_TYPE.VILLAGE;
-                default:
-                    return LANDMARK_TYPE.HOUSES;
-            }
+            return LANDMARK_TYPE.HOUSES;
         }
     }
     #endregion

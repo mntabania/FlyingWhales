@@ -1466,6 +1466,9 @@
                 <e p="Farm.cs" t="Include" />
                 <e p="Goader.cs" t="Include" />
                 <e p="LocationStructure.cs" t="Include" />
+                <e p="Lumberyard.cs" t="Include" />
+                <e p="MageQuarter.cs" t="Include" />
+                <e p="Prison.cs" t="Include" />
                 <e p="Structure Objects" t="Include">
                   <e p="LocationStructureObject.cs" t="Include" />
                   <e p="StructureTemplate.cs" t="Include" />
@@ -1508,6 +1511,7 @@
                   <e p="BlockWall.cs" t="Include" />
                   <e p="Brazier.cs" t="Include" />
                   <e p="BuildSpotTileObject.cs" t="Include" />
+                  <e p="Cage.cs" t="Include" />
                   <e p="Campfire.cs" t="Include" />
                   <e p="Candelabra.cs" t="Include" />
                   <e p="Cauldron.cs" t="Include" />

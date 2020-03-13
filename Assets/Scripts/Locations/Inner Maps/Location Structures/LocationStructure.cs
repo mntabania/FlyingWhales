@@ -31,7 +31,7 @@ namespace Inner_Maps.Location_Structures {
 
         #region getters
         public virtual bool isDwelling => false;
-        public Vector3 worldPosition { get; protected set; }
+        public virtual Vector3 worldPosition { get; protected set; }
         public virtual Vector2 selectableSize => structureObj.size;
         #endregion
 

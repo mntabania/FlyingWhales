@@ -86,7 +86,7 @@ MonoBehaviour:
       overrideLandmarkPortrait: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
-  - landmarkTypeString: Mines
+  - landmarkTypeString: Abandoned Mine
     landmarkType: 8
     buildDuration: 0
     description: The Mines provide Supply.
@@ -98,15 +98,11 @@ MonoBehaviour:
       m_keys: 
       m_values: []
     neutralTileSprites:
-    - mainSprite: {fileID: 21300000, guid: 0b1a6dfee21888942b79f0008084a2b8, type: 3}
-      tintSprite: {fileID: 21300000, guid: f16e449c34192234bb171cc4f9bc300d, type: 3}
+    - mainSprite: {fileID: 21300000, guid: 65cd2e8691df5aa408946fb5b873bdd3, type: 3}
+      tintSprite: {fileID: 0}
       animation: {fileID: 0}
       overrideLandmarkPortrait: {fileID: 0}
-    humansLandmarkTileSprites:
-    - mainSprite: {fileID: 21300000, guid: 0b1a6dfee21888942b79f0008084a2b8, type: 3}
-      tintSprite: {fileID: 21300000, guid: f16e449c34192234bb171cc4f9bc300d, type: 3}
-      animation: {fileID: 0}
-      overrideLandmarkPortrait: {fileID: 0}
+    humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
   - landmarkTypeString: Farm
     landmarkType: 17
@@ -125,8 +121,16 @@ MonoBehaviour:
       tintSprite: {fileID: 21300000, guid: 455f303fb578b4841ae48fd16107beb2, type: 3}
       animation: {fileID: 0}
       overrideLandmarkPortrait: {fileID: 0}
-    humansLandmarkTileSprites: []
-    elvenLandmarkTileSprites: []
+    humansLandmarkTileSprites:
+    - mainSprite: {fileID: 21300000, guid: 897345c9564591c4697a148359e3dc3b, type: 3}
+      tintSprite: {fileID: 21300000, guid: 455f303fb578b4841ae48fd16107beb2, type: 3}
+      animation: {fileID: 0}
+      overrideLandmarkPortrait: {fileID: 0}
+    elvenLandmarkTileSprites:
+    - mainSprite: {fileID: 21300000, guid: a35ec4294aacc5d45a5062db0a45d55d, type: 3}
+      tintSprite: {fileID: 21300000, guid: 2676d8f62a64675408e6e640dfdf1a5c, type: 3}
+      animation: {fileID: 0}
+      overrideLandmarkPortrait: {fileID: 0}
   - landmarkTypeString: Village
     landmarkType: 20
     buildDuration: 0
@@ -685,6 +689,33 @@ MonoBehaviour:
       overrideLandmarkPortrait: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
+  - landmarkTypeString: Mine
+    landmarkType: 62
+    buildDuration: 0
+    description: The Mines provide Supply.
+    uniqueTags: 
+    landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
+      type: 3}
+    defaultLandmarkPortrait: {fileID: 21300000, guid: 4cf45f8b0eb110b439e65339b06fc82f,
+      type: 3}
+    biomeTileSprites:
+      m_keys: 
+      m_values: []
+    neutralTileSprites:
+    - mainSprite: {fileID: 21300000, guid: 0b1a6dfee21888942b79f0008084a2b8, type: 3}
+      tintSprite: {fileID: 21300000, guid: f16e449c34192234bb171cc4f9bc300d, type: 3}
+      animation: {fileID: 0}
+      overrideLandmarkPortrait: {fileID: 0}
+    humansLandmarkTileSprites:
+    - mainSprite: {fileID: 21300000, guid: 0b1a6dfee21888942b79f0008084a2b8, type: 3}
+      tintSprite: {fileID: 21300000, guid: f16e449c34192234bb171cc4f9bc300d, type: 3}
+      animation: {fileID: 0}
+      overrideLandmarkPortrait: {fileID: 0}
+    elvenLandmarkTileSprites:
+    - mainSprite: {fileID: 21300000, guid: 0b1a6dfee21888942b79f0008084a2b8, type: 3}
+      tintSprite: {fileID: 21300000, guid: f16e449c34192234bb171cc4f9bc300d, type: 3}
+      animation: {fileID: 0}
+      overrideLandmarkPortrait: {fileID: 0}
   areaData:
   - locationType: 0
     baseAreaType: 0

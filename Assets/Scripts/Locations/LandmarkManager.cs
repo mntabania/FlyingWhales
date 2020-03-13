@@ -400,7 +400,16 @@ public partial class LandmarkManager : MonoBehaviour {
                 createdStructure = new Inner_Maps.Location_Structures.TheCrypt(location);
                 break;
             case STRUCTURE_TYPE.FARM:
-                createdStructure = new Inner_Maps.Location_Structures.Farm(location);
+                createdStructure = new Farm(location);
+                break;
+            case STRUCTURE_TYPE.MAGE_QUARTERS:
+                createdStructure = new MageQuarter(location);
+                break;
+            case STRUCTURE_TYPE.PRISON:
+                createdStructure = new Prison(location);
+                break;
+            case STRUCTURE_TYPE.LUMBERYARD:
+                createdStructure = new Lumberyard(location);
                 break;
             default:
                 createdStructure = new LocationStructure(type, location);

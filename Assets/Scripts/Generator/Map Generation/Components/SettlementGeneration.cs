@@ -80,9 +80,9 @@ public class SettlementGeneration : MapGenerationComponent {
 		if (tile.featureComponent.HasFeature(TileFeatureDB.Fertile_Feature)) {
 			structureWeights.AddElement(STRUCTURE_TYPE.FARM, 15);
 		}
-		// if (tile.HasNeighbourWithFeature(TileFeatureDB.Metal_Source_Feature)) {
-		// 	structureWeights.AddElement(STRUCTURE_TYPE.MINE, 15);
-		// }
+		if (tile.HasNeighbourWithFeature(TileFeatureDB.Metal_Source_Feature)) {
+			structureWeights.AddElement(STRUCTURE_TYPE.MINE, 15);
+		}
 		if (tile.HasNeighbourWithFeature(TileFeatureDB.Wood_Source_Feature)) {
 			structureWeights.AddElement(STRUCTURE_TYPE.LUMBERYARD, 15);
 		}

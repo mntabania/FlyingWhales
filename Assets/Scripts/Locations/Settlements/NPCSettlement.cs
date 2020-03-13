@@ -492,7 +492,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             case STRUCTURE_TYPE.APOTHECARY:
                 classManager.AddCombatantClass("Shaman");
                 break;
-            case STRUCTURE_TYPE.MINE:
+            case STRUCTURE_TYPE.ABANDONED_MINE:
                 classManager.AddCivilianClass("Miner");
                 break;
         }
@@ -522,7 +522,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             case STRUCTURE_TYPE.APOTHECARY:
                 classManager.RemoveCombatantClass("Shaman");
                 break;
-            case STRUCTURE_TYPE.MINE:
+            case STRUCTURE_TYPE.ABANDONED_MINE:
                 classManager.RemoveCivilianClass("Miner");
                 break;
         }

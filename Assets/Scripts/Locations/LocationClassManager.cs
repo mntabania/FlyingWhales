@@ -15,7 +15,9 @@ public class LocationClassManager {
         currentIndex = 0;
         startLoopIndex = 5;
         numberOfRotations = 0;
-        combatantClasses = new Dictionary<string, int>();
+        combatantClasses = new Dictionary<string, int>() {
+            {"Barbarian", 1},
+        };
         civilianClasses = new Dictionary<string, int>() {
             {"Peasant", 1},
             {"Craftsman", 1},
@@ -67,8 +69,7 @@ public class LocationClassManager {
             // List<CharacterClass> classes = CharacterManager.Instance.GetNormalCombatantClasses();
             // currentClass = classes[UnityEngine.Random.Range(0, classes.Count)].className;
             currentClass = UtilityScripts.CollectionUtilities.GetRandomElement(combatantClasses.Keys);
-        }
-        else if (currentClass == "Civilian") {
+        } else if (currentClass == "Civilian") {
             currentClass = UtilityScripts.CollectionUtilities.GetRandomElement(civilianClasses.Keys);
             // int i = UnityEngine.Random.Range(0, 3);
             // if (i == 0) {
