@@ -1082,6 +1082,7 @@
               <e p="CharacterStateComponent.cs" t="Include" />
               <e p="CombatState.cs" t="Include" />
               <e p="DouseFireState.cs" t="Include" />
+              <e p="FollowState.cs" t="Include" />
               <e p="HuntState.cs" t="Include" />
               <e p="PatrolState.cs" t="Include" />
               <e p="StrollOutsideState.cs" t="Include" />
@@ -1316,6 +1317,7 @@
                 <e p="MineMetal.cs" t="Include" />
                 <e p="MineStone.cs" t="Include" />
                 <e p="Nap.cs" t="Include" />
+                <e p="Neutralize.cs" t="Include" />
                 <e p="PlaceBlueprint.cs" t="Include" />
                 <e p="PlayGuitar.cs" t="Include" />
                 <e p="Poison.cs" t="Include" />
@@ -1327,7 +1329,6 @@
                 <e p="ReplaceTileObject.cs" t="Include" />
                 <e p="Sit.cs" t="Include" />
                 <e p="Sleep.cs" t="Include" />
-                <e p="SnuffTornado.cs" t="Include" />
                 <e p="Spit.cs" t="Include" />
                 <e p="WellJump.cs" t="Include" />
               </e>
@@ -1495,9 +1496,12 @@
               <e p="LocationGridTileGUS.cs" t="Include" />
               <e p="Map Objects" t="Include">
                 <e p="Map Object Visuals" t="Include">
+                  <e p="BallLightningMapObjectVisual.cs" t="Include" />
                   <e p="BaseMapObject.cs" t="Include" />
                   <e p="BaseMapObjectVisual.cs" t="Include" />
                   <e p="BedObjectGameObject.cs" t="Include" />
+                  <e p="FireBallMapObjectVisual.cs" t="Include" />
+                  <e p="FrostyFogMapObjectVisual.cs" t="Include" />
                   <e p="LocustSwarmMapObjectVisual.cs" t="Include" />
                   <e p="MapObject.cs" t="Include" />
                   <e p="MapObjectVisual.cs" t="Include" />
@@ -1506,11 +1510,13 @@
                   <e p="PoisonCloudMapObjectVisual.cs" t="Include" />
                   <e p="TileObjectGameObject.cs" t="Include" />
                   <e p="TornadoMapObjectVisual.cs" t="Include" />
+                  <e p="VaporMapObjectVisual.cs" t="Include" />
                 </e>
                 <e p="SpiritGameObject.cs" t="Include" />
                 <e p="Tile Objects" t="Include">
                   <e p="Anvil.cs" t="Include" />
                   <e p="ArcheryTarget.cs" t="Include" />
+                  <e p="BallLightningTileObject.cs" t="Include" />
                   <e p="Bandages.cs" t="Include" />
                   <e p="Barrel.cs" t="Include" />
                   <e p="Bed.cs" t="Include" />
@@ -1526,12 +1532,22 @@
                   <e p="Crate.cs" t="Include" />
                   <e p="Desk.cs" t="Include" />
                   <e p="EdiblePlant.cs" t="Include" />
+                  <e p="Elemental Crystals" t="Include">
+                    <e p="ElectricCrystal.cs" t="Include" />
+                    <e p="ElementalCrystal.cs" t="Include" />
+                    <e p="FireCrystal.cs" t="Include" />
+                    <e p="IceCrystal.cs" t="Include" />
+                    <e p="PoisonCrystal.cs" t="Include" />
+                    <e p="WaterCrystal.cs" t="Include" />
+                  </e>
                   <e p="FeebleSpirit.cs" t="Include" />
+                  <e p="FireBallTileObject.cs" t="Include" />
                   <e p="Fireplace.cs" t="Include" />
                   <e p="Flower.cs" t="Include" />
                   <e p="FoodBaskets.cs" t="Include" />
                   <e p="FoodPile.cs" t="Include" />
                   <e p="ForlornSpirit.cs" t="Include" />
+                  <e p="FrostyFogTileObject.cs" t="Include" />
                   <e p="GenericTileObject.cs" t="Include" />
                   <e p="GoddessStatue.cs" t="Include" />
                   <e p="Grave.cs" t="Include" />
@@ -1590,6 +1606,7 @@
                   <e p="TrainingDummy.cs" t="Include" />
                   <e p="Trash.cs" t="Include" />
                   <e p="TreeObject.cs" t="Include" />
+                  <e p="VaporTileObject.cs" t="Include" />
                   <e p="WaterBasin.cs" t="Include" />
                   <e p="WaterBucket.cs" t="Include" />
                   <e p="WaterWell.cs" t="Include" />
