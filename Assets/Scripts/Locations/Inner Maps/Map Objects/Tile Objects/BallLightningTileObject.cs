@@ -46,8 +46,8 @@ public class BallLightningTileObject : MovingTileObject {
         }
         if (amount < 0 && elementalDamageType == ELEMENTAL_TYPE.Ice) {
             //Electric Storm
-            if (tileLocation.buildSpotOwner.hexTileOwner != null) {
-                tileLocation.buildSpotOwner.hexTileOwner.spellsComponent.SetHasElectricStorm(true);
+            if (tileLocation.collectionOwner.isPartOfParentRegionMap) {
+                tileLocation.collectionOwner.partOfHextile.hexTileOwner.spellsComponent.SetHasElectricStorm(true);
             }
             _ballLightningMapVisual.Expire();
         } else if (currentHP == 0) {

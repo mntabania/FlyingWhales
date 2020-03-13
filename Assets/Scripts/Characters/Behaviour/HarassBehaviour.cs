@@ -9,7 +9,7 @@ public class HarassBehaviour : CharacterBehaviourComponent {
     }
     public override bool TryDoBehaviour(Character character, ref string log) {
         log += $"\n-{character.name} will harass";
-        if (character.gridTileLocation.buildSpotOwner.hexTileOwner && character.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile == character.behaviourComponent.harassInvadeRaidTarget) {
+        if (character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner && character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile == character.behaviourComponent.harassInvadeRaidTarget) {
             log += "\n-Already in the target npcSettlement";
             if(character.marker.inVisionTileObjects.Count > 0) {
                 log += "\n-Has tile object in vision";

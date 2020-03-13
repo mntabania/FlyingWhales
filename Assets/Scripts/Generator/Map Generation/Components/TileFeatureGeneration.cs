@@ -158,9 +158,9 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		}
 
 		WeightedDictionary<int> tileCountWeights = new WeightedDictionary<int>();
-		tileCountWeights.AddElement(1, 25);
 		tileCountWeights.AddElement(2, 25);
-		tileCountWeights.AddElement(3, 50);
+		tileCountWeights.AddElement(3, 25);
+		tileCountWeights.AddElement(4, 50);
 		
 		for (int i = 0; i < settlementRegions.Count; i++) {
 			Region region = settlementRegions[i];
@@ -171,7 +171,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			for (int j = 0; j < chosenTiles.Count; j++) {
 				HexTile settlementTile = chosenTiles[j];
 				settlementTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, settlementTile);
-				LandmarkManager.Instance.CreateNewLandmarkOnTile(settlementTile, LANDMARK_TYPE.VILLAGE, false);
+				LandmarkManager.Instance.CreateNewLandmarkOnTile(settlementTile, LANDMARK_TYPE.VILLAGE);
 			}
 		}
 		

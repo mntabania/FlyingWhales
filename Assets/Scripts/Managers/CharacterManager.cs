@@ -154,11 +154,7 @@ public class CharacterManager : MonoBehaviour {
             }
         }
         newCharacter.ownParty.CreateIcon();
-
-        //TODO:
-        // if (data.homeID != -1) {
-        //     home = GridMap.Instance.GetRegionByID(data.homeID);
-        // }
+        
         Region currRegion = null;
         if (data.currentLocationID != -1) {
             currRegion = GridMap.Instance.GetRegionByID(data.currentLocationID);
@@ -374,10 +370,6 @@ public class CharacterManager : MonoBehaviour {
 
         newCharacter.ownParty.CreateIcon();
         // NPCSettlement home = null;
-        //TODO:
-        // if (data.homeID != -1) {
-        //     home = GridMap.Instance.GetRegionByID(data.homeID);
-        // }
 
         Region currRegion = null;
         if (data.currentLocationID != -1) {

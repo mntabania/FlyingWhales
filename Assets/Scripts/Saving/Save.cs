@@ -17,7 +17,7 @@ public class Save {
     public List<SaveDataCharacter> characterSaves;
     public List<SaveDataTileObject> tileObjectSaves;
     // public List<SaveDataSpecialObject> specialObjectSaves;
-    public List<SaveDataAreaInnerTileMap> areaMapSaves;
+    // public List<SaveDataAreaInnerTileMap> areaMapSaves;
     public List<SaveDataNotification> notificationSaves;
 
     public SaveDataArea playerAreaSave;
@@ -331,28 +331,28 @@ public class Save {
     //     }
     // }
 
-    public void SaveAreaMaps(List<AreaInnerTileMap> areaMaps) {
-        areaMapSaves = new List<SaveDataAreaInnerTileMap>();
-        for (int i = 0; i < areaMaps.Count; i++) {
-            SaveDataAreaInnerTileMap data = new SaveDataAreaInnerTileMap();
-            data.Save(areaMaps[i]);
-            areaMapSaves.Add(data);
-        }
-    }
+    // public void SaveAreaMaps(List<AreaInnerTileMap> areaMaps) {
+    //     areaMapSaves = new List<SaveDataAreaInnerTileMap>();
+    //     for (int i = 0; i < areaMaps.Count; i++) {
+    //         SaveDataAreaInnerTileMap data = new SaveDataAreaInnerTileMap();
+    //         data.Save(areaMaps[i]);
+    //         areaMapSaves.Add(data);
+    //     }
+    // }
     public void LoadAreaMaps() {
-        for (int i = 0; i < areaMapSaves.Count; i++) {
-            LandmarkManager.Instance.LoadAreaMap(areaMapSaves[i]);
-        }
+        // for (int i = 0; i < areaMapSaves.Count; i++) {
+        //     LandmarkManager.Instance.LoadAreaMap(areaMapSaves[i]);
+        // }
     }
     public void LoadAreaMapsTileTraits() {
-        for (int i = 0; i < areaMapSaves.Count; i++) {
-            areaMapSaves[i].LoadTileTraits();
-        }
+        // for (int i = 0; i < areaMapSaves.Count; i++) {
+        //     areaMapSaves[i].LoadTileTraits();
+        // }
     }
     public void LoadAreaMapsObjectHereOfTiles() {
-        for (int i = 0; i < areaMapSaves.Count; i++) {
-            areaMapSaves[i].LoadObjectHereOfTiles();
-        }
+        // for (int i = 0; i < areaMapSaves.Count; i++) {
+        //     areaMapSaves[i].LoadObjectHereOfTiles();
+        // }
     }
 
     public void LoadAllJobs() {

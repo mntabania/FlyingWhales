@@ -45,14 +45,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ParentPool: {fileID: 0}
+  structureType: 28
   _groundTileMap: {fileID: 8195094280519792724}
   _detailTileMap: {fileID: 8195094280298447024}
   _groundTileMapRenderer: {fileID: 3664157344952097266}
   _detailTileMapRenderer: {fileID: 3664157343754174310}
+  _blockWallsTilemap: {fileID: 0}
   _size: {x: 7, y: 7}
   _center: {x: 3, y: 3, z: 0}
-  _objectsParent: {fileID: 4671645882033440}
+  objectsParent: {fileID: 4671645882033440}
   _furnitureSpotsParent: {fileID: 0}
+  _wallType: 0
+  _wallResource: 0
+  predeterminedOccupiedCoordinates: []
   wallTileMap: {fileID: 8195094281336318224}
   leftWall: {fileID: 1585498277213060, guid: 2e2e9509b5333aa4bbbeeabbd9cbec70, type: 3}
   rightWall: {fileID: 1585498277213060, guid: 70407332126550d4b81db31716c0b3fe, type: 3}
@@ -60,6 +65,7 @@ MonoBehaviour:
   bottomWall: {fileID: 1947783289032522, guid: b5a4337534668834fa79811d98de8ed6, type: 3}
   cornerPrefab: {fileID: 1038175435304820, guid: 551abd56996a3a749b77d74c5832fe15,
     type: 3}
+  assetsToConsiderAsStructure: []
 --- !u!1 &1100567511339654
 GameObject:
   m_ObjectHideFlags: 0

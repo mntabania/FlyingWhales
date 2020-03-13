@@ -165,12 +165,6 @@ public class FactionInfoUI : InfoUIBase {
     private void UpdateRegions() {
         UtilityScripts.Utilities.DestroyChildren(regionsScrollView.content);
         locationItems.Clear();
-
-        //TODO:
-        // for (int i = 0; i < activeFaction.ownedSettlements.Count; i++) {
-        //     Region currRegion = activeFaction.ownedSettlements[i];
-        //     CreateNewRegionItem(currRegion);
-        // }
     }
     private void CreateNewRegionItem(Region region) {
         GameObject characterGO = UIManager.Instance.InstantiateUIObject(regionNameplatePrefab.name, regionsScrollView.content);
@@ -196,14 +190,10 @@ public class FactionInfoUI : InfoUIBase {
     }
     private void OnFactionRegionAdded(Faction faction, BaseSettlement region) {
         if (isShowing && activeFaction.id == faction.id) {
-            //TODO:
-            // CreateNewRegionItem(region);
         }
     }
     private void OnFactionRegionRemoved(Faction faction, BaseSettlement region) {
         if (isShowing && activeFaction.id == faction.id) {
-            //TODO:
-            // DestroyLocationItem(region);
         }
     }
     #endregion

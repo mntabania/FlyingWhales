@@ -10,7 +10,7 @@ using UnityEngine.Profiling;
 using UnityEngine.Serialization;
 using UtilityScripts;
 namespace Inner_Maps {
-    // [ExecuteInEditMode]
+    [ExecuteInEditMode]
     public class InnerMapManager : MonoBehaviour {
 
         public static InnerMapManager Instance;
@@ -146,8 +146,8 @@ namespace Inner_Maps {
             // if (tile.IsPartOfSettlement(out var npcSettlement)) {
             //     selectables.Add(npcSettlement);
             // }
-            if (tile.buildSpotOwner.isPartOfParentRegionMap) {
-                return tile.buildSpotOwner.hexTileOwner;
+            if (tile.collectionOwner.isPartOfParentRegionMap) {
+                return tile.collectionOwner.partOfHextile.hexTileOwner;
             }
             return null;
         }
@@ -183,8 +183,8 @@ namespace Inner_Maps {
             // if (tile.IsPartOfSettlement(out var npcSettlement)) {
             //     selectables.Add(npcSettlement);
             // }
-            if (tile.buildSpotOwner.isPartOfParentRegionMap) {
-                selectables.Add(tile.buildSpotOwner.hexTileOwner);
+            if (tile.collectionOwner.isPartOfParentRegionMap) {
+                selectables.Add(tile.collectionOwner.partOfHextile.hexTileOwner);
             }
             return true;
         }
@@ -319,7 +319,7 @@ namespace Inner_Maps {
 
             Profiler.BeginSample("Show Tile Data Sample");
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            HexTile hexTile = tile.buildSpotOwner.hexTileOwner;
+            HexTile hexTile = tile.collectionOwner.partOfHextile?.hexTileOwner;
             string summary = tile.localPlace.ToString();
             summary = $"{summary}\n<b>HexTile:</b>{(hexTile?.ToString() ?? "None")}";
             summary = $"{summary}\n<b>Local Location:</b>{tile.localLocation.ToString()}";
@@ -368,7 +368,7 @@ namespace Inner_Maps {
             }
             if (tile.structure != null) {
                 summary =
-                    $"{summary}\nStructure: {tile.structure}, Occupied Build Spot: {tile.structure?.occupiedBuildSpot} " +
+                    $"{summary}\nStructure: {tile.structure}, Occupied Build Spot: {tile.structure?.occupiedHexTile} " +
                     $"Tiles: {tile.structure.tiles.Count.ToString()}, Has Owner: {tile.structure.IsOccupied().ToString()}, Is Interior: {tile.structure.isInterior.ToString()}";
                 summary = $"{summary}\nCharacters at {tile.structure}: ";
                 if (tile.structure.charactersHere.Count > 0) {
@@ -436,157 +436,6 @@ namespace Inner_Maps {
             summary = $"{summary}\n\tPersonal Job Queue: ";
             summary = character.jobQueue.jobsInQueue.Count > 0 ? character.jobQueue.jobsInQueue.Aggregate(summary, (current, poi) => $"{current}{poi}, ") : $"{summary}None";
             return summary;
-        }
-        #endregion
-
-        #region Town Map Generation
-        public TownMapSettings GetTownMapSettings(Dictionary<int, Dictionary<int, LocationGridTileSettings>> allSettings) {
-            int minX;
-            int maxX;
-            int minY;
-            int maxY;
-            GetBounds(allSettings, out minX, out maxX, out minY, out maxY);
-            TownMapSettings s = new TownMapSettings();
-            int shiftXBy = 0; //shift x position of all objects by n
-            int shiftYBy = 0;//shift y position of all objects by n
-            if (minX != 0) { shiftXBy = minX * -1; }
-            if (minY != 0) { shiftYBy = minY * -1; }
-
-            Dictionary<int, Dictionary<int, LocationGridTileSettings>> shiftedSettings = ShiftSettingsBy(new Vector2Int(shiftXBy, shiftYBy), allSettings);
-            GetBounds(shiftedSettings, out minX, out maxX, out minY, out maxY);
-
-            if (minX < 0 || minY < 0) {
-                throw new System.Exception(
-                    $"Minimum bounds of shifted settings has negative value! X: {minX}, Y: {minY}");
-            }
-            s.size = new Point(maxX, maxY);
-
-            List<TileTemplateData> groundTiles = new List<TileTemplateData>();
-            List<TileTemplateData> groundWallTiles = new List<TileTemplateData>();
-            List<TileTemplateData> structureTiles = new List<TileTemplateData>();
-            List<TileTemplateData> objectTiles = new List<TileTemplateData>();
-            List<TileTemplateData> detailTiles = new List<TileTemplateData>();
-            List<BuildingSpotData> buildingSpotData = new List<BuildingSpotData>();
-
-            int count = 0;
-            for (int x = 0; x < maxX; x++) {
-                for (int y = 0; y < maxY; y++) {
-                    if (shiftedSettings.ContainsKey(x) && shiftedSettings[x].ContainsKey(y)) {
-                        LocationGridTileSettings currSetting = shiftedSettings[x][y];
-                        currSetting.UpdatePositions(new Vector3(x, y, 0f));
-                        groundTiles.Add(currSetting.groundTile);
-                        groundWallTiles.Add(currSetting.groundWallTile);
-                        structureTiles.Add(currSetting.structureWallTile);
-                        objectTiles.Add(currSetting.objectTile);
-                        detailTiles.Add(currSetting.detailTile);
-                        if (currSetting.hasBuildingSpot) {
-                            buildingSpotData.Add(currSetting.buildingSpot);
-                        }
-                    } else {
-                        TileTemplateData emptyData = TileTemplateData.Empty;
-                        emptyData.tilePosition = new Vector3(x, y, 0);
-                        groundTiles.Add(emptyData);
-                        structureTiles.Add(emptyData);
-                        objectTiles.Add(emptyData);
-                        detailTiles.Add(emptyData);
-                    }
-                    count++;
-                }
-            }
-
-            if (count != (maxX * maxY)) {
-                throw new System.Exception(
-                    $"Total tiles are inconsistent with size! Count is: {count}. MaxX is: {maxX}. MaxY is: {maxY}");
-            }
-
-            foreach (KeyValuePair<int, Dictionary<int, LocationGridTileSettings>> kvp in shiftedSettings) {
-                foreach (KeyValuePair<int, LocationGridTileSettings> kvp2 in kvp.Value) {
-                    LocationGridTileSettings currSetting = kvp2.Value;
-                    currSetting.UpdatePositions(new Vector3(kvp.Key, kvp2.Key, 0f));
-                    groundTiles.Add(currSetting.groundTile);
-                    groundWallTiles.Add(currSetting.groundWallTile);
-                    structureTiles.Add(currSetting.structureWallTile);
-                    objectTiles.Add(currSetting.objectTile);
-                    detailTiles.Add(currSetting.detailTile);
-                    count++;
-                }
-            }
-
-            s.groundTiles = groundTiles.ToArray();
-            s.groundWallTiles = groundWallTiles.ToArray();
-            s.structureTiles = structureTiles.ToArray();
-            s.objectTiles = objectTiles.ToArray();
-            s.detailTiles = detailTiles.ToArray();
-            s.buildSpots = buildingSpotData;
-            return s;
-        }
-        private void GetBounds(Dictionary<int, Dictionary<int, LocationGridTileSettings>> allSettings, out int minX, out int maxX, out int minY, out int maxY) {
-            minX = 99999;
-            maxX = 0;
-            minY = 99999;
-            maxY = 0;
-            foreach (KeyValuePair<int, Dictionary<int, LocationGridTileSettings>> kvp in allSettings) {
-                if (kvp.Key < minX) { minX = kvp.Key; }
-                else if (kvp.Key > maxX) { maxX = kvp.Key; }
-                foreach (KeyValuePair<int, LocationGridTileSettings> kvp2 in kvp.Value) {
-                    if (kvp2.Key < minY) { minY = kvp2.Key; } 
-                    else if (kvp2.Key > maxY) { maxY = kvp2.Key; }
-                }
-            }
-            maxX += 1;
-            maxY += 1; //because collections start at 0, and I need the max length of the collections.
-        }
-        private Dictionary<int, Dictionary<int, LocationGridTileSettings>> ShiftSettingsBy(Vector2Int shiftBy, Dictionary<int, Dictionary<int, LocationGridTileSettings>> settings) {
-            Dictionary<int, Dictionary<int, LocationGridTileSettings>> shifted = new Dictionary<int, Dictionary<int, LocationGridTileSettings>>();
-            foreach (KeyValuePair<int, Dictionary<int, LocationGridTileSettings>> kvp in settings) {
-                foreach (KeyValuePair<int, LocationGridTileSettings> kvp2 in kvp.Value) {
-                    int shiftedX = kvp.Key + shiftBy.x;
-                    int shiftedY = kvp2.Key + shiftBy.y;
-                    LocationGridTileSettings currSetting = kvp2.Value;
-                    if (!shifted.ContainsKey(shiftedX)) {
-                        shifted.Add(shiftedX, new Dictionary<int, LocationGridTileSettings>());
-                    }
-                    shifted[shiftedX].Add(shiftedY, currSetting);
-                }
-            }
-            return shifted;
-        }
-        public Dictionary<int, Dictionary<int, LocationGridTileSettings>> GenerateTownCenterTemplateForGeneration(StructureTemplate template, Vector3Int startPos) {
-            Dictionary<int, Dictionary<int, LocationGridTileSettings>> generated = new Dictionary<int, Dictionary<int, LocationGridTileSettings>>();
-            for (int i = 0; i < template.groundTiles.Length; i++) {
-                TileTemplateData ground = template.groundTiles[i];
-                Vector3 tilePos = ground.tilePosition;
-
-                BuildingSpotData buildingSpot;
-                bool hasBuildingSpot = template.TryGetBuildingSpotDataAtLocation(tilePos, out buildingSpot);
-
-                tilePos.x += startPos.x;
-                tilePos.y += startPos.y;
-                TileTemplateData detail = template.detailTiles[i];
-                TileTemplateData groundWall;
-                if (template.groundWallTiles != null) {
-                    groundWall = template.groundWallTiles[i];
-                } else {
-                    groundWall = TileTemplateData.Empty;
-                }
-            
-                TileTemplateData structureWall = template.structureWallTiles[i];
-                TileTemplateData obj = template.objectTiles[i];
-                if (!generated.ContainsKey((int)tilePos.x)) {
-                    generated.Add((int)tilePos.x, new Dictionary<int, LocationGridTileSettings>());
-                }
-                generated[(int)tilePos.x].Add((int)tilePos.y, new LocationGridTileSettings() {
-                    groundTile = ground,
-                    groundWallTile = groundWall,
-                    detailTile = detail,
-                    structureWallTile = structureWall,
-                    objectTile = obj,
-                    hasBuildingSpot = hasBuildingSpot,
-                    buildingSpot = buildingSpot
-                });
-            }
-            return generated;
-
         }
         #endregion
 

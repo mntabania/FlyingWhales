@@ -48,14 +48,14 @@ public class PlaceBlueprint : GoapAction {
     public void AfterPlaceSuccess(ActualGoapNode goapNode) {
         STRUCTURE_TYPE structureType = (STRUCTURE_TYPE)goapNode.otherData[0];
         BuildSpotTileObject spot = goapNode.poiTarget as BuildSpotTileObject;
-        spot.PlaceBlueprintOnBuildingSpot(structureType);
+        // spot.PlaceBlueprintOnBuildingSpot(structureType);
 
 
         //create new build job at npcSettlement
-        GoapPlanJob buildJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BUILD_BLUEPRINT, INTERACTION_TYPE.BUILD_STRUCTURE, spot, goapNode.actor.homeSettlement);
-        buildJob.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 50 });
-        buildJob.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeBuildJob);
-        goapNode.actor.homeSettlement.AddToAvailableJobs(buildJob);
+        // GoapPlanJob buildJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BUILD_BLUEPRINT, INTERACTION_TYPE.BUILD_STRUCTURE, spot, goapNode.actor.homeSettlement);
+        // buildJob.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 50 });
+        // buildJob.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeBuildJob);
+        // goapNode.actor.homeSettlement.AddToAvailableJobs(buildJob);
 
         goapNode.actor.buildStructureComponent.OnCreateBlueprint(structureType);
     }

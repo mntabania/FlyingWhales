@@ -23,13 +23,13 @@ namespace Inner_Maps {
             Ruined_Stone
         }
         public bool hasDetail { get; set; }
-        public InnerTileMap parentMap { get; private set; }
-        public Tilemap parentTileMap { get; private set; }
-        public Vector3Int localPlace { get; private set; }
+        public InnerTileMap parentMap { get; }
+        public Tilemap parentTileMap { get; }
+        public Vector3Int localPlace { get; }
         public Vector3 worldLocation { get; private set; }
         public Vector3 centeredWorldLocation { get; private set; }
-        public Vector3 localLocation { get; private set; }
-        public Vector3 centeredLocalLocation { get; private set; }
+        public Vector3 localLocation { get; }
+        public Vector3 centeredLocalLocation { get; }
         public Tile_Type tileType { get; private set; }
         public Tile_State tileState { get; private set; }
         public Ground_Type groundType { get; private set; }
@@ -38,24 +38,24 @@ namespace Inner_Maps {
         private Dictionary<GridNeighbourDirection, LocationGridTile> fourNeighbours { get; set; }
         public List<LocationGridTile> neighbourList { get; private set; }
         public IPointOfInterest objHere { get; private set; }
-        public List<Character> charactersHere { get; private set; }
+        public List<Character> charactersHere { get; }
         public bool isOccupied => tileState == Tile_State.Occupied;
-        public bool isLocked { get; private set; } //if a tile is locked, any asset on it should not be replaced.
         public TILE_OBJECT_TYPE reservedObjectType { get; private set; } //the only type of tile object that can be placed here
         public FurnitureSpot furnitureSpot { get; private set; }
         public bool hasFurnitureSpot { get; private set; }
         public List<Trait> normalTraits => genericTileObject.traitContainer.allTraitsAndStatuses;
         public bool hasBlueprint { get; private set; }
-
         private Color defaultTileColor;
+        public GenericTileObject genericTileObject { get; private set; }
+        public List<StructureWallObject> walls { get; }
+        public LocationGridTileCollection collectionOwner { get; private set; }
+        public bool isCorrupted => groundType == Ground_Type.Corrupted;
 
+        #region Pathfinding
         public List<LocationGridTile> ValidTiles { get { return FourNeighbours().Where(o => o.tileType == Tile_Type.Empty).ToList(); } }
         public List<LocationGridTile> UnoccupiedNeighbours { get { return neighbours.Values.Where(o => !o.isOccupied && o.structure == structure).ToList(); } }
-        public List<LocationGridTile> UnoccupiedNeighboursWithinHex { get { return neighbours.Values.Where(o => !o.isOccupied && o.charactersHere.Count <= 0 && o.structure == structure && o.buildSpotOwner.hexTileOwner == buildSpotOwner.hexTileOwner).ToList(); } }
-
-        public GenericTileObject genericTileObject { get; private set; }
-        public List<StructureWallObject> walls { get; private set; }
-        public bool isCorrupted => groundType == Ground_Type.Corrupted;
+        public List<LocationGridTile> UnoccupiedNeighboursWithinHex { get { return neighbours.Values.Where(o => !o.isOccupied && o.charactersHere.Count <= 0 && o.structure == structure && o.collectionOwner.partOfHextile.hexTileOwner == collectionOwner.partOfHextile.hexTileOwner).ToList(); } }
+        #endregion
         
         public LocationGridTile(int x, int y, Tilemap tilemap, InnerTileMap parentMap) {
             this.parentMap = parentMap;
@@ -69,7 +69,6 @@ namespace Inner_Maps {
             tileState = Tile_State.Empty;
             charactersHere = new List<Character>();
             walls = new List<StructureWallObject>();
-            SetLockedState(false);
             SetReservedType(TILE_OBJECT_TYPE.NONE);
             defaultTileColor = Color.white;
         }
@@ -83,15 +82,49 @@ namespace Inner_Maps {
             centeredWorldLocation = data.centeredWorldLocation;
             tileType = data.tileType;
             tileState = data.tileState;
-            SetLockedState(data.isLocked);
             SetReservedType(data.reservedObjectType);
             charactersHere = new List<Character>();
             walls = new List<StructureWallObject>();
             defaultTileColor = Color.white;
         }
 
+        #region Other Data
+        private Dictionary<GridNeighbourDirection, Point> possibleExits =>
+            new Dictionary<GridNeighbourDirection, Point>() {
+                {GridNeighbourDirection.North, new Point(0,1) },
+                {GridNeighbourDirection.South, new Point(0,-1) },
+                {GridNeighbourDirection.West, new Point(-1,0) },
+                {GridNeighbourDirection.East, new Point(1,0) },
+                {GridNeighbourDirection.North_West, new Point(-1,1) },
+                {GridNeighbourDirection.North_East, new Point(1,1) },
+                {GridNeighbourDirection.South_West, new Point(-1,-1) },
+                {GridNeighbourDirection.South_East, new Point(1,-1) },
+            };
+        public void SetTileType(Tile_Type tileType) {
+            this.tileType = tileType;
+        }
         public void CreateGenericTileObject() {
             genericTileObject = new GenericTileObject();
+        }
+        public void SetCollectionOwner(LocationGridTileCollection _collectionOwner) {
+            collectionOwner = _collectionOwner;
+        }
+        private void SetGroundType(Ground_Type groundType) {
+            this.groundType = groundType;
+            if (genericTileObject != null) {
+                switch (groundType) {
+                    case Ground_Type.Grass:
+                    case Ground_Type.Wood:
+                    case Ground_Type.Sand:
+                    case Ground_Type.Desert_Grass:
+                    case Ground_Type.Soil:
+                        genericTileObject.traitContainer.AddTrait(genericTileObject, "Flammable");
+                        break;
+                    default:
+                        genericTileObject.traitContainer.RemoveTrait(genericTileObject, "Flammable");
+                        break;
+                }
+            }
         }
         public void UpdateWorldLocation() {
             worldLocation = parentTileMap.CellToWorld(localPlace);
@@ -128,37 +161,9 @@ namespace Inner_Maps {
 
             }
         }
-        private Dictionary<GridNeighbourDirection, Point> possibleExits =>
-            new Dictionary<GridNeighbourDirection, Point>() {
-                {GridNeighbourDirection.North, new Point(0,1) },
-                {GridNeighbourDirection.South, new Point(0,-1) },
-                {GridNeighbourDirection.West, new Point(-1,0) },
-                {GridNeighbourDirection.East, new Point(1,0) },
-                {GridNeighbourDirection.North_West, new Point(-1,1) },
-                {GridNeighbourDirection.North_East, new Point(1,1) },
-                {GridNeighbourDirection.South_West, new Point(-1,-1) },
-                {GridNeighbourDirection.South_East, new Point(1,-1) },
-            };
-        public void SetTileType(Tile_Type tileType) {
-            this.tileType = tileType;
-        }
-        private void SetGroundType(Ground_Type groundType) {
-            this.groundType = groundType;
-            if (genericTileObject != null) {
-                switch (groundType) {
-                    case Ground_Type.Grass:
-                    case Ground_Type.Wood:
-                    case Ground_Type.Sand:
-                    case Ground_Type.Desert_Grass:
-                    case Ground_Type.Soil:
-                        genericTileObject.traitContainer.AddTrait(genericTileObject, "Flammable");
-                        break;
-                    default:
-                        genericTileObject.traitContainer.RemoveTrait(genericTileObject, "Flammable");
-                        break;
-                }
-            }
-        }
+        #endregion
+        
+        #region Visuals
         public void UpdateGroundTypeBasedOnAsset() {
             Sprite groundAsset = parentMap.groundTilemap.GetSprite(localPlace);
             Sprite structureAsset = parentMap.structureTilemap.GetSprite(localPlace);
@@ -235,18 +240,6 @@ namespace Inner_Maps {
                 }
             }
         }
-        public bool TryGetNeighbourDirection(LocationGridTile tile, out GridNeighbourDirection dir) {
-            foreach (KeyValuePair<GridNeighbourDirection, LocationGridTile> keyValuePair in neighbours) {
-                if (keyValuePair.Value == tile) {
-                    dir = keyValuePair.Key;
-                    return true;
-                }
-            }
-            dir = GridNeighbourDirection.East;
-            return false;
-        }
-
-        #region Visuals
         public TileBase previousGroundVisual { get; private set; }
         public void SetGroundTilemapVisual(TileBase tileBase) {
             SetPreviousGroundVisual(parentMap.groundTilemap.GetTile(localPlace));
@@ -282,7 +275,7 @@ namespace Inner_Maps {
                     LocationGridTile currNeighbour = keyValuePair.Value;
                     bool createEdge = false;
                     // summary += $"\n\tChecking {currNeighbour.ToString()}. Ground type is {groundType.ToString()}. Neighbour Ground Type is {currNeighbour.groundType.ToString()}";
-                    if (this.groundType != Ground_Type.Cave && currNeighbour.groundType == Ground_Type.Cave) {
+                    if (this.groundType != Ground_Type.Cave && groundType != Ground_Type.Structure_Stone && currNeighbour.groundType == Ground_Type.Cave) {
                         createEdge = true;
                     } else if (currNeighbour.tileType == Tile_Type.Wall || currNeighbour.tileType == Tile_Type.Structure_Entrance) {
                         createEdge = false;
@@ -457,18 +450,20 @@ namespace Inner_Maps {
         #endregion
 
         #region Utilities
+        public bool TryGetNeighbourDirection(LocationGridTile tile, out GridNeighbourDirection dir) {
+            foreach (KeyValuePair<GridNeighbourDirection, LocationGridTile> keyValuePair in neighbours) {
+                if (keyValuePair.Value == tile) {
+                    dir = keyValuePair.Key;
+                    return true;
+                }
+            }
+            dir = GridNeighbourDirection.East;
+            return false;
+        }
         public bool IsAtEdgeOfMap() {
             GridNeighbourDirection[] dirs = CollectionUtilities.GetEnumValues<GridNeighbourDirection>();
             for (int i = 0; i < dirs.Length; i++) {
                 if (!neighbours.ContainsKey(dirs[i])) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        public bool HasNeighborAtEdgeOfMap() {
-            foreach (KeyValuePair<GridNeighbourDirection, LocationGridTile> kvp in neighbours) {
-                if (kvp.Value.IsAtEdgeOfMap()) {
                     return true;
                 }
             }
@@ -505,8 +500,8 @@ namespace Inner_Maps {
                 n = FourNeighboursDictionary();
             }
             for (int i = 0; i < n.Values.Count; i++) {
-                if (neighbours.Values.ElementAt(i).buildSpotOwner.hexTileOwner &&
-                    neighbours.Values.ElementAt(i).buildSpotOwner.hexTileOwner.elevationType == elevation) {
+                if (neighbours.Values.ElementAt(i).collectionOwner.partOfHextile.hexTileOwner &&
+                    neighbours.Values.ElementAt(i).collectionOwner.partOfHextile.hexTileOwner.elevationType == elevation) {
                     return true;
                 }
             }
@@ -656,9 +651,6 @@ namespace Inner_Maps {
             }
             return null;
         }
-        public void SetLockedState(bool state) {
-            isLocked = state;
-        }
         public bool IsAtEdgeOfWalkableMap() {
             if ((localPlace.y == InnerTileMap.SouthEdge && localPlace.x >= InnerTileMap.WestEdge && localPlace.x <= parentMap.width - InnerTileMap.EastEdge - 1)
                 || (localPlace.y == parentMap.height - InnerTileMap.NorthEdge - 1 && localPlace.x >= InnerTileMap.WestEdge && localPlace.x <= parentMap.width - InnerTileMap.EastEdge - 1)
@@ -670,9 +662,6 @@ namespace Inner_Maps {
         }
         public void HighlightTile() {
             parentMap.groundTilemap.SetColor(localPlace, Color.blue);
-        }
-        public void HighlightTile(Color color) {
-            parentMap.groundTilemap.SetColor(localPlace, color);
         }
         public void UnhighlightTile() {
             parentMap.groundTilemap.SetColor(localPlace, defaultTileColor);
@@ -789,18 +778,18 @@ namespace Inner_Maps {
             return count;
         }
         public bool IsPartOfSettlement(out BaseSettlement settlement) {
-            if (buildSpotOwner.isPartOfParentRegionMap && buildSpotOwner.hexTileOwner.settlementOnTile != null) {
-                settlement = buildSpotOwner.hexTileOwner.settlementOnTile;
+            if (collectionOwner.isPartOfParentRegionMap && collectionOwner.partOfHextile.hexTileOwner.settlementOnTile != null) {
+                settlement = collectionOwner.partOfHextile.hexTileOwner.settlementOnTile;
                 return true;
             }
             settlement = null;
             return false;
         }
         public bool IsPartOfSettlement(BaseSettlement settlement) {
-            return buildSpotOwner.isPartOfParentRegionMap && buildSpotOwner.hexTileOwner.settlementOnTile == settlement;
+            return collectionOwner.isPartOfParentRegionMap && collectionOwner.partOfHextile.hexTileOwner.settlementOnTile == settlement;
         }
         public bool IsPartOfSettlement() {
-            return buildSpotOwner.isPartOfParentRegionMap && buildSpotOwner.hexTileOwner.settlementOnTile != null;
+            return collectionOwner.isPartOfParentRegionMap && collectionOwner.partOfHextile.hexTileOwner.settlementOnTile != null;
         }
         public bool IsNextToSettlement(out BaseSettlement settlement) {
             for (int i = 0; i < neighbourList.Count; i++) {
@@ -938,13 +927,10 @@ namespace Inner_Maps {
         #endregion
 
         #region Building
-        public BuildingSpot buildSpotOwner { get; private set; }
         public void SetHasBlueprint(bool hasBlueprint) {
             this.hasBlueprint = hasBlueprint;
         }
-        public void SetBuildSpotOwner(BuildingSpot buildSpot) {
-            buildSpotOwner = buildSpot;
-        }
+      
         #endregion
 
         #region Walls
@@ -1053,7 +1039,6 @@ namespace Inner_Maps {
             furnitureSpot = gridTile.furnitureSpot;
             hasFurnitureSpot = gridTile.hasFurnitureSpot;
             hasDetail = gridTile.hasDetail;
-            isLocked = gridTile.isLocked;
 
             if(gridTile.structure != null) {
                 structureID = gridTile.structure.id;

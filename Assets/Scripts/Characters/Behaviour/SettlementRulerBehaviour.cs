@@ -11,6 +11,7 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
     }
 
     public override bool TryDoBehaviour(Character character, ref string log) {
+        return false;
         log += $"\n-{character.name} will try to place blueprint";
         if (character.isAtHomeRegion && character.homeSettlement != null && character.homeSettlement.GetNumberOfJobsWith(JOB_TYPE.BUILD_BLUEPRINT) < 2 && HasCharacterWithPlaceBlueprintJobInSettlement(character.homeSettlement) == false) {
             log += $"\n-{character.name} will roll for blueprint placement.";
@@ -28,10 +29,10 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
 
                 LocationStructureObject lso = chosenStructurePrefab.GetComponent<LocationStructureObject>();
                 BuildSpotTileObject chosenBuildingSpot;
-                if (character.homeRegion.innerMap.TryGetValidBuildSpotTileObjectForStructure(lso, character.homeSettlement, out chosenBuildingSpot) == false) {
-                    log += $"\n-Could not find spot that can house new structure. Abandoning...";
-                    return false;
-                }
+                // if (character.homeRegion.innerMap.TryGetValidBuildSpotTileObjectForStructure(lso, character.homeSettlement, out chosenBuildingSpot) == false) {
+                //     log += $"\n-Could not find spot that can house new structure. Abandoning...";
+                //     return false;
+                // }
                 log += $"\n-Creating new Place Blueprint job targeting {chosenBuildingSpot.ToString()} at {chosenBuildingSpot.gridTileLocation.ToString()}";
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PLACE_BLUEPRINT, INTERACTION_TYPE.PLACE_BLUEPRINT, chosenBuildingSpot, character);
                 job.AddOtherData(INTERACTION_TYPE.PLACE_BLUEPRINT, new object[] { neededStructure });

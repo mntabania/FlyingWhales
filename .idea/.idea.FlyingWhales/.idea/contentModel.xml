@@ -1428,49 +1428,16 @@
             <e p="ILocation.cs" t="Include" />
             <e p="Inner Maps" t="Include">
               <e p="Area Maps" t="Include">
-                <e p="AreaInnerTileMap.cs" t="Include" />
-                <e p="AreaMapTravelLine.cs" t="Include" />
-                <e p="BiomeTileObjectTileSetting.cs" t="Include" />
-                <e p="Building Spots" t="Include">
-                  <e p="BuildingSpot.cs" t="Include" />
-                  <e p="BuildingSpotItem.cs" t="Include" />
-                </e>
-                <e p="BurningSource.cs" t="Include" />
-                <e p="Location Structures" t="Include">
-                  <e p="CityCenter.cs" t="Include" />
-                  <e p="DemonicPrison.cs" t="Include" />
-                  <e p="Dwelling.cs" t="Include" />
-                  <e p="Goader.cs" t="Include" />
-                  <e p="LocationStructure.cs" t="Include" />
-                  <e p="Structure Objects" t="Include">
-                    <e p="LocationStructureObject.cs" t="Include" />
-                    <e p="TortureChamberStructureObject.cs" t="Include" />
-                  </e>
-                  <e p="TheCrypt.cs" t="Include" />
-                  <e p="TheEye.cs" t="Include" />
-                  <e p="TheKennel.cs" t="Include" />
-                  <e p="ThePortal.cs" t="Include" />
-                  <e p="TheSpire.cs" t="Include" />
-                  <e p="TortureChamber.cs" t="Include" />
-                </e>
-                <e p="LocationStructureSetting.cs" t="Include" />
-                <e p="Miscellaneous" t="Include">
-                  <e p="MarkerDummy.cs" t="Include" />
-                </e>
                 <e p="Structure Template Creator" t="Include">
-                  <e p="BuildingSpotData.cs" t="Include" />
-                  <e p="BuildingSpotDataMonobehaviour.cs" t="Include" />
-                  <e p="FurnitureSpot.cs" t="Include" />
-                  <e p="FurnitureSpotMono.cs" t="Include" />
-                  <e p="LocationGridTileSettings.cs" t="Include" />
-                  <e p="STCManager.cs" t="Include" />
-                  <e p="STCManagerEditor.cs" t="Include" />
-                  <e p="StructureSlot.cs" t="Include" />
                   <e p="StructureTemplateObjectData.cs" t="Include" />
-                  <e p="TownMapSettings.cs" t="Include" />
                 </e>
-                <e p="TileObjectTileSetting.cs" t="Include" />
               </e>
+              <e p="BiomeTileObjectTileSetting.cs" t="Include" />
+              <e p="Building Spots" t="Include">
+                <e p="BuildingSpot.cs" t="Include" />
+                <e p="TileCollectionItem.cs" t="Include" />
+              </e>
+              <e p="BurningSource.cs" t="Include" />
               <e p="Collision Triggers" t="Include">
                 <e p="BaseCollisionTrigger.cs" t="Include" />
                 <e p="CharacterCollisionTrigger.cs" t="Include" />
@@ -1487,12 +1454,36 @@
                 <e p="WallVisual.cs" t="Include" />
               </e>
               <e p="InnerMapAssetManager.cs" t="Include" />
+              <e p="InnerMapHexTile.cs" t="Include" />
               <e p="InnerMapManager.cs" t="Include" />
               <e p="InnerTileMap.cs" t="Include" />
               <e p="Lights" t="Include">
                 <e p="InnerMapLight.cs" t="Include" />
               </e>
+              <e p="Location Structures" t="Include">
+                <e p="CityCenter.cs" t="Include" />
+                <e p="DemonicPrison.cs" t="Include" />
+                <e p="Dwelling.cs" t="Include" />
+                <e p="Farm.cs" t="Include" />
+                <e p="Goader.cs" t="Include" />
+                <e p="LocationStructure.cs" t="Include" />
+                <e p="Lumberyard.cs" t="Include" />
+                <e p="MageQuarter.cs" t="Include" />
+                <e p="Prison.cs" t="Include" />
+                <e p="Structure Objects" t="Include">
+                  <e p="LocationStructureObject.cs" t="Include" />
+                  <e p="StructureTemplate.cs" t="Include" />
+                  <e p="TortureChamberStructureObject.cs" t="Include" />
+                </e>
+                <e p="TheCrypt.cs" t="Include" />
+                <e p="TheEye.cs" t="Include" />
+                <e p="TheKennel.cs" t="Include" />
+                <e p="ThePortal.cs" t="Include" />
+                <e p="TheSpire.cs" t="Include" />
+                <e p="TortureChamber.cs" t="Include" />
+              </e>
               <e p="LocationGridTile.cs" t="Include" />
+              <e p="LocationGridTileCollection.cs" t="Include" />
               <e p="LocationGridTileGUS.cs" t="Include" />
               <e p="Map Objects" t="Include">
                 <e p="Map Object Visuals" t="Include">
@@ -1500,6 +1491,7 @@
                   <e p="BaseMapObject.cs" t="Include" />
                   <e p="BaseMapObjectVisual.cs" t="Include" />
                   <e p="BedObjectGameObject.cs" t="Include" />
+                  <e p="CropGameObject.cs" t="Include" />
                   <e p="FireBallMapObjectVisual.cs" t="Include" />
                   <e p="FrostyFogMapObjectVisual.cs" t="Include" />
                   <e p="LocustSwarmMapObjectVisual.cs" t="Include" />
@@ -1525,11 +1517,14 @@
                   <e p="BlockWall.cs" t="Include" />
                   <e p="Brazier.cs" t="Include" />
                   <e p="BuildSpotTileObject.cs" t="Include" />
+                  <e p="Cage.cs" t="Include" />
                   <e p="Campfire.cs" t="Include" />
                   <e p="Candelabra.cs" t="Include" />
                   <e p="Cauldron.cs" t="Include" />
                   <e p="Chains.cs" t="Include" />
+                  <e p="CornCrop.cs" t="Include" />
                   <e p="Crate.cs" t="Include" />
+                  <e p="Crops.cs" t="Include" />
                   <e p="Desk.cs" t="Include" />
                   <e p="EdiblePlant.cs" t="Include" />
                   <e p="Elemental Crystals" t="Include">
@@ -1615,6 +1610,9 @@
                   <e p="WoodPile.cs" t="Include" />
                 </e>
               </e>
+              <e p="Miscellaneous" t="Include">
+                <e p="MarkerDummy.cs" t="Include" />
+              </e>
               <e p="Projectile Receivers" t="Include">
                 <e p="DefaultProjectileReceiver.cs" t="Include" />
                 <e p="ProjectileReceiver.cs" t="Include" />
@@ -1623,7 +1621,14 @@
               <e p="Region Maps" t="Include">
                 <e p="RegionInnerTileMap.cs" t="Include" />
               </e>
+              <e p="Structure Template Creator" t="Include">
+                <e p="BuildingSpotData.cs" t="Include" />
+                <e p="BuildingSpotDataMonobehaviour.cs" t="Include" />
+                <e p="FurnitureSpot.cs" t="Include" />
+                <e p="FurnitureSpotMono.cs" t="Include" />
+              </e>
               <e p="TileHighlighter.cs" t="Include" />
+              <e p="TileObjectTileSetting.cs" t="Include" />
             </e>
             <e p="InnerMapGeneration.cs" t="Include" />
             <e p="LandmarkManager.cs" t="Include" />

@@ -25,7 +25,7 @@ public class Drink : GoapAction {
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}:";
-        int cost = UtilityScripts.Utilities.rng.Next(80, 121);
+        int cost = UtilityScripts.Utilities.Rng.Next(80, 121);
         costLog += $" +{cost}(Initial)";
         if (actor.traitContainer.HasTrait("Alcoholic")) {
             cost += -15;

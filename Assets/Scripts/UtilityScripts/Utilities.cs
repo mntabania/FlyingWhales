@@ -18,52 +18,26 @@ using UnityEngine.UI;
 
 namespace UtilityScripts {
     public class Utilities : MonoBehaviour {
-        public static System.Random rng = new System.Random();
-        public static int lastKingdomColorIndex = 0;
-        public static int lastFactionColorIndex = 0;
-        public static int lastAlliancePoolID = 0;
-        public static int lastWarfareID = 0;
-        public static int lastLogID = 0;
-        public static int lastLandmarkID = 0;
-        public static int lastFactionID = 0;
-        public static int lastCharacterID = 0;
-        public static int lastItemID = 0;
-        public static int lastAreaID = 0;
-        public static int lastMonsterID = 0;
-        public static int lastPartyID = 0;
-        public static int lastSquadID = 0;
-        //public static int lastCharacterSimID = 0;
-        //public static int lastInteractionID = 0;
-        public static int lastTileObjectID = 0;
-        public static int lastStructureID = 0;
-        public static int lastRegionID = 0;
-        public static int lastJobID = 0;
-        public static int lastBurningSourceID = 0;
-        public static int lastSpecialObjectID = 0;
-        public static int lastBuildSpotID = 0;
-
-        public static float defenseBuff = 1.20f;
-        public static int defaultCityHP = 300;
-
+        public static readonly System.Random Rng = new System.Random();
+        private static int _lastFactionColorIndex;
+        private static int _lastLogID;
+        private static int _lastLandmarkID;
+        private static int _lastFactionID;
+        private static int _lastCharacterID;
+        private static int _lastAreaID;
+        private static int _lastPartyID;
+        private static int _lastTileObjectID;
+        private static int _lastStructureID;
+        private static int _lastRegionID;
+        private static int _lastJobID;
+        private static int _lastBurningSourceID;
+        private static int _lastBuildSpotID;
+        private static int _lastTileCollectionID;
         public static LANGUAGES defaultLanguage = LANGUAGES.ENGLISH;
-        public static string dataPath {
-            get {
-// #if UNITY_EDITOR
-//                 return Application.dataPath + "/Resources/Data/";
-// #elif UNITY_STANDALONE
-            return $"{Application.streamingAssetsPath}/Data/";
-// #endif
-            }
-        }
-        public static string worldConfigsSavePath { get { return $"{Application.persistentDataPath}/Saves/"; } }
-        public static string gameSavePath { get { return $"{Application.persistentDataPath}/GameSaves/"; } }
-        public static string worldConfigsTemplatesPath { get { return
-            $"{Application.streamingAssetsPath}/WorldTemplates/"; } }
-        public static string worldConfigFileExt { get { return ".worldConfig"; } }
-        public static string portraitsSavePath { get { return $"{dataPath}PortraitSettings/"; } }
-        public static string portraitFileExt { get { return ".portraitSetting"; } }
-
-        private static Dictionary<string, string> pluralExceptions = new Dictionary<string, string>() {
+        public static string dataPath => $"{Application.streamingAssetsPath}/Data/";
+        public static string gameSavePath => $"{Application.persistentDataPath}/GameSaves/";
+        
+        private static readonly Dictionary<string, string> pluralExceptions = new Dictionary<string, string>() {
             { "man", "men" },
             { "woman", "women" },
             { "child", "children" },
@@ -74,41 +48,56 @@ namespace UtilityScripts {
         
         public static int SetID<T>(T obj) {
             if (obj is Log) {
-                lastLogID += 1;
-                return lastLogID;
-            } else if (obj is BaseLandmark) {
-                lastLandmarkID += 1;
-                return lastLandmarkID;
-            } else if (obj is Faction) {
-                lastFactionID += 1;
-                return lastFactionID;
-            } else if (obj is Character || obj is PreCharacterData) {
-                lastCharacterID += 1;
-                return lastCharacterID;
-            } else if (obj is BaseSettlement) {
-                lastAreaID += 1;
-                return lastAreaID;
-            } else if (obj is Party) {
-                lastPartyID += 1;
-                return lastPartyID;
-            } else if (obj is TileObject) {
-                lastTileObjectID += 1;
-                return lastTileObjectID;
-            } else if (obj is LocationStructure) {
-                lastStructureID += 1;
-                return lastStructureID;
-            } else if (obj is Region) {
-                lastRegionID += 1;
-                return lastRegionID;
-            } else if (obj is JobQueueItem) {
-                lastJobID += 1;
-                return lastJobID;
-            } else if (obj is BurningSource) {
-                lastBurningSourceID += 1;
-                return lastBurningSourceID;
-            } else if (obj is BuildingSpot) {
-                lastBuildSpotID += 1;
-                return lastBuildSpotID;
+                _lastLogID += 1;
+                return _lastLogID;
+            }
+            if (obj is BaseLandmark) {
+                _lastLandmarkID += 1;
+                return _lastLandmarkID;
+            }
+            if (obj is Faction) {
+                _lastFactionID += 1;
+                return _lastFactionID;
+            }
+            if (obj is Character || obj is PreCharacterData) {
+                _lastCharacterID += 1;
+                return _lastCharacterID;
+            }
+            if (obj is BaseSettlement) {
+                _lastAreaID += 1;
+                return _lastAreaID;
+            }
+            if (obj is Party) {
+                _lastPartyID += 1;
+                return _lastPartyID;
+            }
+            if (obj is TileObject) {
+                _lastTileObjectID += 1;
+                return _lastTileObjectID;
+            }
+            if (obj is LocationStructure) {
+                _lastStructureID += 1;
+                return _lastStructureID;
+            }
+            if (obj is Region) {
+                _lastRegionID += 1;
+                return _lastRegionID;
+            }
+            if (obj is JobQueueItem) {
+                _lastJobID += 1;
+                return _lastJobID;
+            }
+            if (obj is BurningSource) {
+                _lastBurningSourceID += 1;
+                return _lastBurningSourceID;
+            }
+            if (obj is BuildingSpot) {
+                _lastBuildSpotID += 1;
+                return _lastBuildSpotID;
+            }
+            if (obj is LocationGridTileCollection) {
+                _lastTileCollectionID += 1;
+                return _lastTileCollectionID;
             }
             return 0;
         }
@@ -117,27 +106,29 @@ namespace UtilityScripts {
         //This is mostly needed when loading data from save file because we don't know the order it will be loaded so we must be sure that last id is the highest number not the id of the last object to load
         public static int SetID<T>(T obj, int idToUse) {
             if (obj is Log) {
-                if (lastLogID <= idToUse) { lastLogID = idToUse; }
+                if (_lastLogID <= idToUse) { _lastLogID = idToUse; }
             } else if (obj is BaseLandmark) {
-                if (lastLandmarkID <= idToUse) { lastLandmarkID = idToUse; }
+                if (_lastLandmarkID <= idToUse) { _lastLandmarkID = idToUse; }
             } else if (obj is Faction) {
-                if (lastFactionID <= idToUse) { lastFactionID = idToUse; }
+                if (_lastFactionID <= idToUse) { _lastFactionID = idToUse; }
             } else if (obj is Character) {
-                if (lastCharacterID <= idToUse) { lastCharacterID = idToUse; }
+                if (_lastCharacterID <= idToUse) { _lastCharacterID = idToUse; }
             } else if (obj is BaseSettlement) {
-                if (lastAreaID <= idToUse) { lastAreaID = idToUse; }
+                if (_lastAreaID <= idToUse) { _lastAreaID = idToUse; }
             } else if (obj is Party) {
-                if (lastPartyID <= idToUse) { lastPartyID = idToUse; }
+                if (_lastPartyID <= idToUse) { _lastPartyID = idToUse; }
             } else if (obj is LocationStructure) {
-                if (lastStructureID <= idToUse) { lastStructureID = idToUse; }
+                if (_lastStructureID <= idToUse) { _lastStructureID = idToUse; }
             } else if (obj is TileObject) {
-                if (lastTileObjectID <= idToUse) { lastTileObjectID = idToUse; }
+                if (_lastTileObjectID <= idToUse) { _lastTileObjectID = idToUse; }
             } else if (obj is Region) {
-                if (lastRegionID <= idToUse) { lastRegionID = idToUse; }
+                if (_lastRegionID <= idToUse) { _lastRegionID = idToUse; }
             } else if (obj is JobQueueItem) {
-                if (lastJobID <= idToUse) { lastJobID = idToUse; }
+                if (_lastJobID <= idToUse) { _lastJobID = idToUse; }
             } else if (obj is BurningSource) {
-                if (lastBurningSourceID <= idToUse) { lastBurningSourceID = idToUse; }
+                if (_lastBurningSourceID <= idToUse) { _lastBurningSourceID = idToUse; }
+            } else if (obj is LocationGridTileCollection) {
+                if (_lastTileCollectionID <= idToUse) { _lastTileCollectionID = idToUse; }
             }
             return idToUse;
         }
@@ -203,10 +194,10 @@ namespace UtilityScripts {
             //{BIOMES.WOODLAND, new Color(34f/255f, 139f/255f, 34f/255f)}
         };
         public static Color GetColorForFaction() {
-            Color chosenColor = factionColorCycle[lastFactionColorIndex];
-            lastFactionColorIndex += 1;
-            if (lastFactionColorIndex >= factionColorCycle.Length) {
-                lastFactionColorIndex = 0;
+            Color chosenColor = factionColorCycle[_lastFactionColorIndex];
+            _lastFactionColorIndex += 1;
+            if (_lastFactionColorIndex >= factionColorCycle.Length) {
+                _lastFactionColorIndex = 0;
             }
             return chosenColor;
         }
@@ -1099,7 +1090,7 @@ namespace UtilityScripts {
         }
         public static T PickRandomElementWithWeights<T>(Dictionary<T, int> weights) {
             int totalOfAllWeights = GetTotalOfWeights(weights);
-            int chance = rng.Next(0, totalOfAllWeights);
+            int chance = Rng.Next(0, totalOfAllWeights);
             int upperBound = 0;
             int lowerBound = 0;
             foreach (KeyValuePair<T, int> kvp in weights) {
@@ -1118,7 +1109,7 @@ namespace UtilityScripts {
         }
         public static T PickRandomElementWithWeights<T>(Dictionary<T, float> weights) {
             float totalOfAllWeights = GetTotalOfWeights(weights);
-            int chance = rng.Next(0, (int) totalOfAllWeights);
+            int chance = Rng.Next(0, (int) totalOfAllWeights);
             float upperBound = 0;
             float lowerBound = 0;
             foreach (KeyValuePair<T, float> kvp in weights) {
@@ -1392,7 +1383,7 @@ namespace UtilityScripts {
             "Tempest",
         };
         public static SEXUALITY GetCompatibleSexuality(SEXUALITY sexuality) {
-            int chance = rng.Next(0, 100);
+            int chance = Rng.Next(0, 100);
             if (sexuality == SEXUALITY.STRAIGHT) {
                 if (chance < 80) {
                     return SEXUALITY.STRAIGHT;
@@ -1581,11 +1572,11 @@ namespace UtilityScripts {
         #region Dictionary
         public static TValue GetRandomValueFromDictionary<TKey, TValue>(IDictionary<TKey, TValue> dict) {
             List<TValue> values = Enumerable.ToList(dict.Values);
-            return values[rng.Next(dict.Count)];
+            return values[Rng.Next(dict.Count)];
         }
         public static TKey GetRandomKeyFromDictionary<TKey, TValue>(IDictionary<TKey, TValue> dict) {
             List<TKey> keys = Enumerable.ToList(dict.Keys);
-            return keys[rng.Next(dict.Count)];
+            return keys[Rng.Next(dict.Count)];
         }
         #endregion
 
@@ -1593,11 +1584,11 @@ namespace UtilityScripts {
         public static int GetMagicAmountByAbundance(ABUNDANCE abundance) {
             switch (abundance) {
                 case ABUNDANCE.HIGH:
-                    return rng.Next(80,101);
+                    return Rng.Next(80,101);
                 case ABUNDANCE.MED:
-                    return rng.Next(30, 80);
+                    return Rng.Next(30, 80);
                 case ABUNDANCE.LOW:
-                    return rng.Next(5, 30);
+                    return Rng.Next(5, 30);
             }
             return 0;
         }

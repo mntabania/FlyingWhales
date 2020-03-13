@@ -5,10 +5,6 @@ using UnityEngine;
 public class CharacterRelationshipValidator : IRelationshipValidator {
 
     public bool CanHaveRelationship(Relatable character, Relatable target, RELATIONSHIP_TYPE type) {
-        //TODO:
-        //if (target.characterClass.className == "Zombie" || character.characterClass.className == "Zombie") {
-        //    return false; //Zombies cannot create relationships
-        //}
 
         Character targetCharacter = target as Character;
         Character sourceCharacter = character as Character; 

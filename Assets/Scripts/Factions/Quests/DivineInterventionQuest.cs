@@ -110,13 +110,6 @@ public class DivineInterventionQuest : Quest {
     //     }
     // }
     private bool AreThereProfaneLandmarks() {
-        for (int i = 0; i < PlayerManager.Instance.player.playerFaction.ownedSettlements.Count; i++) {
-            //TODO:
-            // BaseLandmark landmark = PlayerManager.Instance.player.playerFaction.ownedSettlements[i].mainLandmark;
-            // if(landmark.specificLandmarkType == LANDMARK_TYPE.THE_PROFANE) {
-            //     return true;
-            // }
-        }
         return false;
     }
     // private void TryCreatePerformHolyIncantationJob() {

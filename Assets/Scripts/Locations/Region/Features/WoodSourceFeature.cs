@@ -58,7 +58,7 @@ public class WoodSourceFeature : TileFeature {
     #endregion
     
     private void OnTileObjectPlaced(TileObject tileObject, LocationGridTile tile) {
-        if (tile.buildSpotOwner.hexTileOwner == owner) {
+        if (tile.collectionOwner.isPartOfParentRegionMap && tile.collectionOwner.partOfHextile.hexTileOwner == owner) {
             if (tileObject.tileObjectType == TILE_OBJECT_TYPE.BIG_TREE_OBJECT) {
                 AdjustBigTreeCount(1);    
             } else if (tileObject.tileObjectType == TILE_OBJECT_TYPE.TREE_OBJECT) {
@@ -68,7 +68,7 @@ public class WoodSourceFeature : TileFeature {
         }
     }
     private void OnTileObjectRemoved(TileObject tileObject, Character character, LocationGridTile tile) {
-        if (tile.buildSpotOwner.hexTileOwner == owner) {
+        if (tile.collectionOwner.isPartOfParentRegionMap && tile.collectionOwner.partOfHextile.hexTileOwner == owner) {
             if (tileObject.tileObjectType == TILE_OBJECT_TYPE.BIG_TREE_OBJECT) {
                 AdjustBigTreeCount(-1);    
             } else if (tileObject.tileObjectType == TILE_OBJECT_TYPE.TREE_OBJECT) {

@@ -134,7 +134,7 @@ public class RitualKilling : GoapAction {
     private bool IsTargetInWildernessOrHome(Character actor, IPointOfInterest target, object[] otherData) {
         if(target is Character) {
             Character targetCharacter = target as Character;
-            return targetCharacter.IsInOwnParty() && (targetCharacter.currentStructure == actor.homeStructure || targetCharacter.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile == null); //targetCharacter.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS || 
+            return targetCharacter.IsInOwnParty() && (targetCharacter.currentStructure == actor.homeStructure || targetCharacter.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile == null); //targetCharacter.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS || 
         }
         return false;
     }

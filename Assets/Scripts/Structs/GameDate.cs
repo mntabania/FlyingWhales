@@ -189,7 +189,7 @@ public struct GameDate {
     }
 
     public string ToStringDate(){
-		return $"{((MONTH) this.month)} {this.day}, {this.year} T: {this.tick}";
+		return $"{((MONTH) this.month).ToString()} {this.day.ToString()}, {this.year.ToString()} T: {this.tick.ToString()}";
 	}
 
     public int ConvertToContinuousDays() {

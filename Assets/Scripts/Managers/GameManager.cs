@@ -76,6 +76,7 @@ public class GameManager : MonoBehaviour {
         // Debug.unityLogger.logEnabled = false;
         Instance = this;
         timeElapsed = 0f;
+        days = 1;
         _gameHasStarted = false;
         InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
     }
@@ -125,7 +126,6 @@ public class GameManager : MonoBehaviour {
     [ContextMenu("Start Progression")]
 	public void StartProgression(){
         _gameHasStarted = true;
-        days = 1;
         UIManager.Instance.Pause();
         lastProgressionBeforePausing = "paused";
         SchedulingManager.Instance.StartScheduleCalls ();

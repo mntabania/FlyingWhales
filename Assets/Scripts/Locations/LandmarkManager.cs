@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections;
+using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
@@ -8,8 +10,10 @@ using Locations.Settlements;
 using UnityEngine.Tilemaps;
 using Unity.Jobs;
 using Unity.Collections;
+using UnityEngine.Assertions;
 using UtilityScripts;
 using Debug = System.Diagnostics.Debug;
+using Random = UnityEngine.Random;
 using ThePortal = Inner_Maps.Location_Structures.ThePortal;
 
 public partial class LandmarkManager : MonoBehaviour {
@@ -78,7 +82,7 @@ public partial class LandmarkManager : MonoBehaviour {
             landmarkDataDict.Add(data.landmarkType, data);
         }
     }
-    public BaseLandmark CreateNewLandmarkOnTile(HexTile location, LANDMARK_TYPE landmarkType, bool addFeatures) {
+    public BaseLandmark CreateNewLandmarkOnTile(HexTile location, LANDMARK_TYPE landmarkType) {
         if (location.landmarkOnTile != null) {
             //Destroy landmark on tile
             DestroyLandmarkOnTile(location);
@@ -395,6 +399,18 @@ public partial class LandmarkManager : MonoBehaviour {
             case STRUCTURE_TYPE.THE_CRYPT:
                 createdStructure = new Inner_Maps.Location_Structures.TheCrypt(location);
                 break;
+            case STRUCTURE_TYPE.FARM:
+                createdStructure = new Farm(location);
+                break;
+            case STRUCTURE_TYPE.MAGE_QUARTERS:
+                createdStructure = new MageQuarter(location);
+                break;
+            case STRUCTURE_TYPE.PRISON:
+                createdStructure = new Prison(location);
+                break;
+            case STRUCTURE_TYPE.LUMBERYARD:
+                createdStructure = new Lumberyard(location);
+                break;
             default:
                 createdStructure = new LocationStructure(type, location);
                 break;
@@ -438,69 +454,35 @@ public partial class LandmarkManager : MonoBehaviour {
         }
         return null;
     }
-    public LANDMARK_TYPE GetLandmarkTypeFor(STRUCTURE_TYPE structureType) {
-        LANDMARK_TYPE parsed;
-        if (System.Enum.TryParse(structureType.ToString(), out parsed)) {
-            return parsed;
-        } else {
-            switch (structureType) {
-                case STRUCTURE_TYPE.CITY_CENTER:
-                    return LANDMARK_TYPE.VILLAGE;
-                default:
-                    return LANDMARK_TYPE.HOUSES;
-            }
+    /// <summary>
+    /// Place structures for settlement. This requires that the settlement has enough unoccupied hex tiles.
+    /// NOTE: This function also creates the LocationStructure instances.
+    /// </summary>
+    /// <param name="settlement">The settlement to create structures for.</param>
+    /// <param name="innerTileMap">The Inner map that the settlement is part of.</param>
+    /// <param name="structureTypes">The structure types to create.</param>
+    public IEnumerator PlaceBuiltStructuresForSettlement(BaseSettlement settlement, InnerTileMap innerTileMap, [NotNull]params STRUCTURE_TYPE[] structureTypes) {
+        for (int i = 0; i < structureTypes.Length; i++) {
+            STRUCTURE_TYPE structureType = structureTypes[i];
+            HexTile chosenTile = settlement.GetRandomUnoccupiedHexTile();
+            Assert.IsNotNull(chosenTile, $"There are no more unoccupied tiles to place structure {structureType.ToString()} for settlement {settlement.name}");
+            PlaceBuiltStructureForSettlement(settlement, innerTileMap, chosenTile, structureType);
+            yield return null;
         }
     }
-    public STRUCTURE_TYPE GetStructureTypeFor(LANDMARK_TYPE landmarkType) {
-        switch (landmarkType) {
-            case LANDMARK_TYPE.HOUSES:
-                return STRUCTURE_TYPE.DWELLING;
-            case LANDMARK_TYPE.VILLAGE:
-                return STRUCTURE_TYPE.CITY_CENTER;
-            default:
-                STRUCTURE_TYPE parsed;
-                if (System.Enum.TryParse(landmarkType.ToString(), out parsed)) {
-                    return parsed;
-                } else {
-                    throw new System.Exception($"There is no corresponding structure type for {landmarkType.ToString()}");
-                }
-        }
-        
-    }
-    public void CreateStructureObjectForLandmark(BaseLandmark landmark, BaseSettlement settlement) {
-        LocationStructure structure = CreateNewStructureAt(landmark.tileLocation.region,
-            GetStructureTypeFor(landmark.specificLandmarkType), settlement);
-        PlayerPlaceStructureObject(structure, landmark.tileLocation.region.innerMap, landmark.tileLocation);
-    }
-    private void PlayerPlaceStructureObject(LocationStructure structure, InnerTileMap innerTileMap, HexTile tile) {
-        if (structure.structureType.ShouldBeGeneratedFromTemplate()) {
-            List<GameObject> choices =
-                InnerMapManager.Instance.GetStructurePrefabsForStructure(structure.structureType);
-            GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
-            LocationStructureObject lso = chosenStructurePrefab.GetComponent<LocationStructureObject>();
-            BuildingSpot chosenBuildingSpot;
-            if (PlayerTryGetBuildSpotForStructureInTile(lso, tile, innerTileMap, out chosenBuildingSpot)) {
-                BuildSpotTileObject buildSpotTileObject = innerTileMap.GetBuildSpotTileObject(chosenBuildingSpot);
-                innerTileMap.PlaceStructureObjectAt(chosenBuildingSpot, chosenStructurePrefab, structure, buildSpotTileObject);
-                structure.structureObj.RegisterPreplacedObjects(structure, innerTileMap);
-                structure.structureObj.RescanPathfindingGridOfStructure();
-            } else {
-                throw new System.Exception(
-                    $"Could not find valid building spot for {structure.ToString()} using prefab {chosenStructurePrefab.name}");
-            }
-        }
-    }
-    public bool PlayerTryGetBuildSpotForStructureInTile(LocationStructureObject structureObject, HexTile currTile, 
-        InnerTileMap innerTileMap, out BuildingSpot spot) {
-        for (int j = 0; j < currTile.ownedBuildSpots.Length; j++) {
-            BuildingSpot currSpot = currTile.ownedBuildSpots[j];
-            if (currSpot.isOccupied == false && currSpot.CanFitStructureOnSpot(structureObject, innerTileMap, "Player")) {
-                spot = currSpot;
-                return true;
-            }
-        }
-        spot = null;
-        return false;
+    /// <summary>
+    /// Place a built structure for a settlement at a given tile.
+    /// NOTE: This function also creates the LocationStructure instances.
+    /// </summary>
+    /// <param name="settlement">The settlement to create structures for.</param>
+    /// <param name="innerTileMap">The Inner map that the settlement is part of.</param>
+    /// <param name="tileLocation">The hextile to place the structure object at</param>
+    /// <param name="structureType">The structure type to create</param>
+    public void PlaceBuiltStructureForSettlement(BaseSettlement settlement, InnerTileMap innerTileMap, HexTile tileLocation, STRUCTURE_TYPE structureType) {
+        List<GameObject> choices =
+            InnerMapManager.Instance.GetStructurePrefabsForStructure(structureType);
+        GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
+        innerTileMap.PlaceBuiltStructureTemplateAt(chosenStructurePrefab, tileLocation, settlement);
     }
     #endregion
 

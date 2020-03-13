@@ -3024,6 +3024,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4273550740523536}
   - component: {fileID: 114957255722321372}
+  - component: {fileID: 625240597537152335}
   m_Layer: 14
   m_Name: Smithy 1
   m_TagString: Untagged
@@ -3059,6 +3060,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ParentPool: {fileID: 0}
+  structureType: 12
   _groundTileMap: {fileID: 8195094279973764112}
   _detailTileMap: {fileID: 8195094282547233350}
   _groundTileMapRenderer: {fileID: 3664157346157841144}
@@ -3078,7 +3080,21 @@ MonoBehaviour:
   bottomWall: {fileID: 1947783289032522, guid: b5a4337534668834fa79811d98de8ed6, type: 3}
   cornerPrefab: {fileID: 1038175435304820, guid: 551abd56996a3a749b77d74c5832fe15,
     type: 3}
-  assetToConsiderAsStructure: {fileID: 0}
+  assetsToConsiderAsStructure: []
+--- !u!114 &625240597537152335
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1337062188325554}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6ecdc22d03840dea1e8820cae0652b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  structureObjects:
+  - {fileID: 114957255722321372}
 --- !u!1 &1342392701538302
 GameObject:
   m_ObjectHideFlags: 0

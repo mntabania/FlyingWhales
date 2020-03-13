@@ -24,7 +24,7 @@ public class PrayTileObject : GoapAction {
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         //**Cost**: randomize between 15 - 55
-        return UtilityScripts.Utilities.rng.Next(15, 56);
+        return UtilityScripts.Utilities.Rng.Next(15, 56);
     }
     public override void AddFillersToLog(Log log, ActualGoapNode node) {
         base.AddFillersToLog(log, node);

@@ -63,7 +63,7 @@ public class BaseLandmark {
     public void ChangeLandmarkType(LANDMARK_TYPE type) {
         if (this.specificLandmarkType.IsPlayerLandmark()) {
             //if provided landmark type is player landmark, then create a new instance instead.
-            LandmarkManager.Instance.CreateNewLandmarkOnTile(tileLocation, type, false);
+            LandmarkManager.Instance.CreateNewLandmarkOnTile(tileLocation, type);
             return;
         }
         _specificLandmarkType = type;

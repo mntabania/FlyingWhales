@@ -78,16 +78,7 @@ public class BuryCharacter : GoapAction {
     #endregion
 
     #region State Effects
-    public void PreBurySuccess(ActualGoapNode goapNode) {
-        //TODO:
-        //if (parentPlan.job != null) {
-        //    if (parentPlan.job.jobType == JOB_TYPE.BURY) {
-        //        currentState.SetIntelReaction(NormalBurySuccessIntelReaction);
-        //    } else if (parentPlan.job.jobType == JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM) {
-        //        currentState.SetIntelReaction(SerialKillerBurySuccessIntelReaction);
-        //    }
-        //}
-    }
+    public void PreBurySuccess(ActualGoapNode goapNode) { }
     public void AfterBurySuccess(ActualGoapNode goapNode) {
         //if (parentPlan.job != null) {
         //    parentPlan.job.SetCannotCancelJob(true);
@@ -109,13 +100,6 @@ public class BuryCharacter : GoapAction {
         Tombstone tombstone = new Tombstone();
         tombstone.SetCharacter(targetCharacter);
         goapNode.actor.currentStructure.AddPOI(tombstone, chosenLocation);
-        //TODO: targetCharacter.CancelAllJobsTargettingThisCharacterExcept(JOB_TYPE.BURY, goapNode.actor);
-        //List<Character> characters = targetCharacter.relationshipContainer.relationships.Keys.Where(x => x is AlterEgoData).Select(x => (x as AlterEgoData).owner).ToList();
-        //if(characters != null) {
-        //    for (int i = 0; i < characters.Count; i++) {
-        //        characters[i].AddAwareness(tombstone);
-        //    }
-        //}
     }
     #endregion
 

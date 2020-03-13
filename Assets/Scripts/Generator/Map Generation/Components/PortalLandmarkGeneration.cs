@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Locations.Settlements;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UtilityScripts;
@@ -24,7 +25,9 @@ public class PortalLandmarkGeneration : MapGenerationComponent {
 			"No valid portal tiles were found!");
 		
 		HexTile portalTile = CollectionUtilities.GetRandomElement(validPortalTiles);
-		BaseLandmark portalLandmark = LandmarkManager.Instance.CreateNewLandmarkOnTile(portalTile, LANDMARK_TYPE.THE_PORTAL, false);
+		BaseLandmark portalLandmark = LandmarkManager.Instance.CreateNewLandmarkOnTile(portalTile, LANDMARK_TYPE.THE_PORTAL);
+		PlayerSettlement playerSettlement = LandmarkManager.Instance.CreateNewPlayerSettlement(portalTile);
+		playerSettlement.SetName("Demonic Intrusion");
 		data.portal = portalLandmark;
 	}
 	private bool HasSettlementNeighbour(HexTile tile) {

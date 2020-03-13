@@ -213,7 +213,7 @@ public enum LANDMARK_TYPE {
     NONE = 0,
     THE_PORTAL = 1,
     WORKSHOP = 4,
-    MINE = 8,
+    ABANDONED_MINE = 8,
     FARM = 17,
     VILLAGE = 20,
     BANDIT_CAMP = 24,
@@ -236,6 +236,7 @@ public enum LANDMARK_TYPE {
     HOUSES,
     TORTURE_CHAMBER,
     DEMONIC_PRISON,
+    MINE,
 }
 public enum TECHNOLOGY {
     //Weapon Production
@@ -1139,7 +1140,7 @@ public enum STRUCTURE_TYPE {
     MAGE_QUARTERS = 20,
     NONE = 21,
     MONSTER_LAIR = 22,
-    MINE = 23,
+    ABANDONED_MINE = 23,
     ANCIENT_RUIN = 24,
     MAGE_TOWER = 25,
     THE_PORTAL = 26,
@@ -1154,7 +1155,10 @@ public enum STRUCTURE_TYPE {
     THE_EYE = 35,
     THE_NEEDLES = 36,
     TORTURE_CHAMBER = 37,
-    DEMONIC_PRISON = 38
+    DEMONIC_PRISON = 38,
+    FARM = 39,
+    LUMBERYARD = 40,
+    MINE = 41,
 }
 public enum RELATIONSHIP_TYPE {
     NONE = 0,
@@ -1267,6 +1271,8 @@ public enum TILE_OBJECT_TYPE {
     OBELISK,
     BALL_LIGHTNING,
     FROSTY_FOG,
+    CORN_CROP,
+    CAGE,
     VAPOR,
     FIRE_BALL,
     HERB_PLANT,
@@ -1598,10 +1604,17 @@ public static class Extensions {
             case STRUCTURE_TYPE.DEMONIC_PRISON:
             case STRUCTURE_TYPE.TORTURE_CHAMBER:
             case STRUCTURE_TYPE.MAGE_TOWER:
-            case STRUCTURE_TYPE.MINE:
+            case STRUCTURE_TYPE.ABANDONED_MINE:
                 return true;
             default:
                 return false;
+        }
+    }
+    public static LANDMARK_TYPE GetLandmarkType(this STRUCTURE_TYPE structureType) {
+        if (System.Enum.TryParse(structureType.ToString(), out LANDMARK_TYPE parsed)) {
+            return parsed;
+        } else {
+            return LANDMARK_TYPE.HOUSES;
         }
     }
     #endregion
@@ -2153,13 +2166,21 @@ public static class Extensions {
                 return false;
         }
     }
-    public static string LandmarkToString(this LANDMARK_TYPE type) {
-        switch (type) {
-            case LANDMARK_TYPE.NONE:
-                return "Empty";
+    public static STRUCTURE_TYPE GetStructureType(this LANDMARK_TYPE landmarkType) {
+        switch (landmarkType) {
+            case LANDMARK_TYPE.HOUSES:
+                return STRUCTURE_TYPE.DWELLING;
+            case LANDMARK_TYPE.VILLAGE:
+                return STRUCTURE_TYPE.CITY_CENTER;
             default:
-                return UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(type.ToString());
+                STRUCTURE_TYPE parsed;
+                if (System.Enum.TryParse(landmarkType.ToString(), out parsed)) {
+                    return parsed;
+                } else {
+                    throw new System.Exception($"There is no corresponding structure type for {landmarkType.ToString()}");
+                }
         }
+        
     }
     #endregion
 
