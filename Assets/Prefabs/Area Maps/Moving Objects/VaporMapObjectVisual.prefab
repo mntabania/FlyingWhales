@@ -865,7 +865,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 28
+      scalar: 15
       minScalar: 10
       maxCurve:
         serializedVersion: 2
@@ -1312,7 +1312,7 @@ ParticleSystem:
         key6: {r: 0, g: 0, b: 0, a: 0}
         key7: {r: 0, g: 0, b: 0, a: 0}
         ctime0: 0
-        ctime1: 46838
+        ctime1: 35273
         ctime2: 65535
         ctime3: 0
         ctime4: 0
@@ -1321,7 +1321,7 @@ ParticleSystem:
         ctime7: 0
         atime0: 0
         atime1: 15035
-        atime2: 47031
+        atime2: 34502
         atime3: 65535
         atime4: 0
         atime5: 0
@@ -1367,9 +1367,9 @@ ParticleSystem:
     fps: 30
     frameOverTime:
       serializedVersion: 2
-      minMaxState: 1
-      scalar: 0.9999
-      minScalar: 0.9999
+      minMaxState: 0
+      scalar: 0
+      minScalar: 0
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -1471,7 +1471,7 @@ ParticleSystem:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
-    speedRange: {x: 0, y: 1}
+    speedRange: {x: 0, y: 2}
     tilesX: 1
     tilesY: 1
     animationType: 0
@@ -3759,7 +3759,7 @@ ParticleSystem:
     radiusScale: 1
   SubModule:
     serializedVersion: 2
-    enabled: 1
+    enabled: 0
     subEmitters:
     - serializedVersion: 3
       emitter: {fileID: 0}
