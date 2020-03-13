@@ -450,22 +450,21 @@ public class LocationStructureObject : PooledObject {
 
                 if (tile != null) {
                     Vector2 centeredPos = new Vector2(worldPos.x + 0.5f, worldPos.y + 0.5f);
-                    GameObject wallGO = null;
                     if (tile.name.Contains("Door")) {
                         continue; //skip
                     }
                     WallVisual wallVisual = null;
                     if (tile.name.Contains("Left")) {
-                        wallVisual = InstantiateWall(leftWall, centeredPos, wallTileMap.transform);
+                        wallVisual = InstantiateWall(leftWall, centeredPos, wallTileMap.transform, _wallResource != RESOURCE.WOOD);
                     } 
                     if (tile.name.Contains("Right")) {
-                        wallVisual = InstantiateWall(rightWall, centeredPos, wallTileMap.transform);
+                        wallVisual = InstantiateWall(rightWall, centeredPos, wallTileMap.transform, _wallResource != RESOURCE.WOOD);
                     }
                     if (tile.name.Contains("Bot")) {
-                        wallVisual = InstantiateWall(bottomWall, centeredPos, wallTileMap.transform);
+                        wallVisual = InstantiateWall(bottomWall, centeredPos, wallTileMap.transform, _wallResource != RESOURCE.WOOD);
                     }
                     if (tile.name.Contains("Top")) {
-                        wallVisual = InstantiateWall(topWall, centeredPos, wallTileMap.transform);
+                        wallVisual = InstantiateWall(topWall, centeredPos, wallTileMap.transform, _wallResource != RESOURCE.WOOD);
                     }
 
                     Vector3 cornerPos = centeredPos;
@@ -486,16 +485,21 @@ public class LocationStructureObject : PooledObject {
                         cornerPos.y += 0.5f;
                         Instantiate(cornerPrefab, cornerPos, Quaternion.identity, wallVisual.transform);
                     }
-                    wallVisual.UpdateWallAssets(_wallResource);
+                    if (_wallResource != RESOURCE.WOOD) {
+                        //only update asset if wall resource is not wood.
+                        wallVisual.UpdateWallAssets(_wallResource);    
+                    }
                 }
             }
         }
     }
-    private WallVisual InstantiateWall(GameObject wallPrefab, Vector3 centeredPos, Transform parent) {
+    private WallVisual InstantiateWall(GameObject wallPrefab, Vector3 centeredPos, Transform parent, bool updateWallAsset) {
         GameObject wallGO = Instantiate(wallPrefab, parent);
         wallGO.transform.position = centeredPos;
         WallVisual wallVisual = wallGO.GetComponent<WallVisual>();
-        wallVisual.UpdateWallAssets(_wallResource);
+        if (updateWallAsset) {
+            wallVisual.UpdateWallAssets(_wallResource);    
+        }
         return wallVisual;
     }
 

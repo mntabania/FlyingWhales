@@ -480,6 +480,21 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             case STRUCTURE_TYPE.CEMETERY:
                 classManager.AddCombatantClass("Stalker");
                 break;
+            case STRUCTURE_TYPE.HUNTER_LODGE:
+                classManager.AddCombatantClass("Hunter");
+                break;
+            case STRUCTURE_TYPE.PRISON:
+                classManager.AddCombatantClass("Knight");
+                break;
+            case STRUCTURE_TYPE.MAGE_QUARTERS:
+                classManager.AddCombatantClass("Mage");
+                break;
+            case STRUCTURE_TYPE.APOTHECARY:
+                classManager.AddCombatantClass("Shaman");
+                break;
+            case STRUCTURE_TYPE.MINE:
+                classManager.AddCivilianClass("Miner");
+                break;
         }
     }
     protected override void OnStructureRemoved(LocationStructure structure) {
@@ -494,6 +509,21 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                 break;
             case STRUCTURE_TYPE.CEMETERY:
                 classManager.RemoveCombatantClass("Stalker");
+                break;
+            case STRUCTURE_TYPE.HUNTER_LODGE:
+                classManager.RemoveCombatantClass("Hunter");
+                break;
+            case STRUCTURE_TYPE.PRISON:
+                classManager.RemoveCombatantClass("Knight");
+                break;
+            case STRUCTURE_TYPE.MAGE_QUARTERS:
+                classManager.RemoveCombatantClass("Mage");
+                break;
+            case STRUCTURE_TYPE.APOTHECARY:
+                classManager.RemoveCombatantClass("Shaman");
+                break;
+            case STRUCTURE_TYPE.MINE:
+                classManager.RemoveCivilianClass("Miner");
                 break;
         }
     }

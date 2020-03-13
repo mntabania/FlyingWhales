@@ -50,6 +50,15 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
                 hoverObject.sortingLayerName = "Area Maps";
                 hoverObject.sortingOrder = objectVisual.sortingOrder - 1;    
             }   
+        } else if (obj.tileObjectType == TILE_OBJECT_TYPE.MAGIC_CIRCLE) {
+            if (objectVisual != null) {
+                objectVisual.sortingLayerName = "Area Maps";
+                objectVisual.sortingOrder = InnerMapManager.DetailsTilemapSortingOrder - 1;    
+            }
+            if (hoverObject != null) {
+                hoverObject.sortingLayerName = "Area Maps";
+                hoverObject.sortingOrder = objectVisual.sortingOrder - 1;    
+            }   
         } else {
             base.UpdateSortingOrders(obj);
         }

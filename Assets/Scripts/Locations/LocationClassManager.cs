@@ -10,11 +10,17 @@ public class LocationClassManager {
     private int numberOfRotations;
     private Dictionary<string, LocationClassNumberGuide> characterClassGuide;
     public Dictionary<string, int> combatantClasses { get; }
+    public Dictionary<string, int> civilianClasses { get; }
     public LocationClassManager() {
         currentIndex = 0;
         startLoopIndex = 5;
         numberOfRotations = 0;
         combatantClasses = new Dictionary<string, int>();
+        civilianClasses = new Dictionary<string, int>() {
+            {"Peasant", 1},
+            {"Craftsman", 1},
+        };
+            
         CreateCharacterClassOrderAndGuide();
     }
     public string GetCurrentClassToCreate() {
@@ -40,7 +46,20 @@ public class LocationClassManager {
                 combatantClasses.Remove(className);
             }
         }
-        
+    }
+    public void AddCivilianClass(string className) {
+        if (civilianClasses.ContainsKey(className) == false) {
+            civilianClasses.Add(className, 0);
+        }
+        civilianClasses[className] += 1;
+    }
+    public void RemoveCivilianClass(string className) {
+        if (civilianClasses.ContainsKey(className)) {
+            civilianClasses[className] -= 1;
+            if (civilianClasses[className] <= 0) {
+                civilianClasses.Remove(className);
+            }
+        }
     }
     private string GetClassToCreate(int index) {
         string currentClass = characterClassOrder[index];
@@ -50,16 +69,15 @@ public class LocationClassManager {
             currentClass = UtilityScripts.CollectionUtilities.GetRandomElement(combatantClasses.Keys);
         }
         else if (currentClass == "Civilian") {
-            int i = UnityEngine.Random.Range(0, 3);
-            if (i == 0) {
-                currentClass = "Miner";
-            }
-            else if (i == 0) {
-                currentClass = "Peasant";
-            }
-            else {
-                currentClass = "Craftsman";
-            }
+            currentClass = UtilityScripts.CollectionUtilities.GetRandomElement(civilianClasses.Keys);
+            // int i = UnityEngine.Random.Range(0, 3);
+            // if (i == 0) {
+            //     currentClass = "Miner";
+            // } else if (i == 1) {
+            //     currentClass = "Peasant";
+            // } else {
+            //     currentClass = "Craftsman";
+            // }
         }
         return currentClass;
     }
