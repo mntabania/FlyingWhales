@@ -17,14 +17,6 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	private bool hasStartedScreamCheck;
 
     public Dictionary<GoapAction, int> numOfTimesActionDone { get; private set; }
-
-    private string[] removeStatusTraits = new[] {
-		nameof(Unconscious), nameof(Injured), nameof(Sick), nameof(Plagued),
-		nameof(Infected), nameof(Cursed)
-	};
-	private string[] specialIllnessTraits = new[] {
-		nameof(Sick), nameof(Plagued), nameof(Infected)
-	};
 	
 	public CharacterJobTriggerComponent(Character owner) {
 		_owner = owner;
@@ -110,7 +102,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	}
 	private void OnTraitableGainedTrait(ITraitable traitable, Trait trait) {
 		if (traitable == _owner) {
-			if (removeStatusTraits.Contains(trait.name)) {
+			if (TraitManager.Instance.removeStatusTraits.Contains(trait.name)) {
 				TryCreateRemoveStatusJob(trait);
 			}
 			TryStartScreamCheck();
@@ -119,7 +111,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	private void OnTraitableLostTrait(ITraitable traitable, Trait trait, Character removedBy) {
 		if (traitable == _owner) {
 			TryStopScreamCheck();
-			if (removeStatusTraits.Contains(nameof(trait))) {
+			if (TraitManager.Instance.removeStatusTraits.Contains(nameof(trait))) {
 				_owner.ForceCancelAllJobsTargettingThisCharacterExcept(JOB_TYPE.REMOVE_STATUS, trait.name, removedBy); //so that the character that cured him will not cancel his job.
 			}
 		}
@@ -292,7 +284,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 				bool isResponsibleForTrait = trait.IsResponsibleForTrait(character);
 
 				//if special illness, check if character is healer
-				if (specialIllnessTraits.Contains(nameof(trait))) {
+				if (TraitManager.Instance.specialIllnessTraits.Contains(nameof(trait))) {
 					return isHostile == false &&
 					       character.relationshipContainer.HasOpinionLabelWithCharacter(targetCharacter,
 						       OpinionComponent.Rival, OpinionComponent.Enemy) == false 
@@ -391,7 +383,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	private void TryCreateRemoveStatusJob() {
 		if (_owner.homeSettlement != null && _owner.gridTileLocation.IsNextToOrPartOfSettlement(_owner.homeSettlement)
 		    && _owner.traitContainer.HasTrait("Criminal") == false) {
-			List<Trait> statusTraits = _owner.traitContainer.GetNormalTraits<Trait>(this.removeStatusTraits);
+			List<Trait> statusTraits = _owner.traitContainer.GetNormalTraits<Trait>(TraitManager.Instance.removeStatusTraits);
 			for (int i = 0; i < statusTraits.Count; i++) {
 				Trait trait = statusTraits[i];
 				TryCreateRemoveStatusJob(trait);

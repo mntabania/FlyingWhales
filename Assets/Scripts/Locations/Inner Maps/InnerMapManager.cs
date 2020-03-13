@@ -62,6 +62,9 @@ namespace Inner_Maps {
         public List<LocationGridTile> currentlyHighlightedTiles { get; private set; }
         private LocationGridTile lastClickedTile;
 
+        public TILE_OBJECT_TYPE[] tileObjectsThatAreItems =
+            new[] { TILE_OBJECT_TYPE.HEALING_POTION, TILE_OBJECT_TYPE.ANTIDOTE, TILE_OBJECT_TYPE.TOOL, TILE_OBJECT_TYPE.EMBER, TILE_OBJECT_TYPE.WATER_FLASK, TILE_OBJECT_TYPE.POISON_FLASK, };
+
         #region Monobehaviours
         private void Awake() {
             Instance = this;
@@ -654,6 +657,18 @@ namespace Inner_Maps {
             }
             for (int i = 0; i < 2; i++) {
                 mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.TOOL));
+            }
+            for (int i = 0; i < 2; i++) {
+                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.ANTIDOTE));
+            }
+            for (int i = 0; i < 2; i++) {
+                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.WATER_FLASK));
+            }
+            for (int i = 0; i < 2; i++) {
+                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.POISON_FLASK));
+            }
+            for (int i = 0; i < 2; i++) {
+                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.EMBER));
             }
         }
         #endregion

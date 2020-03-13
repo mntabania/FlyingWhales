@@ -121,7 +121,7 @@ public class DouseFireState : CharacterState {
         }
     }
     private bool HasWater() {
-        return stateComponent.character.HasItem(TILE_OBJECT_TYPE.WATER_BUCKET);
+        return stateComponent.character.HasItem(TILE_OBJECT_TYPE.WATER_FLASK);
     }
     private bool NeedsWater() {
         return true; //!stateComponent.character.traitContainer.HasTrait("Elemental Master");
@@ -155,9 +155,9 @@ public class DouseFireState : CharacterState {
     }
     private void ObtainWater() {
         //character gains 3 water buckets
-        stateComponent.character.ObtainItem(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.WATER_BUCKET));
-        stateComponent.character.ObtainItem(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.WATER_BUCKET));
-        stateComponent.character.ObtainItem(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.WATER_BUCKET));
+        stateComponent.character.ObtainItem(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.WATER_FLASK));
+        stateComponent.character.ObtainItem(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.WATER_FLASK));
+        stateComponent.character.ObtainItem(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.WATER_FLASK));
         isFetchingWater = false; 
     }
     private void DouseNearestFire() {
@@ -197,7 +197,7 @@ public class DouseFireState : CharacterState {
     private void DouseFire() {
         if (currentTarget.traitContainer.RemoveTrait(currentTarget, "Burning", removedBy: this.stateComponent.character)) {
             if (NeedsWater()) {
-                TileObject water = this.stateComponent.character.GetItem(TILE_OBJECT_TYPE.WATER_BUCKET);
+                TileObject water = this.stateComponent.character.GetItem(TILE_OBJECT_TYPE.WATER_FLASK);
                 if (water != null) {
                     //Reduce water count by 1.
                     this.stateComponent.character.UnobtainItem(water);
