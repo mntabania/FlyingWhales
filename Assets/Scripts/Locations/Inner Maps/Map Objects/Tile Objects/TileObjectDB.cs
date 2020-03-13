@@ -70,7 +70,22 @@ public static class TileObjectDB {
             constructionCost = 25,
             constructionTime = 12,
             maxHP = 1000,
-            neededTraitTypes = new string[] { "Healing Expert", "Herbalist" },
+            neededTraitTypes = null,
+            itemRequirementsForCreation = new[] { TILE_OBJECT_TYPE.WATER_FLASK, TILE_OBJECT_TYPE.HERB_PLANT },
+        } },
+        { TILE_OBJECT_TYPE.POISON_FLASK, new TileObjectData() {
+            constructionCost = 10,
+            constructionTime = 12,
+            maxHP = 1000,
+            neededTraitTypes = null,
+            itemRequirementsForCreation = new[] { TILE_OBJECT_TYPE.WATER_FLASK, TILE_OBJECT_TYPE.HERB_PLANT },
+        } },
+         { TILE_OBJECT_TYPE.ANTIDOTE, new TileObjectData() {
+            constructionCost = 10,
+            constructionTime = 12,
+            maxHP = 1000,
+            neededTraitTypes = null,
+            itemRequirementsForCreation = new[] { TILE_OBJECT_TYPE.POISON_FLASK },
         } },
         { TILE_OBJECT_TYPE.LOCUST_SWARM, new TileObjectData() {
             maxHP = 100,
@@ -108,6 +123,7 @@ public struct TileObjectData {
     public int constructionTime; //in ticks
     public int maxHP;
     public string[] neededTraitTypes;
+    public TILE_OBJECT_TYPE[] itemRequirementsForCreation;
     public ProvidedFacility[] providedFacilities;
     //when this object is placed, how many tiles does it occupy? (Default is 0,0) meaning this object only occupies 1 tile.
     public Point occupiedSize; 
@@ -132,6 +148,7 @@ public struct TileObjectData {
                 neededTraitTypes = new string[] { "Builder" },
                 providedFacilities = null,
                 occupiedSize = new Point(1, 1),
+                itemRequirementsForCreation = null,
             };
         }
     }

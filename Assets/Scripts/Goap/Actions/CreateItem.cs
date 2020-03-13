@@ -17,7 +17,7 @@ public class CreateItem : GoapAction {
             TILE_OBJECT_TYPE itemType = InnerMapManager.Instance.tileObjectsThatAreItems[i];
             AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(itemType.ToString()), false, GOAP_EFFECT_TARGET.ACTOR));
         }
-        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Wood Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasSupply);
+        //AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Wood Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasSupply);
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
@@ -31,7 +31,7 @@ public class CreateItem : GoapAction {
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}:";
-        int cost = UtilityScripts.Utilities.rng.Next(150, 201);
+        int cost = UtilityScripts.Utilities.Rng.Next(150, 201);
         costLog += $" +{cost}(Initial)";
         actor.logComponent.AppendCostLog(costLog);
         return cost;

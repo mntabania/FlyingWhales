@@ -257,6 +257,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.CRAFT_TILE_OBJECT, new[]{
             new StateNameAndDuration(){ name = "Craft Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
         } },
+        {INTERACTION_TYPE.CREATE_ITEM, new[]{
+            new StateNameAndDuration(){ name = "Create Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
         {INTERACTION_TYPE.PRAY_TILE_OBJECT, new[]{
             new StateNameAndDuration(){ name = "Pray Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1) },
         } },
