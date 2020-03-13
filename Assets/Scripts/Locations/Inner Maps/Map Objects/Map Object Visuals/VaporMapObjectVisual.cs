@@ -105,7 +105,7 @@ public class VaporMapObjectVisual : MovingMapObjectVisual<TileObject> {
         //    scaleSize = _size + 1;
         //}
         this.gameObject.transform.localScale = new Vector3(_size, _size, 1f);
-        _vaporEffect.transform.localScale = new Vector3(_size, _size, 1f);
+        _vaporEffect.transform.localScale = new Vector3(_size, _size, _size);
     }
     private void Effect() {
         if (gridTileLocation != null) {
