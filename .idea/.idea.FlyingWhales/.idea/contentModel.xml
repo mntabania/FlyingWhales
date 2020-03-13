@@ -1553,6 +1553,7 @@
                   <e p="Grave.cs" t="Include" />
                   <e p="Guitar.cs" t="Include" />
                   <e p="HealingPotion.cs" t="Include" />
+                  <e p="HerbPlant.cs" t="Include" />
                   <e p="IronMaiden.cs" t="Include" />
                   <e p="Kindling.cs" t="Include" />
                   <e p="LocustSwarmTileObject.cs" t="Include" />
