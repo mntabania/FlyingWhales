@@ -61,8 +61,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2405244482665803168}
-  - {fileID: 6247113924894880538}
-  - {fileID: 1548989475226882221}
+  - {fileID: 6250084277241536965}
+  - {fileID: 1544486040454910628}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -80,8 +80,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ParentPool: {fileID: 0}
   structureObjects:
-  - {fileID: 6281194699484773790}
-  - {fileID: 1511585732994112161}
+  - {fileID: 6250084277241522511}
+  - {fileID: 1544486040454897839}
   - {fileID: 4877072596177471119}
 --- !u!1 &1506610190153816
 GameObject:
@@ -1491,7 +1491,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fd7182b7dcb98949856eb51bac9ae25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileObjectType: 90
+  tileObjectType: 92
   spriteRenderer: {fileID: 89300331158266543}
 --- !u!212 &89300331158266543
 SpriteRenderer:
@@ -1683,7 +1683,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fd7182b7dcb98949856eb51bac9ae25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileObjectType: 90
+  tileObjectType: 92
   spriteRenderer: {fileID: 119004620895952268}
 --- !u!212 &119004620895952268
 SpriteRenderer:
@@ -1971,7 +1971,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fd7182b7dcb98949856eb51bac9ae25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileObjectType: 90
+  tileObjectType: 92
   spriteRenderer: {fileID: 8081230324381425145}
 --- !u!212 &8081230324381425145
 SpriteRenderer:
@@ -2067,7 +2067,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fd7182b7dcb98949856eb51bac9ae25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileObjectType: 90
+  tileObjectType: 92
   spriteRenderer: {fileID: 1532894318641523536}
 --- !u!212 &1532894318641523536
 SpriteRenderer:
@@ -2163,7 +2163,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fd7182b7dcb98949856eb51bac9ae25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileObjectType: 90
+  tileObjectType: 92
   spriteRenderer: {fileID: 7156478230929200622}
 --- !u!212 &7156478230929200622
 SpriteRenderer:
@@ -2259,7 +2259,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fd7182b7dcb98949856eb51bac9ae25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileObjectType: 90
+  tileObjectType: 92
   spriteRenderer: {fileID: 8087644002774427781}
 --- !u!212 &8087644002774427781
 SpriteRenderer:
@@ -2451,7 +2451,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fd7182b7dcb98949856eb51bac9ae25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileObjectType: 90
+  tileObjectType: 92
   spriteRenderer: {fileID: 8423444644165776667}
 --- !u!212 &8423444644165776667
 SpriteRenderer:
@@ -2547,7 +2547,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fd7182b7dcb98949856eb51bac9ae25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileObjectType: 90
+  tileObjectType: 92
   spriteRenderer: {fileID: 7699266396687307794}
 --- !u!212 &7699266396687307794
 SpriteRenderer:
@@ -2739,7 +2739,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fd7182b7dcb98949856eb51bac9ae25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileObjectType: 90
+  tileObjectType: 92
   spriteRenderer: {fileID: 1580122638250659463}
 --- !u!212 &1580122638250659463
 SpriteRenderer:
@@ -2835,7 +2835,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fd7182b7dcb98949856eb51bac9ae25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileObjectType: 90
+  tileObjectType: 92
   spriteRenderer: {fileID: 8552078933069440662}
 --- !u!212 &8552078933069440662
 SpriteRenderer:
@@ -2931,7 +2931,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fd7182b7dcb98949856eb51bac9ae25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileObjectType: 90
+  tileObjectType: 92
   spriteRenderer: {fileID: 1751094680286316542}
 --- !u!212 &1751094680286316542
 SpriteRenderer:
@@ -3027,7 +3027,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fd7182b7dcb98949856eb51bac9ae25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileObjectType: 90
+  tileObjectType: 92
   spriteRenderer: {fileID: 7583972012039391468}
 --- !u!212 &7583972012039391468
 SpriteRenderer:
@@ -3219,7 +3219,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fd7182b7dcb98949856eb51bac9ae25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileObjectType: 90
+  tileObjectType: 92
   spriteRenderer: {fileID: 1341545772696762878}
 --- !u!212 &1341545772696762878
 SpriteRenderer:
@@ -3415,7 +3415,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fd7182b7dcb98949856eb51bac9ae25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileObjectType: 90
+  tileObjectType: 92
   spriteRenderer: {fileID: 4138615552132961747}
 --- !u!212 &4138615552132961747
 SpriteRenderer:
@@ -3511,7 +3511,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fd7182b7dcb98949856eb51bac9ae25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileObjectType: 90
+  tileObjectType: 92
   spriteRenderer: {fileID: 476974212436776484}
 --- !u!212 &476974212436776484
 SpriteRenderer:
@@ -3607,7 +3607,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fd7182b7dcb98949856eb51bac9ae25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileObjectType: 90
+  tileObjectType: 92
   spriteRenderer: {fileID: 7391266450211426114}
 --- !u!212 &7391266450211426114
 SpriteRenderer:
@@ -3742,13 +3742,13 @@ PrefabInstance:
         type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d2c2cf637970237418614bb4a0293668, type: 3}
---- !u!4 &1548989475226882221 stripped
+--- !u!4 &1544486040454910628 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4504039566536522, guid: d2c2cf637970237418614bb4a0293668,
     type: 3}
   m_PrefabInstance: {fileID: 1544486040454922215}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1511585732994112161 stripped
+--- !u!114 &1544486040454897839 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 114040151217595718, guid: d2c2cf637970237418614bb4a0293668,
     type: 3}
@@ -3817,13 +3817,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 191a9e123946de349a254ec4c008d174, type: 3}
---- !u!4 &6247113924894880538 stripped
+--- !u!4 &6250084277241536965 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4212835542186378, guid: 191a9e123946de349a254ec4c008d174,
     type: 3}
   m_PrefabInstance: {fileID: 6250084277241531024}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &6281194699484773790 stripped
+--- !u!114 &6250084277241522511 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 114713997552875278, guid: 191a9e123946de349a254ec4c008d174,
     type: 3}

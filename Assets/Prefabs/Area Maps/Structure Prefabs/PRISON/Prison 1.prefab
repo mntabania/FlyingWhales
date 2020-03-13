@@ -8785,7 +8785,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fd7182b7dcb98949856eb51bac9ae25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileObjectType: 91
+  tileObjectType: 93
   spriteRenderer: {fileID: 3508428187780861541}
 --- !u!212 &3508428187780861541
 SpriteRenderer:
@@ -9477,7 +9477,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fd7182b7dcb98949856eb51bac9ae25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileObjectType: 91
+  tileObjectType: 93
   spriteRenderer: {fileID: 375815271495418548}
 --- !u!212 &375815271495418548
 SpriteRenderer:
@@ -13721,7 +13721,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fd7182b7dcb98949856eb51bac9ae25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileObjectType: 91
+  tileObjectType: 93
   spriteRenderer: {fileID: 4223839220700686739}
 --- !u!212 &4223839220700686739
 SpriteRenderer:
@@ -16959,7 +16959,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fd7182b7dcb98949856eb51bac9ae25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileObjectType: 91
+  tileObjectType: 93
   spriteRenderer: {fileID: 2975998347196217767}
 --- !u!212 &2975998347196217767
 SpriteRenderer:
@@ -28761,16 +28761,23 @@ MonoBehaviour:
   - {x: 3, y: 3, z: 0}
   - {x: 3, y: 4, z: 0}
   - {x: 3, y: 5, z: 0}
+  - {x: 3, y: 6, z: 0}
   - {x: 4, y: 1, z: 0}
+  - {x: 4, y: 2, z: 0}
+  - {x: 4, y: 3, z: 0}
   - {x: 4, y: 4, z: 0}
   - {x: 4, y: 5, z: 0}
   - {x: 4, y: 6, z: 0}
   - {x: 5, y: 1, z: 0}
+  - {x: 5, y: 2, z: 0}
+  - {x: 5, y: 3, z: 0}
   - {x: 5, y: 4, z: 0}
   - {x: 5, y: 5, z: 0}
   - {x: 5, y: 6, z: 0}
   - {x: 5, y: 7, z: 0}
   - {x: 6, y: 1, z: 0}
+  - {x: 6, y: 2, z: 0}
+  - {x: 6, y: 3, z: 0}
   - {x: 6, y: 4, z: 0}
   - {x: 6, y: 5, z: 0}
   - {x: 6, y: 6, z: 0}
