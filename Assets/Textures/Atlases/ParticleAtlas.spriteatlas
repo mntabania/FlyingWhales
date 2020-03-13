@@ -31,32 +31,36 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: c56691e3000aa5f46b6b0f833f973a16, type: 3}
-    totalSpriteSurfaceArea: 3412163
+    totalSpriteSurfaceArea: 2922355
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
   - {fileID: 21300000, guid: 03f922f01adc19d41aa73c7069b6385a, type: 3}
   - {fileID: 21300000, guid: e625d2112e65e5d4598da6c9a4dcf027, type: 3}
-  - {fileID: 21300000, guid: cd44e8a14c00aa440b6523200372dd8f, type: 3}
   - {fileID: 21300000, guid: bcedcd336812143469de94f1047a485a, type: 3}
-  - {fileID: 21300000, guid: 50f3d5c3acbe14648953ed838aaff9eb, type: 3}
   - {fileID: 21300000, guid: 2dafc0552dfedc049b5c836617dbd809, type: 3}
   - {fileID: 21300000, guid: 822d07f56afeab6449b5a8b2a2609329, type: 3}
   - {fileID: 21300002, guid: 822d07f56afeab6449b5a8b2a2609329, type: 3}
   - {fileID: 21300004, guid: 822d07f56afeab6449b5a8b2a2609329, type: 3}
   - {fileID: 21300006, guid: 822d07f56afeab6449b5a8b2a2609329, type: 3}
   - {fileID: 21300000, guid: d9d07d0664286aa479d80f21299a5707, type: 3}
-  - {fileID: 21300000, guid: b2cce926cb5f16d45a64fe0e81f13b24, type: 3}
   - {fileID: 21300000, guid: 97100a36482594f42bae6772c15c234a, type: 3}
   - {fileID: 21300000, guid: db22bcb60b54327448252d5872a364ba, type: 3}
-  - {fileID: 21300000, guid: 53b3e388271d202489bac2fc675e9ff5, type: 3}
-  - {fileID: 21300000, guid: 712a3cb8586d9054da97498a7bfa69ea, type: 3}
+  - {fileID: -3806534225411411051, guid: 1b0fefb6083e4a54d8c909e7e05630fc, type: 3}
+  - {fileID: 729556638714886960, guid: 1b0fefb6083e4a54d8c909e7e05630fc, type: 3}
+  - {fileID: -2802718849653357837, guid: 1b0fefb6083e4a54d8c909e7e05630fc, type: 3}
+  - {fileID: 7678009043313907128, guid: bc315589168f8c54a87217490097188e, type: 3}
+  - {fileID: 3886402811268346934, guid: bc315589168f8c54a87217490097188e, type: 3}
+  - {fileID: -4397085772097549116, guid: bc315589168f8c54a87217490097188e, type: 3}
   - {fileID: 21300000, guid: 5e029a996e769784898c1a44b6ba0429, type: 3}
   - {fileID: 21300002, guid: 5e029a996e769784898c1a44b6ba0429, type: 3}
   - {fileID: 4487587328139191825, guid: 06241baa476e1d34da9eb48d6badce14, type: 3}
   - {fileID: 3329742001649244855, guid: 06241baa476e1d34da9eb48d6badce14, type: 3}
   - {fileID: -3537241893320760627, guid: 06241baa476e1d34da9eb48d6badce14, type: 3}
   - {fileID: 5182779116082219118, guid: 06241baa476e1d34da9eb48d6badce14, type: 3}
+  - {fileID: 5673878763007588012, guid: 79ddc45d4b085df45b56143ef830b5cb, type: 3}
+  - {fileID: 6620456628816267292, guid: 79ddc45d4b085df45b56143ef830b5cb, type: 3}
+  - {fileID: -4457272525922876107, guid: 79ddc45d4b085df45b56143ef830b5cb, type: 3}
   - {fileID: 21300000, guid: 9eed63ed936727247a6fd71e45c733e3, type: 3}
   - {fileID: 21300000, guid: 3e1de46e0511b664281c6eecfdbca1fd, type: 3}
   - {fileID: 5670804094069126787, guid: c9dfc78e95bc8964ba352cabe0c04c14, type: 3}
@@ -67,26 +71,30 @@ SpriteAtlas:
   m_PackedSpriteNamesToIndex:
   - Vapor 3
   - point_of_light
-  - Poison_Cloud_2
   - Fire Ball
-  - Poison_Cloud_4
   - sparkle_particle_black
   - a3d06b4810f09b76556df0bd394ec571_0
   - a3d06b4810f09b76556df0bd394ec571_1
   - a3d06b4810f09b76556df0bd394ec571_2
   - a3d06b4810f09b76556df0bd394ec571_3
   - Vapor 2
-  - Poison_Cloud_3
   - sparkle_particle1
   - Vapor 1
-  - Poison_Cloud_1
-  - Poison_Cloud_5
+  - Frosty Fog_2
+  - Frosty Fog_1
+  - Frosty Fog_0
+  - cloud_poison_0
+  - cloud_poison_1
+  - cloud_poison_2
   - Particle_Sprite_Sheet_0
   - Particle_Sprite_Sheet_1
   - Poison_Cloud_Spritesheet_1
   - Poison_Cloud_Spritesheet_0
   - Poison_Cloud_Spritesheet_3
   - Poison_Cloud_Spritesheet_2
+  - Quicksand_2
+  - Quicksand_1
+  - Quicksand_0
   - Ball Lightning
   - sparkle_particle2
   - Vapor Spritesheet_2
