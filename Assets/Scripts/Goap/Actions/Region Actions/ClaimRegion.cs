@@ -49,8 +49,6 @@
     public void AfterClaimSuccess(ActualGoapNode goapNode) {
         goapNode.poiTarget.AddAdvertisedAction(this.goapType);
         var region = goapNode.poiTarget.gridTileLocation.parentMap.location.coreTile.region;
-        //TODO:
-        // LandmarkManager.Instance.OwnRegion(goapNode.actor.faction, region);
     }
     #endregion
 }

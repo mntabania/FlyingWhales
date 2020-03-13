@@ -9,24 +9,6 @@ public partial class LandmarkManager {
     [FormerlySerializedAs("innerStructurePrefab")] [SerializeField] private GameObject areaInnerStructurePrefab;
     [FormerlySerializedAs("areaMapsParent")] [SerializeField] private Transform innerMapsParent;
     [SerializeField] private GameObject regionInnerStructurePrefab;
-    
-    #region NPCSettlement Maps
-    public void LoadAreaMap(SaveDataAreaInnerTileMap data) {
-        GameObject areaMapGO = GameObject.Instantiate(areaInnerStructurePrefab, innerMapsParent);
-        AreaInnerTileMap areaMap = areaMapGO.GetComponent<AreaInnerTileMap>();
-        areaMap.ClearAllTilemaps();
-        data.Load(areaMap);
-
-        //Load other data
-        NPCSettlement npcSettlement = areaMap.npcSettlement;
-
-        areaMap.OnMapGenerationFinished();
-        //npcSettlement.OnMapGenerationFinished();
-        InnerMapManager.Instance.OnCreateInnerMap(areaMap);
-
-        npcSettlement.OnAreaSetAsActive();
-    }
-    #endregion
 
     #region Region Maps
     public IEnumerator GenerateRegionMap(Region region, MapGenerationComponent mapGenerationComponent) {

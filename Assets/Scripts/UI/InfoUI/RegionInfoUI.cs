@@ -275,7 +275,7 @@ public class RegionInfoUI : InfoUIBase {
     #region Demolish
     public void OnClickDemolish() {
         Region region = activeRegion;
-        LandmarkManager.Instance.CreateNewLandmarkOnTile(region.coreTile, LANDMARK_TYPE.NONE, false);
+        LandmarkManager.Instance.CreateNewLandmarkOnTile(region.coreTile, LANDMARK_TYPE.NONE);
         UIManager.Instance.ShowRegionInfo(region);
     }
     #endregion

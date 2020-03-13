@@ -114,7 +114,8 @@ public class DouseFireState : CharacterState {
             if (_fires.Remove(traitable)) {
                 if (currentTarget == traitable && removedBy != stateComponent.character) { 
                     //only redetermine action if burning was removed by something or someone else
-                    // currentTarget = null;
+                    currentTarget = null;
+                    isDousingFire = false;
                     DetermineAction();
                 }
             }
@@ -235,7 +236,7 @@ public class DouseFireStateSaveDataCharacterState : SaveDataCharacterState {
         // foreach (KeyValuePair<BurningSource, List<ITraitable>> kvp in dfState.fires) {
         //     for (int i = 0; i < kvp.Value.Count; i++) {
         //         ITraitable poi = kvp.Value[i];
-        //         //TODO: fires[count] = new POIData(poi);
+        //         fires[count] = new POIData(poi);
         //         count++;
         //     }
         // }

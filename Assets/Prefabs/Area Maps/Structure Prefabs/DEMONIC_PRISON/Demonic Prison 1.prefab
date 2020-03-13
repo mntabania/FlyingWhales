@@ -8135,6 +8135,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4158614464403733565}
   - component: {fileID: 5393119052217026656}
+  - component: {fileID: 8576634444061358850}
   m_Layer: 14
   m_Name: Demonic Prison 1
   m_TagString: Untagged
@@ -8170,6 +8171,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ParentPool: {fileID: 0}
+  structureType: 38
   _groundTileMap: {fileID: 5188964859820617585}
   _detailTileMap: {fileID: 5188964861269615487}
   _groundTileMapRenderer: {fileID: 820087690634341909}
@@ -8180,6 +8182,7 @@ MonoBehaviour:
   objectsParent: {fileID: 4158736853328043761}
   _furnitureSpotsParent: {fileID: 0}
   _wallType: 2
+  _wallResource: 0
   predeterminedOccupiedCoordinates:
   - {x: 1, y: 8, z: 0}
   - {x: 1, y: 9, z: 0}
@@ -8311,6 +8314,19 @@ MonoBehaviour:
   bottomWall: {fileID: 1947783289032522, guid: b5a4337534668834fa79811d98de8ed6, type: 3}
   cornerPrefab: {fileID: 1038175435304820, guid: 551abd56996a3a749b77d74c5832fe15,
     type: 3}
-  assetToConsiderAsStructure: {fileID: 11400000, guid: e9aeaeaa8bd8b1a4e97e3d0b29552f1c,
-    type: 2}
+  assetsToConsiderAsStructure: []
   _shroudParticles: {fileID: 6130823944513892591}
+--- !u!114 &8576634444061358850
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4161023896611396535}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6ecdc22d03840dea1e8820cae0652b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  structureObjects:
+  - {fileID: 5393119052217026656}

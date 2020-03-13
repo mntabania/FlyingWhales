@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4534421776922750}
   - component: {fileID: 114061411227821108}
+  - component: {fileID: 2645107682187193023}
   m_Layer: 14
   m_Name: Temple 1
   m_TagString: Untagged
@@ -45,6 +46,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ParentPool: {fileID: 0}
+  structureType: 24
   _groundTileMap: {fileID: 8195094281275604360}
   _detailTileMap: {fileID: 8195094281980599794}
   _groundTileMapRenderer: {fileID: 3664157346260706188}
@@ -155,6 +157,20 @@ MonoBehaviour:
   assetsToConsiderAsStructure:
   - {fileID: 11400000, guid: 223ec6e7f4915bf4b99adff35de3ab6e, type: 2}
   - {fileID: 11400000, guid: 016c45b2f2cc25a4c870fcfb895e0177, type: 2}
+--- !u!114 &2645107682187193023
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1113093889188924}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6ecdc22d03840dea1e8820cae0652b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  structureObjects:
+  - {fileID: 114061411227821108}
 --- !u!1 &1194344354980260
 GameObject:
   m_ObjectHideFlags: 0

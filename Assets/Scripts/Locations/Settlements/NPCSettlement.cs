@@ -42,7 +42,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public bool isBeingInvaded => _isBeingInvadedCount > 0;
     #endregion
 
-    public NPCSettlement(Region region, LOCATION_TYPE locationType, int citizenCount) : base(locationType, citizenCount)  {
+    public NPCSettlement(Region region, LOCATION_TYPE locationType, int citizenCount) : base(locationType, citizenCount) {
         this.region = region;
         newRulerDesignationWeights = new WeightedDictionary<Character>();
         forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
@@ -93,7 +93,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     #endregion
 
     #region Utilities
-    public void OnAreaSetAsActive() {
+    public void Initialize() {
         SubscribeToSignals();
     }
     private void SetIsUnderSiege(bool state) {
@@ -357,8 +357,8 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             Character resident = residents[i];
             if((resident.canPerform || !resident.isDead) 
                 && resident.gridTileLocation != null 
-                && resident.gridTileLocation.buildSpotOwner.hexTileOwner
-                && resident.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile == this) {
+                && resident.gridTileLocation.collectionOwner.isPartOfParentRegionMap
+                && resident.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile == this) {
                 return true;
             }
         }
@@ -467,9 +467,65 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     #endregion
 
     #region Structures
-    public override void GenerateStructures(int citizenCount, Region region) {
-        base.GenerateStructures(citizenCount, region);
+    protected override void OnStructureAdded(LocationStructure structure) {
+        base.OnStructureAdded(structure);
         AssignPrison();
+        switch (structure.structureType) {
+            case STRUCTURE_TYPE.FARM:
+                classManager.AddCombatantClass("Druid");
+                break;
+            case STRUCTURE_TYPE.LUMBERYARD:
+                classManager.AddCombatantClass("Archer");
+                break;
+            case STRUCTURE_TYPE.CEMETERY:
+                classManager.AddCombatantClass("Stalker");
+                break;
+            case STRUCTURE_TYPE.HUNTER_LODGE:
+                classManager.AddCombatantClass("Hunter");
+                break;
+            case STRUCTURE_TYPE.PRISON:
+                classManager.AddCombatantClass("Knight");
+                break;
+            case STRUCTURE_TYPE.MAGE_QUARTERS:
+                classManager.AddCombatantClass("Mage");
+                break;
+            case STRUCTURE_TYPE.APOTHECARY:
+                classManager.AddCombatantClass("Shaman");
+                break;
+            case STRUCTURE_TYPE.ABANDONED_MINE:
+                classManager.AddCivilianClass("Miner");
+                break;
+        }
+    }
+    protected override void OnStructureRemoved(LocationStructure structure) {
+        base.OnStructureRemoved(structure);
+        AssignPrison();
+        switch (structure.structureType) {
+            case STRUCTURE_TYPE.FARM:
+                classManager.RemoveCombatantClass("Druid");
+                break;
+            case STRUCTURE_TYPE.LUMBERYARD:
+                classManager.RemoveCombatantClass("Archer");
+                break;
+            case STRUCTURE_TYPE.CEMETERY:
+                classManager.RemoveCombatantClass("Stalker");
+                break;
+            case STRUCTURE_TYPE.HUNTER_LODGE:
+                classManager.RemoveCombatantClass("Hunter");
+                break;
+            case STRUCTURE_TYPE.PRISON:
+                classManager.RemoveCombatantClass("Knight");
+                break;
+            case STRUCTURE_TYPE.MAGE_QUARTERS:
+                classManager.RemoveCombatantClass("Mage");
+                break;
+            case STRUCTURE_TYPE.APOTHECARY:
+                classManager.RemoveCombatantClass("Shaman");
+                break;
+            case STRUCTURE_TYPE.ABANDONED_MINE:
+                classManager.RemoveCivilianClass("Miner");
+                break;
+        }
     }
     protected override void LoadStructures(SaveDataArea data) {
         base.LoadStructures(data);
@@ -488,15 +544,15 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     #region Inner Map
     public IEnumerator PlaceObjects() {
         //pre placed objects
-        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in structures) {
-            for (int i = 0; i < keyValuePair.Value.Count; i++) {
-                LocationStructure structure = keyValuePair.Value[i];
-                if (structure.structureObj != null) {
-                    structure.structureObj.RegisterPreplacedObjects(structure, structure.location.innerMap);    
-                }
-                yield return null;
-            }
-        }
+        // foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in structures) {
+        //     for (int i = 0; i < keyValuePair.Value.Count; i++) {
+        //         LocationStructure structure = keyValuePair.Value[i];
+        //         if (structure.structureObj != null) {
+        //             structure.structureObj.RegisterPreplacedObjects(structure, structure.location.innerMap);    
+        //         }
+        //         yield return null;
+        //     }
+        // }
 
         PlaceResourcePiles();
         yield return null;

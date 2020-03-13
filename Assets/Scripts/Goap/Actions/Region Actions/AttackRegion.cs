@@ -49,7 +49,7 @@
     }
     public void AfterAttackSuccess(ActualGoapNode goapNode) {
         goapNode.poiTarget.AddAdvertisedAction(INTERACTION_TYPE.ATTACK_REGION); //return removed advertisement
-        LandmarkManager.Instance.CreateNewLandmarkOnTile(goapNode.poiTarget.gridTileLocation.structure.location.coreTile, LANDMARK_TYPE.NONE, false);
+        LandmarkManager.Instance.CreateNewLandmarkOnTile(goapNode.poiTarget.gridTileLocation.structure.location.coreTile, LANDMARK_TYPE.NONE);
     }
     #endregion
 }

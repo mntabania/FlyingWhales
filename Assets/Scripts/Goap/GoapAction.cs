@@ -338,7 +338,6 @@ public class GoapAction : IReactable {
     }
     protected virtual List<GoapEffect> GetExpectedEffects(Character actor, IPointOfInterest target, object[] otherData) {
         List<GoapEffect> effects = new List<GoapEffect>(baseExpectedEffects);
-        //TODO: Might be a more optimized way to do this
         //modify expected effects depending on actor's traits
         for (int i = 0; i < actor.traitContainer.traits.Count; i++) {
             Trait currTrait = actor.traitContainer.traits[i];

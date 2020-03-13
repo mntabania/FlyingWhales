@@ -27,7 +27,7 @@ public class MakeLove : GoapAction {
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}:";
-        int cost = UtilityScripts.Utilities.rng.Next(80, 121);
+        int cost = UtilityScripts.Utilities.Rng.Next(80, 121);
         costLog += $" +{cost}(Initial)";
         Trait trait = actor.traitContainer.GetNormalTrait<Trait>("Chaste", "Lustful");
         if (trait != null && trait.name == "Chaste") {

@@ -66,8 +66,8 @@ public class RainFeature : TileFeature {
     #region Listeners
     private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure, HexTile featureOwner) {
         if (structure != null && structure.isInterior == false && character.gridTileLocation != null 
-            && character.gridTileLocation.buildSpotOwner.isPartOfParentRegionMap 
-            && character.gridTileLocation.buildSpotOwner.hexTileOwner == featureOwner) {
+            && character.gridTileLocation.collectionOwner.isPartOfParentRegionMap 
+            && character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == featureOwner) {
             AddCharacterOutside(character);
             //if (!character.traitContainer.HasTrait("Wet")) {
             //    character.traitContainer.AddTrait(character, "Wet");
@@ -77,8 +77,8 @@ public class RainFeature : TileFeature {
     private void OnCharacterLeftStructure(Character character, LocationStructure structure, HexTile featureOwner) {
         //character left a structure that was outside. If the character entered a structure that is outside. That 
         //is handled at OnCharacterArrivedAtStructure
-        if (structure.isInterior == false && character.gridTileLocation.buildSpotOwner.isPartOfParentRegionMap
-            && character.gridTileLocation.buildSpotOwner.hexTileOwner == featureOwner) {
+        if (structure.isInterior == false && character.gridTileLocation.collectionOwner.isPartOfParentRegionMap
+            && character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == featureOwner) {
             RemoveCharacterOutside(character);
         }
     }
@@ -97,7 +97,7 @@ public class RainFeature : TileFeature {
         }
     }
     //private void OnTileObjectPlaced(TileObject obj, LocationGridTile gridTile, HexTile featureOwner) {
-    //    if(gridTile.buildSpotOwner.hexTileOwner == featureOwner && gridTile != null && !gridTile.structure.isInterior) {
+    //    if(gridTile.buildSpotOwner.partOfHextile.hexTileOwner == featureOwner && gridTile != null && !gridTile.structure.isInterior) {
     //        obj.traitContainer.AddTrait(obj, "Wet");
     //    }
     //}

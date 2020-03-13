@@ -24,22 +24,6 @@ public class ChopWoodRegion : GoapAction {
     }
     #endregion
 
-    #region Requirements
-    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { 
-        bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
-        if (satisfied) {
-            //**Requirements:** Actor has Logger trait. Region has Lumberyard Landmark. Region is owned by Actor's Faction or Actor's Home's Ruling Faction.
-            var region = poiTarget.gridTileLocation.parentMap.location.coreTile.region;
-            //TODO:
-            // return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null &&
-            //        actor.traitContainer.GetNormalTrait<Trait>("Logger") != null &&
-            //        region.mainLandmark.specificLandmarkType == LANDMARK_TYPE.LUMBERYARD &&
-            //        (region.owner == actor.faction || region.owner == actor.homeRegion.owner);
-        }
-        return false;
-    }
-    #endregion
-
     #region State Effects
     public void PreForageSuccess(ActualGoapNode goapNode) {
         goapNode.descriptionLog.AddToFillers(goapNode.poiTarget.gridTileLocation.parentMap.location.coreTile.region, goapNode.poiTarget.gridTileLocation.parentMap.location.coreTile.region.name, LOG_IDENTIFIER.LANDMARK_1);

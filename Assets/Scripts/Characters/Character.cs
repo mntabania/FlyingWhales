@@ -195,8 +195,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     public BaseSettlement currentSettlement => gridTileLocation != null 
-        && gridTileLocation.buildSpotOwner.hexTileOwner ? 
-        gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile : null;
+        && gridTileLocation.collectionOwner.isPartOfParentRegionMap ? 
+        gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile : null;
     public int level => _level;
     public int experience => _experience;
     public int maxExperience => _maxExperience;
@@ -1465,7 +1465,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //check if this character has a Criminal Trait, if so, remove it
         Trait criminal = traitContainer.GetNormalTrait<Trait>("Criminal");
         if (criminal != null) {
-            traitContainer.RemoveTrait(this, criminal); //TODO: RemoveTrait(criminal, false); do not trigger on remove
+            traitContainer.RemoveTrait(this, criminal);
         }
         // if (PlayerManager.Instance.player != null && this.faction == PlayerManager.Instance.player.playerFaction) {
         //     ClearPlayerActions();
@@ -2412,7 +2412,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                                 //the target of the combat state is not part of this character's faction
                                 if (combatComponent.Fight(targetCombatState.currentClosestHostile, targetCharacter.combatComponent.IsLethalCombatForTarget(currentHostileOfTargetCharacter))) {
                                     //if (!combatComponent.avoidInRange.Contains(targetCharacter)) {
-                                        //TODO: Do process combat behavior first for this character, if the current closest hostile
                                         //of the combat state of this character is also the targetCombatState.currentClosestHostile
                                         //Then that's only when we apply the join combat log and notif
                                         //Because if not, it means that this character is already in combat with someone else, and thus
@@ -4478,7 +4477,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 log += "\nThis action is the end of plan.";
                 //if (job.originalOwner.ownerType != JOB_OWNER.CHARACTER && traitContainer.GetNormalTrait<Trait>("Hardworking") != null) {
                 //    log += "\nFinished a npcSettlement job and character is hardworking, increase happiness by 3000...";
-                //    needsComponent.AdjustHappiness(3000); //TODO: Move this to hardworking trait.
+                //    needsComponent.AdjustHappiness(3000);
                 //}
                 logComponent.PrintLogIfActive(log);
                 //bool forceRemoveJobInQueue = true;
@@ -5069,258 +5068,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     #endregion
 
-    #region Crime System
-    /// <summary>
-    /// Make this character react to a crime that he/she witnessed.
-    /// </summary>
-    /// <param name="witnessedCrime">Witnessed Crime.</param>
-    //public void ReactToCrime(GoapAction witnessedCrime, ref bool hasRelationshipDegraded) {
-    //    //TODO: Crime System Handling!
-    //    //ReactToCrime(witnessedCrime.committedCrime, witnessedCrime, witnessedCrime.actorAlterEgo, ref hasRelationshipDegraded, witnessedCrime);
-    //    //witnessedCrime.OnWitnessedBy(this);
-    //}
-    /// <summary>
-    /// A variation of react to crime in which the parameter SHARE_INTEL_STATUS will be the one to determine if it is informed or witnessed crime
-    /// Returns true or false, if the relationship between the reactor and the criminal has degraded
-    /// </summary>
-    //public bool ReactToCrime(CRIME committedCrime, ActualGoapNode crimeAction, Character criminal, SHARE_INTEL_STATUS status) {
-    //    bool hasRelationshipDegraded = false;
-    //    if (status == SHARE_INTEL_STATUS.WITNESSED) {
-    //        ReactToCrime(committedCrime, crimeAction, criminal, ref hasRelationshipDegraded, crimeAction, null);
-    //    }else if (status == SHARE_INTEL_STATUS.INFORMED) {
-    //        ReactToCrime(committedCrime, crimeAction, criminal, ref hasRelationshipDegraded, null, crimeAction);
-    //    } else {
-    //        logComponent.PrintLogErrorIfActive("The share intel status is neither INFORMED or WITNESSED");
-    //    }
-    //    return hasRelationshipDegraded;
-    //}
-    /// <summary>
-    /// Base function for crime reactions
-    /// </summary>
-    /// <param name="committedCrime">The type of crime that was committed.</param>
-    /// <param name="criminal">The character that committed the crime</param>
-    /// <param name="witnessedCrime">The crime witnessed by this character, if this is null, character was only informed of the crime by someone else.</param>
-    /// <param name="informedCrime">The crime this character was informed of. NOTE: Should only have value if Share Intel</param>
-    //public void ReactToCrime(CRIME committedCrime, ActualGoapNode crimeAction, Character criminal, ref bool hasRelationshipDegraded, ActualGoapNode witnessedCrime = null, ActualGoapNode informedCrime = null) {
-    //    //NOTE: Moved this to be per action specific. See GoapAction.IsConsideredACrimeBy and GoapAction.CanReactToThisCrime for necessary mechanics.
-    //    //if (witnessedCrime != null) {
-    //    //    //if the action that should be considered a crime is part of a job from this character's npcSettlement, do not consider it a crime
-    //    //    if (witnessedCrime.parentPlan.job != null
-    //    //        && homeNpcSettlement.jobQueue.jobsInQueue.Contains(witnessedCrime.parentPlan.job)) {
-    //    //        return;
-    //    //    }
-    //    //    //if the witnessed crime is targetting this character, this character should not react to the crime if the crime's doesNotStopTargetCharacter is true
-    //    //    if (witnessedCrime.poiTarget == this && witnessedCrime.doesNotStopTargetCharacter) {
-    //    //        return;
-    //    //    }
-    //    //}
-        
-    //    string reactSummary = this.name + " will react to crime committed by " + criminal.name;
-    //    if(committedCrime == CRIME.NONE) {
-    //        reactSummary += "\nNo reaction because committed crime is " + committedCrime.ToString();
-    //        logComponent.PrintLogIfActive(reactSummary);
-    //        return;
-    //    }
-    //    //Log witnessLog = null;
-    //    //Log reportLog = null;
-    //    RELATIONSHIP_EFFECT relationshipEfffectWithCriminal = opinionComponent.GetRelationshipEffectWith(criminal);
-    //    CRIME_TYPE category = committedCrime.GetCategory();
-
-    //    //If character witnessed an Infraction crime:
-    //    if (category == CRIME_TYPE.INFRACTION) {
-    //        //-Witness Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder]."
-    //        //- Report / Share Intel Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder]."
-    //        //- no additional response
-    //        reactSummary += "\nCrime committed is infraction.";
-    //        //witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed");
-    //        //reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed");
-    //    }
-    //    //If character has a positive relationship (Friend, Lover, Paramour) with the criminal
-    //    else if (relationshipEfffectWithCriminal == RELATIONSHIP_EFFECT.POSITIVE) {
-    //        reactSummary += "\n" + this.name + " has a positive relationship with " + criminal.name;
-    //        //and crime severity is a Misdemeanor:
-    //        if (category == CRIME_TYPE.MISDEMEANOR) {
-    //            reactSummary += "\nCrime committed is misdemeanor.";
-    //            //- Witness Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder] but did not do anything due to their relationship."
-    //            //-Report / Share Intel Log: "[Character Name] was informed that [Criminal Name] committed [Theft/Assault/Murder] but did not do anything due to their relationship."
-    //            //witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "do_nothing");
-    //            //reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_do_nothing");
-    //        }
-    //        //and crime severity is Serious Crimes or worse:
-    //        else if (category.IsGreaterThanOrEqual(CRIME_TYPE.SERIOUS)) {
-    //            reactSummary += "\nCrime committed is serious or worse. Removing positive relationships.";
-    //            //- Relationship Degradation between Character and Criminal
-    //            hasRelationshipDegraded = RelationshipManager.Instance.RelationshipDegradation(criminal, this, witnessedCrime);
-    //            if (hasRelationshipDegraded) {
-    //                //witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed_degraded");
-    //                //reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_witnessed_degraded");
-    //                PerRoleCrimeReaction(committedCrime, crimeAction, criminal, witnessedCrime, informedCrime);
-    //            } else {
-    //                if (witnessedCrime != null) {
-    //                    if (marker.inVisionCharacters.Contains(criminal)) {
-    //                        combatComponent.AddAvoidInRange(criminal);
-    //                    }
-    //                }
-    //                //witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "do_nothing");
-    //                //reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_do_nothing");
-    //            }
-
-    //        }
-    //    }
-    //    //If character has no relationships with the criminal or they are enemies and the crime is a Misdemeanor or worse:
-    //    else if ((!this.relationshipContainer.HasRelationshipWith(criminal) || this.opinionComponent.IsEnemiesWith(criminal)) 
-    //        && category.IsGreaterThanOrEqual(CRIME_TYPE.MISDEMEANOR)) {
-    //        reactSummary += "\n" + this.name + " does not have a relationship with or is an enemy of " + criminal.name + " and the committed crime is misdemeanor or worse";
-    //        //- Relationship Degradation between Character and Criminal
-    //        hasRelationshipDegraded = RelationshipManager.Instance.RelationshipDegradation(criminal, this, witnessedCrime);
-    //        //- Witness Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder]!"
-    //        if (hasRelationshipDegraded) {
-    //            //witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed_degraded");
-    //            //reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_witnessed_degraded");
-    //            PerRoleCrimeReaction(committedCrime, crimeAction, criminal, witnessedCrime, informedCrime);
-    //        } else {
-    //            if (witnessedCrime != null) {
-    //                if (marker.inVisionCharacters.Contains(criminal)) {
-    //                    combatComponent.AddAvoidInRange(criminal);
-    //                }
-    //            }
-    //            //witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "do_nothing");
-    //            //reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_do_nothing");
-    //        }
-    //    }
-
-    //    //if (witnessedCrime != null) {
-    //    //    if (witnessLog != null) {
-    //    //        witnessLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-    //    //        witnessLog.AddToFillers(criminal.owner, criminal.owner.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-    //    //        witnessLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(committedCrime.ToString()), LOG_IDENTIFIER.STRING_1);
-    //    //        if (this != witnessedCrime.poiTarget) {
-    //    //            PlayerManager.Instance.player.ShowNotificationFrom(this, witnessLog);
-    //    //        }
-    //    //    }
-    //    //} else {
-    //    //    if (reportLog != null) {
-    //    //        reportLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-    //    //        reportLog.AddToFillers(criminal.owner, criminal.owner.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-    //    //        reportLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(committedCrime.ToString()), LOG_IDENTIFIER.STRING_1);
-    //    //        PlayerManager.Instance.player.ShowNotificationFrom(this, reportLog);
-    //    //    }
-    //    //}
-
-    //    logComponent.PrintLogIfActive(reactSummary);
-    //}
-    /// <summary>
-    /// Crime reactions per role.
-    /// </summary>
-    /// <param name="committedCrime">The type of crime that was committed.</param>
-    /// <param name="criminal">The character that committed the crime</param>
-    /// <param name="witnessedCrime">The crime witnessed by this character, if this is null, character was only informed of the crime by someone else.</param>
-    /// <param name="informedCrime">The crime this character was informed of. NOTE: Should only have value if Share Intel</param>
-    //private void PerRoleCrimeReaction(CRIME committedCrime, ActualGoapNode crimeAction, Character criminal, ActualGoapNode witnessedCrime = null, ActualGoapNode informedCrime = null) {
-    //    //GoapPlanJob job = null;
-    //    switch (role.roleType) {
-    //        case CHARACTER_ROLE.CIVILIAN:
-    //        case CHARACTER_ROLE.ADVENTURER:
-    //            //- If the character is a Civilian or Adventurer, he will enter Flee mode (fleeing the criminal) and will create a Report Crime Job Type in his personal job queue
-    //            //if (this.faction != FactionManager.Instance.neutralFaction && criminal.faction == this.faction) {
-    //            //    //only make character flee, if he/she actually witnessed the crime (not share intel)
-    //            //    //GoapAction crimeToReport = informedCrime;
-    //            //    //if (witnessedCrime != null) {
-    //            //    //    crimeToReport = witnessedCrime;
-    //            //    //    ////if a character has no negative disabler traits. Do not Flee. This is so that the character will not also add a Report hostile job
-    //            //    //    //if (!this.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) { 
-    //            //    //    //    this.combatComponent.AddHostileInRange(criminal.owner, false);
-    //            //    //    //}
-    //            //    //}
-    //            //    //TODO: job = CreateReportCrimeJob(committedCrime, crimeToReport, criminal);
-    //            //}
-    //            break;
-    //        case CHARACTER_ROLE.LEADER:
-    //        case CHARACTER_ROLE.NOBLE:
-    //            //- If the character is a Noble or Faction Leader, the criminal will gain the relevant Crime-type trait
-    //            //If he is a Noble or Faction Leader, he will create the Apprehend Job Type in the Location job queue instead.
-    //            if (!isFactionless && criminal.faction == this.faction) {
-    //                //only add apprehend job if the criminal is part of this characters faction
-    //                criminal.AddCriminalTrait(committedCrime, crimeAction);
-    //                // CreateApprehendJobFor(criminal);
-    //                //crimeAction.OnReportCrime();
-    //                //job = JobManager.Instance.CreateNewGoapPlanJob("Apprehend", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeNpcSettlement, targetPOI = actor });
-    //                //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = actor }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
-    //                //job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
-    //                //homeNpcSettlement.jobQueue.AddJobInQueue(job);
-    //            }
-
-    //            break;
-    //        case CHARACTER_ROLE.SOLDIER:
-    //        case CHARACTER_ROLE.BANDIT:
-    //            //- If the character is a Soldier, the criminal will gain the relevant Crime-type trait
-    //            if (!isFactionless && criminal.faction == this.faction) {
-    //                //only add apprehend job if the criminal is part of this characters faction
-    //                criminal.AddCriminalTrait(committedCrime, crimeAction);
-    //                //- If the character is a Soldier, he will also create an Apprehend Job Type in his personal job queue.
-    //                //job = JobManager.Instance.CreateNewGoapPlanJob("Apprehend", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeNpcSettlement, targetPOI = actor });
-    //                //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = actor }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
-    //                //job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
-    //                //homeNpcSettlement.jobQueue.AddJobInQueue(job);
-    //                // CreateApprehendJobFor(criminal, true); //job =
-    //                //if (job != null) {
-    //                //    homeNpcSettlement.jobQueue.ForceAssignCharacterToJob(job, this);
-    //                //}
-    //                //crimeAction.OnReportCrime();
-    //            }
-    //            break;
-    //        default:
-    //            break;
-    //    }
-    //}
-    //public void AddCriminalTrait(CRIME crime, ActualGoapNode crimeAction) {
-    //    Trait trait = null;
-    //    switch (crime) {
-    //        case CRIME.THEFT:
-    //            trait = new Thief();
-    //            break;
-    //        case CRIME.ASSAULT:
-    //            trait = new Assaulter();
-    //            break;
-    //        case CRIME.MURDER:
-    //            trait = new Murderer();
-    //            break;
-    //        case CRIME.ATTEMPTED_MURDER:
-    //            trait = new AttemptedMurderer();
-    //            break;
-    //        case CRIME.ABERRATION:
-    //            trait = new Aberration();
-    //            break;
-    //        case CRIME.HERETIC:
-    //            trait = new Heretic();
-    //            break;
-    //        default:
-    //            break;
-    //    }
-    //    if (trait != null) {
-    //        traitContainer.AddTrait(this, trait, null, crimeAction);
-    //    }
-    //}
-    //private void OnCharacterPerformedAction(ActualGoapNode node) {
-    //    if (canWitness && marker && node.actor != this && node.poiTarget != this) {
-    //        bool isInVision = false;
-    //        for (int i = 0; i < marker.inVisionCharacters.Count; i++) {
-    //            Character characterInVision = marker.inVisionCharacters[i];
-    //            if(node.actor == characterInVision || node.poiTarget == characterInVision) {
-    //                isInVision = true;
-    //                break;
-    //            }
-    //        }
-    //        if (isInVision) {
-    //            CRIME_TYPE crimeType = CrimeManager.Instance.GetCrimeTypeConsideringAction(this, node);
-    //            if (crimeType != CRIME_TYPE.NONE) {
-    //                CrimeManager.Instance.ReactToCrime(this, node, node.actor.currentJob as GoapPlanJob, crimeType);
-    //            }
-    //        }
-    //    }
-    //}
-    #endregion
-
     #region Pathfinding
     public List<LocationGridTile> GetTilesInRadius(int radius, int radiusLimit = 0, bool includeCenterTile = false, bool includeTilesInDifferentStructure = false) {
         if(currentRegion == null) { return null; }
@@ -5614,7 +5361,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #region Missing
     public void CheckMissing() {
         if (!isDead) {
-            if (marker && gridTileLocation != null && isAtHomeRegion && gridTileLocation.buildSpotOwner.isPartOfParentRegionMap 
+            if (marker && gridTileLocation != null && isAtHomeRegion && gridTileLocation.collectionOwner.isPartOfParentRegionMap 
                 && gridTileLocation.IsPartOfSettlement()) {
                 if (currentMissingTicks > CharacterManager.Instance.CHARACTER_MISSING_THRESHOLD) {
                     currentMissingTicks = 0;

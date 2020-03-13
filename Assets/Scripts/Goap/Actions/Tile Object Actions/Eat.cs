@@ -38,7 +38,7 @@ public class Eat : GoapAction {
         if (target is Table) {
             Table table = target as Table;
             if (table.IsOwnedBy(actor)) {
-                cost = UtilityScripts.Utilities.rng.Next(20, 36);
+                cost = UtilityScripts.Utilities.Rng.Next(20, 36);
                 costLog += $" +{cost}(Owned)";
             } else {
                 List<Character> tableOwners = table.GetOwners();
@@ -56,18 +56,18 @@ public class Eat : GoapAction {
                     }
                 }
                 if (isTargetObjectOwnedByFriend) {
-                    cost = UtilityScripts.Utilities.rng.Next(45, 66);
+                    cost = UtilityScripts.Utilities.Rng.Next(45, 66);
                     costLog += $" +{cost}(Owned by Friend)";
                 } else if (isTargetObjectOwnedByEnemy) {
                     cost = 2000;
                     costLog += " +2000(Owned by Enemy)";
                 } else {
-                    cost = UtilityScripts.Utilities.rng.Next(60, 81);
+                    cost = UtilityScripts.Utilities.Rng.Next(60, 81);
                     costLog += $" +{cost}(Otherwise)";
                 }
             }
         } else if (target is FoodPile) {
-            cost = UtilityScripts.Utilities.rng.Next(400, 451);
+            cost = UtilityScripts.Utilities.Rng.Next(400, 451);
             costLog += $" +{cost}(Food Pile)";
         }
         actor.logComponent.AppendCostLog(costLog);

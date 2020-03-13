@@ -13,11 +13,11 @@ public class RaidBehaviour : CharacterBehaviourComponent {
     }
     public override bool TryDoBehaviour(Character character, ref string log) {
         log += $"\n-{character.name} will raid";
-        if (character.gridTileLocation.buildSpotOwner.hexTileOwner && character.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile == character.behaviourComponent.harassInvadeRaidTarget) {
+        if (character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner && character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile == character.behaviourComponent.harassInvadeRaidTarget) {
             log += "\n-Already in the target npcSettlement";
             TileObject targetTileObject = null;
-            Assert.IsTrue(character.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile is NPCSettlement, $"{character.name} is trying to raid a settlement that is not an NPC Settlement");
-            NPCSettlement npcSettlement = character.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile as NPCSettlement;
+            Assert.IsTrue(character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile is NPCSettlement, $"{character.name} is trying to raid a settlement that is not an NPC Settlement");
+            NPCSettlement npcSettlement = character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile as NPCSettlement;
             for (int i = 0; i < npcSettlement.mainStorage.pointsOfInterest.Count; i++) {
                 IPointOfInterest poi = npcSettlement.mainStorage.pointsOfInterest.ElementAt(i);
                 if (poi is Artifact || poi is ResourcePile) {

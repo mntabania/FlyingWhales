@@ -75,8 +75,8 @@ namespace Ruinarch {
                                     } 
                                     break; 
                                 case SPELL_TARGET.HEX: 
-                                    if (hoveredTile != null && hoveredTile.buildSpotOwner.hexTileOwner) { 
-                                        canTarget = PlayerManager.Instance.player.currentActivePlayerSpell.CanTarget(hoveredTile.buildSpotOwner.hexTileOwner); 
+                                    if (hoveredTile != null && hoveredTile.collectionOwner.partOfHextile.hexTileOwner) { 
+                                        canTarget = PlayerManager.Instance.player.currentActivePlayerSpell.CanTarget(hoveredTile.collectionOwner.partOfHextile.hexTileOwner); 
                                     } 
                                     break; 
                                 default: 

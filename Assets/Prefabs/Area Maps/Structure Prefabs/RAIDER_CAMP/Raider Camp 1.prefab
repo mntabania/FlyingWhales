@@ -3033,6 +3033,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4454624527244964}
   - component: {fileID: 114545244566448618}
+  - component: {fileID: 866113394989489682}
   m_Layer: 14
   m_Name: Raider Camp 1
   m_TagString: Untagged
@@ -3068,6 +3069,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ParentPool: {fileID: 0}
+  structureType: 17
   _groundTileMap: {fileID: 8195094279930406526}
   _detailTileMap: {fileID: 8195094282237355142}
   _groundTileMapRenderer: {fileID: 3664157343780890160}
@@ -3087,7 +3089,21 @@ MonoBehaviour:
   bottomWall: {fileID: 1947783289032522, guid: b5a4337534668834fa79811d98de8ed6, type: 3}
   cornerPrefab: {fileID: 1038175435304820, guid: 551abd56996a3a749b77d74c5832fe15,
     type: 3}
-  assetToConsiderAsStructure: {fileID: 0}
+  assetsToConsiderAsStructure: []
+--- !u!114 &866113394989489682
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1389023962421918}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6ecdc22d03840dea1e8820cae0652b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  structureObjects:
+  - {fileID: 114545244566448618}
 --- !u!1 &1390216889155414
 GameObject:
   m_ObjectHideFlags: 0

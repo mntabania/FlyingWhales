@@ -16,45 +16,23 @@ public class LandmarkStructureGeneration : MapGenerationComponent {
 			BaseLandmark landmark = landmarks[i];
 			if (landmark.specificLandmarkType == LANDMARK_TYPE.MONSTER_LAIR) {
 				LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(landmark.tileLocation.region,
-					LandmarkManager.Instance.GetStructureTypeFor(landmark.specificLandmarkType));
+					landmark.specificLandmarkType.GetStructureType());
 				landmark.tileLocation.settlementOnTile.GenerateStructures(structure);
 				yield return MapGenerator.Instance.StartCoroutine(
 					GenerateMonsterLair(landmark.tileLocation, structure));
 			} else if (landmark.specificLandmarkType != LANDMARK_TYPE.VILLAGE) {
-				yield return MapGenerator.Instance.StartCoroutine(CreateStructureObjectForLandmark(landmark, data));	
+				yield return MapGenerator.Instance.StartCoroutine(
+					LandmarkManager.Instance.PlaceBuiltStructuresForSettlement(landmark.tileLocation.settlementOnTile, 
+						landmark.tileLocation.region.innerMap, landmark.specificLandmarkType.GetStructureType()));
+				if (landmark.specificLandmarkType == LANDMARK_TYPE.THE_PORTAL) {
+					data.portalStructure = landmark.tileLocation.settlementOnTile.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL);
+					landmark.tileLocation.InstantlyCorruptAllOwnedInnerMapTiles();
+				}
 			}
 		}
 		yield return null;
 	}
 
-	private IEnumerator CreateStructureObjectForLandmark(BaseLandmark landmark, MapGenerationData data) {
-		LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(landmark.tileLocation.region,
-			LandmarkManager.Instance.GetStructureTypeFor(landmark.specificLandmarkType));
-		if (structure.structureType == STRUCTURE_TYPE.THE_PORTAL) {
-			data.portalStructure = structure;
-			landmark.tileLocation.InstantlyCorruptAllOwnedInnerMapTiles();
-		}
-		yield return MapGenerator.Instance.StartCoroutine(PlaceInitialStructure(structure, landmark.tileLocation.region.innerMap, landmark.tileLocation));
-	}
-
-	private IEnumerator PlaceInitialStructure(LocationStructure structure, InnerTileMap innerTileMap, HexTile tile) {
-		if (structure.structureType.ShouldBeGeneratedFromTemplate()) {
-			List<GameObject> choices =
-				InnerMapManager.Instance.GetStructurePrefabsForStructure(structure.structureType);
-			GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
-			LocationStructureObject lso = chosenStructurePrefab.GetComponent<LocationStructureObject>();
-			if (LandmarkManager.Instance.PlayerTryGetBuildSpotForStructureInTile(lso, tile, innerTileMap, out var chosenBuildingSpot)) {
-				innerTileMap.PlaceStructureObjectAt(chosenBuildingSpot, chosenStructurePrefab, structure);
-				structure.structureObj.RegisterPreplacedObjects(structure, innerTileMap);
-			} else {
-				throw new System.Exception(
-					$"Could not find valid building spot for {structure.ToString()} using prefab {chosenStructurePrefab.name}");
-			}
-			yield return null;
-		}
-
-	}
-	
 	#region Cellular Automata
 	private IEnumerator GenerateMonsterLair(HexTile hexTile, LocationStructure structure) {
 		List<LocationGridTile> locationGridTiles = new List<LocationGridTile>(hexTile.locationGridTiles);
@@ -63,13 +41,14 @@ public class LandmarkStructureGeneration : MapGenerationComponent {
 		
 		MonsterLairCellAutomata(locationGridTiles, structure, hexTile.region, wilderness);
 		
-		for (int j = 0; j < hexTile.ownedBuildSpots.Length; j++) {
-			BuildingSpot spot = hexTile.ownedBuildSpots[j];
-			if (spot.isOccupied == false) {
-				spot.SetIsOccupied(true);
-				spot.UpdateAdjacentSpotsOccupancy(hexTile.region.innerMap);	
-			}
-		}
+		hexTile.innerMapHexTile.Occupy();
+		// for (int j = 0; j < hexTile.ownedBuildSpots.Length; j++) {
+		// 	BuildingSpot spot = hexTile.ownedBuildSpots[j];
+		// 	if (spot.isOccupied == false) {
+		// 		spot.SetIsOccupied(true);
+		// 		spot.UpdateAdjacentSpotsOccupancy(hexTile.region.innerMap);	
+		// 	}
+		// }
 		
 		yield return null;
 	}

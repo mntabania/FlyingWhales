@@ -1,22 +1,30 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class LocationClassManager {
     public string[] characterClassOrder { get; private set; }
-    public int currentIndex { get;  private set; }
-
+    public int currentIndex { get; private set; }
     private int startLoopIndex;
     private int numberOfRotations;
     private Dictionary<string, LocationClassNumberGuide> characterClassGuide;
-
+    public Dictionary<string, int> combatantClasses { get; }
+    public Dictionary<string, int> civilianClasses { get; }
     public LocationClassManager() {
         currentIndex = 0;
         startLoopIndex = 5;
         numberOfRotations = 0;
+        combatantClasses = new Dictionary<string, int>() {
+            {"Barbarian", 1},
+        };
+        civilianClasses = new Dictionary<string, int>() {
+            {"Peasant", 1},
+            {"Craftsman", 1},
+        };
+            
         CreateCharacterClassOrderAndGuide();
     }
-
     public string GetCurrentClassToCreate() {
         return GetClassToCreate(currentIndex);
     }
@@ -27,24 +35,53 @@ public class LocationClassManager {
         }
         return GetClassToCreate(nextIndex);
     }
+    public void AddCombatantClass(string className) {
+        if (combatantClasses.ContainsKey(className) == false) {
+            combatantClasses.Add(className, 0);
+        }
+        combatantClasses[className] += 1;
+    }
+    public void RemoveCombatantClass(string className) {
+        if (combatantClasses.ContainsKey(className)) {
+            combatantClasses[className] -= 1;
+            if (combatantClasses[className] <= 0) {
+                combatantClasses.Remove(className);
+            }
+        }
+    }
+    public void AddCivilianClass(string className) {
+        if (civilianClasses.ContainsKey(className) == false) {
+            civilianClasses.Add(className, 0);
+        }
+        civilianClasses[className] += 1;
+    }
+    public void RemoveCivilianClass(string className) {
+        if (civilianClasses.ContainsKey(className)) {
+            civilianClasses[className] -= 1;
+            if (civilianClasses[className] <= 0) {
+                civilianClasses.Remove(className);
+            }
+        }
+    }
     private string GetClassToCreate(int index) {
         string currentClass = characterClassOrder[index];
         if (currentClass == "Combatant") {
-            List<CharacterClass> classes = CharacterManager.Instance.GetNormalCombatantClasses();
-            currentClass = classes[UnityEngine.Random.Range(0, classes.Count)].className;
+            // List<CharacterClass> classes = CharacterManager.Instance.GetNormalCombatantClasses();
+            // currentClass = classes[UnityEngine.Random.Range(0, classes.Count)].className;
+            currentClass = UtilityScripts.CollectionUtilities.GetRandomElement(combatantClasses.Keys);
         } else if (currentClass == "Civilian") {
-            int i = UnityEngine.Random.Range(0, 3);
-            if (i == 0) {
-                currentClass = "Miner";
-            } else if (i == 0) {
-                currentClass = "Peasant";
-            } else {
-                currentClass = "Craftsman";
-            }
+            currentClass = UtilityScripts.CollectionUtilities.GetRandomElement(civilianClasses.Keys);
+            // int i = UnityEngine.Random.Range(0, 3);
+            // if (i == 0) {
+            //     currentClass = "Miner";
+            // } else if (i == 1) {
+            //     currentClass = "Peasant";
+            // } else {
+            //     currentClass = "Craftsman";
+            // }
         }
         return currentClass;
     }
-
     private void CreateCharacterClassOrderAndGuide() {
         characterClassOrder = new string[] {
             //"Leader",
@@ -62,14 +99,13 @@ public class LocationClassManager {
 
         characterClassGuide = new Dictionary<string, LocationClassNumberGuide>() {
             //{ "Leader", new LocationClassNumberGuide() { supposedNumber = 0, currentNumber = 0, } },
-            { "Peasant", new LocationClassNumberGuide() { supposedNumber = 0, currentNumber = 0, } },
-            { "Combatant", new LocationClassNumberGuide() { supposedNumber = 0, currentNumber = 0, }},
-            { "Craftsman", new LocationClassNumberGuide() { supposedNumber = 0, currentNumber = 0, }},
-            { "Civilian", new LocationClassNumberGuide() { supposedNumber = 0, currentNumber = 0, }},
-            { "Noble", new LocationClassNumberGuide() { supposedNumber = 0, currentNumber = 0, }},
+            {"Peasant", new LocationClassNumberGuide() {supposedNumber = 0, currentNumber = 0,}},
+            {"Combatant", new LocationClassNumberGuide() {supposedNumber = 0, currentNumber = 0,}},
+            {"Craftsman", new LocationClassNumberGuide() {supposedNumber = 0, currentNumber = 0,}},
+            {"Civilian", new LocationClassNumberGuide() {supposedNumber = 0, currentNumber = 0,}},
+            {"Noble", new LocationClassNumberGuide() {supposedNumber = 0, currentNumber = 0,}},
         };
     }
-
     public void OnAddResident(Character residentAdded) {
         string currentClassRequirement = characterClassOrder[currentIndex];
 
@@ -84,7 +120,7 @@ public class LocationClassManager {
         characterClassGuide[currentClassRequirement] = temp;
 
         currentIndex++;
-        if(currentIndex >= characterClassOrder.Length) {
+        if (currentIndex >= characterClassOrder.Length) {
             currentIndex = startLoopIndex;
             numberOfRotations++;
         }
@@ -92,26 +128,31 @@ public class LocationClassManager {
     public void OnRemoveResident(Character residentRemoved) {
         string residentClassName = residentRemoved.characterClass.className;
 
-        if(residentClassName == "Miner") {
-            if(characterClassGuide["Civilian"].currentNumber > 0) {
+        if (residentClassName == "Miner") {
+            if (characterClassGuide["Civilian"].currentNumber > 0) {
                 AdjustCurrentNumberOfClass("Civilian", -1);
-            } else {
+            }
+            else {
                 throw new System.Exception(
                     $"Wrong location class requirement data! Removal of resident{residentClassName} {residentRemoved.name} but current number of Civilian is {characterClassGuide["Civilian"].currentNumber} (supposed number: {characterClassGuide["Civilian"].supposedNumber})");
             }
-        } else if(residentClassName == "Peasant" || residentClassName == "Craftsman") {
+        }
+        else if (residentClassName == "Peasant" || residentClassName == "Craftsman") {
             if (characterClassGuide[residentClassName].currentNumber > 0) {
                 AdjustCurrentNumberOfClass(residentClassName, -1);
-            } else if (characterClassGuide["Civilian"].currentNumber > 0) {
+            }
+            else if (characterClassGuide["Civilian"].currentNumber > 0) {
                 AdjustCurrentNumberOfClass("Civilian", -1);
-            } else {
+            }
+            else {
                 throw new System.Exception(
                     $"Wrong location class requirement data! Removal of resident{residentClassName} {residentRemoved.name} but current number of Civilian is {characterClassGuide["Civilian"].currentNumber} (supposed number: {characterClassGuide["Civilian"].supposedNumber}) and current number of {residentClassName} is {characterClassGuide[residentClassName].currentNumber} (supposed number: {characterClassGuide[residentClassName].supposedNumber})");
             }
-        } else if (residentClassName == "Noble") {
+        }
+        else if (residentClassName == "Noble") {
             if (characterClassGuide[residentClassName].currentNumber > 0) {
                 AdjustCurrentNumberOfClass(residentClassName, -1);
-            } 
+            }
             // else if (characterClassGuide["Combatant"].currentNumber > 0) {
             //     AdjustCurrentNumberOfClass("Combatant", -1);
             // }
@@ -119,10 +160,12 @@ public class LocationClassManager {
                 throw new System.Exception(
                     $"Wrong location class requirement data! Removal of resident{residentClassName} {residentRemoved.name} but current number of Combatant is {characterClassGuide["Combatant"].currentNumber} (supposed number: {characterClassGuide["Combatant"].supposedNumber}) and current number of {residentClassName} is {characterClassGuide[residentClassName].currentNumber} (supposed number: {characterClassGuide[residentClassName].supposedNumber})");
             }
-        } else if (residentRemoved.traitContainer.HasTrait("Combatant")) {
+        }
+        else if (residentRemoved.traitContainer.HasTrait("Combatant")) {
             if (characterClassGuide["Combatant"].currentNumber > 0) {
                 AdjustCurrentNumberOfClass("Combatant", -1);
-            } else {
+            }
+            else {
                 throw new System.Exception(
                     $"Wrong location class requirement data! Removal of resident{residentClassName} {residentRemoved.name} but current number of Combatant is {characterClassGuide["Combatant"].currentNumber} (supposed number: {characterClassGuide["Combatant"].supposedNumber})");
             }
@@ -145,24 +188,28 @@ public class LocationClassManager {
             if (characterClassGuide["Civilian"].currentNumber > 0) {
                 AdjustCurrentNumberOfClass("Civilian", -1);
             }
-        } else if (previousClassName == "Peasant" || previousClassName == "Craftsman") {
+        }
+        else if (previousClassName == "Peasant" || previousClassName == "Craftsman") {
             if (characterClassGuide[previousClassName].currentNumber > 0) {
                 AdjustCurrentNumberOfClass(previousClassName, -1);
-            } else if (characterClassGuide["Civilian"].currentNumber > 0) {
+            }
+            else if (characterClassGuide["Civilian"].currentNumber > 0) {
                 AdjustCurrentNumberOfClass("Civilian", -1);
-            } 
-        } else if (previousClassName == "Noble") {
+            }
+        }
+        else if (previousClassName == "Noble") {
             if (characterClassGuide[previousClassName].currentNumber > 0) {
                 AdjustCurrentNumberOfClass(previousClassName, -1);
             }
             // else if (characterClassGuide["Combatant"].currentNumber > 0) {
             //     AdjustCurrentNumberOfClass("Combatant", -1);
             // }
-        } else if (previousClass.IsCombatant()) {
+        }
+        else if (previousClass.IsCombatant()) {
             if (characterClassGuide["Combatant"].currentNumber > 0) {
                 AdjustCurrentNumberOfClass("Combatant", -1);
             }
-        } 
+        }
         //else {
         //    if (characterClassGuide[previousClassName].currentNumber > 0) {
         //        AdjustCurrentNumberOfClass(previousClassName, -1);
@@ -171,45 +218,51 @@ public class LocationClassManager {
 
         if (currentClassName == "Miner") {
             AdjustCurrentNumberOfClass("Civilian", 1);
-        } else if (currentClassName == "Peasant" || currentClassName == "Craftsman") {
-            if (characterClassGuide[currentClassName].currentNumber < characterClassGuide[currentClassName].supposedNumber) {
+        }
+        else if (currentClassName == "Peasant" || currentClassName == "Craftsman") {
+            if (characterClassGuide[currentClassName].currentNumber <
+                characterClassGuide[currentClassName].supposedNumber) {
                 AdjustCurrentNumberOfClass(currentClassName, 1);
-            } else { //if (characterClassGuide["Civilian"].currentNumber > 0) 
+            }
+            else {
+                //if (characterClassGuide["Civilian"].currentNumber > 0) 
                 AdjustCurrentNumberOfClass("Civilian", 1);
             }
-        } else if (currentClassName == "Noble") {
-            if (characterClassGuide[currentClassName].currentNumber < characterClassGuide[currentClassName].supposedNumber) {
+        }
+        else if (currentClassName == "Noble") {
+            if (characterClassGuide[currentClassName].currentNumber <
+                characterClassGuide[currentClassName].supposedNumber) {
                 AdjustCurrentNumberOfClass(currentClassName, 1);
-            } 
+            }
             // else { // if (characterClassGuide["Combatant"].currentNumber > 0)
             //     AdjustCurrentNumberOfClass("Combatant", 1);
             // }
-        } else if (currentClass.IsCombatant()) {
+        }
+        else if (currentClass.IsCombatant()) {
             AdjustCurrentNumberOfClass("Combatant", 1);
             //if (characterClassGuide["Combatant"].currentNumber > 0) {
             //    AdjustCurrentNumberOfClass("Combatant", 1);
             //}
-        } 
+        }
         //else {
         //    AdjustCurrentNumberOfClass(currentClassName, 1);
         //    //if (characterClassGuide[previousClassName].currentNumber > 0) {
         //    //    AdjustCurrentNumberOfClass(previousClassName, -1);
         //    //}
         //}
-        
     }
-
     private void RevertCharacterClassOrderByOne() {
         string currentClassIdentifier = characterClassOrder[currentIndex];
-        if(currentIndex >= startLoopIndex) {
+        if (currentIndex >= startLoopIndex) {
             currentIndex--;
-            if(numberOfRotations > 0 && currentIndex < startLoopIndex) {
+            if (numberOfRotations > 0 && currentIndex < startLoopIndex) {
                 currentIndex = characterClassOrder.Length - 1;
                 numberOfRotations--;
             }
-        } else {
+        }
+        else {
             currentIndex--;
-            if(currentIndex < 0) {
+            if (currentIndex < 0) {
                 throw new System.Exception("Wrong data! Current index cannot be less than zero");
             }
         }
@@ -227,11 +280,14 @@ public class LocationClassManager {
     }
     private bool DoesCharacterClassFitCurrentClass(Character character) {
         string className = characterClassOrder[currentIndex];
-        if(className == "Combatant") {
+        if (className == "Combatant") {
             return character.traitContainer.HasTrait("Combatant");
-        }else if (className == "Civilian") {
-            return character.characterClass.className == "Miner" || character.characterClass.className == "Peasant" || character.characterClass.className == "Craftsman";
-        } else {
+        }
+        else if (className == "Civilian") {
+            return character.characterClass.className == "Miner" || character.characterClass.className == "Peasant" ||
+                   character.characterClass.className == "Craftsman";
+        }
+        else {
             return character.characterClass.className == className;
         }
     }
@@ -239,7 +295,7 @@ public class LocationClassManager {
         string log = $"Location Character Class Requirements Data For {regionName}";
         foreach (KeyValuePair<string, LocationClassNumberGuide> kvp in characterClassGuide) {
             log +=
-                $"\n{kvp.Key} - Supposed Number: {kvp.Value.supposedNumber}, Current Number: {kvp.Value.currentNumber}"; 
+                $"\n{kvp.Key} - Supposed Number: {kvp.Value.supposedNumber}, Current Number: {kvp.Value.currentNumber}";
         }
         Debug.Log(log);
     }
@@ -249,69 +305,76 @@ public class LocationClassManager {
         if (className == "Miner") {
             LocationClassNumberGuide numberGuide = characterClassGuide["Civilian"];
             return numberGuide.currentNumber > numberGuide.supposedNumber;
-        } else if (className == "Peasant" || className == "Craftsman") {
+        }
+        else if (className == "Peasant" || className == "Craftsman") {
             LocationClassNumberGuide numberGuide = characterClassGuide[className];
             if (numberGuide.currentNumber > numberGuide.supposedNumber) {
                 return true;
-            } else {
+            }
+            else {
                 numberGuide = characterClassGuide["Civilian"];
                 if (numberGuide.currentNumber > numberGuide.supposedNumber) {
                     return true;
                 }
             }
-        } else if (className == "Noble") {
+        }
+        else if (className == "Noble") {
             LocationClassNumberGuide numberGuide = characterClassGuide[className];
             if (numberGuide.currentNumber > numberGuide.supposedNumber) {
                 return true;
-            } 
+            }
             // else {
             //     numberGuide = characterClassGuide["Combatant"];
             //     if (numberGuide.currentNumber > numberGuide.supposedNumber) {
             //         return true;
             //     }
             // }
-        } else if (charClass.IsCombatant()) {
+        }
+        else if (charClass.IsCombatant()) {
             LocationClassNumberGuide numberGuide = characterClassGuide["Combatant"];
             return numberGuide.currentNumber > numberGuide.supposedNumber;
-        } 
+        }
         //else {
         //    LocationClassNumberGuide numberGuide = characterClassGuide[className];
         //    return numberGuide.currentNumber > numberGuide.supposedNumber;
         //}
         return false;
     }
-
     public bool IsClassADeficit(CharacterClass charClass) {
         string className = charClass.className;
 
         if (className == "Miner") {
             LocationClassNumberGuide numberGuide = characterClassGuide["Civilian"];
             return numberGuide.currentNumber < numberGuide.supposedNumber;
-        } else if (className == "Peasant" || className == "Craftsman") {
+        }
+        else if (className == "Peasant" || className == "Craftsman") {
             LocationClassNumberGuide numberGuide = characterClassGuide[className];
             if (numberGuide.currentNumber < numberGuide.supposedNumber) {
                 return true;
-            } else {
+            }
+            else {
                 numberGuide = characterClassGuide["Civilian"];
                 if (numberGuide.currentNumber < numberGuide.supposedNumber) {
                     return true;
                 }
             }
-        } else if (className == "Noble") {
+        }
+        else if (className == "Noble") {
             LocationClassNumberGuide numberGuide = characterClassGuide[className];
             if (numberGuide.currentNumber < numberGuide.supposedNumber) {
                 return true;
-            } 
+            }
             // else {
             //     numberGuide = characterClassGuide["Combatant"];
             //     if (numberGuide.currentNumber < numberGuide.supposedNumber) {
             //         return true;
             //     }
             // }
-        } else if (charClass.IsCombatant()) {
+        }
+        else if (charClass.IsCombatant()) {
             LocationClassNumberGuide numberGuide = characterClassGuide["Combatant"];
             return numberGuide.currentNumber < numberGuide.supposedNumber;
-        } 
+        }
         //else {
         //    LocationClassNumberGuide numberGuide = characterClassGuide[className];
         //    return numberGuide.currentNumber < numberGuide.supposedNumber;

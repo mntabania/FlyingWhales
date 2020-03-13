@@ -28,7 +28,7 @@ public class Play : GoapAction {
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         //**Cost**: randomize between 6-15
-        return UtilityScripts.Utilities.rng.Next(6, 16);
+        return UtilityScripts.Utilities.Rng.Next(6, 16);
     }
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);

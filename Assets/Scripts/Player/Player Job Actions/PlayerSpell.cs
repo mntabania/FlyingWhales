@@ -313,7 +313,7 @@ public class ElectricStormData : SpellData {
         return targetHex != null && !targetHex.spellsComponent.hasElectricStorm;
     }
     public override void HighlightAffectedTiles(LocationGridTile tile) {
-        TileHighlighter.Instance.PositionHighlight(tile.buildSpotOwner.hexTileOwner);
+        TileHighlighter.Instance.PositionHighlight(tile.collectionOwner.partOfHextile.hexTileOwner);
     }
 }
 

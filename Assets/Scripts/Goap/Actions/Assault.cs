@@ -196,7 +196,7 @@ public class Assault : GoapAction {
     //    //Debug.Log(actor.name + " finished combat state!");
     //    Character target = poiTarget as Character;
     //    loser = target;
-    //    //winner = actor; // TODO: How to determine if actor won?
+    //    //winner = actor;
     //    if (target.traitContainer.GetNormalTrait<Trait>("Dead") != null) {
     //        SetState("Target Killed");
     //    } else if (target.traitContainer.GetNormalTrait<Trait>("Unconscious") != null) {

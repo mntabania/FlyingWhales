@@ -9,6 +9,7 @@ using Inner_Maps.Location_Structures;
 using JetBrains.Annotations;
 using Locations.Settlements;
 using SpriteGlow;
+using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
@@ -64,13 +65,13 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     public Region region { get; private set; }
     public TileFeatureComponent featureComponent { get; private set; }
     public BaseSettlement settlementOnTile { get; private set; }
-    public BuildingSpot[] ownedBuildSpots { get; private set; }
     public List<HexTile> AllNeighbours { get; set; }
     public List<HexTile> ValidTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && o.elevationType != ELEVATION.MOUNTAIN).ToList(); } }
     public bool isCurrentlyBeingCorrupted { get; private set; }
     public List<LocationGridTile> locationGridTiles { get; private set; }
     public Sprite baseSprite { get; private set; }
     public Vector2 selectableSize { get; private set; }
+    public InnerMapHexTile innerMapHexTile { get; private set; }
 
     private List<LocationGridTile> corruptedTiles;
     private int _uncorruptibleLandmarkNeighbors = 0; //if 0, can be corrupted, otherwise, cannot be corrupted
@@ -98,7 +99,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     public bool isCorrupted => _isCorrupted;
     public Vector3 worldPosition {
         get {
-            Vector2 pos = ownedBuildSpots[0].spotItem.transform.position;
+            Vector2 pos = innerMapHexTile.gridTileCollections[0].tileCollectionItem.transform.position;
             pos.x += 3.5f;
             pos.y += 3.5f;
             return pos;
@@ -320,6 +321,15 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         for (int i = 0; i < AllNeighbours.Count; i++) {
             HexTile neighbour = AllNeighbours[i];
             if (neighbour.elevationType == elevation) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool HasNeighbourWithFeature(string feature) {
+        for (int i = 0; i < AllNeighbours.Count; i++) {
+            HexTile neighbour = AllNeighbours[i];
+            if (neighbour.featureComponent.HasFeature(feature)) {
                 return true;
             }
         }
@@ -809,13 +819,14 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         if (PlayerManager.Instance.player.mana < EditableValuesManager.Instance.corruptTileManaCost) {
             return false;
         }
+        //TODO: Add checking for if this tile has any structure blueprint on it.
         //if it has any build spots that have a blueprint on them, do not allow
-        for (int i = 0; i < ownedBuildSpots.Length; i++) {
-            BuildingSpot spot = ownedBuildSpots[i];
-            if (spot.hasBlueprint) {
-                return false;
-            }
-        }
+        // for (int i = 0; i < ownedBuildSpots.Length; i++) {
+        //     BuildingSpot spot = ownedBuildSpots[i];
+        //     if (spot.hasBlueprint) {
+        //         return false;
+        //     }
+        // }
         return true;
         //for (int i = 0; i < AllNeighbours.Count; i++) {
         //    HexTile neighbour = AllNeighbours[i];
@@ -946,15 +957,13 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     #endregion
 
     #region Inner Map
-    public void SetOwnedBuildSpot([NotNull]BuildingSpot[] spot) {
-        ownedBuildSpots = spot;
-        
+    public void SetInnerMapHexTileData(InnerMapHexTile _innerMapHexTile) {
+        innerMapHexTile = _innerMapHexTile;
+        Assert.IsNotNull(innerMapHexTile.gridTileCollections, $"InnerMapHexTile data for {this} does not have location grid tile collections!");
         locationGridTiles = new List<LocationGridTile>();
-        for (int i = 0; i < ownedBuildSpots.Length; i++) {
-            BuildingSpot currSpot = ownedBuildSpots[i];
-            if (currSpot != null) {
-                locationGridTiles.AddRange(currSpot.tilesInTerritory);    
-            }
+        for (int i = 0; i < innerMapHexTile.gridTileCollections.Length; i++) {
+            LocationGridTileCollection collection = innerMapHexTile.gridTileCollections[i];
+            locationGridTiles.AddRange(collection.tilesInTerritory);
         }
     }
     public List<TileObject> GetTileObjectsInHexTile(TILE_OBJECT_TYPE type) {
@@ -972,15 +981,15 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     #region Listeners
     private void SubscribeListeners() {    
         Messenger.AddListener<LocationStructure>(Signals.STRUCTURE_OBJECT_PLACED, OnStructurePlaced);
-        Messenger.AddListener<LocationStructure, BuildingSpot>(Signals.STRUCTURE_OBJECT_REMOVED, OnStructureRemoved);
+        Messenger.AddListener<LocationStructure, InnerMapHexTile>(Signals.STRUCTURE_OBJECT_REMOVED, OnStructureRemoved);
     }
     private void OnStructurePlaced(LocationStructure structure) {
-        if (ownedBuildSpots != null && ownedBuildSpots.Contains(structure.occupiedBuildSpot.spot)) {
+        if (innerMapHexTile != null && innerMapHexTile == structure.occupiedHexTile) {
             CheckIfStructureVisualsAreStillValid();
         }
     }
-    private void OnStructureRemoved(LocationStructure structure, BuildingSpot spot) {
-        if (ownedBuildSpots != null && ownedBuildSpots.Contains(spot)) {
+    private void OnStructureRemoved(LocationStructure structure, InnerMapHexTile removedFrom) {
+        if (innerMapHexTile != null && innerMapHexTile == removedFrom) {
             CheckIfStructureVisualsAreStillValid();
         }
     }
@@ -989,7 +998,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         foreach (KeyValuePair<STRUCTURE_TYPE,List<LocationStructure>> pair in region.structures) {
             for (int i = 0; i < pair.Value.Count; i++) {
                 LocationStructure structure = pair.Value[i];
-                if (structure.occupiedBuildSpot != null && structure.occupiedBuildSpot.spot.hexTileOwner == this) {
+                if (structure.occupiedHexTile != null && structure.occupiedHexTile == innerMapHexTile) {
                     int value = pair.Key.StructurePriority(); 
                     if (value > mostImportant.StructurePriority()) {
                         mostImportant = pair.Key;
@@ -1003,11 +1012,11 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     private void CheckIfStructureVisualsAreStillValid() {
         string log = $"Checking {ToString()} to check if landmark on it is still valid";
         STRUCTURE_TYPE mostImportantStructure = GetMostImportantStructureOnTile();
-        LANDMARK_TYPE landmarkType = LandmarkManager.Instance.GetLandmarkTypeFor(mostImportantStructure);
+        LANDMARK_TYPE landmarkType = mostImportantStructure.GetLandmarkType();
         log += $"\nMost important structure is {mostImportantStructure.ToString()}";
         log += $"\nLandmark to create is {landmarkType.ToString()}";
         if (landmarkOnTile == null) {
-            LandmarkManager.Instance.CreateNewLandmarkOnTile(this, landmarkType, false);
+            LandmarkManager.Instance.CreateNewLandmarkOnTile(this, landmarkType);
         } else {
             if (landmarkOnTile.specificLandmarkType != landmarkType) {
                 landmarkOnTile.ChangeLandmarkType(landmarkType);    
@@ -1093,13 +1102,14 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
                && elevationType != ELEVATION.WATER && elevationType != ELEVATION.MOUNTAIN &&
             PlayerManager.Instance.player.mana >= EditableValuesManager.Instance.buildStructureManaCost) {
 
-            //if it has any build spots that have a blueprint on them, do not allow
-            for (int i = 0; i < ownedBuildSpots.Length; i++) {
-                BuildingSpot spot = ownedBuildSpots[i];
-                if (spot.hasBlueprint) {
-                    return false;
-                }
-            }
+            //TODO:
+            // //if it has any build spots that have a blueprint on them, do not allow
+            // for (int i = 0; i < ownedBuildSpots.Length; i++) {
+            //     BuildingSpot spot = ownedBuildSpots[i];
+            //     if (spot.hasBlueprint) {
+            //         return false;
+            //     }
+            // }
             return true;
         }
         return false;
@@ -1169,8 +1179,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         StartCorruption();
         //LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkObj as string);
         BaseLandmark newLandmark =
-            LandmarkManager.Instance.CreateNewLandmarkOnTile(this, landmarkData.landmarkType, false);
-        LandmarkManager.Instance.CreateStructureObjectForLandmark(newLandmark, settlementOnTile);
+            LandmarkManager.Instance.CreateNewLandmarkOnTile(this, landmarkData.landmarkType);
+        LandmarkManager.Instance.PlaceBuiltStructureForSettlement(settlementOnTile, region.innerMap, this,
+            landmarkData.landmarkType.GetStructureType());
         PlayerManager.Instance.player.AdjustMana(-EditableValuesManager.Instance.buildStructureManaCost);
         newLandmark.OnFinishedBuilding();
         UIManager.Instance.HideObjectPicker();
@@ -1238,7 +1249,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     #region Characters
     public List<Character> GetAllCharactersInsideHex() {
         List<Character> characters = null;
-        LocationGridTile lowerLeftCornerTile = ownedBuildSpots[0].tilesInTerritory[0];
+        LocationGridTile lowerLeftCornerTile = innerMapHexTile.gridTileCollections[0].tilesInTerritory[0];
         int xMin = lowerLeftCornerTile.localPlace.x;
         int yMin = lowerLeftCornerTile.localPlace.y;
         int xMax = xMin + (InnerMapManager.BuildingSpotSize.x * 2);
@@ -1255,7 +1266,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         return characters;
     }
     public LocationGridTile GetCenterLocationGridTile() {
-        LocationGridTile lowerLeftCornerTile = ownedBuildSpots[0].tilesInTerritory[0];
+        LocationGridTile lowerLeftCornerTile = innerMapHexTile.gridTileCollections[0].tilesInTerritory[0];
         int xMin = lowerLeftCornerTile.localPlace.x;
         int yMin = lowerLeftCornerTile.localPlace.y;
         int xMax = xMin + InnerMapManager.BuildingSpotSize.x;

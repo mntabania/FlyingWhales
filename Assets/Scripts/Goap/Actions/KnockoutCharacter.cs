@@ -34,7 +34,7 @@ public class KnockoutCharacter : GoapAction {
                 cost += 15;
                 costLog += " +15(Friend/Close/Acquaintance/Same Faction/NPCSettlement)";
             } else if (job.jobType == JOB_TYPE.UNDERMINE) {
-                cost += UtilityScripts.Utilities.rng.Next(80, 121);
+                cost += UtilityScripts.Utilities.Rng.Next(80, 121);
                 costLog += $" +{cost}(Undermine)";
             } else {
                 cost += 2000;

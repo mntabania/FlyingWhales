@@ -18,7 +18,7 @@ namespace Traits {
         public override void ExecuteCostModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, object[] otherData, ref int cost) {
             base.ExecuteCostModification(action, actor, poiTarget, otherData, ref cost);
             if (action == INTERACTION_TYPE.MAKE_LOVE) {
-                cost = UtilityScripts.Utilities.rng.Next(40, 67);
+                cost = UtilityScripts.Utilities.Rng.Next(40, 67);
             }
         }
         //public override void ExecuteActionPerTickEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) {

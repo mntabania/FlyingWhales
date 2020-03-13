@@ -372,7 +372,7 @@ public class Region : ILocation {
         Messenger.RemoveListener(Signals.TICK_STARTED, PerTickBuilding);
         //mainLandmark.ChangeLandmarkType(demonicBuildingData.landmarkType);
         //int previousID = mainLandmark.id;
-        BaseLandmark newLandmark = LandmarkManager.Instance.CreateNewLandmarkOnTile(coreTile, demonicBuildingData.landmarkType, false);
+        BaseLandmark newLandmark = LandmarkManager.Instance.CreateNewLandmarkOnTile(coreTile, demonicBuildingData.landmarkType);
         //newLandmark.OverrideID(previousID);
 
         UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(),
@@ -564,7 +564,7 @@ public class Region : ILocation {
     }
     public LocationStructure GetRandomStructureOfType(STRUCTURE_TYPE type) {
         if (structures.ContainsKey(type)) {
-            return structures[type][UtilityScripts.Utilities.rng.Next(0, structures[type].Count)];
+            return structures[type][UtilityScripts.Utilities.Rng.Next(0, structures[type].Count)];
         }
         return null;
     }
