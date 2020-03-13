@@ -114,7 +114,8 @@ public class DouseFireState : CharacterState {
             if (_fires.Remove(traitable)) {
                 if (currentTarget == traitable && removedBy != stateComponent.character) { 
                     //only redetermine action if burning was removed by something or someone else
-                    // currentTarget = null;
+                    currentTarget = null;
+                    isDousingFire = false;
                     DetermineAction();
                 }
             }
