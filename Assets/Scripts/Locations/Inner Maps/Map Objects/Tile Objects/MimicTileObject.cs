@@ -27,11 +27,12 @@ public class MimicTileObject : TileObject {
             AwakenMimic();
         }
     }
-    public override void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false, object source = null) {
+    public override void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false,
+        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null) {
         if (amount < 0) {
             AwakenMimic();
         }
-        base.AdjustHP(amount, elementalDamageType, triggerDeath, source);
+        base.AdjustHP(amount, elementalDamageType, triggerDeath, source, elementalTraitProcessor);
     }
     private void AwakenMimic() {
         if (_hasBeenAwakened) { return; }

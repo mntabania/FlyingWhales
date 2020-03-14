@@ -21,9 +21,6 @@ public abstract class ElementalCrystal : TileObject {
     #endregion
 
     private void DealElementalDamage(ITraitable traitable) {
-        if (elementalType == ELEMENTAL_TYPE.Fire) {
-            return; //Disabled fire since there is still a problem with burning sources.
-        }
         traitable.AdjustHP(-50, elementalType, true, this);
     }
 }

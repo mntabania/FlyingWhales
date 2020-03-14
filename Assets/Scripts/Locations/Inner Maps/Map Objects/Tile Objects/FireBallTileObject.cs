@@ -28,7 +28,8 @@ public class FireBallTileObject : MovingTileObject {
     public override string ToString() {
         return "Fire Ball";
     }
-    public override void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false, object source = null) {
+    public override void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false,
+        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null) {
         if (currentHP == 0 && amount < 0) {
             return; //hp is already at minimum, do not allow any more negative adjustments
         }
@@ -42,7 +43,10 @@ public class FireBallTileObject : MovingTileObject {
             if (source is Character character) {
                 responsibleCharacter = character;
             }
-            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter);
+            CombatManager.ElementalTraitProcessor etp = elementalTraitProcessor ?? 
+                                                        CombatManager.Instance.DefaultElementalTraitProcessor;
+            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, 
+                responsibleCharacter, etp);
         }
         if (amount < 0 && elementalDamageType == ELEMENTAL_TYPE.Water) {
             //2 Vapors

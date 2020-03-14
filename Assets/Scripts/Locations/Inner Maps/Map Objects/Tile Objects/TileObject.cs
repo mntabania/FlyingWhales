@@ -409,7 +409,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
         return null;
     }
-    public virtual void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false, object source = null) {
+    public virtual void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false,
+        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null) {
         if (currentHP == 0 && amount < 0) {
             return; //hp is already at minimum, do not allow any more negative adjustments
         }
@@ -427,7 +428,10 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             if (source is Character character) {
                 responsibleCharacter = character;
             }
-            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter);
+            CombatManager.ElementalTraitProcessor etp = elementalTraitProcessor ?? 
+                                                        CombatManager.Instance.DefaultElementalTraitProcessor;
+            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, 
+                responsibleCharacter, etp);
             // }
         }
         if (currentHP <= 0) {

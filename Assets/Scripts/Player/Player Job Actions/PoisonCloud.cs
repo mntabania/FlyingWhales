@@ -56,10 +56,7 @@ public class PoisonCloudData : SpellData {
         poisonCloudTileObject.SetDurationInTicks(GameManager.Instance.GetTicksBasedOnHour(Random.Range(2, 6)));
         poisonCloudTileObject.SetGridTileLocation(targetTile);
         poisonCloudTileObject.OnPlacePOI();
-        //add poisoned status so size of cloud is updated.
-        for (int i = 0; i < 5; i++) {
-            poisonCloudTileObject.traitContainer.AddTrait(poisonCloudTileObject, "Poisoned", overrideDuration: 0);
-        }
+        poisonCloudTileObject.SetStacks(5);
     }
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
         return targetTile.structure != null;

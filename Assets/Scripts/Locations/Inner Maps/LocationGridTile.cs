@@ -400,14 +400,14 @@ namespace Inner_Maps {
         public IPointOfInterest RemoveObjectHere(Character removedBy) {
             if (objHere != null) {
                 IPointOfInterest removedObj = objHere;
-                if (objHere is TileObject && removedBy != null) {
-                    //if the object in this tile is a tile object and it was removed by a character, use tile object specific function
-                    (objHere as TileObject).RemoveTileObject(removedBy);
-                } else {
-                    objHere.SetGridTileLocation(null);
-                    objHere.OnDestroyPOI();
-                }
                 objHere = null;
+                if (removedObj is TileObject tileObject && removedBy != null) {
+                    //if the object in this tile is a tile object and it was removed by a character, use tile object specific function
+                    tileObject.RemoveTileObject(removedBy);
+                } else {
+                    removedObj.SetGridTileLocation(null);
+                    removedObj.OnDestroyPOI();
+                }
                 SetTileState(Tile_State.Empty);
                 Messenger.Broadcast(Signals.STOP_CURRENT_ACTION_TARGETING_POI, removedObj);
                 return removedObj;

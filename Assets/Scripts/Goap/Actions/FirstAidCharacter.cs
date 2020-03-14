@@ -89,11 +89,12 @@ public class FirstAidCharacter : GoapAction {
         TileObject potion = goapNode.actor.GetItem(TILE_OBJECT_TYPE.HEALING_POTION);
         if (potion != null) {
             goapNode.actor.UnobtainItem(potion);
-        } else {
-            //the actor does not have a healing potion, log for now
-            goapNode.actor.logComponent.PrintLogErrorIfActive(
-                $"{goapNode.actor.name} does not have a healing potion for first aid! Injured and Unconscious was still removed, but thought you should know.");
-        }
+        } 
+        // else {
+        //     //the actor does not have a healing potion, log for now
+        //     goapNode.actor.logComponent.PrintLogErrorIfActive(
+        //         $"{goapNode.actor.name} does not have a healing potion for first aid! Injured and Unconscious was still removed, but thought you should know.");
+        // }
         //**After Effect 3**: Allow movement of Target
         //(poiTarget as Character).marker.pathfindingAI.AdjustDoNotMove(-1);
     }

@@ -48,7 +48,8 @@ public class VaporTileObject : MovingTileObject {
     public override string ToString() {
         return "Vapor";
     }
-    public override void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false, object source = null) {
+    public override void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false,
+        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null) {
         if (currentHP == 0 && amount < 0) {
             return; //hp is already at minimum, do not allow any more negative adjustments
         }
@@ -61,7 +62,10 @@ public class VaporTileObject : MovingTileObject {
             if (source is Character character) {
                 responsibleCharacter = character;
             }
-            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter);
+            CombatManager.ElementalTraitProcessor etp = elementalTraitProcessor ?? 
+                                                        CombatManager.Instance.DefaultElementalTraitProcessor;
+            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, 
+                responsibleCharacter, etp);
         }
         if (elementalDamageType == ELEMENTAL_TYPE.Ice || currentHP == 0) {
             _vaporMapVisualObject.Expire();

@@ -177,6 +177,8 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
     #region POI's
     private void AddObject(ITraitable obj) {
         if (!_objsInRange.Contains(obj)) {
+            //TODO: Unify this
+            if (obj is PoisonCloudTileObject) { return; }
             _objsInRange.Add(obj);
             OnAddPOI(obj);
         }

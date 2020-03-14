@@ -75,7 +75,8 @@ public class GenericTileObject : TileObject {
     public override string ToString() {
         return $"Generic Obj at tile {gridTileLocation}";
     }
-    public override void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false, object source = null) {
+    public override void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false,
+        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null) {
         if (currentHP == 0 && amount < 0) {
             return; //hp is already at minimum, do not allow any more negative adjustments
         }
@@ -87,7 +88,10 @@ public class GenericTileObject : TileObject {
             if (source != null && source is Character) {
                 responsibleCharacter = source as Character;
             }
-            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter);
+            CombatManager.ElementalTraitProcessor etp = elementalTraitProcessor ?? 
+                                                        CombatManager.Instance.DefaultElementalTraitProcessor;
+            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, 
+                responsibleCharacter, etp);
         }
         if (currentHP <= 0) {
             //floor has been destroyed

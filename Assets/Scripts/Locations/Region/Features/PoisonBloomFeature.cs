@@ -33,10 +33,7 @@ public class PoisonBloomFeature : TileFeature {
             PoisonCloudTileObject poisonCloudTileObject = new PoisonCloudTileObject();
             poisonCloudTileObject.SetGridTileLocation(chosenTile);
             poisonCloudTileObject.OnPlacePOI();
-            //add poisoned status so size of cloud is updated.
-            for (int i = 0; i < 3; i++) {
-                poisonCloudTileObject.traitContainer.AddTrait(poisonCloudTileObject, "Poisoned", overrideDuration: 0);
-            }    
+            poisonCloudTileObject.SetStacks(3);
         }
     }
 }

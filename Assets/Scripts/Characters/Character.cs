@@ -2858,7 +2858,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         _currentHP = amount;
     }
     //Adjust current HP based on specified paramater, but HP must not go below 0
-    public virtual void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false, object source = null) {
+    public virtual void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false,
+        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null) {
+        
         CombatManager.Instance.DamageModifierByElements(ref amount, elementalDamageType, this);
         int previous = _currentHP;
         _currentHP += amount;
@@ -2878,7 +2880,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 if (source is Character) {
                     responsibleCharacter = source as Character;
                 }
-                CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter);
+                CombatManager.ElementalTraitProcessor etp = elementalTraitProcessor ?? 
+                                                            CombatManager.Instance.DefaultElementalTraitProcessor;
+                CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, 
+                    responsibleCharacter, etp);
             }
         }
         if (triggerDeath && previous != _currentHP && _currentHP <= 0) {

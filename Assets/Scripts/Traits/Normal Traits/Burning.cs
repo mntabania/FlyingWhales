@@ -9,10 +9,10 @@ namespace Traits {
         private ITraitable owner { get; set; }
         public BurningSource sourceOfBurning { get; private set; }
         public override bool isPersistent => true;
-        
+        public Character douser { get; private set; } //the character that is going to douse this fire.
         private GameObject burningEffect;
         private readonly List<ITraitable> _burningSpreadChoices;
-        public Character douser { get; private set; } //the character that is going to douse this fire.
+        private bool _hasBeenRemoved;
 
         public Burning() {
             name = "Burning";
@@ -45,6 +45,7 @@ namespace Traits {
                 burningEffect = GameManager.Instance.CreateParticleEffectAt(structureWallObject, PARTICLE_EFFECT.Burning);
             }
             if (sourceOfBurning != null && !sourceOfBurning.objectsOnFire.Contains(owner)) {
+                //this is so that addedTo will be added to the list of objects on fire of the burning source, if it isn't already.
                 SetSourceOfBurning(sourceOfBurning, owner);
             }
             Messenger.AddListener(Signals.TICK_ENDED, PerTickEnded);
@@ -53,7 +54,9 @@ namespace Traits {
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
+            _hasBeenRemoved = true;
             SetDouser(null); //reset douser so that any signals related to that will be removed.
+            SetSourceOfBurning(null, removedFrom);
             Messenger.RemoveListener(Signals.TICK_ENDED, PerTickEnded);
             if (burningEffect) {
                 ObjectPoolManager.Instance.DestroyObject(burningEffect);
@@ -75,7 +78,7 @@ namespace Traits {
         }
         public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
             if (traitOwner.gridTileLocation != null 
-                
+                && characterThatWillDoJob.homeSettlement != null
                 && traitOwner.gridTileLocation.IsPartOfSettlement(characterThatWillDoJob.homeSettlement)) {
                 characterThatWillDoJob.homeSettlement.settlementJobTriggerComponent.TriggerDouseFire();
             }
@@ -132,17 +135,22 @@ namespace Traits {
         }
         public void SetSourceOfBurning(BurningSource source, ITraitable obj) {
             sourceOfBurning = source;
-            if (obj is IPointOfInterest poiOnFire) {
+            if (sourceOfBurning != null && obj is IPointOfInterest poiOnFire) {
                 source.AddObjectOnFire(poiOnFire);
             }
         }
         private void PerTickEnded() {
+            if (_hasBeenRemoved) {
+                //if in case that this trait has been removed on the same tick that this runs, do not allow spreading.
+                return;
+            }
             //Every tick, a Burning tile, object or character has a 15% chance to spread to an adjacent flammable tile, flammable character, 
             //flammable object or the object in the same tile.
             if(PlayerManager.Instance.player.seizeComponent.seizedPOI == owner) {
                 //Temporary fix only, if the burning object is seized, spreading of fire should not trigger
                 return;
             }
+            
             if(owner.gridTileLocation == null) {
                 //Messenger.RemoveListener(Signals.TICK_ENDED, PerTickEnded);
                 //Temporary fix only, if the burning object has no longer have a tile location (presumably destroyed), spreading of fire should not trigger, and remove listener for per tick

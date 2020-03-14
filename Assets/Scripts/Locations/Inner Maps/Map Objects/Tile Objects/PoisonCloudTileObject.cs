@@ -9,6 +9,7 @@ public sealed class PoisonCloudTileObject : MovingTileObject {
     private PoisonCloudMapObjectVisual _poisonCloudVisual;
     public int durationInTicks { get; private set; }
     public int size { get; private set; }
+    private int _stacks;
     
     public PoisonCloudTileObject() {
         Initialize(TILE_OBJECT_TYPE.POISON_CLOUD, false);
@@ -35,43 +36,10 @@ public sealed class PoisonCloudTileObject : MovingTileObject {
     public override void Neutralize() {
         _poisonCloudVisual.Expire();
     }
-    public override void OnPlacePOI() {
-        base.OnPlacePOI();
-        Messenger.AddListener<TileObject, Trait>(Signals.TILE_OBJECT_TRAIT_ADDED, OnTraitAdded);
-        Messenger.AddListener<TileObject, Trait>(Signals.TILE_OBJECT_TRAIT_STACKED, OnTraitStacked);
-        Messenger.AddListener<TileObject, Trait>(Signals.TILE_OBJECT_TRAIT_REMOVED, OnTraitRemoved);
-        Messenger.AddListener<TileObject, Trait>(Signals.TILE_OBJECT_TRAIT_UNSTACKED, OnTraitUnstacked);
+    public void SetStacks(int stacks) {
+        _stacks = stacks;
+        UpdateSizeBasedOnPoisonedStacks();
     }
-    public override void OnDestroyPOI() {
-        base.OnDestroyPOI();
-        Messenger.RemoveListener<TileObject, Trait>(Signals.TILE_OBJECT_TRAIT_ADDED, OnTraitAdded);
-        Messenger.RemoveListener<TileObject, Trait>(Signals.TILE_OBJECT_TRAIT_STACKED, OnTraitStacked);
-        Messenger.RemoveListener<TileObject, Trait>(Signals.TILE_OBJECT_TRAIT_REMOVED, OnTraitRemoved);
-        Messenger.RemoveListener<TileObject, Trait>(Signals.TILE_OBJECT_TRAIT_UNSTACKED, OnTraitUnstacked);
-    }
-
-    #region Listeners
-    private void OnTraitAdded(TileObject tileObject, Trait trait) {
-        if (tileObject == this && trait is Poisoned) {
-            UpdateSizeBasedOnPoisonedStacks();
-        }
-    }
-    private void OnTraitRemoved(TileObject tileObject, Trait trait) {
-        if (tileObject == this && trait is Poisoned) {
-            UpdateSizeBasedOnPoisonedStacks();
-        }
-    }
-    private void OnTraitStacked(TileObject tileObject, Trait trait) {
-        if (tileObject == this && trait is Poisoned) {
-            UpdateSizeBasedOnPoisonedStacks();
-        }
-    }
-    private void OnTraitUnstacked(TileObject tileObject, Trait trait) {
-        if (tileObject == this && trait is Poisoned) {
-            UpdateSizeBasedOnPoisonedStacks();
-        }
-    }
-    #endregion
 
     #region Duration
     public void SetDurationInTicks(int duration) {
@@ -85,21 +53,15 @@ public sealed class PoisonCloudTileObject : MovingTileObject {
         _poisonCloudVisual.SetSize(size);
     }
     private void UpdateSizeBasedOnPoisonedStacks() {
-        int poisonedStacks = 1;
-        if (traitContainer.stacks.ContainsKey("Poisoned")) {
-            poisonedStacks = traitContainer.stacks["Poisoned"];    
-        }
-        Assert.IsTrue(poisonedStacks > 0, $"Poisoned stacks of {this} is {poisonedStacks}.");
-        
-        if (UtilityScripts.Utilities.IsInRange(poisonedStacks, 1, 3)) {
+        if (UtilityScripts.Utilities.IsInRange(_stacks, 1, 3)) {
             SetSize(1);
-        } else if (UtilityScripts.Utilities.IsInRange(poisonedStacks, 3, 5)) {
+        } else if (UtilityScripts.Utilities.IsInRange(_stacks, 3, 5)) {
             SetSize(2);
-        } else if (UtilityScripts.Utilities.IsInRange(poisonedStacks, 5, 10)) {
+        } else if (UtilityScripts.Utilities.IsInRange(_stacks, 5, 10)) {
             SetSize(3);
-        } else if (UtilityScripts.Utilities.IsInRange(poisonedStacks, 10, 17)) {
+        } else if (UtilityScripts.Utilities.IsInRange(_stacks, 10, 17)) {
             SetSize(4);
-        } else if (UtilityScripts.Utilities.IsInRange(poisonedStacks, 17, 26)) {
+        } else if (UtilityScripts.Utilities.IsInRange(_stacks, 17, 26)) {
             SetSize(5);
         } else {
             SetSize(6);
