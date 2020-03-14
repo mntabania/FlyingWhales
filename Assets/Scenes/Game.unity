@@ -48562,6 +48562,19 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 430782f9ea5c30a498181c8c5c16d218, type: 3}
   traitIconPrefab: {fileID: 3337898495377871397, guid: 34762437336d7494e80c588b01eadc6e,
     type: 3}
+  removeStatusTraits:
+  - Unconscious
+  - Injured
+  - Poisoned
+  - Plagued
+  - Infected
+  - Cursed
+  - Freezing
+  - Frozen
+  specialIllnessTraits:
+  - Poisoned
+  - Plagued
+  - Infected
 --- !u!1 &905962139
 GameObject:
   m_ObjectHideFlags: 0
@@ -86924,6 +86937,7 @@ MonoBehaviour:
           undamaged: {fileID: 21300000, guid: dc30e0e162d93854db99983f2914be7b, type: 3}
         - damaged: {fileID: 21300000, guid: 2d4a8e3bf9824d7459df6adbdc9e7446, type: 3}
           undamaged: {fileID: 21300000, guid: a9160550daf18ea40a1a164c35502248, type: 3}
+  tileObjectsThatAreItems: 4c000000630000004d000000620000004e00000061000000
 --- !u!114 &1536722385
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -87647,7 +87661,7 @@ MonoBehaviour:
         m_keys: 06000000
         m_values:
         - activeTile:
-          - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
+          - {fileID: 21300000, guid: 8e802e2f50b66f6489a86739655419b7, type: 3}
           inactiveTile: []
     - biomeAssets:
         m_keys: 06000000
@@ -87659,7 +87673,7 @@ MonoBehaviour:
         m_keys: 06000000
         m_values:
         - activeTile:
-          - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
+          - {fileID: 21300000, guid: 3089f3deaa0b6804c9c25f777149886a, type: 3}
           inactiveTile: []
     - biomeAssets:
         m_keys: 06000000
@@ -87737,23 +87751,20 @@ MonoBehaviour:
         m_keys: 06000000
         m_values:
         - activeTile:
-          - {fileID: 21300000, guid: c81f16893bd90234d99eaa828db43579, type: 3}
-          inactiveTile:
-          - {fileID: 21300000, guid: c81f16893bd90234d99eaa828db43579, type: 3}
+          - {fileID: 21300000, guid: a5ad80f1abcaa054c8e4236074ed79a8, type: 3}
+          inactiveTile: []
     - biomeAssets:
         m_keys: 06000000
         m_values:
         - activeTile:
-          - {fileID: 21300000, guid: 7dcd4be0175214f46913254eb8a78af8, type: 3}
-          inactiveTile:
-          - {fileID: 21300000, guid: 7dcd4be0175214f46913254eb8a78af8, type: 3}
+          - {fileID: 21300000, guid: 8926205bec5ede048a33baa26bab3552, type: 3}
+          inactiveTile: []
     - biomeAssets:
         m_keys: 06000000
         m_values:
         - activeTile:
-          - {fileID: 21300000, guid: ae40eb92eb4f1ec429a90d1bec4f48c8, type: 3}
-          inactiveTile:
-          - {fileID: 21300000, guid: ae40eb92eb4f1ec429a90d1bec4f48c8, type: 3}
+          - {fileID: 21300000, guid: 63884d5f4c549d3428e8988d83c95e38, type: 3}
+          inactiveTile: []
     - biomeAssets:
         m_keys: 06000000
         m_values:
