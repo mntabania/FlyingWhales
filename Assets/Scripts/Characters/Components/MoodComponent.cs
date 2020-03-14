@@ -52,7 +52,7 @@ public class MoodComponent {
 	#region Events
 	public void OnCharacterBecomeMinionOrSummon() {
 		DisableMoodEffects();
-		StopCheckingForMinorMentalBreak();
+		//StopCheckingForMinorMentalBreak();
 		StopCheckingForMajorMentalBreak();
 	}
 	public void OnCharacterNoLongerMinionOrSummon() {
@@ -126,6 +126,13 @@ public class MoodComponent {
 		SwitchMoodStates(MOOD_STATE.NORMAL);
 		Debug.Log(
 			$"{GameManager.Instance.TodayLogString()} {_owner.name} is <color=green>entering</color> <b>normal</b> mood state");
+		if (executeMoodChangeEffects) {
+			//stop checking for major mental breaks
+			StopCheckingForMajorMentalBreak();
+			if (currentCriticalMoodEffectChance > 0f) {
+				Messenger.AddListener(Signals.HOUR_STARTED, DecreaseMajorMentalBreakChance);
+			}
+		}
 	}
 	private void ExitNormalMood() {
 		_isInNormalMood = false;
@@ -139,24 +146,35 @@ public class MoodComponent {
 		SwitchMoodStates(MOOD_STATE.LOW);
 		Debug.Log(
 			$"{GameManager.Instance.TodayLogString()} {_owner.name} is <color=green>entering</color> <b>Low</b> mood state");
+		//if (executeMoodChangeEffects) {
+		//	StartCheckingForMinorMentalBreak();
+		//	if (currentLowMoodEffectChance > 0f) {
+		//		Messenger.RemoveListener(Signals.HOUR_STARTED, DecreaseMinorMentalBreakChance);
+		//	}	
+		//}
 		if (executeMoodChangeEffects) {
-			StartCheckingForMinorMentalBreak();
-			if (currentLowMoodEffectChance > 0f) {
-				Messenger.RemoveListener(Signals.HOUR_STARTED, DecreaseMinorMentalBreakChance);
-			}	
+			//start checking for major mental breaks
+			if (_isInMajorMentalBreak) {
+				Debug.Log(
+					$"{GameManager.Instance.TodayLogString()}{_owner.name} is currently in a major mental break. So not starting hourly check for major mental break.");
+			} else {
+				StartCheckingForMajorMentalBreak();
+			}
+			if (currentCriticalMoodEffectChance > 0f) {
+				Messenger.RemoveListener(Signals.HOUR_STARTED, DecreaseMajorMentalBreakChance);
+			}
 		}
-		
 	}
 	private void ExitLowMood() {
 		_isInLowMood = false;
 		Debug.Log(
 			$"{GameManager.Instance.TodayLogString()} {_owner.name} is <color=red>exiting</color> <b>low</b> mood state");
-		if (executeMoodChangeEffects) {
-			StopCheckingForMinorMentalBreak();
-			if (currentLowMoodEffectChance > 0f) {
-				Messenger.AddListener(Signals.HOUR_STARTED, DecreaseMinorMentalBreakChance);
-			}
-		}
+		//if (executeMoodChangeEffects) {
+		//	StopCheckingForMinorMentalBreak();
+		//	if (currentLowMoodEffectChance > 0f) {
+		//		Messenger.AddListener(Signals.HOUR_STARTED, DecreaseMinorMentalBreakChance);
+		//	}
+		//}
 	}
 	private void StartCheckingForMinorMentalBreak() {
 		Debug.Log($"<color=blue>{GameManager.Instance.TodayLogString()}{_owner.name} has started checking for minor mental break.</color>");
@@ -173,30 +191,12 @@ public class MoodComponent {
 		SwitchMoodStates(MOOD_STATE.CRITICAL);
 		Debug.Log(
 			$"{GameManager.Instance.TodayLogString()} {_owner.name} is <color=green>entering</color> <b>critical</b> mood state");
-		if (executeMoodChangeEffects) {
-			//start checking for major mental breaks
-			if (_isInMajorMentalBreak) {
-				Debug.Log(
-					$"{GameManager.Instance.TodayLogString()}{_owner.name} is currently in a major mental break. So not starting hourly check for major mental break.");
-			} else {
-				StartCheckingForMajorMentalBreak();
-			}
-			if (currentCriticalMoodEffectChance > 0f) {
-				Messenger.RemoveListener(Signals.HOUR_STARTED, DecreaseMajorMentalBreakChance);
-			}
-		}
+		
 	}
 	private void ExitCriticalMood() {
 		_isInCriticalMood = false;
 		Debug.Log(
 			$"{GameManager.Instance.TodayLogString()} {_owner.name} is <color=red>exiting</color> <b>critical</b> mood state");
-		if (executeMoodChangeEffects) {
-			//stop checking for major mental breaks
-			StopCheckingForMajorMentalBreak();
-			if (currentCriticalMoodEffectChance > 0f) {
-				Messenger.AddListener(Signals.HOUR_STARTED, DecreaseMajorMentalBreakChance);
-			}
-		}
 	}
 	private void CheckForMajorMentalBreak() {
 		IncreaseMajorMentalBreakChance();
@@ -255,23 +255,34 @@ public class MoodComponent {
 		if (_isInMajorMentalBreak) {
 			throw new Exception($"{GameManager.Instance.TodayLogString()}{_owner.name} is already in a major mental break, but is trying to trigger another one!");
 		}
-		int roll = Random.Range(0, 3);
+		
 		string summary = $"{GameManager.Instance.TodayLogString()}{_owner.name} triggered major mental break.";
 		_isInMajorMentalBreak = true;
-		if (roll == 0) {
-			//Berserk
-			summary += "Chosen break is <b>berserk</b>";
+		if (_owner.characterClass.className.Equals("Peasant") || _owner.characterClass.className.Equals("Miner") 
+		    || _owner.characterClass.className.Equals("Craftsman")) {
+			int roll = Random.Range(0, 2);
+			if (roll == 0) {
+				//catatonic
+				summary += "Chosen break is <b>catatonic</b>";
+				TriggerCatatonic();
+				_owner.interruptComponent.TriggerInterrupt(INTERRUPT.Mental_Break, _owner);
+			} else if (roll == 1) {
+				//suicidal
+				summary += "Chosen break is <b>suicidal</b>";
+				TriggerSuicidal();
+				_owner.interruptComponent.TriggerInterrupt(INTERRUPT.Mental_Break, _owner);
+			}
+		} else if (_owner.characterClass.className.Equals("Druid") || _owner.characterClass.className.Equals("Shaman") 
+					|| _owner.characterClass.className.Equals("Mage")) {
+			mentalBreakName = "Loss of Control";
+			_owner.interruptComponent.TriggerInterrupt(INTERRUPT.Mental_Break, _owner);
+			TriggerLossOfControl();
+		} else {
+			summary += "Chosen break is <b>Berserked</b>";
 			TriggerBerserk();
-		} else if (roll == 1) {
-			//catatonic
-			summary += "Chosen break is <b>catatonic</b>";
-			TriggerCatatonic();
-		} else if (roll == 2) {
-			//suicidal
-			summary += "Chosen break is <b>suicidal</b>";
-			TriggerSuicidal();
+			_owner.interruptComponent.TriggerInterrupt(INTERRUPT.Mental_Break, _owner);
 		}
-		_owner.interruptComponent.TriggerInterrupt(INTERRUPT.Mental_Break, _owner);
+		
 		Debug.Log($"<color=red>{summary}</color>");
 		StopCheckingForMajorMentalBreak();
 	}
@@ -320,6 +331,16 @@ public class MoodComponent {
 			//gain catharsis
 			_owner.traitContainer.AddTrait(_owner, "Catharsis");
 			Messenger.RemoveListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, CheckIfSuicidalLost);
+			OnMentalBreakDone();
+		}
+	}
+	private void TriggerLossOfControl() {
+		_owner.interruptComponent.TriggerInterrupt(INTERRUPT.Loss_Of_Control, _owner);
+		Messenger.AddListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, CheckIfLossOfControlFinished);
+	}
+	private void CheckIfLossOfControlFinished(INTERRUPT interrupt, Character character) {
+		if (interrupt == INTERRUPT.Loss_Of_Control && character == _owner) {
+			Messenger.RemoveListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, CheckIfLossOfControlFinished);	
 			OnMentalBreakDone();
 		}
 	}
@@ -384,7 +405,7 @@ public class MoodComponent {
 		}
 		_owner.interruptComponent.TriggerInterrupt(INTERRUPT.Mental_Break, _owner);
 		Debug.Log($"<color=red>{summary}</color>");
-		StopCheckingForMinorMentalBreak();
+		//StopCheckingForMinorMentalBreak();
 	}
 	private void TriggerHideAtHome() {
 		if (_owner.traitContainer.AddTrait(_owner, "Hiding")) {
@@ -422,14 +443,15 @@ public class MoodComponent {
 
 	#region Mental Break Shared
 	private void OnMentalBreakDone() {
-		_isInMinorMentalBreak = false;
+		//_isInMinorMentalBreak = false;
 		_isInMajorMentalBreak = false;
 		ResetMajorMentalBreakChance();
-		ResetMinorMentalBreakChance();
-		if (_isInLowMood) {
-			Debug.Log($"{GameManager.Instance.TodayLogString()}{_owner.name} is still in low mood state after mental break, starting check for minor mental break again...");
-			StartCheckingForMinorMentalBreak();
-		}else if (_isInCriticalMood) {
+		//ResetMinorMentalBreakChance();
+		// if (_isInLowMood) {
+		// 	Debug.Log($"{GameManager.Instance.TodayLogString()}{_owner.name} is still in low mood state after mental break, starting check for minor mental break again...");
+		// 	StartCheckingForMinorMentalBreak();
+		// }else 
+		if (_isInCriticalMood) {
 			Debug.Log($"{GameManager.Instance.TodayLogString()}{_owner.name} is still in critical mood state after mental break, starting check for major mental break again...");
 			StartCheckingForMajorMentalBreak();
 		}

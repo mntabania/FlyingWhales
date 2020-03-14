@@ -82,6 +82,7 @@ public class ConsoleBase : InfoUIBase {
             // {"/adjust_resource", TriggerEmotion },
             {"/change_archetype", ChangeArchetype },
             {"/elemental_damage", ChangeCharacterElementalDamage },
+            {"/add_item", AddItemToCharacter },
         };
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -495,6 +496,34 @@ public class ConsoleBase : InfoUIBase {
         }
         UIManager.Instance.ShowCharacterInfo(character, true);
         //character.CenterOnCharacter();
+    }
+    private void AddItemToCharacter(string[] parameters) {
+        if (parameters.Length != 2) { //character, tile object type
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of AddItemToCharacter");
+            return;
+        }
+        string characterParameterString = parameters[0];
+        string objectTypeString = parameters[1];
+
+        bool isCharacterParameterNumeric = int.TryParse(characterParameterString, out var characterID);
+        Character character = null;
+        character = isCharacterParameterNumeric ? CharacterManager.Instance.GetCharacterByID(characterID) 
+            : CharacterManager.Instance.GetCharacterByName(characterParameterString);
+        
+        if (character == null) {
+            AddErrorMessage("There was an error in the command format of AddItemToCharacter");
+            return;
+        }
+
+        TILE_OBJECT_TYPE objectType;
+        if (Enum.TryParse(objectTypeString, true, out objectType)) {
+            TileObject tileObject = InnerMapManager.Instance.CreateNewTileObject<TileObject>(objectType);
+            character.ObtainItem(tileObject);
+        }
+        else {
+            AddErrorMessage("There was an error in the command format of AddItemToCharacter");   
+        }
     }
     private void LogLocationHistory(string[] parameters) {
         if (parameters.Length != 1) {

@@ -3,6 +3,8 @@ using System;
 using Inner_Maps;
 
 public class PoisonBloomFeature : TileFeature {
+
+    private string expirationKey;
     
     public PoisonBloomFeature() {
         name = "Poison Emitting";
@@ -11,12 +13,19 @@ public class PoisonBloomFeature : TileFeature {
     public override void OnAddFeature(HexTile tile) {
         base.OnAddFeature(tile);
         Messenger.AddListener(Signals.TICK_ENDED, () => EmitPoisonCloudsPerTick(tile));
-        GameDate dueDate = GameManager.Instance.Today().AddTicks(GameManager.ticksPerHour);
-        SchedulingManager.Instance.AddEntry(dueDate, () => tile.featureComponent.RemoveFeature(this, tile), this);
+        ScheduleExpiry(tile);
     }
     public override void OnRemoveFeature(HexTile tile) {
         base.OnRemoveFeature(tile);
         Messenger.RemoveListener(Signals.TICK_ENDED, () => EmitPoisonCloudsPerTick(tile));
+    }
+    public void ResetDuration(HexTile tile) {
+        SchedulingManager.Instance.RemoveSpecificEntry(expirationKey);
+        ScheduleExpiry(tile);
+    }
+    private void ScheduleExpiry(HexTile tile) {
+        GameDate dueDate = GameManager.Instance.Today().AddTicks(GameManager.ticksPerHour);
+        expirationKey = SchedulingManager.Instance.AddEntry(dueDate, () => tile.featureComponent.RemoveFeature(this, tile), this);
     }
     private void EmitPoisonCloudsPerTick(HexTile tile) {
         if (UnityEngine.Random.Range(0, 100) < 60) {

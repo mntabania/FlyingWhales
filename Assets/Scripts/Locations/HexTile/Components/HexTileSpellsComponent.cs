@@ -323,6 +323,9 @@ public class HexTileSpellsComponent {
             SetHasBrimstones(false);
         }
     }
+    public void ResetBrimstoneDuration() {
+        _currentBrimstonesDuration = 0;
+    }
     #endregion
 
     #region Electric Storm
@@ -364,6 +367,9 @@ public class HexTileSpellsComponent {
         if (_currentElectricStormDuration >= 12) {
             SetHasElectricStorm(false);
         }
+    }
+    public void ResetElectricStormDuration() {
+        _currentElectricStormDuration = 0;
     }
     #endregion
 }

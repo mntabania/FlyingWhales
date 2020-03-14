@@ -11,6 +11,7 @@ namespace Traits {
         private Character characterOwner;
         private StatusIcon _statusIcon;
         private GameObject _poisonedEffect;
+        public Character cleanser { get; private set; }
 
         private bool _isVenomous;
 
@@ -98,6 +99,14 @@ namespace Traits {
                 _poisonedEffect = null;
             }
         }
+        public override bool IsTangible() {
+            return true;
+        }
+        public override string GetTestingData(ITraitable traitable = null) {
+            string data = base.GetTestingData(traitable);
+            data += $"\n\tCleanser: {cleanser?.name ?? "None"}";
+            return data;
+        }
         #endregion
 
         #region Aware Characters
@@ -141,6 +150,27 @@ namespace Traits {
                 }
             }
         }
+        
+        #region Cleanser
+        public void SetCleanser(Character character) {
+            cleanser = character;
+            if (cleanser == null) {
+                Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterChangedState);
+                Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_PAUSED_STATE, OnCharacterChangedState);
+            } else {
+                Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterChangedState);
+                Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_PAUSED_STATE, OnCharacterChangedState);
+            }
+        }
+        #endregion
+        
+        #region Listeners
+        private void OnCharacterChangedState(Character character, CharacterState state) {
+            if (state.characterState == CHARACTER_STATE.CLEANSE_TILES && cleanser == character) {
+                SetCleanser(null); 
+            }
+        }
+        #endregion
     }
 
     public class SaveDataPoisoned : SaveDataTrait {

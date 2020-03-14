@@ -87,6 +87,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool isInLimbo { get; protected set; }
     public bool isLimboCharacter { get; protected set; }
     public bool hasSeenFire { get; protected set; }
+    public bool hasSeenWet { get; protected set; }
+    public bool hasSeenPoisoned { get; protected set; }
     public bool destroyMarkerOnDeath { get; protected set; }
     public LycanthropeData lycanData { get; protected set; }
     public List<JobQueueItem> forcedCancelJobsOnTickEnded { get; private set; }
@@ -2030,6 +2032,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void SetHasSeenFire(bool state) {
         hasSeenFire = state;
+    }
+    public void SetHasSeenWet(bool state) {
+        hasSeenWet = state;
+    }
+    public void SetHasSeenPoisoned(bool state) {
+        hasSeenPoisoned = state;
     }
     public void SetDestroyMarkerOnDeath(bool state) {
         destroyMarkerOnDeath = state;

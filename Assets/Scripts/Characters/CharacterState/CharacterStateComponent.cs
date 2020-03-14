@@ -288,6 +288,12 @@ public class CharacterStateComponent {
             case CHARACTER_STATE.FOLLOW:
                 newState = new FollowState(this);
                 break;
+            case CHARACTER_STATE.DRY_TILES:
+                newState = new DryTilesState(this);
+                break;
+            case CHARACTER_STATE.CLEANSE_TILES:
+                newState = new CleanseTilesState(this);
+                break;
         }
         return newState;
     }

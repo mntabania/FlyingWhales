@@ -67,6 +67,14 @@ public class LocationClassManager {
             // List<CharacterClass> classes = CharacterManager.Instance.GetNormalCombatantClasses();
             // currentClass = classes[UnityEngine.Random.Range(0, classes.Count)].className;
             currentClass = UtilityScripts.CollectionUtilities.GetRandomElement(combatantClasses.Keys);
+            // int i = UnityEngine.Random.Range(0, 3);
+            // if (i == 0) {
+            //     currentClass = "Mage";
+            // } else if (i == 1) {
+            //     currentClass = "Shaman";
+            // } else {
+            //     currentClass = "Druid";
+            // }
         } else if (currentClass == "Civilian") {
             currentClass = UtilityScripts.CollectionUtilities.GetRandomElement(civilianClasses.Keys);
             // int i = UnityEngine.Random.Range(0, 3);

@@ -1019,6 +1019,7 @@ public enum INTERRUPT {
     Ingested_Poison,
     Mental_Break,
     Being_Tortured,
+    Loss_Of_Control
 }
 
 public enum TRAIT_TYPE {
@@ -1312,7 +1313,8 @@ public enum JOB_TYPE { NONE, UNDERMINE, ENERGY_RECOVERY_URGENT, FULLNESS_RECOVER
         , DESTROY, TRIGGER_FLAW, CORRUPT_CULTIST, CORRUPT_CULTIST_SABOTAGE_FACTION, SCREAM, CLEANSE_CORRUPTION, CLAIM_REGION
         , BUILD_BLUEPRINT, PLACE_BLUEPRINT, COMBAT, STROLL, HAUL, OBTAIN_PERSONAL_FOOD, NEUTRALIZE_DANGER, FLEE_TO_HOME, BURY_SERIAL_KILLER_VICTIM, KILL, GO_TO, CHECK_PARALYZED_FRIEND, VISIT_FRIEND
         , IDLE_RETURN_HOME, IDLE_NAP, IDLE_SIT, IDLE_STAND, IDLE_GO_TO_INN, COMBINE_STOCKPILE, ROAM_AROUND_TERRITORY, ROAM_AROUND_CORRUPTION, ROAM_AROUND_PORTAL, ROAM_AROUND_TILE, RETURN_TERRITORY, RETURN_PORTAL
-        , STAND, ABDUCT, LEARN_MONSTER, TAKE_ARTIFACT, TAKE_ITEM, HIDE_AT_HOME, STAND_STILL, SUICIDE_FOLLOW,
+        , STAND, ABDUCT, LEARN_MONSTER, TAKE_ARTIFACT, TAKE_ITEM, HIDE_AT_HOME, STAND_STILL, SUICIDE_FOLLOW, DRY_TILES,
+        CLEANSE_TILES
 }
 public enum JOB_OWNER { CHARACTER, LOCATION, QUEST, }
 public enum Cardinal_Direction { North, South, East, West };
@@ -1329,7 +1331,10 @@ public enum ACTION_LOCATION_TYPE {
 }
 public enum CHARACTER_STATE_CATEGORY { MAJOR, MINOR,}
 //public enum MOVEMENT_MODE { NORMAL, FLEE, ENGAGE }
-public enum CHARACTER_STATE { NONE, PATROL, HUNT, STROLL, BERSERKED, STROLL_OUTSIDE, COMBAT, DOUSE_FIRE, FOLLOW, }
+public enum CHARACTER_STATE { NONE, PATROL, HUNT, STROLL, BERSERKED, STROLL_OUTSIDE, COMBAT, DOUSE_FIRE, FOLLOW,
+    DRY_TILES,
+    CLEANSE_TILES
+}
 public enum CRIME_TYPE {
     NONE,
     INFRACTION,
@@ -1888,6 +1893,9 @@ public static class Extensions {
             case JOB_TYPE.REPAIR:
                 priority = 650;
                 break;
+            case JOB_TYPE.CLEANSE_TILES:
+                priority = 630;
+                break;
             case JOB_TYPE.CLEANSE_CORRUPTION:
                 priority = 600;
                 break;
@@ -1910,6 +1918,9 @@ public static class Extensions {
                 break;
             case JOB_TYPE.PATROL:
                 priority = 450;
+                break;
+            case JOB_TYPE.DRY_TILES:
+                priority = 430;
                 break;
             case JOB_TYPE.CHECK_PARALYZED_FRIEND:
                 priority = 400;

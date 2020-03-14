@@ -134,6 +134,7 @@ public class CharacterState {
             $"Pausing {stateName} for {stateComponent.character.name}");
         isPaused = true;
         //StopStatePerTick();
+        Messenger.Broadcast(Signals.CHARACTER_PAUSED_STATE, stateComponent.character, this);
     }
     /// <summary>
     /// Resumes the state and its movement behavior
