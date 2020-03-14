@@ -1645,6 +1645,7 @@
                 <e p="HallowedGroundFeature.cs" t="Include" />
                 <e p="InhabitedFeature.cs" t="Include" />
                 <e p="MetalSourceFeature.cs" t="Include" />
+                <e p="PoisonBloomFeature.cs" t="Include" />
                 <e p="RainFeature.cs" t="Include" />
                 <e p="StoneSourceFeature.cs" t="Include" />
                 <e p="SummonsFeature.cs" t="Include" />
@@ -1790,6 +1791,7 @@
               <e p="Paralysis.cs" t="Include" />
               <e p="Pestilence.cs" t="Include" />
               <e p="PlayerSpell.cs" t="Include" />
+              <e p="PoisonBloomData.cs" t="Include" />
               <e p="PoisonCloud.cs" t="Include" />
               <e p="Psychopathy.cs" t="Include" />
               <e p="RainData.cs" t="Include" />

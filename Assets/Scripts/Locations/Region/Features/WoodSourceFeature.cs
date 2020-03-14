@@ -18,8 +18,6 @@ public class WoodSourceFeature : TileFeature {
     public WoodSourceFeature() {
         name = "Wood Source";
         description = "Provides wood.";
-        type = REGION_FEATURE_TYPE.PASSIVE;
-        isRemovedOnInvade = true;
     }  
     
     #region Overrides

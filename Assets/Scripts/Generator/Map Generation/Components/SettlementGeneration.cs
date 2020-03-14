@@ -41,8 +41,29 @@ public class SettlementGeneration : MapGenerationComponent {
 		yield return MapGenerator.Instance.StartCoroutine(npcSettlement.PlaceObjects());
 
 		int dwellingCount = npcSettlement.structures[STRUCTURE_TYPE.DWELLING].Count;
+		
+		//add 2 random combatant classes to the settlement class pool before generating any settlers.
+		List<string> randomClassChoices = CharacterManager.Instance.GetNormalCombatantClasses().Select(x => x.className).ToList();
+		for (int i = 0; i < npcSettlement.classManager.combatantClasses.Keys.Count; i++) {
+			string unlockedClass = npcSettlement.classManager.combatantClasses.Keys.ElementAt(i);
+			randomClassChoices.Remove(unlockedClass);
+		}
+		string[] randomUnlockedClasses = new string[2];
+		for (int i = 0; i < randomUnlockedClasses.Length; i++) {
+			string randomClass = CollectionUtilities.GetRandomElement(randomClassChoices);
+			randomClassChoices.Remove(randomClass);
+			randomUnlockedClasses[i] = randomClass;
+			npcSettlement.classManager.AddCombatantClass(randomClass);
+		}
+		
 		GenerateSettlementResidents(dwellingCount, npcSettlement, faction, data);
 
+		//remove the 2 random classes from the settlement class pool after settlers have been generated
+		for (int i = 0; i < randomUnlockedClasses.Length; i++) {
+			string randomClass = randomUnlockedClasses[i];
+			npcSettlement.classManager.RemoveCombatantClass(randomClass);
+		}
+		
 		CharacterManager.Instance.PlaceInitialCharacters(faction.characters, npcSettlement);
 		npcSettlement.Initialize();
 	}
