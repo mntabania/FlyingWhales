@@ -15,9 +15,7 @@ public class LocationClassManager {
         currentIndex = 0;
         startLoopIndex = 5;
         numberOfRotations = 0;
-        combatantClasses = new Dictionary<string, int>() {
-            {"Barbarian", 1},
-        };
+        combatantClasses = new Dictionary<string, int>();
         civilianClasses = new Dictionary<string, int>() {
             {"Peasant", 1},
             {"Craftsman", 1},

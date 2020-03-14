@@ -15,7 +15,6 @@ public class RainFeature : TileFeature {
     public RainFeature() {
         name = "Rain";
         description = "Rain is pouring down in this location.";
-        type = REGION_FEATURE_TYPE.PASSIVE;
         _charactersOutside = new List<Character>();
     }
 

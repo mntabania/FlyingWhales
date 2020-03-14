@@ -12,7 +12,6 @@ public class ArtifactFeature : TileFeature {
     public ArtifactFeature() {
         name = "Artifact";
         description = "There are rumored treasures hidden in this region. You may be able to find an Artifact here after invading this region.";
-        type = REGION_FEATURE_TYPE.PASSIVE;
         //isRemovedOnActivation = true;
     }
 

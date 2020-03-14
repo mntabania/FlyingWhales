@@ -14,7 +14,6 @@ public class BlizzardFeature : TileFeature {
     public BlizzardFeature() {
         name = "Blizzard";
         description = "There is a blizzard in this location.";
-        type = REGION_FEATURE_TYPE.PASSIVE;
         _charactersOutside = new List<Character>();
     }
 

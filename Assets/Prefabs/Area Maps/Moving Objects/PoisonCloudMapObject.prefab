@@ -4693,7 +4693,7 @@ Transform:
   m_GameObject: {fileID: 1671847895874959471}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -164.5, y: 33.5, z: 0}
-  m_LocalScale: {x: 3, y: 3, z: 1}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_Children:
   - {fileID: 1668552796237118105}
   - {fileID: 1668359728039121191}
@@ -4787,7 +4787,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.88
+  m_Radius: 0.8
 --- !u!114 &1631024502628481985
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4820,6 +4820,7 @@ MonoBehaviour:
   statusIconsParent: {fileID: 0}
   _cloudEffect: {fileID: 8283122582522702008}
   _explosionEffect: {fileID: 201109846814245020}
+  _size: 0
 --- !u!1 &3646719542538322640
 GameObject:
   m_ObjectHideFlags: 0
@@ -9747,8 +9748,8 @@ ParticleSystem:
     enabled: 1
     startLifetime:
       serializedVersion: 2
-      minMaxState: 3
-      scalar: 10
+      minMaxState: 0
+      scalar: 1
       minScalar: 5
       maxCurve:
         serializedVersion: 2

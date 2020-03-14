@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
+using Traits;
 using UnityEngine;
 
 public class PoisonCloud : PlayerSpell {
@@ -51,9 +52,14 @@ public class PoisonCloudData : SpellData {
     }
 
     public override void ActivateAbility(LocationGridTile targetTile) {
-        PoisonCloudTileObject tornadoTileObject = new PoisonCloudTileObject();
-        tornadoTileObject.SetGridTileLocation(targetTile);
-        tornadoTileObject.OnPlacePOI();
+        PoisonCloudTileObject poisonCloudTileObject = new PoisonCloudTileObject();
+        poisonCloudTileObject.SetDurationInTicks(GameManager.Instance.GetTicksBasedOnHour(Random.Range(2, 6)));
+        poisonCloudTileObject.SetGridTileLocation(targetTile);
+        poisonCloudTileObject.OnPlacePOI();
+        //add poisoned status so size of cloud is updated.
+        for (int i = 0; i < 5; i++) {
+            poisonCloudTileObject.traitContainer.AddTrait(poisonCloudTileObject, "Poisoned", overrideDuration: 0);
+        }
     }
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
         return targetTile.structure != null;
