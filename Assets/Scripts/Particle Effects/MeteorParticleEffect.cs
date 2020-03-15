@@ -58,26 +58,30 @@ public class MeteorParticleEffect : BaseParticleEffect {
             }
             if (traitable is TileObject obj) {
                 if (obj.tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
-                    obj.AdjustHP(-obj.currentHP, ELEMENTAL_TYPE.Fire);
+                    obj.AdjustHP(-obj.currentHP, ELEMENTAL_TYPE.Fire, 
+                        elementalTraitProcessor: (target, trait) => ProcessBurningTrait(target, trait, ref bs));
                     if (obj.gridTileLocation == null) {
                         continue; //object was destroyed, do not add burning trait
                     }
                 } else {
-                    CombatManager.Instance.ApplyElementalDamage(0, ELEMENTAL_TYPE.Fire, obj);
+                    CombatManager.Instance.ApplyElementalDamage(0, ELEMENTAL_TYPE.Fire, obj, 
+                        elementalTraitProcessor: (target, trait) => ProcessBurningTrait(target, trait, ref bs));
                     //obj.AdjustHP(0, ELEMENTAL_TYPE.Fire);
                 }
             } else if (traitable is Character character) {
-                character.AdjustHP(-(int)(character.maxHP * 0.4f), ELEMENTAL_TYPE.Fire, true);
+                character.AdjustHP(-(int)(character.maxHP * 0.4f), ELEMENTAL_TYPE.Fire, true, 
+                    elementalTraitProcessor: (target, trait) => ProcessBurningTrait(target, trait, ref bs));
             } else {
-                traitable.AdjustHP(-traitable.currentHP, ELEMENTAL_TYPE.Fire);
+                traitable.AdjustHP(-traitable.currentHP, ELEMENTAL_TYPE.Fire, 
+                    elementalTraitProcessor: (target, trait) => ProcessBurningTrait(target, trait, ref bs));
             }
-            Burning burningTrait = traitable.traitContainer.GetNormalTrait<Burning>("Burning");
-            if(burningTrait != null && burningTrait.sourceOfBurning == null) {
-                if(bs == null) {
-                    bs = new BurningSource(traitable.gridTileLocation.parentMap.region);
-                }
-                burningTrait.SetSourceOfBurning(bs, traitable);
-            }
+            // Burning burningTrait = traitable.traitContainer.GetNormalTrait<Burning>("Burning");
+            // if(burningTrait != null && burningTrait.sourceOfBurning == null) {
+            //     if(bs == null) {
+            //         bs = new BurningSource(traitable.gridTileLocation.parentMap.location);
+            //     }
+            //     burningTrait.SetSourceOfBurning(bs, traitable);
+            // }
             //if (traitable.currentHP > 0 && Random.Range(0, 100) < 60) {
             //    if (traitable.traitContainer.HasTrait("Flammable") &&
             //        !traitable.traitContainer.HasTrait("Burning", "Burnt", "Wet", "Fireproof")) {
@@ -113,4 +117,15 @@ public class MeteorParticleEffect : BaseParticleEffect {
             }
         }
     }
+
+    #region Elemental Traits
+    private void ProcessBurningTrait(ITraitable traitable, Trait trait, ref BurningSource burningSource) {
+        if (trait is Burning burning) {
+            if (burningSource == null) {
+                burningSource = new BurningSource(traitable.gridTileLocation.parentMap.location);
+            }
+            burning.SetSourceOfBurning(burningSource, traitable);
+        }
+    }
+    #endregion
 }

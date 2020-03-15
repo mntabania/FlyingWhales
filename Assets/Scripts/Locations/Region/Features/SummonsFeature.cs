@@ -8,7 +8,6 @@ public class SummonsFeature : TileFeature {
 	public SummonsFeature() {
         name = "Summons";
         description = "This region is home to various monsters. You can summon the monsters if you build The Kennel here.";
-        type = REGION_FEATURE_TYPE.PASSIVE;
     }
 
     #region Override
@@ -36,8 +35,7 @@ public class SummonsFeature : TileFeature {
     //        }
     //    }
     //}
-    public override void OnRemoveCharacterFromRegion(Region region, Character removedCharacter) {
-        base.OnRemoveCharacterFromRegion(region, removedCharacter);
+    public virtual void OnRemoveCharacterFromRegion(Region region, Character removedCharacter) {
         bool stillHasSummon = false;
         for (int i = 0; i < region.charactersAtLocation.Count; i++) {
             Character character = region.charactersAtLocation[i];

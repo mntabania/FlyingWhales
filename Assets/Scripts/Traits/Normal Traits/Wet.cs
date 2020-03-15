@@ -7,6 +7,7 @@ namespace Traits {
     public class Wet : Status {
 
         private StatusIcon _statusIcon;
+        public Character dryer { get; private set; }
         
         public Wet() {
             name = "Wet";
@@ -46,8 +47,19 @@ namespace Traits {
             }
             UpdateVisualsOnRemove(removedFrom);
         }
+        public override bool IsTangible() {
+            return true;
+        }
         #endregion
 
+        #region Listeners
+        private void OnCharacterChangedState(Character character, CharacterState state) {
+            if (state.characterState == CHARACTER_STATE.DRY_TILES && dryer == character) {
+                SetDryer(null); 
+            }
+        }
+        #endregion
+        
         private void UpdateVisualsOnAdd(ITraitable addedTo) {
             if (addedTo is Character character && _statusIcon == null) {
                 _statusIcon = character.marker.AddStatusIcon(this.name);
@@ -75,6 +87,19 @@ namespace Traits {
                 }
             }
         }
+
+        #region Dryer
+        public void SetDryer(Character character) {
+            dryer = character;
+            if (dryer == null) {
+                Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterChangedState);
+                Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_PAUSED_STATE, OnCharacterChangedState);
+            } else {
+                Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterChangedState);
+                Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_PAUSED_STATE, OnCharacterChangedState);
+            }
+        }
+        #endregion
 
     }
 }

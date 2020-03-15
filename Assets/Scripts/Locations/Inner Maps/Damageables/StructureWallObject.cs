@@ -32,7 +32,8 @@ public class StructureWallObject : MapObject<StructureWallObject>, ITraitable {
     }
 
     #region HP
-    public void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false, object source = null) {
+    public void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false,
+        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null) {
         if (currentHP <= 0 && amount < 0) {
             return; //ignore
         }
@@ -49,7 +50,10 @@ public class StructureWallObject : MapObject<StructureWallObject>, ITraitable {
             if (source != null && source is Character) {
                 responsibleCharacter = source as Character;
             }
-            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter);
+            CombatManager.ElementalTraitProcessor etp = elementalTraitProcessor ?? 
+                                                        CombatManager.Instance.DefaultElementalTraitProcessor;
+            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, 
+                responsibleCharacter, etp);
         }
         if (currentHP <= 0) {
             //wall has been destroyed

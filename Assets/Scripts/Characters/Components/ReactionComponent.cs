@@ -410,7 +410,44 @@ public class ReactionComponent {
                 }
             }
         }
-
+        if (!owner.isInCombat && !owner.hasSeenWet) {
+            if (targetTileObject.traitContainer.HasTrait("Wet")
+                && targetTileObject.gridTileLocation != null
+                && targetTileObject.gridTileLocation.IsPartOfSettlement(owner.homeSettlement)
+                && !owner.jobQueue.HasJob(JOB_TYPE.DRY_TILES)) {
+                debugLog += "\n-Target is Wet";
+                owner.SetHasSeenWet(true);
+                owner.homeSettlement.settlementJobTriggerComponent.TriggerDryTiles();
+                for (int i = 0; i < owner.homeSettlement.availableJobs.Count; i++) {
+                    JobQueueItem job = owner.homeSettlement.availableJobs[i];
+                    if (job.jobType == JOB_TYPE.DRY_TILES) {
+                        if (job.assignedCharacter == null && owner.jobQueue.CanJobBeAddedToQueue(job)) {
+                            owner.jobQueue.AddJobInQueue(job);
+                        }
+                        return;
+                    }
+                }
+            }
+        }
+        if (!owner.isInCombat && !owner.hasSeenPoisoned) {
+            if (targetTileObject.traitContainer.HasTrait("Poisoned")
+                && targetTileObject.gridTileLocation != null
+                && targetTileObject.gridTileLocation.IsPartOfSettlement(owner.homeSettlement)
+                && !owner.jobQueue.HasJob(JOB_TYPE.CLEANSE_TILES)) {
+                debugLog += "\n-Target is Poisoned";
+                owner.SetHasSeenPoisoned(true);
+                owner.homeSettlement.settlementJobTriggerComponent.TriggerCleanseTiles();
+                for (int i = 0; i < owner.homeSettlement.availableJobs.Count; i++) {
+                    JobQueueItem job = owner.homeSettlement.availableJobs[i];
+                    if (job.jobType == JOB_TYPE.CLEANSE_TILES) {
+                        if (job.assignedCharacter == null && owner.jobQueue.CanJobBeAddedToQueue(job)) {
+                            owner.jobQueue.AddJobInQueue(job);
+                        }
+                        return;
+                    }
+                }
+            }
+        }
         //if (targetTileObject is TornadoTileObject) {
         //    if (!owner.traitContainer.HasTrait("Elemental Master")) {
         //        if (owner.combatComponent.combatMode == COMBAT_MODE.Aggressive) {

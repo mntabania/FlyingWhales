@@ -61,6 +61,15 @@ public class TileFeatureComponent {
 		}
 		return null;
 	}
+	public T GetFeature<T>() where T : TileFeature{
+		for (int i = 0; i < features.Count; i++) {
+			TileFeature f = features[i];
+			if (f is T feature) {
+				return feature;
+			}
+		}
+		return null;
+	}
 	public bool HasFeature(string featureName) {
 		return GetFeature(featureName) != null;
 	}

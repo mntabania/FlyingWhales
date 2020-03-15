@@ -17,9 +17,14 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	private const int MinimumMetal = 100;
 	private const int MinimumStone = 100;
 	private const int MinimumWood = 100;
+
+	public List<LocationGridTile> wetTiles { get; }
+	public List<LocationGridTile> poisonedTiles { get; }
 	
 	public SettlementJobTriggerComponent(NPCSettlement owner) {
 		_owner = owner;
+		wetTiles = new List<LocationGridTile>();
+		poisonedTiles = new List<LocationGridTile>();
 	}
 	
 	#region Listeners
@@ -32,6 +37,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
 		Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
 		Messenger.AddListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
+		Messenger.AddListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
 		Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
 		Messenger.AddListener<Table>(Signals.FOOD_IN_DWELLING_CHANGED, OnFoodInDwellingChanged);
 		Messenger.AddListener<NPCSettlement, bool>(Signals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, OnSettlementUnderSiegeChanged);
@@ -49,6 +55,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
 		Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
 		Messenger.RemoveListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
+		Messenger.RemoveListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
 		Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
 		Messenger.RemoveListener<Table>(Signals.FOOD_IN_DWELLING_CHANGED, OnFoodInDwellingChanged);
 		Messenger.RemoveListener<NPCSettlement, bool>(Signals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, OnSettlementUnderSiegeChanged);
@@ -110,13 +117,32 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		}
 	}
 	private void OnTraitableGainedTrait(ITraitable traitable, Trait trait) {
-		if (traitable is Character) {
-			Character target = traitable as Character;
+		if (traitable is Character target) {
 			if (trait is Restrained) {
 				TryCreateJudgePrisoner(target);
 			} else if (trait is Criminal) {
 				TryCreateApprehend(target);
 			}
+		} else if (traitable is TileObject) {
+			if (traitable is GenericTileObject) {
+				if (trait is Wet) {
+					AddWetTile(traitable.gridTileLocation);
+				} else if (trait is Poisoned) {
+					AddPoisonedTile(traitable.gridTileLocation);
+				}	
+			}
+		}
+	}
+	private void OnTraitableLostTrait(ITraitable traitable, Trait trait, Character character) {
+		if (traitable is TileObject) {
+			if (traitable is GenericTileObject) {
+				if (trait is Wet) {
+					RemoveWetTile(traitable.gridTileLocation);
+				} else if (trait is Poisoned) {
+					RemovePoisonedTile(traitable.gridTileLocation);
+				}	
+			}
+			
 		}
 	}
 	private void OnCharacterEnteredHexTile(Character character, HexTile tile) {
@@ -536,6 +562,92 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	}
 	private bool HasWaterAvailable(Character character) {
 		return character.currentRegion.HasTileObjectOfType(TILE_OBJECT_TYPE.WATER_WELL);
+	}
+	#endregion
+
+	#region Dry Tiles
+	private void AddWetTile(LocationGridTile tile) {
+		if (tile.IsPartOfSettlement(_owner)) {
+			if (wetTiles.Contains(tile) == false) {
+				wetTiles.Add(tile);
+			}	
+		}
+	}
+	private void RemoveWetTile(LocationGridTile tile) {
+		if (tile.IsPartOfSettlement(_owner)) {
+			if (wetTiles.Remove(tile)) {
+				CheckDryTilesValidity();
+			}	
+		}
+	}
+	public void TriggerDryTiles() {
+		if (wetTiles.Count > 0) {
+			int existingJobs = _owner.GetNumberOfJobsWith(CHARACTER_STATE.DRY_TILES);
+			int jobsToCreate = 3;
+			if (existingJobs < jobsToCreate) {
+				int missing = jobsToCreate - existingJobs;
+				for (int i = 0; i < missing; i++) {
+					CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.DRY_TILES, 
+						CHARACTER_STATE.DRY_TILES, _owner);
+					_owner.AddToAvailableJobs(job);
+				}	
+			}	
+		}
+	}
+	private void CheckDryTilesValidity() {
+		if (wetTiles.Count == 0) {
+			//cancel all dry tiles jobs
+			List<JobQueueItem> jobs = _owner.GetJobs(JOB_TYPE.DRY_TILES);
+			for (int i = 0; i < jobs.Count; i++) {
+				JobQueueItem jqi = jobs[i];
+				if (jqi.assignedCharacter == null) {
+					jqi.ForceCancelJob(false, "no more wet floors");	
+				}
+			}
+		}
+	}
+	#endregion
+	
+	#region Cleanse Tiles
+	private void AddPoisonedTile(LocationGridTile tile) {
+		if (tile.IsPartOfSettlement(_owner)) {
+			if (poisonedTiles.Contains(tile) == false) {
+				poisonedTiles.Add(tile);
+			}	
+		}
+	}
+	private void RemovePoisonedTile(LocationGridTile tile) {
+		if (tile.IsPartOfSettlement(_owner)) {
+			if (poisonedTiles.Remove(tile)) {
+				CheckCleanseTilesValidity();
+			}	
+		}
+	}
+	public void TriggerCleanseTiles() {
+		if (poisonedTiles.Count > 0) {
+			int existingJobs = _owner.GetNumberOfJobsWith(CHARACTER_STATE.CLEANSE_TILES);
+			int jobsToCreate = 3;
+			if (existingJobs < jobsToCreate) {
+				int missing = jobsToCreate - existingJobs;
+				for (int i = 0; i < missing; i++) {
+					CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.CLEANSE_TILES, 
+						CHARACTER_STATE.CLEANSE_TILES, _owner);
+					_owner.AddToAvailableJobs(job);
+				}	
+			}	
+		}
+	}
+	private void CheckCleanseTilesValidity() {
+		if (poisonedTiles.Count == 0) {
+			//cancel all dry tiles jobs
+			List<JobQueueItem> jobs = _owner.GetJobs(JOB_TYPE.CLEANSE_TILES);
+			for (int i = 0; i < jobs.Count; i++) {
+				JobQueueItem jqi = jobs[i];
+				if (jqi.assignedCharacter == null) {
+					jqi.ForceCancelJob(false, "no more poisoned floors");	
+				}
+			}
+		}
 	}
 	#endregion
 }

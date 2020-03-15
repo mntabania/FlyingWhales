@@ -1191,6 +1191,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
             character.logComponent.PrintLogIfActive(log);
         }
         character.SetHasSeenFire(false);
+        character.SetHasSeenWet(false);
+        character.SetHasSeenPoisoned(false);
         character.combatComponent.CheckCombatPerTickEnded();
     }
     #endregion

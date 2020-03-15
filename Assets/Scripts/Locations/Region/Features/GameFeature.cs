@@ -16,8 +16,6 @@ public class GameFeature : TileFeature {
     public GameFeature() {
         name = "Game";
         description = "Hunters can obtain food here.";
-        type = REGION_FEATURE_TYPE.PASSIVE;
-        isRemovedOnInvade = true;
     }
     
     #region Overrides

@@ -745,8 +745,8 @@ public class CharacterInfoUI : InfoUIBase {
         string summary = $"{_activeCharacter.moodComponent.moodValue.ToString()}/100 ({_activeCharacter.moodComponent.moodState})";
         summary +=
             $"\nChance to trigger Major Mental Break {_activeCharacter.moodComponent.currentCriticalMoodEffectChance.ToString()}";
-        summary +=
-            $"\nChance to trigger Minor Mental Break {_activeCharacter.moodComponent.currentLowMoodEffectChance.ToString()}";
+        // summary +=
+        //     $"\nChance to trigger Minor Mental Break {_activeCharacter.moodComponent.currentLowMoodEffectChance.ToString()}";
         UIManager.Instance.ShowSmallInfo(summary);
     }
     public void HideSmallInfo() {

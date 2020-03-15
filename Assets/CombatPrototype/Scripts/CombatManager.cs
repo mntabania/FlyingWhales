@@ -14,11 +14,15 @@ public class CombatManager : MonoBehaviour {
 
     [SerializeField] private ProjectileDictionary _projectileDictionary;
 
+    public delegate void ElementalTraitProcessor(ITraitable target, Trait trait);
+    
     private void Awake() {
         Instance = this;
     }
 
-    public void ApplyElementalDamage(int damage, ELEMENTAL_TYPE elementalType, ITraitable target, Character responsibleCharacter = null) { //, bool shouldSetBurningSource = true
+    public void ApplyElementalDamage(int damage, ELEMENTAL_TYPE elementalType, ITraitable target, 
+        Character responsibleCharacter = null, ElementalTraitProcessor elementalTraitProcessor = null) { 
+        
         ElementalDamageData elementalDamage = ScriptableObjectsManager.Instance.GetElementalDamageData(elementalType);
         if (target != null) {
             CreateHitEffectAt(target, elementalType);
@@ -26,19 +30,19 @@ public class CombatManager : MonoBehaviour {
         if (damage < 0) {
             //Damage should awaken sleeping characters
             if (target.traitContainer.HasTrait("Resting")) {
-                if (target is Character) {
-                    Character character = target as Character;
+                if (target is Character character) {
                     character.jobQueue.CancelFirstJob();
                 }
             }
         }
         if (!string.IsNullOrEmpty(elementalDamage.addedTraitName)) {
-            //Trait trait = null;
-            bool hasSuccessfullyAdded = target.traitContainer.AddTrait(target, elementalDamage.addedTraitName, responsibleCharacter); //, out trait
+            bool hasSuccessfullyAdded = target.traitContainer.AddTrait(target, elementalDamage.addedTraitName, 
+                out Trait trait, responsibleCharacter); //, out trait
             if (hasSuccessfullyAdded) {
                 if (elementalType == ELEMENTAL_TYPE.Electric) {
                     ChainElectricDamage(target, damage);
                 }
+                elementalTraitProcessor?.Invoke(target, trait);
             }
         }
         if(elementalType == ELEMENTAL_TYPE.Earth) {
@@ -221,6 +225,13 @@ public class CombatManager : MonoBehaviour {
             target.traitContainer.RemoveTrait(target, elementsArray[UnityEngine.Random.Range(0, elementsArray.Length)]);
         }
     }
+    public void DefaultElementalTraitProcessor(ITraitable traitable, Trait trait) {
+        if (trait is Burning burning) {
+            //by default, will create new burning source for every burning trait.
+            BurningSource burningSource = new BurningSource(traitable.gridTileLocation.parentMap.location);
+            burning.SetSourceOfBurning(burningSource, traitable);
+        }
+    }
     #endregion
 
     #region Projectiles
@@ -232,3 +243,4 @@ public class CombatManager : MonoBehaviour {
     }
     #endregion
 }
+

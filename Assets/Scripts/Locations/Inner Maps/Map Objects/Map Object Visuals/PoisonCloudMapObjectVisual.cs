@@ -10,10 +10,12 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
     
     [SerializeField] private ParticleSystem _cloudEffect;
     [SerializeField] private ParticleSystem _explosionEffect;
+    [SerializeField] private int _size;
     
     private string _expiryKey;
     private Tweener _movement;
     private List<ITraitable> _objsInRange;
+    private PoisonCloudTileObject _poisonCloud;
     
     
     #region Abstract Members Implementation
@@ -41,14 +43,15 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
     public override void Initialize(TileObject obj) {
         base.Initialize(obj);
         _objsInRange = new List<ITraitable>();
+        _poisonCloud = obj as PoisonCloudTileObject;
     }
     public override void PlaceObjectAt(LocationGridTile tile) {
         base.PlaceObjectAt(tile);
         _cloudEffect.gameObject.SetActive(true);
         _cloudEffect.Play();
         MoveToRandomDirection();
-        //OnGamePaused(GameManager.Instance.isPaused);
-        _expiryKey = SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(Random.Range(2, 6))), Expire, this);
+        _expiryKey = SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().
+            AddTicks(_poisonCloud.durationInTicks), Expire, this);
         Messenger.AddListener(Signals.TICK_ENDED, PerTick);
         Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
         Messenger.AddListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
@@ -126,22 +129,20 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
     }
     private void Explode() {
         Debug.Log($"{GameManager.Instance.TodayLogString()}{this.name} has exploded!");
-        List<ITraitable> affectedObjects =
-            UtilityScripts.GameUtilities.GetTraitableDiamondTilesFromRadius(_mapLocation.innerMap, gridTileLocation.localPlace, 5);
-        for (int i = 0; i < affectedObjects.Count; i++) {
-            ITraitable traitable = affectedObjects[i];
-            traitable.AdjustHP(-Mathf.FloorToInt(obj.maxHP * 0.75f), ELEMENTAL_TYPE.Normal, true);
-            if (traitable.currentHP > 0) {
-                traitable.traitContainer.AddTrait(traitable, "Poisoned");
-                // if (traitable is GenericTileObject) {
-                //     traitable.gridTileLocation.parentMap.groundTilemap.SetColor(traitable.gridTileLocation.localPlace, Color.black);
-                // } else {
-                //     traitable?.mapObjectVisual.SetColor(Color.black);
-                // } 
-            }
+        List<LocationGridTile> affectedTiles =
+            gridTileLocation.GetTilesInRadius(_size, includeCenterTile: true, includeTilesInDifferentStructure: true);
+        for (int i = 0; i < affectedTiles.Count; i++) {
+            LocationGridTile tile = affectedTiles[i];
+            tile.PerformActionOnTraitables(ApplyExplosionEffect);
         }
         _cloudEffect.TriggerSubEmitter(0);
         Expire();
+    }
+    private void ApplyExplosionEffect(ITraitable traitable) {
+        traitable.AdjustHP(-Mathf.FloorToInt(obj.maxHP * 0.75f), ELEMENTAL_TYPE.Normal, true);
+        if (traitable.currentHP > 0) {
+            traitable.traitContainer.AddTrait(traitable, "Poisoned");
+        }
     }
     private void OnTraitableGainedTrait(ITraitable traitable, Trait trait) {
         if (trait is Burning && _objsInRange.Contains(traitable)) {
@@ -176,6 +177,8 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
     #region POI's
     private void AddObject(ITraitable obj) {
         if (!_objsInRange.Contains(obj)) {
+            //TODO: Unify this
+            if (obj is PoisonCloudTileObject) { return; }
             _objsInRange.Add(obj);
             OnAddPOI(obj);
         }
@@ -219,6 +222,22 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
         yield return new WaitForSeconds(0.1f);
         _cloudEffect.Pause();
         _explosionEffect.Pause();
+    }
+    #endregion
+
+    #region Size
+    public void SetSize(int size) {
+        _size = size;
+        ChangeScaleBySize();
+    }
+    private void ChangeScaleBySize() {
+        gameObject.transform.localScale = new Vector3(_size, _size, _size);
+        // _cloudEffect.transform.localScale = new Vector3(_size, _size, _size);
+        ParticleSystem.MainModule mainModule = _cloudEffect.main;
+        mainModule.startSpeed = (_size + 1) / 10f;
+        mainModule.startLifetime = _size;
+        ParticleSystem.EmissionModule emissionModule = _cloudEffect.emission;
+        emissionModule.rateOverTime = (_size + 1) * 10;
     }
     #endregion
 }

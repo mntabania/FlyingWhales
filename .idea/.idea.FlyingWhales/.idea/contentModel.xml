@@ -1080,8 +1080,10 @@
               <e p="BerserkedState.cs" t="Include" />
               <e p="CharacterState.cs" t="Include" />
               <e p="CharacterStateComponent.cs" t="Include" />
+              <e p="CleanseTilesState.cs" t="Include" />
               <e p="CombatState.cs" t="Include" />
               <e p="DouseFireState.cs" t="Include" />
+              <e p="DryTilesState.cs" t="Include" />
               <e p="FollowState.cs" t="Include" />
               <e p="HuntState.cs" t="Include" />
               <e p="PatrolState.cs" t="Include" />
@@ -1232,6 +1234,7 @@
               <e p="ChangeClass.cs" t="Include" />
               <e p="ChatCharacter.cs" t="Include" />
               <e p="CraftFurniture.cs" t="Include" />
+              <e p="CreateItem.cs" t="Include" />
               <e p="Cry.cs" t="Include" />
               <e p="CureCharacter.cs" t="Include" />
               <e p="CurseCharacter.cs" t="Include" />
@@ -1385,6 +1388,7 @@
             <e p="JoinFaction.cs" t="Include" />
             <e p="LaughAt.cs" t="Include" />
             <e p="LeaveFaction.cs" t="Include" />
+            <e p="LossOfControl.cs" t="Include" />
             <e p="MentalBreak.cs" t="Include" />
             <e p="Mock.cs" t="Include" />
             <e p="NarcolepticAttack.cs" t="Include" />
@@ -1506,6 +1510,7 @@
                 </e>
                 <e p="SpiritGameObject.cs" t="Include" />
                 <e p="Tile Objects" t="Include">
+                  <e p="Antidote.cs" t="Include" />
                   <e p="Anvil.cs" t="Include" />
                   <e p="ArcheryTarget.cs" t="Include" />
                   <e p="BallLightningTileObject.cs" t="Include" />
@@ -1535,6 +1540,7 @@
                     <e p="PoisonCrystal.cs" t="Include" />
                     <e p="WaterCrystal.cs" t="Include" />
                   </e>
+                  <e p="Ember.cs" t="Include" />
                   <e p="FeebleSpirit.cs" t="Include" />
                   <e p="FireBallTileObject.cs" t="Include" />
                   <e p="Fireplace.cs" t="Include" />
@@ -1562,6 +1568,7 @@
                   <e p="Plant.cs" t="Include" />
                   <e p="PlinthBook.cs" t="Include" />
                   <e p="PoisonCloudTileObject.cs" t="Include" />
+                  <e p="PoisonFlask.cs" t="Include" />
                   <e p="RackFarmingTools.cs" t="Include" />
                   <e p="RackStaves.cs" t="Include" />
                   <e p="RackTools.cs" t="Include" />
@@ -1604,7 +1611,7 @@
                   <e p="TreeObject.cs" t="Include" />
                   <e p="VaporTileObject.cs" t="Include" />
                   <e p="WaterBasin.cs" t="Include" />
-                  <e p="WaterBucket.cs" t="Include" />
+                  <e p="WaterFlask.cs" t="Include" />
                   <e p="WaterWell.cs" t="Include" />
                   <e p="Wheelbarrow.cs" t="Include" />
                   <e p="WoodPile.cs" t="Include" />
@@ -1645,6 +1652,7 @@
                 <e p="HallowedGroundFeature.cs" t="Include" />
                 <e p="InhabitedFeature.cs" t="Include" />
                 <e p="MetalSourceFeature.cs" t="Include" />
+                <e p="PoisonBloomFeature.cs" t="Include" />
                 <e p="RainFeature.cs" t="Include" />
                 <e p="StoneSourceFeature.cs" t="Include" />
                 <e p="SummonsFeature.cs" t="Include" />
@@ -1790,6 +1798,7 @@
               <e p="Paralysis.cs" t="Include" />
               <e p="Pestilence.cs" t="Include" />
               <e p="PlayerSpell.cs" t="Include" />
+              <e p="PoisonBloomData.cs" t="Include" />
               <e p="PoisonCloud.cs" t="Include" />
               <e p="Psychopathy.cs" t="Include" />
               <e p="RainData.cs" t="Include" />

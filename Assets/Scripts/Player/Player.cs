@@ -114,7 +114,7 @@ public class Player : ILeader, IObjectManipulator {
     public void LevelUp() { }
     #endregion
 
-    #region NPCSettlement
+    #region Settlement
     public PlayerSettlement CreatePlayerSettlement(BaseLandmark portal) {
         PlayerSettlement npcSettlement = LandmarkManager.Instance.CreateNewPlayerSettlement(portal.tileLocation);
         npcSettlement.SetName("Demonic Intrusion");
@@ -530,7 +530,7 @@ public class Player : ILeader, IObjectManipulator {
     }
     #endregion
 
-    #region NPCSettlement Corruption
+    #region Settlement Corruption
     private NPCSettlement AreaIsCorrupted() {
         //TODO:
         // isTileCurrentlyBeingCorrupted = false;
