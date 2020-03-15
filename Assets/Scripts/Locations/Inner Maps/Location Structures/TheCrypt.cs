@@ -7,7 +7,7 @@ namespace Inner_Maps.Location_Structures {
         public override Vector2 selectableSize { get; }
         private Artifact _activatedArtifact;
         
-        public TheCrypt(ILocation location) : base(STRUCTURE_TYPE.THE_CRYPT, location){
+        public TheCrypt(Region location) : base(STRUCTURE_TYPE.THE_CRYPT, location){
             selectableSize = new Vector2(10f, 10f);
         }
 

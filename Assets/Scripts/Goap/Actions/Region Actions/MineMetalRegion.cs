@@ -29,7 +29,7 @@ public class MineMetalRegion : GoapAction {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             //**Requirements:** Actor has Miner trait. Region has Mines Landmark. Region is owned by Actor's Faction or Actor's Home's Ruling Faction.
-            var region = poiTarget.gridTileLocation.parentMap.location.coreTile.region;
+            var region = poiTarget.gridTileLocation.parentMap.region.coreTile.region;
             // return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null &&
             //        actor.traitContainer.GetNormalTrait<Trait>("Miner") != null &&
             //        region.mainLandmark.specificLandmarkType == LANDMARK_TYPE.MINES &&
@@ -41,7 +41,7 @@ public class MineMetalRegion : GoapAction {
 
     #region State Effects
     public void PreMineSuccess(ActualGoapNode goapNode) {
-        goapNode.descriptionLog.AddToFillers(goapNode.poiTarget.gridTileLocation.parentMap.location.coreTile.region, goapNode.poiTarget.gridTileLocation.parentMap.location.coreTile.region.name, LOG_IDENTIFIER.LANDMARK_1);
+        goapNode.descriptionLog.AddToFillers(goapNode.poiTarget.gridTileLocation.parentMap.region.coreTile.region, goapNode.poiTarget.gridTileLocation.parentMap.region.coreTile.region.name, LOG_IDENTIFIER.LANDMARK_1);
     }
     public void AfterMineSuccess(ActualGoapNode goapNode) {
         //**After Effect 1**: Produce Metal random between 100 - 300

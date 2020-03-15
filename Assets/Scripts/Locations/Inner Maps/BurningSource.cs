@@ -6,9 +6,9 @@ public class BurningSource {
 
     public int id { get; }
     public List<ITraitable> objectsOnFire { get; }
-    public ILocation location { get; }
+    public Region location { get; }
     
-    public BurningSource(ILocation location) {
+    public BurningSource(Region location) {
         id = UtilityScripts.Utilities.SetID(this);
         objectsOnFire = new List<ITraitable>();
         this.location = location;

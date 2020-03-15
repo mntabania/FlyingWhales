@@ -10,11 +10,11 @@ public abstract class MovingMapObjectVisual<T> : MapObjectVisual<T> where T : ID
     public bool isSpawned { get; protected set; }
     public LocationGridTile gridTileLocation => GetLocationGridTileByXy(Mathf.FloorToInt(_pos.x), Mathf.FloorToInt(_pos.y));
     private Vector3 _pos;
-    protected ILocation _mapLocation;
+    protected Region _mapLocation;
     
     public override void Initialize(T obj) {
         base.Initialize(obj);
-        _mapLocation = obj.gridTileLocation.parentMap.location;
+        _mapLocation = obj.gridTileLocation.parentMap.region;
     }
     public override void PlaceObjectAt(LocationGridTile tile) {
         base.PlaceObjectAt(tile);

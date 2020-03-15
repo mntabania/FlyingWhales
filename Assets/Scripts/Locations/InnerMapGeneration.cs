@@ -27,7 +27,7 @@ public partial class LandmarkManager {
             for (var j = 0; j < GridMap.Instance.allRegions.Length; j++) {
                 var otherRegion = GridMap.Instance.allRegions[j];
                 if (currRegion != otherRegion && otherRegion.regionTileObject != null) {
-                    currRegion.AddAwareness(otherRegion.regionTileObject);
+                    currRegion.AddPendingAwareness(otherRegion.regionTileObject);
                 }
             }
         }

@@ -11,7 +11,7 @@ namespace Inner_Maps.Location_Structures {
         private bool _isLearnSpellInCooldown;
         private string _cooldownScheduleKey;
         
-        public TheSpire(ILocation location) : base(STRUCTURE_TYPE.THE_SPIRE, location){
+        public TheSpire(Region location) : base(STRUCTURE_TYPE.THE_SPIRE, location){
             selectableSize = new Vector2(10f, 10f);
         }
 

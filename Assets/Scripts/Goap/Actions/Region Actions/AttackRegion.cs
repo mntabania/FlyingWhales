@@ -30,7 +30,7 @@
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             //**Requirement:** Region has a landmark
-            var region = poiTarget.gridTileLocation.parentMap.location.coreTile.region;
+            var region = poiTarget.gridTileLocation.parentMap.region.coreTile.region;
             return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null &&
                    region.mainLandmark.specificLandmarkType != LANDMARK_TYPE.NONE && 
                    region.regionTileObject.Advertises(INTERACTION_TYPE.ATTACK_REGION);

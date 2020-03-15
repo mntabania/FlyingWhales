@@ -27,15 +27,15 @@ public class PlayerJobActionButton : MonoBehaviour {
     private void OnEnable() {
         Messenger.AddListener<PlayerSpell>(Signals.JOB_ACTION_COOLDOWN_ACTIVATED, OnJobActionCooldownActivated);
         Messenger.AddListener<PlayerSpell>(Signals.JOB_ACTION_COOLDOWN_DONE, OnJobActionCooldownDone);
-        Messenger.AddListener<ILocation>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
-        Messenger.AddListener<ILocation>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
+        Messenger.AddListener<Region>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
+        Messenger.AddListener<Region>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
         Messenger.AddListener<PlayerJobActionSlot>(Signals.PLAYER_GAINED_INTERVENE_LEVEL, OnJobActionGainLevel);
     }
     private void OnDisable() {
         Messenger.RemoveListener<PlayerSpell>(Signals.JOB_ACTION_COOLDOWN_ACTIVATED, OnJobActionCooldownActivated);
         Messenger.RemoveListener<PlayerSpell>(Signals.JOB_ACTION_COOLDOWN_DONE, OnJobActionCooldownDone);
-        Messenger.RemoveListener<ILocation>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
-        Messenger.RemoveListener<ILocation>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
+        Messenger.RemoveListener<Region>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
+        Messenger.RemoveListener<Region>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
         Messenger.RemoveListener<PlayerJobActionSlot>(Signals.PLAYER_GAINED_INTERVENE_LEVEL, OnJobActionGainLevel);
     }
 
@@ -124,10 +124,10 @@ public class PlayerJobActionButton : MonoBehaviour {
             UpdateLevel();
         }
     }
-    private void OnInnerMapOpened(ILocation location) {
+    private void OnInnerMapOpened(Region location) {
         UpdateInteractableState();
     }
-    private void OnInnerMapClosed(ILocation location) {
+    private void OnInnerMapClosed(Region location) {
         //Upon closing of npcSettlement map reset intervention ability cooldowns
         //action.InstantCooldown();
         UpdateInteractableState();

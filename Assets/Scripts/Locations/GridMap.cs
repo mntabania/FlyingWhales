@@ -280,6 +280,11 @@ public class GridMap : MonoBehaviour {
         }
         return null;
     }
+    public void UpdateAwarenessInAllRegions() {
+        for (int i = 0; i < allRegions.Length; i++) {
+            allRegions[i].UpdateAwareness();
+        }
+    }
     #endregion
 }
 

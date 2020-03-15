@@ -9,11 +9,11 @@ namespace Inner_Maps.Location_Structures {
         public List<Character> residents => null;
         #endregion
 
-        public CityCenter(ILocation location)
+        public CityCenter(Region location)
             : base(STRUCTURE_TYPE.CITY_CENTER, location) {
         }
 
-        public CityCenter(ILocation location, SaveDataLocationStructure data)
+        public CityCenter(Region location, SaveDataLocationStructure data)
             : base(location, data) {
         }
 

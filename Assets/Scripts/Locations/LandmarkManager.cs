@@ -272,7 +272,7 @@ public partial class LandmarkManager : MonoBehaviour {
         }
         
     }
-    public List<Character> GetAllDeadCharactersInLocation(ILocation location) {
+    public List<Character> GetAllDeadCharactersInLocation(Region location) {
         List<Character> characters = new List<Character>();
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
             Character character = CharacterManager.Instance.allCharacters[i];
@@ -366,7 +366,7 @@ public partial class LandmarkManager : MonoBehaviour {
     #endregion
 
     #region Location Structures
-    public LocationStructure CreateNewStructureAt(ILocation location, STRUCTURE_TYPE type, BaseSettlement settlement = null) {
+    public LocationStructure CreateNewStructureAt(Region location, STRUCTURE_TYPE type, BaseSettlement settlement = null) {
         LocationStructure createdStructure = null;
         switch (type) {
             case STRUCTURE_TYPE.DWELLING:
@@ -420,7 +420,7 @@ public partial class LandmarkManager : MonoBehaviour {
         createdStructure.Initialize();
         return createdStructure;
     }
-    public LocationStructure LoadStructureAt(ILocation location, SaveDataLocationStructure data) {
+    public LocationStructure LoadStructureAt(Region location, SaveDataLocationStructure data) {
         LocationStructure createdStructure = data.Load(location);
         if (createdStructure != null) {
             location.AddStructure(createdStructure);

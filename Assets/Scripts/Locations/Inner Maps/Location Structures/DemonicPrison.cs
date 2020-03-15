@@ -3,7 +3,7 @@ namespace Inner_Maps.Location_Structures {
     public class DemonicPrison : LocationStructure {
         
         public override Vector2 selectableSize { get; }
-        public DemonicPrison(ILocation location) : base(STRUCTURE_TYPE.DEMONIC_PRISON, location){
+        public DemonicPrison(Region location) : base(STRUCTURE_TYPE.DEMONIC_PRISON, location){
             selectableSize = new Vector2(10f, 10f);
         }
         

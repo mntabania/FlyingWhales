@@ -129,8 +129,8 @@ public class PlayerUI : MonoBehaviour {
         Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
         Messenger.AddListener(Signals.ON_CLOSE_SHARE_INTEL, OnCloseShareIntelMenu);
         
-        Messenger.AddListener<ILocation>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
-        Messenger.AddListener<ILocation>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
+        Messenger.AddListener<Region>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
+        Messenger.AddListener<Region>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
         
         Messenger.AddListener<SPELL_TYPE>(Signals.PLAYER_GAINED_SPELL, OnGainSpell);
         Messenger.AddListener<SPELL_TYPE>(Signals.PLAYER_LOST_SPELL, OnLostSpell);
@@ -164,10 +164,10 @@ public class PlayerUI : MonoBehaviour {
     }
 
     #region Listeners
-    private void OnInnerMapOpened(ILocation location) {
+    private void OnInnerMapOpened(Region location) {
         UpdateRegionNameState();
     }
-    private void OnInnerMapClosed(ILocation location) {
+    private void OnInnerMapClosed(Region location) {
         UpdateRegionNameState();
     }
     private void OnKeyPressed(KeyCode pressedKey) {
@@ -279,7 +279,7 @@ public class PlayerUI : MonoBehaviour {
             } else if (UIManager.Instance.hexTileInfoUI.isShowing) {
                 location = UIManager.Instance.hexTileInfoUI.currentlyShowingHexTile.region;
             } else {
-                location = InnerMapManager.Instance.currentlyShowingMap.location as Region;
+                location = InnerMapManager.Instance.currentlyShowingMap.region as Region;
             }
             Assert.IsNotNull(location, $"Trying to update region name UI in top menu, but no region is specified.");
             regionNameTopMenuText.text = location.name;
@@ -492,7 +492,7 @@ public class PlayerUI : MonoBehaviour {
     }
     public void BackToWorld() {
         UtilityScripts.Utilities.DestroyChildren(killSummaryScrollView.content);
-        ILocation closedArea = InnerMapManager.Instance.HideAreaMap();
+        Region closedArea = InnerMapManager.Instance.HideAreaMap();
         successfulAreaCorruptionGO.SetActive(false);
         InnerMapManager.Instance.DestroyInnerMap(closedArea);
 

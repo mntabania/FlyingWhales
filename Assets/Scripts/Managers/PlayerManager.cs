@@ -355,7 +355,7 @@ public class PlayerManager : MonoBehaviour {
             chaosOrb.Initialize();
             yield return null;
         }
-        Debug.Log($"Created {amount.ToString()} chaos orbs at {mapLocation.location.name}. Position {worldPos.ToString()}");
+        Debug.Log($"Created {amount.ToString()} chaos orbs at {mapLocation.region.name}. Position {worldPos.ToString()}");
     }
     private void OnCharacterDidActionSuccess(Character character, ActualGoapNode actionNode) {
         if (character.IsNPC()) {

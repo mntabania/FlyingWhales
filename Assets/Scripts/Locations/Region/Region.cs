@@ -9,7 +9,7 @@ using UnityEngine;
 using UtilityScripts;
 using Random = UnityEngine.Random;
 
-public class Region : ILocation {
+public class Region {
     public int id { get; }
     public string name { get; private set; }
     public string description => GetDescription();
@@ -30,6 +30,8 @@ public class Region : ILocation {
     public LocationStructure mainStorage { get; private set; }
     public bool canShowNotifications { get; private set; }
     public Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness { get; }
+    public List<IPointOfInterest> pendingAddAwareness { get; private set; }
+    public List<IPointOfInterest> pendingRemoveAwareness { get; private set; }
 
     private RegionInnerTileMap _regionInnerTileMap; //inner map of the region, this should only be used if this region does not have an npcSettlement. 
     private string _activeEventAfterEffectScheduleId;
@@ -47,6 +49,8 @@ public class Region : ILocation {
         factionsHere = new List<Faction>();
         residents = new List<Character>();
         awareness = new Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>>();
+        pendingAddAwareness = new List<IPointOfInterest>();
+        pendingRemoveAwareness = new List<IPointOfInterest>();
     }
     public Region(HexTile coreTile) : this() {
         id = UtilityScripts.Utilities.SetID(this);
@@ -489,7 +493,23 @@ public class Region : ILocation {
     #endregion
 
     #region Awareness
-    public bool AddAwareness(IPointOfInterest pointOfInterest) {
+    public void AddPendingAwareness(IPointOfInterest poi) {
+        pendingAddAwareness.Add(poi);
+    }
+    public void RemovePendingAwareness(IPointOfInterest poi) {
+        pendingRemoveAwareness.Add(poi);
+    }
+    public void UpdateAwareness() {
+        for (int i = 0; i < pendingAddAwareness.Count; i++) {
+            AddAwareness(pendingAddAwareness[i]);
+        }
+        for (int i = 0; i < pendingRemoveAwareness.Count; i++) {
+            RemoveAwareness(pendingRemoveAwareness[i]);
+        }
+        pendingAddAwareness.Clear();
+        pendingRemoveAwareness.Clear();
+    }
+    private bool AddAwareness(IPointOfInterest pointOfInterest) {
         if (!HasAwareness(pointOfInterest)) {
             if (!awareness.ContainsKey(pointOfInterest.poiType)) {
                 awareness.Add(pointOfInterest.poiType, new List<IPointOfInterest>());
@@ -682,7 +702,7 @@ public class Region : ILocation {
     public void BlockNotifications() {
         canShowNotifications = false;
     }
-    public bool IsSameCoreLocationAs(ILocation location) {
+    public bool IsSameCoreLocationAs(Region location) {
         return location.coreTile == this.coreTile;
     }
     public void SetRegionTileObject(RegionTileObject _regionTileObject) {

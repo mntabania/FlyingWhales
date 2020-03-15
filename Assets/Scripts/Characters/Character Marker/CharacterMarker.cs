@@ -908,7 +908,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         anchoredPos = transform.localPosition;
 
         if (previousGridTile != character.gridTileLocation) {
-            character.gridTileLocation.parentMap.location.innerMap.OnCharacterMovedTo(character, character.gridTileLocation, previousGridTile);
+            character.gridTileLocation.parentMap.region.innerMap.OnCharacterMovedTo(character, character.gridTileLocation, previousGridTile);
             previousGridTile = character.gridTileLocation;
             if (_previousHexTileLocation == null || (character.gridTileLocation.collectionOwner.isPartOfParentRegionMap && 
                 _previousHexTileLocation != character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner)) {
@@ -951,7 +951,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         UpdatePosition();
         UpdateActionIcon();
         SetCollidersState(true);
-        tile.parentMap.location.AddAwareness(character);
+        tile.parentMap.region.AddPendingAwareness(character);
     }
     public void InitialPlaceMarkerAt(Vector3 worldPosition, Region region, bool addToLocation = true) {
         PlaceMarkerAt(worldPosition, region, addToLocation);
@@ -977,7 +977,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         UpdatePosition();
         UpdateActionIcon();
         SetCollidersState(true);
-        tile.parentMap.location.AddAwareness(character);
+        tile.parentMap.region.AddPendingAwareness(character);
     }
     private IEnumerator Positioner(Vector3 localPos, Vector3 lookAt) {
         yield return null;

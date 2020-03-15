@@ -16,8 +16,12 @@ public class WaterWell : TileObject {
     }
     public override void OnPlacePOI() {
         base.OnPlacePOI();
-        advertisedActions = structureLocation.structureType != STRUCTURE_TYPE.POND && structureLocation.structureType != STRUCTURE_TYPE.OCEAN ? 
-            new List<INTERACTION_TYPE>() { INTERACTION_TYPE.WELL_JUMP, INTERACTION_TYPE.REPAIR } : new List<INTERACTION_TYPE>();
+        if(structureLocation.structureType != STRUCTURE_TYPE.POND && structureLocation.structureType != STRUCTURE_TYPE.OCEAN) {
+            AddAdvertisedAction(INTERACTION_TYPE.WELL_JUMP);
+            AddAdvertisedAction(INTERACTION_TYPE.REPAIR);
+        }
+        //advertisedActions = structureLocation.structureType != STRUCTURE_TYPE.POND && structureLocation.structureType != STRUCTURE_TYPE.OCEAN ? 
+        //    new List<INTERACTION_TYPE>() { INTERACTION_TYPE.WELL_JUMP, INTERACTION_TYPE.REPAIR } : new List<INTERACTION_TYPE>();
     }
     public override bool CanBeDamaged() {
         return structureLocation.structureType != STRUCTURE_TYPE.POND && structureLocation.structureType != STRUCTURE_TYPE.OCEAN;

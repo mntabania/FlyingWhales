@@ -30,7 +30,7 @@ public class HarvestFoodRegion : GoapAction {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             //**Requirements:** Actor is a Worker. Region has Farm Landmark. Region is owned by Actor's Faction or Actor's Home's Ruling Faction.
-            var region = poiTarget.gridTileLocation.parentMap.location.coreTile.region;
+            var region = poiTarget.gridTileLocation.parentMap.region.coreTile.region;
             // return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null && actor.traitContainer.GetNormalTrait<Trait>("Worker") != null 
             //        && region.mainLandmark.specificLandmarkType == LANDMARK_TYPE.FARM && (region.owner == actor.faction || region.owner == actor.homeRegion.owner);
         }
@@ -40,7 +40,7 @@ public class HarvestFoodRegion : GoapAction {
 
     #region State Effects
     public void PreHarvestSuccess(ActualGoapNode goapNode) {
-        goapNode.descriptionLog.AddToFillers(goapNode.poiTarget.gridTileLocation.parentMap.location.coreTile.region, goapNode.poiTarget.gridTileLocation.parentMap.location.coreTile.region.name, LOG_IDENTIFIER.LANDMARK_1);
+        goapNode.descriptionLog.AddToFillers(goapNode.poiTarget.gridTileLocation.parentMap.region.coreTile.region, goapNode.poiTarget.gridTileLocation.parentMap.region.coreTile.region.name, LOG_IDENTIFIER.LANDMARK_1);
     }
     public void AfterHarvestSuccess(ActualGoapNode goapNode) {
         //**After Effect 1**: Produce Food random between 200 - 500

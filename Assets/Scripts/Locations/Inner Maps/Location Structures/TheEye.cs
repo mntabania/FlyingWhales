@@ -4,7 +4,7 @@ namespace Inner_Maps.Location_Structures {
     public class TheEye : LocationStructure{
         public override Vector2 selectableSize { get; }
 
-        public TheEye(ILocation location) : base(STRUCTURE_TYPE.THE_EYE, location){
+        public TheEye(Region location) : base(STRUCTURE_TYPE.THE_EYE, location){
             selectableSize = new Vector2(10f, 10f);
         }
 

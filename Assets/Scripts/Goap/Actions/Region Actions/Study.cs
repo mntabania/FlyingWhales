@@ -26,7 +26,7 @@ public class Study : GoapAction {
     }
     public override void AddFillersToLog(Log log, ActualGoapNode node) {
         base.AddFillersToLog(log, node);
-        log.AddToFillers(node.poiTarget.gridTileLocation.parentMap.location.coreTile.region, node.poiTarget.gridTileLocation.parentMap.location.coreTile.region.name, LOG_IDENTIFIER.LANDMARK_1);
+        log.AddToFillers(node.poiTarget.gridTileLocation.parentMap.region.coreTile.region, node.poiTarget.gridTileLocation.parentMap.region.coreTile.region.name, LOG_IDENTIFIER.LANDMARK_1);
     }
     #endregion
 
@@ -35,7 +35,7 @@ public class Study : GoapAction {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             //**Requirements:** Region must not be corrupted and region must not be empty
-            var region = poiTarget.gridTileLocation.parentMap.location.coreTile.region;
+            var region = poiTarget.gridTileLocation.parentMap.region.coreTile.region;
             return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null && region.coreTile.isCorrupted == false && region.mainLandmark.specificLandmarkType != LANDMARK_TYPE.NONE;
         }
         return false;
@@ -44,7 +44,7 @@ public class Study : GoapAction {
 
     #region State Effects
     public void PreStudySuccess(ActualGoapNode goapNode) {
-        goapNode.descriptionLog.AddToFillers(goapNode.poiTarget.gridTileLocation.parentMap.location.coreTile.region, goapNode.poiTarget.gridTileLocation.parentMap.location.coreTile.region.name, LOG_IDENTIFIER.LANDMARK_1);
+        goapNode.descriptionLog.AddToFillers(goapNode.poiTarget.gridTileLocation.parentMap.region.coreTile.region, goapNode.poiTarget.gridTileLocation.parentMap.region.coreTile.region.name, LOG_IDENTIFIER.LANDMARK_1);
     }
     public void AfterStudySuccess(ActualGoapNode goapNode) {
         List<string> buffs = TraitManager.Instance.GetAllBuffTraitsThatCharacterCanHave(goapNode.actor);

@@ -14,7 +14,7 @@ namespace Inner_Maps {
 
         [SerializeField] private GameObject regionDirectionPrefab;
         
-        public override void Initialize(ILocation location) {
+        public override void Initialize(Region location) {
             base.Initialize(location);
             region = location as Region;
         }
@@ -71,7 +71,7 @@ namespace Inner_Maps {
             }
             
             stopwatch.Stop();
-            mapGenerationComponent.AddLog($"{location.name} CreateTileCollectionGrid took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
+            mapGenerationComponent.AddLog($"{base.region.name} CreateTileCollectionGrid took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
             return new Vector2Int(gridWidth, gridHeight);
         }
         private void InitializeTileCollections(MapGenerationComponent mapGenerationComponent) {
@@ -87,7 +87,7 @@ namespace Inner_Maps {
                 }
             }
             stopwatch.Stop();
-            mapGenerationComponent.AddLog($"{location.name} initialize building spots took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
+            mapGenerationComponent.AddLog($"{base.region.name} initialize building spots took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
         }
         private void ConnectHexTilesToTileCollections(MapGenerationComponent mapGenerationComponent) {
             Stopwatch stopwatch = new Stopwatch();
@@ -128,7 +128,7 @@ namespace Inner_Maps {
             }
             
             stopwatch.Stop();
-            mapGenerationComponent.AddLog($"{location.name} ConnectHexTilesToBuildSpots took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
+            mapGenerationComponent.AddLog($"{base.region.name} ConnectHexTilesToBuildSpots took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
         }
         private void AssignTileCollectionsToHexTile(HexTile tile, int column1, int column2, int row1, int row2) {
             int w = (column2 - column1) + 1;

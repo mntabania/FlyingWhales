@@ -1191,7 +1191,7 @@ public class CharacterNeedsComponent {
     #endregion
 
     #region Events
-    public void OnCharacterLeftLocation(ILocation location) {
+    public void OnCharacterLeftLocation(Region location) {
         // if (location == _character.homeRegion) {
         //     //character left home region
         //     AdjustDoNotGetHungry(1);
@@ -1199,7 +1199,7 @@ public class CharacterNeedsComponent {
         //     AdjustDoNotGetTired(1);
         // }
     }
-    public void OnCharacterArrivedAtLocation(ILocation location) {
+    public void OnCharacterArrivedAtLocation(Region location) {
         // if (location == _character.homeRegion) {
         //     //character arrived at home region
         //     AdjustDoNotGetHungry(-1);

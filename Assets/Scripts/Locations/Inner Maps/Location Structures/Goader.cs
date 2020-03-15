@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Inner_Maps.Location_Structures {
     public class Goader : LocationStructure {
         public override Vector2 selectableSize { get; }
-        public Goader(ILocation location) : base(STRUCTURE_TYPE.GOADER, location){
+        public Goader(Region location) : base(STRUCTURE_TYPE.GOADER, location){
             selectableSize = new Vector2(10f, 10f);
         }
 

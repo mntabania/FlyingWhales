@@ -26,7 +26,7 @@ public class ChopWoodRegion : GoapAction {
 
     #region State Effects
     public void PreForageSuccess(ActualGoapNode goapNode) {
-        goapNode.descriptionLog.AddToFillers(goapNode.poiTarget.gridTileLocation.parentMap.location.coreTile.region, goapNode.poiTarget.gridTileLocation.parentMap.location.coreTile.region.name, LOG_IDENTIFIER.LANDMARK_1);
+        goapNode.descriptionLog.AddToFillers(goapNode.poiTarget.gridTileLocation.parentMap.region.coreTile.region, goapNode.poiTarget.gridTileLocation.parentMap.region.coreTile.region.name, LOG_IDENTIFIER.LANDMARK_1);
     }
     public void AfterForageSuccess(ActualGoapNode goapNode) {
         //**After Effect 1**: Produce Wood random between 200 - 500

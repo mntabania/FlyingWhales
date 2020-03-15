@@ -12,7 +12,7 @@ public interface IDwelling {
     bool isDwelling { get; }
     List<Character> charactersHere { get; }
     List<Character> residents { get; }
-    ILocation location { get; }
+    Region location { get; }
     BaseSettlement settlementLocation { get; }
     // List<SpecialToken> itemsInStructure { get; }
     HashSet<IPointOfInterest> pointsOfInterest { get; }

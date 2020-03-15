@@ -81,7 +81,10 @@ public static class GoapActionStateDB {
             new StateNameAndDuration(){ name = "Rest Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(8), animationName = "Sleep Ground" },
         } },
         {INTERACTION_TYPE.REMOVE_POISON, new[]{
-            new StateNameAndDuration(){ name = "Remove Poison Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
+            new StateNameAndDuration(){ name = "Remove Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
+        } },
+        {INTERACTION_TYPE.REMOVE_FREEZING, new[]{
+            new StateNameAndDuration(){ name = "Remove Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
         } },
         {INTERACTION_TYPE.POISON, new[]{
             new StateNameAndDuration(){ name = "Poison Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
@@ -257,9 +260,6 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.CRAFT_TILE_OBJECT, new[]{
             new StateNameAndDuration(){ name = "Craft Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
         } },
-        {INTERACTION_TYPE.CREATE_ITEM, new[]{
-            new StateNameAndDuration(){ name = "Create Success", status = InteractionManager.Goap_State_Success, duration = 0 },
-        } },
         {INTERACTION_TYPE.PRAY_TILE_OBJECT, new[]{
             new StateNameAndDuration(){ name = "Pray Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1) },
         } },
@@ -388,6 +388,18 @@ public static class GoapActionStateDB {
         } },
         {INTERACTION_TYPE.DESTROY_RESOURCE_AMOUNT, new[]{
             new StateNameAndDuration(){ name = "Destroy Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
+        {INTERACTION_TYPE.CREATE_HEALING_POTION, new[]{
+            new StateNameAndDuration(){ name = "Create Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
+        {INTERACTION_TYPE.CREATE_ANTIDOTE, new[]{
+            new StateNameAndDuration(){ name = "Create Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
+        {INTERACTION_TYPE.CREATE_POISON_FLASK, new[]{
+            new StateNameAndDuration(){ name = "Create Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
+        { INTERACTION_TYPE.EXTRACT_ITEM, new[]{
+            new StateNameAndDuration(){ name = "Extract Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
     };
 }

@@ -8,7 +8,7 @@ namespace Inner_Maps.Location_Structures {
 
         private List<Character> validMinions;
 
-        public ThePortal(ILocation location) : base(STRUCTURE_TYPE.THE_PORTAL, location){
+        public ThePortal(Region location) : base(STRUCTURE_TYPE.THE_PORTAL, location){
             selectableSize = new Vector2(10f, 10f);
         }
         public override void ConstructDefaultActions() {

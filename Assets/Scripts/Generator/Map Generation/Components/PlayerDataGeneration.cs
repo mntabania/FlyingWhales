@@ -70,6 +70,6 @@ public class PlayerDataGeneration : MapGenerationComponent {
 				Debug.Log($"No more monster lairs for {artifact}. It was placed at {artifact.gridTileLocation} at {chosenRegion.name} instead.");
 			}
 		}
-		yield return null;
+        yield return null;
 	}
 }

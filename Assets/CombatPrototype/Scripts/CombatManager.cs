@@ -110,7 +110,7 @@ public class CombatManager : MonoBehaviour {
             Burning burningTrait = traitable.traitContainer.GetNormalTrait<Burning>("Burning");
             if (burningTrait != null && burningTrait.sourceOfBurning == null) {
                 if (bs == null) {
-                    bs = new BurningSource(traitable.gridTileLocation.parentMap.location);
+                    bs = new BurningSource(traitable.gridTileLocation.parentMap.region);
                 }
                 burningTrait.SetSourceOfBurning(bs, traitable);
                 Assert.IsNotNull(burningTrait.sourceOfBurning, $"Burning source of {traitable.ToString()} was set to null");

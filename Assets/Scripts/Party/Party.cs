@@ -302,7 +302,7 @@ public class Party {
     public void SetPartyName(string name) {
         _partyName = name;
     }
-    public void GoToLocation(ILocation targetLocation, PATHFINDING_MODE pathfindingMode, LocationStructure targetStructure = null,
+    public void GoToLocation(Region targetLocation, PATHFINDING_MODE pathfindingMode, LocationStructure targetStructure = null,
         Action doneAction = null, Action actionOnStartOfMovement = null, IPointOfInterest targetPOI = null, LocationGridTile targetTile = null) {
         if (_icon.isTravelling && _icon.travelLine != null) {
             return;

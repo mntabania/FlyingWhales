@@ -101,8 +101,8 @@ public class Player : ILeader, IObjectManipulator {
         //goap
         // Messenger.AddListener<string, ActualGoapNode>(Signals.AFTER_ACTION_STATE_SET, OnAfterActionStateSet);
         // Messenger.AddListener<Character, ActualGoapNode>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
-        Messenger.AddListener<ILocation>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
-        Messenger.AddListener<ILocation>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
+        Messenger.AddListener<Region>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
+        Messenger.AddListener<Region>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
 
         //minions
         Messenger.AddListener<Minion, BaseLandmark>(Signals.MINION_ASSIGNED_PLAYER_LANDMARK, OnMinionAssignedToPlayerLandmark);
@@ -131,14 +131,14 @@ public class Player : ILeader, IObjectManipulator {
     public void SetPlayerArea(PlayerSettlement npcSettlement) {
         playerSettlement = npcSettlement;
     }
-    private void OnInnerMapOpened(ILocation area) {
+    private void OnInnerMapOpened(Region area) {
         //for (int i = 0; i < minions.Count; i++) {
         //    minions[i].ResetCombatAbilityCD();
         //}
         //ResetInterventionAbilitiesCD();
         //currentTargetFaction = npcSettlement.owner;
     }
-    private void OnInnerMapClosed(ILocation area) {
+    private void OnInnerMapClosed(Region area) {
         //currentTargetFaction = null;
     }
     #endregion
@@ -398,7 +398,7 @@ public class Player : ILeader, IObjectManipulator {
     #endregion
 
     #region Player Notifications
-    private bool ShouldShowNotificationFrom(ILocation location) {
+    private bool ShouldShowNotificationFrom(Region location) {
         return location.canShowNotifications;
     }
     private bool ShouldShowNotificationFrom(Character character, bool onlyClickedCharacter = false) {
@@ -417,15 +417,15 @@ public class Player : ILeader, IObjectManipulator {
             return true;
         } else {
             return ShouldShowNotificationFrom(log.fillers.Where(x => x.obj is Character).Select(x => x.obj as Character).ToArray())
-                || ShouldShowNotificationFrom(log.fillers.Where(x => x.obj is ILocation).Select(x => x.obj as ILocation).ToArray());
+                || ShouldShowNotificationFrom(log.fillers.Where(x => x.obj is Region).Select(x => x.obj as Region).ToArray());
         }
     }
-    private bool ShouldShowNotificationFrom(ILocation location, Log log) {
+    private bool ShouldShowNotificationFrom(Region location, Log log) {
         if (ShouldShowNotificationFrom(location)) {
             return true;
         } else {
             return ShouldShowNotificationFrom(log.fillers.Where(x => x.obj is Character).Select(x => x.obj as Character).ToArray())
-                   || ShouldShowNotificationFrom(log.fillers.Where(x => x.obj is ILocation).Select(x => x.obj as ILocation).ToArray());
+                   || ShouldShowNotificationFrom(log.fillers.Where(x => x.obj is Region).Select(x => x.obj as Region).ToArray());
         }
     }
     private bool ShouldShowNotificationFrom(Character[] characters) {
@@ -436,7 +436,7 @@ public class Player : ILeader, IObjectManipulator {
         }
         return false;
     }
-    private bool ShouldShowNotificationFrom(ILocation[] locations) {
+    private bool ShouldShowNotificationFrom(Region[] locations) {
         for (int i = 0; i < locations.Length; i++) {
             if (ShouldShowNotificationFrom(locations[i])) {
                 return true;
@@ -453,7 +453,7 @@ public class Player : ILeader, IObjectManipulator {
         return false;
     }
     
-    public bool ShowNotificationFrom(ILocation location, Log log) {
+    public bool ShowNotificationFrom(Region location, Log log) {
         if (ShouldShowNotificationFrom(location, log)) {
             ShowNotification(log);
             return true;

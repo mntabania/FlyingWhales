@@ -29,7 +29,7 @@ public class FireElemental : Summon {
     private void OnCharacterFinishedAction(ActualGoapNode goapNode) {
         if (goapNode.actor == this && goapNode.action.goapType == INTERACTION_TYPE.STAND) {
             Burning burning = new Burning();
-            burning.SetSourceOfBurning(new BurningSource(gridTileLocation.parentMap.location), gridTileLocation.genericTileObject);
+            burning.SetSourceOfBurning(new BurningSource(gridTileLocation.parentMap.region), gridTileLocation.genericTileObject);
             gridTileLocation.genericTileObject.traitContainer.AddTrait(gridTileLocation.genericTileObject, burning, this, bypassElementalChance: true);
         }
     }

@@ -249,7 +249,7 @@ public class LocationStructureObject : PooledObject {
         if (structure.settlementLocation is NPCSettlement npcSettlement) {
             npcSettlement.OnLocationStructureObjectPlaced(structure);
         } else {
-            innerMap.location.OnLocationStructureObjectPlaced(structure);    
+            innerMap.region.OnLocationStructureObjectPlaced(structure);    
         }
         UpdateSortingOrders();
         Messenger.Broadcast(Signals.STRUCTURE_OBJECT_PLACED, structure);
@@ -298,7 +298,7 @@ public class LocationStructureObject : PooledObject {
                 LocationGridTile tile = map.map[gridTileLocation.x, gridTileLocation.y];
                 occupiedTiles.Add(tile);    
             } else {
-                throw new Exception($"IndexOutOfRangeException when trying to place structure object {name} at {map.location.name}");
+                throw new Exception($"IndexOutOfRangeException when trying to place structure object {name} at {map.region.name}");
             }
         }
         return occupiedTiles;

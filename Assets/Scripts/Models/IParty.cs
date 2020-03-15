@@ -20,13 +20,13 @@ public interface IParty {
     BaseLandmark landmarkLocation { get; }
     BaseLandmark homeLandmark { get; }
     Character mainCharacter { get; }
-    ILocation specificLocation { get; }
+    Region specificLocation { get; }
     List<Character> characters { get; }
 
     void EndAction();
     void GoHome(Action action = null, Action actionOnStartOfMovement = null);
     void RemoveCharacter(Character icharacter);
     //void AdvertiseSelf(ActionThread actionThread);
-    void SetSpecificLocation(ILocation location);
+    void SetSpecificLocation(Region location);
     bool AddCharacter(Character icharacter);
 }

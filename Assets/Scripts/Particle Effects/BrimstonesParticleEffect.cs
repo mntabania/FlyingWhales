@@ -43,7 +43,7 @@ public class BrimstonesParticleEffect : BaseParticleEffect {
             Burning burningTrait = traitable.traitContainer.GetNormalTrait<Burning>("Burning");
             if (burningTrait != null && burningTrait.sourceOfBurning == null) {
                 if (bs == null) {
-                    bs = new BurningSource(traitable.gridTileLocation.parentMap.location);
+                    bs = new BurningSource(traitable.gridTileLocation.parentMap.region);
                 }
                 burningTrait.SetSourceOfBurning(bs, traitable);
             }

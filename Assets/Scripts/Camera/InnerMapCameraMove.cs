@@ -90,20 +90,20 @@ public class InnerMapCameraMove : MonoBehaviour {
     public void Initialize() {
         //SetInitialCameraPosition();
         gameObject.SetActive(false);
-        Messenger.AddListener<ILocation>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
-        Messenger.AddListener<ILocation>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
+        Messenger.AddListener<Region>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
+        Messenger.AddListener<Region>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
         
     }
 
     #region Listeners
-    private void OnInnerMapOpened(ILocation location) {
+    private void OnInnerMapOpened(Region location) {
         gameObject.SetActive(true);
         SetCameraControlState(true);
         SetCameraBordersForMap(location.innerMap);
         ConstrainCameraBounds();
         innerMapsCamera.depth = 2;
     }
-    private void OnInnerMapClosed(ILocation location) {
+    private void OnInnerMapClosed(Region location) {
         gameObject.SetActive(false);
         SetCameraControlState(false);
         innerMapsCamera.depth = 0;

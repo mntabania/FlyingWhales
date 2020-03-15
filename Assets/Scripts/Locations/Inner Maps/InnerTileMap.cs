@@ -66,7 +66,7 @@ namespace Inner_Maps {
         public LocationGridTile[,] map { get; private set; }
         protected List<LocationGridTile> allTiles { get; private set; }
         public List<LocationGridTile> allEdgeTiles { get; private set; }
-        public ILocation location { get; private set; }
+        public Region region { get; private set; }
         public GridGraph pathfindingGraph { get; set; }
         public Vector3 worldPos { get; private set; }
         public GameObject centerGo { get; private set; }
@@ -75,8 +75,8 @@ namespace Inner_Maps {
         public bool isShowing => InnerMapManager.Instance.currentlyShowingMap == this;
 
         #region Generation
-        public virtual void Initialize(ILocation location) {
-            this.location = location;
+        public virtual void Initialize(Region location) {
+            this.region = location;
             activeBurningSources = new List<BurningSource>();
             
             //set tile map sorting orders
@@ -100,10 +100,10 @@ namespace Inner_Maps {
             allTiles = new List<LocationGridTile>();
             allEdgeTiles = new List<LocationGridTile>();
             int batchCount = 0;
-            LocationStructure wilderness = location.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+            LocationStructure wilderness = region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
-                    groundTilemap.SetTile(new Vector3Int(x, y, 0), InnerMapManager.Instance.assetManager.GetOutsideFloorTile(location));
+                    groundTilemap.SetTile(new Vector3Int(x, y, 0), InnerMapManager.Instance.assetManager.GetOutsideFloorTile(region));
                     LocationGridTile tile = new LocationGridTile(x, y, groundTilemap, this);
                     tile.CreateGenericTileObject();
                     tile.SetStructure(wilderness);
@@ -121,7 +121,7 @@ namespace Inner_Maps {
             }
             allTiles.ForEach(x => x.FindNeighbours(map));
             stopwatch.Stop();
-            mapGenerationComponent.AddLog($"{location.name} GenerateGrid took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
+            mapGenerationComponent.AddLog($"{region.name} GenerateGrid took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
         }
 
         #endregion
@@ -291,8 +291,8 @@ namespace Inner_Maps {
             if (!activeBurningSources.Contains(bs)) {
                 activeBurningSources.Add(bs);
                 Log log = new Log(GameManager.Instance.Today(), "General", "Location", "Fire");
-                log.AddToFillers(location, location.name, LOG_IDENTIFIER.LANDMARK_1);
-                PlayerManager.Instance.player.ShowNotificationFrom(location, log);
+                log.AddToFillers(region, region.name, LOG_IDENTIFIER.LANDMARK_1);
+                PlayerManager.Instance.player.ShowNotificationFrom(region, log);
             }
         }
         public void RemoveActiveBurningSources(BurningSource bs) {
@@ -307,7 +307,7 @@ namespace Inner_Maps {
         public void Open() { }
         public void Close() { }
         public virtual void OnMapGenerationFinished() {
-            name = $"{location.name}'s Inner Map";
+            name = $"{region.name}'s Inner Map";
             groundTilemap.CompressBounds();
             _boundDrawer.ManualUpdateBounds(groundTilemap.localBounds);
             worldUiCanvas.worldCamera = InnerMapCameraMove.Instance.innerMapsCamera;
@@ -441,7 +441,7 @@ namespace Inner_Maps {
                 float floorSample = Mathf.PerlinNoise(xCoord, yCoord);
                 positionArray[i] = currTile.localPlace;
                 //ground
-                if (location.coreTile.biomeType == BIOMES.SNOW || location.coreTile.biomeType == BIOMES.TUNDRA) {
+                if (region.coreTile.biomeType == BIOMES.SNOW || region.coreTile.biomeType == BIOMES.TUNDRA) {
                     if (floorSample < 0.5f) {
                         groundTilesArray[i] = InnerMapManager.Instance.assetManager.snowTile;
                     } else if (floorSample >= 0.5f && floorSample < 0.8f) {
@@ -449,7 +449,7 @@ namespace Inner_Maps {
                     } else {
                         groundTilesArray[i] = InnerMapManager.Instance.assetManager.stoneTile;
                     }
-                } else if (location.coreTile.biomeType == BIOMES.DESERT) {
+                } else if (region.coreTile.biomeType == BIOMES.DESERT) {
                     if (floorSample < 0.5f) {
                         groundTilesArray[i] = InnerMapManager.Instance.assetManager.desertGrassTile;
                     } else if (floorSample >= 0.5f && floorSample < 0.8f) {
@@ -503,7 +503,7 @@ namespace Inner_Maps {
                         if (currTile.groundType == LocationGridTile.Ground_Type.Grass || currTile.groundType == LocationGridTile.Ground_Type.Snow) {
                             if (Random.Range(0, 100) < 50) {
                                 //shrubs
-                                if (location.coreTile.biomeType != BIOMES.SNOW && location.coreTile.biomeType != BIOMES.TUNDRA) {
+                                if (region.coreTile.biomeType != BIOMES.SNOW && region.coreTile.biomeType != BIOMES.TUNDRA) {
                                     currTile.hasDetail = true;
                                     TileBase tileBase = null;
                                     //plant or herb plant
@@ -531,7 +531,7 @@ namespace Inner_Maps {
                     
                     if (Random.Range(0, 100) < 3) {
                         currTile.hasDetail = true;
-                        detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.GetFlowerTile(location));
+                        detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.GetFlowerTile(region));
                         if (currTile.structure != null) {
                             ConvertDetailToTileObject(currTile);
                         } else {
@@ -540,7 +540,7 @@ namespace Inner_Maps {
                         
                     } else if (Random.Range(0, 100) < 4) {
                         currTile.hasDetail = true;
-                        detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.GetRockTile(location));
+                        detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.GetRockTile(region));
                         if (currTile.structure != null) {
                             ConvertDetailToTileObject(currTile);
                         } else {
@@ -548,7 +548,7 @@ namespace Inner_Maps {
                         }
                     } else if (Random.Range(0, 100) < 3) {
                         currTile.hasDetail = true;
-                        detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.GetGarbTile(location));
+                        detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.GetGarbTile(region));
                         if (currTile.structure != null) {
                             ConvertDetailToTileObject(currTile);
                         } else {
@@ -577,7 +577,7 @@ namespace Inner_Maps {
             ).ToList();
             yield return StartCoroutine(MapPerlinDetails(tilesToPerlin));
             stopwatch.Stop();
-            mapGenerationComponent.AddLog($"{location.name} GenerateDetails took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
+            mapGenerationComponent.AddLog($"{region.name} GenerateDetails took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
         }
         private void MassSetGroundTileMapVisuals(Vector3Int[] tilePositions, TileBase[] groundAssets) {
             groundTilemap.SetTiles(tilePositions, groundAssets);
@@ -591,7 +591,7 @@ namespace Inner_Maps {
         #region Monobehaviours
         public void Update() {
             if (UIManager.Instance.characterInfoUI.isShowing 
-                && UIManager.Instance.characterInfoUI.activeCharacter.currentRegion == location.coreTile.region
+                && UIManager.Instance.characterInfoUI.activeCharacter.currentRegion == region.coreTile.region
                 && !UIManager.Instance.characterInfoUI.activeCharacter.isDead
                 //&& UIManager.Instance.characterInfoUI.activeCharacter.isWaitingForInteraction <= 0
                 && UIManager.Instance.characterInfoUI.activeCharacter.marker

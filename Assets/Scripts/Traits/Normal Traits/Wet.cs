@@ -18,6 +18,7 @@ namespace Traits {
             moodEffect = -6;
             stackLimit = 10;
             stackModifier = 0f;
+            advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EXTRACT_ITEM };
         }
 
         #region Overrides

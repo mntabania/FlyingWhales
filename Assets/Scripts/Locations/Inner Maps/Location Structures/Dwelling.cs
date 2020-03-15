@@ -19,13 +19,13 @@ namespace Inner_Maps.Location_Structures {
         //facilities
         public Dictionary<FACILITY_TYPE, int> facilities { get; protected set; }
 
-        public Dwelling(ILocation location) 
+        public Dwelling(Region location) 
             : base(STRUCTURE_TYPE.DWELLING, location) {
             residents = new List<Character>();
             InitializeFacilities();
         }
 
-        public Dwelling(ILocation location, SaveDataLocationStructure data)
+        public Dwelling(Region location, SaveDataLocationStructure data)
             : base(location, data) {
             residents = new List<Character>();
             InitializeFacilities();

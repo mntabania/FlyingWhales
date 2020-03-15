@@ -16,7 +16,7 @@ namespace Inner_Maps.Location_Structures {
         public virtual string nameplateName => name;
         public STRUCTURE_TYPE structureType { get; private set; }
         public List<Character> charactersHere { get; private set; }
-        public ILocation location { get; private set; }
+        public Region location { get; private set; }
         public BaseSettlement settlementLocation { get; private set; }
         public HashSet<IPointOfInterest> pointsOfInterest { get; private set; }
         public Dictionary<TILE_OBJECT_TYPE, TileObjectsAndCount> groupedTileObjects { get; private set; }
@@ -35,7 +35,7 @@ namespace Inner_Maps.Location_Structures {
         public virtual Vector2 selectableSize => structureObj.size;
         #endregion
 
-        public LocationStructure(STRUCTURE_TYPE structureType, ILocation location) {
+        public LocationStructure(STRUCTURE_TYPE structureType, Region location) {
             id = UtilityScripts.Utilities.SetID(this);
             this.structureType = structureType;
             name = $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString())} {id.ToString()}";
@@ -48,7 +48,7 @@ namespace Inner_Maps.Location_Structures {
             unoccupiedTiles = new LinkedList<LocationGridTile>();
             SetInteriorState(structureType.IsInterior());
         }
-        public LocationStructure(ILocation location, SaveDataLocationStructure data) {
+        public LocationStructure(Region location, SaveDataLocationStructure data) {
             this.location = location;
             id = UtilityScripts.Utilities.SetID(this, data.id);
             structureType = data.structureType;
@@ -751,7 +751,7 @@ public class SaveDataLocationStructure {
         state = structure.state;
     }
 
-    public LocationStructure Load(ILocation location) {
+    public LocationStructure Load(Region location) {
         LocationStructure createdStructure = null;
         switch (structureType) {
             case STRUCTURE_TYPE.DWELLING:

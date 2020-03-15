@@ -18,6 +18,7 @@ public class StructureWallObject : MapObject<StructureWallObject>, ITraitable {
     public override MapObjectVisual<StructureWallObject> mapVisual => _visual;
     public BaseMapObjectVisual mapObjectVisual => mapVisual;
     private readonly WallVisual _visual;
+    public List<INTERACTION_TYPE> advertisedActions => null;
 
     public StructureWallObject(LocationStructure structure, WallVisual visual, RESOURCE madeOf) {
         name = $"Wall of {structure}";
@@ -113,7 +114,7 @@ public class StructureWallObject : MapObject<StructureWallObject>, ITraitable {
     #endregion
 
     #region ITraitable
-    public void AddAdvertisedAction(INTERACTION_TYPE actionType) {
+    public void AddAdvertisedAction(INTERACTION_TYPE actionType, bool allowDuplicates = false) {
         //Not Applicable
     }
     public void RemoveAdvertisedAction(INTERACTION_TYPE actionType) {

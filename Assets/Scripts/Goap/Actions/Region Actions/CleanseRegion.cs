@@ -24,7 +24,7 @@ public class CleanseRegion : GoapAction {
     }
     public override void AddFillersToLog(Log log, ActualGoapNode node) {
         base.AddFillersToLog(log, node);
-        log.AddToFillers(node.poiTarget.gridTileLocation.parentMap.location.coreTile.region, node.poiTarget.gridTileLocation.parentMap.location.coreTile.region.name, LOG_IDENTIFIER.LANDMARK_1);
+        log.AddToFillers(node.poiTarget.gridTileLocation.parentMap.region.coreTile.region, node.poiTarget.gridTileLocation.parentMap.region.coreTile.region.name, LOG_IDENTIFIER.LANDMARK_1);
     }
     #endregion
 
@@ -33,7 +33,7 @@ public class CleanseRegion : GoapAction {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             //**Requirements:** Actor has Purifier trait. Region is corrupted. Region does not have a landmark.
-            var region = poiTarget.gridTileLocation.parentMap.location.coreTile.region;
+            var region = poiTarget.gridTileLocation.parentMap.region.coreTile.region;
             return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null && actor.traitContainer.HasTrait("Purifier")
                    && region.coreTile.isCorrupted && region.mainLandmark.specificLandmarkType == LANDMARK_TYPE.NONE;
         }
@@ -43,10 +43,10 @@ public class CleanseRegion : GoapAction {
 
     #region State Effects
     public void PreCleanseSuccess(ActualGoapNode goapNode) {
-        goapNode.descriptionLog.AddToFillers(goapNode.poiTarget.gridTileLocation.parentMap.location.coreTile.region, goapNode.poiTarget.gridTileLocation.parentMap.location.coreTile.region.name, LOG_IDENTIFIER.LANDMARK_1);
+        goapNode.descriptionLog.AddToFillers(goapNode.poiTarget.gridTileLocation.parentMap.region.coreTile.region, goapNode.poiTarget.gridTileLocation.parentMap.region.coreTile.region.name, LOG_IDENTIFIER.LANDMARK_1);
     }
     public void AfterCleanseSuccess(ActualGoapNode goapNode) {
-        var region = goapNode.poiTarget.gridTileLocation.parentMap.location.coreTile.region;
+        var region = goapNode.poiTarget.gridTileLocation.parentMap.region.coreTile.region;
     }
     #endregion
 }

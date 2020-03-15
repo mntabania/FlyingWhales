@@ -71,7 +71,7 @@ namespace Inner_Maps {
         public TileObjectAssetDictionary tileObjectTiles;
         public TileObjectAssetDictionary corruptedTileObjectAssets;
 
-        public TileBase GetOutsideFloorTile(ILocation location) {
+        public TileBase GetOutsideFloorTile(Region location) {
             switch (location.coreTile.biomeType) {
                 case BIOMES.SNOW:
                 case BIOMES.TUNDRA:
@@ -94,7 +94,7 @@ namespace Inner_Maps {
                     return null;
             }
         }
-        public TileBase GetFlowerTile(ILocation location) {
+        public TileBase GetFlowerTile(Region location) {
             switch (location.coreTile.biomeType) {
                 case BIOMES.SNOW:
                 case BIOMES.TUNDRA:
@@ -105,7 +105,7 @@ namespace Inner_Maps {
                     return flowerTile;
             }
         }
-        public TileBase GetGarbTile(ILocation location) {
+        public TileBase GetGarbTile(Region location) {
             switch (location.coreTile.biomeType) {
                 case BIOMES.SNOW:
                 case BIOMES.TUNDRA:
@@ -116,7 +116,7 @@ namespace Inner_Maps {
                     return randomGarbTile;
             }
         }
-        public TileBase GetRockTile(ILocation location) {
+        public TileBase GetRockTile(Region location) {
             switch (location.coreTile.biomeType) {
                 case BIOMES.DESERT:
                     return desertRockTile;

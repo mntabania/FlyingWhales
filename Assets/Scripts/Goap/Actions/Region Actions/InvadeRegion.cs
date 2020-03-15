@@ -21,7 +21,7 @@
     }
     public override void AddFillersToLog(Log log, ActualGoapNode node) {
         base.AddFillersToLog(log, node);
-        log.AddToFillers(node.poiTarget.gridTileLocation.parentMap.location.coreTile.region, node.poiTarget.gridTileLocation.parentMap.location.coreTile.region.name, LOG_IDENTIFIER.LANDMARK_1);
+        log.AddToFillers(node.poiTarget.gridTileLocation.parentMap.region.coreTile.region, node.poiTarget.gridTileLocation.parentMap.region.coreTile.region.name, LOG_IDENTIFIER.LANDMARK_1);
     }
     #endregion
 
@@ -30,7 +30,7 @@
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             //**Requirements:** Region is owned by Faction different from Actor's Faction. Region is not Corrupted. Region is non-npcSettlement type.
-            var region = poiTarget.gridTileLocation.parentMap.location.coreTile.region;
+            var region = poiTarget.gridTileLocation.parentMap.region.coreTile.region;
             // return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null && region.owner != null 
             //        && region.owner != actor.faction && region.coreTile.isCorrupted == false 
             //        && region.locationType.IsSettlementType() == false 
@@ -43,11 +43,11 @@
     #region State Effects
     public void PreInvadeSuccess(ActualGoapNode goapNode) {
         goapNode.poiTarget.RemoveAdvertisedAction(this.goapType);
-        goapNode.descriptionLog.AddToFillers(goapNode.poiTarget.gridTileLocation.parentMap.location.coreTile.region, goapNode.poiTarget.gridTileLocation.parentMap.location.coreTile.region.name, LOG_IDENTIFIER.LANDMARK_1);
+        goapNode.descriptionLog.AddToFillers(goapNode.poiTarget.gridTileLocation.parentMap.region.coreTile.region, goapNode.poiTarget.gridTileLocation.parentMap.region.coreTile.region.name, LOG_IDENTIFIER.LANDMARK_1);
     }
     public void AfterInvadeSuccess(ActualGoapNode goapNode) {
         goapNode.poiTarget.AddAdvertisedAction(this.goapType);
-        var region = goapNode.poiTarget.gridTileLocation.parentMap.location.coreTile.region;
+        var region = goapNode.poiTarget.gridTileLocation.parentMap.region.coreTile.region;
         region.AddFactionHere(goapNode.actor.faction);
     }
     #endregion

@@ -1299,7 +1299,7 @@ public class ConsoleBase : InfoUIBase {
             return;
         }
 
-        LocationStructure structure = InnerMapManager.Instance.currentlyShowingMap.location.GetStructureByID(structureType, id);
+        LocationStructure structure = InnerMapManager.Instance.currentlyShowingMap.region.GetStructureByID(structureType, id);
         if (structure == null) {
             AddErrorMessage($"There is no {structureType} with id {id}");
             return;

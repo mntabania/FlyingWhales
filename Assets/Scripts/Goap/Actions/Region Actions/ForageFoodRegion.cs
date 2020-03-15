@@ -29,7 +29,7 @@ public class ForageFoodRegion : GoapAction {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             //**Requirements:** Actor is a Hunter. Region has a Game feature.
-            var region = poiTarget.gridTileLocation.parentMap.location.coreTile.region;
+            var region = poiTarget.gridTileLocation.parentMap.region.coreTile.region;
             return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null &&
                    actor.traitContainer.HasTrait("Hunter") && 
                    region.HasTileWithFeature(TileFeatureDB.Game_Feature);
@@ -40,7 +40,7 @@ public class ForageFoodRegion : GoapAction {
 
     #region State Effects
     public void PreForageSuccess(ActualGoapNode goapNode) {
-        goapNode.descriptionLog.AddToFillers(goapNode.poiTarget.gridTileLocation.parentMap.location.coreTile.region, goapNode.poiTarget.gridTileLocation.parentMap.location.coreTile.region.name, LOG_IDENTIFIER.LANDMARK_1);
+        goapNode.descriptionLog.AddToFillers(goapNode.poiTarget.gridTileLocation.parentMap.region.coreTile.region, goapNode.poiTarget.gridTileLocation.parentMap.region.coreTile.region.name, LOG_IDENTIFIER.LANDMARK_1);
     }
     public void AfterForageSuccess(ActualGoapNode goapNode) {
         //**After Effect 1**: Produce Food random between 100 - 700

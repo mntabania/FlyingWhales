@@ -21,7 +21,7 @@ public class Ignite : PlayerSpell {
         base.ActivateAction(targetTile);
         List<LocationGridTile> tiles = GetTargetTiles(targetTile);
         if (tiles.Count > 0) {
-            BurningSource bs = new BurningSource(targetTile.parentMap.location);
+            BurningSource bs = new BurningSource(targetTile.parentMap.region);
             for (int i = 0; i < tiles.Count; i++) {
                 LocationGridTile tile = tiles[i];
                 Burning burning = new Burning();
@@ -75,7 +75,7 @@ public class IgniteData : SpellData {
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         // LocationGridTile tile = targetPOI.gridTileLocation;
-        BurningSource bs = new BurningSource(targetPOI.gridTileLocation.parentMap.location);
+        BurningSource bs = new BurningSource(targetPOI.gridTileLocation.parentMap.region);
         Burning burning = new Burning();
         burning.SetSourceOfBurning(bs, targetPOI);
         targetPOI.traitContainer.AddTrait(targetPOI, burning, bypassElementalChance: true);

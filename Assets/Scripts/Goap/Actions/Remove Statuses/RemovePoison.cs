@@ -10,18 +10,17 @@ public class RemovePoison : GoapAction {
     public RemovePoison() : base(INTERACTION_TYPE.REMOVE_POISON) {
         actionIconString = GoapActionStateDB.Work_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
+        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
     }
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_POI, conditionKey = "Tool", target = GOAP_EFFECT_TARGET.ACTOR }, HasItemTool);
+        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_POI, conditionKey = "Antidote", target = GOAP_EFFECT_TARGET.ACTOR }, HasAntidote);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Poisoned", target = GOAP_EFFECT_TARGET.TARGET });
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
-        SetState("Remove Poison Success", goapNode);
+        SetState("Remove Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
@@ -34,11 +33,11 @@ public class RemovePoison : GoapAction {
     //public void PreRemovePoisonSuccess(ActualGoapNode goapNode) {
     //    goapNode.descriptionLog.AddToFillers(goapNode.poiTarget.gridTileLocation.structure.location, goapNode.poiTarget.gridTileLocation.structure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
     //}
-    public void AfterRemovePoisonSuccess(ActualGoapNode goapNode) {
+    public void AfterRemoveSuccess(ActualGoapNode goapNode) {
         //**Effect 1**: Remove Poisoned Trait from target table
         goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Poisoned");
         //**Effect 2**: Remove Tool from Actor's inventory
-        TileObject tool = goapNode.actor.GetItem(TILE_OBJECT_TYPE.TOOL);
+        TileObject tool = goapNode.actor.GetItem(TILE_OBJECT_TYPE.ANTIDOTE);
         if (tool != null) {
             goapNode.actor.UnobtainItem(tool);
         } else {
@@ -64,22 +63,8 @@ public class RemovePoison : GoapAction {
     #endregion
 
     #region Preconditions
-    private bool HasItemTool(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor.HasItem(TILE_OBJECT_TYPE.TOOL);
+    private bool HasAntidote(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        return actor.HasItem(TILE_OBJECT_TYPE.ANTIDOTE);
     }
     #endregion
-}
-
-public class RemovePoisonTableData : GoapActionData {
-    public RemovePoisonTableData() : base(INTERACTION_TYPE.REMOVE_POISON) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
-        requirementAction = Requirement;
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        if (!poiTarget.IsAvailable() || poiTarget.gridTileLocation == null) {
-            return false;
-        }
-        return poiTarget.traitContainer.HasTrait("Poisoned");
-    }
 }

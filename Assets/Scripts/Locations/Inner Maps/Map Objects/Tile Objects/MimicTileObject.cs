@@ -37,12 +37,12 @@ public class MimicTileObject : TileObject {
         if (_hasBeenAwakened) { return; }
         _hasBeenAwakened = true;
         Assert.IsNotNull(gridTileLocation, $"{gridTileLocation.localPlace.ToString()} of mimic to awaken was null!");
-        Summon summon = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Mimic, FactionManager.Instance.neutralFaction, homeRegion: gridTileLocation.parentMap.location as Region);
+        Summon summon = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Mimic, FactionManager.Instance.neutralFaction, homeRegion: gridTileLocation.parentMap.region as Region);
         CharacterManager.Instance.PlaceSummon(summon, gridTileLocation);
         if (gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
             summon.AddTerritory(gridTileLocation.collectionOwner.partOfHextile.hexTileOwner);    
         } else {
-            List<HexTile> tiles = (gridTileLocation.parentMap.location as Region).tiles.Where(x =>
+            List<HexTile> tiles = (gridTileLocation.parentMap.region as Region).tiles.Where(x =>
                 x.settlementOnTile == null || x.settlementOnTile.locationType == LOCATION_TYPE.DUNGEON).ToList();
             summon.AddTerritory(UtilityScripts.CollectionUtilities.GetRandomElement(tiles));
           Debug.LogWarning($"{summon.name} was awakened from a mimic, but its gridTileLocation " +

@@ -13,7 +13,7 @@ public class Table : TileObject {
         Initialize(TILE_OBJECT_TYPE.TABLE);
         AddAdvertisedAction(INTERACTION_TYPE.DRINK);
         AddAdvertisedAction(INTERACTION_TYPE.POISON);
-        AddAdvertisedAction(INTERACTION_TYPE.REMOVE_POISON);
+        //AddAdvertisedAction(INTERACTION_TYPE.REMOVE_POISON);
         AddAdvertisedAction(INTERACTION_TYPE.DROP_RESOURCE);
         AddAdvertisedAction(INTERACTION_TYPE.SIT);
 
@@ -27,7 +27,7 @@ public class Table : TileObject {
         Initialize(data);
         AddAdvertisedAction(INTERACTION_TYPE.DRINK);
         AddAdvertisedAction(INTERACTION_TYPE.POISON);
-        AddAdvertisedAction(INTERACTION_TYPE.REMOVE_POISON);
+        //AddAdvertisedAction(INTERACTION_TYPE.REMOVE_POISON);
         AddAdvertisedAction(INTERACTION_TYPE.DROP_RESOURCE);
         AddAdvertisedAction(INTERACTION_TYPE.SIT);
         traitContainer.AddTrait(this, "Edible");

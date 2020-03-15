@@ -195,7 +195,7 @@ namespace Inner_Maps {
                 } else if (assetName.Contains("water") || assetName.Contains("pond")) {
                     SetGroundType(Ground_Type.Water);
                 } else if (assetName.Contains("dirt") || assetName.Contains("soil") || assetName.Contains("outside") || assetName.Contains("snow")) {
-                    if (parentMap.location.coreTile.biomeType == BIOMES.SNOW || parentMap.location.coreTile.biomeType == BIOMES.TUNDRA) {
+                    if (parentMap.region.coreTile.biomeType == BIOMES.SNOW || parentMap.region.coreTile.biomeType == BIOMES.TUNDRA) {
                         if (assetName.Contains("dirtsnow")) {
                             SetGroundType(Ground_Type.Snow_Dirt);
                         } else if (assetName.Contains("snow")) {
@@ -205,7 +205,7 @@ namespace Inner_Maps {
                             //override tile to use tundra soil
                             parentMap.groundTilemap.SetTile(localPlace, InnerMapManager.Instance.assetManager.tundraTile);    
                         }
-                    } else if (parentMap.location.coreTile.biomeType == BIOMES.DESERT) {
+                    } else if (parentMap.region.coreTile.biomeType == BIOMES.DESERT) {
                         if (structure != null && (structure.structureType == STRUCTURE_TYPE.CAVE || structure.structureType == STRUCTURE_TYPE.MONSTER_LAIR)) {
                             SetGroundType(Ground_Type.Stone);
                             //override tile to use stone
@@ -1087,7 +1087,7 @@ namespace Inner_Maps {
             LocationGridTile tile = new LocationGridTile(this, tilemap, parentAreaMap);
 
             if(structureID != -1) {
-                LocationStructure structure = (parentAreaMap.location as NPCSettlement).GetStructureByID(structureType, structureID);
+                LocationStructure structure = parentAreaMap.region.GetStructureByID(structureType, structureID);
                 tile.SetStructure(structure);
             }
 

@@ -176,7 +176,7 @@ public class DepositResourcePile : GoapAction {
                     return false;
                 }
             }
-            return actor.homeRegion == poiTarget.gridTileLocation.parentMap.location;
+            return actor.homeRegion == poiTarget.gridTileLocation.parentMap.region;
         }
         return false;
     }

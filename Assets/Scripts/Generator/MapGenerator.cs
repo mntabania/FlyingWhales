@@ -78,6 +78,7 @@ public class MapGenerator : MonoBehaviour {
             }
             for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
                 Region region = GridMap.Instance.allRegions[i];
+                region.UpdateAwareness();
                 for (int j = 0; j < region.tiles.Count; j++) {
                     HexTile tile = region.tiles[j];
                     if (!tile.isCorrupted

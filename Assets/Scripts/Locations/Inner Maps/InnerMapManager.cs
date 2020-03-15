@@ -54,7 +54,7 @@ namespace Inner_Maps {
         private readonly List<RaycastResult> raycastResults = new List<RaycastResult>();
         public Dictionary<TILE_OBJECT_TYPE, List<TileObject>> allTileObjects { get; private set; }
         public InnerTileMap currentlyShowingMap { get; private set; }
-        public ILocation currentlyShowingLocation { get; private set; }
+        public Region currentlyShowingLocation { get; private set; }
         public List<InnerTileMap> innerMaps { get; private set; }
         public bool isAnInnerMapShowing => currentlyShowingMap != null;
 
@@ -210,11 +210,11 @@ namespace Inner_Maps {
         /// Try and show the npcSettlement map of an npcSettlement. If it does not have one, this will generate one instead.
         /// </summary>
         /// <param name="location"></param>
-        public void TryShowLocationMap(ILocation location) {
+        public void TryShowLocationMap(Region location) {
             Assert.IsNotNull(location.innerMap, $"{location.name} does not have a generated inner map");
             ShowInnerMap(location);
         }
-        public void ShowInnerMap(ILocation location, bool centerCameraOnMapCenter = true, bool instantCenter = true) {
+        public void ShowInnerMap(Region location, bool centerCameraOnMapCenter = true, bool instantCenter = true) {
             if (location.locationType == LOCATION_TYPE.DEMONIC_INTRUSION) {
                 UIManager.Instance.portalPopup.SetActive(true);
                 return;
@@ -228,12 +228,12 @@ namespace Inner_Maps {
                 InnerMapCameraMove.Instance.JustCenterCamera(instantCenter);
             }
         }
-        public ILocation HideAreaMap() {
+        public Region HideAreaMap() {
             if (currentlyShowingMap == null) {
                 return null;
             }
             currentlyShowingMap.Close();
-            ILocation closedLocation = currentlyShowingLocation;
+            Region closedLocation = currentlyShowingLocation;
             InnerMapCameraMove.Instance.CenterCameraOn(null);
             currentlyShowingMap = null;
             currentlyShowingLocation = null;
@@ -251,7 +251,7 @@ namespace Inner_Maps {
             _nextMapPos = new Vector3(_nextMapPos.x, _nextMapPos.y + newMap.height + 10, _nextMapPos.z);
             newMap.OnMapGenerationFinished();
         }
-        public void DestroyInnerMap(ILocation location) {
+        public void DestroyInnerMap(Region location) {
             foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in location.structures) {
                 for (var i = 0; i < keyValuePair.Value.Count; i++) {
                     keyValuePair.Value[i].DoCleanup();
@@ -276,7 +276,7 @@ namespace Inner_Maps {
             }
             return null;
         }
-        public bool IsShowingInnerMap(ILocation location) {
+        public bool IsShowingInnerMap(Region location) {
             return location != null && isAnInnerMapShowing && location.innerMap == currentlyShowingMap;
         }
         #endregion
@@ -419,7 +419,7 @@ namespace Inner_Maps {
                 $"{summary} <b>Base Structure:</b>{(character.trapStructure.structure != null ? character.trapStructure.structure.ToString() : "None")}";
 
             summary = $"{summary}\n\tDestination Tile: ";
-            summary = character.marker.destinationTile == null ? $"{summary}None" : $"{summary}{character.marker.destinationTile} at {character.marker.destinationTile.parentMap.location.name}";
+            summary = character.marker.destinationTile == null ? $"{summary}None" : $"{summary}{character.marker.destinationTile} at {character.marker.destinationTile.parentMap.region.name}";
             
             summary = $"{summary}\n\tPOI's in Vision: ";
             summary = character.marker.inVisionPOIs.Count > 0 ? character.marker.inVisionPOIs.Aggregate(summary, (current, poi) => $"{current}{poi}, ") : $"{summary}None";
@@ -501,24 +501,24 @@ namespace Inner_Maps {
         public void LoadInitialSettlementItems(NPCSettlement npcSettlement) {
             ////Reference: https://trello.com/c/Kuqt3ZSP/2610-put-2-healing-potions-in-the-warehouse-at-start-of-the-game
             LocationStructure mainStorage = npcSettlement.mainStorage;
-            for (int i = 0; i < 4; i++) {
-                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.HEALING_POTION));
-            }
-            for (int i = 0; i < 2; i++) {
-                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.TOOL));
-            }
-            for (int i = 0; i < 2; i++) {
-                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.ANTIDOTE));
-            }
-            for (int i = 0; i < 2; i++) {
-                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.WATER_FLASK));
-            }
-            for (int i = 0; i < 2; i++) {
-                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.POISON_FLASK));
-            }
-            for (int i = 0; i < 2; i++) {
-                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.EMBER));
-            }
+            //for (int i = 0; i < 4; i++) {
+            //    mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.HEALING_POTION));
+            //}
+            //for (int i = 0; i < 2; i++) {
+            //    mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.TOOL));
+            //}
+            //for (int i = 0; i < 2; i++) {
+            //    mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.ANTIDOTE));
+            //}
+            //for (int i = 0; i < 2; i++) {
+            //    mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.WATER_FLASK));
+            //}
+            //for (int i = 0; i < 2; i++) {
+            //    mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.POISON_FLASK));
+            //}
+            //for (int i = 0; i < 2; i++) {
+            //    mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.EMBER));
+            //}
         }
         #endregion
 

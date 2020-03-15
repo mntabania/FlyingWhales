@@ -29,7 +29,7 @@ public class MineStoneRegion : GoapAction {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             //**Requirements:** Actor has Logger trait. Region has Lumberyard Landmark. Region is owned by Actor's Faction or Actor's Home's Ruling Faction.
-            var region = poiTarget.gridTileLocation.parentMap.location.coreTile.region;
+            var region = poiTarget.gridTileLocation.parentMap.region.coreTile.region;
             // return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null &&
             //        actor.traitContainer.GetNormalTrait<Trait>("Miner") != null &&
             //        region.mainLandmark.specificLandmarkType == LANDMARK_TYPE.QUARRY &&
@@ -41,7 +41,7 @@ public class MineStoneRegion : GoapAction {
 
     #region State Effects
     public void PreMineSuccess(ActualGoapNode goapNode) {
-        goapNode.descriptionLog.AddToFillers(goapNode.poiTarget.gridTileLocation.parentMap.location.coreTile.region, goapNode.poiTarget.gridTileLocation.parentMap.location.coreTile.region.name, LOG_IDENTIFIER.LANDMARK_1);
+        goapNode.descriptionLog.AddToFillers(goapNode.poiTarget.gridTileLocation.parentMap.region.coreTile.region, goapNode.poiTarget.gridTileLocation.parentMap.region.coreTile.region.name, LOG_IDENTIFIER.LANDMARK_1);
     }
     public void AfterMineSuccess(ActualGoapNode goapNode) {
         //**After Effect 1**: Produce Stone random between 200 - 500

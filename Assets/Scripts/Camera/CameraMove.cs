@@ -76,16 +76,16 @@ public class CameraMove : MonoBehaviour {
         Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
         Messenger.AddListener<InfoUIBase>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<InfoUIBase>(Signals.MENU_CLOSED, OnMenuClosed);
-        Messenger.AddListener<ILocation>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
-        Messenger.AddListener<ILocation>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
+        Messenger.AddListener<Region>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
+        Messenger.AddListener<Region>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
     }
 
     private void RemoveListeners() {
         Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoaded);
         Messenger.RemoveListener<InfoUIBase>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.RemoveListener<InfoUIBase>(Signals.MENU_CLOSED, OnMenuClosed);
-        Messenger.RemoveListener<ILocation>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
-        Messenger.RemoveListener<ILocation>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
+        Messenger.RemoveListener<Region>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
+        Messenger.RemoveListener<Region>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
     }
 
     #region Utilities
@@ -314,13 +314,13 @@ public class CameraMove : MonoBehaviour {
     #region Listeners
     private void OnMenuOpened(InfoUIBase openedBase) { }
     private void OnMenuClosed(InfoUIBase openedBase) { }
-    private void OnInnerMapOpened(ILocation location) {
+    private void OnInnerMapOpened(Region location) {
         // _mainCamera.cullingMask = 0;
         _raycaster.enabled = false;
         gameObject.SetActive(false);
         SetCameraControlState(false);
     }
-    private void OnInnerMapClosed(ILocation location) {
+    private void OnInnerMapClosed(Region location) {
         // _mainCamera.cullingMask = defaultMask;
         _raycaster.enabled = true;
         gameObject.SetActive(true);

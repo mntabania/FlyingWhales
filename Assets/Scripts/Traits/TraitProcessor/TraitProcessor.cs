@@ -97,15 +97,24 @@ namespace Traits {
         private void ApplyPOITraitInteractions(ITraitable traitable, Trait trait) {
             if (trait.advertisedInteractions != null) {
                 for (int i = 0; i < trait.advertisedInteractions.Count; i++) {
-                    traitable.AddAdvertisedAction(trait.advertisedInteractions[i]);
+                    //NOTE: Did this to allow duplicates
+                    //traitable.advertisedActions.Add(trait.advertisedInteractions[i]);
+                    traitable.AddAdvertisedAction(trait.advertisedInteractions[i], true);
                 }
+            }
+            if(traitable.advertisedActions != null && traitable.advertisedActions.Count > 0 && traitable is GenericTileObject) {
+                traitable.gridTileLocation.parentMap.region.AddPendingAwareness(traitable as GenericTileObject);
             }
         }
         private void UnapplyPOITraitInteractions(ITraitable traitable, Trait trait) {
             if (trait.advertisedInteractions != null) {
                 for (int i = 0; i < trait.advertisedInteractions.Count; i++) {
+                    //traitable.advertisedActions.Remove(trait.advertisedInteractions[i]);
                     traitable.RemoveAdvertisedAction(trait.advertisedInteractions[i]);
                 }
+            }
+            if ((traitable.advertisedActions == null || traitable.advertisedActions.Count <= 0) && traitable is GenericTileObject) {
+                traitable.gridTileLocation.parentMap.region.RemovePendingAwareness(traitable as GenericTileObject);
             }
         }
     }

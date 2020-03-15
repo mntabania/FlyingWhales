@@ -178,7 +178,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         if (mapVisual == null) {
             InitializeMapObject(this);
             OnMapObjectStateChanged(); //update visuals based on map object state
-            gridTileLocation.parentMap.location.AddAwareness(this);
+            gridTileLocation.parentMap.region.AddPendingAwareness(this);
         }
         PlaceMapObjectAt(gridTileLocation);
         OnPlaceTileObjectAtTile(gridTileLocation);
@@ -366,11 +366,11 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             }
         }
     }
-    public void AddAdvertisedAction(INTERACTION_TYPE type) {
+    public void AddAdvertisedAction(INTERACTION_TYPE type, bool allowDuplicates = false) {
         if (advertisedActions == null) {
             advertisedActions = new List<INTERACTION_TYPE>(); //{ INTERACTION_TYPE.ASSAULT }
         }
-        if (advertisedActions.Contains(type) == false) {
+        if (allowDuplicates || advertisedActions.Contains(type) == false) {
             advertisedActions.Add(type);
             // ReSharper disable once Unity.NoNullPropagation
             mapVisual?.UpdateCollidersState(this);    

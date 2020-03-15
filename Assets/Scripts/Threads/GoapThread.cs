@@ -133,6 +133,7 @@ public class GoapThread : Multithread {
         } else {
             CreateNewPlan();
         }
+        GridMap.Instance.UpdateAwarenessInAllRegions();
     }
     private void CreateNewPlan() {
         log = $"-----------------RECEIVING NEW PLAN FROM OTHER THREAD OF {actor.name} WITH TARGET {target?.name}" ??

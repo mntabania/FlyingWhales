@@ -839,6 +839,7 @@ public class GoapPlanner {
             index = currentPlan.currentNodeIndex;
         }
         List<int> tempNodeIndexHolder = new List<int>();
+        List<GoapNode> discardedNodes = new List<GoapNode>();
         while (rawPlan.Count > 0) {
             tempNodeIndexHolder.Clear();
             for (int i = 0; i < rawPlan.Count; i++) {
@@ -868,6 +869,7 @@ public class GoapPlanner {
                     ObjectPoolManager.Instance.ReturnGoapNodeToPool(node);
                 } else {
                     //Multi Job Node
+                    discardedNodes.Clear();
                     ActualGoapNode[] actualNodes = new ActualGoapNode[tempNodeIndexHolder.Count];
                     for (int i = 0; i < tempNodeIndexHolder.Count; i++) {
                         int nodeIndex = tempNodeIndexHolder[i];
@@ -882,12 +884,11 @@ public class GoapPlanner {
                         }
                         ActualGoapNode actualNode = new ActualGoapNode(rawNode.action, owner, rawNode.target, data, rawNode.cost);
                         actualNodes[i] = actualNode;
+                        discardedNodes.Add(rawNode);
                     }
-                    for (int i = 0; i < tempNodeIndexHolder.Count; i++) {
-                        int nodeIndex = tempNodeIndexHolder[i];
-                        GoapNode node = rawPlan[nodeIndex];
-                        rawPlan.RemoveAt(nodeIndex);   
-                        ObjectPoolManager.Instance.ReturnGoapNodeToPool(node);
+                    for (int i = 0; i < discardedNodes.Count; i++) {
+                        rawPlan.Remove(discardedNodes[i]);
+                        ObjectPoolManager.Instance.ReturnGoapNodeToPool(discardedNodes[i]);
                     }
                     MultiJobNode multiJobNode = new MultiJobNode(actualNodes);
                     actualPlan.Insert(0, multiJobNode);

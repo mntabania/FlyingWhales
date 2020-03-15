@@ -9,7 +9,7 @@ namespace Inner_Maps.Location_Structures {
         private Character _currentTortureTarget;
         private TortureChamberStructureObject _tortureChamberStructureObject;
         
-        public TortureChamber(ILocation location) : base(STRUCTURE_TYPE.TORTURE_CHAMBER, location){
+        public TortureChamber(Region location) : base(STRUCTURE_TYPE.TORTURE_CHAMBER, location){
             selectableSize = new Vector2(10f, 10f);
         }
 

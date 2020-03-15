@@ -22,6 +22,7 @@ namespace Traits {
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(1);
             moodEffect = -25;
             _burningSpreadChoices = new List<ITraitable>();
+            advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EXTRACT_ITEM };
             AddTraitOverrideFunctionIdentifier(TraitManager.Initiate_Map_Visual_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Destroy_Map_Visual_Trait);
         }

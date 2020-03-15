@@ -3540,7 +3540,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //public void SetIsFlirting(bool state) {
     //    _isFlirting = state;
     //}
-    public void AddAdvertisedAction(INTERACTION_TYPE type) {
+    public void AddAdvertisedAction(INTERACTION_TYPE type, bool allowDuplicates = false) {
         advertisedActions.Add(type);
     }
     public void RemoveAdvertisedAction(INTERACTION_TYPE type) {
@@ -4091,6 +4091,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //advertisedActions.Add(INTERACTION_TYPE.REVERT_TO_NORMAL_FORM);
         advertisedActions.Add(INTERACTION_TYPE.CHANGE_CLASS);
         advertisedActions.Add(INTERACTION_TYPE.STUDY_MONSTER);
+        advertisedActions.Add(INTERACTION_TYPE.CREATE_HEALING_POTION);
+        advertisedActions.Add(INTERACTION_TYPE.CREATE_ANTIDOTE);
+        advertisedActions.Add(INTERACTION_TYPE.CREATE_POISON_FLASK);
+        advertisedActions.Add(INTERACTION_TYPE.REMOVE_POISON);
+        advertisedActions.Add(INTERACTION_TYPE.REMOVE_FREEZING);
         //advertisedActions.Add(INTERACTION_TYPE.ZOMBIE_DEATH);
         //advertisedActions.Add(INTERACTION_TYPE.STAND);
         //advertisedActions.Add(INTERACTION_TYPE.VISIT);

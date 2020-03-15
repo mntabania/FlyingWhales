@@ -21,7 +21,7 @@ namespace Inner_Maps.Location_Structures {
 
         private MarkerDummy _markerDummy;
 
-        public TheKennel(ILocation location) : base(STRUCTURE_TYPE.THE_KENNEL, location){
+        public TheKennel(Region location) : base(STRUCTURE_TYPE.THE_KENNEL, location){
             selectableSize = new Vector2(10f, 10f);
             _ownedSummons = new HashSet<Summon>();
         }

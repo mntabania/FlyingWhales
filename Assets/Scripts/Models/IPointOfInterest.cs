@@ -69,7 +69,7 @@ public class POIData {
         if (poi.gridTileLocation == null) {
             areaID = -1;
         } else {
-            areaID = poi.gridTileLocation.parentMap.location.id;
+            areaID = poi.gridTileLocation.parentMap.region.id;
         }
         poiType = poi.poiType;
         tileObjectType = TILE_OBJECT_TYPE.NONE;

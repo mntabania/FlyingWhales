@@ -143,8 +143,8 @@ public class UIManager : MonoBehaviour {
         Messenger.AddListener(Signals.INTERACTION_MENU_OPENED, OnInteractionMenuOpened);
         Messenger.AddListener(Signals.INTERACTION_MENU_CLOSED, OnInteractionMenuClosed);
 
-        Messenger.AddListener<ILocation>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
-        Messenger.AddListener<ILocation>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
+        Messenger.AddListener<Region>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
+        Messenger.AddListener<Region>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
 
         Messenger.AddListener<Intel>(Signals.SHOW_INTEL_NOTIFICATION, ShowPlayerNotification);
         Messenger.AddListener<Log>(Signals.SHOW_PLAYER_NOTIFICATION, ShowPlayerNotification);
@@ -895,10 +895,10 @@ public class UIManager : MonoBehaviour {
     [Header("Inner Maps")]
     [SerializeField] private Button returnToWorldBtn;
     [SerializeField] private UIHoverPosition returnToWorldBtnTooltipPos;
-    private void OnInnerMapOpened(ILocation location) {
+    private void OnInnerMapOpened(Region location) {
         worldUIRaycaster.enabled = false;
     }
-    private void OnInnerMapClosed(ILocation location) {
+    private void OnInnerMapClosed(Region location) {
         worldUIRaycaster.enabled = true;
     }
 
