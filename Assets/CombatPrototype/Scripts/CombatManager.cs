@@ -228,7 +228,7 @@ public class CombatManager : MonoBehaviour {
     public void DefaultElementalTraitProcessor(ITraitable traitable, Trait trait) {
         if (trait is Burning burning) {
             //by default, will create new burning source for every burning trait.
-            BurningSource burningSource = new BurningSource(traitable.gridTileLocation.parentMap.location);
+            BurningSource burningSource = new BurningSource(traitable.gridTileLocation.parentMap.region);
             burning.SetSourceOfBurning(burningSource, traitable);
         }
     }

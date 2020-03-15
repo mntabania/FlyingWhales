@@ -56,7 +56,7 @@ public class BrimstonesParticleEffect : BaseParticleEffect {
     private void ProcessBurningTrait(ITraitable traitable, Trait trait, ref BurningSource burningSource) {
         if (trait is Burning burning) {
             if (burningSource == null) {
-                burningSource = new BurningSource(traitable.gridTileLocation.parentMap.location);
+                burningSource = new BurningSource(traitable.gridTileLocation.parentMap.region);
             }
             burning.SetSourceOfBurning(burningSource, traitable);
         }
