@@ -277,6 +277,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //public JobQueueItem currentJob => jobQueue.jobsInQueue.Count > 0 ? jobQueue.jobsInQueue[0] : null; //The current job is always the top of the queue
     public JobTriggerComponent jobTriggerComponent => jobComponent;
     public GameObject visualGO => marker.gameObject;
+    public Character characterOwner => null;
     #endregion
     
     public Character(string className, RACE race, GENDER gender) : this() {
@@ -741,11 +742,21 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             Region deathLocation = currentRegion;
             LocationStructure deathStructure = currentStructure;
             LocationGridTile deathTile = gridTileLocation;
-            for (int i = 0; i < traitContainer.allTraitsAndStatuses.Count; i++) {
-                if (traitContainer.allTraitsAndStatuses[i].OnDeath(this)) {
-                    i--;
+
+            List<Trait> traitOverrideFunctions = traitContainer.GetTraitOverrideFunctions(TraitManager.Death_Trait);
+            if (traitOverrideFunctions != null) {
+                for (int i = 0; i < traitOverrideFunctions.Count; i++) {
+                    Trait trait = traitOverrideFunctions[i];
+                    if (trait.OnDeath(this)) {
+                        i--;
+                    }
                 }
             }
+            //for (int i = 0; i < traitContainer.allTraitsAndStatuses.Count; i++) {
+            //    if (traitContainer.allTraitsAndStatuses[i].OnDeath(this)) {
+            //        i--;
+            //    }
+            //}
             if (lycanData != null) {
                 lycanData.LycanDies(this, cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers);
             }
@@ -1238,44 +1249,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
         logComponent.PrintLogIfActive(log);
         return hasCreatedJob;
-    }
-    /// <summary>
-    /// Force this character to create an undermine job towards the target character.
-    /// Only cases that this will not happen is:
-    /// - if target character is already dead
-    /// - this character already has an undermine job in his/her job queue
-    /// </summary>
-    /// <param name="targetCharacter">The character to undermine.</param>
-    public void ForceCreateUndermineJob(Character targetCharacter, string reason) {
-        if (!targetCharacter.isDead) {
-            CreateUndermineJobOnly(targetCharacter, reason);
-        }
-    }
-    public bool CreateUndermineJobOnly(Character targetCharacter, string reason, REACTION_STATUS status = REACTION_STATUS.INFORMED) {
-        if (jobQueue.HasJob(JOB_TYPE.UNDERMINE, targetCharacter)) {
-            return false;
-        }
-        if (traitContainer.HasTrait("Diplomatic")) {
-            return false;
-        }
-        // if (status == SHARE_INTEL_STATUS.WITNESSED) {
-        //     //When creating undermine job and the creator of the job witnessed the event that caused him/her to undermine, mutate undermine job to knockout job
-        //     //This means that all undermine jobs that are caused by witnessing an event will become knockout jobs
-        //     return CreateKnockoutJob(targetCharacter);
-        // }
-        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.UNDERMINE, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, "Negative", false, GOAP_EFFECT_TARGET.TARGET), targetCharacter, this);
-        logComponent.PrintLogIfActive(
-            $"Added an UNDERMINE ENEMY Job: negative trait to {name} with target {targetCharacter.name}");
-        jobQueue.AddJobInQueue(job);
-
-        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", $"{reason}_and_undermine");
-        log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        // log.AddToFillers(null, currentMoodType.ToString().ToLower(), LOG_IDENTIFIER.STRING_1);
-        logComponent.AddHistory(log);
-
-        // PlayerManager.Instance.player.ShowNotificationFrom(log, this, false);
-        return true;
     }
     public void CancelAllJobs(string reason = "") {
         //AdjustIsWaitingForInteraction(1);
@@ -2132,12 +2105,16 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //    return;
         //}
 
-        for (int i = 0; i < traitContainer.statuses.Count; i++) {
-            traitContainer.statuses[i].OnSeePOIEvenCannotWitness(target, this);
+        List<Trait> traitOverrideFunctions = traitContainer.GetTraitOverrideFunctions(TraitManager.See_Poi_Cannot_Witness_Trait);
+        if (traitOverrideFunctions != null) {
+            for (int i = 0; i < traitOverrideFunctions.Count; i++) {
+                Trait trait = traitOverrideFunctions[i];
+                trait.OnSeePOIEvenCannotWitness(target, this);
+            }
         }
-        // for (int i = 0; i < target.traitContainer.onOthersSeeEvenCannotWitnessTraits.Count; i++) {
-        //     target.traitContainer.onOthersSeeEvenCannotWitnessTraits[i].OnOthersSeeThisEvenCannotWitness(this, target);
-        // }
+        //for (int i = 0; i < traitContainer.statuses.Count; i++) {
+        //    traitContainer.statuses[i].OnSeePOIEvenCannotWitness(target, this);
+        //}
 
         if (!canWitness) {
             return;
@@ -4824,14 +4801,20 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //    }
     //}
     public void OnStartPerformGoapAction(ActualGoapNode node, ref bool willStillContinueAction) {
+
+
         bool stillContinueCurrentAction = true;
-        for (int i = 0; i < traitContainer.traits.Count; i++) {
-            Trait trait = traitContainer.traits[i];
-            if (trait.OnStartPerformGoapAction(node, ref stillContinueCurrentAction)) {
-                willStillContinueAction = stillContinueCurrentAction;
-                break;
-            } else {
-                stillContinueCurrentAction = true;
+
+        List<Trait> traitOverrideFunctions = traitContainer.GetTraitOverrideFunctions(TraitManager.Start_Perform_Trait);
+        if (traitOverrideFunctions != null) {
+            for (int i = 0; i < traitOverrideFunctions.Count; i++) {
+                Trait trait = traitOverrideFunctions[i];
+                if (trait.OnStartPerformGoapAction(node, ref stillContinueCurrentAction)) {
+                    willStillContinueAction = stillContinueCurrentAction;
+                    break;
+                } else {
+                    stillContinueCurrentAction = true;
+                }
             }
         }
     }

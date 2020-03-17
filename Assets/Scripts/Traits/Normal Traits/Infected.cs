@@ -24,6 +24,8 @@ namespace Traits {
             //willBeReanimated = false;
             doNotCheckPerHour = false;
             moodEffect = -5;
+            AddTraitOverrideFunctionIdentifier(TraitManager.Death_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Hour_Started_Trait);
         }
 
         #region Override

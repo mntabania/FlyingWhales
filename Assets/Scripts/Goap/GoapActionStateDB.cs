@@ -401,6 +401,9 @@ public static class GoapActionStateDB {
         { INTERACTION_TYPE.EXTRACT_ITEM, new[]{
             new StateNameAndDuration(){ name = "Extract Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
+        {INTERACTION_TYPE.BOOBY_TRAP, new[]{
+            new StateNameAndDuration(){ name = "Trap Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
     };
 }
 

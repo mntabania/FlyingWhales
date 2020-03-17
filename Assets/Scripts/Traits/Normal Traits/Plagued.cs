@@ -19,6 +19,7 @@ namespace Traits {
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CURE_CHARACTER, };
             mutuallyExclusive = new string[] { "Robust" };
             moodEffect = -4;
+            AddTraitOverrideFunctionIdentifier(TraitManager.Execute_After_Effect_Trait);
             // moodEffect = -30;
         }
 

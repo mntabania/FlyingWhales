@@ -318,6 +318,15 @@ public class BaseRelationshipContainer : IRelationshipContainer {
         }
         return characters;
     }
+    public Character GetFirstEnemyCharacter() {
+        for (int i = 0; i < charactersWithOpinion.Count; i++) {
+            Character otherCharacter = charactersWithOpinion[i];
+            if (IsEnemiesWith(otherCharacter)) {
+                return otherCharacter;
+            }
+        }
+        return null;
+    }
     public List<Character> GetEnemyCharacters() {
         List<Character> characters = new List<Character>();
         for (int i = 0; i < charactersWithOpinion.Count; i++) {

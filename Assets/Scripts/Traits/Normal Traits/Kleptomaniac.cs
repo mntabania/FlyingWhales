@@ -20,6 +20,8 @@ namespace Traits {
             //effects = new List<TraitEffect>();
             noItemCharacters = new List<Character>();
             canBeTriggered = true;
+            AddTraitOverrideFunctionIdentifier(TraitManager.Execute_Expected_Effect_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Death_Trait);
         }
 
         #region Overrides

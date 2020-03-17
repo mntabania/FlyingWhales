@@ -17,6 +17,7 @@ public interface IPointOfInterest : ITraitable, ISelectable {
     List<JobQueueItem> allJobsTargetingThis { get; }
     Dictionary<RESOURCE, int> storedResources { get; }
     Faction factionOwner { get; }
+    Character characterOwner { get; }
     bool isDisabledByPlayer { get; }
     Vector3 worldPosition { get; }
     bool isDead { get; }

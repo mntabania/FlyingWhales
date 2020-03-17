@@ -21,6 +21,7 @@ namespace Traits {
             hindersMovement = true;
             hindersWitness = true;
             hindersPerform = true;
+            AddTraitOverrideFunctionIdentifier(TraitManager.Tick_Started_Trait);
         }
 
         #region Overrides

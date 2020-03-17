@@ -15,6 +15,7 @@ namespace Traits {
             isStacking = true;
             stackLimit = 5;
             stackModifier = 0.5f;
+            AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Trait);
             //effects = new List<TraitEffect>();
         }
 

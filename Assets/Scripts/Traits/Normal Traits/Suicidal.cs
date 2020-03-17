@@ -13,10 +13,11 @@ namespace Traits {
 			type = TRAIT_TYPE.STATUS;
 			effect = TRAIT_EFFECT.NEGATIVE;
 			ticksDuration = GameManager.Instance.GetTicksBasedOnHour(24);
-		}
+            AddTraitOverrideFunctionIdentifier(TraitManager.Tick_Started_Trait);
+        }
 
-		#region Overrides
-		public override void OnAddTrait(ITraitable addedTo) {
+        #region Overrides
+        public override void OnAddTrait(ITraitable addedTo) {
 			base.OnAddTrait(addedTo);
 			if (addedTo is Character) {
 				Character character = addedTo as Character;

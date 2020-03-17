@@ -30,7 +30,6 @@ namespace Traits {
                 character.moodComponent.RemoveMoodEffect(-Mathf.RoundToInt(moodEffect * stackModifier), this);
             }
         }
-        public virtual void OnSeePOIEvenCannotWitness(IPointOfInterest targetPOI, Character character) { }
         public virtual bool IsTangible() { return false; } //is this trait tangible? Only used for traits on tiles, so that the tile's tile object will be activated when it has a tangible trait
         #endregion
 

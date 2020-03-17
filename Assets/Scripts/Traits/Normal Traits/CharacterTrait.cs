@@ -22,6 +22,9 @@ namespace Traits {
             isHidden = true;
             alreadyInspectedTileObjects = new List<TileObject>();
             charactersAlreadySawForHope = new List<Character>();
+            AddTraitOverrideFunctionIdentifier(TraitManager.Start_Perform_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Tick_Started_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Trait);
         }
         public void AddAlreadyInspectedObject(TileObject to) {
             if (!alreadyInspectedTileObjects.Contains(to)) {

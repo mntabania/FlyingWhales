@@ -757,4 +757,32 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         return false;
     }
     #endregion
+
+    #region Undermine
+    public bool CreateUndermineJob(Character targetCharacter, string reason) {
+        if (_owner.jobQueue.HasJob(JOB_TYPE.UNDERMINE, targetCharacter)) {
+            return false;
+        }
+        if (targetCharacter.isDead || _owner.traitContainer.HasTrait("Diplomatic")) {
+            return false;
+        }
+        if (targetCharacter.homeRegion == null) {
+            targetCharacter.logComponent.PrintLogIfActive(_owner.name + " cannot undermine " + targetCharacter.name + " because he/she does not have a home region");
+            return false;
+        }
+        IPointOfInterest chosenObject = targetCharacter.homeRegion.GetFirstTileObjectOnTheFloorOwnedBy(targetCharacter);
+        if (chosenObject == null) {
+            targetCharacter.logComponent.PrintLogIfActive(_owner.name + " cannot undermine " + targetCharacter.name + " because he/she does not have an owned item on the floor in his/her home region");
+            return false;
+        }
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.UNDERMINE, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Booby Trapped", false, GOAP_EFFECT_TARGET.TARGET), chosenObject, _owner);
+        _owner.jobQueue.AddJobInQueue(job);
+
+        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", $"{reason}_and_undermine");
+        log.AddToFillers(_owner, _owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        _owner.logComponent.AddHistory(log);
+        return true;
+    }
+    #endregion  
 }

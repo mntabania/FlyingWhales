@@ -118,11 +118,20 @@ public class Minion {
             // character.role?.OnDeath(character);
             character.traitContainer.RemoveAllTraitsAndStatusesByName(character, "Criminal"); //remove all criminal type traits
 
-            for (int i = 0; i < character.traitContainer.allTraitsAndStatuses.Count; i++) {
-                if (character.traitContainer.allTraitsAndStatuses[i].OnDeath(character)) {
-                    i--;
+            List<Trait> traitOverrideFunctions = character.traitContainer.GetTraitOverrideFunctions(TraitManager.Death_Trait);
+            if (traitOverrideFunctions != null) {
+                for (int i = 0; i < traitOverrideFunctions.Count; i++) {
+                    Trait trait = traitOverrideFunctions[i];
+                    if (trait.OnDeath(character)) {
+                        i--;
+                    }
                 }
             }
+            //for (int i = 0; i < character.traitContainer.allTraitsAndStatuses.Count; i++) {
+            //    if (character.traitContainer.allTraitsAndStatuses[i].OnDeath(character)) {
+            //        i--;
+            //    }
+            //}
 
             character.traitContainer.RemoveAllNonPersistentTraitAndStatuses(character);
             character.marker?.OnDeath(deathTile);

@@ -11,6 +11,7 @@ namespace Traits {
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
+            AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Trait);
             //canBeTriggered = true;
             //effects = new List<TraitEffect>();
         }

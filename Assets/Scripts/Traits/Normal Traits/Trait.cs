@@ -127,14 +127,13 @@ namespace Traits {
         public virtual void OnInitiateMapObjectVisual(ITraitable traitable) { }
         public virtual void OnDestroyMapObjectVisual(ITraitable traitable) { }
         public virtual bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) { return false; } //What jobs a character can create based on the his/her own traits, considering the target?
+        public virtual void OnSeePOIEvenCannotWitness(IPointOfInterest targetPOI, Character character) { }
         protected virtual void OnChangeLevel() { }
         public virtual void OnOwnerInitiallyPlaced(Character owner) { }
         public virtual bool PerTickOwnerMovement() { return false; } //returns true or false if it created a job/action, once a job/action is created must not check others anymore to avoid conflicts
         public virtual bool OnStartPerformGoapAction(ActualGoapNode node, ref bool willStillContinueAction) { return false; } //returns true or false if it created a job/action, once a job/action is created must not check others anymore to avoid conflicts
         //Returns the string of the log key that's supposed to be logged
         public virtual string TriggerFlaw(Character character) {
-            int manaCost = EditableValuesManager.Instance.triggerFlawManaCost;
-            PlayerManager.Instance.player.AdjustMana(-manaCost);
             if (character.trapStructure.structure != null) {
                 //clear all trap structures when triggering flaw
                 character.trapStructure.SetStructureAndDuration(null, 0);

@@ -21,7 +21,7 @@ public class Betrayal : Emotion {
                 } else if (chance == 1) {
                     witness.jobComponent.CreateKillJob(targetCharacter);
                 } else if (chance == 2) {
-                    witness.CreateUndermineJobOnly(targetCharacter, "provoke");
+                    witness.jobComponent.CreateUndermineJob(targetCharacter, "provoke");
                 }
             }
         }

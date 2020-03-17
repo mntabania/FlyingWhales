@@ -46,6 +46,7 @@ public interface IRelationshipContainer {
     string GetOpinionLabel(Character target);
     bool IsFriendsWith(Character character);
     bool IsEnemiesWith(Character character);
+    Character GetFirstEnemyCharacter();
     List<Character> GetCharactersWithPositiveOpinion();
     List<Character> GetCharactersWithNeutralOpinion();
     List<Character> GetCharactersWithNegativeOpinion();

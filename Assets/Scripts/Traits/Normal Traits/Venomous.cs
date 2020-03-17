@@ -14,6 +14,7 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
             elementalType = ELEMENTAL_TYPE.Poison;
+            AddTraitOverrideFunctionIdentifier(TraitManager.Tick_Started_Trait);
         }
 
         #region Overrides

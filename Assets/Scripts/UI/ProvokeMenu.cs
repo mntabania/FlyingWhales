@@ -113,7 +113,7 @@ public class ProvokeMenu : PopupMenuBase {
                 //targetCharacter.jobQueue.AddJobInQueue(job, false);
                 //targetCharacter.jobQueue.ProcessFirstJobInQueue(targetCharacter);
                 succeedUndermine = true;
-                targetCharacter.CreateUndermineJobOnly(chosenCharacter, "provoke");
+                targetCharacter.jobComponent.CreateUndermineJob(chosenCharacter, "provoke");
 
                 //Log addLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "provoke");
                 //addLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

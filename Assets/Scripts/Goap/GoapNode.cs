@@ -573,13 +573,19 @@ public class ActualGoapNode {
         } else {
             CreateDescriptionLog(currentState);
             currentState.preEffect?.Invoke(this);
-            for (int i = 0; i < actor.traitContainer.allTraitsAndStatuses.Count; i++) {
-                Trait currTrait = actor.traitContainer.allTraitsAndStatuses[i];
-                currTrait.ExecuteActionPreEffects(action.goapType, this);
+            List<Trait> actorTraitOverrideFunctions = actor.traitContainer.GetTraitOverrideFunctions(TraitManager.Execute_Pre_Effect_Trait);
+            List<Trait> targetTraitOverrideFunctions = poiTarget.traitContainer.GetTraitOverrideFunctions(TraitManager.Execute_Pre_Effect_Trait);
+            if (actorTraitOverrideFunctions != null) {
+                for (int i = 0; i < actorTraitOverrideFunctions.Count; i++) {
+                    Trait trait = actorTraitOverrideFunctions[i];
+                    trait.ExecuteActionPreEffects(action.goapType, this);
+                }
             }
-            for (int i = 0; i < poiTarget.traitContainer.allTraitsAndStatuses.Count; i++) {
-                Trait currTrait = poiTarget.traitContainer.allTraitsAndStatuses[i];
-                currTrait.ExecuteActionPreEffects(action.goapType, this);
+            if (targetTraitOverrideFunctions != null) {
+                for (int i = 0; i < targetTraitOverrideFunctions.Count; i++) {
+                    Trait trait = targetTraitOverrideFunctions[i];
+                    trait.ExecuteActionPreEffects(action.goapType, this);
+                }
             }
         }
 
@@ -642,17 +648,23 @@ public class ActualGoapNode {
         if (shouldDoAfterEffect && !(isStealth && target.traitContainer.HasTrait("Vigilant"))) {
             currentState.afterEffect?.Invoke(this);
             bool isRemoved = false;
-            for (int i = 0; i < actor.traitContainer.statuses.Count; i++) {
-                Trait currTrait = actor.traitContainer.statuses[i];
-                isRemoved = false;
-                currTrait.ExecuteActionAfterEffects(action.goapType, this, ref isRemoved);
-                if (isRemoved) { i--; }
+            List<Trait> actorTraitOverrideFunctions = actor.traitContainer.GetTraitOverrideFunctions(TraitManager.Execute_After_Effect_Trait);
+            List<Trait> targetTraitOverrideFunctions = poiTarget.traitContainer.GetTraitOverrideFunctions(TraitManager.Execute_After_Effect_Trait);
+            if (actorTraitOverrideFunctions != null) {
+                for (int i = 0; i < actorTraitOverrideFunctions.Count; i++) {
+                    Trait trait = actorTraitOverrideFunctions[i];
+                    isRemoved = false;
+                    trait.ExecuteActionAfterEffects(action.goapType, this, ref isRemoved);
+                    if (isRemoved) { i--; }
+                }
             }
-            for (int i = 0; i < poiTarget.traitContainer.statuses.Count; i++) {
-                Trait currTrait = poiTarget.traitContainer.statuses[i];
-                isRemoved = false;
-                currTrait.ExecuteActionAfterEffects(action.goapType, this, ref isRemoved);
-                if (isRemoved) { i--; }
+            if (targetTraitOverrideFunctions != null) {
+                for (int i = 0; i < targetTraitOverrideFunctions.Count; i++) {
+                    Trait trait = targetTraitOverrideFunctions[i];
+                    isRemoved = false;
+                    trait.ExecuteActionAfterEffects(action.goapType, this, ref isRemoved);
+                    if (isRemoved) { i--; }
+                }
             }
         }
         //else {
@@ -676,13 +688,20 @@ public class ActualGoapNode {
         }
         if (!(isStealth && target.traitContainer.HasTrait("Vigilant"))) {
             currentState.perTickEffect?.Invoke(this);
-            for (int i = 0; i < actor.traitContainer.allTraitsAndStatuses.Count; i++) {
-                Trait currTrait = actor.traitContainer.allTraitsAndStatuses[i];
-                currTrait.ExecuteActionPerTickEffects(action.goapType, this);
+
+            List<Trait> actorTraitOverrideFunctions = actor.traitContainer.GetTraitOverrideFunctions(TraitManager.Execute_Per_Tick_Effect_Trait);
+            List<Trait> targetTraitOverrideFunctions = poiTarget.traitContainer.GetTraitOverrideFunctions(TraitManager.Execute_Per_Tick_Effect_Trait);
+            if (actorTraitOverrideFunctions != null) {
+                for (int i = 0; i < actorTraitOverrideFunctions.Count; i++) {
+                    Trait trait = actorTraitOverrideFunctions[i];
+                    trait.ExecuteActionPerTickEffects(action.goapType, this);
+                }
             }
-            for (int i = 0; i < poiTarget.traitContainer.allTraitsAndStatuses.Count; i++) {
-                Trait currTrait = poiTarget.traitContainer.allTraitsAndStatuses[i];
-                currTrait.ExecuteActionPerTickEffects(action.goapType, this);
+            if (targetTraitOverrideFunctions != null) {
+                for (int i = 0; i < targetTraitOverrideFunctions.Count; i++) {
+                    Trait trait = targetTraitOverrideFunctions[i];
+                    trait.ExecuteActionPerTickEffects(action.goapType, this);
+                }
             }
         }
         if (currentStateDuration >= currentState.duration) {
