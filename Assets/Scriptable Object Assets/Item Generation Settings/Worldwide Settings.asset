@@ -26,27 +26,27 @@ MonoBehaviour:
       - itemType: 103
         minMaxRange:
           lowerBound: 5
-          upperBound: 8
+          upperBound: 6
       - itemType: 102
         minMaxRange:
           lowerBound: 5
-          upperBound: 8
+          upperBound: 6
       - itemType: 104
         minMaxRange:
           lowerBound: 5
-          upperBound: 8
+          upperBound: 6
     - data:
       - itemType: 100
         minMaxRange:
           lowerBound: 5
-          upperBound: 8
+          upperBound: 6
     - data:
       - itemType: 101
         minMaxRange:
           lowerBound: 5
-          upperBound: 8
+          upperBound: 6
     - data:
       - itemType: 101
         minMaxRange:
           lowerBound: 5
-          upperBound: 8
+          upperBound: 6

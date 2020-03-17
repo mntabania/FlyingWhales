@@ -21,5 +21,5 @@ MonoBehaviour:
     - data:
       - itemType: 77
         minMaxRange:
-          lowerBound: 2
-          upperBound: 4
+          lowerBound: 1
+          upperBound: 1

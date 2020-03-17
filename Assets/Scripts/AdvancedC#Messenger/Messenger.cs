@@ -32,23 +32,23 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-static internal class Messenger {
+internal static class Messenger {
 	#region Internal variables
  
 	//Disable the unused variable warning
 #pragma warning disable 0414
 	//Ensures that the MessengerHelper will be created automatically upon start of the game.
-	static private MessengerHelper messengerHelper = ( new GameObject("MessengerHelper") ).AddComponent< MessengerHelper >();
+	private static MessengerHelper messengerHelper = ( new GameObject("MessengerHelper") ).AddComponent< MessengerHelper >();
 #pragma warning restore 0414
  
-	static public Dictionary<string, Delegate> eventTable = new Dictionary<string, Delegate>();
+	public static Dictionary<string, Delegate> eventTable = new Dictionary<string, Delegate>();
  
 	//Message handlers that should never be removed, regardless of calling Cleanup
-	static public List< string > permanentMessages = new List< string > ();
+	public static List< string > permanentMessages = new List< string > ();
 	#endregion
 	#region Helper methods
 	//Marks a certain message as permanent.
-	static public void MarkAsPermanent(string eventType) {
+	public static void MarkAsPermanent(string eventType) {
 #if LOG_ALL_MESSAGES
 		Debug.Log("Messenger MarkAsPermanent \t\"" + eventType + "\"");
 #endif
@@ -57,7 +57,7 @@ static internal class Messenger {
 	}
  
  
-	static public void Cleanup()
+	public static void Cleanup()
 	{
 #if LOG_ALL_MESSAGES
 		Debug.Log("MESSENGER Cleanup. Make sure that none of necessary listeners are removed.");
@@ -84,7 +84,7 @@ static internal class Messenger {
 		}
 	}
  
-	static public void PrintEventTable()
+	public static void PrintEventTable()
 	{
 		Debug.Log("\t\t\t=== MESSENGER PrintEventTable ===");
  
@@ -124,6 +124,47 @@ static internal class Messenger {
             eventTable[eventType] = ordered;
         }
     }
+    private const int eventsPerFrame = 100;
+    private static IEnumerator OrderEventsCoroutine(string eventType) {
+        if (eventTable.ContainsKey(eventType) && Signals.orderedSignalExecution.ContainsKey(eventType)) {
+            Delegate[] actions = eventTable[eventType].GetInvocationList();
+            Delegate ordered = null;
+            SignalMethod[] orderedEvents = Signals.orderedSignalExecution[eventType];
+            int events = 0;
+            for (int i = 0; i < orderedEvents.Length; i++) {
+                //Loop through ordered events
+                //Then check all actions if any of them are equal to the current event
+                //if they are, add that action to the new delegate object, then set the action in the current invocation list to null 
+                //(This is so that all actions remaining in the invocation list after all ordered events are done, are considered uncategorized, and thus cannot be ordered)
+                SignalMethod e = orderedEvents[i];
+                for (int j = 0; j < actions.Length; j++) {
+                    Delegate currAction = actions[j];
+                    if (currAction != null && e.Equals(currAction)) {
+                        ordered = (Callback)ordered + (Callback)currAction;
+                        actions[j] = null;
+                    }
+                    events++;
+                    if (events >= eventsPerFrame) {
+                        yield return null;
+                        events = 0;
+                    }
+                }
+            }
+
+            for (int i = 0; i < actions.Length; i++) {
+                if (actions[i] != null) {
+                    ordered = (Callback)ordered + (Callback)actions[i];
+                    events++;
+                    if (events >= eventsPerFrame) {
+                        yield return null;
+                        events = 0;
+                    }
+                }
+            }
+
+            eventTable[eventType] = ordered;
+        }
+    }
     //static private void OrderEvents(string eventType, Callback newEvent) {
     //    if (eventTable.ContainsKey(eventType) && Signals.orderedSignalExecution.ContainsKey(eventType)) {
     //        SignalMethod matchingMethod;
@@ -136,7 +177,7 @@ static internal class Messenger {
     #endregion
 
     #region Message logging and exception throwing
-    static public void OnListenerAdding(string eventType, Delegate listenerBeingAdded) {
+    public static void OnListenerAdding(string eventType, Delegate listenerBeingAdded) {
 #if LOG_ALL_MESSAGES || LOG_ADD_LISTENER
 		Debug.Log("MESSENGER OnListenerAdding \t\"" + eventType + "\"\t{" + listenerBeingAdded.Target + " -> " + listenerBeingAdded.Method + "}");
 #endif
@@ -151,7 +192,7 @@ static internal class Messenger {
         }
     }
  
-    static public void OnListenerRemoving(string eventType, Delegate listenerBeingRemoved) {
+    public static void OnListenerRemoving(string eventType, Delegate listenerBeingRemoved) {
 #if LOG_ALL_MESSAGES
 		Debug.Log("MESSENGER OnListenerRemoving \t\"" + eventType + "\"\t{" + listenerBeingRemoved.Target + " -> " + listenerBeingRemoved.Method + "}");
 #endif
@@ -170,13 +211,13 @@ static internal class Messenger {
         //}
     }
  
-    static public void OnListenerRemoved(string eventType) {
+    public static void OnListenerRemoved(string eventType) {
         if (eventTable[eventType] == null) {
             eventTable.Remove(eventType);
         }
     }
  
-    static public void OnBroadcasting(string eventType) {
+    public static void OnBroadcasting(string eventType) {
 #if REQUIRE_LISTENER
         if (!eventTable.ContainsKey(eventType)) {
             throw new BroadcastException(string.Format("Broadcasting message \"{0}\" but no listener found. Try marking the message with Messenger.MarkAsPermanent.", eventType));
@@ -184,7 +225,7 @@ static internal class Messenger {
 #endif
     }
  
-    static public BroadcastException CreateBroadcastSignatureException(string eventType) {
+    public static BroadcastException CreateBroadcastSignatureException(string eventType) {
         return new BroadcastException(string.Format("Broadcasting message \"{0}\" but listeners have a different signature than the broadcaster.", eventType));
     }
  
@@ -203,51 +244,51 @@ static internal class Messenger {
  
 	#region AddListener
 	//No parameters
-    static public void AddListener(string eventType, Callback handler) {
+    public static void AddListener(string eventType, Callback handler) {
         OnListenerAdding(eventType, handler);
         eventTable[eventType] = (Callback)eventTable[eventType] + handler;
-        //GameManager.Instance.StartCoroutine(OrderCoroutine(eventType));
-        OrderEvents(eventType);
+        // GameManager.Instance.StartCoroutine(OrderEventsCoroutine(eventType));
+        // OrderEvents(eventType);
     }
  
 	//Single parameter
-	static public void AddListener<T>(string eventType, Callback<T> handler) {
+	public static void AddListener<T>(string eventType, Callback<T> handler) {
         OnListenerAdding(eventType, handler);
         eventTable[eventType] = (Callback<T>)eventTable[eventType] + handler;
     }
  
 	//Two parameters
-	static public void AddListener<T, U>(string eventType, Callback<T, U> handler) {
+	public static void AddListener<T, U>(string eventType, Callback<T, U> handler) {
         OnListenerAdding(eventType, handler);
         eventTable[eventType] = (Callback<T, U>)eventTable[eventType] + handler;
     }
  
 	//Three parameters
-	static public void AddListener<T, U, V>(string eventType, Callback<T, U, V> handler) {
+	public static void AddListener<T, U, V>(string eventType, Callback<T, U, V> handler) {
         OnListenerAdding(eventType, handler);
         eventTable[eventType] = (Callback<T, U, V>)eventTable[eventType] + handler;
     }
 
     //Four parameters
-    static public void AddListener<T, U, V, W>(string eventType, Callback<T, U, V, W> handler) {
+    public static void AddListener<T, U, V, W>(string eventType, Callback<T, U, V, W> handler) {
         OnListenerAdding(eventType, handler);
         eventTable[eventType] = (Callback<T, U, V, W>) eventTable[eventType] + handler;
     }
 
     //Five parameters
-    static public void AddListener<T, U, V, W, X>(string eventType, Callback<T, U, V, W, X> handler) {
+    public static void AddListener<T, U, V, W, X>(string eventType, Callback<T, U, V, W, X> handler) {
         OnListenerAdding(eventType, handler);
         eventTable[eventType] = (Callback<T, U, V, W, X>) eventTable[eventType] + handler;
     }
 
     //Six parameters
-    static public void AddListener<T, U, V, W, X, Y>(string eventType, Callback<T, U, V, W, X, Y> handler) {
+    public static void AddListener<T, U, V, W, X, Y>(string eventType, Callback<T, U, V, W, X, Y> handler) {
         OnListenerAdding(eventType, handler);
         eventTable[eventType] = (Callback<T, U, V, W, X, Y>) eventTable[eventType] + handler;
     }
 
     //Seven parameters
-    static public void AddListener<T, U, V, W, X, Y, Z>(string eventType, Callback<T, U, V, W, X, Y, Z> handler) {
+    public static void AddListener<T, U, V, W, X, Y, Z>(string eventType, Callback<T, U, V, W, X, Y, Z> handler) {
         OnListenerAdding(eventType, handler);
         eventTable[eventType] = (Callback<T, U, V, W, X, Y, Z>) eventTable[eventType] + handler;
     }
@@ -255,7 +296,7 @@ static internal class Messenger {
 
     #region RemoveListener
     //No parameters
-    static public void RemoveListener(string eventType, Callback handler) {
+    public static void RemoveListener(string eventType, Callback handler) {
         if (eventTable.ContainsKey(eventType)) {
             OnListenerRemoving(eventType, handler);
             eventTable[eventType] = (Callback)eventTable[eventType] - handler;
@@ -264,7 +305,7 @@ static internal class Messenger {
     }
  
 	//Single parameter
-	static public void RemoveListener<T>(string eventType, Callback<T> handler) {
+	public static void RemoveListener<T>(string eventType, Callback<T> handler) {
         if (eventTable.ContainsKey(eventType)) {
             OnListenerRemoving(eventType, handler);
             eventTable[eventType] = (Callback<T>)eventTable[eventType] - handler;
@@ -273,7 +314,7 @@ static internal class Messenger {
     }
  
 	//Two parameters
-	static public void RemoveListener<T, U>(string eventType, Callback<T, U> handler) {
+	public static void RemoveListener<T, U>(string eventType, Callback<T, U> handler) {
         if (eventTable.ContainsKey(eventType)) {
             OnListenerRemoving(eventType, handler);
             eventTable[eventType] = (Callback<T, U>)eventTable[eventType] - handler;
@@ -282,7 +323,7 @@ static internal class Messenger {
     }
  
 	//Three parameters
-	static public void RemoveListener<T, U, V>(string eventType, Callback<T, U, V> handler) {
+	public static void RemoveListener<T, U, V>(string eventType, Callback<T, U, V> handler) {
         if (eventTable.ContainsKey(eventType)) {
             OnListenerRemoving(eventType, handler);
             eventTable[eventType] = (Callback<T, U, V>)eventTable[eventType] - handler;
@@ -291,7 +332,7 @@ static internal class Messenger {
     }
 
     //Four parameters
-    static public void RemoveListener<T, U, V, W>(string eventType, Callback<T, U, V, W> handler) {
+    public static void RemoveListener<T, U, V, W>(string eventType, Callback<T, U, V, W> handler) {
         if (eventTable.ContainsKey(eventType)) {
             OnListenerRemoving(eventType, handler);
             eventTable[eventType] = (Callback<T, U, V, W>) eventTable[eventType] - handler;
@@ -300,7 +341,7 @@ static internal class Messenger {
     }
 
     //Five parameters
-    static public void RemoveListener<T, U, V, W, X>(string eventType, Callback<T, U, V, W, X> handler) {
+    public static void RemoveListener<T, U, V, W, X>(string eventType, Callback<T, U, V, W, X> handler) {
         if (eventTable.ContainsKey(eventType)) {
             OnListenerRemoving(eventType, handler);
             eventTable[eventType] = (Callback<T, U, V, W, X>) eventTable[eventType] - handler;
@@ -309,7 +350,7 @@ static internal class Messenger {
     }
 
     //Six parameters
-    static public void RemoveListener<T, U, V, W, X, Y>(string eventType, Callback<T, U, V, W, X, Y> handler) {
+    public static void RemoveListener<T, U, V, W, X, Y>(string eventType, Callback<T, U, V, W, X, Y> handler) {
         if (eventTable.ContainsKey(eventType)) {
             OnListenerRemoving(eventType, handler);
             eventTable[eventType] = (Callback<T, U, V, W, X, Y>) eventTable[eventType] - handler;
@@ -318,7 +359,7 @@ static internal class Messenger {
     }
 
     //Seven parameters
-    static public void RemoveListener<T, U, V, W, X, Y, Z>(string eventType, Callback<T, U, V, W, X, Y, Z> handler) {
+    public static void RemoveListener<T, U, V, W, X, Y, Z>(string eventType, Callback<T, U, V, W, X, Y, Z> handler) {
         if (eventTable.ContainsKey(eventType)) {
             OnListenerRemoving(eventType, handler);
             eventTable[eventType] = (Callback<T, U, V, W, X, Y, Z>) eventTable[eventType] - handler;
@@ -329,7 +370,7 @@ static internal class Messenger {
 
     #region Broadcast
     //No parameters
-    static public void Broadcast(string eventType) {
+    public static void Broadcast(string eventType) {
 #if LOG_ALL_MESSAGES || LOG_BROADCAST_MESSAGE
 		Debug.Log("MESSENGER\t" + System.DateTime.Now.ToString("hh:mm:ss.fff") + "\t\t\tInvoking \t\"" + eventType + "\"");
 #endif
@@ -357,7 +398,7 @@ static internal class Messenger {
     }
  
 	//Single parameter
-    static public void Broadcast<T>(string eventType, T arg1) {
+    public static void Broadcast<T>(string eventType, T arg1) {
 #if LOG_ALL_MESSAGES || LOG_BROADCAST_MESSAGE
 		Debug.Log("MESSENGER\t" + System.DateTime.Now.ToString("hh:mm:ss.fff") + "\t\t\tInvoking \t\"" + eventType + "\"");
 #endif
@@ -384,7 +425,7 @@ static internal class Messenger {
 	}
  
 	//Two parameters
-    static public void Broadcast<T, U>(string eventType, T arg1, U arg2) {
+    public static void Broadcast<T, U>(string eventType, T arg1, U arg2) {
 #if LOG_ALL_MESSAGES || LOG_BROADCAST_MESSAGE
 		Debug.Log("MESSENGER\t" + System.DateTime.Now.ToString("hh:mm:ss.fff") + "\t\t\tInvoking \t\"" + eventType + "\"");
 #endif
@@ -412,7 +453,7 @@ static internal class Messenger {
     }
  
 	//Three parameters
-    static public void Broadcast<T, U, V>(string eventType, T arg1, U arg2, V arg3) {
+    public static void Broadcast<T, U, V>(string eventType, T arg1, U arg2, V arg3) {
 #if LOG_ALL_MESSAGES || LOG_BROADCAST_MESSAGE
 		Debug.Log("MESSENGER\t" + System.DateTime.Now.ToString("hh:mm:ss.fff") + "\t\t\tInvoking \t\"" + eventType + "\"");
 #endif
@@ -440,7 +481,7 @@ static internal class Messenger {
     }
 
     //Four parameters
-    static public void Broadcast<T, U, V, W>(string eventType, T arg1, U arg2, V arg3, W arg4) {
+    public static void Broadcast<T, U, V, W>(string eventType, T arg1, U arg2, V arg3, W arg4) {
 #if LOG_ALL_MESSAGES || LOG_BROADCAST_MESSAGE
 		Debug.Log("MESSENGER\t" + System.DateTime.Now.ToString("hh:mm:ss.fff") + "\t\t\tInvoking \t\"" + eventType + "\"");
 #endif
@@ -468,7 +509,7 @@ static internal class Messenger {
     }
 
     //Five parameters
-    static public void Broadcast<T, U, V, W, X>(string eventType, T arg1, U arg2, V arg3, W arg4, X arg5) {
+    public static void Broadcast<T, U, V, W, X>(string eventType, T arg1, U arg2, V arg3, W arg4, X arg5) {
 #if LOG_ALL_MESSAGES || LOG_BROADCAST_MESSAGE
 		Debug.Log("MESSENGER\t" + System.DateTime.Now.ToString("hh:mm:ss.fff") + "\t\t\tInvoking \t\"" + eventType + "\"");
 #endif
@@ -496,7 +537,7 @@ static internal class Messenger {
     }
 
     //Six parameters
-    static public void Broadcast<T, U, V, W, X, Y>(string eventType, T arg1, U arg2, V arg3, W arg4, X arg5, Y arg6) {
+    public static void Broadcast<T, U, V, W, X, Y>(string eventType, T arg1, U arg2, V arg3, W arg4, X arg5, Y arg6) {
 #if LOG_ALL_MESSAGES || LOG_BROADCAST_MESSAGE
 		Debug.Log("MESSENGER\t" + System.DateTime.Now.ToString("hh:mm:ss.fff") + "\t\t\tInvoking \t\"" + eventType + "\"");
 #endif
@@ -524,7 +565,7 @@ static internal class Messenger {
     }
 
     //Seven parameters
-    static public void Broadcast<T, U, V, W, X, Y, Z>(string eventType, T arg1, U arg2, V arg3, W arg4, X arg5, Y arg6, Z arg7) {
+    public static void Broadcast<T, U, V, W, X, Y, Z>(string eventType, T arg1, U arg2, V arg3, W arg4, X arg5, Y arg6, Z arg7) {
 #if LOG_ALL_MESSAGES || LOG_BROADCAST_MESSAGE
 		Debug.Log("MESSENGER\t" + System.DateTime.Now.ToString("hh:mm:ss.fff") + "\t\t\tInvoking \t\"" + eventType + "\"");
 #endif

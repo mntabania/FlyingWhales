@@ -22,11 +22,11 @@ MonoBehaviour:
       - monsterType: 1
         minMaxRange:
           lowerBound: 1
-          upperBound: 2
+          upperBound: 1
       - monsterType: 2
         minMaxRange:
           lowerBound: 1
-          upperBound: 2
+          upperBound: 1
       - monsterType: 3
         minMaxRange:
           lowerBound: 1
@@ -46,15 +46,15 @@ MonoBehaviour:
       - monsterType: 7
         minMaxRange:
           lowerBound: 1
-          upperBound: 2
+          upperBound: 1
       - monsterType: 8
         minMaxRange:
           lowerBound: 1
-          upperBound: 2
+          upperBound: 1
       - monsterType: 10
         minMaxRange:
           lowerBound: 1
-          upperBound: 2
+          upperBound: 1
       - monsterType: 11
         minMaxRange:
           lowerBound: 1
