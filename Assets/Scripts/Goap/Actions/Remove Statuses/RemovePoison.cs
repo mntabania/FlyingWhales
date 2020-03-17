@@ -11,6 +11,7 @@ public class RemovePoison : GoapAction {
         actionIconString = GoapActionStateDB.Work_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, };
     }
 
     #region Overrides
@@ -35,7 +36,7 @@ public class RemovePoison : GoapAction {
     //}
     public void AfterRemoveSuccess(ActualGoapNode goapNode) {
         //**Effect 1**: Remove Poisoned Trait from target table
-        goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Poisoned");
+        goapNode.poiTarget.traitContainer.RemoveStatusAndStacks(goapNode.poiTarget, "Poisoned");
         //**Effect 2**: Remove Tool from Actor's inventory
         TileObject tool = goapNode.actor.GetItem(TILE_OBJECT_TYPE.ANTIDOTE);
         if (tool != null) {
