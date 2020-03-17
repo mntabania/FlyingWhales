@@ -15,6 +15,8 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT };
+            AddTraitOverrideFunctionIdentifier(TraitManager.Execute_Pre_Effect_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Execute_Per_Tick_Effect_Trait);
         }
 
         #region Overrides

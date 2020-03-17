@@ -11,6 +11,7 @@ namespace Traits {
             type = TRAIT_TYPE.BUFF;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
+            AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Trait);
             //effects = new List<TraitEffect>();
         }
 

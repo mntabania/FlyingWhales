@@ -20,6 +20,7 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
             canBeTriggered = true;
+            AddTraitOverrideFunctionIdentifier(TraitManager.Start_Perform_Trait);
         }
 
         #region Overrides

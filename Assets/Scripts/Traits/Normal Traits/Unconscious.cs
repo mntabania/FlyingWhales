@@ -19,6 +19,8 @@ namespace Traits {
             //hindersMovement = true;
             hindersWitness = true;
             hindersPerform = true;
+            AddTraitOverrideFunctionIdentifier(TraitManager.Death_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Tick_Started_Trait);
         }
 
         #region Overrides

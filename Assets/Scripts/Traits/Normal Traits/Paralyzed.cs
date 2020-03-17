@@ -18,6 +18,7 @@ namespace Traits {
             //charactersThatKnow = new List<Character>();
             hindersMovement = true;
             hindersPerform = true;
+            AddTraitOverrideFunctionIdentifier(TraitManager.Tick_Started_Trait);
         }
 
         #region Overrides

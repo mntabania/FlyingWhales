@@ -14,6 +14,7 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
             isHidden = true;
+            AddTraitOverrideFunctionIdentifier(TraitManager.Death_Trait);
         }
 
         #region Overrides

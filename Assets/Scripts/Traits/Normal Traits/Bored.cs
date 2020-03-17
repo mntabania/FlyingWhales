@@ -12,11 +12,12 @@ namespace Traits {
 			effect = TRAIT_EFFECT.NEGATIVE;
 			ticksDuration = 0;
 			moodEffect = -8;
-			//effects = new List<TraitEffect>();
-		}
+            AddTraitOverrideFunctionIdentifier(TraitManager.Hour_Started_Trait);
+            //effects = new List<TraitEffect>();
+        }
 
-		#region Overrides
-		public override void OnAddTrait(ITraitable addedTo) {
+        #region Overrides
+        public override void OnAddTrait(ITraitable addedTo) {
 			base.OnAddTrait(addedTo);
 			owner = addedTo as Character;
 		}

@@ -25,6 +25,8 @@ namespace Traits {
             ticksDuration = 0;
             canBeTriggered = true;
             opinionCopy = new Dictionary<Character, OpinionData>();
+            AddTraitOverrideFunctionIdentifier(TraitManager.Tick_Started_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Trait);
         }
 
         #region Overrides

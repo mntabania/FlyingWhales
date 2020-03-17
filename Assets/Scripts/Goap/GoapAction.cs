@@ -339,9 +339,12 @@ public class GoapAction : IReactable {
     protected virtual List<GoapEffect> GetExpectedEffects(Character actor, IPointOfInterest target, object[] otherData) {
         List<GoapEffect> effects = new List<GoapEffect>(baseExpectedEffects);
         //modify expected effects depending on actor's traits
-        for (int i = 0; i < actor.traitContainer.traits.Count; i++) {
-            Trait currTrait = actor.traitContainer.traits[i];
-            currTrait.ExecuteExpectedEffectModification(goapType, actor, target, otherData, ref effects);
+        List<Trait> traitOverrideFunctions = actor.traitContainer.GetTraitOverrideFunctions(TraitManager.Execute_Expected_Effect_Trait);
+        if (traitOverrideFunctions != null) {
+            for (int i = 0; i < traitOverrideFunctions.Count; i++) {
+                Trait trait = traitOverrideFunctions[i];
+                trait.ExecuteExpectedEffectModification(goapType, actor, target, otherData, ref effects);
+            }
         }
         return effects;
     }

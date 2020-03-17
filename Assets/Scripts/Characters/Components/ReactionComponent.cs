@@ -32,14 +32,26 @@ public class ReactionComponent {
             return;
         }
         debugLog += "\n-Character will loop through all his/her traits to react to Target";
-        for (int i = 0; i < owner.traitContainer.allTraitsAndStatuses.Count; i++) {
-            debugLog += $"\n - {owner.traitContainer.allTraitsAndStatuses[i].name}";
-            if (owner.traitContainer.allTraitsAndStatuses[i].OnSeePOI(targetTileObject, owner)) {
-                debugLog += ": triggered";
-            } else {
-                debugLog += ": not triggered";
+        List<Trait> traitOverrideFunctions = owner.traitContainer.GetTraitOverrideFunctions(TraitManager.See_Poi_Trait);
+        if (traitOverrideFunctions != null) {
+            for (int i = 0; i < traitOverrideFunctions.Count; i++) {
+                Trait trait = traitOverrideFunctions[i];
+                debugLog += $"\n - {trait.name}";
+                if (trait.OnSeePOI(targetTileObject, owner)) {
+                    debugLog += ": triggered";
+                } else {
+                    debugLog += ": not triggered";
+                }
             }
         }
+        //for (int i = 0; i < owner.traitContainer.allTraitsAndStatuses.Count; i++) {
+        //    debugLog += $"\n - {owner.traitContainer.allTraitsAndStatuses[i].name}";
+        //    if (owner.traitContainer.allTraitsAndStatuses[i].OnSeePOI(targetTileObject, owner)) {
+        //        debugLog += ": triggered";
+        //    } else {
+        //        debugLog += ": not triggered";
+        //    }
+        //}
     }
     public string ReactTo(ActualGoapNode node, REACTION_STATUS status) {
         if (owner.minion != null || owner is Summon || owner.faction == FactionManager.Instance.zombieFaction) {
@@ -306,7 +318,7 @@ public class ReactionComponent {
                         debugLog += "\n-Character and Target are with the same faction or npcSettlement";
                         if (owner.relationshipContainer.IsEnemiesWith(targetCharacter)) {
                             debugLog += "\n-Character considers Target as Enemy or Rival";
-                            if (!targetCharacter.canMove || !targetCharacter.canPerform) {
+                            if ((!targetCharacter.canMove || !targetCharacter.canPerform) && owner.moodComponent.moodState != MOOD_STATE.NORMAL) {
                                 debugLog += "\n-Target can neither move or perform, will trigger Mock or Laugh At interrupt";
                                 if (UnityEngine.Random.Range(0, 2) == 0) {
                                     debugLog += "\n-Character triggered Mock interrupt";

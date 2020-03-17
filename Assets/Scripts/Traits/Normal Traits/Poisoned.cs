@@ -32,6 +32,8 @@ namespace Traits {
             SetLevel(1);
             AddTraitOverrideFunctionIdentifier(TraitManager.Initiate_Map_Visual_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Destroy_Map_Visual_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Execute_After_Effect_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Tick_Started_Trait);
         }
 
         #region Overrides

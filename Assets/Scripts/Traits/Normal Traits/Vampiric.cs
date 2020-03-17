@@ -19,6 +19,7 @@ namespace Traits {
             ticksDuration = 0;
             //_flatHPMod = 500;
             canBeTriggered = true;
+            AddTraitOverrideFunctionIdentifier(TraitManager.Execute_Expected_Effect_Trait);
         }
 
         //public void VamipiricLevel(int level) {

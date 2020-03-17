@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 using Traits;
 
 public class WorkBehaviour : CharacterBehaviourComponent {
@@ -8,19 +9,70 @@ public class WorkBehaviour : CharacterBehaviourComponent {
     }
     
     public override bool TryDoBehaviour(Character character, ref string log) {
-        log += $"\n-{character.name} is going to work or will do needs recovery...";
-        if (!PlanJobQueueFirst(character)) {
-            if (!PlanWorkActions(character)) {
-                return false;
+        log += $"\n-{character.name} will try to do settlement work...";
+        if (character.moodComponent.moodState == MOOD_STATE.NORMAL) {
+            log += $"\n-{character.name} is in normal mood, will do settlement work";
+            return PlanWorkActions(character);
+        } else {
+            log += $"\n-{character.name} is low/critical mood, 15% chance - flaw, 15% chance - undermine";
+            bool triggeredFlaw = false;
+            if (TraitManager.Instance.CanStillTriggerFlaws(character)) {
+                int roll = UnityEngine.Random.Range(0, 100);
+                log += $"\n-Flaw Roll: " + roll;
+                if (roll < 15) {
+                    List<Trait> flawTraits = new List<Trait>();
+                    for (int i = 0; i < character.traitContainer.traits.Count; i++) {
+                        Trait currTrait = character.traitContainer.traits[i];
+                        if (currTrait.type == TRAIT_TYPE.FLAW && currTrait.canBeTriggered) {
+                            flawTraits.Add(currTrait);
+                        }
+                    }
+                    if(flawTraits.Count > 0) {
+                        Trait chosenFlaw = flawTraits[UnityEngine.Random.Range(0, flawTraits.Count)];
+                        string logKey = chosenFlaw.TriggerFlaw(character);
+                        if (logKey == "flaw_effect") {
+                            log += $"\n-{character.name} triggered flaw: " + chosenFlaw.name;
+                            triggeredFlaw = true;
+                        } else {
+                            log += $"\n-{character.name} failed to trigger flaw: " + chosenFlaw.name;
+                        }
+                    } else {
+                        log += $"\n-{character.name} has no Flaws to trigger";
+                    }
+                }
+            } else {
+                log += $"\n-{character.name} can no longer trigger flaws";
             }
-            // if (!character.needsComponent.PlanFullnessRecoveryActions(character)) {
-            //     if (!character.needsComponent.PlanTirednessRecoveryActions(character)) {
-            //         if (!character.needsComponent.PlanHappinessRecoveryActions(character)) {
-            //             
-            //         }
-            //     }
-            // }
+
+            if (!triggeredFlaw) {
+                log += $"\n-{character.name} will try to trigger Undermine";
+                Character chosenEnemy = character.relationshipContainer.GetFirstEnemyCharacter();
+                if (chosenEnemy != null) {
+                    int roll = UnityEngine.Random.Range(0, 100);
+                    log += $"\n-Undermine Roll: " + roll;
+                    if (roll < 100) {
+                        if(character.jobComponent.CreateUndermineJob(chosenEnemy, "provoke")) {
+                            log += $"\n-{character.name} created undermine job for " + chosenEnemy;
+                        } else {
+                            log += $"\n-{character.name} could not create undermine job for " + chosenEnemy;
+                        }
+                    }
+                } else {
+                    log += $"\n-{character.name} does not have enemy or rival";
+                }
+            }
         }
+        //if (!PlanJobQueueFirst(character)) {
+        //    if (!character.needsComponent.PlanFullnessRecoveryActions(character)) {
+        //        if (!character.needsComponent.PlanTirednessRecoveryActions(character)) {
+        //            if (!character.needsComponent.PlanHappinessRecoveryActions(character)) {
+        //                if (!PlanWorkActions(character)) {
+        //                    return false;
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
         return true;
     }
     

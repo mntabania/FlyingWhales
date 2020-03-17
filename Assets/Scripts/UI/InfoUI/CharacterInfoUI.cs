@@ -395,7 +395,7 @@ public class CharacterInfoUI : InfoUIBase {
                 showCover: true, layer: 25,
                 yesBtnText: $"Trigger ({EditableValuesManager.Instance.triggerFlawManaCost.ToString()} Mana)",
                 noBtnText: "Remove Trait",
-                yesBtnInteractable: trait.canBeTriggered && trait.CanFlawBeTriggered(activeCharacter) && TraitManager.Instance.CanStillTriggerFlaws(activeCharacter),
+                yesBtnInteractable: PlayerManager.Instance.player.archetype.canTriggerFlaw && trait.canBeTriggered && trait.CanFlawBeTriggered(activeCharacter) && TraitManager.Instance.CanStillTriggerFlaws(activeCharacter),
                 noBtnInteractable: PlayerManager.Instance.player.archetype.canRemoveTraits,
                 pauseAndResume: true,
                 //noBtnActive: false,
@@ -420,6 +420,8 @@ public class CharacterInfoUI : InfoUIBase {
     }
     private void OnClickTriggerFlaw(Trait trait) {
         string logKey = trait.TriggerFlaw(activeCharacter);
+        int manaCost = EditableValuesManager.Instance.triggerFlawManaCost;
+        PlayerManager.Instance.player.AdjustMana(-manaCost);
         if (logKey != "flaw_effect") {
             UIManager.Instance.ShowYesNoConfirmation(
                 trait.name,

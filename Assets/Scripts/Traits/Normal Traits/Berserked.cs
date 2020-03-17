@@ -20,6 +20,8 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(6);
             hindersWitness = true;
+            AddTraitOverrideFunctionIdentifier(TraitManager.Tick_Started_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Cannot_Witness_Trait);
         }
 
         #region Overrides

@@ -557,38 +557,47 @@ namespace Traits {
 
         #region Processes
         public void ProcessOnTickStarted(ITraitable owner) {
-            if(allTraitsAndStatuses != null) {
-                for (int i = 0; i < allTraitsAndStatuses.Count; i++) {
-                    allTraitsAndStatuses[i].OnTickStarted();
+            List<Trait> traitOverrideFunctions = GetTraitOverrideFunctions(TraitManager.Tick_Started_Trait);
+            if (traitOverrideFunctions != null) {
+                for (int i = 0; i < traitOverrideFunctions.Count; i++) {
+                    Trait trait = traitOverrideFunctions[i];
+                    trait.OnTickStarted();
                 }
             }
+            //if (allTraitsAndStatuses != null) {
+            //    for (int i = 0; i < allTraitsAndStatuses.Count; i++) {
+            //        allTraitsAndStatuses[i].OnTickStarted();
+            //    }
+            //}
         }
         public void ProcessOnTickEnded(ITraitable owner) {
-            if (allTraitsAndStatuses != null) {
-                for (int i = 0; i < allTraitsAndStatuses.Count; i++) {
-                    Trait trait = allTraitsAndStatuses[i];
+            List<Trait> traitOverrideFunctions = GetTraitOverrideFunctions(TraitManager.Tick_Ended_Trait);
+            if (traitOverrideFunctions != null) {
+                for (int i = 0; i < traitOverrideFunctions.Count; i++) {
+                    Trait trait = traitOverrideFunctions[i];
                     trait.OnTickEnded();
-                    //if (currentDurations.ContainsKey(trait)) {
-                    //    currentDurations[trait]++;
-                    //    if(currentDurations[trait] >= trait.ticksDuration) {
-                    //        int prevCount = allTraits.Count;
-                    //        bool removed = RemoveTrait(owner, i);
-                    //        if (removed) {
-                    //            if(allTraits.Count != prevCount) {
-                    //                i--;
-                    //            }
-                    //        }
-                    //    }
-                    //}
                 }
             }
+            //if (allTraitsAndStatuses != null) {
+            //    for (int i = 0; i < allTraitsAndStatuses.Count; i++) {
+            //        Trait trait = allTraitsAndStatuses[i];
+            //        trait.OnTickEnded();
+            //    }
+            //}
         }
         public void ProcessOnHourStarted(ITraitable owner) {
-            if (allTraitsAndStatuses != null) {
-                for (int i = 0; i < allTraitsAndStatuses.Count; i++) {
-                    allTraitsAndStatuses[i].OnHourStarted();
+            List<Trait> traitOverrideFunctions = GetTraitOverrideFunctions(TraitManager.Hour_Started_Trait);
+            if (traitOverrideFunctions != null) {
+                for (int i = 0; i < traitOverrideFunctions.Count; i++) {
+                    Trait trait = traitOverrideFunctions[i];
+                    trait.OnHourStarted();
                 }
             }
+            //if (allTraitsAndStatuses != null) {
+            //    for (int i = 0; i < allTraitsAndStatuses.Count; i++) {
+            //        allTraitsAndStatuses[i].OnHourStarted();
+            //    }
+            //}
         }
         #endregion
         

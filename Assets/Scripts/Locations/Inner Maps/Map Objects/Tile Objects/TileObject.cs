@@ -113,6 +113,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         //AddAdvertisedAction(INTERACTION_TYPE.POISON);
         //AddAdvertisedAction(INTERACTION_TYPE.REMOVE_POISON);
         AddAdvertisedAction(INTERACTION_TYPE.REPAIR);
+        AddAdvertisedAction(INTERACTION_TYPE.BOOBY_TRAP);
         //AddAdvertisedAction(INTERACTION_TYPE.SCRAP);
         //AddAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
         //AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
@@ -122,6 +123,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         //RemoveAdvertisedAction(INTERACTION_TYPE.POISON);
         //RemoveAdvertisedAction(INTERACTION_TYPE.REMOVE_POISON);
         RemoveAdvertisedAction(INTERACTION_TYPE.REPAIR);
+        RemoveAdvertisedAction(INTERACTION_TYPE.BOOBY_TRAP);
         //RemoveAdvertisedAction(INTERACTION_TYPE.SCRAP);
         //RemoveAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
         //RemoveAdvertisedAction(INTERACTION_TYPE.PICK_UP);

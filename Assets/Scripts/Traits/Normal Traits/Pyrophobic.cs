@@ -13,6 +13,7 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
             seenBurningSources = new List<BurningSource>();
+            AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Trait);
         }
 
         public override void OnAddTrait(ITraitable addedTo) {

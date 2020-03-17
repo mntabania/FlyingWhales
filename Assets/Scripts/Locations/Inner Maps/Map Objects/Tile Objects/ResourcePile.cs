@@ -8,8 +8,15 @@ public abstract class ResourcePile : TileObject {
 	public RESOURCE providedResource { get; protected set; }
     public int resourceInPile { get { return storedResources[providedResource]; } }
 
-    public ResourcePile(RESOURCE providedResource) {        
-    	advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.TAKE_RESOURCE, INTERACTION_TYPE.PICK_UP, INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE, INTERACTION_TYPE.DROP, INTERACTION_TYPE.DESTROY_RESOURCE_AMOUNT/*, INTERACTION_TYPE.DROP_RESOURCE*/ };
+    public ResourcePile(RESOURCE providedResource) {
+        AddAdvertisedAction(INTERACTION_TYPE.TAKE_RESOURCE);
+        AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
+        AddAdvertisedAction(INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE);
+        AddAdvertisedAction(INTERACTION_TYPE.DROP);
+        AddAdvertisedAction(INTERACTION_TYPE.DESTROY_RESOURCE_AMOUNT);
+        AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
+        AddAdvertisedAction(INTERACTION_TYPE.BOOBY_TRAP);
+        //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.TAKE_RESOURCE, INTERACTION_TYPE.PICK_UP, INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE, INTERACTION_TYPE.DROP, INTERACTION_TYPE.DESTROY_RESOURCE_AMOUNT/*, INTERACTION_TYPE.DROP_RESOURCE*/ };
         this.providedResource = providedResource;
     }
 

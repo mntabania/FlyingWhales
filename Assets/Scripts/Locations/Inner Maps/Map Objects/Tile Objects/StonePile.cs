@@ -7,14 +7,14 @@ public class StonePile : ResourcePile {
 
     public StonePile() : base(RESOURCE.STONE) {
         Initialize(TILE_OBJECT_TYPE.STONE_PILE, false);
-        AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
+        //AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         //SetResourceInPile(50);
         traitContainer.RemoveTrait(this, "Flammable");
         SetResourceInPile(100);
     }
     public StonePile(SaveDataTileObject data) : base(RESOURCE.STONE) {
         Initialize(data, false);
-        AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
+        //AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
     }
 
     //public override void AdjustResourceInPile(int adjustment) {

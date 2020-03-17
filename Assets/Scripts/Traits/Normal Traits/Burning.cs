@@ -25,6 +25,9 @@ namespace Traits {
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EXTRACT_ITEM };
             AddTraitOverrideFunctionIdentifier(TraitManager.Initiate_Map_Visual_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Destroy_Map_Visual_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Execute_Pre_Effect_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Execute_Per_Tick_Effect_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Death_Trait);
         }
 
         #region Overrides

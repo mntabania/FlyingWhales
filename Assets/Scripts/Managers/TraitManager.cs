@@ -18,6 +18,17 @@ public class TraitManager : MonoBehaviour {
     public const string Enter_Grid_Tile_Trait = "Enter_Grid_Tile_Trait";
     public const string Initiate_Map_Visual_Trait = "Initiate_Map_Visual_Trait";
     public const string Destroy_Map_Visual_Trait = "Destroy_Map_Visual_Trait";
+    public const string Execute_Pre_Effect_Trait = "Execute_Pre_Effect_Trait";
+    public const string Execute_Per_Tick_Effect_Trait = "Execute_Pre_Effect_Trait";
+    public const string Execute_After_Effect_Trait = "Execute_Pre_Effect_Trait";
+    public const string Execute_Expected_Effect_Trait = "Execute_Expected_Effect_Trait";
+    public const string Start_Perform_Trait = "Start_Perform_Trait";
+    public const string Death_Trait = "Death_Trait";
+    public const string Tick_Ended_Trait = "Tick_Ended_Trait";
+    public const string Tick_Started_Trait = "Tick_Started_Trait";
+    public const string Hour_Started_Trait = "Hour_Started_Trait";
+    public const string See_Poi_Trait = "See_Poi_Trait";
+    public const string See_Poi_Cannot_Witness_Trait = "See_Poi_Cannot_Witness_Trait";
 
     public static string[] instancedTraits = new string[] {
         //"Builder",
@@ -40,7 +51,7 @@ public class TraitManager : MonoBehaviour {
         //"Disillusioned", "Elemental Master"
         "Chaste", "Lustful", "Edible", "Paralyzed", "Malnourished", "Withdrawal", "Suicidal", "Criminal", "Dazed", "Hiding", "Bored", "Overheating",
         "Freezing", "Frozen", "Ravenous", "Feeble", "Forlorn", "Accident Prone", "Disoriented", "Consumable",
-        "Fire Prone", "Electric", "Venomous",
+        "Fire Prone", "Electric", "Venomous", "Booby Trapped"
         };
     [FormerlySerializedAs("traitIconDictionary")] [SerializeField] private StringSpriteDictionary traitPortraitDictionary;
     [SerializeField] private StringSpriteDictionary traitIconDictionary;
@@ -177,7 +188,7 @@ public class TraitManager : MonoBehaviour {
     /// </summary>
     /// <returns></returns>
     public bool CanStillTriggerFlaws(Character character) {
-        if (!PlayerManager.Instance.player.archetype.canTriggerFlaw || character.isDead || character.faction.isPlayerFaction || UtilityScripts.GameUtilities.IsRaceBeast(character.race) || character is Summon 
+        if (character.isDead || character.faction.isPlayerFaction || UtilityScripts.GameUtilities.IsRaceBeast(character.race) || character is Summon 
             || character.returnedToLife) {
             return false;
         }

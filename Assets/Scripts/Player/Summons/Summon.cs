@@ -145,11 +145,20 @@ public class Summon : Character, IWorldObject {
 
             traitContainer.RemoveAllTraitsAndStatusesByName(this, "Criminal"); //remove all criminal type traits
 
-            for (int i = 0; i < traitContainer.allTraitsAndStatuses.Count; i++) {
-                if (traitContainer.allTraitsAndStatuses[i].OnDeath(this)) {
-                    i--;
+            List<Trait> traitOverrideFunctions = traitContainer.GetTraitOverrideFunctions(TraitManager.Death_Trait);
+            if (traitOverrideFunctions != null) {
+                for (int i = 0; i < traitOverrideFunctions.Count; i++) {
+                    Trait trait = traitOverrideFunctions[i];
+                    if (trait.OnDeath(this)) {
+                        i--;
+                    }
                 }
             }
+            //for (int i = 0; i < traitContainer.allTraitsAndStatuses.Count; i++) {
+            //    if (traitContainer.allTraitsAndStatuses[i].OnDeath(this)) {
+            //        i--;
+            //    }
+            //}
 
             marker?.OnDeath(deathTile);
 

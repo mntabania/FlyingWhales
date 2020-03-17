@@ -7,6 +7,7 @@ public class PoisonFlask : TileObject{
         AddAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
         AddAdvertisedAction(INTERACTION_TYPE.SCRAP);
         AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
+        AddAdvertisedAction(INTERACTION_TYPE.BOOBY_TRAP);
     }
     public PoisonFlask(SaveDataTileObject data) {
         Initialize(data, false);
@@ -14,5 +15,6 @@ public class PoisonFlask : TileObject{
         AddAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
         AddAdvertisedAction(INTERACTION_TYPE.SCRAP);
         AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
+        AddAdvertisedAction(INTERACTION_TYPE.BOOBY_TRAP);
     }
 }

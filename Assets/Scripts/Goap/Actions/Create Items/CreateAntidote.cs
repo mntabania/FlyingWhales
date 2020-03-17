@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps;
 
-public class CreateAndtidote : GoapAction {
+public class CreateAntidote : GoapAction {
 
-    public CreateAndtidote() : base(INTERACTION_TYPE.CREATE_ANTIDOTE) {
+    public CreateAntidote() : base(INTERACTION_TYPE.CREATE_ANTIDOTE) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         actionIconString = GoapActionStateDB.Work_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
