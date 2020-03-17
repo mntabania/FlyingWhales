@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 129c2b5e0c8f0e14d9fb8b1c30296b6d, type: 3}
-    totalSpriteSurfaceArea: 3479784
+    totalSpriteSurfaceArea: 3483880
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -654,6 +654,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: f626551d73d6e3244b00a22f41ac76c7, type: 3}
   - {fileID: 21300000, guid: eb79551d4d91cb144b9f83b79d37624f, type: 3}
   - {fileID: 21300000, guid: 8ef5061dd179d7c4eb3cfcb9c77d74b7, type: 3}
+  - {fileID: 21300000, guid: 0e87581d39ea6634c8921d7dc6914539, type: 3}
   - {fileID: 21300000, guid: f2641d1dde7297548817a6b024c4f101, type: 3}
   - {fileID: 21300000, guid: 6aefb82daa2520b40ab128ca071315a6, type: 3}
   - {fileID: 21300000, guid: da55aa2d1dc28de44963a631d3a53efd, type: 3}
@@ -1393,6 +1394,7 @@ SpriteAtlas:
   - TORCH#2
   - corruptedSpike02
   - bed_clinic_sleeping1
+  - MUSHROOM#1
   - shore11111101-00
   - caveWallA-00111110-00
   - corruptedGround01

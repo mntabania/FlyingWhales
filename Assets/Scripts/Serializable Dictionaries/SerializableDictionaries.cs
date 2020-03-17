@@ -69,6 +69,10 @@ public class TimeOfDayLightDictionary : SerializableDictionary<TIME_IN_WORDS, fl
 public class BiomeHighlightColorDictionary : SerializableDictionary<BIOMES, Material> { }
 [System.Serializable]
 public class SpriteSpriteDictionary : SerializableDictionary<Sprite, Sprite> { }
+[System.Serializable]
+public class BiomeMonsterDictionary : SerializableDictionary<BIOMES, List<MonsterSetting>, MonsterSettingListStorage> { }
+[System.Serializable]
+public class BiomeItemDictionary : SerializableDictionary<BIOMES, List<ItemSetting>, TileObjectSettingListStorage> { }
 
 //List storage
 [System.Serializable]
@@ -83,3 +87,7 @@ public class TileBaseListStorage : SerializableDictionary.Storage<List<TileBase>
 public class LandmarkTypeListStorage : SerializableDictionary.Storage<List<LANDMARK_TYPE>> { }
 [System.Serializable]
 public class GameObjectListStorage : SerializableDictionary.Storage<List<GameObject>> { }
+[System.Serializable]
+public class MonsterSettingListStorage : SerializableDictionary.Storage<List<MonsterSetting>> { }
+[System.Serializable]
+public class TileObjectSettingListStorage : SerializableDictionary.Storage<List<ItemSetting>> { }

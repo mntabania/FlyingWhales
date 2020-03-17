@@ -1234,7 +1234,11 @@
               <e p="ChangeClass.cs" t="Include" />
               <e p="ChatCharacter.cs" t="Include" />
               <e p="CraftFurniture.cs" t="Include" />
-              <e p="CreateItem.cs" t="Include" />
+              <e p="Create Items" t="Include">
+                <e p="CreateAntidote.cs" t="Include" />
+                <e p="CreateHealingPotion.cs" t="Include" />
+                <e p="CreatePoisonFlask.cs" t="Include" />
+              </e>
               <e p="Cry.cs" t="Include" />
               <e p="CureCharacter.cs" t="Include" />
               <e p="CurseCharacter.cs" t="Include" />
@@ -1247,6 +1251,7 @@
               <e p="Drop.cs" t="Include" />
               <e p="DropItem.cs" t="Include" />
               <e p="DropResource.cs" t="Include" />
+              <e p="ExtractItem.cs" t="Include" />
               <e p="Feed.cs" t="Include" />
               <e p="FeelingBrokenhearted.cs" t="Include" />
               <e p="FeelingConcerned.cs" t="Include" />
@@ -1283,6 +1288,10 @@
                 <e p="Study.cs" t="Include" />
               </e>
               <e p="ReleaseCharacter.cs" t="Include" />
+              <e p="Remove Statuses" t="Include">
+                <e p="RemoveFreezing.cs" t="Include" />
+                <e p="RemovePoison.cs" t="Include" />
+              </e>
               <e p="ResolveCombat.cs" t="Include" />
               <e p="ResolveConflict.cs" t="Include" />
               <e p="RestrainCharacter.cs" t="Include" />
@@ -1326,7 +1335,6 @@
                 <e p="Poison.cs" t="Include" />
                 <e p="PrayTileObject.cs" t="Include" />
                 <e p="RememberFallen.cs" t="Include" />
-                <e p="RemovePoison.cs" t="Include" />
                 <e p="Repair.cs" t="Include" />
                 <e p="RepairStructure.cs" t="Include" />
                 <e p="ReplaceTileObject.cs" t="Include" />
@@ -1495,7 +1503,8 @@
                   <e p="BaseMapObject.cs" t="Include" />
                   <e p="BaseMapObjectVisual.cs" t="Include" />
                   <e p="BedObjectGameObject.cs" t="Include" />
-                  <e p="CropGameObject.cs" t="Include" />
+                  <e p="CornCropObjectVisual.cs" t="Include" />
+                  <e p="CropObjectVisual.cs" t="Include" />
                   <e p="FireBallMapObjectVisual.cs" t="Include" />
                   <e p="FrostyFogMapObjectVisual.cs" t="Include" />
                   <e p="LocustSwarmMapObjectVisual.cs" t="Include" />
@@ -1518,6 +1527,7 @@
                   <e p="Barrel.cs" t="Include" />
                   <e p="Bed.cs" t="Include" />
                   <e p="BedClinic.cs" t="Include" />
+                  <e p="BerryShrub.cs" t="Include" />
                   <e p="BigTreeObject.cs" t="Include" />
                   <e p="BlockWall.cs" t="Include" />
                   <e p="Brazier.cs" t="Include" />
@@ -1531,7 +1541,6 @@
                   <e p="Crate.cs" t="Include" />
                   <e p="Crops.cs" t="Include" />
                   <e p="Desk.cs" t="Include" />
-                  <e p="EdiblePlant.cs" t="Include" />
                   <e p="Elemental Crystals" t="Include">
                     <e p="ElectricCrystal.cs" t="Include" />
                     <e p="ElementalCrystal.cs" t="Include" />
@@ -1820,7 +1829,20 @@
             <e p="SeizeComponent.cs" t="Include" />
             <e p="Summons" t="Include">
               <e p="Abomination.cs" t="Include" />
-              <e p="Ent.cs" t="Include" />
+              <e p="Animals" t="Include">
+                <e p="Animal.cs" t="Include" />
+                <e p="Chicken.cs" t="Include" />
+                <e p="Pig.cs" t="Include" />
+                <e p="Sheep.cs" t="Include" />
+              </e>
+              <e p="Ent" t="Include">
+                <e p="CorruptEnt.cs" t="Include" />
+                <e p="DesertEnt.cs" t="Include" />
+                <e p="Ent.cs" t="Include" />
+                <e p="ForestEnt.cs" t="Include" />
+                <e p="GrassEnt.cs" t="Include" />
+                <e p="SnowEnt.cs" t="Include" />
+              </e>
               <e p="FireElemental.cs" t="Include" />
               <e p="GiantSpider.cs" t="Include" />
               <e p="Golem.cs" t="Include" />
@@ -1832,7 +1854,6 @@
               <e p="SmallSpider.cs" t="Include" />
               <e p="Succubus.cs" t="Include" />
               <e p="Summon.cs" t="Include" />
-              <e p="ThiefSummon.cs" t="Include" />
               <e p="Wolf.cs" t="Include" />
             </e>
           </e>
@@ -1881,6 +1902,8 @@
           <e p="Scriptable Object Scripts" t="Include">
             <e p="ArtifactData.cs" t="Include" />
             <e p="ElementalDamageData.cs" t="Include" />
+            <e p="ItemGenerationSetting.cs" t="Include" />
+            <e p="MonsterGenerationSetting.cs" t="Include" />
           </e>
           <e p="Serializable Dictionaries" t="Include">
             <e p="SerializableDictionaries.cs" t="Include" />

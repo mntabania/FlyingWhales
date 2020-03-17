@@ -87256,9 +87256,9 @@ MonoBehaviour:
         m_keys: 06000000
         m_values:
         - activeTile:
-          - {fileID: 21300000, guid: 6b0d9acc33c3f924faa7c6840e010066, type: 3}
+          - {fileID: 21300000, guid: 0e87581d39ea6634c8921d7dc6914539, type: 3}
           inactiveTile:
-          - {fileID: 21300000, guid: 9de607579992d7946a9c068fbf86e380, type: 3}
+          - {fileID: 21300000, guid: 0e87581d39ea6634c8921d7dc6914539, type: 3}
     - biomeAssets:
         m_keys: 06000000
         m_values:

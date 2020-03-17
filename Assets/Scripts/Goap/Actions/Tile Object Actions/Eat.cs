@@ -124,7 +124,7 @@ public class Eat : GoapAction {
             if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
                 return false;
             }
-            if(poiTarget is SmallAnimal || poiTarget is EdiblePlant) {
+            if(poiTarget is SmallAnimal || poiTarget is BerryShrub) {
                 //If plant or animal, only eat if the actor is homeless
                 if(actor.homeStructure != null) {
                     return false;

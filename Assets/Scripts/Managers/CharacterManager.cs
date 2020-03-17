@@ -412,8 +412,6 @@ public class CharacterManager : MonoBehaviour {
         switch (data.summonType) {
             case SUMMON_TYPE.Wolf:
                 return new Wolf(data);
-            case SUMMON_TYPE.ThiefSummon:
-                return new ThiefSummon(data);
             case SUMMON_TYPE.Skeleton:
                 return new Skeleton(data);
             case SUMMON_TYPE.Succubus:

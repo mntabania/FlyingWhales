@@ -571,6 +571,64 @@ MonoBehaviour:
           - {fileID: 21300000, guid: 4734fc90c7b9beb4fb29b62ae2094ce3, type: 3}
           - {fileID: 21300000, guid: 05e6fcf80972dd54f9a591c616c1727b, type: 3}
           - {fileID: 21300000, guid: da43abf0ff14c314cb46d232648de2c1, type: 3}
+  - raceName: CHICKEN
+    race: 26
+    maleAssets:
+      gender: 0
+      characterClassAssets:
+        m_keys:
+        - Chicken
+        m_values:
+        - defaultSprite: {fileID: 21300000, guid: 6895e43050a4ba04fa5faf5d4580e07a,
+            type: 3}
+          animationSprites:
+          - {fileID: 21300000, guid: db0e97c72e80cb742abc65807ae7de3a, type: 3}
+          - {fileID: 21300000, guid: b2b71b26874efe04881793eb9bf30f4d, type: 3}
+          - {fileID: 21300000, guid: 94dfb79f7ce35d24794e8aed182395eb, type: 3}
+          - {fileID: 21300000, guid: 366b3f7155023c04cbfb6500043df5f9, type: 3}
+          - {fileID: 21300000, guid: 9086bdbd320f89a40907b7c969f292c4, type: 3}
+          - {fileID: 21300000, guid: 6895e43050a4ba04fa5faf5d4580e07a, type: 3}
+          - {fileID: 21300000, guid: 61fbfc3005f20fe4491f14e97c55cf05, type: 3}
+          - {fileID: 21300000, guid: e0309cecaca4e5f45bfe52112a7c0292, type: 3}
+          - {fileID: 21300000, guid: 3b3fe05a4f4e8fb498affa1c23fe8623, type: 3}
+          - {fileID: 21300000, guid: 439c53693762ec44ba4dc32dcd64759c, type: 3}
+          - {fileID: 21300000, guid: 28bc3cfbdc9d33348a6b49d6c4c83ef4, type: 3}
+          - {fileID: 21300000, guid: 2c597cbe62b93214c99a13dfe1d47231, type: 3}
+          - {fileID: 21300000, guid: 04472b1a151862c44b5efe8546c4d32a, type: 3}
+          - {fileID: 21300000, guid: 8d55ca7bc13483b47990a71dd074d800, type: 3}
+          - {fileID: 21300000, guid: 3c9fa0212f67481418e6216b8f163f86, type: 3}
+          - {fileID: 21300000, guid: 48f6dcd51b930eb4e921819c4e55cb5e, type: 3}
+          - {fileID: 21300000, guid: de330dbc87cac9c459ef6aeb818986bf, type: 3}
+          - {fileID: 21300000, guid: 7cd864defd57c8345a67e17eb6c061f7, type: 3}
+          - {fileID: 21300000, guid: b6396c222b64a6d4fa6c8134af855a3e, type: 3}
+    femaleAssets:
+      gender: 1
+      characterClassAssets:
+        m_keys:
+        - Chicken
+        m_values:
+        - defaultSprite: {fileID: 21300000, guid: 76f8fb296cfd06948a630d7003292ad5,
+            type: 3}
+          animationSprites:
+          - {fileID: 21300000, guid: 9bd000849a74ee24c9422e519e290b62, type: 3}
+          - {fileID: 21300000, guid: a0c621333d65f8b45a868bec27729673, type: 3}
+          - {fileID: 21300000, guid: ed5a4cd6b02b0de4ca500a9ea1887579, type: 3}
+          - {fileID: 21300000, guid: f732c123c55216e41a0de2e8529fb480, type: 3}
+          - {fileID: 21300000, guid: e281b6bf66c0efd4591b7829aca457c4, type: 3}
+          - {fileID: 21300000, guid: 76f8fb296cfd06948a630d7003292ad5, type: 3}
+          - {fileID: 21300000, guid: 681c0c66cadba7341ae8ede29d7b838c, type: 3}
+          - {fileID: 21300000, guid: 2d9a43db28b382940a292b93dba35887, type: 3}
+          - {fileID: 21300000, guid: 6a59f698769ee7e4dbc589d7c043b682, type: 3}
+          - {fileID: 21300000, guid: ddf4d5133857cae48af882ab65ce7a6a, type: 3}
+          - {fileID: 21300000, guid: 9f8115cb545b7b7479f3fc142215e32c, type: 3}
+          - {fileID: 21300000, guid: 904fc325ea3ea50409182bd993b0868f, type: 3}
+          - {fileID: 21300000, guid: f4730d18da5c02c43a6da52d5ce042b1, type: 3}
+          - {fileID: 21300000, guid: 0e5e349fa9de3c64fb47e8d54902c66a, type: 3}
+          - {fileID: 21300000, guid: d3c68ff7c8033da449312aff72a1c2d7, type: 3}
+          - {fileID: 21300000, guid: 4857f6afdc6b2154ba8b57bc2e077c1e, type: 3}
+          - {fileID: 21300000, guid: 65265ded1c2003c4791f8955bdf644e2, type: 3}
+          - {fileID: 21300000, guid: 7aa0a13e95451294cad37560ceb0c36a, type: 3}
+          - {fileID: 21300000, guid: 3589061358fc8ad4684b457fcea6e04c, type: 3}
   - raceName: DEMON
     race: 14
     maleAssets:
@@ -2727,6 +2785,122 @@ MonoBehaviour:
           - {fileID: 21300000, guid: 04a20e8f936881e44bdd21ac7ac7a5a9, type: 3}
           - {fileID: 21300000, guid: 2f2d83d55df89344894496edd4b69f0c, type: 3}
           - {fileID: 21300000, guid: 7d8522a7f7258c840822d7dd2a6f5ad1, type: 3}
+  - raceName: PIG
+    race: 24
+    maleAssets:
+      gender: 0
+      characterClassAssets:
+        m_keys:
+        - Pig
+        m_values:
+        - defaultSprite: {fileID: 21300000, guid: 7b731c0dec3614c4ba3f0a1b98d4e33c,
+            type: 3}
+          animationSprites:
+          - {fileID: 21300000, guid: 30a997068a663484c82ddeea58358832, type: 3}
+          - {fileID: 21300000, guid: 80f49dac084965f4f946cc645a9792bf, type: 3}
+          - {fileID: 21300000, guid: cd422c2de4823014ca0af7439bbb2116, type: 3}
+          - {fileID: 21300000, guid: 1d3ce3a72cde8a4468a1030b579269df, type: 3}
+          - {fileID: 21300000, guid: 1b4194e3bbabec244a34d02998aa8a71, type: 3}
+          - {fileID: 21300000, guid: 7b731c0dec3614c4ba3f0a1b98d4e33c, type: 3}
+          - {fileID: 21300000, guid: c60cd3a2aa3bf19439f75b638ae8b52b, type: 3}
+          - {fileID: 21300000, guid: c11145658cdd3f444ab0b5740266e475, type: 3}
+          - {fileID: 21300000, guid: 5115cd58c31fb0c4bb2538faaf5234c7, type: 3}
+          - {fileID: 21300000, guid: 6bbaf3cb784ee0c46b5f7cf2e77a73a9, type: 3}
+          - {fileID: 21300000, guid: 535adcc69ff9ed6449b66dc5a6df7b0b, type: 3}
+          - {fileID: 21300000, guid: a402a7e3849fc6047aa1426c89713ab7, type: 3}
+          - {fileID: 21300000, guid: b0bca2b6622b65d4eb785a56a953671d, type: 3}
+          - {fileID: 21300000, guid: 1fd5fe2ba18ba1f43a818da50cfca4c0, type: 3}
+          - {fileID: 21300000, guid: 7f1e90f2ef6acea4b9681cf55e3fa779, type: 3}
+          - {fileID: 21300000, guid: 65e0319329e726a4aaa21e4b1c2260ac, type: 3}
+          - {fileID: 21300000, guid: 570d4a2eecc523a498270e62f3d28ee0, type: 3}
+          - {fileID: 21300000, guid: 0966900b87f40c941a74d65ebc0d1f3b, type: 3}
+          - {fileID: 21300000, guid: f1066d4bce01c8f4f831ff85ee3f78e3, type: 3}
+    femaleAssets:
+      gender: 1
+      characterClassAssets:
+        m_keys:
+        - Pig
+        m_values:
+        - defaultSprite: {fileID: 21300000, guid: 9d2cbb13e3be54a4e90e5ae7498c7ca4,
+            type: 3}
+          animationSprites:
+          - {fileID: 21300000, guid: 644ee3ec46f22a84487be8f0d96aeb6e, type: 3}
+          - {fileID: 21300000, guid: 4459a12aec67df0479531da19c98e375, type: 3}
+          - {fileID: 21300000, guid: bd379bc6ee18c034bb2754e72f7664df, type: 3}
+          - {fileID: 21300000, guid: 0c7a4d1cd39ea67449b28bcd505a332b, type: 3}
+          - {fileID: 21300000, guid: 35f27109651f9f24e9d689e9ee30d3be, type: 3}
+          - {fileID: 21300000, guid: 9d2cbb13e3be54a4e90e5ae7498c7ca4, type: 3}
+          - {fileID: 21300000, guid: 8683a3466f379b24f913e07714602978, type: 3}
+          - {fileID: 21300000, guid: 724546529dc41014e847316b43e41e46, type: 3}
+          - {fileID: 21300000, guid: 2d116dfff3d93c644a4a62ed3623ce50, type: 3}
+          - {fileID: 21300000, guid: ee607c73e092ec94a80a8f18d0e856fa, type: 3}
+          - {fileID: 21300000, guid: b9f4b437f894903488d2c5760ed234ed, type: 3}
+          - {fileID: 21300000, guid: 2cb9d2c38c2da06438add0b4e8a44786, type: 3}
+          - {fileID: 21300000, guid: a3b1454191f048740a342d29a497e90f, type: 3}
+          - {fileID: 21300000, guid: fe4153ac3388e0f4493a86d6a37f36ce, type: 3}
+          - {fileID: 21300000, guid: 0c8998f6215e33049ae4e6077d42a6e5, type: 3}
+          - {fileID: 21300000, guid: 22632a9d77b7d6a4782381fed60f269a, type: 3}
+          - {fileID: 21300000, guid: a543c3e4f417164468e6c5d97ed0f1a2, type: 3}
+          - {fileID: 21300000, guid: 62d76fb1faf34f6409d49f798f036147, type: 3}
+          - {fileID: 21300000, guid: 17a4abda4883971489716d12c9424e5e, type: 3}
+  - raceName: SHEEP
+    race: 25
+    maleAssets:
+      gender: 0
+      characterClassAssets:
+        m_keys:
+        - Sheep
+        m_values:
+        - defaultSprite: {fileID: 21300000, guid: ab1c3e1ac9683f04d8676c7e2ac6efc7,
+            type: 3}
+          animationSprites:
+          - {fileID: 21300000, guid: 20b4e511f144c9f40aa787324d992144, type: 3}
+          - {fileID: 21300000, guid: 61f2364e117fb3e4fa16714bfff79727, type: 3}
+          - {fileID: 21300000, guid: b3d817f4457019044acc321c80a5f0b8, type: 3}
+          - {fileID: 21300000, guid: fc68362dd1d3c5e4088375807d5d040e, type: 3}
+          - {fileID: 21300000, guid: bb2811faff95e0a4296220c44aa3afb5, type: 3}
+          - {fileID: 21300000, guid: ab1c3e1ac9683f04d8676c7e2ac6efc7, type: 3}
+          - {fileID: 21300000, guid: 1a731c5fae119984b80a72126b60c11d, type: 3}
+          - {fileID: 21300000, guid: e9b63fff2b2fa6743937f2c24ad35125, type: 3}
+          - {fileID: 21300000, guid: dbfa4162cd98c2d4cb1a18072f0e1491, type: 3}
+          - {fileID: 21300000, guid: 8afee7359faeff1469a019bfe99e2344, type: 3}
+          - {fileID: 21300000, guid: a539ffef836c2d542b1fcbbf88bd497c, type: 3}
+          - {fileID: 21300000, guid: 08315ca75032e71428879d29828423a7, type: 3}
+          - {fileID: 21300000, guid: a2810dd4e52b37c4a864e5fe3cb7fed6, type: 3}
+          - {fileID: 21300000, guid: 996ce3dd1a25e9c4c8de5bfacf25eacd, type: 3}
+          - {fileID: 21300000, guid: 7c4564e156e204b4c8f23ccaa5f26eea, type: 3}
+          - {fileID: 21300000, guid: 8d86ad23640e2aa47b6f7941f4a6547f, type: 3}
+          - {fileID: 21300000, guid: 09e8b4f2ab55bdd49afb1866917c1640, type: 3}
+          - {fileID: 21300000, guid: d06f89894a0be6d4a9a8dd5a3aaa0140, type: 3}
+          - {fileID: 21300000, guid: d6df182b852136a4eb1b6aab972c7dd8, type: 3}
+    femaleAssets:
+      gender: 1
+      characterClassAssets:
+        m_keys:
+        - Sheep
+        m_values:
+        - defaultSprite: {fileID: 21300000, guid: d6e9551f0b932a441a03c4af27e04724,
+            type: 3}
+          animationSprites:
+          - {fileID: 21300000, guid: 1656b903473e5974782f6e6291ce951f, type: 3}
+          - {fileID: 21300000, guid: c68985a7d750e2d4b9f81973f7985871, type: 3}
+          - {fileID: 21300000, guid: 2f5a11db98171004b903c78bb5ddb338, type: 3}
+          - {fileID: 21300000, guid: 6e60a3afac51dc444af62efefe8aae37, type: 3}
+          - {fileID: 21300000, guid: 5ce5f7b355245884f9620e98f2fc6162, type: 3}
+          - {fileID: 21300000, guid: d6e9551f0b932a441a03c4af27e04724, type: 3}
+          - {fileID: 21300000, guid: 823c6fcfc89d9ae4ca4cbcbe5394ed4e, type: 3}
+          - {fileID: 21300000, guid: 22ed8838c0c2865408f902f081a31711, type: 3}
+          - {fileID: 21300000, guid: c04b6e3b593f19040ac7bddacd261a39, type: 3}
+          - {fileID: 21300000, guid: 1164f045430b1ed4da4d3676e7e97d7a, type: 3}
+          - {fileID: 21300000, guid: 8705e0a8ce130c34c850af2812ab4f13, type: 3}
+          - {fileID: 21300000, guid: f94e921a4f8d137498aa7b4a1a0106a5, type: 3}
+          - {fileID: 21300000, guid: efaf89ac407c1bc4ab43e5555525822d, type: 3}
+          - {fileID: 21300000, guid: 1157e1f208491864ab0bce56a49c3609, type: 3}
+          - {fileID: 21300000, guid: a071495b27fb4fb44adfd4deebe77a4a, type: 3}
+          - {fileID: 21300000, guid: c8790b5cd3b70c64c84a18048cef345a, type: 3}
+          - {fileID: 21300000, guid: 25d4412d61c3dee4f942218c1476e0a0, type: 3}
+          - {fileID: 21300000, guid: caea9ce82ecbf004c9a25840a8fa6bc6, type: 3}
+          - {fileID: 21300000, guid: 8734415b9d79ac249b5c86411c1685b7, type: 3}
   - raceName: SKELETON
     race: 13
     maleAssets:

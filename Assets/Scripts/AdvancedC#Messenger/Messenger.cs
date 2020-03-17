@@ -95,12 +95,9 @@ static internal class Messenger {
 		Debug.Log("\n");
 	}
 
-    static private void OrderEvents(string eventType) {
+    private static void OrderEvents(string eventType) {
         if (eventTable.ContainsKey(eventType) && Signals.orderedSignalExecution.ContainsKey(eventType)) {
-            System.Diagnostics.Stopwatch orderWatch = new System.Diagnostics.Stopwatch();
-            orderWatch.Start();
             Delegate[] actions = eventTable[eventType].GetInvocationList();
-            string summary = $"Ordering events for signal {eventType} with {actions.Length} events.";
             Delegate ordered = null;
             SignalMethod[] orderedEvents = Signals.orderedSignalExecution[eventType];
             for (int i = 0; i < orderedEvents.Length; i++) {
@@ -125,9 +122,6 @@ static internal class Messenger {
             }
 
             eventTable[eventType] = ordered;
-            orderWatch.Stop();
-            summary += $"\nFinished ordering events. Time elapsed is {orderWatch.ElapsedMilliseconds}ms";
-            //Debug.Log(summary);
         }
     }
     //static private void OrderEvents(string eventType, Callback newEvent) {

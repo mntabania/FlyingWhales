@@ -18,10 +18,21 @@ public struct IntRange {
         upperBound = upper;
     }
 
+    /// <summary>
+    /// Return a random number within this range.
+    /// NOTE: Lower and Upper bounds are inclusive.
+    /// </summary>
+    /// <returns>Random Integer.</returns>
     public int Random() {
         return UnityEngine.Random.Range(lowerBound, upperBound + 1);
     }
 
+    /// <summary>
+    /// Is the given value withing this range.
+    /// NOTE: Lower and Upper bounds are inclusive.
+    /// </summary>
+    /// <param name="value">The value to check</param>
+    /// <returns>True or false.</returns>
     public bool IsInRange(int value) {
         if (value >= lowerBound && value <= upperBound) {
             return true;

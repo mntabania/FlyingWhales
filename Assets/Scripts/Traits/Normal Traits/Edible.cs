@@ -45,7 +45,7 @@ namespace Traits {
         public override void ExecuteActionPreEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) {
             base.ExecuteActionPreEffects(action, goapNode);
             if (action == INTERACTION_TYPE.EAT) {
-                if (owner is Mushroom || owner is EdiblePlant || owner is SmallAnimal) {
+                if (owner is Mushroom || owner is BerryShrub || owner is SmallAnimal) {
                     owner.SetPOIState(POI_STATE.INACTIVE);
                 }
             }
@@ -114,7 +114,7 @@ namespace Traits {
         //}
 
         private string GetEdibleType() {
-            if (owner is EdiblePlant || owner is Mushroom) {
+            if (owner is BerryShrub || owner is Mushroom) {
                 return "Plant";
             } else if (owner is Table) {
                 return "Table";

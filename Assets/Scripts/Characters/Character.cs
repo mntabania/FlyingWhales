@@ -132,7 +132,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //For Testing
     public List<string> locationHistory { get; }
     public List<string> actionHistory { get; }
-    private string _currentPlanStackTrace;
 
     //Components / Managers
     public GoapPlanner planner { get; private set; }
@@ -2211,8 +2210,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //React To Character, Object, and Item
             string debugLog = string.Empty;
             reactionComponent.ReactTo(target, ref debugLog);
-            logComponent.PrintLogIfActive(debugLog);
- 
+            if (string.IsNullOrEmpty(debugLog) == false) {
+                logComponent.PrintLogIfActive(debugLog);
+            }
             if(targetCharacter != null) {
                 ThisCharacterWatchEvent(targetCharacter, null, null);
             }
@@ -4472,7 +4472,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void GoapActionResult(string result, ActualGoapNode actionNode) {
         string log = $"{name} is done performing goap action: {actionNode.action.goapName}";
-        Assert.IsNotNull(currentPlan, $"{name} has finished action {actionNode.action.name} with result {result} but currentPlan is null! \nCurrent plan was set to null call stack {_currentPlanStackTrace}");
+        Assert.IsNotNull(currentPlan, $"{name} has finished action {actionNode.action.name} with result {result} but currentPlan is null!");
         GoapPlan plan = currentPlan;
         GoapPlanJob job = currentJob as GoapPlanJob;
 
@@ -4693,7 +4693,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void SetCurrentPlan(GoapPlan plan) {
         currentPlan = plan;
-        _currentPlanStackTrace = StackTraceUtility.ExtractStackTrace();
     }
     //Only stop an action node if it is the current action node
     ///Stopping action node does not mean that the job will be cancelled, if you want to cancel job at the same time call <see cref="StopCurrentActionNodeAndCancelItsJob">

@@ -1,1 +1,26 @@
-{"_className":"Ravager","_baseAttackPower":80,"_attackPowerPerLevel":32,"_baseSpeed":35,"_speedPerLevel":14,"_hpPerLevel":146,"_baseHP":295,"_baseAttackSpeed":500,"_attackRange":0.800000011920929,"_runSpeedMod":0.0,"_walkSpeedMod":0.0,"_traitNames":["Beast","Combatant"],"_identifier":"Beast","_isNormalNonCombatant":false,"_jobType":2,"_combatPosition":0,"_combatTarget":6,"_attackType":0,"_rangeType":0,"_damageType":2,"_occupiedTileType":0}
+{
+  "_className": "Ravager",
+  "_baseAttackPower": 80,
+  "_attackPowerPerLevel": 32,
+  "_baseSpeed": 35,
+  "_speedPerLevel": 14,
+  "_hpPerLevel": 146,
+  "_baseHP": 295,
+  "_baseAttackSpeed": 500,
+  "_attackRange": 0.800000011920929,
+  "_runSpeedMod": 0.0,
+  "_walkSpeedMod": 0.0,
+  "_traitNames": [
+    "Beast",
+    "Combatant"
+  ],
+  "_identifier": "Beast",
+  "_isNormalNonCombatant": false,
+  "_jobType": 2,
+  "_combatPosition": 0,
+  "_combatTarget": 6,
+  "_attackType": 0,
+  "_rangeType": 0,
+  "_damageType": 2,
+  "_occupiedTileType": 0
+}

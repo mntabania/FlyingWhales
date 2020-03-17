@@ -19537,12 +19537,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed50c8ff9e1a3604cb589243a79c9bd4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minRegionWidthCount: 3
-  maxRegionWidthCount: 4
-  minRegionHeightCount: 3
-  maxRegionHeightCount: 4
-  minCitizenCount: 16
-  maxCitizenCount: 24
+  worldWideMonsterGenerationSetting: {fileID: 11400000, guid: 19bf76a10cca6324aa6a844c5ea01fa5,
+    type: 2}
+  worldWideItemGenerationSetting: {fileID: 11400000, guid: acfbe38be903c424aa99c568054c1231,
+    type: 2}
+  initialArtifactChoices: 0100000002000000030000000400000007000000
 --- !u!1 &1665094242
 GameObject:
   m_ObjectHideFlags: 0

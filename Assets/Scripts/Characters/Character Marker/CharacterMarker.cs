@@ -1071,7 +1071,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
         if (character.characterClass.className == "Mage" || character.visuals.portraitSettings.hair == -1 || 
             character.race == RACE.WOLF || character.race == RACE.SKELETON || 
             character.race == RACE.GOLEM || character.race == RACE.ELEMENTAL || character.race == RACE.KOBOLD ||
-            character.race == RACE.SPIDER || character.race == RACE.MIMIC || character.race == RACE.ENT) {
+            character.race == RACE.SPIDER || character.race == RACE.MIMIC || character.race == RACE.ENT || 
+            character.race == RACE.PIG || character.race == RACE.CHICKEN || character.race == RACE.SHEEP 
+            || character.race == RACE.ABOMINATION) {
             hairImg.gameObject.SetActive(false);
             knockedOutHairImg.gameObject.SetActive(false);
         } else {
