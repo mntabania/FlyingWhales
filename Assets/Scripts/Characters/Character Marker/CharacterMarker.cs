@@ -146,13 +146,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
             }
         }
     }
-    void LateUpdate() {
-        //if (character.isBeingSeized) { return; }
-        string currSpriteName = mainImg.sprite.name;
-        if (character.visuals.markerAnimations.ContainsKey(currSpriteName)) {
-            Sprite newSprite = character.visuals.markerAnimations[currSpriteName];
-            mainImg.sprite = newSprite;
-        } 
+    private void LateUpdate() {
+        UpdateVisualBasedOnCurrentAnimationFrame();
     }
     private void ForceUpdateMarkerVisualsBasedOnAnimation() {
         string currSpriteName = mainImg.sprite.name;
@@ -545,20 +540,11 @@ public class CharacterMarker : MapObjectVisual<Character> {
                     return;
                 }
                 SetTargetTransform(targetCharacter.marker.transform);
-                //if the target is a character, 
-                //check first if he/she is still at the location, 
-                //if (targetCharacter.currentRegion != character.currentRegion) {
-                //    this.arrivalAction?.Invoke();
-                //    ClearArrivalAction();
-                //} else 
                 if (targetCharacter.currentParty != null && targetCharacter.currentParty.icon != null && targetCharacter.currentParty.icon.isTravellingOutside) {
                     OnCharacterAreaTravelling(targetCharacter.currentParty);
                 } 
                 break;
             default:
-                if (targetPOI == null) {
-                    throw new Exception($"{character.name} is trying to go to a null object");
-                }
                 if(targetPOI is MovingTileObject) {
                     SetTargetTransform(targetPOI.mapObjectVisual.transform);
                 } else {
@@ -572,8 +558,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         StartMovement();
     }
     public void GoTo(ITraitable target, Action arrivalAction = null, Action failedToComputePathAction = null, STRUCTURE_TYPE[] notAllowedStructures = null) {
-        var poi = target as IPointOfInterest;
-        if (poi != null) {
+        if (target is IPointOfInterest poi) {
             GoToPOI(poi, arrivalAction, failedToComputePathAction, notAllowedStructures);
         } else {
             pathfindingAI.ClearAllCurrentPathData();
@@ -669,25 +654,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public void SetDestination(Vector3 destination) {
         pathfindingAI.destination = destination;
         pathfindingAI.canSearch = true;
-        //if (!float.IsPositiveInfinity(destination.x)) {
-            
-        //    //pathfindingAI.SearchPath();
-        //} 
-        //else {
-        //    pathfindingAI.canSearch = false;
-        //}
-        
     }
     public void SetTargetTransform(Transform target) {
         destinationSetter.target = target;
         pathfindingAI.canSearch = true;
-        //if (target != null) {
-            
-        //    //pathfindingAI.SearchPath();
-        //} 
-        //else {
-        //    pathfindingAI.canSearch = false;
-        //}
     }
     public void ClearArrivalAction() {
          arrivalAction = null;
@@ -720,6 +690,15 @@ public class CharacterMarker : MapObjectVisual<Character> {
     #endregion
 
     #region Animation
+    private void UpdateVisualBasedOnCurrentAnimationFrame() {
+        string currSpriteName = mainImg.sprite.name;
+        if (character.visuals.markerAnimations.ContainsKey(currSpriteName)) {
+            Sprite newSprite = character.visuals.markerAnimations[currSpriteName];
+            mainImg.sprite = newSprite;
+        } else {
+            mainImg.sprite = character.visuals.defaultSprite;
+        }
+    }
     private void PlayWalkingAnimation() {
         PlayAnimation("Walk");
     }
@@ -978,16 +957,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
         UpdateActionIcon();
         SetCollidersState(true);
         tile.parentMap.region.AddPendingAwareness(character);
-    }
-    private IEnumerator Positioner(Vector3 localPos, Vector3 lookAt) {
-        yield return null;
-        transform.localPosition = localPos;
-        LookAt(lookAt, true);
-    }
-    private IEnumerator Positioner(Vector3 localPos, Quaternion lookAt) {
-        yield return null;
-        transform.localPosition = localPos;
-        Rotate(lookAt, true);
     }
     public void OnDeath(LocationGridTile deathTileLocation) {
         if (character.race == RACE.SKELETON || character is Summon || character.minion != null || character.destroyMarkerOnDeath) {
@@ -1476,107 +1445,23 @@ public class CharacterMarker : MapObjectVisual<Character> {
         if(chosenTile == null) {
             chosenTile = character.currentStructure.GetRandomTile();
         }
-        //pathfindingAI.canSearch = false; //set to false, because if this is true and a destination has been set in the ai path, the ai will still try and go to that point instead of the computed flee path
         GoTo(chosenTile, OnFinishedTraversingFleePath);
-        //pathfindingAI.canSearch = false;
-        //FleeMultiplePath fleePath = FleeMultiplePath.Construct(this.transform.position, character.combatComponent.avoidInRange.Select(x => x.gridTileLocation.worldLocation).ToArray(), 20000);
-        //fleePath.aimStrength = 1;
-        //fleePath.spread = 4000;
-        //seeker.StartPath(fleePath);
     }
     public void OnFleePathComputed(Path path) {
-        //|| character.stateComponent.currentState == null || character.stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT 
-        if (character == null || !character.canPerform || !character.canMove) { //character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
+        if (character == null || !character.canPerform || !character.canMove) {
             return; //this is for cases that the character is no longer in a combat state, but the pathfinding thread returns a flee path
         }
-        //Debug.Log(character.name + " computed flee path");
         arrivalAction = OnFinishedTraversingFleePath;
         StartMovement();
-        //Debug.Log(GameManager.Instance.TodayLogString() + character.name + " will start fleeing");
     }
     public void OnFinishedTraversingFleePath() {
-        //Debug.Log(name + " has finished traversing flee path.");
-        //SetHasFleePath(false);
         if (character.isInCombat) {
             (character.stateComponent.currentState as CombatState).FinishedTravellingFleePath();
         }
-        //UpdateAnimation();
-        //UpdateActionIcon();
     }
     public void SetHasFleePath(bool state) {
         hasFleePath = state;
     }
-    //public void AddTerrifyingObject(IPointOfInterest obj) {
-    //    //terrifyingCharacters += amount;
-    //    //terrifyingCharacters = Math.Max(0, terrifyingCharacters);
-    //    if (!terrifyingObjects.Contains(obj)) {
-    //        terrifyingObjects.Add(obj);
-    //        //rvoController.avoidedAgents.Add(character.marker.fleeingRVOController.rvoAgent);
-    //    }
-    //}
-    //public void RemoveTerrifyingObject(IPointOfInterest obj) {
-    //    terrifyingObjects.Remove(obj);
-    //    //if (terrifyingCharacters.Remove(character)) {
-    //    //    //rvoController.avoidedAgents.Remove(character.marker.fleeingRVOController.rvoAgent);
-    //    //}
-    //}
-    //public void ClearTerrifyingObjects() {
-    //    terrifyingObjects.Clear();
-    //    //rvoController.avoidedAgents.Clear();
-    //}
-    /// <summary>
-    /// Function that determines if the character's hostile list must be transfered to avoid list
-    /// Can be triggered by broadcasting signal <see cref="Signals.TRANSFER_ENGAGE_TO_FLEE_LIST"/>
-    /// </summary>
-    /// <param name="character">The character that should determine the transfer.</param>
-    //private void TransferEngageToFleeList(Character character, string reason) {
-    //    if (this.character == character) {
-    //        string summary = character.name + " will determine the transfer from engage list to flee list";
-    //        if(character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
-    //            summary += "\n" + character.name + " has negative disabler trait. Ignoring transfer.";
-    //            character.logComponent.PrintLogIfActive(summary);
-    //            return;
-    //        }
-    //        if (hostilesInRange.Count == 0 && avoidInRange.Count == 0) {
-    //            summary +=  "\n" + character.name + " does not have any characters in engage or avoid list. Ignoring transfer.";
-    //            character.logComponent.PrintLogIfActive(summary);
-    //            return;
-    //        }
-    //        //check flee first, the logic determines that this character will not flee, then attack by default
-    //        bool willTransfer = true;
-    //        if (character.traitContainer.GetNormalTrait<Trait>("Berserked") != null) {
-    //            willTransfer = false;
-    //        }
-    //        summary += "\nDid " + character.name + " chose to transfer? " + willTransfer.ToString();
-
-    //        //Transfer all from engage list to flee list
-    //        if (willTransfer) {
-    //            //When transferring to flee list, if the character is not in vision just remove him/her in hostiles range
-    //            if (HasLethalCombatTarget()) {
-    //                for (int i = 0; i < hostilesInRange.Count; i++) {
-    //                    IPointOfInterest hostile = hostilesInRange[i];
-    //                    if (inVisionPOIs.Contains(hostile)) {
-    //                        AddAvoidInRange(hostile, false, reason);
-    //                    } else {
-    //                        RemoveHostileInRange(hostile, false);
-    //                        i--;
-    //                    }
-    //                }
-    //                ClearHostilesInRange(false);
-    //            }
-    //            if (character.isInCombat) {
-    //                Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this.character);
-    //            } else {
-    //                if (!character.currentParty.icon.isTravellingOutside) {
-    //                    CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.COMBAT, CHARACTER_STATE.COMBAT, character);
-    //                    //character.stateComponent.SwitchToState(CHARACTER_STATE.COMBAT);
-    //                    character.jobQueue.AddJobInQueue(job);
-    //                }
-    //            }
-    //        }
-    //        character.logComponent.PrintLogIfActive(summary);
-    //    }
-    //}
     #endregion
 
     #region Combat
@@ -1629,16 +1514,13 @@ public class CharacterMarker : MapObjectVisual<Character> {
     //    return nearest;
     //}
     public bool IsCharacterInLineOfSightWith(IPointOfInterest target) {
-        //return targetCharacter.currentStructure == character.currentStructure;
         //precompute our ray settings
         Vector3 start = transform.position;
-        Vector3 direction = target.worldPosition - transform.position;
-
-        //draw the ray in the editor
-        //Debug.DrawRay(start, direction * 10f, Color.red, 1000f);
+        Vector3 direction = target.worldPosition - start;
 
         //do the ray test
-        RaycastHit2D[] hitObjects = Physics2D.RaycastAll(start, direction, 10f);
+        RaycastHit2D[] hitObjects = new RaycastHit2D[20];
+        var size = Physics2D.RaycastNonAlloc(start, direction, hitObjects, 10f);
         for (int i = 0; i < hitObjects.Length; i++) {
             RaycastHit2D hit = hitObjects[i];
             if (hit.collider != null) {
@@ -1646,79 +1528,20 @@ public class CharacterMarker : MapObjectVisual<Character> {
                     || hit.collider.gameObject.CompareTag("Structure_Wall")) {
                     return false;
                 } else {
-                    IVisibleCollider collisionTrigger = hit.collider.gameObject.GetComponent<IVisibleCollider>();
-                    if (collisionTrigger != null) {
-                        if (collisionTrigger.poi == target) {
+                    IVisibleCollider component = hit.collider.gameObject.GetComponent<IVisibleCollider>();
+                    if (component != null) {
+                        if (component.poi == target) {
                             return true;
-                        } else if (!(collisionTrigger.poi is Character)) {
+                        } else if (!(component.poi is Character)) {
                             return false; //if the poi collision is not from a character, consider the target as obstructed
                         }
                         
                     }
                 }
-                //Debug.LogWarning(character.name + " collided with: " + hit.collider.gameObject.name);
             }
         }
         return false;
     }
-    //public bool WillCharacterTransferEngageToFleeList(bool isLethal, ref string reason, bool gotHit) {
-    //    bool willTransfer = false;
-    //    if (gotHit && character.traitContainer.GetNormalTrait<Trait>("Coward") != null && character.traitContainer.GetNormalTrait<Trait>("Berserked") == null) {
-    //        willTransfer = true;
-    //        reason = "coward";
-    //    } else
-    //    if (!isLethal && !HasLethalCombatTarget()) {
-    //        willTransfer = false;
-    //    }
-    //    //- if character is berserked, must not flee
-    //    else if (character.traitContainer.GetNormalTrait<Trait>("Berserked") != null) {
-    //        willTransfer = false;
-    //    }
-    //    //- at some point, situation may trigger the character to flee, at which point it will attempt to move far away from target
-    //    //else if (character.traitContainer.GetNormalTrait<Trait>("Injured") != null) {
-    //    //    //summary += "\n" + character.name + " is injured.";
-    //    //    //-character gets injured(chance based dependent on the character)
-    //    //    willTransfer = true;
-    //    //} 
-    //    else if (character.IsHealthCriticallyLow()) {
-    //        //summary += "\n" + character.name + "'s health is critically low.";
-    //        //-character's hp is critically low (chance based dependent on the character)
-    //        willTransfer = true;
-    //        reason = "critically low health";
-    //    }
-    //    //else if (character.traitContainer.GetNormalTrait<Trait>("Spooked") != null) {
-    //    //    //- fear-type status effect
-    //    //    willTransfer = true;
-    //    //} 
-    //    else if (character.needsComponent.isStarving && !character.isVampire) {
-    //        //-character is starving and is not a vampire
-    //        willTransfer = true;
-    //        reason = "starving";
-    //    } else if (character.needsComponent.isExhausted) {
-    //        //-character is exhausted
-    //        willTransfer = true;
-    //        reason = "exhausted";
-    //    }
-    //    return willTransfer;
-    //}
-    //public void OnThisCharacterEndedCombatState() {
-    //    onProcessCombat = null;
-    //}
-    //public void ProcessCombatBehavior() {
-    //    if (character.isInCombat) {
-    //        Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this.character);
-    //    } else {
-    //        CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.COMBAT, CHARACTER_STATE.COMBAT, character);
-    //        character.jobQueue.AddJobInQueue(job);
-    //        //this.character.stateComponent.SwitchToState(CHARACTER_STATE.COMBAT);
-    //    }
-    //    //execute any external combat actions. This assumes that this character entered combat state.
-    //    onProcessCombat?.Invoke(this.character.stateComponent.currentState as CombatState); 
-    //    onProcessCombat = null;
-    //}
-    //public void AddOnProcessCombatAction(OnProcessCombat action) {
-    //    onProcessCombat += action;
-    //}
     #endregion
 
     #region Colliders
@@ -1754,9 +1577,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
 
     #region Seize
     public void OnSeize() {
-        Character character = this.character;
+        Character _character = character;
         Reset();
-        this.character = character;
+        character = _character;
         buttonCollider.enabled = false;
     }
     public void OnUnseize() {

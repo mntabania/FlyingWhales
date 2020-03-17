@@ -6,17 +6,19 @@ using UnityEngine;
 public class RaceMarkerAsset {
     public string raceName;
     public RACE race;
-    public GenderMarkerAsset maleAssets;
-    public GenderMarkerAsset femaleAssets;
+    public MarkerAsset neutralAssets;
+    public MarkerAsset maleAssets;
+    public MarkerAsset femaleAssets;
 
     public RaceMarkerAsset(RACE race) {
         this.race = race;
         raceName = race.ToString();
-        maleAssets = new GenderMarkerAsset(GENDER.MALE);
-        femaleAssets = new GenderMarkerAsset(GENDER.FEMALE);
+        neutralAssets = new MarkerAsset();
+        maleAssets = new MarkerAsset();
+        femaleAssets = new MarkerAsset();
     }
 
-    public GenderMarkerAsset GetMarkerAsset(GENDER gender) {
+    public MarkerAsset GetMarkerAsset(GENDER gender) {
         switch (gender) {
             case GENDER.MALE:
                 return maleAssets;

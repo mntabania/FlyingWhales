@@ -20,7 +20,6 @@ namespace AssetImporters {
                 textureImporter.filterMode = FilterMode.Point;
                 textureImporter.maxTextureSize = 128; 
                 textureImporter.textureCompression = TextureImporterCompression.Uncompressed;
-                Debug.Log("Character Marker Post Processing Complete");
             }
         }
     }

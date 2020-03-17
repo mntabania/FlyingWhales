@@ -59,7 +59,8 @@ public enum RACE{
     ABOMINATION = 23,
     PIG = 24,
     SHEEP = 25,
-    CHICKEN = 26
+    CHICKEN = 26,
+    LESSER_DEMON = 27,
 }
 public enum HEXTILE_DIRECTION {
     NORTH_WEST,
@@ -2258,6 +2259,7 @@ public static class Extensions {
         switch (race) {
             case RACE.HUMANS:
             case RACE.ELVES:
+            case RACE.LESSER_DEMON:
                 return false;
             default:
                 return true;
