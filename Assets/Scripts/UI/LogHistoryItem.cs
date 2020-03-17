@@ -17,11 +17,8 @@ public class LogHistoryItem : LogItem {
         base.SetLog(log);
         this.name = log.id.ToString();
         dateLbl.text = log.date.ConvertToContinuousDaysWithTime();
-        if (_log.fillers.Count > 0) {
-            this.logLbl.text = UtilityScripts.Utilities.LogReplacer(_log);
-        } else {
-            this.logLbl.text = LocalizationManager.Instance.GetLocalizedValue(_log.category, _log.file, _log.key);
-        }
+        this.logLbl.text = _log.fillers.Count > 0 ? UtilityScripts.Utilities.LogReplacer(_log) 
+            : LocalizationManager.Instance.GetLocalizedValue(_log.category, _log.file, _log.key);
         //if (log.isInspected || GameManager.Instance.inspectAll) {
         //    dateLbl.text = "Day " + new GameDate((int) log.month, log.day, log.year, log.hour).GetDayAndTicksString();
         //    if (_log.fillers.Count > 0) {
@@ -51,30 +48,4 @@ public class LogHistoryItem : LogItem {
         //logBG.color = color;
     }
 
-    public void ShowLogDebugInfo() {
-        //if (log.fromInteraction != null && log.fromInteraction.intel != null) {
-        //    string text = log.GetLogDebugInfo();
-        //    text += "\n\n<i>(Double Click to Obatin intel)</i>";
-        //    UIManager.Instance.ShowSmallInfo(text);
-        //}
-    }
-    public void HideLogDebugInfo() {
-        UIManager.Instance.HideSmallInfo();
-    }
-
-    public void CheckForObtain(BaseEventData baseData) {
-        PointerEventData pData = baseData as PointerEventData;
-        if (pData.clickCount == 2) { //double click
-            ObtainIntel();
-        }
-    }
-
-    public void ObtainIntel() {
-        //if (log.fromInteraction != null && log.fromInteraction.intel != null) {
-        //    if (!PlayerManager.Instance.player.AlreadyHasIntel(log.fromInteraction.intel)) {
-        //        log.fromInteraction.intel.SetLog(log);
-        //        PlayerManager.Instance.player.AddIntel(log.fromInteraction.intel);
-        //    }
-        //}
-    }
 }

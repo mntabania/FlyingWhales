@@ -21,6 +21,7 @@ namespace Traits {
             hindersPerform = true;
             AddTraitOverrideFunctionIdentifier(TraitManager.Death_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Tick_Started_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Hour_Started_Trait);
         }
 
         #region Overrides
@@ -32,8 +33,8 @@ namespace Traits {
         }
         public override void OnAddTrait(ITraitable sourceCharacter) {
             base.OnAddTrait(sourceCharacter);
-            if (sourceCharacter is Character) {
-                _sourceCharacter = sourceCharacter as Character;
+            if (sourceCharacter is Character character) {
+                _sourceCharacter = character;
                 _sourceCharacter.needsComponent.AdjustDoNotGetTired(1);
                 if (_sourceCharacter.currentHP <= 0) {
                     _sourceCharacter.SetHP(1);
@@ -84,6 +85,21 @@ namespace Traits {
         public override void OnTickStarted() {
             base.OnTickStarted();
             _sourceCharacter.needsComponent.AdjustTiredness(1.4f);
+        }
+        public override void OnHourStarted() {
+            base.OnHourStarted();
+            CheckForLycanthropy();
+        }
+        #endregion
+
+        #region Lycanthropy
+        private void CheckForLycanthropy() {
+            if(_sourceCharacter.isLycanthrope) {
+                int chance = UnityEngine.Random.Range(0, 100);
+                if (chance < 25) {
+                    _sourceCharacter.lycanData.Transform(_sourceCharacter);
+                }
+            }
         }
         #endregion
     }

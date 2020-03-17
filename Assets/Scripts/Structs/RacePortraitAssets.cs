@@ -6,14 +6,16 @@ using UnityEngine;
 public class RacePortraitAssets {
     public string raceName;
     public RACE race;
+    public PortraitAssetCollection neutralAssets;
     public PortraitAssetCollection maleAssets;
     public PortraitAssetCollection femaleAssets;
 
     public RacePortraitAssets(RACE race) {
         this.race = race;
         raceName = race.ToString();
-        maleAssets = new PortraitAssetCollection(GENDER.MALE);
-        femaleAssets = new PortraitAssetCollection(GENDER.FEMALE);
+        neutralAssets = new PortraitAssetCollection();
+        maleAssets = new PortraitAssetCollection();
+        femaleAssets = new PortraitAssetCollection();
     }
 
     public PortraitAssetCollection GetPortraitAssetCollection(GENDER gender) {
@@ -23,7 +25,7 @@ public class RacePortraitAssets {
             case GENDER.FEMALE:
                 return femaleAssets;
             default:
-                return null;
+                return neutralAssets;
         }
     }
 }

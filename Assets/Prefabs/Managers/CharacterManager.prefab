@@ -95,10 +95,78 @@ MonoBehaviour:
   _characterPortraitPrefab: {fileID: 1995387493181358, guid: cdfed07929227104599994075478446b,
     type: 3}
   portraitAssets:
+  - raceName: ABOMINATION
+    race: 23
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: 9b0e42b61dbe3bb47ae54d8d3d8d6393, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+  - raceName: ELEMENTAL
+    race: 19
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: 8079e2be5be425e4984d3bff7e212764, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
   - raceName: ELVES
     race: 2
+    neutralAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
     maleAssets:
-      gender: 0
       head:
       - {fileID: 21300000, guid: 63770e2e66034404c93e0ecd0493070c, type: 3}
       - {fileID: 21300000, guid: 2a27ddcc4b754f94089422a6126aaeef, type: 3}
@@ -155,7 +223,6 @@ MonoBehaviour:
       - {fileID: 21300000, guid: f20a0b5fb87e29342832df6364258a61, type: 3}
       - {fileID: 21300000, guid: 1e01f905ac9814d4b89e8844cf5ffd32, type: 3}
     femaleAssets:
-      gender: 1
       head:
       - {fileID: 21300000, guid: 8f12727a6c45217488871d508aaf5086, type: 3}
       - {fileID: 21300000, guid: 9b192c114386a504eb1a08ccea935166, type: 3}
@@ -203,10 +270,48 @@ MonoBehaviour:
       - {fileID: 21300000, guid: 7a59ed47152fec34eb2339c84d04aa31, type: 3}
       mustache: []
       beard: []
+  - raceName: GOLEM
+    race: 18
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: c6756a4a1e068244bbb0505a07406409, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
   - raceName: HUMANS
     race: 1
+    neutralAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
     maleAssets:
-      gender: 0
       head:
       - {fileID: 21300000, guid: 37ca32002f93f0d42adcaa5d97aaadf3, type: 3}
       - {fileID: 21300000, guid: be4a5b381ee08a44fb38f4231f8955e6, type: 3}
@@ -263,7 +368,6 @@ MonoBehaviour:
       - {fileID: 21300000, guid: 0f72a4f380a7505449fe061883609d51, type: 3}
       - {fileID: 21300000, guid: 74855c26ebb5ecd458d725598626c440, type: 3}
     femaleAssets:
-      gender: 1
       head:
       - {fileID: 21300000, guid: 51b57d7ccfa6a0c43b7d82e502e9eb3a, type: 3}
       - {fileID: 21300000, guid: 5fbb804b2d79ecf4dbf0c4a3abc12f49, type: 3}
@@ -313,10 +417,18 @@ MonoBehaviour:
       beard: []
   - raceName: SKELETON
     race: 13
-    maleAssets:
-      gender: 0
+    neutralAssets:
       head:
-      - {fileID: 21300000, guid: 1bea1966013e87a4c9dbe2ef657dc879, type: 3}
+      - {fileID: 21300000, guid: 362b5aa2e37e9da499ca8a81f43cdae7, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+    maleAssets:
+      head: []
       brows: []
       eyes: []
       mouth: []
@@ -325,9 +437,37 @@ MonoBehaviour:
       mustache: []
       beard: []
     femaleAssets:
-      gender: 1
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+  - raceName: SPIDER
+    race: 17
+    neutralAssets:
       head:
-      - {fileID: 21300000, guid: 4473734bd61d0ed49bf32321e890d97a, type: 3}
+      - {fileID: 21300000, guid: 24ddc0decde552649b24891f92edac8b, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+    femaleAssets:
+      head: []
       brows: []
       eyes: []
       mouth: []
@@ -337,110 +477,32 @@ MonoBehaviour:
       beard: []
   - raceName: WOLF
     race: 10
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: bb519cc5a55c1284d8bfe22ff5cd0e25, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
     maleAssets:
-      gender: 0
-      head:
-      - {fileID: 21300000, guid: 1715705dd46b18340b4e2cc19def7a07, type: 3}
-      - {fileID: 21300000, guid: f80cd5e130e2cb7468d1cc88e8c8182f, type: 3}
-      - {fileID: 21300000, guid: a3b8d49f2c7b7b047818db64401936a4, type: 3}
-      - {fileID: 21300000, guid: 6ffc6ef595fdd4b4ba6603cd8c1b5b02, type: 3}
-      brows:
-      - {fileID: 21300000, guid: 98c83903408d5a4409a86767121ab9d4, type: 3}
-      - {fileID: 21300000, guid: 32fc966f081b6e241843ba78219c99b5, type: 3}
-      - {fileID: 21300000, guid: 1149af3ea3bcae648a824dcaf3dc764a, type: 3}
-      - {fileID: 21300000, guid: f0a819b46a778634f8f87bdd91704bdf, type: 3}
-      eyes:
-      - {fileID: 21300000, guid: 58827de0883256f4cb2d1ed413dbe576, type: 3}
-      - {fileID: 21300000, guid: 4bfd74c4f1a92894a917d23ecbbb1d83, type: 3}
-      - {fileID: 21300000, guid: de7a7a8e814c1d845a30ac97ac1e6d04, type: 3}
-      - {fileID: 21300000, guid: dec2284c1d4a8ab49a1df70fd0caad12, type: 3}
-      - {fileID: 21300000, guid: cb36e43d4065a41428cb08c00fafb204, type: 3}
-      - {fileID: 21300000, guid: e58eedc047bfed0408fb69032acee325, type: 3}
-      mouth:
-      - {fileID: 21300000, guid: c6ddf55f2842d2c40bc329265d88f1a0, type: 3}
-      - {fileID: 21300000, guid: 54d8b4fa468177a43bf42aa715bc21a1, type: 3}
-      - {fileID: 21300000, guid: c56f2b443bb56ca4ca5a8976c2e0dab5, type: 3}
-      - {fileID: 21300000, guid: 641455537d4472a4d8eb83ea90e68627, type: 3}
-      - {fileID: 21300000, guid: 66f89b17779200e4b9cc3700cab4126a, type: 3}
-      - {fileID: 21300000, guid: 9bcba9abd3c2eb244a75fd649e5a13ff, type: 3}
-      nose:
-      - {fileID: 21300000, guid: 49b7ceb369e9b5a4f85693a5a3aefe71, type: 3}
-      - {fileID: 21300000, guid: 9a6a9846e7a90b64caba67a89bab8337, type: 3}
-      - {fileID: 21300000, guid: efb887ac82dca324993e96ce205cdfaa, type: 3}
-      - {fileID: 21300000, guid: 21ecbb25e24494e42b1c29c7811afa20, type: 3}
-      - {fileID: 21300000, guid: 3a77653612a0b9043b99a1df8911baae, type: 3}
-      - {fileID: 21300000, guid: 10e9c1b7fea484d47acd127421563477, type: 3}
-      hair:
-      - {fileID: 21300000, guid: 0c5916cd135d48349a7d5658b5c36669, type: 3}
-      - {fileID: 21300000, guid: cb2ce5e69eee8124eb367449cb2d034c, type: 3}
-      - {fileID: 21300000, guid: f266487a4379b964babbe4631b7c3815, type: 3}
-      - {fileID: 21300000, guid: abe2773d9a8210b42bdf25278ba4b686, type: 3}
-      - {fileID: 21300000, guid: 10bcd3a0981e54541a4fb4e38846a053, type: 3}
-      - {fileID: 21300000, guid: 8ac33e08267418544ad843c165b34355, type: 3}
-      - {fileID: 21300000, guid: 892156accac562c42aaeb669bd4cb3be, type: 3}
-      - {fileID: 21300000, guid: e3f286dcf536eaf468069052d82ff159, type: 3}
-      - {fileID: 21300000, guid: ca0db5eab37bb134892db3ed3f3d77f3, type: 3}
-      mustache:
-      - {fileID: 21300000, guid: d9fb27cf6cbe9cc4b9b71542c9bf41d9, type: 3}
-      - {fileID: 21300000, guid: d5c33129096c39a478e03e9590fcf8f2, type: 3}
-      - {fileID: 21300000, guid: 133ffe96bd16a5b479f8543dd27d7b10, type: 3}
-      - {fileID: 21300000, guid: dd19e1f5be4c28a41a91ff1418b419a9, type: 3}
-      beard:
-      - {fileID: 21300000, guid: bc2b2cc069178e4478a2b190088de2ff, type: 3}
-      - {fileID: 21300000, guid: 2c1ab1815353d4d45b8611844e9fb80b, type: 3}
-      - {fileID: 21300000, guid: d3f763f8a60dd6b428193f07b051de5e, type: 3}
-      - {fileID: 21300000, guid: 2fb6c59a0777da24281a79110358148a, type: 3}
-      - {fileID: 21300000, guid: c3962eb105e706f44a9049ea75e46d37, type: 3}
-      - {fileID: 21300000, guid: 3df591a4181f48549a237383268b1371, type: 3}
-      - {fileID: 21300000, guid: 93a1e076cad030f41bedbcf460791466, type: 3}
-      - {fileID: 21300000, guid: bae0ecfd443e8d54ca75e6741ecc1051, type: 3}
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
     femaleAssets:
-      gender: 1
-      head:
-      - {fileID: 21300000, guid: 85d0071b8b5b0c1429f7ea9059982be2, type: 3}
-      - {fileID: 21300000, guid: 28d13d6b94b682c45b5b98b5f019606b, type: 3}
-      - {fileID: 21300000, guid: a92d313ed6339e940bb60586590cb80d, type: 3}
-      - {fileID: 21300000, guid: 376e3a0475a53774c8a37bcc9deb0c57, type: 3}
-      - {fileID: 21300000, guid: ee5014f90b559e742ae65055e71edbb7, type: 3}
-      brows:
-      - {fileID: 21300000, guid: 4234ad7945f878e4ab3180f078968f45, type: 3}
-      - {fileID: 21300000, guid: d1614fd1286e7dc4286c2ad1593a7c7b, type: 3}
-      - {fileID: 21300000, guid: a3c942b4ed4607f41880231a47c98ff1, type: 3}
-      - {fileID: 21300000, guid: c72b46a4942bd19408502e39b3e88d7f, type: 3}
-      eyes:
-      - {fileID: 21300000, guid: eb03fa8ae29193542885856c4bf636d4, type: 3}
-      - {fileID: 21300000, guid: 080068c902f72c64c80694e662ca0bc0, type: 3}
-      - {fileID: 21300000, guid: c72bf3adb1be87c49a0e25de06590d36, type: 3}
-      - {fileID: 21300000, guid: c6cfca146d145414aac2c66433ee19d1, type: 3}
-      - {fileID: 21300000, guid: a61305e9a48bfdd4aab81b0717b9aa92, type: 3}
-      - {fileID: 21300000, guid: 6e293f89468176a449fb475419e5e456, type: 3}
-      - {fileID: 21300000, guid: 12f2e662633d9a647a6f5ddc4f477852, type: 3}
-      mouth:
-      - {fileID: 21300000, guid: b29745fa60b922c4c8137531791b1d09, type: 3}
-      - {fileID: 21300000, guid: 3ac4b2bb908f402419a1f92675828b32, type: 3}
-      - {fileID: 21300000, guid: db4bd79806ce04d4aaaea3ed7be2c1da, type: 3}
-      - {fileID: 21300000, guid: a980791bfb335634a98be02a87c8547c, type: 3}
-      - {fileID: 21300000, guid: 5cd35311105549a4eb7a684e00c539af, type: 3}
-      - {fileID: 21300000, guid: 9a6e22faa64a35b4182a2be72abf93d6, type: 3}
-      - {fileID: 21300000, guid: 09d4a7dbc7115354ba77166406bc653e, type: 3}
-      nose:
-      - {fileID: 21300000, guid: 425e4f2409e6e87499d6deceefd40814, type: 3}
-      - {fileID: 21300000, guid: db67a8bef68653f4db5ba3f00b8c25c0, type: 3}
-      - {fileID: 21300000, guid: 8ff4ec257d1043141996e64193d1c86e, type: 3}
-      - {fileID: 21300000, guid: 9ee6b44274291ed4fbf4ef12532e118c, type: 3}
-      - {fileID: 21300000, guid: ace6921d18943c54c925deb86fc3826d, type: 3}
-      hair:
-      - {fileID: 21300000, guid: 4299c0422cf7d1444882cc60fee43756, type: 3}
-      - {fileID: 21300000, guid: c117eb74727c3ce4388c5ade55f00830, type: 3}
-      - {fileID: 21300000, guid: b7f687e42e431e14e8fcc1b288ea70bf, type: 3}
-      - {fileID: 21300000, guid: bd80f173de88fb74d85923f7f9ec26ac, type: 3}
-      - {fileID: 21300000, guid: cfea3bdcbb139984cb9ac916204aa62a, type: 3}
-      - {fileID: 21300000, guid: 455b05c762fb012458d3ccb4e7307c63, type: 3}
-      - {fileID: 21300000, guid: 7ddf740fd6e7cf940ae1db85b918e12c, type: 3}
-      - {fileID: 21300000, guid: 2b280a0ac975aec4393130ae713b8abf, type: 3}
-      - {fileID: 21300000, guid: 95925a72c33debf42b413795046908dd, type: 3}
-      - {fileID: 21300000, guid: 937dac1077b112c42981360a8365a684, type: 3}
-      - {fileID: 21300000, guid: d65db295ddc2de642a19b56ccd25fdbc, type: 3}
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
       mustache: []
       beard: []
   portraitFrames:

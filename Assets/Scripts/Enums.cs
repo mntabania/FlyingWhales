@@ -2252,4 +2252,16 @@ public static class Extensions {
 
     }
     #endregion
+
+    #region Races
+    public static bool IsGenderNeutral(this RACE race) {
+        switch (race) {
+            case RACE.HUMANS:
+            case RACE.ELVES:
+                return false;
+            default:
+                return true;
+        }
+    }
+    #endregion
 }

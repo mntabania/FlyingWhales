@@ -226,7 +226,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public POINT_OF_INTEREST_TYPE poiType => POINT_OF_INTEREST_TYPE.CHARACTER;
     public LocationGridTile gridTileLocation {
         get {
-            if (!marker) {
+            if (marker == null) {
                 return null;
             }
             if (!IsInOwnParty()) {

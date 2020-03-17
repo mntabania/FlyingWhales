@@ -6,6 +6,7 @@ using System.Linq;
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UtilityScripts;
 
 public class CharacterManager : MonoBehaviour {
@@ -471,14 +472,14 @@ public class CharacterManager : MonoBehaviour {
     #endregion
 
     #region Character Portraits
-    public PortraitAssetCollection GetPortraitAssets(RACE race, GENDER gender) {
+    private PortraitAssetCollection GetPortraitAssets(RACE race, GENDER gender) {
         for (int i = 0; i < portraitAssets.Count; i++) {
             RacePortraitAssets racePortraitAssets = portraitAssets[i];
             if (racePortraitAssets.race == race) {
-                if (gender == GENDER.MALE) {
-                    return racePortraitAssets.maleAssets;
+                if (race.IsGenderNeutral()) {
+                    return racePortraitAssets.neutralAssets;
                 } else {
-                    return racePortraitAssets.femaleAssets;
+                    return gender == GENDER.MALE ? racePortraitAssets.maleAssets : racePortraitAssets.femaleAssets;
                 }
             }
         }
@@ -491,10 +492,11 @@ public class CharacterManager : MonoBehaviour {
     }
     public PortraitSettings GenerateRandomPortrait(RACE race, GENDER gender, string characterClass) {
         PortraitAssetCollection pac = GetPortraitAssets(race, gender);
-        PortraitSettings ps = new PortraitSettings();
-        ps.race = race;
-        ps.gender = gender;
-        ps.wholeImage = classPortraits.ContainsKey(characterClass) ? characterClass : string.Empty;
+        PortraitSettings ps = new PortraitSettings {
+            race = race,
+            gender = gender,
+            wholeImage = classPortraits.ContainsKey(characterClass) ? characterClass : string.Empty
+        };
         if (race == RACE.DEMON) {
             ps.head = -1;
             ps.brows = -1;
@@ -537,7 +539,7 @@ public class CharacterManager : MonoBehaviour {
         if (portraitFrames.ContainsKey(role)) {
             return portraitFrames[role];
         }
-        throw new System.Exception($"There is no frame for role {role}");
+        throw new System.Exception($"There is no frame for role {role.ToString()}");
     }
     public Sprite GetWholeImagePortraitSprite(string className) {
         if (classPortraits.ContainsKey(className)) {
@@ -598,28 +600,31 @@ public class CharacterManager : MonoBehaviour {
         for (int i = 0; i < races.Length; i++) {
             string currRacePath = races[i];
             string raceName = new DirectoryInfo(currRacePath).Name.ToUpper();
-            RACE race;
-            if (System.Enum.TryParse(raceName, out race)) {
+            if (System.Enum.TryParse(raceName, out RACE race)) {
                 RacePortraitAssets raceAsset = new RacePortraitAssets(race);
                 //loop through genders found in races directory
                 string[] genders = System.IO.Directory.GetDirectories(currRacePath);
                 for (int j = 0; j < genders.Length; j++) {
                     string currGenderPath = genders[j];
                     string genderName = new DirectoryInfo(currGenderPath).Name.ToUpper();
-                    GENDER gender;
-                    if (System.Enum.TryParse(genderName, out gender)) {
-                        PortraitAssetCollection assetCollection = raceAsset.GetPortraitAssetCollection(gender);
-                        string[] faceParts = System.IO.Directory.GetDirectories(currGenderPath);
-                        for (int k = 0; k < faceParts.Length; k++) {
-                            string currFacePath = faceParts[k];
-                            string facePartName = new DirectoryInfo(currFacePath).Name;
-                            string[] facePartFiles = Directory.GetFiles(currFacePath);
-                            for (int l = 0; l < facePartFiles.Length; l++) {
-                                string facePartAssetPath = facePartFiles[l];
-                                Sprite loadedSprite = (Sprite)UnityEditor.AssetDatabase.LoadAssetAtPath(facePartAssetPath, typeof(Sprite));
-                                if (loadedSprite != null) {
-                                    assetCollection.AddSpriteToCollection(facePartName, loadedSprite);
-                                }
+                    PortraitAssetCollection assetCollection = null;
+                    if (System.Enum.TryParse(genderName, out GENDER gender)) {
+                        assetCollection = raceAsset.GetPortraitAssetCollection(gender);
+                        
+                    } else if (genderName.Equals("Neutral", StringComparison.InvariantCultureIgnoreCase)) {
+                        assetCollection = raceAsset.neutralAssets;
+                    }
+                    Assert.IsNotNull(assetCollection, $"Asset portrait collection for {genderName} is null.");
+                    string[] faceParts = System.IO.Directory.GetDirectories(currGenderPath);
+                    for (int k = 0; k < faceParts.Length; k++) {
+                        string currFacePath = faceParts[k];
+                        string facePartName = new DirectoryInfo(currFacePath).Name;
+                        string[] facePartFiles = Directory.GetFiles(currFacePath);
+                        for (int l = 0; l < facePartFiles.Length; l++) {
+                            string facePartAssetPath = facePartFiles[l];
+                            Sprite loadedSprite = (Sprite)UnityEditor.AssetDatabase.LoadAssetAtPath(facePartAssetPath, typeof(Sprite));
+                            if (loadedSprite != null) {
+                                assetCollection.AddSpriteToCollection(facePartName, loadedSprite);
                             }
                         }
                     }
