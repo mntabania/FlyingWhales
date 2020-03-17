@@ -248,7 +248,7 @@ internal static class Messenger {
         OnListenerAdding(eventType, handler);
         eventTable[eventType] = (Callback)eventTable[eventType] + handler;
         // GameManager.Instance.StartCoroutine(OrderEventsCoroutine(eventType));
-        // OrderEvents(eventType);
+        OrderEvents(eventType);
     }
  
 	//Single parameter
