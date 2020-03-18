@@ -205,7 +205,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         //OnRemoveTileObject(removedBy, previousTile);
         //SetPOIState(POI_STATE.INACTIVE);
         OnDestroyPOI();
-        if (previousTile != null && previousTile.collectionOwner.partOfHextile.hexTileOwner) {
+        if (previousTile != null && previousTile.collectionOwner.isPartOfParentRegionMap 
+                                 && previousTile.collectionOwner.partOfHextile.hexTileOwner) {
             previousTile.collectionOwner.partOfHextile.hexTileOwner.OnRemovePOIInHex(this);
         }
     }
