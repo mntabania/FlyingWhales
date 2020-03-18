@@ -1235,6 +1235,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     public void RightSelectAction() {
         //Nothing happens
     }
+    public bool CanBeSelected() {
+        return true;
+    }
     #endregion
     
     #region POI

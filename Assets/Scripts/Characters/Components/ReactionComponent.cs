@@ -253,7 +253,7 @@ public class ReactionComponent {
         debugLog += $"{owner.name} is reacting to {targetCharacter.name}";
         if(owner.faction.IsHostileWith(targetCharacter.faction)) {
             debugLog += "\n-Target is hostile";
-            if (!targetCharacter.isDead) {
+            if (!targetCharacter.isDead && targetCharacter.combatComponent.combatMode != COMBAT_MODE.Passive) {
                 debugLog += "\n-Target is not dead";
                 debugLog += "\n-Fight or Flight response";
                 //Fight or Flight
@@ -268,7 +268,7 @@ public class ReactionComponent {
                     }
                 }
             } else {
-                debugLog += "\n-Target is dead";
+                debugLog += "\n-Target is dead or is passive";
                 debugLog += "\n-Do nothing";
             }
         } else if (!owner.isInCombat) {

@@ -136,7 +136,7 @@ namespace Inner_Maps {
                             continue; //skip
                         }
                         //assume that all objects that have the specified tags have the BaseMapObjectVisual class
-                        if (visual.selectable != null) {
+                        if (visual.selectable != null && visual.selectable.CanBeSelected()) {
                             return visual.selectable;
                         }
                     }
@@ -171,7 +171,7 @@ namespace Inner_Maps {
                             continue; //skip
                         }
                         //assume that all objects that have the specified tags have the BaseMapObjectVisual class
-                        if (visual.selectable != null) {
+                        if (visual.selectable != null && visual.selectable.CanBeSelected()) {
                             selectables.Add(visual.selectable);    
                         }
                     } else if (go.gameObject.CompareTag("Map_Click_Blocker")) {

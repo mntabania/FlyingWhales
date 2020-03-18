@@ -1481,6 +1481,7 @@
                 <e p="InnerMapLight.cs" t="Include" />
               </e>
               <e p="Location Structures" t="Include">
+                <e p="Cave.cs" t="Include" />
                 <e p="CityCenter.cs" t="Include" />
                 <e p="DemonicPrison.cs" t="Include" />
                 <e p="Dwelling.cs" t="Include" />
@@ -1489,6 +1490,7 @@
                 <e p="LocationStructure.cs" t="Include" />
                 <e p="Lumberyard.cs" t="Include" />
                 <e p="MageQuarter.cs" t="Include" />
+                <e p="MonsterLair.cs" t="Include" />
                 <e p="Prison.cs" t="Include" />
                 <e p="Structure Objects" t="Include">
                   <e p="LocationStructureObject.cs" t="Include" />
@@ -1530,6 +1532,11 @@
                   <e p="Antidote.cs" t="Include" />
                   <e p="Anvil.cs" t="Include" />
                   <e p="ArcheryTarget.cs" t="Include" />
+                  <e p="Artifacts" t="Include">
+                    <e p="AnkhOfAnubis.cs" t="Include" />
+                    <e p="BerserkOrb.cs" t="Include" />
+                    <e p="Necronomicon.cs" t="Include" />
+                  </e>
                   <e p="BallLightningTileObject.cs" t="Include" />
                   <e p="Bandages.cs" t="Include" />
                   <e p="Barrel.cs" t="Include" />
@@ -1803,10 +1810,12 @@
               <e p="CursedObject.cs" t="Include" />
               <e p="Destroy.cs" t="Include" />
               <e p="EarthquakeData.cs" t="Include" />
+              <e p="ElectricStormData.cs" t="Include" />
               <e p="FeebleSpiritData.cs" t="Include" />
               <e p="ForlornSpiritData.cs" t="Include" />
               <e p="Ignite.cs" t="Include" />
               <e p="Kleptomania.cs" t="Include" />
+              <e p="LandmineData.cs" t="Include" />
               <e p="LightningData.cs" t="Include" />
               <e p="LocustSwarm.cs" t="Include" />
               <e p="Lycanthropy.cs" t="Include" />

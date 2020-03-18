@@ -111,6 +111,9 @@ public class GenericTileObject : TileObject {
         return structureLocation.structureType.IsOpenSpace() == false
                && structureLocation.structureType.IsSettlementStructure();
     }
+    public override bool CanBeSelected() {
+        return false;
+    }
     #endregion
 
     private bool HasTangibleTrait() {

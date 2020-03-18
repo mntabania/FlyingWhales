@@ -5506,5 +5506,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         mapObjectVisual.ExecuteClickAction(PointerEventData.InputButton.Right);
         // UIManager.Instance.ShowCharacterInfo(this);
     }
+    public bool CanBeSelected() {
+        return true;
+    }
     #endregion
 }

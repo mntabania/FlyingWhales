@@ -170,6 +170,12 @@ public class GoapAction : IReactable {
     public virtual LocationGridTile GetOverrideTargetTile(ActualGoapNode goapNode) {
         return null;
     }
+    /// <summary>
+    /// If the actionLocationType is set to NEARBY, will check this first, if it is null, then will use default way.
+    /// </summary>
+    /// <param name="goapNode"></param>
+    /// <returns>List of tile choices</returns>
+    public virtual List<LocationGridTile> NearbyLocationGetter(ActualGoapNode goapNode) { return null; }
     public virtual string ReactionToActor(Character witness, ActualGoapNode node, REACTION_STATUS status) { return string.Empty; }
     public virtual string ReactionToTarget(Character witness, ActualGoapNode node, REACTION_STATUS status) { return string.Empty; }
     public virtual string ReactionOfTarget(ActualGoapNode node, REACTION_STATUS status) { return string.Empty; }
