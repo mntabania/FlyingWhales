@@ -17,7 +17,7 @@ namespace Interrupts {
             int actualHPToLose = Mathf.CeilToInt(actor.maxHP * percentMaxHPToLose);
             Debug.Log(
                 $"Stumble of {actor.name} percent: {percentMaxHPToLose}, max hp: {actor.maxHP}, lost hp: {actualHPToLose}");
-            actor.AdjustHP(-actualHPToLose, ELEMENTAL_TYPE.Normal);
+            actor.AdjustHP(-actualHPToLose, ELEMENTAL_TYPE.Normal, showHPBar: true);
             if (actor.currentHP <= 0) {
                 actor.Death("Stumble");
             }

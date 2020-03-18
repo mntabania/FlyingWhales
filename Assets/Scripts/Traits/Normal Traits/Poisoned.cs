@@ -83,7 +83,7 @@ namespace Traits {
             base.OnTickStarted();
             if (!_isVenomous) {
                 characterOwner?.AdjustHP(-Mathf.RoundToInt(characterOwner.maxHP * (0.005f * characterOwner.traitContainer.stacks[name])),
-                ELEMENTAL_TYPE.Normal, true);
+                ELEMENTAL_TYPE.Normal, true, showHPBar: true);
             }
         }
         public override void OnInitiateMapObjectVisual(ITraitable traitable) {

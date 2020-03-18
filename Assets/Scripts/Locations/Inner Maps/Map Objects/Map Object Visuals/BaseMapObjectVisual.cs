@@ -6,6 +6,7 @@ using DG.Tweening;
 using Inner_Maps;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 /// <summary>
 /// Base class to be used for the visuals of any objects that are NPCSettlement Map Objects.
@@ -13,6 +14,12 @@ using UnityEngine.EventSystems;
 public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, IPointerExitHandler {
     [SerializeField] protected SpriteRenderer objectVisual;
     [SerializeField] protected SpriteRenderer hoverObject;
+
+    [Header("HP")]
+    public GameObject hpBarGO;
+    public Image hpFill;
+    public Image aspeedFill;
+
     public Transform statusIconsParent;
 
     private bool isHoverObjectStateLocked;
@@ -170,5 +177,29 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
         thisTransform.position = worldPos;
     }
     #endregion
-    
+
+    #region Combat
+    public void ShowHPBar(IPointOfInterest poi) {
+        hpBarGO.SetActive(true);
+        UpdateHP(poi);
+    }
+    public void HideHPBar() {
+        hpBarGO.SetActive(false);
+    }
+    public void UpdateHP(IPointOfInterest poi) {
+        if (hpBarGO.activeSelf) {
+            hpFill.fillAmount = (float) poi.currentHP / poi.maxHP;
+        }
+    }
+    public void QuickShowHPBar(IPointOfInterest poi) {
+        StartCoroutine(QuickShowHPBarCoroutine(poi));
+    }
+    private IEnumerator QuickShowHPBarCoroutine(IPointOfInterest poi) {
+        ShowHPBar(poi);
+        yield return new WaitForSeconds(1f);
+        if (!(poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER && (poi as Character).isInCombat)) {
+            HideHPBar();
+        }
+    }
+    #endregion
 }

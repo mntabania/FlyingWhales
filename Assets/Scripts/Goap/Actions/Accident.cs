@@ -51,7 +51,7 @@ public class Accident : GoapAction {
         int actualHPToLose = Mathf.CeilToInt(goapNode.actor.maxHP * percentMaxHPToLose);
         Debug.Log(
             $"Accident of {goapNode.actor.name} percent: {percentMaxHPToLose}, max hp: {goapNode.actor.maxHP}, lost hp: {actualHPToLose}");
-        goapNode.actor.AdjustHP(-actualHPToLose, ELEMENTAL_TYPE.Normal);
+        goapNode.actor.AdjustHP(-actualHPToLose, ELEMENTAL_TYPE.Normal, showHPBar: true);
         if (goapNode.actor.currentHP <= 0) {
             goapNode.actor.Death(deathFromAction: goapNode);
         }

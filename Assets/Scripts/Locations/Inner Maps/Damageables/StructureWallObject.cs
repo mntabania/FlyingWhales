@@ -33,7 +33,7 @@ public class StructureWallObject : MapObject<StructureWallObject>, ITraitable {
 
     #region HP
     public void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false,
-        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null) {
+        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false) {
         if (currentHP <= 0 && amount < 0) {
             return; //ignore
         }
@@ -77,7 +77,7 @@ public class StructureWallObject : MapObject<StructureWallObject>, ITraitable {
     }
     public void OnHitByAttackFrom(Character characterThatAttacked, CombatState state, ref string attackSummary) {
         //GameManager.Instance.CreateHitEffectAt(this, characterThatAttacked.combatComponent.elementalDamage.type);
-        AdjustHP(-characterThatAttacked.attackPower, characterThatAttacked.combatComponent.elementalDamage.type, source: characterThatAttacked);
+        AdjustHP(-characterThatAttacked.attackPower, characterThatAttacked.combatComponent.elementalDamage.type, source: characterThatAttacked, showHPBar: true);
     }
     #endregion
 

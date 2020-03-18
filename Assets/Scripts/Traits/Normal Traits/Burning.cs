@@ -179,7 +179,7 @@ namespace Traits {
                 (trait as Burning)?.SetSourceOfBurning(sourceOfBurning, chosen);
             }
 
-            owner.AdjustHP(-(int)(owner.maxHP * 0.02f), ELEMENTAL_TYPE.Normal, true, this);
+            owner.AdjustHP(-(int)(owner.maxHP * 0.02f), ELEMENTAL_TYPE.Normal, true, this, showHPBar: true);
             //if (owner is Character) {
             //    //Burning characters reduce their current hp by 2% of maxhp every tick. 
             //    //They also have a 6% chance to remove Burning effect but will not gain a Burnt trait afterwards. 

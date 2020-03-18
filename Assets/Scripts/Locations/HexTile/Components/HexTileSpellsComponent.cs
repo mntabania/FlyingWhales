@@ -227,7 +227,7 @@ public class HexTileSpellsComponent {
                 i--;
                 continue;
             }
-            poi.AdjustHP(-25, ELEMENTAL_TYPE.Normal);
+            poi.AdjustHP(-25, ELEMENTAL_TYPE.Normal, showHPBar: true);
             if (poi.gridTileLocation != null && !poi.traitContainer.HasTrait("Immovable")) {
                 if (!DOTween.IsTweening(poi.mapObjectVisual.transform)) {
                     if (UnityEngine.Random.Range(0, 100) < 30) {
@@ -358,7 +358,7 @@ public class HexTileSpellsComponent {
             GameManager.Instance.CreateParticleEffectAt(chosenTile, PARTICLE_EFFECT.Lightning_Strike);
             List<IPointOfInterest> pois = chosenTile.GetPOIsOnTile();
             for (int i = 0; i < pois.Count; i++) {
-                pois[i].AdjustHP(-100, ELEMENTAL_TYPE.Electric);
+                pois[i].AdjustHP(-100, ELEMENTAL_TYPE.Electric, showHPBar: true);
             }
         }
     }

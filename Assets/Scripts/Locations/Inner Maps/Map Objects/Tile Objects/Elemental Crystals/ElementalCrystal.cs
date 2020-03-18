@@ -21,7 +21,7 @@ public abstract class ElementalCrystal : TileObject {
     #endregion
 
     private void DealElementalDamage(ITraitable traitable) {
-        traitable.AdjustHP(-50, elementalType, true, this);
+        traitable.AdjustHP(-50, elementalType, true, this, showHPBar: true);
     }
 }
 

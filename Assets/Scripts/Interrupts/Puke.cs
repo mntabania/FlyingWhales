@@ -7,7 +7,7 @@ namespace Interrupts {
         public Puke() : base(INTERRUPT.Puke) {
             duration = 2;
             doesStopCurrentAction = true;
-            interruptIconString = GoapActionStateDB.Flirt_Icon;
+            interruptIconString = GoapActionStateDB.Sick_Icon;
         }
 
         #region Overrides

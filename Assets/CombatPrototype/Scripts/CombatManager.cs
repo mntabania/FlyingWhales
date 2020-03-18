@@ -110,7 +110,7 @@ public class CombatManager : MonoBehaviour {
         for (int i = 0; i < traitables.Count; i++) {
             ITraitable traitable = traitables[i];
             int damage = Mathf.RoundToInt(traitable.maxHP * damagePercentage);
-            traitable.AdjustHP(-damage, ELEMENTAL_TYPE.Fire);
+            traitable.AdjustHP(-damage, ELEMENTAL_TYPE.Fire, showHPBar: true);
             Burning burningTrait = traitable.traitContainer.GetNormalTrait<Burning>("Burning");
             if (burningTrait != null && burningTrait.sourceOfBurning == null) {
                 if (bs == null) {
@@ -154,7 +154,7 @@ public class CombatManager : MonoBehaviour {
         for (int i = 0; i < traitables.Count; i++) {
             ITraitable traitable = traitables[i];
             int damage = Mathf.RoundToInt(traitable.maxHP * damagePercentage);
-            traitable.AdjustHP(-damage, ELEMENTAL_TYPE.Water);
+            traitable.AdjustHP(-damage, ELEMENTAL_TYPE.Water, showHPBar: true);
             // Burning burningTrait = traitable.traitContainer.GetNormalTrait<Burning>();
             // if (burningTrait != null && burningTrait.sourceOfBurning == null) {
             //     if (bs == null) {
@@ -195,7 +195,7 @@ public class CombatManager : MonoBehaviour {
             }
             yield return new WaitForSeconds(0.1f);
             if (!traitables[i].traitContainer.HasTrait("Zapped")) {
-                traitables[i].AdjustHP(damage, ELEMENTAL_TYPE.Electric, true);
+                traitables[i].AdjustHP(damage, ELEMENTAL_TYPE.Electric, true, showHPBar: true);
             }
         }
     }

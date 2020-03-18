@@ -19,7 +19,7 @@ public class LightningData : SpellData {
         GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Lightning_Strike);
         List<IPointOfInterest> pois = targetTile.GetPOIsOnTile();
         for (int i = 0; i < pois.Count; i++) {
-            pois[i].AdjustHP(-100, ELEMENTAL_TYPE.Electric);
+            pois[i].AdjustHP(-100, ELEMENTAL_TYPE.Electric, showHPBar: true);
         }
     }
     public override void HighlightAffectedTiles(LocationGridTile tile) {

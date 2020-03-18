@@ -7,7 +7,7 @@ public class CureCharacter : GoapAction {
 
     public CureCharacter() : base(INTERACTION_TYPE.CURE_CHARACTER) {
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
-        actionIconString = GoapActionStateDB.FirstAid_Icon;
+        actionIconString = GoapActionStateDB.Cure_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, };
         isNotificationAnIntel = true;

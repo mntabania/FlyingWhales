@@ -37,7 +37,7 @@ public class SingleHeal : CombatAbility {
         if(targetPOI is Character) {
             Character character = targetPOI as Character;
             int heal = Mathf.CeilToInt((_healPercentage / 100f) * character.maxHP);
-            character.AdjustHP(heal, ELEMENTAL_TYPE.Normal);
+            character.AdjustHP(heal, ELEMENTAL_TYPE.Normal, showHPBar: true);
         }
         base.ActivateAbility(targetPOI);
     }

@@ -171,7 +171,7 @@ public class POITestingUI : MonoBehaviour {
             if (chosenType != ARTIFACT_TYPE.None) {
                 hasAdded = true;
                 LocationGridTile tile = poi.gridTileLocation.GetNearestUnoccupiedTileFromThis();
-                Artifact artifact = PlayerManager.Instance.CreateNewArtifact(chosenType);
+                Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(chosenType);
                 tile.structure.AddPOI(artifact, tile);
             }
         }

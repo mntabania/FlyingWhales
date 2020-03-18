@@ -667,7 +667,20 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //}
     //Character's death
     public void SetIsDead(bool isDead) {
-        _isDead = isDead;
+        if(_isDead != isDead) {
+            _isDead = isDead;
+            if (_isDead) {
+                if (race == RACE.HUMANS || race == RACE.ELVES) {
+                    PlayerAction raiseAction = new PlayerAction(PlayerDB.Raise_Skeleton_Action
+                        , () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.RAISE_DEAD].CanPerformAbilityTowards(this)
+                        , null
+                        , () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.RAISE_DEAD].ActivateAbility(this));
+                    AddPlayerAction(raiseAction);
+                }
+            } else {
+                RemovePlayerAction(PlayerDB.Raise_Skeleton_Action);
+            }
+        }
     }
     public void RaiseFromDeath(int level = 1, Action<Character> onReturnToLifeAction = null, Faction faction = null, RACE race = RACE.SKELETON, string className = "") {
         if (faction == null) {
@@ -2530,7 +2543,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
         ELEMENTAL_TYPE elementalType = characterThatAttacked.combatComponent.elementalDamage.type;
-        AdjustHP(-characterThatAttacked.attackPower, elementalType, source: characterThatAttacked);
+        AdjustHP(-characterThatAttacked.attackPower, elementalType, source: characterThatAttacked, showHPBar: true);
         attackSummary += $"\nDealt damage {stateComponent.character.attackPower}";
         //If the hostile reaches 0 hp, evalueate if he/she dies, get knock out, or get injured
         if (currentHP <= 0) {
@@ -2836,32 +2849,32 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     //Adjust current HP based on specified paramater, but HP must not go below 0
     public virtual void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false,
-        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null) {
+        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false) {
         
         CombatManager.Instance.DamageModifierByElements(ref amount, elementalDamageType, this);
         int previous = _currentHP;
         _currentHP += amount;
         _currentHP = Mathf.Clamp(_currentHP, 0, maxHP);
         Messenger.Broadcast(Signals.ADJUSTED_HP, this);
-        if (marker) {
+        if (marker && showHPBar) {
             if (marker.hpBarGO.activeSelf) {
-                marker.UpdateHP();
+                marker.UpdateHP(this);
             } else {
                 if (amount < 0 && _currentHP > 0) {
                     //only show hp bar if hp was reduced and hp is greater than 0
-                    marker.QuickShowHPBar();
+                    marker.QuickShowHPBar(this);
                 }
             }
-            if (amount < 0) {
-                Character responsibleCharacter = null;
-                if (source is Character) {
-                    responsibleCharacter = source as Character;
-                }
-                CombatManager.ElementalTraitProcessor etp = elementalTraitProcessor ?? 
-                                                            CombatManager.Instance.DefaultElementalTraitProcessor;
-                CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, 
-                    responsibleCharacter, etp);
+        }
+        if (amount < 0) {
+            Character responsibleCharacter = null;
+            if (source is Character) {
+                responsibleCharacter = source as Character;
             }
+            CombatManager.ElementalTraitProcessor etp = elementalTraitProcessor ??
+                                                        CombatManager.Instance.DefaultElementalTraitProcessor;
+            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this,
+                responsibleCharacter, etp);
         }
         if (triggerDeath && previous != _currentHP && _currentHP <= 0) {
             if(source != null) {

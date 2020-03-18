@@ -3,9 +3,9 @@ using Interrupts;
 using Traits;
 
 public abstract class Ent : Summon {
-    
+
     public override string raceClassName => "Ent";
-    
+
     protected Ent(SUMMON_TYPE summonType, string className) : base(summonType, className, RACE.ENT,
         UtilityScripts.Utilities.GetRandomGender()) {
         combatComponent.SetCombatMode(COMBAT_MODE.Passive);
@@ -22,16 +22,16 @@ public abstract class Ent : Summon {
         //traitContainer.AddTrait(this, "Fire Prone");
     }
     public override void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false,
-        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null) {
-        base.AdjustHP(amount, elementalDamageType, triggerDeath, source, elementalTraitProcessor);
-        if(amount < 0 && !isDead && !faction.isPlayerFaction) {
-            if(elementalDamageType == ELEMENTAL_TYPE.Fire) {
+        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false) {
+        base.AdjustHP(amount, elementalDamageType, triggerDeath, source, elementalTraitProcessor, showHPBar);
+        if (amount < 0 && !isDead && !faction.isPlayerFaction) {
+            if (elementalDamageType == ELEMENTAL_TYPE.Fire) {
                 combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
             } else {
                 combatComponent.SetCombatMode(COMBAT_MODE.Defend);
             }
             JobQueueItem job = jobQueue.GetJob(JOB_TYPE.STAND_STILL);
-            if(job != null) {
+            if (job != null) {
                 job.ForceCancelJob(false);
             }
         }
@@ -49,4 +49,3 @@ public abstract class Ent : Summon {
         placeForWoodPile.SetReservedType(TILE_OBJECT_TYPE.WOOD_PILE);
     }
 }
-

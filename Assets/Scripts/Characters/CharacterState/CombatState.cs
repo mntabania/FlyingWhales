@@ -79,7 +79,7 @@ public class CombatState : CharacterState {
     }
     protected override void StartState() {
         //stateComponent.character.DecreaseCanWitness();
-        stateComponent.character.marker.ShowHPBar();
+        stateComponent.character.marker.ShowHPBar(stateComponent.character);
         stateComponent.character.marker.SetAnimationBool("InCombat", true);
         //Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, stateComponent.character, "combat");
         Messenger.AddListener<Character>(Signals.DETERMINE_COMBAT_REACTION, DetermineReaction);

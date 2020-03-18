@@ -6,7 +6,7 @@ using Traits;
 public class CraftTileObject : GoapAction {
 
     public CraftTileObject() : base(INTERACTION_TYPE.CRAFT_TILE_OBJECT) {
-        actionIconString = GoapActionStateDB.Work_Icon;
+        actionIconString = GoapActionStateDB.Build_Icon;
         
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };

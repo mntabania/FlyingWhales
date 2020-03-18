@@ -53,6 +53,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public LocationGridTile previousTile { get; private set; }
     public Dictionary<RESOURCE, int> storedResources { get; private set; }
     protected Dictionary<RESOURCE, int> maxResourceValues { get; set; }
+    public List<PlayerAction> actions { get; private set; }
 
     private bool hasSubscribedToListeners;
 
@@ -336,6 +337,37 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     }
     protected virtual string GenerateName() { return UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(tileObjectType.ToString()); }
     public virtual void Neutralize() { }
+    public virtual void ConstructDefaultActions() {
+        actions = new List<PlayerAction>();
+
+        if (tileObjectType == TILE_OBJECT_TYPE.RAVENOUS_SPIRIT || tileObjectType == TILE_OBJECT_TYPE.FEEBLE_SPIRIT ||
+            tileObjectType == TILE_OBJECT_TYPE.FORLORN_SPIRIT) {
+            return;
+        }
+        PlayerAction destroyAction = new PlayerAction(PlayerDB.Destroy_Action,
+            () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.DESTROY].CanPerformAbilityTowards(this),
+            null,
+            () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.DESTROY].ActivateAbility(this));
+        PlayerAction igniteAction = new PlayerAction(PlayerDB.Ignite_Action,
+            () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.IGNITE].CanPerformAbilityTowards(this),
+            null,
+            () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.IGNITE].ActivateAbility(this));
+        PlayerAction poisonAction = new PlayerAction(PlayerDB.Poison_Action,
+            () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.SPOIL].CanPerformAbilityTowards(this),
+            null,
+            () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.SPOIL].ActivateAbility(this));
+        PlayerAction animateAction = new PlayerAction(PlayerDB.Animate_Action, () => false, null);
+        PlayerAction seizeAction = new PlayerAction(PlayerDB.Seize_Object_Action,
+            () => !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && this.mapVisual != null && (this.isBeingCarriedBy != null || this.gridTileLocation != null),
+            null,
+            () => PlayerManager.Instance.player.seizeComponent.SeizePOI(this));
+
+        AddPlayerAction(destroyAction);
+        AddPlayerAction(igniteAction);
+        AddPlayerAction(poisonAction);
+        AddPlayerAction(animateAction);
+        AddPlayerAction(seizeAction);
+    }
     #endregion
 
     #region IPointOfInterest
@@ -412,13 +444,23 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         return null;
     }
     public virtual void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false,
-        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null) {
+        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false) {
         if (currentHP == 0 && amount < 0) {
             return; //hp is already at minimum, do not allow any more negative adjustments
         }
         CombatManager.Instance.DamageModifierByElements(ref amount, elementalDamageType, this);
         currentHP += amount;
         currentHP = Mathf.Clamp(currentHP, 0, maxHP);
+        if (mapVisual && mapVisual.hpBarGO && showHPBar) {
+            if (mapVisual.hpBarGO.activeSelf) {
+                mapVisual.UpdateHP(this);
+            } else {
+                if (amount < 0 && currentHP > 0) {
+                    //only show hp bar if hp was reduced and hp is greater than 0
+                    mapVisual.QuickShowHPBar(this);
+                }
+            }
+        }
         if (amount < 0) {
             //ELEMENTAL_TYPE elementalType = ELEMENTAL_TYPE.Normal;
             //if (source is Character) {
@@ -456,7 +498,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         if (currentHP <= 0) {
             return; //if hp is already 0, do not deal damage
         }
-        AdjustHP(-characterThatAttacked.attackPower, elementalType, source: characterThatAttacked);
+        AdjustHP(-characterThatAttacked.attackPower, elementalType, source: characterThatAttacked, showHPBar: true);
         attackSummary = $"{attackSummary}\nDealt damage {characterThatAttacked.attackPower.ToString()}";
         if (currentHP <= 0) {
             attackSummary = $"{attackSummary}\n{name}'s hp has reached 0.";
@@ -886,38 +928,6 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     }
 
     #region Player Action Target
-    public List<PlayerAction> actions { get; private set; }
-    public void ConstructDefaultActions() {
-        actions = new List<PlayerAction>();
-
-        if (tileObjectType == TILE_OBJECT_TYPE.RAVENOUS_SPIRIT || tileObjectType == TILE_OBJECT_TYPE.FEEBLE_SPIRIT ||
-            tileObjectType == TILE_OBJECT_TYPE.FORLORN_SPIRIT) {
-            return;
-        }
-        PlayerAction destroyAction = new PlayerAction(PlayerDB.Destroy_Action, 
-            () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.DESTROY].CanPerformAbilityTowards(this),
-            null,
-            () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.DESTROY].ActivateAbility(this));
-        PlayerAction igniteAction = new PlayerAction(PlayerDB.Ignite_Action, 
-            () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.IGNITE].CanPerformAbilityTowards(this),
-            null,
-            () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.IGNITE].ActivateAbility(this));
-        PlayerAction poisonAction = new PlayerAction(PlayerDB.Poison_Action, 
-            () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.SPOIL].CanPerformAbilityTowards(this),
-            null,
-            () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.SPOIL].ActivateAbility(this));
-        PlayerAction animateAction = new PlayerAction(PlayerDB.Animate_Action, () => false, null);
-        PlayerAction seizeAction = new PlayerAction(PlayerDB.Seize_Object_Action, 
-            () => !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && this.mapVisual != null && (this.isBeingCarriedBy != null || this.gridTileLocation != null),
-            null,
-            () => PlayerManager.Instance.player.seizeComponent.SeizePOI(this));
-        
-        AddPlayerAction(destroyAction);
-        AddPlayerAction(igniteAction);
-        AddPlayerAction(poisonAction);
-        AddPlayerAction(animateAction);
-        AddPlayerAction(seizeAction);
-    }
     public void AddPlayerAction(PlayerAction action) {
         if (actions.Contains(action) == false) {
             actions.Add(action);

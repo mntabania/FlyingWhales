@@ -4,6 +4,7 @@ using System.Linq;
 using Inner_Maps.Location_Structures;
 using Ruinarch;
 using UnityEngine;
+using Inner_Maps;
 using UtilityScripts;
 
 public class PlayerDataGeneration : MapGenerationComponent {
@@ -35,7 +36,7 @@ public class PlayerDataGeneration : MapGenerationComponent {
 			Region randomRegion = CollectionUtilities.GetRandomElement(GridMap.Instance.allRegions);
 			LocationStructure wilderness = randomRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
 			ARTIFACT_TYPE randomArtifact = CollectionUtilities.GetRandomElement(artifactChoices);
-			Artifact artifact = PlayerManager.Instance.CreateNewArtifact(randomArtifact);
+			Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(randomArtifact);
 			wilderness.AddPOI(artifact);
 			artifactChoices.Remove(randomArtifact);
 		}

@@ -7,7 +7,7 @@ public class Repair : GoapAction {
 
     public Repair() : base(INTERACTION_TYPE.REPAIR) {
         //actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
-        actionIconString = GoapActionStateDB.Work_Icon;
+        actionIconString = GoapActionStateDB.Repair_Icon;
         
         canBeAdvertisedEvenIfActorIsUnavailable = true;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
@@ -99,7 +99,7 @@ public class Repair : GoapAction {
         }
     }
     public void PerTickRepairSuccess(ActualGoapNode goapNode) {
-        goapNode.poiTarget.AdjustHP(20, ELEMENTAL_TYPE.Normal);
+        goapNode.poiTarget.AdjustHP(20, ELEMENTAL_TYPE.Normal, showHPBar: true);
     }
     public void AfterRepairSuccess(ActualGoapNode goapNode) {
         goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Burnt");

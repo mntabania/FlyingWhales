@@ -25,13 +25,6 @@ public class Artifact : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.BOOBY_TRAP);
         //RemoveAdvertisedAction(INTERACTION_TYPE.REPAIR);
     }
-    //public Artifact(SaveDataArtifactSlot data) {
-    //    this.type = data.type;
-    //    level = 1;
-    //    TILE_OBJECT_TYPE parsed = (TILE_OBJECT_TYPE) Enum.Parse(typeof(TILE_OBJECT_TYPE), type.ToString(), true);
-    //    poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.TILE_OBJECT_DESTROY };
-    //    Initialize(data, parsed);
-    //}
     public Artifact(SaveDataArtifact data) {
         this.data = ScriptableObjectsManager.Instance.GetArtifactData(data.artifactType);
         //advertisedActions = new List<INTERACTION_TYPE>();
@@ -69,6 +62,8 @@ public class Artifact : TileObject {
             ArtifactUnlockable unlockable = data.unlocks[i];
             Relock(unlockable);    
         }
+    }
+    public virtual void ActivateArtifactEffect() {
     }
     public bool CanGainSomethingNewByActivating() {
         for (int i = 0; i < data.unlocks.Length; i++) {

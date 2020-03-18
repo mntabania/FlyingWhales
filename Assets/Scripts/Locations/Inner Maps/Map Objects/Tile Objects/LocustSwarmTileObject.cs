@@ -18,7 +18,7 @@ public class LocustSwarmTileObject : MovingTileObject {
         Assert.IsNotNull(_locustSwarmMapObjectVisual, $"Map Object Visual of {this} is null!");
     }
     public override void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false,
-        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null) {
+        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false) {
         if (currentHP == 0 && amount < 0) {
             return; //hp is already at minimum, do not allow any more negative adjustments
         }

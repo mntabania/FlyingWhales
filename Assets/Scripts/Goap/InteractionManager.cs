@@ -23,6 +23,9 @@ public partial class InteractionManager : MonoBehaviour {
     public Dictionary<INTERRUPT, Interrupt> interruptData { get; private set; }
 
 
+    [Header("Actions")]
+    public StringSpriteDictionary actionIconDictionary;
+
     private void Awake() {
         Instance = this;
     }
