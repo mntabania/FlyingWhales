@@ -1389,6 +1389,7 @@
             <e p="Chat.cs" t="Include" />
             <e p="Cowering.cs" t="Include" />
             <e p="CreateFaction.cs" t="Include" />
+            <e p="Feared.cs" t="Include" />
             <e p="FeelingBrokenhearted.cs" t="Include" />
             <e p="FeelingConcerned.cs" t="Include" />
             <e p="FeelingEmbarassed.cs" t="Include" />
@@ -1851,16 +1852,30 @@
                 <e p="SnowEnt.cs" t="Include" />
               </e>
               <e p="FireElemental.cs" t="Include" />
+              <e p="Ghost.cs" t="Include" />
               <e p="GiantSpider.cs" t="Include" />
               <e p="Golem.cs" t="Include" />
               <e p="Incubus.cs" t="Include" />
               <e p="Kobold.cs" t="Include" />
               <e p="Mimic.cs" t="Include" />
+              <e p="Nymph" t="Include">
+                <e p="IceNymph.cs" t="Include" />
+                <e p="Nymph.cs" t="Include" />
+                <e p="WaterNymph.cs" t="Include" />
+                <e p="WindNymph.cs" t="Include" />
+              </e>
               <e p="SeducerSummon.cs" t="Include" />
               <e p="Skeleton.cs" t="Include" />
+              <e p="Sludge.cs" t="Include" />
               <e p="SmallSpider.cs" t="Include" />
               <e p="Succubus.cs" t="Include" />
               <e p="Summon.cs" t="Include" />
+              <e p="Wisp" t="Include">
+                <e p="EarthenWisp.cs" t="Include" />
+                <e p="ElectricWisp.cs" t="Include" />
+                <e p="FireWisp.cs" t="Include" />
+                <e p="Wisp.cs" t="Include" />
+              </e>
               <e p="Wolf.cs" t="Include" />
             </e>
           </e>

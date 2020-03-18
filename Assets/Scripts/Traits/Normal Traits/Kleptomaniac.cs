@@ -173,7 +173,7 @@ namespace Traits {
         private void CheckForClearNoItemsList() {
             //Store the character into the Kleptomaniac trait if it does not have any items. 
             //Exclude all characters listed in Kleptomaniac trait from Steal actions. Clear out the list at the start of every even day.
-            if (UtilityScripts.Utilities.IsEven(GameManager.days)) {
+            if (UtilityScripts.Utilities.IsEven(GameManager.Instance.Today().day)) {
                 ClearNoItemsList();
             }
         }

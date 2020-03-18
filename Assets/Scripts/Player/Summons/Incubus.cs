@@ -6,7 +6,7 @@ using UnityEngine;
 public class Incubus : SeducerSummon {
 
     public const string ClassName = "Incubus";
-    
+    public override string raceClassName => ClassName;
     public Incubus() : base (SUMMON_TYPE.Incubus, GENDER.MALE, ClassName) {
         //combatComponent.SetElementalType(ELEMENTAL_TYPE.Electric);
     }

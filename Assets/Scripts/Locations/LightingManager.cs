@@ -22,7 +22,7 @@ public class LightingManager : MonoBehaviour {
     private int _lightToDarkTickDifference;
 
     public enum Light_State { Dark, Bright }
-    public Light_State currentLightState;
+    public Light_State currentLightState = Light_State.Bright;
     [SerializeField] private bool isTransitioning;
     private Tweener _currentTween;
     
@@ -36,8 +36,6 @@ public class LightingManager : MonoBehaviour {
         Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         ComputeLightingValues();
         SetGlobalLightIntensity(_brightestIntensity);
-        SetCurrentLightState(Light_State.Bright);
-        UpdateAllLightsBasedOnTimeOfDay(GameManager.Instance.Today());
     }
     private void OnTickEnded() {
         UpdateAllLightsBasedOnTimeOfDay(GameManager.Instance.Today());

@@ -8,16 +8,6 @@ public partial class InteractionManager {
     public bool IsSuicideJobStillValid(Character character) {
         return character.traitContainer.HasTrait("Sulking");
     }
-    public bool CanMoveOut(Character character) {
-        TIME_IN_WORDS time = TIME_IN_WORDS.MORNING;
-        if (character.traitContainer.HasTrait("Nocturnal")) {
-            //if nocturnal get after midnight
-            time = TIME_IN_WORDS.AFTER_MIDNIGHT;
-        }
-        return character.traitContainer.HasTrait("Leader") /*character.role.roleType != CHARACTER_ROLE.LEADER*/ &&
-               GameManager.GetTimeInWordsOfTick(GameManager.Instance.tick) ==
-               time; //Only non-leaders can take move out job, and it must also be in the morning time.
-    }
     public bool CanDoCraftFurnitureJob(Character character, JobQueueItem item) {
         TILE_OBJECT_TYPE furnitureToCreate = ((item as GoapPlanJob).targetPOI as TileObject).tileObjectType;
         return furnitureToCreate.CanBeCraftedBy(character);

@@ -362,18 +362,21 @@ public class Save {
     }
 
     public void SaveCurrentDate() {
-        month = GameManager.Instance.month;
-        day = GameManager.days;
-        year = GameManager.Instance.year;
-        tick = GameManager.Instance.tick;
+        GameDate today = GameManager.Instance.Today();
+        month = today.month;
+        day = today.day;
+        year = today.year;
+        tick = today.tick;
         continuousDays = GameManager.Instance.continuousDays;
     }
     public void LoadCurrentDate() {
-        GameManager.Instance.month = month;
-        GameManager.days = day;
-        GameManager.Instance.year = year;
-        GameManager.Instance.tick = tick;
+        GameDate today = GameManager.Instance.Today();
+        today.day = day;
+        today.month = month;
+        today.year = year;
+        today.tick = tick;
         GameManager.Instance.continuousDays = continuousDays;
+        GameManager.Instance.SetToday(today);
     }
 
     public void SaveNotifications() {

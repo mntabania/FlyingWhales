@@ -1,0 +1,27 @@
+﻿{
+  "_className": "Ice Nymph",
+  "_baseAttackPower": 120,
+  "_attackPowerPerLevel": 40,
+  "_baseSpeed": 70,
+  "_speedPerLevel": 18,
+  "_hpPerLevel": 77,
+  "_baseHP": 180,
+  "_baseAttackSpeed": 1200,
+  "_attackRange": 1.5,
+  "_runSpeedMod": 0.0,
+  "_walkSpeedMod": 0.0,
+  "_traitNames": [
+    "Beast",
+    "Combatant"
+  ],
+  "_identifier": "Beast",
+  "_isNormalNonCombatant": false,
+  "_elementalType": 4,
+  "_jobType": 2,
+  "_combatPosition": 1,
+  "_combatTarget": 0,
+  "_attackType": 0,
+  "_rangeType": 1,
+  "_damageType": 2,
+  "_occupiedTileType": 0
+}

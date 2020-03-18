@@ -29748,11 +29748,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ce5a378faa4afc42b950ac6b26006da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  month: 1
-  year: 80
-  tick: 144
-  continuousDays: 1
+  startMonth: 1
+  startDay: 0
   startYear: 80
+  startTick: 144
+  continuousDays: 1
   currProgressionSpeed: 0
   progressionSpeed: 1
   displayFPS: 0
@@ -29789,7 +29789,6 @@ MonoBehaviour:
     - {fileID: 1196197512126470922, guid: 9928b067168bdda459b85c0d7d5ece9a, type: 3}
     - {fileID: 9032662682557629287, guid: 27807dd5bd51992428bc840ebb9d07d0, type: 3}
     - {fileID: 3943589384005629521, guid: 9d3bdd1f0adb6b1408d558ff3ca392bd, type: 3}
-  pauseTickEnded2: 0
   lastProgressionBeforePausing: 
 --- !u!114 &557822220
 MonoBehaviour:
@@ -113059,6 +113058,8 @@ MonoBehaviour:
   _brightPeriodRange:
     lowerBound: 6
     upperBound: 18
+  currentLightState: 1
+  isTransitioning: 0
 --- !u!1 &1921633472
 GameObject:
   m_ObjectHideFlags: 0

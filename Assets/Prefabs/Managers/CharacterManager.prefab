@@ -1423,6 +1423,28 @@ MonoBehaviour:
       characterClassAssets:
         m_keys: []
         m_values: []
+  - raceName: GHOST
+    race: 31
+    neutralAssets:
+      characterClassAssets:
+        m_keys:
+        - Ghost
+        m_values:
+        - defaultSprite: {fileID: 21300000, guid: 73b300d1a236b024db515b3f4adb5357,
+            type: 3}
+          animationSprites:
+          - {fileID: 21300000, guid: 7aef4be6078a0cd4ab0ae6203e31dfae, type: 3}
+          - {fileID: 21300000, guid: 73b300d1a236b024db515b3f4adb5357, type: 3}
+          - {fileID: 21300000, guid: 206b39fed6b572142bac6c29ae6d9a57, type: 3}
+          - {fileID: 21300000, guid: 28ac27b7e65f0f7469bd8c96e61558ba, type: 3}
+    maleAssets:
+      characterClassAssets:
+        m_keys: []
+        m_values: []
+    femaleAssets:
+      characterClassAssets:
+        m_keys: []
+        m_values: []
   - raceName: GOLEM
     race: 18
     neutralAssets:
@@ -2205,6 +2227,28 @@ MonoBehaviour:
       characterClassAssets:
         m_keys: []
         m_values: []
+  - raceName: NYMPH
+    race: 28
+    neutralAssets:
+      characterClassAssets:
+        m_keys:
+        - Default
+        m_values:
+        - defaultSprite: {fileID: 21300000, guid: 7c240af2c0c3f804aa80f32d37b06031,
+            type: 3}
+          animationSprites:
+          - {fileID: 21300000, guid: 9373827a7696d1a4098b5ecf59e2a27e, type: 3}
+          - {fileID: 21300000, guid: 7c240af2c0c3f804aa80f32d37b06031, type: 3}
+          - {fileID: 21300000, guid: 4c738a13665548d44a36920de817555d, type: 3}
+          - {fileID: 21300000, guid: c73efdb0e6134af4d9a706f5a48114e6, type: 3}
+    maleAssets:
+      characterClassAssets:
+        m_keys: []
+        m_values: []
+    femaleAssets:
+      characterClassAssets:
+        m_keys: []
+        m_values: []
   - raceName: PIG
     race: 24
     neutralAssets:
@@ -2282,6 +2326,28 @@ MonoBehaviour:
       characterClassAssets:
         m_keys: []
         m_values: []
+  - raceName: SLUDGE
+    race: 30
+    neutralAssets:
+      characterClassAssets:
+        m_keys:
+        - Sludge
+        m_values:
+        - defaultSprite: {fileID: 21300000, guid: 1435f7e66b58e284d806d86ba999b36d,
+            type: 3}
+          animationSprites:
+          - {fileID: 21300000, guid: 333b2a23cc784ac4995655e6efe65d3b, type: 3}
+          - {fileID: 21300000, guid: 1435f7e66b58e284d806d86ba999b36d, type: 3}
+          - {fileID: 21300000, guid: 6031d9cbab4405c488c0745bb455f7fa, type: 3}
+          - {fileID: 21300000, guid: 73526bc1dc7eb8141a51d1db77ac3465, type: 3}
+    maleAssets:
+      characterClassAssets:
+        m_keys: []
+        m_values: []
+    femaleAssets:
+      characterClassAssets:
+        m_keys: []
+        m_values: []
   - raceName: SPIDER
     race: 17
     neutralAssets:
@@ -2304,6 +2370,28 @@ MonoBehaviour:
           - {fileID: 21300000, guid: e5bedffbf427d1846b26d7a41ec8548a, type: 3}
           - {fileID: 21300000, guid: 749f257e1ffec40458b2503145a26d11, type: 3}
           - {fileID: 21300000, guid: 942c572ae512eef4487593032decbc3a, type: 3}
+    maleAssets:
+      characterClassAssets:
+        m_keys: []
+        m_values: []
+    femaleAssets:
+      characterClassAssets:
+        m_keys: []
+        m_values: []
+  - raceName: WISP
+    race: 29
+    neutralAssets:
+      characterClassAssets:
+        m_keys:
+        - Default
+        m_values:
+        - defaultSprite: {fileID: 21300000, guid: d139064de7483314b98368e73a0e82e2,
+            type: 3}
+          animationSprites:
+          - {fileID: 21300000, guid: 4e315b53befd47c45b7b485559b0a2f1, type: 3}
+          - {fileID: 21300000, guid: d139064de7483314b98368e73a0e82e2, type: 3}
+          - {fileID: 21300000, guid: 18526bb08f15ba74ab46399387da1289, type: 3}
+          - {fileID: 21300000, guid: 24f8ad77eee732a46b0d3fbb7f1c368c, type: 3}
     maleAssets:
       characterClassAssets:
         m_keys: []
