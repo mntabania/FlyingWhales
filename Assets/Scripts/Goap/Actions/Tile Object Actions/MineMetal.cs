@@ -9,7 +9,7 @@ public class MineMetal : GoapAction {
     //private const int MIN_SUPPLY = 20;
 
     public MineMetal() : base(INTERACTION_TYPE.MINE_METAL) {
-        actionIconString = GoapActionStateDB.Work_Icon;
+        actionIconString = GoapActionStateDB.Mine_Icon;
         
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };

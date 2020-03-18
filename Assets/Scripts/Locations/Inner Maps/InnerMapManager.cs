@@ -501,21 +501,21 @@ namespace Inner_Maps {
         public void LoadInitialSettlementItems(NPCSettlement npcSettlement) {
             ////Reference: https://trello.com/c/Kuqt3ZSP/2610-put-2-healing-potions-in-the-warehouse-at-start-of-the-game
             LocationStructure mainStorage = npcSettlement.mainStorage;
-            //for (int i = 0; i < 4; i++) {
-            //    mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.HEALING_POTION));
-            //}
-            //for (int i = 0; i < 2; i++) {
-            //    mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.TOOL));
-            //}
-            //for (int i = 0; i < 2; i++) {
-            //    mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.ANTIDOTE));
-            //}
+            for (int i = 0; i < 4; i++) {
+                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.HEALING_POTION));
+            }
+            for (int i = 0; i < 2; i++) {
+                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.TOOL));
+            }
+            for (int i = 0; i < 2; i++) {
+                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.ANTIDOTE));
+            }
             //for (int i = 0; i < 2; i++) {
             //    mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.WATER_FLASK));
             //}
-            //for (int i = 0; i < 2; i++) {
-            //    mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.POISON_FLASK));
-            //}
+            for (int i = 0; i < 2; i++) {
+                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.POISON_FLASK));
+            }
             //for (int i = 0; i < 2; i++) {
             //    mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.EMBER));
             //}
@@ -600,6 +600,29 @@ namespace Inner_Maps {
                 }
             }
         }
+        #endregion
+
+        #region Artifacts
+
+        #region Artifacts
+        public Artifact CreateNewArtifact(ARTIFACT_TYPE artifactType) {
+            Artifact newArtifact = CreateNewArtifactFromType(artifactType);
+            return newArtifact;
+            //return new Artifact(artifactType);
+        }
+        public Artifact CreateNewArtifact(SaveDataArtifact data) {
+            Artifact newArtifact = CreateNewArtifactClassFromType(data) as Artifact;
+            return newArtifact;
+        }
+        private Artifact CreateNewArtifactFromType(ARTIFACT_TYPE artifactType) {
+            var typeName = UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(artifactType.ToString());
+            return System.Activator.CreateInstance(System.Type.GetType(typeName)) as Artifact;
+        }
+        private object CreateNewArtifactClassFromType(SaveDataArtifact data) {
+            var typeName = UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(data.artifactType.ToString());
+            return System.Activator.CreateInstance(System.Type.GetType(typeName), data);
+        }
+        #endregion
         #endregion
     }
 }

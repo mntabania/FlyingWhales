@@ -451,7 +451,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
     }
     public void OnItemRemovedFromLocation(TileObject item, LocationStructure structure) {
-        //CheckAreaInventoryJobs(structure, item);
+        CheckAreaInventoryJobs(structure, item);
     }
     public bool IsRequiredByLocation(TileObject item) {
         if (item.gridTileLocation != null && item.gridTileLocation.structure == mainStorage) {
@@ -879,9 +879,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     private void OnJobRemovedFromAvailableJobs(JobQueueItem job) {
         jobManager.OnRemoveFromAvailableJobs(job);
         JobManager.Instance.OnFinishJob(job);
-        //if (job.jobType == JOB_TYPE.CRAFT_OBJECT) {
-        //    CheckAreaInventoryJobs(mainStorage, null);
-        //}
+        if (job.jobType == JOB_TYPE.CRAFT_OBJECT) {
+            CheckAreaInventoryJobs(mainStorage, null);
+        }
     }
     //private void CreateReplaceTileObjectJob(TileObject removedObj, LocationGridTile removedFrom) {
     //    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REPLACE_TILE_OBJECT, INTERACTION_TYPE.REPLACE_TILE_OBJECT, new Dictionary<INTERACTION_TYPE, object[]>() {

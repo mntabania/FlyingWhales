@@ -547,7 +547,7 @@ namespace Inner_Maps.Location_Structures {
                 tile.ClearWallObjects();
                 IPointOfInterest obj = tile.objHere;
                 if (obj != null) {
-                    obj.AdjustHP(-tile.objHere.maxHP, ELEMENTAL_TYPE.Normal);
+                    obj.AdjustHP(-tile.objHere.maxHP, ELEMENTAL_TYPE.Normal, showHPBar: true);
                     obj.gridTileLocation?.structure.RemovePOI(obj); //because sometimes adjusting the hp of the object to 0 does not remove it?
                 }
                 

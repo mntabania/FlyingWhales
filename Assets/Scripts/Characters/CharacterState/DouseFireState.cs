@@ -21,7 +21,7 @@ public class DouseFireState : CharacterState {
         characterState = CHARACTER_STATE.DOUSE_FIRE;
         //stateCategory = CHARACTER_STATE_CATEGORY.MAJOR;
         duration = 0;
-        actionIconString = GoapActionStateDB.Drink_Icon;
+        actionIconString = GoapActionStateDB.Douse_Icon;
         _fires = new List<ITraitable>();
     }
 

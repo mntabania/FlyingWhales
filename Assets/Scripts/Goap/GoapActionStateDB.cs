@@ -15,6 +15,24 @@ public static class GoapActionStateDB {
     public static string Flee_Icon = "Flee";
     public static string Patrol_Icon = "Patrol";
     public static string Watch_Icon = "Watch";
+    public static string Anger_Icon = "Anger";
+    public static string Approval_Icon = "Approval";
+    public static string Build_Icon = "Build";
+    public static string Bury_Icon = "Bury";
+    public static string Chop_Icon = "Chop";
+    public static string Clean_Icon = "Clean";
+    public static string Cowering_Icon = "Cowering";
+    public static string Cure_Icon = "Cure";
+    public static string Douse_Icon = "Douse";
+    public static string Harvest_Icon = "Harvest";
+    public static string Haul_Icon = "Haul";
+    public static string Magic_Icon = "Magic";
+    public static string Mine_Icon = "Mine";
+    public static string Mock_Icon = "Mock";
+    public static string Repair_Icon = "Repair";
+    public static string Sad_Icon = "Sad";
+    public static string Shock_Icon = "Shock";
+    public static string Sick_Icon = "Sick";
 
     public static string Drink_Blood_Icon = "Drink Blood";
     public static string Flirt_Icon = "Flirt";

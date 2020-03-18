@@ -873,9 +873,9 @@ public class Player : ILeader, IObjectManipulator {
     }
     public void AddArtifact(ARTIFACT_TYPE artifactType, bool showNewArtifactUI = false) {
         if (!HasArtifactOfType(artifactType)) {
-            Artifact newArtifact = PlayerManager.Instance.CreateNewArtifact(artifactType);
+            Artifact newArtifact = InnerMapManager.Instance.CreateNewArtifact(artifactType);
             artifacts.Add(newArtifact);
-            Messenger.Broadcast<Artifact>(Signals.PLAYER_GAINED_ARTIFACT, newArtifact);
+            Messenger.Broadcast(Signals.PLAYER_GAINED_ARTIFACT, newArtifact);
             if (showNewArtifactUI) {
                 PlayerUI.Instance.newAbilityUI.ShowNewAbilityUI(currentMinionLeader, newArtifact);
             }

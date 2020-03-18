@@ -150,7 +150,7 @@ public class LocustSwarmMapObjectVisual : MovingMapObjectVisual<TileObject> {
     }
     private void CheckObjectForEffects(ITraitable obj) {
         if (obj.traitContainer.GetNormalTrait<Trait>("Edible") != null) {
-            obj.AdjustHP(-obj.currentHP, ELEMENTAL_TYPE.Normal, true, _locustSwarm);
+            obj.AdjustHP(-obj.currentHP, ELEMENTAL_TYPE.Normal, true, _locustSwarm, showHPBar: true);
         }
         if (obj.traitContainer.GetNormalTrait<Trait>("Burning") != null) {
             _locustSwarm.AdjustHP(-Mathf.FloorToInt(_locustSwarm.maxHP * 0.2f), ELEMENTAL_TYPE.Fire, true, obj);

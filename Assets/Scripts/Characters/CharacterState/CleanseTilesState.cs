@@ -15,7 +15,7 @@ public class CleanseTilesState : CharacterState {
         stateName = "Cleanse Tiles State";
         characterState = CHARACTER_STATE.CLEANSE_TILES;
         duration = 0;
-        actionIconString = GoapActionStateDB.Work_Icon;
+        actionIconString = GoapActionStateDB.Clean_Icon;
     }
     
     #region Overrides

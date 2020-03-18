@@ -50,7 +50,7 @@ public class Sacrifice : CombatAbility {
             }
 
             for (int i = 0; i < affectedByExplosion.Count; i++) {
-                affectedByExplosion[i].AdjustHP(-1000, ELEMENTAL_TYPE.Normal, true, source: this);
+                affectedByExplosion[i].AdjustHP(-1000, ELEMENTAL_TYPE.Normal, true, source: this, showHPBar: true);
             }
 
             character.Death("sacrifice");

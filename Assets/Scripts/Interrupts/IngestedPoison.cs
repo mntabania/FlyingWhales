@@ -9,7 +9,7 @@ namespace Interrupts {
 		public IngestedPoison() : base(INTERRUPT.Ingested_Poison) {
 			duration = 0;
 			isSimulateneous = true;
-			interruptIconString = GoapActionStateDB.Flirt_Icon;
+			interruptIconString = GoapActionStateDB.Sick_Icon;
 		}
 
 		#region Overrides

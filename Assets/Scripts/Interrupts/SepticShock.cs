@@ -9,7 +9,7 @@ namespace Interrupts {
             duration = 4;
             doesStopCurrentAction = true;
             doesDropCurrentJob = true;
-            interruptIconString = GoapActionStateDB.Flirt_Icon;
+            interruptIconString = GoapActionStateDB.Shock_Icon;
         }
 
         #region Overrides

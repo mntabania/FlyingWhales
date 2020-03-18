@@ -50,6 +50,7 @@ namespace Inner_Maps {
         public List<StructureWallObject> walls { get; }
         public LocationGridTileCollection collectionOwner { get; private set; }
         public bool isCorrupted => groundType == Ground_Type.Corrupted;
+        public bool hasLandmine { get; private set; }
 
         #region Pathfinding
         public List<LocationGridTile> ValidTiles { get { return FourNeighbours().Where(o => o.tileType == Tile_Type.Empty).ToList(); } }
@@ -382,6 +383,9 @@ namespace Inner_Maps {
                         trait.OnEnterGridTile(character, genericTileObject);
                     }
                 }
+            }
+            if (hasLandmine) {
+                TriggerLandmine(character);
             }
         }
         public void RemoveCharacterHere(Character character) {
@@ -964,6 +968,43 @@ namespace Inner_Maps {
             }
         }
         #endregion
+
+        #region Landmine
+        public void SetHasLandmine(bool state) {
+            hasLandmine = state;
+            //TODO: Update visuals here
+        }
+        private void TriggerLandmine(Character triggeredBy) {
+            SetHasLandmine(false);
+            List<LocationGridTile> tiles = GetTilesInRadius(3, includeCenterTile: true, includeTilesInDifferentStructure: true);
+            BurningSource bs = null;
+            for (int i = 0; i < tiles.Count; i++) {
+                LocationGridTile tile = tiles[i];
+                List<IPointOfInterest> pois = tile.GetPOIsOnTile();
+                for (int j = 0; j < pois.Count; j++) {
+                    IPointOfInterest poi = pois[j];
+                    if (poi.gridTileLocation == null) {
+                        continue; //skip
+                    }
+                    if (poi is TileObject obj) {
+                        if (obj.tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
+                            obj.AdjustHP(-100, ELEMENTAL_TYPE.Fire,
+                                elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref bs), showHPBar: true);
+                        } else {
+                            CombatManager.Instance.ApplyElementalDamage(0, ELEMENTAL_TYPE.Fire, obj,
+                                elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref bs));
+                        }
+                    } else if (poi is Character character) {
+                        character.AdjustHP(-100, ELEMENTAL_TYPE.Fire, true,
+                            elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref bs), showHPBar: true);
+                    } else {
+                        poi.AdjustHP(-100, ELEMENTAL_TYPE.Fire,
+                            elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref bs), showHPBar: true);
+                    }
+                }
+            }
+        }
+        #endregion  
     }
 
     [Serializable]

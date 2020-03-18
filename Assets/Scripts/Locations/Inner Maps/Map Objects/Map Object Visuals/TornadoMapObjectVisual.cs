@@ -264,7 +264,7 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
     private void DealDamage(IDamageable damageable) {
         if (damageable.CanBeDamaged()) {
             //0.35f
-            damageable.AdjustHP(-(int)(damageable.maxHP * 0.55f), ELEMENTAL_TYPE.Normal, true, _tornado);
+            damageable.AdjustHP(-(int)(damageable.maxHP * 0.55f), ELEMENTAL_TYPE.Normal, true, _tornado, showHPBar: true);
         }
     }
     private void TrySuckIn(IDamageable damageable) {
@@ -277,7 +277,7 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
     }
     private void OnDamagableReachedThis(IDamageable damageable) {
         damageable.mapObjectVisual?.OnReachTarget();
-        damageable.AdjustHP(-damageable.maxHP, ELEMENTAL_TYPE.Normal, true, _tornado);
+        damageable.AdjustHP(-damageable.maxHP, ELEMENTAL_TYPE.Normal, true, _tornado, showHPBar: true);
     }
     private bool CanBeSuckedIn(IDamageable damageable) {
         return damageable.CanBeDamaged() && (damageable is GenericTileObject) == false 

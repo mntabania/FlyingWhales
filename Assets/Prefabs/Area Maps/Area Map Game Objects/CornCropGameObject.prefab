@@ -15,6 +15,9 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 2708391221318546907}
   hoverObject: {fileID: 2708388828886894357}
+  hpBarGO: {fileID: 4262818465789832126}
+  hpFill: {fileID: 3005738125951949291}
+  aspeedFill: {fileID: 8467122077929964678}
   statusIconsParent: {fileID: 7342964965005174171}
   growingSprites:
     m_keys:
@@ -118,3 +121,33 @@ SpriteRenderer:
     type: 3}
   m_PrefabInstance: {fileID: 2838617087032410969}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &4262818465789832126 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2039103671744800999, guid: d9d549510a4f590468f27e4140b34e5e,
+    type: 3}
+  m_PrefabInstance: {fileID: 2838617087032410969}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3005738125951949291 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1068001642904623794, guid: d9d549510a4f590468f27e4140b34e5e,
+    type: 3}
+  m_PrefabInstance: {fileID: 2838617087032410969}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &8467122077929964678 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5973331767661807583, guid: d9d549510a4f590468f27e4140b34e5e,
+    type: 3}
+  m_PrefabInstance: {fileID: 2838617087032410969}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

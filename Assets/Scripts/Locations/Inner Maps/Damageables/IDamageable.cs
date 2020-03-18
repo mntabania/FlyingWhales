@@ -13,7 +13,7 @@ public interface IDamageable {
     BaseMapObjectVisual mapObjectVisual { get; }
 
     void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false, object source = null,
-        CombatManager.ElementalTraitProcessor elementalTraitProcessor = null);
+        CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false);
     void OnHitByAttackFrom(Character characterThatAttacked, CombatState state, ref string attackSummary);
     bool CanBeDamaged();
 }

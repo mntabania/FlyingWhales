@@ -5963,18 +5963,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   artifactDataDictionary:
-    m_keys: 0100000002000000030000000400000005000000060000000700000008000000090000000a000000
+    m_keys: 010000000200000003000000
     m_values:
-    - {fileID: 11400000, guid: 2f51d06165fddae48b8b6ed14cf8a964, type: 2}
-    - {fileID: 11400000, guid: 70215bb817c3de449a23cd279009e1ac, type: 2}
-    - {fileID: 11400000, guid: fb2069091604d244584f167c786de11c, type: 2}
-    - {fileID: 11400000, guid: 58aa7aa81f35a68419df375a25c840ad, type: 2}
-    - {fileID: 11400000, guid: 7e6fb9e06e58fbf419fd4a0bd6e46275, type: 2}
-    - {fileID: 11400000, guid: 3b8e226cb6e985d4b84c81df940ee369, type: 2}
-    - {fileID: 11400000, guid: 37442aec056d6ae4386b4e322063e811, type: 2}
-    - {fileID: 11400000, guid: 207118b8c180305409e83b8acb42060d, type: 2}
-    - {fileID: 11400000, guid: 943582b399ad3274f9f983cab86a91f9, type: 2}
-    - {fileID: 11400000, guid: e17be985790aeb8409fe8431d4d9cbbe, type: 2}
+    - {fileID: 11400000, guid: a06c6826c3249124fa64c50f14016013, type: 2}
+    - {fileID: 11400000, guid: 55a2220ba9084a644a20537b6021661d, type: 2}
+    - {fileID: 11400000, guid: 051534f3b07254c429e27ac33e7d83d9, type: 2}
   elementalDamageDataDictionary:
     m_keys: 00000000010000000200000003000000040000000500000006000000
     m_values:
@@ -31699,6 +31692,7 @@ MonoBehaviour:
     - Stop
     - Return To Portal
     - Combat Mode
+    - Raise Skeleton
     m_values:
     - {fileID: 21300000, guid: 1ea6d3c87219ca34fbdaeb2464a68bc6, type: 3}
     - {fileID: 21300000, guid: b509b7ae41091354f8a5b5a1f47718ea, type: 3}
@@ -31726,6 +31720,7 @@ MonoBehaviour:
     - {fileID: 21300000, guid: b509b7ae41091354f8a5b5a1f47718ea, type: 3}
     - {fileID: 21300000, guid: 5609a9ba1552aa6409aa027ddbcd2ceb, type: 3}
     - {fileID: 21300000, guid: 77e63770c7ecb474c9aa378a33e9e6ee, type: 3}
+    - {fileID: 21300000, guid: 425077bbaa6443144a6a7bc4c13caccd, type: 3}
   spellsScrollRect: {fileID: 905962142}
   spellsContainerGO: {fileID: 1251235321}
   spellItemPrefab: {fileID: 7346978857189099377, guid: 0610d1d3c55c69041bdf0b19d48ad3de,
@@ -97218,6 +97213,83 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9e1f1c124631ba448a3e02d32c615ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  actionIconDictionary:
+    m_keys:
+    - Eat
+    - Hostile
+    - Joy
+    - Sleep
+    - Social
+    - Work
+    - Drink
+    - Entertain
+    - Explore
+    - First Aid
+    - Flee
+    - Patrol
+    - Drink Blood
+    - Flirt
+    - Pray
+    - Restrain
+    - Steal
+    - Stealth
+    - Watch
+    - Anger
+    - Approval
+    - Build
+    - Bury
+    - Chop
+    - Clean
+    - Cowering
+    - Cure
+    - Douse
+    - Harvest
+    - Haul
+    - Magic
+    - Mine
+    - Mock
+    - Repair
+    - Sad
+    - Shock
+    - Sick
+    m_values:
+    - {fileID: 21300000, guid: 5a786d93d2807cf40b59d2f8e2175578, type: 3}
+    - {fileID: 21300000, guid: 95f79231f93a3f0499e46aa40e19fcef, type: 3}
+    - {fileID: 21300000, guid: 4a350f5e5db0b524b8f529b0332d1359, type: 3}
+    - {fileID: 21300000, guid: a0bf001f1e836dd4fb26d8cdbda6577a, type: 3}
+    - {fileID: 21300000, guid: 5a6c315d820be4a47be6b608d557c894, type: 3}
+    - {fileID: 21300000, guid: d0440b2a2239fdc4d9c82c807fb76a59, type: 3}
+    - {fileID: 21300000, guid: 8f376b7b2ce182042be10ffc0f1a307b, type: 3}
+    - {fileID: 21300000, guid: 1605f245bccd651418a6da868ce4c504, type: 3}
+    - {fileID: 21300000, guid: abd97990b07f57849b3c5ec8e58ae570, type: 3}
+    - {fileID: 21300000, guid: cf39aa580a482b743bbf80920ec0814c, type: 3}
+    - {fileID: 21300000, guid: b4f2c5f24d7b89045aac39d116bfb8c2, type: 3}
+    - {fileID: 21300000, guid: c84e5847398fb8b4f99cdef74326146b, type: 3}
+    - {fileID: 21300000, guid: 5395d83e70672be4484df767e840dd66, type: 3}
+    - {fileID: 21300000, guid: b6fc588bdc1dda14a9e12c28752c9654, type: 3}
+    - {fileID: 21300000, guid: e46f0a460945f654384cefc0e6c410a6, type: 3}
+    - {fileID: 21300000, guid: 7d8bb54ee481ae448bd0c3866adc496f, type: 3}
+    - {fileID: 21300000, guid: 4155cf0c332b7864d9c20452435e1894, type: 3}
+    - {fileID: 21300000, guid: f73219a174dca49489ec11e6d5c62e46, type: 3}
+    - {fileID: 21300000, guid: f521dc0fe05fcd841adca17c3297d6b1, type: 3}
+    - {fileID: 21300000, guid: b53ae4d8efa07034fab7abae49e4a756, type: 3}
+    - {fileID: 21300000, guid: 966231cba479ae54e9c349f1adcca162, type: 3}
+    - {fileID: 21300000, guid: bee8aa795ec3e18458fce4bf84697bf8, type: 3}
+    - {fileID: 21300000, guid: b8a1dfc70f25b144fbbad2ea3892376b, type: 3}
+    - {fileID: 21300000, guid: 28f8c9f7d1cd3b34d9b092f15c276d8e, type: 3}
+    - {fileID: 21300000, guid: bc7f90f1b9be3404485e4de86fff5b35, type: 3}
+    - {fileID: 21300000, guid: 0d63b4565c710da43ad864486aed4127, type: 3}
+    - {fileID: 21300000, guid: 1cce23fa43f5f8d4098a394573311fa6, type: 3}
+    - {fileID: 21300000, guid: 926c1799cbb535247b4995e06413c418, type: 3}
+    - {fileID: 21300000, guid: b4cfeca0d4e8cfa458e389f4903fa890, type: 3}
+    - {fileID: 21300000, guid: a37c8faae3749b943b722a020c453f46, type: 3}
+    - {fileID: 21300000, guid: 40a05016a0c63df4a9cec8988924ab11, type: 3}
+    - {fileID: 21300000, guid: c015668983091ca4983942f51044d8bd, type: 3}
+    - {fileID: 21300000, guid: 8abf9ac056a94364ca1ba402b951f22d, type: 3}
+    - {fileID: 21300000, guid: 019388d01ffc1134bbfed1d2f413e19e, type: 3}
+    - {fileID: 21300000, guid: 8d39531c7a7c13a44bd46ffc73a27fb9, type: 3}
+    - {fileID: 21300000, guid: e1e2629f3b2fa3a4eb4330d424520b2d, type: 3}
+    - {fileID: 21300000, guid: d7d4d5448e2a2604c95aad638d97ddd4, type: 3}
 --- !u!1 &1681643117
 GameObject:
   m_ObjectHideFlags: 0

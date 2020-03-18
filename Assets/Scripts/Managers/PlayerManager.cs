@@ -46,7 +46,7 @@ public class PlayerManager : MonoBehaviour {
             , SPELL_TYPE.SPAWN_BOULDER, SPELL_TYPE.WATER_BOMB, SPELL_TYPE.MANIFEST_FOOD
             , SPELL_TYPE.BRIMSTONES, SPELL_TYPE.SPLASH_POISON, SPELL_TYPE.LOCUST_SWARM, SPELL_TYPE.BLIZZARD, SPELL_TYPE.RAIN
             , SPELL_TYPE.SPOIL, SPELL_TYPE.BALL_LIGHTNING, SPELL_TYPE.ELECTRIC_STORM, SPELL_TYPE.FROSTY_FOG, SPELL_TYPE.VAPOR, SPELL_TYPE.FIRE_BALL
-            , SPELL_TYPE.POISON_BLOOM
+            , SPELL_TYPE.POISON_BLOOM, SPELL_TYPE.LANDMINE,
         };
 
         allSpellsData = new Dictionary<SPELL_TYPE, SpellData>();
@@ -77,16 +77,16 @@ public class PlayerManager : MonoBehaviour {
         
         LandmarkManager.Instance.OwnSettlement(player.playerFaction, existingPlayerNpcSettlement);
         
-        player.AddArtifact(CreateNewArtifact(ARTIFACT_TYPE.Grasping_Hands));
-        player.AddArtifact(CreateNewArtifact(ARTIFACT_TYPE.Snatching_Hands));
-        player.AddArtifact(CreateNewArtifact(ARTIFACT_TYPE.Abominable_Heart));
-        player.AddArtifact(CreateNewArtifact(ARTIFACT_TYPE.Dark_Matter));
-        player.AddArtifact(CreateNewArtifact(ARTIFACT_TYPE.Looking_Glass));
-        player.AddArtifact(CreateNewArtifact(ARTIFACT_TYPE.Black_Scripture));
-        player.AddArtifact(CreateNewArtifact(ARTIFACT_TYPE.False_Gem));
-        player.AddArtifact(CreateNewArtifact(ARTIFACT_TYPE.Naga_Eyes));
-        player.AddArtifact(CreateNewArtifact(ARTIFACT_TYPE.Tormented_Chalice));
-        player.AddArtifact(CreateNewArtifact(ARTIFACT_TYPE.Lightning_Rod));
+        //player.AddArtifact(CreateNewArtifact(ARTIFACT_TYPE.Grasping_Hands));
+        //player.AddArtifact(CreateNewArtifact(ARTIFACT_TYPE.Snatching_Hands));
+        //player.AddArtifact(CreateNewArtifact(ARTIFACT_TYPE.Abominable_Heart));
+        //player.AddArtifact(CreateNewArtifact(ARTIFACT_TYPE.Dark_Matter));
+        //player.AddArtifact(CreateNewArtifact(ARTIFACT_TYPE.Looking_Glass));
+        //player.AddArtifact(CreateNewArtifact(ARTIFACT_TYPE.Black_Scripture));
+        //player.AddArtifact(CreateNewArtifact(ARTIFACT_TYPE.False_Gem));
+        //player.AddArtifact(CreateNewArtifact(ARTIFACT_TYPE.Naga_Eyes));
+        //player.AddArtifact(CreateNewArtifact(ARTIFACT_TYPE.Tormented_Chalice));
+        //player.AddArtifact(CreateNewArtifact(ARTIFACT_TYPE.Lightning_Rod));
         
         PlayerUI.Instance.UpdateUI();
     }
@@ -241,26 +241,6 @@ public class PlayerManager : MonoBehaviour {
                 return new Taunt();
         }
         return null;
-    }
-    #endregion
-
-    #region Artifacts
-    public Artifact CreateNewArtifact(ARTIFACT_TYPE artifactType) {
-        // Artifact newArtifact = CreateNewArtifactClassFromType(artifactType) as Artifact;
-        // return newArtifact;
-        return new Artifact(artifactType);
-    }
-    public Artifact CreateNewArtifact(SaveDataArtifact data) {
-        Artifact newArtifact = CreateNewArtifactClassFromType(data) as Artifact;
-        return newArtifact;
-    }
-    private object CreateNewArtifactClassFromType(ARTIFACT_TYPE artifactType) {
-        var typeName = UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(artifactType.ToString());
-        return System.Activator.CreateInstance(System.Type.GetType(typeName));
-    }
-    private object CreateNewArtifactClassFromType(SaveDataArtifact data) {
-        var typeName = UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(data.artifactType.ToString());
-        return System.Activator.CreateInstance(System.Type.GetType(typeName), data);
     }
     #endregion
 

@@ -259,5 +259,13 @@ public class TraitManager : MonoBehaviour {
         tileObjectTraitProcessor = new TileObjectTraitProcessor();
         defaultTraitProcessor = new DefaultTraitProcessor();
     }
+    public void ProcessBurningTrait(ITraitable traitable, Trait trait, ref BurningSource burningSource) {
+        if (trait is Burning burning) {
+            if (burningSource == null) {
+                burningSource = new BurningSource(traitable.gridTileLocation.parentMap.region);
+            }
+            burning.SetSourceOfBurning(burningSource, traitable);
+        }
+    }
     #endregion
 }

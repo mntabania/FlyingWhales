@@ -10,6 +10,7 @@ public class RaiseDead : PlayerSpell {
         tier = 2;
         SetDefaultCooldownTime(24);
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER, SPELL_TARGET.TILE_OBJECT };
+        _level = 1;
         //abilityTags.Add(ABILITY_TAG.MAGIC);
     }
 
@@ -81,4 +82,26 @@ public class RaiseDeadData : SpellData {
     public RaiseDeadData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER, SPELL_TARGET.TILE_OBJECT };
     }
+    #region Overrides
+    public override void ActivateAbility(IPointOfInterest targetPOI) {
+        Character target = null;
+        if (targetPOI is Character) {
+            target = targetPOI as Character;
+        } else if (targetPOI is Tombstone) {
+            target = (targetPOI as Tombstone).character;
+        }
+        target.RaiseFromDeath(1, faction: PlayerManager.Instance.player.playerFaction, className: target.characterClass.className);
+
+        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_raise_dead");
+        log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddLogToInvolvedObjects();
+        PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+    }
+    public override bool CanPerformAbilityTowards(Character targetCharacter) {
+        if (!targetCharacter.isDead || !targetCharacter.IsInOwnParty()) {
+            return false;
+        }
+        return base.CanPerformAbilityTowards(targetCharacter);
+    }
+    #endregion
 }

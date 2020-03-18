@@ -7,7 +7,7 @@ namespace Interrupts {
         public Mock() : base(INTERRUPT.Mock) {
             duration = 0;
             isSimulateneous = true;
-            interruptIconString = GoapActionStateDB.Flirt_Icon;
+            interruptIconString = GoapActionStateDB.Mock_Icon;
         }
 
         #region Overrides

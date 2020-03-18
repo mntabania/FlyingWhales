@@ -7,7 +7,7 @@ namespace Interrupts {
         public Angered() : base(INTERRUPT.Angered) {
             duration = 0;
             isSimulateneous = true;
-            interruptIconString = GoapActionStateDB.Flirt_Icon;
+            interruptIconString = GoapActionStateDB.Anger_Icon;
         }
 
         #region Overrides

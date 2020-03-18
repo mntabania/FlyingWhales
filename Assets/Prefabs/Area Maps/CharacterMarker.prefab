@@ -647,7 +647,7 @@ GameObject:
   - component: {fileID: 222644449953090106}
   - component: {fileID: 114106397574004456}
   m_Layer: 14
-  m_Name: BG (1)
+  m_Name: AttackSpeed
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -886,47 +886,6 @@ MonoBehaviour:
   buttonCollider: {fileID: 61734465707681460}
   bloodSplatterEffect: {fileID: 6358000325474896422}
   bloodSplatterEffectRenderer: {fileID: 3982679798551417162}
-  actionIconDictionary:
-    m_keys:
-    - Eat
-    - Hostile
-    - Joy
-    - Sleep
-    - Social
-    - Work
-    - Drink
-    - Entertain
-    - Explore
-    - First Aid
-    - Flee
-    - Patrol
-    - Drink Blood
-    - Flirt
-    - Pray
-    - Restrain
-    - Steal
-    - Stealth
-    - Watch
-    m_values:
-    - {fileID: 21300000, guid: 5a786d93d2807cf40b59d2f8e2175578, type: 3}
-    - {fileID: 21300000, guid: 95f79231f93a3f0499e46aa40e19fcef, type: 3}
-    - {fileID: 21300000, guid: 4a350f5e5db0b524b8f529b0332d1359, type: 3}
-    - {fileID: 21300000, guid: a0bf001f1e836dd4fb26d8cdbda6577a, type: 3}
-    - {fileID: 21300000, guid: 5a6c315d820be4a47be6b608d557c894, type: 3}
-    - {fileID: 21300000, guid: d0440b2a2239fdc4d9c82c807fb76a59, type: 3}
-    - {fileID: 21300000, guid: 8f376b7b2ce182042be10ffc0f1a307b, type: 3}
-    - {fileID: 21300000, guid: 1605f245bccd651418a6da868ce4c504, type: 3}
-    - {fileID: 21300000, guid: abd97990b07f57849b3c5ec8e58ae570, type: 3}
-    - {fileID: 21300000, guid: cf39aa580a482b743bbf80920ec0814c, type: 3}
-    - {fileID: 21300000, guid: b4f2c5f24d7b89045aac39d116bfb8c2, type: 3}
-    - {fileID: 21300000, guid: c84e5847398fb8b4f99cdef74326146b, type: 3}
-    - {fileID: 21300000, guid: 5395d83e70672be4484df767e840dd66, type: 3}
-    - {fileID: 21300000, guid: b6fc588bdc1dda14a9e12c28752c9654, type: 3}
-    - {fileID: 21300000, guid: e46f0a460945f654384cefc0e6c410a6, type: 3}
-    - {fileID: 21300000, guid: 7d8bb54ee481ae448bd0c3866adc496f, type: 3}
-    - {fileID: 21300000, guid: 4155cf0c332b7864d9c20452435e1894, type: 3}
-    - {fileID: 21300000, guid: f73219a174dca49489ec11e6d5c62e46, type: 3}
-    - {fileID: 21300000, guid: f521dc0fe05fcd841adca17c3297d6b1, type: 3}
   animator: {fileID: 95186138413260264}
   animationListener: {fileID: 114755964225770220}
   currentAnimation: 
@@ -1132,7 +1091,7 @@ GameObject:
   - component: {fileID: 222107300213264328}
   - component: {fileID: 114254607747093228}
   m_Layer: 14
-  m_Name: BG
+  m_Name: HPBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

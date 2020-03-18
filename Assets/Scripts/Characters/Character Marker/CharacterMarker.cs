@@ -26,9 +26,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
     [SerializeField] private ParticleSystem bloodSplatterEffect;
     [SerializeField] private ParticleSystemRenderer bloodSplatterEffectRenderer;
 
-    [Header("Actions")]
-    [SerializeField] private StringSpriteDictionary actionIconDictionary;
-
     [Header("Animation")]
     public Animator animator;
     [SerializeField] private CharacterMarkerAnimationListener animationListener;
@@ -42,9 +39,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public CharacterMarkerVisionCollision visionCollision;
 
     [Header("Combat")]
-    public GameObject hpBarGO;
-    public Image hpFill;
-    public Image aspeedFill;
     public Transform projectileParent;
 
     [Header("For Testing")]
@@ -424,7 +418,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         //    return;
         //}
         if (character.isConversing && !character.isInCombat) {
-            actionIcon.sprite = actionIconDictionary[GoapActionStateDB.Social_Icon];
+            actionIcon.sprite = InteractionManager.Instance.actionIconDictionary[GoapActionStateDB.Social_Icon];
             //if (character.isFlirting) {
             //    actionIcon.sprite = actionIconDictionary[GoapActionStateDB.Flirt_Icon];
             //} else {
@@ -436,7 +430,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         
         if (character.interruptComponent.isInterrupted) {
             if (character.interruptComponent.currentInterrupt.interruptIconString != GoapActionStateDB.No_Icon) {
-                actionIcon.sprite = actionIconDictionary[character.interruptComponent.currentInterrupt.interruptIconString];
+                actionIcon.sprite = InteractionManager.Instance.actionIconDictionary[character.interruptComponent.currentInterrupt.interruptIconString];
                 actionIcon.gameObject.SetActive(true);
             } else {
                 actionIcon.gameObject.SetActive(false);
@@ -444,7 +438,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             return;
         } else if (character.interruptComponent.hasTriggeredSimultaneousInterrupt) {
             if (character.interruptComponent.triggeredSimultaneousInterrupt.interruptIconString != GoapActionStateDB.No_Icon) {
-                actionIcon.sprite = actionIconDictionary[character.interruptComponent.triggeredSimultaneousInterrupt.interruptIconString];
+                actionIcon.sprite = InteractionManager.Instance.actionIconDictionary[character.interruptComponent.triggeredSimultaneousInterrupt.interruptIconString];
                 actionIcon.gameObject.SetActive(true);
             } else {
                 actionIcon.gameObject.SetActive(false);
@@ -456,20 +450,20 @@ public class CharacterMarker : MapObjectVisual<Character> {
         
         if (character.currentActionNode != null) {
             if (character.currentActionNode.action.actionIconString != GoapActionStateDB.No_Icon) {
-                actionIcon.sprite = actionIconDictionary[character.currentActionNode.action.actionIconString];
+                actionIcon.sprite = InteractionManager.Instance.actionIconDictionary[character.currentActionNode.action.actionIconString];
                 actionIcon.gameObject.SetActive(true);
             } else {
                 actionIcon.gameObject.SetActive(false);
             }
         } else if (character.stateComponent.currentState != null) {
             if (character.stateComponent.currentState.actionIconString != GoapActionStateDB.No_Icon) {
-                actionIcon.sprite = actionIconDictionary[character.stateComponent.currentState.actionIconString];
+                actionIcon.sprite = InteractionManager.Instance.actionIconDictionary[character.stateComponent.currentState.actionIconString];
                 actionIcon.gameObject.SetActive(true);
             } else {
                 actionIcon.gameObject.SetActive(false);
             }
         } else if (hasFleePath) {
-            actionIcon.sprite = actionIconDictionary[GoapActionStateDB.Flee_Icon];
+            actionIcon.sprite = InteractionManager.Instance.actionIconDictionary[GoapActionStateDB.Flee_Icon];
             actionIcon.gameObject.SetActive(true);
         } else {
             //no action or state
@@ -1056,16 +1050,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public void SetMarkerColor(Color color) {
         mainImg.color = color;
     }
-    public void QuickShowHPBar() {
-        StartCoroutine(QuickShowHPBarCoroutine());
-    }
-    private IEnumerator QuickShowHPBarCoroutine() {
-        ShowHPBar();
-        yield return new WaitForSeconds(1f);
-        if (!(character.stateComponent.currentState is CombatState)) {
-            HideHPBar();
-        }
-    }
     private void UpdateHairState() {
         //TODO: Find another way to unify this
         if (character.characterClass.className == "Mage" || character.visuals.portraitSettings.hair == -1 || 
@@ -1578,18 +1562,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
     #endregion
 
     #region Combat
-    public void ShowHPBar() {
-        hpBarGO.SetActive(true);
-        UpdateHP();
-    }
-    public void HideHPBar() {
-        hpBarGO.SetActive(false);
-    }
-    public void UpdateHP() {
-        if (hpBarGO.activeSelf) {
-            hpFill.fillAmount = (float) character.currentHP / character.maxHP;
-        }
-    }
     public void UpdateAttackSpeedMeter() {
         if (hpBarGO.activeSelf) {
             aspeedFill.fillAmount = attackSpeedMeter / character.attackSpeed;

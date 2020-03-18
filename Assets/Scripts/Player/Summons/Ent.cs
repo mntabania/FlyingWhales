@@ -24,8 +24,8 @@ public class Ent : Summon {
         //traitContainer.AddTrait(this, "Fire Prone");
     }
     public override void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false,
-        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null) {
-        base.AdjustHP(amount, elementalDamageType, triggerDeath, source, elementalTraitProcessor);
+        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false) {
+        base.AdjustHP(amount, elementalDamageType, triggerDeath, source, elementalTraitProcessor, showHPBar);
         if(amount < 0 && !isDead && !faction.isPlayerFaction) {
             if(elementalDamageType == ELEMENTAL_TYPE.Fire) {
                 combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);

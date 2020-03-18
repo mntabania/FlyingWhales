@@ -30,7 +30,7 @@ public class Flamestrike : CombatAbility {
         for (int i = 0; i < targetPOIs.Count; i++) {
             if (targetPOIs[i] is Character) {
                 Character character = targetPOIs[i] as Character;
-                character.AdjustHP(-_damage, ELEMENTAL_TYPE.Normal, true, source: this);
+                character.AdjustHP(-_damage, ELEMENTAL_TYPE.Normal, true, source: this, showHPBar: true);
             }
         }
         base.ActivateAbility(targetPOIs);

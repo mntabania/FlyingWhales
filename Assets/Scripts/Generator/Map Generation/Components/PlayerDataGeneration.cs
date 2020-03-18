@@ -4,6 +4,7 @@ using System.Linq;
 using Inner_Maps.Location_Structures;
 using Ruinarch;
 using UnityEngine;
+using Inner_Maps;
 
 public class PlayerDataGeneration : MapGenerationComponent {
 	public override IEnumerator Execute(MapGenerationData data) {
@@ -37,7 +38,7 @@ public class PlayerDataGeneration : MapGenerationComponent {
 			if (settlementChoices.Count > 0) {
 				NPCSettlement chosenNpcSettlement = UtilityScripts.CollectionUtilities.GetRandomElement(settlementChoices);
 				ARTIFACT_TYPE artifactType = UtilityScripts.CollectionUtilities.GetRandomElement(artifactChoices);
-				Artifact artifact = PlayerManager.Instance.CreateNewArtifact(artifactType);
+				Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(artifactType);
 				chosenNpcSettlement.mainStorage.AddPOI(artifact);
 				artifactChoices.Remove(artifactType);
 				settlementChoices.Remove(chosenNpcSettlement);
@@ -56,7 +57,7 @@ public class PlayerDataGeneration : MapGenerationComponent {
 				BaseLandmark chosenLair = UtilityScripts.CollectionUtilities.GetRandomElement(monsterLairChoices);
 				LocationStructure structure = chosenLair.tileLocation.settlementOnTile.GetRandomStructureOfType(STRUCTURE_TYPE.MONSTER_LAIR);
 				ARTIFACT_TYPE artifactType = UtilityScripts.CollectionUtilities.GetRandomElement(artifactChoices);
-				Artifact artifact = PlayerManager.Instance.CreateNewArtifact(artifactType);
+				Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(artifactType);
 				structure.AddPOI(artifact);
 				artifactChoices.Remove(artifactType);
 				monsterLairChoices.Remove(chosenLair);
@@ -64,7 +65,7 @@ public class PlayerDataGeneration : MapGenerationComponent {
 				Region chosenRegion = UtilityScripts.CollectionUtilities.GetRandomElement(nonPlayerRegions);
 				LocationStructure wilderness = chosenRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
 				ARTIFACT_TYPE artifactType = UtilityScripts.CollectionUtilities.GetRandomElement(artifactChoices);
-				Artifact artifact = PlayerManager.Instance.CreateNewArtifact(artifactType);
+				Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(artifactType);
 				wilderness.AddPOI(artifact);
 				artifactChoices.Remove(artifactType);
 				Debug.Log($"No more monster lairs for {artifact}. It was placed at {artifact.gridTileLocation} at {chosenRegion.name} instead.");
