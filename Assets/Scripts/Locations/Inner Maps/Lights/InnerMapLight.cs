@@ -9,28 +9,23 @@ using Random = UnityEngine.Random;
 public class InnerMapLight : MonoBehaviour{
 
     [SerializeField] private Light2D _light;
-    [SerializeField] private TimeOfDayLightDictionary _timeOfDayLightDictionary;
+    [SerializeField] private float _brightestIntensity;
+    [SerializeField] private float _darkestIntensity;
     private Tweener _flickerTweener;
     
     
     private void OnEnable() {
-        Messenger.AddListener<TIME_IN_WORDS>(Signals.UPDATE_INNER_MAP_LIGHT, UpdateLightBasedOnTimeOfDay);
-        UpdateLightBasedOnTimeOfDay(GameManager.GetCurrentTimeInWordsOfTick());
+        Messenger.AddListener<LightingManager.Light_State>(Signals.UPDATE_INNER_MAP_LIGHT, UpdateLightBasedOnTimeOfDay);
+        UpdateLightBasedOnTimeOfDay(LightingManager.Instance.currentLightState);
     }
     private void OnDisable() {
-        Messenger.RemoveListener<TIME_IN_WORDS>(Signals.UPDATE_INNER_MAP_LIGHT, UpdateLightBasedOnTimeOfDay);
+        Messenger.RemoveListener<LightingManager.Light_State>(Signals.UPDATE_INNER_MAP_LIGHT, UpdateLightBasedOnTimeOfDay);
     }
     
-    private void UpdateLightBasedOnTimeOfDay(TIME_IN_WORDS timeInWords) {
-        Assert.IsTrue(_timeOfDayLightDictionary.ContainsKey(timeInWords), 
-            $"There was no light setting for time of day {timeInWords.ToString()} for {name}");
-        float targetLight = _timeOfDayLightDictionary[timeInWords];
-        Tweener lightTween = DOTween.To(SetLightIntensity, _light.intensity, targetLight, 1f);
-        // if (timeInWords == TIME_IN_WORDS.EARLY_NIGHT || timeInWords == TIME_IN_WORDS.LATE_NIGHT || timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
-        //     lightTween.OnComplete(StartFlicker);
-        // } else {
-        //     StopFlicker();
-        // }
+    private void UpdateLightBasedOnTimeOfDay(LightingManager.Light_State lightState) {
+        //set intensity as inverse of given light state.
+        var targetIntensity = lightState == LightingManager.Light_State.Bright ? _darkestIntensity : _brightestIntensity;
+        DOTween.To(SetLightIntensity, _light.intensity, targetIntensity, 1f);
     }
     private void StartFlicker() {
         _flickerTweener = DOTween.To(SetLightIntensity, _light.intensity, Random.Range(_light.intensity - 0.4f, _light.intensity + 0.4f),

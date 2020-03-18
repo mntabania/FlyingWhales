@@ -32,6 +32,12 @@ public class JobQueueItem {
 
     //Additional data
     public bool cannotBePushedBack { get; protected set; }
+    
+    //object pool
+    /// <summary>
+    /// Has this job been returned to the pool?
+    /// </summary>
+    protected bool hasBeenReset;
 
     public JobQueueItem() {
         id = -1;
@@ -40,6 +46,7 @@ public class JobQueueItem {
 
     protected void Initialize(JOB_TYPE jobType, IJobOwner owner) {
         id = UtilityScripts.Utilities.SetID(this);
+        hasBeenReset = false;
         this.jobType = jobType;
         this.originalOwner = owner;
         if (this.originalOwner == null) {
@@ -53,6 +60,7 @@ public class JobQueueItem {
     }
     protected void Initialize(SaveDataJobQueueItem data) {
         id = UtilityScripts.Utilities.SetID(this, data.id);
+        hasBeenReset = false;
         name = data.name;
         jobType = data.jobType;
         isNotSavable = data.isNotSavable;
@@ -271,6 +279,7 @@ public class JobQueueItem {
     #region Job Object Pool
     public virtual void Reset() {
         Debug.Log($"{GameManager.Instance.TodayLogString()}Job {this} was reset with original owner {originalOwner}");
+        hasBeenReset = true;
         id = -1;
         originalOwner = null;
         name = string.Empty;

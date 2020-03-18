@@ -39,6 +39,18 @@ public struct IntRange {
         }
         return false;
     }
+    
+    /// <summary>
+    /// Is the given value outside this ranges bounds
+    /// </summary>
+    /// <param name="value">The value to check</param>
+    /// <returns>True or false.</returns>
+    public bool IsOutsideRange(int value) {
+        if (value >= upperBound || value <= lowerBound) {
+            return true;
+        }
+        return false;
+    }
 
     public bool IsNearUpperBound(int value) {
         int lowerBoundDifference = Mathf.Abs(value - lowerBound);

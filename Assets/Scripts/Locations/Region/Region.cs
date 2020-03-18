@@ -650,7 +650,7 @@ public class Region {
         foreach (List<LocationStructure> structureList in structures.Values) {
             for (int i = 0; i < structureList.Count; i++) {
                 LocationStructure currStructure = structureList[i];
-                if (currStructure.occupiedHexTile.hexTileOwner != null && currStructure.occupiedHexTile.hexTileOwner.settlementOnTile == character.homeSettlement) {
+                if (currStructure.occupiedHexTile != null && currStructure.occupiedHexTile.hexTileOwner.settlementOnTile == character.homeSettlement) {
                     for (int j = 0; j < currStructure.pointsOfInterest.Count; j++) {
                         IPointOfInterest poi = currStructure.pointsOfInterest.ElementAt(j);
                         if(poi.gridTileLocation != null && poi.characterOwner == character) {

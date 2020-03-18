@@ -43,6 +43,7 @@ public class CharacterStateJob : JobQueueItem {
 
     #region Overrides
     public override bool ProcessJob() {
+        if (hasBeenReset) { return false; }
         if (assignedState == null) {
             CharacterState newState = assignedCharacter.stateComponent.SwitchToState(targetState, targetPOI);
             if (newState != null) {
@@ -50,8 +51,9 @@ public class CharacterStateJob : JobQueueItem {
                 assignedCharacter.SetCurrentJob(this);
                 return true;
             } else {
-                throw new System.Exception(
-                    $"{assignedCharacter.name} tried doing state {targetState} but was unable to do so! This must not happen!");
+                // throw new System.Exception(
+                //     $"{assignedCharacter.name} tried doing state {targetState} but was unable to do so! This must not happen!");
+                return false;
             }
         } else {
             if(assignedState.isPaused && !assignedState.isDone) {

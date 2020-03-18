@@ -86,12 +86,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _light: {fileID: 1391234838246578817}
-  _timeOfDayLightDictionary:
-    m_keys: 010000000200000005000000030000000400000000000000
-    m_values:
-    - 0
-    - 0
-    - 0
-    - 0.6
-    - 0.8
-    - 0.6
+  _brightestIntensity: 0.7
+  _darkestIntensity: 0
