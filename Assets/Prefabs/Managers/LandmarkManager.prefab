@@ -67,6 +67,8 @@ MonoBehaviour:
       overrideLandmarkPortrait: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
+    monsterGenerationSetting: {fileID: 0}
+    itemGenerationSetting: {fileID: 0}
   - landmarkTypeString: Workshop
     landmarkType: 4
     buildDuration: 0
@@ -86,6 +88,8 @@ MonoBehaviour:
       overrideLandmarkPortrait: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
+    monsterGenerationSetting: {fileID: 0}
+    itemGenerationSetting: {fileID: 0}
   - landmarkTypeString: Abandoned Mine
     landmarkType: 8
     buildDuration: 0
@@ -104,6 +108,9 @@ MonoBehaviour:
       overrideLandmarkPortrait: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
+    monsterGenerationSetting: {fileID: 11400000, guid: 2e2bd3770f7212947b5b4d1f8c087ead,
+      type: 2}
+    itemGenerationSetting: {fileID: 0}
   - landmarkTypeString: Farm
     landmarkType: 17
     buildDuration: 0
@@ -131,6 +138,8 @@ MonoBehaviour:
       tintSprite: {fileID: 21300000, guid: 2676d8f62a64675408e6e640dfdf1a5c, type: 3}
       animation: {fileID: 0}
       overrideLandmarkPortrait: {fileID: 0}
+    monsterGenerationSetting: {fileID: 0}
+    itemGenerationSetting: {fileID: 0}
   - landmarkTypeString: Village
     landmarkType: 20
     buildDuration: 0
@@ -160,6 +169,8 @@ MonoBehaviour:
       animation: {fileID: 0}
       overrideLandmarkPortrait: {fileID: 21300000, guid: 260ac1cf6a5dd774cadc8d2a36da5d74,
         type: 3}
+    monsterGenerationSetting: {fileID: 0}
+    itemGenerationSetting: {fileID: 0}
   - landmarkTypeString: Bandit Camp
     landmarkType: 24
     buildDuration: 0
@@ -188,6 +199,8 @@ MonoBehaviour:
       tintSprite: {fileID: 0}
       animation: {fileID: 0}
       overrideLandmarkPortrait: {fileID: 0}
+    monsterGenerationSetting: {fileID: 0}
+    itemGenerationSetting: {fileID: 0}
   - landmarkTypeString: Mage Tower
     landmarkType: 25
     buildDuration: 0
@@ -208,6 +221,8 @@ MonoBehaviour:
       overrideLandmarkPortrait: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
+    monsterGenerationSetting: {fileID: 0}
+    itemGenerationSetting: {fileID: 0}
   - landmarkTypeString: Temple
     landmarkType: 30
     buildDuration: 0
@@ -241,6 +256,9 @@ MonoBehaviour:
       tintSprite: {fileID: 0}
       animation: {fileID: 0}
       overrideLandmarkPortrait: {fileID: 0}
+    monsterGenerationSetting: {fileID: 0}
+    itemGenerationSetting: {fileID: 11400000, guid: 721ae9951663539439b7a9134ae4facf,
+      type: 2}
   - landmarkTypeString: Barracks
     landmarkType: 34
     buildDuration: 0
@@ -272,6 +290,8 @@ MonoBehaviour:
       animation: {fileID: 0}
       overrideLandmarkPortrait: {fileID: 21300000, guid: 85b13cb308265cb469234ed163504cde,
         type: 3}
+    monsterGenerationSetting: {fileID: 0}
+    itemGenerationSetting: {fileID: 0}
   - landmarkTypeString: Monster Lair
     landmarkType: 42
     buildDuration: 0
@@ -292,6 +312,10 @@ MonoBehaviour:
       overrideLandmarkPortrait: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
+    monsterGenerationSetting: {fileID: 11400000, guid: 533fdcbeedd9f6f48b4b96677448f355,
+      type: 2}
+    itemGenerationSetting: {fileID: 11400000, guid: a6ad65290fd985f46a9259117663375d,
+      type: 2}
   - landmarkTypeString: The Spire
     landmarkType: 48
     buildDuration: 48
@@ -311,6 +335,8 @@ MonoBehaviour:
       overrideLandmarkPortrait: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
+    monsterGenerationSetting: {fileID: 0}
+    itemGenerationSetting: {fileID: 0}
   - landmarkTypeString: The Crypt
     landmarkType: 49
     buildDuration: 48
@@ -330,6 +356,8 @@ MonoBehaviour:
       overrideLandmarkPortrait: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
+    monsterGenerationSetting: {fileID: 0}
+    itemGenerationSetting: {fileID: 0}
   - landmarkTypeString: The Kennel
     landmarkType: 50
     buildDuration: 48
@@ -349,6 +377,8 @@ MonoBehaviour:
       overrideLandmarkPortrait: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
+    monsterGenerationSetting: {fileID: 0}
+    itemGenerationSetting: {fileID: 0}
   - landmarkTypeString: The Anvil
     landmarkType: 51
     buildDuration: 48
@@ -368,6 +398,8 @@ MonoBehaviour:
       overrideLandmarkPortrait: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
+    monsterGenerationSetting: {fileID: 0}
+    itemGenerationSetting: {fileID: 0}
   - landmarkTypeString: Goader
     landmarkType: 52
     buildDuration: 48
@@ -387,6 +419,8 @@ MonoBehaviour:
       overrideLandmarkPortrait: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
+    monsterGenerationSetting: {fileID: 0}
+    itemGenerationSetting: {fileID: 0}
   - landmarkTypeString: The Eye
     landmarkType: 53
     buildDuration: 48
@@ -406,6 +440,8 @@ MonoBehaviour:
       overrideLandmarkPortrait: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
+    monsterGenerationSetting: {fileID: 0}
+    itemGenerationSetting: {fileID: 0}
   - landmarkTypeString: The Profane
     landmarkType: 54
     buildDuration: 48
@@ -425,6 +461,8 @@ MonoBehaviour:
       overrideLandmarkPortrait: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
+    monsterGenerationSetting: {fileID: 0}
+    itemGenerationSetting: {fileID: 0}
   - landmarkTypeString: None
     landmarkType: 0
     buildDuration: 0
@@ -444,6 +482,8 @@ MonoBehaviour:
       overrideLandmarkPortrait: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
+    monsterGenerationSetting: {fileID: 0}
+    itemGenerationSetting: {fileID: 0}
   - landmarkTypeString: The Needles
     landmarkType: 55
     buildDuration: 48
@@ -463,6 +503,8 @@ MonoBehaviour:
       overrideLandmarkPortrait: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
+    monsterGenerationSetting: {fileID: 0}
+    itemGenerationSetting: {fileID: 0}
   - landmarkTypeString: The Pit
     landmarkType: 56
     buildDuration: 48
@@ -482,6 +524,8 @@ MonoBehaviour:
       overrideLandmarkPortrait: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
+    monsterGenerationSetting: {fileID: 0}
+    itemGenerationSetting: {fileID: 0}
   - landmarkTypeString: Cave
     landmarkType: 31
     buildDuration: 0
@@ -553,6 +597,10 @@ MonoBehaviour:
       overrideLandmarkPortrait: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
+    monsterGenerationSetting: {fileID: 11400000, guid: 71325157b1a1ed94aadf9a25c2acd7ff,
+      type: 2}
+    itemGenerationSetting: {fileID: 11400000, guid: d815f1ce3c72e5e409bb7c4f02773fdd,
+      type: 2}
   - landmarkTypeString: Lumberyard
     landmarkType: 57
     buildDuration: 0
@@ -583,6 +631,8 @@ MonoBehaviour:
       animation: {fileID: 0}
       overrideLandmarkPortrait: {fileID: 21300000, guid: 570ccff55171ccc4baaed36deacc95a0,
         type: 3}
+    monsterGenerationSetting: {fileID: 0}
+    itemGenerationSetting: {fileID: 0}
   - landmarkTypeString: Quarry
     landmarkType: 58
     buildDuration: 0
@@ -602,6 +652,8 @@ MonoBehaviour:
       overrideLandmarkPortrait: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
+    monsterGenerationSetting: {fileID: 0}
+    itemGenerationSetting: {fileID: 0}
   - landmarkTypeString: Houses
     landmarkType: 59
     buildDuration: 0
@@ -651,6 +703,8 @@ MonoBehaviour:
       animation: {fileID: 0}
       overrideLandmarkPortrait: {fileID: 21300000, guid: 260ac1cf6a5dd774cadc8d2a36da5d74,
         type: 3}
+    monsterGenerationSetting: {fileID: 0}
+    itemGenerationSetting: {fileID: 0}
   - landmarkTypeString: Torture Chamber
     landmarkType: 60
     buildDuration: 0
@@ -670,6 +724,8 @@ MonoBehaviour:
       overrideLandmarkPortrait: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
+    monsterGenerationSetting: {fileID: 0}
+    itemGenerationSetting: {fileID: 0}
   - landmarkTypeString: Demonic Prison
     landmarkType: 61
     buildDuration: 0
@@ -689,6 +745,8 @@ MonoBehaviour:
       overrideLandmarkPortrait: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
+    monsterGenerationSetting: {fileID: 0}
+    itemGenerationSetting: {fileID: 0}
   - landmarkTypeString: Mine
     landmarkType: 62
     buildDuration: 0
@@ -716,6 +774,8 @@ MonoBehaviour:
       tintSprite: {fileID: 21300000, guid: f16e449c34192234bb171cc4f9bc300d, type: 3}
       animation: {fileID: 0}
       overrideLandmarkPortrait: {fileID: 0}
+    monsterGenerationSetting: {fileID: 0}
+    itemGenerationSetting: {fileID: 0}
   areaData:
   - locationType: 0
     baseAreaType: 0

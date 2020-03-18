@@ -4,10 +4,8 @@ using System.Collections.Generic;
 public class CornCrop : Crops{
     public CornCrop() {
         Initialize(TILE_OBJECT_TYPE.CORN_CROP);
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
     }
     public CornCrop(SaveDataTileObject data) {
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
         Initialize(data);
     }
 

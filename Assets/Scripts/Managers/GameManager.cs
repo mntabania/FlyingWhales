@@ -54,9 +54,9 @@ public class GameManager : MonoBehaviour {
     //[SerializeField] private GameObject poisonEffectPrefab;
     [SerializeField] private ParticleEffectAssetDictionary particleEffectsDictionary;
 
-    private const float X1_SPEED = 0.75f;
-    private const float X2_SPEED = 0.5f;
-    private const float X4_SPEED = 0.25f;
+    private const float X1_SPEED = 0.8f;
+    private const float X2_SPEED = 0.55f;
+    private const float X4_SPEED = 0.3f;
 
     private float timeElapsed;
     private bool _gameHasStarted;
@@ -133,7 +133,6 @@ public class GameManager : MonoBehaviour {
         Messenger.Broadcast(Signals.MONTH_START); //for the first month
         Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyDown);
         //TimerHubUI.Instance.AddItem("Until Divine Intervention", 4320, null);
-        Messenger.Broadcast(Signals.UPDATE_INNER_MAP_LIGHT, GetCurrentTimeInWordsOfTick());
     }
     public GameDate Today() {
         return new GameDate(month, days, year, tick);
@@ -231,6 +230,22 @@ public class GameManager : MonoBehaviour {
         //CombatManager.Instance.updateIntervals = this.progressionSpeed / (float) CombatManager.Instance.numOfCombatActionPerDay;
         Messenger.Broadcast(Signals.PROGRESSION_SPEED_CHANGED, progSpeed);
 	}
+    /// <summary>
+    /// Get how many seconds in realtime a tick is.
+    /// <param name="progressionSpeed">The progression speed to factor in.</param>
+    /// </summary>
+    /// <returns>Float value representing ticks in realtime seconds.</returns>
+    public float GetTickSpeed(PROGRESSION_SPEED progressionSpeed) {
+        switch (currProgressionSpeed) {
+            case PROGRESSION_SPEED.X1:
+                return X1_SPEED;
+            case PROGRESSION_SPEED.X2:
+                return X2_SPEED;
+            case PROGRESSION_SPEED.X4:
+                return X4_SPEED;
+        }
+        throw new Exception($"Could not get tick speed from {currProgressionSpeed.ToString()}");
+    }
     private void TickStarted() {
         if (tick % ticksPerHour == 0 && !IsStartOfGame()) {
             //hour reached

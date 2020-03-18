@@ -5,7 +5,6 @@ using UnityEngine;
 [System.Serializable]
 public class PortraitAssetCollection {
 
-    public GENDER gender;
     public List<Sprite> head;
     public List<Sprite> brows;
     public List<Sprite> eyes;
@@ -15,8 +14,7 @@ public class PortraitAssetCollection {
     public List<Sprite> mustache;
     public List<Sprite> beard;
 
-    public PortraitAssetCollection(GENDER gender) {
-        this.gender = gender;
+    public PortraitAssetCollection() {
         head = new List<Sprite>();
         brows = new List<Sprite>();
         eyes = new List<Sprite>();

@@ -1,99 +1,122 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
-using UnityEngine;
 using UnityEngine.Assertions;
 using UtilityScripts;
 
 public class MonsterGeneration : MapGenerationComponent {
 
 	public override IEnumerator Execute(MapGenerationData data) {
-		string[] monsterChoices = new[] { "Golem", "Wolves", "Seducer", "Fire Elementals", "Kobolds", "Giant Spiders", "Ent", "Small Spiders", "Abomination" };
-        List<BaseLandmark> monsterLairs = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.MONSTER_LAIR);
-		for (int i = 0; i < monsterLairs.Count; i++) {
-			BaseLandmark monsterLair = monsterLairs[i];
-			string randomSet = CollectionUtilities.GetRandomElement(monsterChoices);
-			BaseSettlement settlementOnTile = monsterLair.tileLocation.settlementOnTile;
-			LocationStructure monsterLairStructure =
-				settlementOnTile.GetRandomStructureOfType(STRUCTURE_TYPE.MONSTER_LAIR);
-			Assert.IsTrue(monsterLairStructure.unoccupiedTiles.Count > 0, 
-				$"Monster Lair at {monsterLair.tileLocation.region.name} does not have any unoccupied tiles, but is trying to spawn monsters!");
-			int randomAmount;
-			if (randomSet == "Golem") {
-				randomAmount = Random.Range(1, 3);
-				for (int j = 0; j < randomAmount; j++) {
-					CreateMonster(SUMMON_TYPE.Golem, settlementOnTile, monsterLair, monsterLairStructure);
-				}
-			} else if (randomSet == "Wolves") {
-				randomAmount = Random.Range(3, 6);
-				for (int j = 0; j < randomAmount; j++) {
-					CreateMonster(SUMMON_TYPE.Wolf, settlementOnTile, monsterLair, monsterLairStructure);
-				}
-			} else if (randomSet == "Seducer") {
-				int random = Random.Range(0, 3);
-				if (random == 0) {
-					//incubus, succubus
-					CreateMonster(SUMMON_TYPE.Incubus, settlementOnTile, monsterLair, monsterLairStructure);
-					CreateMonster(SUMMON_TYPE.Succubus, settlementOnTile, monsterLair, monsterLairStructure);
-				} else if (random == 1) {
-					//incubus
-					CreateMonster(SUMMON_TYPE.Incubus, settlementOnTile, monsterLair, monsterLairStructure);
-				} else if (random == 2) {
-					//succubus
-					CreateMonster(SUMMON_TYPE.Succubus, settlementOnTile, monsterLair, monsterLairStructure);
-				}
-			} else if (randomSet == "Fire Elementals") {
-				randomAmount = Random.Range(1, 3);
-				for (int j = 0; j < randomAmount; j++) {
-					CreateMonster(SUMMON_TYPE.FireElemental, settlementOnTile, monsterLair, monsterLairStructure);
-				}
-			} else if (randomSet == "Kobolds") {
-				randomAmount = 3;
-				for (int j = 0; j < randomAmount; j++) {
-					CreateMonster(SUMMON_TYPE.Kobold, settlementOnTile, monsterLair, monsterLairStructure);
-				}
-			} else if (randomSet == "Giant Spiders") {
-				randomAmount = Random.Range(1, 4);
-				for (int j = 0; j < randomAmount; j++) {
-					CreateMonster(SUMMON_TYPE.GiantSpider, settlementOnTile, monsterLair, monsterLairStructure);
-				}
-            } else if (randomSet == "Ent") {
-                randomAmount = Random.Range(1, 4);
-                for (int j = 0; j < randomAmount; j++) {
-                    Summon summon = CreateMonster(SUMMON_TYPE.Ent, settlementOnTile, monsterLair, monsterLairStructure);
-                    if(monsterLair.tileLocation.biomeType == BIOMES.DESERT) {
-                        summon.AssignClass("Desert Ent");
-                    } else if (monsterLair.tileLocation.biomeType == BIOMES.FOREST) {
-                        summon.AssignClass("Forest Ent");
-                    } else if (monsterLair.tileLocation.biomeType == BIOMES.SNOW) {
-                        summon.AssignClass("Snow Ent");
-                    } else if (monsterLair.tileLocation.biomeType == BIOMES.GRASSLAND) {
-                        summon.AssignClass("Grass Ent");
-                    } else if (monsterLair.tileLocation.isCorrupted) {
-                        summon.AssignClass("Corrupt Ent");
-                    }
-                }
-            } else if (randomSet == "Small Spiders") {
-                randomAmount = Random.Range(1, 4);
-                for (int j = 0; j < randomAmount; j++) {
-                    CreateMonster(SUMMON_TYPE.Small_Spider, settlementOnTile, monsterLair, monsterLairStructure);
-                }
-            } else if (randomSet == "Abomination") {
-				randomAmount = Random.Range(1, 2);
-				for (int j = 0; j < randomAmount; j++) {
-					CreateMonster(SUMMON_TYPE.Abomination, settlementOnTile, monsterLair, monsterLairStructure);
-				}
-			}
-        }
+		// yield return MapGenerator.Instance.StartCoroutine(RegionalMonsterGeneration());
+		yield return MapGenerator.Instance.StartCoroutine(LandmarkMonsterGeneration());
+		// yield return MapGenerator.Instance.StartCoroutine(CaveMonsterGeneration());
 		yield return null;
 	}
 
-	private Summon CreateMonster(SUMMON_TYPE summonType, BaseSettlement settlementOnTile, BaseLandmark monsterLair,
+	#region Helpers
+	private void CreateMonster(SUMMON_TYPE summonType, BaseSettlement settlementOnTile, BaseLandmark monsterLair,
 		LocationStructure monsterLairStructure) {
 		Summon summon = CharacterManager.Instance.CreateNewSummon(summonType, FactionManager.Instance.neutralFaction, settlementOnTile, monsterLair.tileLocation.region);
 		CharacterManager.Instance.PlaceSummon(summon, CollectionUtilities.GetRandomElement(monsterLairStructure.unoccupiedTiles));
 		summon.AddTerritory(monsterLair.tileLocation);
-        return summon;
+	}
+	private void CreateMonster(SUMMON_TYPE summonType, List<LocationGridTile> locationChoices, params HexTile[] territories) {
+		LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(locationChoices);
+		Assert.IsTrue(chosenTile.collectionOwner.isPartOfParentRegionMap, $"Chosen tile for {summonType.ToString()} is not part of the region map!");
+		Summon summon = CharacterManager.Instance.CreateNewSummon(summonType, FactionManager.Instance.neutralFaction, null, chosenTile.parentMap.region);
+		CharacterManager.Instance.PlaceSummon(summon, chosenTile);
+		summon.AddTerritory(chosenTile.collectionOwner.partOfHextile.hexTileOwner);
+		if (territories != null) {
+			for (int i = 0; i < territories.Length; i++) {
+				HexTile territory = territories[i];
+				summon.AddTerritory(territory);
+			}
+		}
+	}
+	#endregion
+	
+
+	private IEnumerator RegionalMonsterGeneration() {
+		for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+			Region region = GridMap.Instance.allRegions[i];
+			List<LocationGridTile> locationChoices = new List<LocationGridTile>();
+			region.tiles.Where(h => h.landmarkOnTile == null && h.elevationType == ELEVATION.PLAIN).ToList().
+				ForEach(h => locationChoices.AddRange(h.locationGridTiles));
+			MonsterGenerationSetting monsterGenerationSetting =
+				WorldConfigManager.Instance.worldWideMonsterGenerationSetting;
+			List<MonsterSetting> monsterChoices = monsterGenerationSetting.GetMonsterChoicesForBiome(region.coreTile.biomeType);
+			if (monsterChoices != null) {
+				int iterations = monsterGenerationSetting.iterations.Random();
+				for (int j = 0; j < iterations; j++) {
+					MonsterSetting randomMonsterSetting = CollectionUtilities.GetRandomElement(monsterChoices);
+					int randomAmount = randomMonsterSetting.minMaxRange.Random();
+					for (int k = 0; k < randomAmount; k++) {
+						CreateMonster(randomMonsterSetting.monsterType, locationChoices);	
+					}
+				}	
+			}
+			yield return null;
+		}
+	}
+	private IEnumerator LandmarkMonsterGeneration() {
+		List<BaseLandmark> allLandmarks = LandmarkManager.Instance.GetAllLandmarks();
+		for (int i = 0; i < allLandmarks.Count; i++) {
+			BaseLandmark landmark = allLandmarks[i];
+			if (landmark.specificLandmarkType != LANDMARK_TYPE.CAVE) {
+				LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
+				LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmark.specificLandmarkType);
+				if (landmarkData.monsterGenerationSetting != null) {
+					List<MonsterSetting> monsterChoices = landmarkData.monsterGenerationSetting.
+						GetMonsterChoicesForBiome(landmark.tileLocation.biomeType);
+					if (monsterChoices != null) {
+						int iterations = landmarkData.monsterGenerationSetting.iterations.Random();
+						for (int j = 0; j < iterations; j++) {
+							MonsterSetting randomMonsterSetting = CollectionUtilities.GetRandomElement(monsterChoices);
+							int randomAmount = randomMonsterSetting.minMaxRange.Random();
+							for (int k = 0; k < randomAmount; k++) {
+								CreateMonster(randomMonsterSetting.monsterType, landmark.tileLocation.settlementOnTile, landmark, structure);	
+							}
+						}
+						yield return null;
+					}
+				}
+			}
+		}
+	}
+	private IEnumerator CaveMonsterGeneration() {
+		LandmarkData caveData = LandmarkManager.Instance.GetLandmarkData(LANDMARK_TYPE.CAVE);
+		for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+			Region region = GridMap.Instance.allRegions[i];
+			if (region.HasStructure(STRUCTURE_TYPE.CAVE)) {
+				List<LocationStructure> caves = region.GetStructuresAtLocation<LocationStructure>(STRUCTURE_TYPE.CAVE);
+				List<MonsterSetting> monsterChoices = caveData.monsterGenerationSetting.GetMonsterChoicesForBiome(region.coreTile.biomeType);
+				for (int j = 0; j < caves.Count; j++) {
+					LocationStructure cave = caves[j];
+					List<HexTile> hexTilesOfCave = GetHexTileCountOfCave(cave);
+					for (int k = 0; k < hexTilesOfCave.Count; k++) {
+						MonsterSetting randomMonsterSetting = CollectionUtilities.GetRandomElement(monsterChoices);
+						int randomAmount = randomMonsterSetting.minMaxRange.Random();
+						for (int l = 0; l < randomAmount; l++) {
+							CreateMonster(randomMonsterSetting.monsterType, cave.unoccupiedTiles.ToList(), hexTilesOfCave.ToArray());	
+						}
+					}
+				}
+			}
+			yield return null;
+		}
+	}
+
+	private List<HexTile> GetHexTileCountOfCave(LocationStructure caveStructure) {
+		List<HexTile> tiles = new List<HexTile>();
+		for (int i = 0; i < caveStructure.unoccupiedTiles.Count; i++) {
+			LocationGridTile tile = caveStructure.unoccupiedTiles.ElementAt(i);
+			if (tile.collectionOwner.isPartOfParentRegionMap && tiles.Contains(tile.collectionOwner.partOfHextile.hexTileOwner) == false) {
+				tiles.Add(tile.collectionOwner.partOfHextile.hexTileOwner);
+			}
+		}
+		return tiles;
 	}
 }

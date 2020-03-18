@@ -713,9 +713,13 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         traitContainer.RemoveAllTraitsAndStatuses(this);
     }
     public void UpdateOwners() {
-        if (gridTileLocation.structure is Dwelling) {
+        if (gridTileLocation.structure is Dwelling dwelling) {
             owners.Clear();
-            owners.AddRange((gridTileLocation.structure as Dwelling).residents);
+            owners.AddRange(dwelling.residents);
+            //update character owner if object's current character owner is null or is not a resident of the dwelling that it is currently in.
+            if (dwelling.residents.Count > 0 && dwelling.residents.Contains(characterOwner) == false) {
+                SetCharacterOwner(CollectionUtilities.GetRandomElement(dwelling.residents));    
+            }
         }
     }
     // public void SetIsBeingCarriedBy(Character carrier) {

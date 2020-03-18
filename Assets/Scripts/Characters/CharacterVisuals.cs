@@ -11,6 +11,7 @@ public class CharacterVisuals {
     public Material hairMaterial { get; private set; }
     public Material wholeImageMaterial { get; private set; }
     public Dictionary<string, Sprite> markerAnimations { get; private set; }
+    public Sprite defaultSprite { get; private set; }
 
 
     public CharacterVisuals(Character character) {
@@ -49,13 +50,13 @@ public class CharacterVisuals {
 
     private void UpdateMarkerAnimations(Character character) {
         CharacterClassAsset assets = CharacterManager.Instance.GetMarkerAsset(character.race, character.gender, character.characterClass.className);
-        if (assets != null) {
-            markerAnimations = new Dictionary<string, Sprite>();
-            for (int i = 0; i < assets.animationSprites.Count; i++) {
-                Sprite currSprite = assets.animationSprites[i];
-                markerAnimations.Add(currSprite.name, currSprite);
-            }
+        defaultSprite = assets.defaultSprite;
+        markerAnimations = new Dictionary<string, Sprite>();
+        for (int i = 0; i < assets.animationSprites.Count; i++) {
+            Sprite currSprite = assets.animationSprites[i];
+            markerAnimations.Add(currSprite.name, currSprite);
         }
+        
     }
 
     #region UI

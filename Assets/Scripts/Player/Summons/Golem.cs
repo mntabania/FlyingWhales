@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Traits;
 public class Golem : Summon {
-
+    public override string raceClassName => "Golem";
     public Golem() : base(SUMMON_TYPE.Golem, "Golem", RACE.GOLEM, UtilityScripts.Utilities.GetRandomGender()) {
         SetMaxHPMod(1000);
     }

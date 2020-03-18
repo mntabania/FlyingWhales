@@ -130,7 +130,7 @@ public class Butcher : GoapAction {
             if (poiTarget.gridTileLocation == null) {
                 return false;
             }
-            if(poiTarget is SmallAnimal) {
+            if(poiTarget is SmallAnimal || poiTarget is Animal) {
                 return true;
             } else {
                 Character deadCharacter = GetDeadCharacter(poiTarget);
@@ -149,18 +149,18 @@ public class Butcher : GoapAction {
 
     #region Preconditions
     private bool IsTargetDead(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        if (poiTarget is Character) {
-            return (poiTarget as Character).isDead;
+        if (poiTarget is Character character) {
+            return character.isDead;
         }
         return true;
     }
     #endregion
 
     private Character GetDeadCharacter(IPointOfInterest poiTarget) {
-        if (poiTarget is Character) {
-            return poiTarget as Character;
-        } else if (poiTarget is Tombstone) {
-            return (poiTarget as Tombstone).character;
+        if (poiTarget is Character target) {
+            return target;
+        } else if (poiTarget is Tombstone tombstone) {
+            return tombstone.character;
         }
         return null;
     }

@@ -37,7 +37,7 @@ public class MapVisualFactory {
                 obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("BallLightningMapObjectVisual", Vector3.zero, Quaternion.identity);
                 break;
             case TILE_OBJECT_TYPE.CORN_CROP:
-                obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("CornCropGameObject", Vector3.zero, Quaternion.identity);
+                obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("CornCropMapObjectVisual", Vector3.zero, Quaternion.identity);
                 break;
             case TILE_OBJECT_TYPE.FROSTY_FOG:
                 obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("FrostyFogMapObjectVisual", Vector3.zero, Quaternion.identity);
@@ -47,6 +47,12 @@ public class MapVisualFactory {
                 break;
             case TILE_OBJECT_TYPE.FIRE_BALL:
                 obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("FireBallMapObjectVisual", Vector3.zero, Quaternion.identity);
+                break;
+            case TILE_OBJECT_TYPE.BERRY_SHRUB:
+                obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("BerryShrubMapObjectVisual", Vector3.zero, Quaternion.identity);
+                break;
+            case TILE_OBJECT_TYPE.MUSHROOM:
+                obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("MushroomMapObjectVisual", Vector3.zero, Quaternion.identity);
                 break;
             default:
                 obj = ObjectPoolManager.Instance.InstantiateObjectFromPool(Tile_Object_Prefab_Name, Vector3.zero, Quaternion.identity);

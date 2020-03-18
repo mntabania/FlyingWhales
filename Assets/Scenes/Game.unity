@@ -19647,6 +19647,26 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 570609257838163934, guid: c38c7e75a0c6c0e46888d93ecdc69be4,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3772192232113946128, guid: c38c7e75a0c6c0e46888d93ecdc69be4,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4102694569950322102, guid: c38c7e75a0c6c0e46888d93ecdc69be4,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4102694569950322102, guid: c38c7e75a0c6c0e46888d93ecdc69be4,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c38c7e75a0c6c0e46888d93ecdc69be4, type: 3}
 --- !u!114 &388044833 stripped
@@ -87251,9 +87271,9 @@ MonoBehaviour:
         m_keys: 06000000
         m_values:
         - activeTile:
-          - {fileID: 21300000, guid: 6b0d9acc33c3f924faa7c6840e010066, type: 3}
+          - {fileID: 21300000, guid: 0e87581d39ea6634c8921d7dc6914539, type: 3}
           inactiveTile:
-          - {fileID: 21300000, guid: 9de607579992d7946a9c068fbf86e380, type: 3}
+          - {fileID: 21300000, guid: 0e87581d39ea6634c8921d7dc6914539, type: 3}
     - biomeAssets:
         m_keys: 06000000
         m_values:
@@ -113103,6 +113123,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _globalLight: {fileID: 1463951366}
+  _brightestIntensity: 1
+  _darkestIntensity: 0.2
+  _darkPeriodRange:
+    lowerBound: 4
+    upperBound: 20
+  _brightPeriodRange:
+    lowerBound: 6
+    upperBound: 18
 --- !u!1 &1921633472
 GameObject:
   m_ObjectHideFlags: 0

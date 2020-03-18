@@ -491,12 +491,32 @@ namespace Inner_Maps {
             return Vector2.Distance(localLocation, tile.localLocation);
         }
         public bool HasOccupiedNeighbour() {
-            for (int i = 0; i < neighbours.Values.Count; i++) {
-                if (neighbours.Values.ElementAt(i).isOccupied) {
+            for (int i = 0; i < neighbourList.Count; i++) {
+                LocationGridTile tile = neighbourList[i];
+                if (tile.isOccupied) {
                     return true;
                 }
             }
             return false;
+        }
+        public bool HasUnoccupiedNeighbour(out List<LocationGridTile> unoccupiedTiles, bool sameStructure = false) {
+            bool hasUnoccupied = false;
+            unoccupiedTiles = new List<LocationGridTile>();
+            for (int i = 0; i < neighbourList.Count; i++) {
+                LocationGridTile tile = neighbourList[i];
+                if (tile.isOccupied == false) {
+                    if (sameStructure) {
+                        //if same structure switch is on, check if the neighbour is at the same structure
+                        //as this tile before adding to list
+                        if (tile.structure != structure) {
+                            continue; //skip neighbour
+                        }
+                    }
+                    unoccupiedTiles.Add(tile);
+                    hasUnoccupied = true;
+                }
+            }
+            return hasUnoccupied;
         }
         public bool HasNeighbourOfElevation(ELEVATION elevation, bool useFourNeighbours = false) {
             Dictionary<GridNeighbourDirection, LocationGridTile> n = neighbours;

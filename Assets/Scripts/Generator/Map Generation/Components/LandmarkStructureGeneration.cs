@@ -41,6 +41,7 @@ public class LandmarkStructureGeneration : MapGenerationComponent {
 		
 		MonsterLairCellAutomata(locationGridTiles, structure, hexTile.region, wilderness);
 		
+		structure.SetOccupiedHexTile(hexTile.innerMapHexTile);
 		hexTile.innerMapHexTile.Occupy();
 		// for (int j = 0; j < hexTile.ownedBuildSpots.Length; j++) {
 		// 	BuildingSpot spot = hexTile.ownedBuildSpots[j];

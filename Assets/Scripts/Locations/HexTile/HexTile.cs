@@ -993,15 +993,15 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
             CheckIfStructureVisualsAreStillValid();
         }
     }
-    private STRUCTURE_TYPE GetMostImportantStructureOnTile() {
-        STRUCTURE_TYPE mostImportant = STRUCTURE_TYPE.WILDERNESS;
+    public LocationStructure GetMostImportantStructureOnTile() {
+        LocationStructure mostImportant = region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
         foreach (KeyValuePair<STRUCTURE_TYPE,List<LocationStructure>> pair in region.structures) {
             for (int i = 0; i < pair.Value.Count; i++) {
                 LocationStructure structure = pair.Value[i];
                 if (structure.occupiedHexTile != null && structure.occupiedHexTile == innerMapHexTile) {
                     int value = pair.Key.StructurePriority(); 
-                    if (value > mostImportant.StructurePriority()) {
-                        mostImportant = pair.Key;
+                    if (value > mostImportant.structureType.StructurePriority()) {
+                        mostImportant = structure;
                     }    
                 }
             }
@@ -1011,7 +1011,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     }
     private void CheckIfStructureVisualsAreStillValid() {
         string log = $"Checking {ToString()} to check if landmark on it is still valid";
-        STRUCTURE_TYPE mostImportantStructure = GetMostImportantStructureOnTile();
+        STRUCTURE_TYPE mostImportantStructure = GetMostImportantStructureOnTile().structureType;
         LANDMARK_TYPE landmarkType = mostImportantStructure.GetLandmarkType();
         log += $"\nMost important structure is {mostImportantStructure.ToString()}";
         log += $"\nLandmark to create is {landmarkType.ToString()}";

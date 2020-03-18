@@ -3,14 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class GenderMarkerAsset {
-
-    public GENDER gender;
-
+public class MarkerAsset {
     public CharacterClassAssetDictionary characterClassAssets;
 
-    public GenderMarkerAsset(GENDER gender) {
-        this.gender = gender;
+    public MarkerAsset() {
         characterClassAssets = new CharacterClassAssetDictionary();
     }
 }

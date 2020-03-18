@@ -33,30 +33,34 @@ public enum ELEVATION{
     TREES,
 }
 public enum RACE{
-    NONE,
-	HUMANS,
-	ELVES,
-	MINGONS,
-	CROMADS,
-	UNDEAD,
-    GOBLIN,
-	TROLL,
-	DRAGON,
-	DEHKBRUG,
-    WOLF,
-    SLIME,
-    BEAST,
-    SKELETON,
-    DEMON,
-    FAERY,
-    INSECT,
-    SPIDER,
-    GOLEM,
-    ELEMENTAL,
-    KOBOLD,
-    MIMIC,
-    ENT,
-    ABOMINATION
+    NONE = 0,
+	HUMANS = 1,
+	ELVES = 2,
+	MINGONS = 3,
+	CROMADS = 4,
+	UNDEAD = 5,
+    GOBLIN = 6,
+	TROLL = 7,
+	DRAGON = 8,
+	DEHKBRUG = 9,
+    WOLF = 10,
+    SLIME = 11,
+    BEAST = 12,
+    SKELETON = 13,
+    DEMON = 14,
+    FAERY = 15,
+    INSECT = 16,
+    SPIDER = 17,
+    GOLEM = 18,
+    ELEMENTAL = 19,
+    KOBOLD = 20,
+    MIMIC = 21,
+    ENT = 22,
+    ABOMINATION = 23,
+    PIG = 24,
+    SHEEP = 25,
+    CHICKEN = 26,
+    LESSER_DEMON = 27,
 }
 public enum HEXTILE_DIRECTION {
     NORTH_WEST,
@@ -675,16 +679,6 @@ public enum ELEMENT {
     EARTH,
     WIND,
 }
-
-public enum MONSTER_TYPE {
-    SLIME,
-    BEAST,
-    FLORAL,
-    INSECT,
-    HUMANOID,
-    DEMON,
-}
-
 public enum MONSTER_CATEGORY {
     NORMAL,
     BOSS,
@@ -1190,7 +1184,7 @@ public enum POINT_OF_INTEREST_TYPE {
 public enum TILE_OBJECT_TYPE {
     WOOD_PILE = 0,
     SMALL_ANIMAL = 2,
-    EDIBLE_PLANT = 3,
+    BERRY_SHRUB = 3,
     GUITAR = 4,
     MAGIC_CIRCLE = 5,
     TABLE = 6,
@@ -1408,15 +1402,27 @@ public enum COMBAT_ABILITY {
     SINGLE_HEAL, FLAMESTRIKE, FEAR_SPELL, SACRIFICE, TAUNT,
 }
 
-public enum TILE_TAG { CAVE, DUNGEON, FOREST, FLATLAND, MOUNTAIN, GRASSLAND, JUNGLE, TUNDRA, SNOW, DESERT, PROTECTIVE_BARRIER, HALLOWED_GROUNDS, }
-public enum SUMMON_TYPE { None, Wolf, Skeleton, Golem, Succubus, Incubus, ThiefSummon,
+public enum SUMMON_TYPE {
+    None, 
+    Wolf, 
+    Skeleton,
+    Golem,
+    Succubus,
+    Incubus,
     FireElemental,
     Kobold,
     GiantSpider,
     Mimic,
-    Ent,
     Small_Spider,
-    Abomination
+    Abomination,
+    Pig,
+    Sheep,
+    Chicken,
+    Desert_Ent,
+    Forest_Ent,
+    Snow_Ent,
+    Grass_Ent,
+    Corrupt_Ent
 }
 public enum ARTIFACT_TYPE { None, Necronomicon, Ankh_Of_Anubis, Berserk_Orb }
 public enum ABILITY_TAG { NONE, MAGIC, SUPPORT, DEBUFF, CRIME, PHYSICAL, }
@@ -2098,20 +2104,8 @@ public static class Extensions {
     #region Summons
     public static string SummonName(this SUMMON_TYPE type) {
         switch (type) {
-            case SUMMON_TYPE.ThiefSummon:
-                return "Thief";
             default:
                 return UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(type.ToString());
-        }
-    }
-    public static bool CanBeSummoned(this SUMMON_TYPE type) {
-        switch (type) {
-            case SUMMON_TYPE.None:
-            case SUMMON_TYPE.ThiefSummon:
-            case SUMMON_TYPE.Skeleton:
-                return true;
-            default:
-                return false;
         }
     }
     #endregion
@@ -2257,6 +2251,19 @@ public static class Extensions {
                 return string.Empty;
         }
 
+    }
+    #endregion
+
+    #region Races
+    public static bool IsGenderNeutral(this RACE race) {
+        switch (race) {
+            case RACE.HUMANS:
+            case RACE.ELVES:
+            case RACE.LESSER_DEMON:
+                return false;
+            default:
+                return true;
+        }
     }
     #endregion
 }

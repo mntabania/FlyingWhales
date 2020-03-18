@@ -681,8 +681,6 @@ public class Player : ILeader, IObjectManipulator {
                 return "Summon a succubus that will seduce a male character and eliminate him.";
             case SUMMON_TYPE.Incubus:
                 return "Summon a succubus that will seduce a female character and eliminate her.";
-            case SUMMON_TYPE.ThiefSummon:
-                return "Summon a thief that will steal items from the settlements warehouse.";
             default:
                 return
                     $"Summon a {UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(currentlySelectedSummon.ToString())}";

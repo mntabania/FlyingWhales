@@ -876,14 +876,14 @@ namespace UtilityScripts {
             }
             return s;
         }
-        public static List<string> GetEnumChoices<T>(bool includeNone = false, List<T> exclude = null) {
+        public static List<string> GetEnumChoices<T>(bool includeNone = false, params T[] exclude) {
             List<string> options = new List<string>();
             T[] values = (T[]) Enum.GetValues(typeof(T));
             for (int i = 0; i < values.Length; i++) {
                 T currOption = values[i];
                 string currString = currOption.ToString();
                 if (!includeNone) { //do not include none
-                    if (currString.Equals("NONE")) {
+                    if (currString.Equals("NONE", StringComparison.InvariantCultureIgnoreCase)) {
                         continue;
                     }
                 }

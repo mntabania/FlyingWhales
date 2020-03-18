@@ -69,7 +69,7 @@ public class MonsterPanelUI : MonoBehaviour {
         typeOptions.ClearOptions();
         //itemDropOptions.ClearOptions();
 
-        string[] monsterTypes = System.Enum.GetNames(typeof(MONSTER_TYPE));
+        // string[] monsterTypes = System.Enum.GetNames(typeof(MONSTER_TYPE));
 
         //List<string> allItems = new List<string>();
         //string path = Utilities.dataPath + "Items/";
@@ -82,7 +82,7 @@ public class MonsterPanelUI : MonoBehaviour {
         //}
 
         //itemDropOptions.AddOptions(allItems);
-        typeOptions.AddOptions(monsterTypes.ToList());
+        // typeOptions.AddOptions(monsterTypes.ToList());
     }
     private void ClearData() {
         currentSelectedButton = null;
@@ -128,14 +128,6 @@ public class MonsterPanelUI : MonoBehaviour {
             }
         } 
 #endif
-    }
-    private int GetMonsterTypeIndex(MONSTER_TYPE monsterType) {
-        for (int i = 0; i < typeOptions.options.Count; i++) {
-            if (typeOptions.options[i].text == monsterType.ToString()) {
-                return i;
-            }
-        }
-        return 0;
     }
     public void SetItemDropBn(ItemDropBtn btn) {
         _currentSelectedItemDropBtn = btn;

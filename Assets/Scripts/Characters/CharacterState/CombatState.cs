@@ -451,13 +451,15 @@ public class CombatState : CharacterState {
                 log +=
                     $"\n{stateComponent.character.name} is taunted. Setting {taunted.responsibleCharacter.name} as target.";
                 SetClosestHostile(taunted.responsibleCharacter);
-            } else if (currentClosestHostile != null && !stateComponent.character.combatComponent.hostilesInRange.Contains(currentClosestHostile)) {
+            } else if (currentClosestHostile != null && 
+                       (!stateComponent.character.combatComponent.hostilesInRange.Contains(currentClosestHostile) 
+                        || currentClosestHostile.isDead)) {
                 log +=
                     $"\nCurrent closest hostile: {currentClosestHostile.name} is no longer in hostile list, setting another closest hostile...";
                 SetClosestHostile();
             } else if (currentClosestHostile != null && !currentClosestHostile.mapObjectVisual) {
                 log +=
-                    $"\nCurrent closest hostile: {currentClosestHostile.name} is no longer has a map object visual, setting another closest hostile...";
+                    $"\nCurrent closest hostile: {currentClosestHostile.name} no longer has a map object visual, setting another closest hostile...";
                 stateComponent.character.combatComponent.RemoveHostileInRange(currentClosestHostile, false);
                 SetClosestHostile();
             } else if (currentClosestHostile == null) {
@@ -733,6 +735,9 @@ public class CombatState : CharacterState {
     }
     private void OnGamePaused(bool state) {
         if (isDone) {
+            return;
+        }
+        if (stateComponent.character.marker.gameObject.activeSelf == false) {
             return;
         }
         if (state) {

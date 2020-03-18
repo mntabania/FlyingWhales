@@ -6,6 +6,7 @@ using System.Linq;
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UtilityScripts;
 
 public class CharacterManager : MonoBehaviour {
@@ -312,13 +313,13 @@ public class CharacterManager : MonoBehaviour {
     public List<CharacterClass> GetNormalCombatantClasses() {
         return classManager.normalCombatantClasses;
     }
-    public System.Type[] GetClassBehaviourComponents(string className) {
+    public Type[] GetClassBehaviourComponents(string className) {
         return classManager.GetClassBehaviourComponents(className);
     }
     //public System.Type[] GetTraitBehaviourComponents(string traitName) {
     //    return classManager.GetTraitBehaviourComponents(traitName);
     //}
-    public CharacterBehaviourComponent GetCharacterBehaviourComponent(System.Type type) {
+    public CharacterBehaviourComponent GetCharacterBehaviourComponent(Type type) {
         return classManager.GetCharacterBehaviourComponent(type);
     }
     public string GetClassBehaviourComponentKey(string className) {
@@ -412,8 +413,6 @@ public class CharacterManager : MonoBehaviour {
         switch (data.summonType) {
             case SUMMON_TYPE.Wolf:
                 return new Wolf(data);
-            case SUMMON_TYPE.ThiefSummon:
-                return new ThiefSummon(data);
             case SUMMON_TYPE.Skeleton:
                 return new Skeleton(data);
             case SUMMON_TYPE.Succubus:
@@ -427,7 +426,7 @@ public class CharacterManager : MonoBehaviour {
     }
     private object CreateNewSummonClassFromType(SUMMON_TYPE summonType) {
         var typeName = UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(summonType.ToString());
-        return System.Activator.CreateInstance(System.Type.GetType(typeName) ?? throw new Exception($"provided summon type was invalid! {typeName}"));
+        return Activator.CreateInstance(Type.GetType(typeName) ?? throw new Exception($"provided summon type was invalid! {typeName}"));
     }
     public SummonSettings GetSummonSettings(SUMMON_TYPE type) {
         return summonSettings[type];
@@ -455,7 +454,7 @@ public class CharacterManager : MonoBehaviour {
     public Character GetCharacterByName(string name) {
         for (int i = 0; i < characterDatabase.allCharactersList.Count; i++) {
             Character currChar = characterDatabase.allCharactersList[i];
-            if (currChar.name.Equals(name, System.StringComparison.CurrentCultureIgnoreCase)) {
+            if (currChar.name.Equals(name, StringComparison.CurrentCultureIgnoreCase)) {
                 return currChar;
             }
         }
@@ -464,7 +463,7 @@ public class CharacterManager : MonoBehaviour {
     public Character GetLimboCharacterByName(string name) {
         for (int i = 0; i < characterDatabase.limboCharacters.Count; i++) {
             Character currChar = characterDatabase.limboCharacters[i];
-            if (currChar.name.Equals(name, System.StringComparison.CurrentCultureIgnoreCase)) {
+            if (currChar.name.Equals(name, StringComparison.CurrentCultureIgnoreCase)) {
                 return currChar;
             }
         }
@@ -473,14 +472,14 @@ public class CharacterManager : MonoBehaviour {
     #endregion
 
     #region Character Portraits
-    public PortraitAssetCollection GetPortraitAssets(RACE race, GENDER gender) {
+    private PortraitAssetCollection GetPortraitAssets(RACE race, GENDER gender) {
         for (int i = 0; i < portraitAssets.Count; i++) {
             RacePortraitAssets racePortraitAssets = portraitAssets[i];
             if (racePortraitAssets.race == race) {
-                if (gender == GENDER.MALE) {
-                    return racePortraitAssets.maleAssets;
+                if (race.IsGenderNeutral()) {
+                    return racePortraitAssets.neutralAssets;
                 } else {
-                    return racePortraitAssets.femaleAssets;
+                    return gender == GENDER.MALE ? racePortraitAssets.maleAssets : racePortraitAssets.femaleAssets;
                 }
             }
         }
@@ -493,10 +492,11 @@ public class CharacterManager : MonoBehaviour {
     }
     public PortraitSettings GenerateRandomPortrait(RACE race, GENDER gender, string characterClass) {
         PortraitAssetCollection pac = GetPortraitAssets(race, gender);
-        PortraitSettings ps = new PortraitSettings();
-        ps.race = race;
-        ps.gender = gender;
-        ps.wholeImage = classPortraits.ContainsKey(characterClass) ? characterClass : string.Empty;
+        PortraitSettings ps = new PortraitSettings {
+            race = race,
+            gender = gender,
+            wholeImage = classPortraits.ContainsKey(characterClass) ? characterClass : string.Empty
+        };
         if (race == RACE.DEMON) {
             ps.head = -1;
             ps.brows = -1;
@@ -539,7 +539,7 @@ public class CharacterManager : MonoBehaviour {
         if (portraitFrames.ContainsKey(role)) {
             return portraitFrames[role];
         }
-        throw new System.Exception($"There is no frame for role {role}");
+        throw new Exception($"There is no frame for role {role.ToString()}");
     }
     public Sprite GetWholeImagePortraitSprite(string className) {
         if (classPortraits.ContainsKey(className)) {
@@ -600,28 +600,30 @@ public class CharacterManager : MonoBehaviour {
         for (int i = 0; i < races.Length; i++) {
             string currRacePath = races[i];
             string raceName = new DirectoryInfo(currRacePath).Name.ToUpper();
-            RACE race;
-            if (System.Enum.TryParse(raceName, out race)) {
+            if (Enum.TryParse(raceName, out RACE race)) {
                 RacePortraitAssets raceAsset = new RacePortraitAssets(race);
                 //loop through genders found in races directory
-                string[] genders = System.IO.Directory.GetDirectories(currRacePath);
+                string[] genders = Directory.GetDirectories(currRacePath);
                 for (int j = 0; j < genders.Length; j++) {
                     string currGenderPath = genders[j];
                     string genderName = new DirectoryInfo(currGenderPath).Name.ToUpper();
-                    GENDER gender;
-                    if (System.Enum.TryParse(genderName, out gender)) {
-                        PortraitAssetCollection assetCollection = raceAsset.GetPortraitAssetCollection(gender);
-                        string[] faceParts = System.IO.Directory.GetDirectories(currGenderPath);
-                        for (int k = 0; k < faceParts.Length; k++) {
-                            string currFacePath = faceParts[k];
-                            string facePartName = new DirectoryInfo(currFacePath).Name;
-                            string[] facePartFiles = Directory.GetFiles(currFacePath);
-                            for (int l = 0; l < facePartFiles.Length; l++) {
-                                string facePartAssetPath = facePartFiles[l];
-                                Sprite loadedSprite = (Sprite)UnityEditor.AssetDatabase.LoadAssetAtPath(facePartAssetPath, typeof(Sprite));
-                                if (loadedSprite != null) {
-                                    assetCollection.AddSpriteToCollection(facePartName, loadedSprite);
-                                }
+                    PortraitAssetCollection assetCollection = null;
+                    if (Enum.TryParse(genderName, out GENDER gender)) {
+                        assetCollection = raceAsset.GetPortraitAssetCollection(gender);
+                    } else if (genderName.Equals("Neutral", StringComparison.InvariantCultureIgnoreCase)) {
+                        assetCollection = raceAsset.neutralAssets;
+                    }
+                    Assert.IsNotNull(assetCollection, $"Asset portrait collection for {genderName} is null.");
+                    string[] faceParts = Directory.GetDirectories(currGenderPath);
+                    for (int k = 0; k < faceParts.Length; k++) {
+                        string currFacePath = faceParts[k];
+                        string facePartName = new DirectoryInfo(currFacePath).Name;
+                        string[] facePartFiles = Directory.GetFiles(currFacePath);
+                        for (int l = 0; l < facePartFiles.Length; l++) {
+                            string facePartAssetPath = facePartFiles[l];
+                            Sprite loadedSprite = (Sprite)UnityEditor.AssetDatabase.LoadAssetAtPath(facePartAssetPath, typeof(Sprite));
+                            if (loadedSprite != null) {
+                                assetCollection.AddSpriteToCollection(facePartName, loadedSprite);
                             }
                         }
                     }
@@ -650,16 +652,18 @@ public class CharacterManager : MonoBehaviour {
         for (int i = 0; i < markerAssets.Count; i++) {
             RaceMarkerAsset currRaceAsset = markerAssets[i];
             if (currRaceAsset.race == race) {
-                GenderMarkerAsset asset = currRaceAsset.GetMarkerAsset(gender);
-                if (asset.characterClassAssets.ContainsKey(characterClassName) == false) {
-                    Debug.LogWarning($"There are no class assets for {characterClassName} {gender.ToString()} {race.ToString()}");
-                    return null;
+                var asset = race.IsGenderNeutral() ? currRaceAsset.neutralAssets : currRaceAsset.GetMarkerAsset(gender);
+                if (asset.characterClassAssets.ContainsKey(characterClassName)) {
+                    return asset.characterClassAssets[characterClassName];
+                } else if (asset.characterClassAssets.ContainsKey("Default")) {
+                    return asset.characterClassAssets["Default"];
+                } else {
+                    throw new Exception($"There are no class assets for {characterClassName} {gender.ToString()} {race.ToString()}");
                 }
-                return asset.characterClassAssets[characterClassName];
+                
             }
         }
-        Debug.LogWarning($"There are no race assets for {characterClassName} {gender.ToString()} {race.ToString()}");
-        return null;
+        throw new Exception($"There are no race assets for {characterClassName} {gender.ToString()} {race.ToString()}");
     }
     public Sprite GetMarkerHairSprite(GENDER gender) {
         switch (gender) {
@@ -691,37 +695,38 @@ public class CharacterManager : MonoBehaviour {
         for (int i = 0; i < races.Length; i++) {
             string currRacePath = races[i];
             string raceName = new DirectoryInfo(currRacePath).Name.ToUpper();
-            RACE race;
-            if (System.Enum.TryParse(raceName, out race)) {
+            if (Enum.TryParse(raceName, out RACE race)) {
                 RaceMarkerAsset raceAsset = new RaceMarkerAsset(race);
                 //loop through genders found in races directory
-                string[] genders = System.IO.Directory.GetDirectories(currRacePath);
+                string[] genders = Directory.GetDirectories(currRacePath);
                 for (int j = 0; j < genders.Length; j++) {
                     string currGenderPath = genders[j];
                     string genderName = new DirectoryInfo(currGenderPath).Name.ToUpper();
-                    GENDER gender;
-                    if (System.Enum.TryParse(genderName, out gender)) {
-                        GenderMarkerAsset markerAsset = raceAsset.GetMarkerAsset(gender);
-                        //loop through all folders found in gender directory. consider all these as character classes
-                        string[] characterClasses = System.IO.Directory.GetDirectories(currGenderPath);
-                        for (int k = 0; k < characterClasses.Length; k++) {
-                            string currCharacterClassPath = characterClasses[k];
-                            string className = new DirectoryInfo(currCharacterClassPath).Name;
-                            string[] classFiles = Directory.GetFiles(currCharacterClassPath);
-                            CharacterClassAsset characterClassAsset = new CharacterClassAsset();
-                            markerAsset.characterClassAssets.Add(className, characterClassAsset);
-                            for (int l = 0; l < classFiles.Length; l++) {
-                                string classAssetPath = classFiles[l];
-                                Sprite loadedSprite = (Sprite)UnityEditor.AssetDatabase.LoadAssetAtPath(classAssetPath, typeof(Sprite));
-                                if (loadedSprite != null) {
-                                    if (loadedSprite.name.Contains("idle_1")) {
-                                        characterClassAsset.defaultSprite = loadedSprite;
-                                    }
-                                    //assume that sprite is for animation
-                                    characterClassAsset.animationSprites.Add(loadedSprite);
+                    MarkerAsset markerAsset = null;
+                    if (Enum.TryParse(genderName, out GENDER gender)) {
+                        markerAsset = raceAsset.GetMarkerAsset(gender);    
+                    } else if (genderName.Equals("Neutral", StringComparison.InvariantCultureIgnoreCase)) {
+                        markerAsset = raceAsset.neutralAssets;
+                    }
+                    //loop through all folders found in gender directory. consider all these as character classes
+                    string[] characterClasses = Directory.GetDirectories(currGenderPath);
+                    for (int k = 0; k < characterClasses.Length; k++) {
+                        string currCharacterClassPath = characterClasses[k];
+                        string className = new DirectoryInfo(currCharacterClassPath).Name;
+                        string[] classFiles = Directory.GetFiles(currCharacterClassPath);
+                        CharacterClassAsset characterClassAsset = new CharacterClassAsset();
+                        markerAsset.characterClassAssets.Add(className, characterClassAsset);
+                        for (int l = 0; l < classFiles.Length; l++) {
+                            string classAssetPath = classFiles[l];
+                            Sprite loadedSprite = (Sprite)UnityEditor.AssetDatabase.LoadAssetAtPath(classAssetPath, typeof(Sprite));
+                            if (loadedSprite != null) {
+                                if (loadedSprite.name.Contains("idle_1")) {
+                                    characterClassAsset.defaultSprite = loadedSprite;
                                 }
-
+                                //assume that sprite is for animation
+                                characterClassAsset.animationSprites.Add(loadedSprite);
                             }
+
                         }
                     }
                 }
@@ -761,9 +766,9 @@ public class CharacterManager : MonoBehaviour {
         }
     }
     private DeadlySin CreateNewDeadlySin(string deadlySin) {
-        System.Type type = System.Type.GetType(deadlySin);
+        Type type = Type.GetType(deadlySin);
         if(type != null) {
-            DeadlySin sin = System.Activator.CreateInstance(type) as DeadlySin;
+            DeadlySin sin = Activator.CreateInstance(type) as DeadlySin;
             return sin;
         }
         return null;
@@ -788,16 +793,16 @@ public class CharacterManager : MonoBehaviour {
     #region Emotions
     private void ConstructEmotionData() {
         emotionData = new Dictionary<EMOTION, Emotion>();
-        this.allEmotions = new List<Emotion>();
+        allEmotions = new List<Emotion>();
         EMOTION[] enumValues = CollectionUtilities.GetEnumValues<EMOTION>();
         for (int i = 0; i < enumValues.Length; i++) {
             EMOTION emotion = enumValues[i];
             var typeName = UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(emotion.ToString());
-            System.Type type = System.Type.GetType(typeName);
+            Type type = Type.GetType(typeName);
             if (type != null) {
-                Emotion data = System.Activator.CreateInstance(type) as Emotion;
+                Emotion data = Activator.CreateInstance(type) as Emotion;
                 emotionData.Add(emotion, data);
-                this.allEmotions.Add(data);
+                allEmotions.Add(data);
             } else {
                 Debug.LogWarning($"{typeName} has no data!");
             }
@@ -835,18 +840,18 @@ public class CharacterManager : MonoBehaviour {
     #endregion
 }
 
-[System.Serializable]
+[Serializable]
 public class PortraitFrame {
     public Sprite baseBG;
     public Sprite frameOutline;
 }
 
-[System.Serializable]
+[Serializable]
 public struct SummonSettings {
     public Sprite summonPortrait;
 }
 
-[System.Serializable]
+[Serializable]
 public struct ArtifactSettings {
     public Sprite artifactPortrait;
 }

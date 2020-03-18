@@ -1,1 +1,12 @@
-{"race":10,"attackPowerModifier":0.0,"speedModifier":0.0,"hpModifier":0.0,"walkSpeed":1.399999976158142,"runSpeed":3.200000047683716,"neutralSpawnLevelModifier":0,"traitNames":["Consumable"]}
+{
+  "race": 10,
+  "attackPowerModifier": 0.0,
+  "speedModifier": 0.0,
+  "hpModifier": 0.0,
+  "walkSpeed": 1.399999976158142,
+  "runSpeed": 3.200000047683716,
+  "neutralSpawnLevelModifier": 0,
+  "traitNames": [
+    "Consumable"
+  ]
+}

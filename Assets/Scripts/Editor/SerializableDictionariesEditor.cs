@@ -63,6 +63,10 @@ public class TimeOfDayLightDictionaryPropertyDrawer : SerializableDictionaryProp
 public class BiomeHighlightColorDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(SpriteSpriteDictionary))]
 public class SpriteSpriteDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(BiomeMonsterDictionary))]
+public class BiomeMonsterDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(BiomeItemDictionary))]
+public class BiomeItemDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 
 //list storage
 [CustomPropertyDrawer(typeof(LandmarkSpriteListStorage))]
@@ -81,3 +85,7 @@ public class GameObjectListStoragePropertyDrawer : SerializableDictionaryStorage
 public class ArtifactDataDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(ElementalDamageDataDictionary))]
 public class ElementalDamageDataDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(MonsterSettingListStorage))]
+public class MonsterTypeListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
+[CustomPropertyDrawer(typeof(TileObjectSettingListStorage))]
+public class TileObjectTypeListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
