@@ -625,8 +625,13 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			    if (summon.homeStructure != null) {
 				    chosenTile = CollectionUtilities.GetRandomElement(summon.homeStructure.unoccupiedTiles);
 			    } else {
-				    HexTile chosenTerritory = summon.territorries[UnityEngine.Random.Range(0, summon.territorries.Count)];
-				    chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);    
+                    if (summon.territorries.Count > 0) {
+                        HexTile chosenTerritory = summon.territorries[UnityEngine.Random.Range(0, summon.territorries.Count)];
+                        chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
+                    } else {
+                        //If has no territory, roam around tile instead
+                        return TriggerRoamAroundTile();
+                    }
 			    }
 			    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], summon, _owner, new object[] { chosenTile }, 0);
 			    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);

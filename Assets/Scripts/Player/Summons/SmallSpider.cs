@@ -11,6 +11,10 @@ public class SmallSpider : Summon {
         UtilityScripts.Utilities.GetRandomGender()) {
         //combatComponent.SetElementalType(ELEMENTAL_TYPE.Poison);
     }
+    public SmallSpider(string className) : base(SUMMON_TYPE.Small_Spider, className, RACE.SPIDER,
+        UtilityScripts.Utilities.GetRandomGender()) {
+        //combatComponent.SetElementalType(ELEMENTAL_TYPE.Poison);
+    }
     public SmallSpider(SaveDataCharacter data) : base(data) {
         //combatComponent.SetElementalType(ELEMENTAL_TYPE.Poison);
     }

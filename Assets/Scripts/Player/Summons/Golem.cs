@@ -7,6 +7,9 @@ public class Golem : Summon {
     public Golem() : base(SUMMON_TYPE.Golem, "Golem", RACE.GOLEM, UtilityScripts.Utilities.GetRandomGender()) {
         SetMaxHPMod(1000);
     }
+    public Golem(string className) : base(SUMMON_TYPE.Golem, className, RACE.GOLEM, UtilityScripts.Utilities.GetRandomGender()) {
+        SetMaxHPMod(1000);
+    }
     public Golem(SaveDataCharacter data) : base(data) { }
 
     #region Overrides

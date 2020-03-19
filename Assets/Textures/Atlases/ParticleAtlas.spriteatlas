@@ -31,7 +31,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: c56691e3000aa5f46b6b0f833f973a16, type: 3}
-    totalSpriteSurfaceArea: 2922355
+    totalSpriteSurfaceArea: 2926451
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -54,6 +54,7 @@ SpriteAtlas:
   - {fileID: -4397085772097549116, guid: bc315589168f8c54a87217490097188e, type: 3}
   - {fileID: 21300000, guid: 5e029a996e769784898c1a44b6ba0429, type: 3}
   - {fileID: 21300002, guid: 5e029a996e769784898c1a44b6ba0429, type: 3}
+  - {fileID: 21300000, guid: 78df04f980016dc4fb71ef2a8938c2ed, type: 3}
   - {fileID: 4487587328139191825, guid: 06241baa476e1d34da9eb48d6badce14, type: 3}
   - {fileID: 3329742001649244855, guid: 06241baa476e1d34da9eb48d6badce14, type: 3}
   - {fileID: -3537241893320760627, guid: 06241baa476e1d34da9eb48d6badce14, type: 3}
@@ -88,6 +89,7 @@ SpriteAtlas:
   - cloud_poison_2
   - Particle_Sprite_Sheet_0
   - Particle_Sprite_Sheet_1
+  - landmine
   - Poison_Cloud_Spritesheet_1
   - Poison_Cloud_Spritesheet_0
   - Poison_Cloud_Spritesheet_3

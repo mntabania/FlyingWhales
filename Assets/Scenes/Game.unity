@@ -29741,11 +29741,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ce5a378faa4afc42b950ac6b26006da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startMonth: 1
-  startDay: 0
-  startYear: 80
-  startTick: 144
+  month: 1
+  year: 80
+  tick: 144
   continuousDays: 1
+  startYear: 80
   currProgressionSpeed: 0
   progressionSpeed: 1
   displayFPS: 0
@@ -29761,7 +29761,7 @@ MonoBehaviour:
   bloodPuddleEffectPrefab: {fileID: 9033442248038542139, guid: 46622b224b908ae4ba45c8bfcaf2c617,
     type: 3}
   particleEffectsDictionary:
-    m_keys: 0100000002000000030000000400000005000000060000000700000008000000090000000a0000000b0000000d0000000e0000000c0000000f00000010000000110000001200000013000000
+    m_keys: 0100000002000000030000000400000005000000060000000700000008000000090000000a0000000b0000000d0000000e0000000c0000000f0000001000000011000000120000001300000014000000
     m_values:
     - {fileID: 5106000538713877668, guid: 50d896df8d440474a97233e68f30bf8a, type: 3}
     - {fileID: 1979527227019656, guid: 46523c9c550ae58489dc81eb94b1053f, type: 3}
@@ -29782,6 +29782,8 @@ MonoBehaviour:
     - {fileID: 1196197512126470922, guid: 9928b067168bdda459b85c0d7d5ece9a, type: 3}
     - {fileID: 9032662682557629287, guid: 27807dd5bd51992428bc840ebb9d07d0, type: 3}
     - {fileID: 3943589384005629521, guid: 9d3bdd1f0adb6b1408d558ff3ca392bd, type: 3}
+    - {fileID: 6279253120439075722, guid: 76966b4d03acbf24f82c18ddc01b593b, type: 3}
+  pauseTickEnded2: 0
   lastProgressionBeforePausing: 
 --- !u!114 &557822220
 MonoBehaviour:
@@ -113130,7 +113132,7 @@ MonoBehaviour:
   _brightPeriodRange:
     lowerBound: 6
     upperBound: 18
-  currentLightState: 1
+  currentLightState: 0
   isTransitioning: 0
 --- !u!1 &1921633472
 GameObject:

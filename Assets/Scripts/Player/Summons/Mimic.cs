@@ -7,6 +7,8 @@ public class Mimic : Summon {
     
     public Mimic() : base(SUMMON_TYPE.Mimic, "Mimic", RACE.MIMIC,
         UtilityScripts.Utilities.GetRandomGender()) { }
+    public Mimic(string className) : base(SUMMON_TYPE.Mimic, className, RACE.MIMIC,
+        UtilityScripts.Utilities.GetRandomGender()) { }
     public Mimic(SaveDataCharacter data) : base(data) { }
     
     

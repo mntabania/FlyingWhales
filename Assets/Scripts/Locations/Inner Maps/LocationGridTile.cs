@@ -52,6 +52,8 @@ namespace Inner_Maps {
         public bool isCorrupted => groundType == Ground_Type.Corrupted;
         public bool hasLandmine { get; private set; }
 
+        private GameObject _landmineEffect;
+
         #region Pathfinding
         public List<LocationGridTile> ValidTiles { get { return FourNeighbours().Where(o => o.tileType == Tile_Type.Empty).ToList(); } }
         public List<LocationGridTile> UnoccupiedNeighbours { get { return neighbours.Values.Where(o => !o.isOccupied && o.structure == structure).ToList(); } }
@@ -991,8 +993,15 @@ namespace Inner_Maps {
 
         #region Landmine
         public void SetHasLandmine(bool state) {
-            hasLandmine = state;
-            //TODO: Update visuals here
+            if(hasLandmine != state) {
+                hasLandmine = state;
+                if (hasLandmine) {
+                    _landmineEffect = GameManager.Instance.CreateParticleEffectAt(this, PARTICLE_EFFECT.Landmine, InnerMapManager.DetailsTilemapSortingOrder - 1);
+                } else {
+                    ObjectPoolManager.Instance.DestroyObject(_landmineEffect);
+                    _landmineEffect = null;
+                }
+            }
         }
         private void TriggerLandmine(Character triggeredBy) {
             SetHasLandmine(false);

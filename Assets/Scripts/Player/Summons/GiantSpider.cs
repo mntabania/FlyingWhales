@@ -9,5 +9,7 @@ public class GiantSpider : Summon {
     
     public GiantSpider() : base(SUMMON_TYPE.GiantSpider, ClassName, RACE.SPIDER,
         UtilityScripts.Utilities.GetRandomGender()) { }
+    public GiantSpider(string className) : base(SUMMON_TYPE.GiantSpider, className, RACE.SPIDER,
+        UtilityScripts.Utilities.GetRandomGender()) { }
     public GiantSpider(SaveDataCharacter data) : base(data) { }
 }

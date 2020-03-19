@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
 using UnityEngine;
+using Actionables;
 
 public class Artifact : TileObject {
     public ArtifactData data { get; private set; }
@@ -40,12 +41,21 @@ public class Artifact : TileObject {
         return name;
     }
     protected override string GenerateName() { return UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(type.ToString()); }
-    public override void OnPlacePOI() {
-        base.OnPlacePOI();
-        if (gridTileLocation.collectionOwner.isPartOfParentRegionMap && 
-            gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == PlayerManager.Instance.player.portalTile) {
-            PlayerManager.Instance.player.AddArtifact(this);
-        }
+    //public override void OnPlacePOI() {
+    //    base.OnPlacePOI();
+    //    if (gridTileLocation.collectionOwner.isPartOfParentRegionMap && 
+    //        gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == PlayerManager.Instance.player.portalTile) {
+    //        PlayerManager.Instance.player.AddArtifact(this);
+    //    }
+    //}
+    public override void ConstructDefaultActions() {
+        actions = new List<PlayerAction>();
+
+        PlayerAction activateArtifactAction = new PlayerAction(PlayerDB.Activate_Artifact_Action,
+            () => true,
+            null,
+            ActivateArtifactEffect);
+        AddPlayerAction(activateArtifactAction);
     }
     #endregion
 

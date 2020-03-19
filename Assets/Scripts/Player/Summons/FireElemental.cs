@@ -9,8 +9,13 @@ public class FireElemental : Summon {
     
     public FireElemental() : base(SUMMON_TYPE.FireElemental, "FireElemental", RACE.ELEMENTAL,
         UtilityScripts.Utilities.GetRandomGender()) { }
+    public FireElemental(string className) : base(SUMMON_TYPE.FireElemental, className, RACE.ELEMENTAL,
+        UtilityScripts.Utilities.GetRandomGender()) { }
     public FireElemental(SaveDataCharacter data) : base(data) { }
-    
+    public override void Initialize() {
+        base.Initialize();
+        traitContainer.AddTrait(this, "Fireproof");
+    }
     public override void SubscribeToSignals() {
         base.SubscribeToSignals();
         Messenger.AddListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);

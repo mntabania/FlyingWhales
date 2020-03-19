@@ -9,7 +9,7 @@ using UnityEngine;
 public class Skeleton : Summon {
 
     public Skeleton() : base(SUMMON_TYPE.Skeleton, CharacterManager.Instance.GetRandomClassByIdentifier("Normal"), RACE.SKELETON, UtilityScripts.Utilities.GetRandomGender()) { }
-    public Skeleton(SaveDataCharacter data) : base(data) { }
+s    public Skeleton(SaveDataCharacter data) : base(data) { }
 
     #region Overrides
     //public override void OnPlaceSummon(LocationGridTile tile) {
