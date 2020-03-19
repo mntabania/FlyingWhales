@@ -53,7 +53,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public LocationGridTile previousTile { get; private set; }
     public Dictionary<RESOURCE, int> storedResources { get; private set; }
     protected Dictionary<RESOURCE, int> maxResourceValues { get; set; }
-    public List<PlayerAction> actions { get; private set; }
+    public List<PlayerAction> actions { get; protected set; }
 
     private bool hasSubscribedToListeners;
 

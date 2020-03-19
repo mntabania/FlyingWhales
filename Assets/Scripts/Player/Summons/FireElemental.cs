@@ -11,6 +11,10 @@ public class FireElemental : Summon {
         UtilityScripts.Utilities.GetRandomGender()) {
 		//combatComponent.SetElementalType(ELEMENTAL_TYPE.Fire);
     }
+    public FireElemental(string className) : base(SUMMON_TYPE.FireElemental, className, RACE.ELEMENTAL,
+        UtilityScripts.Utilities.GetRandomGender()) {
+        //combatComponent.SetElementalType(ELEMENTAL_TYPE.Fire);
+    }
     public FireElemental(SaveDataCharacter data) : base(data) {
         //combatComponent.SetElementalType(ELEMENTAL_TYPE.Fire);
     }

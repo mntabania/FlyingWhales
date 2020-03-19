@@ -7,6 +7,7 @@ using EZObjectPools;
 
 public class BaseParticleEffect : PooledObject {
     public ParticleSystem[] particleSystems;
+    private ParticleSystemRenderer[] _particleSystemRenderers;
     public bool pauseOnGamePaused;
 
     public LocationGridTile targetTile { get; protected set; }
@@ -14,7 +15,6 @@ public class BaseParticleEffect : PooledObject {
     public void SetTargetTile(LocationGridTile tile) {
         targetTile = tile;
     }
-
     private void OnEnable() {
         if (pauseOnGamePaused) {
             Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
@@ -27,6 +27,14 @@ public class BaseParticleEffect : PooledObject {
         //}
         if (pauseOnGamePaused) {
             Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
+        }
+    }
+    private void TryConstructParticleSystemRenderers() {
+        if(_particleSystemRenderers == null || _particleSystemRenderers.Length <= 0) {
+            _particleSystemRenderers = new ParticleSystemRenderer[particleSystems.Length];
+            for (int i = 0; i < particleSystems.Length; i++) {
+                _particleSystemRenderers[i] = particleSystems[i].GetComponent<ParticleSystemRenderer>();
+            }
         }
     }
     //private void OnParticleEffectDonePlaying(ParticleSystem particleSystem) {
@@ -43,6 +51,12 @@ public class BaseParticleEffect : PooledObject {
     }
     public void ResetParticleEffect() {
         ResetParticle();
+    }
+    public void SetSortingOrder(int amount) {
+        TryConstructParticleSystemRenderers();
+        for (int i = 0; i < _particleSystemRenderers.Length; i++) {
+            _particleSystemRenderers[i].sortingOrder = amount;
+        }
     }
     protected virtual IEnumerator PlayParticleCoroutine() {
         //Playing particle effect is done in a coroutine so that it will wait one frame before pausing the particles if the game is paused when the particle is activated

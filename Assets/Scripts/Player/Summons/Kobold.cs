@@ -11,6 +11,10 @@ public class Kobold : Summon {
         UtilityScripts.Utilities.GetRandomGender()) {
 		//combatComponent.SetElementalType(ELEMENTAL_TYPE.Ice);
     }
+    public Kobold(string className) : base(SUMMON_TYPE.Kobold, className, RACE.KOBOLD,
+        UtilityScripts.Utilities.GetRandomGender()) {
+        //combatComponent.SetElementalType(ELEMENTAL_TYPE.Ice);
+    }
     public Kobold(SaveDataCharacter data) : base(data) {
         //combatComponent.SetElementalType(ELEMENTAL_TYPE.Ice);
     }

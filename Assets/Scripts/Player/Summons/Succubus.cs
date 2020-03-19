@@ -10,6 +10,9 @@ public class Succubus : SeducerSummon {
     public Succubus() : base(SUMMON_TYPE.Succubus, GENDER.FEMALE, ClassName){
         //combatComponent.SetElementalType(ELEMENTAL_TYPE.Ice);
     }
+    public Succubus(string className) : base(SUMMON_TYPE.Succubus, GENDER.FEMALE, className) {
+        //combatComponent.SetElementalType(ELEMENTAL_TYPE.Ice);
+    }
     public Succubus(SaveDataCharacter data) : base(data) {
         //combatComponent.SetElementalType(ELEMENTAL_TYPE.Ice);
     }

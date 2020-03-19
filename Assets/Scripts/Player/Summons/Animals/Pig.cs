@@ -8,6 +8,9 @@ public class Pig : Animal {
     public Pig() : base(SUMMON_TYPE.Pig, "Pig", RACE.PIG) {
         combatComponent.SetCombatMode(COMBAT_MODE.Passive);
     }
+    public Pig(string className) : base(SUMMON_TYPE.Pig, className, RACE.PIG) {
+        combatComponent.SetCombatMode(COMBAT_MODE.Passive);
+    }
     public Pig(SaveDataCharacter data) : base(data) {
         combatComponent.SetCombatMode(COMBAT_MODE.Passive);
     }

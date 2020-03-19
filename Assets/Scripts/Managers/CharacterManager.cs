@@ -112,6 +112,8 @@ public class CharacterManager : MonoBehaviour {
         newCharacter.ownParty.CreateIcon();
         if (homeLocation != null) {
             newCharacter.MigrateHomeTo(homeLocation, homeStructure, false);
+        }
+        if(homeRegion != null) {
             homeRegion.AddResident(newCharacter);
             homeRegion.AddCharacterToLocation(newCharacter);
         }
@@ -332,8 +334,8 @@ public class CharacterManager : MonoBehaviour {
 
     #region Summons
     public Summon CreateNewSummon(SUMMON_TYPE summonType, Faction faction = null, BaseSettlement homeLocation = null,
-        Region homeRegion = null, IDwelling homeStructure = null) {
-        Summon newCharacter = CreateNewSummonClassFromType(summonType) as Summon;
+        Region homeRegion = null, IDwelling homeStructure = null, string className = "") {
+        Summon newCharacter = CreateNewSummonClassFromType(summonType, className) as Summon;
         newCharacter.Initialize();
         if (faction != null) {
             faction.JoinFaction(newCharacter);
@@ -424,8 +426,11 @@ public class CharacterManager : MonoBehaviour {
         }
         return null;
     }
-    private object CreateNewSummonClassFromType(SUMMON_TYPE summonType) {
+    private object CreateNewSummonClassFromType(SUMMON_TYPE summonType, string className) {
         var typeName = UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(summonType.ToString());
+        if(className != "") {
+            return Activator.CreateInstance(Type.GetType(typeName) ?? throw new Exception($"provided summon type was invalid! {typeName}"), className);
+        }
         return Activator.CreateInstance(Type.GetType(typeName) ?? throw new Exception($"provided summon type was invalid! {typeName}"));
     }
     public SummonSettings GetSummonSettings(SUMMON_TYPE type) {

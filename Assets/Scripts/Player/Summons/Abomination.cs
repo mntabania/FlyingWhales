@@ -8,6 +8,8 @@ public class Abomination : Summon {
     
     public Abomination() : base(SUMMON_TYPE.Abomination, "Abomination", RACE.ABOMINATION,
         UtilityScripts.Utilities.GetRandomGender()) { }
+    public Abomination(string className) : base(SUMMON_TYPE.Abomination, className, RACE.ABOMINATION,
+        UtilityScripts.Utilities.GetRandomGender()) { }
     public Abomination(SaveDataCharacter data) : base(data) { }
     
 }

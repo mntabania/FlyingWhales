@@ -516,6 +516,9 @@ namespace Inner_Maps {
             for (int i = 0; i < 2; i++) {
                 mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.POISON_FLASK));
             }
+            mainStorage.AddPOI(CreateNewArtifact(ARTIFACT_TYPE.Necronomicon));
+            mainStorage.AddPOI(CreateNewArtifact(ARTIFACT_TYPE.Berserk_Orb));
+
             //for (int i = 0; i < 2; i++) {
             //    mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.EMBER));
             //}

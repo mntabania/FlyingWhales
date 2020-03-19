@@ -457,7 +457,7 @@ public class GameManager : MonoBehaviour {
     //}
 
     #region Particle Effects
-    public GameObject CreateParticleEffectAt(LocationGridTile tile, PARTICLE_EFFECT particle) {
+    public GameObject CreateParticleEffectAt(LocationGridTile tile, PARTICLE_EFFECT particle, int sortingOrder = -1) {
         GameObject prefab = null;
         GameObject go = null;
         if (particleEffectsDictionary.ContainsKey(particle)) {
@@ -471,6 +471,9 @@ public class GameManager : MonoBehaviour {
         go.SetActive(true);
         BaseParticleEffect particleEffectScript = go.GetComponent<BaseParticleEffect>();
         if (particleEffectScript) {
+            if(sortingOrder != -1) {
+                particleEffectScript.SetSortingOrder(sortingOrder);
+            }
             particleEffectScript.SetTargetTile(tile);
             particleEffectScript.PlayParticleEffect();
         }

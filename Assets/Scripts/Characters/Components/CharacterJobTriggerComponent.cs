@@ -618,16 +618,21 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    if (_owner is Summon) {
 		    if (!_owner.jobQueue.HasJob(JOB_TYPE.RETURN_TERRITORY)) {
 			    Summon summon = _owner as Summon;
-			    HexTile chosenTerritory = summon.territorries[UnityEngine.Random.Range(0, summon.territorries.Count)];
-			    LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
-			    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], _owner, _owner, new object[] { chosenTile }, 0);
-			    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-			    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RETURN_TERRITORY, INTERACTION_TYPE.ROAM, _owner, _owner);
-			    goapPlan.SetDoNotRecalculate(true);
-			    job.SetCannotBePushedBack(true);
-			    job.SetAssignedPlan(goapPlan);
-			    _owner.jobQueue.AddJobInQueue(job);
-			    return true;
+                if(summon.territorries.Count > 0) {
+                    HexTile chosenTerritory = summon.territorries[UnityEngine.Random.Range(0, summon.territorries.Count)];
+                    LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
+                    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], _owner, _owner, new object[] { chosenTile }, 0);
+                    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
+                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RETURN_TERRITORY, INTERACTION_TYPE.ROAM, _owner, _owner);
+                    goapPlan.SetDoNotRecalculate(true);
+                    job.SetCannotBePushedBack(true);
+                    job.SetAssignedPlan(goapPlan);
+                    _owner.jobQueue.AddJobInQueue(job);
+                    return true;
+                } else {
+                    //If has no territory, roam around tile instead
+                    return TriggerRoamAroundTile();
+                }
 		    }
 	    }
 	    return false;
