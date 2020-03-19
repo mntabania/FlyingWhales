@@ -54,6 +54,13 @@ public class Repair : GoapAction {
         //}
         return goapActionInvalidity;
     }
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest target, object[] otherData) {
+        bool satisfied = base.AreRequirementsSatisfied(actor, target, otherData);
+        if (satisfied) {
+            return target.gridTileLocation != null;
+        }
+        return false;
+    }
     private bool IsRepairTargetMissing(ActualGoapNode node) {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;

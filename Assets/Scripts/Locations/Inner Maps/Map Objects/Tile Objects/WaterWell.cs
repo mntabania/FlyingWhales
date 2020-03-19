@@ -23,6 +23,12 @@ public class WaterWell : TileObject {
         //advertisedActions = structureLocation.structureType != STRUCTURE_TYPE.POND && structureLocation.structureType != STRUCTURE_TYPE.OCEAN ? 
         //    new List<INTERACTION_TYPE>() { INTERACTION_TYPE.WELL_JUMP, INTERACTION_TYPE.REPAIR } : new List<INTERACTION_TYPE>();
     }
+    public override bool CanBeAffectedByElementalStatus(string traitName) {
+        if (traitName == "Wet") {
+            return true; //allow water well to be wet.
+        }
+        return structureLocation.structureType != STRUCTURE_TYPE.POND && structureLocation.structureType != STRUCTURE_TYPE.OCEAN;
+    }
     public override bool CanBeDamaged() {
         return structureLocation.structureType != STRUCTURE_TYPE.POND && structureLocation.structureType != STRUCTURE_TYPE.OCEAN;
     }

@@ -18,7 +18,6 @@ public sealed class PoisonCloudTileObject : MovingTileObject {
         traitContainer.AddTrait(this, "Dangerous");
         SetDurationInTicks(GameManager.Instance.GetTicksBasedOnHour(2));
     }
-    
     protected override void CreateMapObjectVisual() {
         base.CreateMapObjectVisual();
         _poisonCloudVisual = mapVisual as PoisonCloudMapObjectVisual;
@@ -35,6 +34,9 @@ public sealed class PoisonCloudTileObject : MovingTileObject {
     }
     public override void Neutralize() {
         _poisonCloudVisual.Expire();
+    }
+    public override bool CanBeAffectedByElementalStatus(string traitName) {
+        return false;
     }
     public void SetStacks(int stacks) {
         _stacks = stacks;

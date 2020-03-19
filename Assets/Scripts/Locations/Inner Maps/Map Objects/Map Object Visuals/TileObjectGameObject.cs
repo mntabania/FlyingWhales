@@ -81,7 +81,7 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
         return UIManager.Instance.tileObjectInfoUI.isShowing &&
                UIManager.Instance.tileObjectInfoUI.activeTileObject == obj;
     }
-    public override bool IsMapObjectMenuVisible() {
+    public virtual bool IsMapObjectMenuVisible() {
         return _isMenuShowing.Invoke();
     }
     #endregion

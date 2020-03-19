@@ -446,9 +446,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     }
     public virtual void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false,
         object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false) {
-        if (currentHP == 0 && amount < 0) {
-            return; //hp is already at minimum, do not allow any more negative adjustments
-        }
+        if (CanBeDamaged() == false) { return; }
+        if (currentHP == 0 && amount < 0) { return; } //hp is already at minimum, do not allow any more negative adjustments
         CombatManager.Instance.DamageModifierByElements(ref amount, elementalDamageType, this);
         currentHP += amount;
         currentHP = Mathf.Clamp(currentHP, 0, maxHP);
@@ -463,12 +462,6 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             }
         }
         if (amount < 0) {
-            //ELEMENTAL_TYPE elementalType = ELEMENTAL_TYPE.Normal;
-            //if (source is Character) {
-            //    elementalType = (source as Character).combatComponent.elementalDamage.type;
-            //}
-            // CombatManager.Instance.CreateHitEffectAt(this, elementalDamageType);
-            // if(currentHP > 0) {
             Character responsibleCharacter = null;
             if (source is Character character) {
                 responsibleCharacter = character;
@@ -477,8 +470,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
                                                         CombatManager.Instance.DefaultElementalTraitProcessor;
             CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, 
                 responsibleCharacter, etp);
-            // }
-        }
+        }    
         if (currentHP <= 0) {
             //object has been destroyed
             Character removed = null;
@@ -539,6 +531,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public TraitProcessor traitProcessor => TraitManager.tileObjectTraitProcessor;
     public void CreateTraitContainer() {
         traitContainer = new TraitContainer();
+    }
+    public virtual bool CanBeAffectedByElementalStatus(string traitName) {
+        return true;
     }
     #endregion
 

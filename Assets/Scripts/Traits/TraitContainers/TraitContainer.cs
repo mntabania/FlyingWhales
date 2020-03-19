@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Inner_Maps;
-
+using UnityEngine.WSA;
 namespace Traits {
     public class TraitContainer : ITraitContainer {
 
@@ -110,6 +110,11 @@ namespace Traits {
         //Returns true or false, if trait should be added or not
         private bool ProcessBeforeAddingElementalStatus(ITraitable addTo, string traitName, bool bypassElementalChance) {
             bool shouldAddTrait = true;
+            if (addTo is TileObject tileObject && tileObject.CanBeAffectedByElementalStatus(traitName) == false) {
+                //Hidden Well Spots in Water Tiles should not receive elemental damage and status effects
+                //Thick walls should not receive elemental status effects
+                return false;
+            }
             if (traitName == "Burning") {
                 if (HasTrait("Freezing")) {
                     RemoveTrait(addTo, "Freezing");
@@ -122,8 +127,8 @@ namespace Traits {
                 if (HasTrait("Poisoned")) {
                     int poisonStacks = stacks["Poisoned"];
                     RemoveStatusAndStacks(addTo, "Poisoned");
-                    if (addTo is IPointOfInterest) {
-                        CombatManager.Instance.PoisonExplosion(addTo as IPointOfInterest, addTo.gridTileLocation, poisonStacks);
+                    if (addTo is IPointOfInterest to) {
+                        CombatManager.Instance.PoisonExplosion(to, addTo.gridTileLocation, poisonStacks);
                     }
                     shouldAddTrait = false;
                 }
@@ -160,7 +165,7 @@ namespace Traits {
             } else if (traitName == "Zapped") {
                 if (HasTrait("Electric")) {
                     shouldAddTrait = false;
-                } else if(addTo is GenericTileObject || addTo is StructureWallObject || addTo is BlockWall) {
+                } else if(addTo is GenericTileObject || addTo is StructureWallObject) {
                     if (!HasTrait("Wet")) {
                         //Ground floor tiles and walls do not get Zapped by electric damage unless they are Wet.
                         shouldAddTrait = false;

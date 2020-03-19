@@ -20,7 +20,7 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
     
     #region Abstract Members Implementation
     public override void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) { }
-    public override bool IsMapObjectMenuVisible() {
+    public virtual bool IsMapObjectMenuVisible() {
         return true;
     }
     public override void UpdateTileObjectVisual(TileObject obj) { }
@@ -177,8 +177,6 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
     #region POI's
     private void AddObject(ITraitable obj) {
         if (!_objsInRange.Contains(obj)) {
-            //TODO: Unify this
-            if (obj is PoisonCloudTileObject) { return; }
             _objsInRange.Add(obj);
             OnAddPOI(obj);
         }

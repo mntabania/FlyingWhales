@@ -26,6 +26,9 @@ public class BlockWall : TileObject {
     }
 
     #region Overrides
+    public override bool CanBeAffectedByElementalStatus(string traitName) {
+        return false;
+    }
     public override void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom, bool removeTraits = true,
         bool destroyTileSlots = true) {
         removedFrom.parentMap.structureTilemap.SetTile(removedFrom.localPlace, null);

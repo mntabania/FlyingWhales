@@ -712,15 +712,15 @@ MonoBehaviour:
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
-    defaultLandmarkPortrait: {fileID: 21300000, guid: 8f57444b93359594096b1dd546244094,
+    defaultLandmarkPortrait: {fileID: 21300000, guid: 6bacb8bd4f3ec954a940598485382ad0,
       type: 3}
     biomeTileSprites:
       m_keys: 
       m_values: []
     neutralTileSprites:
-    - mainSprite: {fileID: 21300000, guid: 6b15ab4e0c664d94f906a2b783906619, type: 3}
-      tintSprite: {fileID: 21300000, guid: d25eaa8dbe14ebb4e96d58aabf1b978f, type: 3}
-      animation: {fileID: 0}
+    - mainSprite: {fileID: 21300000, guid: 234e6925ebef61f49b0f4cd54e1b3959, type: 3}
+      tintSprite: {fileID: 0}
+      animation: {fileID: 9100000, guid: a515eaf954edb284ab7ba81ddf31a0a3, type: 2}
       overrideLandmarkPortrait: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
@@ -739,9 +739,9 @@ MonoBehaviour:
       m_keys: 
       m_values: []
     neutralTileSprites:
-    - mainSprite: {fileID: 21300000, guid: 0919fe3d152887f46a5152e78ab4f9dd, type: 3}
+    - mainSprite: {fileID: 21300000, guid: 566392069dbffc6409998f9359704001, type: 3}
       tintSprite: {fileID: 0}
-      animation: {fileID: 9100000, guid: b447470680d718740b7ffef6eda52099, type: 2}
+      animation: {fileID: 9100000, guid: a62da718639c1c54c952d8b0cf78d36d, type: 2}
       overrideLandmarkPortrait: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
