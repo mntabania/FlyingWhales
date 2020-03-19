@@ -1491,8 +1491,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         Vector3 direction = target.worldPosition - start;
 
         //do the ray test
-        RaycastHit2D[] hitObjects = new RaycastHit2D[20];
-        var size = Physics2D.RaycastNonAlloc(start, direction, hitObjects, 10f);
+        RaycastHit2D[] hitObjects = Physics2D.RaycastAll(start, direction, 10f);
         for (int i = 0; i < hitObjects.Length; i++) {
             RaycastHit2D hit = hitObjects[i];
             if (hit.collider != null) {
