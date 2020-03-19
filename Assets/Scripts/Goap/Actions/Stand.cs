@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Inner_Maps;
 using UnityEngine;  
 using Traits;
 
@@ -16,7 +18,7 @@ public class Stand : GoapAction {
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.GOLEM, 
             RACE.DEMON, RACE.WOLF, RACE.ELEMENTAL, RACE.KOBOLD, RACE.MIMIC, RACE.PIG, RACE.SHEEP, RACE.CHICKEN, 
-            RACE.ABOMINATION };
+            RACE.ABOMINATION, RACE.NYMPH, RACE.WISP, RACE.SLUDGE, RACE.GHOST, RACE.LESSER_DEMON };
     }
 
     #region Overrides
@@ -26,6 +28,12 @@ public class Stand : GoapAction {
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 4;
+    }
+    public override List<LocationGridTile> NearbyLocationGetter(ActualGoapNode goapNode) {
+        if (goapNode.actor is Summon && goapNode.actor.homeStructure != null) {
+            return goapNode.actor.homeStructure.unoccupiedTiles.ToList();
+        }
+        return base.NearbyLocationGetter(goapNode);
     }
     #endregion
 

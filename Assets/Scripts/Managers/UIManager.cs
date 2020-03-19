@@ -198,7 +198,7 @@ public class UIManager : MonoBehaviour {
     }
     private void UpdateUI() {
         dateLbl.SetText(
-            $"Day {GameManager.Instance.continuousDays.ToString()}\n{GameManager.ConvertTickToTime(GameManager.Instance.tick)}");
+            $"Day {GameManager.Instance.continuousDays.ToString()}\n{GameManager.ConvertTickToTime(GameManager.Instance.Today().tick)}");
 
         UpdateInteractableInfoUI();
         UpdateFactionInfo();
@@ -605,7 +605,7 @@ public class UIManager : MonoBehaviour {
         this.gameObject.SetActive(state);
     }
     public void DateHover() {
-        ShowSmallInfo($"Day: {GameManager.Instance.continuousDays} Tick: {GameManager.Instance.tick}");
+        ShowSmallInfo($"Day: {GameManager.Instance.continuousDays.ToString()} Tick: {GameManager.Instance.Today().tick.ToString()}");
     }
     [ExecuteInEditMode]
     [ContextMenu("Set All Scroll Rect Scroll Speed")]

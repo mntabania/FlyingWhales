@@ -728,6 +728,9 @@ namespace Inner_Maps.Location_Structures {
         public void RightSelectAction() {
             //Nothing happens
         }
+        public bool CanBeSelected() {
+            return true;
+        }
         #endregion
     }
 }

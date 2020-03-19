@@ -371,7 +371,7 @@ public class CharacterNeedsComponent {
                 //Example if the time of day is Afternoon, the supposed tick range for it is 145 - 204
                 //So if the current tick of the game is already in 160, the range must be adjusted to 161 - 204, so as to ensure that the character will hit it
                 //But if the current tick of the game is already in 204, it cannot be 204 - 204, so, it will revert back to 145 - 204 
-                int newTick = GameManager.GetRandomTickFromTimeInWords(forcedTirednessRecoveryTimeInWords, GameManager.Instance.tick + 1);
+                int newTick = GameManager.GetRandomTickFromTimeInWords(forcedTirednessRecoveryTimeInWords, GameManager.Instance.Today().tick + 1);
                 TIME_IN_WORDS timeInWords = GameManager.GetTimeInWordsOfTick(newTick);
                 if(timeInWords != forcedTirednessRecoveryTimeInWords) {
                     newTick = GameManager.GetRandomTickFromTimeInWords(forcedTirednessRecoveryTimeInWords);
@@ -458,7 +458,7 @@ public class CharacterNeedsComponent {
         return false;
     }
     public void PlanScheduledTirednessRecovery(Character character) {
-        if (!hasForcedTiredness && tirednessForcedTick != 0 && GameManager.Instance.tick >= tirednessForcedTick && character.canPerform && doNotGetTired <= 0) {
+        if (!hasForcedTiredness && tirednessForcedTick != 0 && GameManager.Instance.Today().tick >= tirednessForcedTick && character.canPerform && doNotGetTired <= 0) {
             if (!character.jobQueue.HasJob(JOB_TYPE.ENERGY_RECOVERY_NORMAL, JOB_TYPE.ENERGY_RECOVERY_URGENT)) {
                 JOB_TYPE jobType = JOB_TYPE.ENERGY_RECOVERY_NORMAL;
                 if (isExhausted) {
@@ -850,7 +850,7 @@ public class CharacterNeedsComponent {
                 //Example if the time of day is Afternoon, the supposed tick range for it is 145 - 204
                 //So if the current tick of the game is already in 160, the range must be adjusted to 161 - 204, so as to ensure that the character will hit it
                 //But if the current tick of the game is already in 204, it cannot be 204 - 204, so, it will revert back to 145 - 204 
-                int newTick = GameManager.GetRandomTickFromTimeInWords(forcedFullnessRecoveryTimeInWords, GameManager.Instance.tick + 1);
+                int newTick = GameManager.GetRandomTickFromTimeInWords(forcedFullnessRecoveryTimeInWords, GameManager.Instance.Today().tick + 1);
                 TIME_IN_WORDS timeInWords = GameManager.GetTimeInWordsOfTick(newTick);
                 if (timeInWords != forcedFullnessRecoveryTimeInWords) {
                     newTick = GameManager.GetRandomTickFromTimeInWords(forcedFullnessRecoveryTimeInWords);
@@ -872,7 +872,7 @@ public class CharacterNeedsComponent {
         doNotGetHungry = Math.Max(doNotGetHungry, 0);
     }
     public void PlanScheduledFullnessRecovery(Character character) {
-        if (!hasForcedFullness && fullnessForcedTick != 0 && GameManager.Instance.tick >= fullnessForcedTick && character.canPerform && doNotGetHungry <= 0) {
+        if (!hasForcedFullness && fullnessForcedTick != 0 && GameManager.Instance.Today().tick >= fullnessForcedTick && character.canPerform && doNotGetHungry <= 0) {
             if (!character.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT)) {
                 JOB_TYPE jobType = JOB_TYPE.FULLNESS_RECOVERY_NORMAL;
                 if (isStarving) {

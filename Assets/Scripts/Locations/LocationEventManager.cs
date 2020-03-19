@@ -13,7 +13,7 @@ public class LocationEventManager {
     private void ProcessEvents() {
         List<LocationEvent> eventsData = LandmarkManager.Instance.locationEventsData;
         int chance = UnityEngine.Random.Range(0, 100);
-        int currentTick = GameManager.Instance.tick;
+        int currentTick = GameManager.Instance.Today().tick;
         for (int i = 0; i < eventsData.Count; i++) {
             LocationEvent eventData = eventsData[i];
             if(currentTick == eventData.triggerTick && chance < eventData.triggerChance && eventData.triggerCondition != null) {

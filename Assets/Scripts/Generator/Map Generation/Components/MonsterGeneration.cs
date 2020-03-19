@@ -22,9 +22,12 @@ public class MonsterGeneration : MapGenerationComponent {
 		Summon summon = CharacterManager.Instance.CreateNewSummon(summonType, FactionManager.Instance.neutralFaction, settlementOnTile, monsterLair.tileLocation.region);
 		CharacterManager.Instance.PlaceSummon(summon, CollectionUtilities.GetRandomElement(monsterLairStructure.unoccupiedTiles));
 		summon.AddTerritory(monsterLair.tileLocation);
+		if (monsterLairStructure is IDwelling homeStructure) {
+			summon.MigrateHomeStructureTo(homeStructure);	
+		}
 	}
-	private void CreateMonster(SUMMON_TYPE summonType, List<LocationGridTile> locationChoices, params HexTile[] territories) {
-		LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(locationChoices);
+	private void CreateMonster(SUMMON_TYPE summonType, List<LocationGridTile> locationChoices, LocationStructure homeStructure = null, params HexTile[] territories) {
+		var chosenTile = homeStructure != null ? CollectionUtilities.GetRandomElement(homeStructure.unoccupiedTiles) : CollectionUtilities.GetRandomElement(locationChoices);
 		Assert.IsTrue(chosenTile.collectionOwner.isPartOfParentRegionMap, $"Chosen tile for {summonType.ToString()} is not part of the region map!");
 		Summon summon = CharacterManager.Instance.CreateNewSummon(summonType, FactionManager.Instance.neutralFaction, null, chosenTile.parentMap.region);
 		CharacterManager.Instance.PlaceSummon(summon, chosenTile);
@@ -34,6 +37,9 @@ public class MonsterGeneration : MapGenerationComponent {
 				HexTile territory = territories[i];
 				summon.AddTerritory(territory);
 			}
+		}
+		if (homeStructure is IDwelling structure) {
+			summon.MigrateHomeStructureTo(structure);
 		}
 	}
 	#endregion
@@ -100,7 +106,7 @@ public class MonsterGeneration : MapGenerationComponent {
 						MonsterSetting randomMonsterSetting = CollectionUtilities.GetRandomElement(monsterChoices);
 						int randomAmount = randomMonsterSetting.minMaxRange.Random();
 						for (int l = 0; l < randomAmount; l++) {
-							CreateMonster(randomMonsterSetting.monsterType, cave.unoccupiedTiles.ToList(), hexTilesOfCave.ToArray());	
+							CreateMonster(randomMonsterSetting.monsterType, cave.unoccupiedTiles.ToList(), cave, hexTilesOfCave.ToArray());	
 						}
 					}
 				}

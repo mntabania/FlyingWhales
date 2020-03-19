@@ -177,7 +177,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 0.1}
+  m_Size: {x: 1, y: 0.3}
   m_EdgeRadius: 0
 --- !u!1 &1476827480323682
 GameObject:
@@ -273,3 +273,4 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212017159406037182}
   hoverObject: {fileID: 0}
+  statusIconsParent: {fileID: 0}

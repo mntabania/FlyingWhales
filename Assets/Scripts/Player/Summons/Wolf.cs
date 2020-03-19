@@ -7,8 +7,7 @@ public class Wolf : Summon {
 	public Wolf() : base(SUMMON_TYPE.Wolf, "Ravager", RACE.WOLF,
 		UtilityScripts.Utilities.GetRandomGender()) {
 	}
-    public Wolf(string className) : base(SUMMON_TYPE.Wolf, className, RACE.WOLF, UtilityScripts.Utilities.GetRandomGender()) {
-    }
+    className
     public Wolf(SaveDataCharacter data) : base(data) { }
 
     #region Overrides

@@ -4,6 +4,7 @@ using Inner_Maps;
 using Ruinarch;
 using Traits;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour {
@@ -11,26 +12,16 @@ public class GameManager : MonoBehaviour {
 	public static GameManager Instance;
 
     public static string[] daysInWords = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
-    //public static TIME_IN_WORDS[] timeInWords = new TIME_IN_WORDS[] {
-    //    TIME_IN_WORDS.AFTER_MIDNIGHT
-    //    , TIME_IN_WORDS.MORNING
-    //    , TIME_IN_WORDS.LUNCH_TIME
-    //    , TIME_IN_WORDS.AFTERNOON
-    //    , TIME_IN_WORDS.EARLY_NIGHT
-    //    , TIME_IN_WORDS.LATE_NIGHT };
 
-
-    public int month;
-    public static int days;
-	public int year;
-    public int tick;
+    [FormerlySerializedAs("month")] public int startMonth;
+    [FormerlySerializedAs("days")] public int startDay;
+	[FormerlySerializedAs("year")] public int startYear;
+    [FormerlySerializedAs("tick")] public int startTick;
     public int continuousDays;
     public const int daysPerMonth = 30;
     public const int ticksPerDay = 288;
     public const int ticksPerHour = 12;
-
-    public int startYear;
-
+    
     public PROGRESSION_SPEED currProgressionSpeed;
 
 	public float progressionSpeed;
@@ -43,15 +34,9 @@ public class GameManager : MonoBehaviour {
     public GameObject travelLinePrefab;
 
     [Header("Particle Effects")]
-    //[SerializeField] private GameObject electricEffectPrefab;
-    //[SerializeField] private GameObject explodeEffectPrefab;
-    //[SerializeField] private GameObject fireEffectPrefab;
     [SerializeField] private GameObject aoeParticlesPrefab;
     [SerializeField] private GameObject aoeParticlesAutoDestroyPrefab;
-    //[SerializeField] private GameObject burningEffectPrefab;
     [SerializeField] private GameObject bloodPuddleEffectPrefab;
-    //[SerializeField] private GameObject freezingEffectPrefab;
-    //[SerializeField] private GameObject poisonEffectPrefab;
     [SerializeField] private ParticleEffectAssetDictionary particleEffectsDictionary;
 
     private const float X1_SPEED = 0.8f;
@@ -60,15 +45,11 @@ public class GameManager : MonoBehaviour {
 
     private float timeElapsed;
     private bool _gameHasStarted;
-
-    public bool pauseTickEnded2;
-
     public string lastProgressionBeforePausing; //what was the last progression speed before the player paused the game. NOTE: This includes paused state
+    private static GameDate today;
 
     #region getters/setters
-    public bool gameHasStarted {
-        get { return _gameHasStarted; }
-    }
+    public bool gameHasStarted => _gameHasStarted;
     #endregion
 
     #region Monobehaviours
@@ -76,7 +57,6 @@ public class GameManager : MonoBehaviour {
         // Debug.unityLogger.logEnabled = false;
         Instance = this;
         timeElapsed = 0f;
-        days = 1;
         _gameHasStarted = false;
         InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
     }
@@ -132,53 +112,21 @@ public class GameManager : MonoBehaviour {
         Messenger.Broadcast(Signals.DAY_STARTED); //for the first day
         Messenger.Broadcast(Signals.MONTH_START); //for the first month
         Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyDown);
+        today = new GameDate(startMonth, startDay, startYear, startTick);
         //TimerHubUI.Instance.AddItem("Until Divine Intervention", 4320, null);
     }
     public GameDate Today() {
-        return new GameDate(month, days, year, tick);
+        return today;
+        // return new GameDate(month, days, year, tick);
+    }
+    public void SetToday(GameDate date) {
+        today = date;
     }
     public string TodayLogString() {
-        return $"[{continuousDays.ToString()} - {ConvertTickToTime(tick)}] ";
+        return $"[{continuousDays.ToString()} - {ConvertTickToTime(today.tick)}] ";
     }
-    public GameDate EndOfTheMonth() {
-        return new GameDate(month, daysPerMonth, year, ticksPerDay);
-    }
-    public int GetNextMonth() {
-        int currMonth = month;
-        currMonth++;
-        if(currMonth > 12) {
-            currMonth = 1;
-        }
-        return currMonth;
-    }
-    public int GetTicksDifferenceOfTwoDates(GameDate fromDate, GameDate toDate) {
-        int date1DaysDiff = fromDate.day;
-        for (int i = 1; i < fromDate.month; i++) {
-            date1DaysDiff += daysPerMonth;
-        }
-        int date2DaysDiff = toDate.day;
-        for (int i = 1; i < toDate.month; i++) {
-            date2DaysDiff += daysPerMonth;
-        }
-        int daysDiff = date2DaysDiff - date1DaysDiff;
-        int yearDiff = toDate.year - fromDate.year;
-        if(fromDate.year > toDate.year) {
-            yearDiff = fromDate.year - toDate.year;
-        }
-
-        int daysDifference = (daysDiff + (yearDiff * 365)) * daysPerMonth;
-        int tickDifference = fromDate.tick - toDate.tick;
-        if (daysDifference > 0) {
-            tickDifference = daysDifference * ticksPerDay;
-            tickDifference = (tickDifference - toDate.tick) + fromDate.tick;
-        }
-        return tickDifference;
-    }
-    public GameDate FirstDayOfTheMonth() {
-		return new GameDate(month, 1, year, 1);
-	}
     public bool IsEndOfDay() {
-        return tick == ticksPerDay;
+        return today.tick == ticksPerDay;
     }
     public void SetPausedState(bool isPaused){
         if (isPaused) {
@@ -214,21 +162,17 @@ public class GameManager : MonoBehaviour {
         yield return null;
         SetPausedState(state);
     }
-    public void SetProgressionSpeed(PROGRESSION_SPEED progSpeed){
-        //if (!isPaused && currProgressionSpeed == progSpeed) {
-        //    return; //ignore change
-        //}
-        currProgressionSpeed = progSpeed;
-        //Debug.Log("Set progression speed to " + progSpeed.ToString());
+    public void SetProgressionSpeed(PROGRESSION_SPEED progressionSpeed){
+        currProgressionSpeed = progressionSpeed;
         float speed = X1_SPEED;
-        if (progSpeed == PROGRESSION_SPEED.X2) {
+        if (progressionSpeed == PROGRESSION_SPEED.X2) {
             speed = X2_SPEED;
-        } else if(progSpeed == PROGRESSION_SPEED.X4){
+        } else if(progressionSpeed == PROGRESSION_SPEED.X4){
             speed = X4_SPEED;
         }
-		progressionSpeed = speed;
+		this.progressionSpeed = speed;
         //CombatManager.Instance.updateIntervals = this.progressionSpeed / (float) CombatManager.Instance.numOfCombatActionPerDay;
-        Messenger.Broadcast(Signals.PROGRESSION_SPEED_CHANGED, progSpeed);
+        Messenger.Broadcast(Signals.PROGRESSION_SPEED_CHANGED, progressionSpeed);
 	}
     /// <summary>
     /// Get how many seconds in realtime a tick is.
@@ -236,7 +180,7 @@ public class GameManager : MonoBehaviour {
     /// </summary>
     /// <returns>Float value representing ticks in realtime seconds.</returns>
     public float GetTickSpeed(PROGRESSION_SPEED progressionSpeed) {
-        switch (currProgressionSpeed) {
+        switch (progressionSpeed) {
             case PROGRESSION_SPEED.X1:
                 return X1_SPEED;
             case PROGRESSION_SPEED.X2:
@@ -247,7 +191,7 @@ public class GameManager : MonoBehaviour {
         throw new Exception($"Could not get tick speed from {currProgressionSpeed.ToString()}");
     }
     private void TickStarted() {
-        if (tick % ticksPerHour == 0 && !IsStartOfGame()) {
+        if (today.tick % ticksPerHour == 0 && !IsStartOfGame()) {
             //hour reached
             Messenger.Broadcast(Signals.HOUR_STARTED);
         }
@@ -256,29 +200,28 @@ public class GameManager : MonoBehaviour {
     }
     private void TickEnded(){
         Messenger.Broadcast(Signals.TICK_ENDED);
-
-        tick += 1;
-        if (tick > ticksPerDay) {
-            //int difference = this.tick - ticksPerDay; //Added this for cases when the ticks to be added per tick is greater than 1, so it is possible that the excess ticks over ticksPerDay can also be greater than 1
-            tick = 1;
+        
+        today.tick += 1;
+        if (today.tick > ticksPerDay) {
+            today.tick = 1;
             DayStarted(false);
         }
         Messenger.Broadcast(Signals.UPDATE_UI);
     }
     public void SetTick(int amount) {
-        tick = amount;
+        today.tick = amount;
         Messenger.Broadcast(Signals.UPDATE_UI);
     }
     private void DayStarted(bool broadcastUI = true) {
-        days += 1;
+        today.day += 1;
         continuousDays += 1;
         Messenger.Broadcast(Signals.DAY_STARTED);
-        if (days > daysPerMonth) {
-            days = 1;
-            month += 1;
-            if (month > 12) {
-                month = 1;
-                year += 1;
+        if (today.day > daysPerMonth) {
+            today.day = 1;
+            today.month += 1;
+            if (today.month > 12) {
+                today.month = 1;
+                today.year += 1;
             }
             Messenger.Broadcast(Signals.MONTH_START);
         }
@@ -328,17 +271,17 @@ public class GameManager : MonoBehaviour {
     //Example: If the character is Nocturnal, MORNING will become LATE_NIGHT
     public static TIME_IN_WORDS GetCurrentTimeInWordsOfTick(Character relativeTo = null) {
         TIME_IN_WORDS time = TIME_IN_WORDS.NONE;
-        if ((Instance.tick >= 265 && Instance.tick <= 288) || (Instance.tick >= 1 && Instance.tick <= 60)) {
+        if ((today.tick >= 265 && today.tick <= 288) || (today.tick >= 1 && today.tick <= 60)) {
             time = TIME_IN_WORDS.AFTER_MIDNIGHT;
-        } else if (Instance.tick >= 61 && Instance.tick <= 132) {
+        } else if (today.tick >= 61 && today.tick <= 132) {
             time = TIME_IN_WORDS.MORNING;
-        } else if (Instance.tick >= 133 && Instance.tick <= 156) {
+        } else if (today.tick >= 133 && today.tick <= 156) {
             time = TIME_IN_WORDS.LUNCH_TIME;
-        } else if (Instance.tick >= 157 && Instance.tick <= 204) {
+        } else if (today.tick >= 157 && today.tick <= 204) {
             time = TIME_IN_WORDS.AFTERNOON;
-        } else if (Instance.tick >= 205 && Instance.tick <= 240) {
+        } else if (today.tick >= 205 && today.tick <= 240) {
             time = TIME_IN_WORDS.EARLY_NIGHT;
-        } else if (Instance.tick >= 241 && Instance.tick <= 264) {
+        } else if (today.tick >= 241 && today.tick <= 264) {
             time = TIME_IN_WORDS.LATE_NIGHT;
         }
         if(relativeTo != null && relativeTo.traitContainer.HasTrait("Nocturnal")) {
@@ -690,17 +633,10 @@ public class GameManager : MonoBehaviour {
 
     #region Utilities
     private bool IsStartOfGame() {
-        if (year == startYear && month == 1 && days == 1 && tick == 24) {
+        if (today.year == startYear && today.month == startMonth && today.day == startDay && today.tick == startTick) {
             return true;
         }
         return false;
-    }
-    public void SetStartDate(GameDate date) {
-        month = date.month;
-        days = date.day;
-        tick = date.tick;
-        year = date.year;
-        continuousDays = date.ConvertToContinuousDays();
     }
     #endregion
 }

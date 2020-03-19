@@ -8,16 +8,10 @@ public class FireElemental : Summon {
     public override string raceClassName => $"Fire Elemental";
     
     public FireElemental() : base(SUMMON_TYPE.FireElemental, "FireElemental", RACE.ELEMENTAL,
-        UtilityScripts.Utilities.GetRandomGender()) {
-		//combatComponent.SetElementalType(ELEMENTAL_TYPE.Fire);
-    }
+        UtilityScripts.Utilities.GetRandomGender()) { }
     public FireElemental(string className) : base(SUMMON_TYPE.FireElemental, className, RACE.ELEMENTAL,
-        UtilityScripts.Utilities.GetRandomGender()) {
-        //combatComponent.SetElementalType(ELEMENTAL_TYPE.Fire);
-    }
-    public FireElemental(SaveDataCharacter data) : base(data) {
-        //combatComponent.SetElementalType(ELEMENTAL_TYPE.Fire);
-    }
+        UtilityScripts.Utilities.GetRandomGender()) { }
+    public FireElemental(SaveDataCharacter data) : base(data) { }
     public override void Initialize() {
         base.Initialize();
         traitContainer.AddTrait(this, "Fireproof");

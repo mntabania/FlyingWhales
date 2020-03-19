@@ -4897,7 +4897,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
 
     //Can only be seized if poi has tile location
-    public void OnSeizePOI() {
+    public virtual void OnSeizePOI() {
         if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == this) {
             UIManager.Instance.characterInfoUI.CloseMenu();
         }
@@ -4928,7 +4928,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.AddListener(Signals.TICK_STARTED, OnTickStartedWhileSeized);
         //Messenger.Broadcast(Signals.ON_SEIZE_CHARACTER, this);
     }
-    public void OnUnseizePOI(LocationGridTile tileLocation) {
+    public virtual void OnUnseizePOI(LocationGridTile tileLocation) {
         Messenger.RemoveListener(Signals.TICK_STARTED, OnTickStartedWhileSeized);
         needsComponent.OnCharacterArrivedAtLocation(tileLocation.structure.location.coreTile.region);
         if (minion == null) {
@@ -5157,7 +5157,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //}
         }
     }
-    public void OnCharacterEndedState(Character character, CharacterState state) {
+    private void OnCharacterEndedState(Character character, CharacterState state) {
         if (character == this) {
             if (state is CombatState && marker) {
                 combatComponent.OnThisCharacterEndedCombatState();
@@ -5505,6 +5505,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void RightSelectAction() {
         mapObjectVisual.ExecuteClickAction(PointerEventData.InputButton.Right);
         // UIManager.Instance.ShowCharacterInfo(this);
+    }
+    public bool CanBeSelected() {
+        return true;
     }
     #endregion
 }

@@ -61,6 +61,10 @@ public enum RACE{
     SHEEP = 25,
     CHICKEN = 26,
     LESSER_DEMON = 27,
+    NYMPH = 28,
+    WISP = 29,
+    SLUDGE = 30,
+    GHOST = 31,
 }
 public enum HEXTILE_DIRECTION {
     NORTH_WEST,
@@ -1018,7 +1022,8 @@ public enum INTERRUPT {
     Ingested_Poison,
     Mental_Break,
     Being_Tortured,
-    Loss_Of_Control
+    Loss_Of_Control,
+    Feared
 }
 
 public enum TRAIT_TYPE {
@@ -1422,7 +1427,15 @@ public enum SUMMON_TYPE {
     Forest_Ent,
     Snow_Ent,
     Grass_Ent,
-    Corrupt_Ent
+    Corrupt_Ent,
+    Ice_Nymph,
+    Water_Nymph,
+    Wind_Nymph,
+    Electric_Wisp,
+    Fire_Wisp,
+    Earthen_Wisp,
+    Sludge,
+    Ghost
 }
 public enum ARTIFACT_TYPE { None, Necronomicon, Ankh_Of_Anubis, Berserk_Orb }
 public enum ABILITY_TAG { NONE, MAGIC, SUPPORT, DEBUFF, CRIME, PHYSICAL, }

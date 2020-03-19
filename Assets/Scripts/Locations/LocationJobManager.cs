@@ -21,7 +21,7 @@ public class LocationJobManager {
 
 
     private void ProcessJobs() {
-        if(GameManager.Instance.tick == _createJobsTriggerTick && currentExistingJobsCount < 2) {
+        if(GameManager.Instance.Today().tick == _createJobsTriggerTick && currentExistingJobsCount < 2) {
             // if (!JobsPart1()) {
                 if (!JobsPart2()) {
                     // JobsPart3();

@@ -411,6 +411,12 @@ public partial class LandmarkManager : MonoBehaviour {
             case STRUCTURE_TYPE.LUMBERYARD:
                 createdStructure = new Lumberyard(location);
                 break;
+            case STRUCTURE_TYPE.MONSTER_LAIR:
+                createdStructure = new MonsterLair(location);
+                break;
+            case STRUCTURE_TYPE.CAVE:
+                createdStructure = new Cave(location);
+                break;
             default:
                 createdStructure = new LocationStructure(type, location);
                 break;

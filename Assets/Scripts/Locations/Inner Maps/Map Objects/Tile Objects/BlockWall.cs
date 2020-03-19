@@ -36,7 +36,12 @@ public class BlockWall : TileObject {
     protected override void OnPlaceTileObjectAtTile(LocationGridTile tile) {
         tile.parentMap.structureTilemap.SetTile(tile.localPlace, InnerMapManager.Instance.assetManager.GetWallAssetBasedOnWallType(wallType));
         tile.SetTileType(LocationGridTile.Tile_Type.Wall);
-        InitializeGUS(Vector2.zero, Vector2.one);
+        if (wallType == WALL_TYPE.Flesh) {
+            InitializeGUS(Vector2.zero, new Vector2(0.5f, 0.5f));
+        } else {
+            InitializeGUS(Vector2.zero, Vector2.one);    
+        }
+        
         base.OnPlaceTileObjectAtTile(tile);
     }
     #endregion

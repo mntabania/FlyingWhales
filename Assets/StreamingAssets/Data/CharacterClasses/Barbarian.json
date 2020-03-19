@@ -1,1 +1,27 @@
-{"_className":"Barbarian","_baseAttackPower":85,"_attackPowerPerLevel":28,"_baseSpeed":30,"_speedPerLevel":10,"_hpPerLevel":117,"_baseHP":350,"_baseAttackSpeed":700,"_attackRange":0.800000011920929,"_runSpeedMod":0.0,"_walkSpeedMod":0.0,"_traitNames":["Combatant","Beastmaster"],"_identifier":"Normal","_isNormalNonCombatant":false,"_elementalType":1,"_jobType":5,"_combatPosition":0,"_combatTarget":6,"_attackType":0,"_rangeType":0,"_damageType":4,"_occupiedTileType":0}
+{
+  "_className": "Barbarian",
+  "_baseAttackPower": 85,
+  "_attackPowerPerLevel": 28,
+  "_baseSpeed": 30,
+  "_speedPerLevel": 10,
+  "_hpPerLevel": 117,
+  "_baseHP": 350,
+  "_baseAttackSpeed": 700,
+  "_attackRange": 0.800000011920929,
+  "_runSpeedMod": 0.0,
+  "_walkSpeedMod": 0.0,
+  "_traitNames": [
+    "Combatant",
+    "Beastmaster"
+  ],
+  "_identifier": "Normal",
+  "_isNormalNonCombatant": false,
+  "_elementalType": 1,
+  "_jobType": 5,
+  "_combatPosition": 0,
+  "_combatTarget": 6,
+  "_attackType": 0,
+  "_rangeType": 0,
+  "_damageType": 4,
+  "_occupiedTileType": 0
+}
