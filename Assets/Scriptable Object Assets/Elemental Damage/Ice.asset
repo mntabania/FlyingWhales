@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _type: 4
   _addedTraitName: Freezing
-  _hitEffectPrefab: {fileID: 1826126969253054, guid: 35a4e5c959a14474086ca1824ea11827,
+  _hitEffectPrefab: {fileID: 3228574098937454294, guid: b6ebdb9c2c3c43644adad46664b580ea,
     type: 3}

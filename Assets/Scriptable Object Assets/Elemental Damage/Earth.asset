@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _type: 6
   _addedTraitName: 
-  _hitEffectPrefab: {fileID: 1826126969253054, guid: 35a4e5c959a14474086ca1824ea11827,
+  _hitEffectPrefab: {fileID: 3721934482128474164, guid: 5484c79acd60ba048b665c99e4839f90,
     type: 3}

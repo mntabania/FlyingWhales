@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _type: 2
   _addedTraitName: Poisoned
-  _hitEffectPrefab: {fileID: 1826126969253054, guid: 35a4e5c959a14474086ca1824ea11827,
+  _hitEffectPrefab: {fileID: 5254788350288310921, guid: 9f8e1a7719926de4f998c110dbee2590,
     type: 3}

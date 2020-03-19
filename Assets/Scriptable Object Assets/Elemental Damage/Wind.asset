@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e388f31d86e855b41937a3c0d9a4f78f, type: 3}
-  m_Name: Electric
+  m_Name: Wind
   m_EditorClassIdentifier: 
-  _type: 5
-  _addedTraitName: Zapped
-  _hitEffectPrefab: {fileID: 4964418547555227624, guid: 9aa0deb52150f4d4ba205bd6530d5900,
+  _type: 7
+  _addedTraitName: 
+  _hitEffectPrefab: {fileID: 2603662140373084498, guid: a6957a315a93ae143b39e89769bf2b31,
     type: 3}

@@ -16,8 +16,7 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
     private Tweener _movement;
     private List<ITraitable> _objsInRange;
     private PoisonCloudTileObject _poisonCloud;
-    
-    
+
     #region Abstract Members Implementation
     public override void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) { }
     public virtual bool IsMapObjectMenuVisible() {
@@ -187,6 +186,12 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
     private void OnAddPOI(ITraitable obj) {
         if (obj.traitContainer.GetNormalTrait<Trait>("Burning") != null) {
             Explode();
+        } else if (obj is PoisonCloudTileObject otherPoisonCloud) {
+            if(_poisonCloud.size != _poisonCloud.maxSize) {
+                int stacksToCombine = otherPoisonCloud.stacks;
+                otherPoisonCloud.Neutralize();
+                _poisonCloud.SetStacks(_poisonCloud.stacks + stacksToCombine);
+            }
         }
     }
     #endregion

@@ -332,9 +332,9 @@ public class VaporData : SpellData {
 
     public override void ActivateAbility(LocationGridTile targetTile) {
         VaporTileObject vaporTileObject = new VaporTileObject();
-        vaporTileObject.SetStacks(EditableValuesManager.Instance.vaporStacks);
         vaporTileObject.SetGridTileLocation(targetTile);
         vaporTileObject.OnPlacePOI();
+        vaporTileObject.SetStacks(EditableValuesManager.Instance.vaporStacks);
     }
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
         return targetTile.structure != null;

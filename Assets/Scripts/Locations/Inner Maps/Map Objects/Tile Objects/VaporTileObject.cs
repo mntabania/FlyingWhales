@@ -7,43 +7,38 @@ using UnityEngine.Assertions;
 public class VaporTileObject : MovingTileObject {
 
     private VaporMapObjectVisual _vaporMapVisualObject;
-    private int _stacks;
-    
+    public int size { get; private set; }
+    public int stacks { get; private set; }
+    public int maxSize { get; private set; }
+    public bool doExpireEffect { get; private set; }
+
     public VaporTileObject() {
         Initialize(TILE_OBJECT_TYPE.VAPOR, false);
         //AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         traitContainer.RemoveTrait(this, "Flammable");
+        maxSize = 6;
+        SetDoExpireEffect(true);
     }
     protected override void CreateMapObjectVisual() {
         base.CreateMapObjectVisual();
         _vaporMapVisualObject = mapVisual as VaporMapObjectVisual;
-        _vaporMapVisualObject.SetSize(GetSizeFromStacks());
         Assert.IsNotNull(_vaporMapVisualObject, $"Map Object Visual of {this} is null!");
     }
+    public void SetDoExpireEffect(bool state) {
+        doExpireEffect = state;
+    }
     public void SetStacks(int stacks) {
-        _stacks = stacks;
+        this.stacks = stacks;
+        UpdateSizeBasedOnWetStacks();
     }
-    private int GetSizeFromStacks() {
-        if(_stacks >= 1 && _stacks <= 2) {
-            return 1;
-        } else if (_stacks >= 3 && _stacks <= 4) {
-            return 2;
-        } else if (_stacks >= 5 && _stacks <= 9) {
-            return 3;
-        } else if (_stacks >= 10 && _stacks <= 16) {
-            return 4;
-        } else if (_stacks >= 17 && _stacks <= 25) {
-            return 5;
-        } else if (_stacks >= 26) {
-            return 6;
-        }
-        throw new System.Exception("Getting size of Vapor based on stacks but stack " + _stacks + " is invalid!");
+    public override void Neutralize() {
+        _vaporMapVisualObject.Expire();
     }
-    //public override void Neutralize() {
-    //    _vaporMapVisualObject.Expire();
-    //}
     public void OnExpire() {
-        Messenger.Broadcast<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, this, null, base.gridTileLocation);
+        //Messenger.Broadcast<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, this, null, base.gridTileLocation);
+        if (doExpireEffect) {
+            Effect();
+        }
     }
     public override string ToString() {
         return "Vapor";
@@ -83,6 +78,53 @@ public class VaporTileObject : MovingTileObject {
         }
         tile = null;
         return false;
+    }
+    #endregion
+
+    #region Size
+    private void SetSize(int size) {
+        this.size = size;
+        _vaporMapVisualObject.SetSize(size);
+    }
+    private void UpdateSizeBasedOnWetStacks() {
+        if (stacks >= 1 && stacks <= 2) {
+            SetSize(1);
+        } else if (stacks >= 3 && stacks <= 4) {
+            SetSize(2);
+        } else if (stacks >= 5 && stacks <= 9) {
+            SetSize(3);
+        } else if (stacks >= 10 && stacks <= 16) {
+            SetSize(4);
+        } else if (stacks >= 17 && stacks <= 25) {
+            SetSize(5);
+        } else if (stacks >= 26) {
+            SetSize(6);
+        }
+    }
+    #endregion
+
+    #region Expire Effect
+    private void Effect() {
+        if (gridTileLocation != null) {
+            int radius = 0;
+            if (UtilityScripts.Utilities.IsEven(size)) {
+                //-3 because (-1 + -2), wherein -1 is the lower odd number, and -2 is the radius
+                //So if size is 4, that means that 4-3 is 1, the radius for the 4x4 is 1 meaning we will get the neighbours of the tile.
+                radius = size - 3;
+            } else {
+                //-2 because we will not need to get the lower odd number since this is already an odd number, just get the radius, hence, -2
+                radius = size - 2;
+            }
+            //If the radius is less than or equal to zero this means we will only get the gridTileLocation itself
+            if (radius <= 0) {
+                gridTileLocation.genericTileObject.traitContainer.AddTrait(gridTileLocation.genericTileObject, "Wet");
+            } else {
+                List<LocationGridTile> tiles = gridTileLocation.GetTilesInRadius(radius, includeCenterTile: true, includeTilesInDifferentStructure: true);
+                for (int i = 0; i < tiles.Count; i++) {
+                    tiles[i].genericTileObject.traitContainer.AddTrait(tiles[i].genericTileObject, "Wet");
+                }
+            }
+        }
     }
     #endregion
 }

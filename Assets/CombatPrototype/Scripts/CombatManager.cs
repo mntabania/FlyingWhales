@@ -47,6 +47,8 @@ public class CombatManager : MonoBehaviour {
         }
         if(elementalType == ELEMENTAL_TYPE.Earth) {
             EarthElementProcess(target);
+        } else if (elementalType == ELEMENTAL_TYPE.Wind) {
+            WindElementProcess(target);
         }
     }
     public void DamageModifierByElements(ref int damage, ELEMENTAL_TYPE elementalType, ITraitable target) {
@@ -223,6 +225,25 @@ public class CombatManager : MonoBehaviour {
             elements = elements.TrimStart(' ');
             string[] elementsArray = elements.Split(' ');
             target.traitContainer.RemoveTrait(target, elementsArray[UnityEngine.Random.Range(0, elementsArray.Length)]);
+        }
+    }
+    private void WindElementProcess(ITraitable target) {
+        if (target.traitContainer.HasTrait("Poisoned")) {
+            int stacks = target.traitContainer.stacks["Poisoned"];
+            target.traitContainer.RemoveStatusAndStacks(target, "Poisoned");
+            PoisonCloudTileObject poisonCloudTileObject = new PoisonCloudTileObject();
+            poisonCloudTileObject.SetDurationInTicks(GameManager.Instance.GetTicksBasedOnHour(UnityEngine.Random.Range(2, 6)));
+            poisonCloudTileObject.SetGridTileLocation(target.gridTileLocation);
+            poisonCloudTileObject.OnPlacePOI();
+            poisonCloudTileObject.SetStacks(stacks);
+        }
+        if (target.traitContainer.HasTrait("Wet")) {
+            int stacks = target.traitContainer.stacks["Wet"];
+            target.traitContainer.RemoveStatusAndStacks(target, "Wet");
+            VaporTileObject vaporTileObject = new VaporTileObject();
+            vaporTileObject.SetGridTileLocation(target.gridTileLocation);
+            vaporTileObject.OnPlacePOI();
+            vaporTileObject.SetStacks(stacks);
         }
     }
     public void DefaultElementalTraitProcessor(ITraitable traitable, Trait trait) {

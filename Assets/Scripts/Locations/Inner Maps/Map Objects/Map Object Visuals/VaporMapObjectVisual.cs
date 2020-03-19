@@ -13,7 +13,9 @@ public class VaporMapObjectVisual : MovingMapObjectVisual<TileObject> {
     private string _expiryKey;
     private Tweener _movement;
     private int _size;
-    
+    private VaporTileObject _vaporTileObject;
+
+
     #region Abstract Members Implementation
     public override void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) { }
     public virtual bool IsMapObjectMenuVisible() {
@@ -36,6 +38,10 @@ public class VaporMapObjectVisual : MovingMapObjectVisual<TileObject> {
     #endregion
 
     #region Overrides
+    public override void Initialize(TileObject obj) {
+        base.Initialize(obj);
+        _vaporTileObject = obj as VaporTileObject;
+    }
     public override void PlaceObjectAt(LocationGridTile tile) {
         base.PlaceObjectAt(tile);
         MoveToRandomDirection();
@@ -107,34 +113,12 @@ public class VaporMapObjectVisual : MovingMapObjectVisual<TileObject> {
         this.gameObject.transform.localScale = new Vector3(_size, _size, 1f);
         _vaporEffect.transform.localScale = new Vector3(_size, _size, _size);
     }
-    private void Effect() {
-        if (gridTileLocation != null) {
-            int radius = 0;
-            if (UtilityScripts.Utilities.IsEven(_size)) {
-                //-3 because (-1 + -2), wherein -1 is the lower odd number, and -2 is the radius
-                //So if size is 4, that means that 4-3 is 1, the radius for the 4x4 is 1 meaning we will get the neighbours of the tile.
-                radius = _size - 3;
-            } else {
-                //-2 because we will not need to get the lower odd number since this is already an odd number, just get the radius, hence, -2
-                radius = _size - 2;
-            }
-            //If the radius is less than or equal to zero this means we will only get the gridTileLocation itself
-            if (radius <= 0) {
-                gridTileLocation.genericTileObject.traitContainer.AddTrait(gridTileLocation.genericTileObject, "Wet");
-            } else {
-                List<LocationGridTile> tiles = gridTileLocation.GetTilesInRadius(radius, includeCenterTile: true, includeTilesInDifferentStructure: true);
-                for (int i = 0; i < tiles.Count; i++) {
-                    tiles[i].genericTileObject.traitContainer.AddTrait(tiles[i].genericTileObject, "Wet");
-                }
-            }
-        }
-    }
     #endregion
     
     #region Expiration
     public void Expire() {
         Debug.Log($"{this.name} expired!");
-        Effect();
+        _vaporTileObject.OnExpire();
         _vaporEffect.Stop();
         isSpawned = false;
         if (string.IsNullOrEmpty(_expiryKey) == false) {
@@ -157,6 +141,24 @@ public class VaporMapObjectVisual : MovingMapObjectVisual<TileObject> {
         _vaporEffect.Play();
         yield return new WaitForSeconds(0.1f);
         _vaporEffect.Pause();
+    }
+    #endregion
+
+    #region Triggers
+    public void OnTriggerEnter2D(Collider2D collision) {
+        if (isSpawned == false) { return; }
+        IBaseCollider collidedWith = collision.gameObject.GetComponent<IBaseCollider>();
+        if (collidedWith != null && collidedWith.damageable is VaporTileObject otherVapor) {
+            CollidedWithVapor(otherVapor);
+        }
+    }
+    private void CollidedWithVapor(VaporTileObject otherVapor) {
+        if (_vaporTileObject.size != _vaporTileObject.maxSize) {
+            int stacksToCombine = otherVapor.stacks;
+            otherVapor.SetDoExpireEffect(false);
+            otherVapor.Neutralize();
+            _vaporTileObject.SetStacks(_vaporTileObject.stacks + stacksToCombine);
+        }
     }
     #endregion
 }
