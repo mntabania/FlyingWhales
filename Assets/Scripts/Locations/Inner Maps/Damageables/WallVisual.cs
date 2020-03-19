@@ -98,7 +98,7 @@ public class WallVisual : MapObjectVisual<StructureWallObject> {
     public override void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) {
         throw new System.NotImplementedException();
     }
-    public override bool IsMapObjectMenuVisible() {
+    public virtual bool IsMapObjectMenuVisible() {
         return true; //always true so that this is skipped
     }
     public override void UpdateCollidersState(StructureWallObject obj) { }

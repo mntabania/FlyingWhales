@@ -16,7 +16,7 @@ public class VaporMapObjectVisual : MovingMapObjectVisual<TileObject> {
     
     #region Abstract Members Implementation
     public override void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) { }
-    public override bool IsMapObjectMenuVisible() {
+    public virtual bool IsMapObjectMenuVisible() {
         return true;
     }
     public override void UpdateTileObjectVisual(TileObject obj) { }

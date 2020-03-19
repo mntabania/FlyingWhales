@@ -93,16 +93,11 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
     #endregion
 
     #region Inquiry
-    /// <summary>
-    /// Is this objects menu (CharacterInfoUI, TileObjectInfoUI) currently showing this objects info?
-    /// </summary>
-    /// <returns>True or false</returns>
-    public abstract bool IsMapObjectMenuVisible();
     public bool IsInvisible() {
         if (ReferenceEquals(objectVisual, null) == false) {
             return Mathf.Approximately(objectVisual.color.a, 0f);    
         }
-        return false;
+        return true;
     }
     #endregion 
 

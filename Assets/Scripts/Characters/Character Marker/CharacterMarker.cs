@@ -1531,7 +1531,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     #region Map Object Visual
     public override void UpdateTileObjectVisual(Character obj) { }
     public override void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) { }
-    public override bool IsMapObjectMenuVisible() {
+    public virtual bool IsMapObjectMenuVisible() {
         if (UIManager.Instance.characterInfoUI.isShowing) {
             return UIManager.Instance.characterInfoUI.activeCharacter == this.character;
         }

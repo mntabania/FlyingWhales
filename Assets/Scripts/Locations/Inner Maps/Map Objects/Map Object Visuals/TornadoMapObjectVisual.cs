@@ -287,9 +287,6 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
     #region Abstract Member Implementation
     public override void UpdateTileObjectVisual(TileObject obj) { }
     public override void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) { }
-    public override bool IsMapObjectMenuVisible() {
-        return true;
-    }
     public override void UpdateCollidersState(TileObject obj) { }
     #endregion
 

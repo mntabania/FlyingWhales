@@ -185,7 +185,7 @@ public class ActualGoapNode {
         if (targetStructure == null) {
             targetStructure = action.GetTargetStructure(this);
             if (targetStructure == null) { throw new System.Exception(
-                $"{actor.name} target structure of action {action.goapName} is null."); }
+                $"{actor.name} target structure of action {action.goapName} targeting {poiTarget} is null."); }
         }
         if (action.actionLocationType == ACTION_LOCATION_TYPE.NEAR_TARGET || action.actionLocationType == ACTION_LOCATION_TYPE.NEAR_OTHER_TARGET) {
             IPointOfInterest targetToGoTo = action.GetTargetToGoTo(this);
