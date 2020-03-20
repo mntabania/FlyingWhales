@@ -54,6 +54,9 @@ public class MapVisualFactory {
             case TILE_OBJECT_TYPE.MUSHROOM:
                 obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("MushroomMapObjectVisual", Vector3.zero, Quaternion.identity);
                 break;
+            case TILE_OBJECT_TYPE.QUICKSAND:
+                obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("QuicksandMapObjectVisual", Vector3.zero, Quaternion.identity);
+                break;
             default:
                 obj = ObjectPoolManager.Instance.InstantiateObjectFromPool(Tile_Object_Prefab_Name, Vector3.zero, Quaternion.identity);
                 break;
