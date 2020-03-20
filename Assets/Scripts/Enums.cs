@@ -1023,7 +1023,8 @@ public enum INTERRUPT {
     Mental_Break,
     Being_Tortured,
     Loss_Of_Control,
-    Feared
+    Feared,
+    Abomination_Death
 }
 
 public enum TRAIT_TYPE {

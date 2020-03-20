@@ -1380,6 +1380,7 @@
             </e>
           </e>
           <e p="Interrupts" t="Include">
+            <e p="AbominationDeath.cs" t="Include" />
             <e p="Accident.cs" t="Include" />
             <e p="Angered.cs" t="Include" />
             <e p="BecomeFactionLeader.cs" t="Include" />
@@ -1523,6 +1524,7 @@
                   <e p="MapVisualFactory.cs" t="Include" />
                   <e p="MovingMapObjectVisual.cs" t="Include" />
                   <e p="PoisonCloudMapObjectVisual.cs" t="Include" />
+                  <e p="QuicksandMapObjectVisual.cs" t="Include" />
                   <e p="TileObjectGameObject.cs" t="Include" />
                   <e p="TornadoMapObjectVisual.cs" t="Include" />
                   <e p="VaporMapObjectVisual.cs" t="Include" />
@@ -1593,6 +1595,7 @@
                   <e p="PlinthBook.cs" t="Include" />
                   <e p="PoisonCloudTileObject.cs" t="Include" />
                   <e p="PoisonFlask.cs" t="Include" />
+                  <e p="QuicksandTileObject.cs" t="Include" />
                   <e p="RackFarmingTools.cs" t="Include" />
                   <e p="RackStaves.cs" t="Include" />
                   <e p="RackTools.cs" t="Include" />
@@ -1974,6 +1977,7 @@
           </e>
           <e p="Traits" t="Include">
             <e p="Normal Traits" t="Include">
+              <e p="AbominationGerm.cs" t="Include" />
               <e p="AccidentProne.cs" t="Include" />
               <e p="Agoraphobic.cs" t="Include" />
               <e p="Angry.cs" t="Include" />

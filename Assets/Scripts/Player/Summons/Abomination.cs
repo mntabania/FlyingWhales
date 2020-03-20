@@ -12,4 +12,11 @@ public class Abomination : Summon {
         UtilityScripts.Utilities.GetRandomGender()) { }
     public Abomination(SaveDataCharacter data) : base(data) { }
     
+    public override void PerTickDuringMovement() {
+        base.PerTickDuringMovement();
+        if (gridTileLocation?.objHere != null && Random.Range(0, 100) < 10) {
+            IPointOfInterest affectedObj = gridTileLocation.objHere;
+            affectedObj.traitContainer.AddTrait(affectedObj, "Abomination Germ", this);
+        }
+    }
 }

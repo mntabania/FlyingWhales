@@ -57,6 +57,12 @@ public class MapVisualFactory {
             case TILE_OBJECT_TYPE.QUICKSAND:
                 obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("QuicksandMapObjectVisual", Vector3.zero, Quaternion.identity);
                 break;
+            case TILE_OBJECT_TYPE.BRAZIER:
+                obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("BrazierGameObject", Vector3.zero, Quaternion.identity);
+                break;
+            case TILE_OBJECT_TYPE.FIREPLACE:
+                obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("FireplaceGameObject", Vector3.zero, Quaternion.identity);
+                break;
             default:
                 obj = ObjectPoolManager.Instance.InstantiateObjectFromPool(Tile_Object_Prefab_Name, Vector3.zero, Quaternion.identity);
                 break;
