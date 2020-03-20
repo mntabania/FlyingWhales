@@ -1298,6 +1298,19 @@ public class Player : ILeader, IObjectManipulator {
         unlearnedAfflictions.Remove(affliction);
     }
     #endregion
+
+    #region Utilities
+    /// <summary>
+    /// Is the player currently doing something?
+    /// (Casting a spell, seizing an object, etc.)
+    /// </summary>
+    /// <returns>True or false.</returns>
+    public bool IsPerformingPlayerAction() {
+        return PlayerManager.Instance.player.currentActivePlayerSpell != null
+               || PlayerManager.Instance.player.seizeComponent.hasSeizedPOI
+               || PlayerManager.Instance.player.currentActiveIntel != null;
+    }
+    #endregion
 }
 
 [System.Serializable]

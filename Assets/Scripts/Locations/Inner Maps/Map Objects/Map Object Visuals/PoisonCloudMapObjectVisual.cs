@@ -81,7 +81,7 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
     private void MoveToRandomDirection() {
         Vector3 direction = (new Vector3(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f), 0f)).normalized * 50f;
         direction += transform.position;
-        _movement = transform.DOMove(direction, 0.3f).SetSpeedBased(true);
+        _movement = transform.DOMove(direction, 0.15f).SetSpeedBased(true);
     }
     private void OnGamePaused(bool isPaused) {
         if (isPaused) {
