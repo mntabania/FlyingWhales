@@ -10,7 +10,6 @@ public class CharacterClassManager : MonoBehaviour {
     public Dictionary<string, List<CharacterClass>> identifierClasses { get; private set; }
     public List<CharacterClass> normalCombatantClasses { get; private set; }
     public List<CharacterClass> allClasses { get; private set; }
-
     private Dictionary<System.Type, CharacterBehaviourComponent> behaviourComponents;
 
     private Dictionary<string, System.Type[]> classIdlePlans = new Dictionary<string, Type[]>() {

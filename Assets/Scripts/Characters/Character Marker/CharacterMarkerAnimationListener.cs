@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,6 +10,8 @@ public class CharacterMarkerAnimationListener : MonoBehaviour {
 
     [SerializeField] private GameObject projectilePrefab;
     private GameObject currentProjectile;
+    private bool _attackWasExecuted;
+    private float _timeElapsed;
 
     public void OnAttackExecuted() {
         //Debug.Log(parentMarker.name + " attacked!");
@@ -25,14 +28,26 @@ public class CharacterMarkerAnimationListener : MonoBehaviour {
             }
         }
     }
-
+    
+    private void Update() {
+        if (_attackWasExecuted) {
+            _timeElapsed += Time.deltaTime;
+            //TODO: Set time threshold to be per class.
+            if (_timeElapsed >= 0.1f) {
+                _attackWasExecuted = false;
+                _timeElapsed = 0f;
+                OnAttackExecuted();
+            }
+        }
+    }
     public void OnAttackAnimationTriggered() {
-        StartCoroutine(CheckAttackExecuted());
+        // StartCoroutine(CheckAttackExecuted());
+        _attackWasExecuted = true;
     }
-    private IEnumerator CheckAttackExecuted() {
-        yield return new WaitForSeconds(parentMarker.attackExecutedTime);
-        OnAttackExecuted();
-    }
+    // private IEnumerator CheckAttackExecuted() {
+    //     yield return new WaitForSeconds(parentMarker.attackExecutedTime);
+    //     OnAttackExecuted();
+    // }
 
     private void CreateProjectile(IDamageable target, CombatState state) {
         if (currentProjectile != null) {

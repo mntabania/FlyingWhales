@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Interrupts;
 using UnityEngine;
 
 namespace Traits {
@@ -106,8 +107,10 @@ namespace Traits {
         /// <summary>
         /// Only used for characters, since traits aren't removed when a character dies.
         /// This function will be called to ensure that any unneeded resources in traits can be freed up when a character dies.
-        /// <see cref="Character.Death(string)"/>
+        /// <see cref="Character.Death(string,ActualGoapNode,Character,Log,LogFiller[],Interrupt)"/>
         /// </summary>
+        /// <param name="character">The character that died.</param>
+        /// <returns>If this trait was removed or not.</returns>
         public virtual bool OnDeath(Character character) { return false; }
         //public virtual bool OnAfterDeath(Character character, string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null, LogFiller[] deathLogFillers = null) { return false; }
         /// <summary>

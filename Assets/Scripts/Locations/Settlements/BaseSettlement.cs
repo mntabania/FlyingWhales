@@ -83,10 +83,11 @@ namespace Locations.Settlements {
                     $"{name} doesn't have any dwellings for {character.name} because structures have not been generated yet");
                 return;
             }
-            if (!character.isFactionless && !structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
-                Debug.LogWarning($"{name} doesn't have any dwellings for {character.name}");
-                return;
-            }
+            //Removed this because, even if there are no dwellings left, home structure should be set to city center
+            // if (!character.isFactionless && !structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
+            //     Debug.LogWarning($"{name} doesn't have any dwellings for {character.name}");
+            //     return;
+            // }
             if (character.isFactionless) {
                 character.SetHomeStructure(null);
                 return;

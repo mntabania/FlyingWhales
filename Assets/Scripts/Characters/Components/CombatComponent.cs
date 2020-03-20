@@ -194,8 +194,8 @@ public class CombatComponent {
     }
     public void RemoveHostileInRange(IPointOfInterest poi, bool processCombatBehavior = true) {
         if (hostilesInRange.Remove(poi)) {
-            if (poi is Character) {
-                lethalCharacters.Remove(poi as Character);
+            if (poi is Character character) {
+                lethalCharacters.Remove(character);
             }
             string removeHostileSummary = $"{poi.name} was removed from {owner.name}'s hostile range.";
             owner.logComponent.PrintLogIfActive(removeHostileSummary);

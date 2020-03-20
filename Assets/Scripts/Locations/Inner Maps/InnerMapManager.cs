@@ -85,8 +85,7 @@ namespace Inner_Maps {
                 //TODO: Create system that disables normal clicks.
                 if (UIManager.Instance.IsMouseOnUI() == false 
                     && ReferenceEquals(currentlyShowingMap, null) == false 
-                    && PlayerManager.Instance.player.currentActivePlayerSpell == null
-                    && PlayerManager.Instance.player.seizeComponent.hasSeizedPOI == false) {
+                    && PlayerManager.Instance.player.IsPerformingPlayerAction() == false) {
                     LocationGridTile clickedTile = GetTileFromMousePosition();
                     if (clickedTile != null && TryGetSelectablesOnTile(clickedTile, out var selectables)) {
                         if (selectables.Count > 0) {
