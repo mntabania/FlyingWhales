@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 50994161517899914}
   - component: {fileID: 58418918162404026}
   m_Layer: 18
-  m_Name: ArrowProjectile
+  m_Name: Wind Projectile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -93,7 +93,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.2
+  m_Radius: 0.3
 --- !u!1 &493841886832692636
 GameObject:
   m_ObjectHideFlags: 0

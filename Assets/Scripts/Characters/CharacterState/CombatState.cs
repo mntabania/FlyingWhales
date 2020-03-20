@@ -618,60 +618,54 @@ public class CombatState : CharacterState {
         InnerMapManager.Instance.FaceTarget(stateComponent.character, currentClosestHostile);
         if (isExecutingAttack == false) {
             stateComponent.character.marker.SetAnimationTrigger("Attack");
-            isExecutingAttack = true;    
+            isExecutingAttack = true;
         }
+        //Reset Attack Speed
+        stateComponent.character.marker.ResetAttackSpeed();
         // stateComponent.character.logComponent.PrintLogIfActive(summary);
         //Debug.Log(summary);
     }
     public bool isExecutingAttack;
     public void OnAttackHit(IDamageable damageable) {
-        if (damageable == null) {
-            return; //NOTE: Sometimes this happens even though the passed value is this character's currentClosestHostile.
-        }
         string attackSummary =
-            $"{GameManager.Instance.TodayLogString()}{stateComponent.character.name} hit {damageable.name}";
-        if (damageable != currentClosestHostile) {
-            attackSummary =
-                $"{stateComponent.character.name} hit {damageable.name} instead of {currentClosestHostile.name}!";
-        }
+            $"{GameManager.Instance.TodayLogString()}{stateComponent.character.name} hit {damageable?.name ?? "Nothing"}";
 
-        //Reset Attack Speed
-        stateComponent.character.marker.ResetAttackSpeed();
-        damageable.OnHitByAttackFrom(stateComponent.character, this, ref attackSummary);
-
-        //If the hostile reaches 0 hp, evalueate if he/she dies, get knock out, or get injured
-        if (damageable.currentHP > 0) {
-            attackSummary += $"\n{damageable.name} still has remaining hp {damageable.currentHP}/{damageable.maxHP}";
-            if (damageable is Character) {
-                Character hitCharacter = damageable as Character;
-                //if the character that attacked is not in the hostile/avoid list of the character that was hit, this means that it is not a retaliation, so the character that was hit must reduce its opinion of the character that attacked
-                if(!hitCharacter.combatComponent.hostilesInRange.Contains(stateComponent.character) && !hitCharacter.combatComponent.avoidInRange.Contains(stateComponent.character)) {
-                    if (!allCharactersThatDegradedRel.Contains(hitCharacter)) {
-                        hitCharacter.relationshipContainer.AdjustOpinion(hitCharacter, stateComponent.character, "Base", -15);
-                        AddCharacterThatDegradedRel(hitCharacter);
-                    }
-                }
-
-
-                //if the character that was hit is not the actual target of this combat, do not make him/her enter combat state
-                if (damageable == currentClosestHostile) {
-                    //When the target is hit and it is still alive, add hostile
-                    if ((hitCharacter.combatComponent.combatMode == COMBAT_MODE.Defend ||
-                        hitCharacter.combatComponent.combatMode == COMBAT_MODE.Aggressive) && hitCharacter.canPerform) {
-                        if (!hitCharacter.combatComponent.hostilesInRange.Contains(stateComponent.character) &&
-                            !hitCharacter.combatComponent.avoidInRange.Contains(stateComponent.character)) {
-                            hitCharacter.combatComponent.FightOrFlight(stateComponent.character, isLethal: stateComponent.character.combatComponent.IsLethalCombatForTarget(hitCharacter));
-                        }
-                    }
-                    //hitCharacter.combatComponent.AddHostileInRange(stateComponent.character, isLethal: stateComponent.character.combatComponent.IsLethalCombatForTarget(hitCharacter));
-                    //also add the hit character as degraded rel, so that when the character that owns this state is hit by the other character because of retaliation, relationship degradation will no longer happen
-                    //Reference: https://trello.com/c/mvLDnyBf/2875-retaliation-should-not-trigger-relationship-degradation
-                    //TODO:
-                    // hitCharacter.combatComponent.AddOnProcessCombatAction((combatState) => combatState.AddCharacterThatDegradedRel(stateComponent.character));
-                }
+        if (damageable != null) {
+            if (damageable != currentClosestHostile) {
+                attackSummary =
+                    $"{stateComponent.character.name} hit {damageable.name} instead of {currentClosestHostile.name}!";
             }
             
+            damageable.OnHitByAttackFrom(stateComponent.character, this, ref attackSummary);
+
+            //If the hostile reaches 0 hp, evaluate if he/she dies, get knock out, or get injured
+            if (damageable.currentHP > 0) {
+                attackSummary += $"\n{damageable.name} still has remaining hp {damageable.currentHP.ToString()}/{damageable.maxHP.ToString()}";
+                if (damageable is Character hitCharacter) {
+                    //if the character that attacked is not in the hostile/avoid list of the character that was hit, this means that it is not a retaliation, so the character that was hit must reduce its opinion of the character that attacked
+                    if(!hitCharacter.combatComponent.hostilesInRange.Contains(stateComponent.character) && !hitCharacter.combatComponent.avoidInRange.Contains(stateComponent.character)) {
+                        if (!allCharactersThatDegradedRel.Contains(hitCharacter)) {
+                            hitCharacter.relationshipContainer.AdjustOpinion(hitCharacter, stateComponent.character, "Base", -15);
+                            AddCharacterThatDegradedRel(hitCharacter);
+                        }
+                    }
+
+
+                    //if the character that was hit is not the actual target of this combat, do not make him/her enter combat state
+                    if (damageable == currentClosestHostile) {
+                        //When the target is hit and it is still alive, add hostile
+                        if ((hitCharacter.combatComponent.combatMode == COMBAT_MODE.Defend ||
+                            hitCharacter.combatComponent.combatMode == COMBAT_MODE.Aggressive) && hitCharacter.canPerform) {
+                            if (!hitCharacter.combatComponent.hostilesInRange.Contains(stateComponent.character) &&
+                                !hitCharacter.combatComponent.avoidInRange.Contains(stateComponent.character)) {
+                                hitCharacter.combatComponent.FightOrFlight(stateComponent.character, isLethal: stateComponent.character.combatComponent.IsLethalCombatForTarget(hitCharacter));
+                            }
+                        }
+                    }
+                }
+            }
         }
+        
         if (stateComponent.currentState == this) { //so that if the combat state has been exited, this no longer executes that results in endless execution of this coroutine.
             attackSummary += $"\n{stateComponent.character.name}'s state is still this, running check coroutine.";
             stateComponent.character.marker.StartCoroutine(CheckIfCurrentHostileIsInRange());
