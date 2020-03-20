@@ -132,6 +132,9 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
         if (objectVisual != null ) {
             SetVisualAlpha(255f / 255f);    
         }
+        if (hpBarGO) {
+            HideHPBar();
+        }
     }
     void OnEnable() {
         Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
