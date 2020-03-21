@@ -874,6 +874,9 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212044654499763036}
   hoverObject: {fileID: 212097248544747360}
+  hpBarGO: {fileID: 1700488925132308}
+  hpFill: {fileID: 114503541738452620}
+  aspeedFill: {fileID: 114150021298348714}
   statusIconsParent: {fileID: 2600264644750238789}
   visualsParent: {fileID: 4833690815638556}
   nameLbl: {fileID: 114873295937025758}
@@ -895,9 +898,6 @@ MonoBehaviour:
   colliders:
   - {fileID: 58282679592281158}
   visionCollision: {fileID: 114699231813471468}
-  hpBarGO: {fileID: 1700488925132308}
-  hpFill: {fileID: 114503541738452620}
-  aspeedFill: {fileID: 114150021298348714}
   projectileParent: {fileID: 4968866154022664}
   colorHighlight: {fileID: 212374460377128016}
   penaltyRadius: 8
@@ -1492,8 +1492,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parentMarker: {fileID: 114379759619008666}
-  projectilePrefab: {fileID: 1068136125598788, guid: 52f8ac223adcd7d48a832e3082c0a62a,
-    type: 3}
 --- !u!1 &1912194434908214
 GameObject:
   m_ObjectHideFlags: 0

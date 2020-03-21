@@ -7,21 +7,14 @@ using UnityEngine;
 public class CharacterMarkerAnimationListener : MonoBehaviour {
 
     [SerializeField] private CharacterMarker parentMarker;
-
-    [SerializeField] private GameObject projectilePrefab;
-    private GameObject currentProjectile;
     private bool _attackWasExecuted;
     private float _timeElapsed;
 
     public void OnAttackExecuted() {
-        //Debug.Log(parentMarker.name + " attacked!");
         if (parentMarker.character.stateComponent.currentState is CombatState combatState) {
             if (parentMarker.character.characterClass.rangeType == RANGE_TYPE.RANGED) {
-                // if (parentMarker.character.characterClass.attackType == ATTACK_TYPE.MAGICAL) {
-                //     CreateMagicalHit(combatState.currentClosestHostile, combatState);
-                // } else {
-                    CreateProjectile(combatState.currentClosestHostile, combatState);
-                // }
+                CreateProjectile(combatState.currentClosestHostile, combatState);
+                combatState.isExecutingAttack = false;
             } else {
                 combatState.isExecutingAttack = false;
                 combatState.OnAttackHit(combatState.currentClosestHostile);
@@ -29,30 +22,11 @@ public class CharacterMarkerAnimationListener : MonoBehaviour {
         }
     }
     
-    private void Update() {
-        if (_attackWasExecuted) {
-            _timeElapsed += Time.deltaTime;
-            //TODO: Set time threshold to be per class.
-            if (_timeElapsed >= 0.1f) {
-                _attackWasExecuted = false;
-                _timeElapsed = 0f;
-                OnAttackExecuted();
-            }
-        }
-    }
     public void OnAttackAnimationTriggered() {
-        // StartCoroutine(CheckAttackExecuted());
         _attackWasExecuted = true;
     }
-    // private IEnumerator CheckAttackExecuted() {
-    //     yield return new WaitForSeconds(parentMarker.attackExecutedTime);
-    //     OnAttackExecuted();
-    // }
 
     private void CreateProjectile(IDamageable target, CombatState state) {
-        if (currentProjectile != null) {
-            return; //only 1 projectile at a time!
-        }
         if (target == null || target.currentHP <= 0) {
             return;
         }
@@ -60,27 +34,17 @@ public class CharacterMarkerAnimationListener : MonoBehaviour {
         Projectile projectile = CombatManager.Instance.CreateNewProjectile(parentMarker.character.combatComponent.elementalDamage.type, parentMarker.character.currentRegion.innerMap.objectsParent, parentMarker.projectileParent.transform.position);
         projectile.SetTarget(target.projectileReceiver.transform, target, state);
         projectile.onHitAction = OnProjectileHit;
-        currentProjectile = projectile.gameObject;
     }
-    private void CreateMagicalHit(IPointOfInterest target, CombatState state) {
-        state.isExecutingAttack = false;
-        GameManager.Instance.CreateParticleEffectAt(target, PARTICLE_EFFECT.Fire);
-        state.OnAttackHit(target);
-    }
-
     /// <summary>
     /// Called when an attack that this character does, hits another character.
     /// </summary>
     /// <param name="target">The character that was hit.</param>
     /// <param name="fromState">The projectile was created from this combat state.</param>
     private void OnProjectileHit(IDamageable target, CombatState fromState) {
-        fromState.isExecutingAttack = false;
-        currentProjectile = null;
         //fromState.OnAttackHit(character);
-        if (parentMarker.character.stateComponent.currentState is CombatState) {
-            CombatState combatState = parentMarker.character.stateComponent.currentState as CombatState;
+        if (parentMarker.character.stateComponent.currentState is CombatState combatState) {
             combatState.OnAttackHit(target);
-        } else {
+        } else if (target != null) {
             string attackSummary = $"{parentMarker.character.name} hit {target.name}, outside of combat state";
             target.OnHitByAttackFrom(parentMarker.character, fromState, ref attackSummary);
             parentMarker.character.logComponent.PrintLogIfActive(attackSummary);
