@@ -42,9 +42,9 @@ namespace Traits {
         //        character.AdjustSpeedModifier(0.15f);
         //    }
         //}
-        public override bool OnStartPerformGoapAction(ActualGoapNode node, ref bool willStillContinueAction) {
-            if(node.action.actionCategory == ACTION_CATEGORY.DIRECT || node.action.actionCategory == ACTION_CATEGORY.CONSUME) {
-                if(node.poiTarget.gridTileLocation != null) {
+        public bool OnPerformGoapAction(ActualGoapNode node, ref bool willStillContinueAction) {
+            if (node.action.actionCategory == ACTION_CATEGORY.DIRECT || node.action.actionCategory == ACTION_CATEGORY.CONSUME) {
+                if (node.poiTarget.gridTileLocation != null) {
                     List<LocationGridTile> tiles = node.poiTarget.gridTileLocation.GetTilesInRadius(1, includeCenterTile: true, includeTilesInDifferentStructure: true);
                     for (int i = 0; i < tiles.Count; i++) {
                         LocationGridTile currTile = tiles[i];
@@ -55,6 +55,7 @@ namespace Traits {
                         }
                     }
                     willStillContinueAction = false;
+                    node.poiTarget.traitContainer.RemoveTrait(node.poiTarget, this);
                     return true;
                 }
             }
