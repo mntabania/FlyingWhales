@@ -16,11 +16,20 @@ namespace Interrupts {
             if(target is Character targetCharacter) {
                 string debugLog = $"{actor.name} invite to make love interrupt with {targetCharacter.name}";
 
-                if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Unconscious") != null) {
-                    debugLog += $"{targetCharacter.name} is unconscious. Invite rejected.";
-                    actor.logComponent.PrintLogIfActive(debugLog);
-                    return false;
-                }
+                //if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Unconscious") != null 
+                //    || targetCharacter.isInCombat
+                //    || (targetCharacter.stateComponent.currentState != null && targetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.DOUSE_FIRE)
+                //    || (targetCharacter.interruptComponent.isInterrupted && targetCharacter.interruptComponent.currentInterrupt.interrupt == INTERRUPT.Cowering)) {
+                //    debugLog += $"{targetCharacter.name} is unconscious/in combat/in douse fire state/cowering. Invite rejected.";
+                //    actor.logComponent.PrintLogIfActive(debugLog);
+
+
+                //    overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", "Invite To Make Love", "Reject");
+                //    overrideEffectLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                //    overrideEffectLog.AddToFillers(target, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                //    actor.currentJob.CancelJob(false);
+                //    return false;
+                //}
                 
                 WeightedDictionary<string> weights = new WeightedDictionary<string>();
                 int acceptWeight = 50;
