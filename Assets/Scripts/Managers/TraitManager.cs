@@ -248,7 +248,7 @@ public class TraitManager : MonoBehaviour {
             return "Thunder Master";
         } else if (tileObject is FireBallTileObject) {
             return "Fire Master";
-        } else if (tileObject is QuicksandTileObject) {
+        } else if (tileObject is Quicksand) {
             return "Earth Master";
         }
         return string.Empty;

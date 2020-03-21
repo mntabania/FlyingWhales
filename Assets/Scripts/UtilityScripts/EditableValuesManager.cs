@@ -43,10 +43,11 @@ public class EditableValuesManager : MonoBehaviour {
 	[SerializeField] private int _sortingOrdersInBetweenHexTileRows = 20; //this is the number of sorting orders in between rows of the world map.
 
     public int vaporStacks;
-		
-	//getters
-	//mood
-	public int normalMoodMinThreshold => _normalMoodMinThreshold;
+    public int poisonCloudStacks;
+
+    //getters
+    //mood
+    public int normalMoodMinThreshold => _normalMoodMinThreshold;
 	public int lowMoodMinThreshold => _lowMoodMinThreshold;
 	public int lowMoodHighThreshold => _lowMoodHighThreshold;
 	public int criticalMoodHighThreshold => _criticalMoodHighThreshold;

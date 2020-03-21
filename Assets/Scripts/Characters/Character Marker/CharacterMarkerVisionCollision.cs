@@ -37,6 +37,9 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
 
     #region Triggers
     public void OnTriggerEnter2D(Collider2D collision) {
+        if(!parentMarker || parentMarker.character == null) {
+            return;
+        }
         if (!parentMarker.character.IsInOwnParty()) {
             return;
         }

@@ -457,7 +457,7 @@ public class CombatState : CharacterState {
                 log +=
                     $"\nCurrent closest hostile: {currentClosestHostile.name} is no longer in hostile list, setting another closest hostile...";
                 SetClosestHostile();
-            } else if (currentClosestHostile != null && !currentClosestHostile.mapObjectVisual) {
+            } else if (currentClosestHostile != null && (!currentClosestHostile.mapObjectVisual || !currentClosestHostile.mapObjectVisual.gameObject)) {
                 log +=
                     $"\nCurrent closest hostile: {currentClosestHostile.name} no longer has a map object visual, setting another closest hostile...";
                 stateComponent.character.combatComponent.RemoveHostileInRange(currentClosestHostile, false);
