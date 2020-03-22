@@ -235,12 +235,13 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
     }
     private void ChangeScaleBySize() {
         gameObject.transform.localScale = new Vector3(_size, _size, _size);
+        _cloudEffect.transform.localScale = new Vector3(_size, _size, _size);
         // _cloudEffect.transform.localScale = new Vector3(_size, _size, _size);
-        ParticleSystem.MainModule mainModule = _cloudEffect.main;
-        mainModule.startSpeed = (_size + 1) / 10f;
-        mainModule.startLifetime = _size;
-        ParticleSystem.EmissionModule emissionModule = _cloudEffect.emission;
-        emissionModule.rateOverTime = (_size + 1) * 10;
+        //ParticleSystem.MainModule mainModule = _cloudEffect.main;
+        //mainModule.startSpeed = (_size + 1) / 10f;
+        //mainModule.startLifetime = _size;
+        //ParticleSystem.EmissionModule emissionModule = _cloudEffect.emission;
+        //emissionModule.rateOverTime = (_size + 1) * 10;
     }
     #endregion
 }

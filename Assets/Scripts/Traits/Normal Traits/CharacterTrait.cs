@@ -127,6 +127,14 @@ namespace Traits {
                 node.actor.interruptComponent.SetIdentifier(string.Empty);
                 return triggered;
             }
+            if (node.poiTarget.traitContainer.HasTrait("Booby Trapped")) {
+                BoobyTrapped targetBoobyTrap = node.poiTarget.traitContainer.GetNormalTrait<BoobyTrapped>("Booby Trapped");
+                bool triggered = targetBoobyTrap.OnPerformGoapAction(node, ref willStillContinueAction);
+                if (triggered) {
+                    node.actor.jobQueue.jobsInQueue[0].CancelJob();
+                }
+                return triggered;
+            }
             return false;
         }
         public override void OnTickStarted() {

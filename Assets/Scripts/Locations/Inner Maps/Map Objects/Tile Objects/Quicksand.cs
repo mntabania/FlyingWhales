@@ -4,18 +4,19 @@ using Inner_Maps;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-public class QuicksandTileObject : TileObject {
+public class Quicksand : TileObject {
 
     private QuicksandMapObjectVisual _quicksandMapVisual;
     
-    public QuicksandTileObject() {
+    public Quicksand() {
         Initialize(TILE_OBJECT_TYPE.QUICKSAND, false);
         traitContainer.AddTrait(this, "Dangerous");
         traitContainer.RemoveTrait(this, "Flammable");
     }
     protected override void CreateMapObjectVisual() {
-        base.CreateMapObjectVisual();
-        _quicksandMapVisual = mapVisual as QuicksandMapObjectVisual;
+        GameObject obj = InnerMapManager.Instance.mapObjectFactory.CreateNewTileObjectMapVisual(tileObjectType);
+        _quicksandMapVisual = obj.GetComponent<QuicksandMapObjectVisual>();
+        mapVisual = _quicksandMapVisual;
         Assert.IsNotNull(_quicksandMapVisual, $"Map Object Visual of {this} is null!");
     }
     public override void Neutralize() {

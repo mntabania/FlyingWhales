@@ -154,6 +154,15 @@ public class POITestingUI : MonoBehaviour {
         }
         HideUI();
     }
+    public void BoobyTrap() {
+        if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.UNDERMINE, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Booby Trapped", false, GOAP_EFFECT_TARGET.TARGET), poi, UIManager.Instance.characterInfoUI.activeCharacter);
+            UIManager.Instance.characterInfoUI.activeCharacter.jobQueue.AddJobInQueue(job);
+        } else {
+            Debug.LogError($"{poi.name} is not a tile object!");
+        }
+        HideUI();
+    }
     #endregion
 
     #region Grid Tile Testing

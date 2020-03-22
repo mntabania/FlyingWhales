@@ -19,7 +19,7 @@ public interface IPointOfInterest : ITraitable, ISelectable {
     Faction factionOwner { get; }
     Character characterOwner { get; }
     bool isDisabledByPlayer { get; }
-    Vector3 worldPosition { get; }
+    //Vector3 worldPosition { get; }
     bool isDead { get; }
     Character isBeingCarriedBy { get; }
     LogComponent logComponent { get; }
