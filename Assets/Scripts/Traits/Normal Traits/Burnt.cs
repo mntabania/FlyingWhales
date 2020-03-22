@@ -24,51 +24,21 @@ namespace Traits {
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
-            if (addedTo is TileObject) {
-                TileObject obj = addedTo as TileObject;
+            if (addedTo is BaseMapObject mapObject && mapObject.baseMapObjectVisual != null) {
+                mapObject.baseMapObjectVisual.SetMaterial(InnerMapManager.Instance.assetManager.burntMaterial);
+            }
+            if (addedTo is TileObject obj) {
                 obj.SetPOIState(POI_STATE.INACTIVE);
-                //obj.SetSlotColor(burntColor);
-                //obj.mapVisual?.SetColor(burntColor);
-                //if (obj is GenericTileObject) {
-                //    LocationGridTile tile = obj.gridTileLocation;
-                //    tile.parentTileMap.SetColor(tile.localPlace, burntColor);
-                //    tile.SetDefaultTileColor(burntColor);
-                //    tile.parentMap.detailsTilemap.SetColor(tile.localPlace, burntColor);
-                //    tile.parentMap.northEdgeTilemap.SetColor(tile.localPlace, burntColor);
-                //    tile.parentMap.southEdgeTilemap.SetColor(tile.localPlace, burntColor);
-                //    tile.parentMap.eastEdgeTilemap.SetColor(tile.localPlace, burntColor);
-                //    tile.parentMap.westEdgeTilemap.SetColor(tile.localPlace, burntColor);
-                //} 
-            } 
-            // else if (addedTo is SpecialToken) {
-            //     SpecialToken token = addedTo as SpecialToken;
-            //     token.SetPOIState(POI_STATE.INACTIVE);
-            //     token.mapVisual.SetColor(burntColor);
-            // }
+            }
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
-            if (removedFrom is TileObject) {
-                TileObject obj = removedFrom as TileObject;
+            if (removedFrom is BaseMapObject mapObject && mapObject.baseMapObjectVisual != null) {
+                mapObject.baseMapObjectVisual.SetMaterial(InnerMapManager.Instance.assetManager.defaultObjectMaterial);
+            }
+            if (removedFrom is TileObject obj) {
                 obj.SetPOIState(POI_STATE.ACTIVE);
-                //obj.SetSlotColor(Color.white);
-                //obj.mapVisual.SetColor(Color.white);
-                //if (obj is GenericTileObject) {
-                //    LocationGridTile tile = obj.gridTileLocation;
-                //    tile.parentTileMap.SetColor(tile.localPlace, Color.white);
-                //    tile.SetDefaultTileColor(Color.white);
-                //    tile.parentMap.detailsTilemap.SetColor(tile.localPlace, Color.white);
-                //    tile.parentMap.northEdgeTilemap.SetColor(tile.localPlace, Color.white);
-                //    tile.parentMap.southEdgeTilemap.SetColor(tile.localPlace, Color.white);
-                //    tile.parentMap.eastEdgeTilemap.SetColor(tile.localPlace, Color.white);
-                //    tile.parentMap.westEdgeTilemap.SetColor(tile.localPlace, Color.white);
-                //}
-            } 
-            // else if (removedFrom is SpecialToken) {
-            //     SpecialToken token = removedFrom as SpecialToken;
-            //     token.SetPOIState(POI_STATE.ACTIVE);
-            //     token.mapVisual.SetColor(Color.white);
-            // }
+            }
         }
         public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
             if (traitOwner is TileObject) {

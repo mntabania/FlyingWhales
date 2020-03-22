@@ -53,10 +53,7 @@ namespace Inner_Maps {
         
         [Header("Corrupted Tiles")] 
         public TileBase corruptedTile;
-        public TileBase corruptedDetailTile;
-        public Sprite[] corruptedTreeAssets;
-        public Sprite[] corruptedBigTreeAssets;
-
+        
         [Header("Demon Tiles")] 
         public TileBase demonicWallTile;
         
@@ -70,6 +67,10 @@ namespace Inner_Maps {
         [Header("Tile Objects")]
         public TileObjectAssetDictionary tileObjectTiles;
         public TileObjectAssetDictionary corruptedTileObjectAssets;
+
+        [Header("Materials")] 
+        public Material burntMaterial;
+        public Material defaultObjectMaterial;
 
         public TileBase GetOutsideFloorTile(Region location) {
             switch (location.coreTile.biomeType) {

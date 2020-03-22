@@ -82,16 +82,15 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
     /// </summary>
     /// <param name="target">The target point in world space</param>
     /// <param name="force">Should this object be forced to rotate?</param>
-    public virtual void LookAt(Vector3 target, bool force = false) {
-
-    }
+    public virtual void LookAt(Vector3 target, bool force = false) { }
     /// <summary>
     /// Rotate this marker to a specific angle.
     /// </summary>
     /// <param name="target">The angle this character must rotate to.</param>
     /// <param name="force">Should this object be forced to rotate?</param>
-    public virtual void Rotate(Quaternion target, bool force = false) {
-
+    public virtual void Rotate(Quaternion target, bool force = false) { }
+    public void SetMaterial(Material material) {
+        objectVisual.material = material;
     }
     #endregion
 

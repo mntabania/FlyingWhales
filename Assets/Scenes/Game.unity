@@ -87169,15 +87169,6 @@ MonoBehaviour:
   monsterLairGroundTile: {fileID: 11400000, guid: afd047e453653d6408938e03da55dcce,
     type: 2}
   corruptedTile: {fileID: 11400000, guid: 82ab4f2ca4172c8419a93070e6c43c01, type: 2}
-  corruptedDetailTile: {fileID: 11400000, guid: 1108c04f38f4d184a88253095f9e628d,
-    type: 2}
-  corruptedTreeAssets:
-  - {fileID: 21300000, guid: f1a8a8c7d4e3844499cab5fc440effad, type: 3}
-  - {fileID: 21300000, guid: cef00f6294c550a4aa9ca7f1c95721a2, type: 3}
-  - {fileID: 21300000, guid: 0ea8ef0a2cbd1ef45875aa7603a88a9b, type: 3}
-  corruptedBigTreeAssets:
-  - {fileID: 21300000, guid: b70306f1d978865459ad97b9221c25e8, type: 3}
-  - {fileID: 21300000, guid: 8f0518dd59fee494a97f26c057d3cdaa, type: 3}
   demonicWallTile: {fileID: 11400000, guid: 6d573d413fddb9645b4619987a76240e, type: 2}
   woodFloorTile: {fileID: 11400000, guid: 4c0a1b3069ff1ab4eba18e4b8362b997, type: 2}
   stoneFloorTile: {fileID: 11400000, guid: 016c45b2f2cc25a4c870fcfb895e0177, type: 2}
@@ -87849,6 +87840,9 @@ MonoBehaviour:
           - {fileID: 21300000, guid: b70306f1d978865459ad97b9221c25e8, type: 3}
           - {fileID: 21300000, guid: 8f0518dd59fee494a97f26c057d3cdaa, type: 3}
           inactiveTile: []
+  burntMaterial: {fileID: 2100000, guid: 0ad3da77b2cc12849a228a637b0e30dd, type: 2}
+  defaultObjectMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3,
+    type: 2}
 --- !u!1 &1538653383
 GameObject:
   m_ObjectHideFlags: 0
