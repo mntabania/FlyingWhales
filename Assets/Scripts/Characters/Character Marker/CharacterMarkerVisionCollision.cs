@@ -114,8 +114,8 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
     
     private void NormalEnterHandling(IPointOfInterest poi) {
         Character targetCharacter = null;
-        if (poi is Character) {
-            targetCharacter = poi as Character;
+        if (poi is Character character) {
+            targetCharacter = character;
         }
         parentMarker.AddPOIAsInVisionRange(poi);
         // if (targetCharacter != null && parentMarker.character.IsHostileWith(targetCharacter)) {

@@ -1024,6 +1024,7 @@
           <e p="Characters" t="Include">
             <e p="BattleTracker.cs" t="Include" />
             <e p="Behaviour" t="Include">
+              <e p="AbductorMonster.cs" t="Include" />
               <e p="BerserkBehaviour.cs" t="Include" />
               <e p="CharacterBehaviourComponent.cs" t="Include" />
               <e p="DazedBehaviour.cs" t="Include" />
@@ -1595,7 +1596,7 @@
                   <e p="PlinthBook.cs" t="Include" />
                   <e p="PoisonCloudTileObject.cs" t="Include" />
                   <e p="PoisonFlask.cs" t="Include" />
-                  <e p="QuicksandTileObject.cs" t="Include" />
+                  <e p="Quicksand.cs" t="Include" />
                   <e p="RackFarmingTools.cs" t="Include" />
                   <e p="RackStaves.cs" t="Include" />
                   <e p="RackTools.cs" t="Include" />

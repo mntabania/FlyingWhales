@@ -6,12 +6,9 @@ using UnityEngine;
 namespace Traits {
     public class Burnt : Status {
 
-        private Color burntColor {
-            get {
-                return Color.gray;
-            }
-        }
-
+        private Color burntColor => Color.gray;
+        private GameObject _burntEffect;
+        
         public Burnt() {
             name = "Burnt";
             description = "This is burnt.";
@@ -25,6 +22,22 @@ namespace Traits {
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
             if (addedTo is BaseMapObject mapObject && mapObject.baseMapObjectVisual != null) {
+                if (mapObject is GenericTileObject genericTileObject) {
+                    LocationGridTile tile = genericTileObject.gridTileLocation;
+                    Sprite floorSprite = tile.parentMap.groundTilemap.
+                        GetSprite(tile.localPlace);
+                    mapObject.baseMapObjectVisual.SetVisual(floorSprite);
+                    tile.parentTileMap.SetColor(tile.localPlace, burntColor);
+                    tile.SetDefaultTileColor(burntColor);
+                    tile.parentMap.detailsTilemap.SetColor(tile.localPlace, burntColor);
+                    tile.parentMap.northEdgeTilemap.SetColor(tile.localPlace, burntColor);
+                    tile.parentMap.southEdgeTilemap.SetColor(tile.localPlace, burntColor);
+                    tile.parentMap.eastEdgeTilemap.SetColor(tile.localPlace, burntColor);
+                    tile.parentMap.westEdgeTilemap.SetColor(tile.localPlace, burntColor);
+                }
+                if (addedTo is IPointOfInterest poi) {
+                    _burntEffect = GameManager.Instance.CreateParticleEffectAt(poi, PARTICLE_EFFECT.Burnt);
+                }
                 mapObject.baseMapObjectVisual.SetMaterial(InnerMapManager.Instance.assetManager.burntMaterial);
             }
             if (addedTo is TileObject obj) {
@@ -34,6 +47,20 @@ namespace Traits {
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
             if (removedFrom is BaseMapObject mapObject && mapObject.baseMapObjectVisual != null) {
+                if (mapObject is GenericTileObject genericTileObject) {
+                    LocationGridTile tile = genericTileObject.gridTileLocation;
+                    tile.parentTileMap.SetColor(tile.localPlace, Color.white);
+                    tile.SetDefaultTileColor(Color.white);
+                    tile.parentMap.detailsTilemap.SetColor(tile.localPlace, Color.white);
+                    tile.parentMap.northEdgeTilemap.SetColor(tile.localPlace, Color.white);
+                    tile.parentMap.southEdgeTilemap.SetColor(tile.localPlace, Color.white);
+                    tile.parentMap.eastEdgeTilemap.SetColor(tile.localPlace, Color.white);
+                    tile.parentMap.westEdgeTilemap.SetColor(tile.localPlace, Color.white);
+                }
+                if (_burntEffect != null) {
+                    ObjectPoolManager.Instance.DestroyObject(_burntEffect);
+                    _burntEffect = null;
+                }
                 mapObject.baseMapObjectVisual.SetMaterial(InnerMapManager.Instance.assetManager.defaultObjectMaterial);
             }
             if (removedFrom is TileObject obj) {
@@ -41,8 +68,7 @@ namespace Traits {
             }
         }
         public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
-            if (traitOwner is TileObject) {
-                TileObject targetPOI = traitOwner as TileObject;
+            if (traitOwner is TileObject targetPOI && targetPOI.tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
                 if (targetPOI.Advertises(INTERACTION_TYPE.REPAIR)) {
                     GoapPlanJob currentJob = targetPOI.GetJobTargetingThisCharacter(JOB_TYPE.REPAIR);
                     if (currentJob == null) {
@@ -68,6 +94,9 @@ namespace Traits {
                 }
             }
             return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
+        }
+        public override bool IsTangible() {
+            return true;
         }
         #endregion
     }

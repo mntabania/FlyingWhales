@@ -2028,11 +2028,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         destroyMarkerOnDeath = state;
     }
     /// <summary>
-    /// Is this character and NPC?
-    /// (Characters that can normally be manipulated by the player)
+    /// Is this character a normal character?
+    /// Characters that are not monsters or minions.
     /// </summary>
     /// <returns></returns>
-    public bool IsNPC() {
+    public bool IsNormalCharacter() {
         return (this is Summon) == false && minion == null;
     }
     #endregion    

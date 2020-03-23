@@ -16,7 +16,9 @@ public struct PortraitSettings {
     public int mustache;
     public int beard;
     public string wholeImage;
-    public float hairColor;
+    public float hairColorHue;
+    public float hairColorSaturation;
+    public float hairColorValue;
     public float wholeImageColor;
 
 }

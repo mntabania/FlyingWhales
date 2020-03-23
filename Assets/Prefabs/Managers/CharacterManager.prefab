@@ -563,7 +563,7 @@ MonoBehaviour:
     - {fileID: 21300000, guid: a2a9035f5a469f34299c98fa2ab01083, type: 3}
     - {fileID: 21300000, guid: a2a9035f5a469f34299c98fa2ab01083, type: 3}
     - {fileID: 21300000, guid: 09f2377c0c409304cb48ab46e4145351, type: 3}
-  hsvMaterial: {fileID: 2100000, guid: f635580cdf2e2344ea31e0dba17cb9b5, type: 2}
+  hsvMaterial: {fileID: 2100000, guid: 4f1995ec43a3fc14cb91dcd56050fd9e, type: 2}
   spriteLightingMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3,
     type: 2}
   maleHairSprite:

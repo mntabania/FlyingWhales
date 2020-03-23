@@ -797,5 +797,18 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         _owner.logComponent.AddHistory(log);
         return true;
     }
-    #endregion  
+    #endregion
+
+    public bool TriggerAbduct() {
+	    if (_owner.homeStructure == null) { return false; }
+	    List<Character> choices = _owner.currentRegion.charactersAtLocation.Where(x => x.IsNormalCharacter()).ToList();
+	    if (choices.Count > 0) {
+		    Character targetCharacter = CollectionUtilities.GetRandomElement(choices);
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MONSTER_ABDUCT, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, target = GOAP_EFFECT_TARGET.TARGET }, targetCharacter, _owner);
+		    job.AddOtherData(INTERACTION_TYPE.DROP, new object[]{_owner.homeStructure});
+		    _owner.jobQueue.AddJobInQueue(job);
+		    return true;
+	    }
+	    return false;
+    }
 }

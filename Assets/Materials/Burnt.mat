@@ -21,11 +21,15 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _MainTex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 80deb517aa362ca4692d227826ab98d7, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Overlay:
+        m_Texture: {fileID: 2800000, guid: 88775c51395afd340afb02483cda49d5, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - _Fade: 0.453
-    - _Scale: 41.2
+    - _Fade: 0.267
+    - _Scale: 60
     m_Colors:
-    - Color_2660BE8B: {r: 1, g: 0.044800397, b: 0, a: 0}
+    - Color_2660BE8B: {r: 1, g: 0.314554, b: 0, a: 0}

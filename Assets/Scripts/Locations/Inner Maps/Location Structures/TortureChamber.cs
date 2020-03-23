@@ -42,13 +42,13 @@ namespace Inner_Maps.Location_Structures {
 
         #region Torture
         private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {
-            if (structure == this && character.IsNPC()) {
+            if (structure == this && character.IsNormalCharacter()) {
                 character.trapStructure.SetForcedStructure(this);
                 character.DecreaseCanTakeJobs();
             }
         }
         private void OnCharacterLeftStructure(Character character, LocationStructure structure) {
-            if (structure == this && character.IsNPC()) {
+            if (structure == this && character.IsNormalCharacter()) {
                 character.trapStructure.SetForcedStructure(null);
                 character.IncreaseCanTakeJobs();
             }
@@ -61,7 +61,7 @@ namespace Inner_Maps.Location_Structures {
             UIManager.Instance.ShowClickableObjectPicker(charactersHere, StartTorture, null, CanTorture, "Choose Torture Target", showCover: true);
         }
         private bool CanTorture(Character character) {
-            return character.IsNPC();
+            return character.IsNormalCharacter();
         }
         private void StartTorture(object character) {
             Character target = character as Character;

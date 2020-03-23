@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class CharacterVisuals {
-    public static readonly int HsvaAdjust = Shader.PropertyToID("_HSVAAdjust");
-
+    //Hair HSV Shader Properties
+    public static readonly int HairHue = Shader.PropertyToID("_Hue");
+    public static readonly int HairSaturation = Shader.PropertyToID("_Saturation");
+    public static readonly int HairValue = Shader.PropertyToID("_Value");
+    
     private Character _owner;
     
     public PortraitSettings portraitSettings { get; private set; }
@@ -30,11 +33,15 @@ public class CharacterVisuals {
     }
     private void CreateHairMaterial() {
         hairMaterial = Object.Instantiate(CharacterManager.Instance.hsvMaterial);
-        hairMaterial.SetVector(HsvaAdjust, new Vector4(portraitSettings.hairColor / 360f, 0f, 0f, 0f));
+        hairMaterial.SetFloat(HairHue, portraitSettings.hairColorHue);
+        hairMaterial.SetFloat(HairSaturation, portraitSettings.hairColorSaturation);
+        hairMaterial.SetFloat(HairValue, portraitSettings.hairColorValue);
     }
     public void CreateWholeImageMaterial() {
         hairMaterial = Object.Instantiate(CharacterManager.Instance.hsvMaterial);
-        hairMaterial.SetVector(HsvaAdjust, new Vector4(portraitSettings.wholeImageColor / 360f, 0f, 0f, 0f));
+        hairMaterial.SetFloat(HairHue, portraitSettings.hairColorHue);
+        hairMaterial.SetFloat(HairSaturation, portraitSettings.hairColorSaturation);
+        hairMaterial.SetFloat(HairValue, portraitSettings.hairColorValue);
     }
 
     public void UpdateAllVisuals(Character character) {

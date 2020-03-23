@@ -32,7 +32,7 @@ namespace Traits {
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
             if (addedTo is Character character) {
-                if (character.IsNPC() && character.gridTileLocation != null && character.gridTileLocation.IsNextToOrPartOfSettlement(out var settlement)
+                if (character.IsNormalCharacter() && character.gridTileLocation != null && character.gridTileLocation.IsNextToOrPartOfSettlement(out var settlement)
                     && settlement is NPCSettlement npcSettlement) {
                     LocationStructure targetStructure = npcSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.CEMETERY) ??
                                                         npcSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
