@@ -22,7 +22,7 @@ namespace Ruinarch {
         }
         public Cursor_Type currentCursorType;
         public Cursor_Type previousCursorType;
-        public PLAYER_ARCHETYPE selectedArchetype { get; private set; } //Need to move this in the future. Not the best way to store the selected archetype from the main menu scene, but for now this will do since we need an object that is carried to the Game scene
+        //public PLAYER_ARCHETYPE selectedArchetype { get; private set; } //Need to move this in the future. Not the best way to store the selected archetype from the main menu scene, but for now this will do since we need an object that is carried to the Game scene
 
         #region Monobehaviours
         private void Awake() {
@@ -179,9 +179,9 @@ namespace Ruinarch {
         public void RevertToPreviousCursor() {
             SetCursorTo(previousCursorType);
         }
-        public void SetSelectedArchetype(PLAYER_ARCHETYPE archetype) {
-            selectedArchetype = archetype;
-        }
+        //public void SetSelectedArchetype(PLAYER_ARCHETYPE archetype) {
+        //    selectedArchetype = archetype;
+        //}
         /// <summary>
         /// Cancel actions based on a hardcoded process
         /// </summary>

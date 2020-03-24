@@ -7,7 +7,7 @@ public class SpoilData : SpellData {
     public override SPELL_TYPE ability => SPELL_TYPE.SPOIL;
     public override string name { get { return "Spoil"; } }
     public override string description { get { return "Poison the food at the target table."; } }
-    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.SABOTAGE; } }
+    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.PLAYER_ACTION; } }
 
     public SpoilData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE_OBJECT };

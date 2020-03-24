@@ -109,8 +109,8 @@ public class CannibalismData : SpellData {
     public override SPELL_TYPE ability => SPELL_TYPE.CANNIBALISM;
     public override string name { get { return "Cannibalism"; } }
     public override string description { get { return "Makes a character eat other characters with the same race for sustenance."; } }
-    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.MONSTER; } }
-    public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.AFFLICTION;
+    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.AFFLICTION; } }
+    //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.AFFLICTION;
 
     public CannibalismData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER, SPELL_TARGET.TILE_OBJECT };

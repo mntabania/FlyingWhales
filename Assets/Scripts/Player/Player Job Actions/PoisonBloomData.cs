@@ -6,8 +6,8 @@ public class PoisonBloomData : SpellData {
     public override SPELL_TYPE ability => SPELL_TYPE.POISON_BLOOM;
     public override string name => "Poison Bloom";
     public override string description => "Random spots in the ground will start emitting small Poison Clouds that move around and then dissipates.";
-    public override SPELL_CATEGORY category => SPELL_CATEGORY.DEVASTATION;
-    public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
+    public override SPELL_CATEGORY category => SPELL_CATEGORY.SPELL;
+    //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
 
     public PoisonBloomData() : base() {
         targetTypes = new[] { SPELL_TARGET.HEX };

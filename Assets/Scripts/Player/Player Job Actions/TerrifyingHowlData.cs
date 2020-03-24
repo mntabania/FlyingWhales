@@ -6,8 +6,8 @@ public class TerrifyingHowlData : SpellData {
     public override SPELL_TYPE ability => SPELL_TYPE.TERRIFYING_HOWL;
     public override string name => "Terrifying Howl";
     public override string description => "Adds 1 stack of Spooked to all characters within range.";
-    public override SPELL_CATEGORY category => SPELL_CATEGORY.DEVASTATION;
-    public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
+    public override SPELL_CATEGORY category => SPELL_CATEGORY.SPELL;
+    //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
 
     public TerrifyingHowlData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };

@@ -51,8 +51,12 @@ namespace Inner_Maps {
         public LocationGridTileCollection collectionOwner { get; private set; }
         public bool isCorrupted => groundType == Ground_Type.Corrupted;
         public bool hasLandmine { get; private set; }
+        public bool hasFreezingTrap { get; private set; }
+        public bool hasSnareTrap { get; private set; }
 
         private GameObject _landmineEffect;
+        private GameObject _freezingTrapEffect;
+        private GameObject _snareTrapEffect;
 
         #region Pathfinding
         public List<LocationGridTile> ValidTiles { get { return FourNeighbours().Where(o => o.tileType == Tile_Type.Empty).ToList(); } }
@@ -389,7 +393,13 @@ namespace Inner_Maps {
             if (hasLandmine) {
                 TriggerLandmine(character);
             }
-            if(isCorrupted) {
+            if (hasFreezingTrap) {
+                TriggerFreezingTrap(character);
+            }
+            if (hasSnareTrap) {
+                TriggerSnareTrap(character);
+            }
+            if (isCorrupted) {
                 if(character.homeSettlement != null && (character.race == RACE.HUMANS || character.race == RACE.ELVES)) {
                     if (!InnerMapManager.Instance.HasWorldKnownDemonicStructure(structure)) {
                         character.jobComponent.CreateReportDemonicStructure(structure);
@@ -1039,6 +1049,48 @@ namespace Inner_Maps {
                     }
                 }
             }
+        }
+        #endregion
+
+        #region Freezing Trap
+        public void SetHasFreezingTrap(bool state) {
+            if (hasFreezingTrap != state) {
+                hasFreezingTrap = state;
+                if (hasFreezingTrap) {
+                    _freezingTrapEffect = GameManager.Instance.CreateParticleEffectAt(this, PARTICLE_EFFECT.Freezing_Trap, InnerMapManager.DetailsTilemapSortingOrder - 1);
+                } else {
+                    ObjectPoolManager.Instance.DestroyObject(_freezingTrapEffect);
+                    _freezingTrapEffect = null;
+                }
+            }
+        }
+        private void TriggerFreezingTrap(Character triggeredBy) {
+            SetHasFreezingTrap(false);
+            for (int i = 0; i < 5; i++) {
+                if (triggeredBy.traitContainer.HasTrait("Frozen")) {
+                    break;
+                } else {
+                    triggeredBy.traitContainer.AddTrait(triggeredBy, "Freezing", bypassElementalChance: true);
+                }
+            }
+        }
+        #endregion
+
+        #region Freezing Trap
+        public void SetHasSnareTrap(bool state) {
+            if (hasSnareTrap != state) {
+                hasSnareTrap = state;
+                if (hasSnareTrap) {
+                    _snareTrapEffect = GameManager.Instance.CreateParticleEffectAt(this, PARTICLE_EFFECT.Snare_Trap, InnerMapManager.DetailsTilemapSortingOrder - 1);
+                } else {
+                    ObjectPoolManager.Instance.DestroyObject(_snareTrapEffect);
+                    _snareTrapEffect = null;
+                }
+            }
+        }
+        private void TriggerSnareTrap(Character triggeredBy) {
+            SetHasSnareTrap(false);
+            triggeredBy.traitContainer.AddTrait(triggeredBy, "Ensnared");
         }
         #endregion  
     }

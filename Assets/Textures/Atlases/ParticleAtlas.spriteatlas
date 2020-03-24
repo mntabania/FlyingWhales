@@ -31,10 +31,11 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: c56691e3000aa5f46b6b0f833f973a16, type: 3}
-    totalSpriteSurfaceArea: 3527356
+    totalSpriteSurfaceArea: 3535548
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
+  - {fileID: 21300000, guid: 41beafc0ab4f76b48bf395aa6c32ba8b, type: 3}
   - {fileID: 8228913293342031306, guid: fd622cd036237fe46ad70a29a10e1966, type: 3}
   - {fileID: -2655667206138245945, guid: fd622cd036237fe46ad70a29a10e1966, type: 3}
   - {fileID: 3725794168979676816, guid: fd622cd036237fe46ad70a29a10e1966, type: 3}
@@ -110,7 +111,9 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 1c16607fcdbef2d41be486b5549116ae, type: 3}
   - {fileID: 21300000, guid: ceac89bfdf4bd6f45bf8c4b2eca51c7b, type: 3}
   - {fileID: 21300000, guid: b42249ef1048f724198420df923ffe23, type: 3}
+  - {fileID: 21300000, guid: f5f00bef1890e3e4893001f8ceb8b1e4, type: 3}
   m_PackedSpriteNamesToIndex:
+  - freezing_trap
   - Smoke_Only_Spritesheet_2
   - Smoke_Only_Spritesheet_1
   - Smoke_Only_Spritesheet_0
@@ -186,5 +189,6 @@ SpriteAtlas:
   - terrifyingHowlSkullC
   - chaos_orb_circle
   - poison_skull
+  - snare_trap
   m_Tag: ParticleAtlas
   m_IsVariant: 0

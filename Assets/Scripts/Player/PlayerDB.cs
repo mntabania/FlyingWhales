@@ -38,7 +38,7 @@ public static class PlayerDB {
     public const string Breed_Monster_Action = "Breed Monster";
     public const string Activate_Artifact_Action = "Activate Artifact";
     public const string Remove_Trait_Action = "Remove Trait";
-    public const string Share_Intel_Action = "Share Intel";
+    //public const string Share_Intel_Action = "Share Intel";
     public const string Combat_Mode_Action = "Combat Mode";
     public const string Raise_Skeleton_Action = "Raise Skeleton";
 
@@ -76,7 +76,7 @@ public static class PlayerDB {
         SPELL_TYPE.LOCUST_SWARM, SPELL_TYPE.BLIZZARD, SPELL_TYPE.SPAWN_BOULDER, SPELL_TYPE.MANIFEST_FOOD,
         SPELL_TYPE.BRIMSTONES, SPELL_TYPE.EARTHQUAKE, SPELL_TYPE.WATER_BOMB, SPELL_TYPE.SPLASH_POISON, SPELL_TYPE.RAIN, //Landmine, Acid_Rain, Rain, Heat_Wave, Wild_Growth, Spider_Rain, Fertility, Spawn_Bandit_Camp, Spawn_Monster_Lair, Spawn_Haunted_Grounds,
         SPELL_TYPE.BALL_LIGHTNING, SPELL_TYPE.ELECTRIC_STORM, SPELL_TYPE.FROSTY_FOG, SPELL_TYPE.VAPOR, SPELL_TYPE.FIRE_BALL,
-        SPELL_TYPE.POISON_BLOOM, SPELL_TYPE.LANDMINE, SPELL_TYPE.TERRIFYING_HOWL,
+        SPELL_TYPE.POISON_BLOOM, SPELL_TYPE.LANDMINE, SPELL_TYPE.TERRIFYING_HOWL, SPELL_TYPE.FREEZING_TRAP, SPELL_TYPE.SNARE_TRAP
     };
 
     public static List<SPELL_TYPE> afflictions = new List<SPELL_TYPE>() { 
@@ -89,7 +89,7 @@ public static class PlayerDB {
         Seize_Object_Action,
         Seize_Character_Action,
         Remove_Trait_Action,
-        Share_Intel_Action,
+        //Share_Intel_Action,
         Zap_Action,
     };
     private static string[] unlockableStructures = new[] {

@@ -7,8 +7,8 @@ public class EarthquakeData : SpellData {
     public override SPELL_TYPE ability => SPELL_TYPE.EARTHQUAKE;
     public override string name { get { return "Earthquake"; } }
     public override string description { get { return "Violently shakes the ground, dealing Normal damage to objects and randomly moving them around. Characters will become Disoriented."; } }
-    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.DEVASTATION; } }
-    public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
+    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.SPELL; } }
+    //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
     public virtual int abilityRadius => 1;
 
     public EarthquakeData() : base() {

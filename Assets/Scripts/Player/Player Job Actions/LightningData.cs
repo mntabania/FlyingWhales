@@ -7,8 +7,8 @@ public class LightningData : SpellData {
     public override SPELL_TYPE ability => SPELL_TYPE.LIGHTNING;
     public override string name { get { return "Lightning"; } }
     public override string description { get { return "A lightning bolt will hit the designated spot, causing Electric damage."; } }
-    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.DEVASTATION; } }
-    public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
+    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.SPELL; } }
+    //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
     public virtual int abilityRadius => 1;
 
     public LightningData() : base() {

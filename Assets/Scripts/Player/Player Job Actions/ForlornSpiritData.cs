@@ -7,8 +7,8 @@ public class ForlornSpiritData : SpellData {
     public override SPELL_TYPE ability => SPELL_TYPE.FORLORN_SPIRIT;
     public override string name { get { return "Forlorn Spirit"; } }
     public override string description { get { return "Roams around and then drains Entertainment of the first character that gets in range. Dissipates after an hour."; } }
-    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.SABOTAGE; } }
-    public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
+    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.SPELL; } }
+    //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
     public virtual int abilityRadius => 1;
 
     public ForlornSpiritData() : base() {

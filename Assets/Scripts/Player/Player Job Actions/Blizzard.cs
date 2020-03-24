@@ -15,8 +15,8 @@ public class BlizzardData : SpellData {
     public override SPELL_TYPE ability => SPELL_TYPE.BLIZZARD;
     public override string name => "Blizzard";
     public override string description => "Significantly lowers the outside temperature on the target area, which may randomly apply Freezing on affected characters.";
-    public override SPELL_CATEGORY category => SPELL_CATEGORY.DEVASTATION;
-    public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
+    public override SPELL_CATEGORY category => SPELL_CATEGORY.SPELL;
+    //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
 
     public BlizzardData() : base() {
         targetTypes = new[] { SPELL_TARGET.HEX };

@@ -123,7 +123,7 @@ public class ZapData : SpellData {
     public override SPELL_TYPE ability => SPELL_TYPE.ZAP;
     public override string name { get { return "Zap"; } }
     public override string description { get { return "Stops a character from his/her action and temporarily paralyzes him/her."; } }
-    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.SABOTAGE; } }
+    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.PLAYER_ACTION; } }
 
     public ZapData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER, SPELL_TARGET.TILE_OBJECT };

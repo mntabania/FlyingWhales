@@ -6,8 +6,8 @@ public class ManifestFoodData : SpellData {
     public override SPELL_TYPE ability => SPELL_TYPE.MANIFEST_FOOD;
     public override string name { get { return "Manifest Food"; } }
     public override string description { get { return "Produce a small amount of Food."; } }
-    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.DEVASTATION; } }
-    public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
+    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.SPELL; } }
+    //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
     public virtual int abilityRadius => 1;
 
     public ManifestFoodData() : base() {

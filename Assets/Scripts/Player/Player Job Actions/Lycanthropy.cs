@@ -124,8 +124,8 @@ public class LycanthropyData : SpellData {
     public override SPELL_TYPE ability => SPELL_TYPE.LYCANTHROPY;
     public override string name { get { return "Lycanthropy"; } }
     public override string description { get { return "Makes a character transform into a wild wolf whenever he/she sleeps."; } }
-    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.MONSTER; } }
-    public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.AFFLICTION;
+    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.AFFLICTION; } }
+    //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.AFFLICTION;
 
     public LycanthropyData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER, SPELL_TARGET.TILE_OBJECT };
