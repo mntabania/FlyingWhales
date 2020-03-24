@@ -6,9 +6,9 @@ public class WindBlastCollisionListener : ParticleCollisionListener {
         // if (_rigidbody2D != null) {
         //     _rigidbody2D.AddForce(transform.right * 2f, ForceMode2D.Impulse);
         // }
-        if (other.CompareTag("Character Marker")) {
-            CharacterMarker characterMarker = other.GetComponent<CharacterMarker>();
-            characterMarker.character.AdjustHP(-20, ELEMENTAL_TYPE.Wind, transform);
-        }
+        // if (other.CompareTag("Character Marker")) {
+        //     CharacterMarker characterMarker = other.GetComponent<CharacterMarker>();
+        //     characterMarker.character.AdjustHP(-20, ELEMENTAL_TYPE.Wind, transform);
+        // }
     }
 }

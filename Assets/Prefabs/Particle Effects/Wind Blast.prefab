@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 3004656286122032480}
   - component: {fileID: 3004656286122032481}
   - component: {fileID: 3004656286122031773}
-  - component: {fileID: 3004656286122032482}
   - component: {fileID: 5241749999225801789}
   m_Layer: 19
   m_Name: Wind Blast
@@ -3626,7 +3625,7 @@ ParticleSystem:
         m_NumAlphaKeys: 2
     range: {x: 0, y: 1}
   CollisionModule:
-    enabled: 1
+    enabled: 0
     serializedVersion: 3
     type: 1
     collisionMode: 1
@@ -3804,7 +3803,7 @@ ParticleSystem:
     radiusScale: 1
     collidesWith:
       serializedVersion: 2
-      m_Bits: 1048576
+      m_Bits: 1064960
     maxCollisionShapes: 256
     quality: 0
     voxelSize: 0.5
@@ -4842,19 +4841,6 @@ MonoBehaviour:
   particleSystems:
   - {fileID: 3004656286122032480}
   pauseOnGamePaused: 0
---- !u!114 &3004656286122032482
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3004656286122032486}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a21e0bbbc87a4c7f94dcbfa4c2d85da8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _baseParticleEffect: {fileID: 3004656286122031773}
 --- !u!114 &5241749999225801789
 MonoBehaviour:
   m_ObjectHideFlags: 0
