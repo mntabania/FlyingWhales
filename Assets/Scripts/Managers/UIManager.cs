@@ -146,7 +146,7 @@ public class UIManager : MonoBehaviour {
         Messenger.AddListener<Region>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
         Messenger.AddListener<Region>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
 
-        Messenger.AddListener<Intel>(Signals.SHOW_INTEL_NOTIFICATION, ShowPlayerNotification);
+        Messenger.AddListener<IIntel>(Signals.SHOW_INTEL_NOTIFICATION, ShowPlayerNotification);
         Messenger.AddListener<Log>(Signals.SHOW_PLAYER_NOTIFICATION, ShowPlayerNotification);
 
         Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
@@ -934,7 +934,7 @@ public class UIManager : MonoBehaviour {
     public void OpenShareIntelMenu(Character targetCharacter) {
         shareIntelMenu.Open(targetCharacter);
     }
-    public void OpenShareIntelMenu(Character targetCharacter, Character actor, Intel intel) {
+    public void OpenShareIntelMenu(Character targetCharacter, Character actor, IIntel intel) {
         shareIntelMenu.Open(targetCharacter, actor, intel);
     }
     public bool IsShareIntelMenuOpen() {
@@ -971,7 +971,7 @@ public class UIManager : MonoBehaviour {
     public Image[] playerNotifTransparentImages;
     public int maxPlayerNotif;
     public List<PlayerNotificationItem> activeNotifications = new List<PlayerNotificationItem>(); //notifications that are currently being shown.
-    private void ShowPlayerNotification(Intel intel) {
+    private void ShowPlayerNotification(IIntel intel) {
         GameObject newIntelGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(intelPrefab.name, Vector3.zero, Quaternion.identity, playerNotifScrollRect.content);
         IntelNotificationItem newItem = newIntelGO.GetComponent<IntelNotificationItem>();
         newItem.Initialize(intel, true, OnNotificationDestroyed);

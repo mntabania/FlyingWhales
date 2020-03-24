@@ -799,7 +799,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
     #region Report Demonic Structure
     public void CreateReportDemonicStructure(LocationStructure structureToReport) {
-        if (_owner.jobQueue.HasJob(JOB_TYPE.REPORT_CORRUPTED_STRUCTURE)) {
+        if (!_owner.jobQueue.HasJob(JOB_TYPE.REPORT_CORRUPTED_STRUCTURE)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REPORT_CORRUPTED_STRUCTURE, INTERACTION_TYPE.REPORT_CORRUPTED_STRUCTURE, _owner, _owner);
             job.AddOtherData(INTERACTION_TYPE.REPORT_CORRUPTED_STRUCTURE, new object[] { structureToReport });
             _owner.jobQueue.AddJobInQueue(job);

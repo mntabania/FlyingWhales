@@ -7,14 +7,14 @@ using UnityEngine.UI;
 
 public class IntelNotificationItem : PlayerNotificationItem {
 
-    public Intel intel { get; private set; }
+    public IIntel intel { get; private set; }
 
     [SerializeField] private Button getIntelBtn;
     [SerializeField] private GameObject convertTooltip;
 
-    public void Initialize(Intel intel, bool hasExpiry = true, System.Action<PlayerNotificationItem> onDestroyAction = null) {
+    public void Initialize(IIntel intel, bool hasExpiry = true, System.Action<PlayerNotificationItem> onDestroyAction = null) {
         this.intel = intel;
-        base.Initialize(intel.node.descriptionLog, hasExpiry, onDestroyAction);
+        base.Initialize(intel.log, hasExpiry, onDestroyAction);
     }
    
     public void GetIntel() {

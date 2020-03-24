@@ -11,7 +11,7 @@ public class GoapActionState {
     public Action<ActualGoapNode> preEffect { get; private set; }
     public Action<ActualGoapNode> perTickEffect { get; private set; }
     public Action<ActualGoapNode> afterEffect { get; private set; }
-    public Func<Character, Intel, REACTION_STATUS, List<string>> shareIntelReaction { get; private set; }
+    public Func<Character, ActionIntel, REACTION_STATUS, List<string>> shareIntelReaction { get; private set; }
     public string status { get; private set; }
     //public bool isDone { get; private set; }
     public string animationName { get; private set; } //specific animation per action state
@@ -36,7 +36,7 @@ public class GoapActionState {
         //CreateLog();
     }
 
-    public void SetIntelReaction(Func<Character, Intel, REACTION_STATUS, List<string>> intelReaction) {
+    public void SetIntelReaction(Func<Character, ActionIntel, REACTION_STATUS, List<string>> intelReaction) {
         shareIntelReaction = intelReaction;
     }
 

@@ -2200,7 +2200,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             targetCharacter = target as Character;
             //React To Interrupt
             if (targetCharacter.interruptComponent.isInterrupted) {
-                reactionComponent.ReactTo(targetCharacter.interruptComponent.currentInterrupt, targetCharacter, targetCharacter.interruptComponent.currentTargetPOI, REACTION_STATUS.WITNESSED);
+                reactionComponent.ReactTo(targetCharacter.interruptComponent.currentInterrupt, targetCharacter, targetCharacter.interruptComponent.currentTargetPOI, targetCharacter.interruptComponent.currentEffectLog, REACTION_STATUS.WITNESSED);
             } else {
                 //targetCharacter.OnSeenBy(this); //trigger that the target character was seen by this character.
                 targetCharacterCurrentActionNode = targetCharacter.currentActionNode;
@@ -3950,14 +3950,19 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //    //    }
     //    //}
     //}
-    public string ShareIntel(Intel intel) {
+    public string ShareIntel(IIntel intel) {
         // PlayerManager.Instance.player.RemoveIntel(intel);
-        if (!intel.node.awareCharacters.Contains(this)) {
-            string reaction = reactionComponent.ReactTo(intel.node, REACTION_STATUS.INFORMED);
-            intel.node.AddAwareCharacter(this);
-            return reaction;
+        if(intel is ActionIntel actionIntel) {
+            if (!actionIntel.node.awareCharacters.Contains(this)) {
+                string reaction = reactionComponent.ReactTo(actionIntel.node, REACTION_STATUS.INFORMED);
+                actionIntel.node.AddAwareCharacter(this);
+                return reaction;
+            }
+        } else if (intel is InterruptIntel interruptIntel) {
+            return reactionComponent.ReactTo(interruptIntel.interrupt, interruptIntel.actor, interruptIntel.target, interruptIntel.log, REACTION_STATUS.INFORMED);
         }
         return "aware";
+
     }
     #endregion
 

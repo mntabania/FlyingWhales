@@ -58,7 +58,7 @@ public class InterruptComponent {
             Messenger.Broadcast(Signals.UPDATE_THOUGHT_BUBBLE, owner);
 
             if (currentInterrupt.duration <= 0) {
-                AddEffectLog();
+                AddEffectLog(currentInterrupt, currentTargetPOI);
                 currentInterrupt.ExecuteInterruptEndEffect(owner, currentTargetPOI);
                 EndInterrupt();
             }
@@ -75,7 +75,7 @@ public class InterruptComponent {
         triggeredSimultaneousInterrupt = interrupt;
         this.identifier = identifier;
         ExecuteStartInterrupt(interrupt, targetPOI);
-        AddEffectLog();
+        AddEffectLog(triggeredSimultaneousInterrupt, currentTargetPOI);
         interrupt.ExecuteInterruptEndEffect(owner, currentTargetPOI);
         currentSimultaneousInterruptDuration = 0;
         Messenger.AddListener(Signals.TICK_ENDED, PerTickSimultaneousInterrupt);
@@ -95,7 +95,7 @@ public class InterruptComponent {
         if (isInterrupted) {
             currentDuration++;
             if(currentDuration >= currentInterrupt.duration) {
-                AddEffectLog();
+                AddEffectLog(currentInterrupt, currentTargetPOI);
                 currentInterrupt.ExecuteInterruptEndEffect(owner, currentTargetPOI);
                 EndInterrupt();
             }
@@ -168,14 +168,19 @@ public class InterruptComponent {
             thoughtBubbleLog.AddToFillers(currentTargetPOI, currentTargetPOI.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         }
     }
-    private void AddEffectLog() {
+    private void AddEffectLog(Interrupt interrupt, IPointOfInterest target) {
         if(_currentEffectLog != null) {
             if (owner != currentTargetPOI) {
                 _currentEffectLog.AddLogToInvolvedObjects();
             } else {
                 owner.logComponent.AddHistory(_currentEffectLog);
             }
-            // PlayerManager.Instance.player.ShowNotificationFrom(owner, _currentEffectLog);
+            if (interrupt.isIntel) {
+                //PlayerManager.Instance.player.ShowNotificationFrom(owner, InteractionManager.Instance.CreateNewIntel(interrupt, owner, target, _currentEffectLog) as IIntel);
+                PlayerManager.Instance.player.ShowNotification(InteractionManager.Instance.CreateNewIntel(interrupt, owner, target, _currentEffectLog) as IIntel);
+            } else {
+                PlayerManager.Instance.player.ShowNotificationFrom(owner, _currentEffectLog);
+            }
         }
         //if (LocalizationManager.Instance.HasLocalizedValue("Interrupt", currentInterrupt.name, "effect")) {
         //    Log effectLog = new Log(GameManager.Instance.Today(), "Interrupt", currentInterrupt.name, "effect");

@@ -52,7 +52,7 @@ public class ShareIntelMenu : PopupMenuBase {
 
         UpdateIntel(PlayerManager.Instance.player.allIntel);
     }
-    public void Open(Character targetCharacter, Character actor, Intel intelToShare) {
+    public void Open(Character targetCharacter, Character actor, IIntel intelToShare) {
         //UIManager.Instance.SetCoverState(true);
         //UIManager.Instance.Pause();
         //UIManager.Instance.SetSpeedTogglesState(false);
@@ -78,21 +78,21 @@ public class ShareIntelMenu : PopupMenuBase {
 
         GameObject actorDialog = ObjectPoolManager.Instance.InstantiateObjectFromPool(dialogItemPrefab.name, Vector3.zero, Quaternion.identity, dialogScrollView.content);
         DialogItem actorItem = actorDialog.GetComponent<DialogItem>();
-        actorItem.SetData(actor, UtilityScripts.Utilities.LogReplacer(intelToShare.node.descriptionLog), DialogItem.Position.Right);
+        actorItem.SetData(actor, UtilityScripts.Utilities.LogReplacer(intelToShare.log), DialogItem.Position.Right);
 
         DirectlyShowIntelReaction(intelToShare);
     }
-    private void DirectlyShowIntelReaction(Intel intel) {
+    private void DirectlyShowIntelReaction(IIntel intel) {
         HideIntel();
         ReactToIntel(intel);
     }
 
-    private void UpdateIntel(List<Intel> intelToShow) {
+    private void UpdateIntel(List<IIntel> intelToShow) {
         intelGO.SetActive(true);
         SetIntelButtonsInteractable(true);
         for (int i = 0; i < intelItems.Length; i++) {
             IntelItem currItem = intelItems[i];
-            Intel intel = intelToShow.ElementAtOrDefault(i);
+            IIntel intel = intelToShow.ElementAtOrDefault(i);
             currItem.SetIntel(intel);
             if (intel != null) {
                 currItem.SetClickAction(ReactToIntel);
@@ -117,7 +117,7 @@ public class ShareIntelMenu : PopupMenuBase {
         Messenger.Broadcast(Signals.ON_CLOSE_SHARE_INTEL);
     }
 
-    private void ReactToIntel(Intel intel) {
+    private void ReactToIntel(IIntel intel) {
         closeBtn.interactable = false;
         //HideIntel();
         //UpdateIntel(new List<Intel>() { intel });
@@ -134,7 +134,7 @@ public class ShareIntelMenu : PopupMenuBase {
         //StartCoroutine(ShowReactions(reactions));
         string response = targetCharacter.ShareIntel(intel);
         if (string.IsNullOrEmpty(response) || string.IsNullOrWhiteSpace(response)) {
-            response = CharacterManager.Instance.TriggerEmotion(EMOTION.Disinterest, targetCharacter, intel.node.actor, REACTION_STATUS.INFORMED);
+            response = CharacterManager.Instance.TriggerEmotion(EMOTION.Disinterest, targetCharacter, intel.actor, REACTION_STATUS.INFORMED);
         }
         StartCoroutine(ShowReaction(response, intel));
     }
@@ -173,10 +173,10 @@ public class ShareIntelMenu : PopupMenuBase {
         //ShareIntel share = PlayerManager.Instance.player.shareIntelAbility;
         //share.DeactivateAction();
     }
-    private IEnumerator ShowReaction(string reaction, Intel intel) {
+    private IEnumerator ShowReaction(string reaction, IIntel intel) {
         if (reaction == string.Empty) {
             //character had no reaction
-            if (intel.node.actor == targetCharacter) {
+            if (intel.actor == targetCharacter) {
                 reaction = "I know what I did.";
             } else {
                 reaction = "A proper response to this information has not been implemented yet.";
@@ -204,7 +204,7 @@ public class ShareIntelMenu : PopupMenuBase {
                                 finalReaction += "\n";
                             }
                             finalReaction +=
-                                $"I feel {responses} towards {(i == 0 ? intel.node.actor.name : intel.node.poiTarget.name)}.";
+                                $"I feel {responses} towards {(i == 0 ? intel.actor.name : intel.target.name)}.";
                         }
                     }
                 }

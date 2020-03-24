@@ -9,6 +9,7 @@ namespace Interrupts {
             duration = 1;
             doesStopCurrentAction = true;
             doesDropCurrentJob = true;
+            isIntel = true;
         }
 
         #region Overrides

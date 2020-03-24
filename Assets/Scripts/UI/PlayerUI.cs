@@ -127,8 +127,8 @@ public class PlayerUI : MonoBehaviour {
         Messenger.AddListener<InfoUIBase>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<InfoUIBase>(Signals.MENU_CLOSED, OnMenuClosed);
         Messenger.AddListener(Signals.UPDATED_CURRENCIES, UpdateUI);
-        Messenger.AddListener<Intel>(Signals.PLAYER_OBTAINED_INTEL, OnIntelObtained);
-        Messenger.AddListener<Intel>(Signals.PLAYER_REMOVED_INTEL, OnIntelRemoved);
+        Messenger.AddListener<IIntel>(Signals.PLAYER_OBTAINED_INTEL, OnIntelObtained);
+        Messenger.AddListener<IIntel>(Signals.PLAYER_REMOVED_INTEL, OnIntelRemoved);
 
         Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
         Messenger.AddListener(Signals.ON_CLOSE_SHARE_INTEL, OnCloseShareIntelMenu);
@@ -326,16 +326,16 @@ public class PlayerUI : MonoBehaviour {
     #endregion
 
     #region Intel
-    private void OnIntelObtained(Intel intel) {
+    private void OnIntelObtained(IIntel intel) {
         UpdateIntel();
     }
-    private void OnIntelRemoved(Intel intel) {
+    private void OnIntelRemoved(IIntel intel) {
         UpdateIntel();
     }
     private void UpdateIntel() {
         for (int i = 0; i < intelItems.Length; i++) {
             IntelItem currItem = intelItems[i];
-            Intel intel = PlayerManager.Instance.player.allIntel.ElementAtOrDefault(i);
+            IIntel intel = PlayerManager.Instance.player.allIntel.ElementAtOrDefault(i);
             currItem.SetIntel(intel);
             if (intel != null) {
                 currItem.SetClickAction(PlayerManager.Instance.player.SetCurrentActiveIntel);
@@ -407,7 +407,7 @@ public class PlayerUI : MonoBehaviour {
         //    rt.anchoredPosition = new Vector3(-1150f, previousPos.y, previousPos.z);
         //}
     }
-    public IntelItem GetIntelItemWithIntel(Intel intel) {
+    public IntelItem GetIntelItemWithIntel(IIntel intel) {
         for (int i = 0; i < intelItems.Length; i++) {
             if (intelItems[i].intel != null && intelItems[i].intel == intel) {
                 return intelItems[i];

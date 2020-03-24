@@ -8,6 +8,7 @@ namespace Interrupts {
             duration = 2;
             doesStopCurrentAction = true;
             interruptIconString = GoapActionStateDB.Sick_Icon;
+            isIntel = true;
         }
 
         #region Overrides

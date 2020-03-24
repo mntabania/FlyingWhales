@@ -9,6 +9,7 @@ namespace Interrupts {
             duration = 3;
             doesStopCurrentAction = true;
             interruptIconString = GoapActionStateDB.Flirt_Icon;
+            isIntel = true;
         }
 
         #region Overrides
@@ -27,8 +28,10 @@ namespace Interrupts {
             } else if (opinionLabel == OpinionComponent.Rival) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, actor, status);
             }
-            if (witness.traitContainer.HasTrait("Coward")) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor, status);
+            if(status == REACTION_STATUS.WITNESSED) {
+                if (witness.traitContainer.HasTrait("Coward")) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor, status);
+                }
             }
             return response;
         }

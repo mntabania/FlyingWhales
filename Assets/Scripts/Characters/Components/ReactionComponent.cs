@@ -58,68 +58,12 @@ public class ReactionComponent {
             //Minions or Summons cannot react to actions
             return string.Empty;
         }
-        if(status == REACTION_STATUS.WITNESSED) {
+        if (status == REACTION_STATUS.WITNESSED) {
             ReactToWitnessedAction(node);
         } else {
             return ReactToInformedAction(node);
         }
         return string.Empty;
-    }
-    public void ReactTo(Interrupt interrupt, Character actor, IPointOfInterest target, REACTION_STATUS status) {
-        if (owner.isInCombat) {
-            return;
-        }
-        if (owner.minion != null || owner is Summon || owner.faction == FactionManager.Instance.zombieFaction /*|| owner.race == RACE.SKELETON*/) {
-            //Minions or Summons cannot react to interrupts
-            return;
-        }
-        if (owner.faction != actor.faction && owner.faction.IsHostileWith(actor.faction)) {
-            //Must not react if the faction of the actor of witnessed action is hostile with the faction of the witness
-            return;
-        }
-        if (actor != owner && target != owner) {
-            if(actor.interruptComponent.currentInterrupt == interrupt && actor.interruptComponent.currentEffectLog != null) {
-                Log witnessLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "witness_event");
-                witnessLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.OTHER);
-                witnessLog.AddToFillers(null,  UtilityScripts.Utilities.LogDontReplace(actor.interruptComponent.currentEffectLog), LOG_IDENTIFIER.APPEND);
-                witnessLog.AddToFillers(actor.interruptComponent.currentEffectLog.fillers);
-                owner.logComponent.AddHistory(witnessLog);
-            }
-            string emotionsToActor = interrupt.ReactionToActor(owner, actor, target, interrupt, status);
-            if (emotionsToActor != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsToActor)) {
-                string error = "Interrupt Error in Witness Reaction To Actor (Duplicate/Incompatible Emotions Triggered)";
-                error += $"\n-Witness: {owner}";
-                error += $"\n-Interrupt: {interrupt.name}";
-                error += $"\n-Actor: {actor.name}";
-                error += $"\n-Target: {target.nameWithID}";
-                owner.logComponent.PrintLogErrorIfActive(error);
-            }
-            string emotionsToTarget = interrupt.ReactionToTarget(owner, actor, target, interrupt, status);
-            if (emotionsToTarget != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsToTarget)) {
-                string error = "Interrupt Error in Witness Reaction To Actor (Duplicate/Incompatible Emotions Triggered)";
-                error += $"\n-Witness: {owner}";
-                error += $"\n-Interrupt: {interrupt.name}";
-                error += $"\n-Actor: {actor.name}";
-                error += $"\n-Target: {target.nameWithID}";
-                owner.logComponent.PrintLogErrorIfActive(error);
-            }
-            string response =
-                $"Witness interrupt reaction of {owner.name} to {interrupt.name} of {actor.name} with target {target.name}: {emotionsToActor}{emotionsToTarget}";
-            owner.logComponent.PrintLogIfActive(response);
-        } else if (target == owner) {
-            string emotionsOfTarget = interrupt.ReactionOfTarget(actor, target, interrupt, status);
-            if (emotionsOfTarget != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsOfTarget)) {
-                string error = "Interrupt Error in Witness Reaction To Actor (Duplicate/Incompatible Emotions Triggered)";
-                error += $"\n-Witness: {owner}";
-                error += $"\n-Interrupt: {interrupt.name}";
-                error += $"\n-Actor: {actor.name}";
-                error += $"\n-Target: {target.nameWithID}";
-                owner.logComponent.PrintLogErrorIfActive(error);
-            }
-            string response =
-                $"Witness interrupt reaction of {owner.name} to {interrupt.name} of {actor.name} with target {target.name}: {emotionsOfTarget}";
-            owner.logComponent.PrintLogIfActive(response);
-        }
     }
     private void ReactToWitnessedAction(ActualGoapNode node) {
         if (owner.isInCombat) {
@@ -249,6 +193,126 @@ public class ReactionComponent {
         //    CrimeManager.Instance.ReactToCrime(owner, node, node.associatedJobType, crimeType);
         //}
     }
+    public string ReactTo(Interrupt interrupt, Character actor, IPointOfInterest target, Log log, REACTION_STATUS status) {
+        if (owner.isInCombat) {
+            return string.Empty;
+        }
+        if (owner.minion != null || owner is Summon || owner.faction == FactionManager.Instance.zombieFaction /*|| owner.race == RACE.SKELETON*/) {
+            //Minions or Summons cannot react to interrupts
+            return string.Empty;
+        }
+        if (owner.faction != actor.faction && owner.faction.IsHostileWith(actor.faction)) {
+            //Must not react if the faction of the actor of witnessed action is hostile with the faction of the witness
+            return string.Empty;
+        }
+        if(status == REACTION_STATUS.WITNESSED) {
+            ReactToWitnessedInterrupt(interrupt, actor, target, log);
+        } else if (status == REACTION_STATUS.INFORMED) {
+            return ReactToInformedInterrupt(interrupt, actor, target, log);
+        }
+        return string.Empty;
+    }
+    private void ReactToWitnessedInterrupt(Interrupt interrupt, Character actor, IPointOfInterest target, Log log) {
+        if (actor != owner && target != owner) {
+            if (actor.interruptComponent.currentInterrupt == interrupt && log != null) {
+                Log witnessLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "witness_event");
+                witnessLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.OTHER);
+                witnessLog.AddToFillers(null, UtilityScripts.Utilities.LogDontReplace(log), LOG_IDENTIFIER.APPEND);
+                witnessLog.AddToFillers(log.fillers);
+                owner.logComponent.AddHistory(witnessLog);
+            }
+            string emotionsToActor = interrupt.ReactionToActor(owner, actor, target, interrupt, REACTION_STATUS.WITNESSED);
+            if (emotionsToActor != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsToActor)) {
+                string error = "Interrupt Error in Witness Reaction To Actor (Duplicate/Incompatible Emotions Triggered)";
+                error += $"\n-Witness: {owner}";
+                error += $"\n-Interrupt: {interrupt.name}";
+                error += $"\n-Actor: {actor.name}";
+                error += $"\n-Target: {target.nameWithID}";
+                owner.logComponent.PrintLogErrorIfActive(error);
+            }
+            string emotionsToTarget = interrupt.ReactionToTarget(owner, actor, target, interrupt, REACTION_STATUS.WITNESSED);
+            if (emotionsToTarget != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsToTarget)) {
+                string error = "Interrupt Error in Witness Reaction To Actor (Duplicate/Incompatible Emotions Triggered)";
+                error += $"\n-Witness: {owner}";
+                error += $"\n-Interrupt: {interrupt.name}";
+                error += $"\n-Actor: {actor.name}";
+                error += $"\n-Target: {target.nameWithID}";
+                owner.logComponent.PrintLogErrorIfActive(error);
+            }
+            string response =
+                $"Witness interrupt reaction of {owner.name} to {interrupt.name} of {actor.name} with target {target.name}: {emotionsToActor}{emotionsToTarget}";
+            owner.logComponent.PrintLogIfActive(response);
+        } else if (target == owner) {
+            string emotionsOfTarget = interrupt.ReactionOfTarget(actor, target, interrupt, REACTION_STATUS.WITNESSED);
+            if (emotionsOfTarget != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsOfTarget)) {
+                string error = "Interrupt Error in Witness Reaction To Actor (Duplicate/Incompatible Emotions Triggered)";
+                error += $"\n-Witness: {owner}";
+                error += $"\n-Interrupt: {interrupt.name}";
+                error += $"\n-Actor: {actor.name}";
+                error += $"\n-Target: {target.nameWithID}";
+                owner.logComponent.PrintLogErrorIfActive(error);
+            }
+            string response =
+                $"Witness interrupt reaction of {owner.name} to {interrupt.name} of {actor.name} with target {target.name}: {emotionsOfTarget}";
+            owner.logComponent.PrintLogIfActive(response);
+        }
+    }
+    private string ReactToInformedInterrupt(Interrupt interrupt, Character actor, IPointOfInterest target, Log log) {
+        if (log == null) {
+            throw new Exception(
+                $"{GameManager.Instance.TodayLogString()}{owner.name} informed interrupt {interrupt.name} by {actor.name} with target {target.name} but it does not have a log!");
+        }
+        Log informedLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "informed_event");
+        informedLog.AddToFillers(log.fillers);
+        informedLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.OTHER);
+        informedLog.AddToFillers(null, UtilityScripts.Utilities.LogDontReplace(log), LOG_IDENTIFIER.APPEND);
+        owner.logComponent.AddHistory(informedLog);
+
+        string response = string.Empty;
+        if (actor != owner && target != owner) {
+            string emotionsToActor = interrupt.ReactionToActor(owner, actor, target, interrupt, REACTION_STATUS.INFORMED);
+            if (emotionsToActor != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsToActor)) {
+                string error = "Interrupt Error in Witness Reaction To Actor (Duplicate/Incompatible Emotions Triggered)";
+                error += $"\n-Witness: {owner}";
+                error += $"\n-Interrupt: {interrupt.name}";
+                error += $"\n-Actor: {actor.name}";
+                error += $"\n-Target: {target.nameWithID}";
+                owner.logComponent.PrintLogErrorIfActive(error);
+            }
+            string emotionsToTarget = interrupt.ReactionToTarget(owner, actor, target, interrupt, REACTION_STATUS.INFORMED);
+            if (emotionsToTarget != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsToTarget)) {
+                string error = "Interrupt Error in Witness Reaction To Actor (Duplicate/Incompatible Emotions Triggered)";
+                error += $"\n-Witness: {owner}";
+                error += $"\n-Interrupt: {interrupt.name}";
+                error += $"\n-Actor: {actor.name}";
+                error += $"\n-Target: {target.nameWithID}";
+                owner.logComponent.PrintLogErrorIfActive(error);
+            }
+            response += $"{emotionsToActor}/{emotionsToTarget}";
+            owner.logComponent.PrintLogIfActive(response);
+        } else if (target == owner) {
+            string emotionsOfTarget = interrupt.ReactionOfTarget(actor, target, interrupt, REACTION_STATUS.INFORMED);
+            if (emotionsOfTarget != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsOfTarget)) {
+                string error = "Interrupt Error in Witness Reaction To Actor (Duplicate/Incompatible Emotions Triggered)";
+                error += $"\n-Witness: {owner}";
+                error += $"\n-Interrupt: {interrupt.name}";
+                error += $"\n-Actor: {actor.name}";
+                error += $"\n-Target: {target.nameWithID}";
+                owner.logComponent.PrintLogErrorIfActive(error);
+            }
+            response = emotionsOfTarget;
+            owner.logComponent.PrintLogIfActive(response);
+        }
+        // else if (node.actor == owner) {
+        //     response = "I know what I did.";
+        // }
+        return response;
+        //CRIME_TYPE crimeType = CrimeManager.Instance.GetCrimeTypeConsideringAction(node);
+        //if (crimeType != CRIME_TYPE.NONE) {
+        //    CrimeManager.Instance.ReactToCrime(owner, node, node.associatedJobType, crimeType);
+        //}
+    }
+
     private void ReactTo(Character targetCharacter, ref string debugLog) {
         debugLog += $"{owner.name} is reacting to {targetCharacter.name}";
         if(owner.faction.IsHostileWith(targetCharacter.faction)) {
