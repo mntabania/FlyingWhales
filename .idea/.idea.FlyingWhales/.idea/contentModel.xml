@@ -1025,6 +1025,7 @@
             <e p="BattleTracker.cs" t="Include" />
             <e p="Behaviour" t="Include">
               <e p="AbductorMonster.cs" t="Include" />
+              <e p="AttackDemonicStructureBehaviour.cs" t="Include" />
               <e p="BerserkBehaviour.cs" t="Include" />
               <e p="CharacterBehaviourComponent.cs" t="Include" />
               <e p="DazedBehaviour.cs" t="Include" />
@@ -1300,6 +1301,7 @@
                 <e p="RemoveFreezing.cs" t="Include" />
                 <e p="RemovePoison.cs" t="Include" />
               </e>
+              <e p="ReportCorruptedStructure.cs" t="Include" />
               <e p="ResolveCombat.cs" t="Include" />
               <e p="ResolveConflict.cs" t="Include" />
               <e p="RestrainCharacter.cs" t="Include" />
@@ -1486,6 +1488,7 @@
                 <e p="Cave.cs" t="Include" />
                 <e p="CityCenter.cs" t="Include" />
                 <e p="DemonicPrison.cs" t="Include" />
+                <e p="DemonicStructure.cs" t="Include" />
                 <e p="Dwelling.cs" t="Include" />
                 <e p="Farm.cs" t="Include" />
                 <e p="Goader.cs" t="Include" />
@@ -1770,6 +1773,7 @@
             <e p="ParticleEffectCallback.cs" t="Include" />
             <e p="RainParticleEffect.cs" t="Include" />
             <e p="TerrifyingHowlCollisionListener.cs" t="Include" />
+            <e p="WindBlastCollisionListener.cs" t="Include" />
           </e>
           <e p="Party" t="Include">
             <e p="Party.cs" t="Include" />
@@ -1806,6 +1810,9 @@
               <e p="Sacrifice.cs" t="Include" />
               <e p="SingleHeal.cs" t="Include" />
               <e p="Taunt.cs" t="Include" />
+            </e>
+            <e p="Components" t="Include">
+              <e p="ThreatComponent.cs" t="Include" />
             </e>
             <e p="Player Job Actions" t="Include">
               <e p="Agoraphobia.cs" t="Include" />
@@ -1844,6 +1851,7 @@
               <e p="Unfaithfulness.cs" t="Include" />
               <e p="Vampirism.cs" t="Include" />
               <e p="WaterBomb.cs" t="Include" />
+              <e p="WindBlastData.cs" t="Include" />
               <e p="Zap.cs" t="Include" />
               <e p="ZombieVirus.cs" t="Include" />
             </e>

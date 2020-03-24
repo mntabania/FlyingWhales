@@ -1403,7 +1403,8 @@ public enum SPELL_TYPE { NONE, LYCANTHROPY, KLEPTOMANIA, VAMPIRISM, UNFAITHFULNE
         LOCUST_SWARM, SPAWN_BOULDER, WATER_BOMB, MANIFEST_FOOD, BRIMSTONES,
         SPLASH_POISON, BLIZZARD, RAIN, SPOIL, BALL_LIGHTNING, ELECTRIC_STORM, FROSTY_FOG, VAPOR, FIRE_BALL,
         POISON_BLOOM, LANDMINE,
-        TERRIFYING_HOWL
+        TERRIFYING_HOWL,
+        WIND_BLAST
 }
 public enum INTERVENTION_ABILITY_TYPE { NONE, AFFLICTION, SPELL, }
 public enum SPELL_CATEGORY { NONE, SABOTAGE, MONSTER, DEVASTATION, HEX }
@@ -1472,7 +1473,8 @@ public enum WALL_TYPE { Stone, Flesh, Demon_Stone }
 public enum PARTICLE_EFFECT { None, Poison, Freezing, Fire, Burning, Explode, Electric, Frozen, Poison_Explosion, 
     Frozen_Explosion, Smoke_Effect, Lightning_Strike, Meteor_Strike, Water_Bomb, Poison_Bomb, Blizzard, Destroy_Explosion, Minion_Dissipate, Brimstones,
     Rain, Landmine, Burnt,
-    Terrifying_Howl
+    Terrifying_Howl,
+    Wind_Blast
 }
 
 #region Crime Subcategories
