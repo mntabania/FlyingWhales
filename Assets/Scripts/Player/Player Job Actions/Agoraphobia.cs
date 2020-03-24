@@ -102,8 +102,8 @@ public class AgoraphobiaData : SpellData {
     public override SPELL_TYPE ability => SPELL_TYPE.AGORAPHOBIA;
     public override string name { get { return "Agoraphobia"; } }
     public override string description { get { return "Makes a character fear crowds."; } }
-    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.HEX; } }
-    public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.AFFLICTION;
+    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.AFFLICTION; } }
+    //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.AFFLICTION;
 
     public AgoraphobiaData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER, SPELL_TARGET.TILE_OBJECT };

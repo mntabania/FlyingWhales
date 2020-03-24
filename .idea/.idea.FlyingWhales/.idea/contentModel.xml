@@ -1827,6 +1827,7 @@
               <e p="ElectricStormData.cs" t="Include" />
               <e p="FeebleSpiritData.cs" t="Include" />
               <e p="ForlornSpiritData.cs" t="Include" />
+              <e p="FreezingTrapData.cs" t="Include" />
               <e p="IceteroidsData.cs" t="Include" />
               <e p="Ignite.cs" t="Include" />
               <e p="Kleptomania.cs" t="Include" />
@@ -1845,6 +1846,7 @@
               <e p="RainData.cs" t="Include" />
               <e p="RaiseDead.cs" t="Include" />
               <e p="RavenousSpiritData.cs" t="Include" />
+              <e p="SnareTrapData.cs" t="Include" />
               <e p="SpawnBoulder.cs" t="Include" />
               <e p="SplashPoison.cs" t="Include" />
               <e p="Spoil.cs" t="Include" />
@@ -2019,6 +2021,7 @@
               <e p="Edible.cs" t="Include" />
               <e p="Electric.cs" t="Include" />
               <e p="ElementalMaster.cs" t="Include" />
+              <e p="Ensnared.cs" t="Include" />
               <e p="Feeble.cs" t="Include" />
               <e p="FireProne.cs" t="Include" />
               <e p="Forlorn.cs" t="Include" />

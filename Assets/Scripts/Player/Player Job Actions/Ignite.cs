@@ -66,7 +66,7 @@ public class IgniteData : SpellData {
     public override SPELL_TYPE ability => SPELL_TYPE.IGNITE;
     public override string name { get { return "Ignite"; } }
     public override string description { get { return "Targets a spot. Target will ignite and start spreading fire."; } }
-    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.DEVASTATION; } }
+    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.PLAYER_ACTION; } }
 
     public IgniteData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };

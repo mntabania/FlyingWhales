@@ -7,8 +7,8 @@ public class RainData : SpellData {
     public override SPELL_TYPE ability => SPELL_TYPE.RAIN;
     public override string name => "Rain";
     public override string description => "Applies Wet to all tiles and objects that are outside structures on the target area.";
-    public override SPELL_CATEGORY category => SPELL_CATEGORY.DEVASTATION;
-    public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
+    public override SPELL_CATEGORY category => SPELL_CATEGORY.SPELL;
+    //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
 
     public RainData() : base() {
         targetTypes = new[] { SPELL_TARGET.HEX };

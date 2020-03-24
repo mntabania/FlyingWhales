@@ -44,8 +44,8 @@ public class PoisonCloudData : SpellData {
     public override SPELL_TYPE ability => SPELL_TYPE.POISON_CLOUD;
     public override string name => "Poison Cloud";
     public override string description => "This noxious cloud may apply poison to objects in its path. Explodes when it gets in contact with Fire, dealing Normal damage.";
-    public override SPELL_CATEGORY category => SPELL_CATEGORY.DEVASTATION;
-    public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
+    public override SPELL_CATEGORY category => SPELL_CATEGORY.SPELL;
+    //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
 
     public PoisonCloudData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };

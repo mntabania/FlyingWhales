@@ -47,7 +47,6 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   particleSystems:
   - {fileID: 4932779106276457861}
-  - {fileID: 0}
   - {fileID: 191792799379770656}
   pauseOnGamePaused: 1
 --- !u!1 &4329814150987926406

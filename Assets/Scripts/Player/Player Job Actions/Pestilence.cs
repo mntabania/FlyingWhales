@@ -109,8 +109,8 @@ public class PestilenceData : SpellData {
     public override SPELL_TYPE ability => SPELL_TYPE.PESTILENCE;
     public override string name { get { return "Pestilence"; } }
     public override string description { get { return "Afflict a character with a virulent and deadly disease. Disease is spread through chatting and sexual contact."; } }
-    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.DEVASTATION; } }
-    public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.AFFLICTION;
+    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.AFFLICTION; } }
+    //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.AFFLICTION;
 
     public PestilenceData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER, SPELL_TARGET.TILE_OBJECT };

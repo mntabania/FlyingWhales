@@ -38,8 +38,8 @@ public class SpawnBoulderData : SpellData {
     public override SPELL_TYPE ability => SPELL_TYPE.SPAWN_BOULDER;
     public override string name => "Spawn Boulder";
     public override string description => "This will produce a durable and impassable block of stone.";
-    public override SPELL_CATEGORY category => SPELL_CATEGORY.DEVASTATION;
-    public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
+    public override SPELL_CATEGORY category => SPELL_CATEGORY.SPELL;
+    //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
     public virtual int abilityRadius => 2;
 
     public SpawnBoulderData() : base() {

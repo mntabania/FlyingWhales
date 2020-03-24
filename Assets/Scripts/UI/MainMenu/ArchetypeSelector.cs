@@ -25,12 +25,12 @@ public class ArchetypeSelector : MonoBehaviour {
     public void OnClickContinue() {
         // Hide();
         continueBtn.interactable = false;
-        for (int i = 0; i < archetypeToggles.Length; i++) {
-            if (archetypeToggles[i].isOn) {
-                InputManager.Instance.SetSelectedArchetype((PLAYER_ARCHETYPE) System.Enum.Parse(typeof(PLAYER_ARCHETYPE), UtilityScripts.Utilities.NotNormalizedConversionStringToEnum(archetypeToggles[i].gameObject.name)));
-                break;
-            }
-        }
+        //for (int i = 0; i < archetypeToggles.Length; i++) {
+        //    if (archetypeToggles[i].isOn) {
+        //        InputManager.Instance.SetSelectedArchetype((PLAYER_ARCHETYPE) System.Enum.Parse(typeof(PLAYER_ARCHETYPE), UtilityScripts.Utilities.NotNormalizedConversionStringToEnum(archetypeToggles[i].gameObject.name)));
+        //        break;
+        //    }
+        //}
         MainMenuUI.Instance.StartNewGame();
     }
 

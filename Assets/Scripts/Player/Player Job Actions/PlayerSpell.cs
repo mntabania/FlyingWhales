@@ -198,7 +198,7 @@ public class SpellData {
     public virtual string name { get { return string.Empty; } }
     public virtual string description { get { return string.Empty; } }
     public virtual SPELL_CATEGORY category { get { return SPELL_CATEGORY.NONE; } }
-    public virtual INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.NONE;
+    //public virtual INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.NONE;
     public SPELL_TARGET[] targetTypes { get; protected set; }
     public int radius { get; protected set; }
 
@@ -284,8 +284,8 @@ public class BallLightningData : SpellData {
     public override SPELL_TYPE ability => SPELL_TYPE.BALL_LIGHTNING;
     public override string name => "Ball Lightning";
     public override string description => "Ball Lightning";
-    public override SPELL_CATEGORY category => SPELL_CATEGORY.DEVASTATION;
-    public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
+    public override SPELL_CATEGORY category => SPELL_CATEGORY.SPELL;
+    //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
 
     public BallLightningData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
@@ -308,8 +308,8 @@ public class FrostyFogData : SpellData {
     public override SPELL_TYPE ability => SPELL_TYPE.FROSTY_FOG;
     public override string name { get { return "Frosty Fog"; } }
     public override string description { get { return "Frosty Fog"; } }
-    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.DEVASTATION; } }
-    public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
+    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.SPELL; } }
+    //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
     public virtual int abilityRadius => 1;
 
     public FrostyFogData() : base() {
@@ -332,8 +332,8 @@ public class VaporData : SpellData {
     public override SPELL_TYPE ability => SPELL_TYPE.VAPOR;
     public override string name => "Vapor";
     public override string description => "Vapor";
-    public override SPELL_CATEGORY category => SPELL_CATEGORY.DEVASTATION;
-    public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
+    public override SPELL_CATEGORY category => SPELL_CATEGORY.SPELL;
+    //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
 
     public VaporData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
@@ -357,8 +357,8 @@ public class FireBallData : SpellData {
     public override SPELL_TYPE ability => SPELL_TYPE.FIRE_BALL;
     public override string name => "Fire Ball";
     public override string description => "Fire Ball";
-    public override SPELL_CATEGORY category => SPELL_CATEGORY.DEVASTATION;
-    public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
+    public override SPELL_CATEGORY category => SPELL_CATEGORY.SPELL;
+    //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
 
     public FireBallData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };

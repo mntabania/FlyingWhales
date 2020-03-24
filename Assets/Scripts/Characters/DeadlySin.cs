@@ -27,9 +27,9 @@ public class Envy : DeadlySin {
     //        || sinAction == DEADLY_SIN_ACTION.SPAWN_EVENT 
     //        || sinAction == DEADLY_SIN_ACTION.CONSTRUCT;
     //}
-    public override SPELL_CATEGORY GetInterventionAbilityCategory() {
-        return SPELL_CATEGORY.SABOTAGE;
-    }
+    //public override SPELL_CATEGORY GetInterventionAbilityCategory() {
+    //    return SPELL_CATEGORY.SABOTAGE;
+    //}
     #endregion
 }
 
@@ -69,9 +69,9 @@ public class Lust : DeadlySin {
     //        || sinAction == DEADLY_SIN_ACTION.INTERFERE
     //        || sinAction == DEADLY_SIN_ACTION.UPGRADE;
     //}
-    public override SPELL_CATEGORY GetInterventionAbilityCategory() {
-        return SPELL_CATEGORY.HEX;
-    }
+    //public override SPELL_CATEGORY GetInterventionAbilityCategory() {
+    //    return SPELL_CATEGORY.HEX;
+    //}
     #endregion
 }
 
@@ -98,9 +98,9 @@ public class Wrath : DeadlySin {
     //        || sinAction == DEADLY_SIN_ACTION.INVADE
     //        || sinAction == DEADLY_SIN_ACTION.FIGHT;
     //}
-    public override SPELL_CATEGORY GetInterventionAbilityCategory() {
-        return SPELL_CATEGORY.DEVASTATION;
-    }
+    //public override SPELL_CATEGORY GetInterventionAbilityCategory() {
+    //    return SPELL_CATEGORY.DEVASTATION;
+    //}
     #endregion
 }
 
@@ -114,8 +114,8 @@ public class Sloth : DeadlySin {
     //        || sinAction == DEADLY_SIN_ACTION.UPGRADE
     //        || sinAction == DEADLY_SIN_ACTION.CONSTRUCT;
     //}
-    public override SPELL_CATEGORY GetInterventionAbilityCategory() {
-        return SPELL_CATEGORY.MONSTER;
-    }
+    //public override SPELL_CATEGORY GetInterventionAbilityCategory() {
+    //    return SPELL_CATEGORY.MONSTER;
+    //}
     #endregion
 }

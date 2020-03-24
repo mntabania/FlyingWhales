@@ -64,8 +64,8 @@ public class TornadoData : SpellData {
     public override SPELL_TYPE ability => SPELL_TYPE.TORNADO;
     public override string name => "Tornado";
     public override string description => "A destructive cyclone that deals heavy Normal damage to everything in its path.";
-    public override SPELL_CATEGORY category => SPELL_CATEGORY.DEVASTATION;
-    public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
+    public override SPELL_CATEGORY category => SPELL_CATEGORY.SPELL;
+    //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
     public TornadoData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
     }

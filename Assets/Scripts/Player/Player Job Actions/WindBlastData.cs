@@ -6,8 +6,7 @@ public class WindBlastData : SpellData {
     public override SPELL_TYPE ability => SPELL_TYPE.WIND_BLAST;
     public override string name => "Wind Blast";
     public override string description => "Pushes movable characters and objects outwards and applies a moderate amount of Wind damage.";
-    public override SPELL_CATEGORY category => SPELL_CATEGORY.DEVASTATION;
-    public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
+    public override SPELL_CATEGORY category => SPELL_CATEGORY.SPELL;
 
     public WindBlastData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
