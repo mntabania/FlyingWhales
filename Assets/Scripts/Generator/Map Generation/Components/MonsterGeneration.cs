@@ -20,7 +20,8 @@ public class MonsterGeneration : MapGenerationComponent {
 	private void CreateMonster(SUMMON_TYPE summonType, BaseSettlement settlementOnTile, BaseLandmark monsterLair,
 		LocationStructure monsterLairStructure) {
 		Summon summon = CharacterManager.Instance.CreateNewSummon(summonType, FactionManager.Instance.neutralFaction, settlementOnTile, monsterLair.tileLocation.region);
-		CharacterManager.Instance.PlaceSummon(summon, CollectionUtilities.GetRandomElement(monsterLairStructure.unoccupiedTiles));
+		LocationGridTile targetTile = CollectionUtilities.GetRandomElement(monsterLairStructure.unoccupiedTiles);
+		CharacterManager.Instance.PlaceSummon(summon, targetTile);
 		summon.AddTerritory(monsterLair.tileLocation);
 		if (monsterLairStructure is IDwelling homeStructure) {
 			summon.MigrateHomeStructureTo(homeStructure);	

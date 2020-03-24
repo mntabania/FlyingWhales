@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 891be410796e8554eafb2611643cc64f, type: 3}
-    totalSpriteSurfaceArea: 3368546
+    totalSpriteSurfaceArea: 3450194
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -61,6 +61,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 95fdf5d018ae0a44f8f6c14311eacbf7, type: 3}
   - {fileID: 21300000, guid: 2485a5e0dc240864c967276cc44cf808, type: 3}
   - {fileID: 21300000, guid: 04b8fbe0b9631dd409a120d55171a9fc, type: 3}
+  - {fileID: 21300000, guid: 68cd1ff0454ef1e4cb4ebea1f50e6be3, type: 3}
   - {fileID: 21300000, guid: 069b3a11c714dfb4a8e95d8b64f42d51, type: 3}
   - {fileID: 21300000, guid: 9b192c114386a504eb1a08ccea935166, type: 3}
   - {fileID: 21300000, guid: 6955f12105973bb4a86c0559254b5e09, type: 3}
@@ -73,10 +74,12 @@ SpriteAtlas:
   - {fileID: 21300000, guid: cb0acb61abcb9674b9b490ed22ff1571, type: 3}
   - {fileID: 21300000, guid: b6579f814b8f3b440a50422999d585ea, type: 3}
   - {fileID: 21300000, guid: 1ad02e91e13597f4ab982a35c280f6e1, type: 3}
+  - {fileID: 21300000, guid: 98d557a1c3fa4a74fb348a35421e9b98, type: 3}
   - {fileID: 21300000, guid: 80f7feb10d7beb9409be78e160c16772, type: 3}
   - {fileID: 21300000, guid: a63131c16706e3d4b95c1022635dec4a, type: 3}
   - {fileID: 21300000, guid: 0af3b9c1d71a8f24ab4f327f349f51e5, type: 3}
   - {fileID: 21300000, guid: 2e4b1de159a8d6a44974b3553fc2185a, type: 3}
+  - {fileID: 21300000, guid: 69cd6ef15db19ba4db8dffbbba9c93b9, type: 3}
   - {fileID: 21300000, guid: a2fa3212751f60543b352c7f00c9abad, type: 3}
   - {fileID: 21300000, guid: 3a641b12296c62440b4445f671127d76, type: 3}
   - {fileID: 21300000, guid: d0bab72205ba05c46a58108cb567e4ed, type: 3}
@@ -194,6 +197,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 29f5658739116e74f81f5635698a8fa8, type: 3}
   - {fileID: 21300000, guid: 31817397d853d484fb120d4203a6bb6e, type: 3}
   - {fileID: 21300000, guid: e75228975f41e16418cd32f509cf4709, type: 3}
+  - {fileID: 21300000, guid: fa0619b7cb438ad43bd60489182d2aa1, type: 3}
   - {fileID: 21300000, guid: 9a9cfbb763b6b7143acf3b6e466ed907, type: 3}
   - {fileID: 21300000, guid: de6de7d732a47da468c0414c1c057cb1, type: 3}
   - {fileID: 21300000, guid: 80140ce7aa60f744daa1588464813534, type: 3}
@@ -242,6 +246,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 912e48cab756ee141954951e196a7b95, type: 3}
   - {fileID: 21300000, guid: 48d98fca18d7e80469d81b1f676e3a20, type: 3}
   - {fileID: 21300000, guid: 1c7f3aea4961b8c49b1f04b2ae5b72ea, type: 3}
+  - {fileID: 21300000, guid: b01760fa846b3474eac6f467194029d0, type: 3}
   - {fileID: 21300000, guid: 181bb9fa8b480ad46893d62c0a50df31, type: 3}
   - {fileID: 21300000, guid: 841b181b894c8904c96aa9f21014adf4, type: 3}
   - {fileID: 21300000, guid: cd25722b295492042b6eaa246112781c, type: 3}
@@ -272,6 +277,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: de27fb9c13f204f42abef4acbf2a610e, type: 3}
   - {fileID: 21300000, guid: bda1deac126da4548966400b0d9c047c, type: 3}
   - {fileID: 21300000, guid: 54aa40bc58c59bd448edd0cf903711ef, type: 3}
+  - {fileID: 21300000, guid: 7acfc5bc61f73a141ad190bb96a66cea, type: 3}
   - {fileID: 21300000, guid: c31d66ccc0868e14793b6009979d6876, type: 3}
   - {fileID: 21300000, guid: 2a27ddcc4b754f94089422a6126aaeef, type: 3}
   - {fileID: 21300000, guid: f75712dcff0e6f84a86a006e6bacaab2, type: 3}
@@ -285,6 +291,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 1b808e2d40ab4ba4985d9ebdac657cf1, type: 3}
   - {fileID: 21300000, guid: cf734b3d45c26af4dad18fccc18ac32c, type: 3}
   - {fileID: 21300000, guid: 6ff5fc4dc5eddd04db848ae3ff3cd57a, type: 3}
+  - {fileID: 21300000, guid: a139866de57b9d84b814b5a52126a901, type: 3}
   - {fileID: 21300000, guid: 9cd7c17da0b879644bdd33ba57a04054, type: 3}
   - {fileID: 21300000, guid: 219ca38d20cabe649add7559a5fd9285, type: 3}
   - {fileID: 21300000, guid: a295258db8d480046b768b474deea9ab, type: 3}
@@ -353,6 +360,7 @@ SpriteAtlas:
   - portrait_border_drag
   - mail_human_hair1
   - human_m_top
+  - M-DesertEnt
   - mail_human_brows2
   - female_human_head2
   - mail_human_mouth4
@@ -365,10 +373,12 @@ SpriteAtlas:
   - mail_human_hair1
   - mail_human_nose6
   - female_human_mouth6
+  - M-CorruptedEnt
   - female_human_nose5
   - mail_human_nose6
   - mail_human_beard2
   - female_human_eyes3
+  - M-JungleEnt
   - female_human_nose2
   - female_human_nose4
   - demon_sloth_portrait
@@ -486,6 +496,7 @@ SpriteAtlas:
   - female_human_nose5
   - female_human_hair9
   - TheCrypt
+  - Head
   - elf_f_top
   - goblin_m_skin
   - mail_human_hair3
@@ -534,6 +545,7 @@ SpriteAtlas:
   - mail_human_hair7
   - fairy_m_skin
   - mail_human_stache4
+  - M-Succubus
   - female_human_brows4
   - female_human_eyes4
   - female_human_hair5
@@ -564,6 +576,7 @@ SpriteAtlas:
   - female_human_hair2
   - TheSpire
   - female_human_mouth2
+  - M-Incubus
   - mail_human_mouth5
   - mail_human_head2
   - female_human_mouth3
@@ -577,6 +590,7 @@ SpriteAtlas:
   - female_human_mouth5
   - female_human_hair8
   - mail_human_hair9
+  - Head
   - female_human_head4
   - female_human_mouth1
   - abomination_under

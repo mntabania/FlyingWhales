@@ -270,6 +270,35 @@ MonoBehaviour:
       - {fileID: 21300000, guid: 7a59ed47152fec34eb2339c84d04aa31, type: 3}
       mustache: []
       beard: []
+  - raceName: ENT
+    race: 22
+    neutralAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
   - raceName: GOLEM
     race: 18
     neutralAssets:
@@ -415,6 +444,66 @@ MonoBehaviour:
       - {fileID: 21300000, guid: 31817397d853d484fb120d4203a6bb6e, type: 3}
       mustache: []
       beard: []
+  - raceName: KOBOLD
+    race: 20
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: fa0619b7cb438ad43bd60489182d2aa1, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+  - raceName: MIMIC
+    race: 21
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: a139866de57b9d84b814b5a52126a901, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
   - raceName: SKELETON
     race: 13
     neutralAssets:
@@ -545,6 +634,10 @@ MonoBehaviour:
     - Incubus
     - Succubus
     - Ravager
+    - Corrupt Ent
+    - Desert Ent
+    - Forest Ent
+    - Grass Ent
     m_values:
     - {fileID: 21300000, guid: 12f193c25cad8824a978c1a8d9d8377f, type: 3}
     - {fileID: 21300000, guid: f261d9fe21365c246a0f3849c9c58ca8, type: 3}
@@ -560,9 +653,13 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 87a778188658a9845a02219ebd9be40f, type: 3}
     - {fileID: 21300000, guid: 9c3c0e5445d94284b90c96cbab889937, type: 3}
     - {fileID: 21300000, guid: 9d587aedde59e4e45885cde1e5758b37, type: 3}
-    - {fileID: 21300000, guid: a2a9035f5a469f34299c98fa2ab01083, type: 3}
-    - {fileID: 21300000, guid: a2a9035f5a469f34299c98fa2ab01083, type: 3}
+    - {fileID: 21300000, guid: 7acfc5bc61f73a141ad190bb96a66cea, type: 3}
+    - {fileID: 21300000, guid: b01760fa846b3474eac6f467194029d0, type: 3}
     - {fileID: 21300000, guid: 09f2377c0c409304cb48ab46e4145351, type: 3}
+    - {fileID: 21300000, guid: 98d557a1c3fa4a74fb348a35421e9b98, type: 3}
+    - {fileID: 21300000, guid: 68cd1ff0454ef1e4cb4ebea1f50e6be3, type: 3}
+    - {fileID: 21300000, guid: 69cd6ef15db19ba4db8dffbbba9c93b9, type: 3}
+    - {fileID: 21300000, guid: 69cd6ef15db19ba4db8dffbbba9c93b9, type: 3}
   hsvMaterial: {fileID: 2100000, guid: 4f1995ec43a3fc14cb91dcd56050fd9e, type: 2}
   spriteLightingMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3,
     type: 2}

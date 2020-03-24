@@ -918,12 +918,14 @@ public class CharacterMarker : MapObjectVisual<Character> {
         this.gameObject.transform.SetParent(tile.parentMap.objectsParent);
         if (addToLocation) {
             tile.structure.location.AddCharacterToLocation(character);
-            tile.structure.AddCharacterAtLocation(character, tile);
         }
         SetActiveState(true);
         UpdateAnimation();
         pathfindingAI.Teleport(tile.centeredWorldLocation);
         UpdatePosition();
+        if (addToLocation) {
+            tile.structure.AddCharacterAtLocation(character, tile);
+        }
         UpdateActionIcon();
         SetCollidersState(true);
         tile.parentMap.region.AddPendingAwareness(character);
