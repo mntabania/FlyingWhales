@@ -1837,6 +1837,7 @@
               <e p="SpawnBoulder.cs" t="Include" />
               <e p="SplashPoison.cs" t="Include" />
               <e p="Spoil.cs" t="Include" />
+              <e p="TerrifyingHowlData.cs" t="Include" />
               <e p="Tornado.cs" t="Include" />
               <e p="Unfaithfulness.cs" t="Include" />
               <e p="Vampirism.cs" t="Include" />
