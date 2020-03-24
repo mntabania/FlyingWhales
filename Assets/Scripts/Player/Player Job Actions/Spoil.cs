@@ -15,6 +15,7 @@ public class SpoilData : SpellData {
 
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
+        IncreaseThreatForEveryCharacterThatSeesPOI(targetPOI, 5);
         targetPOI.traitContainer.AddTrait(targetPOI, "Poisoned");
         Log log = new Log(GameManager.Instance.Today(), "InterventionAbility", name, "activated");
         PlayerManager.Instance.player.ShowNotificationFromPlayer(log);

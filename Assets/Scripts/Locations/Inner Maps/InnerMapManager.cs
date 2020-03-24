@@ -65,6 +65,8 @@ namespace Inner_Maps {
         public TILE_OBJECT_TYPE[] tileObjectsThatAreItems =
             new[] { TILE_OBJECT_TYPE.HEALING_POTION, TILE_OBJECT_TYPE.ANTIDOTE, TILE_OBJECT_TYPE.TOOL, TILE_OBJECT_TYPE.EMBER, TILE_OBJECT_TYPE.WATER_FLASK, TILE_OBJECT_TYPE.POISON_FLASK, };
 
+        public List<LocationStructure> worldKnownDemonicStructures { get; private set; }
+
         #region Monobehaviours
         private void Awake() {
             Instance = this;
@@ -201,6 +203,7 @@ namespace Inner_Maps {
         public void Initialize() {
             allTileObjects = new Dictionary<TILE_OBJECT_TYPE, List<TileObject>>();
             innerMaps = new List<InnerTileMap>();
+            worldKnownDemonicStructures = new List<LocationStructure>();
             mapObjectFactory = new MapVisualFactory();
             InnerMapCameraMove.Instance.Initialize();
             Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnClickMapObject);
@@ -528,6 +531,15 @@ namespace Inner_Maps {
         #region Structures
         public List<GameObject> GetStructurePrefabsForStructure(STRUCTURE_TYPE type) {
             return structurePrefabs[type];
+        }
+        public void AddWorldKnownDemonicStructure(LocationStructure structure) {
+            worldKnownDemonicStructures.Add(structure);
+        }
+        public bool HasWorldKnownDemonicStructure(LocationStructure structure) {
+            return worldKnownDemonicStructures.Contains(structure);
+        }
+        public bool HasExistingWorldKnownDemonicStructure() {
+            return worldKnownDemonicStructures.Count > 0;
         }
         #endregion
 

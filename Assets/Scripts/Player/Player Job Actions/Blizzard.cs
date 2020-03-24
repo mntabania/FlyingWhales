@@ -24,6 +24,7 @@ public class BlizzardData : SpellData {
 
     public override void ActivateAbility(HexTile targetHex) {
         targetHex.featureComponent.AddFeature(TileFeatureDB.Blizzard_Feature, targetHex);
+        base.ActivateAbility(targetHex);
     }
     public override bool CanPerformAbilityTowards(HexTile targetHex) {
         return targetHex != null

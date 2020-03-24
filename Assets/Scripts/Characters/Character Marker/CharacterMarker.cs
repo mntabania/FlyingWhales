@@ -1272,6 +1272,13 @@ public class CharacterMarker : MapObjectVisual<Character> {
         character.combatComponent.RemoveHostileInRange(otherCharacter);
         character.combatComponent.RemoveAvoidInRange(otherCharacter);
     }
+    public void OnBeforeSeizingOtherCharacter(Character otherCharacter) {
+        if (character.race == RACE.HUMANS || character.race == RACE.ELVES) {
+            if (inVisionCharacters.Contains(otherCharacter)) {
+                PlayerManager.Instance.player.threatComponent.AdjustThreat(10);
+            }
+        }
+    }
     //public bool IsLethalCombatForTarget(Character character) {
     //    if (lethalCharacters.ContainsKey(character)) {
     //        return lethalCharacters[character];
@@ -1287,7 +1294,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     //                return true;
     //            }
     //        }
-            
+
     //    }
     //    return false;
     //}

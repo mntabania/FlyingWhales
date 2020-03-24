@@ -5,7 +5,7 @@ using UnityEngine;
 using UtilityScripts;
 using Random = UnityEngine.Random;
 namespace Inner_Maps.Location_Structures {
-    public class TheSpire : LocationStructure {
+    public class TheSpire : DemonicStructure {
         public override Vector2 selectableSize { get; }
 
         private bool _isLearnSpellInCooldown;

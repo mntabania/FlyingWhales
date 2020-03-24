@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 namespace Inner_Maps.Location_Structures {
-    public class TheEye : LocationStructure{
+    public class TheEye : DemonicStructure {
         public override Vector2 selectableSize { get; }
 
         public TheEye(Region location) : base(STRUCTURE_TYPE.THE_EYE, location){

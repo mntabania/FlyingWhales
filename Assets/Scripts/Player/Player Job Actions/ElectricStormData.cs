@@ -16,6 +16,7 @@ public class ElectricStormData : SpellData {
     }
     public override void ActivateAbility(HexTile targetHex) {
         targetHex.spellsComponent.SetHasElectricStorm(true);
+        base.ActivateAbility(targetHex);
     }
     public override bool CanPerformAbilityTowards(HexTile targetHex) {
         return targetHex != null && !targetHex.spellsComponent.hasElectricStorm;

@@ -4,7 +4,7 @@ using Actionables;
 using Traits;
 using UnityEngine;
 namespace Inner_Maps.Location_Structures {
-    public class Goader : LocationStructure {
+    public class Goader : DemonicStructure {
         public override Vector2 selectableSize { get; }
         public Goader(Region location) : base(STRUCTURE_TYPE.GOADER, location){
             selectableSize = new Vector2(10f, 10f);

@@ -34,10 +34,12 @@ public class Player : ILeader, IObjectManipulator {
     public PlayerJobActionSlot[] interventionAbilitySlots { get; }
     public HexTile portalTile { get; private set; }
     public float constructionRatePercentageModifier { get; private set; }
-    //Components
-    public SeizeComponent seizeComponent { get; }
     public List<SPELL_TYPE> unlearnedSpells { get; }
     public List<SPELL_TYPE> unlearnedAfflictions { get; }
+
+    //Components
+    public SeizeComponent seizeComponent { get; }
+    public ThreatComponent threatComponent { get; }
 
     #region getters/setters
     public int id => -645;
@@ -61,6 +63,7 @@ public class Player : ILeader, IObjectManipulator {
         unlearnedAfflictions = new List<SPELL_TYPE>(PlayerDB.afflictions);
         AdjustMana(EditableValuesManager.Instance.startingMana);
         seizeComponent = new SeizeComponent();
+        threatComponent = new ThreatComponent(this);
         ConstructAllInterventionAbilitySlots();
         AddListeners();
     }
@@ -88,6 +91,7 @@ public class Player : ILeader, IObjectManipulator {
             interventionAbilitySlots[i] = data.interventionAbilitySlots[i].Load();
         }
         seizeComponent = new SeizeComponent();
+        threatComponent = new ThreatComponent(this);
         AddListeners();
     }
 

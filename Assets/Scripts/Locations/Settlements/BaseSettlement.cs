@@ -12,6 +12,7 @@ namespace Locations.Settlements {
         public List<HexTile> tiles { get; }
         public List<Character> residents { get; }
         public Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures { get; protected set; }
+        private List<LocationStructure> _allStructures;
         
         protected BaseSettlement(LOCATION_TYPE locationType, int citizenCount) {
             id = UtilityScripts.Utilities.SetID(this);
@@ -20,6 +21,7 @@ namespace Locations.Settlements {
             tiles = new List<HexTile>();
             residents = new List<Character>();
             structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
+            _allStructures = new List<LocationStructure>();
             SetLocationType(locationType);
         }
         protected BaseSettlement(SaveDataArea saveDataArea) {
@@ -29,6 +31,7 @@ namespace Locations.Settlements {
             tiles = new List<HexTile>();
             residents = new List<Character>();
             structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
+            _allStructures = new List<LocationStructure>();
             SetLocationType(saveDataArea.locationType);
         }
 
@@ -141,8 +144,19 @@ namespace Locations.Settlements {
             }
             return true;
         }
+        public bool HasResidentInsideSettlement() {
+            for (int i = 0; i < residents.Count; i++) {
+                Character resident = residents[i];
+                if (resident.gridTileLocation != null
+                    && resident.gridTileLocation.collectionOwner.isPartOfParentRegionMap
+                    && resident.IsInHomeSettlement()) {
+                    return true;
+                }
+            }
+            return false;
+        }
         #endregion
-        
+
         #region Faction
         public void SetOwner(Faction owner) {
             SetPreviousOwner(this.owner);
@@ -181,12 +195,14 @@ namespace Locations.Settlements {
             }
             if (!structures[structure.structureType].Contains(structure)) {
                 structures[structure.structureType].Add(structure);
+                _allStructures.Add(structure);
                 OnStructureAdded(structure);
             }
         }
         public void RemoveStructure(LocationStructure structure) {
             if (structures.ContainsKey(structure.structureType)) {
                 if (structures[structure.structureType].Remove(structure)) {
+                    _allStructures.Remove(structure);
                     if (structures[structure.structureType].Count == 0) { //this is only for optimization
                         structures.Remove(structure.structureType);
                     }
@@ -201,6 +217,9 @@ namespace Locations.Settlements {
                 return structures[type][UtilityScripts.Utilities.Rng.Next(0, structures[type].Count)];
             }
             return null;
+        }
+        public LocationStructure GetRandomStructure() {
+            return _allStructures[UnityEngine.Random.Range(0, _allStructures.Count)];
         }
         public LocationStructure GetStructureByID(STRUCTURE_TYPE type, int id) {
             if (structures.ContainsKey(type)) {

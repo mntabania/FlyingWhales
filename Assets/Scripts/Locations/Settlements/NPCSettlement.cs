@@ -14,6 +14,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public Region region { get; }
     public LocationStructure prison { get; private set; }
     public LocationStructure mainStorage { get; private set; }
+    public CityCenter cityCenter { get; private set; }
 
     //Data that are only referenced from this npcSettlement's region
     //These are only getter data, meaning it cannot be stored
@@ -469,6 +470,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     #region Structures
     protected override void OnStructureAdded(LocationStructure structure) {
         base.OnStructureAdded(structure);
+        if(cityCenter == null && structure.structureType == STRUCTURE_TYPE.CITY_CENTER) {
+            cityCenter = structure as CityCenter;
+        }
         AssignPrison();
         switch (structure.structureType) {
             case STRUCTURE_TYPE.FARM:

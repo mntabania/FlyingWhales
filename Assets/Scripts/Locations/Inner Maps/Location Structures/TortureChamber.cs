@@ -4,7 +4,7 @@ using Traits;
 using UnityEngine;
 using UnityEngine.Assertions;
 namespace Inner_Maps.Location_Structures {
-    public class TortureChamber : LocationStructure {
+    public class TortureChamber : DemonicStructure {
         public override Vector2 selectableSize { get; }
         private Character _currentTortureTarget;
         private TortureChamberStructureObject _tortureChamberStructureObject;

@@ -119,6 +119,7 @@ public class UnleashSummonUI : PopupMenuBase {
                 chosenSummons[i].behaviourComponent.SetIsInvading(true, targetNpcSettlement);
             }
         }
+        PlayerManager.Instance.player.threatComponent.AdjustThreat(5 + (5 * chosenSummons.Count));
         base.Close();
         //entrances.Clear();
         //InnerTileMap innerMap = InnerMapManager.Instance.currentlyShowingMap;

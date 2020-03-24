@@ -95,11 +95,15 @@ public class PlayerUI : MonoBehaviour {
     [Header("Player Actions")]
     public StringSpriteDictionary playerActionIconDictionary;
     private List<System.Action> pendingUIToShow { get; set; }
+
     [Header("Spells")]
     public ScrollRect spellsScrollRect;
     public GameObject spellsContainerGO;
     public GameObject spellItemPrefab;
     private List<SpellItem> _spellItems;
+
+    [Header("Threat")]
+    public Image threatMeter;
 
     private PlayerJobActionButton[] interventionAbilityBtns;
     public string harassRaidInvade { get; private set; }
@@ -149,6 +153,7 @@ public class PlayerUI : MonoBehaviour {
         Messenger.AddListener<Character>(Signals.CHARACTER_BECOMES_NON_MINION_OR_SUMMON, CharacterBecomesNonMinionOrSummon);
         Messenger.AddListener<Character, CharacterClass, CharacterClass>(Signals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
         Messenger.AddListener<Character, Character>(Signals.ON_SWITCH_FROM_LIMBO, OnCharacterSwitchFromLimbo);
+        Messenger.AddListener(Signals.THREAT_UPDATED, OnThreatUpdated);
         Messenger.AddListener<IPointOfInterest>(Signals.ON_SEIZE_POI, OnSeizePOI);
         Messenger.AddListener<IPointOfInterest>(Signals.ON_UNSEIZE_POI, OnUnseizePOI);
 
@@ -267,6 +272,9 @@ public class PlayerUI : MonoBehaviour {
         if (@base is HextileInfoUI || @base is RegionInfoUI) {
             UpdateRegionNameState();
         }
+    }
+    private void OnThreatUpdated() {
+        threatMeter.fillAmount = PlayerManager.Instance.player.threatComponent.threat / (float) ThreatComponent.MAX_THREAT;
     }
     #endregion
 
@@ -987,6 +995,7 @@ public class PlayerUI : MonoBehaviour {
             } else if (harassRaidInvade == "invade") {
                 harassRaidInvadeLeaderMinion.character.behaviourComponent.SetIsInvading(true, harassRaidInvadeTargetNpcSettlement);
             }
+            PlayerManager.Instance.player.threatComponent.AdjustThreat(5);
         }
     }
     #endregion

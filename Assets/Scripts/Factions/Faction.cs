@@ -55,6 +55,9 @@ public class Faction {
     public bool isMajorFriendlyNeutral {
         get { return isMajorFaction || this == FactionManager.Instance.friendlyNeutralFaction; }
     }
+    public bool isMajorNonPlayerFriendlyNeutral {
+        get { return isMajorNonPlayer || this == FactionManager.Instance.friendlyNeutralFaction; }
+    }
     public bool isMajorNonPlayer {
         get { return isMajorFaction && !isPlayerFaction; }
     }

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 namespace Inner_Maps.Location_Structures {
-    public class DemonicPrison : LocationStructure {
+    public class DemonicPrison : DemonicStructure {
         
         public override Vector2 selectableSize { get; }
         public DemonicPrison(Region location) : base(STRUCTURE_TYPE.DEMONIC_PRISON, location){

@@ -74,6 +74,7 @@ public class Artifact : TileObject {
         }
     }
     public virtual void ActivateArtifactEffect() {
+        Messenger.Broadcast(Signals.INCREASE_THREAT_THAT_SEES_POI, this, 5);
     }
     public bool CanGainSomethingNewByActivating() {
         for (int i = 0; i < data.unlocks.Length; i++) {

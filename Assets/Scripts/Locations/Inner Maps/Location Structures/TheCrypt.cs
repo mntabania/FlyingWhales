@@ -3,7 +3,7 @@ using Actionables;
 using UnityEngine;
 
 namespace Inner_Maps.Location_Structures {
-    public class TheCrypt : LocationStructure{
+    public class TheCrypt : DemonicStructure {
         public override Vector2 selectableSize { get; }
         private Artifact _activatedArtifact;
         

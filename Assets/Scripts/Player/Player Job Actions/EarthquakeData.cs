@@ -17,6 +17,7 @@ public class EarthquakeData : SpellData {
 
     public override void ActivateAbility(HexTile targetHex) {
         targetHex.spellsComponent.SetHasEarthquake(true);
+        base.ActivateAbility(targetHex);
     }
     public override bool CanPerformAbilityTowards(HexTile targetHex) {
         return targetHex != null && !targetHex.spellsComponent.hasEarthquake;

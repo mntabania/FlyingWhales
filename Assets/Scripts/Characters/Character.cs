@@ -482,6 +482,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.AddListener<ActualGoapNode>(Signals.ACTION_PERFORMED, OnActionPerformed);
         Messenger.AddListener<Character, IPointOfInterest, Interrupt>(Signals.INTERRUPT_STARTED, OnInterruptStarted);
         Messenger.AddListener<IPointOfInterest>(Signals.ON_SEIZE_POI, OnSeizePOI);
+        Messenger.AddListener<IPointOfInterest>(Signals.BEFORE_SEIZING_POI, OnBeforeSeizingPOI);
         //Messenger.AddListener<Character>(Signals.ON_SEIZE_CHARACTER, OnSeizeOtherCharacter);
         //Messenger.AddListener<TileObject>(Signals.ON_SEIZE_TILE_OBJECT, OnSeizeTileObject);
         Messenger.AddListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
@@ -489,6 +490,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.AddListener<IPointOfInterest>(Signals.STOP_CURRENT_ACTION_TARGETING_POI, OnStopCurrentActionTargetingPOI);
         Messenger.AddListener<IPointOfInterest, Character>(Signals.STOP_CURRENT_ACTION_TARGETING_POI_EXCEPT_ACTOR, OnStopCurrentActionTargetingPOIExceptActor);
         Messenger.AddListener<LocationStructure>(Signals.STRUCTURE_DESTROYED, OnStructureDestroyed);
+        Messenger.AddListener<IPointOfInterest, int>(Signals.INCREASE_THREAT_THAT_SEES_POI, IncreaseThreatThatSeesPOI);
 
         //Messenger.AddListener<ActualGoapNode>(Signals.ACTION_PERFORMED, OnCharacterPerformedAction);
         needsComponent.SubscribeToSignals();
@@ -511,6 +513,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.RemoveListener<ActualGoapNode>(Signals.ACTION_PERFORMED, OnActionPerformed);
         Messenger.RemoveListener<Character, IPointOfInterest, Interrupt>(Signals.INTERRUPT_STARTED, OnInterruptStarted);
         Messenger.RemoveListener<IPointOfInterest>(Signals.ON_SEIZE_POI, OnSeizePOI);
+        Messenger.RemoveListener<IPointOfInterest>(Signals.BEFORE_SEIZING_POI, OnBeforeSeizingPOI);
         //Messenger.RemoveListener<Character>(Signals.ON_SEIZE_CHARACTER, OnSeizeOtherCharacter);
         //Messenger.RemoveListener<TileObject>(Signals.ON_SEIZE_TILE_OBJECT, OnSeizeTileObject);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
@@ -518,6 +521,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.RemoveListener<IPointOfInterest>(Signals.STOP_CURRENT_ACTION_TARGETING_POI, OnStopCurrentActionTargetingPOI);
         Messenger.RemoveListener<IPointOfInterest, Character>(Signals.STOP_CURRENT_ACTION_TARGETING_POI_EXCEPT_ACTOR, OnStopCurrentActionTargetingPOIExceptActor);
         Messenger.RemoveListener<LocationStructure>(Signals.STRUCTURE_DESTROYED, OnStructureDestroyed);
+        Messenger.RemoveListener<IPointOfInterest, int>(Signals.INCREASE_THREAT_THAT_SEES_POI, IncreaseThreatThatSeesPOI);
         //Messenger.RemoveListener<ActualGoapNode>(Signals.ACTION_PERFORMED, OnCharacterPerformedAction);
         needsComponent.UnsubscribeToSignals();
         jobComponent.UnsubscribeListeners();
@@ -589,6 +593,20 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (currentActionNode != null && currentActionNode.poiTarget == poi && this != actor) {
             StopCurrentActionNode();
         }
+    }
+    private void IncreaseThreatThatSeesPOI(IPointOfInterest poi, int amount) {
+        if (marker) {
+            if (poi is Character character) {
+                if (marker.inVisionCharacters.Contains(character)) {
+                    PlayerManager.Instance.player.threatComponent.AdjustThreat(amount);
+                }
+            } else if (poi is TileObject tileObject) {
+                if (marker.inVisionTileObjects.Contains(tileObject)) {
+                    PlayerManager.Instance.player.threatComponent.AdjustThreat(amount);
+                }
+            }
+        }
+
     }
     #endregion
 
@@ -1790,8 +1808,16 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         visuals.UpdateAllVisuals(this);
         //update goap interactions that should no longer be valid
         if (race == RACE.SKELETON) {
-            advertisedActions.Remove(INTERACTION_TYPE.DRINK_BLOOD);
-            advertisedActions.Remove(INTERACTION_TYPE.SHARE_INFORMATION);
+            RemoveAdvertisedAction(INTERACTION_TYPE.DRINK_BLOOD);
+            RemoveAdvertisedAction(INTERACTION_TYPE.SHARE_INFORMATION);
+        } else {
+            AddAdvertisedAction(INTERACTION_TYPE.DRINK_BLOOD);
+            AddAdvertisedAction(INTERACTION_TYPE.SHARE_INFORMATION);
+        }
+        if (race == RACE.HUMANS || race == RACE.ELVES) {
+            AddAdvertisedAction(INTERACTION_TYPE.REPORT_CORRUPTED_STRUCTURE);
+        } else {
+            RemoveAdvertisedAction(INTERACTION_TYPE.REPORT_CORRUPTED_STRUCTURE);
         }
     }
     private void ChangeClass(string className) {
@@ -1869,17 +1895,35 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             marker.OnOtherCharacterDied(characterThatDied);
         }
     }
+    private void OnBeforeSeizingPOI(IPointOfInterest poi) {
+        if (poi is Character character) {
+            OnBeforeSeizingCharacter(character);
+        } else if (poi is TileObject tileObject) {
+            OnBeforeSeizingTileObject(tileObject);
+        }
+    }
     private void OnSeizePOI(IPointOfInterest poi) {
-        if(poi is Character) {
-            OnSeizeCharacter(poi as Character);
-        } else if (poi is TileObject) {
-            OnSeizeTileObject(poi as TileObject);
+        if(poi is Character character) {
+            OnSeizeCharacter(character);
+        } else if (poi is TileObject tileObject) {
+            OnSeizeTileObject(tileObject);
+        }
+    }
+    private void OnBeforeSeizingCharacter(Character character) {
+        if (character.id != id) {
+            //RemoveRelationship(characterThatDied); //do not remove relationships when dying
+            marker.OnBeforeSeizingOtherCharacter(character);
         }
     }
     private void OnSeizeCharacter(Character character) {
         if (character.id != id) {
             //RemoveRelationship(characterThatDied); //do not remove relationships when dying
             marker.OnSeizeOtherCharacter(character);
+        }
+    }
+    private void OnBeforeSeizingTileObject(TileObject tileObject) {
+        if(marker && marker.inVisionTileObjects.Contains(tileObject)) {
+            PlayerManager.Instance.player.threatComponent.AdjustThreat(5);
         }
     }
     private void OnSeizeTileObject(TileObject tileObject) {
@@ -4044,71 +4088,51 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //}
     public void ConstructInitialGoapAdvertisementActions() {
         //poiGoapActions = new List<INTERACTION_TYPE>();
-        advertisedActions.Add(INTERACTION_TYPE.ASSAULT);
-        advertisedActions.Add(INTERACTION_TYPE.RESTRAIN_CHARACTER);
-        //poiGoapActions.Add(INTERACTION_TYPE.STROLL);
-        advertisedActions.Add(INTERACTION_TYPE.DAYDREAM);
-        advertisedActions.Add(INTERACTION_TYPE.SLEEP_OUTSIDE);
-        advertisedActions.Add(INTERACTION_TYPE.PRAY);
-        //poiGoapActions.Add(INTERACTION_TYPE.EXPLORE);
-        //poiGoapActions.Add(INTERACTION_TYPE.PATROL);
-        //poiGoapActions.Add(INTERACTION_TYPE.TRAVEL);
-        //poiGoapActions.Add(INTERACTION_TYPE.RETURN_HOME_LOCATION);
-        //poiGoapActions.Add(INTERACTION_TYPE.HUNT_ACTION);
-        advertisedActions.Add(INTERACTION_TYPE.PLAY);
-        advertisedActions.Add(INTERACTION_TYPE.JUDGE_CHARACTER);
-        advertisedActions.Add(INTERACTION_TYPE.CURSE_CHARACTER);
-        advertisedActions.Add(INTERACTION_TYPE.ASK_FOR_HELP_SAVE_CHARACTER);
-        advertisedActions.Add(INTERACTION_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE);
-        advertisedActions.Add(INTERACTION_TYPE.BURY_CHARACTER);
-        advertisedActions.Add(INTERACTION_TYPE.INVITE);
-        advertisedActions.Add(INTERACTION_TYPE.MAKE_LOVE);
-        advertisedActions.Add(INTERACTION_TYPE.TANTRUM);
-        //advertisedActions.Add(INTERACTION_TYPE.BREAK_UP);
-        //advertisedActions.Add(INTERACTION_TYPE.PUKE);
-        //advertisedActions.Add(INTERACTION_TYPE.SEPTIC_SHOCK);
-        advertisedActions.Add(INTERACTION_TYPE.CARRY);
-        advertisedActions.Add(INTERACTION_TYPE.DROP);
-        //advertisedActions.Add(INTERACTION_TYPE.RESOLVE_CONFLICT);
-        advertisedActions.Add(INTERACTION_TYPE.ASK_TO_STOP_JOB);
-        advertisedActions.Add(INTERACTION_TYPE.STRANGLE);
-        //advertisedActions.Add(INTERACTION_TYPE.SHOCK);
-        advertisedActions.Add(INTERACTION_TYPE.CRY);
-        //advertisedActions.Add(INTERACTION_TYPE.HAVE_AFFAIR);
-        advertisedActions.Add(INTERACTION_TYPE.SLAY_CHARACTER);
-        //advertisedActions.Add(INTERACTION_TYPE.FEELING_CONCERNED);
-        //advertisedActions.Add(INTERACTION_TYPE.LAUGH_AT);
-        advertisedActions.Add(INTERACTION_TYPE.TEASE);
-        //advertisedActions.Add(INTERACTION_TYPE.FEELING_SPOOKED);
-        //advertisedActions.Add(INTERACTION_TYPE.FEELING_BROKENHEARTED);
-        //advertisedActions.Add(INTERACTION_TYPE.GRIEVING);
-        advertisedActions.Add(INTERACTION_TYPE.DANCE);
-        advertisedActions.Add(INTERACTION_TYPE.SING);
-        advertisedActions.Add(INTERACTION_TYPE.GO_TO);
-        advertisedActions.Add(INTERACTION_TYPE.SCREAM_FOR_HELP);
-        advertisedActions.Add(INTERACTION_TYPE.RESOLVE_COMBAT);
-        advertisedActions.Add(INTERACTION_TYPE.RETURN_HOME);
-        //advertisedActions.Add(INTERACTION_TYPE.RETURN_HOME_LOCATION);
-        advertisedActions.Add(INTERACTION_TYPE.CHAT_CHARACTER);
-        //advertisedActions.Add(INTERACTION_TYPE.TRANSFORM_TO_WOLF_FORM);
-        //advertisedActions.Add(INTERACTION_TYPE.REVERT_TO_NORMAL_FORM);
-        advertisedActions.Add(INTERACTION_TYPE.CHANGE_CLASS);
-        advertisedActions.Add(INTERACTION_TYPE.STUDY_MONSTER);
-        advertisedActions.Add(INTERACTION_TYPE.CREATE_HEALING_POTION);
-        advertisedActions.Add(INTERACTION_TYPE.CREATE_ANTIDOTE);
-        advertisedActions.Add(INTERACTION_TYPE.CREATE_POISON_FLASK);
-        advertisedActions.Add(INTERACTION_TYPE.REMOVE_POISON);
-        advertisedActions.Add(INTERACTION_TYPE.REMOVE_FREEZING);
-        //advertisedActions.Add(INTERACTION_TYPE.ZOMBIE_DEATH);
-        //advertisedActions.Add(INTERACTION_TYPE.STAND);
-        //advertisedActions.Add(INTERACTION_TYPE.VISIT);
-        //advertisedActions.Add(INTERACTION_TYPE.CRAFT_FURNITURE);
+        AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
+        AddAdvertisedAction(INTERACTION_TYPE.SLEEP_OUTSIDE);
+        AddAdvertisedAction(INTERACTION_TYPE.GO_TO);
+        AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
+        AddAdvertisedAction(INTERACTION_TYPE.RETURN_HOME);
+        AddAdvertisedAction(INTERACTION_TYPE.CARRY);
+        AddAdvertisedAction(INTERACTION_TYPE.DROP);
+        AddAdvertisedAction(INTERACTION_TYPE.KNOCKOUT_CHARACTER);
 
-        if (race != RACE.SKELETON) {
-            advertisedActions.Add(INTERACTION_TYPE.SHARE_INFORMATION);
-            advertisedActions.Add(INTERACTION_TYPE.DRINK_BLOOD);
-            advertisedActions.Add(INTERACTION_TYPE.KNOCKOUT_CHARACTER);
-            advertisedActions.Add(INTERACTION_TYPE.BUTCHER);
+        if (this is Summon) {
+            AddAdvertisedAction(INTERACTION_TYPE.PLAY);
+        }
+        if (!(this is Summon) && race != RACE.SKELETON) {
+            AddAdvertisedAction(INTERACTION_TYPE.RESTRAIN_CHARACTER);
+            AddAdvertisedAction(INTERACTION_TYPE.DAYDREAM);
+            AddAdvertisedAction(INTERACTION_TYPE.PRAY);
+            AddAdvertisedAction(INTERACTION_TYPE.JUDGE_CHARACTER);
+            AddAdvertisedAction(INTERACTION_TYPE.CURSE_CHARACTER);
+            AddAdvertisedAction(INTERACTION_TYPE.ASK_FOR_HELP_SAVE_CHARACTER);
+            AddAdvertisedAction(INTERACTION_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE);
+            AddAdvertisedAction(INTERACTION_TYPE.BURY_CHARACTER);
+            AddAdvertisedAction(INTERACTION_TYPE.INVITE);
+            AddAdvertisedAction(INTERACTION_TYPE.MAKE_LOVE);
+            AddAdvertisedAction(INTERACTION_TYPE.TANTRUM);
+            AddAdvertisedAction(INTERACTION_TYPE.ASK_TO_STOP_JOB);
+            AddAdvertisedAction(INTERACTION_TYPE.STRANGLE);
+            AddAdvertisedAction(INTERACTION_TYPE.CRY);
+            AddAdvertisedAction(INTERACTION_TYPE.SLAY_CHARACTER);
+            AddAdvertisedAction(INTERACTION_TYPE.TEASE);
+            AddAdvertisedAction(INTERACTION_TYPE.DANCE);
+            AddAdvertisedAction(INTERACTION_TYPE.SING);
+            AddAdvertisedAction(INTERACTION_TYPE.SCREAM_FOR_HELP);
+            AddAdvertisedAction(INTERACTION_TYPE.CHANGE_CLASS);
+            AddAdvertisedAction(INTERACTION_TYPE.STUDY_MONSTER);
+            AddAdvertisedAction(INTERACTION_TYPE.CREATE_HEALING_POTION);
+            AddAdvertisedAction(INTERACTION_TYPE.CREATE_ANTIDOTE);
+            AddAdvertisedAction(INTERACTION_TYPE.CREATE_POISON_FLASK);
+            AddAdvertisedAction(INTERACTION_TYPE.REMOVE_POISON);
+            AddAdvertisedAction(INTERACTION_TYPE.REMOVE_FREEZING);
+            AddAdvertisedAction(INTERACTION_TYPE.SHARE_INFORMATION);
+            AddAdvertisedAction(INTERACTION_TYPE.DRINK_BLOOD);
+            AddAdvertisedAction(INTERACTION_TYPE.BUTCHER);
+        }
+        if (race == RACE.HUMANS || race == RACE.ELVES) {
+            AddAdvertisedAction(INTERACTION_TYPE.REPORT_CORRUPTED_STRUCTURE);
         }
     }
     /// <summary>

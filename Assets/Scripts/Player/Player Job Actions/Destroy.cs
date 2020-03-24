@@ -54,6 +54,7 @@ public class DestroyData : SpellData {
 
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
+        IncreaseThreatForEveryCharacterThatSeesPOI(targetPOI, 5);
         LocationGridTile targetTile = targetPOI.gridTileLocation;
         targetTile.structure.RemovePOI(targetPOI);
         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_intervention");
