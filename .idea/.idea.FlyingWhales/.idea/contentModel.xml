@@ -1765,6 +1765,7 @@
             <e p="BaseParticleEffect.cs" t="Include" />
             <e p="BlizzardParticleEffect.cs" t="Include" />
             <e p="BrimstonesParticleEffect.cs" t="Include" />
+            <e p="IceteroidParticleEffect.cs" t="Include" />
             <e p="LightningParticleEffect.cs" t="Include" />
             <e p="MeteorParticleEffect.cs" t="Include" />
             <e p="ObjectPoolParticle.cs" t="Include" />
@@ -1826,6 +1827,7 @@
               <e p="ElectricStormData.cs" t="Include" />
               <e p="FeebleSpiritData.cs" t="Include" />
               <e p="ForlornSpiritData.cs" t="Include" />
+              <e p="IceteroidsData.cs" t="Include" />
               <e p="Ignite.cs" t="Include" />
               <e p="Kleptomania.cs" t="Include" />
               <e p="LandmineData.cs" t="Include" />

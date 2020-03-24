@@ -32,6 +32,11 @@ public class HexTileSpellsComponent {
     public bool hasElectricStorm { get; private set; }
     private int _currentElectricStormDuration;
     #endregion
+    
+    #region Iceteroid Variables
+    public bool hasIceteroids { get; private set; }
+    private int _currentIceteroidsDuration;
+    #endregion
 
     public HexTileSpellsComponent(HexTile owner) {
         this.owner = owner;
@@ -370,6 +375,47 @@ public class HexTileSpellsComponent {
     }
     public void ResetElectricStormDuration() {
         _currentElectricStormDuration = 0;
+    }
+    #endregion
+    
+    #region Iceteroids
+    public void SetHasIceteroids(bool state) {
+        if (hasIceteroids != state) {
+            hasIceteroids = state;
+            if (hasIceteroids) {
+                StartIceteroids();
+            } else {
+                StopIceteroids();
+            }
+        }
+    }
+    private void StartIceteroids() {
+        _currentIceteroidsDuration = 0;
+        owner.StartCoroutine(CommenceFallingIceteroids());
+        Messenger.AddListener(Signals.TICK_STARTED, PerTickIceteroids);
+    }
+    private void StopIceteroids() {
+        owner.StopCoroutine(CommenceFallingIceteroids());
+        Messenger.RemoveListener(Signals.TICK_STARTED, PerTickIceteroids);
+    }
+    private IEnumerator CommenceFallingIceteroids() {
+        while (hasIceteroids) {
+            while (GameManager.Instance.isPaused) {
+                yield return null;
+            }
+            yield return new WaitForSeconds(UnityEngine.Random.Range(0.1f, 0.7f));
+            LocationGridTile chosenTile = owner.locationGridTiles[UnityEngine.Random.Range(0, owner.locationGridTiles.Count)];
+            GameManager.Instance.CreateParticleEffectAt(chosenTile, PARTICLE_EFFECT.Iceteroids);            
+        }
+    }
+    private void PerTickIceteroids() {
+        _currentIceteroidsDuration++;
+        if (_currentIceteroidsDuration >= GameManager.ticksPerHour) {
+            SetHasIceteroids(false);
+        }
+    }
+    public void ResetIceteroidDuration() {
+        _currentIceteroidsDuration = 0;
     }
     #endregion
 }

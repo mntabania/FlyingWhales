@@ -7,10 +7,10 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: ParticlesCore 2
+  m_Name: Iceteroid_Subemitter
   m_Shader: {fileID: 4800000, guid: 18cc8fe7d50c89741b56c1ae6a5baa66, type: 3}
-  m_ShaderKeywords: BlendAlpha Clip_ON FrameBlend_OFF SoftParticles_OFF VertLight_OFF
-    _ALPHABLEND_ON _BLENDMODE_BLEND
+  m_ShaderKeywords: BlendAlpha Clip_ON FrameBlend_ON SoftParticles_OFF VertLight_OFF
+    _ALPHABLEND_ON _BLENDMODE_BLEND _FADING_ON _FLIPBOOK_BLENDING
   m_LightmapFlags: 5
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
@@ -45,7 +45,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 7badf87401cca5b449f7233270c8995e, type: 3}
+        m_Texture: {fileID: 2800000, guid: 05839f1a8049db445b449455d3793590, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -71,7 +71,7 @@ Material:
     - _BumpScale: 1
     - _CullMode: 0
     - _Cutoff: 0.5
-    - _Cutout: 0.5
+    - _Cutout: 0.2
     - _CutoutThreshold: 0.015
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
@@ -93,12 +93,12 @@ Material:
     - _UseCutout: 0
     - _UseCutoutTex: 0
     - _UseCutoutThreshold: 0
-    - _UseFrameBlending: 0
+    - _UseFrameBlending: 1
     - _UseFresnel: 0
     - _UseFresnelFading: 0
     - _UseNoiseDistortion: 0
     - _UseParticlesAlphaCutout: 0
-    - _UseSoft: 0
+    - _UseSoft: 1
     - _UseSoftCutout: 0
     - _UseVertexStreamRandom: 0
     - _ZWrite: 0
@@ -110,5 +110,5 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _FogColorMultiplier: {r: 0, g: 0, b: 0, a: 0}
     - _FresnelColor: {r: 1, g: 1, b: 1, a: 1}
-    - _Tiling: {r: 800, g: 800, b: 8, a: 8}
-    - _TintColor: {r: 1.9374552, g: 0.59813523, b: 0.5698397, a: 1}
+    - _Tiling: {r: 1600, g: 800, b: 16, a: 8}
+    - _TintColor: {r: 0.3529412, g: 0.40588236, b: 0.49019608, a: 1}
