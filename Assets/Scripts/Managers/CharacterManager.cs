@@ -511,7 +511,7 @@ public class CharacterManager : MonoBehaviour {
             ps.hair = -1;
             ps.mustache = -1;
             ps.beard = -1;
-            ps.hairColor = 0f;
+            ps.hairColorHue = 0f;
             ps.wholeImageColor = UnityEngine.Random.Range(-144f, 144f);
         } else {
             ps.head = CollectionUtilities.GetRandomIndexInList(pac.head);
@@ -535,7 +535,9 @@ public class CharacterManager : MonoBehaviour {
             } else {
                 ps.beard = CollectionUtilities.GetRandomIndexInList(pac.beard);
             }
-            ps.hairColor = UnityEngine.Random.Range(-720f, 720f);
+            ps.hairColorHue = UnityEngine.Random.Range(0f, 1f);
+            ps.hairColorSaturation = UnityEngine.Random.Range(0f, 1f);
+            ps.hairColorValue = UnityEngine.Random.Range(0f, 0.1f);
             ps.wholeImageColor = 0f;
         }
         return ps;

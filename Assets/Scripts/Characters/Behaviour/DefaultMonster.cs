@@ -8,9 +8,8 @@ public class DefaultMonster : CharacterBehaviourComponent {
 		// attributes = new[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.WITHIN_HOME_SETTLEMENT_ONLY };
 	}
 	public override bool TryDoBehaviour(Character character, ref string log) {
-		if (character is Summon) {
-			log += $"\n-{character.name} is monster";
-			Summon summon = character as Summon;
+		if (character is Summon summon) {
+			log += $"\n-{summon.name} is monster";
 			if (summon.gridTileLocation != null) {
 				if (summon.IsInTerritory()) {
 					bool hasAddedJob = false;
@@ -22,7 +21,7 @@ public class DefaultMonster : CharacterBehaviourComponent {
 					} else {
 						log += "\n-35% chance to Roam Around Territory";
 						int roll = UnityEngine.Random.Range(0, 100);
-						log += $"\n-Roll: {roll}";
+						log += $"\n-Roll: {roll.ToString()}";
 						if (roll < 35) {
 							hasAddedJob = summon.jobComponent.TriggerRoamAroundTerritory();
 						} else {
@@ -30,15 +29,15 @@ public class DefaultMonster : CharacterBehaviourComponent {
 							if (currTime == TIME_IN_WORDS.LATE_NIGHT || currTime == TIME_IN_WORDS.AFTER_MIDNIGHT) {
 								log += "\n-Late Night or After Midnight, 40% chance to Sleep";
 								int sleepRoll = UnityEngine.Random.Range(0, 100);
-								log += $"\n-Roll: {sleepRoll}";
+								log += $"\n-Roll: {sleepRoll.ToString()}";
 								if (roll < 40) {
 									hasAddedJob = summon.jobComponent.TriggerMonsterSleep();
 								}
 							} else {
 								log += "\n-5% chance to Sleep";
 								int sleepRoll = UnityEngine.Random.Range(0, 100);
-								log += $"\n-Roll: {sleepRoll}";
-								if (roll < 5) {
+								log += $"\n-Roll: {sleepRoll.ToString()}";
+								if (sleepRoll < 5) {
 									hasAddedJob = summon.jobComponent.TriggerMonsterSleep();
 								}
 							}
@@ -57,7 +56,7 @@ public class DefaultMonster : CharacterBehaviourComponent {
 					} else {
 						log += "\n-50% chance to Roam Around Tile";
 						int roll = UnityEngine.Random.Range(0, 100);
-						log += $"\n-Roll: {roll}";
+						log += $"\n-Roll: {roll.ToString()}";
 						if (roll < 50) {
 							summon.jobComponent.TriggerRoamAroundTile();
 						} else {

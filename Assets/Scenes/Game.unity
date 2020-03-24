@@ -29763,7 +29763,7 @@ MonoBehaviour:
   bloodPuddleEffectPrefab: {fileID: 9033442248038542139, guid: 46622b224b908ae4ba45c8bfcaf2c617,
     type: 3}
   particleEffectsDictionary:
-    m_keys: 0100000002000000030000000400000005000000060000000700000008000000090000000a0000000b0000000d0000000e0000000c0000000f0000001000000011000000120000001300000014000000
+    m_keys: 0100000002000000030000000400000005000000060000000700000008000000090000000a0000000b0000000d0000000e0000000c0000000f000000100000001100000012000000130000001400000015000000
     m_values:
     - {fileID: 5106000538713877668, guid: 50d896df8d440474a97233e68f30bf8a, type: 3}
     - {fileID: 1979527227019656, guid: 46523c9c550ae58489dc81eb94b1053f, type: 3}
@@ -29785,6 +29785,7 @@ MonoBehaviour:
     - {fileID: 9032662682557629287, guid: 27807dd5bd51992428bc840ebb9d07d0, type: 3}
     - {fileID: 3943589384005629521, guid: 9d3bdd1f0adb6b1408d558ff3ca392bd, type: 3}
     - {fileID: 6279253120439075722, guid: 76966b4d03acbf24f82c18ddc01b593b, type: 3}
+    - {fileID: 3021797405281841405, guid: 3099318f3efda9a4db2e4a61c1433b1e, type: 3}
   lastProgressionBeforePausing: 
 --- !u!114 &557822220
 MonoBehaviour:
@@ -50279,7 +50280,6 @@ MonoBehaviour:
   m_RequiresDepthTextureOption: 2
   m_RequiresOpaqueTextureOption: 2
   m_CameraType: 0
-  m_CameraOutput: 0
   m_Cameras: []
   m_RendererIndex: -1
   m_VolumeLayerMask:
@@ -50291,6 +50291,7 @@ MonoBehaviour:
   m_AntialiasingQuality: 2
   m_StopNaN: 0
   m_Dithering: 0
+  m_ClearDepth: 1
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
   m_Version: 2
@@ -87338,15 +87339,6 @@ MonoBehaviour:
   monsterLairGroundTile: {fileID: 11400000, guid: afd047e453653d6408938e03da55dcce,
     type: 2}
   corruptedTile: {fileID: 11400000, guid: 82ab4f2ca4172c8419a93070e6c43c01, type: 2}
-  corruptedDetailTile: {fileID: 11400000, guid: 1108c04f38f4d184a88253095f9e628d,
-    type: 2}
-  corruptedTreeAssets:
-  - {fileID: 21300000, guid: f1a8a8c7d4e3844499cab5fc440effad, type: 3}
-  - {fileID: 21300000, guid: cef00f6294c550a4aa9ca7f1c95721a2, type: 3}
-  - {fileID: 21300000, guid: 0ea8ef0a2cbd1ef45875aa7603a88a9b, type: 3}
-  corruptedBigTreeAssets:
-  - {fileID: 21300000, guid: b70306f1d978865459ad97b9221c25e8, type: 3}
-  - {fileID: 21300000, guid: 8f0518dd59fee494a97f26c057d3cdaa, type: 3}
   demonicWallTile: {fileID: 11400000, guid: 6d573d413fddb9645b4619987a76240e, type: 2}
   woodFloorTile: {fileID: 11400000, guid: 4c0a1b3069ff1ab4eba18e4b8362b997, type: 2}
   stoneFloorTile: {fileID: 11400000, guid: 016c45b2f2cc25a4c870fcfb895e0177, type: 2}
@@ -88018,6 +88010,9 @@ MonoBehaviour:
           - {fileID: 21300000, guid: b70306f1d978865459ad97b9221c25e8, type: 3}
           - {fileID: 21300000, guid: 8f0518dd59fee494a97f26c057d3cdaa, type: 3}
           inactiveTile: []
+  burntMaterial: {fileID: 2100000, guid: 1010dec766f2511479731f5cc07e612d, type: 2}
+  defaultObjectMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3,
+    type: 2}
 --- !u!1 &1538653383
 GameObject:
   m_ObjectHideFlags: 0
@@ -100240,7 +100235,6 @@ MonoBehaviour:
   m_RequiresDepthTextureOption: 2
   m_RequiresOpaqueTextureOption: 2
   m_CameraType: 0
-  m_CameraOutput: 0
   m_Cameras: []
   m_RendererIndex: -1
   m_VolumeLayerMask:
@@ -100252,6 +100246,7 @@ MonoBehaviour:
   m_AntialiasingQuality: 2
   m_StopNaN: 0
   m_Dithering: 0
+  m_ClearDepth: 1
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
   m_Version: 2

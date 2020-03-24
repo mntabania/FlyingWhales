@@ -61,8 +61,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2405244482665803168}
-  - {fileID: 6250084277241536965}
-  - {fileID: 1544486040454910628}
+  - {fileID: 6247113924894880538}
+  - {fileID: 1548989475226882221}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -80,8 +80,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ParentPool: {fileID: 0}
   structureObjects:
-  - {fileID: 6250084277241522511}
-  - {fileID: 1544486040454897839}
+  - {fileID: 6281194699484773790}
+  - {fileID: 1511585732994112161}
   - {fileID: 4877072596177471119}
 --- !u!1 &1506610190153816
 GameObject:
@@ -3740,15 +3740,16 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 21300000, guid: 5b2e163b9f5d84942bb967fa63594b3c,
         type: 3}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 9166960008432164318, guid: d2c2cf637970237418614bb4a0293668, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: d2c2cf637970237418614bb4a0293668, type: 3}
---- !u!4 &1544486040454910628 stripped
+--- !u!4 &1548989475226882221 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4504039566536522, guid: d2c2cf637970237418614bb4a0293668,
     type: 3}
   m_PrefabInstance: {fileID: 1544486040454922215}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1544486040454897839 stripped
+--- !u!114 &1511585732994112161 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 114040151217595718, guid: d2c2cf637970237418614bb4a0293668,
     type: 3}
@@ -3815,15 +3816,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6182895645051691930, guid: 191a9e123946de349a254ec4c008d174, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 191a9e123946de349a254ec4c008d174, type: 3}
---- !u!4 &6250084277241536965 stripped
+--- !u!4 &6247113924894880538 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4212835542186378, guid: 191a9e123946de349a254ec4c008d174,
     type: 3}
   m_PrefabInstance: {fileID: 6250084277241531024}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &6250084277241522511 stripped
+--- !u!114 &6281194699484773790 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 114713997552875278, guid: 191a9e123946de349a254ec4c008d174,
     type: 3}

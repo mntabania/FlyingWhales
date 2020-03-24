@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Inner_Maps;
-using UnityEngine.WSA;
 namespace Traits {
     public class TraitContainer : ITraitContainer {
 
