@@ -523,7 +523,8 @@ public class CombatState : CharacterState {
             }
             Log fleeLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "start_flee");
             fleeLog.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            fleeLog.AddToFillers(objToAvoid, objToAvoid.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            fleeLog.AddToFillers(objToAvoid, objToAvoid is GenericTileObject ? "something" : objToAvoid.name,
+                LOG_IDENTIFIER.TARGET_CHARACTER);
             fleeLog.AddToFillers(null, avoidReason, LOG_IDENTIFIER.STRING_1);
             stateComponent.character.logComponent.RegisterLog(fleeLog, null, false);
         }

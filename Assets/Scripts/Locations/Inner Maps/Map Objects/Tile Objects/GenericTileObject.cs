@@ -24,11 +24,6 @@ public class GenericTileObject : TileObject {
         }
     }
     public override void OnPlacePOI() {
-        // if (ReferenceEquals(mapVisual, null)) {
-        //     InitializeMapObject(this);
-        // }
-        // PlaceMapObjectAt(gridTileLocation);
-        // OnPlaceTileObjectAtTile(gridTileLocation);
         SetPOIState(POI_STATE.ACTIVE);
     }
     protected override void OnPlaceTileObjectAtTile(LocationGridTile tile) { } //overridden this to reduce unnecessary processing 
@@ -50,13 +45,7 @@ public class GenericTileObject : TileObject {
         base.OnTileObjectGainedTrait(trait);
         if (trait is Status status) {
             if(status.IsTangible()) {
-                // EnableGameObject();
-                //create map object visual
-                if (ReferenceEquals(mapVisual, null)) {
-                    InitializeMapObject(this);
-                }
-                PlaceMapObjectAt(gridTileLocation);
-                OnPlaceTileObjectAtTile(gridTileLocation);
+                GetOrCreateMapVisual();
 
                 SubscribeListeners();
             }
@@ -64,11 +53,7 @@ public class GenericTileObject : TileObject {
     }
     public override void OnTileObjectLostTrait(Trait trait) {
         base.OnTileObjectLostTrait(trait);
-        if (HasTangibleTrait() == false) {
-            // DisableGameObject();
-            if (ReferenceEquals(mapVisual, null) == false) {
-                DestroyMapVisualGameObject();    
-            }
+        if (TryDestroyMapVisual()) {
             UnsubscribeListeners();
         }
     }
@@ -115,6 +100,24 @@ public class GenericTileObject : TileObject {
         return false;
     }
     #endregion
+
+    public BaseMapObjectVisual GetOrCreateMapVisual() {
+        if (ReferenceEquals(mapVisual, null)) {
+            InitializeMapObject(this);
+            PlaceMapObjectAt(gridTileLocation);
+            OnPlaceTileObjectAtTile(gridTileLocation);
+        }
+        return mapVisual;
+    }
+    public bool TryDestroyMapVisual() {
+        if (HasTangibleTrait() == false) {
+            if (ReferenceEquals(mapVisual, null) == false) {
+                DestroyMapVisualGameObject();
+            }
+            return true;
+        }
+        return false;
+    }
 
     private bool HasTangibleTrait() {
         for (int i = 0; i < traitContainer.statuses.Count; i++) {

@@ -29763,7 +29763,7 @@ MonoBehaviour:
   bloodPuddleEffectPrefab: {fileID: 9033442248038542139, guid: 46622b224b908ae4ba45c8bfcaf2c617,
     type: 3}
   particleEffectsDictionary:
-    m_keys: 0100000002000000030000000400000005000000060000000700000008000000090000000a0000000b0000000d0000000e0000000c0000000f000000100000001100000012000000130000001400000015000000
+    m_keys: 0100000002000000030000000400000005000000060000000700000008000000090000000a0000000b0000000d0000000e0000000c0000000f00000010000000110000001200000013000000140000001500000016000000
     m_values:
     - {fileID: 5106000538713877668, guid: 50d896df8d440474a97233e68f30bf8a, type: 3}
     - {fileID: 1979527227019656, guid: 46523c9c550ae58489dc81eb94b1053f, type: 3}
@@ -29786,6 +29786,7 @@ MonoBehaviour:
     - {fileID: 3943589384005629521, guid: 9d3bdd1f0adb6b1408d558ff3ca392bd, type: 3}
     - {fileID: 6279253120439075722, guid: 76966b4d03acbf24f82c18ddc01b593b, type: 3}
     - {fileID: 3021797405281841405, guid: 3099318f3efda9a4db2e4a61c1433b1e, type: 3}
+    - {fileID: 6235883671057424977, guid: c3e93ecfa559e6f43bb3985d6f3d27ae, type: 3}
   lastProgressionBeforePausing: 
 --- !u!114 &557822220
 MonoBehaviour:
@@ -50280,6 +50281,7 @@ MonoBehaviour:
   m_RequiresDepthTextureOption: 2
   m_RequiresOpaqueTextureOption: 2
   m_CameraType: 0
+  m_CameraOutput: 0
   m_Cameras: []
   m_RendererIndex: -1
   m_VolumeLayerMask:
@@ -50291,7 +50293,6 @@ MonoBehaviour:
   m_AntialiasingQuality: 2
   m_StopNaN: 0
   m_Dithering: 0
-  m_ClearDepth: 1
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
   m_Version: 2
@@ -100107,7 +100108,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 537313792
+    m_Bits: 2015744
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -100161,7 +100162,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_EventMask:
     serializedVersion: 2
-    m_Bits: 16384
+    m_Bits: 1064960
   m_MaxRayIntersections: 0
 --- !u!114 &1713567861
 MonoBehaviour:
@@ -100235,6 +100236,7 @@ MonoBehaviour:
   m_RequiresDepthTextureOption: 2
   m_RequiresOpaqueTextureOption: 2
   m_CameraType: 0
+  m_CameraOutput: 0
   m_Cameras: []
   m_RendererIndex: -1
   m_VolumeLayerMask:
@@ -100246,7 +100248,6 @@ MonoBehaviour:
   m_AntialiasingQuality: 2
   m_StopNaN: 0
   m_Dithering: 0
-  m_ClearDepth: 1
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
   m_Version: 2
