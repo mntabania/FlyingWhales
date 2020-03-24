@@ -833,7 +833,7 @@ GameObject:
   - component: {fileID: 114720397635659402}
   - component: {fileID: 114167030245026914}
   - component: {fileID: 61734465707681460}
-  m_Layer: 14
+  m_Layer: 20
   m_Name: CharacterMarker
   m_TagString: Character Marker
   m_Icon: {fileID: 0}

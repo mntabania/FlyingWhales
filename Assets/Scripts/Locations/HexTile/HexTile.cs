@@ -1178,12 +1178,12 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     private void StartBuild(LandmarkData landmarkData) {
         StartCorruption();
         //LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkObj as string);
-        BaseLandmark newLandmark =
-            LandmarkManager.Instance.CreateNewLandmarkOnTile(this, landmarkData.landmarkType);
+        // BaseLandmark newLandmark =
+        //     LandmarkManager.Instance.CreateNewLandmarkOnTile(this, landmarkData.landmarkType);
         LandmarkManager.Instance.PlaceBuiltStructureForSettlement(settlementOnTile, region.innerMap, this,
             landmarkData.landmarkType.GetStructureType());
         PlayerManager.Instance.player.AdjustMana(-EditableValuesManager.Instance.buildStructureManaCost);
-        newLandmark.OnFinishedBuilding();
+        landmarkOnTile?.OnFinishedBuilding();
         UIManager.Instance.HideObjectPicker();
     }
     #endregion

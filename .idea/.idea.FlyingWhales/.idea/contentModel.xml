@@ -1766,8 +1766,10 @@
             <e p="MeteorParticleEffect.cs" t="Include" />
             <e p="ObjectPoolParticle.cs" t="Include" />
             <e p="ParticleCallback.cs" t="Include" />
+            <e p="ParticleCollisionListener.cs" t="Include" />
             <e p="ParticleEffectCallback.cs" t="Include" />
             <e p="RainParticleEffect.cs" t="Include" />
+            <e p="TerrifyingHowlCollisionListener.cs" t="Include" />
           </e>
           <e p="Party" t="Include">
             <e p="Party.cs" t="Include" />

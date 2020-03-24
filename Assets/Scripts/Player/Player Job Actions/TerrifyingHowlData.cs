@@ -20,10 +20,10 @@ public class TerrifyingHowlData : SpellData {
         SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddTicks(3),
             () => targetTile.genericTileObject.TryDestroyMapVisual(), this);
         
-        for (int i = 0; i < tiles.Count; i++) {
-            LocationGridTile tile = tiles[i];
-            tile.PerformActionOnTraitables((traitable) => SpookCharacter(traitable, targetTile));
-        }
+        // for (int i = 0; i < tiles.Count; i++) {
+        //     LocationGridTile tile = tiles[i];
+        //     tile.PerformActionOnTraitables((traitable) => SpookCharacter(traitable, targetTile));
+        // }
         GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Terrifying_Howl);
     }
     private void SpookCharacter(ITraitable traitable, LocationGridTile targetTile) {
