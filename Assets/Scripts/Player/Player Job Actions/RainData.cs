@@ -16,6 +16,7 @@ public class RainData : SpellData {
 
     public override void ActivateAbility(HexTile targetHex) {
         targetHex.featureComponent.AddFeature(TileFeatureDB.Rain_Feature, targetHex);
+        base.ActivateAbility(targetHex);
     }
     public override bool CanPerformAbilityTowards(HexTile targetHex) {
         return targetHex != null

@@ -23,6 +23,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public LocationStructure structureLocation => gridTileLocation.structure;
     public bool isDisabledByPlayer { get; private set; }
     public bool isSummonedByPlayer { get; private set; }
+    public bool isPreplaced { get; private set; }
     public List<JobQueueItem> allJobsTargetingThis { get; private set; }
     private List<Character> owners { get; set; }
     public Character isBeingCarriedBy { get; private set; }
@@ -357,7 +358,6 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.SPOIL].CanPerformAbilityTowards(this),
             null,
             () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.SPOIL].ActivateAbility(this));
-        PlayerAction animateAction = new PlayerAction(PlayerDB.Animate_Action, () => false, null);
         PlayerAction seizeAction = new PlayerAction(PlayerDB.Seize_Object_Action,
             () => !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && this.mapVisual != null && (this.isBeingCarriedBy != null || this.gridTileLocation != null),
             null,
@@ -366,7 +366,6 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         AddPlayerAction(destroyAction);
         AddPlayerAction(igniteAction);
         AddPlayerAction(poisonAction);
-        AddPlayerAction(animateAction);
         AddPlayerAction(seizeAction);
     }
     #endregion
@@ -449,6 +448,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         if (CanBeDamaged() == false) { return; }
         if (currentHP == 0 && amount < 0) { return; } //hp is already at minimum, do not allow any more negative adjustments
         CombatManager.Instance.DamageModifierByElements(ref amount, elementalDamageType, this);
+        //int supposedHP = currentHP + amount;
         currentHP += amount;
         currentHP = Mathf.Clamp(currentHP, 0, maxHP);
         if (mapVisual && mapVisual.hpBarGO && showHPBar) {
@@ -476,6 +476,15 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             Character removed = null;
             if (source is Character character) {
                 removed = character;
+            }
+            if (isPreplaced && gridTileLocation != null && gridTileLocation.structure is DemonicStructure demonicStructure) {
+                //int structureDamage = 0;
+                //if (supposedHP < 0) {
+                //    structureDamage = amount - supposedHP;
+                //} else if (supposedHP > maxHP) {
+                //    structureDamage = (maxHP + amount) - supposedHP;
+                //}
+                demonicStructure.AdjustHP(-1);
             }
             gridTileLocation?.structure.RemovePOI(this, removed);
         }
@@ -797,6 +806,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     }
     protected TileObject GetBase() {
         return this;
+    }
+    public void SetIsPreplaced(bool state) {
+        isPreplaced = state;
     }
     #endregion
 

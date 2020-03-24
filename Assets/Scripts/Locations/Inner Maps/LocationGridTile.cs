@@ -389,6 +389,13 @@ namespace Inner_Maps {
             if (hasLandmine) {
                 TriggerLandmine(character);
             }
+            if(isCorrupted) {
+                if(character.homeSettlement != null && (character.race == RACE.HUMANS || character.race == RACE.ELVES)) {
+                    if (!InnerMapManager.Instance.HasWorldKnownDemonicStructure(structure)) {
+                        character.jobComponent.CreateReportDemonicStructure(structure);
+                    }
+                }
+            }
         }
         public void RemoveCharacterHere(Character character) {
             charactersHere.Remove(character);

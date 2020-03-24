@@ -5,7 +5,7 @@ using Actionables;
 using UnityEngine;
 using UtilityScripts;
 namespace Inner_Maps.Location_Structures {
-    public class TheKennel : LocationStructure{
+    public class TheKennel : DemonicStructure {
         public override Vector2 selectableSize { get; }
         public override string nameplateName => $"{name} ({MaxCapacity - _remainingCapacity}/{MaxCapacity})";
         private const int BreedingDuration = GameManager.ticksPerHour;

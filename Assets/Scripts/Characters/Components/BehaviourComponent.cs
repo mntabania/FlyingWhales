@@ -1,17 +1,21 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Inner_Maps.Location_Structures;
 
 public class BehaviourComponent {
 
 	public Character owner { get; private set; }
     public List<CharacterBehaviourComponent> currentBehaviourComponents { get; private set; }
     public NPCSettlement harassInvadeRaidTarget { get; private set; }
+    public DemonicStructure attackDemonicStructureTarget { get; private set; }
     public bool isHarassing { get; private set; }
     public bool isRaiding { get; private set; }
     public bool isInvading { get; private set; }
+    public bool isAttackingDemonicStructure { get; private set; }
 
     private COMBAT_MODE combatModeBeforeHarassRaidInvade;
+    private COMBAT_MODE combatModeBeforeAttackingDemonicStructure;
 
     public BehaviourComponent (Character owner) {
         this.owner = owner;
@@ -159,6 +163,21 @@ public class BehaviourComponent {
                 RemoveBehaviourComponent(typeof(InvadeBehaviour));
                 owner.RemovePlayerAction(PlayerDB.End_Invade_Action);
                 Messenger.RemoveListener<NPCSettlement>(Signals.NO_ABLE_CHARACTER_INSIDE_SETTLEMENT, OnNoLongerAbleResidentsInsideSettlement);
+            }
+        }
+    }
+    public void SetIsAttackingDemonicStructure(bool state, DemonicStructure target) {
+        if (isAttackingDemonicStructure != state) {
+            isAttackingDemonicStructure = state;
+            attackDemonicStructureTarget = target;
+            owner.CancelAllJobs();
+            if (isAttackingDemonicStructure) {
+                combatModeBeforeAttackingDemonicStructure = owner.combatComponent.combatMode;
+                owner.combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
+                AddBehaviourComponent(typeof(AttackDemonicStructureBehaviour));
+            } else {
+                owner.combatComponent.SetCombatMode(combatModeBeforeAttackingDemonicStructure);
+                RemoveBehaviourComponent(typeof(AttackDemonicStructureBehaviour));
             }
         }
     }

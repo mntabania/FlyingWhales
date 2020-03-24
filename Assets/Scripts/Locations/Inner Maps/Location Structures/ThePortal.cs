@@ -3,7 +3,7 @@ using System.Linq;
 using Actionables;
 using UnityEngine;
 namespace Inner_Maps.Location_Structures {
-    public class ThePortal : LocationStructure {
+    public class ThePortal : DemonicStructure {
         public override Vector2 selectableSize { get; }
 
         private List<Character> validMinions;

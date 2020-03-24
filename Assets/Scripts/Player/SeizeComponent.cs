@@ -29,6 +29,7 @@ public class SeizeComponent {
         if (seizedPOI == null) {
             poi.isBeingCarriedBy?.UncarryPOI();
             if (poi.gridTileLocation != null) {
+                Messenger.Broadcast(Signals.BEFORE_SEIZING_POI, poi);
                 poi.OnSeizePOI();
                 if (poi is BaseMapObject baseMapObject) { baseMapObject.OnManipulatedBy(PlayerManager.Instance.player); }
                 Messenger.Broadcast(Signals.ON_SEIZE_POI, poi);

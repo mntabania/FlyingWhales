@@ -94,6 +94,7 @@ public static class Signals {
     public static string CHARACTER_SWITCHED_ALTER_EGO = "OnCharacterSwitchedAlterEgo"; //Parameters (Character character)
     public static string DETERMINE_COMBAT_REACTION = "DetermineCombatReaction"; //Parameters (Character character)
     public static string CHARACTER_CLASS_CHANGE = "CharacterClassChange";
+    public static string BEFORE_SEIZING_POI = "BeforeSeizingPOI";
     public static string ON_SEIZE_POI = "OnSeizePOI";
     public static string ON_UNSEIZE_POI = "OnUnseizePOI";
     public static string CHARACTER_MISSING = "OnCharacterMissing";
@@ -101,6 +102,7 @@ public static class Signals {
     public static string ON_SET_AS_FACTION_LEADER = "OnSetAsFactionLeader";
     public static string ON_SET_AS_SETTLEMENT_RULER = "OnSetAsFactionLeader";
     public static string ON_SWITCH_FROM_LIMBO = "OnSwitchFromLimbo";
+    public static string INCREASE_THREAT_THAT_SEES_POI = "IncreaseThreatThatSeesPOI";
 
     /// <summary>
     /// Parameters (MoodComponent moodComponentModified)
@@ -269,6 +271,7 @@ public static class Signals {
     public static string JOB_SLOT_LOCK_CHANGED = "OnJobSlotLockChanged"; //Parameters (JOB job, bool lockedState);
     public static string PLAYER_OBTAINED_INTEL = "OnPlayerObtainedIntel"; //Parameters (InteractionIntel)
     public static string PLAYER_REMOVED_INTEL = "OnPlayerRemovedIntel"; //Parameters (InteractionIntel)
+    public static string THREAT_UPDATED = "OnThreatUpdated";
     /// <summary>
     /// Parameters (Summon newSummon)
     /// </summary>

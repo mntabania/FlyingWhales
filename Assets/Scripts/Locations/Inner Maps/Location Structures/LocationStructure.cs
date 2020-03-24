@@ -27,7 +27,7 @@ namespace Inner_Maps.Location_Structures {
         public List<LocationGridTile> tiles { get; private set; }
         public LinkedList<LocationGridTile> unoccupiedTiles { get; private set; }
         public bool isInterior { get; private set; }
-        private bool _hasBeenDestroyed;
+        public bool hasBeenDestroyed { get; private set; }
 
         #region getters
         public virtual bool isDwelling => false;
@@ -524,7 +524,7 @@ namespace Inner_Maps.Location_Structures {
 
         #region Destroy
         protected virtual void DestroyStructure() {
-            if (_hasBeenDestroyed) {
+            if (hasBeenDestroyed) {
                 return;
             }
             Debug.Log($"{GameManager.Instance.TodayLogString()}{ToString()} was destroyed!");
@@ -565,7 +565,7 @@ namespace Inner_Maps.Location_Structures {
             settlementLocation.RemoveStructure(this);
             Messenger.Broadcast(Signals.STRUCTURE_OBJECT_REMOVED, this, occupiedHexTile);
             SetOccupiedHexTile(null);
-            _hasBeenDestroyed = true;
+            hasBeenDestroyed = true;
             UnsubscribeListeners();
             Messenger.Broadcast(Signals.STRUCTURE_DESTROYED, this);
         }

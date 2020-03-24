@@ -109,10 +109,14 @@ public class LocationStructureObject : PooledObject {
             tile.SetReservedType(preplacedObj.tileObjectType);
 
             TileObject newTileObject = InnerMapManager.Instance.CreateNewTileObject<TileObject>(preplacedObj.tileObjectType);
+            newTileObject.SetIsPreplaced(true);
             structure.AddPOI(newTileObject, tile);
             newTileObject.mapVisual.SetVisual(preplacedObj.spriteRenderer.sprite);
             newTileObject.mapVisual.SetRotation(preplacedObj.transform.localEulerAngles.z);
             newTileObject.RevalidateTileObjectSlots();
+        }
+        if (structure is DemonicStructure demonicStructure) {
+            demonicStructure.AdjustHP(5);
         }
         SetPreplacedObjectsState(false);
     }
