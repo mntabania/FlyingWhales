@@ -10,6 +10,7 @@ namespace Interrupts {
             doesStopCurrentAction = true;
             doesDropCurrentJob = true;
             interruptIconString = GoapActionStateDB.Shock_Icon;
+            isIntel = true;
         }
 
         #region Overrides

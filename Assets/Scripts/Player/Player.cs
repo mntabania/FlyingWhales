@@ -17,7 +17,7 @@ public class Player : ILeader, IObjectManipulator {
     public Faction playerFaction { get; private set; }
     public PlayerSettlement playerSettlement { get; private set; }
     public int mana { get; private set; }
-    public List<Intel> allIntel { get; private set; }
+    public List<IIntel> allIntel { get; private set; }
     public List<Minion> minions { get; private set; }
     public List<Summon> summons { get; private set; }
     public List<Artifact> artifacts { get; private set; }
@@ -28,7 +28,7 @@ public class Player : ILeader, IObjectManipulator {
     public Minion currentMinionLeader { get; private set; }
     public NPCSettlement currentNpcSettlementBeingInvaded { get; private set; }
     public CombatAbility currentActiveCombatAbility { get; private set; }
-    public Intel currentActiveIntel { get; private set; }
+    public IIntel currentActiveIntel { get; private set; }
     //public int maxSummonSlots { get; private set; } //how many summons can the player have
     //public int maxArtifactSlots { get; private set; } //how many artifacts can the player have
     public PlayerJobActionSlot[] interventionAbilitySlots { get; }
@@ -52,7 +52,7 @@ public class Player : ILeader, IObjectManipulator {
     #endregion
 
     public Player() {
-        allIntel = new List<Intel>();
+        allIntel = new List<IIntel>();
         minions = new List<Minion>();
         summons = new List<Summon>();
         artifacts = new List<Artifact>();
@@ -68,7 +68,7 @@ public class Player : ILeader, IObjectManipulator {
         AddListeners();
     }
     public Player(SaveDataPlayer data) {
-        allIntel = new List<Intel>();
+        allIntel = new List<IIntel>();
         minions = new List<Minion>();
         //maxSummonSlots = data.maxSummonSlots;
         //maxArtifactSlots = data.maxArtifactSlots;
@@ -335,7 +335,7 @@ public class Player : ILeader, IObjectManipulator {
     #endregion
 
     #region Intel
-    public void AddIntel(Intel newIntel) {
+    public void AddIntel(IIntel newIntel) {
         if (!allIntel.Contains(newIntel)) {
             allIntel.Add(newIntel);
             if (allIntel.Count > PlayerDB.MAX_INTEL) {
@@ -344,7 +344,7 @@ public class Player : ILeader, IObjectManipulator {
             Messenger.Broadcast(Signals.PLAYER_OBTAINED_INTEL, newIntel);
         }
     }
-    private void RemoveIntel(Intel intel) {
+    private void RemoveIntel(IIntel intel) {
         if (allIntel.Remove(intel)) {
             Messenger.Broadcast(Signals.PLAYER_REMOVED_INTEL, intel);
         }
@@ -354,12 +354,12 @@ public class Player : ILeader, IObjectManipulator {
         //    AddIntel(data.allIntel[i].Load());
         //}
     }
-    public void SetCurrentActiveIntel(Intel intel) {
+    public void SetCurrentActiveIntel(IIntel intel) {
         if (currentActiveIntel == intel) {
             //Do not process when setting the same combat ability
             return;
         }
-        Intel previousIntel = currentActiveIntel;
+        IIntel previousIntel = currentActiveIntel;
         currentActiveIntel = intel;
         if (currentActiveIntel == null) {
             IntelItem intelItem = PlayerUI.Instance.GetIntelItemWithIntel(previousIntel);
@@ -471,9 +471,9 @@ public class Player : ILeader, IObjectManipulator {
         }
         return false;
     }
-    public bool ShowNotificationFrom(Character character, Intel log) {
+    public bool ShowNotificationFrom(Character character, IIntel intel) {
         if (ShouldShowNotificationFrom(character)) {
-            ShowNotification(log);
+            ShowNotification(intel);
             return true;
         }
         return false;
@@ -493,10 +493,10 @@ public class Player : ILeader, IObjectManipulator {
     }
     
     private void ShowNotification(Log log) {
-        Messenger.Broadcast<Log>(Signals.SHOW_PLAYER_NOTIFICATION, log);
+        Messenger.Broadcast(Signals.SHOW_PLAYER_NOTIFICATION, log);
     }
-    private void ShowNotification(Intel intel) {
-        Messenger.Broadcast<Intel>(Signals.SHOW_INTEL_NOTIFICATION, intel);
+    public void ShowNotification(IIntel intel) {
+        Messenger.Broadcast(Signals.SHOW_INTEL_NOTIFICATION, intel);
     }
     #endregion
 

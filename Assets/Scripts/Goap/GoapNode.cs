@@ -623,7 +623,7 @@ public class ActualGoapNode {
                     // PlayerManager.Instance.player.ShowNotificationFrom(descriptionLog, actor);
                     // Messenger.Broadcast(Signals.SHOW_PLAYER_NOTIFICATION, descriptionLog);
                 } else {
-                    PlayerManager.Instance.player.ShowNotificationFrom(actor, InteractionManager.Instance.CreateNewIntel(this));
+                    PlayerManager.Instance.player.ShowNotificationFrom(actor, InteractionManager.Instance.CreateNewIntel(this) as IIntel);
                     // Messenger.Broadcast(Signals.SHOW_INTEL_NOTIFICATION, InteractionManager.Instance.CreateNewIntel(this));
                 }
                 descriptionLog.AddLogToInvolvedObjects();

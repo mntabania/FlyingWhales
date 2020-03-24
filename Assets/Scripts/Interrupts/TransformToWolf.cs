@@ -10,6 +10,7 @@ namespace Interrupts {
             doesStopCurrentAction = true;
             doesDropCurrentJob = true;
             interruptIconString = GoapActionStateDB.Flirt_Icon;
+            isIntel = true;
         }
 
         #region Overrides

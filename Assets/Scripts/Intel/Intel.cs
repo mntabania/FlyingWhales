@@ -1,32 +1,38 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Interrupts;
 
-public class Intel  {
+public class ActionIntel : IIntel {
     public ActualGoapNode node { get; private set; }
-    public Intel(ActualGoapNode node) {
+    public Log log { get { return node.descriptionLog; } }
+    public Character actor { get { return node.actor; } }
+    public IPointOfInterest target { get { return node.poiTarget; } }
+
+    public ActionIntel(ActualGoapNode node) {
         this.node = node;
     }
-    //public Log intelLog;
+}
+public class InterruptIntel : IIntel {
+    public Interrupt interrupt { get; private set; }
+    public Character actor { get; private set; }
+    public IPointOfInterest target { get; private set; }
+    public Log effectLog { get; private set; }
 
-    //public Intel() { }
-    //public Intel(Character actor, GoapAction action) : this() { }
-    //public Intel(Character actor, GoapPlan plan) : this() { }
-    //public Intel(IPointOfInterest obj) : this() { }
+    public Log log { get { return effectLog; } }
 
-    //public Intel(SaveDataIntel data) : this() {
-    //    if (data.hasLog) {
-    //        SetIntelLog(data.intelLog.Load());
-    //    }
-    //}
-    //public void SetIntelLog(Log log) {
-    //    intelLog = log;
-    //}
+    public InterruptIntel(Interrupt interrupt, Character actor, IPointOfInterest target, Log effectLog) {
+        this.interrupt = interrupt;
+        this.actor = actor;
+        this.target = target;
+        this.effectLog = effectLog;
+    }
+}
 
-    /// <summary>
-    /// Function called when an intel reaches it's expiry date and the player has not obtained it.
-    /// </summary>
-    //public virtual void OnIntelExpire() { } 
+public interface IIntel {
+    Log log { get; }
+    Character actor { get; }
+    IPointOfInterest target { get; }
 }
 
 //[System.Serializable]

@@ -6,9 +6,9 @@ using UnityEngine.UI;
 
 public class IntelItem : MonoBehaviour {
 
-    public Intel intel { get; private set; }
+    public IIntel intel { get; private set; }
 
-    public delegate void OnClickAction(Intel intel);
+    public delegate void OnClickAction(IIntel intel);
     private OnClickAction onClickAction;
 
     private List<System.Action> otherClickActions;
@@ -21,7 +21,7 @@ public class IntelItem : MonoBehaviour {
     [SerializeField] private Sprite eventIntelIcon;
     [SerializeField] private Sprite objectIntelIcon;
 
-    public void SetIntel(Intel intel) {
+    public void SetIntel(IIntel intel) {
         this.intel = intel;
         otherClickActions = new List<System.Action>();
         ClearClickActions();
@@ -32,7 +32,7 @@ public class IntelItem : MonoBehaviour {
             //    iconImg.sprite = eventIntelIcon;
             //} 
             //infoLbl.text = Utilities.LogReplacer(intel.intelLog);
-            infoLbl.text = UtilityScripts.Utilities.LogReplacer(intel.node.descriptionLog);
+            infoLbl.text = UtilityScripts.Utilities.LogReplacer(intel.log);
             mainBtn.interactable = true;
             iconImg.gameObject.SetActive(true);
         } else {

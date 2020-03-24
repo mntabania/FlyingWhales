@@ -111,8 +111,11 @@ public partial class InteractionManager : MonoBehaviour {
     //}
     
     //TODO: Object pool this
-    public Intel CreateNewIntel(ActualGoapNode node) {
-        return new Intel(node);
+    public ActionIntel CreateNewIntel(ActualGoapNode node) {
+        return new ActionIntel(node);
+    }
+    public InterruptIntel CreateNewIntel(Interrupt interrupt, Character actor, IPointOfInterest target, Log effectLog) {
+        return new InterruptIntel(interrupt, actor, target, effectLog);
     }
     #endregion
 

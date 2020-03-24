@@ -31,6 +31,14 @@ public class ReportCorruptedStructure : GoapAction {
         Character actor = goapNode.actor;
         return actor.homeSettlement.cityCenter.GetRandomTile();
     }
+    public override IPointOfInterest GetTargetToGoTo(ActualGoapNode goapNode) {
+        return null;
+    }
+    public override void AddFillersToLog(Log log, ActualGoapNode node) {
+        base.AddFillersToLog(log, node);
+        LocationStructure structureToReport = node.otherData[0] as LocationStructure;
+        log.AddToFillers(structureToReport, structureToReport.GetNameRelativeTo(node.actor), LOG_IDENTIFIER.LANDMARK_2);
+    }
     #endregion
 
     #region Requirements
@@ -44,11 +52,11 @@ public class ReportCorruptedStructure : GoapAction {
     #endregion
 
     #region State Effects
-    public void PreReportSuccess(ActualGoapNode goapNode) {
-        object[] otherData = goapNode.otherData;
-        LocationStructure structureToReport = otherData[0] as LocationStructure;
-        goapNode.descriptionLog.AddToFillers(structureToReport, structureToReport.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_2);
-    }
+    //public void PreReportSuccess(ActualGoapNode goapNode) {
+    //    object[] otherData = goapNode.otherData;
+    //    LocationStructure structureToReport = otherData[0] as LocationStructure;
+    //    goapNode.descriptionLog.AddToFillers(structureToReport, structureToReport.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_2);
+    //}
     public void AfterReportSuccess(ActualGoapNode goapNode) {
         object[] otherData = goapNode.otherData;
         LocationStructure structureToReport = otherData[0] as LocationStructure;

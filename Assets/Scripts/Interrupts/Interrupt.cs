@@ -11,6 +11,7 @@ namespace Interrupts {
         public bool doesStopCurrentAction { get; protected set; }
         public bool doesDropCurrentJob { get; protected set; }
         public string interruptIconString { get; protected set; }
+        public bool isIntel { get; protected set; }
 
         public Interrupt(INTERRUPT interrupt) {
             this.interrupt = interrupt;

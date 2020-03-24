@@ -10,10 +10,11 @@ namespace Interrupts {
 			duration = 0;
 			isSimulateneous = true;
 			interruptIconString = GoapActionStateDB.Sick_Icon;
-		}
+            isIntel = true;
+        }
 
-		#region Overrides
-		public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target, ref Log overrideEffectLog) {
+        #region Overrides
+        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target, ref Log overrideEffectLog) {
 			if (UnityEngine.Random.Range(0, 2) == 0) {
 				if(actor.traitContainer.AddTrait(actor, "Poisoned")) {
                     //TODO: Can still be improved: Create a function that returns the trait that's been added instead of boolean
@@ -35,6 +36,15 @@ namespace Interrupts {
 
 			return base.ExecuteInterruptStartEffect(actor, target, ref overrideEffectLog);
 		}
-		#endregion
-	}
+        public override string ReactionToActor(Character witness, Character actor, IPointOfInterest target,
+           Interrupt interrupt, REACTION_STATUS status) {
+            string response = base.ReactionToActor(witness, actor, target, interrupt, status);
+            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status);
+            if (!witness.relationshipContainer.IsEnemiesWith(actor)) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status);
+            }
+            return response;
+        }
+        #endregion
+    }
 }

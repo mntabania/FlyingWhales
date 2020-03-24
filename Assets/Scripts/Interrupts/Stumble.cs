@@ -8,6 +8,7 @@ namespace Interrupts {
             duration = 2;
             doesStopCurrentAction = true;
             interruptIconString = GoapActionStateDB.Flirt_Icon;
+            isIntel = true;
         }
 
         #region Overrides
@@ -22,6 +23,16 @@ namespace Interrupts {
                 actor.Death("Stumble");
             }
             return true;
+        }
+        public override string ReactionToActor(Character witness, Character actor, IPointOfInterest target,
+            Interrupt interrupt, REACTION_STATUS status) {
+            string response = base.ReactionToActor(witness, actor, target, interrupt, status);
+            if (witness.relationshipContainer.IsFriendsWith(actor)) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status);
+            } else if (witness.relationshipContainer.IsEnemiesWith(actor)) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, actor, status);
+            }
+            return response;
         }
         #endregion
     }
