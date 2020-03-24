@@ -37,6 +37,6 @@ public class WindBlastData : SpellData {
         return targetTile.structure != null;
     }
     public override void HighlightAffectedTiles(LocationGridTile tile) {
-        TileHighlighter.Instance.PositionHighlight(1, tile);
+        TileHighlighter.Instance.PositionHighlight(0, tile);
     }
 }
