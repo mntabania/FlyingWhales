@@ -44,7 +44,11 @@ public abstract class InfoUIBase : MonoBehaviour {
         UIManager.Instance.poiTestingUI.HideUI();
         UIManager.Instance.minionCommandsUI.HideUI();
         UIManager.Instance.customDropdownList.Close();
-        _playerActionTarget = _data as IPlayerActionTarget;
+        if(_data is Minion minion) {
+            _playerActionTarget = minion.character;
+        } else {
+            _playerActionTarget = _data as IPlayerActionTarget;
+        }
         if (_playerActionTarget != null) {
             LoadActions(_playerActionTarget);    
         }
