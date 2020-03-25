@@ -8,7 +8,7 @@ public class IceteroidParticleEffect : BaseParticleEffect {
         StartCoroutine(IceteroidEffect());
     }
     private IEnumerator IceteroidEffect() {
-        yield return new WaitForSeconds(0.6f);
+        yield return new WaitForSeconds(1.6f);
         OnIceteroidFell();
     }
     protected override void ParticleAfterEffect(ParticleSystem particleSystem) {
