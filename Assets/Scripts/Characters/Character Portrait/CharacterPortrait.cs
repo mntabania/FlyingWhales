@@ -70,7 +70,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         } else {
             SetWholeImageSprite(null);
             SetWholeImageState(false);
-            SetHairMaterial(character.visuals.hairMaterial);
+            SetHairMaterial(character.visuals.hairUIMaterial);
             
             SetPortraitAsset("head", character.visuals.portraitSettings.head, _portraitSettings.race, _portraitSettings.gender, head);
             SetPortraitAsset("brows", character.visuals.portraitSettings.brows, _portraitSettings.race, _portraitSettings.gender, brows);

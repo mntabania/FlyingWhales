@@ -47,8 +47,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ParentPool: {fileID: 0}
   particleSystems:
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 1865106449365310970}
+  - {fileID: 1649882161034167099}
 --- !u!1 &5640923190549851440
 GameObject:
   m_ObjectHideFlags: 0

@@ -29,6 +29,7 @@ public class CharacterManager : MonoBehaviour {
     [SerializeField] private RolePortraitFramesDictionary portraitFrames;
     [SerializeField] private StringSpriteDictionary classPortraits;
     public Material hsvMaterial;
+    public Material hairUIMaterial;
     public Material spriteLightingMaterial;
 
     //TODO: Will move this once other hair assets arrive

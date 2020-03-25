@@ -4,14 +4,16 @@ using UnityEngine;
 
 public class CharacterVisuals {
     //Hair HSV Shader Properties
-    public static readonly int HairHue = Shader.PropertyToID("_Hue");
-    public static readonly int HairSaturation = Shader.PropertyToID("_Saturation");
-    public static readonly int HairValue = Shader.PropertyToID("_Value");
+    private static readonly int HairHue = Shader.PropertyToID("_Hue");
+    private static readonly int HairSaturation = Shader.PropertyToID("_Saturation");
+    private static readonly int HairValue = Shader.PropertyToID("_Value");
+    private static readonly int HsvaAdjust = Shader.PropertyToID("_HSVAAdjust");
     
     private Character _owner;
     
     public PortraitSettings portraitSettings { get; private set; }
     public Material hairMaterial { get; private set; }
+    public Material hairUIMaterial { get; private set; }
     public Material wholeImageMaterial { get; private set; }
     public Dictionary<string, Sprite> markerAnimations { get; private set; }
     public Sprite defaultSprite { get; private set; }
@@ -36,12 +38,18 @@ public class CharacterVisuals {
         hairMaterial.SetFloat(HairHue, portraitSettings.hairColorHue);
         hairMaterial.SetFloat(HairSaturation, portraitSettings.hairColorSaturation);
         hairMaterial.SetFloat(HairValue, portraitSettings.hairColorValue);
+        
+        hairUIMaterial = Object.Instantiate(CharacterManager.Instance.hairUIMaterial);
+        hairUIMaterial.SetVector(HsvaAdjust, new Vector4(portraitSettings.hairColorHue, portraitSettings.hairColorSaturation, portraitSettings.hairColorValue, 0f));
     }
     public void CreateWholeImageMaterial() {
         hairMaterial = Object.Instantiate(CharacterManager.Instance.hsvMaterial);
         hairMaterial.SetFloat(HairHue, portraitSettings.hairColorHue);
         hairMaterial.SetFloat(HairSaturation, portraitSettings.hairColorSaturation);
         hairMaterial.SetFloat(HairValue, portraitSettings.hairColorValue);
+        
+        hairUIMaterial = Object.Instantiate(CharacterManager.Instance.hairUIMaterial);
+        hairUIMaterial.SetVector(HsvaAdjust, new Vector4(portraitSettings.hairColorHue, portraitSettings.hairColorSaturation, portraitSettings.hairColorValue, 0f));
     }
 
     public void UpdateAllVisuals(Character character) {
