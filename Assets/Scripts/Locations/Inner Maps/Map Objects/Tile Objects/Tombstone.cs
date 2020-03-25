@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using Actionables;
 
 public class Tombstone : TileObject {
 
@@ -30,16 +29,17 @@ public class Tombstone : TileObject {
         character.DisableMarker();
         character.SetGrave(this);
         if (character.race == RACE.HUMANS || character.race == RACE.ELVES) {
-            PlayerAction raiseAction = new PlayerAction(PlayerDB.Raise_Skeleton_Action
-                , () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.RAISE_DEAD].CanPerformAbilityTowards(this)
-                , null
-                , () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.RAISE_DEAD].ActivateAbility(this));
-            AddPlayerAction(raiseAction);
+            //PlayerAction raiseAction = new PlayerAction(PlayerDB.Raise_Skeleton_Action
+            //    , () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.RAISE_DEAD].CanPerformAbilityTowards(this)
+            //    , null
+            //    , () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.RAISE_DEAD].ActivateAbility(this));
+            AddPlayerAction(SPELL_TYPE.RAISE_DEAD);
         }
     }
     public override void OnDestroyPOI() {
         base.OnDestroyPOI();
-        RemovePlayerAction(PlayerDB.Raise_Skeleton_Action);
+        //RemovePlayerAction(PlayerDB.Raise_Skeleton_Action);
+        RemovePlayerAction(SPELL_TYPE.RAISE_DEAD);
     }
     public virtual void OnClickAction() {
         UIManager.Instance.ShowCharacterInfo(character, true);

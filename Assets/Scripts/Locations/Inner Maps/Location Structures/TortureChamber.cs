@@ -1,12 +1,11 @@
 ﻿using System.Linq;
-using Actionables;
 using Traits;
 using UnityEngine;
 using UnityEngine.Assertions;
 namespace Inner_Maps.Location_Structures {
     public class TortureChamber : DemonicStructure {
         public override Vector2 selectableSize { get; }
-        private Character _currentTortureTarget;
+        public Character currentTortureTarget { get; private set; }
         private TortureChamberStructureObject _tortureChamberStructureObject;
         
         public TortureChamber(Region location) : base(STRUCTURE_TYPE.TORTURE_CHAMBER, location){
@@ -54,10 +53,10 @@ namespace Inner_Maps.Location_Structures {
             }
         }
         private void AddTortureAction() {
-            PlayerAction tortureAction = new PlayerAction(PlayerDB.Torture_Action, () => _currentTortureTarget == null, null, ChooseTortureTarget);
-            AddPlayerAction(tortureAction);
+            //PlayerAction tortureAction = new PlayerAction(PlayerDB.Torture_Action, () => currentTortureTarget == null, null, ChooseTortureTarget);
+            AddPlayerAction(SPELL_TYPE.TORTURE);
         }
-        private void ChooseTortureTarget() {
+        public void ChooseTortureTarget() {
             UIManager.Instance.ShowClickableObjectPicker(charactersHere, StartTorture, null, CanTorture, "Choose Torture Target", showCover: true);
         }
         private bool CanTorture(Character character) {
@@ -65,7 +64,7 @@ namespace Inner_Maps.Location_Structures {
         }
         private void StartTorture(object character) {
             Character target = character as Character;
-            _currentTortureTarget = target;
+            currentTortureTarget = target;
             TileObject ironMaiden = GetTileObjectOfType<TileObject>(TILE_OBJECT_TYPE.IRON_MAIDEN);
             Assert.IsNotNull(ironMaiden, $"Trying to activate torture for {target.name} but there was no iron maiden available!");
             target.marker.GoToPOI(ironMaiden, OnArriveAtTortureLocation);
@@ -73,16 +72,16 @@ namespace Inner_Maps.Location_Structures {
             Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
         }
         private void OnArriveAtTortureLocation() {
-            _currentTortureTarget.interruptComponent.TriggerInterrupt(INTERRUPT.Being_Tortured, _currentTortureTarget);
+            currentTortureTarget.interruptComponent.TriggerInterrupt(INTERRUPT.Being_Tortured, currentTortureTarget);
             Messenger.AddListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, CheckIfTortureInterruptFinished);
             _tortureChamberStructureObject.ActivateShroudParticles();
         }
         private void StopTorture() {
-            _currentTortureTarget = null;
+            currentTortureTarget = null;
             _tortureChamberStructureObject.DeactivateShroudParticles();
         }
         private void CheckIfTortureInterruptFinished(INTERRUPT interrupt, Character character) {
-            if (character == _currentTortureTarget && interrupt == INTERRUPT.Being_Tortured) {
+            if (character == currentTortureTarget && interrupt == INTERRUPT.Being_Tortured) {
                 Messenger.RemoveListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, CheckIfTortureInterruptFinished);
                 StopTorture();
             }

@@ -16,6 +16,8 @@ public class PlayerManager : MonoBehaviour {
     public Player player;
     
     public Dictionary<SPELL_TYPE, SpellData> allSpellsData;
+    public Dictionary<SPELL_TYPE, PlayerAction> allPlayerActionsData;
+    public Dictionary<SPELL_TYPE, SpellData> allAfflictionsData;
     public COMBAT_ABILITY[] allCombatAbilities;
 
     [Header("Job Action Icons")]
@@ -29,37 +31,39 @@ public class PlayerManager : MonoBehaviour {
 
     [Header("Chaos Orbs")] 
     [SerializeField] private GameObject chaosOrbPrefab;
-    
+
+    private SPELL_TYPE[] allSpells = { SPELL_TYPE.METEOR
+            , SPELL_TYPE.TORNADO, SPELL_TYPE.RAVENOUS_SPIRIT, SPELL_TYPE.FEEBLE_SPIRIT, SPELL_TYPE.FORLORN_SPIRIT
+            , SPELL_TYPE.LIGHTNING, SPELL_TYPE.POISON_CLOUD, SPELL_TYPE.EARTHQUAKE
+            , SPELL_TYPE.SPAWN_BOULDER, SPELL_TYPE.WATER_BOMB, SPELL_TYPE.MANIFEST_FOOD
+            , SPELL_TYPE.BRIMSTONES, SPELL_TYPE.SPLASH_POISON, SPELL_TYPE.LOCUST_SWARM, SPELL_TYPE.BLIZZARD, SPELL_TYPE.RAIN
+            , SPELL_TYPE.BALL_LIGHTNING, SPELL_TYPE.ELECTRIC_STORM, SPELL_TYPE.FROSTY_FOG, SPELL_TYPE.VAPOR, SPELL_TYPE.FIRE_BALL
+            , SPELL_TYPE.POISON_BLOOM, SPELL_TYPE.LANDMINE, SPELL_TYPE.TERRIFYING_HOWL, SPELL_TYPE.FREEZING_TRAP, SPELL_TYPE.SNARE_TRAP, SPELL_TYPE.WIND_BLAST
+            , SPELL_TYPE.ICETEROIDS, SPELL_TYPE.HEAT_WAVE, 
+    };
+
+    private SPELL_TYPE[] allPlayerActions = { SPELL_TYPE.ZAP, SPELL_TYPE.RAISE_DEAD, SPELL_TYPE.DESTROY, SPELL_TYPE.IGNITE, SPELL_TYPE.POISON
+            , SPELL_TYPE.TORTURE, SPELL_TYPE.SUMMON_MINION, SPELL_TYPE.STOP, SPELL_TYPE.SEIZE_OBJECT, SPELL_TYPE.SEIZE_CHARACTER, SPELL_TYPE.SEIZE_MONSTER
+            , SPELL_TYPE.RETURN_TO_PORTAL, SPELL_TYPE.RAID, SPELL_TYPE.HARASS, SPELL_TYPE.INVADE, SPELL_TYPE.LEARN_SPELL, SPELL_TYPE.CHANGE_COMBAT_MODE
+            , SPELL_TYPE.BUILD_DEMONIC_STRUCTURE, SPELL_TYPE.AFFLICT, SPELL_TYPE.ACTIVATE_TILE_OBJECT, SPELL_TYPE.BREED_MONSTER
+            , SPELL_TYPE.END_RAID, SPELL_TYPE.END_HARASS, SPELL_TYPE.END_INVADE, SPELL_TYPE.INTERFERE,
+    };
+
+    private SPELL_TYPE[] allAfflictions = { SPELL_TYPE.CANNIBALISM
+            , SPELL_TYPE.LYCANTHROPY, SPELL_TYPE.VAMPIRISM, SPELL_TYPE.KLEPTOMANIA
+            , SPELL_TYPE.UNFAITHFULNESS, SPELL_TYPE.CURSED_OBJECT, SPELL_TYPE.ALCOHOLIC
+            , SPELL_TYPE.AGORAPHOBIA, SPELL_TYPE.PARALYSIS, SPELL_TYPE.ZOMBIE_VIRUS
+            , SPELL_TYPE.PESTILENCE, SPELL_TYPE.PSYCHOPATHY,
+    };
+
     private void Awake() {
         Instance = this;
     }
     public void Initialize() {
         // SPELL_TYPE[] allSpellTypes = UtilityScripts.CollectionUtilities.GetEnumValues<SPELL_TYPE>();
-        SPELL_TYPE[] allSpellTypes = { SPELL_TYPE.ZAP, SPELL_TYPE.RAISE_DEAD, SPELL_TYPE.CANNIBALISM
-            , SPELL_TYPE.LYCANTHROPY, SPELL_TYPE.VAMPIRISM, SPELL_TYPE.KLEPTOMANIA
-            , SPELL_TYPE.UNFAITHFULNESS, SPELL_TYPE.METEOR
-            , SPELL_TYPE.IGNITE, SPELL_TYPE.CURSED_OBJECT, SPELL_TYPE.ALCOHOLIC
-            , SPELL_TYPE.AGORAPHOBIA, SPELL_TYPE.PARALYSIS, SPELL_TYPE.ZOMBIE_VIRUS
-            , SPELL_TYPE.PESTILENCE, SPELL_TYPE.PSYCHOPATHY, SPELL_TYPE.TORNADO, SPELL_TYPE.DESTROY
-            , SPELL_TYPE.RAVENOUS_SPIRIT, SPELL_TYPE.FEEBLE_SPIRIT, SPELL_TYPE.FORLORN_SPIRIT
-            , SPELL_TYPE.LIGHTNING, SPELL_TYPE.POISON_CLOUD, SPELL_TYPE.EARTHQUAKE
-            , SPELL_TYPE.SPAWN_BOULDER, SPELL_TYPE.WATER_BOMB, SPELL_TYPE.MANIFEST_FOOD
-            , SPELL_TYPE.BRIMSTONES, SPELL_TYPE.SPLASH_POISON, SPELL_TYPE.LOCUST_SWARM, SPELL_TYPE.BLIZZARD, SPELL_TYPE.RAIN
-            , SPELL_TYPE.SPOIL, SPELL_TYPE.BALL_LIGHTNING, SPELL_TYPE.ELECTRIC_STORM, SPELL_TYPE.FROSTY_FOG, SPELL_TYPE.VAPOR, SPELL_TYPE.FIRE_BALL
-            , SPELL_TYPE.POISON_BLOOM, SPELL_TYPE.LANDMINE, SPELL_TYPE.TERRIFYING_HOWL, SPELL_TYPE.FREEZING_TRAP, SPELL_TYPE.SNARE_TRAP, SPELL_TYPE.WIND_BLAST
-            , SPELL_TYPE.ICETEROIDS, SPELL_TYPE.HEAT_WAVE,
-        };
-
-        allSpellsData = new Dictionary<SPELL_TYPE, SpellData>();
-        for (int i = 0; i < allSpellTypes.Length; i++) {
-            SPELL_TYPE spellType = allSpellTypes[i];
-            if (spellType != SPELL_TYPE.NONE) {
-                var typeName =
-                    $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(spellType.ToString())}Data";
-                allSpellsData.Add(spellType, System.Activator.CreateInstance(System.Type.GetType(typeName) ?? 
-                   throw new Exception($"Problem with creating spell data for {typeName}")) as SpellData);    
-            }
-        }
+        ConstructAllSpellsData();
+        ConstructAllPlayerActionsData();
+        ConstructAllAfflictionsData();
         //Unit Selection
         Messenger.AddListener<InfoUIBase>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<InfoUIBase>(Signals.MENU_CLOSED, OnMenuClosed);
@@ -131,6 +135,42 @@ public class PlayerManager : MonoBehaviour {
     }
 
     #region Utilities
+    private void ConstructAllSpellsData() {
+        allSpellsData = new Dictionary<SPELL_TYPE, SpellData>();
+        for (int i = 0; i < allSpells.Length; i++) {
+            SPELL_TYPE spellType = allSpells[i];
+            if (spellType != SPELL_TYPE.NONE) {
+                var typeName =
+                    $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(spellType.ToString())}Data";
+                allSpellsData.Add(spellType, System.Activator.CreateInstance(System.Type.GetType(typeName) ??
+                   throw new Exception($"Problem with creating spell data for {typeName}")) as SpellData);
+            }
+        }
+    }
+    private void ConstructAllPlayerActionsData() {
+        allPlayerActionsData = new Dictionary<SPELL_TYPE, PlayerAction>();
+        for (int i = 0; i < allPlayerActions.Length; i++) {
+            SPELL_TYPE spellType = allPlayerActions[i];
+            if (spellType != SPELL_TYPE.NONE) {
+                var typeName =
+                    $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(spellType.ToString())}Data";
+                allPlayerActionsData.Add(spellType, System.Activator.CreateInstance(System.Type.GetType(typeName) ??
+                   throw new Exception($"Problem with creating spell data for {typeName}")) as PlayerAction);
+            }
+        }
+    }
+    private void ConstructAllAfflictionsData() {
+        allAfflictionsData = new Dictionary<SPELL_TYPE, SpellData>();
+        for (int i = 0; i < allAfflictions.Length; i++) {
+            SPELL_TYPE spellType = allAfflictions[i];
+            if (spellType != SPELL_TYPE.NONE) {
+                var typeName =
+                    $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(spellType.ToString())}Data";
+                allAfflictionsData.Add(spellType, System.Activator.CreateInstance(System.Type.GetType(typeName) ??
+                   throw new Exception($"Problem with creating spell data for {typeName}")) as SpellData);
+            }
+        }
+    }
     public Sprite GetJobActionSprite(string actionName) {
         if (spellIcons.ContainsKey(actionName)) {
             return spellIcons[actionName];
@@ -152,8 +192,8 @@ public class PlayerManager : MonoBehaviour {
             //    return new Abduct();
             //case SPELL_TYPE.ACCESS_MEMORIES:
             //    return new AccessMemories();
-            case SPELL_TYPE.DESTROY:
-                return new Destroy();
+            //case SPELL_TYPE.DESTROY:
+            //    return new Destroy();
             //case SPELL_TYPE.DISABLE:
             //    return new Disable();
             //case SPELL_TYPE.ENRAGE:
@@ -170,14 +210,14 @@ public class PlayerManager : MonoBehaviour {
             //    return new Jolt();
             //case SPELL_TYPE.PROVOKE:
             //    return new Provoke();
-            case SPELL_TYPE.RAISE_DEAD:
-                return new RaiseDead();
+            //case SPELL_TYPE.RAISE_DEAD:
+            //    return new RaiseDead();
             //case INTERVENTION_ABILITY.SHARE_INTEL:
             //    return new ShareIntel();
             //case SPELL_TYPE.SPOOK:
             //    return new Spook();
-            case SPELL_TYPE.ZAP:
-                return new Zap();
+            //case SPELL_TYPE.ZAP:
+            //    return new Zap();
             case SPELL_TYPE.CANNIBALISM:
                 return new Cannibalism();
             //case SPELL_TYPE.CLOAK_OF_INVISIBILITY:
@@ -186,8 +226,8 @@ public class PlayerManager : MonoBehaviour {
             //    return new Lure();
             case SPELL_TYPE.METEOR:
                 return new Meteor();
-            case SPELL_TYPE.IGNITE:
-                return new Ignite();
+            //case SPELL_TYPE.IGNITE:
+            //    return new Ignite();
             case SPELL_TYPE.CURSED_OBJECT:
                 return new CursedObject();
             //case SPELL_TYPE.SPOIL:
@@ -213,11 +253,32 @@ public class PlayerManager : MonoBehaviour {
         }
         return null;
     }
+    public bool IsSpell(SPELL_TYPE type) {
+        return allSpells.Contains(type);
+    }
+    public bool IsAffliction(SPELL_TYPE type) {
+        return allAfflictions.Contains(type);
+    }
+    public bool IsPlayerAction(SPELL_TYPE type) {
+        return allPlayerActions.Contains(type);
+    }
     public SpellData GetSpellData(SPELL_TYPE type) {
         if (allSpellsData.ContainsKey(type)) {
             return allSpellsData[type];
         }
-        throw new System.Exception($"No spell data for {type}");
+        return null;
+    }
+    public SpellData GetAfflictionData(SPELL_TYPE type) {
+        if (allAfflictionsData.ContainsKey(type)) {
+            return allAfflictionsData[type];
+        }
+        return null;
+    }
+    public PlayerAction GetPlayerActionData(SPELL_TYPE type) {
+        if (allPlayerActionsData.ContainsKey(type)) {
+            return allPlayerActionsData[type];
+        }
+        return null;
     }
     public int GetSpellTier(SPELL_TYPE abilityType) {
         if (spellTiers.ContainsKey(abilityType)) {

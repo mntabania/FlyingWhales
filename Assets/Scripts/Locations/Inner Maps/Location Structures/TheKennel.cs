@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Actionables;
 using UnityEngine;
 using UtilityScripts;
 namespace Inner_Maps.Location_Structures {
@@ -100,16 +99,16 @@ namespace Inner_Maps.Location_Structures {
             }
         }
         private void AddBreedMonsterAction() {
-            PlayerAction action = new PlayerAction(PlayerDB.Breed_Monster_Action, CanDoBreedMonster, null, OnClickBreedMonster);
-            AddPlayerAction(action);
+            //PlayerAction action = new PlayerAction(PlayerDB.Breed_Monster_Action, CanDoBreedMonster, null, OnClickBreedMonster);
+            AddPlayerAction(SPELL_TYPE.BREED_MONSTER);
         }
         private void RemoveBreedMonsterAction() {
-            RemovePlayerAction(GetPlayerAction(PlayerDB.Breed_Monster_Action));
+            RemovePlayerAction(SPELL_TYPE.BREED_MONSTER);
         }
-        private bool CanDoBreedMonster() {
+        public bool CanDoBreedMonster() {
             return _remainingCapacity > 0 && _isCurrentlyBreeding == false;
         }
-        private void OnClickBreedMonster() {
+        public void OnClickBreedMonster() {
             List<RaceClass> monsters = PlayerManager.Instance.player.archetype.monsters;
             UIManager.Instance.ShowClickableObjectPicker(monsters, OnChooseBreedMonster, null, CanBreedMonster, "Choose Monster to Breed." );
         }

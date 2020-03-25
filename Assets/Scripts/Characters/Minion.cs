@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.Linq;
-using Actionables;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Traits;
@@ -413,18 +412,6 @@ public class Minion {
     }
     public void SetIsSummoned(bool state) {
         isSummoned = state;
-    }
-    #endregion
-
-    #region Player Action Target
-    private void RemoveInvalidPlayerActions() {
-        List<PlayerAction> currentActions = new List<PlayerAction>(character.actions); 
-        for (int i = 0; i < currentActions.Count; i++) {
-            PlayerAction action = currentActions[i];
-            if (action.actionName != "Seize") {
-                character.RemovePlayerAction(action);    
-            }
-        }
     }
     #endregion
     

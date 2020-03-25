@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Actionables;
 using Traits;
 using UnityEngine;
 namespace Inner_Maps.Location_Structures {
@@ -25,7 +24,7 @@ namespace Inner_Maps.Location_Structures {
         #endregion
         
         #region Interfere
-        private void ShowInterfereUI() {
+        public void ShowInterfereUI() {
             DualObjectPickerTabSetting[] tabs = new[] {
                 new DualObjectPickerTabSetting() {
                     name = "Join Faction",
@@ -39,11 +38,12 @@ namespace Inner_Maps.Location_Structures {
             UIManager.Instance.dualObjectPicker.ShowDualObjectPicker(tabs);
         }
         private void AddInterfereAction() {
-            PlayerAction interfere = new PlayerAction(PlayerDB.Interfere_Action, () => true, null, ShowInterfereUI);
-            AddPlayerAction(interfere);
+            //PlayerAction interfere = new PlayerAction(PlayerDB.Interfere_Action, () => true, null, ShowInterfereUI);
+            AddPlayerAction(SPELL_TYPE.INTERFERE);
         }
         private void RemoveInterfereAction() {
-            RemovePlayerAction(GetPlayerAction(PlayerDB.Interfere_Action));
+            //RemovePlayerAction(GetPlayerAction(PlayerDB.Interfere_Action));
+            RemovePlayerAction(SPELL_TYPE.INTERFERE);
         }
         #endregion
 

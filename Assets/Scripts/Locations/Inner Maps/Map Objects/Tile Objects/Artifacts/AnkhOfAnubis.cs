@@ -11,9 +11,9 @@ public class AnkhOfAnubis : Artifact {
     }
 
     #region Overrides
-    public override void ActivateArtifactEffect() {
+    public override void ActivateTileObject() {
         if(gridTileLocation != null) {
-            base.ActivateArtifactEffect();
+            base.ActivateTileObject();
             Quicksand quicksand = InnerMapManager.Instance.CreateNewTileObject<Quicksand>(TILE_OBJECT_TYPE.QUICKSAND);
             quicksand.SetGridTileLocation(gridTileLocation);
             quicksand.OnPlacePOI();

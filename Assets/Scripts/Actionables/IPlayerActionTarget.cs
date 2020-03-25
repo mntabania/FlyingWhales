@@ -2,19 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Actionables {
-	/// <summary>
-	/// Interface for classes that can be targeted by player actions.
-	/// </summary>
-	public interface IPlayerActionTarget {
+/// <summary>
+/// Interface for classes that can be targeted by player actions.
+/// </summary>
+public interface IPlayerActionTarget {
 
-		List<Actionables.PlayerAction> actions { get; }
+    List<SPELL_TYPE> actions { get; }
 
-		void ConstructDefaultActions();
-		void AddPlayerAction(PlayerAction action);
-		void RemovePlayerAction(PlayerAction action);
-        void RemovePlayerAction(string actionName);
-		void ClearPlayerActions();
-	}	
+    void ConstructDefaultActions();
+    void AddPlayerAction(SPELL_TYPE action);
+    void RemovePlayerAction(SPELL_TYPE action);
+    void ClearPlayerActions();
 }
-

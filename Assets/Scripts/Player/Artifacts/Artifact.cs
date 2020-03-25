@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
 using UnityEngine;
-using Actionables;
 
 public class Artifact : TileObject {
     public ArtifactData data { get; private set; }
@@ -49,75 +48,72 @@ public class Artifact : TileObject {
     //    }
     //}
     public override void ConstructDefaultActions() {
-        actions = new List<PlayerAction>();
+        actions = new List<SPELL_TYPE>();
 
-        PlayerAction activateArtifactAction = new PlayerAction(PlayerDB.Activate_Artifact_Action,
-            () => true,
-            null,
-            ActivateArtifactEffect);
-        AddPlayerAction(activateArtifactAction);
+        //PlayerAction activateArtifactAction = new PlayerAction(PlayerDB.Activate_Artifact_Action,
+        //    () => true,
+        //    null,
+        //    ActivateArtifactEffect);
+        AddPlayerAction(SPELL_TYPE.ACTIVATE_TILE_OBJECT);
     }
     #endregion
 
-    public virtual void Activate() {
-        hasBeenActivated = true;
-        for (int i = 0; i < data.unlocks.Length; i++) {
-            ArtifactUnlockable unlockable = data.unlocks[i];
-            Unlock(unlockable);    
-        }
-    }
-    public virtual void Deactivate() {
-        hasBeenActivated = false;
-        for (int i = 0; i < data.unlocks.Length; i++) {
-            ArtifactUnlockable unlockable = data.unlocks[i];
-            Relock(unlockable);    
-        }
-    }
-    public virtual void ActivateArtifactEffect() {
-        Messenger.Broadcast(Signals.INCREASE_THREAT_THAT_SEES_POI, this, 5);
-    }
-    public bool CanGainSomethingNewByActivating() {
-        for (int i = 0; i < data.unlocks.Length; i++) {
-            ArtifactUnlockable unlockable = data.unlocks[i];
-            if (CanGainSomethingNewByActivating(unlockable)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    private bool CanGainSomethingNewByActivating(ArtifactUnlockable unlockable) {
-        switch (unlockable.unlockableType) {
-            case ARTIFACT_UNLOCKABLE_TYPE.Action:
-                return PlayerManager.Instance.player.archetype.actions.Contains(unlockable.identifier) == false;
-            case ARTIFACT_UNLOCKABLE_TYPE.Structure:
-                LANDMARK_TYPE landmarkType = (LANDMARK_TYPE)Enum.Parse(typeof(LANDMARK_TYPE), unlockable.identifier);
-                return PlayerManager.Instance.player.archetype.demonicStructures.Contains(landmarkType) == false;
-            default:
-                return false;
-        }
-    }
-    private void Unlock(ArtifactUnlockable unlockable) {
-        switch (unlockable.unlockableType) {
-            case ARTIFACT_UNLOCKABLE_TYPE.Action:
-                PlayerManager.Instance.player.archetype.AddAction(unlockable.identifier);
-                break;
-            case ARTIFACT_UNLOCKABLE_TYPE.Structure:
-                LANDMARK_TYPE landmarkType = (LANDMARK_TYPE)Enum.Parse(typeof(LANDMARK_TYPE), unlockable.identifier);
-                PlayerManager.Instance.player.archetype.AddDemonicStructure(landmarkType);
-                break;
-        }
-    }
-    private void Relock(ArtifactUnlockable unlockable) {
-        switch (unlockable.unlockableType) {
-            case ARTIFACT_UNLOCKABLE_TYPE.Action:
-                PlayerManager.Instance.player.archetype.RemoveAction(unlockable.identifier);
-                break;
-            case ARTIFACT_UNLOCKABLE_TYPE.Structure:
-                LANDMARK_TYPE landmarkType = (LANDMARK_TYPE)Enum.Parse(typeof(LANDMARK_TYPE), unlockable.identifier);
-                PlayerManager.Instance.player.archetype.RemoveDemonicStructure(landmarkType);
-                break;
-        }
-    }
+    //public virtual void Activate() {
+    //    hasBeenActivated = true;
+    //    for (int i = 0; i < data.unlocks.Length; i++) {
+    //        ArtifactUnlockable unlockable = data.unlocks[i];
+    //        Unlock(unlockable);    
+    //    }
+    //}
+    //public virtual void Deactivate() {
+    //    hasBeenActivated = false;
+    //    for (int i = 0; i < data.unlocks.Length; i++) {
+    //        ArtifactUnlockable unlockable = data.unlocks[i];
+    //        Relock(unlockable);    
+    //    }
+    //}
+    //public bool CanGainSomethingNewByActivating() {
+    //    for (int i = 0; i < data.unlocks.Length; i++) {
+    //        ArtifactUnlockable unlockable = data.unlocks[i];
+    //        if (CanGainSomethingNewByActivating(unlockable)) {
+    //            return true;
+    //        }
+    //    }
+    //    return false;
+    //}
+    //private bool CanGainSomethingNewByActivating(ArtifactUnlockable unlockable) {
+    //    switch (unlockable.unlockableType) {
+    //        case ARTIFACT_UNLOCKABLE_TYPE.Action:
+    //            return PlayerManager.Instance.player.archetype.playerActions.Contains(unlockable.identifier) == false;
+    //        case ARTIFACT_UNLOCKABLE_TYPE.Structure:
+    //            LANDMARK_TYPE landmarkType = (LANDMARK_TYPE)Enum.Parse(typeof(LANDMARK_TYPE), unlockable.identifier);
+    //            return PlayerManager.Instance.player.archetype.demonicStructures.Contains(landmarkType) == false;
+    //        default:
+    //            return false;
+    //    }
+    //}
+    //private void Unlock(ArtifactUnlockable unlockable) {
+    //    switch (unlockable.unlockableType) {
+    //        case ARTIFACT_UNLOCKABLE_TYPE.Action:
+    //            PlayerManager.Instance.player.archetype.AddAction(unlockable.identifier);
+    //            break;
+    //        case ARTIFACT_UNLOCKABLE_TYPE.Structure:
+    //            LANDMARK_TYPE landmarkType = (LANDMARK_TYPE)Enum.Parse(typeof(LANDMARK_TYPE), unlockable.identifier);
+    //            PlayerManager.Instance.player.archetype.AddDemonicStructure(landmarkType);
+    //            break;
+    //    }
+    //}
+    //private void Relock(ArtifactUnlockable unlockable) {
+    //    switch (unlockable.unlockableType) {
+    //        case ARTIFACT_UNLOCKABLE_TYPE.Action:
+    //            PlayerManager.Instance.player.archetype.RemoveAction(unlockable.identifier);
+    //            break;
+    //        case ARTIFACT_UNLOCKABLE_TYPE.Structure:
+    //            LANDMARK_TYPE landmarkType = (LANDMARK_TYPE)Enum.Parse(typeof(LANDMARK_TYPE), unlockable.identifier);
+    //            PlayerManager.Instance.player.archetype.RemoveDemonicStructure(landmarkType);
+    //            break;
+    //    }
+    //}
     
 }
 

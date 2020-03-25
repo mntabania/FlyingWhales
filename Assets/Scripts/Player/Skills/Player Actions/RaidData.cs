@@ -1,0 +1,30 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class RaidData : PlayerAction {
+    public override SPELL_TYPE type => SPELL_TYPE.RAID;
+    public override string name { get { return "Raid"; } }
+    public override string description { get { return "Raid"; } }
+
+    public RaidData() : base() {
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.HEX };
+    }
+    #region Overrides
+    public override void ActivateAbility(HexTile targetHex) {
+        PlayerUI.Instance.OnClickHarassRaidInvade(targetHex, "raid");
+    }
+    public override bool CanPerformAbilityTowards(HexTile targetHex) {
+        if (targetHex.settlementOnTile != null && targetHex.settlementOnTile is NPCSettlement npcSettlement) {
+            return !npcSettlement.isBeingRaided;
+        }
+        return false;
+    }
+    public override bool IsValid(IPlayerActionTarget target) {
+        if(target is HexTile targetHex) {
+            return targetHex.settlementOnTile != null && targetHex.settlementOnTile.owner != null && targetHex.settlementOnTile.owner.isMajorNonPlayer;
+        }
+        return false;
+    }
+    #endregion
+}

@@ -8,7 +8,6 @@ using TMPro;
 using UnityEngine.UI;
 using Traits;
 using UnityEngine.Serialization;
-using Actionables;
 
 public class MinionInfoUI : InfoUIBase {
     
@@ -98,7 +97,7 @@ public class MinionInfoUI : InfoUIBase {
     }
     protected override void OnPlayerActionExecuted(PlayerAction action) {
         base.OnPlayerActionExecuted(action);
-        if(action.actionName == PlayerDB.Combat_Mode_Action) {
+        if(action.type == SPELL_TYPE.CHANGE_COMBAT_MODE) {
             SetCombatModeUIPosition(action);
         }
     }
@@ -106,13 +105,13 @@ public class MinionInfoUI : InfoUIBase {
         UtilityScripts.Utilities.DestroyChildren(actionsTransform);
         activeActionItems.Clear();
         for (int i = 0; i < target.actions.Count; i++) {
-            PlayerAction action = target.actions[i];
-            if (action.IsValid(target) && PlayerManager.Instance.player.archetype.CanDoAction(action.actionName)) {
-                if (action.actionName == PlayerDB.Combat_Mode_Action) {
-                    action.SetLabelText(action.actionName + ": " + UtilityScripts.Utilities.NotNormalizedConversionEnumToString(activeMinion.character.combatComponent.combatMode.ToString()));
-                }
-                ActionItem actionItem = AddNewAction(action);
-                actionItem.SetInteractable(action.isActionClickableChecker.Invoke() && !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI);
+            PlayerAction action = PlayerManager.Instance.GetPlayerActionData(target.actions[i]);
+            if (action.IsValid(target) && PlayerManager.Instance.player.archetype.CanDoPlayerAction(action.type)) {
+                //if (action.actionName == PlayerDB.Combat_Mode_Action) {
+                //    action.SetLabelText(action.actionName + ": " + UtilityScripts.Utilities.NotNormalizedConversionEnumToString(activeCharacter.combatComponent.combatMode.ToString()));
+                //}
+                ActionItem actionItem = AddNewAction(action, target);
+                actionItem.SetInteractable(action.CanPerformAbilityTo(target) && !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI);
             }
         }
     }
@@ -378,8 +377,11 @@ public class MinionInfoUI : InfoUIBase {
         UIManager.Instance.customDropdownList.ShowDropdown(combatModes, OnClickChooseCombatMode, CanChoostCombatMode);
     }
     private void SetCombatModeUIPosition(PlayerAction action) {
-        Vector3 actionWorldPos = action.actionItem.transform.localPosition;
-        UIManager.Instance.customDropdownList.SetPosition(new Vector3(actionWorldPos.x, actionWorldPos.y + 10f, actionWorldPos.z));
+        ActionItem actionItem = GetActiveActionItem(action);
+        if (actionItem != null) {
+            Vector3 actionWorldPos = actionItem.transform.localPosition;
+            UIManager.Instance.customDropdownList.SetPosition(new Vector3(actionWorldPos.x, actionWorldPos.y + 10f, actionWorldPos.z));
+        }
     }
     private bool CanChoostCombatMode(string mode) {
         if(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(activeMinion.character.combatComponent.combatMode.ToString())

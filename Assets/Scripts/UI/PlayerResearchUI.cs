@@ -72,7 +72,7 @@ public class PlayerResearchUI : MonoBehaviour {
             if (info != string.Empty) {
                 info += "\n";
             }
-            info += $"Cost: {data.manaCost} Mana";
+            //info += $"Cost: {data.manaCost} Mana";
             UIManager.Instance.ShowSmallInfo(info);
         }
     }

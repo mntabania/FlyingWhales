@@ -17,7 +17,7 @@ namespace Archetype {
                 new RaceClass(RACE.DEMON, "Succubus"), new RaceClass(RACE.KOBOLD, "Kobold"),
                 new RaceClass(RACE.SPIDER, "GiantSpider")
             };
-            actions = new List<string>();
+            //playerActions = new List<string>();
             SetCanTriggerFlaw(true);
             SetCanRemoveTraits(true);
         }
@@ -26,7 +26,7 @@ namespace Archetype {
         public override bool CanAfflict(SPELL_TYPE type) {
             return true;
         }
-        public override bool CanDoAction(string actionName) {
+        public override bool CanDoPlayerAction(SPELL_TYPE type) {
             return true;
         }
         public override bool CanSummonMinion(Minion minion) {

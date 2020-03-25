@@ -73,6 +73,8 @@ public class SpriteSpriteDictionary : SerializableDictionary<Sprite, Sprite> { }
 public class BiomeMonsterDictionary : SerializableDictionary<BIOMES, List<MonsterSetting>, MonsterSettingListStorage> { }
 [System.Serializable]
 public class BiomeItemDictionary : SerializableDictionary<BIOMES, List<ItemSetting>, TileObjectSettingListStorage> { }
+[System.Serializable]
+public class SpellSpriteDictionary : SerializableDictionary<SPELL_TYPE, Sprite> { }
 
 //List storage
 [System.Serializable]

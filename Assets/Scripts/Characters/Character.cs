@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Actionables;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UnityEngine;
@@ -689,14 +688,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             _isDead = isDead;
             if (_isDead) {
                 if (race == RACE.HUMANS || race == RACE.ELVES) {
-                    PlayerAction raiseAction = new PlayerAction(PlayerDB.Raise_Skeleton_Action
-                        , () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.RAISE_DEAD].CanPerformAbilityTowards(this)
-                        , null
-                        , () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.RAISE_DEAD].ActivateAbility(this));
-                    AddPlayerAction(raiseAction);
+                    //PlayerAction raiseAction = new PlayerAction(PlayerDB.Raise_Skeleton_Action
+                    //    , () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.RAISE_DEAD].CanPerformAbilityTowards(this)
+                    //    , null
+                    //    , () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.RAISE_DEAD].ActivateAbility(this));
+                    AddPlayerAction(SPELL_TYPE.RAISE_DEAD);
                 }
             } else {
-                RemovePlayerAction(PlayerDB.Raise_Skeleton_Action);
+                RemovePlayerAction(SPELL_TYPE.RAISE_DEAD);
             }
         }
     }
@@ -5451,70 +5450,61 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #endregion
 
     #region Player Action Target
-    public List<PlayerAction> actions { get; protected set; }
+    public List<SPELL_TYPE> actions { get; protected set; }
     public List<string> overrideThoughts {
         get { return _overrideThoughts; }
     }
     public virtual void ConstructDefaultActions() {
-        actions = new List<PlayerAction>();
+        actions = new List<SPELL_TYPE>();
 
         if (race == RACE.DEMON) {
-            PlayerAction stopAction = new PlayerAction(PlayerDB.Stop_Action, 
-                () => true,
-                null,
-                jobComponent.TriggerStopJobs);
-            PlayerAction returnAction = new PlayerAction(PlayerDB.Return_To_Portal_Action, 
-                () => true,
-                null,
-                () => jobComponent.TriggerReturnPortal());
-            PlayerAction combatModeAction = new PlayerAction(PlayerDB.Combat_Mode_Action,
-                () => true,
-                null,
-                UIManager.Instance.characterInfoUI.ShowSwitchCombatModeUI);
-            combatModeAction.SetLabelText(combatModeAction.actionName + ": " + UtilityScripts.Utilities.NotNormalizedConversionEnumToString(combatComponent.combatMode.ToString()));
+            //PlayerAction stopAction = new PlayerAction(PlayerDB.Stop_Action, 
+            //    () => true,
+            //    null,
+            //    jobComponent.TriggerStopJobs);
+            //PlayerAction returnAction = new PlayerAction(PlayerDB.Return_To_Portal_Action, 
+            //    () => true,
+            //    null,
+            //    () => jobComponent.TriggerReturnPortal());
+            //PlayerAction combatModeAction = new PlayerAction(PlayerDB.Combat_Mode_Action,
+            //    () => true,
+            //    null,
+            //    UIManager.Instance.characterInfoUI.ShowSwitchCombatModeUI);
+            //combatModeAction.SetLabelText(combatModeAction.actionName + ": " + UtilityScripts.Utilities.NotNormalizedConversionEnumToString(combatComponent.combatMode.ToString()));
 
-            AddPlayerAction(stopAction);
-            AddPlayerAction(returnAction);
-            AddPlayerAction(combatModeAction);
+            AddPlayerAction(SPELL_TYPE.STOP);
+            AddPlayerAction(SPELL_TYPE.RETURN_TO_PORTAL);
+            AddPlayerAction(SPELL_TYPE.CHANGE_COMBAT_MODE);
         } else {
-            PlayerAction afflictAction = new PlayerAction(PlayerDB.Afflict_Action, 
-                () => true,
-                null,
-                UIManager.Instance.characterInfoUI.ShowAfflictUI);
-            PlayerAction zapAction = new PlayerAction(PlayerDB.Zap_Action, 
-                () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.ZAP].CanPerformAbilityTowards(this),
-                null,
-                () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.ZAP].ActivateAbility(this));
-            PlayerAction seizeAction = new PlayerAction(PlayerDB.Seize_Character_Action, 
-                () => !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && !traitContainer.HasTrait("Leader", "Blessed"),
-                null,
-                () => PlayerManager.Instance.player.seizeComponent.SeizePOI(this));
+            //PlayerAction afflictAction = new PlayerAction(PlayerDB.Afflict_Action, 
+            //    () => true,
+            //    null,
+            //    UIManager.Instance.characterInfoUI.ShowAfflictUI);
+            //PlayerAction zapAction = new PlayerAction(PlayerDB.Zap_Action, 
+            //    () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.ZAP].CanPerformAbilityTowards(this),
+            //    null,
+            //    () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.ZAP].ActivateAbility(this));
+            //PlayerAction seizeAction = new PlayerAction(PlayerDB.Seize_Character_Action, 
+            //    () => !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && !traitContainer.HasTrait("Leader", "Blessed"),
+            //    null,
+            //    () => PlayerManager.Instance.player.seizeComponent.SeizePOI(this));
             // PlayerAction shareIntelAction = new PlayerAction("Share Intel", () => false, null);
 
-            AddPlayerAction(afflictAction);
-            AddPlayerAction(zapAction);
-            AddPlayerAction(seizeAction);
+            AddPlayerAction(SPELL_TYPE.AFFLICT);
+            AddPlayerAction(SPELL_TYPE.ZAP);
+            AddPlayerAction(SPELL_TYPE.SEIZE_CHARACTER);
         }
         // AddPlayerAction(shareIntelAction);
     }
-    public void AddPlayerAction(PlayerAction action) {
+    public void AddPlayerAction(SPELL_TYPE action) {
         if (actions.Contains(action) == false) {
             actions.Add(action);
             Messenger.Broadcast(Signals.PLAYER_ACTION_ADDED_TO_TARGET, action, this as IPlayerActionTarget);    
         }
     }
-    public void RemovePlayerAction(PlayerAction action) {
+    public void RemovePlayerAction(SPELL_TYPE action) {
         if (actions.Remove(action)) {
             Messenger.Broadcast(Signals.PLAYER_ACTION_REMOVED_FROM_TARGET, action, this as IPlayerActionTarget);
-        }
-    }
-    public void RemovePlayerAction(string actionName) {
-        for (int i = 0; i < actions.Count; i++) {
-            PlayerAction action = actions[i];
-            if (action.actionName == actionName) {
-                actions.RemoveAt(i);
-                Messenger.Broadcast(Signals.PLAYER_ACTION_REMOVED_FROM_TARGET, action, this as IPlayerActionTarget);
-            }
         }
     }
     public void ClearPlayerActions() {

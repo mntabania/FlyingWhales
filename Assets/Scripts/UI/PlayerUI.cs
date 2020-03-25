@@ -94,6 +94,7 @@ public class PlayerUI : MonoBehaviour {
 
     [Header("Player Actions")]
     public StringSpriteDictionary playerActionIconDictionary;
+    public SpellSpriteDictionary playerActionsIconDictionary;
     private List<System.Action> pendingUIToShow { get; set; }
 
     [Header("Spells")]
@@ -906,7 +907,20 @@ public class PlayerUI : MonoBehaviour {
     private void CreateNewSpellItem(SPELL_TYPE spell) {
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(spellItemPrefab.name, Vector3.zero, Quaternion.identity, spellsScrollRect.content);
         SpellItem item = go.GetComponent<SpellItem>();
-        item.SetSpell(PlayerManager.Instance.GetSpellData(spell));
+        SpellData spellData = PlayerManager.Instance.GetSpellData(spell);
+        if (spellData != null) {
+            item.SetSpell(spellData);
+        } else {
+            spellData = PlayerManager.Instance.GetAfflictionData(spell);
+            if (spellData != null) {
+                item.SetSpell(spellData);
+            } else {
+                spellData = PlayerManager.Instance.GetPlayerActionData(spell);
+                if (spellData != null) {
+                    item.SetSpell(spellData);
+                }
+            }
+        }
         _spellItems.Add(item);
     }
     private void DeleteSpellItem(SPELL_TYPE spell) {
@@ -918,7 +932,7 @@ public class PlayerUI : MonoBehaviour {
     private SpellItem GetSpellItem(SPELL_TYPE spell) {
         for (int i = 0; i < _spellItems.Count; i++) {
             SpellItem item = _spellItems[i];
-            if (item.spellData.ability == spell) {
+            if (item.spellData.type == spell) {
                 return item;
             }
         }

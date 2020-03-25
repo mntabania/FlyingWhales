@@ -113,12 +113,14 @@ public class BehaviourComponent {
                 owner.combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
                 AddBehaviourComponent(typeof(HarassBehaviour));
                 //TODO: Optimize this to not always create new instance if playeraction, or if it can't be helped, do object pool
-                owner.AddPlayerAction(new Actionables.PlayerAction(PlayerDB.End_Harass_Action, () => true, null, () => SetIsHarassing(false, null)));
+                //owner.AddPlayerAction(new PlayerAction(PlayerDB.End_Harass_Action, () => true, null, () => SetIsHarassing(false, null)));
+                owner.AddPlayerAction(SPELL_TYPE.END_HARASS);
             } else {
                 previousTarget.DecreaseIsBeingHarassedCount();
                 owner.combatComponent.SetCombatMode(combatModeBeforeHarassRaidInvade);
                 RemoveBehaviourComponent(typeof(HarassBehaviour));
-                owner.RemovePlayerAction(PlayerDB.End_Harass_Action);
+                //owner.RemovePlayerAction(PlayerDB.End_Harass_Action);
+                owner.RemovePlayerAction(SPELL_TYPE.END_HARASS);
             }
         }
     }
@@ -134,12 +136,14 @@ public class BehaviourComponent {
                 owner.combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
                 AddBehaviourComponent(typeof(RaidBehaviour));
                 //TODO: Optimize this to not always create new instance if playeraction, or if it can't be helped, do object pool
-                owner.AddPlayerAction(new Actionables.PlayerAction(PlayerDB.End_Raid_Action, () => true, null, () => SetIsRaiding(false, null)));
+                //owner.AddPlayerAction(new PlayerAction(PlayerDB.End_Raid_Action, () => true, null, () => SetIsRaiding(false, null)));
+                owner.AddPlayerAction(SPELL_TYPE.END_RAID);
             } else {
                 previousTarget.DecreaseIsBeingRaidedCount();
                 owner.combatComponent.SetCombatMode(combatModeBeforeHarassRaidInvade);
                 RemoveBehaviourComponent(typeof(RaidBehaviour));
-                owner.RemovePlayerAction(PlayerDB.End_Raid_Action);
+                //owner.RemovePlayerAction(PlayerDB.End_Raid_Action);
+                owner.RemovePlayerAction(SPELL_TYPE.END_RAID);
             }
         }
     }
@@ -155,13 +159,15 @@ public class BehaviourComponent {
                 owner.combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
                 AddBehaviourComponent(typeof(InvadeBehaviour));
                 //TODO: Optimize this to not always create new instance if playeraction, or if it can't be helped, do object pool
-                owner.AddPlayerAction(new Actionables.PlayerAction(PlayerDB.End_Invade_Action, () => true, null, () => SetIsInvading(false, null)));
+                //owner.AddPlayerAction(new PlayerAction(PlayerDB.End_Invade_Action, () => true, null, () => SetIsInvading(false, null)));
+                owner.AddPlayerAction(SPELL_TYPE.END_INVADE);
                 Messenger.AddListener<NPCSettlement>(Signals.NO_ABLE_CHARACTER_INSIDE_SETTLEMENT, OnNoLongerAbleResidentsInsideSettlement);
             } else {
                 previousTarget.DecreaseIsBeingInvadedCount();
                 owner.combatComponent.SetCombatMode(combatModeBeforeHarassRaidInvade);
                 RemoveBehaviourComponent(typeof(InvadeBehaviour));
-                owner.RemovePlayerAction(PlayerDB.End_Invade_Action);
+                //owner.RemovePlayerAction(PlayerDB.End_Invade_Action);
+                owner.RemovePlayerAction(SPELL_TYPE.END_INVADE);
                 Messenger.RemoveListener<NPCSettlement>(Signals.NO_ABLE_CHARACTER_INSIDE_SETTLEMENT, OnNoLongerAbleResidentsInsideSettlement);
             }
         }

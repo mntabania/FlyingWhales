@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using PathFind;
 using System.Linq;
-using Actionables;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using JetBrains.Annotations;
@@ -793,19 +792,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
             _uncorruptibleLandmarkNeighbors = 1;
         }
     }
-    private void CheckForCorruptAction() {
-        PlayerAction existingCorruptAction = GetPlayerAction(PlayerDB.Corrupt_Action);
-        if (CanBeCorrupted()) {
-            if (existingCorruptAction == null) {
-                PlayerAction corruptAction = new PlayerAction(PlayerDB.Corrupt_Action, CanBeCorrupted, null, StartCorruption);
-                AddPlayerAction(corruptAction);
-            }
-        } else {
-            if (existingCorruptAction != null) {
-                RemovePlayerAction(existingCorruptAction);    
-            }
-        }
-    }
     private bool CanBeCorrupted() {
         if (isCorrupted) {
             return false; //already corrupted.
@@ -1027,47 +1013,29 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     #endregion
     
     #region Player Action Target
-    public List<PlayerAction> actions { get; private set; }
+    public List<SPELL_TYPE> actions { get; private set; }
     public void ConstructDefaultActions() {
-        actions = new List<PlayerAction>();
-        PlayerAction harassAction = new PlayerAction(PlayerDB.Harass_Action, CanDoHarass, IsHarassRaidInvadeValid, () => PlayerUI.Instance.OnClickHarassRaidInvade(this, "harass"));
-        PlayerAction raidAction = new PlayerAction(PlayerDB.Raid_Action, CanDoRaid, IsHarassRaidInvadeValid, () => PlayerUI.Instance.OnClickHarassRaidInvade(this, "raid"));
-        PlayerAction invadeAction = new PlayerAction(PlayerDB.Invade_Action, CanDoInvade, IsHarassRaidInvadeValid, () => PlayerUI.Instance.OnClickHarassRaidInvade(this, "invade"));
-        PlayerAction buildAction = new PlayerAction(PlayerDB.Build_Demonic_Structure_Action, () => true, CanBuildDemonicStructure, OnClickBuild);
+        actions = new List<SPELL_TYPE>();
+        //PlayerAction harassAction = new PlayerAction(PlayerDB.Harass_Action, CanDoHarass, IsHarassRaidInvadeValid, () => PlayerUI.Instance.OnClickHarassRaidInvade(this, "harass"));
+        //PlayerAction raidAction = new PlayerAction(PlayerDB.Raid_Action, CanDoRaid, IsHarassRaidInvadeValid, () => PlayerUI.Instance.OnClickHarassRaidInvade(this, "raid"));
+        //PlayerAction invadeAction = new PlayerAction(PlayerDB.Invade_Action, CanDoInvade, IsHarassRaidInvadeValid, () => PlayerUI.Instance.OnClickHarassRaidInvade(this, "invade"));
+        //PlayerAction buildAction = new PlayerAction(PlayerDB.Build_Demonic_Structure_Action, () => true, CanBuildDemonicStructure, OnClickBuild);
 
-        AddPlayerAction(buildAction);
-        AddPlayerAction(harassAction);
-        AddPlayerAction(raidAction);
-        AddPlayerAction(invadeAction);
+        AddPlayerAction(SPELL_TYPE.HARASS);
+        AddPlayerAction(SPELL_TYPE.RAID);
+        AddPlayerAction(SPELL_TYPE.INVADE);
+        AddPlayerAction(SPELL_TYPE.BUILD_DEMONIC_STRUCTURE);
     }
-    public void AddPlayerAction(PlayerAction action) {
+    public void AddPlayerAction(SPELL_TYPE action) {
         if (actions.Contains(action) == false) {
             actions.Add(action);
             Messenger.Broadcast(Signals.PLAYER_ACTION_ADDED_TO_TARGET, action, this as IPlayerActionTarget);    
         }
     }
-    public void RemovePlayerAction(PlayerAction action) {
+    public void RemovePlayerAction(SPELL_TYPE action) {
         if (actions.Remove(action)) {
             Messenger.Broadcast(Signals.PLAYER_ACTION_REMOVED_FROM_TARGET, action, this as IPlayerActionTarget);
         }
-    }
-    public void RemovePlayerAction(string actionName) {
-        for (int i = 0; i < actions.Count; i++) {
-            PlayerAction action = actions[i];
-            if (action.actionName == actionName) {
-                actions.RemoveAt(i);
-                Messenger.Broadcast(Signals.PLAYER_ACTION_REMOVED_FROM_TARGET, action, this as IPlayerActionTarget);
-            }
-        }
-    }
-    private PlayerAction GetPlayerAction(string actionName) {
-        for (int i = 0; i < actions.Count; i++) {
-            PlayerAction playerAction = actions[i];
-            if (playerAction.actionName == actionName) {
-                return playerAction;
-            }
-        }
-        return null;
     }
     public void ClearPlayerActions() {
         actions.Clear();
@@ -1096,7 +1064,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     #endregion
 
     #region Demonic Structure Building
-    private bool CanBuildDemonicStructure(IPlayerActionTarget target) {
+    public bool CanBuildDemonicStructure() {
         //Cannot build on settlements and hextiles with blueprints right now
         if(/*isCorrupted && isCurrentlyBeingCorrupted == false &&*/ settlementOnTile == null && landmarkOnTile == null 
                && elevationType != ELEVATION.WATER && elevationType != ELEVATION.MOUNTAIN &&
@@ -1114,7 +1082,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         }
         return false;
     }
-    private void OnClickBuild() {
+    public void OnClickBuild() {
         demonicLandmarksThatCanBeBuilt.Clear();
         List<LANDMARK_TYPE> demonicLandmarkTypes = PlayerManager.Instance.player.archetype.demonicStructures;
         for (int i = 0; i < demonicLandmarkTypes.Count; i++) {
