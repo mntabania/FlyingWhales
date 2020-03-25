@@ -42,7 +42,7 @@ ParticleSystem:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3004656286122032486}
   serializedVersion: 6
-  lengthInSec: 2
+  lengthInSec: 0.8
   simulationSpeed: 3
   stopAction: 0
   cullingMode: 0
@@ -117,7 +117,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 2
+      scalar: 0.8
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -170,7 +170,7 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.1
+      scalar: 0.6
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -286,7 +286,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.5
+      scalar: 0.7
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -806,7 +806,7 @@ ParticleSystem:
           m_RotationOrder: 4
     arc:
       value: 360
-      mode: 0
+      mode: 3
       spread: 0
       speed:
         serializedVersion: 2
@@ -977,7 +977,7 @@ ParticleSystem:
       countCurve:
         serializedVersion: 2
         minMaxState: 0
-        scalar: 25
+        scalar: 16
         minScalar: 30
         maxCurve:
           serializedVersion: 2
@@ -1364,7 +1364,7 @@ ParticleSystem:
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
-        key1: {r: 1, g: 1, b: 1, a: 0}
+        key1: {r: 1, g: 1, b: 1, a: 1}
         key2: {r: 0, g: 0, b: 0, a: 0}
         key3: {r: 0, g: 0, b: 0, a: 0}
         key4: {r: 0, g: 0, b: 0, a: 0}
@@ -1380,8 +1380,8 @@ ParticleSystem:
         ctime6: 0
         ctime7: 0
         atime0: 0
-        atime1: 65535
-        atime2: 0
+        atime1: 55705
+        atime2: 65535
         atime3: 0
         atime4: 0
         atime5: 0
@@ -1389,7 +1389,7 @@ ParticleSystem:
         atime7: 0
         m_Mode: 0
         m_NumColorKeys: 2
-        m_NumAlphaKeys: 2
+        m_NumAlphaKeys: 3
       minGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -1427,9 +1427,9 @@ ParticleSystem:
     fps: 30
     frameOverTime:
       serializedVersion: 2
-      minMaxState: 1
-      scalar: 0.9999
-      minScalar: 0.9999
+      minMaxState: 3
+      scalar: 0.6666667
+      minScalar: 0
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -1481,7 +1481,7 @@ ParticleSystem:
     startFrame:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 0.9999
+      scalar: 0.6666667
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -1545,12 +1545,6 @@ ParticleSystem:
     - sprite: {fileID: 8179260598735185054, guid: f810572f0dae17443b98667b17daab0f,
         type: 3}
     - sprite: {fileID: -4779962145498816031, guid: f810572f0dae17443b98667b17daab0f,
-        type: 3}
-    - sprite: {fileID: -8205707622099368517, guid: f810572f0dae17443b98667b17daab0f,
-        type: 3}
-    - sprite: {fileID: -3139005018507065254, guid: f810572f0dae17443b98667b17daab0f,
-        type: 3}
-    - sprite: {fileID: 5845064981058963059, guid: f810572f0dae17443b98667b17daab0f,
         type: 3}
     flipU: 0
     flipV: 0
@@ -2421,7 +2415,7 @@ ParticleSystem:
       m_Bits: 4294967295
     influenceList: []
   ClampVelocityModule:
-    enabled: 1
+    enabled: 0
     x:
       serializedVersion: 2
       minMaxState: 0
@@ -3948,8 +3942,8 @@ ParticleSystem:
         m_RotationOrder: 4
     maxLights: 20
   TrailModule:
-    enabled: 1
-    mode: 0
+    enabled: 0
+    mode: 1
     ratio: 1
     lifetime:
       serializedVersion: 2
@@ -4781,7 +4775,7 @@ ParticleSystemRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: b02a26158b64fd84791f1e9a550cd1ea, type: 2}
-  - {fileID: 2100000, guid: e19ff0635d0f5a24ca0eb25d846426fb, type: 2}
+  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
