@@ -4709,7 +4709,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e7d23a527800d534ea040002239f3d2e, type: 2}
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -9669,6 +9669,9 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 5229256702244508662}
   hoverObject: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
   _coreEffect: {fileID: 1903960852784539153}
   _flareEffect: {fileID: 3554959302319257072}

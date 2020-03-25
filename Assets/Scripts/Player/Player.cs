@@ -405,7 +405,7 @@ public class Player : ILeader, IObjectManipulator {
     private bool ShouldShowNotificationFrom(Region location) {
         return location.canShowNotifications;
     }
-    private bool ShouldShowNotificationFrom(Character character, bool onlyClickedCharacter = false) {
+    private bool ShouldShowNotificationFrom(Character character) {
         // if (!onlyClickedCharacter && InnerMapCameraMove.Instance.gameObject.activeSelf) { //&& !character.isDead
         //     if ((UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == character.id) || (character.marker &&  InnerMapCameraMove.Instance.CanSee(character.marker.gameObject))) {
         //         return true;
@@ -484,7 +484,7 @@ public class Player : ILeader, IObjectManipulator {
         }
     }
     public void ShowNotificationFrom(Log log, Character character, bool onlyClickedCharacter) {
-        if (ShouldShowNotificationFrom(character, onlyClickedCharacter)) {
+        if (ShouldShowNotificationFrom(character)) {
             ShowNotification(log);
         }
     }

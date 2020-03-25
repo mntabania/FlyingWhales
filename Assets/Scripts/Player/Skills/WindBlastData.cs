@@ -21,7 +21,7 @@ public class WindBlastData : SpellData {
         }
     }
     private void ApplyWindDamage(ITraitable traitable) {
-        traitable.AdjustHP(-30, ELEMENTAL_TYPE.Wind, true);
+        traitable.AdjustHP(-30, ELEMENTAL_TYPE.Wind, true, showHPBar: true);
     }
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
         return targetTile.structure != null;

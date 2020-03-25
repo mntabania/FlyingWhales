@@ -80,22 +80,26 @@ public class MapGenerationFinalization : MapGenerationComponent {
 				t.collectionOwner.isPartOfParentRegionMap &&
 				t.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile == null &&
 				t.collectionOwner.partOfHextile.hexTileOwner.elevationType == ELEVATION.PLAIN).ToList();
-			ItemGenerationSetting itemGenerationSetting =
-				WorldConfigManager.Instance.worldWideItemGenerationSetting;
-			List<ItemSetting> itemChoices = itemGenerationSetting.GetItemChoicesForBiome(region.coreTile.biomeType);
-			if (itemChoices != null) {
-				int iterations = itemGenerationSetting.iterations.Random();
-				for (int j = 0; j < iterations; j++) {
-					ItemSetting randomMonsterSetting = CollectionUtilities.GetRandomElement(itemChoices);
-					int randomAmount = randomMonsterSetting.minMaxRange.Random();
-					for (int k = 0; k < randomAmount; k++) {
-						TILE_OBJECT_TYPE tileObjectType = CollectionUtilities.GetRandomElement(itemChoices).itemType;
-						LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(locationChoices);
-						chosenTile.structure.AddPOI(
-							InnerMapManager.Instance.CreateNewTileObject<TileObject>(tileObjectType), chosenTile);
-						locationChoices.Remove(chosenTile);
-					}
-				}	
+			if (locationChoices.Count > 0) {
+				ItemGenerationSetting itemGenerationSetting =
+					WorldConfigManager.Instance.worldWideItemGenerationSetting;
+				List<ItemSetting> itemChoices = itemGenerationSetting.GetItemChoicesForBiome(region.coreTile.biomeType);
+				if (itemChoices != null) {
+					int iterations = itemGenerationSetting.iterations.Random();
+					for (int j = 0; j < iterations; j++) {
+						if (locationChoices.Count == 0) { break; } //no more location choices
+						ItemSetting randomMonsterSetting = CollectionUtilities.GetRandomElement(itemChoices);
+						int randomAmount = randomMonsterSetting.minMaxRange.Random();
+						for (int k = 0; k < randomAmount; k++) {
+							if (locationChoices.Count == 0) { break; } //no more location choices
+							TILE_OBJECT_TYPE tileObjectType = CollectionUtilities.GetRandomElement(itemChoices).itemType;
+							LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(locationChoices);
+							chosenTile.structure.AddPOI(
+								InnerMapManager.Instance.CreateNewTileObject<TileObject>(tileObjectType), chosenTile);
+							locationChoices.Remove(chosenTile);
+						}
+					}	
+				}		
 			}
 			yield return null;
 		}

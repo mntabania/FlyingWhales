@@ -8,7 +8,7 @@ public class IceteroidParticleEffect : BaseParticleEffect {
         StartCoroutine(IceteroidEffect());
     }
     private IEnumerator IceteroidEffect() {
-        yield return new WaitForSeconds(0.6f);
+        yield return new WaitForSeconds(1.6f);
         OnIceteroidFell();
     }
     protected override void ParticleAfterEffect(ParticleSystem particleSystem) {
@@ -18,7 +18,7 @@ public class IceteroidParticleEffect : BaseParticleEffect {
         targetTile.PerformActionOnTraitables(DealDamage);
     }
     private void DealDamage(ITraitable traitable) {
-        traitable.AdjustHP(-50, ELEMENTAL_TYPE.Ice, true);
+        traitable.AdjustHP(-50, ELEMENTAL_TYPE.Ice, true, showHPBar: true);
         if (traitable is Character character && character.isDead == false && Random.Range(0, 100) < 25) {
             character.traitContainer.AddTrait(character, "Injured");
         }

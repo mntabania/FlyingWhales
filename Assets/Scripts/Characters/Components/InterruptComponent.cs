@@ -176,8 +176,8 @@ public class InterruptComponent {
                 owner.logComponent.AddHistory(_currentEffectLog);
             }
             if (interrupt.isIntel) {
-                //PlayerManager.Instance.player.ShowNotificationFrom(owner, InteractionManager.Instance.CreateNewIntel(interrupt, owner, target, _currentEffectLog) as IIntel);
-                PlayerManager.Instance.player.ShowNotification(InteractionManager.Instance.CreateNewIntel(interrupt, owner, target, _currentEffectLog) as IIntel);
+                PlayerManager.Instance.player.ShowNotificationFrom(owner, InteractionManager.Instance.CreateNewIntel(interrupt, owner, target, _currentEffectLog) as IIntel);
+                // PlayerManager.Instance.player.ShowNotification(InteractionManager.Instance.CreateNewIntel(interrupt, owner, target, _currentEffectLog) as IIntel);
             } else {
                 PlayerManager.Instance.player.ShowNotificationFrom(owner, _currentEffectLog);
             }

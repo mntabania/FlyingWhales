@@ -1681,6 +1681,7 @@
                 <e p="FertileFeature.cs" t="Include" />
                 <e p="GameFeature.cs" t="Include" />
                 <e p="HallowedGroundFeature.cs" t="Include" />
+                <e p="HeatWaveFeature.cs" t="Include" />
                 <e p="InhabitedFeature.cs" t="Include" />
                 <e p="MetalSourceFeature.cs" t="Include" />
                 <e p="PoisonBloomFeature.cs" t="Include" />
@@ -1765,6 +1766,7 @@
             <e p="BaseParticleEffect.cs" t="Include" />
             <e p="BlizzardParticleEffect.cs" t="Include" />
             <e p="BrimstonesParticleEffect.cs" t="Include" />
+            <e p="HeatWaveParticleEffect.cs" t="Include" />
             <e p="IceteroidParticleEffect.cs" t="Include" />
             <e p="LightningParticleEffect.cs" t="Include" />
             <e p="MeteorParticleEffect.cs" t="Include" />
@@ -1828,6 +1830,7 @@
               <e p="FeebleSpiritData.cs" t="Include" />
               <e p="ForlornSpiritData.cs" t="Include" />
               <e p="FreezingTrapData.cs" t="Include" />
+              <e p="HeatWaveData.cs" t="Include" />
               <e p="IceteroidsData.cs" t="Include" />
               <e p="Ignite.cs" t="Include" />
               <e p="Kleptomania.cs" t="Include" />

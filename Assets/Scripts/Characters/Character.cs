@@ -3123,7 +3123,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (minion == null && race != RACE.DEMON && !(this is Summon)) { //only generate buffs and flaws for non minion characters. Reference: https://trello.com/c/pC9hBih0/2781-demonic-minions-should-not-have-pregenerated-buff-and-flaw-traits
  
             List<string> buffTraits = new List<string>(TraitManager.Instance.buffTraitPool);
-            List<string> flawTraits = new List<string>(TraitManager.Instance.flawTraitPool);
             List<string> neutralTraits = new List<string>(TraitManager.Instance.neutralTraitPool);
 
             //First trait is random buff trait
@@ -3142,7 +3141,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (buffTrait.mutuallyExclusive != null) {
                 buffTraits = CollectionUtilities.RemoveElements(ref buffTraits, buffTrait.mutuallyExclusive); //update buff traits pool to accomodate new trait
                 neutralTraits = CollectionUtilities.RemoveElements(ref neutralTraits, buffTrait.mutuallyExclusive); //update neutral traits pool to accomodate new trait
-                flawTraits = CollectionUtilities.RemoveElements(ref flawTraits, buffTrait.mutuallyExclusive); //update flaw traits pool to accomodate new trait
             }
 
 
@@ -3177,36 +3175,17 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (buffOrNeutralTrait.mutuallyExclusive != null) {
                 buffTraits = CollectionUtilities.RemoveElements(ref buffTraits, buffOrNeutralTrait.mutuallyExclusive); //update buff traits pool to accomodate new trait
                 neutralTraits = CollectionUtilities.RemoveElements(ref neutralTraits, buffOrNeutralTrait.mutuallyExclusive); //update neutral traits pool to accomodate new trait
-                flawTraits = CollectionUtilities.RemoveElements(ref flawTraits, buffOrNeutralTrait.mutuallyExclusive); //update flaw traits pool to accomodate new trait
             }
 
 
-            //Third trait is a random neutral or flaw traits
-            string chosenFlawOrNeutralTraitName;
-            if (flawTraits.Count > 0 && neutralTraits.Count > 0) {
-                if (UnityEngine.Random.Range(0, 2) == 0) {
-                    //Buff trait
-                    int index = UnityEngine.Random.Range(0, flawTraits.Count);
-                    chosenFlawOrNeutralTraitName = flawTraits[index];
-                    flawTraits.RemoveAt(index);
-                } else {
-                    //Neutral trait
-                    int index = UnityEngine.Random.Range(0, neutralTraits.Count);
-                    chosenFlawOrNeutralTraitName = neutralTraits[index];
-                    neutralTraits.RemoveAt(index);
-                }
-            } else {
-                if (flawTraits.Count > 0) {
-                    int index = UnityEngine.Random.Range(0, flawTraits.Count);
-                    chosenFlawOrNeutralTraitName = flawTraits[index];
-                    flawTraits.RemoveAt(index);
-                } else {
-                    int index = UnityEngine.Random.Range(0, neutralTraits.Count);
-                    chosenFlawOrNeutralTraitName = neutralTraits[index];
-                    neutralTraits.RemoveAt(index);
-                }
+            //Third trait is a random neutral trait
+            if (neutralTraits.Count > 0) {
+                //Neutral trait
+                int index = UnityEngine.Random.Range(0, neutralTraits.Count);
+                var chosenNeutralTraitName = neutralTraits[index];
+                neutralTraits.RemoveAt(index);
+                traitContainer.AddTrait(this, chosenNeutralTraitName);
             }
-            traitContainer.AddTrait(this, chosenFlawOrNeutralTraitName);
         }
 
         traitContainer.AddTrait(this, "Character Trait");
