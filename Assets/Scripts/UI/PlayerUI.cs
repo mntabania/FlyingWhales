@@ -93,7 +93,6 @@ public class PlayerUI : MonoBehaviour {
     private readonly List<string> factionActionsList = new List<string>() { "Manage Cult", "Meddle" };
 
     [Header("Player Actions")]
-    public StringSpriteDictionary playerActionIconDictionary;
     public SpellSpriteDictionary playerActionsIconDictionary;
     private List<System.Action> pendingUIToShow { get; set; }
 
