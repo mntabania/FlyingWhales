@@ -34,7 +34,11 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
     
     #region Visuals
     public void SetRotation(float rotation) {
-        this.transform.localRotation = Quaternion.Euler(0f, 0f, rotation);
+        Quaternion quaternion = Quaternion.Euler(0f, 0f, rotation);
+        objectVisual.transform.localRotation = quaternion;
+        if (hoverObject != null) {
+            hoverObject.transform.localRotation = quaternion;    
+        }
     }
     public void SetVisual(Sprite sprite) {
         objectVisual.sprite = sprite;
