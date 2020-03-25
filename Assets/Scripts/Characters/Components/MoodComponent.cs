@@ -126,13 +126,6 @@ public class MoodComponent {
 		SwitchMoodStates(MOOD_STATE.NORMAL);
 		Debug.Log(
 			$"{GameManager.Instance.TodayLogString()} {_owner.name} is <color=green>entering</color> <b>normal</b> mood state");
-		if (executeMoodChangeEffects) {
-			//stop checking for major mental breaks
-			StopCheckingForMajorMentalBreak();
-			if (currentCriticalMoodEffectChance > 0f) {
-				Messenger.AddListener(Signals.HOUR_STARTED, DecreaseMajorMentalBreakChance);
-			}
-		}
 	}
 	private void ExitNormalMood() {
 		_isInNormalMood = false;
@@ -146,12 +139,20 @@ public class MoodComponent {
 		SwitchMoodStates(MOOD_STATE.LOW);
 		Debug.Log(
 			$"{GameManager.Instance.TodayLogString()} {_owner.name} is <color=green>entering</color> <b>Low</b> mood state");
-		//if (executeMoodChangeEffects) {
-		//	StartCheckingForMinorMentalBreak();
-		//	if (currentLowMoodEffectChance > 0f) {
-		//		Messenger.RemoveListener(Signals.HOUR_STARTED, DecreaseMinorMentalBreakChance);
-		//	}	
-		//}
+		
+	}
+	private void ExitLowMood() {
+		_isInLowMood = false;
+		Debug.Log(
+			$"{GameManager.Instance.TodayLogString()} {_owner.name} is <color=red>exiting</color> <b>low</b> mood state");
+	}
+	#endregion
+
+	#region Critical Mood
+	private void EnterCriticalMood() {
+		SwitchMoodStates(MOOD_STATE.CRITICAL);
+		Debug.Log(
+			$"{GameManager.Instance.TodayLogString()} {_owner.name} is <color=green>entering</color> <b>critical</b> mood state");
 		if (executeMoodChangeEffects) {
 			//start checking for major mental breaks
 			if (_isInMajorMentalBreak) {
@@ -164,39 +165,19 @@ public class MoodComponent {
 				Messenger.RemoveListener(Signals.HOUR_STARTED, DecreaseMajorMentalBreakChance);
 			}
 		}
-	}
-	private void ExitLowMood() {
-		_isInLowMood = false;
-		Debug.Log(
-			$"{GameManager.Instance.TodayLogString()} {_owner.name} is <color=red>exiting</color> <b>low</b> mood state");
-		//if (executeMoodChangeEffects) {
-		//	StopCheckingForMinorMentalBreak();
-		//	if (currentLowMoodEffectChance > 0f) {
-		//		Messenger.AddListener(Signals.HOUR_STARTED, DecreaseMinorMentalBreakChance);
-		//	}
-		//}
-	}
-	private void StartCheckingForMinorMentalBreak() {
-		Debug.Log($"<color=blue>{GameManager.Instance.TodayLogString()}{_owner.name} has started checking for minor mental break.</color>");
-		Messenger.AddListener(Signals.HOUR_STARTED, CheckForMinorMentalBreak);
-	}
-	private void StopCheckingForMinorMentalBreak() {
-		Debug.Log($"<color=red>{GameManager.Instance.TodayLogString()}{_owner.name} has stopped checking for minor mental break.</color>");
-		Messenger.RemoveListener(Signals.HOUR_STARTED, CheckForMinorMentalBreak);
-	}
-	#endregion
-
-	#region Critical Mood
-	private void EnterCriticalMood() {
-		SwitchMoodStates(MOOD_STATE.CRITICAL);
-		Debug.Log(
-			$"{GameManager.Instance.TodayLogString()} {_owner.name} is <color=green>entering</color> <b>critical</b> mood state");
 		
 	}
 	private void ExitCriticalMood() {
 		_isInCriticalMood = false;
 		Debug.Log(
 			$"{GameManager.Instance.TodayLogString()} {_owner.name} is <color=red>exiting</color> <b>critical</b> mood state");
+		if (executeMoodChangeEffects) {
+			//stop checking for major mental breaks
+			StopCheckingForMajorMentalBreak();
+			if (currentCriticalMoodEffectChance > 0f) {
+				Messenger.AddListener(Signals.HOUR_STARTED, DecreaseMajorMentalBreakChance);
+			}
+		}
 	}
 	private void CheckForMajorMentalBreak() {
 		IncreaseMajorMentalBreakChance();
