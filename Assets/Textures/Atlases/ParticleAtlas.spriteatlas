@@ -31,7 +31,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: c56691e3000aa5f46b6b0f833f973a16, type: 3}
-    totalSpriteSurfaceArea: 3670588
+    totalSpriteSurfaceArea: 3695164
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -53,6 +53,7 @@ SpriteAtlas:
   - {fileID: -4222175053655546447, guid: e0def6a20a9dab747a7ac185c751e775, type: 3}
   - {fileID: 5825907045803026397, guid: e0def6a20a9dab747a7ac185c751e775, type: 3}
   - {fileID: -8642194086536131060, guid: e0def6a20a9dab747a7ac185c751e775, type: 3}
+  - {fileID: 21300000, guid: 7ffa92335d505064b8d6af1adc54fe24, type: 3}
   - {fileID: 21300000, guid: bcedcd336812143469de94f1047a485a, type: 3}
   - {fileID: 21300000, guid: c5b489c3c09d40347b547b3807f59dcd, type: 3}
   - {fileID: -3587638100287170247, guid: 3382c8749e2624c47b49a295ca829599, type: 3}
@@ -70,6 +71,7 @@ SpriteAtlas:
   - {fileID: -3616280095395431313, guid: 7a569755d0dffa040addd4de5e8d7ca3, type: 3}
   - {fileID: 21300000, guid: 99d8528565c8c6e41b743b5f0c9bc85c, type: 3}
   - {fileID: 21300000, guid: e67f3ec584968d842bdf9ed6447a4e4e, type: 3}
+  - {fileID: 21300000, guid: 5a210ed55917784408e9845d8b08ec64, type: 3}
   - {fileID: 21300000, guid: 822d07f56afeab6449b5a8b2a2609329, type: 3}
   - {fileID: 21300002, guid: 822d07f56afeab6449b5a8b2a2609329, type: 3}
   - {fileID: 21300004, guid: 822d07f56afeab6449b5a8b2a2609329, type: 3}
@@ -104,6 +106,7 @@ SpriteAtlas:
   - {fileID: 6620456628816267292, guid: 79ddc45d4b085df45b56143ef830b5cb, type: 3}
   - {fileID: -4457272525922876107, guid: 79ddc45d4b085df45b56143ef830b5cb, type: 3}
   - {fileID: 21300000, guid: 793be07dbb8e1db49a3ea23451a86bdf, type: 3}
+  - {fileID: 21300000, guid: 42efb19dd0a11644099e2b3e628d4870, type: 3}
   - {fileID: 21300000, guid: 9eed63ed936727247a6fd71e45c733e3, type: 3}
   - {fileID: 21300000, guid: 676fc73e3f1574540952aa8e35d3cc9e, type: 3}
   - {fileID: 21300000, guid: c0a4664e7d5b6a843b6e9fcde39d745a, type: 3}
@@ -143,6 +146,7 @@ SpriteAtlas:
   - poison_splash_7
   - poison_splash_4
   - poison_splash_5
+  - heatwave1
   - Fire Ball
   - iceblock01
   - water_splash_3
@@ -160,6 +164,7 @@ SpriteAtlas:
   - poison_bubble_4
   - terrifyingHowlCloudC
   - windRipple01
+  - heatwave2
   - a3d06b4810f09b76556df0bd394ec571_0
   - a3d06b4810f09b76556df0bd394ec571_1
   - a3d06b4810f09b76556df0bd394ec571_2
@@ -194,6 +199,7 @@ SpriteAtlas:
   - Quicksand_1
   - Quicksand_0
   - tornadoD
+  - heatwaveLarge
   - Ball Lightning
   - windBlast01
   - terrifyingHowlSkullB

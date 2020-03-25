@@ -1402,8 +1402,7 @@ public enum SPELL_TYPE { NONE, LYCANTHROPY, KLEPTOMANIA, VAMPIRISM, UNFAITHFULNE
         PARALYSIS, ZOMBIE_VIRUS, PSYCHOPATHY, TORNADO, RAVENOUS_SPIRIT, FEEBLE_SPIRIT, FORLORN_SPIRIT, POISON_CLOUD, LIGHTNING, EARTHQUAKE,
         LOCUST_SWARM, SPAWN_BOULDER, WATER_BOMB, MANIFEST_FOOD, BRIMSTONES,
         SPLASH_POISON, BLIZZARD, RAIN, SPOIL, BALL_LIGHTNING, ELECTRIC_STORM, FROSTY_FOG, VAPOR, FIRE_BALL,
-        POISON_BLOOM, LANDMINE, TERRIFYING_HOWL, FREEZING_TRAP, SNARE_TRAP, WIND_BLAST,
-        ICETEROIDS
+        POISON_BLOOM, LANDMINE, TERRIFYING_HOWL, FREEZING_TRAP, SNARE_TRAP, WIND_BLAST, ICETEROIDS, HEAT_WAVE,
 }
 //public enum INTERVENTION_ABILITY_TYPE { NONE, AFFLICTION, SPELL, }
 public enum SPELL_CATEGORY { NONE, SPELL, AFFLICTION, PLAYER_ACTION, }
@@ -1471,8 +1470,7 @@ public enum COMBAT_MODE { Aggressive, Passive, Defend, }
 public enum WALL_TYPE { Stone, Flesh, Demon_Stone }
 public enum PARTICLE_EFFECT { None, Poison, Freezing, Fire, Burning, Explode, Electric, Frozen, Poison_Explosion, 
     Frozen_Explosion, Smoke_Effect, Lightning_Strike, Meteor_Strike, Water_Bomb, Poison_Bomb, Blizzard, Destroy_Explosion, Minion_Dissipate, Brimstones,
-    Rain, Landmine, Burnt, Terrifying_Howl, Freezing_Trap, Snare_Trap, Wind_Blast,
-    Iceteroids
+    Rain, Landmine, Burnt, Terrifying_Howl, Freezing_Trap, Snare_Trap, Wind_Blast, Iceteroids, Heat_Wave,
 }
 
 #region Crime Subcategories
