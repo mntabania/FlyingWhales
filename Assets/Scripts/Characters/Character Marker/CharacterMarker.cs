@@ -1131,24 +1131,24 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
     }
     private void ProcessAllUnprocessedVisionPOIs() {
-        // if(unprocessedVisionPOIs.Count > 0) {
-        //     string log = $"{character.name} tick ended! Processing all unprocessed in visions...";
-        //     if (!character.isDead/* && character.canWitness*/) { //character.traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting", "Zapped") == null
-        //         for (int i = 0; i < unprocessedVisionPOIs.Count; i++) {
-        //             IPointOfInterest poi = unprocessedVisionPOIs[i];
-        //             log += $"\n-{poi.nameWithID}";
-        //             bool reactToActionOnly = false;
-        //             if (unprocessedVisionPOIsForActionOnly.Count > 0) {
-        //                 reactToActionOnly = unprocessedVisionPOIsForActionOnly.Contains(poi);
-        //             }
-        //             character.ThisCharacterSaw(poi, reactToActionOnly);
-        //         }
-        //     } else {
-        //         log += "\n - Character is either dead or cannot witness, not processing...";
-        //     }
-        //     ClearUnprocessedPOI();
-        //     character.logComponent.PrintLogIfActive(log);
-        // }
+        if(unprocessedVisionPOIs.Count > 0) {
+            string log = $"{character.name} tick ended! Processing all unprocessed in visions...";
+            if (!character.isDead/* && character.canWitness*/) { //character.traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting", "Zapped") == null
+                for (int i = 0; i < unprocessedVisionPOIs.Count; i++) {
+                    IPointOfInterest poi = unprocessedVisionPOIs[i];
+                    log += $"\n-{poi.nameWithID}";
+                    bool reactToActionOnly = false;
+                    if (unprocessedVisionPOIsForActionOnly.Count > 0) {
+                        reactToActionOnly = unprocessedVisionPOIsForActionOnly.Contains(poi);
+                    }
+                    character.ThisCharacterSaw(poi, reactToActionOnly);
+                }
+            } else {
+                log += "\n - Character is either dead or cannot witness, not processing...";
+            }
+            ClearUnprocessedPOI();
+            character.logComponent.PrintLogIfActive(log);
+        }
         character.SetHasSeenFire(false);
         character.SetHasSeenWet(false);
         character.SetHasSeenPoisoned(false);
