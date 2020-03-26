@@ -548,6 +548,36 @@ public class Player : ILeader, IObjectManipulator {
     #endregion
 
     #region Summons
+    public SUMMON_TYPE currentActiveSummon { get; private set; }
+    public void SetCurrentlyActiveSummon(SUMMON_TYPE summon) {
+        if (currentActiveSummon != summon) {
+            SUMMON_TYPE previousActiveSummon = currentActiveSummon;
+            currentActiveSummon = summon;
+            if (currentActiveSummon == SUMMON_TYPE.None) {
+                Messenger.RemoveListener<KeyCode>(Signals.KEY_DOWN, OnSummonCast);
+                InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
+                Messenger.Broadcast(Signals.PLAYER_NO_ACTIVE_MONSTER, previousActiveSummon);
+            } else {
+                InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Check);
+                Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnSummonCast);
+            }
+        }
+    }
+    private void OnSummonCast(KeyCode key) {
+        if (key == KeyCode.Mouse0) {
+            TrySummonMonster();
+        }
+    }
+    private void TrySummonMonster() {
+        if (UIManager.Instance.IsMouseOnUI() || !InnerMapManager.Instance.isAnInnerMapShowing) {
+            return; //clicked on UI;
+        }
+        LocationGridTile hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
+        if (hoveredTile != null) {
+            Summon summon = CharacterManager.Instance.CreateNewSummon(currentActiveSummon, FactionManager.Instance.neutralFaction, homeRegion: hoveredTile.parentMap.region as Region);
+            CharacterManager.Instance.PlaceSummon(summon, hoveredTile);
+        }
+    }
     //private void GainSummonSlot(bool showUI = true) {
     //    SummonSlot newSlot = new SummonSlot();
     //    summons.Add(newSlot);

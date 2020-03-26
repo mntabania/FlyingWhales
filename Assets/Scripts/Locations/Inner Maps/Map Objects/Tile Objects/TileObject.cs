@@ -472,28 +472,23 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
                                                         CombatManager.Instance.DefaultElementalTraitProcessor;
             CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, 
                 responsibleCharacter, etp);
-        }    
+        }
+        LocationGridTile tile = gridTileLocation;
         if (currentHP <= 0) {
             //object has been destroyed
             Character removed = null;
             if (source is Character character) {
                 removed = character;
             }
-            if (isPreplaced && gridTileLocation != null && gridTileLocation.structure is DemonicStructure demonicStructure) {
-                //int structureDamage = 0;
-                //if (supposedHP < 0) {
-                //    structureDamage = amount - supposedHP;
-                //} else if (supposedHP > maxHP) {
-                //    structureDamage = (maxHP + amount) - supposedHP;
-                //}
-                demonicStructure.AdjustHP(-1);
-            }
             gridTileLocation?.structure.RemovePOI(this, removed);
         }
         if (amount < 0) {
-            Messenger.Broadcast(Signals.OBJECT_DAMAGED, this as IPointOfInterest);    
+            Messenger.Broadcast(Signals.OBJECT_DAMAGED, this as IPointOfInterest);
         } else if (currentHP == maxHP) {
             Messenger.Broadcast(Signals.OBJECT_REPAIRED, this as IPointOfInterest);
+        }
+        if (isPreplaced && tile != null && tile.structure is DemonicStructure demonicStructure) {
+            demonicStructure.AdjustHP(amount);
         }
     }
     public void OnHitByAttackFrom(Character characterThatAttacked, CombatState state, ref string attackSummary) {

@@ -1441,7 +1441,7 @@ public enum SUMMON_TYPE {
     Fire_Wisp,
     Earthen_Wisp,
     Sludge,
-    Ghost
+    Ghost,
 }
 public enum ARTIFACT_TYPE { None, Necronomicon, Ankh_Of_Anubis, Berserk_Orb }
 public enum ABILITY_TAG { NONE, MAGIC, SUPPORT, DEBUFF, CRIME, PHYSICAL, }

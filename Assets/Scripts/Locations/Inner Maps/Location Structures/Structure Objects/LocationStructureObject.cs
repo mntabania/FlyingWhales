@@ -115,9 +115,6 @@ public class LocationStructureObject : PooledObject {
             newTileObject.mapVisual.SetRotation(preplacedObj.transform.localEulerAngles.z);
             newTileObject.RevalidateTileObjectSlots();
         }
-        if (structure is DemonicStructure demonicStructure) {
-            demonicStructure.AdjustHP(1);
-        }
         SetPreplacedObjectsState(false);
     }
     public void PlacePreplacedObjectsAsBlueprints(LocationStructure structure, InnerTileMap areaMap, NPCSettlement npcSettlement) {

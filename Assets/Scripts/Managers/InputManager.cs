@@ -195,6 +195,9 @@ namespace Ruinarch {
             } else if (PlayerManager.Instance.player.currentActiveIntel != null) {
                 //cancel current intel
                 PlayerManager.Instance.player.SetCurrentActiveIntel(null);
+            } else if (PlayerManager.Instance.player.currentActiveSummon != SUMMON_TYPE.None) {
+                //cancel current intel
+                PlayerManager.Instance.player.SetCurrentlyActiveSummon(SUMMON_TYPE.None);
             } else {
                 if (UIManager.Instance.openedPopups.Count > 0) {
                     //close latest popup

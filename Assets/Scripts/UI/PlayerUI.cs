@@ -102,6 +102,12 @@ public class PlayerUI : MonoBehaviour {
     public GameObject spellItemPrefab;
     private List<SpellItem> _spellItems;
 
+    [Header("Summons")]
+    public ScrollRect summonsScrollRect;
+    public GameObject summonsContainerGO;
+    public GameObject summonItemPrefab;
+    private List<SummonItem> _summonItems;
+
     [Header("Threat")]
     public Image threatMeter;
 
@@ -123,6 +129,7 @@ public class PlayerUI : MonoBehaviour {
     public void Initialize() {
         pendingUIToShow = new List<Action>();
         _spellItems = new List<SpellItem>();
+        _summonItems = new List<SummonItem>();
 
         Messenger.AddListener<InfoUIBase>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<InfoUIBase>(Signals.MENU_CLOSED, OnMenuClosed);
@@ -165,7 +172,7 @@ public class PlayerUI : MonoBehaviour {
         InitialUpdateKillCountCharacterItems();
         UpdateIntel();
         CreateInitialSpells();
-        
+        CreateSummonsForTesting();
     }
 
     #region Listeners
@@ -949,6 +956,36 @@ public class PlayerUI : MonoBehaviour {
     //    SpellData ability = PlayerManager.Instance.GetSpellData(spell);
     //    PlayerManager.Instance.player.SetCurrentlyActivePlayerSpell(ability);
     //}
+    #endregion
+
+    #region Summons
+    public void OnToggleSummons(bool isOn) {
+        if (isOn) {
+            ShowSummons();
+        } else {
+            HideSummons();
+        }
+    }
+    private void ShowSummons() {
+        summonsContainerGO.SetActive(true);
+    }
+    private void HideSummons() {
+        summonsContainerGO.SetActive(false);
+    }
+    public void CreateSummonsForTesting() {
+        SUMMON_TYPE[] summons = (SUMMON_TYPE[]) System.Enum.GetValues(typeof(SUMMON_TYPE));
+        for (int i = 0; i < summons.Length; i++) {
+            if(summons[i] != SUMMON_TYPE.None) {
+                CreateNewSummonItem(summons[i]);
+            }
+        }
+    }
+    private void CreateNewSummonItem(SUMMON_TYPE summon) {
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(summonItemPrefab.name, Vector3.zero, Quaternion.identity, summonsScrollRect.content);
+        SummonItem item = go.GetComponent<SummonItem>();
+        item.SetSummon(summon);
+        _summonItems.Add(item);
+    }
     #endregion
 
     #region Faction Actions
