@@ -381,6 +381,8 @@ public static class Signals {
     public static string UNSUMMON_MINION = "OnUnsummonMinion";
     public static string PLAYER_NO_ACTIVE_SPELL = "OnPlayerNoActiveSpell";
     public static string PLAYER_NO_ACTIVE_MONSTER = "OnPlayerNoActiveMonster";
+    public static string PLAYER_NO_ACTIVE_ITEM = "OnPlayerNoActiveItem";
+    public static string PLAYER_NO_ACTIVE_ARTIFACT = "OnPlayerNoActiveArtifact";
     public static string PLAYER_GAINED_SPELL = "OnPlayerGainedSpell";
     public static string PLAYER_LOST_SPELL = "OnPlayerLostSpell";
     #endregion

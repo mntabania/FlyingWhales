@@ -108,6 +108,18 @@ public class PlayerUI : MonoBehaviour {
     public GameObject summonItemPrefab;
     private List<SummonItem> _summonItems;
 
+    [Header("Items")]
+    public ScrollRect itemsScrollRect;
+    public GameObject itemsContainerGO;
+    public GameObject itemItemPrefab;
+    private List<ItemItem> _itemItems;
+
+    [Header("Artifacts")]
+    public ScrollRect artifactsScrollRect;
+    public GameObject artifactsContainerGO;
+    public GameObject artifactItemPrefab;
+    private List<ArtifactItem> _artifactItems;
+
     [Header("Threat")]
     public Image threatMeter;
 
@@ -130,6 +142,8 @@ public class PlayerUI : MonoBehaviour {
         pendingUIToShow = new List<Action>();
         _spellItems = new List<SpellItem>();
         _summonItems = new List<SummonItem>();
+        _itemItems = new List<ItemItem>();
+        _artifactItems = new List<ArtifactItem>();
 
         Messenger.AddListener<InfoUIBase>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<InfoUIBase>(Signals.MENU_CLOSED, OnMenuClosed);
@@ -173,6 +187,8 @@ public class PlayerUI : MonoBehaviour {
         UpdateIntel();
         CreateInitialSpells();
         CreateSummonsForTesting();
+        CreateItemsForTesting();
+        CreateArtifactsForTesting();
     }
 
     #region Listeners
@@ -985,6 +1001,61 @@ public class PlayerUI : MonoBehaviour {
         SummonItem item = go.GetComponent<SummonItem>();
         item.SetSummon(summon);
         _summonItems.Add(item);
+    }
+    #endregion
+
+    #region Tile Objects
+    public void OnToggleItems(bool isOn) {
+        if (isOn) {
+            ShowItems();
+        } else {
+            HideItems();
+        }
+    }
+    private void ShowItems() {
+        itemsContainerGO.SetActive(true);
+    }
+    private void HideItems() {
+        itemsContainerGO.SetActive(false);
+    }
+    public void CreateItemsForTesting() {
+        TILE_OBJECT_TYPE[] items = new[] { TILE_OBJECT_TYPE.ELECTRIC_CRYSTAL, TILE_OBJECT_TYPE.FIRE_CRYSTAL, TILE_OBJECT_TYPE.ICE_CRYSTAL, TILE_OBJECT_TYPE.POISON_CRYSTAL, TILE_OBJECT_TYPE.WATER_CRYSTAL };
+        for (int i = 0; i < items.Length; i++) {
+            CreateNewItemItem(items[i]);
+        }
+    }
+    private void CreateNewItemItem(TILE_OBJECT_TYPE item) {
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(itemItemPrefab.name, Vector3.zero, Quaternion.identity, itemsScrollRect.content);
+        ItemItem itemItem = go.GetComponent<ItemItem>();
+        itemItem.SetItem(item);
+        _itemItems.Add(itemItem);
+    }
+    public void OnToggleArtifacts(bool isOn) {
+        if (isOn) {
+            ShowArtifacts();
+        } else {
+            HideArtifacts();
+        }
+    }
+    private void ShowArtifacts() {
+        artifactsContainerGO.SetActive(true);
+    }
+    private void HideArtifacts() {
+        artifactsContainerGO.SetActive(false);
+    }
+    public void CreateArtifactsForTesting() {
+        ARTIFACT_TYPE[] artifacts = (ARTIFACT_TYPE[]) System.Enum.GetValues(typeof(ARTIFACT_TYPE));
+        for (int i = 0; i < artifacts.Length; i++) {
+            if(artifacts[i] != ARTIFACT_TYPE.None) {
+                CreateNewArtifactItem(artifacts[i]);
+            }
+        }
+    }
+    private void CreateNewArtifactItem(ARTIFACT_TYPE artifact) {
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(artifactItemPrefab.name, Vector3.zero, Quaternion.identity, artifactsScrollRect.content);
+        ArtifactItem artifactArtifact = go.GetComponent<ArtifactItem>();
+        artifactArtifact.SetArtifact(artifact);
+        _artifactItems.Add(artifactArtifact);
     }
     #endregion
 
