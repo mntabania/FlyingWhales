@@ -71,6 +71,7 @@ namespace Inner_Maps.Location_Structures {
             PlayerManager.Instance.player.LearnSpell(spellType);
             UIManager.Instance.HideObjectPicker();
             OnSpellLearned();
+            PlayerManager.Instance.GetPlayerActionData(SPELL_TYPE.LEARN_SPELL).OnExecuteSpellActionAffliction();
         }
         private void OnHoverSpell(SPELL_TYPE spell) {
             
@@ -89,6 +90,7 @@ namespace Inner_Maps.Location_Structures {
             PlayerManager.Instance.player.LearnAffliction(spellType);
             UIManager.Instance.HideObjectPicker();
             OnSpellLearned();
+            PlayerManager.Instance.GetPlayerActionData(SPELL_TYPE.LEARN_SPELL).OnExecuteSpellActionAffliction();
         }
         private void OnHoverAffliction(SPELL_TYPE spellType) {
             SpellData data = PlayerManager.Instance.GetAfflictionData(spellType);

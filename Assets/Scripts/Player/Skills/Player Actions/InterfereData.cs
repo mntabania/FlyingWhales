@@ -19,10 +19,14 @@ public class InterfereData : PlayerAction {
         }
     }
     public override bool CanPerformAbilityTowards(LocationStructure structure) {
-        if (structure is Inner_Maps.Location_Structures.Goader) {
-            return true;
+        bool canPerform = base.CanPerformAbilityTowards(structure);
+        if (canPerform) {
+            if (structure is Inner_Maps.Location_Structures.Goader) {
+                return true;
+            }
+            return false;
         }
-        return false;
+        return canPerform;
     }
     #endregion
 }

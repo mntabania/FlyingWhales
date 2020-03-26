@@ -1003,12 +1003,16 @@ public class PlayerUI : MonoBehaviour {
             //harassRaidInvadeLeaderMinion.character.behaviourComponent.SetHarassInvadeRaidTarget(harassRaidInvadeTargetNpcSettlement);
             if (harassRaidInvade == "harass") {
                 harassRaidInvadeLeaderMinion.character.behaviourComponent.SetIsHarassing(true, harassRaidInvadeTargetNpcSettlement);
+                PlayerManager.Instance.GetPlayerActionData(SPELL_TYPE.HARASS).OnExecuteSpellActionAffliction();
             } else if (harassRaidInvade == "raid") {
                 harassRaidInvadeLeaderMinion.character.behaviourComponent.SetIsRaiding(true, harassRaidInvadeTargetNpcSettlement);
+                PlayerManager.Instance.GetPlayerActionData(SPELL_TYPE.RAID).OnExecuteSpellActionAffliction();
             } else if (harassRaidInvade == "invade") {
                 harassRaidInvadeLeaderMinion.character.behaviourComponent.SetIsInvading(true, harassRaidInvadeTargetNpcSettlement);
+                PlayerManager.Instance.GetPlayerActionData(SPELL_TYPE.INVADE).OnExecuteSpellActionAffliction();
             }
             PlayerManager.Instance.player.threatComponent.AdjustThreat(5);
+            
         }
     }
     #endregion

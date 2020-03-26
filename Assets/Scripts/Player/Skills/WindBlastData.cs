@@ -19,12 +19,18 @@ public class WindBlastData : SpellData {
             LocationGridTile tile = tiles[i];
             tile.PerformActionOnTraitables(ApplyWindDamage);
         }
+        IncreaseThreatThatSeesTile(targetTile, 10);
+        base.ActivateAbility(targetTile);
     }
     private void ApplyWindDamage(ITraitable traitable) {
         traitable.AdjustHP(-30, ELEMENTAL_TYPE.Wind, true, showHPBar: true);
     }
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
-        return targetTile.structure != null;
+        bool canPerform = base.CanPerformAbilityTowards(targetTile);
+        if (canPerform) {
+            return targetTile.structure != null;
+        }
+        return canPerform;
     }
     public override void HighlightAffectedTiles(LocationGridTile tile) {
         TileHighlighter.Instance.PositionHighlight(1, tile);

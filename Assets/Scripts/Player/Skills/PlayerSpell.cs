@@ -194,7 +194,7 @@ public class PlayerSpell {
     #endregion
 }
 
-public class SpellData {
+public class SpellData : IPlayerSkill {
     public virtual SPELL_TYPE type => SPELL_TYPE.NONE;
     public virtual string name { get { return string.Empty; } }
     public virtual string description { get { return string.Empty; } }
@@ -203,31 +203,49 @@ public class SpellData {
     public SPELL_TARGET[] targetTypes { get; protected set; }
     public int radius { get; protected set; }
 
+    public int charges { get; private set; }
+    public int manaCost { get; private set; }
+    public int cooldown { get; private set; }
+    public int currentCooldownTick { get; private set; }
+    public bool hasCharges => charges != -1;
+    public bool hasCooldown => cooldown != -1;
+    public bool hasManaCost => manaCost != -1;
+
     protected SpellData() {
+        charges = -1;
+        manaCost = -1;
+        cooldown = -1;
     }
 
     #region Virtuals
-    public virtual void ActivateAbility(IPointOfInterest targetPOI) { }
-    public virtual void ActivateAbility(LocationGridTile targetTile) { }
+    public virtual void ActivateAbility(IPointOfInterest targetPOI) {
+        OnExecuteSpellActionAffliction();
+    }
+    public virtual void ActivateAbility(LocationGridTile targetTile) {
+        OnExecuteSpellActionAffliction();
+    }
     public virtual void ActivateAbility(HexTile targetHex) {
         if(targetHex.settlementOnTile != null) {
             if(targetHex.settlementOnTile.HasResidentInsideSettlement()){
                 PlayerManager.Instance.player.threatComponent.AdjustThreat(20);
             }
         }
+        OnExecuteSpellActionAffliction();
     }
-    public virtual void ActivateAbility(LocationStructure targetStructure) { }
+    public virtual void ActivateAbility(LocationStructure targetStructure) {
+        OnExecuteSpellActionAffliction();
+    }
 
     public virtual bool CanPerformAbilityTowards(Character targetCharacter) {
         if((targetCharacter.race != RACE.HUMANS && targetCharacter.race != RACE.ELVES) || targetCharacter.traitContainer.HasTrait("Blessed")) {
             return false;
         }
-        return true;
+        return CanPerformAbility();
     }
-    public virtual bool CanPerformAbilityTowards(TileObject tileObject) { return true; }
-    public virtual bool CanPerformAbilityTowards(LocationGridTile targetTile) { return true; }
-    public virtual bool CanPerformAbilityTowards(HexTile targetHex) { return true; }
-    public virtual bool CanPerformAbilityTowards(LocationStructure targetStructure) { return true; }
+    public virtual bool CanPerformAbilityTowards(TileObject tileObject) { return CanPerformAbility(); }
+    public virtual bool CanPerformAbilityTowards(LocationGridTile targetTile) { return CanPerformAbility(); }
+    public virtual bool CanPerformAbilityTowards(HexTile targetHex) { return CanPerformAbility(); }
+    public virtual bool CanPerformAbilityTowards(LocationStructure targetStructure) { return CanPerformAbility(); }
     /// <summary>
     /// Highlight the affected area of this spell given a tile.
     /// </summary>
@@ -245,7 +263,10 @@ public class SpellData {
         } else if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
             return CanPerformAbilityTowards(poi as TileObject);
         }
-        return true;
+        return CanPerformAbility();
+    }
+    protected bool CanPerformAbility() {
+        return (!hasCharges || charges > 0) && (!hasManaCost || PlayerManager.Instance.player.mana >= manaCost) && (!hasCooldown || currentCooldownTick == cooldown);
     }
     /// <summary>
     /// Function that determines whether this action can target the given character or not.
@@ -277,6 +298,35 @@ public class SpellData {
     protected void IncreaseThreatForEveryCharacterThatSeesPOI(IPointOfInterest poi, int amount) {
         Messenger.Broadcast(Signals.INCREASE_THREAT_THAT_SEES_POI, poi, amount);
     }
+    protected void IncreaseThreatThatSeesTile(LocationGridTile targetTile, int amount) {
+        Messenger.Broadcast(Signals.INCREASE_THREAT_THAT_SEES_TILE, targetTile, amount);
+    }
+    public void OnExecuteSpellActionAffliction() {
+        if(hasCharges && charges > 0) {
+            charges--;
+        }
+        if (hasManaCost) {
+            PlayerManager.Instance.player.AdjustMana(-manaCost);
+        }
+        if (hasCooldown) {
+            currentCooldownTick = 0;
+            Messenger.AddListener(Signals.TICK_STARTED, PerTickCooldown);
+        }
+
+        if(category == SPELL_CATEGORY.PLAYER_ACTION) {
+            Messenger.Broadcast(Signals.ON_EXECUTE_PLAYER_ACTION, this as PlayerAction);
+        } else if (category == SPELL_CATEGORY.AFFLICTION) {
+            Messenger.Broadcast(Signals.ON_EXECUTE_AFFLICTION, this);
+        } else if (category == SPELL_CATEGORY.SPELL) {
+            Messenger.Broadcast(Signals.ON_EXECUTE_SPELL, this);
+        }
+    }
+    private void PerTickCooldown() {
+        currentCooldownTick++;
+        if(currentCooldownTick == cooldown) {
+            Messenger.RemoveListener(Signals.TICK_STARTED, PerTickCooldown);
+        }
+    }
     #endregion
 }
 
@@ -295,9 +345,15 @@ public class BallLightningData : SpellData {
         BallLightningTileObject ballLightning = new BallLightningTileObject();
         ballLightning.SetGridTileLocation(targetTile);
         ballLightning.OnPlacePOI();
+        IncreaseThreatThatSeesTile(targetTile, 10);
+        base.ActivateAbility(targetTile);
     }
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
-        return targetTile.structure != null;
+        bool canPerform = base.CanPerformAbilityTowards(targetTile);
+        if (canPerform) {
+            return targetTile.structure != null;
+        }
+        return canPerform;
     }
     public override void HighlightAffectedTiles(LocationGridTile tile) {
         TileHighlighter.Instance.PositionHighlight(2, tile);
@@ -319,9 +375,15 @@ public class FrostyFogData : SpellData {
         FrostyFogTileObject frostyFog = new FrostyFogTileObject();
         frostyFog.SetGridTileLocation(targetTile);
         frostyFog.OnPlacePOI();
+        IncreaseThreatThatSeesTile(targetTile, 10);
+        base.ActivateAbility(targetTile);
     }
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
-        return targetTile.structure != null;
+        bool canPerform = base.CanPerformAbilityTowards(targetTile);
+        if (canPerform) {
+            return targetTile.structure != null;
+        }
+        return canPerform;
     }
     public override void HighlightAffectedTiles(LocationGridTile tile) {
         TileHighlighter.Instance.PositionHighlight(1, tile);
@@ -344,9 +406,15 @@ public class VaporData : SpellData {
         vaporTileObject.SetGridTileLocation(targetTile);
         vaporTileObject.OnPlacePOI();
         vaporTileObject.SetStacks(EditableValuesManager.Instance.vaporStacks);
+        IncreaseThreatThatSeesTile(targetTile, 10);
+        base.ActivateAbility(targetTile);
     }
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
-        return targetTile.structure != null;
+        bool canPerform = base.CanPerformAbilityTowards(targetTile);
+        if (canPerform) {
+            return targetTile.structure != null;
+        }
+        return canPerform;
     }
     public override void HighlightAffectedTiles(LocationGridTile tile) {
         TileHighlighter.Instance.PositionHighlight(2, tile);
@@ -368,9 +436,15 @@ public class FireBallData : SpellData {
         FireBallTileObject fireBallTileObject = new FireBallTileObject();
         fireBallTileObject.SetGridTileLocation(targetTile);
         fireBallTileObject.OnPlacePOI();
+        IncreaseThreatThatSeesTile(targetTile, 10);
+        base.ActivateAbility(targetTile);
     }
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
-        return targetTile.structure != null;
+        bool canPerform = base.CanPerformAbilityTowards(targetTile);
+        if (canPerform) {
+            return targetTile.structure != null;
+        }
+        return canPerform;
     }
     public override void HighlightAffectedTiles(LocationGridTile tile) {
         TileHighlighter.Instance.PositionHighlight(2, tile);

@@ -95,8 +95,8 @@ public class MinionInfoUI : InfoUIBase {
         UpdateHistory(_activeMinion.character);
         ResetAllScrollPositions();
     }
-    protected override void OnPlayerActionExecuted(PlayerAction action) {
-        base.OnPlayerActionExecuted(action);
+    protected override void OnExecutePlayerAction(PlayerAction action) {
+        base.OnExecutePlayerAction(action);
         if(action.type == SPELL_TYPE.CHANGE_COMBAT_MODE) {
             SetCombatModeUIPosition(action);
         }

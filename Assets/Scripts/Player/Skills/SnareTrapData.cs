@@ -15,8 +15,14 @@ public class SnareTrapData : SpellData {
     }
     public override void ActivateAbility(LocationGridTile targetTile) {
         targetTile.SetHasSnareTrap(true);
+        IncreaseThreatThatSeesTile(targetTile, 10);
+        base.ActivateAbility(targetTile);
     }
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
-        return !targetTile.hasSnareTrap;
+        bool canPerform = base.CanPerformAbilityTowards(targetTile);
+        if (canPerform) {
+            return !targetTile.hasSnareTrap;
+        }
+        return canPerform;
     }
 }

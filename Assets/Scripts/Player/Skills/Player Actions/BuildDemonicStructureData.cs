@@ -14,9 +14,6 @@ public class BuildDemonicStructureData : PlayerAction {
     public override void ActivateAbility(HexTile targetHex) {
         targetHex.OnClickBuild();
     }
-    public override bool CanPerformAbilityTowards(HexTile targetHex) {
-        return true;
-    }
     public override bool IsValid(IPlayerActionTarget target) {
         if (target is HexTile targetHex) {
             return targetHex.CanBuildDemonicStructure();

@@ -16,8 +16,14 @@ public class LandmineData : SpellData {
     }
     public override void ActivateAbility(LocationGridTile targetTile) {
         targetTile.SetHasLandmine(true);
+        IncreaseThreatThatSeesTile(targetTile, 10);
+        base.ActivateAbility(targetTile);
     }
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
-        return !targetTile.hasLandmine;
+        bool canPerform = base.CanPerformAbilityTowards(targetTile);
+        if (canPerform) {
+            return !targetTile.hasLandmine;
+        }
+        return canPerform;
     }
 }

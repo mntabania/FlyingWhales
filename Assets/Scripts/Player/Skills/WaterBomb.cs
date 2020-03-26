@@ -30,12 +30,18 @@ public class WaterBombData : SpellData {
             tile.PerformActionOnTraitables(MakeTraitbleWet);
         }
         GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Water_Bomb);
+        IncreaseThreatThatSeesTile(targetTile, 10);
+        base.ActivateAbility(targetTile);
     }
     private void MakeTraitbleWet(ITraitable traitable) {
         traitable.traitContainer.AddTrait(traitable, "Wet");
     }
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
-        return targetTile.structure != null;
+        bool canPerform = base.CanPerformAbilityTowards(targetTile);
+        if (canPerform) {
+            return targetTile.structure != null;
+        }
+        return canPerform;
     }
     public override void HighlightAffectedTiles(LocationGridTile tile) {
         TileHighlighter.Instance.PositionHighlight(1, tile);

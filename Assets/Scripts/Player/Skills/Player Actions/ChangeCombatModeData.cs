@@ -20,9 +20,6 @@ public class ChangeCombatModeData : PlayerAction {
             UIManager.Instance.characterInfoUI.ShowSwitchCombatModeUI();
         }
     }
-    public override bool CanPerformAbilityTowards(Character targetCharacter) {
-        return true;
-    }
     public override string GetLabelName(IPlayerActionTarget target) {
         if(target is Character character) {
             return "Combat Mode: " + UtilityScripts.Utilities.NotNormalizedConversionEnumToString(character.combatComponent.combatMode.ToString());

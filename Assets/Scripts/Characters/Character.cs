@@ -490,6 +490,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.AddListener<IPointOfInterest, Character>(Signals.STOP_CURRENT_ACTION_TARGETING_POI_EXCEPT_ACTOR, OnStopCurrentActionTargetingPOIExceptActor);
         Messenger.AddListener<LocationStructure>(Signals.STRUCTURE_DESTROYED, OnStructureDestroyed);
         Messenger.AddListener<IPointOfInterest, int>(Signals.INCREASE_THREAT_THAT_SEES_POI, IncreaseThreatThatSeesPOI);
+        Messenger.AddListener<LocationGridTile, int>(Signals.INCREASE_THREAT_THAT_SEES_TILE, IncreaseThreatThatSeesTile);
 
         //Messenger.AddListener<ActualGoapNode>(Signals.ACTION_PERFORMED, OnCharacterPerformedAction);
         needsComponent.SubscribeToSignals();
@@ -521,6 +522,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.RemoveListener<IPointOfInterest, Character>(Signals.STOP_CURRENT_ACTION_TARGETING_POI_EXCEPT_ACTOR, OnStopCurrentActionTargetingPOIExceptActor);
         Messenger.RemoveListener<LocationStructure>(Signals.STRUCTURE_DESTROYED, OnStructureDestroyed);
         Messenger.RemoveListener<IPointOfInterest, int>(Signals.INCREASE_THREAT_THAT_SEES_POI, IncreaseThreatThatSeesPOI);
+        Messenger.RemoveListener<LocationGridTile, int>(Signals.INCREASE_THREAT_THAT_SEES_TILE, IncreaseThreatThatSeesTile);
         //Messenger.RemoveListener<ActualGoapNode>(Signals.ACTION_PERFORMED, OnCharacterPerformedAction);
         needsComponent.UnsubscribeToSignals();
         jobComponent.UnsubscribeListeners();
@@ -605,7 +607,16 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 }
             }
         }
-
+    }
+    private void IncreaseThreatThatSeesTile(LocationGridTile tile, int amount) {
+        if (marker && gridTileLocation != null && gridTileLocation.parentMap.region == tile.parentMap.region) {
+            if(gridTileLocation.structure == tile.structure || (!gridTileLocation.structure.isInterior && !tile.structure.isInterior)) {
+                float distance = Vector2.Distance(tile.centeredWorldLocation, gridTileLocation.centeredWorldLocation);
+                if (distance <= 5f) {
+                    PlayerManager.Instance.player.threatComponent.AdjustThreat(amount);
+                }
+            }
+        }
     }
     #endregion
 

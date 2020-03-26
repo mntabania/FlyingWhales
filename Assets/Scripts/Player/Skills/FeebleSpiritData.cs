@@ -19,10 +19,16 @@ public class FeebleSpiritData : SpellData {
         FeebleSpirit spirit = InnerMapManager.Instance.CreateNewTileObject<FeebleSpirit>(TILE_OBJECT_TYPE.FEEBLE_SPIRIT);
         spirit.SetGridTileLocation(targetTile);
         spirit.OnPlacePOI();
+        IncreaseThreatThatSeesTile(targetTile, 10);
+        base.ActivateAbility(targetTile);
         // targetTile.structure.AddPOI(spirit, targetTile);
     }
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
-        return targetTile.structure != null && targetTile.objHere == null;
+        bool canPerform = base.CanPerformAbilityTowards(targetTile);
+        if (canPerform) {
+            return targetTile.structure != null && targetTile.objHere == null;
+        }
+        return canPerform;
     }
     public override void HighlightAffectedTiles(LocationGridTile tile) {
         TileHighlighter.Instance.PositionHighlight(0, tile);

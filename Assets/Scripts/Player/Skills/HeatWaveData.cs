@@ -17,10 +17,14 @@ public class HeatWaveData : SpellData {
         base.ActivateAbility(targetHex);
     }
     public override bool CanPerformAbilityTowards(HexTile targetHex) {
-        return targetHex != null
-               && targetHex.biomeType != BIOMES.SNOW
-               && targetHex.biomeType != BIOMES.FOREST
-               && targetHex.featureComponent.HasFeature(TileFeatureDB.Heat_Wave_Feature) == false;
+        bool canPerform = base.CanPerformAbilityTowards(targetHex);
+        if (canPerform) {
+            return targetHex != null
+                   && targetHex.biomeType != BIOMES.SNOW
+                   && targetHex.biomeType != BIOMES.FOREST
+                   && targetHex.featureComponent.HasFeature(TileFeatureDB.Heat_Wave_Feature) == false;
+        }
+        return canPerform;
     }
     public override void HighlightAffectedTiles(LocationGridTile tile) {
         TileHighlighter.Instance.PositionHighlight(tile.collectionOwner.partOfHextile.hexTileOwner);

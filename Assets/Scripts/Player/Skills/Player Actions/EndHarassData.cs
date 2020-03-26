@@ -19,9 +19,7 @@ public class EndHarassData : PlayerAction {
         if(targetPOI is Character character) {
             character.behaviourComponent.SetIsHarassing(false, null);
         }
-    }
-    public override bool CanPerformAbilityTowards(Character targetCharacter) {
-        return true;
+        base.ActivateAbility(targetPOI);
     }
     #endregion
 }

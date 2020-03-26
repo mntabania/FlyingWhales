@@ -21,10 +21,14 @@ public class TortureData : PlayerAction {
         }
     }
     public override bool CanPerformAbilityTowards(LocationStructure structure) {
-        if (structure is TortureChamber tortureChamber) {
-            return tortureChamber.currentTortureTarget == null;
+        bool canPerform = base.CanPerformAbilityTowards(structure);
+        if (canPerform) {
+            if (structure is TortureChamber tortureChamber) {
+                return tortureChamber.currentTortureTarget == null;
+            }
+            return false;
         }
-        return false;
+        return canPerform;
     }
     #endregion
 }

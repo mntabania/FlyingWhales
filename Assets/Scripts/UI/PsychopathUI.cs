@@ -55,6 +55,7 @@ public class PsychopathUI : PopupMenuBase {
 
         }
         HidePsychopathUI();
+        PlayerManager.Instance.GetAfflictionData(SPELL_TYPE.PSYCHOPATHY).OnExecuteSpellActionAffliction();
     }
     public void OnClickAdd() {
         if(requirements.Count >= 2) {

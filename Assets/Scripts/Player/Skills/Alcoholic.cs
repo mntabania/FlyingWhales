@@ -107,6 +107,7 @@ public class AlcoholicData : SpellData {
         log.AddToFillers(null, "Drunkard", LOG_IDENTIFIER.STRING_1);
         log.AddLogToInvolvedObjects();
         PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+        base.ActivateAbility(targetPOI);
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
         if (targetCharacter.isDead || targetCharacter.traitContainer.HasTrait("Drunkard")) {

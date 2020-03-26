@@ -50,9 +50,15 @@ public class SpawnBoulderData : SpellData {
         BlockWall wall = InnerMapManager.Instance.CreateNewTileObject<BlockWall>(TILE_OBJECT_TYPE.BLOCK_WALL);
         wall.SetWallType(WALL_TYPE.Demon_Stone);
         targetTile.structure.AddPOI(wall, targetTile);
+        IncreaseThreatThatSeesTile(targetTile, 10);
+        base.ActivateAbility(targetTile);
     }
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
-        return targetTile.structure != null && targetTile.objHere == null;
+        bool canPerform = base.CanPerformAbilityTowards(targetTile);
+        if (canPerform) {
+            return targetTile.structure != null && targetTile.objHere == null;
+        }
+        return canPerform;
     }
     public override void HighlightAffectedTiles(LocationGridTile tile) {
         TileHighlighter.Instance.PositionHighlight(0, tile);

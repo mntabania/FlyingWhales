@@ -25,6 +25,7 @@ public class IgniteData : PlayerAction {
         targetPOI.traitContainer.AddTrait(targetPOI, burning, bypassElementalChance: true);
         Log log = new Log(GameManager.Instance.Today(), "InterventionAbility", name, "activated");
         PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+        base.ActivateAbility(targetPOI);
     }
     public override bool CanPerformAbilityTowards(TileObject tileObject) {
         if (tileObject.gridTileLocation == null || tileObject.gridTileLocation.genericTileObject.traitContainer.HasTrait("Burning", "Wet", "Fireproof")) {
@@ -32,11 +33,5 @@ public class IgniteData : PlayerAction {
         }
         return base.CanPerformAbilityTowards(tileObject);
     }
-    // public override bool CanPerformAbilityTowards(SpecialToken item) {
-    //     if (item.gridTileLocation == null || item.gridTileLocation.genericTileObject.traitContainer.HasTrait("Burning")) {
-    //         return false;
-    //     }
-    //     return base.CanPerformAbilityTowards(item);
-    // }
     #endregion
 }

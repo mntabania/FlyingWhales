@@ -20,7 +20,7 @@ public abstract class InfoUIBase : MonoBehaviour {
     #region virtuals
     internal virtual void Initialize() {
         Messenger.AddListener<InfoUIBase>(Signals.BEFORE_MENU_OPENED, BeforeMenuOpens);
-        Messenger.AddListener<PlayerAction>(Signals.PLAYER_ACTION_EXECUTED, OnPlayerActionExecuted);
+        Messenger.AddListener<PlayerAction>(Signals.ON_EXECUTE_PLAYER_ACTION, OnExecutePlayerAction);
         Messenger.AddListener<IPlayerActionTarget>(Signals.RELOAD_PLAYER_ACTIONS, ReloadPlayerActions);
         Messenger.AddListener<SPELL_TYPE, IPlayerActionTarget>(Signals.PLAYER_ACTION_ADDED_TO_TARGET, OnPlayerActionAddedToTarget);
         Messenger.AddListener<SPELL_TYPE, IPlayerActionTarget>(Signals.PLAYER_ACTION_REMOVED_FROM_TARGET, OnPlayerActionRemovedFromTarget);
@@ -64,7 +64,7 @@ public abstract class InfoUIBase : MonoBehaviour {
     public virtual void ShowTooltip(GameObject objectHovered) {
 
     }
-    protected virtual void OnPlayerActionExecuted(PlayerAction action) {
+    protected virtual void OnExecutePlayerAction(PlayerAction action) {
         if (_playerActionTarget != null && _playerActionTarget.actions.Contains(action.type)) {
             LoadActions(_playerActionTarget);
         }

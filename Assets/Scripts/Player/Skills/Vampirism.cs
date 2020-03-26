@@ -124,6 +124,7 @@ public class VampirismData : SpellData {
         log.AddToFillers(null, "Vampiric", LOG_IDENTIFIER.STRING_1);
         log.AddLogToInvolvedObjects();
         PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+        base.ActivateAbility(targetPOI);
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
         if (targetCharacter.isDead || targetCharacter.race == RACE.SKELETON || targetCharacter.traitContainer.HasTrait("Cannibal", "Vampiric", "Beast")) {

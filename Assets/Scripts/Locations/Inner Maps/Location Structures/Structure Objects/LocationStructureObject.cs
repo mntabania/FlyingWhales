@@ -116,7 +116,7 @@ public class LocationStructureObject : PooledObject {
             newTileObject.RevalidateTileObjectSlots();
         }
         if (structure is DemonicStructure demonicStructure) {
-            demonicStructure.AdjustHP(5);
+            demonicStructure.AdjustHP(1);
         }
         SetPreplacedObjectsState(false);
     }

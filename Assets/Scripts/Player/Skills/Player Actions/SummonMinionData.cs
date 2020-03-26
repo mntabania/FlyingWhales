@@ -21,7 +21,11 @@ public class SummonMinionData : PlayerAction {
         }
     }
     public override bool CanPerformAbilityTowards(LocationStructure structure) {
-        return PlayerManager.Instance.player.mana >= EditableValuesManager.Instance.summonMinionManaCost;
+        bool canPerform = base.CanPerformAbilityTowards(structure);
+        if (canPerform) {
+            return PlayerManager.Instance.player.mana >= EditableValuesManager.Instance.summonMinionManaCost;
+        }
+        return canPerform;
     }
     #endregion
 }

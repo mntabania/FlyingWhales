@@ -15,8 +15,14 @@ public class FreezingTrapData : SpellData {
     }
     public override void ActivateAbility(LocationGridTile targetTile) {
         targetTile.SetHasFreezingTrap(true);
+        IncreaseThreatThatSeesTile(targetTile, 10);
+        base.ActivateAbility(targetTile);
     }
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
-        return !targetTile.hasFreezingTrap;
+        bool canPerform = base.CanPerformAbilityTowards(targetTile);
+        if (canPerform) {
+            return !targetTile.hasFreezingTrap;
+        }
+        return canPerform;
     }
 }

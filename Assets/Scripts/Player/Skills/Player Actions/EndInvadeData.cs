@@ -19,9 +19,7 @@ public class EndInvadeData : PlayerAction {
         if(targetPOI is Character character) {
             character.behaviourComponent.SetIsInvading(false, null);
         }
-    }
-    public override bool CanPerformAbilityTowards(Character targetCharacter) {
-        return true;
+        base.ActivateAbility(targetPOI);
     }
     #endregion
 }

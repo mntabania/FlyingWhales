@@ -1153,6 +1153,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         PlayerManager.Instance.player.AdjustMana(-EditableValuesManager.Instance.buildStructureManaCost);
         landmarkOnTile?.OnFinishedBuilding();
         UIManager.Instance.HideObjectPicker();
+        PlayerManager.Instance.GetPlayerActionData(SPELL_TYPE.BUILD_DEMONIC_STRUCTURE).OnExecuteSpellActionAffliction();
     }
     #endregion
 

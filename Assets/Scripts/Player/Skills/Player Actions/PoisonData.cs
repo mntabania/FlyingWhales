@@ -18,6 +18,7 @@ public class PoisonData : PlayerAction {
         targetPOI.traitContainer.AddTrait(targetPOI, "Poisoned");
         Log log = new Log(GameManager.Instance.Today(), "InterventionAbility", name, "activated");
         PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+        base.ActivateAbility(targetPOI);
     }
     public override bool CanPerformAbilityTowards(TileObject tileObject) {
         if (tileObject.gridTileLocation == null || tileObject.traitContainer.HasTrait("Poisoned", "Robust")) {

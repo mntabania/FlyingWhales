@@ -15,10 +15,14 @@ public class InvadeData : PlayerAction {
         PlayerUI.Instance.OnClickHarassRaidInvade(targetHex, "invade");
     }
     public override bool CanPerformAbilityTowards(HexTile targetHex) {
-        if (targetHex.settlementOnTile != null && targetHex.settlementOnTile is NPCSettlement npcSettlement) {
-            return !npcSettlement.isBeingInvaded;
+        bool canPerform = base.CanPerformAbilityTowards(targetHex);
+        if (canPerform) {
+            if (targetHex.settlementOnTile != null && targetHex.settlementOnTile is NPCSettlement npcSettlement) {
+                return !npcSettlement.isBeingInvaded;
+            }
+            return false;
         }
-        return false;
+        return canPerform;
     }
     public override bool IsValid(IPlayerActionTarget target) {
         if(target is HexTile targetHex) {

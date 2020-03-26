@@ -17,9 +17,14 @@ public class SeizeObjectData : PlayerAction {
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         PlayerManager.Instance.player.seizeComponent.SeizePOI(targetPOI);
+        base.ActivateAbility(targetPOI);
     }
     public override bool CanPerformAbilityTowards(TileObject targetTileObject) {
-        return !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && targetTileObject.mapVisual != null && (targetTileObject.isBeingCarriedBy != null || targetTileObject.gridTileLocation != null);
+        bool canPerform = base.CanPerformAbilityTowards(targetTileObject);
+        if (canPerform) {
+            return !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && targetTileObject.mapVisual != null && (targetTileObject.isBeingCarriedBy != null || targetTileObject.gridTileLocation != null);
+        }
+        return canPerform;
     }
     #endregion
 }

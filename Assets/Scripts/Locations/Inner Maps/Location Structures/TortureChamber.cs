@@ -69,6 +69,7 @@ namespace Inner_Maps.Location_Structures {
             Assert.IsNotNull(ironMaiden, $"Trying to activate torture for {target.name} but there was no iron maiden available!");
             target.marker.GoToPOI(ironMaiden, OnArriveAtTortureLocation);
             UIManager.Instance.HideObjectPicker();
+            PlayerManager.Instance.GetPlayerActionData(SPELL_TYPE.LEARN_SPELL).OnExecuteSpellActionAffliction();
             Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
         }
         private void OnArriveAtTortureLocation() {

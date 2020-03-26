@@ -19,9 +19,7 @@ public class StopData : PlayerAction {
         if(targetPOI is Character character) {
             character.jobComponent.TriggerStopJobs();
         }
-    }
-    public override bool CanPerformAbilityTowards(Character targetCharacter) {
-        return true;
+        base.ActivateAbility(targetPOI);
     }
     #endregion
 }

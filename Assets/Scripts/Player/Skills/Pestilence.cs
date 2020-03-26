@@ -127,6 +127,7 @@ public class PestilenceData : SpellData {
             (targetPOI as Character).interruptComponent.TriggerInterrupt(INTERRUPT.Plagued, targetPOI);
         }
         // targetPOI.traitContainer.AddTrait(targetPOI, "Plagued");
+        base.ActivateAbility(targetPOI);
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
         if (targetCharacter.isDead || targetCharacter.race == RACE.SKELETON || targetCharacter.traitContainer.HasTrait("Plagued", "Robust", "Beast")) {

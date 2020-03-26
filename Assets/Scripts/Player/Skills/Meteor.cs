@@ -61,6 +61,7 @@ public class MeteorData : SpellData {
     public override void ActivateAbility(LocationGridTile targetTile) {
         //CreateMeteorStrikeAt(targetTile);
         GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Meteor_Strike);
+        base.ActivateAbility(targetTile);
     }
     //private void CreateMeteorStrikeAt(LocationGridTile tile) {
     //    GameObject meteorGO = InnerMapManager.Instance.mapObjectFactory.CreateNewMeteorObject();

@@ -400,7 +400,11 @@ namespace Inner_Maps {
                 TriggerSnareTrap(character);
             }
             if (isCorrupted) {
-                if(character.homeSettlement != null && (character.race == RACE.HUMANS || character.race == RACE.ELVES)) {
+                if(!character.behaviourComponent.isAttackingDemonicStructure 
+                    && character.homeSettlement != null 
+                    && (character.race == RACE.HUMANS || character.race == RACE.ELVES)
+                    && structure != null
+                    && structure is DemonicStructure) {
                     if (!InnerMapManager.Instance.HasWorldKnownDemonicStructure(structure)) {
                         character.jobComponent.CreateReportDemonicStructure(structure);
                     }

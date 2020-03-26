@@ -75,29 +75,8 @@ public class MeteorParticleEffect : BaseParticleEffect {
                 traitable.AdjustHP(-traitable.currentHP, ELEMENTAL_TYPE.Fire, 
                     elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref bs), showHPBar: true);
             }
-            // Burning burningTrait = traitable.traitContainer.GetNormalTrait<Burning>("Burning");
-            // if(burningTrait != null && burningTrait.sourceOfBurning == null) {
-            //     if(bs == null) {
-            //         bs = new BurningSource(traitable.gridTileLocation.parentMap.location);
-            //     }
-            //     burningTrait.SetSourceOfBurning(bs, traitable);
-            // }
-            //if (traitable.currentHP > 0 && Random.Range(0, 100) < 60) {
-            //    if (traitable.traitContainer.HasTrait("Flammable") &&
-            //        !traitable.traitContainer.HasTrait("Burning", "Burnt", "Wet", "Fireproof")) {
-            //        Burning burning = new Burning();
-            //        burning.SetSourceOfBurning(bs, traitable);
-            //        traitable.traitContainer.AddTrait(traitable, burning);
-            //    }
-            //}
         }
-        //if (!DOTween.IsTweening(InnerMapCameraMove.Instance.innerMapsCamera)) {
-        //    Tweener tween = InnerMapCameraMove.Instance.innerMapsCamera.DOShakeRotation(0.8f, new Vector3(8f, 8f, 0f), 25);
-        //    tween.OnComplete(OnTweenComplete);
-        //}
-        //else {
-
-        //}
+        Messenger.Broadcast(Signals.INCREASE_THREAT_THAT_SEES_TILE, targetTile, 10);
         InnerMapCameraMove.Instance.MeteorShake();
         GameManager.Instance.StartCoroutine(ExpireCoroutine(gameObject));
     }

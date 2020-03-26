@@ -190,8 +190,8 @@ public class CharacterInfoUI : InfoUIBase {
         //    UpdateCharacterInfo();
         //}
     }
-    protected override void OnPlayerActionExecuted(PlayerAction action) {
-        base.OnPlayerActionExecuted(action);
+    protected override void OnExecutePlayerAction(PlayerAction action) {
+        base.OnExecutePlayerAction(action);
         if(action.type == SPELL_TYPE.CHANGE_COMBAT_MODE) {
             SetCombatModeUIPosition(action);
         }
@@ -711,7 +711,7 @@ public class CharacterInfoUI : InfoUIBase {
     }
     private void ActivateAffliction(SPELL_TYPE afflictionType) {
         PlayerManager.Instance.GetAfflictionData(afflictionType).ActivateAbility(activeCharacter);
-
+        PlayerManager.Instance.GetPlayerActionData(SPELL_TYPE.AFFLICT).OnExecuteSpellActionAffliction();
         UIManager.Instance.HideObjectPicker();
     }
     private bool CanActivateAffliction(string afflictionName) {
@@ -808,6 +808,7 @@ public class CharacterInfoUI : InfoUIBase {
         UIManager.Instance.characterInfoUI.activeCharacter.combatComponent.SetCombatMode(combatMode);
         Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, activeCharacter as IPlayerActionTarget);
         UIManager.Instance.customDropdownList.Close();
+        PlayerManager.Instance.GetPlayerActionData(SPELL_TYPE.CHANGE_COMBAT_MODE).OnExecuteSpellActionAffliction();
     }
     #endregion
 }

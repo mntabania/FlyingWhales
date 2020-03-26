@@ -28,6 +28,7 @@ public class DestroyData : PlayerAction {
         if (UIManager.Instance.tileObjectInfoUI.isShowing && UIManager.Instance.tileObjectInfoUI.activeTileObject == targetPOI) {
             UIManager.Instance.tileObjectInfoUI.CloseMenu();
         }
+        base.ActivateAbility(targetPOI);
     }
     public override bool CanPerformAbilityTowards(TileObject tileObject) {
         if (tileObject.gridTileLocation == null) {
@@ -35,11 +36,5 @@ public class DestroyData : PlayerAction {
         }
         return base.CanPerformAbilityTowards(tileObject);
     }
-    // public override bool CanPerformAbilityTowards(SpecialToken item) {
-    //     if (item.gridTileLocation == null) {
-    //         return false;
-    //     }
-    //     return base.CanPerformAbilityTowards(item);
-    // }
     #endregion
 }

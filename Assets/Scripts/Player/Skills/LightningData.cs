@@ -21,6 +21,8 @@ public class LightningData : SpellData {
         for (int i = 0; i < pois.Count; i++) {
             pois[i].AdjustHP(-100, ELEMENTAL_TYPE.Electric, showHPBar: true);
         }
+        IncreaseThreatThatSeesTile(targetTile, 10);
+        base.ActivateAbility(targetTile);
     }
     public override void HighlightAffectedTiles(LocationGridTile tile) {
         TileHighlighter.Instance.PositionHighlight(0, tile);

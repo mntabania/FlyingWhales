@@ -17,9 +17,14 @@ public class ActivateTileObjectData : PlayerAction {
         if(targetPOI is TileObject targetTileObject) {
             targetTileObject.ActivateTileObject();
         }
+        base.ActivateAbility(targetPOI);
     }
-    public override bool CanPerformAbilityTowards(TileObject tileObject) {
-        return true;
+    public override bool CanPerformAbilityTowards(TileObject targetTileObject) {
+        bool canPerform = base.CanPerformAbilityTowards(targetTileObject);
+        if (canPerform) {
+            return targetTileObject.gridTileLocation != null;
+        }
+        return canPerform;
     }
     #endregion
 }

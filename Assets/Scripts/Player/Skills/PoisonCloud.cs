@@ -57,9 +57,15 @@ public class PoisonCloudData : SpellData {
         poisonCloudTileObject.SetGridTileLocation(targetTile);
         poisonCloudTileObject.OnPlacePOI();
         poisonCloudTileObject.SetStacks(5);
+        IncreaseThreatThatSeesTile(targetTile, 10);
+        base.ActivateAbility(targetTile);
     }
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
-        return targetTile.structure != null;
+        bool canPerform = base.CanPerformAbilityTowards(targetTile);
+        if (canPerform) {
+            return targetTile.structure != null;
+        }
+        return canPerform;
     }
     public override void HighlightAffectedTiles(LocationGridTile tile) {
         TileHighlighter.Instance.PositionHighlight(2, tile);

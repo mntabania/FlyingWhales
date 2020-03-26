@@ -20,7 +20,11 @@ public class EarthquakeData : SpellData {
         base.ActivateAbility(targetHex);
     }
     public override bool CanPerformAbilityTowards(HexTile targetHex) {
-        return targetHex != null && !targetHex.spellsComponent.hasEarthquake;
+        bool canPerform = base.CanPerformAbilityTowards(targetHex);
+        if (canPerform) {
+            return targetHex != null && !targetHex.spellsComponent.hasEarthquake;
+        }
+        return canPerform;
     }
     public override void HighlightAffectedTiles(LocationGridTile tile) {
         TileHighlighter.Instance.PositionHighlight(tile.collectionOwner.partOfHextile.hexTileOwner);

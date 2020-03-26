@@ -25,6 +25,8 @@ public class TerrifyingHowlData : SpellData {
         //     tile.PerformActionOnTraitables((traitable) => SpookCharacter(traitable, targetTile));
         // }
         GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Terrifying_Howl);
+        IncreaseThreatThatSeesTile(targetTile, 10);
+        base.ActivateAbility(targetTile);
     }
     private void SpookCharacter(ITraitable traitable, LocationGridTile targetTile) {
         if (traitable is Character character) {
@@ -34,7 +36,11 @@ public class TerrifyingHowlData : SpellData {
         }
     }
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
-        return targetTile.structure != null;
+        bool canPerform = base.CanPerformAbilityTowards(targetTile);
+        if (canPerform) {
+            return targetTile.structure != null;
+        }
+        return canPerform;
     }
     public override void HighlightAffectedTiles(LocationGridTile tile) {
         TileHighlighter.Instance.PositionHighlight(1, tile);

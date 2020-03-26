@@ -19,7 +19,11 @@ public class ElectricStormData : SpellData {
         base.ActivateAbility(targetHex);
     }
     public override bool CanPerformAbilityTowards(HexTile targetHex) {
-        return targetHex != null && !targetHex.spellsComponent.hasElectricStorm;
+        bool canPerform = base.CanPerformAbilityTowards(targetHex);
+        if (canPerform) {
+            return targetHex != null && !targetHex.spellsComponent.hasElectricStorm;
+        }
+        return canPerform;
     }
     public override void HighlightAffectedTiles(LocationGridTile tile) {
         TileHighlighter.Instance.PositionHighlight(tile.collectionOwner.partOfHextile.hexTileOwner);

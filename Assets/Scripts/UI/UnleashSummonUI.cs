@@ -106,18 +106,21 @@ public class UnleashSummonUI : PopupMenuBase {
                 //chosenSummons[i].behaviourComponent.SetHarassInvadeRaidTarget(targetNpcSettlement);
                 chosenSummons[i].behaviourComponent.SetIsHarassing(true, targetNpcSettlement);
             }
+            PlayerManager.Instance.GetPlayerActionData(SPELL_TYPE.HARASS).OnExecuteSpellActionAffliction();
         } else if (PlayerUI.Instance.harassRaidInvade == "raid") {
             PlayerUI.Instance.harassRaidInvadeLeaderMinion.character.behaviourComponent.SetIsRaiding(true, targetNpcSettlement);
             for (int i = 0; i < chosenSummons.Count; i++) {
                 //chosenSummons[i].behaviourComponent.SetHarassInvadeRaidTarget(targetNpcSettlement);
                 chosenSummons[i].behaviourComponent.SetIsRaiding(true, targetNpcSettlement);
             }
+            PlayerManager.Instance.GetPlayerActionData(SPELL_TYPE.RAID).OnExecuteSpellActionAffliction();
         } else if (PlayerUI.Instance.harassRaidInvade == "invade") {
             PlayerUI.Instance.harassRaidInvadeLeaderMinion.character.behaviourComponent.SetIsInvading(true, targetNpcSettlement);
             for (int i = 0; i < chosenSummons.Count; i++) {
                 //chosenSummons[i].behaviourComponent.SetHarassInvadeRaidTarget(targetNpcSettlement);
                 chosenSummons[i].behaviourComponent.SetIsInvading(true, targetNpcSettlement);
             }
+            PlayerManager.Instance.GetPlayerActionData(SPELL_TYPE.INVADE).OnExecuteSpellActionAffliction();
         }
         PlayerManager.Instance.player.threatComponent.AdjustThreat(5 + (5 * chosenSummons.Count));
         base.Close();

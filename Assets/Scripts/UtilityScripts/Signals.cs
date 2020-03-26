@@ -103,6 +103,7 @@ public static class Signals {
     public static string ON_SET_AS_SETTLEMENT_RULER = "OnSetAsFactionLeader";
     public static string ON_SWITCH_FROM_LIMBO = "OnSwitchFromLimbo";
     public static string INCREASE_THREAT_THAT_SEES_POI = "IncreaseThreatThatSeesPOI";
+    public static string INCREASE_THREAT_THAT_SEES_TILE = "IncreaseThreatThatSeesTILE";
 
     /// <summary>
     /// Parameters (MoodComponent moodComponentModified)
@@ -349,7 +350,15 @@ public static class Signals {
     /// <summary>
     /// parameters (PlayerAction)
     /// </summary>
-    public static string PLAYER_ACTION_EXECUTED = "OnPlayerActionExecuted";
+    public static string ON_EXECUTE_PLAYER_ACTION = "OnExecutePlayerAction";
+    /// <summary>
+    /// parameters (Affliction)
+    /// </summary>
+    public static string ON_EXECUTE_AFFLICTION = "OnExecuteAffliction";
+    /// <summary>
+    /// parameters (Spell)
+    /// </summary>
+    public static string ON_EXECUTE_SPELL = "OnExecuteSpell";
     /// <summary>
     /// parameters (IPlayerActionTarget)
     /// </summary>

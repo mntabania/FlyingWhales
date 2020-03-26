@@ -19,10 +19,14 @@ public class LearnSpellData : PlayerAction {
         }
     }
     public override bool CanPerformAbilityTowards(LocationStructure structure) {
-        if (structure is Inner_Maps.Location_Structures.TheSpire theSpire) {
-            return theSpire.CanLearnSpell();
+        bool canPerform = base.CanPerformAbilityTowards(structure);
+        if (canPerform) {
+            if (structure is Inner_Maps.Location_Structures.TheSpire theSpire) {
+                return theSpire.CanLearnSpell();
+            }
+            return false;
         }
-        return false;
+        return canPerform;
     }
     #endregion
 }

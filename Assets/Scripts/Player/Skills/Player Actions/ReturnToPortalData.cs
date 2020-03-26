@@ -19,9 +19,7 @@ public class ReturnToPortalData : PlayerAction {
         if(targetPOI is Character character) {
             character.jobComponent.TriggerReturnPortal();
         }
-    }
-    public override bool CanPerformAbilityTowards(Character targetCharacter) {
-        return true;
+        base.ActivateAbility(targetPOI);
     }
     #endregion
 }

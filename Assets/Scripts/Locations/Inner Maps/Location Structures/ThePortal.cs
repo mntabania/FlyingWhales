@@ -47,6 +47,7 @@ namespace Inner_Maps.Location_Structures {
             //Character character = obj as Character;
             character.minion.Summon(this);
             UIManager.Instance.HideObjectPicker();
+            PlayerManager.Instance.GetPlayerActionData(SPELL_TYPE.SUMMON_MINION).OnExecuteSpellActionAffliction();
         }
     }
 }

@@ -17,9 +17,14 @@ public class SeizeCharacterData : PlayerAction {
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         PlayerManager.Instance.player.seizeComponent.SeizePOI(targetPOI);
+        base.ActivateAbility(targetPOI);
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
-        return !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && !targetCharacter.traitContainer.HasTrait("Leader", "Blessed");
+        bool canPerform = base.CanPerformAbilityTowards(targetCharacter);
+        if (canPerform) {
+            return !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && !targetCharacter.traitContainer.HasTrait("Leader", "Blessed");
+        }
+        return canPerform;
     }
     #endregion
 }

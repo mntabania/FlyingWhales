@@ -23,7 +23,6 @@ public class PlayerAction : SpellData {
         } else if (target is LocationStructure targetStructure) {
             ActivateAbility(targetStructure);
         }
-        Messenger.Broadcast(Signals.PLAYER_ACTION_EXECUTED, this);
 	}
     public bool CanPerformAbilityTo(IPlayerActionTarget target) {
         if (target is IPointOfInterest targetPOI) {
@@ -33,6 +32,6 @@ public class PlayerAction : SpellData {
         } else if (target is LocationStructure targetStructure) {
             return CanPerformAbilityTowards(targetStructure);
         }
-        return true;
+        return CanPerformAbility();
     }
 }

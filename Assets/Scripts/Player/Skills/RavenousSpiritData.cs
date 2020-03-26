@@ -19,10 +19,16 @@ public class RavenousSpiritData : SpellData {
         RavenousSpirit spirit = InnerMapManager.Instance.CreateNewTileObject<RavenousSpirit>(TILE_OBJECT_TYPE.RAVENOUS_SPIRIT);
         spirit.SetGridTileLocation(targetTile);
         spirit.OnPlacePOI();
+        IncreaseThreatThatSeesTile(targetTile, 10);
+        base.ActivateAbility(targetTile);
         // targetTile.structure.AddPOI(spirit, targetTile);
     }
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
-        return targetTile.structure != null && targetTile.objHere == null;
+        bool canPerform = base.CanPerformAbilityTowards(targetTile);
+        if (canPerform) {
+            return targetTile.structure != null && targetTile.objHere == null;
+        }
+        return canPerform;
     }
     public override void HighlightAffectedTiles(LocationGridTile tile) {
         TileHighlighter.Instance.PositionHighlight(0, tile);

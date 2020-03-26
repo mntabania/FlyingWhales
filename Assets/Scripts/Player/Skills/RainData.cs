@@ -19,9 +19,13 @@ public class RainData : SpellData {
         base.ActivateAbility(targetHex);
     }
     public override bool CanPerformAbilityTowards(HexTile targetHex) {
-        return targetHex != null
-               && targetHex.biomeType != BIOMES.DESERT
-               && targetHex.featureComponent.HasFeature(TileFeatureDB.Rain_Feature) == false;
+        bool canPerform = base.CanPerformAbilityTowards(targetHex);
+        if (canPerform) {
+            return targetHex != null
+                   && targetHex.biomeType != BIOMES.DESERT
+                   && targetHex.featureComponent.HasFeature(TileFeatureDB.Rain_Feature) == false;
+        }
+        return canPerform;
     }
     public override void HighlightAffectedTiles(LocationGridTile tile) {
         TileHighlighter.Instance.PositionHighlight(tile.collectionOwner.partOfHextile.hexTileOwner);
