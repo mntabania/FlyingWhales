@@ -1433,7 +1433,7 @@ public enum SPELL_TYPE { NONE, LYCANTHROPY, KLEPTOMANIA, VAMPIRISM, UNFAITHFULNE
     SPLASH_POISON, BLIZZARD, RAIN, POISON, BALL_LIGHTNING, ELECTRIC_STORM, FROSTY_FOG, VAPOR, FIRE_BALL,
     POISON_BLOOM, LANDMINE, TERRIFYING_HOWL, FREEZING_TRAP, SNARE_TRAP, WIND_BLAST, ICETEROIDS, HEAT_WAVE, TORTURE, SUMMON_MINION,
     STOP, SEIZE_OBJECT, SEIZE_CHARACTER, SEIZE_MONSTER, RETURN_TO_PORTAL, RAID, HARASS, INVADE, LEARN_SPELL, CHANGE_COMBAT_MODE, BUILD_DEMONIC_STRUCTURE, AFFLICT, ACTIVATE_TILE_OBJECT,
-    BREED_MONSTER, END_RAID, END_HARASS, END_INVADE, INTERFERE,
+    BREED_MONSTER, END_RAID, END_HARASS, END_INVADE, INTERFERE, COWARDICE, PYROPHOBIA, NARCOLEPSY,
 }
 //public enum INTERVENTION_ABILITY_TYPE { NONE, AFFLICTION, SPELL, }
 public enum SPELL_CATEGORY { NONE, SPELL, AFFLICTION, PLAYER_ACTION, }
@@ -1471,7 +1471,7 @@ public enum SUMMON_TYPE {
     Sludge,
     Ghost,
 }
-public enum ARTIFACT_TYPE { None, Necronomicon, Ankh_Of_Anubis, Berserk_Orb }
+public enum ARTIFACT_TYPE { None, Necronomicon, Ankh_Of_Anubis, Berserk_Orb, Heart_Of_The_Wind, Gorgon_Eye }
 public enum ABILITY_TAG { NONE, MAGIC, SUPPORT, DEBUFF, CRIME, PHYSICAL, }
 public enum LANDMARK_YIELD_TYPE { SUMMON, ARTIFACT, ABILITY, SKIRMISH, STORY_EVENT, }
 public enum SERIAL_VICTIM_TYPE { NONE, GENDER, RACE, CLASS, TRAIT }
@@ -1501,7 +1501,7 @@ public enum COMBAT_MODE { Aggressive, Passive, Defend, }
 public enum WALL_TYPE { Stone, Flesh, Demon_Stone }
 public enum PARTICLE_EFFECT { None, Poison, Freezing, Fire, Burning, Explode, Electric, Frozen, Poison_Explosion, 
     Frozen_Explosion, Smoke_Effect, Lightning_Strike, Meteor_Strike, Water_Bomb, Poison_Bomb, Blizzard, Destroy_Explosion, Minion_Dissipate, Brimstones,
-    Rain, Landmine, Burnt, Terrifying_Howl, Freezing_Trap, Snare_Trap, Wind_Blast, Iceteroids, Heat_Wave,
+    Rain, Landmine, Burnt, Terrifying_Howl, Freezing_Trap, Snare_Trap, Wind_Blast, Iceteroids, Heat_Wave, Gorgon_Eye,
 }
 
 #region Crime Subcategories

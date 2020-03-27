@@ -96,7 +96,7 @@ public class AlcoholicData : SpellData {
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.AFFLICTION;
 
     public AlcoholicData() : base() {
-        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER, SPELL_TARGET.TILE_OBJECT };
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
     }
 
     #region Overrides

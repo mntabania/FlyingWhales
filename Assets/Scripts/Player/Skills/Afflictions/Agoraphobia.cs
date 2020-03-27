@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using Traits;
 
-public class Cannibalism : PlayerSpell {
+public class Agoraphobia : PlayerSpell {
 
-    public Cannibalism() : base(SPELL_TYPE.CANNIBALISM) {
-        tier = 2;
+    public Agoraphobia() : base(SPELL_TYPE.AGORAPHOBIA) {
+        tier = 3;
         SetDefaultCooldownTime(24);
-        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER, SPELL_TARGET.TILE_OBJECT};
-        //abilityTags.Add(ABILITY_TAG.MAGIC);
-        //abilityTags.Add(ABILITY_TAG.CRIME);
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER, SPELL_TARGET.TILE_OBJECT };
+        //abilityTags.Add(ABILITY_TAG.NONE);
     }
 
     #region Overrides
@@ -28,7 +27,7 @@ public class Cannibalism : PlayerSpell {
             for (int i = 0; i < targets.Count; i++) {
                 Character currTarget = targets[i];
                 if (CanPerformActionTowards(currTarget)) {
-                    Trait newTrait = new Cannibal();
+                    Trait newTrait = new Agoraphobic();
                     newTrait.SetLevel(level);
                     currTarget.traitContainer.AddTrait(currTarget, newTrait);
                     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted");
@@ -58,10 +57,7 @@ public class Cannibalism : PlayerSpell {
         if (targetCharacter.isDead) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
             return false;
         }
-        if (targetCharacter.race == RACE.SKELETON) {
-            return false;
-        }
-        if (targetCharacter.traitContainer.HasTrait("Cannibal", "Vampiric")) {
+        if (targetCharacter.traitContainer.HasTrait("Agoraphobic")) {
             return false;
         }
         //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
@@ -92,10 +88,7 @@ public class Cannibalism : PlayerSpell {
         if (targetCharacter.isDead) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
             return false;
         }
-        if (targetCharacter.race == RACE.SKELETON) {
-            return false;
-        }
-        if (targetCharacter.traitContainer.HasTrait("Cannibal", "Vampiric")) {
+        if (targetCharacter.traitContainer.HasTrait("Agoraphobic")) {
             return false;
         }
         //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
@@ -105,29 +98,29 @@ public class Cannibalism : PlayerSpell {
     }
 }
 
-public class CannibalismData : SpellData {
-    public override SPELL_TYPE type => SPELL_TYPE.CANNIBALISM;
-    public override string name { get { return "Cannibalism"; } }
-    public override string description { get { return "Makes a character eat other characters with the same race for sustenance."; } }
+public class AgoraphobiaData : SpellData {
+    public override SPELL_TYPE type => SPELL_TYPE.AGORAPHOBIA;
+    public override string name { get { return "Agoraphobia"; } }
+    public override string description { get { return "Makes a character fear crowds."; } }
     public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.AFFLICTION; } }
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.AFFLICTION;
 
-    public CannibalismData() : base() {
-        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER, SPELL_TARGET.TILE_OBJECT };
+    public AgoraphobiaData() : base() {
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
     }
 
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
-        targetPOI.traitContainer.AddTrait(targetPOI, "Cannibal");
+        targetPOI.traitContainer.AddTrait(targetPOI, "Agoraphobic");
         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted");
         log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        log.AddToFillers(null, "Cannibal", LOG_IDENTIFIER.STRING_1);
+        log.AddToFillers(null, "Agoraphobic", LOG_IDENTIFIER.STRING_1);
         log.AddLogToInvolvedObjects();
         PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
         base.ActivateAbility(targetPOI);
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
-        if (targetCharacter.isDead || targetCharacter.race == RACE.SKELETON || targetCharacter.traitContainer.HasTrait("Cannibal", "Vampiric")) {
+        if (targetCharacter.isDead || targetCharacter.traitContainer.HasTrait("Agoraphobic")) {
             return false;
         }
         return base.CanPerformAbilityTowards(targetCharacter);

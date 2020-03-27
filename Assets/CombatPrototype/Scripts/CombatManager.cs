@@ -61,10 +61,21 @@ public class CombatManager : MonoBehaviour {
             if(elementalType == ELEMENTAL_TYPE.Fire) {
                 if (target.traitContainer.HasTrait("Fire Prone")) {
                     damage *= 2;
+                } else if (target.traitContainer.HasTrait("Fireproof")) {
+                    //Immunity - less 85% damage
+                    damage = Mathf.RoundToInt(damage * 0.15f);
                 }
             } else if (elementalType == ELEMENTAL_TYPE.Electric) {
                 if (target.traitContainer.HasTrait("Electric")) {
-                    damage = 0;
+                    //Immunity - less 85% damage
+                    damage = Mathf.RoundToInt(damage * 0.15f);
+                    //damage = 0;
+                }
+            } else if (elementalType == ELEMENTAL_TYPE.Ice) {
+                if (target.traitContainer.HasTrait("Cold Blooded")) {
+                    //Immunity - less 85% damage
+                    damage = Mathf.RoundToInt(damage * 0.15f);
+                    //damage = 0;
                 }
             }
         }
