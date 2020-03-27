@@ -32,7 +32,7 @@ public class DouseFireState : CharacterState {
             BurningSource burningSource = stateComponent.character.currentRegion.innerMap.activeBurningSources[i];
             for (int j = 0; j < burningSource.objectsOnFire.Count; j++) {
                 ITraitable traitable = burningSource.objectsOnFire[j];
-                if (traitable is IPointOfInterest pointOfInterest && pointOfInterest.gridTileLocation.
+                if (traitable is IPointOfInterest pointOfInterest && pointOfInterest.gridTileLocation != null && pointOfInterest.gridTileLocation.
                     IsPartOfSettlement(stateComponent.character.homeSettlement)) {
                     AddFire(pointOfInterest);
                 }

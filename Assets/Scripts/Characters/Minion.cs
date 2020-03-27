@@ -358,7 +358,7 @@ public class Minion {
     #region Summoning
     public void Summon(Inner_Maps.Location_Structures.ThePortal portalStructure) {
         character.CreateMarker();
-
+        character.marker.visionCollider.VoteToUnFilterVision();
         int minX = portalStructure.tiles.Min(t => t.localPlace.x);
         int maxX = portalStructure.tiles.Max(t => t.localPlace.x);
         int minY = portalStructure.tiles.Min(t => t.localPlace.y);
