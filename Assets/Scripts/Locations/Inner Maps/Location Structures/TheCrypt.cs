@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Actionables;
 using UnityEngine;
 
 namespace Inner_Maps.Location_Structures {
@@ -24,11 +23,12 @@ namespace Inner_Maps.Location_Structures {
 
         #region Activate
         private void AddActivateAction() {
-            PlayerAction activate = new PlayerAction(PlayerDB.Activate_Artifact_Action, CanDoActivateArtifactAction, null, OnClickActivateArtifact);
-            AddPlayerAction(activate);
+            //PlayerAction activate = new PlayerAction(PlayerDB.Activate_Artifact_Action, CanDoActivateArtifactAction, null, OnClickActivateArtifact);
+            AddPlayerAction(SPELL_TYPE.ACTIVATE_TILE_OBJECT);
         }
         private void RemoveActivateAction() {
-            RemovePlayerAction(GetPlayerAction(PlayerDB.Activate_Artifact_Action));
+            //RemovePlayerAction(GetPlayerAction(PlayerDB.Activate_Artifact_Action));
+            RemovePlayerAction(SPELL_TYPE.ACTIVATE_TILE_OBJECT);
         }
         private bool CanDoActivateArtifactAction() {
             return PlayerManager.Instance.player.mana >= 50;
@@ -38,15 +38,16 @@ namespace Inner_Maps.Location_Structures {
             UIManager.Instance.ShowClickableObjectPicker(artifacts, ActivateArtifact, null, CanActivateArtifact, "Activate an Artifact");
         }
         private void ActivateArtifact(object obj) {
-            _activatedArtifact?.Deactivate();
-            Artifact artifact = obj as Artifact;
-            artifact.Activate();
-            _activatedArtifact = artifact;
-            PlayerManager.Instance.player.AdjustMana(-50);
-            UIManager.Instance.HideObjectPicker();
+            //_activatedArtifact?.Deactivate();
+            //Artifact artifact = obj as Artifact;
+            //artifact.Activate();
+            //_activatedArtifact = artifact;
+            //PlayerManager.Instance.player.AdjustMana(-50);
+            //UIManager.Instance.HideObjectPicker();
         }
         private bool CanActivateArtifact(Artifact artifact) {
-            return artifact.hasBeenActivated == false && artifact.CanGainSomethingNewByActivating();
+            //return artifact.hasBeenActivated == false && artifact.CanGainSomethingNewByActivating();
+            return false;
         }
         #endregion
     }

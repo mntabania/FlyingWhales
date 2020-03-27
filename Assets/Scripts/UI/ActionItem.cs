@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using Actionables;
 using EZObjectPools;
 using TMPro;
 using UnityEngine;
@@ -9,8 +8,9 @@ using UnityEngine.UI;
 public class ActionItem : PooledObject {
 
 	public PlayerAction playerAction { get; private set; }
-	
-	[SerializeField] private Button button;
+    public IPlayerActionTarget playerActionTarget { get; private set; }
+
+    [SerializeField] private Button button;
 	[SerializeField] private Image actionImg;
 	[SerializeField] private Image coverImg;
     [SerializeField] private Image highlightImg;
@@ -18,8 +18,9 @@ public class ActionItem : PooledObject {
 
 	private string expiryKey;
 	
-	public void SetAction(PlayerAction playerAction) {
+	public void SetAction(PlayerAction playerAction, IPlayerActionTarget playerActionTarget) {
         this.playerAction = playerAction;
+        this.playerActionTarget = playerActionTarget;
         UnToggleHighlight();
         //if (playerAction.actions != null) {
         //    button.onClick.AddListener(playerAction.Execute);
@@ -27,8 +28,8 @@ public class ActionItem : PooledObject {
         // if (icon != null) {
         // 	actionImg.sprite = icon;	
         // }
-        actionImg.sprite = PlayerUI.Instance.playerActionIconDictionary[playerAction.actionName];
-        actionLbl.text = playerAction.labelText;
+        actionImg.sprite = PlayerUI.Instance.playerActionsIconDictionary[playerAction.type];
+        actionLbl.text = playerAction.GetLabelName(playerActionTarget);
 		SetAsClickable();
         // Messenger.AddListener<PlayerAction>(Signals.PLAYER_ACTION_UNTOGGLE, ListenUntoggleHighlight);
 	}
@@ -60,13 +61,10 @@ public class ActionItem : PooledObject {
             // UpdateState();
         //}
     }
-    private void UpdateState() {
-        SetInteractable(playerAction.isActionClickableChecker.Invoke());
-    }
     public void OnClickThis() {
-        if (playerAction != null && playerAction.actions != null) {
+        if (playerAction != null) {
             ToggleHighlight();
-            playerAction.Execute();
+            playerAction.Activate(playerActionTarget);
         }
     }
 

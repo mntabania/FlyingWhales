@@ -548,6 +548,36 @@ public class Player : ILeader, IObjectManipulator {
     #endregion
 
     #region Summons
+    public SUMMON_TYPE currentActiveSummon { get; private set; }
+    public void SetCurrentlyActiveSummon(SUMMON_TYPE summon) {
+        if (currentActiveSummon != summon) {
+            SUMMON_TYPE previousActiveSummon = currentActiveSummon;
+            currentActiveSummon = summon;
+            if (currentActiveSummon == SUMMON_TYPE.None) {
+                Messenger.RemoveListener<KeyCode>(Signals.KEY_DOWN, OnSummonCast);
+                InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
+                Messenger.Broadcast(Signals.PLAYER_NO_ACTIVE_MONSTER, previousActiveSummon);
+            } else {
+                InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Check);
+                Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnSummonCast);
+            }
+        }
+    }
+    private void OnSummonCast(KeyCode key) {
+        if (key == KeyCode.Mouse0) {
+            TrySummonMonster();
+        }
+    }
+    private void TrySummonMonster() {
+        if (UIManager.Instance.IsMouseOnUI() || !InnerMapManager.Instance.isAnInnerMapShowing) {
+            return; //clicked on UI;
+        }
+        LocationGridTile hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
+        if (hoveredTile != null) {
+            Summon summon = CharacterManager.Instance.CreateNewSummon(currentActiveSummon, FactionManager.Instance.neutralFaction, homeRegion: hoveredTile.parentMap.region as Region);
+            CharacterManager.Instance.PlaceSummon(summon, hoveredTile);
+        }
+    }
     //private void GainSummonSlot(bool showUI = true) {
     //    SummonSlot newSlot = new SummonSlot();
     //    summons.Add(newSlot);
@@ -791,6 +821,36 @@ public class Player : ILeader, IObjectManipulator {
     #endregion
 
     #region Artifacts
+    public ARTIFACT_TYPE currentActiveArtifact { get; private set; }
+    public void SetCurrentlyActiveArtifact(ARTIFACT_TYPE artifact) {
+        if (currentActiveArtifact != artifact) {
+            ARTIFACT_TYPE previousActiveArtifact = currentActiveArtifact;
+            currentActiveArtifact = artifact;
+            if (currentActiveArtifact == ARTIFACT_TYPE.None) {
+                Messenger.RemoveListener<KeyCode>(Signals.KEY_DOWN, OnArtifactCast);
+                InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
+                Messenger.Broadcast(Signals.PLAYER_NO_ACTIVE_ARTIFACT, previousActiveArtifact);
+            } else {
+                InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Check);
+                Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnArtifactCast);
+            }
+        }
+    }
+    private void OnArtifactCast(KeyCode key) {
+        if (key == KeyCode.Mouse0) {
+            TrySpawnArtifact();
+        }
+    }
+    private void TrySpawnArtifact() {
+        if (UIManager.Instance.IsMouseOnUI() || !InnerMapManager.Instance.isAnInnerMapShowing) {
+            return; //clicked on UI;
+        }
+        LocationGridTile hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
+        if (hoveredTile != null && hoveredTile.objHere == null) {
+            Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(currentActiveArtifact);
+            hoveredTile.structure.AddPOI(artifact, hoveredTile);
+        }
+    }
     //private void ConstructAllArtifactSlots() {
     //    for (int i = 0; i < artifactSlots.Length; i++) {
     //        if(artifactSlots[i] == null) {
@@ -1312,7 +1372,43 @@ public class Player : ILeader, IObjectManipulator {
     public bool IsPerformingPlayerAction() {
         return PlayerManager.Instance.player.currentActivePlayerSpell != null
                || PlayerManager.Instance.player.seizeComponent.hasSeizedPOI
-               || PlayerManager.Instance.player.currentActiveIntel != null;
+               || PlayerManager.Instance.player.currentActiveIntel != null
+               || PlayerManager.Instance.player.currentActiveSummon != SUMMON_TYPE.None
+               || PlayerManager.Instance.player.currentActiveItem != TILE_OBJECT_TYPE.NONE
+               || PlayerManager.Instance.player.currentActiveArtifact != ARTIFACT_TYPE.None;
+    }
+    #endregion
+
+    #region Tile Objects
+    public TILE_OBJECT_TYPE currentActiveItem { get; private set; }
+    public void SetCurrentlyActiveItem(TILE_OBJECT_TYPE item) {
+        if (currentActiveItem != item) {
+            TILE_OBJECT_TYPE previousActiveItem = currentActiveItem;
+            currentActiveItem = item;
+            if (currentActiveItem == TILE_OBJECT_TYPE.NONE) {
+                Messenger.RemoveListener<KeyCode>(Signals.KEY_DOWN, OnItemCast);
+                InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
+                Messenger.Broadcast(Signals.PLAYER_NO_ACTIVE_ITEM, previousActiveItem);
+            } else {
+                InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Check);
+                Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnItemCast);
+            }
+        }
+    }
+    private void OnItemCast(KeyCode key) {
+        if (key == KeyCode.Mouse0) {
+            TrySpawnItem();
+        }
+    }
+    private void TrySpawnItem() {
+        if (UIManager.Instance.IsMouseOnUI() || !InnerMapManager.Instance.isAnInnerMapShowing) {
+            return; //clicked on UI;
+        }
+        LocationGridTile hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
+        if (hoveredTile != null && hoveredTile.objHere == null) {
+            TileObject item = InnerMapManager.Instance.CreateNewTileObject<TileObject>(currentActiveItem);
+            hoveredTile.structure.AddPOI(item, hoveredTile);
+        }
     }
     #endregion
 }

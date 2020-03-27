@@ -46,7 +46,7 @@ public class PlayerJobData {
                 break;
             case JOB.DEBILITATOR:
                 //jobActions.Add(new Intervene());
-                jobActions.Add(new Zap());
+                //jobActions.Add(new Zap());
                 //jobActions.Add(new Jolt());
                 //jobActions.Add(new Spook());
                 //jobActions.Add(new Enrage());
@@ -55,8 +55,8 @@ public class PlayerJobData {
             case JOB.INSTIGATOR:
                 //jobActions.Add(new Abduct());
                 //jobActions.Add(new Provoke());
-                jobActions.Add(new Destroy());
-                jobActions.Add(new RaiseDead());
+                //jobActions.Add(new Destroy());
+                //jobActions.Add(new RaiseDead());
                 break;
         }
         //for (int i = 0; i < jobActions.Count; i++) {

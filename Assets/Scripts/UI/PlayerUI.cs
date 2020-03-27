@@ -93,7 +93,7 @@ public class PlayerUI : MonoBehaviour {
     private readonly List<string> factionActionsList = new List<string>() { "Manage Cult", "Meddle" };
 
     [Header("Player Actions")]
-    public StringSpriteDictionary playerActionIconDictionary;
+    public SpellSpriteDictionary playerActionsIconDictionary;
     private List<System.Action> pendingUIToShow { get; set; }
 
     [Header("Spells")]
@@ -101,6 +101,24 @@ public class PlayerUI : MonoBehaviour {
     public GameObject spellsContainerGO;
     public GameObject spellItemPrefab;
     private List<SpellItem> _spellItems;
+
+    [Header("Summons")]
+    public ScrollRect summonsScrollRect;
+    public GameObject summonsContainerGO;
+    public GameObject summonItemPrefab;
+    private List<SummonItem> _summonItems;
+
+    [Header("Items")]
+    public ScrollRect itemsScrollRect;
+    public GameObject itemsContainerGO;
+    public GameObject itemItemPrefab;
+    private List<ItemItem> _itemItems;
+
+    [Header("Artifacts")]
+    public ScrollRect artifactsScrollRect;
+    public GameObject artifactsContainerGO;
+    public GameObject artifactItemPrefab;
+    private List<ArtifactItem> _artifactItems;
 
     [Header("Threat")]
     public Image threatMeter;
@@ -123,6 +141,9 @@ public class PlayerUI : MonoBehaviour {
     public void Initialize() {
         pendingUIToShow = new List<Action>();
         _spellItems = new List<SpellItem>();
+        _summonItems = new List<SummonItem>();
+        _itemItems = new List<ItemItem>();
+        _artifactItems = new List<ArtifactItem>();
 
         Messenger.AddListener<InfoUIBase>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<InfoUIBase>(Signals.MENU_CLOSED, OnMenuClosed);
@@ -165,7 +186,9 @@ public class PlayerUI : MonoBehaviour {
         InitialUpdateKillCountCharacterItems();
         UpdateIntel();
         CreateInitialSpells();
-        
+        CreateSummonsForTesting();
+        CreateItemsForTesting();
+        CreateArtifactsForTesting();
     }
 
     #region Listeners
@@ -906,7 +929,20 @@ public class PlayerUI : MonoBehaviour {
     private void CreateNewSpellItem(SPELL_TYPE spell) {
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(spellItemPrefab.name, Vector3.zero, Quaternion.identity, spellsScrollRect.content);
         SpellItem item = go.GetComponent<SpellItem>();
-        item.SetSpell(PlayerManager.Instance.GetSpellData(spell));
+        SpellData spellData = PlayerManager.Instance.GetSpellData(spell);
+        if (spellData != null) {
+            item.SetSpell(spellData);
+        } else {
+            spellData = PlayerManager.Instance.GetAfflictionData(spell);
+            if (spellData != null) {
+                item.SetSpell(spellData);
+            } else {
+                spellData = PlayerManager.Instance.GetPlayerActionData(spell);
+                if (spellData != null) {
+                    item.SetSpell(spellData);
+                }
+            }
+        }
         _spellItems.Add(item);
     }
     private void DeleteSpellItem(SPELL_TYPE spell) {
@@ -918,7 +954,7 @@ public class PlayerUI : MonoBehaviour {
     private SpellItem GetSpellItem(SPELL_TYPE spell) {
         for (int i = 0; i < _spellItems.Count; i++) {
             SpellItem item = _spellItems[i];
-            if (item.spellData.ability == spell) {
+            if (item.spellData.type == spell) {
                 return item;
             }
         }
@@ -936,6 +972,91 @@ public class PlayerUI : MonoBehaviour {
     //    SpellData ability = PlayerManager.Instance.GetSpellData(spell);
     //    PlayerManager.Instance.player.SetCurrentlyActivePlayerSpell(ability);
     //}
+    #endregion
+
+    #region Summons
+    public void OnToggleSummons(bool isOn) {
+        if (isOn) {
+            ShowSummons();
+        } else {
+            HideSummons();
+        }
+    }
+    private void ShowSummons() {
+        summonsContainerGO.SetActive(true);
+    }
+    private void HideSummons() {
+        summonsContainerGO.SetActive(false);
+    }
+    public void CreateSummonsForTesting() {
+        SUMMON_TYPE[] summons = (SUMMON_TYPE[]) System.Enum.GetValues(typeof(SUMMON_TYPE));
+        for (int i = 0; i < summons.Length; i++) {
+            if(summons[i] != SUMMON_TYPE.None) {
+                CreateNewSummonItem(summons[i]);
+            }
+        }
+    }
+    private void CreateNewSummonItem(SUMMON_TYPE summon) {
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(summonItemPrefab.name, Vector3.zero, Quaternion.identity, summonsScrollRect.content);
+        SummonItem item = go.GetComponent<SummonItem>();
+        item.SetSummon(summon);
+        _summonItems.Add(item);
+    }
+    #endregion
+
+    #region Tile Objects
+    public void OnToggleItems(bool isOn) {
+        if (isOn) {
+            ShowItems();
+        } else {
+            HideItems();
+        }
+    }
+    private void ShowItems() {
+        itemsContainerGO.SetActive(true);
+    }
+    private void HideItems() {
+        itemsContainerGO.SetActive(false);
+    }
+    public void CreateItemsForTesting() {
+        TILE_OBJECT_TYPE[] items = new[] { TILE_OBJECT_TYPE.ELECTRIC_CRYSTAL, TILE_OBJECT_TYPE.FIRE_CRYSTAL, TILE_OBJECT_TYPE.ICE_CRYSTAL, TILE_OBJECT_TYPE.POISON_CRYSTAL, TILE_OBJECT_TYPE.WATER_CRYSTAL };
+        for (int i = 0; i < items.Length; i++) {
+            CreateNewItemItem(items[i]);
+        }
+    }
+    private void CreateNewItemItem(TILE_OBJECT_TYPE item) {
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(itemItemPrefab.name, Vector3.zero, Quaternion.identity, itemsScrollRect.content);
+        ItemItem itemItem = go.GetComponent<ItemItem>();
+        itemItem.SetItem(item);
+        _itemItems.Add(itemItem);
+    }
+    public void OnToggleArtifacts(bool isOn) {
+        if (isOn) {
+            ShowArtifacts();
+        } else {
+            HideArtifacts();
+        }
+    }
+    private void ShowArtifacts() {
+        artifactsContainerGO.SetActive(true);
+    }
+    private void HideArtifacts() {
+        artifactsContainerGO.SetActive(false);
+    }
+    public void CreateArtifactsForTesting() {
+        ARTIFACT_TYPE[] artifacts = (ARTIFACT_TYPE[]) System.Enum.GetValues(typeof(ARTIFACT_TYPE));
+        for (int i = 0; i < artifacts.Length; i++) {
+            if(artifacts[i] != ARTIFACT_TYPE.None) {
+                CreateNewArtifactItem(artifacts[i]);
+            }
+        }
+    }
+    private void CreateNewArtifactItem(ARTIFACT_TYPE artifact) {
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(artifactItemPrefab.name, Vector3.zero, Quaternion.identity, artifactsScrollRect.content);
+        ArtifactItem artifactArtifact = go.GetComponent<ArtifactItem>();
+        artifactArtifact.SetArtifact(artifact);
+        _artifactItems.Add(artifactArtifact);
+    }
     #endregion
 
     #region Faction Actions
@@ -990,12 +1111,16 @@ public class PlayerUI : MonoBehaviour {
             //harassRaidInvadeLeaderMinion.character.behaviourComponent.SetHarassInvadeRaidTarget(harassRaidInvadeTargetNpcSettlement);
             if (harassRaidInvade == "harass") {
                 harassRaidInvadeLeaderMinion.character.behaviourComponent.SetIsHarassing(true, harassRaidInvadeTargetNpcSettlement);
+                PlayerManager.Instance.GetPlayerActionData(SPELL_TYPE.HARASS).OnExecuteSpellActionAffliction();
             } else if (harassRaidInvade == "raid") {
                 harassRaidInvadeLeaderMinion.character.behaviourComponent.SetIsRaiding(true, harassRaidInvadeTargetNpcSettlement);
+                PlayerManager.Instance.GetPlayerActionData(SPELL_TYPE.RAID).OnExecuteSpellActionAffliction();
             } else if (harassRaidInvade == "invade") {
                 harassRaidInvadeLeaderMinion.character.behaviourComponent.SetIsInvading(true, harassRaidInvadeTargetNpcSettlement);
+                PlayerManager.Instance.GetPlayerActionData(SPELL_TYPE.INVADE).OnExecuteSpellActionAffliction();
             }
             PlayerManager.Instance.player.threatComponent.AdjustThreat(5);
+            
         }
     }
     #endregion

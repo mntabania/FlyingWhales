@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Actionables;
 using UnityEngine;
 namespace Inner_Maps.Location_Structures {
     public class ThePortal : DemonicStructure {
@@ -14,12 +13,12 @@ namespace Inner_Maps.Location_Structures {
         public override void ConstructDefaultActions() {
             base.ConstructDefaultActions();
             validMinions = new List<Character>();
-            PlayerAction summonMinion = new PlayerAction(PlayerDB.Summon_Minion_Action, 
-                () => PlayerManager.Instance.player.mana >= EditableValuesManager.Instance.summonMinionManaCost, null,
-                SummonMinion);
-            AddPlayerAction(summonMinion);
+            //PlayerAction summonMinion = new PlayerAction(PlayerDB.Summon_Minion_Action, 
+            //    () => PlayerManager.Instance.player.mana >= EditableValuesManager.Instance.summonMinionManaCost, null,
+            //    SummonMinion);
+            AddPlayerAction(SPELL_TYPE.SUMMON_MINION);
         }
-        private void SummonMinion() {
+        public void SummonMinion() {
             validMinions.Clear();
             for (int i = 0; i < PlayerManager.Instance.player.minions.Count; i++) {
                 Minion minion = PlayerManager.Instance.player.minions[i];
@@ -48,6 +47,7 @@ namespace Inner_Maps.Location_Structures {
             //Character character = obj as Character;
             character.minion.Summon(this);
             UIManager.Instance.HideObjectPicker();
+            PlayerManager.Instance.GetPlayerActionData(SPELL_TYPE.SUMMON_MINION).OnExecuteSpellActionAffliction();
         }
     }
 }

@@ -7,10 +7,10 @@ namespace Archetype {
         public string name { get; protected set; }
         public PLAYER_ARCHETYPE type { get; protected set; }
         public string selectorDescription { get; protected set; }
-        public List<string> actions { get; protected set; }
         public List<string> minionClasses { get; protected set; }
         public List<SPELL_TYPE> spells { get; protected set; }
         public List<SPELL_TYPE> afflictions { get; protected set; }
+        public List<SPELL_TYPE> playerActions { get; protected set; }
         public List<RaceClass> monsters { get; protected set; }
         public List<LANDMARK_TYPE> demonicStructures { get; protected set; }
         public bool canTriggerFlaw { get; protected set; }
@@ -25,8 +25,8 @@ namespace Archetype {
         public virtual bool CanAfflict(SPELL_TYPE type) {
             return afflictions.Contains(type);
         }
-        public virtual bool CanDoAction(string actionName) {
-            return actions.Contains(actionName);
+        public virtual bool CanDoPlayerAction(SPELL_TYPE type) {
+            return playerActions.Contains(type);
         }
         public virtual bool CanSummonMinion(Minion minion) {
             return minionClasses.Contains(minion.character.characterClass.className);
@@ -49,18 +49,18 @@ namespace Archetype {
         #endregion
 
         #region Actions
-        public void AddAction(string actionName) {
-            if(actions == null) { return; }
-            if (!actions.Contains(actionName)) {
-                actions.Add(actionName);
-                Debug.Log($"Action was added to player {actionName}");
+        public void AddAction(SPELL_TYPE action) {
+            if(playerActions == null) { return; }
+            if (!playerActions.Contains(action)) {
+                playerActions.Add(action);
+                Debug.Log($"Action was added to player {action.ToString()}");
             }
         }
-        public bool RemoveAction(string actionName) {
-            if (actions == null) { return false; }
-            bool wasRemoved = actions.Remove(actionName);
+        public bool RemoveAction(SPELL_TYPE action) {
+            if (playerActions == null) { return false; }
+            bool wasRemoved = playerActions.Remove(action);
             if (wasRemoved) {
-                Debug.Log($"Action was removed from player {actionName}");
+                Debug.Log($"Action was removed from player {action.ToString()}");
             }
             return wasRemoved;
         }

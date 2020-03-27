@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Actionables;
 using Traits;
 using UnityEngine;
 namespace Inner_Maps.Location_Structures {
@@ -25,7 +24,7 @@ namespace Inner_Maps.Location_Structures {
         #endregion
         
         #region Interfere
-        private void ShowInterfereUI() {
+        public void ShowInterfereUI() {
             DualObjectPickerTabSetting[] tabs = new[] {
                 new DualObjectPickerTabSetting() {
                     name = "Join Faction",
@@ -39,11 +38,12 @@ namespace Inner_Maps.Location_Structures {
             UIManager.Instance.dualObjectPicker.ShowDualObjectPicker(tabs);
         }
         private void AddInterfereAction() {
-            PlayerAction interfere = new PlayerAction(PlayerDB.Interfere_Action, () => true, null, ShowInterfereUI);
-            AddPlayerAction(interfere);
+            //PlayerAction interfere = new PlayerAction(PlayerDB.Interfere_Action, () => true, null, ShowInterfereUI);
+            AddPlayerAction(SPELL_TYPE.INTERFERE);
         }
         private void RemoveInterfereAction() {
-            RemovePlayerAction(GetPlayerAction(PlayerDB.Interfere_Action));
+            //RemovePlayerAction(GetPlayerAction(PlayerDB.Interfere_Action));
+            RemovePlayerAction(SPELL_TYPE.INTERFERE);
         }
         #endregion
 
@@ -87,6 +87,7 @@ namespace Inner_Maps.Location_Structures {
             Faction faction = obj2 as Faction;
             PlayerManager.Instance.player.AdjustMana(-GetJoinManaCostForCharacter(character));
             character.interruptComponent.TriggerInterrupt(INTERRUPT.Join_Faction, faction.characters[0], "join_faction_normal");
+            PlayerManager.Instance.GetPlayerActionData(SPELL_TYPE.INTERFERE).OnExecuteSpellActionAffliction();
         }
         private void OnHoverJoinCharacter(Character character) {
             UIManager.Instance.ShowSmallInfo($"Mana cost make {character.name} join a faction: {GetJoinManaCostForCharacter(character)}");
@@ -131,6 +132,7 @@ namespace Inner_Maps.Location_Structures {
             Character character = obj2 as Character;
             PlayerManager.Instance.player.AdjustMana(-GetLeaveManaCostForCharacter(character));
             character.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Faction, character, "left_faction_normal");
+            PlayerManager.Instance.GetPlayerActionData(SPELL_TYPE.INTERFERE).OnExecuteSpellActionAffliction();
         }
         private int GetLeaveManaCostForCharacter(Character character) {
             if (character.isFactionLeader) {

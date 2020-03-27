@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Actionables;
 using UnityEngine;
 using UtilityScripts;
 using Random = UnityEngine.Random;
@@ -31,17 +30,17 @@ namespace Inner_Maps.Location_Structures {
 
         #region Learn Spell
         private void AddLearnSpell() {
-            PlayerAction learnSpellAction = new PlayerAction(PlayerDB.Learn_Spell_Action, CanLearnSpell, null, TryLearnASpellOrAffliction);
-            AddPlayerAction(learnSpellAction);
+            //PlayerAction learnSpellAction = new PlayerAction(PlayerDB.Learn_Spell_Action, CanLearnSpell, null, TryLearnASpellOrAffliction);
+            AddPlayerAction(SPELL_TYPE.LEARN_SPELL);
         }
         private void RemoveLearnSpell() {
-            RemovePlayerAction(GetPlayerAction(PlayerDB.Learn_Spell_Action));
+            RemovePlayerAction(SPELL_TYPE.LEARN_SPELL);
         }
-        private bool CanLearnSpell() {
+        public bool CanLearnSpell() {
             return _isLearnSpellInCooldown == false && PlayerManager.Instance.player.mana >= 100 &&
                    PlayerManager.Instance.player.unlearnedSpells.Count > 0 && PlayerManager.Instance.player.unlearnedAfflictions.Count > 0;
         }
-        private void TryLearnASpellOrAffliction() {
+        public void TryLearnASpellOrAffliction() {
             bool canLearnSpells = PlayerManager.Instance.player.unlearnedSpells.Count > 0;
             bool canLearnAfflictions = PlayerManager.Instance.player.unlearnedAfflictions.Count > 0;
             if (canLearnSpells && canLearnAfflictions) {
@@ -72,6 +71,7 @@ namespace Inner_Maps.Location_Structures {
             PlayerManager.Instance.player.LearnSpell(spellType);
             UIManager.Instance.HideObjectPicker();
             OnSpellLearned();
+            PlayerManager.Instance.GetPlayerActionData(SPELL_TYPE.LEARN_SPELL).OnExecuteSpellActionAffliction();
         }
         private void OnHoverSpell(SPELL_TYPE spell) {
             
@@ -90,9 +90,10 @@ namespace Inner_Maps.Location_Structures {
             PlayerManager.Instance.player.LearnAffliction(spellType);
             UIManager.Instance.HideObjectPicker();
             OnSpellLearned();
+            PlayerManager.Instance.GetPlayerActionData(SPELL_TYPE.LEARN_SPELL).OnExecuteSpellActionAffliction();
         }
         private void OnHoverAffliction(SPELL_TYPE spellType) {
-            SpellData data = PlayerManager.Instance.GetSpellData(spellType);
+            SpellData data = PlayerManager.Instance.GetAfflictionData(spellType);
             UIManager.Instance.ShowSmallInfo(data.description, data.name);
         }
         private void OnHoverExitAffliction(SPELL_TYPE spellType) {

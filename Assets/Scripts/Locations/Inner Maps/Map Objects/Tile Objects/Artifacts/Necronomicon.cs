@@ -11,9 +11,9 @@ public class Necronomicon : Artifact {
     }
 
     #region Overrides
-    public override void ActivateArtifactEffect() {
+    public override void ActivateTileObject() {
         if (gridTileLocation != null) {
-            base.ActivateArtifactEffect();
+            base.ActivateTileObject();
             List<LocationGridTile> tilesInRange = gridTileLocation.GetTilesInRadius(1);
             LocationGridTile tile1 = null;
             LocationGridTile tile2 = null;

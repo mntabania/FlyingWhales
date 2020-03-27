@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using Actionables;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using JetBrains.Annotations;
@@ -316,13 +315,13 @@ public class Summon : Character, IWorldObject {
 
     #region Player Action Target
     public override void ConstructDefaultActions() {
-        actions = new List<PlayerAction>();
-        PlayerAction seizeAction = new PlayerAction(PlayerDB.Seize_Character_Action,
-        () => !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && !this.traitContainer.HasTrait("Leader", "Blessed"),
-        null,
-        () => PlayerManager.Instance.player.seizeComponent.SeizePOI(this));
+        actions = new List<SPELL_TYPE>();
+        //PlayerAction seizeAction = new PlayerAction(PlayerDB.Seize_Character_Action,
+        //() => !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && !this.traitContainer.HasTrait("Leader", "Blessed"),
+        //null,
+        //() => PlayerManager.Instance.player.seizeComponent.SeizePOI(this));
 
-        AddPlayerAction(seizeAction);
+        AddPlayerAction(SPELL_TYPE.SEIZE_MONSTER);
     }
     #endregion
     

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
+using System.Linq;
 
 public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
     public AttackDemonicStructureBehaviour() {
@@ -14,15 +16,18 @@ public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
         } else {
             if (character.gridTileLocation.structure == character.behaviourComponent.attackDemonicStructureTarget) {
                 log += "\n-Already in the target demonic structure";
-                if (character.marker.inVisionTileObjects.Count > 0) {
+                LocationStructure targetStructure = character.behaviourComponent.attackDemonicStructureTarget;
+                if (targetStructure.pointsOfInterest.Count > 0) {
                     log += "\n-Has tile object in vision";
                     log += "\n-Adding tile object as hostile";
                     TileObject chosenTileObject = null;
-                    for (int i = 0; i < character.marker.inVisionTileObjects.Count; i++) {
-                        TileObject tileObject = character.marker.inVisionTileObjects[i];
-                        if (tileObject.isPreplaced) {
-                            chosenTileObject = tileObject;
-                            break;
+                    for (int i = 0; i < targetStructure.pointsOfInterest.Count; i++) {
+                        IPointOfInterest poi = targetStructure.pointsOfInterest.ElementAt(i);
+                        if(poi is TileObject tileObject) {
+                            if (tileObject.isPreplaced) {
+                                chosenTileObject = tileObject;
+                                break;
+                            }
                         }
                     }
                     if (chosenTileObject != null) {

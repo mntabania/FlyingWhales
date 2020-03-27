@@ -3,7 +3,6 @@ using System.Collections;
 using UnityEngine.UI;
 using System;
 using System.Collections.Generic;
-using Actionables;
 
 public abstract class InfoUIBase : MonoBehaviour {
     public Button backButton;
@@ -21,10 +20,10 @@ public abstract class InfoUIBase : MonoBehaviour {
     #region virtuals
     internal virtual void Initialize() {
         Messenger.AddListener<InfoUIBase>(Signals.BEFORE_MENU_OPENED, BeforeMenuOpens);
-        Messenger.AddListener<PlayerAction>(Signals.PLAYER_ACTION_EXECUTED, OnPlayerActionExecuted);
+        Messenger.AddListener<PlayerAction>(Signals.ON_EXECUTE_PLAYER_ACTION, OnExecutePlayerAction);
         Messenger.AddListener<IPlayerActionTarget>(Signals.RELOAD_PLAYER_ACTIONS, ReloadPlayerActions);
-        Messenger.AddListener<PlayerAction, IPlayerActionTarget>(Signals.PLAYER_ACTION_ADDED_TO_TARGET, OnPlayerActionAddedToTarget);
-        Messenger.AddListener<PlayerAction, IPlayerActionTarget>(Signals.PLAYER_ACTION_REMOVED_FROM_TARGET, OnPlayerActionRemovedFromTarget);
+        Messenger.AddListener<SPELL_TYPE, IPlayerActionTarget>(Signals.PLAYER_ACTION_ADDED_TO_TARGET, OnPlayerActionAddedToTarget);
+        Messenger.AddListener<SPELL_TYPE, IPlayerActionTarget>(Signals.PLAYER_ACTION_REMOVED_FROM_TARGET, OnPlayerActionRemovedFromTarget);
         Messenger.AddListener(Signals.HIDE_MENUS, OnReceiveHideMenuSignal);
     }
     private void OnReceiveHideMenuSignal() {
@@ -45,7 +44,11 @@ public abstract class InfoUIBase : MonoBehaviour {
         UIManager.Instance.poiTestingUI.HideUI();
         UIManager.Instance.minionCommandsUI.HideUI();
         UIManager.Instance.customDropdownList.Close();
-        _playerActionTarget = _data as IPlayerActionTarget;
+        if(_data is Minion minion) {
+            _playerActionTarget = minion.character;
+        } else {
+            _playerActionTarget = _data as IPlayerActionTarget;
+        }
         if (_playerActionTarget != null) {
             LoadActions(_playerActionTarget);    
         }
@@ -61,8 +64,8 @@ public abstract class InfoUIBase : MonoBehaviour {
     public virtual void ShowTooltip(GameObject objectHovered) {
 
     }
-    protected virtual void OnPlayerActionExecuted(PlayerAction action) {
-        if (_playerActionTarget != null && _playerActionTarget.actions.Contains(action)) {
+    protected virtual void OnExecutePlayerAction(PlayerAction action) {
+        if (_playerActionTarget != null && _playerActionTarget.actions.Contains(action.type)) {
             LoadActions(_playerActionTarget);
         }
     }
@@ -83,19 +86,19 @@ public abstract class InfoUIBase : MonoBehaviour {
         UtilityScripts.Utilities.DestroyChildren(actionsTransform);
         activeActionItems.Clear();
         for (int i = 0; i < target.actions.Count; i++) {
-            PlayerAction action = target.actions[i];
-            if (action.IsValid(target) && PlayerManager.Instance.player.archetype.CanDoAction(action.actionName)) {
-                ActionItem actionItem = AddNewAction(action);
-                actionItem.SetInteractable(action.isActionClickableChecker.Invoke() && !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI);
+            PlayerAction action = PlayerManager.Instance.GetPlayerActionData(target.actions[i]);
+            if (action.IsValid(target) && PlayerManager.Instance.player.archetype.CanDoPlayerAction(action.type)) {
+                ActionItem actionItem = AddNewAction(action, target);
+                actionItem.SetInteractable(action.CanPerformAbilityTo(target) && !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI);
             }
         }
     }
-    protected ActionItem AddNewAction(PlayerAction playerAction) {
+    protected ActionItem AddNewAction(PlayerAction playerAction, IPlayerActionTarget target) {
         GameObject obj = ObjectPoolManager.Instance.InstantiateObjectFromPool(actionItemPrefab.name, Vector3.zero,
             Quaternion.identity, actionsTransform);
         ActionItem item = obj.GetComponent<ActionItem>();
-        item.SetAction(playerAction);
-        playerAction.SetActionItem(item);
+        item.SetAction(playerAction, target);
+        //playerAction.SetActionItem(item);
         activeActionItems.Add(item);
         return item;
     }
@@ -108,12 +111,12 @@ public abstract class InfoUIBase : MonoBehaviour {
         }
         return null;
     }
-    private void OnPlayerActionAddedToTarget(PlayerAction playerAction, IPlayerActionTarget actionTarget) {
+    private void OnPlayerActionAddedToTarget(SPELL_TYPE playerAction, IPlayerActionTarget actionTarget) {
         if (_playerActionTarget == actionTarget && isShowing) {
             LoadActions(actionTarget);
         }
     }
-    private void OnPlayerActionRemovedFromTarget(PlayerAction playerAction, IPlayerActionTarget actionTarget) {
+    private void OnPlayerActionRemovedFromTarget(SPELL_TYPE playerAction, IPlayerActionTarget actionTarget) {
         if (_playerActionTarget == actionTarget && isShowing) {
             LoadActions(actionTarget);
         }
@@ -122,6 +125,19 @@ public abstract class InfoUIBase : MonoBehaviour {
         if (_playerActionTarget == actionTarget && isShowing) {
             LoadActions(actionTarget);
         }
+    }
+    #endregion
+
+
+    #region Player Actions
+    protected ActionItem GetActiveActionItem(PlayerAction action) {
+        for (int i = 0; i < activeActionItems.Count; i++) {
+            ActionItem item = activeActionItems[i];
+            if (item.playerAction == action) {
+                return item;
+            }
+        }
+        return null;
     }
     #endregion
 }

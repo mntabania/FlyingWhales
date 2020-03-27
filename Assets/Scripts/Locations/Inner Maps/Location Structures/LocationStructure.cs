@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Actionables;
 using UnityEngine;
 using BayatGames.SaveGameFree.Types;
 using Inner_Maps;
@@ -679,38 +678,20 @@ namespace Inner_Maps.Location_Structures {
         }
 
         #region Player Action Target
-        public List<PlayerAction> actions { get; private set; }
+        public List<SPELL_TYPE> actions { get; private set; }
         public virtual void ConstructDefaultActions() {
-            actions = new List<PlayerAction>();
+            actions = new List<SPELL_TYPE>();
         }
-        public void AddPlayerAction(PlayerAction action) {
+        public void AddPlayerAction(SPELL_TYPE action) {
             if (actions.Contains(action) == false) {
                 actions.Add(action);
                 Messenger.Broadcast(Signals.PLAYER_ACTION_ADDED_TO_TARGET, action, this as IPlayerActionTarget);    
             }
         }
-        public void RemovePlayerAction(PlayerAction action) {
+        public void RemovePlayerAction(SPELL_TYPE action) {
             if (actions.Remove(action)) {
                 Messenger.Broadcast(Signals.PLAYER_ACTION_REMOVED_FROM_TARGET, action, this as IPlayerActionTarget);
             }
-        }
-        public void RemovePlayerAction(string actionName) {
-            for (int i = 0; i < actions.Count; i++) {
-                PlayerAction action = actions[i];
-                if (action.actionName == actionName) {
-                    actions.RemoveAt(i);
-                    Messenger.Broadcast(Signals.PLAYER_ACTION_REMOVED_FROM_TARGET, action, this as IPlayerActionTarget);
-                }
-            }
-        }
-        public PlayerAction GetPlayerAction(string actionName) {
-            for (int i = 0; i < actions.Count; i++) {
-                PlayerAction playerAction = actions[i];
-                if (playerAction.actionName == actionName) {
-                    return playerAction;
-                }
-            }
-            return null;
         }
         public void ClearPlayerActions() {
             actions.Clear();

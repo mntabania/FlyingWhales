@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Actionables;
 using UnityEngine;
 using BayatGames.SaveGameFree.Types;
 using Inner_Maps;
@@ -54,7 +53,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public LocationGridTile previousTile { get; private set; }
     public Dictionary<RESOURCE, int> storedResources { get; private set; }
     protected Dictionary<RESOURCE, int> maxResourceValues { get; set; }
-    public List<PlayerAction> actions { get; protected set; }
+    public List<SPELL_TYPE> actions { get; protected set; }
 
     private bool hasSubscribedToListeners;
 
@@ -348,33 +347,36 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     protected virtual string GenerateName() { return UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(tileObjectType.ToString()); }
     public virtual void Neutralize() { }
     public virtual void ConstructDefaultActions() {
-        actions = new List<PlayerAction>();
+        actions = new List<SPELL_TYPE>();
 
         if (tileObjectType == TILE_OBJECT_TYPE.RAVENOUS_SPIRIT || tileObjectType == TILE_OBJECT_TYPE.FEEBLE_SPIRIT ||
             tileObjectType == TILE_OBJECT_TYPE.FORLORN_SPIRIT) {
             return;
         }
-        PlayerAction destroyAction = new PlayerAction(PlayerDB.Destroy_Action,
-            () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.DESTROY].CanPerformAbilityTowards(this),
-            null,
-            () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.DESTROY].ActivateAbility(this));
-        PlayerAction igniteAction = new PlayerAction(PlayerDB.Ignite_Action,
-            () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.IGNITE].CanPerformAbilityTowards(this),
-            null,
-            () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.IGNITE].ActivateAbility(this));
-        PlayerAction poisonAction = new PlayerAction(PlayerDB.Poison_Action,
-            () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.SPOIL].CanPerformAbilityTowards(this),
-            null,
-            () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.SPOIL].ActivateAbility(this));
-        PlayerAction seizeAction = new PlayerAction(PlayerDB.Seize_Object_Action,
-            () => !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && this.mapVisual != null && (this.isBeingCarriedBy != null || this.gridTileLocation != null),
-            null,
-            () => PlayerManager.Instance.player.seizeComponent.SeizePOI(this));
+        //PlayerAction destroyAction = new PlayerAction(PlayerDB.Destroy_Action,
+        //    () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.DESTROY].CanPerformAbilityTowards(this),
+        //    null,
+        //    () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.DESTROY].ActivateAbility(this));
+        //PlayerAction igniteAction = new PlayerAction(PlayerDB.Ignite_Action,
+        //    () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.IGNITE].CanPerformAbilityTowards(this),
+        //    null,
+        //    () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.IGNITE].ActivateAbility(this));
+        //PlayerAction poisonAction = new PlayerAction(PlayerDB.Poison_Action,
+        //    () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.POISON].CanPerformAbilityTowards(this),
+        //    null,
+        //    () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.POISON].ActivateAbility(this));
+        //PlayerAction seizeAction = new PlayerAction(PlayerDB.Seize_Object_Action,
+        //    () => !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && this.mapVisual != null && (this.isBeingCarriedBy != null || this.gridTileLocation != null),
+        //    null,
+        //    () => PlayerManager.Instance.player.seizeComponent.SeizePOI(this));
 
-        AddPlayerAction(destroyAction);
-        AddPlayerAction(igniteAction);
-        AddPlayerAction(poisonAction);
-        AddPlayerAction(seizeAction);
+        AddPlayerAction(SPELL_TYPE.DESTROY);
+        AddPlayerAction(SPELL_TYPE.IGNITE);
+        AddPlayerAction(SPELL_TYPE.POISON);
+        AddPlayerAction(SPELL_TYPE.SEIZE_OBJECT);
+    }
+    public virtual void ActivateTileObject() {
+        Messenger.Broadcast(Signals.INCREASE_THREAT_THAT_SEES_POI, this as IPointOfInterest, 5);
     }
     #endregion
 
@@ -474,28 +476,23 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
                                                         CombatManager.Instance.DefaultElementalTraitProcessor;
             CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, 
                 responsibleCharacter, etp);
-        }    
+        }
+        LocationGridTile tile = gridTileLocation;
         if (currentHP <= 0) {
             //object has been destroyed
             Character removed = null;
             if (source is Character character) {
                 removed = character;
             }
-            if (isPreplaced && gridTileLocation != null && gridTileLocation.structure is DemonicStructure demonicStructure) {
-                //int structureDamage = 0;
-                //if (supposedHP < 0) {
-                //    structureDamage = amount - supposedHP;
-                //} else if (supposedHP > maxHP) {
-                //    structureDamage = (maxHP + amount) - supposedHP;
-                //}
-                demonicStructure.AdjustHP(-1);
-            }
             gridTileLocation?.structure.RemovePOI(this, removed);
         }
         if (amount < 0) {
-            Messenger.Broadcast(Signals.OBJECT_DAMAGED, this as IPointOfInterest);    
+            Messenger.Broadcast(Signals.OBJECT_DAMAGED, this as IPointOfInterest);
         } else if (currentHP == maxHP) {
             Messenger.Broadcast(Signals.OBJECT_REPAIRED, this as IPointOfInterest);
+        }
+        if (isPreplaced && tile != null && tile.structure is DemonicStructure demonicStructure) {
+            demonicStructure.AdjustHP(amount);
         }
     }
     public void OnHitByAttackFrom(Character characterThatAttacked, CombatState state, ref string attackSummary) {
@@ -940,24 +937,15 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     }
 
     #region Player Action Target
-    public void AddPlayerAction(PlayerAction action) {
+    public void AddPlayerAction(SPELL_TYPE action) {
         if (actions.Contains(action) == false) {
             actions.Add(action);
             Messenger.Broadcast(Signals.PLAYER_ACTION_ADDED_TO_TARGET, action, this as IPlayerActionTarget);    
         }
     }
-    public void RemovePlayerAction(PlayerAction action) {
+    public void RemovePlayerAction(SPELL_TYPE action) {
         if (actions.Remove(action)) {
             Messenger.Broadcast(Signals.PLAYER_ACTION_REMOVED_FROM_TARGET, action, this as IPlayerActionTarget);
-        }
-    }
-    public void RemovePlayerAction(string actionName) {
-        for (int i = 0; i < actions.Count; i++) {
-            PlayerAction action = actions[i];
-            if (action.actionName == actionName) {
-                actions.RemoveAt(i);
-                Messenger.Broadcast(Signals.PLAYER_ACTION_REMOVED_FROM_TARGET, action, this as IPlayerActionTarget);
-            }
         }
     }
     public void ClearPlayerActions() {

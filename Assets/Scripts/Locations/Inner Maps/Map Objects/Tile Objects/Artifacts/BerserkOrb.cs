@@ -11,9 +11,9 @@ public class BerserkOrb : Artifact {
     }
 
     #region Overrides
-    public override void ActivateArtifactEffect() {
+    public override void ActivateTileObject() {
         if (gridTileLocation != null) {
-            base.ActivateArtifactEffect();
+            base.ActivateTileObject();
             List<LocationGridTile> tilesInRange = gridTileLocation.GetTilesInRadius(3);
             for (int i = 0; i < tilesInRange.Count; i++) {
                 LocationGridTile currTile = tilesInRange[i];
