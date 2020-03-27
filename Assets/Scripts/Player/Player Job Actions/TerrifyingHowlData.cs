@@ -16,7 +16,8 @@ public class TerrifyingHowlData : SpellData {
     public override void ActivateAbility(LocationGridTile targetTile) {
         List<LocationGridTile> tiles = targetTile.GetTilesInRadius(1, includeCenterTile: true, includeTilesInDifferentStructure: false);
         //create generic tile object and destroy after 3 ticks.
-        targetTile.genericTileObject.GetOrCreateMapVisual();
+        BaseMapObjectVisual visual = targetTile.genericTileObject.GetOrCreateMapVisual();
+        visual.visionTrigger.VoteToMakeVisibleToCharacters();
         SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddTicks(3),
             () => targetTile.genericTileObject.TryDestroyMapVisual(), this);
         

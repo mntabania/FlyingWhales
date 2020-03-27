@@ -2316,9 +2316,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ParentPool: {fileID: 0}
   structureObjects:
+  - {fileID: 6448938183779932339}
   - {fileID: 6672058920945566766}
   - {fileID: 5451561246236326271}
-  - {fileID: 6448938183779932339}
 --- !u!1 &1738204981005188
 GameObject:
   m_ObjectHideFlags: 0

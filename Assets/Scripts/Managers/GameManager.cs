@@ -4,6 +4,7 @@ using Inner_Maps;
 using Ruinarch;
 using Traits;
 using UnityEngine;
+using UnityEngine.Profiling;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
@@ -91,13 +92,17 @@ public class GameManager : MonoBehaviour {
     
     private void Update() {
         if (_gameHasStarted && !isPaused) {
+            Profiler.BeginSample("Tick Started Call");
             if (Math.Abs(timeElapsed) <= 0f) {
                 TickStarted();
             }
+            Profiler.EndSample();
             timeElapsed += Time.deltaTime;
             if (timeElapsed >= progressionSpeed) {
                 timeElapsed = 0f;
+                Profiler.BeginSample("Tick Ended Call");
                 TickEnded();
+                Profiler.EndSample();
             }
         }
     }

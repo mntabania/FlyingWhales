@@ -1825,6 +1825,14 @@ public static class Extensions {
                 return false;
         }
     }
+    public static bool IsTileObjectVisibleByDefault(this TILE_OBJECT_TYPE tileObjectType) {
+        switch (tileObjectType) {
+            case TILE_OBJECT_TYPE.TOMBSTONE:
+                return true;
+            default:
+                return tileObjectType.IsTileObjectAnItem();
+        }
+    }
     #endregion
 
     #region Jobs

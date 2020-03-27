@@ -99,7 +99,7 @@ namespace Locations.Settlements {
             if (chosenDwelling == null) {
                 Character lover = CharacterManager.Instance.GetCharacterByID(character.relationshipContainer
                     .GetFirstRelatableIDWithRelationship(RELATIONSHIP_TYPE.LOVER));
-                if (lover != null && lover.faction.id == character.faction.id && residents.Contains(lover)) { //check if the character has a lover that lives in the npcSettlement
+                if (lover != null && lover.faction.id == character.faction.id && residents.Contains(lover) && lover.homeStructure.tiles.Count > 0) { //check if the character has a lover that lives in the npcSettlement
                     chosenDwelling = lover.homeStructure;
                 }
                 if (chosenDwelling == null && (character.homeStructure == null || character.homeStructure.location.id != id)) { //else, find an unoccupied dwelling (also check if the character doesn't already live in this npcSettlement)

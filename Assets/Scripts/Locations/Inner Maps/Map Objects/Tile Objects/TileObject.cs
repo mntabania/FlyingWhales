@@ -65,7 +65,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public Vector3 worldPosition => mapVisual.transform.position;
     public virtual Vector2 selectableSize => Vector2Int.one;
     public bool isDead => gridTileLocation == null; //Consider the object as dead if it no longer has a tile location (has been removed)
-    public ProjectileReceiver projectileReceiver => mapVisual.collisionTrigger.projectileReceiver;
+    public ProjectileReceiver projectileReceiver => mapVisual.visionTrigger.projectileReceiver;
     public Transform worldObject => mapVisual != null ? mapVisual.transform : null;
     public string nameWithID => ToString();
     public GameObject visualGO => mapVisual.gameObject;
@@ -321,8 +321,16 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public virtual bool CanBeReplaced() {
         return false;
     }
-    public virtual void OnTileObjectGainedTrait(Trait trait) { }
-    public virtual void OnTileObjectLostTrait(Trait trait) { }
+    public virtual void OnTileObjectGainedTrait(Trait trait) {
+        if (trait is Status status && status.IsTangible() && mapObjectVisual != null) {
+            mapObjectVisual.visionTrigger.VoteToMakeVisibleToCharacters();
+        }
+    }
+    public virtual void OnTileObjectLostTrait(Trait trait) {
+        if (trait is Status status && status.IsTangible() && mapObjectVisual != null) {
+            mapObjectVisual.visionTrigger.VoteToMakeInvisibleToCharacters();
+        }
+    }
     public virtual bool IsValidCombatTarget() {
         return gridTileLocation != null;
     }
@@ -406,14 +414,10 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
         if (allowDuplicates || advertisedActions.Contains(type) == false) {
             advertisedActions.Add(type);
-            // ReSharper disable once Unity.NoNullPropagation
-            mapVisual?.UpdateCollidersState(this);    
         }
     }
     public void RemoveAdvertisedAction(INTERACTION_TYPE type) {
         advertisedActions.Remove(type);
-        // ReSharper disable once Unity.NoNullPropagation
-        mapVisual?.UpdateCollidersState(this);
     }
     public void AddJobTargetingThis(JobQueueItem job) {
         allJobsTargetingThis.Add(job);

@@ -38,15 +38,17 @@ namespace Traits {
 
         #region Overrides
         public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
-            if (targetPOI is TileObject tileObj) {
-                if (tileObj.isSummonedByPlayer && !characterThatWillDoJob.traitContainer.HasTrait("Suspicious") && !alreadyInspectedTileObjects.Contains(tileObj)) {
-                    if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.INSPECT, tileObj)) {
-                        GoapPlanJob inspectJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.INSPECT, INTERACTION_TYPE.INSPECT, tileObj, characterThatWillDoJob);
-                        characterThatWillDoJob.jobQueue.AddJobInQueue(inspectJob);
-                        return true;
-                    }
-                }
-            }
+            // if (targetPOI is TileObject tileObj) {
+            //     if ((tileObj.isSummonedByPlayer || tileObj.lastManipulatedBy is Player) 
+            //         && !characterThatWillDoJob.traitContainer.HasTrait("Suspicious") 
+            //         && !alreadyInspectedTileObjects.Contains(tileObj)) {
+            //         if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.INSPECT, tileObj)) {
+            //             GoapPlanJob inspectJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.INSPECT, INTERACTION_TYPE.INSPECT, tileObj, characterThatWillDoJob);
+            //             characterThatWillDoJob.jobQueue.AddJobInQueue(inspectJob);
+            //             return true;
+            //         }
+            //     }
+            // }
             if (targetPOI is TileObject item) {
                 if (!characterThatWillDoJob.traitContainer.HasTrait("Beast") /*characterThatWillDoJob.role.roleType != CHARACTER_ROLE.BEAST*/) {
                     if (item.CanBePickedUpNormallyUponVisionBy(characterThatWillDoJob)

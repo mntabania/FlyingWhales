@@ -111,7 +111,7 @@ namespace Inner_Maps {
             this.tileType = tileType;
         }
         public void CreateGenericTileObject() {
-            genericTileObject = new GenericTileObject();
+            genericTileObject = new GenericTileObject(this);
         }
         public void SetCollectionOwner(LocationGridTileCollection _collectionOwner) {
             collectionOwner = _collectionOwner;

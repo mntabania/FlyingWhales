@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Inner_Maps;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
 
 public class TileObjectGameObject : MapObjectVisual<TileObject> {
@@ -23,10 +24,8 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
                 false));
         }
 
-        collisionTrigger = this.transform.GetComponentInChildren<TileObjectCollisionTrigger>();
-        if (collisionTrigger == null) {
-            Debug.LogError($"NO COLLISION TRIGGER FOR {tileObject.nameWithID}");
-        }
+        visionTrigger = this.transform.GetComponentInChildren<TileObjectVisionTrigger>();
+        Assert.IsNotNull(visionTrigger, $"NO COLLISION TRIGGER FOR {tileObject.nameWithID}");
         _isMenuShowing = () => IsMenuShowing(tileObject);
         UpdateSortingOrders(tileObject);
     }
@@ -131,19 +130,19 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
     }
     #endregion
 
-    #region Colliders
-    public override void UpdateCollidersState(TileObject obj) {
-        if (obj is GenericTileObject) {
-            //Generic tile object is always visible
-            SetAsVisibleToCharacters();
-        } else {
-            if (obj.advertisedActions != null && obj.advertisedActions.Count > 0) {
-                SetAsVisibleToCharacters();
-            } else {
-                SetAsInvisibleToCharacters();
-            }    
-        }
-        
-    }
-    #endregion
+    // #region Colliders
+    // public override void UpdateCollidersState(TileObject obj) {
+    //     if (obj is GenericTileObject) {
+    //         //Generic tile object is always visible
+    //         SetAsVisibleToCharacters();
+    //     } else {
+    //         if (obj.advertisedActions != null && obj.advertisedActions.Count > 0) {
+    //             SetAsVisibleToCharacters();
+    //         } else {
+    //             SetAsInvisibleToCharacters();
+    //         }    
+    //     }
+    //     
+    // }
+    // #endregion
 }

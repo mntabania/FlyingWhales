@@ -27,28 +27,23 @@ namespace Traits {
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
-            if (addedTo is Character) {
-                Character character = addedTo as Character;
+            if (addedTo is Character character) {
                 _owner = character;
                 if (character.marker) {
                     character.marker.BerserkedMarker();
                 }
+                character.marker.visionCollider.VoteToUnFilterVision();
                 character.CancelAllJobs();
                 character.behaviourComponent.AddBehaviourComponent(typeof(BerserkBehaviour));
-                // _behaviourComponentsBeforeBerserked = new List<CharacterBehaviourComponent>(character.behaviourComponent.currentBehaviourComponents);
-                // character.behaviourComponent.ReplaceBehaviourComponent(new List<CharacterBehaviourComponent>()
-                //     {CharacterManager.Instance.GetCharacterBehaviourComponent(typeof(BerserkBehaviour))});
-                //character.stateComponent.SwitchToState(CHARACTER_STATE.BERSERKED);
             }
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
-            if (removedFrom is Character) {
-                Character character = removedFrom as Character;
+            if (removedFrom is Character character) {
                 if (character.marker) {
                     character.marker.UnberserkedMarker();
+                    character.marker.visionCollider.VoteToFilterVision();
                 }
-                
                 //check hostiles in range, remove any poi's that are not hostile with the character 
                 List<IPointOfInterest> hostilesToRemove = new List<IPointOfInterest>();
                 for (int i = 0; i < character.combatComponent.hostilesInRange.Count; i++) {
@@ -72,8 +67,6 @@ namespace Traits {
                 }
                 character.behaviourComponent.RemoveBehaviourComponent(typeof(BerserkBehaviour));
                 character.needsComponent.CheckExtremeNeeds();
-                // character.behaviourComponent.ReplaceBehaviourComponent(_behaviourComponentsBeforeBerserked);
-                // _behaviourComponentsBeforeBerserked.Clear();
             }
         }
         public override void OnSeePOIEvenCannotWitness(IPointOfInterest targetPOI, Character character) {

@@ -56,7 +56,9 @@ public class CharacterStateJob : JobQueueItem {
                 return false;
             }
         } else {
-            if(assignedState.isPaused && !assignedState.isDone) {
+            if (assignedState.isDone) {
+                CancelJob(false);
+            } else if(assignedState.isPaused) {
                 assignedState.ResumeState();
                 if (assignedState != null) {
                     if (!assignedState.isDone) {

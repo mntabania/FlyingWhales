@@ -14139,6 +14139,49 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 271216280}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &272713899
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 272713900}
+  - component: {fileID: 272713901}
+  m_Layer: 0
+  m_Name: FPS Display
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &272713900
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 272713899}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1614811350}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &272713901
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 272713899}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7e30444b64c26b4286e032ef9f6362b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &274548862
 GameObject:
   m_ObjectHideFlags: 0
@@ -29709,7 +29752,6 @@ GameObject:
   m_Component:
   - component: {fileID: 557822218}
   - component: {fileID: 557822219}
-  - component: {fileID: 557822220}
   m_Layer: 5
   m_Name: GameManager
   m_TagString: Untagged
@@ -29793,18 +29835,6 @@ MonoBehaviour:
     - {fileID: 1392349110666401631, guid: 238ac475c4154134b930dff56ef29955, type: 3}
     - {fileID: 807724972994560084, guid: e2dc8a8fcefe4424496b6a532acd420e, type: 3}
   lastProgressionBeforePausing: 
---- !u!114 &557822220
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 557822217}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7e30444b64c26b4286e032ef9f6362b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &558180736
 GameObject:
   m_ObjectHideFlags: 0
@@ -92750,6 +92780,7 @@ RectTransform:
   - {fileID: 535842905}
   - {fileID: 1494702484}
   - {fileID: 1149810665}
+  - {fileID: 272713900}
   m_Father: {fileID: 1810423187}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

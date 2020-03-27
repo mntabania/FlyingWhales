@@ -148,7 +148,7 @@ public class GoapPlanJob : JobQueueItem {
     public override bool ProcessJob() {
         if (hasBeenReset) { return false; }
         if(assignedPlan == null && originalOwner != null) {
-            Character characterOwner = assignedCharacter as Character;
+            Character characterOwner = assignedCharacter;
             bool isPersonal = originalOwner.ownerType == JOB_OWNER.CHARACTER;
             if (targetInteractionType != INTERACTION_TYPE.NONE) {
                 characterOwner.planner.StartGOAP(targetInteractionType, targetPOI, this, isPersonal);

@@ -15,6 +15,13 @@ namespace UtilityScripts {
 
         private static Stopwatch stopwatch = new Stopwatch();
         private static List<LocationGridTile> listHolder = new List<LocationGridTile>();
+
+        public static string Filtered_Object_Layer = "Filtered Object";
+        public static string Unfiltered_Object_Layer = "Non Filtered Object";
+        public static string Filtered_Vision_Layer = "Filtered Vision";
+        public static string Unfiltered_Vision_Layer = "Non Filtered Vision";
+        public static int Line_Of_Sight_Layer_Mask = LayerMask.GetMask("Unpassable", Filtered_Object_Layer, Unfiltered_Object_Layer);
+        public static int Unpassable_Layer_Mask = LayerMask.GetMask("Unpassable");
         
         public static string GetNormalizedSingularRace(RACE race) {
             switch (race) {
@@ -306,9 +313,14 @@ namespace UtilityScripts {
                 tile.parentMap.groundTilemap.SetColor(tile.localPlace, color);
             }
         }
-        
         public static Color InvertColor (Color color) {
             return new Color (1.0f-color.r, 1.0f-color.g, 1.0f-color.b);
+        }
+        public static Vector2 VectorSubtraction(Vector2 a, Vector2 b) {
+            Vector3 result = a;
+            result.x = a.x - b.x;
+            result.y = a.y - b.y;
+            return result;
         }
     }    
 }

@@ -4768,7 +4768,7 @@ GameObject:
   - component: {fileID: 6264197702967429512}
   - component: {fileID: 6317225675359311576}
   - component: {fileID: 708533474729780968}
-  m_Layer: 15
+  m_Layer: 22
   m_Name: FrostyFogMapObjectVisual
   m_TagString: Moving Object
   m_Icon: {fileID: 0}
@@ -4909,6 +4909,9 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 6110539123779670778}
   hoverObject: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
   _frostyFogEffect: {fileID: 3994581259307150028}
 --- !u!1 &6213656057822333758
@@ -4922,7 +4925,7 @@ GameObject:
   - component: {fileID: 6210163966592875582}
   - component: {fileID: 6316684003992397250}
   - component: {fileID: 6261630977858158748}
-  m_Layer: 15
+  m_Layer: 17
   m_Name: ProjectileReceiver
   m_TagString: Untagged
   m_Icon: {fileID: 0}

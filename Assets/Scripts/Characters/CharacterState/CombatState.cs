@@ -4,6 +4,8 @@ using UnityEngine;
 using Traits;
 using UnityEngine.EventSystems;
 using Inner_Maps;
+using UnityEngine.Assertions;
+using UnityEngine.Profiling;
 
 public class CombatState : CharacterState {
 
@@ -98,14 +100,14 @@ public class CombatState : CharacterState {
         // }
         stateComponent.character.logComponent.PrintLogIfActive(
             $"Starting combat state for {stateComponent.character.name}");
-        stateComponent.character.marker.StartCoroutine(CheckIfCurrentHostileIsInRange());
+        // stateComponent.character.marker.StartCoroutine(CheckIfCurrentHostileIsInRange());
     }
     protected override void EndState() {
         stateComponent.character.marker.pathfindingAI.ClearAllCurrentPathData();
         stateComponent.character.marker.SetHasFleePath(false);
 
         //stateComponent.character.IncreaseCanWitness();
-        stateComponent.character.marker.StopCoroutine(CheckIfCurrentHostileIsInRange());
+        // stateComponent.character.marker.StopCoroutine(CheckIfCurrentHostileIsInRange());
 
         stateComponent.character.marker.HideHPBar();
         stateComponent.character.marker.SetAnimationBool("InCombat", false);
@@ -365,7 +367,7 @@ public class CombatState : CharacterState {
     }
     private bool IsStillInRange(IPointOfInterest poi) {
         //I added checking for poisInRangeButDiffStructure beacuse characters are being removed from the character's avoid range when they exit a structure. (Myk)
-        return stateComponent.character.marker.inVisionPOIs.Contains(poi) || stateComponent.character.marker.visionCollision.poisInRangeButDiffStructure.Contains(poi);
+        return stateComponent.character.marker.inVisionPOIs.Contains(poi) || stateComponent.character.marker.visionCollider.poisInRangeButDiffStructure.Contains(poi);
     }
 
     private void SetIsAttacking(bool state) {
@@ -556,40 +558,67 @@ public class CombatState : CharacterState {
             stateComponent.character.logComponent.RegisterLog(log, null, false);
         }
     }
+    private float timeElapsed;
+    public void LateUpdate() {
+        if (GameManager.Instance.isPaused) { return; }
+        timeElapsed += Time.deltaTime;
+        if (timeElapsed >= 1f) {
+            timeElapsed = 0;
+            Profiler.BeginSample($"{stateComponent.character.name} Combat State Late Update");
+            if (currentClosestHostile != null) {
+                if (currentClosestHostile.isDead) {
+                    stateComponent.character.combatComponent.RemoveHostileInRange(currentClosestHostile);
+                } else if (currentClosestHostile.currentRegion != stateComponent.character.currentRegion) {
+                    stateComponent.character.combatComponent.RemoveHostileInRange(currentClosestHostile);
+                } else if (isAttacking && isExecutingAttack == false) {
+                    //If character is attacking and distance is within the attack range of this character, attack
+                    //else, pursue again
+                    // Profiler.BeginSample($"{stateComponent.character.name} Distance Computation");
+                    // float distance = Vector2.Distance(stateComponent.character.marker.transform.position, currentClosestHostile.worldPosition);
+                    // Profiler.EndSample();
+                    Profiler.BeginSample($"{stateComponent.character.name} Line of Sight Check");
+                    bool isInLineOfSight =
+                        stateComponent.character.marker.IsCharacterInLineOfSightWith(currentClosestHostile, stateComponent.character.characterClass.attackRange);
+                    Profiler.EndSample();
+                    // if (distance < stateComponent.character.characterClass.attackRange) {
+                    if (isInLineOfSight) {
+                        Attack();
+                    } else {
+                        PursueClosestHostile();
+                    }
+                }
+            }
+            Profiler.EndSample();
+        }
+        
+    }
+    
     //Will be constantly checked every frame
     private IEnumerator CheckIfCurrentHostileIsInRange() {
-        //string log = GameManager.Instance.TodayLogString() + "Checking if current closest hostile is in range for " + stateComponent.character.name + " to attack...";
+        Profiler.BeginSample($"{stateComponent.character.name} CheckIfCurrentHostileIsInRange");
         if (currentClosestHostile == null) {
             //log += "\nNo current closest hostile, cannot trigger attack...";
             //stateComponent.character.PrintLogIfActive(log);
         }
         else if (currentClosestHostile.isDead) {
-            //log += "\nCurrent closest hostile is dead, removing hostile in hostile list...";
-            //stateComponent.character.PrintLogIfActive(log);
             stateComponent.character.combatComponent.RemoveHostileInRange(currentClosestHostile);
         }
         else if (currentClosestHostile.currentRegion != stateComponent.character.currentRegion) {
-            //log += "\nCurrent closest hostile is already in another location or is travelling to one, removing hostile in hostile list...";
-            //stateComponent.character.PrintLogIfActive(log);
             stateComponent.character.combatComponent.RemoveHostileInRange(currentClosestHostile);
         }
         //If character is attacking and distance is within the attack range of this character, attack
         //else, pursue again
         else if (isAttacking) {
             float distance = Vector2.Distance(stateComponent.character.marker.transform.position, currentClosestHostile.worldPosition);
-            if (distance <= stateComponent.character.characterClass.attackRange && stateComponent.character.marker.IsCharacterInLineOfSightWith(currentClosestHostile)) { //&& currentClosestHostile.currentStructure == stateComponent.character.currentStructure
-                //log += "\n" + stateComponent.character.name + " is within range of " + currentClosestHostile.name + ". Attacking...";
-                //stateComponent.character.PrintLogIfActive(log);
-                //&& currentClosestHostile.currentStructure == stateComponent.character.currentStructure //Commented out structure checking first for assault action (Need to discuss)
+            if (distance <= stateComponent.character.characterClass.attackRange && stateComponent.character.marker.IsCharacterInLineOfSightWith(currentClosestHostile)) {
                 Attack();
             } else {
-                //log += "\n" + stateComponent.character.name + " is not in range of " + currentClosestHostile.name + ". Pursuing...";
-                //stateComponent.character.PrintLogIfActive(log);
                 PursueClosestHostile();
             }
         }
 
         yield return null;
+        Profiler.EndSample();
         if (stateComponent.currentState == this && !isExecutingAttack) { //so that if the combat state has been exited, this no longer executes that results in endless execution of this coroutine.
             stateComponent.character.marker.StartCoroutine(CheckIfCurrentHostileIsInRange());
         }
@@ -667,13 +696,13 @@ public class CombatState : CharacterState {
             }
         }
         
-        if (stateComponent.currentState == this) { //so that if the combat state has been exited, this no longer executes that results in endless execution of this coroutine.
-            attackSummary += $"\n{stateComponent.character.name}'s state is still this, running check coroutine.";
-            stateComponent.character.marker.StartCoroutine(CheckIfCurrentHostileIsInRange());
-        } else {
-            attackSummary +=
-                $"\n{stateComponent.character.name}'s state no longer this, NOT running check coroutine. Current state is{stateComponent.currentState?.stateName}" ?? "Null";
-        }
+        // if (stateComponent.currentState == this) { //so that if the combat state has been exited, this no longer executes that results in endless execution of this coroutine.
+        //     attackSummary += $"\n{stateComponent.character.name}'s state is still this, running check coroutine.";
+        //     stateComponent.character.marker.StartCoroutine(CheckIfCurrentHostileIsInRange());
+        // } else {
+        //     attackSummary +=
+        //         $"\n{stateComponent.character.name}'s state no longer this, NOT running check coroutine. Current state is{stateComponent.currentState?.stateName}" ?? "Null";
+        // }
         //Debug.Log(attackSummary);
     }
     private void StartPursueTimer() {
@@ -735,11 +764,11 @@ public class CombatState : CharacterState {
         if (stateComponent.character.marker.gameObject.activeSelf == false) {
             return;
         }
-        if (state) {
-            stateComponent.character.marker.StopCoroutine(CheckIfCurrentHostileIsInRange());
-        } else {
-            stateComponent.character.marker.StartCoroutine(CheckIfCurrentHostileIsInRange());
-        }
+        // if (state) {
+        //     stateComponent.character.marker.StopCoroutine(CheckIfCurrentHostileIsInRange());
+        // } else {
+        //     stateComponent.character.marker.StartCoroutine(CheckIfCurrentHostileIsInRange());
+        // }
     }
     public void SetForcedTarget(Character character) {
         forcedTarget = character;

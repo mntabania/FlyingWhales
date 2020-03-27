@@ -5,14 +5,13 @@ using UnityEngine;
 using Traits;
 
 public class GenericTileObject : TileObject {
-
-    public bool hasBeenInitialized { get; private set; }
-
-    public GenericTileObject() {
-        //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
+    private bool hasBeenInitialized { get; set; }
+    public override LocationGridTile gridTileLocation => _owner;
+    private readonly LocationGridTile _owner;
+    public GenericTileObject(LocationGridTile locationGridTile) {
+        _owner = locationGridTile;
     }
     public GenericTileObject(SaveDataTileObject data) {
-        //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
         Initialize(data, false);
     }
 
@@ -42,14 +41,19 @@ public class GenericTileObject : TileObject {
         return false;
     }
     public override void OnTileObjectGainedTrait(Trait trait) {
-        base.OnTileObjectGainedTrait(trait);
         if (trait is Status status) {
             if(status.IsTangible()) {
-                GetOrCreateMapVisual();
-
-                SubscribeListeners();
+                //if status is wet, and this tile is not part of a settlement, then do not create a map visual, since
+                //characters do not react to wet tiles outside their settlement.
+                bool willCreateVisual = !(status is Wet && gridTileLocation.IsPartOfSettlement() == false);
+                if (willCreateVisual) {
+                    GetOrCreateMapVisual();
+                    SubscribeListeners();    
+                }
+                
             }
         }
+        base.OnTileObjectGainedTrait(trait);
     }
     public override void OnTileObjectLostTrait(Trait trait) {
         base.OnTileObjectLostTrait(trait);
@@ -110,7 +114,7 @@ public class GenericTileObject : TileObject {
         return mapVisual;
     }
     public bool TryDestroyMapVisual() {
-        if (HasTangibleTrait() == false) {
+        if (traitContainer.HasTangibleTrait() == false) {
             if (ReferenceEquals(mapVisual, null) == false) {
                 DestroyMapVisualGameObject();
             }
@@ -118,17 +122,6 @@ public class GenericTileObject : TileObject {
         }
         return false;
     }
-
-    private bool HasTangibleTrait() {
-        for (int i = 0; i < traitContainer.statuses.Count; i++) {
-            Status currTrait = traitContainer.statuses[i];
-            if (currTrait.IsTangible()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
 
     public void ManualInitialize(LocationGridTile tile) {
         if (hasBeenInitialized) {

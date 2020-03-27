@@ -26,8 +26,19 @@ public abstract class BaseMapObject {
     #endregion
 
     #region Manipulation
-    public void OnManipulatedBy(IObjectManipulator manipulator) {
-        lastManipulatedBy = manipulator;
+    public void OnManipulatedBy(IObjectManipulator newManipulator) {
+        IObjectManipulator previousManipulator = lastManipulatedBy;
+        lastManipulatedBy = newManipulator;
+        if (newManipulator is Player && (previousManipulator is Player) == false) {
+            //if object was manipulated by the player, and it wasn't previously, vote to make it visible to characters
+            baseMapObjectVisual.visionTrigger.VoteToMakeVisibleToCharacters();
+        } else if (newManipulator is Character && previousManipulator is Player) {
+            //if object was manipulated by a character, check if the previous manipulator was the player,
+            //if it was, then vote to make this object invisible to characters.
+            baseMapObjectVisual.visionTrigger.VoteToMakeInvisibleToCharacters();
+        }    
+        
+        
     }
     #endregion
 
@@ -55,7 +66,11 @@ public abstract class BaseMapObject {
 
     #region Testing
     public virtual string GetAdditionalTestingData() {
-        return $"\n\tLast Manipulated by: {lastManipulatedBy}";
+        string data = $"\n\tLast Manipulated by: {lastManipulatedBy}";
+        if (baseMapObjectVisual != null) {
+            data += $"\n\tVision Votes: {baseMapObjectVisual.visionTrigger.filterVotes.ToString()}";    
+        }
+        return data;
     }
     #endregion
 

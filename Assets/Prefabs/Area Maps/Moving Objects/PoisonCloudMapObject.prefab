@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1668359728039121191}
   - component: {fileID: 1630450187916789979}
   - component: {fileID: 1723774052884376965}
-  m_Layer: 15
+  m_Layer: 17
   m_Name: ProjectileReceiver
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4677,7 +4677,7 @@ GameObject:
   - component: {fileID: 1722413500452906129}
   - component: {fileID: 1631024502628481985}
   - component: {fileID: 2158167358507671494}
-  m_Layer: 15
+  m_Layer: 22
   m_Name: PoisonCloudMapObject
   m_TagString: Moving Object
   m_Icon: {fileID: 0}

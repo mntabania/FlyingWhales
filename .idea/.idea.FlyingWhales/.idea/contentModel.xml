@@ -585,6 +585,7 @@
         </e>
         <e p="Ignore" t="Include">
           <e p="Test Scripts" t="Include">
+            <e p="CollisionLayerTester.cs" t="Include" />
             <e p="DelegateTester.cs" t="Include" />
           </e>
         </e>
@@ -1058,7 +1059,7 @@
               <e p="CharacterMarkerFOV.cs" t="Include" />
               <e p="CharacterMarkerFOVEditor.cs" t="Include" />
               <e p="CharacterMarkerHostilityCollision.cs" t="Include" />
-              <e p="CharacterMarkerVisionCollision.cs" t="Include" />
+              <e p="CharacterMarkerVisionCollider.cs" t="Include" />
               <e p="StatusIcon.cs" t="Include" />
             </e>
             <e p="Character Portrait" t="Include">
@@ -1463,12 +1464,11 @@
               </e>
               <e p="BurningSource.cs" t="Include" />
               <e p="Collision Triggers" t="Include">
-                <e p="BaseCollisionTrigger.cs" t="Include" />
-                <e p="CharacterCollisionTrigger.cs" t="Include" />
-                <e p="IBaseCollider.cs" t="Include" />
-                <e p="IVisibleCollider.cs" t="Include" />
-                <e p="TileObjectCollisionTrigger.cs" t="Include" />
-                <e p="WallObjectCollisionTrigger.cs" t="Include" />
+                <e p="BaseVisionTrigger.cs" t="Include" />
+                <e p="CharacterVisionTrigger.cs" t="Include" />
+                <e p="PoiVisionTrigger.cs" t="Include" />
+                <e p="TileObjectVisionTrigger.cs" t="Include" />
+                <e p="WallObjectVisionTrigger.cs" t="Include" />
               </e>
               <e p="Damageables" t="Include">
                 <e p="IDamageable.cs" t="Include" />
@@ -1667,6 +1667,9 @@
               </e>
               <e p="TileHighlighter.cs" t="Include" />
               <e p="TileObjectTileSetting.cs" t="Include" />
+              <e p="Vision Colliders" t="Include">
+                <e p="BaseVisionCollider.cs" t="Include" />
+              </e>
             </e>
             <e p="InnerMapGeneration.cs" t="Include" />
             <e p="LandmarkManager.cs" t="Include" />

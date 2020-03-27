@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 2016121202457545629}
   - component: {fileID: 1465232907660824489}
   - component: {fileID: 3530449603676801492}
-  m_Layer: 15
+  m_Layer: 22
   m_Name: LocustSwarmMapObjectVisual
   m_TagString: Moving Object
   m_Icon: {fileID: 0}
@@ -52,6 +52,9 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 3530449603676801492}
   hoverObject: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
   locustSwarmParticle: {fileID: 2210633008740798494}
 --- !u!58 &4002699566689528138
@@ -4920,7 +4923,7 @@ GameObject:
   - component: {fileID: 2640091653725768876}
   - component: {fileID: 6959671907412108392}
   - component: {fileID: 7883184872995896012}
-  m_Layer: 15
+  m_Layer: 17
   m_Name: ProjectileReceiver
   m_TagString: Untagged
   m_Icon: {fileID: 0}

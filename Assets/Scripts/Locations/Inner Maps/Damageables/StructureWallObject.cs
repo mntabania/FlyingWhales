@@ -12,7 +12,7 @@ public class StructureWallObject : MapObject<StructureWallObject>, ITraitable {
     public RESOURCE madeOf { get; private set; }
     public ITraitContainer traitContainer { get; private set; }
     public LocationGridTile gridTileLocation { get; private set; }
-    public ProjectileReceiver projectileReceiver => _visual.collisionTrigger.projectileReceiver;
+    public ProjectileReceiver projectileReceiver => _visual.visionTrigger.projectileReceiver;
     public TraitProcessor traitProcessor => TraitManager.defaultTraitProcessor;
     public Transform worldObject => _visual.transform;
     public override MapObjectVisual<StructureWallObject> mapVisual => _visual;

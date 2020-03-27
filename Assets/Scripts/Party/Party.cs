@@ -174,7 +174,7 @@ public class Party {
                 tileObject.InitializeMapObject(tileObject);
             }
             //tileObject.SetGridTileLocation(owner.gridTileLocation);
-            tileObject.collisionTrigger.SetCollidersState(false);
+            tileObject.visionTrigger.SetCollidersState(false);
             tileObject.mapVisual.transform.SetParent(_owner.marker.visualsParent);
             tileObject.mapVisual.transform.localPosition = new Vector3(0f, 0.5f, 0f);
             tileObject.mapVisual.transform.eulerAngles = Vector3.zero;

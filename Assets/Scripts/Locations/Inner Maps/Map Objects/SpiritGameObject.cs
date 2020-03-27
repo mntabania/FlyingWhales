@@ -29,7 +29,7 @@ public class SpiritGameObject : MapObjectVisual<TileObject> {
             tileObject.state, 
             tileObject.structureLocation.location.coreTile.biomeType,
             isCorrupted));  
-        collisionTrigger = this.transform.GetComponentInChildren<TileObjectCollisionTrigger>();
+        visionTrigger = this.transform.GetComponentInChildren<TileObjectVisionTrigger>();
         _isMenuShowing = () => IsMenuShowing(tileObject);
         UpdateSortingOrders(tileObject);
     }
@@ -128,9 +128,6 @@ public class SpiritGameObject : MapObjectVisual<TileObject> {
     #endregion
 
     #region Colliders
-    public override void UpdateCollidersState(TileObject obj) {
-        SetAsVisibleToCharacters();
-    }
     #endregion
 
     #region Spirit

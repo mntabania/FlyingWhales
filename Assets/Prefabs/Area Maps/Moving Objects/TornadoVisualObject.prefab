@@ -4678,7 +4678,7 @@ GameObject:
   - component: {fileID: 58645192881817854}
   - component: {fileID: 114511027858794576}
   - component: {fileID: 114266373067413422}
-  m_Layer: 15
+  m_Layer: 22
   m_Name: TornadoVisualObject
   m_TagString: Moving Object
   m_Icon: {fileID: 0}
@@ -4839,7 +4839,7 @@ GameObject:
   - component: {fileID: 4592490955062600}
   - component: {fileID: 114807994506257588}
   - component: {fileID: 61774771450348010}
-  m_Layer: 15
+  m_Layer: 17
   m_Name: ProjectileReceiver
   m_TagString: Untagged
   m_Icon: {fileID: 0}

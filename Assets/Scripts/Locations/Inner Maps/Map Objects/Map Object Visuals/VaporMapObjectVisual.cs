@@ -22,12 +22,11 @@ public class VaporMapObjectVisual : MovingMapObjectVisual<TileObject> {
         return true;
     }
     public override void UpdateTileObjectVisual(TileObject obj) { }
-    public override void UpdateCollidersState(TileObject obj) { }
     #endregion
 
     #region Monobehaviours
     private void Awake() {
-        collisionTrigger = transform.GetComponentInChildren<TileObjectCollisionTrigger>();
+        visionTrigger = transform.GetComponentInChildren<TileObjectVisionTrigger>();
     }
     protected override void Update() {
         base.Update();
@@ -147,7 +146,7 @@ public class VaporMapObjectVisual : MovingMapObjectVisual<TileObject> {
     #region Triggers
     public void OnTriggerEnter2D(Collider2D collision) {
         if (isSpawned == false) { return; }
-        IBaseCollider collidedWith = collision.gameObject.GetComponent<IBaseCollider>();
+        BaseVisionTrigger collidedWith = collision.gameObject.GetComponent<BaseVisionTrigger>();
         if (collidedWith != null && collidedWith.damageable is VaporTileObject otherVapor) {
             CollidedWithVapor(otherVapor);
         }

@@ -28,12 +28,12 @@ public class AbductorMonster : CharacterBehaviourComponent {
 								log += "\n-Late Night or After Midnight, 40% chance to Sleep";
 								int sleepRoll = UnityEngine.Random.Range(0, 100);
 								log += $"\n-Roll: {sleepRoll.ToString()}";
-								if (sleepRoll < 0) { //40
+								if (sleepRoll < 40) { //40
 									hasAddedJob = summon.jobComponent.TriggerMonsterSleep();
 								} else if (currTime == TIME_IN_WORDS.AFTER_MIDNIGHT) {
 									log += "\n-After Midnight, and did not sleep, 15% chance to abduct";
 									int abductRoll = UnityEngine.Random.Range(0, 100);
-									if (abductRoll < 100) { //15
+									if (abductRoll < 15) { //15
 										hasAddedJob = summon.jobComponent.TriggerAbduct();			
 									}
 								}

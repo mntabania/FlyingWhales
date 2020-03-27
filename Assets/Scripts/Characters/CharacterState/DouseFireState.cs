@@ -32,8 +32,9 @@ public class DouseFireState : CharacterState {
             BurningSource burningSource = stateComponent.character.currentRegion.innerMap.activeBurningSources[i];
             for (int j = 0; j < burningSource.objectsOnFire.Count; j++) {
                 ITraitable traitable = burningSource.objectsOnFire[j];
-                if (traitable is IPointOfInterest) {
-                    AddFire(traitable as IPointOfInterest);
+                if (traitable is IPointOfInterest pointOfInterest && pointOfInterest.gridTileLocation.
+                    IsPartOfSettlement(stateComponent.character.homeSettlement)) {
+                    AddFire(pointOfInterest);
                 }
             }
         }
@@ -51,7 +52,7 @@ public class DouseFireState : CharacterState {
         Messenger.RemoveListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
         Messenger.RemoveListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
     }
-    public void DetermineAction() {
+    private void DetermineAction() {
         if (StillHasFire()) {
             if (HasWater() || NeedsWater() == false) {
                 //douse nearest fire
@@ -103,7 +104,7 @@ public class DouseFireState : CharacterState {
 
     #region Utilities
     private void OnTraitableGainedTrait(ITraitable traitable, Trait trait) {
-        if (trait is Burning) {
+        if (trait is Burning && traitable.gridTileLocation != null && traitable.gridTileLocation.IsPartOfSettlement(stateComponent.character.homeSettlement)) {
             if (_fires.Contains(traitable) == false) {
                 _fires.Add(traitable);
             }

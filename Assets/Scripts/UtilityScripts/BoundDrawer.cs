@@ -27,10 +27,12 @@ public class BoundDrawer : MonoBehaviour {
     public void ManualUpdateBounds(Bounds bounds) {
         this.bounds = bounds;
     }
+#if UNITY_EDITOR
     void Update() {
         CalcPositons();
         DrawBox();
     }
+#endif
 
     void CalcPositons() {
         //Bounds bounds = GetComponent<MeshFilter>().mesh.bounds;

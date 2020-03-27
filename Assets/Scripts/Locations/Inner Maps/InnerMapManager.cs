@@ -430,7 +430,7 @@ namespace Inner_Maps {
             summary = character.marker.inVisionCharacters.Count > 0 ? character.marker.inVisionCharacters.Select((t, i) => (Character) character.marker.inVisionCharacters.ElementAt(i)).Aggregate(summary, (current, poi) => $"{current}{poi.name}, ") : $"{summary}None";
             
             summary = $"{summary}\n\tPOI's in Range but different structures: ";
-            summary = character.marker.visionCollision.poisInRangeButDiffStructure.Count > 0 ? character.marker.visionCollision.poisInRangeButDiffStructure.Aggregate(summary, (current, poi) => $"{current}{poi}, ") : $"{summary}None";
+            summary = character.marker.visionCollider.poisInRangeButDiffStructure.Count > 0 ? character.marker.visionCollider.poisInRangeButDiffStructure.Aggregate(summary, (current, poi) => $"{current}{poi}, ") : $"{summary}None";
             
             summary = $"{summary}\n\tHostiles in Range: ";
             summary = character.combatComponent.hostilesInRange.Count > 0 ? character.combatComponent.hostilesInRange.Aggregate(summary, (current, poi) => $"{current}{poi.name}, ") : $"{summary}None";
@@ -603,13 +603,13 @@ namespace Inner_Maps {
                 if(target.isBeingCarriedBy != null) {
                     objectToLookAt = target.isBeingCarriedBy.mapObjectVisual;
                 }
-                if (target.isBeingCarriedBy != actor && objectToLookAt != null) {
+                if (target.isBeingCarriedBy != actor && ReferenceEquals(objectToLookAt, null) == false) {
                     actor.mapObjectVisual.LookAt(objectToLookAt.transform.position);
                 }
             }
         }
         public void FaceTarget(IPointOfInterest actor, LocationGridTile target) {
-            if (actor != target && actor.gridTileLocation != null && target != null) {
+            if (actor.gridTileLocation != null && target != null) {
                 if (target != actor.gridTileLocation) {
                     actor.mapObjectVisual.LookAt(target.centeredWorldLocation);
                 }

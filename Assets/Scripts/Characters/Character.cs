@@ -11,6 +11,7 @@ using UnityEngine.Assertions;
 using Interrupts;
 using Locations.Settlements;
 using UnityEngine.EventSystems;
+using UnityEngine.Profiling;
 using UtilityScripts;
 
 public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlayerActionTarget, IObjectManipulator {
@@ -226,7 +227,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public POINT_OF_INTEREST_TYPE poiType => POINT_OF_INTEREST_TYPE.CHARACTER;
     public LocationGridTile gridTileLocation {
         get {
-            if (marker == null) {
+            if (ReferenceEquals(marker, null)) {
                 return null;
             }
             if (!IsInOwnParty()) {
@@ -265,7 +266,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public float runSpeed => raceSetting.runSpeed + (raceSetting.runSpeed * characterClass.runSpeedMod);
     public Vector3 worldPosition => marker.transform.position;
     public Vector2 selectableSize => Vector2Int.one;
-    public ProjectileReceiver projectileReceiver => marker.collisionTrigger.projectileReceiver;
+    public ProjectileReceiver projectileReceiver => marker.visionTrigger.projectileReceiver;
     public JOB_OWNER ownerType => JOB_OWNER.CHARACTER;
     public bool isInCombat => stateComponent.currentState != null && stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT;
     public Transform worldObject => marker.transform;
@@ -1517,7 +1518,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //        (ownParty as CharacterParty).actionData.currentAction.EndAction(ownParty, (ownParty as CharacterParty).actionData.currentTargetObject);
         //    }
         //}
-        marker.collisionTrigger.SetCollidersState(true);
+        marker.visionTrigger.SetCollidersState(true);
         marker.UpdateAnimation();
         //if (this.minion != null) {
         //    this.minion.SetEnabledState(true); //reenable this minion, since it could've been disabled because it was part of another party
@@ -1528,7 +1529,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //currentRegion.RemoveCharacterFromLocation(this); //Why are we removing the character from location if it is added to a party
             //ownParty.specificLocation.RemoveCharacterFromLocation(this);
             //ownParty.icon.SetVisualState(false);
-            marker.collisionTrigger.SetCollidersState(false);
+            marker.visionTrigger.SetCollidersState(false);
             marker.UpdateAnimation();
         }
     }
@@ -2912,24 +2913,21 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         if (amount < 0) {
             Character responsibleCharacter = null;
-            if (source is Character) {
-                responsibleCharacter = source as Character;
+            if (source is Character character) {
+                responsibleCharacter = character;
             }
             CombatManager.ElementalTraitProcessor etp = elementalTraitProcessor ??
                                                         CombatManager.Instance.DefaultElementalTraitProcessor;
             CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this,
                 responsibleCharacter, etp);
         }
-        if (triggerDeath && previous != _currentHP && _currentHP <= 0) {
+        if (triggerDeath && _currentHP <= 0) {
             if(source != null) {
-                if (source is Character) {
-                    Character character = source as Character;
+                if (source is Character character) {
                     Death("attacked", responsibleCharacter: character);
                 } else {
                     string cause = "attacked";
-                    if (source != null) {
-                        cause += $"_{source}";
-                    }
+                    cause += $"_{source}";
                     Death(cause);
                 }
             } else {
@@ -3268,12 +3266,24 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         StartTickGoapPlanGeneration();
     }
     protected virtual void OnTickEnded() {
+        Profiler.BeginSample($"{name} ProcessForcedCancelJobsOnTickEnded() call");
         ProcessForcedCancelJobsOnTickEnded();
+        Profiler.EndSample();
+        Profiler.BeginSample($"{name} moodComponent.OnTickEnded() call");
         moodComponent.OnTickEnded();
+        Profiler.EndSample();
+        Profiler.BeginSample($"{name} interruptComponent.OnTickEnded() call");
         interruptComponent.OnTickEnded();
+        Profiler.EndSample();
+        Profiler.BeginSample($"{name} stateComponent.OnTickEnded() call");
         stateComponent.OnTickEnded();
+        Profiler.EndSample();
+        Profiler.BeginSample($"{name} ProcessTraitsOnTickEnded() call");
         ProcessTraitsOnTickEnded();
+        Profiler.EndSample();
+        Profiler.BeginSample($"{name} EndTickPerformJobs() call");
         EndTickPerformJobs();
+        Profiler.EndSample();
     }
     protected virtual void OnHourStarted() {
         ProcessTraitsOnHourStarted();
@@ -3305,10 +3315,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     public bool CanPerformEndTickJobs() {
-        return !isDead && isStoppedByOtherCharacter <= 0 /*&& canWitness*/
-            && currentActionNode == null && planner.status == GOAP_PLANNING_STATUS.NONE && jobQueue.jobsInQueue.Count > 0 
-            && currentParty.icon.isTravellingOutside == false && !marker.hasFleePath 
-            && stateComponent.currentState == null && IsInOwnParty() && !interruptComponent.isInterrupted; //minion == null && doNotDisturb <= 0
+        bool canPerformEndTickJobs = !isDead && isStoppedByOtherCharacter <= 0 /*&& canWitness*/
+         && currentActionNode == null && planner.status == GOAP_PLANNING_STATUS.NONE && jobQueue.jobsInQueue.Count > 0 
+         && currentParty.icon.isTravellingOutside == false && !marker.hasFleePath 
+         && stateComponent.currentState == null && IsInOwnParty() && !interruptComponent.isInterrupted; //minion == null && doNotDisturb <= 0 
+        return canPerformEndTickJobs;
     }
     //public void PlanGoapActions() {
     //    if (!IsInOwnParty() || ownParty.icon.isTravelling || _doNotDisturb > 0 /*|| isWaitingForInteraction > 0 */ || isDead || marker.hasFleePath) {
@@ -4191,82 +4202,81 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void PerformTopPriorityJob() {
         string log = $"PERFORMING GOAP PLANS OF {name}";
         if (currentActionNode != null) {
-            log +=
-                $"\n{name} can't perform another action because he/she is currently performing {currentActionNode.action.goapName}";
+            log =
+                $"{log}\n{name} can't perform another action because he/she is currently performing {currentActionNode.action.goapName}";
             logComponent.PrintLogIfActive(log);
             return;
         }
         
-        //List<INTERACTION_TYPE> actorAllowedActions = RaceManager.Instance.GetNPCInteractionsOfCharacter(this);
-        //bool willGoIdleState = true;
-        if(jobQueue.jobsInQueue[0] is GoapPlanJob) {
-            GoapPlanJob currentTopPrioJob = jobQueue.jobsInQueue[0] as GoapPlanJob;
-            if(currentTopPrioJob.assignedPlan != null) {
-                GoapPlan plan = currentTopPrioJob.assignedPlan;
-                ActualGoapNode currentNode = plan.currentActualNode;
-                if (RaceManager.Instance.CanCharacterDoGoapAction(this, currentNode.action.goapType)
+        GoapPlanJob currentTopPrioJob = jobQueue.jobsInQueue[0] as GoapPlanJob;
+        if(currentTopPrioJob?.assignedPlan != null) {
+            GoapPlan plan = currentTopPrioJob.assignedPlan;
+            ActualGoapNode currentNode = plan.currentActualNode;
+            if (RaceManager.Instance.CanCharacterDoGoapAction(this, currentNode.action.goapType)
                 && InteractionManager.Instance.CanSatisfyGoapActionRequirements(currentNode.action.goapType, currentNode.actor, currentNode.poiTarget, currentNode.otherData)) {
-                    bool preconditionsSatisfied = plan.currentActualNode.action.CanSatisfyAllPreconditions(currentNode.actor, currentNode.poiTarget, currentNode.otherData);
-                    if (!preconditionsSatisfied) {
-                        log += $"\n - {plan.currentActualNode} Action's preconditions are not all satisfied, trying to recalculate plan...";
-                        if (plan.doNotRecalculate) {
-                            log += $"\n - {plan.currentActualNode} Action's plan has doNotRecalculate state set to true, dropping plan...";
-                            logComponent.PrintLogIfActive(log);
-                            currentTopPrioJob.CancelJob(false);
-                        } else {
-                            logComponent.PrintLogIfActive(log);
-                            planner.RecalculateJob(currentTopPrioJob);
-                        }
-                    } else {
-                        //Do not perform action if the target character is still in another character's party, this means that he/she is probably being abducted
-                        //Wait for the character to be in its own party before doing the action
-                        if (currentNode.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-                            Character targetCharacter = currentNode.poiTarget as Character;
-                            if (!targetCharacter.IsInOwnParty() && targetCharacter.currentParty != ownParty) {
-                                log += $"\n - {targetCharacter.name} is not in its own party, waiting and skipping...";
-                                logComponent.PrintLogIfActive(log);
-                                return;
-                            }
-                        }
-                        if (currentNode.poiTarget != this && currentNode.isStealth) {
-                            //When performing a stealth job action to a character check if that character is already in vision range, if it is, check if the character doesn't have anyone other than this character in vision, if it is, skip it
-                            if (marker.inVisionPOIs.Contains(currentNode.poiTarget) && !marker.CanDoStealthActionToTarget(currentNode.poiTarget)) {
-                                log += "\n - Action is stealth and character cannot do stealth action right now...";
-                                logComponent.PrintLogIfActive(log);
-                                return;
-                            }
-                        }
-                        if(traitContainer.HasTrait("Lazy")) {
-                            log += "\n - Character is lazy, has 20% chance to not perform job if it is a needs type job...";
-                            if (currentTopPrioJob.jobType.IsNeedsTypeJob()) {
-                                int chance = UnityEngine.Random.Range(0, 100);
-                                log += $"\n - Roll: {chance}";
-                                if (chance < 20) {
-                                    Lazy lazy = traitContainer.GetNormalTrait<Lazy>("Lazy");
-                                    if (lazy.TriggerLazy()) {
-                                        log += "\n - Character triggered lazy, not going to do job";
-                                        logComponent.PrintLogIfActive(log);
-                                        return;
-                                    } else {
-                                        log += "\n - Character did not trigger lazy, continue to do action";
-                                    }
-                                }
-                            } else {
-                                log += "\n - Job is not a needs type job, continue to do job";
-                            }
-                        }
-                        log += "\n - Action's preconditions are all satisfied, doing action...";
+                bool preconditionsSatisfied = plan.currentActualNode.action.CanSatisfyAllPreconditions(currentNode.actor, currentNode.poiTarget, currentNode.otherData);
+                if (!preconditionsSatisfied) {
+                    log =
+                        $"{log}\n - {plan.currentActualNode} Action's preconditions are not all satisfied, trying to recalculate plan...";
+                    if (plan.doNotRecalculate) {
+                        log =
+                            $"{log}\n - {plan.currentActualNode} Action's plan has doNotRecalculate state set to true, dropping plan...";
                         logComponent.PrintLogIfActive(log);
-                        Messenger.Broadcast(Signals.CHARACTER_WILL_DO_PLAN, this, plan);
-                        currentNode.DoAction(currentTopPrioJob, plan);
+                        currentTopPrioJob.CancelJob(false);
+                    } else {
+                        logComponent.PrintLogIfActive(log);
+                        planner.RecalculateJob(currentTopPrioJob);
                     }
                 } else {
-                    log += $"\n - {plan.currentActualNode} Action did not meet current requirements and allowed actions, dropping plan...";
+                    //Do not perform action if the target character is still in another character's party, this means that he/she is probably being abducted
+                    //Wait for the character to be in its own party before doing the action
+                    if (currentNode.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+                        Character targetCharacter = currentNode.poiTarget as Character;
+                        if (!targetCharacter.IsInOwnParty() && targetCharacter.currentParty != ownParty) {
+                            log = $"{log}\n - {targetCharacter.name} is not in its own party, waiting and skipping...";
+                            logComponent.PrintLogIfActive(log);
+                            return;
+                        }
+                    }
+                    if (currentNode.poiTarget != this && currentNode.isStealth) {
+                        //When performing a stealth job action to a character check if that character is already in vision range, if it is, check if the character doesn't have anyone other than this character in vision, if it is, skip it
+                        if (marker.inVisionPOIs.Contains(currentNode.poiTarget) && !marker.CanDoStealthActionToTarget(currentNode.poiTarget)) {
+                            log = $"{log}\n - Action is stealth and character cannot do stealth action right now...";
+                            logComponent.PrintLogIfActive(log);
+                            return;
+                        }
+                    }
+                    if(traitContainer.HasTrait("Lazy")) {
+                        log =
+                            $"{log}\n - Character is lazy, has 20% chance to not perform job if it is a needs type job...";
+                        if (currentTopPrioJob.jobType.IsNeedsTypeJob()) {
+                            int chance = UnityEngine.Random.Range(0, 100);
+                            log = $"{log}\n - Roll: {chance.ToString()}";
+                            if (chance < 20) {
+                                Lazy lazy = traitContainer.GetNormalTrait<Lazy>("Lazy");
+                                if (lazy.TriggerLazy()) {
+                                    log = $"{log}\n - Character triggered lazy, not going to do job";
+                                    logComponent.PrintLogIfActive(log);
+                                    return;
+                                } else {
+                                    log = $"{log}\n - Character did not trigger lazy, continue to do action";
+                                }
+                            }
+                        } else {
+                            log = $"{log}\n - Job is not a needs type job, continue to do job";
+                        }
+                    }
+                    log = $"{log}\n - Action's preconditions are all satisfied, doing action...";
                     logComponent.PrintLogIfActive(log);
-                    currentTopPrioJob.CancelJob(false);
+                    Messenger.Broadcast(Signals.CHARACTER_WILL_DO_PLAN, this, plan);
+                    currentNode.DoAction(currentTopPrioJob, plan);
                 }
+            } else {
+                log =
+                    $"{log}\n - {plan.currentActualNode} Action did not meet current requirements and allowed actions, dropping plan...";
+                logComponent.PrintLogIfActive(log);
+                currentTopPrioJob.CancelJob(false);
             }
-            
         }
 
         //for (int i = 0; i < allGoapPlans.Count; i++) {

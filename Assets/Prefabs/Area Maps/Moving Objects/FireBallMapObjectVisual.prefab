@@ -9528,7 +9528,7 @@ GameObject:
   - component: {fileID: 5381824823694444676}
   - component: {fileID: 5473484325521070036}
   - component: {fileID: 287888792591758478}
-  m_Layer: 15
+  m_Layer: 22
   m_Name: FireBallMapObjectVisual
   m_TagString: Moving Object
   m_Icon: {fileID: 0}
@@ -9686,7 +9686,7 @@ GameObject:
   - component: {fileID: 5363818557143268658}
   - component: {fileID: 5474034177727079630}
   - component: {fileID: 5384963219558203792}
-  m_Layer: 15
+  m_Layer: 17
   m_Name: ProjectileReceiver
   m_TagString: Untagged
   m_Icon: {fileID: 0}
