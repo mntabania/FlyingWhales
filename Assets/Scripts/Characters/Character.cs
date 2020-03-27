@@ -4217,7 +4217,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             logComponent.PrintLogIfActive(log);
             return;
         }
-        
         GoapPlanJob currentTopPrioJob = jobQueue.jobsInQueue[0] as GoapPlanJob;
         if(currentTopPrioJob?.assignedPlan != null) {
             GoapPlan plan = currentTopPrioJob.assignedPlan;

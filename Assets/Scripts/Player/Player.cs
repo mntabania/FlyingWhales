@@ -66,6 +66,7 @@ public class Player : ILeader, IObjectManipulator {
         threatComponent = new ThreatComponent(this);
         ConstructAllInterventionAbilitySlots();
         AddListeners();
+        currentActiveItem = TILE_OBJECT_TYPE.NONE;
     }
     public Player(SaveDataPlayer data) {
         allIntel = new List<IIntel>();
