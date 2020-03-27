@@ -252,7 +252,7 @@ GameObject:
   - component: {fileID: 224254967257501736}
   - component: {fileID: 61074229831935010}
   - component: {fileID: 114540296650639094}
-  m_Layer: 15
+  m_Layer: 24
   m_Name: CollisionTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}

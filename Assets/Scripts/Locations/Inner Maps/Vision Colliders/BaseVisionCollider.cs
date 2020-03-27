@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UtilityScripts;
 
 /// <summary>
@@ -42,4 +43,8 @@ public abstract class BaseVisionCollider : MonoBehaviour {
         gameObject.layer = LayerMask.NameToLayer(GameUtilities.Unfiltered_Vision_Layer);
     }
     #endregion
+
+    public virtual void Reset() {
+        _filterVisionVotes = 0;
+    }
 }

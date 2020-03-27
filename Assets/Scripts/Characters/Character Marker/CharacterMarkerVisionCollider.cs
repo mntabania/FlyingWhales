@@ -26,7 +26,8 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
         VoteToFilterVision();
         Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
     }
-    public void Reset() {
+    public override void Reset() {
+        base.Reset();
         Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
         OnDisable();
     }

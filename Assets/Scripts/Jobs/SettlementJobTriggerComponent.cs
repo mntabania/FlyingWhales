@@ -583,7 +583,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	public void TriggerDryTiles() {
 		if (wetTiles.Count > 0) {
 			int existingJobs = _owner.GetNumberOfJobsWith(CHARACTER_STATE.DRY_TILES);
-			int jobsToCreate = 3;
+			int jobsToCreate = 1;
 			if (existingJobs < jobsToCreate) {
 				int missing = jobsToCreate - existingJobs;
 				for (int i = 0; i < missing; i++) {
@@ -626,7 +626,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	public void TriggerCleanseTiles() {
 		if (poisonedTiles.Count > 0) {
 			int existingJobs = _owner.GetNumberOfJobsWith(CHARACTER_STATE.CLEANSE_TILES);
-			int jobsToCreate = 3;
+			int jobsToCreate = 1;
 			if (existingJobs < jobsToCreate) {
 				int missing = jobsToCreate - existingJobs;
 				for (int i = 0; i < missing; i++) {
