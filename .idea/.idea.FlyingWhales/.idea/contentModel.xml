@@ -1542,6 +1542,8 @@
                   <e p="Artifacts" t="Include">
                     <e p="AnkhOfAnubis.cs" t="Include" />
                     <e p="BerserkOrb.cs" t="Include" />
+                    <e p="GorgonEye.cs" t="Include" />
+                    <e p="HeartOfTheWind.cs" t="Include" />
                     <e p="Necronomicon.cs" t="Include" />
                   </e>
                   <e p="BallLightningTileObject.cs" t="Include" />
@@ -1855,11 +1857,24 @@
             <e p="PlayerJobData.cs" t="Include" />
             <e p="SeizeComponent.cs" t="Include" />
             <e p="Skills" t="Include">
-              <e p="Agoraphobia.cs" t="Include" />
-              <e p="Alcoholic.cs" t="Include" />
+              <e p="Afflictions" t="Include">
+                <e p="Agoraphobia.cs" t="Include" />
+                <e p="Alcoholic.cs" t="Include" />
+                <e p="Cannibalism.cs" t="Include" />
+                <e p="CowardiceData.cs" t="Include" />
+                <e p="Kleptomania.cs" t="Include" />
+                <e p="Lycanthropy.cs" t="Include" />
+                <e p="NarcolepsyData.cs" t="Include" />
+                <e p="Paralysis.cs" t="Include" />
+                <e p="Pestilence.cs" t="Include" />
+                <e p="Psychopathy.cs" t="Include" />
+                <e p="PyrophopiaData.cs" t="Include" />
+                <e p="Unfaithfulness.cs" t="Include" />
+                <e p="Vampirism.cs" t="Include" />
+                <e p="ZombieVirus.cs" t="Include" />
+              </e>
               <e p="Blizzard.cs" t="Include" />
               <e p="BrimstonesData.cs" t="Include" />
-              <e p="Cannibalism.cs" t="Include" />
               <e p="CursedObject.cs" t="Include" />
               <e p="EarthquakeData.cs" t="Include" />
               <e p="ElectricStormData.cs" t="Include" />
@@ -1868,15 +1883,11 @@
               <e p="FreezingTrapData.cs" t="Include" />
               <e p="HeatWaveData.cs" t="Include" />
               <e p="IceteroidsData.cs" t="Include" />
-              <e p="Kleptomania.cs" t="Include" />
               <e p="LandmineData.cs" t="Include" />
               <e p="LightningData.cs" t="Include" />
               <e p="LocustSwarm.cs" t="Include" />
-              <e p="Lycanthropy.cs" t="Include" />
               <e p="ManifestFoodData.cs" t="Include" />
               <e p="Meteor.cs" t="Include" />
-              <e p="Paralysis.cs" t="Include" />
-              <e p="Pestilence.cs" t="Include" />
               <e p="Player Actions" t="Include">
                 <e p="ActivateTIleObjectData.cs" t="Include" />
                 <e p="AfflictData.cs" t="Include" />
@@ -1907,7 +1918,6 @@
               <e p="PlayerSpell.cs" t="Include" />
               <e p="PoisonBloomData.cs" t="Include" />
               <e p="PoisonCloud.cs" t="Include" />
-              <e p="Psychopathy.cs" t="Include" />
               <e p="RainData.cs" t="Include" />
               <e p="RavenousSpiritData.cs" t="Include" />
               <e p="SnareTrapData.cs" t="Include" />
@@ -1915,11 +1925,8 @@
               <e p="SplashPoison.cs" t="Include" />
               <e p="TerrifyingHowlData.cs" t="Include" />
               <e p="Tornado.cs" t="Include" />
-              <e p="Unfaithfulness.cs" t="Include" />
-              <e p="Vampirism.cs" t="Include" />
               <e p="WaterBomb.cs" t="Include" />
               <e p="WindBlastData.cs" t="Include" />
-              <e p="ZombieVirus.cs" t="Include" />
             </e>
             <e p="Summons" t="Include">
               <e p="Abomination.cs" t="Include" />
