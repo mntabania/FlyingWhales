@@ -1294,6 +1294,8 @@ public enum TILE_OBJECT_TYPE {
     POISON_CRYSTAL,
     ELECTRIC_CRYSTAL,
     QUICKSAND,
+    SNOW_MOUND,
+    ICE,
 }
 public enum POI_STATE {
     ACTIVE,
