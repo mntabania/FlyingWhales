@@ -10,6 +10,9 @@ using Pathfinding;
 using System.Linq;
 using Inner_Maps;
 using Traits;
+using UnityEngine.Profiling;
+using UnityEngine.Serialization;
+using UtilityScripts;
 
 public class CharacterMarker : MapObjectVisual<Character> {
     public Character character { get; private set; }
@@ -36,7 +39,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public AIDestinationSetter destinationSetter;
     public Seeker seeker;
     public Collider2D[] colliders;
-    public CharacterMarkerVisionCollision visionCollision;
+    [FormerlySerializedAs("visionCollision")] public CharacterMarkerVisionCollider visionCollider;
 
     [Header("Combat")]
     public Transform projectileParent;
@@ -81,12 +84,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     private LocationGridTile _previousGridTile;
     private float progressionSpeedMultiplier;
-    public float penaltyRadius;
     public bool useCanTraverse;
 
     public float attackSpeedMeter { get; private set; }
     private AnimatorOverrideController animatorOverrideController; //this is the controller that is made per character
-    public float attackExecutedTime { get; private set; } //how long into the attack animation is this character's attack actually executed.
     private HexTile _previousHexTileLocation;
     
     public void SetCharacter(Character character) {
@@ -131,17 +132,21 @@ public class CharacterMarker : MapObjectVisual<Character> {
             UpdateAnimation();
         }
     }
-    private void Update() {
+    public void ManualUpdate() {
         if (GameManager.Instance.gameHasStarted && !GameManager.Instance.isPaused) {
             if (character.isBeingSeized) { return; }
             if (attackSpeedMeter < character.attackSpeed) {
                 attackSpeedMeter += ((Time.deltaTime * 1000f) * progressionSpeedMultiplier);
                 UpdateAttackSpeedMeter();
             }
+            pathfindingAI.UpdateMe();
         }
     }
     private void LateUpdate() {
         UpdateVisualBasedOnCurrentAnimationFrame();
+        if (character.stateComponent.currentState is CombatState combatState) {
+            combatState.LateUpdate();
+        }
     }
     private void ForceUpdateMarkerVisualsBasedOnAnimation() {
         string currSpriteName = mainImg.sprite.name;
@@ -198,6 +203,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED,
             OnTileObjectRemovedFromTile);
         Messenger.AddListener<IPointOfInterest>(Signals.REPROCESS_POI, ReprocessPOI);
+        Messenger.AddListener(Signals.TICK_ENDED, PerTickMovement);
     }
     private void RemoveListeners() {
         Messenger.RemoveListener<InfoUIBase>(Signals.MENU_OPENED, OnMenuOpened);
@@ -211,6 +217,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         // Messenger.RemoveListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
         Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemovedFromTile);
         Messenger.RemoveListener<IPointOfInterest>(Signals.REPROCESS_POI, ReprocessPOI);
+        Messenger.RemoveListener(Signals.TICK_ENDED, PerTickMovement);
     }
     public void OnCharacterGainedTrait(Character characterThatGainedTrait, Trait trait) {
         //this will make this character flee when he/she gains an injured trait
@@ -302,7 +309,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
                 character.combatComponent.RemoveHostileInRange(carriedCharacter); //removed hostile because he/she left the npcSettlement.
                 character.combatComponent.RemoveAvoidInRange(carriedCharacter);
                 RemovePOIFromInVisionRange(carriedCharacter);
-                visionCollision.RemovePOIAsInRangeButDifferentStructure(carriedCharacter);
+                visionCollider.RemovePOIAsInRangeButDifferentStructure(carriedCharacter);
             }
         }
         //for (int i = 0; i < travellingParty.characters.Count; i++) {
@@ -368,7 +375,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         character.combatComponent.RemoveHostileInRange(obj);
         character.combatComponent.RemoveAvoidInRange(obj);
         RemovePOIFromInVisionRange(obj);
-        visionCollision.RemovePOIAsInRangeButDifferentStructure(obj);
+        visionCollider.RemovePOIAsInRangeButDifferentStructure(obj);
     }
     #endregion
 
@@ -481,9 +488,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
         
         Messenger.Broadcast(Signals.CHARACTER_EXITED_HEXTILE, character, _previousHexTileLocation);
         
-        visionCollision.Reset();
-        GameObject.Destroy(collisionTrigger.gameObject);
-        collisionTrigger = null;
+        visionCollider.Reset();
+        GameObject.Destroy(visionTrigger.gameObject);
+        visionTrigger = null;
         SetCollidersState(false);
         pathfindingAI.ResetThis();
         character = null;
@@ -593,8 +600,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         pathfindingAI.SetIsStopMovement(false);
         character.currentParty.icon.SetIsTravelling(true);
         UpdateAnimation();
-        Messenger.AddListener(Signals.TICK_ENDED, PerTickMovement);
-        //Messenger.Broadcast(Signals.CHARACTER_STARTED_MOVING, character);
+        // Messenger.AddListener(Signals.TICK_ENDED, PerTickMovement);
     }
     public void StopMovement() {
         isMoving = false;
@@ -605,15 +611,18 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
         pathfindingAI.SetIsStopMovement(true);
         UpdateAnimation();
-        Messenger.RemoveListener(Signals.TICK_ENDED, PerTickMovement);
-        //Messenger.Broadcast(Signals.CHARACTER_STOPPED_MOVING, character);
+        // Messenger.RemoveListener(Signals.TICK_ENDED, PerTickMovement);
     }
     private void PerTickMovement() {
-        if (character == null) {
-            Messenger.RemoveListener(Signals.TICK_ENDED, PerTickMovement);
-            return;
+        // if (character == null) {
+        //     Messenger.RemoveListener(Signals.TICK_ENDED, PerTickMovement);
+        //     return;
+        // }
+        Profiler.BeginSample($"{character.name} PerTickMovement");
+        if (isMoving) {
+            character.PerTickDuringMovement();    
         }
-        character.PerTickDuringMovement();
+        Profiler.EndSample();
     }
     /// <summary>
     /// Make this marker look at a specific point (In World Space).
@@ -772,7 +781,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         if (triggerName == "Attack" && (character.stateComponent.currentState is CombatState) == false) {
             return; //because sometime trigger is set even though character is no longer in combat state.
         }
-        if (animator.runtimeAnimatorController != null) {
+        if (ReferenceEquals(animator.runtimeAnimatorController, null) == false) {
             animator.SetTrigger(triggerName);
         }
         if (triggerName == "Attack") {
@@ -910,7 +919,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         PlaceMarkerAt(tile, addToLocation);
         pathfindingAI.UpdateMe();
         SetCollidersState(true);
-        visionCollision.Initialize();
+        visionCollider.Initialize();
         CreateCollisionTrigger();
         UpdateSpeed();
     }
@@ -934,7 +943,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         PlaceMarkerAt(worldPosition, region, addToLocation);
         pathfindingAI.UpdateMe();
         SetCollidersState(true);
-        visionCollision.Initialize();
+        visionCollider.Initialize();
         CreateCollisionTrigger();
         UpdateSpeed();
     }
@@ -975,7 +984,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             character.combatComponent.ClearHostilesInRange();
             ClearPOIsInVisionRange();
             character.combatComponent.ClearAvoidInRange();
-            visionCollision.OnDeath();
+            visionCollider.OnDeath();
             StartCoroutine(UpdatePositionNextFrame());
         }
     }
@@ -1050,8 +1059,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
     private void CreateCollisionTrigger() {
         GameObject collisionTriggerGO = GameObject.Instantiate(InnerMapManager.Instance.characterCollisionTriggerPrefab, this.transform);
         collisionTriggerGO.transform.localPosition = Vector3.zero;
-        collisionTrigger = collisionTriggerGO.GetComponent<CharacterCollisionTrigger>();
-        collisionTrigger.Initialize(character);
+        visionTrigger = collisionTriggerGO.GetComponent<CharacterVisionTrigger>();
+        visionTrigger.Initialize(character);
     }
     public void AddPOIAsInVisionRange(IPointOfInterest poi) {
         if (!inVisionPOIs.Contains(poi)) {
@@ -1131,6 +1140,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
     }
     private void ProcessAllUnprocessedVisionPOIs() {
+        Profiler.BeginSample($"{character.name} ProcessAllUnprocessedVisionPOIs");
         if(unprocessedVisionPOIs.Count > 0) {
             string log = $"{character.name} tick ended! Processing all unprocessed in visions...";
             if (!character.isDead/* && character.canWitness*/) { //character.traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting", "Zapped") == null
@@ -1153,6 +1163,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         character.SetHasSeenWet(false);
         character.SetHasSeenPoisoned(false);
         character.combatComponent.CheckCombatPerTickEnded();
+        Profiler.EndSample();
     }
     #endregion
 
@@ -1472,56 +1483,38 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public bool CanAttackByAttackSpeed() {
         return attackSpeedMeter >= character.attackSpeed;
     }
-    //public IPointOfInterest GetNearestValidHostile() {
-    //    IPointOfInterest nearest = null;
-    //    float nearestDist = 9999f;
-    //    //first check only the hostiles that are in the same npcSettlement as this character
-    //    for (int i = 0; i < hostilesInRange.Count; i++) {
-    //        IPointOfInterest poi = hostilesInRange[i];
-    //        if (poi.IsValidCombatTarget()) {
-    //            float dist = Vector2.Distance(this.transform.position, poi.worldPosition);
-    //            if (nearest == null || dist < nearestDist) {
-    //                nearest = poi;
-    //                nearestDist = dist;
-    //            }
-    //        }
-            
-    //    }
-    //    //if no character was returned, choose at random from the list, since we are sure that all characters in the list are not in the same npcSettlement as this character
-    //    if (nearest == null) {
-    //        List<Character> hostileCharacters = hostilesInRange.Where(x => x.poiType == POINT_OF_INTEREST_TYPE.CHARACTER).Select(x => x as Character).ToList();
-    //        if (hostileCharacters.Count > 0) {
-    //            nearest = hostileCharacters[UnityEngine.Random.Range(0, hostileCharacters.Count)];
-    //        }
-    //    }
-    //    return nearest;
-    //}
-    public bool IsCharacterInLineOfSightWith(IPointOfInterest target) {
+    private readonly RaycastHit2D[] linOfSightHitObjects = new RaycastHit2D[5];
+    public bool IsCharacterInLineOfSightWith(IPointOfInterest target, float rayDistance = 5f) {
+        Profiler.BeginSample($"{character.name} IsCharacterInLineOfSightWith Pre Check");
+        if (inVisionPOIs.Contains(target) == false) { return false; }
+        Profiler.EndSample();
+        
+        Profiler.BeginSample($"{character.name} start set");
         //precompute our ray settings
         Vector3 start = transform.position;
-        Vector3 direction = target.worldPosition - start;
-
+        Profiler.EndSample();
+        
+        Profiler.BeginSample($"{character.name} Vector3 subtraction");
+        Vector3 direction = GameUtilities.VectorSubtraction(target.worldPosition, start).normalized;
+        Profiler.EndSample();
+        
+        Profiler.BeginSample($"{character.name} Raycast");
         //do the ray test
-        RaycastHit2D[] hitObjects = Physics2D.RaycastAll(start, direction, 10f);
-        for (int i = 0; i < hitObjects.Length; i++) {
-            RaycastHit2D hit = hitObjects[i];
-            if (hit.collider != null) {
-                if(hit.collider.gameObject.name == "Structure_Tilemap" || hit.collider.gameObject.name == "Walls_Tilemap" 
-                    || hit.collider.gameObject.CompareTag("Structure_Wall")) {
-                    return false;
-                } else {
-                    IVisibleCollider component = hit.collider.gameObject.GetComponent<IVisibleCollider>();
-                    if (component != null) {
-                        if (component.poi == target) {
-                            return true;
-                        } else if (!(component.poi is Character)) {
-                            return false; //if the poi collision is not from a character, consider the target as obstructed
-                        }
-                        
-                    }
-                }
+        var size = Physics2D.RaycastNonAlloc(start, direction, linOfSightHitObjects, rayDistance, 
+            GameUtilities.Line_Of_Sight_Layer_Mask);
+        Profiler.EndSample();
+        
+        Profiler.BeginSample($"{character.name} Raycast result loop");
+        for (int i = 0; i < size; i++) {
+            RaycastHit2D hit = linOfSightHitObjects[i];
+            if(hit.collider.gameObject.layer == GameUtilities.Unpassable_Layer_Mask) {
+                return false;
+            } else if (hit.transform.IsChildOf(target.mapObjectVisual.transform)) {
+                return true;
             }
+            
         }
+        Profiler.EndSample();
         return false;
     }
     #endregion
@@ -1534,7 +1527,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     public void SetAllColliderStates(bool state) {
         SetCollidersState(state);
-        collisionTrigger.SetCollidersState(state);
+        visionTrigger.SetCollidersState(state);
     }
     #endregion
 
@@ -1546,14 +1539,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
             return UIManager.Instance.characterInfoUI.activeCharacter == this.character;
         }
         return false;
-    }
-    public override void UpdateCollidersState(Character obj) {
-        //Do not implement?
-        // if (obj.advertisedActions.Count > 0) {
-        //     EnableColliders();
-        // } else {
-        //     DisableColliders();
-        // }
     }
     #endregion
 

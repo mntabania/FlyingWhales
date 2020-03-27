@@ -9380,7 +9380,7 @@ GameObject:
   - component: {fileID: 5919204086661778244}
   - component: {fileID: 6026534671400899256}
   - component: {fileID: 5975744310080419814}
-  m_Layer: 15
+  m_Layer: 17
   m_Name: ProjectileReceiver
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9454,7 +9454,7 @@ GameObject:
   - component: {fileID: 5973239200681033458}
   - component: {fileID: 6025984187313562018}
   - component: {fileID: 4483168898089939160}
-  m_Layer: 15
+  m_Layer: 22
   m_Name: BallLightningMapObjectVisual
   m_TagString: Moving Object
   m_Icon: {fileID: 0}

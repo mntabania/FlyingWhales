@@ -21,12 +21,11 @@ public class QuicksandMapObjectVisual : MapObjectVisual<TileObject> {
         return true;
     }
     public override void UpdateTileObjectVisual(TileObject obj) { }
-    public override void UpdateCollidersState(TileObject obj) { }
     #endregion
 
     #region Monobehaviours
     private void Awake() {
-        collisionTrigger = transform.GetComponentInChildren<TileObjectCollisionTrigger>();
+        visionTrigger = transform.GetComponentInChildren<TileObjectVisionTrigger>();
         _charactersInRange = new List<Character>();
     }
     #endregion
@@ -98,13 +97,13 @@ public class QuicksandMapObjectVisual : MapObjectVisual<TileObject> {
     
     #region Triggers
     public void OnTriggerEnter2D(Collider2D collision) {
-        IBaseCollider collidedWith = collision.gameObject.GetComponent<IBaseCollider>();
+        BaseVisionTrigger collidedWith = collision.gameObject.GetComponent<BaseVisionTrigger>();
         if (collidedWith != null && collidedWith.damageable is Character character) { 
             AddCharacter(character);   
         }
     }
     public void OnTriggerExit2D(Collider2D collision) {
-        IBaseCollider collidedWith = collision.gameObject.GetComponent<IBaseCollider>();
+        BaseVisionTrigger collidedWith = collision.gameObject.GetComponent<BaseVisionTrigger>();
         if (collidedWith != null && collidedWith.damageable is Character character) { 
             RemoveCharacter(character);   
         }

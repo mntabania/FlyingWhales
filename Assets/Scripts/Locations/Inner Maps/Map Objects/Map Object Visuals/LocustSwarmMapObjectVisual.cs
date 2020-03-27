@@ -22,12 +22,11 @@ public class LocustSwarmMapObjectVisual : MovingMapObjectVisual<TileObject> {
         return true;
     }
     public override void UpdateTileObjectVisual(TileObject obj) { }
-    public override void UpdateCollidersState(TileObject obj) { }
     #endregion
 
     #region Monobehaviours
     private void Awake() {
-        collisionTrigger = transform.GetComponentInChildren<TileObjectCollisionTrigger>();
+        visionTrigger = transform.GetComponentInChildren<TileObjectVisionTrigger>();
     }
     protected override void Update() {
         base.Update();
@@ -98,14 +97,14 @@ public class LocustSwarmMapObjectVisual : MovingMapObjectVisual<TileObject> {
 
     #region Triggers
     public void OnTriggerEnter2D(Collider2D collision) {
-        IBaseCollider collidedWith = collision.gameObject.GetComponent<IBaseCollider>();
+        BaseVisionTrigger collidedWith = collision.gameObject.GetComponent<BaseVisionTrigger>();
         if (collidedWith != null && collidedWith.damageable is ITraitable traitable 
             && CanBeAffectedByLocustSwarm(traitable)) { 
             AddObject(traitable);   
         }
     }
     public void OnTriggerExit2D(Collider2D collision) {
-        IBaseCollider collidedWith = collision.gameObject.GetComponent<IBaseCollider>();
+        BaseVisionTrigger collidedWith = collision.gameObject.GetComponent<BaseVisionTrigger>();
         if (collidedWith != null && collidedWith.damageable is ITraitable traitable
             && CanBeAffectedByLocustSwarm(traitable)) { 
             RemoveObject(traitable);   

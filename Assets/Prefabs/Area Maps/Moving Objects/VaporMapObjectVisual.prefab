@@ -4770,7 +4770,7 @@ GameObject:
   - component: {fileID: 8315084800165161687}
   - component: {fileID: 8278368223723860779}
   - component: {fileID: 8335664390782817909}
-  m_Layer: 15
+  m_Layer: 17
   m_Name: ProjectileReceiver
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4844,7 +4844,7 @@ GameObject:
   - component: {fileID: 8333088902019276641}
   - component: {fileID: 8277820502390472753}
   - component: {fileID: 8185379888650524027}
-  m_Layer: 15
+  m_Layer: 22
   m_Name: VaporMapObjectVisual
   m_TagString: Moving Object
   m_Icon: {fileID: 0}
@@ -4983,5 +4983,8 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 8180520849324459027}
   hoverObject: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
   _vaporEffect: {fileID: 594688162140365333}

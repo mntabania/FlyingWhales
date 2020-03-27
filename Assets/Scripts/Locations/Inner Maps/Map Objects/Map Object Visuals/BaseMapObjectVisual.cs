@@ -31,6 +31,7 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
     public Sprite usedSprite => objectVisual.sprite;
     public ISelectable selectable { get; protected set; }
     public SpriteRenderer objectSpriteRenderer => objectVisual;
+    public BaseVisionTrigger visionTrigger { get; protected set; }
     
     #region Visuals
     public void SetRotation(float rotation) {
@@ -137,6 +138,9 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
         }
         if (hpBarGO) {
             HideHPBar();
+        }
+        if (visionTrigger) {
+            visionTrigger.Reset();    
         }
     }
     void OnEnable() {

@@ -19,6 +19,18 @@ namespace Traits {
         }
 
         #region Overrides
+        public override void OnAddTrait(ITraitable addedTo) {
+            base.OnAddTrait(addedTo);
+            if (addedTo is Character character) {
+                character.marker.visionCollider.VoteToUnFilterVision();
+            }
+        }
+        public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
+            base.OnRemoveTrait(removedFrom, removedBy);
+            if (removedFrom is Character character) {
+                character.marker.visionCollider.VoteToFilterVision();
+            }
+        }
         public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
             if (targetPOI is TileObject) { // || targetPOI is SpecialToken
                 if (UnityEngine.Random.Range(0, 100) < 3) {

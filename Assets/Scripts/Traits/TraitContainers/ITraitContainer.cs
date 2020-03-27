@@ -73,5 +73,9 @@ namespace Traits {
         void SwitchOnTrait(string name);
         void SwitchOffTrait(string name);
         #endregion
+
+        #region Inquiry
+        bool HasTangibleTrait();
+        #endregion
     }
 }

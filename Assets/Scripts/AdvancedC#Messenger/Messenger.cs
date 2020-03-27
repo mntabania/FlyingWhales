@@ -27,9 +27,9 @@
 //#define LOG_BROADCAST_EXECUTION
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Profiling;
 using UnityEngine.SceneManagement;
 
 internal static class Messenger {
@@ -97,6 +97,7 @@ internal static class Messenger {
 
     private static void OrderEvents(string eventType) {
         if (eventTable.ContainsKey(eventType) && Signals.orderedSignalExecution.ContainsKey(eventType)) {
+            Profiler.BeginSample($"Order Events {eventType}");
             Delegate[] actions = eventTable[eventType].GetInvocationList();
             Delegate ordered = null;
             SignalMethod[] orderedEvents = Signals.orderedSignalExecution[eventType];
@@ -122,47 +123,7 @@ internal static class Messenger {
             }
 
             eventTable[eventType] = ordered;
-        }
-    }
-    private const int eventsPerFrame = 100;
-    private static IEnumerator OrderEventsCoroutine(string eventType) {
-        if (eventTable.ContainsKey(eventType) && Signals.orderedSignalExecution.ContainsKey(eventType)) {
-            Delegate[] actions = eventTable[eventType].GetInvocationList();
-            Delegate ordered = null;
-            SignalMethod[] orderedEvents = Signals.orderedSignalExecution[eventType];
-            int events = 0;
-            for (int i = 0; i < orderedEvents.Length; i++) {
-                //Loop through ordered events
-                //Then check all actions if any of them are equal to the current event
-                //if they are, add that action to the new delegate object, then set the action in the current invocation list to null 
-                //(This is so that all actions remaining in the invocation list after all ordered events are done, are considered uncategorized, and thus cannot be ordered)
-                SignalMethod e = orderedEvents[i];
-                for (int j = 0; j < actions.Length; j++) {
-                    Delegate currAction = actions[j];
-                    if (currAction != null && e.Equals(currAction)) {
-                        ordered = (Callback)ordered + (Callback)currAction;
-                        actions[j] = null;
-                    }
-                    events++;
-                    if (events >= eventsPerFrame) {
-                        yield return null;
-                        events = 0;
-                    }
-                }
-            }
-
-            for (int i = 0; i < actions.Length; i++) {
-                if (actions[i] != null) {
-                    ordered = (Callback)ordered + (Callback)actions[i];
-                    events++;
-                    if (events >= eventsPerFrame) {
-                        yield return null;
-                        events = 0;
-                    }
-                }
-            }
-
-            eventTable[eventType] = ordered;
+            Profiler.EndSample();
         }
     }
     //static private void OrderEvents(string eventType, Callback newEvent) {

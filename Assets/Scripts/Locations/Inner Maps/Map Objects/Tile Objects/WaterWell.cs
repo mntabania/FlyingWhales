@@ -7,9 +7,6 @@ public class WaterWell : TileObject {
 
     public WaterWell() {
         Initialize(TILE_OBJECT_TYPE.WATER_WELL);
-        traitContainer.RemoveTrait(this, "Flammable");
-        //Wet wet = new Wet {ticksDuration = 0};
-        traitContainer.AddTrait(this, "Wet", overrideDuration: 0);
     }
     public WaterWell(SaveDataTileObject data) {
         Initialize(data);
@@ -20,8 +17,8 @@ public class WaterWell : TileObject {
             AddAdvertisedAction(INTERACTION_TYPE.WELL_JUMP);
             AddAdvertisedAction(INTERACTION_TYPE.REPAIR);
         }
-        //advertisedActions = structureLocation.structureType != STRUCTURE_TYPE.POND && structureLocation.structureType != STRUCTURE_TYPE.OCEAN ? 
-        //    new List<INTERACTION_TYPE>() { INTERACTION_TYPE.WELL_JUMP, INTERACTION_TYPE.REPAIR } : new List<INTERACTION_TYPE>();
+        traitContainer.RemoveTrait(this, "Flammable");
+        traitContainer.AddTrait(this, "Wet", overrideDuration: 0);
     }
     public override bool CanBeAffectedByElementalStatus(string traitName) {
         if (traitName == "Wet") {

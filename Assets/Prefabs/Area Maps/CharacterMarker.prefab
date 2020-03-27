@@ -327,7 +327,7 @@ GameObject:
   - component: {fileID: 4343832300210686}
   - component: {fileID: 114699231813471468}
   - component: {fileID: 50678872814987440}
-  - component: {fileID: 58282679592281158}
+  - component: {fileID: 6363129055570018152}
   m_Layer: 15
   m_Name: VisionCollider
   m_TagString: Character Marker
@@ -362,7 +362,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parentMarker: {fileID: 114379759619008666}
-  isInitialized: 0
 --- !u!50 &50678872814987440
 Rigidbody2D:
   serializedVersion: 4
@@ -384,8 +383,8 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!58 &58282679592281158
-CircleCollider2D:
+--- !u!61 &6363129055570018152
+BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -394,12 +393,22 @@ CircleCollider2D:
   m_Enabled: 0
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
   serializedVersion: 2
-  m_Radius: 5
+  m_Size: {x: 8, y: 8}
+  m_EdgeRadius: 0
 --- !u!1 &1173466362250984
 GameObject:
   m_ObjectHideFlags: 0
@@ -896,8 +905,8 @@ MonoBehaviour:
   destinationSetter: {fileID: 114167030245026914}
   seeker: {fileID: 114578536136533292}
   colliders:
-  - {fileID: 58282679592281158}
-  visionCollision: {fileID: 114699231813471468}
+  - {fileID: 6363129055570018152}
+  visionCollider: {fileID: 114699231813471468}
   projectileParent: {fileID: 4968866154022664}
   colorHighlight: {fileID: 212374460377128016}
   penaltyRadius: 8

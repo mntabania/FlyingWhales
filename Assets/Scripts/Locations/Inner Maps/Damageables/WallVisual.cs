@@ -20,13 +20,13 @@ public class WallVisual : MapObjectVisual<StructureWallObject> {
     
     private void Awake() {
         _spriteRenderers = transform.GetComponentsInChildren<SpriteRenderer>();
-        collisionTrigger = transform.GetComponentInChildren<WallObjectCollisionTrigger>();
-        collisionTrigger.gameObject.SetActive(false);
+        visionTrigger = transform.GetComponentInChildren<WallObjectVisionTrigger>();
+        visionTrigger.gameObject.SetActive(false);
     }
 
     public override void Initialize(StructureWallObject obj) {
-        collisionTrigger.Initialize(obj);
-        collisionTrigger.gameObject.SetActive(true);
+        visionTrigger.Initialize(obj);
+        visionTrigger.gameObject.SetActive(true);
         UpdateWallAssets(obj);
     }
     /// <summary>
@@ -89,7 +89,7 @@ public class WallVisual : MapObjectVisual<StructureWallObject> {
 
     public override void Reset() {
         base.Reset();
-        collisionTrigger.gameObject.SetActive(false);
+        visionTrigger.gameObject.SetActive(false);
     }
 
     public override void UpdateTileObjectVisual(StructureWallObject obj) {
@@ -101,5 +101,4 @@ public class WallVisual : MapObjectVisual<StructureWallObject> {
     public virtual bool IsMapObjectMenuVisible() {
         return true; //always true so that this is skipped
     }
-    public override void UpdateCollidersState(StructureWallObject obj) { }
 }

@@ -26,7 +26,7 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
     #endregion
 
     private void Awake() {
-        collisionTrigger = transform.GetComponentInChildren<TileObjectCollisionTrigger>();
+        visionTrigger = transform.GetComponentInChildren<TileObjectVisionTrigger>();
     }
     public override void Initialize(TileObject tileObject) {
         base.Initialize(tileObject);
@@ -198,7 +198,7 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
     #region Triggers
     public void OnTriggerEnter2D(Collider2D collision) {
         //if(collision.tag == "Spell") { return; }
-        IBaseCollider collidedWith = collision.gameObject.GetComponent<IBaseCollider>();
+        BaseVisionTrigger collidedWith = collision.gameObject.GetComponent<BaseVisionTrigger>();
         if (collidedWith != null) {
             if (collidedWith.damageable == null) {
                 throw new System.Exception($"Tornado collided with {collidedWith} but damagable was null!");
@@ -209,7 +209,7 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
     }
     public void OnTriggerExit2D(Collider2D collision) {
         //if (collision.tag == "Spell") { return; }
-        IBaseCollider collidedWith = collision.gameObject.GetComponent<IBaseCollider>();
+        BaseVisionTrigger collidedWith = collision.gameObject.GetComponent<BaseVisionTrigger>();
         if (collidedWith != null) {
             // Debug.Log($"Tornado collision exit with {collidedWith.damageable.name}");
             RemoveDamageable(collidedWith.damageable);
@@ -287,7 +287,6 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
     #region Abstract Member Implementation
     public override void UpdateTileObjectVisual(TileObject obj) { }
     public override void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) { }
-    public override void UpdateCollidersState(TileObject obj) { }
     #endregion
 
     #region Listeners

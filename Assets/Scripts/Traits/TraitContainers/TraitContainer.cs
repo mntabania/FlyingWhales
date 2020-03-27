@@ -699,6 +699,18 @@ namespace Traits {
         //    return onEnterGridTileTraits.Remove(trait);
         //}
         #endregion
+
+        #region Inquiry
+        public bool HasTangibleTrait() {
+            for (int i = 0; i < statuses.Count; i++) {
+                Status currTrait = statuses[i];
+                if (currTrait.IsTangible()) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        #endregion
     }
 }
 

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using EZObjectPools;
@@ -6,11 +7,7 @@ using Inner_Maps;
 using UnityEngine;
 
 public class Projectile : PooledObject {
-
-    [SerializeField] private Transform targetTransform;
-    [SerializeField] private Rigidbody2D rigidBody;
-    [SerializeField] private float rotateSpeed = 200f;
-    [SerializeField] private float speed = 5f;
+    
     [SerializeField] private Collider2D _collider;
     [SerializeField] private ParticleSystem projectileParticles;
     [SerializeField] private ParticleSystem collisionParticles;
@@ -24,7 +21,8 @@ public class Projectile : PooledObject {
     private CombatState createdBy;
     private Tweener tween;
     private bool _hasHit;
-
+    private float _timeAlive;
+    
     #region Monobehaviours
     private void OnDestroy() {
         // Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
@@ -32,6 +30,13 @@ public class Projectile : PooledObject {
         Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
         // Messenger.RemoveListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
+    }
+    private void Update() {
+        _timeAlive += Time.deltaTime;
+        if (_timeAlive > 5f) {
+            //destroy projectile
+            DestroyProjectile();
+        }
     }
     #endregion
 
@@ -42,9 +47,9 @@ public class Projectile : PooledObject {
         // transform.rotation = Quaternion.Euler(0f, 0f, rot_z - 90);
         _hasHit = false;
         name = $"Projectile from {createdBy.stateComponent.character.name} targeting {targetObject.name}";
-        this.targetTransform = target;
         this.targetObject = targetObject;
         this.createdBy = createdBy;
+        _timeAlive = 0f;
         if (projectileParticles != null) {
             projectileParticles.Play();    
         }
@@ -66,7 +71,6 @@ public class Projectile : PooledObject {
         tween?.Kill();
         if (projectileParticles != null) { projectileParticles.Stop(); }
         onHitAction?.Invoke(poi, createdBy);
-        targetTransform = null;
         _collider.enabled = false;
         collisionParticles.Play(true);
     }
@@ -94,7 +98,7 @@ public class Projectile : PooledObject {
         }
         collisionParticles.Clear();
         onHitAction = null;
-        targetTransform = null;
+        _timeAlive = 0f;
     }
     #endregion
     

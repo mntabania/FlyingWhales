@@ -4,15 +4,16 @@ using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
+using UnityEngine;
 using UnityEngine.Assertions;
 using UtilityScripts;
 
 public class MonsterGeneration : MapGenerationComponent {
 
 	public override IEnumerator Execute(MapGenerationData data) {
-		// yield return MapGenerator.Instance.StartCoroutine(RegionalMonsterGeneration());
+		yield return MapGenerator.Instance.StartCoroutine(RegionalMonsterGeneration());
 		yield return MapGenerator.Instance.StartCoroutine(LandmarkMonsterGeneration());
-		// yield return MapGenerator.Instance.StartCoroutine(CaveMonsterGeneration());
+		yield return MapGenerator.Instance.StartCoroutine(CaveMonsterGeneration());
 		yield return null;
 	}
 
@@ -27,8 +28,9 @@ public class MonsterGeneration : MapGenerationComponent {
 			summon.MigrateHomeStructureTo(homeStructure);	
 		}
 	}
-	private void CreateMonster(SUMMON_TYPE summonType, List<LocationGridTile> locationChoices, LocationStructure homeStructure = null, params HexTile[] territories) {
+	private Summon CreateMonster(SUMMON_TYPE summonType, List<LocationGridTile> locationChoices, LocationStructure homeStructure = null, params HexTile[] territories) {
 		var chosenTile = homeStructure != null ? CollectionUtilities.GetRandomElement(homeStructure.unoccupiedTiles) : CollectionUtilities.GetRandomElement(locationChoices);
+		Assert.IsNotNull(chosenTile, $"Chosen tile for {summonType.ToString()} is null!");
 		Assert.IsTrue(chosenTile.collectionOwner.isPartOfParentRegionMap, $"Chosen tile for {summonType.ToString()} is not part of the region map!");
 		Summon summon = CharacterManager.Instance.CreateNewSummon(summonType, FactionManager.Instance.neutralFaction, null, chosenTile.parentMap.region);
 		CharacterManager.Instance.PlaceSummon(summon, chosenTile);
@@ -42,6 +44,7 @@ public class MonsterGeneration : MapGenerationComponent {
 		if (homeStructure is IDwelling structure) {
 			summon.MigrateHomeStructureTo(structure);
 		}
+		return summon;
 	}
 	#endregion
 	
@@ -50,8 +53,12 @@ public class MonsterGeneration : MapGenerationComponent {
 		for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
 			Region region = GridMap.Instance.allRegions[i];
 			List<LocationGridTile> locationChoices = new List<LocationGridTile>();
-			region.tiles.Where(h => h.landmarkOnTile == null && h.elevationType == ELEVATION.PLAIN).ToList().
+			region.tiles.Where(h => h.landmarkOnTile == null && (h.elevationType == ELEVATION.PLAIN || h.elevationType == ELEVATION.TREES)).ToList().
 				ForEach(h => locationChoices.AddRange(h.locationGridTiles));
+			if (locationChoices.Count == 0) {
+				Debug.LogWarning($"Could not find valid tiles to place monsters at {region.name}");
+				continue;
+			}
 			MonsterGenerationSetting monsterGenerationSetting =
 				WorldConfigManager.Instance.worldWideMonsterGenerationSetting;
 			List<MonsterSetting> monsterChoices = monsterGenerationSetting.GetMonsterChoicesForBiome(region.coreTile.biomeType);
@@ -61,7 +68,12 @@ public class MonsterGeneration : MapGenerationComponent {
 					MonsterSetting randomMonsterSetting = CollectionUtilities.GetRandomElement(monsterChoices);
 					int randomAmount = randomMonsterSetting.minMaxRange.Random();
 					for (int k = 0; k < randomAmount; k++) {
-						CreateMonster(randomMonsterSetting.monsterType, locationChoices);	
+						Summon summon = CreateMonster(randomMonsterSetting.monsterType, locationChoices);
+						locationChoices.Remove(summon.gridTileLocation);
+					}
+					if (locationChoices.Count == 0) {
+						Debug.LogWarning($"Ran out of grid tiles to place monsters at region {region.name}");
+						break;
 					}
 				}	
 			}

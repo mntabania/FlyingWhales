@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using Traits;
 
 public abstract class MapObject<T> : BaseMapObject where T: IDamageable {
-    public BaseCollisionTrigger<T> collisionTrigger {
+    public BaseVisionTrigger visionTrigger {
         get {
             Assert.IsNotNull(mapVisual, $"{this.ToString()} had a problem getting its collision trigger! MapVisual: {mapVisual?.name ?? "null"}.");
-            return mapVisual.collisionTrigger;            
+            return mapVisual.visionTrigger;            
         }
     } 
     ///this is set in each inheritors implementation of <see cref="MapObject{T}.CreateMapObjectVisual"/>
@@ -19,7 +19,7 @@ public abstract class MapObject<T> : BaseMapObject where T: IDamageable {
     public void InitializeMapObject(T obj) {
         CreateMapObjectVisual();
         mapVisual.Initialize(obj);
-        InitializeCollisionTrigger(obj);
+        InitializeVisionTrigger(obj);
         if (mapVisual.selectable is TileObject tileObject) {
             List<Trait> traitOverrideFunctions = tileObject.traitContainer.GetTraitOverrideFunctions(TraitManager.Initiate_Map_Visual_Trait);
             if (traitOverrideFunctions != null) {
@@ -35,7 +35,7 @@ public abstract class MapObject<T> : BaseMapObject where T: IDamageable {
     #region Placement
     protected void PlaceMapObjectAt(LocationGridTile tile) {
         mapVisual.PlaceObjectAt(tile);
-        collisionTrigger.gameObject.SetActive(true);
+        visionTrigger.gameObject.SetActive(true);
     }
     #endregion
 
@@ -47,9 +47,8 @@ public abstract class MapObject<T> : BaseMapObject where T: IDamageable {
     #endregion
 
     #region Collision
-    private void InitializeCollisionTrigger(T obj) {
-        collisionTrigger.Initialize(obj);
-        mapVisual.UpdateCollidersState(obj);
+    private void InitializeVisionTrigger(T obj) {
+        visionTrigger.Initialize(obj);
     }
     #endregion
 }
