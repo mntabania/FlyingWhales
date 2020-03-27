@@ -90,6 +90,10 @@ public static class TileObjectDB {
         { TILE_OBJECT_TYPE.LOCUST_SWARM, new TileObjectData() {
             maxHP = 100,
         } },
+        { TILE_OBJECT_TYPE.PORTAL_TILE_OBJECT, new TileObjectData() {
+            maxHP = 10000,
+        } },
+        
         //{ TILE_OBJECT_TYPE.WATER_BUCKET, new TileObjectData() {
         //    constructionCost = 25,
         //    constructionTime = 12,

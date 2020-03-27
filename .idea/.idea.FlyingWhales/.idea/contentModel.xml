@@ -1528,6 +1528,7 @@
                   <e p="MapVisualFactory.cs" t="Include" />
                   <e p="MovingMapObjectVisual.cs" t="Include" />
                   <e p="PoisonCloudMapObjectVisual.cs" t="Include" />
+                  <e p="PortalGameObject.cs" t="Include" />
                   <e p="QuicksandMapObjectVisual.cs" t="Include" />
                   <e p="TileObjectGameObject.cs" t="Include" />
                   <e p="TornadoMapObjectVisual.cs" t="Include" />
@@ -1549,18 +1550,31 @@
                   <e p="Bed.cs" t="Include" />
                   <e p="BedClinic.cs" t="Include" />
                   <e p="BerryShrub.cs" t="Include" />
+                  <e p="BigSpawningPit.cs" t="Include" />
                   <e p="BigTreeObject.cs" t="Include" />
                   <e p="BlockWall.cs" t="Include" />
+                  <e p="BloodPool.cs" t="Include" />
+                  <e p="BoneRows.cs" t="Include" />
+                  <e p="Bones.cs" t="Include" />
                   <e p="Brazier.cs" t="Include" />
                   <e p="BuildSpotTileObject.cs" t="Include" />
                   <e p="Cage.cs" t="Include" />
                   <e p="Campfire.cs" t="Include" />
                   <e p="Candelabra.cs" t="Include" />
+                  <e p="Candles.cs" t="Include" />
+                  <e p="Carpet.cs" t="Include" />
                   <e p="Cauldron.cs" t="Include" />
                   <e p="Chains.cs" t="Include" />
                   <e p="CornCrop.cs" t="Include" />
+                  <e p="CorruptedPit.cs" t="Include" />
+                  <e p="CorruptedSpike.cs" t="Include" />
+                  <e p="CorruptedTendril.cs" t="Include" />
                   <e p="Crate.cs" t="Include" />
                   <e p="Crops.cs" t="Include" />
+                  <e p="CryptChest.cs" t="Include" />
+                  <e p="DemonAltar.cs" t="Include" />
+                  <e p="DemonCircle.cs" t="Include" />
+                  <e p="DemonRack.cs" t="Include" />
                   <e p="Desk.cs" t="Include" />
                   <e p="Elemental Crystals" t="Include">
                     <e p="ElectricCrystal.cs" t="Include" />
@@ -1571,7 +1585,9 @@
                     <e p="WaterCrystal.cs" t="Include" />
                   </e>
                   <e p="Ember.cs" t="Include" />
+                  <e p="Eyeball.cs" t="Include" />
                   <e p="FeebleSpirit.cs" t="Include" />
+                  <e p="FeedingTrough.cs" t="Include" />
                   <e p="FireBallTileObject.cs" t="Include" />
                   <e p="Fireplace.cs" t="Include" />
                   <e p="Flower.cs" t="Include" />
@@ -1582,23 +1598,31 @@
                   <e p="GenericTileObject.cs" t="Include" />
                   <e p="GoddessStatue.cs" t="Include" />
                   <e p="Grave.cs" t="Include" />
+                  <e p="Grimoire.cs" t="Include" />
+                  <e p="GroundBolt.cs" t="Include" />
                   <e p="Guitar.cs" t="Include" />
                   <e p="HealingPotion.cs" t="Include" />
                   <e p="HerbPlant.cs" t="Include" />
                   <e p="IronMaiden.cs" t="Include" />
+                  <e p="Jars.cs" t="Include" />
                   <e p="Kindling.cs" t="Include" />
                   <e p="LocustSwarmTileObject.cs" t="Include" />
                   <e p="MagicCircle.cs" t="Include" />
+                  <e p="Manacles.cs" t="Include" />
+                  <e p="ManaRune.cs" t="Include" />
                   <e p="MetalPile.cs" t="Include" />
                   <e p="MimicTileObject.cs" t="Include" />
                   <e p="MovingTileObject.cs" t="Include" />
                   <e p="Mushroom.cs" t="Include" />
                   <e p="Obelisk.cs" t="Include" />
                   <e p="Ore.cs" t="Include" />
+                  <e p="Pew.cs" t="Include" />
                   <e p="Plant.cs" t="Include" />
                   <e p="PlinthBook.cs" t="Include" />
+                  <e p="PlinthOrb.cs" t="Include" />
                   <e p="PoisonCloudTileObject.cs" t="Include" />
                   <e p="PoisonFlask.cs" t="Include" />
+                  <e p="PortalTileObject.cs" t="Include" />
                   <e p="Quicksand.cs" t="Include" />
                   <e p="RackFarmingTools.cs" t="Include" />
                   <e p="RackStaves.cs" t="Include" />
@@ -1615,8 +1639,12 @@
                   <e p="ShelfBooks.cs" t="Include" />
                   <e p="ShelfScrolls.cs" t="Include" />
                   <e p="ShelfSwords.cs" t="Include" />
+                  <e p="Sigil.cs" t="Include" />
+                  <e p="SkullLamp.cs" t="Include" />
+                  <e p="Skulls.cs" t="Include" />
                   <e p="SmallAnimal.cs" t="Include" />
                   <e p="SmithingForge.cs" t="Include" />
+                  <e p="SpawningPit.cs" t="Include" />
                   <e p="Statue.cs" t="Include" />
                   <e p="StonePile.cs" t="Include" />
                   <e p="Stump.cs" t="Include" />
@@ -1637,6 +1665,7 @@
                   <e p="Tool.cs" t="Include" />
                   <e p="Torch.cs" t="Include" />
                   <e p="TornadoTileObject.cs" t="Include" />
+                  <e p="TortureTable.cs" t="Include" />
                   <e p="TrainingDummy.cs" t="Include" />
                   <e p="Trash.cs" t="Include" />
                   <e p="TreeObject.cs" t="Include" />

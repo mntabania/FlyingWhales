@@ -8,6 +8,7 @@ using DG.Tweening;
 public class SeizeComponent {
     public IPointOfInterest seizedPOI { get; private set; }
     public bool isPreparingToBeUnseized { get; private set; }
+    private Sprite _seizedPOISprite;
 
     private Vector3 followOffset;
     private Tween tween;
@@ -30,6 +31,7 @@ public class SeizeComponent {
             poi.isBeingCarriedBy?.UncarryPOI();
             if (poi.gridTileLocation != null) {
                 Messenger.Broadcast(Signals.BEFORE_SEIZING_POI, poi);
+                _seizedPOISprite = poi.mapObjectVisual.usedSprite;
                 poi.OnSeizePOI();
                 if (poi is BaseMapObject baseMapObject) { baseMapObject.OnManipulatedBy(PlayerManager.Instance.player); }
                 Messenger.Broadcast(Signals.ON_SEIZE_POI, poi);
@@ -92,6 +94,10 @@ public class SeizeComponent {
         }
         DisableFollowMousePosition();
         seizedPOI.OnUnseizePOI(hoveredTile);
+        if (seizedPOI.mapObjectVisual != null) {
+            seizedPOI.mapObjectVisual.SetVisual(_seizedPOISprite);    
+        }
+        _seizedPOISprite = null;
         Messenger.Broadcast(Signals.ON_UNSEIZE_POI, seizedPOI);
         seizedPOI = null;
         //PlayerUI.Instance.HideSeizedObjectUI();
