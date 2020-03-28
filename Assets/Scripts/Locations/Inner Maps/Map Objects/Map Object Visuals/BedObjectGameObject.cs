@@ -10,11 +10,15 @@ public class BedObjectGameObject : TileObjectGameObject {
     [SerializeField] private Sprite bed2Sleeping;
 
     public override void UpdateTileObjectVisual(TileObject bed) {
+        HexTile hex = bed.structureLocation.location.coreTile;
+        if (bed.gridTileLocation.collectionOwner != null && bed.gridTileLocation.collectionOwner.partOfHextile != null) {
+            hex = bed.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
+        }
         int userCount = bed.users.Length;
         if (userCount == 0) {
             SetVisual(InnerMapManager.Instance.GetTileObjectAsset(bed, 
-                bed.state, 
-                bed.structureLocation.location.coreTile.biomeType,
+                bed.state,
+                hex.biomeType,
                 bed.gridTileLocation?.isCorrupted ?? false));
         } else if (userCount == 1) {
             SetVisual(bed1Sleeping);

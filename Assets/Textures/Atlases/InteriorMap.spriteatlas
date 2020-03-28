@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 129c2b5e0c8f0e14d9fb8b1c30296b6d, type: 3}
-    totalSpriteSurfaceArea: 3435669
+    totalSpriteSurfaceArea: 3443861
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -53,6 +53,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 299cb31070ec3e745b1227e017f953d8, type: 3}
   - {fileID: 21300000, guid: 8bbdc5106b9077b4fbac05d139f412a9, type: 3}
   - {fileID: 21300000, guid: d4d756103c078464c9973a244a0472bf, type: 3}
+  - {fileID: 21300000, guid: 4a28c710d541fbb47a6923c36242605a, type: 3}
   - {fileID: 21300000, guid: 298d2420e3171b847a9c9b0a0804ee21, type: 3}
   - {fileID: 21300000, guid: 71714520b35b0104098b07d8f4474e96, type: 3}
   - {fileID: 21300000, guid: 029f3620468d6334694e1ce40ffdc9d9, type: 3}
@@ -444,6 +445,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: ce7fa298e4478584393245d871ecd743, type: 3}
   - {fileID: 21300000, guid: cbcaf8a872766104b9933560e0d06e55, type: 3}
   - {fileID: 21300000, guid: 694d89a8bcd92864aa2df8096da51bda, type: 3}
+  - {fileID: 21300000, guid: 26d75ba8516161040a8283184431facd, type: 3}
   - {fileID: 21300000, guid: 66f292b82d7dfaa45b7fad07f08ba800, type: 3}
   - {fileID: 21300000, guid: 3b031bb8781bf1d4fb6be6d19db75a7d, type: 3}
   - {fileID: 21300000, guid: 34a90eb8128963c4d99b1da9f97dd25e, type: 3}
@@ -782,6 +784,7 @@ SpriteAtlas:
   - floorStone022
   - demonWallA-10100011-00
   - demonWallA-11101000-00
+  - heart_of_the_wind
   - fleshGround_v01
   - demonStone03
   - demonFeedingTrough00
@@ -1173,6 +1176,7 @@ SpriteAtlas:
   - wallA-1010-wall0001
   - floorRuins01
   - Pond
+  - gorgon_eye
   - demonCultCarpetLong00
   - water03
   - poison11000001-00

@@ -13,10 +13,14 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
         base.Initialize(tileObject);
         this.name = tileObject.ToString();
         if (tileObject.gridTileLocation != null) {
+            HexTile hex = tileObject.structureLocation.location.coreTile;
+            if(tileObject.gridTileLocation.collectionOwner != null && tileObject.gridTileLocation.collectionOwner.partOfHextile != null) {
+                hex = tileObject.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
+            }
             var isCorrupted = tileObject.gridTileLocation.isCorrupted;
             SetVisual(InnerMapManager.Instance.GetTileObjectAsset(tileObject, 
-                tileObject.state, 
-                tileObject.structureLocation.location.coreTile.biomeType,
+                tileObject.state,
+                hex.biomeType,
                 isCorrupted));
         } else {
             SetVisual(InnerMapManager.Instance.GetTileObjectAsset(tileObject,
@@ -83,9 +87,13 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
     
     
     public override void UpdateTileObjectVisual(TileObject tileObject) {
+        HexTile hex = tileObject.structureLocation.location.coreTile;
+        if (tileObject.gridTileLocation.collectionOwner != null && tileObject.gridTileLocation.collectionOwner.partOfHextile != null) {
+            hex = tileObject.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
+        }
         SetVisual(InnerMapManager.Instance.GetTileObjectAsset(tileObject, 
-            tileObject.state, 
-            tileObject.structureLocation.location.coreTile.biomeType,
+            tileObject.state,
+            hex.biomeType,
             tileObject.gridTileLocation?.isCorrupted ?? false));
     }
 

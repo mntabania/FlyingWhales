@@ -435,13 +435,17 @@ namespace Inner_Maps {
             
             for (int i = 0; i < tiles.Count; i++) {
                 LocationGridTile currTile = tiles[i];
+                HexTile hex = region.coreTile;
+                if(currTile.collectionOwner != null && currTile.collectionOwner.partOfHextile != null) {
+                    hex = currTile.collectionOwner.partOfHextile.hexTileOwner;
+                }
                 float xCoord = (float)currTile.localPlace.x / xSize * 11f + offsetX;
                 float yCoord = (float)currTile.localPlace.y / ySize * 11f + offsetY;
 
                 float floorSample = Mathf.PerlinNoise(xCoord, yCoord);
                 positionArray[i] = currTile.localPlace;
                 //ground
-                if (region.coreTile.biomeType == BIOMES.SNOW || region.coreTile.biomeType == BIOMES.TUNDRA) {
+                if (hex.biomeType == BIOMES.SNOW || hex.biomeType == BIOMES.TUNDRA) {
                     if (floorSample < 0.5f) {
                         groundTilesArray[i] = InnerMapManager.Instance.assetManager.snowTile;
                     } else if (floorSample >= 0.5f && floorSample < 0.8f) {
@@ -449,7 +453,7 @@ namespace Inner_Maps {
                     } else {
                         groundTilesArray[i] = InnerMapManager.Instance.assetManager.stoneTile;
                     }
-                } else if (region.coreTile.biomeType == BIOMES.DESERT) {
+                } else if (hex.biomeType == BIOMES.DESERT) {
                     if (floorSample < 0.5f) {
                         groundTilesArray[i] = InnerMapManager.Instance.assetManager.desertGrassTile;
                     } else if (floorSample >= 0.5f && floorSample < 0.8f) {
@@ -579,7 +583,7 @@ namespace Inner_Maps {
             stopwatch.Stop();
             mapGenerationComponent.AddLog($"{region.name} GenerateDetails took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
         }
-        private void MassSetGroundTileMapVisuals(Vector3Int[] tilePositions, TileBase[] groundAssets) {
+        public void MassSetGroundTileMapVisuals(Vector3Int[] tilePositions, TileBase[] groundAssets) {
             groundTilemap.SetTiles(tilePositions, groundAssets);
             for (int i = 0; i < tilePositions.Length; i++) {
                 LocationGridTile tile = map[tilePositions[i].x, tilePositions[i].y];

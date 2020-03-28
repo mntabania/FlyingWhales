@@ -44,7 +44,12 @@ namespace Traits {
                     IPointOfInterest obj = poi;
                     obj.SetPOIState(POI_STATE.INACTIVE);
                 }
-                Messenger.Broadcast(Signals.REPROCESS_POI, poi);
+                if(poi is WinterRose winterRose) {
+                    winterRose.WinterRoseEffect();
+                } else {
+                    //Will not reprocess if winter rose since it will be destroyed anyway
+                    Messenger.Broadcast(Signals.REPROCESS_POI, poi);
+                }
             } else if (addedTo is StructureWallObject structureWallObject) {
                 burningEffect = GameManager.Instance.CreateParticleEffectAt(structureWallObject, PARTICLE_EFFECT.Burning);
             }

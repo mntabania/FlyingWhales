@@ -31,6 +31,9 @@ namespace Traits {
                 character.needsComponent.AdjustComfortDecreaseRate(2f);
             }
             UpdateVisualsOnAdd(addedTo);
+            if (addedTo is DesertRose desertRose) {
+                desertRose.DesertRoseEffect();
+            }
         }
         public override void OnStackStatus(ITraitable addedTo) {
             base.OnStackStatus(addedTo);

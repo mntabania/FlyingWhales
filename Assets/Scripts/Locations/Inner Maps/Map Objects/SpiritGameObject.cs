@@ -25,9 +25,13 @@ public class SpiritGameObject : MapObjectVisual<TileObject> {
         if (tileObject.gridTileLocation != null) {
             isCorrupted = tileObject.gridTileLocation.isCorrupted;
         }
+        HexTile hex = tileObject.structureLocation.location.coreTile;
+        if (tileObject.gridTileLocation.collectionOwner != null && tileObject.gridTileLocation.collectionOwner.partOfHextile != null) {
+            hex = tileObject.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
+        }
         SetVisual(InnerMapManager.Instance.GetTileObjectAsset(tileObject, 
             tileObject.state, 
-            tileObject.structureLocation.location.coreTile.biomeType,
+            hex.biomeType,
             isCorrupted));  
         visionTrigger = this.transform.GetComponentInChildren<TileObjectVisionTrigger>();
         _isMenuShowing = () => IsMenuShowing(tileObject);
@@ -68,9 +72,13 @@ public class SpiritGameObject : MapObjectVisual<TileObject> {
     
     
     public override void UpdateTileObjectVisual(TileObject tileObject) {
+        HexTile hex = tileObject.structureLocation.location.coreTile;
+        if (tileObject.gridTileLocation.collectionOwner != null && tileObject.gridTileLocation.collectionOwner.partOfHextile != null) {
+            hex = tileObject.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
+        }
         SetVisual(InnerMapManager.Instance.GetTileObjectAsset(tileObject,
             tileObject.state,
-            tileObject.structureLocation.location.coreTile.biomeType,
+            hex.biomeType,
             tileObject.gridTileLocation?.isCorrupted ?? false));
     }
 

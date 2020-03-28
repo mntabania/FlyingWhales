@@ -49,6 +49,10 @@ public class CombatManager : MonoBehaviour {
             EarthElementProcess(target);
         } else if (elementalType == ELEMENTAL_TYPE.Wind) {
             WindElementProcess(target);
+        } else if (elementalType == ELEMENTAL_TYPE.Fire) {
+            FireElementProcess(target);
+        } else if (elementalType == ELEMENTAL_TYPE.Water) {
+            WaterElementProcess(target);
         }
     }
     public void DamageModifierByElements(ref int damage, ELEMENTAL_TYPE elementalType, ITraitable target) {
@@ -58,7 +62,21 @@ public class CombatManager : MonoBehaviour {
                 damage = 0;
                 return;
             }
-            if(elementalType == ELEMENTAL_TYPE.Fire) {
+            if(elementalType != ELEMENTAL_TYPE.Fire) {
+                if(target is WinterRose) {
+                    //Immunity - less 85% damage
+                    damage = Mathf.RoundToInt(damage * 0.15f);
+                    return;
+                }
+            }
+            if (elementalType != ELEMENTAL_TYPE.Water) {
+                if (target is DesertRose) {
+                    //Immunity - less 85% damage
+                    damage = Mathf.RoundToInt(damage * 0.15f);
+                    return;
+                }
+            }
+            if (elementalType == ELEMENTAL_TYPE.Fire) {
                 if (target.traitContainer.HasTrait("Fire Prone")) {
                     damage *= 2;
                 } else if (target.traitContainer.HasTrait("Fireproof")) {
@@ -255,6 +273,16 @@ public class CombatManager : MonoBehaviour {
             vaporTileObject.SetGridTileLocation(target.gridTileLocation);
             vaporTileObject.OnPlacePOI();
             vaporTileObject.SetStacks(stacks);
+        }
+    }
+    private void FireElementProcess(ITraitable target) {
+        if (target is WinterRose winterRose) {
+            winterRose.WinterRoseEffect();
+        }
+    }
+    private void WaterElementProcess(ITraitable target) {
+        if (target is DesertRose desertRose) {
+            desertRose.DesertRoseEffect();
         }
     }
     public void DefaultElementalTraitProcessor(ITraitable traitable, Trait trait) {

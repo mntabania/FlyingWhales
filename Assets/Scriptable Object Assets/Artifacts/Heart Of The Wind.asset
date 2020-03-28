@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Heart Of The Wind
   m_EditorClassIdentifier: 
   _type: 4
-  _sprite: {fileID: 21300000, guid: 14b3250c3a370374a93e774bffae363b, type: 3}
+  _sprite: {fileID: 21300000, guid: 4a28c710d541fbb47a6923c36242605a, type: 3}
   _portrait: {fileID: 21300000, guid: 8f57444b93359594096b1dd546244094, type: 3}
   _unlocks: []
