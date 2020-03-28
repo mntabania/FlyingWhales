@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 129c2b5e0c8f0e14d9fb8b1c30296b6d, type: 3}
-    totalSpriteSurfaceArea: 3427477
+    totalSpriteSurfaceArea: 3435669
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -137,6 +137,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 978e31121aa06d14d8370f5c9ad3d5dd, type: 3}
   - {fileID: 21300000, guid: cf390512771e4824abd324c067dd8cba, type: 3}
   - {fileID: 21300000, guid: c08d4d12b16e6584bb2a742a0a425ed4, type: 3}
+  - {fileID: 21300000, guid: 44607122ecf1f5b40afe658cc8efe3d1, type: 3}
   - {fileID: 21300000, guid: d463f122f5069dd4395b05e323a85816, type: 3}
   - {fileID: 21300000, guid: dc7b542209fdd344e873791a3729db60, type: 3}
   - {fileID: 21300000, guid: 1242d522eda04944a85b60351bcd18b9, type: 3}
@@ -715,6 +716,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 77695fae57265d5438f8bf633a99a037, type: 3}
   - {fileID: 21300000, guid: c1fc69be7a8f674419b60a08b4861276, type: 3}
   - {fileID: 21300000, guid: f6a5febe714d1e446ad84ab66890939a, type: 3}
+  - {fileID: 21300000, guid: e91e34ce88ea6564ab37d7287548712d, type: 3}
   - {fileID: 21300000, guid: a0a4d6ce5031c114a9ce1347e68524b9, type: 3}
   - {fileID: 21300000, guid: 303cf6ceb5ea40849b5a9fd2ac06c9eb, type: 3}
   - {fileID: 21300000, guid: 79440dcec49fd98499b6dadc5725faca, type: 3}
@@ -864,6 +866,7 @@ SpriteAtlas:
   - poison01110001-00
   - laidWallA10000011-00
   - demonWallA-11101111-00
+  - ice_shard
   - rug01
   - skullPillar00
   - caveWallA-10001111-00
@@ -1442,6 +1445,7 @@ SpriteAtlas:
   - TRAINING_DUMMY#2
   - horizontal_1
   - tableDecor01
+  - snow_mound
   - poison11010111-00
   - caveWallA-10001011-00
   - wallA-0101-wall1010

@@ -132,19 +132,13 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
 
     #region Listeners
     protected void SubscribeListeners() {
-        // if (hasSubscribedToListeners == false) {
-        //     hasSubscribedToListeners = true;
-        //     Messenger.AddListener(Signals.TICK_ENDED, () => traitContainer.ProcessOnTickEnded(this));    
-        // }
+        //Messenger.AddListener(Signals.TICK_STARTED, ProcessTraitsOnTickStarted);
     }
     protected void UnsubscribeListeners() {
-        // if (hasSubscribedToListeners) {
-        //     hasSubscribedToListeners = false;
-        //     Messenger.RemoveListener(Signals.TICK_ENDED, () => traitContainer.ProcessOnTickEnded(this));    
-        // }
+        //Messenger.RemoveListener(Signals.TICK_STARTED, ProcessTraitsOnTickStarted);
     }
     #endregion
-    
+
     #region Virtuals
     /// <summary>
     /// Called when a character starts to do an action towards this object.
@@ -544,6 +538,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     }
     public virtual bool CanBeAffectedByElementalStatus(string traitName) {
         return true;
+    }
+    protected void ProcessTraitsOnTickStarted() {
+        traitContainer.ProcessOnTickStarted(this);
     }
     #endregion
 
