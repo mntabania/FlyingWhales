@@ -5171,7 +5171,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fd7182b7dcb98949856eb51bac9ae25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileObjectType: 133
+  tileObjectType: 135
   spriteRenderer: {fileID: 5463828748537457310}
 --- !u!212 &5463828748537457310
 SpriteRenderer:
