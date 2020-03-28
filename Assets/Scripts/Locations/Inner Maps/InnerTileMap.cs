@@ -444,32 +444,9 @@ namespace Inner_Maps {
 
                 float floorSample = Mathf.PerlinNoise(xCoord, yCoord);
                 positionArray[i] = currTile.localPlace;
+                currTile.SetFloorSample(floorSample);
                 //ground
-                if (hex.biomeType == BIOMES.SNOW || hex.biomeType == BIOMES.TUNDRA) {
-                    if (floorSample < 0.5f) {
-                        groundTilesArray[i] = InnerMapManager.Instance.assetManager.snowTile;
-                    } else if (floorSample >= 0.5f && floorSample < 0.8f) {
-                        groundTilesArray[i] = InnerMapManager.Instance.assetManager.snowDirt;
-                    } else {
-                        groundTilesArray[i] = InnerMapManager.Instance.assetManager.stoneTile;
-                    }
-                } else if (hex.biomeType == BIOMES.DESERT) {
-                    if (floorSample < 0.5f) {
-                        groundTilesArray[i] = InnerMapManager.Instance.assetManager.desertGrassTile;
-                    } else if (floorSample >= 0.5f && floorSample < 0.8f) {
-                        groundTilesArray[i] = InnerMapManager.Instance.assetManager.desertSandTile;
-                    } else {
-                        groundTilesArray[i] = InnerMapManager.Instance.assetManager.desertStoneGroundTile;
-                    }
-                } else {
-                    if (floorSample < 0.5f) {
-                        groundTilesArray[i] = InnerMapManager.Instance.assetManager.grassTile;
-                    } else if (floorSample >= 0.5f && floorSample < 0.8f) {
-                        groundTilesArray[i] = InnerMapManager.Instance.assetManager.soilTile;
-                    } else {
-                        groundTilesArray[i] = InnerMapManager.Instance.assetManager.stoneTile;
-                    }
-                }
+                groundTilesArray[i] = GetGroundAssetPerlin(floorSample, hex.biomeType);
                 currTile.SetPreviousGroundVisual(null);
                 
                 // batchCount++;
@@ -588,6 +565,33 @@ namespace Inner_Maps {
             for (int i = 0; i < tilePositions.Length; i++) {
                 LocationGridTile tile = map[tilePositions[i].x, tilePositions[i].y];
                 tile.UpdateGroundTypeBasedOnAsset();
+            }
+        }
+        public static TileBase GetGroundAssetPerlin(float floorSample, BIOMES biomeType) {
+            if (biomeType == BIOMES.SNOW || biomeType == BIOMES.TUNDRA) {
+                if (floorSample < 0.5f) {
+                    return InnerMapManager.Instance.assetManager.snowTile;
+                } else if (floorSample >= 0.5f && floorSample < 0.8f) {
+                    return InnerMapManager.Instance.assetManager.snowDirt;
+                } else {
+                    return InnerMapManager.Instance.assetManager.stoneTile;
+                }
+            } else if (biomeType == BIOMES.DESERT) {
+                if (floorSample < 0.5f) {
+                    return InnerMapManager.Instance.assetManager.desertGrassTile;
+                } else if (floorSample >= 0.5f && floorSample < 0.8f) {
+                    return InnerMapManager.Instance.assetManager.desertSandTile;
+                } else {
+                    return InnerMapManager.Instance.assetManager.desertStoneGroundTile;
+                }
+            } else {
+                if (floorSample < 0.5f) {
+                    return InnerMapManager.Instance.assetManager.grassTile;
+                } else if (floorSample >= 0.5f && floorSample < 0.8f) {
+                    return InnerMapManager.Instance.assetManager.soilTile;
+                } else {
+                    return InnerMapManager.Instance.assetManager.stoneTile;
+                }
             }
         }
         #endregion

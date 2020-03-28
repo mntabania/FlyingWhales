@@ -1255,15 +1255,15 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         ChangeGridTilesBiome();
     }
     private void ChangeGridTilesBiome() {
-        float offsetX = Random.Range(0f, 99999f);
-        float offsetY = Random.Range(0f, 99999f);
-        int minX = locationGridTiles.Min(t => t.localPlace.x);
-        int maxX = locationGridTiles.Max(t => t.localPlace.x);
-        int minY = locationGridTiles.Min(t => t.localPlace.y);
-        int maxY = locationGridTiles.Max(t => t.localPlace.y);
-
-        int xSize = maxX - minX;
-        int ySize = maxY - minY;
+        // float offsetX = Random.Range(0f, 99999f);
+        // float offsetY = Random.Range(0f, 99999f);
+        // int minX = locationGridTiles.Min(t => t.localPlace.x);
+        // int maxX = locationGridTiles.Max(t => t.localPlace.x);
+        // int minY = locationGridTiles.Min(t => t.localPlace.y);
+        // int maxY = locationGridTiles.Max(t => t.localPlace.y);
+        //
+        // int xSize = maxX - minX;
+        // int ySize = maxY - minY;
 
         //Vector3Int[] positionArray = new Vector3Int[locationGridTiles.Count];
         //TileBase[] groundTilesArray = new TileBase[locationGridTiles.Count];
@@ -1273,55 +1273,15 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
                 continue;
             }
             LocationGridTile currTile = locationGridTiles[i];
-            float xCoord = (float) currTile.localPlace.x / xSize * 11f + offsetX;
-            float yCoord = (float) currTile.localPlace.y / ySize * 11f + offsetY;
-
-            float floorSample = Mathf.PerlinNoise(xCoord, yCoord);
-            //positionArray[i] = currTile.localPlace;
             Vector3Int position = currTile.localPlace;
-            TileBase groundTile = null;
-            //ground
-            if (biomeType == BIOMES.SNOW || biomeType == BIOMES.TUNDRA) {
-                if (floorSample < 0.5f) {
-                    //groundTilesArray[i] = InnerMapManager.Instance.assetManager.snowTile;
-                    groundTile = InnerMapManager.Instance.assetManager.snowTile;
-                } else if (floorSample >= 0.5f && floorSample < 0.8f) {
-                    //groundTilesArray[i] = InnerMapManager.Instance.assetManager.snowDirt;
-                    groundTile = InnerMapManager.Instance.assetManager.snowDirt;
-                } else {
-                    //groundTilesArray[i] = InnerMapManager.Instance.assetManager.stoneTile;
-                    groundTile = InnerMapManager.Instance.assetManager.stoneTile;
-                }
-            } else if (biomeType == BIOMES.DESERT) {
-                if (floorSample < 0.5f) {
-                    //groundTilesArray[i] = InnerMapManager.Instance.assetManager.desertGrassTile;
-                    groundTile = InnerMapManager.Instance.assetManager.desertGrassTile;
-                } else if (floorSample >= 0.5f && floorSample < 0.8f) {
-                    //groundTilesArray[i] = InnerMapManager.Instance.assetManager.desertSandTile;
-                    groundTile = InnerMapManager.Instance.assetManager.desertSandTile;
-                } else {
-                    //groundTilesArray[i] = InnerMapManager.Instance.assetManager.desertStoneGroundTile;
-                    groundTile = InnerMapManager.Instance.assetManager.desertStoneGroundTile;
-                }
-            } else {
-                if (floorSample < 0.5f) {
-                    //groundTilesArray[i] = InnerMapManager.Instance.assetManager.grassTile;
-                    groundTile = InnerMapManager.Instance.assetManager.grassTile;
-                } else if (floorSample >= 0.5f && floorSample < 0.8f) {
-                    //groundTilesArray[i] = InnerMapManager.Instance.assetManager.soilTile;
-                    groundTile = InnerMapManager.Instance.assetManager.soilTile;
-                } else {
-                    //groundTilesArray[i] = InnerMapManager.Instance.assetManager.stoneTile;
-                    groundTile = InnerMapManager.Instance.assetManager.stoneTile;
-                }
-            }
+            TileBase groundTile = InnerTileMap.GetGroundAssetPerlin(currTile.floorSample, biomeType);
             currTile.SetPreviousGroundVisual(null);
             currTile.parentMap.groundTilemap.SetTile(position, groundTile);
             currTile.UpdateGroundTypeBasedOnAsset();
             if (currTile.objHere != null && currTile.objHere.mapObjectVisual && currTile.objHere is TileObject tileObject) {
                 tileObject.mapVisual.UpdateTileObjectVisual(tileObject);
             }
-            currTile.CreateSeamlessEdgesForTile(currTile.parentMap);
+            currTile.CreateSeamlessEdgesForSelfAndNeighbours();
         }
         //locationGridTiles[0].parentMap.MassSetGroundTileMapVisuals(positionArray, groundTilesArray);
     }
