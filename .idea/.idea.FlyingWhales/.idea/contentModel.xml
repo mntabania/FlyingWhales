@@ -1577,6 +1577,7 @@
                   <e p="DemonAltar.cs" t="Include" />
                   <e p="DemonCircle.cs" t="Include" />
                   <e p="DemonRack.cs" t="Include" />
+                  <e p="DesertRose.cs" t="Include" />
                   <e p="Desk.cs" t="Include" />
                   <e p="Elemental Crystals" t="Include">
                     <e p="ElectricCrystal.cs" t="Include" />
@@ -1605,6 +1606,7 @@
                   <e p="Guitar.cs" t="Include" />
                   <e p="HealingPotion.cs" t="Include" />
                   <e p="HerbPlant.cs" t="Include" />
+                  <e p="Ice.cs" t="Include" />
                   <e p="IronMaiden.cs" t="Include" />
                   <e p="Jars.cs" t="Include" />
                   <e p="Kindling.cs" t="Include" />
@@ -1646,6 +1648,7 @@
                   <e p="Skulls.cs" t="Include" />
                   <e p="SmallAnimal.cs" t="Include" />
                   <e p="SmithingForge.cs" t="Include" />
+                  <e p="SnowMound.cs" t="Include" />
                   <e p="SpawningPit.cs" t="Include" />
                   <e p="Statue.cs" t="Include" />
                   <e p="StonePile.cs" t="Include" />
@@ -1676,6 +1679,7 @@
                   <e p="WaterFlask.cs" t="Include" />
                   <e p="WaterWell.cs" t="Include" />
                   <e p="Wheelbarrow.cs" t="Include" />
+                  <e p="WinterRose.cs" t="Include" />
                   <e p="WoodPile.cs" t="Include" />
                 </e>
               </e>
@@ -2108,6 +2112,7 @@
               <e p="Lustful.cs" t="Include" />
               <e p="Lycanthrope.cs" t="Include" />
               <e p="Malnourished.cs" t="Include" />
+              <e p="Melting.cs" t="Include" />
               <e p="MusicHater.cs" t="Include" />
               <e p="MusicLover.cs" t="Include" />
               <e p="Narcoleptic.cs" t="Include" />

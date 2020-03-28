@@ -53,6 +53,10 @@ namespace Inner_Maps {
         public bool hasLandmine { get; private set; }
         public bool hasFreezingTrap { get; private set; }
         public bool hasSnareTrap { get; private set; }
+        /// <summary>
+        /// The generated perlin noise sample of this tile.
+        /// </summary>
+        public float floorSample { get; private set; }
 
         private GameObject _landmineEffect;
         private GameObject _freezingTrapEffect;
@@ -171,6 +175,9 @@ namespace Inner_Maps {
         #endregion
         
         #region Visuals
+        public void SetFloorSample(float floorSample) {
+            this.floorSample = floorSample;
+        }
         public void UpdateGroundTypeBasedOnAsset() {
             Sprite groundAsset = parentMap.groundTilemap.GetSprite(localPlace);
             Sprite structureAsset = parentMap.structureTilemap.GetSprite(localPlace);
@@ -202,7 +209,11 @@ namespace Inner_Maps {
                 } else if (assetName.Contains("water") || assetName.Contains("pond")) {
                     SetGroundType(Ground_Type.Water);
                 } else if (assetName.Contains("dirt") || assetName.Contains("soil") || assetName.Contains("outside") || assetName.Contains("snow")) {
-                    if (parentMap.region.coreTile.biomeType == BIOMES.SNOW || parentMap.region.coreTile.biomeType == BIOMES.TUNDRA) {
+                    BIOMES biomeType = parentMap.region.coreTile.biomeType;
+                    if (collectionOwner.isPartOfParentRegionMap) {
+                        biomeType = collectionOwner.partOfHextile.hexTileOwner.biomeType;
+                    }
+                    if (biomeType == BIOMES.SNOW || biomeType == BIOMES.TUNDRA) {
                         if (assetName.Contains("dirtsnow")) {
                             SetGroundType(Ground_Type.Snow_Dirt);
                         } else if (assetName.Contains("snow")) {
@@ -212,7 +223,7 @@ namespace Inner_Maps {
                             //override tile to use tundra soil
                             parentMap.groundTilemap.SetTile(localPlace, InnerMapManager.Instance.assetManager.tundraTile);    
                         }
-                    } else if (parentMap.region.coreTile.biomeType == BIOMES.DESERT) {
+                    } else if (biomeType == BIOMES.DESERT) {
                         if (structure != null && (structure.structureType == STRUCTURE_TYPE.CAVE || structure.structureType == STRUCTURE_TYPE.MONSTER_LAIR)) {
                             SetGroundType(Ground_Type.Stone);
                             //override tile to use stone
