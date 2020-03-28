@@ -1315,13 +1315,13 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
                     groundTile = InnerMapManager.Instance.assetManager.stoneTile;
                 }
             }
-            currTile.SetPreviousGroundVisual(null);
-            currTile.parentMap.groundTilemap.SetTile(position, groundTile);
-            currTile.UpdateGroundTypeBasedOnAsset();
+            currTile.SetGroundTilemapVisual(groundTile);
+            currTile.CreateSeamlessEdgesForTile(currTile.parentMap);
+            //currTile.parentMap.groundTilemap.SetTile(position, groundTile);
+            //currTile.UpdateGroundTypeBasedOnAsset();
             if (currTile.objHere != null && currTile.objHere.mapObjectVisual && currTile.objHere is TileObject tileObject) {
                 tileObject.mapVisual.UpdateTileObjectVisual(tileObject);
             }
-            currTile.CreateSeamlessEdgesForTile(currTile.parentMap);
         }
         //locationGridTiles[0].parentMap.MassSetGroundTileMapVisuals(positionArray, groundTilesArray);
     }

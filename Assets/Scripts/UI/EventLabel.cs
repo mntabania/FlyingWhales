@@ -103,31 +103,33 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
                     onClickAction.Invoke(obj);
                 }
             } else {
-                if (obj is Character) {
-                    UIManager.Instance.ShowCharacterInfo(obj as Character, true);
-                } else if (obj is NPCSettlement) {
-                    UIManager.Instance.ShowRegionInfo((obj as NPCSettlement).region);
-                } else if (obj is Faction) {
-                    UIManager.Instance.ShowFactionInfo((obj as Faction));
-                } else if (obj is Minion) {
-                    UIManager.Instance.ShowCharacterInfo((obj as Minion).character, true);
-                } 
-                //else if (obj is Combat) {
-                //    UIManager.Instance.ShowCombatLog(obj as Combat);
-                //} 
-                else if (obj is Party) {
-                    Party party = obj as Party;
-                    UIManager.Instance.ShowCharacterInfo(party.owner, true);
-                } else if (obj is IPointOfInterest) {
-                    IPointOfInterest poi = obj as IPointOfInterest;
-                    if (poi is Character) {
-                        UIManager.Instance.ShowCharacterInfo(poi as Character, true);
-                    } else if (poi is TileObject) {
-                        UIManager.Instance.ShowTileObjectInfo(poi as TileObject);
+                if(obj != null) {
+                    if (obj is Character) {
+                        UIManager.Instance.ShowCharacterInfo(obj as Character, true);
+                    } else if (obj is NPCSettlement) {
+                        UIManager.Instance.ShowRegionInfo((obj as NPCSettlement).region);
+                    } else if (obj is Faction) {
+                        UIManager.Instance.ShowFactionInfo((obj as Faction));
+                    } else if (obj is Minion) {
+                        UIManager.Instance.ShowCharacterInfo((obj as Minion).character, true);
                     }
-                } else if (obj is Region) {
-                    Region region = obj as Region;
-                    UIManager.Instance.ShowRegionInfo(region);
+                    //else if (obj is Combat) {
+                    //    UIManager.Instance.ShowCombatLog(obj as Combat);
+                    //} 
+                    else if (obj is Party) {
+                        Party party = obj as Party;
+                        UIManager.Instance.ShowCharacterInfo(party.owner, true);
+                    } else if (obj is IPointOfInterest) {
+                        IPointOfInterest poi = obj as IPointOfInterest;
+                        if (poi is Character) {
+                            UIManager.Instance.ShowCharacterInfo(poi as Character, true);
+                        } else if (poi is TileObject) {
+                            UIManager.Instance.ShowTileObjectInfo(poi as TileObject);
+                        }
+                    } else if (obj is Region) {
+                        Region region = obj as Region;
+                        UIManager.Instance.ShowRegionInfo(region);
+                    }
                 }
             }
             ResetHighlightValues();

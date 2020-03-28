@@ -1,8 +1,9 @@
 ﻿using System;
-using Inner_Maps;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
 using UnityEngine;
@@ -294,6 +295,25 @@ public class CharacterManager : MonoBehaviour {
         foodPile.SetResourceInPile(food);
         targetTile.structure.AddPOI(foodPile, targetTile);
         targetTile.SetReservedType(TILE_OBJECT_TYPE.FOOD_PILE);
+    }
+    public void RaiseFromDeath(Character characterToCopy, Faction faction, RACE race = RACE.SKELETON, string className = "") {
+        StartCoroutine(Raise(characterToCopy, faction, race, className));
+    }
+    private IEnumerator Raise(Character target, Faction faction, RACE race, string className) {
+        target.marker.PlayAnimation("Raise Dead");
+        yield return new WaitForSeconds(0.7f);
+        Summon summon = CreateNewSummon(SUMMON_TYPE.Skeleton, faction, homeRegion: target.homeRegion, className: target.characterClass.className);
+        summon.SetName(target.fullname);
+        summon.CreateMarker();
+        LocationGridTile tile = target.gridTileLocation;
+        if (target.grave != null) {
+            tile = target.grave.gridTileLocation;
+            target.grave.gridTileLocation.structure.RemovePOI(target.grave);
+            target.SetGrave(null);
+        }
+        summon.InitialCharacterPlacement(tile);
+        target.DestroyMarker();
+        RemoveCharacter(target);
     }
     #endregion
 
