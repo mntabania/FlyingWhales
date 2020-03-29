@@ -12,7 +12,7 @@ public class FeebleSpirit : TileObject {
     private int _duration;
     private int _currentDuration;
     // private LocationGridTile _originalGridTile;
-    
+
     #region getters
     public override LocationGridTile gridTileLocation => base.gridTileLocation;
     // (mapVisual == null ? null : GetLocationGridTileByXy(

@@ -50,7 +50,12 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
             }
 
             if (collidedWith.damageable.gridTileLocation == null) {
-                return; //ignore, Usually happens if an item is picked up just as this character sees it.
+                if(collidedWith.damageable is FeebleSpirit || collidedWith.damageable is RavenousSpirit || collidedWith.damageable is ForlornSpirit) {
+                    //Spirits can be collided even without gridTileLocation
+                    //TODO: Put inside a system instead of special case?
+                } else {
+                    return; //ignore, Usually happens if an item is picked up just as this character sees it.
+                }
             }
             List<Trait> traitOverrideFunctions = collidedWith.poi.traitContainer.GetTraitOverrideFunctions(TraitManager.Collision_Trait);
             if(traitOverrideFunctions != null) {
