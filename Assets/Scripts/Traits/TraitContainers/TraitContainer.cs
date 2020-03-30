@@ -303,6 +303,7 @@ namespace Traits {
                         RemoveScheduleTicket(status.name, bySchedule);
                     }
                 } else {
+                    //status is stacking
                     if (stacks.ContainsKey(status.name)) {
                         if (stacks[status.name] > 1) {
                             stacks[status.name]--;

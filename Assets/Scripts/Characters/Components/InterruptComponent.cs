@@ -131,7 +131,7 @@ public class InterruptComponent {
     //    }
     //}
     private void EndInterrupt() {
-        bool willCheckInvision = currentInterrupt.duration > 0;
+        bool willCheckInVision = currentInterrupt.duration > 0;
         Interrupt finishedInterrupt = currentInterrupt;
         currentInterrupt = null;
         currentDuration = 0;
@@ -143,7 +143,7 @@ public class InterruptComponent {
                     CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.COMBAT, CHARACTER_STATE.COMBAT, owner);
                     owner.jobQueue.AddJobInQueue(job);
                 } else {
-                    if (willCheckInvision) {
+                    if (willCheckInVision) {
                         if (owner.marker) {
                             for (int i = 0; i < owner.marker.inVisionCharacters.Count; i++) {
                                 Character inVisionCharacter = owner.marker.inVisionCharacters[i];

@@ -122,7 +122,7 @@ public class Poison : GoapAction {
                     return false;
                 }
                 Poisoned poisonedTrait = poiTarget.traitContainer.GetNormalTrait<Poisoned>("Poisoned");
-                if (poisonedTrait != null && poisonedTrait.responsibleCharacters.Contains(actor)) {
+                if (poisonedTrait?.responsibleCharacters != null && poisonedTrait.responsibleCharacters.Contains(actor)) {
                     return false; //to prevent poisoning a table that has been already poisoned by this character
                 }
                 return !d.IsResident(actor);
