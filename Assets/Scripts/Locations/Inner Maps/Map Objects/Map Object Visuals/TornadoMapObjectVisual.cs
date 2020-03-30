@@ -245,7 +245,7 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile tile = tiles[i];
             if (tile.genericTileObject.CanBeDamaged()) {
-                tile.genericTileObject.AdjustHP(-(int)(tile.genericTileObject.maxHP * 0.35f), ELEMENTAL_TYPE.Normal, true, this);
+                tile.genericTileObject.AdjustHP(-(int)(tile.genericTileObject.maxHP * 0.35f), ELEMENTAL_TYPE.Wind, true, this);
             }
         }
         for (int i = 0; i < _damagablesInTornado.Count; i++) {
@@ -264,7 +264,7 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
     private void DealDamage(IDamageable damageable) {
         if (damageable.CanBeDamaged()) {
             //0.35f
-            damageable.AdjustHP(-(int)(damageable.maxHP * 0.55f), ELEMENTAL_TYPE.Normal, true, _tornado, showHPBar: true);
+            damageable.AdjustHP(-(int)(damageable.maxHP * 0.55f), ELEMENTAL_TYPE.Wind, true, _tornado, showHPBar: true);
         }
     }
     private void TrySuckIn(IDamageable damageable) {
@@ -277,7 +277,7 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
     }
     private void OnDamagableReachedThis(IDamageable damageable) {
         damageable.mapObjectVisual?.OnReachTarget();
-        damageable.AdjustHP(-damageable.maxHP, ELEMENTAL_TYPE.Normal, true, _tornado, showHPBar: true);
+        damageable.AdjustHP(-damageable.maxHP, ELEMENTAL_TYPE.Wind, true, _tornado, showHPBar: true);
     }
     private bool CanBeSuckedIn(IDamageable damageable) {
         return damageable.CanBeDamaged() && (damageable is GenericTileObject) == false 
