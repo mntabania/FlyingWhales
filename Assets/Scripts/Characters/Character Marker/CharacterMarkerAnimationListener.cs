@@ -7,11 +7,13 @@ using UnityEngine;
 public class CharacterMarkerAnimationListener : MonoBehaviour {
 
     [SerializeField] private CharacterMarker parentMarker;
-    private bool _attackWasExecuted;
     private float _timeElapsed;
-
+    private bool isExecutingAttack;
+    private const float AttackTime = 0.16f;
+    
     public void OnAttackExecuted() {
-        if (parentMarker.character.stateComponent.currentState is CombatState combatState) {
+        if (parentMarker.character.stateComponent.currentState is CombatState combatState && combatState.isExecutingAttack) {
+            Debug.Log($"{parentMarker.character.name} executed attack.");
             if (parentMarker.character.characterClass.rangeType == RANGE_TYPE.RANGED) {
                 CreateProjectile(combatState.currentClosestHostile, combatState);
                 combatState.isExecutingAttack = false;
@@ -21,11 +23,19 @@ public class CharacterMarkerAnimationListener : MonoBehaviour {
             }
         }
     }
-    
-    public void OnAttackAnimationTriggered() {
-        _attackWasExecuted = true;
+    public void StartAttackExecution() {
+        isExecutingAttack = true;
     }
-
+    private void Update() {
+        if (isExecutingAttack) {
+            _timeElapsed += Time.deltaTime;
+            if (_timeElapsed >= AttackTime) {
+                _timeElapsed = 0f;
+                isExecutingAttack = false;
+                OnAttackExecuted();
+            }
+        }
+    }
     private void CreateProjectile(IDamageable target, CombatState state) {
         if (target == null || target.currentHP <= 0) {
             return;

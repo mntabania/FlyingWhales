@@ -785,8 +785,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
             animator.SetTrigger(triggerName);
         }
         if (triggerName == "Attack") {
-            //start coroutine to call 
-            animationListener.OnAttackAnimationTriggered();
+            //start coroutine to call
+            animationListener.StartAttackExecution();
         }
     }
     public void SetAnimationBool(string name, bool value) {

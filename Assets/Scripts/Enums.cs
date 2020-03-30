@@ -1677,6 +1677,9 @@ public static class Extensions {
             case STRUCTURE_TYPE.TORTURE_CHAMBER:
             case STRUCTURE_TYPE.MAGE_TOWER:
             case STRUCTURE_TYPE.ABANDONED_MINE:
+            case STRUCTURE_TYPE.LUMBERYARD:
+            case STRUCTURE_TYPE.MINE:
+            case STRUCTURE_TYPE.MAGE_QUARTERS:
                 return true;
             default:
                 return false;

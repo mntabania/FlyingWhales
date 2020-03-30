@@ -91,9 +91,14 @@ public class SchedulingManager : MonoBehaviour {
         int expectedIterations = acts.Count;
         int actualIterations = 0;
 		for (int i = 0; i < acts.Count; i++) {
-			if(acts[i].IsScheduleStillValid() && acts[i].action.Target != null){
-				acts [i].action ();
-			}
+            ScheduledAction action = acts[i];
+            if (schedules[checkGameDate].Contains(action)) {
+                //only perform scheduled action, if it still present in the original actions list.
+                if(action.IsScheduleStillValid() && action.action.Target != null){
+                    action.action ();
+                }    
+            }
+			
             actualIterations++;
         }
         Assert.IsTrue(expectedIterations == actualIterations, $"Scheduling Manager inconsistency with performing scheduled actions! Performed actions were {actualIterations} but expected actions were {expectedIterations.ToString()}");
@@ -145,7 +150,7 @@ public struct ScheduledAction {
     public string scheduleID;
     public Action action;
     public object scheduler; //the object that scheduled this action
-
+    
     public bool IsScheduleStillValid() {
         if (scheduler is Character character) {
             return !character.isDead;

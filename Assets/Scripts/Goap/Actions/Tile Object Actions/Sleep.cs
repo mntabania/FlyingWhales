@@ -200,7 +200,7 @@ public class Sleep : GoapAction {
 
 public class SleepData : GoapActionData {
     public SleepData() : base(INTERACTION_TYPE.SLEEP) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
         requirementAction = Requirement;
     }
 

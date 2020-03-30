@@ -10,7 +10,7 @@ public class JudgeCharacter : GoapAction {
         actionIconString = GoapActionStateDB.Work_Icon;
         doesNotStopTargetCharacter = true;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
     }
 
     #region Overrides
@@ -450,6 +450,6 @@ public class JudgeCharacter : GoapAction {
 
 public class JudgeCharacterData : GoapActionData {
     public JudgeCharacterData() : base(INTERACTION_TYPE.JUDGE_CHARACTER) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
     }
 }

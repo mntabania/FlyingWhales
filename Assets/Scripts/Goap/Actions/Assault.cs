@@ -600,7 +600,7 @@ public class Assault : GoapAction {
 
 public class AssaultData : GoapActionData {
     public AssaultData() : base(INTERACTION_TYPE.ASSAULT) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
         requirementAction = Requirement;
     }
 

@@ -121,17 +121,10 @@ public class Log {
             LogFiller currFiller = fillers[i];
             object obj = currFiller.obj;
             if (obj != null) {
-                if (obj is IPointOfInterest) {
-                    (obj as IPointOfInterest).logComponent.AddHistory(this);
-                }
-                //else if (obj is NPCSettlement) {
-                //    (obj as NPCSettlement).AddHistory(this);
-                //} 
-                //else if (obj is Minion) {
-                //    (obj as Minion).character.AddHistory(this);
-                //} 
-                else if (obj is Faction) {
-                    (obj as Faction).AddHistory(this);
+                if (obj is IPointOfInterest pointOfInterest) {
+                    pointOfInterest.logComponent.AddHistory(this);
+                } else if (obj is Faction faction) {
+                    faction.AddHistory(this);
                 }
             }
         }

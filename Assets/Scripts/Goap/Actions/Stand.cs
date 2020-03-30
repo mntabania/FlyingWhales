@@ -50,7 +50,7 @@ public class Stand : GoapAction {
 
 public class StandData : GoapActionData {
     public StandData() : base(INTERACTION_TYPE.STAND) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
         requirementAction = Requirement;
     }
 
