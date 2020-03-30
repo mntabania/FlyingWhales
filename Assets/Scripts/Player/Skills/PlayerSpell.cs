@@ -237,7 +237,8 @@ public class SpellData : IPlayerSkill {
     }
 
     public virtual bool CanPerformAbilityTowards(Character targetCharacter) {
-        if((targetCharacter.race != RACE.HUMANS && targetCharacter.race != RACE.ELVES) || targetCharacter.traitContainer.HasTrait("Blessed")) {
+        //(targetCharacter.race != RACE.HUMANS && targetCharacter.race != RACE.ELVES)
+        if(targetCharacter.traitContainer.HasTrait("Blessed")) {
             return false;
         }
         return CanPerformAbility();

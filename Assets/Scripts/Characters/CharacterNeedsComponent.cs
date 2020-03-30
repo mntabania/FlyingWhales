@@ -150,6 +150,7 @@ public class CharacterNeedsComponent {
     #endregion
 
     public void CheckExtremeNeeds(Interrupt interruptThatTriggered = null) {
+        if (HasNeeds() == false) { return; }
         string summary = $"{GameManager.Instance.TodayLogString()}{_character.name} will check his/her needs.";
         if (isStarving && (interruptThatTriggered == null || interruptThatTriggered.interrupt != INTERRUPT.Grieving)) {
             summary += $"\n{_character.name} is starving. Planning fullness recovery actions...";

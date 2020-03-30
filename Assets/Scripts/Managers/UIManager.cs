@@ -1098,6 +1098,24 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI yesBtnLbl;
     [SerializeField] private TextMeshProUGUI noBtnLbl;
     [SerializeField] private HoverHandler yesBtnUnInteractableHoverHandler;
+    /// <summary>
+    /// Show a yes/no pop up window
+    /// </summary>
+    /// <param name="header">The title of the window.</param>
+    /// <param name="question">The question answerable by yes/no.</param>
+    /// <param name="onClickYesAction">The action to perform once the user clicks yes. NOTE: Closing of this window is added by default</param>
+    /// <param name="onClickNoAction">The action to perform once the user clicks no. NOTE: Closing of this window is added by default</param>
+    /// <param name="showCover">Should this popup also show a cover that covers the game.</param>
+    /// <param name="layer">The sorting layer order of this window.</param>
+    /// <param name="yesBtnText">The yes button text.</param>
+    /// <param name="noBtnText">The no button text.</param>
+    /// <param name="yesBtnInteractable">Should the yes button be clickable?</param>
+    /// <param name="noBtnInteractable">Should the no button be clickable?</param>
+    /// <param name="pauseAndResume">Should the game pause when this window shows, and resume when it closes?</param>
+    /// <param name="yesBtnActive">Should the yes button be visible?</param>
+    /// <param name="noBtnActive">Should the no button be visible?</param>
+    /// <param name="yesBtnInactiveHoverAction">Action to execute when user hover over an un-clickable yes button</param>
+    /// <param name="yesBtnInactiveHoverExitAction">Action to execute when user hover over an un-clickable no button</param>
     public void ShowYesNoConfirmation(string header, string question, System.Action onClickYesAction = null, System.Action onClickNoAction = null,
         bool showCover = false, int layer = 21, string yesBtnText = "Yes", string noBtnText = "No", bool yesBtnInteractable = true, bool noBtnInteractable = true, bool pauseAndResume = false, 
         bool yesBtnActive = true, bool noBtnActive = true, System.Action yesBtnInactiveHoverAction = null, System.Action yesBtnInactiveHoverExitAction = null) {

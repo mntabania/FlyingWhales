@@ -70,7 +70,7 @@ namespace Traits {
                 if (tileObject is GenericTileObject) {
                     tileObject.gridTileLocation.parentMap.SetUpperGroundVisual(tileObject.gridTileLocation.localPlace, 
                         InnerMapManager.Instance.assetManager.shoreTile, 0.5f);
-                } else {
+                } else if (tileObject.tileObjectType != TILE_OBJECT_TYPE.WATER_WELL){
                     //add water icon above object
                     _statusIcon = addedTo.mapObjectVisual?.AddStatusIcon(this.name);
                 }

@@ -3699,12 +3699,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     public void DropAllItems(LocationGridTile tile) { //, bool removeFactionOwner = false
-        while (isHoldingItem) {
-            TileObject item = items[0];
+        List<TileObject> itemsToDrop = new List<TileObject>(items);
+        for (int i = 0; i < itemsToDrop.Count; i++) {
+            TileObject item = itemsToDrop[i];
             if (UnobtainItem(item)) {
-                // if (removeFactionOwner) {
-                //     item.SetFactionOwner(null);
-                // }
                 LocationGridTile targetTile = tile;
                 if (targetTile == null || targetTile.objHere != null) {
                     targetTile = gridTileLocation.GetNearestUnoccupiedTileFromThis();
@@ -3712,22 +3710,29 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 if (targetTile != null) {
                     targetTile.structure.AddPOI(item, targetTile);
                 } else {
-                    logComponent.PrintLogErrorIfActive(
-                        $"Cannot drop {item.nameWithID} of {name} because there is no target tile.");
+                    //items dropped on death that have no place to go will be discarded  
+                    Debug.LogWarning($"{name} wants to drop {item.name} but no unoccupied tile is available. Item will be discarded.");
                 }
-                //if (item.specialTokenType.CreatesObjectWhenDropped()) {
-                //    LocationGridTile targetTile = tile.GetNearestUnoccupiedTileFromThis();
-                //    targetTile.structure.AddItem(item, targetTile);
-                //    //location.AddSpecialTokenToLocation(token, structure, targetTile);
-                //    if (structure != homeStructure) {
-                //        //if this character drops this at a structure that is not his/her home structure, set the owner of the item to null
-                //        item.SetCharacterOwner(null);
-                //    }
-                //} else {
-                //    item.SetCharacterOwner(null);
-                //}
             }
         }
+        // while (isHoldingItem) {
+        //     TileObject item = items[0];
+        //     if (UnobtainItem(item)) {
+        //         // if (removeFactionOwner) {
+        //         //     item.SetFactionOwner(null);
+        //         // }
+        //         LocationGridTile targetTile = tile;
+        //         if (targetTile == null || targetTile.objHere != null) {
+        //             targetTile = gridTileLocation.GetNearestUnoccupiedTileFromThis();
+        //         }
+        //         if (targetTile != null) {
+        //             targetTile.structure.AddPOI(item, targetTile);
+        //         } else {
+        //             //items dropped on death that have no place to go will be discarded  
+        //             break;
+        //         }
+        //     }
+        // }
     }
     public void PickUpItem(TileObject item, bool changeCharacterOwnership = false) {
         item.isBeingCarriedBy?.UnobtainItem(item);
