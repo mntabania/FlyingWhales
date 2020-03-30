@@ -532,6 +532,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         DestroyMapVisualGameObject();
         tileLocation.structure.AddPOI(this, tileLocation);
     }
+    public virtual bool CollectsLogs() {
+        return true;
+    }
     #endregion
 
     #region Traits

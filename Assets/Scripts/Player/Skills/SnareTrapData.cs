@@ -23,6 +23,9 @@ public class SnareTrapData : SpellData {
         if (canPerform) {
             return !targetTile.hasSnareTrap;
         }
-        return canPerform;
+        return false;
+    }
+    public override void HighlightAffectedTiles(LocationGridTile tile) {
+        TileHighlighter.Instance.PositionHighlight(0, tile);
     }
 }

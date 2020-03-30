@@ -47,6 +47,9 @@ public class BlockWall : TileObject {
         
         base.OnPlaceTileObjectAtTile(tile);
     }
+    public override bool CollectsLogs() {
+        return false;
+    }
     #endregion
 
     public void UpdateVisual(LocationGridTile tile) {

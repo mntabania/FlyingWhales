@@ -1892,6 +1892,7 @@
               <e p="LocustSwarm.cs" t="Include" />
               <e p="ManifestFoodData.cs" t="Include" />
               <e p="Meteor.cs" t="Include" />
+              <e p="PlantGermData.cs" t="Include" />
               <e p="Player Actions" t="Include">
                 <e p="ActivateTIleObjectData.cs" t="Include" />
                 <e p="AfflictData.cs" t="Include" />

@@ -122,7 +122,9 @@ public class Log {
             object obj = currFiller.obj;
             if (obj != null) {
                 if (obj is IPointOfInterest pointOfInterest) {
-                    pointOfInterest.logComponent.AddHistory(this);
+                    if (pointOfInterest.CollectsLogs()) {
+                        pointOfInterest.logComponent.AddHistory(this);    
+                    }
                 } else if (obj is Faction faction) {
                     faction.AddHistory(this);
                 }

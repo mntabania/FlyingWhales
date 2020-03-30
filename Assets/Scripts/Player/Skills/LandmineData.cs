@@ -26,4 +26,7 @@ public class LandmineData : SpellData {
         }
         return canPerform;
     }
+    public override void HighlightAffectedTiles(LocationGridTile tile) {
+        TileHighlighter.Instance.PositionHighlight(0, tile);
+    }
 }

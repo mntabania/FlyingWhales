@@ -4990,6 +4990,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         needsComponent.CheckExtremeNeeds();
         //Messenger.Broadcast(Signals.ON_UNSEIZE_CHARACTER, this);
     }
+    public bool CollectsLogs() {
+        return true;
+    }
     #endregion
 
     #region Resources

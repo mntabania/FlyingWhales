@@ -12,6 +12,13 @@ public class BerryShrub : Crops {
         Initialize(data);
     }
 
+    #region Overrides
+    public override void ConstructDefaultActions() {
+        base.ConstructDefaultActions();
+        AddPlayerAction(SPELL_TYPE.PLANT_GERM);
+    }
+    #endregion
+
     #region Growth State
     protected override int GetRipeningTicks() {
         return GameManager.Instance.GetTicksBasedOnHour(24);
