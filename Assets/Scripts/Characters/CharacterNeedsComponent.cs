@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using Interrupts;
 using Traits;
 using UnityEngine;
@@ -114,12 +115,12 @@ public class CharacterNeedsComponent {
         hasForcedTiredness = false;
     }
     public void Initialize() {
-        //NOTE: These values will be randomized when this character is placed in his/her npcSettlement map.
-        ResetTirednessMeter();
-        ResetFullnessMeter();
-        ResetHappinessMeter();
-        ResetComfortMeter();
-        ResetHopeMeter();
+        // //NOTE: These values will be randomized when this character is placed in his/her npcSettlement map.
+        // ResetTirednessMeter();
+        // ResetFullnessMeter();
+        // ResetHappinessMeter();
+        // ResetComfortMeter();
+        // ResetHopeMeter();
     }
     public void InitialCharacterPlacement() {
         ResetHopeMeter();
@@ -187,11 +188,11 @@ public class CharacterNeedsComponent {
         }
     }
     public string GetNeedsSummary() {
-        string summary = $"Fullness: {fullness}/{FULLNESS_DEFAULT}";
-        summary += $"\nTiredness: {tiredness}/{TIREDNESS_DEFAULT}";
-        summary += $"\nHappiness: {happiness}/{HAPPINESS_DEFAULT}";
-        summary += $"\nComfort: {comfort}/{COMFORT_DEFAULT}";
-        summary += $"\nHope: {hope}/{HOPE_DEFAULT}";
+        string summary = $"Fullness: {fullness.ToString(CultureInfo.InvariantCulture)}/{FULLNESS_DEFAULT.ToString(CultureInfo.InvariantCulture)}";
+        summary += $"\nTiredness: {tiredness.ToString(CultureInfo.InvariantCulture)}/{TIREDNESS_DEFAULT.ToString(CultureInfo.InvariantCulture)}";
+        summary += $"\nHappiness: {happiness.ToString(CultureInfo.InvariantCulture)}/{HAPPINESS_DEFAULT.ToString(CultureInfo.InvariantCulture)}";
+        summary += $"\nComfort: {comfort.ToString(CultureInfo.InvariantCulture)}/{COMFORT_DEFAULT.ToString(CultureInfo.InvariantCulture)}";
+        summary += $"\nHope: {hope.ToString(CultureInfo.InvariantCulture)}/{HOPE_DEFAULT.ToString(CultureInfo.InvariantCulture)}";
         return summary;
     }
     public void AdjustFullnessDecreaseRate(float amount) {
@@ -206,19 +207,19 @@ public class CharacterNeedsComponent {
     public void AdjustComfortDecreaseRate(float amount) {
         comfortDecreaseRate += amount;
     }
-    public void SetTirednessLowerBound(float amount) {
+    private void SetTirednessLowerBound(float amount) {
         tirednessLowerBound = amount;
     }
-    public void SetFullnessLowerBound(float amount) {
+    private void SetFullnessLowerBound(float amount) {
         fullnessLowerBound = amount;
     }
-    public void SetHappinessLowerBound(float amount) {
+    private void SetHappinessLowerBound(float amount) {
         happinessLowerBound = amount;
     }
-    public void SetComfortLowerBound(float amount) {
+    private void SetComfortLowerBound(float amount) {
         comfortLowerBound = amount;
     }
-    public void SetHopeLowerBound(float amount) {
+    private void SetHopeLowerBound(float amount) {
         hopeLowerBound = amount;
     }
 

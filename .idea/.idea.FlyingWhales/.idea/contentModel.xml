@@ -2226,7 +2226,7 @@
               <e p="FactionInfoUI.cs" t="Include" />
               <e p="HextileInfoUI.cs" t="Include" />
               <e p="InfoUIBase.cs" t="Include" />
-              <e p="MinionInfoUI.cs" t="Include" />
+              <e p="MonsterInfoUI.cs" t="Include" />
               <e p="PartyInfoInfoUi.cs" t="Include" />
               <e p="QuestInfoUI.cs" t="Include" />
               <e p="RegionInfoUI.cs" t="Include" />

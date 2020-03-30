@@ -2,6 +2,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Inner_Maps;
 using TMPro;
@@ -11,16 +12,14 @@ using UnityEngine.Serialization;
 
 public class CharacterInfoUI : InfoUIBase {
     
-    [Space(10)]
     [Header("Basic Info")]
     [SerializeField] private CharacterPortrait characterPortrait;
     [SerializeField] private TextMeshProUGUI nameLbl;
     [SerializeField] private TextMeshProUGUI lvlClassLbl;
     [SerializeField] private TextMeshProUGUI plansLbl;
     [SerializeField] private LogItem plansLblLogItem;
-    
-    [Space(10)]
-    [Header("Location")]
+
+    [Space(10)] [Header("Location")]
     [SerializeField] private TextMeshProUGUI factionLbl;
     [SerializeField] private EventLabel factionEventLbl;
     [SerializeField] private TextMeshProUGUI currentLocationLbl;
@@ -30,44 +29,37 @@ public class CharacterInfoUI : InfoUIBase {
     [SerializeField] private TextMeshProUGUI houseLbl;
     [SerializeField] private EventLabel houseEventLbl;
 
-    [Space(10)]
-    [Header("Logs")]
+    [Space(10)] [Header("Logs")]
     [SerializeField] private GameObject logParentGO;
     [SerializeField] private GameObject logHistoryPrefab;
     [SerializeField] private ScrollRect historyScrollView;
     private LogHistoryItem[] logHistoryItems;
 
-    [Space(10)]
-    [Header("Stats")]
+    [Space(10)] [Header("Stats")]
     [SerializeField] private TextMeshProUGUI hpLbl;
     [SerializeField] private TextMeshProUGUI attackLbl;
     [SerializeField] private TextMeshProUGUI speedLbl;
 
-    [Space(10)]
-    [Header("Traits")]
+    [Space(10)] [Header("Traits")]
     [SerializeField] private TextMeshProUGUI statusTraitsLbl;
     [SerializeField] private TextMeshProUGUI normalTraitsLbl;
     [SerializeField] private EventLabel statusTraitsEventLbl;
     [SerializeField] private EventLabel normalTraitsEventLbl;
 
-    [Space(10)]
-    [Header("Items")]
+    [Space(10)] [Header("Items")]
     [SerializeField] private TextMeshProUGUI itemsLbl;
     
-    [Space(10)]
-    [Header("Relationships")]
+    [Space(10)] [Header("Relationships")]
     [SerializeField] private EventLabel relationshipNamesEventLbl;
     [SerializeField] private TextMeshProUGUI relationshipTypesLbl;
     [SerializeField] private TextMeshProUGUI relationshipNamesLbl;
     [SerializeField] private TextMeshProUGUI relationshipValuesLbl;
 
-    [Space(10)] 
-    [Header("Mood")] 
+    [Space(10)] [Header("Mood")] 
     [SerializeField] private MarkedMeter moodMeter;
     [SerializeField] private TextMeshProUGUI moodSummary;
     
-    [Space(10)] 
-    [Header("Needs")] 
+    [Space(10)] [Header("Needs")] 
     [SerializeField] private MarkedMeter energyMeter;
     [SerializeField] private MarkedMeter fullnessMeter;
     [SerializeField] private MarkedMeter happinessMeter;
@@ -93,13 +85,10 @@ public class CharacterInfoUI : InfoUIBase {
         Messenger.AddListener<InfoUIBase>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<InfoUIBase>(Signals.MENU_CLOSED, OnMenuClosed);
         Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
-        //Messenger.AddListener(Signals.ON_CLOSE_SHARE_INTEL, OnCloseShareIntelMenu);
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.AddListener<TileObject, Character>(Signals.CHARACTER_OBTAINED_ITEM, UpdateInventoryInfoFromSignal);
         Messenger.AddListener<TileObject, Character>(Signals.CHARACTER_LOST_ITEM, UpdateInventoryInfoFromSignal);
-        //Messenger.AddListener<Character>(Signals.CHARACTER_SWITCHED_ALTER_EGO, OnCharacterChangedAlterEgo);
         Messenger.AddListener<Relatable, Relatable>(Signals.RELATIONSHIP_ADDED, OnRelationshipAdded);
-        //Messenger.AddListener<Relatable, RELATIONSHIP_TRAIT, Relatable>(Signals.RELATIONSHIP_REMOVED, OnRelationshipRemoved);
         Messenger.AddListener<Character, Character>(Signals.OPINION_ADDED, OnOpinionChanged);
         Messenger.AddListener<Character, Character>(Signals.OPINION_REMOVED, OnOpinionChanged);
         Messenger.AddListener<Character, Character, string>(Signals.OPINION_INCREASED, OnOpinionChanged);
@@ -109,7 +98,6 @@ public class CharacterInfoUI : InfoUIBase {
         Messenger.AddListener<MoodComponent>(Signals.MOOD_SUMMARY_MODIFIED, OnMoodModified);
 
         normalTraitsEventLbl.SetOnClickAction(OnClickTrait);
-        //statusTraitsEventLbl.SetOnClickAction(OnClickTrait);
         relationshipNamesEventLbl.SetOnClickAction(OnClickCharacter);
         
         factionEventLbl.SetOnClickAction(OnClickFaction);
@@ -180,15 +168,8 @@ public class CharacterInfoUI : InfoUIBase {
         UpdateRelationships();
         UpdateInventoryInfo();
         UpdateHistory(_activeCharacter);
-        // UpdateAllHistoryInfo();
         ResetAllScrollPositions();
         UpdateMoodSummary();
-    }
-    public override void SetData(object data) {
-        base.SetData(data);
-        //if (isShowing) {
-        //    UpdateCharacterInfo();
-        //}
     }
     protected override void OnExecutePlayerAction(PlayerAction action) {
         base.OnExecutePlayerAction(action);
@@ -311,10 +292,6 @@ public class CharacterInfoUI : InfoUIBase {
         }
     }
     private void UpdateTraits() {
-        // if (_activeCharacter.minion != null) {
-        //     return;
-        // }
-
         string statusTraits = string.Empty;
         string normalTraits = string.Empty;
 
@@ -358,16 +335,14 @@ public class CharacterInfoUI : InfoUIBase {
         }
     }
     public void OnHoverTrait(object obj) {
-        if (obj is string) {
-            string text = (string) obj;
+        if (obj is string text) {
             int index = int.Parse(text);
             Trait trait = activeCharacter.traitContainer.traits[index];
             UIManager.Instance.ShowSmallInfo(trait.description);
         }
     }
     public void OnHoverStatus(object obj) {
-        if (obj is string) {
-            string text = (string) obj;
+        if (obj is string text) {
             int index = int.Parse(text);
             Trait trait = activeCharacter.traitContainer.statuses[index];
             UIManager.Instance.ShowSmallInfo(trait.description);
@@ -377,8 +352,7 @@ public class CharacterInfoUI : InfoUIBase {
         UIManager.Instance.HideSmallInfo();
     }
     private void OnClickTrait(object obj) {
-        if (obj is string) {
-            string text = (string) obj;
+        if (obj is string text) {
             int index = int.Parse(text);
             Trait trait = activeCharacter.traitContainer.traits[index];
             string traitDescription = trait.description;
@@ -549,14 +523,14 @@ public class CharacterInfoUI : InfoUIBase {
         summary = $"{summary}{("\nMood: " + activeCharacter.moodComponent.moodValue + "/100" + "(" + activeCharacter.moodComponent.moodState.ToString() + ")")}";
         summary = $"{summary}{("\nHP: " + activeCharacter.currentHP.ToString() + "/" + activeCharacter.maxHP.ToString())}";
         summary = $"{summary}{("\nIgnore Hostiles: " + activeCharacter.ignoreHostility.ToString())}";
-        summary = $"{summary}{("\nAttack Range: " + activeCharacter.characterClass.attackRange.ToString())}";
+        summary = $"{summary}{("\nAttack Range: " + activeCharacter.characterClass.attackRange.ToString(CultureInfo.InvariantCulture))}";
         summary = $"{summary}{("\nAttack Speed: " + activeCharacter.attackSpeed.ToString())}";
         summary = $"{summary}{("\nCombat Mode: " + activeCharacter.combatComponent.combatMode.ToString())}";
         summary = $"{summary}{("\nElemental Type: " + activeCharacter.combatComponent.elementalDamage.name)}";
 
         if (activeCharacter.stateComponent.currentState != null) {
-            summary = $"{summary}{$"\nCurrent State: {activeCharacter.stateComponent.currentState}"}";
-            summary = $"{summary}{$"\n\tDuration in state: {activeCharacter.stateComponent.currentState.currentDuration}/{activeCharacter.stateComponent.currentState.duration}"}";
+            summary = $"{summary}\nCurrent State: {activeCharacter.stateComponent.currentState}";
+            summary = $"{summary}\n\tDuration in state: {activeCharacter.stateComponent.currentState.currentDuration.ToString()}/{activeCharacter.stateComponent.currentState.duration.ToString()}";
         }
         
         summary += "\nBehaviour Components: ";
@@ -574,12 +548,7 @@ public class CharacterInfoUI : InfoUIBase {
         } else {
             summary += "None";
         }
-        
         // summary += "\n" + activeCharacter.needsComponent.GetNeedsSummary();
-        // summary += "\n\nAlter Egos: ";
-        // for (int i = 0; i < activeCharacter.alterEgos.Values.Count; i++) {
-        //     summary += "\n" + activeCharacter.alterEgos.Values.ElementAt(i).GetAlterEgoSummary();
-        // }
         UIManager.Instance.ShowSmallInfo(summary);
     }
     public void HideCharacterTestingInfo() {
@@ -745,9 +714,7 @@ public class CharacterInfoUI : InfoUIBase {
     public void ShowMoodTooltip() {
         string summary = $"{_activeCharacter.moodComponent.moodValue.ToString()}/100 ({_activeCharacter.moodComponent.moodState})";
         summary +=
-            $"\nChance to trigger Major Mental Break {_activeCharacter.moodComponent.currentCriticalMoodEffectChance.ToString()}";
-        // summary +=
-        //     $"\nChance to trigger Minor Mental Break {_activeCharacter.moodComponent.currentLowMoodEffectChance.ToString()}";
+            $"\nChance to trigger Major Mental Break {_activeCharacter.moodComponent.currentCriticalMoodEffectChance.ToString(CultureInfo.InvariantCulture)}";
         UIManager.Instance.ShowSmallInfo(summary);
     }
     public void HideSmallInfo() {
@@ -764,19 +731,19 @@ public class CharacterInfoUI : InfoUIBase {
         comfortMeter.SetFillAmount(_activeCharacter.needsComponent.comfort/CharacterNeedsComponent.COMFORT_DEFAULT);
     }
     public void ShowEnergyTooltip() {
-        UIManager.Instance.ShowSmallInfo($"{_activeCharacter.needsComponent.tiredness.ToString()}/100");
+        UIManager.Instance.ShowSmallInfo($"{_activeCharacter.needsComponent.tiredness.ToString(CultureInfo.InvariantCulture)}/100");
     }
     public void ShowFullnessTooltip() {
-        UIManager.Instance.ShowSmallInfo($"{_activeCharacter.needsComponent.fullness.ToString()}/100");
+        UIManager.Instance.ShowSmallInfo($"{_activeCharacter.needsComponent.fullness.ToString(CultureInfo.InvariantCulture)}/100");
     }
     public void ShowHappinessTooltip() {
-        UIManager.Instance.ShowSmallInfo($"{_activeCharacter.needsComponent.happiness.ToString()}/100");
+        UIManager.Instance.ShowSmallInfo($"{_activeCharacter.needsComponent.happiness.ToString(CultureInfo.InvariantCulture)}/100");
     }
     public void ShowHopeTooltip() {
-        UIManager.Instance.ShowSmallInfo($"{_activeCharacter.needsComponent.hope.ToString()}/100");
+        UIManager.Instance.ShowSmallInfo($"{_activeCharacter.needsComponent.hope.ToString(CultureInfo.InvariantCulture)}/100");
     }
     public void ShowComfortTooltip() {
-        UIManager.Instance.ShowSmallInfo($"{_activeCharacter.needsComponent.comfort.ToString()}/100");
+        UIManager.Instance.ShowSmallInfo($"{_activeCharacter.needsComponent.comfort.ToString(CultureInfo.InvariantCulture)}/100");
     }
     #endregion
 

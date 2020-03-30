@@ -90245,7 +90245,7 @@ MonoBehaviour:
   _optionsMenu: {fileID: 1720977191}
   factionInfoUI: {fileID: 1485930123}
   characterInfoUI: {fileID: 572338040}
-  minionInfoUI: {fileID: 1355506606076801839}
+  monsterInfoUI: {fileID: 1355506606076801839}
   regionInfoUI: {fileID: 867287454}
   tileObjectInfoUI: {fileID: 388044833}
   questInfoUI: {fileID: 40351474}

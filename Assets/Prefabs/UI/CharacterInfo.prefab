@@ -5158,7 +5158,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &224579316077557694
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5207,6 +5207,9 @@ MonoBehaviour:
   lvlClassLbl: {fileID: 114073762202928504}
   plansLbl: {fileID: 114418987349231008}
   plansLblLogItem: {fileID: 114282139537712572}
+  tabGroup: {fileID: 114737164713125536}
+  moodToggle: {fileID: 114304808046673170}
+  relationsToggle: {fileID: 114635469443879880}
   factionLbl: {fileID: 114127418725721938}
   factionEventLbl: {fileID: 114412895551190676}
   currentLocationLbl: {fileID: 114771732905705926}

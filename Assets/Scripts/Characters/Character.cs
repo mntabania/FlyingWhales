@@ -431,13 +431,18 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         moodComponent.SetMoodValue(50);
         CreateOwnParty();
 
-        needsComponent.Initialize();
-        
+        if (needsComponent.HasNeeds()) {
+            needsComponent.Initialize();    
+        }
+
         //supply
         SetSupply(UnityEngine.Random.Range(10, 61)); //Randomize initial supply per character (Random amount between 10 to 60.)
     }
     public virtual void InitialCharacterPlacement(LocationGridTile tile) {
-        needsComponent.InitialCharacterPlacement();
+        if (needsComponent.HasNeeds()) {
+            needsComponent.InitialCharacterPlacement();    
+        }
+        
         ConstructInitialGoapAdvertisementActions();
         marker.InitialPlaceMarkerAt(tile, false); //since normal characters are already placed in their areas.
         //AddInitialAwareness();
