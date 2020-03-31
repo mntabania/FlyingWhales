@@ -1586,6 +1586,10 @@ public static class Extensions {
             case STRUCTURE_TYPE.ASSASSIN_GUILD:
             case STRUCTURE_TYPE.HUNTER_LODGE:
             case STRUCTURE_TYPE.MAGE_QUARTERS:
+            case STRUCTURE_TYPE.MAGE_TOWER:
+            case STRUCTURE_TYPE.ABANDONED_MINE:
+            case STRUCTURE_TYPE.LUMBERYARD:
+            case STRUCTURE_TYPE.MINE:
                 return true;
             default:
                 return false;

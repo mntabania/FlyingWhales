@@ -2248,6 +2248,7 @@
             <e p="LocationPortrait.cs" t="Include" />
             <e p="LocationSmallInfo.cs" t="Include" />
             <e p="LogHistoryItem.cs" t="Include" />
+            <e p="LoseGameOverItem.cs" t="Include" />
             <e p="MainMenu" t="Include">
               <e p="ArchetypeSelector.cs" t="Include" />
               <e p="MainMenuUI.cs" t="Include" />
@@ -2329,6 +2330,7 @@
             <e p="TraitItem.cs" t="Include" />
             <e p="UIMenuSettings.cs" t="Include" />
             <e p="UnleashSummonUI.cs" t="Include" />
+            <e p="WinGameOverItem.cs" t="Include" />
             <e p="WorldEventIcon.cs" t="Include" />
             <e p="WorldEventNameplate.cs" t="Include" />
           </e>

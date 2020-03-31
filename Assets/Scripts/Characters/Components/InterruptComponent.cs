@@ -30,11 +30,6 @@ public class InterruptComponent {
     #region General
     public bool TriggerInterrupt(INTERRUPT interrupt, IPointOfInterest targetPOI, string identifier = "") {
         Interrupt triggeredInterrupt = InteractionManager.Instance.GetInterruptData(interrupt);
-        
-        currentInterrupt = triggeredInterrupt;
-        currentTargetPOI = targetPOI;
-        this.identifier = identifier;
-        
         if (!triggeredInterrupt.isSimulateneous) {
             if (isInterrupted) {
                 owner.logComponent.PrintLogIfActive(
@@ -43,7 +38,11 @@ public class InterruptComponent {
             }
             owner.logComponent.PrintLogIfActive(
                 $"{owner.name} triggered a non simultaneous interrupt: {triggeredInterrupt.name}");
-
+            
+            currentInterrupt = triggeredInterrupt;
+            currentTargetPOI = targetPOI;
+            this.identifier = identifier;
+            
             CreateThoughtBubbleLog();
 
             if (ReferenceEquals(owner.marker, null) == false && owner.marker.isMoving) {

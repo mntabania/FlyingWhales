@@ -197,7 +197,7 @@ public class DouseFireState : CharacterState {
         Profiler.EndSample();
     }
     private void DouseFire() {
-        if (currentTarget.traitContainer.RemoveTrait(currentTarget, "Burning", removedBy: this.stateComponent.character)) {
+        if (currentTarget != null && currentTarget.traitContainer.RemoveTrait(currentTarget, "Burning", removedBy: this.stateComponent.character)) {
             if (NeedsWater()) {
                 TileObject water = this.stateComponent.character.GetItem(TILE_OBJECT_TYPE.WATER_FLASK);
                 if (water != null) {

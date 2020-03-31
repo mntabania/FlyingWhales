@@ -22,6 +22,7 @@ public class TileFeatureComponent {
 	}
 	public bool RemoveFeature(TileFeature feature, HexTile tile) {
 		if (features.Remove(feature)) {
+			Debug.Log($"{GameManager.Instance.TodayLogString()}{feature.name} was removed from {tile}");
 			feature.OnRemoveFeature(tile);
 			return true;
 		}
