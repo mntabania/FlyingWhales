@@ -256,7 +256,7 @@ public class MoodComponent {
 		} else if (_owner.characterClass.className.Equals("Druid") || _owner.characterClass.className.Equals("Shaman") 
 					|| _owner.characterClass.className.Equals("Mage")) {
 			mentalBreakName = "Loss of Control";
-			_owner.interruptComponent.TriggerInterrupt(INTERRUPT.Mental_Break, _owner);
+			// _owner.interruptComponent.TriggerInterrupt(INTERRUPT.Mental_Break, _owner);
 			TriggerLossOfControl();
 		} else {
 			summary += "Chosen break is <b>Berserked</b>";

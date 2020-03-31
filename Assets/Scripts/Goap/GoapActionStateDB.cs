@@ -33,6 +33,7 @@ public static class GoapActionStateDB {
     public static string Sad_Icon = "Sad";
     public static string Shock_Icon = "Shock";
     public static string Sick_Icon = "Sick";
+    public static string Exclamation_Icon = "Exclamation";
 
     public static string Drink_Blood_Icon = "Drink Blood";
     public static string Flirt_Icon = "Flirt";

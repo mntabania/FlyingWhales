@@ -26,8 +26,8 @@ namespace Traits {
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
-            if (addedTo is Character) {
-                owner = addedTo as Character;
+            if (addedTo is Character character) {
+                owner = character;
                 owner.needsComponent.AdjustComfortDecreaseRate(10);
             } 
             //else if (addedTo is TileObject) {
@@ -35,7 +35,7 @@ namespace Traits {
             //}
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
-            owner.needsComponent.AdjustComfortDecreaseRate(-10);
+            owner?.needsComponent.AdjustComfortDecreaseRate(-10);
             base.OnRemoveTrait(removedFrom, removedBy);
         }
         // protected override void OnChangeLevel() {

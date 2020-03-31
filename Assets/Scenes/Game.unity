@@ -99665,6 +99665,7 @@ MonoBehaviour:
     - Sad
     - Shock
     - Sick
+    - Exclamation
     m_values:
     - {fileID: 21300000, guid: 5a786d93d2807cf40b59d2f8e2175578, type: 3}
     - {fileID: 21300000, guid: 95f79231f93a3f0499e46aa40e19fcef, type: 3}
@@ -99703,6 +99704,7 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 8d39531c7a7c13a44bd46ffc73a27fb9, type: 3}
     - {fileID: 21300000, guid: e1e2629f3b2fa3a4eb4330d424520b2d, type: 3}
     - {fileID: 21300000, guid: d7d4d5448e2a2604c95aad638d97ddd4, type: 3}
+    - {fileID: 21300000, guid: a2da4a4c354e9234085fa519dffd9302, type: 3}
 --- !u!1 &1681643117
 GameObject:
   m_ObjectHideFlags: 0
