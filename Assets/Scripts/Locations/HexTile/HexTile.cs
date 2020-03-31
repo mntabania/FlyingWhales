@@ -76,7 +76,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     private List<LocationGridTile> corruptedTiles;
     private int _uncorruptibleLandmarkNeighbors = 0; //if 0, can be corrupted, otherwise, cannot be corrupted
     private Dictionary<HEXTILE_DIRECTION, HexTile> _neighbourDirections;
-    private List<string> demonicLandmarksThatCanBeBuilt;
+    //private List<string> demonicLandmarksThatCanBeBuilt;
     
     //Components
     public HexTileSpellsComponent spellsComponent { get; private set; }
@@ -118,7 +118,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     public void Initialize() {
         featureComponent = new TileFeatureComponent();
         spellsComponent = new HexTileSpellsComponent(this);
-        demonicLandmarksThatCanBeBuilt = new List<string>();
+        //demonicLandmarksThatCanBeBuilt = new List<string>();
         selectableSize = new Vector2Int(12, 12);
         Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
     }
@@ -823,7 +823,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         //}
         //return false;
     }
-    private void StartCorruption() {
+    public void StartCorruption() {
         //PlayerManager.Instance.player.AdjustMana(-EditableValuesManager.Instance.corruptTileManaCost);
         InstantlyCorruptAllOwnedInnerMapTiles();
         OnCorruptSuccess();
@@ -1084,49 +1084,26 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         return false;
     }
     public void OnClickBuild() {
-        demonicLandmarksThatCanBeBuilt.Clear();
-        List<LANDMARK_TYPE> demonicLandmarkTypes = PlayerManager.Instance.player.archetype.demonicStructures;
-        for (int i = 0; i < demonicLandmarkTypes.Count; i++) {
-            demonicLandmarksThatCanBeBuilt.Add(UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(demonicLandmarkTypes[i].ToString()));
-        }
-        //UIManager.Instance.dualObjectPicker.ShowDualObjectPicker(PlayerManager.Instance.player.minions.Select(x => x.character).ToList(), demonicLandmarksThatCanBeBuilt,
-        //    "Choose a minion", "Choose a structure",
-        //    CanChooseMinion, CanChooseLandmark,
-        //    OnHoverEnterMinion, OnHoverLandmarkChoice,
-        //    OnHoverExitMinion, OnHoverExitLandmarkChoice,
-        //    StartBuild, "Build", column2Identifier: "Landmark");
-        UIManager.Instance.ShowClickableObjectPicker(demonicLandmarksThatCanBeBuilt, StartBuildConfirmation, null, CanChooseLandmark, "Choose a structure to build", OnHoverLandmarkChoice, OnHoverExitLandmarkChoice, identifier: "Landmark", shouldConfirmOnPick: true, asButton: true);
+        //demonicLandmarksThatCanBeBuilt.Clear();
+        //List<LANDMARK_TYPE> demonicLandmarkTypes = ;
+        //for (int i = 0; i < demonicLandmarkTypes.Count; i++) {
+        //    demonicLandmarksThatCanBeBuilt.Add(UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(demonicLandmarkTypes[i].ToString()));
+        //}
+        UIManager.Instance.ShowClickableObjectPicker(PlayerManager.Instance.player.archetype.demonicStructuresSkills
+            , StartBuildConfirmation, null, CanChooseLandmark, "Choose a structure to build"
+            , OnHoverStructureChoice, OnHoverExitStructureChoice, portraitGetter: GetStructurePortrait, shouldConfirmOnPick: true, asButton: true);
     }
-    //private bool CanChooseMinion(Character character) {
-    //    return !character.minion.isAssigned && character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.BUILDER);
-    //}
-    //private void OnHoverEnterMinion(Character character) {
-    //    if (!CanChooseMinion(character)) {
-    //        string message = string.Empty;
-    //        if (character.minion.isAssigned) {
-    //            message = $"{character.name} is already doing something else.";
-    //        } else if (!character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.BUILDER)) {
-    //            message = $"{character.name} does not have the required trait: Builder";
-    //        }
-    //        UIManager.Instance.ShowSmallInfo(message);
-    //    }
-    //}
-    //private void OnHoverExitMinion(Character character) {
-    //    UIManager.Instance.HideSmallInfo();
-    //}
-    private bool CanChooseLandmark(string landmarkName) {
-        if (landmarkName == "The Pit" || landmarkName == "The Profane") {
-            return false;
-        }
-        if (landmarkName == "The Eye" && region.HasStructure(STRUCTURE_TYPE.THE_EYE)) {
+    private bool CanChooseLandmark(SPELL_TYPE structureType) {
+        if (structureType == SPELL_TYPE.THE_EYE && region.HasStructure(STRUCTURE_TYPE.THE_EYE)) {
             return false; //only 1 eye per region.
         }
-        if (landmarkName == "Goader" && PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.GOADER)) {
+        if (structureType == SPELL_TYPE.THE_GOADER && PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.THE_GOADER)) {
             return false; //only 1 finger at a time.
         }
         return true;
     }
-    private void OnHoverLandmarkChoice(string landmarkName) {
+    private void OnHoverStructureChoice(SPELL_TYPE structureType) {
+        string landmarkName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString());
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkName);
         string info = landmarkData.description;
         //if (info != string.Empty) {
@@ -1135,24 +1112,24 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         //info += $"Duration: {GameManager.Instance.GetCeilingHoursBasedOnTicks(landmarkData.buildDuration).ToString()} hours";
         UIManager.Instance.ShowSmallInfo(info);
     }
-    private void OnHoverExitLandmarkChoice(string landmarkName) {
+    private void OnHoverExitStructureChoice(SPELL_TYPE structureType) {
         UIManager.Instance.HideSmallInfo();
     }
-
-    private void StartBuildConfirmation(object landmarkObj) {
-        string landmarkName = landmarkObj as string;
+    private Sprite GetStructurePortrait(string name) {
+        string landmarkName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(name);
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkName);
-        UIManager.Instance.ShowYesNoConfirmation("Build Structure Confirmation", "Are you sure you want to build " + landmarkName + "?", () => StartBuild(landmarkData));
+        return landmarkData.defaultLandmarkPortrait;
     }
-    private void StartBuild(LandmarkData landmarkData) {
-        StartCorruption();
-        //LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkObj as string);
-        // BaseLandmark newLandmark =
-        //     LandmarkManager.Instance.CreateNewLandmarkOnTile(this, landmarkData.landmarkType);
-        LandmarkManager.Instance.PlaceBuiltStructureForSettlement(settlementOnTile, region.innerMap, this,
-            landmarkData.landmarkType.GetStructureType());
-        PlayerManager.Instance.player.AdjustMana(-EditableValuesManager.Instance.buildStructureManaCost);
-        landmarkOnTile?.OnFinishedBuilding();
+
+    private void StartBuildConfirmation(object structureObj) {
+        SPELL_TYPE structureType = (SPELL_TYPE) structureObj;
+        string landmarkName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString());
+        LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkName);
+        UIManager.Instance.ShowYesNoConfirmation("Build Structure Confirmation", "Are you sure you want to build " + landmarkName + "?", () => StartBuild(structureType));
+    }
+    private void StartBuild(SPELL_TYPE structureType) {
+        DemonicStructurePlayerSkill demonicStructureSkill = PlayerManager.Instance.GetDemonicStructureSkillData(structureType);
+        demonicStructureSkill.ActivateAbility(this);
         UIManager.Instance.HideObjectPicker();
         PlayerManager.Instance.GetPlayerActionData(SPELL_TYPE.BUILD_DEMONIC_STRUCTURE).OnExecuteSpellActionAffliction();
     }

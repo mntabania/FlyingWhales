@@ -81,11 +81,11 @@ public class ArchetypeSelectorItem : MonoBehaviour {
     }
     private void UpdateStructuresText(PlayerArchetype playerArchetype) {
         string structures = string.Empty;
-        for (int i = 0; i < playerArchetype.demonicStructures.Count; i++) {
+        for (int i = 0; i < playerArchetype.demonicStructuresSkills.Count; i++) {
             if (i > 0) {
                 structures += ", ";
             }
-            structures += UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(playerArchetype.demonicStructures[i].ToString());
+            structures += UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(playerArchetype.demonicStructuresSkills[i].ToString());
         }
         if (structures != string.Empty) {
             structuresText.text = structures;

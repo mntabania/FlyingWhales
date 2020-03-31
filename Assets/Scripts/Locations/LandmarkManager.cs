@@ -387,7 +387,7 @@ public partial class LandmarkManager : MonoBehaviour {
             case STRUCTURE_TYPE.THE_EYE:
                 createdStructure = new Inner_Maps.Location_Structures.TheEye(location);
                 break;
-            case STRUCTURE_TYPE.GOADER:
+            case STRUCTURE_TYPE.THE_GOADER:
                 createdStructure = new Inner_Maps.Location_Structures.Goader(location);
                 break;
             case STRUCTURE_TYPE.DEMONIC_PRISON:

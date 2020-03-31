@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Inner_Maps.Location_Structures {
     public class Goader : DemonicStructure {
         public override Vector2 selectableSize { get; }
-        public Goader(Region location) : base(STRUCTURE_TYPE.GOADER, location){
+        public Goader(Region location) : base(STRUCTURE_TYPE.THE_GOADER, location){
             selectableSize = new Vector2(10f, 10f);
         }
 

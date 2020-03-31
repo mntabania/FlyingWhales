@@ -55,7 +55,8 @@ public class ThreatComponent {
             Character character = CharacterManager.Instance.allCharacters[i];
             if(character.canPerform && character.canMove && character.canWitness && character.faction.isMajorNonPlayerFriendlyNeutral
                 && (character.race == RACE.HUMANS || character.race == RACE.ELVES) && !character.isInCombat
-                && !(character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.DOUSE_FIRE)) {
+                && !(character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.DOUSE_FIRE)
+                && character.traitContainer.HasTrait("Combatant")) {
                 count++;
                 debugLog += "RETALIATOR: " + character.name;
                 characters.Add(character);

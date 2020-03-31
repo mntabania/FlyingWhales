@@ -400,7 +400,7 @@ MonoBehaviour:
     elvenLandmarkTileSprites: []
     monsterGenerationSetting: {fileID: 0}
     itemGenerationSetting: {fileID: 0}
-  - landmarkTypeString: Goader
+  - landmarkTypeString: The Goader
     landmarkType: 52
     buildDuration: 48
     description: Manipulate characters into joining or leaving factions.
