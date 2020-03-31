@@ -13,7 +13,7 @@ public class Poison : GoapAction {
         //_isStealthAction = true;
         //SetIsStealth(true);
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
         isNotificationAnIntel = true;
     }
 
@@ -122,7 +122,7 @@ public class Poison : GoapAction {
                     return false;
                 }
                 Poisoned poisonedTrait = poiTarget.traitContainer.GetNormalTrait<Poisoned>("Poisoned");
-                if (poisonedTrait != null && poisonedTrait.responsibleCharacters.Contains(actor)) {
+                if (poisonedTrait?.responsibleCharacters != null && poisonedTrait.responsibleCharacters.Contains(actor)) {
                     return false; //to prevent poisoning a table that has been already poisoned by this character
                 }
                 return !d.IsResident(actor);
@@ -546,7 +546,7 @@ public class Poison : GoapAction {
 
 public class PoisonTableData : GoapActionData {
     public PoisonTableData() : base(INTERACTION_TYPE.POISON) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
         requirementAction = Requirement;
     }
 

@@ -9,7 +9,7 @@ using UnityEngine.UI;
 using Traits;
 using UnityEngine.Serialization;
 
-public class MinionInfoUI : InfoUIBase {
+public class MonsterInfoUI : InfoUIBase {
     
     [Space(10)]
     [Header("Basic Info")]
@@ -43,9 +43,9 @@ public class MinionInfoUI : InfoUIBase {
     [Header("Items")]
     [SerializeField] private TextMeshProUGUI itemsLbl;
     
-    private Minion _activeMinion;
+    private Character _activeMonster;
 
-    public Minion activeMinion => _activeMinion;
+    public Character activeMonster => _activeMonster;
     private List<string> combatModes;
 
     internal override void Initialize() {
@@ -56,7 +56,6 @@ public class MinionInfoUI : InfoUIBase {
         Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_STACKED, UpdateTraitsFromSignal);
         Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_UNSTACKED, UpdateTraitsFromSignal);
         Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
-        //Messenger.AddListener(Signals.ON_CLOSE_SHARE_INTEL, OnCloseShareIntelMenu);
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.AddListener<TileObject, Character>(Signals.CHARACTER_OBTAINED_ITEM, UpdateInventoryInfoFromSignal);
         Messenger.AddListener<TileObject, Character>(Signals.CHARACTER_LOST_ITEM, UpdateInventoryInfoFromSignal);
@@ -71,14 +70,14 @@ public class MinionInfoUI : InfoUIBase {
     public override void CloseMenu() {
         base.CloseMenu();
         Selector.Instance.Deselect();
-        if (_activeMinion != null && ReferenceEquals(_activeMinion.character.marker, null) == false 
-            && InnerMapCameraMove.Instance.target == _activeMinion.character.marker.gameObject.transform) {
+        if (_activeMonster != null && ReferenceEquals(_activeMonster.marker, null) == false 
+            && InnerMapCameraMove.Instance.target == _activeMonster.marker.gameObject.transform) {
             InnerMapCameraMove.Instance.CenterCameraOn(null);
         }
-        _activeMinion = null;
+        _activeMonster = null;
     }
     public override void OpenMenu() {
-        _activeMinion = _data as Minion;
+        _activeMonster = _data as Character;
         base.OpenMenu();
         if (UIManager.Instance.IsShareIntelMenuOpen()) {
             backButton.interactable = false;
@@ -86,13 +85,13 @@ public class MinionInfoUI : InfoUIBase {
         if (UIManager.Instance.IsObjectPickerOpen()) {
             UIManager.Instance.HideObjectPicker();
         }
-        if (_activeMinion.character.marker && _activeMinion.character.marker.transform != null) {
-            Selector.Instance.Select(_activeMinion.character, _activeMinion.character.marker.transform);    
+        if (_activeMonster.marker && _activeMonster.marker.transform != null) {
+            Selector.Instance.Select(_activeMonster, _activeMonster.marker.transform);    
         }
-        UpdateMinionInfo();
+        UpdateMonsterInfo();
         UpdateTraits();
         UpdateInventoryInfo();
-        UpdateHistory(_activeMinion.character);
+        UpdateHistory(_activeMonster);
         ResetAllScrollPositions();
     }
     protected override void OnExecutePlayerAction(PlayerAction action) {
@@ -134,8 +133,8 @@ public class MinionInfoUI : InfoUIBase {
     private void ResetAllScrollPositions() {
         historyScrollView.verticalNormalizedPosition = 1;
     }
-    public void UpdateMinionInfo() {
-        if (_activeMinion == null) {
+    public void UpdateMonsterInfo() {
+        if (_activeMonster == null) {
             return;
         }
         UpdatePortrait();
@@ -143,15 +142,15 @@ public class MinionInfoUI : InfoUIBase {
         UpdateStatInfo();
     }
     private void UpdatePortrait() {
-        characterPortrait.GeneratePortrait(_activeMinion.character);
+        characterPortrait.GeneratePortrait(_activeMonster);
     }
     public void UpdateBasicInfo() {
-        nameLbl.text = _activeMinion.character.visuals.GetNameplateName();
-        lvlClassLbl.text = _activeMinion.character.raceClassName;
+        nameLbl.text = _activeMonster.visuals.GetNameplateName();
+        lvlClassLbl.text = _activeMonster.raceClassName;
         UpdateThoughtBubble();
     }
     public void UpdateThoughtBubble() {
-        plansLbl.text = activeMinion.character.visuals.GetThoughtBubble(out var log);
+        plansLbl.text = activeMonster.visuals.GetThoughtBubble(out var log);
         if (log != null) {
             plansLblLogItem.SetLog(log);
         }
@@ -160,9 +159,9 @@ public class MinionInfoUI : InfoUIBase {
 
     #region Stats
     private void UpdateStatInfo() {
-        hpLbl.text = $"{_activeMinion.character.currentHP}/{_activeMinion.character.maxHP}";
-        attackLbl.text = $"{_activeMinion.character.attackPower}";
-        speedLbl.text = $"{_activeMinion.character.speed}";
+        hpLbl.text = $"{_activeMonster.currentHP.ToString()}/{_activeMonster.maxHP.ToString()}";
+        attackLbl.text = $"{_activeMonster.attackPower.ToString()}";
+        speedLbl.text = $"{_activeMonster.speed.ToString()}";
         if(characterPortrait.character != null) {
             characterPortrait.UpdateLvl();
         }
@@ -171,14 +170,14 @@ public class MinionInfoUI : InfoUIBase {
 
     #region Traits
     private void UpdateTraitsFromSignal(Character character, Trait trait) {
-        if(!isShowing || _activeMinion.character != character) {
+        if(!isShowing || _activeMonster != character) {
             return;
         }
         UpdateTraits();
         UpdateThoughtBubble();
     }
     private void UpdateThoughtBubbleFromSignal(Character character) {
-        if (isShowing && _activeMinion.character == character) {
+        if (isShowing && _activeMonster == character) {
             UpdateThoughtBubble();
         }
     }
@@ -186,19 +185,19 @@ public class MinionInfoUI : InfoUIBase {
         string statusTraits = string.Empty;
         string normalTraits = string.Empty;
 
-        for (int i = 0; i < _activeMinion.character.traitContainer.statuses.Count; i++) {
-            Trait currTrait = _activeMinion.character.traitContainer.statuses[i];
-            if (currTrait.isHidden) {
+        for (int i = 0; i < _activeMonster.traitContainer.statuses.Count; i++) {
+            Status currStatus = _activeMonster.traitContainer.statuses[i];
+            if (currStatus.isHidden) {
                 continue; //skip
             }
             string color = UIManager.normalTextColor;
-            if (!string.IsNullOrEmpty(normalTraits)) {
-                normalTraits = $"{normalTraits}, ";
+            if (!string.IsNullOrEmpty(statusTraits)) {
+                statusTraits = $"{statusTraits}, ";
             }
-            normalTraits = $"{normalTraits}<b><color={color}><link=\"{i}\">{currTrait.GetNameInUI(activeMinion.character)}</link></color></b>";
+            statusTraits = $"{statusTraits}<b><color={color}><link=\"{i}\">{currStatus.GetNameInUI(_activeMonster)}</link></color></b>";
         }
-        for (int i = 0; i < _activeMinion.character.traitContainer.traits.Count; i++) {
-            Trait currTrait = _activeMinion.character.traitContainer.traits[i];
+        for (int i = 0; i < _activeMonster.traitContainer.traits.Count; i++) {
+            Trait currTrait = _activeMonster.traitContainer.traits[i];
             if (currTrait.isHidden) {
                 continue; //skip
             }
@@ -208,10 +207,10 @@ public class MinionInfoUI : InfoUIBase {
             } else if (currTrait.type == TRAIT_TYPE.FLAW) {
                 color = UIManager.flawTextColor;
             }
-            if (!string.IsNullOrEmpty(statusTraits)) {
-                statusTraits = $"{statusTraits}, ";
+            if (!string.IsNullOrEmpty(normalTraits)) {
+                normalTraits = $"{normalTraits}, ";
             }
-            statusTraits = $"{statusTraits}<b><color={color}><link=\"{i}\">{currTrait.GetNameInUI(activeMinion.character)}</link></color></b>";
+            normalTraits = $"{normalTraits}<b><color={color}><link=\"{i}\">{currTrait.GetNameInUI(_activeMonster)}</link></color></b>";
         }
 
         statusTraitsLbl.text = string.Empty;
@@ -226,18 +225,16 @@ public class MinionInfoUI : InfoUIBase {
         }
     }
     public void OnHoverTrait(object obj) {
-        if (obj is string) {
-            string text = (string) obj;
+        if (obj is string text) {
             int index = int.Parse(text);
-            Trait trait = activeMinion.character.traitContainer.traits[index];
+            Trait trait = activeMonster.traitContainer.traits[index];
             UIManager.Instance.ShowSmallInfo(trait.description);
         }
     }
     public void OnHoverStatus(object obj) {
-        if (obj is string) {
-            string text = (string) obj;
+        if (obj is string text) {
             int index = int.Parse(text);
-            Trait trait = activeMinion.character.traitContainer.statuses[index];
+            Trait trait = activeMonster.traitContainer.statuses[index];
             UIManager.Instance.ShowSmallInfo(trait.description);
         }
     }
@@ -248,16 +245,16 @@ public class MinionInfoUI : InfoUIBase {
 
     #region Items
     private void UpdateInventoryInfoFromSignal(TileObject item, Character character) {
-        if (isShowing && _activeMinion.character == character) {
+        if (isShowing && _activeMonster == character) {
             UpdateInventoryInfo();
         }
     }
     private void UpdateInventoryInfo() {
         itemsLbl.text = string.Empty;
-        for (int i = 0; i < _activeMinion.character.items.Count; i++) {
-            TileObject currInventoryItem = _activeMinion.character.items[i];
+        for (int i = 0; i < _activeMonster.items.Count; i++) {
+            TileObject currInventoryItem = _activeMonster.items[i];
             itemsLbl.text = $"{itemsLbl.text} {currInventoryItem.name}";
-            if (i < _activeMinion.character.items.Count - 1) {
+            if (i < _activeMonster.items.Count - 1) {
                 itemsLbl.text = $"{itemsLbl.text}, ";
             }
         }
@@ -266,17 +263,17 @@ public class MinionInfoUI : InfoUIBase {
 
     #region History
     private void UpdateHistory(IPointOfInterest poi) {
-        if (isShowing && poi == _activeMinion.character) {
+        if (isShowing && poi == _activeMonster) {
             UpdateAllHistoryInfo();
         }
     }
     private void UpdateAllHistoryInfo() {
-        int historyCount = _activeMinion.character.logComponent.history.Count;
+        int historyCount = _activeMonster.logComponent.history.Count;
         int historyLastIndex = historyCount - 1;
         for (int i = 0; i < logHistoryItems.Length; i++) {
             LogHistoryItem currItem = logHistoryItems[i];
             if(i < historyCount) {
-                Log currLog = _activeMinion.character.logComponent.history[historyLastIndex - i];
+                Log currLog = _activeMonster.logComponent.history[historyLastIndex - i];
                 currItem.gameObject.SetActive(true);
                 currItem.SetLog(currLog);
             } else {
@@ -298,7 +295,7 @@ public class MinionInfoUI : InfoUIBase {
     }
     //private void OnCloseShareIntelMenu() { }
     private void OnCharacterDied(Character character) {
-        if (this.isShowing && activeMinion.character == character) {
+        if (this.isShowing && activeMonster == character) {
             InnerMapCameraMove.Instance.CenterCameraOn(null);
         }
     }
@@ -306,48 +303,48 @@ public class MinionInfoUI : InfoUIBase {
 
     #region For Testing
     public void ShowCharacterTestingInfo() {
-        string summary = $"Home structure: {activeMinion.character.homeStructure}" ?? "None";
-        summary = $"{summary}{($"\nCurrent structure: {activeMinion.character.currentStructure}" ?? "None")}";
-        summary = $"{summary}{("\nPOI State: " + activeMinion.character.state.ToString())}";
-        summary = $"{summary}{("\nDo Not Get Hungry: " + activeMinion.character.needsComponent.doNotGetHungry)}";
-        summary = $"{summary}{("\nDo Not Get Tired: " + activeMinion.character.needsComponent.doNotGetTired)}";
-        summary = $"{summary}{("\nDo Not Get Bored: " + activeMinion.character.needsComponent.doNotGetBored)}";
-        summary = $"{summary}{("\nDo Not Recover HP: " + activeMinion.character.doNotRecoverHP)}";
-        summary = $"{summary}{("\nCan Move: " + activeMinion.character.canMove)}";
-        summary = $"{summary}{("\nCan Witness: " + activeMinion.character.canWitness)}";
-        summary = $"{summary}{("\nCan Be Attacked: " + activeMinion.character.canBeAtttacked)}";
-        summary = $"{summary}{("\nCan Perform: " + activeMinion.character.canPerform)}";
-        summary = $"{summary}{("\nIs Missing: " + activeMinion.character.isMissing)}";
-        summary = $"{summary}{("\n" + activeMinion.character.needsComponent.GetNeedsSummary())}";
-        summary = $"{summary}{("\nFullness Time: " + (activeMinion.character.needsComponent.fullnessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeMinion.character.needsComponent.fullnessForcedTick)))}";
-        summary = $"{summary}{("\nTiredness Time: " + (activeMinion.character.needsComponent.tirednessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeMinion.character.needsComponent.tirednessForcedTick)))}";
-        summary = $"{summary}{("\nRemaining Sleep Ticks: " + activeMinion.character.needsComponent.currentSleepTicks)}";
-        summary = $"{summary}{("\nFood: " + activeMinion.character.food)}";
+        string summary = $"Home structure: {activeMonster.homeStructure}" ?? "None";
+        summary = $"{summary}{($"\nCurrent structure: {activeMonster.currentStructure}" ?? "None")}";
+        summary = $"{summary}{("\nPOI State: " + activeMonster.state.ToString())}";
+        summary = $"{summary}{("\nDo Not Get Hungry: " + activeMonster.needsComponent.doNotGetHungry)}";
+        summary = $"{summary}{("\nDo Not Get Tired: " + activeMonster.needsComponent.doNotGetTired)}";
+        summary = $"{summary}{("\nDo Not Get Bored: " + activeMonster.needsComponent.doNotGetBored)}";
+        summary = $"{summary}{("\nDo Not Recover HP: " + activeMonster.doNotRecoverHP)}";
+        summary = $"{summary}{("\nCan Move: " + activeMonster.canMove)}";
+        summary = $"{summary}{("\nCan Witness: " + activeMonster.canWitness)}";
+        summary = $"{summary}{("\nCan Be Attacked: " + activeMonster.canBeAtttacked)}";
+        summary = $"{summary}{("\nCan Perform: " + activeMonster.canPerform)}";
+        summary = $"{summary}{("\nIs Missing: " + activeMonster.isMissing)}";
+        summary = $"{summary}{("\n" + activeMonster.needsComponent.GetNeedsSummary())}";
+        summary = $"{summary}{("\nFullness Time: " + (activeMonster.needsComponent.fullnessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeMonster.needsComponent.fullnessForcedTick)))}";
+        summary = $"{summary}{("\nTiredness Time: " + (activeMonster.needsComponent.tirednessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeMonster.needsComponent.tirednessForcedTick)))}";
+        summary = $"{summary}{("\nRemaining Sleep Ticks: " + activeMonster.needsComponent.currentSleepTicks)}";
+        summary = $"{summary}{("\nFood: " + activeMonster.food)}";
         // summary = $"{summary}{("\nRole: " + activeCharacter.role.roleType.ToString())}";
-        summary = $"{summary}{("\nSexuality: " + activeMinion.character.sexuality.ToString())}";
-        summary = $"{summary}{("\nMood: " + activeMinion.character.moodComponent.moodValue + "/100" + "(" + activeMinion.character.moodComponent.moodState.ToString() + ")")}";
-        summary = $"{summary}{("\nHP: " + activeMinion.character.currentHP + "/" + activeMinion.character.maxHP)}";
-        summary = $"{summary}{("\nIgnore Hostiles: " + activeMinion.character.ignoreHostility)}";
-        summary = $"{summary}{("\nAttack Range: " + activeMinion.character.characterClass.attackRange)}";
-        summary = $"{summary}{("\nAttack Speed: " + activeMinion.character.attackSpeed)}";
-        summary = $"{summary}{("\nCombat Mode: " + activeMinion.character.combatComponent.combatMode.ToString())}";
-        summary = $"{summary}{("\nElemental Type: " + activeMinion.character.combatComponent.elementalDamage.name)}";
+        summary = $"{summary}{("\nSexuality: " + activeMonster.sexuality.ToString())}";
+        summary = $"{summary}{("\nMood: " + activeMonster.moodComponent.moodValue + "/100" + "(" + activeMonster.moodComponent.moodState.ToString() + ")")}";
+        summary = $"{summary}{("\nHP: " + activeMonster.currentHP + "/" + activeMonster.maxHP)}";
+        summary = $"{summary}{("\nIgnore Hostiles: " + activeMonster.ignoreHostility)}";
+        summary = $"{summary}{("\nAttack Range: " + activeMonster.characterClass.attackRange)}";
+        summary = $"{summary}{("\nAttack Speed: " + activeMonster.attackSpeed)}";
+        summary = $"{summary}{("\nCombat Mode: " + activeMonster.combatComponent.combatMode.ToString())}";
+        summary = $"{summary}{("\nElemental Type: " + activeMonster.combatComponent.elementalDamage.name)}";
 
-        if (activeMinion.character.stateComponent.currentState != null) {
-            summary = $"{summary}{$"\nCurrent State: {activeMinion.character.stateComponent.currentState}"}";
-            summary = $"{summary}{$"\n\tDuration in state: {activeMinion.character.stateComponent.currentState.currentDuration}/{activeMinion.character.stateComponent.currentState.duration}"}";
+        if (activeMonster.stateComponent.currentState != null) {
+            summary = $"{summary}\nCurrent State: {activeMonster.stateComponent.currentState}";
+            summary = $"{summary}\n\tDuration in state: {activeMonster.stateComponent.currentState.currentDuration}/{activeMonster.stateComponent.currentState.duration}";
         }
         
         summary += "\nBehaviour Components: ";
-        for (int i = 0; i < activeMinion.character.behaviourComponent.currentBehaviourComponents.Count; i++) {
-            CharacterBehaviourComponent component = activeMinion.character.behaviourComponent.currentBehaviourComponents[i];
+        for (int i = 0; i < activeMonster.behaviourComponent.currentBehaviourComponents.Count; i++) {
+            CharacterBehaviourComponent component = activeMonster.behaviourComponent.currentBehaviourComponents[i];
             summary += $"{component.ToString()}, ";
         }
         
         summary += "\nPersonal Job Queue: ";
-        if (activeMinion.character.jobQueue.jobsInQueue.Count > 0) {
-            for (int i = 0; i < activeMinion.character.jobQueue.jobsInQueue.Count; i++) {
-                JobQueueItem poi = activeMinion.character.jobQueue.jobsInQueue[i];
+        if (activeMonster.jobQueue.jobsInQueue.Count > 0) {
+            for (int i = 0; i < activeMonster.jobQueue.jobsInQueue.Count; i++) {
+                JobQueueItem poi = activeMonster.jobQueue.jobsInQueue[i];
                 summary += $"{poi}, ";
             }
         } else {
@@ -384,7 +381,7 @@ public class MinionInfoUI : InfoUIBase {
         }
     }
     private bool CanChoostCombatMode(string mode) {
-        if(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(activeMinion.character.combatComponent.combatMode.ToString())
+        if(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(activeMonster.combatComponent.combatMode.ToString())
             == mode) {
             return false;
         }
@@ -393,7 +390,7 @@ public class MinionInfoUI : InfoUIBase {
     private void OnClickChooseCombatMode(string mode) {
         COMBAT_MODE combatMode = (COMBAT_MODE) System.Enum.Parse(typeof(COMBAT_MODE), UtilityScripts.Utilities.NotNormalizedConversionStringToEnum(mode));
         UIManager.Instance.characterInfoUI.activeCharacter.combatComponent.SetCombatMode(combatMode);
-        Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, activeMinion as IPlayerActionTarget);
+        Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, activeMonster as IPlayerActionTarget);
         UIManager.Instance.customDropdownList.Close();
     }
     #endregion

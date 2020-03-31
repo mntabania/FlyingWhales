@@ -2,72 +2,77 @@
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using UnityEngine.Assertions;
 
 public class SchedulingManager : MonoBehaviour {
 	public static SchedulingManager Instance;
 
 	private Dictionary<GameDate, List<ScheduledAction>> schedules = new Dictionary<GameDate, List<ScheduledAction>> (new GameDateComparer());
 	private GameDate checkGameDate;
-
+    private List<ScheduledAction> _actionsToDo;
+    
+    
 	void Awake(){
 		Instance = this;
+        _actionsToDo = new List<ScheduledAction>();
 	}
 	public void StartScheduleCalls() {
-        this.checkGameDate = GameManager.Instance.Today();
+        checkGameDate = GameManager.Instance.Today();
 		Messenger.AddListener(Signals.TICK_ENDED, CheckSchedule);
-        //Messenger.AddListener(Signals.DAY_STARTED, CheckSchedule);
     }
 	private void CheckSchedule(){
-        this.checkGameDate = GameManager.Instance.Today();
-        if (this.schedules.ContainsKey(this.checkGameDate)){
-			DoAsScheduled (this.schedules [this.checkGameDate]);
-			RemoveEntry (this.checkGameDate);
+        checkGameDate = GameManager.Instance.Today();
+        if (schedules.ContainsKey(checkGameDate)) {
+            _actionsToDo.Clear();
+            _actionsToDo.AddRange(schedules[checkGameDate]);
+            DoAsScheduled(_actionsToDo);
+			RemoveEntry(checkGameDate);
 		}
 	}
 	internal string AddEntry(GameDate gameDate, Action act, object adder){
-        if (!this.schedules.ContainsKey(gameDate)) {
-            this.schedules.Add(gameDate, new List<ScheduledAction>());
+        if (!schedules.ContainsKey(gameDate)) {
+            schedules.Add(gameDate, new List<ScheduledAction>());
         }
         string newID = GenerateScheduleID();
-        this.schedules[gameDate].Add(new ScheduledAction() { scheduleID = newID, action = act, scheduler = adder });
+        schedules[gameDate].Add(new ScheduledAction() { scheduleID = newID, action = act, scheduler = adder });
         Debug.Log(
             $"{GameManager.Instance.TodayLogString()}Created new schedule on {gameDate.ConvertToContinuousDaysWithTime()}. Action is {act.Method.Name}, by {adder}");
         return newID;
 	}
 	internal void RemoveEntry(GameDate gameDate){
-		this.schedules.Remove (gameDate);
+		schedules.Remove (gameDate);
 	}
     internal void RemoveSpecificEntry(int month, int day, int year, int hour, int continuousDays, Action act) {
         GameDate gameDate = new GameDate(month, day, year, hour);
-        if (this.schedules.ContainsKey(gameDate)) {
-            List<ScheduledAction> acts = this.schedules[gameDate];
+        if (schedules.ContainsKey(gameDate)) {
+            List<ScheduledAction> acts = schedules[gameDate];
             for (int i = 0; i < acts.Count; i++) {
                 if (acts[i].action.Target == act.Target) {
-                    this.schedules[gameDate].RemoveAt(i);
+                    schedules[gameDate].RemoveAt(i);
                     break;
                 }
             }
         }
     }
     internal void RemoveSpecificEntry(GameDate date, Action act) {
-        if (this.schedules.ContainsKey(date)) {
-            List<ScheduledAction> acts = this.schedules[date];
+        if (schedules.ContainsKey(date)) {
+            List<ScheduledAction> acts = schedules[date];
             for (int i = 0; i < acts.Count; i++) {
                 if (acts[i].action.Target == act.Target) {
-                    this.schedules[date].RemoveAt(i);
+                    schedules[date].RemoveAt(i);
                     break;
                 }
             }
         }
     }
     private bool RemoveSpecificEntry(GameDate date, string id) {
-        if (this.schedules.ContainsKey(date)) {
-            List<ScheduledAction> acts = this.schedules[date];
+        if (schedules.ContainsKey(date)) {
+            List<ScheduledAction> acts = schedules[date];
             for (int i = 0; i < acts.Count; i++) {
                 ScheduledAction action = acts[i];
                 if (action.scheduleID == id) {
-                    this.schedules[date].RemoveAt(i);
-                    Debug.Log($"Removed scheduled item {action}");
+                    schedules[date].RemoveAt(i);
+                    Debug.Log($"Removed scheduled item {action.ToString()} for {action.scheduler.ToString()}. ID is {id}");
                     return true;
                 }
             }
@@ -82,12 +87,21 @@ public class SchedulingManager : MonoBehaviour {
         }
         return false;
     }
-    private void DoAsScheduled(List<ScheduledAction> acts){
+    private void DoAsScheduled(List<ScheduledAction> acts) {
+        int expectedIterations = acts.Count;
+        int actualIterations = 0;
 		for (int i = 0; i < acts.Count; i++) {
-			if(acts[i].IsScheduleStillValid() && acts[i].action.Target != null){
-				acts [i].action ();
-			}
-		}
+            ScheduledAction action = acts[i];
+            if (schedules[checkGameDate].Contains(action)) {
+                //only perform scheduled action, if it still present in the original actions list.
+                if(action.IsScheduleStillValid() && action.action.Target != null){
+                    action.action ();
+                }    
+            }
+			
+            actualIterations++;
+        }
+        Assert.IsTrue(expectedIterations == actualIterations, $"Scheduling Manager inconsistency with performing scheduled actions! Performed actions were {actualIterations} but expected actions were {expectedIterations.ToString()}");
 	}
     public void ClearAllSchedulesBy(Character character) {
         Dictionary<GameDate, List<ScheduledAction>> temp = new Dictionary<GameDate, List<ScheduledAction>>(schedules);
@@ -136,19 +150,13 @@ public struct ScheduledAction {
     public string scheduleID;
     public Action action;
     public object scheduler; //the object that scheduled this action
-
+    
     public bool IsScheduleStillValid() {
-        if (scheduler is Character) {
-            Character character = scheduler as Character;
+        if (scheduler is Character character) {
             return !character.isDead;
-        } else if (scheduler is TileObject) {
-            TileObject tileObject = scheduler as TileObject;
+        } else if (scheduler is TileObject tileObject) {
             return tileObject.gridTileLocation != null;
-        } 
-        // else if (scheduler is SpecialToken) {
-        //     SpecialToken token = scheduler as SpecialToken;
-        //     return token.gridTileLocation != null;
-        // }
+        }
         return true;
     }
 

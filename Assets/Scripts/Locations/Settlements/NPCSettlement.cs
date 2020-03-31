@@ -434,7 +434,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                     for (int i = 0; i < jobs.Count; i++) {
                         JobQueueItem jqi = jobs[i];
                         if (jqi is GoapPlanJob goapPlanJob && goapPlanJob.targetPOI is TileObject tileObject && tileObject.tileObjectType == TILE_OBJECT_TYPE.HEALING_POTION) {
-                            jqi.ForceCancelJob(false, "NPCSettlement has enough healing potions");    
+                            jqi.ForceCancelJob(false, "Settlement has enough healing potions");    
                         }
                     }
                 }
@@ -444,7 +444,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                     for (int i = 0; i < jobs.Count; i++) {
                         JobQueueItem jqi = jobs[i];
                         if (jqi is GoapPlanJob goapPlanJob && goapPlanJob.targetPOI is TileObject tileObject && tileObject.tileObjectType == TILE_OBJECT_TYPE.TOOL) {
-                            jqi.ForceCancelJob(false, "NPCSettlement has enough tools");    
+                            jqi.ForceCancelJob(false, "Settlement has enough tools");    
                         }
                     }
                 }

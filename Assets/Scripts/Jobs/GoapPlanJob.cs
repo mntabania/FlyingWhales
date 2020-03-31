@@ -207,7 +207,8 @@ public class GoapPlanJob : JobQueueItem {
         if (assignedCharacter != null) {
             if(assignedPlan != null) {
                 //assignedCharacter.AdjustIsWaitingForInteraction(1);
-                if (assignedCharacter.currentActionNode != null && assignedCharacter.currentActionNode == assignedPlan.currentActualNode) {
+                if (assignedCharacter.currentActionNode != null && assignedPlan.currentNode != null 
+                    && assignedCharacter.currentActionNode == assignedPlan.currentActualNode) {
                     //if (assignedCharacter.currentParty.icon.isTravelling) {
                     //    if (assignedCharacter.currentParty.icon.travelLine == null) {
                     //        assignedCharacter.marker.StopMovement();

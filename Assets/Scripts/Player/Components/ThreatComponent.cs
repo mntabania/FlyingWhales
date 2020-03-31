@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using UtilityScripts;
 
 public class ThreatComponent {
     public Player player { get; private set; }
@@ -40,7 +41,6 @@ public class ThreatComponent {
     }
 
     private void AssaultDemonicStructure() {
-        PlayerUI.Instance.ShowGeneralConfirmation("Threat Response", "Your threat level has reached maximum. The people will now retaliate!");
         string debugLog = string.Empty;
         LocationStructure targetDemonicStructure = null;
         if (InnerMapManager.Instance.HasExistingWorldKnownDemonicStructure()) {
@@ -49,6 +49,7 @@ public class ThreatComponent {
             targetDemonicStructure = PlayerManager.Instance.player.playerSettlement.GetRandomStructure();
         }
         debugLog += "TARGET: " + targetDemonicStructure.name;
+        List<Character> characters = new List<Character>();
         int count = 0;
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
             Character character = CharacterManager.Instance.allCharacters[i];
@@ -57,12 +58,21 @@ public class ThreatComponent {
                 && !(character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.DOUSE_FIRE)) {
                 count++;
                 debugLog += "RETALIATOR: " + character.name;
+                characters.Add(character);
                 character.behaviourComponent.SetIsAttackingDemonicStructure(true, targetDemonicStructure as DemonicStructure);
                 if(count >= 5) {
                     break;
                 }
             }
         }
+        if (characters.Count > 0) {
+            Character chosenCharacter = CollectionUtilities.GetRandomElement(characters);
+            UIManager.Instance.ShowYesNoConfirmation("Threat Response", 
+                "Your threat level has reached maximum. The people will now retaliate!", 
+                onClickNoAction: chosenCharacter.CenterOnCharacter, yesBtnText: "OK", noBtnText: "Jump to an attacker", 
+                showCover:true, pauseAndResume: true);    
+        }
+        // PlayerUI.Instance.ShowGeneralConfirmation("Threat Response", "Your threat level has reached maximum. The people will now retaliate!");
         Debug.Log(debugLog);
     }
 }

@@ -445,22 +445,26 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     }
     public virtual void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false,
         object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false) {
-        if (CanBeDamaged() == false) { return; }
         if (currentHP == 0 && amount < 0) { return; } //hp is already at minimum, do not allow any more negative adjustments
         CombatManager.Instance.DamageModifierByElements(ref amount, elementalDamageType, this);
-        //int supposedHP = currentHP + amount;
-        currentHP += amount;
-        currentHP = Mathf.Clamp(currentHP, 0, maxHP);
-        if (mapVisual && mapVisual.hpBarGO && showHPBar) {
-            if (mapVisual.hpBarGO.activeSelf) {
-                mapVisual.UpdateHP(this);
-            } else {
-                if (amount < 0 && currentHP > 0) {
-                    //only show hp bar if hp was reduced and hp is greater than 0
-                    mapVisual.QuickShowHPBar(this);
+
+        if (CanBeDamaged()) {
+            //only added checking here because even if objects cannot be damaged,
+            //they should still be able to react to the elements
+            currentHP += amount;
+            currentHP = Mathf.Clamp(currentHP, 0, maxHP);
+            if (mapVisual && mapVisual.hpBarGO && showHPBar) {
+                if (mapVisual.hpBarGO.activeSelf) {
+                    mapVisual.UpdateHP(this);
+                } else {
+                    if (amount < 0 && currentHP > 0) {
+                        //only show hp bar if hp was reduced and hp is greater than 0
+                        mapVisual.QuickShowHPBar(this);
+                    }
                 }
-            }
+            }    
         }
+        
         if (amount < 0) {
             Character responsibleCharacter = null;
             if (source is Character character) {
@@ -527,6 +531,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public void OnUnseizePOI(LocationGridTile tileLocation) {
         DestroyMapVisualGameObject();
         tileLocation.structure.AddPOI(this, tileLocation);
+    }
+    public virtual bool CollectsLogs() {
+        return true;
     }
     #endregion
 

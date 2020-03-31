@@ -262,7 +262,7 @@ public class TraitManager : MonoBehaviour {
         defaultTraitProcessor = new DefaultTraitProcessor();
     }
     public void ProcessBurningTrait(ITraitable traitable, Trait trait, ref BurningSource burningSource) {
-        if (trait is Burning burning) {
+        if (trait is Burning burning && traitable.gridTileLocation != null) {
             if (burningSource == null) {
                 burningSource = new BurningSource(traitable.gridTileLocation.parentMap.region);
             }

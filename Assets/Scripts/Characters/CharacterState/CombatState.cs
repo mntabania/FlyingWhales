@@ -85,8 +85,6 @@ public class CombatState : CharacterState {
         stateComponent.character.marker.SetAnimationBool("InCombat", true);
         //Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, stateComponent.character, "combat");
         Messenger.AddListener<Character>(Signals.DETERMINE_COMBAT_REACTION, DetermineReaction);
-        Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
-
         base.StartState();
         //if (stateComponent.character.currentActionNode is Assault && !stateComponent.character.currentActionNode.isPerformingActualAction) {
         //    stateComponent.character.currentActionNode.Perform(); //this is for when a character will assault a target, but his/her attack range is less than his/her vision range. (Because end reached distance of assault action is set to attack range)
@@ -114,8 +112,6 @@ public class CombatState : CharacterState {
         stateComponent.character.logComponent.PrintLogIfActive(
             $"Ending combat state for {stateComponent.character.name}");
         Messenger.RemoveListener<Character>(Signals.DETERMINE_COMBAT_REACTION, DetermineReaction);
-        Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
-
         base.EndState();
     }
     //public override void OnExitThisState() {
@@ -757,19 +753,6 @@ public class CombatState : CharacterState {
     #region Utilities
     public void ResetClosestHostile() {
         currentClosestHostile = null;
-    }
-    private void OnGamePaused(bool state) {
-        if (isDone) {
-            return;
-        }
-        if (stateComponent.character.marker.gameObject.activeSelf == false) {
-            return;
-        }
-        // if (state) {
-        //     stateComponent.character.marker.StopCoroutine(CheckIfCurrentHostileIsInRange());
-        // } else {
-        //     stateComponent.character.marker.StartCoroutine(CheckIfCurrentHostileIsInRange());
-        // }
     }
     public void SetForcedTarget(Character character) {
         forcedTarget = character;

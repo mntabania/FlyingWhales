@@ -28,7 +28,7 @@ public class BlizzardFeature : TileFeature {
             (character, hexTile) => OnCharacterLeftHexTile(character, hexTile, tile));
         Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE,
             (character, hexTile) => OnCharacterEnteredHexTile(character, hexTile, tile));
-        RescheduleFreezingCheck(); //this will start the freezing check loop
+        RescheduleFreezingCheck(tile); //this will start the freezing check loop
         
         //schedule removal of this feature after x amount of ticks.
         GameDate expiryDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(4));
@@ -98,7 +98,7 @@ public class BlizzardFeature : TileFeature {
     #endregion
 
     #region Effects
-    private void CheckForFreezing() {
+    private void CheckForFreezing(HexTile hex) {
         string summary = $"{GameManager.Instance.TodayLogString()}Starting freezing check...";
         int chance = 15;
         for (int i = 0; i < _charactersOutside.Count; i++) {
@@ -113,12 +113,13 @@ public class BlizzardFeature : TileFeature {
             }
         }
         //reschedule 15 minutes after.
-        RescheduleFreezingCheck();
+        RescheduleFreezingCheck(hex);
         Debug.Log(summary);
     }
-    private void RescheduleFreezingCheck() {
+    private void RescheduleFreezingCheck(HexTile hex) {
+        if (hex.featureComponent.HasFeature(name) == false) { return; }
         GameDate dueDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnMinutes(15));
-        _currentFreezingCheckSchedule = SchedulingManager.Instance.AddEntry(dueDate, CheckForFreezing, this);
+        _currentFreezingCheckSchedule = SchedulingManager.Instance.AddEntry(dueDate, () => CheckForFreezing(hex), this);
     }
     #endregion
 }

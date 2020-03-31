@@ -19,6 +19,7 @@ public class WaterWell : TileObject {
         }
         traitContainer.RemoveTrait(this, "Flammable");
         traitContainer.AddTrait(this, "Wet", overrideDuration: 0);
+        traitContainer.AddTrait(this, "Immovable");
     }
     public override bool CanBeAffectedByElementalStatus(string traitName) {
         if (traitName == "Wet") {

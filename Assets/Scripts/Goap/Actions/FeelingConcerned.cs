@@ -11,7 +11,7 @@ public class FeelingConcerned : GoapAction {
         doesNotStopTargetCharacter = true;
         canBeAdvertisedEvenIfActorIsUnavailable = true;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
     }
 
     #region Overrides
@@ -36,7 +36,7 @@ public class FeelingConcerned : GoapAction {
 
 public class FeelingConcernedData : GoapActionData {
     public FeelingConcernedData() : base(INTERACTION_TYPE.FEELING_CONCERNED) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
     }
 }
 

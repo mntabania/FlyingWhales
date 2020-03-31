@@ -30,6 +30,11 @@ public class InterruptComponent {
     #region General
     public bool TriggerInterrupt(INTERRUPT interrupt, IPointOfInterest targetPOI, string identifier = "") {
         Interrupt triggeredInterrupt = InteractionManager.Instance.GetInterruptData(interrupt);
+        
+        currentInterrupt = triggeredInterrupt;
+        currentTargetPOI = targetPOI;
+        this.identifier = identifier;
+        
         if (!triggeredInterrupt.isSimulateneous) {
             if (isInterrupted) {
                 owner.logComponent.PrintLogIfActive(
@@ -38,9 +43,6 @@ public class InterruptComponent {
             }
             owner.logComponent.PrintLogIfActive(
                 $"{owner.name} triggered a non simultaneous interrupt: {triggeredInterrupt.name}");
-            currentInterrupt = triggeredInterrupt;
-            currentTargetPOI = targetPOI;
-            this.identifier = identifier;
 
             CreateThoughtBubbleLog();
 
@@ -131,7 +133,7 @@ public class InterruptComponent {
     //    }
     //}
     private void EndInterrupt() {
-        bool willCheckInvision = currentInterrupt.duration > 0;
+        bool willCheckInVision = currentInterrupt.duration > 0;
         Interrupt finishedInterrupt = currentInterrupt;
         currentInterrupt = null;
         currentDuration = 0;
@@ -143,7 +145,7 @@ public class InterruptComponent {
                     CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.COMBAT, CHARACTER_STATE.COMBAT, owner);
                     owner.jobQueue.AddJobInQueue(job);
                 } else {
-                    if (willCheckInvision) {
+                    if (willCheckInVision) {
                         if (owner.marker) {
                             for (int i = 0; i < owner.marker.inVisionCharacters.Count; i++) {
                                 Character inVisionCharacter = owner.marker.inVisionCharacters[i];

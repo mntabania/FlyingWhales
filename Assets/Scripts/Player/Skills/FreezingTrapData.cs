@@ -23,6 +23,9 @@ public class FreezingTrapData : SpellData {
         if (canPerform) {
             return !targetTile.hasFreezingTrap;
         }
-        return canPerform;
+        return false;
+    }
+    public override void HighlightAffectedTiles(LocationGridTile tile) {
+        TileHighlighter.Instance.PositionHighlight(0, tile);
     }
 }

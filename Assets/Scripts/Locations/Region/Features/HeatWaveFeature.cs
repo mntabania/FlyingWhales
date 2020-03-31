@@ -134,6 +134,7 @@ public class HeatWaveFeature : TileFeature {
         RescheduleHeatWaveCheck(hex);
     }
     private void RescheduleHeatWaveCheck(HexTile hex) {
+        if (hex.featureComponent.HasFeature(name) == false) { return; }
         GameDate dueDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnMinutes(15));
         _currentRainCheckSchedule = SchedulingManager.Instance.AddEntry(dueDate, () => CheckForOverheating(hex), this);
     }

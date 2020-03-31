@@ -6,11 +6,18 @@ using UnityEngine;
 public class Mushroom : Crops {
 
     public Mushroom() {
-        Initialize(TILE_OBJECT_TYPE.BERRY_SHRUB);
+        Initialize(TILE_OBJECT_TYPE.MUSHROOM);
     }
     public Mushroom(SaveDataTileObject data) {
         Initialize(data);
     }
+
+    #region Override
+    public override void ConstructDefaultActions() {
+        base.ConstructDefaultActions();
+        AddPlayerAction(SPELL_TYPE.PLANT_GERM);
+    }
+    #endregion
 
     #region Growth State
     protected override int GetRipeningTicks() {
