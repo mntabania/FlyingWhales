@@ -32,8 +32,6 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private ProvokeMenu provokeMenu;
 
     [Header("Miscellaneous")]
-    [SerializeField] private GameObject gameOverGO;
-    [SerializeField] private TextMeshProUGUI gameOverDescriptionText;
     [SerializeField] private GameObject successfulAreaCorruptionGO;
     [SerializeField] private ScrollRect killSummaryScrollView;
 
@@ -66,6 +64,10 @@ public class PlayerUI : MonoBehaviour {
 
     [Header("Saving/Loading")]
     public Button saveGameButton;
+
+    [Header("End Game Mechanics")]
+    [SerializeField] private WinGameOverItem winGameOver;
+    [SerializeField] private LoseGameOverItem loseGameOver;
 
     [Header("Kill Count UI")]
     [SerializeField] private GameObject killCountGO;
@@ -498,13 +500,14 @@ public class PlayerUI : MonoBehaviour {
     //}
     #endregion
 
-    #region Lose Condition
-    public void GameOver(string descriptionText) {
-        gameOverDescriptionText.text = descriptionText;
-        gameOverGO.SetActive(true);
+    #region End Game Mechanics
+    public void WinGameOver() {
+        UIManager.Instance.Pause();
+        winGameOver.Open();
     }
-    public void BackToMainMenu() {
-        LevelLoaderManager.Instance.LoadLevel("MainMenu");
+    public void LoseGameOver() {
+        UIManager.Instance.Pause();
+        loseGameOver.Open();
     }
     #endregion
 
@@ -527,9 +530,9 @@ public class PlayerUI : MonoBehaviour {
         successfulAreaCorruptionGO.SetActive(false);
         InnerMapManager.Instance.DestroyInnerMap(closedArea);
 
-        if (LandmarkManager.Instance.AreAllNonPlayerAreasCorrupted()) {
-            GameOver("You have conquered all settlements! This world is now yours! Congratulations!");
-        }
+        //if (LandmarkManager.Instance.AreAllNonPlayerAreasCorrupted()) {
+        //    GameOver("You have conquered all settlements! This world is now yours! Congratulations!");
+        //}
     }
     #endregion
 

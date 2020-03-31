@@ -56,6 +56,8 @@ public class PlayerManager : MonoBehaviour {
             , SPELL_TYPE.PESTILENCE, SPELL_TYPE.PSYCHOPATHY, SPELL_TYPE.COWARDICE, SPELL_TYPE.PYROPHOBIA, SPELL_TYPE.NARCOLEPSY
     };
 
+    private bool _hasWinCheckTimer;
+
     private void Awake() {
         Instance = this;
     }
@@ -67,6 +69,9 @@ public class PlayerManager : MonoBehaviour {
         //Unit Selection
         Messenger.AddListener<InfoUIBase>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<InfoUIBase>(Signals.MENU_CLOSED, OnMenuClosed);
+        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterCanNoLongerMove);
+        Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterCanNoLongerPerform);
         // Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressedDown);
         Messenger.AddListener<Vector3, int, InnerTileMap>(Signals.CREATE_CHAOS_ORBS, CreateChaosOrbsAt);
         Messenger.AddListener<Character, ActualGoapNode>(Signals.CHARACTER_DID_ACTION_SUCCESSFULLY, OnCharacterDidActionSuccess);
@@ -438,6 +443,48 @@ public class PlayerManager : MonoBehaviour {
             return obj;
         }
         throw new System.Exception($"Could not create new archetype {archetype} because there is no data for it!");
+    }
+    #endregion
+
+    #region End Game Mechanics
+    private void OnCharacterDied(Character character) {
+        CheckWinCondition();
+    }
+    private void OnCharacterCanNoLongerPerform(Character character) {
+        CheckWinCondition();
+    }
+    private void OnCharacterCanNoLongerMove(Character character) {
+        CheckWinCondition();
+    }
+    private void CheckWinCondition() {
+        if (DoesPlayerWin()) {
+            if (!_hasWinCheckTimer) {
+                CreateWinCheckTimer();
+            }
+        }
+    }
+    private void FinalCheckWinCondition() {
+        if (DoesPlayerWin()) {
+            PlayerUI.Instance.WinGameOver();
+        }
+        _hasWinCheckTimer = false;
+    }
+    private bool DoesPlayerWin() {
+        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+            Character character = CharacterManager.Instance.allCharacters[i];
+            if(character.faction.isMajorNonPlayerFriendlyNeutral && !(character is Summon) && character.minion == null) {
+                if(!character.isDead || character.canPerform || character.canMove) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    private void CreateWinCheckTimer() {
+        GameDate dueDate = GameManager.Instance.Today();
+        dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(1));
+        SchedulingManager.Instance.AddEntry(dueDate, FinalCheckWinCondition, this);
+        _hasWinCheckTimer = true;
     }
     #endregion
 }

@@ -24,22 +24,22 @@ public class SaveManager : MonoBehaviour {
         currentSave = save;
     }
     public void SaveCurrentStateOfWorld() {
-        Save save = new Save((int)GridMap.Instance.width, (int)GridMap.Instance.height, GridMap.Instance._borderThickness);
-        save.SaveHextiles(GridMap.Instance.normalHexTiles);
-        // save.SaveOuterHextiles(GridMap.Instance.outerGridList);
-        save.SaveRegions(GridMap.Instance.allRegions);
-        // save.SavePlayerArea(PlayerManager.Instance.player.playerSettlement);
-        save.SaveNonPlayerAreas();
-        save.SaveFactions(FactionManager.Instance.allFactions);
-        save.SaveCharacters(CharacterManager.Instance.allCharacters);
-        save.SavePlayer(PlayerManager.Instance.player);
-        save.SaveTileObjects(InnerMapManager.Instance.allTileObjects);
-        // save.SaveSpecialObjects(TokenManager.Instance.specialObjects);
-//        save.SaveAreaMaps(InnerMapManager.Instance.innerMaps); TODO: Saving for new generic inner map
-        save.SaveCurrentDate();
-        save.SaveNotifications();
+//        Save save = new Save((int)GridMap.Instance.width, (int)GridMap.Instance.height, GridMap.Instance._borderThickness);
+//        save.SaveHextiles(GridMap.Instance.normalHexTiles);
+//        // save.SaveOuterHextiles(GridMap.Instance.outerGridList);
+//        save.SaveRegions(GridMap.Instance.allRegions);
+//        // save.SavePlayerArea(PlayerManager.Instance.player.playerSettlement);
+//        save.SaveNonPlayerAreas();
+//        save.SaveFactions(FactionManager.Instance.allFactions);
+//        save.SaveCharacters(CharacterManager.Instance.allCharacters);
+//        save.SavePlayer(PlayerManager.Instance.player);
+//        save.SaveTileObjects(InnerMapManager.Instance.allTileObjects);
+//        // save.SaveSpecialObjects(TokenManager.Instance.specialObjects);
+////        save.SaveAreaMaps(InnerMapManager.Instance.innerMaps); TODO: Saving for new generic inner map
+//        save.SaveCurrentDate();
+//        save.SaveNotifications();
 
-        SaveGame.Save<Save>(UtilityScripts.Utilities.gameSavePath + saveFileName, save);
+//        SaveGame.Save<Save>(UtilityScripts.Utilities.gameSavePath + saveFileName, save);
     }
     public void LoadSaveData() {
         if(UtilityScripts.Utilities.DoesFileExist(UtilityScripts.Utilities.gameSavePath + saveFileName)) {

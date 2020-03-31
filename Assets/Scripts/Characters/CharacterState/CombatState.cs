@@ -714,6 +714,7 @@ public class CombatState : CharacterState {
             stateComponent.character.logComponent.PrintLogIfActive(
                 $"Stopping pursue timer for {stateComponent.character.name}");
             _hasTimerStarted = false;
+            _currentAttackTimer = 0;
         }
     }
     #endregion

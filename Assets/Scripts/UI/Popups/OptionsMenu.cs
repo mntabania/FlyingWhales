@@ -27,4 +27,11 @@ public class OptionsMenu : PopupMenuBase {
     public void ExitGame() {
         Application.Quit();
     }
+    public void AbandonWorld() {
+        UIManager.Instance.ShowYesNoConfirmation("Abandon World", "Are you sure you want to abandon this world?", Abandon, layer: 50);
+    }
+    private void Abandon() {
+        SaveManager.Instance.SaveCurrentStateOfWorld();
+        LevelLoaderManager.Instance.LoadLevel("MainMenu");
+    }
 }

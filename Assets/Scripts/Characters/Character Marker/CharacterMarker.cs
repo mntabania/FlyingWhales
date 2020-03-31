@@ -359,8 +359,15 @@ public class CharacterMarker : MapObjectVisual<Character> {
             if (inVisionCharacters.Contains(otherCharacter)) {
                 character.CreateJobsOnTargetGainTrait(otherCharacter, trait);
             }
+
+            //When another character gains cannot perform, this character must check if that character is in hostile list, if it is, check if it lethal or not,
+            //If not lethal, remove hostile and avoid in range, if lethal, continue attacking
             if (!otherCharacter.canPerform) {
-                character.combatComponent.RemoveHostileInRange(otherCharacter); //removed hostile because he/she became unconscious.
+                if (character.combatComponent.hostilesInRange.Contains(otherCharacter)) {
+                    if (!character.combatComponent.IsLethalCombatForTarget(otherCharacter)) {
+                        character.combatComponent.RemoveHostileInRange(otherCharacter);
+                    }
+                }
                 character.combatComponent.RemoveAvoidInRange(otherCharacter);
             }
         }

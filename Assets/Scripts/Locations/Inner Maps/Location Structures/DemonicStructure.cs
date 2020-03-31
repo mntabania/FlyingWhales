@@ -7,10 +7,10 @@ namespace Inner_Maps.Location_Structures {
         public int structureHP { get; private set; }
 
         public DemonicStructure(STRUCTURE_TYPE structureType, Region location) : base(structureType, location) {
-            AdjustHP(2000);
+            AdjustHP(500);
         }
         public DemonicStructure(Region location, SaveDataLocationStructure data) : base(location, data) {
-            AdjustHP(2000);
+            AdjustHP(500);
         }
 
 

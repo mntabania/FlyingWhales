@@ -25,7 +25,7 @@ public class DivineInterventionQuest : Quest {
     public override void FinishQuest() {
         base.FinishQuest();
         TimerHubUI.Instance.RemoveItem("Until Divine Intervention");
-        PlayerUI.Instance.GameOver("The gods have arrived and wiped you off from the face of this planet!");
+        //PlayerUI.Instance.GameOver("The gods have arrived and wiped you off from the face of this planet!");
     }
     protected override void PerTickOnQuest() {
         //Remove jobs at the end of the day if it hasn't been taken
