@@ -275,6 +275,12 @@ public class RelationshipManager : MonoBehaviour {
             rel2.relationshipContainer.AddRelationship(rel2, rel1, pair);
             rel2.relationshipProcessor?.OnRelationshipAdded(rel2, rel1, pair);
         }
+        if (rel == RELATIONSHIP_TYPE.AFFAIR) {
+            Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "Affair");
+            log.AddToFillers(rel1 as Character, rel1.relatableName, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddToFillers(rel2 as Character, rel2.relatableName, LOG_IDENTIFIER.TARGET_CHARACTER);
+            log.AddLogToInvolvedObjects();
+        }
         return rel1.relationshipContainer.GetRelationshipDataWith(rel2);
     }
     public void CreateNewRelationshipDataBetween(Relatable rel1, Relatable rel2) {

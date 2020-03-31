@@ -29,28 +29,41 @@ namespace Traits {
         }
         public override string TriggerFlaw(Character character) {
             string successLogKey = base.TriggerFlaw(character);
-            if (character.relationshipContainer.GetFirstRelatableIDWithRelationship(RELATIONSHIP_TYPE.LOVER) != -1) {
-                Character affair = CharacterManager.Instance.GetCharacterByID(character.relationshipContainer
-                    .GetFirstRelatableIDWithRelationship(RELATIONSHIP_TYPE.AFFAIR));
-                if (affair == null) {
+            int loverID = character.relationshipContainer.GetFirstRelatableIDWithRelationship(RELATIONSHIP_TYPE.LOVER); 
+            if (loverID != -1) {
+                List<int> affairIDs = character.relationshipContainer
+                    .GetAllRelatableIDWithRelationship(RELATIONSHIP_TYPE.AFFAIR);
+                Character aliveAffair = null;
+                for (int i = 0; i < affairIDs.Count; i++) {
+                    int affairID = affairIDs[i];
+                    aliveAffair = CharacterManager.Instance.GetCharacterByID(affairID);
+                    if (aliveAffair != null && aliveAffair.isDead == false) { break; }
+                }
+                if (aliveAffair == null) {
                     if (!character.jobQueue.HasJob(JOB_TYPE.TRIGGER_FLAW)) {
                         List<Character> choices = new List<Character>();
-                        for (int i = 0; i < character.currentRegion.charactersAtLocation.Count; i++) {
-                            Character choice = character.currentRegion.charactersAtLocation[i];
-                            SEXUALITY sexuality1 = character.sexuality;
-                            SEXUALITY sexuality2 = choice.sexuality;
-                            GENDER gender1 = character.gender;
-                            GENDER gender2 = choice.gender;
-                            if (RelationshipManager.IsSexuallyCompatible(sexuality1, sexuality2, gender1, gender2) 
-                                && RelationshipManager.Instance.GetValidator(character).
-                                    CanHaveRelationship(character, choice, RELATIONSHIP_TYPE.AFFAIR)) {
-                                choices.Add(choice);
+                        //choose from characters that owner has a relationship with, that is not their lover or affair and is still alive.
+                        foreach (var relationship in character.relationshipContainer.relationships) {
+                            if (relationship.Key != loverID && relationship.Value.HasRelationship(RELATIONSHIP_TYPE.AFFAIR) == false) {
+                                Character otherCharacter = CharacterManager.Instance.GetCharacterByID(relationship.Key);
+                                if (otherCharacter != null && otherCharacter.isDead == false) {
+                                    SEXUALITY sexuality1 = character.sexuality;
+                                    SEXUALITY sexuality2 = otherCharacter.sexuality;
+                                    GENDER gender1 = character.gender;
+                                    GENDER gender2 = otherCharacter.gender;
+                                    if (RelationshipManager.IsSexuallyCompatible(sexuality1, sexuality2, gender1, gender2) 
+                                        && RelationshipManager.Instance.GetValidator(character).
+                                            CanHaveRelationship(character, otherCharacter, RELATIONSHIP_TYPE.AFFAIR)) {
+                                        choices.Add(otherCharacter);
+                                    }
+                                }
                             }
                         }
 
                         if (choices.Count > 0) {
                             //If no affair yet, the character will create a Have Affair Job which will attempt to have an affair with a viable target.
-                            GoapPlanJob cheatJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.HAVE_AFFAIR, CollectionUtilities.GetRandomElement(choices), character);
+                            Character chosenCharacter = CollectionUtilities.GetRandomElement(choices);
+                            GoapPlanJob cheatJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.HAVE_AFFAIR, chosenCharacter, character);
                             character.jobQueue.AddJobInQueue(cheatJob);
                             return successLogKey;
                         } else {
@@ -60,7 +73,7 @@ namespace Traits {
                 } else {
                     if (!character.jobQueue.HasJob(JOB_TYPE.TRIGGER_FLAW)) {
                         //If already has a affair, the character will attempt to make love with one.
-                        GoapPlanJob cheatJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.MAKE_LOVE, affair, character);
+                        GoapPlanJob cheatJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.MAKE_LOVE, aliveAffair, character);
                         character.jobQueue.AddJobInQueue(cheatJob);
                     }
                 }

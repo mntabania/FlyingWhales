@@ -57,6 +57,9 @@ public class LightingManager : MonoBehaviour {
             if (isTransitioning) { return; }
             isTransitioning = true;
             //transitioning
+            Light_State targetLightState =
+                currentLightState == Light_State.Dark ? Light_State.Bright : Light_State.Dark;
+            Messenger.Broadcast(Signals.UPDATE_INNER_MAP_LIGHT, targetLightState); //update other lights based on target light state
             var targetIntensity = currentLightState == Light_State.Dark ? _brightestIntensity : _darkestIntensity;
             _currentTween = DOTween.To(SetGlobalLightIntensity, _globalLight.intensity, targetIntensity, 
                 _darkToLightTickDifference * GameManager.Instance.GetTickSpeed(PROGRESSION_SPEED.X1)).OnComplete(OnDoneTransition);
@@ -94,7 +97,6 @@ public class LightingManager : MonoBehaviour {
     private void SetCurrentLightState(Light_State lightState) {
         if (currentLightState == lightState) { return; }
         currentLightState = lightState;
-        Messenger.Broadcast(Signals.UPDATE_INNER_MAP_LIGHT, currentLightState);
     }
     
 }

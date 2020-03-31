@@ -56,7 +56,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public IDwelling homeStructure { get; protected set; }
     //public IRelationshipContainer relationshipContainer => currentAlterEgo.relationshipContainer;
     //public IRelationshipValidator relationshipValidator => currentAlterEgo.relationshipValidator;
-    public List<INTERACTION_TYPE> advertisedActions { get; private set; }
+    public List<INTERACTION_TYPE> advertisedActions { get; }
     public int supply { get; set; }
     public int food { get; set; }
     public CharacterMarker marker { get; private set; }
@@ -4145,6 +4145,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             AddAdvertisedAction(INTERACTION_TYPE.SHARE_INFORMATION);
             AddAdvertisedAction(INTERACTION_TYPE.DRINK_BLOOD);
             AddAdvertisedAction(INTERACTION_TYPE.BUTCHER);
+            AddAdvertisedAction(INTERACTION_TYPE.HAVE_AFFAIR);
         }
         if (race == RACE.HUMANS || race == RACE.ELVES) {
             AddAdvertisedAction(INTERACTION_TYPE.REPORT_CORRUPTED_STRUCTURE);

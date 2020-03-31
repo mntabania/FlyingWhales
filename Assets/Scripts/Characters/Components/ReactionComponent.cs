@@ -341,10 +341,12 @@ public class ReactionComponent {
                 debugLog += "\n-Character is not minion and not summon and Target is not being targeted by an action, continue reaction";
                 if (!targetCharacter.isDead) {
                     debugLog += "\n-Target is not dead";
-                    if (!owner.isConversing && !targetCharacter.isConversing && owner.nonActionEventsComponent.CanInteract(targetCharacter)) {
+                    if (!owner.isConversing && !targetCharacter.isConversing && owner.nonActionEventsComponent.CanInteract(targetCharacter) 
+                        //only allow chat if characters current action is not have affair or if his action is have affair but the character he is reacting to is not the target of that action.
+                        && (owner.currentActionNode == null || (owner.currentActionNode.action.goapType != INTERACTION_TYPE.HAVE_AFFAIR || owner.currentActionNode.poiTarget != targetCharacter))) {
                         debugLog += "\n-Character and Target are not Chatting or Flirting and Character can interact with Target, has 3% chance to Chat";
                         int chance = UnityEngine.Random.Range(0, 100);
-                        debugLog += $"\n-Roll: {chance}";
+                        debugLog += $"\n-Roll: {chance.ToString()}";
                         if (chance < 3) {
                             debugLog += "\n-Chat triggered";
                             owner.interruptComponent.TriggerInterrupt(INTERRUPT.Chat, targetCharacter);
@@ -365,7 +367,7 @@ public class ReactionComponent {
                                         debugLog += $"\n-Chance: {value} (No Compatibility)";
                                     }
                                     int flirtChance = UnityEngine.Random.Range(0, 100);
-                                    debugLog += $"\n-Roll: {flirtChance}";
+                                    debugLog += $"\n-Roll: {flirtChance.ToString()}";
                                     if (flirtChance < value) {
                                         owner.interruptComponent.TriggerInterrupt(INTERRUPT.Flirt, targetCharacter);
                                     } else {

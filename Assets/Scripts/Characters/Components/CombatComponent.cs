@@ -267,7 +267,9 @@ public class CombatComponent {
             //    nearest = hostileCharacters[UnityEngine.Random.Range(0, hostileCharacters.Count)];
             //}
             for (int i = 0; i < hostilesInRange.Count; i++) {
-                if(hostilesInRange[i].poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+                IPointOfInterest pointOfInterest = hostilesInRange[i];
+                if(pointOfInterest.IsValidCombatTarget() && 
+                   pointOfInterest.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
                     nearest = hostilesInRange[i];
                     break;
                 }

@@ -75,7 +75,8 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	}
 	private void OnObjectDamaged(IPointOfInterest poi) {
 		Assert.IsTrue(poi is TileObject); // || poi is SpecialToken
-		if (poi.gridTileLocation != null && poi.gridTileLocation.IsPartOfSettlement(_owner)) {
+		TileObject tileObject = poi as TileObject;
+		if (poi.gridTileLocation != null && poi.gridTileLocation.IsPartOfSettlement(_owner) && tileObject.tileObjectType.CanBeRepaired()) {
 			TryCreateRepairJob(poi);
 		}
 	}

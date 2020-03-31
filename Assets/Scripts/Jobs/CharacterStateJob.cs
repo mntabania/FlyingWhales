@@ -46,7 +46,7 @@ public class CharacterStateJob : JobQueueItem {
         if (hasBeenReset) { return false; }
         if (assignedState == null) {
             CharacterState newState = assignedCharacter.stateComponent.SwitchToState(targetState, targetPOI);
-            if (newState != null) {
+            if (newState != null && hasBeenReset == false) {
                 SetAssignedState(newState);
                 assignedCharacter.SetCurrentJob(this);
                 return true;

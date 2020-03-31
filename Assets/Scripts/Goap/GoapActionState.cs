@@ -57,7 +57,7 @@ public class GoapActionState {
             goapNode.action.AddFillersToLog(_descriptionLog, goapNode);
             return _descriptionLog;
         } else {
-            Debug.LogWarning($"{this.name} does had problems creating it's description log");
+            Debug.LogWarning($"{this.name} had problems creating it's description log");
         }
         return null;
     }

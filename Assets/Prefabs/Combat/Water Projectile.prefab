@@ -18935,10 +18935,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ParentPool: {fileID: 0}
-  targetTransform: {fileID: 0}
-  rigidBody: {fileID: 5402599419117334285}
-  rotateSpeed: 800
-  speed: 7
   _collider: {fileID: 5369208663550938429}
   projectileParticles: {fileID: 3750895883743846708}
   collisionParticles: {fileID: 881511717635142795}
@@ -18979,4 +18975,4 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.3
+  m_Radius: 0.05

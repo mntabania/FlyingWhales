@@ -386,6 +386,10 @@ public class UIManager : MonoBehaviour {
         
         tooltipParent.transform.position = v3;
 
+        if (rtToReposition.sizeDelta.y >= Screen.height) {
+            return;
+        }
+
         Vector3[] corners = new Vector3[4]; //bottom-left, top-left, top-right, bottom-right
         List<int> cornersOutside = new List<int>();
         boundsRT.GetWorldCorners(corners);
