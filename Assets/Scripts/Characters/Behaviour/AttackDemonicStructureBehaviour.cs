@@ -24,7 +24,7 @@ public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
                     for (int i = 0; i < targetStructure.pointsOfInterest.Count; i++) {
                         IPointOfInterest poi = targetStructure.pointsOfInterest.ElementAt(i);
                         if(poi is TileObject tileObject) {
-                            if (tileObject.isPreplaced) {
+                            if (tileObject.isPreplaced && tileObject.gridTileLocation != null && PathfindingManager.Instance.HasPath(tileObject.gridTileLocation, character.gridTileLocation)) {
                                 chosenTileObject = tileObject;
                                 break;
                             }

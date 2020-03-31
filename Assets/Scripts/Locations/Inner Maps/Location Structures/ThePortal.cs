@@ -18,6 +18,10 @@ namespace Inner_Maps.Location_Structures {
             //    SummonMinion);
             AddPlayerAction(SPELL_TYPE.SUMMON_MINION);
         }
+        protected override void DestroyStructure() {
+            base.DestroyStructure();
+            PlayerUI.Instance.LoseGameOver();
+        }
         public void SummonMinion() {
             validMinions.Clear();
             for (int i = 0; i < PlayerManager.Instance.player.minions.Count; i++) {

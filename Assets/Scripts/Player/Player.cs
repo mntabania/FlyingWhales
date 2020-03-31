@@ -17,6 +17,7 @@ public class Player : ILeader, IObjectManipulator {
     public Faction playerFaction { get; private set; }
     public PlayerSettlement playerSettlement { get; private set; }
     public int mana { get; private set; }
+    public int experience { get; private set; }
     public List<IIntel> allIntel { get; private set; }
     public List<Minion> minions { get; private set; }
     public List<Summon> summons { get; private set; }
@@ -1409,6 +1410,21 @@ public class Player : ILeader, IObjectManipulator {
         if (hoveredTile != null && hoveredTile.objHere == null) {
             TileObject item = InnerMapManager.Instance.CreateNewTileObject<TileObject>(currentActiveItem);
             hoveredTile.structure.AddPOI(item, hoveredTile);
+        }
+    }
+    #endregion
+
+    #region Experience
+    public void AdjustExperience(int amount) {
+        experience += amount;
+        if(experience < 0) {
+            experience = 0;
+        }
+    }
+    public void SetExperience(int amount) {
+        experience = amount;
+        if (experience < 0) {
+            experience = 0;
         }
     }
     #endregion
