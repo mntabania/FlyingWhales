@@ -4,6 +4,8 @@ using UnityEngine;
 using Traits;
 using System.Linq;
 using Inner_Maps.Location_Structures;
+using JetBrains.Annotations;
+using UnityEngine.Assertions;
 
 public class MakeLove : GoapAction {
 
@@ -83,13 +85,16 @@ public class MakeLove : GoapAction {
         }
     }
     public override IPointOfInterest GetTargetToGoTo(ActualGoapNode goapNode) {
-        return GetValidBedForActor(goapNode.actor);
+        Character targetCharacter = goapNode.poiTarget as Character;
+        Assert.IsNotNull(targetCharacter, $"Make love of {goapNode.actor.name} is not a character! {goapNode.poiTarget?.ToString() ?? "Null"}");
+        return GetValidBedForActor(goapNode.actor, targetCharacter);
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
         GoapActionInvalidity goapActionInvalidity = base.IsInvalid(node);
-        Character actor = node.actor;
         if (goapActionInvalidity.isInvalid == false) {
-            Bed bed = GetValidBedForActor(node.actor);
+            Character targetCharacter = node.poiTarget as Character;
+            Assert.IsNotNull(targetCharacter, $"Make love of {node.actor.name} is not a character! {node.poiTarget?.ToString() ?? "Null"}");
+            Bed bed = GetValidBedForActor(node.actor, targetCharacter);
             if (bed == null ||  bed.IsAvailable() == false || bed.GetActiveUserCount() > 0) {
                 goapActionInvalidity.isInvalid = true;
                 goapActionInvalidity.stateName = "Make Love Fail";
@@ -284,7 +289,7 @@ public class MakeLove : GoapAction {
             if (target.currentParty.icon.isTravellingOutside || target.currentRegion != actor.currentRegion) {
                 return false; //target is outside the map
             }
-            if (GetValidBedForActor(actor) == null) {
+            if (GetValidBedForActor(actor, target) == null) {
                 return false;
             }
             if (!(actor is SeducerSummon)) { //ignore relationships if succubus
@@ -298,7 +303,7 @@ public class MakeLove : GoapAction {
     }
     #endregion
 
-    private Bed GetValidBedForActor(Character actor) {
+    private Bed GetValidBedForActor(Character actor, [NotNull]Character target) {
         if (actor is Summon) {
             //check un owned dwellings for possible beds
             List<Dwelling> dwellings =
@@ -312,7 +317,16 @@ public class MakeLove : GoapAction {
             }
             return null;
         } else {
-            return actor.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.BED).FirstOrDefault() as Bed;
+            Bed actorBed = actor.homeStructure.GetTileObjectOfType<Bed>(TILE_OBJECT_TYPE.BED);
+            if (actorBed != null && actorBed.GetActiveUserCount() == 0) {
+                return actorBed;
+            } else {
+                Bed targetBed = target.homeStructure.GetTileObjectOfType<Bed>(TILE_OBJECT_TYPE.BED);
+                if (targetBed != null && targetBed.GetActiveUserCount() == 0) {
+                    return targetBed;
+                }
+            }
+            return null;
         }   
     }
     

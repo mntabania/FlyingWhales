@@ -24,6 +24,7 @@ public interface IRelationshipContainer {
     #endregion
 
     #region Getting
+    List<int> GetAllRelatableIDWithRelationship(params RELATIONSHIP_TYPE[] type);
     int GetFirstRelatableIDWithRelationship(params RELATIONSHIP_TYPE[] type);
     int GetRelatablesWithRelationshipCount(params RELATIONSHIP_TYPE[] type);
     IRelationshipData GetRelationshipDataWith(Relatable relatable);

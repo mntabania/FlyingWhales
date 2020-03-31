@@ -1876,6 +1876,19 @@ public static class Extensions {
                 return tileObjectType.IsTileObjectAnItem();
         }
     }
+    public static bool CanBeRepaired(this TILE_OBJECT_TYPE tileObjectType) {
+        switch (tileObjectType) {
+            case TILE_OBJECT_TYPE.BED:
+            case TILE_OBJECT_TYPE.TABLE:
+            case TILE_OBJECT_TYPE.DESK:
+            case TILE_OBJECT_TYPE.GUITAR:
+            case TILE_OBJECT_TYPE.TORCH:
+            case TILE_OBJECT_TYPE.WATER_WELL:
+                return true;
+            default:
+                return false;
+        }
+    }
     #endregion
 
     #region Jobs

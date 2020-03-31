@@ -20,38 +20,35 @@ public class HaveAffair : GoapAction {
         base.Perform(goapNode);
         SetState("Affair Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
-        Character otherCharacter = target as Character;
-        Character currCharacter = actor;
-        List<RELATIONSHIP_TYPE> existingRelsOfCurrentCharacter = currCharacter.relationshipContainer.GetRelationshipDataWith(otherCharacter)?.relationships ?? null;
-        List<RELATIONSHIP_TYPE> existingRelsOfOtherCharacter = otherCharacter.relationshipContainer.GetRelationshipDataWith(currCharacter)?.relationships ?? null;
-        int cost = 1;
-        if (existingRelsOfCurrentCharacter != null) {
-            if (existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TYPE.RELATIVE)) {
-                //- character is a relative: Weight +50
-                cost += 50;
-            }
-            if (existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TYPE.LOVER)
-                || currCharacter.relationshipContainer.IsEnemiesWith(otherCharacter)) {
-                //- character is a lover: Weight x0
-                //- character is an enemy: Weight x0
-                cost *= 0;
-            }
-        }
-        if (UtilityScripts.GameUtilities.IsRaceBeast(otherCharacter.race)) {
-            //- character is beast 0 out weight
-            cost *= 0;
-        }
-        return cost;
-    }
+    // protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    //     Character otherCharacter = target as Character;
+    //     Character currCharacter = actor;
+    //     List<RELATIONSHIP_TYPE> existingRelsOfCurrentCharacter = currCharacter.relationshipContainer.GetRelationshipDataWith(otherCharacter)?.relationships ?? null;
+    //     List<RELATIONSHIP_TYPE> existingRelsOfOtherCharacter = otherCharacter.relationshipContainer.GetRelationshipDataWith(currCharacter)?.relationships ?? null;
+    //     int cost = 1;
+    //     if (existingRelsOfCurrentCharacter != null) {
+    //         if (existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TYPE.RELATIVE)) {
+    //             //- character is a relative: Weight +50
+    //             cost += 50;
+    //         }
+    //         if (existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TYPE.LOVER)
+    //             || currCharacter.relationshipContainer.IsEnemiesWith(otherCharacter)) {
+    //             //- character is a lover: Weight x0
+    //             //- character is an enemy: Weight x0
+    //             cost *= 0;
+    //         }
+    //     }
+    //     if (UtilityScripts.GameUtilities.IsRaceBeast(otherCharacter.race)) {
+    //         //- character is beast 0 out weight
+    //         cost *= 0;
+    //     }
+    //     return cost;
+    // }
     #endregion
 
     #region Effects
-    public void PreAffairSuccess() {
-        //currentState.SetIntelReaction(AffairSuccessReactions);
-    }
     public void AfterAffairSuccess(ActualGoapNode goapNode) {
-        RelationshipManager.Instance.CreateNewRelationshipBetween(goapNode.actor, goapNode.poiTarget as Character, RELATIONSHIP_TYPE.AFFAIR);
+        goapNode.actor.interruptComponent.TriggerInterrupt(INTERRUPT.Flirt, goapNode.poiTarget);
     }
     #endregion
 

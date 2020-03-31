@@ -122,6 +122,15 @@ public class BaseRelationshipContainer : IRelationshipContainer {
         }
         return -1;
     }
+    public List<int> GetAllRelatableIDWithRelationship(params RELATIONSHIP_TYPE[] type) {
+        List<int> ids = new List<int>();
+        foreach (KeyValuePair<int, IRelationshipData> kvp in relationships) {
+            if (kvp.Value.HasRelationship(type)) {
+                ids.Add(kvp.Key);
+            }
+        }
+        return ids;
+    }
     public int GetRelatablesWithRelationshipCount(params RELATIONSHIP_TYPE[] type) {
         int count = 0;
         foreach (KeyValuePair<int, IRelationshipData> kvp in relationships) {

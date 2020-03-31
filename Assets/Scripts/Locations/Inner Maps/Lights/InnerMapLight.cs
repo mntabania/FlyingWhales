@@ -22,7 +22,7 @@ public class InnerMapLight : MonoBehaviour{
     private void UpdateLightBasedOnGlobalLight(LightingManager.Light_State globalLightState) {
         //set intensity as inverse of given light state.
         var targetIntensity = GetTargetIntensity(globalLightState);
-        DOTween.To(SetLightIntensity, _light.intensity, targetIntensity, 1f);
+        DOTween.To(SetLightIntensity, _light.intensity, targetIntensity, 8f);
     }
     private void InstantUpdateLightBasedOnGlobalLight(LightingManager.Light_State globalLightState) {
         SetLightIntensity(GetTargetIntensity(globalLightState));

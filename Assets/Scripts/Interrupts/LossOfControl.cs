@@ -10,7 +10,7 @@ namespace Interrupts {
             doesDropCurrentJob = true;
             doesStopCurrentAction = true;
             isSimulateneous = false;
-            interruptIconString = GoapActionStateDB.Exclamation_Icon;
+            interruptIconString = GoapActionStateDB.Shock_Icon;
         }
 
         #region Overrides

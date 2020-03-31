@@ -50,6 +50,7 @@ public class Summon : Character, IWorldObject {
         
         needsComponent.Initialize();
         
+        advertisedActions.Clear(); //This is so that any advertisements from OnUpdateRace will be negated. TODO: Make updating advertisements better.
         ConstructInitialGoapAdvertisementActions();
         needsComponent.SetFullnessForcedTick(0);
         needsComponent.SetTirednessForcedTick(0);

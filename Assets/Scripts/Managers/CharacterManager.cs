@@ -281,8 +281,8 @@ public class CharacterManager : MonoBehaviour {
     public void CreateFoodPileForPOI(IPointOfInterest poi, LocationGridTile tileOverride = null) {
         LocationGridTile targetTile = tileOverride;
         Character deadCharacter = null;
-        if (poi is Character) {
-            deadCharacter = poi as Character;
+        if (poi is Character character) {
+            deadCharacter = character;
         }
         if(targetTile == null) {
             targetTile = poi.gridTileLocation;
@@ -292,6 +292,12 @@ public class CharacterManager : MonoBehaviour {
         }
         int food = GetFoodAmountTakenFromDead(deadCharacter);
         FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(TILE_OBJECT_TYPE.FOOD_PILE);
+        if (deadCharacter != null) {
+            Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "became_food_pile");
+            log.AddToFillers(deadCharacter, deadCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddToFillers(foodPile, foodPile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            log.AddLogToInvolvedObjects();
+        }
         foodPile.SetResourceInPile(food);
         targetTile.structure.AddPOI(foodPile, targetTile);
         targetTile.SetReservedType(TILE_OBJECT_TYPE.FOOD_PILE);
