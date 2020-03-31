@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: da1d92a130b3f8f4bb0110cd352dca08, type: 3}
-    totalSpriteSurfaceArea: 8645475
+    totalSpriteSurfaceArea: 8650095
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -1045,6 +1045,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 2bcde44c41effc547a86cce847d9f7d9, type: 3}
   - {fileID: 21300000, guid: 4224584cc8a5a974e975d83ed3834ce1, type: 3}
   - {fileID: 21300000, guid: 91b5a84cbebf68b41b143550dcbc6c2f, type: 3}
+  - {fileID: 21300000, guid: a2da4a4c354e9234085fa519dffd9302, type: 3}
   - {fileID: 21300000, guid: c9651c4c32f892a43b5b08157299a9e7, type: 3}
   - {fileID: 21300000, guid: b0a57c4c1622f50499786db7ae3d84c5, type: 3}
   - {fileID: 21300000, guid: 277f2d4c8432300448879bc7cea1638b, type: 3}
@@ -2347,6 +2348,7 @@ SpriteAtlas:
   - walk_2
   - attack_1
   - sleep_2
+  - action_icon_exclamation
   - walk_4
   - walk_2
   - idle_4

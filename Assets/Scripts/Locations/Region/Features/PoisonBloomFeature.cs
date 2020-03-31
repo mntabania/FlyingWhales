@@ -5,6 +5,7 @@ using Inner_Maps;
 public class PoisonBloomFeature : TileFeature {
 
     private string expirationKey;
+    private HexTile owner;
     
     public PoisonBloomFeature() {
         name = "Poison Emitting";
@@ -12,24 +13,28 @@ public class PoisonBloomFeature : TileFeature {
     }
     public override void OnAddFeature(HexTile tile) {
         base.OnAddFeature(tile);
-        Messenger.AddListener(Signals.TICK_ENDED, () => EmitPoisonCloudsPerTick(tile));
-        ScheduleExpiry(tile);
+        owner = tile;
+        Messenger.AddListener(Signals.TICK_ENDED, EmitPoisonCloudsPerTick);
+        ScheduleExpiry();
     }
     public override void OnRemoveFeature(HexTile tile) {
         base.OnRemoveFeature(tile);
-        Messenger.RemoveListener(Signals.TICK_ENDED, () => EmitPoisonCloudsPerTick(tile));
+        Messenger.RemoveListener(Signals.TICK_ENDED, EmitPoisonCloudsPerTick);
+        owner = null;
     }
-    public void ResetDuration(HexTile tile) {
-        SchedulingManager.Instance.RemoveSpecificEntry(expirationKey);
-        ScheduleExpiry(tile);
+    public void ResetDuration() {
+        if (owner != null) {
+            SchedulingManager.Instance.RemoveSpecificEntry(expirationKey);
+            ScheduleExpiry();    
+        }
     }
-    private void ScheduleExpiry(HexTile tile) {
+    private void ScheduleExpiry() {
         GameDate dueDate = GameManager.Instance.Today().AddTicks(GameManager.ticksPerHour);
-        expirationKey = SchedulingManager.Instance.AddEntry(dueDate, () => tile.featureComponent.RemoveFeature(this, tile), this);
+        expirationKey = SchedulingManager.Instance.AddEntry(dueDate, () => owner.featureComponent.RemoveFeature(this, owner), this);
     }
-    private void EmitPoisonCloudsPerTick(HexTile tile) {
-        if (UnityEngine.Random.Range(0, 100) < 60) {
-            LocationGridTile chosenTile = UtilityScripts.CollectionUtilities.GetRandomElement(tile.locationGridTiles);
+    private void EmitPoisonCloudsPerTick() {
+        if (UnityEngine.Random.Range(0, 100) < 60 && owner != null) {
+            LocationGridTile chosenTile = UtilityScripts.CollectionUtilities.GetRandomElement(owner.locationGridTiles);
             PoisonCloudTileObject poisonCloudTileObject = new PoisonCloudTileObject();
             poisonCloudTileObject.SetGridTileLocation(chosenTile);
             poisonCloudTileObject.OnPlacePOI();

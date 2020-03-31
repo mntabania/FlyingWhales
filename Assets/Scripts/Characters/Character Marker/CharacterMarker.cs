@@ -1153,6 +1153,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
             if (!character.isDead/* && character.canWitness*/) { //character.traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting", "Zapped") == null
                 for (int i = 0; i < unprocessedVisionPOIs.Count; i++) {
                     IPointOfInterest poi = unprocessedVisionPOIs[i];
+                    if (poi.mapObjectVisual == null) {
+                        log += $"\n-{poi.nameWithID}'s map visual has been destroyed. Skipping...";
+                        continue;
+                    }
                     log += $"\n-{poi.nameWithID}";
                     bool reactToActionOnly = false;
                     if (unprocessedVisionPOIsForActionOnly.Count > 0) {

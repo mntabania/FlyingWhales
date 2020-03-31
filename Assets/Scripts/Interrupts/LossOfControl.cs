@@ -35,7 +35,7 @@ namespace Interrupts {
                     //Poison Bloom
                     PoisonBloomFeature poisonBloomFeature = hexTile.featureComponent.GetFeature<PoisonBloomFeature>();
                     if (poisonBloomFeature != null) {
-                        poisonBloomFeature.ResetDuration(hexTile);
+                        poisonBloomFeature.ResetDuration();
                     } else {
                         PlayerManager.Instance.GetSpellData(SPELL_TYPE.POISON_BLOOM).ActivateAbility(hexTile);
                     }
