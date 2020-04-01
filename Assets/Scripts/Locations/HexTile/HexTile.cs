@@ -1255,19 +1255,23 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         //TileBase[] groundTilesArray = new TileBase[locationGridTiles.Count];
 
         for (int i = 0; i < locationGridTiles.Count; i++) {
-            if (locationGridTiles[i].structure.isInterior) {
-                continue;
-            }
             LocationGridTile currTile = locationGridTiles[i];
             Vector3Int position = currTile.localPlace;
             TileBase groundTile = InnerTileMap.GetGroundAssetPerlin(currTile.floorSample, biomeType);
-            currTile.SetPreviousGroundVisual(null);
-            currTile.parentMap.groundTilemap.SetTile(position, groundTile);
-            currTile.UpdateGroundTypeBasedOnAsset();
-            if (currTile.objHere != null && currTile.objHere.mapObjectVisual && currTile.objHere is TileObject tileObject) {
-                tileObject.mapVisual.UpdateTileObjectVisual(tileObject);
+            if (currTile.structure.isInterior || currTile.isCorrupted) {
+                //set the previous tile to the new biome, so that when the structure is destroyed
+                //it will revert to the right asset
+                currTile.SetPreviousGroundVisual(groundTile);
+            } else {
+                currTile.SetPreviousGroundVisual(null);
+                currTile.parentMap.groundTilemap.SetTile(position, groundTile);
+                currTile.UpdateGroundTypeBasedOnAsset();
+                if (currTile.objHere != null && currTile.objHere.mapObjectVisual && currTile.objHere is TileObject tileObject) {
+                    tileObject.mapVisual.UpdateTileObjectVisual(tileObject);
+                }
+                currTile.CreateSeamlessEdgesForSelfAndNeighbours();    
             }
-            currTile.CreateSeamlessEdgesForSelfAndNeighbours();
+            
         }
         //locationGridTiles[0].parentMap.MassSetGroundTileMapVisuals(positionArray, groundTilesArray);
     }

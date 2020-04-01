@@ -1687,6 +1687,12 @@ public static class Extensions {
             case STRUCTURE_TYPE.LUMBERYARD:
             case STRUCTURE_TYPE.MINE:
             case STRUCTURE_TYPE.MAGE_QUARTERS:
+            case STRUCTURE_TYPE.THE_PORTAL:
+            case STRUCTURE_TYPE.THE_EYE:
+            case STRUCTURE_TYPE.THE_CRYPT:
+            case STRUCTURE_TYPE.THE_SPIRE:
+            case STRUCTURE_TYPE.THE_GOADER:
+            case STRUCTURE_TYPE.THE_KENNEL:
                 return true;
             default:
                 return false;

@@ -296,51 +296,62 @@ namespace Inner_Maps {
             Dictionary<GridNeighbourDirection, LocationGridTile> neighbours;
             if (HasCardinalNeighbourOfDifferentGroundType(out neighbours)) {
                 // summary += $"\nHas Neighbour of different ground type. Checking neighbours {neighbours.Count.ToString()}";
+                BIOMES thisBiome = GetBiomeOfGroundType(groundType);
                 Dictionary<GridNeighbourDirection, LocationGridTile> fourNeighbours = FourNeighboursDictionary();
                 foreach (KeyValuePair<GridNeighbourDirection, LocationGridTile> keyValuePair in fourNeighbours) {
                     LocationGridTile currNeighbour = keyValuePair.Value;
                     bool createEdge = false;
-                    // summary += $"\n\tChecking {currNeighbour.ToString()}. Ground type is {groundType.ToString()}. Neighbour Ground Type is {currNeighbour.groundType.ToString()}";
-                    if (this.groundType != Ground_Type.Cave && groundType != Ground_Type.Structure_Stone && currNeighbour.groundType == Ground_Type.Cave) {
-                        createEdge = true;
-                    } else if (currNeighbour.tileType == Tile_Type.Wall || currNeighbour.tileType == Tile_Type.Structure_Entrance) {
-                        createEdge = false;
-                    } else if (groundType != Ground_Type.Water && currNeighbour.groundType == Ground_Type.Water) {
-                        createEdge = true;
-                    } else if (groundType == Ground_Type.Corrupted && currNeighbour.groundType != Ground_Type.Bone) {
-                        createEdge = true;
-                    } else if (groundType == Ground_Type.Demon_Stone && currNeighbour.groundType != Ground_Type.Corrupted) {
-                        createEdge = true;
-                    } else if (groundType == Ground_Type.Bone) {
-                        createEdge = true;
-                    } else if (currNeighbour.groundType == Ground_Type.Bone) {
-                        createEdge = false;
-                    } else if (groundType != Ground_Type.Corrupted && currNeighbour.groundType == Ground_Type.Corrupted) {
-                        createEdge = false;
-                    } else if (groundType == Ground_Type.Snow && currNeighbour.groundType != Ground_Type.Snow) {
-                        createEdge = true;
-                    } else if (groundType == Ground_Type.Cobble && currNeighbour.groundType != Ground_Type.Snow) {
-                        createEdge = true;
-                    } else if ((groundType == Ground_Type.Tundra || groundType == Ground_Type.Snow_Dirt) &&
-                               (currNeighbour.groundType == Ground_Type.Stone || currNeighbour.groundType == Ground_Type.Soil)) {
-                        createEdge = true;
-                    } else if (groundType == Ground_Type.Grass && currNeighbour.groundType == Ground_Type.Soil) {
-                        createEdge = true;
-                    } else if (groundType == Ground_Type.Soil && currNeighbour.groundType == Ground_Type.Stone) {
-                        createEdge = true;
-                    } else if (groundType == Ground_Type.Stone && currNeighbour.groundType == Ground_Type.Grass) {
-                        createEdge = true;
-                    } else if (groundType == Ground_Type.Desert_Grass &&
-                               (currNeighbour.groundType == Ground_Type.Desert_Stone || currNeighbour.groundType == Ground_Type.Sand)) {
-                        createEdge = true;
-                    } else if (groundType == Ground_Type.Sand && currNeighbour.groundType == Ground_Type.Desert_Stone) {
-                        createEdge = true;
-                    } else if (groundType == Ground_Type.Sand && currNeighbour.groundType == Ground_Type.Stone) {
-                        createEdge = true;
-                    } else if ((groundType != Ground_Type.Ruined_Stone && groundType != Ground_Type.Structure_Stone) 
-                               && currNeighbour.groundType == Ground_Type.Ruined_Stone) {
-                        createEdge = true;
+                    BIOMES otherBiome = GetBiomeOfGroundType(currNeighbour.groundType);
+                    if (thisBiome != otherBiome && thisBiome != BIOMES.NONE && otherBiome != BIOMES.NONE) {
+                        if (thisBiome == BIOMES.SNOW) {
+                            createEdge = true;
+                        } else if (thisBiome == BIOMES.GRASSLAND && otherBiome == BIOMES.DESERT) {
+                            createEdge = true;
+                        }
+                    } else {
+                        // summary += $"\n\tChecking {currNeighbour.ToString()}. Ground type is {groundType.ToString()}. Neighbour Ground Type is {currNeighbour.groundType.ToString()}";
+                        if (this.groundType != Ground_Type.Cave && groundType != Ground_Type.Structure_Stone && currNeighbour.groundType == Ground_Type.Cave) {
+                            createEdge = true;
+                        } else if (currNeighbour.tileType == Tile_Type.Wall || currNeighbour.tileType == Tile_Type.Structure_Entrance) {
+                            createEdge = false;
+                        } else if (groundType != Ground_Type.Water && currNeighbour.groundType == Ground_Type.Water) {
+                            createEdge = true;
+                        } else if (groundType == Ground_Type.Corrupted && currNeighbour.groundType != Ground_Type.Bone) {
+                            createEdge = true;
+                        } else if (groundType == Ground_Type.Demon_Stone && currNeighbour.groundType != Ground_Type.Corrupted) {
+                            createEdge = true;
+                        } else if (groundType == Ground_Type.Bone) {
+                            createEdge = true;
+                        } else if (currNeighbour.groundType == Ground_Type.Bone) {
+                            createEdge = false;
+                        } else if (groundType != Ground_Type.Corrupted && currNeighbour.groundType == Ground_Type.Corrupted) {
+                            createEdge = false;
+                        } else if (groundType == Ground_Type.Snow && currNeighbour.groundType != Ground_Type.Snow) {
+                            createEdge = true;
+                        } else if (groundType == Ground_Type.Cobble && currNeighbour.groundType != Ground_Type.Snow) {
+                            createEdge = true;
+                        } else if ((groundType == Ground_Type.Tundra || groundType == Ground_Type.Snow_Dirt) &&
+                                   (currNeighbour.groundType == Ground_Type.Stone || currNeighbour.groundType == Ground_Type.Soil)) {
+                            createEdge = true;
+                        } else if (groundType == Ground_Type.Grass && currNeighbour.groundType == Ground_Type.Soil) {
+                            createEdge = true;
+                        } else if (groundType == Ground_Type.Soil && currNeighbour.groundType == Ground_Type.Stone) {
+                            createEdge = true;
+                        } else if (groundType == Ground_Type.Stone && currNeighbour.groundType == Ground_Type.Grass) {
+                            createEdge = true;
+                        } else if (groundType == Ground_Type.Desert_Grass &&
+                                   (currNeighbour.groundType == Ground_Type.Desert_Stone || currNeighbour.groundType == Ground_Type.Sand)) {
+                            createEdge = true;
+                        } else if (groundType == Ground_Type.Sand && currNeighbour.groundType == Ground_Type.Desert_Stone) {
+                            createEdge = true;
+                        } else if (groundType == Ground_Type.Sand && currNeighbour.groundType == Ground_Type.Stone) {
+                            createEdge = true;
+                        } else if ((groundType != Ground_Type.Ruined_Stone && groundType != Ground_Type.Structure_Stone) 
+                                   && currNeighbour.groundType == Ground_Type.Ruined_Stone) {
+                            createEdge = true;
+                        }
                     }
+                    
                     // summary += $"\n\tWill create edge? {createEdge.ToString()}. At {keyValuePair.Key.ToString()}";
                     Tilemap mapToUse;
                     switch (keyValuePair.Key) {
@@ -372,6 +383,23 @@ namespace Inner_Maps {
                     }
                 }
                 // Debug.Log(summary);    
+            }
+        }
+        private BIOMES GetBiomeOfGroundType(Ground_Type groundType) {
+            switch (groundType) {
+                case Ground_Type.Sand:
+                case Ground_Type.Desert_Grass:
+                case Ground_Type.Desert_Stone:
+                    return BIOMES.DESERT;
+                case Ground_Type.Snow:
+                case Ground_Type.Snow_Dirt:
+                case Ground_Type.Tundra:
+                    return BIOMES.SNOW;
+                case Ground_Type.Soil:
+                case Ground_Type.Grass:
+                    return BIOMES.GRASSLAND;
+                default:
+                    return BIOMES.NONE;
             }
         }
         #endregion
