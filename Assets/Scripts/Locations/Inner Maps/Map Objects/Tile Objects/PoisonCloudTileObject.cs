@@ -20,12 +20,14 @@ public sealed class PoisonCloudTileObject : MovingTileObject {
         SetDurationInTicks(GameManager.Instance.GetTicksBasedOnHour(2));
         maxSize = 6;
     }
+
+    #region Overrides
     protected override void CreateMapObjectVisual() {
         base.CreateMapObjectVisual();
         _poisonCloudVisual = mapVisual as PoisonCloudMapObjectVisual;
     }
     protected override bool TryGetGridTileLocation(out LocationGridTile tile) {
-        if (_poisonCloudVisual != null) {
+        if (_poisonCloudVisual != null && _hasExpired == false) {
             if (_poisonCloudVisual.isSpawned) {
                 tile = _poisonCloudVisual.gridTileLocation;
                 return true;
@@ -40,6 +42,8 @@ public sealed class PoisonCloudTileObject : MovingTileObject {
     public override bool CanBeAffectedByElementalStatus(string traitName) {
         return false;
     }
+    #endregion
+    
     public void SetStacks(int stacks) {
         this.stacks = stacks;
         UpdateSizeBasedOnPoisonedStacks();
@@ -72,4 +76,8 @@ public sealed class PoisonCloudTileObject : MovingTileObject {
         }
     }
     #endregion
+
+    public void Explode() {
+        _poisonCloudVisual.Explode();
+    }
 }

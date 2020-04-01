@@ -14,7 +14,7 @@ public class FireBallMapObjectVisual : MovingMapObjectVisual<TileObject> {
     private string _expiryKey;
     private Tweener _movement;
     private List<ITraitable> _objsInRange;
-    
+    private FireBallTileObject owner;
     
     #region Abstract Members Implementation
     public override void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) { }
@@ -40,6 +40,7 @@ public class FireBallMapObjectVisual : MovingMapObjectVisual<TileObject> {
     public override void Initialize(TileObject obj) {
         base.Initialize(obj);
         _objsInRange = new List<ITraitable>();
+        owner = obj as FireBallTileObject;
     }
     public override void PlaceObjectAt(LocationGridTile tile) {
         base.PlaceObjectAt(tile);
@@ -166,6 +167,7 @@ public class FireBallMapObjectVisual : MovingMapObjectVisual<TileObject> {
         Messenger.RemoveListener(Signals.TICK_ENDED, PerTick);
         Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
         Messenger.RemoveListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
+        owner.Expire();
         StartCoroutine(DestroyCoroutine());
     }
     private IEnumerator DestroyCoroutine() {

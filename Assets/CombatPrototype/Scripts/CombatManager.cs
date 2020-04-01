@@ -132,31 +132,29 @@ public class CombatManager : MonoBehaviour {
         if (damagePercentage > 1) {
             damagePercentage = 1;
         }
+        BurningSource bs = null;
         for (int i = 0; i < affectedTiles.Count; i++) {
             LocationGridTile tile = affectedTiles[i];
-            traitables.AddRange(tile.GetTraitablesOnTile());
+            // traitables.AddRange(tile.GetTraitablesOnTile());
+            tile.PerformActionOnTraitables((traitable) => PoisonExplosionEffect(traitable, damagePercentage, ref bs));
         }
-        // flammables = flammables.Where(x => !x.traitContainer.HasTrait("Burning", "Burnt", "Wet", "Fireproof")).ToList();
-        BurningSource bs = null;
-        for (int i = 0; i < traitables.Count; i++) {
-            ITraitable traitable = traitables[i];
-            int damage = Mathf.RoundToInt(traitable.maxHP * damagePercentage);
-            traitable.AdjustHP(-damage, ELEMENTAL_TYPE.Fire, showHPBar: true);
-            Burning burningTrait = traitable.traitContainer.GetNormalTrait<Burning>("Burning");
-            if (burningTrait != null && burningTrait.sourceOfBurning == null) {
-                if (bs == null) {
-                    bs = new BurningSource(traitable.gridTileLocation.parentMap.region);
-                }
-                burningTrait.SetSourceOfBurning(bs, traitable);
-                Assert.IsNotNull(burningTrait.sourceOfBurning, $"Burning source of {traitable.ToString()} was set to null");
-            }
-        }
-
         if(!(target is GenericTileObject)) {
             Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Poison Explosion", "effect");
             log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
             log.AddLogToInvolvedObjects();
+        }
+    }
+    private void PoisonExplosionEffect(ITraitable traitable, float damagePercentage, ref BurningSource bs) {
+        int damage = Mathf.RoundToInt(traitable.maxHP * damagePercentage);
+        traitable.AdjustHP(-damage, ELEMENTAL_TYPE.Fire, showHPBar: true);
+        Burning burningTrait = traitable.traitContainer.GetNormalTrait<Burning>("Burning");
+        if (burningTrait != null && burningTrait.sourceOfBurning == null) {
+            if (bs == null) {
+                bs = new BurningSource(traitable.gridTileLocation.parentMap.region);
+            }
+            burningTrait.SetSourceOfBurning(bs, traitable);
+            Assert.IsNotNull(burningTrait.sourceOfBurning, $"Burning source of {traitable.ToString()} was set to null");
         }
     }
     public void FrozenExplosion(IPointOfInterest target, LocationGridTile targetTile, int stacks) {
@@ -178,21 +176,8 @@ public class CombatManager : MonoBehaviour {
         }
         for (int i = 0; i < affectedTiles.Count; i++) {
             LocationGridTile tile = affectedTiles[i];
-            traitables.AddRange(tile.GetTraitablesOnTile());
-        }
-        // flammables = flammables.Where(x => !x.traitContainer.HasTrait("Burning", "Burnt", "Wet", "Fireproof")).ToList();
-        // BurningSource bs = null;
-        for (int i = 0; i < traitables.Count; i++) {
-            ITraitable traitable = traitables[i];
-            int damage = Mathf.RoundToInt(traitable.maxHP * damagePercentage);
-            traitable.AdjustHP(-damage, ELEMENTAL_TYPE.Water, showHPBar: true);
-            // Burning burningTrait = traitable.traitContainer.GetNormalTrait<Burning>();
-            // if (burningTrait != null && burningTrait.sourceOfBurning == null) {
-            //     if (bs == null) {
-            //         bs = new BurningSource(InnerMapManager.Instance.currentlyShowingLocation);
-            //     }
-            //     burningTrait.SetSourceOfBurning(bs, traitable);
-            // }
+            // traitables.AddRange(tile.GetTraitablesOnTile());
+            tile.PerformActionOnTraitables((traitable) => FrozenExplosionEffect(traitable, damagePercentage));
         }
 
         if (!(target is GenericTileObject)) {
@@ -202,32 +187,43 @@ public class CombatManager : MonoBehaviour {
             log.AddLogToInvolvedObjects();
         }
     }
+    private void FrozenExplosionEffect(ITraitable traitable, float damagePercentage) {
+        int damage = Mathf.RoundToInt(traitable.maxHP * damagePercentage);
+        traitable.AdjustHP(-damage, ELEMENTAL_TYPE.Water, showHPBar: true);
+    }
     public void ChainElectricDamage(ITraitable traitable, int damage) {
         List<ITraitable> traitables = new List<ITraitable>();
         if (traitable.gridTileLocation != null) {
             List<LocationGridTile> tiles = traitable.gridTileLocation.GetTilesInRadius(1, includeTilesInDifferentStructure: true);
             traitables.Clear();
+            List<LocationGridTile> affectedTiles = new List<LocationGridTile>();
             for (int i = 0; i < tiles.Count; i++) {
-                if (tiles[i].genericTileObject.traitContainer.HasTrait("Wet")) {
-                    traitables.AddRange(tiles[i].GetTraitablesOnTile());
+                LocationGridTile tile = tiles[i];
+                if (tile.genericTileObject.traitContainer.HasTrait("Wet")) {
+                    // traitables.AddRange(tile.GetTraitablesOnTile());
+                    affectedTiles.Add(tile);
                 }
             }
-            if (traitables.Count > 0) {
-                StartCoroutine(ChainElectricDamageCoroutine(traitables, damage));
+            if (affectedTiles.Count > 0) {
+                StartCoroutine(ChainElectricDamageCoroutine(affectedTiles, damage));
             }
         }
     }
-    private IEnumerator ChainElectricDamageCoroutine(List<ITraitable> traitables, int damage) {
-        for (int i = 0; i < traitables.Count; i++) {
+    private IEnumerator ChainElectricDamageCoroutine(List<LocationGridTile> tiles, int damage) {
+        for (int i = 0; i < tiles.Count; i++) {
             while (GameManager.Instance.isPaused) {
                 //Pause coroutine while game is paused
                 //Might be performance heavy, needs testing
                 yield return null;
             }
             yield return new WaitForSeconds(0.1f);
-            if (!traitables[i].traitContainer.HasTrait("Zapped")) {
-                traitables[i].AdjustHP(damage, ELEMENTAL_TYPE.Electric, true, showHPBar: true);
-            }
+            LocationGridTile tile = tiles[i];
+            tile.PerformActionOnTraitables((traitable) => ChainElectricEffect(traitable, damage));
+        }
+    }
+    private void ChainElectricEffect(ITraitable traitable, int damage) {
+        if (!traitable.traitContainer.HasTrait("Zapped")) {
+            traitable.AdjustHP(damage, ELEMENTAL_TYPE.Electric, true, showHPBar: true);
         }
     }
     #endregion
@@ -278,6 +274,8 @@ public class CombatManager : MonoBehaviour {
     private void FireElementProcess(ITraitable target) {
         if (target is WinterRose winterRose) {
             winterRose.WinterRoseEffect();
+        } else if (target is PoisonCloudTileObject poisonCloudTileObject) {
+            poisonCloudTileObject.Explode();
         }
     }
     private void WaterElementProcess(ITraitable target) {

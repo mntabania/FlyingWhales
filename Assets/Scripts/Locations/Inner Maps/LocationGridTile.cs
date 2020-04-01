@@ -747,31 +747,6 @@ namespace Inner_Maps {
         public void SetDefaultTileColor(Color color) {
             defaultTileColor = color;
         }
-        public List<ITraitable> GetTraitablesOnTileWithTrait(string requiredTrait) {
-            List<ITraitable> traitables = new List<ITraitable>();
-            if (genericTileObject.traitContainer.HasTrait(requiredTrait)) {
-                traitables.Add(genericTileObject);
-            }
-            for (int i = 0; i < walls.Count; i++) {
-                StructureWallObject structureWallObject = walls[i];
-                if (structureWallObject.traitContainer.HasTrait(requiredTrait)) {
-                    traitables.Add(structureWallObject);
-                }
-            }
-            if (objHere != null && objHere.traitContainer.HasTrait(requiredTrait)) {
-                if ((objHere is TileObject && (objHere as TileObject).mapObjectState == MAP_OBJECT_STATE.BUILT)) { //|| (objHere is SpecialToken && (objHere as SpecialToken).mapObjectState == MAP_OBJECT_STATE.BUILT)
-                    traitables.Add(objHere);
-                }
-            }
-        
-            for (int i = 0; i < charactersHere.Count; i++) {
-                Character character = charactersHere[i];
-                if (character.traitContainer.HasTrait(requiredTrait)) {
-                    traitables.Add(character);
-                }
-            }
-            return traitables;
-        }
         public List<ITraitable> GetTraitablesOnTile() {
             List<ITraitable> traitables = new List<ITraitable>();
             traitables.Add(genericTileObject);
@@ -803,6 +778,7 @@ namespace Inner_Maps {
                 Character character = charactersHere[i];
                 callback.Invoke(character);
             }
+            Messenger.Broadcast(Signals.ACTION_PERFORMED_ON_TILE_TRAITABLES, this, callback);
         }
         public List<IPointOfInterest> GetPOIsOnTile() {
             List<IPointOfInterest> pois = new List<IPointOfInterest>();

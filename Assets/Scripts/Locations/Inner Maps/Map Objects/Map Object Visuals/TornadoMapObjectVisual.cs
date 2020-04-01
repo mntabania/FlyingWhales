@@ -142,6 +142,7 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
     public void Expire() {
         StopTornadoParticle();
         SchedulingManager.Instance.RemoveSpecificEntry(_expiryKey);
+        _tornado.Expire();
         GameManager.Instance.StartCoroutine(ExpireCoroutine());
     }
     private IEnumerator ExpireCoroutine() {
