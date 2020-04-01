@@ -85,7 +85,7 @@ public class CharacterState {
         //    //job.assignedCharacter.jobQueue.RemoveJobInQueue(job);
         //    job.ForceCancelJob();
         //}
-        Messenger.Broadcast(Signals.CHARACTER_ENDED_STATE, stateComponent.character, this);
+        // Messenger.Broadcast(Signals.CHARACTER_ENDED_STATE, stateComponent.character, this);
     }
     //Only call this base function if state has duration
     public virtual void PerTickInState() {
@@ -122,6 +122,7 @@ public class CharacterState {
     //This is called on ExitCurrentState function in CharacterStateComponent after all exit processing is finished
     public virtual void AfterExitingState() {
         stateComponent.character.marker.UpdateActionIcon();
+        Messenger.Broadcast(Signals.CHARACTER_ENDED_STATE, stateComponent.character, this);
     }
     //public virtual bool CanResumeState() {
     //    return true;

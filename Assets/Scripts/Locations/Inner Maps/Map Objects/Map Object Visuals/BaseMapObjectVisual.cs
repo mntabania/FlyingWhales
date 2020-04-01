@@ -14,6 +14,7 @@ using UnityEngine.UI;
 public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, IPointerExitHandler {
     [SerializeField] protected SpriteRenderer objectVisual;
     [SerializeField] protected SpriteRenderer hoverObject;
+    [SerializeField] protected Collider2D clickCollider; //collider responsible for receiving pointer events
 
     [Header("HP")]
     public GameObject hpBarGO;
@@ -32,6 +33,13 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
     public ISelectable selectable { get; protected set; }
     public SpriteRenderer objectSpriteRenderer => objectVisual;
     public BaseVisionTrigger visionTrigger { get; protected set; }
+
+    #region Initialization
+    protected void Initialize(ISelectable selectable) {
+        this.selectable = selectable;
+        UpdateClickableColliderState();
+    }
+    #endregion
     
     #region Visuals
     public void SetRotation(float rotation) {
@@ -127,6 +135,11 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
     }
     public void ExecuteHoverExitAction() {
         onHoverExitAction?.Invoke();
+    }
+    private void UpdateClickableColliderState() {
+        if (clickCollider != null) {
+            clickCollider.enabled = selectable.CanBeSelected();    
+        }
     }
     #endregion
 

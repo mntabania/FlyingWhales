@@ -53,7 +53,9 @@ public class MonsterGeneration : MapGenerationComponent {
 		for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
 			Region region = GridMap.Instance.allRegions[i];
 			List<LocationGridTile> locationChoices = new List<LocationGridTile>();
-			region.tiles.Where(h => h.landmarkOnTile == null && (h.elevationType == ELEVATION.PLAIN || h.elevationType == ELEVATION.TREES)).ToList().
+			region.tiles.Where(h => h.landmarkOnTile == null && 
+                (h.elevationType == ELEVATION.PLAIN || h.elevationType == ELEVATION.TREES) && 
+                h.HasOwnedSettlementNeighbour() == false).ToList().
 				ForEach(h => locationChoices.AddRange(h.locationGridTiles));
 			if (locationChoices.Count == 0) {
 				Debug.LogWarning($"Could not find valid tiles to place monsters at {region.name}");

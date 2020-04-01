@@ -14,6 +14,7 @@ namespace Archetype {
             //        , PlayerDB.Learn_Spell_Action, PlayerDB.Activate_Artifact_Action
             //};
             monsters = new List<RaceClass> { new RaceClass(RACE.SKELETON, "Archer"), new RaceClass(RACE.SKELETON, "Marauder") };
+            demonicStructuresSkills = new List<SPELL_TYPE>();
             //demonicStructures = new List<LANDMARK_TYPE>() { LANDMARK_TYPE.THE_PROFANE, LANDMARK_TYPE.THE_KENNEL, LANDMARK_TYPE.TORTURE_CHAMBER, LANDMARK_TYPE.DEMONIC_PRISON, LANDMARK_TYPE.THE_SPIRE, LANDMARK_TYPE.THE_CRYPT };
             minionClasses = new List<string>() { "Pride", "Sloth", "Lust", "Gluttony" };
             afflictions = new List<SPELL_TYPE>() { SPELL_TYPE.PESTILENCE, SPELL_TYPE.LYCANTHROPY, SPELL_TYPE.VAMPIRISM, SPELL_TYPE.ZOMBIE_VIRUS, SPELL_TYPE.CURSED_OBJECT, /*Befoul, Imp Seed*/ };

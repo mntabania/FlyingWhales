@@ -80,6 +80,8 @@ public class CombatState : CharacterState {
         }
     }
     protected override void StartState() {
+        stateComponent.character.logComponent.PrintLogIfActive(
+            $"Starting combat state for {stateComponent.character.name}");
         //stateComponent.character.DecreaseCanWitness();
         stateComponent.character.marker.ShowHPBar(stateComponent.character);
         stateComponent.character.marker.SetAnimationBool("InCombat", true);
@@ -96,8 +98,6 @@ public class CombatState : CharacterState {
         //         stateComponent.character.ChangeFactionTo(PlayerManager.Instance.player.playerFaction);
         //     }
         // }
-        stateComponent.character.logComponent.PrintLogIfActive(
-            $"Starting combat state for {stateComponent.character.name}");
         // stateComponent.character.marker.StartCoroutine(CheckIfCurrentHostileIsInRange());
     }
     protected override void EndState() {
@@ -163,29 +163,6 @@ public class CombatState : CharacterState {
     }
     #endregion
 
-    private Region GetCriminalNewHomeLocation() {
-        List<Region> potentialRegions = new List<Region>();
-        for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
-            Region region = GridMap.Instance.allRegions[i];
-            if (stateComponent.character.homeRegion != region && !region.coreTile.isCorrupted) {
-                potentialRegions.Add(region);
-            }
-        }
-
-        //TODO:
-        // if(potentialRegions.Count > 0) {
-        //     return potentialRegions[UnityEngine.Random.Range(0, potentialRegions.Count)];
-        // } else {
-        //     for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
-        //         Region region = GridMap.Instance.allRegions[i];
-        //         if (stateComponent.character.homeRegion != region && region != PlayerManager.Instance.player.playerNpcSettlement.region) {
-        //             potentialRegions.Add(region);
-        //         }
-        //     }
-        //     return potentialRegions[UnityEngine.Random.Range(0, potentialRegions.Count)];
-        // }
-        return null;
-    }
     /// <summary>
     /// Function that determines what a character should do in a certain point in time.
     /// Can be triggered by broadcasting signal <see cref="Signals.DETERMINE_COMBAT_REACTION"/>
@@ -370,6 +347,8 @@ public class CombatState : CharacterState {
         isAttacking = state;
         if (isAttacking) {
             actionIconString = GoapActionStateDB.Hostile_Icon;
+            thoughtBubbleLog = new Log(GameManager.Instance.Today(), "CharacterState", "Combat State", "thought_bubble");
+            thoughtBubbleLog.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         } else {
             actionIconString = GoapActionStateDB.Flee_Icon;
         }
@@ -525,6 +504,7 @@ public class CombatState : CharacterState {
                 LOG_IDENTIFIER.TARGET_CHARACTER);
             fleeLog.AddToFillers(null, avoidReason, LOG_IDENTIFIER.STRING_1);
             stateComponent.character.logComponent.RegisterLog(fleeLog, null, false);
+            thoughtBubbleLog = fleeLog;
         }
     }
 

@@ -335,6 +335,15 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         }
         return false;
     }
+    public bool HasOwnedSettlementNeighbour() {
+        for (int i = 0; i < AllNeighbours.Count; i++) {
+            HexTile neighbour = AllNeighbours[i];
+            if (neighbour.settlementOnTile?.owner != null) {
+                return true;
+            }
+        }
+        return false;
+    }
     public string GetDisplayName() {
         if (settlementOnTile != null) {
             return settlementOnTile.name;

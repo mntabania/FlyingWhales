@@ -5,7 +5,7 @@ public abstract class MapObjectVisual<T> : BaseMapObjectVisual where T : IDamage
     protected T obj { get; private set; }
     
     public virtual void Initialize(T obj) {
-        selectable = obj as ISelectable;
+        base.Initialize(obj as ISelectable);
         this.obj = obj;
         onHoverOverAction = () => OnPointerEnter(obj);
         onHoverExitAction = () => OnPointerExit(obj);

@@ -1518,7 +1518,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         Profiler.BeginSample($"{character.name} Raycast result loop");
         for (int i = 0; i < size; i++) {
             RaycastHit2D hit = linOfSightHitObjects[i];
-            if(hit.collider.gameObject.layer == GameUtilities.Unpassable_Layer_Mask) {
+            if(hit.collider.gameObject.layer == LayerMask.NameToLayer("Unpassable")) {
                 return false;
             } else if (hit.transform.IsChildOf(target.mapObjectVisual.transform)) {
                 return true;
