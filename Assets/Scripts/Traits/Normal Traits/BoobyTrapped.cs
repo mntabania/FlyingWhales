@@ -45,13 +45,17 @@ namespace Traits {
         public bool OnPerformGoapAction(ActualGoapNode node, ref bool willStillContinueAction) {
             if (node.action.actionCategory == ACTION_CATEGORY.DIRECT || node.action.actionCategory == ACTION_CATEGORY.CONSUME) {
                 if (node.poiTarget.gridTileLocation != null) {
+                    Log log = new Log(GameManager.Instance.Today(), "Trait", this.name, "trap_activated");
+                    log.AddToFillers(node.actor, node.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    log.AddToFillers(node.poiTarget, node.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    log.AddLogToInvolvedObjects();
                     List<LocationGridTile> tiles = node.poiTarget.gridTileLocation.GetTilesInRadius(1, includeCenterTile: true, includeTilesInDifferentStructure: true);
                     for (int i = 0; i < tiles.Count; i++) {
                         LocationGridTile currTile = tiles[i];
                         List<IPointOfInterest> pois = currTile.GetPOIsOnTile();
                         for (int j = 0; j < pois.Count; j++) {
                             IPointOfInterest currPOI = pois[j];
-                            currPOI.AdjustHP(-10, _element, true);
+                            currPOI.AdjustHP(-500, _element, true);
                         }
                     }
                     willStillContinueAction = false;

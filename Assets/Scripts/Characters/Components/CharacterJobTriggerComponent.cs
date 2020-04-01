@@ -685,7 +685,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         _owner.jobQueue.AddJobInQueue(job);
     }
     public void CreatePickUpJob(TileObject target) {
-        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.PICK_UP, target, _owner);
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TAKE_ITEM, INTERACTION_TYPE.PICK_UP, target, _owner);
         _owner.jobQueue.AddJobInQueue(job);
     }
     public void CreateDestroyResourceAmountJob(ResourcePile target, int amount) {

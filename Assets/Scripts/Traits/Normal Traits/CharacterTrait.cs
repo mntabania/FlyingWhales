@@ -52,7 +52,7 @@ namespace Traits {
             if (targetPOI is TileObject item) {
                 if (!characterThatWillDoJob.traitContainer.HasTrait("Beast") /*characterThatWillDoJob.role.roleType != CHARACTER_ROLE.BEAST*/) {
                     if (item.CanBePickedUpNormallyUponVisionBy(characterThatWillDoJob)
-                        && !characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.PICK_UP)) {
+                        && !characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.TAKE_ITEM, INTERACTION_TYPE.PICK_UP)) {
                         characterThatWillDoJob.jobComponent.CreatePickUpJob(item);
                         return true;
                     }
@@ -171,31 +171,6 @@ namespace Traits {
                 //    }
                 //}
             }
-        }
-
-        private bool RandomizeBetweenShockAndCryJob(Character characterThatWillDoJob) {
-            if (UnityEngine.Random.Range(0, 2) == 0) {
-                return CreatePrioritizedShockJob(characterThatWillDoJob);
-            } else {
-                return CreatePrioritizedCryJob(characterThatWillDoJob);
-            }
-        }
-        private bool CreatePrioritizedShockJob(Character characterThatWillDoJob) {
-            //if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.SHOCK)) {
-            //    GoapPlanJob shockJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.SHOCK, characterThatWillDoJob, characterThatWillDoJob);
-            //    characterThatWillDoJob.jobQueue.AddJobInQueue(shockJob);
-            //    return true;
-            //}
-            //return false;
-            return characterThatWillDoJob.interruptComponent.TriggerInterrupt(INTERRUPT.Shocked, characterThatWillDoJob);
-        }
-        private bool CreatePrioritizedCryJob(Character characterThatWillDoJob) {
-            if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.CRY)) {
-                GoapPlanJob cryJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.CRY, characterThatWillDoJob, characterThatWillDoJob);
-                characterThatWillDoJob.jobQueue.AddJobInQueue(cryJob);
-                return true;
-            }
-            return false;
         }
         private bool CreateLaughAtJob(Character characterThatWillDoJob, Character target) {
             //if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.LAUGH_AT)) {
