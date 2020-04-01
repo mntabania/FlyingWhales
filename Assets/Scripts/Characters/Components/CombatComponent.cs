@@ -76,41 +76,63 @@ public class CombatComponent {
                         Fight(target, isLethal);
                     } else {
                         debugLog += "\n-Character hp is lower or equal than target";
-                        int fightChance = 25;
-                        for (int i = 0; i < owner.marker.inVisionCharacters.Count; i++) {
-                            if (owner.marker.inVisionCharacters[i].combatComponent.hostilesInRange.Contains(target)) {
-                                debugLog += "\n-Character has another character in vision who has the same target";
-                                fightChance = 75;
-                                break;
-                            }
-                        }
-                        debugLog += $"\n-Fight chance: {fightChance}";
-                        int roll = UnityEngine.Random.Range(0, 100);
-                        debugLog += $"\n-Roll: {roll}";
-                        if (roll < fightChance) {
-                            debugLog += "\n-FIGHT";
-                            owner.logComponent.PrintLogIfActive(debugLog);
+                        if (CombatManager.Instance.IsImmuneToElement(targetCharacter, elementalDamage.type)) {
+                            debugLog += "\n-Target is immune to character elemental damage";
+                            Flight(target, "got scared");
+                        } else if (CombatManager.Instance.IsImmuneToElement(owner, targetCharacter.combatComponent.elementalDamage.type)) {
+                            debugLog += "\n-Character is immune to target elemental damage";
                             Fight(target, isLethal);
                         } else {
-                            debugLog += "\n-FLIGHT";
-                            owner.logComponent.PrintLogIfActive(debugLog);
-                            Flight(target, "got scared");
+                            if (owner.currentHP >= Mathf.CeilToInt(owner.maxHP * 0.5f)) {
+                                debugLog += "\n-Character's hp is greater than or equal to 50% of its max hp";
+                                Fight(target, isLethal);
+                            } else {
+                                int fightChance = 25;
+                                for (int i = 0; i < owner.marker.inVisionCharacters.Count; i++) {
+                                    if (owner.marker.inVisionCharacters[i].combatComponent.hostilesInRange.Contains(target)) {
+                                        debugLog += "\n-Character has another character in vision who has the same target";
+                                        fightChance = 75;
+                                        break;
+                                    }
+                                }
+                                debugLog += $"\n-Fight chance: {fightChance}";
+                                int roll = UnityEngine.Random.Range(0, 100);
+                                debugLog += $"\n-Roll: {roll}";
+                                if (roll < fightChance) {
+                                    debugLog += "\n-FIGHT";
+                                    owner.logComponent.PrintLogIfActive(debugLog);
+                                    Fight(target, isLethal);
+                                } else {
+                                    debugLog += "\n-FLIGHT";
+                                    owner.logComponent.PrintLogIfActive(debugLog);
+                                    Flight(target, "got scared");
+                                }
+                            }
                         }
                     }
                 }
             }
-        } else {
+        } else if (target is TileObject tileObject) {
             debugLog += "\n-Target is object";
             if (owner.traitContainer.HasTrait("Coward")) {
                 debugLog += "\n-Character is coward";
                 debugLog += "\n-FLIGHT";
                 owner.logComponent.PrintLogIfActive(debugLog);
                 Flight(target, "character is a coward");
-            } else {
-                debugLog += "\n-Character is not coward";
-                debugLog += "\n-FIGHT";
+            } else if (tileObject.traitContainer.HasTrait("Dangerous")) {
+                debugLog += "\n-Object is dangerous";
+                if (string.IsNullOrEmpty(tileObject.neutralizer) == false && 
+                    owner.traitContainer.HasTrait(tileObject.neutralizer)) {
+                    debugLog += $"\n-Character has neutralizer trait {tileObject.neutralizer}";    
+                    Fight(target, isLethal);
+                } else {
+                    Flight(target, "got scared");
+                }
                 owner.logComponent.PrintLogIfActive(debugLog);
+            } else {
+                debugLog += "\n-Object is not dangerous";
                 Fight(target, isLethal);
+                owner.logComponent.PrintLogIfActive(debugLog);
             }
         }
     }

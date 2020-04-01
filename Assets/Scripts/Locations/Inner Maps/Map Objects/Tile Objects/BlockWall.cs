@@ -33,18 +33,14 @@ public class BlockWall : TileObject {
         bool destroyTileSlots = true) {
         removedFrom.parentMap.structureTilemap.SetTile(removedFrom.localPlace, null);
         removedFrom.SetTileType(LocationGridTile.Tile_Type.Empty);
-        DestroyExistingGUS();
+        mapVisual.DestroyExistingGUS();
         base.OnRemoveTileObject(removedBy, removedFrom, removeTraits, destroyTileSlots);
     }
     protected override void OnPlaceTileObjectAtTile(LocationGridTile tile) {
         tile.parentMap.structureTilemap.SetTile(tile.localPlace, InnerMapManager.Instance.assetManager.GetWallAssetBasedOnWallType(wallType));
         tile.SetTileType(LocationGridTile.Tile_Type.Wall);
-        if (wallType == WALL_TYPE.Flesh) {
-            InitializeGUS(Vector2.zero, new Vector2(0.5f, 0.5f));
-        } else {
-            InitializeGUS(Vector2.zero, Vector2.one);    
-        }
-        
+        mapVisual.InitializeGUS(Vector2.zero, wallType == WALL_TYPE.Flesh ? new Vector2(0.5f, 0.5f) : Vector2.one);
+
         base.OnPlaceTileObjectAtTile(tile);
     }
     public override bool CollectsLogs() {

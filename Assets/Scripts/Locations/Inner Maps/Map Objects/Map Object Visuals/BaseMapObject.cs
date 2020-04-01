@@ -1,6 +1,8 @@
 ﻿using UnityEngine.Assertions;
 using Traits;
 using System.Collections.Generic;
+using Inner_Maps;
+using UnityEngine;
 
 /// <summary>
 /// Base class for anything in the npcSettlement map that can be damaged and has a physical object to be shown.
@@ -12,7 +14,7 @@ public abstract class BaseMapObject {
     /// The last manipulator that interacted with this object.
     /// </summary>
     public IObjectManipulator lastManipulatedBy { get; private set; }
-    public abstract BaseMapObjectVisual baseMapObjectVisual { get; } 
+    public abstract BaseMapObjectVisual baseMapObjectVisual { get; }
 
     #region Object State
     public void SetMapObjectState(MAP_OBJECT_STATE state) {
@@ -73,6 +75,5 @@ public abstract class BaseMapObject {
         return data;
     }
     #endregion
-
     
 }

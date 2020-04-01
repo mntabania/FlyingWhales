@@ -98,6 +98,43 @@ public class CombatManager : MonoBehaviour {
             }
         }
     }
+    public bool IsImmuneToElement(ITraitable target, ELEMENTAL_TYPE elementalType) {
+        if(target is VaporTileObject && elementalType != ELEMENTAL_TYPE.Ice) {
+            //Vapors are immune to all other damage types except Ice
+            return true;
+        }
+        if(elementalType != ELEMENTAL_TYPE.Fire) {
+            if(target is WinterRose) {
+                //Immunity - less 85% damage
+                return true;
+            }
+        }
+        if (elementalType != ELEMENTAL_TYPE.Water) {
+            if (target is DesertRose) {
+                //Immunity - less 85% damage
+                return true;
+            }
+        }
+        if (elementalType == ELEMENTAL_TYPE.Fire) {
+            if (target.traitContainer.HasTrait("Fire Prone")) {
+                return false;
+            } else if (target.traitContainer.HasTrait("Fireproof")) {
+                //Immunity - less 85% damage
+                return true;
+            }
+        } else if (elementalType == ELEMENTAL_TYPE.Electric) {
+            if (target.traitContainer.HasTrait("Electric")) {
+                //Immunity - less 85% damage
+                return true;
+            }
+        } else if (elementalType == ELEMENTAL_TYPE.Ice) {
+            if (target.traitContainer.HasTrait("Cold Blooded")) {
+                //Immunity - less 85% damage
+                return true;
+            }
+        }
+        return false;
+    }
     public void CreateHitEffectAt(IDamageable poi, ELEMENTAL_TYPE elementalType) {
         ElementalDamageData elementalData = ScriptableObjectsManager.Instance.GetElementalDamageData(elementalType);
         if (poi.gridTileLocation == null) {

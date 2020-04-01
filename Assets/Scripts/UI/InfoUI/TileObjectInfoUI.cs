@@ -108,7 +108,8 @@ public class TileObjectInfoUI : InfoUIBase {
     }
     private void UpdateTabs() {
         //Do not show Characters tab is Tile Object cannot have users/characters
-        if(activeTileObject.tileObjectType == TILE_OBJECT_TYPE.BED || activeTileObject.tileObjectType == TILE_OBJECT_TYPE.TABLE) {
+        // if(activeTileObject.tileObjectType == TILE_OBJECT_TYPE.BED || activeTileObject.tileObjectType == TILE_OBJECT_TYPE.TABLE || activeTileObject.tileObjectType == TILE_OBJECT_TYPE.TOMBSTONE) {
+        if (activeTileObject.users != null) {
             charactersToggle.interactable = true;
             charactersToggleLbl.gameObject.SetActive(true);
         } else {
