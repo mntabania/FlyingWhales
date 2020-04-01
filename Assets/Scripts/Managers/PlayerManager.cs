@@ -18,6 +18,7 @@ public class PlayerManager : MonoBehaviour {
     public Dictionary<SPELL_TYPE, SpellData> allSpellsData;
     public Dictionary<SPELL_TYPE, PlayerAction> allPlayerActionsData;
     public Dictionary<SPELL_TYPE, SpellData> allAfflictionsData;
+    public Dictionary<SPELL_TYPE, DemonicStructurePlayerSkill> allDemonicStructureSkillsData;
     public COMBAT_ABILITY[] allCombatAbilities;
 
     [Header("Job Action Icons")]
@@ -56,6 +57,10 @@ public class PlayerManager : MonoBehaviour {
             , SPELL_TYPE.PESTILENCE, SPELL_TYPE.PSYCHOPATHY, SPELL_TYPE.COWARDICE, SPELL_TYPE.PYROPHOBIA, SPELL_TYPE.NARCOLEPSY
     };
 
+    private SPELL_TYPE[] allDemonicStructureSkills = { SPELL_TYPE.THE_GOADER, SPELL_TYPE.THE_EYE, SPELL_TYPE.THE_CRYPT,
+        SPELL_TYPE.THE_KENNEL, SPELL_TYPE.THE_SPIRE, SPELL_TYPE.TORTURE_CHAMBER, SPELL_TYPE.DEMONIC_PRISON,
+    };
+
     private bool _hasWinCheckTimer;
 
     private void Awake() {
@@ -66,6 +71,7 @@ public class PlayerManager : MonoBehaviour {
         ConstructAllSpellsData();
         ConstructAllPlayerActionsData();
         ConstructAllAfflictionsData();
+        ConstructAllDemonicStructureSkillsData();
         //Unit Selection
         Messenger.AddListener<InfoUIBase>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<InfoUIBase>(Signals.MENU_CLOSED, OnMenuClosed);
@@ -161,6 +167,18 @@ public class PlayerManager : MonoBehaviour {
                     $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(spellType.ToString())}Data";
                 allPlayerActionsData.Add(spellType, System.Activator.CreateInstance(System.Type.GetType(typeName) ??
                    throw new Exception($"Problem with creating spell data for {typeName}")) as PlayerAction);
+            }
+        }
+    }
+    private void ConstructAllDemonicStructureSkillsData() {
+        allDemonicStructureSkillsData = new Dictionary<SPELL_TYPE, DemonicStructurePlayerSkill>();
+        for (int i = 0; i < allDemonicStructureSkills.Length; i++) {
+            SPELL_TYPE spellType = allDemonicStructureSkills[i];
+            if (spellType != SPELL_TYPE.NONE) {
+                var typeName =
+                    $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(spellType.ToString())}Data";
+                allDemonicStructureSkillsData.Add(spellType, System.Activator.CreateInstance(System.Type.GetType(typeName) ??
+                   throw new Exception($"Problem with creating spell data for {typeName}")) as DemonicStructurePlayerSkill);
             }
         }
     }
@@ -282,6 +300,12 @@ public class PlayerManager : MonoBehaviour {
     public PlayerAction GetPlayerActionData(SPELL_TYPE type) {
         if (allPlayerActionsData.ContainsKey(type)) {
             return allPlayerActionsData[type];
+        }
+        return null;
+    }
+    public DemonicStructurePlayerSkill GetDemonicStructureSkillData(SPELL_TYPE type) {
+        if (allDemonicStructureSkillsData.ContainsKey(type)) {
+            return allDemonicStructureSkillsData[type];
         }
         return null;
     }

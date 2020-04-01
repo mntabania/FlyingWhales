@@ -9,7 +9,8 @@ namespace Archetype {
             minionClasses = CharacterManager.sevenDeadlySinsClassNames.ToList();
             afflictions = PlayerDB.afflictions;
             spells = PlayerDB.spells;
-            demonicStructures = new List<LANDMARK_TYPE>() { LANDMARK_TYPE.THE_EYE, LANDMARK_TYPE.THE_KENNEL, LANDMARK_TYPE.THE_CRYPT, LANDMARK_TYPE.THE_SPIRE, LANDMARK_TYPE.THE_PROFANE, LANDMARK_TYPE.THE_PIT, LANDMARK_TYPE.GOADER, LANDMARK_TYPE.TORTURE_CHAMBER, LANDMARK_TYPE.DEMONIC_PRISON };
+            demonicStructuresSkills = new List<SPELL_TYPE>() { SPELL_TYPE.THE_EYE, SPELL_TYPE.THE_KENNEL, SPELL_TYPE.THE_CRYPT, SPELL_TYPE.THE_SPIRE
+                , SPELL_TYPE.THE_GOADER, SPELL_TYPE.TORTURE_CHAMBER, SPELL_TYPE.DEMONIC_PRISON };
             monsters = new List<RaceClass>() {
                 new RaceClass(RACE.WOLF, "Ravager"), new RaceClass(RACE.GOLEM, "Golem"),
                 new RaceClass(RACE.SKELETON, "Archer"), new RaceClass(RACE.SKELETON, "Marauder"),
@@ -32,7 +33,7 @@ namespace Archetype {
         public override bool CanSummonMinion(Minion minion) {
             return true;
         }
-        public override bool CanBuildDemonicStructure(LANDMARK_TYPE type) {
+        public override bool CanBuildDemonicStructure(SPELL_TYPE type) {
             return true;
         }
         //public override bool CanCastSpell(string spellName) {

@@ -11,8 +11,8 @@ namespace Archetype {
         public List<SPELL_TYPE> spells { get; protected set; }
         public List<SPELL_TYPE> afflictions { get; protected set; }
         public List<SPELL_TYPE> playerActions { get; protected set; }
+        public List<SPELL_TYPE> demonicStructuresSkills { get; protected set; }
         public List<RaceClass> monsters { get; protected set; }
-        public List<LANDMARK_TYPE> demonicStructures { get; protected set; }
         public bool canTriggerFlaw { get; protected set; }
         public bool canRemoveTraits { get; protected set; }
 
@@ -31,8 +31,8 @@ namespace Archetype {
         public virtual bool CanSummonMinion(Minion minion) {
             return minionClasses.Contains(minion.character.characterClass.className);
         }
-        public virtual bool CanBuildDemonicStructure(LANDMARK_TYPE type) {
-            return demonicStructures.Contains(type);
+        public virtual bool CanBuildDemonicStructure(SPELL_TYPE type) {
+            return demonicStructuresSkills.Contains(type);
         }
         public virtual bool CanCastSpell(SPELL_TYPE type) {
             return spells.Contains(type);
@@ -139,16 +139,16 @@ namespace Archetype {
         #endregion
 
         #region Demonic Structures
-        public void AddDemonicStructure(LANDMARK_TYPE type) {
-            if (demonicStructures == null) { return; }
-            if (!demonicStructures.Contains(type)) {
-                demonicStructures.Add(type);
+        public void AddDemonicStructure(SPELL_TYPE type) {
+            if (demonicStructuresSkills == null) { return; }
+            if (!demonicStructuresSkills.Contains(type)) {
+                demonicStructuresSkills.Add(type);
                 Debug.Log($"Demonic structure was added to player {type.ToString()}");
             }
         }
-        public bool RemoveDemonicStructure(LANDMARK_TYPE type) {
-            if (demonicStructures == null) { return false; }
-            bool wasRemoved = demonicStructures.Remove(type);
+        public bool RemoveDemonicStructure(SPELL_TYPE type) {
+            if (demonicStructuresSkills == null) { return false; }
+            bool wasRemoved = demonicStructuresSkills.Remove(type);
             if (wasRemoved) {
                 Debug.Log($"Demonic structure was removed from player {type.ToString()}");
             }

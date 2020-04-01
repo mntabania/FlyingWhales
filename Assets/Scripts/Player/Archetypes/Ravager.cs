@@ -14,7 +14,7 @@ namespace Archetype {
             //        , PlayerDB.Learn_Spell_Action, PlayerDB.Activate_Artifact_Action
             //};
             monsters = new List<RaceClass> { new RaceClass(RACE.WOLF, "Ravager"), new RaceClass(RACE.GOLEM, "Golem") };
-            demonicStructures = new List<LANDMARK_TYPE>() { LANDMARK_TYPE.THE_PIT, LANDMARK_TYPE.THE_KENNEL, LANDMARK_TYPE.DEMONIC_PRISON, LANDMARK_TYPE.THE_SPIRE, LANDMARK_TYPE.THE_CRYPT };
+            //demonicStructures = new List<LANDMARK_TYPE>() { LANDMARK_TYPE.THE_PIT, LANDMARK_TYPE.THE_KENNEL, LANDMARK_TYPE.DEMONIC_PRISON, LANDMARK_TYPE.THE_SPIRE, LANDMARK_TYPE.THE_CRYPT };
             minionClasses = new List<string>() { "Pride", "Envy", "Greed", "Wrath" };
             afflictions = new List<SPELL_TYPE>() { }; //No intial afflictions
             spells = new List<SPELL_TYPE>() { SPELL_TYPE.TORNADO, SPELL_TYPE.POISON_CLOUD, SPELL_TYPE.METEOR, SPELL_TYPE.LIGHTNING

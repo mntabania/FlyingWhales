@@ -12,9 +12,11 @@ public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
     public override bool TryDoBehaviour(Character character, ref string log) {
         log += $"\n-{character.name} will attack demonic structure";
         if (character.behaviourComponent.attackDemonicStructureTarget.hasBeenDestroyed) {
+            character.marker.visionCollider.VoteToFilterVision();
             character.behaviourComponent.SetIsAttackingDemonicStructure(false, null);
         } else {
             if (character.gridTileLocation.structure == character.behaviourComponent.attackDemonicStructureTarget) {
+                character.marker.visionCollider.VoteToUnFilterVision();
                 log += "\n-Already in the target demonic structure";
                 LocationStructure targetStructure = character.behaviourComponent.attackDemonicStructureTarget;
                 if (targetStructure.pointsOfInterest.Count > 0) {
@@ -47,7 +49,6 @@ public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
                 log += "\n-Roam there";
                 LocationGridTile targetTile = character.behaviourComponent.attackDemonicStructureTarget.tiles[UnityEngine.Random.Range(0, character.behaviourComponent.attackDemonicStructureTarget.tiles.Count)];
                 character.jobComponent.TriggerRoamAroundTile(targetTile);
-
             }
         }
         return true;
