@@ -5,8 +5,6 @@ using UnityEngine;
 using Traits;
 
 public class HarvestPlant : GoapAction {
-    //private const int MAX_SUPPLY = 50;
-    //private const int MIN_SUPPLY = 20;
 
     public HarvestPlant() : base(INTERACTION_TYPE.HARVEST_PLANT) {
         actionIconString = GoapActionStateDB.Harvest_Icon;

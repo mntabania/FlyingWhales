@@ -13,7 +13,9 @@ public class WaterWell : TileObject {
     }
     public override void OnPlacePOI() {
         base.OnPlacePOI();
-        if(structureLocation.structureType != STRUCTURE_TYPE.POND && structureLocation.structureType != STRUCTURE_TYPE.OCEAN) {
+        if(structureLocation.structureType == STRUCTURE_TYPE.POND || structureLocation.structureType == STRUCTURE_TYPE.OCEAN) {
+            AddAdvertisedAction(INTERACTION_TYPE.FISH);
+        } else {
             AddAdvertisedAction(INTERACTION_TYPE.WELL_JUMP);
             AddAdvertisedAction(INTERACTION_TYPE.REPAIR);
         }

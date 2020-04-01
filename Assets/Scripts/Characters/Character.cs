@@ -3324,7 +3324,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void EndTickPerformJobs() {
         if (CanPerformEndTickJobs()) {
-            if (!jobQueue.jobsInQueue[0].ProcessJob()) {
+            if (jobQueue.jobsInQueue[0].ProcessJob() == false) {
                 PerformTopPriorityJob();
             }
         }
@@ -5159,12 +5159,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #endregion
 
     #region States
-    private const float Combat_Signalled_Distance = 4f;
     private void OnCharacterStartedState(Character characterThatStartedState, CharacterState state) {
         if (characterThatStartedState == this) {
             marker.UpdateActionIcon();
             if (state.characterState.IsCombatState()) {
                 ClearIgnoreHostilities();
+                marker.visionCollider.TransferAllDifferentStructureCharacters();
             }
         } else {
             //if (state.characterState == CHARACTER_STATE.COMBAT && traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting") == null && isAtHomeRegion && !ownParty.icon.isTravellingOutside) {
@@ -5202,6 +5202,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (character == this) {
             if (state is CombatState && marker) {
                 combatComponent.OnThisCharacterEndedCombatState();
+                marker.visionCollider.ReCategorizeVision();
             }
         }
     }

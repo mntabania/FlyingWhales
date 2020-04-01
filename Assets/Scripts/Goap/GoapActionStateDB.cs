@@ -424,6 +424,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.REPORT_CORRUPTED_STRUCTURE, new[]{
             new StateNameAndDuration(){ name = "Report Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
+        {INTERACTION_TYPE.FISH, new[]{
+            new StateNameAndDuration(){ name = "Fish Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
+        } },
     };
 }
 

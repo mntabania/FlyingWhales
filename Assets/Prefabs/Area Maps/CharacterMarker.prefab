@@ -347,7 +347,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4292969201924648}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &114699231813471468
 MonoBehaviour:
@@ -861,7 +861,6 @@ Transform:
   - {fileID: 4833690815638556}
   - {fileID: 4691589913767788}
   - {fileID: 4968866154022664}
-  - {fileID: 9100811082952450312}
   - {fileID: 4343832300210686}
   - {fileID: 4192762394243992}
   - {fileID: 2600264644750238789}
@@ -884,6 +883,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212044654499763036}
   hoverObject: {fileID: 212097248544747360}
+  clickCollider: {fileID: 61734465707681460}
   hpBarGO: {fileID: 1700488925132308}
   hpFill: {fileID: 114503541738452620}
   aspeedFill: {fileID: 114150021298348714}
@@ -1272,7 +1272,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4292969201924648}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &212948007245262788
 SpriteRenderer:
@@ -1355,7 +1355,7 @@ RectTransform:
   - {fileID: 224918228527882964}
   - {fileID: 224377648046493718}
   m_Father: {fileID: 4292969201924648}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -1416,6 +1416,7 @@ Transform:
   - {fileID: 4354265817075328}
   - {fileID: 4223043793697580}
   - {fileID: 7362849163022709127}
+  - {fileID: 9100811082952450312}
   m_Father: {fileID: 4833690815638556}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -6394,14 +6395,14 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4292969201924648}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &7167299176181166439
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 4292969201924648}
+    m_TransformParent: {fileID: 4518093157065078}
     m_Modifications:
     - target: {fileID: 283353901439333757, guid: a1f23643fbdff744db95ec146ba780e4,
         type: 3}

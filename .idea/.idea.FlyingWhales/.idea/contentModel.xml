@@ -587,6 +587,7 @@
           <e p="Test Scripts" t="Include">
             <e p="CollisionLayerTester.cs" t="Include" />
             <e p="DelegateTester.cs" t="Include" />
+            <e p="LineOfSightTester.cs" t="Include" />
           </e>
         </e>
         <e p="KriptoFX" t="Include">
@@ -1335,6 +1336,7 @@
                 <e p="CraftTileObject.cs" t="Include" />
                 <e p="Drink.cs" t="Include" />
                 <e p="Eat.cs" t="Include" />
+                <e p="Fish.cs" t="Include" />
                 <e p="HarvestPlant.cs" t="Include" />
                 <e p="Inspect.cs" t="Include" />
                 <e p="MineMetal.cs" t="Include" />
@@ -1687,6 +1689,7 @@
                 <e p="MarkerDummy.cs" t="Include" />
               </e>
               <e p="Projectile Receivers" t="Include">
+                <e p="BlockWallProjectileReceiver.cs" t="Include" />
                 <e p="DefaultProjectileReceiver.cs" t="Include" />
                 <e p="ProjectileReceiver.cs" t="Include" />
                 <e p="WallProjectileReceiver.cs" t="Include" />

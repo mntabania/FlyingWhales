@@ -134,6 +134,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212487511842338434}
   hoverObject: {fileID: 212489938902139980}
+  clickCollider: {fileID: 61518028179232044}
   hpBarGO: {fileID: 2039103671744800999}
   hpFill: {fileID: 1068001642904623794}
   aspeedFill: {fileID: 5973331767661807583}

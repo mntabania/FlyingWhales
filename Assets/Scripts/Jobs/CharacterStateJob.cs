@@ -43,10 +43,11 @@ public class CharacterStateJob : JobQueueItem {
 
     #region Overrides
     public override bool ProcessJob() {
-        if (hasBeenReset) { return false; }
+        if (hasBeenReset) { return true; }
         if (assignedState == null) {
             CharacterState newState = assignedCharacter.stateComponent.SwitchToState(targetState, targetPOI);
-            if (newState != null && hasBeenReset == false) {
+            if (hasBeenReset) { return true; } //Need to check since job can be reset when the assignedCharacter switches states.
+            if (newState != null) {
                 SetAssignedState(newState);
                 assignedCharacter.SetCurrentJob(this);
                 return true;

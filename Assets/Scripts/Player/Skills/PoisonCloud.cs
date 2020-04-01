@@ -23,12 +23,12 @@ public class PoisonCloud : PlayerSpell {
     
     public override void ShowRange(LocationGridTile targetTile) {
         base.ShowRange(targetTile);
-        List<LocationGridTile> tiles = UtilityScripts.GameUtilities.GetDiamondTilesFromRadius(targetTile.parentMap, targetTile.localPlace, 3);
+        List<LocationGridTile> tiles = UtilityScripts.GameUtilities.GetDiamondTilesFromRadius(targetTile.parentMap, targetTile.localPlace, 1);
         InnerMapManager.Instance.HighlightTiles(tiles);
     }
     public override void HideRange(LocationGridTile targetTile) {
         base.HideRange(targetTile);
-        List<LocationGridTile> tiles = UtilityScripts.GameUtilities.GetDiamondTilesFromRadius(targetTile.parentMap, targetTile.localPlace, 3);
+        List<LocationGridTile> tiles = UtilityScripts.GameUtilities.GetDiamondTilesFromRadius(targetTile.parentMap, targetTile.localPlace, 1);
         InnerMapManager.Instance.UnhighlightTiles(tiles);
     }
     public virtual bool CanTarget(LocationGridTile tile) {
@@ -68,6 +68,6 @@ public class PoisonCloudData : SpellData {
         return canPerform;
     }
     public override void HighlightAffectedTiles(LocationGridTile tile) {
-        TileHighlighter.Instance.PositionHighlight(2, tile);
+        TileHighlighter.Instance.PositionHighlight(1, tile);
     }
 }

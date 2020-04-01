@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Pathfinding;
 using UnityEngine;
 using Traits;
 
@@ -65,19 +66,7 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
                 }
             }
 
-            if (collidedWith.poi.gridTileLocation.structure == parentMarker.character.gridTileLocation.structure || collidedWith.IgnoresStructureDifference()) {
-                //if it is, just follow the normal procedure when a poi becomes in range
-                NormalEnterHandling(collidedWith.poi);
-            } else {
-                if (collidedWith.poi.gridTileLocation != null && collidedWith.poi.gridTileLocation.structure != null 
-                    && parentMarker.character.gridTileLocation != null && parentMarker.character.gridTileLocation.structure != null
-                    && collidedWith.poi.gridTileLocation.structure.structureType.IsOpenSpace() && parentMarker.character.gridTileLocation.structure.structureType.IsOpenSpace()) {
-                    NormalEnterHandling(collidedWith.poi);
-                }
-                else {
-                    AddPOIAsInRangeButDifferentStructure(collidedWith.poi);
-                }
-            }
+            TryAddPOIToVision(collidedWith.poi);
         }
     }
     protected override void OnTriggerExit2D(Collider2D collision) {
@@ -93,15 +82,68 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
     private void NormalEnterHandling(IPointOfInterest poi) {
         parentMarker.AddPOIAsInVisionRange(poi);
     }
+    public void TransferAllDifferentStructureCharacters() {
+        Debug.Log($"{GameManager.Instance.TodayLogString()} {parentMarker.character.name} is transferring all objects in different structures to its normal vision");
+        
+        List<IPointOfInterest> diffStructurePOIs = new List<IPointOfInterest>(poisInRangeButDiffStructure);
+        for (int i = 0; i < diffStructurePOIs.Count; i++) {
+            IPointOfInterest poi = diffStructurePOIs[i];
+            if (TryAddPOIToVision(poi)) {
+                RemovePOIAsInRangeButDifferentStructure(poi);
+            }
+        }
+    }
+    public void ReCategorizeVision() {
+        Debug.Log($"{GameManager.Instance.TodayLogString()} {parentMarker.character.name} Re categorizing objects in its normal vision");
+        List<IPointOfInterest> poisInVision = new List<IPointOfInterest>(parentMarker.inVisionPOIs);
+        for (int i = 0; i < poisInVision.Count; i++) {
+            IPointOfInterest pointOfInterest = poisInVision[i];
+            //if poi wasn't added to the characters normal vision, remove that poi from inVisionPOIs 
+            if (TryAddPOIToVision(pointOfInterest) == false) {
+                parentMarker.RemovePOIFromInVisionRange(pointOfInterest);
+            }
+        }
+    }
+    /// <summary>
+    /// Try to add a POI to this character's normal vision.
+    /// </summary>
+    /// <param name="poi">The POI to check.</param>
+    /// <returns>Whether or not the poi was added to the character's normal vision.</returns>
+    private bool TryAddPOIToVision(IPointOfInterest poi) {
+        if (poi.gridTileLocation.structure == parentMarker.character.gridTileLocation.structure || 
+            (parentMarker.character.stateComponent.currentState is CombatState && 
+             PathfindingManager.Instance.HasPath(poi.gridTileLocation, parentMarker.character.gridTileLocation))|| 
+            (poi.mapObjectVisual.visionTrigger as POIVisionTrigger).IgnoresStructureDifference()) {
+            //if it is, just follow the normal procedure when a poi becomes in range
+            NormalEnterHandling(poi);
+            return true;
+        } else {
+            if (poi.gridTileLocation?.structure != null && 
+                parentMarker.character.gridTileLocation?.structure != null && 
+                poi.gridTileLocation.structure.structureType.IsOpenSpace() && 
+                parentMarker.character.gridTileLocation.structure.structureType.IsOpenSpace()) {
+                //if both the character that owns this and the object is part of a structure that is open space
+                //process as if normal
+                NormalEnterHandling(poi);
+                return true;
+            } else {
+                AddPOIAsInRangeButDifferentStructure(poi);
+                return false;
+            }
+        }
+    }
 
     #region Different Structure Handling
     public void AddPOIAsInRangeButDifferentStructure(IPointOfInterest poi) {
-        poisInRangeButDiffStructure.Add(poi);
+        if (poisInRangeButDiffStructure.Contains(poi) == false) {
+            poisInRangeButDiffStructure.Add(poi);    
+        }
     }
     public void RemovePOIAsInRangeButDifferentStructure(IPointOfInterest poi) {
         poisInRangeButDiffStructure.Remove(poi);
     }
     private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {
+        if (parentMarker.character.isInCombat) { return; } //if character is in combat, ignore this
          //if the character that arrived at the new structure is in this character different structure list
          //check if that character now has the same structure as this character,
         if (poisInRangeButDiffStructure.Contains(character) && (structure == parentMarker.character.currentStructure || (structure.structureType.IsOpenSpace() && parentMarker.character.currentStructure.structureType.IsOpenSpace()))) {

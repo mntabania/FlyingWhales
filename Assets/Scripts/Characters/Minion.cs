@@ -382,16 +382,14 @@ public class Minion {
         
         PlayerManager.Instance.player.AdjustMana(-EditableValuesManager.Instance.summonMinionManaCost);
         
-        Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
-        Messenger.AddListener(Signals.TICK_STARTED, OnTickStarted);
+        SubscribeListeners();
         SetIsSummoned(true);
         Messenger.Broadcast(Signals.SUMMON_MINION, this);
     }
     private void Unsummon() {
         character.SetHP(0);
         Messenger.AddListener(Signals.TICK_ENDED, UnsummonedHPRecovery);
-        Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
-        Messenger.RemoveListener(Signals.TICK_STARTED, OnTickStarted);
+        UnSubscribeListeners();
         SetIsSummoned(false);
         Messenger.Broadcast(Signals.UNSUMMON_MINION, this);
     }
@@ -425,6 +423,36 @@ public class Minion {
             character.jobComponent.TriggerRoamAroundTile();
         } else if (job.jobType == JOB_TYPE.ROAM_AROUND_TILE) {
             character.jobComponent.TriggerMonsterStand();
+        }
+    }
+    #endregion
+
+    #region Listeners
+    private void SubscribeListeners() {
+        Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
+        Messenger.AddListener(Signals.TICK_STARTED, OnTickStarted);
+        Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
+        Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
+    }
+    private void UnSubscribeListeners() {
+        Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
+        Messenger.RemoveListener(Signals.TICK_STARTED, OnTickStarted);
+        Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
+        Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
+    }
+    private void OnCharacterStartedState(Character characterThatStartedState, CharacterState state) {
+        if (characterThatStartedState == character) {
+            character.marker.UpdateActionIcon();
+            if (state.characterState.IsCombatState()) {
+                character.marker.visionCollider.TransferAllDifferentStructureCharacters();
+            }
+        }
+    }
+    private void OnCharacterEndedState(Character character, CharacterState state) {
+        if (character == this.character) {
+            if (state is CombatState && character.marker) {
+                character.marker.visionCollider.ReCategorizeVision();
+            }
         }
     }
     #endregion
