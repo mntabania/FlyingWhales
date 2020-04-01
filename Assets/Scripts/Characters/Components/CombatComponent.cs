@@ -209,8 +209,9 @@ public class CombatComponent {
                     if (combatState.currentClosestHostile == poi) {
                         combatState.ResetClosestHostile();
                     }
-                    Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, owner);
+                    //Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, owner);
                 }
+                willProcessCombat = true;
             }
         }
     }
@@ -220,9 +221,10 @@ public class CombatComponent {
             lethalCharacters.Clear();
             //When adding hostile in range, check if character is already in combat state, if it is, only reevaluate combat behavior, if not, enter combat state
             if (processCombatBehavior) {
-                if (owner.isInCombat) {
-                    Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, owner);
-                }
+                //if (owner.isInCombat) {
+                //    Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, owner);
+                //}
+                willProcessCombat = true;
             }
         }
     }
@@ -300,9 +302,10 @@ public class CombatComponent {
     public void RemoveAvoidInRange(IPointOfInterest poi, bool processCombatBehavior = true) {
         if (avoidInRange.Remove(poi)) {
             if (processCombatBehavior) {
-                if (owner.isInCombat) {
-                    Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, owner);
-                }
+                willProcessCombat = true;
+                //if (owner.isInCombat) {
+                //    Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, owner);
+                //}
             }
         }
     }
@@ -310,9 +313,10 @@ public class CombatComponent {
         if (avoidInRange.Count > 0) {
             avoidInRange.Clear();
             if (processCombatBehavior) {
-                if (owner.isInCombat) {
-                    Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, owner);
-                }
+                willProcessCombat = true;
+                //if (owner.isInCombat) {
+                //    Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, owner);
+                //}
             }
         }
     }

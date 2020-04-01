@@ -159,9 +159,14 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
     public void OnTriggerEnter2D(Collider2D collision) {
         if (isSpawned == false) { return; }
         BaseVisionTrigger collidedWith = collision.gameObject.GetComponent<BaseVisionTrigger>();
-        if (collidedWith != null && collidedWith.damageable is ITraitable traitable) { 
-            AddObject(traitable);   
+        if (collidedWith != null) {
+            if(collidedWith.damageable is PoisonCloudTileObject otherPoisonCloud) {
+                CollidedWithPoisonCloud(otherPoisonCloud);
+            } else if (collidedWith.damageable is ITraitable traitable) {
+                AddObject(traitable);
+            }
         }
+        
     }
     public void OnTriggerExit2D(Collider2D collision) {
         if (isSpawned == false) { return; }
@@ -170,8 +175,15 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
             RemoveObject(traitable);   
         }
     }
+    private void CollidedWithPoisonCloud(PoisonCloudTileObject otherPoisonCloud) {
+        if (_poisonCloud.size != _poisonCloud.maxSize) {
+            int stacksToCombine = otherPoisonCloud.stacks;
+            otherPoisonCloud.Neutralize();
+            _poisonCloud.SetStacks(_poisonCloud.stacks + stacksToCombine);
+        }
+    }
     #endregion
-    
+
     #region POI's
     private void AddObject(ITraitable obj) {
         if (!_objsInRange.Contains(obj)) {

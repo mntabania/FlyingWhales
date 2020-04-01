@@ -47,6 +47,7 @@ public class InterruptComponent {
 
             if (ReferenceEquals(owner.marker, null) == false && owner.marker.isMoving) {
                 owner.marker.StopMovement();
+                owner.marker.SetHasFleePath(false);
             }
             if (currentInterrupt.doesDropCurrentJob) {
                 owner.currentJob?.CancelJob(false);
