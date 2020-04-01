@@ -1509,6 +1509,7 @@ public enum PARTICLE_EFFECT { None, Poison, Freezing, Fire, Burning, Explode, El
     Frozen_Explosion, Smoke_Effect, Lightning_Strike, Meteor_Strike, Water_Bomb, Poison_Bomb, Blizzard, Destroy_Explosion, Minion_Dissipate, Brimstones,
     Rain, Landmine, Burnt, Terrifying_Howl, Freezing_Trap, Snare_Trap, Wind_Blast, Iceteroids, Heat_Wave, Gorgon_Eye,
 }
+public enum PLAYER_SKILL_STATE { Locked, Unlocked, Learned, }
 
 #region Crime Subcategories
 [System.AttributeUsage(System.AttributeTargets.Field)]
