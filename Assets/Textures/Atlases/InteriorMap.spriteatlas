@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 129c2b5e0c8f0e14d9fb8b1c30296b6d, type: 3}
-    totalSpriteSurfaceArea: 3443861
+    totalSpriteSurfaceArea: 3452053
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -203,6 +203,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: fc098a437ccd49b47a7582f9279fbaf1, type: 3}
   - {fileID: 21300000, guid: 861a88531e5d1264b8f809ccfa1ee965, type: 3}
   - {fileID: 21300000, guid: 433ec56307549ad42bdfab0084104ce8, type: 3}
+  - {fileID: 21300000, guid: 11906c63aaedadb42843a1861b2d282b, type: 3}
   - {fileID: 21300000, guid: 5754c683be215e54f989dea775f3d717, type: 3}
   - {fileID: 21300000, guid: 931db39314af6aa4b863b2996aac60a4, type: 3}
   - {fileID: 21300000, guid: 95ab6aa30060bf14a98f8c70aab2cf46, type: 3}
@@ -503,6 +504,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 2a30a1a97f1dfa947a9d78809407e79a, type: 3}
   - {fileID: 21300000, guid: 190bc7a952a5df04b9806c1ad69a4a35, type: 3}
   - {fileID: 21300000, guid: e85247b9c5ad0ba48b54c98a216a9cff, type: 3}
+  - {fileID: 21300000, guid: c77799b9783c3b1419ac8bf68b07ec36, type: 3}
   - {fileID: 21300000, guid: d5fb61d92848cf149a96ae7d2054e15b, type: 3}
   - {fileID: 21300000, guid: a9b153d972870a24abeb826b0c38ea0b, type: 3}
   - {fileID: 21300000, guid: b89d8cd91f5cc544ca9d4dfa7989c828, type: 3}
@@ -934,6 +936,7 @@ SpriteAtlas:
   - cobblestone_h00
   - demonBarsVertical01
   - desertRocks03
+  - winter_rose
   - dirt00
   - GRAVE#1
   - vertical_1
@@ -1234,6 +1237,7 @@ SpriteAtlas:
   - BRAZIER#1
   - table_armor
   - supplies
+  - desert_rose
   - shore01010111-00
   - shelfDecor00
   - WaterWell
