@@ -72,8 +72,10 @@ public class ExtractItem : GoapAction {
             text += "Ice";
         }
         string article = UtilityScripts.Utilities.GetArticleForWord(text);
-        text += article + " " + text;
+        text = article + " " + text;
         goapNode.descriptionLog.AddToFillers(null, text, LOG_IDENTIFIER.STRING_1);
+        goapNode.thoughtBubbleLog?.AddToFillers(null, text, LOG_IDENTIFIER.STRING_1);
+        goapNode.thoughtBubbleMovingLog?.AddToFillers(null, text, LOG_IDENTIFIER.STRING_1);
     }
     public void AfterExtractSuccess(ActualGoapNode goapNode) {
         Character actor = goapNode.actor;

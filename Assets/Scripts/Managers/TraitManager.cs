@@ -199,7 +199,10 @@ public class TraitManager : MonoBehaviour {
     }
     public void CopyTraitOrStatus(Trait trait, ITraitable from, ITraitable to) {
         if (from.traitContainer.HasTrait(trait.name)) {
-            int numOfStacks = from.traitContainer.stacks[trait.name];
+            int numOfStacks = 1;
+            if (from.traitContainer.stacks.ContainsKey(trait.name)) {
+                numOfStacks = from.traitContainer.stacks[trait.name];    
+            }
             //In the loop, override duration to zero so that it will not reset the trait's timer
             Trait duplicateTrait = null;
             for (int i = 0; i < numOfStacks; i++) {
