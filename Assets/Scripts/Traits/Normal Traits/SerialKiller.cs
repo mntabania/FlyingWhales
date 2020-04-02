@@ -277,6 +277,9 @@ namespace Traits {
             }
         }
         private bool IsCharacterApplicableAsVictim(Character target) {
+            if (target == character) {
+                return false;
+            }
             return target.currentRegion != character.currentRegion || target.isBeingSeized || target.isDead || target.isMissing;
         }
         public bool CreateHuntVictimJob() {

@@ -6,6 +6,7 @@ using UnityEngine.Assertions;
 public class LocustSwarmTileObject : MovingTileObject {
 
     private LocustSwarmMapObjectVisual _locustSwarmMapObjectVisual;
+    public override string neutralizer => "Beastmaster";
     
     public LocustSwarmTileObject() {
         Initialize(TILE_OBJECT_TYPE.LOCUST_SWARM, false);

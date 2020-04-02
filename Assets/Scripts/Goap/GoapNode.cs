@@ -165,7 +165,7 @@ public class ActualGoapNode {
         actionStatus = ACTION_STATUS.STARTED;
         associatedJobType = job.jobType;
         //Temporary only, create a system for this
-        if(action.goapType == INTERACTION_TYPE.STEAL) {
+        if(action.goapType == INTERACTION_TYPE.STEAL || action.goapType == INTERACTION_TYPE.DRINK_BLOOD) {
             isStealth = true;
         }
         actor.SetCurrentActionNode(this, job, plan);

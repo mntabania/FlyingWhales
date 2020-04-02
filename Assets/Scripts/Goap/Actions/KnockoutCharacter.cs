@@ -84,9 +84,6 @@ public class KnockoutCharacter : GoapAction {
     #endregion
 
     #region State Effects
-    public void PreKnockoutSuccess(ActualGoapNode goapNode) {
-        //TODO: currentState.SetIntelReaction(KnockoutSuccessIntelReaction);
-    }
     public void AfterKnockoutSuccess(ActualGoapNode goapNode) {
         goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, "Unconscious", goapNode.actor, gainedFromDoing: goapNode);
     }

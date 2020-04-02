@@ -7,6 +7,7 @@ using UnityEngine.Assertions;
 public class FireBallTileObject : MovingTileObject {
 
     private FireBallMapObjectVisual _fireBallMapVisual;
+    public override string neutralizer => "Fire Master";
     
     public FireBallTileObject() {
         Initialize(TILE_OBJECT_TYPE.FIRE_BALL, false);
