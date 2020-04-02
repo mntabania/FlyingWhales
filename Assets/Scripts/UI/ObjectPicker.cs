@@ -497,7 +497,7 @@ public class ObjectPicker : PopupMenuBase {
         }
         for (int i = 0; i < invalidItems.Count; i++) {
             Enum enumerator = invalidItems[i];
-            GameObject itemGO = UIManager.Instance.InstantiateUIObject(objectPickerStringItemPrefab.name, objectPickerScrollView.content);
+            GameObject itemGO = UIManager.Instance.InstantiateUIObject(objectPickerEnumItemPrefab.name, objectPickerScrollView.content);
             EnumNameplateItem item = itemGO.GetComponent<EnumNameplateItem>();
             item.SetObject(enumerator);
             item.ClearAllOnClickActions();
