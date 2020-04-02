@@ -19,7 +19,7 @@ public class LightningData : SpellData {
         GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Lightning_Strike);
         List<IPointOfInterest> pois = targetTile.GetPOIsOnTile();
         for (int i = 0; i < pois.Count; i++) {
-            pois[i].AdjustHP(-100, ELEMENTAL_TYPE.Electric, showHPBar: true);
+            pois[i].AdjustHP(-350, ELEMENTAL_TYPE.Electric, showHPBar: true);
         }
         IncreaseThreatThatSeesTile(targetTile, 10);
         base.ActivateAbility(targetTile);

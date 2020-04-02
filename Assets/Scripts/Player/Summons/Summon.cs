@@ -354,25 +354,25 @@ public class SummonSlot {
 
     public void SetSummon(Summon summon) {
         this.summon = summon;
-        if (this.summon != null) {
-            this.summon.SetLevel(level);
-        }
+        //if (this.summon != null) {
+        //    this.summon.StartingLevel();
+        //}
     }
 
-    public void LevelUp() {
-        level++;
-        level = Mathf.Clamp(level, 1, PlayerDB.MAX_LEVEL_SUMMON);
-        if (this.summon != null) {
-            this.summon.SetLevel(level);
-        }
-        Messenger.Broadcast(Signals.PLAYER_GAINED_SUMMON_LEVEL, this);
-    }
-    public void SetLevel(int amount) {
-        level = amount;
-        level = Mathf.Clamp(level, 1, PlayerDB.MAX_LEVEL_SUMMON);
-        if (this.summon != null) {
-            this.summon.SetLevel(level);
-        }
-        Messenger.Broadcast(Signals.PLAYER_GAINED_SUMMON_LEVEL, this);
-    }
+    //public void LevelUp() {
+    //    level++;
+    //    level = Mathf.Clamp(level, 1, PlayerDB.MAX_LEVEL_SUMMON);
+    //    if (this.summon != null) {
+    //        this.summon.SetLevel(level);
+    //    }
+    //    Messenger.Broadcast(Signals.PLAYER_GAINED_SUMMON_LEVEL, this);
+    //}
+    //public void SetLevel(int amount) {
+    //    level = amount;
+    //    level = Mathf.Clamp(level, 1, PlayerDB.MAX_LEVEL_SUMMON);
+    //    if (this.summon != null) {
+    //        this.summon.SetLevel(level);
+    //    }
+    //    Messenger.Broadcast(Signals.PLAYER_GAINED_SUMMON_LEVEL, this);
+    //}
 }

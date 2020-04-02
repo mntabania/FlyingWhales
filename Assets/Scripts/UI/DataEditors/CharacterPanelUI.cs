@@ -304,9 +304,9 @@ public class CharacterPanelUI : MonoBehaviour {
         if(multiplier < 0) {
             multiplier = 0;
         }
-        _singleAttackPower += (multiplier * (int)((characterClass.attackPowerPerLevel / 100f) * (float)raceSetting.attackPowerModifier));
-        _singleSpeed += (multiplier * (int) ((characterClass.speedPerLevel / 100f) * (float) raceSetting.speedModifier));
-        _singleHP += (multiplier * (int) ((characterClass.hpPerLevel / 100f) * (float) raceSetting.hpModifier));
+        //_singleAttackPower += (multiplier * (int)((characterClass.attackPowerPerLevel / 100f) * (float)raceSetting.attackPowerModifier));
+        //_singleSpeed += (multiplier * (int) ((characterClass.speedPerLevel / 100f) * (float) raceSetting.speedModifier));
+        //_singleHP += (multiplier * (int) ((characterClass.hpPerLevel / 100f) * (float) raceSetting.hpModifier));
 
         ////Add stats per level from race
         //if(level > 1) {

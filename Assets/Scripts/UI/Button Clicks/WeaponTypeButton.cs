@@ -12,13 +12,13 @@ public class WeaponTypeButton : MonoBehaviour {
         if(panelName == "skill") {
             SkillPanelUI.Instance.currentSelectedWeaponTypeButton = this;
         }else if (panelName == "class") {
-            if(categoryName == "weapon") {
-                ClassPanelUI.Instance.currentSelectedWeaponButton = this;
-            } else if (categoryName == "armor") {
-                ClassPanelUI.Instance.currentSelectedArmorButton = this;
-            } else if (categoryName == "accessory") {
-                ClassPanelUI.Instance.currentSelectedAccessoryButton = this;
-            }
+            //if(categoryName == "weapon") {
+            //    ClassPanelUI.Instance.currentSelectedWeaponButton = this;
+            //} else if (categoryName == "armor") {
+            //    ClassPanelUI.Instance.currentSelectedArmorButton = this;
+            //} else if (categoryName == "accessory") {
+            //    ClassPanelUI.Instance.currentSelectedAccessoryButton = this;
+            //}
         }
     }
 }

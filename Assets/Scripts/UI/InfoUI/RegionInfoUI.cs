@@ -157,12 +157,12 @@ public class RegionInfoUI : InfoUIBase {
             }
         }
 
-        List<CharacterNameplateItem> orderedVisitors = new List<CharacterNameplateItem>(visitors.OrderByDescending(x => x.character.level));
-        List<CharacterNameplateItem> orderedResidents = new List<CharacterNameplateItem>(residents.OrderByDescending(x => x.character.level));
+        //List<CharacterNameplateItem> orderedVisitors = new List<CharacterNameplateItem>(visitors.OrderByDescending(x => x.character.level));
+        //List<CharacterNameplateItem> orderedResidents = new List<CharacterNameplateItem>(residents.OrderByDescending(x => x.character.level));
 
         List<CharacterNameplateItem> orderedItems = new List<CharacterNameplateItem>();
-        orderedItems.AddRange(orderedVisitors);
-        orderedItems.AddRange(orderedResidents);
+        orderedItems.AddRange(visitors);
+        orderedItems.AddRange(residents);
         
         for (int i = 0; i < orderedItems.Count; i++) {
             CharacterNameplateItem currItem = orderedItems[i];

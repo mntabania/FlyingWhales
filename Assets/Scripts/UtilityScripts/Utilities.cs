@@ -994,16 +994,21 @@ namespace UtilityScripts {
             return new string(src, 0, dstIdx);
         }
         public static string[] ConvertStringToArray(string str, char separator) {
-            string[] arr = str.Split(',');
-            return arr;
+            if (!string.IsNullOrEmpty(str)) {
+                string[] arr = str.Split(separator);
+                return arr;
+            }
+            return null;
         }
         public static string ConvertArrayToString(string[] str, char separator) {
             string joinedStr = string.Empty;
-            for (int i = 0; i < str.Length; i++) {
-                if(i > 0) {
-                    joinedStr += separator;
+            if (str != null) {
+                for (int i = 0; i < str.Length; i++) {
+                    if (i > 0) {
+                        joinedStr += separator;
+                    }
+                    joinedStr += str[i];
                 }
-                joinedStr += str[i];
             }
             return joinedStr;
         }

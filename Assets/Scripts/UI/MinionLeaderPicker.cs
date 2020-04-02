@@ -22,7 +22,7 @@ public class MinionLeaderPicker : MonoBehaviour {
     }
     public void OnHover() {
         string text = minion.character.name;
-        text += $"\nLvl.{minion.character.level} {minion.character.raceClassName}";
+        text += $"\n{minion.character.raceClassName}";
         UIManager.Instance.ShowSmallInfo(text);
     }
     public void OnHoverOut() {

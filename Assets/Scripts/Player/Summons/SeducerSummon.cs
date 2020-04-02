@@ -78,10 +78,10 @@ public class SeducerSummon : Summon {
             doneCharacters.Add(node.poiTarget as Character);
         }
     }
-    public override void LevelUp() {
-        base.LevelUp();
-        seduceChance += 25;
-    }
+    //public override void LevelUp() {
+    //    base.LevelUp();
+    //    seduceChance += 25;
+    //}
     public override bool CanBeInstructedByPlayer() {
         bool canBeInstructed = base.CanBeInstructedByPlayer();
         if (canBeInstructed) {

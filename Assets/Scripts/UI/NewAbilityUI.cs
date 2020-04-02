@@ -41,7 +41,7 @@ public class NewAbilityUI : PopupMenuBase {
             this.minion = minion;
             minionPortrait.GeneratePortrait(this.minion.character);
             string text = this.minion.character.name;
-            text += $"\nLvl. {this.minion.character.level} {this.minion.character.raceClassName}";
+            text += $"\n{this.minion.character.raceClassName}";
             minionText.text = text;
         }
     }
@@ -75,7 +75,7 @@ public class NewAbilityUI : PopupMenuBase {
             Summon summon = obj as Summon;
             abilityIcon.sprite = CharacterManager.Instance.GetSummonSettings(summon.summonType).summonPortrait;
             string text = $"{summon.name} ({summon.summonType.SummonName()})";
-            text += $"\nLevel: {summon.level}";
+            //text += $"\nLevel: {summon.level}";
             text += $"\nDescription: {PlayerManager.Instance.player.GetSummonDescription(summon.summonType)}";
             abilityText.text = text;
             obtainText.gameObject.SetActive(true);

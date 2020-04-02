@@ -35,9 +35,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //protected SIDES _currentSide;
     protected int _currentHP;
     protected int _maxHP;
-    protected int _level;
-    protected int _experience;
-    protected int _maxExperience;
+    //protected int _level;
+    //protected int _experience;
+    //protected int _maxExperience;
     protected int _sp;
 
     //visuals
@@ -198,25 +198,26 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public BaseSettlement currentSettlement => gridTileLocation != null 
         && gridTileLocation.collectionOwner.isPartOfParentRegionMap ? 
         gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile : null;
-    public int level => _level;
-    public int experience => _experience;
-    public int maxExperience => _maxExperience;
-    public int speed {
-        get {
-            int total = (int) ((_characterClass.baseSpeed + speedMod) * (1f + ((_raceSetting.speedModifier + speedPercentMod) / 100f)));
-            if (total < 0) {
-                return 1;
-            }
-            return total;
-        }
-    }
+    //public int level => _level;
+    //public int experience => _experience;
+    //public int maxExperience => _maxExperience;
+    //public int speed {
+    //    get {
+    //        int total = (int) ((_characterClass.baseSpeed + speedMod) * (1f + ((_raceSetting.speedModifier + speedPercentMod) / 100f)));
+    //        if (total < 0) {
+    //            return 1;
+    //        }
+    //        return total;
+    //    }
+    //}
     public int attackPower {
         get {
-            int total = (int) ((_characterClass.baseAttackPower + attackPowerMod) * (1f + ((_raceSetting.attackPowerModifier + attackPowerPercentMod) / 100f)));
-            if (total < 0) {
-                return 1;
-            }
-            return total;
+            return _characterClass.baseAttackPower;
+            //int total = (int) ((_characterClass.baseAttackPower + attackPowerMod) * (1f + ((_raceSetting.attackPowerModifier + attackPowerPercentMod) / 100f)));
+            //if (total < 0) {
+            //    return 1;
+            //}
+            //return total;
         }
     }
     public int maxHP => _maxHP;
@@ -261,8 +262,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             return _currentStructure;
         }
     }
-    public float walkSpeed => raceSetting.walkSpeed + (raceSetting.walkSpeed * characterClass.walkSpeedMod);
-    public float runSpeed => raceSetting.runSpeed + (raceSetting.runSpeed * characterClass.runSpeedMod);
+    public float walkSpeed => raceSetting.walkSpeed;
+    public float runSpeed => raceSetting.runSpeed;
     public Vector3 worldPosition => marker.transform.position;
     public Vector2 selectableSize => Vector2Int.one;
     public ProjectileReceiver projectileReceiver => marker.visionTrigger.projectileReceiver;
@@ -288,7 +289,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         AssignClass(className, true);
         SetName(RandomNameGenerator.GenerateRandomName(_raceSetting.race, _gender));
         GenerateSexuality();
-        StartingLevel();
+        UpdateMaxHPAndReset();
         visuals = new CharacterVisuals(this);
     }
     public Character(string className, RACE race, GENDER gender, SEXUALITY sexuality, int id = -1) : this() {
@@ -299,7 +300,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         AssignClass(className, true);
         SetName(RandomNameGenerator.GenerateRandomName(_raceSetting.race, _gender));
         SetSexuality(sexuality);
-        StartingLevel();
+        UpdateMaxHPAndReset();
         visuals = new CharacterVisuals(this);
     }
     public Character(SaveDataCharacter data) {
@@ -339,7 +340,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         needsComponent = new CharacterNeedsComponent(this);
         
         //RPG
-        SetExperience(0);
+        //SetExperience(0);
 
         //Traits
         CreateTraitContainer();
@@ -394,9 +395,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
         _maxHP = data.maxHP;
         _currentHP = data.currentHP;
-        _level = data.level;
-        _experience = data.experience;
-        _maxExperience = data.maxExperience;
+        //_level = data.level;
+        //_experience = data.experience;
+        //_maxExperience = data.maxExperience;
         attackPowerMod = data.attackPowerMod;
         speedMod = data.speedMod;
         maxHPMod = data.maxHPMod;
@@ -716,18 +717,18 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
     }
-    public void RaiseFromDeath(int level = 1, Action<Character> onReturnToLifeAction = null, Faction faction = null, RACE race = RACE.SKELETON, string className = "") {
+    public void RaiseFromDeath(Action<Character> onReturnToLifeAction = null, Faction faction = null, RACE race = RACE.SKELETON, string className = "") {
         if (faction == null) {
-            GameManager.Instance.StartCoroutine(Raise(this, level, onReturnToLifeAction, FactionManager.Instance.neutralFaction, race, className));
+            GameManager.Instance.StartCoroutine(Raise(this, onReturnToLifeAction, FactionManager.Instance.neutralFaction, race, className));
         } else {
-            GameManager.Instance.StartCoroutine(Raise(this, level, onReturnToLifeAction, faction, race, className));
+            GameManager.Instance.StartCoroutine(Raise(this, onReturnToLifeAction, faction, race, className));
         }
     }
-    private IEnumerator Raise(Character target, int level, Action<Character> onReturnToLifeAction, Faction faction, RACE race, string className) {
+    private IEnumerator Raise(Character target, Action<Character> onReturnToLifeAction, Faction faction, RACE race, string className) {
         target.marker.PlayAnimation("Raise Dead");
         yield return new WaitForSeconds(0.7f);
         target.ReturnToLife(faction, race, className);
-        target.SetLevel(level);
+        target.UpdateMaxHPAndReset();
         yield return null;
         onReturnToLifeAction?.Invoke(this);
     }
@@ -1016,13 +1017,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (role == CharacterRole.BEAST) {
             return GameUtilities.GetRespectiveBeastClassNameFromByRace(race);
         } else {
-            string className = CharacterManager.Instance.GetRandomClassByIdentifier(role.classNameOrIdentifier);
-            if (className != string.Empty) {
-                return className;
-            } else {
-                return role.classNameOrIdentifier;
-            }
+            //string className = CharacterManager.Instance.GetRandomClassByIdentifier(role.classNameOrIdentifier);
+            //if (className != string.Empty) {
+            //    return className;
+            //} else {
+            //    return role.classNameOrIdentifier;
+            //}
         }
+        return string.Empty;
     }
     public void RemoveClass() {
         if (_characterClass == null) { return; }
@@ -2701,186 +2703,186 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #endregion
 
     #region RPG
-    private void StartingLevel() {
-        _level = 1;
+    public void UpdateMaxHPAndReset() {
+        //_level = 1;
         UpdateMaxHP();
         ResetToFullHP();
     }
 
-    private bool hpMagicRangedStatMod;
-    public virtual void LevelUp() {
-        //Only level up once per day
-        if (_level < CharacterManager.Instance.maxLevel) {
-            _level += 1;
-            //Add stats per level from class
-            if (_characterClass.rangeType == RANGE_TYPE.MELEE) {//_characterClass.attackType == ATTACK_TYPE.PHYSICAL &&  = Commented this because if the character is a MAGICAL MELEE, he cannot level up
-                AdjustAttackMod(_characterClass.attackPowerPerLevel);
-                AdjustSpeedMod(_characterClass.speedPerLevel);
-                AdjustMaxHPMod(_characterClass.hpPerLevel);
-            } else if (_characterClass.attackType == ATTACK_TYPE.PHYSICAL && _characterClass.rangeType == RANGE_TYPE.RANGED) {
-                if (_level % 2 == 0) {
-                    //even
-                    AdjustMaxHPMod(_characterClass.hpPerLevel);
-                } else {
-                    //odd
-                    AdjustAttackMod(_characterClass.attackPowerPerLevel);
-                }
-                AdjustSpeedMod(_characterClass.speedPerLevel);
-            } else if (_characterClass.attackType == ATTACK_TYPE.MAGICAL && _characterClass.rangeType == RANGE_TYPE.RANGED) {
-                if (!hpMagicRangedStatMod) {
-                    AdjustAttackMod(_characterClass.attackPowerPerLevel);
-                } else {
-                    AdjustMaxHPMod(_characterClass.hpPerLevel);
-                }
-                if ((_level - 1) % 2 == 0) {
-                    hpMagicRangedStatMod = !hpMagicRangedStatMod;
-                }
-                AdjustSpeedMod(_characterClass.speedPerLevel);
-            }
-            UpdateMaxHP();
-            //Reset to full health and sp
-            ResetToFullHP();
+    //private bool hpMagicRangedStatMod;
+    //public virtual void LevelUp() {
+    //    //Only level up once per day
+    //    if (_level < CharacterManager.Instance.maxLevel) {
+    //        _level += 1;
+    //        //Add stats per level from class
+    //        if (_characterClass.rangeType == RANGE_TYPE.MELEE) {//_characterClass.attackType == ATTACK_TYPE.PHYSICAL &&  = Commented this because if the character is a MAGICAL MELEE, he cannot level up
+    //            AdjustAttackMod(_characterClass.attackPowerPerLevel);
+    //            AdjustSpeedMod(_characterClass.speedPerLevel);
+    //            AdjustMaxHPMod(_characterClass.hpPerLevel);
+    //        } else if (_characterClass.attackType == ATTACK_TYPE.PHYSICAL && _characterClass.rangeType == RANGE_TYPE.RANGED) {
+    //            if (_level % 2 == 0) {
+    //                //even
+    //                AdjustMaxHPMod(_characterClass.hpPerLevel);
+    //            } else {
+    //                //odd
+    //                AdjustAttackMod(_characterClass.attackPowerPerLevel);
+    //            }
+    //            AdjustSpeedMod(_characterClass.speedPerLevel);
+    //        } else if (_characterClass.attackType == ATTACK_TYPE.MAGICAL && _characterClass.rangeType == RANGE_TYPE.RANGED) {
+    //            if (!hpMagicRangedStatMod) {
+    //                AdjustAttackMod(_characterClass.attackPowerPerLevel);
+    //            } else {
+    //                AdjustMaxHPMod(_characterClass.hpPerLevel);
+    //            }
+    //            if ((_level - 1) % 2 == 0) {
+    //                hpMagicRangedStatMod = !hpMagicRangedStatMod;
+    //            }
+    //            AdjustSpeedMod(_characterClass.speedPerLevel);
+    //        }
+    //        UpdateMaxHP();
+    //        //Reset to full health and sp
+    //        ResetToFullHP();
 
-            Messenger.Broadcast(Signals.CHARACTER_LEVEL_CHANGED, this);
-        }
-    }
-    public void LevelUp(int amount) {
-        //Only level up once per day
-        //if (_lastLevelUpDay == GameManager.Instance.continuousDays) {
-        //    return;
-        //}
-        //_lastLevelUpDay = GameManager.Instance.continuousDays;
-        int supposedLevel = _level + amount;
-        if (supposedLevel > CharacterManager.Instance.maxLevel) {
-            amount = CharacterManager.Instance.maxLevel - level;
-        } else if (supposedLevel < 0) {
-            amount -= (supposedLevel - 1);
-        }
-        //Add stats per level from class
-        if (_characterClass.rangeType == RANGE_TYPE.MELEE) {//_characterClass.attackType == ATTACK_TYPE.PHYSICAL &&  = Commented this because if the character is a MAGICAL MELEE, he cannot level up
-            AdjustAttackMod(_characterClass.attackPowerPerLevel * amount);
-            AdjustSpeedMod(_characterClass.speedPerLevel * amount);
-            AdjustMaxHPMod(_characterClass.hpPerLevel * amount);
-        } else if (_characterClass.attackType == ATTACK_TYPE.PHYSICAL && _characterClass.rangeType == RANGE_TYPE.RANGED) {
-            int multiplier = (amount < 0 ? -1 : 1);
-            int range = amount * multiplier;
-            if (range > 0) {
-                for (int i = 0; i < range; i++) {
-                    if (i % 2 == 0) {
-                        //even
-                        AdjustMaxHPMod(_characterClass.hpPerLevel * multiplier);
-                    } else {
-                        //odd
-                        AdjustAttackMod(_characterClass.attackPowerPerLevel * multiplier);
-                    }
-                }
-            }
-            AdjustSpeedMod(_characterClass.speedPerLevel * amount);
-        } else if (_characterClass.attackType == ATTACK_TYPE.MAGICAL && _characterClass.rangeType == RANGE_TYPE.RANGED) {
-            int multiplier = (amount < 0 ? -1 : 1);
-            int range = amount * multiplier;
-            if (range > 0) {
-                for (int i = _level; i <= _level + range; i++) {
-                    if (!hpMagicRangedStatMod) {
-                        AdjustAttackMod(_characterClass.attackPowerPerLevel * multiplier);
-                    } else {
-                        AdjustMaxHPMod(_characterClass.hpPerLevel * multiplier);
-                    }
-                    if (i != 1 && (i - 1) % 2 == 0) {
-                        hpMagicRangedStatMod = !hpMagicRangedStatMod;
-                    }
-                }
-            }
-            AdjustSpeedMod(_characterClass.speedPerLevel * amount);
-        }
-        _level += amount;
+    //        Messenger.Broadcast(Signals.CHARACTER_LEVEL_CHANGED, this);
+    //    }
+    //}
+    //public void LevelUp(int amount) {
+    //    //Only level up once per day
+    //    //if (_lastLevelUpDay == GameManager.Instance.continuousDays) {
+    //    //    return;
+    //    //}
+    //    //_lastLevelUpDay = GameManager.Instance.continuousDays;
+    //    int supposedLevel = _level + amount;
+    //    if (supposedLevel > CharacterManager.Instance.maxLevel) {
+    //        amount = CharacterManager.Instance.maxLevel - level;
+    //    } else if (supposedLevel < 0) {
+    //        amount -= (supposedLevel - 1);
+    //    }
+    //    //Add stats per level from class
+    //    if (_characterClass.rangeType == RANGE_TYPE.MELEE) {//_characterClass.attackType == ATTACK_TYPE.PHYSICAL &&  = Commented this because if the character is a MAGICAL MELEE, he cannot level up
+    //        AdjustAttackMod(_characterClass.attackPowerPerLevel * amount);
+    //        AdjustSpeedMod(_characterClass.speedPerLevel * amount);
+    //        AdjustMaxHPMod(_characterClass.hpPerLevel * amount);
+    //    } else if (_characterClass.attackType == ATTACK_TYPE.PHYSICAL && _characterClass.rangeType == RANGE_TYPE.RANGED) {
+    //        int multiplier = (amount < 0 ? -1 : 1);
+    //        int range = amount * multiplier;
+    //        if (range > 0) {
+    //            for (int i = 0; i < range; i++) {
+    //                if (i % 2 == 0) {
+    //                    //even
+    //                    AdjustMaxHPMod(_characterClass.hpPerLevel * multiplier);
+    //                } else {
+    //                    //odd
+    //                    AdjustAttackMod(_characterClass.attackPowerPerLevel * multiplier);
+    //                }
+    //            }
+    //        }
+    //        AdjustSpeedMod(_characterClass.speedPerLevel * amount);
+    //    } else if (_characterClass.attackType == ATTACK_TYPE.MAGICAL && _characterClass.rangeType == RANGE_TYPE.RANGED) {
+    //        int multiplier = (amount < 0 ? -1 : 1);
+    //        int range = amount * multiplier;
+    //        if (range > 0) {
+    //            for (int i = _level; i <= _level + range; i++) {
+    //                if (!hpMagicRangedStatMod) {
+    //                    AdjustAttackMod(_characterClass.attackPowerPerLevel * multiplier);
+    //                } else {
+    //                    AdjustMaxHPMod(_characterClass.hpPerLevel * multiplier);
+    //                }
+    //                if (i != 1 && (i - 1) % 2 == 0) {
+    //                    hpMagicRangedStatMod = !hpMagicRangedStatMod;
+    //                }
+    //            }
+    //        }
+    //        AdjustSpeedMod(_characterClass.speedPerLevel * amount);
+    //    }
+    //    _level += amount;
 
-        UpdateMaxHP();
-        //Reset to full health and sp
-        ResetToFullHP();
-        //ResetToFullSP();
-        Messenger.Broadcast(Signals.CHARACTER_LEVEL_CHANGED, this);
-        //if (_playerCharacterItem != null) {
-        //    _playerCharacterItem.UpdateMinionItem();
-        //}
-    }
-    public void SetLevel(int amount) {
-        int previousLevel = _level;
-        _level = amount;
-        if (_level < 1) {
-            _level = 1;
-        } else if (_level > CharacterManager.Instance.maxLevel) {
-            _level = CharacterManager.Instance.maxLevel;
-        }
-
-        //Add stats per level from class
-        int difference = _level - previousLevel;
-        if (_characterClass.rangeType == RANGE_TYPE.MELEE) {//_characterClass.attackType == ATTACK_TYPE.PHYSICAL &&  = Commented this because if the character is a MAGICAL MELEE, he cannot level up
-            AdjustAttackMod(_characterClass.attackPowerPerLevel * difference);
-            AdjustSpeedMod(_characterClass.speedPerLevel * difference);
-            AdjustMaxHPMod(_characterClass.hpPerLevel * difference);
-        } else if (_characterClass.attackType == ATTACK_TYPE.PHYSICAL && _characterClass.rangeType == RANGE_TYPE.RANGED) {
-            int multiplier = (difference < 0 ? -1 : 1);
-            int range = difference * multiplier;
-            if (range > 0) {
-                for (int i = 0; i < range; i++) {
-                    if (i % 2 == 0) {
-                        //even
-                        AdjustMaxHPMod(_characterClass.hpPerLevel * multiplier);
-                    } else {
-                        //odd
-                        AdjustAttackMod(_characterClass.attackPowerPerLevel * multiplier);
-                    }
-                }
-            }
-            AdjustSpeedMod(_characterClass.speedPerLevel * difference);
-        } else if (_characterClass.attackType == ATTACK_TYPE.MAGICAL && _characterClass.rangeType == RANGE_TYPE.RANGED) {
-            int multiplier = (difference < 0 ? -1 : 1);
-            int range = difference * multiplier;
-            if (range > 0) {
-                for (int i = _level; i <= _level + range; i++) {
-                    if (!hpMagicRangedStatMod) {
-                        AdjustAttackMod(_characterClass.attackPowerPerLevel * multiplier);
-                    } else {
-                        AdjustMaxHPMod(_characterClass.hpPerLevel * multiplier);
-                    }
-                    if (i != 1 && (i - 1) % 2 == 0) {
-                        hpMagicRangedStatMod = !hpMagicRangedStatMod;
-                    }
-                }
-            }
-            AdjustSpeedMod(_characterClass.speedPerLevel * difference);
-        }
-
-        UpdateMaxHP();
-        //Reset to full health and sp
-        ResetToFullHP();
-        //ResetToFullSP();
-        Messenger.Broadcast(Signals.CHARACTER_LEVEL_CHANGED, this);
-        //if (_playerCharacterItem != null) {
-        //    _playerCharacterItem.UpdateMinionItem();
+    //    UpdateMaxHP();
+    //    //Reset to full health and sp
+    //    ResetToFullHP();
+    //    //ResetToFullSP();
+    //    Messenger.Broadcast(Signals.CHARACTER_LEVEL_CHANGED, this);
+    //    //if (_playerCharacterItem != null) {
+    //    //    _playerCharacterItem.UpdateMinionItem();
+    //    //}
+    //}
+    //public void SetLevel(int amount) {
+        //int previousLevel = _level;
+        //_level = amount;
+        //if (_level < 1) {
+        //    _level = 1;
+        //} else if (_level > CharacterManager.Instance.maxLevel) {
+        //    _level = CharacterManager.Instance.maxLevel;
         //}
 
-        //Reset Experience
-        //_experience = 0;
-        //RecomputeMaxExperience();
-    }
-    public void AdjustExperience(int amount) {
-        _experience += amount;
-        if (_experience >= _maxExperience) {
-            SetExperience(0);
-            //LevelUp();
-        }
-    }
-    public void SetExperience(int amount) {
-        _experience = amount;
-    }
-    private void RecomputeMaxExperience() {
-        _maxExperience = Mathf.CeilToInt(100f * ((Mathf.Pow((float) _level, 1.25f)) / 1.1f));
-    }
-    public void SetMaxExperience(int amount) {
-        _maxExperience = amount;
-    }
+        ////Add stats per level from class
+        //int difference = _level - previousLevel;
+        //if (_characterClass.rangeType == RANGE_TYPE.MELEE) {//_characterClass.attackType == ATTACK_TYPE.PHYSICAL &&  = Commented this because if the character is a MAGICAL MELEE, he cannot level up
+        //    AdjustAttackMod(_characterClass.attackPowerPerLevel * difference);
+        //    AdjustSpeedMod(_characterClass.speedPerLevel * difference);
+        //    AdjustMaxHPMod(_characterClass.hpPerLevel * difference);
+        //} else if (_characterClass.attackType == ATTACK_TYPE.PHYSICAL && _characterClass.rangeType == RANGE_TYPE.RANGED) {
+        //    int multiplier = (difference < 0 ? -1 : 1);
+        //    int range = difference * multiplier;
+        //    if (range > 0) {
+        //        for (int i = 0; i < range; i++) {
+        //            if (i % 2 == 0) {
+        //                //even
+        //                AdjustMaxHPMod(_characterClass.hpPerLevel * multiplier);
+        //            } else {
+        //                //odd
+        //                AdjustAttackMod(_characterClass.attackPowerPerLevel * multiplier);
+        //            }
+        //        }
+        //    }
+        //    AdjustSpeedMod(_characterClass.speedPerLevel * difference);
+        //} else if (_characterClass.attackType == ATTACK_TYPE.MAGICAL && _characterClass.rangeType == RANGE_TYPE.RANGED) {
+        //    int multiplier = (difference < 0 ? -1 : 1);
+        //    int range = difference * multiplier;
+        //    if (range > 0) {
+        //        for (int i = _level; i <= _level + range; i++) {
+        //            if (!hpMagicRangedStatMod) {
+        //                AdjustAttackMod(_characterClass.attackPowerPerLevel * multiplier);
+        //            } else {
+        //                AdjustMaxHPMod(_characterClass.hpPerLevel * multiplier);
+        //            }
+        //            if (i != 1 && (i - 1) % 2 == 0) {
+        //                hpMagicRangedStatMod = !hpMagicRangedStatMod;
+        //            }
+        //        }
+        //    }
+        //    AdjustSpeedMod(_characterClass.speedPerLevel * difference);
+        //}
+
+        //UpdateMaxHP();
+        ////Reset to full health and sp
+        //ResetToFullHP();
+        ////ResetToFullSP();
+        //Messenger.Broadcast(Signals.CHARACTER_LEVEL_CHANGED, this);
+        ////if (_playerCharacterItem != null) {
+        ////    _playerCharacterItem.UpdateMinionItem();
+        ////}
+
+        ////Reset Experience
+        ////_experience = 0;
+        ////RecomputeMaxExperience();
+    //}
+    //public void AdjustExperience(int amount) {
+    //    _experience += amount;
+    //    if (_experience >= _maxExperience) {
+    //        SetExperience(0);
+    //        //LevelUp();
+    //    }
+    //}
+    //public void SetExperience(int amount) {
+    //    _experience = amount;
+    //}
+    //private void RecomputeMaxExperience() {
+    //    _maxExperience = Mathf.CeilToInt(100f * ((Mathf.Pow((float) _level, 1.25f)) / 1.1f));
+    //}
+    //public void SetMaxExperience(int amount) {
+    //    _maxExperience = amount;
+    //}
     //public void AdjustElementalWeakness(ELEMENT element, float amount) {
     //    _elementalWeaknesses[element] += amount;
     //}
@@ -3018,7 +3020,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     public void UpdateMaxHP() {
-        _maxHP = (int) (((_characterClass.baseHP + maxHPMod) * (1f + ((_raceSetting.hpModifier + maxHPPercentMod) / 100f))) * 4f);
+        _maxHP = _characterClass.baseHP;
+        //_maxHP = (int) (((_characterClass.baseHP + maxHPMod) * (1f + ((_raceSetting.hpModifier + maxHPPercentMod) / 100f))) * 4f);
         if (_maxHP < 0) {
             _maxHP = 1;
         }

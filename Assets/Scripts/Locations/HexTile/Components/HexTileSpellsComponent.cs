@@ -232,7 +232,7 @@ public class HexTileSpellsComponent {
                 i--;
                 continue;
             }
-            poi.AdjustHP(-25, ELEMENTAL_TYPE.Normal, showHPBar: true);
+            poi.AdjustHP(-40, ELEMENTAL_TYPE.Normal, showHPBar: true);
             if (poi.gridTileLocation != null && !poi.traitContainer.HasTrait("Immovable")) {
                 if (!DOTween.IsTweening(poi.mapObjectVisual.transform)) {
                     if (UnityEngine.Random.Range(0, 100) < 30) {
@@ -287,7 +287,11 @@ public class HexTileSpellsComponent {
             }
             yield return new WaitForSeconds(UnityEngine.Random.Range(0.1f, 0.7f));
             LocationGridTile chosenTile = owner.locationGridTiles[UnityEngine.Random.Range(0, owner.locationGridTiles.Count)];
-            GameManager.Instance.CreateParticleEffectAt(chosenTile, PARTICLE_EFFECT.Brimstones);            
+            GameManager.Instance.CreateParticleEffectAt(chosenTile, PARTICLE_EFFECT.Brimstones);
+            List<IPointOfInterest> pois = chosenTile.GetPOIsOnTile();
+            for (int i = 0; i < pois.Count; i++) {
+                pois[i].AdjustHP(-120, ELEMENTAL_TYPE.Fire, true, showHPBar: true);
+            }
         }
     }
     //private IEnumerator CommenceBrimstoneEffect(LocationGridTile targetTile) {
@@ -363,7 +367,7 @@ public class HexTileSpellsComponent {
             GameManager.Instance.CreateParticleEffectAt(chosenTile, PARTICLE_EFFECT.Lightning_Strike);
             List<IPointOfInterest> pois = chosenTile.GetPOIsOnTile();
             for (int i = 0; i < pois.Count; i++) {
-                pois[i].AdjustHP(-100, ELEMENTAL_TYPE.Electric, showHPBar: true);
+                pois[i].AdjustHP(-175, ELEMENTAL_TYPE.Electric, true, showHPBar: true);
             }
         }
     }
@@ -405,7 +409,11 @@ public class HexTileSpellsComponent {
             }
             yield return new WaitForSeconds(UnityEngine.Random.Range(0.1f, 0.7f));
             LocationGridTile chosenTile = owner.locationGridTiles[UnityEngine.Random.Range(0, owner.locationGridTiles.Count)];
-            GameManager.Instance.CreateParticleEffectAt(chosenTile, PARTICLE_EFFECT.Iceteroids);            
+            GameManager.Instance.CreateParticleEffectAt(chosenTile, PARTICLE_EFFECT.Iceteroids);
+            List<IPointOfInterest> pois = chosenTile.GetPOIsOnTile();
+            for (int i = 0; i < pois.Count; i++) {
+                pois[i].AdjustHP(-120, ELEMENTAL_TYPE.Ice, true, showHPBar: true);
+            }
         }
     }
     private void PerTickIceteroids() {

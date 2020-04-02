@@ -117,7 +117,7 @@ public class Player : ILeader, IObjectManipulator {
     #endregion
 
     #region ILeader
-    public void LevelUp() { }
+    //public void LevelUp() { }
     #endregion
 
     #region Settlement
@@ -618,13 +618,13 @@ public class Player : ILeader, IObjectManipulator {
     //    LoseSummonSlot(slot);
     //    UIManager.Instance.HideObjectPicker();
     //}
-    public void AddSummon(SUMMON_TYPE type, int level = 1, bool showNewSummonUI = false) {
+    public void AddSummon(SUMMON_TYPE type, bool showNewSummonUI = false) {
         Faction faction = playerFaction;
         if (type == SUMMON_TYPE.Incubus || type == SUMMON_TYPE.Succubus) {
             faction = FactionManager.Instance.neutralFaction;
         }
         Summon newSummon = CharacterManager.Instance.CreateNewSummon(type, faction, playerSettlement);
-        newSummon.SetLevel(level);
+        //newSummon.SetLevel(level);
         AddSummon(newSummon, showNewSummonUI);
     }
     //public void GainSummon(Summon summon) {

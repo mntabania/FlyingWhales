@@ -327,8 +327,11 @@ public class CharacterManager : MonoBehaviour {
     public CharacterClass CreateNewCharacterClass(string className) {
         return classManager.CreateNewCharacterClass(className);
     }
-    public string GetRandomClassByIdentifier(string identifier) {
-        return classManager.GetRandomClassByIdentifier(identifier);
+    //public string GetRandomClassByIdentifier(string identifier) {
+    //    return classManager.GetRandomClassByIdentifier(identifier);
+    //}
+    public string GetRandomCombatant() {
+        return classManager.GetRandomCombatant().className;
     }
     public bool HasCharacterClass(string className) {
         return classManager.classesDictionary.ContainsKey(className);

@@ -79,7 +79,7 @@ public class LevelUpUI : PopupMenuBase {
             minionToLevelUp = minion;
             minionPortrait.GeneratePortrait(minionToLevelUp.character);
             string text = minionToLevelUp.character.name;
-            text += $"\nLvl. {minionToLevelUp.character.level} {minionToLevelUp.character.raceClassName}";
+            text += $"\n{minionToLevelUp.character.raceClassName}";
             minionText.text = text;
             minionPortrait.gameObject.SetActive(true);
             minionText.gameObject.SetActive(true);
@@ -122,7 +122,7 @@ public class LevelUpUI : PopupMenuBase {
                 //if (summonSlot.isLocked) {
                 //    PlayerManager.Instance.player.IncreaseSummonSlot();
                 //} else {
-                    summonSlot.LevelUp();
+                    //summonSlot.LevelUp();
                 //}
             } else if (selectedObj is ArtifactSlot) {
                 ArtifactSlot artifactSlot = selectedObj as ArtifactSlot;

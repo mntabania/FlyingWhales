@@ -73,7 +73,7 @@ public class ReplaceUI : PopupMenuBase {
             Summon summon = obj as Summon;
             otaImage.sprite = CharacterManager.Instance.GetSummonSettings(summon.summonType).summonPortrait;
             string text = $"{summon.name} ({summon.summonType.SummonName()})";
-            text += $"\nLevel: {summon.level}";
+            //text += $"\nLevel: {summon.level}";
             text += $"\nDescription: {PlayerManager.Instance.player.GetSummonDescription(summon.summonType)}";
             otaText.text = text;
             otaImage.gameObject.SetActive(true);
@@ -104,7 +104,7 @@ public class ReplaceUI : PopupMenuBase {
         } else if (obj is Minion) {
             Minion minion = obj as Minion;
             string text = minion.character.name;
-            text += $"\nLvl. {minion.character.level} {minion.character.raceClassName}";
+            text += $"\n{minion.character.raceClassName}";
             otaText.text = text;
             portrait.GeneratePortrait(minion.character);
             portrait.gameObject.SetActive(true);

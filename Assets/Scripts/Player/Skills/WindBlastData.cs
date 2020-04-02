@@ -5,7 +5,7 @@ using Traits;
 public class WindBlastData : SpellData {
     public override SPELL_TYPE type => SPELL_TYPE.WIND_BLAST;
     public override string name => "Wind Blast";
-    public override string description => "Pushes movable characters and objects outwards and applies a moderate amount of Wind damage.";
+    public override string description => "A powerful blast of wind spreads out from the target tile, dealing Wind damage to all in range.";
     public override SPELL_CATEGORY category => SPELL_CATEGORY.SPELL;
 
     public WindBlastData() : base() {
@@ -23,7 +23,7 @@ public class WindBlastData : SpellData {
         base.ActivateAbility(targetTile);
     }
     private void ApplyWindDamage(ITraitable traitable) {
-        traitable.AdjustHP(-30, ELEMENTAL_TYPE.Wind, true, showHPBar: true);
+        traitable.AdjustHP(-300, ELEMENTAL_TYPE.Wind, true, showHPBar: true);
     }
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
         bool canPerform = base.CanPerformAbilityTowards(targetTile);

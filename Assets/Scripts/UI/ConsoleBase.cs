@@ -1147,11 +1147,11 @@ public class ConsoleBase : InfoUIBase {
         RACE race = (RACE)System.Enum.Parse(typeof(RACE), raceDropdown.options[raceDropdown.value].text);
         string className = classDropdown.options[classDropdown.value].text;
         int level = int.Parse(levelInput.text);
-        if (race != RACE.NONE && level > 0) {
+        if (race != RACE.NONE) {
             Minion minion = PlayerManager.Instance.player.CreateNewMinion(className, race);
-            if (level > 1) {
-                minion.character.LevelUp(level - 1);
-            }
+            //if (level > 1) {
+            //    minion.character.LevelUp(level - 1);
+            //}
             PlayerManager.Instance.player.AddMinion(minion);
         }
     }

@@ -161,10 +161,10 @@ public class MonsterInfoUI : InfoUIBase {
     private void UpdateStatInfo() {
         hpLbl.text = $"{_activeMonster.currentHP.ToString()}/{_activeMonster.maxHP.ToString()}";
         attackLbl.text = $"{_activeMonster.attackPower.ToString()}";
-        speedLbl.text = $"{_activeMonster.speed.ToString()}";
-        if(characterPortrait.character != null) {
-            characterPortrait.UpdateLvl();
-        }
+        speedLbl.text = $"{_activeMonster.attackSpeed / 1000f}s";
+        //if(characterPortrait.character != null) {
+        //    characterPortrait.UpdateLvl();
+        //}
     }
     #endregion
 

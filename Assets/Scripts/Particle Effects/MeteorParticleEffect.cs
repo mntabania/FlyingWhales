@@ -58,21 +58,22 @@ public class MeteorParticleEffect : BaseParticleEffect {
     private void MeteorEffect(ITraitable traitable, ref BurningSource bs) {
         if (traitable.gridTileLocation == null) { return; }
         BurningSource burningSource = bs;
-        if (traitable is TileObject obj) {
-            if (obj.tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
-                obj.AdjustHP(-obj.currentHP, ELEMENTAL_TYPE.Fire, 
-                    elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref burningSource), showHPBar: true);
-            } else {
-                CombatManager.Instance.ApplyElementalDamage(0, ELEMENTAL_TYPE.Fire, obj, 
-                    elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref burningSource));
-            }
-        } else if (traitable is Character character) {
-            character.AdjustHP(-(int)(character.maxHP * 0.4f), ELEMENTAL_TYPE.Fire, true, 
-                elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref burningSource), showHPBar: true);
-        } else {
-            traitable.AdjustHP(-traitable.currentHP, ELEMENTAL_TYPE.Fire, 
-                elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref burningSource), showHPBar: true);
-        }
+        traitable.AdjustHP(-500, ELEMENTAL_TYPE.Fire, true, elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref burningSource), showHPBar: true);
+        //if (traitable is TileObject obj) {
+        //    if (obj.tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
+        //        obj.AdjustHP(-500, ELEMENTAL_TYPE.Fire, 
+        //            elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref burningSource), showHPBar: true);
+        //    } else {
+        //        CombatManager.Instance.ApplyElementalDamage(0, ELEMENTAL_TYPE.Fire, obj, 
+        //            elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref burningSource));
+        //    }
+        //} else if (traitable is Character character) {
+        //    character.AdjustHP(-500, ELEMENTAL_TYPE.Fire, true, 
+        //        elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref burningSource), showHPBar: true);
+        //} else {
+        //    traitable.AdjustHP(-500, ELEMENTAL_TYPE.Fire, 
+        //        elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref burningSource), showHPBar: true);
+        //}
         bs = burningSource;
     }
     private void OnTweenComplete() {

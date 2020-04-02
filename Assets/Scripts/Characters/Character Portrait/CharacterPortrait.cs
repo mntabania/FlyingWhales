@@ -47,7 +47,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     private bool isPixelPerfect;
 
     private void OnEnable() {
-        Messenger.AddListener<Character>(Signals.CHARACTER_LEVEL_CHANGED, OnCharacterLevelChanged);
+        //Messenger.AddListener<Character>(Signals.CHARACTER_LEVEL_CHANGED, OnCharacterLevelChanged);
         Messenger.AddListener<Character>(Signals.FACTION_SET, OnFactionSet);
         Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);
         Messenger.AddListener<Character>(Signals.ROLE_CHANGED, OnCharacterChangedRole);
@@ -101,7 +101,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
                 beard.rectTransform.anchoredPosition = new Vector2(55f, 55f);
             }
         }
-        UpdateLvl();
+        //UpdateLvl();
         UpdateFrame();
         UpdateFactionEmblem();
 
@@ -118,9 +118,9 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     }
 
     #region Utilities
-    public void UpdateLvl() {
-        lvlTxt.text = _character.level.ToString();
-    }
+    //public void UpdateLvl() {
+    //    lvlTxt.text = _character.level.ToString();
+    //}
     private void SetWholeImageSprite(Sprite sprite) {
         wholeImage.sprite = sprite;
     }
@@ -251,13 +251,13 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     #endregion
 
     #region Listeners
-    private void OnCharacterLevelChanged(Character character) {
-        if (_character != null && _character.id == character.id) {
-            UpdateLvl();
-        }
-    }
+    //private void OnCharacterLevelChanged(Character character) {
+    //    if (_character != null && _character.id == character.id) {
+    //        UpdateLvl();
+    //    }
+    //}
     private void RemoveListeners() {
-        Messenger.RemoveListener<Character>(Signals.CHARACTER_LEVEL_CHANGED, OnCharacterLevelChanged);
+        //Messenger.RemoveListener<Character>(Signals.CHARACTER_LEVEL_CHANGED, OnCharacterLevelChanged);
         Messenger.RemoveListener<Character>(Signals.FACTION_SET, OnFactionSet);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);
         Messenger.RemoveListener<Character>(Signals.ROLE_CHANGED, OnCharacterChangedRole);

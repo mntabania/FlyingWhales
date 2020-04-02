@@ -11,5 +11,5 @@ public interface ILeader {
     Region currentRegion { get; }
     Region homeRegion { get; }
 
-    void LevelUp();
+    //void LevelUp();
 }

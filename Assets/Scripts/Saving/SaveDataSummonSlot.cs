@@ -19,7 +19,7 @@ public class SaveDataSummonSlot {
 
     public SummonSlot Load() {
         SummonSlot slot = new SummonSlot();
-        slot.SetLevel(level);
+        //slot.SetLevel(level);
         if(summonID != -1) {
             slot.SetSummon(CharacterManager.Instance.GetCharacterByID(summonID) as Summon);
         }

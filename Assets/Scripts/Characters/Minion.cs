@@ -28,7 +28,7 @@ public class Minion {
         this.exp = 0;
         traitsToAdd = new List<string>();
         character.SetMinion(this);
-        SetLevel(1);
+        //character.StartingLevel();
         SetAssignedDeadlySinName(character.characterClass.className);
         character.ownParty.icon.SetVisualState(true);
         if (!keepData) {
@@ -59,25 +59,25 @@ public class Minion {
     public void SetPlayerCharacterItem(PlayerCharacterItem item) {
         //character.SetPlayerCharacterItem(item);
     }
-    public void AdjustExp(int amount) {
-        exp += amount;
-        if(exp >= 100) {
-            LevelUp();
-            exp = 0;
-        }else if (exp < 0) {
-            exp = 0;
-        }
-        //_characterItem.UpdateMinionItem();
-    }
-    public void SetLevel(int level) {
-        character.SetLevel(level);
-    }
-    public void LevelUp() {
-        character.LevelUp();
-    }
-    public void LevelUp(int amount) {
-        character.LevelUp(amount);
-    }
+    //public void AdjustExp(int amount) {
+    //    exp += amount;
+    //    if(exp >= 100) {
+    //        LevelUp();
+    //        exp = 0;
+    //    }else if (exp < 0) {
+    //        exp = 0;
+    //    }
+    //    //_characterItem.UpdateMinionItem();
+    //}
+    //public void SetLevel(int level) {
+    //    character.SetLevel(level);
+    //}
+    //public void LevelUp() {
+    //    character.LevelUp();
+    //}
+    //public void LevelUp(int amount) {
+    //    character.LevelUp(amount);
+    //}
     public void SetIndexDefaultSort(int index) {
         indexDefaultSort = index;
     }

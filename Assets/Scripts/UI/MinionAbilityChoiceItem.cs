@@ -22,7 +22,7 @@ public class MinionAbilityChoiceItem : MonoBehaviour {
             portrait.GeneratePortrait(minion.character);
 
             string text = minion.character.name;
-            text += $"\nLvl.{minion.character.level} {minion.character.raceClassName}";
+            text += $"\n{minion.character.raceClassName}";
             minionText.text = text;
 
             UpdateAbilityItems();

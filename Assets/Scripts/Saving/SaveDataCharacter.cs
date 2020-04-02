@@ -177,9 +177,9 @@ public class SaveDataCharacter {
 
         currentHP = character.currentHP;
         maxHP = character.maxHP;
-        level = character.level;
-        experience = character.experience;
-        maxExperience = character.maxExperience;
+        //level = character.level;
+        //experience = character.experience;
+        //maxExperience = character.maxExperience;
         attackPowerMod = character.attackPowerMod;
         speedMod = character.speedMod;
         maxHPMod = character.maxHPMod;

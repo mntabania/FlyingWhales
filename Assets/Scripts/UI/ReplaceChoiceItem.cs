@@ -51,7 +51,7 @@ public class ReplaceChoiceItem : PooledObject {
         if (obj is Summon) {
             Summon summon = obj as Summon;
             string text = $"{summon.name} ({summon.summonType.SummonName()})";
-            text += $"\nLevel: {summon.level}";
+            //text += $"\nLevel: {summon.level}";
             text += $"\nDescription: {PlayerManager.Instance.player.GetSummonDescription(summon.summonType)}";
             info.text = text;
         } 
@@ -75,7 +75,7 @@ public class ReplaceChoiceItem : PooledObject {
         } else if (obj is Minion) {
             Minion minion = obj as Minion;
             string text = minion.character.name;
-            text += $"\nLvl. {minion.character.level} {minion.character.raceClassName}";
+            text += $"\n{minion.character.raceClassName}";
             info.text = text;
         }
     }

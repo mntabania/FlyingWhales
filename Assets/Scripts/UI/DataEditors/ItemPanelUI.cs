@@ -90,7 +90,7 @@ public class ItemPanelUI : MonoBehaviour {
         }
         MonsterPanelUI.Instance.UpdateItemDropOptions();
         CharacterPanelUI.Instance.UpdateItemOptions();
-        ClassPanelUI.Instance.UpdateItemOptions();
+        //ClassPanelUI.Instance.UpdateItemOptions();
     }
     public void LoadAllData() {
         _attributes = new List<string>();

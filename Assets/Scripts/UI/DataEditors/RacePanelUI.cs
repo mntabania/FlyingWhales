@@ -165,12 +165,12 @@ public class RacePanelUI : MonoBehaviour {
     }
     private void LoadRaceDataToUI(RaceSetting raceSetting) {
         raceOptions.value = GetDropdownIndex(raceOptions, raceSetting.race.ToString());
-        attackModifierInput.text = raceSetting.attackPowerModifier.ToString();
-        speedModifierInput.text = raceSetting.speedModifier.ToString();
+        //attackModifierInput.text = raceSetting.attackPowerModifier.ToString();
+        //speedModifierInput.text = raceSetting.speedModifier.ToString();
         runSpeedInput.text = raceSetting.runSpeed.ToString();
         walkSpeedInput.text = raceSetting.walkSpeed.ToString();
-        hpModifierInput.text = raceSetting.hpModifier.ToString();
-        neutralSpawnLevelModInput.text = raceSetting.neutralSpawnLevelModifier.ToString();
+        //hpModifierInput.text = raceSetting.hpModifier.ToString();
+        //neutralSpawnLevelModInput.text = raceSetting.neutralSpawnLevelModifier.ToString();
 
         for (int i = 0; i < raceSetting.traitNames.Length; i++) {
             string traitName = raceSetting.traitNames[i];

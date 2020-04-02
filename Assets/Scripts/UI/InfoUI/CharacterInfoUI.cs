@@ -241,10 +241,10 @@ public class CharacterInfoUI : InfoUIBase {
     private void UpdateStatInfo() {
         hpLbl.text = $"{_activeCharacter.currentHP.ToString()}/{_activeCharacter.maxHP.ToString()}";
         attackLbl.text = $"{_activeCharacter.attackPower.ToString()}";
-        speedLbl.text = $"{_activeCharacter.speed.ToString()}";
-        if(characterPortrait.character != null) {
-            characterPortrait.UpdateLvl();
-        }
+        speedLbl.text =  $"{_activeCharacter.attackSpeed / 1000f}s";
+        //if(characterPortrait.character != null) {
+        //    characterPortrait.UpdateLvl();
+        //}
     }
     #endregion
 

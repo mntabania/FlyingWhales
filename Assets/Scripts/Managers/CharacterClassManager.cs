@@ -112,12 +112,12 @@ public class CharacterClassManager : MonoBehaviour {
             //    //    identifierClasses.Add(currentClass.identifier, demonClasses);
             //    //}
             //}
-            if (!identifierClasses.ContainsKey(currentClass.identifier)) {
-                identifierClasses.Add(currentClass.identifier, new List<CharacterClass>() { currentClass });
-            } else {
-                identifierClasses[currentClass.identifier].Add(currentClass);
-            }
-            identifierClasses["All"].Add(currentClass);
+            //if (!identifierClasses.ContainsKey(currentClass.identifier)) {
+            //    identifierClasses.Add(currentClass.identifier, new List<CharacterClass>() { currentClass });
+            //} else {
+            //    identifierClasses[currentClass.identifier].Add(currentClass);
+            //}
+            //identifierClasses["All"].Add(currentClass);
 
             if (currentClass.IsCombatant() && currentClass.identifier == "Normal") {
                 normalCombatantClasses.Add(currentClass);
@@ -131,13 +131,16 @@ public class CharacterClassManager : MonoBehaviour {
         }
         return null;
     }
-    public string GetRandomClassByIdentifier(string identifier) {
-        if (identifierClasses.ContainsKey(identifier)) {
-            List<CharacterClass> list = identifierClasses[identifier];
-            return list[UnityEngine.Random.Range(0, list.Count)].className;
-        }
-        return string.Empty;
+    public CharacterClass GetRandomCombatant() {
+        return normalCombatantClasses[UnityEngine.Random.Range(0, normalCombatantClasses.Count)];
     }
+    //public string GetRandomClassByIdentifier(string identifier) {
+    //    if (identifierClasses.ContainsKey(identifier)) {
+    //        List<CharacterClass> list = identifierClasses[identifier];
+    //        return list[UnityEngine.Random.Range(0, list.Count)].className;
+    //    }
+    //    return string.Empty;
+    //}
     #endregion
 
     #region Class Idle Plans
