@@ -38,8 +38,7 @@ namespace Traits {
         #region Overrides
         public override void OnAddTrait(ITraitable sourceCharacter) {
             base.OnAddTrait(sourceCharacter);
-            if (sourceCharacter is Character) {
-                Character character = sourceCharacter as Character;
+            if (sourceCharacter is Character character) {
                 character.jobQueue.CancelAllJobs(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT, JOB_TYPE.ENERGY_RECOVERY_NORMAL, JOB_TYPE.ENERGY_RECOVERY_URGENT);
                 character.needsComponent.SetTirednessForcedTick(0);
                 character.needsComponent.SetForcedFullnessRecoveryTimeInWords(TIME_IN_WORDS.LATE_NIGHT);

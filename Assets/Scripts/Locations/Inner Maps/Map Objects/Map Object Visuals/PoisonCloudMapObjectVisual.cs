@@ -125,16 +125,16 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
             Debug.Log(summary);
         }
     }
-    private void Explode() {
+    public void Explode() {
         Debug.Log($"{GameManager.Instance.TodayLogString()}{this.name} has exploded!");
+        _cloudEffect.TriggerSubEmitter(0);
+        Expire();
         List<LocationGridTile> affectedTiles =
             gridTileLocation.GetTilesInRadius(_size, includeCenterTile: true, includeTilesInDifferentStructure: true);
         for (int i = 0; i < affectedTiles.Count; i++) {
             LocationGridTile tile = affectedTiles[i];
             tile.PerformActionOnTraitables(ApplyExplosionEffect);
         }
-        _cloudEffect.TriggerSubEmitter(0);
-        Expire();
     }
     private void ApplyExplosionEffect(ITraitable traitable) {
         traitable.AdjustHP(-Mathf.FloorToInt(obj.maxHP * 0.75f), ELEMENTAL_TYPE.Normal, true);
@@ -219,6 +219,7 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
         Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
         Messenger.RemoveListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
         Messenger.RemoveListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
+        _poisonCloud.Expire();
         StartCoroutine(DestroyCoroutine());
     }
     private IEnumerator DestroyCoroutine() {

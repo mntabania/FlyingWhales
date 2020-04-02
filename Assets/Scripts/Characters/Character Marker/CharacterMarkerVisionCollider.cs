@@ -84,10 +84,10 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
     }
     public void TransferAllDifferentStructureCharacters() {
         Debug.Log($"{GameManager.Instance.TodayLogString()} {parentMarker.character.name} is transferring all objects in different structures to its normal vision");
-        
         List<IPointOfInterest> diffStructurePOIs = new List<IPointOfInterest>(poisInRangeButDiffStructure);
         for (int i = 0; i < diffStructurePOIs.Count; i++) {
             IPointOfInterest poi = diffStructurePOIs[i];
+            if (poi.gridTileLocation == null) { continue; }
             if (TryAddPOIToVision(poi)) {
                 RemovePOIAsInRangeButDifferentStructure(poi);
             }
@@ -98,6 +98,7 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
         List<IPointOfInterest> poisInVision = new List<IPointOfInterest>(parentMarker.inVisionPOIs);
         for (int i = 0; i < poisInVision.Count; i++) {
             IPointOfInterest pointOfInterest = poisInVision[i];
+            if (pointOfInterest.gridTileLocation == null) { continue; }
             //if poi wasn't added to the characters normal vision, remove that poi from inVisionPOIs 
             if (TryAddPOIToVision(pointOfInterest) == false) {
                 parentMarker.RemovePOIFromInVisionRange(pointOfInterest);

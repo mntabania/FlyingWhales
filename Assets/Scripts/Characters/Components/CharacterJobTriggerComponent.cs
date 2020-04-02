@@ -198,14 +198,14 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		return false;
 	}
 	private void TriggerRemoveStatus(Trait trait) {
-		GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = trait.name, target = GOAP_EFFECT_TARGET.TARGET };
-		if (_owner.homeSettlement.HasJob(goapEffect, _owner) == false) {
-			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REMOVE_STATUS, goapEffect, _owner, _owner.homeSettlement);
-			job.SetCanTakeThisJobChecker((Character character, JobQueueItem jqi) => CanTakeRemoveStatus(character, job, trait));
-			job.SetStillApplicableChecker(() => IsRemoveStatusJobStillApplicable(_owner, job, trait));
-			// job.AddOtherData(INTERACTION_TYPE.CRAFT_TILE_OBJECT, new object[] { TILE_OBJECT_TYPE.HEALING_POTION });
-			// job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TokenManager.Instance.itemData[SPECIAL_TOKEN.HEALING_POTION].craftCost });
-			_owner.homeSettlement.AddToAvailableJobs(job);
+		if (trait.gainedFromDoing == null || trait.gainedFromDoing.isStealth == false) { //only create remove status job if trait was not gained from a stealth action
+			GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = trait.name, target = GOAP_EFFECT_TARGET.TARGET };
+			if (_owner.homeSettlement.HasJob(goapEffect, _owner) == false) {
+				GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REMOVE_STATUS, goapEffect, _owner, _owner.homeSettlement);
+				job.SetCanTakeThisJobChecker((Character character, JobQueueItem jqi) => CanTakeRemoveStatus(character, job, trait));
+				job.SetStillApplicableChecker(() => IsRemoveStatusJobStillApplicable(_owner, job, trait));
+				_owner.homeSettlement.AddToAvailableJobs(job);
+			}	
 		}
 	}
 	private void TriggerFeed(Character target) {
@@ -685,7 +685,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         _owner.jobQueue.AddJobInQueue(job);
     }
     public void CreatePickUpJob(TileObject target) {
-        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.PICK_UP, target, _owner);
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TAKE_ITEM, INTERACTION_TYPE.PICK_UP, target, _owner);
         _owner.jobQueue.AddJobInQueue(job);
     }
     public void CreateDestroyResourceAmountJob(ResourcePile target, int amount) {

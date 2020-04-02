@@ -347,7 +347,7 @@ public class LocationStructureObject : PooledObject {
         base.Reset();
         SetPreplacedObjectsState(true);
         _groundTileMap.gameObject.SetActive(true);
-        _blockWallsTilemap.gameObject.SetActive(true);
+        _blockWallsTilemap?.gameObject.SetActive(true);
         tiles = null;
     }
     #endregion

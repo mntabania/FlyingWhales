@@ -44,41 +44,36 @@ public class MeteorParticleEffect : BaseParticleEffect {
         //    meteorExplosionParticles[i].Play();
         //}
         List<ITraitable> traitables = new List<ITraitable>();
+        BurningSource bs = null;
         List<LocationGridTile> tiles = targetTile.GetTilesInRadius(1, 0, true); //radius
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile tile = tiles[i];
-            traitables.AddRange(tile.GetTraitablesOnTile());
+            tile.PerformActionOnTraitables((traitable) => MeteorEffect(traitable, ref bs));
         }
-        // flammables = flammables.Where(x => !x.traitContainer.HasTrait("Burning", "Burnt", "Wet", "Fireproof")).ToList();
-        BurningSource bs = null;
-        for (int i = 0; i < traitables.Count; i++) {
-            ITraitable traitable = traitables[i];
-            if (traitable.gridTileLocation == null) {
-                continue; //skip
-            }
-            if (traitable is TileObject obj) {
-                if (obj.tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
-                    obj.AdjustHP(-obj.currentHP, ELEMENTAL_TYPE.Fire, 
-                        elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref bs), showHPBar: true);
-                    if (obj.gridTileLocation == null) {
-                        continue; //object was destroyed, do not add burning trait
-                    }
-                } else {
-                    CombatManager.Instance.ApplyElementalDamage(0, ELEMENTAL_TYPE.Fire, obj, 
-                        elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref bs));
-                    //obj.AdjustHP(0, ELEMENTAL_TYPE.Fire);
-                }
-            } else if (traitable is Character character) {
-                character.AdjustHP(-(int)(character.maxHP * 0.4f), ELEMENTAL_TYPE.Fire, true, 
-                    elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref bs), showHPBar: true);
-            } else {
-                traitable.AdjustHP(-traitable.currentHP, ELEMENTAL_TYPE.Fire, 
-                    elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref bs), showHPBar: true);
-            }
-        }
+        
         Messenger.Broadcast(Signals.INCREASE_THREAT_THAT_SEES_TILE, targetTile, 10);
         InnerMapCameraMove.Instance.MeteorShake();
         GameManager.Instance.StartCoroutine(ExpireCoroutine(gameObject));
+    }
+    private void MeteorEffect(ITraitable traitable, ref BurningSource bs) {
+        if (traitable.gridTileLocation == null) { return; }
+        BurningSource burningSource = bs;
+        if (traitable is TileObject obj) {
+            if (obj.tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
+                obj.AdjustHP(-obj.currentHP, ELEMENTAL_TYPE.Fire, 
+                    elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref burningSource), showHPBar: true);
+            } else {
+                CombatManager.Instance.ApplyElementalDamage(0, ELEMENTAL_TYPE.Fire, obj, 
+                    elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref burningSource));
+            }
+        } else if (traitable is Character character) {
+            character.AdjustHP(-(int)(character.maxHP * 0.4f), ELEMENTAL_TYPE.Fire, true, 
+                elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref burningSource), showHPBar: true);
+        } else {
+            traitable.AdjustHP(-traitable.currentHP, ELEMENTAL_TYPE.Fire, 
+                elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref burningSource), showHPBar: true);
+        }
+        bs = burningSource;
     }
     private void OnTweenComplete() {
         //InnerMapCameraMove.Instance.innerMapsCamera.transform.rotation = Quaternion.Euler(new Vector3(0f,0f,0f));

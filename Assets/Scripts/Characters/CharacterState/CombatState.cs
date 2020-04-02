@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using Traits;
 using UnityEngine.EventSystems;
@@ -511,7 +510,7 @@ public class CombatState : CharacterState {
     #region Attacking
     private void PursueClosestHostile() {
         if (!stateComponent.character.currentParty.icon.isTravelling || stateComponent.character.marker.targetPOI != currentClosestHostile) {
-            stateComponent.character.marker.GoToPOI(currentClosestHostile);
+            stateComponent.character.marker.GoToPOI(currentClosestHostile);    
         }
     }
     private void SetClosestHostile() {
@@ -538,7 +537,7 @@ public class CombatState : CharacterState {
     public void LateUpdate() {
         if (GameManager.Instance.isPaused) { return; }
         timeElapsed += Time.deltaTime;
-        if (timeElapsed >= 1f) {
+        if (timeElapsed >= 0.3f) {
             timeElapsed = 0;
             Profiler.BeginSample($"{stateComponent.character.name} Combat State Late Update");
             if (currentClosestHostile != null) {
@@ -570,41 +569,12 @@ public class CombatState : CharacterState {
     }
     
     //Will be constantly checked every frame
-    private IEnumerator CheckIfCurrentHostileIsInRange() {
-        Profiler.BeginSample($"{stateComponent.character.name} CheckIfCurrentHostileIsInRange");
-        if (currentClosestHostile == null) {
-            //log += "\nNo current closest hostile, cannot trigger attack...";
-            //stateComponent.character.PrintLogIfActive(log);
-        }
-        else if (currentClosestHostile.isDead) {
-            stateComponent.character.combatComponent.RemoveHostileInRange(currentClosestHostile);
-        }
-        else if (currentClosestHostile.currentRegion != stateComponent.character.currentRegion) {
-            stateComponent.character.combatComponent.RemoveHostileInRange(currentClosestHostile);
-        }
-        //If character is attacking and distance is within the attack range of this character, attack
-        //else, pursue again
-        else if (isAttacking) {
-            float distance = Vector2.Distance(stateComponent.character.marker.transform.position, currentClosestHostile.worldPosition);
-            if (distance <= stateComponent.character.characterClass.attackRange && stateComponent.character.marker.IsCharacterInLineOfSightWith(currentClosestHostile)) {
-                Attack();
-            } else {
-                PursueClosestHostile();
-            }
-        }
-
-        yield return null;
-        Profiler.EndSample();
-        if (stateComponent.currentState == this && !isExecutingAttack) { //so that if the combat state has been exited, this no longer executes that results in endless execution of this coroutine.
-            stateComponent.character.marker.StartCoroutine(CheckIfCurrentHostileIsInRange());
-        }
-    }
     private void Attack() {
         string summary = $"{stateComponent.character.name} will attack {currentClosestHostile?.name}";
-
+        
         //When in range and in line of sight, stop movement
         if (stateComponent.character.currentParty.icon.isTravelling && stateComponent.character.currentParty.icon.travelLine == null) {
-            stateComponent.character.marker.StopMovement(); //only stop movement if target is also not moving.
+            stateComponent.character.marker.StopMovement();
             //clear the marker's target poi when it reaches the target, so that the pursue closest hostile will still execute when the other character chooses to flee
             stateComponent.character.marker.SetTargetPOI(null);
         }
@@ -619,7 +589,7 @@ public class CombatState : CharacterState {
             //Debug.Log(summary);
             return;
         }
-
+        
         summary += "\nExecuting attack...";
         InnerMapManager.Instance.FaceTarget(stateComponent.character, currentClosestHostile);
         if (isExecutingAttack == false) {
@@ -635,7 +605,7 @@ public class CombatState : CharacterState {
     public void OnAttackHit(IDamageable damageable) {
         string attackSummary =
             $"{GameManager.Instance.TodayLogString()}{stateComponent.character.name} hit {damageable?.name ?? "Nothing"}";
-
+        
         if (damageable != null) {
             if (damageable != currentClosestHostile) {
                 attackSummary =

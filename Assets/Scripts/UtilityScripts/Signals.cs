@@ -34,6 +34,7 @@ public static class Signals {
     public static string TILE_HOVERED_OVER = "OnTileHoveredOver"; //Parameters (HexTile hoveredTile)
     public static string TILE_HOVERED_OUT = "OnTileHoveredOut"; //Parameters (HexTile hoveredTile)
     public static string MODIFY_BUILD_SPOT_WALKABILITY = "ModifyBuildSpotWalkability";
+    public static string ACTION_PERFORMED_ON_TILE_TRAITABLES = "OnActionPerformedOnTileTraitables";
     #endregion
 
     #region Areas/Regions
@@ -534,6 +535,7 @@ public static class Signals {
             new SignalMethod() { methodName = "OnTickEnded", objectType = typeof(Character) },
         }},
     };
+    
     public static bool TryGetMatchingSignalMethod(string eventType, Callback method, out SignalMethod matching) {
         for (int i = 0; i < orderedSignalExecution[eventType].Length; i++) {
             SignalMethod sm = orderedSignalExecution[eventType][i];

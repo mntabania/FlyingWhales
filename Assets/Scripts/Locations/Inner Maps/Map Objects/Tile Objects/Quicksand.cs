@@ -7,6 +7,7 @@ using UnityEngine.Assertions;
 public class Quicksand : TileObject {
 
     private QuicksandMapObjectVisual _quicksandMapVisual;
+    public override string neutralizer => "Earth Master";
     
     public Quicksand() {
         Initialize(TILE_OBJECT_TYPE.QUICKSAND, false);

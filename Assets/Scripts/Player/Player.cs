@@ -358,7 +358,7 @@ public class Player : ILeader, IObjectManipulator {
     }
     public void SetCurrentActiveIntel(IIntel intel) {
         if (currentActiveIntel == intel) {
-            //Do not process when setting the same combat ability
+            //Do not process when setting the same intel
             return;
         }
         IIntel previousIntel = currentActiveIntel;
@@ -385,17 +385,18 @@ public class Player : ILeader, IObjectManipulator {
         if (minions.Count > 0 && CanShareIntel(InnerMapManager.Instance.currentlyHoveredPoi, ref hoverText)) {
             Character targetCharacter = InnerMapManager.Instance.currentlyHoveredPoi as Character;
             UIManager.Instance.OpenShareIntelMenu(targetCharacter, minions[0].character, currentActiveIntel);
+            RemoveIntel(currentActiveIntel);
+            SetCurrentActiveIntel(null);
         }
     }
     public bool CanShareIntel(IPointOfInterest poi, ref string hoverText) {
-        if(poi is Character) {
-            Character character = poi as Character;
+        if(poi is Character character) {
             hoverText = string.Empty;
             if(character.traitContainer.HasTrait("Blessed", "Catatonic")) {
                 hoverText = "Blessed/Catatonic characters cannot be targeted.";
                 return false;
             }
-            if(!character.faction.isPlayerFaction && !UtilityScripts.GameUtilities.IsRaceBeast(character.race)) { //character.role.roleType != CHARACTER_ROLE.BEAST && character.role.roleType != CHARACTER_ROLE.PLAYER
+            if(!character.faction.isPlayerFaction && !GameUtilities.IsRaceBeast(character.race)) { //character.role.roleType != CHARACTER_ROLE.BEAST && character.role.roleType != CHARACTER_ROLE.PLAYER
                 return true;
             }
         }
@@ -497,7 +498,7 @@ public class Player : ILeader, IObjectManipulator {
     private void ShowNotification(Log log) {
         Messenger.Broadcast(Signals.SHOW_PLAYER_NOTIFICATION, log);
     }
-    public void ShowNotification(IIntel intel) {
+    private void ShowNotification(IIntel intel) {
         Messenger.Broadcast(Signals.SHOW_INTEL_NOTIFICATION, intel);
     }
     #endregion

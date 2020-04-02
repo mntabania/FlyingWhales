@@ -70,6 +70,10 @@ public class ObjectPoolManager : MonoBehaviour {
     public void DestroyObject(PooledObject pooledObject) {
         PooledObject[] pooledObjects = pooledObject.GetComponents<PooledObject>();
         Messenger.Broadcast(Signals.POOLED_OBJECT_DESTROYED, pooledObject.gameObject);
+        pooledObject.BeforeDestroyActions();
+        for (int i = 0; i < pooledObjects.Length; i++) {
+            pooledObjects[i].BeforeDestroyActions();
+        }
         pooledObject.SendObjectBackToPool();
         for (int i = 0; i < pooledObjects.Length; i++) {
             pooledObjects[i].Reset();
@@ -79,6 +83,9 @@ public class ObjectPoolManager : MonoBehaviour {
     public void DestroyObject(GameObject gameObject) {
         PooledObject[] pooledObjects = gameObject.GetComponents<PooledObject>();
         Messenger.Broadcast(Signals.POOLED_OBJECT_DESTROYED, gameObject);
+        for (int i = 0; i < pooledObjects.Length; i++) {
+            pooledObjects[i].BeforeDestroyActions();
+        }
         pooledObjects[0].SendObjectBackToPool();
         for (int i = 0; i < pooledObjects.Length; i++) {
             pooledObjects[i].Reset();

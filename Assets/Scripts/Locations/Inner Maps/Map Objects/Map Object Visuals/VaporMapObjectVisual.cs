@@ -125,6 +125,7 @@ public class VaporMapObjectVisual : MovingMapObjectVisual<TileObject> {
         }
         Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
         Messenger.RemoveListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
+        _vaporTileObject.Expire();
         StartCoroutine(DestroyCoroutine());
     }
     private IEnumerator DestroyCoroutine() {

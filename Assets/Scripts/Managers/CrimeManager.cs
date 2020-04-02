@@ -31,6 +31,15 @@ public class CrimeManager : MonoBehaviour {
                 }
             }
         } else if (consideredAction.associatedJobType == JOB_TYPE.DESTROY) {
+            if (consideredAction.poiTarget is TileObject tileObject) {
+                if (tileObject.characterOwner != null && 
+                    tileObject.characterOwner != consideredAction.actor) {
+                    //only consider destroy job as infraction if target object is owned by someone else
+                    return CRIME_TYPE.INFRACTION;    
+                } else {
+                    return CRIME_TYPE.NONE;
+                }
+            }
             return CRIME_TYPE.INFRACTION;
         } else if (actionType == INTERACTION_TYPE.STEAL
             || actionType == INTERACTION_TYPE.POISON) {

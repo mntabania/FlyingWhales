@@ -172,6 +172,7 @@ public class LocustSwarmMapObjectVisual : MovingMapObjectVisual<TileObject> {
         if (string.IsNullOrEmpty(_movementKey) == false) {
             SchedulingManager.Instance.RemoveSpecificEntry(_movementKey);    
         }
+        _locustSwarm.Expire();
         ObjectPoolManager.Instance.DestroyObject(this);
     }
     #endregion

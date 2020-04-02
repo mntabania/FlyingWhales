@@ -33,6 +33,7 @@ namespace EZObjectPools
         }
 
         public virtual void Reset() { }
+        public virtual void BeforeDestroyActions() { }
 
         //void OnDisable()
         //{

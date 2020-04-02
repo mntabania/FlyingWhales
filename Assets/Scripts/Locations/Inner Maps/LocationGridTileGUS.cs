@@ -8,8 +8,7 @@ namespace Inner_Maps {
         [SerializeField] private GraphUpdateScene gus;
         [SerializeField] private BoxCollider2D boxCollider;
         
-        public void Initialize(Vector2 offset, Vector2 size, IPointOfInterest poi) {
-            name = poi.name;
+        public void Initialize(Vector2 offset, Vector2 size) {
             boxCollider.offset = offset;
             boxCollider.size = size;
             gus.setWalkability = false;

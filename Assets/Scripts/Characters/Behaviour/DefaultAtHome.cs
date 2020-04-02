@@ -132,6 +132,9 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                                 } else if (chosenRelatable.isDead || chosenRelatable.isMissing) {
                                     targetStructure = null;
                                     positiveRelatables.RemoveAt(index);
+                                } else if (PathfindingManager.Instance.HasPathEvenDiffRegion(character.gridTileLocation, targetStructure.GetRandomTile()) == false) {
+                                    targetStructure = null;
+                                    positiveRelatables.RemoveAt(index);
                                 }
                             }
                             if (targetStructure != null) {

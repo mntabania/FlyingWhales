@@ -36,8 +36,7 @@ public class Assault : GoapAction {
         Character actor = node.actor;
         IPointOfInterest target = node.poiTarget;
         if (!witness.IsHostileWith(actor)) {
-            if (target is Character) {
-                Character targetCharacter = target as Character;
+            if (target is Character targetCharacter) {
                 string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
                 if (opinionLabel == OpinionComponent.Enemy || opinionLabel == OpinionComponent.Rival) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status);

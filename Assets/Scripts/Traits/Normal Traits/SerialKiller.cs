@@ -6,7 +6,8 @@ using System.Linq;
 using Inner_Maps.Location_Structures;
 
 namespace Traits {
-    public class Psychopath : Trait {
+    public class 
+        Psychopath : Trait {
 
         public SerialVictim victim1Requirement { get; private set; }
         //public SerialVictim victim2Requirement { get; private set; }
@@ -79,7 +80,10 @@ namespace Traits {
             if (targetVictim == null) {
                 for (int i = 0; i < character.currentRegion.charactersAtLocation.Count; i++) {
                     Character potentialVictim = character.currentRegion.charactersAtLocation[i];
-                    if (IsCharacterApplicableAsVictim(potentialVictim)) {
+                    if (potentialVictim == character) {
+                        continue;
+                    }
+                    if (IsCharacterNotApplicableAsVictim(potentialVictim)) {
                         continue;
                     }
                     if (!potentialVictim.isDead && DoesCharacterFitAnyVictimRequirements(potentialVictim)) {
@@ -267,7 +271,7 @@ namespace Traits {
         //}
         public void CheckTargetVictimIfStillAvailable() {
             if (targetVictim != null) {
-                if (IsCharacterApplicableAsVictim(targetVictim)) {
+                if (IsCharacterNotApplicableAsVictim(targetVictim)) {
                     SetTargetVictim(null);
                     //if (hasStartedFollowing) {
                     //    StopFollowing();
@@ -276,7 +280,7 @@ namespace Traits {
                 }
             }
         }
-        private bool IsCharacterApplicableAsVictim(Character target) {
+        private bool IsCharacterNotApplicableAsVictim(Character target) {
             return target.currentRegion != character.currentRegion || target.isBeingSeized || target.isDead || target.isMissing;
         }
         public bool CreateHuntVictimJob() {
@@ -284,7 +288,7 @@ namespace Traits {
                 return false;
             }
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM, INTERACTION_TYPE.RITUAL_KILLING, targetVictim, character);
-            if (character.homeStructure == null || character.homeStructure.residents.Count > 1) {
+            if (character.homeStructure?.residents == null || character.homeStructure.residents.Count > 1) {
                 LocationGridTile outsideSettlementTile = character.currentRegion.GetRandomOutsideSettlementLocationGridTileWithPathTo(character.gridTileLocation);
                 if(outsideSettlementTile != null) {
                     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { outsideSettlementTile.structure, outsideSettlementTile });

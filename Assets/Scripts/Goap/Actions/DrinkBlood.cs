@@ -217,7 +217,7 @@ public class DrinkBlood : GoapAction {
         int chance = UnityEngine.Random.Range(0, 100);
         if(chance < 85) {
             Lethargic lethargic = new Lethargic();
-            goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, lethargic, goapNode.actor);
+            goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, lethargic, goapNode.actor, goapNode);
         } else {
             Vampiric vampiric = new Vampiric();
             goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, vampiric, goapNode.actor);

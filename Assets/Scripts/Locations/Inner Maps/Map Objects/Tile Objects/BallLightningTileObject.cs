@@ -7,6 +7,7 @@ using UnityEngine.Assertions;
 public class BallLightningTileObject : MovingTileObject {
 
     private BallLightningMapObjectVisual _ballLightningMapVisual;
+    public override string neutralizer => "Thunder Master";
     
     public BallLightningTileObject() {
         Initialize(TILE_OBJECT_TYPE.BALL_LIGHTNING, false);

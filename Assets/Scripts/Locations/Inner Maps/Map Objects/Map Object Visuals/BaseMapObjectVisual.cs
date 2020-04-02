@@ -34,6 +34,11 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
     public SpriteRenderer objectSpriteRenderer => objectVisual;
     public BaseVisionTrigger visionTrigger { get; protected set; }
 
+    ///this is null by default. This is responsible for updating the pathfinding graph when a tileobject that should be unapassable is placed
+    /// <see cref="LocationGridTileGUS.Initialize"/>,
+    /// this should also destroyed when the object is removed. <see cref="LocationGridTileGUS.Destroy"/>
+    private LocationGridTileGUS graphUpdateScene { get; set; } 
+    
     #region Initialization
     protected void Initialize(ISelectable selectable) {
         this.selectable = selectable;
@@ -162,6 +167,10 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
     void OnDisable() {
         Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
     }
+    public override void BeforeDestroyActions() {
+        base.BeforeDestroyActions();
+        DestroyExistingGUS();
+    }
     #endregion
 
     #region Tweening
@@ -221,6 +230,22 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
         if (!(poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER && (poi as Character).isInCombat)) {
             HideHPBar();
         }
+    }
+    #endregion
+    
+    #region Graph Updates
+    public void InitializeGUS(Vector2 offset, Vector2 size) {
+        if (graphUpdateScene == null) {
+            GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool("LocationGridTileGUS", Vector3.zero, Quaternion.identity, transform);
+            LocationGridTileGUS gus = go.GetComponent<LocationGridTileGUS>();
+            graphUpdateScene = gus;
+        }
+        graphUpdateScene.Initialize(offset, size);
+    }
+    public void DestroyExistingGUS() {
+        if (graphUpdateScene == null) return;
+        graphUpdateScene.Destroy();
+        graphUpdateScene = null;
     }
     #endregion
 }

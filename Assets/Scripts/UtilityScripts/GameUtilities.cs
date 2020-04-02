@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using Inner_Maps;
-using Traits;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.UI;
@@ -269,43 +268,6 @@ namespace UtilityScripts {
                 radiusModifier++;
             }
             return listHolder;
-        }
-        public static List<ITraitable> GetTraitableDiamondTilesFromRadius(InnerTileMap map, Vector3Int center, int radius) {
-            List<ITraitable> traitables = new List<ITraitable>();
-            int lowerBoundY = center.y - radius;
-            int upperBoundY = center.y + radius;
-            
-            //from center to upwards
-            int radiusModifier = 0;
-            for (int y = center.y; y <= upperBoundY; y++) {
-                int lowerBoundX = (center.x - radius) + radiusModifier;
-                int upperBoundX = (center.x + radius) - radiusModifier;    
-                for (int x = lowerBoundX; x <= upperBoundX; x++) {
-                    if (Utilities.IsInRange(x, 0, map.width) 
-                        && Utilities.IsInRange(y, 0, map.height)) {
-                        LocationGridTile tile = map.map[x, y];
-                        traitables.AddRange(tile.GetTraitablesOnTile());
-                    }
-                }
-                radiusModifier++;
-            }
-                    
-            //from center downwards
-            radiusModifier = 0;
-            //-1 because center row tiles were already added above
-            for (int y = center.y - 1; y >= lowerBoundY; y--) {
-                int lowerBoundX = (center.x - radius) + radiusModifier;
-                int upperBoundX = (center.x + radius) - radiusModifier;    
-                for (int x = lowerBoundX; x <= upperBoundX; x++) {
-                    if (Utilities.IsInRange(x, 0, map.width) 
-                        && Utilities.IsInRange(y, 0, map.height)) {
-                        LocationGridTile tile = map.map[x, y];
-                        traitables.AddRange(tile.GetTraitablesOnTile());
-                    }
-                }
-                radiusModifier++;
-            }
-            return traitables;
         }
         public static void HighlightTiles(List<LocationGridTile> tiles, Color color) {
             for (int i = 0; i < tiles.Count; i++) {

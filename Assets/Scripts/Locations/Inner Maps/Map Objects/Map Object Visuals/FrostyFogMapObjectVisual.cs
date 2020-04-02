@@ -13,6 +13,7 @@ public class FrostyFogMapObjectVisual : MovingMapObjectVisual<TileObject> {
     private string _expiryKey;
     private Tweener _movement;
     private List<ITraitable> _objsInRange;
+    private FrostyFogTileObject owner;
     
     
     #region Abstract Members Implementation
@@ -39,6 +40,7 @@ public class FrostyFogMapObjectVisual : MovingMapObjectVisual<TileObject> {
     public override void Initialize(TileObject obj) {
         base.Initialize(obj);
         _objsInRange = new List<ITraitable>();
+        owner = obj as FrostyFogTileObject;
     }
     public override void PlaceObjectAt(LocationGridTile tile) {
         base.PlaceObjectAt(tile);
@@ -151,6 +153,7 @@ public class FrostyFogMapObjectVisual : MovingMapObjectVisual<TileObject> {
         Messenger.RemoveListener(Signals.TICK_ENDED, PerTick);
         Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
         Messenger.RemoveListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
+        owner.Expire();
         StartCoroutine(DestroyCoroutine());
     }
     private IEnumerator DestroyCoroutine() {
