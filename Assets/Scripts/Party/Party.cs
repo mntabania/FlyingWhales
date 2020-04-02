@@ -302,18 +302,25 @@ public class Party {
     public void SetPartyName(string name) {
         _partyName = name;
     }
-    public void GoToLocation(Region targetLocation, PATHFINDING_MODE pathfindingMode, LocationStructure targetStructure = null,
+    public bool GoToLocation(Region targetLocation, PATHFINDING_MODE pathfindingMode, LocationStructure targetStructure = null,
         Action doneAction = null, Action actionOnStartOfMovement = null, IPointOfInterest targetPOI = null, LocationGridTile targetTile = null) {
         if (_icon.isTravelling && _icon.travelLine != null) {
-            return;
+            return true;
         }
         if (owner.currentRegion.IsSameCoreLocationAs(targetLocation)) {
             //action doer is already at the target location
             doneAction?.Invoke();
+            return true;
         } else {
             //_icon.SetActionOnTargetReached(doneAction);
             LocationGridTile exitTile = owner.GetTargetTileToGoToRegion(targetLocation.coreTile.region);
-            owner.marker.GoTo(exitTile, () => MoveToAnotherLocation(targetLocation.coreTile.region, pathfindingMode, targetStructure, doneAction, actionOnStartOfMovement, targetPOI, targetTile));
+            if (PathfindingManager.Instance.HasPath(owner.gridTileLocation, exitTile)) {
+                //check first if character has path toward the exit tile.
+                owner.marker.GoTo(exitTile, () => MoveToAnotherLocation(targetLocation.coreTile.region, pathfindingMode, targetStructure, doneAction, actionOnStartOfMovement, targetPOI, targetTile));
+                return true;
+            } else {
+                return false;
+            }
         }
     }
     private void MoveToAnotherLocation(Region targetLocation, PATHFINDING_MODE pathfindingMode, LocationStructure targetStructure = null,

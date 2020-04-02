@@ -270,6 +270,10 @@ namespace Inner_Maps {
         public void SetGroundTilemapVisual(TileBase tileBase) {
             SetPreviousGroundVisual(parentMap.groundTilemap.GetTile(localPlace));
             parentMap.groundTilemap.SetTile(localPlace, tileBase);
+            if (genericTileObject.mapObjectVisual != null && genericTileObject.mapObjectVisual.usedSprite != null) {
+                //if this tile's map object is shown and is showing a visual, update it's sprite to use the updated sprite.
+                genericTileObject.mapObjectVisual.SetVisual(parentMap.groundTilemap.GetSprite(localPlace));
+            }
             UpdateGroundTypeBasedOnAsset();
         }
         public void SetStructureTilemapVisual(TileBase tileBase) {

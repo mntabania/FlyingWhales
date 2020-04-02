@@ -263,8 +263,8 @@ public class ActualGoapNode {
         if (!MoveToDoAction(job)) {
             if (targetTile != null) {
                 //If cannot move to do action because there is no path between two location grid tiles, handle it here
-                if (actor is Summon) {
-                    (actor as Summon).NoPathToDoJob(job);
+                if (actor is Summon summon) {
+                    summon.NoPathToDoJob(job);
                 } else if (actor.minion != null) {
                     actor.minion.NoPathToDoJob(job);
                 }
@@ -279,7 +279,10 @@ public class ActualGoapNode {
     private bool MoveToDoAction(JobQueueItem job) {
         //Only create thought bubble log when characters starts the action/moves to do the action so we can pass the target structure
         if (!actor.currentRegion.IsSameCoreLocationAs(targetTile.structure.location)) { //different core locations
-            actor.currentParty.GoToLocation(targetTile.structure.location, PATHFINDING_MODE.NORMAL, doneAction: () => CheckAndMoveToDoAction(job));
+            if (actor.currentParty.GoToLocation(targetTile.structure.location, PATHFINDING_MODE.NORMAL, doneAction: () => CheckAndMoveToDoAction(job)) == false) {
+                //character cannot exit region.
+                return false;
+            }
         } else {
             if (targetTile == null) {
                 //Here we check if there is a target tile to go to because if there is not, the target might already be destroyed/taken/disabled, if that happens, we must cancel job
