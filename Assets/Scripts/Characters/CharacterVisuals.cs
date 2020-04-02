@@ -56,6 +56,7 @@ public class CharacterVisuals {
         //if (character.isSwitchingAlterEgo) {
         //    return;
         //}
+        if (character.characterClass.className == "Zombie") { return; } //if character is a zombie do not update visuals, use default.
         UpdateMarkerAnimations(character);
         UpdatePortraitSettings(character);
         if (character.marker) {

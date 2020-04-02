@@ -514,8 +514,10 @@ public class CombatState : CharacterState {
         }
     }
     private void SetClosestHostile() {
+        IPointOfInterest newClosestHostile = stateComponent.character.combatComponent.GetNearestValidHostile();
+        if (newClosestHostile == currentClosestHostile) { return; } // ignore change
         IPointOfInterest previousClosestHostile = currentClosestHostile;
-        currentClosestHostile = stateComponent.character.combatComponent.GetNearestValidHostile();
+        currentClosestHostile = newClosestHostile;
         if (currentClosestHostile != null && previousClosestHostile != currentClosestHostile) {
             Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "new_combat_target");
             log.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -524,6 +526,7 @@ public class CombatState : CharacterState {
         }
     }
     private void SetClosestHostile(IPointOfInterest poi) {
+        if (poi == currentClosestHostile) { return; } //ignore change
         IPointOfInterest previousClosestHostile = currentClosestHostile;
         currentClosestHostile = poi;
         if (currentClosestHostile != null && previousClosestHostile != currentClosestHostile) {
@@ -606,7 +609,7 @@ public class CombatState : CharacterState {
         string attackSummary =
             $"{GameManager.Instance.TodayLogString()}{stateComponent.character.name} hit {damageable?.name ?? "Nothing"}";
         
-        if (damageable != null) {
+        if (damageable != null && currentClosestHostile != null) {
             if (damageable != currentClosestHostile) {
                 attackSummary =
                     $"{stateComponent.character.name} hit {damageable.name} instead of {currentClosestHostile.name}!";

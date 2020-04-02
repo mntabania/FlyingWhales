@@ -484,7 +484,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		Debug.Log(summary);
 	}
 	private void TryCreateKnockoutJobs(Character target) {
-		if (CanCreateKnockoutJob() && target.faction.IsHostileWith(_owner.owner)) {
+		if (CanCreateKnockoutJob() && target.faction.IsHostileWith(_owner.owner) && target.canPerform) {
 			int combatantResidents = 
 				_owner.residents.Count(x => x.traitContainer.HasTrait("Combatant"));
 			int existingKnockoutJobs = _owner.GetNumberOfJobsWith(JOB_TYPE.KNOCKOUT);

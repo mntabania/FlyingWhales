@@ -2172,7 +2172,7 @@ MonoBehaviour:
   m_textAlignment: 257
   m_characterSpacing: 0
   m_wordSpacing: 0
-  m_lineSpacing: -8
+  m_lineSpacing: 0
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
@@ -5207,9 +5207,6 @@ MonoBehaviour:
   lvlClassLbl: {fileID: 114073762202928504}
   plansLbl: {fileID: 114418987349231008}
   plansLblLogItem: {fileID: 114282139537712572}
-  tabGroup: {fileID: 114737164713125536}
-  moodToggle: {fileID: 114304808046673170}
-  relationsToggle: {fileID: 114635469443879880}
   factionLbl: {fileID: 114127418725721938}
   factionEventLbl: {fileID: 114412895551190676}
   currentLocationLbl: {fileID: 114771732905705926}
@@ -10258,7 +10255,7 @@ MonoBehaviour:
   m_textAlignment: 257
   m_characterSpacing: 0
   m_wordSpacing: 0
-  m_lineSpacing: -8
+  m_lineSpacing: 0
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
@@ -13867,7 +13864,7 @@ MonoBehaviour:
   m_textAlignment: 257
   m_characterSpacing: 0
   m_wordSpacing: 0
-  m_lineSpacing: -8
+  m_lineSpacing: 0
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0

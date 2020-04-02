@@ -7,7 +7,7 @@ namespace Interrupts {
         public Watch() : base(INTERRUPT.Watch) {
             duration = 4;
             doesStopCurrentAction = true;
-            interruptIconString = GoapActionStateDB.Flirt_Icon;
+            interruptIconString = GoapActionStateDB.Watch_Icon;
         }
 
         //#region Overrides
