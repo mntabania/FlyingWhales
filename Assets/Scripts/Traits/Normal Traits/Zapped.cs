@@ -14,7 +14,7 @@ namespace Traits {
             ticksDuration = GameManager.Instance.GetTicksBasedOnMinutes(15);
             hindersMovement = true;
             hindersWitness = true;
-            hindersPerform = true;
+            // hindersPerform = true;
             //hasOnEnterGridTile = true;
             AddTraitOverrideFunctionIdentifier(TraitManager.Enter_Grid_Tile_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Initiate_Map_Visual_Trait);

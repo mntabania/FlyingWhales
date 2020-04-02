@@ -80,12 +80,10 @@ public class PathfindingManager : MonoBehaviour {
             return PathUtilities.IsPathPossible(AstarPath.active.GetNearest(fromTile.centeredWorldLocation, NNConstraint.Default).node,
                     AstarPath.active.GetNearest(toTile.centeredWorldLocation, NNConstraint.Default).node);
         } else {
-            LocationGridTile nearestEdgeFrom =
-                (fromTile.parentMap as RegionInnerTileMap).GetTileToGoToRegion(toTile.structure.location); //fromTile.GetNearestEdgeTileFromThis();
+            LocationGridTile nearestEdgeFrom = fromTile.GetNearestEdgeTileFromThis();
             if(PathUtilities.IsPathPossible(AstarPath.active.GetNearest(fromTile.centeredWorldLocation, NNConstraint.Default).node,
                     AstarPath.active.GetNearest(nearestEdgeFrom.centeredWorldLocation, NNConstraint.Default).node)) {
-                LocationGridTile nearestEdgeTo =
-                    (toTile.parentMap as RegionInnerTileMap).GetTileToGoToRegion(fromTile.structure.location);
+                LocationGridTile nearestEdgeTo = toTile.GetNearestEdgeTileFromThis();
                 return PathUtilities.IsPathPossible(AstarPath.active.GetNearest(toTile.centeredWorldLocation, NNConstraint.Default).node,
                     AstarPath.active.GetNearest(nearestEdgeTo.centeredWorldLocation, NNConstraint.Default).node);
             }

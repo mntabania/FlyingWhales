@@ -9,8 +9,8 @@ namespace Archetype {
             minionClasses = CharacterManager.sevenDeadlySinsClassNames.ToList();
             afflictions = PlayerDB.afflictions;
             spells = PlayerDB.spells;
-            demonicStructuresSkills = new List<SPELL_TYPE>() { SPELL_TYPE.THE_EYE, SPELL_TYPE.THE_KENNEL, SPELL_TYPE.THE_CRYPT, SPELL_TYPE.THE_SPIRE
-                , SPELL_TYPE.THE_GOADER, SPELL_TYPE.TORTURE_CHAMBER, SPELL_TYPE.DEMONIC_PRISON };
+            // SPELL_TYPE.THE_SPIRE,
+            demonicStructuresSkills = new List<SPELL_TYPE>() { SPELL_TYPE.THE_EYE, SPELL_TYPE.THE_KENNEL, SPELL_TYPE.THE_CRYPT, SPELL_TYPE.THE_GOADER, SPELL_TYPE.TORTURE_CHAMBER, SPELL_TYPE.DEMONIC_PRISON };
             monsters = new List<RaceClass>() {
                 new RaceClass(RACE.WOLF, "Ravager"), new RaceClass(RACE.GOLEM, "Golem"),
                 new RaceClass(RACE.SKELETON, "Archer"), new RaceClass(RACE.SKELETON, "Marauder"),

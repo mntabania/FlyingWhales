@@ -51,7 +51,7 @@ public class WorkBehaviour : CharacterBehaviourComponent {
                     int roll = UnityEngine.Random.Range(0, 100);
                     log += $"\n-Undermine Roll: " + roll;
                     if (roll < 100) {
-                        if(character.jobComponent.CreateUndermineJob(chosenEnemy, "provoke")) {
+                        if(character.jobComponent.CreateUndermineJob(chosenEnemy, "normal")) {
                             log += $"\n-{character.name} created undermine job for " + chosenEnemy;
                         } else {
                             log += $"\n-{character.name} could not create undermine job for " + chosenEnemy;
