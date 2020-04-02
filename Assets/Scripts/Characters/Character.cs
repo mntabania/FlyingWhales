@@ -4114,15 +4114,16 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         AddAdvertisedAction(INTERACTION_TYPE.CARRY);
         AddAdvertisedAction(INTERACTION_TYPE.DROP);
         AddAdvertisedAction(INTERACTION_TYPE.KNOCKOUT_CHARACTER);
+        AddAdvertisedAction(INTERACTION_TYPE.RESTRAIN_CHARACTER);
+        AddAdvertisedAction(INTERACTION_TYPE.JUDGE_CHARACTER);
+        AddAdvertisedAction(INTERACTION_TYPE.SLAY_CHARACTER);
 
         if (this is Summon) {
             AddAdvertisedAction(INTERACTION_TYPE.PLAY);
         }
         if (!(this is Summon) && race != RACE.SKELETON) {
-            AddAdvertisedAction(INTERACTION_TYPE.RESTRAIN_CHARACTER);
             AddAdvertisedAction(INTERACTION_TYPE.DAYDREAM);
             AddAdvertisedAction(INTERACTION_TYPE.PRAY);
-            AddAdvertisedAction(INTERACTION_TYPE.JUDGE_CHARACTER);
             AddAdvertisedAction(INTERACTION_TYPE.CURSE_CHARACTER);
             AddAdvertisedAction(INTERACTION_TYPE.ASK_FOR_HELP_SAVE_CHARACTER);
             AddAdvertisedAction(INTERACTION_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE);
@@ -4133,7 +4134,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             AddAdvertisedAction(INTERACTION_TYPE.ASK_TO_STOP_JOB);
             AddAdvertisedAction(INTERACTION_TYPE.STRANGLE);
             AddAdvertisedAction(INTERACTION_TYPE.CRY);
-            AddAdvertisedAction(INTERACTION_TYPE.SLAY_CHARACTER);
             AddAdvertisedAction(INTERACTION_TYPE.TEASE);
             AddAdvertisedAction(INTERACTION_TYPE.DANCE);
             AddAdvertisedAction(INTERACTION_TYPE.SING);
