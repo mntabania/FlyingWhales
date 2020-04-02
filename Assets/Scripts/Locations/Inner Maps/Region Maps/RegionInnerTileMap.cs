@@ -13,6 +13,8 @@ namespace Inner_Maps {
         private Dictionary<Region, Transform> otherRegionObjects { get; set; } //dictionary of objects to show which direction other regions are from this one.
 
         [SerializeField] private GameObject regionDirectionPrefab;
+        private Bounds groundMapLocalBounds;
+        
         
         public override void Initialize(Region location) {
             base.Initialize(location);
@@ -29,6 +31,7 @@ namespace Inner_Maps {
             InitializeTileCollections(mapGenerationComponent);
             ConnectHexTilesToTileCollections(mapGenerationComponent);
             yield return StartCoroutine(GenerateDetails(mapGenerationComponent));
+            groundMapLocalBounds = groundTilemap.localBounds;
         }
 
         #region Build Spots
@@ -172,7 +175,7 @@ namespace Inner_Maps {
             }
         }
         private Vector3 GetClosestPointToRegion(Region targetRegion) {
-            Bounds bounds = groundTilemap.localBounds;
+            Bounds bounds = groundMapLocalBounds;
             bounds.center = bounds.center + groundTilemap.transform.position;
             Vector3 closestPoint = bounds.ClosestPoint(otherRegionObjects[targetRegion].position);
             return transform.InverseTransformPoint(closestPoint);

@@ -231,6 +231,9 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
     }
     private void OnAddPoiActions(IDamageable poi) {
         //DealDamage(poi);
+        if (poi is MovingTileObject) {
+            return;
+        }
         poi.mapObjectVisual.transform.DOShakeRotation(20f, new Vector3(0f, 0f, 10f));
     }
     #endregion

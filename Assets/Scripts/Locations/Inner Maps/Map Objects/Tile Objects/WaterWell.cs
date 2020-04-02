@@ -20,8 +20,15 @@ public class WaterWell : TileObject {
             AddAdvertisedAction(INTERACTION_TYPE.REPAIR);
         }
         traitContainer.RemoveTrait(this, "Flammable");
-        traitContainer.AddTrait(this, "Wet", overrideDuration: 0);
         traitContainer.AddTrait(this, "Immovable");
+        for (int i = 0; i < 10; i++) {
+            traitContainer.AddTrait(this, "Wet", overrideDuration: 0);    
+        }
+        Messenger.AddListener(Signals.HOUR_STARTED, HourStarted);
+    }
+    public override void OnDestroyPOI() {
+        base.OnDestroyPOI();
+        Messenger.RemoveListener(Signals.HOUR_STARTED, HourStarted);
     }
     public override bool CanBeAffectedByElementalStatus(string traitName) {
         if (traitName == "Wet") {
@@ -41,4 +48,13 @@ public class WaterWell : TileObject {
     public override string ToString() {
         return $"Well {id.ToString()}";
     }
+
+    #region Listeners
+    private void HourStarted() {
+        if (traitContainer.stacks.ContainsKey("Wet") && traitContainer.stacks["Wet"] < 10) {
+            traitContainer.AddTrait(this, "Wet", overrideDuration: 0);    
+        }
+        
+    }
+    #endregion
 }

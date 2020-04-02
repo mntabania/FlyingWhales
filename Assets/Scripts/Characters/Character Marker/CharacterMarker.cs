@@ -360,16 +360,17 @@ public class CharacterMarker : MapObjectVisual<Character> {
                 character.CreateJobsOnTargetGainTrait(otherCharacter, trait);
             }
 
-            //When another character gains cannot perform, this character must check if that character is in hostile list, if it is, check if it lethal or not,
-            //If not lethal, remove hostile and avoid in range, if lethal, continue attacking
-            if (!otherCharacter.canPerform) {
-                if (character.combatComponent.hostilesInRange.Contains(otherCharacter)) {
-                    if (!character.combatComponent.IsLethalCombatForTarget(otherCharacter)) {
+            //Only remove hostile in range from non lethal combat if target specifically becomes: Unconscious, Zapped or Restrained.
+            //if (!otherCharacter.canPerform) {
+            if (character.combatComponent.IsLethalCombatForTarget(otherCharacter) == false) {
+                if (otherCharacter.traitContainer.HasTrait("Unconscious", "Zapped", "Restrained")) {
+                    if (character.combatComponent.hostilesInRange.Contains(otherCharacter)) {
                         character.combatComponent.RemoveHostileInRange(otherCharacter);
                     }
+                    character.combatComponent.RemoveAvoidInRange(otherCharacter);
                 }
-                character.combatComponent.RemoveAvoidInRange(otherCharacter);
             }
+            
         }
     }
     // private void OnItemRemovedFromTile(SpecialToken token, LocationGridTile removedFrom) {

@@ -58,6 +58,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			if (_owner.currentSettlement is NPCSettlement npcSettlement && npcSettlement.isUnderSiege) {
 				TriggerFleeHome();	
 			}
+			character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.RESTRAIN); //cancel all restrain jobs.
 			_owner.needsComponent.CheckExtremeNeeds();
             for (int i = 0; i < _owner.marker.inVisionCharacters.Count; i++) {
                 Character inVisionCharacter = _owner.marker.inVisionCharacters[i];
@@ -81,17 +82,16 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
             character.UncarryPOI();
             character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.KNOCKOUT);
+            TryTriggerRestrain();
         }
 	}
 	private void OnCharacterCanNoLongerMove(Character character) {
 		if (character == _owner) {
 			TryStartScreamCheck();
-			TryTriggerRestrain();
 		}
 	}
 	private void OnCharacterCanMoveAgain(Character character) {
 		if (character == _owner) {
-			// Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.RESTRAIN, _owner as IPointOfInterest);
 			TryStopScreamCheck();
 		}
 	}
@@ -215,10 +215,12 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		_owner.jobQueue.AddJobInQueue(job);
 	}
 	private void TriggerRestrain(NPCSettlement npcSettlement) {
-		GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RESTRAIN, INTERACTION_TYPE.RESTRAIN_CHARACTER, _owner, npcSettlement);
-		job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRestrainJob);
-		job.SetStillApplicableChecker(() => IsRestrainApplicable(_owner, npcSettlement));
-		npcSettlement.AddToAvailableJobs(job);
+		if (npcSettlement.HasJob(JOB_TYPE.RESTRAIN, _owner) == false) {
+			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RESTRAIN, INTERACTION_TYPE.RESTRAIN_CHARACTER, _owner, npcSettlement);
+        	job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRestrainJob);
+        	job.SetStillApplicableChecker(() => IsRestrainApplicable(_owner, npcSettlement));
+        	npcSettlement.AddToAvailableJobs(job);	
+		}
 	}
 	//private bool TriggerMoveCharacterToBed(Character target) {
 	//	if (target.homeStructure != null && target.HasJobTargetingThis(JOB_TYPE.MOVE_CHARACTER) == false) {
@@ -269,7 +271,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		return true;
 	}
 	private bool IsRestrainApplicable(Character target, NPCSettlement npcSettlement) {
-		return target.canMove == false && target.gridTileLocation != null &&
+		return target.canPerform == false && target.gridTileLocation != null &&
 		       target.gridTileLocation.IsNextToOrPartOfSettlement(npcSettlement);
 	}
 	#endregion
@@ -406,14 +408,10 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
 	#region Restrain
 	private void TryTriggerRestrain() {
-		BaseSettlement nearSettlement;
-		if (_owner.gridTileLocation.IsPartOfSettlement(out nearSettlement) 
+		if (_owner.gridTileLocation.IsPartOfSettlement(out var nearSettlement) 
 		    || _owner.gridTileLocation.IsNextToSettlement(out nearSettlement)) {
 			if (nearSettlement is NPCSettlement npcSettlement && nearSettlement.owner != null 
 			    && _owner.faction != nearSettlement.owner) {
-				// bool isHostileWithFaction =
-				// 	_owner.faction.GetRelationshipWith(nearNpcSettlement.owner).relationshipStatus ==
-				// 	FACTION_RELATIONSHIP_STATUS.HOSTILE;
 				if (_owner.faction.IsHostileWith(nearSettlement.owner)) {
 					TriggerRestrain(npcSettlement);
 				}

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Inner_Maps;
 using UnityEngine;
-
+using UnityEngine.Assertions;
 namespace Traits {
     public class Poisoned : Status {
 
@@ -72,7 +72,10 @@ namespace Traits {
         public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode, ref bool isRemoved) {
             base.ExecuteActionAfterEffects(action, goapNode, ref isRemoved);
             if (goapNode.action.actionCategory == ACTION_CATEGORY.CONSUME) {
-                if(traitable is IPointOfInterest poi) {
+                if(traitable is IPointOfInterest poi && goapNode.poiTarget == poi) {
+                    Assert.IsFalse(goapNode.actor == poi, $"Consume action ({goapNode.action.name}) " +
+                        $"performed on {goapNode.poiTarget.name} by {goapNode.actor.name} is trying to remove poisoned " +
+                        $"stacks from the actor rather than the target!");
                     goapNode.actor.interruptComponent.TriggerInterrupt(INTERRUPT.Ingested_Poison, poi);
                     poi.traitContainer.RemoveStatusAndStacks(poi, this.name);
                     isRemoved = true;
@@ -131,7 +134,7 @@ namespace Traits {
         }
 
         private void UpdateVisualsOnAdd(ITraitable addedTo) {
-            if(addedTo is IPointOfInterest pointOfInterest && _poisonedEffect == null) {
+            if(addedTo is IPointOfInterest pointOfInterest && _poisonedEffect == null && (pointOfInterest is MovingTileObject) == false) {
                 _poisonedEffect = GameManager.Instance.CreateParticleEffectAt(pointOfInterest, PARTICLE_EFFECT.Poison, false);
             }
             if (addedTo is TileObject tileObject) {
