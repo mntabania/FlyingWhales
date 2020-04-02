@@ -37,7 +37,12 @@ public class CombatComponent {
             owner.logComponent.PrintLogIfActive(debugLog);
             return;
         }
-        if(owner.faction == FactionManager.Instance.zombieFaction || owner.race == RACE.SKELETON) {
+        if (hostilesInRange.Contains(target) || avoidInRange.Contains(target)) {
+            debugLog += "\n-Target is already in hostile/avoid list, will no longer trigger fight or flight";
+            owner.logComponent.PrintLogIfActive(debugLog);
+            return;
+        }
+        if (owner.faction == FactionManager.Instance.zombieFaction || owner.race == RACE.SKELETON) {
             debugLog += "\n-Character is zombie";
             debugLog += "\n-FIGHT";
             owner.logComponent.PrintLogIfActive(debugLog);

@@ -632,10 +632,7 @@ public class CombatState : CharacterState {
                         //When the target is hit and it is still alive, add hostile
                         if ((hitCharacter.combatComponent.combatMode == COMBAT_MODE.Defend ||
                             hitCharacter.combatComponent.combatMode == COMBAT_MODE.Aggressive) && hitCharacter.canPerform) {
-                            if (!hitCharacter.combatComponent.hostilesInRange.Contains(stateComponent.character) &&
-                                !hitCharacter.combatComponent.avoidInRange.Contains(stateComponent.character)) {
-                                hitCharacter.combatComponent.FightOrFlight(stateComponent.character, isLethal: stateComponent.character.combatComponent.IsLethalCombatForTarget(hitCharacter));
-                            }
+                            hitCharacter.combatComponent.FightOrFlight(stateComponent.character, isLethal: stateComponent.character.combatComponent.IsLethalCombatForTarget(hitCharacter));
                         }
                     }
                 }
