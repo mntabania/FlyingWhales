@@ -20,9 +20,12 @@ namespace Traits {
 
         #region Overrides
         public override void OnAddTrait(ITraitable sourcePOI) {
-            if (sourcePOI is Character) {
-                owner = sourcePOI as Character;
-                //owner.AdjustMoodValue(-20, this);
+            if (sourcePOI is Character character) {
+                owner = character;
+                Log log = new Log(GameManager.Instance.Today(), "Trait", name, "gain");
+                log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                log.AddToFillers(responsibleCharacter, responsibleCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                log.AddLogToInvolvedObjects();
             }
             base.OnAddTrait(sourcePOI);
         }

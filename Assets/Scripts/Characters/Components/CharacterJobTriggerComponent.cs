@@ -279,12 +279,12 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		if (job is GoapPlanJob) {
 			GoapPlanJob goapPlanJob = job as GoapPlanJob;
 			Character targetCharacter = goapPlanJob.targetPOI as Character;
-			if (character != targetCharacter) {
+			// if (character != targetCharacter) {
 				bool isHostile = character.IsHostileWith(targetCharacter, false);
 				bool isResponsibleForTrait = trait.IsResponsibleForTrait(character);
 
 				//if special illness, check if character is healer
-				if (TraitManager.Instance.specialIllnessTraits.Contains(nameof(trait))) {
+				if (TraitManager.Instance.specialIllnessTraits.Contains(trait.name)) {
 					return isHostile == false &&
 					       character.relationshipContainer.HasOpinionLabelWithCharacter(targetCharacter,
 						       OpinionComponent.Rival, OpinionComponent.Enemy) == false 
@@ -298,7 +298,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 					       OpinionComponent.Rival, OpinionComponent.Enemy) == false 
 				       && isResponsibleForTrait == false
                        && !character.traitContainer.HasTrait("Psychopath");
-			}
+			// }
 		}
 		return false;
 	}
@@ -383,7 +383,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	private void TryCreateRemoveStatusJob() {
 		if (_owner.homeSettlement != null && _owner.gridTileLocation.IsNextToOrPartOfSettlement(_owner.homeSettlement)
 		    && _owner.traitContainer.HasTrait("Criminal") == false) {
-			List<Trait> statusTraits = _owner.traitContainer.GetNormalTraits<Trait>(TraitManager.Instance.removeStatusTraits);
+			List<Trait> statusTraits = _owner.traitContainer.GetNormalTraits<Trait>(TraitManager.Instance.removeStatusTraits.ToArray());
 			for (int i = 0; i < statusTraits.Count; i++) {
 				Trait trait = statusTraits[i];
 				TryCreateRemoveStatusJob(trait);
