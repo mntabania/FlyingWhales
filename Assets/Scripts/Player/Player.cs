@@ -498,7 +498,7 @@ public class Player : ILeader, IObjectManipulator {
     private void ShowNotification(Log log) {
         Messenger.Broadcast(Signals.SHOW_PLAYER_NOTIFICATION, log);
     }
-    public void ShowNotification(IIntel intel) {
+    private void ShowNotification(IIntel intel) {
         Messenger.Broadcast(Signals.SHOW_INTEL_NOTIFICATION, intel);
     }
     #endregion
