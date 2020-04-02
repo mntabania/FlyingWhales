@@ -73,12 +73,12 @@ public class TraitManager : MonoBehaviour {
     public List<string> flawTraitPool { get; private set; }
     public List<string> neutralTraitPool { get; private set; }
 
-    public string[] removeStatusTraits = new[] {
-        nameof(Unconscious), nameof(Injured), nameof(Poisoned), nameof(Plagued),
-        nameof(Infected), nameof(Cursed), nameof(Freezing), nameof(Frozen)
+    public List<string> removeStatusTraits = new List<string> {
+        "Unconscious", "Injured", "Poisoned","Plagued",
+        "Infected", "Cursed", "Freezing", "Frozen"
     };
-    public string[] specialIllnessTraits = new[] {
-        nameof(Poisoned), nameof(Plagued), nameof(Infected)
+    public List<string> specialIllnessTraits = new List<string> {
+        "Poisoned", "Plagued", "Infected"
     };
 
     #region getters/setters

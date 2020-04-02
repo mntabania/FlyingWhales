@@ -1857,6 +1857,7 @@
               <e p="Taunt.cs" t="Include" />
             </e>
             <e p="Components" t="Include">
+              <e p="PlayerSkillComponent.cs" t="Include" />
               <e p="ThreatComponent.cs" t="Include" />
             </e>
             <e p="Player.cs" t="Include" />
