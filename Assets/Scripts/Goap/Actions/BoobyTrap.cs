@@ -27,6 +27,53 @@ public class BoobyTrap : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return cost;
     }
+    public override string ReactionToActor(Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionToActor(witness, node, status);
+        Character actor = node.actor;
+        IPointOfInterest target = node.poiTarget;
+
+        if (target is TileObject tileObject) {
+            if (tileObject.characterOwner == witness) {
+                if (witness.traitContainer.HasTrait("Coward")) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor, status);
+                } else {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, actor, status);
+                }
+                if(witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.RELATIVE)
+                    || witness.relationshipContainer.IsFriendsWith(actor)) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor, status);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status);
+                }
+            } else if (tileObject.characterOwner != null) {
+                Character owner = tileObject.characterOwner;
+                if (witness.relationshipContainer.HasRelationshipWith(owner, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.RELATIVE)
+                    || witness.relationshipContainer.IsFriendsWith(owner)) {
+                    if (witness.traitContainer.HasTrait("Coward")) {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor, status);
+                    } else {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status);
+
+                        if (witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.RELATIVE)
+                            || witness.relationshipContainer.IsFriendsWith(actor)) {
+                            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor, status);
+                        }
+                    }
+                }
+            } else {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status);
+
+                if (witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.RELATIVE)
+                    || witness.relationshipContainer.IsFriendsWith(actor)) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor, status);
+                }
+            }
+        }
+        CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.MISDEMEANOR);
+        return response;
+    }
     #endregion
 
     #region State Effects

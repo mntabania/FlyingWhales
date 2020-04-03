@@ -126,6 +126,8 @@ public class CrimeManager : MonoBehaviour {
             lastStrawReason = "attacked someone";
         } else if (committedCrime.action.goapType == INTERACTION_TYPE.POISON) {
             lastStrawReason = "attacked someone";
+        } else if (committedCrime.action.goapType == INTERACTION_TYPE.BOOBY_TRAP) {
+            lastStrawReason = "got caught";
         }
         reactor.relationshipContainer.AdjustOpinion(reactor, crimeCommitter, "Misdemeanor", -4, lastStrawReason);
         MakeCharacterACriminal(crimeCommitter, CRIME_TYPE.MISDEMEANOR, committedCrime.action);
