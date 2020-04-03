@@ -230,8 +230,8 @@ public class CombatManager : MonoBehaviour {
     }
     public void ChainElectricDamage(ITraitable traitable, int damage) {
         damage = Mathf.RoundToInt(damage * 0.2f);
-        if(damage < 1) {
-            damage = 1;
+        if(damage >= 0) {
+            damage = -1;
         }
         List<ITraitable> traitables = new List<ITraitable>();
         if (traitable.gridTileLocation != null) {

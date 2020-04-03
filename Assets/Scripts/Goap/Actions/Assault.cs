@@ -22,6 +22,17 @@ public class Assault : GoapAction {
     protected override void ConstructBasePreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.STARTS_COMBAT, target = GOAP_EFFECT_TARGET.TARGET });
     }
+    public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
+        GoapActionInvalidity goapActionInvalidity = base.IsInvalid(node);
+        Character actor = node.actor;
+        IPointOfInterest poiTarget = node.poiTarget;
+        if (goapActionInvalidity.isInvalid == false) {
+            if (actor.IsHealthCriticallyLow()) {
+                goapActionInvalidity.isInvalid = true;
+            }
+        }
+        return goapActionInvalidity;
+    }
     public override void Perform(ActualGoapNode actionNode) {
         base.Perform(actionNode);
         SetState("Combat Start", actionNode);
@@ -61,7 +72,7 @@ public class Assault : GoapAction {
         IPointOfInterest target = node.poiTarget;
         if (node.associatedJobType == JOB_TYPE.APPREHEND) {
             Character targetCharacter = target as Character;
-            string opinionLabel = witness.opinionComponent.GetOpinionLabel(targetCharacter);
+            string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
             if (opinionLabel == OpinionComponent.Acquaintance) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, targetCharacter, status);
             } else if (opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
@@ -72,6 +83,16 @@ public class Assault : GoapAction {
             }
         }
         return response;
+    }
+    #endregion
+
+    #region Requirements
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
+        if (satisfied) {
+            return !actor.IsHealthCriticallyLow();
+        }
+        return false;
     }
     #endregion
 
