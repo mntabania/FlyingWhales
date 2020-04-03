@@ -376,6 +376,7 @@ public class FrostyFogData : SpellData {
         FrostyFogTileObject frostyFog = new FrostyFogTileObject();
         frostyFog.SetGridTileLocation(targetTile);
         frostyFog.OnPlacePOI();
+        frostyFog.SetStacks(EditableValuesManager.Instance.frostyFogStacks);
         IncreaseThreatThatSeesTile(targetTile, 10);
         base.ActivateAbility(targetTile);
     }

@@ -64,6 +64,9 @@ namespace Traits {
         }
         private bool TryAddElementalStatus(ITraitable addTo, string traitName, Character characterResponsible, 
             ActualGoapNode gainedFromDoing, bool bypassElementalChance, int overrideDuration) {
+            if (addTo is MovingTileObject || addTo is Quicksand) {
+                return false;
+            }
             bool shouldAddTrait = ProcessBeforeAddingElementalStatus(addTo, traitName, bypassElementalChance);
             if (shouldAddTrait) {
                 shouldAddTrait = ProcessBeforeSuccessfullyAddingElementalStatus(addTo, traitName, ref overrideDuration);
@@ -80,6 +83,9 @@ namespace Traits {
         private bool TryAddElementalStatus(ITraitable addTo, string traitName, out Trait trait, Character characterResponsible, 
             ActualGoapNode gainedFromDoing, bool bypassElementalChance, int overrideDuration) {
             trait = null;
+            if(addTo is MovingTileObject || addTo is Quicksand) {
+                return false;
+            }
             bool shouldAddTrait = ProcessBeforeAddingElementalStatus(addTo, traitName, bypassElementalChance);
             if (shouldAddTrait) {
                 shouldAddTrait = ProcessBeforeSuccessfullyAddingElementalStatus(addTo, traitName, ref overrideDuration);
@@ -277,6 +283,13 @@ namespace Traits {
             } else if (traitName == "Freezing") {
                 chance = 20;
                 if (HasTrait("Cold Blooded", "Burning")) {
+                    chance = 0;
+                } else if (HasTrait("Wet")) {
+                    chance = 100;
+                }
+            } else if (traitName == "Zapped") {
+                chance = 15;
+                if (HasTrait("Electric")) {
                     chance = 0;
                 } else if (HasTrait("Wet")) {
                     chance = 100;

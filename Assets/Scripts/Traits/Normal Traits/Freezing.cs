@@ -18,6 +18,7 @@ namespace Traits {
             moodEffect = -5;
             stackLimit = 3;
             stackModifier = 1f;
+            advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.REMOVE_FREEZING };
             AddTraitOverrideFunctionIdentifier(TraitManager.Initiate_Map_Visual_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Destroy_Map_Visual_Trait);
         }

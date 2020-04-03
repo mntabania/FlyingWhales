@@ -9,13 +9,15 @@ using Random = UnityEngine.Random;
 public class FrostyFogMapObjectVisual : MovingMapObjectVisual<TileObject> {
     
     [SerializeField] private ParticleSystem _frostyFogEffect;
-    
+    [SerializeField] private ParticleSystem _snowFlakesEffect;
+    [SerializeField] private ParticleSystem _waveEffect;
+
     private string _expiryKey;
     private Tweener _movement;
     private List<ITraitable> _objsInRange;
     private FrostyFogTileObject owner;
-    
-    
+    private int _size;
+
     #region Abstract Members Implementation
     public override void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) { }
     public virtual bool IsMapObjectMenuVisible() {
@@ -58,6 +60,8 @@ public class FrostyFogMapObjectVisual : MovingMapObjectVisual<TileObject> {
         } else {
             _movement.Play();
             _frostyFogEffect.Play();
+            _snowFlakesEffect.Play();
+            _waveEffect.Play();
         }
     }
     public override void Reset() {
@@ -67,6 +71,8 @@ public class FrostyFogMapObjectVisual : MovingMapObjectVisual<TileObject> {
         _movement = null;
         _objsInRange = null;
         _frostyFogEffect.Clear();
+        _snowFlakesEffect.Clear();
+        _waveEffect.Clear();
     }
     #endregion
 
@@ -80,9 +86,13 @@ public class FrostyFogMapObjectVisual : MovingMapObjectVisual<TileObject> {
         if (isPaused) {
             _movement.Pause();
             _frostyFogEffect.Pause();
+            _snowFlakesEffect.Pause();
+            _waveEffect.Pause();
         } else {
             _movement.Play();
             _frostyFogEffect.Play();
+            _snowFlakesEffect.Play();
+            _waveEffect.Play();
         }
     }
     private void OnProgressionSpeedChanged(PROGRESSION_SPEED progression) {
@@ -113,7 +123,20 @@ public class FrostyFogMapObjectVisual : MovingMapObjectVisual<TileObject> {
         }
     }
     #endregion
-    
+
+    #region Size
+    public void SetSize(int size) {
+        _size = size;
+        ChangeScaleBySize();
+    }
+    private void ChangeScaleBySize() {
+        this.gameObject.transform.localScale = new Vector3(_size, _size, 1f);
+        _frostyFogEffect.transform.localScale = new Vector3(_size, _size, _size);
+        _snowFlakesEffect.transform.localScale = new Vector3(_size, _size, _size);
+        _waveEffect.transform.localScale = new Vector3(_size, _size, _size);
+    }
+    #endregion
+
     #region Triggers
     public void OnTriggerEnter2D(Collider2D collision) {
         if (isSpawned == false) { return; }
@@ -146,6 +169,9 @@ public class FrostyFogMapObjectVisual : MovingMapObjectVisual<TileObject> {
     public void Expire() {
         Debug.Log($"{this.name} expired!");
         _frostyFogEffect.Stop();
+        _snowFlakesEffect.Stop();
+        _waveEffect.Stop();
+
         isSpawned = false;
         if (string.IsNullOrEmpty(_expiryKey) == false) {
             SchedulingManager.Instance.RemoveSpecificEntry(_expiryKey);
@@ -167,8 +193,12 @@ public class FrostyFogMapObjectVisual : MovingMapObjectVisual<TileObject> {
         //Playing particle effect is done in a coroutine so that it will wait one frame before pausing the particles if the game is paused when the particle is activated
         //This will make sure that the particle effect will show but it will be paused right away
         _frostyFogEffect.Play();
+        _snowFlakesEffect.Play();
+        _waveEffect.Play();
         yield return new WaitForSeconds(0.1f);
         _frostyFogEffect.Pause();
+        _snowFlakesEffect.Pause();
+        _waveEffect.Pause();
     }
     #endregion
 }
