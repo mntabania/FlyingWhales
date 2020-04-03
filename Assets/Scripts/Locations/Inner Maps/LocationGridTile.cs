@@ -377,11 +377,14 @@ namespace Inner_Maps {
                     }
                     Assert.IsNotNull(mapToUse, $"{nameof(mapToUse)} != null");
                     if (createEdge) {
-                        Assert.IsTrue(InnerMapManager.Instance.assetManager.edgeAssets.ContainsKey(groundType), 
-                            $"No edge asset for {groundType.ToString()} for neighbour {currNeighbour.groundType.ToString()} ");
-                        Assert.IsTrue(InnerMapManager.Instance.assetManager.edgeAssets[groundType].Count > (int)keyValuePair.Key, 
-                            $"No edge asset for {groundType.ToString()} for neighbour {currNeighbour.groundType.ToString()} for direction {keyValuePair.Key.ToString()} ");
-                        mapToUse.SetTile(localPlace, InnerMapManager.Instance.assetManager.edgeAssets[groundType][(int)keyValuePair.Key]);    
+                        // Assert.IsTrue(InnerMapManager.Instance.assetManager.edgeAssets.ContainsKey(groundType), 
+                        //     $"No edge asset for {groundType.ToString()} for neighbour {currNeighbour.groundType.ToString()} ");
+                        // Assert.IsTrue(InnerMapManager.Instance.assetManager.edgeAssets[groundType].Count > (int)keyValuePair.Key, 
+                        //     $"No edge asset for {groundType.ToString()} for neighbour {currNeighbour.groundType.ToString()} for direction {keyValuePair.Key.ToString()} ");
+                        if (InnerMapManager.Instance.assetManager.edgeAssets.ContainsKey(groundType) && 
+                            InnerMapManager.Instance.assetManager.edgeAssets[groundType].Count > (int)keyValuePair.Key) {
+                            mapToUse.SetTile(localPlace, InnerMapManager.Instance.assetManager.edgeAssets[groundType][(int)keyValuePair.Key]);    
+                        }
                     } else {
                         mapToUse.SetTile(localPlace, null);
                     }
@@ -1097,7 +1100,7 @@ namespace Inner_Maps {
         }
         private void TriggerFreezingTrap(Character triggeredBy) {
             SetHasFreezingTrap(false);
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 3; i++) {
                 if (triggeredBy.traitContainer.HasTrait("Frozen")) {
                     break;
                 } else {

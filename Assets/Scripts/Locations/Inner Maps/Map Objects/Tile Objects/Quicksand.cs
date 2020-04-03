@@ -11,8 +11,6 @@ public class Quicksand : TileObject {
     
     public Quicksand() {
         Initialize(TILE_OBJECT_TYPE.QUICKSAND, false);
-        traitContainer.AddTrait(this, "Dangerous");
-        traitContainer.RemoveTrait(this, "Flammable");
     }
     protected override void CreateMapObjectVisual() {
         GameObject obj = InnerMapManager.Instance.mapObjectFactory.CreateNewTileObjectMapVisual(tileObjectType);
@@ -22,6 +20,11 @@ public class Quicksand : TileObject {
     }
     public override void Neutralize() {
         _quicksandMapVisual.Expire();
+    }
+    public override void OnPlacePOI() {
+        base.OnPlacePOI();
+        traitContainer.AddTrait(this, "Dangerous");
+        traitContainer.RemoveTrait(this, "Flammable");
     }
     public override string ToString() {
         return "Quicksand";

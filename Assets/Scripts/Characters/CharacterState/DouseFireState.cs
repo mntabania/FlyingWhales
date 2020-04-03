@@ -60,6 +60,7 @@ public class DouseFireState : CharacterState {
             } else {
                 //get water from pond
                 if (GetWater() == false) {
+                    job.AddBlacklistedCharacter(stateComponent.character);
                     stateComponent.ExitCurrentState();
                 }
             }

@@ -47,7 +47,7 @@ public class CrimeManager : MonoBehaviour {
         } else if (actionType == INTERACTION_TYPE.KNOCKOUT_CHARACTER
             || actionType == INTERACTION_TYPE.ASSAULT) {
             if(consideredAction.associatedJobType != JOB_TYPE.APPREHEND) {
-                if (target is Character targetCharacter) {
+                if (target is Character targetCharacter && targetCharacter.IsNormalCharacter()) {
                     if (!actor.IsHostileWith(targetCharacter)) {
                         return CRIME_TYPE.MISDEMEANOR;
                     }

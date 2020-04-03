@@ -59,6 +59,8 @@ public class CraftTileObject : GoapAction {
         obj.SetMapObjectState(MAP_OBJECT_STATE.BUILDING);
         goapNode.descriptionLog.AddToFillers(null, UtilityScripts.Utilities.GetArticleForWord(obj.tileObjectType.ToString()), LOG_IDENTIFIER.STRING_1);
         goapNode.descriptionLog.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(obj.tileObjectType.ToString()), LOG_IDENTIFIER.ITEM_1);
+        goapNode.thoughtBubbleLog?.AddToFillers(null, UtilityScripts.Utilities.GetArticleForWord(obj.tileObjectType.ToString()), LOG_IDENTIFIER.STRING_1);
+        goapNode.thoughtBubbleLog?.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(obj.tileObjectType.ToString()), LOG_IDENTIFIER.ITEM_1);
     }
     public void AfterCraftSuccess(ActualGoapNode goapNode) {
         TileObject tileObj = goapNode.poiTarget as TileObject;

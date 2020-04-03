@@ -12,8 +12,6 @@ public class FireBallTileObject : MovingTileObject {
     public FireBallTileObject() {
         Initialize(TILE_OBJECT_TYPE.FIRE_BALL, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
-        traitContainer.AddTrait(this, "Dangerous");
-        traitContainer.RemoveTrait(this, "Flammable");
     }
     protected override void CreateMapObjectVisual() {
         base.CreateMapObjectVisual();
@@ -22,6 +20,11 @@ public class FireBallTileObject : MovingTileObject {
     }
     public override void Neutralize() {
         _fireBallMapVisual.Expire();
+    }
+    public override void OnPlacePOI() {
+        base.OnPlacePOI();
+        traitContainer.AddTrait(this, "Dangerous");
+        traitContainer.RemoveTrait(this, "Flammable");
     }
     public void OnExpire() {
         Messenger.Broadcast<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, this, null, base.gridTileLocation);
