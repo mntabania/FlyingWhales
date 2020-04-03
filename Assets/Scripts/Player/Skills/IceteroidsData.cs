@@ -20,7 +20,7 @@ public class IceteroidsData : SpellData {
         if (canPerform) {
             return targetHex != null && !targetHex.spellsComponent.hasIceteroids;
         }
-        return canPerform;
+        return false;
     }
     public override void HighlightAffectedTiles(LocationGridTile tile) {
         TileHighlighter.Instance.PositionHighlight(tile.collectionOwner.partOfHextile.hexTileOwner);
