@@ -160,7 +160,7 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
         if (isSpawned == false) { return; }
         BaseVisionTrigger collidedWith = collision.gameObject.GetComponent<BaseVisionTrigger>();
         if (collidedWith != null) {
-            if(collidedWith.damageable is PoisonCloudTileObject otherPoisonCloud) {
+            if(collidedWith.damageable is PoisonCloudTileObject otherPoisonCloud && otherPoisonCloud != _poisonCloud) {
                 CollidedWithPoisonCloud(otherPoisonCloud);
             } else if (collidedWith.damageable is ITraitable traitable) {
                 AddObject(traitable);

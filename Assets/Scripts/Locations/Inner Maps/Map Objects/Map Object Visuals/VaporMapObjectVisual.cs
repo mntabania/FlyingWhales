@@ -44,7 +44,9 @@ public class VaporMapObjectVisual : MovingMapObjectVisual<TileObject> {
     public override void PlaceObjectAt(LocationGridTile tile) {
         base.PlaceObjectAt(tile);
         MoveToRandomDirection();
-        _expiryKey = SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(2)), Expire, this);
+        GameDate expiry = GameManager.Instance.Today();
+        expiry.AddTicks(GameManager.Instance.GetTicksBasedOnHour(2));
+        _expiryKey = SchedulingManager.Instance.AddEntry(expiry, Expire, this);
         Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
         Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         isSpawned = true;
@@ -148,7 +150,7 @@ public class VaporMapObjectVisual : MovingMapObjectVisual<TileObject> {
     public void OnTriggerEnter2D(Collider2D collision) {
         if (isSpawned == false) { return; }
         BaseVisionTrigger collidedWith = collision.gameObject.GetComponent<BaseVisionTrigger>();
-        if (collidedWith != null && collidedWith.damageable is VaporTileObject otherVapor) {
+        if (collidedWith != null && collidedWith.damageable is VaporTileObject otherVapor && otherVapor != _vaporTileObject) {
             CollidedWithVapor(otherVapor);
         }
     }

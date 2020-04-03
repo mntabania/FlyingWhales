@@ -12,8 +12,6 @@ public class BallLightningTileObject : MovingTileObject {
     public BallLightningTileObject() {
         Initialize(TILE_OBJECT_TYPE.BALL_LIGHTNING, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
-        traitContainer.AddTrait(this, "Dangerous");
-        traitContainer.RemoveTrait(this, "Flammable");
     }
     protected override void CreateMapObjectVisual() {
         base.CreateMapObjectVisual();
@@ -25,6 +23,11 @@ public class BallLightningTileObject : MovingTileObject {
     }
     public void OnExpire() {
         Messenger.Broadcast<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, this, null, base.gridTileLocation);
+    }
+    public override void OnPlacePOI() {
+        base.OnPlacePOI();
+        traitContainer.AddTrait(this, "Dangerous");
+        traitContainer.RemoveTrait(this, "Flammable");
     }
     public override string ToString() {
         return "Ball Lightning";

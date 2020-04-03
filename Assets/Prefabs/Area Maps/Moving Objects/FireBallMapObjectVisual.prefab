@@ -4754,6 +4754,91 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
+--- !u!1 &1770900261875780996
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6223275529916056581}
+  - component: {fileID: 1743863568088242527}
+  - component: {fileID: 2093473743643384312}
+  - component: {fileID: 2737371022690332235}
+  m_Layer: 23
+  m_Name: VisionTrigger
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6223275529916056581
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1770900261875780996}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 5363818557143268658}
+  m_Father: {fileID: 5363994219566470222}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!58 &1743863568088242527
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1770900261875780996}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 1
+--- !u!50 &2093473743643384312
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1770900261875780996}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 4
+--- !u!114 &2737371022690332235
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1770900261875780996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e12d132d432599342889ec637bce56a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _projectileReceiver: {fileID: 5474034177727079630}
+  mainCollider: {fileID: 1743863568088242527}
 --- !u!1 &5215968718537217256
 GameObject:
   m_ObjectHideFlags: 0
@@ -9526,7 +9611,6 @@ GameObject:
   - component: {fileID: 5229256702244508662}
   - component: {fileID: 5391416850164190314}
   - component: {fileID: 5381824823694444676}
-  - component: {fileID: 5473484325521070036}
   - component: {fileID: 287888792591758478}
   m_Layer: 22
   m_Name: FireBallMapObjectVisual
@@ -9548,8 +9632,8 @@ Transform:
   m_Children:
   - {fileID: 362333197635381958}
   - {fileID: 4374896567903805502}
-  - {fileID: 5363818557143268658}
   - {fileID: 2028482601637355580}
+  - {fileID: 6223275529916056581}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -9640,20 +9724,6 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 1
---- !u!114 &5473484325521070036
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5360603073492718714}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e12d132d432599342889ec637bce56a6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _projectileReceiver: {fileID: 5474034177727079630}
-  mainCollider: {fileID: 5381824823694444676}
 --- !u!114 &287888792591758478
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9669,6 +9739,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 5229256702244508662}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
   hpBarGO: {fileID: 0}
   hpFill: {fileID: 0}
   aspeedFill: {fileID: 0}
@@ -9700,12 +9771,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5360872307678677554}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 5363994219566470222}
-  m_RootOrder: 2
+  m_Father: {fileID: 6223275529916056581}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5474034177727079630
 MonoBehaviour:
@@ -9776,7 +9847,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5363994219566470222}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!198 &3430688738691814884
 ParticleSystem:

@@ -19,7 +19,7 @@ public class TileObjectVisionTrigger : POIVisionTrigger {
         
     }
     public override bool IgnoresStructureDifference() {
-        if (poi is TornadoTileObject) {
+        if (poi is MovingTileObject) {
             return true;
         }
         return false;

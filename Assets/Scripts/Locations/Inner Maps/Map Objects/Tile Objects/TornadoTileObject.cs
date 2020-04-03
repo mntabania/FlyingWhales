@@ -15,8 +15,6 @@ public class TornadoTileObject : MovingTileObject {
         //advertisedActions = new List<INTERACTION_TYPE>(){ INTERACTION_TYPE.NEUTRALIZE };
         Initialize(TILE_OBJECT_TYPE.TORNADO, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
-        traitContainer.AddTrait(this, "Dangerous");
-        traitContainer.RemoveTrait(this, "Flammable");
     }
     protected override void CreateMapObjectVisual() {
         base.CreateMapObjectVisual();
@@ -37,6 +35,11 @@ public class TornadoTileObject : MovingTileObject {
     }
     public override string ToString() {
         return "Tornado";
+    }
+    public override void OnPlacePOI() {
+        base.OnPlacePOI();
+        traitContainer.AddTrait(this, "Dangerous");
+        traitContainer.RemoveTrait(this, "Flammable");
     }
 
     #region Moving Tile Object

@@ -16,8 +16,6 @@ public sealed class PoisonCloudTileObject : MovingTileObject {
     public PoisonCloudTileObject() {
         Initialize(TILE_OBJECT_TYPE.POISON_CLOUD, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
-        traitContainer.RemoveTrait(this, "Flammable");
-        traitContainer.AddTrait(this, "Dangerous");
         SetDurationInTicks(GameManager.Instance.GetTicksBasedOnHour(2));
         maxSize = 6;
     }
@@ -42,6 +40,11 @@ public sealed class PoisonCloudTileObject : MovingTileObject {
     }
     public override bool CanBeAffectedByElementalStatus(string traitName) {
         return false;
+    }
+    public override void OnPlacePOI() {
+        base.OnPlacePOI();
+        traitContainer.AddTrait(this, "Dangerous");
+        traitContainer.RemoveTrait(this, "Flammable");
     }
     #endregion
     
