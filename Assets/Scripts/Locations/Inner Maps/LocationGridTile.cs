@@ -1100,7 +1100,7 @@ namespace Inner_Maps {
         }
         private void TriggerFreezingTrap(Character triggeredBy) {
             SetHasFreezingTrap(false);
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 3; i++) {
                 if (triggeredBy.traitContainer.HasTrait("Frozen")) {
                     break;
                 } else {

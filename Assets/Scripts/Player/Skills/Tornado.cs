@@ -12,7 +12,7 @@ public class Tornado : PlayerSpell {
     public Tornado() : base(SPELL_TYPE.TORNADO) {
         SetDefaultCooldownTime(24);
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
-        radius = 1;
+        radius = 2;
         tier = 1;
         durationInTicks = GameManager.Instance.GetTicksBasedOnHour(2);
     }
@@ -72,7 +72,7 @@ public class TornadoData : SpellData {
 
     public override void ActivateAbility(LocationGridTile targetTile) {
         TornadoTileObject tornadoTileObject = new TornadoTileObject();
-        tornadoTileObject.SetRadius(1);
+        tornadoTileObject.SetRadius(2);
         tornadoTileObject.SetDuration(GameManager.Instance.GetTicksBasedOnHour(Random.Range(1, 4)));
         tornadoTileObject.SetGridTileLocation(targetTile);
         tornadoTileObject.OnPlacePOI();
@@ -87,6 +87,6 @@ public class TornadoData : SpellData {
         return canPerform;
     }
     public override void HighlightAffectedTiles(LocationGridTile tile) {
-        TileHighlighter.Instance.PositionHighlight(1, tile);
+        TileHighlighter.Instance.PositionHighlight(2, tile);
     }
 }

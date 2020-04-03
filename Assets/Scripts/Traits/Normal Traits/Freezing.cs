@@ -16,7 +16,7 @@ namespace Traits {
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(1);
             isStacking = true;
             moodEffect = -5;
-            stackLimit = 5;
+            stackLimit = 3;
             stackModifier = 1f;
             AddTraitOverrideFunctionIdentifier(TraitManager.Initiate_Map_Visual_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Destroy_Map_Visual_Trait);
