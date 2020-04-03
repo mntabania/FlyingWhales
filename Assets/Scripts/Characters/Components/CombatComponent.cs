@@ -336,6 +336,20 @@ public class CombatComponent {
             }
         }
     }
+    public void RemoveAvoidInRangeSchedule(IPointOfInterest poi, bool processCombatBehavior = true) {
+        if (avoidInRange.Contains(poi)) {
+            GameDate dueDate = GameManager.Instance.Today();
+            dueDate.AddTicks(3);
+            SchedulingManager.Instance.AddEntry(dueDate, () => FinalCheckForRemoveAvoidSchedule(poi, processCombatBehavior), owner);
+        }
+    }
+    private void FinalCheckForRemoveAvoidSchedule(IPointOfInterest poi, bool processCombatBehavior) {
+        if (owner.marker) {
+            if (!owner.marker.inVisionPOIs.Contains(poi)) {
+                RemoveAvoidInRange(poi, processCombatBehavior);
+            }
+        }
+    }
     public void ClearAvoidInRange(bool processCombatBehavior = true) {
         if (avoidInRange.Count > 0) {
             avoidInRange.Clear();
