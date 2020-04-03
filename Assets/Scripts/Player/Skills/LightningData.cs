@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps;
+using Traits;
 
 public class LightningData : SpellData {
     public override SPELL_TYPE type => SPELL_TYPE.LIGHTNING;
@@ -17,12 +18,18 @@ public class LightningData : SpellData {
 
     public override void ActivateAbility(LocationGridTile targetTile) {
         GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Lightning_Strike);
-        List<IPointOfInterest> pois = targetTile.GetPOIsOnTile();
-        for (int i = 0; i < pois.Count; i++) {
-            pois[i].AdjustHP(-350, ELEMENTAL_TYPE.Electric, showHPBar: true);
-        }
+        // List<IPointOfInterest> pois = targetTile.GetPOIsOnTile();
+        // for (int i = 0; i < pois.Count; i++) {
+        //     pois[i].AdjustHP(-350, ELEMENTAL_TYPE.Electric, showHPBar: true);
+        // }
+        targetTile.PerformActionOnTraitables(LightningDamage);
         IncreaseThreatThatSeesTile(targetTile, 10);
         base.ActivateAbility(targetTile);
+    }
+    private void LightningDamage(ITraitable traitable) {
+        if (traitable is IPointOfInterest poi) {
+            poi.AdjustHP(-350, ELEMENTAL_TYPE.Electric, showHPBar: true);
+        }
     }
     public override void HighlightAffectedTiles(LocationGridTile tile) {
         TileHighlighter.Instance.PositionHighlight(0, tile);

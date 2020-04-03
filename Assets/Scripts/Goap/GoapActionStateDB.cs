@@ -430,6 +430,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.FISH, new[]{
             new StateNameAndDuration(){ name = "Fish Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
         } },
+        {INTERACTION_TYPE.DOUSE_FIRE, new[]{
+            new StateNameAndDuration(){ name = "Douse Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
     };
 }
 

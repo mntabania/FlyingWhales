@@ -1258,6 +1258,7 @@
               <e p="DepositResourcePile.cs" t="Include" />
               <e p="DestroyResourceAmount.cs" t="Include" />
               <e p="DispelMagic.cs" t="Include" />
+              <e p="DouseFire.cs" t="Include" />
               <e p="DrinkBlood.cs" t="Include" />
               <e p="Drop.cs" t="Include" />
               <e p="DropItem.cs" t="Include" />

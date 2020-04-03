@@ -91,9 +91,27 @@ public static class TileObjectDB {
             maxHP = 100,
         } },
         { TILE_OBJECT_TYPE.PORTAL_TILE_OBJECT, new TileObjectData() {
-            maxHP = 10000,
+            maxHP = 100000,
         } },
-        
+        { TILE_OBJECT_TYPE.FIRE_CRYSTAL, new TileObjectData() {
+            maxHP = 150,
+        } },
+        { TILE_OBJECT_TYPE.WATER_CRYSTAL, new TileObjectData() {
+            maxHP = 150,
+        } },
+        { TILE_OBJECT_TYPE.ELECTRIC_CRYSTAL, new TileObjectData() {
+            maxHP = 150,
+        } },
+        { TILE_OBJECT_TYPE.POISON_CRYSTAL, new TileObjectData() {
+            maxHP = 150,
+        } },
+        { TILE_OBJECT_TYPE.ICE_CRYSTAL, new TileObjectData() {
+            maxHP = 150,
+        } },
+        { TILE_OBJECT_TYPE.BLOCK_WALL, new TileObjectData() {
+            maxHP = 500,
+        } },
+
         //{ TILE_OBJECT_TYPE.WATER_BUCKET, new TileObjectData() {
         //    constructionCost = 25,
         //    constructionTime = 12,
@@ -148,7 +166,7 @@ public struct TileObjectData {
             return new TileObjectData() {
                 constructionCost = 10,
                 constructionTime = 12,
-                maxHP = 1000,
+                maxHP = 200,
                 neededTraitTypes = new string[] { "Builder" },
                 providedFacilities = null,
                 occupiedSize = new Point(1, 1),

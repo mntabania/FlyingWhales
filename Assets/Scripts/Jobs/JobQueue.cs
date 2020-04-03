@@ -381,6 +381,20 @@ public class JobQueue {
         }
         return false;
     }
+    public bool HasJob(GoapEffect effect, IPointOfInterest target) {
+        for (int i = 0; i < jobsInQueue.Count; i++) {
+            JobQueueItem jqi = jobsInQueue[i];
+            if (jqi is GoapPlanJob gpj) {
+                if (effect.conditionType == gpj.goal.conditionType
+                    && effect.conditionKey == gpj.goal.conditionKey
+                    && effect.target == gpj.goal.target
+                    && target == gpj.targetPOI) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     public bool HasJob(params JOB_TYPE[] jobTypes) {
         for (int i = 0; i < jobsInQueue.Count; i++) {
             for (int j = 0; j < jobTypes.Length; j++) {

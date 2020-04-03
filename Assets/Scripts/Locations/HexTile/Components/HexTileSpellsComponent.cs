@@ -288,10 +288,16 @@ public class HexTileSpellsComponent {
             yield return new WaitForSeconds(UnityEngine.Random.Range(0.1f, 0.7f));
             LocationGridTile chosenTile = owner.locationGridTiles[UnityEngine.Random.Range(0, owner.locationGridTiles.Count)];
             GameManager.Instance.CreateParticleEffectAt(chosenTile, PARTICLE_EFFECT.Brimstones);
-            List<IPointOfInterest> pois = chosenTile.GetPOIsOnTile();
-            for (int i = 0; i < pois.Count; i++) {
-                pois[i].AdjustHP(-120, ELEMENTAL_TYPE.Fire, true, showHPBar: true);
-            }
+            // List<IPointOfInterest> pois = chosenTile.GetPOIsOnTile();
+            // for (int i = 0; i < pois.Count; i++) {
+            //     pois[i].AdjustHP(-120, ELEMENTAL_TYPE.Fire, true, showHPBar: true);
+            // }
+            chosenTile.PerformActionOnTraitables(BrimstoneEffect);
+        }
+    }
+    private void BrimstoneEffect(ITraitable traitable) {
+        if (traitable is IPointOfInterest poi) {
+            poi.AdjustHP(-120, ELEMENTAL_TYPE.Fire, true, showHPBar: true);
         }
     }
     //private IEnumerator CommenceBrimstoneEffect(LocationGridTile targetTile) {
@@ -365,10 +371,16 @@ public class HexTileSpellsComponent {
             yield return new WaitForSeconds(UnityEngine.Random.Range(0.1f, 0.7f));
             LocationGridTile chosenTile = owner.locationGridTiles[UnityEngine.Random.Range(0, owner.locationGridTiles.Count)];
             GameManager.Instance.CreateParticleEffectAt(chosenTile, PARTICLE_EFFECT.Lightning_Strike);
-            List<IPointOfInterest> pois = chosenTile.GetPOIsOnTile();
-            for (int i = 0; i < pois.Count; i++) {
-                pois[i].AdjustHP(-175, ELEMENTAL_TYPE.Electric, true, showHPBar: true);
-            }
+            // List<IPointOfInterest> pois = chosenTile.GetPOIsOnTile();
+            // for (int i = 0; i < pois.Count; i++) {
+            //     pois[i].AdjustHP(-175, ELEMENTAL_TYPE.Electric, true, showHPBar: true);
+            // }
+            chosenTile.PerformActionOnTraitables(ElectricStormEffect);
+        }
+    }
+    private void ElectricStormEffect(ITraitable traitable) {
+        if (traitable is IPointOfInterest poi) {
+            poi.AdjustHP(-175, ELEMENTAL_TYPE.Electric, true, showHPBar: true);
         }
     }
     private void PerTickElectricStorm() {

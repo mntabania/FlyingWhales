@@ -963,6 +963,7 @@ public enum INTERACTION_TYPE {
     REPORT_CORRUPTED_STRUCTURE,
     FISH,
     REMOVE_UNCONSCIOUS,
+    DOUSE_FIRE
 }
 
 public enum INTERACTION_CATEGORY {
@@ -1938,10 +1939,8 @@ public static class Extensions {
                 priority = 1010;
                 break;
             case JOB_TYPE.ENERGY_RECOVERY_URGENT:
-                priority = 1000;
-                break;
             case JOB_TYPE.FULLNESS_RECOVERY_URGENT:
-                priority = 1020;
+                priority = 1000;
                 break;
             case JOB_TYPE.KNOCKOUT:
                 priority = 970;

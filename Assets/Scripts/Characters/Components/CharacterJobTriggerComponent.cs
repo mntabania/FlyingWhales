@@ -105,6 +105,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			if (TraitManager.Instance.removeStatusTraits.Contains(trait.name)) {
 				TryCreateRemoveStatusJob(trait);
 			}
+			if (trait is Burning || trait is Poisoned) {
+				TriggerRemoveStatusSelf(trait);
+			}
 			TryStartScreamCheck();
 		}
 	}
@@ -208,6 +211,16 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			}	
 		}
 	}
+	private void TriggerRemoveStatusSelf(Trait trait) {
+		if (trait.gainedFromDoing == null || trait.gainedFromDoing.isStealth == false) { //only create remove status job if trait was not gained from a stealth action
+			GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = trait.name, target = GOAP_EFFECT_TARGET.TARGET };
+			if (_owner.jobQueue.HasJob(goapEffect, _owner) == false) {
+				GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REMOVE_STATUS, goapEffect, _owner, _owner);
+				job.SetStillApplicableChecker(() => IsRemoveStatusSelfJobStillApplicable(_owner, job, trait));
+				_owner.jobQueue.AddJobInQueue(job);
+			}	
+		}
+	}
 	private void TriggerFeed(Character target) {
 		GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, target = GOAP_EFFECT_TARGET.TARGET };
 		GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FEED, goapEffect, target, _owner);
@@ -263,6 +276,15 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			return false;
 		}
 		if (target.traitContainer.HasTrait("Criminal")) {
+			return false;
+		}
+		if (!target.traitContainer.HasTrait(trait.name)) {
+			return false; //target no longer has the given trait
+		}
+		return true;
+	}
+	private bool IsRemoveStatusSelfJobStillApplicable(Character target, GoapPlanJob job, Trait trait) {
+		if (target.gridTileLocation == null || target.isDead) {
 			return false;
 		}
 		if (!target.traitContainer.HasTrait(trait.name)) {
