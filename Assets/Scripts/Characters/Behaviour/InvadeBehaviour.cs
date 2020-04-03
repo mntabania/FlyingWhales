@@ -19,7 +19,6 @@ public class InvadeBehaviour : CharacterBehaviourComponent {
             HexTile targetHex = character.behaviourComponent.harassInvadeRaidTarget.tiles[UnityEngine.Random.Range(0, character.behaviourComponent.harassInvadeRaidTarget.tiles.Count)];
             LocationGridTile targetTile = targetHex.locationGridTiles[UnityEngine.Random.Range(0, targetHex.locationGridTiles.Count)];
             character.jobComponent.TriggerRoamAroundTile(targetTile);
-
         }
         return true;
     }

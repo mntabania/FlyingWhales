@@ -68,6 +68,9 @@ public class Butcher : GoapAction {
         if(target is SmallAnimal) {
             cost += UtilityScripts.Utilities.Rng.Next(60, 71);
             costLog += $" +{cost}(Small Animal)";
+        } else if (target is Animal) {
+            cost += UtilityScripts.Utilities.Rng.Next(0, 11);
+            costLog += $" +{cost}(Animal)";
         }
         actor.logComponent.AppendCostLog(costLog);
         return cost;

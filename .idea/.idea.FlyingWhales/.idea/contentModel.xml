@@ -1303,6 +1303,7 @@
               <e p="Remove Statuses" t="Include">
                 <e p="RemoveFreezing.cs" t="Include" />
                 <e p="RemovePoison.cs" t="Include" />
+                <e p="RemoveUnconscious.cs" t="Include" />
               </e>
               <e p="ReportCorruptedStructure.cs" t="Include" />
               <e p="ResolveCombat.cs" t="Include" />

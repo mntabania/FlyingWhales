@@ -77,10 +77,10 @@ public class Spit : GoapAction {
             if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
                 return false;
             }
-            if (poiTarget is Tombstone) {
-                Tombstone tombstone = poiTarget as Tombstone;
+            if (poiTarget is Tombstone tombstone) {
                 Character target = tombstone.character;
-                return actor.relationshipContainer.GetRelationshipEffectWith(target) == RELATIONSHIP_EFFECT.NEGATIVE;
+                return actor.relationshipContainer.IsEnemiesWith(target);
+                // return actor.relationshipContainer.GetRelationshipEffectWith(target) == RELATIONSHIP_EFFECT.NEGATIVE;
             }
             return false;
         }

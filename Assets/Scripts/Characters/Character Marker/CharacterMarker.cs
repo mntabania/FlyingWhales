@@ -883,6 +883,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
         hoveredImg.enabled = state;
         // clickedImg.enabled = state;
     }
+    public bool IsShowingVisuals() {
+        return mainImg.gameObject.activeSelf;
+    }
     private void UpdateHairVisuals() {
         Sprite hair = CharacterManager.Instance.GetMarkerHairSprite(character.gender);
         hairImg.sprite = hair;

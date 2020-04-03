@@ -160,22 +160,23 @@ public class DepositResourcePile : GoapAction {
                 return false;
             }
             if (poiTarget.gridTileLocation.structure.settlementLocation != null) {
-                if (poiTarget.gridTileLocation.structure == actor.homeSettlement.mainStorage) {
-                    return false;
-                }
+                // if (poiTarget.gridTileLocation.structure == actor.homeSettlement.mainStorage) {
+                //     return false;
+                // }
                 if (actor.homeSettlement.mainStorage.unoccupiedTiles.Count <= 0) {
                     return false;
                 }
-            } else {
-                //Cannot be deposited if already in the storage
-                LocationStructure structure = poiTarget.gridTileLocation.structure;
-                if (structure == actor.homeSettlement.mainStorage) {
-                    return false;
-                }
-                if (actor.homeSettlement.mainStorage != null && actor.homeSettlement.mainStorage.unoccupiedTiles.Count <= 0) {
-                    return false;
-                }
-            }
+            } 
+            // else {
+            //     //Cannot be deposited if already in the storage
+            //     LocationStructure structure = poiTarget.gridTileLocation.structure;
+            //     if (structure == actor.homeSettlement.mainStorage) {
+            //         return false;
+            //     }
+            //     if (actor.homeSettlement.mainStorage != null && actor.homeSettlement.mainStorage.unoccupiedTiles.Count <= 0) {
+            //         return false;
+            //     }
+            // }
             return actor.homeRegion == poiTarget.gridTileLocation.parentMap.region;
         }
         return false;
