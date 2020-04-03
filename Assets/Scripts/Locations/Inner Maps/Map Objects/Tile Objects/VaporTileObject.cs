@@ -11,7 +11,8 @@ public class VaporTileObject : MovingTileObject {
     public int stacks { get; private set; }
     public int maxSize { get; private set; }
     public bool doExpireEffect { get; private set; }
-
+    protected override int affectedRange => size;
+    
     public VaporTileObject() {
         Initialize(TILE_OBJECT_TYPE.VAPOR, false);
         //AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);

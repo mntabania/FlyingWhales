@@ -161,16 +161,16 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	private void OnSettlementUnderSiegeChanged(NPCSettlement npcSettlement, bool isUnderSiege) {
 		if (npcSettlement == _owner) {
 			if (isUnderSiege) {
-				TryCreateKnockoutJobs();
+				TryCreateRestrainJobs();
 			}	
 		}
 	}
 	private void OnCharacterSaw(Character character, IPointOfInterest seenPOI) {
 		if (character.homeSettlement == _owner && character.homeSettlement.isUnderSiege 
-		                                       && character.currentSettlement == character.homeSettlement) {
-			if (seenPOI is Character) {
-				Character target = seenPOI as Character;
-				TryCreateKnockoutJobs(target);
+		    && character.currentSettlement == character.homeSettlement 
+		    && character.combatComponent.combatMode != COMBAT_MODE.Passive) {
+			if (seenPOI is Character target) {
+				TryCreateRestrainJobs(target);
 			}	
 		}
 	}
@@ -460,57 +460,57 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	#endregion
 
 	#region Knockout
-	private void TryCreateKnockoutJobs() {
+	private void TryCreateRestrainJobs() {
 		string summary = $"{GameManager.Instance.TodayLogString()}{_owner.name} is under siege, trying to create knockout jobs...";
-		if (CanCreateKnockoutJob()) {
+		if (CanCreateRestrainJob()) {
 			int combatantResidents = 
 				_owner.residents.Count(x => x.traitContainer.HasTrait("Combatant"));
-			int existingKnockoutJobs = _owner.GetNumberOfJobsWith(JOB_TYPE.KNOCKOUT);
+			int existingRestrainJobs = _owner.GetNumberOfJobsWith(JOB_TYPE.RESTRAIN);
 			summary += $"\nCombatant residents: {combatantResidents.ToString()}";
-			summary += $"\nExisting knockout jobs: {existingKnockoutJobs.ToString()}";
+			summary += $"\nExisting restrain jobs: {existingRestrainJobs.ToString()}";
 			List<Character> hostileCharacters = _owner.GetHostileCharactersInSettlement();
 			if (hostileCharacters.Count > 0) {
 				Character target = hostileCharacters.First();
-				int jobsToCreate = combatantResidents - existingKnockoutJobs;
-				summary += $"\nWill create {jobsToCreate.ToString()} knockout jobs.";
+				int jobsToCreate = combatantResidents - existingRestrainJobs;
+				summary += $"\nWill create {jobsToCreate.ToString()} restrain jobs.";
 				for (int i = 0; i < jobsToCreate; i++) {
-					summary += $"\nWill create knockout job targeting {target.name}.";
-					CreateKnockoutJob(target);
+					summary += $"\nWill create restrain job targeting {target.name}.";
+					CreateRestrainJob(target);
 				}	
 			}
 		} else {
-			summary += $"\nCannot create knockout jobs";
+			summary += $"\nCannot create restrain jobs";
 		}
 		Debug.Log(summary);
 	}
-	private void TryCreateKnockoutJobs(Character target) {
-		if (CanCreateKnockoutJob() && target.faction.IsHostileWith(_owner.owner) && target.canPerform) {
+	private void TryCreateRestrainJobs(Character target) {
+		if (CanCreateRestrainJob() && target.faction.IsHostileWith(_owner.owner) && target.canPerform) {
 			int combatantResidents = 
 				_owner.residents.Count(x => x.traitContainer.HasTrait("Combatant"));
-			int existingKnockoutJobs = _owner.GetNumberOfJobsWith(JOB_TYPE.KNOCKOUT);
+			int existingKnockoutJobs = _owner.GetNumberOfJobsWith(JOB_TYPE.RESTRAIN);
 			int jobsToCreate = combatantResidents - existingKnockoutJobs;
 			for (int i = 0; i < jobsToCreate; i++) {
-				CreateKnockoutJob(target);
+				CreateRestrainJob(target);
 			}	
 		}
 	}
-	private bool CanCreateKnockoutJob() {
+	private bool CanCreateRestrainJob() {
 		int combatantResidents = 
 			_owner.residents.Count(x => x.traitContainer.HasTrait("Combatant"));
-		int existingKnockoutJobs = _owner.GetNumberOfJobsWith(JOB_TYPE.KNOCKOUT);
-		return existingKnockoutJobs < combatantResidents;
+		int existingRestrainJobs = _owner.GetNumberOfJobsWith(JOB_TYPE.RESTRAIN);
+		return existingRestrainJobs < combatantResidents;
 	}
-	private void CreateKnockoutJob(Character target) {
-		GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.KNOCKOUT, 
-			new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Unconscious",
+	private void CreateRestrainJob(Character target) {
+		GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RESTRAIN, 
+			new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Restrained",
 				false, GOAP_EFFECT_TARGET.TARGET), 
 			target, _owner);
-		job.SetStillApplicableChecker(() => IsKnockOutJobStillApplicable(target));
+		job.SetStillApplicableChecker(() => IsRestrainJobStillApplicable(target));
 		job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeKnockoutJob);
 		_owner.AddToAvailableJobs(job, 0);
 	}
-	private bool IsKnockOutJobStillApplicable(Character target) {
-		return target.canPerform && target.gridTileLocation != null
+	private bool IsRestrainJobStillApplicable(Character target) {
+		return target.traitContainer.HasTrait("Restrained") == false && target.gridTileLocation != null
 		    && target.gridTileLocation.IsNextToOrPartOfSettlement(_owner);
 	}
 	#endregion

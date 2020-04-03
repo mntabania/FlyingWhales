@@ -10,7 +10,7 @@ public class TornadoTileObject : MovingTileObject {
     public int durationInTicks { get; private set; }
     private TornadoMapObjectVisual _tornadoMapObjectVisual;
     public override string neutralizer => "Wind Master";
-    
+    protected override int affectedRange => 2;
     public TornadoTileObject() {
         //advertisedActions = new List<INTERACTION_TYPE>(){ INTERACTION_TYPE.NEUTRALIZE };
         Initialize(TILE_OBJECT_TYPE.TORNADO, false);

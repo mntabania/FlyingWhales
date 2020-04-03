@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Inner_Maps;
 using Traits;
 using UnityEngine;
@@ -8,6 +9,7 @@ public abstract class MovingTileObject : TileObject {
     public override MapObjectVisual<TileObject> mapVisual => _mapVisual;
     private MovingMapObjectVisual<TileObject> _mapVisual;
     public bool hasExpired { get; protected set; }
+    protected virtual int affectedRange => 1;
 
     protected virtual bool TryGetGridTileLocation(out LocationGridTile tile) {
         if (_mapVisual != null) {
@@ -37,9 +39,18 @@ public abstract class MovingTileObject : TileObject {
 
     #region Listeners
     private void OnActionPerformedOnTile(LocationGridTile tile, TraitableCallback action) {
-        if (tile == gridTileLocation) {
-            action.Invoke(this);
+        if (affectedRange == 0) {
+            if (tile == gridTileLocation) {
+                action.Invoke(this);
+            }  
+        } else {
+            List<LocationGridTile> affectedTiles = gridTileLocation.GetTilesInRadius(affectedRange, includeCenterTile: true,
+                includeTilesInDifferentStructure: true);
+            if (affectedTiles.Contains(tile)) {
+                action.Invoke(this);
+            }    
         }
+        
     }
     #endregion
 }

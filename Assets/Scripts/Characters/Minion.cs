@@ -312,9 +312,11 @@ public class Minion {
     private void OnTickEnded() {
         character.interruptComponent.OnTickEnded();
         character.stateComponent.OnTickEnded();
+        character.ProcessTraitsOnTickEnded();
         character.EndTickPerformJobs();
     }
     private void OnTickStarted() {
+        character.ProcessTraitsOnTickStarted();
         if (character.CanPlanGoap()) {
             character.PerStartTickActionPlanning();
         }

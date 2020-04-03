@@ -12,7 +12,8 @@ public sealed class PoisonCloudTileObject : MovingTileObject {
     public int stacks { get; private set; }
     public int maxSize { get; private set; }
     public override string neutralizer => "Poison Expert";
-
+    protected override int affectedRange => size;
+    
     public PoisonCloudTileObject() {
         Initialize(TILE_OBJECT_TYPE.POISON_CLOUD, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);

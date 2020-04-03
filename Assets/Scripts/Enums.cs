@@ -1966,8 +1966,10 @@ public static class Extensions {
                 priority = 910;
                 break;
             case JOB_TYPE.FEED:
-            case JOB_TYPE.RESTRAIN:
                 priority = 900;
+                break;
+            case JOB_TYPE.RESTRAIN:
+                priority = 970;
                 break;
             case JOB_TYPE.BURY:
                 priority = 870;

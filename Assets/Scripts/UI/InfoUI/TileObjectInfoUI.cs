@@ -80,7 +80,7 @@ public class TileObjectInfoUI : InfoUIBase {
         // }
         
         activeTileObject = _data as TileObject;
-        if(activeTileObject.gridTileLocation != null) {
+        if(activeTileObject.gridTileLocation != null && activeTileObject.mapObjectVisual != null) {
             bool instantCenter = !InnerMapManager.Instance.IsShowingInnerMap(activeTileObject.currentRegion);
             InnerMapCameraMove.Instance.CenterCameraOn(activeTileObject.mapObjectVisual.gameObject, instantCenter);
         }

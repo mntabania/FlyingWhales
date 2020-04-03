@@ -58,7 +58,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			if (_owner.currentSettlement is NPCSettlement npcSettlement && npcSettlement.isUnderSiege) {
 				TriggerFleeHome();	
 			}
-			character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.RESTRAIN); //cancel all restrain jobs.
+			// character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.RESTRAIN); //cancel all restrain jobs.
 			_owner.needsComponent.CheckExtremeNeeds();
             for (int i = 0; i < _owner.marker.inVisionCharacters.Count; i++) {
                 Character inVisionCharacter = _owner.marker.inVisionCharacters[i];
@@ -82,7 +82,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
             character.UncarryPOI();
             character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.KNOCKOUT);
-            TryTriggerRestrain();
+            // TryTriggerRestrain();
         }
 	}
 	private void OnCharacterCanNoLongerMove(Character character) {

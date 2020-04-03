@@ -1882,12 +1882,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 }
                 CameraMove.Instance.CenterCameraOn(currentRegion.coreTile.gameObject);
             }
-        } else {
-            if (InnerMapManager.Instance.isAnInnerMapShowing) {
-                InnerMapManager.Instance.HideAreaMap();
-            }
-            CameraMove.Instance.CenterCameraOn(currentRegion.coreTile.gameObject);
-        }
+        } 
+        // else {
+        //     if (InnerMapManager.Instance.isAnInnerMapShowing) {
+        //         InnerMapManager.Instance.HideAreaMap();
+        //     }
+        //     CameraMove.Instance.CenterCameraOn(currentRegion.coreTile.gameObject);
+        // }
     }
     private void OnOtherCharacterDied(Character characterThatDied) {
         if (characterThatDied.id != id) {
@@ -2061,7 +2062,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     public virtual bool IsValidCombatTarget() {
-        return isDead == false && canPerform && marker != null 
+        return isDead == false && (canPerform || canMove) && marker != null 
                 && gridTileLocation != null; //traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) == false
     }
     public void ExecutePendingActionsAfterMultithread() {
@@ -3220,17 +3221,17 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void RemoveTraitNeededToBeRemoved(Trait trait) {
         traitsNeededToBeRemoved.Remove(trait);
     }
-    protected void ProcessTraitsOnTickStarted() {
+    public void ProcessTraitsOnTickStarted() {
         if (!interruptComponent.isInterrupted) {
             traitContainer.ProcessOnTickStarted(this);
         }
     }
-    private void ProcessTraitsOnTickEnded() {
+    public void ProcessTraitsOnTickEnded() {
         if (!interruptComponent.isInterrupted) {
             traitContainer.ProcessOnTickEnded(this);
         }
     }
-    private void ProcessTraitsOnHourStarted() {
+    public void ProcessTraitsOnHourStarted() {
         if (!interruptComponent.isInterrupted) {
             traitContainer.ProcessOnHourStarted(this);
         }
@@ -4123,6 +4124,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
         if (this is Summon) {
             AddAdvertisedAction(INTERACTION_TYPE.PLAY);
+        }
+        if (this is Animal) {
+            AddAdvertisedAction(INTERACTION_TYPE.BUTCHER);
         }
         if (!(this is Summon) && race != RACE.SKELETON) {
             AddAdvertisedAction(INTERACTION_TYPE.DAYDREAM);
@@ -5545,6 +5549,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         // UIManager.Instance.ShowCharacterInfo(this);
     }
     public bool CanBeSelected() {
+        if (marker != null && marker.IsShowingVisuals() == false) {
+            return false;
+        }
         return true;
     }
     #endregion

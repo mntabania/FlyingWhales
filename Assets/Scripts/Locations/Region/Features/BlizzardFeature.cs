@@ -100,7 +100,7 @@ public class BlizzardFeature : TileFeature {
     #region Effects
     private void CheckForFreezing(HexTile hex) {
         string summary = $"{GameManager.Instance.TodayLogString()}Starting freezing check...";
-        int chance = 15;
+        int chance = 35;
         for (int i = 0; i < _charactersOutside.Count; i++) {
             Character character = _charactersOutside[i];
             int roll = UnityEngine.Random.Range(0, 100);
