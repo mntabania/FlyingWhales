@@ -7,7 +7,7 @@ namespace Interrupts {
         public CreateFaction() : base(INTERRUPT.Create_Faction) {
             duration = 0;
             isSimulateneous = true;
-            interruptIconString = GoapActionStateDB.Flirt_Icon;
+            interruptIconString = GoapActionStateDB.No_Icon;
         }
 
         #region Overrides
