@@ -419,7 +419,7 @@ public static class GoapActionStateDB {
             new StateNameAndDuration(){ name = "Extract Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
         {INTERACTION_TYPE.BOOBY_TRAP, new[]{
-            new StateNameAndDuration(){ name = "Trap Success", status = InteractionManager.Goap_State_Success, duration = 5 },
+            new StateNameAndDuration(){ name = "Trap Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(5) },
         } },
         {INTERACTION_TYPE.REPORT_CORRUPTED_STRUCTURE, new[]{
             new StateNameAndDuration(){ name = "Report Success", status = InteractionManager.Goap_State_Success, duration = 0 },
