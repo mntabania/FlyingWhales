@@ -980,7 +980,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         tile.parentMap.region.AddPendingAwareness(character);
     }
     public void OnDeath(LocationGridTile deathTileLocation) {
-        if (character.race == RACE.SKELETON || character is Summon || character.minion != null || character.destroyMarkerOnDeath) {
+        if (character.minion != null || character.destroyMarkerOnDeath) {
             character.DestroyMarker();
         } else {
             SetCollidersState(false);

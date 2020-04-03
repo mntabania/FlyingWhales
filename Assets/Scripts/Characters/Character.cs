@@ -1084,9 +1084,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //}
     public void AddJobTargetingThis(JobQueueItem job) {
         allJobsTargetingThis.Add(job);
+        marker.visionTrigger.VoteToMakeVisibleToCharacters();
     }
     public bool RemoveJobTargetingThis(JobQueueItem job) {
-        return allJobsTargetingThis.Remove(job);
+        if (allJobsTargetingThis.Remove(job)) {
+            marker.visionTrigger.VoteToMakeInvisibleToCharacters();
+            return true;
+        }
+        return false;
     }
     public void ForceCancelAllJobsTargettingThisCharacter() {
         for (int i = 0; i < allJobsTargetingThis.Count; i++) {

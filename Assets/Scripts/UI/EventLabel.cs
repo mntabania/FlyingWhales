@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps.Location_Structures;
 using Ruinarch;
 using UnityEngine.EventSystems;
 using TMPro;
@@ -104,31 +105,22 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
                 }
             } else {
                 if(obj != null) {
-                    if (obj is Character) {
-                        UIManager.Instance.ShowCharacterInfo(obj as Character, true);
-                    } else if (obj is NPCSettlement) {
-                        UIManager.Instance.ShowRegionInfo((obj as NPCSettlement).region);
-                    } else if (obj is Faction) {
-                        UIManager.Instance.ShowFactionInfo((obj as Faction));
-                    } else if (obj is Minion) {
-                        UIManager.Instance.ShowCharacterInfo((obj as Minion).character, true);
-                    }
-                    //else if (obj is Combat) {
-                    //    UIManager.Instance.ShowCombatLog(obj as Combat);
-                    //} 
-                    else if (obj is Party) {
-                        Party party = obj as Party;
+                    if (obj is Character character) {
+                        UIManager.Instance.ShowCharacterInfo(character, true);
+                    } else if (obj is NPCSettlement settlement) {
+                        UIManager.Instance.ShowRegionInfo(settlement.region);
+                    } else if (obj is Faction faction) {
+                        UIManager.Instance.ShowFactionInfo(faction);
+                    } else if (obj is Minion minion) {
+                        UIManager.Instance.ShowCharacterInfo(minion.character, true);
+                    } else if (obj is Party party) {
                         UIManager.Instance.ShowCharacterInfo(party.owner, true);
-                    } else if (obj is IPointOfInterest) {
-                        IPointOfInterest poi = obj as IPointOfInterest;
-                        if (poi is Character) {
-                            UIManager.Instance.ShowCharacterInfo(poi as Character, true);
-                        } else if (poi is TileObject) {
-                            UIManager.Instance.ShowTileObjectInfo(poi as TileObject);
-                        }
-                    } else if (obj is Region) {
-                        Region region = obj as Region;
+                    } else if (obj is TileObject tileObject) {
+                            UIManager.Instance.ShowTileObjectInfo(tileObject);
+                    } else if (obj is Region region) {
                         UIManager.Instance.ShowRegionInfo(region);
+                    } else if (obj is LocationStructure structure) {
+                        structure.CenterOnStructure();
                     }
                 }
             }
