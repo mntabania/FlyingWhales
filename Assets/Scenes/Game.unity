@@ -78393,6 +78393,7 @@ MonoBehaviour:
   _sortingOrdersInBetweenHexTileRows: 20
   vaporStacks: 1
   poisonCloudStacks: 1
+  frostyFogStacks: 1
 --- !u!1 &1382697469
 GameObject:
   m_ObjectHideFlags: 0

@@ -22,7 +22,7 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(4);
             //effects = new List<TraitEffect>();
-            advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CURE_CHARACTER, };
+            advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.REMOVE_POISON, };
             awareCharacters = new List<Character>();
             mutuallyExclusive = new string[] { "Robust" };
             moodEffect = -12;

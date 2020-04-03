@@ -7,11 +7,15 @@ using UnityEngine.Assertions;
 public class FrostyFogTileObject : MovingTileObject {
 
     private FrostyFogMapObjectVisual _frostyFogMapVisual;
-    
+    public int size { get; private set; }
+    public int stacks { get; private set; }
+    public int maxSize { get; private set; }
+
     public FrostyFogTileObject() {
         Initialize(TILE_OBJECT_TYPE.FROSTY_FOG, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         traitContainer.RemoveTrait(this, "Flammable");
+        maxSize = 6;
     }
     protected override void CreateMapObjectVisual() {
         base.CreateMapObjectVisual();
@@ -56,7 +60,11 @@ public class FrostyFogTileObject : MovingTileObject {
             _frostyFogMapVisual.Expire();
         } else if (elementalDamageType == ELEMENTAL_TYPE.Electric) {
             //2 Ball Lightnings
-            for (int i = 0; i < 2; i++) {
+            int numOfBallLightnings = 1 + (stacks / 4);
+            if (numOfBallLightnings > 4) {
+                numOfBallLightnings = 4;
+            }
+            for (int i = 0; i < numOfBallLightnings; i++) {
                 BallLightningTileObject ballLightning = new BallLightningTileObject();
                 ballLightning.SetGridTileLocation(tileLocation);
                 ballLightning.OnPlacePOI();
@@ -79,6 +87,32 @@ public class FrostyFogTileObject : MovingTileObject {
         }
         tile = null;
         return false;
+    }
+    #endregion
+
+    #region Size and Stacks
+    public void SetStacks(int stacks) {
+        this.stacks = stacks;
+        UpdateSizeBasedOnStacks();
+    }
+    private void SetSize(int size) {
+        this.size = size;
+        _frostyFogMapVisual.SetSize(size);
+    }
+    private void UpdateSizeBasedOnStacks() {
+        if (stacks >= 1 && stacks <= 2) {
+            SetSize(1);
+        } else if (stacks >= 3 && stacks <= 4) {
+            SetSize(2);
+        } else if (stacks >= 5 && stacks <= 9) {
+            SetSize(3);
+        } else if (stacks >= 10 && stacks <= 16) {
+            SetSize(4);
+        } else if (stacks >= 17 && stacks <= 25) {
+            SetSize(5);
+        } else if (stacks >= 26) {
+            SetSize(6);
+        }
     }
     #endregion
 }

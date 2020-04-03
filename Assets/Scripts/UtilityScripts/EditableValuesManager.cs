@@ -44,6 +44,7 @@ public class EditableValuesManager : MonoBehaviour {
 
     public int vaporStacks;
     public int poisonCloudStacks;
+    public int frostyFogStacks;
 
     //getters
     //mood

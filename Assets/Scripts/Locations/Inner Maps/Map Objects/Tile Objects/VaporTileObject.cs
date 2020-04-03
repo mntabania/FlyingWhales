@@ -62,7 +62,28 @@ public class VaporTileObject : MovingTileObject {
             CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, 
                 responsibleCharacter, etp);
         }
-        if (elementalDamageType == ELEMENTAL_TYPE.Ice || currentHP == 0) {
+        if (elementalDamageType == ELEMENTAL_TYPE.Fire) {
+            _vaporMapVisualObject.Expire();
+        } else if (elementalDamageType == ELEMENTAL_TYPE.Ice) {
+            //Frosty Fog
+            LocationGridTile targetTile = gridTileLocation;
+            SetDoExpireEffect(false);
+            _vaporMapVisualObject.Expire();
+            FrostyFogTileObject frostyFog = new FrostyFogTileObject();
+            frostyFog.SetGridTileLocation(targetTile);
+            frostyFog.OnPlacePOI();
+            frostyFog.SetStacks(stacks);
+        } else if (elementalDamageType == ELEMENTAL_TYPE.Poison) {
+            LocationGridTile targetTile = gridTileLocation;
+            SetDoExpireEffect(false);
+            _vaporMapVisualObject.Expire();
+            PoisonCloudTileObject poisonCloudTileObject = new PoisonCloudTileObject();
+            poisonCloudTileObject.SetDurationInTicks(GameManager.Instance.GetTicksBasedOnHour(Random.Range(2, 6)));
+            poisonCloudTileObject.SetGridTileLocation(targetTile);
+            poisonCloudTileObject.OnPlacePOI();
+            poisonCloudTileObject.SetStacks(stacks);
+        }
+        if (!hasExpired && currentHP == 0) {
             _vaporMapVisualObject.Expire();
         }
         Debug.Log($"{GameManager.Instance.TodayLogString()}HP of {this} was adjusted by {amount}. New HP is {currentHP}.");

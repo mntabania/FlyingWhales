@@ -4145,8 +4145,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             AddAdvertisedAction(INTERACTION_TYPE.CREATE_HEALING_POTION);
             AddAdvertisedAction(INTERACTION_TYPE.CREATE_ANTIDOTE);
             AddAdvertisedAction(INTERACTION_TYPE.CREATE_POISON_FLASK);
-            AddAdvertisedAction(INTERACTION_TYPE.REMOVE_POISON);
-            AddAdvertisedAction(INTERACTION_TYPE.REMOVE_FREEZING);
+            //AddAdvertisedAction(INTERACTION_TYPE.REMOVE_POISON);
+            //AddAdvertisedAction(INTERACTION_TYPE.REMOVE_FREEZING);
             AddAdvertisedAction(INTERACTION_TYPE.SHARE_INFORMATION);
             AddAdvertisedAction(INTERACTION_TYPE.DRINK_BLOOD);
             AddAdvertisedAction(INTERACTION_TYPE.BUTCHER);

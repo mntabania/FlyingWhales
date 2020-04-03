@@ -19,7 +19,7 @@ namespace Traits {
             hindersMovement = true;
             hindersPerform = true;
             hindersWitness = true;
-            advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EXTRACT_ITEM };
+            advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EXTRACT_ITEM, INTERACTION_TYPE.REMOVE_FREEZING };
             AddTraitOverrideFunctionIdentifier(TraitManager.Initiate_Map_Visual_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Destroy_Map_Visual_Trait);
         }

@@ -17,9 +17,9 @@ public class FirstAidCharacter : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        //AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Healing Potion", false, GOAP_EFFECT_TARGET.ACTOR), HasHealingPotion);
+        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Healing Potion", false, GOAP_EFFECT_TARGET.ACTOR), HasHealingPotion);
         AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.REMOVE_TRAIT, "Injured", false, GOAP_EFFECT_TARGET.TARGET));
-        AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.REMOVE_TRAIT, "Unconscious", false, GOAP_EFFECT_TARGET.TARGET));
+        //AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.REMOVE_TRAIT, "Unconscious", false, GOAP_EFFECT_TARGET.TARGET));
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
@@ -85,7 +85,7 @@ public class FirstAidCharacter : GoapAction {
         Character targetCharacter = goapNode.poiTarget as Character;
         targetCharacter.relationshipContainer.AdjustOpinion(targetCharacter, goapNode.actor, "Base", 3);
         goapNode.poiTarget.traitContainer.RemoveStatusAndStacks(goapNode.poiTarget, "Injured", goapNode.actor);
-        goapNode.poiTarget.traitContainer.RemoveStatusAndStacks(goapNode.poiTarget, "Unconscious", goapNode.actor);
+        //goapNode.poiTarget.traitContainer.RemoveStatusAndStacks(goapNode.poiTarget, "Unconscious", goapNode.actor);
         //TileObject potion = goapNode.actor.GetItem(TILE_OBJECT_TYPE.HEALING_POTION);
         //if (potion != null) {
         //    goapNode.actor.UnobtainItem(potion);

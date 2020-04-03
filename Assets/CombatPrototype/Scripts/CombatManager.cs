@@ -57,49 +57,24 @@ public class CombatManager : MonoBehaviour {
     }
     public void DamageModifierByElements(ref int damage, ELEMENTAL_TYPE elementalType, ITraitable target) {
         if(damage < 0) {
-            if(target is VaporTileObject && elementalType != ELEMENTAL_TYPE.Ice) {
-                //Vapors are immune to all other damage types except Ice
-                damage = 0;
+            if(IsImmuneToElement(target, elementalType)) {
+                if(target is VaporTileObject) {
+                    damage = 0;
+                } else {
+                    //Immunity - less 85% damage
+                    damage = Mathf.RoundToInt(damage * 0.15f);
+                }
                 return;
-            }
-            if(elementalType != ELEMENTAL_TYPE.Fire) {
-                if(target is WinterRose) {
-                    //Immunity - less 85% damage
-                    damage = Mathf.RoundToInt(damage * 0.15f);
-                    return;
-                }
-            }
-            if (elementalType != ELEMENTAL_TYPE.Water) {
-                if (target is DesertRose) {
-                    //Immunity - less 85% damage
-                    damage = Mathf.RoundToInt(damage * 0.15f);
-                    return;
-                }
             }
             if (elementalType == ELEMENTAL_TYPE.Fire) {
                 if (target.traitContainer.HasTrait("Fire Prone")) {
                     damage *= 2;
-                } else if (target.traitContainer.HasTrait("Fireproof")) {
-                    //Immunity - less 85% damage
-                    damage = Mathf.RoundToInt(damage * 0.15f);
-                }
-            } else if (elementalType == ELEMENTAL_TYPE.Electric) {
-                if (target.traitContainer.HasTrait("Electric")) {
-                    //Immunity - less 85% damage
-                    damage = Mathf.RoundToInt(damage * 0.15f);
-                    //damage = 0;
-                }
-            } else if (elementalType == ELEMENTAL_TYPE.Ice) {
-                if (target.traitContainer.HasTrait("Cold Blooded")) {
-                    //Immunity - less 85% damage
-                    damage = Mathf.RoundToInt(damage * 0.15f);
-                    //damage = 0;
                 }
             }
         }
     }
     public bool IsImmuneToElement(ITraitable target, ELEMENTAL_TYPE elementalType) {
-        if(target is VaporTileObject && elementalType != ELEMENTAL_TYPE.Ice) {
+        if(target is VaporTileObject && elementalType != ELEMENTAL_TYPE.Ice && elementalType != ELEMENTAL_TYPE.Poison && elementalType != ELEMENTAL_TYPE.Fire) {
             //Vapors are immune to all other damage types except Ice
             return true;
         }
