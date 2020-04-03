@@ -170,6 +170,13 @@ namespace Traits {
                         shouldAddTrait = false;
                     }
                 }
+                if (HasTrait("Frozen")) {
+                    RemoveTrait(addTo, "Frozen");
+                    if (addTo is IPointOfInterest) {
+                        CombatManager.Instance.FrozenExplosion(addTo as IPointOfInterest, addTo.gridTileLocation, 1);
+                    }
+                    shouldAddTrait = false;
+                }
             }
             if (shouldAddTrait) {
                 if (bypassElementalChance) {
@@ -188,14 +195,6 @@ namespace Traits {
             if (traitName == "Freezing") {
                 if (HasTrait("Frozen")) {
                     AddTrait(addTo, "Frozen");
-                    shouldAddTrait = false;
-                }
-            } else if (traitName == "Zapped") {
-                if (HasTrait("Frozen")) {
-                    RemoveTrait(addTo, "Frozen");
-                    if(addTo is IPointOfInterest) {
-                        CombatManager.Instance.FrozenExplosion(addTo as IPointOfInterest, addTo.gridTileLocation, 1);
-                    }
                     shouldAddTrait = false;
                 }
             } else if (traitName == "Poisoned") {

@@ -229,6 +229,10 @@ public class CombatManager : MonoBehaviour {
         traitable.AdjustHP(-damage, ELEMENTAL_TYPE.Water, showHPBar: true);
     }
     public void ChainElectricDamage(ITraitable traitable, int damage) {
+        damage = Mathf.RoundToInt(damage * 0.2f);
+        if(damage < 1) {
+            damage = 1;
+        }
         List<ITraitable> traitables = new List<ITraitable>();
         if (traitable.gridTileLocation != null) {
             List<LocationGridTile> tiles = traitable.gridTileLocation.GetTilesInRadius(1, includeTilesInDifferentStructure: true);

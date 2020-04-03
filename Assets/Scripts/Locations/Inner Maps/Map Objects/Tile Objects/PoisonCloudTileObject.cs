@@ -28,7 +28,7 @@ public sealed class PoisonCloudTileObject : MovingTileObject {
         _poisonCloudVisual = mapVisual as PoisonCloudMapObjectVisual;
     }
     protected override bool TryGetGridTileLocation(out LocationGridTile tile) {
-        if (_poisonCloudVisual != null && _hasExpired == false) {
+        if (_poisonCloudVisual != null && hasExpired == false) {
             if (_poisonCloudVisual.isSpawned) {
                 tile = _poisonCloudVisual.gridTileLocation;
                 return true;

@@ -603,7 +603,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     private void IncreaseThreatThatSeesPOI(IPointOfInterest poi, int amount) {
-        if (marker) {
+        if (faction != null && faction.isMajorNonPlayerFriendlyNeutral && marker) {
             if (poi is Character character) {
                 if (marker.inVisionCharacters.Contains(character)) {
                     PlayerManager.Instance.player.threatComponent.AdjustThreat(amount);
@@ -616,7 +616,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     private void IncreaseThreatThatSeesTile(LocationGridTile tile, int amount) {
-        if (marker && gridTileLocation != null && gridTileLocation.parentMap.region == tile.parentMap.region) {
+        if (faction != null && faction.isMajorNonPlayerFriendlyNeutral && marker && gridTileLocation != null && gridTileLocation.parentMap.region == tile.parentMap.region) {
             if(gridTileLocation.structure == tile.structure || (!gridTileLocation.structure.isInterior && !tile.structure.isInterior)) {
                 float distance = Vector2.Distance(tile.centeredWorldLocation, gridTileLocation.centeredWorldLocation);
                 if (distance <= 5f) {
@@ -1940,8 +1940,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     private void OnBeforeSeizingTileObject(TileObject tileObject) {
-        if(marker && marker.inVisionTileObjects.Contains(tileObject)) {
-            PlayerManager.Instance.player.threatComponent.AdjustThreat(5);
+        if(faction != null && faction.isMajorNonPlayerFriendlyNeutral && marker) {
+            if (marker.inVisionTileObjects.Contains(tileObject)) {
+                PlayerManager.Instance.player.threatComponent.AdjustThreat(5);
+            }
         }
     }
     private void OnSeizeTileObject(TileObject tileObject) {

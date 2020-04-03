@@ -1298,7 +1298,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         character.combatComponent.RemoveAvoidInRange(otherCharacter);
     }
     public void OnBeforeSeizingOtherCharacter(Character otherCharacter) {
-        if (character.race == RACE.HUMANS || character.race == RACE.ELVES) {
+        if (character.faction != null && character.faction.isMajorNonPlayerFriendlyNeutral) {
             if (inVisionCharacters.Contains(otherCharacter)) {
                 PlayerManager.Instance.player.threatComponent.AdjustThreat(10);
             }
