@@ -27,7 +27,7 @@ namespace Inner_Maps.Location_Structures {
             validMinions.Clear();
             for (int i = 0; i < PlayerManager.Instance.player.minions.Count; i++) {
                 Minion minion = PlayerManager.Instance.player.minions[i];
-                if(minion.character.currentHP >= minion.character.maxHP && minion.character.gridTileLocation == null) {
+                if(CanSummonMinion(minion.character)) {
                     if (PlayerManager.Instance.player.archetype.CanSummonMinion(minion)) {
                         validMinions.Add(minion.character);
                     }

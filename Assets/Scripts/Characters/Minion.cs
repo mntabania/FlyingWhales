@@ -310,6 +310,7 @@ public class Minion {
         //GoToWorkArea();
     }
     private void OnTickEnded() {
+        character.interruptComponent.OnTickEnded();
         character.stateComponent.OnTickEnded();
         character.EndTickPerformJobs();
     }
@@ -391,6 +392,13 @@ public class Minion {
         Messenger.AddListener(Signals.TICK_ENDED, UnsummonedHPRecovery);
         UnSubscribeListeners();
         SetIsSummoned(false);
+        character.behaviourComponent.SetIsHarassing(false, null);
+        character.behaviourComponent.SetIsRaiding(false, null);
+        character.behaviourComponent.SetIsInvading(false, null);
+        character.CancelAllJobs();
+        character.interruptComponent.ForceEndNonSimultaneousInterrupt();
+        character.combatComponent.ClearAvoidInRange(false);
+        character.combatComponent.ClearHostilesInRange(false);
         Messenger.Broadcast(Signals.UNSUMMON_MINION, this);
     }
     private void UnsummonedHPRecovery() {
