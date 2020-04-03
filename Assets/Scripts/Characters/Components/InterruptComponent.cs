@@ -142,8 +142,10 @@ public class InterruptComponent {
                 Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, owner);
             } else {
                 if (owner.combatComponent.hostilesInRange.Count > 0 || owner.combatComponent.avoidInRange.Count > 0) {
-                    CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.COMBAT, CHARACTER_STATE.COMBAT, owner);
-                    owner.jobQueue.AddJobInQueue(job);
+                    if (owner.jobQueue.HasJob(JOB_TYPE.COMBAT) == false) {
+                        CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.COMBAT, CHARACTER_STATE.COMBAT, owner);
+                        owner.jobQueue.AddJobInQueue(job);    
+                    }
                 } else {
                     if (willCheckInVision) {
                         if (owner.marker) {
