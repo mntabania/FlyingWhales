@@ -311,7 +311,8 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         for (int i = 0; i < region.charactersAtLocation.Count; i++) {
             Character character = region.charactersAtLocation[i];
             if (character.gridTileLocation.IsPartOfSettlement(this)
-            && owner.IsHostileWith(character.faction)) {
+            && owner.IsHostileWith(character.faction) 
+            && character.traitContainer.HasTrait("Restrained") == false) {
                 hostileCharacters.Add(character);
             }
         }
@@ -539,8 +540,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         if(owner != null 
             && character.gridTileLocation != null 
             && character.gridTileLocation.IsPartOfSettlement(this) 
-            && character.canPerform 
-            && character.canMove 
+            // && character.canPerform 
+            // && character.canMove
+            && character.traitContainer.HasTrait("Unconscious") == false
             && character.combatComponent.combatMode != COMBAT_MODE.Passive) {
             if (owner.IsHostileWith(character.faction)) {
                 SetIsUnderSiege(true);

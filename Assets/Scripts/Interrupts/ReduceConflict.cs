@@ -8,7 +8,7 @@ namespace Interrupts {
         public ReduceConflict() : base(INTERRUPT.Reduce_Conflict) {
             duration = 0;
             isSimulateneous = true;
-            interruptIconString = GoapActionStateDB.Flirt_Icon;
+            interruptIconString = GoapActionStateDB.No_Icon;
         }
 
         #region Overrides
