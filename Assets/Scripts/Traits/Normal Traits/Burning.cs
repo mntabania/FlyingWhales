@@ -73,7 +73,7 @@ namespace Traits {
             }
             if (removedFrom is IPointOfInterest) {
                 if (removedFrom is Character character) {
-                    character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.DOUSE_FIRE);
+                    // character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.REMOVE_STATUS);
                     character.AdjustDoNotRecoverHP(-1);
                 }
             } 

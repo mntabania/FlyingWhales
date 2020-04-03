@@ -4119,6 +4119,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         AddAdvertisedAction(INTERACTION_TYPE.RESTRAIN_CHARACTER);
         AddAdvertisedAction(INTERACTION_TYPE.JUDGE_CHARACTER);
         AddAdvertisedAction(INTERACTION_TYPE.SLAY_CHARACTER);
+        AddAdvertisedAction(INTERACTION_TYPE.DOUSE_FIRE);
 
         if (this is Summon) {
             AddAdvertisedAction(INTERACTION_TYPE.PLAY);
@@ -5508,7 +5509,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //    null,
             //    () => PlayerManager.Instance.player.seizeComponent.SeizePOI(this));
             // PlayerAction shareIntelAction = new PlayerAction("Share Intel", () => false, null);
-
             AddPlayerAction(SPELL_TYPE.AFFLICT);
             AddPlayerAction(SPELL_TYPE.ZAP);
             AddPlayerAction(SPELL_TYPE.SEIZE_CHARACTER);

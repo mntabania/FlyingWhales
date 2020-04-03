@@ -108,7 +108,7 @@ public class BallLightningMapObjectVisual : MovingMapObjectVisual<TileObject> {
             return;
         }
         for (int i = 0; i < _objsInRange.Count; i++) {
-            _objsInRange[i].AdjustHP(-10, ELEMENTAL_TYPE.Electric, true, showHPBar: true);
+            _objsInRange[i].AdjustHP(-60, ELEMENTAL_TYPE.Electric, true, showHPBar: true);
         }
     }
     #endregion
