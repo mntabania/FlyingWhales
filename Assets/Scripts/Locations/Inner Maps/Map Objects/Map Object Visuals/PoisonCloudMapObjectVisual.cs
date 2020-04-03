@@ -176,10 +176,12 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
         }
     }
     private void CollidedWithPoisonCloud(PoisonCloudTileObject otherPoisonCloud) {
-        if (_poisonCloud.size != _poisonCloud.maxSize) {
-            int stacksToCombine = otherPoisonCloud.stacks;
-            otherPoisonCloud.Neutralize();
-            _poisonCloud.SetStacks(_poisonCloud.stacks + stacksToCombine);
+        if(!otherPoisonCloud.hasExpired) {
+            if (_poisonCloud.size != _poisonCloud.maxSize) {
+                int stacksToCombine = otherPoisonCloud.stacks;
+                otherPoisonCloud.Neutralize();
+                _poisonCloud.SetStacks(_poisonCloud.stacks + stacksToCombine);
+            }
         }
     }
     #endregion

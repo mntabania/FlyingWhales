@@ -536,8 +536,12 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         AssignPrison();
     }
     private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {
-        if(owner != null && character.gridTileLocation != null && 
-           character.gridTileLocation.IsPartOfSettlement(this) && character.canPerform && character.canMove) {
+        if(owner != null 
+            && character.gridTileLocation != null 
+            && character.gridTileLocation.IsPartOfSettlement(this) 
+            && character.canPerform 
+            && character.canMove 
+            && character.combatComponent.combatMode != COMBAT_MODE.Passive) {
             if (owner.IsHostileWith(character.faction)) {
                 SetIsUnderSiege(true);
             }

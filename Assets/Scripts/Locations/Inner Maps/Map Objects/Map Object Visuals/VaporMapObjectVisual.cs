@@ -155,11 +155,13 @@ public class VaporMapObjectVisual : MovingMapObjectVisual<TileObject> {
         }
     }
     private void CollidedWithVapor(VaporTileObject otherVapor) {
-        if (_vaporTileObject.size != _vaporTileObject.maxSize) {
-            int stacksToCombine = otherVapor.stacks;
-            otherVapor.SetDoExpireEffect(false);
-            otherVapor.Neutralize();
-            _vaporTileObject.SetStacks(_vaporTileObject.stacks + stacksToCombine);
+        if (!otherVapor.hasExpired) {
+            if (_vaporTileObject.size != _vaporTileObject.maxSize) {
+                int stacksToCombine = otherVapor.stacks;
+                otherVapor.SetDoExpireEffect(false);
+                otherVapor.Neutralize();
+                _vaporTileObject.SetStacks(_vaporTileObject.stacks + stacksToCombine);
+            }
         }
     }
     #endregion

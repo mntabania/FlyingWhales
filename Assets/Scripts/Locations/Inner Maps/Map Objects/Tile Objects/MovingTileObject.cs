@@ -7,7 +7,7 @@ public abstract class MovingTileObject : TileObject {
     public sealed override LocationGridTile gridTileLocation => TryGetGridTileLocation(out var tile) ? tile : base.gridTileLocation;
     public override MapObjectVisual<TileObject> mapVisual => _mapVisual;
     private MovingMapObjectVisual<TileObject> _mapVisual;
-    protected bool _hasExpired;
+    public bool hasExpired { get; protected set; }
 
     protected virtual bool TryGetGridTileLocation(out LocationGridTile tile) {
         if (_mapVisual != null) {
@@ -30,7 +30,7 @@ public abstract class MovingTileObject : TileObject {
         Messenger.AddListener<LocationGridTile, TraitableCallback>(Signals.ACTION_PERFORMED_ON_TILE_TRAITABLES, OnActionPerformedOnTile);
     }
     public virtual void Expire() {
-        _hasExpired = true;
+        hasExpired = true;
         Messenger.RemoveListener<LocationGridTile, TraitableCallback>(Signals.ACTION_PERFORMED_ON_TILE_TRAITABLES, OnActionPerformedOnTile);
     } 
     #endregion

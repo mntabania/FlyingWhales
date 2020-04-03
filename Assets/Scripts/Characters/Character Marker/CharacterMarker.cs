@@ -165,10 +165,13 @@ public class CharacterMarker : MapObjectVisual<Character> {
     protected override void OnPointerRightClick(Character poi) {
         base.OnPointerRightClick(poi);
         Character activeCharacter = UIManager.Instance.characterInfoUI.activeCharacter;
+        if (activeCharacter == null) {
+            activeCharacter = UIManager.Instance.monsterInfoUI.activeMonster;
+        }
         if (activeCharacter != null) {
             if (activeCharacter.minion == null) {
 #if UNITY_EDITOR
-                UIManager.Instance.poiTestingUI.ShowUI(character);
+                UIManager.Instance.poiTestingUI.ShowUI(character, activeCharacter);
 #endif
             } else {
                 UIManager.Instance.minionCommandsUI.ShowUI(character);
@@ -1298,7 +1301,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         character.combatComponent.RemoveAvoidInRange(otherCharacter);
     }
     public void OnBeforeSeizingOtherCharacter(Character otherCharacter) {
-        if (character.race == RACE.HUMANS || character.race == RACE.ELVES) {
+        if (character.faction != null && character.faction.isMajorNonPlayerFriendlyNeutral) {
             if (inVisionCharacters.Contains(otherCharacter)) {
                 PlayerManager.Instance.player.threatComponent.AdjustThreat(10);
             }
