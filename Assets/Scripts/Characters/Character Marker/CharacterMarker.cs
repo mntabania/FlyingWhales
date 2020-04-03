@@ -363,7 +363,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             //Only remove hostile in range from non lethal combat if target specifically becomes: Unconscious, Zapped or Restrained.
             //if (!otherCharacter.canPerform) {
             if (character.combatComponent.IsLethalCombatForTarget(otherCharacter) == false) {
-                if (otherCharacter.traitContainer.HasTrait("Unconscious", "Zapped", "Restrained")) {
+                if (otherCharacter.traitContainer.HasTrait("Unconscious", "Paralyzed", "Restrained")) {
                     if (character.combatComponent.hostilesInRange.Contains(otherCharacter)) {
                         character.combatComponent.RemoveHostileInRange(otherCharacter);
                     }
