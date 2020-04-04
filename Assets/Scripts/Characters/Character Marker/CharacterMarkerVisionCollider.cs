@@ -111,7 +111,8 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
     /// <param name="poi">The POI to check.</param>
     /// <returns>Whether or not the poi was added to the character's normal vision.</returns>
     private bool TryAddPOIToVision(IPointOfInterest poi) {
-        if (poi.gridTileLocation.structure == parentMarker.character.gridTileLocation.structure || 
+        if (poi.gridTileLocation != null && 
+            poi.gridTileLocation.structure == parentMarker.character.gridTileLocation.structure || 
             (parentMarker.character.stateComponent.currentState is CombatState && 
              PathfindingManager.Instance.HasPath(poi.gridTileLocation, parentMarker.character.gridTileLocation))|| 
             (poi.mapObjectVisual.visionTrigger as POIVisionTrigger).IgnoresStructureDifference()) {

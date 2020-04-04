@@ -115,9 +115,9 @@ public class Steal : GoapAction {
         if (satisfied) {
             TileObject item = poiTarget as TileObject;
             if (poiTarget.gridTileLocation != null) {
-                return item.characterOwner != null && item.characterOwner != actor;
+                return true; //item.characterOwner != null && item.characterOwner != actor;
             } else {
-                return item.isBeingCarriedBy != null && item.characterOwner != null && item.characterOwner != actor;
+                return item.isBeingCarriedBy != null;//&& item.characterOwner != null && item.characterOwner != actor;
             }
         }
         return false;

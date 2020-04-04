@@ -23,6 +23,7 @@ public class Artifact : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
         AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
         AddAdvertisedAction(INTERACTION_TYPE.BOOBY_TRAP);
+        AddAdvertisedAction(INTERACTION_TYPE.STEAL);
         //RemoveAdvertisedAction(INTERACTION_TYPE.REPAIR);
     }
     public Artifact(SaveDataArtifact data) {
@@ -33,6 +34,7 @@ public class Artifact : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
         AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
         AddAdvertisedAction(INTERACTION_TYPE.BOOBY_TRAP);
+        AddAdvertisedAction(INTERACTION_TYPE.STEAL);
     }
 
     #region Overrides

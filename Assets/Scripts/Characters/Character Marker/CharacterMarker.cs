@@ -1127,7 +1127,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
         //     //Minion or Summon cannot process pois
         //     return;
         // }
-        if (reactToActionOnly) {
+        
+        //if poi is already set as unprocessed, do not set it to check the action only, since the poi was just seen this tick.
+        //so this character should react to both the character and the action/interrupt.
+        if (reactToActionOnly && unprocessedVisionPOIs.Contains(poi) == false) {
             if (!unprocessedVisionPOIsForActionOnly.Contains(poi)) {
                 unprocessedVisionPOIsForActionOnly.Add(poi);
             }

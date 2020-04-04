@@ -11,6 +11,7 @@ public class HealingPotion : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.SCRAP);
         AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
         AddAdvertisedAction(INTERACTION_TYPE.BOOBY_TRAP);
+        AddAdvertisedAction(INTERACTION_TYPE.STEAL);
     }
     public HealingPotion(SaveDataTileObject data) {
         Initialize(data, false);
@@ -19,5 +20,6 @@ public class HealingPotion : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.SCRAP);
         AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
         AddAdvertisedAction(INTERACTION_TYPE.BOOBY_TRAP);
+        AddAdvertisedAction(INTERACTION_TYPE.STEAL);
     }
 }
