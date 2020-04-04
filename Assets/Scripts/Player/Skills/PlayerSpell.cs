@@ -419,7 +419,7 @@ public class VaporData : SpellData {
         return canPerform;
     }
     public override void HighlightAffectedTiles(LocationGridTile tile) {
-        TileHighlighter.Instance.PositionHighlight(2, tile);
+        TileHighlighter.Instance.PositionHighlight(1, tile);
     }
 }
 
