@@ -772,6 +772,11 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     // }
     public void SetCharacterOwner(Character characterOwner) {
         this.characterOwner = characterOwner;
+        if (characterOwner != null) {
+            AddAdvertisedAction(INTERACTION_TYPE.STEAL);
+        } else {
+            RemoveAdvertisedAction(INTERACTION_TYPE.STEAL);
+        }
     }
     public void SetInventoryOwner(Character character) {
         Debug.Log($"Set Carried by character of item {this.ToString()} to {(isBeingCarriedBy?.name ?? "null")}");

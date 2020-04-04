@@ -286,6 +286,7 @@ namespace Inner_Maps {
         public void RevertToPreviousGroundVisual() {
             if (ReferenceEquals(previousGroundVisual, null) == false) {
                 SetGroundTilemapVisual(previousGroundVisual);
+                CreateSeamlessEdgesForSelfAndNeighbours();
             }
         }
         public void CreateSeamlessEdgesForSelfAndNeighbours() {

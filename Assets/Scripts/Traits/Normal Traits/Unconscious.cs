@@ -57,7 +57,9 @@ namespace Traits {
             }
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
-            _sourceCharacter.AdjustHP(1, ELEMENTAL_TYPE.Normal);
+            if (_sourceCharacter.isDead == false) {
+                _sourceCharacter.AdjustHP(1, ELEMENTAL_TYPE.Normal);
+            }
             _sourceCharacter.needsComponent.AdjustDoNotGetTired(-1);
             _sourceCharacter.RemoveTraitNeededToBeRemoved(this);
             _sourceCharacter.RegisterLog("NonIntel", "remove_trait", null, name.ToLower());

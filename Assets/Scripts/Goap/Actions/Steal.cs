@@ -32,8 +32,8 @@ public class Steal : GoapAction {
         int cost = UtilityScripts.Utilities.Rng.Next(300, 351);
         costLog += $" +{cost}(Initial)";
         if (actor.traitContainer.HasTrait("Kleptomaniac")) {
-            cost += -200;
-            costLog += " -200(Kleptomaniac)";
+            cost += -250;
+            costLog += " -250(Kleptomaniac)";
         } else {
             TileObject item = null;
             if(target is TileObject) {
