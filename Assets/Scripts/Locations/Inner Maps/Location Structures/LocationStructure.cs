@@ -455,6 +455,17 @@ namespace Inner_Maps.Location_Structures {
         public void SetInteriorState(bool _isInterior) {
             isInterior = _isInterior;
         }
+        public void CenterOnStructure() {
+            if (InnerMapManager.Instance.isAnInnerMapShowing && InnerMapManager.Instance.currentlyShowingMap != location.innerMap) {
+                InnerMapManager.Instance.HideAreaMap();
+            }
+            if (location.innerMap.isShowing == false) {
+                InnerMapManager.Instance.ShowInnerMap(location);
+            }
+            if (structureObj != null) {
+                InnerMapCameraMove.Instance.CenterCameraOn(structureObj.gameObject);    
+            }
+        }
         #endregion
 
         #region Tile Objects

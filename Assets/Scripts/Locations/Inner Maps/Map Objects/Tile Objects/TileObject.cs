@@ -114,6 +114,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         //AddAdvertisedAction(INTERACTION_TYPE.SCRAP);
         //AddAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
         //AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
+        // AddAdvertisedAction(INTERACTION_TYPE.STEAL);
     }
     protected void RemoveCommonAdvertisements() {
         RemoveAdvertisedAction(INTERACTION_TYPE.ASSAULT);
@@ -124,6 +125,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         //RemoveAdvertisedAction(INTERACTION_TYPE.SCRAP);
         //RemoveAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
         //RemoveAdvertisedAction(INTERACTION_TYPE.PICK_UP);
+        // RemoveAdvertisedAction(INTERACTION_TYPE.STEAL);
     }
 
     #region Listeners
@@ -422,9 +424,16 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     }
     public void AddJobTargetingThis(JobQueueItem job) {
         allJobsTargetingThis.Add(job);
+        // ReSharper disable once Unity.NoNullPropagation
+        mapObjectVisual?.visionTrigger.VoteToMakeVisibleToCharacters();
     }
     public bool RemoveJobTargetingThis(JobQueueItem job) {
-        return allJobsTargetingThis.Remove(job);
+        if (allJobsTargetingThis.Remove(job)) {
+            // ReSharper disable once Unity.NoNullPropagation
+            mapObjectVisual?.visionTrigger.VoteToMakeInvisibleToCharacters();
+            return true;
+        }
+        return false;
     }
     public bool HasJobTargetingThis(params JOB_TYPE[] jobTypes) {
         for (int i = 0; i < allJobsTargetingThis.Count; i++) {
@@ -872,10 +881,17 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             }
             AddAdvertisedAction(INTERACTION_TYPE.CRAFT_TILE_OBJECT);
             UnsubscribeListeners();
+            if (_unbuiltObjectValidityChecker != null) {
+                Messenger.AddListener(Signals.CHECK_UNBUILT_OBJECT_VALIDITY, CheckUnbuiltObjectValidity);
+            }
         } else if (mapObjectState == MAP_OBJECT_STATE.BUILDING) {
             mapVisual.SetVisualAlpha(128f / 255f);
             SetSlotAlpha(128f / 255f);
+            _unbuiltObjectValidityChecker = null;
+            Messenger.RemoveListener(Signals.CHECK_UNBUILT_OBJECT_VALIDITY, CheckUnbuiltObjectValidity);
         } else {
+            _unbuiltObjectValidityChecker = null;
+            Messenger.RemoveListener(Signals.CHECK_UNBUILT_OBJECT_VALIDITY, CheckUnbuiltObjectValidity);
             mapVisual.SetVisualAlpha(255f / 255f);
             SetSlotAlpha(255f / 255f);
             if (advertisedActions != null && advertisedActions.Count > 0) {
@@ -888,6 +904,23 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             }
             storedActions = null;
             SubscribeListeners();
+        }
+    }
+    protected void CheckUnbuiltObjectValidity() {
+        if (_unbuiltObjectValidityChecker != null) {
+            if (_unbuiltObjectValidityChecker.Invoke(this) == false) {
+                //unbuilt object is no longer valid, remove it
+                Messenger.RemoveListener(Signals.CHECK_UNBUILT_OBJECT_VALIDITY, CheckUnbuiltObjectValidity);
+                _unbuiltObjectValidityChecker = null;
+                Messenger.Broadcast(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING,  this as IPointOfInterest);
+                List<JobQueueItem> jobs = new List<JobQueueItem>(allJobsTargetingThis);
+                for (int i = 0; i < jobs.Count; i++) {
+                    JobQueueItem jobQueueItem = jobs[i];
+                    jobQueueItem.CancelJob(false);
+                }
+                gridTileLocation.structure.RemovePOI(this);
+                Debug.Log($"{GameManager.Instance.TodayLogString()}Unbuilt object {this} was removed!");
+            }
         }
     }
     #endregion

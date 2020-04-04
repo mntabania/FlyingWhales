@@ -15,13 +15,16 @@ public abstract class BaseMapObject {
     /// </summary>
     public IObjectManipulator lastManipulatedBy { get; private set; }
     public abstract BaseMapObjectVisual baseMapObjectVisual { get; }
-
+    protected System.Func<BaseMapObject, bool> _unbuiltObjectValidityChecker;
+    
+    
     #region Object State
-    public void SetMapObjectState(MAP_OBJECT_STATE state) {
+    public void SetMapObjectState(MAP_OBJECT_STATE state, System.Func<BaseMapObject, bool> unbuiltObjectValidityChecker = null) {
         if (mapObjectState == state) {
             return; //ignore change
         }
         mapObjectState = state;
+        _unbuiltObjectValidityChecker = unbuiltObjectValidityChecker;
         OnMapObjectStateChanged();
     }
     protected abstract void OnMapObjectStateChanged();

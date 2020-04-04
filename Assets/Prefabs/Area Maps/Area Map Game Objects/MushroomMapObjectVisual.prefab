@@ -15,11 +15,12 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 3322243960296386388}
   hoverObject: {fileID: 3322241980719553946}
+  clickCollider: {fileID: 0}
   hpBarGO: {fileID: 0}
   hpFill: {fileID: 0}
   aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 7956641783735713556}
-  growingSprite: {fileID: 21300000, guid: 0e87581d39ea6634c8921d7dc6914539, type: 3}
+  growingSprite: {fileID: 0}
   ripeSprite: {fileID: 21300000, guid: 0e87581d39ea6634c8921d7dc6914539, type: 3}
 --- !u!1001 &3235857238022592982
 PrefabInstance:

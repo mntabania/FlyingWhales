@@ -980,7 +980,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         tile.parentMap.region.AddPendingAwareness(character);
     }
     public void OnDeath(LocationGridTile deathTileLocation) {
-        if (character.race == RACE.SKELETON || character is Summon || character.minion != null || character.destroyMarkerOnDeath) {
+        if (character.minion != null || character.destroyMarkerOnDeath) {
             character.DestroyMarker();
         } else {
             SetCollidersState(false);
@@ -1127,7 +1127,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
         //     //Minion or Summon cannot process pois
         //     return;
         // }
-        if (reactToActionOnly) {
+        
+        //if poi is already set as unprocessed, do not set it to check the action only, since the poi was just seen this tick.
+        //so this character should react to both the character and the action/interrupt.
+        if (reactToActionOnly && unprocessedVisionPOIs.Contains(poi) == false) {
             if (!unprocessedVisionPOIsForActionOnly.Contains(poi)) {
                 unprocessedVisionPOIsForActionOnly.Add(poi);
             }

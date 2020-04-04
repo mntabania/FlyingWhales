@@ -78,10 +78,17 @@ public abstract class ResourcePile : TileObject {
             advertisedActions.Clear();
             AddAdvertisedAction(INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE);
             UnsubscribeListeners();
+            if (_unbuiltObjectValidityChecker != null) {
+                Messenger.AddListener(Signals.CHECK_UNBUILT_OBJECT_VALIDITY, CheckUnbuiltObjectValidity);
+            }
         } else if (mapObjectState == MAP_OBJECT_STATE.BUILDING) {
             mapVisual.SetVisualAlpha(128f / 255f);
             SetSlotAlpha(128f / 255f);
+            _unbuiltObjectValidityChecker = null;
+            Messenger.RemoveListener(Signals.CHECK_UNBUILT_OBJECT_VALIDITY, CheckUnbuiltObjectValidity);
         } else {
+            _unbuiltObjectValidityChecker = null;
+            Messenger.RemoveListener(Signals.CHECK_UNBUILT_OBJECT_VALIDITY, CheckUnbuiltObjectValidity);
             mapVisual.SetVisualAlpha(255f / 255f);
             SetSlotAlpha(255f / 255f);
             // RemoveAdvertisedAction(INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE);

@@ -1084,9 +1084,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //}
     public void AddJobTargetingThis(JobQueueItem job) {
         allJobsTargetingThis.Add(job);
+        marker.visionTrigger.VoteToMakeVisibleToCharacters();
     }
     public bool RemoveJobTargetingThis(JobQueueItem job) {
-        return allJobsTargetingThis.Remove(job);
+        if (allJobsTargetingThis.Remove(job)) {
+            marker.visionTrigger.VoteToMakeInvisibleToCharacters();
+            return true;
+        }
+        return false;
     }
     public void ForceCancelAllJobsTargettingThisCharacter() {
         for (int i = 0; i < allJobsTargetingThis.Count; i++) {
@@ -1855,13 +1860,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void CenterOnCharacter() {
         if (marker) {
-            if (currentParty.icon.isTravellingOutside) {
+            if (currentParty != null && currentParty.icon != null && currentParty.icon.isTravellingOutside) {
                 if (InnerMapManager.Instance.isAnInnerMapShowing) {
                     InnerMapManager.Instance.HideAreaMap();
                 }
                 //CameraMove.Instance.CenterCameraOn(currentParty.icon.travelLine.iconImg.gameObject);
                 CameraMove.Instance.CenterCameraOn(currentParty.icon.targetLocation.coreTile.gameObject);
-            } else if (currentParty.icon.isTravelling) {
+            } else if (currentParty != null && currentParty.icon != null && currentParty.icon.isTravelling) {
                 if (marker.gameObject.activeInHierarchy) {
                     bool instantCenter = !InnerMapManager.Instance.IsShowingInnerMap(currentRegion);
                     if (currentRegion != null && instantCenter) {
@@ -3210,9 +3215,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
         traitContainer.AddTrait(this, "Character Trait");
         traitContainer.AddTrait(this, "Flammable");
-        //traitContainer.AddTrait(this, "Drunkard");
-        //traitContainer.AddTrait(this, "Accident Prone");
-
         defaultCharacterTrait = traitContainer.GetNormalTrait<CharacterTrait>("Character Trait");
     }
     public void AddTraitNeededToBeRemoved(Trait trait) {
@@ -4121,6 +4123,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         AddAdvertisedAction(INTERACTION_TYPE.JUDGE_CHARACTER);
         AddAdvertisedAction(INTERACTION_TYPE.SLAY_CHARACTER);
         AddAdvertisedAction(INTERACTION_TYPE.DOUSE_FIRE);
+        AddAdvertisedAction(INTERACTION_TYPE.BURY_CHARACTER);
 
         if (this is Summon) {
             AddAdvertisedAction(INTERACTION_TYPE.PLAY);
@@ -4134,7 +4137,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             AddAdvertisedAction(INTERACTION_TYPE.CURSE_CHARACTER);
             AddAdvertisedAction(INTERACTION_TYPE.ASK_FOR_HELP_SAVE_CHARACTER);
             AddAdvertisedAction(INTERACTION_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE);
-            AddAdvertisedAction(INTERACTION_TYPE.BURY_CHARACTER);
             AddAdvertisedAction(INTERACTION_TYPE.INVITE);
             AddAdvertisedAction(INTERACTION_TYPE.MAKE_LOVE);
             AddAdvertisedAction(INTERACTION_TYPE.TANTRUM);

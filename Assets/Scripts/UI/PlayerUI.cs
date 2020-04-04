@@ -920,7 +920,14 @@ public class PlayerUI : MonoBehaviour {
     }
     public void CreateInitialSpells() {
         for (int i = 0; i < PlayerManager.Instance.player.archetype.spells.Count; i++) {
-            CreateNewSpellItem(PlayerManager.Instance.player.archetype.spells[i]);
+            SPELL_TYPE spell = PlayerManager.Instance.player.archetype.spells[i];
+// #if !UNITY_EDITOR
+            if(spell == SPELL_TYPE.FEEBLE_SPIRIT || spell == SPELL_TYPE.RAVENOUS_SPIRIT 
+                || spell == SPELL_TYPE.FORLORN_SPIRIT){
+                continue;
+            }
+// #endif
+            CreateNewSpellItem(spell);
         }
     }
     private void OnGainSpell(SPELL_TYPE spell) {

@@ -502,6 +502,10 @@ public static class Signals {
     public static string TILE_OBJECT_TRAIT_REMOVED = "OnTileObjectTraitRemoved"; //Parameters (Character character, Trait)
     public static string TILE_OBJECT_TRAIT_STACKED = "OnTileObjectTraitStacked";
     public static string TILE_OBJECT_TRAIT_UNSTACKED = "OnTileObjectTraitUnstacked";
+    /// <summary>
+    /// Parameters: Region
+    /// </summary>
+    public static string CHECK_UNBUILT_OBJECT_VALIDITY = "CheckUnbuiltObjectValidity";
     #endregion
 
     #region Tile Object

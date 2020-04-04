@@ -11,12 +11,15 @@ public class LocustSwarmTileObject : MovingTileObject {
     public LocustSwarmTileObject() {
         Initialize(TILE_OBJECT_TYPE.LOCUST_SWARM, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
-        traitContainer.AddTrait(this, "Dangerous");
     }
     protected override void CreateMapObjectVisual() {
         base.CreateMapObjectVisual();
         _locustSwarmMapObjectVisual = mapVisual as LocustSwarmMapObjectVisual;
         Assert.IsNotNull(_locustSwarmMapObjectVisual, $"Map Object Visual of {this} is null!");
+    }
+    public override void OnPlacePOI() {
+        base.OnPlacePOI();
+        traitContainer.AddTrait(this, "Dangerous");
     }
     public override void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false,
         object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false) {

@@ -17,6 +17,10 @@ public class Mushroom : Crops {
         base.ConstructDefaultActions();
         AddPlayerAction(SPELL_TYPE.PLANT_GERM);
     }
+    public override void OnPlacePOI() {
+        base.OnPlacePOI();
+        SetGrowthState(Growth_State.Ripe);
+    }
     #endregion
 
     #region Growth State

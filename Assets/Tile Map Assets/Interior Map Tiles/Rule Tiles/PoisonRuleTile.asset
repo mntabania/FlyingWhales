@@ -107,6 +107,10 @@ MonoBehaviour:
     m_OverrideSprite: {fileID: 21300000, guid: 1646be3384b8d8545a7a09a83bc6c5b4, type: 3}
   - m_OriginalSprite: {fileID: 21300000, guid: 8302bf4ef9710ac4ca272c251e9178da, type: 3}
     m_OverrideSprite: {fileID: 21300000, guid: 34a90eb8128963c4d99b1da9f97dd25e, type: 3}
+  - m_OriginalSprite: {fileID: 21300000, guid: 7ef5da6c30bcf224d9ed1a99d0c8e008, type: 3}
+    m_OverrideSprite: {fileID: 21300000, guid: 3da5c6dbb7f53684a8e8982ca6ebb90b, type: 3}
+  - m_OriginalSprite: {fileID: 21300000, guid: 33f1e002cbd4b23489285d5dfc0639f0, type: 3}
+    m_OverrideSprite: {fileID: 21300000, guid: 38afdf1d326454244b83b32180aace2e, type: 3}
   m_OverrideTilingRules: []
   m_OverrideDefault:
     m_Enabled: 0

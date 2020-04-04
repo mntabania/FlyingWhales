@@ -13,6 +13,7 @@ public class Tool : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.SCRAP);
         AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
         AddAdvertisedAction(INTERACTION_TYPE.BOOBY_TRAP);
+        // AddAdvertisedAction(INTERACTION_TYPE.STEAL);
     }
     public Tool(SaveDataTileObject data) {
         //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
@@ -22,5 +23,6 @@ public class Tool : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.SCRAP);
         AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
         AddAdvertisedAction(INTERACTION_TYPE.BOOBY_TRAP);
+        // AddAdvertisedAction(INTERACTION_TYPE.STEAL);
     }
 }

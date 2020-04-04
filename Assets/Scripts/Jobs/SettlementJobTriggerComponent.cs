@@ -105,7 +105,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	private void OnTileObjectRemoved(TileObject tileObject, Character removedBy, LocationGridTile removedFrom) {
 		if (tileObject is ResourcePile) {
 			ResourcePile resourcePile = tileObject as ResourcePile;
-			if (removedFrom.IsPartOfSettlement(_owner)) {
+			if (removedFrom.parentMap.region == _owner.region) {
 				CheckResource(resourcePile.tileObjectType, resourcePile.providedResource);	
 			}
 		}
@@ -259,11 +259,12 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 			TriggerProduceResource(resource, resourcePile, jobType);
 		} else {
 			ResourcePile pile = _owner.mainStorage.GetResourcePileObjectWithLowestCount(resourcePile, false);
-			Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, jobType, pile as IPointOfInterest);
 			Assert.IsNotNull(pile, $"{_owner.name} is trying to cancel produce resource {resource.ToString()}, but could not find any pile of type {resourcePile.ToString()}");
-			if (IsProduceResourceJobStillValid(resource) == false && pile.mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
-				_owner.mainStorage.RemovePOI(pile); //remove unbuilt pile
-			}
+			Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, jobType, pile as IPointOfInterest);
+			Messenger.Broadcast(Signals.CHECK_UNBUILT_OBJECT_VALIDITY);
+			// if (IsProduceResourceJobStillValid(resource) == false && pile.mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
+			// 	_owner.mainStorage.RemovePOI(pile); //remove unbuilt pile
+			// }
 		}
 	}
 	private void TriggerProduceResource(RESOURCE resourceType, TILE_OBJECT_TYPE resourcePile, JOB_TYPE jobType) {
@@ -272,7 +273,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 			if (targetPile == null) {
 				ResourcePile newPile = InnerMapManager.Instance.CreateNewTileObject<ResourcePile>(resourcePile);
 				_owner.mainStorage.AddPOI(newPile);
-				newPile.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
+				newPile.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT, IsResourcePileStillValid);
 				targetPile = newPile;
 			}
 			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(
@@ -292,6 +293,12 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	}
 	private bool IsProduceResourceJobStillValid(RESOURCE resource) {
 		return GetTotalResource(resource) < GetMinimumResource(resource);
+	}
+	private bool IsResourcePileStillValid(BaseMapObject mapObject) {
+		if (mapObject is ResourcePile resourcePile) {
+			return IsProduceResourceJobStillValid(resourcePile.providedResource);
+		}
+		return false;
 	}
 	#endregion
 
@@ -390,6 +397,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		if (patrolChance < 15 && _owner.GetNumberOfJobsWith(CHARACTER_STATE.PATROL) < 2) {
 			CharacterStateJob stateJob = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.PATROL, CHARACTER_STATE.PATROL, _owner);
 			stateJob.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoPatrol);
+			stateJob.SetCannotBePushedBack(true);
 			_owner.AddToAvailableJobs(stateJob);
 		}
 	}

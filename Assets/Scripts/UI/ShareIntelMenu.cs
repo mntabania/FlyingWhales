@@ -211,7 +211,7 @@ public class ShareIntelMenu : PopupMenuBase {
                 if (finalReaction != string.Empty) {
                     reaction = finalReaction;
                 } else {
-                    reaction = "I processed no emotions. I am a rock, I am an i-i-i-island.";
+                    reaction = $"I feel disinterest towards this.";
                 }
             }
         }

@@ -7,7 +7,7 @@ namespace Interrupts {
         public Chat() : base(INTERRUPT.Chat) {
             duration = 0;
             isSimulateneous = true;
-            interruptIconString = GoapActionStateDB.Flirt_Icon;
+            interruptIconString = GoapActionStateDB.Social_Icon;
         }
 
         #region Overrides

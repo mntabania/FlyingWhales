@@ -29858,7 +29858,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &547005291
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -29902,7 +29902,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 547005293}
   toggleTransition: 1
   graphic: {fileID: 1146521584}
-  m_Group: {fileID: 1765814870}
+  m_Group: {fileID: 0}
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
@@ -78391,9 +78391,9 @@ MonoBehaviour:
   _unlockWorldMapManaCost: 0
   _unlockRegionManaCost: 0
   _sortingOrdersInBetweenHexTileRows: 20
-  vaporStacks: 1
+  vaporStacks: 5
   poisonCloudStacks: 1
-  frostyFogStacks: 1
+  frostyFogStacks: 5
 --- !u!1 &1382697469
 GameObject:
   m_ObjectHideFlags: 0
@@ -92731,6 +92731,106 @@ PrefabInstance:
       propertyPath: m_Name
       value: CharacterInfo
       objectReference: {fileID: 0}
+    - target: {fileID: 114033866780183280, guid: 806752206f775b240af4069999713824,
+        type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 114033866780183280, guid: 806752206f775b240af4069999713824,
+        type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 114044574713667684, guid: 806752206f775b240af4069999713824,
+        type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 114044574713667684, guid: 806752206f775b240af4069999713824,
+        type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 114064986842197772, guid: 806752206f775b240af4069999713824,
+        type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 114064986842197772, guid: 806752206f775b240af4069999713824,
+        type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 114154285256346678, guid: 806752206f775b240af4069999713824,
+        type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 114154285256346678, guid: 806752206f775b240af4069999713824,
+        type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 114246170629791276, guid: 806752206f775b240af4069999713824,
+        type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 114246170629791276, guid: 806752206f775b240af4069999713824,
+        type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 114618128188864902, guid: 806752206f775b240af4069999713824,
+        type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 114618128188864902, guid: 806752206f775b240af4069999713824,
+        type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 114686123280567990, guid: 806752206f775b240af4069999713824,
+        type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 114686123280567990, guid: 806752206f775b240af4069999713824,
+        type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 114695541447778562, guid: 806752206f775b240af4069999713824,
+        type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 114695541447778562, guid: 806752206f775b240af4069999713824,
+        type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 114839174013258668, guid: 806752206f775b240af4069999713824,
+        type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 114839174013258668, guid: 806752206f775b240af4069999713824,
+        type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 114898742474566442, guid: 806752206f775b240af4069999713824,
+        type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 114898742474566442, guid: 806752206f775b240af4069999713824,
+        type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 224579316077557694, guid: 806752206f775b240af4069999713824,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -93968,7 +94068,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1612921080
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -94012,7 +94112,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1612921082}
   toggleTransition: 1
   graphic: {fileID: 294415384}
-  m_Group: {fileID: 1765814870}
+  m_Group: {fileID: 0}
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
