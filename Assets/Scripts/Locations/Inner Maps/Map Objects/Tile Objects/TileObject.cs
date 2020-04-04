@@ -114,7 +114,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         //AddAdvertisedAction(INTERACTION_TYPE.SCRAP);
         //AddAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
         //AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
-        AddAdvertisedAction(INTERACTION_TYPE.STEAL);
+        // AddAdvertisedAction(INTERACTION_TYPE.STEAL);
     }
     protected void RemoveCommonAdvertisements() {
         RemoveAdvertisedAction(INTERACTION_TYPE.ASSAULT);
@@ -125,7 +125,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         //RemoveAdvertisedAction(INTERACTION_TYPE.SCRAP);
         //RemoveAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
         //RemoveAdvertisedAction(INTERACTION_TYPE.PICK_UP);
-        RemoveAdvertisedAction(INTERACTION_TYPE.STEAL);
+        // RemoveAdvertisedAction(INTERACTION_TYPE.STEAL);
     }
 
     #region Listeners

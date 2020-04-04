@@ -663,6 +663,10 @@ public class CharacterInfoUI : InfoUIBase {
         afflictions.Clear();
         List<SPELL_TYPE> afflictionTypes = PlayerManager.Instance.player.archetype.afflictions;
         for (int i = 0; i < afflictionTypes.Count; i++) {
+            SPELL_TYPE spellType = afflictionTypes[i];
+            if (spellType == SPELL_TYPE.KLEPTOMANIA) {
+                continue;
+            }
             afflictions.Add(PlayerManager.Instance.GetAfflictionData(afflictionTypes[i]).name);
         }
         //foreach (SpellData abilityData in PlayerManager.Instance.allSpellsData.Values) {

@@ -11,7 +11,7 @@ public class Antidote : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.SCRAP);
         AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
         AddAdvertisedAction(INTERACTION_TYPE.BOOBY_TRAP);
-        AddAdvertisedAction(INTERACTION_TYPE.STEAL);
+        // AddAdvertisedAction(INTERACTION_TYPE.STEAL);
     }
     public Antidote(SaveDataTileObject data) {
         Initialize(data, false);
@@ -20,6 +20,6 @@ public class Antidote : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.SCRAP);
         AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
         AddAdvertisedAction(INTERACTION_TYPE.BOOBY_TRAP);
-        AddAdvertisedAction(INTERACTION_TYPE.STEAL);
+        // AddAdvertisedAction(INTERACTION_TYPE.STEAL);
     }
 }
