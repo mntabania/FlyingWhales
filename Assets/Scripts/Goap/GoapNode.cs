@@ -169,7 +169,7 @@ public class ActualGoapNode {
             isStealth = true;
         }
         actor.SetCurrentActionNode(this, job, plan);
-        CreateThoughtBubbleLog(targetStructure);
+        // CreateThoughtBubbleLog(targetStructure);
         //parentPlan?.SetPlanState(GOAP_PLAN_STATE.IN_PROGRESS);
         Messenger.Broadcast(Signals.CHARACTER_DOING_ACTION, actor, this);
         actor.marker.UpdateActionIcon();
@@ -179,6 +179,7 @@ public class ActualGoapNode {
         //Move To Do Action
         actor.marker.pathfindingAI.ResetEndReachedDistance();
         SetTargetToGoTo();
+        CreateThoughtBubbleLog(targetStructure);
         CheckAndMoveToDoAction(job);
     }
     private void SetTargetToGoTo() {

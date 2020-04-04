@@ -45,29 +45,33 @@ public class WorkBehaviour : CharacterBehaviourComponent {
                 log += $"\n-{character.name} can no longer trigger flaws";
             }
 
-            if (!triggeredFlaw && character.traitContainer.HasTrait("Diplomatic") == false) {
-                log += $"\n-{character.name} will try to trigger Undermine";
-                int roll = UnityEngine.Random.Range(0, 100);
-                log += $"\n-Undermine Roll: " + roll;
-                if (roll < 15) {
-                    List<Character> enemies = character.relationshipContainer.GetEnemyCharacters();
-                    if (enemies.Count > 0) {
-                        Character chosenEnemy = CollectionUtilities.GetRandomElement(enemies);
-                        if (chosenEnemy.homeRegion.GetFirstTileObjectOnTheFloorOwnedBy(chosenEnemy) != null) {
-                            if (character.jobComponent.CreateUndermineJob(chosenEnemy, "normal")) {
-                                log += $"\n-{character.name} created undermine job for " + chosenEnemy;
-                            }
-                            else {
-                                log += $"\n-{character.name} could not create undermine job for " + chosenEnemy;
+            if (triggeredFlaw) {
+                return true;
+            } else {
+                if (character.traitContainer.HasTrait("Diplomatic") == false) {
+                    log += $"\n-{character.name} will try to trigger Undermine";
+                    int roll = UnityEngine.Random.Range(0, 100);
+                    log += $"\n-Undermine Roll: " + roll;
+                    if (roll < 15) {
+                        List<Character> enemies = character.relationshipContainer.GetEnemyCharacters();
+                        if (enemies.Count > 0) {
+                            Character chosenEnemy = CollectionUtilities.GetRandomElement(enemies);
+                            if (chosenEnemy.homeRegion.GetFirstTileObjectOnTheFloorOwnedBy(chosenEnemy) != null) {
+                                if (character.jobComponent.CreateUndermineJob(chosenEnemy, "normal")) {
+                                    log += $"\n-{character.name} created undermine job for " + chosenEnemy;
+                                    return true;
+                                }
+                                else {
+                                    log += $"\n-{character.name} could not create undermine job for " + chosenEnemy;
+                                }
+                            } else {
+                                log += $"\n-{chosenEnemy.name} does not have an owned item on the floor ";
                             }
                         } else {
-                            log += $"\n-{chosenEnemy.name} does not have an owned item on the floor ";
+                            log += $"\n-{character.name} does not have enemy or rival";
                         }
-                    } else {
-                        log += $"\n-{character.name} does not have enemy or rival";
-                    }
+                    }    
                 }
-                
             }
         }
         //if (!PlanJobQueueFirst(character)) {
@@ -81,7 +85,7 @@ public class WorkBehaviour : CharacterBehaviourComponent {
         //        }
         //    }
         //}
-        return true;
+        return false;
     }
     
     private bool PlanJobQueueFirst(Character character) {

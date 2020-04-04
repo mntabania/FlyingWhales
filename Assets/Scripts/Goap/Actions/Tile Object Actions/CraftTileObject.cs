@@ -25,6 +25,7 @@ public class CraftTileObject : GoapAction {
         base.AddFillersToLog(log, node);
         TileObject obj = node.poiTarget as TileObject;
         log.AddToFillers(null, UtilityScripts.Utilities.GetArticleForWord(obj.tileObjectType.ToString()), LOG_IDENTIFIER.STRING_1);
+        log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(obj.tileObjectType.ToString()), LOG_IDENTIFIER.ITEM_1);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}:";
