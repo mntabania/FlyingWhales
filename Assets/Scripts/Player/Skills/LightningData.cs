@@ -28,7 +28,7 @@ public class LightningData : SpellData {
     }
     private void LightningDamage(ITraitable traitable) {
         if (traitable is IPointOfInterest poi) {
-            poi.AdjustHP(-350, ELEMENTAL_TYPE.Electric, showHPBar: true);
+            poi.AdjustHP(-350, ELEMENTAL_TYPE.Electric, triggerDeath: true, showHPBar: true);
         }
     }
     public override void HighlightAffectedTiles(LocationGridTile tile) {

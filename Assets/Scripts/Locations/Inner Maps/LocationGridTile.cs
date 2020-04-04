@@ -1068,7 +1068,7 @@ namespace Inner_Maps {
                     }
                     if (poi is TileObject obj) {
                         if (obj.tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
-                            obj.AdjustHP(-350, ELEMENTAL_TYPE.Normal,
+                            obj.AdjustHP(-350, ELEMENTAL_TYPE.Normal, true,
                                 elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref bs), showHPBar: true);
                         } else {
                             CombatManager.Instance.ApplyElementalDamage(0, ELEMENTAL_TYPE.Normal, obj,
@@ -1078,7 +1078,7 @@ namespace Inner_Maps {
                         character.AdjustHP(-350, ELEMENTAL_TYPE.Normal, true,
                             elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref bs), showHPBar: true);
                     } else {
-                        poi.AdjustHP(-350, ELEMENTAL_TYPE.Normal,
+                        poi.AdjustHP(-350, ELEMENTAL_TYPE.Normal, true,
                             elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref bs), showHPBar: true);
                     }
                 }

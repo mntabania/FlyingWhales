@@ -229,7 +229,11 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
                     //if this character is not available, check if the current action type can be advertised even when the character is inactive.
                     continue; //skip
                 }
-                if (PathfindingManager.Instance.HasPathEvenDiffRegion(actor.gridTileLocation, gridTileLocation) && RaceManager.Instance.CanCharacterDoGoapAction(actor, currType)) {
+                LocationGridTile tileLocation = gridTileLocation;
+                if(isBeingCarriedBy != null) {
+                    tileLocation = isBeingCarriedBy.gridTileLocation;
+                }
+                if (PathfindingManager.Instance.HasPathEvenDiffRegion(actor.gridTileLocation, tileLocation) && RaceManager.Instance.CanCharacterDoGoapAction(actor, currType)) {
                     object[] data = null;
                     if (otherData != null) {
                         if (otherData.ContainsKey(currType)) {
@@ -273,19 +277,24 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         if ((IsAvailable() || action.canBeAdvertisedEvenIfActorIsUnavailable)
             && advertisedActions != null && advertisedActions.Contains(action.goapType)
             && actor.trapStructure.SatisfiesForcedStructure(this)
-            && RaceManager.Instance.CanCharacterDoGoapAction(actor, action.goapType)
-            && PathfindingManager.Instance.HasPathEvenDiffRegion(actor.gridTileLocation, gridTileLocation)) {
-            object[] data = null;
-            if (otherData != null) {
-                if (otherData.ContainsKey(action.goapType)) {
-                    data = otherData[action.goapType];
-                } else if (otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
-                    data = otherData[INTERACTION_TYPE.NONE];
-                }
+            && RaceManager.Instance.CanCharacterDoGoapAction(actor, action.goapType)) {
+            LocationGridTile tileLocation = gridTileLocation;
+            if (isBeingCarriedBy != null) {
+                tileLocation = isBeingCarriedBy.gridTileLocation;
             }
-            if (action.CanSatisfyRequirements(actor, this, data)) {
-                cost = action.GetCost(actor, this, job, data);
-                return true;
+            if(PathfindingManager.Instance.HasPathEvenDiffRegion(actor.gridTileLocation, tileLocation)) {
+                object[] data = null;
+                if (otherData != null) {
+                    if (otherData.ContainsKey(action.goapType)) {
+                        data = otherData[action.goapType];
+                    } else if (otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
+                        data = otherData[INTERACTION_TYPE.NONE];
+                    }
+                }
+                if (action.CanSatisfyRequirements(actor, this, data)) {
+                    cost = action.GetCost(actor, this, job, data);
+                    return true;
+                }
             }
         }
         return false;
@@ -764,7 +773,15 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     //     this.factionOwner = factionOwner;
     // }
     public void SetCharacterOwner(Character characterOwner) {
-        this.characterOwner = characterOwner;
+        if(this.characterOwner != characterOwner) {
+            this.characterOwner = characterOwner;
+            if (this.characterOwner == null) {
+                RemoveAdvertisedAction(INTERACTION_TYPE.STEAL);
+            } else {
+                AddAdvertisedAction(INTERACTION_TYPE.STEAL);
+            }
+        }
+
     }
     public void SetInventoryOwner(Character character) {
         Debug.Log($"Set Carried by character of item {this.ToString()} to {(isBeingCarriedBy?.name ?? "null")}");
