@@ -10,7 +10,7 @@ PrefabInstance:
     - target: {fileID: 210213197602261700, guid: 6fd3c404c38db534cb71a4ec07508f51,
         type: 3}
       propertyPath: m_Name
-      value: ObjectPooledParticles
+      value: Blood Puddle Effect
       objectReference: {fileID: 0}
     - target: {fileID: 650138032046407940, guid: 6fd3c404c38db534cb71a4ec07508f51,
         type: 3}

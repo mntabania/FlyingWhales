@@ -13920,6 +13920,7 @@ MonoBehaviour:
   projectileParticles: {fileID: 689482027800914802}
   collisionParticles: {fileID: 1247588912318527322}
   collisionParticleCallback: {fileID: 8837946942502962434}
+  _lineRenderer: {fileID: 4163839787739822756}
 --- !u!50 &3121497656322026352
 Rigidbody2D:
   serializedVersion: 4

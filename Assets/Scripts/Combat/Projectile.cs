@@ -12,6 +12,7 @@ public class Projectile : PooledObject {
     [SerializeField] private ParticleSystem projectileParticles;
     [SerializeField] private ParticleSystem collisionParticles;
     [SerializeField] private ParticleCallback collisionParticleCallback;
+    [SerializeField] private TrailRenderer _lineRenderer;
     
     public IDamageable targetObject { get; private set; }
     public System.Action<IDamageable, CombatState> onHitAction;
@@ -33,7 +34,7 @@ public class Projectile : PooledObject {
     }
     private void Update() {
         _timeAlive += Time.deltaTime;
-        if (_timeAlive > 5f) {
+        if (_timeAlive > 1f) {
             //destroy projectile
             DestroyProjectile();
         }
@@ -62,8 +63,8 @@ public class Projectile : PooledObject {
         // Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
         collisionParticleCallback.SetAction(DestroyProjectile); //when the collision particles have successfully stopped. Destroy this object.
         
-        tween = transform.DOMove(target.position, 25f).SetSpeedBased(true).SetEase(Ease.Linear).SetAutoKill(false);
-        // tween.OnUpdate (() => tween.ChangeEndValue (target.position, true));
+        tween = transform.DOMove(target.position, 25f).SetSpeedBased(true).SetEase(Ease.Linear).SetAutoKill(true);
+        _lineRenderer.enabled = true;
     }
 
     public void OnProjectileHit(IDamageable poi) {
@@ -99,6 +100,7 @@ public class Projectile : PooledObject {
         collisionParticles.Clear();
         onHitAction = null;
         _timeAlive = 0f;
+        _lineRenderer.enabled = false;
     }
     #endregion
     

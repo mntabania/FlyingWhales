@@ -188,8 +188,8 @@ public class Butcher : GoapAction {
         int transformedFood = CharacterManager.Instance.GetFoodAmountTakenFromDead(deadCharacter);
         //goapNode.actor.AdjustFood(transformedFood);
 
-        if (poiTarget is Character) {
-            (poiTarget as Character).DestroyMarker();
+        if (poiTarget is Character character) {
+            character.DestroyMarker();
         } else {
             tileLocation.structure.RemovePOI(poiTarget, goapNode.actor);
         }

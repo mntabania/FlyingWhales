@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps.Location_Structures;
 using UnityEngine;
 using Traits;
 
@@ -20,6 +21,9 @@ public class ResolveCombat : GoapAction {
         //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.CANNOT_MOVE, target = GOAP_EFFECT_TARGET.TARGET });
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", target = GOAP_EFFECT_TARGET.TARGET });
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, target = GOAP_EFFECT_TARGET.TARGET });
+    }
+    public override LocationStructure GetTargetStructure(ActualGoapNode node) {
+        return node.actor.gridTileLocation.structure;
     }
     public override void Perform(ActualGoapNode actionNode) {
         base.Perform(actionNode);

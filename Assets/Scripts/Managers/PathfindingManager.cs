@@ -110,11 +110,12 @@ public class PathfindingManager : MonoBehaviour {
         gg.center = pos;
         gg.collision.use2D = true;
         gg.collision.type = ColliderType.Sphere;
-        if (newMap.region.locationType == LOCATION_TYPE.DUNGEON) {
-            gg.collision.diameter = 2f;
-        } else {
-            gg.collision.diameter = 0.9f;
-        }
+        gg.collision.diameter = 0.6f;
+        // if (newMap.region.locationType == LOCATION_TYPE.DUNGEON) {
+        //     gg.collision.diameter = 2f;
+        // } else {
+        //     gg.collision.diameter = 0.9f;
+        // }
         gg.collision.mask = LayerMask.GetMask("Unpassable");
         AstarPath.active.Scan(gg);
         newMap.pathfindingGraph = gg;

@@ -662,7 +662,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void DestroyMarker(LocationGridTile destroyedAt = null) {
         if (destroyedAt == null) {
-            gridTileLocation.RemoveCharacterHere(this);
+            gridTileLocation?.RemoveCharacterHere(this);
         } else {
             destroyedAt.RemoveCharacterHere(this);
         }
