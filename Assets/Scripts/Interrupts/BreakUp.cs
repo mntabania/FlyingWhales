@@ -12,7 +12,7 @@ namespace Interrupts {
 
         #region Overrides
         public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target, ref Log overrideEffectLog) {
-            actor.nonActionEventsComponent.NormalBreakUp(target as Character, actor.interruptComponent.identifier);
+            actor.nonActionEventsComponent.NormalBreakUp(target as Character, actor.interruptComponent.simultaneousIdentifier);
             return true;
         }
         #endregion

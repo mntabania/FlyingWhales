@@ -450,8 +450,8 @@ public class PlayerManager : MonoBehaviour {
                 }
                 character.logComponent.PrintLogIfActive(
                     $"{GameManager.Instance.TodayLogString()}{character.name} performed a crime of type {crimeType.ToString()}. Expelling {orbsToCreate.ToString()} Chaos Orbs.");
-                Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, character.marker.transform.position, orbsToCreate, 
-                    character.currentRegion.innerMap);
+                //Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, character.marker.transform.position, orbsToCreate, 
+                //    character.currentRegion.innerMap);
 
             }    
         }

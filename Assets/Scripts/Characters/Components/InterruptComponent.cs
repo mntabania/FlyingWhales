@@ -9,6 +9,7 @@ public class InterruptComponent {
     public Interrupt currentInterrupt { get; private set; }
     public int currentDuration { get; private set; }
     public string identifier { get; private set; }
+    public string simultaneousIdentifier { get; private set; }
     public Interrupt triggeredSimultaneousInterrupt { get; private set; }
     public int currentSimultaneousInterruptDuration { get; private set; }
 
@@ -25,6 +26,7 @@ public class InterruptComponent {
     public InterruptComponent(Character owner) {
         this.owner = owner;
         identifier = string.Empty;
+        simultaneousIdentifier = string.Empty;
     }
 
     #region General
@@ -69,18 +71,25 @@ public class InterruptComponent {
         }
         return true;
     }
-    public void SetIdentifier(string text) {
-        identifier = text;
+    public void SetIdentifier(string text, bool isSimultaneous) {
+        if (isSimultaneous) {
+            simultaneousIdentifier = text;
+        } else {
+            identifier = text;
+        }
     }
     private bool TriggeredSimultaneousInterrupt(Interrupt interrupt, IPointOfInterest targetPOI, string identifier) {
         owner.logComponent.PrintLogIfActive($"{owner.name} triggered a simultaneous interrupt: {interrupt.name}");
+        bool alreadyHasSimultaneousInterrupt = hasTriggeredSimultaneousInterrupt;
         triggeredSimultaneousInterrupt = interrupt;
-        this.identifier = identifier;
+        simultaneousIdentifier = identifier;
         ExecuteStartInterrupt(interrupt, targetPOI);
         AddEffectLog(triggeredSimultaneousInterrupt, currentTargetPOI);
         interrupt.ExecuteInterruptEndEffect(owner, currentTargetPOI);
         currentSimultaneousInterruptDuration = 0;
-        Messenger.AddListener(Signals.TICK_ENDED, PerTickSimultaneousInterrupt);
+        if (!alreadyHasSimultaneousInterrupt) {
+            Messenger.AddListener(Signals.TICK_ENDED, PerTickSimultaneousInterrupt);
+        }
         return true;
     }
     private void ExecuteStartInterrupt(Interrupt interrupt, IPointOfInterest targetPOI) {

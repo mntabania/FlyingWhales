@@ -105,27 +105,27 @@ namespace Traits {
         //    } 
         //    return base.CreateJobsOnEnterVisionBasedOnOwnerTrait(targetPOI, characterThatWillDoJob);
         //}
-        public override void OnTickStarted() {
-            base.OnTickStarted();
-            if (_owner.stateComponent.currentState is CombatState) {
-                CheckForChaosOrb();
-            }
-        }
+        //public override void OnTickStarted() {
+        //    base.OnTickStarted();
+        //    if (_owner.stateComponent.currentState is CombatState) {
+        //        CheckForChaosOrb();
+        //    }
+        //}
         #endregion
         
-        #region Chaos Orb
-        private void CheckForChaosOrb() {
-            string summary = $"{_owner.name} is rolling for chaos orb in berserked trait";
-            int roll = Random.Range(0, 100);
-            int chance = 60;
-            summary += $"\nRoll is {roll.ToString()}. Chance is {chance.ToString()}";
-            if (roll < chance) {
-                Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, _owner.marker.transform.position, 
-                    1, _owner.currentRegion.innerMap);
-            }
-            _owner.logComponent.PrintLogIfActive(summary);
-        }
-        #endregion
+        //#region Chaos Orb
+        //private void CheckForChaosOrb() {
+        //    string summary = $"{_owner.name} is rolling for chaos orb in berserked trait";
+        //    int roll = Random.Range(0, 100);
+        //    int chance = 60;
+        //    summary += $"\nRoll is {roll.ToString()}. Chance is {chance.ToString()}";
+        //    if (roll < chance) {
+        //        Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, _owner.marker.transform.position, 
+        //            1, _owner.currentRegion.innerMap);
+        //    }
+        //    _owner.logComponent.PrintLogIfActive(summary);
+        //}
+        //#endregion
     }
 }
 

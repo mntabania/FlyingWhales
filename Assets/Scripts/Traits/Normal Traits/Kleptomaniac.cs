@@ -185,7 +185,7 @@ namespace Traits {
                 }
                 return true;
             } else {
-                return item.characterOwner != null && item.characterOwner != traitOwner && item.characterOwner.relationshipContainer.IsFriendsWith(this.traitOwner);
+                return item.characterOwner != null && item.characterOwner != traitOwner && item.characterOwner.relationshipContainer.IsEnemiesWith(this.traitOwner);
             }
         }
     }

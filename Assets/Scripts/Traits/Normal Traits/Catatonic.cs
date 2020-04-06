@@ -46,7 +46,7 @@ namespace Traits {
         public override void OnTickStarted() {
             base.OnTickStarted();
             CheckTrait();
-            CheckForChaosOrb();
+            //CheckForChaosOrb();
         }
         #endregion
 
@@ -134,19 +134,19 @@ namespace Traits {
         }
         #endregion
 
-        #region Chaos Orb
-        private void CheckForChaosOrb() {
-            string summary = $"{owner.name} is rolling for chaos orb in catatonic trait";
-            int roll = Random.Range(0, 100);
-            int chance = 5;
-            summary += $"\nRoll is {roll.ToString()}. Chance is {chance.ToString()}";
-            if (roll < chance) {
-                Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, owner.marker.transform.position, 
-                    1, owner.currentRegion.innerMap);
-            }
-            owner.logComponent.PrintLogIfActive(summary);
-        }
-        #endregion
+        //#region Chaos Orb
+        //private void CheckForChaosOrb() {
+        //    string summary = $"{owner.name} is rolling for chaos orb in catatonic trait";
+        //    int roll = Random.Range(0, 100);
+        //    int chance = 5;
+        //    summary += $"\nRoll is {roll.ToString()}. Chance is {chance.ToString()}";
+        //    if (roll < chance) {
+        //        Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, owner.marker.transform.position, 
+        //            1, owner.currentRegion.innerMap);
+        //    }
+        //    owner.logComponent.PrintLogIfActive(summary);
+        //}
+        //#endregion
     }
 
     //public class SaveDataCatatonic : SaveDataTrait {
