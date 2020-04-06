@@ -130,10 +130,15 @@ public class FrostyFogMapObjectVisual : MovingMapObjectVisual<TileObject> {
         ChangeScaleBySize();
     }
     private void ChangeScaleBySize() {
-        this.gameObject.transform.localScale = new Vector3(_size, _size, 1f);
-        _frostyFogEffect.transform.localScale = new Vector3(_size, _size, _size);
-        _snowFlakesEffect.transform.localScale = new Vector3(_size, _size, _size);
-        _waveEffect.transform.localScale = new Vector3(_size, _size, _size);
+        Vector3 targetSize = new Vector3(_size, _size, _size);
+        transform.DOScale(new Vector3(_size, _size, 1f), 1f);
+        _frostyFogEffect.transform.DOScale(targetSize, 1f);
+        _snowFlakesEffect.transform.DOScale(targetSize, 1f);
+        _waveEffect.transform.DOScale(targetSize, 1f);
+        // this.gameObject.transform.localScale = new Vector3(_size, _size, 1f);
+        // _frostyFogEffect.transform.localScale = new Vector3(_size, _size, _size);
+        // _snowFlakesEffect.transform.localScale = new Vector3(_size, _size, _size);
+        // _waveEffect.transform.localScale = new Vector3(_size, _size, _size);
     }
     #endregion
 
@@ -171,7 +176,7 @@ public class FrostyFogMapObjectVisual : MovingMapObjectVisual<TileObject> {
         _frostyFogEffect.Stop();
         _snowFlakesEffect.Stop();
         _waveEffect.Stop();
-
+        visionTrigger.SetCollidersState(false);
         isSpawned = false;
         if (string.IsNullOrEmpty(_expiryKey) == false) {
             SchedulingManager.Instance.RemoveSpecificEntry(_expiryKey);
@@ -183,7 +188,7 @@ public class FrostyFogMapObjectVisual : MovingMapObjectVisual<TileObject> {
         StartCoroutine(DestroyCoroutine());
     }
     private IEnumerator DestroyCoroutine() {
-        yield return new WaitForSeconds(0.8f);
+        yield return new WaitForSeconds(4.5f);
         ObjectPoolManager.Instance.DestroyObject(this);
     }
     #endregion

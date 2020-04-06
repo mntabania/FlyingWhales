@@ -111,8 +111,10 @@ public class VaporMapObjectVisual : MovingMapObjectVisual<TileObject> {
         //if(_size > 1) {
         //    scaleSize = _size + 1;
         //}
-        this.gameObject.transform.localScale = new Vector3(_size, _size, 1f);
-        _vaporEffect.transform.localScale = new Vector3(_size, _size, _size);
+        // this.gameObject.transform.localScale = new Vector3(_size, _size, 1f);
+        // _vaporEffect.transform.localScale = new Vector3(_size, _size, _size);
+        transform.DOScale(new Vector3(_size, _size, 1f), 1f);
+        _vaporEffect.transform.DOScale(new Vector3(_size, _size, _size), 1f);
     }
     #endregion
     
@@ -121,6 +123,7 @@ public class VaporMapObjectVisual : MovingMapObjectVisual<TileObject> {
         Debug.Log($"{this.name} expired!");
         _vaporTileObject.OnExpire();
         _vaporEffect.Stop();
+        visionTrigger.SetCollidersState(false);
         isSpawned = false;
         if (string.IsNullOrEmpty(_expiryKey) == false) {
             SchedulingManager.Instance.RemoveSpecificEntry(_expiryKey);
@@ -131,7 +134,7 @@ public class VaporMapObjectVisual : MovingMapObjectVisual<TileObject> {
         StartCoroutine(DestroyCoroutine());
     }
     private IEnumerator DestroyCoroutine() {
-        yield return new WaitForSeconds(0.8f);
+        yield return new WaitForSeconds(2f);
         ObjectPoolManager.Instance.DestroyObject(this);
     }
     #endregion
