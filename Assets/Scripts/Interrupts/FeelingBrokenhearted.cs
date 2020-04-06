@@ -14,6 +14,7 @@ namespace Interrupts {
         #region Overrides
         public override bool ExecuteInterruptEndEffect(Character actor, IPointOfInterest target) {
             actor.jobQueue.CancelAllJobs(JOB_TYPE.HAPPINESS_RECOVERY);
+            actor.interruptComponent.TriggerInterrupt(INTERRUPT.Cry, actor, "feeling heartbroken");
             return true;
         }
         #endregion

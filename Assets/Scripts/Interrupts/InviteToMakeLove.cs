@@ -79,7 +79,7 @@ namespace Interrupts {
                 overrideEffectLog.AddToFillers(target, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 //actor.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
 
-                actor.interruptComponent.SetIdentifier(chosen);
+                actor.interruptComponent.SetIdentifier(chosen, true);
                 if (chosen == "Reject") {
                     actor.relationshipContainer.AdjustOpinion(actor, targetCharacter, "Base", -3, "rejected sexual advances");
                     actor.traitContainer.AddTrait(actor, "Annoyed");

@@ -16,7 +16,7 @@ namespace Interrupts {
                 Character targetCharacter = target as Character;
                 Faction factionToJoinTo = targetCharacter.faction;
                 if (actor.ChangeFactionTo(factionToJoinTo)) {
-                    overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", "Join Faction", actor.interruptComponent.identifier);
+                    overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", "Join Faction", actor.interruptComponent.simultaneousIdentifier);
                     overrideEffectLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     overrideEffectLog.AddToFillers(factionToJoinTo, factionToJoinTo.name, LOG_IDENTIFIER.FACTION_1);
                     //actor.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);

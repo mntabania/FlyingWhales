@@ -125,8 +125,8 @@ namespace Traits {
         public override bool OnStartPerformGoapAction(ActualGoapNode node, ref bool willStillContinueAction) {
             if(node.action.goapType == INTERACTION_TYPE.MAKE_LOVE) {
                 bool triggered = node.actor.interruptComponent.TriggerInterrupt(INTERRUPT.Invite_To_Make_Love, node.poiTarget);
-                willStillContinueAction = node.actor.interruptComponent.identifier == "Accept";
-                node.actor.interruptComponent.SetIdentifier(string.Empty);
+                willStillContinueAction = node.actor.interruptComponent.simultaneousIdentifier == "Accept";
+                node.actor.interruptComponent.SetIdentifier(string.Empty, true);
                 return triggered;
             }
             if (node.poiTarget.traitContainer.HasTrait("Booby Trapped")) {
