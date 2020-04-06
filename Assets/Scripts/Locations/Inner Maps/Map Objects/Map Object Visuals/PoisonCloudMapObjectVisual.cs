@@ -214,6 +214,7 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
     public void Expire() {
         Debug.Log($"{this.name} expired!");
         _cloudEffect.Stop();
+        visionTrigger.SetCollidersState(false);
         isSpawned = false;
         if (string.IsNullOrEmpty(_expiryKey) == false) {
             SchedulingManager.Instance.RemoveSpecificEntry(_expiryKey);
@@ -226,7 +227,7 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
         StartCoroutine(DestroyCoroutine());
     }
     private IEnumerator DestroyCoroutine() {
-        yield return new WaitForSeconds(0.8f);
+        yield return new WaitForSeconds(2f);
         ObjectPoolManager.Instance.DestroyObject(this);
     }
     #endregion
@@ -249,14 +250,11 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
         ChangeScaleBySize();
     }
     private void ChangeScaleBySize() {
-        gameObject.transform.localScale = new Vector3(_size, _size, _size);
-        _cloudEffect.transform.localScale = new Vector3(_size, _size, _size);
+        Vector3 targetSize = new Vector3(_size, _size, _size);
+        transform.DOScale(targetSize, 1f);
+        _cloudEffect.transform.DOScale(targetSize, 1f);
+        // gameObject.transform.localScale = new Vector3(_size, _size, _size);
         // _cloudEffect.transform.localScale = new Vector3(_size, _size, _size);
-        //ParticleSystem.MainModule mainModule = _cloudEffect.main;
-        //mainModule.startSpeed = (_size + 1) / 10f;
-        //mainModule.startLifetime = _size;
-        //ParticleSystem.EmissionModule emissionModule = _cloudEffect.emission;
-        //emissionModule.rateOverTime = (_size + 1) * 10;
     }
     #endregion
 }

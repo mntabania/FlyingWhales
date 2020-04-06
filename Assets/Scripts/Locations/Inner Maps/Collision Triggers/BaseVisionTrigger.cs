@@ -23,6 +23,7 @@ public abstract class BaseVisionTrigger : MonoBehaviour{
         _projectileReceiver.gameObject.SetActive(true);
         _projectileReceiver.Initialize(damageable);
         mainCollider.isTrigger = true; //vision triggers should always be set as triggers.
+        SetCollidersState(true);
     }
     /// <summary>
     /// Set the active state of both, this collider and the projectile
