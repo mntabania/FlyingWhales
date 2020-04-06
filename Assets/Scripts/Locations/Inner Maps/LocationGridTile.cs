@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using BayatGames.SaveGameFree.Types;
@@ -446,7 +447,7 @@ namespace Inner_Maps {
                 }
             }
             if (hasLandmine) {
-                TriggerLandmine(character);
+                GameManager.Instance.StartCoroutine(TriggerLandmine(character));
             }
             if (hasFreezingTrap) {
                 TriggerFreezingTrap(character);
@@ -1055,7 +1056,9 @@ namespace Inner_Maps {
                 }
             }
         }
-        private void TriggerLandmine(Character triggeredBy) {
+        private IEnumerator TriggerLandmine(Character triggeredBy) {
+            GameManager.Instance.CreateParticleEffectAt(this, PARTICLE_EFFECT.Landmine_Explosion);
+            yield return new WaitForSeconds(0.5f);
             SetHasLandmine(false);
             List<LocationGridTile> tiles = GetTilesInRadius(3, includeCenterTile: true, includeTilesInDifferentStructure: true);
             BurningSource bs = null;
@@ -1100,6 +1103,7 @@ namespace Inner_Maps {
             }
         }
         private void TriggerFreezingTrap(Character triggeredBy) {
+            GameManager.Instance.CreateParticleEffectAt(triggeredBy, PARTICLE_EFFECT.Freezing_Trap_Explosion);
             SetHasFreezingTrap(false);
             for (int i = 0; i < 3; i++) {
                 if (triggeredBy.traitContainer.HasTrait("Frozen")) {
@@ -1124,6 +1128,7 @@ namespace Inner_Maps {
             }
         }
         private void TriggerSnareTrap(Character triggeredBy) {
+            GameManager.Instance.CreateParticleEffectAt(triggeredBy, PARTICLE_EFFECT.Snare_Trap_Explosion);
             SetHasSnareTrap(false);
             triggeredBy.traitContainer.AddTrait(triggeredBy, "Ensnared");
         }
