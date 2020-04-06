@@ -27,7 +27,7 @@ public class BrimstonesParticleEffect : BaseParticleEffect {
         if (traitable is TileObject obj) {
             if (obj.tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
                 BurningSource burningSource = bs;
-                obj.AdjustHP(-obj.currentHP, ELEMENTAL_TYPE.Fire, elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref burningSource), showHPBar: true);
+                obj.AdjustHP(-obj.currentHP, ELEMENTAL_TYPE.Fire, true, elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref burningSource), showHPBar: true);
                 bs = burningSource;
                 // if (obj.gridTileLocation == null) {
                 //     continue; //object was destroyed, do not add burning trait
@@ -48,7 +48,7 @@ public class BrimstonesParticleEffect : BaseParticleEffect {
             }
         } else {
             BurningSource burningSource = bs;
-            traitable.AdjustHP(-traitable.currentHP, ELEMENTAL_TYPE.Fire, 
+            traitable.AdjustHP(-traitable.currentHP, ELEMENTAL_TYPE.Fire, true, 
                 elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref burningSource), showHPBar: true);
             bs = burningSource;
         }

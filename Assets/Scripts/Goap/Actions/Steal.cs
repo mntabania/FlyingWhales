@@ -16,11 +16,16 @@ public class Steal : GoapAction {
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
         AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.HAS_POI, GOAP_EFFECT_TARGET.ACTOR));
+        AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, GOAP_EFFECT_TARGET.ACTOR));
+
     }
     protected override List<GoapEffect> GetExpectedEffects(Character actor, IPointOfInterest target, object[] otherData) {
         List <GoapEffect> ee = base.GetExpectedEffects(actor, target, otherData);
         TileObject item = target as TileObject;
-        ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_POI, conditionKey = item.tileObjectType.ToString(), target = GOAP_EFFECT_TARGET.ACTOR });
+        ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_POI, conditionKey = item.name, isKeyANumber = false, target = GOAP_EFFECT_TARGET.ACTOR });
+        if (actor.traitContainer.HasTrait("Kleptomaniac")) {
+            ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.ACTOR });
+        }
         return ee;
     }
     public override void Perform(ActualGoapNode goapNode) {
