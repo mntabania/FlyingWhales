@@ -2331,6 +2331,9 @@ MonoBehaviour:
       characterClassAssets:
         m_keys:
         - Default
+        - Ice Nymph
+        - Water Nymph
+        - Wind Nymph
         m_values:
         - defaultSprite: {fileID: 21300000, guid: 7c240af2c0c3f804aa80f32d37b06031,
             type: 3}
@@ -2339,6 +2342,27 @@ MonoBehaviour:
           - {fileID: 21300000, guid: 7c240af2c0c3f804aa80f32d37b06031, type: 3}
           - {fileID: 21300000, guid: 4c738a13665548d44a36920de817555d, type: 3}
           - {fileID: 21300000, guid: c73efdb0e6134af4d9a706f5a48114e6, type: 3}
+        - defaultSprite: {fileID: 21300000, guid: 79d46d8a0dae90e4d9d94a14b035a251,
+            type: 3}
+          animationSprites:
+          - {fileID: 21300000, guid: be1dbfba2bd2fb549bc9b7d3478c9206, type: 3}
+          - {fileID: 21300000, guid: 79d46d8a0dae90e4d9d94a14b035a251, type: 3}
+          - {fileID: 21300000, guid: 48f7cb5b3ff85164689e2030e99b465f, type: 3}
+          - {fileID: 21300000, guid: 984d5b19438572e49a2dbb404942fd66, type: 3}
+        - defaultSprite: {fileID: 21300000, guid: ab551cee00c39d84681c730b968bae65,
+            type: 3}
+          animationSprites:
+          - {fileID: 21300000, guid: 04b11148118c74f42a79f2a776a0bbfc, type: 3}
+          - {fileID: 21300000, guid: ab551cee00c39d84681c730b968bae65, type: 3}
+          - {fileID: 21300000, guid: 52bb20e807b754a44ba626ee482af569, type: 3}
+          - {fileID: 21300000, guid: 3b8e289152b20404f83045e800b25f35, type: 3}
+        - defaultSprite: {fileID: 21300000, guid: dbde9cb9247132e4bb24bf7708c25707,
+            type: 3}
+          animationSprites:
+          - {fileID: 21300000, guid: 66da18a16433393499910ed8c8c23027, type: 3}
+          - {fileID: 21300000, guid: dbde9cb9247132e4bb24bf7708c25707, type: 3}
+          - {fileID: 21300000, guid: 006da451afa6d5841b40005f4c3f351a, type: 3}
+          - {fileID: 21300000, guid: 5d47f1830a0afcc428c52948a46f886f, type: 3}
     maleAssets:
       characterClassAssets:
         m_keys: []
@@ -2482,6 +2506,9 @@ MonoBehaviour:
       characterClassAssets:
         m_keys:
         - Default
+        - Earthen Wisp
+        - Electric Wisp
+        - Fire Wisp
         m_values:
         - defaultSprite: {fileID: 21300000, guid: d139064de7483314b98368e73a0e82e2,
             type: 3}
@@ -2490,6 +2517,27 @@ MonoBehaviour:
           - {fileID: 21300000, guid: d139064de7483314b98368e73a0e82e2, type: 3}
           - {fileID: 21300000, guid: 18526bb08f15ba74ab46399387da1289, type: 3}
           - {fileID: 21300000, guid: 24f8ad77eee732a46b0d3fbb7f1c368c, type: 3}
+        - defaultSprite: {fileID: 21300000, guid: 2c6cbb70a0e166247851e38dee4c7b3a,
+            type: 3}
+          animationSprites:
+          - {fileID: 21300000, guid: f04c2099f8653794fb728b90132ea122, type: 3}
+          - {fileID: 21300000, guid: 2c6cbb70a0e166247851e38dee4c7b3a, type: 3}
+          - {fileID: 21300000, guid: ebc183157e13624459d1c5b4dc049351, type: 3}
+          - {fileID: 21300000, guid: 3048fba78cf8f7544b8e5eb7320263b4, type: 3}
+        - defaultSprite: {fileID: 21300000, guid: 487b64a2e99a51a43b37cde184afdfee,
+            type: 3}
+          animationSprites:
+          - {fileID: 21300000, guid: 32a0b84db44a7f541988e7fea127617b, type: 3}
+          - {fileID: 21300000, guid: 487b64a2e99a51a43b37cde184afdfee, type: 3}
+          - {fileID: 21300000, guid: 2ca1807332767524b84281a354242f4c, type: 3}
+          - {fileID: 21300000, guid: 2f0371a685eb51a40afa4894a5d9c036, type: 3}
+        - defaultSprite: {fileID: 21300000, guid: 91bc128d1e9ee4e4c98a546a04139c03,
+            type: 3}
+          animationSprites:
+          - {fileID: 21300000, guid: 072e990aa03aa8044b93396574fed3eb, type: 3}
+          - {fileID: 21300000, guid: 91bc128d1e9ee4e4c98a546a04139c03, type: 3}
+          - {fileID: 21300000, guid: c31692014652e1543aeca664f4b67ee6, type: 3}
+          - {fileID: 21300000, guid: 5c41dff933bceb3498b6d9e2679a0a92, type: 3}
     maleAssets:
       characterClassAssets:
         m_keys: []
