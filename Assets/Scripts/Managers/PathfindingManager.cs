@@ -110,7 +110,7 @@ public class PathfindingManager : MonoBehaviour {
         gg.center = pos;
         gg.collision.use2D = true;
         gg.collision.type = ColliderType.Sphere;
-        gg.collision.diameter = 0.6f;
+        gg.collision.diameter = 0.7f;
         // if (newMap.region.locationType == LOCATION_TYPE.DUNGEON) {
         //     gg.collision.diameter = 2f;
         // } else {
