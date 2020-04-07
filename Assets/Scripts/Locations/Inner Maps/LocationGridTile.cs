@@ -457,10 +457,9 @@ namespace Inner_Maps {
             }
             if (isCorrupted) {
                 if(!character.behaviourComponent.isAttackingDemonicStructure 
-                    && character.homeSettlement != null 
-                    && (character.race == RACE.HUMANS || character.race == RACE.ELVES)
-                    && structure != null
-                    && structure is DemonicStructure) {
+                   && character.homeSettlement != null 
+                   && (character.race == RACE.HUMANS || character.race == RACE.ELVES) && structure is DemonicStructure
+                   && character.marker != null) {
                     if (!InnerMapManager.Instance.HasWorldKnownDemonicStructure(structure)) {
                         character.jobComponent.CreateReportDemonicStructure(structure);
                     }

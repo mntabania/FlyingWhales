@@ -310,12 +310,14 @@ public class Minion {
         //GoToWorkArea();
     }
     private void OnTickEnded() {
+        if (character.isDead) { return; }
         character.interruptComponent.OnTickEnded();
         character.stateComponent.OnTickEnded();
         character.ProcessTraitsOnTickEnded();
         character.EndTickPerformJobs();
     }
     private void OnTickStarted() {
+        if (character.isDead) { return; }
         character.ProcessTraitsOnTickStarted();
         if (character.CanPlanGoap()) {
             character.PerStartTickActionPlanning();

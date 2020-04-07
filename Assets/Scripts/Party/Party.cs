@@ -131,12 +131,12 @@ public class Party {
         //SetSpecificLocation(deathLocation); //set the specific location of this party, to the location it died at
         //owner.SetCurrentStructureLocation(deathStructure, false);
         RemoveListeners();
-        if (_icon.party.owner.race == RACE.SKELETON) {
-            GameObject.Destroy(_icon.gameObject);
-            _icon = null;
-        } else {
+        // if (_icon.party.owner.race == RACE.SKELETON) {
+        //     GameObject.Destroy(_icon.gameObject);
+        //     _icon = null;
+        // } else {
             _icon.gameObject.SetActive(false);
-        }        
+        // }        
 
         //_currentCombat = null;
 

@@ -23,7 +23,6 @@ public class CombatState : CharacterState {
     private int fleeChance;
     private bool isFleeToHome;
 
-
     public CombatState(CharacterStateComponent characterComp) : base(characterComp) {
         stateName = "Combat State";
         characterState = CHARACTER_STATE.COMBAT;
@@ -43,26 +42,8 @@ public class CombatState : CharacterState {
         StartCombatMovement();
     }
     public override void PerTickInState() {
-        //if (isPaused) {
-        //    return;
-        //}
-        //if (stateComponent.currentState != this) {
-        //    return; //to prevent exiting from this function, when this state was already exited by another funtion in the same stack.
-        //}
-        //if (stateComponent.character.doNotDisturb > 0) {
-        //    StopStatePerTick();
-        //    OnExitThisState();
-        //    return;
-        //}
-        //if the character is away from home and is at an edge tile, go to home location
-        //if (!isAttacking && stateComponent.character.homeNpcSettlement != null && stateComponent.character.homeNpcSettlement != stateComponent.character.specificLocation && stateComponent.character.gridTileLocation.IsAtEdgeOfWalkableMap()) {
-        //    StopStatePerTick();
-        //    OnExitThisState();
-        //    //stateComponent.character.PlanIdleReturnHome();
-        //    stateComponent.character.currentParty.GoToLocation(stateComponent.character.homeNpcSettlement, PATHFINDING_MODE.NORMAL, stateComponent.character.homeNpcSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS), null, null, null, null);
-        //    return;
-        //}
         if (_hasTimerStarted) {
+            //timer has been started, increment timer
             _currentAttackTimer += 1;
             if (_currentAttackTimer >= CombatManager.pursueDuration) {
                 StopPursueTimer();
@@ -71,10 +52,10 @@ public class CombatState : CharacterState {
             }
         } else {
             //If character is pursuing the current closest hostile, check if that hostile is in range, if it is, start pursue timer
-            if (isAttacking && stateComponent.character.currentParty.icon.isTravelling && stateComponent.character.marker.targetPOI == currentClosestHostile) {
-                if (stateComponent.character.marker.inVisionPOIs.Contains(currentClosestHostile)) {
-                    StartPursueTimer();
-                }
+            //&& stateComponent.character.currentParty.icon.isTravelling
+            if (isAttacking && currentClosestHostile != null && stateComponent.character.marker.targetPOI == currentClosestHostile &&
+                stateComponent.character.marker.inVisionPOIs.Contains(currentClosestHostile)) {
+                StartPursueTimer();
             }
         }
     }
@@ -518,6 +499,7 @@ public class CombatState : CharacterState {
         if (newClosestHostile == currentClosestHostile) { return; } // ignore change
         IPointOfInterest previousClosestHostile = currentClosestHostile;
         currentClosestHostile = newClosestHostile;
+        StopPursueTimer(); //stop pursue timer, any time target changes. This is so that pursue timer is reset when target changes
         if (currentClosestHostile != null && previousClosestHostile != currentClosestHostile) {
             Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "new_combat_target");
             log.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -529,6 +511,7 @@ public class CombatState : CharacterState {
         if (poi == currentClosestHostile) { return; } //ignore change
         IPointOfInterest previousClosestHostile = currentClosestHostile;
         currentClosestHostile = poi;
+        StopPursueTimer(); //stop pursue timer, any time target changes. This is so that pursue timer is reset when target changes
         if (currentClosestHostile != null && previousClosestHostile != currentClosestHostile) {
             Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "new_combat_target");
             log.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -654,7 +637,7 @@ public class CombatState : CharacterState {
     private void StartPursueTimer() {
         if (!_hasTimerStarted) {
             stateComponent.character.logComponent.PrintLogIfActive(
-                $"Starting pursue timer for {stateComponent.character.name}");
+                $"Starting pursue timer for {stateComponent.character.name} targeting {currentClosestHostile?.name ?? "Null"}");
             _currentAttackTimer = 0;
             _hasTimerStarted = true;
         }

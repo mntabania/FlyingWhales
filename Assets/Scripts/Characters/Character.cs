@@ -1084,11 +1084,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //}
     public void AddJobTargetingThis(JobQueueItem job) {
         allJobsTargetingThis.Add(job);
-        marker.visionTrigger.VoteToMakeVisibleToCharacters();
+        //removed this because all characters can be seen by each other at all times.
+        // marker.visionTrigger.VoteToMakeVisibleToCharacters();
     }
     public bool RemoveJobTargetingThis(JobQueueItem job) {
         if (allJobsTargetingThis.Remove(job)) {
-            marker.visionTrigger.VoteToMakeInvisibleToCharacters();
+            //removed this because all characters can be seen by each other at all times.
+            // marker.visionTrigger.VoteToMakeInvisibleToCharacters();
             return true;
         }
         return false;

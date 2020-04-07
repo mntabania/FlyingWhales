@@ -1398,6 +1398,7 @@
             <e p="Chat.cs" t="Include" />
             <e p="Cowering.cs" t="Include" />
             <e p="CreateFaction.cs" t="Include" />
+            <e p="Cry.cs" t="Include" />
             <e p="Feared.cs" t="Include" />
             <e p="FeelingBrokenhearted.cs" t="Include" />
             <e p="FeelingConcerned.cs" t="Include" />
