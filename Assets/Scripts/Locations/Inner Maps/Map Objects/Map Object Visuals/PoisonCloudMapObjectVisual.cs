@@ -138,7 +138,7 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
     }
     private void ApplyExplosionEffect(ITraitable traitable) {
         traitable.AdjustHP(-250, ELEMENTAL_TYPE.Fire, true, showHPBar: true);
-        if (traitable.currentHP > 0) {
+        if (traitable.currentHP > 0 || traitable is GenericTileObject) {
             traitable.traitContainer.AddTrait(traitable, "Poisoned");
         }
     }

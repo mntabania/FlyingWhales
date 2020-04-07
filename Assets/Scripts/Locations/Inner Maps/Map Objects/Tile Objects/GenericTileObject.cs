@@ -87,6 +87,8 @@ public class GenericTileObject : TileObject {
             gridTileLocation.RevertToPreviousGroundVisual();
             gridTileLocation.SetPreviousGroundVisual(null); //so that tile will never revert to old floor
             structureLocation.OnTileDestroyed(gridTileLocation);
+            //reset floor hp
+            currentHP = maxHP;
         } else if (amount < 0 && currentHP < maxHP) {
             //floor has been damaged
             structureLocation.OnTileDamaged(gridTileLocation);

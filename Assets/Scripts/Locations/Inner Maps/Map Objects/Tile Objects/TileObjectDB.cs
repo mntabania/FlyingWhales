@@ -121,6 +121,9 @@ public static class TileObjectDB {
         { TILE_OBJECT_TYPE.BLOCK_WALL, new TileObjectData() {
             maxHP = 500,
         } },
+        { TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT, new TileObjectData() {
+            maxHP = 1000,
+        } },
 
         //{ TILE_OBJECT_TYPE.WATER_BUCKET, new TileObjectData() {
         //    constructionCost = 25,
