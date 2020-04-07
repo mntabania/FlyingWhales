@@ -423,8 +423,7 @@ public class ActualGoapNode {
         actionStatus = ACTION_STATUS.PERFORMING;
         actor.marker.UpdateAnimation();
 
-        if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-            Character targetCharacter = poiTarget as Character;
+        if (poiTarget is Character targetCharacter) {
             if (!action.doesNotStopTargetCharacter && actor != poiTarget) {
                 if (!targetCharacter.isDead) {
                     if (targetCharacter.currentParty.icon.isTravelling) {
@@ -441,6 +440,8 @@ public class ActualGoapNode {
                 }
                 targetCharacter.AdjustIsStoppedByOtherCharacter(1);
             }
+        } else if (poiTarget is TileObject targetTileObject) {
+            targetTileObject.AdjustRepairCounter(1);
         }
         if (action.actionCategory != ACTION_CATEGORY.INDIRECT && poiTarget is BaseMapObject baseMapObject) {
             baseMapObject.OnManipulatedBy(actor);
@@ -726,12 +727,11 @@ public class ActualGoapNode {
         //}
     }
     private void OnFinishActionTowardsTarget() {
-        if (actionStatus == ACTION_STATUS.FAIL) {
-            return;
-        }
-        if (poiTarget is TileObject) {
-            TileObject target = poiTarget as TileObject;
-            target.OnDoneActionToObject(this);
+        if (poiTarget is TileObject targetTileObject) {
+            targetTileObject.AdjustRepairCounter(-1);
+            if (actionStatus != ACTION_STATUS.FAIL) {
+                targetTileObject.OnDoneActionToObject(this);
+            }
         }
     }
     private void OnCancelActionTowardsTarget() {

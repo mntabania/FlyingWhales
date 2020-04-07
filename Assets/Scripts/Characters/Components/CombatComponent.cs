@@ -148,8 +148,10 @@ public class CombatComponent {
             hostilesInRange.Add(target);
             avoidInRange.Remove(target);
             willProcessCombat = true;
-            if (target.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-                lethalCharacters.Add(target as Character, isLethal);
+            if (target is Character targetCharacter) {
+                lethalCharacters.Add(targetCharacter, isLethal);
+            } else if (target is TileObject targetTileObject) {
+                targetTileObject.AdjustRepairCounter(1);
             }
             debugLog += $"\n{target.name} was added to {owner.name}'s hostile range!";
             hasFought = true;
@@ -162,6 +164,8 @@ public class CombatComponent {
         if (hostilesInRange.Remove(target)) {
             if (target.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
                 lethalCharacters.Remove(target as Character);
+            } else if (target is TileObject targetTileObject) {
+                targetTileObject.AdjustRepairCounter(-1);
             }
         }
         if (!avoidInRange.Contains(target)) {
@@ -207,22 +211,24 @@ public class CombatComponent {
     #endregion
 
     #region Hostiles
-    private bool AddHostileInRange(IPointOfInterest poi, bool processCombatBehaviour = true, bool isLethal = true) {
-        //Not yet applicable
-        //if (!hostilesInRange.Contains(poi)) {
-        //    hostilesInRange.Add(poi);
-        //    if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-        //        lethalCharacters.Add(poi as Character, isLethal);
-        //    }
-        //    owner.logComponent.PrintLogIfActive(poi.name + " was added to " + owner.name + "'s hostile range!");
-        //    willProcessCombat = true;
-        //}
-        return false;
-    }
+    //private bool AddHostileInRange(IPointOfInterest poi, bool processCombatBehaviour = true, bool isLethal = true) {
+    //    //Not yet applicable
+    //    //if (!hostilesInRange.Contains(poi)) {
+    //    //    hostilesInRange.Add(poi);
+    //    //    if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+    //    //        lethalCharacters.Add(poi as Character, isLethal);
+    //    //    }
+    //    //    owner.logComponent.PrintLogIfActive(poi.name + " was added to " + owner.name + "'s hostile range!");
+    //    //    willProcessCombat = true;
+    //    //}
+    //    return false;
+    //}
     public void RemoveHostileInRange(IPointOfInterest poi, bool processCombatBehavior = true) {
         if (hostilesInRange.Remove(poi)) {
             if (poi is Character character) {
                 lethalCharacters.Remove(character);
+            } else if (poi is TileObject targetTileObject) {
+                targetTileObject.AdjustRepairCounter(-1);
             }
             string removeHostileSummary = $"{poi.name} was removed from {owner.name}'s hostile range.";
             owner.logComponent.PrintLogIfActive(removeHostileSummary);
@@ -244,6 +250,11 @@ public class CombatComponent {
     }
     public void ClearHostilesInRange(bool processCombatBehavior = true) {
         if (hostilesInRange.Count > 0) {
+            for (int i = 0; i < hostilesInRange.Count; i++) {
+                if (hostilesInRange[i] is TileObject targetTileObject) {
+                    targetTileObject.AdjustRepairCounter(-1);
+                }
+            }
             hostilesInRange.Clear();
             lethalCharacters.Clear();
             //When adding hostile in range, check if character is already in combat state, if it is, only reevaluate combat behavior, if not, enter combat state

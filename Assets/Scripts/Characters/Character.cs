@@ -1220,6 +1220,16 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //    }
         //}
     }
+    protected void CancelRemoveStatusFeedAndRepairJobs() {
+        for (int i = 0; i < allJobsTargetingThis.Count; i++) {
+            JobQueueItem job = allJobsTargetingThis[i];
+            if (job.jobType == JOB_TYPE.REMOVE_STATUS || job.jobType == JOB_TYPE.REPAIR || job.jobType == JOB_TYPE.FEED) {
+                if (job.CancelJob(false)) {
+                    i--;
+                }
+            }
+        }
+    }
     //private bool CreateJobsOnEnterVisionWithCharacter(Character targetCharacter) {
     //    string log = $"{name} saw {targetCharacter.name}, will try to create jobs on enter vision...";
     //    if (!CanCharacterReact(targetCharacter)) {
@@ -2950,6 +2960,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                                                         CombatManager.Instance.DefaultElementalTraitProcessor;
             CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this,
                 responsibleCharacter, etp);
+            CancelRemoveStatusFeedAndRepairJobs();
         }
         if (triggerDeath && _currentHP <= 0) {
             if(source != null) {

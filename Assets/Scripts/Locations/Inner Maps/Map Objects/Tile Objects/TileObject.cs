@@ -50,6 +50,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public Dictionary<RESOURCE, int> storedResources { get; private set; }
     protected Dictionary<RESOURCE, int> maxResourceValues { get; set; }
     public List<SPELL_TYPE> actions { get; protected set; }
+    public int repairCounter { get; protected set; } //If greater than zero, this tile object cannot be repaired
 
     private bool hasSubscribedToListeners;
 
@@ -66,6 +67,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public GameObject visualGO => mapVisual.gameObject;
     //public Character isBeingCarriedBy => carriedByCharacter;
     public Faction factionOwner => characterOwner?.faction;
+    public bool canBeRepaired => repairCounter <= 0;
     #endregion
 
     protected void Initialize(TILE_OBJECT_TYPE tileObjectType, bool shouldAddCommonAdvertisements = true) {
@@ -488,6 +490,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
                                                         CombatManager.Instance.DefaultElementalTraitProcessor;
             CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, 
                 responsibleCharacter, etp);
+            CancelRemoveStatusFeedAndRepairJobs();
         }
         LocationGridTile tile = gridTileLocation;
         if (currentHP <= 0) {
@@ -548,6 +551,16 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     }
     public virtual bool CollectsLogs() {
         return true;
+    }
+    protected void CancelRemoveStatusFeedAndRepairJobs() {
+        for (int i = 0; i < allJobsTargetingThis.Count; i++) {
+            JobQueueItem job = allJobsTargetingThis[i];
+            if(job.jobType == JOB_TYPE.REMOVE_STATUS || job.jobType == JOB_TYPE.REPAIR || job.jobType == JOB_TYPE.FEED) {
+                if (job.CancelJob(false)){
+                    i--;
+                }
+            }
+        }
     }
     #endregion
 
@@ -836,6 +849,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     }
     public void SetIsPreplaced(bool state) {
         isPreplaced = state;
+    }
+    public void AdjustRepairCounter(int amount) {
+        repairCounter += amount;
     }
     #endregion
 
