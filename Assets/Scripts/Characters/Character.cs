@@ -1581,6 +1581,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return ownParty.IsPOICarried(poi);
     }
+    public bool IsPOICarriedOrInInventory(string poiName) {
+        return HasItem(poiName) || ownParty.IsPOICarried(poiName);
+    }
     public void UncarryPOI(IPointOfInterest poi, bool bringBackToInventory = false, bool addToLocation = true, LocationGridTile dropLocation = null) {
         if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             ownParty.RemovePOI(poi, addToLocation, dropLocation);
@@ -3647,6 +3650,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return false;
     }
+    public bool UnobtainItem(string name) {
+        TileObject removedItem = RemoveItem(name);
+        if (removedItem != null) {
+            removedItem.SetInventoryOwner(null);
+            return true;
+        }
+        return false;
+    }
     //public bool ConsumeToken(SpecialToken token) {
     //    token.OnConsumeToken(this);
     //    if (token.uses <= 0) {
@@ -3673,6 +3684,16 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         TileObject removedItem = null;
         for (int i = 0; i < items.Count; i++) {
             if (items[i].tileObjectType == itemType) {
+                removedItem = items[i];
+                RemoveItem(i);
+            }
+        }
+        return removedItem;
+    }
+    private TileObject RemoveItem(string name) {
+        TileObject removedItem = null;
+        for (int i = 0; i < items.Count; i++) {
+            if (items[i].name == name) {
                 removedItem = items[i];
                 RemoveItem(i);
             }
