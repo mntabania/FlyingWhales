@@ -36,7 +36,7 @@ public class MainMenuManager : MonoBehaviour {
     }
     #endregion
     private void Initialize() {
-        SaveManager.Instance.LoadSaveData();
+        SaveManager.Instance.LoadSaveDataPlayer();
         //loadGameButton.interactable = SaveManager.Instance.currentSave != null;
     }
     

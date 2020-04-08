@@ -77,7 +77,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     private int _uncorruptibleLandmarkNeighbors = 0; //if 0, can be corrupted, otherwise, cannot be corrupted
     private Dictionary<HEXTILE_DIRECTION, HexTile> _neighbourDirections;
     //private List<string> demonicLandmarksThatCanBeBuilt;
-    
+    private int _isBeingDefendedCount;
+
     //Components
     public HexTileSpellsComponent spellsComponent { get; private set; }
 
@@ -97,6 +98,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     private GameObject highlightGO => _highlightGO;
     private Dictionary<HEXTILE_DIRECTION, HexTile> neighbourDirections => _neighbourDirections;
     public bool isCorrupted => _isCorrupted;
+    public bool isBeingDefended => _isBeingDefendedCount > 0;
     public Vector3 worldPosition {
         get {
             Vector2 pos = innerMapHexTile.gridTileCollections[0].tileCollectionItem.transform.position;
@@ -1032,7 +1034,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         //PlayerAction buildAction = new PlayerAction(PlayerDB.Build_Demonic_Structure_Action, () => true, CanBuildDemonicStructure, OnClickBuild);
 
         AddPlayerAction(SPELL_TYPE.HARASS);
-        AddPlayerAction(SPELL_TYPE.RAID);
+        //AddPlayerAction(SPELL_TYPE.DEFEND);
         AddPlayerAction(SPELL_TYPE.INVADE);
         AddPlayerAction(SPELL_TYPE.BUILD_DEMONIC_STRUCTURE);
     }
@@ -1049,27 +1051,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     }
     public void ClearPlayerActions() {
         actions.Clear();
-    }
-    private bool CanDoHarass() {
-        if (settlementOnTile is NPCSettlement npcSettlement) {
-            return !npcSettlement.isBeingHarassed;    
-        }
-        return false;
-    }
-    private bool CanDoRaid() {
-        if (settlementOnTile is NPCSettlement npcSettlement) {
-            return !npcSettlement.isBeingRaided;    
-        }
-        return false;
-    }
-    private bool CanDoInvade() {
-        if (settlementOnTile is NPCSettlement npcSettlement) {
-            return !npcSettlement.isBeingInvaded;    
-        }
-        return false;
-    }
-    private bool IsHarassRaidInvadeValid(IPlayerActionTarget target) {
-        return settlementOnTile != null && settlementOnTile.owner != null && settlementOnTile.owner.isMajorNonPlayer;
     }
     #endregion
 
@@ -1275,5 +1256,14 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         }
         //locationGridTiles[0].parentMap.MassSetGroundTileMapVisuals(positionArray, groundTilesArray);
     }
-    #endregion  
+    #endregion
+
+    #region Defend
+    public void IncreaseIsBeingDefendedCount() {
+        _isBeingDefendedCount++;
+    }
+    public void DecreaseIsBeingDefendedCount() {
+        _isBeingDefendedCount--;
+    }
+    #endregion
 }

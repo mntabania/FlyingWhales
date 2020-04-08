@@ -83,6 +83,9 @@ public class Summon : Character, IWorldObject {
                 return;
             }
             UnsubscribeSignals();
+            behaviourComponent.SetIsHarassing(false, null);
+            behaviourComponent.SetIsInvading(false, null);
+            behaviourComponent.SetIsDefending(false, null);
 
             //if (currentParty.specificLocation == null) {
             //    throw new Exception("Specific location of " + this.name + " is null! Please use command /l_character_location_history [Character Name/ID] in console menu to log character's location history. (Use '~' to show console menu)");

@@ -224,6 +224,9 @@ public class SpellData : IPlayerSkill {
     public virtual void ActivateAbility(LocationGridTile targetTile) {
         OnExecuteSpellActionAffliction();
     }
+    public virtual void ActivateAbility(LocationGridTile targetTile, ref Character spawnedCharacter) {
+        OnExecuteSpellActionAffliction();
+    }
     public virtual void ActivateAbility(HexTile targetHex) {
         if(targetHex.settlementOnTile != null) {
             if(targetHex.settlementOnTile.HasResidentInsideSettlement()){
@@ -327,6 +330,18 @@ public class SpellData : IPlayerSkill {
         if(currentCooldownTick == cooldown) {
             Messenger.RemoveListener(Signals.TICK_STARTED, PerTickCooldown);
         }
+    }
+    #endregion
+
+    #region Attributes
+    public void SetCharges(int amount) {
+        charges = amount;
+    }
+    public void SetManaCost(int amount) {
+        manaCost = amount;
+    }
+    public void SetCooldown(int amount) {
+        cooldown = amount;
     }
     #endregion
 }

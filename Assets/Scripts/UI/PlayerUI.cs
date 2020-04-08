@@ -126,9 +126,9 @@ public class PlayerUI : MonoBehaviour {
     public Image threatMeter;
 
     private PlayerJobActionButton[] interventionAbilityBtns;
-    public string harassRaidInvade { get; private set; }
-    public Minion harassRaidInvadeLeaderMinion { get; private set; }
-    public NPCSettlement harassRaidInvadeTargetNpcSettlement { get; private set; }
+    public string harassDefendInvadeIdentifier { get; private set; }
+    //public Minion harassRaidInvadeLeaderMinion { get; private set; }
+    public HexTile harassDefendInvadeTargetHex { get; private set; }
 
     void Awake() {
         Instance = this;
@@ -1102,36 +1102,37 @@ public class PlayerUI : MonoBehaviour {
     #endregion
 
     #region NPCSettlement Actions
-    public void OnClickHarassRaidInvade(HexTile targetHex, string identifier) {
-        harassRaidInvadeTargetNpcSettlement = targetHex.settlementOnTile as NPCSettlement;
-        harassRaidInvade = identifier;
-        UIManager.Instance.ShowClickableObjectPicker(PlayerManager.Instance.player.minions.Where(x => x.character.gridTileLocation != null).Select(x => x.character).ToList(), HarassRaidInvade
-            , null, CanChooseMinion, "Choose Leader Minion", showCover: true);
+    public void OnClickHarassDefendInvade(HexTile targetHex, string identifier) {
+        harassDefendInvadeTargetHex = targetHex;
+        harassDefendInvadeIdentifier = identifier;
+        unleashSummonUI.ShowUnleashSummonUI();
+        //UIManager.Instance.ShowClickableObjectPicker(PlayerManager.Instance.player.minions.Where(x => x.character.gridTileLocation != null).Select(x => x.character).ToList(), HarassRaidInvade
+        //    , null, CanChooseMinion, "Choose Leader Minion", showCover: true);
     }
-    private bool CanChooseMinion(Character character) {
-        return !character.isDead && !character.behaviourComponent.isHarassing && !character.behaviourComponent.isRaiding && !character.behaviourComponent.isInvading;
-    }
-    private void HarassRaidInvade(object obj) {
-        Character character = obj as Character;
-        harassRaidInvadeLeaderMinion = character.minion;
-        UIManager.Instance.HideObjectPicker();
-        if(PlayerManager.Instance.player.summons.Count > 0) {
-            unleashSummonUI.ShowUnleashSummonUI();
-        } else {
-            //harassRaidInvadeLeaderMinion.character.behaviourComponent.SetHarassInvadeRaidTarget(harassRaidInvadeTargetNpcSettlement);
-            if (harassRaidInvade == "harass") {
-                harassRaidInvadeLeaderMinion.character.behaviourComponent.SetIsHarassing(true, harassRaidInvadeTargetNpcSettlement);
-                PlayerManager.Instance.GetPlayerActionData(SPELL_TYPE.HARASS).OnExecuteSpellActionAffliction();
-            } else if (harassRaidInvade == "raid") {
-                harassRaidInvadeLeaderMinion.character.behaviourComponent.SetIsRaiding(true, harassRaidInvadeTargetNpcSettlement);
-                PlayerManager.Instance.GetPlayerActionData(SPELL_TYPE.RAID).OnExecuteSpellActionAffliction();
-            } else if (harassRaidInvade == "invade") {
-                harassRaidInvadeLeaderMinion.character.behaviourComponent.SetIsInvading(true, harassRaidInvadeTargetNpcSettlement);
-                PlayerManager.Instance.GetPlayerActionData(SPELL_TYPE.INVADE).OnExecuteSpellActionAffliction();
-            }
-            PlayerManager.Instance.player.threatComponent.AdjustThreat(5);
+    //private bool CanChooseMinion(Character character) {
+    //    return !character.isDead && !character.behaviourComponent.isHarassing && !character.behaviourComponent.isRaiding && !character.behaviourComponent.isInvading;
+    //}
+    //private void HarassRaidInvade(object obj) {
+    //    Character character = obj as Character;
+    //    harassRaidInvadeLeaderMinion = character.minion;
+    //    UIManager.Instance.HideObjectPicker();
+    //    if(PlayerManager.Instance.player.summons.Count > 0) {
+    //        unleashSummonUI.ShowUnleashSummonUI();
+    //    } else {
+    //        //harassRaidInvadeLeaderMinion.character.behaviourComponent.SetHarassInvadeRaidTarget(harassRaidInvadeTargetNpcSettlement);
+    //        if (harassRaidInvadeIdentifier == "harass") {
+    //            harassRaidInvadeLeaderMinion.character.behaviourComponent.SetIsHarassing(true, harassRaidInvadeTargetHex);
+    //            PlayerManager.Instance.GetPlayerActionData(SPELL_TYPE.HARASS).OnExecuteSpellActionAffliction();
+    //        } else if (harassRaidInvadeIdentifier == "raid") {
+    //            harassRaidInvadeLeaderMinion.character.behaviourComponent.SetIsRaiding(true, harassRaidInvadeTargetHex);
+    //            PlayerManager.Instance.GetPlayerActionData(SPELL_TYPE.RAID).OnExecuteSpellActionAffliction();
+    //        } else if (harassRaidInvadeIdentifier == "invade") {
+    //            harassRaidInvadeLeaderMinion.character.behaviourComponent.SetIsInvading(true, harassRaidInvadeTargetHex);
+    //            PlayerManager.Instance.GetPlayerActionData(SPELL_TYPE.INVADE).OnExecuteSpellActionAffliction();
+    //        }
+    //        PlayerManager.Instance.player.threatComponent.AdjustThreat(5);
             
-        }
-    }
+    //    }
+    //}
     #endregion
 }

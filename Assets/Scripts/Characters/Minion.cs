@@ -378,15 +378,17 @@ public class Minion {
         LocationGridTile centerTile = portalStructure.location.innerMap.map[centerX, centerY];
         // Vector3 pos = centerTile.worldLocation;
 
-        character.marker.InitialPlaceMarkerAt(centerTile);
+        Summon(centerTile);
+    }
+    public void Summon(LocationGridTile tile) {
+        character.CreateMarker();
+        character.marker.visionCollider.VoteToUnFilterVision();
+
+        character.marker.InitialPlaceMarkerAt(tile);
         character.SetIsDead(false);
 
-        Vector2Int tileToGoToCoords = new Vector2Int(character.gridTileLocation.localPlace.x, character.gridTileLocation.localPlace.y - 3);
-        LocationGridTile tileToGoTo = portalStructure.location.innerMap.map[tileToGoToCoords.x, tileToGoToCoords.y];
-        character.marker.GoTo(tileToGoTo);
-        
         PlayerManager.Instance.player.AdjustMana(-EditableValuesManager.Instance.summonMinionManaCost);
-        
+
         SubscribeListeners();
         SetIsSummoned(true);
         Messenger.Broadcast(Signals.SUMMON_MINION, this);
@@ -397,7 +399,7 @@ public class Minion {
         UnSubscribeListeners();
         SetIsSummoned(false);
         character.behaviourComponent.SetIsHarassing(false, null);
-        character.behaviourComponent.SetIsRaiding(false, null);
+        character.behaviourComponent.SetIsDefending(false, null);
         character.behaviourComponent.SetIsInvading(false, null);
         character.CancelAllJobs();
         character.interruptComponent.ForceEndNonSimultaneousInterrupt();

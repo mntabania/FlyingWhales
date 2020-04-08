@@ -257,13 +257,13 @@ public class Save {
         }
     }
 
-    public void SavePlayer(Player player) {
-        playerSave = new SaveDataPlayer();
-        playerSave.Save(player);
-    }
-    public void LoadPlayer() {
-        playerSave.Load();
-    }
+    //public void SavePlayer(Player player) {
+    //    playerSave = new SaveDataPlayer();
+    //    playerSave.Save(player);
+    //}
+    //public void LoadPlayer() {
+    //    playerSave.Load();
+    //}
 
     public void SaveTileObjects(Dictionary<TILE_OBJECT_TYPE, List<TileObject>> tileObjects) {
         tileObjectSaves = new List<SaveDataTileObject>();

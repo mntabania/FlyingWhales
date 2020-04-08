@@ -18,6 +18,9 @@ namespace Archetype {
                 new RaceClass(RACE.DEMON, "Succubus"), new RaceClass(RACE.KOBOLD, "Kobold"),
                 new RaceClass(RACE.SPIDER, "GiantSpider")
             };
+            minionPlayerSkills = new List<SPELL_TYPE>() { SPELL_TYPE.DEMON_WRATH, SPELL_TYPE.DEMON_PRIDE, SPELL_TYPE.DEMON_LUST, SPELL_TYPE.DEMON_GLUTTONY, SPELL_TYPE.DEMON_SLOTH, SPELL_TYPE.DEMON_ENVY, SPELL_TYPE.DEMON_GREED, };
+            summonPlayerSkills = new List<SPELL_TYPE>() { SPELL_TYPE.SKELETON_MARAUDER, };
+
             //playerActions = new List<string>();
             SetCanTriggerFlaw(true);
             SetCanRemoveTraits(true);

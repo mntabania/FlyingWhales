@@ -17,7 +17,7 @@ public class EndRaidData : PlayerAction {
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         if(targetPOI is Character character) {
-            character.behaviourComponent.SetIsRaiding(false, null);
+            character.behaviourComponent.SetIsDefending(false, null);
         }
         base.ActivateAbility(targetPOI);
     }

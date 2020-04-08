@@ -82,6 +82,10 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
             character.UncarryPOI();
             character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.KNOCKOUT);
+
+            _owner.behaviourComponent.SetIsHarassing(false, null);
+            _owner.behaviourComponent.SetIsInvading(false, null);
+            _owner.behaviourComponent.SetIsDefending(false, null);
             // TryTriggerRestrain();
         }
 	}

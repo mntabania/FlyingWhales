@@ -7,10 +7,11 @@ public class BehaviourComponent {
 
 	public Character owner { get; private set; }
     public List<CharacterBehaviourComponent> currentBehaviourComponents { get; private set; }
-    public NPCSettlement harassInvadeRaidTarget { get; private set; }
+    public NPCSettlement assignedTargetSettlement { get; private set; }
+    public HexTile assignedTargetHex { get; private set; }
     public DemonicStructure attackDemonicStructureTarget { get; private set; }
     public bool isHarassing { get; private set; }
-    public bool isRaiding { get; private set; }
+    public bool isDefending { get; private set; }
     public bool isInvading { get; private set; }
     public bool isAttackingDemonicStructure { get; private set; }
 
@@ -101,73 +102,88 @@ public class BehaviourComponent {
         currentBehaviourComponents.Add(component);
         return true;
     }
-    public void SetIsHarassing(bool state, NPCSettlement target) {
+    public void SetIsHarassing(bool state, HexTile target) {
         if(isHarassing != state) {
             isHarassing = state;
-            NPCSettlement previousTarget = harassInvadeRaidTarget;
-            harassInvadeRaidTarget = target;
+            NPCSettlement previousTarget = assignedTargetSettlement;
+            assignedTargetHex = target;
+            if (assignedTargetHex != null) {
+                assignedTargetSettlement = assignedTargetHex.settlementOnTile as NPCSettlement;
+            } else {
+                assignedTargetSettlement = null;
+            }
             owner.CancelAllJobs();
             if (isHarassing) {
-                harassInvadeRaidTarget.IncreaseIsBeingHarassedCount();
+                assignedTargetSettlement.IncreaseIsBeingHarassedCount();
                 combatModeBeforeHarassRaidInvade = owner.combatComponent.combatMode;
                 owner.combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
                 AddBehaviourComponent(typeof(HarassBehaviour));
                 //TODO: Optimize this to not always create new instance if playeraction, or if it can't be helped, do object pool
                 //owner.AddPlayerAction(new PlayerAction(PlayerDB.End_Harass_Action, () => true, null, () => SetIsHarassing(false, null)));
-                owner.AddPlayerAction(SPELL_TYPE.END_HARASS);
+                //owner.AddPlayerAction(SPELL_TYPE.END_HARASS);
             } else {
                 previousTarget.DecreaseIsBeingHarassedCount();
                 owner.combatComponent.SetCombatMode(combatModeBeforeHarassRaidInvade);
                 RemoveBehaviourComponent(typeof(HarassBehaviour));
                 //owner.RemovePlayerAction(PlayerDB.End_Harass_Action);
-                owner.RemovePlayerAction(SPELL_TYPE.END_HARASS);
+                //owner.RemovePlayerAction(SPELL_TYPE.END_HARASS);
             }
         }
     }
-    public void SetIsRaiding(bool state, NPCSettlement target) {
-        if (isRaiding != state) {
-            isRaiding = state;
-            NPCSettlement previousTarget = harassInvadeRaidTarget;
-            harassInvadeRaidTarget = target;
+    public void SetIsDefending(bool state, HexTile target) {
+        if (isDefending != state) {
+            isDefending = state;
+            HexTile previousTarget = assignedTargetHex;
+            assignedTargetHex = target;
+            //if (assignedTargetHex != null) {
+            //    assignedTargetSettlement = assignedTargetHex.settlementOnTile as NPCSettlement;
+            //} else {
+            //    assignedTargetSettlement = null;
+            //}
             owner.CancelAllJobs();
-            if (isRaiding) {
-                harassInvadeRaidTarget.IncreaseIsBeingRaidedCount();
+            if (isDefending) {
+                assignedTargetHex.IncreaseIsBeingDefendedCount();
                 combatModeBeforeHarassRaidInvade = owner.combatComponent.combatMode;
-                owner.combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
-                AddBehaviourComponent(typeof(RaidBehaviour));
+                owner.combatComponent.SetCombatMode(COMBAT_MODE.Defend);
+                AddBehaviourComponent(typeof(DefendBehaviour));
                 //TODO: Optimize this to not always create new instance if playeraction, or if it can't be helped, do object pool
                 //owner.AddPlayerAction(new PlayerAction(PlayerDB.End_Raid_Action, () => true, null, () => SetIsRaiding(false, null)));
-                owner.AddPlayerAction(SPELL_TYPE.END_RAID);
+                //owner.AddPlayerAction(SPELL_TYPE.END_RAID);
             } else {
-                previousTarget.DecreaseIsBeingRaidedCount();
+                previousTarget.DecreaseIsBeingDefendedCount();
                 owner.combatComponent.SetCombatMode(combatModeBeforeHarassRaidInvade);
-                RemoveBehaviourComponent(typeof(RaidBehaviour));
+                RemoveBehaviourComponent(typeof(DefendBehaviour));
                 //owner.RemovePlayerAction(PlayerDB.End_Raid_Action);
-                owner.RemovePlayerAction(SPELL_TYPE.END_RAID);
+                //owner.RemovePlayerAction(SPELL_TYPE.END_RAID);
             }
         }
     }
-    public void SetIsInvading(bool state, NPCSettlement target) {
+    public void SetIsInvading(bool state, HexTile target) {
         if (isInvading != state) {
             isInvading = state;
-            NPCSettlement previousTarget = harassInvadeRaidTarget;
-            harassInvadeRaidTarget = target;
+            NPCSettlement previousTarget = assignedTargetSettlement;
+            assignedTargetHex = target;
+            if (assignedTargetHex != null) {
+                assignedTargetSettlement = assignedTargetHex.settlementOnTile as NPCSettlement;
+            } else {
+                assignedTargetSettlement = null;
+            }
             owner.CancelAllJobs();
             if (isInvading) {
-                harassInvadeRaidTarget.IncreaseIsBeingInvadedCount();
+                assignedTargetSettlement.IncreaseIsBeingInvadedCount();
                 combatModeBeforeHarassRaidInvade = owner.combatComponent.combatMode;
                 owner.combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
                 AddBehaviourComponent(typeof(InvadeBehaviour));
                 //TODO: Optimize this to not always create new instance if playeraction, or if it can't be helped, do object pool
                 //owner.AddPlayerAction(new PlayerAction(PlayerDB.End_Invade_Action, () => true, null, () => SetIsInvading(false, null)));
-                owner.AddPlayerAction(SPELL_TYPE.END_INVADE);
+                //owner.AddPlayerAction(SPELL_TYPE.END_INVADE);
                 Messenger.AddListener<NPCSettlement>(Signals.NO_ABLE_CHARACTER_INSIDE_SETTLEMENT, OnNoLongerAbleResidentsInsideSettlement);
             } else {
                 previousTarget.DecreaseIsBeingInvadedCount();
                 owner.combatComponent.SetCombatMode(combatModeBeforeHarassRaidInvade);
                 RemoveBehaviourComponent(typeof(InvadeBehaviour));
                 //owner.RemovePlayerAction(PlayerDB.End_Invade_Action);
-                owner.RemovePlayerAction(SPELL_TYPE.END_INVADE);
+                //owner.RemovePlayerAction(SPELL_TYPE.END_INVADE);
                 Messenger.RemoveListener<NPCSettlement>(Signals.NO_ABLE_CHARACTER_INSIDE_SETTLEMENT, OnNoLongerAbleResidentsInsideSettlement);
             }
         }
@@ -188,7 +204,7 @@ public class BehaviourComponent {
         }
     }
     private void OnNoLongerAbleResidentsInsideSettlement(NPCSettlement npcSettlement) {
-        if(harassInvadeRaidTarget == npcSettlement) {
+        if(assignedTargetSettlement == npcSettlement) {
             SetIsInvading(false, null);
         }
     }
