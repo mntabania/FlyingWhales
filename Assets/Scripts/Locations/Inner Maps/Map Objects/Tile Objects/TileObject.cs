@@ -490,7 +490,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
                                                         CombatManager.Instance.DefaultElementalTraitProcessor;
             CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, 
                 responsibleCharacter, etp);
-            CancelRemoveStatusFeedAndRepairJobs();
+            //CancelRemoveStatusFeedAndRepairJobsTargetingThis();
         }
         LocationGridTile tile = gridTileLocation;
         if (currentHP <= 0) {
@@ -552,7 +552,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public virtual bool CollectsLogs() {
         return true;
     }
-    protected void CancelRemoveStatusFeedAndRepairJobs() {
+    public void CancelRemoveStatusFeedAndRepairJobsTargetingThis() {
         for (int i = 0; i < allJobsTargetingThis.Count; i++) {
             JobQueueItem job = allJobsTargetingThis[i];
             if(job.jobType == JOB_TYPE.REMOVE_STATUS || job.jobType == JOB_TYPE.REPAIR || job.jobType == JOB_TYPE.FEED) {

@@ -153,6 +153,7 @@ public class CombatComponent {
             } else if (target is TileObject targetTileObject) {
                 targetTileObject.AdjustRepairCounter(1);
             }
+            target.CancelRemoveStatusFeedAndRepairJobsTargetingThis();
             debugLog += $"\n{target.name} was added to {owner.name}'s hostile range!";
             hasFought = true;
             owner.logComponent.PrintLogIfActive(debugLog);

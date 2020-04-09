@@ -81,7 +81,7 @@ public class GenericTileObject : TileObject {
                                                         CombatManager.Instance.DefaultElementalTraitProcessor;
             CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, 
                 responsibleCharacter, etp);
-            CancelRemoveStatusFeedAndRepairJobs();
+            //CancelRemoveStatusFeedAndRepairJobsTargetingThis();
         }
         if (currentHP <= 0) {
             //floor has been destroyed

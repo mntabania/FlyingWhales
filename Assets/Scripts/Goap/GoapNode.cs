@@ -443,6 +443,9 @@ public class ActualGoapNode {
         } else if (poiTarget is TileObject targetTileObject) {
             targetTileObject.AdjustRepairCounter(1);
         }
+        if(associatedJobType != JOB_TYPE.REMOVE_STATUS && associatedJobType != JOB_TYPE.REPAIR && associatedJobType != JOB_TYPE.FEED) {
+            poiTarget.CancelRemoveStatusFeedAndRepairJobsTargetingThis();
+        }
         if (action.actionCategory != ACTION_CATEGORY.INDIRECT && poiTarget is BaseMapObject baseMapObject) {
             baseMapObject.OnManipulatedBy(actor);
         }
