@@ -197,9 +197,11 @@ public class BehaviourComponent {
                 combatModeBeforeAttackingDemonicStructure = owner.combatComponent.combatMode;
                 owner.combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
                 AddBehaviourComponent(typeof(AttackDemonicStructureBehaviour));
+                owner.traitContainer.AddTrait(owner, "Fervor");
             } else {
                 owner.combatComponent.SetCombatMode(combatModeBeforeAttackingDemonicStructure);
                 RemoveBehaviourComponent(typeof(AttackDemonicStructureBehaviour));
+                owner.traitContainer.RemoveTrait(owner, "Fervor");
             }
         }
     }

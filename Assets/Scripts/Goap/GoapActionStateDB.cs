@@ -433,6 +433,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.DOUSE_FIRE, new[]{
             new StateNameAndDuration(){ name = "Douse Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
+        {INTERACTION_TYPE.ATTACK_DEMONIC_STRUCTURE, new[]{
+            new StateNameAndDuration(){ name = "Attack Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
     };
 }
 

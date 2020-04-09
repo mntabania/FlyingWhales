@@ -37,18 +37,18 @@ public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
                     } else {
                         log += "\n-No preplaced tile object in vision";
                         log += "\n-Roam";
-                        character.jobComponent.TriggerRoamAroundTile();
+                        character.jobComponent.TriggerAttackDemonicStructure();
                     }
                 } else {
                     log += "\n-No tile object in vision";
                     log += "\n-Roam";
-                    character.jobComponent.TriggerRoamAroundTile();
+                    character.jobComponent.TriggerAttackDemonicStructure();
                 }
             } else {
                 log += "\n-Is not in the target demonic structure";
                 log += "\n-Roam there";
                 LocationGridTile targetTile = character.behaviourComponent.attackDemonicStructureTarget.tiles[UnityEngine.Random.Range(0, character.behaviourComponent.attackDemonicStructureTarget.tiles.Count)];
-                character.jobComponent.TriggerRoamAroundTile(targetTile);
+                character.jobComponent.TriggerAttackDemonicStructure(targetTile);
             }
         }
         return true;

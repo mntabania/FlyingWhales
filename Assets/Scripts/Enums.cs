@@ -963,7 +963,8 @@ public enum INTERACTION_TYPE {
     REPORT_CORRUPTED_STRUCTURE,
     FISH,
     REMOVE_UNCONSCIOUS,
-    DOUSE_FIRE
+    DOUSE_FIRE,
+    ATTACK_DEMONIC_STRUCTURE,
 }
 
 public enum INTERACTION_CATEGORY {
@@ -1513,7 +1514,7 @@ public enum WALL_TYPE { Stone, Flesh, Demon_Stone }
 public enum PARTICLE_EFFECT { None, Poison, Freezing, Fire, Burning, Explode, Electric, Frozen, Poison_Explosion, 
     Frozen_Explosion, Smoke_Effect, Lightning_Strike, Meteor_Strike, Water_Bomb, Poison_Bomb, Blizzard, Destroy_Explosion, Minion_Dissipate, Brimstones,
     Rain, Landmine, Burnt, Terrifying_Howl, Freezing_Trap, Snare_Trap, Wind_Blast, Iceteroids, Heat_Wave, Gorgon_Eye, Landmine_Explosion, Freezing_Trap_Explosion,
-    Snare_Trap_Explosion,
+    Snare_Trap_Explosion, Fervor,
 }
 public enum PLAYER_SKILL_STATE { Locked, Unlocked, Learned, }
 
@@ -1921,6 +1922,7 @@ public static class Extensions {
     public static int GetJobTypePriority(this JOB_TYPE jobType) {
         int priority = 0;
         switch (jobType) {
+            case JOB_TYPE.ASSAULT_DEMONIC_STRUCTURE:
             case JOB_TYPE.FLEE_TO_HOME:
                 priority = 1200;
                 break;
@@ -1955,9 +1957,6 @@ public static class Extensions {
                 break;
             case JOB_TYPE.DESTROY:
                 priority = 940;
-                break;
-            case JOB_TYPE.ASSAULT_DEMONIC_STRUCTURE:
-                priority = 935;
                 break;
             case JOB_TYPE.KILL:
             case JOB_TYPE.REMOVE_STATUS:

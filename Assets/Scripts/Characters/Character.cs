@@ -3332,8 +3332,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //If at the start of the tick, the character is not currently doing any action, and is not waiting for any new plans, it means that the character will no longer perform any actions
         //so start doing actions again
         //SetHasAlreadyAskedForPlan(false);
-        needsComponent.PlanScheduledFullnessRecovery(this);
-        needsComponent.PlanScheduledTirednessRecovery(this);
+        if (needsComponent.HasNeeds()) {
+            needsComponent.PlanScheduledFullnessRecovery(this);
+            needsComponent.PlanScheduledTirednessRecovery(this);
+        }
         if (CanPlanGoap()) {
             PerStartTickActionPlanning();
         }

@@ -611,6 +611,27 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         }
         return false;
     }
+    public bool TriggerAttackDemonicStructure(LocationGridTile tile = null) {
+        if (!_owner.jobQueue.HasJob(JOB_TYPE.ASSAULT_DEMONIC_STRUCTURE)) {
+            LocationGridTile chosenTile = tile;
+            if (chosenTile == null) {
+                if (_owner.gridTileLocation.collectionOwner.isPartOfParentRegionMap == false) {
+                    return false;
+                }
+                HexTile chosenTerritory = _owner.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
+                chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
+            }
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ATTACK_DEMONIC_STRUCTURE], _owner, _owner, new object[] { chosenTile }, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ASSAULT_DEMONIC_STRUCTURE, INTERACTION_TYPE.ATTACK_DEMONIC_STRUCTURE, _owner, _owner);
+            goapPlan.SetDoNotRecalculate(true);
+            job.SetCannotBePushedBack(true);
+            job.SetAssignedPlan(goapPlan);
+            _owner.jobQueue.AddJobInQueue(job);
+            return true;
+        }
+        return false;
+    }
     public bool TriggerMoveToHex(HexTile hex) {
         if (!_owner.jobQueue.HasJob(JOB_TYPE.ROAM_AROUND_TILE)) {
 	        LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(hex.locationGridTiles);
