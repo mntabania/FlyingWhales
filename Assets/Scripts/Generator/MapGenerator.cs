@@ -156,7 +156,7 @@ public class MapGenerator : MonoBehaviour {
         data.LoadCharacterHomeStructures();
         data.LoadCurrentDate(); //Moved this because some jobs use current date
         data.LoadCharacterInitialPlacements();
-        data.LoadPlayer();
+        //data.LoadPlayer();
 
         data.LoadAllJobs();
         data.LoadTileObjectsDataAfterLoadingAreaMap();

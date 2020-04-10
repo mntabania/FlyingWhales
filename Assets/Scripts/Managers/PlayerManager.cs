@@ -19,6 +19,9 @@ public class PlayerManager : MonoBehaviour {
     public Dictionary<SPELL_TYPE, PlayerAction> allPlayerActionsData;
     public Dictionary<SPELL_TYPE, SpellData> allAfflictionsData;
     public Dictionary<SPELL_TYPE, DemonicStructurePlayerSkill> allDemonicStructureSkillsData;
+    public Dictionary<SPELL_TYPE, MinionPlayerSkill> allMinionPlayerSkillsData;
+    public Dictionary<SPELL_TYPE, SummonPlayerSkill> allSummonPlayerSkillsData;
+    public Dictionary<SPELL_TYPE, SpellData> allPlayerSkillsData;
     public COMBAT_ABILITY[] allCombatAbilities;
 
     [Header("Job Action Icons")]
@@ -45,9 +48,9 @@ public class PlayerManager : MonoBehaviour {
 
     private SPELL_TYPE[] allPlayerActions = { SPELL_TYPE.ZAP, SPELL_TYPE.RAISE_DEAD, SPELL_TYPE.DESTROY, SPELL_TYPE.IGNITE, SPELL_TYPE.POISON
             , SPELL_TYPE.TORTURE, SPELL_TYPE.SUMMON_MINION, SPELL_TYPE.STOP, SPELL_TYPE.SEIZE_OBJECT, SPELL_TYPE.SEIZE_CHARACTER, SPELL_TYPE.SEIZE_MONSTER
-            , SPELL_TYPE.RETURN_TO_PORTAL, SPELL_TYPE.RAID, SPELL_TYPE.HARASS, SPELL_TYPE.INVADE, SPELL_TYPE.LEARN_SPELL, SPELL_TYPE.CHANGE_COMBAT_MODE
+            /*, SPELL_TYPE.RETURN_TO_PORTAL*/, SPELL_TYPE.DEFEND, SPELL_TYPE.HARASS, SPELL_TYPE.INVADE, SPELL_TYPE.LEARN_SPELL/*, SPELL_TYPE.CHANGE_COMBAT_MODE*/
             , SPELL_TYPE.BUILD_DEMONIC_STRUCTURE, SPELL_TYPE.AFFLICT, SPELL_TYPE.ACTIVATE_TILE_OBJECT, SPELL_TYPE.BREED_MONSTER
-            , SPELL_TYPE.END_RAID, SPELL_TYPE.END_HARASS, SPELL_TYPE.END_INVADE, SPELL_TYPE.INTERFERE, SPELL_TYPE.PLANT_GERM
+            /*, SPELL_TYPE.END_RAID, SPELL_TYPE.END_HARASS, SPELL_TYPE.END_INVADE*/, SPELL_TYPE.INTERFERE, SPELL_TYPE.PLANT_GERM
     };
 
     private SPELL_TYPE[] allAfflictions = { SPELL_TYPE.CANNIBALISM
@@ -56,10 +59,15 @@ public class PlayerManager : MonoBehaviour {
             , SPELL_TYPE.AGORAPHOBIA, SPELL_TYPE.PARALYSIS, SPELL_TYPE.ZOMBIE_VIRUS
             , SPELL_TYPE.PESTILENCE, SPELL_TYPE.PSYCHOPATHY, SPELL_TYPE.COWARDICE, SPELL_TYPE.PYROPHOBIA, SPELL_TYPE.NARCOLEPSY
     };
-
     private SPELL_TYPE[] allDemonicStructureSkills = { SPELL_TYPE.THE_GOADER, SPELL_TYPE.THE_EYE, SPELL_TYPE.THE_CRYPT,
         SPELL_TYPE.THE_KENNEL, SPELL_TYPE.THE_SPIRE, SPELL_TYPE.TORTURE_CHAMBER, SPELL_TYPE.DEMONIC_PRISON,
     };
+
+    private SPELL_TYPE[] allMinionPlayerSkills = { SPELL_TYPE.DEMON_WRATH, SPELL_TYPE.DEMON_PRIDE, SPELL_TYPE.DEMON_LUST
+        , SPELL_TYPE.DEMON_GLUTTONY, SPELL_TYPE.DEMON_SLOTH, SPELL_TYPE.DEMON_ENVY, SPELL_TYPE.DEMON_GREED,
+    };
+
+    private SPELL_TYPE[] allSummonPlayerSkills = { SPELL_TYPE.SKELETON_MARAUDER, };
 
     private bool _hasWinCheckTimer;
 
@@ -68,10 +76,13 @@ public class PlayerManager : MonoBehaviour {
     }
     public void Initialize() {
         // SPELL_TYPE[] allSpellTypes = UtilityScripts.CollectionUtilities.GetEnumValues<SPELL_TYPE>();
+        allPlayerSkillsData = new Dictionary<SPELL_TYPE, SpellData>();
         ConstructAllSpellsData();
         ConstructAllPlayerActionsData();
         ConstructAllAfflictionsData();
         ConstructAllDemonicStructureSkillsData();
+        ConstructAllMinionPlayerSkillsData();
+        ConstructAllSummonPlayerSkillsData();
         //Unit Selection
         Messenger.AddListener<InfoUIBase>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<InfoUIBase>(Signals.MENU_CLOSED, OnMenuClosed);
@@ -105,36 +116,37 @@ public class PlayerManager : MonoBehaviour {
         //player.AddArtifact(CreateNewArtifact(ARTIFACT_TYPE.Lightning_Rod));
         
         PlayerUI.Instance.UpdateUI();
+        player.LoadPlayerData(SaveManager.Instance.currentSaveDataPlayer);
     }
-    public void InitializePlayer(SaveDataPlayer data) {
-        player = new Player(data);
-        player.CreatePlayerFaction(data);
-        // NPCSettlement existingPlayerNpcSettlement = LandmarkManager.Instance.GetAreaByID(data.playerAreaID);
-        // player.SetPlayerArea(existingPlayerNpcSettlement);
-        //PlayerUI.Instance.UpdateUI();
-        //PlayerUI.Instance.InitializeThreatMeter();
-        //PlayerUI.Instance.UpdateThreatMeter();
+    //public void InitializePlayer(SaveDataPlayer data) {
+    //    player = new Player(data);
+    //    player.CreatePlayerFaction(data);
+    //    // NPCSettlement existingPlayerNpcSettlement = LandmarkManager.Instance.GetAreaByID(data.playerAreaID);
+    //    // player.SetPlayerArea(existingPlayerNpcSettlement);
+    //    //PlayerUI.Instance.UpdateUI();
+    //    //PlayerUI.Instance.InitializeThreatMeter();
+    //    //PlayerUI.Instance.UpdateThreatMeter();
 
-        for (int i = 0; i < data.minions.Count; i++) {
-            data.minions[i].Load(player);
-        }
-        //for (int i = 0; i < data.summonSlots.Count; i++) {
-        //    Summon summon = CharacterManager.Instance.GetCharacterByID(data.summonIDs[i]) as Summon;
-        //    player.GainSummon(summon);
-        //}
-        //for (int i = 0; i < data.artifacts.Count; i++) {
-        //    data.artifacts[i].Load(player);
-        //}
-        //for (int i = 0; i < data.interventionAbilities.Count; i++) {
-        //    data.interventionAbilities[i].Load(player);
-        //}
-        for (int i = 0; i < player.minions.Count; i++) {
-            if(player.minions[i].character.id == data.currentMinionLeaderID) {
-                player.SetMinionLeader(player.minions[i]);
-            }
-        }
-        //player.SetPlayerTargetFaction(LandmarkManager.Instance.enemyOfPlayerArea.owner);
-    }
+    //    for (int i = 0; i < data.minions.Count; i++) {
+    //        data.minions[i].Load(player);
+    //    }
+    //    //for (int i = 0; i < data.summonSlots.Count; i++) {
+    //    //    Summon summon = CharacterManager.Instance.GetCharacterByID(data.summonIDs[i]) as Summon;
+    //    //    player.GainSummon(summon);
+    //    //}
+    //    //for (int i = 0; i < data.artifacts.Count; i++) {
+    //    //    data.artifacts[i].Load(player);
+    //    //}
+    //    //for (int i = 0; i < data.interventionAbilities.Count; i++) {
+    //    //    data.interventionAbilities[i].Load(player);
+    //    //}
+    //    for (int i = 0; i < player.minions.Count; i++) {
+    //        if(player.minions[i].character.id == data.currentMinionLeaderID) {
+    //            player.SetMinionLeader(player.minions[i]);
+    //        }
+    //    }
+    //    //player.SetPlayerTargetFaction(LandmarkManager.Instance.enemyOfPlayerArea.owner);
+    //}
     public int GetManaCostForSpell(int tier) {
         if (tier == 1) {
             return 150;
@@ -153,8 +165,10 @@ public class PlayerManager : MonoBehaviour {
             if (spellType != SPELL_TYPE.NONE) {
                 var typeName =
                     $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(spellType.ToString())}Data";
-                allSpellsData.Add(spellType, System.Activator.CreateInstance(System.Type.GetType(typeName) ??
-                   throw new Exception($"Problem with creating spell data for {typeName}")) as SpellData);
+                SpellData spellData = System.Activator.CreateInstance(System.Type.GetType(typeName) ??
+                   throw new Exception($"Problem with creating spell data for {typeName}")) as SpellData;
+                allSpellsData.Add(spellType, spellData);
+                allPlayerSkillsData.Add(spellType, spellData);
             }
         }
     }
@@ -165,8 +179,11 @@ public class PlayerManager : MonoBehaviour {
             if (spellType != SPELL_TYPE.NONE) {
                 var typeName =
                     $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(spellType.ToString())}Data";
-                allPlayerActionsData.Add(spellType, System.Activator.CreateInstance(System.Type.GetType(typeName) ??
-                   throw new Exception($"Problem with creating spell data for {typeName}")) as PlayerAction);
+
+                PlayerAction playerAction = System.Activator.CreateInstance(System.Type.GetType(typeName) ??
+                   throw new Exception($"Problem with creating spell data for {typeName}")) as PlayerAction;
+                allPlayerActionsData.Add(spellType, playerAction);
+                allPlayerSkillsData.Add(spellType, playerAction);
             }
         }
     }
@@ -177,8 +194,10 @@ public class PlayerManager : MonoBehaviour {
             if (spellType != SPELL_TYPE.NONE) {
                 var typeName =
                     $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(spellType.ToString())}Data";
-                allDemonicStructureSkillsData.Add(spellType, System.Activator.CreateInstance(System.Type.GetType(typeName) ??
-                   throw new Exception($"Problem with creating spell data for {typeName}")) as DemonicStructurePlayerSkill);
+                DemonicStructurePlayerSkill demonicStructureSkill = System.Activator.CreateInstance(System.Type.GetType(typeName) ??
+                   throw new Exception($"Problem with creating spell data for {typeName}")) as DemonicStructurePlayerSkill;
+                allDemonicStructureSkillsData.Add(spellType, demonicStructureSkill);
+                allPlayerSkillsData.Add(spellType, demonicStructureSkill);
             }
         }
     }
@@ -189,8 +208,38 @@ public class PlayerManager : MonoBehaviour {
             if (spellType != SPELL_TYPE.NONE) {
                 var typeName =
                     $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(spellType.ToString())}Data";
-                allAfflictionsData.Add(spellType, System.Activator.CreateInstance(System.Type.GetType(typeName) ??
-                   throw new Exception($"Problem with creating spell data for {typeName}")) as SpellData);
+                SpellData affliction = System.Activator.CreateInstance(System.Type.GetType(typeName) ??
+                   throw new Exception($"Problem with creating spell data for {typeName}")) as SpellData;
+                allAfflictionsData.Add(spellType, affliction);
+                allPlayerSkillsData.Add(spellType, affliction);
+            }
+        }
+    }
+    private void ConstructAllMinionPlayerSkillsData() {
+        allMinionPlayerSkillsData = new Dictionary<SPELL_TYPE, MinionPlayerSkill>();
+        for (int i = 0; i < allMinionPlayerSkills.Length; i++) {
+            SPELL_TYPE spellType = allMinionPlayerSkills[i];
+            if (spellType != SPELL_TYPE.NONE) {
+                var typeName =
+                    $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(spellType.ToString())}Data";
+                MinionPlayerSkill minionPlayerSkill = System.Activator.CreateInstance(System.Type.GetType(typeName) ??
+                   throw new Exception($"Problem with creating spell data for {typeName}")) as MinionPlayerSkill;
+                allMinionPlayerSkillsData.Add(spellType, minionPlayerSkill);
+                allPlayerSkillsData.Add(spellType, minionPlayerSkill);
+            }
+        }
+    }
+    private void ConstructAllSummonPlayerSkillsData() {
+        allSummonPlayerSkillsData = new Dictionary<SPELL_TYPE, SummonPlayerSkill>();
+        for (int i = 0; i < allSummonPlayerSkills.Length; i++) {
+            SPELL_TYPE spellType = allSummonPlayerSkills[i];
+            if (spellType != SPELL_TYPE.NONE) {
+                var typeName =
+                    $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(spellType.ToString())}Data";
+                SummonPlayerSkill summonPlayerSkill = System.Activator.CreateInstance(System.Type.GetType(typeName) ??
+                   throw new Exception($"Problem with creating spell data for {typeName}")) as SummonPlayerSkill;
+                allSummonPlayerSkillsData.Add(spellType, summonPlayerSkill);
+                allPlayerSkillsData.Add(spellType, summonPlayerSkill);
             }
         }
     }
@@ -285,6 +334,12 @@ public class PlayerManager : MonoBehaviour {
     public bool IsPlayerAction(SPELL_TYPE type) {
         return allPlayerActions.Contains(type);
     }
+    public SpellData GetPlayerSkillData(SPELL_TYPE type) {
+        if (allPlayerSkillsData.ContainsKey(type)) {
+            return allPlayerSkillsData[type];
+        }
+        return null;
+    }
     public SpellData GetSpellData(SPELL_TYPE type) {
         if (allSpellsData.ContainsKey(type)) {
             return allSpellsData[type];
@@ -306,6 +361,18 @@ public class PlayerManager : MonoBehaviour {
     public DemonicStructurePlayerSkill GetDemonicStructureSkillData(SPELL_TYPE type) {
         if (allDemonicStructureSkillsData.ContainsKey(type)) {
             return allDemonicStructureSkillsData[type];
+        }
+        return null;
+    }
+    public MinionPlayerSkill GetMinionPlayerSkillData(SPELL_TYPE type) {
+        if (allMinionPlayerSkillsData.ContainsKey(type)) {
+            return allMinionPlayerSkillsData[type];
+        }
+        return null;
+    }
+    public SummonPlayerSkill GetSummonPlayerSkillData(SPELL_TYPE type) {
+        if (allSummonPlayerSkillsData.ContainsKey(type)) {
+            return allSummonPlayerSkillsData[type];
         }
         return null;
     }

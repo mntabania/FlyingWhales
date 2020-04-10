@@ -5,6 +5,16 @@ using Traits;
 
 public static class TileObjectDB {
 
+    public static TileObjectData Default = new TileObjectData() {
+        constructionCost = 10,
+        constructionTime = 12,
+        maxHP = 200,
+        neededTraitTypes = new string[] { "Builder" },
+        providedFacilities = null,
+        occupiedSize = new Point(1, 1),
+        itemRequirementsForCreation = null,
+    };
+
     //tile objects
     public static Dictionary<TILE_OBJECT_TYPE, TileObjectData> tileObjectData = new Dictionary<TILE_OBJECT_TYPE, TileObjectData>() {
         { TILE_OBJECT_TYPE.WOOD_PILE, new TileObjectData() {
@@ -71,21 +81,21 @@ public static class TileObjectDB {
             constructionTime = 12,
             maxHP = 1000,
             neededTraitTypes = null,
-            itemRequirementsForCreation = new[] { TILE_OBJECT_TYPE.WATER_FLASK, TILE_OBJECT_TYPE.HERB_PLANT },
+            itemRequirementsForCreation = new[] { "Water Flask", "Herb Plant" },
         } },
         { TILE_OBJECT_TYPE.POISON_FLASK, new TileObjectData() {
             constructionCost = 10,
             constructionTime = 12,
             maxHP = 1000,
             neededTraitTypes = null,
-            itemRequirementsForCreation = new[] { TILE_OBJECT_TYPE.WATER_FLASK, TILE_OBJECT_TYPE.HERB_PLANT },
+            itemRequirementsForCreation = new[] { "Water Flask", "Herb Plant" },
         } },
          { TILE_OBJECT_TYPE.ANTIDOTE, new TileObjectData() {
             constructionCost = 10,
             constructionTime = 12,
             maxHP = 1000,
             neededTraitTypes = null,
-            itemRequirementsForCreation = new[] { TILE_OBJECT_TYPE.POISON_FLASK },
+            itemRequirementsForCreation = new[] { "Poison Flask" },
         } },
         { TILE_OBJECT_TYPE.LOCUST_SWARM, new TileObjectData() {
             maxHP = 100,
@@ -131,24 +141,24 @@ public static class TileObjectDB {
             return tileObjectData[objType];
         }
         //Debug.LogWarning("No tile data for type " + objType.ToString() + " used default tileobject data");
-        return TileObjectData.Default;
+        return Default;
     }
     public static bool TryGetTileObjectData(TILE_OBJECT_TYPE objType, out TileObjectData data) {
         if (tileObjectData.ContainsKey(objType)) {
             data = tileObjectData[objType];
             return true;
         }
-        data = new TileObjectData();
+        data = Default;
         return false;
     }
 }
 
-public struct TileObjectData {
+public class TileObjectData {
     public int constructionCost;
     public int constructionTime; //in ticks
     public int maxHP;
     public string[] neededTraitTypes;
-    public TILE_OBJECT_TYPE[] itemRequirementsForCreation;
+    public string[] itemRequirementsForCreation;
     public ProvidedFacility[] providedFacilities;
     //when this object is placed, how many tiles does it occupy? (Default is 0,0) meaning this object only occupies 1 tile.
     public Point occupiedSize; 
@@ -162,20 +172,6 @@ public struct TileObjectData {
             }
         }
         return false;
-    }
-
-    public static TileObjectData Default {
-        get {
-            return new TileObjectData() {
-                constructionCost = 10,
-                constructionTime = 12,
-                maxHP = 200,
-                neededTraitTypes = new string[] { "Builder" },
-                providedFacilities = null,
-                occupiedSize = new Point(1, 1),
-                itemRequirementsForCreation = null,
-            };
-        }
     }
 }
 public struct ProvidedFacility {

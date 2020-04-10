@@ -12,6 +12,8 @@ namespace Archetype {
         public List<SPELL_TYPE> afflictions { get; protected set; }
         public List<SPELL_TYPE> playerActions { get; protected set; }
         public List<SPELL_TYPE> demonicStructuresSkills { get; protected set; }
+        public List<SPELL_TYPE> minionPlayerSkills { get; protected set; }
+        public List<SPELL_TYPE> summonPlayerSkills { get; protected set; }
         public List<RaceClass> monsters { get; protected set; }
         public bool canTriggerFlaw { get; protected set; }
         public bool canRemoveTraits { get; protected set; }

@@ -2,17 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SkillTree : MonoBehaviour
-{
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+[CreateAssetMenu(fileName = "New Player Skill Tree", menuName = "Scriptable Objects/Player Skill Tree")]
+public class PlayerSkillTree : ScriptableObject {
+    public PlayerSkillTreeNode[] nodes;
+    public PlayerSkillTreeNodeID[] tree;
 }

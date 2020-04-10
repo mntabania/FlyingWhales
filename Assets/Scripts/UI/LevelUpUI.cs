@@ -51,15 +51,15 @@ public class LevelUpUI : PopupMenuBase {
          //        }
          //    }
          //} 
-         else if (identifierToLevelUp.ToLower() == "summon_slot") {
-            for (int i = 0; i < PlayerManager.Instance.player.summons.Count; i++) {
-                choices.Add(PlayerManager.Instance.player.summons[i]);
-            }
-        } else if (identifierToLevelUp.ToLower() == "artifact_slot") {
-            for (int i = 0; i < PlayerManager.Instance.player.artifacts.Count; i++) {
-                choices.Add(PlayerManager.Instance.player.artifacts[i]);
-            }
-        }
+        // else if (identifierToLevelUp.ToLower() == "summon_slot") {
+        //    for (int i = 0; i < PlayerManager.Instance.player.summons.Count; i++) {
+        //        choices.Add(PlayerManager.Instance.player.summons[i]);
+        //    }
+        //} else if (identifierToLevelUp.ToLower() == "artifact_slot") {
+        //    for (int i = 0; i < PlayerManager.Instance.player.artifacts.Count; i++) {
+        //        choices.Add(PlayerManager.Instance.player.artifacts[i]);
+        //    }
+        //}
         for (int i = 0; i < choices.Count; i++) {
             object currItem = choices[i];
             GameObject choiceGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(choicePrefab.name, Vector3.zero, Quaternion.identity, choicesParent);

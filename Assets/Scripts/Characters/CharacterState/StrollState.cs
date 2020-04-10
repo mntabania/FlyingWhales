@@ -4,7 +4,7 @@ using Inner_Maps;
 using UnityEngine;
 
 public class StrollState : CharacterState {
-    private int _planDuration;
+    //private int _planDuration;
 
     public StrollState(CharacterStateComponent characterComp) : base(characterComp) {
         stateName = "Stroll State";
@@ -18,19 +18,20 @@ public class StrollState : CharacterState {
         base.DoMovementBehavior();
         StartStrollMovement();
     }
-    public override void PerTickInState() {
-        base.PerTickInState();
-        if (_planDuration >= 4) {
-            _planDuration = 0;
-            if (!stateComponent.character.needsComponent.PlanFullnessRecoveryActions(stateComponent.character)) {
-                if (!stateComponent.character.needsComponent.PlanTirednessRecoveryActions(stateComponent.character)) {
-                    stateComponent.character.needsComponent.PlanHappinessRecoveryActions(stateComponent.character);
-                }
-            }
-        } else {
-            _planDuration++;
-        }
-    }
+    //public override void PerTickInState() {
+    //    base.PerTickInState();
+    //    if (_planDuration >= 4) {
+    //        _planDuration = 0;
+    //        if (!stateComponent.character.needsComponent.PlanFullnessRecoveryActions(stateComponent.character)) {
+    //            if (!stateComponent.character.needsComponent.PlanTirednessRecoveryActions(stateComponent.character)) {
+    //                stateComponent.character.needsComponent.PlanHappinessRecoveryActions(stateComponent.character);
+    //            }
+    //        }
+    //    } else {
+    //        _planDuration++;
+    //    }
+    //}
+
     // public override bool OnEnterVisionWith(IPointOfInterest targetPOI) {
     //     if (stateComponent.character.faction.isMajorFriendlyNeutral && 
     //         stateComponent.character.faction != FactionManager.Instance.zombieFaction &&

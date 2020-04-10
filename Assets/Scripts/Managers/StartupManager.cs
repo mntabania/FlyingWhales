@@ -19,13 +19,8 @@ public class StartupManager : MonoBehaviour {
         yield return StartCoroutine(initializer.InitializeDataBeforeWorldCreation());
 
         LevelLoaderManager.Instance.UpdateLoadingInfo("Initializing World...");
-        if (SaveManager.Instance.currentSave != null) {
-            Debug.Log("Loading world from current saved data...");
-            this.mapGenerator.InitializeWorld(SaveManager.Instance.currentSave);
-        } else {
-            Debug.Log("Generating random world...");
-            yield return StartCoroutine(this.mapGenerator.InitializeWorld());
-        }
+        Debug.Log("Generating random world...");
+        yield return StartCoroutine(this.mapGenerator.InitializeWorld());
     }
 
     private void OnGameLoaded() {

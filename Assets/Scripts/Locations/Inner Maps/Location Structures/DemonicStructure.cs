@@ -13,6 +13,12 @@ namespace Inner_Maps.Location_Structures {
             AdjustHP(500);
         }
 
+        #region Overrides
+        public override void ConstructDefaultActions() {
+            base.ConstructDefaultActions();
+            AddPlayerAction(SPELL_TYPE.DEFEND);
+        }
+        #endregion
 
         #region HP
         public void AdjustHP(int amount, bool shouldDestroyStructure = true) {

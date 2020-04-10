@@ -46,6 +46,7 @@ public interface IPointOfInterest : ITraitable, ISelectable {
     bool HasResourceAmount(RESOURCE resourceType, int amount);
     void OnSeizePOI();
     void OnUnseizePOI(LocationGridTile tileLocation);
+    void CancelRemoveStatusFeedAndRepairJobsTargetingThis();
     /// <summary>
     /// Does this POI collect Logs aka. History
     /// </summary>

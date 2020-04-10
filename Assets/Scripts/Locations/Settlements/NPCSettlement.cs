@@ -32,14 +32,14 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     private readonly WeightedDictionary<Character> newRulerDesignationWeights;
     private int newRulerDesignationChance;
     private int _isBeingHarassedCount;
-    private int _isBeingRaidedCount;
+    //private int _isBeingRaidedCount;
     private int _isBeingInvadedCount;
 
     #region getters
     public JobTriggerComponent jobTriggerComponent => settlementJobTriggerComponent;
     public SettlementJobTriggerComponent settlementJobTriggerComponent { get; }
     public bool isBeingHarassed => _isBeingHarassedCount > 0;
-    public bool isBeingRaided => _isBeingRaidedCount > 0;
+    //public bool isBeingRaided => _isBeingRaidedCount > 0;
     public bool isBeingInvaded => _isBeingInvadedCount > 0;
     #endregion
 
@@ -110,12 +110,12 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public void DecreaseIsBeingHarassedCount() {
         _isBeingHarassedCount--;
     }
-    public void IncreaseIsBeingRaidedCount() {
-        _isBeingRaidedCount++;
-    }
-    public void DecreaseIsBeingRaidedCount() {
-        _isBeingRaidedCount--;
-    }
+    //public void IncreaseIsBeingRaidedCount() {
+    //    _isBeingRaidedCount++;
+    //}
+    //public void DecreaseIsBeingRaidedCount() {
+    //    _isBeingRaidedCount--;
+    //}
     public void IncreaseIsBeingInvadedCount() {
         _isBeingInvadedCount++;
     }
@@ -865,7 +865,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                 affectedStructure.AddPOI(item);
 
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, item, this);
-                job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.HEALING_POTION).constructionCost });
+                //job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.HEALING_POTION).constructionCost });
                 job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanBrewPotion);
                 AddToAvailableJobs(job);
             }
@@ -879,7 +879,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                     affectedStructure.AddPOI(item);
 
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, item, this);
-                    job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.TOOL).constructionCost });
+                    //job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.TOOL).constructionCost });
                     job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCraftTool);
                     AddToAvailableJobs(job);
                 }

@@ -7,9 +7,11 @@ using Traits;
 
 public class SaveManager : MonoBehaviour {
     public static SaveManager Instance;
-    public Save currentSave { get; private set; }
+    //public Save currentSave { get; private set; }
+    public SaveDataPlayer currentSaveDataPlayer { get; private set; }
 
     private const string saveFileName = "CURRENT_SAVE_FILE";
+    private const string saveDataPlayerFileName = "SAVED_PLAYER_DATA";
 
     private void Awake() {
         if (Instance == null) {
@@ -20,8 +22,11 @@ public class SaveManager : MonoBehaviour {
         }
     }
 
-    public void SetCurrentSave(Save save) {
-        currentSave = save;
+    //public void SetCurrentSave(Save save) {
+    //    currentSave = save;
+    //}
+    public void SetCurrentSaveDataPlayer(SaveDataPlayer save) {
+        currentSaveDataPlayer = save;
     }
     public void SaveCurrentStateOfWorld() {
 //        Save save = new Save((int)GridMap.Instance.width, (int)GridMap.Instance.height, GridMap.Instance._borderThickness);
@@ -41,9 +46,15 @@ public class SaveManager : MonoBehaviour {
 
 //        SaveGame.Save<Save>(UtilityScripts.Utilities.gameSavePath + saveFileName, save);
     }
-    public void LoadSaveData() {
-        if(UtilityScripts.Utilities.DoesFileExist(UtilityScripts.Utilities.gameSavePath + saveFileName)) {
-            SetCurrentSave(SaveGame.Load<Save>(UtilityScripts.Utilities.gameSavePath + saveFileName));
+    public void LoadSaveDataPlayer() {
+        //if(UtilityScripts.Utilities.DoesFileExist(UtilityScripts.Utilities.gameSavePath + saveFileName)) {
+        //    SetCurrentSave(SaveGame.Load<Save>(UtilityScripts.Utilities.gameSavePath + saveFileName));
+        //}
+        if (UtilityScripts.Utilities.DoesFileExist(UtilityScripts.Utilities.gameSavePath + saveDataPlayerFileName)) {
+            SetCurrentSaveDataPlayer(SaveGame.Load<SaveDataPlayer>(UtilityScripts.Utilities.gameSavePath + saveDataPlayerFileName));
+        }
+        if(currentSaveDataPlayer == null) {
+            currentSaveDataPlayer = new SaveDataPlayer();
         }
     }
 

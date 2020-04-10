@@ -62,7 +62,7 @@ public class MainMenuUI : MonoBehaviour {
     }
 
     public void StartNewGame() {
-        SaveManager.Instance.SetCurrentSave(null);
+        //SaveManager.Instance.SetCurrentSave(null);
         newGameButton.interactable = false;
         loadGameButton.interactable = false;
         AudioManager.Instance.TransitionTo("Loading", 10);

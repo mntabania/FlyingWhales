@@ -41,6 +41,7 @@ public class Player : ILeader, IObjectManipulator {
     //Components
     public SeizeComponent seizeComponent { get; }
     public ThreatComponent threatComponent { get; }
+    public PlayerSkillComponent playerSkillComponent { get; }
 
     #region getters/setters
     public int id => -645;
@@ -65,36 +66,16 @@ public class Player : ILeader, IObjectManipulator {
         AdjustMana(EditableValuesManager.Instance.startingMana);
         seizeComponent = new SeizeComponent();
         threatComponent = new ThreatComponent(this);
+        playerSkillComponent = new PlayerSkillComponent(this);
         ConstructAllInterventionAbilitySlots();
         AddListeners();
         currentActiveItem = TILE_OBJECT_TYPE.NONE;
     }
-    public Player(SaveDataPlayer data) {
-        allIntel = new List<IIntel>();
-        minions = new List<Minion>();
-        //maxSummonSlots = data.maxSummonSlots;
-        //maxArtifactSlots = data.maxArtifactSlots;
-        unlearnedSpells = new List<SPELL_TYPE>();
-        unlearnedAfflictions = new List<SPELL_TYPE>();
-        mana = data.mana;
-        SetConstructionRatePercentageModifier(data.constructionRatePercentageModifier);
-        //summons = new List<SummonSlot>();
-        //for (int i = 0; i < summons.Count; i++) {
-        //    summons.Add(data.summonSlots[i].Load());
-        //}
 
-        // artifacts = new List<Artifact>();
-        // for (int i = 0; i < artifacts.Count; i++) {
-        //     artifacts.Add(data.artifactSlots[i].Load());
-        // }
-
-        interventionAbilitySlots = new PlayerJobActionSlot[data.interventionAbilitySlots.Count];
-        for (int i = 0; i < interventionAbilitySlots.Length; i++) {
-            interventionAbilitySlots[i] = data.interventionAbilitySlots[i].Load();
+    public void LoadPlayerData(SaveDataPlayer save) {
+        if(save != null) {
+            playerSkillComponent.LoadPlayerSkillTreeNodeData(save);
         }
-        seizeComponent = new SeizeComponent();
-        threatComponent = new ThreatComponent(this);
-        AddListeners();
     }
 
     public void SetPortalTile(HexTile tile) {
@@ -156,11 +137,11 @@ public class Player : ILeader, IObjectManipulator {
         faction.SetEmblem(FactionManager.Instance.GetFactionEmblem(6));
         SetPlayerFaction(faction);
     }
-    public void CreatePlayerFaction(SaveDataPlayer data) {
-        Faction faction = FactionManager.Instance.GetFactionBasedOnID(data.playerFactionID);
-        faction.SetLeader(this);
-        SetPlayerFaction(faction);
-    }
+    //public void CreatePlayerFaction(SaveDataPlayer data) {
+    //    Faction faction = FactionManager.Instance.GetFactionBasedOnID(data.playerFactionID);
+    //    faction.SetLeader(this);
+    //    SetPlayerFaction(faction);
+    //}
     private void SetPlayerFaction(Faction faction) {
         playerFaction = faction;
     }

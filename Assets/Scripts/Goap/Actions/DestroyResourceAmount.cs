@@ -50,7 +50,7 @@ public class DestroyResourceAmount : GoapAction {
             amountToReduce = (int) otherData[0];
         }
         pile.AdjustResourceInPile(-amountToReduce);
-        goapNode.actor.behaviourComponent.SetIsRaiding(false, null);
+        goapNode.actor.behaviourComponent.SetIsDefending(false, null);
     }
     #endregion
 }

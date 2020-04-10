@@ -16,9 +16,9 @@ public class SummonMinionData : PlayerAction {
 
     #region Overrides
     public override void ActivateAbility(LocationStructure structure) {
-        if (structure is Inner_Maps.Location_Structures.ThePortal portal) {
-            portal.SummonMinion();
-        }
+        //if (structure is Inner_Maps.Location_Structures.ThePortal portal) {
+        //    portal.SummonMinion();
+        //}
     }
     public override bool CanPerformAbilityTowards(LocationStructure structure) {
         bool canPerform = base.CanPerformAbilityTowards(structure);

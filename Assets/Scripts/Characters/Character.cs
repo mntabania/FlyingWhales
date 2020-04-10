@@ -1220,6 +1220,16 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //    }
         //}
     }
+    public void CancelRemoveStatusFeedAndRepairJobsTargetingThis() {
+        for (int i = 0; i < allJobsTargetingThis.Count; i++) {
+            JobQueueItem job = allJobsTargetingThis[i];
+            if (job.jobType == JOB_TYPE.REMOVE_STATUS || job.jobType == JOB_TYPE.REPAIR || job.jobType == JOB_TYPE.FEED) {
+                if (job.CancelJob(false)) {
+                    i--;
+                }
+            }
+        }
+    }
     //private bool CreateJobsOnEnterVisionWithCharacter(Character targetCharacter) {
     //    string log = $"{name} saw {targetCharacter.name}, will try to create jobs on enter vision...";
     //    if (!CanCharacterReact(targetCharacter)) {
@@ -1582,6 +1592,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             return HasItem(poi as TileObject);
         }
         return ownParty.IsPOICarried(poi);
+    }
+    public bool IsPOICarriedOrInInventory(string poiName) {
+        return HasItem(poiName) || ownParty.IsPOICarried(poiName);
     }
     public void UncarryPOI(IPointOfInterest poi, bool bringBackToInventory = false, bool addToLocation = true, LocationGridTile dropLocation = null) {
         if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
@@ -2947,6 +2960,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                                                         CombatManager.Instance.DefaultElementalTraitProcessor;
             CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this,
                 responsibleCharacter, etp);
+            //CancelRemoveStatusFeedAndRepairJobsTargetingThis();
         }
         if (triggerDeath && _currentHP <= 0) {
             if(source != null) {
@@ -3318,8 +3332,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //If at the start of the tick, the character is not currently doing any action, and is not waiting for any new plans, it means that the character will no longer perform any actions
         //so start doing actions again
         //SetHasAlreadyAskedForPlan(false);
-        needsComponent.PlanScheduledFullnessRecovery(this);
-        needsComponent.PlanScheduledTirednessRecovery(this);
+        if (needsComponent.HasNeeds()) {
+            needsComponent.PlanScheduledFullnessRecovery(this);
+            needsComponent.PlanScheduledTirednessRecovery(this);
+        }
         if (CanPlanGoap()) {
             PerStartTickActionPlanning();
         }
@@ -3649,6 +3665,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return false;
     }
+    public bool UnobtainItem(string name) {
+        TileObject removedItem = RemoveItem(name);
+        if (removedItem != null) {
+            removedItem.SetInventoryOwner(null);
+            return true;
+        }
+        return false;
+    }
     //public bool ConsumeToken(SpecialToken token) {
     //    token.OnConsumeToken(this);
     //    if (token.uses <= 0) {
@@ -3675,6 +3699,16 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         TileObject removedItem = null;
         for (int i = 0; i < items.Count; i++) {
             if (items[i].tileObjectType == itemType) {
+                removedItem = items[i];
+                RemoveItem(i);
+            }
+        }
+        return removedItem;
+    }
+    private TileObject RemoveItem(string name) {
+        TileObject removedItem = null;
+        for (int i = 0; i < items.Count; i++) {
+            if (items[i].name == name) {
                 removedItem = items[i];
                 RemoveItem(i);
             }
@@ -5501,8 +5535,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //combatModeAction.SetLabelText(combatModeAction.actionName + ": " + UtilityScripts.Utilities.NotNormalizedConversionEnumToString(combatComponent.combatMode.ToString()));
 
             AddPlayerAction(SPELL_TYPE.STOP);
-            AddPlayerAction(SPELL_TYPE.RETURN_TO_PORTAL);
-            AddPlayerAction(SPELL_TYPE.CHANGE_COMBAT_MODE);
+            //AddPlayerAction(SPELL_TYPE.RETURN_TO_PORTAL);
+            //AddPlayerAction(SPELL_TYPE.CHANGE_COMBAT_MODE);
         } else {
             //PlayerAction afflictAction = new PlayerAction(PlayerDB.Afflict_Action, 
             //    () => true,

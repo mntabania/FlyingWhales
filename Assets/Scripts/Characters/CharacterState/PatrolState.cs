@@ -5,7 +5,7 @@ using Inner_Maps.Location_Structures;
 using UnityEngine;
 
 public class PatrolState : CharacterState {
-    private int _planDuration;
+    //private int _planDuration;
 
     public PatrolState(CharacterStateComponent characterComp) : base(characterComp) {
         stateName = "Patrol State";
@@ -52,16 +52,16 @@ public class PatrolState : CharacterState {
             stateComponent.ExitCurrentState();
             return;
         }
-        if (_planDuration >= 4) {
-            _planDuration = 0;
-            if (!stateComponent.character.needsComponent.PlanFullnessRecoveryActions(stateComponent.character)) {
-                if (!stateComponent.character.needsComponent.PlanTirednessRecoveryActions(stateComponent.character)) {
-                    stateComponent.character.needsComponent.PlanHappinessRecoveryActions(stateComponent.character);
-                }
-            }
-        } else {
-            _planDuration++;
-        }
+        //if (_planDuration >= 4) {
+        //    _planDuration = 0;
+        //    if (!stateComponent.character.needsComponent.PlanFullnessRecoveryActions(stateComponent.character)) {
+        //        if (!stateComponent.character.needsComponent.PlanTirednessRecoveryActions(stateComponent.character)) {
+        //            stateComponent.character.needsComponent.PlanHappinessRecoveryActions(stateComponent.character);
+        //        }
+        //    }
+        //} else {
+        //    _planDuration++;
+        //}
     }
     #endregion
     private void StartPatrolMovement() {

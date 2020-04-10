@@ -963,7 +963,8 @@ public enum INTERACTION_TYPE {
     REPORT_CORRUPTED_STRUCTURE,
     FISH,
     REMOVE_UNCONSCIOUS,
-    DOUSE_FIRE
+    DOUSE_FIRE,
+    ATTACK_DEMONIC_STRUCTURE,
 }
 
 public enum INTERACTION_CATEGORY {
@@ -1440,9 +1441,11 @@ public enum SPELL_TYPE { NONE, LYCANTHROPY, KLEPTOMANIA, VAMPIRISM, UNFAITHFULNE
     LOCUST_SWARM, SPAWN_BOULDER, WATER_BOMB, MANIFEST_FOOD, BRIMSTONES,
     SPLASH_POISON, BLIZZARD, RAIN, POISON, BALL_LIGHTNING, ELECTRIC_STORM, FROSTY_FOG, VAPOR, FIRE_BALL,
     POISON_BLOOM, LANDMINE, TERRIFYING_HOWL, FREEZING_TRAP, SNARE_TRAP, WIND_BLAST, ICETEROIDS, HEAT_WAVE, TORTURE, SUMMON_MINION,
-    STOP, SEIZE_OBJECT, SEIZE_CHARACTER, SEIZE_MONSTER, RETURN_TO_PORTAL, RAID, HARASS, INVADE, LEARN_SPELL, CHANGE_COMBAT_MODE, BUILD_DEMONIC_STRUCTURE, AFFLICT, ACTIVATE_TILE_OBJECT,
+    STOP, SEIZE_OBJECT, SEIZE_CHARACTER, SEIZE_MONSTER, RETURN_TO_PORTAL, DEFEND, HARASS, INVADE, LEARN_SPELL, CHANGE_COMBAT_MODE, BUILD_DEMONIC_STRUCTURE, AFFLICT, ACTIVATE_TILE_OBJECT,
     BREED_MONSTER, END_RAID, END_HARASS, END_INVADE, INTERFERE, COWARDICE, PYROPHOBIA, NARCOLEPSY,
     PLANT_GERM, THE_GOADER, THE_EYE, THE_CRYPT, THE_KENNEL, THE_SPIRE, TORTURE_CHAMBER, DEMONIC_PRISON,
+    DEMON_WRATH, DEMON_PRIDE, DEMON_LUST, DEMON_GLUTTONY, DEMON_SLOTH, DEMON_ENVY, DEMON_GREED,
+    SKELETON_MARAUDER,
 }
 //public enum INTERVENTION_ABILITY_TYPE { NONE, AFFLICTION, SPELL, }
 public enum SPELL_CATEGORY { NONE, SPELL, AFFLICTION, PLAYER_ACTION, DEMONIC_STRUCTURE, MINION, SUMMON }
@@ -1511,7 +1514,7 @@ public enum WALL_TYPE { Stone, Flesh, Demon_Stone }
 public enum PARTICLE_EFFECT { None, Poison, Freezing, Fire, Burning, Explode, Electric, Frozen, Poison_Explosion, 
     Frozen_Explosion, Smoke_Effect, Lightning_Strike, Meteor_Strike, Water_Bomb, Poison_Bomb, Blizzard, Destroy_Explosion, Minion_Dissipate, Brimstones,
     Rain, Landmine, Burnt, Terrifying_Howl, Freezing_Trap, Snare_Trap, Wind_Blast, Iceteroids, Heat_Wave, Gorgon_Eye, Landmine_Explosion, Freezing_Trap_Explosion,
-    Snare_Trap_Explosion,
+    Snare_Trap_Explosion, Fervor,
 }
 public enum PLAYER_SKILL_STATE { Locked, Unlocked, Learned, }
 
@@ -1919,6 +1922,7 @@ public static class Extensions {
     public static int GetJobTypePriority(this JOB_TYPE jobType) {
         int priority = 0;
         switch (jobType) {
+            case JOB_TYPE.ASSAULT_DEMONIC_STRUCTURE:
             case JOB_TYPE.FLEE_TO_HOME:
                 priority = 1200;
                 break;
@@ -1953,9 +1957,6 @@ public static class Extensions {
                 break;
             case JOB_TYPE.DESTROY:
                 priority = 940;
-                break;
-            case JOB_TYPE.ASSAULT_DEMONIC_STRUCTURE:
-                priority = 935;
                 break;
             case JOB_TYPE.KILL:
             case JOB_TYPE.REMOVE_STATUS:

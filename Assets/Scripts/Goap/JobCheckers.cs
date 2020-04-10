@@ -135,15 +135,17 @@ public partial class InteractionManager {
             && !character.traitContainer.HasTrait("Criminal")
             && !targetCharacter.traitContainer.HasTrait("Restrained");
     }
-    public bool CanCharacterTakeRepairJob(Character character) {
-        // if (job is GoapPlanJob) {
-        //     GoapPlanJob goapPlanJob = job as GoapPlanJob;
-        //     return goapPlanJob.targetPOI.
-        // }
-        return character.traitContainer.HasTrait("Worker", "Combatant");
-        //return character.role.roleType == CHARACTER_ROLE.SOLDIER ||
-        //       character.role.roleType == CHARACTER_ROLE.CIVILIAN ||
-        //       character.role.roleType == CHARACTER_ROLE.ADVENTURER;
+    public bool CanCharacterTakeRepairJob(Character character, JobQueueItem job) {
+        bool canTakeRepairJob = false;
+        if(job is GoapPlanJob planJob) {
+            if(planJob.targetPOI is TileObject targetTileObject) {
+                canTakeRepairJob = targetTileObject.canBeRepaired;
+            }
+        }
+        return canTakeRepairJob && character.traitContainer.HasTrait("Worker", "Combatant");
+    }
+    public bool CanCharacterTakeRepairJob(Character character, TileObject targetTileObject) {
+        return targetTileObject.canBeRepaired && character.traitContainer.HasTrait("Worker", "Combatant");
     }
     public bool CanCharacterTakeReplaceTileObjectJob(Character character, JobQueueItem job) {
         object[] otherData = (job as GoapPlanJob).otherData[INTERACTION_TYPE.REPLACE_TILE_OBJECT];

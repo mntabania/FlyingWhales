@@ -322,7 +322,7 @@ public class ReactionComponent {
                 debugLog += "\n-Fight or Flight response";
                 //Fight or Flight
                 if (owner.combatComponent.combatMode == COMBAT_MODE.Aggressive) {
-                    bool isLethal = !owner.behaviourComponent.isHarassing && !owner.behaviourComponent.isRaiding;
+                    bool isLethal = !owner.behaviourComponent.isHarassing && !owner.behaviourComponent.isDefending;
                     bool isTopPrioJobLethal = owner.jobQueue.jobsInQueue.Count <= 0 || owner.jobQueue.jobsInQueue[0].jobType.IsJobLethal();
                     if (owner.jobQueue.jobsInQueue.Count > 0) {
                         debugLog += $"\n-{owner.jobQueue.jobsInQueue[0].jobType}";

@@ -296,6 +296,9 @@ public class Party {
     public bool IsPOICarried(IPointOfInterest poi) {
         return carriedPOI == poi;
     }
+    public bool IsPOICarried(string name) {
+        return carriedPOI != null && carriedPOI.name == name;
+    }
     #endregion
 
     #region Utilities
