@@ -27,9 +27,9 @@ public class LocustSwarmMapObjectVisual : MovingMapObjectVisual<TileObject> {
     #region Monobehaviours
     private void Awake() {
         visionTrigger = transform.GetComponentInChildren<TileObjectVisionTrigger>();
+        _objsInRange = new List<ITraitable>();
     }
-    protected override void Update() {
-        base.Update();
+    private void LateUpdate() {
         if (isSpawned && gridTileLocation == null) {
             Expire();
         }
@@ -39,19 +39,16 @@ public class LocustSwarmMapObjectVisual : MovingMapObjectVisual<TileObject> {
     #region Overrides
     public override void Initialize(TileObject obj) {
         base.Initialize(obj);
-        _objsInRange = new List<ITraitable>();
         _locustSwarm = obj as LocustSwarmTileObject;
     }
     public override void PlaceObjectAt(LocationGridTile tile) {
         base.PlaceObjectAt(tile);
-        isSpawned = true;
         RandomizeDirection();
         //OnGamePaused(GameManager.Instance.isPaused);
         _expiryKey = SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(6)), Expire, this);
         Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
         Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         Messenger.AddListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
-
         if (GameManager.Instance.isPaused) {
             _movement.Pause();
             StartCoroutine(PlayParticleCoroutineWhenGameIsPaused());
@@ -59,6 +56,7 @@ public class LocustSwarmMapObjectVisual : MovingMapObjectVisual<TileObject> {
             _movement.Play();
             locustSwarmParticle.Play();
         }
+        isSpawned = true;
     }
     public override void Reset() {
         base.Reset();
@@ -66,7 +64,7 @@ public class LocustSwarmMapObjectVisual : MovingMapObjectVisual<TileObject> {
         _expiryKey = string.Empty;
         _movementKey = string.Empty;
         _movement = null;
-        _objsInRange = null;
+        _objsInRange.Clear();
         Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
         Messenger.RemoveListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         Messenger.RemoveListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
@@ -172,6 +170,7 @@ public class LocustSwarmMapObjectVisual : MovingMapObjectVisual<TileObject> {
         if (string.IsNullOrEmpty(_movementKey) == false) {
             SchedulingManager.Instance.RemoveSpecificEntry(_movementKey);    
         }
+        isSpawned = false;
         _locustSwarm.Expire();
         ObjectPoolManager.Instance.DestroyObject(this);
     }

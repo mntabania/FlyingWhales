@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 
 public class OptionsMenu : PopupMenuBase {
@@ -31,6 +32,7 @@ public class OptionsMenu : PopupMenuBase {
         UIManager.Instance.ShowYesNoConfirmation("Abandon World", "Are you sure you want to abandon this world?", Abandon, layer: 50);
     }
     private void Abandon() {
+        DOTween.Clear(true);
         SaveManager.Instance.Save();
         LevelLoaderManager.Instance.LoadLevel("MainMenu");
     }
