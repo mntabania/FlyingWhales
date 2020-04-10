@@ -30,7 +30,7 @@ public class PlayerSkillComponent {
         nodesData.Add(node);
         SetPlayerSkillData(node);
         //TODO: Save
-        SaveManager.Instance.SaveCurrentStateOfWorld();
+        //SaveManager.Instance.SaveCurrentStateOfWorld();
     }
     public bool RemovePlayerSkillTreeNodeData(PlayerSkillTreeNodeData node) {
         return nodesData.Remove(node);
@@ -45,7 +45,7 @@ public class PlayerSkillComponent {
         return false;
     }
     public void LoadPlayerSkillTreeNodeData(SaveDataPlayer save) {
-        nodesData = save.nodesData;
+        nodesData = save.learnedSkills;
         PopulateAllSkills();
     }
     #endregion
@@ -58,7 +58,7 @@ public class PlayerSkillComponent {
         }
     }
     private void SetPlayerSkillData(PlayerSkillTreeNodeData node) {
-        SpellData spellData = PlayerManager.Instance.GetPlayerSkillData(node.skill);
+        SpellData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(node.skill);
         CatergorizePlayerSkill(spellData);
         spellData.SetCharges(node.charges);
         spellData.SetCooldown(node.cooldown);

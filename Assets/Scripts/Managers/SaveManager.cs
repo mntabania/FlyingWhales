@@ -5,6 +5,10 @@ using BayatGames.SaveGameFree;
 using Inner_Maps;
 using Traits;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 public class SaveManager : MonoBehaviour {
     public static SaveManager Instance;
     //public Save currentSave { get; private set; }
@@ -13,13 +17,25 @@ public class SaveManager : MonoBehaviour {
     private const string saveFileName = "CURRENT_SAVE_FILE";
     private const string saveDataPlayerFileName = "SAVED_PLAYER_DATA";
 
+    public PlayerSkillTree[] allSkillTrees;
+
     private void Awake() {
         if (Instance == null) {
             Instance = this;
             DontDestroyOnLoad(this.gameObject);
+
+#if UNITY_EDITOR
+            EditorApplication.quitting += OnEditorQuit;
+#endif
         } else {
             Destroy(this.gameObject);
         }
+    }
+    private void OnApplicationQuit() {
+        Save();
+    }
+    private void OnEditorQuit() {
+        Save();
     }
 
     //public void SetCurrentSave(Save save) {
@@ -46,6 +62,10 @@ public class SaveManager : MonoBehaviour {
 
 //        SaveGame.Save<Save>(UtilityScripts.Utilities.gameSavePath + saveFileName, save);
     }
+    public void Save() {
+        SaveDataPlayer save = currentSaveDataPlayer;
+        SaveGame.Save(UtilityScripts.Utilities.gameSavePath + saveDataPlayerFileName, save);
+    }
     public void LoadSaveDataPlayer() {
         //if(UtilityScripts.Utilities.DoesFileExist(UtilityScripts.Utilities.gameSavePath + saveFileName)) {
         //    SetCurrentSave(SaveGame.Load<Save>(UtilityScripts.Utilities.gameSavePath + saveFileName));
@@ -55,6 +75,7 @@ public class SaveManager : MonoBehaviour {
         }
         if(currentSaveDataPlayer == null) {
             currentSaveDataPlayer = new SaveDataPlayer();
+            currentSaveDataPlayer.InitializeInitialData();
         }
     }
 

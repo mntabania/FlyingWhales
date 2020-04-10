@@ -939,15 +939,15 @@ public class PlayerUI : MonoBehaviour {
     private void CreateNewSpellItem(SPELL_TYPE spell) {
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(spellItemPrefab.name, Vector3.zero, Quaternion.identity, spellsScrollRect.content);
         SpellItem item = go.GetComponent<SpellItem>();
-        SpellData spellData = PlayerManager.Instance.GetSpellData(spell);
+        SpellData spellData = PlayerSkillManager.Instance.GetSpellData(spell);
         if (spellData != null) {
             item.SetSpell(spellData);
         } else {
-            spellData = PlayerManager.Instance.GetAfflictionData(spell);
+            spellData = PlayerSkillManager.Instance.GetAfflictionData(spell);
             if (spellData != null) {
                 item.SetSpell(spellData);
             } else {
-                spellData = PlayerManager.Instance.GetPlayerActionData(spell);
+                spellData = PlayerSkillManager.Instance.GetPlayerActionData(spell);
                 if (spellData != null) {
                     item.SetSpell(spellData);
                 }

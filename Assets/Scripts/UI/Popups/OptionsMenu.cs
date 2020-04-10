@@ -22,7 +22,7 @@ public class OptionsMenu : PopupMenuBase {
         InnerMapCameraMove.Instance.AllowEdgePanning(state);
     }
     public void SaveGame() {
-        SaveManager.Instance.SaveCurrentStateOfWorld();
+        SaveManager.Instance.Save();
     }
     public void ExitGame() {
         Application.Quit();
@@ -31,7 +31,7 @@ public class OptionsMenu : PopupMenuBase {
         UIManager.Instance.ShowYesNoConfirmation("Abandon World", "Are you sure you want to abandon this world?", Abandon, layer: 50);
     }
     private void Abandon() {
-        SaveManager.Instance.SaveCurrentStateOfWorld();
+        SaveManager.Instance.Save();
         LevelLoaderManager.Instance.LoadLevel("MainMenu");
     }
 }

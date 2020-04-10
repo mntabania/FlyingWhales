@@ -117,7 +117,7 @@ namespace Inner_Maps.Location_Structures {
             StartBreedingMonster(raceClass);
             UIManager.Instance.HideObjectPicker();
             Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
-            PlayerManager.Instance.GetPlayerActionData(SPELL_TYPE.BREED_MONSTER).OnExecuteSpellActionAffliction();
+            PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.BREED_MONSTER).OnExecuteSpellActionAffliction();
         }
         private bool CanBreedMonster(RaceClass raceClass) {
             return _remainingCapacity >= GetMonsterCapacityCost(GetMonsterType(raceClass));

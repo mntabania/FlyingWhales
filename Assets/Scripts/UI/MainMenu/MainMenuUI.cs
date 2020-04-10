@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class MainMenuUI : MonoBehaviour {
 
@@ -14,12 +15,17 @@ public class MainMenuUI : MonoBehaviour {
     [SerializeField] private EasyTween glowTween;
     [SerializeField] private EasyTween glow2Tween;
 
+    [SerializeField] private Image bg;
+
     [Header("Buttons")]
     [SerializeField] private Button loadGameButton;
     [SerializeField] private Button newGameButton;
-    
+    [SerializeField] private Button invadeButton;
+    [SerializeField] private Button researchButton;
+
+
     [Header("Archetypes")]
-    [SerializeField] private ArchetypeSelector _archetypeSelector;
+    [SerializeField] private SkillTreeSelector _skillTreeSelector;
     
     private void Awake() {
         Instance = this;
@@ -53,7 +59,21 @@ public class MainMenuUI : MonoBehaviour {
         glowTween.OnValueChangedAnimation(false);
     }
     public void OnClickPlayGame() {
-       _archetypeSelector.Show();
+        bg.DOFade(0f, 1f).OnComplete(OnCompleteBGTween);
+        newGameButton.interactable = false;
+        loadGameButton.interactable = false;
+        HideMenuButtons();
+        titleTween.OnValueChangedAnimation(false);
+    }
+    private void OnCompleteBGTween() {
+        invadeButton.gameObject.SetActive(true);
+        researchButton.gameObject.SetActive(true);
+    }
+    public void OnClickInvade() {
+        StartNewGame();
+    }
+    public void OnClickResearch() {
+        _skillTreeSelector.Show();
     }
     public void OnClickLoadGame() {
         newGameButton.interactable = false;

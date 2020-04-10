@@ -1402,12 +1402,14 @@ public class Player : ILeader, IObjectManipulator {
         if(experience < 0) {
             experience = 0;
         }
+        SaveManager.Instance.currentSaveDataPlayer.SetExp(experience);
     }
     public void SetExperience(int amount) {
         experience = amount;
         if (experience < 0) {
             experience = 0;
         }
+        SaveManager.Instance.currentSaveDataPlayer.SetExp(experience);
     }
     #endregion
 }

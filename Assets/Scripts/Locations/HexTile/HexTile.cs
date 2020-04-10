@@ -1118,10 +1118,10 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         UIManager.Instance.ShowYesNoConfirmation("Build Structure Confirmation", "Are you sure you want to build " + landmarkName + "?", () => StartBuild(structureType));
     }
     private void StartBuild(SPELL_TYPE structureType) {
-        DemonicStructurePlayerSkill demonicStructureSkill = PlayerManager.Instance.GetDemonicStructureSkillData(structureType);
+        DemonicStructurePlayerSkill demonicStructureSkill = PlayerSkillManager.Instance.GetDemonicStructureSkillData(structureType);
         demonicStructureSkill.ActivateAbility(this);
         UIManager.Instance.HideObjectPicker();
-        PlayerManager.Instance.GetPlayerActionData(SPELL_TYPE.BUILD_DEMONIC_STRUCTURE).OnExecuteSpellActionAffliction();
+        PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.BUILD_DEMONIC_STRUCTURE).OnExecuteSpellActionAffliction();
     }
     #endregion
 

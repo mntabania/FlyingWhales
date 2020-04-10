@@ -1,0 +1,156 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fad318641d7d2554b9816d62359d7c19, type: 3}
+  m_Name: Ravager Skill Tree
+  m_EditorClassIdentifier: 
+  nodes:
+    m_keys: 3800000037000000540000001900000028000000090000002e000000260000000a0000001d000000170000002200000006000000230000002c000000120000004a00000049000000070000004e000000560000005700000058000000
+    m_values:
+    - manaCost: -1
+      charges: -1
+      cooldown: -1
+      expCost: 300
+      buttonSprite: {fileID: 21300000, guid: 1de8b7335028dce4b8e2c6254181530f, type: 3}
+      unlockedSkills: 370000005600000019000000
+    - manaCost: -1
+      charges: -1
+      cooldown: -1
+      expCost: 300
+      buttonSprite: {fileID: 21300000, guid: 1de8b7335028dce4b8e2c6254181530f, type: 3}
+      unlockedSkills: 54000000
+    - manaCost: -1
+      charges: -1
+      cooldown: -1
+      expCost: 300
+      buttonSprite: {fileID: 21300000, guid: f3d10cfae10019d42954e3bf94a00a44, type: 3}
+      unlockedSkills: 
+    - manaCost: -1
+      charges: -1
+      cooldown: -1
+      expCost: 300
+      buttonSprite: {fileID: 21300000, guid: 1721f25e3f54f78489f9a120a49a68f7, type: 3}
+      unlockedSkills: 28000000
+    - manaCost: -1
+      charges: -1
+      cooldown: -1
+      expCost: 300
+      buttonSprite: {fileID: 21300000, guid: 1721f25e3f54f78489f9a120a49a68f7, type: 3}
+      unlockedSkills: 
+    - manaCost: -1
+      charges: -1
+      cooldown: -1
+      expCost: 300
+      buttonSprite: {fileID: 21300000, guid: 7ecd3228d54a4dc4f817bd86a29d1f1a, type: 3}
+      unlockedSkills: 2e00000026000000
+    - manaCost: -1
+      charges: -1
+      cooldown: -1
+      expCost: 300
+      buttonSprite: {fileID: 21300000, guid: 7ecd3228d54a4dc4f817bd86a29d1f1a, type: 3}
+      unlockedSkills: 
+    - manaCost: -1
+      charges: -1
+      cooldown: -1
+      expCost: 300
+      buttonSprite: {fileID: 21300000, guid: 7ecd3228d54a4dc4f817bd86a29d1f1a, type: 3}
+      unlockedSkills: 0a0000001d000000
+    - manaCost: -1
+      charges: -1
+      cooldown: -1
+      expCost: 300
+      buttonSprite: {fileID: 21300000, guid: 7ecd3228d54a4dc4f817bd86a29d1f1a, type: 3}
+      unlockedSkills: 
+    - manaCost: -1
+      charges: -1
+      cooldown: -1
+      expCost: 300
+      buttonSprite: {fileID: 21300000, guid: 7ecd3228d54a4dc4f817bd86a29d1f1a, type: 3}
+      unlockedSkills: 
+    - manaCost: -1
+      charges: -1
+      cooldown: -1
+      expCost: 300
+      buttonSprite: {fileID: 21300000, guid: 2e4df33af4860f64294a4996c64ed080, type: 3}
+      unlockedSkills: 220000002c000000
+    - manaCost: -1
+      charges: -1
+      cooldown: -1
+      expCost: 300
+      buttonSprite: {fileID: 21300000, guid: 2e4df33af4860f64294a4996c64ed080, type: 3}
+      unlockedSkills: 0600000023000000
+    - manaCost: -1
+      charges: -1
+      cooldown: -1
+      expCost: 300
+      buttonSprite: {fileID: 21300000, guid: 1de8b7335028dce4b8e2c6254181530f, type: 3}
+      unlockedSkills: 
+    - manaCost: -1
+      charges: -1
+      cooldown: -1
+      expCost: 300
+      buttonSprite: {fileID: 21300000, guid: 2e4df33af4860f64294a4996c64ed080, type: 3}
+      unlockedSkills: 
+    - manaCost: -1
+      charges: -1
+      cooldown: -1
+      expCost: 300
+      buttonSprite: {fileID: 21300000, guid: 9cd696d31c2c8534b8a5ec2a949c43fa, type: 3}
+      unlockedSkills: 12000000
+    - manaCost: -1
+      charges: -1
+      cooldown: -1
+      expCost: 300
+      buttonSprite: {fileID: 21300000, guid: 9cd696d31c2c8534b8a5ec2a949c43fa, type: 3}
+      unlockedSkills: 
+    - manaCost: -1
+      charges: -1
+      cooldown: -1
+      expCost: 300
+      buttonSprite: {fileID: 21300000, guid: e82f28130057b894cb52771c34d33c2d, type: 3}
+      unlockedSkills: 580000004900000007000000
+    - manaCost: -1
+      charges: -1
+      cooldown: -1
+      expCost: 300
+      buttonSprite: {fileID: 21300000, guid: e82f28130057b894cb52771c34d33c2d, type: 3}
+      unlockedSkills: 
+    - manaCost: -1
+      charges: -1
+      cooldown: -1
+      expCost: 300
+      buttonSprite: {fileID: 21300000, guid: 1de8b7335028dce4b8e2c6254181530f, type: 3}
+      unlockedSkills: 4e000000
+    - manaCost: -1
+      charges: -1
+      cooldown: -1
+      expCost: 300
+      buttonSprite: {fileID: 21300000, guid: f3d10cfae10019d42954e3bf94a00a44, type: 3}
+      unlockedSkills: 
+    - manaCost: -1
+      charges: -1
+      cooldown: -1
+      expCost: 300
+      buttonSprite: {fileID: 21300000, guid: 1de8b7335028dce4b8e2c6254181530f, type: 3}
+      unlockedSkills: 57000000
+    - manaCost: -1
+      charges: -1
+      cooldown: -1
+      expCost: 300
+      buttonSprite: {fileID: 21300000, guid: 1de8b7335028dce4b8e2c6254181530f, type: 3}
+      unlockedSkills: 
+    - manaCost: -1
+      charges: -1
+      cooldown: -1
+      expCost: 300
+      buttonSprite: {fileID: 21300000, guid: 1de8b7335028dce4b8e2c6254181530f, type: 3}
+      unlockedSkills: 
+  initialLearnedSkills: 3800000009000000170000004a000000

@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UI.Extensions;
 
-public class ArchetypeSelector : MonoBehaviour {
+public class SkillTreeSelector : MonoBehaviour {
 
     [SerializeField] private HorizontalScrollSnap _horizontalScrollSnap;
     [SerializeField] private Button continueBtn;

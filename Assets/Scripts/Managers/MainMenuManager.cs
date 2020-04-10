@@ -6,10 +6,14 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Linq;
 using BayatGames.SaveGameFree;
+using TMPro;
 
 public class MainMenuManager : MonoBehaviour {
 
     public static MainMenuManager Instance;
+
+    public ParentPlayerSkillTreeUI[] parentPlayerSkillTrees;
+    public TextMeshProUGUI expText;
 
     [ContextMenu("Get Combinations")]
     public void GetCombinations() {
@@ -30,18 +34,29 @@ public class MainMenuManager : MonoBehaviour {
         Instance = this;
     }
     private void Start() {
-        Initialize();
         AudioManager.Instance.PlayFade("Main Menu", 5, () => MainMenuUI.Instance.ShowMenuButtons());
         LevelLoaderManager.Instance.SetLoadingState(false);
+        Initialize();
     }
     #endregion
+
     private void Initialize() {
         SaveManager.Instance.LoadSaveDataPlayer();
+        for (int i = 0; i < parentPlayerSkillTrees.Length; i++) {
+            parentPlayerSkillTrees[i].LoadSkillTree();
+        }
+        UpdateExp();
         //loadGameButton.interactable = SaveManager.Instance.currentSave != null;
     }
-    
+
     public void LoadMainGameScene() {
         //WorldConfigManager.Instance.SetDataToUse(newGameData); //Remove so that code will randomly generate world.
         LevelLoaderManager.Instance.LoadLevel("Game");
+    }
+    public void OnUnlockPlayerSkill() {
+        UpdateExp();
+    }
+    private void UpdateExp() {
+        expText.text = SaveManager.Instance.currentSaveDataPlayer.exp.ToString();
     }
 }

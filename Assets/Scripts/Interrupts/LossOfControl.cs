@@ -29,7 +29,7 @@ namespace Interrupts {
                         //reset electric storm
                         hexTile.spellsComponent.ResetElectricStormDuration();
                     } else {
-                        PlayerManager.Instance.GetSpellData(SPELL_TYPE.ELECTRIC_STORM).ActivateAbility(hexTile);
+                        PlayerSkillManager.Instance.GetSpellData(SPELL_TYPE.ELECTRIC_STORM).ActivateAbility(hexTile);
                     }
                 } else if (actor.characterClass.className.Equals("Shaman")) {
                     //Poison Bloom
@@ -37,7 +37,7 @@ namespace Interrupts {
                     if (poisonBloomFeature != null) {
                         poisonBloomFeature.ResetDuration();
                     } else {
-                        PlayerManager.Instance.GetSpellData(SPELL_TYPE.POISON_BLOOM).ActivateAbility(hexTile);
+                        PlayerSkillManager.Instance.GetSpellData(SPELL_TYPE.POISON_BLOOM).ActivateAbility(hexTile);
                     }
                 } else if (actor.characterClass.className.Equals("Mage")) { 
                     //Brimstones
@@ -45,7 +45,7 @@ namespace Interrupts {
                         //reset electric storm
                         hexTile.spellsComponent.ResetBrimstoneDuration();
                     } else {
-                        PlayerManager.Instance.GetSpellData(SPELL_TYPE.BRIMSTONES).ActivateAbility(hexTile);
+                        PlayerSkillManager.Instance.GetSpellData(SPELL_TYPE.BRIMSTONES).ActivateAbility(hexTile);
                     }
                 }
                 else {

@@ -87,7 +87,7 @@ namespace Inner_Maps.Location_Structures {
             Faction faction = obj2 as Faction;
             PlayerManager.Instance.player.AdjustMana(-GetJoinManaCostForCharacter(character));
             character.interruptComponent.TriggerInterrupt(INTERRUPT.Join_Faction, faction.characters[0], "join_faction_normal");
-            PlayerManager.Instance.GetPlayerActionData(SPELL_TYPE.INTERFERE).OnExecuteSpellActionAffliction();
+            PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.INTERFERE).OnExecuteSpellActionAffliction();
         }
         private void OnHoverJoinCharacter(Character character) {
             UIManager.Instance.ShowSmallInfo($"Mana cost make {character.name} join a faction: {GetJoinManaCostForCharacter(character)}");
@@ -132,7 +132,7 @@ namespace Inner_Maps.Location_Structures {
             Character character = obj2 as Character;
             PlayerManager.Instance.player.AdjustMana(-GetLeaveManaCostForCharacter(character));
             character.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Faction, character, "left_faction_normal");
-            PlayerManager.Instance.GetPlayerActionData(SPELL_TYPE.INTERFERE).OnExecuteSpellActionAffliction();
+            PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.INTERFERE).OnExecuteSpellActionAffliction();
         }
         private int GetLeaveManaCostForCharacter(Character character) {
             if (character.isFactionLeader) {

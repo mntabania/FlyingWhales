@@ -12,8 +12,8 @@ public class PlayerSpell {
     //public Minion minion { get; protected set; }
     public SPELL_TYPE spellType { get; protected set; }
     public SPELL_CATEGORY spellCategory { get; protected set; }
-    public string name { get { return PlayerManager.Instance.allSpellsData[spellType].name; } }
-    public string description { get { return PlayerManager.Instance.allSpellsData[spellType].description; } }
+    public string name { get { return PlayerSkillManager.Instance.allSpellsData[spellType].name; } }
+    public string description { get { return PlayerSkillManager.Instance.allSpellsData[spellType].description; } }
     public int tier { get; protected set; }
     public int abilityRadius { get; protected set; } //0 means single target
     public virtual string dynamicDescription { get { return description; } }

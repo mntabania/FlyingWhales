@@ -181,7 +181,7 @@ public class CharacterInfoUI : InfoUIBase {
         UtilityScripts.Utilities.DestroyChildren(actionsTransform);
         activeActionItems.Clear();
         for (int i = 0; i < target.actions.Count; i++) {
-            PlayerAction action = PlayerManager.Instance.GetPlayerActionData(target.actions[i]);
+            PlayerAction action = PlayerSkillManager.Instance.GetPlayerActionData(target.actions[i]);
             if (action.IsValid(target) && PlayerManager.Instance.player.archetype.CanDoPlayerAction(action.type)) {
                 //if (action.actionName == PlayerDB.Combat_Mode_Action) {
                 //    action.SetLabelText(action.actionName + ": " + UtilityScripts.Utilities.NotNormalizedConversionEnumToString(activeCharacter.combatComponent.combatMode.ToString()));
@@ -664,7 +664,7 @@ public class CharacterInfoUI : InfoUIBase {
         List<SPELL_TYPE> afflictionTypes = PlayerManager.Instance.player.archetype.afflictions;
         for (int i = 0; i < afflictionTypes.Count; i++) {
             SPELL_TYPE spellType = afflictionTypes[i];
-            afflictions.Add(PlayerManager.Instance.GetAfflictionData(afflictionTypes[i]).name);
+            afflictions.Add(PlayerSkillManager.Instance.GetAfflictionData(afflictionTypes[i]).name);
         }
         //foreach (SpellData abilityData in PlayerManager.Instance.allSpellsData.Values) {
         //    if (abilityData.type == INTERVENTION_ABILITY_TYPE.AFFLICTION) {
@@ -680,13 +680,13 @@ public class CharacterInfoUI : InfoUIBase {
         UIManager.Instance.ShowYesNoConfirmation("Affliction Confirmation", "Are you sure you want to afflict " + afflictionName + "?", () => ActivateAffliction(afflictionType));
     }
     private void ActivateAffliction(SPELL_TYPE afflictionType) {
-        PlayerManager.Instance.GetAfflictionData(afflictionType).ActivateAbility(activeCharacter);
-        PlayerManager.Instance.GetPlayerActionData(SPELL_TYPE.AFFLICT).OnExecuteSpellActionAffliction();
+        PlayerSkillManager.Instance.GetAfflictionData(afflictionType).ActivateAbility(activeCharacter);
+        PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.AFFLICT).OnExecuteSpellActionAffliction();
         UIManager.Instance.HideObjectPicker();
     }
     private bool CanActivateAffliction(string afflictionName) {
         SPELL_TYPE afflictionType = (SPELL_TYPE) System.Enum.Parse(typeof(SPELL_TYPE), afflictionName.ToUpper().Replace(' ', '_'));
-        return PlayerManager.Instance.GetAfflictionData(afflictionType).CanPerformAbilityTowards(activeCharacter);
+        return PlayerSkillManager.Instance.GetAfflictionData(afflictionType).CanPerformAbilityTowards(activeCharacter);
     }
     #endregion
 
@@ -776,7 +776,7 @@ public class CharacterInfoUI : InfoUIBase {
         UIManager.Instance.characterInfoUI.activeCharacter.combatComponent.SetCombatMode(combatMode);
         Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, activeCharacter as IPlayerActionTarget);
         UIManager.Instance.customDropdownList.Close();
-        PlayerManager.Instance.GetPlayerActionData(SPELL_TYPE.CHANGE_COMBAT_MODE).OnExecuteSpellActionAffliction();
+        PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.CHANGE_COMBAT_MODE).OnExecuteSpellActionAffliction();
     }
     #endregion
 }

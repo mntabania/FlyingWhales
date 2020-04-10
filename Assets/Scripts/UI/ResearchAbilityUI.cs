@@ -50,7 +50,7 @@ public class ResearchAbilityUI : PopupMenuBase {
         string name = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(ability.ToString());
         ability1Icon.sprite = PlayerManager.Instance.GetJobActionSprite(name);
         string text = name;
-        text += $"\n{PlayerManager.Instance.allSpellsData[ability].description}";
+        text += $"\n{PlayerSkillManager.Instance.allSpellsData[ability].description}";
         //text += "\nTier: " + PlayerManager.Instance.GetInterventionAbilityTier(ability);
         ability1Text.text = text;
     }
@@ -59,7 +59,7 @@ public class ResearchAbilityUI : PopupMenuBase {
         string name = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(ability.ToString());
         ability2Icon.sprite = PlayerManager.Instance.GetJobActionSprite(name);
         string text = name;
-        text += $"\n{PlayerManager.Instance.allSpellsData[ability].description}";
+        text += $"\n{PlayerSkillManager.Instance.allSpellsData[ability].description}";
         //text += "\nTier: " + PlayerManager.Instance.GetInterventionAbilityTier(ability);
         ability2Text.text = text;
     }
@@ -68,7 +68,7 @@ public class ResearchAbilityUI : PopupMenuBase {
         string name = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(ability.ToString());
         ability3Icon.sprite = PlayerManager.Instance.GetJobActionSprite(name);
         string text = name;
-        text += $"\n{PlayerManager.Instance.allSpellsData[ability].description}";
+        text += $"\n{PlayerSkillManager.Instance.allSpellsData[ability].description}";
         //text += "\nTier: " + PlayerManager.Instance.GetInterventionAbilityTier(ability);
         ability3Text.text = text;
     }

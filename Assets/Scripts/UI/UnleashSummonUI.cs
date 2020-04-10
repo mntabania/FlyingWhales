@@ -63,14 +63,14 @@ public class UnleashSummonUI : PopupMenuBase {
             item.gameObject.SetActive(true);
         }
         for (int i = 0; i < PlayerManager.Instance.player.archetype.minionPlayerSkills.Count; i++) {
-            MinionPlayerSkill minionPlayerSkill = PlayerManager.Instance.GetMinionPlayerSkillData(PlayerManager.Instance.player.archetype.minionPlayerSkills[i]);
+            MinionPlayerSkill minionPlayerSkill = PlayerSkillManager.Instance.GetMinionPlayerSkillData(PlayerManager.Instance.player.archetype.minionPlayerSkills[i]);
             SpellNameplateItem item = CreateNewSpellNameplateItem();
             item.SetSpell(minionPlayerSkill);
             item.SetToggleAction(OnToggleMinionMonster);
             item.gameObject.SetActive(true);
         }
         for (int i = 0; i < PlayerManager.Instance.player.archetype.summonPlayerSkills.Count; i++) {
-            SummonPlayerSkill summonPlayerSkill = PlayerManager.Instance.GetSummonPlayerSkillData(PlayerManager.Instance.player.archetype.summonPlayerSkills[i]);
+            SummonPlayerSkill summonPlayerSkill = PlayerSkillManager.Instance.GetSummonPlayerSkillData(PlayerManager.Instance.player.archetype.summonPlayerSkills[i]);
             SpellNameplateItem item = CreateNewSpellNameplateItem();
             item.SetSpell(summonPlayerSkill);
             item.SetToggleAction(OnToggleMinionMonster);
@@ -152,7 +152,7 @@ public class UnleashSummonUI : PopupMenuBase {
                 spawnedCharacter.behaviourComponent.SetIsHarassing(true, targetHex);
                 entrances.RemoveAt(0);
             }
-            PlayerManager.Instance.GetPlayerActionData(SPELL_TYPE.HARASS).OnExecuteSpellActionAffliction();
+            PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.HARASS).OnExecuteSpellActionAffliction();
         } else if (PlayerUI.Instance.harassDefendInvadeIdentifier == "defend") {
             for (int i = 0; i < chosenSummons.Count; i++) {
                 Character summon = chosenSummons[i];
@@ -166,7 +166,7 @@ public class UnleashSummonUI : PopupMenuBase {
                 spawnedCharacter.behaviourComponent.SetIsDefending(true, targetHex);
                 entrances.RemoveAt(0);
             }
-            PlayerManager.Instance.GetPlayerActionData(SPELL_TYPE.DEFEND).OnExecuteSpellActionAffliction();
+            PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.DEFEND).OnExecuteSpellActionAffliction();
         } else if (PlayerUI.Instance.harassDefendInvadeIdentifier == "invade") {
             for (int i = 0; i < chosenSummons.Count; i++) {
                 Character summon = chosenSummons[i];
@@ -180,7 +180,7 @@ public class UnleashSummonUI : PopupMenuBase {
                 spawnedCharacter.behaviourComponent.SetIsInvading(true, targetHex);
                 entrances.RemoveAt(0);
             }
-            PlayerManager.Instance.GetPlayerActionData(SPELL_TYPE.INVADE).OnExecuteSpellActionAffliction();
+            PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.INVADE).OnExecuteSpellActionAffliction();
         }
         PlayerManager.Instance.player.threatComponent.AdjustThreat(5 + (5 * chosenSummons.Count));
 
