@@ -172,7 +172,13 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 			locationGridTiles.Where(t => t.HasNeighbourNotInList(locationGridTiles) == false && t.IsAtEdgeOfMap() == false).ToList();
 		
 		LocationGridTile[,] tileMap = CellularAutomataGenerator.ConvertListToGridMap(refinedTiles);
-		int[,] cellMap = CellularAutomataGenerator.GenerateMap(tileMap, refinedTiles, 1, 25);
+		int fillPercent = 15;
+		int smoothing = 1;
+		if (locationGridTiles.Count > 196) {
+			fillPercent = 35;
+			smoothing = 2;
+		}
+		int[,] cellMap = CellularAutomataGenerator.GenerateMap(tileMap, refinedTiles, smoothing, fillPercent);
 		
 		Assert.IsNotNull(cellMap, $"There was no cellmap generated for elevation structure {elevationStructure.ToString()}");
 		
