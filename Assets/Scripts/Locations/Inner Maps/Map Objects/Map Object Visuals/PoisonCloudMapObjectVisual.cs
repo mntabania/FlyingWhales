@@ -166,7 +166,6 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
                 AddObject(traitable);
             }
         }
-        
     }
     public void OnTriggerExit2D(Collider2D collision) {
         if (isSpawned == false) { return; }
@@ -179,6 +178,8 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
         if(!otherPoisonCloud.hasExpired) {
             if (_poisonCloud.size != _poisonCloud.maxSize) {
                 int stacksToCombine = otherPoisonCloud.stacks;
+                otherPoisonCloud.mapVisual.transform.DOKill();
+                otherPoisonCloud.mapVisual.transform.DOMove(transform.position, 4f);
                 otherPoisonCloud.Neutralize();
                 _poisonCloud.SetStacks(_poisonCloud.stacks + stacksToCombine);
             }
