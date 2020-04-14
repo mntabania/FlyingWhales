@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UtilityScripts;
 namespace Inner_Maps.Location_Structures {
-    public class Dwelling : LocationStructure, IDwelling {
+    public class Dwelling : ManMadeStructure, IDwelling {
 
         public List<Character> residents { get; private set; }
 
@@ -19,14 +19,12 @@ namespace Inner_Maps.Location_Structures {
         //facilities
         public Dictionary<FACILITY_TYPE, int> facilities { get; protected set; }
 
-        public Dwelling(Region location) 
-            : base(STRUCTURE_TYPE.DWELLING, location) {
+        public Dwelling(Region location) : base(STRUCTURE_TYPE.DWELLING, location) {
             residents = new List<Character>();
             InitializeFacilities();
         }
 
-        public Dwelling(Region location, SaveDataLocationStructure data)
-            : base(location, data) {
+        public Dwelling(Region location, SaveDataLocationStructure data) : base(location, data) {
             residents = new List<Character>();
             InitializeFacilities();
         }

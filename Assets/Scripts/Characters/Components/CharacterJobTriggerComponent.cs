@@ -315,7 +315,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 				if (TraitManager.Instance.specialIllnessTraits.Contains(trait.name)) {
 					return isHostile == false &&
 					       character.relationshipContainer.HasOpinionLabelWithCharacter(targetCharacter,
-						       OpinionComponent.Rival, OpinionComponent.Enemy) == false 
+						       RelationshipManager.Rival, RelationshipManager.Enemy) == false 
 					       && isResponsibleForTrait == false
                            && !character.traitContainer.HasTrait("Psychopath")
                            && character.traitContainer.HasTrait("Healing Expert");	
@@ -323,7 +323,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 				
 				return isHostile == false &&
 				       character.relationshipContainer.HasOpinionLabelWithCharacter(targetCharacter,
-					       OpinionComponent.Rival, OpinionComponent.Enemy) == false 
+					       RelationshipManager.Rival, RelationshipManager.Enemy) == false 
 				       && isResponsibleForTrait == false
                        && !character.traitContainer.HasTrait("Psychopath");
 			// }
@@ -472,8 +472,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	// 			|| target.faction.GetRelationshipWith(_owner.faction).relationshipStatus
 	// 			!= FACTION_RELATIONSHIP_STATUS.HOSTILE;
 	// 		bool isNotEnemy =
-	// 			_owner.opinionComponent.HasOpinionLabelWithCharacter(target, OpinionComponent.Enemy,
-	// 				OpinionComponent.Rival) == false;
+	// 			_owner.RelationshipManager.HasOpinionLabelWithCharacter(target, RelationshipManager.Enemy,
+	// 				RelationshipManager.Rival) == false;
 	// 		if ((isSameHome || isNotHostileFaction) && isNotEnemy) {
 	// 			return TriggerMoveCharacterToBed(target);
 	// 		}
@@ -487,8 +487,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	// 		                           || target.faction.GetRelationshipWith(_owner.faction).relationshipStatus
 	// 		                           != FACTION_RELATIONSHIP_STATUS.HOSTILE;
 	// 		bool isNotEnemy =
-	// 			_owner.opinionComponent.HasOpinionLabelWithCharacter(target, OpinionComponent.Enemy,
-	// 				OpinionComponent.Rival) == false;
+	// 			_owner.RelationshipManager.HasOpinionLabelWithCharacter(target, RelationshipManager.Enemy,
+	// 				RelationshipManager.Rival) == false;
 	// 		if ((isSameHome || isNotHostileFaction) && isNotEnemy) {
 	// 			return TriggerMoveCharacterForHappinessRecovery(target);
 	// 		}

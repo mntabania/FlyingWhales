@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 namespace Inner_Maps.Location_Structures {
-    public class CityCenter : LocationStructure, IDwelling {
+    public class CityCenter : NaturalStructure, IDwelling {
 
         #region getters
         public override bool isDwelling => true;

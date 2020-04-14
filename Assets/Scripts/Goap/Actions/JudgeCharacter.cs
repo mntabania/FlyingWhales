@@ -92,25 +92,25 @@ public class JudgeCharacter : GoapAction {
             }
         }
 
-        if(opinionLabel == OpinionComponent.Close_Friend) {
+        if(opinionLabel == RelationshipManager.Close_Friend) {
             absolve *= 3;
             whip *= 2;
             kill *= 0;
             exile = Mathf.RoundToInt(exile * 0.2f);
             debugLog += "\n-Close Friend: absolve = x3, whip = x2, kill = x0, exile = x0.2";
-        } else if (opinionLabel == OpinionComponent.Friend) {
+        } else if (opinionLabel == RelationshipManager.Friend) {
             absolve *= 2;
             whip *= 2;
             kill = Mathf.RoundToInt(kill * 0.1f);
             exile = Mathf.RoundToInt(exile * 0.5f);
             debugLog += "\n-Friend: absolve = x2, whip = x2, kill = x0.1, exile = x0.5";
-        } else if (opinionLabel == OpinionComponent.Enemy) {
+        } else if (opinionLabel == RelationshipManager.Enemy) {
             absolve = Mathf.RoundToInt(absolve * 0.1f);
             whip = Mathf.RoundToInt(whip * 0.5f);
             kill *= 2;
             exile = Mathf.RoundToInt(exile * 1.5f);
             debugLog += "\n-Enemy: absolve = x0.1, whip = x0.5, kill = x2, exile = x1.5";
-        } else if (opinionLabel == OpinionComponent.Rival) {
+        } else if (opinionLabel == RelationshipManager.Rival) {
             absolve *= 0;
             whip = Mathf.RoundToInt(whip * 0.5f);
             kill *= 3;
@@ -224,12 +224,12 @@ public class JudgeCharacter : GoapAction {
         //    exile *= 0.5f;
         //}
 
-        //if (goapNode.actor.opinionComponent.IsFriendsWith(targetCharacter)) {
+        //if (goapNode.actor.RelationshipManager.IsFriendsWith(targetCharacter)) {
         //    absolve *= 2f;
         //    whip *= 2f;
         //    kill *= 0.5f;
         //    exile *= 0.5f;
-        //} else if (goapNode.actor.opinionComponent.IsEnemiesWith(targetCharacter)) {
+        //} else if (goapNode.actor.RelationshipManager.IsEnemiesWith(targetCharacter)) {
         //    absolve *= 0.2f;
         //    whip *= 0.5f;
         //    kill *= 2f;

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 namespace Inner_Maps.Location_Structures {
-    public class Cave : LocationStructure, IDwelling {
+    public class Cave : NaturalStructure, IDwelling {
 
         #region getters
         public override bool isDwelling => true;

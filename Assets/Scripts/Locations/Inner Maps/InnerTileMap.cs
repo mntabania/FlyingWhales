@@ -551,8 +551,7 @@ namespace Inner_Maps {
             //Generate details for the outside map
             List<LocationGridTile> tilesToPerlin = allTiles.Where(x =>
                 x.objHere == null
-                && (x.structure == null || x.structure.structureType == STRUCTURE_TYPE.WILDERNESS ||
-                    x.structure.structureType == STRUCTURE_TYPE.WORK_AREA)
+                && (x.structure == null || x.structure.structureType == STRUCTURE_TYPE.WILDERNESS)
                 && x.tileType != LocationGridTile.Tile_Type.Wall
                 && !x.IsAdjacentTo(typeof(MagicCircle))
             ).ToList();

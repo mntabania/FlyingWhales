@@ -74,10 +74,10 @@ public class RememberFallen : GoapAction {
         if (target is Tombstone) {
             Character targetCharacter = (target as Tombstone).character;
             string witnessOpinionLabelToDead = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
-            if ((witnessOpinionLabelToDead == OpinionComponent.Friend || witnessOpinionLabelToDead == OpinionComponent.Close_Friend)
+            if ((witnessOpinionLabelToDead == RelationshipManager.Friend || witnessOpinionLabelToDead == RelationshipManager.Close_Friend)
                 && !witness.traitContainer.HasTrait("Psychopath")) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status);
-            } else if (witnessOpinionLabelToDead == OpinionComponent.Rival) {
+            } else if (witnessOpinionLabelToDead == RelationshipManager.Rival) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, actor, status);
                 if (witness.relationshipContainer.IsFriendsWith(actor)) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor, status);

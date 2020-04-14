@@ -9,7 +9,7 @@ using Locations.Settlements;
 using UnityEngine.Assertions;
 namespace Inner_Maps.Location_Structures {
     [System.Serializable]
-    public class LocationStructure : IPlayerActionTarget, ISelectable {
+    public abstract class LocationStructure : IPlayerActionTarget, ISelectable {
         public int id { get; private set; }
         public string name { get; protected set; }
         public virtual string nameplateName => name;
@@ -34,26 +34,24 @@ namespace Inner_Maps.Location_Structures {
         public virtual Vector2 selectableSize => structureObj.size;
         #endregion
 
-        public LocationStructure(STRUCTURE_TYPE structureType, Region location) {
+        protected LocationStructure(STRUCTURE_TYPE structureType, Region location) {
             id = UtilityScripts.Utilities.SetID(this);
             this.structureType = structureType;
             name = $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString())} {id.ToString()}";
             this.location = location;
             charactersHere = new List<Character>();
-            // itemsInStructure = new List<SpecialToken>();
             pointsOfInterest = new HashSet<IPointOfInterest>();
             groupedTileObjects = new Dictionary<TILE_OBJECT_TYPE, TileObjectsAndCount>();
             tiles = new List<LocationGridTile>();
             unoccupiedTiles = new LinkedList<LocationGridTile>();
             SetInteriorState(structureType.IsInterior());
         }
-        public LocationStructure(Region location, SaveDataLocationStructure data) {
+        protected LocationStructure(Region location, SaveDataLocationStructure data) {
             this.location = location;
             id = UtilityScripts.Utilities.SetID(this, data.id);
             structureType = data.structureType;
             name = data.name;
             charactersHere = new List<Character>();
-            // itemsInStructure = new List<SpecialToken>();
             pointsOfInterest = new HashSet<IPointOfInterest>();
             groupedTileObjects = new Dictionary<TILE_OBJECT_TYPE, TileObjectsAndCount>();
             tiles = new List<LocationGridTile>();
@@ -68,20 +66,8 @@ namespace Inner_Maps.Location_Structures {
         #endregion
 
         #region Listeners
-        protected virtual void SubscribeListeners() {
-            if (structureType.HasWalls()) {
-                Messenger.AddListener<StructureWallObject>(Signals.WALL_DAMAGED, OnWallDamaged);
-                Messenger.AddListener<StructureWallObject>(Signals.WALL_DESTROYED, OnWallDestroyed);
-                Messenger.AddListener<StructureWallObject>(Signals.WALL_REPAIRED, OnWallRepaired);
-            }
-        }
-        protected virtual void UnsubscribeListeners() {
-            if (structureType.HasWalls()) {
-                Messenger.RemoveListener<StructureWallObject>(Signals.WALL_DAMAGED, OnWallDamaged);
-                Messenger.RemoveListener<StructureWallObject>(Signals.WALL_DESTROYED, OnWallDestroyed);
-                Messenger.RemoveListener<StructureWallObject>(Signals.WALL_REPAIRED, OnWallRepaired);
-            }
-        }
+        protected virtual void SubscribeListeners() { }
+        protected virtual void UnsubscribeListeners() { }
         #endregion
 
         #region Residents
@@ -399,6 +385,12 @@ namespace Inner_Maps.Location_Structures {
             }
             return tiles[Random.Range(0, tiles.Count)];
         }
+        public virtual void OnTileDamaged(LocationGridTile tile) { }
+        public virtual void OnTileRepaired(LocationGridTile tile) {
+            // ReSharper disable once Unity.NoNullPropagation
+            structureObj?.ApplyGroundTileAssetForTile(tile);
+        }
+        public void OnTileDestroyed(LocationGridTile tile) { }
         #endregion
 
         #region Utilities
@@ -419,9 +411,6 @@ namespace Inner_Maps.Location_Structures {
                     return $"the outskirts of {location.name}";
                 case STRUCTURE_TYPE.CEMETERY:
                     return $"the cemetery of {location.name}";
-                case STRUCTURE_TYPE.DUNGEON:
-                case STRUCTURE_TYPE.WORK_AREA:
-                case STRUCTURE_TYPE.EXPLORE_AREA:
                 case STRUCTURE_TYPE.POND:
                     return location.name;
                 case STRUCTURE_TYPE.CITY_CENTER:
@@ -465,6 +454,9 @@ namespace Inner_Maps.Location_Structures {
             if (structureObj != null) {
                 InnerMapCameraMove.Instance.CenterCameraOn(structureObj.gameObject);    
             }
+        }
+        public override string ToString() {
+            return $"{structureType.ToString()} {id.ToString()} at {location.name}";
         }
         #endregion
 
@@ -538,15 +530,7 @@ namespace Inner_Maps.Location_Structures {
                 return;
             }
             Debug.Log($"{GameManager.Instance.TodayLogString()}{ToString()} was destroyed!");
-        
-            //TODO: Each structure should still have it's own build spot tile object
-            // if (settlementLocation is NPCSettlement npcSettlement) {
-            //     JobQueueItem existingRepairJob = npcSettlement.GetJob(JOB_TYPE.REPAIR, occupiedHexTile);
-            //     if (existingRepairJob != null) {
-            //         npcSettlement.RemoveFromAvailableJobs(existingRepairJob);
-            //     }    
-            // }
-        
+
             //transfer tiles to either the wilderness or work npcSettlement
             List<LocationGridTile> tilesInStructure = new List<LocationGridTile>(tiles);
             LocationStructure wilderness = location.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
@@ -568,7 +552,6 @@ namespace Inner_Maps.Location_Structures {
                 tile.genericTileObject.AdjustHP(tile.genericTileObject.maxHP, ELEMENTAL_TYPE.Normal);
             }
         
-            // occupiedBuildSpot.RemoveOccupyingStructure(this);
             //disable game object. Destruction of structure game object is handled by it's parent structure template.
             structureObj.OnOwnerStructureDestroyed(); 
             location.RemoveStructure(this);
@@ -579,103 +562,6 @@ namespace Inner_Maps.Location_Structures {
             UnsubscribeListeners();
             Messenger.Broadcast(Signals.STRUCTURE_DESTROYED, this);
         }
-        private bool CheckIfStructureDestroyed() {
-            //To check if a structure is destroyed, check if 50% of its walls have been destroyed.
-            int neededWallsToBeConsideredValid = Mathf.FloorToInt(structureObj.walls.Length * 0.5f);
-            int intactWalls = structureObj.walls.Count(wall => wall.currentHP > 0);
-            if (intactWalls < neededWallsToBeConsideredValid) {
-                //consider structure as destroyed
-                DestroyStructure();
-                return true;
-            }
-            return false;
-        }
-        #endregion
-
-        #region Walls
-        public void OnWallDestroyed(StructureWallObject structureWall) {
-            //check if structure destroyed
-            if (structureObj.walls.Contains(structureWall)) {
-                structureWall.gridTileLocation.SetTileType(LocationGridTile.Tile_Type.Empty);
-                structureObj.RescanPathfindingGridOfStructure();
-                CheckInteriorState();
-                CheckIfStructureDestroyed();
-            }
-        }
-        public void OnWallRepaired(StructureWallObject structureWall) {
-            if (structureObj.walls.Contains(structureWall)) {
-                structureWall.gridTileLocation.SetTileType(LocationGridTile.Tile_Type.Wall);
-                structureObj.RescanPathfindingGridOfStructure();
-                CheckInteriorState();
-            }
-        }
-        public void OnWallDamaged(StructureWallObject structureWall) {
-            Assert.IsNotNull(structureObj, $"Wall of {this.ToString()} was damaged, but it has no structure object");
-            if (structureObj.walls.Contains(structureWall)) {
-                //create repair job
-                OnStructureDamaged();
-            }
-        }
-        public void OnTileDamaged(LocationGridTile tile) {
-            OnStructureDamaged();
-        }
-        public void OnTileRepaired(LocationGridTile tile) {
-            // ReSharper disable once Unity.NoNullPropagation
-            structureObj?.ApplyGroundTileAssetForTile(tile);
-        }
-        public void OnTileDestroyed(LocationGridTile tile) {
-            if (structureType.IsOpenSpace()) {
-                return; //do not check for destruction if structure is open space (Wilderness, Work NPCSettlement, Cemetery, etc.)
-            }
-            // CheckIfStructureDestroyed();
-        }
-        private void OnStructureDamaged() {
-            if (structureType.IsOpenSpace() || structureType.IsSettlementStructure() == false) {
-                return; //do not check for damage if structure is open space (Wilderness, Work NPCSettlement, Cemetery, etc.)
-            }
-            //TODO:
-            // if (occupiedHexTile.advertisedActions.Contains(INTERACTION_TYPE.REPAIR_STRUCTURE) == false) {
-            //     occupiedHexTile.AddAdvertisedAction(INTERACTION_TYPE.REPAIR_STRUCTURE);
-            // }
-            CheckInteriorState();
-            //TODO:
-            // if (settlementLocation is NPCSettlement npcSettlement) {
-            //     if (npcSettlement.HasJob(JOB_TYPE.REPAIR, occupiedHexTile) == false) {
-            //         CreateRepairJob();
-            //     }    
-            // }
-            
-        }
-        private bool StillHasObjectsToRepair() {
-            for (int i = 0; i < tiles.Count; i++) {
-                LocationGridTile tile = tiles[i];
-                if (tile.genericTileObject.currentHP < tile.genericTileObject.maxHP) {
-                    return true;
-                }
-                if (tile.walls.Any(wall => wall.currentHP < wall.maxHP)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        private void CheckInteriorState() {
-            //if structure object only has 70% or less of walls intact, set it as exterior
-            //else, set it as interior
-            int neededWallsToBeConsideredExterior = Mathf.FloorToInt(structureObj.walls.Length * 0.7f);
-            int intactWalls = structureObj.walls.Count(wall => wall.currentHP > 0);
-            SetInteriorState(intactWalls > neededWallsToBeConsideredExterior);
-        }
-        #endregion
-
-        #region Repair
-        private void CreateRepairJob() {
-            if (settlementLocation is NPCSettlement npcSettlement) {
-                //TODO:
-                // GoapPlanJob repairJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REPAIR, INTERACTION_TYPE.REPAIR_STRUCTURE, occupiedHexTile, npcSettlement);
-                // repairJob.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRepairStructureJob);
-                // npcSettlement.AddToAvailableJobs(repairJob);    
-            }
-        }
         #endregion
 
         #region Resource
@@ -683,10 +569,6 @@ namespace Inner_Maps.Location_Structures {
             structureObj.ChangeResourceMadeOf(resource);
         }
         #endregion
-
-        public override string ToString() {
-            return $"{structureType.ToString()} {id.ToString()} at {location.name}";
-        }
 
         #region Player Action Target
         public List<SPELL_TYPE> actions { get; private set; }
@@ -717,9 +599,7 @@ namespace Inner_Maps.Location_Structures {
         public void LeftSelectAction() {
             UIManager.Instance.ShowStructureInfo(this);
         }
-        public void RightSelectAction() {
-            //Nothing happens
-        }
+        public void RightSelectAction() { }
         public bool CanBeSelected() {
             return true;
         }
@@ -747,15 +627,7 @@ public class SaveDataLocationStructure {
     }
 
     public LocationStructure Load(Region location) {
-        LocationStructure createdStructure = null;
-        switch (structureType) {
-            case STRUCTURE_TYPE.DWELLING:
-                createdStructure = new Dwelling(location, this);
-                break;
-            default:
-                createdStructure = new LocationStructure(location, this);
-                break;
-        }
+        LocationStructure createdStructure = LandmarkManager.Instance.CreateNewStructureAt(location, structureType);
         loadedStructure = createdStructure;
         return createdStructure;
     }

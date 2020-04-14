@@ -27,8 +27,8 @@ namespace Interrupts {
                 // response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, originalForm);
 
                 string opinionLabel = witness.relationshipContainer.GetOpinionLabel(originalForm);
-                if (opinionLabel == OpinionComponent.Acquaintance || opinionLabel == OpinionComponent.Friend ||
-                    opinionLabel == OpinionComponent.Close_Friend) {
+                if (opinionLabel == RelationshipManager.Acquaintance || opinionLabel == RelationshipManager.Friend ||
+                    opinionLabel == RelationshipManager.Close_Friend) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Despair, witness, originalForm, status);
                 }
                 if (witness.traitContainer.HasTrait("Coward")) {

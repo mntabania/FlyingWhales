@@ -48,6 +48,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212996254105172424}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &1015886529758864
 GameObject:
@@ -372,7 +376,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 4
-      m_TileSpriteIndex: 3
+      m_TileSpriteIndex: 1
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -410,12 +414,12 @@ Tilemap:
   m_TileSpriteArray:
   - m_RefCount: 1
     m_Data: {fileID: 21300000, guid: 9e70eb347cc091f4194765e6de46ad52, type: 3}
-  - m_RefCount: 1
+  - m_RefCount: 2
     m_Data: {fileID: 21300000, guid: 80deb517aa362ca4692d227826ab98d7, type: 3}
   - m_RefCount: 1
     m_Data: {fileID: 21300000, guid: 32d101c7287c00b43888ac765c65ea92, type: 3}
-  - m_RefCount: 1
-    m_Data: {fileID: 21300000, guid: acd979997eb35524b8cb032c7c3dd425, type: 3}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
   - m_RefCount: 3
     m_Data: {fileID: 21300000, guid: 3229e72770a2cb448bb5b5dd4cf20e3a, type: 3}
   - m_RefCount: 4
@@ -1325,6 +1329,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212081993051756216}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &1128605841917636
 GameObject:
@@ -1673,6 +1681,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212007766654066838}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &1212055532041416
 GameObject:
@@ -1793,6 +1805,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212167207419100470}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &1221696109996858
 GameObject:
@@ -2258,6 +2274,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6ecdc22d03840dea1e8820cae0652b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ParentPool: {fileID: 0}
   structureObjects:
   - {fileID: 114060076164638088}
 --- !u!1 &1281747276450380
@@ -2935,6 +2952,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212433475250401154}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &1345885130427092
 GameObject:
@@ -3220,6 +3241,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212437085714264824}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &1370937060069414
 GameObject:
@@ -3441,6 +3466,7 @@ Transform:
   - {fileID: 224037350038525260}
   - {fileID: 9189060587210584442}
   - {fileID: 6453867386210757393}
+  - {fileID: 4037760829818472276}
   m_Father: {fileID: 4346199753087522}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3539,6 +3565,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212122198049352492}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &1465477968114160
 GameObject:
@@ -3919,6 +3949,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212361184968475508}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &1534316955966520
 GameObject:
@@ -4077,6 +4111,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212235472142994108}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &1548603948777664
 GameObject:
@@ -4197,6 +4235,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212437327237013000}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &1563784242990014
 GameObject:
@@ -4328,6 +4370,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212154411213755948}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &1598548069726270
 GameObject:
@@ -6190,6 +6236,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212259632500640044}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &1854925876256816
 GameObject:
@@ -6622,6 +6672,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212468522517969932}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &1938163845033768
 GameObject:
@@ -6672,6 +6726,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212311895402980276}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &1944087542923332
 GameObject:
@@ -6721,6 +6779,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212645102297052360}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &1944639659454274
 GameObject:
@@ -6843,6 +6905,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212710040141320734}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &1949402409498102
 GameObject:
@@ -7189,6 +7255,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212164873237023276}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &1978427922655104
 GameObject:
@@ -7332,6 +7402,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212168237748739514}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &1998341797850910
 GameObject:
@@ -7441,6 +7515,107 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 0.1}
   m_EdgeRadius: 0
+--- !u!1 &4386456716411598757
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4037760829818472276}
+  - component: {fileID: 3410824886597029561}
+  - component: {fileID: 5495555490811930593}
+  m_Layer: 14
+  m_Name: StructureTemplateObjectData (3)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &4037760829818472276
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4386456716411598757}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4428485796987460}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 2.5, y: 2.5}
+  m_SizeDelta: {x: 1, y: 1}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &3410824886597029561
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4386456716411598757}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd7182b7dcb98949856eb51bac9ae25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tileObjectType: 24
+  spriteRenderer: {fileID: 5495555490811930593}
+--- !u!212 &5495555490811930593
+SpriteRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4386456716411598757}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RenderingLayerMask: 4294967295
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 1024382313
+  m_SortingLayer: 19
+  m_SortingOrder: 60
+  m_Sprite: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 1, y: 1}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 0
+  m_MaskInteraction: 0
+  m_SpriteSortPoint: 0
 --- !u!1 &7843433348404724869
 GameObject:
   m_ObjectHideFlags: 0

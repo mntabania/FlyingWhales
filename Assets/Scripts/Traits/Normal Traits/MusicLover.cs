@@ -77,7 +77,7 @@ namespace Traits {
                 //            if (dwelling.IsOccupied()) {
                 //                for (int i = 0; i < dwelling.residents.Count; i++) {
                 //                    Character currResident = dwelling.residents[i];
-                //                    if (currResident.opinionComponent.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.POSITIVE) {
+                //                    if (currResident.RelationshipManager.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.POSITIVE) {
                 //                        //- Actor is not a resident but has a positive relationship with the Guitar's Dwelling resident: 20-36 (If music lover 10 - 26)
                 //                        cost = Utilities.rng.Next(10, 27);
                 //                    }
@@ -98,7 +98,7 @@ namespace Traits {
         //    owner.traitContainer.AddTrait(owner, "Satisfied");
         //    owner.needsComponent.AdjustTiredness(10f);
         //    owner.needsComponent.AdjustHappiness(10f);
-        //    owner.opinionComponent.AdjustOpinion(guitarPlayer, "Base", 3);
+        //    owner.RelationshipManager.AdjustOpinion(guitarPlayer, "Base", 3);
         //    //Debug.Log(GameManager.Instance.TodayLogString() + owner.name + " heard " + guitarPlayer.name + " playing a guitar, and became happier.");
         //    Log log = new Log(GameManager.Instance.Today(), "Trait", "MusicLover", "heard_guitar");
         //    log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -111,7 +111,7 @@ namespace Traits {
         //    owner.traitContainer.AddTrait(owner, "Satisfied");
         //    owner.needsComponent.AdjustTiredness(10f);
         //    owner.needsComponent.AdjustHappiness(10f);
-        //    owner.opinionComponent.AdjustOpinion(singer, "Base", 3);
+        //    owner.RelationshipManager.AdjustOpinion(singer, "Base", 3);
         //    //Debug.Log(GameManager.Instance.TodayLogString() + owner.name + " heard " + guitarPlayer.name + " playing a guitar, and became happier.");
         //    Log log = new Log(GameManager.Instance.Today(), "Trait", "MusicLover", "heard_sing");
         //    log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

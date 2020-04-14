@@ -16,8 +16,8 @@ public class PreCharacterRelationship {
 
     public void SetCompatibility(int value) {
         compatibility = value;
-        Assert.IsTrue(compatibility >= OpinionComponent.MinCompatibility 
-                      && compatibility <= OpinionComponent.MaxCompatibility, 
+        Assert.IsTrue(compatibility >= RelationshipManager.MinCompatibility 
+                      && compatibility <= RelationshipManager.MaxCompatibility, 
             $"Compatibility value exceeds the min/max compatibility. Set Value is {compatibility.ToString()}");
     }
     public void SetOpinion(int value) {

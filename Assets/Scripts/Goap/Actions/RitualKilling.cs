@@ -94,7 +94,7 @@ public class RitualKilling : GoapAction {
             Character targetCharacter = target as Character;
             if (!witness.traitContainer.HasTrait("Psychopath")) {
                 string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
-                if (opinionLabel == OpinionComponent.Acquaintance || opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
+                if (opinionLabel == RelationshipManager.Acquaintance || opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, target, status);
                 }
             }

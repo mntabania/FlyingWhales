@@ -84,11 +84,11 @@ public class RestrainCharacter : GoapAction {
                 }
             } else {
                 string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
-                if(opinionLabel == OpinionComponent.Acquaintance) {
+                if(opinionLabel == RelationshipManager.Acquaintance) {
                     if (!witness.traitContainer.HasTrait("Psychopath") && UnityEngine.Random.Range(0, 2) == 0) {
                         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, targetCharacter, status);
                     }
-                } else if (opinionLabel == OpinionComponent.Enemy || opinionLabel == OpinionComponent.Rival) {
+                } else if (opinionLabel == RelationshipManager.Enemy || opinionLabel == RelationshipManager.Rival) {
                     if (!witness.traitContainer.HasTrait("Diplomatic")) {
                         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, targetCharacter, status);
                     }

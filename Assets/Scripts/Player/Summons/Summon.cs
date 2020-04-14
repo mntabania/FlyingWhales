@@ -276,14 +276,6 @@ public class Summon : Character, IWorldObject {
     }
     #endregion
 
-    #region Utilities
-    protected void GoToWorkArea() {
-        LocationStructure structure = this.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA);
-        LocationGridTile tile = structure.GetRandomTile();
-        this.marker.GoTo(tile);
-    }
-    #endregion
-
     #region Territorries
     public void AddTerritory([NotNull]HexTile tile) {
         if (territorries.Contains(tile) == false) {

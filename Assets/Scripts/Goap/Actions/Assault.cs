@@ -49,12 +49,12 @@ public class Assault : GoapAction {
         if (!witness.IsHostileWith(actor)) {
             if (target is Character targetCharacter) {
                 string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
-                if (opinionLabel == OpinionComponent.Enemy || opinionLabel == OpinionComponent.Rival) {
+                if (opinionLabel == RelationshipManager.Enemy || opinionLabel == RelationshipManager.Rival) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status);
                 } else if (node.associatedJobType != JOB_TYPE.APPREHEND) {
-                    if (opinionLabel == OpinionComponent.Acquaintance) {
+                    if (opinionLabel == RelationshipManager.Acquaintance) {
                         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status);
-                    } else if (opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
+                    } else if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
                         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status);
                         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status);
                     }
@@ -73,9 +73,9 @@ public class Assault : GoapAction {
         if (node.associatedJobType == JOB_TYPE.APPREHEND) {
             Character targetCharacter = target as Character;
             string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
-            if (opinionLabel == OpinionComponent.Acquaintance) {
+            if (opinionLabel == RelationshipManager.Acquaintance) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, targetCharacter, status);
-            } else if (opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
+            } else if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, targetCharacter, status);
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, targetCharacter, status);
             } else {

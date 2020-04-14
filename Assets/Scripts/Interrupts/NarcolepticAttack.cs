@@ -25,11 +25,11 @@ namespace Interrupts {
             string response = base.ReactionToActor(witness, actor, target, interrupt, status);
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status);
             string opinionLabel = witness.relationshipContainer.GetOpinionLabel(actor);
-            if (opinionLabel == OpinionComponent.Enemy) {
+            if (opinionLabel == RelationshipManager.Enemy) {
                 if (UnityEngine.Random.Range(0, 2) == 0) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, actor, status);
                 }
-            } else if (opinionLabel == OpinionComponent.Rival) {
+            } else if (opinionLabel == RelationshipManager.Rival) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, actor, status);
             }
             return response;

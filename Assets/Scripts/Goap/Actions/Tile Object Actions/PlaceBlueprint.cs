@@ -33,8 +33,9 @@ public class PlaceBlueprint : GoapAction {
             if (poiTarget.gridTileLocation == null) {
                 return false;
             }
-            BuildSpotTileObject buildSpot = poiTarget as BuildSpotTileObject;
-            return buildSpot.spot.IsOpenFor(actor.homeSettlement);
+            //TODO: Check hextile instead
+            // StructureTileObject structure = poiTarget as StructureTileObject;
+            // return structure.spot.IsOpenFor(actor.homeSettlement);
         }
         return false;
     }
@@ -47,7 +48,7 @@ public class PlaceBlueprint : GoapAction {
     }
     public void AfterPlaceSuccess(ActualGoapNode goapNode) {
         STRUCTURE_TYPE structureType = (STRUCTURE_TYPE)goapNode.otherData[0];
-        BuildSpotTileObject spot = goapNode.poiTarget as BuildSpotTileObject;
+        StructureTileObject spot = goapNode.poiTarget as StructureTileObject;
         // spot.PlaceBlueprintOnBuildingSpot(structureType);
 
 

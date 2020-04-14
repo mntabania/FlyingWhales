@@ -4,31 +4,29 @@ using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UnityEngine;
 
-public class BuildSpotTileObject : TileObject {
+public class StructureTileObject : TileObject {
 
-    public BuildingSpot spot { get; private set; }
-
-    public BuildSpotTileObject() {
-        Initialize(TILE_OBJECT_TYPE.BUILD_SPOT_TILE_OBJECT, false);
-        AddAdvertisedAction(INTERACTION_TYPE.PLACE_BLUEPRINT);
+    public LocationStructure structureParent => gridTileLocation?.structure;
+    
+    public StructureTileObject() {
+        Initialize(TILE_OBJECT_TYPE.STRUCTURE_TILE_OBJECT, false);
         AddAdvertisedAction(INTERACTION_TYPE.BUILD_STRUCTURE);
-        //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PLACE_BLUEPRINT, INTERACTION_TYPE.BUILD_STRUCTURE, };
         traitContainer.RemoveTrait(this, "Flammable");
     }
-    public BuildSpotTileObject(SaveDataTileObject data) {
-        //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PLACE_BLUEPRINT, INTERACTION_TYPE.BUILD_STRUCTURE, };
+    public StructureTileObject(SaveDataTileObject data) {
         Initialize(data, false);
-        AddAdvertisedAction(INTERACTION_TYPE.PLACE_BLUEPRINT);
         AddAdvertisedAction(INTERACTION_TYPE.BUILD_STRUCTURE);
-        //RemoveCommonAdvertisements();
         traitContainer.RemoveTrait(this, "Flammable");
     }
 
     #region Overrides
     public override string ToString() {
-        return $"Build Spot {id.ToString()}";
+        return $"Structure Tile Object {id.ToString()}";
     }
     public override bool CanBeDamaged() {
+        return false;
+    }
+    public override bool CanBeSelected() {
         return false;
     }
     #endregion

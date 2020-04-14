@@ -366,65 +366,21 @@ public partial class LandmarkManager : MonoBehaviour {
     #endregion
 
     #region Location Structures
-    public LocationStructure CreateNewStructureAt(Region location, STRUCTURE_TYPE type, BaseSettlement settlement = null) {
-        LocationStructure createdStructure = null;
-        switch (type) {
-            case STRUCTURE_TYPE.DWELLING:
-                createdStructure = new Dwelling(location);
-                break;
-            case STRUCTURE_TYPE.CITY_CENTER:
-                createdStructure = new CityCenter(location);
-                break;
-            case STRUCTURE_TYPE.THE_PORTAL:
-                createdStructure = new Inner_Maps.Location_Structures.ThePortal(location);
-                break;
-            case STRUCTURE_TYPE.THE_SPIRE:
-                createdStructure = new Inner_Maps.Location_Structures.TheSpire(location);
-                break;
-            case STRUCTURE_TYPE.TORTURE_CHAMBER:
-                createdStructure = new TortureChamber(location);
-                break;
-            case STRUCTURE_TYPE.THE_EYE:
-                createdStructure = new Inner_Maps.Location_Structures.TheEye(location);
-                break;
-            case STRUCTURE_TYPE.THE_GOADER:
-                createdStructure = new Inner_Maps.Location_Structures.Goader(location);
-                break;
-            case STRUCTURE_TYPE.DEMONIC_PRISON:
-                createdStructure = new DemonicPrison(location);
-                break;
-            case STRUCTURE_TYPE.THE_KENNEL:
-                createdStructure = new Inner_Maps.Location_Structures.TheKennel(location);
-                break;
-            case STRUCTURE_TYPE.THE_CRYPT:
-                createdStructure = new Inner_Maps.Location_Structures.TheCrypt(location);
-                break;
-            case STRUCTURE_TYPE.FARM:
-                createdStructure = new Farm(location);
-                break;
-            case STRUCTURE_TYPE.MAGE_QUARTERS:
-                createdStructure = new MageQuarter(location);
-                break;
-            case STRUCTURE_TYPE.PRISON:
-                createdStructure = new Prison(location);
-                break;
-            case STRUCTURE_TYPE.LUMBERYARD:
-                createdStructure = new Lumberyard(location);
-                break;
-            case STRUCTURE_TYPE.MONSTER_LAIR:
-                createdStructure = new MonsterLair(location);
-                break;
-            case STRUCTURE_TYPE.CAVE:
-                createdStructure = new Cave(location);
-                break;
-            default:
-                createdStructure = new LocationStructure(type, location);
-                break;
+    public LocationStructure CreateNewStructureAt(Region location, STRUCTURE_TYPE structureType, BaseSettlement settlement = null) {
+        string noSpacesTypeName = UtilityScripts.Utilities.RemoveAllWhiteSpace(UtilityScripts.Utilities
+            .NormalizeStringUpperCaseFirstLettersNoSpace(structureType.ToString()));
+        string typeName = $"Inner_Maps.Location_Structures.{ noSpacesTypeName }";
+        Type type = Type.GetType(typeName);
+        if (type != null) {
+            var structure = Activator.CreateInstance(type, location) as LocationStructure;
+            location.AddStructure(structure);
+            settlement?.AddStructure(structure);
+            structure.Initialize();
+            return structure;
         }
-        location.AddStructure(createdStructure);
-        settlement?.AddStructure(createdStructure);
-        createdStructure.Initialize();
-        return createdStructure;
+        else {
+            throw new Exception($"No structure class for type {structureType.ToString()}, {noSpacesTypeName}");
+        }
     }
     public LocationStructure LoadStructureAt(Region location, SaveDataLocationStructure data) {
         LocationStructure createdStructure = data.Load(location);

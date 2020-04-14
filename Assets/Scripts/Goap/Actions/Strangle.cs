@@ -47,9 +47,9 @@ public class Strangle : GoapAction {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor, status);
                 } else {
                     string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
-                    if(opinionLabel == OpinionComponent.Rival) {
+                    if(opinionLabel == RelationshipManager.Rival) {
                         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status);
-                    } else if (opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
+                    } else if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
                         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status);
                         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, actor, status);
                     } else {
@@ -77,7 +77,7 @@ public class Strangle : GoapAction {
             Character targetCharacter = target as Character;
             if (actor != targetCharacter) {
                 string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
-                if (opinionLabel == OpinionComponent.Rival) {
+                if (opinionLabel == RelationshipManager.Rival) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, targetCharacter, status);
                 } else {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, targetCharacter, status);

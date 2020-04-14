@@ -48,7 +48,7 @@ public class Nap : GoapAction {
         //        for (int i = 0; i < dwelling.residents.Count; i++) {
         //            Character resident = dwelling.residents[i];
         //            if (resident != actor) {
-        //                if (actor.opinionComponent.HasOpinion(resident) && actor.opinionComponent.GetTotalOpinion(resident) > 0) {
+        //                if (actor.RelationshipManager.HasOpinion(resident) && actor.RelationshipManager.GetTotalOpinion(resident) > 0) {
         //                    return 25;
         //                }
         //            }
@@ -107,13 +107,13 @@ public class Nap : GoapAction {
 
                 if(alreadySleepingCharacter != null) {
                     string opinionLabel = actor.relationshipContainer.GetOpinionLabel(alreadySleepingCharacter);
-                    if(opinionLabel == OpinionComponent.Friend) {
+                    if(opinionLabel == RelationshipManager.Friend) {
                         cost += 20;
                         costLog += " +20(Friend Occupies)";
-                    } else if (opinionLabel == OpinionComponent.Acquaintance) {
+                    } else if (opinionLabel == RelationshipManager.Acquaintance) {
                         cost += 25;
                         costLog += " +25(Acquaintance Occupies)";
-                    } else if (opinionLabel == OpinionComponent.Enemy || opinionLabel == OpinionComponent.Rival || opinionLabel == string.Empty) {
+                    } else if (opinionLabel == RelationshipManager.Enemy || opinionLabel == RelationshipManager.Rival || opinionLabel == string.Empty) {
                         cost += 100;
                         costLog += " +100(Enemy/Rival/None Occupies)";
                     }

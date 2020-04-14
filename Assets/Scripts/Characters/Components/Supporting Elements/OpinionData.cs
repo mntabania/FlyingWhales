@@ -68,8 +68,8 @@ public class OpinionData {
     }
     public void SetCompatibilityValue(int value) {
         compatibilityValue = value;
-        Assert.IsTrue(compatibilityValue >= OpinionComponent.MinCompatibility 
-                      && compatibilityValue <= OpinionComponent.MaxCompatibility, 
+        Assert.IsTrue(compatibilityValue >= RelationshipManager.MinCompatibility 
+                      && compatibilityValue <= RelationshipManager.MaxCompatibility, 
             $"Compatibility value exceeds the min/max compatibility. Set Value is {compatibilityValue.ToString()}");
     }
 

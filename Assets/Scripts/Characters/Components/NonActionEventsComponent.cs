@@ -4,7 +4,7 @@ using UnityEngine;
 using Traits;
 
 public class NonActionEventsComponent {
-    public Character owner { get; private set; }
+    private Character owner { get; }
 
     private const string Warm_Chat = "Warm Chat";
     private const string Awkward_Chat = "Awkward Chat";
@@ -12,7 +12,7 @@ public class NonActionEventsComponent {
     private const string Insult = "Insult";
     private const string Praise = "Praise";
 
-    private WeightedDictionary<string> chatWeights;
+    private readonly WeightedDictionary<string> chatWeights;
 
     public NonActionEventsComponent(Character owner) {
         this.owner = owner;
@@ -108,21 +108,21 @@ public class NonActionEventsComponent {
             strLog += "\nWarm Chat: -40, Argument: +30";
         }
 
-        if (actorOpinionLabel == OpinionComponent.Close_Friend || actorOpinionLabel == OpinionComponent.Friend) {
+        if (actorOpinionLabel == RelationshipManager.Close_Friend || actorOpinionLabel == RelationshipManager.Friend) {
             chatWeights.AddWeightToElement(Awkward_Chat, -15);
             strLog += "\n\nActor's opinion of Target is Close Friend or Friend, modified weights...";
             strLog += "\nAwkward Chat: -15";
-        } else if (actorOpinionLabel == OpinionComponent.Enemy || actorOpinionLabel == OpinionComponent.Rival) {
+        } else if (actorOpinionLabel == RelationshipManager.Enemy || actorOpinionLabel == RelationshipManager.Rival) {
             chatWeights.AddWeightToElement(Awkward_Chat, 15);
             strLog += "\n\nActor's opinion of Target is Enemy or Rival, modified weights...";
             strLog += "\nAwkward Chat: +15";
         }
 
-        if (targetOpinionLabel == OpinionComponent.Close_Friend || targetOpinionLabel == OpinionComponent.Friend) {
+        if (targetOpinionLabel == RelationshipManager.Close_Friend || targetOpinionLabel == RelationshipManager.Friend) {
             chatWeights.AddWeightToElement(Awkward_Chat, -15);
             strLog += "\n\nTarget's opinion of Actor is Close Friend or Friend, modified weights...";
             strLog += "\nAwkward Chat: -15";
-        } else if (targetOpinionLabel == OpinionComponent.Enemy || targetOpinionLabel == OpinionComponent.Rival) {
+        } else if (targetOpinionLabel == RelationshipManager.Enemy || targetOpinionLabel == RelationshipManager.Rival) {
             chatWeights.AddWeightToElement(Awkward_Chat, 15);
             strLog += "\n\nTarget's opinion of Actor is Enemy or Rival, modified weights...";
             strLog += "\nAwkward Chat: +15";
@@ -245,7 +245,7 @@ public class NonActionEventsComponent {
     //Char1 decreased his/her opinion of char2
     private void OnOpinionDecreased(Character char1, Character char2, string reason) {
         if(char1 == owner && char2 != null) {
-            if (UnityEngine.Random.Range(0, 100) < 30) {
+            if (UnityEngine.Random.Range(0, 100) < 30) {//30
                 if (owner.relationshipContainer.GetTotalOpinion(char2) < -25) {
                     if (owner.relationshipContainer.HasRelationshipWith(char2, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR)) {
                         char1.interruptComponent.TriggerInterrupt(INTERRUPT.Break_Up, char2, reason);
@@ -261,10 +261,10 @@ public class NonActionEventsComponent {
     private void TriggerBreakUp(Character target, RELATIONSHIP_TYPE relationship, string reason) {
         RelationshipManager.Instance.RemoveRelationshipBetween(owner, target, relationship);
         //upon break up, if one of them still has a Positive opinion of the other, he will gain Heartbroken trait
-        if (!owner.traitContainer.HasTrait("Psychopath")) { //owner.opinionComponent.GetTotalOpinion(target) >= 0
+        if (!owner.traitContainer.HasTrait("Psychopath")) { //owner.RelationshipManager.GetTotalOpinion(target) >= 0
             owner.traitContainer.AddTrait(owner, "Heartbroken", target);
         }
-        if (!target.traitContainer.HasTrait("Psychopath")) { //target.opinionComponent.GetTotalOpinion(owner) >= 0
+        if (!target.traitContainer.HasTrait("Psychopath")) { //target.RelationshipManager.GetTotalOpinion(owner) >= 0
             target.traitContainer.AddTrait(target, "Heartbroken", owner);
         }
         RelationshipManager.Instance.CreateNewRelationshipBetween(owner, target, RELATIONSHIP_TYPE.EX_LOVER);
@@ -337,7 +337,7 @@ public class NonActionEventsComponent {
         string opinionLabel = owner.relationshipContainer.GetOpinionLabel(target);
 
         // If Opinion of Target towards Actor is already in Acquaintance range
-        if (opinionLabel == OpinionComponent.Acquaintance)
+        if (opinionLabel == RelationshipManager.Acquaintance)
         {
             // 15% chance to develop Lover relationship if both characters have no Lover yet
             if (UnityEngine.Random.Range(0, 100) < 15)
@@ -360,7 +360,7 @@ public class NonActionEventsComponent {
             }
         }
         // If Opinion of Target towards Actor is already in Friend or Close Friend range
-        else if (opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend)
+        else if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend)
         {
             // 25 % chance to develop Lover relationship if both characters have no Lover yet
             if (UnityEngine.Random.Range(0, 100) < 25)

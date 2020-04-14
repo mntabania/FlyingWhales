@@ -23,10 +23,10 @@ namespace Interrupts {
             string response = base.ReactionToActor(witness, actor, target, interrupt, status);
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status);
             string opinionLabel = witness.relationshipContainer.GetOpinionLabel(actor);
-            if (opinionLabel == OpinionComponent.Acquaintance || opinionLabel == OpinionComponent.Friend ||
-                opinionLabel == OpinionComponent.Close_Friend) {
+            if (opinionLabel == RelationshipManager.Acquaintance || opinionLabel == RelationshipManager.Friend ||
+                opinionLabel == RelationshipManager.Close_Friend) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status);
-            } else if (opinionLabel == OpinionComponent.Rival) {
+            } else if (opinionLabel == RelationshipManager.Rival) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, actor, status);
             }
             if (witness.traitContainer.HasTrait("Coward")) {

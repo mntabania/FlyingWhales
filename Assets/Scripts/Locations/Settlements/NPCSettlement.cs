@@ -335,8 +335,8 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                     } else if (rel2Data.opinions.compatibilityValue != -1) {
                         compatibilityValue = rel2Data.opinions.compatibilityValue;
                     } else {
-                        compatibilityValue = Random.Range(OpinionComponent.MinCompatibility,
-                            OpinionComponent.MaxCompatibility);  
+                        compatibilityValue = Random.Range(RelationshipManager.MinCompatibility,
+                            RelationshipManager.MaxCompatibility);  
                     }
                     rel1Data.opinions.SetCompatibilityValue(compatibilityValue);
                     rel2Data.opinions.SetCompatibilityValue(compatibilityValue);
@@ -597,16 +597,11 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         if (chosenPrison != null) {
             prison = chosenPrison;
         } else {
-            chosenPrison = GetRandomStructureOfType(STRUCTURE_TYPE.EXPLORE_AREA);
+            chosenPrison = GetRandomStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
             if (chosenPrison != null) {
                 prison = chosenPrison;
             } else {
-                chosenPrison = GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA);
-                if (chosenPrison != null) {
-                    prison = chosenPrison;
-                } else {
-                    prison = GetRandomStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
-                }
+                Debug.LogWarning($"Could not find valid prison for {name}");
             }
         }
     }

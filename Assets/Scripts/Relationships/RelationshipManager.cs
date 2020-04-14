@@ -7,16 +7,23 @@ using Random = UnityEngine.Random;
 
 public class RelationshipManager : MonoBehaviour {
 
-    public static RelationshipManager Instance = null;
+    public static RelationshipManager Instance;
 
     private IRelationshipValidator _characterRelationshipValidator;
     private IRelationshipProcessor _characterRelationshipProcessor;
     
+    public const string Close_Friend = "Close Friend";
+    public const string Friend = "Friend";
+    public const string Acquaintance = "Acquaintance";
+    public const string Enemy = "Enemy";
+    public const string Rival = "Rival";
+    
+    public const int MaxCompatibility = 5;
+    public const int MinCompatibility = 0;
+    
 
     void Awake() {
         Instance = this;
-        //TODO: Use Reflection.
-        //validators
         _characterRelationshipValidator = new CharacterRelationshipValidator();
         //processors
         _characterRelationshipProcessor = new CharacterRelationshipProcessor();
@@ -287,8 +294,8 @@ public class RelationshipManager : MonoBehaviour {
         IRelationshipData relationshipData1 = rel1.relationshipContainer.GetOrCreateRelationshipDataWith(rel1, rel2);
         IRelationshipData relationshipData2 = rel2.relationshipContainer.GetOrCreateRelationshipDataWith(rel2, rel1);
 
-        int randomCompatibility = UnityEngine.Random.Range(OpinionComponent.MinCompatibility,
-            OpinionComponent.MaxCompatibility);
+        int randomCompatibility = UnityEngine.Random.Range(RelationshipManager.MinCompatibility,
+            RelationshipManager.MaxCompatibility);
                         
         relationshipData1.opinions.SetCompatibilityValue(randomCompatibility);
         relationshipData2.opinions.SetCompatibilityValue(randomCompatibility);

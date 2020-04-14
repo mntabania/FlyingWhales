@@ -197,7 +197,7 @@ public class Bed : TileObject {
                 RELATIONSHIP_EFFECT relEffect = character.relationshipContainer.GetRelationshipEffectWith(user);
                 if(character.relationshipContainer.HasRelationshipWith(user) == false 
                    || character.relationshipContainer.IsEnemiesWith(user) 
-                   || character.relationshipContainer.HasOpinionLabelWithCharacter(user, OpinionComponent.Acquaintance)) {
+                   || character.relationshipContainer.HasOpinionLabelWithCharacter(user, RelationshipManager.Acquaintance)) {
                     return false;
                 }
             }

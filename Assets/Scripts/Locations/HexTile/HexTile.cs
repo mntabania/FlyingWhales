@@ -101,7 +101,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     public bool isBeingDefended => _isBeingDefendedCount > 0;
     public Vector3 worldPosition {
         get {
-            Vector2 pos = innerMapHexTile.gridTileCollections[0].tileCollectionItem.transform.position;
+            Vector2 pos = innerMapHexTile.gridTileCollections[0].locationGridTileCollectionItem.transform.position;
             pos.x += 3.5f;
             pos.y += 3.5f;
             return pos;
