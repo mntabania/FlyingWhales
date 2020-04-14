@@ -1222,19 +1222,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         ChangeGridTilesBiome();
     }
     private void ChangeGridTilesBiome() {
-        // float offsetX = Random.Range(0f, 99999f);
-        // float offsetY = Random.Range(0f, 99999f);
-        // int minX = locationGridTiles.Min(t => t.localPlace.x);
-        // int maxX = locationGridTiles.Max(t => t.localPlace.x);
-        // int minY = locationGridTiles.Min(t => t.localPlace.y);
-        // int maxY = locationGridTiles.Max(t => t.localPlace.y);
-        //
-        // int xSize = maxX - minX;
-        // int ySize = maxY - minY;
-
-        //Vector3Int[] positionArray = new Vector3Int[locationGridTiles.Count];
-        //TileBase[] groundTilesArray = new TileBase[locationGridTiles.Count];
-
         for (int i = 0; i < locationGridTiles.Count; i++) {
             LocationGridTile currTile = locationGridTiles[i];
             Vector3Int position = currTile.localPlace;
@@ -1252,10 +1239,37 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
                 }
                 currTile.CreateSeamlessEdgesForSelfAndNeighbours();    
             }
-            
         }
-        //locationGridTiles[0].parentMap.MassSetGroundTileMapVisuals(positionArray, groundTilesArray);
     }
+    public void GradualChangeBiomeType(BIOMES biomeType, System.Action onFinishChangeAction) {
+        SetBiome(biomeType);
+        Biomes.Instance.UpdateTileVisuals(this);
+        StartCoroutine(ChangeGridTilesBiomeCoroutine(onFinishChangeAction));
+    }
+    private IEnumerator ChangeGridTilesBiomeCoroutine(System.Action onFinishChangeAction) {
+        // List<LocationGridTile> gridTiles = new List<LocationGridTile>(locationGridTiles);
+        // gridTiles = UtilityScripts.CollectionUtilities.Shuffle(gridTiles);
+        for (int i = 0; i < locationGridTiles.Count; i++) {
+            LocationGridTile currTile = locationGridTiles[i];
+            Vector3Int position = currTile.localPlace;
+            TileBase groundTile = InnerTileMap.GetGroundAssetPerlin(currTile.floorSample, biomeType);
+            if (currTile.structure.isInterior || currTile.isCorrupted) {
+                //set the previous tile to the new biome, so that when the structure is destroyed
+                //it will revert to the right asset
+                currTile.SetPreviousGroundVisual(groundTile);
+            } else {
+                currTile.SetPreviousGroundVisual(null);
+                currTile.parentMap.groundTilemap.SetTile(position, groundTile);
+                currTile.UpdateGroundTypeBasedOnAsset();
+                if (currTile.objHere != null && currTile.objHere.mapObjectVisual && currTile.objHere is TileObject tileObject) {
+                    tileObject.mapVisual.UpdateTileObjectVisual(tileObject);
+                }
+                currTile.CreateSeamlessEdgesForSelfAndNeighbours();
+            }
+            yield return null;
+        }
+        onFinishChangeAction.Invoke();
+    } 
     #endregion
 
     #region Defend

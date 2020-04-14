@@ -21,6 +21,13 @@ public class AutoDestroyParticle : PooledObject {
         }
     }
 
+    public void StopEmission() {
+        for (int i = 0; i < particleSystems.Length; i++) {
+            ParticleSystem ps = particleSystems[i];
+            ps.Stop();
+        }
+    }
+    
     public override void Reset() {
         base.Reset();
         for (int i = 0; i < particleSystems.Length; i++) {
