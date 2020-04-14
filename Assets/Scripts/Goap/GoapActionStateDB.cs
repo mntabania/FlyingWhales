@@ -436,6 +436,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.ATTACK_DEMONIC_STRUCTURE, new[]{
             new StateNameAndDuration(){ name = "Attack Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
+        {INTERACTION_TYPE.HEAL_SELF, new[]{
+            new StateNameAndDuration(){ name = "Heal Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(15) },
+        } },
     };
 }
 

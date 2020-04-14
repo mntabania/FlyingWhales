@@ -965,6 +965,7 @@ public enum INTERACTION_TYPE {
     REMOVE_UNCONSCIOUS,
     DOUSE_FIRE,
     ATTACK_DEMONIC_STRUCTURE,
+    HEAL_SELF
 }
 
 public enum INTERACTION_CATEGORY {
@@ -1357,6 +1358,7 @@ public enum JOB_TYPE { NONE, UNDERMINE, ENERGY_RECOVERY_URGENT, FULLNESS_RECOVER
         , IDLE_RETURN_HOME, IDLE_NAP, IDLE_SIT, IDLE_STAND, IDLE_GO_TO_INN, COMBINE_STOCKPILE, ROAM_AROUND_TERRITORY, ROAM_AROUND_CORRUPTION, ROAM_AROUND_PORTAL, ROAM_AROUND_TILE, RETURN_TERRITORY, RETURN_PORTAL
         , STAND, ABDUCT, LEARN_MONSTER, TAKE_ARTIFACT, TAKE_ITEM, HIDE_AT_HOME, STAND_STILL, SUICIDE_FOLLOW
         , DRY_TILES, CLEANSE_TILES, MONSTER_ABDUCT, REPORT_CORRUPTED_STRUCTURE, ASSAULT_DEMONIC_STRUCTURE,
+        RECOVER_HP
 }
 public enum JOB_OWNER { CHARACTER, LOCATION, QUEST, }
 public enum Cardinal_Direction { North, South, East, West };
@@ -1910,6 +1912,9 @@ public static class Extensions {
                 break;
             case JOB_TYPE.GO_TO:
                 priority = 925;
+                break;
+            case JOB_TYPE.RECOVER_HP:
+                priority = 920;
                 break;
             case JOB_TYPE.UNDERMINE:
                 priority = 910;

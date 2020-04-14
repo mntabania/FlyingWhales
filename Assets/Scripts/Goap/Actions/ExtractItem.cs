@@ -38,11 +38,30 @@ public class ExtractItem : GoapAction {
         base.Perform(goapNode);
         SetState("Extract Success", goapNode);
     }
-    //public override void AddFillersToLog(Log log, ActualGoapNode node) {
-    //    base.AddFillersToLog(log, node);
-    //    TileObject obj = node.poiTarget as TileObject;
-    //    log.AddToFillers(null, UtilityScripts.Utilities.GetArticleForWord(obj.tileObjectType.ToString()), LOG_IDENTIFIER.STRING_1);
-    //}
+    public override void AddFillersToLog(Log log, ActualGoapNode node) {
+        base.AddFillersToLog(log, node);
+        TileObject obj = node.poiTarget as TileObject;
+        IPointOfInterest target = node.poiTarget;
+        string text = string.Empty;
+        if (target.traitContainer.HasTrait("Wet")) {
+            text += "Water Flask";
+        }
+        if (target.traitContainer.HasTrait("Burning")) {
+            if(text != string.Empty) {
+                text += ", ";
+            }
+            text += "Ember";
+        }
+        if (target is SnowMound || target.traitContainer.HasTrait("Frozen")) {
+            if (text != string.Empty) {
+                text += ", ";
+            }
+            text += "Ice";
+        }
+        string article = UtilityScripts.Utilities.GetArticleForWord(text);
+        text = article + " " + text;
+        log.AddToFillers(null, text, LOG_IDENTIFIER.STRING_1);
+    }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}:";
         int cost = 250;

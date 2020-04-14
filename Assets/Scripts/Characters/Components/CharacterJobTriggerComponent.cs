@@ -868,4 +868,20 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    }
 	    return false;
     }
+
+    #region Heal Self
+    public void OnHPReduced() {
+	    if (_owner.jobQueue.HasJob(JOB_TYPE.RECOVER_HP) == false && _owner.currentHP < Mathf.FloorToInt(_owner.maxHP * 0.5f)) {
+		    CreateHealSelfJob();	
+	    }
+    }
+    private void CreateHealSelfJob() {
+	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RECOVER_HP, INTERACTION_TYPE.HEAL_SELF, _owner, _owner);
+	    job.SetStillApplicableChecker(IsHealSelfJobStillApplicable);
+	    _owner.jobQueue.AddJobInQueue(job);
+    }
+    private bool IsHealSelfJobStillApplicable() {
+	    return _owner.currentHP < _owner.maxHP;
+    }
+    #endregion
 }

@@ -1271,6 +1271,7 @@
               <e p="GoTo.cs" t="Include" />
               <e p="Grieving.cs" t="Include" />
               <e p="HaveAffair.cs" t="Include" />
+              <e p="HealSelf.cs" t="Include" />
               <e p="Invite.cs" t="Include" />
               <e p="JudgeCharacter.cs" t="Include" />
               <e p="KnockoutCharacter.cs" t="Include" />

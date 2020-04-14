@@ -2949,6 +2949,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
         if (amount < 0) {
+            //hp was reduced
+            jobComponent.OnHPReduced();
             Character responsibleCharacter = null;
             if (source is Character character) {
                 responsibleCharacter = character;
@@ -2958,6 +2960,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this,
                 responsibleCharacter, etp);
             //CancelRemoveStatusFeedAndRepairJobsTargetingThis();
+        }
+        else {
+            //hp was increased
+            Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.RECOVER_HP, this as IPointOfInterest);
         }
         if (triggerDeath && _currentHP <= 0) {
             if(source != null) {
@@ -4157,7 +4163,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         AddAdvertisedAction(INTERACTION_TYPE.SLAY_CHARACTER);
         AddAdvertisedAction(INTERACTION_TYPE.DOUSE_FIRE);
         AddAdvertisedAction(INTERACTION_TYPE.BURY_CHARACTER);
-
+        
         if (this is Summon) {
             AddAdvertisedAction(INTERACTION_TYPE.PLAY);
         }
@@ -4194,6 +4200,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         if (race == RACE.HUMANS || race == RACE.ELVES) {
             AddAdvertisedAction(INTERACTION_TYPE.REPORT_CORRUPTED_STRUCTURE);
+            AddAdvertisedAction(INTERACTION_TYPE.HEAL_SELF);
         }
     }
     /// <summary>
