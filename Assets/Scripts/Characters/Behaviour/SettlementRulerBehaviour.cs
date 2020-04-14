@@ -28,7 +28,7 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
                 log += $"\n-Structure Prefab chosen is {chosenStructurePrefab.name}";
 
                 LocationStructureObject lso = chosenStructurePrefab.GetComponent<LocationStructureObject>();
-                BuildSpotTileObject chosenBuildingSpot;
+                StructureTileObject chosenBuildingSpot;
                 // if (character.homeRegion.innerMap.TryGetValidBuildSpotTileObjectForStructure(lso, character.homeSettlement, out chosenBuildingSpot) == false) {
                 //     log += $"\n-Could not find spot that can house new structure. Abandoning...";
                 //     return false;

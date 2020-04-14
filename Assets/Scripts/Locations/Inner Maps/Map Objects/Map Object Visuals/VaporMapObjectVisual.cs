@@ -161,6 +161,8 @@ public class VaporMapObjectVisual : MovingMapObjectVisual<TileObject> {
         if (!otherVapor.hasExpired) {
             if (_vaporTileObject.size != _vaporTileObject.maxSize) {
                 int stacksToCombine = otherVapor.stacks;
+                otherVapor.mapVisual.transform.DOKill();
+                otherVapor.mapVisual.transform.DOMove(transform.position, 4f);
                 otherVapor.SetDoExpireEffect(false);
                 otherVapor.Neutralize();
                 _vaporTileObject.SetStacks(_vaporTileObject.stacks + stacksToCombine);

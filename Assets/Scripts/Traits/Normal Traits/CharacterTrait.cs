@@ -88,7 +88,7 @@ namespace Traits {
                         //     bool hasCreatedJob = RandomizeBetweenShockAndCryJob(characterThatWillDoJob);
                         //     //characterThatWillDoJob.needsComponent.AdjustHappiness(-4000);
                         //     return hasCreatedJob;
-                        // } else if (characterThatWillDoJob.opinionComponent.IsFriendsWith(targetCharacter)) {
+                        // } else if (characterThatWillDoJob.RelationshipManager.IsFriendsWith(targetCharacter)) {
                         //     characterThatWillDoJob.traitContainer.AddTrait(characterThatWillDoJob, "Griefstricken");
                         //     bool hasCreatedJob = CreatePrioritizedShockJob(characterThatWillDoJob);
                         //     //characterThatWillDoJob.needsComponent.AdjustHappiness(-2000);
@@ -106,12 +106,12 @@ namespace Traits {
                     // }
                     if (targetCharacter.race == RACE.SKELETON || targetCharacter.characterClass.className == "Zombie") {
                         string opinionLabel = characterThatWillDoJob.relationshipContainer.GetOpinionLabel(targetCharacter);
-                        if (opinionLabel == OpinionComponent.Friend) {
+                        if (opinionLabel == RelationshipManager.Friend) {
                             if (!charactersAlreadySawForHope.Contains(targetCharacter)) {
                                 charactersAlreadySawForHope.Add(targetCharacter);
                                 characterThatWillDoJob.needsComponent.AdjustHope(-5f);
                             }
-                        } else if (opinionLabel == OpinionComponent.Close_Friend) {
+                        } else if (opinionLabel == RelationshipManager.Close_Friend) {
                             if (!charactersAlreadySawForHope.Contains(targetCharacter)) {
                                 charactersAlreadySawForHope.Add(targetCharacter);
                                 characterThatWillDoJob.needsComponent.AdjustHope(-10f);

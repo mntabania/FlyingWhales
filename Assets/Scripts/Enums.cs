@@ -965,6 +965,7 @@ public enum INTERACTION_TYPE {
     REMOVE_UNCONSCIOUS,
     DOUSE_FIRE,
     ATTACK_DEMONIC_STRUCTURE,
+    HEAL_SELF
 }
 
 public enum INTERACTION_CATEGORY {
@@ -1135,10 +1136,7 @@ public enum STRUCTURE_TYPE {
     INN = 1,
     WAREHOUSE = 2,
     DWELLING = 3,
-    DUNGEON = 4,
     WILDERNESS = 5,
-    WORK_AREA = 6,
-    EXPLORE_AREA = 7,
     CEMETERY = 8,
     PRISON = 9,
     POND = 10,
@@ -1217,7 +1215,7 @@ public enum TILE_OBJECT_TYPE {
     GENERIC_TILE_OBJECT = 21,
     FOOD_PILE = 22,
     GODDESS_STATUE = 23,
-    BUILD_SPOT_TILE_OBJECT = 24,
+    STRUCTURE_TILE_OBJECT = 24,
     STONE_PILE = 25,
     METAL_PILE = 26,
     TORNADO = 27,
@@ -1360,6 +1358,7 @@ public enum JOB_TYPE { NONE, UNDERMINE, ENERGY_RECOVERY_URGENT, FULLNESS_RECOVER
         , IDLE_RETURN_HOME, IDLE_NAP, IDLE_SIT, IDLE_STAND, IDLE_GO_TO_INN, COMBINE_STOCKPILE, ROAM_AROUND_TERRITORY, ROAM_AROUND_CORRUPTION, ROAM_AROUND_PORTAL, ROAM_AROUND_TILE, RETURN_TERRITORY, RETURN_PORTAL
         , STAND, ABDUCT, LEARN_MONSTER, TAKE_ARTIFACT, TAKE_ITEM, HIDE_AT_HOME, STAND_STILL, SUICIDE_FOLLOW
         , DRY_TILES, CLEANSE_TILES, MONSTER_ABDUCT, REPORT_CORRUPTED_STRUCTURE, ASSAULT_DEMONIC_STRUCTURE,
+        RECOVER_HP
 }
 public enum JOB_OWNER { CHARACTER, LOCATION, QUEST, }
 public enum Cardinal_Direction { North, South, East, West };
@@ -1516,6 +1515,9 @@ public enum PARTICLE_EFFECT { None, Poison, Freezing, Fire, Burning, Explode, El
     Frozen_Explosion, Smoke_Effect, Lightning_Strike, Meteor_Strike, Water_Bomb, Poison_Bomb, Blizzard, Destroy_Explosion, Minion_Dissipate, Brimstones,
     Rain, Landmine, Burnt, Terrifying_Howl, Freezing_Trap, Snare_Trap, Wind_Blast, Iceteroids, Heat_Wave, Gorgon_Eye, Landmine_Explosion, Freezing_Trap_Explosion,
     Snare_Trap_Explosion, Fervor,
+    Desert_Rose,
+    Winter_Rose,
+    Build_Demonic_Structure
 }
 public enum PLAYER_SKILL_STATE { Locked, Unlocked, Learned, }
 
@@ -1562,7 +1564,6 @@ public static class Extensions {
     public static bool IsOpenSpace(this STRUCTURE_TYPE sub) {
         switch (sub) {
             case STRUCTURE_TYPE.WILDERNESS:
-            case STRUCTURE_TYPE.WORK_AREA:
             case STRUCTURE_TYPE.CEMETERY:
             case STRUCTURE_TYPE.POND:
             case STRUCTURE_TYPE.CITY_CENTER:
@@ -1583,32 +1584,9 @@ public static class Extensions {
                 return false;
         }
     }
-    public static bool HasWalls(this STRUCTURE_TYPE sub) {
-        switch (sub) {
-            case STRUCTURE_TYPE.PRISON:
-            case STRUCTURE_TYPE.DWELLING:
-            case STRUCTURE_TYPE.SMITHY:
-            case STRUCTURE_TYPE.BARRACKS:
-            case STRUCTURE_TYPE.APOTHECARY:
-            case STRUCTURE_TYPE.GRANARY:
-            case STRUCTURE_TYPE.MINER_CAMP:
-            case STRUCTURE_TYPE.RAIDER_CAMP:
-            case STRUCTURE_TYPE.ASSASSIN_GUILD:
-            case STRUCTURE_TYPE.HUNTER_LODGE:
-            case STRUCTURE_TYPE.MAGE_QUARTERS:
-            case STRUCTURE_TYPE.MAGE_TOWER:
-            case STRUCTURE_TYPE.ABANDONED_MINE:
-            case STRUCTURE_TYPE.LUMBERYARD:
-            case STRUCTURE_TYPE.MINE:
-                return true;
-            default:
-                return false;
-        }
-    }
     public static bool IsSettlementStructure(this STRUCTURE_TYPE sub) {
         switch (sub) {
             case STRUCTURE_TYPE.CITY_CENTER:
-            case STRUCTURE_TYPE.WORK_AREA:
             case STRUCTURE_TYPE.CEMETERY:
             case STRUCTURE_TYPE.PRISON:
             case STRUCTURE_TYPE.DWELLING:
@@ -1626,19 +1604,9 @@ public static class Extensions {
                 return false;
         }
     }
-    public static bool ShouldBeGeneratedFromTemplate(this STRUCTURE_TYPE sub) {
-        switch (sub) {
-            case STRUCTURE_TYPE.WILDERNESS:
-            case STRUCTURE_TYPE.WORK_AREA:
-                return false;
-            default:
-                return true;
-        }
-    }
     public static int StructurePriority(this STRUCTURE_TYPE sub) {
         switch (sub) {
             case STRUCTURE_TYPE.WILDERNESS:
-            case STRUCTURE_TYPE.WORK_AREA:
             case STRUCTURE_TYPE.POND:
             case STRUCTURE_TYPE.CEMETERY:
                 return -1;
@@ -1650,24 +1618,6 @@ public static class Extensions {
                 return 2;
             case STRUCTURE_TYPE.WAREHOUSE:
                 return 3;
-            case STRUCTURE_TYPE.PRISON:
-                return 5;
-            default:
-                return 99;
-        }
-    }
-    public static int StructureGenerationPriority(this STRUCTURE_TYPE sub) {
-        switch (sub) {
-            case STRUCTURE_TYPE.CITY_CENTER:
-                return 0;
-            case STRUCTURE_TYPE.INN:
-                return 1;
-            case STRUCTURE_TYPE.WAREHOUSE:
-                return 2;
-            case STRUCTURE_TYPE.DWELLING:
-                return 3;
-            case STRUCTURE_TYPE.CEMETERY:
-                return 4;
             case STRUCTURE_TYPE.PRISON:
                 return 5;
             default:
@@ -1965,6 +1915,9 @@ public static class Extensions {
                 break;
             case JOB_TYPE.GO_TO:
                 priority = 925;
+                break;
+            case JOB_TYPE.RECOVER_HP:
+                priority = 920;
                 break;
             case JOB_TYPE.UNDERMINE:
                 priority = 910;

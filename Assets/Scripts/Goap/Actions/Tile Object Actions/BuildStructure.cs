@@ -28,8 +28,8 @@ public class BuildStructure : GoapAction {
     }
     public override void AddFillersToLog(Log log, ActualGoapNode goapNode) {
         base.AddFillersToLog(log, goapNode);
-        BuildSpotTileObject target = goapNode.poiTarget as BuildSpotTileObject;
-        log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(target.spot.blueprintType.ToString()), LOG_IDENTIFIER.STRING_1);
+        StructureTileObject target = goapNode.poiTarget as StructureTileObject;
+        // log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(target.spot.blueprintType.ToString()), LOG_IDENTIFIER.STRING_1);
     }
     public override void OnStopWhileStarted(ActualGoapNode node) {
         base.OnStopWhileStarted(node);
@@ -51,8 +51,9 @@ public class BuildStructure : GoapAction {
             if (poiTarget.gridTileLocation == null) {
                 return false;
             }
-            BuildSpotTileObject buildSpot = poiTarget as BuildSpotTileObject;
-            return buildSpot.spot.hasBlueprint;
+            //TODO:
+            // StructureTileObject structure = poiTarget as StructureTileObject;
+            // return structure.spot.hasBlueprint;
         }
         return false;
     }
@@ -76,17 +77,17 @@ public class BuildStructure : GoapAction {
 
     #region State Effects
     public void PreBuildSuccess(ActualGoapNode goapNode) {
-        BuildSpotTileObject target = goapNode.poiTarget as BuildSpotTileObject;
+        StructureTileObject target = goapNode.poiTarget as StructureTileObject;
         if (goapNode.actor.ownParty.carriedPOI != null) {
             ResourcePile carriedPile = goapNode.actor.ownParty.carriedPOI as ResourcePile;
             int cost = TileObjectDB.GetTileObjectData((goapNode.poiTarget as TileObject).tileObjectType).constructionCost;
             carriedPile.AdjustResourceInPile(-50);
             goapNode.poiTarget.AdjustResource(RESOURCE.WOOD, 50);
         }
-        goapNode.descriptionLog.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(target.spot.blueprintType.ToString()), LOG_IDENTIFIER.STRING_1);
+        // goapNode.descriptionLog.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(target.spot.blueprintType.ToString()), LOG_IDENTIFIER.STRING_1);
     }
     public void AfterBuildSuccess(ActualGoapNode goapNode) {
-        BuildSpotTileObject spot = goapNode.poiTarget as BuildSpotTileObject;
+        StructureTileObject spot = goapNode.poiTarget as StructureTileObject;
         // LocationStructure structure = spot.BuildBlueprint(goapNode.actor.homeSettlement);
         // goapNode.poiTarget.AdjustResource(RESOURCE.WOOD, -50);
 

@@ -63,9 +63,9 @@ namespace Inner_Maps {
                     float yPos = (y + 1) * (InnerMapManager.BuildingSpotSize.y) - (InnerMapManager.BuildingSpotSize.y / 2f);
                     collectionGO.transform.localPosition = new Vector2(xPos, yPos);
                     
-                    TileCollectionItem tileCollectionItem = collectionGO.GetComponent<TileCollectionItem>();
+                    LocationGridTileCollectionItem locationGridTileCollectionItem = collectionGO.GetComponent<LocationGridTileCollectionItem>();
                     LocationGridTileCollection collection =
-                        new LocationGridTileCollection(new Vector2Int(x, y), tileCollectionItem);
+                        new LocationGridTileCollection(new Vector2Int(x, y), locationGridTileCollectionItem);
                     locationGridTileCollections[x, y] = collection;
 
                     // spotItem.SetBuildingSpot(newSpot);

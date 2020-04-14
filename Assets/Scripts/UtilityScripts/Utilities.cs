@@ -31,7 +31,6 @@ namespace UtilityScripts {
         private static int _lastRegionID;
         private static int _lastJobID;
         private static int _lastBurningSourceID;
-        private static int _lastBuildSpotID;
         private static int _lastTileCollectionID;
         public static LANGUAGES defaultLanguage = LANGUAGES.ENGLISH;
         public static string dataPath => $"{Application.streamingAssetsPath}/Data/";
@@ -90,10 +89,6 @@ namespace UtilityScripts {
             if (obj is BurningSource) {
                 _lastBurningSourceID += 1;
                 return _lastBurningSourceID;
-            }
-            if (obj is BuildingSpot) {
-                _lastBuildSpotID += 1;
-                return _lastBuildSpotID;
             }
             if (obj is LocationGridTileCollection) {
                 _lastTileCollectionID += 1;

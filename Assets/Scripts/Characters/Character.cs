@@ -138,8 +138,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public BuildStructureComponent buildStructureComponent { get; private set; }
     public CharacterStateComponent stateComponent { get; private set; }
     public NonActionEventsComponent nonActionEventsComponent { get; private set; }
-    [Obsolete("opinionComponent is obsolete and has been moved to the BaseRelationshipContainer")]
-    public OpinionComponent opinionComponent { get; private set; }
     public InterruptComponent interruptComponent { get; private set; }
     public BehaviourComponent behaviourComponent { get; private set; }
     public MoodComponent moodComponent { get; private set; }
@@ -370,7 +368,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         trapStructure = new TrapStructure();
         planner = new GoapPlanner(this);
         nonActionEventsComponent = new NonActionEventsComponent(this);
-        opinionComponent = new OpinionComponent(this);
         interruptComponent = new InterruptComponent(this);
         behaviourComponent = new BehaviourComponent(this);
         moodComponent = new MoodComponent(this);
@@ -1913,14 +1910,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     private void OnOtherCharacterDied(Character characterThatDied) {
         if (characterThatDied.id != id) {
             string opinionLabel = relationshipContainer.GetOpinionLabel(characterThatDied);
-            if (opinionLabel == OpinionComponent.Close_Friend
+            if (opinionLabel == RelationshipManager.Close_Friend
                 || (relationshipContainer.HasSpecialPositiveRelationshipWith(characterThatDied) 
                     && relationshipContainer.IsEnemiesWith(characterThatDied) == false)) {
                 needsComponent.AdjustHope(-10f);
                 if (!traitContainer.HasTrait("Psychopath")) {
                     traitContainer.AddTrait(this, "Griefstricken", characterThatDied);
                 }
-            } else if (opinionLabel == OpinionComponent.Friend) {
+            } else if (opinionLabel == RelationshipManager.Friend) {
                 needsComponent.AdjustHope(-5f);
             } 
 
@@ -2952,6 +2949,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
         if (amount < 0) {
+            //hp was reduced
+            jobComponent.OnHPReduced();
             Character responsibleCharacter = null;
             if (source is Character character) {
                 responsibleCharacter = character;
@@ -2961,6 +2960,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this,
                 responsibleCharacter, etp);
             //CancelRemoveStatusFeedAndRepairJobsTargetingThis();
+        }
+        else {
+            //hp was increased
+            Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.RECOVER_HP, this as IPointOfInterest);
         }
         if (triggerDeath && _currentHP <= 0) {
             if(source != null) {
@@ -3583,8 +3586,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 if(character.isDead || character.isMissing || homeStructure == character.homeStructure) {
                     continue;
                 }
-                if (relationshipContainer.HasOpinionLabelWithCharacter(character, OpinionComponent.Acquaintance, 
-                    OpinionComponent.Friend, OpinionComponent.Close_Friend)) {
+                if (relationshipContainer.HasOpinionLabelWithCharacter(character, RelationshipManager.Acquaintance, 
+                    RelationshipManager.Friend, RelationshipManager.Close_Friend)) {
                     if (character.traitContainer.HasTrait("Paralyzed", "Catatonic")) {
                         positiveCharacters.Add(character);
                     }
@@ -4160,7 +4163,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         AddAdvertisedAction(INTERACTION_TYPE.SLAY_CHARACTER);
         AddAdvertisedAction(INTERACTION_TYPE.DOUSE_FIRE);
         AddAdvertisedAction(INTERACTION_TYPE.BURY_CHARACTER);
-
+        
         if (this is Summon) {
             AddAdvertisedAction(INTERACTION_TYPE.PLAY);
         }
@@ -4197,6 +4200,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         if (race == RACE.HUMANS || race == RACE.ELVES) {
             AddAdvertisedAction(INTERACTION_TYPE.REPORT_CORRUPTED_STRUCTURE);
+            AddAdvertisedAction(INTERACTION_TYPE.HEAL_SELF);
         }
     }
     /// <summary>
@@ -5225,7 +5229,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //    }
             //    //Debug.Log(this.name + " distance with " + characterThatStartedState.name + " is " + distance.ToString());
             //    if (targetCharacter != null && this.isPartOfHomeFaction && characterThatStartedState.isAtHomeRegion && characterThatStartedState.isPartOfHomeFaction && this.IsCombatReady()
-            //        && this.IsHostileOutsider(targetCharacter) && (opinionComponent.GetRelationshipEffectWith(characterThatStartedState) == RELATIONSHIP_EFFECT.POSITIVE || characterThatStartedState.role.roleType == CHARACTER_ROLE.SOLDIER)
+            //        && this.IsHostileOutsider(targetCharacter) && (RelationshipManager.GetRelationshipEffectWith(characterThatStartedState) == RELATIONSHIP_EFFECT.POSITIVE || characterThatStartedState.role.roleType == CHARACTER_ROLE.SOLDIER)
             //        && distance <= Combat_Signalled_Distance) {
             //        if (combatComponent.AddHostileInRange(targetCharacter, false)) {
             //            if (!combatComponent.avoidInRange.Contains(targetCharacter)) {
@@ -5484,9 +5488,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     private void OnCharacterMissing(Character missingCharacter) {
         if(missingCharacter != this) {
             string opinionLabel = relationshipContainer.GetOpinionLabel(missingCharacter);
-            if(opinionLabel == OpinionComponent.Friend) {
+            if(opinionLabel == RelationshipManager.Friend) {
                 needsComponent.AdjustHope(-5f);
-            }else if (opinionLabel == OpinionComponent.Close_Friend) {
+            }else if (opinionLabel == RelationshipManager.Close_Friend) {
                 needsComponent.AdjustHope(-10f);
             }
         }
@@ -5494,9 +5498,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     private void OnCharacterNoLongerMissing(Character missingCharacter) {
         if (missingCharacter != this) {
             string opinionLabel = relationshipContainer.GetOpinionLabel(missingCharacter);
-            if (opinionLabel == OpinionComponent.Friend) {
+            if (opinionLabel == RelationshipManager.Friend) {
                 needsComponent.AdjustHope(5f);
-            } else if (opinionLabel == OpinionComponent.Close_Friend) {
+            } else if (opinionLabel == RelationshipManager.Close_Friend) {
                 needsComponent.AdjustHope(10f);
             }
         }

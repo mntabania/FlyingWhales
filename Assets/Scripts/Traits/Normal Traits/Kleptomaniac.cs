@@ -76,7 +76,7 @@ namespace Traits {
         //         }
         //     } else if (targetPOI is Character) {
         //         Character targetCharacter = targetPOI as Character;
-        //         if (characterThatWillDoJob.opinionComponent.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.POSITIVE && characterThatWillDoJob.marker.CanDoStealthActionToTarget(targetCharacter) && targetCharacter.items.Count > 0) {
+        //         if (characterThatWillDoJob.RelationshipManager.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.POSITIVE && characterThatWillDoJob.marker.CanDoStealthActionToTarget(targetCharacter) && targetCharacter.items.Count > 0) {
         //             SpecialToken item = targetCharacter.items[Random.Range(0, targetCharacter.items.Count)];
         //             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.STEAL, INTERACTION_TYPE.STEAL, item, characterThatWillDoJob);
         //             job.SetIsStealth(true);

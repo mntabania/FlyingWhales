@@ -158,7 +158,7 @@ public class PlayGuitar : GoapAction {
             //         if (dwelling.IsOccupied()) {
             //             for (int i = 0; i < dwelling.residents.Count; i++) {
             //                 Character currResident = dwelling.residents[i];
-            //                 if (currResident.opinionComponent.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.POSITIVE) {
+            //                 if (currResident.RelationshipManager.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.POSITIVE) {
             //                     return true;
             //                 }
             //             }

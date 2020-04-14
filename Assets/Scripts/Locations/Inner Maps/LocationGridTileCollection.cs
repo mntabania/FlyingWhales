@@ -10,14 +10,14 @@ namespace Inner_Maps {
         public Vector2Int locationInGrid { get; }
         public LocationGridTile[] tilesInTerritory { get; private set; }
         public InnerMapHexTile partOfHextile { get; private set; }
-        public TileCollectionItem tileCollectionItem { get; }
+        public LocationGridTileCollectionItem locationGridTileCollectionItem { get; }
 
         public bool isPartOfParentRegionMap => partOfHextile != null;
         
-        public LocationGridTileCollection(Vector2Int _locationInGrid, TileCollectionItem _tileCollectionItem) {
+        public LocationGridTileCollection(Vector2Int _locationInGrid, LocationGridTileCollectionItem locationGridTileCollectionItem) {
             id = UtilityScripts.Utilities.SetID(this);
             locationInGrid = _locationInGrid;
-            tileCollectionItem = _tileCollectionItem;
+            this.locationGridTileCollectionItem = locationGridTileCollectionItem;
         }
 
         #region Initialization
@@ -33,7 +33,7 @@ namespace Inner_Maps {
         private void DetermineTilesInnTerritory(InnerTileMap tileMap) {
             tilesInTerritory = new LocationGridTile[InnerMapManager.BuildingSpotSize.x * InnerMapManager.BuildingSpotSize.y];
             int radius = Mathf.FloorToInt(InnerMapManager.BuildingSpotSize.x / 2f);
-            Vector2 localPosition = tileCollectionItem.transform.localPosition;
+            Vector2 localPosition = locationGridTileCollectionItem.transform.localPosition;
             Vector2Int centeredLocation
                 = new Vector2Int(Mathf.FloorToInt(localPosition.x), Mathf.FloorToInt(localPosition.y));  
             Vector2Int startingPos = new Vector2Int(centeredLocation.x - radius, centeredLocation.y - radius);

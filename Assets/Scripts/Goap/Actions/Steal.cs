@@ -46,7 +46,7 @@ public class Steal : GoapAction {
             }
             if(item != null && item.characterOwner != null) {
                 string opinionLabel = actor.relationshipContainer.GetOpinionLabel(item.characterOwner);
-                if(opinionLabel == OpinionComponent.Acquaintance || opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
+                if(opinionLabel == RelationshipManager.Acquaintance || opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
                     cost += 2000;
                     costLog += " +2000(not Kleptomaniac, Friend/Close/Acquaintance)";
                 }

@@ -1989,7 +1989,7 @@ GameObject:
   - component: {fileID: 114520684233025900}
   - component: {fileID: 5233163872306119009}
   m_Layer: 14
-  m_Name: Mine 1
+  m_Name: Abandoned Mine 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2166,6 +2166,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6ecdc22d03840dea1e8820cae0652b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ParentPool: {fileID: 0}
   structureObjects:
   - {fileID: 114520684233025900}
 --- !u!1 &1401363751003234
@@ -2933,6 +2934,7 @@ Transform:
   - {fileID: 7439844025418246892}
   - {fileID: 215290119139594276}
   - {fileID: 7329973425101352627}
+  - {fileID: 608075680953777069}
   m_Father: {fileID: 4692683338183034}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4645,6 +4647,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 7445839877507620040}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &695933492081040093
 GameObject:
@@ -4741,6 +4747,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 5207042494141262351}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &709663723900520253
 GameObject:
@@ -5182,6 +5192,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 1789535681822761880}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &854705801086997698
 GameObject:
@@ -5609,6 +5623,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 5035016441307660674}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &928719269908239477
 GameObject:
@@ -5704,6 +5722,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 2920306999253799174}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &1024004502685669110
 GameObject:
@@ -5943,6 +5965,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 6620722633367640359}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &1104485275264571709
 GameObject:
@@ -5993,6 +6019,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 7914914845218233358}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &1142851793024282220
 GameObject:
@@ -6368,6 +6398,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 1661874944711448111}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &1316467229309121089
 GameObject:
@@ -6417,6 +6451,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 1698199376608184826}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &1327471726493995183
 GameObject:
@@ -7950,6 +7988,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 1313442619771127742}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &1817106010310123804
 GameObject:
@@ -8045,6 +8087,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 2588969616094733966}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &1838808158189586552
 GameObject:
@@ -8855,6 +8901,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 5086525383051771066}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &2096085772241709300
 GameObject:
@@ -9201,7 +9251,107 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 4582649795364129257}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
+--- !u!1 &2262439734855016046
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 608075680953777069}
+  - component: {fileID: 2197449799516005692}
+  - component: {fileID: 4400561014727453233}
+  m_Layer: 14
+  m_Name: StructureTemplateObjectData (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &608075680953777069
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2262439734855016046}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 5.5, y: 8.5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4947364616982008}
+  m_RootOrder: 51
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2197449799516005692
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2262439734855016046}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd7182b7dcb98949856eb51bac9ae25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tileObjectType: 24
+  spriteRenderer: {fileID: 4400561014727453233}
+--- !u!212 &4400561014727453233
+SpriteRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2262439734855016046}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 1024382313
+  m_SortingLayer: 19
+  m_SortingOrder: 60
+  m_Sprite: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 1, y: 1}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 0
+  m_MaskInteraction: 0
+  m_SpriteSortPoint: 0
 --- !u!1 &2266386891870753466
 GameObject:
   m_ObjectHideFlags: 0
@@ -9969,6 +10119,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 2657403617416588864}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &2591147921435240989
 GameObject:
@@ -11022,6 +11176,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 3310354112324802274}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &2913145867783129271
 GameObject:
@@ -11189,6 +11347,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 3430781496310689390}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &3002728522379437089
 GameObject:
@@ -11784,6 +11946,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 919649154825803056}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &3251604313857418255
 GameObject:
@@ -12447,6 +12613,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 5941508665896568678}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &3405228027314378809
 GameObject:
@@ -12685,6 +12855,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 950071700276799114}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &3477684801970593616
 GameObject:
@@ -12734,6 +12908,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 3121434685680425677}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &3501046520427193857
 GameObject:
@@ -13058,6 +13236,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 6325777157796436091}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &3581261630888356265
 GameObject:
@@ -13262,6 +13444,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 7054868841702630509}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &3627157703884865295
 GameObject:
@@ -13312,6 +13498,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 6278722037528027296}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &3667363670017514698
 GameObject:
@@ -13362,6 +13552,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 1376879288197239224}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &3695722379507338556
 GameObject:
@@ -13538,6 +13732,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 5322454723312656866}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &3766151373899918568
 GameObject:
@@ -14384,6 +14582,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 6759384945160946525}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &4193604425275795252
 GameObject:
@@ -14433,6 +14635,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 2091571044768070433}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &4212130864812340315
 GameObject:
@@ -15463,6 +15669,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 6083375542490902064}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &4686569762121082633
 GameObject:
@@ -15512,6 +15722,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 2024458557568420067}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &4705604034681817733
 GameObject:
@@ -16180,6 +16394,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 6882803616800976422}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &4808753601919098349
 GameObject:
@@ -16300,6 +16518,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 7415167887981199406}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &4828798632136740189
 GameObject:
@@ -16840,6 +17062,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 221114103917140162}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &4883784457326604704
 GameObject:
@@ -16890,6 +17116,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 1064682292934536639}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &4967908888331862184
 GameObject:
@@ -16939,6 +17169,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 1311051924584483975}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &5007916153305639100
 GameObject:
@@ -17084,6 +17318,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 8920140361176822984}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &5122365236787011003
 GameObject:
@@ -18075,6 +18313,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 1750993386036361731}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &5486527340079903490
 GameObject:
@@ -18303,6 +18545,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 1316423587200146911}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &5556057787005285328
 GameObject:
@@ -18444,6 +18690,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 470530354522031536}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &5597978131369759412
 GameObject:
@@ -18778,6 +19028,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 2767403871510774073}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &5715505530569597835
 GameObject:
@@ -18827,6 +19081,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 5215032442015108398}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &5753300656357894317
 GameObject:
@@ -19055,6 +19313,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 1583351195622827237}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &5961900683772419130
 GameObject:
@@ -19317,6 +19579,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 5689822521383939361}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &6019808614730230125
 GameObject:
@@ -19747,6 +20013,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 6114837872829257111}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &6093943031605391673
 GameObject:
@@ -20244,6 +20514,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 4302588857397577308}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &6291567585312443567
 GameObject:
@@ -20410,6 +20684,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 3113671418244209323}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &6441442581234029856
 GameObject:
@@ -20709,6 +20987,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 3076226653022911436}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &6523969647618771597
 GameObject:
@@ -21045,6 +21327,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 7551635634994248337}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &6661233200946420449
 GameObject:
@@ -21688,6 +21974,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 9171733342282287246}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &6805049687125604410
 GameObject:
@@ -21737,6 +22027,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 7184060850238014402}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &6825056418729394524
 GameObject:
@@ -21833,6 +22127,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 837576139034225395}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &6894290660758763549
 GameObject:
@@ -22036,6 +22334,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 5867630565842914390}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &6920769607595315199
 GameObject:
@@ -22598,6 +22900,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 9206618193683261011}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &7125981565787346312
 GameObject:
@@ -22860,6 +23166,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 6163279472471566826}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &7242640237119519567
 GameObject:
@@ -23826,6 +24136,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 6686017639301698296}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &7658408666633877569
 GameObject:
@@ -23875,6 +24189,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 4381123868188804360}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &7685157980778318870
 GameObject:
@@ -24204,6 +24522,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 5007048740674320354}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &7851431639956944567
 GameObject:
@@ -24416,6 +24738,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 8773951933813993710}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &7926790361411172282
 GameObject:
@@ -24904,6 +25230,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 3613614375771749291}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &8033883469065562732
 GameObject:
@@ -24954,6 +25284,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 4637543894474484462}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &8041889941726277498
 GameObject:
@@ -25120,6 +25454,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 5249100640826632781}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &8090482626934596213
 GameObject:
@@ -25240,6 +25578,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 8044911615322827650}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &8158231843919444467
 GameObject:
@@ -25762,6 +26104,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 3797551203951731720}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &8293905860401077154
 GameObject:
@@ -26565,6 +26911,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 6141864960359568563}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &8408430461188096771
 GameObject:
@@ -26660,6 +27010,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 2793304525264801066}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &8420483887139243978
 GameObject:
@@ -26971,6 +27325,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 1808974275779027263}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &8562967190168472753
 GameObject:
@@ -27112,6 +27470,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 3092966705558351080}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &8811118021068412019
 GameObject:
@@ -27566,6 +27928,10 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 805715065484689960}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}
 --- !u!1 &8871759539194692715
 GameObject:
@@ -27971,4 +28337,8 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 8118641871230128347}
   hoverObject: {fileID: 0}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
   statusIconsParent: {fileID: 0}

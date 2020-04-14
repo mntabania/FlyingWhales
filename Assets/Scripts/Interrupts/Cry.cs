@@ -23,17 +23,17 @@ namespace Interrupts {
         //public override string ReactionToActor(Character witness, Character actor, IPointOfInterest target, Interrupt interrupt, REACTION_STATUS status) {
         //    string response = base.ReactionToActor(witness, actor, target, interrupt, status);
         //    string opinionLabel = witness.relationshipContainer.GetOpinionLabel(actor);
-        //    if (opinionLabel == OpinionComponent.Acquaintance) {
+        //    if (opinionLabel == RelationshipManager.Acquaintance) {
         //        if (!witness.traitContainer.HasTrait("Psychopath")) {
         //            if (UnityEngine.Random.Range(0, 2) == 0) {
         //                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status);
         //            }
         //        }
-        //    } else if (opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
+        //    } else if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
         //        if (!witness.traitContainer.HasTrait("Psychopath")) {
         //            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status);
         //        }
-        //    } else if (opinionLabel == OpinionComponent.Enemy || opinionLabel == OpinionComponent.Rival) {
+        //    } else if (opinionLabel == RelationshipManager.Enemy || opinionLabel == RelationshipManager.Rival) {
         //        if (UnityEngine.Random.Range(0, 2) == 0) {
         //            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, actor, status);
         //        }

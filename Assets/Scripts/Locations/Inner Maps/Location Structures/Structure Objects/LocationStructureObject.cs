@@ -161,7 +161,7 @@ public class LocationStructureObject : PooledObject {
     public void ClearOutUnimportantObjectsBeforePlacement() {
         for (int i = 0; i < tiles.Length; i++) {
             LocationGridTile tile = tiles[i];
-            if (tile.objHere != null && (tile.objHere is BuildSpotTileObject) == false) { //TODO: Remove tight coupling with Build Spot Tile object
+            if (tile.objHere != null && (tile.objHere is StructureTileObject) == false) { //TODO: Remove tight coupling with Build Spot Tile object
                 tile.structure.RemovePOI(tile.objHere);
             }
             tile.parentMap.detailsTilemap.SetTile(tile.localPlace, null);
@@ -175,7 +175,7 @@ public class LocationStructureObject : PooledObject {
             List<LocationGridTile> differentStructureTiles = tile.neighbourList.Where(x => !tiles.Contains(x)).ToList();
             for (int j = 0; j < differentStructureTiles.Count; j++) {
                 LocationGridTile diffTile = differentStructureTiles[j];
-                if (diffTile.objHere != null && (diffTile.objHere is BuildSpotTileObject) == false) { //TODO: Remove tight coupling with Build Spot Tile object
+                if (diffTile.objHere != null && (diffTile.objHere is StructureTileObject) == false) { //TODO: Remove tight coupling with Build Spot Tile object
                     diffTile.structure.RemovePOI(diffTile.objHere);
                 }
                 diffTile.parentMap.detailsTilemap.SetTile(diffTile.localPlace, null);
@@ -414,6 +414,17 @@ public class LocationStructureObject : PooledObject {
                     break;
             }
         }
+    }
+    /// <summary>
+    /// Get what this structures walls are made of.
+    /// </summary>
+    /// <returns>A resource type. NOTE: this defaults to wood if no walls are present.</returns>
+    public RESOURCE WallsMadeOf() {
+        if (walls.Length > 0) {
+            StructureWallObject structureWallObject = walls[0];
+            return structureWallObject.madeOf;
+        }
+        return RESOURCE.WOOD;
     }
     #endregion
 

@@ -107,7 +107,7 @@ public class Butcher : GoapAction {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disgust, witness, actor, status);
             
                 string opinionLabel = witness.relationshipContainer.GetOpinionLabel(actor);
-                if (opinionLabel == OpinionComponent.Acquaintance || opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
+                if (opinionLabel == RelationshipManager.Acquaintance || opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor, status);
                 }
                 if (!witness.traitContainer.HasTrait("Psychopath")) {
@@ -115,7 +115,7 @@ public class Butcher : GoapAction {
                 }
             }
             string witnessOpinionToTarget = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
-            if (witnessOpinionToTarget == OpinionComponent.Friend || witnessOpinionToTarget == OpinionComponent.Close_Friend || witnessOpinionToTarget == OpinionComponent.Acquaintance 
+            if (witnessOpinionToTarget == RelationshipManager.Friend || witnessOpinionToTarget == RelationshipManager.Close_Friend || witnessOpinionToTarget == RelationshipManager.Acquaintance 
                 || witness.faction == targetCharacter.faction || witness.homeSettlement == targetCharacter.homeSettlement) {
                 if (!witness.traitContainer.HasTrait("Psychopath")) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status);

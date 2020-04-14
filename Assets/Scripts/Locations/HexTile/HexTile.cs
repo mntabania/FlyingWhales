@@ -101,7 +101,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     public bool isBeingDefended => _isBeingDefendedCount > 0;
     public Vector3 worldPosition {
         get {
-            Vector2 pos = innerMapHexTile.gridTileCollections[0].tileCollectionItem.transform.position;
+            Vector2 pos = innerMapHexTile.gridTileCollections[0].locationGridTileCollectionItem.transform.position;
             pos.x += 3.5f;
             pos.y += 3.5f;
             return pos;
@@ -1059,7 +1059,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         //Cannot build on settlements and hextiles with blueprints right now
         if(/*isCorrupted && isCurrentlyBeingCorrupted == false &&*/ settlementOnTile == null && landmarkOnTile == null 
                && elevationType != ELEVATION.WATER && elevationType != ELEVATION.MOUNTAIN &&
-            PlayerManager.Instance.player.mana >= EditableValuesManager.Instance.buildStructureManaCost) {
+            PlayerManager.Instance.player.mana >= EditableValuesManager.Instance.buildStructureManaCost && _buildParticles == null) {
 
             //TODO:
             // //if it has any build spots that have a blueprint on them, do not allow
@@ -1117,11 +1117,20 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkName);
         UIManager.Instance.ShowYesNoConfirmation("Build Structure Confirmation", "Are you sure you want to build " + landmarkName + "?", () => StartBuild(structureType));
     }
+    private AutoDestroyParticle _buildParticles;
     private void StartBuild(SPELL_TYPE structureType) {
+        _buildParticles = GameManager.Instance.CreateParticleEffectAt(GetCenterLocationGridTile(),
+            PARTICLE_EFFECT.Build_Demonic_Structure).GetComponent<AutoDestroyParticle>();
+        UIManager.Instance.HideObjectPicker();
+        StartCoroutine(BuildCoroutine(structureType));
+    }
+    private IEnumerator BuildCoroutine(SPELL_TYPE structureType) {
+        yield return new WaitForSeconds(3f);
+        _buildParticles.StopEmission();
         DemonicStructurePlayerSkill demonicStructureSkill = PlayerSkillManager.Instance.GetDemonicStructureSkillData(structureType);
         demonicStructureSkill.ActivateAbility(this);
-        UIManager.Instance.HideObjectPicker();
         PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.BUILD_DEMONIC_STRUCTURE).OnExecuteSpellActionAffliction();
+        _buildParticles = null;
     }
     #endregion
 
@@ -1222,19 +1231,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         ChangeGridTilesBiome();
     }
     private void ChangeGridTilesBiome() {
-        // float offsetX = Random.Range(0f, 99999f);
-        // float offsetY = Random.Range(0f, 99999f);
-        // int minX = locationGridTiles.Min(t => t.localPlace.x);
-        // int maxX = locationGridTiles.Max(t => t.localPlace.x);
-        // int minY = locationGridTiles.Min(t => t.localPlace.y);
-        // int maxY = locationGridTiles.Max(t => t.localPlace.y);
-        //
-        // int xSize = maxX - minX;
-        // int ySize = maxY - minY;
-
-        //Vector3Int[] positionArray = new Vector3Int[locationGridTiles.Count];
-        //TileBase[] groundTilesArray = new TileBase[locationGridTiles.Count];
-
         for (int i = 0; i < locationGridTiles.Count; i++) {
             LocationGridTile currTile = locationGridTiles[i];
             Vector3Int position = currTile.localPlace;
@@ -1252,10 +1248,37 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
                 }
                 currTile.CreateSeamlessEdgesForSelfAndNeighbours();    
             }
-            
         }
-        //locationGridTiles[0].parentMap.MassSetGroundTileMapVisuals(positionArray, groundTilesArray);
     }
+    public void GradualChangeBiomeType(BIOMES biomeType, System.Action onFinishChangeAction) {
+        SetBiome(biomeType);
+        Biomes.Instance.UpdateTileVisuals(this);
+        StartCoroutine(ChangeGridTilesBiomeCoroutine(onFinishChangeAction));
+    }
+    private IEnumerator ChangeGridTilesBiomeCoroutine(System.Action onFinishChangeAction) {
+        // List<LocationGridTile> gridTiles = new List<LocationGridTile>(locationGridTiles);
+        // gridTiles = UtilityScripts.CollectionUtilities.Shuffle(gridTiles);
+        for (int i = 0; i < locationGridTiles.Count; i++) {
+            LocationGridTile currTile = locationGridTiles[i];
+            Vector3Int position = currTile.localPlace;
+            TileBase groundTile = InnerTileMap.GetGroundAssetPerlin(currTile.floorSample, biomeType);
+            if (currTile.structure.isInterior || currTile.isCorrupted) {
+                //set the previous tile to the new biome, so that when the structure is destroyed
+                //it will revert to the right asset
+                currTile.SetPreviousGroundVisual(groundTile);
+            } else {
+                currTile.SetPreviousGroundVisual(null);
+                currTile.parentMap.groundTilemap.SetTile(position, groundTile);
+                currTile.UpdateGroundTypeBasedOnAsset();
+                if (currTile.objHere != null && currTile.objHere.mapObjectVisual && currTile.objHere is TileObject tileObject) {
+                    tileObject.mapVisual.UpdateTileObjectVisual(tileObject);
+                }
+                currTile.CreateSeamlessEdgesForSelfAndNeighbours();
+            }
+            yield return null;
+        }
+        onFinishChangeAction.Invoke();
+    } 
     #endregion
 
     #region Defend

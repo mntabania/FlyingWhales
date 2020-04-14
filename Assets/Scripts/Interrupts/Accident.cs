@@ -23,17 +23,17 @@ namespace Interrupts {
             Interrupt interrupt, REACTION_STATUS status) {
             string response = base.ReactionToActor(witness, actor, target, interrupt, status);
             string opinionLabel = witness.relationshipContainer.GetOpinionLabel(actor);
-            if (opinionLabel == OpinionComponent.Acquaintance) {
+            if (opinionLabel == RelationshipManager.Acquaintance) {
                 if(UnityEngine.Random.Range(0, 2) == 0) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status);
                 }
-            } else if (opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
+            } else if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status);
-            } else if (opinionLabel == OpinionComponent.Enemy) {
+            } else if (opinionLabel == RelationshipManager.Enemy) {
                 if (UnityEngine.Random.Range(0, 2) == 0) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, actor, status);
                 }
-            } else if (opinionLabel == OpinionComponent.Rival) {
+            } else if (opinionLabel == RelationshipManager.Rival) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, actor, status);
             }
             return response;

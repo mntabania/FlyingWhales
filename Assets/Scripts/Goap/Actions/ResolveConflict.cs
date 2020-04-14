@@ -72,7 +72,7 @@ public class ResolveConflict : GoapAction {
         if (goapNode.poiTarget is Character) {
             Character targetCharacter = goapNode.poiTarget as Character;
             //List<Relatable> allEnemyTraits = targetCharacter.relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TRAIT.ENEMY);
-            // Character target = targetCharacter.opinionComponent.GetEnemyCharacters().First();
+            // Character target = targetCharacter.RelationshipManager.GetEnemyCharacters().First();
             // if (target != null) {
             //     RelationshipManager.Instance.RemoveOneWayRelationship(targetCharacter.currentAlterEgo, target, RELATIONSHIP_TYPE.ENEMY);
             // } else {

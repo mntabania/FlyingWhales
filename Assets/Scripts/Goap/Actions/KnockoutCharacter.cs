@@ -29,7 +29,7 @@ public class KnockoutCharacter : GoapAction {
         if (target is Character) {
             Character targetCharacter = target as Character;
             string opinionLabel = actor.relationshipContainer.GetOpinionLabel(targetCharacter);
-            if (opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend || opinionLabel == OpinionComponent.Acquaintance
+            if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend || opinionLabel == RelationshipManager.Acquaintance
                 || actor.faction == targetCharacter.faction || actor.homeSettlement == targetCharacter.homeSettlement) {
                 cost += 15;
                 costLog += " +15(Friend/Close/Acquaintance/Same Faction/NPCSettlement)";
@@ -51,7 +51,7 @@ public class KnockoutCharacter : GoapAction {
         if (target is Character) {
             Character targetCharacter = target as Character;
             string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
-            if (opinionLabel == OpinionComponent.Rival) {
+            if (opinionLabel == RelationshipManager.Rival) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status);
             } else {
                 if(node.associatedJobType != JOB_TYPE.APPREHEND) {
@@ -62,9 +62,9 @@ public class KnockoutCharacter : GoapAction {
                 }
             }
 
-            if (opinionLabel == OpinionComponent.Acquaintance) {
+            if (opinionLabel == RelationshipManager.Acquaintance) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status);
-            } else if (opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
+            } else if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status);
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status);
             }
