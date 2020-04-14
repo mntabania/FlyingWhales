@@ -84,9 +84,11 @@ public class MinionCommandsUI : MonoBehaviour {
             isInteractable = CanKnockout;
         } else if (button.gameObject.name == "Abduct") {
             isInteractable = CanAbduct;
-        } else if (button.gameObject.name == "Learn Monster") {
-            isInteractable = CanLearnMonster;
-        } else if (button.gameObject.name == "Take Artifact") {
+        } 
+        //else if (button.gameObject.name == "Learn Monster") {
+        //    isInteractable = CanLearnMonster;
+        //} 
+        else if (button.gameObject.name == "Take Artifact") {
             isInteractable = CanTakeArtifact;
         }
         button.interactable = isInteractable == null || isInteractable();
@@ -147,23 +149,23 @@ public class MinionCommandsUI : MonoBehaviour {
     }
     #endregion
 
-    #region Monsters
-    public void LearnMonster() {
-        if (CanIssueCommand()) {
-            if (targetPOI is Character) {
-                Character actor = UIManager.Instance.characterInfoUI.activeCharacter;
-                actor.jobComponent.CreateLearnMonsterJob(targetPOI as Character);
-            } else {
-                Debug.LogError($"{targetPOI.name} is not a character!");
-            }
-        }
-        HideUI();
-    }
-    private bool CanLearnMonster() {
-        Character target = targetPOI as Character;
-        return !PlayerManager.Instance.player.archetype.HasMonster(target.race, target.characterClass.className);
-    }
-    #endregion
+    //#region Monsters
+    //public void LearnMonster() {
+    //    if (CanIssueCommand()) {
+    //        if (targetPOI is Character) {
+    //            Character actor = UIManager.Instance.characterInfoUI.activeCharacter;
+    //            actor.jobComponent.CreateLearnMonsterJob(targetPOI as Character);
+    //        } else {
+    //            Debug.LogError($"{targetPOI.name} is not a character!");
+    //        }
+    //    }
+    //    HideUI();
+    //}
+    //private bool CanLearnMonster() {
+    //    Character target = targetPOI as Character;
+    //    return !PlayerManager.Instance.player.archetype.HasMonster(target.race, target.characterClass.className);
+    //}
+    //#endregion
 
     #region Artifacts
     public void TakeArtifact() {

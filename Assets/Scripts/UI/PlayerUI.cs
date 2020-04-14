@@ -919,8 +919,8 @@ public class PlayerUI : MonoBehaviour {
         //customDropdownList.HideDropdown();
     }
     public void CreateInitialSpells() {
-        for (int i = 0; i < PlayerManager.Instance.player.archetype.spells.Count; i++) {
-            SPELL_TYPE spell = PlayerManager.Instance.player.archetype.spells[i];
+        for (int i = 0; i < PlayerManager.Instance.player.playerSkillComponent.spells.Count; i++) {
+            SPELL_TYPE spell = PlayerManager.Instance.player.playerSkillComponent.spells[i];
 // #if !UNITY_EDITOR
             if(spell == SPELL_TYPE.FEEBLE_SPIRIT || spell == SPELL_TYPE.RAVENOUS_SPIRIT 
                 || spell == SPELL_TYPE.FORLORN_SPIRIT){

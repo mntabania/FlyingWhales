@@ -1266,7 +1266,7 @@ public class ConsoleBase : InfoUIBase {
         string typeParameterString = parameters[0];
         PLAYER_ARCHETYPE type;
         if (Enum.TryParse(typeParameterString, out type)) {
-            PlayerManager.Instance.player.SetArchetype(type);
+            //PlayerManager.Instance.player.SetArchetype(type);
             AddSuccessMessage($"Changed Player Archetype to: {type}");
         } else {
             AddErrorMessage($"There is no archetype {typeParameterString}");

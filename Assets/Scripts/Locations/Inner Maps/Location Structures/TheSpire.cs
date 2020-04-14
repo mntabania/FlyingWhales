@@ -67,8 +67,8 @@ namespace Inner_Maps.Location_Structures {
                 "Choose a spell to learn", OnHoverSpell, OnHoverExitSpell, showCover: true);
         }
         private void LearnNewSpell(object obj) {
-            SPELL_TYPE spellType = (SPELL_TYPE) obj;
-            PlayerManager.Instance.player.LearnSpell(spellType);
+            //SPELL_TYPE spellType = (SPELL_TYPE) obj;
+            //PlayerManager.Instance.player.LearnSpell(spellType);
             UIManager.Instance.HideObjectPicker();
             OnSpellLearned();
             PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.LEARN_SPELL).OnExecuteSpellActionAffliction();
@@ -86,8 +86,8 @@ namespace Inner_Maps.Location_Structures {
                 "Choose a spell to learn", OnHoverAffliction, OnHoverExitAffliction, showCover: true, portraitGetter:AfflictionPortraitGetter);
         }
         private void LearnNewAffliction(object obj) {
-            SPELL_TYPE spellType = (SPELL_TYPE)obj;
-            PlayerManager.Instance.player.LearnAffliction(spellType);
+            //SPELL_TYPE spellType = (SPELL_TYPE)obj;
+            //PlayerManager.Instance.player.LearnAffliction(spellType);
             UIManager.Instance.HideObjectPicker();
             OnSpellLearned();
             PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.LEARN_SPELL).OnExecuteSpellActionAffliction();

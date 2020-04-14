@@ -4038,7 +4038,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   parentSkillTreeUI: {fileID: 1194852126347524552}
   skillTreeItems:
-    m_keys: 02000000040000000e0000005a0000001100000051000000
+    m_keys: 02000000040000000e0000005a0000001100000063000000
     m_values:
     - {fileID: 5617096496425509082}
     - {fileID: 2994272371104245388}
@@ -9806,12 +9806,12 @@ PrefabInstance:
     - target: {fileID: 474651944014927640, guid: c8213a0ab684af74c8e14a81a425cf61,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 81.8
+      value: 87.3
       objectReference: {fileID: 0}
     - target: {fileID: 474651944014927640, guid: c8213a0ab684af74c8e14a81a425cf61,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 65.1
+      value: 69.5
       objectReference: {fileID: 0}
     - target: {fileID: 474651944014927640, guid: c8213a0ab684af74c8e14a81a425cf61,
         type: 3}

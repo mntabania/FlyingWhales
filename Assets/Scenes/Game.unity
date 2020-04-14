@@ -38206,6 +38206,8 @@ MonoBehaviour:
     - Cowardice
     - Pyrophobia
     - Narcolepsy
+    - Hotheaded
+    - Gluttony
     m_values:
     - {fileID: 21300000, guid: 360bd7c134b76554488e42b1b995ce62, type: 3}
     - {fileID: 21300000, guid: 69b99f864b21aaf468543d8e4f78d683, type: 3}
@@ -38228,6 +38230,8 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 00c146ecfee6b7c4fb1138f861d0a9f4, type: 3}
     - {fileID: 21300000, guid: 77e63770c7ecb474c9aa378a33e9e6ee, type: 3}
     - {fileID: 21300000, guid: 00c146ecfee6b7c4fb1138f861d0a9f4, type: 3}
+    - {fileID: 21300000, guid: be6e6d76787bad747acdc647f43942bb, type: 3}
+    - {fileID: 21300000, guid: be6e6d76787bad747acdc647f43942bb, type: 3}
     - {fileID: 21300000, guid: be6e6d76787bad747acdc647f43942bb, type: 3}
     - {fileID: 21300000, guid: be6e6d76787bad747acdc647f43942bb, type: 3}
     - {fileID: 21300000, guid: be6e6d76787bad747acdc647f43942bb, type: 3}

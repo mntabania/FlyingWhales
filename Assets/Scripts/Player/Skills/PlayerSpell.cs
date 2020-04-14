@@ -215,6 +215,7 @@ public class SpellData : IPlayerSkill {
         charges = -1;
         manaCost = -1;
         cooldown = -1;
+        currentCooldownTick = cooldown;
     }
 
     #region Virtuals
@@ -269,7 +270,7 @@ public class SpellData : IPlayerSkill {
         }
         return CanPerformAbility();
     }
-    protected bool CanPerformAbility() {
+    public bool CanPerformAbility() {
         return (!hasCharges || charges > 0) && (!hasManaCost || PlayerManager.Instance.player.mana >= manaCost) && (!hasCooldown || currentCooldownTick == cooldown);
     }
     /// <summary>
@@ -331,6 +332,12 @@ public class SpellData : IPlayerSkill {
             Messenger.RemoveListener(Signals.TICK_STARTED, PerTickCooldown);
         }
     }
+    public string GetManaCostChargesCooldownStr() {
+        string str = "Mana Cost: " + manaCost;
+        str += "\nCharges: " + charges;
+        str += "\nCooldown: " + cooldown;
+        return str;
+    }
     #endregion
 
     #region Attributes
@@ -342,6 +349,7 @@ public class SpellData : IPlayerSkill {
     }
     public void SetCooldown(int amount) {
         cooldown = amount;
+        currentCooldownTick = cooldown;
     }
     #endregion
 }

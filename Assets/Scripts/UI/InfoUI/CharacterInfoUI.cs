@@ -182,7 +182,7 @@ public class CharacterInfoUI : InfoUIBase {
         activeActionItems.Clear();
         for (int i = 0; i < target.actions.Count; i++) {
             PlayerAction action = PlayerSkillManager.Instance.GetPlayerActionData(target.actions[i]);
-            if (action.IsValid(target) && PlayerManager.Instance.player.archetype.CanDoPlayerAction(action.type)) {
+            if (action.IsValid(target) && PlayerManager.Instance.player.playerSkillComponent.CanDoPlayerAction(action.type)) {
                 //if (action.actionName == PlayerDB.Combat_Mode_Action) {
                 //    action.SetLabelText(action.actionName + ": " + UtilityScripts.Utilities.NotNormalizedConversionEnumToString(activeCharacter.combatComponent.combatMode.ToString()));
                 //}
@@ -368,8 +368,8 @@ public class CharacterInfoUI : InfoUIBase {
                 showCover: true, layer: 25,
                 yesBtnText: $"Trigger ({EditableValuesManager.Instance.triggerFlawManaCost.ToString()} Mana)",
                 noBtnText: "Remove Trait",
-                yesBtnInteractable: PlayerManager.Instance.player.archetype.canTriggerFlaw && trait.canBeTriggered && trait.CanFlawBeTriggered(activeCharacter) && TraitManager.Instance.CanStillTriggerFlaws(activeCharacter),
-                noBtnInteractable: PlayerManager.Instance.player.archetype.canRemoveTraits,
+                yesBtnInteractable: PlayerManager.Instance.player.playerSkillComponent.canTriggerFlaw && trait.canBeTriggered && trait.CanFlawBeTriggered(activeCharacter) && TraitManager.Instance.CanStillTriggerFlaws(activeCharacter),
+                noBtnInteractable: PlayerManager.Instance.player.playerSkillComponent.canRemoveTraits,
                 pauseAndResume: true,
                 //noBtnActive: false,
                 //yesBtnActive: trait.canBeTriggered,
@@ -661,7 +661,7 @@ public class CharacterInfoUI : InfoUIBase {
     #region Afflict
     public void ShowAfflictUI() {
         afflictions.Clear();
-        List<SPELL_TYPE> afflictionTypes = PlayerManager.Instance.player.archetype.afflictions;
+        List<SPELL_TYPE> afflictionTypes = PlayerManager.Instance.player.playerSkillComponent.afflictions;
         for (int i = 0; i < afflictionTypes.Count; i++) {
             SPELL_TYPE spellType = afflictionTypes[i];
             afflictions.Add(PlayerSkillManager.Instance.GetAfflictionData(afflictionTypes[i]).name);
@@ -672,7 +672,7 @@ public class CharacterInfoUI : InfoUIBase {
         //    }
         //}
         UIManager.Instance.ShowClickableObjectPicker(afflictions, ActivateAfflictionConfirmation, null, CanActivateAffliction,
-            "Select Affliction", identifier: "Intervention Ability", showCover: true, layer: 19, shouldConfirmOnPick: true, asButton: true);
+            "Select Affliction", OnHoverAffliction, OnHoverOutAffliction, identifier: "Intervention Ability", showCover: true, layer: 19, shouldConfirmOnPick: true, asButton: true);
     }
     private void ActivateAfflictionConfirmation(object o) {
         string afflictionName = (string) o;
@@ -687,6 +687,13 @@ public class CharacterInfoUI : InfoUIBase {
     private bool CanActivateAffliction(string afflictionName) {
         SPELL_TYPE afflictionType = (SPELL_TYPE) System.Enum.Parse(typeof(SPELL_TYPE), afflictionName.ToUpper().Replace(' ', '_'));
         return PlayerSkillManager.Instance.GetAfflictionData(afflictionType).CanPerformAbilityTowards(activeCharacter);
+    }
+    private void OnHoverAffliction(string afflictionName) {
+        SPELL_TYPE afflictionType = (SPELL_TYPE) System.Enum.Parse(typeof(SPELL_TYPE), afflictionName.ToUpper().Replace(' ', '_'));
+        UIManager.Instance.ShowSmallInfo(PlayerSkillManager.Instance.GetAfflictionData(afflictionType).GetManaCostChargesCooldownStr());
+    }
+    private void OnHoverOutAffliction(string afflictionName) {
+        UIManager.Instance.HideSmallInfo();
     }
     #endregion
 

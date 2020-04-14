@@ -20,6 +20,7 @@ public class Minion {
     public bool isAssigned => assignedRegion != null; //true if minion is already assigned somewhere else, maybe in construction or research spells
     public int spellExtractionCount { get; private set; } //the number of times a spell was extracted from this minion.
     public bool isSummoned { get; private set; }
+    public SPELL_TYPE minionPlayerSkillType { get; private set; }
 
     private string _assignedDeadlySinName;
     
@@ -358,6 +359,9 @@ public class Minion {
     public void AdjustSpellExtractionCount(int amount) {
         spellExtractionCount += amount;
     }
+    public void SetMinionPlayerSkillType(SPELL_TYPE skillType) {
+        minionPlayerSkillType = skillType;
+    }
     #endregion
 
     #region Summoning
@@ -405,6 +409,7 @@ public class Minion {
         character.interruptComponent.ForceEndNonSimultaneousInterrupt();
         character.combatComponent.ClearAvoidInRange(false);
         character.combatComponent.ClearHostilesInRange(false);
+        PlayerSkillManager.Instance.GetMinionPlayerSkillData(minionPlayerSkillType).StartCooldown();
         Messenger.Broadcast(Signals.UNSUMMON_MINION, this);
     }
     private void UnsummonedHPRecovery() {

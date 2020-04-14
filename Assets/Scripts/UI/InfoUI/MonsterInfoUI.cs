@@ -105,7 +105,7 @@ public class MonsterInfoUI : InfoUIBase {
         activeActionItems.Clear();
         for (int i = 0; i < target.actions.Count; i++) {
             PlayerAction action = PlayerSkillManager.Instance.GetPlayerActionData(target.actions[i]);
-            if (action.IsValid(target) && PlayerManager.Instance.player.archetype.CanDoPlayerAction(action.type)) {
+            if (action.IsValid(target) && PlayerManager.Instance.player.playerSkillComponent.CanDoPlayerAction(action.type)) {
                 //if (action.actionName == PlayerDB.Combat_Mode_Action) {
                 //    action.SetLabelText(action.actionName + ": " + UtilityScripts.Utilities.NotNormalizedConversionEnumToString(activeCharacter.combatComponent.combatMode.ToString()));
                 //}

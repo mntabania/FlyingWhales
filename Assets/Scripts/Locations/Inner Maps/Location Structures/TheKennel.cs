@@ -109,8 +109,8 @@ namespace Inner_Maps.Location_Structures {
             return _remainingCapacity > 0 && _isCurrentlyBreeding == false;
         }
         public void OnClickBreedMonster() {
-            List<RaceClass> monsters = PlayerManager.Instance.player.archetype.monsters;
-            UIManager.Instance.ShowClickableObjectPicker(monsters, OnChooseBreedMonster, null, CanBreedMonster, "Choose Monster to Breed." );
+            //List<RaceClass> monsters = PlayerManager.Instance.player.archetype.monsters;
+            //UIManager.Instance.ShowClickableObjectPicker(monsters, OnChooseBreedMonster, null, CanBreedMonster, "Choose Monster to Breed." );
         }
         private void OnChooseBreedMonster(object obj) {
             RaceClass raceClass = (RaceClass)obj;

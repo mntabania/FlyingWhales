@@ -49,7 +49,7 @@ public class PlayerManager : MonoBehaviour {
         player = new Player();
         player.CreatePlayerFaction();
         player.SetPortalTile(portal.tileLocation);
-        player.SetArchetype(archeType);
+        //player.SetArchetype(archeType);
         PlayerSettlement existingPlayerNpcSettlement = portal.tileLocation.settlementOnTile as PlayerSettlement;
         Assert.IsNotNull(existingPlayerNpcSettlement, $"Portal does not have a player settlement on its tile");
         player.SetPlayerArea(existingPlayerNpcSettlement);

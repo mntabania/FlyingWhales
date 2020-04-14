@@ -11,13 +11,11 @@ using UnityEditor;
 
 public class SaveManager : MonoBehaviour {
     public static SaveManager Instance;
-    //public Save currentSave { get; private set; }
-    public SaveDataPlayer currentSaveDataPlayer { get; private set; }
-
-    private const string saveFileName = "CURRENT_SAVE_FILE";
     private const string saveDataPlayerFileName = "SAVED_PLAYER_DATA";
 
+    public SaveDataPlayer currentSaveDataPlayer { get; private set; }
     public PlayerSkillTree[] allSkillTrees;
+    public bool unlockAll;
 
     private void Awake() {
         if (Instance == null) {
