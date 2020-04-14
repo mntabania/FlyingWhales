@@ -1059,7 +1059,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         //Cannot build on settlements and hextiles with blueprints right now
         if(/*isCorrupted && isCurrentlyBeingCorrupted == false &&*/ settlementOnTile == null && landmarkOnTile == null 
                && elevationType != ELEVATION.WATER && elevationType != ELEVATION.MOUNTAIN &&
-            PlayerManager.Instance.player.mana >= EditableValuesManager.Instance.buildStructureManaCost) {
+            PlayerManager.Instance.player.mana >= EditableValuesManager.Instance.buildStructureManaCost && _buildParticles == null) {
 
             //TODO:
             // //if it has any build spots that have a blueprint on them, do not allow
@@ -1117,11 +1117,20 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkName);
         UIManager.Instance.ShowYesNoConfirmation("Build Structure Confirmation", "Are you sure you want to build " + landmarkName + "?", () => StartBuild(structureType));
     }
+    private AutoDestroyParticle _buildParticles;
     private void StartBuild(SPELL_TYPE structureType) {
+        _buildParticles = GameManager.Instance.CreateParticleEffectAt(GetCenterLocationGridTile(),
+            PARTICLE_EFFECT.Build_Demonic_Structure).GetComponent<AutoDestroyParticle>();
+        UIManager.Instance.HideObjectPicker();
+        StartCoroutine(BuildCoroutine(structureType));
+    }
+    private IEnumerator BuildCoroutine(SPELL_TYPE structureType) {
+        yield return new WaitForSeconds(3f);
+        _buildParticles.StopEmission();
         DemonicStructurePlayerSkill demonicStructureSkill = PlayerSkillManager.Instance.GetDemonicStructureSkillData(structureType);
         demonicStructureSkill.ActivateAbility(this);
-        UIManager.Instance.HideObjectPicker();
         PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.BUILD_DEMONIC_STRUCTURE).OnExecuteSpellActionAffliction();
+        _buildParticles = null;
     }
     #endregion
 

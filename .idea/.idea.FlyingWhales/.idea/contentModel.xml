@@ -1501,7 +1501,6 @@
                 <e p="DemonicStructure.cs" t="Include" />
                 <e p="Dwelling.cs" t="Include" />
                 <e p="Farm.cs" t="Include" />
-                <e p="Goader.cs" t="Include" />
                 <e p="Granary.cs" t="Include" />
                 <e p="HunterLodge.cs" t="Include" />
                 <e p="Inn.cs" t="Include" />
@@ -1526,6 +1525,7 @@
                 </e>
                 <e p="TheCrypt.cs" t="Include" />
                 <e p="TheEye.cs" t="Include" />
+                <e p="TheGoader.cs" t="Include" />
                 <e p="TheKennel.cs" t="Include" />
                 <e p="ThePortal.cs" t="Include" />
                 <e p="TheSpire.cs" t="Include" />
