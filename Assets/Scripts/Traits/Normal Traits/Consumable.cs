@@ -23,7 +23,7 @@ namespace Traits {
             _owner = addedTo;
         }
         public override bool OnDeath(Character character) {
-            if(character.traitContainer.HasTrait("Burning", "Burnt")) {
+            if(character.traitContainer.HasTrait("Burning", "Burnt") && !character.traitContainer.HasTrait("Infected")) {
                 CharacterManager.Instance.CreateFoodPileForPOI(character);
                 character.SetDestroyMarkerOnDeath(true);
             }

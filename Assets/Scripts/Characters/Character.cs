@@ -1029,10 +1029,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         _characterClass = null;
     }
     public void AssignClass(string className, bool isInitial = false) {
-        if (CharacterManager.Instance.HasCharacterClass(className)) {
-            AssignClass(CharacterManager.Instance.CreateNewCharacterClass(className), isInitial);
-        } else {
-            throw new Exception($"There is no class named {className} but it is being assigned to {name}");
+        if(characterClass == null || className != characterClass.className) {
+            if (CharacterManager.Instance.HasCharacterClass(className)) {
+                AssignClass(CharacterManager.Instance.CreateNewCharacterClass(className), isInitial);
+            } else {
+                throw new Exception($"There is no class named {className} but it is being assigned to {name}");
+            }
         }
     }
     protected void OnUpdateCharacterClass() {
