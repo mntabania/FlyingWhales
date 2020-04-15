@@ -29,13 +29,13 @@ namespace Traits {
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
             owner = addedTo as Character;
-            owner.needsComponent.AdjustComfortDecreaseRate(10);
+            owner.needsComponent.AdjustComfortDecreaseRate(2);
             Messenger.AddListener(Signals.HOUR_STARTED, HourlyCheck);
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
             owner.marker.SetMarkerColor(Color.white);
-            owner.needsComponent.AdjustComfortDecreaseRate(-10);
+            owner.needsComponent.AdjustComfortDecreaseRate(-2);
             if (Messenger.eventTable.ContainsKey(Signals.HOUR_STARTED)) {
                 Messenger.RemoveListener(Signals.HOUR_STARTED, HourlyCheck);
             }
