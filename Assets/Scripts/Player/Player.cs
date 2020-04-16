@@ -13,7 +13,7 @@ using Random = UnityEngine.Random;
 // ReSharper disable Unity.NoNullPropagation
 
 public class Player : ILeader, IObjectManipulator {
-    public PlayerArchetype archetype { get; private set; }
+    //public PlayerArchetype archetype { get; private set; }
     public Faction playerFaction { get; private set; }
     public PlayerSettlement playerSettlement { get; private set; }
     public int mana { get; private set; }
@@ -74,6 +74,7 @@ public class Player : ILeader, IObjectManipulator {
 
     public void LoadPlayerData(SaveDataPlayer save) {
         if(save != null) {
+            experience = save.exp;
             playerSkillComponent.LoadPlayerSkillTreeNodeData(save);
         }
     }
@@ -1326,27 +1327,27 @@ public class Player : ILeader, IObjectManipulator {
     }
     #endregion
 
-    #region Archetype
-    public void SetArchetype(PLAYER_ARCHETYPE type) {
-        if(archetype == null || archetype.type != type) {
-            archetype = PlayerManager.CreateNewArchetype(type);
-            for (int i = 0; i < archetype.spells.Count; i++) {
-                unlearnedSpells.Remove(archetype.spells[i]);
-            }
-            for (int i = 0; i < archetype.afflictions.Count; i++) {
-                unlearnedAfflictions.Remove(archetype.afflictions[i]);
-            }
-        }
-    }
-    public void LearnSpell(SPELL_TYPE type) {
-        archetype.AddSpell(type);
-        unlearnedSpells.Remove(type);
-    }
-    public void LearnAffliction(SPELL_TYPE affliction) {
-        archetype.AddAffliction(affliction);
-        unlearnedAfflictions.Remove(affliction);
-    }
-    #endregion
+    //#region Archetype
+    //public void SetArchetype(PLAYER_ARCHETYPE type) {
+    //    if(archetype == null || archetype.type != type) {
+    //        archetype = PlayerManager.CreateNewArchetype(type);
+    //        for (int i = 0; i < archetype.spells.Count; i++) {
+    //            unlearnedSpells.Remove(archetype.spells[i]);
+    //        }
+    //        for (int i = 0; i < archetype.afflictions.Count; i++) {
+    //            unlearnedAfflictions.Remove(archetype.afflictions[i]);
+    //        }
+    //    }
+    //}
+    //public void LearnSpell(SPELL_TYPE type) {
+    //    archetype.AddSpell(type);
+    //    unlearnedSpells.Remove(type);
+    //}
+    //public void LearnAffliction(SPELL_TYPE affliction) {
+    //    archetype.AddAffliction(affliction);
+    //    unlearnedAfflictions.Remove(affliction);
+    //}
+    //#endregion
 
     #region Utilities
     /// <summary>

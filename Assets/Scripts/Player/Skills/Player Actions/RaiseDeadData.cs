@@ -29,7 +29,7 @@ public class RaiseDeadData : PlayerAction {
         base.ActivateAbility(targetPOI);
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
-        if (!targetCharacter.isDead || !targetCharacter.IsInOwnParty()) {
+        if (!targetCharacter.isDead || !targetCharacter.IsInOwnParty() || targetCharacter.traitContainer.HasTrait("Infected")) {
             return false;
         }
         return base.CanPerformAbilityTowards(targetCharacter);

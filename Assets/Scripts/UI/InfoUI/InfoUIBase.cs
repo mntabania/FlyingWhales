@@ -87,7 +87,7 @@ public abstract class InfoUIBase : MonoBehaviour {
         activeActionItems.Clear();
         for (int i = 0; i < target.actions.Count; i++) {
             PlayerAction action = PlayerSkillManager.Instance.GetPlayerActionData(target.actions[i]);
-            if (action.IsValid(target) && PlayerManager.Instance.player.archetype.CanDoPlayerAction(action.type)) {
+            if (action.IsValid(target) && PlayerManager.Instance.player.playerSkillComponent.CanDoPlayerAction(action.type)) {
                 ActionItem actionItem = AddNewAction(action, target);
                 actionItem.SetInteractable(action.CanPerformAbilityTo(target) && !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI);
             }

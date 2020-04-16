@@ -20,7 +20,10 @@ public class SaveDataPlayer {
                 LearnSkill(node, currSkillTree.nodes[node]);
             }
         }
-
+        PlayerSkillTreeNodeData afflict = new PlayerSkillTreeNodeData() { skill = SPELL_TYPE.AFFLICT, charges = -1, cooldown = -1, manaCost = -1 };
+        learnedSkills.Add(afflict);
+        PlayerSkillTreeNodeData seizeCharacter = new PlayerSkillTreeNodeData() { skill = SPELL_TYPE.SEIZE_CHARACTER, charges = -1, cooldown = 12, manaCost = 20 };
+        learnedSkills.Add(seizeCharacter);
         //learnedSkills = new List<PlayerSkillTreeNodeData>() {
         //    //Ravager
         //    new PlayerSkillTreeNodeData() { skill = SPELL_TYPE.INVADE, charges = -1, cooldown = -1, manaCost = -1 },

@@ -46,11 +46,11 @@ public class StudyMonster : GoapAction {
 
     #region State Effects
     public void AfterStudySuccess(ActualGoapNode goapNode) {
-        IPointOfInterest target = goapNode.poiTarget;
-        if(target is Character) {
-            Character targetCharacter = target as Character;
-            PlayerManager.Instance.player.archetype.AddMonster(new RaceClass(targetCharacter.race, targetCharacter.characterClass.className));
-        }
+        //IPointOfInterest target = goapNode.poiTarget;
+        //if(target is Character) {
+        //    Character targetCharacter = target as Character;
+        //    PlayerManager.Instance.player.archetype.AddMonster(new RaceClass(targetCharacter.race, targetCharacter.characterClass.className));
+        //}
     }
     #endregion
 }

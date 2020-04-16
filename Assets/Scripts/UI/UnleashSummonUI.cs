@@ -62,18 +62,20 @@ public class UnleashSummonUI : PopupMenuBase {
             item.SetPortraitInteractableState(false);
             item.gameObject.SetActive(true);
         }
-        for (int i = 0; i < PlayerManager.Instance.player.archetype.minionPlayerSkills.Count; i++) {
-            MinionPlayerSkill minionPlayerSkill = PlayerSkillManager.Instance.GetMinionPlayerSkillData(PlayerManager.Instance.player.archetype.minionPlayerSkills[i]);
+        for (int i = 0; i < PlayerManager.Instance.player.playerSkillComponent.minionsSkills.Count; i++) {
+            MinionPlayerSkill minionPlayerSkill = PlayerSkillManager.Instance.GetMinionPlayerSkillData(PlayerManager.Instance.player.playerSkillComponent.minionsSkills[i]);
             SpellNameplateItem item = CreateNewSpellNameplateItem();
             item.SetSpell(minionPlayerSkill);
             item.SetToggleAction(OnToggleMinionMonster);
+            item.UpdateInteractability();
             item.gameObject.SetActive(true);
         }
-        for (int i = 0; i < PlayerManager.Instance.player.archetype.summonPlayerSkills.Count; i++) {
-            SummonPlayerSkill summonPlayerSkill = PlayerSkillManager.Instance.GetSummonPlayerSkillData(PlayerManager.Instance.player.archetype.summonPlayerSkills[i]);
+        for (int i = 0; i < PlayerManager.Instance.player.playerSkillComponent.summonsSkills.Count; i++) {
+            SummonPlayerSkill summonPlayerSkill = PlayerSkillManager.Instance.GetSummonPlayerSkillData(PlayerManager.Instance.player.playerSkillComponent.summonsSkills[i]);
             SpellNameplateItem item = CreateNewSpellNameplateItem();
             item.SetSpell(summonPlayerSkill);
             item.SetToggleAction(OnToggleMinionMonster);
+            item.UpdateInteractability();
             item.gameObject.SetActive(true);
         }
     }

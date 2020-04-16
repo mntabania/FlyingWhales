@@ -51,13 +51,15 @@ public class ActionItem : PooledObject {
     }
     public void ToggleHighlight() {
         //if (!playerAction.isInstant) {
-            highlightImg.gameObject.SetActive(true);
+        highlightImg.gameObject.SetActive(true);
+        OnHover();
             // UpdateState();
         //}
     }
     public void UnToggleHighlight() {
         //if (!playerAction.isInstant) {
-            highlightImg.gameObject.SetActive(false);
+        highlightImg.gameObject.SetActive(false);
+        OnHoverOut();
             // UpdateState();
         //}
     }
@@ -66,6 +68,12 @@ public class ActionItem : PooledObject {
             ToggleHighlight();
             playerAction.Activate(playerActionTarget);
         }
+    }
+    public void OnHover() {
+        UIManager.Instance.ShowSmallInfo(playerAction.GetManaCostChargesCooldownStr());
+    }
+    public void OnHoverOut() {
+        UIManager.Instance.HideSmallInfo();
     }
 
     #region Listeners

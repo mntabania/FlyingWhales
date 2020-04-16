@@ -30,10 +30,14 @@ public class SpellNameplateItem : PooledObject {
         }
     }
     public void OnHoverSpell() {
-        UIManager.Instance.ShowSmallInfo(spellData.description);
+        string hoverShow = spellData.description + "\n" + spellData.GetManaCostChargesCooldownStr();
+        UIManager.Instance.ShowSmallInfo(hoverShow);
     }
     public void OnHoverOutSpell() {
         UIManager.Instance.HideSmallInfo();
+    }
+    public void UpdateInteractability() {
+        spellToggle.interactable = spellData.CanPerformAbility();
     }
 
     public override void Reset() {

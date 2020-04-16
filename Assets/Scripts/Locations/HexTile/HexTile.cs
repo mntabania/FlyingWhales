@@ -1079,7 +1079,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         //for (int i = 0; i < demonicLandmarkTypes.Count; i++) {
         //    demonicLandmarksThatCanBeBuilt.Add(UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(demonicLandmarkTypes[i].ToString()));
         //}
-        UIManager.Instance.ShowClickableObjectPicker(PlayerManager.Instance.player.archetype.demonicStructuresSkills
+        UIManager.Instance.ShowClickableObjectPicker(PlayerManager.Instance.player.playerSkillComponent.demonicStructuresSkills
             , StartBuildConfirmation, null, CanChooseLandmark, "Choose a structure to build"
             , OnHoverStructureChoice, OnHoverExitStructureChoice, portraitGetter: GetStructurePortrait, shouldConfirmOnPick: true, asButton: true, identifier: "Demonic Structure");
     }
