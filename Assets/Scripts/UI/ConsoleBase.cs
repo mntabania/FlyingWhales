@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using System.IO;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Tutorial;
 using UnityEngine.Events;
 using UtilityScripts;
 
@@ -1393,6 +1394,23 @@ public class ConsoleBase : InfoUIBase {
         //     }
         //     AddSuccessMessage(log);
         // }
+    }
+    #endregion
+
+    #region Tutorial
+    public void ResetTutorial() {
+        string[] completedTutorials = PlayerPrefsX.GetStringArray(TutorialManager.CompletedTutorialsKey);
+        PlayerPrefs.DeleteKey(TutorialManager.CompletedTutorialsKey);
+        //respawn previously completed tutorials
+        TutorialManager.Tutorial[] allTutorials = CollectionUtilities.GetEnumValues<TutorialManager.Tutorial>();
+        for (int i = 0; i < allTutorials.Length; i++) {
+            TutorialManager.Tutorial tutorial = allTutorials[i];
+            if (completedTutorials.Contains(tutorial.ToString())) {
+                TutorialQuest tutorialQuest = TutorialManager.Instance.InstantiateTutorial(tutorial);
+                tutorialQuest.WaitForAvailability();
+            }
+        }
+        
     }
     #endregion
 }

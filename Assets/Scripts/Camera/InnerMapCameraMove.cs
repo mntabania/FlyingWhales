@@ -6,9 +6,9 @@ using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
 using DG.Tweening;
 
-public class InnerMapCameraMove : MonoBehaviour {
+public class InnerMapCameraMove : BaseCameraMove {
 
-	public static InnerMapCameraMove Instance = null;
+	public static InnerMapCameraMove Instance;
 
 	[SerializeField] private float _minFov;
 	[SerializeField] private float _maxFov;
@@ -29,9 +29,6 @@ public class InnerMapCameraMove : MonoBehaviour {
 
     [SerializeField] private bool allowZoom = true;
 
-    [Header("Panning")]
-    [SerializeField] private float cameraPanSpeed = 50f;
-    
     [Header("Dragging")]
     private float dragThreshold = 0.1f;
     private float currDragTime;
@@ -88,7 +85,6 @@ public class InnerMapCameraMove : MonoBehaviour {
     }
 
     public void Initialize() {
-        //SetInitialCameraPosition();
         gameObject.SetActive(false);
         Messenger.AddListener<Region>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
         Messenger.AddListener<Region>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
@@ -109,7 +105,7 @@ public class InnerMapCameraMove : MonoBehaviour {
         innerMapsCamera.depth = 0;
     }
     private void OnPooledObjectDestroyed(GameObject obj) {
-        if (target == obj.transform || target == obj) {
+        if (target == obj.transform) {
             target = null;
         }
     }
@@ -140,9 +136,6 @@ public class InnerMapCameraMove : MonoBehaviour {
 
     #region Positioning
     public void MoveCamera(Vector3 newPos) {
-        //Vector3 point = areaMapsCamera.WorldToViewportPoint(newPos);
-        //Vector3 delta = newPos - areaMapsCamera.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, point.z)); //(new Vector3(0.5, 0.5, point.z));
-        //Vector3 destination = transform.position + delta;
         transform.position = newPos;
         //ConstrainCameraBounds();
     }
@@ -162,9 +155,7 @@ public class InnerMapCameraMove : MonoBehaviour {
             if (instantCenter) {
                 MoveCamera(GO.transform.position);
             } 
-            //else {
-                target = GO.transform;
-            //}
+            target = GO.transform;
         }
     }
     public void CenterCameraOn(Vector2 pos) {
@@ -172,37 +163,6 @@ public class InnerMapCameraMove : MonoBehaviour {
     }
     public void CenterCameraOnTile(HexTile tile) {
         MoveCamera(tile.worldPosition);
-    }
-    private void ArrowKeysMovement() {
-        // if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow) ||Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S)) {
-        //     if (!UIManager.Instance.IsConsoleShowing()) {
-        //         float zAxisValue = Input.GetAxis("Vertical");
-        //         iTween.MoveUpdate(innerMapsCamera.gameObject, iTween.Hash("y", innerMapsCamera.transform.position.y + zAxisValue, "time", 0.1f));
-        //     }
-        // }
-        //
-        // if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D)) {
-        //     if (!UIManager.Instance.IsConsoleShowing()) {
-        //         float xAxisValue = Input.GetAxis("Horizontal");
-        //         iTween.MoveUpdate(innerMapsCamera.gameObject, iTween.Hash("x", innerMapsCamera.transform.position.x + xAxisValue, "time", 0.1f));
-        //     }
-        // }
-        if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S)) {
-            //&& (EventSystem.current.currentSelectedGameObject == null || EventSystem.current.currentSelectedGameObject.GetComponent<TMPro.TMP_InputField>() == null)
-            if (!UIManager.Instance.IsConsoleShowing()) { 
-                float zAxisValue = Input.GetAxis("Vertical");
-                // iTween.MoveUpdate(_mainCamera.gameObject, iTween.Hash("y", _mainCamera.transform.position.y + zAxisValue, "time", 0.1f));
-                transform.Translate(new Vector3(0f, zAxisValue * Time.deltaTime * cameraPanSpeed, 0f));
-            }
-        }
-
-        if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D)) {
-            if (!UIManager.Instance.IsConsoleShowing()) {
-                float xAxisValue = Input.GetAxis("Horizontal");
-                // iTween.MoveUpdate(_mainCamera.gameObject, iTween.Hash("x", _mainCamera.transform.position.x + xAxisValue, "time", 0.1f));
-                transform.Translate(new Vector3(xAxisValue * Time.deltaTime * cameraPanSpeed, 0f, 0f));
-            }
-        }
     }
     private void Zooming() {
         Rect screenRect = new Rect(0, 0, Screen.width, Screen.height);

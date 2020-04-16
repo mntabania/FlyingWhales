@@ -91,12 +91,12 @@ namespace Inner_Maps {
                     LocationGridTile clickedTile = GetTileFromMousePosition();
                     if (clickedTile != null && TryGetSelectablesOnTile(clickedTile, out var selectables)) {
                         if (selectables.Count > 0) {
+                            ISelectable objToSelect = null;
                             if (lastClickedTile != clickedTile) {
                                 //if last tile that was clicked is not the tile that has been clicked, then instead of 
                                 //looping through the selectables, just select the first one.
-                                selectables[0].LeftSelectAction();  
+                                objToSelect = selectables[0];
                             } else {
-                                ISelectable objToSelect = null;
                                 for (int i = 0; i < selectables.Count; i++) {
                                     ISelectable currentSelectable = selectables[i];
                                     if (currentSelectable.IsCurrentlySelected()) {
@@ -105,11 +105,12 @@ namespace Inner_Maps {
                                         break;
                                     }
                                 }
-                                if (objToSelect == null) {
-                                    objToSelect = selectables[0];
-                                }
-                                objToSelect.LeftSelectAction();    
                             }
+                            if (objToSelect == null) {
+                                objToSelect = selectables[0];
+                            }
+                            objToSelect.LeftSelectAction();  
+                            Messenger.Broadcast(Signals.SELECTABLE_LEFT_CLICKED, objToSelect);
                         }
                         lastClickedTile = clickedTile;    
                     }

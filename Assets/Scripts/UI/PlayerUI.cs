@@ -903,6 +903,7 @@ public class PlayerUI : MonoBehaviour {
         // spellList.ShowDropdown(PlayerManager.Instance.player.archetype.spells, OnClickSpell, CanChooseItem);
         //customDropdownList.ShowDropdown(PlayerManager.Instance.player.archetype.spells, OnClickSpell, CanChooseItem);
         spellsContainerGO.SetActive(true);
+        Messenger.Broadcast(Signals.SPELLS_MENU_SHOWN);
     }
     //private bool CanChooseItem(string item) {
     //    //if (item == PlayerDB.Tornado || item == PlayerDB.Meteor || item == PlayerDB.Ravenous_Spirit || item == PlayerDB.Feeble_Spirit || item == PlayerDB.Forlorn_Spirit

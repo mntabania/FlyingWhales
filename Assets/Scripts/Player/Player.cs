@@ -246,6 +246,7 @@ public class Player : ILeader, IObjectManipulator {
             } else {
             	InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Cross);
                 Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnSpellCast);
+                Messenger.Broadcast(Signals.PLAYER_SET_ACTIVE_SPELL, currentActivePlayerSpell);
             }
         }
     }

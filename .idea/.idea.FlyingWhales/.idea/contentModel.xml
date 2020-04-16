@@ -1016,6 +1016,7 @@
           </e>
           <e p="BoundsTester.cs" t="Include" />
           <e p="Camera" t="Include">
+            <e p="BaseCameraMove.cs" t="Include" />
             <e p="CameraMove.cs" t="Include" />
             <e p="InnerMapCameraMove.cs" t="Include" />
           </e>
@@ -2228,6 +2229,36 @@
               <e p="TraitValidator.cs" t="Include" />
             </e>
           </e>
+          <e p="Tutorial" t="Include">
+            <e p="Steps" t="Include">
+              <e p="CharacterInfo.cs" t="Include" />
+              <e p="ChooseSpellStep.cs" t="Include" />
+              <e p="ClickOnAreaStep.cs" t="Include" />
+              <e p="ClickOnCharacterStep.cs" t="Include" />
+              <e p="ClickOnEmptyAreaStep.cs" t="Include" />
+              <e p="ClickOnObjectStep.cs" t="Include" />
+              <e p="ClickOnStructureStep.cs" t="Include" />
+              <e p="DropCharacterAtStructureStep.cs" t="Include" />
+              <e p="ExecutedPlayerActionStep.cs" t="Include" />
+              <e p="ExecuteSpellStep.cs" t="Include" />
+              <e p="LookAroundStep.cs" t="Include" />
+              <e p="NameplateClickedStep.cs" t="Include" />
+              <e p="ObjectPickerShownStep.cs" t="Include" />
+              <e p="ShowSpellMenuStep.cs" t="Include" />
+              <e p="StructureBuiltStep.cs" t="Include" />
+              <e p="ToggleTurnedOnStep.cs" t="Include" />
+              <e p="TutorialQuestStep.cs" t="Include" />
+              <e p="UnpauseStep.cs" t="Include" />
+            </e>
+            <e p="Tutorial Quests" t="Include">
+              <e p="BasicControls.cs" t="Include" />
+              <e p="BuildAKennel.cs" t="Include" />
+              <e p="CastMeteor.cs" t="Include" />
+              <e p="DefendAStructure.cs" t="Include" />
+            </e>
+            <e p="TutorialManager.cs" t="Include" />
+            <e p="TutorialQuest.cs" t="Include" />
+          </e>
           <e p="UI" t="Include">
             <e p="AbilityItem.cs" t="Include" />
             <e p="ActionItem.cs" t="Include" />
@@ -2402,6 +2433,11 @@
             <e p="TheProfaneUI.cs" t="Include" />
             <e p="TimerHubItem.cs" t="Include" />
             <e p="TraitItem.cs" t="Include" />
+            <e p="Tutorial" t="Include">
+              <e p="TutorialQuestItem.cs" t="Include" />
+              <e p="TutorialQuestStepItem.cs" t="Include" />
+              <e p="TutorialUI.cs" t="Include" />
+            </e>
             <e p="UIMenuSettings.cs" t="Include" />
             <e p="UnleashSummonUI.cs" t="Include" />
             <e p="WinGameOverItem.cs" t="Include" />
@@ -2413,6 +2449,7 @@
             <e p="BezierCurve.cs" t="Include" />
             <e p="BezierCurveParent.cs" t="Include" />
             <e p="BoundDrawer.cs" t="Include" />
+            <e p="ChangeOpacityOnHoverImage.cs" t="Include" />
             <e p="CollectionUtilities.cs" t="Include" />
             <e p="ColliderUtility.cs" t="Include" />
             <e p="CustomDropZone.cs" t="Include" />
@@ -2433,6 +2470,7 @@
             <e p="MinionDraggable.cs" t="Include" />
             <e p="NewMinionDraggable.cs" t="Include" />
             <e p="ObjectCopier.cs" t="Include" />
+            <e p="PlayerPrefsX.cs" t="Include" />
             <e p="RandomizedStartFrameAnimation.cs" t="Include" />
             <e p="RandomNameGenerator.cs" t="Include" />
             <e p="RectDrawer.cs" t="Include" />

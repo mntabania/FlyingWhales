@@ -588,6 +588,7 @@ public class UIManager : MonoBehaviour {
 
         objectPicker.ShowClickable(choices, onClickAction, comparer, validityChecker, title, onHoverAction,
             onHoverExitAction, identifier, showCover, layer, portraitGetter, shouldConfirmOnPick, asButton);
+        Messenger.Broadcast(Signals.OBJECT_PICKER_SHOWN, identifier);
         //Pause();
         //SetSpeedTogglesState(false);
     }

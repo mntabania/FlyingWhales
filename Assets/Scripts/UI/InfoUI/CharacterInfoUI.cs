@@ -779,4 +779,27 @@ public class CharacterInfoUI : InfoUIBase {
         PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.CHANGE_COMBAT_MODE).OnExecuteSpellActionAffliction();
     }
     #endregion
+
+    #region Tabs
+    public void OnToggleInfo(bool isOn) {
+        if (isOn) {
+            Messenger.Broadcast(Signals.TOGGLE_TURNED_ON, "CharacterInfo_Info");    
+        }
+    }
+    public void OnToggleMood(bool isOn) {
+        if (isOn) {
+            Messenger.Broadcast(Signals.TOGGLE_TURNED_ON, "CharacterInfo_Mood");    
+        }
+    }
+    public void OnToggleRelations(bool isOn) {
+        if (isOn) {
+            Messenger.Broadcast(Signals.TOGGLE_TURNED_ON, "CharacterInfo_Relations");    
+        }
+    }
+    public void OnToggleLogs(bool isOn) {
+        if (isOn) {
+            Messenger.Broadcast(Signals.TOGGLE_TURNED_ON, "CharacterInfo_Logs");    
+        }
+    }
+    #endregion
 }

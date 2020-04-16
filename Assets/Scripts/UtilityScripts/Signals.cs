@@ -197,6 +197,15 @@ public static class Signals {
     /// Parameters: PopupMenuBase
     /// </summary>
     public static string POPUP_MENU_CLOSED = "OnPopupMenuClosed";
+    /// <summary>
+    /// Parameters: string mainNameplateText
+    /// </summary>
+    public static string NAMEPLATE_CLICKED = "OnNameplateClicked";
+    public static string SPELLS_MENU_SHOWN = "OnSpellsMenuShown";
+    /// <summary>
+    /// Parameters: string activatedToggle
+    /// </summary>
+    public static string TOGGLE_TURNED_ON = "ToggleTurnedOn";
     #endregion
 
     #region Quest Signals
@@ -381,11 +390,16 @@ public static class Signals {
     public static string SUMMON_MINION = "OnSummonMinion";
     public static string UNSUMMON_MINION = "OnUnsummonMinion";
     public static string PLAYER_NO_ACTIVE_SPELL = "OnPlayerNoActiveSpell";
+    public static string PLAYER_SET_ACTIVE_SPELL = "OnPlayerSetActiveSpell";
     public static string PLAYER_NO_ACTIVE_MONSTER = "OnPlayerNoActiveMonster";
     public static string PLAYER_NO_ACTIVE_ITEM = "OnPlayerNoActiveItem";
     public static string PLAYER_NO_ACTIVE_ARTIFACT = "OnPlayerNoActiveArtifact";
     public static string PLAYER_GAINED_SPELL = "OnPlayerGainedSpell";
     public static string PLAYER_LOST_SPELL = "OnPlayerLostSpell";
+    /// <summary>
+    /// Parameters: PlayerAction activatedAction
+    /// </summary>
+    public static string PLAYER_ACTION_ACTIVATED = "OnPlayerActionActivated";
     #endregion
 
     #region Interaction
@@ -511,6 +525,26 @@ public static class Signals {
     #region Tile Object
     public static string ADD_TILE_OBJECT_USER = "OnAddTileObjectUser";
     public static string REMOVE_TILE_OBJECT_USER = "OnAddTileObjectUser";
+    #endregion
+
+    #region Tutorial
+    /// <summary>
+    /// Parameters: TutorialQuestStep completedStep
+    /// </summary>
+    public static string TUTORIAL_STEP_COMPLETED = "TutorialStepCompleted";
+    public static string CAMERA_MOVED_BY_PLAYER = "CameraMovedByPlayer";
+    /// <summary>
+    /// Parameters: ISelectable clickedObject
+    /// </summary>
+    public static string SELECTABLE_LEFT_CLICKED = "SelectableLeftClicked";
+    /// <summary>
+    /// Parameters: TutorialQuest completedQuest
+    /// </summary>
+    public static string TUTORIAL_QUEST_COMPLETED = "TutorialQuestCompleted";
+    /// <summary>
+    /// Parameters: string identifier
+    /// </summary>
+    public static string OBJECT_PICKER_SHOWN = "ObjectPickerShown";
     #endregion
 
     public static Dictionary<string, SignalMethod[]> orderedSignalExecution = new Dictionary<string, SignalMethod[]>() {
