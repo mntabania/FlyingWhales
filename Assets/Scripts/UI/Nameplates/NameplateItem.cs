@@ -131,6 +131,7 @@ public class NameplateItem<T> : PooledObject {
     /// </summary>
     public void OnClick() {
         onClickNameplate?.Invoke(obj);
+        Messenger.Broadcast(Signals.NAMEPLATE_CLICKED, mainLbl.text);
     }
     #endregion
 

@@ -23,6 +23,7 @@ public class PlayerAction : SpellData {
         } else if (target is LocationStructure targetStructure) {
             ActivateAbility(targetStructure);
         }
+        Messenger.Broadcast(Signals.PLAYER_ACTION_ACTIVATED, this);
 	}
     public bool CanPerformAbilityTo(IPlayerActionTarget target) {
         if (target is IPointOfInterest targetPOI) {

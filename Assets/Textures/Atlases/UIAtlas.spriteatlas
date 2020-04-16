@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: d64d057451588de47862f92a337b5fc0, type: 3}
-    totalSpriteSurfaceArea: 14150507
+    totalSpriteSurfaceArea: 14163100
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -107,11 +107,13 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 25d987c1792195a4381cd53746b577b9, type: 3}
   - {fileID: 21300000, guid: 871688c1dd0f80e428130a38f3bbc722, type: 3}
   - {fileID: 21300000, guid: e6ff13d1afe244942b58c619f9dd0514, type: 3}
+  - {fileID: 21300000, guid: f7307ed1d30887f4c9ee0318e4f12240, type: 3}
   - {fileID: 21300000, guid: 05fa35e1c002cfb4882f1995aa47c30c, type: 3}
   - {fileID: 21300000, guid: 6f6f06e1ba66f514bb518e2df77f0854, type: 3}
   - {fileID: 21300000, guid: e5983af1cfc65ad41a4c806c32124204, type: 3}
   - {fileID: 21300000, guid: 1b96ebf196409684fb1e35671e17331f, type: 3}
   - {fileID: 21300000, guid: a8dbf002cf84550429764d5a37797a46, type: 3}
+  - {fileID: 21300000, guid: fed4f602cdd25ce45ac3c95e68292179, type: 3}
   - {fileID: 21300000, guid: 5b15da026bff8444596c56e4941d0a5e, type: 3}
   - {fileID: 21300000, guid: 4bdc5012594c6c2428feb60b9110bb6e, type: 3}
   - {fileID: 21300000, guid: b6303b1211fb90d498597fc6b939e2e1, type: 3}
@@ -586,6 +588,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: a948e24f99c995d4e94b9e294213b469, type: 3}
   - {fileID: 21300000, guid: fc9be25f246340f46a390e3ac5481c7d, type: 3}
   - {fileID: 21300000, guid: 10a1c45fa9617864ebe1dd6f16d2ac94, type: 3}
+  - {fileID: 21300000, guid: f16eaf5f3ece5a442a66279536ef0123, type: 3}
   - {fileID: 21300000, guid: 2f02ff5fcb2857a449743957c3c493e1, type: 3}
   - {fileID: 21300000, guid: af38a86ffe95efb4b88a3d4443a7cb85, type: 3}
   - {fileID: 21300000, guid: 5008457f997ff5949ab1c1be6e37daea, type: 3}
@@ -675,11 +678,13 @@ SpriteAtlas:
   - button_build_disabled
   - bottom_inventory1
   - button_spells_clicked
+  - tutorial_quest_container
   - rikitik
   - button_research_hover
   - ge_icon-10
   - abduction
   - button_reroll_hover
+  - tutorial_goal_checkbox_complete
   - button_intel_disabled
   - tab_traits_inactive
   - Enlarged-Border-Gold
@@ -1154,6 +1159,7 @@ SpriteAtlas:
   - button_research_disabled
   - intel_button_default
   - spell_slot_clicked
+  - tutorial_goal_checkbox_incomplete
   - 2x_button_disabled
   - structures_overview_divider_decor
   - pause_button_hover

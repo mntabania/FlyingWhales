@@ -2,7 +2,7 @@
 using System.Linq;
 using Inner_Maps;
 using UnityEngine;
-
+using UnityEngine.EventSystems;
 namespace Ruinarch {
     public class InputManager : MonoBehaviour {
 
@@ -17,6 +17,8 @@ namespace Ruinarch {
 
         [SerializeField] private CursorTextureDictionary cursors;
 
+        public GameObject lastClickedObject { get; private set; }
+        
         public enum Cursor_Type {
             None, Default, Target, Drag_Hover, Drag_Clicked, Check, Cross, Link
         }

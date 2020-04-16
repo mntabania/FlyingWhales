@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
+using Tutorial;
 using UnityEngine;
 
 public class Initializer : MonoBehaviour {
@@ -33,5 +34,6 @@ public class Initializer : MonoBehaviour {
     public void InitializeDataAfterWorldCreation() {
         PlayerUI.Instance.InitializeAfterGameLoaded();
         LightingManager.Instance.Initialize();
+        TutorialManager.Instance.Initialize();
     }
 }

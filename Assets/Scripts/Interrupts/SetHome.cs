@@ -32,7 +32,9 @@ namespace Interrupts {
         public override Log CreateEffectLog(Character actor, IPointOfInterest target) {
             Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Set Home", "set_new_home_structure");
             log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(actor.homeStructure.ToString()), LOG_IDENTIFIER.STRING_1);
+            if (actor.homeStructure != null) {
+                log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(actor.homeStructure.ToString()), LOG_IDENTIFIER.STRING_1);    
+            }
             return log;
         }
         #endregion

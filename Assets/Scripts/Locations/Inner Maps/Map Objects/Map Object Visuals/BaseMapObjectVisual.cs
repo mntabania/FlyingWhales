@@ -124,7 +124,7 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
     #region Pointer Functions
     public void ExecuteClickAction(PointerEventData.InputButton button) {
         if (button == PointerEventData.InputButton.Left) {
-            onLeftClickAction?.Invoke();    
+            onLeftClickAction?.Invoke();
         }else if (button == PointerEventData.InputButton.Right) {
             onRightClickAction?.Invoke();
         }
