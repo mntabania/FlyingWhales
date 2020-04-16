@@ -110,9 +110,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool canPerform => _canPerformValue >= 0;
     public bool canTakeJobs => canTakeJobsValue >= 0;
 
-    //Needs
-    public CharacterNeedsComponent needsComponent { get; private set; }
-
     //hostility
     public virtual int ignoreHostility { get; protected set; }
 
@@ -135,6 +132,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     //Components / Managers
     public GoapPlanner planner { get; private set; }
+    public CharacterNeedsComponent needsComponent { get; private set; }
     public BuildStructureComponent buildStructureComponent { get; private set; }
     public CharacterStateComponent stateComponent { get; private set; }
     public NonActionEventsComponent nonActionEventsComponent { get; private set; }
@@ -822,9 +820,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
             if (stateComponent.currentState != null) {
                 stateComponent.ExitCurrentState();
-                //if (stateComponent.currentState != null) {
-                //    stateComponent.currentState.OnExitThisState();
-                //}
             }
             //else if (stateComponent.stateToDo != null) {
             //    stateComponent.SetStateToDo(null);
@@ -912,6 +907,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 homeRegion.RemoveResident(this);
                 SetHomeRegion(home); //keep this data with character to prevent errors
                 SetHomeStructure(homeStructure); //keep this data with character to prevent errors
+            }
+            if(homeSettlement != null) {
+                homeSettlement.jobPriorityComponent.UnassignResidentToPrimaryJob(this);
             }
             //if (homeNpcSettlement != null) {
             //    NPCSettlement home = homeNpcSettlement;
@@ -3832,6 +3830,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public bool HasItem(string itemName) {
         return GetItem(itemName) != null;
+    }
+    public bool IsInventoryAtFullCapacity() {
+        return items.Count >= characterClass.inventoryCapacity;
+    }
+    public bool IsItemInteresting(string itemName) {
+        return characterClass.interestedItemNames != null && characterClass.interestedItemNames.Contains(itemName);
     }
     // public List<TileObject> GetItemsOwned() {
     //     List<TileObject> itemsOwned = new List<TileObject>();

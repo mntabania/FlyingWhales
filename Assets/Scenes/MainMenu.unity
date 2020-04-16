@@ -26680,6 +26680,21 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 76139949}
     m_Modifications:
+    - target: {fileID: 3227730897551201416, guid: 529ac6582b4120243a6c2902d9aa8e56,
+        type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3227730897551201416, guid: 529ac6582b4120243a6c2902d9aa8e56,
+        type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3227730897551201416, guid: 529ac6582b4120243a6c2902d9aa8e56,
+        type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4961014425320245252, guid: 529ac6582b4120243a6c2902d9aa8e56,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -26789,11 +26804,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Lich Skill Tree UI
-      objectReference: {fileID: 0}
-    - target: {fileID: 4961014425320245253, guid: 529ac6582b4120243a6c2902d9aa8e56,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 529ac6582b4120243a6c2902d9aa8e56, type: 3}

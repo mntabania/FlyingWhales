@@ -105,18 +105,6 @@ public class WorkBehaviour : CharacterBehaviourComponent {
                 }
             }
             if (jobToAssign != null) {
-                //bool triggerLazy = false;
-                //Lazy lazy = character.traitContainer.GetNormalTrait<Trait>("Lazy") as Lazy;
-                //if (lazy != null) {
-                //    triggerLazy = Random.Range(0, 100) < 20;
-                //}
-                //if (triggerLazy) {
-                //    if (lazy.TriggerLazy()) {
-                //        return true;
-                //    } else {
-                //        character.PrintLogIfActive($"Triggered LAZY happiness recovery but {character.name} already has that job type in queue and will not do it anymore!");
-                //    }
-                //}
                 character.jobQueue.AddJobInQueue(jobToAssign);
                 //took job based from vision
                 return true;
@@ -130,18 +118,6 @@ public class WorkBehaviour : CharacterBehaviourComponent {
                     }
                 }
                 if (jobToAssign != null) {
-                    //bool triggerLazy = false;
-                    //Lazy lazy = character.traitContainer.GetNormalTrait<Trait>("Lazy") as Lazy;
-                    //if (lazy != null) {
-                    //    triggerLazy = Random.Range(0, 100) < 20;
-                    //}
-                    //if (triggerLazy) {
-                    //    if (lazy.TriggerLazy()) {
-                    //        return true;
-                    //    } else {
-                    //        character.PrintLogIfActive($"Triggered LAZY happiness recovery but {character.name} already has that job type in queue and will not do it anymore!");
-                    //    }
-                    //}
                     character.jobQueue.AddJobInQueue(jobToAssign);
                     return true;
                 }    

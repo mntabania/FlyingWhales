@@ -93,6 +93,22 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                 } else {
                     log += $"\n  -Time of Day: {currentTimeOfDay}";
                 }
+                log += "\n-Otherwise, if it is Morning or Afternoon, 25% chance to add Obtain Personal Item Job if the character's Inventory is not yet full";
+                if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON) {
+                    log += $"\n  -Time of Day: {currentTimeOfDay}";
+                    int chance = Random.Range(0, 100);
+                    log += $"\n  -RNG roll: {chance.ToString()}";
+                    if (chance < 25) {
+                        if (character.jobComponent.TryCreateObtainPersonalItemJob()) {
+                            log += $"\n  -Created Obtain Personal Item Job";
+                            return true;
+                        } else {
+                            log += $"\n  -Could not create Obtain Personal Item Job. Either the inventory has reached full capacity or character has no items that he/she is interested";
+                        }
+                    }
+                } else {
+                    log += $"\n  -Time of Day: {currentTimeOfDay}";
+                }
                 log += "\n-Otherwise, if it is Morning or Lunch Time or Afternoon or Early Night, 25% chance to enter Stroll Outside Mode for 1 hour";
                 if ((currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.LUNCH_TIME || 
                      currentTimeOfDay == TIME_IN_WORDS.AFTERNOON || currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT) 

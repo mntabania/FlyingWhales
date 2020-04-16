@@ -50,11 +50,13 @@ namespace Traits {
             //     }
             // }
             if (targetPOI is TileObject item) {
-                if (!characterThatWillDoJob.traitContainer.HasTrait("Beast") /*characterThatWillDoJob.role.roleType != CHARACTER_ROLE.BEAST*/) {
-                    if (item.CanBePickedUpNormallyUponVisionBy(characterThatWillDoJob)
-                        && !characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.TAKE_ITEM, INTERACTION_TYPE.PICK_UP)) {
-                        characterThatWillDoJob.jobComponent.CreatePickUpJob(item);
-                        return true;
+                if(!characterThatWillDoJob.IsInventoryAtFullCapacity() && characterThatWillDoJob.IsItemInteresting(item.name)) {
+                    if (!characterThatWillDoJob.traitContainer.HasTrait("Beast") /*characterThatWillDoJob.role.roleType != CHARACTER_ROLE.BEAST*/) {
+                        if (item.CanBePickedUpNormallyUponVisionBy(characterThatWillDoJob)
+                            && !characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.TAKE_ITEM, INTERACTION_TYPE.PICK_UP)) {
+                            characterThatWillDoJob.jobComponent.CreatePickUpJob(item);
+                            return true;
+                        }
                     }
                 }
             }

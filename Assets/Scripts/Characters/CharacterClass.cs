@@ -28,6 +28,10 @@ public class CharacterClass {
     //[SerializeField] private COMBAT_TARGET _combatTarget;
     [SerializeField] private ATTACK_TYPE _attackType;
     [SerializeField] private RANGE_TYPE _rangeType;
+
+    [SerializeField] private JOB_TYPE[] _priorityJobs;
+    [SerializeField] private JOB_TYPE[] _secondaryJobs;
+    [SerializeField] private JOB_TYPE[] _ableJobs;
     //[SerializeField] private DAMAGE_TYPE _damageType;
     //[SerializeField] private COMBAT_OCCUPIED_TILE _occupiedTileType;
 
@@ -118,6 +122,15 @@ public class CharacterClass {
     public STRUCTURE_TYPE[] relatedStructures {
         get { return _relatedStructures; }
     }
+    public JOB_TYPE[] priorityJobs {
+        get { return _priorityJobs; }
+    }
+    public JOB_TYPE[] secondaryJobs {
+        get { return _secondaryJobs; }
+    }
+    public JOB_TYPE[] ableJobs {
+        get { return _ableJobs; }
+    }
     #endregion
 
     public CharacterClass CreateNewCopy() {
@@ -146,6 +159,12 @@ public class CharacterClass {
         //newClass._roleType = this._roleType;
         //newClass._skillName = this._skillName;
         newClass._traitNames = this._traitNames;
+        newClass._inventoryCapacity = this._inventoryCapacity;
+        newClass._interestedItemNames = this._interestedItemNames;
+        newClass._relatedStructures = this._relatedStructures;
+        newClass._priorityJobs = this._priorityJobs;
+        newClass._secondaryJobs = this._secondaryJobs;
+        newClass._ableJobs = this._ableJobs;
         //newClass._jobType = this._jobType;
         //Array.Copy(this._traitNames, newClass._traitNames, this._traitNames.Length);
         return newClass;
@@ -192,6 +211,10 @@ public class CharacterClass {
         this._traitNames = ClassPanelUI.Instance.traitNames.ToArray();
         this._relatedStructures = ClassPanelUI.Instance.relatedStructures.ToArray();
         this._interestedItemNames = UtilityScripts.Utilities.ConvertStringToArray(ClassPanelUI.Instance.interestedItemNamesInput.text, ',');
+        this._priorityJobs = ClassPanelUI.Instance.priorityJobs.ToArray();
+        this._secondaryJobs = ClassPanelUI.Instance.secondaryJobs.ToArray();
+        this._ableJobs = ClassPanelUI.Instance.ableJobs.ToArray();
+
         //this._jobType = (JOB) System.Enum.Parse(typeof(JOB), ClassPanelUI.Instance.jobTypeOptions.options[ClassPanelUI.Instance.jobTypeOptions.value].text);
     }
     public bool IsCombatant() {

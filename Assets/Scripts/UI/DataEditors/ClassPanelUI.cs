@@ -35,6 +35,10 @@ public class ClassPanelUI : MonoBehaviour {
     //public Dropdown armorsOptions;
     public Dropdown relatedStructuresOptions;
     public Dropdown traitOptions;
+    public Dropdown priorityJobsOptions;
+    public Dropdown secondaryJobsOptions;
+    public Dropdown ableJobsOptions;
+
 
     public Dropdown elementalTypeOptions;
     //public Dropdown combatPositionOptions;
@@ -53,22 +57,33 @@ public class ClassPanelUI : MonoBehaviour {
     //public GameObject accessoriesGO;
     public GameObject traitsGO;
     public GameObject relatedStructuresGO;
+    public GameObject priorityJobsGO;
+    public GameObject secondaryJobsGO;
+    public GameObject ableJobsGO;
 
     //public GameObject weaponTypeBtnGO;
     public GameObject traitBtnGO;
     public GameObject relatedStructuresBtnGO;
+    public GameObject priorityJobBtnPrefab;
+
 
     //public Transform weaponsContentTransform;
     //public Transform armorsContentTransform;
     //public Transform accessoriesContentTransform;
     public ScrollRect traitsScrollRect;
     public ScrollRect relatedStructuresScrollRect;
+    public ScrollRect priorityJobsScrollRect;
+    public ScrollRect secondaryJobsScrollRect;
+    public ScrollRect ableJobsScrollRect;
 
     //[NonSerialized] public WeaponTypeButton currentSelectedWeaponButton;
     //[NonSerialized] public WeaponTypeButton currentSelectedArmorButton;
     //[NonSerialized] public WeaponTypeButton currentSelectedAccessoryButton;
     [NonSerialized] public ClassTraitButton currentSelectedClassTraitButton;
     [NonSerialized] public StructureTypeButton currentSelectedRelatedStructuresButton;
+    [NonSerialized] public PriorityJobButton currentSelectedPriorityJobButton;
+    [NonSerialized] public PriorityJobButton currentSelectedSecondaryJobButton;
+    [NonSerialized] public PriorityJobButton currentSelectedAbleJobButton;
 
     //[NonSerialized] public int latestLevel;
     [NonSerialized] public List<string> allClasses;
@@ -78,6 +93,9 @@ public class ClassPanelUI : MonoBehaviour {
     //private List<string> _accessoryTiers;
     private List<string> _traitNames;
     private List<STRUCTURE_TYPE> _relatedStructures;
+    private List<JOB_TYPE> _priorityJobs;
+    private List<JOB_TYPE> _secondaryJobs;
+    private List<JOB_TYPE> _ableJobs;
 
     #region getters/setters
     //public List<string> weaponTiers {
@@ -94,6 +112,15 @@ public class ClassPanelUI : MonoBehaviour {
     }
     public List<STRUCTURE_TYPE> relatedStructures {
         get { return _relatedStructures; }
+    }
+    public List<JOB_TYPE> priorityJobs {
+        get { return _priorityJobs; }
+    }
+    public List<JOB_TYPE> secondaryJobs {
+        get { return _secondaryJobs; }
+    }
+    public List<JOB_TYPE> ableJobs {
+        get { return _ableJobs; }
     }
     #endregion
 
@@ -135,6 +162,9 @@ public class ClassPanelUI : MonoBehaviour {
         //_accessoryTiers = new List<string>();
         _traitNames = new List<string>();
         _relatedStructures = new List<STRUCTURE_TYPE>();
+        _priorityJobs = new List<JOB_TYPE>();
+        _secondaryJobs = new List<JOB_TYPE>();
+        _ableJobs = new List<JOB_TYPE>();
 
         //recruitmentCostInput.text = "0";
         elementalTypeOptions.ClearOptions();
@@ -143,6 +173,10 @@ public class ClassPanelUI : MonoBehaviour {
         attackTypeOptions.ClearOptions();
         rangeTypeOptions.ClearOptions();
         relatedStructuresOptions.ClearOptions();
+        priorityJobsOptions.ClearOptions();
+        secondaryJobsOptions.ClearOptions();
+        ableJobsOptions.ClearOptions();
+
         //damageTypeOptions.ClearOptions();
         //occupiedTileOptions.ClearOptions();
         //roleOptions.ClearOptions();
@@ -155,6 +189,7 @@ public class ClassPanelUI : MonoBehaviour {
         string[] attackTypes = System.Enum.GetNames(typeof(ATTACK_TYPE));
         string[] rangeTypes = System.Enum.GetNames(typeof(RANGE_TYPE));
         string[] structureTypes = System.Enum.GetNames(typeof(STRUCTURE_TYPE));
+        string[] jobTypes = System.Enum.GetNames(typeof(JOB_TYPE));
         //string[] occupiedTiles = System.Enum.GetNames(typeof(COMBAT_OCCUPIED_TILE));
         //string[] roles = System.Enum.GetNames(typeof(CHARACTER_ROLE));
         //string[] jobs = System.Enum.GetNames(typeof(JOB));
@@ -166,6 +201,10 @@ public class ClassPanelUI : MonoBehaviour {
         attackTypeOptions.AddOptions(attackTypes.ToList());
         rangeTypeOptions.AddOptions(rangeTypes.ToList());
         relatedStructuresOptions.AddOptions(structureTypes.ToList());
+        priorityJobsOptions.AddOptions(jobTypes.ToList());
+        secondaryJobsOptions.AddOptions(jobTypes.ToList());
+        ableJobsOptions.AddOptions(jobTypes.ToList());
+
         //damageTypeOptions.AddOptions(damageTypes.ToList());
         //occupiedTileOptions.AddOptions(occupiedTiles.ToList());
         //roleOptions.AddOptions(roles.ToList());
@@ -220,11 +259,18 @@ public class ClassPanelUI : MonoBehaviour {
         //_accessoryTiers.Clear();
         _traitNames.Clear();
         _relatedStructures.Clear();
+        _priorityJobs.Clear();
+        _secondaryJobs.Clear();
+        _ableJobs.Clear();
+
         //UtilityScripts.Utilities.DestroyChildren(weaponsContentTransform);
         //UtilityScripts.Utilities.DestroyChildren(armorsContentTransform);
         //UtilityScripts.Utilities.DestroyChildren(accessoriesContentTransform);
         UtilityScripts.Utilities.DestroyChildren(traitsScrollRect.content);
         UtilityScripts.Utilities.DestroyChildren(relatedStructuresScrollRect.content);
+        UtilityScripts.Utilities.DestroyChildren(priorityJobsScrollRect.content);
+        UtilityScripts.Utilities.DestroyChildren(secondaryJobsScrollRect.content);
+        UtilityScripts.Utilities.DestroyChildren(ableJobsScrollRect.content);
     }
     private void SaveClass() {
         if (string.IsNullOrEmpty(classNameInput.text)) {
@@ -329,7 +375,24 @@ public class ClassPanelUI : MonoBehaviour {
                 go.GetComponent<StructureTypeButton>().SetStructureType(structure);
             }
         }
-
+        if (characterClass.priorityJobs != null) {
+            for (int i = 0; i < characterClass.priorityJobs.Length; i++) {
+                JOB_TYPE jobType = characterClass.priorityJobs[i];
+                OnAddJob(jobType, "priority");
+            }
+        }
+        if (characterClass.secondaryJobs != null) {
+            for (int i = 0; i < characterClass.secondaryJobs.Length; i++) {
+                JOB_TYPE jobType = characterClass.secondaryJobs[i];
+                OnAddJob(jobType, "secondary");
+            }
+        }
+        if (characterClass.ableJobs != null) {
+            for (int i = 0; i < characterClass.ableJobs.Length; i++) {
+                JOB_TYPE jobType = characterClass.ableJobs[i];
+                OnAddJob(jobType, "able");
+            }
+        }
     }
     private int GetDropdownIndex(Dropdown options, string name) {
         for (int i = 0; i < options.options.Count; i++) {
@@ -443,37 +506,119 @@ public class ClassPanelUI : MonoBehaviour {
             }
         }
     }
-    //public void OnClickWeaponsTab() {
-    //    weaponsGO.SetActive(true);
-    //    armorsGO.SetActive(false);
-    //    accessoriesGO.SetActive(false);
-    //    traitsGO.SetActive(false);
-    //}
-    //public void OnClickArmorsTab() {
-    //    weaponsGO.SetActive(false);
-    //    armorsGO.SetActive(true);
-    //    accessoriesGO.SetActive(false);
-    //    traitsGO.SetActive(false);
-    //}
-    //public void OnClickAccessoriesTab() {
-    //    weaponsGO.SetActive(false);
-    //    armorsGO.SetActive(false);
-    //    accessoriesGO.SetActive(true);
-    //    traitsGO.SetActive(false);
-    //}
+    public void OnAddPriorityJob() {
+        string job = priorityJobsOptions.options[priorityJobsOptions.value].text;
+        JOB_TYPE jobType = (JOB_TYPE) System.Enum.Parse(typeof(JOB_TYPE), job);
+        OnAddJob(jobType, "priority");
+    }
+    public void OnAddSecondaryJob() {
+        string job = secondaryJobsOptions.options[secondaryJobsOptions.value].text;
+        JOB_TYPE jobType = (JOB_TYPE) System.Enum.Parse(typeof(JOB_TYPE), job);
+        OnAddJob(jobType, "secondary");
+    }
+    public void OnAddAbleJob() {
+        string job = ableJobsOptions.options[ableJobsOptions.value].text;
+        JOB_TYPE jobType = (JOB_TYPE) System.Enum.Parse(typeof(JOB_TYPE), job);
+        OnAddJob(jobType, "able");
+    }
+    public void OnRemovePriorityJob() {
+        OnRemoveJob("priority");
+    }
+    public void OnRemoveSecondaryJob() {
+        OnRemoveJob("secondary");
+    }
+    public void OnRemoveAbleJob() {
+        OnRemoveJob("able");
+    }
+    private void OnAddJob(JOB_TYPE jobType, string identifier) {
+        bool hasBeenAdded = false;
+        ScrollRect scrollRect = null;
+        if(identifier == "priority") {
+            scrollRect = priorityJobsScrollRect;
+            if (!_priorityJobs.Contains(jobType)) {
+                _priorityJobs.Add(jobType);
+                hasBeenAdded = true;
+            }
+        } else if (identifier == "secondary") {
+            scrollRect = secondaryJobsScrollRect;
+            if (!_secondaryJobs.Contains(jobType)) {
+                _secondaryJobs.Add(jobType);
+                hasBeenAdded = true;
+            }
+        } else if (identifier == "able") {
+            scrollRect = ableJobsScrollRect;
+            if (!_ableJobs.Contains(jobType)) {
+                _ableJobs.Add(jobType);
+                hasBeenAdded = true;
+            }
+        }
+        if (hasBeenAdded) {
+            GameObject go = GameObject.Instantiate(priorityJobBtnPrefab, scrollRect.content);
+            go.GetComponent<PriorityJobButton>().SetJobType(jobType, identifier);
+        }
+    }
+    public void OnRemoveJob(string identifier) {
+        if (identifier == "priority") {
+            if (currentSelectedPriorityJobButton != null) {
+                JOB_TYPE jobType = currentSelectedPriorityJobButton.jobType;
+                if (_priorityJobs.Remove(jobType)) {
+                    GameObject.Destroy(currentSelectedPriorityJobButton.gameObject);
+                    currentSelectedPriorityJobButton = null;
+                }
+            }
+        } else if (identifier == "secondary") {
+            if (currentSelectedSecondaryJobButton != null) {
+                JOB_TYPE jobType = currentSelectedSecondaryJobButton.jobType;
+                if (_secondaryJobs.Remove(jobType)) {
+                    GameObject.Destroy(currentSelectedSecondaryJobButton.gameObject);
+                    currentSelectedSecondaryJobButton = null;
+                }
+            }
+        } else if (identifier == "able") {
+            if (currentSelectedAbleJobButton != null) {
+                JOB_TYPE jobType = currentSelectedAbleJobButton.jobType;
+                if (_ableJobs.Remove(jobType)) {
+                    GameObject.Destroy(currentSelectedAbleJobButton.gameObject);
+                    currentSelectedAbleJobButton = null;
+                }
+            }
+        }
+        
+    }
     public void OnClickTraitsTab() {
-        //weaponsGO.SetActive(false);
-        //armorsGO.SetActive(false);
-        //accessoriesGO.SetActive(false);
         relatedStructuresGO.SetActive(false);
         traitsGO.SetActive(true);
+        priorityJobsGO.SetActive(false);
+        secondaryJobsGO.SetActive(false);
+        ableJobsGO.SetActive(false);
     }
     public void OnClickRelatedStructuresTab() {
-        //weaponsGO.SetActive(false);
-        //armorsGO.SetActive(false);
-        //accessoriesGO.SetActive(false);
         relatedStructuresGO.SetActive(true);
         traitsGO.SetActive(false);
+        priorityJobsGO.SetActive(false);
+        secondaryJobsGO.SetActive(false);
+        ableJobsGO.SetActive(false);
+    }
+    public void OnClickPriorityJobsTab() {
+        relatedStructuresGO.SetActive(false);
+        traitsGO.SetActive(false);
+        priorityJobsGO.SetActive(true);
+        secondaryJobsGO.SetActive(false);
+        ableJobsGO.SetActive(false);
+    }
+    public void OnClickSecondaryJobsTab() {
+        relatedStructuresGO.SetActive(false);
+        traitsGO.SetActive(false);
+        priorityJobsGO.SetActive(false);
+        secondaryJobsGO.SetActive(true);
+        ableJobsGO.SetActive(false);
+    }
+    public void OnClickAbleJobsTab() {
+        relatedStructuresGO.SetActive(false);
+        traitsGO.SetActive(false);
+        priorityJobsGO.SetActive(false);
+        secondaryJobsGO.SetActive(false);
+        ableJobsGO.SetActive(true);
     }
     #endregion
 }

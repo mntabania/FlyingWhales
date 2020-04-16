@@ -12,7 +12,7 @@ public class PlayerSkillTreeUI : MonoBehaviour {
         }
     }
 
-    public void OnClickSkillTreeButton(SPELL_TYPE skillType) {
-        parentSkillTreeUI.OnClickSkillTreeButton(skillType);
+    public void OnClickSkillTreeButton(SPELL_TYPE skillType, PlayerSkillTreeItem skillTreeItem) {
+        parentSkillTreeUI.OnClickSkillTreeButton(skillType, skillTreeItem);
     }
 }

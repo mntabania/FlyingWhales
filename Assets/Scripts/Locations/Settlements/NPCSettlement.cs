@@ -28,6 +28,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public LocationClassManager classManager { get; }
     public LocationEventManager eventManager { get; }
     public LocationJobManager jobManager { get; }
+    public SettlementJobPriorityComponent jobPriorityComponent { get; }
 
     private readonly WeightedDictionary<Character> newRulerDesignationWeights;
     private int newRulerDesignationChance;
@@ -52,6 +53,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         classManager = new LocationClassManager();
         eventManager = new LocationEventManager(this);
         jobManager = new LocationJobManager(this);
+        jobPriorityComponent = new SettlementJobPriorityComponent(this);
         settlementJobTriggerComponent = new SettlementJobTriggerComponent(this);
 
     }
@@ -155,6 +157,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         if (base.AddResident(character, chosenHome, ignoreCapacity)) {
             if (character.race == RACE.DEMON || character is Summon) { return true; }
             classManager.OnAddResident(character);
+            jobPriorityComponent.OnAddResident(character);
             return true;
         }
         return false;
@@ -162,6 +165,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public override bool RemoveResident(Character character) {
         if (base.RemoveResident(character)) {
             classManager.OnRemoveResident(character);
+            jobPriorityComponent.OnRemoveResident(character);
             return true;
         }
         return false;
@@ -809,11 +813,30 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         return false;
     }
     public JobQueueItem GetFirstUnassignedJobToCharacterJob(Character character) {
+        JobQueueItem chosenPriorityJob = null;
+        JobQueueItem chosenSecondaryJob = null;
+        JobQueueItem chosenAbleJob = null;
+
         for (int i = 0; i < availableJobs.Count; i++) {
             JobQueueItem job = availableJobs[i];
             if (job.assignedCharacter == null && character.jobQueue.CanJobBeAddedToQueue(job)) {
-                return job;
+                if(job.jobType == character.jobComponent.primaryJob) {
+                    return job;
+                } else if (chosenPriorityJob == null && character.characterClass.priorityJobs != null && character.characterClass.priorityJobs.Contains(job.jobType)) {
+                    chosenPriorityJob = job;
+                } else if (chosenSecondaryJob == null && character.characterClass.secondaryJobs != null && character.characterClass.secondaryJobs.Contains(job.jobType)) {
+                    chosenSecondaryJob = job;
+                } else if (chosenAbleJob == null && character.characterClass.ableJobs != null && character.characterClass.ableJobs.Contains(job.jobType)) {
+                    chosenAbleJob = job;
+                }
             }
+        }
+        if(chosenPriorityJob != null) {
+            return chosenPriorityJob;
+        } else if (chosenSecondaryJob != null) {
+            return chosenSecondaryJob;
+        } else if (chosenAbleJob != null) {
+            return chosenAbleJob;
         }
         return null;
     }

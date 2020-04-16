@@ -527,6 +527,7 @@ public class CharacterInfoUI : InfoUIBase {
         summary = $"{summary}{("\nAttack Speed: " + activeCharacter.attackSpeed.ToString())}";
         summary = $"{summary}{("\nCombat Mode: " + activeCharacter.combatComponent.combatMode.ToString())}";
         summary = $"{summary}{("\nElemental Type: " + activeCharacter.combatComponent.elementalDamage.name)}";
+        summary = $"{summary}{("\nPrimary Job: " + activeCharacter.jobComponent.primaryJob.ToString())}";
 
         if (activeCharacter.stateComponent.currentState != null) {
             summary = $"{summary}\nCurrent State: {activeCharacter.stateComponent.currentState}";

@@ -11,16 +11,20 @@ using UtilityScripts;
 using Random = UnityEngine.Random;
 
 public class CharacterJobTriggerComponent : JobTriggerComponent {
-
 	private Character _owner;
-	
-	private bool hasStartedScreamCheck;
 
+    public JOB_TYPE primaryJob { get; private set; }
     public Dictionary<GoapAction, int> numOfTimesActionDone { get; private set; }
-	
-	public CharacterJobTriggerComponent(Character owner) {
+    public List<JOB_TYPE> primaryJobCandidates;
+
+    private List<string> obtainPersonalItemRandomList;
+    private bool hasStartedScreamCheck;
+
+    public CharacterJobTriggerComponent(Character owner) {
 		_owner = owner;
         numOfTimesActionDone = new Dictionary<GoapAction, int>();
+        primaryJobCandidates = new List<JOB_TYPE>();
+        SetPrimaryJob(JOB_TYPE.NONE);
 	}
 
     #region Listeners
@@ -160,10 +164,16 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			TryStartScreamCheck();
 		}
 	}
-	#endregion
+    #endregion
 
-	#region Job Triggers
-	private void TriggerScreamJob() {
+    #region Utilities
+    public void SetPrimaryJob(JOB_TYPE jobType) {
+        primaryJob = jobType;
+    }
+    #endregion
+
+    #region Job Triggers
+    private void TriggerScreamJob() {
 		if (_owner.jobQueue.HasJob(JOB_TYPE.SCREAM) == false) {
 			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SCREAM, INTERACTION_TYPE.SCREAM_FOR_HELP, _owner, _owner);
 			_owner.jobQueue.AddJobInQueue(job);
@@ -788,6 +798,34 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     public void CreateTakeItemJob(TileObject targetItem) {
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TAKE_ITEM, INTERACTION_TYPE.PICK_UP, targetItem, _owner);
         _owner.jobQueue.AddJobInQueue(job);
+    }
+    public bool TryCreateObtainPersonalItemJob() {
+        if (!_owner.IsInventoryAtFullCapacity()) {
+            if(_owner.characterClass.interestedItemNames != null && _owner.characterClass.interestedItemNames.Length > 0) {
+                string chosenItemName = string.Empty;
+                if(obtainPersonalItemRandomList == null) {
+                    obtainPersonalItemRandomList = new List<string>();
+                }
+                obtainPersonalItemRandomList.Clear();
+                for (int i = 0; i < _owner.characterClass.interestedItemNames.Length; i++) {
+                    string itemName = _owner.characterClass.interestedItemNames[i];
+                    if (!_owner.HasItem(itemName)) {
+                        obtainPersonalItemRandomList.Add(itemName);
+                    }
+                }
+                if(obtainPersonalItemRandomList.Count > 0) {
+                    chosenItemName = obtainPersonalItemRandomList[UnityEngine.Random.Range(0, obtainPersonalItemRandomList.Count)];
+                } else {
+                    chosenItemName = _owner.characterClass.interestedItemNames[UnityEngine.Random.Range(0, _owner.characterClass.interestedItemNames.Length)];
+                }
+                GoapEffect goapEffect = new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, chosenItemName, false, GOAP_EFFECT_TARGET.ACTOR);
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.OBTAIN_PERSONAL_ITEM, goapEffect, _owner, _owner);
+                _owner.jobQueue.AddJobInQueue(job);
+                return true;
+            }
+        }
+        return false;
+
     }
     #endregion
 
