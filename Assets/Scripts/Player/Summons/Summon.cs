@@ -329,6 +329,8 @@ public class Summon : Character, IWorldObject {
             jobComponent.TriggerRoamAroundTile();
         } else if (job.jobType == JOB_TYPE.ROAM_AROUND_TILE) {
             jobComponent.TriggerMonsterStand();
+        } else if (job.jobType == JOB_TYPE.RETURN_TERRITORY) {
+            jobComponent.TriggerRoamAroundTile();
         }
     }
     #endregion

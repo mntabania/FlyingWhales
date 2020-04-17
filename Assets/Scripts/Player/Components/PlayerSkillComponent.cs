@@ -82,7 +82,8 @@ public class PlayerSkillComponent {
         }
         SpellData afflict = PlayerSkillManager.Instance.GetPlayerSkillData(SPELL_TYPE.AFFLICT);
         CatergorizePlayerSkill(afflict);
-        SetPlayerSkillData(new PlayerSkillTreeNodeData() { skill = SPELL_TYPE.SEIZE_CHARACTER, charges = -1, manaCost = 20, cooldown = 12 });
+        SpellData buildDemonicStructure = PlayerSkillManager.Instance.GetPlayerSkillData(SPELL_TYPE.BUILD_DEMONIC_STRUCTURE);
+        CatergorizePlayerSkill(buildDemonicStructure);
     }
     private void PopulateAllSkills() {
         if (nodesData != null) {
