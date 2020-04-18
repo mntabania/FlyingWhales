@@ -55,22 +55,22 @@ public class Tombstone : TileObject {
     }
     public void SetCharacter(Character character, SaveDataTileObject data) {
         this.character = character;
-        Initialize(data, false);
+        //Initialize(data, false);
     }
 }
 
-public class SaveDataTombstone : SaveDataTileObject {
-    public int characterID;
+//public class SaveDataTombstone : SaveDataTileObject {
+//    public int characterID;
 
-    public override void Save(TileObject tileObject) {
-        base.Save(tileObject);
-        Tombstone obj = tileObject as Tombstone;
-        characterID = obj.character.id;
-    }
+//    public override void Save(TileObject tileObject) {
+//        base.Save(tileObject);
+//        Tombstone obj = tileObject as Tombstone;
+//        characterID = obj.character.id;
+//    }
 
-    public override TileObject Load() {
-        Tombstone obj = base.Load() as Tombstone;
-        obj.SetCharacter(CharacterManager.Instance.GetCharacterByID(characterID), this);
-        return obj;
-    }
-}
+//    public override TileObject Load() {
+//        Tombstone obj = base.Load() as Tombstone;
+//        obj.SetCharacter(CharacterManager.Instance.GetCharacterByID(characterID), this);
+//        return obj;
+//    }
+//}

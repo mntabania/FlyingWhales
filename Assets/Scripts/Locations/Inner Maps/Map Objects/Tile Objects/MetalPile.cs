@@ -12,10 +12,10 @@ public class MetalPile : ResourcePile {
         traitContainer.RemoveTrait(this, "Flammable");
         SetResourceInPile(100);
     }
-    public MetalPile(SaveDataTileObject data) : base(RESOURCE.METAL) {
-        Initialize(data, false);
-        //AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
-    }
+    //public MetalPile(SaveDataTileObject data) : base(RESOURCE.METAL) {
+    //    Initialize(data, false);
+    //    //AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
+    //}
 
     //public override void AdjustResourceInPile(int adjustment) {
     //    base.AdjustResourceInPile(adjustment);
@@ -31,18 +31,18 @@ public class MetalPile : ResourcePile {
     }
 }
 
-public class SaveDataMetalPile : SaveDataTileObject {
-    public int suppliesInPile;
+//public class SaveDataMetalPile : SaveDataTileObject {
+//    public int suppliesInPile;
 
-    public override void Save(TileObject tileObject) {
-        base.Save(tileObject);
-        MetalPile obj = tileObject as MetalPile;
-        suppliesInPile = obj.resourceInPile;
-    }
+//    public override void Save(TileObject tileObject) {
+//        base.Save(tileObject);
+//        MetalPile obj = tileObject as MetalPile;
+//        suppliesInPile = obj.resourceInPile;
+//    }
 
-    public override TileObject Load() {
-        MetalPile obj = base.Load() as MetalPile;
-        obj.SetResourceInPile(suppliesInPile);
-        return obj;
-    }
-}
+//    public override TileObject Load() {
+//        MetalPile obj = base.Load() as MetalPile;
+//        obj.SetResourceInPile(suppliesInPile);
+//        return obj;
+//    }
+//}

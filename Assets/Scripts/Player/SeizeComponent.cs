@@ -110,8 +110,20 @@ public class SeizeComponent {
     public bool CanUnseize(LocationGridTile tileLocation) {
         if (tileLocation.structure.structureType == STRUCTURE_TYPE.THE_KENNEL) {
             if (seizedPOI is Summon summon) {
-                int numOfSummons = tileLocation.structure.GetNumberOfInsideSummonsHere();
+                int numOfSummons = tileLocation.structure.GetNumberOfSummonsHere();
                 if(numOfSummons < 3) {
+                    return true;
+                }
+            }
+            return false;
+        } else if (tileLocation.structure.structureType == STRUCTURE_TYPE.THE_CRYPT) {
+            if(seizedPOI is Tombstone) {
+                //Temporarily disabled unseizing tombstones in crypt because we still do not have a save data for characters, hence, we cannot save tombstones
+                return false;
+            }
+            if (seizedPOI is TileObject tileObject) {
+                int numOfTileOjects = tileLocation.structure.GetNumberOfNonPreplacedTileObjectsHere();
+                if (numOfTileOjects < 3) {
                     return true;
                 }
             }

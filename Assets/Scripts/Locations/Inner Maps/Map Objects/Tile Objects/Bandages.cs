@@ -5,8 +5,8 @@ public class Bandages : TileObject {
         Initialize(TILE_OBJECT_TYPE.BANDAGES);
         //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
     }
-    public Bandages(SaveDataTileObject data) {
-        //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
-        Initialize(data);
-    }
+    //public Bandages(SaveDataTileObject data) {
+    //    //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
+    //    Initialize(data);
+    //}
 }

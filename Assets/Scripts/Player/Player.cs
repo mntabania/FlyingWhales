@@ -1427,6 +1427,34 @@ public class Player : ILeader, IObjectManipulator {
             SaveManager.Instance.currentSaveDataPlayer.SaveSummons(kennelSummons);
         }
     }
+    public void SaveTileObjects() {
+        List<LocationStructure> crypts = playerSettlement.GetStructuresOfType(STRUCTURE_TYPE.THE_CRYPT);
+        List<TileObject> cryptTileObjects = null;
+        if (crypts != null) {
+            for (int i = 0; i < crypts.Count; i++) {
+                LocationStructure currCrypt = crypts[i];
+                foreach (TileObjectsAndCount tileObjectsAndCount in currCrypt.groupedTileObjects.Values) {
+                    if(tileObjectsAndCount.tileObjects != null && tileObjectsAndCount.tileObjects.Count > 0) {
+                        for (int j = 0; j < tileObjectsAndCount.tileObjects.Count; j++) {
+                            TileObject tileObject = tileObjectsAndCount.tileObjects[j];
+                            if(tileObject.gridTileLocation != null 
+                                && tileObject.tileObjectType != TILE_OBJECT_TYPE.BLOCK_WALL
+                                && tileObject.preplacedLocationStructure != currCrypt
+                                && !tileObject.isSaved) {
+                                if (cryptTileObjects == null) {
+                                    cryptTileObjects = new List<TileObject>();
+                                }
+                                cryptTileObjects.Add(tileObject);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if (cryptTileObjects != null) {
+            SaveManager.Instance.currentSaveDataPlayer.SaveTileObjects(cryptTileObjects);
+        }
+    }
     #endregion
 }
 

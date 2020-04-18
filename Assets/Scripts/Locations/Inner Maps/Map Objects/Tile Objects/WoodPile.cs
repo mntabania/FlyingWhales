@@ -11,9 +11,9 @@ public class WoodPile : ResourcePile {
         traitContainer.RemoveTrait(this, "Flammable");
         SetResourceInPile(100);
     }
-    public WoodPile(SaveDataTileObject data) : base(RESOURCE.WOOD) {
-        Initialize(data, false);
-    }
+    //public WoodPile(SaveDataTileObject data) : base(RESOURCE.WOOD) {
+    //    Initialize(data, false);
+    //}
     //public override void AdjustResourceInPile(int adjustment) {
     //    base.AdjustResourceInPile(adjustment);
     //    if (adjustment < 0) {
@@ -28,18 +28,18 @@ public class WoodPile : ResourcePile {
     }
 }
 
-public class SaveDataWoodPile : SaveDataTileObject {
-    public int suppliesInPile;
+//public class SaveDataWoodPile : SaveDataTileObject {
+//    public int suppliesInPile;
 
-    public override void Save(TileObject tileObject) {
-        base.Save(tileObject);
-        WoodPile obj = tileObject as WoodPile;
-        suppliesInPile = obj.resourceInPile;
-    }
+//    public override void Save(TileObject tileObject) {
+//        base.Save(tileObject);
+//        WoodPile obj = tileObject as WoodPile;
+//        suppliesInPile = obj.resourceInPile;
+//    }
 
-    public override TileObject Load() {
-        WoodPile obj = base.Load() as WoodPile;
-        obj.SetResourceInPile(suppliesInPile);
-        return obj;
-    }
-}
+//    public override TileObject Load() {
+//        WoodPile obj = base.Load() as WoodPile;
+//        obj.SetResourceInPile(suppliesInPile);
+//        return obj;
+//    }
+//}

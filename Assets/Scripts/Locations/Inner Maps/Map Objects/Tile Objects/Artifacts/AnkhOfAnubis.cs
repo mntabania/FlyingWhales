@@ -7,8 +7,8 @@ public class AnkhOfAnubis : Artifact {
 
     public AnkhOfAnubis() : base(ARTIFACT_TYPE.Ankh_Of_Anubis) {
     }
-    public AnkhOfAnubis(SaveDataArtifact data) : base(data) {
-    }
+    //public AnkhOfAnubis(SaveDataArtifact data) : base(data) {
+    //}
 
     #region Overrides
     public override void ActivateTileObject() {

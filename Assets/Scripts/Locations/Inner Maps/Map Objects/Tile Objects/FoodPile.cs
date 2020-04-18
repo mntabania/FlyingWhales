@@ -12,11 +12,11 @@ public class FoodPile : ResourcePile {
         traitContainer.AddTrait(this, "Edible");
         SetResourceInPile(100);
     }
-    public FoodPile(SaveDataTileObject data) : base(RESOURCE.FOOD) {
-        Initialize(data, false);
-        //AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
-        traitContainer.AddTrait(this, "Edible");
-    }
+    //public FoodPile(SaveDataTileObject data) : base(RESOURCE.FOOD) {
+    //    Initialize(data, false);
+    //    //AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
+    //    traitContainer.AddTrait(this, "Edible");
+    //}
 
     #region Overrides
     public override string ToString() {
@@ -28,18 +28,18 @@ public class FoodPile : ResourcePile {
     #endregion
 }
 
-public class SaveDataFoodPile : SaveDataTileObject {
-    public int foodInPile;
+//public class SaveDataFoodPile : SaveDataTileObject {
+//    public int foodInPile;
 
-    public override void Save(TileObject tileObject) {
-        base.Save(tileObject);
-        FoodPile obj = tileObject as FoodPile;
-        foodInPile = obj.resourceInPile;
-    }
+//    public override void Save(TileObject tileObject) {
+//        base.Save(tileObject);
+//        FoodPile obj = tileObject as FoodPile;
+//        foodInPile = obj.resourceInPile;
+//    }
 
-    public override TileObject Load() {
-        FoodPile obj = base.Load() as FoodPile;
-        obj.SetResourceInPile(foodInPile);
-        return obj;
-    }
-}
+//    public override TileObject Load() {
+//        FoodPile obj = base.Load() as FoodPile;
+//        obj.SetResourceInPile(foodInPile);
+//        return obj;
+//    }
+//}

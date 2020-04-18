@@ -22,16 +22,16 @@ public class Table : TileObject {
         traitContainer.AddTrait(this, "Edible");
     }
 
-    public Table(SaveDataTileObject data) {
-        //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.DRINK, INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.DROP_RESOURCE, INTERACTION_TYPE.REPAIR, INTERACTION_TYPE.SIT };
-        Initialize(data);
-        AddAdvertisedAction(INTERACTION_TYPE.DRINK);
-        AddAdvertisedAction(INTERACTION_TYPE.POISON);
-        //AddAdvertisedAction(INTERACTION_TYPE.REMOVE_POISON);
-        AddAdvertisedAction(INTERACTION_TYPE.DROP_RESOURCE);
-        AddAdvertisedAction(INTERACTION_TYPE.SIT);
-        traitContainer.AddTrait(this, "Edible");
-    }
+    //public Table(SaveDataTileObject data) {
+    //    //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.DRINK, INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.DROP_RESOURCE, INTERACTION_TYPE.REPAIR, INTERACTION_TYPE.SIT };
+    //    Initialize(data);
+    //    AddAdvertisedAction(INTERACTION_TYPE.DRINK);
+    //    AddAdvertisedAction(INTERACTION_TYPE.POISON);
+    //    //AddAdvertisedAction(INTERACTION_TYPE.REMOVE_POISON);
+    //    AddAdvertisedAction(INTERACTION_TYPE.DROP_RESOURCE);
+    //    AddAdvertisedAction(INTERACTION_TYPE.SIT);
+    //    traitContainer.AddTrait(this, "Edible");
+    //}
 
     #region Overrides
     public override void SetPOIState(POI_STATE state) {
@@ -301,18 +301,18 @@ public class Table : TileObject {
     #endregion
 }
 
-public class SaveDataTable : SaveDataTileObject {
-    public int food;
+//public class SaveDataTable : SaveDataTileObject {
+//    public int food;
 
-    public override void Save(TileObject tileObject) {
-        base.Save(tileObject);
-        Table obj = tileObject as Table;
-        food = obj.food;
-    }
+//    public override void Save(TileObject tileObject) {
+//        base.Save(tileObject);
+//        Table obj = tileObject as Table;
+//        food = obj.food;
+//    }
 
-    public override TileObject Load() {
-        Table obj = base.Load() as Table;
-        obj.SetFood(food);
-        return obj;
-    }
-}
+//    public override TileObject Load() {
+//        Table obj = base.Load() as Table;
+//        obj.SetFood(food);
+//        return obj;
+//    }
+//}

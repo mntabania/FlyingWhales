@@ -42,18 +42,18 @@ public class TreeObject : TileObject {
     }
 }
 
-public class SaveDataTreeObject: SaveDataTileObject {
-    public int yield;
+//public class SaveDataTreeObject: SaveDataTileObject {
+//    public int yield;
 
-    public override void Save(TileObject tileObject) {
-        base.Save(tileObject);
-        TreeObject obj = tileObject as TreeObject;
-        yield = obj.yield;
-    }
+//    public override void Save(TileObject tileObject) {
+//        base.Save(tileObject);
+//        TreeObject obj = tileObject as TreeObject;
+//        yield = obj.yield;
+//    }
 
-    public override TileObject Load() {
-        TreeObject obj = base.Load() as TreeObject;
-        obj.SetYield(yield);
-        return obj;
-    }
-}
+//    public override TileObject Load() {
+//        TreeObject obj = base.Load() as TreeObject;
+//        obj.SetYield(yield);
+//        return obj;
+//    }
+//}

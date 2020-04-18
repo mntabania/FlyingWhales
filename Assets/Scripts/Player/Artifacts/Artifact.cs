@@ -26,16 +26,16 @@ public class Artifact : TileObject {
         // AddAdvertisedAction(INTERACTION_TYPE.STEAL);
         //RemoveAdvertisedAction(INTERACTION_TYPE.REPAIR);
     }
-    public Artifact(SaveDataArtifact data) {
-        this.data = ScriptableObjectsManager.Instance.GetArtifactData(data.artifactType);
-        //advertisedActions = new List<INTERACTION_TYPE>();
-        Initialize(data, false);
-        AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
-        AddAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
-        AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
-        AddAdvertisedAction(INTERACTION_TYPE.BOOBY_TRAP);
-        // AddAdvertisedAction(INTERACTION_TYPE.STEAL);
-    }
+    //public Artifact(SaveDataArtifact data) {
+    //    this.data = ScriptableObjectsManager.Instance.GetArtifactData(data.artifactType);
+    //    //advertisedActions = new List<INTERACTION_TYPE>();
+    //    Initialize(data, false);
+    //    AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
+    //    AddAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
+    //    AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
+    //    AddAdvertisedAction(INTERACTION_TYPE.BOOBY_TRAP);
+    //    // AddAdvertisedAction(INTERACTION_TYPE.STEAL);
+    //}
 
     #region Overrides
     public override string ToString() {

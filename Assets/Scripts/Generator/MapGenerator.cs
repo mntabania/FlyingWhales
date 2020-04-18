@@ -127,7 +127,7 @@ public class MapGenerator : MonoBehaviour {
         data.LoadFactions();
         data.LoadCharacters();
         // data.LoadSpecialObjects();
-        data.LoadTileObjects();
+        //data.LoadTileObjects();
         yield return null;
         data.LoadCharacterRelationships();
         data.LoadCharacterTraits();
@@ -149,17 +149,17 @@ public class MapGenerator : MonoBehaviour {
         //LandmarkManager.Instance.GenerateAreaMap(LandmarkManager.Instance.enemyOfPlayerArea, false);
         data.LoadAreaMaps();
         data.LoadAreaStructureEntranceTiles();
-        data.LoadTileObjectsPreviousTileAndCurrentTile();
+        //data.LoadTileObjectsPreviousTileAndCurrentTile();
         data.LoadAreaMapsObjectHereOfTiles();
         data.LoadAreaMapsTileTraits();
-        data.LoadTileObjectTraits();
+        //data.LoadTileObjectTraits();
         data.LoadCharacterHomeStructures();
         data.LoadCurrentDate(); //Moved this because some jobs use current date
         data.LoadCharacterInitialPlacements();
         //data.LoadPlayer();
 
         data.LoadAllJobs();
-        data.LoadTileObjectsDataAfterLoadingAreaMap();
+        //data.LoadTileObjectsDataAfterLoadingAreaMap();
 
         //Note: Loading npcSettlement items is after loading the inner map because LocationStructure and LocationGridTile is required
         data.LoadPlayerAreaItems();

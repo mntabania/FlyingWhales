@@ -7,8 +7,8 @@ public class GorgonEye : Artifact {
 
     public GorgonEye() : base(ARTIFACT_TYPE.Gorgon_Eye) {
     }
-    public GorgonEye(SaveDataArtifact data) : base(data) {
-    }
+    //public GorgonEye(SaveDataArtifact data) : base(data) {
+    //}
 
     #region Overrides
     public override void ActivateTileObject() {

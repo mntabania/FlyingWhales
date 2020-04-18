@@ -265,50 +265,50 @@ public class Save {
     //    playerSave.Load();
     //}
 
-    public void SaveTileObjects(Dictionary<TILE_OBJECT_TYPE, List<TileObject>> tileObjects) {
-        tileObjectSaves = new List<SaveDataTileObject>();
-        foreach (KeyValuePair<TILE_OBJECT_TYPE, List<TileObject>> kvp in tileObjects) {
-            if(kvp.Key == TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
-                continue; //Do not save generic tile object because it will be created again upon loading
-            }
-            for (int i = 0; i < kvp.Value.Count; i++) {
-                TileObject currTileObject = kvp.Value[i];
-                SaveDataTileObject data = null;
-                System.Type type = System.Type.GetType($"SaveData{currTileObject.GetType()}");
-                if (type != null) {
-                    data = System.Activator.CreateInstance(type) as SaveDataTileObject;
-                } else {
-                    if(currTileObject is Artifact) {
-                        data = new SaveDataArtifact();
-                    } else {
-                        data = new SaveDataTileObject();
-                    }
-                }
-                data.Save(currTileObject);
-                tileObjectSaves.Add(data);
-            }
-        }
-    }
-    public void LoadTileObjects() {
-        for (int i = 0; i < tileObjectSaves.Count; i++) {
-            tileObjectSaves[i].Load();
-        }
-    }
-    public void LoadTileObjectsPreviousTileAndCurrentTile() {
-        for (int i = 0; i < tileObjectSaves.Count; i++) {
-            tileObjectSaves[i].LoadPreviousTileAndCurrentTile();
-        }
-    }
-    public void LoadTileObjectTraits() {
-        for (int i = 0; i < tileObjectSaves.Count; i++) {
-            tileObjectSaves[i].LoadTraits();
-        }
-    }
-    public void LoadTileObjectsDataAfterLoadingAreaMap() {
-        for (int i = 0; i < tileObjectSaves.Count; i++) {
-            tileObjectSaves[i].LoadAfterLoadingAreaMap();
-        }
-    }
+    //public void SaveTileObjects(Dictionary<TILE_OBJECT_TYPE, List<TileObject>> tileObjects) {
+    //    tileObjectSaves = new List<SaveDataTileObject>();
+    //    foreach (KeyValuePair<TILE_OBJECT_TYPE, List<TileObject>> kvp in tileObjects) {
+    //        if(kvp.Key == TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
+    //            continue; //Do not save generic tile object because it will be created again upon loading
+    //        }
+    //        for (int i = 0; i < kvp.Value.Count; i++) {
+    //            TileObject currTileObject = kvp.Value[i];
+    //            SaveDataTileObject data = null;
+    //            System.Type type = System.Type.GetType($"SaveData{currTileObject.GetType()}");
+    //            if (type != null) {
+    //                data = System.Activator.CreateInstance(type) as SaveDataTileObject;
+    //            } else {
+    //                if(currTileObject is Artifact) {
+    //                    data = new SaveDataArtifact();
+    //                } else {
+    //                    data = new SaveDataTileObject();
+    //                }
+    //            }
+    //            data.Save(currTileObject);
+    //            tileObjectSaves.Add(data);
+    //        }
+    //    }
+    //}
+    //public void LoadTileObjects() {
+    //    for (int i = 0; i < tileObjectSaves.Count; i++) {
+    //        tileObjectSaves[i].Load();
+    //    }
+    //}
+    //public void LoadTileObjectsPreviousTileAndCurrentTile() {
+    //    for (int i = 0; i < tileObjectSaves.Count; i++) {
+    //        tileObjectSaves[i].LoadPreviousTileAndCurrentTile();
+    //    }
+    //}
+    //public void LoadTileObjectTraits() {
+    //    for (int i = 0; i < tileObjectSaves.Count; i++) {
+    //        tileObjectSaves[i].LoadTraits();
+    //    }
+    //}
+    //public void LoadTileObjectsDataAfterLoadingAreaMap() {
+    //    for (int i = 0; i < tileObjectSaves.Count; i++) {
+    //        tileObjectSaves[i].LoadAfterLoadingAreaMap();
+    //    }
+    //}
 
     // public void SaveSpecialObjects(List<SpecialObject> specialObjects) {
     //     specialObjectSaves = new List<SaveDataSpecialObject>();

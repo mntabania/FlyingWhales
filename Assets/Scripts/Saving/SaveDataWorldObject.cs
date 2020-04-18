@@ -31,20 +31,20 @@ public class SaveDataWorldObject {
     }
 }
 
-public class SaveDataArtifact : SaveDataTileObject {
-    public ARTIFACT_TYPE artifactType;
+//public class SaveDataArtifact : SaveDataTileObject {
+//    public ARTIFACT_TYPE artifactType;
 
-    public override void Save(TileObject tileObject) {
-        base.Save(tileObject);
-        Artifact artifact = tileObject as Artifact;
-        artifactType = artifact.type;
-    }
+//    public override void Save(TileObject tileObject) {
+//        base.Save(tileObject);
+//        Artifact artifact = tileObject as Artifact;
+//        artifactType = artifact.type;
+//    }
 
-    public override TileObject Load() {
-        Artifact artifact = base.Load() as Artifact;
-        return artifact;
-    }
-}
+//    public override TileObject Load() {
+//        Artifact artifact = base.Load() as Artifact;
+//        return artifact;
+//    }
+//}
 
 //public class SaveDataSummon {
 //    public int id;

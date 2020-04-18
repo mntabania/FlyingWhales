@@ -109,7 +109,7 @@ public class LocationStructureObject : PooledObject {
             tile.SetReservedType(preplacedObj.tileObjectType);
 
             TileObject newTileObject = InnerMapManager.Instance.CreateNewTileObject<TileObject>(preplacedObj.tileObjectType);
-            newTileObject.SetIsPreplaced(true);
+            newTileObject.SetIsPreplaced(true, structure);
             structure.AddPOI(newTileObject, tile);
             newTileObject.mapVisual.SetVisual(preplacedObj.spriteRenderer.sprite);
             newTileObject.mapVisual.SetRotation(preplacedObj.transform.localEulerAngles.z);

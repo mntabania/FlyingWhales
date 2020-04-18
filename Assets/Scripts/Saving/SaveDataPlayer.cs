@@ -9,6 +9,7 @@ public class SaveDataPlayer {
     public List<PlayerSkillTreeNodeData> learnedSkills;
     public List<PlayerSkillTreeNodeData> unlockedSkills;
     public List<SaveDataSummon> kennelSummons;
+    public List<SaveDataTileObject> cryptTileObjects;
 
     public void InitializeInitialData() {
         exp = 10000;
@@ -110,6 +111,17 @@ public class SaveDataPlayer {
                 kennelSummons.RemoveAt(i);
                 break;
             }
+        }
+    }
+    #endregion
+
+    #region Tile Objects
+    public void SaveTileObjects(List<TileObject> tileObjects) {
+        if (cryptTileObjects == null) {
+            cryptTileObjects = new List<SaveDataTileObject>();
+        }
+        for (int i = 0; i < tileObjects.Count; i++) {
+            cryptTileObjects.Add(new SaveDataTileObject(tileObjects[i]));
         }
     }
     #endregion

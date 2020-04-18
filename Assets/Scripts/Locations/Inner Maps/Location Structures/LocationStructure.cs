@@ -62,6 +62,10 @@ namespace Inner_Maps.Location_Structures {
             SetInteriorState(structureType.IsInterior());
         }
 
+        #region Virtuals
+        public virtual void OnBuiltStructure() { }
+        #endregion
+
         #region Initialization
         public virtual void Initialize() {
             SubscribeListeners();
@@ -95,12 +99,24 @@ namespace Inner_Maps.Location_Structures {
                 RemovePOI(character);
             }
         }
-        public int GetNumberOfInsideSummonsHere() {
+        public int GetNumberOfSummonsHere() {
             int count = 0;
             for (int i = 0; i < charactersHere.Count; i++) {
                 Character character = charactersHere[i];
                 if (character.gridTileLocation != null && character is Summon) {
                     count++;
+                }
+            }
+            return count;
+        }
+        public int GetNumberOfNonPreplacedTileObjectsHere() {
+            int count = 0;
+            foreach (TileObjectsAndCount tileObjAndCount in groupedTileObjects.Values) {
+                for (int i = 0; i < tileObjAndCount.tileObjects.Count; i++) {
+                    TileObject obj = tileObjAndCount.tileObjects[i];
+                    if (obj.tileObjectType != TILE_OBJECT_TYPE.BLOCK_WALL && obj.preplacedLocationStructure != this) {
+                        count++;
+                    }
                 }
             }
             return count;
@@ -405,6 +421,12 @@ namespace Inner_Maps.Location_Structures {
                 return null;
             }
             return tiles[Random.Range(0, tiles.Count)];
+        }
+        public LocationGridTile GetRandomUnoccupiedTile() {
+            if (unoccupiedTiles.Count <= 0) {
+                return null;
+            }
+            return unoccupiedTiles.ElementAt(Random.Range(0, unoccupiedTiles.Count));
         }
         public virtual void OnTileDamaged(LocationGridTile tile) { }
         public virtual void OnTileRepaired(LocationGridTile tile) {

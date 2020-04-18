@@ -23,6 +23,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public bool isDisabledByPlayer { get; private set; }
     public bool isSummonedByPlayer { get; private set; }
     public bool isPreplaced { get; private set; }
+    public LocationStructure preplacedLocationStructure { get; private set; }
     public List<JobQueueItem> allJobsTargetingThis { get; private set; }
     private List<Character> owners { get; set; }
     public Character isBeingCarriedBy { get; private set; }
@@ -51,6 +52,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     protected Dictionary<RESOURCE, int> maxResourceValues { get; set; }
     public List<SPELL_TYPE> actions { get; protected set; }
     public int repairCounter { get; protected set; } //If greater than zero, this tile object cannot be repaired
+    public bool isSaved { get; private set; }
 
     private bool hasSubscribedToListeners;
 
@@ -92,21 +94,21 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         SubscribeListeners();
     }
     protected void Initialize(SaveDataTileObject data, bool shouldAddCommonAdvertisements = true) {
-        id = UtilityScripts.Utilities.SetID(this, data.id);
-        tileObjectType = data.tileObjectType;
-        new List<string>();
-        allJobsTargetingThis = new List<JobQueueItem>();
-        owners = new List<Character>();
-        hasCreatedSlots = false;
-        CreateTraitContainer();
-        if (shouldAddCommonAdvertisements) {
-            AddCommonAdvertisements();
-        }
-        ConstructResources();
-        ConstructDefaultActions();
-        logComponent = new LogComponent(this);
-        InnerMapManager.Instance.AddTileObject(this);
-        SubscribeListeners();
+        //id = UtilityScripts.Utilities.SetID(this, data.id);
+        //tileObjectType = data.tileObjectType;
+        //new List<string>();
+        //allJobsTargetingThis = new List<JobQueueItem>();
+        //owners = new List<Character>();
+        //hasCreatedSlots = false;
+        //CreateTraitContainer();
+        //if (shouldAddCommonAdvertisements) {
+        //    AddCommonAdvertisements();
+        //}
+        //ConstructResources();
+        //ConstructDefaultActions();
+        //logComponent = new LogComponent(this);
+        //InnerMapManager.Instance.AddTileObject(this);
+        //SubscribeListeners();
     }
     private void AddCommonAdvertisements() {
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
@@ -848,11 +850,15 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     protected TileObject GetBase() {
         return this;
     }
-    public void SetIsPreplaced(bool state) {
+    public void SetIsPreplaced(bool state, LocationStructure structure) {
         isPreplaced = state;
+        preplacedLocationStructure = structure;
     }
     public void AdjustRepairCounter(int amount) {
         repairCounter += amount;
+    }
+    public void SetIsSaved(bool state) {
+        isSaved = state;
     }
     #endregion
 
@@ -1040,110 +1046,47 @@ public struct TileObjectSerializableData {
 
 [System.Serializable]
 public class SaveDataTileObject {
-    public int id;
     public TILE_OBJECT_TYPE tileObjectType;
-    public List<SaveDataTrait> traits;
-    public List<int> awareCharactersIDs;
-    //public LocationStructure structureLocation { get; protected set; }
-    public bool isDisabledByPlayer;
-    public bool isSummonedByPlayer;
-    //public List<JobQueueItem> allJobsTargettingThis { get; protected set; }
-    //public List<Character> owners;
+    public string[] traitNames;
+    //public string[] statusNames;
+    //public int[] statusStacks;
+    public RESOURCE[] storedResourcesTypes;
+    public int[] storedResourcesAmount;
+    public bool isArtifact;
+    public ARTIFACT_TYPE artifactType;
 
-    //public Vector3Save tileID;
-    public POI_STATE state;
-    public Vector3Save previousTileID;
-    public int previousTileAreaID;
-    public bool hasCurrentTile;
-
-    public int structureLocationAreaID;
-    public int structureLocationID;
-    public STRUCTURE_TYPE structureLocationType;
-
-    protected TileObject loadedTileObject;
-
-    public virtual void Save(TileObject tileObject) {
-        id = tileObject.id;
+    public SaveDataTileObject(TileObject tileObject) {
         tileObjectType = tileObject.tileObjectType;
-        isDisabledByPlayer = tileObject.isDisabledByPlayer;
-        isSummonedByPlayer = tileObject.isSummonedByPlayer;
-        state = tileObject.state;
-
-        hasCurrentTile = tileObject.gridTileLocation != null;
-
-        if(tileObject.structureLocation != null) {
-            structureLocationID = tileObject.structureLocation.id;
-            structureLocationAreaID = tileObject.structureLocation.location.id; //TODO: Refactor, because location is no longer guaranteed to be an npcSettlement.
-            structureLocationType = tileObject.structureLocation.structureType;
-        } else {
-            structureLocationID = -1;
-            structureLocationAreaID = -1;
+        if(tileObject is Artifact artifact) {
+            isArtifact = true;
+            artifactType = artifact.type;
         }
 
-        if (tileObject.previousTile != null) {
-            previousTileID = new Vector3Save(tileObject.previousTile.localPlace);
-            previousTileAreaID = tileObject.previousTile.structure.location.id;
-        } else {
-            previousTileID = new Vector3Save(0, 0, -1);
-            previousTileAreaID = -1;
-        }
-
-        traits = new List<SaveDataTrait>();
-        for (int i = 0; i < tileObject.traitContainer.allTraitsAndStatuses.Count; i++) {
-            SaveDataTrait saveDataTrait = SaveManager.ConvertTraitToSaveDataTrait(tileObject.traitContainer.allTraitsAndStatuses[i]);
-            if (saveDataTrait != null) {
-                saveDataTrait.Save(tileObject.traitContainer.allTraitsAndStatuses[i]);
-                traits.Add(saveDataTrait);
+        List<Trait> traits = tileObject.traitContainer.traits;
+        List<Status> statuses = tileObject.traitContainer.statuses;
+        Dictionary<RESOURCE, int> storedResources = tileObject.storedResources;
+        if (traits != null && traits.Count > 0) {
+            traitNames = new string[tileObject.traitContainer.traits.Count];
+            for (int i = 0; i < traits.Count; i++) {
+                traitNames[i] = traits[i].name;
             }
         }
-
-        //awareCharactersIDs = new List<int>();
-        //for (int i = 0; i < tileObject.awareCharacters.Count; i++) {
-        //    awareCharactersIDs.Add(tileObject.awareCharacters[i].id);
+        //if (statuses != null && statuses.Count > 0) {
+        //    statusNames = new string[tileObject.traitContainer.statuses.Count];
+        //    statusStacks = new int[tileObject.traitContainer.statuses.Count];
+        //    for (int i = 0; i < statuses.Count; i++) {
+        //        statusNames[i] = statuses[i].name;
+        //        statusStacks[i] = tileObject.traitContainer.stacks[statusNames[i]];
+        //    }
         //}
-    }
-
-    public virtual TileObject Load() {
-        string tileObjectName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(tileObjectType.ToString());
-        TileObject tileObject = System.Activator.CreateInstance(System.Type.GetType(tileObjectName), this) as TileObject;
-
-        //if(structureLocationID != -1 && structureLocationAreaID != -1) {
-        //    NPCSettlement npcSettlement = LandmarkManager.Instance.GetAreaByID(structureLocationAreaID);
-        //    tileObject.SetStructureLocation(npcSettlement.GetStructureByID(structureLocationType, structureLocationID));
-        //}
-        //for (int i = 0; i < awareCharactersIDs.Count; i++) {
-        //    tileObject.AddAwareCharacter(CharacterManager.Instance.GetCharacterByID(awareCharactersIDs[i]));
-        //}
-
-        tileObject.SetIsDisabledByPlayer(isDisabledByPlayer);
-        tileObject.SetIsSummonedByPlayer(isSummonedByPlayer);
-        tileObject.SetPOIState(state);
-
-        loadedTileObject = tileObject;
-        return loadedTileObject;
-    }
-
-    //This is the last to be loaded in SaveDataTileObject, so release loadedTileObject reference
-    public virtual void LoadAfterLoadingAreaMap() {
-        loadedTileObject = null;
-    }
-
-    public void LoadPreviousTileAndCurrentTile() {
-        if (previousTileAreaID != -1 && previousTileID.z != -1) {
-            // NPCSettlement npcSettlement = LandmarkManager.Instance.GetAreaByID(previousTileAreaID);
-            // LocationGridTile tile = npcSettlement.innerMap.map[(int)previousTileID.x, (int)previousTileID.y];
-            // tile.structure.AddPOI(loadedTileObject, tile);
-            // if (!hasCurrentTile) {
-            //     tile.structure.RemovePOI(loadedTileObject);
-            // }
-        }
-    }
-
-    public void LoadTraits() {
-        for (int i = 0; i < traits.Count; i++) {
-            Character responsibleCharacter = null;
-            Trait trait = traits[i].Load(ref responsibleCharacter);
-            loadedTileObject.traitContainer.AddTrait(loadedTileObject, trait, responsibleCharacter);
+        if(storedResources != null && storedResources.Count > 0) {
+            storedResourcesTypes = new RESOURCE[storedResources.Count];
+            storedResourcesAmount = new int[storedResources.Count];
+            int i = 0;
+            foreach (KeyValuePair<RESOURCE, int> item in storedResources) {
+                storedResourcesTypes[i] = item.Key;
+                storedResourcesAmount[i] = item.Value;
+            }
         }
     }
 }

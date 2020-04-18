@@ -626,18 +626,18 @@ namespace Inner_Maps {
             return newArtifact;
             //return new Artifact(artifactType);
         }
-        public Artifact CreateNewArtifact(SaveDataArtifact data) {
-            Artifact newArtifact = CreateNewArtifactClassFromType(data) as Artifact;
-            return newArtifact;
-        }
+        //public Artifact CreateNewArtifact(SaveDataArtifact data) {
+        //    Artifact newArtifact = CreateNewArtifactClassFromType(data) as Artifact;
+        //    return newArtifact;
+        //}
         private Artifact CreateNewArtifactFromType(ARTIFACT_TYPE artifactType) {
             var typeName = UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(artifactType.ToString());
             return System.Activator.CreateInstance(System.Type.GetType(typeName)) as Artifact;
         }
-        private object CreateNewArtifactClassFromType(SaveDataArtifact data) {
-            var typeName = UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(data.artifactType.ToString());
-            return System.Activator.CreateInstance(System.Type.GetType(typeName), data);
-        }
+        //private object CreateNewArtifactClassFromType(SaveDataArtifact data) {
+        //    var typeName = UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(data.artifactType.ToString());
+        //    return System.Activator.CreateInstance(System.Type.GetType(typeName), data);
+        //}
         #endregion
         #endregion
     }

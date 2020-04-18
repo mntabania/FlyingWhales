@@ -17,13 +17,13 @@ public class Ore : TileObject {
 
         SetYield(50);
     }
-    public Ore(SaveDataTileObject data) {
-        //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.MINE_METAL, INTERACTION_TYPE.ASSAULT, };
-        Initialize(data, false);
-        AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
-        AddAdvertisedAction(INTERACTION_TYPE.MINE_METAL);
+    //public Ore(SaveDataTileObject data) {
+    //    //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.MINE_METAL, INTERACTION_TYPE.ASSAULT, };
+    //    Initialize(data, false);
+    //    AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
+    //    AddAdvertisedAction(INTERACTION_TYPE.MINE_METAL);
 
-    }
+    //}
 
     #region Overrides
     public override string ToString() {
@@ -62,18 +62,18 @@ public class Ore : TileObject {
     }
 }
 
-public class SaveDataOre : SaveDataTileObject {
-    public int yield;
+//public class SaveDataOre : SaveDataTileObject {
+//    public int yield;
 
-    public override void Save(TileObject tileObject) {
-        base.Save(tileObject);
-        Ore obj = tileObject as Ore;
-        yield = obj.yield;
-    }
+//    public override void Save(TileObject tileObject) {
+//        base.Save(tileObject);
+//        Ore obj = tileObject as Ore;
+//        yield = obj.yield;
+//    }
 
-    public override TileObject Load() {
-        Ore obj = base.Load() as Ore;
-        obj.SetYield(yield);
-        return obj;
-    }
-}
+//    public override TileObject Load() {
+//        Ore obj = base.Load() as Ore;
+//        obj.SetYield(yield);
+//        return obj;
+//    }
+//}

@@ -7,8 +7,8 @@ public class HeartOfTheWind : Artifact {
 
     public HeartOfTheWind() : base(ARTIFACT_TYPE.Heart_Of_The_Wind) {
     }
-    public HeartOfTheWind(SaveDataArtifact data) : base(data) {
-    }
+    //public HeartOfTheWind(SaveDataArtifact data) : base(data) {
+    //}
 
     #region Overrides
     public override void ActivateTileObject() {

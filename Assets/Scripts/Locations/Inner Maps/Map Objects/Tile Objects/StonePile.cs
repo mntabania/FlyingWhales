@@ -12,10 +12,10 @@ public class StonePile : ResourcePile {
         traitContainer.RemoveTrait(this, "Flammable");
         SetResourceInPile(100);
     }
-    public StonePile(SaveDataTileObject data) : base(RESOURCE.STONE) {
-        Initialize(data, false);
-        //AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
-    }
+    //public StonePile(SaveDataTileObject data) : base(RESOURCE.STONE) {
+    //    Initialize(data, false);
+    //    //AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
+    //}
 
     //public override void AdjustResourceInPile(int adjustment) {
     //    base.AdjustResourceInPile(adjustment);
@@ -31,18 +31,18 @@ public class StonePile : ResourcePile {
     }
 }
 
-public class SaveDataStonePile : SaveDataTileObject {
-    public int suppliesInPile;
+//public class SaveDataStonePile : SaveDataTileObject {
+//    public int suppliesInPile;
 
-    public override void Save(TileObject tileObject) {
-        base.Save(tileObject);
-        StonePile obj = tileObject as StonePile;
-        suppliesInPile = obj.resourceInPile;
-    }
+//    public override void Save(TileObject tileObject) {
+//        base.Save(tileObject);
+//        StonePile obj = tileObject as StonePile;
+//        suppliesInPile = obj.resourceInPile;
+//    }
 
-    public override TileObject Load() {
-        StonePile obj = base.Load() as StonePile;
-        obj.SetResourceInPile(suppliesInPile);
-        return obj;
-    }
-}
+//    public override TileObject Load() {
+//        StonePile obj = base.Load() as StonePile;
+//        obj.SetResourceInPile(suppliesInPile);
+//        return obj;
+//    }
+//}

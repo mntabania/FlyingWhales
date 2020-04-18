@@ -7,8 +7,8 @@ public class Necronomicon : Artifact {
 
     public Necronomicon() : base(ARTIFACT_TYPE.Necronomicon) {
     }
-    public Necronomicon(SaveDataArtifact data) : base(data) {
-    }
+    //public Necronomicon(SaveDataArtifact data) : base(data) {
+    //}
 
     #region Overrides
     public override void ActivateTileObject() {
