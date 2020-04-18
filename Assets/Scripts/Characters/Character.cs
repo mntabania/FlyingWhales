@@ -148,6 +148,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public override string relatableName => _firstName;
     public virtual string name => _firstName;
     public string fullname => $"{_firstName} {_surName}";
+    public string firstName => _firstName;
+    public string surName => _surName;
     public string nameWithID => name;
     public virtual string raceClassName => $"{GameUtilities.GetNormalizedRaceAdjective(race)} {characterClass.className}";
     public override int id => _id;
@@ -1820,20 +1822,23 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #endregion
 
     #region Utilities
-    private bool ChangeRace(RACE race) {
-        if (_raceSetting != null) {
-            if (_raceSetting.race == race) {
-                return false; //current race is already the new race, no change
+    public bool ChangeRace(RACE race) {
+        if(_raceSetting == null || _raceSetting.race != race) {
+            if (_raceSetting != null) {
+                if (_raceSetting.race == race) {
+                    return false; //current race is already the new race, no change
+                }
+                for (int i = 0; i < _raceSetting.traitNames.Length; i++) {
+                    traitContainer.RemoveTrait(this, _raceSetting.traitNames[i]); //Remove traits from race
+                }
             }
-            for (int i = 0; i < _raceSetting.traitNames.Length; i++) {
-                traitContainer.RemoveTrait(this, _raceSetting.traitNames[i]); //Remove traits from race
-            }
+            RaceSetting rs = RaceManager.Instance.racesDictionary[race.ToString()];
+            _raceSetting = rs.CreateNewCopy();
+            OnUpdateRace();
+            Messenger.Broadcast(Signals.CHARACTER_CHANGED_RACE, this);
+            return true;
         }
-        RaceSetting rs = RaceManager.Instance.racesDictionary[race.ToString()];
-        _raceSetting = rs.CreateNewCopy();
-        OnUpdateRace();
-        Messenger.Broadcast(Signals.CHARACTER_CHANGED_RACE, this);
-        return true;
+        return false;
     }
     protected void OnUpdateRace() {
         for (int i = 0; i < _raceSetting.traitNames.Length; i++) {
@@ -1861,6 +1866,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //_characterClass = charClass.CreateNewCopy();
 
     }
+    public void ChangeGender(GENDER gender) {
+        _gender = gender;
+    }
     public void SetName(string newName) {
         _name = newName;
         string[] split = _name.Split(' '); 
@@ -1869,6 +1877,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             _surName = split[1];    
         }
         RandomNameGenerator.RemoveNameAsAvailable(gender, race, newName);
+    }
+    public void SetFirstAndLastName(string firstName, string lastName) {
+        _firstName = firstName;
+        _surName = lastName;
+        RandomNameGenerator.RemoveNameAsAvailable(gender, race, fullname);
     }
     public void CenterOnCharacter() {
         if (marker) {

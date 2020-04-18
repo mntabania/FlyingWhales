@@ -500,6 +500,13 @@ namespace Traits {
                 }
             }
         }
+        public void RemoveAllTraits(ITraitable traitable) {
+            for (int i = 0; i < traits.Count; i++) {
+                if (RemoveTrait(traitable, i)) { //remove all traits
+                    i--;
+                }
+            }
+        }
         #endregion
 
         #region Getting

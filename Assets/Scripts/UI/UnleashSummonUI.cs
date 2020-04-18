@@ -53,8 +53,8 @@ public class UnleashSummonUI : PopupMenuBase {
         UtilityScripts.Utilities.DestroyChildren(summonsScrollRect.content);
         characterNameplateItems.Clear();
         spellNameplateItems.Clear();
-        for (int i = 0; i < PlayerManager.Instance.player.summons.Count; i++) {
-            Summon summon = PlayerManager.Instance.player.summons[i];
+        for (int i = 0; i < PlayerManager.Instance.player.playerSkillComponent.summons.Count; i++) {
+            Summon summon = PlayerManager.Instance.player.playerSkillComponent.summons[i];
             CharacterNameplateItem item = CreateNewCharacterNameplateItem();
             item.SetAsToggle();
             item.SetObject(summon);
@@ -143,8 +143,8 @@ public class UnleashSummonUI : PopupMenuBase {
         }
         if (PlayerUI.Instance.harassDefendInvadeIdentifier == "harass") {
             for (int i = 0; i < chosenSummons.Count; i++) {
-                Character summon = chosenSummons[i];
-                TryPlaceSummon(summon as Summon, entrances[0]);
+                Summon summon = chosenSummons[i] as Summon;
+                TryPlaceSummon(summon, entrances[0]);
                 summon.behaviourComponent.SetIsHarassing(true, targetHex);
                 entrances.RemoveAt(0);
             }
@@ -157,8 +157,8 @@ public class UnleashSummonUI : PopupMenuBase {
             PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.HARASS).OnExecuteSpellActionAffliction();
         } else if (PlayerUI.Instance.harassDefendInvadeIdentifier == "defend") {
             for (int i = 0; i < chosenSummons.Count; i++) {
-                Character summon = chosenSummons[i];
-                TryPlaceSummon(summon as Summon, entrances[0]);
+                Summon summon = chosenSummons[i] as Summon;
+                TryPlaceSummon(summon, entrances[0]);
                 summon.behaviourComponent.SetIsDefending(true, targetHex);
                 entrances.RemoveAt(0);
             }
@@ -171,8 +171,8 @@ public class UnleashSummonUI : PopupMenuBase {
             PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.DEFEND).OnExecuteSpellActionAffliction();
         } else if (PlayerUI.Instance.harassDefendInvadeIdentifier == "invade") {
             for (int i = 0; i < chosenSummons.Count; i++) {
-                Character summon = chosenSummons[i];
-                TryPlaceSummon(summon as Summon, entrances[0]);
+                Summon summon = chosenSummons[i] as Summon;
+                TryPlaceSummon(summon, entrances[0]);
                 summon.behaviourComponent.SetIsInvading(true, targetHex);
                 entrances.RemoveAt(0);
             }
@@ -194,8 +194,10 @@ public class UnleashSummonUI : PopupMenuBase {
         Close();
     }
     private void TryPlaceSummon(Summon summon, LocationGridTile locationTile) {
+        summon.SetHomeRegion(locationTile.structure.location);
         CharacterManager.Instance.PlaceSummon(summon, locationTile);
         Messenger.Broadcast(Signals.PLAYER_PLACED_SUMMON, summon);
+        PlayerManager.Instance.player.playerSkillComponent.RemoveSummon(summon, true);
     }
     //private void SetSummon(Summon summon) {
     //    this.summon = summon;

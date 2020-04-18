@@ -301,7 +301,7 @@ public class SaveDataCharacter {
     public void Load() {
         Character character = null;
         if (isSummon) {
-            character = CharacterManager.Instance.CreateNewSummon(this);
+            //character = CharacterManager.Instance.CreateNewSummon(this);
         } else {
             character = CharacterManager.Instance.CreateNewCharacter(this);
         }

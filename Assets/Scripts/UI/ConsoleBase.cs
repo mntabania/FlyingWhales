@@ -1168,17 +1168,17 @@ public class ConsoleBase : InfoUIBase {
 
         string typeParameterString = parameters[0];
         SUMMON_TYPE type;
-        if (typeParameterString.Equals("All")) {
-            SUMMON_TYPE[] types = CollectionUtilities.GetEnumValues<SUMMON_TYPE>();
-            for (int i = 1; i < types.Length; i++) {
-                PlayerManager.Instance.player.AddSummon(types[i]);
-            }
-        } else if (Enum.TryParse(typeParameterString, out type)) {
-            PlayerManager.Instance.player.AddSummon(type);
-            AddSuccessMessage($"Gained new summon: {type}");
-        } else {
-            AddErrorMessage($"There is no summon of type {typeParameterString}");
-        }
+        //if (typeParameterString.Equals("All")) {
+        //    SUMMON_TYPE[] types = CollectionUtilities.GetEnumValues<SUMMON_TYPE>();
+        //    for (int i = 1; i < types.Length; i++) {
+        //        PlayerManager.Instance.player.AddSummon(types[i]);
+        //    }
+        //} else if (Enum.TryParse(typeParameterString, out type)) {
+        //    PlayerManager.Instance.player.AddSummon(type);
+        //    AddSuccessMessage($"Gained new summon: {type}");
+        //} else {
+        //    AddErrorMessage($"There is no summon of type {typeParameterString}");
+        //}
     }
     //private void GainSummonSlot (string[] parameters) {
     //    if (parameters.Length != 1) {

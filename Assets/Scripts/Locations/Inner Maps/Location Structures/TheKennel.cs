@@ -152,7 +152,7 @@ namespace Inner_Maps.Location_Structures {
             summon.AddTerritory(occupiedHexTile.hexTileOwner);
             summon.combatComponent.SetCombatMode(COMBAT_MODE.Defend);
             AddOwnedSummon(summon);
-            PlayerManager.Instance.player.AddSummon(summon);
+            //PlayerManager.Instance.player.AddSummon(summon);
             Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
         }
         private void AddOwnedSummon(Summon summon) {
@@ -183,7 +183,7 @@ namespace Inner_Maps.Location_Structures {
         private void OnCharacterDied(Character character) {
             if (character is Summon summon && _ownedSummons.Contains(character)) {
                 RemoveOwnedSummon(summon);
-                PlayerManager.Instance.player.RemoveSummon(summon);
+                //PlayerManager.Instance.player.RemoveSummon(summon);
             }
         }
         #endregion

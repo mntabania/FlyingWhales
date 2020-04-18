@@ -52,7 +52,7 @@ public class ReplaceChoiceItem : PooledObject {
             Summon summon = obj as Summon;
             string text = $"{summon.name} ({summon.summonType.SummonName()})";
             //text += $"\nLevel: {summon.level}";
-            text += $"\nDescription: {PlayerManager.Instance.player.GetSummonDescription(summon.summonType)}";
+            text += $"\nDescription: {PlayerManager.Instance.player.playerSkillComponent.GetSummonDescription(summon.summonType)}";
             info.text = text;
         } 
         // else if (obj is Artifact) {

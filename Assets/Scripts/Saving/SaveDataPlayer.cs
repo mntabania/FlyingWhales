@@ -8,6 +8,7 @@ public class SaveDataPlayer {
     public int exp;
     public List<PlayerSkillTreeNodeData> learnedSkills;
     public List<PlayerSkillTreeNodeData> unlockedSkills;
+    public List<SaveDataSummon> kennelSummons;
 
     public void InitializeInitialData() {
         exp = 10000;
@@ -24,42 +25,9 @@ public class SaveDataPlayer {
         learnedSkills.Add(afflict);
         PlayerSkillTreeNodeData buildDemonicStructure = new PlayerSkillTreeNodeData() { skill = SPELL_TYPE.BUILD_DEMONIC_STRUCTURE, charges = -1, cooldown = -1, manaCost = -1 };
         learnedSkills.Add(buildDemonicStructure);
-        //learnedSkills = new List<PlayerSkillTreeNodeData>() {
-        //    //Ravager
-        //    new PlayerSkillTreeNodeData() { skill = SPELL_TYPE.INVADE, charges = -1, cooldown = -1, manaCost = -1 },
-        //    new PlayerSkillTreeNodeData() { skill = SPELL_TYPE.METEOR, charges = -1, cooldown = -1, manaCost = -1 },
-        //    new PlayerSkillTreeNodeData() { skill = SPELL_TYPE.LIGHTNING, charges = -1, cooldown = -1, manaCost = -1 },
-        //    new PlayerSkillTreeNodeData() { skill = SPELL_TYPE.THE_KENNEL, charges = -1, cooldown = -1, manaCost = -1 },
-
-        //    //Puppet Master
-        //    new PlayerSkillTreeNodeData() { skill = SPELL_TYPE.KLEPTOMANIA, charges = -1, cooldown = -1, manaCost = -1 },
-        //    new PlayerSkillTreeNodeData() { skill = SPELL_TYPE.PYROPHOBIA, charges = -1, cooldown = -1, manaCost = -1 },
-        //    new PlayerSkillTreeNodeData() { skill = SPELL_TYPE.AGITATE, charges = -1, cooldown = -1, manaCost = -1 },
-        //    new PlayerSkillTreeNodeData() { skill = SPELL_TYPE.SEIZE_OBJECT, charges = -1, cooldown = -1, manaCost = -1 },
-
-        //    //Lich
-        //    new PlayerSkillTreeNodeData() { skill = SPELL_TYPE.SEIZE_MONSTER, charges = -1, cooldown = -1, manaCost = -1 },
-        //    new PlayerSkillTreeNodeData() { skill = SPELL_TYPE.POISON, charges = -1, cooldown = -1, manaCost = -1 },
-        //    new PlayerSkillTreeNodeData() { skill = SPELL_TYPE.SKELETON_MARAUDER, charges = -1, cooldown = -1, manaCost = -1 },
-        //    new PlayerSkillTreeNodeData() { skill = SPELL_TYPE.DEMON_ENVY, charges = -1, cooldown = -1, manaCost = -1 },
-        //};
-
-        //for (int i = 0; i < allSkillTrees.Length; i++) {
-        //    PlayerSkillTree currSkillTree = allSkillTrees[i];
-        //    for (int j = 0; j < currSkillTree.tree.Length; j++) {
-        //        PlayerSkillTreeNodeID node = currSkillTree.tree[j];
-        //        PlayerSkillTreeNodeData learnedSkill = new PlayerSkillTreeNodeData() { skill = node.skillType, charges = -1, cooldown = -1, manaCost = -1 };
-        //        learnedSkills.Add(learnedSkill);
-        //        if(node.unlockedSkills != null && node.unlockedSkills.Length > 0) {
-        //            for (int k = 0; k < node.unlockedSkills.Length; k++) {
-        //                PlayerSkillTreeNodeID unlockedNode = node.unlockedSkills[k];
-        //                PlayerSkillTreeNodeData unlockedSkill = new PlayerSkillTreeNodeData() { skill = unlockedNode.skillType, charges = -1, cooldown = -1, manaCost = -1 };
-        //                unlockedSkills.Add(unlockedSkill);
-        //            }
-        //        }
-        //    }
-        //}
     }
+
+    #region Exp
     public void SetExp(int amount) {
         exp = amount;
     }
@@ -69,7 +37,9 @@ public class SaveDataPlayer {
             exp = 0;
         }
     }
+    #endregion
 
+    #region Skills
     public void LearnSkill(SPELL_TYPE skillType, int cost) {
         PlayerSkillTreeNodeData learnedSkill = new PlayerSkillTreeNodeData() { skill = skillType, charges = -1, cooldown = -1, manaCost = -1 };
         learnedSkills.Add(learnedSkill);
@@ -119,4 +89,28 @@ public class SaveDataPlayer {
         }
         return false;
     }
+    #endregion
+
+    #region Summons
+    public void SaveSummons(List<Summon> summons) {
+        if(kennelSummons == null) {
+            kennelSummons = new List<SaveDataSummon>();
+        }
+        for (int i = 0; i < summons.Count; i++) {
+            kennelSummons.Add(new SaveDataSummon(summons[i]));
+        }
+    }
+    public void RemoveKennelSummon(Summon summon) {
+        for (int i = 0; i < kennelSummons.Count; i++) {
+            SaveDataSummon summonData = kennelSummons[i];
+            if(summonData.className == summon.characterClass.className
+                && summonData.summonType == summon.summonType
+                && summonData.firstName == summon.firstName
+                && summonData.surName == summon.surName) {
+                kennelSummons.RemoveAt(i);
+                break;
+            }
+        }
+    }
+    #endregion
 }

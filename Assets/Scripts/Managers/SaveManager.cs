@@ -61,6 +61,7 @@ public class SaveManager : MonoBehaviour {
 //        SaveGame.Save<Save>(UtilityScripts.Utilities.gameSavePath + saveFileName, save);
     }
     public void Save() {
+        //PlayerManager.Instance.player.SaveSummons();
         SaveDataPlayer save = currentSaveDataPlayer;
         SaveGame.Save(UtilityScripts.Utilities.gameSavePath + saveDataPlayerFileName, save);
     }

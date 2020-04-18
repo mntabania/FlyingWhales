@@ -384,60 +384,32 @@ public class CharacterManager : MonoBehaviour {
         AddNewCharacter(newCharacter);
         return newCharacter;
     }
-    public Summon CreateNewSummon(SaveDataCharacter data) {
-        Summon newCharacter = CreateNewSummonClassFromType(data);
-        newCharacter.CreateOwnParty();
-        newCharacter.ConstructInitialGoapAdvertisementActions();
-
-        //for (int i = 0; i < data.alterEgos.Count; i++) {
-        //    data.alterEgos[i].Load(newCharacter);
-        //}
-
-        Faction faction = FactionManager.Instance.GetFactionBasedOnID(data.factionID);
+    public Summon CreateNewSummon(SaveDataSummon data, Faction faction = null, BaseSettlement homeLocation = null,
+        Region homeRegion = null, IDwelling homeStructure = null) {
+        Summon newCharacter = CreateNewSummonClassFromType(data.summonType, data.className) as Summon;
+        newCharacter.ChangeGender(data.gender);
+        newCharacter.ChangeRace(data.race);
+        newCharacter.SetFirstAndLastName(data.firstName, data.surName);
+        newCharacter.Initialize();
         if (faction != null) {
             faction.JoinFaction(newCharacter);
-            if (data.isFactionLeader) {
-                faction.OnlySetLeader(newCharacter);
+        } else {
+            FactionManager.Instance.neutralFaction.JoinFaction(newCharacter);
+        }
+        newCharacter.ownParty.CreateIcon();
+        if (homeLocation != null) {
+            newCharacter.MigrateHomeTo(homeLocation, homeStructure, false);
+        }
+        if (homeRegion != null) {
+            homeRegion.AddResident(newCharacter);
+            homeRegion.AddCharacterToLocation(newCharacter.ownParty.owner);
+        }
+        newCharacter.traitContainer.RemoveAllTraits(newCharacter);
+        if(data.traitNames != null && data.traitNames.Length > 0) {
+            for (int i = 0; i < data.traitNames.Length; i++) {
+                newCharacter.traitContainer.AddTrait(newCharacter, data.traitNames[i]);
             }
         }
-
-        newCharacter.ownParty.CreateIcon();
-        // NPCSettlement home = null;
-
-        Region currRegion = null;
-        if (data.currentLocationID != -1) {
-            currRegion = GridMap.Instance.GetRegionByID(data.currentLocationID);
-        }
-        if (currRegion != null) {
-            newCharacter.ownParty.icon.SetPosition(currRegion.coreTile.transform.position);
-        }
-        // if (data.isDead) {
-        //     if(home != null) {
-        //         newCharacter.SetHomeRegion(home); //keep this data with character to prevent errors
-        //         //home.AssignCharacterToDwellingInArea(newCharacter); //We do not save LocationStructure, so this is only done so that the dead character will not have null issues with homeStructure
-        //     }
-        //     if(currRegion != null) {
-        //         newCharacter.SetRegionLocation(currRegion);
-        //     }
-        // } else {
-        //     if (home != null) {
-        //         newCharacter.MigrateHomeTo(home, null, false);
-        //     }
-        //     if (currRegion != null) {
-        //         currRegion.AddCharacterToLocation(newCharacter.ownParty.owner, null, false);
-        //     }
-        // }
-
-        // for (int i = 0; i < data.items.Count; i++) {
-        //     data.items[i].Load(newCharacter);
-        // }
-        //for (int i = 0; i < data.normalTraits.Count; i++) {
-        //    Character responsibleCharacter = null;
-        //    Trait trait = data.normalTraits[i].Load(ref responsibleCharacter);
-        //    newCharacter.AddTrait(trait, responsibleCharacter);
-        //}
-        //newCharacter.LoadAllStatsOfCharacter(data);
-
         AddNewCharacter(newCharacter);
         return newCharacter;
     }

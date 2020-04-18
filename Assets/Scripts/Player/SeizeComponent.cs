@@ -92,6 +92,9 @@ public class SeizeComponent {
         if(hoveredTile.objHere != null) {
             return false;
         }
+        if (!CanUnseize(hoveredTile)) {
+            return false;
+        }
         DisableFollowMousePosition();
         seizedPOI.OnUnseizePOI(hoveredTile);
         if (seizedPOI.mapObjectVisual != null) {
@@ -102,6 +105,18 @@ public class SeizeComponent {
         seizedPOI = null;
         //PlayerUI.Instance.HideSeizedObjectUI();
         InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
+        return true;
+    }
+    public bool CanUnseize(LocationGridTile tileLocation) {
+        if (tileLocation.structure.structureType == STRUCTURE_TYPE.THE_KENNEL) {
+            if (seizedPOI is Summon summon) {
+                int numOfSummons = tileLocation.structure.GetNumberOfInsideSummonsHere();
+                if(numOfSummons < 3) {
+                    return true;
+                }
+            }
+            return false;
+        }
         return true;
     }
     private int GetManaCost(IPointOfInterest poi) {

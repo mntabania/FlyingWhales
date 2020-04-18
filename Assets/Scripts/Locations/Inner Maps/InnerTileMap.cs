@@ -382,6 +382,7 @@ namespace Inner_Maps {
                     LocationGridTile tile = occupiedTiles[j];
                     tile.SetStructure(structure);
                 }
+                //structure.SetOuterTiles();
                 structure.SetStructureObject(structureObject);
                 structure.SetOccupiedHexTile(hexTile.innerMapHexTile);
                 structureObject.OnBuiltStructureObjectPlaced(this, structure);

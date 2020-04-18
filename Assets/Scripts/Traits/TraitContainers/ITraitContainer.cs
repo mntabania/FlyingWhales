@@ -44,6 +44,7 @@ namespace Traits {
         bool RemoveTraitOnSchedule(ITraitable removeFrom, Trait trait);
         void RemoveAllNonPersistentTraitAndStatuses(ITraitable traitable);
         void RemoveAllTraitsAndStatuses(ITraitable traitable);
+        void RemoveAllTraits(ITraitable traitable);
         #endregion
 
         #region Getting

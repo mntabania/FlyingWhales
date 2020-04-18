@@ -232,6 +232,19 @@ namespace Locations.Settlements {
             }
             return null;
         }
+        public List<LocationStructure> GetStructuresOfType(STRUCTURE_TYPE structureType) {
+            List<LocationStructure> structures = null;
+            for (int i = 0; i < _allStructures.Count; i++) {
+                LocationStructure currStructure = _allStructures[i];
+                if(currStructure.structureType == structureType) {
+                    if(structures == null) {
+                        structures = new List<LocationStructure>();
+                    }
+                    structures.Add(currStructure);
+                }
+            }
+            return structures;
+        }
         public bool HasStructure(STRUCTURE_TYPE type) {
             return structures.ContainsKey(type);
         }

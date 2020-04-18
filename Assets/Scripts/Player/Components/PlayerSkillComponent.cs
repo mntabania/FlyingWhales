@@ -56,6 +56,15 @@ public class PlayerSkillComponent {
             PopulateAllSkills();
         }
     }
+    public void LoadSummons(SaveDataPlayer save) {
+        if(save.kennelSummons != null && save.kennelSummons.Count > 0) {
+            for (int i = 0; i < save.kennelSummons.Count; i++) {
+                SaveDataSummon summonData = save.kennelSummons[i];
+                Summon savedSummon = CharacterManager.Instance.CreateNewSummon(summonData, player.playerFaction);
+                AddSummon(savedSummon);
+            }
+        }
+    }
     #endregion
 
     #region Utilities
@@ -73,6 +82,7 @@ public class PlayerSkillComponent {
     }
     #endregion
 
+    #region Skills
     private void PopulateDevModeSkills() {
         for (int i = 0; i < SaveManager.Instance.allSkillTrees.Length; i++) {
             PlayerSkillTree skillTree = SaveManager.Instance.allSkillTrees[i];
@@ -124,4 +134,35 @@ public class PlayerSkillComponent {
             summonsSkills.Add(spellData.type);
         }
     }
+    #endregion
+
+    #region Summons
+    public void AddSummon(Summon summon) {
+        summons.Add(summon);
+    }
+    public void RemoveSummon(Summon summon, bool removeOnSaveFile = false) {
+        if (summons.Remove(summon)) {
+            if (removeOnSaveFile) {
+                SaveManager.Instance.currentSaveDataPlayer.RemoveKennelSummon(summon);
+            }
+        }
+    }
+    public string GetSummonDescription(SUMMON_TYPE currentlySelectedSummon) {
+        switch (currentlySelectedSummon) {
+            case SUMMON_TYPE.Wolf:
+                return "Summon a wolf to run amok.";
+            case SUMMON_TYPE.Skeleton:
+                return "Summon a skeleton that will abduct a random character.";
+            case SUMMON_TYPE.Golem:
+                return "Summon a stone golem that can sustain alot of hits.";
+            case SUMMON_TYPE.Succubus:
+                return "Summon a succubus that will seduce a male character and eliminate him.";
+            case SUMMON_TYPE.Incubus:
+                return "Summon a succubus that will seduce a female character and eliminate her.";
+            default:
+                return
+                    $"Summon a {UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(currentlySelectedSummon.ToString())}";
+        }
+    }
+    #endregion
 }

@@ -74,7 +74,7 @@ public class ReplaceUI : PopupMenuBase {
             otaImage.sprite = CharacterManager.Instance.GetSummonSettings(summon.summonType).summonPortrait;
             string text = $"{summon.name} ({summon.summonType.SummonName()})";
             //text += $"\nLevel: {summon.level}";
-            text += $"\nDescription: {PlayerManager.Instance.player.GetSummonDescription(summon.summonType)}";
+            text += $"\nDescription: {PlayerManager.Instance.player.playerSkillComponent.GetSummonDescription(summon.summonType)}";
             otaText.text = text;
             otaImage.gameObject.SetActive(true);
         } 

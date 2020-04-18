@@ -76,7 +76,7 @@ public class NewAbilityUI : PopupMenuBase {
             abilityIcon.sprite = CharacterManager.Instance.GetSummonSettings(summon.summonType).summonPortrait;
             string text = $"{summon.name} ({summon.summonType.SummonName()})";
             //text += $"\nLevel: {summon.level}";
-            text += $"\nDescription: {PlayerManager.Instance.player.GetSummonDescription(summon.summonType)}";
+            text += $"\nDescription: {PlayerManager.Instance.player.playerSkillComponent.GetSummonDescription(summon.summonType)}";
             abilityText.text = text;
             obtainText.gameObject.SetActive(true);
         }

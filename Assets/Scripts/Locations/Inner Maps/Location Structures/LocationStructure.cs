@@ -25,6 +25,8 @@ namespace Inner_Maps.Location_Structures {
         //Inner Map
         public List<LocationGridTile> tiles { get; private set; }
         public LinkedList<LocationGridTile> unoccupiedTiles { get; private set; }
+        //public List<LocationGridTile> outerTiles { get; private set; }
+
         public bool isInterior { get; private set; }
         public bool hasBeenDestroyed { get; private set; }
 
@@ -44,6 +46,7 @@ namespace Inner_Maps.Location_Structures {
             groupedTileObjects = new Dictionary<TILE_OBJECT_TYPE, TileObjectsAndCount>();
             tiles = new List<LocationGridTile>();
             unoccupiedTiles = new LinkedList<LocationGridTile>();
+            //outerTiles = new List<LocationGridTile>();
             SetInteriorState(structureType.IsInterior());
         }
         protected LocationStructure(Region location, SaveDataLocationStructure data) {
@@ -54,6 +57,7 @@ namespace Inner_Maps.Location_Structures {
             charactersHere = new List<Character>();
             pointsOfInterest = new HashSet<IPointOfInterest>();
             groupedTileObjects = new Dictionary<TILE_OBJECT_TYPE, TileObjectsAndCount>();
+            //outerTiles = new List<LocationGridTile>();
             tiles = new List<LocationGridTile>();
             SetInteriorState(structureType.IsInterior());
         }
@@ -90,6 +94,16 @@ namespace Inner_Maps.Location_Structures {
                 character.SetCurrentStructureLocation(null);
                 RemovePOI(character);
             }
+        }
+        public int GetNumberOfInsideSummonsHere() {
+            int count = 0;
+            for (int i = 0; i < charactersHere.Count; i++) {
+                Character character = charactersHere[i];
+                if (character.gridTileLocation != null && character is Summon) {
+                    count++;
+                }
+            }
+            return count;
         }
         #endregion
 
@@ -367,11 +381,18 @@ namespace Inner_Maps.Location_Structures {
                 if (structureType != STRUCTURE_TYPE.WILDERNESS && tile.IsPartOfSettlement(out var settlement)) {
                     SetSettlementLocation(settlement);
                 }
+                //if (tile.HasDifferentDwellingOrOutsideNeighbour()) {
+                //    outerTiles.Add(tile);
+                //    tile.SetIsOuterTile(true);
+                //}
             }
         }
         public void RemoveTile(LocationGridTile tile) {
             tiles.Remove(tile);
             RemoveUnoccupiedTile(tile);
+            //if (outerTiles.Remove(tile)) {
+            //    tile.SetIsOuterTile(false);
+            //}
         }
         public void AddUnoccupiedTile(LocationGridTile tile) {
             unoccupiedTiles.AddLast(tile);
@@ -420,6 +441,15 @@ namespace Inner_Maps.Location_Structures {
                         $"the {UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString())}";
             }
         }
+        //public void SetOuterTiles() {
+        //    for (int i = 0; i < tiles.Count; i++) {
+        //        LocationGridTile currTile = tiles[i];
+        //        if (currTile.HasDifferentDwellingOrOutsideNeighbour()) {
+        //            outerTiles.Add(currTile);
+        //        }
+        //    }
+        //}
+        //Note: Retained this because I don't know how to set the outer tiles on world creation. I only have the SetOuterTiles whenever a new structure is built. I also don't know when to set the outer tiles of wilderness. - Chy
         public List<LocationGridTile> GetOuterTiles() {
             List<LocationGridTile> outerTiles = new List<LocationGridTile>();
             for (int i = 0; i < tiles.Count; i++) {

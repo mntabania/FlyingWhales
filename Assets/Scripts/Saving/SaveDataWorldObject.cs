@@ -46,19 +46,19 @@ public class SaveDataArtifact : SaveDataTileObject {
     }
 }
 
-public class SaveDataSummon {
-    public int id;
+//public class SaveDataSummon {
+//    public int id;
 
-    public void Save(IWorldObject worldObject) {
-        //base.Save(worldObject);
-        if (worldObject is Summon) {
-            Summon summon = worldObject as Summon;
-            id = summon.id;
-        }
-    }
+//    public void Save(IWorldObject worldObject) {
+//        //base.Save(worldObject);
+//        if (worldObject is Summon) {
+//            Summon summon = worldObject as Summon;
+//            id = summon.id;
+//        }
+//    }
 
-    public IWorldObject Load() {
-        Summon summon = CharacterManager.Instance.GetCharacterByID(id) as Summon;
-        return summon;
-    }
-}
+//    public IWorldObject Load() {
+//        Summon summon = CharacterManager.Instance.GetCharacterByID(id) as Summon;
+//        return summon;
+//    }
+//}

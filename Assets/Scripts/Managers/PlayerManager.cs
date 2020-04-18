@@ -372,6 +372,7 @@ public class PlayerManager : MonoBehaviour {
     }
     private void FinalCheckWinCondition() {
         if (DoesPlayerWin()) {
+            player.SaveSummons();
             PlayerUI.Instance.WinGameOver();
         }
         _hasWinCheckTimer = false;

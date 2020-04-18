@@ -54,6 +54,7 @@ namespace Inner_Maps {
         public bool hasLandmine { get; private set; }
         public bool hasFreezingTrap { get; private set; }
         public bool hasSnareTrap { get; private set; }
+        //public bool isOuterTile { get; private set; }
         /// <summary>
         /// The generated perlin noise sample of this tile.
         /// </summary>
@@ -928,6 +929,9 @@ namespace Inner_Maps {
             }
             return tiles;
         }
+        //public void SetIsOuterTile(bool state) {
+        //    isOuterTile = state;
+        //}
         #endregion
 
         #region Mouse Actions

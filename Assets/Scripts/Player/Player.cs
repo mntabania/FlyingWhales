@@ -10,6 +10,7 @@ using Locations.Settlements;
 using Ruinarch;
 using UtilityScripts;
 using Random = UnityEngine.Random;
+using Inner_Maps.Location_Structures;
 // ReSharper disable Unity.NoNullPropagation
 
 public class Player : ILeader, IObjectManipulator {
@@ -20,7 +21,7 @@ public class Player : ILeader, IObjectManipulator {
     public int experience { get; private set; }
     public List<IIntel> allIntel { get; private set; }
     public List<Minion> minions { get; private set; }
-    public List<Summon> summons { get; private set; }
+    //public List<Summon> summons { get; private set; }
     public List<Artifact> artifacts { get; private set; }
     private int currentCorruptionDuration { get; set; }
     private int currentCorruptionTick { get; set; }
@@ -56,7 +57,7 @@ public class Player : ILeader, IObjectManipulator {
     public Player() {
         allIntel = new List<IIntel>();
         minions = new List<Minion>();
-        summons = new List<Summon>();
+        //summons = new List<Summon>();
         artifacts = new List<Artifact>();
         interventionAbilitySlots = new PlayerJobActionSlot[PlayerDB.MAX_INTERVENTION_ABILITIES];
         //maxSummonSlots = 0;
@@ -76,6 +77,7 @@ public class Player : ILeader, IObjectManipulator {
         if(save != null) {
             experience = save.exp;
             playerSkillComponent.LoadPlayerSkillTreeNodeData(save);
+            playerSkillComponent.LoadSummons(save);
         }
     }
 
@@ -601,15 +603,15 @@ public class Player : ILeader, IObjectManipulator {
     //    LoseSummonSlot(slot);
     //    UIManager.Instance.HideObjectPicker();
     //}
-    public void AddSummon(SUMMON_TYPE type, bool showNewSummonUI = false) {
-        Faction faction = playerFaction;
-        if (type == SUMMON_TYPE.Incubus || type == SUMMON_TYPE.Succubus) {
-            faction = FactionManager.Instance.neutralFaction;
-        }
-        Summon newSummon = CharacterManager.Instance.CreateNewSummon(type, faction, playerSettlement);
-        //newSummon.SetLevel(level);
-        AddSummon(newSummon, showNewSummonUI);
-    }
+    //public void AddSummon(SUMMON_TYPE type, bool showNewSummonUI = false) {
+    //    Faction faction = playerFaction;
+    //    if (type == SUMMON_TYPE.Incubus || type == SUMMON_TYPE.Succubus) {
+    //        faction = FactionManager.Instance.neutralFaction;
+    //    }
+    //    Summon newSummon = CharacterManager.Instance.CreateNewSummon(type, faction, playerSettlement);
+    //    //newSummon.SetLevel(level);
+    //    AddSummon(newSummon, showNewSummonUI);
+    //}
     //public void GainSummon(Summon summon) {
         //if (maxSummonSlots == 0) {
         //    //no summon slots yet
@@ -647,90 +649,73 @@ public class Player : ILeader, IObjectManipulator {
     //    }
     //    return count;
     //}
-    public void AddSummon(Summon newSummon, bool showNewSummonUI = false) {
-        if (!summons.Contains(newSummon)) {
-            summons.Add(newSummon);
-            playerSettlement.AddResident(newSummon, ignoreCapacity: true);
-            Messenger.Broadcast(Signals.PLAYER_GAINED_SUMMON, newSummon);
-            if (showNewSummonUI) {
-                PlayerUI.Instance.newAbilityUI.ShowNewAbilityUI(currentMinionLeader, newSummon);
-            }
-        }
-        //for (int i = 0; i < summons.Count; i++) {
-        //    if (summons[i].summon == null) {
-        //        summons[i].SetSummon(newSummon);
-        //        playerNpcSettlement.AddResident(newSummon, ignoreCapacity:true);
-        //        Messenger.Broadcast(Signals.PLAYER_GAINED_SUMMON, newSummon);
-        //        if (showNewSummonUI) {
-        //            PlayerUI.Instance.newAbilityUI.ShowNewAbilityUI(currentMinionLeader, newSummon);
-        //        }
-        //        break;
-        //    }
-        //}
-    }
-    /// <summary>
-    /// Remove summon from the players list of available summons.
-    /// NOTE: Summons will be placed back on the list when the player is done with a map.
-    /// </summary>
-    /// <param name="summon">The summon to be removed.</param>
-    public bool RemoveSummon(Summon summon) {
-        return summons.Remove(summon);
-        //for (int i = 0; i < summons.Count; i++) {
-        //    if (summons[i].summon == summon) {
-        //        summons[i].summon = null;
-        //        Messenger.Broadcast(Signals.PLAYER_REMOVED_SUMMON, summon);
-        //        break;
-        //    }
-        //}
-    }
-    public void RemoveSummon(SUMMON_TYPE summon) {
-        Summon chosenSummon = GetSummonOfType(summon);
-        if(chosenSummon != null) {
-            RemoveSummon(chosenSummon);
-        }
-    }
-    public string GetSummonDescription(SUMMON_TYPE currentlySelectedSummon) {
-        switch (currentlySelectedSummon) {
-            case SUMMON_TYPE.Wolf:
-                return "Summon a wolf to run amok.";
-            case SUMMON_TYPE.Skeleton:
-                return "Summon a skeleton that will abduct a random character.";
-            case SUMMON_TYPE.Golem:
-                return "Summon a stone golem that can sustain alot of hits.";
-            case SUMMON_TYPE.Succubus:
-                return "Summon a succubus that will seduce a male character and eliminate him.";
-            case SUMMON_TYPE.Incubus:
-                return "Summon a succubus that will seduce a female character and eliminate her.";
-            default:
-                return
-                    $"Summon a {UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(currentlySelectedSummon.ToString())}";
-        }
-    }
-    //public Summon GetAvailableSummonOfType(SUMMON_TYPE type) {
-    //    List<SummonSlot> choices = summons.Where(x => x.summon != null && !x.summon.hasBeenUsed && x.summon.summonType == type).ToList();
-    //    return choices[Random.Range(0, choices.Count)].summon;
+    //public void AddSummon(Summon newSummon, bool showNewSummonUI = false) {
+    //    if (!summons.Contains(newSummon)) {
+    //        summons.Add(newSummon);
+    //        playerSettlement.AddResident(newSummon, ignoreCapacity: true);
+    //        Messenger.Broadcast(Signals.PLAYER_GAINED_SUMMON, newSummon);
+    //        if (showNewSummonUI) {
+    //            PlayerUI.Instance.newAbilityUI.ShowNewAbilityUI(currentMinionLeader, newSummon);
+    //        }
+    //    }
+    //    //for (int i = 0; i < summons.Count; i++) {
+    //    //    if (summons[i].summon == null) {
+    //    //        summons[i].SetSummon(newSummon);
+    //    //        playerNpcSettlement.AddResident(newSummon, ignoreCapacity:true);
+    //    //        Messenger.Broadcast(Signals.PLAYER_GAINED_SUMMON, newSummon);
+    //    //        if (showNewSummonUI) {
+    //    //            PlayerUI.Instance.newAbilityUI.ShowNewAbilityUI(currentMinionLeader, newSummon);
+    //    //        }
+    //    //        break;
+    //    //    }
+    //    //}
     //}
-    public bool HasSummonOfType(SUMMON_TYPE summonType) {
-        return GetSummonDescription(summonType) != null;
-    }
-    public Summon GetSummonOfType(SUMMON_TYPE summonType) {
-        for (int i = 0; i < summons.Count; i++) {
-            if (summons[i].summonType == summonType) {
-                return summons[i];
-            }
-        }
-        return null;
-    }
-    public bool HasAnySummon(params string[] summonName) {
-        SUMMON_TYPE type;
-        for (int i = 0; i < summonName.Length; i++) {
-            string currName = summonName[i];
-            if (System.Enum.TryParse(currName, out type)) {
-                return HasSummonOfType(type);
-            }
-        }
-        return false;
-    }
+    ///// <summary>
+    ///// Remove summon from the players list of available summons.
+    ///// NOTE: Summons will be placed back on the list when the player is done with a map.
+    ///// </summary>
+    ///// <param name="summon">The summon to be removed.</param>
+    //public bool RemoveSummon(Summon summon) {
+    //    return summons.Remove(summon);
+    //    //for (int i = 0; i < summons.Count; i++) {
+    //    //    if (summons[i].summon == summon) {
+    //    //        summons[i].summon = null;
+    //    //        Messenger.Broadcast(Signals.PLAYER_REMOVED_SUMMON, summon);
+    //    //        break;
+    //    //    }
+    //    //}
+    //}
+    //public void RemoveSummon(SUMMON_TYPE summon) {
+    //    Summon chosenSummon = GetSummonOfType(summon);
+    //    if(chosenSummon != null) {
+    //        RemoveSummon(chosenSummon);
+    //    }
+    //}
+    ////public Summon GetAvailableSummonOfType(SUMMON_TYPE type) {
+    ////    List<SummonSlot> choices = summons.Where(x => x.summon != null && !x.summon.hasBeenUsed && x.summon.summonType == type).ToList();
+    ////    return choices[Random.Range(0, choices.Count)].summon;
+    ////}
+    //public bool HasSummonOfType(SUMMON_TYPE summonType) {
+    //    return GetSummonDescription(summonType) != null;
+    //}
+    //public Summon GetSummonOfType(SUMMON_TYPE summonType) {
+    //    for (int i = 0; i < summons.Count; i++) {
+    //        if (summons[i].summonType == summonType) {
+    //            return summons[i];
+    //        }
+    //    }
+    //    return null;
+    //}
+    //public bool HasAnySummon(params string[] summonName) {
+    //    SUMMON_TYPE type;
+    //    for (int i = 0; i < summonName.Length; i++) {
+    //        string currName = summonName[i];
+    //        if (System.Enum.TryParse(currName, out type)) {
+    //            return HasSummonOfType(type);
+    //        }
+    //    }
+    //    return false;
+    //}
     //public List<Summon> GetAllSummons() {
     //    List<Summon> all = new List<Summon>();
     //    for (int i = 0; i < summons.Count; i++) {
@@ -1404,14 +1389,43 @@ public class Player : ILeader, IObjectManipulator {
         if(experience < 0) {
             experience = 0;
         }
-        SaveManager.Instance.currentSaveDataPlayer.SetExp(experience);
+        SaveExp();
     }
     public void SetExperience(int amount) {
         experience = amount;
         if (experience < 0) {
             experience = 0;
         }
+        SaveExp();
+    }
+    #endregion
+
+    #region Saving
+    private void SaveExp() {
         SaveManager.Instance.currentSaveDataPlayer.SetExp(experience);
+    }
+    public void SaveSummons() {
+        List<LocationStructure> kennels = playerSettlement.GetStructuresOfType(STRUCTURE_TYPE.THE_KENNEL);
+        List<Summon> kennelSummons = null;
+        if(kennels != null) {
+            for (int i = 0; i < kennels.Count; i++) {
+                LocationStructure currKennel = kennels[i];
+                for (int j = 0; j < currKennel.charactersHere.Count; j++) {
+                    Character character = currKennel.charactersHere[j];
+                    if(character is Summon summon) {
+                        if(summon.gridTileLocation != null && summon.marker) {
+                            if(kennelSummons == null) {
+                                kennelSummons = new List<Summon>();
+                            }
+                            kennelSummons.Add(summon);
+                        }
+                    }
+                }
+            }
+        }
+        if(kennelSummons != null) {
+            SaveManager.Instance.currentSaveDataPlayer.SaveSummons(kennelSummons);
+        }
     }
     #endregion
 }
