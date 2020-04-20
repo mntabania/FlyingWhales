@@ -748,9 +748,10 @@ public class CharacterManager : MonoBehaviour {
 
     #region Listeners
     private void OnCharacterFinishedAction(ActualGoapNode node) {
-        node.actor.marker.UpdateActionIcon();
-        node.actor.marker.UpdateAnimation();
-
+        if (node.actor.marker) {
+            node.actor.marker.UpdateActionIcon();
+            node.actor.marker.UpdateAnimation();
+        }
         //for (int i = 0; i < actor.marker.inVisionCharacters.Count; i++) {
         //    Character otherCharacter = actor.marker.inVisionCharacters[i];
         //    //crime system:

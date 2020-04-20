@@ -10,4 +10,20 @@ public class KillData : PlayerAction {
     public KillData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
     }
+
+    #region Overrides
+    public override void ActivateAbility(IPointOfInterest targetPOI) {
+        if (targetPOI is Character targetCharacter) {
+            PlayerUI.Instance.unleashSummonUI.SetTargetCharacter(targetCharacter);
+            PlayerUI.Instance.unleashSummonUI.ShowUnleashSummonUI("kill");
+        }
+    }
+    public override bool CanPerformAbilityTowards(Character targetCharacter) {
+        bool canPerform = base.CanPerformAbilityTowards(targetCharacter);
+        if (canPerform) {
+            return !targetCharacter.isDead;
+        }
+        return canPerform;
+    }
+    #endregion
 }

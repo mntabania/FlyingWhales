@@ -10,4 +10,20 @@ public class KnockoutData : PlayerAction {
     public KnockoutData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
     }
+
+    #region Overrides
+    public override void ActivateAbility(IPointOfInterest targetPOI) {
+        if(targetPOI is Character targetCharacter) {
+            PlayerUI.Instance.unleashSummonUI.SetTargetCharacter(targetCharacter);
+            PlayerUI.Instance.unleashSummonUI.ShowUnleashSummonUI("knockout");
+        }
+    }
+    public override bool CanPerformAbilityTowards(Character targetCharacter) {
+        bool canPerform = base.CanPerformAbilityTowards(targetCharacter);
+        if (canPerform) {
+            return !targetCharacter.traitContainer.HasTrait("Unconscious");
+        }
+        return canPerform;
+    }
+    #endregion
 }

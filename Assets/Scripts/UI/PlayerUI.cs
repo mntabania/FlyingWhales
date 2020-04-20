@@ -126,7 +126,6 @@ public class PlayerUI : MonoBehaviour {
     public Image threatMeter;
 
     private PlayerJobActionButton[] interventionAbilityBtns;
-    public string harassDefendInvadeIdentifier { get; private set; }
     //public Minion harassRaidInvadeLeaderMinion { get; private set; }
     public HexTile harassDefendInvadeTargetHex { get; private set; }
 
@@ -1105,8 +1104,7 @@ public class PlayerUI : MonoBehaviour {
     #region NPCSettlement Actions
     public void OnClickHarassDefendInvade(HexTile targetHex, string identifier) {
         harassDefendInvadeTargetHex = targetHex;
-        harassDefendInvadeIdentifier = identifier;
-        unleashSummonUI.ShowUnleashSummonUI();
+        unleashSummonUI.ShowUnleashSummonUI(identifier);
         //UIManager.Instance.ShowClickableObjectPicker(PlayerManager.Instance.player.minions.Where(x => x.character.gridTileLocation != null).Select(x => x.character).ToList(), HarassRaidInvade
         //    , null, CanChooseMinion, "Choose Leader Minion", showCover: true);
     }

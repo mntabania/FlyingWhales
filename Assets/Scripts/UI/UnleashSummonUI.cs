@@ -25,8 +25,13 @@ public class UnleashSummonUI : PopupMenuBase {
     private List<LocationGridTile> entrances = new List<LocationGridTile>();
     private int manaCost => chosenSummons.Count * 50;
 
-    public void ShowUnleashSummonUI() {
-        titleText.text = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(PlayerUI.Instance.harassDefendInvadeIdentifier);
+    public string identifier { get; private set; }
+
+    private Character _targetCharacter;
+
+    public void ShowUnleashSummonUI(string identifier) {
+        this.identifier = identifier;
+        titleText.text = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(identifier);
         if (characterNameplateItems == null) {
             characterNameplateItems = new List<CharacterNameplateItem>();
         }
@@ -36,7 +41,7 @@ public class UnleashSummonUI : PopupMenuBase {
         chosenSummons.Clear();
         chosenMinionMonsters.Clear();
         if (PlayerUI.Instance.IsMajorUIShowing()) {
-            PlayerUI.Instance.AddPendingUI(() => ShowUnleashSummonUI());
+            PlayerUI.Instance.AddPendingUI(() => ShowUnleashSummonUI(identifier));
             return;
         }
         isGamePausedOnShowUI = GameManager.Instance.isPaused;
@@ -48,6 +53,9 @@ public class UnleashSummonUI : PopupMenuBase {
         PopulateMinionsMonstersSummons();
         UpdateSummonButton();
         base.Open();
+    }
+    public void SetTargetCharacter(Character character) {
+        _targetCharacter = character;
     }
     private void PopulateMinionsMonstersSummons() {
         UtilityScripts.Utilities.DestroyChildren(summonsScrollRect.content);
@@ -141,7 +149,7 @@ public class UnleashSummonUI : PopupMenuBase {
                 }
             }
         }
-        if (PlayerUI.Instance.harassDefendInvadeIdentifier == "harass") {
+        if (identifier == "harass") {
             for (int i = 0; i < chosenSummons.Count; i++) {
                 Summon summon = chosenSummons[i] as Summon;
                 TryPlaceSummon(summon, entrances[0]);
@@ -155,7 +163,7 @@ public class UnleashSummonUI : PopupMenuBase {
                 entrances.RemoveAt(0);
             }
             PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.HARASS).OnExecuteSpellActionAffliction();
-        } else if (PlayerUI.Instance.harassDefendInvadeIdentifier == "defend") {
+        } else if (identifier == "defend") {
             for (int i = 0; i < chosenSummons.Count; i++) {
                 Summon summon = chosenSummons[i] as Summon;
                 TryPlaceSummon(summon, entrances[0]);
@@ -169,7 +177,7 @@ public class UnleashSummonUI : PopupMenuBase {
                 entrances.RemoveAt(0);
             }
             PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.DEFEND).OnExecuteSpellActionAffliction();
-        } else if (PlayerUI.Instance.harassDefendInvadeIdentifier == "invade") {
+        } else if (identifier == "invade") {
             for (int i = 0; i < chosenSummons.Count; i++) {
                 Summon summon = chosenSummons[i] as Summon;
                 TryPlaceSummon(summon, entrances[0]);
@@ -187,6 +195,103 @@ public class UnleashSummonUI : PopupMenuBase {
         PlayerManager.Instance.player.threatComponent.AdjustThreat(5 + (5 * chosenSummons.Count));
 
         if(spawnedCharacter != null) {
+            spawnedCharacter.CenterOnCharacter();
+        } else if (chosenSummons.Count > 0) {
+            chosenSummons[0].CenterOnCharacter();
+        }
+        Close();
+    }
+    private void Knockout() {
+        entrances.Clear();
+        HexTile targetHex = _targetCharacter.gridTileLocation.collectionOwner.GetNearestHexTile();
+        Character spawnedCharacter = null;
+        LocationGridTile mainEntrance = targetHex.GetCenterLocationGridTile();
+        entrances.Add(mainEntrance);
+
+        int totalEntrances = chosenSummons.Count + chosenMinionMonsters.Count;
+        for (int i = 0; i < entrances.Count; i++) {
+            if (entrances.Count == totalEntrances) {
+                break;
+            }
+            for (int j = 0; j < entrances[i].neighbourList.Count; j++) {
+                LocationGridTile newEntrance = entrances[i].neighbourList[j];
+                //if (newEntrance.objHere == null && newEntrance.charactersHere.Count == 0 && newEntrance.structure != null) {
+                if (!entrances.Contains(newEntrance)) {
+                    entrances.Add(newEntrance);
+                    if (entrances.Count == totalEntrances) {
+                        break;
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < chosenSummons.Count; i++) {
+            Summon summon = chosenSummons[i] as Summon;
+            TryPlaceSummon(summon, entrances[0]);
+            GoapPlanJob job = summon.jobComponent.CreateKnockoutJob(_targetCharacter);
+            summon.jobComponent.SetFinalJobAssignment(job);
+            summon.SetDestroyMarkerOnDeath(true);
+            entrances.RemoveAt(0);
+        }
+        for (int i = 0; i < chosenMinionMonsters.Count; i++) {
+            SpellData minionMonsterPlayerSkll = chosenMinionMonsters[i];
+            minionMonsterPlayerSkll.ActivateAbility(entrances[0], ref spawnedCharacter);
+            GoapPlanJob job = spawnedCharacter.jobComponent.CreateKnockoutJob(_targetCharacter);
+            spawnedCharacter.jobComponent.SetFinalJobAssignment(job);
+            spawnedCharacter.SetDestroyMarkerOnDeath(true);
+            entrances.RemoveAt(0);
+        }
+        PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.KNOCKOUT).OnExecuteSpellActionAffliction();
+
+        if (spawnedCharacter != null) {
+            spawnedCharacter.CenterOnCharacter();
+        } else if (chosenSummons.Count > 0) {
+            chosenSummons[0].CenterOnCharacter();
+        }
+        Close();
+    }
+    private void Kill() {
+        entrances.Clear();
+        HexTile targetHex = _targetCharacter.gridTileLocation.collectionOwner.GetNearestHexTile();
+        Character spawnedCharacter = null;
+        LocationGridTile mainEntrance = targetHex.GetCenterLocationGridTile();
+        entrances.Add(mainEntrance);
+
+        int totalEntrances = chosenSummons.Count + chosenMinionMonsters.Count;
+        for (int i = 0; i < entrances.Count; i++) {
+            if (entrances.Count == totalEntrances) {
+                break;
+            }
+            for (int j = 0; j < entrances[i].neighbourList.Count; j++) {
+                LocationGridTile newEntrance = entrances[i].neighbourList[j];
+                //if (newEntrance.objHere == null && newEntrance.charactersHere.Count == 0 && newEntrance.structure != null) {
+                if (!entrances.Contains(newEntrance)) {
+                    entrances.Add(newEntrance);
+                    if (entrances.Count == totalEntrances) {
+                        break;
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < chosenSummons.Count; i++) {
+            Summon summon = chosenSummons[i] as Summon;
+            TryPlaceSummon(summon, entrances[0]);
+            GoapPlanJob job = summon.jobComponent.CreateKillJob(_targetCharacter);
+            summon.jobComponent.SetFinalJobAssignment(job);
+            summon.SetDestroyMarkerOnDeath(true);
+            entrances.RemoveAt(0);
+        }
+        for (int i = 0; i < chosenMinionMonsters.Count; i++) {
+            SpellData minionMonsterPlayerSkll = chosenMinionMonsters[i];
+            minionMonsterPlayerSkll.ActivateAbility(entrances[0], ref spawnedCharacter);
+            GoapPlanJob job = spawnedCharacter.jobComponent.CreateKillJob(_targetCharacter);
+            spawnedCharacter.jobComponent.SetFinalJobAssignment(job);
+            spawnedCharacter.SetDestroyMarkerOnDeath(true);
+            entrances.RemoveAt(0);
+        }
+        PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.KILL).OnExecuteSpellActionAffliction();
+
+        if (spawnedCharacter != null) {
             spawnedCharacter.CenterOnCharacter();
         } else if (chosenSummons.Count > 0) {
             chosenSummons[0].CenterOnCharacter();
@@ -211,7 +316,13 @@ public class UnleashSummonUI : PopupMenuBase {
     //}
     
     public void OnClickConfirm() {
-        HarassDefendInvade();
+        if(identifier == "knockout") {
+            Knockout();
+        } else if (identifier == "kill") {
+            Kill();
+        } else {
+            HarassDefendInvade();
+        }
 
         //if (PlayerManager.Instance.player.mana >= manaCost) {
         //    Close();

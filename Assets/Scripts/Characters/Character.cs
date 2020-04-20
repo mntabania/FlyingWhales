@@ -2725,11 +2725,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (IsHealthCriticallyLow()) {
             return false;
         }
-        if (needsComponent.isStarving && !traitContainer.HasTrait("Vampiric")) {
-            return false; //only characters that are not vampires will flee if they are starving
-        }
-        if (needsComponent.isExhausted) {
-            return false;
+        if (needsComponent.HasNeeds()) {
+            if (needsComponent.isStarving && !traitContainer.HasTrait("Vampiric")) {
+                return false; //only characters that are not vampires will flee if they are starving
+            }
+            if (needsComponent.isExhausted) {
+                return false;
+            }
         }
         return true;
     }
@@ -5448,6 +5450,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void OnJobAddedToCharacterJobQueue(JobQueueItem job, Character character) {
     }
     public void OnJobRemovedFromCharacterJobQueue(JobQueueItem job, Character character) {
+        if(job == jobComponent.finalJobAssignment) {
+            LocationGridTile deathTile = character.gridTileLocation;
+            jobComponent.SetFinalJobAssignment(null);
+            Death();
+            if(deathTile != null && this is Summon) {
+                GameManager.Instance.CreateParticleEffectAt(deathTile, PARTICLE_EFFECT.Minion_Dissipate);
+            }
+        }
         JobManager.Instance.OnFinishJob(job);
     }
     public bool ForceCancelJob(JobQueueItem job) {
@@ -5577,6 +5587,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             AddPlayerAction(SPELL_TYPE.AFFLICT);
             AddPlayerAction(SPELL_TYPE.ZAP);
             AddPlayerAction(SPELL_TYPE.SEIZE_CHARACTER);
+            AddPlayerAction(SPELL_TYPE.KNOCKOUT);
+            AddPlayerAction(SPELL_TYPE.KILL);
         }
         // AddPlayerAction(shareIntelAction);
     }

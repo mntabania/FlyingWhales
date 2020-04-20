@@ -11,7 +11,7 @@ public class KnockoutCharacter : GoapAction {
         doesNotStopTargetCharacter = true;
         actionIconString = GoapActionStateDB.Stealth_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD, RACE.SPIDER };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.ELEMENTAL, RACE.KOBOLD, RACE.SPIDER, RACE.DEMON, RACE.SKELETON };
         isNotificationAnIntel = true;
     }
 

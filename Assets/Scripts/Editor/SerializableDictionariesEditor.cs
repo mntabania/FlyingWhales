@@ -67,6 +67,8 @@ public class SpriteSpriteDictionaryPropertyDrawer : SerializableDictionaryProper
 public class BiomeMonsterDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(BiomeItemDictionary))]
 public class BiomeItemDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(SpellSpriteDictionary))]
+public class SpellSpriteDictionaryDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(PlayerSkillTreeNodeDictionary))]
 public class PlayerSkillTreeNodeDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(PlayerSkillTreeNodeItemDictionary))]

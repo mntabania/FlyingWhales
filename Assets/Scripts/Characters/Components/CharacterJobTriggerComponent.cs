@@ -13,6 +13,7 @@ using Random = UnityEngine.Random;
 public class CharacterJobTriggerComponent : JobTriggerComponent {
 	private Character _owner;
 
+    public JobQueueItem finalJobAssignment { get; private set; }
     public JOB_TYPE primaryJob { get; private set; }
     public Dictionary<GoapAction, int> numOfTimesActionDone { get; private set; }
     public List<JOB_TYPE> primaryJobCandidates;
@@ -85,7 +86,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			character.marker.pathfindingAI.ClearAllCurrentPathData();
 
             character.UncarryPOI();
-            character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.KNOCKOUT);
+            if (character.traitContainer.HasTrait("Unconscious")) {
+                character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.KNOCKOUT);
+            }
 
             _owner.behaviourComponent.SetIsHarassing(false, null);
             _owner.behaviourComponent.SetIsInvading(false, null);
@@ -169,6 +172,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     #region Utilities
     public void SetPrimaryJob(JOB_TYPE jobType) {
         primaryJob = jobType;
+    }
+    public void SetFinalJobAssignment(JobQueueItem job) {
+        finalJobAssignment = job;
     }
     #endregion
 
@@ -771,17 +777,21 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     #endregion
     
     #region Other Characters
-    public void CreateKnockoutJob(Character targetCharacter) {
+    public GoapPlanJob CreateKnockoutJob(Character targetCharacter) {
 	    if (!_owner.jobQueue.HasJob(JOB_TYPE.KNOCKOUT, targetCharacter)) {
 		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.KNOCKOUT, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Unconscious", false, GOAP_EFFECT_TARGET.TARGET), targetCharacter, _owner);
 		    _owner.jobQueue.AddJobInQueue(job);
+            return job;
 	    }
+        return null;
     }
-    public void CreateKillJob(Character targetCharacter) {
+    public GoapPlanJob CreateKillJob(Character targetCharacter) {
 	    if (!_owner.jobQueue.HasJob(JOB_TYPE.KILL, targetCharacter)) {
 		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.KILL, new GoapEffect(GOAP_EFFECT_CONDITION.DEATH, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), targetCharacter, _owner);
 		    _owner.jobQueue.AddJobInQueue(job);
+            return job;
 	    }
+        return null;
     }
     #endregion
 
