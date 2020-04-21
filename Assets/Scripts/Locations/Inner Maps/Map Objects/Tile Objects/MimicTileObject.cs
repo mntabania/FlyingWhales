@@ -21,6 +21,7 @@ public class MimicTileObject : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
     }
+    protected override string GenerateName() { return "Treasure Chest"; }
     public override void OnDoActionToObject(ActualGoapNode action) {
         if (action.action.actionCategory == ACTION_CATEGORY.DIRECT || action.action.actionCategory == ACTION_CATEGORY.CONSUME) {
             action.actor.StopCurrentActionNode();

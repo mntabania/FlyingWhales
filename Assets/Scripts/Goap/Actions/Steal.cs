@@ -37,14 +37,14 @@ public class Steal : GoapAction {
         int cost = UtilityScripts.Utilities.Rng.Next(300, 351);
         costLog += $" +{cost}(Initial)";
         if (actor.traitContainer.HasTrait("Kleptomaniac")) {
-            cost += -250;
+            cost -= 250;
             costLog += " -250(Kleptomaniac)";
         } else {
             TileObject item = null;
-            if(target is TileObject) {
-                item = target as TileObject;
+            if(target is TileObject tileObject) {
+                item = tileObject;
             }
-            if(item != null && item.characterOwner != null) {
+            if(item?.characterOwner != null) {
                 string opinionLabel = actor.relationshipContainer.GetOpinionLabel(item.characterOwner);
                 if(opinionLabel == RelationshipManager.Acquaintance || opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
                     cost += 2000;
@@ -92,7 +92,11 @@ public class Steal : GoapAction {
         if (witness.relationshipContainer.IsFriendsWith(actor)) {
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor, status);
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status);
+            if (witness == target || (target is TileObject tileObject && tileObject.IsOwnedBy(witness))) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor, status);
+            }
         }
+       
         CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.MISDEMEANOR);
         return response;
     }
@@ -100,8 +104,8 @@ public class Steal : GoapAction {
         string response = base.ReactionOfTarget(node, status);
         Character actor = node.actor;
         IPointOfInterest target = node.poiTarget;
-        if(target is TileObject) {
-            Character targetCharacter = (target as TileObject).isBeingCarriedBy;
+        if(target is TileObject tileObject) {
+            Character targetCharacter = tileObject.isBeingCarriedBy;
             if(targetCharacter != null) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, targetCharacter, actor, status);
                 if (targetCharacter.traitContainer.HasTrait("Hothead") || UnityEngine.Random.Range(0, 100) < 35) {

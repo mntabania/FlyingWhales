@@ -25,6 +25,7 @@ public class BigTreeObject : TreeObject {
 	public override string ToString() {
 		return $"Big Tree {id.ToString()}";
 	}
+	protected override string GenerateName() { return "Big Tree"; }
 
 	public static bool CanBePlacedOnTile(LocationGridTile tile) {
 		if (tile.isOccupied) {

@@ -9,4 +9,6 @@ public class RackTools : TileObject{
         Initialize(data);
         //AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
     }
+    
+    protected override string GenerateName() { return "Tools"; }
 }

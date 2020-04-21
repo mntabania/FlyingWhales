@@ -179,6 +179,9 @@ namespace Traits {
         }
 
         private bool CanBeStolen(TileObject item) {
+            if (item is StructureTileObject || item is GenericTileObject) {
+                return false;
+            }
             if (item.isBeingCarriedBy != null) {
                 if (item.isBeingCarriedBy == this.traitOwner || item.isBeingCarriedBy.relationshipContainer.IsFriendsWith(this.traitOwner)) {
                     return false;

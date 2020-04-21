@@ -9,4 +9,5 @@ public class ShelfBooks : TileObject{
         Initialize(data);
         //AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
     }
+    protected override string GenerateName() { return "Book Shelf"; }
 }

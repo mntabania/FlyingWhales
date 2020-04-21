@@ -35,35 +35,37 @@ public class Eat : GoapAction {
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}:";
         int cost = 0;
-        if (target is Table) {
-            Table table = target as Table;
-            if (table.IsOwnedBy(actor)) {
+        if (target is Table table) {
+            if (table.gridTileLocation != null && table.structureLocation == actor.homeStructure) {
                 cost = UtilityScripts.Utilities.Rng.Next(20, 36);
-                costLog += $" +{cost}(Owned)";
+                costLog += $" +{cost}(Table is in actor's home)";
             } else {
-                List<Character> tableOwners = table.GetOwners();
-                bool isTargetObjectOwnedByFriend = false;
-                bool isTargetObjectOwnedByEnemy = false;
-                if (tableOwners != null) {
-                    for (int i = 0; i < tableOwners.Count; i++) {
-                        Character objectOwner = tableOwners[i];
-                        if (actor.relationshipContainer.IsFriendsWith(objectOwner)) {
-                            isTargetObjectOwnedByFriend = true;
-                            break;
-                        } else if (actor.relationshipContainer.IsEnemiesWith(objectOwner)) {
-                            isTargetObjectOwnedByEnemy = true;
+                if (actor.needsComponent.isStarving) {
+                    Character tableOwner = table.characterOwner;
+                    if (tableOwner != null) {
+                        if (actor.relationshipContainer.IsFriendsWith(tableOwner)) {
+                            cost = UtilityScripts.Utilities.Rng.Next(70, 81);
+                            costLog += $" +{cost}(Table is owned by friend/close friend and actor is starving)";        
+                        } else if (actor.relationshipContainer.IsEnemiesWith(tableOwner)) {
+                            cost = 300;
+                            costLog += $" +{cost}(Table is owned by friend/close friend and actor is starving)";        
+                        } else {
+                            cost = UtilityScripts.Utilities.Rng.Next(50, 71);
+                            costLog += $" +{cost}(Table owned by someone that is not friend or enemy and actor is starving)";
                         }
+                    } else {
+                        cost = UtilityScripts.Utilities.Rng.Next(50, 71);
+                        costLog += $" +{cost}(Table not owned)";
                     }
-                }
-                if (isTargetObjectOwnedByFriend) {
-                    cost = UtilityScripts.Utilities.Rng.Next(45, 66);
-                    costLog += $" +{cost}(Owned by Friend)";
-                } else if (isTargetObjectOwnedByEnemy) {
-                    cost = 2000;
-                    costLog += " +2000(Owned by Enemy)";
                 } else {
-                    cost = UtilityScripts.Utilities.Rng.Next(60, 81);
-                    costLog += $" +{cost}(Otherwise)";
+                    //not starving
+                    if (table.characterOwner != null) {
+                        cost = 2000;
+                        costLog += $" +{cost}(Table personally owned by someone else)";
+                    } else {
+                        cost = UtilityScripts.Utilities.Rng.Next(50, 71);
+                        costLog += $" +{cost}(Table not owned)";
+                    }
                 }
             }
         } else if (target is FoodPile) {
