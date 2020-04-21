@@ -13,7 +13,10 @@ namespace Tutorial {
         protected override void ConstructSteps() {
             steps = new List<TutorialQuestStepCollection>() {
                 new TutorialQuestStepCollection(new ClickOnStructureStep("Select a Demonic Structure", "Demonic")),
-                new TutorialQuestStepCollection(new ExecutedPlayerActionStep(SPELL_TYPE.DEFEND, "Click on Defend and Choose at least one defender"))
+                new TutorialQuestStepCollection(
+                    new ActivateDefendStep(),
+                    new ExecutedPlayerActionStep(SPELL_TYPE.DEFEND, "Summon at least one defender")
+                )
             };
         }
 

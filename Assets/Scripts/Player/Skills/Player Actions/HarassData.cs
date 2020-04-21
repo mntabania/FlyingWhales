@@ -13,6 +13,7 @@ public class HarassData : PlayerAction {
     #region Overrides
     public override void ActivateAbility(HexTile targetHex) {
         PlayerUI.Instance.OnClickHarassDefendInvade(targetHex, "harass");
+        Messenger.Broadcast(Signals.HARASS_ACTIVATED);
     }
     public override bool CanPerformAbilityTowards(HexTile targetHex) {
         bool canPerform = base.CanPerformAbilityTowards(targetHex);

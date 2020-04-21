@@ -34,7 +34,11 @@ namespace Tutorial {
         }
         protected override void ConstructSteps() {
             steps = new List<TutorialQuestStepCollection>() {
-                new TutorialQuestStepCollection(new ClickOnStructureStep("Select a Demonic Structure", "Demonic")),
+                new TutorialQuestStepCollection(new ClickOnAreaStep("Click on a Village area", validityChecker: IsHexTileAVillage)),
+                new TutorialQuestStepCollection(
+                    new ActivateHarassStep(),
+                    new ExecutedPlayerActionStep(SPELL_TYPE.HARASS, "Summon at least one harasser")
+                )
             };
         }
         public override void PerFrameActions() {
@@ -56,10 +60,15 @@ namespace Tutorial {
 
         #region Availability Functions
         private void OnSpellExecutedWhileInactive(SpellData spellData) {
-            //reset wait time
-            TutorialManager.Instance.StopCoroutine(availabilityTimer);
-            availabilityTimer = TutorialManager.Instance.StartCoroutine(WaitForSeconds());
-            hasNotCasted = false;
+            if (spellData.type == SPELL_TYPE.HARASS) {
+                TutorialManager.Instance.StopCoroutine(availabilityTimer);
+                CompleteTutorial();
+            } else {
+                //reset wait time
+                TutorialManager.Instance.StopCoroutine(availabilityTimer);
+                availabilityTimer = TutorialManager.Instance.StartCoroutine(WaitForSeconds());
+                hasNotCasted = false;    
+            }
         }
         private IEnumerator WaitForSeconds() {
             yield return new WaitForSecondsRealtime(10);
@@ -70,15 +79,15 @@ namespace Tutorial {
             if (TutorialManager.Instance.HasActiveTutorial()) { return false; }
             if (InnerMapManager.Instance.currentlyShowingLocation == null) { return false; }
             if (InnerMapManager.Instance.currentlyShowingLocation.HasActiveSettlement() == false) { return false; }
-            if (PlayerManager.Instance.player.minions.Count <= 0) { return false; }
+            if (PlayerManager.Instance.player.playerSkillComponent.minionsSkills.Count <= 0) { return false; }
             return true;
         }
         #endregion
-        
 
         #region Step Helpers
-        private bool IsSelectedCharacterValid(Character character) {
-            return character.IsNormalCharacter();
+        private bool IsHexTileAVillage(HexTile tile) {
+            return tile.landmarkOnTile != null && (tile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.VILLAGE || 
+                                                   tile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.HOUSES);
         }
         #endregion
     }

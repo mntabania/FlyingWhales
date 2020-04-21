@@ -413,6 +413,8 @@ public static class Signals {
     /// Parameters: IIntel setIntel
     /// </summary>
     public static string ACTIVE_INTEL_SET = "OnPlayerActiveIntelSet";
+    public static string HARASS_ACTIVATED = "OnHarassActivated";
+    public static string DEFEND_ACTIVATED = "OnDefendActivated";
     #endregion
 
     #region Interaction
@@ -598,7 +600,6 @@ public static class Signals {
             new SignalMethod() { methodName = "OnTickEnded", objectType = typeof(Character) },
         }},
     };
-    
     public static bool TryGetMatchingSignalMethod(string eventType, Callback method, out SignalMethod matching) {
         for (int i = 0; i < orderedSignalExecution[eventType].Length; i++) {
             SignalMethod sm = orderedSignalExecution[eventType][i];

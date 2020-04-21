@@ -12,22 +12,23 @@ namespace Tutorial {
         protected override void ConstructSteps() {
             steps = new List<TutorialQuestStepCollection>() {
                 new TutorialQuestStepCollection(new ClickOnCharacterStep("Find a dead Resident",
-                    validityChecker: IsCharacterDead).SetCompleteAction(OnFindDeadCharacter)
+                    validityChecker: IsCharacterValid).SetCompleteAction(OnFindDeadCharacter)
                 )
             };
         }
 
         #region Listeners
         private void OnCharacterDied(Character character) {
-            if (character.currentRegion == InnerMapManager.Instance.currentlyShowingLocation) {
-                MakeAvailable();    
+            if (character.IsNormalCharacter() &&
+                character.currentRegion == InnerMapManager.Instance.currentlyShowingLocation) {
+                MakeAvailable();
             }
         }
         #endregion
 
         #region Step Helpers
-        private bool IsCharacterDead(Character character) {
-            return character.isDead;
+        private bool IsCharacterValid(Character character) {
+            return character.IsNormalCharacter() && character.isDead;
         }
         #endregion
 

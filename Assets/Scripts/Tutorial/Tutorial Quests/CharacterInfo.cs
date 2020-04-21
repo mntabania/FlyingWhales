@@ -36,11 +36,13 @@ namespace Tutorial {
         }
         protected override void ConstructSteps() {
             steps = new List<TutorialQuestStepCollection>() {
-                new TutorialQuestStepCollection(new ClickOnCharacterStep("Click on a sapient character", validityChecker: IsSelectedCharacterValid)),
-                new TutorialQuestStepCollection(new ToggleTurnedOnStep("CharacterInfo_Info", "Open its Info tab")),
-                new TutorialQuestStepCollection(new ToggleTurnedOnStep("CharacterInfo_Mood", "Open its Needs tab")),
-                new TutorialQuestStepCollection(new ToggleTurnedOnStep("CharacterInfo_Relations", "Open its Relations tab")),
-                new TutorialQuestStepCollection(new ToggleTurnedOnStep("CharacterInfo_Logs", "Open its Logs tab"))
+                new TutorialQuestStepCollection(
+                    new ClickOnCharacterStep("Click on a sapient character", validityChecker: IsSelectedCharacterValid),
+                    new ToggleTurnedOnStep("CharacterInfo_Info", "Open its Info tab"),
+                    new ToggleTurnedOnStep("CharacterInfo_Mood", "Open its Mood tab"),
+                    new ToggleTurnedOnStep("CharacterInfo_Relations", "Open its Relations tab"),
+                    new ToggleTurnedOnStep("CharacterInfo_Logs", "Open its Logs tab")
+                )
             };
         }
         #endregion

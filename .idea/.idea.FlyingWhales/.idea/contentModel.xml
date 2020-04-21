@@ -2236,6 +2236,8 @@
           </e>
           <e p="Tutorial" t="Include">
             <e p="Steps" t="Include">
+              <e p="ActivateDefendStep.cs" t="Include" />
+              <e p="ActivateHarassStep.cs" t="Include" />
               <e p="ChooseSpellStep.cs" t="Include" />
               <e p="ClickOnAreaStep.cs" t="Include" />
               <e p="ClickOnCharacterStep.cs" t="Include" />
