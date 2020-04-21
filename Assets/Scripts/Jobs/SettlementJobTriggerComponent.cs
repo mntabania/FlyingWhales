@@ -111,8 +111,8 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		}
 	}
 	private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {
-		if (structure.settlementLocation == _owner) {
-			if (structure.structureType == STRUCTURE_TYPE.PRISON) {
+		if (structure.settlementLocation == _owner && structure.settlementLocation is NPCSettlement npcSettlement) {
+			if (structure == npcSettlement.prison) {
 				TryCreateJudgePrisoner(character);
 			}
 		}
@@ -361,14 +361,17 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	#region Judge Prisoner
 	private void TryCreateJudgePrisoner(Character target) {
 		if (target.traitContainer.HasTrait("Restrained")
-		    && target.currentStructure.structureType == STRUCTURE_TYPE.PRISON
+		    && target.currentStructure.settlementLocation is NPCSettlement
 		    && target.currentStructure.settlementLocation == _owner) {
-			if (!target.HasJobTargetingThis(JOB_TYPE.JUDGE_PRISONER)) {
-				GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.JUDGE_PRISONER, INTERACTION_TYPE.JUDGE_CHARACTER, target, _owner);
-				job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoJudgementJob);
-				job.SetStillApplicableChecker(() => InteractionManager.Instance.IsJudgementJobStillApplicable(target));
-				_owner.AddToAvailableJobs(job);
-			}
+            NPCSettlement npcSettlement = target.currentStructure.settlementLocation as NPCSettlement;
+            if(npcSettlement.prison == target.currentStructure) {
+                if (!target.HasJobTargetingThis(JOB_TYPE.JUDGE_PRISONER)) {
+                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.JUDGE_PRISONER, INTERACTION_TYPE.JUDGE_CHARACTER, target, _owner);
+                    job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoJudgementJob);
+                    job.SetStillApplicableChecker(() => InteractionManager.Instance.IsJudgementJobStillApplicable(target));
+                    _owner.AddToAvailableJobs(job);
+                }
+            }
 		}
 	}
 	#endregion

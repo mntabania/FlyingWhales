@@ -51,7 +51,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
     //vision colliders
     public List<IPointOfInterest> inVisionPOIs { get; private set; } //POI's in this characters vision collider
     public List<IPointOfInterest> unprocessedVisionPOIs { get; private set; } //POI's in this characters vision collider
-    public List<IPointOfInterest> unprocessedVisionPOIsForActionOnly { get; private set; } //POI's in this characters vision collider
+    public List<IPointOfInterest> unprocessedVisionPOIInterruptsOnly { get; private set; } //POI's in this characters vision collider
+    public List<ActualGoapNode> unprocessedActionsOnly { get; private set; } //POI's in this characters vision collider
     public List<Character> inVisionCharacters { get; private set; } //POI's in this characters vision collider
     public List<TileObject> inVisionTileObjects { get; private set; } //POI's in this characters vision collider
     //public List<IPointOfInterest> hostilesInRange { get; private set; } //POI's in this characters hostility collider
@@ -101,7 +102,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
         ForceUpdateMarkerVisualsBasedOnAnimation();
 
         unprocessedVisionPOIs = new List<IPointOfInterest>();
-        unprocessedVisionPOIsForActionOnly = new List<IPointOfInterest>();
+        unprocessedVisionPOIInterruptsOnly = new List<IPointOfInterest>();
+        unprocessedActionsOnly = new List<ActualGoapNode>();
         inVisionPOIs = new List<IPointOfInterest>();
         inVisionCharacters = new List<Character>();
         inVisionTileObjects = new List<TileObject>();
@@ -1108,6 +1110,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         inVisionCharacters.Clear();
         inVisionTileObjects.Clear();
         ClearUnprocessedPOI();
+        ClearUnprocessedActions();
     }
     public void LogPOIsInVisionRange() {
         string summary = $"{character.name}'s POIs in range: ";
@@ -1122,17 +1125,17 @@ public class CharacterMarker : MapObjectVisual<Character> {
             character.PerformGoapAction();
         }
     }
-    public void AddUnprocessedPOI(IPointOfInterest poi, bool reactToActionOnly = false) {
+    public void AddUnprocessedPOI(IPointOfInterest poi, bool reactToInterruptOnly = false) {
         // if (character.minion != null || character is Summon) {
         //     //Minion or Summon cannot process pois
         //     return;
         // }
-        
+
         //if poi is already set as unprocessed, do not set it to check the action only, since the poi was just seen this tick.
         //so this character should react to both the character and the action/interrupt.
-        if (reactToActionOnly && unprocessedVisionPOIs.Contains(poi) == false) {
-            if (!unprocessedVisionPOIsForActionOnly.Contains(poi)) {
-                unprocessedVisionPOIsForActionOnly.Add(poi);
+        if (reactToInterruptOnly && unprocessedVisionPOIs.Contains(poi) == false) {
+            if (!unprocessedVisionPOIInterruptsOnly.Contains(poi)) {
+                unprocessedVisionPOIInterruptsOnly.Add(poi);
             }
         }
         if (!unprocessedVisionPOIs.Contains(poi)) {
@@ -1140,13 +1143,24 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
         // character.logComponent.PrintLogIfActive(character.name + " added unprocessed poi " + poi.nameWithID);
     }
+    public void AddUnprocessedAction(ActualGoapNode action) {
+        if (!unprocessedActionsOnly.Contains(action)) {
+            unprocessedActionsOnly.Add(action);
+        }
+    }
+    public void RemoveUnprocessedAction(ActualGoapNode action) {
+        unprocessedActionsOnly.Remove(action);
+    }
     public void RemoveUnprocessedPOI(IPointOfInterest poi) {
         unprocessedVisionPOIs.Remove(poi);
-        unprocessedVisionPOIsForActionOnly.Remove(poi);
+        unprocessedVisionPOIInterruptsOnly.Remove(poi);
     }
     public void ClearUnprocessedPOI() {
         unprocessedVisionPOIs.Clear();
-        unprocessedVisionPOIsForActionOnly.Clear();
+        unprocessedVisionPOIInterruptsOnly.Clear();
+    }
+    public void ClearUnprocessedActions() {
+        unprocessedActionsOnly.Clear();
     }
     public bool HasUnprocessedPOI(IPointOfInterest poi) {
         return unprocessedVisionPOIs.Contains(poi);
@@ -1158,8 +1172,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     private void ProcessAllUnprocessedVisionPOIs() {
         Profiler.BeginSample($"{character.name} ProcessAllUnprocessedVisionPOIs");
-        if(unprocessedVisionPOIs.Count > 0) {
-            string log = $"{character.name} tick ended! Processing all unprocessed in visions...";
+        string log = $"{character.name} tick ended! Processing all unprocessed in visions...";
+        if (unprocessedVisionPOIs.Count > 0) {
             if (!character.isDead/* && character.canWitness*/) { //character.traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting", "Zapped") == null
                 for (int i = 0; i < unprocessedVisionPOIs.Count; i++) {
                     IPointOfInterest poi = unprocessedVisionPOIs[i];
@@ -1169,17 +1183,29 @@ public class CharacterMarker : MapObjectVisual<Character> {
                     }
                     log += $"\n-{poi.nameWithID}";
                     bool reactToActionOnly = false;
-                    if (unprocessedVisionPOIsForActionOnly.Count > 0) {
-                        reactToActionOnly = unprocessedVisionPOIsForActionOnly.Contains(poi);
+                    if (unprocessedVisionPOIInterruptsOnly.Count > 0) {
+                        reactToActionOnly = unprocessedVisionPOIInterruptsOnly.Contains(poi);
                     }
                     character.ThisCharacterSaw(poi, reactToActionOnly);
                 }
             } else {
-                log += "\n - Character is either dead or cannot witness, not processing...";
+                log += "\n - Character is either dead, not processing...";
             }
             ClearUnprocessedPOI();
-            character.logComponent.PrintLogIfActive(log);
         }
+        if (unprocessedActionsOnly.Count > 0) {
+            if (!character.isDead) {
+                for (int i = 0; i < unprocessedActionsOnly.Count; i++) {
+                    ActualGoapNode action = unprocessedActionsOnly[i];
+                    log += $"\n-{action.goapName}";
+                    character.ThisCharacterSawAction(action);
+                }
+            } else {
+                log += "\n - Character is either dead, not processing...";
+            }
+            ClearUnprocessedActions();
+        }
+        character.logComponent.PrintLogIfActive(log);
         character.SetHasSeenFire(false);
         character.SetHasSeenWet(false);
         character.SetHasSeenPoisoned(false);
