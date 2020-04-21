@@ -34,6 +34,12 @@ namespace Tutorial {
             Messenger.RemoveListener<SpellData>(Signals.ON_EXECUTE_AFFLICTION, OnSpellExecutedWhileInWaitList);
             Messenger.RemoveListener<PlayerAction>(Signals.ON_EXECUTE_PLAYER_ACTION, OnSpellExecutedWhileInWaitList);
         }
+        public override void Deactivate() {
+            base.Deactivate();
+            Messenger.RemoveListener<SpellData>(Signals.ON_EXECUTE_SPELL, OnSpellExecutedWhileInWaitList);
+            Messenger.RemoveListener<SpellData>(Signals.ON_EXECUTE_AFFLICTION, OnSpellExecutedWhileInWaitList);
+            Messenger.RemoveListener<PlayerAction>(Signals.ON_EXECUTE_PLAYER_ACTION, OnSpellExecutedWhileInWaitList);
+        }
         protected override void ConstructSteps() {
             steps = new List<TutorialQuestStepCollection>() {
                 new TutorialQuestStepCollection(
