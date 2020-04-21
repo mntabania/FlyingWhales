@@ -1,1 +1,1 @@
-{"items":[{"key":"thought_bubble_m","value":"%00@ is going to douse the fire on %10@."},{"key":"douse fire success_description","value":"%00@ doused the fire on %10@."},{"key":"target missing_description","value":"%00@ was unable to douse the fire."}]}
+{"items":[{"key":"thought_bubble_m","value":"%00@ is going to douse the fire on %10@."},{"key":"douse success_description","value":"%00@ doused the fire on %10@."},{"key":"target missing_description","value":"%00@ was unable to douse the fire."}]}
