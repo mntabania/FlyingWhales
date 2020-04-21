@@ -124,6 +124,13 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     private void SetWholeImageSprite(Sprite sprite) {
         wholeImage.sprite = sprite;
     }
+    public void SetAsDefaultMinion() {
+        SetWholeImageSprite(CharacterManager.Instance.GetWholeImagePortraitSprite("Wrath"));
+        SetWholeImageState(true);
+        SetFaceObjectStates(false);
+        lvlGO.SetActive(false);
+        factionEmblem.SetFaction(PlayerManager.Instance.player.playerFaction);
+    }
     private void SetWholeImageState(bool state) {
         wholeImage.gameObject.SetActive(state);
     }

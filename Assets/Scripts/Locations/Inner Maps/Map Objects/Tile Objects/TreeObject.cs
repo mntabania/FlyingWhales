@@ -22,7 +22,7 @@ public class TreeObject : TileObject {
     public override string ToString() {
         return $"Tree {id.ToString()}";
     }
-    
+    protected override string GenerateName() { return "Tree"; }
     public void AdjustYield(int amount) {
         yield += amount;
         yield = Mathf.Max(0, yield);

@@ -354,6 +354,7 @@ public class Player : ILeader, IObjectManipulator {
             Messenger.RemoveListener<KeyCode>(Signals.KEY_DOWN, OnIntelCast);
             InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
         } else {
+            Messenger.Broadcast(Signals.ACTIVE_INTEL_SET, currentActiveIntel);
             IntelItem intelItem = PlayerUI.Instance.GetIntelItemWithIntel(currentActiveIntel);
             intelItem?.SetClickedState(true);
             InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Cross);
@@ -367,9 +368,9 @@ public class Player : ILeader, IObjectManipulator {
     }
     private void TryExecuteCurrentActiveIntel() {
         string hoverText = string.Empty;
-        if (minions.Count > 0 && CanShareIntel(InnerMapManager.Instance.currentlyHoveredPoi, ref hoverText)) {
+        if (CanShareIntel(InnerMapManager.Instance.currentlyHoveredPoi, ref hoverText)) {
             Character targetCharacter = InnerMapManager.Instance.currentlyHoveredPoi as Character;
-            UIManager.Instance.OpenShareIntelMenu(targetCharacter, minions[0].character, currentActiveIntel);
+            UIManager.Instance.OpenShareIntelMenu(targetCharacter, null, currentActiveIntel);
             RemoveIntel(currentActiveIntel);
             SetCurrentActiveIntel(null);
         }

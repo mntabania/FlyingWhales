@@ -423,6 +423,9 @@ public class PlayerUI : MonoBehaviour {
     }
     public void ShowPlayerIntels(bool state) {
         intelContainer.SetActive(state);
+        if (state) {
+            Messenger.Broadcast(Signals.INTEL_MENU_OPENED);    
+        }
         //RectTransform rt = UIManager.Instance.playerNotifGO.transform as RectTransform;
         //Vector3 previousPos = rt.anchoredPosition;
         //if (!state) {

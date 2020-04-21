@@ -14,6 +14,7 @@ public class DefendData : PlayerAction {
     #region Overrides
     public override void ActivateAbility(LocationStructure targetStructure) {
         PlayerUI.Instance.OnClickHarassDefendInvade(targetStructure.occupiedHexTile.hexTileOwner, "defend");
+        Messenger.Broadcast(Signals.DEFEND_ACTIVATED);
     }
     public override bool CanPerformAbilityTowards(LocationStructure targetStructure) {
         bool canPerform = base.CanPerformAbilityTowards(targetStructure);

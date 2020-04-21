@@ -661,6 +661,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         InfoUIBase baseToShow = GetMenuToShowWhenTileIsClicked();
         if (baseToShow != null) {
             if (baseToShow is RegionInfoUI) {
+                Messenger.Broadcast(Signals.REGION_SELECTED, region);
                 UIManager.Instance.ShowRegionInfo(region);
             } else if (baseToShow is HextileInfoUI) {
                 UIManager.Instance.ShowHexTileInfo(this);
@@ -700,6 +701,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
             InnerMapManager.Instance.TryShowLocationMap(region);
             InnerMapCameraMove.Instance.CenterCameraOnTile(this);
         }
+        Messenger.Broadcast(Signals.TILE_DOUBLE_CLICKED, this);
     }
     public void PointerClick(BaseEventData bed) {
         PointerEventData ped = bed as PointerEventData;

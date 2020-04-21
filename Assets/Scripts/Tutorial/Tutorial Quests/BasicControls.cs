@@ -9,7 +9,7 @@ namespace Tutorial {
         public override void WaitForAvailability() {
             TutorialManager.Instance.StartCoroutine(WaitForSeconds());
         }
-        public override void ConstructSteps() {
+        protected override void ConstructSteps() {
             TutorialQuestStep look = new LookAroundStep(tooltip: "Use WASD/Arrow keys/Middle Mouse drag to control the camera.");
             TutorialQuestStep unpause = new UnpauseStep(tooltip: "Unpause the game by pressing the pause button or the Space Bar");
             TutorialQuestStep objectClick = new ClickOnObjectStep();
@@ -17,8 +17,10 @@ namespace Tutorial {
             TutorialQuestStep structureClick = new ClickOnStructureStep();
             TutorialQuestStep hexTileClick = new ClickOnAreaStep();
 
-            steps = new List<TutorialQuestStep>() {
-                look, unpause, objectClick, characterClick, structureClick, hexTileClick
+            steps = new List<TutorialQuestStepCollection>() {
+                new TutorialQuestStepCollection(look, unpause),
+                new TutorialQuestStepCollection(objectClick, characterClick),
+                new TutorialQuestStepCollection(structureClick, hexTileClick),
             };
         }
 

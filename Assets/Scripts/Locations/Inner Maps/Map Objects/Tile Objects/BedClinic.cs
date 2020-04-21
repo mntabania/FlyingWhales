@@ -9,4 +9,6 @@ public class BedClinic : TileObject{
         //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
         Initialize(data);
     }
+    
+    protected override string GenerateName() { return "Clinic Bed"; }
 }

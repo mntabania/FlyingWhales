@@ -6,12 +6,12 @@ using UnityEngine.UI;
 
 public class GeneralConfirmation : PopupMenuBase {
 
-    [SerializeField] private TextMeshProUGUI generalConfirmationTitleText;
-    [SerializeField] private TextMeshProUGUI generalConfirmationBodyText;
-    [SerializeField] private Button generalConfirmationButton;
-    [SerializeField] private TextMeshProUGUI generalConfirmationButtonText;
+    [SerializeField] protected TextMeshProUGUI generalConfirmationTitleText;
+    [SerializeField] protected TextMeshProUGUI generalConfirmationBodyText;
+    [SerializeField] protected Button generalConfirmationButton;
+    [SerializeField] protected TextMeshProUGUI generalConfirmationButtonText;
     
-    public void ShowGeneralConfirmation(string header, string body, string buttonText = "OK", System.Action onClickOK = null) {
+    public virtual void ShowGeneralConfirmation(string header, string body, string buttonText = "OK", System.Action onClickOK = null) {
         if (PlayerUI.Instance.IsMajorUIShowing()) {
             PlayerUI.Instance.AddPendingUI(() => ShowGeneralConfirmation(header, body, buttonText, onClickOK));
             return;

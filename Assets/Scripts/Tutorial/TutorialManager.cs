@@ -2,25 +2,39 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Video;
 using UtilityScripts;
 namespace Tutorial {
     public class TutorialManager : MonoBehaviour {
 
         public static TutorialManager Instance;
-        public enum Tutorial { Basic_Controls, Build_A_Kennel,
-            Defend_A_Structure,
-            Cast_Meteor,
-            Character_Info
-        }
-        
-        private List<TutorialQuest> _activeTutorials;
         public const string CompletedTutorialsKey = "Completed_Tutorials";
+        public enum Tutorial { Basic_Controls, Build_A_Kennel, Defend_A_Structure, Cast_Meteor, Character_Info,
+            Harass_A_Village,
+            Regional_Map,
+            Trigger_Poison_Explosion,
+            Survive_Counterattack,
+            Share_An_Intel,
+            Apply_An_Affliction,
+            Win_Condition
+        }
 
+        private List<TutorialQuest> _activeTutorials;
         private List<TutorialQuest> _waitingTutorials;
+        private List<TutorialQuest> _instantiatedTutorials;
         
         //UI
         public TutorialUI tutorialUI;
+        [SerializeField] private VideoPlayer videoPlayer;
+
+        //Pictures
+        public RenderTexture tutorialRenderTexture;
+        public Texture2D spellPopUpPicture;
         
+        //Video Clips
+        public VideoClip demonicStructureVideoClip;
+        
+        #region Monobehaviours
         private void Awake() {
             Instance = this;
         }
@@ -29,9 +43,22 @@ namespace Tutorial {
                 CheckIfNewTutorialCanBeActivated();    
             }
         }
+        private void Update() {
+            if (GameManager.Instance.gameHasStarted) {
+                for (int i = 0; i < _instantiatedTutorials.Count; i++) {
+                    TutorialQuest tutorialQuest = _instantiatedTutorials[i];
+                    tutorialQuest.PerFrameActions();
+                }
+            }
+        }
+        #endregion
+
+
+        #region Initialization
         public void Initialize() {
             _activeTutorials = new List<TutorialQuest>();
             _waitingTutorials = new List<TutorialQuest>();
+            _instantiatedTutorials = new List<TutorialQuest>();
             
             tutorialUI.Initialize();
             
@@ -43,10 +70,10 @@ namespace Tutorial {
                 if (completedTutorials.Contains(tutorial.ToString()) == false) {
                     TutorialQuest tutorialQuest = InstantiateTutorial(tutorial);
                     tutorialQuest.WaitForAvailability();
+                    _instantiatedTutorials.Add(tutorialQuest);
                 }
             }
         }
-
         public TutorialQuest InstantiateTutorial(Tutorial tutorial) {
             string noSpacesName = UtilityScripts.Utilities.RemoveAllWhiteSpace(UtilityScripts.Utilities.
                 NormalizeStringUpperCaseFirstLettersNoSpace(tutorial.ToString()));
@@ -57,6 +84,7 @@ namespace Tutorial {
             }
             throw new Exception($"Could not instantiate tutorial quest {noSpacesName}");
         }
+        #endregion
 
         #region Inquiry
         public bool HasTutorialBeenCompleted(Tutorial tutorial) {
@@ -115,10 +143,41 @@ namespace Tutorial {
         private void DeactivateTutorial(TutorialQuest tutorialQuest) {
             _activeTutorials.Remove(tutorialQuest);
             _waitingTutorials.Remove(tutorialQuest); //this is for cases when a tutorial is in the waiting list, but has been deactivated.
+            _instantiatedTutorials.Remove(tutorialQuest);
             if (tutorialQuest.tutorialQuestItem != null) {
                 tutorialUI.HideTutorialQuest(tutorialQuest);
             }
             tutorialQuest.Deactivate();
+        }
+        public bool HasActiveTutorial() {
+            return _activeTutorials.Count > 0;
+        }
+        #endregion
+
+        #region For Testing
+        public void ResetTutorials() {
+            string[] completedTutorials = PlayerPrefsX.GetStringArray(CompletedTutorialsKey);
+            PlayerPrefs.DeleteKey(CompletedTutorialsKey);
+            //respawn previously completed tutorials
+            Tutorial[] allTutorials = CollectionUtilities.GetEnumValues<Tutorial>();
+            for (int i = 0; i < allTutorials.Length; i++) {
+                Tutorial tutorial = allTutorials[i];
+                if (completedTutorials.Contains(tutorial.ToString())) {
+                    TutorialQuest tutorialQuest = InstantiateTutorial(tutorial);
+                    tutorialQuest.WaitForAvailability();
+                    _instantiatedTutorials.Add(tutorialQuest);
+                }
+            }
+        }
+        #endregion
+
+        #region Video Player
+        public void SetVideoClip(VideoClip videoClip) {
+            videoPlayer.clip = videoClip;
+            videoPlayer.Stop();
+        }
+        public void PlayVideoClip() {
+            videoPlayer.Play();
         }
         #endregion
 

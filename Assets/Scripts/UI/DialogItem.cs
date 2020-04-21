@@ -24,7 +24,13 @@ public class DialogItem : MonoBehaviour {
     [SerializeField] private Vector2 rightPortraitPos;
 
     public void SetData(Character character, string text, Position position = Position.Left) {
-        portrait.GeneratePortrait(character);
+        if (character != null) {
+            portrait.enabled = true;
+            portrait.GeneratePortrait(character);    
+        } else {
+            portrait.SetAsDefaultMinion();
+            portrait.enabled = false;
+        }
         if (position == Position.Left) {
             leftText.text = text;
         } else {

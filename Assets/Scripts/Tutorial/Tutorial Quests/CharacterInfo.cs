@@ -8,6 +8,8 @@ namespace Tutorial {
         public override int priority => 5;
         
         public CharacterInfo() : base("Character Info", TutorialManager.Tutorial.Character_Info) { }
+
+        #region Overrides
         public override void WaitForAvailability() {
             Messenger.AddListener<SpellData>(Signals.ON_EXECUTE_SPELL, OnSpellExecutedWhileWaitingForAvailability);
             Messenger.AddListener<SpellData>(Signals.ON_EXECUTE_AFFLICTION, OnSpellExecutedWhileWaitingForAvailability);
@@ -32,15 +34,24 @@ namespace Tutorial {
             Messenger.RemoveListener<SpellData>(Signals.ON_EXECUTE_AFFLICTION, OnSpellExecutedWhileInWaitList);
             Messenger.RemoveListener<PlayerAction>(Signals.ON_EXECUTE_PLAYER_ACTION, OnSpellExecutedWhileInWaitList);
         }
-        public override void ConstructSteps() {
-            steps = new List<TutorialQuestStep>() {
-                new ClickOnCharacterStep("Click on a sapient character", validityChecker: IsSelectedCharacterValid),
-                new ToggleTurnedOnStep("CharacterInfo_Info", "Open its Info tab"),
-                new ToggleTurnedOnStep("CharacterInfo_Mood", "Open its Needs tab"),
-                new ToggleTurnedOnStep("CharacterInfo_Relations", "Open its Relations tab"),
-                new ToggleTurnedOnStep("CharacterInfo_Logs", "Open its Logs tab"),
+        public override void Deactivate() {
+            base.Deactivate();
+            Messenger.RemoveListener<SpellData>(Signals.ON_EXECUTE_SPELL, OnSpellExecutedWhileInWaitList);
+            Messenger.RemoveListener<SpellData>(Signals.ON_EXECUTE_AFFLICTION, OnSpellExecutedWhileInWaitList);
+            Messenger.RemoveListener<PlayerAction>(Signals.ON_EXECUTE_PLAYER_ACTION, OnSpellExecutedWhileInWaitList);
+        }
+        protected override void ConstructSteps() {
+            steps = new List<TutorialQuestStepCollection>() {
+                new TutorialQuestStepCollection(
+                    new ClickOnCharacterStep("Click on a sapient character", validityChecker: IsSelectedCharacterValid),
+                    new ToggleTurnedOnStep("CharacterInfo_Info", "Open its Info tab"),
+                    new ToggleTurnedOnStep("CharacterInfo_Mood", "Open its Mood tab"),
+                    new ToggleTurnedOnStep("CharacterInfo_Relations", "Open its Relations tab"),
+                    new ToggleTurnedOnStep("CharacterInfo_Logs", "Open its Logs tab")
+                )
             };
         }
+        #endregion
 
         #region Availability Functions
         private void OnSpellExecutedWhileWaitingForAvailability(SpellData spellData) {

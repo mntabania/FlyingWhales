@@ -129,6 +129,7 @@ public class CombatManager : MonoBehaviour {
     #region Explosion
     public void PoisonExplosion(IPointOfInterest target, LocationGridTile targetTile, int stacks) {
         StartCoroutine(PoisonExplosionCoroutine(target, targetTile, stacks));
+        Messenger.Broadcast(Signals.POISON_EXPLOSION_TRIGGERED, target);
     }
     private IEnumerator PoisonExplosionCoroutine(IPointOfInterest target, LocationGridTile targetTile, int stacks) {
         while (GameManager.Instance.isPaused) {

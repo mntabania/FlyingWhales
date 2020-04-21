@@ -35,6 +35,7 @@ public static class Signals {
     public static string TILE_HOVERED_OUT = "OnTileHoveredOut"; //Parameters (HexTile hoveredTile)
     public static string MODIFY_BUILD_SPOT_WALKABILITY = "ModifyBuildSpotWalkability";
     public static string ACTION_PERFORMED_ON_TILE_TRAITABLES = "OnActionPerformedOnTileTraitables";
+    public static string TILE_DOUBLE_CLICKED = "OnTileDoubleClicked"; //Parameters (HexTile clickedTile)
     #endregion
 
     #region Areas/Regions
@@ -206,6 +207,10 @@ public static class Signals {
     /// Parameters: string activatedToggle
     /// </summary>
     public static string TOGGLE_TURNED_ON = "ToggleTurnedOn";
+    /// <summary>
+    /// Parameters: Region selectedRegion
+    /// </summary>
+    public static string REGION_SELECTED = "OnRegionSelected";
     #endregion
 
     #region Quest Signals
@@ -283,6 +288,10 @@ public static class Signals {
     public static string PLAYER_OBTAINED_INTEL = "OnPlayerObtainedIntel"; //Parameters (InteractionIntel)
     public static string PLAYER_REMOVED_INTEL = "OnPlayerRemovedIntel"; //Parameters (InteractionIntel)
     public static string THREAT_UPDATED = "OnThreatUpdated";
+    /// <summary>
+    /// Parameters (List<Character> attacking characters)
+    /// </summary>
+    public static string THREAT_MAXED_OUT = "OnThreatMaxedOut";
     /// <summary>
     /// Parameters (Summon newSummon)
     /// </summary>
@@ -400,6 +409,12 @@ public static class Signals {
     /// Parameters: PlayerAction activatedAction
     /// </summary>
     public static string PLAYER_ACTION_ACTIVATED = "OnPlayerActionActivated";
+    /// <summary>
+    /// Parameters: IIntel setIntel
+    /// </summary>
+    public static string ACTIVE_INTEL_SET = "OnPlayerActiveIntelSet";
+    public static string HARASS_ACTIVATED = "OnHarassActivated";
+    public static string DEFEND_ACTIVATED = "OnDefendActivated";
     #endregion
 
     #region Interaction
@@ -545,6 +560,18 @@ public static class Signals {
     /// Parameters: string identifier
     /// </summary>
     public static string OBJECT_PICKER_SHOWN = "ObjectPickerShown";
+    /// <summary>
+    /// Parameters: TutorialQuestStepCollection completedCollection
+    /// </summary>
+    public static string TUTORIAL_STEP_COLLECTION_COMPLETED = "TutorialStepCollectionCompleted";
+    public static string INTEL_MENU_OPENED = "OnIntelMenuOpened";
+    #endregion
+
+    #region Elements
+    /// <summary>
+    /// Parameters IPointOfInterest target
+    /// </summary>
+    public static string POISON_EXPLOSION_TRIGGERED = "OnPoisonExplosionTriggered";
     #endregion
 
     public static Dictionary<string, SignalMethod[]> orderedSignalExecution = new Dictionary<string, SignalMethod[]>() {
@@ -573,7 +600,6 @@ public static class Signals {
             new SignalMethod() { methodName = "OnTickEnded", objectType = typeof(Character) },
         }},
     };
-    
     public static bool TryGetMatchingSignalMethod(string eventType, Callback method, out SignalMethod matching) {
         for (int i = 0; i < orderedSignalExecution[eventType].Length; i++) {
             SignalMethod sm = orderedSignalExecution[eventType][i];
