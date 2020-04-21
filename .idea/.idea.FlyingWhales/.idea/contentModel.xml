@@ -1777,6 +1777,9 @@
             </e>
             <e p="Settlements" t="Include">
               <e p="BaseSettlement.cs" t="Include" />
+              <e p="Components" t="Include">
+                <e p="SettlementJobPriorityComponent.cs" t="Include" />
+              </e>
               <e p="NPCSettlement.cs" t="Include" />
               <e p="PlayerSettlement.cs" t="Include" />
             </e>
@@ -1897,6 +1900,7 @@
                 <e p="Alcoholic.cs" t="Include" />
                 <e p="Cannibalism.cs" t="Include" />
                 <e p="CowardiceData.cs" t="Include" />
+                <e p="GluttonyData.cs" t="Include" />
                 <e p="HotheadedData.cs" t="Include" />
                 <e p="Kleptomania.cs" t="Include" />
                 <e p="LazinessData.cs" t="Include" />
@@ -1959,6 +1963,7 @@
                 <e p="ChangeCombatModeData.cs" t="Include" />
                 <e p="DefendData.cs" t="Include" />
                 <e p="DestroyData.cs" t="Include" />
+                <e p="EmpowerData.cs" t="Include" />
                 <e p="EndHarassData.cs" t="Include" />
                 <e p="EndInvadeData.cs" t="Include" />
                 <e p="EndRaidData.cs" t="Include" />
@@ -2080,7 +2085,7 @@
             <e p="SaveDataPlayer.cs" t="Include" />
             <e p="SaveDataRegion.cs" t="Include" />
             <e p="SaveDataRelationship.cs" t="Include" />
-            <e p="SaveDataSummonSlot.cs" t="Include" />
+            <e p="SaveDataSummon.cs" t="Include" />
             <e p="SaveDataTrait.cs" t="Include" />
             <e p="SaveDataWorldEvent.cs" t="Include" />
             <e p="SaveDataWorldObject.cs" t="Include" />
@@ -2231,30 +2236,48 @@
           </e>
           <e p="Tutorial" t="Include">
             <e p="Steps" t="Include">
-              <e p="CharacterInfo.cs" t="Include" />
               <e p="ChooseSpellStep.cs" t="Include" />
               <e p="ClickOnAreaStep.cs" t="Include" />
               <e p="ClickOnCharacterStep.cs" t="Include" />
               <e p="ClickOnEmptyAreaStep.cs" t="Include" />
               <e p="ClickOnObjectStep.cs" t="Include" />
               <e p="ClickOnStructureStep.cs" t="Include" />
+              <e p="DoubleClickHexTileStep.cs" t="Include" />
               <e p="DropCharacterAtStructureStep.cs" t="Include" />
+              <e p="EliminateCharacterStep.cs" t="Include" />
+              <e p="ExecuteAfflictionStep.cs" t="Include" />
               <e p="ExecutedPlayerActionStep.cs" t="Include" />
               <e p="ExecuteSpellStep.cs" t="Include" />
+              <e p="HideRegionMapStep.cs" t="Include" />
               <e p="LookAroundStep.cs" t="Include" />
               <e p="NameplateClickedStep.cs" t="Include" />
               <e p="ObjectPickerShownStep.cs" t="Include" />
+              <e p="SelectIntelStep.cs" t="Include" />
+              <e p="SelectRegionStep.cs" t="Include" />
+              <e p="ShareIntelStep.cs" t="Include" />
+              <e p="ShowIntelMenuStep.cs" t="Include" />
               <e p="ShowSpellMenuStep.cs" t="Include" />
+              <e p="StoreIntelStep.cs" t="Include" />
               <e p="StructureBuiltStep.cs" t="Include" />
               <e p="ToggleTurnedOnStep.cs" t="Include" />
+              <e p="TriggerPoisonExplosionStep.cs" t="Include" />
               <e p="TutorialQuestStep.cs" t="Include" />
+              <e p="TutorialQuestStepCollection.cs" t="Include" />
               <e p="UnpauseStep.cs" t="Include" />
             </e>
             <e p="Tutorial Quests" t="Include">
+              <e p="ApplyAnAffliction.cs" t="Include" />
               <e p="BasicControls.cs" t="Include" />
               <e p="BuildAKennel.cs" t="Include" />
               <e p="CastMeteor.cs" t="Include" />
+              <e p="CharacterInfo.cs" t="Include" />
               <e p="DefendAStructure.cs" t="Include" />
+              <e p="HarassAVillage.cs" t="Include" />
+              <e p="RegionalMap.cs" t="Include" />
+              <e p="ShareAnIntel.cs" t="Include" />
+              <e p="SurviveCounterattack.cs" t="Include" />
+              <e p="TriggerPoisonExplosion.cs" t="Include" />
+              <e p="WinCondition.cs" t="Include" />
             </e>
             <e p="TutorialManager.cs" t="Include" />
             <e p="TutorialQuest.cs" t="Include" />
@@ -2276,6 +2299,7 @@
               <e p="InvestigateButton.cs" t="Include" />
               <e p="ItemDropBtn.cs" t="Include" />
               <e p="MonsterSkillButton.cs" t="Include" />
+              <e p="PriorityJobButton.cs" t="Include" />
               <e p="RaceStringButton.cs" t="Include" />
               <e p="RequirementButton.cs" t="Include" />
               <e p="SkillsPerLevelButton.cs" t="Include" />
@@ -2399,6 +2423,7 @@
             <e p="Popups" t="Include">
               <e p="ArtifactListUI.cs" t="Include" />
               <e p="GeneralConfirmation.cs" t="Include" />
+              <e p="GeneralConfirmationWithVisual.cs" t="Include" />
               <e p="GenericPopupMenu.cs" t="Include" />
               <e p="IntelListUI.cs" t="Include" />
               <e p="ItemListUI.cs" t="Include" />

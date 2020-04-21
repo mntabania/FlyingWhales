@@ -26,7 +26,8 @@ public class ThreatComponent {
         threat = Mathf.Clamp(threat, 0, 100);
         Messenger.Broadcast(Signals.THREAT_UPDATED);
         if (hasReachedMax) {
-            AssaultDemonicStructure();
+            AssaultDemonicStructure(out List<Character> attackingCharacters);
+            Messenger.Broadcast(Signals.THREAT_MAXED_OUT, attackingCharacters);
             ResetThreat();
         }
         //TODO: Threat Response - Assault Demonic Structure
@@ -40,7 +41,7 @@ public class ThreatComponent {
 
     }
 
-    private void AssaultDemonicStructure() {
+    private void AssaultDemonicStructure(out List<Character> attackingCharacters) {
         string debugLog = string.Empty;
         LocationStructure targetDemonicStructure = null;
         if (InnerMapManager.Instance.HasExistingWorldKnownDemonicStructure()) {
@@ -73,6 +74,7 @@ public class ThreatComponent {
                 onClickNoAction: chosenCharacter.CenterOnCharacter, yesBtnText: "OK", noBtnText: "Jump to an attacker", 
                 showCover:true, pauseAndResume: true);    
         }
+        attackingCharacters = characters;
         // PlayerUI.Instance.ShowGeneralConfirmation("Threat Response", "Your threat level has reached maximum. The people will now retaliate!");
         Debug.Log(debugLog);
     }

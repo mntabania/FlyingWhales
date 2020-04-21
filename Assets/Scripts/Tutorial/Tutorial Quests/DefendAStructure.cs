@@ -10,16 +10,17 @@ namespace Tutorial {
         protected override void StopWaitingForAvailability() {
             Messenger.RemoveListener<LocationStructure>(Signals.STRUCTURE_OBJECT_PLACED, OnStructurePlaced);
         }
-        public override void ConstructSteps() {
-            steps = new List<TutorialQuestStep>() {
-                new ClickOnStructureStep("Select a Demonic Structure", "Demonic"),
-                new ExecutedPlayerActionStep(SPELL_TYPE.DEFEND, "Click on Defend and Choose at least one defender")
+        protected override void ConstructSteps() {
+            steps = new List<TutorialQuestStepCollection>() {
+                new TutorialQuestStepCollection(new ClickOnStructureStep("Select a Demonic Structure", "Demonic")),
+                new TutorialQuestStepCollection(new ExecutedPlayerActionStep(SPELL_TYPE.DEFEND, "Click on Defend and Choose at least one defender"))
             };
         }
 
         #region Listeners
         private void OnStructurePlaced(LocationStructure structure) {
-            if (structure is DemonicStructure) {
+            if (structure is DemonicStructure 
+                && PlayerManager.Instance.player.playerSkillComponent.CanDoPlayerAction(SPELL_TYPE.DEFEND)) {
                 MakeAvailable();
             }
         }

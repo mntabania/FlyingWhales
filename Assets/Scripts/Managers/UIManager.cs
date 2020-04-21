@@ -1296,4 +1296,8 @@ public class UIManager : MonoBehaviour {
         tooltipParentRT.anchoredPosition = Vector2.zero;
     }
     #endregion
+
+    #region General Confirmation
+    public GeneralConfirmationWithVisual generalConfirmationWithVisual;
+    #endregion
 }

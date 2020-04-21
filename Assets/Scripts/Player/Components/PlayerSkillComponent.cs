@@ -80,6 +80,20 @@ public class PlayerSkillComponent {
     public bool CanCastSpell(SPELL_TYPE type) {
         return spells.Contains(type);
     }
+    public bool HasAnyAvailableAffliction() {
+        for (int i = 0; i < afflictions.Count; i++) {
+            SpellData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(afflictions[i]);
+            if (spellData.hasCharges == false) {
+                return true;
+            } else {
+                //spell uses charges. Check if has any
+                if (spellData.charges > 0) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region Skills

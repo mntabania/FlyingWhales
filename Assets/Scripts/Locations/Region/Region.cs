@@ -265,6 +265,16 @@ public class Region {
         }
         return tilesWithFeature;
     }
+    public bool HasActiveSettlement() {
+        for (int i = 0; i < tiles.Count; i++) {
+            HexTile tile = tiles[i];
+            if (tile.settlementOnTile != null && tile.settlementOnTile is NPCSettlement npcSettlement && 
+                npcSettlement.owner != null && (npcSettlement.owner.race == RACE.ELVES || npcSettlement.owner.race == RACE.HUMANS)) {
+                return true;
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region Invasion

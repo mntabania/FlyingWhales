@@ -15,15 +15,21 @@ public class TutorialQuestItem : PooledObject {
     [SerializeField] private GameObject tutorialQuestStepPrefab;
 
     public ContentSizeFitter contentSizeFitter;
-
+    
     private Vector2 _defaultSize;
+    private TutorialQuest _tutorialQuest;
     private void Awake() {
         _defaultSize = (transform as RectTransform).sizeDelta;
     }
     public void SetTutorialQuest(TutorialQuest tutorialQuest) {
+        _tutorialQuest = tutorialQuest;
         headerLbl.text = tutorialQuest.questName;
-        for (int i = 0; i < tutorialQuest.steps.Count; i++) {
-            TutorialQuestStep step = tutorialQuest.steps[i];
+        UpdateSteps();
+    }
+    public void UpdateSteps() {
+        UtilityScripts.Utilities.DestroyChildren(stepsParent);
+        for (int i = 0; i < _tutorialQuest.activeStepCollection.steps.Count; i++) {
+            TutorialQuestStep step = _tutorialQuest.activeStepCollection.steps[i];
             GameObject stepGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(tutorialQuestStepPrefab.name,
                 Vector3.zero, Quaternion.identity, stepsParent);
             TutorialQuestStepItem stepItem = stepGO.GetComponent<TutorialQuestStepItem>();
