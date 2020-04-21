@@ -5451,14 +5451,18 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void OnJobRemovedFromCharacterJobQueue(JobQueueItem job, Character character) {
         if(job == jobComponent.finalJobAssignment) {
-            LocationGridTile deathTile = character.gridTileLocation;
-            jobComponent.SetFinalJobAssignment(null);
-            Death();
-            if(deathTile != null && this is Summon) {
-                GameManager.Instance.CreateParticleEffectAt(deathTile, PARTICLE_EFFECT.Minion_Dissipate);
-            }
+            Messenger.AddListener(Signals.TICK_STARTED, DissipateAfterFinalJobAssignment);
         }
         JobManager.Instance.OnFinishJob(job);
+    }
+    private void DissipateAfterFinalJobAssignment() {
+        Messenger.RemoveListener(Signals.TICK_STARTED, DissipateAfterFinalJobAssignment);
+        LocationGridTile deathTile = gridTileLocation;
+        jobComponent.SetFinalJobAssignment(null);
+        Death();
+        if (deathTile != null && this is Summon) {
+            GameManager.Instance.CreateParticleEffectAt(deathTile, PARTICLE_EFFECT.Minion_Dissipate);
+        }
     }
     public bool ForceCancelJob(JobQueueItem job) {
         //JobManager.Instance.OnFinishGoapPlanJob(job);
