@@ -13,7 +13,11 @@ namespace Tutorial {
         }
         protected override void ConstructSteps() {
             steps = new List<TutorialQuestStepCollection>() {
-                new TutorialQuestStepCollection(new TriggerPoisonExplosionStep("Deal fire damage"))
+                new TutorialQuestStepCollection(
+                    new TriggerPoisonExplosionStep("Deal fire damage")
+                        .SetHoverOverAction(OnHoverTriggerPoisonExplosionStep)
+                        .SetHoverOutAction(OnHoverOutTriggerPoisonExplosionStep)
+                )
             };
         }
 
@@ -22,6 +26,18 @@ namespace Tutorial {
             if (spellData.type == SPELL_TYPE.POISON || spellData.type == SPELL_TYPE.SPLASH_POISON) {
                 MakeAvailable();
             }
+        }
+        #endregion
+
+        #region Step Helpers
+        private void OnHoverTriggerPoisonExplosionStep(TutorialQuestStepItem stepItem) {
+            UIManager.Instance.ShowSmallInfo("All damage in Ruinarch can have an Elemental Type (Fire, Water, Wind, etc.)." +
+                                             "You can trigger a poison explosion by dealing <color=\"red\">Fire Damage</color>" +
+                                             " on a <color=\"green\">Poisoned</color> object.", 
+                TutorialManager.Instance.fireDamageVideoClip, "Dealing Fire Damage", stepItem.hoverPosition);
+        }
+        private void OnHoverOutTriggerPoisonExplosionStep() {
+            UIManager.Instance.HideSmallInfo();
         }
         #endregion
     }

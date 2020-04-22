@@ -3,7 +3,7 @@ namespace Tutorial {
     public class ChooseSpellStep : TutorialQuestStep {
         private readonly SPELL_TYPE _neededSpellType;
         public ChooseSpellStep(SPELL_TYPE neededSpellType, string stepDescription, string tooltip = "") 
-            : base(stepDescription, tooltip) {
+            : base(stepDescription) {
             _neededSpellType = neededSpellType;
         }
         protected override void SubscribeListeners() {

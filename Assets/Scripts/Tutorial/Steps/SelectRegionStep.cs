@@ -1,6 +1,6 @@
 ﻿namespace Tutorial {
     public class SelectRegionStep : TutorialQuestStep {
-        public SelectRegionStep(string stepDescription = "Select a Region", string tooltip = "") : base(stepDescription, tooltip) { }
+        public SelectRegionStep(string stepDescription = "Select a Region", string tooltip = "") : base(stepDescription) { }
         protected override void SubscribeListeners() {
             Messenger.AddListener<Region>(Signals.REGION_SELECTED, CheckForCompletion);
         }

@@ -4,7 +4,7 @@ namespace Tutorial {
     public class EliminateCharacterStep : TutorialQuestStep {
         private readonly List<Character> _targets;
         public EliminateCharacterStep(string stepDescription = "Eliminate characters", string tooltip = "", 
-            params Character[] targets) : base(stepDescription, tooltip) {
+            params Character[] targets) : base(stepDescription) {
             _targets = new List<Character>(targets);
         }
         protected override void SubscribeListeners() {

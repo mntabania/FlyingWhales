@@ -5,7 +5,7 @@ namespace Tutorial {
         private readonly string _neededIdentifier;
         
         public ToggleTurnedOnStep(string neededIdentifier, string stepDescription, string tooltip = "") 
-            : base(stepDescription, tooltip) {
+            : base(stepDescription) {
             _neededIdentifier = neededIdentifier;
         }
         protected override void SubscribeListeners() {

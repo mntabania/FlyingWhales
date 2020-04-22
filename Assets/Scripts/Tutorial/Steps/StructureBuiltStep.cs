@@ -5,7 +5,7 @@ namespace Tutorial {
         private readonly STRUCTURE_TYPE _neededStructure;
         
         public StructureBuiltStep(STRUCTURE_TYPE neededStructure, string stepDescription = "Build Structure", string tooltip = "") 
-            : base(stepDescription, tooltip) {
+            : base(stepDescription) {
             _neededStructure = neededStructure;
         }
         protected override void SubscribeListeners() {

@@ -10,6 +10,7 @@ public class TutorialUI : MonoBehaviour {
     
     [SerializeField] private Transform tutorialQuestsParent;
     [SerializeField] private GameObject tutorialQuestItemPrefab;
+    [SerializeField] private VerticalLayoutGroup _layoutGroup;
 
     public void Initialize() {
         UtilityScripts.Utilities.DestroyChildren(tutorialQuestsParent);
@@ -24,7 +25,7 @@ public class TutorialUI : MonoBehaviour {
         Vector2 targetSize = rectTransform.sizeDelta;
         rectTransform.sizeDelta = new Vector2(0f, rectTransform.sizeDelta.y);
         rectTransform.DOSizeDelta(targetSize, 0.4f).SetEase(Ease.InCubic);
-
+        StartCoroutine(ReLayout());
         return tutorialQuestItem;
     }
     public void HideTutorialQuest(TutorialQuest tutorialQuest) {
@@ -43,6 +44,12 @@ public class TutorialUI : MonoBehaviour {
     private void OnCompleteEaseOutHeight(TutorialQuest tutorialQuest) {
         ObjectPoolManager.Instance.DestroyObject(tutorialQuest.tutorialQuestItem);
         tutorialQuest.SetTutorialQuestItem(null);
+    }
+
+    private IEnumerator ReLayout() {
+        _layoutGroup.enabled = false;
+        yield return null;
+        _layoutGroup.enabled = true;
     }
 
 }

@@ -4,7 +4,7 @@ namespace Tutorial {
         private string _neededText;
 
         public NameplateClickedStep(string neededText, string stepDescription = "Nameplate clicked", string tooltip = "")
-            : base(stepDescription, tooltip) {
+            : base(stepDescription) {
             _neededText = neededText;
         }
         protected override void SubscribeListeners() {

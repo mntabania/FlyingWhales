@@ -26,9 +26,8 @@ namespace Tutorial {
         }
         protected override void ConstructSteps() {
             steps = new List<TutorialQuestStepCollection>() {
-                new TutorialQuestStepCollection(new ClickOnCharacterStep("Click on a sapient character", 
-                    "NOTE: You cannot cast afflictions on Blessed characters",
-                    IsCharacterValid)),
+                new TutorialQuestStepCollection(new ClickOnCharacterStep("Click on a sapient character",
+                    IsCharacterValid).SetHoverOverAction(OnHoverSelectCharacterStep).SetHoverOutAction(UIManager.Instance.HideSmallInfo)),
                 new TutorialQuestStepCollection(
                     new ObjectPickerShownStep("Click on Afflict button", "Intervention Ability"),
                     new ExecuteAfflictionStep("Choose an Affliction to apply").SetCompleteAction(() => UIManager.Instance.generalConfirmationWithVisual.ShowGeneralConfirmation("Afflictions", 
@@ -61,6 +60,12 @@ namespace Tutorial {
         #region Step Helpers
         private bool IsCharacterValid(Character character) {
             return character.IsNormalCharacter() && character.traitContainer.HasTrait("Blessed") == false;
+        }
+        private void OnHoverSelectCharacterStep(TutorialQuestStepItem item) {
+            UIManager.Instance.ShowSmallInfo("There are some characters that are <color=\"green\">Blessed</color>. " +
+                                             "These characters cannot be directly affected by your spells. " +
+                                             "You will need to find other ways to deal with them.",
+                TutorialManager.Instance.blessedVideoClip, "Blessed Characters", item.hoverPosition);
         }
         #endregion
     }

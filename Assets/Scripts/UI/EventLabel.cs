@@ -191,8 +191,7 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
                     objectDictionary.Add(linkText, obj);
                 }
             } else {
-                int idToUse;
-                if (!int.TryParse(linkText, out idToUse)) {
+                if (!int.TryParse(linkText, out var idToUse)) {
                     string id = linkText.Substring(0, linkText.IndexOf('_'));
                     idToUse = int.Parse(id);
                 }
@@ -223,13 +222,13 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
         }
     }
     private void HighlightLink(TMP_LinkInfo linkInfo) {
-        string oldText = $"<link={'"'}{linkInfo.GetLinkID()}{'"'}>{linkInfo.GetLinkText()}</link>";
+        string oldText = $"<link=\"{linkInfo.GetLinkID()}\">{linkInfo.GetLinkText()}</link>";
         string newText = $"<u>{oldText}</u>";
         text.text = text.text.Replace(oldText, newText);
         InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Link);
     }
     private void UnhighlightLink(TMP_LinkInfo linkInfo) {
-        string oldText = $"<link={'"'}{linkInfo.GetLinkID()}{'"'}>{linkInfo.GetLinkText()}</link>";
+        string oldText = $"<link=\"{linkInfo.GetLinkID()}\">{linkInfo.GetLinkText()}</link>";
         string newText = $"<u>{oldText}</u>";
         text.text = text.text.Replace(newText, oldText);
         InputManager.Instance.RevertToPreviousCursor();

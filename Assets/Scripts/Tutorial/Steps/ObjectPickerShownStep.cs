@@ -2,7 +2,7 @@
     public class ObjectPickerShownStep : TutorialQuestStep {
         private readonly string _neededIdentifier;
         public ObjectPickerShownStep(string stepDescription, string neededIdentifier, string tooltip = "") 
-            : base(stepDescription, tooltip) {
+            : base(stepDescription) {
             _neededIdentifier = neededIdentifier;
         }
         protected override void SubscribeListeners() {
