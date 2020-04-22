@@ -126,6 +126,15 @@ public class CharacterStateJob : JobQueueItem {
             //}
         }
     }
+    public override bool CancelJob(bool shouldDoAfterEffect = true, string reason = "") {
+        if(assignedState != null && assignedState.characterState == CHARACTER_STATE.COMBAT) {
+            if(assignedCharacter != null) {
+                assignedCharacter.combatComponent.ClearHostilesInRange();
+                assignedCharacter.combatComponent.ClearAvoidInRange();
+            }
+        }
+        return base.CancelJob(shouldDoAfterEffect, reason);
+    }
     //protected override bool CanTakeJob(Character character) {
     //    if(targetState == CHARACTER_STATE.PATROL) {
     //        if(character.role.roleType == CHARACTER_ROLE.SOLDIER) {

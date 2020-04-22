@@ -133,110 +133,19 @@ public class JudgeCharacter : GoapAction {
         CreateJudgeLog(goapNode, chosen);
 
         if (chosen == "Absolve") {
-            if(crimeData != null) { crimeData.SetCrimeStatus(CRIME_STATUS.Absolved); }
+            if (crimeData != null) { crimeData.SetCrimeStatus(CRIME_STATUS.Absolved); }
             TargetReleased(goapNode);
         } else if (chosen == "Whip") {
             if (crimeData != null) { crimeData.SetCrimeStatus(CRIME_STATUS.Punished); }
             TargetWhip(goapNode);
-        } else if(chosen == "Kill") {
+        } else if (chosen == "Kill") {
             TargetExecuted(goapNode);
         } else if (chosen == "Exile") {
             if (crimeData != null) { crimeData.SetCrimeStatus(CRIME_STATUS.Exiled); }
             TargetExiled(goapNode);
         }
-
-        //WeightedFloatDictionary<string> weights = new WeightedFloatDictionary<string>();
-
-        //Character targetCharacter = goapNode.poiTarget as Character;
-
-        //float absolve = 0f;
-        //float whip = 0f;
-        //float kill = 0f;
-        //float exile = 0f;
-
-        ////base weights
-        //if (targetCharacter.faction != goapNode.actor.faction && targetCharacter.faction.GetRelationshipWith(goapNode.actor.faction).relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE) {
-        //    //hostile faction
-        //    whip = 5f;
-        //    kill = 100f;
-        //    exile = 10f;
-        //} else {
-        //    //criminal traits
-        //    List<Criminal> crimes = targetCharacter.traitContainer.GetAllTraitsOf(TRAIT_TYPE.CRIMINAL).Select(x => x as Criminal).ToList();
-
-        //    if (crimes.Count > 0) {
-        //        for (int i = 0; i < crimes.Count; i++) {
-        //            Criminal trait = crimes[i];
-        //            switch (trait.crimeSeverity) {
-        //                case CRIME_TYPE.MISDEMEANOR:
-        //                    absolve += 50f;
-        //                    whip += 100f;
-        //                    break;
-        //                case CRIME_TYPE.SERIOUS:
-        //                    absolve += 5f;
-        //                    whip += 20f;
-        //                    kill += 50f;
-        //                    exile += 50f;
-        //                    break;
-        //                case CRIME_TYPE.HEINOUS:
-        //                    whip += 5f;
-        //                    kill += 100f;
-        //                    exile += 50f;
-        //                    break;
-        //            }
-        //        }
-        //    } else {
-        //        kill = 100f;
-        //        Debug.LogWarning(goapNode.actor.name + " is trying to judge " + targetCharacter.name + " but has no crime, and is not part of a hostile faction.");
-        //    }
-        //}
-
-        ////modifiers
-        //if (targetCharacter.faction == goapNode.actor.faction) {
-        //    absolve *= 1.5f;
-        //    whip *= 1.5f;
-        //} else {
-        //    FACTION_RELATIONSHIP_STATUS rel = goapNode.actor.faction.GetRelationshipWith(targetCharacter.faction).relationshipStatus;
-        //    switch (rel) {
-        //        case FACTION_RELATIONSHIP_STATUS.COLD_WAR:
-        //            absolve *= 0.5f;
-        //            whip *= 0.5f;
-        //            kill *= 1.5f;
-        //            exile *= 2f;
-        //            break;
-        //        case FACTION_RELATIONSHIP_STATUS.HOSTILE:
-        //            absolve *= 0.2f;
-        //            whip *= 0.5f;
-        //            kill *= 2f;
-        //            exile *= 1.5f;
-        //            break;
-        //    }
-        //}
-
-        //if (goapNode.actor.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TYPE.LOVER)) {
-        //    absolve *= 2f;
-        //    whip *= 2f;
-        //    kill *= 0.2f;
-        //    exile *= 0.5f;
-        //}
-        //if (goapNode.actor.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TYPE.RELATIVE)) {
-        //    absolve *= 2f;
-        //    whip *= 2f;
-        //    kill *= 0.5f;
-        //    exile *= 0.5f;
-        //}
-
-        //if (goapNode.actor.RelationshipManager.IsFriendsWith(targetCharacter)) {
-        //    absolve *= 2f;
-        //    whip *= 2f;
-        //    kill *= 0.5f;
-        //    exile *= 0.5f;
-        //} else if (goapNode.actor.RelationshipManager.IsEnemiesWith(targetCharacter)) {
-        //    absolve *= 0.2f;
-        //    whip *= 0.5f;
-        //    kill *= 2f;
-        //    exile *= 1.5f;
-        //}
+        //if (crimeData != null) { crimeData.SetCrimeStatus(CRIME_STATUS.Exiled); }
+        //TargetExiled(goapNode);
     }
     private void TargetExecuted(ActualGoapNode goapNode) {
         (goapNode.poiTarget as Character).Death("executed", deathFromAction: goapNode, responsibleCharacter: goapNode.actor);
@@ -249,9 +158,9 @@ public class JudgeCharacter : GoapAction {
         //    ForceTargetReturnHome(goapNode);
         //}
         goapNode.poiTarget.traitContainer.RemoveAllTraitsAndStatusesByName(goapNode.poiTarget, "Criminal");
-        if (!targetCharacter.isAtHomeRegion) {
-            ForceTargetReturnHome(goapNode);
-        }
+        //if (!targetCharacter.isAtHomeRegion) {
+        //    ForceTargetReturnHome(goapNode);
+        //}
         ////**Effect 3**: If target is from the same faction, remove any Criminal type trait from him.
         //else {
         //    goapNode.poiTarget.traitContainer.RemoveAllTraitsByType(goapNode.poiTarget, TRAIT_TYPE.CRIMINAL);
@@ -262,7 +171,7 @@ public class JudgeCharacter : GoapAction {
     public void TargetExiled(ActualGoapNode goapNode) {
         //**Effect 2**: Target becomes unaligned and will have his Home Location set to a random different location
         Character target = goapNode.poiTarget as Character;
-        target.ChangeFactionTo(FactionManager.Instance.neutralFaction);
+        target.ChangeFactionTo(FactionManager.Instance.friendlyNeutralFaction);
         //List<NPCSettlement> choices = new List<NPCSettlement>(LandmarkManager.Instance.allNonPlayerAreas.Where(x => x.owner == null)); //limited choices to only use un owned areas
         List<Region> choices = GridMap.Instance.allRegions.Where(x => !x.coreTile.isCorrupted).ToList();
         //TODO:
@@ -275,7 +184,7 @@ public class JudgeCharacter : GoapAction {
         // target.MigrateHomeTo(newHome);
 
         //**Effect 3**: Target is not hostile with characters from the Actor's faction until Target leaves the location. Target is forced to create a Return Home plan
-        ForceTargetReturnHome(goapNode);
+        //ForceTargetReturnHome(goapNode);
 
         //**Effect 4**: Remove any Criminal type trait from him.
         goapNode.poiTarget.traitContainer.RemoveAllTraitsAndStatusesByName(goapNode.poiTarget, "Criminal");
@@ -302,8 +211,8 @@ public class JudgeCharacter : GoapAction {
 
     private void ForceTargetReturnHome(ActualGoapNode goapNode) {
         Character target = goapNode.poiTarget as Character;
-        target.AdjustIgnoreHostilities(1); //target should ignore hostilities or be ignored by other hostiles, until it returns home.
-        target.AddOnLeaveAreaAction(() => target.AdjustIgnoreHostilities(-1));
+        //target.AdjustIgnoreHostilities(1); //target should ignore hostilities or be ignored by other hostiles, until it returns home.
+        //target.AddOnLeaveAreaAction(() => target.AdjustIgnoreHostilities(-1));
         //target.AddOnLeaveAreaAction(() => target.ClearAllAwarenessOfType(POINT_OF_INTEREST_TYPE.ITEM, POINT_OF_INTEREST_TYPE.TILE_OBJECT));
 
         // CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.RETURN_HOME, CHARACTER_STATE.MOVE_OUT, target);
