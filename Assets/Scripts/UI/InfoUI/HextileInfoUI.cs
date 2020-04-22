@@ -85,6 +85,8 @@ public class HextileInfoUI : InfoUIBase {
             foreach (var combatantClass in npcSettlement.classManager.combatantClasses) {
                 summary += $"\n\t {combatantClass.Key} - {combatantClass.Value.ToString()}";
             }
+            summary += $"\n{npcSettlement.name} Job Assignments: ";
+            summary += npcSettlement.jobPriorityComponent.GetJobAssignments();
         }
         UIManager.Instance.ShowSmallInfo(summary);
     }

@@ -63,5 +63,14 @@ public class SettlementJobPriorityComponent
             primaryJobTracker[characterPrimaryJob]--;
         }
     }
+    public string GetJobAssignments() {
+        string assignments = string.Empty;
+        if(primaryJobTracker != null) {
+            foreach (KeyValuePair<JOB_TYPE, int> item in primaryJobTracker) {
+                assignments += "\n" + item.Key.ToString() + " - " + item.Value;
+            }
+        }
+        return assignments;
+    }
     #endregion
 }

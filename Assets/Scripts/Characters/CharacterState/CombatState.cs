@@ -14,6 +14,7 @@ public class CombatState : CharacterState {
     public bool isAttacking { get; private set; } //if not attacking, it is assumed that the character is fleeing
     public IPointOfInterest currentClosestHostile { get; private set; }
     public GoapPlanJob jobThatTriggeredThisState { get; private set; }
+    public ActualGoapNode actionThatTriggeredThisState { get; private set; }
     public Character forcedTarget { get; private set; }
     public List<Character> allCharactersThatDegradedRel { get; private set; }
 
@@ -698,8 +699,11 @@ public class CombatState : CharacterState {
             allCharactersThatDegradedRel.Add(character);
         }
     }
-    public void SetActionThatTriggeredThisState(GoapPlanJob action) {
-        jobThatTriggeredThisState = action;
+    public void SetJobThatTriggeredThisState(GoapPlanJob job) {
+        jobThatTriggeredThisState = job;
+    }
+    public void SetActionThatTriggeredThisState(ActualGoapNode action) {
+        actionThatTriggeredThisState = action;
     }
     #endregion
 }

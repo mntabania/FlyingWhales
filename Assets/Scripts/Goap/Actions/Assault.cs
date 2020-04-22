@@ -103,6 +103,7 @@ public class Assault : GoapAction {
     public void AfterCombatStart(ActualGoapNode goapNode) {
         Debug.Log($"{goapNode.actor} will start combat towards {goapNode.poiTarget.name}");
         bool isLethal = goapNode.associatedJobType.IsJobLethal();
+        goapNode.actor.combatComponent.SetActionAndJobThatTriggeredCombat(goapNode, goapNode.actor.currentJob as GoapPlanJob);
         goapNode.actor.combatComponent.Fight(goapNode.poiTarget, isLethal: isLethal);
         // if(goapNode.poiTarget is Character) {
         //     Character targetCharacter = goapNode.poiTarget as Character;

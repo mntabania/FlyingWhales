@@ -176,6 +176,42 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     public void SetFinalJobAssignment(JobQueueItem job) {
         finalJobAssignment = job;
     }
+    public string GetPriorityJobs() {
+        string jobs = string.Empty;
+        if (_owner.characterClass.priorityJobs != null && _owner.characterClass.priorityJobs.Length > 0) {
+            for (int i = 0; i < _owner.characterClass.priorityJobs.Length; i++) {
+                if (i > 0) {
+                    jobs += ",";
+                }
+                jobs += _owner.characterClass.priorityJobs[i].ToString();
+            }
+        }
+        return jobs;
+    }
+    public string GetSecondaryJobs() {
+        string jobs = string.Empty;
+        if (_owner.characterClass.secondaryJobs != null && _owner.characterClass.secondaryJobs.Length > 0) {
+            for (int i = 0; i < _owner.characterClass.secondaryJobs.Length; i++) {
+                if (i > 0) {
+                    jobs += ",";
+                }
+                jobs += _owner.characterClass.secondaryJobs[i].ToString();
+            }
+        }
+        return jobs;
+    }
+    public string GetAbleJobs() {
+        string jobs = string.Empty;
+        if (_owner.characterClass.ableJobs != null && _owner.characterClass.ableJobs.Length > 0) {
+            for (int i = 0; i < _owner.characterClass.ableJobs.Length; i++) {
+                if (i > 0) {
+                    jobs += ",";
+                }
+                jobs += _owner.characterClass.ableJobs[i].ToString();
+            }
+        }
+        return jobs;
+    }
     #endregion
 
     #region Job Triggers

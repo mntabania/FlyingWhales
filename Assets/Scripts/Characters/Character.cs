@@ -2172,11 +2172,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (marker.inVisionCharacters.Contains(node.actor)) {
                 //marker.actionsToWitness.Add(node);
                 //This is done so that the character will react again
-                marker.AddUnprocessedPOI(node.actor, true);
+                marker.AddUnprocessedAction(node);
             } else if (marker.inVisionPOIs.Contains(node.poiTarget)) {
                 //marker.actionsToWitness.Add(node);
                 //This is done so that the character will react again
-                marker.AddUnprocessedPOI(node.poiTarget, true);
+                marker.AddUnprocessedAction(node);
             }
         }
 
@@ -2260,11 +2260,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                         reactionComponent.ReactTo(targetCharacterCurrentActionNode, REACTION_STATUS.WITNESSED);
                         targetCharacterCurrentActionNode.AddAwareCharacter(this);
                     }
-                } else if (targetCharacter.isInCombat && targetCharacter.jobQueue.jobsInQueue.Count > 1) {
-                    if (targetCharacter.jobQueue.jobsInQueue[1] is GoapPlanJob) {
-                        GoapPlanJob planJob = targetCharacter.jobQueue.jobsInQueue[1] as GoapPlanJob;
-                        if (planJob.assignedPlan != null && planJob.assignedPlan.currentActualNode != null) {
-                            targetCharacterCurrentActionNode = planJob.assignedPlan.currentActualNode;
+                } else if (targetCharacter.isInCombat) {
+                    if (targetCharacter.stateComponent.currentState is CombatState combatState) {
+                        targetCharacterCurrentActionNode = combatState.actionThatTriggeredThisState;
+                        if (targetCharacterCurrentActionNode != null) {
                             if (!targetCharacterCurrentActionNode.awareCharacters.Contains(this)) {
                                 reactionComponent.ReactTo(targetCharacterCurrentActionNode, REACTION_STATUS.WITNESSED);
                                 targetCharacterCurrentActionNode.AddAwareCharacter(this);
@@ -2281,7 +2280,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     GoapPlanJob job = target.allJobsTargetingThis[i] as GoapPlanJob;
                     GoapPlan plan = job.assignedPlan;
                     if (plan != null /*&& plan.currentActualNode.action.shouldAddLogs*/ 
-                        && plan.currentActualNode.actionStatus == ACTION_STATUS.PERFORMING
+                        && plan.currentActualNode.actionStatus != ACTION_STATUS.STARTED && plan.currentActualNode.actionStatus != ACTION_STATUS.NONE
                         && plan.currentActualNode != targetCharacterCurrentActionNode && plan.currentActualNode.actor != this) {
                         if (!plan.currentActualNode.awareCharacters.Contains(this)) {
                             reactionComponent.ReactTo(plan.currentActualNode, REACTION_STATUS.WITNESSED);
@@ -2301,6 +2300,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if(targetCharacter != null) {
                 ThisCharacterWatchEvent(targetCharacter, null, null);
             }
+        }
+    }
+    public void ThisCharacterSawAction(ActualGoapNode action) {
+        if (!action.awareCharacters.Contains(this)) {
+            reactionComponent.ReactTo(action, REACTION_STATUS.WITNESSED);
+            action.AddAwareCharacter(this);
         }
     }
     //public List<Log> GetWitnessOrInformedMemories(int dayFrom, int dayTo, Character involvedCharacter = null) {

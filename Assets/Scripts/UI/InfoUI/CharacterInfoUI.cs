@@ -528,6 +528,9 @@ public class CharacterInfoUI : InfoUIBase {
         summary = $"{summary}{("\nCombat Mode: " + activeCharacter.combatComponent.combatMode.ToString())}";
         summary = $"{summary}{("\nElemental Type: " + activeCharacter.combatComponent.elementalDamage.name)}";
         summary = $"{summary}{("\nPrimary Job: " + activeCharacter.jobComponent.primaryJob.ToString())}";
+        summary = $"{summary}{("\nPriority Jobs: " + activeCharacter.jobComponent.GetPriorityJobs())}";
+        summary = $"{summary}{("\nSecondary Jobs: " + activeCharacter.jobComponent.GetSecondaryJobs())}";
+        summary = $"{summary}{("\nAble Jobs: " + activeCharacter.jobComponent.GetAbleJobs())}";
 
         if (activeCharacter.stateComponent.currentState != null) {
             summary = $"{summary}\nCurrent State: {activeCharacter.stateComponent.currentState}";

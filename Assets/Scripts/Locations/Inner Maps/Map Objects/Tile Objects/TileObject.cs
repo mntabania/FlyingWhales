@@ -502,7 +502,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             if (source is Character character) {
                 removed = character;
             }
-            gridTileLocation?.structure.RemovePOI(this, removed);
+            tile.structure.RemovePOI(this, removed);
         }
         if (amount < 0) {
             Messenger.Broadcast(Signals.OBJECT_DAMAGED, this as IPointOfInterest);

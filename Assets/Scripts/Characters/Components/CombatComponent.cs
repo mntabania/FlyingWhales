@@ -12,8 +12,9 @@ public class CombatComponent {
     public Dictionary<Character, bool> lethalCharacters { get; private set; }
     public string avoidReason { get; private set; }
     public ElementalDamageData elementalDamage { get; private set; }
-    private bool willProcessCombat;
-    
+    private bool _willProcessCombat;
+    public ActualGoapNode actionThatTriggeredCombatState { get; private set; }
+    public GoapPlanJob jobThatTriggeredCombatState { get; private set; }
     // public ActualGoapNode combatConnectedActionNode { get; private set; }
 
     //delegates
@@ -147,7 +148,7 @@ public class CombatComponent {
             string debugLog = $"Triggered FIGHT response for {owner.name} against {target.nameWithID}";
             hostilesInRange.Add(target);
             avoidInRange.Remove(target);
-            willProcessCombat = true;
+            _willProcessCombat = true;
             if (target is Character targetCharacter) {
                 lethalCharacters.Add(targetCharacter, isLethal);
             } else if (target is TileObject targetTileObject) {
@@ -173,7 +174,7 @@ public class CombatComponent {
             string debugLog = $"Triggered FLIGHT response for {owner.name} against {target.nameWithID}";
             if (owner.marker.inVisionPOIs.Contains(target)) {
                 avoidInRange.Add(target);
-                willProcessCombat = true;
+                _willProcessCombat = true;
                 avoidReason = reason;
                 debugLog += $"\n{target.name} was added to {owner.name}'s avoid range!";
                 hasFled = true;
@@ -205,7 +206,7 @@ public class CombatComponent {
                 }
             }
             ClearHostilesInRange(false);
-            willProcessCombat = true;
+            _willProcessCombat = true;
             avoidReason = reason;
         }
     }
@@ -245,7 +246,7 @@ public class CombatComponent {
                     }
                     //Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, owner);
                 }
-                willProcessCombat = true;
+                _willProcessCombat = true;
             }
         }
     }
@@ -263,7 +264,7 @@ public class CombatComponent {
                 //if (owner.isInCombat) {
                 //    Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, owner);
                 //}
-                willProcessCombat = true;
+                _willProcessCombat = true;
             }
         }
     }
@@ -331,7 +332,7 @@ public class CombatComponent {
         //if (!poi.isDead && !poi.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) && character.traitContainer.GetNormalTrait<Trait>("Berserked") == null) {
             if (!avoidInRange.Contains(poi)) {
                 avoidInRange.Add(poi);
-                willProcessCombat = true;
+                _willProcessCombat = true;
                 avoidReason = reason;
                 return true;
             }
@@ -341,7 +342,7 @@ public class CombatComponent {
     public void RemoveAvoidInRange(IPointOfInterest poi, bool processCombatBehavior = true) {
         if (avoidInRange.Remove(poi)) {
             if (processCombatBehavior) {
-                willProcessCombat = true;
+                _willProcessCombat = true;
                 //if (owner.isInCombat) {
                 //    Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, owner);
                 //}
@@ -366,7 +367,7 @@ public class CombatComponent {
         if (avoidInRange.Count > 0) {
             avoidInRange.Clear();
             if (processCombatBehavior) {
-                willProcessCombat = true;
+                _willProcessCombat = true;
                 //if (owner.isInCombat) {
                 //    Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, owner);
                 //}
@@ -419,9 +420,9 @@ public class CombatComponent {
         onProcessCombat = action;
     }
     public void CheckCombatPerTickEnded() {
-        if (willProcessCombat) {
+        if (_willProcessCombat) {
             ProcessCombatBehavior();
-            willProcessCombat = false;
+            _willProcessCombat = false;
         }
     }
     public void SetCombatMode(COMBAT_MODE mode) {
@@ -444,8 +445,9 @@ public class CombatComponent {
             SetElementalType(owner.characterClass.elementalType);
         }
     }
-    // public void SetCombatConnectedActionNode(ActualGoapNode node) {
-    //     combatConnectedActionNode = node;
-    // }
+    public void SetActionAndJobThatTriggeredCombat(ActualGoapNode node, GoapPlanJob job) {
+        actionThatTriggeredCombatState = node;
+        jobThatTriggeredCombatState = job;
+    }
     #endregion
 }

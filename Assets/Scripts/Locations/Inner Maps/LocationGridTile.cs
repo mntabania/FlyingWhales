@@ -484,7 +484,7 @@ namespace Inner_Maps {
             if (objHere != null) {
                 IPointOfInterest removedObj = objHere;
                 objHere = null;
-                if (removedObj is TileObject tileObject && removedBy != null) {
+                if (removedObj is TileObject tileObject) {
                     //if the object in this tile is a tile object and it was removed by a character, use tile object specific function
                     tileObject.RemoveTileObject(removedBy);
                 } else {
