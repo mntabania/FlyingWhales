@@ -293,8 +293,21 @@ public class Faction {
     //        Debug.LogError(GameManager.Instance.TodayLogString() + name + " cannot set new leader because there is no previous leader!");
     //    }
     //}
-    public void OnlySetLeader(ILeader leader) {
-        this.leader = leader;
+    public void OnlySetLeader(ILeader newLeader) {
+        if(leader != newLeader) {
+            ILeader prevLeader = leader;
+            leader = newLeader;
+            if(prevLeader != null && prevLeader is Character prevCharacterLeader) {
+                if (!prevCharacterLeader.isSettlementRuler) {
+                    prevCharacterLeader.jobComponent.RemovePriorityJob(JOB_TYPE.JUDGE_PRISONER);
+                }
+            }
+            if(leader != null) {
+                if(leader is Character characterLeader) {
+                    characterLeader.jobComponent.AddPriorityJob(JOB_TYPE.JUDGE_PRISONER);
+                }
+            }
+        }
     }
     private void OnCharacterClassChange(Character character, CharacterClass previousClass, CharacterClass currentClass) {
         CheckIfCharacterStillFitsIdeology(character);

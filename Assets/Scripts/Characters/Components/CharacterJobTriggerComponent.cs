@@ -15,6 +15,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
     public JobQueueItem finalJobAssignment { get; private set; }
     public JOB_TYPE primaryJob { get; private set; }
+    public List<JOB_TYPE> priorityJobs { get; private set; }
     public Dictionary<GoapAction, int> numOfTimesActionDone { get; private set; }
     public List<JOB_TYPE> primaryJobCandidates;
 
@@ -25,6 +26,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		_owner = owner;
         numOfTimesActionDone = new Dictionary<GoapAction, int>();
         primaryJobCandidates = new List<JOB_TYPE>();
+        priorityJobs = new List<JOB_TYPE>();
         SetPrimaryJob(JOB_TYPE.NONE);
 	}
 
@@ -186,6 +188,17 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
                 jobs += _owner.characterClass.priorityJobs[i].ToString();
             }
         }
+        if(_owner.jobComponent.priorityJobs.Count > 0) {
+            if(jobs != string.Empty) {
+                jobs += ",";
+            }
+            for (int i = 0; i < _owner.jobComponent.priorityJobs.Count; i++) {
+                if (i > 0) {
+                    jobs += ",";
+                }
+                jobs += _owner.jobComponent.priorityJobs[i].ToString();
+            }
+        }
         return jobs;
     }
     public string GetSecondaryJobs() {
@@ -211,6 +224,14 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             }
         }
         return jobs;
+    }
+    public void AddPriorityJob(JOB_TYPE jobType) {
+        if (!priorityJobs.Contains(jobType)) {
+            priorityJobs.Add(jobType);
+        }
+    }
+    public bool RemovePriorityJob(JOB_TYPE jobType) {
+        return priorityJobs.Remove(jobType);
     }
     #endregion
 

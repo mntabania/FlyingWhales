@@ -1813,9 +1813,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (isSettlementRuler) {
                 AssignBuildStructureComponent();
                 behaviourComponent.AddBehaviourComponent(typeof(SettlementRulerBehaviour));
+                jobComponent.AddPriorityJob(JOB_TYPE.JUDGE_PRISONER);
             } else {
                 UnassignBuildStructureComponent();
                 behaviourComponent.RemoveBehaviourComponent(typeof(SettlementRulerBehaviour));
+                if (!isFactionLeader) {
+                    jobComponent.RemovePriorityJob(JOB_TYPE.JUDGE_PRISONER);
+                }
             }
         }
     }

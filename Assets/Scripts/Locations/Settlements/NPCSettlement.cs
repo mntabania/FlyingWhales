@@ -822,7 +822,8 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             if (job.assignedCharacter == null && character.jobQueue.CanJobBeAddedToQueue(job)) {
                 if(job.jobType == character.jobComponent.primaryJob) {
                     return job;
-                } else if (chosenPriorityJob == null && character.characterClass.priorityJobs != null && character.characterClass.priorityJobs.Contains(job.jobType)) {
+                } else if (chosenPriorityJob == null && character.characterClass.priorityJobs != null 
+                    && (character.characterClass.priorityJobs.Contains(job.jobType) || character.jobComponent.priorityJobs.Contains(job.jobType))) {
                     chosenPriorityJob = job;
                 } else if (chosenSecondaryJob == null && character.characterClass.secondaryJobs != null && character.characterClass.secondaryJobs.Contains(job.jobType)) {
                     chosenSecondaryJob = job;
