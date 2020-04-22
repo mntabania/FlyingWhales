@@ -3,7 +3,7 @@
         private readonly SPELL_TYPE _neededSpellType;
         
         public ExecuteSpellStep(SPELL_TYPE neededSpellType, string stepDescription, string tooltip = "") 
-            : base(stepDescription, tooltip) {
+            : base(stepDescription) {
             _neededSpellType = neededSpellType;
         }
         protected override void SubscribeListeners() {

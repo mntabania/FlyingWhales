@@ -33,7 +33,12 @@ namespace Tutorial {
         
         //Video Clips
         public VideoClip demonicStructureVideoClip;
-        
+        public VideoClip fireDamageVideoClip;
+        public VideoClip villageVideoClip;
+        public VideoClip storeIntelVideoClip;
+        public VideoClip shareIntelVideoClip;
+        public VideoClip blessedVideoClip;
+
         #region Monobehaviours
         private void Awake() {
             Instance = this;

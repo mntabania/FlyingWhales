@@ -2,8 +2,8 @@
 namespace Tutorial {
     public class ClickOnEmptyAreaStep : TutorialQuestStep {
         private readonly Func<HexTile, bool> _validityChecker;
-        public ClickOnEmptyAreaStep(string stepDescription = "Click on an empty area", string tooltip = "", 
-            Func<HexTile, bool> validityChecker = null) : base(stepDescription, tooltip) {
+        public ClickOnEmptyAreaStep(string stepDescription = "Click on an empty area", 
+            Func<HexTile, bool> validityChecker = null) : base(stepDescription) {
             _validityChecker = validityChecker;
         }
         protected override void SubscribeListeners() {

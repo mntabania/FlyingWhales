@@ -1,7 +1,7 @@
 ﻿namespace Tutorial {
     public class SelectIntelStep : TutorialQuestStep {
         public SelectIntelStep(string stepDescription = "Select an Intel", string tooltip = "") 
-            : base(stepDescription, tooltip) { }
+            : base(stepDescription) { }
         protected override void SubscribeListeners() {
             Messenger.AddListener<IIntel>(Signals.ACTIVE_INTEL_SET, CheckForCompletion);
         }

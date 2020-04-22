@@ -1,7 +1,7 @@
 ﻿namespace Tutorial {
     public class ShareIntelStep : TutorialQuestStep {
         public ShareIntelStep(string stepDescription = "Share Intel", string tooltip = "") 
-            : base(stepDescription, tooltip) { }
+            : base(stepDescription) { }
         protected override void SubscribeListeners() {
             Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, Complete);
         }

@@ -7,7 +7,7 @@ namespace Tutorial {
         private readonly SPELL_TYPE actionType;
         
         public ExecutedPlayerActionStep(SPELL_TYPE actionType, string stepDescription = "Click on a button", string tooltip = "")
-            : base(stepDescription, tooltip) {
+            : base(stepDescription) {
             this.actionType = actionType;
         }
         protected override void SubscribeListeners() {

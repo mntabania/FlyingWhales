@@ -1,6 +1,6 @@
 ﻿namespace Tutorial {
     public class TriggerPoisonExplosionStep : TutorialQuestStep {
-        public TriggerPoisonExplosionStep(string stepDescription = "Trigger Poison Explosion", string tooltip = "") : base(stepDescription, tooltip) { }
+        public TriggerPoisonExplosionStep(string stepDescription = "Trigger Poison Explosion", string tooltip = "") : base(stepDescription) { }
         protected override void SubscribeListeners() {
             Messenger.AddListener<IPointOfInterest>(Signals.POISON_EXPLOSION_TRIGGERED, CheckForCompletion);
         }

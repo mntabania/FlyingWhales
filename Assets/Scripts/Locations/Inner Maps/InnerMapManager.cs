@@ -144,16 +144,20 @@ namespace Inner_Maps {
                     }
                 }
             }
-            
-            if (tile.structure != null && ReferenceEquals(tile.structure.structureObj, null) == false) {
-                return tile.structure;
-            }
-            // if (tile.IsPartOfSettlement(out var npcSettlement)) {
-            //     selectables.Add(npcSettlement);
-            // }
+
             if (tile.collectionOwner.isPartOfParentRegionMap) {
-                return tile.collectionOwner.partOfHextile.hexTileOwner;
+                if (tile.collectionOwner.partOfHextile.hexTileOwner.landmarkOnTile != null 
+                    && tile.collectionOwner.partOfHextile.hexTileOwner.landmarkOnTile.specificLandmarkType.IsPlayerLandmark()) {
+                    return tile.structure;
+                }
+                else {
+                    if (tile.structure != null && ReferenceEquals(tile.structure.structureObj, null) == false) {
+                        return tile.structure;
+                    }
+                    return tile.collectionOwner.partOfHextile.hexTileOwner;
+                }
             }
+            
             return null;
         }
         private bool TryGetSelectablesOnTile(LocationGridTile tile, out List<ISelectable> selectables) {
@@ -182,14 +186,17 @@ namespace Inner_Maps {
                 }
             }
             
-            if (tile.structure != null && ReferenceEquals(tile.structure.structureObj, null) == false) {
-                selectables.Add(tile.structure);
-            }
-            // if (tile.IsPartOfSettlement(out var npcSettlement)) {
-            //     selectables.Add(npcSettlement);
-            // }
             if (tile.collectionOwner.isPartOfParentRegionMap) {
-                selectables.Add(tile.collectionOwner.partOfHextile.hexTileOwner);
+                if (tile.collectionOwner.partOfHextile.hexTileOwner.landmarkOnTile != null 
+                    && tile.collectionOwner.partOfHextile.hexTileOwner.landmarkOnTile.specificLandmarkType.IsPlayerLandmark()) {
+                    selectables.Add(tile.structure);
+                }
+                else {
+                    if (tile.structure != null && ReferenceEquals(tile.structure.structureObj, null) == false) {
+                        selectables.Add(tile.structure);
+                    }
+                    selectables.Add(tile.collectionOwner.partOfHextile.hexTileOwner);
+                }
             }
             return true;
         }

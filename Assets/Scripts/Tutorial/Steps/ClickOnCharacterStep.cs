@@ -2,8 +2,8 @@
 namespace Tutorial {
     public class ClickOnCharacterStep : TutorialQuestStep {
         private readonly Func<Character, bool> _validityChecker;
-        public ClickOnCharacterStep(string stepDescription = "Click on a character", string tooltip = "", 
-            System.Func<Character, bool> validityChecker = null) : base(stepDescription, tooltip) {
+        public ClickOnCharacterStep(string stepDescription = "Click on a character", 
+            System.Func<Character, bool> validityChecker = null) : base(stepDescription) {
             _validityChecker = validityChecker;
         }
         protected override void SubscribeListeners() {

@@ -1,6 +1,6 @@
 ﻿namespace Tutorial {
     public class HideRegionMapStep : TutorialQuestStep {
-        public HideRegionMapStep(string stepDescription = "Hide regional map", string tooltip = "") : base(stepDescription, tooltip) { }
+        public HideRegionMapStep(string stepDescription = "Hide regional map", string tooltip = "") : base(stepDescription) { }
         protected override void SubscribeListeners() {
             Messenger.AddListener<Region>(Signals.LOCATION_MAP_CLOSED, CheckForCompletion);
         }

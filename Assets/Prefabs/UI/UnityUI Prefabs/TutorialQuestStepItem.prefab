@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6963489646633369484}
   - component: {fileID: 6963489646633369491}
   - component: {fileID: 6963489646633369490}
-  - component: {fileID: 6963489646633369485}
+  - component: {fileID: 6511669951229421250}
   m_Layer: 5
   m_Name: StepLbl
   m_TagString: Untagged
@@ -157,7 +157,7 @@ MonoBehaviour:
   - {fileID: 0}
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &6963489646633369485
+--- !u!114 &6511669951229421250
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -166,13 +166,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 6963489646633369487}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: be97d49975a8ba24683fa964f9c21b16, type: 3}
+  m_Script: {fileID: 11500000, guid: f737e5ae56a617244ad293beb715783c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tooltipPos: {fileID: 0}
-  tooltipHeader: 
-  ignoreInteractable: 0
-  onHoverOverAction:
+  logItem: {fileID: 0}
+  text: {fileID: 6963489646633369490}
+  allowClickAction: 1
+  hoverAction:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 3683284480543255046}
@@ -186,7 +186,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  onHoverExitAction:
+  hoverOutAction:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 3683284480543255046}
@@ -378,6 +378,7 @@ RectTransform:
   m_Children:
   - {fileID: 6963489647206589560}
   - {fileID: 6963489646633369484}
+  - {fileID: 1117154030800497309}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -401,7 +402,8 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   _stepLbl: {fileID: 6963489646633369490}
   _completedToggle: {fileID: 6963489648587181313}
-  _hoverHandler: {fileID: 6963489646633369485}
+  _eventLabel: {fileID: 6511669951229421250}
+  hoverPosition: {fileID: 8574925121846302010}
 --- !u!114 &6963489648587181313
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -450,3 +452,53 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_IsOn: 1
+--- !u!1 &7314840133379905873
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1117154030800497309}
+  - component: {fileID: 8574925121846302010}
+  m_Layer: 5
+  m_Name: HoverPos
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1117154030800497309
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7314840133379905873}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 6963489648587181312}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 1, y: 0.5}
+  m_AnchorMax: {x: 1, y: 0.5}
+  m_AnchoredPosition: {x: -405.95, y: -0.000051498413}
+  m_SizeDelta: {x: 53.300003, y: 41.4}
+  m_Pivot: {x: 1, y: 0.5}
+--- !u!114 &8574925121846302010
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7314840133379905873}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a81b96823c9c6704498c188c2c4b997d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pivot: {x: 1, y: 0.5}
+  anchor: 5

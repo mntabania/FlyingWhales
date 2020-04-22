@@ -1,14 +1,18 @@
 ﻿namespace Tutorial {
     public abstract class TutorialQuestStep {
 
-        public string stepDescription { get; }
-        public string tooltip { get; private set; }
+        public string stepDescription { get; } 
         public bool isCompleted { get; private set; }
-        public System.Action onCompleteAction { get; private set; }
-        
-        protected TutorialQuestStep(string stepDescription, string tooltip) {
+        private System.Action onCompleteAction { get; set; }
+        public System.Action<TutorialQuestStepItem> onHoverOverAction { get; private set; }
+        public System.Action onHoverOutAction { get; private set; }
+
+        #region getters
+        public bool hasHoverAction => onHoverOverAction != null || onHoverOutAction != null;
+        #endregion
+
+        protected TutorialQuestStep(string stepDescription) {
             this.stepDescription = stepDescription;
-            this.tooltip = tooltip;
             isCompleted = false;
         }
 
@@ -38,6 +42,18 @@
             return this;
         }
         #endregion
+
+        #region Hover Actions
+        public TutorialQuestStep SetHoverOverAction(System.Action<TutorialQuestStepItem> onHoverOverAction) {
+            this.onHoverOverAction = onHoverOverAction;
+            return this;
+        }
+        public TutorialQuestStep SetHoverOutAction(System.Action onHoverOutAction) {
+            this.onHoverOutAction = onHoverOutAction;
+            return this;
+        }
+        #endregion
+        
 
         public void Cleanup() {
             UnSubscribeListeners();
