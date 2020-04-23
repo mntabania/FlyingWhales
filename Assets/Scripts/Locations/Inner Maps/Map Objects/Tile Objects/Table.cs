@@ -12,7 +12,7 @@ public class Table : TileObject {
         //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.DRINK, INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.DROP_RESOURCE, INTERACTION_TYPE.REPAIR, INTERACTION_TYPE.SIT };
         Initialize(TILE_OBJECT_TYPE.TABLE);
         AddAdvertisedAction(INTERACTION_TYPE.DRINK);
-        AddAdvertisedAction(INTERACTION_TYPE.POISON);
+        // AddAdvertisedAction(INTERACTION_TYPE.POISON);
         //AddAdvertisedAction(INTERACTION_TYPE.REMOVE_POISON);
         AddAdvertisedAction(INTERACTION_TYPE.DROP_RESOURCE);
         AddAdvertisedAction(INTERACTION_TYPE.SIT);

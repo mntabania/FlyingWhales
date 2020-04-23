@@ -4193,6 +4193,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         AddAdvertisedAction(INTERACTION_TYPE.SLAY_CHARACTER);
         AddAdvertisedAction(INTERACTION_TYPE.DOUSE_FIRE);
         AddAdvertisedAction(INTERACTION_TYPE.BURY_CHARACTER);
+        AddAdvertisedAction(INTERACTION_TYPE.POISON);
         
         if (this is Summon) {
             AddAdvertisedAction(INTERACTION_TYPE.PLAY);

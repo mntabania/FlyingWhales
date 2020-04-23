@@ -96,16 +96,10 @@ public class Poison : GoapAction {
     #endregion
 
     #region State Effects
-    public void PrePoisonSuccess(ActualGoapNode goapNode) {
-        //**Effect 1**: Add Poisoned Trait to target table
+    public void AfterPoisonSuccess(ActualGoapNode goapNode) {
         goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, "Poisoned", goapNode.actor);
-        //GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
-        //goapNode.descriptionLog.AddToFillers(goapNode.poiTarget.gridTileLocation.structure.location, goapNode.poiTarget.gridTileLocation.structure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
-        //TODO: currentState.SetIntelReaction(PoisonSuccessReactions);
+        goapNode.actor.UnobtainItem(TILE_OBJECT_TYPE.TOOL);
     }
-    // public void AfterPoisonSuccess(ActualGoapNode goapNode) {
-    //     
-    // }
     #endregion
 
     #region Requirement

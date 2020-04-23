@@ -656,7 +656,7 @@ public class Region {
         }
         return structuresAtLocation;
     }
-    public IPointOfInterest GetFirstTileObjectOnTheFloorOwnedBy(Character character) {
+    public IPointOfInterest GetFirstTileObjectOnTheFloorOwnedBy(Character character, System.Func<IPointOfInterest, bool> validityChecker = null) {
         foreach (List<LocationStructure> structureList in structures.Values) {
             for (int i = 0; i < structureList.Count; i++) {
                 LocationStructure currStructure = structureList[i];
@@ -664,7 +664,13 @@ public class Region {
                     for (int j = 0; j < currStructure.pointsOfInterest.Count; j++) {
                         IPointOfInterest poi = currStructure.pointsOfInterest.ElementAt(j);
                         if(poi.gridTileLocation != null && poi.characterOwner == character) {
-                            return poi;
+                            if (validityChecker != null) {
+                                if (validityChecker.Invoke(poi)) {
+                                    return poi;
+                                }
+                            } else {
+                                return poi;    
+                            }
                         }
                     }
                 }

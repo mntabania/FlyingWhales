@@ -989,4 +989,33 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    return _owner.currentHP < _owner.maxHP;
     }
     #endregion
+    
+    #region Undermine
+    public bool CreatePoisonFoodJob(Character targetCharacter) {
+	    if (_owner.jobQueue.HasJob(JOB_TYPE.POISON_FOOD, targetCharacter)) {
+		    return false;
+	    }
+	    if (targetCharacter.isDead) {
+		    return false;
+	    }
+	    if (targetCharacter.homeRegion == null) {
+		    targetCharacter.logComponent.PrintLogIfActive(_owner.name + " cannot poison food " + targetCharacter.name + " because he/she does not have a home region");
+		    return false;
+	    }
+	    IPointOfInterest chosenObject = targetCharacter.homeRegion.GetFirstTileObjectOnTheFloorOwnedBy(targetCharacter, 
+		    (poi) => poi.advertisedActions.Contains(INTERACTION_TYPE.EAT));
+	    if (chosenObject == null) {
+		    targetCharacter.logComponent.PrintLogIfActive(_owner.name + " cannot poison food " + targetCharacter.name + " because he/she does not have an owned item on the floor in his/her home region");
+		    return false;
+	    }
+	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.POISON_FOOD, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Poisoned", false, GOAP_EFFECT_TARGET.TARGET), chosenObject, _owner);
+	    _owner.jobQueue.AddJobInQueue(job);
+
+	    Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "poison_undermine");
+	    log.AddToFillers(_owner, _owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+	    log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+	    _owner.logComponent.AddHistory(log);
+	    return true;
+    }
+    #endregion
 }

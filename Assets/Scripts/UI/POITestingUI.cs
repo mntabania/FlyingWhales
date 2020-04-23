@@ -133,8 +133,10 @@ public class POITestingUI : MonoBehaviour {
         if (poi is Table) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.UNDERMINE, INTERACTION_TYPE.POISON, poi, activeCharacter);
             activeCharacter.jobQueue.AddJobInQueue(job);
+        } else if (poi is Character targetCharacter) {
+            activeCharacter.jobComponent.CreatePoisonFoodJob(targetCharacter);
         } else {
-            Debug.LogError($"{poi.name} is not a table!");
+            Debug.LogError($"{poi.name} is not a table or a character!");
         }
         HideUI();
     }
