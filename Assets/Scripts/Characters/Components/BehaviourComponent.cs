@@ -144,7 +144,7 @@ public class BehaviourComponent {
             if (isDefending) {
                 assignedTargetHex.IncreaseIsBeingDefendedCount();
                 combatModeBeforeHarassRaidInvade = owner.combatComponent.combatMode;
-                owner.combatComponent.SetCombatMode(COMBAT_MODE.Defend);
+                owner.combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
                 AddBehaviourComponent(typeof(DefendBehaviour));
                 //TODO: Optimize this to not always create new instance if playeraction, or if it can't be helped, do object pool
                 //owner.AddPlayerAction(new PlayerAction(PlayerDB.End_Raid_Action, () => true, null, () => SetIsRaiding(false, null)));

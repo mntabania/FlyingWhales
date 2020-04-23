@@ -49,6 +49,20 @@ public class SettlementJobPriorityComponent
                     }
                 }
             }
+            if (!hasSetPrimaryJob) {
+                for (int i = 0; i < character.jobComponent.priorityJobs.Count; i++) {
+                    JOB_TYPE currPrioJob = character.jobComponent.priorityJobs[i];
+                    if (primaryJobTracker.ContainsKey(currPrioJob)) {
+                        character.jobComponent.primaryJobCandidates.Add(currPrioJob);
+                        if (primaryJobTracker[currPrioJob] == 0) {
+                            character.jobComponent.SetPrimaryJob(currPrioJob);
+                            primaryJobTracker[currPrioJob]++;
+                            hasSetPrimaryJob = true;
+                            break;
+                        }
+                    }
+                }
+            }
             if (!hasSetPrimaryJob && character.jobComponent.primaryJobCandidates.Count > 0) {
                 JOB_TYPE chosenJob = character.jobComponent.primaryJobCandidates[UnityEngine.Random.Range(0, character.jobComponent.primaryJobCandidates.Count)];
                 character.jobComponent.SetPrimaryJob(chosenJob);

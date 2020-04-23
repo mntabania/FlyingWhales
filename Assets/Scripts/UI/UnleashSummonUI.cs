@@ -126,29 +126,9 @@ public class UnleashSummonUI : PopupMenuBase {
         return item;
     }
     private void HarassDefendInvade() {
-        entrances.Clear();
         HexTile targetHex = PlayerUI.Instance.harassDefendInvadeTargetHex;
-        //NPCSettlement targetNpcSettlement = targetHex.settlementOnTile as NPCSettlement;
         Character spawnedCharacter = null;
-        LocationGridTile mainEntrance = targetHex.GetCenterLocationGridTile();
-        entrances.Add(mainEntrance);
 
-        int totalEntrances = chosenSummons.Count + chosenMinionMonsters.Count;
-        for (int i = 0; i < entrances.Count; i++) {
-            if (entrances.Count == totalEntrances) {
-                break;
-            }
-            for (int j = 0; j < entrances[i].neighbourList.Count; j++) {
-                LocationGridTile newEntrance = entrances[i].neighbourList[j];
-                //if (newEntrance.objHere == null && newEntrance.charactersHere.Count == 0 && newEntrance.structure != null) {
-                if (!entrances.Contains(newEntrance)) {
-                    entrances.Add(newEntrance);
-                    if (entrances.Count == totalEntrances) {
-                        break;
-                    }
-                }
-            }
-        }
         if (identifier == "harass") {
             for (int i = 0; i < chosenSummons.Count; i++) {
                 Summon summon = chosenSummons[i] as Summon;
@@ -165,12 +145,18 @@ public class UnleashSummonUI : PopupMenuBase {
             PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.HARASS).OnExecuteSpellActionAffliction();
         } else if (identifier == "defend") {
             for (int i = 0; i < chosenSummons.Count; i++) {
+                if(entrances.Count <= 0) {
+                    entrances.AddRange(targetHex.borderTiles);
+                }
                 Summon summon = chosenSummons[i] as Summon;
                 TryPlaceSummon(summon, entrances[0]);
                 summon.behaviourComponent.SetIsDefending(true, targetHex);
                 entrances.RemoveAt(0);
             }
             for (int i = 0; i < chosenMinionMonsters.Count; i++) {
+                if (entrances.Count <= 0) {
+                    entrances.AddRange(targetHex.borderTiles);
+                }
                 SpellData minionMonsterPlayerSkll = chosenMinionMonsters[i];
                 minionMonsterPlayerSkll.ActivateAbility(entrances[0], ref spawnedCharacter);
                 spawnedCharacter.behaviourComponent.SetIsDefending(true, targetHex);
@@ -200,6 +186,32 @@ public class UnleashSummonUI : PopupMenuBase {
             chosenSummons[0].CenterOnCharacter();
         }
         Close();
+    }
+    private void PopulateEntrances(HexTile targetHex) {
+        entrances.Clear();
+        if(identifier == "defend") {
+            entrances.AddRange(targetHex.borderTiles);
+        } else {
+            LocationGridTile mainEntrance = targetHex.GetCenterLocationGridTile();
+            entrances.Add(mainEntrance);
+
+            int totalEntrances = chosenSummons.Count + chosenMinionMonsters.Count;
+            for (int i = 0; i < entrances.Count; i++) {
+                if (entrances.Count == totalEntrances) {
+                    break;
+                }
+                for (int j = 0; j < entrances[i].neighbourList.Count; j++) {
+                    LocationGridTile newEntrance = entrances[i].neighbourList[j];
+                    //if (newEntrance.objHere == null && newEntrance.charactersHere.Count == 0 && newEntrance.structure != null) {
+                    if (!entrances.Contains(newEntrance)) {
+                        entrances.Add(newEntrance);
+                        if (entrances.Count == totalEntrances) {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
     }
     private void Knockout() {
         entrances.Clear();

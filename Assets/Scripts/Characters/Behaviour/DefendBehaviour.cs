@@ -16,7 +16,7 @@ public class DefendBehaviour : CharacterBehaviourComponent {
         log += $"\n-{character.name} will defend";
         if (character.behaviourComponent.assignedTargetHex != null) {
             HexTile chosenHex = character.behaviourComponent.assignedTargetHex;
-            LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(chosenHex.locationGridTiles);
+            LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(chosenHex.borderTiles);
             character.jobComponent.TriggerRoamAroundTile(chosenTile);
             return true;
         }

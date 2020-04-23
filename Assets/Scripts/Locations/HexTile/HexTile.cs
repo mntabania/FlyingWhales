@@ -69,6 +69,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     public List<HexTile> ValidTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && o.elevationType != ELEVATION.MOUNTAIN).ToList(); } }
     public bool isCurrentlyBeingCorrupted { get; private set; }
     public List<LocationGridTile> locationGridTiles { get; private set; }
+    public List<LocationGridTile> borderTiles { get; private set; }
     public Sprite baseSprite { get; private set; }
     public Vector2 selectableSize { get; private set; }
     public InnerMapHexTile innerMapHexTile { get; private set; }
@@ -965,6 +966,50 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
             LocationGridTileCollection collection = innerMapHexTile.gridTileCollections[i];
             locationGridTiles.AddRange(collection.tilesInTerritory);
         }
+        PopulateBorderTiles();
+    }
+    private void PopulateBorderTiles() {
+        borderTiles = new List<LocationGridTile>();
+        InnerTileMap tileMap = region.innerMap;
+        //To populate border tiles we need to know the width and height of hextile in the inner map, which is currently InnerMapManager.BuildingSpotSize x 2
+        int hexWidth = InnerMapManager.BuildingSpotSize.x * 2;
+        int hexHeight = InnerMapManager.BuildingSpotSize.y * 2;
+
+        //Our origin point will always be the first entry in the locationGridTiles list, assuming that the first entry is always the lower left corner of the hex tile
+        int originX = locationGridTiles[0].localPlace.x;
+        int originY = locationGridTiles[0].localPlace.y;
+
+        //Let's get the actual width and height from the origin point
+        int actualHeight = originY + (hexHeight - 1);
+        int actualWidth = originX + (hexWidth - 1);
+
+        //Now, to calculate border tiles, we will simply add the origin points and the hex width and height and loop through all the tiles corresponding those points
+        //There are four sides to the borders since the hex tile in the inner map is a square, we will call it A - left side, B - up side, C - right side, and D - down side
+        
+        //To get A, we must increment from originY, while the originX is constant
+        for (int i = originY; i < actualHeight; i++) {
+            borderTiles.Add(tileMap.map[originX, i]);
+        }
+        //To get B, we must increment from originX, while actualHeight is constant
+        for (int i = originX; i < actualWidth; i++) {
+            borderTiles.Add(tileMap.map[i, actualHeight]);
+        }
+        //To get C, we must increment from originY, while actualWidth is constant
+        for (int i = originY; i <= actualHeight; i++) {
+            borderTiles.Add(tileMap.map[actualWidth, i]);
+        }
+        //To get D, we must increment from originX, while originY is constant
+        for (int i = originX + 1; i < actualWidth; i++) {
+            borderTiles.Add(tileMap.map[i, originY]);
+        }
+
+        //IMPORTANT NOTE BELOW! DO NOT DELETE COMMENT!
+        //Let's check using an example, if the origin point is (0, 0) and the actual width = 7, and the actual height = 7
+        //Then A = (0, 0) to (0, 6)
+        //B = (0, 7) to (6, 7)
+        //C = (7, 0) to (7, 7)
+        //D = (1, 0) to (6, 0)
+
     }
     public List<TileObject> GetTileObjectsInHexTile(TILE_OBJECT_TYPE type) {
         List<TileObject> tileObjects = new List<TileObject>();
