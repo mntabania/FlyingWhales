@@ -70,7 +70,7 @@ namespace Tutorial {
         #region Inactive State Listeners
         private void OnSpellExecutedWhileInactive(SpellData spellData) {
             _notCastedTime = 0f; //reset cast timer.
-            if (isAvailable) { 
+            if (isAvailable && TutorialManager.Instance.IsInWaitList(this)) { 
                 //if the tutorial is already available, but is inactive, make this tutorial unavailable again.
                 MakeUnavailable();
             }

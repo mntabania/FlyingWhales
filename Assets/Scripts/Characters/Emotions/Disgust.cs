@@ -12,7 +12,7 @@ public class Disgust : Emotion {
     public override string ProcessEmotion(Character witness, IPointOfInterest target, REACTION_STATUS status) {
         if (target is Character) {
             Character targetCharacter = target as Character;
-            witness.relationshipContainer.AdjustOpinion(witness, targetCharacter, "Disgust", -6);
+            witness.relationshipContainer.AdjustOpinion(witness, targetCharacter, "Disgust", -10);
         }
         return base.ProcessEmotion(witness, target, status);
     }

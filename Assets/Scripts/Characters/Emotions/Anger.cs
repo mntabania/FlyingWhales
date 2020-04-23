@@ -12,7 +12,16 @@ public class Anger : Emotion {
     public override string ProcessEmotion(Character witness, IPointOfInterest target, REACTION_STATUS status) {
         if(target is Character) {
             Character targetCharacter = target as Character;
-            witness.relationshipContainer.AdjustOpinion(witness, targetCharacter, "Base", -14);
+            witness.relationshipContainer.AdjustOpinion(witness, targetCharacter, "Anger", -14);
+            //temporary opinion debuff
+            witness.relationshipContainer.AdjustOpinion(witness, targetCharacter, "Anger", -40);
+            GameDate dueDate = GameManager.Instance.Today();
+            dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(8));
+            SchedulingManager.Instance.AddEntry(dueDate,
+                () => witness.relationshipContainer.AdjustOpinion(witness, targetCharacter, "Anger", 40), 
+                this
+            );
+            
             witness.traitContainer.AddTrait(witness, "Angry");
             if(UnityEngine.Random.Range(0, 100) < 25) {
                 int chance = UnityEngine.Random.Range(0, 3);

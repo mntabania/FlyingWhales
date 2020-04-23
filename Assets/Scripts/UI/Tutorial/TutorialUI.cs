@@ -25,7 +25,7 @@ public class TutorialUI : MonoBehaviour {
         Vector2 targetSize = rectTransform.sizeDelta;
         rectTransform.sizeDelta = new Vector2(0f, rectTransform.sizeDelta.y);
         rectTransform.DOSizeDelta(targetSize, 0.4f).SetEase(Ease.InCubic);
-        StartCoroutine(ReLayout());
+        ReLayoutTutorials();
         return tutorialQuestItem;
     }
     public void HideTutorialQuest(TutorialQuest tutorialQuest) {
@@ -46,6 +46,10 @@ public class TutorialUI : MonoBehaviour {
         tutorialQuest.SetTutorialQuestItem(null);
     }
 
+    public void ReLayoutTutorials() {
+        StartCoroutine(ReLayout());
+    }
+    
     private IEnumerator ReLayout() {
         _layoutGroup.enabled = false;
         yield return null;

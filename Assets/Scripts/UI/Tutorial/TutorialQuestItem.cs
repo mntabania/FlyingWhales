@@ -35,6 +35,7 @@ public class TutorialQuestItem : PooledObject {
             TutorialQuestStepItem stepItem = stepGO.GetComponent<TutorialQuestStepItem>();
             stepItem.SetStep(step);
         }
+        TutorialManager.Instance.tutorialUI.ReLayoutTutorials();
     }
     public override void Reset() {
         base.Reset();
