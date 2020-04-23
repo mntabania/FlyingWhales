@@ -30,7 +30,7 @@ public class InterruptComponent {
     }
 
     #region General
-    public bool TriggerInterrupt(INTERRUPT interrupt, IPointOfInterest targetPOI, string identifier = "") {
+    public bool TriggerInterrupt(INTERRUPT interrupt, IPointOfInterest targetPOI, string identifier = "", ActualGoapNode actionThatTriggered = null) {
         Interrupt triggeredInterrupt = InteractionManager.Instance.GetInterruptData(interrupt);
         if (!triggeredInterrupt.isSimulateneous) {
             if (isInterrupted) {
@@ -57,7 +57,7 @@ public class InterruptComponent {
             if (currentInterrupt.doesStopCurrentAction) {
                 owner.currentJob?.StopJobNotDrop();
             }
-            ExecuteStartInterrupt(triggeredInterrupt, targetPOI);
+            ExecuteStartInterrupt(triggeredInterrupt, targetPOI, actionThatTriggered);
             Messenger.Broadcast(Signals.INTERRUPT_STARTED, owner, currentTargetPOI, currentInterrupt);
             Messenger.Broadcast(Signals.UPDATE_THOUGHT_BUBBLE, owner);
 
@@ -67,7 +67,7 @@ public class InterruptComponent {
                 EndInterrupt();
             }
         } else {
-             TriggeredSimultaneousInterrupt(triggeredInterrupt, targetPOI, identifier);
+             TriggeredSimultaneousInterrupt(triggeredInterrupt, targetPOI, identifier, actionThatTriggered);
         }
         return true;
     }
@@ -78,12 +78,12 @@ public class InterruptComponent {
             identifier = text;
         }
     }
-    private bool TriggeredSimultaneousInterrupt(Interrupt interrupt, IPointOfInterest targetPOI, string identifier) {
+    private bool TriggeredSimultaneousInterrupt(Interrupt interrupt, IPointOfInterest targetPOI, string identifier, ActualGoapNode actionThatTriggered) {
         owner.logComponent.PrintLogIfActive($"{owner.name} triggered a simultaneous interrupt: {interrupt.name}");
         bool alreadyHasSimultaneousInterrupt = hasTriggeredSimultaneousInterrupt;
         triggeredSimultaneousInterrupt = interrupt;
         simultaneousIdentifier = identifier;
-        ExecuteStartInterrupt(interrupt, targetPOI);
+        ExecuteStartInterrupt(interrupt, targetPOI, actionThatTriggered);
         AddEffectLog(triggeredSimultaneousInterrupt, currentTargetPOI);
         interrupt.ExecuteInterruptEndEffect(owner, currentTargetPOI);
         currentSimultaneousInterruptDuration = 0;
@@ -92,9 +92,9 @@ public class InterruptComponent {
         }
         return true;
     }
-    private void ExecuteStartInterrupt(Interrupt interrupt, IPointOfInterest targetPOI) {
+    private void ExecuteStartInterrupt(Interrupt interrupt, IPointOfInterest targetPOI, ActualGoapNode actionThatTriggered) {
         _currentEffectLog = null;
-        interrupt.ExecuteInterruptStartEffect(owner, targetPOI, ref _currentEffectLog);
+        interrupt.ExecuteInterruptStartEffect(owner, targetPOI, ref _currentEffectLog, actionThatTriggered);
         if(_currentEffectLog == null) {
             _currentEffectLog = interrupt.CreateEffectLog(owner, targetPOI);
         }

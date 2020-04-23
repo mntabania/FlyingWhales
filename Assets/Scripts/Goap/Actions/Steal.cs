@@ -90,10 +90,10 @@ public class Steal : GoapAction {
 
         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status);
         if (witness.relationshipContainer.IsFriendsWith(actor)) {
-            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor, status);
-            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status);
+            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor, status, node);
+            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status, node);
             if (witness == target || (target is TileObject tileObject && tileObject.IsOwnedBy(witness))) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor, status);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor, status, node);
             }
         }
        
@@ -107,9 +107,9 @@ public class Steal : GoapAction {
         if(target is TileObject tileObject) {
             Character targetCharacter = tileObject.isBeingCarriedBy;
             if(targetCharacter != null) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, targetCharacter, actor, status);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, targetCharacter, actor, status, node);
                 if (targetCharacter.traitContainer.HasTrait("Hothead") || UnityEngine.Random.Range(0, 100) < 35) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, targetCharacter, actor, status);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, targetCharacter, actor, status, node);
                 }
                 CrimeManager.Instance.ReactToCrime(targetCharacter, actor, node, node.associatedJobType, CRIME_TYPE.MISDEMEANOR);
             }

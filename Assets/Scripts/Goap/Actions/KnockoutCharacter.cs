@@ -52,7 +52,7 @@ public class KnockoutCharacter : GoapAction {
             Character targetCharacter = target as Character;
             string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
             if (opinionLabel == RelationshipManager.Rival) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status, node);
             } else {
                 if(node.associatedJobType != JOB_TYPE.APPREHEND) {
                     if (witness.homeSettlement == targetCharacter.homeSettlement || witness.faction == targetCharacter.faction
@@ -63,10 +63,10 @@ public class KnockoutCharacter : GoapAction {
             }
 
             if (opinionLabel == RelationshipManager.Acquaintance) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
             } else if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status);
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);
             }
         }
         return response;

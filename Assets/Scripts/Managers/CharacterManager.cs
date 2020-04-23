@@ -818,8 +818,8 @@ public class CharacterManager : MonoBehaviour {
             }
         }
     }
-    public string TriggerEmotion(EMOTION emotionType, Character emoter, IPointOfInterest target, REACTION_STATUS status) {
-        return $" {GetEmotion(emotionType).ProcessEmotion(emoter, target, status)}";
+    public string TriggerEmotion(EMOTION emotionType, Character emoter, IPointOfInterest target, REACTION_STATUS status, ActualGoapNode action = null) {
+        return $" {GetEmotion(emotionType).ProcessEmotion(emoter, target, status, action)}";
     }
     public Emotion GetEmotion(string name) {
         for (int i = 0; i < allEmotions.Count; i++) {

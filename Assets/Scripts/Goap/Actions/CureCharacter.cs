@@ -48,10 +48,10 @@ public class CureCharacter : GoapAction {
         string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
         if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
             if (!witness.traitContainer.HasTrait("Psychopath")) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Gratefulness, witness, actor, status);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Gratefulness, witness, actor, status, node);
             }
         } else if (opinionLabel == RelationshipManager.Rival) {
-            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status);
+            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
         }
         return response;
     }
@@ -63,13 +63,13 @@ public class CureCharacter : GoapAction {
         if (!targetCharacter.traitContainer.HasTrait("Psychopath")) {
             if (targetCharacter.relationshipContainer.IsEnemiesWith(actor)) {
                 if(UnityEngine.Random.Range(0, 100) < 30) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Gratefulness, targetCharacter, actor, status);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Gratefulness, targetCharacter, actor, status, node);
                 }
                 if (UnityEngine.Random.Range(0, 100) < 20) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Embarassment, targetCharacter, actor, status);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Embarassment, targetCharacter, actor, status, node);
                 }
             } else {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Gratefulness, targetCharacter, actor, status);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Gratefulness, targetCharacter, actor, status, node);
             }
         }
         return response;

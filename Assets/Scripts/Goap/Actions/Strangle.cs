@@ -44,26 +44,26 @@ public class Strangle : GoapAction {
             Character targetCharacter = target as Character;
             if(actor != targetCharacter) {
                 if (witness.traitContainer.HasTrait("Coward")) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor, status);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor, status, node);
                 } else {
                     string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
                     if(opinionLabel == RelationshipManager.Rival) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status, node);
                     } else if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
                         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status);
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, actor, status);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, actor, status, node);
                     } else {
                         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status);
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
                     }
                 }
                 CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.SERIOUS);
             } else {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status, node);
                 if (witness.traitContainer.HasTrait("Psychopath") || witness.relationshipContainer.IsEnemiesWith(actor)) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, actor, status);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, actor, status, node);
                 } else {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
                 }
             }
         }
@@ -78,9 +78,9 @@ public class Strangle : GoapAction {
             if (actor != targetCharacter) {
                 string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
                 if (opinionLabel == RelationshipManager.Rival) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, targetCharacter, status);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, targetCharacter, status, node);
                 } else {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, targetCharacter, status);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, targetCharacter, status, node);
                 }
             }
         }
@@ -93,9 +93,9 @@ public class Strangle : GoapAction {
         if (target is Character) {
             Character targetCharacter = target as Character;
             if (actor != targetCharacter) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, targetCharacter, actor, status);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, targetCharacter, actor, status, node);
                 if (targetCharacter.relationshipContainer.IsFriendsWith(actor) && !targetCharacter.traitContainer.HasTrait("Psychopath")) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, targetCharacter, actor, status);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, targetCharacter, actor, status, node);
                 }
                 CrimeManager.Instance.ReactToCrime(targetCharacter, actor, node, node.associatedJobType, CRIME_TYPE.SERIOUS);
             }

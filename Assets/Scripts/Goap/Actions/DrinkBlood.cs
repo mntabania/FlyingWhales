@@ -137,27 +137,27 @@ public class DrinkBlood : GoapAction {
         IPointOfInterest target = node.poiTarget;
         if (!witness.traitContainer.HasTrait("Vampiric")) {
             CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.HEINOUS);
-            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status);
+            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status, node);
 
             string opinionLabel = witness.relationshipContainer.GetOpinionLabel(actor);
             if (opinionLabel == RelationshipManager.Acquaintance || opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Despair, witness, actor, status);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Despair, witness, actor, status, node);
             }
             if(witness.traitContainer.HasTrait("Coward")) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor, status);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor, status, node);
             } else if (!witness.traitContainer.HasTrait("Psychopath")) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, actor, status);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, actor, status, node);
             }
         }
         if(target is Character) {
             Character targetCharacter = target as Character;
             string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
             if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status);
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);
             } else if (opinionLabel == RelationshipManager.Acquaintance || witness.faction == targetCharacter.faction || witness.homeSettlement == targetCharacter.homeSettlement) {
                 if (!witness.traitContainer.HasTrait("Psychopath")) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);
                 }
             }
         }
@@ -170,14 +170,14 @@ public class DrinkBlood : GoapAction {
         if (target is Character) {
             Character targetCharacter = target as Character;
             CrimeManager.Instance.ReactToCrime(targetCharacter, actor, node, node.associatedJobType, CRIME_TYPE.HEINOUS);
-            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, targetCharacter, actor, status);
+            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, targetCharacter, actor, status, node);
             if (targetCharacter.traitContainer.HasTrait("Coward")) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, targetCharacter, actor, status);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, targetCharacter, actor, status, node);
             } else {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, targetCharacter, actor, status);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, targetCharacter, actor, status, node);
             }
             if (targetCharacter.relationshipContainer.IsFriendsWith(actor)) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, targetCharacter, actor, status);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, targetCharacter, actor, status, node);
             }
         }
         return response;

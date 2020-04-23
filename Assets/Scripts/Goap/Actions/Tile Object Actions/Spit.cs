@@ -55,12 +55,12 @@ public class Spit : GoapAction {
             Character targetCharacter = (target as Tombstone).character;
             string witnessOpinionLabelToDead = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
             if (witnessOpinionLabelToDead == RelationshipManager.Friend || witnessOpinionLabelToDead == RelationshipManager.Close_Friend) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status);
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
             } else if (witnessOpinionLabelToDead == RelationshipManager.Rival) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status, node);
             } else {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
             }
         }
         return response;
