@@ -134,7 +134,11 @@ public class ShareIntelMenu : PopupMenuBase {
         //StartCoroutine(ShowReactions(reactions));
         string response = targetCharacter.ShareIntel(intel);
         if (string.IsNullOrEmpty(response) || string.IsNullOrWhiteSpace(response)) {
-            response = CharacterManager.Instance.TriggerEmotion(EMOTION.Disinterest, targetCharacter, intel.actor, REACTION_STATUS.INFORMED);
+            ActualGoapNode action = null;
+            if(intel is ActionIntel actionIntel) {
+                action = actionIntel.node;
+            }
+            response = CharacterManager.Instance.TriggerEmotion(EMOTION.Disinterest, targetCharacter, intel.actor, REACTION_STATUS.INFORMED, action);
         }
         StartCoroutine(ShowReaction(response, intel));
     }

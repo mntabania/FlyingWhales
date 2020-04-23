@@ -43,15 +43,15 @@ public class Cry : GoapAction {
         string opinionLabel = witness.relationshipContainer.GetOpinionLabel(actor);
         if (opinionLabel == RelationshipManager.Enemy || opinionLabel == RelationshipManager.Rival) {
             if (UnityEngine.Random.Range(0, 2) == 0) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, actor, status);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, actor, status, node);
             }
         } else if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
             if (!witness.traitContainer.HasTrait("Psychopath")) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status, node);
             }        
         } else if (opinionLabel == RelationshipManager.Acquaintance) {
             if (!witness.traitContainer.HasTrait("Psychopath") && UnityEngine.Random.Range(0, 2) == 0) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status, node);
             }        
         } 
         return response;

@@ -40,7 +40,8 @@ public class CombatState : CharacterState {
     #region Overrides
     protected override void DoMovementBehavior() {
         base.DoMovementBehavior();
-        StartCombatMovement();
+        stateComponent.character.combatComponent.SetWillProcessCombat(true);
+        //StartCombatMovement();
     }
     public override void PerTickInState() {
         if (_hasTimerStarted) {

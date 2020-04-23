@@ -121,7 +121,7 @@ public class MakeLove : GoapAction {
 
         if (status == REACTION_STATUS.WITNESSED) {
             //If witnessed
-            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status);
+            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status, node);
         }
 
         if (target is Character targetCharacter) {
@@ -136,8 +136,8 @@ public class MakeLove : GoapAction {
                             CRIME_TYPE.INFRACTION);    
                     } else if (actorLover == witness) {
                         //if witness is lover of actor
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor, status);
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor, status, node);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
                     }
                         
                 }
@@ -147,20 +147,20 @@ public class MakeLove : GoapAction {
                 if (targetLover != null) {
                     if (witness == targetLover) {
                         //witness is lover of target
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);
                     }
                     if (witness.relationshipContainer.IsFriendsWith(actor) || witness.relationshipContainer.IsFamilyMember(actor)) {
                         //if actor is friend/close friend or relative
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor, status);    
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor, status, node);    
                     } else {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, actor, status);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, actor, status, node);
                     }
                 }
             } else {
                 //actor and target are lovers
                 if(witness.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.AFFAIR)) {
                     //if witness and target have an affair
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, actor, status);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, actor, status, node);
                 }
             }
             
@@ -174,7 +174,7 @@ public class MakeLove : GoapAction {
 
         if (status == REACTION_STATUS.WITNESSED) {
             //If witnessed
-            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status);
+            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status, node);
         }
 
         if (target is Character targetCharacter) {
@@ -189,8 +189,8 @@ public class MakeLove : GoapAction {
                             CRIME_TYPE.INFRACTION);    
                     } else if (targetLover == witness) {
                         //if witness is lover of target
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, targetCharacter, status);
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, targetCharacter, status);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, targetCharacter, status, node);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, targetCharacter, status, node);
                     }
                         
                 }
@@ -200,20 +200,20 @@ public class MakeLove : GoapAction {
                 if (actorLover != null) {
                     if (witness == targetLover) {
                         //witness is lover of actor
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, targetCharacter, status);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, targetCharacter, status, node);
                     }
                     if (witness.relationshipContainer.IsFriendsWith(actor) || witness.relationshipContainer.IsFamilyMember(actor)) {
                         //if actor is friend/close friend or relative
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, targetCharacter, status);    
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, targetCharacter, status, node);    
                     } else {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, targetCharacter, status);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, targetCharacter, status, node);
                     }
                 }
             } else {
                 //actor and target are lovers
                 if(witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.AFFAIR)) {
                     //if witness and actor have an affair
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, targetCharacter, status);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, targetCharacter, status, node);
                 }
             }
             

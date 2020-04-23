@@ -35,39 +35,39 @@ public class BoobyTrap : GoapAction {
         if (target is TileObject tileObject) {
             if (tileObject.characterOwner == witness) {
                 if (witness.traitContainer.HasTrait("Coward")) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor, status);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor, status, node);
                 } else {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status);
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, actor, status);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, actor, status, node);
                 }
                 if(witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.RELATIVE)
                     || witness.relationshipContainer.IsFriendsWith(actor)) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor, status);
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor, status, node);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status, node);
                 }
             } else if (tileObject.characterOwner != null) {
                 Character owner = tileObject.characterOwner;
                 if (witness.relationshipContainer.HasRelationshipWith(owner, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.RELATIVE)
                     || witness.relationshipContainer.IsFriendsWith(owner)) {
                     if (witness.traitContainer.HasTrait("Coward")) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor, status);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor, status, node);
                     } else {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status);
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status, node);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
 
                         if (witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.RELATIVE)
                             || witness.relationshipContainer.IsFriendsWith(actor)) {
-                            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor, status);
+                            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor, status, node);
                         }
                     }
                 }
             } else {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
 
                 if (witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.RELATIVE)
                     || witness.relationshipContainer.IsFriendsWith(actor)) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status);
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor, status);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status, node);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor, status, node);
                 }
             }
         }

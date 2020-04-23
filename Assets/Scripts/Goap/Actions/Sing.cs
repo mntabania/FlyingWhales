@@ -60,9 +60,9 @@ public class Sing : GoapAction {
         Trait trait = witness.traitContainer.GetNormalTrait<Trait>("Music Hater", "Music Lover");
         if (trait != null) {
             if (trait.name == "Music Hater") {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
             } else {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status, node);
                 SEXUALITY sexuality1 = witness.sexuality;
                 SEXUALITY sexuality2 = actor.sexuality;
                 GENDER gender1 = witness.gender;
@@ -75,7 +75,7 @@ public class Sing : GoapAction {
                         value = 20;
                     }
                     if (UnityEngine.Random.Range(0, 100) < value) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Arousal, witness, actor, status);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Arousal, witness, actor, status, node);
                     }
                 }
             }

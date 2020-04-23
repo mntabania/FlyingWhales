@@ -110,7 +110,7 @@ public class ActualGoapNode {
     public LocationStructure targetStructure { get; private set; }
     public LocationGridTile targetTile { get; private set; }
     public IPointOfInterest targetPOIToGoTo { get; private set; }
-    public JOB_TYPE associatedJobType { get; private set; }
+    public JobQueueItem associatedJob { get; private set; }
 
     public string currentStateName { get; private set; }
     public int currentStateDuration { get; private set; }
@@ -141,6 +141,7 @@ public class ActualGoapNode {
     public string goapName {
         get { return action.goapName; }
     }
+    public JOB_TYPE associatedJobType => associatedJob != null ? associatedJob.jobType : JOB_TYPE.NONE;
     #endregion
 
     public ActualGoapNode(GoapAction action, Character actor, IPointOfInterest poiTarget, object[] otherData, int cost) {
@@ -151,7 +152,6 @@ public class ActualGoapNode {
         this.cost = cost;
         actionStatus = ACTION_STATUS.NONE;
         currentStateName = string.Empty;
-        associatedJobType = JOB_TYPE.NONE;
         awareCharacters = new List<Character>();
         //Messenger.AddListener<string, ActualGoapNode>(Signals.ACTION_STATE_SET, OnActionStateSet);
     }
@@ -163,7 +163,7 @@ public class ActualGoapNode {
     #region Action
     public virtual void DoAction(JobQueueItem job, GoapPlan plan) {
         actionStatus = ACTION_STATUS.STARTED;
-        associatedJobType = job.jobType;
+        associatedJob = job;
         //Temporary only, create a system for this
         if(action.goapType == INTERACTION_TYPE.STEAL || action.goapType == INTERACTION_TYPE.DRINK_BLOOD) {
             isStealth = true;
