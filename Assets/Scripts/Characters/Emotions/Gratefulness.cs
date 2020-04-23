@@ -9,7 +9,8 @@ public class Gratefulness : Emotion {
     }
 
     #region Overrides
-    public override string ProcessEmotion(Character witness, IPointOfInterest target, REACTION_STATUS status) {
+    public override string ProcessEmotion(Character witness, IPointOfInterest target, REACTION_STATUS status,
+        ActualGoapNode goapNode = null) {
         if (target is Character) {
             Character targetCharacter = target as Character;
             witness.relationshipContainer.AdjustOpinion(witness, targetCharacter, "Gratefulness", 10);
@@ -22,7 +23,7 @@ public class Gratefulness : Emotion {
                 this
             );
         }
-        return base.ProcessEmotion(witness, target, status);
+        return base.ProcessEmotion(witness, target, status, goapNode);
     }
     #endregion
 }

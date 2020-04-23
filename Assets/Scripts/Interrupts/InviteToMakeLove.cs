@@ -12,7 +12,8 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target, ref Log overrideEffectLog) {
+        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target,
+            ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             if(target is Character targetCharacter) {
                 string debugLog = $"{actor.name} invite to make love interrupt with {targetCharacter.name}";
 

@@ -14,7 +14,8 @@ public class Emotion {
         name = UtilityScripts.Utilities.NotNormalizedConversionEnumToString(emotionType.ToString());
         responses = new string[] { name };
     }
-    public virtual string ProcessEmotion(Character actor, IPointOfInterest target, REACTION_STATUS status) {
+    public virtual string ProcessEmotion(Character actor, IPointOfInterest target, REACTION_STATUS status,
+        ActualGoapNode goapNode = null) {
         return responses[UnityEngine.Random.Range(0, responses.Length)];
     }
     public bool IsEmotionCompatibleWithThis(string emotionName) {

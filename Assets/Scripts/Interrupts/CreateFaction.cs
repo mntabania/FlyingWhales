@@ -11,7 +11,8 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target, ref Log overrideEffectLog) {
+        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target,
+            ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             Faction newFaction = FactionManager.Instance.CreateNewFaction(actor.race);
             actor.ChangeFactionTo(newFaction);
             newFaction.SetLeader(actor);

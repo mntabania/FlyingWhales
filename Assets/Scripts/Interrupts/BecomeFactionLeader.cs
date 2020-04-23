@@ -11,7 +11,8 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target, ref Log overrideEffectLog) {
+        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target,
+            ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             actor.faction.SetLeader(actor);
 
             overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", "Become Faction Leader", "became_leader");

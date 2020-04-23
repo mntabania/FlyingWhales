@@ -9,7 +9,8 @@ public class Disapproval : Emotion {
     }
 
     #region Overrides
-    public override string ProcessEmotion(Character witness, IPointOfInterest target, REACTION_STATUS status) {
+    public override string ProcessEmotion(Character witness, IPointOfInterest target, REACTION_STATUS status,
+        ActualGoapNode goapNode = null) {
         if (target is Character) {
             Character targetCharacter = target as Character;
             witness.relationshipContainer.AdjustOpinion(witness, targetCharacter, "Disapproval", -4);
@@ -17,7 +18,7 @@ public class Disapproval : Emotion {
                 targetCharacter.interruptComponent.TriggerInterrupt(INTERRUPT.Stopped, witness);
             }
         }
-        return base.ProcessEmotion(witness, target, status);
+        return base.ProcessEmotion(witness, target, status, goapNode);
     }
     #endregion
 }

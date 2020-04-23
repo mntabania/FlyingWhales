@@ -11,7 +11,8 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target, ref Log overrideEffectLog) {
+        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target,
+            ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             actor.traitContainer.AddTrait(actor, "Angry");
             return true;
         }

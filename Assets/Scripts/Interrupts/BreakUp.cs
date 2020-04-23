@@ -11,7 +11,8 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target, ref Log overrideEffectLog) {
+        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target,
+            ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             actor.nonActionEventsComponent.NormalBreakUp(target as Character, actor.interruptComponent.simultaneousIdentifier);
             return true;
         }

@@ -11,7 +11,8 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target, ref Log overrideEffectLog) {
+        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target,
+            ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             Faction prevFaction = actor.faction;
             if (actor.ChangeFactionTo(FactionManager.Instance.friendlyNeutralFaction)) {
                 overrideEffectLog  = new Log(GameManager.Instance.Today(), "Interrupt", "Leave Faction", actor.interruptComponent.simultaneousIdentifier);
@@ -20,7 +21,7 @@ namespace Interrupts {
                 //actor.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
                 return true;
             }
-            return base.ExecuteInterruptStartEffect(actor, target, ref overrideEffectLog);
+            return base.ExecuteInterruptStartEffect(actor, target, ref overrideEffectLog, goapNode);
         }
         #endregion
     }

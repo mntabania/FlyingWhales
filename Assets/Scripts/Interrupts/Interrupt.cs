@@ -22,7 +22,8 @@ namespace Interrupts {
 
         #region Virtuals
         public virtual bool ExecuteInterruptEndEffect(Character actor, IPointOfInterest target) { return false; }
-        public virtual bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target, ref Log overrideEffectLog) { return false; }
+        public virtual bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target,
+            ref Log overrideEffectLog, ActualGoapNode goapNode = null) { return false; }
         public virtual string ReactionToActor(Character witness, Character actor, IPointOfInterest target,
             Interrupt interrupt, REACTION_STATUS status) { return string.Empty; }
         public virtual string ReactionToTarget(Character witness, Character actor, IPointOfInterest target,

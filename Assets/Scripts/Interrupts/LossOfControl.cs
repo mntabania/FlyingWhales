@@ -14,7 +14,8 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target, ref Log overrideEffectLog) {
+        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target,
+            ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             actor.DecreaseCanMove();
             overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", "Mental Break", "break");
             overrideEffectLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -53,7 +54,7 @@ namespace Interrupts {
                 }
             }
             
-            return base.ExecuteInterruptStartEffect(actor, target, ref overrideEffectLog);
+            return base.ExecuteInterruptStartEffect(actor, target, ref overrideEffectLog, goapNode);
         }
         public override bool ExecuteInterruptEndEffect(Character actor, IPointOfInterest target) {
             actor.IncreaseCanMove();
