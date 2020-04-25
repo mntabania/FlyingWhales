@@ -60,7 +60,7 @@ public class PlayerSkillDetails : MonoBehaviour {
         confirmationGO.SetActive(true);
     }
     public void OnClickYes() {
-        SaveManager.Instance.currentSaveDataPlayer.LearnSkill(skillData.type, skillTreeNode.expCost);
+        SaveManager.Instance.currentSaveDataPlayer.LearnSkill(skillData.type, skillTreeNode);
         parentPlayerSkillTreeUI.OnLearnSkill(skillData.type);
         confirmationGO.SetActive(false);
     }
