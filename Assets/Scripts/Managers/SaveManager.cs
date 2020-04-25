@@ -62,7 +62,7 @@ public class SaveManager : MonoBehaviour {
     }
     public void Save() {
         //PlayerManager.Instance.player.SaveSummons();
-        PlayerManager.Instance.player.SaveTileObjects();
+        //PlayerManager.Instance.player.SaveTileObjects();
         SaveDataPlayer save = currentSaveDataPlayer;
         SaveGame.Save(UtilityScripts.Utilities.gameSavePath + saveDataPlayerFileName, save);
     }
