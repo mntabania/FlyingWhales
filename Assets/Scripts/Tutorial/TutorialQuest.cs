@@ -88,7 +88,8 @@ namespace Tutorial {
                     TutorialQuestStepCollection stepCollection = steps[nextIndex];
                     stepCollection.Activate();
                     activeStepCollection = stepCollection;
-                    tutorialQuestItem.UpdateSteps();
+                    //only re layout if completed collection has a different number of steps compared to the new active one. 
+                    tutorialQuestItem.UpdateSteps(completedCollection.steps.Count != activeStepCollection.steps.Count);
                 }
             }
         }

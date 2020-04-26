@@ -4,7 +4,7 @@ namespace Tutorial {
         
         private readonly string _neededIdentifier;
         
-        public ToggleTurnedOnStep(string neededIdentifier, string stepDescription, string tooltip = "") 
+        public ToggleTurnedOnStep(string neededIdentifier, string stepDescription) 
             : base(stepDescription) {
             _neededIdentifier = neededIdentifier;
         }

@@ -684,9 +684,9 @@ public class CharacterInfoUI : InfoUIBase {
         UIManager.Instance.ShowYesNoConfirmation("Affliction Confirmation", "Are you sure you want to afflict " + afflictionName + "?", () => ActivateAffliction(afflictionType));
     }
     private void ActivateAffliction(SPELL_TYPE afflictionType) {
+        UIManager.Instance.HideObjectPicker();
         PlayerSkillManager.Instance.GetAfflictionData(afflictionType).ActivateAbility(activeCharacter);
         PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.AFFLICT).OnExecuteSpellActionAffliction();
-        UIManager.Instance.HideObjectPicker();
     }
     private bool CanActivateAffliction(string afflictionName) {
         SPELL_TYPE afflictionType = (SPELL_TYPE) System.Enum.Parse(typeof(SPELL_TYPE), afflictionName.ToUpper().Replace(' ', '_'));

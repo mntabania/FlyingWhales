@@ -6,7 +6,7 @@ namespace Tutorial {
         private readonly System.Type _neededType;
         
         public DropCharacterAtStructureStep(STRUCTURE_TYPE dropAt, System.Type neededType, 
-            string stepDescription = "Drop character at structure", string tooltip = "") : base(stepDescription) {
+            string stepDescription = "Drop character at structure") : base(stepDescription) {
             _dropAt = dropAt;
             _neededType = neededType;
         }

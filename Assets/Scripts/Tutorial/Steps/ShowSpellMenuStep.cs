@@ -1,6 +1,6 @@
 ﻿namespace Tutorial {
     public class ShowSpellMenuStep : TutorialQuestStep {
-        public ShowSpellMenuStep(string stepDescription = "Click on Spells tab", string tooltip = "") 
+        public ShowSpellMenuStep(string stepDescription = "Click on Spells tab") 
             : base(stepDescription) { }
         protected override void SubscribeListeners() {
             Messenger.AddListener(Signals.SPELLS_MENU_SHOWN, Complete);

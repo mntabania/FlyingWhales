@@ -25,11 +25,6 @@ namespace Tutorial {
         
         //UI
         public TutorialUI tutorialUI;
-        [SerializeField] private VideoPlayer videoPlayer;
-
-        //Pictures
-        public RenderTexture tutorialRenderTexture;
-        public Texture2D spellPopUpPicture;
         
         //Video Clips
         public VideoClip demonicStructureVideoClip;
@@ -38,6 +33,11 @@ namespace Tutorial {
         public VideoClip storeIntelVideoClip;
         public VideoClip shareIntelVideoClip;
         public VideoClip blessedVideoClip;
+        public VideoClip timeControlsVideoClip;
+        public VideoClip areaVideoClip;
+        public VideoClip spellsVideoClip;
+        public VideoClip afflictionsVideoClip;
+        public Texture deadCharactersImage;
 
         #region Monobehaviours
         private void Awake() {
@@ -173,16 +173,6 @@ namespace Tutorial {
                     _instantiatedTutorials.Add(tutorialQuest);
                 }
             }
-        }
-        #endregion
-
-        #region Video Player
-        public void SetVideoClip(VideoClip videoClip) {
-            videoPlayer.clip = videoClip;
-            videoPlayer.Stop();
-        }
-        public void PlayVideoClip() {
-            videoPlayer.Play();
         }
         #endregion
 

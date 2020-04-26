@@ -1,7 +1,7 @@
 ﻿namespace Tutorial {
     public class ObjectPickerShownStep : TutorialQuestStep {
         private readonly string _neededIdentifier;
-        public ObjectPickerShownStep(string stepDescription, string neededIdentifier, string tooltip = "") 
+        public ObjectPickerShownStep(string stepDescription, string neededIdentifier) 
             : base(stepDescription) {
             _neededIdentifier = neededIdentifier;
         }

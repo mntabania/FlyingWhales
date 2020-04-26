@@ -3,7 +3,7 @@ using System.Linq;
 namespace Tutorial {
     public class EliminateCharacterStep : TutorialQuestStep {
         private readonly List<Character> _targets;
-        public EliminateCharacterStep(string stepDescription = "Eliminate characters", string tooltip = "", 
+        public EliminateCharacterStep(string stepDescription = "Eliminate characters", 
             params Character[] targets) : base(stepDescription) {
             _targets = new List<Character>(targets);
         }

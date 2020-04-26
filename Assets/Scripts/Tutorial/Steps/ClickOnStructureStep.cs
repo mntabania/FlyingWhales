@@ -4,7 +4,7 @@ namespace Tutorial {
     public class ClickOnStructureStep : TutorialQuestStep {
         private readonly string _structureIdentifier;
         public ClickOnStructureStep(string stepDescription = "Click on a structure", 
-            string structureIdentifier = "Normal", string tooltip = "") : base(stepDescription) {
+            string structureIdentifier = "Normal") : base(stepDescription) {
             _structureIdentifier = structureIdentifier;
         }
         protected override void SubscribeListeners() {

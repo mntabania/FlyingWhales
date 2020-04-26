@@ -2,7 +2,7 @@
 namespace Tutorial {
     public class ClickOnAreaStep : TutorialQuestStep {
         private readonly Func<HexTile, bool> _validityChecker;
-        public ClickOnAreaStep(string stepDescription = "Click on an area", string tooltip = "", 
+        public ClickOnAreaStep(string stepDescription = "Click on an area", 
             Func<HexTile, bool> validityChecker = null) : base(stepDescription) {
             _validityChecker = validityChecker;
         }

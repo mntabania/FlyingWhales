@@ -130,6 +130,7 @@ public class UnleashSummonUI : PopupMenuBase {
         Character spawnedCharacter = null;
 
         if (identifier == "harass") {
+            PopulateEntrances(targetHex);
             for (int i = 0; i < chosenSummons.Count; i++) {
                 Summon summon = chosenSummons[i] as Summon;
                 TryPlaceSummon(summon, entrances[0]);
@@ -164,6 +165,7 @@ public class UnleashSummonUI : PopupMenuBase {
             }
             PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.DEFEND).OnExecuteSpellActionAffliction();
         } else if (identifier == "invade") {
+            PopulateEntrances(targetHex);
             for (int i = 0; i < chosenSummons.Count; i++) {
                 Summon summon = chosenSummons[i] as Summon;
                 TryPlaceSummon(summon, entrances[0]);

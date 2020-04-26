@@ -4,7 +4,7 @@ namespace Tutorial {
     public class StructureBuiltStep : TutorialQuestStep {
         private readonly STRUCTURE_TYPE _neededStructure;
         
-        public StructureBuiltStep(STRUCTURE_TYPE neededStructure, string stepDescription = "Build Structure", string tooltip = "") 
+        public StructureBuiltStep(STRUCTURE_TYPE neededStructure, string stepDescription = "Build Structure") 
             : base(stepDescription) {
             _neededStructure = neededStructure;
         }

@@ -2,7 +2,7 @@
 namespace Tutorial {
     public class ChooseSpellStep : TutorialQuestStep {
         private readonly SPELL_TYPE _neededSpellType;
-        public ChooseSpellStep(SPELL_TYPE neededSpellType, string stepDescription, string tooltip = "") 
+        public ChooseSpellStep(SPELL_TYPE neededSpellType, string stepDescription) 
             : base(stepDescription) {
             _neededSpellType = neededSpellType;
         }

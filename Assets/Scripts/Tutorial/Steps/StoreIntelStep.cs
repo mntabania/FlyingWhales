@@ -1,6 +1,6 @@
 ﻿namespace Tutorial {
     public class StoreIntelStep : TutorialQuestStep {
-        public StoreIntelStep(string stepDescription = "Store an intel", string tooltip = "") 
+        public StoreIntelStep(string stepDescription = "Store an intel") 
             : base(stepDescription) { }
         protected override void SubscribeListeners() {
             Messenger.AddListener<IIntel>(Signals.PLAYER_OBTAINED_INTEL, CheckForCompletion);

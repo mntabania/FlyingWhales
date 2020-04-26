@@ -1,6 +1,6 @@
 ﻿namespace Tutorial {
     public class ClickOnObjectStep : TutorialQuestStep {
-        public ClickOnObjectStep(string stepDescription = "Click on an object", string tooltip = "") 
+        public ClickOnObjectStep(string stepDescription = "Click on an object") 
             : base(stepDescription) { }
         protected override void SubscribeListeners() {
             Messenger.AddListener<ISelectable>(Signals.SELECTABLE_LEFT_CLICKED, CheckForCompletion);
