@@ -1075,5 +1075,17 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         _owner.jobQueue.AddJobInQueue(job);
         return true;
     }
+    public bool CreateConfirmRumorJob(Character targetCharacter, ActualGoapNode action) {
+        if (targetCharacter.isDead) {
+            return false;
+        }
+        if (action == null) {
+            return false;
+        }
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CONFIRM_RUMOR, INTERACTION_TYPE.SHARE_INFORMATION, targetCharacter, _owner);
+        job.AddOtherData(INTERACTION_TYPE.SHARE_INFORMATION, new object[] { action });
+        _owner.jobQueue.AddJobInQueue(job);
+        return true;
+    }
     #endregion
 }

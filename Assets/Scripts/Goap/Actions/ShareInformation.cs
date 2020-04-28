@@ -57,9 +57,7 @@ public class ShareInformation : GoapAction {
 
         REACTABLE_EFFECT reactableEffect = reactable.GetReactableEffect();
         if (reactableEffect == REACTABLE_EFFECT.Negative) {
-            //TODO: Rumormongering Crime
-
-            if(witness == reactable.actor) {
+            if (witness == reactable.actor) {
                 if(reactable is ActualGoapNode) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Embarassment, witness, actor, status, node);
                 } else {
@@ -80,6 +78,7 @@ public class ShareInformation : GoapAction {
                     }
                 }
             }
+            CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.INFRACTION);
         } else {
             if (witness == reactable.actor) {
                 if (reactable is ActualGoapNode) {
@@ -98,7 +97,9 @@ public class ShareInformation : GoapAction {
             }
         }
         //SPECIAL CASE: After reacting to the Share Info Action itself, witness should also react to the rumor itself
-        ProcessInformation(node.actor, witness, reactable);
+        if(reactable.name != "Share Information") {
+            ProcessInformation(node.actor, witness, reactable, node);
+        }
         return response;
     }
     #endregion
@@ -109,9 +110,9 @@ public class ShareInformation : GoapAction {
         IReactable reactable = otherData[0] as IReactable;
         Character sharer = goapNode.actor;
         Character recipient = goapNode.poiTarget as Character;
-        ProcessInformation(sharer, recipient, reactable);
+        ProcessInformation(sharer, recipient, reactable, goapNode);
     }
-    private void ProcessInformation(Character sharer, Character recipient, IReactable reactable) {
+    private void ProcessInformation(Character sharer, Character recipient, IReactable reactable, ActualGoapNode shareActionItself) {
         if (reactable is ActualGoapNode || reactable is InterruptHolder) {
             if (reactable.actor != recipient) {
                 recipient.reactionComponent.ReactTo(reactable, REACTION_STATUS.INFORMED, false);
@@ -187,6 +188,7 @@ public class ShareInformation : GoapAction {
                     CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, recipient, sharer, REACTION_STATUS.INFORMED, reactable as ActualGoapNode);
                     if (UnityEngine.Random.Range(0, 100) < 35) {
                         //TODO: Confirm Rumor
+                        recipient.jobComponent.CreateConfirmRumorJob(reactable.actor, shareActionItself);
                     }
                 }
                 Log believeLog = new Log(GameManager.Instance.Today(), "GoapAction", name, result);
