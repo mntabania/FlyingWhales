@@ -7,20 +7,20 @@ using UtilityScripts;
 public class WorldMapLandmarkGeneration : MapGenerationComponent {
 
 	public override IEnumerator Execute(MapGenerationData data) {
-		CreateMonsterLairs();
+		CreateMonsterLairs(WorldConfigManager.Instance.isDemoWorld ? 1 : 3, WorldConfigManager.Instance.isDemoWorld ? 100 : 75);
 		yield return null;
-		CreateAbandonedMines();
+		CreateAbandonedMines(WorldConfigManager.Instance.isDemoWorld ? 0 : 2, WorldConfigManager.Instance.isDemoWorld ? 0 : 50);
 		yield return null;
-		CreateTemples();
+		CreateTemples(WorldConfigManager.Instance.isDemoWorld ? 1 : 2, WorldConfigManager.Instance.isDemoWorld ? 100 : 35);
 		yield return null;
-		CreateMageTowers();
+		CreateMageTowers(WorldConfigManager.Instance.isDemoWorld ? 0 : 2, WorldConfigManager.Instance.isDemoWorld ? 0 : 35);
 		yield return null;
 	}
 
-	private void CreateMonsterLairs() {
+	private void CreateMonsterLairs(int loopCount, int chance) {
 		int createdCount = 0;
-		for (int i = 0; i < 3; i++) { //3
-			if (Random.Range(0, 100) < 75) { //75
+		for (int i = 0; i < loopCount; i++) { //3
+			if (Random.Range(0, 100) < chance) { //75
 				List<HexTile> choices = GridMap.Instance.normalHexTiles
 					.Where(x => x.elevationType == ELEVATION.PLAIN && x.featureComponent.features.Count == 0 && x.landmarkOnTile == null)
 					.ToList();
@@ -37,10 +37,10 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 		}
 		Debug.Log($"Created {createdCount.ToString()} Monster Lairs");
 	}
-	private void CreateAbandonedMines() {
+	private void CreateAbandonedMines(int loopCount, int chance) {
 		int createdCount = 0;
-		for (int i = 0; i < 2; i++) {
-			if (Random.Range(0, 100) < 50) { //50
+		for (int i = 0; i < loopCount; i++) {
+			if (Random.Range(0, 100) < chance) { //50
 				List<HexTile> choices = GridMap.Instance.normalHexTiles
 					.Where(x => x.elevationType == ELEVATION.PLAIN && x.featureComponent.features.Count == 0
 					            && x.HasNeighbourWithElevation(ELEVATION.MOUNTAIN) && x.landmarkOnTile == null)
@@ -58,10 +58,10 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 		}
 		Debug.Log($"Created {createdCount.ToString()} Mines");
 	}
-	private void CreateTemples() {
+	private void CreateTemples(int loopCount, int chance) {
 		int createdCount = 0;
-		for (int i = 0; i < 2; i++) {
-			if (Random.Range(0, 100) < 35) { //35
+		for (int i = 0; i < loopCount; i++) {
+			if (Random.Range(0, 100) < chance) { //35
 				List<HexTile> choices = GridMap.Instance.normalHexTiles
 					.Where(x => x.elevationType == ELEVATION.PLAIN && x.featureComponent.features.Count == 0 && x.landmarkOnTile == null)
 					.ToList();
@@ -78,10 +78,10 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 		}
 		Debug.Log($"Created {createdCount.ToString()} Temples");
 	}
-	private void CreateMageTowers() {
+	private void CreateMageTowers(int loopCount, int chance) {
 		int createdCount = 0;
-		for (int i = 0; i < 2; i++) {
-			if (Random.Range(0, 100) < 35) { //35
+		for (int i = 0; i < loopCount; i++) {
+			if (Random.Range(0, 100) < chance) { //35
 				List<HexTile> choices = GridMap.Instance.normalHexTiles
 					.Where(x => x.elevationType == ELEVATION.PLAIN && x.featureComponent.features.Count == 0 && x.landmarkOnTile == null)
 					.ToList();

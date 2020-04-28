@@ -9,12 +9,18 @@ public class TileFeatureGeneration : MapGenerationComponent {
 
 	public override IEnumerator Execute(MapGenerationData data) {
 		yield return MapGenerator.Instance.StartCoroutine(GenerateFeaturesForAllTiles());
-		yield return MapGenerator.Instance.StartCoroutine(ComputeHabitabilityValues(data));
-		if (IsGeneratedMapValid(data)) {
-			DetermineSettlements(4, data);	
-		} else {
-			succeess = false;
+		if (WorldConfigManager.Instance.isDemoWorld) {
+			DetermineSettlementsForDemo();
 		}
+		else {
+			yield return MapGenerator.Instance.StartCoroutine(ComputeHabitabilityValues(data));
+			if (IsGeneratedMapValid(data)) {
+				DetermineSettlements(4, data);	
+			} else {
+				succeess = false;
+			}
+		}
+		
 	}
 	private IEnumerator GenerateFeaturesForAllTiles() {
 		List<HexTile> flatTilesWithNoFeatures = new List<HexTile>();
@@ -174,29 +180,47 @@ public class TileFeatureGeneration : MapGenerationComponent {
 				LandmarkManager.Instance.CreateNewLandmarkOnTile(settlementTile, LANDMARK_TYPE.VILLAGE);
 			}
 		}
+	}
+	private void DetermineSettlementsForDemo() {
+		Region region = GridMap.Instance.allRegions[0];
+		HexTile habitableTile = CollectionUtilities.GetRandomElement(region.tiles);
+		int tileCount = 3;
+		List<HexTile> chosenTiles = new List<HexTile> {habitableTile};
+		List<HexTile> tileChoices = new List<HexTile>(habitableTile.AllNeighbours);
+		while (chosenTiles.Count != tileCount) {
+			Assert.IsTrue(tileChoices.Count > 0, "Settlement tile choices for demo is lacking.");
+			HexTile chosenTile = CollectionUtilities.GetRandomElement(tileChoices);
+			chosenTiles.Add(chosenTile);
+			chosenTile.SetElevation(ELEVATION.PLAIN);
+			tileChoices.Remove(chosenTile);
+		}
+
+		for (int i = 0; i < chosenTiles.Count; i++) {
+			HexTile chosenTile = chosenTiles[i];
+			chosenTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, chosenTile);
+			LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.VILLAGE);
+		}
 		
-		
-		// string log = "Determining npcSettlement tiles";
-		// List<Region> settlementChoices = new List<Region>(GridMap.Instance.allRegions);
-		// for (int i = 0; i < count; i++) {
-		// 	Region chosenRegion = CollectionUtilities.GetRandomElement(settlementChoices);
-		// 	HexTile randomTile = CollectionUtilities.GetRandomElement(chosenRegion.tiles);
-		// 	randomTile.SetElevation(ELEVATION.PLAIN);
-		// 	randomTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, randomTile);
-		// 	LandmarkManager.Instance.CreateNewLandmarkOnTile(randomTile, LANDMARK_TYPE.VILLAGE, false);
-		// 	log += $"\nChose {randomTile.ToString()} to be a npcSettlement";
-		// 	if (Random.Range(0, 2) == 1) {
-		// 		//2 tiles are settlements
-		// 		HexTile adjacentTile = CollectionUtilities.GetRandomElement(randomTile.AllNeighbours
-		// 			.Where(x => x.featureComponent.HasFeature(TileFeatureDB.Inhabited_Feature) == false
-		// 			            && x.region == randomTile.region).ToList());
-		// 		adjacentTile.SetElevation(ELEVATION.PLAIN);
-		// 		adjacentTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, adjacentTile);
-		// 		LandmarkManager.Instance.CreateNewLandmarkOnTile(adjacentTile, LANDMARK_TYPE.VILLAGE, false);
-		// 		log += $"\nChose {adjacentTile.ToString()} next to {randomTile.ToString()} to be a npcSettlement";
-		// 	}
-		// 	settlementChoices.Remove(chosenRegion);
-		// }
+		List<HexTile> neighbouringTiles = GetNeighbouringTiles(chosenTiles);
+		//if settlement is not adjacent to any water hex tile create one
+		if (neighbouringTiles.Any(h => h.elevationType == ELEVATION.WATER) == false) {
+			HexTile randomTile = CollectionUtilities.GetRandomElement(neighbouringTiles);
+			randomTile.SetElevation(ELEVATION.WATER);
+			randomTile.featureComponent.RemoveAllFeatures(randomTile);
+		}
+	}
+	private List<HexTile> GetNeighbouringTiles(List<HexTile> tiles) {
+		List<HexTile> neighbouringTiles = new List<HexTile>();
+		for (int i = 0; i < tiles.Count; i++) {
+			HexTile tile = tiles[i];
+			for (int j = 0; j < tile.AllNeighbours.Count; j++) {
+				HexTile neighbour = tile.AllNeighbours[j];
+				if (tiles.Contains(neighbour) == false && neighbouringTiles.Contains(neighbour) == false) {
+					neighbouringTiles.Add(neighbour);
+				}
+			}
+		}
+		return neighbouringTiles;
 	}
 	private HexTile GetTileWithHighestHabitability(Region region, MapGenerationData data) {
 		int highestHabitability = 0;

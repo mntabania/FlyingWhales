@@ -32,7 +32,7 @@ public class ObjectPoolManager : MonoBehaviour {
 
         for (int i = 0; i < otherPrefabs.Length; i++) {
             GameObject currPrefab = otherPrefabs[i];
-            CreateNewPool(currPrefab, currPrefab.name, 0, true, true, false); //50
+            CreateNewPool(currPrefab, currPrefab.name, 0, true, true, false); //50    
         }
 
         ConstructGoapNodes();

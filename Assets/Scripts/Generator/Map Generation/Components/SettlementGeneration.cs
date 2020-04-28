@@ -25,6 +25,9 @@ public class SettlementGeneration : MapGenerationComponent {
 	
 	private IEnumerator CreateSettlement(Region region, MapGenerationData data) {
 		List<HexTile> settlementTiles = region.GetTilesWithFeature(TileFeatureDB.Inhabited_Feature);
+		if (WorldConfigManager.Instance.isDemoWorld) {
+			Assert.IsTrue(settlementTiles.Count == 3, "Settlement tiles of demo build is not 3!");
+		}
 		Faction faction = FactionManager.Instance.CreateNewFaction(CollectionUtilities.GetRandomElement(raceChoices));
 		LOCATION_TYPE locationType = LOCATION_TYPE.HUMAN_SETTLEMENT;
 		if (faction.race == RACE.ELVES) {
@@ -34,9 +37,9 @@ public class SettlementGeneration : MapGenerationComponent {
 			(region, locationType, 1, settlementTiles.ToArray());
 		npcSettlement.AddStructure(region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
 		LandmarkManager.Instance.OwnSettlement(faction, npcSettlement);
-		
-		List<STRUCTURE_TYPE> structureTypes = GenerateStructures(npcSettlement);
-
+		var structureTypes = WorldConfigManager.Instance.isDemoWorld ? 
+			new List<STRUCTURE_TYPE>() {STRUCTURE_TYPE.CITY_CENTER, STRUCTURE_TYPE.FARM, STRUCTURE_TYPE.MINE} : 
+			GenerateStructures(npcSettlement);
 		yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.PlaceBuiltStructuresForSettlement(npcSettlement, region.innerMap, structureTypes.ToArray()));
 		yield return MapGenerator.Instance.StartCoroutine(npcSettlement.PlaceObjects());
 

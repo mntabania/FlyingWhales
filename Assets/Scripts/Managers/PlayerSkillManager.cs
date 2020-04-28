@@ -165,6 +165,9 @@ public class PlayerSkillManager : MonoBehaviour {
     public bool IsAffliction(SPELL_TYPE type) {
         return allAfflictions.Contains(type);
     }
+    public bool IsMinion(SPELL_TYPE type) {
+        return allMinionPlayerSkills.Contains(type);
+    }
     public bool IsPlayerAction(SPELL_TYPE type) {
         return allPlayerActions.Contains(type);
     }

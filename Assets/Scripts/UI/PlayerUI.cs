@@ -902,34 +902,16 @@ public class PlayerUI : MonoBehaviour {
         }
     }
     private void ShowSpells() {
-        // spellList.ShowDropdown(PlayerManager.Instance.player.archetype.spells, OnClickSpell, CanChooseItem);
-        //customDropdownList.ShowDropdown(PlayerManager.Instance.player.archetype.spells, OnClickSpell, CanChooseItem);
         spellsContainerGO.SetActive(true);
         Messenger.Broadcast(Signals.SPELLS_MENU_SHOWN);
     }
-    //private bool CanChooseItem(string item) {
-    //    //if (item == PlayerDB.Tornado || item == PlayerDB.Meteor || item == PlayerDB.Ravenous_Spirit || item == PlayerDB.Feeble_Spirit || item == PlayerDB.Forlorn_Spirit
-    //    //    || item == PlayerDB.Lightning || item == PlayerDB.Poison_Cloud || item == PlayerDB.Locust_Swarm || item == PlayerDB.Earthquake
-    //    //    || item == PlayerDB.Locust_Swarm || item == PlayerDB.Spawn_Boulder || item == PlayerDB.Manifest_Food
-    //    //    || item == PlayerDB.Brimstones || item == PlayerDB.Water_Bomb || item == PlayerDB.Splash_Poison || item == PlayerDB.Blizzard) {
-    //    //    return true;
-    //    //}
-    //    //return false;
-    //    return true;
-    //}
     private void HideSpells() {
         spellsContainerGO.SetActive(false);
         //customDropdownList.HideDropdown();
     }
-    public void CreateInitialSpells() {
+    private void CreateInitialSpells() {
         for (int i = 0; i < PlayerManager.Instance.player.playerSkillComponent.spells.Count; i++) {
             SPELL_TYPE spell = PlayerManager.Instance.player.playerSkillComponent.spells[i];
-// #if !UNITY_EDITOR
-            if(spell == SPELL_TYPE.FEEBLE_SPIRIT || spell == SPELL_TYPE.RAVENOUS_SPIRIT 
-                || spell == SPELL_TYPE.FORLORN_SPIRIT){
-                continue;
-            }
-// #endif
             CreateNewSpellItem(spell);
         }
     }
@@ -956,6 +938,10 @@ public class PlayerUI : MonoBehaviour {
                 }
             }
         }
+        if (WorldConfigManager.Instance.isDemoWorld) {
+            //in demo world, only allow spells that are set to be available.
+            item.SetInteractableState(WorldConfigManager.Instance.availableSpellsInDemoBuild.Contains(spell));
+        }
         _spellItems.Add(item);
     }
     private void DeleteSpellItem(SPELL_TYPE spell) {
@@ -973,18 +959,6 @@ public class PlayerUI : MonoBehaviour {
         }
         return null;
     }
-    //private void OnClickSpell(string spellName) {
-    //    if(PlayerManager.Instance.player.currentActivePlayerSpell != null) {
-    //        PlayerManager.Instance.player.SetCurrentlyActivePlayerSpell(null);
-    //    }
-    //    SPELL_TYPE spell = SPELL_TYPE.NONE;
-    //    string enumSpellName = spellName.ToUpper().Replace(' ', '_');
-    //    if (!System.Enum.TryParse(enumSpellName, out spell)) {
-    //        System.Enum.TryParse(enumSpellName + "_SPELL", out spell);
-    //    }
-    //    SpellData ability = PlayerManager.Instance.GetSpellData(spell);
-    //    PlayerManager.Instance.player.SetCurrentlyActivePlayerSpell(ability);
-    //}
     #endregion
 
     #region Summons

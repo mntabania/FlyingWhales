@@ -23,7 +23,7 @@ namespace Inner_Maps {
         public IEnumerator GenerateMap(MapGenerationComponent mapGenerationComponent) {
             name = $"{region.name}'s Inner Map";
             region.SetRegionInnerMap(this);
-            ClearAllTilemaps();
+            ClearAllTileMaps();
             Vector2Int buildSpotGridSize = CreateTileCollectionGrid(mapGenerationComponent);
             int tileMapWidth = buildSpotGridSize.x * InnerMapManager.BuildingSpotSize.x;
             int tileMapHeight = buildSpotGridSize.y * InnerMapManager.BuildingSpotSize.y;

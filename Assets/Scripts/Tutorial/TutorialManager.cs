@@ -9,7 +9,12 @@ namespace Tutorial {
 
         public static TutorialManager Instance;
         public const string CompletedTutorialsKey = "Completed_Tutorials";
-        public enum Tutorial { Basic_Controls, Build_A_Kennel, Defend_A_Structure, Cast_Meteor, Character_Info,
+        public enum Tutorial { 
+            Basic_Controls, 
+            Build_A_Kennel, 
+            Defend_A_Structure, 
+            Cast_Meteor, 
+            Character_Info,
             Harass_A_Village,
             Regional_Map,
             Trigger_Poison_Explosion,
@@ -58,7 +63,6 @@ namespace Tutorial {
         }
         #endregion
 
-
         #region Initialization
         public void Initialize() {
             _activeTutorials = new List<TutorialQuest>();
@@ -72,7 +76,12 @@ namespace Tutorial {
             Tutorial[] allTutorials = CollectionUtilities.GetEnumValues<Tutorial>();
             for (int i = 0; i < allTutorials.Length; i++) {
                 Tutorial tutorial = allTutorials[i];
-                if (completedTutorials.Contains(tutorial.ToString()) == false) {
+                bool instantiateTutorial = completedTutorials.Contains(tutorial.ToString()) == false;
+                if (WorldConfigManager.Instance.isDemoWorld && instantiateTutorial) {
+                    //if is demo world, check if tutorial should be enabled in demo
+                    instantiateTutorial = WorldConfigManager.Instance.demoTutorials.Contains(tutorial);
+                }
+                if (instantiateTutorial) {
                     TutorialQuest tutorialQuest = InstantiateTutorial(tutorial);
                     tutorialQuest.WaitForAvailability();
                     _instantiatedTutorials.Add(tutorialQuest);

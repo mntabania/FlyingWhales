@@ -3,6 +3,7 @@ using System.Linq;
 using Inner_Maps;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 namespace Ruinarch {
     public class InputManager : MonoBehaviour {
 
@@ -25,7 +26,9 @@ namespace Ruinarch {
         public Cursor_Type currentCursorType;
         public Cursor_Type previousCursorType;
         //public PLAYER_ARCHETYPE selectedArchetype { get; private set; } //Need to move this in the future. Not the best way to store the selected archetype from the main menu scene, but for now this will do since we need an object that is carried to the Game scene
-
+        private bool runUpdate;
+        
+        
         #region Monobehaviours
         private void Awake() {
             if (Instance == null) {
@@ -34,11 +37,13 @@ namespace Ruinarch {
                 SetCursorTo(Cursor_Type.Default);
                 previousCursorType = Cursor_Type.Default;
                 // Cursor.lockState = CursorLockMode.Confined;
+                SceneManager.activeSceneChanged += OnActiveSceneChanged;
             } else {
                 Destroy(gameObject);
             }
         }
-        private void Update() { 
+        private void Update() {
+            if (runUpdate == false) { return; }
             if (ReferenceEquals(PlayerManager.Instance, null) == false && PlayerManager.Instance.player != null) {
                 if (PlayerManager.Instance.player.seizeComponent.hasSeizedPOI) {
                     if (UIManager.Instance.IsMouseOnUI() || !InnerMapManager.Instance.isAnInnerMapShowing) {
@@ -217,5 +222,15 @@ namespace Ruinarch {
                 }
             }
         }
+
+        #region Utilities
+        private void OnActiveSceneChanged(Scene current, Scene next) {
+            if (next.name == "Game") {
+                runUpdate = true;
+            } else {
+                runUpdate = false;
+            }
+        }
+        #endregion
     }
 }

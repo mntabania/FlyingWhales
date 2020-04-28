@@ -127,7 +127,7 @@ namespace Inner_Maps {
         #endregion
 
         #region Visuals
-        public void ClearAllTilemaps() {
+        protected void ClearAllTileMaps() {
             for (var i = 0; i < _allTilemaps.Length; i++) {
                 _allTilemaps[i].ClearAllTiles();
             }
@@ -561,7 +561,7 @@ namespace Inner_Maps {
             stopwatch.Stop();
             mapGenerationComponent.AddLog($"{region.name} GenerateDetails took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
         }
-        public void MassSetGroundTileMapVisuals(Vector3Int[] tilePositions, TileBase[] groundAssets) {
+        private void MassSetGroundTileMapVisuals(Vector3Int[] tilePositions, TileBase[] groundAssets) {
             groundTilemap.SetTiles(tilePositions, groundAssets);
             for (int i = 0; i < tilePositions.Length; i++) {
                 LocationGridTile tile = map[tilePositions[i].x, tilePositions[i].y];

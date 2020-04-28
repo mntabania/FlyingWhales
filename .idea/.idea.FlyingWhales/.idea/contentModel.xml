@@ -2329,6 +2329,7 @@
               <e p="SkillPanelUI.cs" t="Include" />
               <e p="TraitPanelUI.cs" t="Include" />
             </e>
+            <e p="DemoUI.cs" t="Include" />
             <e p="DeveloperNotificationArea.cs" t="Include" />
             <e p="DeveloperNotificationItem.cs" t="Include" />
             <e p="DialogItem.cs" t="Include" />

@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: d64d057451588de47862f92a337b5fc0, type: 3}
-    totalSpriteSurfaceArea: 14163100
+    totalSpriteSurfaceArea: 16236700
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -236,6 +236,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 12143706cced450468790025e798d4c8, type: 3}
   - {fileID: 21300000, guid: a281ef06c58a0814db5c0d3bfbf59830, type: 3}
   - {fileID: 21300000, guid: b841b11601ebf1d43abe56c6978bdef0, type: 3}
+  - {fileID: 21300000, guid: 9cf90516cebe53046928c75c2c2a31dd, type: 3}
   - {fileID: 21300000, guid: 60451426095c6b043abef135f3e47483, type: 3}
   - {fileID: 21300000, guid: c9308036dbc926241861e76bf65adc5b, type: 3}
   - {fileID: 21300000, guid: 224d7236dc7afb847ad516c0f98e3954, type: 3}
@@ -807,6 +808,7 @@ SpriteAtlas:
   - interaction_tab_selected
   - intel_row_default
   - interaction_used_list
+  - web_bg
   - spell_slot_default
   - interaction_tab_invalid
   - assign_button_hover
