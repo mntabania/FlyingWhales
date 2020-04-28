@@ -85,7 +85,7 @@ namespace Interrupts {
         public string ReactionOfTarget(REACTION_STATUS status) {
             return interrupt.ReactionOfTarget(actor, target, interrupt, status);
         }
-        public REACTABLE_EFFECT GetReactableEffect() {
+        public REACTABLE_EFFECT GetReactableEffect(Character witness) {
             return REACTABLE_EFFECT.Neutral;
         }
         #endregion

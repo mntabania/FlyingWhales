@@ -54,6 +54,12 @@ public class Drink : GoapAction {
         Character actor = node.actor;
         actor.needsComponent.AdjustDoNotGetBored(-1);
     }
+    public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
+        if (witness.traitContainer.HasTrait("Drunkard")) {
+            return REACTABLE_EFFECT.Positive;
+        }
+        return REACTABLE_EFFECT.Neutral;
+    }
     #endregion
 
     #region State Effects

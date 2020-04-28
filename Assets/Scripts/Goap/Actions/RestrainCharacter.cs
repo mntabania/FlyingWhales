@@ -112,6 +112,14 @@ public class RestrainCharacter : GoapAction {
         }
         return response;
     }
+    public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
+        if (node.poiTarget is Character character) {
+            if (node.poiTarget.traitContainer.HasTrait("Criminal") || witness.IsHostileWith(character)) {
+                return REACTABLE_EFFECT.Positive;
+            }
+        }
+        return REACTABLE_EFFECT.Negative;
+    }
     #endregion
 
     #region Requirements

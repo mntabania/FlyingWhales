@@ -50,6 +50,9 @@ public class DispelMagic : GoapAction {
         TileObject chosen = magicCircle[Random.Range(0, magicCircle.Count)];
         return chosen;
     }
+    public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
+        return REACTABLE_EFFECT.Positive;
+    }
     #endregion
 
     #region State Effects

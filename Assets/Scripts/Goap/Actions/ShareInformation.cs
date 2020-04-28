@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;  
 using Traits;
 using Interrupts;
+using UnityEngine.Assertions;
 
 public class ShareInformation : GoapAction {
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.INDIRECT; } }
@@ -55,7 +56,7 @@ public class ShareInformation : GoapAction {
         Character actor = node.actor;
         Character target = node.poiTarget as Character;
 
-        REACTABLE_EFFECT reactableEffect = reactable.GetReactableEffect();
+        REACTABLE_EFFECT reactableEffect = reactable.GetReactableEffect(witness);
         if (reactableEffect == REACTABLE_EFFECT.Negative) {
             //TODO: Rumormongering Crime
 
@@ -100,6 +101,14 @@ public class ShareInformation : GoapAction {
         //SPECIAL CASE: After reacting to the Share Info Action itself, witness should also react to the rumor itself
         ProcessInformation(node.actor, witness, reactable);
         return response;
+    }
+    public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
+        IReactable reactable = node.otherData[0] as IReactable;
+        Assert.IsNotNull(reactable, $"{witness.name} is trying to get reactable effect of {node}, but reactable is null!");
+        if (reactable.GetReactableEffect(witness) == REACTABLE_EFFECT.Negative) {
+            return REACTABLE_EFFECT.Negative;
+        }
+        return REACTABLE_EFFECT.Neutral;
     }
     #endregion
 
@@ -146,7 +155,7 @@ public class ShareInformation : GoapAction {
                     weightLog += "\nSource is Rival: Disbelief + 250";
                 }
 
-                REACTABLE_EFFECT reactableEffect = reactable.GetReactableEffect();
+                REACTABLE_EFFECT reactableEffect = reactable.GetReactableEffect(recipient);
                 if (reactableEffect == REACTABLE_EFFECT.Positive) {
                     if (opinionLabelOfRecipientToActor == RelationshipManager.Friend || opinionLabelOfRecipientToActor == RelationshipManager.Close_Friend) {
                         beliefWeight += 500;

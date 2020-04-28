@@ -97,6 +97,9 @@ public class Feed : GoapAction {
             }
         }
     }
+    public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
+        return REACTABLE_EFFECT.Positive;
+    }
     #endregion
 
     #region Effects

@@ -124,6 +124,14 @@ public class Butcher : GoapAction {
         }
         return response;
     }
+    public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
+        if (node.poiTarget is Character character) {
+            if (character.IsNormalCharacter()) {
+                return REACTABLE_EFFECT.Negative;
+            }
+        }
+        return REACTABLE_EFFECT.Positive;
+    }
     #endregion
 
     #region Requirements

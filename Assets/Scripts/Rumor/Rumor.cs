@@ -37,7 +37,7 @@ public class Rumor : IReactable {
         return rumorable.ReactionOfTarget(status);
     }
 
-    public REACTABLE_EFFECT GetReactableEffect() {
+    public REACTABLE_EFFECT GetReactableEffect(Character witness) {
         return REACTABLE_EFFECT.Neutral;
     }
     #endregion

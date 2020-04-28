@@ -12,7 +12,7 @@ public interface IReactable {
     string ReactionToActor(Character witness, REACTION_STATUS status);
     string ReactionToTarget(Character witness, REACTION_STATUS status);
     string ReactionOfTarget(REACTION_STATUS status);
-    REACTABLE_EFFECT GetReactableEffect();
+    REACTABLE_EFFECT GetReactableEffect(Character witness);
 }
 
 public interface IRumorable {

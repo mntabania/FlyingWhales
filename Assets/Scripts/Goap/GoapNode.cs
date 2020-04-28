@@ -748,7 +748,7 @@ public class ActualGoapNode : IReactable, IRumorable {
 
     #region General
     public override string ToString() {
-        return $"Action: {action?.name ?? "Null"}. Target {poiTarget?.name ?? "Null"}";
+        return $"Action: {action?.name ?? "Null"}. Actor: {actor.name} . Target: {poiTarget?.name ?? "Null"}";
     }
     #endregion
 
@@ -777,8 +777,8 @@ public class ActualGoapNode : IReactable, IRumorable {
     public string ReactionOfTarget(REACTION_STATUS status) {
         return action.ReactionOfTarget(this, status);
     }
-    public REACTABLE_EFFECT GetReactableEffect() {
-        return REACTABLE_EFFECT.Neutral;
+    public REACTABLE_EFFECT GetReactableEffect(Character witness) {
+        return action.GetReactableEffect(this, witness);
     }
     #endregion
 }

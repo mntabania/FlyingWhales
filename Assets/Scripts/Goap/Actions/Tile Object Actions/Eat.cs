@@ -91,6 +91,14 @@ public class Eat : GoapAction {
         }
         return goapActionInvalidity;
     }
+    public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
+        if (node.poiTarget is TileObject tileObject) {
+            if (tileObject.characterOwner != null && tileObject.characterOwner != node.actor) {
+                return REACTABLE_EFFECT.Negative;        
+            }
+        }
+        return REACTABLE_EFFECT.Neutral;
+    }
     #endregion
 
     #region Effects

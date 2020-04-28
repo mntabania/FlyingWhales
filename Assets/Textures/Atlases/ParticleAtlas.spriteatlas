@@ -31,7 +31,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: c56691e3000aa5f46b6b0f833f973a16, type: 3}
-    totalSpriteSurfaceArea: 3695164
+    totalSpriteSurfaceArea: 4695164
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -70,6 +70,7 @@ SpriteAtlas:
   - {fileID: 6190793755409535107, guid: 7a569755d0dffa040addd4de5e8d7ca3, type: 3}
   - {fileID: -3616280095395431313, guid: 7a569755d0dffa040addd4de5e8d7ca3, type: 3}
   - {fileID: 21300000, guid: 99d8528565c8c6e41b743b5f0c9bc85c, type: 3}
+  - {fileID: 21300000, guid: 87c172859cc73a8439eaab96ec134afb, type: 3}
   - {fileID: 21300000, guid: e67f3ec584968d842bdf9ed6447a4e4e, type: 3}
   - {fileID: 21300000, guid: 5a210ed55917784408e9845d8b08ec64, type: 3}
   - {fileID: 21300000, guid: 822d07f56afeab6449b5a8b2a2609329, type: 3}
@@ -163,6 +164,7 @@ SpriteAtlas:
   - poison_bubble_3
   - poison_bubble_4
   - terrifyingHowlCloudC
+  - chaos_orb_center
   - windRipple01
   - heatwave2
   - a3d06b4810f09b76556df0bd394ec571_0
