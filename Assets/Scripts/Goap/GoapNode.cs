@@ -93,7 +93,7 @@ public abstract class JobNode {
 }
 
 //actual nodes located in a finished plan that is going to be executed by a character
-public class ActualGoapNode {
+public class ActualGoapNode : IReactable, IRumorable {
     public IPointOfInterest poiTarget { get; private set; }
     //public AlterEgoData poiTargetAlterEgo { get; private set; } //The alter ego the target was using while doing this action. only occupied if target is a character
     public Character actor { get; private set; }
@@ -114,6 +114,7 @@ public class ActualGoapNode {
 
     public string currentStateName { get; private set; }
     public int currentStateDuration { get; private set; }
+    public Rumor rumor { get; private set; }
     
     public List<Character> awareCharacters { get; private set; }
 
@@ -129,19 +130,16 @@ public class ActualGoapNode {
             return action.states[currentStateName]; 
         }
     }
-    public bool isPerformingActualAction {
-        get { return actionStatus == ACTION_STATUS.PERFORMING; }
-    }
-    public bool isDone {
-        get { return actionStatus == ACTION_STATUS.SUCCESS || actionStatus == ACTION_STATUS.FAIL; }
-    }
-    public INTERACTION_TYPE goapType {
-        get { return action.goapType; }
-    }
-    public string goapName {
-        get { return action.goapName; }
-    }
+    public bool isPerformingActualAction => actionStatus == ACTION_STATUS.PERFORMING;
+    public bool isDone => actionStatus == ACTION_STATUS.SUCCESS || actionStatus == ACTION_STATUS.FAIL;
+    public INTERACTION_TYPE goapType => action.goapType;
+    public string goapName => action.goapName;
     public JOB_TYPE associatedJobType => associatedJob != null ? associatedJob.jobType : JOB_TYPE.NONE;
+    public bool isRumor => rumor != null;
+    public string name => action.goapName;
+    public string typeName => "Action";
+    public IPointOfInterest target => poiTarget;
+    public Log informationLog => descriptionLog;
     #endregion
 
     public ActualGoapNode(GoapAction action, Character actor, IPointOfInterest poiTarget, object[] otherData, int cost) {
@@ -329,82 +327,6 @@ public class ActualGoapNode {
         }
         return true;
     }
-    //private void MoveToDoAction() {
-    //    if (targetStructure == null) {
-    //        targetStructure = action.GetTargetStructure(this);
-    //        if (targetStructure == null) { throw new System.Exception(actor.name + " target structure of action " + action.goapName + " is null."); }
-    //    }
-    //    //Only create thought bubble log when characters starts the action/moves to do the action so we can pass the target structure
-    //    CreateThoughtBubbleLog(targetStructure);
-    //    if (!actor.currentRegion.IsSameCoreLocationAs(targetStructure.location)) { //different core locations
-    //        actor.currentParty.GoToLocation(targetStructure.location, PATHFINDING_MODE.NORMAL, doneAction: MoveToDoAction);
-    //    } else {
-    //        if (action.actionLocationType == ACTION_LOCATION_TYPE.NEAR_TARGET || action.actionLocationType == ACTION_LOCATION_TYPE.NEAR_OTHER_TARGET) {
-    //            IPointOfInterest targetToGoTo = action.GetTargetToGoTo(this);
-    //            if(targetToGoTo == null) {
-    //                targetTile = action.GetTargetTileToGoTo(this);
-    //                actor.marker.GoTo(targetTile, OnArriveAtTargetLocation);
-    //            } else {
-    //                targetTile = targetToGoTo.gridTileLocation;
-    //                actor.marker.GoTo(targetToGoTo, OnArriveAtTargetLocation);
-    //            }
-    //        } else if (action.actionLocationType == ACTION_LOCATION_TYPE.IN_PLACE) {
-    //            targetTile = actor.gridTileLocation;
-    //            actor.PerformGoapAction();
-    //        } else if (action.actionLocationType == ACTION_LOCATION_TYPE.NEARBY) {
-    //            List<LocationGridTile> choices = actor.currentNpcSettlement.areaMap.GetTilesInRadius(actor.gridTileLocation, 3);
-    //            if (choices.Count > 0) {
-    //                targetTile = choices[Utilities.rng.Next(0, choices.Count)];
-    //                actor.marker.GoTo(targetTile, OnArriveAtTargetLocation);
-    //            } else {
-    //                targetTile = actor.gridTileLocation;
-    //                actor.PerformGoapAction();
-    //            }
-    //        } else if (action.actionLocationType == ACTION_LOCATION_TYPE.RANDOM_LOCATION) {
-    //            List<LocationGridTile> choices = targetStructure.unoccupiedTiles;
-    //            if (choices.Count > 0) {
-    //                targetTile = choices[Utilities.rng.Next(0, choices.Count)];
-    //                actor.marker.GoTo(targetTile, OnArriveAtTargetLocation);
-    //            } else {
-    //                throw new System.Exception(actor.name + " target tile of action " + action.goapName + " for " + action.actionLocationType.ToString() + " is null.");
-    //            }
-    //        } else if (action.actionLocationType == ACTION_LOCATION_TYPE.RANDOM_LOCATION_B) {
-    //            List<LocationGridTile> choices = targetStructure.unoccupiedTiles.Where(x => x.UnoccupiedNeighbours.Count > 0).ToList();
-    //            if (choices.Count > 0) {
-    //                targetTile = choices[Utilities.rng.Next(0, choices.Count)];
-    //                actor.marker.GoTo(targetTile, OnArriveAtTargetLocation);
-    //            } else {
-    //                throw new System.Exception(actor.name + " target tile of action " + action.goapName + " for " + action.actionLocationType.ToString() + " is null.");
-    //            }
-    //        } else if (action.actionLocationType == ACTION_LOCATION_TYPE.RANDOM_LOCATION_B) {
-    //            List<LocationGridTile> choices = targetStructure.unoccupiedTiles.Where(x => x.UnoccupiedNeighbours.Count > 0).ToList();
-    //            if (choices.Count > 0) {
-    //                targetTile = choices[Utilities.rng.Next(0, choices.Count)];
-    //                actor.marker.GoTo(targetTile, OnArriveAtTargetLocation);
-    //            } else {
-    //                throw new System.Exception(actor.name + " target tile of action " + action.goapName + " for " + action.actionLocationType.ToString() + " is null.");
-    //            }
-    //        } else if (action.actionLocationType == ACTION_LOCATION_TYPE.TARGET_IN_VISION) {
-    //            if (actor.marker.inVisionPOIs.Contains(poiTarget)) {
-    //                targetTile = actor.gridTileLocation;
-    //                actor.PerformGoapAction();
-    //            } else {
-    //                //No OnArriveAtTargetLocation because it doesn't trigger on arrival, rather, it is triggered by on vision
-    //                targetTile = poiTarget.gridTileLocation;
-    //                actor.marker.GoTo(poiTarget);
-    //            }
-    //        } else if (action.actionLocationType == ACTION_LOCATION_TYPE.OVERRIDE) {
-    //            LocationGridTile tile = action.GetOverrideTargetTile(this);
-    //            if (tile != null) {
-    //                targetTile = tile;
-    //                actor.marker.GoTo(tile, OnArriveAtTargetLocation);
-    //            } else {
-    //                throw new System.Exception(actor.name + " override target tile of action " + action.goapName + " for " + action.actionLocationType.ToString() + " is null.");
-    //            }
-                
-    //        }
-    //    }
-    //}
     private void OnArriveAtTargetLocation() {
         if(action.actionLocationType != ACTION_LOCATION_TYPE.TARGET_IN_VISION) {
             //Only do perform goap action on arrive at location if the location type is not target in vision, because if it is, we no longer need this function because perform goap action is already called upon entering vision
@@ -824,13 +746,39 @@ public class ActualGoapNode {
     }
     #endregion
 
+    #region General
     public override string ToString() {
         return $"Action: {action?.name ?? "Null"}. Target {poiTarget?.name ?? "Null"}";
     }
+    #endregion
 
-    //#region Crime
-    //public void SetAsCrime(CRIME_TYPE crimeType) {
-    //    this.crimeType = crimeType;
-    //}
-    //#endregion
+    #region IRumorable
+    public void SetAsRumor(Rumor newRumor) {
+        if(rumor != newRumor) {
+            rumor = newRumor;
+            if(rumor != null) {
+                actionStatus = ACTION_STATUS.SUCCESS;
+                currentStateName = GoapActionStateDB.goapActionStates[goapType][0].name;
+                CreateDescriptionLog(currentState);
+            }
+        }
+    }
+    #endregion
+
+    #region IReactable
+    public string ReactionToActor(Character witness, REACTION_STATUS status) {
+        return action.ReactionToActor(witness, this, status);
+    }
+
+    public string ReactionToTarget(Character witness, REACTION_STATUS status) {
+        return action.ReactionToTarget(witness, this, status);
+    }
+
+    public string ReactionOfTarget(REACTION_STATUS status) {
+        return action.ReactionOfTarget(this, status);
+    }
+    public REACTABLE_EFFECT GetReactableEffect() {
+        return REACTABLE_EFFECT.Neutral;
+    }
+    #endregion
 }

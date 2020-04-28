@@ -288,7 +288,7 @@ public class SettlementGeneration : MapGenerationComponent {
 							
 							character.relationshipContainer.SetOpinion(character, targetCharacterData.id, 
 								targetCharacterData.firstName, targetCharacterData.gender,
-								"Base", kvp.Value.baseOpinion);
+								"Base", kvp.Value.baseOpinion, true);
 							
 							relationshipData.opinions.SetCompatibilityValue(kvp.Value.compatibility);
 							

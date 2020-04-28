@@ -17,7 +17,6 @@ public class NonActionEventsComponent {
     public NonActionEventsComponent(Character owner) {
         this.owner = owner;
         chatWeights = new WeightedDictionary<string>();
-        Messenger.AddListener<Character, Character, string>(Signals.OPINION_DECREASED, OnOpinionDecreased);
     }
 
     #region Utilities
@@ -242,18 +241,6 @@ public class NonActionEventsComponent {
     #endregion
 
     #region Break Up
-    //Char1 decreased his/her opinion of char2
-    private void OnOpinionDecreased(Character char1, Character char2, string reason) {
-        if(char1 == owner && char2 != null) {
-            if (UnityEngine.Random.Range(0, 100) < 30) {//30
-                if (owner.relationshipContainer.GetTotalOpinion(char2) < -25) {
-                    if (owner.relationshipContainer.HasRelationshipWith(char2, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR)) {
-                        char1.interruptComponent.TriggerInterrupt(INTERRUPT.Break_Up, char2, reason);
-                    }
-                }
-            }
-        }
-    }
     public void NormalBreakUp(Character target, string reason) {
         RELATIONSHIP_TYPE relationship = owner.relationshipContainer.GetRelationshipFromParametersWith(target, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR);
         TriggerBreakUp(target, relationship, reason);

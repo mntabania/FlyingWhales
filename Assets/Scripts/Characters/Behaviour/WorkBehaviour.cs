@@ -15,12 +15,12 @@ public class WorkBehaviour : CharacterBehaviourComponent {
             log += $"\n-{character.name} is in normal mood, will do settlement work";
             return PlanWorkActions(character);
         } else {
-            log += $"\n-{character.name} is low/critical mood, 15% chance - flaw, 15% chance - undermine";
+            log += $"\n-{character.name} is low/critical mood, 4% chance - flaw, 4% chance - undermine";
             bool triggeredFlaw = false;
             if (TraitManager.Instance.CanStillTriggerFlaws(character)) {
                 int roll = UnityEngine.Random.Range(0, 100);
                 log += $"\n-Flaw Roll: " + roll;
-                if (roll < 15) {
+                if (roll < 4) {
                     List<Trait> flawTraits = new List<Trait>();
                     for (int i = 0; i < character.traitContainer.traits.Count; i++) {
                         Trait currTrait = character.traitContainer.traits[i];
@@ -52,21 +52,28 @@ public class WorkBehaviour : CharacterBehaviourComponent {
                     log += $"\n-{character.name} will try to trigger Undermine";
                     int roll = UnityEngine.Random.Range(0, 100);
                     log += $"\n-Undermine Roll: " + roll;
-                    if (roll < 15) {
+                    if (roll < 4) {
                         List<Character> enemies = character.relationshipContainer.GetEnemyCharacters();
                         if (enemies.Count > 0) {
                             Character chosenEnemy = CollectionUtilities.GetRandomElement(enemies);
-                            if (chosenEnemy.homeRegion.GetFirstTileObjectOnTheFloorOwnedBy(chosenEnemy) != null) {
-                                if (character.jobComponent.CreateUndermineJob(chosenEnemy, "normal")) {
-                                    log += $"\n-{character.name} created undermine job for " + chosenEnemy;
-                                    return true;
-                                }
-                                else {
-                                    log += $"\n-{character.name} could not create undermine job for " + chosenEnemy;
-                                }
+                            if(UnityEngine.Random.Range(0, 2) == 0) {
+                                //Place Trap
+                                character.jobComponent.CreatePlaceTrapJob(chosenEnemy);
                             } else {
-                                log += $"\n-{chosenEnemy.name} does not have an owned item on the floor ";
+                                //Poison Food
+                                character.jobComponent.CreatePoisonFoodJob(chosenEnemy);
                             }
+                            //if (chosenEnemy.homeRegion.GetFirstTileObjectOnTheFloorOwnedBy(chosenEnemy) != null) {
+                            //    if (character.jobComponent.CreateUndermineJob(chosenEnemy, "normal")) {
+                            //        log += $"\n-{character.name} created undermine job for " + chosenEnemy;
+                            //        return true;
+                            //    }
+                            //    else {
+                            //        log += $"\n-{character.name} could not create undermine job for " + chosenEnemy;
+                            //    }
+                            //} else {
+                            //    log += $"\n-{chosenEnemy.name} does not have an owned item on the floor ";
+                            //}
                         } else {
                             log += $"\n-{character.name} does not have enemy or rival";
                         }
@@ -85,13 +92,6 @@ public class WorkBehaviour : CharacterBehaviourComponent {
         //        }
         //    }
         //}
-        return false;
-    }
-    
-    private bool PlanJobQueueFirst(Character character) {
-        if (!character.needsComponent.isStarving && !character.needsComponent.isExhausted && !character.needsComponent.isSulking) {
-            return PlanWorkActions(character);
-        }
         return false;
     }
     private bool PlanWorkActions(Character character) {

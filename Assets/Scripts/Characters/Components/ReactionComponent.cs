@@ -53,84 +53,86 @@ public class ReactionComponent {
         //    }
         //}
     }
-    public string ReactTo(ActualGoapNode node, REACTION_STATUS status) {
+    public string ReactTo(IReactable reactable, REACTION_STATUS status, bool addLog = true) {
         if (owner.minion != null || owner is Summon || owner.faction == FactionManager.Instance.zombieFaction /*|| owner.race == RACE.SKELETON*/) {
             //Minions or Summons cannot react to actions
             return string.Empty;
         }
         if (status == REACTION_STATUS.WITNESSED) {
-            ReactToWitnessedAction(node);
+            ReactToWitnessedReactable(reactable, addLog);
         } else {
-            return ReactToInformedAction(node);
+            return ReactToInformedReactable(reactable, addLog);
         }
         return string.Empty;
     }
-    private void ReactToWitnessedAction(ActualGoapNode node) {
+    private void ReactToWitnessedReactable(IReactable reactable, bool addLog) {
         if (owner.isInCombat) {
             return;
         }
-        if (owner.faction != node.actor.faction && owner.faction.IsHostileWith(node.actor.faction)) {
+        if (owner.faction != reactable.actor.faction && owner.faction.IsHostileWith(reactable.actor.faction)) {
             //Must not react if the faction of the actor of witnessed action is hostile with the faction of the witness
             return;
         }
         //if (witnessedEvent.currentStateName == null) {
         //    throw new System.Exception(GameManager.Instance.TodayLogString() + this.name + " witnessed event " + witnessedEvent.action.goapName + " by " + witnessedEvent.actor.name + " but it does not have a current state!");
         //}
-        if (string.IsNullOrEmpty(node.currentStateName)) {
-            return;
-        }
-        if (node.descriptionLog == null) {
+        //if (string.IsNullOrEmpty(reactable.currentStateName)) {
+        //    return;
+        //}
+        if (reactable.informationLog == null) {
             throw new Exception(
-                $"{GameManager.Instance.TodayLogString()}{owner.name} witnessed event {node.action.goapName} by {node.actor.name} with state {node.currentStateName} but it does not have a description log!");
+                $"{GameManager.Instance.TodayLogString()}{owner.name} witnessed event {reactable.name} by {reactable.actor.name} does not have a log!");
         }
-        IPointOfInterest target = node.poiTarget;
-        if(node.poiTarget is TileObject && node.action.goapType == INTERACTION_TYPE.STEAL) {
-            TileObject item = node.poiTarget as TileObject;
-            if(item.isBeingCarriedBy != null) {
-                target = item.isBeingCarriedBy;
+        IPointOfInterest target = reactable.target;
+        if(reactable.target is TileObject item && reactable is ActualGoapNode node) {
+            if (node.action.goapType == INTERACTION_TYPE.STEAL) {
+                if (item.isBeingCarriedBy != null) {
+                    target = item.isBeingCarriedBy;
+                }
             }
         }
-        if(node.actor != owner && target != owner) {
-            Log witnessLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "witness_event", node);
-            witnessLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.OTHER);
-            witnessLog.AddToFillers(null, UtilityScripts.Utilities.LogDontReplace(node.descriptionLog), LOG_IDENTIFIER.APPEND);
-            witnessLog.AddToFillers(node.descriptionLog.fillers);
-            owner.logComponent.AddHistory(witnessLog);
-
-            string emotionsToActor = node.action.ReactionToActor(owner, node, REACTION_STATUS.WITNESSED);
+        if(reactable.actor != owner && target != owner) {
+            if (addLog) {
+                Log witnessLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "witness_event", reactable as ActualGoapNode);
+                witnessLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.OTHER);
+                witnessLog.AddToFillers(null, UtilityScripts.Utilities.LogDontReplace(reactable.informationLog), LOG_IDENTIFIER.APPEND);
+                witnessLog.AddToFillers(reactable.informationLog.fillers);
+                owner.logComponent.AddHistory(witnessLog);
+            }
+            string emotionsToActor = reactable.ReactionToActor(owner, REACTION_STATUS.WITNESSED);
             if(emotionsToActor != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsToActor)) {
                 string error = "Action Error in Witness Reaction To Actor (Duplicate/Incompatible Emotions Triggered)";
                 error += $"\n-Witness: {owner}";
-                error += $"\n-Action: {node.action.goapName}";
-                error += $"\n-Actor: {node.actor.name}";
-                error += $"\n-Target: {node.poiTarget.nameWithID}";
+                error += $"\n-Action: {reactable.name}";
+                error += $"\n-Actor: {reactable.actor.name}";
+                error += $"\n-Target: {reactable.target.nameWithID}";
                 owner.logComponent.PrintLogErrorIfActive(error);
             }
-            string emotionsToTarget = node.action.ReactionToTarget(owner, node, REACTION_STATUS.WITNESSED);
+            string emotionsToTarget = reactable.ReactionToTarget(owner, REACTION_STATUS.WITNESSED);
             if (emotionsToTarget != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsToTarget)) {
                 string error = "Action Error in Witness Reaction To Target (Duplicate/Incompatible Emotions Triggered)";
                 error += $"\n-Witness: {owner}";
-                error += $"\n-Action: {node.action.goapName}";
-                error += $"\n-Actor: {node.actor.name}";
-                error += $"\n-Target: {node.poiTarget.nameWithID}";
+                error += $"\n-Action: {reactable.name}";
+                error += $"\n-Actor: {reactable.actor.name}";
+                error += $"\n-Target: {reactable.target.nameWithID}";
                 owner.logComponent.PrintLogErrorIfActive(error);
             }
             string response =
-                $"Witness action reaction of {owner.name} to {node.action.goapName} of {node.actor.name} with target {node.poiTarget.name}: {emotionsToActor}{emotionsToTarget}";
+                $"Witness action reaction of {owner.name} to {reactable.name} of {reactable.actor.name} with target {reactable.target.name}: {emotionsToActor}{emotionsToTarget}";
             owner.logComponent.PrintLogIfActive(response);
         } else if (target == owner) {
-            if (!node.isStealth || target.traitContainer.HasTrait("Vigilant")) {
-                string emotionsOfTarget = node.action.ReactionOfTarget(node, REACTION_STATUS.WITNESSED);
+            if (!reactable.isStealth || target.traitContainer.HasTrait("Vigilant")) {
+                string emotionsOfTarget = reactable.ReactionOfTarget(REACTION_STATUS.WITNESSED);
                 if (emotionsOfTarget != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsOfTarget)) {
                     string error = "Action Error in Witness Reaction Of Target (Duplicate/Incompatible Emotions Triggered)";
                     error += $"\n-Witness: {owner}";
-                    error += $"\n-Action: {node.action.goapName}";
-                    error += $"\n-Actor: {node.actor.name}";
-                    error += $"\n-Target: {node.poiTarget.nameWithID}";
+                    error += $"\n-Action: {reactable.name}";
+                    error += $"\n-Actor: {reactable.actor.name}";
+                    error += $"\n-Target: {reactable.target.nameWithID}";
                     owner.logComponent.PrintLogErrorIfActive(error);
                 }
                 string response =
-                    $"Witness action reaction of {owner.name} to {node.action.goapName} of {node.actor.name} with target {node.poiTarget.name}: {emotionsOfTarget}";
+                    $"Witness action reaction of {owner.name} to {reactable.name} of {reactable.actor.name} with target {reactable.target.name}: {emotionsOfTarget}";
                 owner.logComponent.PrintLogIfActive(response);
             }
         }
@@ -140,46 +142,48 @@ public class ReactionComponent {
         //    CrimeManager.Instance.ReactToCrime(owner, node, node.associatedJobType, crimeType);
         //}
     }
-    private string ReactToInformedAction(ActualGoapNode node) {
-        if (node.descriptionLog == null) {
+    private string ReactToInformedReactable(IReactable reactable, bool addLog) {
+        if (reactable.informationLog == null) {
             throw new Exception(
-                $"{GameManager.Instance.TodayLogString()}{owner.name} informed event {node.action.goapName} by {node.actor.name} with state {node.currentStateName} but it does not have a description log!");
+                $"{GameManager.Instance.TodayLogString()}{owner.name} informed event {reactable.name} by {reactable.actor.name} does not have a log!");
         }
-        Log informedLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "informed_event", node);
-        informedLog.AddToFillers(node.descriptionLog.fillers);
-        informedLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.OTHER);
-        informedLog.AddToFillers(null, UtilityScripts.Utilities.LogDontReplace(node.descriptionLog), LOG_IDENTIFIER.APPEND);
-        owner.logComponent.AddHistory(informedLog);
+        if (addLog) {
+            Log informedLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "informed_event", reactable as ActualGoapNode);
+            informedLog.AddToFillers(reactable.informationLog.fillers);
+            informedLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.OTHER);
+            informedLog.AddToFillers(null, UtilityScripts.Utilities.LogDontReplace(reactable.informationLog), LOG_IDENTIFIER.APPEND);
+            owner.logComponent.AddHistory(informedLog);
+        }
 
         string response = string.Empty;
-        if (node.actor != owner && node.poiTarget != owner) {
-            string emotionsToActor = node.action.ReactionToActor(owner, node, REACTION_STATUS.INFORMED);
+        if (reactable.actor != owner && reactable.target != owner) {
+            string emotionsToActor = reactable.ReactionToActor(owner, REACTION_STATUS.INFORMED);
             if (emotionsToActor != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsToActor)) {
                 string error = "Action Error in Witness Reaction To Actor (Duplicate/Incompatible Emotions Triggered)";
                 error += $"\n-Witness: {owner}";
-                error += $"\n-Action: {node.action.goapName}";
-                error += $"\n-Actor: {node.actor.name}";
-                error += $"\n-Target: {node.poiTarget.nameWithID}";
+                error += $"\n-Action: {reactable.name}";
+                error += $"\n-Actor: {reactable.actor.name}";
+                error += $"\n-Target: {reactable.target.nameWithID}";
                 owner.logComponent.PrintLogErrorIfActive(error);
             }
-            string emotionsToTarget = node.action.ReactionToTarget(owner, node, REACTION_STATUS.INFORMED);
+            string emotionsToTarget = reactable.ReactionToTarget(owner, REACTION_STATUS.INFORMED);
             if (emotionsToTarget != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsToTarget)) {
                 string error = "Action Error in Witness Reaction To Target (Duplicate/Incompatible Emotions Triggered)";
                 error += $"\n-Witness: {owner}";
-                error += $"\n-Action: {node.action.goapName}";
-                error += $"\n-Actor: {node.actor.name}";
-                error += $"\n-Target: {node.poiTarget.nameWithID}";
+                error += $"\n-Action: {reactable.name}";
+                error += $"\n-Actor: {reactable.actor.name}";
+                error += $"\n-Target: {reactable.target.nameWithID}";
                 owner.logComponent.PrintLogErrorIfActive(error);
             }
             response += $"{emotionsToActor}/{emotionsToTarget}";
-        } else if(node.poiTarget == owner && node.poiTarget is Character) {
-            string emotionsOfTarget = node.action.ReactionOfTarget(node, REACTION_STATUS.INFORMED);
+        } else if(reactable.target == owner && reactable.target is Character) {
+            string emotionsOfTarget = reactable.ReactionOfTarget(REACTION_STATUS.INFORMED);
             if (emotionsOfTarget != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsOfTarget)) {
                 string error = "Action Error in Witness Reaction Of Target (Duplicate/Incompatible Emotions Triggered)";
                 error += $"\n-Witness: {owner}";
-                error += $"\n-Action: {node.action.goapName}";
-                error += $"\n-Actor: {node.actor.name}";
-                error += $"\n-Target: {node.poiTarget.nameWithID}";
+                error += $"\n-Action: {reactable.name}";
+                error += $"\n-Actor: {reactable.actor.name}";
+                error += $"\n-Target: {reactable.target.nameWithID}";
                 owner.logComponent.PrintLogErrorIfActive(error);
             }
             response = emotionsOfTarget;

@@ -18,7 +18,12 @@ public class CharacterManager : MonoBehaviour {
     [SerializeField] private CharacterClassManager classManager;
 
     public static readonly string[] sevenDeadlySinsClassNames = { "Lust", "Gluttony", "Greed", "Sloth", "Wrath", "Envy", "Pride" };
+    public const string Make_Love = "Make Love", Steal = "Steal", Poison_Food = "Poison Food",
+        Place_Trap = "Place Trap", Flirt = "Flirt", Transform_To_Wolf = "Transform To Wolf", Drink_Blood = "Drink Blood",
+        Destroy_Action = "Destroy";
     public const int MAX_HISTORY_LOGS = 300;
+
+    
     public GameObject characterIconPrefab;
     public Transform characterIconsParent;
 
@@ -53,6 +58,7 @@ public class CharacterManager : MonoBehaviour {
     public SUMMON_TYPE[] summonsPool { get; private set; }
     public int CHARACTER_MISSING_THRESHOLD { get; private set; }
     public COMBAT_MODE[] combatModes { get; private set; }
+    public List<string> rumorWorthyActions { get; private set; }
 
     #region getters/setters
     public List<Character> allCharacters => characterDatabase.allCharactersList;
@@ -72,6 +78,7 @@ public class CharacterManager : MonoBehaviour {
         CHARACTER_MISSING_THRESHOLD = GameManager.Instance.GetTicksBasedOnHour(72);
         summonsPool = new[] { SUMMON_TYPE.Wolf, SUMMON_TYPE.Golem, SUMMON_TYPE.Incubus, SUMMON_TYPE.Succubus };
         combatModes = new COMBAT_MODE[] { COMBAT_MODE.Aggressive, COMBAT_MODE.Passive, COMBAT_MODE.Defend };
+        rumorWorthyActions = new List<string>() { Make_Love, Steal, Poison_Food, Place_Trap, Flirt, Transform_To_Wolf, Drink_Blood, Destroy_Action };
         characterDatabase = new CharacterDatabase();
         ConstructEmotionData();
         Messenger.AddListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
@@ -848,6 +855,7 @@ public class CharacterManager : MonoBehaviour {
         return true;
     }
     #endregion
+
 }
 
 [Serializable]

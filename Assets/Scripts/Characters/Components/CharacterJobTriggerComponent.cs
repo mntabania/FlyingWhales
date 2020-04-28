@@ -842,6 +842,14 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    }
         return null;
     }
+    public GoapPlanJob CreateBrawlJob(Character targetCharacter) {
+        if (!_owner.jobQueue.HasJob(JOB_TYPE.BRAWL, targetCharacter)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BRAWL, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Unconscious", false, GOAP_EFFECT_TARGET.TARGET), targetCharacter, _owner);
+            _owner.jobQueue.AddJobInQueue(job);
+            return job;
+        }
+        return null;
+    }
     public GoapPlanJob CreateKillJob(Character targetCharacter) {
 	    if (!_owner.jobQueue.HasJob(JOB_TYPE.KILL, targetCharacter)) {
 		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.KILL, new GoapEffect(GOAP_EFFECT_CONDITION.DEATH, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), targetCharacter, _owner);
@@ -931,7 +939,15 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             targetCharacter.logComponent.PrintLogIfActive(_owner.name + " cannot undermine " + targetCharacter.name + " because he/she does not have a home region");
             return false;
         }
-        IPointOfInterest chosenObject = targetCharacter.homeRegion.GetFirstTileObjectOnTheFloorOwnedBy(targetCharacter);
+        IPointOfInterest chosenObject = null;
+        for (int i = 0; i < targetCharacter.ownedItems.Count; i++) {
+            TileObject item = targetCharacter.ownedItems[i];
+            if (item.gridTileLocation != null && item.mapVisual) {
+                chosenObject = item;
+                break;
+            }
+        }
+        //IPointOfInterest chosenObject = targetCharacter.homeRegion.GetFirstTileObjectOnTheFloorOwnedBy(targetCharacter);
         if (chosenObject == null) {
             targetCharacter.logComponent.PrintLogIfActive(_owner.name + " cannot undermine " + targetCharacter.name + " because he/she does not have an owned item on the floor in his/her home region");
             return false;
@@ -944,6 +960,25 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         _owner.logComponent.AddHistory(log);
         return true;
+    }
+    public bool CreatePlaceTrapPOIJob(IPointOfInterest target) {
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PLACE_TRAP, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Booby Trapped", false, GOAP_EFFECT_TARGET.TARGET), target, _owner);
+        _owner.jobQueue.AddJobInQueue(job);
+        return true;
+    }
+    public bool CreatePlaceTrapJob(Character targetCharacter) {
+        IPointOfInterest chosenObject = null;
+        for (int i = 0; i < targetCharacter.ownedItems.Count; i++) {
+            TileObject item = targetCharacter.ownedItems[i];
+            if (item.gridTileLocation != null && item.mapVisual) {
+                chosenObject = item;
+                break;
+            }
+        }
+        if(chosenObject != null) {
+            return CreatePlaceTrapPOIJob(chosenObject);
+        }
+        return false;
     }
     #endregion
 
@@ -1002,8 +1037,16 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		    targetCharacter.logComponent.PrintLogIfActive(_owner.name + " cannot poison food " + targetCharacter.name + " because he/she does not have a home region");
 		    return false;
 	    }
-	    IPointOfInterest chosenObject = targetCharacter.homeRegion.GetFirstTileObjectOnTheFloorOwnedBy(targetCharacter, 
-		    (poi) => poi.advertisedActions.Contains(INTERACTION_TYPE.EAT));
+        IPointOfInterest chosenObject = null;
+        for (int i = 0; i < targetCharacter.ownedItems.Count; i++) {
+            TileObject item = targetCharacter.ownedItems[i];
+            if (item.gridTileLocation != null && item.mapVisual && item.advertisedActions.Contains(INTERACTION_TYPE.EAT)) {
+                chosenObject = item;
+                break;
+            }
+        }
+      //  IPointOfInterest chosenObject = targetCharacter.homeRegion.GetFirstTileObjectOnTheFloorOwnedBy(targetCharacter, 
+		    //(poi) => poi.advertisedActions.Contains(INTERACTION_TYPE.EAT));
 	    if (chosenObject == null) {
 		    targetCharacter.logComponent.PrintLogIfActive(_owner.name + " cannot poison food " + targetCharacter.name + " because he/she does not have an owned item on the floor in his/her home region");
 		    return false;
@@ -1016,6 +1059,21 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 	    _owner.logComponent.AddHistory(log);
 	    return true;
+    }
+    #endregion
+
+    #region Rumor
+    public bool CreateSpreadRumorJob(Character targetCharacter, Rumor rumor) {
+        if (targetCharacter.isDead) {
+            return false;
+        }
+        if (rumor == null) {
+            return false;
+        }
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SPREAD_RUMOR, INTERACTION_TYPE.SHARE_INFORMATION, targetCharacter, _owner);
+        job.AddOtherData(INTERACTION_TYPE.SHARE_INFORMATION, new object[] { rumor });
+        _owner.jobQueue.AddJobInQueue(job);
+        return true;
     }
     #endregion
 }
