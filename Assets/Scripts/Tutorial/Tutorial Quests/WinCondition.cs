@@ -38,7 +38,7 @@ namespace Tutorial {
                 "Winning is quite simple: all Residents must be dead. Use the limited amount of abilities " +
                 "you have wisely to succeed!\n\nYou can also abandon a playthrough by clicking on the Abandon button. " +
                 "You will gain minimal amount of Experience Points if you do, regardless of how many Residents have " +
-                "been killed.", TutorialManager.Instance.spellPopUpPicture);
+                "been killed.", TutorialManager.Instance.deadCharactersImage);
         }
         #endregion
     }

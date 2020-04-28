@@ -26,17 +26,11 @@ namespace Tutorial {
         }
         protected override void ConstructSteps() {
             steps = new List<TutorialQuestStepCollection>() {
-                new TutorialQuestStepCollection(new ClickOnCharacterStep("Click on a sapient character",
+                new TutorialQuestStepCollection(new ClickOnCharacterStep("Click on a valid sapient character",
                     IsCharacterValid).SetHoverOverAction(OnHoverSelectCharacterStep).SetHoverOutAction(UIManager.Instance.HideSmallInfo)),
                 new TutorialQuestStepCollection(
                     new ObjectPickerShownStep("Click on Afflict button", "Intervention Ability"),
-                    new ExecuteAfflictionStep("Choose an Affliction to apply").SetCompleteAction(() => UIManager.Instance.generalConfirmationWithVisual.ShowGeneralConfirmation("Afflictions", 
-                        "These are negative Traits that you may apply to a world's Resident that will affect their behavior. " +
-                        "Afflictions do not have any Mana Cost but they have a limited number of Charges.\n\n" +
-                        "There are a vast number of different types of Afflictions you may experiment with. " +
-                        "You can turn someone into a Psychopath or a Vampire, or you can afflict one with a Zombie Virus.", 
-                        TutorialManager.Instance.spellPopUpPicture)
-                    )
+                    new ExecuteAfflictionStep("Choose an Affliction to apply").SetCompleteAction(OnCompleteExecuteAffliction)
                 )
             };
         }
@@ -66,6 +60,14 @@ namespace Tutorial {
                                              "These characters cannot be directly affected by your spells. " +
                                              "You will need to find other ways to deal with them.",
                 TutorialManager.Instance.blessedVideoClip, "Blessed Characters", item.hoverPosition);
+        }
+        private void OnCompleteExecuteAffliction() {
+            UIManager.Instance.generalConfirmationWithVisual.ShowGeneralConfirmation("Afflictions",
+                "These are negative Traits that you may apply to a world's Resident that will affect their behavior. " +
+                "Afflictions do not have any Mana Cost but they have a limited number of Charges.\n\n" +
+                "There are a vast number of different types of Afflictions you may experiment with. " +
+                "You can turn someone into a Psychopath or a Vampire, or you can afflict one with a Zombie Virus.",
+                TutorialManager.Instance.afflictionsVideoClip);
         }
         #endregion
     }

@@ -1,6 +1,6 @@
 ﻿namespace Tutorial {
     public class ShowIntelMenuStep : TutorialQuestStep {
-        public ShowIntelMenuStep(string stepDescription = "Click Intel Tab", string tooltip = "") 
+        public ShowIntelMenuStep(string stepDescription = "Click Intel Tab") 
             : base(stepDescription) {
         }
         protected override void SubscribeListeners() {

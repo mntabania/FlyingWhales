@@ -1,6 +1,6 @@
 ﻿namespace Tutorial {
     public class DoubleClickHexTileStep : TutorialQuestStep {
-        public DoubleClickHexTileStep(string stepDescription = "Double click on a hextile", string tooltip = "") : base(stepDescription) { }
+        public DoubleClickHexTileStep(string stepDescription = "Double click on a hextile") : base(stepDescription) { }
         protected override void SubscribeListeners() {
             Messenger.AddListener<HexTile>(Signals.TILE_DOUBLE_CLICKED, CheckForCompletion);
         }

@@ -49,24 +49,12 @@ public class PlayerManager : MonoBehaviour {
         player = new Player();
         player.CreatePlayerFaction();
         player.SetPortalTile(portal.tileLocation);
-        //player.SetArchetype(archeType);
         PlayerSettlement existingPlayerNpcSettlement = portal.tileLocation.settlementOnTile as PlayerSettlement;
         Assert.IsNotNull(existingPlayerNpcSettlement, $"Portal does not have a player settlement on its tile");
         player.SetPlayerArea(existingPlayerNpcSettlement);
         
         LandmarkManager.Instance.OwnSettlement(player.playerFaction, existingPlayerNpcSettlement);
-        
-        //player.AddArtifact(CreateNewArtifact(ARTIFACT_TYPE.Grasping_Hands));
-        //player.AddArtifact(CreateNewArtifact(ARTIFACT_TYPE.Snatching_Hands));
-        //player.AddArtifact(CreateNewArtifact(ARTIFACT_TYPE.Abominable_Heart));
-        //player.AddArtifact(CreateNewArtifact(ARTIFACT_TYPE.Dark_Matter));
-        //player.AddArtifact(CreateNewArtifact(ARTIFACT_TYPE.Looking_Glass));
-        //player.AddArtifact(CreateNewArtifact(ARTIFACT_TYPE.Black_Scripture));
-        //player.AddArtifact(CreateNewArtifact(ARTIFACT_TYPE.False_Gem));
-        //player.AddArtifact(CreateNewArtifact(ARTIFACT_TYPE.Naga_Eyes));
-        //player.AddArtifact(CreateNewArtifact(ARTIFACT_TYPE.Tormented_Chalice));
-        //player.AddArtifact(CreateNewArtifact(ARTIFACT_TYPE.Lightning_Rod));
-        
+
         PlayerUI.Instance.UpdateUI();
         player.LoadPlayerData(SaveManager.Instance.currentSaveDataPlayer);
     }

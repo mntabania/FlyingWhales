@@ -119,10 +119,14 @@ public class GameManager : MonoBehaviour {
         Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyDown);
         today = new GameDate(startMonth, startDay, startYear, startTick);
         //TimerHubUI.Instance.AddItem("Until Divine Intervention", 4320, null);
+        if (WorldConfigManager.Instance.isDemoWorld) {
+            //schedule game over at end of day 2
+            GameDate dueDate = new GameDate(startMonth, 2, startYear, ticksPerDay);
+            SchedulingManager.Instance.AddEntry(dueDate, () => UIManager.Instance.ShowEndDemoScreen(), this);
+        }
     }
     public GameDate Today() {
         return today;
-        // return new GameDate(month, days, year, tick);
     }
     public void SetToday(GameDate date) {
         today = date;
@@ -400,9 +404,6 @@ public class GameManager : MonoBehaviour {
     public int GetCeilingDaysBasedOnTicks(int ticks) {
         return Mathf.CeilToInt(ticks / (float) ticksPerDay);
     }
-    //public void SetTicksToAddPerTick(int amount) {
-    //    ticksToAddPerTick = amount;
-    //}
 
     #region Particle Effects
     public GameObject CreateParticleEffectAt(LocationGridTile tile, PARTICLE_EFFECT particle, int sortingOrder = -1) {
@@ -412,7 +413,7 @@ public class GameManager : MonoBehaviour {
             prefab = particleEffectsDictionary[particle];
         } else {
             Debug.LogError("No prefab for particle effect: " + particle.ToString());
-            return prefab;
+            return null;
         }
         go = ObjectPoolManager.Instance.InstantiateObjectFromPool(prefab.name, Vector3.zero, Quaternion.identity, tile.parentMap.objectsParent);
         go.transform.localPosition = tile.centeredLocalLocation;
@@ -607,27 +608,6 @@ public class GameManager : MonoBehaviour {
         go.SetActive(true);
     }
     #endregion
-
-    //#region Cursor
-    //public void SetCursorToDefault() {
-    //    isDraggingItem = false;
-    //    Cursor.SetCursor(defaultCursorTexture, hotSpot, cursorMode);
-    //}
-    //public void SetCursorToTarget() {
-    //    Cursor.SetCursor(targetCursorTexture, hotSpot, cursorMode);
-    //}
-    //public void SetCursorToDrag() {
-    //    Cursor.SetCursor(dragWorldCursorTexture, new Vector2(16f, 16f), cursorMode);
-    //}
-    //public void SetCursorToItemDragHover() {
-    //    isDraggingItem = false;
-    //    Cursor.SetCursor(dragItemHoverCursorTexture, hotSpot, cursorMode);
-    //}
-    //public void SetCursorToItemDragClicked() {
-    //    isDraggingItem = true;
-    //    Cursor.SetCursor(dragItemClickedCursorTexture, hotSpot, cursorMode);
-    //}
-    //#endregion
 
     #region For Testing
     [ContextMenu("Print Event Table")]

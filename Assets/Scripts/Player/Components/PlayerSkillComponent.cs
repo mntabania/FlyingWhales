@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public class PlayerSkillComponent {
     public Player player { get; private set; }
@@ -101,13 +102,23 @@ public class PlayerSkillComponent {
         for (int i = 0; i < SaveManager.Instance.allSkillTrees.Length; i++) {
             PlayerSkillTree skillTree = SaveManager.Instance.allSkillTrees[i];
             foreach (KeyValuePair<SPELL_TYPE, PlayerSkillTreeNode> item in skillTree.nodes) {
-                SetPlayerSkillData(item.Key, item.Value);
+                bool shouldAddSpell = true;
+                if (WorldConfigManager.Instance.isDemoWorld) {
+                    //if demo world, spell should be added if it is not a minion type. If it is, check if that spell is in
+                    //the available set of spells for the demo. Other spells are added because in the demo, their buttons should still
+                    //be seen, but instead, should not be clickable.
+                    shouldAddSpell = PlayerSkillManager.Instance.IsMinion(item.Key) == false ||
+                                     WorldConfigManager.Instance.availableSpellsInDemoBuild.Contains(item.Key);
+                }
+                if (shouldAddSpell) {
+                    SetPlayerSkillData(item.Key, item.Value);
+                }
             }
         }
         SpellData afflict = PlayerSkillManager.Instance.GetPlayerSkillData(SPELL_TYPE.AFFLICT);
-        CatergorizePlayerSkill(afflict);
+        CategorizePlayerSkill(afflict);
         SpellData buildDemonicStructure = PlayerSkillManager.Instance.GetPlayerSkillData(SPELL_TYPE.BUILD_DEMONIC_STRUCTURE);
-        CatergorizePlayerSkill(buildDemonicStructure);
+        CategorizePlayerSkill(buildDemonicStructure);
     }
     private void PopulateAllSkills() {
         if (nodesData != null) {
@@ -118,22 +129,20 @@ public class PlayerSkillComponent {
     }
     private void SetPlayerSkillData(PlayerSkillTreeNodeData node) {
         SpellData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(node.skill);
-        CatergorizePlayerSkill(spellData);
+        CategorizePlayerSkill(spellData);
         spellData.SetCharges(node.charges);
         spellData.SetCooldown(node.cooldown);
         spellData.SetManaCost(node.manaCost);
     }
     private void SetPlayerSkillData(SPELL_TYPE skill, PlayerSkillTreeNode node) {
         SpellData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(skill);
-        CatergorizePlayerSkill(spellData);
+        CategorizePlayerSkill(spellData);
         spellData.SetCharges(node.charges);
         spellData.SetCooldown(node.cooldown);
         spellData.SetManaCost(node.manaCost);
     }
-    private void CatergorizePlayerSkill(SpellData spellData) {
-        if(spellData == null) {
-            Debug.Log("sdfsdf");
-        }
+    private void CategorizePlayerSkill(SpellData spellData) {
+        Assert.IsNotNull(spellData, "Given spell data in CategorizePlayerSkill is null!");
         if (spellData.category == SPELL_CATEGORY.AFFLICTION) {
             afflictions.Add(spellData.type);
         } else if (spellData.category == SPELL_CATEGORY.DEMONIC_STRUCTURE) {

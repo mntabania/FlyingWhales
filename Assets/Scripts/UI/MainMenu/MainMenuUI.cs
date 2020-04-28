@@ -59,11 +59,17 @@ public class MainMenuUI : MonoBehaviour {
         glowTween.OnValueChangedAnimation(false);
     }
     public void OnClickPlayGame() {
-        bg.DOFade(0f, 1f).OnComplete(OnCompleteBGTween);
-        newGameButton.interactable = false;
-        loadGameButton.interactable = false;
-        HideMenuButtons();
-        titleTween.OnValueChangedAnimation(false);
+        if (WorldConfigManager.Instance.isDemoWorld) {
+            newGameButton.interactable = false;
+            loadGameButton.interactable = false;
+            StartNewGame();
+        } else {
+            bg.DOFade(0f, 1f).OnComplete(OnCompleteBGTween);
+            newGameButton.interactable = false;
+            loadGameButton.interactable = false;
+            HideMenuButtons();
+            titleTween.OnValueChangedAnimation(false);
+        }
     }
     private void OnCompleteBGTween() {
         invadeButton.gameObject.SetActive(true);

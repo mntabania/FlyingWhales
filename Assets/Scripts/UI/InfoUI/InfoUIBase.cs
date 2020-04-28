@@ -89,7 +89,13 @@ public abstract class InfoUIBase : MonoBehaviour {
             PlayerAction action = PlayerSkillManager.Instance.GetPlayerActionData(target.actions[i]);
             if (action.IsValid(target) && PlayerManager.Instance.player.playerSkillComponent.CanDoPlayerAction(action.type)) {
                 ActionItem actionItem = AddNewAction(action, target);
-                actionItem.SetInteractable(action.CanPerformAbilityTo(target) && !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI);
+
+                if (WorldConfigManager.Instance.isDemoWorld && WorldConfigManager.Instance.availableSpellsInDemoBuild.Contains(action.type) == false) {
+                    //if demo world, and action is not set as available, then disable button.
+                    actionItem.SetInteractable(false);
+                } else {
+                    actionItem.SetInteractable(action.CanPerformAbilityTo(target) && !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI);    
+                }
             }
         }
     }
@@ -126,10 +132,6 @@ public abstract class InfoUIBase : MonoBehaviour {
             LoadActions(actionTarget);
         }
     }
-    #endregion
-
-
-    #region Player Actions
     protected ActionItem GetActiveActionItem(PlayerAction action) {
         for (int i = 0; i < activeActionItems.Count; i++) {
             ActionItem item = activeActionItems[i];

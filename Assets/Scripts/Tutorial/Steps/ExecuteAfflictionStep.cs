@@ -1,6 +1,6 @@
 ﻿namespace Tutorial {
     public class ExecuteAfflictionStep : TutorialQuestStep {
-        public ExecuteAfflictionStep(string stepDescription, string tooltip = "") : base(stepDescription) { }
+        public ExecuteAfflictionStep(string stepDescription) : base(stepDescription) { }
         protected override void SubscribeListeners() {
             Messenger.AddListener<SpellData>(Signals.ON_EXECUTE_AFFLICTION, CheckForCompletion);
         }

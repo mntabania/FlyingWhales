@@ -3,7 +3,7 @@ namespace Tutorial {
     public class NameplateClickedStep : TutorialQuestStep {
         private string _neededText;
 
-        public NameplateClickedStep(string neededText, string stepDescription = "Nameplate clicked", string tooltip = "")
+        public NameplateClickedStep(string neededText, string stepDescription = "Nameplate clicked")
             : base(stepDescription) {
             _neededText = neededText;
         }

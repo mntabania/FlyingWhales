@@ -170,6 +170,8 @@ public class UIManager : MonoBehaviour {
         Messenger.AddListener<PopupMenuBase>(Signals.POPUP_MENU_CLOSED, OnPopupMenuClosed);
 
         UpdateUI();
+        
+        returnToWorldBtn.gameObject.SetActive(WorldConfigManager.Instance.isDemoWorld == false);
     }
     private void OnGameLoaded() {
         UpdateUI();
@@ -1362,5 +1364,12 @@ public class UIManager : MonoBehaviour {
     #region General Confirmation
     [Header("General Confirmation")]
     public GeneralConfirmationWithVisual generalConfirmationWithVisual;
+    #endregion
+
+    #region Demo
+    [SerializeField] private DemoUI _demoUi;
+    public void ShowEndDemoScreen() {
+        _demoUi.Show();
+    }
     #endregion
 }

@@ -2,7 +2,7 @@
     public class ExecuteSpellStep : TutorialQuestStep {
         private readonly SPELL_TYPE _neededSpellType;
         
-        public ExecuteSpellStep(SPELL_TYPE neededSpellType, string stepDescription, string tooltip = "") 
+        public ExecuteSpellStep(SPELL_TYPE neededSpellType, string stepDescription) 
             : base(stepDescription) {
             _neededSpellType = neededSpellType;
         }

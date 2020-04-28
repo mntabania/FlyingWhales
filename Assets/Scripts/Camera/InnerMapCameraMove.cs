@@ -29,11 +29,7 @@ public class InnerMapCameraMove : BaseCameraMove {
 
     [SerializeField] private bool allowZoom = true;
 
-    [Header("Dragging")]
-    private float dragThreshold = 0.1f;
-    private float currDragTime;
-    private Vector3 dragOrigin;
-    private bool isDragging = false;
+  
 
     [Header("Edging")]
     [SerializeField] private float edgingSpeed = 30f;
@@ -77,7 +73,7 @@ public class InnerMapCameraMove : BaseCameraMove {
             return;
         }
         ArrowKeysMovement();
-        Dragging();
+        Dragging(innerMapsCamera);
         Edging();
         Zooming();
         Targetting();
@@ -207,61 +203,6 @@ public class InnerMapCameraMove : BaseCameraMove {
             //    target = null;
             //}
         }
-    }
-    private bool startedOnUI = false;
-    private bool hasReachedThreshold = false;
-    private Vector3 originMousePos;
-    private void Dragging() {
-        if (startedOnUI) {
-            if (!Input.GetMouseButton(2)) {
-                ResetDragValues();
-            }
-            return;
-        }
-        if (!isDragging) {
-            if (Input.GetMouseButtonDown(2)) {
-                if (UIManager.Instance.IsMouseOnUI() || InnerMapManager.Instance.currentlyHoveredPoi != null) { //if the dragging started on UI, a tileobject or a character, do not allow drag
-                    startedOnUI = true;
-                    return;
-                }
-                //dragOrigin = Input.mousePosition; //on first press of mouse
-            } else if (Input.GetMouseButton(2)) {
-                currDragTime += Time.deltaTime; //while the left mouse button is pressed
-                if (currDragTime >= dragThreshold) {
-                    if (!hasReachedThreshold) {
-                        dragOrigin = innerMapsCamera.ScreenToWorldPoint(Input.mousePosition);
-                        originMousePos = Input.mousePosition;
-                        hasReachedThreshold = true;
-                    }
-                    if (originMousePos !=  Input.mousePosition) { //check if the mouse has moved position from the origin, only then will it be considered dragging
-                        InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Drag_Clicked);
-                        isDragging = true;
-                    }
-                }
-            }
-            
-        }
-
-        if (isDragging) {
-            Vector3 difference = (innerMapsCamera.ScreenToWorldPoint(Input.mousePosition))- innerMapsCamera.transform.position;
-            innerMapsCamera.transform.position = dragOrigin-difference;
-            if (Input.GetMouseButtonUp(2)) {
-                ResetDragValues();
-                InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
-            }
-        } else {
-            if (!Input.GetMouseButton(2)) {
-                currDragTime = 0f;
-                hasReachedThreshold = false;
-            }
-        }
-    }
-    private void ResetDragValues() {
-        //CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
-        currDragTime = 0f;
-        isDragging = false;
-        startedOnUI = false;
-        hasReachedThreshold = false;
     }
     private void SetCameraBordersForMap(InnerTileMap map) {
         float y = map.transform.localPosition.y;

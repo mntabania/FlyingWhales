@@ -6,7 +6,11 @@ using UtilityScripts;
 public class WorldMapBiomeGeneration : MapGenerationComponent {
 	public override IEnumerator Execute(MapGenerationData data) {
 		int batchCount = 0;
-		List<BIOMES> choices = new List<BIOMES>(){ BIOMES.DESERT, BIOMES.GRASSLAND, BIOMES.FOREST, BIOMES.SNOW };
+		List<BIOMES> choices;
+		choices = WorldConfigManager.Instance.isDemoWorld ? 
+			new List<BIOMES>(){ BIOMES.GRASSLAND } : 
+			new List<BIOMES>(){ BIOMES.DESERT, BIOMES.GRASSLAND, BIOMES.FOREST, BIOMES.SNOW };
+		 
 		for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
 			Region region = GridMap.Instance.allRegions[i];
 			BIOMES randomBiome = CollectionUtilities.GetRandomElement(choices);

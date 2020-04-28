@@ -31,10 +31,7 @@ public class SpellItem : PooledObject {
         PlayerManager.Instance.player.SetCurrentlyActivePlayerSpell(null);
         if (state) {
             PlayerManager.Instance.player.SetCurrentlyActivePlayerSpell(spellData);
-        } 
-        //else {
-        //    PlayerManager.Instance.player.SetCurrentlyActivePlayerSpell(null);
-        //}
+        }
     }
 
     public void OnHoverSpell() {
@@ -44,9 +41,13 @@ public class SpellItem : PooledObject {
     public void OnHoverOutSpell() {
         UIManager.Instance.HideSmallInfo();
     }
+    public void SetInteractableState(bool interactable) {
+        spellToggle.interactable = interactable;
+    }
 
     public override void Reset() {
         base.Reset();
+        SetInteractableState(true);
         spellData = null;
         Messenger.RemoveListener<SpellData>(Signals.PLAYER_NO_ACTIVE_SPELL, OnPlayerNoActiveSpell);
     }

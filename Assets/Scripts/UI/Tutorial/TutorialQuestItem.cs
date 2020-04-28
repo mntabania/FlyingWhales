@@ -26,7 +26,7 @@ public class TutorialQuestItem : PooledObject {
         headerLbl.text = tutorialQuest.questName;
         UpdateSteps();
     }
-    public void UpdateSteps() {
+    public void UpdateSteps(bool updateLayout = false) {
         UtilityScripts.Utilities.DestroyChildren(stepsParent);
         for (int i = 0; i < _tutorialQuest.activeStepCollection.steps.Count; i++) {
             TutorialQuestStep step = _tutorialQuest.activeStepCollection.steps[i];
@@ -35,7 +35,9 @@ public class TutorialQuestItem : PooledObject {
             TutorialQuestStepItem stepItem = stepGO.GetComponent<TutorialQuestStepItem>();
             stepItem.SetStep(step);
         }
-        TutorialManager.Instance.tutorialUI.ReLayoutTutorials();
+        if (updateLayout) {
+            TutorialManager.Instance.tutorialUI.ReLayoutTutorials();    
+        }
     }
     public override void Reset() {
         base.Reset();

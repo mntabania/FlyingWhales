@@ -5,14 +5,21 @@ using UnityEngine;
 public class WorldMapGridGeneration : MapGenerationComponent {
 
 	public override IEnumerator Execute(MapGenerationData data) {
-		data.regionCount = 5;
-		data.width = 10;
-		data.height = 12;
+		if (WorldConfigManager.Instance.isDemoWorld) {
+			data.regionCount = 1;
+			data.width = 8;
+			data.height = 10;
+		} else {
+			data.regionCount = 5;
+			data.width = 10;
+			data.height = 12;
+		}
+		
 		Debug.Log($"Width: {data.width.ToString()} Height: {data.height.ToString()} Region Count: {data.regionCount.ToString()}");
 		yield return MapGenerator.Instance.StartCoroutine(GenerateGrid(data));
 	}
 	private IEnumerator GenerateGrid(MapGenerationData data) {
-		GridMap.Instance.SetupInitialData(10, 12);
+		GridMap.Instance.SetupInitialData(data.width, data.height);
 		float newX = MapGenerationData.xOffset * (data.width / 2f);
 		float newY = MapGenerationData.yOffset * (data.height / 2f);
 		GridMap.Instance.transform.localPosition = new Vector2(-newX, -newY);

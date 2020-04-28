@@ -25,7 +25,7 @@ public class TutorialUI : MonoBehaviour {
         Vector2 targetSize = rectTransform.sizeDelta;
         rectTransform.sizeDelta = new Vector2(0f, rectTransform.sizeDelta.y);
         rectTransform.DOSizeDelta(targetSize, 0.4f).SetEase(Ease.InCubic);
-        ReLayoutTutorials();
+        // ReLayoutTutorials();
         return tutorialQuestItem;
     }
     public void HideTutorialQuest(TutorialQuest tutorialQuest) {
@@ -42,8 +42,10 @@ public class TutorialUI : MonoBehaviour {
         rectTransform.DOSizeDelta(targetSize, 0.3f).OnComplete(() => OnCompleteEaseOutHeight(tutorialQuest));
     }
     private void OnCompleteEaseOutHeight(TutorialQuest tutorialQuest) {
-        ObjectPoolManager.Instance.DestroyObject(tutorialQuest.tutorialQuestItem);
-        tutorialQuest.SetTutorialQuestItem(null);
+        if (tutorialQuest.tutorialQuestItem != null) {
+            ObjectPoolManager.Instance.DestroyObject(tutorialQuest.tutorialQuestItem);
+            tutorialQuest.SetTutorialQuestItem(null);    
+        }
     }
 
     public void ReLayoutTutorials() {

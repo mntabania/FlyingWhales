@@ -53,20 +53,27 @@ public class WorldMapRegionGeneration : MapGenerationComponent {
 			}
 		}
 	};
-
-	private const int regionCount = 5;
 	
 	public override IEnumerator Execute(MapGenerationData data) {
-		// yield return MapGenerator.Instance.StartCoroutine(GridMap.Instance.DivideToRegions(
-		// 	GridMap.Instance.normalHexTiles, data.regionCount, 5));
-
-		WorldMapTemplate chosenTemplate = CollectionUtilities.GetRandomElement(worldMapTemplates);
-		yield return MapGenerator.Instance.StartCoroutine(DivideToRegions(chosenTemplate));
+		WorldMapTemplate chosenTemplate;
+		if (WorldConfigManager.Instance.isDemoWorld) {
+			chosenTemplate = new WorldMapTemplate() {
+				regions = new Dictionary<int, RegionTemplate[]>() {
+					{0, new [] {
+						new RegionTemplate(8, 10), 
+						}
+					}	
+				}
+			};
+		} else {
+			chosenTemplate = CollectionUtilities.GetRandomElement(worldMapTemplates);
+		}
+		yield return MapGenerator.Instance.StartCoroutine(DivideToRegions(chosenTemplate, data));
 	}
-	private IEnumerator DivideToRegions(WorldMapTemplate mapTemplate) {
+	private IEnumerator DivideToRegions(WorldMapTemplate mapTemplate, MapGenerationData data) {
 		int lastX = 0;
 		int lastY = 0;
-		Region[] allRegions = new Region[regionCount];
+		Region[] allRegions = new Region[data.regionCount];
 		int regionIndex = 0;
 		foreach (var mapTemplateRegion in mapTemplate.regions) {
 			for (int i = 0; i < mapTemplateRegion.Value.Length; i++) {

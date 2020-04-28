@@ -372,9 +372,9 @@ public class Biomes : MonoBehaviour {
         tile.LoadBeaches();
     }
 	public IEnumerator GenerateElevation(List<HexTile> tiles, int mapWidth, int mapHeight) {
-        float elevationFrequency = 8.93f; //19.1f//14.93f;//2.66f;
-        float moistureFrequency = 12.34f; //3.34f;//2.94f;
-        float tempFrequency = 2.64f;//2.4f;
+        float elevationFrequency = WorldConfigManager.Instance.isDemoWorld ? 15f : 8.93f;
+        float moistureFrequency = 12.34f;
+        float tempFrequency = 2.64f;
 
         float elevationRand = UnityEngine.Random.Range(500f,2000f);
         float moistureRand = UnityEngine.Random.Range(500f,2000f);
