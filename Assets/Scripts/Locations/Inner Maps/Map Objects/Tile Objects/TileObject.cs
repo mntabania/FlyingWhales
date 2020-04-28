@@ -819,7 +819,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         if (tileObjectType.IsTileObjectAnItem() == false) {
             return false;
         }
-        if (UtilityScripts.GameUtilities.IsRaceBeast(character.race)) {
+        if (GameUtilities.IsRaceBeast(character.race)) {
             return false;
         }
         if (character.race == RACE.SKELETON) {

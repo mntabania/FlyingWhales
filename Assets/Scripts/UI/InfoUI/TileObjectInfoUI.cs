@@ -87,7 +87,9 @@ public class TileObjectInfoUI : InfoUIBase {
         // activeTileObject.mapVisual.SetHoverObjectState(true);
         // activeTileObject.mapVisual.LockHoverObject();
         base.OpenMenu();
-        Selector.Instance.Select(activeTileObject);
+        if (activeTileObject.mapObjectVisual != null) {
+            Selector.Instance.Select(activeTileObject);    
+        }
         UIManager.Instance.HideObjectPicker();
         UpdateTabs();
         UpdateBasicInfo();

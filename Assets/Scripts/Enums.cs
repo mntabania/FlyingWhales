@@ -965,7 +965,8 @@ public enum INTERACTION_TYPE {
     REMOVE_UNCONSCIOUS,
     DOUSE_FIRE,
     ATTACK_DEMONIC_STRUCTURE,
-    HEAL_SELF
+    HEAL_SELF,
+    OPEN
 }
 
 public enum INTERACTION_CATEGORY {
@@ -1278,7 +1279,7 @@ public enum TILE_OBJECT_TYPE {
     FORLORN_SPIRIT,
     POISON_CLOUD,
     LOCUST_SWARM,
-    MIMIC_TILE_OBJECT,
+    TREASURE_CHEST,
     SAWHORSE,
     OBELISK,
     BALL_LIGHTNING,
@@ -1329,6 +1330,7 @@ public enum TILE_OBJECT_TYPE {
     PORTAL_TILE_OBJECT,
     WINTER_ROSE,
     DESERT_ROSE,
+    MIMIC_TILE_OBJECT,
 }
 public enum POI_STATE {
     ACTIVE,
@@ -1357,7 +1359,8 @@ public enum JOB_TYPE { NONE, UNDERMINE, ENERGY_RECOVERY_URGENT, FULLNESS_RECOVER
         , BUILD_BLUEPRINT, PLACE_BLUEPRINT, COMBAT, STROLL, HAUL, OBTAIN_PERSONAL_FOOD, NEUTRALIZE_DANGER, FLEE_TO_HOME, BURY_SERIAL_KILLER_VICTIM, KILL, GO_TO, CHECK_PARALYZED_FRIEND, VISIT_FRIEND
         , IDLE_RETURN_HOME, IDLE_NAP, IDLE_SIT, IDLE_STAND, IDLE_GO_TO_INN, COMBINE_STOCKPILE, ROAM_AROUND_TERRITORY, ROAM_AROUND_CORRUPTION, ROAM_AROUND_PORTAL, ROAM_AROUND_TILE, RETURN_TERRITORY, RETURN_PORTAL
         , STAND, ABDUCT, LEARN_MONSTER, TAKE_ARTIFACT, TAKE_ITEM, HIDE_AT_HOME, STAND_STILL, SUICIDE_FOLLOW
-        , DRY_TILES, CLEANSE_TILES, MONSTER_ABDUCT, REPORT_CORRUPTED_STRUCTURE, ASSAULT_DEMONIC_STRUCTURE, RECOVER_HP, POISON_FOOD
+        , DRY_TILES, CLEANSE_TILES, MONSTER_ABDUCT, REPORT_CORRUPTED_STRUCTURE, ASSAULT_DEMONIC_STRUCTURE, RECOVER_HP, POISON_FOOD,
+        OPEN_CHEST
 }
 public enum JOB_OWNER { CHARACTER, LOCATION, QUEST, }
 public enum Cardinal_Direction { North, South, East, West };
@@ -1598,6 +1601,9 @@ public static class Extensions {
             case STRUCTURE_TYPE.ASSASSIN_GUILD:
             case STRUCTURE_TYPE.HUNTER_LODGE:
             case STRUCTURE_TYPE.MAGE_QUARTERS:
+            case STRUCTURE_TYPE.FARM:
+            case STRUCTURE_TYPE.LUMBERYARD:
+            case STRUCTURE_TYPE.MINE:
                 return true;
             default:
                 return false;
@@ -1827,7 +1833,6 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.HEALING_POTION:
             case TILE_OBJECT_TYPE.TOOL:
             case TILE_OBJECT_TYPE.ARTIFACT:
-            case TILE_OBJECT_TYPE.MIMIC_TILE_OBJECT:
                 return true;
             default:
                 return false;
@@ -1836,6 +1841,7 @@ public static class Extensions {
     public static bool IsTileObjectVisibleByDefault(this TILE_OBJECT_TYPE tileObjectType) {
         switch (tileObjectType) {
             case TILE_OBJECT_TYPE.TOMBSTONE:
+            case TILE_OBJECT_TYPE.TREASURE_CHEST:
                 return true;
             default:
                 return tileObjectType.IsTileObjectAnItem();
@@ -1920,6 +1926,7 @@ public static class Extensions {
                 break;
             case JOB_TYPE.UNDERMINE:
             case JOB_TYPE.POISON_FOOD:
+            case JOB_TYPE.OPEN_CHEST:
                 priority = 910;
                 break;
             case JOB_TYPE.FEED:

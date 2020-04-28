@@ -15,6 +15,7 @@ public abstract class Ent : Summon {
     }
     public override void Initialize() {
         base.Initialize();
+        SetDestroyMarkerOnDeath(true);
         behaviourComponent.RemoveBehaviourComponent(typeof(DefaultMonster));
         behaviourComponent.RemoveBehaviourComponent(typeof(MovementProcessing));
         behaviourComponent.AddBehaviourComponent(typeof(EntBehaviour));

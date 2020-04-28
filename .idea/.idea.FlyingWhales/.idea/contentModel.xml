@@ -1346,6 +1346,7 @@
                 <e p="MineStone.cs" t="Include" />
                 <e p="Nap.cs" t="Include" />
                 <e p="Neutralize.cs" t="Include" />
+                <e p="Open.cs" t="Include" />
                 <e p="PlaceBlueprint.cs" t="Include" />
                 <e p="PlayGuitar.cs" t="Include" />
                 <e p="Poison.cs" t="Include" />
@@ -1639,7 +1640,6 @@
                   <e p="Manacles.cs" t="Include" />
                   <e p="ManaRune.cs" t="Include" />
                   <e p="MetalPile.cs" t="Include" />
-                  <e p="MimicTileObject.cs" t="Include" />
                   <e p="MovingTileObject.cs" t="Include" />
                   <e p="Mushroom.cs" t="Include" />
                   <e p="Obelisk.cs" t="Include" />
@@ -1698,6 +1698,7 @@
                   <e p="TortureTable.cs" t="Include" />
                   <e p="TrainingDummy.cs" t="Include" />
                   <e p="Trash.cs" t="Include" />
+                  <e p="TreasureChest.cs" t="Include" />
                   <e p="TreeObject.cs" t="Include" />
                   <e p="VaporTileObject.cs" t="Include" />
                   <e p="WaterBasin.cs" t="Include" />

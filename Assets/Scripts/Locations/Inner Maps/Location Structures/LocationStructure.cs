@@ -363,7 +363,7 @@ namespace Inner_Maps.Location_Structures {
                         return unoccupiedTiles.Where(x => !x.HasOccupiedNeighbour() && !x.GetTilesInRadius(3).Any(y => y.objHere is WaterWell) && !x.HasNeighbouringWalledStructure()).ToList();
                     } else if (poi is GoddessStatue) {
                         return unoccupiedTiles.Where(x => !x.HasOccupiedNeighbour() && !x.GetTilesInRadius(3).Any(y => y.objHere is GoddessStatue) && !x.HasNeighbouringWalledStructure()).ToList();
-                    } else if (poi is MimicTileObject || poi is ElementalCrystal) {
+                    } else if (poi is TreasureChest || poi is ElementalCrystal) {
                         return unoccupiedTiles.Where(x => x.IsPartOfSettlement() == false).ToList();
                     } else if (poi is Guitar || poi is Bed || poi is Table) {
                         return GetOuterTiles().Where(x => unoccupiedTiles.Contains(x) && x.tileType != LocationGridTile.Tile_Type.Structure_Entrance).ToList();

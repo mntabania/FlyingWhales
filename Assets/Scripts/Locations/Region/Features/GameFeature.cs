@@ -23,7 +23,6 @@ public class GameFeature : TileFeature {
         owner = tile;
         Messenger.AddListener<TileObject, LocationGridTile>(Signals.TILE_OBJECT_PLACED, OnTileObjectPlaced);
         Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
-        
         List<TileObject> animals = tile.GetTileObjectsInHexTile(TILE_OBJECT_TYPE.SMALL_ANIMAL);
         currentAnimalCount = animals.Count;
         if (animals.Count <= MaxAnimals) {

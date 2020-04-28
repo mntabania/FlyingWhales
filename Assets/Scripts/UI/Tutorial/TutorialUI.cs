@@ -22,7 +22,7 @@ public class TutorialUI : MonoBehaviour {
         TutorialQuestItem tutorialQuestItem = tutorialQuestGO.GetComponent<TutorialQuestItem>();
         tutorialQuestItem.SetTutorialQuest(tutorialQuest);
         RectTransform rectTransform = tutorialQuestGO.transform as RectTransform;
-        Vector2 targetSize = rectTransform.sizeDelta;
+        Vector2 targetSize = new Vector2(392f, 55f);
         rectTransform.sizeDelta = new Vector2(0f, rectTransform.sizeDelta.y);
         rectTransform.DOSizeDelta(targetSize, 0.4f).SetEase(Ease.InCubic);
         // ReLayoutTutorials();

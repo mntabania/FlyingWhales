@@ -50,7 +50,13 @@ namespace Traits {
             //     }
             // }
             if (targetPOI is TileObject item) {
-                if(!characterThatWillDoJob.IsInventoryAtFullCapacity() && characterThatWillDoJob.IsItemInteresting(item.name)) {
+                if (item is TreasureChest) {
+                    if (characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.OPEN_CHEST, item) == false 
+                        && characterThatWillDoJob.traitContainer.HasTrait("Suspicious") == false) {
+                        //if character is non suspicious, create an open chest job.
+                        characterThatWillDoJob.jobComponent.CreateOpenChestJob(item);
+                    }
+                } else if(!characterThatWillDoJob.IsInventoryAtFullCapacity() && characterThatWillDoJob.IsItemInteresting(item.name)) {
                     if (!characterThatWillDoJob.traitContainer.HasTrait("Beast") /*characterThatWillDoJob.role.roleType != CHARACTER_ROLE.BEAST*/) {
                         if (item.CanBePickedUpNormallyUponVisionBy(characterThatWillDoJob)
                             && !characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.TAKE_ITEM, INTERACTION_TYPE.PICK_UP)) {
