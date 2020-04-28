@@ -38,7 +38,7 @@ public interface IRelationshipContainer {
     void AdjustOpinion(Character owner, Character target, string opinionText, int opinionValue, string lastStrawReason = "");
     void SetOpinion(Character owner, Character target, string opinionText, int opinionValue, string lastStrawReason = "");
     void SetOpinion(Character owner, int targetID, string targetName, GENDER gender, string opinionText,
-        int opinionValue,
+        int opinionValue, bool isInitial,
         string lastStrawReason = "");
     void RemoveOpinion(Character target, string opinionText);
     bool HasOpinion(Character target, string opinionText);

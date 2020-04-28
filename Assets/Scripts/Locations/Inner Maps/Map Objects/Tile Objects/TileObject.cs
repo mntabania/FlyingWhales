@@ -799,10 +799,15 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     // }
     public void SetCharacterOwner(Character characterOwner) {
         if(this.characterOwner != characterOwner) {
+            Character prevOwner = this.characterOwner;
             this.characterOwner = characterOwner;
+            if (prevOwner != null) {
+                prevOwner.RemoveOwnedItem(this);
+            }
             if (this.characterOwner == null) {
                 RemoveAdvertisedAction(INTERACTION_TYPE.STEAL);
             } else {
+                this.characterOwner.AddOwnedItem(this);
                 AddAdvertisedAction(INTERACTION_TYPE.STEAL);
             }
         }

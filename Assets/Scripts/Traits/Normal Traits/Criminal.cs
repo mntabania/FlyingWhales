@@ -50,7 +50,7 @@ namespace Traits {
         #endregion
 
         #region General
-        public void SetCrime(CRIME_TYPE crimeType, IReactable crime) {
+        public void SetCrime(CRIME_TYPE crimeType, ICrimeable crime) {
             if(crimeData != null) {
                 Debug.LogError(
                     $"Cannot set crime to criminal {owner.name} because it already has a crime: {crimeData.crimeType}");

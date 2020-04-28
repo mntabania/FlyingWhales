@@ -8,7 +8,7 @@ using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Traits;
 
-public class GoapAction : IReactable {
+public class GoapAction : ICrimeable {
 
     public INTERACTION_TYPE goapType { get; private set; }
     public virtual ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }

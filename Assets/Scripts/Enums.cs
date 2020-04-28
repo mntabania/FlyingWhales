@@ -1360,7 +1360,7 @@ public enum JOB_TYPE { NONE, UNDERMINE, ENERGY_RECOVERY_URGENT, FULLNESS_RECOVER
         , IDLE_RETURN_HOME, IDLE_NAP, IDLE_SIT, IDLE_STAND, IDLE_GO_TO_INN, COMBINE_STOCKPILE, ROAM_AROUND_TERRITORY, ROAM_AROUND_CORRUPTION, ROAM_AROUND_PORTAL, ROAM_AROUND_TILE, RETURN_TERRITORY, RETURN_PORTAL
         , STAND, ABDUCT, LEARN_MONSTER, TAKE_ARTIFACT, TAKE_ITEM, HIDE_AT_HOME, STAND_STILL, SUICIDE_FOLLOW
         , DRY_TILES, CLEANSE_TILES, MONSTER_ABDUCT, REPORT_CORRUPTED_STRUCTURE, ASSAULT_DEMONIC_STRUCTURE, RECOVER_HP, POISON_FOOD,
-        OPEN_CHEST
+        , BRAWL, PLACE_TRAP, SPREAD_RUMOR, OPEN_CHEST
 }
 public enum JOB_OWNER { CHARACTER, LOCATION, QUEST, }
 public enum Cardinal_Direction { North, South, East, West };
@@ -1522,6 +1522,7 @@ public enum PARTICLE_EFFECT { None, Poison, Freezing, Fire, Burning, Explode, El
     Build_Demonic_Structure
 }
 public enum PLAYER_SKILL_STATE { Locked, Unlocked, Learned, }
+public enum REACTABLE_EFFECT { Neutral, Positive, Negative, }
 
 #region Crime Subcategories
 [System.AttributeUsage(System.AttributeTargets.Field)]
@@ -1905,6 +1906,7 @@ public static class Extensions {
                 priority = 1000;
                 break;
             case JOB_TYPE.KNOCKOUT:
+            case JOB_TYPE.BRAWL:
                 priority = 970;
                 break;
             case JOB_TYPE.DOUSE_FIRE:
@@ -1926,6 +1928,7 @@ public static class Extensions {
                 break;
             case JOB_TYPE.UNDERMINE:
             case JOB_TYPE.POISON_FOOD:
+            case JOB_TYPE.PLACE_TRAP:
             case JOB_TYPE.OPEN_CHEST:
                 priority = 910;
                 break;
@@ -2000,6 +2003,9 @@ public static class Extensions {
                 break;
             case JOB_TYPE.VISIT_FRIEND:
                 priority = 280;
+                break;
+            case JOB_TYPE.SPREAD_RUMOR:
+                priority = 270;
                 break;
             case JOB_TYPE.OBTAIN_PERSONAL_ITEM:
             case JOB_TYPE.ABDUCT:
@@ -2155,6 +2161,7 @@ public static class Extensions {
             case JOB_TYPE.KNOCKOUT:
             case JOB_TYPE.ABDUCT:
             case JOB_TYPE.LEARN_MONSTER:
+            case JOB_TYPE.BRAWL:
                 return false;
             default:
                 return true;

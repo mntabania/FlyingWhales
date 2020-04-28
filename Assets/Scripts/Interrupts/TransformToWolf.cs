@@ -21,7 +21,10 @@ namespace Interrupts {
         public override string ReactionToActor(Character witness, Character actor, IPointOfInterest target,
             Interrupt interrupt, REACTION_STATUS status) {
             string response = base.ReactionToActor(witness, actor, target, interrupt, status);
-            Character originalForm = actor.lycanData.originalForm;
+            Character originalForm = actor;
+            if(actor.lycanData != null) {
+                originalForm = actor.lycanData.originalForm;
+            }
             if (!witness.isLycanthrope) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, originalForm, status);
                 // response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, originalForm);

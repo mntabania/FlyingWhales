@@ -13,7 +13,7 @@ public class CrimeManager : MonoBehaviour {
 	}
 
     #region Character
-    public void MakeCharacterACriminal(Character character, CRIME_TYPE crimeType, IReactable committedCrime) {
+    public void MakeCharacterACriminal(Character character, CRIME_TYPE crimeType, ICrimeable committedCrime) {
         Criminal criminalTrait = new Criminal();
         character.traitContainer.AddTrait(character, criminalTrait);
         criminalTrait.SetCrime(crimeType, committedCrime);
@@ -166,14 +166,14 @@ public class CrimeManager : MonoBehaviour {
 public class CrimeData {
     public CRIME_TYPE crimeType { get; private set; }
     public CRIME_STATUS crimeStatus { get; private set; }
-    public IReactable crime { get; private set; }
+    public ICrimeable crime { get; private set; }
     public string strCrimeType { get; private set; }
 
     public Character criminal { get; private set; }
     public Character judge { get; private set; }
     public List<Character> witnesses { get; private set; }
 
-    public CrimeData(CRIME_TYPE crimeType, IReactable crime, Character criminal) {
+    public CrimeData(CRIME_TYPE crimeType, ICrimeable crime, Character criminal) {
         this.crimeType = crimeType;
         this.crime = crime;
         this.criminal = criminal;

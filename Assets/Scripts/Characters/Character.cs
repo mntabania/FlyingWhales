@@ -66,6 +66,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public ActualGoapNode previousCurrentActionNode { get; private set; }
     public Character lastAssaultedCharacter { get; private set; }
     public List<TileObject> items { get; private set; }
+    public List<TileObject> ownedItems { get; private set; }
     public JobQueue jobQueue { get; private set; }
     public List<JobQueueItem> allJobsTargetingThis { get; private set; }
     public bool canCombat { get; private set; } //This should only be a getter but since we need to know when the value changes it now has a setter
@@ -143,6 +144,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public ReactionComponent reactionComponent { get; private set; }
     public LogComponent logComponent { get; private set; }
     public CombatComponent combatComponent { get; private set; }
+    public RumorComponent rumorComponent { get; private set; }
+
 
     #region getters / setters
     public override string relatableName => _firstName;
@@ -317,6 +320,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         advertisedActions = new List<INTERACTION_TYPE>();
         stateComponent = new CharacterStateComponent(this);
         items = new List<TileObject>();
+        ownedItems = new List<TileObject>();
         jobQueue = new JobQueue(this);
         allJobsTargetingThis = new List<JobQueueItem>();
         traitsNeededToBeRemoved = new List<Trait>();
@@ -346,6 +350,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         // combatHistory = new Dictionary<int, Combat>();
         advertisedActions = new List<INTERACTION_TYPE>();
         items = new List<TileObject>();
+        ownedItems = new List<TileObject>();
         allJobsTargetingThis = new List<JobQueueItem>();
         traitsNeededToBeRemoved = new List<Trait>();
         onLeaveAreaActions = new List<Action>();
@@ -375,6 +380,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         reactionComponent = new ReactionComponent(this);
         logComponent = new LogComponent(this);
         combatComponent = new CombatComponent(this);
+        rumorComponent = new RumorComponent(this);
     }
 
     //This is done separately after all traits have been loaded so that the data will be accurate
@@ -3661,6 +3667,16 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //    }
     //    return false;
     //}
+    public bool AddOwnedItem(TileObject item) {
+        if (!ownedItems.Contains(item)) {
+            ownedItems.Add(item);
+            return true;
+        }
+        return false;
+    }
+    public bool RemoveOwnedItem(TileObject item) {
+        return ownedItems.Remove(item);
+    }
     public bool ObtainItem(TileObject item, bool changeCharacterOwnership = false) {
         if (AddItem(item)) {
             // item.SetFactionOwner(this.faction);

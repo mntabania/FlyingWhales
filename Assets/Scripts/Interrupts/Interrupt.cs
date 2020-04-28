@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Interrupts {
-    public class Interrupt : IReactable {
+    public class Interrupt : ICrimeable {
         public INTERRUPT interrupt { get; protected set; }
         public string name { get; protected set; }
         public int duration { get; protected set; }
@@ -38,6 +38,63 @@ namespace Interrupts {
                 return effectLog;
             }
             return null;
+        }
+        public virtual Log CreateEffectLog(Character actor, IPointOfInterest target, string key) {
+            if (LocalizationManager.Instance.HasLocalizedValue("Interrupt", name, key)) {
+                Log effectLog = new Log(GameManager.Instance.Today(), "Interrupt", name, key);
+                effectLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                effectLog.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                return effectLog;
+            }
+            return null;
+        }
+        #endregion
+    }
+
+    public class InterruptHolder : IReactable, IRumorable {
+        public Interrupt interrupt { get; private set; }
+        public Character actor { get; private set; }
+        public IPointOfInterest target { get; private set; }
+        public Log effectLog { get; private set; }
+        public Rumor rumor { get; private set; }
+
+        #region getters
+        public string name => interrupt.name;
+        public string typeName => "Interrupt";
+        public Log informationLog => effectLog;
+        public bool isStealth => false;
+        public bool isRumor => rumor != null;
+        #endregion
+
+        public InterruptHolder(Interrupt interrupt, Character actor, IPointOfInterest target, Log effectLog) {
+            this.interrupt = interrupt;
+            this.actor = actor;
+            this.target = target;
+            this.effectLog = effectLog;
+        }
+
+        #region IReactable
+        public string ReactionToActor(Character witness, REACTION_STATUS status) {
+            return interrupt.ReactionToActor(witness, actor, target, interrupt, status);
+        }
+
+        public string ReactionToTarget(Character witness, REACTION_STATUS status) {
+            return interrupt.ReactionToTarget(witness, actor, target, interrupt, status);
+        }
+
+        public string ReactionOfTarget(REACTION_STATUS status) {
+            return interrupt.ReactionOfTarget(actor, target, interrupt, status);
+        }
+        public REACTABLE_EFFECT GetReactableEffect() {
+            return REACTABLE_EFFECT.Neutral;
+        }
+        #endregion
+
+        #region IRumorable
+        public void SetAsRumor(Rumor newRumor) {
+            if (rumor != newRumor) {
+                rumor = newRumor;
+            }
         }
         #endregion
     }
