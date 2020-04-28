@@ -1112,6 +1112,7 @@
               <e p="MoodComponent.cs" t="Include" />
               <e p="NonActionEventsComponent.cs" t="Include" />
               <e p="ReactionComponent.cs" t="Include" />
+              <e p="RumorComponent.cs" t="Include" />
               <e p="Supporting Elements" t="Include">
                 <e p="IMoodModifier.cs" t="Include" />
                 <e p="OpinionData.cs" t="Include" />
@@ -1819,6 +1820,7 @@
           <e p="Models" t="Include">
             <e p="ICharacter.cs" t="Include" />
             <e p="ICharacterBase.cs" t="Include" />
+            <e p="ICrimeable.cs" t="Include" />
             <e p="IDwelling.cs" t="Include" />
             <e p="IJobOwner.cs" t="Include" />
             <e p="ILeader.cs" t="Include" />
@@ -2070,6 +2072,9 @@
               <e p="CharacterRelationshipValidator.cs" t="Include" />
               <e p="IRelationshipValidator.cs" t="Include" />
             </e>
+          </e>
+          <e p="Rumor" t="Include">
+            <e p="Rumor.cs" t="Include" />
           </e>
           <e p="Saving" t="Include">
             <e p="Save.cs" t="Include" />
