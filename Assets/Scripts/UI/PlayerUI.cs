@@ -940,7 +940,13 @@ public class PlayerUI : MonoBehaviour {
         }
         if (WorldConfigManager.Instance.isDemoWorld) {
             //in demo world, only allow spells that are set to be available.
-            item.SetInteractableState(WorldConfigManager.Instance.availableSpellsInDemoBuild.Contains(spell));
+            bool isInteractable = WorldConfigManager.Instance.availableSpellsInDemoBuild.Contains(spell);
+            item.SetInteractableState(isInteractable);
+            if (isInteractable) {
+                item.transform.SetAsFirstSibling();
+            } else {
+                item.transform.SetAsLastSibling();
+            }
         }
         _spellItems.Add(item);
     }
