@@ -14,17 +14,27 @@ public class PortalLandmarkGeneration : MapGenerationComponent {
 	}
 
 	private void PlacePortal(MapGenerationData data) {
-		List<HexTile> validPortalTiles = GridMap.Instance.normalHexTiles.Where(h =>
-			(h.elevationType == ELEVATION.PLAIN || h.elevationType == ELEVATION.TREES)
-			&& h.region.HasTileWithFeature(TileFeatureDB.Inhabited_Feature)
-			&& HasSettlementNeighbour(h) == false 
-			&& h.featureComponent.HasFeature(TileFeatureDB.Inhabited_Feature) == false
-		).ToList();
-
+		List<HexTile> validPortalTiles;
+		if (WorldConfigManager.Instance.isDemoWorld) {
+			validPortalTiles = new List<HexTile>() {
+				GridMap.Instance.map[1, 7]
+			};
+		} else {
+			validPortalTiles = GridMap.Instance.normalHexTiles.Where(h =>
+				(h.elevationType == ELEVATION.PLAIN || h.elevationType == ELEVATION.TREES)
+				&& h.region.HasTileWithFeature(TileFeatureDB.Inhabited_Feature)
+				&& HasSettlementNeighbour(h) == false 
+				&& h.featureComponent.HasFeature(TileFeatureDB.Inhabited_Feature) == false
+			).ToList();
+		}
+		
 		Assert.IsTrue(validPortalTiles.Count > 0,
 			"No valid portal tiles were found!");
 		
 		HexTile portalTile = CollectionUtilities.GetRandomElement(validPortalTiles);
+		if (WorldConfigManager.Instance.isDemoWorld) {
+			portalTile.SetElevation(ELEVATION.PLAIN);
+		}
 		BaseLandmark portalLandmark = LandmarkManager.Instance.CreateNewLandmarkOnTile(portalTile, LANDMARK_TYPE.THE_PORTAL);
 		PlayerSettlement playerSettlement = LandmarkManager.Instance.CreateNewPlayerSettlement(portalTile);
 		playerSettlement.SetName("Demonic Intrusion");

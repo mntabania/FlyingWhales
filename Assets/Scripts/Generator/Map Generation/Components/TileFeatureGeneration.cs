@@ -183,20 +183,15 @@ public class TileFeatureGeneration : MapGenerationComponent {
 	}
 	private void DetermineSettlementsForDemo() {
 		Region region = GridMap.Instance.allRegions[0];
-		HexTile habitableTile = CollectionUtilities.GetRandomElement(region.tiles);
-		int tileCount = 3;
-		List<HexTile> chosenTiles = new List<HexTile> {habitableTile};
-		List<HexTile> tileChoices = new List<HexTile>(habitableTile.AllNeighbours);
-		while (chosenTiles.Count != tileCount) {
-			Assert.IsTrue(tileChoices.Count > 0, "Settlement tile choices for demo is lacking.");
-			HexTile chosenTile = CollectionUtilities.GetRandomElement(tileChoices);
-			chosenTiles.Add(chosenTile);
-			chosenTile.SetElevation(ELEVATION.PLAIN);
-			tileChoices.Remove(chosenTile);
-		}
+		List<HexTile> chosenTiles = new List<HexTile> {
+			GridMap.Instance.map[4, 5],
+			GridMap.Instance.map[5, 5],
+			GridMap.Instance.map[4, 6]
+		};
 
 		for (int i = 0; i < chosenTiles.Count; i++) {
 			HexTile chosenTile = chosenTiles[i];
+			chosenTile.SetElevation(ELEVATION.PLAIN);
 			chosenTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, chosenTile);
 			LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.VILLAGE);
 		}

@@ -119,6 +119,12 @@ public class PlayerSkillComponent {
         CategorizePlayerSkill(afflict);
         SpellData buildDemonicStructure = PlayerSkillManager.Instance.GetPlayerSkillData(SPELL_TYPE.BUILD_DEMONIC_STRUCTURE);
         CategorizePlayerSkill(buildDemonicStructure);
+        
+        //For Demo
+        if (WorldConfigManager.Instance.isDemoWorld) {
+            SpellData rain = PlayerSkillManager.Instance.GetPlayerSkillData(SPELL_TYPE.RAIN);
+            CategorizePlayerSkill(rain);    
+        }
     }
     private void PopulateAllSkills() {
         if (nodesData != null) {
