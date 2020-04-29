@@ -57,7 +57,6 @@ namespace Tutorial {
         }
         #endregion
         
-
         #region Availability Functions
         private void OnSpellExecutedWhileInactive(SpellData spellData) {
             if (spellData.type == SPELL_TYPE.HARASS) {
@@ -86,8 +85,7 @@ namespace Tutorial {
 
         #region Step Helpers
         private bool IsHexTileAVillage(HexTile tile) {
-            return tile.landmarkOnTile != null && (tile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.VILLAGE || 
-                                                   tile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.HOUSES);
+            return tile.landmarkOnTile != null && tile.landmarkOnTile.specificLandmarkType.GetStructureType().IsSettlementStructure();
         }
         #endregion
     }

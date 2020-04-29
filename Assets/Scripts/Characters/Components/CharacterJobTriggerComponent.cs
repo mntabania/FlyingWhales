@@ -806,6 +806,10 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TAKE_ITEM, INTERACTION_TYPE.PICK_UP, target, _owner);
         _owner.jobQueue.AddJobInQueue(job);
     }
+    public void CreateOpenChestJob(TileObject target) {
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.OPEN_CHEST, INTERACTION_TYPE.OPEN, target, _owner);
+        _owner.jobQueue.AddJobInQueue(job);
+    }
     public void CreateDestroyResourceAmountJob(ResourcePile target, int amount) {
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DESTROY, INTERACTION_TYPE.DESTROY_RESOURCE_AMOUNT, target, _owner);
         if(amount > 0) {

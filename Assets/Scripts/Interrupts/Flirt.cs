@@ -25,10 +25,10 @@ namespace Interrupts {
                 if (isLoverOrAffair) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status);
                 } else {
+                    //TODO: Cannot do this part since we cannot know the result of flirting in reactions
                     //if (witness.relationshipContainer.IsFriendsWith(actor)) {
 
                     //}
-                    //TODO
                 }
             }
             return response;

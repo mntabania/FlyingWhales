@@ -102,6 +102,9 @@ public class Strangle : GoapAction {
         }
         return response;
     }
+    public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
+        return REACTABLE_EFFECT.Negative;
+    }
     #endregion
 
     #region Requirements

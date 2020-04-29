@@ -58,6 +58,10 @@ public class ReactionComponent {
             //Minions or Summons cannot react to actions
             return string.Empty;
         }
+        if (reactable.awareCharacters.Contains(owner)) {
+            return "aware";
+        }
+        reactable.AddAwareCharacter(owner);
         if (status == REACTION_STATUS.WITNESSED) {
             ReactToWitnessedReactable(reactable, addLog);
         } else {

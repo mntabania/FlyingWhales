@@ -220,6 +220,14 @@ public class MakeLove : GoapAction {
         }
         return response;
     }
+    public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
+        if (node.poiTarget is Character character) {
+            if (node.actor.relationshipContainer.HasRelationshipWith(character, RELATIONSHIP_TYPE.LOVER) == false) {
+                return REACTABLE_EFFECT.Negative;
+            }
+        }
+        return REACTABLE_EFFECT.Neutral;
+    }
     #endregion
 
     #region Effects

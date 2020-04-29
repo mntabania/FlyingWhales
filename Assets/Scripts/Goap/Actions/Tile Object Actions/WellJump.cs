@@ -27,6 +27,9 @@ public class WellJump : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return 10;
     }
+    public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
+        return REACTABLE_EFFECT.Negative;
+    }
     #endregion
 
     #region Requirements

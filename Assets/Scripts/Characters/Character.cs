@@ -2266,18 +2266,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 //targetCharacter.OnSeenBy(this); //trigger that the target character was seen by this character.
                 targetCharacterCurrentActionNode = targetCharacter.currentActionNode;
                 if (targetCharacterCurrentActionNode != null /*&& node.action.shouldAddLogs*/ && targetCharacterCurrentActionNode.actionStatus != ACTION_STATUS.STARTED && targetCharacterCurrentActionNode.actionStatus != ACTION_STATUS.NONE && targetCharacterCurrentActionNode.actor != this) {
-                    if (!targetCharacterCurrentActionNode.awareCharacters.Contains(this)) {
-                        reactionComponent.ReactTo(targetCharacterCurrentActionNode, REACTION_STATUS.WITNESSED);
-                        targetCharacterCurrentActionNode.AddAwareCharacter(this);
-                    }
+                    reactionComponent.ReactTo(targetCharacterCurrentActionNode, REACTION_STATUS.WITNESSED);
                 } else if (targetCharacter.isInCombat) {
                     if (targetCharacter.stateComponent.currentState is CombatState combatState) {
                         targetCharacterCurrentActionNode = combatState.actionThatTriggeredThisState;
                         if (targetCharacterCurrentActionNode != null) {
-                            if (!targetCharacterCurrentActionNode.awareCharacters.Contains(this)) {
-                                reactionComponent.ReactTo(targetCharacterCurrentActionNode, REACTION_STATUS.WITNESSED);
-                                targetCharacterCurrentActionNode.AddAwareCharacter(this);
-                            }
+                            reactionComponent.ReactTo(targetCharacterCurrentActionNode, REACTION_STATUS.WITNESSED);
                         }
                     }
                 }
@@ -2292,10 +2286,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     if (plan != null /*&& plan.currentActualNode.action.shouldAddLogs*/ 
                         && plan.currentActualNode.actionStatus != ACTION_STATUS.STARTED && plan.currentActualNode.actionStatus != ACTION_STATUS.NONE
                         && plan.currentActualNode != targetCharacterCurrentActionNode && plan.currentActualNode.actor != this) {
-                        if (!plan.currentActualNode.awareCharacters.Contains(this)) {
-                            reactionComponent.ReactTo(plan.currentActualNode, REACTION_STATUS.WITNESSED);
-                            plan.currentActualNode.AddAwareCharacter(this);
-                        }
+                        reactionComponent.ReactTo(plan.currentActualNode, REACTION_STATUS.WITNESSED);
                     }
                 }
             }
@@ -2313,10 +2304,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     public void ThisCharacterSawAction(ActualGoapNode action) {
-        if (!action.awareCharacters.Contains(this)) {
-            reactionComponent.ReactTo(action, REACTION_STATUS.WITNESSED);
-            action.AddAwareCharacter(this);
-        }
+        reactionComponent.ReactTo(action, REACTION_STATUS.WITNESSED);
     }
     //public List<Log> GetWitnessOrInformedMemories(int dayFrom, int dayTo, Character involvedCharacter = null) {
     //    List<Log> memories = new List<Log>();
@@ -4056,11 +4044,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public string ShareIntel(IIntel intel) {
         // PlayerManager.Instance.player.RemoveIntel(intel);
         if(intel is ActionIntel actionIntel) {
-            if (!actionIntel.node.awareCharacters.Contains(this)) {
-                string reaction = reactionComponent.ReactTo(actionIntel.node, REACTION_STATUS.INFORMED);
-                actionIntel.node.AddAwareCharacter(this);
-                return reaction;
-            }
+            return reactionComponent.ReactTo(actionIntel.node, REACTION_STATUS.INFORMED);
         } else if (intel is InterruptIntel interruptIntel) {
             return reactionComponent.ReactTo(interruptIntel.interrupt, interruptIntel.actor, interruptIntel.target, interruptIntel.log, REACTION_STATUS.INFORMED);
         }
@@ -4244,6 +4228,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             AddAdvertisedAction(INTERACTION_TYPE.DRINK_BLOOD);
             AddAdvertisedAction(INTERACTION_TYPE.BUTCHER);
             AddAdvertisedAction(INTERACTION_TYPE.HAVE_AFFAIR);
+            AddAdvertisedAction(INTERACTION_TYPE.OPEN);
         }
         if (race == RACE.HUMANS || race == RACE.ELVES) {
             AddAdvertisedAction(INTERACTION_TYPE.REPORT_CORRUPTED_STRUCTURE);

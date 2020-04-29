@@ -41,6 +41,8 @@ public class CrimeManager : MonoBehaviour {
                 }
             }
             return CRIME_TYPE.INFRACTION;
+        } else if (consideredAction.associatedJobType == JOB_TYPE.SPREAD_RUMOR) {
+            return CRIME_TYPE.INFRACTION;
         } else if (actionType == INTERACTION_TYPE.STEAL
             || actionType == INTERACTION_TYPE.POISON) {
             return CRIME_TYPE.MISDEMEANOR;

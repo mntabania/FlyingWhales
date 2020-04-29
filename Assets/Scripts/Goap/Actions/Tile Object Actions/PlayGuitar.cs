@@ -111,6 +111,14 @@ public class PlayGuitar : GoapAction {
         }
         return response;
     }
+    public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
+        if (witness.traitContainer.HasTrait("Music Hater")) {
+            return REACTABLE_EFFECT.Negative;
+        } else if (witness.traitContainer.HasTrait("Music Lover")) {
+            return REACTABLE_EFFECT.Positive;
+        }
+        return REACTABLE_EFFECT.Neutral;
+    }
     #endregion
 
     #region State Effects

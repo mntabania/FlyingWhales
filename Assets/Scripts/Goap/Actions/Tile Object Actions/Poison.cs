@@ -93,6 +93,9 @@ public class Poison : GoapAction {
         CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.MISDEMEANOR);
         return response;
     }
+    public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
+        return REACTABLE_EFFECT.Negative;
+    }
     #endregion
 
     #region State Effects

@@ -1112,6 +1112,7 @@
               <e p="MoodComponent.cs" t="Include" />
               <e p="NonActionEventsComponent.cs" t="Include" />
               <e p="ReactionComponent.cs" t="Include" />
+              <e p="RumorComponent.cs" t="Include" />
               <e p="Supporting Elements" t="Include">
                 <e p="IMoodModifier.cs" t="Include" />
                 <e p="OpinionData.cs" t="Include" />
@@ -1346,6 +1347,7 @@
                 <e p="MineStone.cs" t="Include" />
                 <e p="Nap.cs" t="Include" />
                 <e p="Neutralize.cs" t="Include" />
+                <e p="Open.cs" t="Include" />
                 <e p="PlaceBlueprint.cs" t="Include" />
                 <e p="PlayGuitar.cs" t="Include" />
                 <e p="Poison.cs" t="Include" />
@@ -1639,7 +1641,6 @@
                   <e p="Manacles.cs" t="Include" />
                   <e p="ManaRune.cs" t="Include" />
                   <e p="MetalPile.cs" t="Include" />
-                  <e p="MimicTileObject.cs" t="Include" />
                   <e p="MovingTileObject.cs" t="Include" />
                   <e p="Mushroom.cs" t="Include" />
                   <e p="Obelisk.cs" t="Include" />
@@ -1698,6 +1699,7 @@
                   <e p="TortureTable.cs" t="Include" />
                   <e p="TrainingDummy.cs" t="Include" />
                   <e p="Trash.cs" t="Include" />
+                  <e p="TreasureChest.cs" t="Include" />
                   <e p="TreeObject.cs" t="Include" />
                   <e p="VaporTileObject.cs" t="Include" />
                   <e p="WaterBasin.cs" t="Include" />
@@ -1818,6 +1820,7 @@
           <e p="Models" t="Include">
             <e p="ICharacter.cs" t="Include" />
             <e p="ICharacterBase.cs" t="Include" />
+            <e p="ICrimeable.cs" t="Include" />
             <e p="IDwelling.cs" t="Include" />
             <e p="IJobOwner.cs" t="Include" />
             <e p="ILeader.cs" t="Include" />
@@ -2069,6 +2072,9 @@
               <e p="CharacterRelationshipValidator.cs" t="Include" />
               <e p="IRelationshipValidator.cs" t="Include" />
             </e>
+          </e>
+          <e p="Rumor" t="Include">
+            <e p="Rumor.cs" t="Include" />
           </e>
           <e p="Saving" t="Include">
             <e p="Save.cs" t="Include" />

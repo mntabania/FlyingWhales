@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class SpellItem : PooledObject {
     public TextMeshProUGUI spellButtonText;
     public Toggle spellToggle;
+    public GameObject cover;
 
     public SpellData spellData { get; private set; }
 
@@ -43,6 +44,7 @@ public class SpellItem : PooledObject {
     }
     public void SetInteractableState(bool interactable) {
         spellToggle.interactable = interactable;
+        cover.SetActive(interactable == false);
     }
 
     public override void Reset() {
