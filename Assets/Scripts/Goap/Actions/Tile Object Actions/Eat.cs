@@ -59,9 +59,11 @@ public class Eat : GoapAction {
                     }
                 } else {
                     //not starving
-                    if (table.characterOwner != null) {
+                    if (table.characterOwner != null && table.characterOwner != actor 
+                        && table.characterOwner.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR) == false
+                        && table.characterOwner.relationshipContainer.IsFamilyMember(actor) == false) {
                         cost = 2000;
-                        costLog += $" +{cost}(Table personally owned by someone else)";
+                        costLog += $" +{cost}(Table personally owned by someone else who is not the Actor's Lover, Affair or Relative)";
                     } else {
                         cost = UtilityScripts.Utilities.Rng.Next(50, 71);
                         costLog += $" +{cost}(Table not owned)";
@@ -93,7 +95,9 @@ public class Eat : GoapAction {
     }
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
         if (node.poiTarget is TileObject tileObject) {
-            if (tileObject.characterOwner != null && tileObject.characterOwner != node.actor) {
+            if (tileObject.characterOwner != null && tileObject.characterOwner != node.actor 
+                && tileObject.characterOwner.relationshipContainer.HasRelationshipWith(node.actor, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR) == false
+                && tileObject.characterOwner.relationshipContainer.IsFamilyMember(node.actor) == false) {
                 return REACTABLE_EFFECT.Negative;        
             }
         }
