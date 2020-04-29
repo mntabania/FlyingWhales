@@ -64,8 +64,9 @@ public partial class InteractionManager {
         return TILE_OBJECT_TYPE.TOOL.CanBeCraftedBy(character);
     }
     public bool CanDoObtainSupplyJob(Character character) {
-        return character.traitContainer.HasTrait("Combatant");
-        //return character.role.roleType == CHARACTER_ROLE.SOLDIER;
+        return true;
+        //NOTE: No longer checks for combatant if can do produce resource job since it is already part of the priority jobs list
+        //return character.traitContainer.HasTrait("Combatant");
     }
     public bool CanDoProduceWoodJob(Character character) {
         return character.traitContainer.HasTrait("Logger");
