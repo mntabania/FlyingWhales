@@ -19,16 +19,28 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 
 	private void CreateMonsterLairs(int loopCount, int chance) {
 		int createdCount = 0;
-		for (int i = 0; i < loopCount; i++) { //3
-			if (Random.Range(0, 100) < chance) { //75
-				List<HexTile> choices = GridMap.Instance.normalHexTiles
-					.Where(x => x.elevationType == ELEVATION.PLAIN && x.featureComponent.features.Count == 0 && x.landmarkOnTile == null)
-					.ToList();
+		for (int i = 0; i < loopCount; i++) {
+			if (Random.Range(0, 100) < chance) {
+				List<HexTile> choices;
+				if (WorldConfigManager.Instance.isDemoWorld) {
+					choices = new List<HexTile>() {
+						GridMap.Instance.map[3, 3]
+					};
+				} else {
+					choices = GridMap.Instance.normalHexTiles
+						.Where(x => x.elevationType == ELEVATION.PLAIN && x.featureComponent.features.Count == 0 && x.landmarkOnTile == null)
+						.ToList();
+				}
 				if (choices.Count > 0) {
 					HexTile chosenTile = CollectionUtilities.GetRandomElement(choices);
 					LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.MONSTER_LAIR);
 					LandmarkManager.Instance.CreateNewSettlement(chosenTile.region, LOCATION_TYPE.DUNGEON, 0,
 						chosenTile);
+					if (WorldConfigManager.Instance.isDemoWorld) {
+						//make sure that chosen tiles for demo are flat and featureless  
+						chosenTile.featureComponent.RemoveAllFeatures(chosenTile);
+						chosenTile.SetElevation(ELEVATION.PLAIN);
+					}
 					createdCount++;
 				} else {
 					break;
@@ -40,7 +52,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 	private void CreateAbandonedMines(int loopCount, int chance) {
 		int createdCount = 0;
 		for (int i = 0; i < loopCount; i++) {
-			if (Random.Range(0, 100) < chance) { //50
+			if (Random.Range(0, 100) < chance) {
 				List<HexTile> choices = GridMap.Instance.normalHexTiles
 					.Where(x => x.elevationType == ELEVATION.PLAIN && x.featureComponent.features.Count == 0
 					            && x.HasNeighbourWithElevation(ELEVATION.MOUNTAIN) && x.landmarkOnTile == null)
@@ -61,15 +73,27 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 	private void CreateTemples(int loopCount, int chance) {
 		int createdCount = 0;
 		for (int i = 0; i < loopCount; i++) {
-			if (Random.Range(0, 100) < chance) { //35
-				List<HexTile> choices = GridMap.Instance.normalHexTiles
-					.Where(x => x.elevationType == ELEVATION.PLAIN && x.featureComponent.features.Count == 0 && x.landmarkOnTile == null)
-					.ToList();
+			if (Random.Range(0, 100) < chance) {
+				List<HexTile> choices;
+				if (WorldConfigManager.Instance.isDemoWorld) {
+					choices = new List<HexTile>() {
+						GridMap.Instance.map[6, 8]
+					};
+				} else {
+					choices = GridMap.Instance.normalHexTiles
+						.Where(x => x.elevationType == ELEVATION.PLAIN && x.featureComponent.features.Count == 0 && x.landmarkOnTile == null)
+						.ToList();
+				}
 				if (choices.Count > 0) {
 					HexTile chosenTile = CollectionUtilities.GetRandomElement(choices);
 					LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.ANCIENT_RUIN);
 					LandmarkManager.Instance.CreateNewSettlement(chosenTile.region, LOCATION_TYPE.DUNGEON, 0,
 						chosenTile);
+					if (WorldConfigManager.Instance.isDemoWorld) {
+						//make sure that chosen tiles for demo are flat and featureless  
+						chosenTile.featureComponent.RemoveAllFeatures(chosenTile);
+						chosenTile.SetElevation(ELEVATION.PLAIN);
+					}
 					createdCount++;
 				} else {
 					break;
@@ -81,7 +105,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 	private void CreateMageTowers(int loopCount, int chance) {
 		int createdCount = 0;
 		for (int i = 0; i < loopCount; i++) {
-			if (Random.Range(0, 100) < chance) { //35
+			if (Random.Range(0, 100) < chance) {
 				List<HexTile> choices = GridMap.Instance.normalHexTiles
 					.Where(x => x.elevationType == ELEVATION.PLAIN && x.featureComponent.features.Count == 0 && x.landmarkOnTile == null)
 					.ToList();
