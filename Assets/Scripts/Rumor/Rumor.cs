@@ -35,7 +35,7 @@ public class Rumor : IReactable {
         return rumorable.ReactionOfTarget(status);
     }
     public REACTABLE_EFFECT GetReactableEffect(Character witness) {
-        return REACTABLE_EFFECT.Neutral;
+        return REACTABLE_EFFECT.Negative;
     }
     public void AddAwareCharacter(Character character) {
         rumorable.AddAwareCharacter(character);

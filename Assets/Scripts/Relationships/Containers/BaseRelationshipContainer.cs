@@ -246,60 +246,60 @@ public class BaseRelationshipContainer : IRelationshipContainer {
     }
     public void OnOpinionChanged(Character owner, Character targetCharacter, string reason) {
         if (owner.relationshipContainer.IsEnemiesWith(targetCharacter)) {
-            Character spreadRumorTarget = owner.rumorComponent.GetRandomSpreadRumorTarget(targetCharacter);
-            if (spreadRumorTarget != null) {
-                Rumor rumor = owner.rumorComponent.GenerateNewRandomRumor(spreadRumorTarget, targetCharacter);
-                owner.jobComponent.CreateSpreadRumorJob(spreadRumorTarget, rumor);
-                return;
-            }
+            //Character spreadRumorTarget = owner.rumorComponent.GetRandomSpreadRumorTarget(targetCharacter);
+            //if (spreadRumorTarget != null) {
+            //    Rumor rumor = owner.rumorComponent.GenerateNewRandomRumor(spreadRumorTarget, targetCharacter);
+            //    owner.jobComponent.CreateSpreadRumorJob(spreadRumorTarget, rumor);
+            //    return;
+            //}
 
-            //if (UnityEngine.Random.Range(0, 100) < 30) {//30
-            //    //Break up
-            //    if (owner.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR)) {
-            //        owner.interruptComponent.TriggerInterrupt(INTERRUPT.Break_Up, targetCharacter, reason);
-            //        return;
-            //    }
-            //}
-            //int chance = 1;
-            //int roll = UnityEngine.Random.Range(0, 100);
-            //MOOD_STATE ownerMood = owner.moodComponent.moodState;
-            //string opinionLabel = owner.relationshipContainer.GetOpinionLabel(targetCharacter);
-            //if (ownerMood == MOOD_STATE.LOW) {
-            //    chance *= 10;
-            //} else if (ownerMood == MOOD_STATE.CRITICAL) {
-            //    chance *= 15;
-            //}
-            //if (opinionLabel == RelationshipManager.Rival) {
-            //    chance *= 2;
-            //}
-            //if (roll < chance) {
-            //    if (owner.marker && owner.marker.inVisionCharacters.Contains(targetCharacter)) {
-            //        if (owner.traitContainer.HasTrait("Combatant")) {
-            //            if (UnityEngine.Random.Range(0, 100) < 50) {
-            //                if (owner.jobComponent.CreateBrawlJob(targetCharacter) != null) {
-            //                    return;
-            //                }
-            //            }
-            //        }
-            //    }
-            //    if (UnityEngine.Random.Range(0, 100) < 25) {
-            //        if (owner.jobComponent.CreatePoisonFoodJob(targetCharacter)) {
-            //            return;
-            //        }
-            //    }
-            //    if (UnityEngine.Random.Range(0, 100) < 50) {
-            //        if (owner.jobComponent.CreatePlaceTrapJob(targetCharacter)) {
-            //            return;
-            //        }
-            //    }
-            //    //Spread Rumor
-            //    Character spreadRumorTarget = owner.rumorComponent.GetRandomSpreadRumorTarget(targetCharacter);
-            //    if (spreadRumorTarget != null) {
-            //        Rumor rumor = owner.rumorComponent.GenerateNewRandomRumor(spreadRumorTarget, targetCharacter);
-            //        owner.jobComponent.CreateSpreadRumorJob(spreadRumorTarget, rumor);
-            //        return;
-            //    }
-            //}
+            if (UnityEngine.Random.Range(0, 100) < 30) {//30
+                //Break up
+                if (owner.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR)) {
+                    owner.interruptComponent.TriggerInterrupt(INTERRUPT.Break_Up, targetCharacter, reason);
+                    return;
+                }
+            }
+            int chance = 1;
+            int roll = UnityEngine.Random.Range(0, 100);
+            MOOD_STATE ownerMood = owner.moodComponent.moodState;
+            string opinionLabel = owner.relationshipContainer.GetOpinionLabel(targetCharacter);
+            if (ownerMood == MOOD_STATE.LOW) {
+                chance *= 10;
+            } else if (ownerMood == MOOD_STATE.CRITICAL) {
+                chance *= 15;
+            }
+            if (opinionLabel == RelationshipManager.Rival) {
+                chance *= 2;
+            }
+            if (roll < chance) {
+                if (owner.marker && owner.marker.inVisionCharacters.Contains(targetCharacter)) {
+                    if (owner.traitContainer.HasTrait("Combatant")) {
+                        if (UnityEngine.Random.Range(0, 100) < 50) {
+                            if (owner.jobComponent.CreateBrawlJob(targetCharacter) != null) {
+                                return;
+                            }
+                        }
+                    }
+                }
+                if (UnityEngine.Random.Range(0, 100) < 25) {
+                    if (owner.jobComponent.CreatePoisonFoodJob(targetCharacter)) {
+                        return;
+                    }
+                }
+                if (UnityEngine.Random.Range(0, 100) < 50) {
+                    if (owner.jobComponent.CreatePlaceTrapJob(targetCharacter)) {
+                        return;
+                    }
+                }
+                //Spread Rumor
+                Character spreadRumorTarget = owner.rumorComponent.GetRandomSpreadRumorTarget(targetCharacter);
+                if (spreadRumorTarget != null) {
+                    Rumor rumor = owner.rumorComponent.GenerateNewRandomRumor(spreadRumorTarget, targetCharacter);
+                    owner.jobComponent.CreateSpreadRumorJob(spreadRumorTarget, rumor);
+                    return;
+                }
+            }
         }
         
     }
