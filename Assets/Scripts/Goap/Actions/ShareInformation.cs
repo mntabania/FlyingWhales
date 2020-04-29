@@ -31,6 +31,8 @@ public class ShareInformation : GoapAction {
         object[] otherData = node.otherData;
         if (otherData.Length == 1 && otherData[0] is IReactable) {
             IReactable reactable = otherData[0] as IReactable;
+            string actionDescription = string.Empty;
+
             log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.OTHER);
             log.AddToFillers(poiTarget, poiTarget.name, LOG_IDENTIFIER.OTHER_2);
             log.AddToFillers(null, UtilityScripts.Utilities.GetArticleForWord(reactable.typeName) + " " + reactable.typeName.ToLower(), LOG_IDENTIFIER.ACTION_DESCRIPTION);
