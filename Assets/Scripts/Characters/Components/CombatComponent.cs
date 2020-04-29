@@ -422,8 +422,8 @@ public class CombatComponent {
     }
     public void CheckCombatPerTickEnded() {
         if (_willProcessCombat) {
+            SetWillProcessCombat(false); //Moved this up here, because ProcessCombatBehavior can set process combat to true again, and we don't want to overwrite that.
             ProcessCombatBehavior();
-            SetWillProcessCombat(false);
         }
     }
     public void SetCombatMode(COMBAT_MODE mode) {
