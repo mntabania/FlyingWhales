@@ -13,12 +13,15 @@ namespace Interrupts {
 
         #region Overrides
         public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target, ref Log overrideEffectLog, ActualGoapNode node = null) {
-            if(node != null) {
+            bool executed = base.ExecuteInterruptStartEffect(actor, target, ref overrideEffectLog, node);
+            if (node != null) {
                 node.action.OnStoppedInterrupt(node);
                 node.associatedJob?.CancelJob(false);
-                return true;
+                executed = true;
             }
-            return base.ExecuteInterruptStartEffect(actor, target, ref overrideEffectLog, node);
+            actor.currentJob?.CancelJob(false);
+            actor.currentJob?.StopJobNotDrop();
+            return executed;
         }
         #endregion
     }

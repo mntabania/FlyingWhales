@@ -1081,10 +1081,10 @@ public class UIManager : MonoBehaviour {
         }
 
         if (itemToReplace != null) {
-            newNotif.SetTickShown(itemToReplace.tickShown);
-            int index = (itemToReplace.transform as RectTransform).GetSiblingIndex();
+            //newNotif.SetTickShown(itemToReplace.tickShown);
+            //int index = (itemToReplace.transform as RectTransform).GetSiblingIndex();
             itemToReplace.DeleteNotification();
-            (newNotif.gameObject.transform as RectTransform).SetSiblingIndex(index);
+            //(newNotif.gameObject.transform as RectTransform).SetSiblingIndex(index);
         }
         //else {
         //    (newNotif.gameObject.transform as RectTransform).SetAsLastSibling();

@@ -18,6 +18,7 @@ public class LogComponent  {
     #region History
     public bool AddHistory(Log log) {
         if (!history.Contains(log)) {
+            log.SetDate(GameManager.Instance.Today());
             history.Add(log);
             if (history.Count > 300) {
                 history.RemoveAt(0);
