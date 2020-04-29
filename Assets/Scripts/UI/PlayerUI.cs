@@ -6,6 +6,7 @@ using UnityEngine.UI.Extensions;
 using TMPro;
 using System.Linq;
 using System;
+using DG.Tweening;
 using Inner_Maps;
 using Ruinarch;
 using Traits;
@@ -121,9 +122,9 @@ public class PlayerUI : MonoBehaviour {
     public GameObject artifactsContainerGO;
     public GameObject artifactItemPrefab;
     private List<ArtifactItem> _artifactItems;
-
+    
     [Header("Threat")]
-    public Image threatMeter;
+    [SerializeField] private TextMeshProUGUI threatLbl;
 
     private PlayerJobActionButton[] interventionAbilityBtns;
     //public Minion harassRaidInvadeLeaderMinion { get; private set; }
@@ -190,6 +191,7 @@ public class PlayerUI : MonoBehaviour {
         CreateSummonsForTesting();
         CreateItemsForTesting();
         CreateArtifactsForTesting();
+        OnThreatUpdated();
     }
 
     #region Listeners
@@ -298,7 +300,7 @@ public class PlayerUI : MonoBehaviour {
         }
     }
     private void OnThreatUpdated() {
-        threatMeter.fillAmount = PlayerManager.Instance.player.threatComponent.threat / (float) ThreatComponent.MAX_THREAT;
+        threatLbl.text = PlayerManager.Instance.player.threatComponent.threat.ToString();
     }
     #endregion
 

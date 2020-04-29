@@ -65,10 +65,7 @@ public class Butcher : GoapAction {
                 costLog += $" +{cost}(Demon)";
             }
         }
-        if(target is SmallAnimal) {
-            cost += UtilityScripts.Utilities.Rng.Next(60, 71);
-            costLog += $" +{cost}(Small Animal)";
-        } else if (target is Animal) {
+        if (target is Animal) {
             cost += UtilityScripts.Utilities.Rng.Next(0, 11);
             costLog += $" +{cost}(Animal)";
         }
@@ -141,7 +138,7 @@ public class Butcher : GoapAction {
             if (poiTarget.gridTileLocation == null) {
                 return false;
             }
-            if(poiTarget is SmallAnimal || poiTarget is Animal) {
+            if(poiTarget is Animal) {
                 return true;
             } else {
                 Character deadCharacter = GetDeadCharacter(poiTarget);

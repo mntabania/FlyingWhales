@@ -316,7 +316,8 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             Character character = region.charactersAtLocation[i];
             if (character.gridTileLocation.IsPartOfSettlement(this)
             && owner.IsHostileWith(character.faction) 
-            && character.traitContainer.HasTrait("Restrained") == false) {
+            && character.traitContainer.HasTrait("Restrained") == false
+            && character.combatComponent.combatMode != COMBAT_MODE.Passive) {
                 hostileCharacters.Add(character);
             }
         }

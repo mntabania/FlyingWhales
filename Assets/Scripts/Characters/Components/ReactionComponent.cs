@@ -475,6 +475,7 @@ public class ReactionComponent {
         if (!owner.isInCombat && !owner.hasSeenFire) {
             if (targetTileObject.traitContainer.HasTrait("Burning")
                 && targetTileObject.gridTileLocation != null
+                && owner.homeSettlement != null
                 && targetTileObject.gridTileLocation.IsPartOfSettlement(owner.homeSettlement)
                 && !owner.traitContainer.HasTrait("Pyrophobic")
                 && !owner.jobQueue.HasJob(JOB_TYPE.DOUSE_FIRE)) {
@@ -499,6 +500,7 @@ public class ReactionComponent {
         if (!owner.isInCombat && !owner.hasSeenWet) {
             if (targetTileObject.traitContainer.HasTrait("Wet")
                 && targetTileObject.gridTileLocation != null
+                && owner.homeSettlement != null
                 && targetTileObject.gridTileLocation.IsPartOfSettlement(owner.homeSettlement)
                 && !owner.jobQueue.HasJob(JOB_TYPE.DRY_TILES)) {
                 debugLog += "\n-Target is Wet";
@@ -575,7 +577,9 @@ public class ReactionComponent {
             }
         } else {
             if (targetTileObject.tileObjectType.IsTileObjectAnItem()) {
-                if (targetTileObject.gridTileLocation != null && targetTileObject.gridTileLocation.structure != owner.homeSettlement.mainStorage && targetTileObject.gridTileLocation.structure is Dwelling) {
+                if (targetTileObject.gridTileLocation != null && owner.homeSettlement != null 
+                    && targetTileObject.gridTileLocation.structure != owner.homeSettlement.mainStorage 
+                    && targetTileObject.gridTileLocation.structure is Dwelling) {
                     owner.jobComponent.CreateTakeItemJob(targetTileObject);
                 }
             }

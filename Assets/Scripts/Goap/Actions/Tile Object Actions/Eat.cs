@@ -141,12 +141,18 @@ public class Eat : GoapAction {
             if (actor.traitContainer.HasTrait("Vampiric")) {
                 return false;
             }
-            if(poiTarget is SmallAnimal || poiTarget is BerryShrub) {
+            if(poiTarget is BerryShrub) {
                 //If plant or animal, only eat if the actor is homeless
                 if(actor.homeStructure != null) {
                     return false;
                 }
-            } 
+            }
+            if (poiTarget is Table) {
+                //if target is table, do not allow if actor is a monster
+                if (UtilityScripts.GameUtilities.IsRaceBeast(actor.race) || actor.IsNormalCharacter() == false) {
+                    return false;
+                }
+            }
             // else {
             //     if(poiTarget.storedResources[RESOURCE.FOOD] < 12) {
             //         return false;

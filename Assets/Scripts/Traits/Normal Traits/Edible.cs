@@ -47,7 +47,7 @@ namespace Traits {
         public override void ExecuteActionPreEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) {
             base.ExecuteActionPreEffects(action, goapNode);
             if (action == INTERACTION_TYPE.EAT) {
-                if (owner is Mushroom || owner is BerryShrub || owner is SmallAnimal) {
+                if (owner is Mushroom || owner is BerryShrub) {
                     owner.SetPOIState(POI_STATE.INACTIVE);
                 }
             }

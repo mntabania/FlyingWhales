@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: d64d057451588de47862f92a337b5fc0, type: 3}
-    totalSpriteSurfaceArea: 16236700
+    totalSpriteSurfaceArea: 16246134
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -229,6 +229,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 3f1591b5d6936844599ed4f55f814155, type: 3}
   - {fileID: 21300000, guid: 5e044ab580bc6a742b662eb99f868c17, type: 3}
   - {fileID: 21300000, guid: 859053c5bb0e8084f9c896ede4a432d6, type: 3}
+  - {fileID: 21300000, guid: a604b4d5370241c46b74c71e0a1fb94d, type: 3}
   - {fileID: 21300000, guid: dd9654e584df8c445b6bc2411c7b6c47, type: 3}
   - {fileID: 21300000, guid: 49b2e0f597de5a14d9e7507417c28aa0, type: 3}
   - {fileID: 21300000, guid: c00663f52c96c5542a7c80686c6efd58, type: 3}
@@ -801,6 +802,7 @@ SpriteAtlas:
   - button_goader_default
   - minion_scroll_left_hover
   - minion_filter_class_on
+  - threat_container
   - 7-Ice
   - scroll_button_left_on
   - button_close_clicked
