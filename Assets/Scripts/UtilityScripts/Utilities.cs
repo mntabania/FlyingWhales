@@ -344,6 +344,9 @@ namespace UtilityScripts {
             string newText = LocalizationManager.Instance.GetLocalizedValue(log.category, log.file, log.key);
             return newText;
         }
+        public static string LogDontReplace(string category, string file, string key) {
+            return LocalizationManager.Instance.GetLocalizedValue(category, file, key);
+        }
         public static string CustomPronounReplacer(string wordToBeReplaced, List<LogFiller> objectLog) {
             LOG_IDENTIFIER identifier = Utilities.logIdentifiers[wordToBeReplaced.Substring(1, wordToBeReplaced.Length - 2)];
             string wordToReplace = string.Empty;

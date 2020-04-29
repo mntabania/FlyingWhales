@@ -10,6 +10,11 @@ public class PlayerSkillDetails : MonoBehaviour {
     public TextMeshProUGUI descriptionText;
     public TextMeshProUGUI expText;
     public TextMeshProUGUI confirmationTitleText;
+    public TextMeshProUGUI categoryText;
+    public TextMeshProUGUI chargesText;
+    public TextMeshProUGUI manaCostText;
+    public TextMeshProUGUI cooldownText;
+
     public Button unlockButton;
     public Sprite learnedButtonSprite;
     public Sprite notLearnedButtonSprite;
@@ -32,6 +37,17 @@ public class PlayerSkillDetails : MonoBehaviour {
         titleText.text = skillData.name;
         descriptionText.text = skillData.description;
         expText.text = skillTreeNode.expCost + " XP";
+        categoryText.text = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(skillData.category.ToString());
+        chargesText.text = "" + (skillTreeNode.charges != -1 ? skillTreeNode.charges : 0);
+        manaCostText.text = "" + (skillTreeNode.manaCost != -1 ? skillTreeNode.manaCost : 0);
+
+        string cdText = string.Empty;
+        if(skillTreeNode.cooldown == -1) {
+            cdText = "0 mins";
+        } else {
+            cdText = GameManager.GetTimeAsWholeDuration(skillTreeNode.cooldown) + " " + GameManager.GetTimeIdentifierAsWholeDuration(skillTreeNode.cooldown);
+        }
+        cooldownText.text = cdText;
 
         SaveDataPlayer saveDataPlayer = SaveManager.Instance.currentSaveDataPlayer;
         if (saveDataPlayer.IsSkillLearned(skillData.type) || saveDataPlayer.exp < skillTreeNode.expCost) {

@@ -137,7 +137,7 @@ public class ActualGoapNode : IReactable, IRumorable {
     public JOB_TYPE associatedJobType => associatedJob != null ? associatedJob.jobType : JOB_TYPE.NONE;
     public bool isRumor => rumor != null;
     public string name => action.goapName;
-    public string typeName => "Action";
+    public string classificationName => "News";
     public IPointOfInterest target => poiTarget;
     public Log informationLog => descriptionLog;
     #endregion

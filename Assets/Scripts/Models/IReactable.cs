@@ -4,7 +4,7 @@ using UnityEngine;
 
 public interface IReactable {
     string name { get; }
-    string typeName { get; }
+    string classificationName { get; }
     Character actor { get; }
     IPointOfInterest target { get; }
     Log informationLog { get; }

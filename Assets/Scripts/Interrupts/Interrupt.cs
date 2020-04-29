@@ -61,7 +61,7 @@ namespace Interrupts {
 
         #region getters
         public string name => interrupt.name;
-        public string typeName => "Interrupt";
+        public string classificationName => "News";
         public Log informationLog => effectLog;
         public bool isStealth => false;
         public bool isRumor => rumor != null;

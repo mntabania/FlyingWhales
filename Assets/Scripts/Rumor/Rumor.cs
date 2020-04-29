@@ -9,7 +9,7 @@ public class Rumor : IReactable {
 
     #region getters
     public string name => rumorable.name;
-    public string typeName => "Rumor";
+    public string classificationName => "Rumor";
     public Character actor => rumorable.actor;
     public IPointOfInterest target => rumorable.target;
     public Log informationLog => rumorable.informationLog;

@@ -31,12 +31,31 @@ public class ShareInformation : GoapAction {
         object[] otherData = node.otherData;
         if (otherData.Length == 1 && otherData[0] is IReactable) {
             IReactable reactable = otherData[0] as IReactable;
-            string actionDescription = string.Empty;
-
+            string articleWord = string.Empty;
+            string information = string.Empty;
+            if(reactable is ActualGoapNode actionReactable) {
+                articleWord = "some";
+                if (actionReactable.action.goapType == INTERACTION_TYPE.SHARE_INFORMATION) {
+                    //TODO: Localize this
+                    if (actionReactable.otherData != null && actionReactable.otherData.Length == 1) {
+                        IReactable reactableRoot = actionReactable.otherData[0] as IReactable;
+                        string fillerWord = "sharing";
+                        if (reactableRoot is Rumor) {
+                            fillerWord = "spreading";
+                        }
+                        information = actionReactable.actor.name + " is " + fillerWord + " " + reactableRoot.classificationName.ToLower() + " about " + reactable.actor.name;
+                    }
+                }
+            } else {
+                articleWord = UtilityScripts.Utilities.GetArticleForWord(reactable.classificationName);
+            }
+            if(information == string.Empty) {
+                information = UtilityScripts.Utilities.LogReplacer(reactable.informationLog);
+            }
             log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.OTHER);
             log.AddToFillers(poiTarget, poiTarget.name, LOG_IDENTIFIER.OTHER_2);
-            log.AddToFillers(null, UtilityScripts.Utilities.GetArticleForWord(reactable.typeName) + " " + reactable.typeName.ToLower(), LOG_IDENTIFIER.ACTION_DESCRIPTION);
-            log.AddToFillers(null, UtilityScripts.Utilities.LogReplacer(reactable.informationLog), LOG_IDENTIFIER.STRING_1);
+            log.AddToFillers(null, articleWord + " " + reactable.classificationName.ToLower(), LOG_IDENTIFIER.ACTION_DESCRIPTION);
+            log.AddToFillers(null, information, LOG_IDENTIFIER.STRING_1);
             //log.AddToFillers(reactable.informationLog.fillers);
         }
     }
@@ -194,23 +213,23 @@ public class ShareInformation : GoapAction {
 
                 //recipient.reactionComponent.ReactTo(reactable, REACTION_STATUS.INFORMED, false);
 
-                //CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, recipient, sharer, REACTION_STATUS.INFORMED, reactable as ActualGoapNode);
-                //recipient.jobComponent.CreateConfirmRumorJob(reactable.actor, shareActionItself);
+                CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, recipient, sharer, REACTION_STATUS.INFORMED, reactable as ActualGoapNode);
+                recipient.jobComponent.CreateConfirmRumorJob(reactable.actor, shareActionItself);
 
-                if (result == "Belief") {
-                    //Recipient believes
-                    recipient.reactionComponent.ReactTo(reactable, REACTION_STATUS.INFORMED, false);
-                } else {
-                    //Recipient does not believe
-                    CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, recipient, sharer, REACTION_STATUS.INFORMED, reactable as ActualGoapNode);
-                    if (UnityEngine.Random.Range(0, 100) < 35) {
-                        recipient.jobComponent.CreateConfirmRumorJob(reactable.actor, shareActionItself);
-                    }
-                }
+                //if (result == "Belief") {
+                //    //Recipient believes
+                //    recipient.reactionComponent.ReactTo(reactable, REACTION_STATUS.INFORMED, false);
+                //} else {
+                //    //Recipient does not believe
+                //    CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, recipient, sharer, REACTION_STATUS.INFORMED, reactable as ActualGoapNode);
+                //    if (UnityEngine.Random.Range(0, 100) < 35) {
+                //        recipient.jobComponent.CreateConfirmRumorJob(reactable.actor, shareActionItself);
+                //    }
+                //}
                 Log believeLog = new Log(GameManager.Instance.Today(), "GoapAction", name, result);
                 believeLog.AddToFillers(sharer, sharer.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 believeLog.AddToFillers(recipient, recipient.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                believeLog.AddToFillers(null, reactable.typeName.ToLower(), LOG_IDENTIFIER.STRING_1);
+                believeLog.AddToFillers(null, reactable.classificationName.ToLower(), LOG_IDENTIFIER.STRING_1);
                 believeLog.AddLogToInvolvedObjects();
             }
         }

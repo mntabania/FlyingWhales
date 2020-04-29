@@ -404,6 +404,36 @@ public class GameManager : MonoBehaviour {
     public int GetCeilingDaysBasedOnTicks(int ticks) {
         return Mathf.CeilToInt(ticks / (float) ticksPerDay);
     }
+    public int GetCeilingMinsBasedOnTicks(int ticks) {
+        return ticks * 5;
+    }
+    public static int GetTimeAsWholeDuration(int ticks) {
+        //Returns duration not as ticks but as time
+        //If ticks exceeds a day, returns time as day
+        //If ticks exceeds an hour, returns time as hour
+        //If ticks exceeds a mins, returns time as mins
+
+        if (ticks >= ticksPerDay) {
+            return Mathf.CeilToInt(ticks / (float) ticksPerDay);
+        } else if(ticks >= ticksPerHour) {
+            return Mathf.CeilToInt(ticks / (float) ticksPerHour);
+        } else {
+            return ticks * 5;
+        }
+    }
+    public static string GetTimeIdentifierAsWholeDuration(int ticks) {
+        //Returns duration not as ticks but as time
+        //If ticks exceeds a day, returns time as day
+        //If ticks exceeds an hour, returns time as hour
+        //If ticks exceeds a mins, returns time as mins
+        if (ticks >= ticksPerDay) {
+            return "days";
+        } else if (ticks >= ticksPerHour) {
+            return "hours";
+        } else {
+            return "mins";
+        }
+    }
 
     #region Particle Effects
     public GameObject CreateParticleEffectAt(LocationGridTile tile, PARTICLE_EFFECT particle, int sortingOrder = -1) {
