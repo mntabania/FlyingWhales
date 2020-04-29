@@ -33,6 +33,8 @@ public class ChaosOrb : PooledObject {
 			transform.position = Vector3.SmoothDamp(transform.position, targetPos,  ref velocity, smoothTime);
 			yield return null;
 		}
+		Vector3 finalPos = transform.position;
+		transform.position = new Vector3(finalPos.x, finalPos.y, -1f);
 		onReachAction?.Invoke();
 		positionCoroutine = null;
 	}

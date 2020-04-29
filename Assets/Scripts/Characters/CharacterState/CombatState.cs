@@ -67,6 +67,7 @@ public class CombatState : CharacterState {
         //stateComponent.character.DecreaseCanWitness();
         stateComponent.character.marker.ShowHPBar(stateComponent.character);
         stateComponent.character.marker.SetAnimationBool("InCombat", true);
+        stateComponent.character.marker.visionCollider.VoteToUnFilterVision();
         //Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, stateComponent.character, "combat");
         Messenger.AddListener<Character>(Signals.DETERMINE_COMBAT_REACTION, DetermineReaction);
         base.StartState();
@@ -91,6 +92,7 @@ public class CombatState : CharacterState {
 
         stateComponent.character.marker.HideHPBar();
         stateComponent.character.marker.SetAnimationBool("InCombat", false);
+        stateComponent.character.marker.visionCollider.VoteToFilterVision();
         stateComponent.character.logComponent.PrintLogIfActive(
             $"Ending combat state for {stateComponent.character.name}");
         Messenger.RemoveListener<Character>(Signals.DETERMINE_COMBAT_REACTION, DetermineReaction);

@@ -167,9 +167,8 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	}
 	private void OnCharacterSaw(Character character, IPointOfInterest seenPOI) {
 		if (character.homeSettlement == _owner && character.homeSettlement.isUnderSiege 
-		    && character.currentSettlement == character.homeSettlement 
-		    && character.combatComponent.combatMode != COMBAT_MODE.Passive) {
-			if (seenPOI is Character target) {
+		    && character.currentSettlement == character.homeSettlement) {
+			if (seenPOI is Character target && target.combatComponent.combatMode != COMBAT_MODE.Passive) {
 				TryCreateRestrainJobs(target);
 			}	
 		}

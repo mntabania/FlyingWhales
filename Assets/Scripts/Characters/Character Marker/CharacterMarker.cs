@@ -172,7 +172,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
         if (activeCharacter != null) {
             if (activeCharacter.minion == null) {
-#if UNITY_EDITOR
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
                 UIManager.Instance.poiTestingUI.ShowUI(character, activeCharacter);
 #endif
             } else {

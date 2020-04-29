@@ -110,7 +110,7 @@ public class SpiritGameObject : MapObjectVisual<TileObject> {
         }
         if (activeCharacter != null) {
             if(activeCharacter.minion == null) {
-#if UNITY_EDITOR
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
                 UIManager.Instance.poiTestingUI.ShowUI(poi, activeCharacter);
 #endif
             } else {
