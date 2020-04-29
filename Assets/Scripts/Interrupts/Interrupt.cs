@@ -57,6 +57,7 @@ namespace Interrupts {
         public IPointOfInterest target { get; private set; }
         public Log effectLog { get; private set; }
         public Rumor rumor { get; private set; }
+        public List<Character> awareCharacters { get; private set; }
 
         #region getters
         public string name => interrupt.name;
@@ -71,6 +72,7 @@ namespace Interrupts {
             this.actor = actor;
             this.target = target;
             this.effectLog = effectLog;
+            awareCharacters = new List<Character>();
         }
 
         #region IReactable
@@ -87,6 +89,9 @@ namespace Interrupts {
         }
         public REACTABLE_EFFECT GetReactableEffect(Character witness) {
             return REACTABLE_EFFECT.Neutral;
+        }
+        public void AddAwareCharacter(Character character) {
+            awareCharacters.Add(character);
         }
         #endregion
 

@@ -85,7 +85,7 @@ public class RumorComponent {
                     if (potentialCharacter.ownedItems.Count > 0) {
                         for (int j = 0; j < potentialCharacter.ownedItems.Count; j++) {
                             TileObject ownedItem = potentialCharacter.ownedItems[j];
-                            if (ownedItem.gridTileLocation != null && owner.gridTileLocation != null && ownedItem.gridTileLocation.structure.location == owner.gridTileLocation.structure.location) {
+                            if (!(ownedItem is StructureTileObject) && ownedItem.gridTileLocation != null && owner.gridTileLocation != null && ownedItem.gridTileLocation.structure.location == owner.gridTileLocation.structure.location) {
                                 _rumorTargetPool.Add(ownedItem);
                             }
                         }

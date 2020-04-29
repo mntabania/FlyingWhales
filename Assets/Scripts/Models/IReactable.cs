@@ -9,9 +9,11 @@ public interface IReactable {
     IPointOfInterest target { get; }
     Log informationLog { get; }
     bool isStealth { get; }
+    List<Character> awareCharacters { get; }
     string ReactionToActor(Character witness, REACTION_STATUS status);
     string ReactionToTarget(Character witness, REACTION_STATUS status);
     string ReactionOfTarget(REACTION_STATUS status);
+    void AddAwareCharacter(Character character);
     REACTABLE_EFFECT GetReactableEffect(Character witness);
 }
 
@@ -21,7 +23,9 @@ public interface IRumorable {
     IPointOfInterest target { get; }
     Log informationLog { get; }
     bool isStealth { get; }
+    List<Character> awareCharacters { get; }
     void SetAsRumor(Rumor rumor);
+    void AddAwareCharacter(Character character);
     string ReactionToActor(Character witness, REACTION_STATUS status);
     string ReactionToTarget(Character witness, REACTION_STATUS status);
     string ReactionOfTarget(REACTION_STATUS status);

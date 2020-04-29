@@ -14,6 +14,7 @@ public class Rumor : IReactable {
     public IPointOfInterest target => rumorable.target;
     public Log informationLog => rumorable.informationLog;
     public bool isStealth => rumorable.isStealth;
+    public List<Character> awareCharacters => rumorable.awareCharacters;
     #endregion
 
     public Rumor(Character characterThatCreated, IRumorable rumorable) {
@@ -24,21 +25,20 @@ public class Rumor : IReactable {
     }
 
     #region IReactable
-
     public string ReactionToActor(Character witness, REACTION_STATUS status) {
         return rumorable.ReactionToActor(witness, status);
     }
-
     public string ReactionToTarget(Character witness, REACTION_STATUS status) {
         return rumorable.ReactionToTarget(witness, status);
     }
-
     public string ReactionOfTarget(REACTION_STATUS status) {
         return rumorable.ReactionOfTarget(status);
     }
-
     public REACTABLE_EFFECT GetReactableEffect(Character witness) {
-        return REACTABLE_EFFECT.Neutral;
+        return REACTABLE_EFFECT.Negative;
+    }
+    public void AddAwareCharacter(Character character) {
+        rumorable.AddAwareCharacter(character);
     }
     #endregion
 }

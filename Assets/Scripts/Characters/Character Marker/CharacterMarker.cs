@@ -993,9 +993,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
             UpdateActionIcon();
             gameObject.transform.SetParent(deathTileLocation.parentMap.objectsParent);
             LocationGridTile placeMarkerAt = deathTileLocation;
-            if (deathTileLocation.isOccupied) {
-                placeMarkerAt = deathTileLocation.GetNearestUnoccupiedTileFromThis();
-            }
+            //if (deathTileLocation.isOccupied) {
+            //    placeMarkerAt = deathTileLocation.GetNearestUnoccupiedTileFromThis();
+            //}
             transform.position = placeMarkerAt.centeredWorldLocation;
             character.combatComponent.ClearHostilesInRange();
             ClearPOIsInVisionRange();
