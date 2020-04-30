@@ -69,6 +69,9 @@ public class GenericTileObject : TileObject {
         if (currentHP == 0 && amount < 0) {
             return; //hp is already at minimum, do not allow any more negative adjustments
         }
+        if (amount < 0 && CanBeDamaged() == false) {
+            return;
+        }
         CombatManager.Instance.DamageModifierByElements(ref amount, elementalDamageType, this);
         this.currentHP += amount;
         this.currentHP = Mathf.Clamp(this.currentHP, 0, maxHP);
@@ -81,27 +84,27 @@ public class GenericTileObject : TileObject {
                                                         CombatManager.Instance.DefaultElementalTraitProcessor;
             CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, 
                 responsibleCharacter, etp);
-            //CancelRemoveStatusFeedAndRepairJobsTargetingThis();
         }
+        
         if (currentHP <= 0) {
             //floor has been destroyed
             gridTileLocation.RevertToPreviousGroundVisual();
             gridTileLocation.SetPreviousGroundVisual(null); //so that tile will never revert to old floor
-            structureLocation.OnTileDestroyed(gridTileLocation);
-            //reset floor hp
+        } 
+        if (amount < 0) {
+            structureLocation.OnTileDamaged(gridTileLocation, amount);
+        } else if (amount > 0) {
+            structureLocation.OnTileRepaired(gridTileLocation, amount);
+        }
+
+        if (currentHP <= 0) {
+            //reset floor hp at end of processing
             currentHP = maxHP;
-        } else if (amount < 0 && currentHP < maxHP) {
-            //floor has been damaged
-            structureLocation.OnTileDamaged(gridTileLocation);
-        } else if (currentHP == maxHP) {
-            //floor has been fully repaired
-            structureLocation.OnTileRepaired(gridTileLocation);
         }
     }
     public override bool CanBeDamaged() {
         //only damage tiles that are part of non open space structures i.e structures with walls.
-        return structureLocation.structureType.IsOpenSpace() == false
-               && structureLocation.structureType.IsSettlementStructure();
+        return structureLocation.structureType.IsOpenSpace() == false;
     }
     public override bool CanBeSelected() {
         return false;

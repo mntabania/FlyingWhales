@@ -31,8 +31,8 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	public void SubscribeToListeners() {
 		Messenger.AddListener(Signals.HOUR_STARTED, HourlyJobActions);
 		Messenger.AddListener<ResourcePile>(Signals.RESOURCE_IN_PILE_CHANGED, OnResourceInPileChanged);
-		Messenger.AddListener<IPointOfInterest>(Signals.OBJECT_DAMAGED, OnObjectDamaged);
-		Messenger.AddListener<IPointOfInterest>(Signals.OBJECT_REPAIRED, OnObjectRepaired);
+		Messenger.AddListener<IPointOfInterest, int>(Signals.OBJECT_DAMAGED, OnObjectDamaged);
+		Messenger.AddListener<IPointOfInterest>(Signals.OBJECT_FULLY_REPAIRED, OnObjectFullyRepaired);
 		Messenger.AddListener<TileObject, LocationGridTile>(Signals.TILE_OBJECT_PLACED, OnTileObjectPlaced);
 		Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
 		Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
@@ -49,8 +49,8 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	public void UnsubscribeListeners() {
 		Messenger.RemoveListener(Signals.HOUR_STARTED, HourlyJobActions);
 		Messenger.RemoveListener<ResourcePile>(Signals.RESOURCE_IN_PILE_CHANGED, OnResourceInPileChanged);
-		Messenger.RemoveListener<IPointOfInterest>(Signals.OBJECT_DAMAGED, OnObjectDamaged);
-		Messenger.RemoveListener<IPointOfInterest>(Signals.OBJECT_REPAIRED, OnObjectRepaired);
+		Messenger.RemoveListener<IPointOfInterest, int>(Signals.OBJECT_DAMAGED, OnObjectDamaged);
+		Messenger.RemoveListener<IPointOfInterest>(Signals.OBJECT_FULLY_REPAIRED, OnObjectFullyRepaired);
 		Messenger.RemoveListener<TileObject, LocationGridTile>(Signals.TILE_OBJECT_PLACED, OnTileObjectPlaced);
 		Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
 		Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
@@ -73,14 +73,14 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 			TryCreateCombineStockpile(resourcePile);
 		}
 	}
-	private void OnObjectDamaged(IPointOfInterest poi) {
+	private void OnObjectDamaged(IPointOfInterest poi, int amount) {
 		Assert.IsTrue(poi is TileObject); // || poi is SpecialToken
 		TileObject tileObject = poi as TileObject;
 		if (poi.gridTileLocation != null && poi.gridTileLocation.IsPartOfSettlement(_owner) && tileObject.tileObjectType.CanBeRepaired()) {
 			TryCreateRepairJob(poi);
 		}
 	}
-	private void OnObjectRepaired(IPointOfInterest poi) {
+	private void OnObjectFullyRepaired(IPointOfInterest poi) {
 		Assert.IsTrue(poi is TileObject); // || poi is SpecialToken
 		if (poi.gridTileLocation != null && poi.gridTileLocation.IsPartOfSettlement(_owner)) {
 			//cancel existing repair job

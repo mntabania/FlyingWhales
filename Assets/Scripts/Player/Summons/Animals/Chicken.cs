@@ -32,9 +32,10 @@ public class Chicken : Animal {
             LocationGridTile randomTile = CollectionUtilities.GetRandomElement(tiles);
             if (gridTileLocation.structure.structureType == STRUCTURE_TYPE.CAVE) {
                 randomTile.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.MUSHROOM), randomTile);
-            } else if (gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.biomeType == BIOMES.GRASSLAND
-                       || gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.biomeType == BIOMES.FOREST
-                       || gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.biomeType == BIOMES.DESERT) {
+            } else if (gridTileLocation.structure.structureType.IsOpenSpace() 
+                       && (gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.biomeType == BIOMES.GRASSLAND
+                           || gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.biomeType == BIOMES.FOREST
+                           || gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.biomeType == BIOMES.DESERT)) {
                 randomTile.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.HERB_PLANT), randomTile);
             }
         }

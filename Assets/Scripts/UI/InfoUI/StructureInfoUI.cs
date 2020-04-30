@@ -44,6 +44,6 @@ public class StructureInfoUI : InfoUIBase {
         //UpdateCharacters();
     }
     private void UpdateBasicInfo() {
-        nameLbl.text = activeStructure.nameplateName;
+        nameLbl.text = $"{activeStructure.nameplateName} ({activeStructure.currentHP.ToString()}/{activeStructure.maxHP.ToString()})";
     }
 }
