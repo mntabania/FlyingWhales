@@ -825,6 +825,26 @@ namespace UtilityScripts {
             normalizedString = UpperCaseFirstLetters(normalizedString);
             return normalizedString;
         }
+        /// <summary>
+        /// Convert a string with just words separated by spaces into a proper sentence.
+        /// </summary>
+        /// <param name="originalText">The original text.</param>
+        /// <returns>A for</returns>
+        public static string Comafy(string originalText) {
+            string finalReaction = string.Empty;
+            string[] words = originalText.Split(' ').Where(x => string.IsNullOrEmpty(x) == false).ToArray();
+            for (int i = 0; i < words.Length; i++) {
+                string word = words[i];
+                if (i + 1 == words.Length) {
+                    finalReaction += $"{word}";
+                } else if (i + 2 == words.Length) {
+                    finalReaction += $"{word} and ";
+                } else {
+                    finalReaction += $"{word}, ";
+                }
+            }
+            return finalReaction;
+        }
         public static string NormalizeStringUpperCaseFirstLettersNoSpace(string s) {
             s = s.ToLower();
             string[] words = s.Split('_');

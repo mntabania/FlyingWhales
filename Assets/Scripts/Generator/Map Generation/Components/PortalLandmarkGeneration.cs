@@ -35,6 +35,7 @@ public class PortalLandmarkGeneration : MapGenerationComponent {
 		if (WorldConfigManager.Instance.isDemoWorld) {
 			portalTile.SetElevation(ELEVATION.PLAIN);
 		}
+		portalTile.featureComponent.RemoveAllFeatures(portalTile);
 		BaseLandmark portalLandmark = LandmarkManager.Instance.CreateNewLandmarkOnTile(portalTile, LANDMARK_TYPE.THE_PORTAL);
 		PlayerSettlement playerSettlement = LandmarkManager.Instance.CreateNewPlayerSettlement(portalTile);
 		playerSettlement.SetName("Demonic Intrusion");
