@@ -8,7 +8,7 @@ using Inner_Maps.Location_Structures;
 public class SeizeObjectData : PlayerAction {
     public override SPELL_TYPE type => SPELL_TYPE.SEIZE_OBJECT;
     public override string name => "Seize Object";
-    public override string description => "Seize Object";
+    public override string description => "This Action can be used to take an object and then transfer it to an unoccupied tile.";
     public SeizeObjectData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE_OBJECT };
     }

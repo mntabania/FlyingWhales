@@ -63,7 +63,7 @@ public class Tornado : PlayerSpell {
 public class TornadoData : SpellData {
     public override SPELL_TYPE type => SPELL_TYPE.TORNADO;
     public override string name => "Tornado";
-    public override string description => "A destructive cyclone that deals heavy Normal damage to everything in its path.";
+    public override string description => "This Spell summons a devastating Tornado that moves around randomly. It deals a high amount of Wind damage to everything it comes in contact with.";
     public override SPELL_CATEGORY category => SPELL_CATEGORY.SPELL;
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
     public TornadoData() : base() {

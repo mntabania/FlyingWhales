@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class DemonicStructurePlayerSkill : SpellData {
     public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.DEMONIC_STRUCTURE; } }
+    public override string description => name;
+
     public STRUCTURE_TYPE structureType { get; protected set; }
 
     public DemonicStructurePlayerSkill() : base() {

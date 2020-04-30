@@ -6,7 +6,7 @@ using UnityEngine;
 public class PoisonData : PlayerAction {
     public override SPELL_TYPE type => SPELL_TYPE.POISON;
     public override string name { get { return "Poison"; } }
-    public override string description { get { return "Poison the food at the target table."; } }
+    public override string description { get { return "This Action can be used to apply Poisoned on an object."; } }
 
     public PoisonData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE_OBJECT };

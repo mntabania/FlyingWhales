@@ -6,7 +6,7 @@ using Inner_Maps;
 public class ElectricStormData : SpellData {
     public override SPELL_TYPE type => SPELL_TYPE.ELECTRIC_STORM;
     public override string name { get { return "Electric Storm"; } }
-    public override string description { get { return "Lightning strikes random tiles on the target area, dealing Electric damage."; } }
+    public override string description { get { return "This Spell will spawn a series of lightning strikes onto a target area, dealing Electric damage to anything they hit."; } }
     public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.SPELL; } }
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
     public virtual int abilityRadius => 1;

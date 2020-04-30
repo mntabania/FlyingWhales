@@ -6,7 +6,7 @@ using Inner_Maps;
 public class PlantGermData : PlayerAction {
     public override SPELL_TYPE type => SPELL_TYPE.PLANT_GERM;
     public override string name => "Plant Germ";
-    public override string description => "Plant Germ";
+    public override string description => "This Action puts an Abomination Germ on a Mushroom or a Berry Shrub.";
 
     public PlantGermData() : base() {
         targetTypes = new[] { SPELL_TARGET.TILE_OBJECT };
