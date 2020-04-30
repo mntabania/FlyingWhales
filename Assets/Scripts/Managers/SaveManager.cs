@@ -14,8 +14,6 @@ public class SaveManager : MonoBehaviour {
     private const string saveDataPlayerFileName = "SAVED_PLAYER_DATA";
 
     public SaveDataPlayer currentSaveDataPlayer { get; private set; }
-    public PlayerSkillTree[] allSkillTrees;
-    public bool unlockAll;
 
     private void Awake() {
         if (Instance == null) {

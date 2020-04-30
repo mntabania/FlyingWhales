@@ -103,6 +103,7 @@ public class PlayerUI : MonoBehaviour {
     public ScrollRect spellsScrollRect;
     public GameObject spellsContainerGO;
     public GameObject spellItemPrefab;
+    public PlayerSkillDetails skillDetails;
     private List<SpellItem> _spellItems;
 
     [Header("Summons")]
@@ -966,6 +967,12 @@ public class PlayerUI : MonoBehaviour {
             }
         }
         return null;
+    }
+    public void OnHoverSpell(SpellData skillData) {
+        skillDetails.ShowPlayerSkillDetails(skillData, PlayerSkillManager.Instance.GetPlayerSkillTreeNode(skillData.type), true);
+    }
+    public void OnHoverOutSpell(SpellData skillData) {
+        skillDetails.HidePlayerSkillDetails();
     }
     #endregion
 

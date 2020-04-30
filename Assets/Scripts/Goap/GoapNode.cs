@@ -391,6 +391,9 @@ public class ActualGoapNode : IReactable, IRumorable {
         if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER && !action.doesNotStopTargetCharacter && actor != poiTarget) {
             Character targetCharacter = poiTarget as Character;
             if (!targetCharacter.isDead) {
+                if (targetCharacter.stateComponent.currentState != null && targetCharacter.stateComponent.currentState.isPaused) {
+                    targetCharacter.stateComponent.currentState.ResumeState();
+                }
                 targetCharacter.IncreaseCanMove();
             }
             targetCharacter.AdjustIsStoppedByOtherCharacter(-1);
@@ -418,11 +421,9 @@ public class ActualGoapNode : IReactable, IRumorable {
         if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER && !action.doesNotStopTargetCharacter && actor != poiTarget) {
             Character targetCharacter = poiTarget as Character;
             if (!targetCharacter.isDead) {
-                //if (resumeTargetCharacterState) {
-                //    if (targetCharacter.stateComponent.currentState != null && targetCharacter.stateComponent.currentState.isPaused) {
-                //        targetCharacter.stateComponent.currentState.ResumeState();
-                //    }
-                //}
+                if (targetCharacter.stateComponent.currentState != null && targetCharacter.stateComponent.currentState.isPaused) {
+                    targetCharacter.stateComponent.currentState.ResumeState();
+                }
                 targetCharacter.IncreaseCanMove();
             }
             targetCharacter.AdjustIsStoppedByOtherCharacter(-1);
