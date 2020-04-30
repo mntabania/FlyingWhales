@@ -62,7 +62,7 @@ public class StructureWallObject : MapObject<StructureWallObject>, ITraitable {
             Messenger.Broadcast(Signals.WALL_REPAIRED, this, amount);
         }
         
-        _visual.UpdateWallState(this);
+        _visual.UpdateWallAssets(this);
         _visual.UpdateWallState(this);
         
         if (currentHP <= 0) {
