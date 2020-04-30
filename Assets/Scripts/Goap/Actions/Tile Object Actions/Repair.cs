@@ -105,9 +105,9 @@ public class Repair : GoapAction {
             tileObj.AdjustResource(RESOURCE.WOOD, cost);
         }
     }
-    public void PerTickRepairSuccess(ActualGoapNode goapNode) {
-        goapNode.poiTarget.AdjustHP(20, ELEMENTAL_TYPE.Normal, showHPBar: true);
-    }
+    // public void PerTickRepairSuccess(ActualGoapNode goapNode) {
+    //     goapNode.poiTarget.AdjustHP(50, ELEMENTAL_TYPE.Normal, showHPBar: true);
+    // }
     public void AfterRepairSuccess(ActualGoapNode goapNode) {
         goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Burnt");
         goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Damaged");
@@ -116,6 +116,10 @@ public class Repair : GoapAction {
         TileObjectData data = TileObjectDB.GetTileObjectData(tileObj.tileObjectType);
         int cost = (int) (data.constructionCost * 0.5f);
         tileObj.AdjustResource(RESOURCE.WOOD, -cost);
+
+        int missingHP = tileObj.maxHP - tileObj.currentHP;
+        tileObj.AdjustHP(missingHP, ELEMENTAL_TYPE.Normal);
+
         //goapNode.actor.AdjustSupply((int) (data.constructionCost * 0.5f));
 
     }

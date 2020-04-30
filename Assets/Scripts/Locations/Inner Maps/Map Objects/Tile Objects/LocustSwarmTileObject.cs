@@ -45,9 +45,13 @@ public class LocustSwarmTileObject : MovingTileObject {
             _locustSwarmMapObjectVisual.Expire();
         }
         if (amount < 0) {
-            Messenger.Broadcast(Signals.OBJECT_DAMAGED, this as IPointOfInterest);    
-        } else if (currentHP == maxHP) {
-            Messenger.Broadcast(Signals.OBJECT_REPAIRED, this as IPointOfInterest);
+            Messenger.Broadcast(Signals.OBJECT_DAMAGED, this as IPointOfInterest, amount);
+        } else if (amount > 0) {
+            if (currentHP == maxHP) {
+                Messenger.Broadcast(Signals.OBJECT_FULLY_REPAIRED, this as IPointOfInterest);
+            } else {
+                Messenger.Broadcast(Signals.OBJECT_REPAIRED, this as IPointOfInterest, amount);
+            }
         }
         Debug.Log($"{GameManager.Instance.TodayLogString()}HP of {this} was adjusted by {amount}. New HP is {currentHP}.");
     }

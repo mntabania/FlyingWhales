@@ -100,7 +100,7 @@ public class LocationStructureObject : PooledObject {
     #endregion
 
     #region Tile Objects
-    public void RegisterPreplacedObjects(LocationStructure structure, InnerTileMap innerMap) {
+    private void RegisterPreplacedObjects(LocationStructure structure, InnerTileMap innerMap) {
         StructureTemplateObjectData[] preplacedObjs = GetPreplacedObjects();
         for (int i = 0; i < preplacedObjs.Length; i++) {
             StructureTemplateObjectData preplacedObj = preplacedObjs[i];
@@ -114,6 +114,7 @@ public class LocationStructureObject : PooledObject {
             newTileObject.mapVisual.SetVisual(preplacedObj.spriteRenderer.sprite);
             newTileObject.mapVisual.SetRotation(preplacedObj.transform.localEulerAngles.z);
             newTileObject.RevalidateTileObjectSlots();
+            structure.AddObjectAsDamageContributor(newTileObject);
         }
         SetPreplacedObjectsState(false);
     }
@@ -256,6 +257,7 @@ public class LocationStructureObject : PooledObject {
         Messenger.Broadcast(Signals.STRUCTURE_OBJECT_PLACED, structure);
     }
     public void OnOwnerStructureDestroyed() {
+        RescanPathfindingGridOfStructure();
         gameObject.SetActive(false); //disable this object.
         _parentTemplate.CheckForDestroy(); //check if whole structure template has been destroyed.
     }
@@ -347,7 +349,9 @@ public class LocationStructureObject : PooledObject {
         base.Reset();
         SetPreplacedObjectsState(true);
         _groundTileMap.gameObject.SetActive(true);
-        _blockWallsTilemap?.gameObject.SetActive(true);
+        if (_blockWallsTilemap != null) {
+            _blockWallsTilemap.gameObject.SetActive(true);    
+        }
         tiles = null;
     }
     #endregion
@@ -372,6 +376,7 @@ public class LocationStructureObject : PooledObject {
                             InnerMapManager.Instance.CreateNewTileObject<BlockWall>(TILE_OBJECT_TYPE.BLOCK_WALL);
                         blockWall.SetWallType(_wallType);
                         structure.AddPOI(blockWall, tile);
+                        structure.AddObjectAsDamageContributor(blockWall);
                     }
                     else {
                         map.structureTilemap.SetTile(tile.localPlace, blockWallAsset);
@@ -391,6 +396,7 @@ public class LocationStructureObject : PooledObject {
                 tile.SetTileType(LocationGridTile.Tile_Type.Wall);
                 structureWallObject.SetGridTileLocation(tile);
                 tile.AddWallObject(structureWallObject);
+                structure.AddObjectAsDamageContributor(structureWallObject);
                 walls[i] = structureWallObject;
             }    
         }

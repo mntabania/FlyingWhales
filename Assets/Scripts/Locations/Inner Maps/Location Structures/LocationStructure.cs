@@ -26,9 +26,12 @@ namespace Inner_Maps.Location_Structures {
         public List<LocationGridTile> tiles { get; private set; }
         public LinkedList<LocationGridTile> unoccupiedTiles { get; private set; }
         //public List<LocationGridTile> outerTiles { get; private set; }
-
         public bool isInterior { get; private set; }
         public bool hasBeenDestroyed { get; private set; }
+        //HP
+        public int maxHP { get; private set; }
+        public int currentHP { get; private set; }
+        public HashSet<IDamageable> objectsThatContributeToDamage { get; private set; }
 
         #region getters
         public virtual bool isDwelling => false;
@@ -46,6 +49,9 @@ namespace Inner_Maps.Location_Structures {
             groupedTileObjects = new Dictionary<TILE_OBJECT_TYPE, TileObjectsAndCount>();
             tiles = new List<LocationGridTile>();
             unoccupiedTiles = new LinkedList<LocationGridTile>();
+            objectsThatContributeToDamage = new HashSet<IDamageable>();
+            maxHP = 5000;
+            currentHP = maxHP;
             //outerTiles = new List<LocationGridTile>();
             SetInteriorState(structureType.IsInterior());
         }
@@ -59,6 +65,9 @@ namespace Inner_Maps.Location_Structures {
             groupedTileObjects = new Dictionary<TILE_OBJECT_TYPE, TileObjectsAndCount>();
             //outerTiles = new List<LocationGridTile>();
             tiles = new List<LocationGridTile>();
+            objectsThatContributeToDamage = new HashSet<IDamageable>();
+            maxHP = 5000;
+            currentHP = maxHP;
             SetInteriorState(structureType.IsInterior());
         }
 
@@ -428,12 +437,13 @@ namespace Inner_Maps.Location_Structures {
             }
             return unoccupiedTiles.ElementAt(Random.Range(0, unoccupiedTiles.Count));
         }
-        public virtual void OnTileDamaged(LocationGridTile tile) { }
-        public virtual void OnTileRepaired(LocationGridTile tile) {
-            // ReSharper disable once Unity.NoNullPropagation
-            structureObj?.ApplyGroundTileAssetForTile(tile);
+        public virtual void OnTileDamaged(LocationGridTile tile, int amount) { }
+        public virtual void OnTileRepaired(LocationGridTile tile, int amount) {
+            if (tile.genericTileObject.currentHP >= tile.genericTileObject.maxHP) {
+                // ReSharper disable once Unity.NoNullPropagation
+                structureObj?.ApplyGroundTileAssetForTile(tile);    
+            }
         }
-        public void OnTileDestroyed(LocationGridTile tile) { }
         #endregion
 
         #region Utilities
@@ -581,6 +591,7 @@ namespace Inner_Maps.Location_Structures {
             if (hasBeenDestroyed) {
                 return;
             }
+            hasBeenDestroyed = true;
             Debug.Log($"{GameManager.Instance.TodayLogString()}{ToString()} was destroyed!");
 
             //transfer tiles to either the wilderness or work npcSettlement
@@ -593,7 +604,7 @@ namespace Inner_Maps.Location_Structures {
                 tile.ClearWallObjects();
                 IPointOfInterest obj = tile.objHere;
                 if (obj != null) {
-                    obj.AdjustHP(-tile.objHere.maxHP, ELEMENTAL_TYPE.Normal, showHPBar: true);
+                    // obj.AdjustHP(-tile.objHere.maxHP, ELEMENTAL_TYPE.Normal, showHPBar: true);
                     obj.gridTileLocation?.structure.RemovePOI(obj); //because sometimes adjusting the hp of the object to 0 does not remove it?
                 }
                 
@@ -610,7 +621,6 @@ namespace Inner_Maps.Location_Structures {
             settlementLocation.RemoveStructure(this);
             Messenger.Broadcast(Signals.STRUCTURE_OBJECT_REMOVED, this, occupiedHexTile);
             SetOccupiedHexTile(null);
-            hasBeenDestroyed = true;
             UnsubscribeListeners();
             Messenger.Broadcast(Signals.STRUCTURE_DESTROYED, this);
         }
@@ -654,6 +664,30 @@ namespace Inner_Maps.Location_Structures {
         public void RightSelectAction() { }
         public bool CanBeSelected() {
             return true;
+        }
+        #endregion
+
+        #region HP
+        public void AddObjectAsDamageContributor(IDamageable damageable) {
+            objectsThatContributeToDamage.Add(damageable);
+        }
+        protected void OnObjectDamaged(IPointOfInterest poi, int amount) {
+            if (objectsThatContributeToDamage.Contains(poi)) {
+                AdjustHP(amount);
+            }
+        }
+        protected void OnObjectRepaired(IPointOfInterest poi, int amount) {
+            if (objectsThatContributeToDamage.Contains(poi)) {
+                AdjustHP(amount);
+            }
+        }
+        protected virtual void AdjustHP(int amount) {
+            if (hasBeenDestroyed) { return; }
+            currentHP += amount;
+            currentHP = Mathf.Clamp(currentHP, 0, maxHP);
+            if (currentHP == 0) {
+                DestroyStructure();
+            }
         }
         #endregion
     }

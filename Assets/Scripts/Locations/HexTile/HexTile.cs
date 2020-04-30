@@ -1057,16 +1057,23 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     private void CheckIfStructureVisualsAreStillValid() {
         string log = $"Checking {ToString()} to check if landmark on it is still valid";
         STRUCTURE_TYPE mostImportantStructure = GetMostImportantStructureOnTile().structureType;
-        LANDMARK_TYPE landmarkType = mostImportantStructure.GetLandmarkType();
         log += $"\nMost important structure is {mostImportantStructure.ToString()}";
-        log += $"\nLandmark to create is {landmarkType.ToString()}";
-        if (landmarkOnTile == null) {
-            LandmarkManager.Instance.CreateNewLandmarkOnTile(this, landmarkType);
+        if (mostImportantStructure == STRUCTURE_TYPE.WILDERNESS) {
+            log += $"\nWill destroy existing landmark {landmarkOnTile?.ToString() ?? "Null"}";
+            LandmarkManager.Instance.DestroyLandmarkOnTile(this);
         } else {
-            if (landmarkOnTile.specificLandmarkType != landmarkType) {
-                landmarkOnTile.ChangeLandmarkType(landmarkType);    
-            }
+            LANDMARK_TYPE landmarkType = mostImportantStructure.GetLandmarkType();
+            log += $"\nLandmark to create is {landmarkType.ToString()}";
+            if (landmarkOnTile == null) {
+                LandmarkManager.Instance.CreateNewLandmarkOnTile(this, landmarkType);
+            } else {
+                if (landmarkOnTile.specificLandmarkType != landmarkType) {
+                    landmarkOnTile.ChangeLandmarkType(landmarkType);    
+                }
+            }    
         }
+        
+        
         Debug.Log(log);
     }
     #endregion

@@ -55,24 +55,19 @@ public class StructureWallObject : MapObject<StructureWallObject>, ITraitable {
             CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, 
                 responsibleCharacter, etp);
         }
+
+        if (amount < 0) {
+            Messenger.Broadcast(Signals.WALL_DAMAGED, this, amount);
+        } else if (amount > 0) {
+            Messenger.Broadcast(Signals.WALL_REPAIRED, this, amount);
+        }
+        
+        _visual.UpdateWallAssets(this);
+        _visual.UpdateWallState(this);
+        
         if (currentHP <= 0) {
             //wall has been destroyed
-            _visual.UpdateWallState(this);
-            Messenger.Broadcast(Signals.WALL_DESTROYED, this);
             gridTileLocation.CreateSeamlessEdgesForSelfAndNeighbours();
-        } else if (amount < 0 && currentHP < maxHP) {
-            //wall has been damaged
-            _visual.UpdateWallAssets(this);
-            Messenger.Broadcast(Signals.WALL_DAMAGED, this);
-        } else if (amount > 0 && currentHP < maxHP) {
-            //wall has been partially repaired
-            _visual.UpdateWallState(this);
-            //Messenger.Broadcast(Signals.WALL_REPAIRED, this);
-        } else if (currentHP == maxHP) {
-            //wall has been fully repaired
-            _visual.UpdateWallAssets(this);
-            _visual.UpdateWallState(this);
-            Messenger.Broadcast(Signals.WALL_REPAIRED, this);
         }
     }
     public void OnHitByAttackFrom(Character characterThatAttacked, CombatState state, ref string attackSummary) {

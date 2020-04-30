@@ -41,8 +41,7 @@ namespace Traits {
                         CreateJobsOnEnterVisionBasedOnTrait(character, character);
                     }
                 } else {
-                    IPointOfInterest obj = poi;
-                    obj.SetPOIState(POI_STATE.INACTIVE);
+                    poi.SetPOIState(POI_STATE.INACTIVE);
                 }
                 if(poi is WinterRose winterRose) {
                     winterRose.WinterRoseEffect();
@@ -71,10 +70,12 @@ namespace Traits {
                 ObjectPoolManager.Instance.DestroyObject(burningEffect);
                 burningEffect = null;
             }
-            if (removedFrom is IPointOfInterest) {
+            if (removedFrom is IPointOfInterest obj) {
                 if (removedFrom is Character character) {
                     // character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.REMOVE_STATUS);
                     character.AdjustDoNotRecoverHP(-1);
+                } else {
+                    obj.SetPOIState(POI_STATE.ACTIVE);   
                 }
             } 
         }

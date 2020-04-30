@@ -17,7 +17,8 @@ public class DestroyData : PlayerAction {
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         IncreaseThreatForEveryCharacterThatSeesPOI(targetPOI, 5);
         LocationGridTile targetTile = targetPOI.gridTileLocation;
-        targetTile.structure.RemovePOI(targetPOI);
+        targetPOI.AdjustHP(-targetPOI.currentHP, ELEMENTAL_TYPE.Normal, true);
+        // targetTile.structure.RemovePOI(targetPOI);
         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_intervention");
         log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(null, "destroyed", LOG_IDENTIFIER.STRING_1);

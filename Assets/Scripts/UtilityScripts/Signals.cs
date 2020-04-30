@@ -475,7 +475,6 @@ public static class Signals {
     #endregion
 
     #region Structures
-    public static string WALL_DESTROYED = "OnWallDestroyed";
     public static string WALL_DAMAGED = "OnWallDamaged";
     public static string WALL_REPAIRED = "OnWallRepaired";
     /// <summary>
@@ -488,13 +487,17 @@ public static class Signals {
 
     #region POI
     /// <summary>
-    /// Parameters (IPointOfInterest damagedObj)
+    /// Parameters (IPointOfInterest damagedObj, int damageAmount)
     /// </summary>
     public static string OBJECT_DAMAGED = "OnObjectDamaged";
     /// <summary>
-    /// Parameters (IPointOfInterest repairedObj)
+    /// Parameters (IPointOfInterest repairedObj, int repairAmount)
     /// </summary>
     public static string OBJECT_REPAIRED = "OnObjectRepaired";
+    /// <summary>
+    /// Parameters (IPointOfInterest repairedObj)
+    /// </summary>
+    public static string OBJECT_FULLY_REPAIRED = "OnObjectFullyRepaired";
     public static string SPIRIT_OBJECT_NO_DESTINATION = "OnSpiritObjectNoDestination";
     #endregion
 
@@ -600,6 +603,7 @@ public static class Signals {
             new SignalMethod() { methodName = "OnTickEnded", objectType = typeof(Character) },
         }},
     };
+    
     public static bool TryGetMatchingSignalMethod(string eventType, Callback method, out SignalMethod matching) {
         for (int i = 0; i < orderedSignalExecution[eventType].Length; i++) {
             SignalMethod sm = orderedSignalExecution[eventType][i];

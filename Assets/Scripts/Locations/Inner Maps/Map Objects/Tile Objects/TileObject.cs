@@ -505,13 +505,16 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             tile.structure.RemovePOI(this, removed);
         }
         if (amount < 0) {
-            Messenger.Broadcast(Signals.OBJECT_DAMAGED, this as IPointOfInterest);
-        } else if (currentHP == maxHP) {
-            Messenger.Broadcast(Signals.OBJECT_REPAIRED, this as IPointOfInterest);
+            Messenger.Broadcast(Signals.OBJECT_DAMAGED, this as IPointOfInterest, amount);
+        } else if (amount > 0) {
+            Messenger.Broadcast(Signals.OBJECT_REPAIRED, this as IPointOfInterest, amount);
         }
-        if (isPreplaced && tile != null && tile.structure is DemonicStructure demonicStructure) {
-            demonicStructure.AdjustHP(amount);
-        }
+        if (currentHP == maxHP) {
+            Messenger.Broadcast(Signals.OBJECT_FULLY_REPAIRED, this as IPointOfInterest);
+        } 
+        // if (isPreplaced && tile != null && tile.structure is DemonicStructure demonicStructure) {
+        //     demonicStructure.AdjustHP(amount);
+        // }
     }
     public void OnHitByAttackFrom(Character characterThatAttacked, CombatState state, ref string attackSummary) {
         ELEMENTAL_TYPE elementalType = characterThatAttacked.combatComponent.elementalDamage.type;
