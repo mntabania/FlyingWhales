@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using Tutorial;
 
 [System.Serializable]
 public class SaveDataPlayer {
@@ -10,7 +11,8 @@ public class SaveDataPlayer {
     public List<PlayerSkillTreeNodeData> unlockedSkills;
     public List<SaveDataSummon> kennelSummons;
     public List<SaveDataTileObject> cryptTileObjects;
-
+    public List<TutorialManager.Tutorial> completedTutorials;
+    
     public void InitializeInitialData() {
         exp = 10000;
         learnedSkills = new List<PlayerSkillTreeNodeData>();
@@ -26,6 +28,8 @@ public class SaveDataPlayer {
         learnedSkills.Add(afflict);
         PlayerSkillTreeNodeData buildDemonicStructure = new PlayerSkillTreeNodeData() { skill = SPELL_TYPE.BUILD_DEMONIC_STRUCTURE, charges = -1, cooldown = -1, manaCost = -1 };
         learnedSkills.Add(buildDemonicStructure);
+
+        InitializeTutorialData();
     }
 
     #region Exp
@@ -115,6 +119,18 @@ public class SaveDataPlayer {
         for (int i = 0; i < tileObjects.Count; i++) {
             cryptTileObjects.Add(new SaveDataTileObject(tileObjects[i]));
         }
+    }
+    #endregion
+
+    #region Tutorials
+    public void InitializeTutorialData() {
+        completedTutorials = new List<TutorialManager.Tutorial>();
+    }
+    public void AddTutorialAsCompleted(TutorialManager.Tutorial tutorial) {
+        completedTutorials.Add(tutorial);
+    }
+    public void ResetTutorialProgress() {
+        completedTutorials.Clear();
     }
     #endregion
 }

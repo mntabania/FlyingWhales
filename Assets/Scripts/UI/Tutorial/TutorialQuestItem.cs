@@ -39,6 +39,29 @@ public class TutorialQuestItem : PooledObject {
             TutorialManager.Instance.tutorialUI.ReLayoutTutorials();    
         }
     }
+    public void UpdateStepsDelayed(bool updateLayout = false) {
+        StartCoroutine(UpdateStepsCoroutine(updateLayout));
+    }
+    private IEnumerator UpdateStepsCoroutine(bool updateLayout) {
+        yield return new WaitForSecondsRealtime(1.5f);
+        // RectTransform[] children =
+        //     UtilityScripts.GameUtilities.GetComponentsInDirectChildren<RectTransform>(stepsParent.gameObject);
+        // for (int i = 0; i < children.Length; i++) {
+        //     RectTransform child = children[i];
+        // }
+        UtilityScripts.Utilities.DestroyChildren(stepsParent);
+        for (int i = 0; i < _tutorialQuest.activeStepCollection.steps.Count; i++) {
+            TutorialQuestStep step = _tutorialQuest.activeStepCollection.steps[i];
+            GameObject stepGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(tutorialQuestStepPrefab.name,
+                Vector3.zero, Quaternion.identity, stepsParent);
+            TutorialQuestStepItem stepItem = stepGO.GetComponent<TutorialQuestStepItem>();
+            stepItem.SetStep(step);
+        }
+        if (updateLayout) {
+            TutorialManager.Instance.tutorialUI.ReLayoutTutorials();    
+        }
+    }
+    
     public override void Reset() {
         base.Reset();
         UtilityScripts.Utilities.DestroyChildren(stepsParent);

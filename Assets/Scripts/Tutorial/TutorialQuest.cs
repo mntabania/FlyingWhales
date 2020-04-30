@@ -75,8 +75,7 @@ namespace Tutorial {
         /// </summary>
         protected abstract void ConstructSteps();
         #endregion
-
-
+        
         #region Listeners
         private void OnTutorialStepCollectionCompleted(TutorialQuestStepCollection completedCollection) {
             if (steps.Contains(completedCollection)) {
@@ -89,7 +88,7 @@ namespace Tutorial {
                     stepCollection.Activate();
                     activeStepCollection = stepCollection;
                     //only re layout if completed collection has a different number of steps compared to the new active one. 
-                    tutorialQuestItem.UpdateSteps(completedCollection.steps.Count != activeStepCollection.steps.Count);
+                    tutorialQuestItem.UpdateStepsDelayed(completedCollection.steps.Count != activeStepCollection.steps.Count);
                 }
             }
         }

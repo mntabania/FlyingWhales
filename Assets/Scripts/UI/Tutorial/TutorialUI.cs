@@ -34,6 +34,16 @@ public class TutorialUI : MonoBehaviour {
         targetSize.x = 0f;
         rectTransform.DOSizeDelta(targetSize, 0.4f).SetEase(Ease.OutCubic).OnComplete(() => OnCompleteEaseOutWidth(tutorialQuest));
     }
+    public void HideTutorialQuestDelayed(TutorialQuest tutorialQuest) {
+        StartCoroutine(HideTutorialQuestCoroutine(tutorialQuest));
+    }
+    private IEnumerator HideTutorialQuestCoroutine(TutorialQuest tutorialQuest) {
+        yield return new WaitForSeconds(1.5f);
+        RectTransform rectTransform = tutorialQuest.tutorialQuestItem.transform as RectTransform;
+        Vector2 targetSize = rectTransform.sizeDelta;
+        targetSize.x = 0f;
+        rectTransform.DOSizeDelta(targetSize, 0.4f).SetEase(Ease.OutCubic).OnComplete(() => OnCompleteEaseOutWidth(tutorialQuest));
+    }
     private void OnCompleteEaseOutWidth(TutorialQuest tutorialQuest) {
         RectTransform rectTransform = tutorialQuest.tutorialQuestItem.transform as RectTransform;
         Vector2 targetSize = rectTransform.sizeDelta;
