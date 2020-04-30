@@ -413,6 +413,19 @@ public class BaseRelationshipContainer : IRelationshipContainer {
         }
         return characters;
     }
+    public Character GetRandomEnemyCharacter() {
+        List<Character> characters = new List<Character>();
+        for (int i = 0; i < charactersWithOpinion.Count; i++) {
+            Character otherCharacter = charactersWithOpinion[i];
+            if (IsEnemiesWith(otherCharacter)) {
+                characters.Add(otherCharacter);
+            }
+        }
+        if(characters.Count > 0) {
+            return characters[UnityEngine.Random.Range(0, characters.Count)];
+        }
+        return null;
+    }
     public List<Character> GetFriendCharacters() {
         List<Character> characters = new List<Character>();
         for (int i = 0; i < charactersWithOpinion.Count; i++) {
