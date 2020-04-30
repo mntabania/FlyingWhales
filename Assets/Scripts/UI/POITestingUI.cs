@@ -126,6 +126,18 @@ public class POITestingUI : MonoBehaviour {
         }
         HideUI();
     }
+    public void SpreadRumor() {
+        if (poi is Character targetCharacter) {
+            Character rumoredCharacter = activeCharacter.relationshipContainer.GetRandomEnemyCharacter();
+            if(rumoredCharacter != null) {
+                Rumor rumor = activeCharacter.rumorComponent.GenerateNewRandomRumor(targetCharacter, rumoredCharacter);
+                activeCharacter.jobComponent.CreateSpreadRumorJob(targetCharacter, rumor);
+            }
+        } else {
+            Debug.LogError($"{poi.name} is not a character!");
+        }
+        HideUI();
+    }
     #endregion
 
     #region Tile Object Testing
