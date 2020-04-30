@@ -43,9 +43,11 @@ public class GameFeature : TileFeature {
     public override void OnRemoveFeature(HexTile tile) {
         base.OnRemoveFeature(tile);
         Messenger.RemoveListener(Signals.HOUR_STARTED, TryGeneratePerHour);
-        Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);    
-        ownedAnimals.Clear();
-        ownedAnimals = null;
+        Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        if (ownedAnimals != null) {
+            ownedAnimals.Clear();
+            ownedAnimals = null;    
+        }
     }
     #endregion
 

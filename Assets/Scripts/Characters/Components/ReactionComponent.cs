@@ -104,22 +104,40 @@ public class ReactionComponent {
                 owner.logComponent.AddHistory(witnessLog);
             }
             string emotionsToActor = reactable.ReactionToActor(owner, REACTION_STATUS.WITNESSED);
-            if(emotionsToActor != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsToActor)) {
-                string error = "Action Error in Witness Reaction To Actor (Duplicate/Incompatible Emotions Triggered)";
-                error += $"\n-Witness: {owner}";
-                error += $"\n-Action: {reactable.name}";
-                error += $"\n-Actor: {reactable.actor.name}";
-                error += $"\n-Target: {reactable.target.nameWithID}";
-                owner.logComponent.PrintLogErrorIfActive(error);
+            if(emotionsToActor != string.Empty) {
+                if (!CharacterManager.Instance.EmotionsChecker(emotionsToActor)) {
+                    string error = "Action Error in Witness Reaction To Actor (Duplicate/Incompatible Emotions Triggered)";
+                    error += $"\n-Witness: {owner}";
+                    error += $"\n-Action: {reactable.name}";
+                    error += $"\n-Actor: {reactable.actor.name}";
+                    error += $"\n-Target: {reactable.target.nameWithID}";
+                    owner.logComponent.PrintLogErrorIfActive(error);
+                } else {
+                    //add log of emotions felt
+                    Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction");
+                    log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    log.AddToFillers(reactable.actor, reactable.actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    log.AddToFillers(null, UtilityScripts.Utilities.Comafy(emotionsToActor), LOG_IDENTIFIER.STRING_1);
+                    log.AddLogToInvolvedObjects();
+                }
             }
             string emotionsToTarget = reactable.ReactionToTarget(owner, REACTION_STATUS.WITNESSED);
-            if (emotionsToTarget != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsToTarget)) {
-                string error = "Action Error in Witness Reaction To Target (Duplicate/Incompatible Emotions Triggered)";
-                error += $"\n-Witness: {owner}";
-                error += $"\n-Action: {reactable.name}";
-                error += $"\n-Actor: {reactable.actor.name}";
-                error += $"\n-Target: {reactable.target.nameWithID}";
-                owner.logComponent.PrintLogErrorIfActive(error);
+            if (emotionsToTarget != string.Empty) {
+                if (!CharacterManager.Instance.EmotionsChecker(emotionsToTarget)) {
+                    string error = "Action Error in Witness Reaction To Target (Duplicate/Incompatible Emotions Triggered)";
+                    error += $"\n-Witness: {owner}";
+                    error += $"\n-Action: {reactable.name}";
+                    error += $"\n-Actor: {reactable.actor.name}";
+                    error += $"\n-Target: {reactable.target.nameWithID}";
+                    owner.logComponent.PrintLogErrorIfActive(error);
+                } else {
+                    //add log of emotions felt
+                    Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction");
+                    log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    log.AddToFillers(reactable.target, reactable.target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    log.AddToFillers(null, UtilityScripts.Utilities.Comafy(emotionsToTarget), LOG_IDENTIFIER.STRING_1);
+                    log.AddLogToInvolvedObjects();
+                }
             }
             string response =
                 $"Witness action reaction of {owner.name} to {reactable.name} of {reactable.actor.name} with target {reactable.target.name}: {emotionsToActor}{emotionsToTarget}";
@@ -127,13 +145,22 @@ public class ReactionComponent {
         } else if (target == owner) {
             if (!reactable.isStealth || target.traitContainer.HasTrait("Vigilant")) {
                 string emotionsOfTarget = reactable.ReactionOfTarget(REACTION_STATUS.WITNESSED);
-                if (emotionsOfTarget != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsOfTarget)) {
-                    string error = "Action Error in Witness Reaction Of Target (Duplicate/Incompatible Emotions Triggered)";
-                    error += $"\n-Witness: {owner}";
-                    error += $"\n-Action: {reactable.name}";
-                    error += $"\n-Actor: {reactable.actor.name}";
-                    error += $"\n-Target: {reactable.target.nameWithID}";
-                    owner.logComponent.PrintLogErrorIfActive(error);
+                if (emotionsOfTarget != string.Empty) {
+                    if (!CharacterManager.Instance.EmotionsChecker(emotionsOfTarget)) {
+                        string error = "Action Error in Witness Reaction Of Target (Duplicate/Incompatible Emotions Triggered)";
+                        error += $"\n-Witness: {owner}";
+                        error += $"\n-Action: {reactable.name}";
+                        error += $"\n-Actor: {reactable.actor.name}";
+                        error += $"\n-Target: {reactable.target.nameWithID}";
+                        owner.logComponent.PrintLogErrorIfActive(error);
+                    } else {
+                        //add log of emotions felt
+                        Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction");
+                        log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                        log.AddToFillers(reactable.actor, reactable.actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                        log.AddToFillers(null, UtilityScripts.Utilities.Comafy(emotionsOfTarget), LOG_IDENTIFIER.STRING_1);
+                        log.AddLogToInvolvedObjects();
+                    }
                 }
                 string response =
                     $"Witness action reaction of {owner.name} to {reactable.name} of {reactable.actor.name} with target {reactable.target.name}: {emotionsOfTarget}";
@@ -162,33 +189,60 @@ public class ReactionComponent {
         string response = string.Empty;
         if (reactable.actor != owner && reactable.target != owner) {
             string emotionsToActor = reactable.ReactionToActor(owner, REACTION_STATUS.INFORMED);
-            if (emotionsToActor != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsToActor)) {
-                string error = "Action Error in Witness Reaction To Actor (Duplicate/Incompatible Emotions Triggered)";
-                error += $"\n-Witness: {owner}";
-                error += $"\n-Action: {reactable.name}";
-                error += $"\n-Actor: {reactable.actor.name}";
-                error += $"\n-Target: {reactable.target.nameWithID}";
-                owner.logComponent.PrintLogErrorIfActive(error);
+            if (emotionsToActor != string.Empty) {
+                if (!CharacterManager.Instance.EmotionsChecker(emotionsToActor)) {
+                    string error = "Action Error in Witness Reaction To Actor (Duplicate/Incompatible Emotions Triggered)";
+                    error += $"\n-Witness: {owner}";
+                    error += $"\n-Action: {reactable.name}";
+                    error += $"\n-Actor: {reactable.actor.name}";
+                    error += $"\n-Target: {reactable.target.nameWithID}";
+                    owner.logComponent.PrintLogErrorIfActive(error);
+                } else {
+                    //add log of emotions felt
+                    Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction");
+                    log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    log.AddToFillers(reactable.actor, reactable.actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    log.AddToFillers(null, UtilityScripts.Utilities.Comafy(emotionsToActor), LOG_IDENTIFIER.STRING_1);
+                    log.AddLogToInvolvedObjects();
+                }
             }
             string emotionsToTarget = reactable.ReactionToTarget(owner, REACTION_STATUS.INFORMED);
-            if (emotionsToTarget != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsToTarget)) {
-                string error = "Action Error in Witness Reaction To Target (Duplicate/Incompatible Emotions Triggered)";
-                error += $"\n-Witness: {owner}";
-                error += $"\n-Action: {reactable.name}";
-                error += $"\n-Actor: {reactable.actor.name}";
-                error += $"\n-Target: {reactable.target.nameWithID}";
-                owner.logComponent.PrintLogErrorIfActive(error);
+            if (emotionsToTarget != string.Empty) {
+                if (!CharacterManager.Instance.EmotionsChecker(emotionsToTarget)) {
+                    string error = "Action Error in Witness Reaction To Target (Duplicate/Incompatible Emotions Triggered)";
+                    error += $"\n-Witness: {owner}";
+                    error += $"\n-Action: {reactable.name}";
+                    error += $"\n-Actor: {reactable.actor.name}";
+                    error += $"\n-Target: {reactable.target.nameWithID}";
+                    owner.logComponent.PrintLogErrorIfActive(error);
+                } else {
+                    //add log of emotions felt
+                    Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction");
+                    log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    log.AddToFillers(reactable.target, reactable.target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    log.AddToFillers(null, UtilityScripts.Utilities.Comafy(emotionsToTarget), LOG_IDENTIFIER.STRING_1);
+                    log.AddLogToInvolvedObjects();
+                }
             }
             response += $"{emotionsToActor}/{emotionsToTarget}";
         } else if(reactable.target == owner && reactable.target is Character) {
             string emotionsOfTarget = reactable.ReactionOfTarget(REACTION_STATUS.INFORMED);
-            if (emotionsOfTarget != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsOfTarget)) {
-                string error = "Action Error in Witness Reaction Of Target (Duplicate/Incompatible Emotions Triggered)";
-                error += $"\n-Witness: {owner}";
-                error += $"\n-Action: {reactable.name}";
-                error += $"\n-Actor: {reactable.actor.name}";
-                error += $"\n-Target: {reactable.target.nameWithID}";
-                owner.logComponent.PrintLogErrorIfActive(error);
+            if (emotionsOfTarget != string.Empty) {
+                if (!CharacterManager.Instance.EmotionsChecker(emotionsOfTarget)) {
+                    string error = "Action Error in Witness Reaction Of Target (Duplicate/Incompatible Emotions Triggered)";
+                    error += $"\n-Witness: {owner}";
+                    error += $"\n-Action: {reactable.name}";
+                    error += $"\n-Actor: {reactable.actor.name}";
+                    error += $"\n-Target: {reactable.target.nameWithID}";
+                    owner.logComponent.PrintLogErrorIfActive(error);
+                } else {
+                    //add log of emotions felt
+                    Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction");
+                    log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    log.AddToFillers(reactable.actor, reactable.actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    log.AddToFillers(null, UtilityScripts.Utilities.Comafy(emotionsOfTarget), LOG_IDENTIFIER.STRING_1);
+                    log.AddLogToInvolvedObjects();
+                }
             }
             response = emotionsOfTarget;
         }
@@ -230,35 +284,59 @@ public class ReactionComponent {
                 owner.logComponent.AddHistory(witnessLog);
             }
             string emotionsToActor = interrupt.ReactionToActor(owner, actor, target, interrupt, REACTION_STATUS.WITNESSED);
-            if (emotionsToActor != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsToActor)) {
-                string error = "Interrupt Error in Witness Reaction To Actor (Duplicate/Incompatible Emotions Triggered)";
-                error += $"\n-Witness: {owner}";
-                error += $"\n-Interrupt: {interrupt.name}";
-                error += $"\n-Actor: {actor.name}";
-                error += $"\n-Target: {target.nameWithID}";
-                owner.logComponent.PrintLogErrorIfActive(error);
+            if (emotionsToActor != string.Empty) {
+                if (!CharacterManager.Instance.EmotionsChecker(emotionsToActor)) {
+                    string error = "Interrupt Error in Witness Reaction To Actor (Duplicate/Incompatible Emotions Triggered)";
+                    error += $"\n-Witness: {owner}";
+                    error += $"\n-Interrupt: {interrupt.name}";
+                    error += $"\n-Actor: {actor.name}";
+                    error += $"\n-Target: {target.nameWithID}";
+                    owner.logComponent.PrintLogErrorIfActive(error);
+                } else {
+                    Log emotionsLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction");
+                    emotionsLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    emotionsLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    emotionsLog.AddToFillers(null, UtilityScripts.Utilities.Comafy(emotionsToActor), LOG_IDENTIFIER.STRING_1);
+                    emotionsLog.AddLogToInvolvedObjects();
+                }
             }
             string emotionsToTarget = interrupt.ReactionToTarget(owner, actor, target, interrupt, REACTION_STATUS.WITNESSED);
-            if (emotionsToTarget != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsToTarget)) {
-                string error = "Interrupt Error in Witness Reaction To Actor (Duplicate/Incompatible Emotions Triggered)";
-                error += $"\n-Witness: {owner}";
-                error += $"\n-Interrupt: {interrupt.name}";
-                error += $"\n-Actor: {actor.name}";
-                error += $"\n-Target: {target.nameWithID}";
-                owner.logComponent.PrintLogErrorIfActive(error);
+            if (emotionsToTarget != string.Empty) {
+                if (!CharacterManager.Instance.EmotionsChecker(emotionsToTarget)) {
+                    string error = "Interrupt Error in Witness Reaction To Actor (Duplicate/Incompatible Emotions Triggered)";
+                    error += $"\n-Witness: {owner}";
+                    error += $"\n-Interrupt: {interrupt.name}";
+                    error += $"\n-Actor: {actor.name}";
+                    error += $"\n-Target: {target.nameWithID}";
+                    owner.logComponent.PrintLogErrorIfActive(error);
+                } else {
+                    Log emotionsLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction");
+                    emotionsLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    emotionsLog.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    emotionsLog.AddToFillers(null, UtilityScripts.Utilities.Comafy(emotionsToTarget), LOG_IDENTIFIER.STRING_1);
+                    emotionsLog.AddLogToInvolvedObjects();
+                }
             }
             string response =
                 $"Witness interrupt reaction of {owner.name} to {interrupt.name} of {actor.name} with target {target.name}: {emotionsToActor}{emotionsToTarget}";
             owner.logComponent.PrintLogIfActive(response);
         } else if (target == owner) {
             string emotionsOfTarget = interrupt.ReactionOfTarget(actor, target, interrupt, REACTION_STATUS.WITNESSED);
-            if (emotionsOfTarget != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsOfTarget)) {
-                string error = "Interrupt Error in Witness Reaction To Actor (Duplicate/Incompatible Emotions Triggered)";
-                error += $"\n-Witness: {owner}";
-                error += $"\n-Interrupt: {interrupt.name}";
-                error += $"\n-Actor: {actor.name}";
-                error += $"\n-Target: {target.nameWithID}";
-                owner.logComponent.PrintLogErrorIfActive(error);
+            if (emotionsOfTarget != string.Empty) {
+                if (!CharacterManager.Instance.EmotionsChecker(emotionsOfTarget)) {
+                    string error = "Interrupt Error in Witness Reaction To Actor (Duplicate/Incompatible Emotions Triggered)";
+                    error += $"\n-Witness: {owner}";
+                    error += $"\n-Interrupt: {interrupt.name}";
+                    error += $"\n-Actor: {actor.name}";
+                    error += $"\n-Target: {target.nameWithID}";
+                    owner.logComponent.PrintLogErrorIfActive(error);
+                } else {
+                    Log emotionsLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction");
+                    emotionsLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    emotionsLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    emotionsLog.AddToFillers(null, UtilityScripts.Utilities.Comafy(emotionsOfTarget), LOG_IDENTIFIER.STRING_1);
+                    emotionsLog.AddLogToInvolvedObjects();
+                }
             }
             string response =
                 $"Witness interrupt reaction of {owner.name} to {interrupt.name} of {actor.name} with target {target.name}: {emotionsOfTarget}";
@@ -279,34 +357,58 @@ public class ReactionComponent {
         string response = string.Empty;
         if (actor != owner && target != owner) {
             string emotionsToActor = interrupt.ReactionToActor(owner, actor, target, interrupt, REACTION_STATUS.INFORMED);
-            if (emotionsToActor != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsToActor)) {
-                string error = "Interrupt Error in Witness Reaction To Actor (Duplicate/Incompatible Emotions Triggered)";
-                error += $"\n-Witness: {owner}";
-                error += $"\n-Interrupt: {interrupt.name}";
-                error += $"\n-Actor: {actor.name}";
-                error += $"\n-Target: {target.nameWithID}";
-                owner.logComponent.PrintLogErrorIfActive(error);
+            if (emotionsToActor != string.Empty) {
+                if (!CharacterManager.Instance.EmotionsChecker(emotionsToActor)) {
+                    string error = "Interrupt Error in Witness Reaction To Actor (Duplicate/Incompatible Emotions Triggered)";
+                    error += $"\n-Witness: {owner}";
+                    error += $"\n-Interrupt: {interrupt.name}";
+                    error += $"\n-Actor: {actor.name}";
+                    error += $"\n-Target: {target.nameWithID}";
+                    owner.logComponent.PrintLogErrorIfActive(error);
+                } else {
+                    Log emotionsLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction");
+                    emotionsLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    emotionsLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    emotionsLog.AddToFillers(null, UtilityScripts.Utilities.Comafy(emotionsToActor), LOG_IDENTIFIER.STRING_1);
+                    emotionsLog.AddLogToInvolvedObjects();
+                }
             }
             string emotionsToTarget = interrupt.ReactionToTarget(owner, actor, target, interrupt, REACTION_STATUS.INFORMED);
-            if (emotionsToTarget != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsToTarget)) {
-                string error = "Interrupt Error in Witness Reaction To Actor (Duplicate/Incompatible Emotions Triggered)";
-                error += $"\n-Witness: {owner}";
-                error += $"\n-Interrupt: {interrupt.name}";
-                error += $"\n-Actor: {actor.name}";
-                error += $"\n-Target: {target.nameWithID}";
-                owner.logComponent.PrintLogErrorIfActive(error);
+            if (emotionsToTarget != string.Empty) {
+                if (!CharacterManager.Instance.EmotionsChecker(emotionsToTarget)) {
+                    string error = "Interrupt Error in Witness Reaction To Actor (Duplicate/Incompatible Emotions Triggered)";
+                    error += $"\n-Witness: {owner}";
+                    error += $"\n-Interrupt: {interrupt.name}";
+                    error += $"\n-Actor: {actor.name}";
+                    error += $"\n-Target: {target.nameWithID}";
+                    owner.logComponent.PrintLogErrorIfActive(error);
+                } else {
+                    Log emotionsLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction");
+                    emotionsLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    emotionsLog.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    emotionsLog.AddToFillers(null, UtilityScripts.Utilities.Comafy(emotionsToTarget), LOG_IDENTIFIER.STRING_1);
+                    emotionsLog.AddLogToInvolvedObjects();
+                }
             }
             response += $"{emotionsToActor}/{emotionsToTarget}";
             owner.logComponent.PrintLogIfActive(response);
         } else if (target == owner) {
             string emotionsOfTarget = interrupt.ReactionOfTarget(actor, target, interrupt, REACTION_STATUS.INFORMED);
-            if (emotionsOfTarget != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsOfTarget)) {
-                string error = "Interrupt Error in Witness Reaction To Actor (Duplicate/Incompatible Emotions Triggered)";
-                error += $"\n-Witness: {owner}";
-                error += $"\n-Interrupt: {interrupt.name}";
-                error += $"\n-Actor: {actor.name}";
-                error += $"\n-Target: {target.nameWithID}";
-                owner.logComponent.PrintLogErrorIfActive(error);
+            if (emotionsOfTarget != string.Empty) {
+                if (!CharacterManager.Instance.EmotionsChecker(emotionsOfTarget)) {
+                    string error = "Interrupt Error in Witness Reaction To Actor (Duplicate/Incompatible Emotions Triggered)";
+                    error += $"\n-Witness: {owner}";
+                    error += $"\n-Interrupt: {interrupt.name}";
+                    error += $"\n-Actor: {actor.name}";
+                    error += $"\n-Target: {target.nameWithID}";
+                    owner.logComponent.PrintLogErrorIfActive(error);
+                } else {
+                    Log emotionsLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction");
+                    emotionsLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    emotionsLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    emotionsLog.AddToFillers(null, UtilityScripts.Utilities.Comafy(emotionsOfTarget), LOG_IDENTIFIER.STRING_1);
+                    emotionsLog.AddLogToInvolvedObjects();
+                }
             }
             response = emotionsOfTarget;
             owner.logComponent.PrintLogIfActive(response);
