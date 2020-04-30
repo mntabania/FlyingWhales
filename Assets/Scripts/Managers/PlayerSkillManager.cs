@@ -7,6 +7,9 @@ using UnityEngine;
 public class PlayerSkillManager : MonoBehaviour {
     public static PlayerSkillManager Instance;
 
+    public PlayerSkillTree[] allSkillTrees;
+    public bool unlockAllSkills;
+
     public Dictionary<SPELL_TYPE, SpellData> allSpellsData;
     public Dictionary<SPELL_TYPE, PlayerAction> allPlayerActionsData;
     public Dictionary<SPELL_TYPE, SpellData> allAfflictionsData;
@@ -210,6 +213,15 @@ public class PlayerSkillManager : MonoBehaviour {
     public SummonPlayerSkill GetSummonPlayerSkillData(SPELL_TYPE type) {
         if (allSummonPlayerSkillsData.ContainsKey(type)) {
             return allSummonPlayerSkillsData[type];
+        }
+        return null;
+    }
+    public PlayerSkillTreeNode GetPlayerSkillTreeNode(SPELL_TYPE skillType) {
+        for (int i = 0; i < allSkillTrees.Length; i++) {
+            PlayerSkillTree skillTree = allSkillTrees[i];
+            if (skillTree.nodes.ContainsKey(skillType)) {
+                return skillTree.nodes[skillType];
+            }
         }
         return null;
     }

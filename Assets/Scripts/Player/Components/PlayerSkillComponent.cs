@@ -51,7 +51,7 @@ public class PlayerSkillComponent {
     }
     public void LoadPlayerSkillTreeNodeData(SaveDataPlayer save) {
         nodesData = save.learnedSkills;
-        if (SaveManager.Instance.unlockAll) {
+        if (PlayerSkillManager.Instance.unlockAllSkills) {
             PopulateDevModeSkills();
         } else {
             PopulateAllSkills();
@@ -99,8 +99,8 @@ public class PlayerSkillComponent {
 
     #region Skills
     private void PopulateDevModeSkills() {
-        for (int i = 0; i < SaveManager.Instance.allSkillTrees.Length; i++) {
-            PlayerSkillTree skillTree = SaveManager.Instance.allSkillTrees[i];
+        for (int i = 0; i < PlayerSkillManager.Instance.allSkillTrees.Length; i++) {
+            PlayerSkillTree skillTree = PlayerSkillManager.Instance.allSkillTrees[i];
             foreach (KeyValuePair<SPELL_TYPE, PlayerSkillTreeNode> item in skillTree.nodes) {
                 bool shouldAddSpell = true;
                 if (WorldConfigManager.Instance.isDemoWorld) {

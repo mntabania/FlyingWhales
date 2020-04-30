@@ -43,7 +43,7 @@ public class ShareInformation : GoapAction {
                         if (reactableRoot is Rumor) {
                             fillerWord = "spreading";
                         }
-                        information = actionReactable.actor.name + " is " + fillerWord + " " + reactableRoot.classificationName.ToLower() + " about " + reactable.actor.name;
+                        information = actionReactable.actor.name + " is " + fillerWord + " " + reactableRoot.classificationName.ToLower() + " about " + reactableRoot.actor.name + ".";
                     }
                 }
             } else {
@@ -213,19 +213,19 @@ public class ShareInformation : GoapAction {
 
                 //recipient.reactionComponent.ReactTo(reactable, REACTION_STATUS.INFORMED, false);
 
-                CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, recipient, sharer, REACTION_STATUS.INFORMED, reactable as ActualGoapNode);
-                recipient.jobComponent.CreateConfirmRumorJob(reactable.actor, shareActionItself);
+                //CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, recipient, sharer, REACTION_STATUS.INFORMED, reactable as ActualGoapNode);
+                //recipient.jobComponent.CreateConfirmRumorJob(reactable.actor, shareActionItself);
 
-                //if (result == "Belief") {
-                //    //Recipient believes
-                //    recipient.reactionComponent.ReactTo(reactable, REACTION_STATUS.INFORMED, false);
-                //} else {
-                //    //Recipient does not believe
-                //    CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, recipient, sharer, REACTION_STATUS.INFORMED, reactable as ActualGoapNode);
-                //    if (UnityEngine.Random.Range(0, 100) < 35) {
-                //        recipient.jobComponent.CreateConfirmRumorJob(reactable.actor, shareActionItself);
-                //    }
-                //}
+                if (result == "Belief") {
+                    //Recipient believes
+                    recipient.reactionComponent.ReactTo(reactable, REACTION_STATUS.INFORMED, false);
+                } else {
+                    //Recipient does not believe
+                    CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, recipient, sharer, REACTION_STATUS.INFORMED, reactable as ActualGoapNode);
+                    if (UnityEngine.Random.Range(0, 100) < 35) {
+                        recipient.jobComponent.CreateConfirmRumorJob(reactable.actor, shareActionItself);
+                    }
+                }
                 Log believeLog = new Log(GameManager.Instance.Today(), "GoapAction", name, result);
                 believeLog.AddToFillers(sharer, sharer.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 believeLog.AddToFillers(recipient, recipient.name, LOG_IDENTIFIER.TARGET_CHARACTER);
