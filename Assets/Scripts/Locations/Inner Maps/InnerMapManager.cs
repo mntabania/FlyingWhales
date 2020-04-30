@@ -189,7 +189,9 @@ namespace Inner_Maps {
             if (tile.collectionOwner.isPartOfParentRegionMap) {
                 if (tile.collectionOwner.partOfHextile.hexTileOwner.landmarkOnTile != null 
                     && tile.collectionOwner.partOfHextile.hexTileOwner.landmarkOnTile.specificLandmarkType.IsPlayerLandmark()) {
-                    selectables.Add(tile.structure);
+                    selectables.Add(tile.structure is DemonicStructure
+                        ? tile.structure
+                        : tile.collectionOwner.partOfHextile.hexTileOwner.GetMostImportantStructureOnTile());
                 }
                 else {
                     if (tile.structure != null && ReferenceEquals(tile.structure.structureObj, null) == false) {

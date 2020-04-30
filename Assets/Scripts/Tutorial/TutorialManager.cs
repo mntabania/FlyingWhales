@@ -70,13 +70,17 @@ namespace Tutorial {
             _instantiatedTutorials = new List<TutorialQuest>();
             
             tutorialUI.Initialize();
+
+            if (SaveManager.Instance.currentSaveDataPlayer.completedTutorials == null) {
+                SaveManager.Instance.currentSaveDataPlayer.InitializeTutorialData();
+            }
             
             //Create instances for all uncompleted tutorials.
-            string[] completedTutorials = PlayerPrefsX.GetStringArray(CompletedTutorialsKey);
+            List<Tutorial> completedTutorials = SaveManager.Instance.currentSaveDataPlayer.completedTutorials;
             Tutorial[] allTutorials = CollectionUtilities.GetEnumValues<Tutorial>();
             for (int i = 0; i < allTutorials.Length; i++) {
                 Tutorial tutorial = allTutorials[i];
-                bool instantiateTutorial = completedTutorials.Contains(tutorial.ToString()) == false;
+                bool instantiateTutorial = completedTutorials.Contains(tutorial) == false;
                 if (WorldConfigManager.Instance.isDemoWorld && instantiateTutorial) {
                     //if is demo world, check if tutorial should be enabled in demo
                     instantiateTutorial = WorldConfigManager.Instance.demoTutorials.Contains(tutorial);
@@ -102,16 +106,13 @@ namespace Tutorial {
 
         #region Inquiry
         public bool HasTutorialBeenCompleted(Tutorial tutorial) {
-            string[] completedTutorials = PlayerPrefsX.GetStringArray(CompletedTutorialsKey);
-            return completedTutorials.Contains(tutorial.ToString());
+            return SaveManager.Instance.currentSaveDataPlayer.completedTutorials.Contains(tutorial);
         }
         #endregion
 
         #region Completion
         public void CompleteTutorialQuest(TutorialQuest tutorial) {
-            List<string> completedTutorials = PlayerPrefsX.GetStringArray(CompletedTutorialsKey).ToList();
-            completedTutorials.Add(tutorial.tutorialType.ToString());
-            PlayerPrefsX.SetStringArray(CompletedTutorialsKey, completedTutorials.ToArray());
+            SaveManager.Instance.currentSaveDataPlayer.AddTutorialAsCompleted(tutorial.tutorialType);
             DeactivateTutorial(tutorial);
             Messenger.Broadcast(Signals.TUTORIAL_QUEST_COMPLETED, tutorial);
         }
@@ -159,7 +160,7 @@ namespace Tutorial {
             _waitingTutorials.Remove(tutorialQuest); //this is for cases when a tutorial is in the waiting list, but has been deactivated.
             _instantiatedTutorials.Remove(tutorialQuest);
             if (tutorialQuest.tutorialQuestItem != null) {
-                tutorialUI.HideTutorialQuest(tutorialQuest);
+                tutorialUI.HideTutorialQuestDelayed(tutorialQuest);
             }
             tutorialQuest.Deactivate();
         }
@@ -170,13 +171,13 @@ namespace Tutorial {
 
         #region For Testing
         public void ResetTutorials() {
-            string[] completedTutorials = PlayerPrefsX.GetStringArray(CompletedTutorialsKey);
-            PlayerPrefs.DeleteKey(CompletedTutorialsKey);
+            List<Tutorial> completedTutorials = new List<Tutorial>(SaveManager.Instance.currentSaveDataPlayer.completedTutorials);
+            SaveManager.Instance.currentSaveDataPlayer.ResetTutorialProgress();
             //respawn previously completed tutorials
             Tutorial[] allTutorials = CollectionUtilities.GetEnumValues<Tutorial>();
             for (int i = 0; i < allTutorials.Length; i++) {
                 Tutorial tutorial = allTutorials[i];
-                if (completedTutorials.Contains(tutorial.ToString())) {
+                if (completedTutorials.Contains(tutorial)) {
                     TutorialQuest tutorialQuest = InstantiateTutorial(tutorial);
                     tutorialQuest.WaitForAvailability();
                     _instantiatedTutorials.Add(tutorialQuest);

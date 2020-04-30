@@ -38,7 +38,7 @@ public class PlayerSkillDetails : MonoBehaviour {
     private void UpdateData() {
         titleText.text = skillData.name;
         descriptionText.text = skillData.description;
-        expText.text = skillTreeNode.expCost + " XP";
+        expText.text = skillTreeNode?.expCost + " XP";
 
         int charges = skillData.charges;
         int manaCost = skillData.manaCost;

@@ -51,7 +51,7 @@ public class PlayerSkillComponent {
     }
     public void LoadPlayerSkillTreeNodeData(SaveDataPlayer save) {
         nodesData = save.learnedSkills;
-        if (PlayerSkillManager.Instance.unlockAllSkills) {
+        if (PlayerSkillManager.Instance.unlockAllSkills || WorldConfigManager.Instance.isDemoWorld) {
             PopulateDevModeSkills();
         } else {
             PopulateAllSkills();
