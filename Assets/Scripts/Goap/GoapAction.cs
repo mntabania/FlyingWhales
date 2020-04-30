@@ -122,6 +122,16 @@ public class GoapAction : ICrimeable {
             log.AddToFillers(actor.currentRegion, actor.currentRegion.name, LOG_IDENTIFIER.LANDMARK_1);
         }
     }
+    public virtual bool IsInvalidOnVision(ActualGoapNode node) {
+        Character actor = node.actor;
+        IPointOfInterest poiTarget = node.poiTarget;
+        if(poiTarget is Character targetCharacter) {
+            if (targetCharacter.isInCombat) {
+                return true;
+            }
+        }
+        return false;
+    }
     public virtual GoapActionInvalidity IsInvalid(ActualGoapNode node) {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;

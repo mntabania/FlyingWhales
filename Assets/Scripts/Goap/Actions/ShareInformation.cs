@@ -12,6 +12,7 @@ public class ShareInformation : GoapAction {
         actionIconString = GoapActionStateDB.Entertain_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
+        doesNotStopTargetCharacter = true;
     }
 
     #region Overrides
