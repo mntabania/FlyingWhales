@@ -335,11 +335,15 @@ public class ActualGoapNode : IReactable, IRumorable {
     }
     public void PerformAction() {
         GoapActionInvalidity goapActionInvalidity = action.IsInvalid(this);
-        if (goapActionInvalidity.isInvalid) {
+        bool isInvalidOnVision = action.IsInvalidOnVision(this);
+        if (goapActionInvalidity.isInvalid || isInvalidOnVision) {
             Debug.Log($"{GameManager.Instance.TodayLogString()}{actor.name}'s action {action.goapType.ToString()} was invalid!");
             action.LogActionInvalid(goapActionInvalidity, this);
             actor.GoapActionResult(InteractionManager.Goap_State_Fail, this);
             action.OnInvalidAction(this);
+            if (isInvalidOnVision) {
+                associatedJob?.CancelJob(false);
+            }
             return;
         }
         actionStatus = ACTION_STATUS.PERFORMING;
@@ -348,11 +352,11 @@ public class ActualGoapNode : IReactable, IRumorable {
         if (poiTarget is Character targetCharacter) {
             if (!action.doesNotStopTargetCharacter && actor != poiTarget) {
                 if (!targetCharacter.isDead) {
-                    if (targetCharacter.currentParty.icon.isTravelling) {
-                        if (targetCharacter.currentParty.icon.travelLine == null) {
-                            //This means that the actor currently travelling to another tile in tilemap
-                            targetCharacter.marker.StopMovement();
-                        }
+                    if (targetCharacter.marker.isMoving) {
+                        targetCharacter.marker.StopMovement();
+                    }
+                    if (targetCharacter.stateComponent.currentState != null) {
+                        targetCharacter.stateComponent.currentState.PauseState();
                     }
                     if (targetCharacter.currentActionNode != null) {
                         targetCharacter.StopCurrentActionNode(false);

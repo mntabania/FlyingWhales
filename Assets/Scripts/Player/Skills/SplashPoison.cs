@@ -15,7 +15,7 @@ public class SplashPoison : PlayerSpell {
 public class SplashPoisonData : SpellData {
     public override SPELL_TYPE type => SPELL_TYPE.SPLASH_POISON;
     public override string name => "Splash Poison";
-    public override string description => "Applies Poisoned to a 2 tile radius around the designated spot.";
+    public override string description => "This Spell applies Poisoned to a 3x3 tile floor.";
     public override SPELL_CATEGORY category => SPELL_CATEGORY.SPELL;
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
 

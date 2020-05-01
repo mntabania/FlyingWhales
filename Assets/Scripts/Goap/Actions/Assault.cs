@@ -95,6 +95,9 @@ public class Assault : GoapAction {
             return REACTABLE_EFFECT.Negative;
         }
     }
+    public override bool IsInvalidOnVision(ActualGoapNode node) {
+        return false;
+    }
     #endregion
 
     #region Requirements

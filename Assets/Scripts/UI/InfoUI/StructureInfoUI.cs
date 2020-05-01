@@ -28,8 +28,10 @@ public class StructureInfoUI : InfoUIBase {
     }
     public override void OpenMenu() {
         activeStructure = _data as LocationStructure;
-        bool instantCenter = !InnerMapManager.Instance.IsShowingInnerMap(activeStructure.location);
-        InnerMapCameraMove.Instance.CenterCameraOn(activeStructure.structureObj.gameObject, instantCenter);
+        if(activeStructure.structureObj != null && activeStructure.structureObj.gameObject) {
+            bool instantCenter = !InnerMapManager.Instance.IsShowingInnerMap(activeStructure.location);
+            InnerMapCameraMove.Instance.CenterCameraOn(activeStructure.structureObj.gameObject, instantCenter);
+        }
         base.OpenMenu();
         Selector.Instance.Select(activeStructure);
         UpdateInfo();

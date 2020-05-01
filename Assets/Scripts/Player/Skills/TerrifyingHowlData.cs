@@ -5,7 +5,7 @@ using Traits;
 public class TerrifyingHowlData : SpellData {
     public override SPELL_TYPE type => SPELL_TYPE.TERRIFYING_HOWL;
     public override string name => "Terrifying Howl";
-    public override string description => "Adds 1 stack of Spooked to all characters within range.";
+    public override string description => "This Spell releases a bunch of screaming skulls. Their spine-tingling wails will cause all nearby characters to flee.";
     public override SPELL_CATEGORY category => SPELL_CATEGORY.SPELL;
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
 

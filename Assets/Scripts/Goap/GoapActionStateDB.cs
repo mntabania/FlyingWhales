@@ -218,7 +218,7 @@ public static class GoapActionStateDB {
             new StateNameAndDuration(){ name = "Share Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
         {INTERACTION_TYPE.WATCH, new[]{
-            new StateNameAndDuration(){ name = "Watch Success", status = InteractionManager.Goap_State_Success, duration =  GameManager.Instance.GetTicksBasedOnHour(1) },//-1
+            new StateNameAndDuration(){ name = "Watch Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1) },//-1
         } },
         {INTERACTION_TYPE.INSPECT, new[]{
             new StateNameAndDuration(){ name = "Inspect Success", status = InteractionManager.Goap_State_Success, duration = 0 },

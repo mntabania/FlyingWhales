@@ -5,7 +5,7 @@ using Traits;
 public class WindBlastData : SpellData {
     public override SPELL_TYPE type => SPELL_TYPE.WIND_BLAST;
     public override string name => "Wind Blast";
-    public override string description => "A powerful blast of wind spreads out from the target tile, dealing Wind damage to all in range.";
+    public override string description => "This Spell blasts a powerful wave of air outward from a target spot, dealing Wind damage to anything it hits.";
     public override SPELL_CATEGORY category => SPELL_CATEGORY.SPELL;
 
     public WindBlastData() : base() {

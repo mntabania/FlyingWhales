@@ -3,7 +3,7 @@
 public class IceteroidsData : SpellData {
     public override SPELL_TYPE type => SPELL_TYPE.ICETEROIDS;
     public override string name => "Iceteroids";
-    public override string description => "Frozen meteorites will strike random tiles on the target area, dealing Ice damage.";
+    public override string description => "This Spell will make dozens of icy rocks come crashing down from space onto a target area, dealing Ice damage to anything they hit.";
     public override SPELL_CATEGORY category => SPELL_CATEGORY.SPELL;
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
     public virtual int abilityRadius => 1;

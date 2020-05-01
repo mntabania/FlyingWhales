@@ -131,6 +131,9 @@ public class CharacterState {
     /// Pauses this state, used in switching states if this is a major state
     /// </summary>
     public virtual void PauseState() {
+        if (isPaused) {
+            return;
+        }
         stateComponent.character.logComponent.PrintLogIfActive(
             $"Pausing {stateName} for {stateComponent.character.name}");
         isPaused = true;

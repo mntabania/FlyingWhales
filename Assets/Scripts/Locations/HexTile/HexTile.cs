@@ -1147,9 +1147,10 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         return true;
     }
     private void OnHoverStructureChoice(SPELL_TYPE structureType) {
-        string landmarkName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString());
-        LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkName);
-        string info = landmarkData.description;
+        //string landmarkName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString());
+        //LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkName);
+        DemonicStructurePlayerSkill demonicStructureSkill = PlayerSkillManager.Instance.GetDemonicStructureSkillData(structureType);
+        string info = demonicStructureSkill.description + "\n" + demonicStructureSkill.GetManaCostChargesCooldownStr();
         //if (info != string.Empty) {
         //    info += "\n";
         //}
