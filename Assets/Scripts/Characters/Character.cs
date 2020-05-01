@@ -1478,6 +1478,17 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //    job.SetCancelJobOnDropPlan(false);
     //    jobQueue.AddJobInQueue(job);
     //}
+    public void NoPathToDoJob(JobQueueItem job) {
+        if (job.jobType == JOB_TYPE.ROAM_AROUND_TERRITORY 
+            || job.jobType == JOB_TYPE.RETURN_PORTAL 
+            || job.jobType == JOB_TYPE.RETURN_TERRITORY
+            || job.jobType == JOB_TYPE.ROAM_AROUND_CORRUPTION
+            || job.jobType == JOB_TYPE.ROAM_AROUND_PORTAL) {
+            jobComponent.TriggerRoamAroundTile();
+        } else {
+            jobComponent.TriggerStand();
+        }
+    }
     #endregion
 
     #region Faction

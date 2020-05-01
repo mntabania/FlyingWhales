@@ -53,7 +53,7 @@ public class EntBehaviour : CharacterBehaviourComponent {
                 }
                 if (!hasAddedJob) {
                     log += "\n-Stand";
-                    ent.jobComponent.TriggerMonsterStand();
+                    ent.jobComponent.TriggerStand();
                 }
             } else {
                 log += "\n-Outside territory";

@@ -34,7 +34,7 @@ MonoBehaviour:
       buttonSprite: {fileID: 21300000, guid: f3d10cfae10019d42954e3bf94a00a44, type: 3}
       unlockedSkills: 
     - manaCost: -1
-      charges: 3
+      charges: 10
       cooldown: 3
       expCost: 300
       buttonSprite: {fileID: 21300000, guid: 1721f25e3f54f78489f9a120a49a68f7, type: 3}

@@ -320,20 +320,6 @@ public class Summon : Character, IWorldObject {
         AddPlayerAction(SPELL_TYPE.SEIZE_MONSTER);
     }
     #endregion
-    
-    #region Jobs
-    public void NoPathToDoJob(JobQueueItem job) {
-        if (job.jobType == JOB_TYPE.ROAM_AROUND_TERRITORY) {
-            jobComponent.TriggerRoamAroundTile();
-        } else if (job.jobType == JOB_TYPE.RETURN_PORTAL) {
-            jobComponent.TriggerRoamAroundTile();
-        } else if (job.jobType == JOB_TYPE.ROAM_AROUND_TILE) {
-            jobComponent.TriggerMonsterStand();
-        } else if (job.jobType == JOB_TYPE.RETURN_TERRITORY) {
-            jobComponent.TriggerRoamAroundTile();
-        }
-    }
-    #endregion
 }
 
 public class SummonSlot {
