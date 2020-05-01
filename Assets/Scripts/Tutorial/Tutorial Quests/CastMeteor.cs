@@ -13,6 +13,7 @@ namespace Tutorial {
         public override void WaitForAvailability() {
             Messenger.AddListener<SpellData>(Signals.ON_EXECUTE_SPELL, OnSpellExecutedWhileWaitingForAvailability);
             availabilityTimer = TutorialManager.Instance.StartCoroutine(WaitForSeconds());
+            Messenger.RemoveListener<SpellData>(Signals.ON_EXECUTE_SPELL, OnSpellExecutedWhileInWaitList);
         }
         protected override void StopWaitingForAvailability() {
             Messenger.RemoveListener<SpellData>(Signals.ON_EXECUTE_SPELL, OnSpellExecutedWhileWaitingForAvailability);

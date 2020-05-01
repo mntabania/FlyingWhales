@@ -45,7 +45,7 @@ namespace Tutorial {
         #region Inactive State Listeners
         private void OnSpellExecutedWhileInactive(SpellData spellData) {
             _notCastedTime = 0f;
-            if (isAvailable) {
+            if (isAvailable && TutorialManager.Instance.IsInWaitList(this)) {
                 MakeUnavailable();
             }
         }

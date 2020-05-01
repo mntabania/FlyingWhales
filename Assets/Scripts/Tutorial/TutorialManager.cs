@@ -8,7 +8,7 @@ namespace Tutorial {
     public class TutorialManager : MonoBehaviour {
 
         public static TutorialManager Instance;
-        public const string CompletedTutorialsKey = "Completed_Tutorials";
+        private const int MaxActiveTutorials = 1;
         public enum Tutorial { 
             Basic_Controls, 
             Build_A_Kennel, 
@@ -133,10 +133,10 @@ namespace Tutorial {
 
         #region Presentation
         private void CheckIfNewTutorialCanBeActivated() {
-            if (_waitingTutorials.Count > 0 && _activeTutorials.Count < 3) {
+            if (_waitingTutorials.Count > 0 && _activeTutorials.Count < MaxActiveTutorials) {
                 //new tutorial can be shown.
                 //check number of tutorials that can be shown. 3 at maximum
-                int missingTutorials = 3 - _activeTutorials.Count;
+                int missingTutorials = MaxActiveTutorials - _activeTutorials.Count;
                 if (missingTutorials > _waitingTutorials.Count) {
                     //if number of missing tutorials is greater than the available tutorials, then just show the available ones.
                     missingTutorials = _waitingTutorials.Count;

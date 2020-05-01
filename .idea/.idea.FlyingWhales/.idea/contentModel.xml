@@ -1005,6 +1005,7 @@
           </e>
           <e p="Asset Postprocessors" t="Include">
             <e p="CharacterMarkerAssetImporter.cs" t="Include" />
+            <e p="CharacterPortraitAssetImporter.cs" t="Include" />
             <e p="MapObjectAssetImporter.cs" t="Include" />
           </e>
           <e p="Attributes" t="Include">

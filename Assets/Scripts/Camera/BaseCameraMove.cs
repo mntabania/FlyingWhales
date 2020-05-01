@@ -20,17 +20,19 @@ public class BaseCameraMove : MonoBehaviour{
     protected void ArrowKeysMovement() {
         if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S)) {
             if (!UIManager.Instance.IsConsoleShowing()) { 
-                float zAxisValue = Input.GetAxis("Vertical");
-                transform.Translate(new Vector3(0f, zAxisValue * Time.deltaTime * cameraPanSpeed, 0f));
-                Messenger.Broadcast(Signals.CAMERA_MOVED_BY_PLAYER);
+                float yAxisValue = Input.GetAxis("Vertical");
+                Vector3 targetPos = new Vector3(0f, yAxisValue * Time.deltaTime * cameraPanSpeed, 0f);
+                transform.Translate(targetPos);
+                Messenger.Broadcast(Signals.CAMERA_MOVED_BY_PLAYER, targetPos);
             }
         }
 
         if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D)) {
             if (!UIManager.Instance.IsConsoleShowing()) {
                 float xAxisValue = Input.GetAxis("Horizontal");
-                transform.Translate(new Vector3(xAxisValue * Time.deltaTime * cameraPanSpeed, 0f, 0f));
-                Messenger.Broadcast(Signals.CAMERA_MOVED_BY_PLAYER);
+                Vector3 targetPos = new Vector3(xAxisValue * Time.deltaTime * cameraPanSpeed, 0f, 0f);
+                transform.Translate(targetPos);
+                Messenger.Broadcast(Signals.CAMERA_MOVED_BY_PLAYER, targetPos);
             }
         }
     }
@@ -68,7 +70,7 @@ public class BaseCameraMove : MonoBehaviour{
         if (isDragging) {
             Vector3 difference = (targetCamera.ScreenToWorldPoint(Input.mousePosition))- targetCamera.transform.position;
             targetCamera.transform.position = dragOrigin-difference;
-            Messenger.Broadcast(Signals.CAMERA_MOVED_BY_PLAYER);
+            Messenger.Broadcast(Signals.CAMERA_MOVED_BY_PLAYER, difference);
             if (Input.GetMouseButtonUp(2)) {
                 ResetDragValues();
                 InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
