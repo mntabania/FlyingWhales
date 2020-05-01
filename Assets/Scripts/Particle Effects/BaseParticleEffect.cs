@@ -84,7 +84,9 @@ public class BaseParticleEffect : PooledObject {
     }
     protected virtual void ResetParticle() {
         for (int i = 0; i < particleSystems.Length; i++) {
-            particleSystems[i].Clear();
+            ParticleSystem ps = particleSystems[i];
+            ps.Clear();
+            ps.Stop();
         }
     }
     protected virtual void ParticleAfterEffect(ParticleSystem particleSystem) {
