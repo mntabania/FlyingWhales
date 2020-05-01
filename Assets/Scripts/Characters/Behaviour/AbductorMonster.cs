@@ -42,7 +42,7 @@ public class AbductorMonster : CharacterBehaviourComponent {
 					}
 					if (!hasAddedJob) {
 						log += "\n-Stand";
-						summon.jobComponent.TriggerMonsterStand();
+						summon.jobComponent.TriggerStand();
 					}
 				} else {
 					log += "\n-Outside territory";

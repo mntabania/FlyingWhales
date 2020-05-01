@@ -418,7 +418,7 @@ public class Minion {
         } else if (job.jobType == JOB_TYPE.RETURN_PORTAL) {
             character.jobComponent.TriggerRoamAroundTile();
         } else if (job.jobType == JOB_TYPE.ROAM_AROUND_TILE) {
-            character.jobComponent.TriggerMonsterStand();
+            character.jobComponent.TriggerStand();
         }
     }
     #endregion
