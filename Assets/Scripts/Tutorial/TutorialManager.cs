@@ -27,6 +27,8 @@ namespace Tutorial {
         private List<TutorialQuest> _activeTutorials;
         private List<TutorialQuest> _waitingTutorials;
         private List<TutorialQuest> _instantiatedTutorials;
+
+        public bool alwaysResetTutorialsOnStart;
         
         //UI
         public TutorialUI tutorialUI;
@@ -71,7 +73,7 @@ namespace Tutorial {
             
             tutorialUI.Initialize();
 
-            if (SaveManager.Instance.currentSaveDataPlayer.completedTutorials == null) {
+            if (SaveManager.Instance.currentSaveDataPlayer.completedTutorials == null || alwaysResetTutorialsOnStart) {
                 SaveManager.Instance.currentSaveDataPlayer.InitializeTutorialData();
             }
             
@@ -87,7 +89,6 @@ namespace Tutorial {
                 }
                 if (instantiateTutorial) {
                     TutorialQuest tutorialQuest = InstantiateTutorial(tutorial);
-                    tutorialQuest.WaitForAvailability();
                     _instantiatedTutorials.Add(tutorialQuest);
                 }
             }
@@ -179,7 +180,6 @@ namespace Tutorial {
                 Tutorial tutorial = allTutorials[i];
                 if (completedTutorials.Contains(tutorial)) {
                     TutorialQuest tutorialQuest = InstantiateTutorial(tutorial);
-                    tutorialQuest.WaitForAvailability();
                     _instantiatedTutorials.Add(tutorialQuest);
                 }
             }

@@ -3,14 +3,22 @@ using System.Collections.Generic;
 namespace Tutorial {
     public class TriggerPoisonExplosion : TutorialQuest {
         public TriggerPoisonExplosion() : base("Trigger a Poison Explosion", TutorialManager.Tutorial.Trigger_Poison_Explosion) { }
-        public override void WaitForAvailability() {
-            Messenger.AddListener<SpellData>(Signals.ON_EXECUTE_SPELL, OnSpellExecuted);
-            Messenger.AddListener<PlayerAction>(Signals.ON_EXECUTE_PLAYER_ACTION, OnSpellExecuted);
+
+        #region Criteria
+        protected override void ConstructCriteria() {
+            _activationCriteria = new List<TutorialQuestCriteria>() {
+                new SpellExecuted(new [] {SPELL_TYPE.POISON, SPELL_TYPE.SPLASH_POISON})
+            };
         }
-        protected override void StopWaitingForAvailability() {
-            Messenger.RemoveListener<SpellData>(Signals.ON_EXECUTE_SPELL, OnSpellExecuted);
-            Messenger.RemoveListener<PlayerAction>(Signals.ON_EXECUTE_PLAYER_ACTION, OnSpellExecuted);
+        protected override bool HasMetAllCriteria() {
+            bool hasMetAllCriteria = base.HasMetAllCriteria();
+            if (hasMetAllCriteria) {
+                return TutorialManager.Instance.HasActiveTutorial() == false;
+            }
+            return false;
         }
+        #endregion
+        
         protected override void ConstructSteps() {
             steps = new List<TutorialQuestStepCollection>() {
                 new TutorialQuestStepCollection(
@@ -20,14 +28,6 @@ namespace Tutorial {
                 )
             };
         }
-
-        #region Listeners
-        private void OnSpellExecuted(SpellData spellData) {
-            if (spellData.type == SPELL_TYPE.POISON || spellData.type == SPELL_TYPE.SPLASH_POISON) {
-                MakeAvailable();
-            }
-        }
-        #endregion
 
         #region Step Helpers
         private void OnHoverTriggerPoisonExplosionStep(TutorialQuestStepItem stepItem) {

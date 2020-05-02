@@ -13,27 +13,87 @@ namespace Tutorial {
         public virtual int priority => 0; //priority of this tutorial
         public TutorialQuestItem tutorialQuestItem { get; private set; }
         public bool isAvailable { get; private set; }
+        /// <summary>
+        /// Is this tutorial activated? In other words, is this tutorial currently being shown to the player.
+        /// </summary>
+        public bool isActivated { get; private set; }
         public List<TutorialQuestStepCollection> steps { get; protected set; }
-        public TutorialQuestStepCollection activeStepCollection { get; private set; } 
+        public TutorialQuestStepCollection activeStepCollection { get; private set; }
+        protected List<TutorialQuestCriteria> _activationCriteria;
 
         protected TutorialQuest(string _questName, TutorialManager.Tutorial _tutorialType) {
             questName = _questName;
             tutorialType = _tutorialType;
+            Initialize();
         }
 
-        #region Availability
+        #region Initialization
+        private void Initialize() {
+            ConstructCriteria();
+            StartCheckingCriteria();
+        }
+        #endregion
+
+        #region Criteria
         /// <summary>
-        /// Initialize this quest, this usually means subscribing to listeners/waiting for activation criteria to be met.
+        /// Construct the list of criteria that this quest needs to be activated.
         /// </summary>
-        public abstract void WaitForAvailability();
-        protected virtual void StopWaitingForAvailability() { }
+        protected abstract void ConstructCriteria();
+        /// <summary>
+        /// Make this quest start checking for it's criteria
+        /// </summary>
+        private void StartCheckingCriteria() {
+            Messenger.AddListener<TutorialQuestCriteria>(Signals.TUTORIAL_QUEST_CRITERIA_MET, OnCriteriaMet);
+            Messenger.AddListener<TutorialQuestCriteria>(Signals.TUTORIAL_QUEST_CRITERIA_UNMET, OnCriteriaUnMet);
+            for (int i = 0; i < _activationCriteria.Count; i++) {
+                TutorialQuestCriteria criteria = _activationCriteria[i];
+                criteria.Enable();
+            }
+        }
+        private void StopCheckingCriteria() {
+            Messenger.RemoveListener<TutorialQuestCriteria>(Signals.TUTORIAL_QUEST_CRITERIA_MET, OnCriteriaMet);
+            Messenger.RemoveListener<TutorialQuestCriteria>(Signals.TUTORIAL_QUEST_CRITERIA_UNMET, OnCriteriaUnMet);
+            for (int i = 0; i < _activationCriteria.Count; i++) {
+                TutorialQuestCriteria criteria = _activationCriteria[i];
+                criteria.Disable();
+            }
+        }
+        private void OnCriteriaMet(TutorialQuestCriteria criteria) {
+            if (isAvailable) { return; } //do not check criteria completion if tutorial has already been made available
+            if (_activationCriteria.Contains(criteria)) {
+                //check if all criteria has been met
+                if (HasMetAllCriteria()) {
+                    MakeAvailable();
+                }
+            }
+        }
+        private void OnCriteriaUnMet(TutorialQuestCriteria criteria) {
+            if (_activationCriteria.Contains(criteria)) {
+                if (isAvailable) {
+                    MakeUnavailable();
+                }
+            }
+        }
+        protected virtual bool HasMetAllCriteria() {
+            bool hasMetAllCriteria = true;
+            for (int i = 0; i < _activationCriteria.Count; i++) {
+                TutorialQuestCriteria c = _activationCriteria[i];
+                if (c.hasCriteriaBeenMet == false) {
+                    hasMetAllCriteria = false;
+                    break;
+                }
+            }
+            return hasMetAllCriteria;
+        }
+        #endregion
+        
+        #region Availability
         /// <summary>
         /// Make this quest available, this means that this quest is put on the list of available tutorials that the
         /// player can undertake. Usually this is preceded by this quests' criteria being met.  
         /// </summary>
         protected virtual void MakeAvailable() {
             isAvailable = true;
-            StopWaitingForAvailability();
             ConstructSteps();
             TutorialManager.Instance.AddTutorialToWaitList(this);
         }
@@ -44,7 +104,6 @@ namespace Tutorial {
             isAvailable = false;
             Assert.IsTrue(TutorialManager.Instance.IsInWaitList(this), $"{questName} is being made unavailable even though it is not the the current tutorial wait list.");
             TutorialManager.Instance.RemoveTutorialFromWaitList(this);
-            WaitForAvailability();
         }
         #endregion
 
@@ -53,16 +112,19 @@ namespace Tutorial {
         /// Activate this tutorial, meaning this quest should be listening for whether its steps are completed.
         /// </summary>
         public virtual void Activate() {
+            StopCheckingCriteria();
             Messenger.AddListener<TutorialQuestStepCollection>(Signals.TUTORIAL_STEP_COLLECTION_COMPLETED, OnTutorialStepCollectionCompleted);
+            isActivated = true;
             //activate first collection
             TutorialQuestStepCollection stepCollection = steps[0];
             stepCollection.Activate();
             activeStepCollection = stepCollection;
         }
         public virtual void Deactivate() {
+            isActivated = false;
             if (isAvailable == false) {
                 //only stop waiting for availability only if tutorial has not yet been made available but has been deactivated.  
-                StopWaitingForAvailability();    
+                StopCheckingCriteria();    
             }
             //cleanup steps
             activeStepCollection?.Deactivate();

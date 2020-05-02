@@ -10,6 +10,11 @@ public class ThreatComponent {
 
     public const int MAX_THREAT = 100;
     public int threat;
+    /// <summary>
+    /// The list of characters that are currently attacking your demonic structure.
+    /// NOTE: This is only updated when threat has reached maximum
+    /// </summary>
+    public List<Character> attackingCharacters { get; private set; }
 
     public ThreatComponent(Player player) {
         this.player = player;
@@ -26,8 +31,9 @@ public class ThreatComponent {
         threat = Mathf.Clamp(threat, 0, 100);
         Messenger.Broadcast(Signals.THREAT_UPDATED);
         if (hasReachedMax) {
-            AssaultDemonicStructure(out List<Character> attackingCharacters);
-            Messenger.Broadcast(Signals.THREAT_MAXED_OUT, attackingCharacters);
+            AssaultDemonicStructure(out List<Character> _attackingCharacters);
+            attackingCharacters = _attackingCharacters;
+            Messenger.Broadcast(Signals.THREAT_MAXED_OUT);
             ResetThreat();
         }
         //TODO: Threat Response - Assault Demonic Structure

@@ -568,6 +568,14 @@ public static class Signals {
     /// </summary>
     public static string TUTORIAL_STEP_COLLECTION_COMPLETED = "TutorialStepCollectionCompleted";
     public static string INTEL_MENU_OPENED = "OnIntelMenuOpened";
+    /// <summary>
+    /// Parameters (TutorialQuestCriteria)
+    /// </summary>
+    public static string TUTORIAL_QUEST_CRITERIA_MET = "OnTutorialQuestCriteriaMet";
+    /// <summary>
+    /// Parameters (TutorialQuestCriteria)
+    /// </summary>
+    public static string TUTORIAL_QUEST_CRITERIA_UNMET = "OnTutorialQuestCriteriaUnMet";
     #endregion
 
     #region Elements
@@ -603,7 +611,6 @@ public static class Signals {
             new SignalMethod() { methodName = "OnTickEnded", objectType = typeof(Character) },
         }},
     };
-    
     public static bool TryGetMatchingSignalMethod(string eventType, Callback method, out SignalMethod matching) {
         for (int i = 0; i < orderedSignalExecution[eventType].Length; i++) {
             SignalMethod sm = orderedSignalExecution[eventType][i];

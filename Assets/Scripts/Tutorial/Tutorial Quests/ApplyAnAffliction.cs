@@ -3,27 +3,26 @@ using UnityEngine;
 namespace Tutorial {
     public class ApplyAnAffliction : TutorialQuest {
         public override int priority => 40;
-
-        private float _notCastedTime;
         
         public ApplyAnAffliction() : base("Apply an Affliction", TutorialManager.Tutorial.Apply_An_Affliction) { }
-        public override void WaitForAvailability() {
-            Messenger.AddListener<SpellData>(Signals.ON_EXECUTE_SPELL, OnSpellExecutedWhileInactive);
-            Messenger.AddListener<SpellData>(Signals.ON_EXECUTE_AFFLICTION, OnSpellExecutedWhileInactive);
-            Messenger.AddListener<PlayerAction>(Signals.ON_EXECUTE_PLAYER_ACTION, OnSpellExecutedWhileInactive);
+
+
+        #region Criteria
+        protected override void ConstructCriteria() {
+            _activationCriteria = new List<TutorialQuestCriteria>() {
+                new PlayerHasNotCastedForSeconds(15f),
+                new PlayerHasNotCompletedTutorialInSeconds(15f)
+            };
         }
-        public override void Activate() {
-            Messenger.RemoveListener<SpellData>(Signals.ON_EXECUTE_SPELL, OnSpellExecutedWhileInactive);
-            Messenger.RemoveListener<SpellData>(Signals.ON_EXECUTE_AFFLICTION, OnSpellExecutedWhileInactive);
-            Messenger.RemoveListener<PlayerAction>(Signals.ON_EXECUTE_PLAYER_ACTION, OnSpellExecutedWhileInactive);
-            base.Activate();
+        protected override bool HasMetAllCriteria() {
+            bool hasMetAllCriteria = base.HasMetAllCriteria();
+            if (hasMetAllCriteria) {
+                return PlayerManager.Instance.player.playerSkillComponent.HasAnyAvailableAffliction();
+            }
+            return false;
         }
-        public override void Deactivate() {
-            base.Deactivate();
-            Messenger.RemoveListener<SpellData>(Signals.ON_EXECUTE_SPELL, OnSpellExecutedWhileInactive);
-            Messenger.RemoveListener<SpellData>(Signals.ON_EXECUTE_AFFLICTION, OnSpellExecutedWhileInactive);
-            Messenger.RemoveListener<PlayerAction>(Signals.ON_EXECUTE_PLAYER_ACTION, OnSpellExecutedWhileInactive);
-        }
+        #endregion
+        
         protected override void ConstructSteps() {
             steps = new List<TutorialQuestStepCollection>() {
                 new TutorialQuestStepCollection(new ClickOnCharacterStep("Click on a valid sapient character",
@@ -34,22 +33,6 @@ namespace Tutorial {
                 )
             };
         }
-        public override void PerFrameActions() {
-            if (isAvailable) { return; }
-            _notCastedTime += Time.deltaTime;
-            if (_notCastedTime >= 10f && PlayerManager.Instance.player.playerSkillComponent.HasAnyAvailableAffliction()) {
-                MakeAvailable();
-            }
-        }
-
-        #region Inactive State Listeners
-        private void OnSpellExecutedWhileInactive(SpellData spellData) {
-            _notCastedTime = 0f;
-            if (isAvailable && TutorialManager.Instance.IsInWaitList(this)) {
-                MakeUnavailable();
-            }
-        }
-        #endregion
 
         #region Step Helpers
         private bool IsCharacterValid(Character character) {

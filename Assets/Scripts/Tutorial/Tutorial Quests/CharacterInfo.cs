@@ -9,41 +9,17 @@ namespace Tutorial {
         
         public CharacterInfo() : base("Character Info", TutorialManager.Tutorial.Character_Info) { }
 
+        #region Criteria
+        protected override void ConstructCriteria() {
+            _activationCriteria = new List<TutorialQuestCriteria>() {
+                new HasCompletedTutorialQuest(TutorialManager.Tutorial.Basic_Controls),
+                new PlayerHasNotCastedForSeconds(15f),
+                new PlayerHasNotCompletedTutorialInSeconds(15f)
+            };
+        }
+        #endregion
+        
         #region Overrides
-        public override void WaitForAvailability() {
-            Messenger.AddListener<SpellData>(Signals.ON_EXECUTE_SPELL, OnSpellExecutedWhileWaitingForAvailability);
-            Messenger.AddListener<SpellData>(Signals.ON_EXECUTE_AFFLICTION, OnSpellExecutedWhileWaitingForAvailability);
-            Messenger.AddListener<PlayerAction>(Signals.ON_EXECUTE_PLAYER_ACTION, OnSpellExecutedWhileWaitingForAvailability);
-            availabilityTimer = TutorialManager.Instance.StartCoroutine(WaitForSeconds());
-            
-            Messenger.RemoveListener<SpellData>(Signals.ON_EXECUTE_SPELL, OnSpellExecutedWhileInWaitList);
-            Messenger.RemoveListener<SpellData>(Signals.ON_EXECUTE_AFFLICTION, OnSpellExecutedWhileInWaitList);
-            Messenger.RemoveListener<PlayerAction>(Signals.ON_EXECUTE_PLAYER_ACTION, OnSpellExecutedWhileInWaitList);
-        }
-        protected override void StopWaitingForAvailability() {
-            Messenger.RemoveListener<SpellData>(Signals.ON_EXECUTE_SPELL, OnSpellExecutedWhileWaitingForAvailability);
-            Messenger.RemoveListener<SpellData>(Signals.ON_EXECUTE_AFFLICTION, OnSpellExecutedWhileWaitingForAvailability);
-            Messenger.RemoveListener<PlayerAction>(Signals.ON_EXECUTE_PLAYER_ACTION, OnSpellExecutedWhileWaitingForAvailability);
-            if (availabilityTimer != null) {
-                TutorialManager.Instance.StopCoroutine(availabilityTimer);
-            }
-            Messenger.AddListener<SpellData>(Signals.ON_EXECUTE_SPELL, OnSpellExecutedWhileInWaitList);
-            Messenger.AddListener<SpellData>(Signals.ON_EXECUTE_AFFLICTION, OnSpellExecutedWhileInWaitList);
-            Messenger.AddListener<PlayerAction>(Signals.ON_EXECUTE_PLAYER_ACTION, OnSpellExecutedWhileInWaitList);
-        }
-        public override void Activate() {
-            base.Activate();
-            //stop listening for spell execution while in wait list.
-            Messenger.RemoveListener<SpellData>(Signals.ON_EXECUTE_SPELL, OnSpellExecutedWhileInWaitList);
-            Messenger.RemoveListener<SpellData>(Signals.ON_EXECUTE_AFFLICTION, OnSpellExecutedWhileInWaitList);
-            Messenger.RemoveListener<PlayerAction>(Signals.ON_EXECUTE_PLAYER_ACTION, OnSpellExecutedWhileInWaitList);
-        }
-        public override void Deactivate() {
-            base.Deactivate();
-            Messenger.RemoveListener<SpellData>(Signals.ON_EXECUTE_SPELL, OnSpellExecutedWhileInWaitList);
-            Messenger.RemoveListener<SpellData>(Signals.ON_EXECUTE_AFFLICTION, OnSpellExecutedWhileInWaitList);
-            Messenger.RemoveListener<PlayerAction>(Signals.ON_EXECUTE_PLAYER_ACTION, OnSpellExecutedWhileInWaitList);
-        }
         protected override void ConstructSteps() {
             steps = new List<TutorialQuestStepCollection>() {
                 new TutorialQuestStepCollection(
@@ -54,24 +30,6 @@ namespace Tutorial {
                     new ToggleTurnedOnStep("CharacterInfo_Logs", "Open its Logs tab")
                 )
             };
-        }
-        #endregion
-
-        #region Availability Functions
-        private void OnSpellExecutedWhileWaitingForAvailability(SpellData spellData) {
-            //reset wait time
-            TutorialManager.Instance.StopCoroutine(availabilityTimer);
-            availabilityTimer = TutorialManager.Instance.StartCoroutine(WaitForSeconds());
-        }
-        private IEnumerator WaitForSeconds() {
-            yield return new WaitForSecondsRealtime(10);
-            MakeAvailable();
-        }
-        #endregion
-        
-        #region Wait List Functions
-        private void OnSpellExecutedWhileInWaitList(SpellData spellData) {
-            MakeUnavailable();
         }
         #endregion
 
