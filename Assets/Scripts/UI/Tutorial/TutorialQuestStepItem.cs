@@ -1,4 +1,5 @@
-﻿using EZObjectPools;
+﻿using DG.Tweening;
+using EZObjectPools;
 using TMPro;
 using Tutorial;
 using UnityEngine;
@@ -10,6 +11,7 @@ public class TutorialQuestStepItem : PooledObject {
     [SerializeField] private TextMeshProUGUI _stepLbl;
     [SerializeField] private Toggle _completedToggle;
     [SerializeField] private EventLabel _eventLabel;
+    [SerializeField] private RectTransform _container;
     public UIHoverPosition hoverPosition;
     
     private TutorialQuestStep _step;
@@ -31,16 +33,33 @@ public class TutorialQuestStepItem : PooledObject {
             _completedToggle.isOn = true;
         }
     }
+    public void TweenIn() {
+        _container.anchoredPosition = new Vector2(450f, 0f);
+        _container.DOAnchorPosX(0f, 0.4f);
+    }
+    public void TweenOut(System.Action onCompleteAction = null) {
+        Tweener tween = _container.DOAnchorPosX(450f, 0.4f);
+        if (onCompleteAction != null) {
+            tween.OnComplete(onCompleteAction.Invoke);
+        }
+    }
+
+    #region Hover
     public void ShowTooltip() {
-        // UIManager.Instance.ShowSmallInfo(_step.tooltip);
         _step.onHoverOverAction?.Invoke(this);
     }
     public void HideTooltip() {
-        // UIManager.Instance.HideSmallInfo();
         _step.onHoverOutAction?.Invoke();
     }
+    #endregion
+
+    #region Object Pool
     public override void Reset() {
         base.Reset();
+        _container.anchoredPosition = Vector2.zero;
         Messenger.RemoveListener<TutorialQuestStep>(Signals.TUTORIAL_STEP_COMPLETED, OnTutorialStepCompleted);
     }
+    #endregion
+    
+    
 }

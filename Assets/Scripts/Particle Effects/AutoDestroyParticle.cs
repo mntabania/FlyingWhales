@@ -1,4 +1,5 @@
-﻿using EZObjectPools;
+﻿using System;
+using EZObjectPools;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,8 +7,15 @@ using UnityEngine;
 public class AutoDestroyParticle : PooledObject {
 
     [SerializeField] private ParticleSystem[] particleSystems;
-
-    private void Update() {
+    private void OnEnable() {
+        for (int i = 0; i < particleSystems.Length; i++) {
+            ParticleSystem ps = particleSystems[i];
+            ps.Stop();
+            ps.Clear();
+            ps.Play();
+        }
+    }
+    private void LateUpdate() {
         bool allInactive = true;
         for (int i = 0; i < particleSystems.Length; i++) {
             ParticleSystem currPS = particleSystems[i];
@@ -25,13 +33,16 @@ public class AutoDestroyParticle : PooledObject {
         for (int i = 0; i < particleSystems.Length; i++) {
             ParticleSystem ps = particleSystems[i];
             ps.Stop();
+            ps.Clear();
         }
     }
     
     public override void Reset() {
         base.Reset();
         for (int i = 0; i < particleSystems.Length; i++) {
-            particleSystems[i].Clear();
+            ParticleSystem ps = particleSystems[i];
+            ps.Stop();
+            ps.Clear();
         }
     }
 

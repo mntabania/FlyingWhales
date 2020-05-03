@@ -175,7 +175,7 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 		int fillPercent = 15;
 		int smoothing = 1;
 		if (locationGridTiles.Count > 196) {
-			fillPercent = 35;
+			fillPercent = 32;
 			smoothing = 2;
 		}
 		int[,] cellMap = CellularAutomataGenerator.GenerateMap(tileMap, refinedTiles, smoothing, fillPercent);

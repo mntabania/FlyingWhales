@@ -10,19 +10,26 @@ namespace Tutorial {
         private float _notCastingTime;
         
         public RegionalMap() : base("Regional Map", TutorialManager.Tutorial.Regional_Map) { }
-        
-        #region Overrides
-        public override void WaitForAvailability() {
-            Messenger.AddListener<SpellData>(Signals.ON_EXECUTE_SPELL, OnSpellCast);
-            Messenger.AddListener<SpellData>(Signals.ON_EXECUTE_AFFLICTION, OnSpellCast);
-            Messenger.AddListener<PlayerAction>(Signals.ON_EXECUTE_PLAYER_ACTION, OnSpellCast);
+
+        #region Criteria
+        protected override void ConstructCriteria() {
+            _activationCriteria = new List<TutorialQuestCriteria>() {
+                new HasCompletedTutorialQuest(TutorialManager.Tutorial.Basic_Controls),
+                new PlayerHasNotCastedForSeconds(15f),
+                new PlayerHasNotCompletedTutorialInSeconds(15f),
+                new PlayerIsInInnerMap()
+            };
             Messenger.AddListener<HexTile>(Signals.TILE_DOUBLE_CLICKED, OnTileDoubleClicked);
         }
+        #endregion
+        
+        #region Overrides
         public override void Activate() {
             base.Activate();
-            Messenger.RemoveListener<SpellData>(Signals.ON_EXECUTE_SPELL, OnSpellCast);
-            Messenger.RemoveListener<SpellData>(Signals.ON_EXECUTE_AFFLICTION, OnSpellCast);
-            Messenger.RemoveListener<PlayerAction>(Signals.ON_EXECUTE_PLAYER_ACTION, OnSpellCast);
+            Messenger.RemoveListener<HexTile>(Signals.TILE_DOUBLE_CLICKED, OnTileDoubleClicked);
+        }
+        public override void Deactivate() {
+            base.Deactivate();
             Messenger.RemoveListener<HexTile>(Signals.TILE_DOUBLE_CLICKED, OnTileDoubleClicked);
         }
         protected override void ConstructSteps() {
@@ -32,25 +39,9 @@ namespace Tutorial {
                 new TutorialQuestStepCollection(new DoubleClickHexTileStep())
             };
         }
-        public override void PerFrameActions() {
-            _notCastingTime += Time.deltaTime;
-            if (isAvailable == false) {
-                if (_notCastingTime >= 10f) {
-                    if (InnerMapManager.Instance.currentlyShowingLocation != null) {
-                        MakeAvailable();
-                    }
-                }
-            }
-        }
         #endregion
 
         #region Listeners
-        private void OnSpellCast(SpellData spellData) {
-            _notCastingTime = 0f;
-            if (TutorialManager.Instance.IsInWaitList(this)) {
-                MakeUnavailable();
-            }
-        }
         private void OnTileDoubleClicked(HexTile hexTile) {
             CompleteTutorial();
         }

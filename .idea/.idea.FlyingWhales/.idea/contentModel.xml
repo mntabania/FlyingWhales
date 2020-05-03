@@ -1005,6 +1005,7 @@
           </e>
           <e p="Asset Postprocessors" t="Include">
             <e p="CharacterMarkerAssetImporter.cs" t="Include" />
+            <e p="CharacterPortraitAssetImporter.cs" t="Include" />
             <e p="MapObjectAssetImporter.cs" t="Include" />
           </e>
           <e p="Attributes" t="Include">
@@ -2288,6 +2289,18 @@
             </e>
             <e p="TutorialManager.cs" t="Include" />
             <e p="TutorialQuest.cs" t="Include" />
+            <e p="TutorialQuestCriteria" t="Include">
+              <e p="CharacterDied.cs" t="Include" />
+              <e p="DemonicStructurePlaced.cs" t="Include" />
+              <e p="GameHasBeenRunningForSeconds.cs" t="Include" />
+              <e p="HasCompletedTutorialQuest.cs" t="Include" />
+              <e p="PlayerHasNotCastedForSeconds.cs" t="Include" />
+              <e p="PlayerHasNotCompletedTutorialInSeconds.cs" t="Include" />
+              <e p="PlayerIsInInnerMap.cs" t="Include" />
+              <e p="SpellExecuted.cs" t="Include" />
+              <e p="ThreatMaxedOut.cs" t="Include" />
+              <e p="TutorialQuestCriteria.cs" t="Include" />
+            </e>
           </e>
           <e p="UI" t="Include">
             <e p="AbilityItem.cs" t="Include" />

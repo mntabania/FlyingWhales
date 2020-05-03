@@ -125,6 +125,36 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+  - raceName: CHICKEN
+    race: 26
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: 59f382848bf662e49a24e9fa7fd1080b, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
   - raceName: ELEMENTAL
     race: 19
     neutralAssets:
@@ -274,6 +304,36 @@ MonoBehaviour:
     race: 22
     neutralAssets:
       head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+  - raceName: GHOST
+    race: 31
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: 7357917f81b59fc4c8bd413941774aa7, type: 3}
       brows: []
       eyes: []
       mouth: []
@@ -504,6 +564,95 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+  - raceName: NYMPH
+    race: 28
+    neutralAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+  - raceName: PIG
+    race: 24
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: 40507c8f8647b26409f2f9d92b28fb70, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+  - raceName: SHEEP
+    race: 25
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: e03a0da1821763243b38cfa2edaef43e, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
   - raceName: SKELETON
     race: 13
     neutralAssets:
@@ -534,11 +683,70 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+  - raceName: SLUDGE
+    race: 30
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: 22cfd84bf71a94148a77f19eecc86c75, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
   - raceName: SPIDER
     race: 17
     neutralAssets:
       head:
       - {fileID: 21300000, guid: 24ddc0decde552649b24891f92edac8b, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+  - raceName: WISP
+    race: 29
+    neutralAssets:
+      head: []
       brows: []
       eyes: []
       mouth: []
@@ -638,6 +846,12 @@ MonoBehaviour:
     - Desert Ent
     - Forest Ent
     - Grass Ent
+    - Earth Wisp
+    - Electric Wisp
+    - Fire Wisp
+    - Ice Nymph
+    - Water Nymph
+    - Wind Nymph
     m_values:
     - {fileID: 21300000, guid: 12f193c25cad8824a978c1a8d9d8377f, type: 3}
     - {fileID: 21300000, guid: f261d9fe21365c246a0f3849c9c58ca8, type: 3}
@@ -660,6 +874,12 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 68cd1ff0454ef1e4cb4ebea1f50e6be3, type: 3}
     - {fileID: 21300000, guid: 69cd6ef15db19ba4db8dffbbba9c93b9, type: 3}
     - {fileID: 21300000, guid: 69cd6ef15db19ba4db8dffbbba9c93b9, type: 3}
+    - {fileID: 21300000, guid: 2922f110bc541a44998a3c638c284f78, type: 3}
+    - {fileID: 21300000, guid: e7a2781c7d87254478da24e883eb4144, type: 3}
+    - {fileID: 21300000, guid: 7de9bb4993f04944fa5f7b7e5b2c9a5a, type: 3}
+    - {fileID: 21300000, guid: c758c0d0c1ffb0344ae5cc5f2ee78197, type: 3}
+    - {fileID: 21300000, guid: ec424fd5a02dea54b825c08a5a5e2b9a, type: 3}
+    - {fileID: 21300000, guid: 1181dd6621aeee2458f1b80f7103dff5, type: 3}
   hsvMaterial: {fileID: 2100000, guid: 4f1995ec43a3fc14cb91dcd56050fd9e, type: 2}
   hairUIMaterial: {fileID: 2100000, guid: f635580cdf2e2344ea31e0dba17cb9b5, type: 2}
   spriteLightingMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3,

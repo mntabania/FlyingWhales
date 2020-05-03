@@ -4,27 +4,33 @@ namespace Tutorial {
     public class ShareAnIntel : TutorialQuest {
         public ShareAnIntel() : base("Share an Intel", TutorialManager.Tutorial.Share_An_Intel) { }
 
-        private float _notCastedTime;
-        private bool hasRecentlyCastASpell;
         public override int priority => 30;
-        public override void WaitForAvailability() {
-            Messenger.AddListener<SpellData>(Signals.ON_EXECUTE_SPELL, OnSpellExecutedWhileInactive);
-            Messenger.AddListener<SpellData>(Signals.ON_EXECUTE_AFFLICTION, OnSpellExecutedWhileInactive);
-            Messenger.AddListener<PlayerAction>(Signals.ON_EXECUTE_PLAYER_ACTION, OnSpellExecutedWhileInactive);
+
+        #region Criteria
+        protected override void ConstructCriteria() {
+            _activationCriteria = new List<TutorialQuestCriteria>() {
+                new PlayerHasNotCastedForSeconds(15f),
+                new PlayerHasNotCompletedTutorialInSeconds(15f),
+                new HasCompletedTutorialQuest(TutorialManager.Tutorial.Build_A_Kennel)
+            };
             Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, CompleteTutorial);
         }
+        protected override bool HasMetAllCriteria() {
+            bool hasMetAllCriteria = base.HasMetAllCriteria();
+            if (hasMetAllCriteria) {
+                return PlayerSkillManager.Instance.GetPlayerSkillData(SPELL_TYPE.THE_EYE).charges > 0;
+            }
+            return false;
+        }
+        #endregion
+
+        #region Overrides
         public override void Activate() {
-            Messenger.RemoveListener<SpellData>(Signals.ON_EXECUTE_SPELL, OnSpellExecutedWhileInactive);
-            Messenger.RemoveListener<SpellData>(Signals.ON_EXECUTE_AFFLICTION, OnSpellExecutedWhileInactive);
-            Messenger.RemoveListener<PlayerAction>(Signals.ON_EXECUTE_PLAYER_ACTION, OnSpellExecutedWhileInactive);
             Messenger.RemoveListener(Signals.ON_OPEN_SHARE_INTEL, CompleteTutorial);
             base.Activate();
         }
         public override void Deactivate() {
             base.Deactivate();
-            Messenger.RemoveListener<SpellData>(Signals.ON_EXECUTE_SPELL, OnSpellExecutedWhileInactive);
-            Messenger.RemoveListener<SpellData>(Signals.ON_EXECUTE_AFFLICTION, OnSpellExecutedWhileInactive);
-            Messenger.RemoveListener<PlayerAction>(Signals.ON_EXECUTE_PLAYER_ACTION, OnSpellExecutedWhileInactive);
             Messenger.RemoveListener(Signals.ON_OPEN_SHARE_INTEL, CompleteTutorial);
         }
         protected override void ConstructSteps() {
@@ -47,35 +53,8 @@ namespace Tutorial {
                 )
             };
         }
-        public override void PerFrameActions() {
-            if (isAvailable) { return; }
-            _notCastedTime += Time.deltaTime;
-            //player has recently cast a spell if notCastTime is less than given amount of time.
-            hasRecentlyCastASpell = _notCastedTime < 10f;
-            CheckIfCanBeMadeAvailable();
-        }
-        private void CheckIfCanBeMadeAvailable() {
-            if (hasRecentlyCastASpell) {
-                return;
-            }
-            if (TutorialManager.Instance.HasTutorialBeenCompleted(TutorialManager.Tutorial.Build_A_Kennel) == false) {
-                return;
-            }
-            if (PlayerSkillManager.Instance.GetPlayerSkillData(SPELL_TYPE.THE_EYE).charges <= 0) {
-                return;
-            }
-            MakeAvailable();
-        }
-
-        #region Inactive State Listeners
-        private void OnSpellExecutedWhileInactive(SpellData spellData) {
-            _notCastedTime = 0f; //reset cast timer.
-            if (isAvailable && TutorialManager.Instance.IsInWaitList(this)) { 
-                //if the tutorial is already available, but is inactive, make this tutorial unavailable again.
-                MakeUnavailable();
-            }
-        }
         #endregion
+
 
         #region Step Helpers
         private bool IsSelectedAreaValid(HexTile tile) {

@@ -1,13 +1,13 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Inner_Maps.Location_Structures;
-using UnityEngine;
 namespace Tutorial {
     public class BasicControls : TutorialQuest {
 
         public BasicControls() : base("Basic Controls", TutorialManager.Tutorial.Basic_Controls) { }
-        public override void WaitForAvailability() {
-            TutorialManager.Instance.StartCoroutine(WaitForSeconds());
+        protected override void ConstructCriteria() {
+            _activationCriteria = new List<TutorialQuestCriteria>() {
+                new GameHasBeenRunningForSeconds(8f)
+            };
         }
         protected override void ConstructSteps() {
             TutorialQuestStep look = new LookAroundStep()
@@ -28,11 +28,6 @@ namespace Tutorial {
                 new TutorialQuestStepCollection(objectClick, characterClick),
                 new TutorialQuestStepCollection(structureClick, hexTileClick),
             };
-        }
-
-        private IEnumerator WaitForSeconds() {
-            yield return new WaitForSecondsRealtime(8);
-            MakeAvailable();
         }
 
         #region Step Helpers

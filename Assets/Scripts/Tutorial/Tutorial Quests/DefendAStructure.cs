@@ -4,12 +4,22 @@ using Inner_Maps.Location_Structures;
 namespace Tutorial {
     public class DefendAStructure : TutorialQuest {
         public DefendAStructure() : base("Defend A Structure", TutorialManager.Tutorial.Defend_A_Structure) { }
-        public override void WaitForAvailability() {
-            Messenger.AddListener<LocationStructure>(Signals.STRUCTURE_OBJECT_PLACED, OnStructurePlaced);
+
+        #region Criteria
+        protected override void ConstructCriteria() {
+            _activationCriteria = new List<TutorialQuestCriteria>() {
+                new DemonicStructurePlaced()
+            };
         }
-        protected override void StopWaitingForAvailability() {
-            Messenger.RemoveListener<LocationStructure>(Signals.STRUCTURE_OBJECT_PLACED, OnStructurePlaced);
+        protected override bool HasMetAllCriteria() {
+            bool hasMetAllCriteria = base.HasMetAllCriteria();
+            if (hasMetAllCriteria) {
+                return PlayerManager.Instance.player.playerSkillComponent.CanDoPlayerAction(SPELL_TYPE.DEFEND);
+            }
+            return false;
         }
+        #endregion
+        
         protected override void ConstructSteps() {
             steps = new List<TutorialQuestStepCollection>() {
                 new TutorialQuestStepCollection(new ClickOnStructureStep("Select a Demonic Structure", "Demonic")),
@@ -19,14 +29,5 @@ namespace Tutorial {
                 )
             };
         }
-
-        #region Listeners
-        private void OnStructurePlaced(LocationStructure structure) {
-            if (structure is DemonicStructure 
-                && PlayerManager.Instance.player.playerSkillComponent.CanDoPlayerAction(SPELL_TYPE.DEFEND)) {
-                MakeAvailable();
-            }
-        }
-        #endregion
     }
 }

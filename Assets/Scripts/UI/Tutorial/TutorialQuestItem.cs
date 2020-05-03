@@ -44,11 +44,14 @@ public class TutorialQuestItem : PooledObject {
     }
     private IEnumerator UpdateStepsCoroutine(bool updateLayout) {
         yield return new WaitForSecondsRealtime(1.5f);
-        // RectTransform[] children =
-        //     UtilityScripts.GameUtilities.GetComponentsInDirectChildren<RectTransform>(stepsParent.gameObject);
-        // for (int i = 0; i < children.Length; i++) {
-        //     RectTransform child = children[i];
-        // }
+        TutorialQuestStepItem[] children =
+            UtilityScripts.GameUtilities.GetComponentsInDirectChildren<TutorialQuestStepItem>(stepsParent.gameObject);
+        for (int i = 0; i < children.Length; i++) {
+            TutorialQuestStepItem child = children[i];
+            child.TweenOut();
+            yield return new WaitForSecondsRealtime(0.2f);
+        }
+        yield return new WaitForSecondsRealtime(0.6f);
         UtilityScripts.Utilities.DestroyChildren(stepsParent);
         for (int i = 0; i < _tutorialQuest.activeStepCollection.steps.Count; i++) {
             TutorialQuestStep step = _tutorialQuest.activeStepCollection.steps[i];
@@ -56,6 +59,8 @@ public class TutorialQuestItem : PooledObject {
                 Vector3.zero, Quaternion.identity, stepsParent);
             TutorialQuestStepItem stepItem = stepGO.GetComponent<TutorialQuestStepItem>();
             stepItem.SetStep(step);
+            stepItem.TweenIn();
+            yield return new WaitForSecondsRealtime(0.2f);
         }
         if (updateLayout) {
             TutorialManager.Instance.tutorialUI.ReLayoutTutorials();    
