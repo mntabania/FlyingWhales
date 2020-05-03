@@ -139,7 +139,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                                 int index = Random.Range(0, positiveRelatables.Count);
                                 Character chosenRelatable = positiveRelatables[index];
                                 targetCharacter = chosenRelatable;
-                                targetStructure = chosenRelatable.homeStructure.GetLocationStructure();
+                                targetStructure = chosenRelatable.homeStructure;
                                 if (targetStructure == null) {
                                     positiveRelatables.RemoveAt(index);
                                 } else if (targetStructure == character.homeStructure) {

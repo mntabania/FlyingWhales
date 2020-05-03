@@ -419,11 +419,12 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	}
 	private bool CanTakeObtainPersonalFoodJob(Character character, JobQueueItem job) {
 		GoapPlanJob goapPlanJob = job as GoapPlanJob;
-		if (goapPlanJob.targetPOI.gridTileLocation.structure is IDwelling) {
-			IDwelling dwelling = goapPlanJob.targetPOI.gridTileLocation.structure as IDwelling;
-			return dwelling.IsResident(character);
-		}
-		return false;
+        return goapPlanJob.targetPOI.gridTileLocation.structure.IsResident(character);
+  //      if (goapPlanJob.targetPOI.gridTileLocation.structure is IDwelling) {
+		//	IDwelling dwelling = goapPlanJob.targetPOI.gridTileLocation.structure as IDwelling;
+		//	return dwelling.IsResident(character);
+		//}
+		//return false;
 	}
 	#endregion
 

@@ -1495,7 +1495,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         if(character is Summon summon) {
             chosenTile = summon.GetRandomLocationGridTileWithPath();
         } else {
-            chosenTile = character.homeStructure.GetLocationStructure().GetRandomTile();
+            chosenTile = character.homeStructure.GetRandomTile();
             
         }
         if(chosenTile == null) {

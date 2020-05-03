@@ -24,7 +24,7 @@ public class ReactionComponent {
         // else if (targetTileObject.poiType == POINT_OF_INTEREST_TYPE.ITEM) {
         //     ReactTo(targetTileObject as SpecialToken, ref debugLog);
         // }
-        if (owner.minion != null || owner is Summon || owner.faction == FactionManager.Instance.zombieFaction /*|| owner.race == RACE.SKELETON*/) {
+        if (owner.isSummonOrMinion || owner.faction == FactionManager.Instance.zombieFaction /*|| owner.race == RACE.SKELETON*/) {
             //Minions or Summons cannot react to its own traits
             return;
         }
@@ -54,7 +54,7 @@ public class ReactionComponent {
         //}
     }
     public string ReactTo(IReactable reactable, REACTION_STATUS status, bool addLog = true) {
-        if (owner.minion != null || owner is Summon || owner.faction == FactionManager.Instance.zombieFaction /*|| owner.race == RACE.SKELETON*/) {
+        if (owner.isSummonOrMinion || owner.faction == FactionManager.Instance.zombieFaction /*|| owner.race == RACE.SKELETON*/) {
             //Minions or Summons cannot react to actions
             return string.Empty;
         }
@@ -259,7 +259,7 @@ public class ReactionComponent {
         if (owner.isInCombat) {
             return string.Empty;
         }
-        if (owner.minion != null || owner is Summon || owner.faction == FactionManager.Instance.zombieFaction /*|| owner.race == RACE.SKELETON*/) {
+        if (owner.isSummonOrMinion || owner.faction == FactionManager.Instance.zombieFaction /*|| owner.race == RACE.SKELETON*/) {
             //Minions or Summons cannot react to interrupts
             return string.Empty;
         }
@@ -517,7 +517,7 @@ public class ReactionComponent {
                                         Bed bed = targetCharacter.homeStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.BED) as Bed;
                                         if (bed != null && bed.gridTileLocation != targetCharacter.gridTileLocation) {
                                             debugLog += "\n-Target has a home and an available bed, will trigger Move Character job to bed";
-                                            owner.jobComponent.TryTriggerMoveCharacter(targetCharacter, targetCharacter.homeStructure.GetLocationStructure(), bed.gridTileLocation);
+                                            owner.jobComponent.TryTriggerMoveCharacter(targetCharacter, targetCharacter.homeStructure, bed.gridTileLocation);
                                         } else {
                                             debugLog += "\n-Target has a home but does not have an available bed or already in bed, will not trigger Move Character job";
                                         }
@@ -530,7 +530,7 @@ public class ReactionComponent {
                                         //Pray
                                         if (targetCharacter.currentStructure != targetCharacter.homeStructure) {
                                             debugLog += "\n-Target chose Pray and is not inside his/her house, will trigger Move Character job";
-                                            owner.jobComponent.TryTriggerMoveCharacter(targetCharacter, targetCharacter.homeStructure.GetLocationStructure());
+                                            owner.jobComponent.TryTriggerMoveCharacter(targetCharacter, targetCharacter.homeStructure);
                                         } else {
                                             debugLog += "\n-Target chose Pray but is already inside his/her house, will not trigger Move Character job";
                                         }
@@ -569,7 +569,7 @@ public class ReactionComponent {
         }
     }
     private void ReactTo(TileObject targetTileObject, ref string debugLog) {
-        if (owner.minion != null || owner is Summon || owner.faction == FactionManager.Instance.zombieFaction /*|| owner.race == RACE.SKELETON*/) {
+        if (owner.isSummonOrMinion || owner.faction == FactionManager.Instance.zombieFaction /*|| owner.race == RACE.SKELETON*/) {
             //Minions or Summons cannot react to objects
             return;
         }

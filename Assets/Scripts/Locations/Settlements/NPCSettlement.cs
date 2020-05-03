@@ -153,7 +153,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             classManager.OnResidentChangeClass(character, previousClass, currentClass);
         }
     }
-    public override bool AddResident(Character character, IDwelling chosenHome = null, bool ignoreCapacity = true) {
+    public override bool AddResident(Character character, LocationStructure chosenHome = null, bool ignoreCapacity = true) {
         if (base.AddResident(character, chosenHome, ignoreCapacity)) {
             if (character.race == RACE.DEMON || character is Summon) { return true; }
             classManager.OnAddResident(character);

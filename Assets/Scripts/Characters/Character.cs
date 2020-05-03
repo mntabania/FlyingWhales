@@ -12,6 +12,7 @@ using Locations.Settlements;
 using UnityEngine.EventSystems;
 using UnityEngine.Profiling;
 using UtilityScripts;
+using JetBrains.Annotations;
 
 public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlayerActionTarget, IObjectManipulator {
 
@@ -53,7 +54,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public int maxHPPercentMod { get; protected set; }
     public Region homeRegion { get; protected set; }
     public NPCSettlement homeSettlement => homeStructure?.settlementLocation as NPCSettlement;
-    public IDwelling homeStructure { get; protected set; }
+    public LocationStructure homeStructure { get; protected set; }
     //public IRelationshipContainer relationshipContainer => currentAlterEgo.relationshipContainer;
     //public IRelationshipValidator relationshipValidator => currentAlterEgo.relationshipValidator;
     public List<INTERACTION_TYPE> advertisedActions { get; }
@@ -93,6 +94,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool destroyMarkerOnDeath { get; protected set; }
     public LycanthropeData lycanData { get; protected set; }
     public List<JobQueueItem> forcedCancelJobsOnTickEnded { get; private set; }
+    public List<HexTile> territorries { get; private set; }
 
     private List<Action> onLeaveAreaActions;
     private POI_STATE _state;
@@ -276,6 +278,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool isMissing => currentMissingTicks > CharacterManager.Instance.CHARACTER_MISSING_THRESHOLD;
     public bool isBeingSeized => PlayerManager.Instance.player != null && PlayerManager.Instance.player.seizeComponent.seizedPOI == this;
     public bool isLycanthrope => lycanData != null;
+    public bool isSummonOrMinion => this is Summon || minion != null;
     //public JobQueueItem currentJob => jobQueue.jobsInQueue.Count > 0 ? jobQueue.jobsInQueue[0] : null; //The current job is always the top of the queue
     public JobTriggerComponent jobTriggerComponent => jobComponent;
     public GameObject visualGO => marker.gameObject;
@@ -356,6 +359,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         onLeaveAreaActions = new List<Action>();
         pendingActionsAfterMultiThread = new List<Action>();
         forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
+        territorries = new List<HexTile>();
         SetPOIState(POI_STATE.ACTIVE);
         needsComponent.ResetSleepTicks();
         ConstructResources();
@@ -911,7 +915,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
             if (homeRegion != null) {
                 Region home = homeRegion;
-                IDwelling homeStructure = this.homeStructure;
+                LocationStructure homeStructure = this.homeStructure;
                 homeRegion.RemoveResident(this);
                 SetHomeRegion(home); //keep this data with character to prevent errors
                 SetHomeStructure(homeStructure); //keep this data with character to prevent errors
@@ -2042,7 +2046,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //Cannot react if interrupted
             return false;
         }
-        if (this is Summon || minion != null) {
+        if (isSummonOrMinion) {
             //Cannot react if summon or minion
             return false;
         }
@@ -3148,11 +3152,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
     }
-    public void SetHomeStructure(IDwelling homeStructure) {
+    public void SetHomeStructure(LocationStructure homeStructure) {
         this.homeStructure = homeStructure;
         //currentAlterEgo.SetHomeStructure(homeStructure);
     }
-    public bool MigrateHomeTo(BaseSettlement newHomeSettlement, IDwelling homeStructure = null, bool broadcast = true) {
+    public bool MigrateHomeTo(BaseSettlement newHomeSettlement, LocationStructure homeStructure = null, bool broadcast = true) {
         BaseSettlement previousHome = null;
         if (homeSettlement != null) {
             previousHome = homeSettlement;
@@ -3166,7 +3170,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return false;
     }
-    public void MigrateHomeStructureTo(IDwelling dwelling) {
+    public void MigrateHomeStructureTo(LocationStructure dwelling) {
         if (homeStructure != null) {
             if (homeStructure == dwelling) {
                 return; //ignore change
@@ -5652,6 +5656,40 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             return false;
         }
         return true;
+    }
+    #endregion
+
+
+    #region Territorries
+    public void AddTerritory([NotNull]HexTile tile) {
+        if (territorries.Contains(tile) == false) {
+            territorries.Add(tile);
+        }
+    }
+    public void RemoveTerritory(HexTile tile) {
+        territorries.Remove(tile);
+    }
+    public bool HasTerritory() {
+        return territorries.Count > 0;
+    }
+    public bool IsInTerritory() {
+        if (gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+            return territorries.Contains(gridTileLocation.collectionOwner.partOfHextile.hexTileOwner);
+        }
+        return false;
+    }
+    public LocationGridTile GetRandomLocationGridTileWithPath() {
+        LocationGridTile chosenTile = null;
+        if (territorries.Count > 0) {
+            //while (chosenTile == null) {
+            HexTile chosenTerritory = territorries[UnityEngine.Random.Range(0, territorries.Count)];
+            LocationGridTile chosenGridTile = chosenTerritory.locationGridTiles[UnityEngine.Random.Range(0, chosenTerritory.locationGridTiles.Count)];
+            if (PathfindingManager.Instance.HasPathEvenDiffRegion(gridTileLocation, chosenGridTile)) {
+                chosenTile = chosenGridTile;
+            }
+            //}
+        }
+        return chosenTile;
     }
     #endregion
 }

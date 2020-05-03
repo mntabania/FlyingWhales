@@ -606,62 +606,56 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     }
     #endregion
     
-    #region Monsters/Minions
+    #region Roam
     public bool TriggerRoamAroundTerritory() {
-	    if (_owner is Summon summon) {
-		    if (!summon.jobQueue.HasJob(JOB_TYPE.ROAM_AROUND_TERRITORY)) {
-			    LocationGridTile chosenTile;
-			    if (summon.homeStructure != null) {
-				    chosenTile = CollectionUtilities.GetRandomElement(summon.homeStructure.unoccupiedTiles);
-			    } else {
-				    HexTile chosenTerritory = summon.territorries[UnityEngine.Random.Range(0, summon.territorries.Count)]; 
-				    chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);    
-			    }
-			    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], summon, _owner, new object[] { chosenTile }, 0);
-			    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-			    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ROAM_AROUND_TERRITORY, INTERACTION_TYPE.ROAM, _owner, _owner);
-			    goapPlan.SetDoNotRecalculate(true);
-			    job.SetCannotBePushedBack(true);
-			    job.SetAssignedPlan(goapPlan);
-			    summon.jobQueue.AddJobInQueue(job);
-			    return true;
-		    }
-	    }
-	    return false;
+        if (!_owner.jobQueue.HasJob(JOB_TYPE.ROAM_AROUND_TERRITORY)) {
+            LocationGridTile chosenTile;
+            if (_owner.homeStructure != null) {
+                chosenTile = CollectionUtilities.GetRandomElement(_owner.homeStructure.unoccupiedTiles);
+            } else {
+                HexTile chosenTerritory = _owner.territorries[UnityEngine.Random.Range(0, _owner.territorries.Count)];
+                chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
+            }
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], _owner, _owner, new object[] { chosenTile }, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ROAM_AROUND_TERRITORY, INTERACTION_TYPE.ROAM, _owner, _owner);
+            goapPlan.SetDoNotRecalculate(true);
+            job.SetCannotBePushedBack(true);
+            job.SetAssignedPlan(goapPlan);
+            _owner.jobQueue.AddJobInQueue(job);
+            return true;
+        }
+        return false;
     }
     public bool TriggerRoamAroundCorruption() {
-	    if (_owner.minion != null) {
-		    if (!_owner.jobQueue.HasJob(JOB_TYPE.ROAM_AROUND_CORRUPTION)) {
-			    HexTile chosenTerritory = PlayerManager.Instance.player.playerSettlement.tiles[UnityEngine.Random.Range(0, PlayerManager.Instance.player.playerSettlement.tiles.Count)];
-			    LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
-			    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], _owner, _owner, new object[] { chosenTile }, 0);
-			    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-			    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ROAM_AROUND_CORRUPTION, INTERACTION_TYPE.ROAM, _owner, _owner);
-			    goapPlan.SetDoNotRecalculate(true);
-			    job.SetCannotBePushedBack(true);
-			    job.SetAssignedPlan(goapPlan);
-			    _owner.jobQueue.AddJobInQueue(job);
-			    return true;
-		    }
-	    }
-	    return false;
+        if (!_owner.jobQueue.HasJob(JOB_TYPE.ROAM_AROUND_CORRUPTION)) {
+            HexTile chosenTerritory = PlayerManager.Instance.player.playerSettlement.tiles[UnityEngine.Random.Range(0, PlayerManager.Instance.player.playerSettlement.tiles.Count)];
+            LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], _owner, _owner, new object[] { chosenTile }, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ROAM_AROUND_CORRUPTION, INTERACTION_TYPE.ROAM, _owner, _owner);
+            goapPlan.SetDoNotRecalculate(true);
+            job.SetCannotBePushedBack(true);
+            job.SetAssignedPlan(goapPlan);
+            _owner.jobQueue.AddJobInQueue(job);
+            return true;
+        }
+        return false;
     }
     public bool TriggerRoamAroundPortal() {
-	    if (_owner.minion != null) {
-		    if (!_owner.jobQueue.HasJob(JOB_TYPE.ROAM_AROUND_PORTAL)) {
-			    HexTile chosenTerritory = PlayerManager.Instance.player.portalTile;
-			    LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
-			    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], _owner, _owner, new object[] { chosenTile }, 0);
-			    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-			    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ROAM_AROUND_PORTAL, INTERACTION_TYPE.ROAM, _owner, _owner);
-			    goapPlan.SetDoNotRecalculate(true);
-			    job.SetCannotBePushedBack(true);
-			    job.SetAssignedPlan(goapPlan);
-			    _owner.jobQueue.AddJobInQueue(job);
-			    return true;
-		    }
-	    }
-	    return false;
+        if (!_owner.jobQueue.HasJob(JOB_TYPE.ROAM_AROUND_PORTAL)) {
+            HexTile chosenTerritory = PlayerManager.Instance.player.portalTile;
+            LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], _owner, _owner, new object[] { chosenTile }, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ROAM_AROUND_PORTAL, INTERACTION_TYPE.ROAM, _owner, _owner);
+            goapPlan.SetDoNotRecalculate(true);
+            job.SetCannotBePushedBack(true);
+            job.SetAssignedPlan(goapPlan);
+            _owner.jobQueue.AddJobInQueue(job);
+            return true;
+        }
+        return false;
     }
     public bool TriggerRoamAroundTile(LocationGridTile tile = null) {
         if (!_owner.jobQueue.HasJob(JOB_TYPE.ROAM_AROUND_TILE)) {
@@ -737,63 +731,57 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         return false;
     }
     public bool TriggerReturnTerritory() {
-	    if (_owner is Summon summon) {
-		    if (!summon.jobQueue.HasJob(JOB_TYPE.RETURN_TERRITORY)) {
-			    LocationGridTile chosenTile;
-			    if (summon.homeStructure != null) {
-				    chosenTile = CollectionUtilities.GetRandomElement(summon.homeStructure.unoccupiedTiles);
-			    } else {
-                    if (summon.territorries.Count > 0) {
-                        HexTile chosenTerritory = summon.territorries[UnityEngine.Random.Range(0, summon.territorries.Count)];
-                        chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
-                    } else {
-                        //If has no territory, roam around tile instead
-                        return TriggerRoamAroundTile();
-                    }
-			    }
-			    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], summon, _owner, new object[] { chosenTile }, 0);
-			    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-			    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RETURN_TERRITORY, INTERACTION_TYPE.ROAM, _owner, _owner);
-			    goapPlan.SetDoNotRecalculate(true);
-			    job.SetCannotBePushedBack(true);
-			    job.SetAssignedPlan(goapPlan);
-			    summon.jobQueue.AddJobInQueue(job);
-			    return true;
-		    }
-	    }
-	    return false;
+        if (!_owner.jobQueue.HasJob(JOB_TYPE.RETURN_TERRITORY)) {
+            LocationGridTile chosenTile;
+            if (_owner.homeStructure != null) {
+                chosenTile = CollectionUtilities.GetRandomElement(_owner.homeStructure.unoccupiedTiles);
+            } else {
+                if (_owner.territorries.Count > 0) {
+                    HexTile chosenTerritory = _owner.territorries[UnityEngine.Random.Range(0, _owner.territorries.Count)];
+                    chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
+                } else {
+                    //If has no territory, roam around tile instead
+                    return TriggerRoamAroundTile();
+                }
+            }
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], _owner, _owner, new object[] { chosenTile }, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RETURN_TERRITORY, INTERACTION_TYPE.ROAM, _owner, _owner);
+            goapPlan.SetDoNotRecalculate(true);
+            job.SetCannotBePushedBack(true);
+            job.SetAssignedPlan(goapPlan);
+            _owner.jobQueue.AddJobInQueue(job);
+            return true;
+        }
+        return false;
     }
     public bool TriggerReturnPortal() {
-	    if (_owner.minion != null) {
-		    if (!_owner.jobQueue.HasJob(JOB_TYPE.RETURN_PORTAL)) {
-			    HexTile chosenTerritory = PlayerManager.Instance.player.portalTile;
-			    LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
-			    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], _owner, _owner, new object[] { chosenTile }, 0);
-			    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-			    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RETURN_PORTAL, INTERACTION_TYPE.ROAM, _owner, _owner);
-			    goapPlan.SetDoNotRecalculate(true);
-			    job.SetCannotBePushedBack(true);
-			    job.SetAssignedPlan(goapPlan);
-			    _owner.jobQueue.AddJobInQueue(job);
-			    return true;
-		    }
-	    }
-	    return false;
+        if (!_owner.jobQueue.HasJob(JOB_TYPE.RETURN_PORTAL)) {
+            HexTile chosenTerritory = PlayerManager.Instance.player.portalTile;
+            LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], _owner, _owner, new object[] { chosenTile }, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RETURN_PORTAL, INTERACTION_TYPE.ROAM, _owner, _owner);
+            goapPlan.SetDoNotRecalculate(true);
+            job.SetCannotBePushedBack(true);
+            job.SetAssignedPlan(goapPlan);
+            _owner.jobQueue.AddJobInQueue(job);
+            return true;
+        }
+        return false;
     }
     public bool TriggerMonsterSleep() {
-	    if (_owner is Summon) {
-		    if (!_owner.jobQueue.HasJob(JOB_TYPE.ENERGY_RECOVERY_NORMAL)) {
-			    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.SLEEP_OUTSIDE], _owner, _owner, null, 0);
-			    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-			    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ENERGY_RECOVERY_NORMAL, INTERACTION_TYPE.SLEEP_OUTSIDE, _owner, _owner);
-			    goapPlan.SetDoNotRecalculate(true);
-			    job.SetCannotBePushedBack(true);
-			    job.SetAssignedPlan(goapPlan);
-			    _owner.jobQueue.AddJobInQueue(job);
-			    return true;
-		    }
-	    }
-	    return false;
+        if (!_owner.jobQueue.HasJob(JOB_TYPE.ENERGY_RECOVERY_NORMAL)) {
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.SLEEP_OUTSIDE], _owner, _owner, null, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ENERGY_RECOVERY_NORMAL, INTERACTION_TYPE.SLEEP_OUTSIDE, _owner, _owner);
+            goapPlan.SetDoNotRecalculate(true);
+            job.SetCannotBePushedBack(true);
+            job.SetAssignedPlan(goapPlan);
+            _owner.jobQueue.AddJobInQueue(job);
+            return true;
+        }
+        return false;
     }
     public void CreateLearnMonsterJob(Character target) {
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.LEARN_MONSTER, INTERACTION_TYPE.STUDY_MONSTER, target, _owner);

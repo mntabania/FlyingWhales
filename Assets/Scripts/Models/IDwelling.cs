@@ -9,7 +9,7 @@ public interface IDwelling {
     int id { get; }
     string name { get; }
     STRUCTURE_TYPE structureType { get; }
-    bool isDwelling { get; }
+    //bool isDwelling { get; }
     List<Character> charactersHere { get; }
     List<Character> residents { get; }
     Region location { get; }
@@ -35,11 +35,10 @@ public interface IDwelling {
     bool AddPOI(IPointOfInterest poi, LocationGridTile tileLocation = null, bool placeObject = true);
     bool RemovePOI(IPointOfInterest poi, Character removedBy = null);
     bool HasUnoccupiedFurnitureSpot();
-    bool HasFacilityDeficit();
-    FACILITY_TYPE GetMostNeededValidFacility();
-    LocationStructure GetLocationStructure();
+    //bool HasFacilityDeficit();
+    //FACILITY_TYPE GetMostNeededValidFacility();
     TileObject GetUnoccupiedTileObject(params TILE_OBJECT_TYPE[] type);
-    List<LocationGridTile> GetUnoccupiedFurnitureSpotsThatCanProvide(FACILITY_TYPE type);
+    //List<LocationGridTile> GetUnoccupiedFurnitureSpotsThatCanProvide(FACILITY_TYPE type);
     List<TileObject> GetTileObjectsOfType(TILE_OBJECT_TYPE type);
     T GetTileObjectOfType<T>(TILE_OBJECT_TYPE type) where T : TileObject;
 }

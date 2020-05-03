@@ -32,6 +32,7 @@ namespace Inner_Maps.Location_Structures {
         public int maxHP { get; private set; }
         public int currentHP { get; private set; }
         public HashSet<IDamageable> objectsThatContributeToDamage { get; private set; }
+        public List<Character> residents { get; protected set; }
 
         #region getters
         public virtual bool isDwelling => false;
@@ -50,6 +51,7 @@ namespace Inner_Maps.Location_Structures {
             tiles = new List<LocationGridTile>();
             unoccupiedTiles = new LinkedList<LocationGridTile>();
             objectsThatContributeToDamage = new HashSet<IDamageable>();
+            residents = new List<Character>();
             maxHP = 5000;
             currentHP = maxHP;
             //outerTiles = new List<LocationGridTile>();
@@ -66,6 +68,7 @@ namespace Inner_Maps.Location_Structures {
             //outerTiles = new List<LocationGridTile>();
             tiles = new List<LocationGridTile>();
             objectsThatContributeToDamage = new HashSet<IDamageable>();
+            residents = new List<Character>();
             maxHP = 5000;
             currentHP = maxHP;
             SetInteriorState(structureType.IsInterior());
@@ -73,6 +76,9 @@ namespace Inner_Maps.Location_Structures {
 
         #region Virtuals
         public virtual void OnBuiltStructure() { }
+        protected virtual void OnAddResident(Character newResident) { }
+        protected virtual void OnRemoveResident(Character newResident) { }
+        public virtual bool CanBeResidentHere(Character character) { return true; }
         #endregion
 
         #region Initialization
@@ -87,11 +93,6 @@ namespace Inner_Maps.Location_Structures {
         protected virtual void UnsubscribeListeners() { }
         #endregion
 
-        #region Residents
-        public virtual bool IsOccupied() {
-            return false; //will only ever use this in dwellings, to prevent need for casting
-        }
-        #endregion
 
         #region Characters
         public void AddCharacterAtLocation(Character character, LocationGridTile tile = null) {
@@ -634,6 +635,7 @@ namespace Inner_Maps.Location_Structures {
 
         #region Player Action Target
         public List<SPELL_TYPE> actions { get; private set; }
+
         public virtual void ConstructDefaultActions() {
             actions = new List<SPELL_TYPE>();
         }
@@ -689,6 +691,100 @@ namespace Inner_Maps.Location_Structures {
                 DestroyStructure();
             }
         }
+        #endregion
+
+        #region Residents
+        public void AddResident(Character character) {
+            if (!residents.Contains(character)) {
+                residents.Add(character);
+                character.SetHomeStructure(this);
+                OnAddResident(character);
+            }
+        }
+        public void RemoveResident(Character character) {
+            if (residents.Remove(character)) {
+                character.SetHomeStructure(null);
+                OnRemoveResident(character);
+            }
+        }
+        public bool IsResident(Character character) {
+            return character.homeStructure == this; //residents.Contains(character);
+        }
+        public bool HasPositiveRelationshipWithAnyResident(Character character) {
+            if (residents.Contains(character)) {
+                return true; //if the provided character is a resident of this dwelling, then yes, consider relationship as positive
+            }
+            for (int i = 0; i < residents.Count; i++) {
+                Character currResident = residents[i];
+                RELATIONSHIP_EFFECT effect = character.relationshipContainer.GetRelationshipEffectWith(currResident);
+                if (effect == RELATIONSHIP_EFFECT.POSITIVE) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public bool HasEnemyOrNoRelationshipWithAnyResident(Character character) {
+            for (int i = 0; i < residents.Count; i++) {
+                Character currResident = residents[i];
+                RELATIONSHIP_EFFECT effect = character.relationshipContainer.GetRelationshipEffectWith(currResident);
+                if (effect == RELATIONSHIP_EFFECT.NEGATIVE || effect == RELATIONSHIP_EFFECT.NONE) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public bool IsOccupied() {
+            return residents.Count > 0;
+        }
+        #endregion
+
+        #region Facilities
+        public bool HasUnoccupiedFurnitureSpot() {
+            for (int i = 0; i < tiles.Count; i++) {
+                LocationGridTile currTile = tiles[i];
+                if (currTile.objHere == null && currTile.hasFurnitureSpot) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        //public bool HasFacilityDeficit() {
+        //    foreach (KeyValuePair<FACILITY_TYPE, int> kvp in facilities) {
+        //        if (kvp.Value <= 0) {
+        //            return true;
+        //        }
+        //    }
+        //    return false;
+        //}
+        //public FACILITY_TYPE GetMostNeededValidFacility() {
+        //    //get the facility with the lowest value, that can be provided given the unoccupied furnitureSpots
+        //    int lowestValue = 99999;
+        //    FACILITY_TYPE lowestFacility = FACILITY_TYPE.NONE;
+        //    foreach (KeyValuePair<FACILITY_TYPE, int> keyValuePair in facilities) {
+        //        if (keyValuePair.Value < lowestValue && HasUnoccupiedFurnitureSpotsThatCanProvide(keyValuePair.Key)) {
+        //            lowestValue = keyValuePair.Value;
+        //            lowestFacility = keyValuePair.Key;
+        //        }
+        //    }
+        //    return lowestFacility;
+        //}
+        //public List<LocationGridTile> GetUnoccupiedFurnitureSpotsThatCanProvide(FACILITY_TYPE type) {
+        //    List<LocationGridTile> validTiles = new List<LocationGridTile>();
+        //    for (int i = 0; i < tiles.Count; i++) {
+        //        LocationGridTile currTile = tiles[i];
+        //        if (currTile.objHere == null && currTile.hasFurnitureSpot && currTile.furnitureSpot.allowedFurnitureTypes != null) {
+        //            for (int j = 0; j < currTile.furnitureSpot.allowedFurnitureTypes.Length; j++) {
+        //                FURNITURE_TYPE furnitureType = currTile.furnitureSpot.allowedFurnitureTypes[j];
+        //                TILE_OBJECT_TYPE tileObject = furnitureType.ConvertFurnitureToTileObject();
+        //                if (tileObject.CanProvideFacility(type)) {
+        //                    validTiles.Add(currTile);
+        //                    break;
+        //                }
+        //            }
+        //        }
+        //    }
+        //    return validTiles;
+        //}
         #endregion
     }
 }
