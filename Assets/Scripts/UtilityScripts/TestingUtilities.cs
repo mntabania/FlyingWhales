@@ -28,8 +28,8 @@ namespace UtilityScripts {
                     summary += "\nNone";
                 }
                 summary += "\nActive Quest: ";
-                if (npcSettlement.owner != null && npcSettlement.owner.activeQuest != null) {
-                    summary += npcSettlement.owner.activeQuest.name;
+                if (npcSettlement.owner != null && npcSettlement.owner.activeFactionQuest != null) {
+                    summary += npcSettlement.owner.activeFactionQuest.name;
                 } else {
                     summary += "None";
                 }

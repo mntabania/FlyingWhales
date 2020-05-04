@@ -1198,8 +1198,8 @@
             <e p="FactionIdeologyComponent.cs" t="Include" />
             <e p="FactionRelationship.cs" t="Include" />
             <e p="Quests" t="Include">
-              <e p="DivineInterventionQuest.cs" t="Include" />
-              <e p="Quest.cs" t="Include" />
+              <e p="DivineInterventionFactionQuest.cs" t="Include" />
+              <e p="FactionQuest.cs" t="Include" />
             </e>
           </e>
           <e p="Generator" t="Include">
@@ -2052,6 +2052,71 @@
               <e p="Wolf.cs" t="Include" />
             </e>
           </e>
+          <e p="Quests" t="Include">
+            <e p="Quest.cs" t="Include" />
+            <e p="Steps" t="Include">
+              <e p="ActivateDefendStep.cs" t="Include" />
+              <e p="ActivateHarassStep.cs" t="Include" />
+              <e p="ChooseSpellStep.cs" t="Include" />
+              <e p="ClickOnAreaStep.cs" t="Include" />
+              <e p="ClickOnCharacterStep.cs" t="Include" />
+              <e p="ClickOnEmptyAreaStep.cs" t="Include" />
+              <e p="ClickOnObjectStep.cs" t="Include" />
+              <e p="ClickOnStructureStep.cs" t="Include" />
+              <e p="DoubleClickHexTileStep.cs" t="Include" />
+              <e p="DropCharacterAtStructureStep.cs" t="Include" />
+              <e p="EliminateCharacterStep.cs" t="Include" />
+              <e p="ExecuteAfflictionStep.cs" t="Include" />
+              <e p="ExecutedPlayerActionStep.cs" t="Include" />
+              <e p="ExecuteSpellStep.cs" t="Include" />
+              <e p="HideRegionMapStep.cs" t="Include" />
+              <e p="LookAroundStep.cs" t="Include" />
+              <e p="NameplateClickedStep.cs" t="Include" />
+              <e p="ObjectPickerShownStep.cs" t="Include" />
+              <e p="QuestStep.cs" t="Include" />
+              <e p="QuestStepCollection.cs" t="Include" />
+              <e p="SelectIntelStep.cs" t="Include" />
+              <e p="SelectRegionStep.cs" t="Include" />
+              <e p="ShareIntelStep.cs" t="Include" />
+              <e p="ShowIntelMenuStep.cs" t="Include" />
+              <e p="ShowSpellMenuStep.cs" t="Include" />
+              <e p="StoreIntelStep.cs" t="Include" />
+              <e p="StructureBuiltStep.cs" t="Include" />
+              <e p="ToggleTurnedOnStep.cs" t="Include" />
+              <e p="TriggerPoisonExplosionStep.cs" t="Include" />
+              <e p="UnpauseStep.cs" t="Include" />
+            </e>
+            <e p="Tutorial" t="Include">
+              <e p="Tutorial Quests" t="Include">
+                <e p="ApplyAnAffliction.cs" t="Include" />
+                <e p="BasicControls.cs" t="Include" />
+                <e p="BuildAKennel.cs" t="Include" />
+                <e p="CastMeteor.cs" t="Include" />
+                <e p="CharacterInfo.cs" t="Include" />
+                <e p="DefendAStructure.cs" t="Include" />
+                <e p="HarassAVillage.cs" t="Include" />
+                <e p="RegionalMap.cs" t="Include" />
+                <e p="ShareAnIntel.cs" t="Include" />
+                <e p="SurviveCounterattack.cs" t="Include" />
+                <e p="TriggerPoisonExplosion.cs" t="Include" />
+                <e p="WinCondition.cs" t="Include" />
+              </e>
+              <e p="TutorialManager.cs" t="Include" />
+              <e p="TutorialQuest.cs" t="Include" />
+              <e p="TutorialQuestCriteria" t="Include">
+                <e p="CharacterDied.cs" t="Include" />
+                <e p="DemonicStructurePlaced.cs" t="Include" />
+                <e p="GameHasBeenRunningForSeconds.cs" t="Include" />
+                <e p="HasCompletedTutorialQuest.cs" t="Include" />
+                <e p="PlayerHasNotCastedForSeconds.cs" t="Include" />
+                <e p="PlayerHasNotCompletedTutorialInSeconds.cs" t="Include" />
+                <e p="PlayerIsInInnerMap.cs" t="Include" />
+                <e p="SpellExecuted.cs" t="Include" />
+                <e p="ThreatMaxedOut.cs" t="Include" />
+                <e p="TutorialQuestCriteria.cs" t="Include" />
+              </e>
+            </e>
+          </e>
           <e p="Relationships" t="Include">
             <e p="BaseRelatable.cs" t="Include" />
             <e p="Containers" t="Include">
@@ -2240,68 +2305,6 @@
               <e p="TraitValidator.cs" t="Include" />
             </e>
           </e>
-          <e p="Tutorial" t="Include">
-            <e p="Steps" t="Include">
-              <e p="ActivateDefendStep.cs" t="Include" />
-              <e p="ActivateHarassStep.cs" t="Include" />
-              <e p="ChooseSpellStep.cs" t="Include" />
-              <e p="ClickOnAreaStep.cs" t="Include" />
-              <e p="ClickOnCharacterStep.cs" t="Include" />
-              <e p="ClickOnEmptyAreaStep.cs" t="Include" />
-              <e p="ClickOnObjectStep.cs" t="Include" />
-              <e p="ClickOnStructureStep.cs" t="Include" />
-              <e p="DoubleClickHexTileStep.cs" t="Include" />
-              <e p="DropCharacterAtStructureStep.cs" t="Include" />
-              <e p="EliminateCharacterStep.cs" t="Include" />
-              <e p="ExecuteAfflictionStep.cs" t="Include" />
-              <e p="ExecutedPlayerActionStep.cs" t="Include" />
-              <e p="ExecuteSpellStep.cs" t="Include" />
-              <e p="HideRegionMapStep.cs" t="Include" />
-              <e p="LookAroundStep.cs" t="Include" />
-              <e p="NameplateClickedStep.cs" t="Include" />
-              <e p="ObjectPickerShownStep.cs" t="Include" />
-              <e p="SelectIntelStep.cs" t="Include" />
-              <e p="SelectRegionStep.cs" t="Include" />
-              <e p="ShareIntelStep.cs" t="Include" />
-              <e p="ShowIntelMenuStep.cs" t="Include" />
-              <e p="ShowSpellMenuStep.cs" t="Include" />
-              <e p="StoreIntelStep.cs" t="Include" />
-              <e p="StructureBuiltStep.cs" t="Include" />
-              <e p="ToggleTurnedOnStep.cs" t="Include" />
-              <e p="TriggerPoisonExplosionStep.cs" t="Include" />
-              <e p="TutorialQuestStep.cs" t="Include" />
-              <e p="TutorialQuestStepCollection.cs" t="Include" />
-              <e p="UnpauseStep.cs" t="Include" />
-            </e>
-            <e p="Tutorial Quests" t="Include">
-              <e p="ApplyAnAffliction.cs" t="Include" />
-              <e p="BasicControls.cs" t="Include" />
-              <e p="BuildAKennel.cs" t="Include" />
-              <e p="CastMeteor.cs" t="Include" />
-              <e p="CharacterInfo.cs" t="Include" />
-              <e p="DefendAStructure.cs" t="Include" />
-              <e p="HarassAVillage.cs" t="Include" />
-              <e p="RegionalMap.cs" t="Include" />
-              <e p="ShareAnIntel.cs" t="Include" />
-              <e p="SurviveCounterattack.cs" t="Include" />
-              <e p="TriggerPoisonExplosion.cs" t="Include" />
-              <e p="WinCondition.cs" t="Include" />
-            </e>
-            <e p="TutorialManager.cs" t="Include" />
-            <e p="TutorialQuest.cs" t="Include" />
-            <e p="TutorialQuestCriteria" t="Include">
-              <e p="CharacterDied.cs" t="Include" />
-              <e p="DemonicStructurePlaced.cs" t="Include" />
-              <e p="GameHasBeenRunningForSeconds.cs" t="Include" />
-              <e p="HasCompletedTutorialQuest.cs" t="Include" />
-              <e p="PlayerHasNotCastedForSeconds.cs" t="Include" />
-              <e p="PlayerHasNotCompletedTutorialInSeconds.cs" t="Include" />
-              <e p="PlayerIsInInnerMap.cs" t="Include" />
-              <e p="SpellExecuted.cs" t="Include" />
-              <e p="ThreatMaxedOut.cs" t="Include" />
-              <e p="TutorialQuestCriteria.cs" t="Include" />
-            </e>
-          </e>
           <e p="UI" t="Include">
             <e p="AbilityItem.cs" t="Include" />
             <e p="ActionItem.cs" t="Include" />
@@ -2458,6 +2461,11 @@
             <e p="PsychopathRequirementsUI.cs" t="Include" />
             <e p="PsychopathUI.cs" t="Include" />
             <e p="QuestJobNameplate.cs" t="Include" />
+            <e p="Quests" t="Include">
+              <e p="QuestItem.cs" t="Include" />
+              <e p="QuestStepItem.cs" t="Include" />
+              <e p="QuestUI.cs" t="Include" />
+            </e>
             <e p="RegionNameplateItem.cs" t="Include" />
             <e p="ReplaceChoiceItem.cs" t="Include" />
             <e p="ReplaceUI.cs" t="Include" />
@@ -2479,11 +2487,6 @@
             <e p="TheProfaneUI.cs" t="Include" />
             <e p="TimerHubItem.cs" t="Include" />
             <e p="TraitItem.cs" t="Include" />
-            <e p="Tutorial" t="Include">
-              <e p="TutorialQuestItem.cs" t="Include" />
-              <e p="TutorialQuestStepItem.cs" t="Include" />
-              <e p="TutorialUI.cs" t="Include" />
-            </e>
             <e p="UIMenuSettings.cs" t="Include" />
             <e p="UnleashSummonUI.cs" t="Include" />
             <e p="WinGameOverItem.cs" t="Include" />

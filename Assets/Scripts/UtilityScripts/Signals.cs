@@ -545,11 +545,18 @@ public static class Signals {
     public static string REMOVE_TILE_OBJECT_USER = "OnAddTileObjectUser";
     #endregion
 
-    #region Tutorial
+    #region Quests
     /// <summary>
-    /// Parameters: TutorialQuestStep completedStep
+    /// Parameters: QuestStep completedStep
     /// </summary>
-    public static string TUTORIAL_STEP_COMPLETED = "TutorialStepCompleted";
+    public static string QUEST_STEP_COMPLETED = "QuestStepCompleted";
+    /// <summary>
+    /// Parameters: QuestStepCollection completedCollection
+    /// </summary>
+    public static string STEP_COLLECTION_COMPLETED = "StepCollectionCompleted";
+    #endregion
+    
+    #region Tutorial
     public static string CAMERA_MOVED_BY_PLAYER = "CameraMovedByPlayer";
     /// <summary>
     /// Parameters: ISelectable clickedObject
@@ -563,10 +570,6 @@ public static class Signals {
     /// Parameters: string identifier
     /// </summary>
     public static string OBJECT_PICKER_SHOWN = "ObjectPickerShown";
-    /// <summary>
-    /// Parameters: TutorialQuestStepCollection completedCollection
-    /// </summary>
-    public static string TUTORIAL_STEP_COLLECTION_COMPLETED = "TutorialStepCollectionCompleted";
     public static string INTEL_MENU_OPENED = "OnIntelMenuOpened";
     /// <summary>
     /// Parameters (TutorialQuestCriteria)

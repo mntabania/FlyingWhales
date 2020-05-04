@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using Factions;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using JetBrains.Annotations;
@@ -109,6 +110,10 @@ public class UIManager : MonoBehaviour {
     [Space(10)]
     [Header("Custom Dropdown List")]
     public CustomDropdownList customDropdownList;
+    
+    [Space(10)]
+    [Header("Quest UI")]
+    public QuestUI questUI;
 
     public bool isShowingAreaTooltip { get; private set; } //is the tooltip for npcSettlement double clicks showing?
     private InfoUIBase _lastOpenedInfoUI;
@@ -143,6 +148,7 @@ public class UIManager : MonoBehaviour {
             allMenus[i].Initialize();
         }
         questInfoUI.Initialize();
+        questUI.Initialize();
         Messenger.AddListener(Signals.HIDE_MENUS, HideMenus);
         Messenger.AddListener<string, int, UnityAction>(Signals.SHOW_DEVELOPER_NOTIFICATION, ShowDeveloperNotification);
         Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
@@ -845,8 +851,8 @@ public class UIManager : MonoBehaviour {
     [Space(10)]
     [Header("Quest UI")]
     public QuestInfoUI questInfoUI;
-    public void ShowQuestInfo(Quest quest) {
-        questInfoUI.ShowQuestInfoUI(quest);
+    public void ShowQuestInfo(FactionQuest factionQuest) {
+        questInfoUI.ShowQuestInfoUI(factionQuest);
     }
     public void UpdateQuestInfo() {
         if (questInfoUI.gameObject.activeSelf) {
@@ -1367,9 +1373,13 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     #region Demo
-    [SerializeField] private DemoUI _demoUi;
+    [Header("Demo")]
+    [SerializeField] private DemoUI _demoUI;
+    public void ShowStartDemoScreen() {
+        _demoUI.ShowStartScreen();
+    }
     public void ShowEndDemoScreen() {
-        _demoUi.Show();
+        _demoUI.ShowEndScreen();
     }
     #endregion
 }

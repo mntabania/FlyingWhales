@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Ruinarch;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
@@ -109,8 +110,7 @@ namespace Inner_Maps {
                             if (objToSelect == null) {
                                 objToSelect = selectables[0];
                             }
-                            objToSelect.LeftSelectAction();  
-                            Messenger.Broadcast(Signals.SELECTABLE_LEFT_CLICKED, objToSelect);
+                            InputManager.Instance.Select(objToSelect);
                         }
                         lastClickedTile = clickedTile;    
                     }
@@ -123,7 +123,6 @@ namespace Inner_Maps {
                 }
             }
         }
-        
         private ISelectable GetFirstSelectableOnTile(LocationGridTile tile) {
             PointerEventData pointer = new PointerEventData(EventSystem.current) {position = Input.mousePosition};
 

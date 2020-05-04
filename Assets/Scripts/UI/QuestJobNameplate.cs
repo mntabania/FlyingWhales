@@ -4,11 +4,12 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using EZObjectPools;
+using Factions;
 
 public class QuestJobNameplate : PooledObject {
 
     public JobQueueItem job { get; private set; }
-    public Quest quest { get; private set; }
+    public FactionQuest factionQuest { get; private set; }
 
     public TextMeshProUGUI jobNameLbl;
     public Image jobIconImg;
@@ -17,9 +18,9 @@ public class QuestJobNameplate : PooledObject {
 
     public System.Action onClickAction { get; private set; }
 
-    public void Initialize(Quest quest, JobQueueItem job) {
+    public void Initialize(FactionQuest factionQuest, JobQueueItem job) {
         this.job = job;
-        this.quest = quest;
+        this.factionQuest = factionQuest;
         UpdateInfo();
     }
 
@@ -36,7 +37,7 @@ public class QuestJobNameplate : PooledObject {
     public override void Reset() {
         base.Reset();
         job = null;
-        quest = null;
+        factionQuest = null;
     }
     #endregion
 
@@ -51,7 +52,7 @@ public class QuestJobNameplate : PooledObject {
         if (job != null) {
             if (job.jobType == JOB_TYPE.CRAFT_OBJECT) {
                 hoverText =
-                    $"This quest aims to build a new Goddess Statue at {quest.region.name}. A Goddess Statue allows any resident to assist in speeding up the ritual by offering their own sincere prayer.";
+                    $"This quest aims to build a new Goddess Statue at {factionQuest.region.name}. A Goddess Statue allows any resident to assist in speeding up the ritual by offering their own sincere prayer.";
             } 
             // else if (job.jobType == JOB_TYPE.DESTROY_PROFANE_LANDMARK) {
             //     hoverText = "This quest aims to destroy one of Ruinarch's Profane structures.";

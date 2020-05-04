@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using BayatGames.SaveGameFree.Types;
+using Factions;
 
 [System.Serializable]
 public class SaveDataFaction {
@@ -68,10 +69,10 @@ public class SaveDataFaction {
             ownedRegionIDs.Add(faction.ownedSettlements[i].id);
         }
 
-        hasActiveQuest = faction.activeQuest != null;
+        hasActiveQuest = faction.activeFactionQuest != null;
         if (hasActiveQuest) {
             activeQuest = new SaveDataQuest();
-            activeQuest.Save(faction.activeQuest);
+            activeQuest.Save(faction.activeFactionQuest);
         }
     }
 
@@ -96,9 +97,9 @@ public class SaveDataFaction {
 
     public void LoadFactionActiveQuest() {
         if (hasActiveQuest) {
-            Quest quest = activeQuest.Load();
+            FactionQuest factionQuest = activeQuest.Load();
             if (activeQuest.isActivated) {
-                quest.factionOwner.SetActiveQuest(quest);
+                factionQuest.factionOwner.SetActiveQuest(factionQuest);
             }
         }
     }
