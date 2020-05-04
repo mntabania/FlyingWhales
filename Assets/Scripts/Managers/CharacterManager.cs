@@ -86,7 +86,7 @@ public class CharacterManager : MonoBehaviour {
 
     #region Characters
     public Character CreateNewLimboCharacter(RACE race, string className, GENDER gender, Faction faction = null,
-    NPCSettlement homeLocation = null, IDwelling homeStructure = null) {
+    NPCSettlement homeLocation = null, LocationStructure homeStructure = null) {
         Character newCharacter = new Character(className, race, gender);
         newCharacter.SetIsLimboCharacter(true);
         newCharacter.Initialize();
@@ -108,7 +108,7 @@ public class CharacterManager : MonoBehaviour {
         return newCharacter;
     }
     public Character CreateNewCharacter(string className, RACE race, GENDER gender, Faction faction = null,
-        BaseSettlement homeLocation = null, Region homeRegion = null, IDwelling homeStructure = null) {
+        BaseSettlement homeLocation = null, Region homeRegion = null, LocationStructure homeStructure = null) {
         Character newCharacter = new Character(className, race, gender);
         newCharacter.Initialize();
         if (faction != null) {
@@ -131,7 +131,7 @@ public class CharacterManager : MonoBehaviour {
         return newCharacter;
     }
     public Character CreateNewCharacter(string className, RACE race, GENDER gender, SEXUALITY sexuality, Faction faction = null,
-        NPCSettlement homeLocation = null, IDwelling homeStructure = null) {
+        NPCSettlement homeLocation = null, LocationStructure homeStructure = null) {
         Character newCharacter = new Character(className, race, gender, sexuality);
         newCharacter.Initialize();
         if (faction != null) {
@@ -198,7 +198,7 @@ public class CharacterManager : MonoBehaviour {
         return newCharacter;
     }
     public Character CreateNewCharacter(PreCharacterData data, string className, Faction faction = null,
-        NPCSettlement homeLocation = null, IDwelling homeStructure = null) {
+        NPCSettlement homeLocation = null, LocationStructure homeStructure = null) {
         Character newCharacter = new Character(className, data.race, data.gender, data.sexuality, data.id);
         newCharacter.SetName(data.name);
         
@@ -371,7 +371,7 @@ public class CharacterManager : MonoBehaviour {
 
     #region Summons
     public Summon CreateNewSummon(SUMMON_TYPE summonType, Faction faction = null, BaseSettlement homeLocation = null,
-        Region homeRegion = null, IDwelling homeStructure = null, string className = "") {
+        Region homeRegion = null, LocationStructure homeStructure = null, string className = "") {
         Summon newCharacter = CreateNewSummonClassFromType(summonType, className) as Summon;
         newCharacter.Initialize();
         if (faction != null) {
@@ -392,7 +392,7 @@ public class CharacterManager : MonoBehaviour {
         return newCharacter;
     }
     public Summon CreateNewSummon(SaveDataSummon data, Faction faction = null, BaseSettlement homeLocation = null,
-        Region homeRegion = null, IDwelling homeStructure = null) {
+        Region homeRegion = null, LocationStructure homeStructure = null) {
         Summon newCharacter = CreateNewSummonClassFromType(data.summonType, data.className) as Summon;
         newCharacter.ChangeGender(data.gender);
         newCharacter.ChangeRace(data.race);

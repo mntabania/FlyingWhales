@@ -241,10 +241,9 @@ public class PlayGuitarData : GoapActionData {
             if (actor.homeStructure == knownLoc.structure) {
                 return true;
             } else {
-                IDwelling dwelling = knownLoc.structure as IDwelling;
-                if (dwelling.IsOccupied()) {
-                    for (int i = 0; i < dwelling.residents.Count; i++) {
-                        Character currResident = dwelling.residents[i];
+                if (knownLoc.structure.IsOccupied()) {
+                    for (int i = 0; i < knownLoc.structure.residents.Count; i++) {
+                        Character currResident = knownLoc.structure.residents[i];
                         if (currResident.relationshipContainer.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.POSITIVE) {
                             return true;
                         }

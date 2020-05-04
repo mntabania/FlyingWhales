@@ -49,7 +49,7 @@ namespace Locations.Settlements {
         public void SetInitialResidentCount(int count) {
             citizenCount = count;
         }
-        public virtual bool AddResident(Character character, IDwelling chosenHome = null, bool ignoreCapacity = true) {
+        public virtual bool AddResident(Character character, LocationStructure chosenHome = null, bool ignoreCapacity = true) {
             if (!residents.Contains(character)) {
                 if (!ignoreCapacity) {
                     if (IsResidentsFull()) {
@@ -80,7 +80,7 @@ namespace Locations.Settlements {
             }
             return false;
         }
-        public virtual void AssignCharacterToDwellingInArea(Character character, IDwelling dwellingOverride = null) {
+        public virtual void AssignCharacterToDwellingInArea(Character character, LocationStructure dwellingOverride = null) {
             if (structures == null) {
                 Debug.LogWarning(
                     $"{name} doesn't have any dwellings for {character.name} because structures have not been generated yet");
@@ -95,7 +95,7 @@ namespace Locations.Settlements {
                 character.SetHomeStructure(null);
                 return;
             }
-            IDwelling chosenDwelling = dwellingOverride;
+            LocationStructure chosenDwelling = dwellingOverride;
             if (chosenDwelling == null) {
                 Character lover = CharacterManager.Instance.GetCharacterByID(character.relationshipContainer
                     .GetFirstRelatableIDWithRelationship(RELATIONSHIP_TYPE.LOVER));
@@ -105,7 +105,7 @@ namespace Locations.Settlements {
                 if (chosenDwelling == null && (character.homeStructure == null || character.homeStructure.location.id != id)) { //else, find an unoccupied dwelling (also check if the character doesn't already live in this npcSettlement)
                     List<LocationStructure> structureList = structures[STRUCTURE_TYPE.DWELLING];
                     for (int i = 0; i < structureList.Count; i++) {
-                        Dwelling currDwelling = structureList[i] as Dwelling;
+                        LocationStructure currDwelling = structureList[i];
                         if (currDwelling.CanBeResidentHere(character)) {
                             chosenDwelling = currDwelling;
                             break;

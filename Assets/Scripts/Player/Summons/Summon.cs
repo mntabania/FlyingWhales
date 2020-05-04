@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
-using JetBrains.Annotations;
 using Traits;
 using UnityEngine;
 using Interrupts;
@@ -12,8 +11,6 @@ public class Summon : Character, IWorldObject {
 
 	public SUMMON_TYPE summonType { get; private set; }
     public bool hasBeenUsed { get; private set; } //has this summon been used in the current map. TODO: Set this to false at end of invasion of map.
-
-    public List<HexTile> territorries { get; private set; }
     
     #region getters/setters
     public virtual string worldObjectName {
@@ -30,11 +27,11 @@ public class Summon : Character, IWorldObject {
     // }
     protected Summon(SUMMON_TYPE summonType, string className, RACE race, GENDER gender) : base(className, race, gender) {
         this.summonType = summonType;
-        territorries = new List<HexTile>();
+        //territorries = new List<HexTile>();
     }
     protected Summon(SaveDataCharacter data) : base(data) {
         this.summonType = data.summonType;
-        territorries = new List<HexTile>();
+        //territorries = new List<HexTile>();
     }
 
     #region Overrides
@@ -133,7 +130,7 @@ public class Summon : Character, IWorldObject {
 
             if (homeRegion != null) {
                 Region home = homeRegion;
-                IDwelling homeStructure = this.homeStructure;
+                LocationStructure homeStructure = this.homeStructure;
                 homeRegion.RemoveResident(this);
                 SetHomeRegion(home); //keep this data with character to prevent errors
                 SetHomeStructure(homeStructure); //keep this data with character to prevent errors
@@ -273,39 +270,6 @@ public class Summon : Character, IWorldObject {
     public void Obtain() {
         //invading a region with a summon will recruit that summon for the player
         //UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Gained new Summon: " + this.summonType.SummonName(), () => PlayerManager.Instance.player.GainSummon(this, true));
-    }
-    #endregion
-
-    #region Territorries
-    public void AddTerritory([NotNull]HexTile tile) {
-        if (territorries.Contains(tile) == false) {
-            territorries.Add(tile);
-        }
-    }
-    public void RemoveTerritory(HexTile tile) {
-        territorries.Remove(tile);
-    }
-    public bool HasTerritory() {
-        return territorries.Count > 0;
-    }
-    public bool IsInTerritory() {
-        if (gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-            return territorries.Contains(gridTileLocation.collectionOwner.partOfHextile.hexTileOwner);    
-        }
-        return false;
-    }
-    public LocationGridTile GetRandomLocationGridTileWithPath() {
-        LocationGridTile chosenTile = null;
-        if(territorries.Count > 0) {
-            //while (chosenTile == null) {
-                HexTile chosenTerritory = territorries[UnityEngine.Random.Range(0, territorries.Count)];
-                LocationGridTile chosenGridTile = chosenTerritory.locationGridTiles[UnityEngine.Random.Range(0, chosenTerritory.locationGridTiles.Count)];
-                if(PathfindingManager.Instance.HasPathEvenDiffRegion(gridTileLocation, chosenGridTile)) {
-                    chosenTile = chosenGridTile;
-                }
-            //}
-        }
-        return chosenTile;
     }
     #endregion
 

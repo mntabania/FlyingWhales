@@ -24,11 +24,12 @@ public class MonsterGeneration : MapGenerationComponent {
 		LocationGridTile targetTile = CollectionUtilities.GetRandomElement(monsterLairStructure.unoccupiedTiles);
 		CharacterManager.Instance.PlaceSummon(summon, targetTile);
 		summon.AddTerritory(monsterLair.tileLocation);
-		if (monsterLairStructure is IDwelling homeStructure) {
-			summon.MigrateHomeStructureTo(homeStructure);	
-		}
-	}
-	private Summon CreateMonster(SUMMON_TYPE summonType, List<LocationGridTile> locationChoices, LocationStructure homeStructure = null, params HexTile[] territories) {
+        summon.MigrateHomeStructureTo(monsterLairStructure);
+        //if (monsterLairStructure is LocationStructure homeStructure) {
+        //	summon.MigrateHomeStructureTo(homeStructure);	
+        //}
+    }
+    private Summon CreateMonster(SUMMON_TYPE summonType, List<LocationGridTile> locationChoices, LocationStructure homeStructure = null, params HexTile[] territories) {
 		var chosenTile = homeStructure != null ? CollectionUtilities.GetRandomElement(homeStructure.unoccupiedTiles) : CollectionUtilities.GetRandomElement(locationChoices);
 		Assert.IsNotNull(chosenTile, $"Chosen tile for {summonType.ToString()} is null!");
 		Assert.IsTrue(chosenTile.collectionOwner.isPartOfParentRegionMap, $"Chosen tile for {summonType.ToString()} is not part of the region map!");
@@ -41,9 +42,10 @@ public class MonsterGeneration : MapGenerationComponent {
 				summon.AddTerritory(territory);
 			}
 		}
-		if (homeStructure is IDwelling structure) {
-			summon.MigrateHomeStructureTo(structure);
-		}
+        summon.MigrateHomeStructureTo(homeStructure);
+  //      if (homeStructure is IDwelling structure) {
+		//	summon.MigrateHomeStructureTo(structure);
+		//}
 		return summon;
 	}
 	#endregion

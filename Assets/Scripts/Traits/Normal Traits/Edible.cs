@@ -90,17 +90,15 @@ namespace Traits {
                         if (table.structureLocation == actor.homeStructure) {
                             cost = 12;
                         } else {
-                            IDwelling dwelling = table.structureLocation as IDwelling;
-                            if (dwelling.HasPositiveRelationshipWithAnyResident(actor)) {
+                            if (table.structureLocation.HasPositiveRelationshipWithAnyResident(actor)) {
                                 cost = 18;
-                            } else if (!dwelling.IsOccupied()) {
+                            } else if (!table.structureLocation.IsOccupied()) {
                                 cost = 28;
                             }
                         }
                     } else {
                         cost = 28;
                     }
-                    
                 }
                
             }

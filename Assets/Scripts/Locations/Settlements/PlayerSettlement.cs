@@ -8,7 +8,7 @@ namespace Locations.Settlements {
 
 
         #region Residents
-        public override void AssignCharacterToDwellingInArea(Character character, IDwelling dwellingOverride = null) {
+        public override void AssignCharacterToDwellingInArea(Character character, LocationStructure dwellingOverride = null) {
             if (structures == null) {
                 Debug.LogWarning(
                     $"{name} doesn't have any dwellings for {character.name} because structures have not been generated yet");
@@ -22,17 +22,17 @@ namespace Locations.Settlements {
                 character.SetHomeStructure(null);
                 return;
             }
-            IDwelling chosenDwelling = dwellingOverride;
+            LocationStructure chosenDwelling = dwellingOverride;
             if (chosenDwelling == null) {
                 if (PlayerManager.Instance != null && PlayerManager.Instance.player != null && id == PlayerManager.Instance.player.playerSettlement.id) {
-                    chosenDwelling = structures[STRUCTURE_TYPE.DWELLING][0] as Dwelling; //to avoid errors, residents in player npcSettlement will all share the same dwelling
+                    chosenDwelling = structures[STRUCTURE_TYPE.DWELLING][0]; //to avoid errors, residents in player npcSettlement will all share the same dwelling
                 }
             }
             if (chosenDwelling == null) {
                 //if the code reaches here, it means that the npcSettlement could not find a dwelling for the character
                 Debug.LogWarning(
                     $"{GameManager.Instance.TodayLogString()}Could not find a dwelling for {character.name} at {name}, setting home to Town Center");
-                chosenDwelling = GetRandomStructureOfType(STRUCTURE_TYPE.CITY_CENTER) as CityCenter;
+                chosenDwelling = GetRandomStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
             }
             character.MigrateHomeStructureTo(chosenDwelling);
         }

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Inner_Maps.Location_Structures;
 
 namespace Interrupts {
     public class SetHome : Interrupt {
@@ -15,7 +16,7 @@ namespace Interrupts {
             ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             if(actor.homeSettlement != null) {
                 NPCSettlement npcSettlement = actor.homeSettlement;
-                IDwelling chosenHomeStructure = null;
+                LocationStructure chosenHomeStructure = null;
                 if(target != actor) {
                     chosenHomeStructure = (target as Character).homeStructure;
                 }
