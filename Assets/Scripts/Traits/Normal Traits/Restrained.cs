@@ -56,9 +56,10 @@ namespace Traits {
             if (sourceCharacter is Character) {
                 Character character = sourceCharacter as Character;
                 character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.FEED);
-                if(!(removedBy != null && removedBy.currentActionNode.action.goapType == INTERACTION_TYPE.JUDGE_CHARACTER && removedBy.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING)) {
-                    character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.JUDGE_PRISONER);
-                }
+                character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.JUDGE_PRISONER);
+                // if(!(removedBy != null && removedBy.currentActionNode.action.goapType == INTERACTION_TYPE.JUDGE_CHARACTER && removedBy.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING)) {
+                //     character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.JUDGE_PRISONER);
+                // }
                 //Messenger.RemoveListener(Signals.TICK_STARTED, CheckRestrainTrait);
                 //Messenger.RemoveListener(Signals.HOUR_STARTED, CheckRestrainTraitPerHour);
                 //_sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, name.ToLower());

@@ -1233,6 +1233,7 @@
           </e>
           <e p="Goap" t="Include">
             <e p="Actions" t="Include">
+              <e p="Absolve.cs" t="Include" />
               <e p="Accident.cs" t="Include" />
               <e p="AskForHelpRemovePoisonTable.cs" t="Include" />
               <e p="AskForHelpSaveCharacter.cs" t="Include" />
@@ -1265,6 +1266,8 @@
               <e p="Drop.cs" t="Include" />
               <e p="DropItem.cs" t="Include" />
               <e p="DropResource.cs" t="Include" />
+              <e p="Execute.cs" t="Include" />
+              <e p="Exile.cs" t="Include" />
               <e p="ExtractItem.cs" t="Include" />
               <e p="Feed.cs" t="Include" />
               <e p="FeelingBrokenhearted.cs" t="Include" />
@@ -1365,6 +1368,7 @@
               <e p="TransformToWolfForm.cs" t="Include" />
               <e p="Visit.cs" t="Include" />
               <e p="Watch.cs" t="Include" />
+              <e p="Whip.cs" t="Include" />
               <e p="ZombieDeath.cs" t="Include" />
             </e>
             <e p="Awareness" t="Include">

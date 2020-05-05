@@ -79,7 +79,6 @@ namespace Tutorial {
         }
         protected override void MakeUnavailable() {
             base.MakeUnavailable();
-            Assert.IsTrue(TutorialManager.Instance.IsInWaitList(this), $"{questName} is being made unavailable even though it is not the the current tutorial wait list.");
             TutorialManager.Instance.RemoveTutorialFromWaitList(this);
         }
         #endregion

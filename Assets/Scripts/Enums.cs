@@ -966,7 +966,11 @@ public enum INTERACTION_TYPE {
     DOUSE_FIRE,
     ATTACK_DEMONIC_STRUCTURE,
     HEAL_SELF,
-    OPEN
+    OPEN,
+    EXILE,
+    WHIP,
+    EXECUTE,
+    ABSOLVE
 }
 
 public enum INTERACTION_CATEGORY {

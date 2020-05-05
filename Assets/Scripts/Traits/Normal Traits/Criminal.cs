@@ -50,13 +50,13 @@ namespace Traits {
         #endregion
 
         #region General
-        public void SetCrime(CRIME_TYPE crimeType, ICrimeable crime) {
+        public void SetCrime(CRIME_TYPE crimeType, ICrimeable crime, IPointOfInterest crimeTarget) {
             if(crimeData != null) {
                 Debug.LogError(
                     $"Cannot set crime to criminal {owner.name} because it already has a crime: {crimeData.crimeType}");
                 return;
             }
-            crimeData = new CrimeData(crimeType, crime, owner);
+            crimeData = new CrimeData(crimeType, crime, owner, crimeTarget);
         }
         #endregion
     }
