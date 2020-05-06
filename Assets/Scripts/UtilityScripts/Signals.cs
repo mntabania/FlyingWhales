@@ -579,6 +579,7 @@ public static class Signals {
     /// Parameters (TutorialQuestCriteria)
     /// </summary>
     public static string TUTORIAL_QUEST_CRITERIA_UNMET = "OnTutorialQuestCriteriaUnMet";
+    public static string METEOR_FELL = "OnMeteorFell";
     #endregion
 
     #region Elements
@@ -614,6 +615,7 @@ public static class Signals {
             new SignalMethod() { methodName = "OnTickEnded", objectType = typeof(Character) },
         }},
     };
+    
     public static bool TryGetMatchingSignalMethod(string eventType, Callback method, out SignalMethod matching) {
         for (int i = 0; i < orderedSignalExecution[eventType].Length; i++) {
             SignalMethod sm = orderedSignalExecution[eventType][i];

@@ -39188,6 +39188,9 @@ MonoBehaviour:
   afflictionsVideoClip: {fileID: 32900000, guid: edc67aca1c56f624abdd136bab3cc69a,
     type: 3}
   deadCharactersImage: {fileID: 2800000, guid: 1358bb0264fccaa47b07f470d372be20, type: 3}
+  afflictButtonVideoClip: {fileID: 32900000, guid: faa7a4e2f2b9ece4698d2dd21be74b89,
+    type: 3}
+  spellsTabVideoClip: {fileID: 32900000, guid: 34bab97629f177041971f4b1c90d74a6, type: 3}
 --- !u!4 &711025101 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4243562867990628, guid: c51738521ec0ac14abf6fc9fd57b44d9,

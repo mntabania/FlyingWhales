@@ -27,10 +27,15 @@ namespace Tutorial {
         
         protected override void ConstructSteps() {
             steps = new List<QuestStepCollection>() {
-                new QuestStepCollection(new ClickOnCharacterStep("Click on a valid sapient character",
-                    IsCharacterValid).SetHoverOverAction(OnHoverSelectCharacterStep).SetHoverOutAction(UIManager.Instance.HideSmallInfo)),
                 new QuestStepCollection(
-                    new ObjectPickerShownStep("Click on Afflict button", "Intervention Ability"),
+                    new ClickOnCharacterStep("Click on a Villager", IsCharacterValid)
+                        .SetHoverOverAction(OnHoverSelectCharacterStep)
+                        .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
+                    ),
+                new QuestStepCollection(
+                    new ObjectPickerShownStep("Click on Afflict button", "Intervention Ability")
+                        .SetHoverOverAction(OnHoverAfflictButtonStep)
+                        .SetHoverOutAction(UIManager.Instance.HideSmallInfo),
                     new ExecuteAfflictionStep("Choose an Affliction to apply").SetCompleteAction(OnCompleteExecuteAffliction)
                 )
             };
@@ -53,6 +58,10 @@ namespace Tutorial {
                 "There are a vast number of different types of Afflictions you may experiment with. " +
                 "You can turn someone into a Psychopath or a Vampire, or you can afflict one with a Zombie Virus.",
                 TutorialManager.Instance.afflictionsVideoClip);
+        }
+        private void OnHoverAfflictButtonStep(QuestStepItem item) {
+            UIManager.Instance.ShowSmallInfo("The afflict button can be seen beside the selected character's nameplate",
+                TutorialManager.Instance.afflictButtonVideoClip, "How to Afflict", item.hoverPosition);
         }
         #endregion
     }

@@ -43,6 +43,8 @@ namespace Tutorial {
         public VideoClip spellsVideoClip;
         public VideoClip afflictionsVideoClip;
         public Texture deadCharactersImage;
+        public VideoClip afflictButtonVideoClip;
+        public VideoClip spellsTabVideoClip;
 
         #region Monobehaviours
         private void Awake() {

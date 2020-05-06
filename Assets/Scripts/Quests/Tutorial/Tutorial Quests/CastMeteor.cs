@@ -23,7 +23,10 @@ namespace Tutorial {
         #region Overrides
         protected override void ConstructSteps() {
             steps = new List<QuestStepCollection>() {
-                new QuestStepCollection(new ShowSpellMenuStep()),
+                new QuestStepCollection(new ShowSpellMenuStep()
+                    .SetHoverOverAction(OnHoverShowSpell)
+                    .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
+                ),
                 new QuestStepCollection(new ChooseSpellStep(SPELL_TYPE.METEOR, "Click on Meteor")),
                 new QuestStepCollection(new ExecuteSpellStep(SPELL_TYPE.METEOR, "Cast on any tile")
                     .SetCompleteAction(OnCompleteExecuteSpell))
@@ -31,9 +34,16 @@ namespace Tutorial {
         }
         #endregion
         
-
         #region Step Helpers
+        private void OnHoverShowSpell(QuestStepItem item) {
+            UIManager.Instance.ShowSmallInfo("The spells tab can be accessed on the top left of your screen.",
+                TutorialManager.Instance.spellsTabVideoClip, "Spells Tab", item.hoverPosition);
+        }
         private void OnCompleteExecuteSpell() {
+            TutorialManager.Instance.StartCoroutine(DelayedOnExecuteSpellPopup());
+        }
+        private IEnumerator DelayedOnExecuteSpellPopup() {
+            yield return new WaitForSecondsRealtime(1.5f);
             UIManager.Instance.generalConfirmationWithVisual.ShowGeneralConfirmation("Spells",
                 "These are powerful magic that you may cast on a tile or an area of the map. " +
                 "Spells do not have any Mana Cost but they have a limited number of Charges. " +

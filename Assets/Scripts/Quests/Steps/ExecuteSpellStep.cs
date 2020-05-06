@@ -7,10 +7,19 @@
             _neededSpellType = neededSpellType;
         }
         protected override void SubscribeListeners() {
-            Messenger.AddListener<SpellData>(Signals.ON_EXECUTE_SPELL, CheckForCompletion);
+            if (_neededSpellType == SPELL_TYPE.METEOR) {
+                Messenger.AddListener(Signals.METEOR_FELL, Complete);
+            } else {
+                Messenger.AddListener<SpellData>(Signals.ON_EXECUTE_SPELL, CheckForCompletion);    
+            }
+            
         }
         protected override void UnSubscribeListeners() {
-            Messenger.RemoveListener<SpellData>(Signals.ON_EXECUTE_SPELL, CheckForCompletion);
+            if (_neededSpellType == SPELL_TYPE.METEOR) {
+                Messenger.RemoveListener(Signals.METEOR_FELL, Complete);
+            } else {
+                Messenger.RemoveListener<SpellData>(Signals.ON_EXECUTE_SPELL, CheckForCompletion);
+            }
         }
 
         #region Listeners
