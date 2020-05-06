@@ -27,10 +27,9 @@
         target.traitContainer.RemoveTrait(target, "Criminal", goapNode.actor);
         target.traitContainer.RemoveTrait(target, "Restrained", goapNode.actor);
         Faction oldFaction = target.faction;
-        target.ChangeFactionTo(FactionManager.Instance.neutralFaction);
+        oldFaction.KickOutCharacter(target);
         target.MigrateHomeTo(null, null);
         target.ClearTerritory();
-        oldFaction.AddBannedCharacter(target);
     }
     #endregion
 }

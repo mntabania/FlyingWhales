@@ -130,8 +130,8 @@ public class JudgeCharacter : GoapAction {
         string chosen = weights.PickRandomElementGivenWeights();
         debugLog += $"\n\n{chosen}";
         actor.logComponent.PrintLogIfActive(debugLog);
+        
         CreateJudgeLog(goapNode, chosen);
-
         if (chosen == "Absolve") {
             crimeData?.SetCrimeStatus(CRIME_STATUS.Absolved);
             TargetAbsolved(goapNode);
