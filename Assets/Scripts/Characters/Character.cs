@@ -4211,6 +4211,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         AddAdvertisedAction(INTERACTION_TYPE.WHIP);
         AddAdvertisedAction(INTERACTION_TYPE.EXECUTE);
         AddAdvertisedAction(INTERACTION_TYPE.ABSOLVE);
+        AddAdvertisedAction(INTERACTION_TYPE.START_TEND);
         
         if (this is Summon) {
             AddAdvertisedAction(INTERACTION_TYPE.PLAY);

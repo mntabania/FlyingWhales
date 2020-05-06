@@ -233,4 +233,16 @@ public class BehaviourComponent {
         return log;
     }
     #endregion
+
+    #region Inquiry
+    public bool HasBehaviour(System.Type type) {
+        for (int i = 0; i < currentBehaviourComponents.Count; i++) {
+            CharacterBehaviourComponent cbc = currentBehaviourComponents[i];
+            if (cbc.GetType() == type) {
+                return true;
+            }
+        }
+        return false;
+    }
+    #endregion
 }

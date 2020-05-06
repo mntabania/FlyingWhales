@@ -25,6 +25,8 @@ public class DemoUI : MonoBehaviour {
     public void ShowStartScreen() {
         UIManager.Instance.Pause();
         UIManager.Instance.SetSpeedTogglesState(false);
+        CameraMove.Instance.DisableMovement();
+        InnerMapCameraMove.Instance.DisableMovement();
         startScreen.gameObject.SetActive(true);
         startMessageWindow.gameObject.SetActive(true);
         startGameButton.gameObject.SetActive(true);
@@ -63,6 +65,8 @@ public class DemoUI : MonoBehaviour {
     private void HideStartDemoScreen() {
         startScreen.gameObject.SetActive(false);
         UIManager.Instance.SetSpeedTogglesState(true);
+        CameraMove.Instance.EnableMovement();
+        InnerMapCameraMove.Instance.EnableMovement();
 
         TutorialManager.Instance.InstantiatePendingTutorials();
     }

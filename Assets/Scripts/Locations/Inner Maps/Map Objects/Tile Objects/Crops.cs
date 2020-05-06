@@ -1,43 +1,47 @@
 ﻿public abstract class Crops : TileObject {
     public enum Growth_State { Growing, Ripe }
-    
-    protected string ripeScheduleKey;
     public Growth_State currentGrowthState { get; private set; }
-    private GameDate ripeningDate;
+    private int _remainingRipeningTicks;
+    private int _growthRate; //how fast does this crop grow? (aka how many ticks are subtracted from the remaining ripening ticks per tick)
 
+    protected Crops() {
+        SetGrowthRate(1);
+    }
+    
     #region Growth
     protected void SetGrowthState(Growth_State growthState) {
         currentGrowthState = growthState;
         if (growthState == Growth_State.Growing) {
-            ScheduleRipening();
+            _remainingRipeningTicks = GetRipeningTicks();
+            Messenger.AddListener(Signals.TICK_ENDED, PerTickGrowth);
             RemoveAdvertisedAction(INTERACTION_TYPE.HARVEST_PLANT);
         } else if (growthState == Growth_State.Ripe) {
-            ripeScheduleKey = string.Empty;
+            _remainingRipeningTicks = 0;
+            Messenger.RemoveListener(Signals.TICK_ENDED, PerTickGrowth);
             AddAdvertisedAction(INTERACTION_TYPE.HARVEST_PLANT);
         }
         mapVisual.UpdateTileObjectVisual(this);
     }
-    private void ScheduleRipening() {
-        if (string.IsNullOrEmpty(ripeScheduleKey) == false) { return; } //already have a 
-        GameDate dueDate = GameManager.Instance.Today();
-        dueDate.AddTicks(GetRipeningTicks());
-        ripeningDate = dueDate;
-        ripeScheduleKey =
-            SchedulingManager.Instance.AddEntry(dueDate, () => SetGrowthState(Growth_State.Ripe), this);
-    }
+    
     /// <summary>
     /// function to get how many ticks until this crop becomes ripe.
     /// </summary>
     /// <returns></returns>
     protected abstract int GetRipeningTicks();
+    private void PerTickGrowth() {
+        if (_remainingRipeningTicks <= 0) {
+            SetGrowthState(Growth_State.Ripe);
+        }
+        _remainingRipeningTicks -= _growthRate;
+    }
+    public void SetGrowthRate(int growthRate) {
+        _growthRate = growthRate;
+    }
     #endregion
-
+    
     public override void OnDestroyPOI() {
         base.OnDestroyPOI();
-        if (string.IsNullOrEmpty(ripeScheduleKey) == false) {
-            SchedulingManager.Instance.RemoveSpecificEntry(ripeScheduleKey);
-            ripeScheduleKey = string.Empty;
-        }
+        Messenger.RemoveListener(Signals.TICK_ENDED, PerTickGrowth);
     }
     public override void OnPlacePOI() {
         base.OnPlacePOI();
@@ -48,8 +52,9 @@
     public override string GetAdditionalTestingData() {
         string data = base.GetAdditionalTestingData();
         data += $"\n\tGrowth State {currentGrowthState.ToString()}";
+        data += $"\n\tGrowth Rate {_growthRate.ToString()}";
         data += $"\n\tRipening ticks: {GetRipeningTicks().ToString()}";
-        data += $"\n\tRipening Date: {ripeningDate.ConvertToContinuousDaysWithTime()}";
+        data += $"\n\tRemaining ticks until ripe: {_remainingRipeningTicks.ToString()}";
         return data;
     }
     #endregion

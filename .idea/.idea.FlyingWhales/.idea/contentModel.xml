@@ -1052,6 +1052,7 @@
               <e p="SerialKillerBehaviour.cs" t="Include" />
               <e p="SettlementRulerBehaviour.cs" t="Include" />
               <e p="SuicidalBehaviour.cs" t="Include" />
+              <e p="TendFarmBehaviour.cs" t="Include" />
               <e p="WorkBehaviour.cs" t="Include" />
             </e>
             <e p="Character Marker" t="Include">
@@ -1330,6 +1331,7 @@
               <e p="SleepOutside.cs" t="Include" />
               <e p="Stand.cs" t="Include" />
               <e p="StandStill.cs" t="Include" />
+              <e p="StartTend.cs" t="Include" />
               <e p="Steal.cs" t="Include" />
               <e p="StealthTransform.cs" t="Include" />
               <e p="Strangle.cs" t="Include" />
@@ -1338,6 +1340,7 @@
               <e p="TakeResource.cs" t="Include" />
               <e p="Tantrum.cs" t="Include" />
               <e p="Tease.cs" t="Include" />
+              <e p="Tend.cs" t="Include" />
               <e p="Tile Object Actions" t="Include">
                 <e p="BuildStructure.cs" t="Include" />
                 <e p="ChopWood.cs" t="Include" />
@@ -2282,6 +2285,8 @@
               <e p="Spooked.cs" t="Include" />
               <e p="Suicidal.cs" t="Include" />
               <e p="Suspicious.cs" t="Include" />
+              <e p="Tended.cs" t="Include" />
+              <e p="Tending.cs" t="Include" />
               <e p="Trait.cs" t="Include" />
               <e p="Unconscious.cs" t="Include" />
               <e p="Unfaithful.cs" t="Include" />

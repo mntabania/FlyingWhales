@@ -281,13 +281,18 @@ namespace Inner_Maps.Location_Structures {
             }
             return objs;
         }
-        public List<T> GetTileObjectsOfType<T>() where T : TileObject {
+        public List<T> GetTileObjectsOfType<T>(System.Func<T, bool> validityChecker = null) where T : TileObject {
             List<T> objs = new List<T>();
             for (int i = 0; i < pointsOfInterest.Count; i++) {
                 IPointOfInterest poi = pointsOfInterest.ElementAt(i); 
-                if (poi is T) {
-                    T obj = poi as T;
-                    objs.Add(obj);
+                if (poi is T obj) {
+                    if (validityChecker != null) {
+                        if (validityChecker.Invoke(obj)) {
+                            objs.Add(obj);    
+                        }  
+                    } else {
+                        objs.Add(obj);    
+                    }
                 }
             }
             return objs;
@@ -301,6 +306,16 @@ namespace Inner_Maps.Location_Structures {
                     if (obj.tileObjectType == type) {
                         return obj as T;
                     }
+                }
+            }
+            return null;
+        }
+        public T GetTileObjectOfType<T>() where T : TileObject{
+            List<TileObject> objs = new List<TileObject>();
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest poi = pointsOfInterest.ElementAt(i); 
+                if (poi is T obj) {
+                    return obj;
                 }
             }
             return null;

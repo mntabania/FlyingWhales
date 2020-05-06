@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class BerryShrub : Crops {
 
-    public BerryShrub() {
+    public BerryShrub() : base() {
         Initialize(TILE_OBJECT_TYPE.BERRY_SHRUB);
     }
     public BerryShrub(SaveDataTileObject data) {

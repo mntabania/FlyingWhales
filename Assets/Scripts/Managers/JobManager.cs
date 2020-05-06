@@ -25,10 +25,10 @@ public class JobManager : MonoBehaviour {
         }
     }
     public void OnFinishJob(JobQueueItem job) {
-        if (job is GoapPlanJob) {
-            ReturnGoapPlanJobToPool(job as GoapPlanJob);
-        } else { //if (job is CharacterStateJob) 
-            ReturnCharacterStateJobToPool(job as CharacterStateJob);
+        if (job is GoapPlanJob planJob) {
+            ReturnGoapPlanJobToPool(planJob);
+        } else if (job is CharacterStateJob stateJob) { //
+            ReturnCharacterStateJobToPool(stateJob);
         }
     }
 
@@ -93,6 +93,7 @@ public class JobManager : MonoBehaviour {
         job.Initialize(data);
         return job;
     }
+
     private CharacterStateJob GetCharacterStateJobFromPool() {
         if (stateJobPool.Count > 0) {
             CharacterStateJob job = stateJobPool[0];

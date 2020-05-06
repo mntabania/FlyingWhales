@@ -15,9 +15,12 @@ public class BaseCameraMove : MonoBehaviour{
     private bool startedOnUI = false;
     private bool hasReachedThreshold = false;
     private Vector3 originMousePos;
+
+    private bool isMovementDisabled;
     
     #region Movement
     protected void ArrowKeysMovement() {
+        if (isMovementDisabled) { return; }
         if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S)) {
             if (!UIManager.Instance.IsConsoleShowing()) { 
                 float yAxisValue = Input.GetAxis("Vertical");
@@ -37,6 +40,7 @@ public class BaseCameraMove : MonoBehaviour{
         }
     }
     protected void Dragging(Camera targetCamera) {
+        if (isMovementDisabled) { return; }
         if (startedOnUI) {
             if (!Input.GetMouseButton(2)) {
                 ResetDragValues();
@@ -88,6 +92,12 @@ public class BaseCameraMove : MonoBehaviour{
         isDragging = false;
         startedOnUI = false;
         hasReachedThreshold = false;
+    }
+    public void DisableMovement() {
+        isMovementDisabled = true;
+    }
+    public void EnableMovement() {
+        isMovementDisabled = false;
     }
     #endregion
 }

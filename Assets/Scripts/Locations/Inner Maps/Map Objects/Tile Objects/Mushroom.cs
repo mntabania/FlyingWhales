@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Mushroom : Crops {
 
-    public Mushroom() {
+    public Mushroom() : base() {
         Initialize(TILE_OBJECT_TYPE.MUSHROOM);
     }
     public Mushroom(SaveDataTileObject data) {

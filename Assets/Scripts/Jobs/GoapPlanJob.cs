@@ -150,10 +150,11 @@ public class GoapPlanJob : JobQueueItem {
         if(assignedPlan == null && originalOwner != null) {
             Character characterOwner = assignedCharacter;
             bool isPersonal = originalOwner.ownerType == JOB_OWNER.CHARACTER;
+            IPointOfInterest target = targetPOI ?? assignedCharacter; //if provided target is null, default to the assigned character.
             if (targetInteractionType != INTERACTION_TYPE.NONE) {
-                characterOwner.planner.StartGOAP(targetInteractionType, targetPOI, this, isPersonal);
+                characterOwner.planner.StartGOAP(targetInteractionType, target, this, isPersonal);
             } else {
-                characterOwner.planner.StartGOAP(goal, targetPOI, this, isPersonal);
+                characterOwner.planner.StartGOAP(goal, target, this, isPersonal);
                 //for (int i = 0; i < goals.Length; i++) {
                 //    Precondition goal = goals[i];
                 //    if(!goal.CanSatisfyCondition(characterOwner, targetPOI)) {

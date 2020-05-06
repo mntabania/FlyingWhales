@@ -192,6 +192,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		for (int i = 0; i < chosenTiles.Count; i++) {
 			HexTile chosenTile = chosenTiles[i];
 			chosenTile.SetElevation(ELEVATION.PLAIN);
+			chosenTile.featureComponent.RemoveAllFeatures(chosenTile);
 			chosenTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, chosenTile);
 			LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.VILLAGE);
 		}
