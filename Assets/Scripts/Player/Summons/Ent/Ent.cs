@@ -16,10 +16,10 @@ public abstract class Ent : Summon {
     public override void Initialize() {
         base.Initialize();
         SetDestroyMarkerOnDeath(true);
-        behaviourComponent.RemoveBehaviourComponent(typeof(DefaultMonster));
-        behaviourComponent.RemoveBehaviourComponent(typeof(MovementProcessing));
+        //behaviourComponent.RemoveBehaviourComponent(typeof(DefaultMonster));
+        //behaviourComponent.RemoveBehaviourComponent(typeof(MovementProcessing));
         behaviourComponent.AddBehaviourComponent(typeof(EntBehaviour));
-        behaviourComponent.AddBehaviourComponent(typeof(MovementProcessing));
+        //behaviourComponent.AddBehaviourComponent(typeof(MovementProcessing));
         //traitContainer.AddTrait(this, "Fire Prone");
     }
     public override void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false,

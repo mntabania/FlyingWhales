@@ -30,11 +30,13 @@ public class SpellNameplateItem : PooledObject {
         }
     }
     public void OnHoverSpell() {
-        string hoverShow = spellData.description + "\n" + spellData.GetManaCostChargesCooldownStr();
-        UIManager.Instance.ShowSmallInfo(hoverShow);
+        //string hoverShow = spellData.description + "\n" + spellData.GetManaCostChargesCooldownStr();
+        //UIManager.Instance.ShowSmallInfo(hoverShow);
+        PlayerUI.Instance.OnHoverSpell(spellData);
     }
     public void OnHoverOutSpell() {
-        UIManager.Instance.HideSmallInfo();
+        //UIManager.Instance.HideSmallInfo();
+        PlayerUI.Instance.OnHoverOutSpell(spellData);
     }
     public void UpdateInteractability() {
         spellToggle.interactable = spellData.CanPerformAbility();

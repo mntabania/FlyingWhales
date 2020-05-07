@@ -11,6 +11,7 @@ public class CombatManager : MonoBehaviour {
     public static CombatManager Instance;
 
     public const int pursueDuration = 10;
+    public const string Hostility = "Hostility", Retaliation = "Retaliation", Berserked = "Berserked", Action = "Action";
 
     [SerializeField] private ProjectileDictionary _projectileDictionary;
 

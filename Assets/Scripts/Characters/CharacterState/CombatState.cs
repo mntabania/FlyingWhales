@@ -114,14 +114,11 @@ public class CombatState : CharacterState {
         if (!stateComponent.character.isDead) {
             if (isBeingApprehended && stateComponent.character.traitContainer.HasTrait("Criminal") && stateComponent.character.canPerform && stateComponent.character.canMove) { //!stateComponent.character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
                 //If this criminal character is being apprehended and survived (meaning he did not die, or is not unconscious or restrained)
-                if (!stateComponent.character.isFactionless) {
+                if (!stateComponent.character.isFriendlyFactionless) {
                     //Leave current faction
-                    stateComponent.character.ChangeFactionTo(FactionManager.Instance.neutralFaction);
+                    stateComponent.character.ChangeFactionTo(FactionManager.Instance.friendlyNeutralFaction);
                 }
-
-                //TODO:
-                // Region newHomeRegion = GetCriminalNewHomeLocation();
-                // stateComponent.character.MigrateHomeTo(newHomeRegion);
+                stateComponent.character.MigrateHomeTo(null);
 
                 string log =
                     $"{stateComponent.character.name} is a criminal and survived being apprehended. Changed faction to: {stateComponent.character.faction.name} and home to: {stateComponent.character.homeRegion.name}";

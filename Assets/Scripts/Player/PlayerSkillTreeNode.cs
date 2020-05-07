@@ -8,6 +8,8 @@ public class PlayerSkillTreeNode {
     public int manaCost;
     public int charges;
     public int cooldown;
+    public int threat;
+    public int threatPerHour;
     public int expCost;
     public Sprite buttonSprite;
     public SPELL_TYPE[] unlockedSkills;
@@ -19,4 +21,6 @@ public class PlayerSkillTreeNodeData {
     public int manaCost;
     public int charges;
     public int cooldown;
+    public int threat;
+    public int threatPerHour;
 }

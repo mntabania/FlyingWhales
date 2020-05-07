@@ -14,46 +14,45 @@ public class BehaviourComponent {
     public bool isDefending { get; private set; }
     public bool isInvading { get; private set; }
     public bool isAttackingDemonicStructure { get; private set; }
+    public string defaultBehaviourSetName { get; private set; }
 
     private COMBAT_MODE combatModeBeforeHarassRaidInvade;
     private COMBAT_MODE combatModeBeforeAttackingDemonicStructure;
 
     public BehaviourComponent (Character owner) {
         this.owner = owner;
+        defaultBehaviourSetName = string.Empty;
         currentBehaviourComponents = new List<CharacterBehaviourComponent>();
+        PopulateInitialBehaviourComponents();
     }
 
     #region General
     public void PopulateInitialBehaviourComponents() {
-        System.Type[] classBehaviourComponents = CharacterManager.Instance.GetClassBehaviourComponents(owner.characterClass.className);
-        for (int i = 0; i < classBehaviourComponents.Length; i++) {
-            CharacterBehaviourComponent behaviourComponent = CharacterManager.Instance.GetCharacterBehaviourComponent(classBehaviourComponents[i]);
-            AddBehaviourComponent(behaviourComponent);
-        }
+        ChangeDefaultBehaviourSet(CharacterManager.Default_Resident_Behaviour);
     }
     public void OnChangeClass(CharacterClass newClass, CharacterClass oldClass) {
         if(oldClass == newClass) {
             return;
         }
-        if(oldClass != null && newClass != null) {
-            string oldClassBehaviourComponentKey = CharacterManager.Instance.GetClassBehaviourComponentKey(oldClass.className);
-            string newClassBehaviourComponentKey = CharacterManager.Instance.GetClassBehaviourComponentKey(newClass.className);
-            if (oldClassBehaviourComponentKey == newClassBehaviourComponentKey) {
-                return;
-            }
-        }
-        if (oldClass != null) {
-            System.Type[] classBehaviourComponents = CharacterManager.Instance.GetClassBehaviourComponents(oldClass.className);
-            for (int i = 0; i < classBehaviourComponents.Length; i++) {
-                RemoveBehaviourComponent(CharacterManager.Instance.GetCharacterBehaviourComponent(classBehaviourComponents[i]));
-            }
-        }
-        if(newClass != null) {
-            System.Type[] classBehaviourComponents = CharacterManager.Instance.GetClassBehaviourComponents(newClass.className);
-            for (int i = 0; i < classBehaviourComponents.Length; i++) {
-                AddBehaviourComponent(CharacterManager.Instance.GetCharacterBehaviourComponent(classBehaviourComponents[i]));
-            }
-        }
+        //if(oldClass != null && newClass != null) {
+        //    string oldClassBehaviourComponentKey = CharacterManager.Instance.GetClassBehaviourComponentKey(oldClass.className);
+        //    string newClassBehaviourComponentKey = CharacterManager.Instance.GetClassBehaviourComponentKey(newClass.className);
+        //    if (oldClassBehaviourComponentKey == newClassBehaviourComponentKey) {
+        //        return;
+        //    }
+        //}
+        //if (oldClass != null) {
+        //    System.Type[] classBehaviourComponents = CharacterManager.Instance.GetDefaultBehaviourSet(oldClass.className);
+        //    for (int i = 0; i < classBehaviourComponents.Length; i++) {
+        //        RemoveBehaviourComponent(CharacterManager.Instance.GetCharacterBehaviourComponent(classBehaviourComponents[i]));
+        //    }
+        //}
+        //if(newClass != null) {
+        //    System.Type[] classBehaviourComponents = CharacterManager.Instance.GetDefaultBehaviourSet(newClass.className);
+        //    for (int i = 0; i < classBehaviourComponents.Length; i++) {
+        //        AddBehaviourComponent(CharacterManager.Instance.GetCharacterBehaviourComponent(classBehaviourComponents[i]));
+        //    }
+        //}
     }
     public bool AddBehaviourComponent(CharacterBehaviourComponent component) {
         if(component == null) {
@@ -208,6 +207,29 @@ public class BehaviourComponent {
     private void OnNoLongerAbleResidentsInsideSettlement(NPCSettlement npcSettlement) {
         if(assignedTargetSettlement == npcSettlement) {
             SetIsInvading(false, null);
+        }
+    }
+    public void ChangeDefaultBehaviourSet(string setName) {
+        if(defaultBehaviourSetName != setName) {
+            RemoveDefaultBehaviourSet(defaultBehaviourSetName);
+            AddDefaultBehaviourSet(setName);
+            defaultBehaviourSetName = setName;
+        }
+    }
+    private void AddDefaultBehaviourSet(string setName) {
+        System.Type[] defaultBehaviours = CharacterManager.Instance.GetDefaultBehaviourSet(setName);
+        if(defaultBehaviours != null) {
+            for (int i = 0; i < defaultBehaviours.Length; i++) {
+                AddBehaviourComponent(defaultBehaviours[i]);
+            }
+        }
+    }
+    private void RemoveDefaultBehaviourSet(string setName) {
+        System.Type[] defaultBehaviours = CharacterManager.Instance.GetDefaultBehaviourSet(setName);
+        if (defaultBehaviours != null) {
+            for (int i = 0; i < defaultBehaviours.Length; i++) {
+                RemoveBehaviourComponent(defaultBehaviours[i]);
+            }
         }
     }
     #endregion

@@ -200,8 +200,9 @@ public class Party {
             if (targetPlagued != null) {
                 string plaguedSummary = $"{owner.name} carried a plagued character. Rolling for infection.";
                 int roll = UnityEngine.Random.Range(0, 100);
-                plaguedSummary += $"\nRoll is: {roll}, Chance is: {targetPlagued.GetCarryInfectChance()}";
-                if (roll < targetPlagued.GetCarryInfectChance()) {
+                int carryInfectChance = targetPlagued.GetCarryInfectChance();
+                plaguedSummary += $"\nRoll is: {roll}, Chance is: {carryInfectChance}";
+                if (roll < carryInfectChance) {
                     //carrier will be infected with plague
                     plaguedSummary += $"\nWill infect {owner.name} with plague!";
                     owner.interruptComponent.TriggerInterrupt(INTERRUPT.Plagued, owner);

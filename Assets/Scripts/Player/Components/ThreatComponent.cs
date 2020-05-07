@@ -9,7 +9,9 @@ public class ThreatComponent {
     public Player player { get; private set; }
 
     public const int MAX_THREAT = 100;
-    public int threat;
+    public int threat { get; private set; }
+    public int threatPerHour { get; private set; }
+
     /// <summary>
     /// The list of characters that are currently attacking your demonic structure.
     /// NOTE: This is only updated when threat has reached maximum
@@ -18,7 +20,10 @@ public class ThreatComponent {
 
     public ThreatComponent(Player player) {
         this.player = player;
-        Messenger.AddListener(Signals.TICK_STARTED, PerTick);
+        Messenger.AddListener(Signals.HOUR_STARTED, PerHour);
+    }
+    private void PerHour() {
+        AdjustThreat(threatPerHour);
     }
 
     public void AdjustThreat(int amount) {
@@ -36,15 +41,17 @@ public class ThreatComponent {
             Messenger.Broadcast(Signals.THREAT_MAXED_OUT);
             ResetThreat();
         }
-        //TODO: Threat Response - Assault Demonic Structure
+    }
+    public void AdjustThreatPerHour(int amount) {
+        threatPerHour += amount;
+    }
+    public void SetThreatPerHour(int amount) {
+        threatPerHour = amount;
     }
     public void ResetThreat() {
         threat = 0;
+        SetThreatPerHour(0);
         Messenger.Broadcast(Signals.THREAT_UPDATED);
-    }
-
-    private void PerTick() {
-
     }
 
     private void AssaultDemonicStructure(out List<Character> attackingCharacters) {

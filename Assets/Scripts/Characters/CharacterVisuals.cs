@@ -29,7 +29,6 @@ public class CharacterVisuals {
         portraitSettings = data.portraitSettings;
         CreateHairMaterial();
     }
-
     private void UpdatePortraitSettings(Character character) {
         portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(character.race, character.gender, character.characterClass.className);
     }

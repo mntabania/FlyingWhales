@@ -662,8 +662,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             LocationGridTile chosenTile = tile;
             if (chosenTile == null) {
                 if (_owner.gridTileLocation.collectionOwner.isPartOfParentRegionMap == false) {
-                    TriggerStand();
-                    return false;
+                    HexTile chosenTerritory = _owner.gridTileLocation.collectionOwner.GetNearestHexTile();
+                    chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
                 } else {
                     HexTile chosenTerritory = _owner.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
                     chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
@@ -1080,6 +1080,35 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         job.AddOtherData(INTERACTION_TYPE.SHARE_INFORMATION, new object[] { action });
         _owner.jobQueue.AddJobInQueue(job);
         return true;
+    }
+    #endregion
+
+    #region Visit Different Region
+    public bool TriggerVisitDifferentRegion() {
+        if (!_owner.jobQueue.HasJob(JOB_TYPE.VISIT_DIFFERENT_REGION)) {
+            Region chosenRegion = null;
+            List<Region> adjacentRegions = _owner.currentRegion.AdjacentRegions();
+            if(adjacentRegions != null && adjacentRegions.Count > 0) {
+                chosenRegion = adjacentRegions[UnityEngine.Random.Range(0, adjacentRegions.Count)];
+            }
+            if(chosenRegion != null) {
+                HexTile hex = chosenRegion.GetRandomPlainHex();
+                if(hex != null) {
+                    LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(hex.locationGridTiles);
+                    if (_owner.gridTileLocation != null && PathfindingManager.Instance.HasPathEvenDiffRegion(_owner.gridTileLocation, chosenTile)) {
+                        ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], _owner, _owner, new object[] { chosenTile }, 0);
+                        GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
+                        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.VISIT_DIFFERENT_REGION, INTERACTION_TYPE.ROAM, _owner, _owner);
+                        goapPlan.SetDoNotRecalculate(true);
+                        job.SetCannotBePushedBack(true);
+                        job.SetAssignedPlan(goapPlan);
+                        _owner.jobQueue.AddJobInQueue(job);
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
     #endregion
 }

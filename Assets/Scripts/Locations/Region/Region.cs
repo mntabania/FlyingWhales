@@ -36,11 +36,11 @@ public class Region {
     private RegionInnerTileMap _regionInnerTileMap; //inner map of the region, this should only be used if this region does not have an npcSettlement. 
     private string _activeEventAfterEffectScheduleId;
     private List<Border> _borders;
-    private Dictionary<STRUCTURE_TYPE, List<LocationStructure>> _structures;
-    
+    public Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures { get; private set; }
+    public List<LocationStructure> allStructures { get; private set; }
+
     #region getter/setter
     public BaseLandmark mainLandmark => coreTile.landmarkOnTile;
-    public Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures => _structures;
     public InnerTileMap innerMap => _regionInnerTileMap;
     #endregion
 
@@ -569,7 +569,8 @@ public class Region {
     
     #region Structures
     public void GenerateStructures() {
-        _structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
+        structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
+        allStructures = new List<LocationStructure>();
         LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.WILDERNESS);
     }
     public void AddStructure(LocationStructure structure) {
@@ -579,13 +580,14 @@ public class Region {
 
         if (!structures[structure.structureType].Contains(structure)) {
             structures[structure.structureType].Add(structure);
+            allStructures.Add(structure);
             // Debug.Log($"New structure {structure.name} was added to region {name}" );
         }
     }
     public void RemoveStructure(LocationStructure structure) {
         if (structures.ContainsKey(structure.structureType)) {
             if (structures[structure.structureType].Remove(structure)) {
-
+                allStructures.Remove(structure);
                 if (structures[structure.structureType].Count == 0) { //this is only for optimization
                     structures.Remove(structure.structureType);
                 }
@@ -599,16 +601,56 @@ public class Region {
         return null;
     }
     public LocationStructure GetRandomStructure() {
-        Dictionary<STRUCTURE_TYPE, List<LocationStructure>> _allStructures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>(this.structures);
-        _allStructures.Remove(STRUCTURE_TYPE.CAVE);
-        _allStructures.Remove(STRUCTURE_TYPE.OCEAN);
-        int dictIndex = UnityEngine.Random.Range(0, _allStructures.Count);
-        int count = 0;
-        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in _allStructures) {
-            if (count == dictIndex) {
-                return kvp.Value[UnityEngine.Random.Range(0, kvp.Value.Count)];
+        LocationStructure randomStructure = null;
+        while (randomStructure == null) {
+            KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp = structures.ElementAt(UnityEngine.Random.Range(0, structures.Count));
+            if (kvp.Key != STRUCTURE_TYPE.CAVE && kvp.Key != STRUCTURE_TYPE.OCEAN && kvp.Value.Count > 0) {
+                randomStructure = kvp.Value[UnityEngine.Random.Range(0, kvp.Value.Count)];
             }
-            count++;
+        }
+        return randomStructure;
+        //Dictionary<STRUCTURE_TYPE, List<LocationStructure>> _allStructures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>(this.structures);
+        //_allStructures.Remove(STRUCTURE_TYPE.CAVE);
+        //_allStructures.Remove(STRUCTURE_TYPE.OCEAN);
+        //int dictIndex = UnityEngine.Random.Range(0, _allStructures.Count);
+        //int count = 0;
+        //foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in _allStructures) {
+        //    if (count == dictIndex) {
+        //        return kvp.Value[UnityEngine.Random.Range(0, kvp.Value.Count)];
+        //    }
+        //    count++;
+        //}
+        //return null;
+    }
+    public LocationStructure GetRandomUnoccupiedStructureWithTag(params STRUCTURE_TAG[] tag) {
+        List<LocationStructure> structuresWithTag = null;
+        for (int i = 0; i < allStructures.Count; i++) {
+            LocationStructure currStructure = allStructures[i];
+            if (!currStructure.IsOccupied()) {
+                if (currStructure.HasStructureTag(tag)) {
+                    if(structuresWithTag == null) { structuresWithTag = new List<LocationStructure>(); }
+                    structuresWithTag.Add(currStructure);
+                }
+            }
+        }
+        if(structuresWithTag != null && structuresWithTag.Count > 0) {
+            return structuresWithTag[UnityEngine.Random.Range(0, structuresWithTag.Count)];
+        }
+        return null;
+    }
+    public LocationStructure GetRandomUnoccupiedStructureWithTags() {
+        List<LocationStructure> structuresWithTag = null;
+        for (int i = 0; i < allStructures.Count; i++) {
+            LocationStructure currStructure = allStructures[i];
+            if (!currStructure.IsOccupied()) {
+                if (currStructure.HasStructureTags()) {
+                    if (structuresWithTag == null) { structuresWithTag = new List<LocationStructure>(); }
+                    structuresWithTag.Add(currStructure);
+                }
+            }
+        }
+        if (structuresWithTag != null && structuresWithTag.Count > 0) {
+            return structuresWithTag[UnityEngine.Random.Range(0, structuresWithTag.Count)];
         }
         return null;
     }
@@ -929,6 +971,34 @@ public class Region {
             }
         }
         return count;
+    }
+    public HexTile GetRandomNoStructurePlainHex() {
+        List<HexTile> hexes = null;
+        for (int i = 0; i < tiles.Count; i++) {
+            HexTile currHex = tiles[i];
+            if(currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && currHex.landmarkOnTile == null) {
+                if(hexes == null) { hexes = new List<HexTile>(); }
+                hexes.Add(currHex);
+            }
+        }
+        if(hexes != null && hexes.Count > 0) {
+            return hexes[UnityEngine.Random.Range(0, hexes.Count)];
+        }
+        return null;
+    }
+    public HexTile GetRandomPlainHex() {
+        List<HexTile> hexes = null;
+        for (int i = 0; i < tiles.Count; i++) {
+            HexTile currHex = tiles[i];
+            if (currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN) {
+                if (hexes == null) { hexes = new List<HexTile>(); }
+                hexes.Add(currHex);
+            }
+        }
+        if (hexes != null && hexes.Count > 0) {
+            return hexes[UnityEngine.Random.Range(0, hexes.Count)];
+        }
+        return null;
     }
     #endregion
 

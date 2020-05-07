@@ -51,7 +51,7 @@ public class Summon : Character, IWorldObject {
         ConstructInitialGoapAdvertisementActions();
         needsComponent.SetFullnessForcedTick(0);
         needsComponent.SetTirednessForcedTick(0);
-        behaviourComponent.AddBehaviourComponent(typeof(DefaultMonster));
+        behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Default_Monster_Behaviour);
         //SubscribeToSignals(); //NOTE: Only made characters subscribe to signals when their npcSettlement is the one that is currently active. TODO: Also make sure to unsubscribe a character when the player has completed their map.
     }
     public override void OnActionPerformed(ActualGoapNode node) { } //overridden OnActionStateSet so that summons cannot witness other events.

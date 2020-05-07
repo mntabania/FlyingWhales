@@ -12,6 +12,7 @@ namespace Locations.Settlements {
         public List<HexTile> tiles { get; }
         public List<Character> residents { get; }
         public Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures { get; protected set; }
+        public Region region { get; protected set; }
         private List<LocationStructure> _allStructures;
         
         protected BaseSettlement(LOCATION_TYPE locationType, int citizenCount) {
@@ -63,7 +64,7 @@ namespace Locations.Settlements {
                         $"{character.name} tried to become a resident of {name} but their factions conflicted");
                     return false;
                 }
-                // region.AddResident(character);
+                //region.AddResident(character);
                 residents.Add(character);
                 AssignCharacterToDwellingInArea(character, chosenHome);
                 return true;
@@ -72,9 +73,9 @@ namespace Locations.Settlements {
         }
         public virtual bool RemoveResident(Character character) {
             if (residents.Remove(character)) {
-                // region.RemoveResident(character);
+                //regio.RemoveResident(character);
                 if (character.homeStructure != null && character.homeSettlement == this) {
-                    character.homeStructure.RemoveResident(character);
+                    character.ChangeHomeStructure(null);
                 }
                 return true;
             }
@@ -86,7 +87,7 @@ namespace Locations.Settlements {
                     $"{name} doesn't have any dwellings for {character.name} because structures have not been generated yet");
                 return;
             }
-            //Removed this because, even if there are no dwellings left, home structure should be set to city center
+            //Note: Removed this because, even if there are no dwellings left, home structure should be set to city center
             // if (!character.isFactionless && !structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
             //     Debug.LogWarning($"{name} doesn't have any dwellings for {character.name}");
             //     return;
@@ -120,7 +121,7 @@ namespace Locations.Settlements {
                     $"{GameManager.Instance.TodayLogString()}Could not find a dwelling for {character.name} at {name}, setting home to Town Center");
                 chosenDwelling = GetRandomStructureOfType(STRUCTURE_TYPE.CITY_CENTER) as CityCenter;
             }
-            character.MigrateHomeStructureTo(chosenDwelling);
+            character.ChangeHomeStructure(chosenDwelling);
         }
         private bool CanCharacterBeAddedAsResidentBasedOnFaction(Character character) {
             if (owner != null && character.faction != null) {
@@ -213,7 +214,7 @@ namespace Locations.Settlements {
         protected virtual void OnStructureAdded(LocationStructure structure) { }
         protected virtual void OnStructureRemoved(LocationStructure structure) { }
         public LocationStructure GetRandomStructureOfType(STRUCTURE_TYPE type) {
-            if (structures.ContainsKey(type)) {
+            if (HasStructure(type)) {
                 return structures[type][UtilityScripts.Utilities.Rng.Next(0, structures[type].Count)];
             }
             return null;
@@ -233,17 +234,10 @@ namespace Locations.Settlements {
             return null;
         }
         public List<LocationStructure> GetStructuresOfType(STRUCTURE_TYPE structureType) {
-            List<LocationStructure> structures = null;
-            for (int i = 0; i < _allStructures.Count; i++) {
-                LocationStructure currStructure = _allStructures[i];
-                if(currStructure.structureType == structureType) {
-                    if(structures == null) {
-                        structures = new List<LocationStructure>();
-                    }
-                    structures.Add(currStructure);
-                }
+            if (HasStructure(structureType)) {
+                return structures[structureType];
             }
-            return structures;
+            return null;
         }
         public bool HasStructure(STRUCTURE_TYPE type) {
             return structures.ContainsKey(type);

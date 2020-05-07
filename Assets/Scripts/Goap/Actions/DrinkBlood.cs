@@ -218,7 +218,7 @@ public class DrinkBlood : GoapAction {
         //poiTarget.SetPOIState(POI_STATE.ACTIVE);
         goapNode.actor.needsComponent.AdjustDoNotGetHungry(-1);
         int chance = UnityEngine.Random.Range(0, 100);
-        if(chance < 85) {
+        if(chance < 80) {
             Lethargic lethargic = new Lethargic();
             goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, lethargic, goapNode.actor, goapNode);
         } else {

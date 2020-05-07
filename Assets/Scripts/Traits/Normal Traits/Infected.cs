@@ -56,7 +56,7 @@ namespace Traits {
 
         private void HourlyCheck() {
             if (!_hasAlreadyDied) {
-                if(UnityEngine.Random.Range(0, 100) < 10) {
+                if(UnityEngine.Random.Range(0, 100) < 20) {
                     owner.interruptComponent.TriggerInterrupt(INTERRUPT.Zombie_Death, owner);
                 }
             } else {
@@ -121,7 +121,7 @@ namespace Traits {
                 string summary = $"{hitCharacter.name} was hit by {hitBy.name}. Rolling for infect...";
                 int roll = Random.Range(0, 100);
                 summary += $"\nRoll is {roll}";
-                int chance = 20;
+                int chance = 35;
                 if (hitCharacter.isDead) {
                     chance = 80;
                 }

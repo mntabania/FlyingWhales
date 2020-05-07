@@ -101,7 +101,7 @@ public partial class InteractionManager {
             //        return false;
             //    }
             //}
-            if (character.isFactionless) {
+            if (character.isFactionless || character.isFriendlyFactionless) {
                 return character.race == targetCharacter.race && character.homeRegion == targetCharacter.homeRegion &&
                        !targetCharacter.relationshipContainer.IsEnemiesWith(character);
             }
@@ -158,20 +158,20 @@ public partial class InteractionManager {
                sourceCharacter.relationshipContainer.GetRelationshipEffectWith(character) !=
                RELATIONSHIP_EFFECT.NEGATIVE;
     }
-    public bool CanCharacterTakeRestrainedFeedJob(Character sourceCharacter, Character character) {
-        if (sourceCharacter.currentRegion.IsResident(character)) {
-            if (!character.isFactionless) {
-                return character.traitContainer.HasTrait("Worker", "Combatant");
-                //return character.role.roleType == CHARACTER_ROLE.SOLDIER ||
-                //       character.role.roleType == CHARACTER_ROLE.CIVILIAN;
-            }
-            else {
-                return !character.traitContainer.HasTrait("Beast") /*character.role.roleType != CHARACTER_ROLE.BEAST*/ &&
-                       sourceCharacter.currentStructure.structureType.IsOpenSpace();
-            }
-        }
-        return false;
-    }
+    //public bool CanCharacterTakeRestrainedFeedJob(Character sourceCharacter, Character character) {
+    //    if (sourceCharacter.currentRegion.IsResident(character)) {
+    //        if (!character.isFactionless && !character.isFriendlyFactionless) {
+    //            return character.traitContainer.HasTrait("Worker", "Combatant");
+    //            //return character.role.roleType == CHARACTER_ROLE.SOLDIER ||
+    //            //       character.role.roleType == CHARACTER_ROLE.CIVILIAN;
+    //        }
+    //        else {
+    //            return !character.traitContainer.HasTrait("Beast") /*character.role.roleType != CHARACTER_ROLE.BEAST*/ &&
+    //                   sourceCharacter.currentStructure.structureType.IsOpenSpace();
+    //        }
+    //    }
+    //    return false;
+    //}
     public bool CanCharacterTakeDropJob(Character sourceCharacter, Character character) {
         return sourceCharacter != character && sourceCharacter.faction == character.faction &&
                character.relationshipContainer.GetRelationshipEffectWith(sourceCharacter) !=

@@ -349,13 +349,15 @@ public class MakeLove : GoapAction {
             }
             return null;
         } else {
-            Bed actorBed = actor.homeStructure.GetTileObjectOfType<Bed>(TILE_OBJECT_TYPE.BED);
-            if (actorBed != null && actorBed.GetActiveUserCount() == 0) {
-                return actorBed;
-            } else {
-                Bed targetBed = target.homeStructure.GetTileObjectOfType<Bed>(TILE_OBJECT_TYPE.BED);
-                if (targetBed != null && targetBed.GetActiveUserCount() == 0) {
-                    return targetBed;
+            if(actor.homeStructure != null) {
+                Bed actorBed = actor.homeStructure.GetTileObjectOfType<Bed>(TILE_OBJECT_TYPE.BED);
+                if (actorBed != null && actorBed.GetActiveUserCount() == 0) {
+                    return actorBed;
+                } else {
+                    Bed targetBed = target.homeStructure.GetTileObjectOfType<Bed>(TILE_OBJECT_TYPE.BED);
+                    if (targetBed != null && targetBed.GetActiveUserCount() == 0) {
+                        return targetBed;
+                    }
                 }
             }
             return null;

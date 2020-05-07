@@ -34,7 +34,7 @@ namespace Locations.Settlements {
                     $"{GameManager.Instance.TodayLogString()}Could not find a dwelling for {character.name} at {name}, setting home to Town Center");
                 chosenDwelling = GetRandomStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
             }
-            character.MigrateHomeStructureTo(chosenDwelling);
+            character.ChangeHomeStructure(chosenDwelling);
         }
         protected override bool IsResidentsFull() {
             return false; //resident capacity is never full for player npcSettlement

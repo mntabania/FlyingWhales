@@ -83,7 +83,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public Party currentParty { get; protected set; }
     public Dictionary<RESOURCE, int> storedResources { get; protected set; }
     public int currentMissingTicks { get; protected set; }
-    public bool isSettlementRuler { get; protected set; }
     public bool hasUnresolvedCrime { get; protected set; }
     public bool isConversing { get; protected set; }
     public bool isInLimbo { get; protected set; }
@@ -95,6 +94,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public LycanthropeData lycanData { get; protected set; }
     public List<JobQueueItem> forcedCancelJobsOnTickEnded { get; private set; }
     public List<HexTile> territorries { get; private set; }
+    public NPCSettlement ruledSettlement { get; private set; }
+    public bool isWanderer { get; private set; }
 
     private List<Action> onLeaveAreaActions;
     private POI_STATE _state;
@@ -180,6 +181,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool isFactionLeader => faction != null && faction.leader == this;
     public bool isHoldingItem => items.Count > 0;
     public bool isAtHomeRegion => currentRegion == homeRegion && !currentParty.icon.isTravellingOutside;
+    public bool isAtHomeStructure => currentStructure == homeStructure && homeStructure != null;
     public bool isPartOfHomeFaction => homeRegion != null && faction != null && homeRegion.IsFactionHere(faction); //is this character part of the faction that owns his home npcSettlement
     //public bool isFlirting => _isFlirting;
     public override GENDER gender => _gender;
@@ -283,8 +285,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public JobTriggerComponent jobTriggerComponent => jobComponent;
     public GameObject visualGO => marker.gameObject;
     public Character characterOwner => null;
+    public bool isSettlementRuler => ruledSettlement != null;
     #endregion
-    
+
     public Character(string className, RACE race, GENDER gender) : this() {
         _id = UtilityScripts.Utilities.SetID(this);
         _gender = gender;
@@ -772,6 +775,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //RemoveAllNonPersistentTraits();
             //ClearAllAwareness();
             //NPCSettlement gloomhollow = LandmarkManager.Instance.GetAreaByName("Gloomhollow");
+            //ChangeHomeStructure(null);
             MigrateHomeStructureTo(null);
             needsComponent.SetTirednessForcedTick(0);
             needsComponent.SetFullnessForcedTick(0);
@@ -1828,9 +1832,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return false;
     } 
-    public void SetIsSettlementRuler(bool state) {
-        if(isSettlementRuler != state) {
-            isSettlementRuler = state;
+    public void SetRuledSettlement(NPCSettlement settlement) {
+        if(ruledSettlement != settlement) {
+            ruledSettlement = settlement;
             if (isSettlementRuler) {
                 AssignBuildStructureComponent();
                 behaviourComponent.AddBehaviourComponent(typeof(SettlementRulerBehaviour));
@@ -2154,6 +2158,16 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     /// <returns></returns>
     public bool IsNormalCharacter() {
         return (this is Summon) == false && minion == null;
+    }
+    public void SetIsWanderer(bool state) {
+        if(isWanderer != state) {
+            isWanderer = state;
+            if (isWanderer) {
+                behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Default_Wanderer_Behaviour);
+            } else {
+                behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Default_Resident_Behaviour);
+            }
+        }
     }
     #endregion    
 
@@ -3156,13 +3170,27 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         this.homeStructure = homeStructure;
         //currentAlterEgo.SetHomeStructure(homeStructure);
     }
-    public bool MigrateHomeTo(BaseSettlement newHomeSettlement, LocationStructure homeStructure = null, bool broadcast = true) {
+    public bool MigrateHomeTo(BaseSettlement newHomeSettlement, LocationStructure homeStructure = null, bool broadcast = true, bool addToRegionResidents = true) {
         BaseSettlement previousHome = null;
+        bool sameRegionLocationAlready = false;
         if (homeSettlement != null) {
             previousHome = homeSettlement;
             previousHome.RemoveResident(this);
+
+            if(previousHome.region != null) {
+                if(newHomeSettlement != null && previousHome.region == newHomeSettlement.region) {
+                    sameRegionLocationAlready = true;
+                } else {
+                    previousHome.region.RemoveResident(this);
+                }
+            }
         }
-        if (newHomeSettlement.AddResident(this, homeStructure)) {
+        if (newHomeSettlement != null && newHomeSettlement.AddResident(this, homeStructure)) {
+            if (addToRegionResidents && newHomeSettlement.region != null) {
+                if (!sameRegionLocationAlready) {
+                    newHomeSettlement.region.AddResident(this);
+                }
+            }
             if (broadcast) {
                 Messenger.Broadcast(Signals.CHARACTER_MIGRATED_HOME, this, previousHome, newHomeSettlement);
             }
@@ -3171,6 +3199,28 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return false;
     }
     public void MigrateHomeStructureTo(LocationStructure dwelling) {
+        if(dwelling == null) {
+            MigrateHomeTo(null);
+        } else {
+            if (dwelling.settlementLocation != null) {
+                MigrateHomeTo(dwelling.settlementLocation, dwelling);
+            } else {
+                bool sameLocationAlready = false;
+                if (homeStructure != null && homeStructure.location != null) {
+                    if (homeStructure.location == dwelling.location) {
+                        sameLocationAlready = true;
+                    } else {
+                        homeStructure.location.RemoveResident(this);
+                    }
+                }
+                if (!sameLocationAlready) {
+                    dwelling.location.AddResident(this);
+                }
+                ChangeHomeStructure(dwelling);
+            }
+        }
+    }
+    public void ChangeHomeStructure(LocationStructure dwelling) {
         if (homeStructure != null) {
             if (homeStructure == dwelling) {
                 return; //ignore change
@@ -3539,7 +3589,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             log += $"{name} is already dead not planning other idle plans.";
             return log;
         }
-        if (!isFactionless) { }
+        //if (!isFactionless) { }
         string classIdlePlanLog = behaviourComponent.RunBehaviour();
         log += $"\n{classIdlePlanLog}";
         return log;
@@ -5664,10 +5714,29 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void AddTerritory([NotNull]HexTile tile) {
         if (territorries.Contains(tile) == false) {
             territorries.Add(tile);
+            HexTile firstTerritory = territorries[0];
+            if(firstTerritory.region != homeRegion) {
+                if(homeRegion != null) {
+                    homeRegion.RemoveResident(this);
+                }
+                firstTerritory.region.AddResident(this);
+            }
         }
     }
     public void RemoveTerritory(HexTile tile) {
-        territorries.Remove(tile);
+        if (territorries.Remove(tile)) {
+            //QUESTION: Should a character be removed as region resident if it does not have a territory, home structure, home settlement there?
+
+            //if(territorries.Count == 0) {
+            //    if(homeStructure == null && homeSettlement == null) {
+
+            //    }
+            //}
+        }
+    }
+    public void ClearTerritory() {
+        //QUESTION: Should a character be removed as region resident if it does not have a territory, home structure, home settlement there?
+        territorries.Clear();
     }
     public bool HasTerritory() {
         return territorries.Count > 0;

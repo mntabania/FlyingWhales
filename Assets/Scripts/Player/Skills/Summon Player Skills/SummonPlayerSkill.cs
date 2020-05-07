@@ -15,7 +15,7 @@ public class SummonPlayerSkill : SpellData {
     public override void ActivateAbility(LocationGridTile targetTile, ref Character spawnedCharacter) {
         Summon summon = CharacterManager.Instance.CreateNewSummon(summonType, PlayerManager.Instance.player.playerFaction, homeRegion: targetTile.parentMap.region as Region, className: className);
         CharacterManager.Instance.PlaceSummon(summon, targetTile);
-        summon.behaviourComponent.AddBehaviourComponent(typeof(DefaultMinion));
+        //summon.behaviourComponent.AddBehaviourComponent(typeof(DefaultMinion));
         spawnedCharacter = summon;
         base.ActivateAbility(targetTile, ref spawnedCharacter);
     }

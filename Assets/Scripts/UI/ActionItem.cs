@@ -70,10 +70,12 @@ public class ActionItem : PooledObject {
         }
     }
     public void OnHover() {
-        UIManager.Instance.ShowSmallInfo(playerAction.description + "\n" + playerAction.GetManaCostChargesCooldownStr());
+        PlayerUI.Instance.OnHoverSpell(playerAction);
+        //UIManager.Instance.ShowSmallInfo(playerAction.description + "\n" + playerAction.GetManaCostChargesCooldownStr());
     }
     public void OnHoverOut() {
-        UIManager.Instance.HideSmallInfo();
+        //UIManager.Instance.HideSmallInfo();
+        PlayerUI.Instance.OnHoverOutSpell(playerAction);
     }
 
     #region Listeners

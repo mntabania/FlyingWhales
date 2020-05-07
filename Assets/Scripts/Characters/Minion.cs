@@ -38,7 +38,7 @@ public class Minion {
         // RemoveInvalidPlayerActions();
         character.needsComponent.SetFullnessForcedTick(0);
         character.needsComponent.SetTirednessForcedTick(0);
-        character.behaviourComponent.AddBehaviourComponent(typeof(DefaultMinion));
+        character.behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Default_Minion_Behaviour);
         character.combatComponent.SetCombatMode(COMBAT_MODE.Defend);
         character.visuals.UpdateAllVisuals(character);
     }

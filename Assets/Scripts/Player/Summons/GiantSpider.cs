@@ -16,7 +16,7 @@ public class GiantSpider : Summon {
     #region Overrides
     public override void Initialize() {
         base.Initialize();
-        behaviourComponent.RemoveBehaviourComponent(typeof(DefaultMonster));
+        //behaviourComponent.RemoveBehaviourComponent(typeof(DefaultMonster));
         behaviourComponent.AddBehaviourComponent(typeof(AbductorMonster));
     }
     #endregion

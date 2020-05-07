@@ -18,6 +18,7 @@ public class ObjectPoolManager : MonoBehaviour {
     public List<GoapNode> goapNodesPool { get; private set; }
     public List<OpinionData> opinionDataPool { get; private set; }
     public List<TraitRemoveSchedule> traitRemoveSchedulePool { get; private set; }
+    public List<CombatData> combatDataPool { get; private set; }
 
     private void Awake() {
         Instance = this;
@@ -38,6 +39,7 @@ public class ObjectPoolManager : MonoBehaviour {
         ConstructGoapNodes();
         ConstructOpinionDataPool();
         ConstructTraitRemoveSchedulePool();
+        ConstructCombatDataPool();
     }
 
     public GameObject InstantiateObjectFromPool(string poolName, Vector3 position, Quaternion rotation, Transform parent = null, bool isWorldPosition = false) {
@@ -178,6 +180,29 @@ public class ObjectPoolManager : MonoBehaviour {
             return data;
         }
         return new TraitRemoveSchedule();
+    }
+    #endregion
+
+    #region Combat Data
+    private void ConstructCombatDataPool() {
+        combatDataPool = new List<CombatData>();
+    }
+    public CombatData CreateNewCombatData() {
+        CombatData data = GetCombatDataFromPool();
+        data.Initialize();
+        return data;
+    }
+    public void ReturnCombatDataToPool(CombatData data) {
+        data.Reset();
+        combatDataPool.Add(data);
+    }
+    private CombatData GetCombatDataFromPool() {
+        if (combatDataPool.Count > 0) {
+            CombatData data = combatDataPool[0];
+            combatDataPool.RemoveAt(0);
+            return data;
+        }
+        return new CombatData();
     }
     #endregion
 }

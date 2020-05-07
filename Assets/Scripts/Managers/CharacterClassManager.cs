@@ -10,40 +10,7 @@ public class CharacterClassManager : MonoBehaviour {
     public Dictionary<string, List<CharacterClass>> identifierClasses { get; private set; }
     public List<CharacterClass> normalCombatantClasses { get; private set; }
     public List<CharacterClass> allClasses { get; private set; }
-    private Dictionary<System.Type, CharacterBehaviourComponent> behaviourComponents;
 
-    private Dictionary<string, System.Type[]> classIdlePlans = new Dictionary<string, Type[]>() {
-        { "Default",
-            new Type[]{
-                typeof(DefaultFactionRelated),
-                typeof(WorkBehaviour),
-                typeof(DefaultAtHome),
-                typeof(DefaultOutside),
-                typeof(DefaultBaseStructure),
-                typeof(DefaultOtherStructure),
-                typeof(DefaultExtraCatcher),
-                typeof(MovementProcessing),
-            }
-        },
-        {"Lust", new []{typeof(MinionBehaviour)}},
-        {"Greed", new []{typeof(MinionBehaviour)}},
-        {"Wrath", new []{typeof(MinionBehaviour)}},
-        {"Gluttony", new []{typeof(MinionBehaviour)}},
-        {"Sloth", new []{typeof(MinionBehaviour)}},
-        {"Pride", new []{typeof(MinionBehaviour)}},
-        {"Envy", new []{typeof(MinionBehaviour)}},
-        //{ "Leader",
-        //    new Type[]{
-        //        typeof(WorkBehaviour),
-        //        typeof(BlueprintBehaviour),
-        //        typeof(DefaultAtHome),
-        //        typeof(DefaultOutside),
-        //        typeof(DefaultBaseStructure),
-        //        typeof(DefaultOtherStructure),
-        //        typeof(DefaultExtraCatcher),
-        //    }
-        //},
-    };
 
     //private Dictionary<string, System.Type[]> traitIdlePlans = new Dictionary<string, Type[]>() {
     //    { "Berserked",
@@ -70,7 +37,6 @@ public class CharacterClassManager : MonoBehaviour {
 
     public void Initialize() {
         ConstructAllClasses();
-        ConstructCharacterBehaviours();
     }
 
     #region Classes
@@ -144,39 +110,12 @@ public class CharacterClassManager : MonoBehaviour {
     #endregion
 
     #region Class Idle Plans
-    private void ConstructCharacterBehaviours() {
-        List<CharacterBehaviourComponent> allBehaviours = ReflectiveEnumerator.GetEnumerableOfType<CharacterBehaviourComponent>().ToList();
-        behaviourComponents = new Dictionary<System.Type, CharacterBehaviourComponent>();
-        for (int i = 0; i < allBehaviours.Count; i++) {
-            CharacterBehaviourComponent behaviour = allBehaviours[i];
-            behaviourComponents.Add(behaviour.GetType(), behaviour);
-        }
-    }
-    public System.Type[] GetClassBehaviourComponents(string className) {
-        if (classIdlePlans.ContainsKey(className)) {
-            return classIdlePlans[className];
-        } else {
-            return classIdlePlans["Default"];
-        }
-    }
     //public System.Type[] GetTraitBehaviourComponents(string traitName) {
     //    if (traitIdlePlans.ContainsKey(traitName)) {
     //        return traitIdlePlans[traitName];
     //    }
     //    return null;
     //}
-    public CharacterBehaviourComponent GetCharacterBehaviourComponent(System.Type type) {
-        if (behaviourComponents.ContainsKey(type)) {
-            return behaviourComponents[type];
-        }
-        return null;
-    }
-    public string GetClassBehaviourComponentKey(string className) {
-        if (classIdlePlans.ContainsKey(className)) {
-            return className;
-        }
-        return "Default";
-    }
     //private string DefaultClassIdlePlan(Character character) {
     //    string log = "Default Class Idle Plan for " + character.name;
     //    if (character.faction.id != FactionManager.Instance.neutralFaction.id) {

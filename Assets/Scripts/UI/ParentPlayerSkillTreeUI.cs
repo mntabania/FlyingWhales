@@ -15,7 +15,7 @@ public class ParentPlayerSkillTreeUI : MonoBehaviour {
         }
     }
     public void OnClickSkillTreeButton(SPELL_TYPE skillType, PlayerSkillTreeItem skillTreeItem) {
-        skillDetails.ShowPlayerSkillDetails(PlayerSkillManager.Instance.GetPlayerSkillData(skillType), skillTree.nodes[skillType], false);
+        skillDetails.ShowPlayerSkillDetails(PlayerSkillManager.Instance.GetPlayerSkillData(skillType), skillTree.nodes[skillType]);
         SetCurrentClickedSkillTreeItem(skillTreeItem);
     }
     public void OnLearnSkill(SPELL_TYPE skillType) {

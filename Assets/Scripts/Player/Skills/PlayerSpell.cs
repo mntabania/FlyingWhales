@@ -206,6 +206,9 @@ public class SpellData : IPlayerSkill {
     public int charges { get; private set; }
     public int manaCost { get; private set; }
     public int cooldown { get; private set; }
+    public int threat { get; private set; }
+    public int threatPerHour { get; private set; }
+
     public int currentCooldownTick { get; private set; }
     public bool hasCharges => charges != -1;
     public bool hasCooldown => cooldown != -1;
@@ -215,6 +218,8 @@ public class SpellData : IPlayerSkill {
         charges = -1;
         manaCost = -1;
         cooldown = -1;
+        threat = 0;
+        threatPerHour = 0;
         currentCooldownTick = cooldown;
     }
 
@@ -317,6 +322,8 @@ public class SpellData : IPlayerSkill {
             currentCooldownTick = 0;
             Messenger.AddListener(Signals.TICK_STARTED, PerTickCooldown);
         }
+        PlayerManager.Instance.player.threatComponent.AdjustThreatPerHour(threatPerHour);
+        PlayerManager.Instance.player.threatComponent.AdjustThreat(threat);
 
         if(category == SPELL_CATEGORY.PLAYER_ACTION) {
             Messenger.Broadcast(Signals.ON_EXECUTE_PLAYER_ACTION, this as PlayerAction);
@@ -350,6 +357,12 @@ public class SpellData : IPlayerSkill {
     public void SetCooldown(int amount) {
         cooldown = amount;
         currentCooldownTick = cooldown;
+    }
+    public void SetThreat(int amount) {
+        threat = amount;
+    }
+    public void SetThreatPerHour(int amount) {
+        threatPerHour = amount;
     }
     #endregion
 }

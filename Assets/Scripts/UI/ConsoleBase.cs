@@ -84,6 +84,7 @@ public class ConsoleBase : InfoUIBase {
             {"/change_archetype", ChangeArchetype },
             {"/elemental_damage", ChangeCharacterElementalDamage },
             {"/add_item", AddItemToCharacter },
+            {"/null_home", ChangeCharacterHomeToNull },
         };
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -1025,6 +1026,24 @@ public class ConsoleBase : InfoUIBase {
 
         character.combatComponent.SetElementalType(elementalType);
         AddSuccessMessage($"Changed {character.name} elemental damage to {elementalParameterString}");
+    }
+    private void ChangeCharacterHomeToNull(string[] parameters) {
+        if (parameters.Length != 1) { //parameters command, item
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of ChangeCharacterHomeToNull");
+            return;
+        }
+        string characterParameterString = parameters[0];
+
+        Character character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
+
+        if (character == null) {
+            AddErrorMessage($"There is no character named {characterParameterString}");
+            return;
+        }
+
+        character.MigrateHomeTo(null);
+        AddSuccessMessage($"Changed {character.name} home to null");
     }
     #endregion
 

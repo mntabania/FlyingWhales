@@ -23,8 +23,10 @@ public class MonsterGeneration : MapGenerationComponent {
 		Summon summon = CharacterManager.Instance.CreateNewSummon(summonType, FactionManager.Instance.neutralFaction, settlementOnTile, monsterLair.tileLocation.region);
 		LocationGridTile targetTile = CollectionUtilities.GetRandomElement(monsterLairStructure.unoccupiedTiles);
 		CharacterManager.Instance.PlaceSummon(summon, targetTile);
-		summon.AddTerritory(monsterLair.tileLocation);
+		//summon.AddTerritory(monsterLair.tileLocation);
         summon.MigrateHomeStructureTo(monsterLairStructure);
+        //summon.ChangeHomeStructure(monsterLairStructure);
+
         //if (monsterLairStructure is LocationStructure homeStructure) {
         //	summon.MigrateHomeStructureTo(homeStructure);	
         //}
@@ -35,14 +37,15 @@ public class MonsterGeneration : MapGenerationComponent {
 		Assert.IsTrue(chosenTile.collectionOwner.isPartOfParentRegionMap, $"Chosen tile for {summonType.ToString()} is not part of the region map!");
 		Summon summon = CharacterManager.Instance.CreateNewSummon(summonType, FactionManager.Instance.neutralFaction, null, chosenTile.parentMap.region);
 		CharacterManager.Instance.PlaceSummon(summon, chosenTile);
-		summon.AddTerritory(chosenTile.collectionOwner.partOfHextile.hexTileOwner);
-		if (territories != null) {
-			for (int i = 0; i < territories.Length; i++) {
-				HexTile territory = territories[i];
-				summon.AddTerritory(territory);
-			}
-		}
+		//summon.AddTerritory(chosenTile.collectionOwner.partOfHextile.hexTileOwner);
+		//if (territories != null) {
+		//	for (int i = 0; i < territories.Length; i++) {
+		//		HexTile territory = territories[i];
+		//		summon.AddTerritory(territory);
+		//	}
+		//}
         summon.MigrateHomeStructureTo(homeStructure);
+        //summon.ChangeHomeStructure(homeStructure);
   //      if (homeStructure is IDwelling structure) {
 		//	summon.MigrateHomeStructureTo(structure);
 		//}

@@ -8,7 +8,7 @@ using Tutorial;
 public class SaveDataPlayer {
     public int exp;
     public List<PlayerSkillTreeNodeData> learnedSkills;
-    public List<PlayerSkillTreeNodeData> unlockedSkills;
+    public List<SPELL_TYPE> unlockedSkills;
     public List<SaveDataSummon> kennelSummons;
     public List<SaveDataTileObject> cryptTileObjects;
     public List<TutorialManager.Tutorial> completedTutorials;
@@ -16,7 +16,7 @@ public class SaveDataPlayer {
     public void InitializeInitialData() {
         exp = 10000;
         learnedSkills = new List<PlayerSkillTreeNodeData>();
-        unlockedSkills = new List<PlayerSkillTreeNodeData>();
+        unlockedSkills = new List<SPELL_TYPE>();
         for (int i = 0; i < PlayerSkillManager.Instance.allSkillTrees.Length; i++) {
             PlayerSkillTree currSkillTree = PlayerSkillManager.Instance.allSkillTrees[i];
             for (int j = 0; j < currSkillTree.initialLearnedSkills.Length; j++) {
@@ -47,7 +47,7 @@ public class SaveDataPlayer {
     #region Skills
     public void LearnSkill(SPELL_TYPE skillType, PlayerSkillTreeNode node) {
         AdjustExp(-node.expCost);
-        PlayerSkillTreeNodeData learnedSkill = new PlayerSkillTreeNodeData() { skill = skillType, charges = node.charges, cooldown = node.cooldown, manaCost = node.manaCost };
+        PlayerSkillTreeNodeData learnedSkill = new PlayerSkillTreeNodeData() { skill = skillType, charges = node.charges, cooldown = node.cooldown, manaCost = node.manaCost, threat = node.threat, threatPerHour = node.threatPerHour };
         learnedSkills.Add(learnedSkill);
 
         PlayerSkillTreeNode learnedNode = PlayerSkillManager.Instance.GetPlayerSkillTreeNode(skillType);
@@ -55,8 +55,8 @@ public class SaveDataPlayer {
             for (int k = 0; k < learnedNode.unlockedSkills.Length; k++) {
                 SPELL_TYPE unlockedSkillType = learnedNode.unlockedSkills[k];
                 PlayerSkillTreeNode unlockedNode = PlayerSkillManager.Instance.GetPlayerSkillTreeNode(unlockedSkillType); //skillTree.nodes[unlockedSkillType];
-                PlayerSkillTreeNodeData unlockedSkill = new PlayerSkillTreeNodeData() { skill = unlockedSkillType, charges = unlockedNode.charges, cooldown = unlockedNode.cooldown, manaCost = unlockedNode.manaCost };
-                unlockedSkills.Add(unlockedSkill);
+                //PlayerSkillTreeNodeData unlockedSkill = new PlayerSkillTreeNodeData() { skill = unlockedSkillType, charges = unlockedNode.charges, cooldown = unlockedNode.cooldown, manaCost = unlockedNode.manaCost, threat = unlockedNode.threat, threatPerHour = unlockedNode.threatPerHour };
+                unlockedSkills.Add(unlockedSkillType);
             }
         }
     }
@@ -74,8 +74,8 @@ public class SaveDataPlayer {
     public bool IsSkillUnlocked(SPELL_TYPE skillType) {
         if (unlockedSkills != null) {
             for (int i = 0; i < unlockedSkills.Count; i++) {
-                PlayerSkillTreeNodeData nodeData = unlockedSkills[i];
-                if (nodeData.skill == skillType) {
+                //PlayerSkillTreeNodeData nodeData = unlockedSkills[i];
+                if (unlockedSkills[i] == skillType) {
                     return true;
                 }
             }

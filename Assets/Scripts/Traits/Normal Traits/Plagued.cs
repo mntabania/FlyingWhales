@@ -5,10 +5,10 @@ using UnityEngine;
 namespace Traits {
     public class Plagued : Status {
 
-        public Character owner { get; private set; } //poi that has the poison
+        public IPointOfInterest owner { get; private set; } //poi that has the poison
 
         private float pukeChance = 5f;
-        private float septicChance = 0.5f;
+        private float septicChance = 2.5f;
 
         public Plagued() {
             name = "Plagued";
@@ -27,15 +27,16 @@ namespace Traits {
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
             if (addedTo is Character character) {
-                owner = character;
-                owner.needsComponent.AdjustComfortDecreaseRate(10);
+                character.needsComponent.AdjustComfortDecreaseRate(10);
             } 
             //else if (addedTo is TileObject) {
             //    ticksDuration = GameManager.Instance.GetTicksBasedOnHour(12);
             //}
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
-            owner?.needsComponent.AdjustComfortDecreaseRate(-10);
+            if (removedFrom is Character character) {
+                character.needsComponent.AdjustComfortDecreaseRate(10);
+            }
             base.OnRemoveTrait(removedFrom, removedBy);
         }
         // protected override void OnChangeLevel() {
@@ -51,41 +52,27 @@ namespace Traits {
         //     }
         // }
         public override bool PerTickOwnerMovement() {
-            //string summary = owner.name + " is rolling for plagued chances....";
-            float pukeRoll = Random.Range(0f, 100f);
-            float septicRoll = Random.Range(0f, 100f);
+            //NOTE: This is a wrong probability computation for floats - FIND A SOLUTION
+            //float pukeRoll = Random.Range(0f, 100f);
+            //float septicRoll = Random.Range(0f, 100f);
+            int pukeRoll = Random.Range(0, 100);
+            int septicRoll = Random.Range(0, 100);
             bool hasCreatedJob = false;
             if (pukeRoll < pukeChance) {
                 //do puke action
-                if (owner.characterClass.className == "Zombie"/* || (owner.currentActionNode != null && owner.currentActionNode.action.goapType == INTERACTION_TYPE.PUKE)*/) {
-                    return hasCreatedJob;
+                if (owner is Character character) {
+                    if(character.characterClass.className == "Zombie"/* || (owner.currentActionNode != null && owner.currentActionNode.action.goapType == INTERACTION_TYPE.PUKE)*/) {
+                        return hasCreatedJob;
+                    }
+                    return character.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, owner);
                 }
-                //ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.PUKE], owner, owner, null, 0);
-                //GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
-                //GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE, owner, owner);
-                //goapPlan.SetDoNotRecalculate(true);
-                //job.SetCannotBePushedBack(true);
-                //job.SetAssignedPlan(goapPlan);
-                //owner.jobQueue.AddJobInQueue(job);
-                ////GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE, owner, owner);
-                ////owner.jobQueue.AddJobInQueue(job);
-
-                return owner.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, owner);
             } else if (septicRoll < septicChance) {
-                if (owner.characterClass.className == "Zombie"/* || (owner.currentActionNode != null && owner.currentActionNode.action.goapType == INTERACTION_TYPE.SEPTIC_SHOCK)*/) {
-                    return hasCreatedJob;
+                if (owner is Character character) {
+                    if (character.characterClass.className == "Zombie"/* || (owner.currentActionNode != null && owner.currentActionNode.action.goapType == INTERACTION_TYPE.PUKE)*/) {
+                        return hasCreatedJob;
+                    }
+                    return character.interruptComponent.TriggerInterrupt(INTERRUPT.Septic_Shock, owner);
                 }
-                //ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.SEPTIC_SHOCK], owner, owner, null, 0);
-                //GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
-                //GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.SEPTIC_SHOCK, owner, owner);
-                //goapPlan.SetDoNotRecalculate(true);
-                //job.SetCannotBePushedBack(true);
-                //job.SetAssignedPlan(goapPlan);
-                //owner.jobQueue.AddJobInQueue(job);
-                ////GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.SEPTIC_SHOCK, owner, owner);
-                ////owner.jobQueue.AddJobInQueue(job);
-
-                return owner.interruptComponent.TriggerInterrupt(INTERRUPT.Septic_Shock, owner);
             }
             return hasCreatedJob;
         }
@@ -114,7 +101,7 @@ namespace Traits {
         #endregion
 
         private bool TryGetTargetAndInfectorAndChance(ActualGoapNode goapNode, out IPointOfInterest target, out IPointOfInterest infector, out int chance) {
-            chance = 25;
+            chance = 0;
             if (goapNode.actor == owner) {
                 target = goapNode.poiTarget;
                 infector = goapNode.actor;
@@ -122,14 +109,34 @@ namespace Traits {
                 target = goapNode.actor;
                 infector = goapNode.poiTarget;
             }
-            if(infector.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
-                if(goapNode.action.actionCategory == ACTION_CATEGORY.DIRECT) {
-                    chance = 10;
+            if(owner.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+                //if (goapNode.poiTarget == owner) {
+                //    if (goapNode.goapType == INTERACTION_TYPE.CARRY || goapNode.goapType == INTERACTION_TYPE.CARRY_CORPSE || goapNode.goapType == INTERACTION_TYPE.INVITE) {
+                //        chance = 50;
+                //        return true;
+                //    }
+                //}
+                if (goapNode.action.actionCategory == ACTION_CATEGORY.DIRECT || goapNode.action.actionCategory == ACTION_CATEGORY.CONSUME) {
+                    chance = 35;
+                    return true;
+                }
+            } else if (owner.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+                if (goapNode.action.actionCategory == ACTION_CATEGORY.DIRECT) {
+                    chance = 35;
                 } else if (goapNode.action.actionCategory == ACTION_CATEGORY.CONSUME) {
                     chance = 100;
                 }
             }
             return true;
+        }
+
+        public void ChatInfection(Character target) {
+            if(UnityEngine.Random.Range(0, 100) < 35) {
+                target.interruptComponent.TriggerInterrupt(INTERRUPT.Plagued, target);
+            }
+        }
+        public int GetCarryInfectChance() {
+            return 50;
         }
 
         //private int GetInfectChanceForAction(INTERACTION_TYPE type) {
@@ -144,36 +151,6 @@ namespace Traits {
         //            return 0;
         //    }
         //}
-
-        public int GetChatInfectChance() {
-            if (level == 1) {
-                return 25;
-            } else if (level == 2) {
-                return 35;
-            } else {
-                return 45;
-            }
-        }
-        public int GetMakeLoveInfectChance() {
-            return 50;
-            // if (level == 1) {
-            //     return 50;
-            // } else if (level == 2) {
-            //     return 75;
-            // } else {
-            //     return 100;
-            // }
-        }
-        public int GetCarryInfectChance() {
-            return 50;
-            // if (level == 1) {
-            //     return 50;
-            // } else if (level == 2) {
-            //     return 75;
-            // } else {
-            //     return 100;
-            // }
-        }
     }
 
 }

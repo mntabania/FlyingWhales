@@ -14,6 +14,7 @@ namespace Inner_Maps.Location_Structures {
         public string name { get; protected set; }
         public virtual string nameplateName => name;
         public STRUCTURE_TYPE structureType { get; private set; }
+        public List<STRUCTURE_TAG> structureTags { get; protected set; }
         public List<Character> charactersHere { get; private set; }
         public Region location { get; private set; }
         public BaseSettlement settlementLocation { get; private set; }
@@ -51,6 +52,7 @@ namespace Inner_Maps.Location_Structures {
             tiles = new List<LocationGridTile>();
             unoccupiedTiles = new LinkedList<LocationGridTile>();
             objectsThatContributeToDamage = new HashSet<IDamageable>();
+            structureTags = new List<STRUCTURE_TAG>();
             residents = new List<Character>();
             maxHP = 5000;
             currentHP = maxHP;
@@ -65,6 +67,7 @@ namespace Inner_Maps.Location_Structures {
             charactersHere = new List<Character>();
             pointsOfInterest = new HashSet<IPointOfInterest>();
             groupedTileObjects = new Dictionary<TILE_OBJECT_TYPE, TileObjectsAndCount>();
+            structureTags = new List<STRUCTURE_TAG>();
             //outerTiles = new List<LocationGridTile>();
             tiles = new List<LocationGridTile>();
             objectsThatContributeToDamage = new HashSet<IDamageable>();
@@ -93,6 +96,98 @@ namespace Inner_Maps.Location_Structures {
         protected virtual void UnsubscribeListeners() { }
         #endregion
 
+        #region Utilities
+        /// <summary>
+        /// Get the structure's name based on specified rules.
+        /// Rules are at - https://trello.com/c/mRzzH9BE/1432-location-naming-convention
+        /// </summary>
+        /// <param name="character">The character requesting the name</param>
+        public virtual string GetNameRelativeTo(Character character) {
+            switch (structureType) {
+                case STRUCTURE_TYPE.INN:
+                    return "the inn";
+                case STRUCTURE_TYPE.WAREHOUSE:
+                    return $"the {location.name} warehouse";
+                case STRUCTURE_TYPE.PRISON:
+                    return $"the {location.name} prison";
+                case STRUCTURE_TYPE.WILDERNESS:
+                    return $"the outskirts of {location.name}";
+                case STRUCTURE_TYPE.CEMETERY:
+                    return $"the cemetery of {location.name}";
+                case STRUCTURE_TYPE.POND:
+                    return location.name;
+                case STRUCTURE_TYPE.CITY_CENTER:
+                    return $"the {location.name} city center";
+                default:
+                    return
+                        $"the {UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString())}";
+            }
+        }
+        //public void SetOuterTiles() {
+        //    for (int i = 0; i < tiles.Count; i++) {
+        //        LocationGridTile currTile = tiles[i];
+        //        if (currTile.HasDifferentDwellingOrOutsideNeighbour()) {
+        //            outerTiles.Add(currTile);
+        //        }
+        //    }
+        //}
+        //Note: Retained this because I don't know how to set the outer tiles on world creation. I only have the SetOuterTiles whenever a new structure is built. I also don't know when to set the outer tiles of wilderness. - Chy
+        public List<LocationGridTile> GetOuterTiles() {
+            List<LocationGridTile> outerTiles = new List<LocationGridTile>();
+            for (int i = 0; i < tiles.Count; i++) {
+                LocationGridTile currTile = tiles[i];
+                if (currTile.HasDifferentDwellingOrOutsideNeighbour()) {
+                    outerTiles.Add(currTile);
+                }
+            }
+            return outerTiles;
+        }
+        public void DoCleanup() {
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest poi = pointsOfInterest.ElementAt(i);
+                if (poi is TileObject) {
+                    (poi as TileObject).DoCleanup();
+                }
+            }
+        }
+        public void SetSettlementLocation(BaseSettlement npcSettlement) {
+            settlementLocation = npcSettlement;
+        }
+        public void SetInteriorState(bool _isInterior) {
+            isInterior = _isInterior;
+        }
+        public void CenterOnStructure() {
+            if (InnerMapManager.Instance.isAnInnerMapShowing && InnerMapManager.Instance.currentlyShowingMap != location.innerMap) {
+                InnerMapManager.Instance.HideAreaMap();
+            }
+            if (location.innerMap.isShowing == false) {
+                InnerMapManager.Instance.ShowInnerMap(location);
+            }
+            if (structureObj != null) {
+                InnerMapCameraMove.Instance.CenterCameraOn(structureObj.gameObject);
+            }
+        }
+        public void AddStructureTag(STRUCTURE_TAG tag) {
+            structureTags.Add(tag);
+        }
+        public bool RemoveStructureTag(STRUCTURE_TAG tag) {
+            return structureTags.Remove(tag);
+        }
+        public bool HasStructureTag(params STRUCTURE_TAG[] tag) {
+            for (int i = 0; i < tag.Length; i++) {
+                if (structureTags.Contains(tag[i])) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public bool HasStructureTags() {
+            return structureTags.Count > 0;
+        }
+        public override string ToString() {
+            return $"{structureType.ToString()} {id.ToString()} at {location.name}";
+        }
+        #endregion
 
         #region Characters
         public void AddCharacterAtLocation(Character character, LocationGridTile tile = null) {
@@ -444,82 +539,6 @@ namespace Inner_Maps.Location_Structures {
                 // ReSharper disable once Unity.NoNullPropagation
                 structureObj?.ApplyGroundTileAssetForTile(tile);    
             }
-        }
-        #endregion
-
-        #region Utilities
-        /// <summary>
-        /// Get the structure's name based on specified rules.
-        /// Rules are at - https://trello.com/c/mRzzH9BE/1432-location-naming-convention
-        /// </summary>
-        /// <param name="character">The character requesting the name</param>
-        public virtual string GetNameRelativeTo(Character character) {
-            switch (structureType) {
-                case STRUCTURE_TYPE.INN:
-                    return "the inn";
-                case STRUCTURE_TYPE.WAREHOUSE:
-                    return $"the {location.name} warehouse";
-                case STRUCTURE_TYPE.PRISON:
-                    return $"the {location.name} prison";
-                case STRUCTURE_TYPE.WILDERNESS:
-                    return $"the outskirts of {location.name}";
-                case STRUCTURE_TYPE.CEMETERY:
-                    return $"the cemetery of {location.name}";
-                case STRUCTURE_TYPE.POND:
-                    return location.name;
-                case STRUCTURE_TYPE.CITY_CENTER:
-                    return $"the {location.name} city center";
-                default:
-                    return
-                        $"the {UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString())}";
-            }
-        }
-        //public void SetOuterTiles() {
-        //    for (int i = 0; i < tiles.Count; i++) {
-        //        LocationGridTile currTile = tiles[i];
-        //        if (currTile.HasDifferentDwellingOrOutsideNeighbour()) {
-        //            outerTiles.Add(currTile);
-        //        }
-        //    }
-        //}
-        //Note: Retained this because I don't know how to set the outer tiles on world creation. I only have the SetOuterTiles whenever a new structure is built. I also don't know when to set the outer tiles of wilderness. - Chy
-        public List<LocationGridTile> GetOuterTiles() {
-            List<LocationGridTile> outerTiles = new List<LocationGridTile>();
-            for (int i = 0; i < tiles.Count; i++) {
-                LocationGridTile currTile = tiles[i];
-                if (currTile.HasDifferentDwellingOrOutsideNeighbour()) {
-                    outerTiles.Add(currTile);
-                }
-            }
-            return outerTiles;
-        }
-        public void DoCleanup() {
-            for (int i = 0; i < pointsOfInterest.Count; i++) {
-                IPointOfInterest poi = pointsOfInterest.ElementAt(i);
-                if (poi is TileObject) {
-                    (poi as TileObject).DoCleanup();
-                }
-            }
-        }
-        public void SetSettlementLocation(BaseSettlement npcSettlement) {
-            settlementLocation = npcSettlement;
-        }
-        public void SetInteriorState(bool _isInterior) {
-            isInterior = _isInterior;
-        }
-        public void CenterOnStructure() {
-            if (InnerMapManager.Instance.isAnInnerMapShowing && InnerMapManager.Instance.currentlyShowingMap != location.innerMap) {
-                InnerMapManager.Instance.HideAreaMap();
-            }
-            if (location.innerMap.isShowing == false) {
-                InnerMapManager.Instance.ShowInnerMap(location);
-            }
-            if (structureObj != null) {
-                InnerMapCameraMove.Instance.CenterCameraOn(structureObj.gameObject);    
-            }
-        }
-        public override string ToString() {
-            return $"{structureType.ToString()} {id.ToString()} at {location.name}";
         }
         #endregion
 

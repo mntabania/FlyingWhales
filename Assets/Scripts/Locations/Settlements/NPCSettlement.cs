@@ -11,7 +11,6 @@ using UtilityScripts;
 using Random = UnityEngine.Random;
 
 public class NPCSettlement : BaseSettlement, IJobOwner {
-    public Region region { get; }
     public LocationStructure prison { get; private set; }
     public LocationStructure mainStorage { get; private set; }
     public CityCenter cityCenter { get; private set; }
@@ -155,6 +154,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     }
     public override bool AddResident(Character character, LocationStructure chosenHome = null, bool ignoreCapacity = true) {
         if (base.AddResident(character, chosenHome, ignoreCapacity)) {
+            //region.AddResident(character);
             if (character.race == RACE.DEMON || character is Summon) { return true; }
             classManager.OnAddResident(character);
             jobPriorityComponent.OnAddResident(character);
@@ -164,6 +164,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     }
     public override bool RemoveResident(Character character) {
         if (base.RemoveResident(character)) {
+            //region.RemoveResident(character);
             classManager.OnRemoveResident(character);
             jobPriorityComponent.OnRemoveResident(character);
             return true;
@@ -186,10 +187,10 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
     }
     public void SetRuler(Character newRuler) {
-        ruler?.SetIsSettlementRuler(false);
+        ruler?.SetRuledSettlement(null);
         ruler = newRuler;
         if(ruler != null) {
-            ruler.SetIsSettlementRuler(true);
+            ruler.SetRuledSettlement(this);
             //ResetNewRulerDesignationChance();
             if (Messenger.eventTable.ContainsKey(Signals.HOUR_STARTED)) {
                 Messenger.RemoveListener(Signals.HOUR_STARTED, CheckForNewRulerDesignation);

@@ -1150,15 +1150,19 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         //string landmarkName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString());
         //LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkName);
         DemonicStructurePlayerSkill demonicStructureSkill = PlayerSkillManager.Instance.GetDemonicStructureSkillData(structureType);
-        string info = demonicStructureSkill.description + "\n" + demonicStructureSkill.GetManaCostChargesCooldownStr();
+        //string info = demonicStructureSkill.description + "\n" + demonicStructureSkill.GetManaCostChargesCooldownStr();
+        //UIManager.Instance.ShowSmallInfo(info);
+
+        PlayerUI.Instance.OnHoverSpell(demonicStructureSkill);
+
         //if (info != string.Empty) {
         //    info += "\n";
         //}
         //info += $"Duration: {GameManager.Instance.GetCeilingHoursBasedOnTicks(landmarkData.buildDuration).ToString()} hours";
-        UIManager.Instance.ShowSmallInfo(info);
     }
     private void OnHoverExitStructureChoice(SPELL_TYPE structureType) {
-        UIManager.Instance.HideSmallInfo();
+        //UIManager.Instance.HideSmallInfo();
+        PlayerUI.Instance.OnHoverOutSpell(null);
     }
     private Sprite GetStructurePortrait(string name) {
         string landmarkName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(name);

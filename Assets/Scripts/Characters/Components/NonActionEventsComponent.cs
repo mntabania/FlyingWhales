@@ -233,6 +233,14 @@ public class NonActionEventsComponent {
         owner.SetIsConversing(true);
         target.SetIsConversing(true);
 
+        Plagued ownerPlague = owner.traitContainer.GetNormalTrait<Plagued>("Plagued");
+        Plagued targetPlague = target.traitContainer.GetNormalTrait<Plagued>("Plagued");
+        if (ownerPlague != null && targetPlague == null) {
+            ownerPlague.ChatInfection(target);
+        }
+        if (targetPlague != null && ownerPlague == null) {
+            targetPlague.ChatInfection(owner);
+        }
         dueDate.AddTicks(2);
         SchedulingManager.Instance.AddEntry(dueDate, () => owner.SetIsConversing(false), owner);
         SchedulingManager.Instance.AddEntry(dueDate, () => target.SetIsConversing(false), target);

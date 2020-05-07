@@ -42,48 +42,48 @@ public class Assault : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return 50;
     }
-    public override string ReactionToActor(Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionToActor(witness, node, status);
-        Character actor = node.actor;
-        IPointOfInterest target = node.poiTarget;
-        if (!witness.IsHostileWith(actor)) {
-            if (target is Character targetCharacter) {
-                string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
-                if (opinionLabel == RelationshipManager.Enemy || opinionLabel == RelationshipManager.Rival) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status, node);
-                } else if (node.associatedJobType != JOB_TYPE.APPREHEND) {
-                    if (opinionLabel == RelationshipManager.Acquaintance) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
-                    } else if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);
-                    }
-                }
-                if (node.associatedJobType != JOB_TYPE.APPREHEND && !actor.IsHostileWith(targetCharacter)) {
-                    CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.MISDEMEANOR);
-                }
-            }
-        }
-        return response;
-    }
-    public override string ReactionToTarget(Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionToTarget(witness, node, status);
-        Character actor = node.actor;
-        IPointOfInterest target = node.poiTarget;
-        if (node.associatedJobType == JOB_TYPE.APPREHEND) {
-            Character targetCharacter = target as Character;
-            string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
-            if (opinionLabel == RelationshipManager.Acquaintance) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, targetCharacter, status, node);
-            } else if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, targetCharacter, status, node);
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, targetCharacter, status, node);
-            } else {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disgust, witness, targetCharacter, status, node);
-            }
-        }
-        return response;
-    }
+    //public override string ReactionToActor(Character witness, ActualGoapNode node, REACTION_STATUS status) {
+    //    string response = base.ReactionToActor(witness, node, status);
+    //    Character actor = node.actor;
+    //    IPointOfInterest target = node.poiTarget;
+    //    if (!witness.IsHostileWith(actor)) {
+    //        if (target is Character targetCharacter) {
+    //            string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
+    //            if (opinionLabel == RelationshipManager.Enemy || opinionLabel == RelationshipManager.Rival) {
+    //                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status, node);
+    //            } else if (node.associatedJobType != JOB_TYPE.APPREHEND) {
+    //                if (opinionLabel == RelationshipManager.Acquaintance) {
+    //                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
+    //                } else if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
+    //                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
+    //                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);
+    //                }
+    //            }
+    //            if (node.associatedJobType != JOB_TYPE.APPREHEND && !actor.IsHostileWith(targetCharacter)) {
+    //                CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.MISDEMEANOR);
+    //            }
+    //        }
+    //    }
+    //    return response;
+    //}
+    //public override string ReactionToTarget(Character witness, ActualGoapNode node, REACTION_STATUS status) {
+    //    string response = base.ReactionToTarget(witness, node, status);
+    //    Character actor = node.actor;
+    //    IPointOfInterest target = node.poiTarget;
+    //    if (node.associatedJobType == JOB_TYPE.APPREHEND) {
+    //        Character targetCharacter = target as Character;
+    //        string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
+    //        if (opinionLabel == RelationshipManager.Acquaintance) {
+    //            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, targetCharacter, status, node);
+    //        } else if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
+    //            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, targetCharacter, status, node);
+    //            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, targetCharacter, status, node);
+    //        } else {
+    //            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disgust, witness, targetCharacter, status, node);
+    //        }
+    //    }
+    //    return response;
+    //}
     public override void OnStoppedInterrupt(ActualGoapNode node) {
         base.OnStoppedInterrupt(node);
         node.actor.combatComponent.RemoveHostileInRange(node.poiTarget);

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EntBehaviour : CharacterBehaviourComponent {
 	public EntBehaviour() {
-		priority = 0;
+		priority = 1;
 		// attributes = new[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.WITHIN_HOME_SETTLEMENT_ONLY };
 	}
 	public override bool TryDoBehaviour(Character character, ref string log) {

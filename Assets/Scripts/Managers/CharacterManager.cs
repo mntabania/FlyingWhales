@@ -21,6 +21,8 @@ public class CharacterManager : MonoBehaviour {
     public const string Make_Love = "Make Love", Steal = "Steal", Poison_Food = "Poison Food",
         Place_Trap = "Place Trap", Flirt = "Flirt", Transform_To_Wolf = "Transform To Wolf", Drink_Blood = "Drink Blood",
         Destroy_Action = "Destroy";
+    public const string Default_Resident_Behaviour = "Default Resident Behaviour", Default_Monster_Behaviour = "Default Monster Behaviour",
+        Default_Minion_Behaviour = "Default Minion Behaviour", Default_Wanderer_Behaviour = "Default Wanderer Behaviour";
     public const int MAX_HISTORY_LOGS = 300;
 
     
@@ -60,6 +62,42 @@ public class CharacterManager : MonoBehaviour {
     public COMBAT_MODE[] combatModes { get; private set; }
     public List<string> rumorWorthyActions { get; private set; }
 
+    private Dictionary<System.Type, CharacterBehaviourComponent> behaviourComponents;
+    private Dictionary<string, System.Type[]> defaultBehaviourSets = new Dictionary<string, Type[]>() {
+        { Default_Resident_Behaviour,
+            new []{
+                typeof(DefaultFactionRelated),
+                typeof(WorkBehaviour),
+                typeof(DefaultAtHome),
+                typeof(DefaultOutside),
+                typeof(DefaultBaseStructure),
+                typeof(DefaultOtherStructure),
+                typeof(DefaultExtraCatcher),
+                typeof(MovementProcessing),
+            }
+        },
+        { Default_Monster_Behaviour,
+            new []{
+                typeof(MovementProcessing),
+                typeof(DefaultMonster)
+            }
+        },
+        { Default_Minion_Behaviour,
+            new []{
+                typeof(MovementProcessing),
+                typeof(DefaultMinion)
+            }
+        },
+        { Default_Wanderer_Behaviour,
+            new []{
+                typeof(MovementProcessing),
+                typeof(DefaultFactionRelated),
+                typeof(DefaultWanderer),
+                //TODO: WANDERER
+            }
+        },
+    };
+
     #region getters/setters
     public List<Character> allCharacters => characterDatabase.allCharactersList;
     public GameObject characterPortraitPrefab => _characterPortraitPrefab;
@@ -81,6 +119,7 @@ public class CharacterManager : MonoBehaviour {
         rumorWorthyActions = new List<string>() { Make_Love, Steal, Poison_Food, Place_Trap, Flirt, Transform_To_Wolf, Drink_Blood, Destroy_Action };
         characterDatabase = new CharacterDatabase();
         ConstructEmotionData();
+        ConstructCharacterBehaviours();
         Messenger.AddListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
     }
 
@@ -99,7 +138,7 @@ public class CharacterManager : MonoBehaviour {
         }
         newCharacter.ownParty.CreateIcon();
         if (homeLocation != null) {
-            newCharacter.MigrateHomeTo(homeLocation, homeStructure, false);
+            newCharacter.MigrateHomeTo(homeLocation, homeStructure, false, false);
             homeLocation.region.AddCharacterToLocation(newCharacter);
         }
         newCharacter.CreateInitialTraitsByClass();
@@ -120,7 +159,7 @@ public class CharacterManager : MonoBehaviour {
         }
         newCharacter.ownParty.CreateIcon();
         if (homeLocation != null) {
-            newCharacter.MigrateHomeTo(homeLocation, homeStructure, false);
+            newCharacter.MigrateHomeTo(homeLocation, homeStructure, false, false);
         }
         if(homeRegion != null) {
             homeRegion.AddResident(newCharacter);
@@ -143,8 +182,8 @@ public class CharacterManager : MonoBehaviour {
         }
         newCharacter.ownParty.CreateIcon();
         if (homeLocation != null) {
-            newCharacter.MigrateHomeTo(homeLocation, homeStructure, false);
-            homeLocation.region.AddResident(newCharacter);
+            newCharacter.MigrateHomeTo(homeLocation, homeStructure, false, true);
+            //homeLocation.region.AddResident(newCharacter);
             homeLocation.region.AddCharacterToLocation(newCharacter);
         }
         newCharacter.CreateInitialTraitsByClass();
@@ -212,8 +251,8 @@ public class CharacterManager : MonoBehaviour {
         }
         newCharacter.ownParty.CreateIcon();
         if (homeLocation != null) {
-            newCharacter.MigrateHomeTo(homeLocation, homeStructure, false);
-            homeLocation.region.AddResident(newCharacter);
+            newCharacter.MigrateHomeTo(homeLocation, homeStructure, false, true);
+            //homeLocation.region.AddResident(newCharacter);
             homeLocation.region.AddCharacterToLocation(newCharacter);
         }
         newCharacter.CreateInitialTraitsByClass();
@@ -352,20 +391,34 @@ public class CharacterManager : MonoBehaviour {
     public List<CharacterClass> GetNormalCombatantClasses() {
         return classManager.normalCombatantClasses;
     }
-    public Type[] GetClassBehaviourComponents(string className) {
-        return classManager.GetClassBehaviourComponents(className);
+    public List<CharacterClass> GetAllClasses() {
+        return classManager.allClasses;
+    }
+    #endregion
+
+    #region Behaviours
+    private void ConstructCharacterBehaviours() {
+        List<CharacterBehaviourComponent> allBehaviours = ReflectiveEnumerator.GetEnumerableOfType<CharacterBehaviourComponent>().ToList();
+        behaviourComponents = new Dictionary<System.Type, CharacterBehaviourComponent>();
+        for (int i = 0; i < allBehaviours.Count; i++) {
+            CharacterBehaviourComponent behaviour = allBehaviours[i];
+            behaviourComponents.Add(behaviour.GetType(), behaviour);
+        }
+    }
+    public Type[] GetDefaultBehaviourSet(string setName) {
+        if (defaultBehaviourSets.ContainsKey(setName)) {
+            return defaultBehaviourSets[setName];
+        }
+        return null;
     }
     //public System.Type[] GetTraitBehaviourComponents(string traitName) {
     //    return classManager.GetTraitBehaviourComponents(traitName);
     //}
     public CharacterBehaviourComponent GetCharacterBehaviourComponent(Type type) {
-        return classManager.GetCharacterBehaviourComponent(type);
-    }
-    public string GetClassBehaviourComponentKey(string className) {
-        return classManager.GetClassBehaviourComponentKey(className);
-    }
-    public List<CharacterClass> GetAllClasses() {
-        return classManager.allClasses;
+        if (behaviourComponents.ContainsKey(type)) {
+            return behaviourComponents[type];
+        }
+        return null;
     }
     #endregion
 

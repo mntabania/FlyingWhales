@@ -695,10 +695,12 @@ public class CharacterInfoUI : InfoUIBase {
     private void OnHoverAffliction(string afflictionName) {
         SPELL_TYPE afflictionType = (SPELL_TYPE) System.Enum.Parse(typeof(SPELL_TYPE), afflictionName.ToUpper().Replace(' ', '_'));
         SpellData affliction = PlayerSkillManager.Instance.GetAfflictionData(afflictionType);
-        UIManager.Instance.ShowSmallInfo(affliction.description + "\n" + affliction.GetManaCostChargesCooldownStr());
+        //UIManager.Instance.ShowSmallInfo(affliction.description + "\n" + affliction.GetManaCostChargesCooldownStr());
+        PlayerUI.Instance.OnHoverSpell(affliction);
     }
     private void OnHoverOutAffliction(string afflictionName) {
         UIManager.Instance.HideSmallInfo();
+        PlayerUI.Instance.OnHoverOutSpell(null);
     }
     #endregion
 

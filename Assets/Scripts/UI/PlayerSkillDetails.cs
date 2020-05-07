@@ -24,10 +24,9 @@ public class PlayerSkillDetails : MonoBehaviour {
     private PlayerSkillTreeNode skillTreeNode;
     private bool _useSkillData;
 
-    public void ShowPlayerSkillDetails(SpellData skillData, PlayerSkillTreeNode skillTreeNode, bool useSkillData) {
+    public void ShowPlayerSkillDetails(SpellData skillData, PlayerSkillTreeNode skillTreeNode) {
         this.skillData = skillData;
         this.skillTreeNode = skillTreeNode;
-        _useSkillData = useSkillData;
         UpdateData();
         gameObject.SetActive(true);
     }
@@ -40,14 +39,19 @@ public class PlayerSkillDetails : MonoBehaviour {
         descriptionText.text = skillData.description;
         expText.text = skillTreeNode?.expCost + " XP";
 
-        int charges = skillData.charges;
-        int manaCost = skillData.manaCost;
-        int cooldown = skillData.cooldown;
-        if(!_useSkillData) {
-            charges = skillTreeNode.charges;
-            manaCost = skillTreeNode.manaCost;
-            cooldown = skillTreeNode.cooldown;
-        }
+        int charges = skillTreeNode.charges;
+        int manaCost = skillTreeNode.manaCost;
+        int cooldown = skillTreeNode.cooldown;
+
+        //int charges = skillData.charges;
+        //int manaCost = skillData.manaCost;
+        //int cooldown = skillData.cooldown;
+        //if(!_useSkillData) {
+        //    charges = skillTreeNode.charges;
+        //    manaCost = skillTreeNode.manaCost;
+        //    cooldown = skillTreeNode.cooldown;
+        //}
+
         categoryText.text = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(skillData.category.ToString());
         chargesText.text = "" + (charges != -1 ? charges : 0);
         manaCostText.text = "" + (manaCost != -1 ? manaCost : 0);
@@ -60,29 +64,25 @@ public class PlayerSkillDetails : MonoBehaviour {
         }
         cooldownText.text = cdText;
 
-        if (_useSkillData) {
-            unlockButton.gameObject.SetActive(false);
+        SaveDataPlayer saveDataPlayer = SaveManager.Instance.currentSaveDataPlayer;
+        if (saveDataPlayer.IsSkillLearned(skillData.type) || saveDataPlayer.exp < skillTreeNode.expCost) {
+            SpriteState newSpriteState = new SpriteState();
+            newSpriteState.highlightedSprite = unlockButton.spriteState.highlightedSprite;
+            newSpriteState.pressedSprite = unlockButton.spriteState.pressedSprite;
+            newSpriteState.selectedSprite = unlockButton.spriteState.selectedSprite;
+            newSpriteState.disabledSprite = learnedButtonSprite;
+            unlockButton.spriteState = newSpriteState;
+            unlockButton.interactable = false;
+            unlockButton.gameObject.SetActive(true);
         } else {
-            SaveDataPlayer saveDataPlayer = SaveManager.Instance.currentSaveDataPlayer;
-            if (saveDataPlayer.IsSkillLearned(skillData.type) || saveDataPlayer.exp < skillTreeNode.expCost) {
-                SpriteState newSpriteState = new SpriteState();
-                newSpriteState.highlightedSprite = unlockButton.spriteState.highlightedSprite;
-                newSpriteState.pressedSprite = unlockButton.spriteState.pressedSprite;
-                newSpriteState.selectedSprite = unlockButton.spriteState.selectedSprite;
-                newSpriteState.disabledSprite = learnedButtonSprite;
-                unlockButton.spriteState = newSpriteState;
-                unlockButton.interactable = false;
-                unlockButton.gameObject.SetActive(true);
-            } else {
-                SpriteState newSpriteState = new SpriteState();
-                newSpriteState.highlightedSprite = unlockButton.spriteState.highlightedSprite;
-                newSpriteState.pressedSprite = unlockButton.spriteState.pressedSprite;
-                newSpriteState.selectedSprite = unlockButton.spriteState.selectedSprite;
-                newSpriteState.disabledSprite = notLearnedButtonSprite;
-                unlockButton.spriteState = newSpriteState;
-                unlockButton.interactable = true;
-                unlockButton.gameObject.SetActive(saveDataPlayer.IsSkillUnlocked(skillData.type));
-            }
+            SpriteState newSpriteState = new SpriteState();
+            newSpriteState.highlightedSprite = unlockButton.spriteState.highlightedSprite;
+            newSpriteState.pressedSprite = unlockButton.spriteState.pressedSprite;
+            newSpriteState.selectedSprite = unlockButton.spriteState.selectedSprite;
+            newSpriteState.disabledSprite = notLearnedButtonSprite;
+            unlockButton.spriteState = newSpriteState;
+            unlockButton.interactable = true;
+            unlockButton.gameObject.SetActive(saveDataPlayer.IsSkillUnlocked(skillData.type));
         }
     }
 

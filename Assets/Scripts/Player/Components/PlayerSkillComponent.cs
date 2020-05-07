@@ -139,6 +139,9 @@ public class PlayerSkillComponent {
         spellData.SetCharges(node.charges);
         spellData.SetCooldown(node.cooldown);
         spellData.SetManaCost(node.manaCost);
+        spellData.SetThreat(node.threat);
+        spellData.SetThreatPerHour(node.threatPerHour);
+
     }
     private void SetPlayerSkillData(SPELL_TYPE skill, PlayerSkillTreeNode node) {
         SpellData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(skill);
@@ -146,6 +149,8 @@ public class PlayerSkillComponent {
         spellData.SetCharges(node.charges);
         spellData.SetCooldown(node.cooldown);
         spellData.SetManaCost(node.manaCost);
+        spellData.SetThreat(node.threat);
+        spellData.SetThreatPerHour(node.threatPerHour);
     }
     private void CategorizePlayerSkill(SpellData spellData) {
         Assert.IsNotNull(spellData, "Given spell data in CategorizePlayerSkill is null!");
