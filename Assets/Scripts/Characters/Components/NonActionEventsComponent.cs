@@ -335,7 +335,7 @@ public class NonActionEventsComponent {
         if (opinionLabel == RelationshipManager.Acquaintance)
         {
             // 15% chance to develop Lover relationship if both characters have no Lover yet
-            if (UnityEngine.Random.Range(0, 100) < 15)
+            if (UnityEngine.Random.Range(0, 100) < 25)
             {
                 if (owner.relationshipValidator.CanHaveRelationship(owner, target, RELATIONSHIP_TYPE.LOVER)
                     && target.relationshipValidator.CanHaveRelationship(target, owner, RELATIONSHIP_TYPE.LOVER))
@@ -345,7 +345,7 @@ public class NonActionEventsComponent {
 
             }
             // 20% chance to develop Affair if at least one of the characters already have a Lover 
-            else if (UnityEngine.Random.Range(0, 100) < 25)
+            else if (UnityEngine.Random.Range(0, 100) < 35)
             {
                 if (owner.relationshipValidator.CanHaveRelationship(owner, target, RELATIONSHIP_TYPE.AFFAIR)
                     && target.relationshipValidator.CanHaveRelationship(target, owner, RELATIONSHIP_TYPE.AFFAIR))
@@ -358,7 +358,7 @@ public class NonActionEventsComponent {
         else if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend)
         {
             // 25 % chance to develop Lover relationship if both characters have no Lover yet
-            if (UnityEngine.Random.Range(0, 100) < 25)
+            if (UnityEngine.Random.Range(0, 100) < 35)
             {
                 if (owner.relationshipValidator.CanHaveRelationship(owner, target, RELATIONSHIP_TYPE.LOVER)
                     && target.relationshipValidator.CanHaveRelationship(target, owner, RELATIONSHIP_TYPE.LOVER))
@@ -368,7 +368,7 @@ public class NonActionEventsComponent {
 
             }
             // 35% chance to develop Affair if at least one of the characters already have a Lover 
-            else if (UnityEngine.Random.Range(0, 100) < 35)
+            else if (UnityEngine.Random.Range(0, 100) < 50)
             {
                 if (owner.relationshipValidator.CanHaveRelationship(owner, target, RELATIONSHIP_TYPE.AFFAIR)
                     && target.relationshipValidator.CanHaveRelationship(target, owner, RELATIONSHIP_TYPE.AFFAIR))
