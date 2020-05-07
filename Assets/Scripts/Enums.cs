@@ -1039,6 +1039,7 @@ public enum INTERRUPT {
     Feared,
     Abomination_Death,
     Cry,
+    Surprised,
 }
 
 public enum TRAIT_TYPE {
