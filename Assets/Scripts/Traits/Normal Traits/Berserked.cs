@@ -75,17 +75,17 @@ namespace Traits {
                 Character targetCharacter = targetPOI as Character;
                 if (!targetCharacter.isDead) {
                     if (character.faction.isPlayerFaction) {
-                        character.combatComponent.Fight(targetCharacter, isLethal: true); //check hostility if from player faction, so as not to attack other characters that are also from the same faction.
+                        character.combatComponent.Fight(targetCharacter, CombatManager.Berserked, isLethal: true); //check hostility if from player faction, so as not to attack other characters that are also from the same faction.
                     } else {
                         if (!targetCharacter.traitContainer.HasTrait("Unconscious")) {
-                            character.combatComponent.Fight(targetCharacter, isLethal: false);
+                            character.combatComponent.Fight(targetCharacter, CombatManager.Berserked, isLethal: false);
                         }
                     }
                 }
             } else if (targetPOI is TileObject) { // || targetPOI is SpecialToken
                 if (Random.Range(0, 100) < 35) {
                     //character.jobComponent.TriggerDestroy(targetPOI);
-                    character.combatComponent.Fight(targetPOI, isLethal: false);
+                    character.combatComponent.Fight(targetPOI, CombatManager.Berserked, isLethal: false);
                 }
             }
         }

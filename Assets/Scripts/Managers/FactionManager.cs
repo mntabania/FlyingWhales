@@ -103,6 +103,7 @@ public class FactionManager : MonoBehaviour {
     }
     private Faction CreateZombieFaction() {
         Faction zombies = CreateNewFaction(RACE.NONE, factionName: "Zombies");
+        zombies.SetIsMajorFaction(false);
         foreach (KeyValuePair<Faction,FactionRelationship> pair in zombies.relationships) {
             zombies.SetRelationshipFor(pair.Key, FACTION_RELATIONSHIP_STATUS.HOSTILE);
         }

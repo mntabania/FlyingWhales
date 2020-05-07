@@ -149,7 +149,7 @@ public class Eat : GoapAction {
             }
             if (poiTarget is Table) {
                 //if target is table, do not allow if actor is a monster
-                if (UtilityScripts.GameUtilities.IsRaceBeast(actor.race) || actor.IsNormalCharacter() == false) {
+                if (UtilityScripts.GameUtilities.IsRaceBeast(actor.race) || actor.isNormalCharacter == false) {
                     return false;
                 }
             }

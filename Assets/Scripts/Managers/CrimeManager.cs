@@ -15,9 +15,15 @@ public class CrimeManager : MonoBehaviour {
     #region Character
     public void MakeCharacterACriminal(Character character, IPointOfInterest target, CRIME_TYPE crimeType,
         ICrimeable committedCrime) {
-        Criminal criminalTrait = new Criminal();
-        character.traitContainer.AddTrait(character, criminalTrait);
-        criminalTrait.SetCrime(crimeType, committedCrime, target);
+        if (character.traitContainer.HasTrait("Criminal")) {
+            //Criminal criminalTrait = character.traitContainer.GetNormalTrait<Criminal>("Criminal");
+            //criminalTrait.SetCrime(crimeType, committedCrime, target);
+        } else {
+            Criminal criminalTrait = new Criminal();
+            character.traitContainer.AddTrait(character, criminalTrait);
+            criminalTrait.SetCrime(crimeType, committedCrime, target);
+        }
+
     }
     public CRIME_TYPE GetCrimeTypeConsideringAction(ActualGoapNode consideredAction) {
         Character actor = consideredAction.actor;
@@ -50,7 +56,7 @@ public class CrimeManager : MonoBehaviour {
         } else if (actionType == INTERACTION_TYPE.KNOCKOUT_CHARACTER
             || actionType == INTERACTION_TYPE.ASSAULT) {
             if(consideredAction.associatedJobType != JOB_TYPE.APPREHEND) {
-                if (target is Character targetCharacter && targetCharacter.IsNormalCharacter()) {
+                if (target is Character targetCharacter && targetCharacter.isNormalCharacter) {
                     if (!actor.IsHostileWith(targetCharacter)) {
                         return CRIME_TYPE.MISDEMEANOR;
                     }

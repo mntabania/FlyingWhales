@@ -123,7 +123,7 @@ public class Butcher : GoapAction {
     }
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
         if (node.poiTarget is Character character) {
-            if (character.IsNormalCharacter()) {
+            if (character.isNormalCharacter) {
                 return REACTABLE_EFFECT.Negative;
             }
         }

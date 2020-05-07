@@ -9,11 +9,11 @@ public class CombatComponent {
     public COMBAT_MODE combatMode { get; private set; }
     public List<IPointOfInterest> hostilesInRange { get; private set; } //POI's in this characters hostility collider
     public List<IPointOfInterest> avoidInRange { get; private set; } //POI's in this characters hostility collider
-    public Dictionary<Character, bool> lethalCharacters { get; private set; }
+    public Dictionary<IPointOfInterest, CombatData> fightCombatData { get; private set; }
     public string avoidReason { get; private set; }
     public ElementalDamageData elementalDamage { get; private set; }
-    public ActualGoapNode actionThatTriggeredCombatState { get; private set; }
-    public GoapPlanJob jobThatTriggeredCombatState { get; private set; }
+    //public ActualGoapNode actionThatTriggeredCombatState { get; private set; }
+    //public GoapPlanJob jobThatTriggeredCombatState { get; private set; }
     // public ActualGoapNode combatConnectedActionNode { get; private set; }
 
     //delegates
@@ -26,13 +26,13 @@ public class CombatComponent {
 		this.owner = owner;
         hostilesInRange = new List<IPointOfInterest>();
         avoidInRange = new List<IPointOfInterest>();
-        lethalCharacters = new Dictionary<Character, bool>();
+        fightCombatData = new Dictionary<IPointOfInterest, CombatData>();
         SetCombatMode(COMBAT_MODE.Aggressive);
         SetElementalType(ELEMENTAL_TYPE.Normal);
 	}
 
     #region Fight or Flight
-    public void FightOrFlight(IPointOfInterest target, bool isLethal = true) {
+    public void FightOrFlight(IPointOfInterest target, string fightReason, ActualGoapNode connectedAction = null, bool isLethal = true) {
         string debugLog = $"FIGHT or FLIGHT response of {owner.name} against {target.nameWithID}";
         if (!owner.canPerform || !owner.canMove) {
             debugLog += "\n-Character cannot move/perform, will not fight or flight";
@@ -48,7 +48,7 @@ public class CombatComponent {
             debugLog += "\n-Character is zombie";
             debugLog += "\n-FIGHT";
             owner.logComponent.PrintLogIfActive(debugLog);
-            Fight(target, isLethal);
+            Fight(target, fightReason, connectedAction, isLethal);
             return;
         }
         if (target is Character) {
@@ -68,7 +68,7 @@ public class CombatComponent {
                     if (chance < 20) {
                         debugLog += "\n-FIGHT";
                         owner.logComponent.PrintLogIfActive(debugLog);
-                        Fight(target, isLethal);
+                        Fight(target, fightReason, connectedAction, isLethal);
                     } else {
                         debugLog += "\n-FLIGHT";
                         owner.logComponent.PrintLogIfActive(debugLog);
@@ -80,7 +80,7 @@ public class CombatComponent {
                         debugLog += "\n-Character hp is higher than target";
                         debugLog += "\n-FIGHT";
                         owner.logComponent.PrintLogIfActive(debugLog);
-                        Fight(target, isLethal);
+                        Fight(target, fightReason, connectedAction, isLethal);
                     } else {
                         debugLog += "\n-Character hp is lower or equal than target";
                         if (CombatManager.Instance.IsImmuneToElement(targetCharacter, elementalDamage.type)) {
@@ -88,11 +88,11 @@ public class CombatComponent {
                             Flight(target, "got scared");
                         } else if (CombatManager.Instance.IsImmuneToElement(owner, targetCharacter.combatComponent.elementalDamage.type)) {
                             debugLog += "\n-Character is immune to target elemental damage";
-                            Fight(target, isLethal);
+                            Fight(target, fightReason, connectedAction, isLethal);
                         } else {
                             if (owner.currentHP >= Mathf.CeilToInt(owner.maxHP * 0.5f)) {
                                 debugLog += "\n-Character's hp is greater than or equal to 50% of its max hp";
-                                Fight(target, isLethal);
+                                Fight(target, fightReason, connectedAction, isLethal);
                             } else {
                                 int fightChance = 25;
                                 for (int i = 0; i < owner.marker.inVisionCharacters.Count; i++) {
@@ -108,7 +108,7 @@ public class CombatComponent {
                                 if (roll < fightChance) {
                                     debugLog += "\n-FIGHT";
                                     owner.logComponent.PrintLogIfActive(debugLog);
-                                    Fight(target, isLethal);
+                                    Fight(target, fightReason, connectedAction, isLethal);
                                 } else {
                                     debugLog += "\n-FLIGHT";
                                     owner.logComponent.PrintLogIfActive(debugLog);
@@ -131,28 +131,38 @@ public class CombatComponent {
                 if (string.IsNullOrEmpty(tileObject.neutralizer) == false && 
                     owner.traitContainer.HasTrait(tileObject.neutralizer)) {
                     debugLog += $"\n-Character has neutralizer trait {tileObject.neutralizer}";    
-                    Fight(target, isLethal);
+                    Fight(target, fightReason, connectedAction, isLethal);
                 } else {
                     Flight(target, "got scared");
                 }
                 owner.logComponent.PrintLogIfActive(debugLog);
             } else {
                 debugLog += "\n-Object is not dangerous";
-                Fight(target, isLethal);
+                Fight(target, fightReason, connectedAction, isLethal);
                 owner.logComponent.PrintLogIfActive(debugLog);
             }
         }
     }
-    public bool Fight(IPointOfInterest target, bool isLethal = true) {
+    public bool Fight(IPointOfInterest target, string reason, ActualGoapNode connectedAction = null, bool isLethal = true) {
         bool hasFought = false;
+        avoidInRange.Remove(target);
         if (!hostilesInRange.Contains(target)) {
             string debugLog = $"Triggered FIGHT response for {owner.name} against {target.nameWithID}";
             hostilesInRange.Add(target);
             avoidInRange.Remove(target);
             SetWillProcessCombat(true);
-            if (target is Character targetCharacter) {
-                lethalCharacters.Add(targetCharacter, isLethal);
-            } else if (target is TileObject targetTileObject) {
+
+            CombatData newCombatData = ObjectPoolManager.Instance.CreateNewCombatData();
+            newCombatData.SetData(reason, connectedAction, isLethal);
+            if (fightCombatData.ContainsKey(target)) {
+                CombatData prevCombatData = fightCombatData[target];
+                ObjectPoolManager.Instance.ReturnCombatDataToPool(prevCombatData);
+                fightCombatData[target] = newCombatData;
+            } else {
+                fightCombatData.Add(target, newCombatData);
+            }
+
+            if (target is TileObject targetTileObject) {
                 targetTileObject.AdjustRepairCounter(1);
             }
             target.CancelRemoveStatusFeedAndRepairJobsTargetingThis();
@@ -165,9 +175,10 @@ public class CombatComponent {
     public bool Flight(IPointOfInterest target, string reason = "") {
         bool hasFled = false;
         if (hostilesInRange.Remove(target)) {
-            if (target.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-                lethalCharacters.Remove(target as Character);
-            } else if (target is TileObject targetTileObject) {
+            //if (target.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+            //    fightCombatData.Remove(target as Character);
+            //} else 
+            if (target is TileObject targetTileObject) {
                 targetTileObject.AdjustRepairCounter(-1);
             }
         }
@@ -228,9 +239,10 @@ public class CombatComponent {
     //}
     public void RemoveHostileInRange(IPointOfInterest poi, bool processCombatBehavior = true) {
         if (hostilesInRange.Remove(poi)) {
-            if (poi is Character character) {
-                lethalCharacters.Remove(character);
-            } else if (poi is TileObject targetTileObject) {
+            //if (poi is Character character) {
+            //    fightCombatData.Remove(character);
+            //} else 
+            if (poi is TileObject targetTileObject) {
                 targetTileObject.AdjustRepairCounter(-1);
             }
             string removeHostileSummary = $"{poi.name} was removed from {owner.name}'s hostile range.";
@@ -259,7 +271,7 @@ public class CombatComponent {
                 }
             }
             hostilesInRange.Clear();
-            lethalCharacters.Clear();
+            //fightCombatData.Clear();
             //When adding hostile in range, check if character is already in combat state, if it is, only reevaluate combat behavior, if not, enter combat state
             if (processCombatBehavior) {
                 //if (owner.isInCombat) {
@@ -270,8 +282,8 @@ public class CombatComponent {
         }
     }
     public bool IsLethalCombatForTarget(Character character) {
-        if (lethalCharacters.ContainsKey(character)) {
-            return lethalCharacters[character];
+        if (fightCombatData.ContainsKey(character)) {
+            return fightCombatData[character].isLethal;
         }
         return true;
     }
@@ -446,12 +458,50 @@ public class CombatComponent {
             SetElementalType(owner.characterClass.elementalType);
         }
     }
-    public void SetActionAndJobThatTriggeredCombat(ActualGoapNode node, GoapPlanJob job) {
-        actionThatTriggeredCombatState = node;
-        jobThatTriggeredCombatState = job;
-    }
+    //public void SetActionAndJobThatTriggeredCombat(ActualGoapNode node, GoapPlanJob job) {
+    //    actionThatTriggeredCombatState = node;
+    //    jobThatTriggeredCombatState = job;
+    //}
     public void SetWillProcessCombat(bool state) {
         _willProcessCombat = state;
     }
     #endregion
+
+    #region Combat Data
+    public CombatData GetCombatData(IPointOfInterest target) {
+        if (fightCombatData.ContainsKey(target)) {
+            return fightCombatData[target];
+        }
+        return null;
+    }
+    public void ClearCombatData() {
+        foreach (CombatData combatData in fightCombatData.Values) {
+            ObjectPoolManager.Instance.ReturnCombatDataToPool(combatData);
+        }
+        fightCombatData.Clear();
+    }
+    #endregion
+}
+
+public class CombatData {
+    public string reasonForCombat;
+    public ActualGoapNode connectedAction;
+    public bool isLethal;
+
+    public CombatData() {
+        Initialize();
+    }
+    public void Initialize() {
+        reasonForCombat = string.Empty;
+        connectedAction = null;
+        isLethal = false;
+    }
+    public void Reset() {
+        Initialize();
+    }
+    public void SetData(string reasonForCombat, ActualGoapNode connectedAction, bool isLethal) {
+        this.reasonForCombat = reasonForCombat;
+        this.connectedAction = connectedAction;
+        this.isLethal = isLethal;
+    }
 }

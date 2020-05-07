@@ -301,7 +301,7 @@ public class PlayerManager : MonoBehaviour {
         Debug.Log($"Created {amount.ToString()} chaos orbs at {mapLocation.region.name}. Position {worldPos.ToString()}");
     }
     private void OnCharacterDidActionSuccess(Character character, ActualGoapNode actionNode) {
-        if (character.IsNormalCharacter()) {
+        if (character.isNormalCharacter) {
             CRIME_TYPE crimeType = CrimeManager.Instance.GetCrimeTypeConsideringAction(actionNode);
             if (crimeType != CRIME_TYPE.NONE) {
                 int orbsToCreate;

@@ -51,11 +51,11 @@ public class CharacterStateJob : JobQueueItem {
             if (newState != null && assignedCharacter.stateComponent.currentState == newState) {
                 SetAssignedState(newState);
                 assignedCharacter.SetCurrentJob(this);
-                if(newState is CombatState combatState) {
-                    combatState.SetActionThatTriggeredThisState(assignedCharacter.combatComponent.actionThatTriggeredCombatState);
-                    combatState.SetJobThatTriggeredThisState(assignedCharacter.combatComponent.jobThatTriggeredCombatState);
-                    assignedCharacter.combatComponent.SetActionAndJobThatTriggeredCombat(null, null);
-                }
+                //if(newState is CombatState combatState) {
+                //    combatState.SetActionThatTriggeredThisState(assignedCharacter.combatComponent.actionThatTriggeredCombatState);
+                //    combatState.SetJobThatTriggeredThisState(assignedCharacter.combatComponent.jobThatTriggeredCombatState);
+                //    assignedCharacter.combatComponent.SetActionAndJobThatTriggeredCombat(null, null);
+                //}
                 return true;
             } else {
                 // throw new System.Exception(

@@ -14,7 +14,7 @@ public class HarassBehaviour : CharacterBehaviourComponent {
             if(character.marker.inVisionTileObjects.Count > 0) {
                 log += "\n-Has tile object in vision";
                 log += "\n-Adding tile object as hostile";
-                character.combatComponent.Fight(character.marker.inVisionTileObjects[0]);
+                character.combatComponent.Fight(character.marker.inVisionTileObjects[0], CombatManager.Hostility);
             } else {
                 log += "\n-No tile object in vision";
                 log += "\n-Roam";

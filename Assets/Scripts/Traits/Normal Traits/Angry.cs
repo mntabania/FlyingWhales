@@ -49,7 +49,7 @@ namespace Traits {
                 Character targetCharacter = targetPOI as Character;
                 if (Random.Range(0, 2) == 0 && characterThatWillDoJob.relationshipContainer.IsEnemiesWith(targetCharacter)
                     && !targetCharacter.traitContainer.HasTrait("Unconscious")) {
-                    characterThatWillDoJob.combatComponent.Fight(targetCharacter, isLethal: false);
+                    characterThatWillDoJob.combatComponent.Fight(targetCharacter, CombatManager.Anger, isLethal: false);
                 }
             }
             return base.OnSeePOI(targetPOI, characterThatWillDoJob);

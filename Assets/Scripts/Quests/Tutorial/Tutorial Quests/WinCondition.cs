@@ -13,7 +13,7 @@ namespace Tutorial {
             };
         }
         private bool IsDeadCharacterValidForActivation(Character character) {
-            return character.IsNormalCharacter() &&
+            return character.isNormalCharacter &&
                    character.currentRegion == InnerMapManager.Instance.currentlyShowingLocation;
         }
         #endregion
@@ -30,7 +30,7 @@ namespace Tutorial {
 
         #region Step Helpers
         private bool IsCharacterValid(Character character) {
-            return character.IsNormalCharacter() && character.isDead;
+            return character.isNormalCharacter && character.isDead;
         }
         #endregion
 

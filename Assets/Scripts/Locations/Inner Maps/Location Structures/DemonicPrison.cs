@@ -21,13 +21,13 @@ namespace Inner_Maps.Location_Structures {
         #endregion
         
         private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {
-            if (structure == this && character.IsNormalCharacter()) {
+            if (structure == this && character.isNormalCharacter) {
                 character.trapStructure.SetForcedStructure(this);
                 character.DecreaseCanTakeJobs();
             }
         }
         private void OnCharacterLeftStructure(Character character, LocationStructure structure) {
-            if (structure == this && character.IsNormalCharacter()) {
+            if (structure == this && character.isNormalCharacter) {
                 character.trapStructure.SetForcedStructure(null);
                 character.IncreaseCanTakeJobs();
             }

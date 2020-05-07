@@ -728,7 +728,7 @@ public class UIManager : MonoBehaviour {
     [Header("Character Info")]
     [SerializeField] internal CharacterInfoUI characterInfoUI;
     public void ShowCharacterInfo(Character character, bool centerOnCharacter = false) {
-        if(character.IsNormalCharacter()) {
+        if(character.isNormalCharacter) {
             if (tempDisableShowInfoUI) {
                 SetTempDisableShowInfoUI(false);
                 return;

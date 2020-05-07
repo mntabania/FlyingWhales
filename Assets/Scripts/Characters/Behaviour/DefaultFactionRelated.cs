@@ -17,7 +17,7 @@ public class DefaultFactionRelated : CharacterBehaviourComponent {
                 if (character.currentRegion != null) {
                     for (int i = 0; i < character.currentRegion.factionsHere.Count; i++) {
                         Faction potentialFaction = character.currentRegion.factionsHere[i];
-                        if (!potentialFaction.isPlayerFaction && !potentialFaction.isDestroyed
+                        if (potentialFaction.isMajorNonPlayer && !potentialFaction.isDestroyed
                             && !potentialFaction.IsCharacterBannedFromJoining(character)
                             && potentialFaction.ideologyComponent.DoesCharacterFitCurrentIdeologies(character)) {
                             if (!viableFactions.Contains(potentialFaction)) {

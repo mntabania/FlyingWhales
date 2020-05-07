@@ -24,7 +24,7 @@ public class ReactionComponent {
         // else if (targetTileObject.poiType == POINT_OF_INTEREST_TYPE.ITEM) {
         //     ReactTo(targetTileObject as SpecialToken, ref debugLog);
         // }
-        if (owner.isSummonOrMinion || owner.faction == FactionManager.Instance.zombieFaction /*|| owner.race == RACE.SKELETON*/) {
+        if (!owner.isNormalCharacter || owner.faction == FactionManager.Instance.zombieFaction /*|| owner.race == RACE.SKELETON*/) {
             //Minions or Summons cannot react to its own traits
             return;
         }
@@ -54,7 +54,7 @@ public class ReactionComponent {
         //}
     }
     public string ReactTo(IReactable reactable, REACTION_STATUS status, bool addLog = true) {
-        if (owner.isSummonOrMinion || owner.faction == FactionManager.Instance.zombieFaction /*|| owner.race == RACE.SKELETON*/) {
+        if (!owner.isNormalCharacter || owner.faction == FactionManager.Instance.zombieFaction /*|| owner.race == RACE.SKELETON*/) {
             //Minions or Summons cannot react to actions
             return string.Empty;
         }
@@ -259,7 +259,7 @@ public class ReactionComponent {
         if (owner.isInCombat) {
             return string.Empty;
         }
-        if (owner.isSummonOrMinion || owner.faction == FactionManager.Instance.zombieFaction /*|| owner.race == RACE.SKELETON*/) {
+        if (!owner.isNormalCharacter || owner.faction == FactionManager.Instance.zombieFaction /*|| owner.race == RACE.SKELETON*/) {
             //Minions or Summons cannot react to interrupts
             return string.Empty;
         }
@@ -438,7 +438,7 @@ public class ReactionComponent {
                         debugLog += $"\n-{owner.jobQueue.jobsInQueue[0].jobType}";
                     }
                     if (!targetCharacter.traitContainer.HasTrait("Unconscious") || (isLethal && isTopPrioJobLethal)) {
-                        owner.combatComponent.FightOrFlight(targetCharacter, isLethal);
+                        owner.combatComponent.FightOrFlight(targetCharacter, CombatManager.Hostility, isLethal: isLethal);
                     }
                 }
             } else {
@@ -554,7 +554,7 @@ public class ReactionComponent {
                             if (owner.combatComponent.combatMode == COMBAT_MODE.Aggressive) {
                                 bool isTopPrioJobLethal = owner.jobQueue.jobsInQueue.Count <= 0 || owner.jobQueue.jobsInQueue[0].jobType.IsJobLethal();
                                 if (!targetCharacter.traitContainer.HasTrait("Unconscious") || isTopPrioJobLethal) {
-                                    owner.combatComponent.FightOrFlight(targetCharacter);
+                                    owner.combatComponent.FightOrFlight(targetCharacter, CombatManager.Hostility);
                                 }
                             }
                         }
@@ -569,7 +569,7 @@ public class ReactionComponent {
         }
     }
     private void ReactTo(TileObject targetTileObject, ref string debugLog) {
-        if (owner.isSummonOrMinion || owner.faction == FactionManager.Instance.zombieFaction /*|| owner.race == RACE.SKELETON*/) {
+        if (!owner.isNormalCharacter || owner.faction == FactionManager.Instance.zombieFaction /*|| owner.race == RACE.SKELETON*/) {
             //Minions or Summons cannot react to objects
             return;
         }
@@ -651,7 +651,7 @@ public class ReactionComponent {
         //}
         if (targetTileObject.traitContainer.HasTrait("Dangerous")) {
             if (owner.traitContainer.HasTrait("Berserked")) {
-                owner.combatComponent.FightOrFlight(targetTileObject);
+                owner.combatComponent.FightOrFlight(targetTileObject, CombatManager.Berserked);
             } else if(owner.stateComponent.currentState == null || owner.stateComponent.currentState.characterState != CHARACTER_STATE.FOLLOW){
                 if (owner.traitContainer.HasTrait("Suicidal")) {
                     if (!owner.jobQueue.HasJob(JOB_TYPE.SUICIDE_FOLLOW)) {
@@ -686,6 +686,120 @@ public class ReactionComponent {
                 }
             }
         }
+    }
+    //The reason why we pass the character that was hit instead of just getting the current closest hostile in combat state is because 
+    public void ReactToCombat(CombatState combat, Character characterHit) {
+        if (!owner.isNormalCharacter || owner.faction == FactionManager.Instance.zombieFaction /*|| owner.race == RACE.SKELETON*/) {
+            //Minions or Summons cannot react to objects
+            return;
+        }
+        Character attacker = combat.stateComponent.character;
+        Character reactor = owner;
+        string log = reactor.name + " is reacting to combat of " + attacker.name + " against " + characterHit.name;
+        if (reactor.isInCombat) {
+            log += "\n-In combat, will skip processing";
+            reactor.logComponent.PrintLogIfActive(log);
+            return;
+        }
+        if (reactor.IsHostileWith(attacker)) {
+            log += "\n-Hostile with attacker, will skip processing";
+            reactor.logComponent.PrintLogIfActive(log);
+            return;
+        }
+        if (combat.DidCharacterAlreadyReactToThisCombat(reactor)) {
+            log += "\n-Already reacted to the combat, will skip processing";
+            reactor.logComponent.PrintLogIfActive(log);
+            return;
+        }
+        if (combat.DidCharacterAlreadyReactToThisCombat(reactor)) {
+            log += "\n-Already reacted to the combat, will skip processing";
+            reactor.logComponent.PrintLogIfActive(log);
+            return;
+        }
+        combat.AddCharacterThatReactedToThisCombat(reactor);
+        if (combat.currentClosestHostile != characterHit) {
+            log += "\n-Hit Character is not the same as the actual target which is: " + combat.currentClosestHostile?.name;
+            if (characterHit.isInCombat) {
+                log += "\n-Hit Character is in combat";
+                log += "\n-Do nothing";
+            } else {
+                log += "\n-Reactor felt Shocked";
+                CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, reactor, attacker, REACTION_STATUS.WITNESSED);
+            }
+        } else {
+            CombatData combatDataAgainstCharacterHit = attacker.combatComponent.GetCombatData(characterHit);
+            if(combatDataAgainstCharacterHit != null && combatDataAgainstCharacterHit.connectedAction != null && combatDataAgainstCharacterHit.connectedAction.associatedJobType == JOB_TYPE.APPREHEND) {
+                log += "\n-Combat is part of Apprehend Job";
+                log += "\n-Reactor felt Shocked";
+                CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, reactor, attacker, REACTION_STATUS.WITNESSED);
+            } else {
+                if(characterHit == reactor) {
+                    log += "\n-Hit Character is the Reactor";
+                    if (characterHit.relationshipContainer.IsFriendsWith(attacker)) {
+                        log += "\n-Hit Character is Friends/Close Friends with Attacker";
+                        log += "\n-Reactor felt Betrayal";
+                        CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, reactor, attacker, REACTION_STATUS.WITNESSED);
+                    } else if (characterHit.relationshipContainer.IsEnemiesWith(attacker)) {
+                        log += "\n-Hit Character is Enemies/Rivals with Attacker";
+                        log += "\n-Reactor felt Anger";
+                        CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, reactor, attacker, REACTION_STATUS.WITNESSED);
+                    }
+                } else {
+                    log += "\n-Hit Character is NOT the Reactor";
+                    if (reactor.relationshipContainer.IsFriendsWith(characterHit)) {
+                        log += "\n-Reactor is Friends/Close Friends with Hit Character";
+                        if (reactor.relationshipContainer.IsFriendsWith(attacker)) {
+                            log += "\n-Reactor is Friends/Close Friends with Attacker";
+                            log += "\n-Reactor felt Shock, Disappointment";
+                            CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, reactor, attacker, REACTION_STATUS.WITNESSED);
+                            CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, reactor, attacker, REACTION_STATUS.WITNESSED);
+                        } else if (reactor.relationshipContainer.IsEnemiesWith(attacker)) {
+                            log += "\n-Reactor is Enemies/Rivals with Attacker";
+                            log += "\n-Reactor felt Rage";
+                            CharacterManager.Instance.TriggerEmotion(EMOTION.Rage, reactor, attacker, REACTION_STATUS.WITNESSED);
+                        } else {
+                            log += "\n-Reactor felt Anger";
+                            CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, reactor, attacker, REACTION_STATUS.WITNESSED);
+                        }
+                    } else if (reactor.relationshipContainer.IsEnemiesWith(characterHit)) {
+                        log += "\n-Reactor is Enemies/Rivals with Hit Character";
+                        if (reactor.relationshipContainer.IsFriendsWith(attacker)) {
+                            log += "\n-Reactor is Friends/Close Friends with Attacker";
+                            log += "\n-Reactor felt Approval";
+                            CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, reactor, attacker, REACTION_STATUS.WITNESSED);
+                        } else if (reactor.relationshipContainer.IsEnemiesWith(attacker)) {
+                            log += "\n-Reactor is Enemies/Rivals with Attacker";
+                            log += "\n-Reactor felt Shock";
+                            CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, reactor, attacker, REACTION_STATUS.WITNESSED);
+                        } else {
+                            log += "\n-Reactor felt Approval";
+                            CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, reactor, attacker, REACTION_STATUS.WITNESSED);
+                        }
+                    } else {
+                        log += "\n-Reactor felt Shock";
+                        CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, reactor, attacker, REACTION_STATUS.WITNESSED);
+                    }
+                }
+            }
+        }
+
+        //Check for crime
+        if((reactor.faction != null && reactor.faction == attacker.faction) || (reactor.homeSettlement != null && reactor.homeSettlement == attacker.homeSettlement)) {
+            log += "\n-Reactor is the same faction/home settlement as Attacker";
+            log += "\n-Reactor is checking for crime";
+            CombatData combatDataAgainstCharacterHit = attacker.combatComponent.GetCombatData(characterHit);
+            if(combatDataAgainstCharacterHit != null && combatDataAgainstCharacterHit.connectedAction != null) {
+                ActualGoapNode possibleCrimeAction = combatDataAgainstCharacterHit.connectedAction;
+                CRIME_TYPE crimeType = CrimeManager.Instance.GetCrimeTypeConsideringAction(possibleCrimeAction);
+                log += "\n-Crime committed is: " + crimeType.ToString();
+                if (crimeType != CRIME_TYPE.NONE) {
+                    log += "\n-Reactor will react to crime";
+                    CrimeManager.Instance.ReactToCrime(reactor, attacker, possibleCrimeAction, possibleCrimeAction.associatedJobType, crimeType);
+                }
+            }
+        }
+
+        reactor.logComponent.PrintLogIfActive(log);
     }
     // private void ReactTo(SpecialToken targetItem, ref string debugLog) {
     //     if (owner.minion != null || owner is Summon) {

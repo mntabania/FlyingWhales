@@ -18,7 +18,7 @@ public class ObjectPoolManager : MonoBehaviour {
     public List<GoapNode> goapNodesPool { get; private set; }
     public List<OpinionData> opinionDataPool { get; private set; }
     public List<TraitRemoveSchedule> traitRemoveSchedulePool { get; private set; }
-    // public List<CombatData> combatDataPool { get; private set; }
+    public List<CombatData> combatDataPool { get; private set; }
 
     private void Awake() {
         Instance = this;
@@ -185,24 +185,24 @@ public class ObjectPoolManager : MonoBehaviour {
 
     #region Combat Data
     private void ConstructCombatDataPool() {
-        // combatDataPool = new List<CombatData>();
+        combatDataPool = new List<CombatData>();
     }
-    // public CombatData CreateNewCombatData() {
-    //     CombatData data = GetCombatDataFromPool();
-    //     data.Initialize();
-    //     return data;
-    // }
-    // public void ReturnCombatDataToPool(CombatData data) {
-    //     data.Reset();
-    //     combatDataPool.Add(data);
-    // }
-    // private CombatData GetCombatDataFromPool() {
-    //     if (combatDataPool.Count > 0) {
-    //         CombatData data = combatDataPool[0];
-    //         combatDataPool.RemoveAt(0);
-    //         return data;
-    //     }
-    //     return new CombatData();
-    // }
+    public CombatData CreateNewCombatData() {
+        CombatData data = GetCombatDataFromPool();
+        data.Initialize();
+        return data;
+    }
+    public void ReturnCombatDataToPool(CombatData data) {
+        data.Reset();
+        combatDataPool.Add(data);
+    }
+    private CombatData GetCombatDataFromPool() {
+        if (combatDataPool.Count > 0) {
+            CombatData data = combatDataPool[0];
+            combatDataPool.RemoveAt(0);
+            return data;
+        }
+        return new CombatData();
+    }
     #endregion
 }

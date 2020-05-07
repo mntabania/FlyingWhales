@@ -43,7 +43,7 @@ namespace Tutorial {
 
         #region Step Helpers
         private bool IsCharacterValid(Character character) {
-            return character.IsNormalCharacter() && character.traitContainer.HasTrait("Blessed") == false;
+            return character.isNormalCharacter && character.traitContainer.HasTrait("Blessed") == false;
         }
         private void OnHoverSelectCharacterStep(QuestStepItem item) {
             UIManager.Instance.ShowSmallInfo("There are some characters that are <color=\"green\">Blessed</color>. " +

@@ -33,7 +33,7 @@ public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
                         }
                     }
                     if (chosenTileObject != null) {
-                        character.combatComponent.Fight(chosenTileObject);
+                        character.combatComponent.Fight(chosenTileObject, CombatManager.Hostility);
                     } else {
                         log += "\n-No preplaced tile object in vision";
                         log += "\n-Roam";

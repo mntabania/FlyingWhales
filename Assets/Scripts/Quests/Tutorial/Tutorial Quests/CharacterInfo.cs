@@ -37,7 +37,7 @@ namespace Tutorial {
 
         #region Step Helpers
         private bool IsSelectedCharacterValid(Character character) {
-            return character.IsNormalCharacter();
+            return character.isNormalCharacter;
         }
         #endregion
     }

@@ -12,7 +12,7 @@ public class Threatened : Emotion {
     public override string ProcessEmotion(Character witness, IPointOfInterest target, REACTION_STATUS status,
         ActualGoapNode goapNode = null) {
         //Fight or Flight
-        witness.combatComponent.FightOrFlight(target);
+        witness.combatComponent.FightOrFlight(target, CombatManager.Threatened);
         return base.ProcessEmotion(witness, target, status, goapNode);
     }
     #endregion

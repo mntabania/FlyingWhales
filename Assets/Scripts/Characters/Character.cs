@@ -280,7 +280,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool isMissing => currentMissingTicks > CharacterManager.Instance.CHARACTER_MISSING_THRESHOLD;
     public bool isBeingSeized => PlayerManager.Instance.player != null && PlayerManager.Instance.player.seizeComponent.seizedPOI == this;
     public bool isLycanthrope => lycanData != null;
-    public bool isSummonOrMinion => this is Summon || minion != null;
+    /// <summary>
+    /// Is this character a normal character?
+    /// Characters that are not monsters or minions.
+    /// </summary>
+    /// <returns></returns>
+    public bool isNormalCharacter => (this is Summon) == false && minion == null;
     //public JobQueueItem currentJob => jobQueue.jobsInQueue.Count > 0 ? jobQueue.jobsInQueue[0] : null; //The current job is always the top of the queue
     public JobTriggerComponent jobTriggerComponent => jobComponent;
     public GameObject visualGO => marker.gameObject;
@@ -2048,7 +2053,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //Cannot react if interrupted
             return false;
         }
-        if (isSummonOrMinion) {
+        if (!isNormalCharacter) {
             //Cannot react if summon or minion
             return false;
         }
@@ -2148,14 +2153,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void SetDestroyMarkerOnDeath(bool state) {
         destroyMarkerOnDeath = state;
-    }
-    /// <summary>
-    /// Is this character a normal character?
-    /// Characters that are not monsters or minions.
-    /// </summary>
-    /// <returns></returns>
-    public bool IsNormalCharacter() {
-        return (this is Summon) == false && minion == null;
     }
     public void SetIsWanderer(bool state) {
         if(isWanderer != state) {
@@ -2294,14 +2291,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 targetCharacterCurrentActionNode = targetCharacter.currentActionNode;
                 if (targetCharacterCurrentActionNode != null /*&& node.action.shouldAddLogs*/ && targetCharacterCurrentActionNode.actionStatus != ACTION_STATUS.STARTED && targetCharacterCurrentActionNode.actionStatus != ACTION_STATUS.NONE && targetCharacterCurrentActionNode.actor != this) {
                     reactionComponent.ReactTo(targetCharacterCurrentActionNode, REACTION_STATUS.WITNESSED);
-                } else if (targetCharacter.isInCombat) {
-                    if (targetCharacter.stateComponent.currentState is CombatState combatState) {
-                        targetCharacterCurrentActionNode = combatState.actionThatTriggeredThisState;
-                        if (targetCharacterCurrentActionNode != null) {
-                            reactionComponent.ReactTo(targetCharacterCurrentActionNode, REACTION_STATUS.WITNESSED);
-                        }
-                    }
-                }
+                } 
+                //else if (targetCharacter.isInCombat) {
+                //    if (targetCharacter.stateComponent.currentState is CombatState combatState) {
+                //        targetCharacterCurrentActionNode = combatState.actionThatTriggeredThisState;
+                //        if (targetCharacterCurrentActionNode != null) {
+                //            reactionComponent.ReactTo(targetCharacterCurrentActionNode, REACTION_STATUS.WITNESSED);
+                //        }
+                //    }
+                //}
             }
         }
         if (target.allJobsTargetingThis.Count > 0) {
@@ -2325,9 +2323,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (string.IsNullOrEmpty(debugLog) == false) {
                 logComponent.PrintLogIfActive(debugLog);
             }
-            if(targetCharacter != null) {
-                ThisCharacterWatchEvent(targetCharacter, null, null);
-            }
+            //if(targetCharacter != null) {
+            //    ThisCharacterWatchEvent(targetCharacter, null, null);
+            //}
         }
     }
     public void ThisCharacterSawAction(ActualGoapNode action) {
@@ -2490,7 +2488,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                                     if (relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.POSITIVE) {
                                         CreateWatchEvent(null, targetCombatState, targetCharacter);
                                     } else {
-                                        if (combatComponent.Fight(targetCombatState.currentClosestHostile, targetCharacter.combatComponent.IsLethalCombatForTarget(currentHostileOfTargetCharacter))) {
+                                        if (combatComponent.Fight(targetCombatState.currentClosestHostile, CombatManager.Join_Combat, isLethal: targetCharacter.combatComponent.IsLethalCombatForTarget(currentHostileOfTargetCharacter))) {
                                             //if (!combatComponent.avoidInRange.Contains(targetCharacter)) {
                                                 //Do process combat behavior first for this character, if the current closest hostile
                                                 //of the combat state of this character is also the targetCombatState.currentClosestHostile
@@ -2533,7 +2531,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                                 }
                             } else {
                                 //the target of the combat state is not part of this character's faction
-                                if (combatComponent.Fight(targetCombatState.currentClosestHostile, targetCharacter.combatComponent.IsLethalCombatForTarget(currentHostileOfTargetCharacter))) {
+                                if (combatComponent.Fight(targetCombatState.currentClosestHostile, CombatManager.Join_Combat, isLethal: targetCharacter.combatComponent.IsLethalCombatForTarget(currentHostileOfTargetCharacter))) {
                                     //if (!combatComponent.avoidInRange.Contains(targetCharacter)) {
                                         //of the combat state of this character is also the targetCombatState.currentClosestHostile
                                         //Then that's only when we apply the join combat log and notif
@@ -2645,9 +2643,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     /// This character was hit by an attack.
     /// </summary>
     /// <param name="characterThatAttacked">The character that attacked this.</param>
-    /// <param name="state">The combat state that the attacker is in.</param>
+    /// <param name="combat">The combat state that the attacker is in.</param>
     /// <param name="attackSummary">reference log of what happened.</param>
-    public void OnHitByAttackFrom(Character characterThatAttacked, CombatState state, ref string attackSummary) {
+    public void OnHitByAttackFrom(Character characterThatAttacked, CombatState combat, ref string attackSummary) {
         // CombatManager.Instance.CreateHitEffectAt(this, elementalType);
         if (currentHP <= 0) {
             return; //if hp is already 0, do not deal damage
@@ -2656,8 +2654,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //If someone is attacked, relationship should deteriorate
         //TODO: SAVE THE allCharactersThatDegradeRel list so when loaded they will not be able to degrade rel again
         Character responsibleCharacter = null;
-        if (state != null) {
-            if (state.currentClosestHostile == this) {
+        if (combat != null) {
+            if (combat.currentClosestHostile == this) {
                 //Do not set as responsible character for unconscious trait if character is hit unintentionally
                 //So, only set responsible character if currentClosestHostile is this character, meaning, this character is really the target
                 responsibleCharacter = characterThatAttacked;
@@ -2729,22 +2727,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     characterThatAttacked.logComponent.PrintLogIfActive(rollLog);
                 }
             }
-
         }
-        //else {
-        //    Invisible invisible = characterThatAttacked.GetNormalTrait<Trait>("Invisible") as Invisible;
-        //    if (invisible != null) {
-        //        if (invisible.level == 1) {
-        //            //Level 1 = remove invisible trait
-        //            characterThatAttacked.RemoveTrait(invisible);
-        //        } else if (invisible.level == 2) {
-        //            //Level 2 = attacked character will be the only character to see
-        //            invisible.AddCharacterThatCanSee(this);
-        //        }
-        //        //Level 3 = will not be seen forever
-        //    }
-        //}
-
+        if (characterThatAttacked.marker) {
+            for (int i = 0; i < characterThatAttacked.marker.inVisionCharacters.Count; i++) {
+                Character inVision = characterThatAttacked.marker.inVisionCharacters[i];
+                inVision.reactionComponent.ReactToCombat(combat, this);
+            }
+        }
         Messenger.Broadcast(Signals.CHARACTER_WAS_HIT, this, characterThatAttacked);
     }
     /// <summary>

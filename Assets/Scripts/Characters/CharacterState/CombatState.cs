@@ -13,10 +13,11 @@ public class CombatState : CharacterState {
 
     public bool isAttacking { get; private set; } //if not attacking, it is assumed that the character is fleeing
     public IPointOfInterest currentClosestHostile { get; private set; }
-    public GoapPlanJob jobThatTriggeredThisState { get; private set; }
-    public ActualGoapNode actionThatTriggeredThisState { get; private set; }
+    //public GoapPlanJob jobThatTriggeredThisState { get; private set; }
+    //public ActualGoapNode actionThatTriggeredThisState { get; private set; }
     public Character forcedTarget { get; private set; }
     public List<Character> allCharactersThatDegradedRel { get; private set; }
+    public List<Character> allCharactersThatReactedToThisCombat { get; private set; }
 
     //Is this character fighting another character or has a character in hostile range list who is trying to apprehend him/her because he/she is a criminal?
     //See: https://trello.com/c/uCZfbCSa/2819-criminals-should-eventually-flee-npcSettlement-and-leave-faction
@@ -35,6 +36,7 @@ public class CombatState : CharacterState {
         //Default start of combat state is attacking
         isAttacking = true;
         allCharactersThatDegradedRel = new List<Character>();
+        allCharactersThatReactedToThisCombat = new List<Character>();
     }
 
     #region Overrides
@@ -139,8 +141,8 @@ public class CombatState : CharacterState {
                 }
             }
             stateComponent.character.needsComponent.CheckExtremeNeeds();
-
         }
+        stateComponent.character.combatComponent.ClearCombatData();
     }
     #endregion
 
@@ -346,12 +348,10 @@ public class CombatState : CharacterState {
         }
         for (int i = 0; i < stateComponent.character.combatComponent.hostilesInRange.Count; i++) {
             IPointOfInterest poi = stateComponent.character.combatComponent.hostilesInRange[i];
-            if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-                Character hostile = poi as Character;
+            if (poi is Character hostile) {
                 if (hostile.isInCombat) {
-                    CombatState combatState = hostile.stateComponent.currentState as CombatState;
-                    if (combatState.jobThatTriggeredThisState != null && combatState.jobThatTriggeredThisState.jobType == JOB_TYPE.APPREHEND
-                        && combatState.jobThatTriggeredThisState.targetPOI == stateComponent.character) {
+                    CombatData combatData = hostile.combatComponent.GetCombatData(stateComponent.character);
+                    if(combatData != null && combatData.connectedAction != null && combatData.connectedAction.associatedJobType == JOB_TYPE.APPREHEND) {
                         isBeingApprehended = true;
                         return;
                     }
@@ -360,12 +360,11 @@ public class CombatState : CharacterState {
             
         }
         for (int i = 0; i < stateComponent.character.combatComponent.avoidInRange.Count; i++) {
-            if(stateComponent.character.combatComponent.avoidInRange[i].poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-                Character hostile = stateComponent.character.combatComponent.avoidInRange[i] as Character;
+            IPointOfInterest poi = stateComponent.character.combatComponent.avoidInRange[i];
+            if (poi is Character hostile) {
                 if (hostile.isInCombat) {
-                    CombatState combatState = hostile.stateComponent.currentState as CombatState;
-                    if (combatState.jobThatTriggeredThisState != null && combatState.jobThatTriggeredThisState.jobType == JOB_TYPE.APPREHEND
-                        && combatState.jobThatTriggeredThisState.targetPOI == stateComponent.character) {
+                    CombatData combatData = hostile.combatComponent.GetCombatData(stateComponent.character);
+                    if (combatData != null && combatData.connectedAction != null && combatData.connectedAction.associatedJobType == JOB_TYPE.APPREHEND) {
                         isBeingApprehended = true;
                         return;
                     }
@@ -619,7 +618,7 @@ public class CombatState : CharacterState {
                         //When the target is hit and it is still alive, add hostile
                         if ((hitCharacter.combatComponent.combatMode == COMBAT_MODE.Defend ||
                             hitCharacter.combatComponent.combatMode == COMBAT_MODE.Aggressive) && hitCharacter.canPerform) {
-                            hitCharacter.combatComponent.FightOrFlight(stateComponent.character, isLethal: stateComponent.character.combatComponent.IsLethalCombatForTarget(hitCharacter));
+                            hitCharacter.combatComponent.FightOrFlight(stateComponent.character, CombatManager.Retaliation, isLethal: stateComponent.character.combatComponent.IsLethalCombatForTarget(hitCharacter));
                         }
                     }
                 }
@@ -699,11 +698,22 @@ public class CombatState : CharacterState {
             allCharactersThatDegradedRel.Add(character);
         }
     }
-    public void SetJobThatTriggeredThisState(GoapPlanJob job) {
-        jobThatTriggeredThisState = job;
+    public void AddCharacterThatReactedToThisCombat(Character character) {
+        allCharactersThatReactedToThisCombat.Add(character);
     }
-    public void SetActionThatTriggeredThisState(ActualGoapNode action) {
-        actionThatTriggeredThisState = action;
+    public bool DidCharacterAlreadyReactToThisCombat(Character character) {
+        for (int i = 0; i < allCharactersThatReactedToThisCombat.Count; i++) {
+            if(allCharactersThatReactedToThisCombat[i] == character) {
+                return true;
+            }
+        }
+        return false;
     }
+    //public void SetJobThatTriggeredThisState(GoapPlanJob job) {
+    //    jobThatTriggeredThisState = job;
+    //}
+    //public void SetActionThatTriggeredThisState(ActualGoapNode action) {
+    //    actionThatTriggeredThisState = action;
+    //}
     #endregion
 }
