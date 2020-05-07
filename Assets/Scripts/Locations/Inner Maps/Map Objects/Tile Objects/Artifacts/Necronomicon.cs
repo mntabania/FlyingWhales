@@ -6,6 +6,7 @@ using Inner_Maps;
 public class Necronomicon : Artifact {
 
     public Necronomicon() : base(ARTIFACT_TYPE.Necronomicon) {
+        maxHP = 700;
     }
     //public Necronomicon(SaveDataArtifact data) : base(data) {
     //}

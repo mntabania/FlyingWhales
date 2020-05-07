@@ -114,7 +114,10 @@ public class LocationStructureObject : PooledObject {
             newTileObject.mapVisual.SetVisual(preplacedObj.spriteRenderer.sprite);
             newTileObject.mapVisual.SetRotation(preplacedObj.transform.localEulerAngles.z);
             newTileObject.RevalidateTileObjectSlots();
-            structure.AddObjectAsDamageContributor(newTileObject);
+            if (structure is Inner_Maps.Location_Structures.ThePortal 
+                && newTileObject.tileObjectType == TILE_OBJECT_TYPE.PORTAL_TILE_OBJECT) {
+                structure.AddObjectAsDamageContributor(newTileObject);    
+            }
         }
         SetPreplacedObjectsState(false);
     }

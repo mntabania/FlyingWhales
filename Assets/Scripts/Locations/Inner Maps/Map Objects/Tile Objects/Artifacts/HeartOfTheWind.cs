@@ -6,6 +6,7 @@ using Inner_Maps;
 public class HeartOfTheWind : Artifact {
 
     public HeartOfTheWind() : base(ARTIFACT_TYPE.Heart_Of_The_Wind) {
+        maxHP = 700;
     }
     //public HeartOfTheWind(SaveDataArtifact data) : base(data) {
     //}

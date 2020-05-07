@@ -6,6 +6,7 @@ using Inner_Maps;
 public class GorgonEye : Artifact {
 
     public GorgonEye() : base(ARTIFACT_TYPE.Gorgon_Eye) {
+        maxHP = 700;
     }
     //public GorgonEye(SaveDataArtifact data) : base(data) {
     //}
