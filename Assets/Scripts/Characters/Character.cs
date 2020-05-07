@@ -3233,7 +3233,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //character's home was destroyed.
         if (structure == homeStructure) {
             // MigrateHomeStructureTo(null);
-            interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, this);
+            MigrateHomeTo(null);
+            //interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, this);
         }
     }
     #endregion
