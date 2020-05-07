@@ -115,10 +115,10 @@ public class LocationClassManager {
     public void OnAddResident(Character residentAdded) {
         string currentClassRequirement = characterClassOrder[currentIndex];
 
-        if (!DoesCharacterClassFitCurrentClass(residentAdded)) {
-            throw new System.Exception(
-                $"New resident {residentAdded.name}'s class which is {residentAdded.characterClass.className} does not match current location class requirement: {currentClassRequirement}");
-        }
+        //if (!DoesCharacterClassFitCurrentClass(residentAdded)) {
+        //    throw new System.Exception(
+        //        $"New resident {residentAdded.name}'s class which is {residentAdded.characterClass.className} does not match current location class requirement: {currentClassRequirement}");
+        //}
 
         LocationClassNumberGuide temp = characterClassGuide[currentClassRequirement];
         temp.supposedNumber++;
