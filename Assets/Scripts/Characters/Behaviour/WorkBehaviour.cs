@@ -100,8 +100,8 @@ public class WorkBehaviour : CharacterBehaviourComponent {
             JobQueueItem jobToAssign = character.homeSettlement.GetFirstJobBasedOnVision(character);
             if (jobToAssign == null) {
                 //if there are none, check the characters faction job queue under the same conditions.
-                if (character.faction?.activeQuest != null) {
-                    jobToAssign = character.faction.activeQuest.GetFirstJobBasedOnVision(character);
+                if (character.faction?.activeFactionQuest != null) {
+                    jobToAssign = character.faction.activeFactionQuest.GetFirstJobBasedOnVision(character);
                 }
             }
             if (jobToAssign != null) {
@@ -113,8 +113,8 @@ public class WorkBehaviour : CharacterBehaviourComponent {
                 //regardless of vision instead.
                 jobToAssign = character.homeSettlement.GetFirstUnassignedJobToCharacterJob(character);
                 if (jobToAssign == null) {
-                    if (character.faction?.activeQuest != null) {
-                        jobToAssign = character.faction.activeQuest.GetFirstUnassignedJobToCharacterJob(character);
+                    if (character.faction?.activeFactionQuest != null) {
+                        jobToAssign = character.faction.activeFactionQuest.GetFirstUnassignedJobToCharacterJob(character);
                     }
                 }
                 if (jobToAssign != null) {

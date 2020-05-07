@@ -232,5 +232,12 @@ namespace Ruinarch {
             }
         }
         #endregion
+
+        #region Selection
+        public void Select(ISelectable objToSelect) {
+            objToSelect.LeftSelectAction();
+            Messenger.Broadcast(Signals.SELECTABLE_LEFT_CLICKED, objToSelect);
+        }
+        #endregion
     }
 }

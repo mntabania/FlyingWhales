@@ -1519,9 +1519,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (faction == newFaction) {
             return false; //if the new faction is the same, ignore change
         }
-        if (faction != null) {
-            faction.LeaveFaction(this);
-        }
+        faction?.LeaveFaction(this);
         newFaction.JoinFaction(this);
         return true;
     }
@@ -4259,6 +4257,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         AddAdvertisedAction(INTERACTION_TYPE.DOUSE_FIRE);
         AddAdvertisedAction(INTERACTION_TYPE.BURY_CHARACTER);
         AddAdvertisedAction(INTERACTION_TYPE.POISON);
+        AddAdvertisedAction(INTERACTION_TYPE.EXILE);
+        AddAdvertisedAction(INTERACTION_TYPE.WHIP);
+        AddAdvertisedAction(INTERACTION_TYPE.EXECUTE);
+        AddAdvertisedAction(INTERACTION_TYPE.ABSOLVE);
+        AddAdvertisedAction(INTERACTION_TYPE.START_TEND);
         
         if (this is Summon) {
             AddAdvertisedAction(INTERACTION_TYPE.PLAY);

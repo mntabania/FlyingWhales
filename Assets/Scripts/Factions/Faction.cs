@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using Factions;
 using Locations.Settlements;
 using Traits;
 
@@ -37,7 +38,7 @@ public class Faction {
     public FACTION_TYPE factionType { get; private set; }
     public bool isActive { get; private set; }
     public List<Log> history { get; private set; }
-    public Quest activeQuest { get; protected set; }
+    public FactionQuest activeFactionQuest { get; protected set; }
 
     //Components
     public FactionIdeologyComponent ideologyComponent { get; protected set; }
@@ -823,21 +824,21 @@ public class Faction {
     public void CreateAndSetActiveQuest(string name, Region region) {
         var typeName = $"{UtilityScripts.Utilities.RemoveAllWhiteSpace(name)}Quest";
         System.Type type = System.Type.GetType(typeName);
-        Quest quest = null;
+        FactionQuest factionQuest = null;
         if(type != null) {
-            quest = System.Activator.CreateInstance(type, this, region) as Quest;
+            factionQuest = System.Activator.CreateInstance(type, this, region) as FactionQuest;
         } else {
-            quest = new Quest(this, region);
+            factionQuest = new FactionQuest(this, region);
         }
-        SetActiveQuest(quest);
+        SetActiveQuest(factionQuest);
     }
-    public void SetActiveQuest(Quest quest) {
-        if(activeQuest != null) {
-            activeQuest.FinishQuest();
+    public void SetActiveQuest(FactionQuest factionQuest) {
+        if(activeFactionQuest != null) {
+            activeFactionQuest.FinishQuest();
         }
-        activeQuest = quest;
-        if(activeQuest != null) {
-            activeQuest.ActivateQuest();
+        activeFactionQuest = factionQuest;
+        if(activeFactionQuest != null) {
+            activeFactionQuest.ActivateQuest();
         }
     }
     #endregion

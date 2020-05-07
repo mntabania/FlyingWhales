@@ -238,10 +238,10 @@ public class FactionInfoUI : InfoUIBase {
     }
     public void ShowFactionTestingInfo() {
         string summary = string.Empty;
-        if (activeFaction.activeQuest != null) {
-            summary += activeFaction.activeQuest.name;
-            for (int i = 0; i < activeFaction.activeQuest.availableJobs.Count; i++) {
-                JobQueueItem item = activeFaction.activeQuest.availableJobs[i];
+        if (activeFaction.activeFactionQuest != null) {
+            summary += activeFaction.activeFactionQuest.name;
+            for (int i = 0; i < activeFaction.activeFactionQuest.availableJobs.Count; i++) {
+                JobQueueItem item = activeFaction.activeFactionQuest.availableJobs[i];
                 summary += $"\n\t- {item.jobType}: {item.assignedCharacter?.name}";
             }
         }

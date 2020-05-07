@@ -122,7 +122,7 @@ public class JudgeCharacter : GoapAction {
 
         weights.AddElement("Absolve", absolve);
         weights.AddElement("Whip", whip);
-        weights.AddElement("Kill", kill);
+        weights.AddElement("Execute", kill);
         weights.AddElement("Exile", exile);
 
         debugLog += $"\n\n{weights.GetWeightsSummary("FINAL WEIGHTS")}";
@@ -130,233 +130,49 @@ public class JudgeCharacter : GoapAction {
         string chosen = weights.PickRandomElementGivenWeights();
         debugLog += $"\n\n{chosen}";
         actor.logComponent.PrintLogIfActive(debugLog);
+        
         CreateJudgeLog(goapNode, chosen);
-
         if (chosen == "Absolve") {
-            if (crimeData != null) { crimeData.SetCrimeStatus(CRIME_STATUS.Absolved); }
-            TargetReleased(goapNode);
+            crimeData?.SetCrimeStatus(CRIME_STATUS.Absolved);
+            TargetAbsolved(goapNode);
         } else if (chosen == "Whip") {
-            if (crimeData != null) { crimeData.SetCrimeStatus(CRIME_STATUS.Punished); }
+            crimeData?.SetCrimeStatus(CRIME_STATUS.Punished);
             TargetWhip(goapNode);
-        } else if (chosen == "Kill") {
+        } else if (chosen == "Execute") {
             TargetExecuted(goapNode);
         } else if (chosen == "Exile") {
-            if (crimeData != null) { crimeData.SetCrimeStatus(CRIME_STATUS.Exiled); }
+            crimeData?.SetCrimeStatus(CRIME_STATUS.Exiled);
             TargetExiled(goapNode);
         }
         //if (crimeData != null) { crimeData.SetCrimeStatus(CRIME_STATUS.Exiled); }
         //TargetExiled(goapNode);
     }
     private void TargetExecuted(ActualGoapNode goapNode) {
-        (goapNode.poiTarget as Character).Death("executed", deathFromAction: goapNode, responsibleCharacter: goapNode.actor);
-        goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Restrained", goapNode.actor);
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.JUDGE_PRISONER, INTERACTION_TYPE.EXECUTE, goapNode.target, goapNode.actor);
+        goapNode.actor.jobQueue.AddJobInQueue(job);
     }
-    private void TargetReleased(ActualGoapNode goapNode) {
-        Character targetCharacter = goapNode.poiTarget as Character;
-        //**Effect 2**: If target is from a different faction or unaligned, target is not hostile with characters from the Actor's faction until Target leaves the location. Target is forced to create a Return Home plan
-        //if (goapNode.poiTarget.factionOwner == FactionManager.Instance.neutralFaction || goapNode.poiTarget.factionOwner != goapNode.actor.faction) {
-        //    ForceTargetReturnHome(goapNode);
-        //}
-        goapNode.poiTarget.traitContainer.RemoveAllTraitsAndStatusesByName(goapNode.poiTarget, "Criminal");
-        //if (!targetCharacter.isAtHomeRegion) {
-        //    ForceTargetReturnHome(goapNode);
-        //}
-        ////**Effect 3**: If target is from the same faction, remove any Criminal type trait from him.
-        //else {
-        //    goapNode.poiTarget.traitContainer.RemoveAllTraitsByType(goapNode.poiTarget, TRAIT_TYPE.CRIMINAL);
-        //}
-        //**Effect 1**: Remove target's Restrained trait
-        goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Restrained", goapNode.actor);
+    private void TargetAbsolved(ActualGoapNode goapNode) {
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.JUDGE_PRISONER, INTERACTION_TYPE.ABSOLVE, goapNode.target, goapNode.actor);
+        goapNode.actor.jobQueue.AddJobInQueue(job);
     }
-    public void TargetExiled(ActualGoapNode goapNode) {
-        //**Effect 2**: Target becomes unaligned and will have his Home Location set to a random different location
-        Character target = goapNode.poiTarget as Character;
-        target.ChangeFactionTo(FactionManager.Instance.friendlyNeutralFaction);
-        //List<NPCSettlement> choices = new List<NPCSettlement>(LandmarkManager.Instance.allNonPlayerAreas.Where(x => x.owner == null)); //limited choices to only use un owned areas
-        List<Region> choices = GridMap.Instance.allRegions.Where(x => !x.coreTile.isCorrupted).ToList();
-        //TODO:
-        // if (choices == null || choices.Count <= 0) {
-        //     choices = GridMap.Instance.allRegions.Where(x => x != PlayerManager.Instance.player.playerNpcSettlement.region).ToList();
-        // }
-        choices.Remove(target.homeRegion);
-        //TODO:
-        // Region newHome = choices[Random.Range(0, choices.Count)];
-        // target.MigrateHomeTo(newHome);
-
-        //**Effect 3**: Target is not hostile with characters from the Actor's faction until Target leaves the location. Target is forced to create a Return Home plan
-        //ForceTargetReturnHome(goapNode);
-
-        //**Effect 4**: Remove any Criminal type trait from him.
-        goapNode.poiTarget.traitContainer.RemoveAllTraitsAndStatusesByName(goapNode.poiTarget, "Criminal");
-
-        //**Effect 1**: Remove target's Restrained trait
-        goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Restrained", goapNode.actor);
+    private void TargetExiled(ActualGoapNode goapNode) {
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.JUDGE_PRISONER, INTERACTION_TYPE.EXILE, goapNode.target, goapNode.actor);
+        goapNode.actor.jobQueue.AddJobInQueue(job);
     }
-    public void TargetWhip(ActualGoapNode goapNode) {
-        goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, "Injured");
-        goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, "Lethargic");
-        //**Effect 4**: Remove any Criminal type trait from him.
-        goapNode.poiTarget.traitContainer.RemoveAllTraitsAndStatusesByName(goapNode.poiTarget, "Criminal");
-        //**Effect 1**: Remove target's Restrained trait
-        goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Restrained", goapNode.actor);
+    private void TargetWhip(ActualGoapNode goapNode) {
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.JUDGE_PRISONER, INTERACTION_TYPE.WHIP, goapNode.target, goapNode.actor);
+        goapNode.actor.jobQueue.AddJobInQueue(job);
     }
     #endregion
 
-    private void CreateJudgeLog(ActualGoapNode goapNode, string logKey) {
-        Log log = new Log(GameManager.Instance.Today(), "GoapAction", goapName, logKey, goapNode);
+    private void CreateJudgeLog(ActualGoapNode goapNode, string result) {
+        Log log = new Log(GameManager.Instance.Today(), "GoapAction", goapName, "judge result", goapNode);
         log.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(goapNode.poiTarget, goapNode.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        log.AddToFillers(null, result, LOG_IDENTIFIER.STRING_1);
         goapNode.OverrideDescriptionLog(log);
     }
-
-    private void ForceTargetReturnHome(ActualGoapNode goapNode) {
-        Character target = goapNode.poiTarget as Character;
-        //target.AdjustIgnoreHostilities(1); //target should ignore hostilities or be ignored by other hostiles, until it returns home.
-        //target.AddOnLeaveAreaAction(() => target.AdjustIgnoreHostilities(-1));
-        //target.AddOnLeaveAreaAction(() => target.ClearAllAwarenessOfType(POINT_OF_INTEREST_TYPE.ITEM, POINT_OF_INTEREST_TYPE.TILE_OBJECT));
-
-        // CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.RETURN_HOME, CHARACTER_STATE.MOVE_OUT, target);
-        // target.jobQueue.AddJobInQueue(job);
-        target.PlanIdleReturnHome();
-    }
-
-    //#region Intel Reactions
-    //private List<string> EndState1Reactions(Character recipient, Intel intel, SHARE_INTEL_STATUS status) {
-    //    List<string> reactions = new List<string>();
-    //    Character target = poiTarget as Character;
-
-    //    RELATIONSHIP_EFFECT relWithTarget = recipient.relationshipContainer.GetRelationshipEffectWith(poiTargetAlterEgo);
-
-    //    //Recipient and Actor are the same
-    //    if (recipient == actor) {
-    //        //- **Recipient Response Text**: "I know what I've done!"
-    //        reactions.Add(string.Format("I know what I've done!", actor.name));
-    //        //-**Recipient Effect**:  no effect
-    //    }
-    //    //Recipient considers Target a personal Enemy:
-    //    else if (recipient.relationshipContainer.HasRelationshipWith(poiTargetAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
-    //        //- **Recipient Response Text**: "[Target Name] deserves that!"
-    //        reactions.Add(string.Format("{0} deserves that!", target.name));
-    //        //-**Recipient Effect * *: no effect
-    //    }
-    //    //Recipient considers Actor a personal Enemy:
-    //     else if (recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
-    //        //- **Recipient Response Text**: "[Actor Name] is truly ruthless."
-    //        reactions.Add(string.Format("{0} is truly ruthless.", actor.name));
-    //        //-**Recipient Effect * *: no effect
-    //    }
-    //    //Recipient considers Target a personal Friend, Paramour, Lover or Relative:
-    //    else if (recipient.relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TRAIT.FRIEND, RELATIONSHIP_TRAIT.AFFAIR, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.RELATIVE).Contains(poiTargetAlterEgo)) {
-    //        //- **Recipient Response Text**: "I cannot forgive [Actor Name] for executing [Target Name]!"
-    //        reactions.Add(string.Format("I cannot forgive {0} for executing {1}!", actor.name, target.name));
-    //        //-**Recipient Effect * *:  Recipient will consider Actor an Enemy
-    //        if (!recipient.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
-    //            RelationshipManager.Instance.CreateNewOneWayRelationship(recipient, actorAlterEgo, RELATIONSHIP_TRAIT.ENEMY);
-    //        }
-    //    }
-    //    //Recipient and Target have no relationship but are from the same faction:
-    //    else if (relWithTarget == RELATIONSHIP_EFFECT.NONE && recipient.faction == poiTargetAlterEgo.faction) {
-    //        //- **Recipient Response Text**: "That is sad but I trust that it was a just judgment."
-    //        reactions.Add("That is sad but I trust that it was a just judgment.");
-    //        //-**Recipient Effect * *: no effect
-    //    }
-    //    return reactions;
-    //}
-    //private List<string> EndState2Reactions(Character recipient, Intel intel, SHARE_INTEL_STATUS status) {
-    //    List<string> reactions = new List<string>();
-    //    Character target = poiTarget as Character;
-
-    //    RELATIONSHIP_EFFECT relWithTarget = recipient.relationshipContainer.GetRelationshipEffectWith(poiTargetAlterEgo);
-
-    //    //Recipient and Actor are the same
-    //    if (recipient == actor) {
-    //        //- **Recipient Response Text**: "I know what I've done!"
-    //        reactions.Add(string.Format("I know what I've done!", actor.name));
-    //        //-**Recipient Effect**:  no effect
-    //    }
-    //    //Recipient and Target are the same
-    //    else if (recipient == target) {
-    //        //- **Recipient Response Text**: "I am relieved that I was released."
-    //        reactions.Add("I am relieved that I was released.");
-    //        //-**Recipient Effect**:  no effect
-    //    }
-    //    //Recipient considers Target a personal Enemy:
-    //    else if (recipient.relationshipContainer.HasRelationshipWith(poiTargetAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
-    //        //- **Recipient Response Text**: "[Target Name] shouldn't have been let go so easily!"
-    //        reactions.Add(string.Format("{0} shouldn't have been let go so easily!", target.name));
-    //        //- **Recipient Effect**: If they don't have any relationship yet, Recipient will consider Actor an Enemy
-    //        if (!recipient.relationshipContainer.HasRelationshipWith(actorAlterEgo)) {
-    //            RelationshipManager.Instance.CreateNewOneWayRelationship(recipient, actorAlterEgo, RELATIONSHIP_TRAIT.ENEMY);
-    //        }
-    //    }
-    //    //Recipient considers Actor a personal Enemy:
-    //     else if (recipient.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
-    //        //- **Recipient Response Text**: "[Actor Name] is simply naive."
-    //        reactions.Add(string.Format("{0} is simply naive.", actor.name));
-    //        //-**Recipient Effect * *: no effect
-    //    }
-    //    //Recipient considers Target a personal Friend, Paramour, Lover or Relative:
-    //    else if (recipient.relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TRAIT.FRIEND, RELATIONSHIP_TRAIT.AFFAIR, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.RELATIVE).Contains(target.currentAlterEgo)) {
-    //        //- **Recipient Response Text**: "I am grateful that [Actor Name] released [Target Name] unharmed."
-    //        reactions.Add(string.Format("I am grateful that {0} released {1} unharmed.", actor.name, target.name));
-    //        //- **Recipient Effect**:  If they don't have any relationship yet, Recipient will consider Actor a Friend
-    //        if (!recipient.relationshipContainer.HasRelationshipWith(actorAlterEgo)) {
-    //            RelationshipManager.Instance.CreateNewOneWayRelationship(recipient, actorAlterEgo, RELATIONSHIP_TRAIT.FRIEND);
-    //        }
-    //    }
-    //    //Recipient and Target have no relationship but are from the same faction:
-    //    else if (relWithTarget == RELATIONSHIP_EFFECT.NONE && recipient.faction == poiTargetAlterEgo.faction) {
-    //        //- **Recipient Response Text**: "I trust that it was a just judgment."
-    //        reactions.Add("I trust that it was a just judgment.");
-    //        //-**Recipient Effect * *: no effect
-    //    }
-    //    return reactions;
-    //}
-    //private List<string> EndState3Reactions(Character recipient, Intel intel, SHARE_INTEL_STATUS status) {
-    //    List<string> reactions = new List<string>();
-    //    Character target = poiTarget as Character;
-
-    //    RELATIONSHIP_EFFECT relWithTarget = recipient.relationshipContainer.GetRelationshipEffectWith(poiTargetAlterEgo);
-
-    //    //Recipient and Actor are the same
-    //    if (recipient == actor) {
-    //        //- **Recipient Response Text**: "I know what I've done!"
-    //        reactions.Add(string.Format("I know what I've done!", actor.name));
-    //        //-**Recipient Effect**:  no effect
-    //    }
-    //    //Recipient and Target are the same
-    //    else if (recipient == target) {
-    //        //- **Recipient Response Text**: "I am sad that I was exiled but at least I am still alive."
-    //        reactions.Add("I am sad that I was exiled but at least I am still alive.");
-    //        //-**Recipient Effect**:  no effect
-    //    }
-    //    //Recipient considers Target a personal Enemy:
-    //    else if (recipient.relationshipContainer.HasRelationshipWith(poiTargetAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
-    //        //- **Recipient Response Text**: "[Target Name] shouldn't have been let go so easily!"
-    //        reactions.Add(string.Format("{0} shouldn't have been let go so easily!", target.name));
-    //        //- **Recipient Effect**: no effect
-    //    }
-    //    //Recipient considers Actor a personal Enemy:
-    //     else if (recipient.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
-    //        //- **Recipient Response Text**: "[Actor Name] is simply naive."
-    //        reactions.Add(string.Format("{0} is irrational.", actor.name));
-    //        //-**Recipient Effect * *: no effect
-    //    }
-    //    //Recipient considers Target a personal Friend, Paramour, Lover or Relative:
-    //    else if (recipient.relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TRAIT.FRIEND, RELATIONSHIP_TRAIT.AFFAIR, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.RELATIVE).Contains(poiTargetAlterEgo)) {
-    //        //- **Recipient Response Text**: "I am grateful that [Actor Name] exiled [Target Name] unharmed."
-    //        reactions.Add(string.Format("I am grateful that {0} exiled {1} unharmed.", actor.name, target.name));
-    //        //- **Recipient Effect**:  no effect
-    //    }
-    //    //Recipient and Target have no relationship but are from the same faction:
-    //    else if (relWithTarget == RELATIONSHIP_EFFECT.NONE && recipient.faction == poiTargetAlterEgo.faction) {
-    //        //- **Recipient Response Text**: "I trust that it was a just judgment."
-    //        reactions.Add("I trust that it was a just judgment.");
-    //        //-**Recipient Effect * *: no effect
-    //    }
-    //    return reactions;
-    //}
-    //#endregion
+    
 }
 
 public class JudgeCharacterData : GoapActionData {

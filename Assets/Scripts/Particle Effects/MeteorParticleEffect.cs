@@ -52,8 +52,10 @@ public class MeteorParticleEffect : BaseParticleEffect {
         }
         
         Messenger.Broadcast(Signals.INCREASE_THREAT_THAT_SEES_TILE, targetTile, 10);
+        Messenger.Broadcast(Signals.METEOR_FELL);
         InnerMapCameraMove.Instance.MeteorShake();
         GameManager.Instance.StartCoroutine(ExpireCoroutine(gameObject));
+        
     }
     private void MeteorEffect(ITraitable traitable, ref BurningSource bs) {
         if (traitable.gridTileLocation == null) { return; }

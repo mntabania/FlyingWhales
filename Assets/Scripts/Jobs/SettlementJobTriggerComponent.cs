@@ -45,6 +45,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		Messenger.AddListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJobSuccessfully);
 		Messenger.AddListener<NPCSettlement>(Signals.SETTLEMENT_CHANGE_STORAGE, OnSettlementChangedStorage);
 		Messenger.AddListener<BurningSource>(Signals.BURNING_SOURCE_INACTIVE, OnBurningSourceInactive);
+		Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
 	}
 	public void UnsubscribeListeners() {
 		Messenger.RemoveListener(Signals.HOUR_STARTED, HourlyJobActions);
@@ -62,6 +63,10 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		Messenger.RemoveListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJobSuccessfully);
 		Messenger.RemoveListener<NPCSettlement>(Signals.SETTLEMENT_CHANGE_STORAGE, OnSettlementChangedStorage);
 		Messenger.RemoveListener<BurningSource>(Signals.BURNING_SOURCE_INACTIVE, OnBurningSourceInactive);
+	}
+	private void OnGameLoaded() {
+		Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoaded);
+		CheckIfFarmShouldBeTended(true);
 	}
 	private void HourlyJobActions() {
 		CreatePatrolJobs();
@@ -657,6 +662,63 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 					jqi.ForceCancelJob(false, "no more poisoned floors");	
 				}
 			}
+		}
+	}
+	#endregion
+
+	#region Tend Farm
+	private void ScheduleTendFarmCheck() {
+		GameDate checkDate = GameManager.Instance.Today();
+		checkDate.AddDays(1);
+		checkDate.SetTicks(GameManager.Instance.GetTicksBasedOnHour(6));
+		SchedulingManager.Instance.AddEntry(checkDate, () => CheckIfFarmShouldBeTended(true), this);
+	}
+	public void CheckIfFarmShouldBeTended(bool reschedule) {
+		if (GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.Today().tick) > 16) {
+			return; //already 4pm do not create tend job
+		}
+		List<LocationStructure> farms = _owner.GetStructuresOfType(STRUCTURE_TYPE.FARM);
+		if (farms != null) {
+			int untendedCornCrops = 0;
+			for (int i = 0; i < farms.Count; i++) {
+				LocationStructure farm = farms[i];
+				List<CornCrop> cornCrops = farm.GetTileObjectsOfType<CornCrop>(TILE_OBJECT_TYPE.CORN_CROP);
+				for (int j = 0; j < cornCrops.Count; j++) {
+					CornCrop cornCrop = cornCrops[j];
+					if (cornCrop.traitContainer.HasTrait("Tended") == false) {
+						untendedCornCrops++;
+						if (untendedCornCrops >= 3) {
+							break;
+						}
+					}
+				}
+				if (untendedCornCrops >= 3) {
+					break;
+				}
+			}
+			if (untendedCornCrops >= 3) {
+				CreateTendFarmJob();
+			}	
+		}
+		if (reschedule) {
+			//reschedule check for next day
+			ScheduleTendFarmCheck();	
+		}
+	}
+	private void CreateTendFarmJob() {
+		GameDate expiry = GameManager.Instance.Today();
+		expiry.SetTicks(GameManager.Instance.GetTicksBasedOnHour(21));
+		SchedulingManager.Instance.AddEntry(expiry, CancelTendJobs, this);
+		
+		GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TEND_FARM, INTERACTION_TYPE.START_TEND, 
+			null, _owner);
+		_owner.AddToAvailableJobs(job);
+	}
+	private void CancelTendJobs() {
+		List<JobQueueItem> jobs = _owner.GetJobs(JOB_TYPE.TEND_FARM);
+		for (int i = 0; i < jobs.Count; i++) {
+			JobQueueItem job = jobs[i];
+			job.ForceCancelJob(false);
 		}
 	}
 	#endregion

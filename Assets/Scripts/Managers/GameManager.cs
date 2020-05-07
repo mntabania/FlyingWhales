@@ -108,7 +108,10 @@ public class GameManager : MonoBehaviour {
     }
     #endregion
 
-    [ContextMenu("Start Progression")]
+    public void Initialize() {
+        today = new GameDate(startMonth, startDay, startYear, startTick);
+    }
+    
 	public void StartProgression(){
         _gameHasStarted = true;
         UIManager.Instance.Pause();
@@ -117,9 +120,9 @@ public class GameManager : MonoBehaviour {
         Messenger.Broadcast(Signals.DAY_STARTED); //for the first day
         Messenger.Broadcast(Signals.MONTH_START); //for the first month
         Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyDown);
-        today = new GameDate(startMonth, startDay, startYear, startTick);
         //TimerHubUI.Instance.AddItem("Until Divine Intervention", 4320, null);
         if (WorldConfigManager.Instance.isDemoWorld) {
+            UIManager.Instance.ShowStartDemoScreen();
             //schedule game over at end of day 2
             GameDate dueDate = new GameDate(startMonth, 2, startYear, ticksPerDay);
             SchedulingManager.Instance.AddEntry(dueDate, () => UIManager.Instance.ShowEndDemoScreen(), this);

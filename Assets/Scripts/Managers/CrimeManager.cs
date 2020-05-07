@@ -13,10 +13,11 @@ public class CrimeManager : MonoBehaviour {
 	}
 
     #region Character
-    public void MakeCharacterACriminal(Character character, CRIME_TYPE crimeType, ICrimeable committedCrime) {
+    public void MakeCharacterACriminal(Character character, IPointOfInterest target, CRIME_TYPE crimeType,
+        ICrimeable committedCrime) {
         Criminal criminalTrait = new Criminal();
         character.traitContainer.AddTrait(character, criminalTrait);
-        criminalTrait.SetCrime(crimeType, committedCrime);
+        criminalTrait.SetCrime(crimeType, committedCrime, target);
     }
     public CRIME_TYPE GetCrimeTypeConsideringAction(ActualGoapNode consideredAction) {
         Character actor = consideredAction.actor;
@@ -134,7 +135,7 @@ public class CrimeManager : MonoBehaviour {
             lastStrawReason = "got caught";
         }
         reactor.relationshipContainer.AdjustOpinion(reactor, crimeCommitter, "Misdemeanor", -10, lastStrawReason);
-        MakeCharacterACriminal(crimeCommitter, CRIME_TYPE.MISDEMEANOR, committedCrime.action);
+        MakeCharacterACriminal(crimeCommitter, committedCrime.target, CRIME_TYPE.MISDEMEANOR, committedCrime.action);
     }
     private void ReactToSeriousCrime(Character reactor, Character crimeCommitter, ActualGoapNode committedCrime, JOB_TYPE crimeJobType) {
         string lastStrawReason = string.Empty;
@@ -144,7 +145,7 @@ public class CrimeManager : MonoBehaviour {
             lastStrawReason = "is a Psychopath killer";
         }
         reactor.relationshipContainer.AdjustOpinion(reactor, crimeCommitter, "Serious Crime", -20);
-        MakeCharacterACriminal(crimeCommitter, CRIME_TYPE.SERIOUS, committedCrime.action);
+        MakeCharacterACriminal(crimeCommitter, committedCrime.target, CRIME_TYPE.SERIOUS, committedCrime.action);
     }
     private void ReactToHeinousCrime(Character reactor, Character crimeCommitter, ActualGoapNode committedCrime, JOB_TYPE crimeJobType) {
         string lastStrawReason = string.Empty;
@@ -154,7 +155,7 @@ public class CrimeManager : MonoBehaviour {
             lastStrawReason = "is a vampire";
         }
         reactor.relationshipContainer.AdjustOpinion(reactor, crimeCommitter, "Heinous Crime", -40);
-        MakeCharacterACriminal(crimeCommitter, CRIME_TYPE.HEINOUS, committedCrime.action);
+        MakeCharacterACriminal(crimeCommitter, committedCrime.target, CRIME_TYPE.HEINOUS, committedCrime.action);
     }
     private void ReactToHeinousCrime(Character reactor, Character actor, Interrupt interrupt) {
         string lastStrawReason = string.Empty;
@@ -162,25 +163,27 @@ public class CrimeManager : MonoBehaviour {
             lastStrawReason = "is a werewolf";
         }
         reactor.relationshipContainer.AdjustOpinion(reactor, actor, "Heinous Crime", -40);
-        MakeCharacterACriminal(actor, CRIME_TYPE.HEINOUS, interrupt);
+        MakeCharacterACriminal(actor, null, CRIME_TYPE.HEINOUS, interrupt);
     }
     #endregion
 }
 
 public class CrimeData {
-    public CRIME_TYPE crimeType { get; private set; }
+    public CRIME_TYPE crimeType { get; }
     public CRIME_STATUS crimeStatus { get; private set; }
-    public ICrimeable crime { get; private set; }
-    public string strCrimeType { get; private set; }
+    public ICrimeable crime { get; }
+    public string strCrimeType { get; }
 
-    public Character criminal { get; private set; }
+    public Character criminal { get; }
+    public IPointOfInterest target { get; }
     public Character judge { get; private set; }
-    public List<Character> witnesses { get; private set; }
+    public List<Character> witnesses { get; }
 
-    public CrimeData(CRIME_TYPE crimeType, ICrimeable crime, Character criminal) {
+    public CrimeData(CRIME_TYPE crimeType, ICrimeable crime, Character criminal, IPointOfInterest target) {
         this.crimeType = crimeType;
         this.crime = crime;
         this.criminal = criminal;
+        this.target = target;
         strCrimeType = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(this.crimeType.ToString());
         witnesses = new List<Character>();
         SetCrimeStatus(CRIME_STATUS.Unpunished);

@@ -7,6 +7,7 @@ using UnityEngine;
 public class Initializer : MonoBehaviour {
     public IEnumerator InitializeDataBeforeWorldCreation() {
         LocalizationManager.Instance.Initialize();
+        GameManager.Instance.Initialize();
         CharacterManager.Instance.Initialize();
         RaceManager.Instance.Initialize();
         TraitManager.Instance.Initialize();

@@ -651,6 +651,16 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
         return objs;
     }
+    public List<T> GetTileObjectsFromStructures<T>(STRUCTURE_TYPE structureType, Func<T, bool> validityChecker = null) where T : TileObject {
+        List<T> objs = new List<T>();
+        if (HasStructure(structureType)) {
+            List<LocationStructure> structureList = structures[structureType];
+            for (int i = 0; i < structureList.Count; i++) {
+                objs.AddRange(structureList[i].GetTileObjectsOfType<T>(validityChecker));
+            }
+        }
+        return objs;
+    }
     #endregion
 
     #region Jobs

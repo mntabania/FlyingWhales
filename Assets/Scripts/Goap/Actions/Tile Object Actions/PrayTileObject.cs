@@ -42,8 +42,8 @@ public class PrayTileObject : GoapAction {
     public void AfterPraySuccess(ActualGoapNode goapNode) {
         if (goapNode.poiTarget is GoddessStatue) {
             //Speed up divine intervention by 4 hours
-            if(goapNode.actor.faction != null && goapNode.actor.faction.activeQuest != null && goapNode.actor.faction.activeQuest is DivineInterventionQuest) {
-                goapNode.actor.faction.activeQuest.AdjustCurrentDuration(GameManager.Instance.GetTicksBasedOnHour(4));
+            if(goapNode.actor.faction != null && goapNode.actor.faction.activeFactionQuest != null && goapNode.actor.faction.activeFactionQuest is DivineInterventionFactionQuest) {
+                goapNode.actor.faction.activeFactionQuest.AdjustCurrentDuration(GameManager.Instance.GetTicksBasedOnHour(4));
             }
         }
     }

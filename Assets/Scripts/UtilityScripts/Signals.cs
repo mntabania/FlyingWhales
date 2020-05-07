@@ -545,11 +545,18 @@ public static class Signals {
     public static string REMOVE_TILE_OBJECT_USER = "OnAddTileObjectUser";
     #endregion
 
-    #region Tutorial
+    #region Quests
     /// <summary>
-    /// Parameters: TutorialQuestStep completedStep
+    /// Parameters: QuestStep completedStep
     /// </summary>
-    public static string TUTORIAL_STEP_COMPLETED = "TutorialStepCompleted";
+    public static string QUEST_STEP_COMPLETED = "QuestStepCompleted";
+    /// <summary>
+    /// Parameters: QuestStepCollection completedCollection
+    /// </summary>
+    public static string STEP_COLLECTION_COMPLETED = "StepCollectionCompleted";
+    #endregion
+    
+    #region Tutorial
     public static string CAMERA_MOVED_BY_PLAYER = "CameraMovedByPlayer";
     /// <summary>
     /// Parameters: ISelectable clickedObject
@@ -563,10 +570,6 @@ public static class Signals {
     /// Parameters: string identifier
     /// </summary>
     public static string OBJECT_PICKER_SHOWN = "ObjectPickerShown";
-    /// <summary>
-    /// Parameters: TutorialQuestStepCollection completedCollection
-    /// </summary>
-    public static string TUTORIAL_STEP_COLLECTION_COMPLETED = "TutorialStepCollectionCompleted";
     public static string INTEL_MENU_OPENED = "OnIntelMenuOpened";
     /// <summary>
     /// Parameters (TutorialQuestCriteria)
@@ -576,6 +579,7 @@ public static class Signals {
     /// Parameters (TutorialQuestCriteria)
     /// </summary>
     public static string TUTORIAL_QUEST_CRITERIA_UNMET = "OnTutorialQuestCriteriaUnMet";
+    public static string METEOR_FELL = "OnMeteorFell";
     #endregion
 
     #region Elements
@@ -611,6 +615,7 @@ public static class Signals {
             new SignalMethod() { methodName = "OnTickEnded", objectType = typeof(Character) },
         }},
     };
+    
     public static bool TryGetMatchingSignalMethod(string eventType, Callback method, out SignalMethod matching) {
         for (int i = 0; i < orderedSignalExecution[eventType].Length; i++) {
             SignalMethod sm = orderedSignalExecution[eventType][i];

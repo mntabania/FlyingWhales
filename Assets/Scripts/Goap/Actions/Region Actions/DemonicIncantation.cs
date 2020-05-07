@@ -38,7 +38,7 @@ public class DemonicIncantation : GoapAction {
 
     #region State Effects
     public void AfterIncantationSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.faction.activeQuest.AdjustCurrentDuration(-GameManager.ticksPerDay);
+        goapNode.actor.faction.activeFactionQuest.AdjustCurrentDuration(-GameManager.ticksPerDay);
     }
     #endregion
 }

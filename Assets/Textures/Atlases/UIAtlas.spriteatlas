@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: d64d057451588de47862f92a337b5fc0, type: 3}
-    totalSpriteSurfaceArea: 16946204
+    totalSpriteSurfaceArea: 17484350
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -145,7 +145,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: a38707f257b6741409bad0361466bab6, type: 3}
   - {fileID: 21300000, guid: c64b78f22828268438108c40fb8107c4, type: 3}
   - {fileID: 21300000, guid: 719f29f2ac8a5284e9bc5e19e9ee6738, type: 3}
-  - {fileID: 21300000, guid: ad0ba403edcb24941bfe8c77517193b9, type: 3}
   - {fileID: 21300000, guid: 49b5bd03e6cefb84cae8ad022541cb3d, type: 3}
   - {fileID: 21300000, guid: c794e1137d601be43916aef1a4b3a837, type: 3}
   - {fileID: 21300000, guid: e82f28130057b894cb52771c34d33c2d, type: 3}
@@ -242,6 +241,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 60451426095c6b043abef135f3e47483, type: 3}
   - {fileID: 21300000, guid: c9308036dbc926241861e76bf65adc5b, type: 3}
   - {fileID: 21300000, guid: 224d7236dc7afb847ad516c0f98e3954, type: 3}
+  - {fileID: 21300000, guid: 49685f365c0c3c84b945b6ddfba6c3ab, type: 3}
   - {fileID: 21300000, guid: 6538ba461864aff48a15c84e401023e0, type: 3}
   - {fileID: 21300000, guid: 57ffdd4602cace544b62cc8403b95732, type: 3}
   - {fileID: 21300000, guid: 69588056b4ad115468466382af1ce08c, type: 3}
@@ -545,6 +545,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 7e79c4fd3dc36ff4ea2eb936ede05203, type: 3}
   - {fileID: 21300000, guid: f84365fdb8107b54da4c93f53ab26dbd, type: 3}
   - {fileID: 21300000, guid: 3e90c00e87ec4cc45a61c1a0f7d06585, type: 3}
+  - {fileID: 21300000, guid: 03e8540e6ed44704abd21d6230c79a17, type: 3}
   - {fileID: 21300000, guid: aa3b632e938f5e046bb0948ebd754783, type: 3}
   - {fileID: 21300000, guid: 08a24b3e63f9bd346840c902a738d56b, type: 3}
   - {fileID: 21300000, guid: 0b0d5c3e24b6ea144b0993ddee8a432a, type: 3}
@@ -720,7 +721,6 @@ SpriteAtlas:
   - button_anvil_clicked
   - minion_scroll_button_down_invalid
   - orelia_s
-  - skill_details_tooltip_container
   - portrait_border_highlight
   - minion_tab_skill_disabled
   - 10-Orange
@@ -817,6 +817,7 @@ SpriteAtlas:
   - spell_slot_default
   - interaction_tab_invalid
   - assign_button_hover
+  - demo_start_popup
   - minion_tab_traits_hover
   - button_back_hover
   - button_unlock_default
@@ -1120,6 +1121,7 @@ SpriteAtlas:
   - intel_button_clicked
   - log_button_hover
   - ge_cont-05A
+  - demo_end_popup
   - pause_button_disabled
   - button_interfere_hover
   - pause_button_default
