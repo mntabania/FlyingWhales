@@ -27,7 +27,7 @@ public class Rage : Emotion {
                 witness.jobComponent.CreateKillJob(targetCharacter);
             }
         } else if (target is TileObject tileObject) {
-            witness.combatComponent.Fight(tileObject);
+            witness.combatComponent.Fight(tileObject, CombatManager.Rage);
         }
         return base.ProcessEmotion(witness, target, status, goapNode);
     }

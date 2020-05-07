@@ -371,7 +371,7 @@ public class CharacterManager : MonoBehaviour {
         List<Character> characters = new List<Character>();
         for (int i = 0; i < allCharacters.Count; i++) {
             Character character = allCharacters[i];
-            if (character.IsNormalCharacter()) {
+            if (character.isNormalCharacter) {
                 characters.Add(character);
             }
         }
