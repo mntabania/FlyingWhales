@@ -664,7 +664,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             LocationGridTile chosenTile = tile;
             if (chosenTile == null) {
                 if (_owner.gridTileLocation.collectionOwner.isPartOfParentRegionMap == false) {
-                    HexTile chosenTerritory = _owner.gridTileLocation.collectionOwner.GetNearestHexTile();
+                    HexTile chosenTerritory = _owner.gridTileLocation.collectionOwner.GetNearestHexTileWithinRegion();
                     chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
                 } else {
                     HexTile chosenTerritory = _owner.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;

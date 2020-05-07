@@ -11,6 +11,7 @@ namespace Inner_Maps {
         public LocationGridTile[] tilesInTerritory { get; private set; }
         public InnerMapHexTile partOfHextile { get; private set; }
         public LocationGridTileCollectionItem locationGridTileCollectionItem { get; }
+        public Region region { get; private set; }
 
         public bool isPartOfParentRegionMap => partOfHextile != null;
         
@@ -22,6 +23,7 @@ namespace Inner_Maps {
 
         #region Initialization
         public void Initialize(InnerTileMap map) {
+            region = map.region;
             DetermineTilesInnTerritory(map);
         }
         public void SetAsPartOfHexTile(InnerMapHexTile tile) {
@@ -84,17 +86,19 @@ namespace Inner_Maps {
         #endregion
 
         #region Data Getting
-        public HexTile GetNearestHexTile() {
+        public HexTile GetNearestHexTileWithinRegion() {
             if(partOfHextile != null) { return partOfHextile.hexTileOwner; }
             foreach (LocationGridTileCollection collection in neighbours.Values) {
-                if(collection.partOfHextile != null) {
+                if(collection.partOfHextile != null && collection.region == region) {
                     return collection.partOfHextile.hexTileOwner;
                 }
             }
             foreach (LocationGridTileCollection collection in neighbours.Values) {
-                HexTile nearestHex = collection.GetNearestHexTile();
-                if (nearestHex != null) {
-                    return nearestHex;
+                if(collection.region == region) {
+                    HexTile nearestHex = collection.GetNearestHexTileWithinRegion();
+                    if (nearestHex != null) {
+                        return nearestHex;
+                    }
                 }
             }
             return null;
