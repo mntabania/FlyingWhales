@@ -65,15 +65,15 @@ namespace Inner_Maps.Location_Structures {
          }
          #endregion
 
-        #region Tiles
-        public override void OnTileDamaged(LocationGridTile tile, int amount) {
-            OnStructureDamaged();
-            AdjustHP(amount);
-        }
-        public override void OnTileRepaired(LocationGridTile tile, int amount) {
-            AdjustHP(amount);
-        }
-        #endregion
+        // #region Tiles
+        // public override void OnTileDamaged(LocationGridTile tile, int amount) {
+        //     OnStructureDamaged();
+        //     AdjustHP(amount);
+        // }
+        // public override void OnTileRepaired(LocationGridTile tile, int amount) {
+        //     AdjustHP(amount);
+        // }
+        // #endregion
 
         #region Utilities
         private void OnStructureDamaged() {

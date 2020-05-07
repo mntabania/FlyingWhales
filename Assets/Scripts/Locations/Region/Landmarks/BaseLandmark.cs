@@ -84,11 +84,11 @@ public class BaseLandmark {
         for (int i = 0; i < tileLocation.featureComponent.features.Count; i++) {
             tileLocation.featureComponent.features[i].OnDemolishLandmark(tileLocation, specificLandmarkType);
         }
-        if (specificLandmarkType.IsPlayerLandmark()) {
-            HexTile tile = _location;
-            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(),
-                $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(specificLandmarkType.ToString())} was destroyed!", () => UIManager.Instance.ShowRegionInfo(tile.region));
-        }
+        // if (specificLandmarkType.IsPlayerLandmark()) {
+            // HexTile tile = _location;
+            // UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(),
+            //     $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(specificLandmarkType.ToString())} was destroyed!", () => UIManager.Instance.ShowRegionInfo(tile.region));
+        // }
         ObjectPoolManager.Instance.DestroyObject(nameplate);
         _location = null;
     }

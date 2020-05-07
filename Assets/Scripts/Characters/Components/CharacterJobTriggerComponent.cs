@@ -871,7 +871,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     public bool TryCreateObtainPersonalItemJob() {
         if (!_owner.IsInventoryAtFullCapacity()) {
             if(_owner.characterClass.interestedItemNames != null && _owner.characterClass.interestedItemNames.Length > 0) {
-                string chosenItemName = string.Empty;
+                string chosenItemName;
                 if(obtainPersonalItemRandomList == null) {
                     obtainPersonalItemRandomList = new List<string>();
                 }
@@ -979,17 +979,19 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     #region Report Demonic Structure
     public void CreateReportDemonicStructure(LocationStructure structureToReport) {
 	    if (!_owner.jobQueue.HasJob(JOB_TYPE.REPORT_CORRUPTED_STRUCTURE)) {
-		    UIManager.Instance.ShowYesNoConfirmation("Demonic Structure Seen", 
-			    $"Your demonic structure {structureToReport.name} has been seen by {_owner.name}!", 
-			    onClickNoAction: _owner.CenterOnCharacter, yesBtnText: "OK", noBtnText: $"Jump to {_owner}", 
-			    showCover:true, pauseAndResume: true);
+		    // UIManager.Instance.ShowYesNoConfirmation("Demonic Structure Seen", 
+			   //  $"Your demonic structure {structureToReport.name} has been seen by {_owner.name}!", 
+			   //  onClickNoAction: _owner.CenterOnCharacter, yesBtnText: "OK", noBtnText: $"Jump to {_owner}", 
+			   //  showCover:true, pauseAndResume: true);
 		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REPORT_CORRUPTED_STRUCTURE, INTERACTION_TYPE.REPORT_CORRUPTED_STRUCTURE, _owner, _owner);
             job.AddOtherData(INTERACTION_TYPE.REPORT_CORRUPTED_STRUCTURE, new object[] { structureToReport });
             _owner.jobQueue.AddJobInQueue(job);
+            Messenger.Broadcast(Signals.DEMONIC_STRUCTURE_DISCOVERED, structureToReport, _owner, job);
         }
     }
     #endregion
 
+    #region Abduct
     public bool TriggerAbduct() {
 	    if (_owner.homeStructure == null) { return false; }
 	    List<Character> choices = _owner.currentRegion.charactersAtLocation.Where(x => x.isNormalCharacter).ToList();
@@ -1002,6 +1004,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    }
 	    return false;
     }
+    #endregion
 
     #region Heal Self
     public void OnHPReduced() {
@@ -1109,6 +1112,24 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             }
         }
         return false;
+    }
+    #endregion
+
+    #region Bury
+    public void TriggerBuryMe() {
+	    if (_owner.minion == null && _owner.gridTileLocation != null && _owner.gridTileLocation.IsNextToOrPartOfSettlement(out var settlement)
+	        && settlement is NPCSettlement npcSettlement) {
+		    LocationStructure targetStructure = npcSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.CEMETERY) ??
+		                                        npcSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+		    GoapPlanJob buryJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BURY, INTERACTION_TYPE.BURY_CHARACTER, _owner, npcSettlement);
+		    buryJob.SetCanTakeThisJobChecker(InteractionManager.Instance.CanTakeBuryJob);
+		    buryJob.AddOtherData(INTERACTION_TYPE.BURY_CHARACTER, new object[]{ targetStructure });
+		    buryJob.SetStillApplicableChecker(() => IsBuryJobStillApplicable(_owner, npcSettlement));
+		    npcSettlement.AddToAvailableJobs(buryJob);
+	    }
+    }
+    private bool IsBuryJobStillApplicable(Character target, NPCSettlement npcSettlement) {
+	    return target.gridTileLocation != null && target.gridTileLocation.IsNextToOrPartOfSettlement(npcSettlement);
     }
     #endregion
 }

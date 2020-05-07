@@ -15,7 +15,7 @@ namespace Tutorial {
                 new PlayerHasNotCompletedTutorialInSeconds(15f),
                 new HasCompletedTutorialQuest(TutorialManager.Tutorial.Build_A_Kennel)
             };
-            Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, CompleteTutorial);
+            Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, CompleteQuest);
         }
         protected override bool HasMetAllCriteria() {
             bool hasMetAllCriteria = base.HasMetAllCriteria();
@@ -28,12 +28,12 @@ namespace Tutorial {
 
         #region Overrides
         public override void Activate() {
-            Messenger.RemoveListener(Signals.ON_OPEN_SHARE_INTEL, CompleteTutorial);
+            Messenger.RemoveListener(Signals.ON_OPEN_SHARE_INTEL, CompleteQuest);
             base.Activate();
         }
         public override void Deactivate() {
             base.Deactivate();
-            Messenger.RemoveListener(Signals.ON_OPEN_SHARE_INTEL, CompleteTutorial);
+            Messenger.RemoveListener(Signals.ON_OPEN_SHARE_INTEL, CompleteQuest);
         }
         protected override void ConstructSteps() {
             steps = new List<QuestStepCollection>() {
@@ -49,7 +49,7 @@ namespace Tutorial {
                     .SetHoverOutAction(UIManager.Instance.HideSmallInfo)),
                 new QuestStepCollection(new ShowIntelMenuStep(),
                     new SelectIntelStep("Choose the stored intel"),
-                    new ShareIntelStep("Share to a sapient character")
+                    new ShareIntelStep("Share to a Villager")
                         .SetHoverOverAction(OnHoverShareIntel)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
                 )

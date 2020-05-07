@@ -142,49 +142,10 @@ public class ShareIntelMenu : PopupMenuBase {
         }
         StartCoroutine(ShowReaction(response, intel));
     }
-    string[] randomNothings = new string[] {
-        "I really don't care",
-        "And I should care, why?",
-        "Should this mean something to me?",
-        "Stop wasting my time!",
-        "And the point of sharing this with me is...?"
-    };
-    private IEnumerator ShowReactions(List<string> reactions) {
-        Debug.Log($"Showing Reactions of {targetCharacter.name}: {reactions.Count}");
-        if (reactions.Count == 0) {
-            //character had no reaction
-            reactions.Add(randomNothings[Random.Range(0, randomNothings.Length)]);
-        }
-        for (int i = 0; i < reactions.Count; i++) {
-            GameObject targetDialog = ObjectPoolManager.Instance.InstantiateObjectFromPool(dialogItemPrefab.name, Vector3.zero, Quaternion.identity, dialogScrollView.content);
-            DialogItem item = targetDialog.GetComponent<DialogItem>();
-            item.SetData(targetCharacter, reactions[i]);
-            if (i + 1 == reactions.Count) {
-                endOfConversationLbl.transform.SetParent(dialogScrollView.content);
-                endOfConversationLbl.gameObject.SetActive(true);
-                //UIManager.Instance.ScrollRectSnapTo(dialogScrollView, endOfConversationLbl.transform as RectTransform);
-            } else {
-                //UIManager.Instance.ScrollRectSnapTo(dialogScrollView, item.characterDialogParent);
-            }
-            
-            //yield return new WaitForSeconds(0.5f);
-            //dialogScrollView.verticalNormalizedPosition = 0f;
-
-        }
-        closeBtn.interactable = true;
-        dialogScrollView.verticalNormalizedPosition = 0f;
-        yield return null;
-        //ShareIntel share = PlayerManager.Instance.player.shareIntelAbility;
-        //share.DeactivateAction();
-    }
     private IEnumerator ShowReaction(string reaction, IIntel intel) {
         if (reaction == string.Empty) {
             //character had no reaction
-            if (intel.actor == targetCharacter) {
-                reaction = "I know what I did.";
-            } else {
-                reaction = "A proper response to this information has not been implemented yet.";
-            }
+            reaction = intel.actor == targetCharacter ? "I know what I did." : "A proper response to this information has not been implemented yet.";
         } else {
             if (reaction == "aware") {
                 reaction = "I already know this.";
@@ -193,7 +154,7 @@ public class ShareIntelMenu : PopupMenuBase {
                 string finalReaction = string.Empty;
                 for (int i = 0; i < emotionsToActorAndTarget.Length; i++) {
                     string[] words = emotionsToActorAndTarget[i].Split(' ');
-                    if(words != null) {
+                    {
                         string responses = string.Empty;
                         for (int j = 0; j < words.Length; j++) {
                             string currWord = words[j];
@@ -212,11 +173,7 @@ public class ShareIntelMenu : PopupMenuBase {
                         }
                     }
                 }
-                if (finalReaction != string.Empty) {
-                    reaction = finalReaction;
-                } else {
-                    reaction = $"I feel disinterest towards this.";
-                }
+                reaction = finalReaction != string.Empty ? finalReaction : $"I feel disinterest towards this.";
             }
         }
         GameObject targetDialog = ObjectPoolManager.Instance.InstantiateObjectFromPool(dialogItemPrefab.name, Vector3.zero, Quaternion.identity, dialogScrollView.content);
@@ -225,7 +182,7 @@ public class ShareIntelMenu : PopupMenuBase {
         endOfConversationLbl.transform.SetParent(dialogScrollView.content);
         endOfConversationLbl.gameObject.SetActive(true);
         closeBtn.interactable = true;
-        dialogScrollView.verticalNormalizedPosition = 0f;
+        dialogScrollView.verticalNormalizedPosition = 1f;
         yield return null;
         //ShareIntel share = PlayerManager.Instance.player.shareIntelAbility;
         //share.DeactivateAction();

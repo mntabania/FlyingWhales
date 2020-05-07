@@ -457,12 +457,14 @@ namespace Inner_Maps {
                 TriggerSnareTrap(character);
             }
             if (isCorrupted) {
+                LocationStructure mostImportantStructureOnTile =
+                    collectionOwner.partOfHextile.hexTileOwner.GetMostImportantStructureOnTile();
                 if(!character.behaviourComponent.isAttackingDemonicStructure 
                    && character.homeSettlement != null 
-                   && (character.race == RACE.HUMANS || character.race == RACE.ELVES) && structure is DemonicStructure
+                   && (character.race == RACE.HUMANS || character.race == RACE.ELVES) && mostImportantStructureOnTile is DemonicStructure
                    && character.marker != null) {
-                    if (!InnerMapManager.Instance.HasWorldKnownDemonicStructure(structure)) {
-                        character.jobComponent.CreateReportDemonicStructure(structure);
+                    if (!InnerMapManager.Instance.HasWorldKnownDemonicStructure(mostImportantStructureOnTile)) {
+                        character.jobComponent.CreateReportDemonicStructure(mostImportantStructureOnTile);
                     }
                 }
             }

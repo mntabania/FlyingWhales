@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: d64d057451588de47862f92a337b5fc0, type: 3}
-    totalSpriteSurfaceArea: 17738828
+    totalSpriteSurfaceArea: 17741180
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -373,6 +373,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: c54729f95e0d0e74a8d609b0df98161a, type: 3}
   - {fileID: 21300000, guid: f8010af9aadf2d549a42206416ba9af9, type: 3}
   - {fileID: 21300000, guid: f5653af9160c320488845fa06af53e38, type: 3}
+  - {fileID: 21300000, guid: 17fa400a80a573c4bb8164e86b31d53e, type: 3}
   - {fileID: 21300000, guid: b80e600ad3f763e4aa790a3a5097d816, type: 3}
   - {fileID: 21300000, guid: 3b6b421af9db4234d974602232a5953e, type: 3}
   - {fileID: 21300000, guid: c66bf41aede20094d9e61d7f323df027, type: 3}
@@ -570,6 +571,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: fe70dd9e7b458b147bf6087c61efe10c, type: 3}
   - {fileID: 21300000, guid: 9cc875ae4b8c72741884f2ff0710cc99, type: 3}
   - {fileID: 21300000, guid: b509b7ae41091354f8a5b5a1f47718ea, type: 3}
+  - {fileID: 21300000, guid: cca0fdbe9fb13d649bf572236b504eee, type: 3}
   - {fileID: 21300000, guid: a4b862ce9aa06cd418ac056889c11415, type: 3}
   - {fileID: 21300000, guid: cbe635ce0bb70c34cbaf2c1b0d60455a, type: 3}
   - {fileID: 21300000, guid: 6acb08cebcf86d04c97e40d6fff922e3, type: 3}
@@ -623,6 +625,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 044a10ffb7cf1ea4fa87052f5c9563f8, type: 3}
   - {fileID: 21300000, guid: 7a9533ffeedeb3443924db0e8be0bf6f, type: 3}
   - {fileID: 21300000, guid: b1f635ffb61a0dd42819f237385eaadb, type: 3}
+  - {fileID: 21300000, guid: f9c56cffd6570ee4aa91ddfe15f4831a, type: 3}
   m_PackedSpriteNamesToIndex:
   - disable_object
   - ge_cont-05B
@@ -950,6 +953,7 @@ SpriteAtlas:
   - button_action_clicked
   - button_invade_default
   - button_kennels_default
+  - tutorial_goal_checkbox_cross
   - tab_items_hover
   - button_invade_disabled
   - minion_tab_items_active
@@ -1147,6 +1151,7 @@ SpriteAtlas:
   - notification_intel_button_clicked
   - button_intel_default
   - zap
+  - tutorial_goal_checkbox_check
   - agent_action_button_default
   - button_invade_hover
   - button_pause_off
@@ -1200,5 +1205,6 @@ SpriteAtlas:
   - button_pause_on
   - world_button_default
   - button_switch_default
+  - quest_fail_mark
   m_Tag: UIAtlas
   m_IsVariant: 0

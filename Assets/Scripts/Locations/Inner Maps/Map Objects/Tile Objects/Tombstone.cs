@@ -1,25 +1,21 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Inner_Maps;
 using UnityEngine;
 
 public class Tombstone : TileObject {
 
     public override Character[] users {
-        get { return new Character[] { this.character }; }
+        get { return new[] { character }; }
     }
-
     public Character character { get; private set; }
     public Tombstone() {
-        //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.REMEMBER_FALLEN, INTERACTION_TYPE.SPIT, INTERACTION_TYPE.BUTCHER };
-        ////Initialize(TILE_OBJECT_TYPE.TOMBSTONE);
         AddAdvertisedAction(INTERACTION_TYPE.REMEMBER_FALLEN);
         AddAdvertisedAction(INTERACTION_TYPE.SPIT);
         AddAdvertisedAction(INTERACTION_TYPE.BUTCHER);
     }
     public Tombstone(SaveDataTileObject data) {
-        //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.REMEMBER_FALLEN, INTERACTION_TYPE.SPIT, INTERACTION_TYPE.BUTCHER };
-        ////Initialize(data);
         AddAdvertisedAction(INTERACTION_TYPE.REMEMBER_FALLEN);
         AddAdvertisedAction(INTERACTION_TYPE.SPIT);
         AddAdvertisedAction(INTERACTION_TYPE.BUTCHER);
@@ -29,22 +25,21 @@ public class Tombstone : TileObject {
         character.DisableMarker();
         character.SetGrave(this);
         if (character.race == RACE.HUMANS || character.race == RACE.ELVES) {
-            //PlayerAction raiseAction = new PlayerAction(PlayerDB.Raise_Skeleton_Action
-            //    , () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.RAISE_DEAD].CanPerformAbilityTowards(this)
-            //    , null
-            //    , () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.RAISE_DEAD].ActivateAbility(this));
             AddPlayerAction(SPELL_TYPE.RAISE_DEAD);
         }
     }
     public override void OnDestroyPOI() {
         base.OnDestroyPOI();
-        //RemovePlayerAction(PlayerDB.Raise_Skeleton_Action);
         RemovePlayerAction(SPELL_TYPE.RAISE_DEAD);
+        character.EnableMarker();
+        LocationGridTile tile = previousTile;
+        if (tile.isOccupied) {
+            tile = previousTile.GetRandomUnoccupiedNeighbor();
+        }
+        character.marker.PlaceMarkerAt(tile, false);
+        character.SetGrave(null);
+        character.jobComponent.TriggerBuryMe();
     }
-    public virtual void OnClickAction() {
-        UIManager.Instance.ShowCharacterInfo(character, true);
-    }
-
     public override string ToString() {
         return $"Tombstone of {character.name}";
     }

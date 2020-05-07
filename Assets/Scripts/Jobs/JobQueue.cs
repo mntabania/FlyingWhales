@@ -123,6 +123,8 @@ public class JobQueue {
     }
     public bool RemoveJobInQueue(JobQueueItem job, bool shouldDoAfterEffect = true, string reason = "") {
         if (jobsInQueue.Remove(job)) {
+            Messenger.Broadcast(Signals.JOB_REMOVED_FROM_QUEUE, job, owner);
+            
             job.UnassignJob(shouldDoAfterEffect, reason);
             string ownerName = owner.name;
             string removeLog = $"{job.name} has been removed from {ownerName} job queue.";

@@ -45,7 +45,7 @@ namespace Tutorial {
 
         #region Listeners
         private void OnTileDoubleClicked(HexTile hexTile) {
-            CompleteTutorial();
+            CompleteQuest();
         }
         #endregion
     }

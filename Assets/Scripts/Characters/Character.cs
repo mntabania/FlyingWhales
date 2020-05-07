@@ -2034,7 +2034,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             && UtilityScripts.Utilities.IsInRange(y, 0, currentRegion.innerMap.height)) {
             return currentRegion.innerMap.map[x, y];
         }
-        return null;
+        int xCoordinate = Mathf.Clamp(x, 0, currentRegion.innerMap.width);
+        int yCoordinate = Mathf.Clamp(y, 0, currentRegion.innerMap.height);
+        return currentRegion.innerMap.map[xCoordinate, yCoordinate];;
     }
     public void UpdateCanCombatState() {
         bool combatState = traitContainer.HasTrait("Combatant") && !traitContainer.HasTrait("Injured");
@@ -4645,7 +4647,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Assert.IsNotNull(currentPlan, $"{name} has finished action {actionNode.action.name} with result {result} but currentPlan is null!");
         GoapPlan plan = currentPlan;
         GoapPlanJob job = currentJob as GoapPlanJob;
-
+        Assert.IsNotNull(job, $"Current job of {name} is null or not GoapPlanJob {currentJob?.ToString() ?? "Null"}");
+        
         if (actionNode == currentActionNode) {
             SetCurrentActionNode(null, null, null);
         }
@@ -4673,6 +4676,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 //if (actionNode.isStoppedAsCurrentAction && plan != null && plan.job != null && plan.job.jobQueueParent.isAreaOrQuestJobQueue) {
                 //    forceRemoveJobInQueue = false;
                 //}
+                job.SetFinishedSuccessfully(true);
                 Messenger.Broadcast(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, this, job);
                 
                 //this means that this is the end goal so end this plan now

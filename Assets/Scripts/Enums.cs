@@ -1506,7 +1506,9 @@ public enum MAP_OBJECT_STATE { BUILT, UNBUILT, BUILDING }
 public enum FACTION_IDEOLOGY { INCLUSIVE = 0, EXCLUSIVE = 1, MILITARIST = 2, ECONOMIST = 3, DIVINE_WORSHIP = 4, NATURE_WORSHIP = 5, DEMON_WORSHIP = 6 }
 public enum BEHAVIOUR_COMPONENT_ATTRIBUTE { WITHIN_HOME_SETTLEMENT_ONLY, ONCE_PER_DAY, DO_NOT_SKIP_PROCESSING, } //, OUTSIDE_SETTLEMENT_ONLY
 public enum EXCLUSIVE_IDEOLOGY_CATEGORIES { RACE, GENDER, TRAIT, }
-public enum EMOTION { None, Fear, Approval, Embarassment, Disgust, Anger, Betrayal, Concern, Disappointment, Scorn, Sadness, Threatened, Arousal, Disinterest, Despair, Shock, Resentment, Disapproval, Gratefulness, Rage }
+public enum EMOTION { None, Fear, Approval, Embarassment, Disgust, Anger, Betrayal, Concern, Disappointment, Scorn, Sadness, Threatened,
+    Arousal, Disinterest, Despair, Shock, Resentment, Disapproval, Gratefulness, Rage
+}
 public enum PLAYER_ARCHETYPE { Normal, Ravager, Lich, Puppet_Master, }
 public enum ELEMENTAL_TYPE { Normal, Fire, Poison, Water, Ice, Electric, Earth, Wind, }
 /// <summary>

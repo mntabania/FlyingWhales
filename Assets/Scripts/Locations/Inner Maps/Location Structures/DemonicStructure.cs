@@ -4,8 +4,14 @@ using UnityEngine;
 
 namespace Inner_Maps.Location_Structures {
     public class DemonicStructure : LocationStructure {
-        protected DemonicStructure(STRUCTURE_TYPE structureType, Region location) : base(structureType, location) { }
-        public DemonicStructure(Region location, SaveDataLocationStructure data) : base(location, data) { }
+        protected DemonicStructure(STRUCTURE_TYPE structureType, Region location) : base(structureType, location) {
+            maxHP = 5000;
+            currentHP = maxHP;
+        }
+        public DemonicStructure(Region location, SaveDataLocationStructure data) : base(location, data) {
+            maxHP = 5000;
+            currentHP = maxHP;
+        }
 
         #region Overrides
         public override void ConstructDefaultActions() {

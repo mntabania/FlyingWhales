@@ -37,7 +37,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public virtual string neutralizer => string.Empty;
 
     //hp
-    public int maxHP { get; private set; }
+    public int maxHP { get; protected set; }
     public int currentHP { get; protected set; }
 
     //tile slots

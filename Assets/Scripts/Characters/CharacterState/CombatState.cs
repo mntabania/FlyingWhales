@@ -18,6 +18,7 @@ public class CombatState : CharacterState {
     public Character forcedTarget { get; private set; }
     public List<Character> allCharactersThatDegradedRel { get; private set; }
     public List<Character> allCharactersThatReactedToThisCombat { get; private set; }
+    public bool endedInternally { get; private set; } //was this combat ended from within this combat state?
 
     //Is this character fighting another character or has a character in hostile range list who is trying to apprehend him/her because he/she is a criminal?
     //See: https://trello.com/c/uCZfbCSa/2819-criminals-should-eventually-flee-npcSettlement-and-leave-faction
@@ -244,6 +245,7 @@ public class CombatState : CharacterState {
                     if (character.combatComponent.avoidInRange.Count > 0) {
                         character.combatComponent.ClearAvoidInRange(false);
                     }
+                    endedInternally = true;
                     character.stateComponent.ExitCurrentState();
                 }
             }
@@ -435,6 +437,7 @@ public class CombatState : CharacterState {
             }
             if (currentClosestHostile == null) {
                 log += "\nNo more hostile characters, exiting combat state...";
+                endedInternally = true;
                 stateComponent.ExitCurrentState();
             } else {
                 float distance = Vector2.Distance(stateComponent.character.marker.transform.position, currentClosestHostile.worldPosition);
@@ -451,6 +454,7 @@ public class CombatState : CharacterState {
             if (stateComponent.character.combatComponent.avoidInRange.Count <= 0) {
                 log += "\nNo more avoid characters, exiting combat state...";
                 stateComponent.character.logComponent.PrintLogIfActive(log);
+                endedInternally = true;
                 stateComponent.ExitCurrentState();
                 return;
             }

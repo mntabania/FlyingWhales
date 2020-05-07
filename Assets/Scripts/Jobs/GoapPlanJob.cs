@@ -27,6 +27,7 @@ public class GoapPlanJob : JobQueueItem {
     //public bool allowDeadTargets { get; private set; }
 
     public List<object> allOtherData { get; private set; }
+    public bool finishedSuccessfully { get; protected set; }
 
     public GoapPlanJob() : base() {
         otherData = new Dictionary<INTERACTION_TYPE, object[]>();
@@ -379,6 +380,9 @@ public class GoapPlanJob : JobQueueItem {
             plan.OnAttachPlanToJob(this);
         }
     }
+    public void SetFinishedSuccessfully(bool state) {
+        finishedSuccessfully = state;
+    }
     private void OnArriveAtLocationStopMovement() {
         if (assignedCharacter != null) {
             assignedCharacter.OnArriveAtAreaStopMovement();
@@ -451,6 +455,7 @@ public class GoapPlanJob : JobQueueItem {
         otherData.Clear();
         allOtherData.Clear();
         SetAssignedPlan(null);
+        SetFinishedSuccessfully(false);
     }
     #endregion
 }

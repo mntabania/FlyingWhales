@@ -6,6 +6,7 @@ using Inner_Maps;
 public class BerserkOrb : Artifact {
 
     public BerserkOrb() : base(ARTIFACT_TYPE.Berserk_Orb) {
+        maxHP = 700;
     }
     //public BerserkOrb(SaveDataArtifact data) : base(data) {
     //}

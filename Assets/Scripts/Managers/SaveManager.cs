@@ -68,13 +68,19 @@ public class SaveManager : MonoBehaviour {
         //if(UtilityScripts.Utilities.DoesFileExist(UtilityScripts.Utilities.gameSavePath + saveFileName)) {
         //    SetCurrentSave(SaveGame.Load<Save>(UtilityScripts.Utilities.gameSavePath + saveFileName));
         //}
-        if (UtilityScripts.Utilities.DoesFileExist(UtilityScripts.Utilities.gameSavePath + saveDataPlayerFileName)) {
-            SetCurrentSaveDataPlayer(SaveGame.Load<SaveDataPlayer>(UtilityScripts.Utilities.gameSavePath + saveDataPlayerFileName));
-        }
-        if(currentSaveDataPlayer == null) {
+        if (WorldConfigManager.Instance.isDemoWorld) {
             currentSaveDataPlayer = new SaveDataPlayer();
             currentSaveDataPlayer.InitializeInitialData();
+        } else {
+            if (UtilityScripts.Utilities.DoesFileExist(UtilityScripts.Utilities.gameSavePath + saveDataPlayerFileName)) {
+                SetCurrentSaveDataPlayer(SaveGame.Load<SaveDataPlayer>(UtilityScripts.Utilities.gameSavePath + saveDataPlayerFileName));
+            }
+            if(currentSaveDataPlayer == null) {
+                currentSaveDataPlayer = new SaveDataPlayer();
+                currentSaveDataPlayer.InitializeInitialData();
+            }    
         }
+        
     }
 
     public static SaveDataTrait ConvertTraitToSaveDataTrait(Trait trait) {

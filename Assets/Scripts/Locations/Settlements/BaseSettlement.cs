@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Inner_Maps.Location_Structures;
 using UnityEngine;
+using UtilityScripts;
 namespace Locations.Settlements {
     public class BaseSettlement {
         public int id { get; }
@@ -220,7 +221,7 @@ namespace Locations.Settlements {
             return null;
         }
         public LocationStructure GetRandomStructure() {
-            return _allStructures[UnityEngine.Random.Range(0, _allStructures.Count)];
+            return CollectionUtilities.GetRandomElement(_allStructures);;
         }
         public LocationStructure GetStructureByID(STRUCTURE_TYPE type, int id) {
             if (structures.ContainsKey(type)) {

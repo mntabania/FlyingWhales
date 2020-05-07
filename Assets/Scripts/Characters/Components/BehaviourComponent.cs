@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps.Location_Structures;
@@ -64,8 +65,12 @@ public class BehaviourComponent {
     public bool AddBehaviourComponent(System.Type componentType) {
         return AddBehaviourComponent(CharacterManager.Instance.GetCharacterBehaviourComponent(componentType));
     }
-    public bool RemoveBehaviourComponent(CharacterBehaviourComponent component) {
-        return currentBehaviourComponents.Remove(component);
+    private bool RemoveBehaviourComponent(CharacterBehaviourComponent component) {
+        bool wasRemoved = currentBehaviourComponents.Remove(component);
+        if (wasRemoved) {
+            Messenger.Broadcast(Signals.CHARACTER_REMOVED_BEHAVIOUR, owner, component);
+        }
+        return wasRemoved;
     }
     public bool RemoveBehaviourComponent(System.Type componentType) {
         return RemoveBehaviourComponent(CharacterManager.Instance.GetCharacterBehaviourComponent(componentType));
@@ -187,23 +192,6 @@ public class BehaviourComponent {
             }
         }
     }
-    public void SetIsAttackingDemonicStructure(bool state, DemonicStructure target) {
-        if (isAttackingDemonicStructure != state) {
-            isAttackingDemonicStructure = state;
-            attackDemonicStructureTarget = target;
-            owner.CancelAllJobs();
-            if (isAttackingDemonicStructure) {
-                combatModeBeforeAttackingDemonicStructure = owner.combatComponent.combatMode;
-                owner.combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
-                AddBehaviourComponent(typeof(AttackDemonicStructureBehaviour));
-                owner.traitContainer.AddTrait(owner, "Fervor");
-            } else {
-                owner.combatComponent.SetCombatMode(combatModeBeforeAttackingDemonicStructure);
-                RemoveBehaviourComponent(typeof(AttackDemonicStructureBehaviour));
-                owner.traitContainer.RemoveTrait(owner, "Fervor");
-            }
-        }
-    }
     private void OnNoLongerAbleResidentsInsideSettlement(NPCSettlement npcSettlement) {
         if(assignedTargetSettlement == npcSettlement) {
             SetIsInvading(false, null);
@@ -265,6 +253,63 @@ public class BehaviourComponent {
             }
         }
         return false;
+    }
+    #endregion
+
+    #region Attack Demonic Structure
+    public void SetIsAttackingDemonicStructure(bool state, DemonicStructure target) {
+        if (isAttackingDemonicStructure != state) {
+            isAttackingDemonicStructure = state;
+            attackDemonicStructureTarget = target;
+            owner.CancelAllJobs();
+            if (isAttackingDemonicStructure) {
+                combatModeBeforeAttackingDemonicStructure = owner.combatComponent.combatMode;
+                owner.combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
+                AddBehaviourComponent(typeof(AttackDemonicStructureBehaviour));
+                owner.traitContainer.AddTrait(owner, "Fervor");
+                StartCheckingIfShouldStopAttackingDemonicStructure();
+            } else {
+                owner.combatComponent.SetCombatMode(combatModeBeforeAttackingDemonicStructure);
+                RemoveBehaviourComponent(typeof(AttackDemonicStructureBehaviour));
+                owner.traitContainer.RemoveTrait(owner, "Fervor");
+                StopCheckingIfShouldStopAttackingDemonicStructure();
+            }
+        }
+    }
+    private void StartCheckingIfShouldStopAttackingDemonicStructure() {
+        Messenger.AddListener<Character, ActualGoapNode>(Signals.CHARACTER_DOING_ACTION, OnActionStartedWhileAttackingDemonicStructure);
+        Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
+        Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterCanNoLongerPerform);
+    }
+    private void StopCheckingIfShouldStopAttackingDemonicStructure() {
+        Messenger.RemoveListener<Character, ActualGoapNode>(Signals.CHARACTER_DOING_ACTION, OnActionStartedWhileAttackingDemonicStructure);
+        Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
+        Messenger.RemoveListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterCanNoLongerPerform);
+    }
+    private void OnActionStartedWhileAttackingDemonicStructure(Character actor, ActualGoapNode action) {
+        if (actor == owner) {
+            if (action.action.goapType != INTERACTION_TYPE.ATTACK_DEMONIC_STRUCTURE) {
+                SetIsAttackingDemonicStructure(false, null);
+            }
+        }
+    }
+    private void OnCharacterCanNoLongerPerform(Character character) {
+        if (character == owner) {
+            SetIsAttackingDemonicStructure(false, null);
+        }
+    }
+    private void OnJobRemovedFromCharacter(JobQueueItem job, Character character) {
+        if (character == owner) {
+            if (job is GoapPlanJob goapJob) {
+                if (job.jobType == JOB_TYPE.ASSAULT_DEMONIC_STRUCTURE && goapJob.finishedSuccessfully == false) {
+                    SetIsAttackingDemonicStructure(false, null);
+                }    
+            } else if (job is CharacterStateJob stateJob) {
+                if (stateJob.assignedState is CombatState combatState && combatState.endedInternally == false) {
+                    SetIsAttackingDemonicStructure(false, null);
+                }
+            }    
+        }
     }
     #endregion
 }

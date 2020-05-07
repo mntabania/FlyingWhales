@@ -32,22 +32,11 @@ namespace Traits {
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
             if (addedTo is Character character) {
-                //character.IsNormalCharacter
-                if (character.minion == null && character.gridTileLocation != null && character.gridTileLocation.IsNextToOrPartOfSettlement(out var settlement)
-                    && settlement is NPCSettlement npcSettlement) {
-                    LocationStructure targetStructure = npcSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.CEMETERY) ??
-                                                        npcSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-                    GoapPlanJob buryJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BURY, INTERACTION_TYPE.BURY_CHARACTER, character, npcSettlement);
-                    buryJob.SetCanTakeThisJobChecker(InteractionManager.Instance.CanTakeBuryJob);
-                    buryJob.AddOtherData(INTERACTION_TYPE.BURY_CHARACTER, new object[]{ targetStructure });
-                    buryJob.SetStillApplicableChecker(() => IsBuryJobStillApplicable(character, npcSettlement));
-                    npcSettlement.AddToAvailableJobs(buryJob);
-                }
+                //character.IsNormalCharacter()
+                character.jobComponent.TriggerBuryMe();
             }
         }
-        private bool IsBuryJobStillApplicable(Character target, NPCSettlement npcSettlement) {
-            return target.gridTileLocation != null && target.gridTileLocation.IsNextToOrPartOfSettlement(npcSettlement);
-        }
+        
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
             if (removedFrom is Character) {

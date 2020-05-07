@@ -52,7 +52,8 @@ namespace Traits {
             if (targetPOI is TileObject item) {
                 if (item is TreasureChest) {
                     if (characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.OPEN_CHEST, item) == false 
-                        && characterThatWillDoJob.traitContainer.HasTrait("Suspicious") == false) {
+                        && characterThatWillDoJob.traitContainer.HasTrait("Suspicious") == false 
+                        && characterThatWillDoJob.behaviourComponent.HasBehaviour(typeof(AttackDemonicStructure)) == false) {
                         //if character is non suspicious, create an open chest job.
                         characterThatWillDoJob.jobComponent.CreateOpenChestJob(item);
                     }

@@ -25,9 +25,6 @@ public class GoapPlan {
     //public GOAP_CATEGORY category { get; private set; }
     //public GoapPlanJob job { get; private set; }
     //public bool isPriority { get; private set; }
-
-    public string setPlanStateCallStack;
-
     public GoapPlan(List<JobNode> nodes, IPointOfInterest target, bool isPersonalPlan = true) {
         this.startingNode = nodes[0];
         this.endNode = nodes[nodes.Count - 1];
@@ -136,7 +133,6 @@ public class GoapPlan {
     //}
     public void SetPlanState(GOAP_PLAN_STATE state) {
         this.state = state;
-        setPlanStateCallStack = $"{state} {StackTraceUtility.ExtractStackTrace()}";
     }
     public void OnAttachPlanToJob(GoapPlanJob job) {
         for (int i = 0; i < allNodes.Count; i++) {

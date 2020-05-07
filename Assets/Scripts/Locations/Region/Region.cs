@@ -317,8 +317,8 @@ public class Region {
         if (demonicInvasionData.currentDuration > mainLandmark.invasionTicks) {
             //invaded.
             Invade();
-            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(),
-                $"You have successfully invaded {this.name}", () => UIManager.Instance.ShowRegionInfo(this));
+            // UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(),
+            //     $"You have successfully invaded {this.name}", () => UIManager.Instance.ShowRegionInfo(this));
             Messenger.RemoveListener(Signals.TICK_STARTED, PerInvasionTick);
         }
     }
@@ -389,8 +389,8 @@ public class Region {
         BaseLandmark newLandmark = LandmarkManager.Instance.CreateNewLandmarkOnTile(coreTile, demonicBuildingData.landmarkType);
         //newLandmark.OverrideID(previousID);
 
-        UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(),
-            $"Finished building {UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(newLandmark.specificLandmarkType.ToString())} at {this.name}", () => UIManager.Instance.ShowRegionInfo(this));
+        // UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(),
+        //     $"Finished building {UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(newLandmark.specificLandmarkType.ToString())} at {this.name}", () => UIManager.Instance.ShowRegionInfo(this));
         demonicBuildingData = new DemonicLandmarkBuildingData();
         //assignedMinion.SetAssignedRegion(null);
         //SetAssignedMinion(null);

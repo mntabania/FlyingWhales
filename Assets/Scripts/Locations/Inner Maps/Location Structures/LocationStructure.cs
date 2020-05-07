@@ -30,8 +30,8 @@ namespace Inner_Maps.Location_Structures {
         public bool isInterior { get; private set; }
         public bool hasBeenDestroyed { get; private set; }
         //HP
-        public int maxHP { get; private set; }
-        public int currentHP { get; private set; }
+        public int maxHP { get; protected set; }
+        public int currentHP { get; protected set; }
         public HashSet<IDamageable> objectsThatContributeToDamage { get; private set; }
         public List<Character> residents { get; protected set; }
 
@@ -54,7 +54,7 @@ namespace Inner_Maps.Location_Structures {
             objectsThatContributeToDamage = new HashSet<IDamageable>();
             structureTags = new List<STRUCTURE_TAG>();
             residents = new List<Character>();
-            maxHP = 5000;
+            maxHP = 3000;
             currentHP = maxHP;
             //outerTiles = new List<LocationGridTile>();
             SetInteriorState(structureType.IsInterior());
@@ -72,7 +72,7 @@ namespace Inner_Maps.Location_Structures {
             tiles = new List<LocationGridTile>();
             objectsThatContributeToDamage = new HashSet<IDamageable>();
             residents = new List<Character>();
-            maxHP = 5000;
+            maxHP = 3000;
             currentHP = maxHP;
             SetInteriorState(structureType.IsInterior());
         }

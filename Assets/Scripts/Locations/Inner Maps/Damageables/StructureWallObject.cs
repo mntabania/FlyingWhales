@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class StructureWallObject : MapObject<StructureWallObject>, ITraitable {
     public string name { get; }
-    public int maxHP { get; }
+    public int maxHP { get; private set; }
     public int currentHP { get; private set; }
     public RESOURCE madeOf { get; private set; }
     public ITraitContainer traitContainer { get; private set; }
@@ -23,15 +23,28 @@ public class StructureWallObject : MapObject<StructureWallObject>, ITraitable {
     public StructureWallObject(LocationStructure structure, WallVisual visual, RESOURCE madeOf) {
         name = $"Wall of {structure}";
         _visual = visual;
-        maxHP = 500;
-        currentHP = maxHP;
         this.madeOf = madeOf;
+        UpdateMaxHPBasedOnResource();
+        currentHP = maxHP;
         CreateTraitContainer();
         traitContainer.AddTrait(this, "Flammable");
         visual.Initialize(this);
     }
 
     #region HP
+    private void UpdateMaxHPBasedOnResource() {
+        switch (madeOf) {
+            case RESOURCE.WOOD:
+                maxHP = 250;
+                break;
+            case RESOURCE.STONE:
+                maxHP = 500;
+                break;
+            case RESOURCE.METAL:
+                maxHP = 800;
+                break;
+        }
+    }
     public void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false,
         object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false) {
         if (currentHP <= 0 && amount < 0) {
@@ -80,7 +93,7 @@ public class StructureWallObject : MapObject<StructureWallObject>, ITraitable {
     internal void ChangeResourceMadeOf(RESOURCE madeOf) {
         this.madeOf = madeOf;
         _visual.UpdateWallAssets(this);
-        //TODO: Update HP based on new resource
+        UpdateMaxHPBasedOnResource();
         switch (madeOf) {
             case RESOURCE.WOOD:
                 traitContainer.AddTrait(this, "Flammable");

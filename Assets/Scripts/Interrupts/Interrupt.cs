@@ -12,12 +12,13 @@ namespace Interrupts {
         public bool doesDropCurrentJob { get; protected set; }
         public string interruptIconString { get; protected set; }
         public bool isIntel { get; protected set; }
-
-        public Interrupt(INTERRUPT interrupt) {
+        public bool shouldAddLogs { get; protected set; } //Does this interrupt add logs to the involved characters
+        protected Interrupt(INTERRUPT interrupt) {
             this.interrupt = interrupt;
             this.name = UtilityScripts.Utilities.NotNormalizedConversionEnumToString(interrupt.ToString());
             isSimulateneous = false;
             interruptIconString = GoapActionStateDB.No_Icon;
+            shouldAddLogs = true;
         }
 
         #region Virtuals
