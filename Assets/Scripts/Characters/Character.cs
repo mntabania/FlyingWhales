@@ -2029,7 +2029,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             && UtilityScripts.Utilities.IsInRange(y, 0, currentRegion.innerMap.height)) {
             return currentRegion.innerMap.map[x, y];
         }
-        return null;
+        int xCoordinate = Mathf.Clamp(x, 0, currentRegion.innerMap.width);
+        int yCoordinate = Mathf.Clamp(y, 0, currentRegion.innerMap.height);
+        return currentRegion.innerMap.map[xCoordinate, yCoordinate];;
     }
     public void UpdateCanCombatState() {
         bool combatState = traitContainer.HasTrait("Combatant") && !traitContainer.HasTrait("Injured");

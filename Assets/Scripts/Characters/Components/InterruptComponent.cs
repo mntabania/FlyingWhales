@@ -183,10 +183,12 @@ public class InterruptComponent {
     }
     private void AddEffectLog(Interrupt interrupt, IPointOfInterest target) {
         if(_currentEffectLog != null) {
-            if (owner != currentTargetPOI) {
-                _currentEffectLog.AddLogToInvolvedObjects();
-            } else {
-                owner.logComponent.AddHistory(_currentEffectLog);
+            if (interrupt.shouldAddLogs) {
+                if (owner != currentTargetPOI) {
+                    _currentEffectLog.AddLogToInvolvedObjects();
+                } else {
+                    owner.logComponent.AddHistory(_currentEffectLog);
+                }    
             }
             if (interrupt.isIntel) {
                 PlayerManager.Instance.player.ShowNotificationFrom(owner, InteractionManager.Instance.CreateNewIntel(interrupt, owner, target, _currentEffectLog) as IIntel);
