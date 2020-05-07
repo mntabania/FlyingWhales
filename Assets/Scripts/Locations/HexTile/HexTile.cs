@@ -1138,12 +1138,17 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
             , OnHoverStructureChoice, OnHoverExitStructureChoice, portraitGetter: GetStructurePortrait, shouldConfirmOnPick: true, asButton: true, identifier: "Demonic Structure");
     }
     private bool CanChooseLandmark(SPELL_TYPE structureType) {
-        if (structureType == SPELL_TYPE.THE_EYE && region.HasStructure(STRUCTURE_TYPE.THE_EYE)) {
-            return false; //only 1 eye per region.
+        if (WorldConfigManager.Instance.isDemoWorld) {
+            return WorldConfigManager.Instance.availableSpellsInDemoBuild.Contains(structureType);
+        } else {
+            if (structureType == SPELL_TYPE.THE_EYE && region.HasStructure(STRUCTURE_TYPE.THE_EYE)) {
+                return false; //only 1 eye per region.
+            }
+            if (structureType == SPELL_TYPE.THE_GOADER && PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.THE_GOADER)) {
+                return false; //only 1 finger at a time.
+            }    
         }
-        if (structureType == SPELL_TYPE.THE_GOADER && PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.THE_GOADER)) {
-            return false; //only 1 finger at a time.
-        }
+        
         return true;
     }
     private void OnHoverStructureChoice(SPELL_TYPE structureType) {

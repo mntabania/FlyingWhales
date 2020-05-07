@@ -90,12 +90,12 @@ public abstract class InfoUIBase : MonoBehaviour {
             if (action.IsValid(target) && PlayerManager.Instance.player.playerSkillComponent.CanDoPlayerAction(action.type)) {
                 ActionItem actionItem = AddNewAction(action, target);
 
-                if (WorldConfigManager.Instance.isDemoWorld && WorldConfigManager.Instance.availableSpellsInDemoBuild.Contains(action.type) == false) {
-                    //if demo world, and action is not set as available, then disable button.
-                    actionItem.SetInteractable(false);
-                } else {
+                // if (WorldConfigManager.Instance.isDemoWorld && WorldConfigManager.Instance.availableSpellsInDemoBuild.Contains(action.type) == false) {
+                //     //if demo world, and action is not set as available, then disable button.
+                //     actionItem.SetInteractable(false);
+                // } else {
                     actionItem.SetInteractable(action.CanPerformAbilityTo(target) && !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI);    
-                }
+                // }
             }
         }
     }

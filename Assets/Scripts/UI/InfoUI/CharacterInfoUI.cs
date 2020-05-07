@@ -668,7 +668,7 @@ public class CharacterInfoUI : InfoUIBase {
         List<SPELL_TYPE> afflictionTypes = PlayerManager.Instance.player.playerSkillComponent.afflictions;
         for (int i = 0; i < afflictionTypes.Count; i++) {
             SPELL_TYPE spellType = afflictionTypes[i];
-            afflictions.Add(PlayerSkillManager.Instance.GetAfflictionData(afflictionTypes[i]).name);
+            afflictions.Add(PlayerSkillManager.Instance.GetAfflictionData(spellType).name);
         }
         //foreach (SpellData abilityData in PlayerManager.Instance.allSpellsData.Values) {
         //    if (abilityData.type == INTERVENTION_ABILITY_TYPE.AFFLICTION) {
@@ -690,6 +690,9 @@ public class CharacterInfoUI : InfoUIBase {
     }
     private bool CanActivateAffliction(string afflictionName) {
         SPELL_TYPE afflictionType = (SPELL_TYPE) System.Enum.Parse(typeof(SPELL_TYPE), afflictionName.ToUpper().Replace(' ', '_'));
+        if (WorldConfigManager.Instance.isDemoWorld) {
+            return WorldConfigManager.Instance.availableSpellsInDemoBuild.Contains(afflictionType);
+        }
         return PlayerSkillManager.Instance.GetAfflictionData(afflictionType).CanPerformAbilityTowards(activeCharacter);
     }
     private void OnHoverAffliction(string afflictionName) {
