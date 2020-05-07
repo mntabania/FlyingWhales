@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: d64d057451588de47862f92a337b5fc0, type: 3}
-    totalSpriteSurfaceArea: 17484350
+    totalSpriteSurfaceArea: 17738828
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -145,6 +145,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: a38707f257b6741409bad0361466bab6, type: 3}
   - {fileID: 21300000, guid: c64b78f22828268438108c40fb8107c4, type: 3}
   - {fileID: 21300000, guid: 719f29f2ac8a5284e9bc5e19e9ee6738, type: 3}
+  - {fileID: 21300000, guid: ad0ba403edcb24941bfe8c77517193b9, type: 3}
   - {fileID: 21300000, guid: 49b5bd03e6cefb84cae8ad022541cb3d, type: 3}
   - {fileID: 21300000, guid: c794e1137d601be43916aef1a4b3a837, type: 3}
   - {fileID: 21300000, guid: e82f28130057b894cb52771c34d33c2d, type: 3}
@@ -721,6 +722,7 @@ SpriteAtlas:
   - button_anvil_clicked
   - minion_scroll_button_down_invalid
   - orelia_s
+  - skill_details_tooltip_container
   - portrait_border_highlight
   - minion_tab_skill_disabled
   - 10-Orange

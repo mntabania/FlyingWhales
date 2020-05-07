@@ -1040,6 +1040,7 @@
               <e p="DefaultMonster.cs" t="Include" />
               <e p="DefaultOtherStructure.cs" t="Include" />
               <e p="DefaultOutside.cs" t="Include" />
+              <e p="DefaultWanderer.cs" t="Include" />
               <e p="DefendBehaviour.cs" t="Include" />
               <e p="DesiresIsolationBehaviour.cs" t="Include" />
               <e p="EntBehaviour.cs" t="Include" />
@@ -2446,6 +2447,7 @@
             <e p="PlayerNotificationItem.cs" t="Include" />
             <e p="PlayerResearchUI.cs" t="Include" />
             <e p="PlayerSkillDetails.cs" t="Include" />
+            <e p="PlayerSkillDetailsTooltip.cs" t="Include" />
             <e p="PlayerSkillTreeItem.cs" t="Include" />
             <e p="PlayerSkillTreeUI.cs" t="Include" />
             <e p="PlayerSummonMinionUI.cs" t="Include" />
