@@ -50,7 +50,7 @@ namespace Tutorial {
         #region Availability Listeners
         private void OnAlreadyBuiltStructure(LocationStructure structure) {
             if (structure is DemonicStructure) {
-                CompleteTutorial(); //player already built a structure
+                CompleteQuest(); //player already built a structure
             }
         }
         #endregion

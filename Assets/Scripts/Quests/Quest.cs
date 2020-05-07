@@ -19,7 +19,6 @@ namespace Quests {
         public QuestItem questItem { get; private set; }
         #endregion
 
-
         protected Quest(string _questName) {
             questName = _questName;
         }
@@ -88,12 +87,12 @@ namespace Quests {
         private bool CheckForCompletion() {
             if (steps.Any(s => s.isComplete == false) == false) {
                 //check if any steps are not yet completed, if there are none, then this tutorial has been completed
-                CompleteTutorial();
+                CompleteQuest();
                 return true;
             }
             return false;
         }
-        protected abstract void CompleteTutorial();
+        protected abstract void CompleteQuest();
         #endregion
 
         #region UI

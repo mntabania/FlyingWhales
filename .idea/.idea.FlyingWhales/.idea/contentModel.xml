@@ -2062,9 +2062,17 @@
           </e>
           <e p="Quests" t="Include">
             <e p="Quest.cs" t="Include" />
+            <e p="QuestManager.cs" t="Include" />
+            <e p="Reaction Quests" t="Include">
+              <e p="Counterattack.cs" t="Include" />
+              <e p="DemonicStructureDiscovered.cs" t="Include" />
+              <e p="EliminateAllVillagers.cs" t="Include" />
+              <e p="ReactionQuest.cs" t="Include" />
+            </e>
             <e p="Steps" t="Include">
               <e p="ActivateDefendStep.cs" t="Include" />
               <e p="ActivateHarassStep.cs" t="Include" />
+              <e p="CharactersRemovedBehaviourStep.cs" t="Include" />
               <e p="ChooseSpellStep.cs" t="Include" />
               <e p="ClickOnAreaStep.cs" t="Include" />
               <e p="ClickOnCharacterStep.cs" t="Include" />
@@ -2077,6 +2085,7 @@
               <e p="ExecuteAfflictionStep.cs" t="Include" />
               <e p="ExecutedPlayerActionStep.cs" t="Include" />
               <e p="ExecuteSpellStep.cs" t="Include" />
+              <e p="GoapJobFailed.cs" t="Include" />
               <e p="HideRegionMapStep.cs" t="Include" />
               <e p="LookAroundStep.cs" t="Include" />
               <e p="NameplateClickedStep.cs" t="Include" />
@@ -2105,9 +2114,7 @@
                 <e p="HarassAVillage.cs" t="Include" />
                 <e p="RegionalMap.cs" t="Include" />
                 <e p="ShareAnIntel.cs" t="Include" />
-                <e p="SurviveCounterattack.cs" t="Include" />
                 <e p="TriggerPoisonExplosion.cs" t="Include" />
-                <e p="WinCondition.cs" t="Include" />
               </e>
               <e p="TutorialManager.cs" t="Include" />
               <e p="TutorialQuest.cs" t="Include" />

@@ -33,7 +33,6 @@ public static class Signals {
     public static string TILE_RIGHT_CLICKED = "OnTileRightClicked"; //Parameters (HexTile clickedTile)
     public static string TILE_HOVERED_OVER = "OnTileHoveredOver"; //Parameters (HexTile hoveredTile)
     public static string TILE_HOVERED_OUT = "OnTileHoveredOut"; //Parameters (HexTile hoveredTile)
-    public static string MODIFY_BUILD_SPOT_WALKABILITY = "ModifyBuildSpotWalkability";
     public static string ACTION_PERFORMED_ON_TILE_TRAITABLES = "OnActionPerformedOnTileTraitables";
     public static string TILE_DOUBLE_CLICKED = "OnTileDoubleClicked"; //Parameters (HexTile clickedTile)
     #endregion
@@ -73,7 +72,6 @@ public static class Signals {
     public static string CHARACTER_REMOVED = "OnCharacterRemoved"; //Parameters (Character removedCharacter)
     public static string CHARACTER_OBTAINED_ITEM = "OnCharacterObtainItem"; //Parameters (SpecialToken obtainedItem, Character characterThatObtainedItem)
     public static string CHARACTER_LOST_ITEM = "OnCharacterLostItem"; //Parameters (SpecialToken unobtainedItem, Character character)
-    public static string CHARACTER_LEVEL_CHANGED = "OnCharacterLevelChange"; //Parameters (Character character)
     public static string CHARACTER_TRAIT_ADDED = "OnCharacterTraitAdded";
     public static string CHARACTER_TRAIT_REMOVED = "OnCharacterTraitRemoved"; //Parameters (Character character, Trait)
     public static string CHARACTER_TRAIT_STACKED = "OnCharacterTraitStacked";
@@ -106,12 +104,10 @@ public static class Signals {
     public static string ON_SWITCH_FROM_LIMBO = "OnSwitchFromLimbo";
     public static string INCREASE_THREAT_THAT_SEES_POI = "IncreaseThreatThatSeesPOI";
     public static string INCREASE_THREAT_THAT_SEES_TILE = "IncreaseThreatThatSeesTILE";
-
     /// <summary>
     /// Parameters (MoodComponent moodComponentModified)
     /// </summary>
     public static string MOOD_SUMMARY_MODIFIED = "OnMoodSummaryModified";
-
     /// <summary>
     /// Parameters (Character characterWithVision, Character characterRemovedFromVision)
     /// </summary>
@@ -156,9 +152,13 @@ public static class Signals {
     public static string CHARACTER_CAN_NO_LONGER_PERFORM = "OnCharacterCannotPerform";
     public static string CHARACTER_CAN_PERFORM_AGAIN = "OnCharacterCanPerform";
     /// <summary>
-    /// parameters (IPointOfInterest poiToReprocess)
+    /// Parameters (IPointOfInterest poiToReprocess)
     /// </summary>
     public static string REPROCESS_POI = "ReprocessPOI";
+    /// <summary>
+    /// Parameters (Character, CharacterBehaviourComponent)
+    /// </summary>
+    public static string CHARACTER_REMOVED_BEHAVIOUR = "OnCharacterRemovedBehaviour";
     #endregion
 
     #region UI
@@ -169,7 +169,6 @@ public static class Signals {
     /// Parameters (string text, int expiry, UnityAction onClickAction)
     /// </summary>
     public static string SHOW_DEVELOPER_NOTIFICATION = "ShowNotification";
-    public static string SHOW_CHARACTER_DIALOG = "ShowCharacterDialog"; //Parameters(Character character, string text, List<CharacterDialogChoice> choices)
     public static string LOG_ADDED = "OnLogAdded"; //Parameters (object itemThatHadHistoryAdded) either a character or a landmark
     public static string PAUSED = "OnPauseChanged"; //Parameters (bool isGamePaused)
     public static string PROGRESSION_SPEED_CHANGED = "OnProgressionSpeedChanged"; //Parameters (PROGRESSION_SPEED progressionSpeed)
@@ -178,16 +177,13 @@ public static class Signals {
     public static string MENU_CLOSED = "OnMenuClosed"; //Parameters (UIMenu closedMenu)
     public static string INTERACTION_MENU_OPENED = "OnInteractionMenuOpened"; //Parameters ()
     public static string INTERACTION_MENU_CLOSED = "OnInteractionMenuClosed"; //Parameters ()
-    public static string CLICKED_INTERACTION_BUTTON = "OnClickedInteractionButton";
     public static string HIDE_MENUS = "HideMenus";
     public static string DRAG_OBJECT_CREATED = "OnDragObjectCreated"; //Parameters (DragObject obj)
     public static string DRAG_OBJECT_DESTROYED = "OnDragObjectDestroyed"; //Parameters (DragObject obj)
     public static string SHOW_INTEL_NOTIFICATION = "ShowIntelNotification"; //Parameters (Intel)
     public static string SHOW_PLAYER_NOTIFICATION = "ShowPlayerNotification"; //Parameters (Log)
-    public static string CAMERA_OUT_OF_FOCUS = "CameraOutOfFocus";
     public static string ON_OPEN_SHARE_INTEL = "OnOpenShareIntel";
     public static string ON_CLOSE_SHARE_INTEL = "OnCloseShareIntel";
-    public static string SHOW_TIMER_HUB_ITEM = "ShowTimerHubItem";
     public static string REGION_INFO_UI_UPDATE_APPROPRIATE_CONTENT = "OnAreaInfoUIUpdateAppropriateContent";
     public static string UPDATE_THOUGHT_BUBBLE = "OnUpdateThoughtBubble";
     /// <summary>
@@ -215,27 +211,21 @@ public static class Signals {
 
     #region Quest Signals
     public static string CHARACTER_SNATCHED = "OnCharacterSnatched"; //Parameters (Character snatchedCharacter)
-    public static string CHARACTER_RELEASED = "OnCharacterReleased"; //Parameters (Character releasedCharacter)
-    public static string QUEST_TURNED_IN = "OnQuestTurnedIn"; //Parameter (Quest turnedInQuest)
     public static string ADD_QUEST_JOB = "OnAddQuestJob"; //Parameter (Quest quest, JobQueueItem job)
     public static string REMOVE_QUEST_JOB = "OnRemoveQuestJob"; //Parameter (Quest quest, JobQueueItem job)
     #endregion
 
     #region Party
-    public static string MONSTER_PARTY_DIED = "OnMonsterPartyDied"; //Parameters (MonsterParty monsterParty)
     public static string CHARACTER_JOINED_PARTY = "OnCharacterJoinedParty"; //Parameters (ICharacter characterThatJoined, NewParty affectedParty)
     public static string CHARACTER_LEFT_PARTY = "OnCharacterLeftParty"; //Parameters (ICharacter characterThatLeft, NewParty affectedParty)
-    public static string PARTY_DIED = "OnPartyDied"; //Parameters (Party partyThatDied)
     #endregion
 
     #region Factions
     public static string FACTION_CREATED = "OnFactionCreated"; //Parameters (Faction createdFaction)
-    public static string FACTION_DELETED = "OnFactionDeleted"; //Parameters (Faction deletedFaction)
     public static string CHARACTER_ADDED_TO_FACTION = "OnCharacterAddedToFaction"; //Parameters (Character addedCharacter, Faction affectedFaction)
     public static string CHARACTER_REMOVED_FROM_FACTION = "OnCharacterRemovedFromFaction"; //Parameters (Character addedCharacter, Faction affectedFaction)
     public static string FACTION_SET = "OnFactionSet"; //Parameters (Character characterThatSetFaction)
     public static string FACTION_LEADER_DIED = "OnFactionLeaderDied"; //Parameters (Faction affectedFaction)
-    public static string FACTION_DIED = "OnFactionDied"; //Parameters (Faction affectedFaction)
     public static string FACTION_OWNED_REGION_ADDED = "OnFactionOwnedAreaAdded"; //Parameters (Faction affectedFaction, NPCSettlement addedArea)
     public static string FACTION_OWNED_REGION_REMOVED = "OnFactionOwnedAreaRemoved"; //Parameters (Faction affectedFaction, NPCSettlement removedArea)
     public static string FACTION_RELATIONSHIP_CHANGED = "OnFactionRelationshipChanged"; //Parameters (FactionRelationship rel)
@@ -244,46 +234,16 @@ public static class Signals {
     #endregion
 
     #region Actions
-    public static string ACTION_SUCCESS = "OnActionSuccess"; //Parameters (CharacterParty partyThatSucceeded, CharacterAction actionThatSucceeded)
     public static string ACTION_PERFORMED = "OnActionPerformed";
-    public static string ACTION_DAY_ADJUSTED = "OnActionDayAdjusted"; //Parameters (CharacterAction action, CharacterParty doer)
-    public static string ACTION_TAKEN = "OnActionTaken"; //Parameters (CharacterAction action, CharacterParty doer)
-    public static string ACTION_ADDED_TO_QUEUE = "OnActionAddedToQueue"; //Parameters (CharacterAction actionAdded, Character affectedCharacter)
-    public static string ACTION_REMOVED_FROM_QUEUE = "OnActionRemovedFromQueue"; //Parameters (CharacterAction actionRemoved, Character affectedCharacter)
-    public static string LOOK_FOR_ACTION = "LookForAction"; //Parameters (ActionThread actionThread)
-    public static string BUILD_STRUCTURE_LOOK_ACTION = "BuildStructureLookAction"; //Parameters (BuildStructureQuestData questData)
-    public static string OLD_NEWS_TRIGGER = "OnOldNewsTrigger"; //Parameters (IPointOfInterest poi)
     public static string SCREAM_FOR_HELP = "OnScreamForHelp"; //Parameters (Character characterThatScreamed)
-    public static string ON_COMMIT_CRIME = "OnCommitCrime";
-    //public static string ON_TARGETTED_BY_ACTION = "OnCharacterTargettedByAction"; //Parameters (Character, GoapAction)
-    #endregion
-
-    #region Squads
-    public static string SQUAD_CREATED = "OnSquadCreated"; //Parameters (Squad createdSquad)
-    public static string SQUAD_DELETED = "OnSquadDeleted"; //Parameters (Squad deletedSquad)
-    public static string SQUAD_MEMBER_REMOVED = "OnSquadMemberRemoved"; //Parameters (ICharacter removedCharacter, Squad affectedSquad)
-    public static string SQUAD_MEMBER_ADDED = "OnSquadMemberAdded"; //Parameters (ICharacter addedCharacter, Squad affectedSquad)
-    public static string SQUAD_LEADER_SET = "OnSquadLeaderSet"; //Parameters (ICharacter leader, Squad affectedSquad)
-    #endregion
-
-    #region Combat
-    public static string COMBAT_DONE = "OnCombatDone"; //Parameters (Combat doneCombat)
-    public static string ADD_TO_COMBAT_LOGS = "OnAddToCombatLogs";
-    public static string HIGHLIGHT_ATTACKER = "OnHighlightAttacker";
-    public static string UNHIGHLIGHT_ATTACKER = "OnUnhighlightAttacker";
-    public static string UPDATE_COMBAT_GRIDS = "OnUpdateCombatGrids";
-    public static string NEWCOMBAT_DONE = "OnNewCombatDone";
     #endregion
 
     #region Player
-    public static string TOKEN_ADDED = "OnIntelAdded"; //Parameters (Intel addedIntel)
-    public static string CHARACTER_TOKEN_ADDED = "OnCharacterIntelAdded"; //Parameters (CharacterIntel characterIntel)
     public static string UPDATED_CURRENCIES = "OnUpdatesCurrencies";
     public static string MINION_ASSIGNED_TO_JOB = "OnCharacterAssignedToJob"; //Parameters (JOB job, Character character);
     public static string MINION_UNASSIGNED_FROM_JOB = "OnCharacterUnassignedFromJob"; //Parameters (JOB job, Character character);
     public static string JOB_ACTION_COOLDOWN_ACTIVATED = "OnJobActionCooldownActivated"; //Parameters (PlayerJobAction action);
     public static string JOB_ACTION_COOLDOWN_DONE = "OnJobActionCooldownDone"; //Parameters (PlayerJobAction action);
-    public static string JOB_ACTION_SUB_TEXT_CHANGED = "OnJobActionSubTextChanged"; //Parameters (PlayerJobAction action);
     public static string JOB_SLOT_LOCK_CHANGED = "OnJobSlotLockChanged"; //Parameters (JOB job, bool lockedState);
     public static string PLAYER_OBTAINED_INTEL = "OnPlayerObtainedIntel"; //Parameters (InteractionIntel)
     public static string PLAYER_REMOVED_INTEL = "OnPlayerRemovedIntel"; //Parameters (InteractionIntel)
@@ -292,23 +252,6 @@ public static class Signals {
     /// Parameters (List<Character> attacking characters)
     /// </summary>
     public static string THREAT_MAXED_OUT = "OnThreatMaxedOut";
-    /// <summary>
-    /// Parameters (Summon newSummon)
-    /// </summary>
-    public static string PLAYER_GAINED_SUMMON = "OnPlayerGainedSummon";
-    public static string PLAYER_GAINED_SUMMON_LEVEL = "OnPlayerGainedSummonLevel";
-    /// <summary>
-    /// Parameters (SummonSlot gainedSummonSlot)
-    /// </summary>
-    public static string PLAYER_GAINED_SUMMON_SLOT = "OnPlayerGainedSummonSlot";
-    /// <summary>
-    /// Parameters (Summon removedSummon)
-    /// </summary>
-    public static string PLAYER_REMOVED_SUMMON = "OnPlayerRemovedSummon";
-    /// <summary>
-    /// Parameters (SummonSlot lostSummonSlot)
-    /// </summary>
-    public static string PLAYER_LOST_SUMMON_SLOT = "OnPlayerLostSummonSlot";
     /// <summary>
     /// Parameters (Summon placedSummon)
     /// </summary>
@@ -319,17 +262,9 @@ public static class Signals {
     public static string PLAYER_GAINED_ARTIFACT = "OnPlayerGainedArtifact";
     public static string PLAYER_GAINED_ARTIFACT_LEVEL = "OnPlayerGainedArtifactLevel";
     /// <summary>
-    /// Parameters (ArtifactSlot gainedArtifactSlot)
-    /// </summary>
-    public static string PLAYER_GAINED_ARTIFACT_SLOT = "OnPlayerGainedArtifactSlot";
-    /// <summary>
     /// Parameters (Artifact removedArtifact)
     /// </summary>
     public static string PLAYER_REMOVED_ARTIFACT = "OnPlayerRemovedArtifact";
-    /// <summary>
-    /// Parameters (ArtifactSlot lostArtifactSlot)
-    /// </summary>
-    public static string PLAYER_LOST_ARTIFACT_SLOT = "OnPlayerLostArtifactSlot";
     public static string PLAYER_USED_ARTIFACT = "OnPlayerUsedArtifact";
     /// <summary>
     /// Parameters (NPCSettlement invadedArea)
@@ -394,8 +329,6 @@ public static class Signals {
     /// parameters (Vector3 worldPos, int orbCount, InnerTileMap mapLocation)
     /// </summary>
     public static string CREATE_CHAOS_ORBS = "CreateChaosOrbs";
-
-    public static string PLAYER_ACTION_UNTOGGLE = "OnPlayerActionUntoggle";
     public static string SUMMON_MINION = "OnSummonMinion";
     public static string UNSUMMON_MINION = "OnUnsummonMinion";
     public static string PLAYER_NO_ACTIVE_SPELL = "OnPlayerNoActiveSpell";
@@ -446,6 +379,10 @@ public static class Signals {
     public static string ON_SET_JOB = "OnSetJob"; //Parameters (GoapPlanJob)
     public static string CHECK_JOB_APPLICABILITY = "OnCheckJobApplicability"; //Parameters (JOB_TYPE, IPointOfInterest)
     public static string CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING = "OnCheckAllJobsTargetingApplicability"; //Parameters (IPointOfInterest)
+    /// <summary>
+    /// Parameters (JobQueueItem, Character)
+    /// </summary>
+    public static string JOB_REMOVED_FROM_QUEUE = "OnJobRemovedFromQueue";
     #endregion
 
     #region Location Grid Tile
@@ -551,6 +488,10 @@ public static class Signals {
     /// </summary>
     public static string QUEST_STEP_COMPLETED = "QuestStepCompleted";
     /// <summary>
+    /// Parameters: QuestStep failedStep
+    /// </summary>
+    public static string QUEST_STEP_FAILED = "OnQuestStepFailed";
+    /// <summary>
     /// Parameters: QuestStepCollection completedCollection
     /// </summary>
     public static string STEP_COLLECTION_COMPLETED = "StepCollectionCompleted";
@@ -580,6 +521,18 @@ public static class Signals {
     /// </summary>
     public static string TUTORIAL_QUEST_CRITERIA_UNMET = "OnTutorialQuestCriteriaUnMet";
     public static string METEOR_FELL = "OnMeteorFell";
+    /// <summary>
+    /// Parameters (QuestStep)
+    /// </summary>
+    public static string UPDATE_QUEST_STEP_ITEM = "UpdateQuestStepItem";
+    /// <summary>
+    /// Parameters (List[Character], DemonicStructure)
+    /// </summary>
+    public static string CHARACTERS_ATTACKING_DEMONIC_STRUCTURE = "CharactersAttackingDemonicStructure";
+    /// <summary>
+    /// Parameters (LocationStructure, Character, GoapPlanJob)
+    /// </summary>
+    public static string DEMONIC_STRUCTURE_DISCOVERED = "DemonicStructureDiscovered";
     #endregion
 
     #region Elements

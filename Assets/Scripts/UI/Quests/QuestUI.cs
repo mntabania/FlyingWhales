@@ -20,9 +20,12 @@ public class QuestUI : MonoBehaviour {
         UtilityScripts.Utilities.DestroyChildren(questsParent);
     }
     
-    public QuestItem ShowQuest(Quest quest) {
+    public QuestItem ShowQuest(Quest quest, bool insertAtTop = false) {
         GameObject questGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(questItemPrefab.name,
             Vector3.zero, Quaternion.identity, questsParent);
+        if (insertAtTop) {
+            questGO.transform.SetAsFirstSibling();
+        }
         QuestItem questItem = questGO.GetComponent<QuestItem>();
         questItem.SetQuest(quest);
         questItem.TweenIn();

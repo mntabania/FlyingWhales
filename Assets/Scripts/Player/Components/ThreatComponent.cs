@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using UnityEngine.Assertions;
 using UtilityScripts;
 
 public class ThreatComponent {
@@ -62,6 +63,12 @@ public class ThreatComponent {
         } else {
             targetDemonicStructure = PlayerManager.Instance.player.playerSettlement.GetRandomStructure();
         }
+        if (targetDemonicStructure == null) {
+            //it is assumed that this only happens if the player casts a spell that is seen by another character,
+            //but results in the destruction of the portal
+            attackingCharacters = null;
+            return;
+        }
         debugLog += "TARGET: " + targetDemonicStructure.name;
         List<Character> characters = new List<Character>();
         int count = 0;
@@ -80,14 +87,17 @@ public class ThreatComponent {
                 }
             }
         }
-        if (characters.Count > 0) {
-            Character chosenCharacter = CollectionUtilities.GetRandomElement(characters);
-            UIManager.Instance.ShowYesNoConfirmation("Threat Response", 
-                "Your threat level has reached maximum. The people will now retaliate!", 
-                onClickNoAction: chosenCharacter.CenterOnCharacter, yesBtnText: "OK", noBtnText: "Jump to an attacker", 
-                showCover:true, pauseAndResume: true);    
-        }
+        // if (characters.Count > 0) {
+            // Character chosenCharacter = CollectionUtilities.GetRandomElement(characters);
+            // UIManager.Instance.ShowYesNoConfirmation("Threat Response", 
+            //     "Your threat level has reached maximum. The people will now retaliate!", 
+            //     onClickNoAction: chosenCharacter.CenterOnCharacter, yesBtnText: "OK", noBtnText: "Jump to an attacker", 
+            //     showCover:true, pauseAndResume: true);    
+        // }
         attackingCharacters = characters;
+        if (attackingCharacters.Count > 0) {
+            Messenger.Broadcast(Signals.CHARACTERS_ATTACKING_DEMONIC_STRUCTURE, attackingCharacters, targetDemonicStructure as DemonicStructure);    
+        }
         // PlayerUI.Instance.ShowGeneralConfirmation("Threat Response", "Your threat level has reached maximum. The people will now retaliate!");
         Debug.Log(debugLog);
     }

@@ -367,6 +367,16 @@ public class CharacterManager : MonoBehaviour {
         target.DestroyMarker();
         RemoveCharacter(target);
     }
+    public List<Character> GetAllNormalCharacters() {
+        List<Character> characters = new List<Character>();
+        for (int i = 0; i < allCharacters.Count; i++) {
+            Character character = allCharacters[i];
+            if (character.IsNormalCharacter()) {
+                characters.Add(character);
+            }
+        }
+        return characters;
+    }
     #endregion
 
     #region Character Class Manager

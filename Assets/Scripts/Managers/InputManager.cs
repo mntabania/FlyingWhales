@@ -196,6 +196,7 @@ namespace Ruinarch {
             if (GameManager.Instance.gameHasStarted == false) {
                 return;
             }
+            UIManager.Instance.SetTempDisableShowInfoUI(false);
             if (PlayerManager.Instance.player.currentActivePlayerSpell != null) {
                 //cancel current spell
                 PlayerManager.Instance.player.SetCurrentlyActivePlayerSpell(null);

@@ -19,17 +19,20 @@ public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
                 character.marker.visionCollider.VoteToUnFilterVision();
                 log += "\n-Already in the target demonic structure";
                 LocationStructure targetStructure = character.behaviourComponent.attackDemonicStructureTarget;
-                if (targetStructure.pointsOfInterest.Count > 0) {
+                if (targetStructure.objectsThatContributeToDamage.Count > 0) {
                     log += "\n-Has tile object in vision";
                     log += "\n-Adding tile object as hostile";
                     TileObject chosenTileObject = null;
-                    for (int i = 0; i < targetStructure.pointsOfInterest.Count; i++) {
-                        IPointOfInterest poi = targetStructure.pointsOfInterest.ElementAt(i);
-                        if(poi is TileObject tileObject) {
-                            if (tileObject.isPreplaced && tileObject.gridTileLocation != null && PathfindingManager.Instance.HasPath(tileObject.gridTileLocation, character.gridTileLocation)) {
-                                chosenTileObject = tileObject;
-                                break;
-                            }
+                    for (int i = 0; i < targetStructure.objectsThatContributeToDamage.Count; i++) {
+                        IDamageable damageable = targetStructure.objectsThatContributeToDamage.ElementAt(i);
+                        if (damageable is IPointOfInterest poi) {
+                            if(poi is TileObject tileObject) {
+                                if (tileObject.isPreplaced && tileObject.gridTileLocation != null 
+                                    && PathfindingManager.Instance.HasPath(tileObject.gridTileLocation, character.gridTileLocation)) {
+                                    chosenTileObject = tileObject;
+                                    break;
+                                }
+                            }    
                         }
                     }
                     if (chosenTileObject != null) {

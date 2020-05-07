@@ -466,7 +466,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: fed4f602cdd25ce45ac3c95e68292179, type: 3}
+  m_Sprite: {fileID: 21300000, guid: cca0fdbe9fb13d649bf572236b504eee, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -603,9 +603,12 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   _stepLbl: {fileID: 6963489646633369490}
   _completedToggle: {fileID: 6963489648587181313}
+  _toggleImage: {fileID: 6963489647004931698}
   _eventLabel: {fileID: 6511669951229421250}
   _container: {fileID: 2916533126210494323}
   centerButton: {fileID: 5308444116215935345}
+  checkSprite: {fileID: 21300000, guid: cca0fdbe9fb13d649bf572236b504eee, type: 3}
+  crossSprite: {fileID: 21300000, guid: f9c56cffd6570ee4aa91ddfe15f4831a, type: 3}
   hoverPosition: {fileID: 8574925121846302010}
 --- !u!114 &6963489648587181313
 MonoBehaviour:

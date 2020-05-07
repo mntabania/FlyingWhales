@@ -34,6 +34,5 @@ public class CharacterDatabase {
         limboCharacters.Remove(character.id);
         return limboCharactersList.Remove(character);
     }
-    
-    
+
 }

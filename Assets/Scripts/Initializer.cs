@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
+using Quests;
 using Tutorial;
 using UnityEngine;
 
@@ -36,5 +37,6 @@ public class Initializer : MonoBehaviour {
         PlayerUI.Instance.InitializeAfterGameLoaded();
         LightingManager.Instance.Initialize();
         TutorialManager.Instance.Initialize();
+        QuestManager.Instance.InitializeAfterGameLoaded();
     }
 }

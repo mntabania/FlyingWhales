@@ -11,18 +11,16 @@ namespace Tutorial {
         public static TutorialManager Instance;
         private const int MaxActiveTutorials = 1;
         public enum Tutorial { 
-            Basic_Controls, 
-            Build_A_Kennel, 
-            Defend_A_Structure, 
-            Cast_Meteor, 
-            Character_Info,
-            Harass_A_Village,
-            Regional_Map,
-            Trigger_Poison_Explosion,
-            Survive_Counterattack,
-            Share_An_Intel,
-            Apply_An_Affliction,
-            Win_Condition
+            Basic_Controls = 0, 
+            Build_A_Kennel = 1, 
+            Defend_A_Structure = 2, 
+            Cast_Meteor = 3, 
+            Character_Info = 4,
+            Harass_A_Village = 5,
+            Regional_Map = 6,
+            Trigger_Poison_Explosion = 7,
+            Share_An_Intel = 9,
+            Apply_An_Affliction = 10,
         }
 
         private List<TutorialQuest> _activeTutorials;
@@ -145,8 +143,8 @@ namespace Tutorial {
         }
         private void ActivateTutorial(TutorialQuest tutorialQuest) {
             _activeTutorials.Add(tutorialQuest);
-            tutorialQuest.Activate();
             RemoveTutorialFromWaitList(tutorialQuest);
+            tutorialQuest.Activate();
             QuestItem questItem = UIManager.Instance.questUI.ShowQuest(tutorialQuest);
             tutorialQuest.SetTutorialQuestItem(questItem);
         }

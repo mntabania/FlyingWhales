@@ -84,7 +84,7 @@ namespace Tutorial {
         #endregion
 
         #region Completion
-        protected override void CompleteTutorial() {
+        protected override void CompleteQuest() {
             TutorialManager.Instance.CompleteTutorialQuest(this);
         }
         #endregion
