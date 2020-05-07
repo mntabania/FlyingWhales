@@ -49,7 +49,7 @@ namespace Tutorial {
                     .SetHoverOutAction(UIManager.Instance.HideSmallInfo)),
                 new QuestStepCollection(new ShowIntelMenuStep(),
                     new SelectIntelStep("Choose the stored intel"),
-                    new ShareIntelStep("Share to a sapient character")
+                    new ShareIntelStep("Share to a Villager")
                         .SetHoverOverAction(OnHoverShareIntel)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
                 )

@@ -1138,6 +1138,7 @@
               <e p="Emotion.cs" t="Include" />
               <e p="Fear.cs" t="Include" />
               <e p="Gratefulness.cs" t="Include" />
+              <e p="Rage.cs" t="Include" />
               <e p="Resentment.cs" t="Include" />
               <e p="Sadness.cs" t="Include" />
               <e p="Scorn.cs" t="Include" />

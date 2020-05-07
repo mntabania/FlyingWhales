@@ -25,7 +25,7 @@ namespace Tutorial {
         protected override void ConstructSteps() {
             steps = new List<QuestStepCollection>() {
                 new QuestStepCollection(
-                    new ClickOnCharacterStep("Click on a sapient character", validityChecker: IsSelectedCharacterValid),
+                    new ClickOnCharacterStep("Click on a Villager", validityChecker: IsSelectedCharacterValid),
                     new ToggleTurnedOnStep("CharacterInfo_Info", "Open its Info tab"),
                     new ToggleTurnedOnStep("CharacterInfo_Mood", "Open its Mood tab"),
                     new ToggleTurnedOnStep("CharacterInfo_Relations", "Open its Relations tab"),
