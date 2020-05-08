@@ -80,6 +80,7 @@ public class StructureWallObject : MapObject<StructureWallObject>, ITraitable {
         
         if (currentHP <= 0) {
             //wall has been destroyed
+            gridTileLocation.SetTileType(LocationGridTile.Tile_Type.Empty);
             gridTileLocation.CreateSeamlessEdgesForSelfAndNeighbours();
         }
     }

@@ -85,6 +85,7 @@ public class ConsoleBase : InfoUIBase {
             {"/elemental_damage", ChangeCharacterElementalDamage },
             {"/add_item", AddItemToCharacter },
             {"/null_home", ChangeCharacterHomeToNull },
+            {"/damage_tile", DamageTile },
         };
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -1419,6 +1420,47 @@ public class ConsoleBase : InfoUIBase {
     #region Tutorial
     public void ResetTutorial() {
         TutorialManager.Instance.ResetTutorials();
+    }
+    #endregion
+
+    #region Tiles
+    private void DamageTile(string[] parameters) {
+        if (parameters.Length != 3) { //region, tile coordinates (x, y)
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of DamageTile");
+            return;
+        }
+        
+        string regionName = parameters[0];
+        Region region = GridMap.Instance.GetRegionByName(regionName);
+        if (region == null) {
+            AddErrorMessage($"There is no region named {regionName}!");
+            return;
+        }
+        string xString = parameters[1];
+        int x;
+        if (Int32.TryParse(xString, out x) == false) {
+            AddErrorMessage($"{xString} is not an integer!");
+            return;
+        }
+        
+        string yString = parameters[2];
+        int y;
+        if (Int32.TryParse(yString, out y) == false) {
+            AddErrorMessage($"{yString} is not an integer!");
+            return;
+        }
+
+        if (UtilityScripts.Utilities.IsInRange(x, 0, region.innerMap.width) && 
+            UtilityScripts.Utilities.IsInRange(y, 0, region.innerMap.height)) {
+            LocationGridTile tile = region.innerMap.map[x, y];
+            tile.genericTileObject.AdjustHP(-tile.genericTileObject.maxHP, ELEMENTAL_TYPE.Normal);
+            AddSuccessMessage($"Successfully damaged {tile.localPlace.ToString()}!");    
+        }
+        else {
+            AddErrorMessage($"No tile with coordinates {x.ToString()},{y.ToString()} at {region.name} was found!");
+        }
+        
     }
     #endregion
 }

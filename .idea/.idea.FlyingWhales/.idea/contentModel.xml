@@ -1440,6 +1440,7 @@
             <e p="Shocked.cs" t="Include" />
             <e p="Stopped.cs" t="Include" />
             <e p="Stumble.cs" t="Include" />
+            <e p="Surprised.cs" t="Include" />
             <e p="TransformToWolf.cs" t="Include" />
             <e p="Watch.cs" t="Include" />
             <e p="ZombieDeath.cs" t="Include" />
@@ -2067,6 +2068,7 @@
             <e p="Reaction Quests" t="Include">
               <e p="Counterattack.cs" t="Include" />
               <e p="DemonicStructureDiscovered.cs" t="Include" />
+              <e p="DivineIntervention.cs" t="Include" />
               <e p="EliminateAllVillagers.cs" t="Include" />
               <e p="ReactionQuest.cs" t="Include" />
             </e>
@@ -2116,6 +2118,7 @@
                 <e p="RegionalMap.cs" t="Include" />
                 <e p="ShareAnIntel.cs" t="Include" />
                 <e p="TriggerPoisonExplosion.cs" t="Include" />
+                <e p="WinCondition.cs" t="Include" />
               </e>
               <e p="TutorialManager.cs" t="Include" />
               <e p="TutorialQuest.cs" t="Include" />
