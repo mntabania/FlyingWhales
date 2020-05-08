@@ -288,8 +288,8 @@ namespace Inner_Maps {
         public void RevertToPreviousGroundVisual() {
             if (ReferenceEquals(previousGroundVisual, null) == false) {
                 SetGroundTilemapVisual(previousGroundVisual);
-                CreateSeamlessEdgesForSelfAndNeighbours();
             }
+            CreateSeamlessEdgesForSelfAndNeighbours();
         }
         public void CreateSeamlessEdgesForSelfAndNeighbours() {
             CreateSeamlessEdgesForTile(parentMap);

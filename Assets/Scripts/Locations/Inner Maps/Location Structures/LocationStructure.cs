@@ -550,6 +550,7 @@ namespace Inner_Maps.Location_Structures {
         }
         public virtual void OnTileDamaged(LocationGridTile tile, int amount) { }
         public virtual void OnTileRepaired(LocationGridTile tile, int amount) {
+            if (hasBeenDestroyed) { return; }
             if (tile.genericTileObject.currentHP >= tile.genericTileObject.maxHP) {
                 // ReSharper disable once Unity.NoNullPropagation
                 structureObj?.ApplyGroundTileAssetForTile(tile);    
@@ -644,8 +645,8 @@ namespace Inner_Maps.Location_Structures {
                 }
                 
                 tile.SetStructure(transferTo);
+                tile.SetTileType(LocationGridTile.Tile_Type.Empty);
                 tile.RevertToPreviousGroundVisual();
-                tile.CreateSeamlessEdgesForTile(location.innerMap);
                 tile.SetPreviousGroundVisual(null); //so that the tile will never revert to the structure tile, unless a new structure is put on it.
                 tile.genericTileObject.AdjustHP(tile.genericTileObject.maxHP, ELEMENTAL_TYPE.Normal);
             }

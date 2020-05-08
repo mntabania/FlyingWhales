@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using Inner_Maps.Location_Structures;
 using Quests;
 using Quests.Steps;
+using UnityEngine;
 namespace Tutorial {
     public class BasicControls : TutorialQuest {
 
@@ -22,8 +24,10 @@ namespace Tutorial {
             QuestStep characterClick = new ClickOnCharacterStep();
             QuestStep structureClick = new ClickOnStructureStep();
             QuestStep hexTileClick = new ClickOnAreaStep().SetHoverOverAction(OnHoverClickArea)
-                .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
-                .SetCompleteAction(OnCompleteClickArea);
+                .SetHoverOutAction(UIManager.Instance.HideSmallInfo);
+            if (WorldConfigManager.Instance.isDemoWorld == false) {
+                hexTileClick.SetCompleteAction(OnCompleteClickArea);
+            }
 
             steps = new List<QuestStepCollection>() {
                 new QuestStepCollection(look, unpause),
@@ -34,16 +38,18 @@ namespace Tutorial {
 
         #region Step Helpers
         private void OnHoverLookAround(QuestStepItem stepItem) {
-            UIManager.Instance.ShowSmallInfo("You can move the camera around by doing any of the following: " +
-                                             "\n- Using the " +
-                                             "<sprite=\"Text_Sprites\" name=\"W\">" +
-                                             "<sprite=\"Text_Sprites\" name=\"A\">" +
-                                             "<sprite=\"Text_Sprites\" name=\"S\">" +
-                                             "<sprite=\"Text_Sprites\" name=\"D\"> keys " +
-                                             "\n- Using the Arrow Keys " +
-                                             "\n- Press and hold the middle mouse button and drag", 
+            UIManager.Instance.ShowSmallInfo(
+                 "You can move the camera around by doing any of the following: " +
+                 "\n- Using the " +
+                 "<sprite=\"Text_Sprites\" name=\"W\">" +
+                 "<sprite=\"Text_Sprites\" name=\"A\">" +
+                 "<sprite=\"Text_Sprites\" name=\"S\">" +
+                 "<sprite=\"Text_Sprites\" name=\"D\"> keys " +
+                 "\n- Using the Arrow Keys " +
+                 "\n- Press and hold the middle mouse button and drag", 
                 stepItem.hoverPosition,
-                "Camera Movement");
+                "Camera Movement"
+            );
         }
         private void OnHoverUnpause(QuestStepItem stepItem) {
             UIManager.Instance.ShowSmallInfo("You can Pause/Unpause the game using the Space Bar. Alternatively, " +
@@ -57,6 +63,10 @@ namespace Tutorial {
                 "Selecting Areas");
         }
         private void OnCompleteClickArea() {
+            TutorialManager.Instance.StartCoroutine(DelayedAreaTooltip());
+        }
+        private IEnumerator DelayedAreaTooltip() {
+            yield return new WaitForSeconds(1f);
             UIManager.Instance.generalConfirmationWithVisual.ShowGeneralConfirmation("Areas", 
                 "Areas have representations in both the Interior Map and World Map. " +
                 "An Area in the World Map is represented by a Hex Tile and an Area in the Interior Map is represented by a Square when selected.", 

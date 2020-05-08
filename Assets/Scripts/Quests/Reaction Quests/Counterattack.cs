@@ -6,8 +6,8 @@ using Quests.Steps;
 namespace Quests {
     public class Counterattack : ReactionQuest {
 
-        private List<Character> _attackers;
-        private DemonicStructure _targetStructure;
+        private readonly List<Character> _attackers;
+        private readonly DemonicStructure _targetStructure;
 
         public Counterattack(List<Character> attackers, DemonicStructure targetStructure) : base("Counterattack!") {
             _attackers = attackers;
