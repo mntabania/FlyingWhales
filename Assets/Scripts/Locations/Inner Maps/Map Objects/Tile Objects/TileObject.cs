@@ -382,7 +382,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         AddPlayerAction(SPELL_TYPE.SEIZE_OBJECT);
     }
     public virtual void ActivateTileObject() {
-        Messenger.Broadcast(Signals.INCREASE_THREAT_THAT_SEES_POI, this as IPointOfInterest, 5);
+        //Messenger.Broadcast(Signals.INCREASE_THREAT_THAT_SEES_POI, this as IPointOfInterest, 5);
     }
     #endregion
 

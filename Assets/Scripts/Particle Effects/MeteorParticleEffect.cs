@@ -51,7 +51,7 @@ public class MeteorParticleEffect : BaseParticleEffect {
             tile.PerformActionOnTraitables((traitable) => MeteorEffect(traitable, ref bs));
         }
         
-        Messenger.Broadcast(Signals.INCREASE_THREAT_THAT_SEES_TILE, targetTile, 10);
+        //Messenger.Broadcast(Signals.INCREASE_THREAT_THAT_SEES_TILE, targetTile, 10);
         Messenger.Broadcast(Signals.METEOR_FELL);
         InnerMapCameraMove.Instance.MeteorShake();
         GameManager.Instance.StartCoroutine(ExpireCoroutine(gameObject));

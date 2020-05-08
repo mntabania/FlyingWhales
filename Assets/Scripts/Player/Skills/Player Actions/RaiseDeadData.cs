@@ -12,7 +12,7 @@ public class RaiseDeadData : PlayerAction {
     }
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
-        IncreaseThreatForEveryCharacterThatSeesPOI(targetPOI, 5);
+        //IncreaseThreatForEveryCharacterThatSeesPOI(targetPOI, 5);
         Character target = null;
         if (targetPOI is Character) {
             target = targetPOI as Character;

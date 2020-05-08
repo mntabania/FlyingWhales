@@ -15,7 +15,7 @@ public class DestroyData : PlayerAction {
 
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
-        IncreaseThreatForEveryCharacterThatSeesPOI(targetPOI, 5);
+        //IncreaseThreatForEveryCharacterThatSeesPOI(targetPOI, 5);
         LocationGridTile targetTile = targetPOI.gridTileLocation;
         targetPOI.AdjustHP(-targetPOI.currentHP, ELEMENTAL_TYPE.Normal, true);
         // targetTile.structure.RemovePOI(targetPOI);

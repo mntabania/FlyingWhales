@@ -19,7 +19,7 @@ public class RavenousSpiritData : SpellData {
         RavenousSpirit spirit = InnerMapManager.Instance.CreateNewTileObject<RavenousSpirit>(TILE_OBJECT_TYPE.RAVENOUS_SPIRIT);
         spirit.SetGridTileLocation(targetTile);
         spirit.OnPlacePOI();
-        IncreaseThreatThatSeesTile(targetTile, 10);
+        //IncreaseThreatThatSeesTile(targetTile, 10);
         base.ActivateAbility(targetTile);
         // targetTile.structure.AddPOI(spirit, targetTile);
     }

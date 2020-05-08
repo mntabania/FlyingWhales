@@ -19,7 +19,7 @@ public class WindBlastData : SpellData {
             LocationGridTile tile = tiles[i];
             tile.PerformActionOnTraitables(ApplyWindDamage);
         }
-        IncreaseThreatThatSeesTile(targetTile, 10);
+        //IncreaseThreatThatSeesTile(targetTile, 10);
         base.ActivateAbility(targetTile);
     }
     private void ApplyWindDamage(ITraitable traitable) {

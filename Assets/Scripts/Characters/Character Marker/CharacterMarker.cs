@@ -1342,6 +1342,14 @@ public class CharacterMarker : MapObjectVisual<Character> {
             }
         }
     }
+    public void OnBeforeSeizingThisCharacter() {
+        for (int i = 0; i < inVisionCharacters.Count; i++) {
+            Character inVision = inVisionCharacters[i];
+            if (inVision.faction != null && inVision.faction.isMajorNonPlayerFriendlyNeutral) {
+                PlayerManager.Instance.player.threatComponent.AdjustThreat(10);
+            }
+        }
+    }
     //public bool IsLethalCombatForTarget(Character character) {
     //    if (lethalCharacters.ContainsKey(character)) {
     //        return lethalCharacters[character];

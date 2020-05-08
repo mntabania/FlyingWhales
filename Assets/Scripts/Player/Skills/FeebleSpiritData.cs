@@ -19,7 +19,7 @@ public class FeebleSpiritData : SpellData {
         FeebleSpirit spirit = InnerMapManager.Instance.CreateNewTileObject<FeebleSpirit>(TILE_OBJECT_TYPE.FEEBLE_SPIRIT);
         spirit.SetGridTileLocation(targetTile);
         spirit.OnPlacePOI();
-        IncreaseThreatThatSeesTile(targetTile, 10);
+        //IncreaseThreatThatSeesTile(targetTile, 10);
         base.ActivateAbility(targetTile);
         // targetTile.structure.AddPOI(spirit, targetTile);
     }

@@ -26,7 +26,7 @@ public class TerrifyingHowlData : SpellData {
         //     tile.PerformActionOnTraitables((traitable) => SpookCharacter(traitable, targetTile));
         // }
         GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Terrifying_Howl);
-        IncreaseThreatThatSeesTile(targetTile, 10);
+        //IncreaseThreatThatSeesTile(targetTile, 10);
         base.ActivateAbility(targetTile);
     }
     private void SpookCharacter(ITraitable traitable, LocationGridTile targetTile) {
