@@ -49,6 +49,10 @@ public class GenericTileObject : TileObject {
                 if (willCreateVisual) {
                     GetOrCreateMapVisual();
                     SubscribeListeners();    
+                } else {
+                    //if should not create visual, also do not vote on vision, this is for cases when a tile already has a gameobject
+                    //and gained a trait that should not make the tile visible.
+                    return;
                 }
                 
             }

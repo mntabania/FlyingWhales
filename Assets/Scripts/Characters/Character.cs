@@ -75,6 +75,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public TrapStructure trapStructure { get; private set; }
     public bool isDisabledByPlayer { get; protected set; }
     public float speedModifier { get; private set; }
+    public float walkSpeedModifier { get; private set; }
+    public float runSpeedModifier { get; private set; }
     public string deathStr { get; private set; }
     public TileObject tileObjectLocation { get; private set; }
     public CharacterTrait defaultCharacterTrait { get; private set; }
@@ -267,8 +269,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             return _currentStructure;
         }
     }
-    public float walkSpeed => raceSetting.walkSpeed;
-    public float runSpeed => raceSetting.runSpeed;
+    public float walkSpeed => raceSetting.walkSpeed + (raceSetting.walkSpeed * walkSpeedModifier);
+    public float runSpeed => raceSetting.runSpeed + (raceSetting.runSpeed * runSpeedModifier);
     public Vector3 worldPosition => marker.transform.position;
     public Vector2 selectableSize => Vector2Int.one;
     public ProjectileReceiver projectileReceiver => marker.visionTrigger.projectileReceiver;
@@ -700,6 +702,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (marker) {
             marker.UpdateSpeed();
         }
+    }
+    public void AdjustWalkSpeedModifier(float amount) {
+        walkSpeedModifier += amount;
+    }
+    public void AdjustRunSpeedModifier(float amount) {
+        runSpeedModifier += amount;
     }
     public virtual void PerTickDuringMovement() {
         for (int i = 0; i < traitContainer.allTraitsAndStatuses.Count; i++) {
@@ -5138,6 +5146,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             marker.InitialPlaceMarkerAt(tileLocation, false);
         }
         needsComponent.CheckExtremeNeeds();
+        if (isDead) {
+            Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.BURY, this as IPointOfInterest);
+            jobComponent.TriggerBuryMe();    
+        }
         //Messenger.Broadcast(Signals.ON_UNSEIZE_CHARACTER, this);
     }
     public bool CollectsLogs() {
