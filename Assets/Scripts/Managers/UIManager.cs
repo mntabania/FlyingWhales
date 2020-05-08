@@ -43,6 +43,7 @@ public class UIManager : MonoBehaviour {
     public GameObject smallInfoGO;
     public RectTransform smallInfoRT;
     public HorizontalLayoutGroup smallInfoBGParentLG;
+    public VerticalLayoutGroup smallInfoVerticalLG;
     public RectTransform smallInfoBGRT;
     public TextMeshProUGUI smallInfoLbl;
     public LocationSmallInfo locationSmallInfo;
@@ -346,6 +347,8 @@ public class UIManager : MonoBehaviour {
         if (!IsSmallInfoShowing()) {
             smallInfoGO.transform.SetParent(this.transform);
             smallInfoGO.SetActive(true);
+            StartCoroutine(ReLayout(smallInfoBGParentLG));
+            StartCoroutine(ReLayout(smallInfoVerticalLG));
         }
         PositionTooltip(smallInfoGO, smallInfoRT, smallInfoBGRT);
         Profiler.EndSample();
@@ -360,10 +363,19 @@ public class UIManager : MonoBehaviour {
         message = message.Replace("\\n", "\n");
 
         smallInfoLbl.text = message;
+        
+        PositionTooltip(pos, smallInfoGO, smallInfoRT);
+        
         if (!IsSmallInfoShowing()) {
             smallInfoGO.SetActive(true);
+            StartCoroutine(ReLayout(smallInfoBGParentLG));
+            StartCoroutine(ReLayout(smallInfoVerticalLG));
         }
-        PositionTooltip(pos, smallInfoGO, smallInfoRT);
+    }
+    private IEnumerator ReLayout(LayoutGroup layoutGroup) {
+        layoutGroup.enabled = false;
+        yield return null;
+        layoutGroup.enabled = true;
     }
     public void ShowSmallInfo(string info, [NotNull]VideoClip videoClip, string header = "", UIHoverPosition pos = null) {
         Assert.IsNotNull(videoClip, "Small info with visual was called but no video clip was provided");

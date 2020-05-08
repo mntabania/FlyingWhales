@@ -1603,7 +1603,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
     #region Seize
     public void OnSeize() {
         Character _character = character;
+        Color color = mainImg.color;
         Reset();
+        SetMarkerColor(color);
         character = _character;
         buttonCollider.enabled = false;
     }

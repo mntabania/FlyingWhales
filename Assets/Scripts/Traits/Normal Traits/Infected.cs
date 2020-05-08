@@ -56,8 +56,10 @@ namespace Traits {
 
         private void HourlyCheck() {
             if (!_hasAlreadyDied) {
-                if(UnityEngine.Random.Range(0, 100) < 20) {
+                if(UnityEngine.Random.Range(0, 100) < 20) { //20
                     owner.interruptComponent.TriggerInterrupt(INTERRUPT.Zombie_Death, owner);
+                    owner.AdjustRunSpeedModifier(1f);
+                    owner.AdjustWalkSpeedModifier(-0.5f);
                 }
             } else {
                 int todayTick = GameManager.Instance.Today().tick;

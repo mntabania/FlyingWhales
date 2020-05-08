@@ -280,6 +280,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		return false;
 	}
 	private void TriggerRemoveStatus(Trait trait) {
+		if (_owner.isDead) { return; }
 		if (trait.gainedFromDoing == null || trait.gainedFromDoing.isStealth == false) { //only create remove status job if trait was not gained from a stealth action
 			GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = trait.name, target = GOAP_EFFECT_TARGET.TARGET };
 			if (_owner.homeSettlement.HasJob(goapEffect, _owner) == false) {
