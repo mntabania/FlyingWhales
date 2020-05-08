@@ -23,6 +23,7 @@ public class LightningData : SpellData {
         //     pois[i].AdjustHP(-350, ELEMENTAL_TYPE.Electric, showHPBar: true);
         // }
         targetTile.PerformActionOnTraitables(LightningDamage);
+        targetTile.genericTileObject.traitContainer.AddTrait(targetTile.genericTileObject, "Danger Remnant");
         //IncreaseThreatThatSeesTile(targetTile, 10);
         base.ActivateAbility(targetTile);
     }

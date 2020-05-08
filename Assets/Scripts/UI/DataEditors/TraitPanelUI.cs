@@ -40,7 +40,8 @@ public class TraitPanelUI : MonoBehaviour {
     public Toggle percentageToggle;
     public Toggle hasRequirementToggle;
     public Toggle isNotToggle;
-    public Toggle _isHidden;
+    public Toggle isHiddenToggle;
+    public Toggle isTangibleToggle;
     public ScrollRect requirementsScrollRect;
     public ScrollRect effectsScrollRect;
     public GameObject traitEffectBtnGO;
@@ -159,7 +160,8 @@ public class TraitPanelUI : MonoBehaviour {
         percentageToggle.isOn = false;
         hasRequirementToggle.isOn = false;
         isNotToggle.isOn = false;
-        _isHidden.isOn = false;
+        isHiddenToggle.isOn = false;
+        isTangibleToggle.isOn = false;
         isStackingToggle.isOn = false;
 
         _effects.Clear();
@@ -217,7 +219,8 @@ public class TraitPanelUI : MonoBehaviour {
                 effect = (TRAIT_EFFECT) System.Enum.Parse(typeof(TRAIT_EFFECT), traitEffectOptions.options[traitEffectOptions.value].text),
                 ticksDuration = int.Parse(durationInput.text),
                 //effects = _effects,
-                isHidden = _isHidden.isOn,
+                isHidden = isHiddenToggle.isOn,
+                isTangible = isTangibleToggle.isOn,
                 mutuallyExclusive = GetMutuallyExclusiveTraits(),
                 advertisedInteractions = _advertisedInteractions,
                 moodEffect = int.Parse(moodInput.text),
@@ -236,7 +239,7 @@ public class TraitPanelUI : MonoBehaviour {
                 effect = (TRAIT_EFFECT) System.Enum.Parse(typeof(TRAIT_EFFECT), traitEffectOptions.options[traitEffectOptions.value].text),
                 ticksDuration = int.Parse(durationInput.text),
                 //effects = _effects,
-                isHidden = _isHidden.isOn,
+                isHidden = isHiddenToggle.isOn,
                 mutuallyExclusive = GetMutuallyExclusiveTraits(),
                 advertisedInteractions = _advertisedInteractions,
                 moodEffect = int.Parse(moodInput.text),
@@ -284,7 +287,7 @@ public class TraitPanelUI : MonoBehaviour {
         mutuallyExclusiveInput.text = ConvertMutuallyExclusiveTraitsToText(trait);
         _advertisedInteractions = trait.advertisedInteractions;
         moodInput.text = trait.moodEffect.ToString();
-        _isHidden.isOn = trait.isHidden;
+        isHiddenToggle.isOn = trait.isHidden;
         UpdateAdvertisedInteractionsText();
     }
     private void LoadStatusToUI(Status status) {
@@ -297,7 +300,8 @@ public class TraitPanelUI : MonoBehaviour {
         mutuallyExclusiveInput.text = ConvertMutuallyExclusiveTraitsToText(status);
         _advertisedInteractions = status.advertisedInteractions;
         moodInput.text = status.moodEffect.ToString();
-        _isHidden.isOn = status.isHidden;
+        isHiddenToggle.isOn = status.isHidden;
+        isTangibleToggle.isOn = status.isTangible;
         isStackingToggle.isOn = status.isStacking;
         stackLimitInput.text = status.stackLimit.ToString();
         stackModInput.text = status.stackModifier.ToString();

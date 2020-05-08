@@ -594,7 +594,6 @@ public class ReactionComponent {
                                 owner.combatComponent.Flight(targetTileObject, "saw fire");
                             }
                         }
-                        return;
                     }
                 }
             }
@@ -614,7 +613,6 @@ public class ReactionComponent {
                         if (job.assignedCharacter == null && owner.jobQueue.CanJobBeAddedToQueue(job)) {
                             owner.jobQueue.AddJobInQueue(job);
                         }
-                        return;
                     }
                 }
             }
@@ -633,22 +631,10 @@ public class ReactionComponent {
                         if (job.assignedCharacter == null && owner.jobQueue.CanJobBeAddedToQueue(job)) {
                             owner.jobQueue.AddJobInQueue(job);
                         }
-                        return;
                     }
                 }
             }
         }
-        //if (targetTileObject is TornadoTileObject) {
-        //    if (!owner.traitContainer.HasTrait("Elemental Master")) {
-        //        if (owner.combatComponent.combatMode == COMBAT_MODE.Aggressive) {
-        //            if (owner.traitContainer.HasTrait("Berserked")) {
-        //                owner.combatComponent.FightOrFlight(targetTileObject);
-        //            } else {
-        //                owner.combatComponent.Flight(targetTileObject, "saw a tornado");
-        //            }
-        //        }
-        //    }
-        //}
         if (targetTileObject.traitContainer.HasTrait("Dangerous")) {
             if (owner.traitContainer.HasTrait("Berserked")) {
                 owner.combatComponent.FightOrFlight(targetTileObject, CombatManager.Berserked);
@@ -677,12 +663,41 @@ public class ReactionComponent {
                     owner.combatComponent.Flight(targetTileObject, "saw a " + targetTileObject.name);
                 }
             }
-        } else {
-            if (targetTileObject.tileObjectType.IsTileObjectAnItem()) {
-                if (targetTileObject.gridTileLocation != null && owner.homeSettlement != null 
-                    && targetTileObject.gridTileLocation.structure != owner.homeSettlement.mainStorage 
-                    && targetTileObject.gridTileLocation.structure is Dwelling) {
-                    owner.jobComponent.CreateTakeItemJob(targetTileObject);
+        }
+        if (targetTileObject.tileObjectType.IsTileObjectAnItem()) {
+            if (targetTileObject.gridTileLocation != null && owner.homeSettlement != null
+                && targetTileObject.gridTileLocation.structure != owner.homeSettlement.mainStorage
+                && targetTileObject.gridTileLocation.structure is Dwelling) {
+                owner.jobComponent.CreateTakeItemJob(targetTileObject);
+            }
+        }
+        if(targetTileObject.traitContainer.HasTrait("Danger Remnant")) {
+            if (!owner.traitContainer.HasTrait("Berserked")) {
+                if (owner.traitContainer.HasTrait("Coward")) {
+                    CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, owner, targetTileObject, REACTION_STATUS.WITNESSED);
+                } else {
+                    int shockChance = 30;
+                    if (owner.traitContainer.HasTrait("Combatant")) {
+                        shockChance = 70;
+                    }
+                    if (UnityEngine.Random.Range(0, 100) < shockChance) {
+                        CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, owner, targetTileObject, REACTION_STATUS.WITNESSED);
+                    } else {
+                        CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, owner, targetTileObject, REACTION_STATUS.WITNESSED);
+                    }
+                }
+            }
+        }
+        if (targetTileObject.traitContainer.HasTrait("Surprised Remnant")) {
+            if (!owner.traitContainer.HasTrait("Berserked")) {
+                if (owner.traitContainer.HasTrait("Coward")) {
+                    CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, owner, targetTileObject, REACTION_STATUS.WITNESSED);
+                } else {
+                    if (UnityEngine.Random.Range(0, 100) < 95) {
+                        CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, owner, targetTileObject, REACTION_STATUS.WITNESSED);
+                    } else {
+                        CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, owner, targetTileObject, REACTION_STATUS.WITNESSED);
+                    }
                 }
             }
         }

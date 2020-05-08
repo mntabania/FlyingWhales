@@ -242,9 +242,7 @@ public class CombatState : CharacterState {
                 } else {
                     summary += "\n-Has no hostile or avoid in list";
                     summary += "\n-Exiting combat state";
-                    if (character.combatComponent.avoidInRange.Count > 0) {
-                        character.combatComponent.ClearAvoidInRange(false);
-                    }
+                    character.combatComponent.ClearAvoidInRange(false);
                     endedInternally = true;
                     character.stateComponent.ExitCurrentState();
                 }

@@ -21,6 +21,7 @@ namespace Traits {
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(4);
+            isTangible = true;
             //effects = new List<TraitEffect>();
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.REMOVE_POISON, };
             awareCharacters = new List<Character>();
@@ -103,9 +104,6 @@ namespace Traits {
                 ObjectPoolManager.Instance.DestroyObject(_poisonedEffect);
                 _poisonedEffect = null;
             }
-        }
-        public override bool IsTangible() {
-            return true;
         }
         public override string GetTestingData(ITraitable traitable = null) {
             string data = base.GetTestingData(traitable);

@@ -50,8 +50,9 @@ public class MeteorParticleEffect : BaseParticleEffect {
             LocationGridTile tile = tiles[i];
             tile.PerformActionOnTraitables((traitable) => MeteorEffect(traitable, ref bs));
         }
-        
+
         //Messenger.Broadcast(Signals.INCREASE_THREAT_THAT_SEES_TILE, targetTile, 10);
+        targetTile.genericTileObject.traitContainer.AddTrait(targetTile.genericTileObject, "Danger Remnant");
         Messenger.Broadcast(Signals.METEOR_FELL);
         InnerMapCameraMove.Instance.MeteorShake();
         GameManager.Instance.StartCoroutine(ExpireCoroutine(gameObject));

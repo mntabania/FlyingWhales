@@ -15,6 +15,7 @@ namespace Traits {
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(2); //if this trait is only temporary, then it should not advertise GET_WATER
+            isTangible = true;
             isStacking = true;
             moodEffect = -6;
             stackLimit = 10;
@@ -49,9 +50,6 @@ namespace Traits {
                 character.needsComponent.AdjustComfortDecreaseRate(-2f);
             }
             UpdateVisualsOnRemove(removedFrom);
-        }
-        public override bool IsTangible() {
-            return true;
         }
         #endregion
 

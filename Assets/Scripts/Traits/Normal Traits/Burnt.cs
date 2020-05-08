@@ -15,6 +15,7 @@ namespace Traits {
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = 0;
+            isTangible = true;
             //effects = new List<TraitEffect>();
         }
 
@@ -94,9 +95,6 @@ namespace Traits {
                 }
             }
             return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
-        }
-        public override bool IsTangible() {
-            return true;
         }
         #endregion
     }
