@@ -479,8 +479,9 @@ public class CombatState : CharacterState {
 
             IPointOfInterest objToAvoid = stateComponent.character.combatComponent.avoidInRange[stateComponent.character.combatComponent.avoidInRange.Count - 1];
             string avoidReason = "got scared";
-            if(stateComponent.character.combatComponent.avoidReason != string.Empty) {
-                avoidReason = stateComponent.character.combatComponent.avoidReason;
+            CombatData combatData = stateComponent.character.combatComponent.GetCombatData(objToAvoid);
+            if(combatData != null && combatData.avoidReason != string.Empty) {
+                avoidReason = combatData.avoidReason;
             }
             Log fleeLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "start_flee");
             fleeLog.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

@@ -57,7 +57,7 @@ public class PoisonCloudData : SpellData {
         poisonCloudTileObject.SetGridTileLocation(targetTile);
         poisonCloudTileObject.OnPlacePOI();
         poisonCloudTileObject.SetStacks(5);
-        IncreaseThreatThatSeesTile(targetTile, 10);
+        //IncreaseThreatThatSeesTile(targetTile, 10);
         base.ActivateAbility(targetTile);
     }
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {

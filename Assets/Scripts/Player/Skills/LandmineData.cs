@@ -16,7 +16,7 @@ public class LandmineData : SpellData {
     }
     public override void ActivateAbility(LocationGridTile targetTile) {
         targetTile.SetHasLandmine(true);
-        IncreaseThreatThatSeesTile(targetTile, 10);
+        //IncreaseThreatThatSeesTile(targetTile, 10);
         base.ActivateAbility(targetTile);
     }
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {

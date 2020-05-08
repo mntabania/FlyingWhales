@@ -20,7 +20,7 @@ public class ManifestFoodData : SpellData {
         targetTile.structure.AddPOI(foodPile, targetTile);
         foodPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.FOOD_PILE);
         GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Smoke_Effect);
-        IncreaseThreatThatSeesTile(targetTile, 10);
+        //IncreaseThreatThatSeesTile(targetTile, 10);
         base.ActivateAbility(targetTile);
     }
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {

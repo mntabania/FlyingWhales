@@ -19,7 +19,7 @@ public class ForlornSpiritData : SpellData {
         ForlornSpirit spirit = InnerMapManager.Instance.CreateNewTileObject<ForlornSpirit>(TILE_OBJECT_TYPE.FORLORN_SPIRIT);
         spirit.SetGridTileLocation(targetTile);
         spirit.OnPlacePOI();
-        IncreaseThreatThatSeesTile(targetTile, 10);
+        //IncreaseThreatThatSeesTile(targetTile, 10);
         base.ActivateAbility(targetTile);
         // targetTile.structure.AddPOI(spirit, targetTile);
     }

@@ -512,7 +512,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.AddListener<IPointOfInterest, Character>(Signals.STOP_CURRENT_ACTION_TARGETING_POI_EXCEPT_ACTOR, OnStopCurrentActionTargetingPOIExceptActor);
         Messenger.AddListener<LocationStructure>(Signals.STRUCTURE_DESTROYED, OnStructureDestroyed);
         Messenger.AddListener<IPointOfInterest, int>(Signals.INCREASE_THREAT_THAT_SEES_POI, IncreaseThreatThatSeesPOI);
-        Messenger.AddListener<LocationGridTile, int>(Signals.INCREASE_THREAT_THAT_SEES_TILE, IncreaseThreatThatSeesTile);
+        //Messenger.AddListener<LocationGridTile, int>(Signals.INCREASE_THREAT_THAT_SEES_TILE, IncreaseThreatThatSeesTile);
 
         //Messenger.AddListener<ActualGoapNode>(Signals.ACTION_PERFORMED, OnCharacterPerformedAction);
         needsComponent.SubscribeToSignals();
@@ -544,7 +544,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.RemoveListener<IPointOfInterest, Character>(Signals.STOP_CURRENT_ACTION_TARGETING_POI_EXCEPT_ACTOR, OnStopCurrentActionTargetingPOIExceptActor);
         Messenger.RemoveListener<LocationStructure>(Signals.STRUCTURE_DESTROYED, OnStructureDestroyed);
         Messenger.RemoveListener<IPointOfInterest, int>(Signals.INCREASE_THREAT_THAT_SEES_POI, IncreaseThreatThatSeesPOI);
-        Messenger.RemoveListener<LocationGridTile, int>(Signals.INCREASE_THREAT_THAT_SEES_TILE, IncreaseThreatThatSeesTile);
+        //Messenger.RemoveListener<LocationGridTile, int>(Signals.INCREASE_THREAT_THAT_SEES_TILE, IncreaseThreatThatSeesTile);
         //Messenger.RemoveListener<ActualGoapNode>(Signals.ACTION_PERFORMED, OnCharacterPerformedAction);
         needsComponent.UnsubscribeToSignals();
         jobComponent.UnsubscribeListeners();
@@ -1991,10 +1991,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     private void OnBeforeSeizingCharacter(Character character) {
-        if (character.id != id) {
-            //RemoveRelationship(characterThatDied); //do not remove relationships when dying
-            marker.OnBeforeSeizingOtherCharacter(character);
+        if(this == character) {
+            marker.OnBeforeSeizingThisCharacter();
         }
+        //if (character.id != id) {
+        //    //RemoveRelationship(characterThatDied); //do not remove relationships when dying
+        //    marker.OnBeforeSeizingOtherCharacter(character);
+        //}
     }
     private void OnSeizeCharacter(Character character) {
         if (character.id != id) {

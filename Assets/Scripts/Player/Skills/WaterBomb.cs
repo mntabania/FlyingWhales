@@ -30,7 +30,7 @@ public class WaterBombData : SpellData {
             tile.PerformActionOnTraitables(MakeTraitbleWet);
         }
         GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Water_Bomb);
-        IncreaseThreatThatSeesTile(targetTile, 10);
+        //IncreaseThreatThatSeesTile(targetTile, 10);
         base.ActivateAbility(targetTile);
     }
     private void MakeTraitbleWet(ITraitable traitable) {

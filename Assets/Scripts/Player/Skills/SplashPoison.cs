@@ -30,7 +30,7 @@ public class SplashPoisonData : SpellData {
             tile.PerformActionOnTraitables(MakeTraitblePoisoned);
         }
         GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Poison_Bomb);
-        IncreaseThreatThatSeesTile(targetTile, 10);
+        //IncreaseThreatThatSeesTile(targetTile, 10);
         base.ActivateAbility(targetTile);
     }
     private void MakeTraitblePoisoned(ITraitable traitable) {

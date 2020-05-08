@@ -12,6 +12,7 @@ public class ResolveCombat : GoapAction {
         doesNotStopTargetCharacter = true;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.DEMON, RACE.SPIDER, RACE.SKELETON };
+        canBeAdvertisedEvenIfActorIsUnavailable = true;
     }
 
     #region Overrides
@@ -20,7 +21,7 @@ public class ResolveCombat : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Unconscious", target = GOAP_EFFECT_TARGET.TARGET });
         //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.CANNOT_MOVE, target = GOAP_EFFECT_TARGET.TARGET });
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", target = GOAP_EFFECT_TARGET.TARGET });
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, target = GOAP_EFFECT_TARGET.TARGET });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.TARGET });
     }
     public override LocationStructure GetTargetStructure(ActualGoapNode node) {
         return node.actor.gridTileLocation.structure;
@@ -37,9 +38,9 @@ public class ResolveCombat : GoapAction {
         return goapActionInvalidity;
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
-        string costLog = $"\n{name} {target.nameWithID}: +50(Constant)";
+        string costLog = $"\n{name} {target.nameWithID}: +0(Constant)";
         actor.logComponent.AppendCostLog(costLog);
-        return 50;
+        return 0;
     }
     #endregion
 

@@ -10,7 +10,7 @@ public class CombatComponent {
     public List<IPointOfInterest> hostilesInRange { get; private set; } //POI's in this characters hostility collider
     public List<IPointOfInterest> avoidInRange { get; private set; } //POI's in this characters hostility collider
     public Dictionary<IPointOfInterest, CombatData> fightCombatData { get; private set; }
-    public string avoidReason { get; private set; }
+    //public string avoidReason { get; private set; }
     public ElementalDamageData elementalDamage { get; private set; }
     //public ActualGoapNode actionThatTriggeredCombatState { get; private set; }
     //public GoapPlanJob jobThatTriggeredCombatState { get; private set; }
@@ -152,13 +152,16 @@ public class CombatComponent {
             avoidInRange.Remove(target);
             SetWillProcessCombat(true);
 
-            CombatData newCombatData = ObjectPoolManager.Instance.CreateNewCombatData();
-            newCombatData.SetData(reason, connectedAction, isLethal);
+            //CombatData newCombatData = ObjectPoolManager.Instance.CreateNewCombatData();
+            //newCombatData.SetFightData(reason, connectedAction, isLethal);
             if (fightCombatData.ContainsKey(target)) {
-                CombatData prevCombatData = fightCombatData[target];
-                ObjectPoolManager.Instance.ReturnCombatDataToPool(prevCombatData);
-                fightCombatData[target] = newCombatData;
+                //CombatData prevCombatData = fightCombatData[target];
+                //ObjectPoolManager.Instance.ReturnCombatDataToPool(prevCombatData);
+                //fightCombatData[target] = newCombatData;
+                fightCombatData[target].SetFightData(reason, connectedAction, isLethal);
             } else {
+                CombatData newCombatData = ObjectPoolManager.Instance.CreateNewCombatData();
+                newCombatData.SetFightData(reason, connectedAction, isLethal);
                 fightCombatData.Add(target, newCombatData);
             }
 
@@ -187,7 +190,15 @@ public class CombatComponent {
             if (owner.marker.inVisionPOIs.Contains(target)) {
                 avoidInRange.Add(target);
                 SetWillProcessCombat(true);
-                avoidReason = reason;
+
+                if (fightCombatData.ContainsKey(target)) {
+                    fightCombatData[target].SetFlightData(reason);
+                } else {
+                    CombatData newCombatData = ObjectPoolManager.Instance.CreateNewCombatData();
+                    newCombatData.SetFlightData(reason);
+                    fightCombatData.Add(target, newCombatData);
+                }
+
                 debugLog += $"\n{target.name} was added to {owner.name}'s avoid range!";
                 hasFled = true;
                 if (target is Character) {
@@ -208,6 +219,15 @@ public class CombatComponent {
                     IPointOfInterest hostile = hostilesInRange[i];
                     if (owner.marker.inVisionPOIs.Contains(hostile)) {
                         avoidInRange.Add(hostile);
+
+                        if (fightCombatData.ContainsKey(hostile)) {
+                            fightCombatData[hostile].SetFlightData(reason);
+                        } else {
+                            CombatData newCombatData = ObjectPoolManager.Instance.CreateNewCombatData();
+                            newCombatData.SetFlightData(reason);
+                            fightCombatData.Add(hostile, newCombatData);
+                        }
+
                         if (hostile is Character) {
                             Character targetCharacter = hostile as Character;
                             if (targetCharacter.combatComponent.combatMode == COMBAT_MODE.Defend) {
@@ -219,7 +239,7 @@ public class CombatComponent {
             }
             ClearHostilesInRange(false);
             SetWillProcessCombat(true);
-            avoidReason = reason;
+            //avoidReason = reason;
         }
     }
     #endregion
@@ -346,7 +366,7 @@ public class CombatComponent {
             if (!avoidInRange.Contains(poi)) {
                 avoidInRange.Add(poi);
                 SetWillProcessCombat(true);
-                avoidReason = reason;
+                //avoidReason = reason;
                 return true;
             }
         }
@@ -416,7 +436,7 @@ public class CombatComponent {
                     }
                 }
             }
-            avoidReason = string.Empty;
+            //avoidReason = string.Empty;
         }
         owner.logComponent.PrintLogIfActive(log);
         //execute any external combat actions. This assumes that this character entered combat state.
@@ -485,6 +505,7 @@ public class CombatComponent {
 
 public class CombatData {
     public string reasonForCombat;
+    public string avoidReason;
     public ActualGoapNode connectedAction;
     public bool isLethal;
 
@@ -493,15 +514,19 @@ public class CombatData {
     }
     public void Initialize() {
         reasonForCombat = string.Empty;
+        avoidReason = string.Empty;
         connectedAction = null;
         isLethal = false;
     }
     public void Reset() {
         Initialize();
     }
-    public void SetData(string reasonForCombat, ActualGoapNode connectedAction, bool isLethal) {
+    public void SetFightData(string reasonForCombat, ActualGoapNode connectedAction, bool isLethal) {
         this.reasonForCombat = reasonForCombat;
         this.connectedAction = connectedAction;
         this.isLethal = isLethal;
+    }
+    public void SetFlightData(string avoidReason) {
+        this.avoidReason = avoidReason;
     }
 }

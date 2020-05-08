@@ -17,7 +17,7 @@ public class IgniteData : PlayerAction {
 
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
-        IncreaseThreatForEveryCharacterThatSeesPOI(targetPOI, 5);
+        //IncreaseThreatForEveryCharacterThatSeesPOI(targetPOI, 5);
         // LocationGridTile tile = targetPOI.gridTileLocation;
         BurningSource bs = new BurningSource(targetPOI.gridTileLocation.parentMap.region);
         Burning burning = new Burning();

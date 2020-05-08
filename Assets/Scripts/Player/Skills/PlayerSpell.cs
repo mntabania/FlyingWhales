@@ -234,11 +234,11 @@ public class SpellData : IPlayerSkill {
         OnExecuteSpellActionAffliction();
     }
     public virtual void ActivateAbility(HexTile targetHex) {
-        if(targetHex.settlementOnTile != null) {
-            if(targetHex.settlementOnTile.HasResidentInsideSettlement()){
-                PlayerManager.Instance.player.threatComponent.AdjustThreat(20);
-            }
-        }
+        //if(targetHex.settlementOnTile != null) {
+        //    if(targetHex.settlementOnTile.HasResidentInsideSettlement()){
+        //        PlayerManager.Instance.player.threatComponent.AdjustThreat(20);
+        //    }
+        //}
         OnExecuteSpellActionAffliction();
     }
     public virtual void ActivateAbility(LocationStructure targetStructure) {
@@ -308,9 +308,9 @@ public class SpellData : IPlayerSkill {
     protected void IncreaseThreatForEveryCharacterThatSeesPOI(IPointOfInterest poi, int amount) {
         Messenger.Broadcast(Signals.INCREASE_THREAT_THAT_SEES_POI, poi, amount);
     }
-    protected void IncreaseThreatThatSeesTile(LocationGridTile targetTile, int amount) {
-        Messenger.Broadcast(Signals.INCREASE_THREAT_THAT_SEES_TILE, targetTile, amount);
-    }
+    //protected void IncreaseThreatThatSeesTile(LocationGridTile targetTile, int amount) {
+    //    Messenger.Broadcast(Signals.INCREASE_THREAT_THAT_SEES_TILE, targetTile, amount);
+    //}
     public void OnExecuteSpellActionAffliction() {
         if(hasCharges && charges > 0) {
             charges--;
@@ -382,7 +382,7 @@ public class BallLightningData : SpellData {
         BallLightningTileObject ballLightning = new BallLightningTileObject();
         ballLightning.SetGridTileLocation(targetTile);
         ballLightning.OnPlacePOI();
-        IncreaseThreatThatSeesTile(targetTile, 10);
+        //IncreaseThreatThatSeesTile(targetTile, 10);
         base.ActivateAbility(targetTile);
     }
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
@@ -413,7 +413,7 @@ public class FrostyFogData : SpellData {
         frostyFog.SetGridTileLocation(targetTile);
         frostyFog.OnPlacePOI();
         frostyFog.SetStacks(EditableValuesManager.Instance.frostyFogStacks);
-        IncreaseThreatThatSeesTile(targetTile, 10);
+        //IncreaseThreatThatSeesTile(targetTile, 10);
         base.ActivateAbility(targetTile);
     }
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
@@ -444,7 +444,7 @@ public class VaporData : SpellData {
         vaporTileObject.SetGridTileLocation(targetTile);
         vaporTileObject.OnPlacePOI();
         vaporTileObject.SetStacks(EditableValuesManager.Instance.vaporStacks);
-        IncreaseThreatThatSeesTile(targetTile, 10);
+        //IncreaseThreatThatSeesTile(targetTile, 10);
         base.ActivateAbility(targetTile);
     }
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
@@ -474,7 +474,7 @@ public class FireBallData : SpellData {
         FireBallTileObject fireBallTileObject = new FireBallTileObject();
         fireBallTileObject.SetGridTileLocation(targetTile);
         fireBallTileObject.OnPlacePOI();
-        IncreaseThreatThatSeesTile(targetTile, 10);
+        //IncreaseThreatThatSeesTile(targetTile, 10);
         base.ActivateAbility(targetTile);
     }
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {

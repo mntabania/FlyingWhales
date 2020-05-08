@@ -52,7 +52,7 @@ public class LocustSwarmData : SpellData {
         LocustSwarmTileObject tornadoTileObject = new LocustSwarmTileObject();
         tornadoTileObject.SetGridTileLocation(targetTile);
         tornadoTileObject.OnPlacePOI();
-        IncreaseThreatThatSeesTile(targetTile, 10);
+        //IncreaseThreatThatSeesTile(targetTile, 10);
         base.ActivateAbility(targetTile);
     }
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {

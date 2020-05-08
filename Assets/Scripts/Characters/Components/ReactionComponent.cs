@@ -547,17 +547,17 @@ public class ReactionComponent {
                             }
                         }
                     } else {
-                        debugLog += "\n-Character and Target are not with the same faction and npcSettlement";
-                        if (owner.relationshipContainer.IsEnemiesWith(targetCharacter)) {
-                            debugLog += "\n-Character considers Target as Enemy or Rival, will trigger Fight or Flight response";
-                            //Fight or Flight
-                            if (owner.combatComponent.combatMode == COMBAT_MODE.Aggressive) {
-                                bool isTopPrioJobLethal = owner.jobQueue.jobsInQueue.Count <= 0 || owner.jobQueue.jobsInQueue[0].jobType.IsJobLethal();
-                                if (!targetCharacter.traitContainer.HasTrait("Unconscious") || isTopPrioJobLethal) {
-                                    owner.combatComponent.FightOrFlight(targetCharacter, CombatManager.Hostility);
-                                }
-                            }
-                        }
+                        //debugLog += "\n-Character and Target are not with the same faction and npcSettlement";
+                        //if (owner.relationshipContainer.IsEnemiesWith(targetCharacter)) {
+                        //    debugLog += "\n-Character considers Target as Enemy or Rival, will trigger Fight or Flight response";
+                        //    //Fight or Flight
+                        //    if (owner.combatComponent.combatMode == COMBAT_MODE.Aggressive) {
+                        //        bool isTopPrioJobLethal = owner.jobQueue.jobsInQueue.Count <= 0 || owner.jobQueue.jobsInQueue[0].jobType.IsJobLethal();
+                        //        if (!targetCharacter.traitContainer.HasTrait("Unconscious") || isTopPrioJobLethal) {
+                        //            owner.combatComponent.FightOrFlight(targetCharacter, CombatManager.Hostility);
+                        //        }
+                        //    }
+                        //}
                     }
                 } else {
                     debugLog += "\n-Target is dead";

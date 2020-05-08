@@ -9,13 +9,26 @@ public class PlayerAction : SpellData {
 
     public PlayerAction() {
 	}
+
+    #region Virtuals
     public virtual bool IsValid(IPlayerActionTarget target) {
         return true;
     }
     public virtual string GetLabelName(IPlayerActionTarget target) {
         return name;
     }
-	public void Activate(IPlayerActionTarget target) {
+    #endregion
+
+    #region Overrides
+    public override void ActivateAbility(IPointOfInterest targetPOI) {
+        if(targetPOI is TileObject tileObject) {
+            IncreaseThreatForEveryCharacterThatSeesPOI(targetPOI, 5);
+        }
+        base.ActivateAbility(targetPOI);
+    }
+    #endregion  
+
+    public void Activate(IPlayerActionTarget target) {
         if(target is IPointOfInterest targetPOI) {
             ActivateAbility(targetPOI);
         } else if (target is HexTile targetHex) {
