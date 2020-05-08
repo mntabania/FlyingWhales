@@ -38700,7 +38700,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f6804fb87404a048bcc08203ca1c27f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  alwaysResetTutorialsOnStart: 0
+  alwaysResetTutorialsOnStart: 1
   demonicStructureVideoClip: {fileID: 32900000, guid: 46fae55937600b1449cf86ca67570560,
     type: 3}
   fireDamageVideoClip: {fileID: 32900000, guid: 8ad86ac31aab30447a8820ced840cadd,
@@ -72506,6 +72506,18 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 1258178465}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1258178467 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 114154593709522904, guid: b2759c51bf271794183341425156d63a,
+    type: 3}
+  m_PrefabInstance: {fileID: 1258178465}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1259876892
 GameObject:
   m_ObjectHideFlags: 0
@@ -91444,6 +91456,7 @@ MonoBehaviour:
   smallInfoGO: {fileID: 2082434079}
   smallInfoRT: {fileID: 1421381628}
   smallInfoBGParentLG: {fileID: 102133339}
+  smallInfoVerticalLG: {fileID: 1258178467}
   smallInfoBGRT: {fileID: 1258178466}
   smallInfoLbl: {fileID: 2041725645}
   locationSmallInfo: {fileID: 752113107}
