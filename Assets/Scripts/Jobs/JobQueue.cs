@@ -72,7 +72,7 @@ public class JobQueue {
         }
 
         job.OnAddJobToQueue();
-        job.originalOwner.OnJobAddedToCharacterJobQueue(job, owner);
+        job.originalOwner?.OnJobAddedToCharacterJobQueue(job, owner);
         //if(quest != null) {
         //    quest.OnAddJob(job);
         //}
