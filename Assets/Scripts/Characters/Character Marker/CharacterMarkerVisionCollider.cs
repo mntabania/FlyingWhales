@@ -95,13 +95,15 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
     }
     public void ReCategorizeVision() {
         Debug.Log($"{GameManager.Instance.TodayLogString()} {parentMarker.character.name} Re categorizing objects in its normal vision");
-        List<IPointOfInterest> poisInVision = new List<IPointOfInterest>(parentMarker.inVisionPOIs);
-        for (int i = 0; i < poisInVision.Count; i++) {
-            IPointOfInterest pointOfInterest = poisInVision[i];
+        //List<IPointOfInterest> poisInVision = new List<IPointOfInterest>(parentMarker.inVisionPOIs);
+        for (int i = 0; i < parentMarker.inVisionPOIs.Count; i++) {
+            IPointOfInterest pointOfInterest = parentMarker.inVisionPOIs[i];
             if (pointOfInterest.gridTileLocation == null) { continue; }
             //if poi wasn't added to the characters normal vision, remove that poi from inVisionPOIs 
             if (TryAddPOIToVision(pointOfInterest) == false) {
-                parentMarker.RemovePOIFromInVisionRange(pointOfInterest);
+                if (parentMarker.RemovePOIFromInVisionRange(pointOfInterest)) {
+                    i--;
+                }
             }
         }
     }
@@ -111,9 +113,9 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
     /// <param name="poi">The POI to check.</param>
     /// <returns>Whether or not the poi was added to the character's normal vision.</returns>
     private bool TryAddPOIToVision(IPointOfInterest poi) {
-        if (poi.gridTileLocation != null && 
+        if (parentMarker && poi.gridTileLocation != null && 
             poi.gridTileLocation.structure == parentMarker.character.gridTileLocation.structure || 
-            (parentMarker.character.stateComponent.currentState is CombatState && 
+            (parentMarker.character.stateComponent.currentState != null && parentMarker.character.stateComponent.currentState is CombatState && 
              PathfindingManager.Instance.HasPath(poi.gridTileLocation, parentMarker.character.gridTileLocation))|| 
             (poi.mapObjectVisual.visionTrigger as POIVisionTrigger).IgnoresStructureDifference()) {
             //if it is, just follow the normal procedure when a poi becomes in range
