@@ -741,15 +741,20 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     public void RaiseFromDeath(Action<Character> onReturnToLifeAction = null, Faction faction = null, RACE race = RACE.SKELETON, string className = "") {
-        if (faction == null) {
-            GameManager.Instance.StartCoroutine(Raise(this, onReturnToLifeAction, FactionManager.Instance.neutralFaction, race, className));
-        } else {
-            GameManager.Instance.StartCoroutine(Raise(this, onReturnToLifeAction, faction, race, className));
-        }
+        GameManager.Instance.StartCoroutine(faction == null
+            ? Raise(this, onReturnToLifeAction, FactionManager.Instance.neutralFaction, race, className)
+            : Raise(this, onReturnToLifeAction, faction, race, className));
     }
     private IEnumerator Raise(Character target, Action<Character> onReturnToLifeAction, Faction faction, RACE race, string className) {
-        target.marker.PlayAnimation("Raise Dead");
-        yield return new WaitForSeconds(0.7f);
+        if (className == "Zombie") {
+            LocationGridTile tile = grave != null ? grave.gridTileLocation : target.gridTileLocation;
+            GameManager.Instance.CreateParticleEffectAt(tile, PARTICLE_EFFECT.Zombie_Transformation);
+            yield return new WaitForSeconds(5f);
+            target.marker.PlayAnimation("Raise Dead");
+        } else {
+            target.marker.PlayAnimation("Raise Dead");
+            yield return new WaitForSeconds(0.7f);    
+        }
         target.ReturnToLife(faction, race, className);
         target.UpdateMaxHPAndReset();
         yield return null;
@@ -777,9 +782,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             ownParty.ReturnToLife();
             marker.OnReturnToLife();
             if (grave != null) {
-                marker.PlaceMarkerAt(grave.gridTileLocation);
+                Tombstone tombstone = grave;
                 grave.gridTileLocation.structure.RemovePOI(grave);
                 SetGrave(null);
+                marker.PlaceMarkerAt(tombstone.previousTile);
             }
             traitContainer.RemoveTrait(this, "Dead");
             for (int i = 0; i < traitContainer.traits.Count; i++) {

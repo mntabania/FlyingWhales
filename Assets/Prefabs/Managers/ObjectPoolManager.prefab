@@ -221,4 +221,5 @@ MonoBehaviour:
   - {fileID: 4594298860778284518, guid: 33b4253dd72b73d408ea10368c61bf4e, type: 3}
   - {fileID: 1778797288484614360, guid: ed1877e31927bc3439a13589579362d9, type: 3}
   - {fileID: 6963489648587181315, guid: 240d60c0a2170734cabd850cff39b94c, type: 3}
+  - {fileID: 6861156651601679793, guid: 097dd5e9aae45524ea4e5d4d721b3685, type: 3}
   UIObjectPoolParent: {fileID: 0}
