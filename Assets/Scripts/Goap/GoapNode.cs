@@ -262,7 +262,7 @@ public class ActualGoapNode : IReactable, IRumorable {
         if (!MoveToDoAction(job)) {
             if (targetTile != null) {
                 //If cannot move to do action because there is no path between two location grid tiles, handle it here
-                actor.NoPathToDoJob(job);
+                actor.NoPathToDoJobOrAction(job, this);
                 if (job.originalOwner != null && job.originalOwner.ownerType != JOB_OWNER.CHARACTER) {
                     job.AddBlacklistedCharacter(actor);
                 }

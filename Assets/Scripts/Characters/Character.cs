@@ -741,20 +741,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     public void RaiseFromDeath(Action<Character> onReturnToLifeAction = null, Faction faction = null, RACE race = RACE.SKELETON, string className = "") {
-        GameManager.Instance.StartCoroutine(faction == null
-            ? Raise(this, onReturnToLifeAction, FactionManager.Instance.neutralFaction, race, className)
-            : Raise(this, onReturnToLifeAction, faction, race, className));
+        if (faction == null) {
+            GameManager.Instance.StartCoroutine(Raise(this, onReturnToLifeAction, FactionManager.Instance.neutralFaction, race, className));
+        } else {
+            GameManager.Instance.StartCoroutine(Raise(this, onReturnToLifeAction, faction, race, className));
+        }
     }
     private IEnumerator Raise(Character target, Action<Character> onReturnToLifeAction, Faction faction, RACE race, string className) {
-        if (className == "Zombie") {
-            LocationGridTile tile = grave != null ? grave.gridTileLocation : target.gridTileLocation;
-            GameManager.Instance.CreateParticleEffectAt(tile, PARTICLE_EFFECT.Zombie_Transformation);
-            yield return new WaitForSeconds(5f);
-            target.marker.PlayAnimation("Raise Dead");
-        } else {
-            target.marker.PlayAnimation("Raise Dead");
-            yield return new WaitForSeconds(0.7f);    
-        }
+        target.marker.PlayAnimation("Raise Dead");
+        yield return new WaitForSeconds(0.7f);
         target.ReturnToLife(faction, race, className);
         target.UpdateMaxHPAndReset();
         yield return null;
@@ -782,10 +777,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             ownParty.ReturnToLife();
             marker.OnReturnToLife();
             if (grave != null) {
-                Tombstone tombstone = grave;
+                marker.PlaceMarkerAt(grave.gridTileLocation);
                 grave.gridTileLocation.structure.RemovePOI(grave);
                 SetGrave(null);
-                marker.PlaceMarkerAt(tombstone.previousTile);
             }
             traitContainer.RemoveTrait(this, "Dead");
             for (int i = 0; i < traitContainer.traits.Count; i++) {
@@ -1505,12 +1499,16 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //    job.SetCancelJobOnDropPlan(false);
     //    jobQueue.AddJobInQueue(job);
     //}
-    public void NoPathToDoJob(JobQueueItem job) {
-        if (job.jobType == JOB_TYPE.ROAM_AROUND_TERRITORY 
-            || job.jobType == JOB_TYPE.RETURN_PORTAL 
-            || job.jobType == JOB_TYPE.RETURN_TERRITORY
+    public void NoPathToDoJobOrAction(JobQueueItem job, ActualGoapNode action) {
+        if(job.jobType == JOB_TYPE.RETURN_PORTAL || job.jobType == JOB_TYPE.RETURN_TERRITORY) {
+            interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
+            jobComponent.TriggerRoamAroundTile();
+        } else if (job.jobType == JOB_TYPE.ROAM_AROUND_TERRITORY 
             || job.jobType == JOB_TYPE.ROAM_AROUND_CORRUPTION
             || job.jobType == JOB_TYPE.ROAM_AROUND_PORTAL) {
+            jobComponent.TriggerRoamAroundTile();
+        } else if (action.goapType == INTERACTION_TYPE.RETURN_HOME) {
+            interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
             jobComponent.TriggerRoamAroundTile();
         } else {
             jobComponent.TriggerStand();
@@ -3438,23 +3436,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //characters that cannot witness, cannot plan actions.
         //minion == null &&
         return !isDead && isStoppedByOtherCharacter <= 0 && canPerform
-            && currentActionNode == null && planner.status == GOAP_PLANNING_STATUS.NONE 
-            && (jobQueue.jobsInQueue.Count <= 0 || behaviourComponent.GetHighestBehaviourPriority() > jobQueue.jobsInQueue[0].priority)
+            && currentActionNode == null && planner.status == GOAP_PLANNING_STATUS.NONE && jobQueue.jobsInQueue.Count <= 0
             && !marker.hasFleePath && stateComponent.currentState == null && IsInOwnParty() && !interruptComponent.isInterrupted;
     }
     public void EndTickPerformJobs() {
-        if (CanPerformEndTickJobs() && HasSameOrHigherPriorityJobThanBehaviour()) {
+        if (CanPerformEndTickJobs()) {
             if (jobQueue.jobsInQueue[0].ProcessJob() == false) {
                 PerformTopPriorityJob();
             }
         }
-    }
-    /// <summary>
-    /// Does this character have a job that is same or higher priority than it's highest priority behaviour?
-    /// </summary>
-    /// <returns>True or false</returns>
-    public bool HasSameOrHigherPriorityJobThanBehaviour() {
-        return jobQueue.jobsInQueue[0].priority >= behaviourComponent.GetHighestBehaviourPriority();
     }
     public bool CanPerformEndTickJobs() {
         bool canPerformEndTickJobs = !isDead && isStoppedByOtherCharacter <= 0 /*&& canWitness*/
