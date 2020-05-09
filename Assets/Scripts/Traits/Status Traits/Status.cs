@@ -11,6 +11,7 @@ namespace Traits {
         public bool isStacking;
         public int stackLimit;
         public float stackModifier;
+        public bool isTangible;
 
         #region Virtuals
         public virtual void OnStackStatus(ITraitable addedTo) {
@@ -30,7 +31,7 @@ namespace Traits {
                 character.moodComponent.RemoveMoodEffect(-Mathf.RoundToInt(moodEffect * stackModifier), this);
             }
         }
-        public virtual bool IsTangible() { return false; } //is this trait tangible? Only used for traits on tiles, so that the tile's tile object will be activated when it has a tangible trait
+        //public virtual bool IsTangible() { return false; } //is this trait tangible? Only used for traits on tiles, so that the tile's tile object will be activated when it has a tangible trait
         #endregion
 
         #region Overrides

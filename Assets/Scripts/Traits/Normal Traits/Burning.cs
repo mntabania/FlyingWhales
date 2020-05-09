@@ -20,6 +20,7 @@ namespace Traits {
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(1);
+            isTangible = true;
             moodEffect = -25;
             _burningSpreadChoices = new List<ITraitable>();
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EXTRACT_ITEM };
@@ -98,9 +99,6 @@ namespace Traits {
             pyrophobic?.AddKnownBurningSource(sourceOfBurning, traitOwner);
             
             return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
-        }
-        public override bool IsTangible() {
-            return true;
         }
         public override string GetTestingData(ITraitable traitable = null) {
             return sourceOfBurning != null ? $"Douser: {douser?.name ?? "None"}. {sourceOfBurning}" : base.GetTestingData(traitable);

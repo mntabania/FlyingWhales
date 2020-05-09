@@ -327,12 +327,12 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         return false;
     }
     public virtual void OnTileObjectGainedTrait(Trait trait) {
-        if (trait is Status status && status.IsTangible() && mapObjectVisual != null) {
+        if (trait is Status status && status.isTangible && mapObjectVisual != null) {
             mapObjectVisual.visionTrigger.VoteToMakeVisibleToCharacters();
         }
     }
     public virtual void OnTileObjectLostTrait(Trait trait) {
-        if (trait is Status status && status.IsTangible() && mapObjectVisual != null) {
+        if (trait is Status status && status.isTangible && mapObjectVisual != null) {
             mapObjectVisual.visionTrigger.VoteToMakeInvisibleToCharacters();
         }
     }

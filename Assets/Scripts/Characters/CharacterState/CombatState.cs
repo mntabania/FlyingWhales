@@ -43,8 +43,9 @@ public class CombatState : CharacterState {
     #region Overrides
     protected override void DoMovementBehavior() {
         base.DoMovementBehavior();
-        stateComponent.character.combatComponent.SetWillProcessCombat(true);
-        //StartCombatMovement();
+        //stateComponent.character.combatComponent.SetWillProcessCombat(true);
+        stateComponent.character.combatComponent.SetWillProcessCombat(false);
+        StartCombatMovement();
     }
     public override void PerTickInState() {
         if (_hasTimerStarted) {
@@ -242,9 +243,7 @@ public class CombatState : CharacterState {
                 } else {
                     summary += "\n-Has no hostile or avoid in list";
                     summary += "\n-Exiting combat state";
-                    if (character.combatComponent.avoidInRange.Count > 0) {
-                        character.combatComponent.ClearAvoidInRange(false);
-                    }
+                    character.combatComponent.ClearAvoidInRange(false);
                     endedInternally = true;
                     character.stateComponent.ExitCurrentState();
                 }

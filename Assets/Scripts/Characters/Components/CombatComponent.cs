@@ -145,7 +145,6 @@ public class CombatComponent {
     }
     public bool Fight(IPointOfInterest target, string reason, ActualGoapNode connectedAction = null, bool isLethal = true) {
         bool hasFought = false;
-        avoidInRange.Remove(target);
         if (!hostilesInRange.Contains(target)) {
             string debugLog = $"Triggered FIGHT response for {owner.name} against {target.nameWithID}";
             hostilesInRange.Add(target);
@@ -376,6 +375,7 @@ public class CombatComponent {
         if (avoidInRange.Remove(poi)) {
             if (processCombatBehavior) {
                 SetWillProcessCombat(true);
+                owner.logComponent.PrintLogIfActive($"{poi.name} was removed from {owner.name}'s avoid range!");
                 //if (owner.isInCombat) {
                 //    Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, owner);
                 //}
@@ -399,6 +399,7 @@ public class CombatComponent {
     public void ClearAvoidInRange(bool processCombatBehavior = true) {
         if (avoidInRange.Count > 0) {
             avoidInRange.Clear();
+            owner.logComponent.PrintLogIfActive($"{owner.name} cleared avoid range!");
             if (processCombatBehavior) {
                 SetWillProcessCombat(true);
                 //if (owner.isInCombat) {

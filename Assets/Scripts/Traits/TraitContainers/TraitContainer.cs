@@ -724,7 +724,7 @@ namespace Traits {
         public bool HasTangibleTrait() {
             for (int i = 0; i < statuses.Count; i++) {
                 Status currTrait = statuses[i];
-                if (currTrait.IsTangible()) {
+                if (currTrait.isTangible) {
                     return true;
                 }
             }

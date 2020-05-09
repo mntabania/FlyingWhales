@@ -1092,7 +1092,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             Messenger.Broadcast(Signals.CHARACTER_SAW, character, poi);
         }
     }
-    public void RemovePOIFromInVisionRange(IPointOfInterest poi) {
+    public bool RemovePOIFromInVisionRange(IPointOfInterest poi) {
         if (inVisionPOIs.Remove(poi)) {
             RemoveUnprocessedPOI(poi);
             character.combatComponent.RemoveAvoidInRangeSchedule(poi);
@@ -1103,7 +1103,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
             } else if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
                 inVisionTileObjects.Remove(poi as TileObject);
             }
+            return true;
         }
+        return false;
     }
     public void ClearPOIsInVisionRange() {
         inVisionPOIs.Clear();
@@ -1603,9 +1605,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     #region Seize
     public void OnSeize() {
         Character _character = character;
-        Color color = mainImg.color;
         Reset();
-        SetMarkerColor(color);
         character = _character;
         buttonCollider.enabled = false;
     }

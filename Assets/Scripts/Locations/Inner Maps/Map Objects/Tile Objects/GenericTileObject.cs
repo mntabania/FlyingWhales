@@ -42,7 +42,7 @@ public class GenericTileObject : TileObject {
     }
     public override void OnTileObjectGainedTrait(Trait trait) {
         if (trait is Status status) {
-            if(status.IsTangible()) {
+            if(status.isTangible) {
                 //if status is wet, and this tile is not part of a settlement, then do not create a map visual, since
                 //characters do not react to wet tiles outside their settlement.
                 bool willCreateVisual = !(status is Wet && gridTileLocation.IsPartOfSettlement() == false);
