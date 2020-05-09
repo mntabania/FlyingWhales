@@ -5,7 +5,7 @@ using Inner_Maps.Location_Structures;
 
 public class DefaultWanderer : CharacterBehaviourComponent {
 	public DefaultWanderer() {
-		priority = 11;
+		priority = 25;
 		// attributes = new[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.WITHIN_HOME_SETTLEMENT_ONLY };
 	}
 	public override bool TryDoBehaviour(Character character, ref string log) {

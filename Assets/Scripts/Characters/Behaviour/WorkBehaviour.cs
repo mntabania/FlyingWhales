@@ -5,7 +5,7 @@ using UtilityScripts;
 
 public class WorkBehaviour : CharacterBehaviourComponent {
     public WorkBehaviour() {
-        priority = 40;
+        priority = 16;
         //attributes = new[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.WITHIN_HOME_SETTLEMENT_ONLY };
     }
     

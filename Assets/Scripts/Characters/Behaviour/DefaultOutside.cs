@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class DefaultOutside : CharacterBehaviourComponent {
     public DefaultOutside() {
-        priority = 60;
+        priority = 4;
         //attributes = new BEHAVIOUR_COMPONENT_ATTRIBUTE[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.WITHIN_HOME_SETTLEMENT_ONLY };
     }
     public override bool TryDoBehaviour(Character character, ref string log) {

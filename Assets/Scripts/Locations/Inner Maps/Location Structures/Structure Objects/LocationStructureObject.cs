@@ -379,7 +379,9 @@ public class LocationStructureObject : PooledObject {
                             InnerMapManager.Instance.CreateNewTileObject<BlockWall>(TILE_OBJECT_TYPE.BLOCK_WALL);
                         blockWall.SetWallType(_wallType);
                         structure.AddPOI(blockWall, tile);
-                        structure.AddObjectAsDamageContributor(blockWall);
+                        if (structure.structureType != STRUCTURE_TYPE.THE_PORTAL) {
+                            structure.AddObjectAsDamageContributor(blockWall);    
+                        }
                     }
                     else {
                         map.structureTilemap.SetTile(tile.localPlace, blockWallAsset);

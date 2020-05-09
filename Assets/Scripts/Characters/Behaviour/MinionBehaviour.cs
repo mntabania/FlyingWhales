@@ -5,7 +5,7 @@ using UnityEngine;
 public class MinionBehaviour : CharacterBehaviourComponent {
 
 	public MinionBehaviour() {
-		priority = 40;
+		priority = 8;
 	}
     
     public override bool TryDoBehaviour(Character character, ref string log) {

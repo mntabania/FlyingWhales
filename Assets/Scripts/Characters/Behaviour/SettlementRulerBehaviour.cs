@@ -6,7 +6,7 @@ using UtilityScripts;
 
 public class SettlementRulerBehaviour : CharacterBehaviourComponent {
     public SettlementRulerBehaviour() {
-        priority = 20;
+        priority = 22;
         attributes = new BEHAVIOUR_COMPONENT_ATTRIBUTE[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.WITHIN_HOME_SETTLEMENT_ONLY, BEHAVIOUR_COMPONENT_ATTRIBUTE.ONCE_PER_DAY };
     }
 

@@ -4,10 +4,11 @@ using UnityEngine;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using System.Linq;
+using UtilityScripts;
 
 public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
     public AttackDemonicStructureBehaviour() {
-        priority = 0;
+        priority = 1080;
     }
     public override bool TryDoBehaviour(Character character, ref string log) {
         log += $"\n-{character.name} will attack demonic structure";
@@ -15,7 +16,8 @@ public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
             character.marker.visionCollider.VoteToFilterVision();
             character.behaviourComponent.SetIsAttackingDemonicStructure(false, null);
         } else {
-            if (character.gridTileLocation.structure == character.behaviourComponent.attackDemonicStructureTarget) {
+            if (character.gridTileLocation.collectionOwner.isPartOfParentRegionMap 
+                && character.gridTileLocation.collectionOwner.partOfHextile == character.behaviourComponent.attackDemonicStructureTarget.occupiedHexTile) {
                 character.marker.visionCollider.VoteToUnFilterVision();
                 log += "\n-Already in the target demonic structure";
                 LocationStructure targetStructure = character.behaviourComponent.attackDemonicStructureTarget;
@@ -27,8 +29,9 @@ public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
                         IDamageable damageable = targetStructure.objectsThatContributeToDamage.ElementAt(i);
                         if (damageable is IPointOfInterest poi) {
                             if(poi is TileObject tileObject) {
-                                if (tileObject.isPreplaced && tileObject.gridTileLocation != null 
-                                    && PathfindingManager.Instance.HasPath(tileObject.gridTileLocation, character.gridTileLocation)) {
+                                if (tileObject.gridTileLocation != null 
+                                    && (tileObject.tileObjectType == TILE_OBJECT_TYPE.BLOCK_WALL ||
+                                        PathfindingManager.Instance.HasPath(tileObject.gridTileLocation, character.gridTileLocation))) {
                                     chosenTileObject = tileObject;
                                     break;
                                 }
@@ -50,7 +53,9 @@ public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
             } else {
                 log += "\n-Is not in the target demonic structure";
                 log += "\n-Roam there";
-                LocationGridTile targetTile = character.behaviourComponent.attackDemonicStructureTarget.tiles[UnityEngine.Random.Range(0, character.behaviourComponent.attackDemonicStructureTarget.tiles.Count)];
+                List<LocationGridTile> tileChoices = character.behaviourComponent.attackDemonicStructureTarget.tiles
+                    .Where(x => PathfindingManager.Instance.HasPathEvenDiffRegion(character.gridTileLocation, x)).ToList();
+                LocationGridTile targetTile = CollectionUtilities.GetRandomElement(tileChoices);
                 character.jobComponent.TriggerAttackDemonicStructure(targetTile);
             }
         }

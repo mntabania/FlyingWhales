@@ -3438,15 +3438,23 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //characters that cannot witness, cannot plan actions.
         //minion == null &&
         return !isDead && isStoppedByOtherCharacter <= 0 && canPerform
-            && currentActionNode == null && planner.status == GOAP_PLANNING_STATUS.NONE && jobQueue.jobsInQueue.Count <= 0
+            && currentActionNode == null && planner.status == GOAP_PLANNING_STATUS.NONE 
+            && (jobQueue.jobsInQueue.Count <= 0 || behaviourComponent.GetHighestBehaviourPriority() > jobQueue.jobsInQueue[0].priority)
             && !marker.hasFleePath && stateComponent.currentState == null && IsInOwnParty() && !interruptComponent.isInterrupted;
     }
     public void EndTickPerformJobs() {
-        if (CanPerformEndTickJobs()) {
+        if (CanPerformEndTickJobs() && HasSameOrHigherPriorityJobThanBehaviour()) {
             if (jobQueue.jobsInQueue[0].ProcessJob() == false) {
                 PerformTopPriorityJob();
             }
         }
+    }
+    /// <summary>
+    /// Does this character have a job that is same or higher priority than it's highest priority behaviour?
+    /// </summary>
+    /// <returns>True or false</returns>
+    public bool HasSameOrHigherPriorityJobThanBehaviour() {
+        return jobQueue.jobsInQueue[0].priority >= behaviourComponent.GetHighestBehaviourPriority();
     }
     public bool CanPerformEndTickJobs() {
         bool canPerformEndTickJobs = !isDead && isStoppedByOtherCharacter <= 0 /*&& canWitness*/

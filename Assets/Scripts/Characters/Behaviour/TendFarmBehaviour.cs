@@ -5,7 +5,7 @@ using UtilityScripts;
 public class TendFarmBehaviour : CharacterBehaviourComponent {
     
     public TendFarmBehaviour() {
-        priority = 0;
+        priority = 440;
         // attributes = new[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.WITHIN_HOME_SETTLEMENT_ONLY };
     }
     public override bool TryDoBehaviour(Character character, ref string log) {

@@ -68,6 +68,7 @@ public class BehaviourComponent {
     private bool RemoveBehaviourComponent(CharacterBehaviourComponent component) {
         bool wasRemoved = currentBehaviourComponents.Remove(component);
         if (wasRemoved) {
+            Debug.Log($"{owner.name} removed character behaviour {component}");
             Messenger.Broadcast(Signals.CHARACTER_REMOVED_BEHAVIOUR, owner, component);
         }
         return wasRemoved;
@@ -97,7 +98,7 @@ public class BehaviourComponent {
     private bool AddBehaviourComponentInOrder(CharacterBehaviourComponent component) {
         if (currentBehaviourComponents.Count > 0) {
             for (int i = 0; i < currentBehaviourComponents.Count; i++) {
-                if (component.priority <= currentBehaviourComponents[i].priority) {
+                if (component.priority > currentBehaviourComponents[i].priority) {
                     currentBehaviourComponents.Insert(i, component);
                     return true;
                 }
@@ -310,6 +311,15 @@ public class BehaviourComponent {
                 }
             }    
         }
+    }
+    #endregion
+
+    #region Priority
+    public int GetHighestBehaviourPriority() {
+        if (currentBehaviourComponents.Count > 0) {
+            return currentBehaviourComponents[0].priority;
+        }
+        return -1;
     }
     #endregion
 }
