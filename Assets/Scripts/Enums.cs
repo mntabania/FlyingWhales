@@ -65,6 +65,7 @@ public enum RACE{
     WISP = 29,
     SLUDGE = 30,
     GHOST = 31,
+    ANGEL = 32,
 }
 public enum HEXTILE_DIRECTION {
     NORTH_WEST,
@@ -1491,6 +1492,8 @@ public enum SUMMON_TYPE {
     Earthen_Wisp,
     Sludge,
     Ghost,
+    Warrior_Angel,
+    Magical_Angel,
 }
 public enum ARTIFACT_TYPE { None, Necronomicon, Ankh_Of_Anubis, Berserk_Orb, Heart_Of_The_Wind, Gorgon_Eye }
 public enum ABILITY_TAG { NONE, MAGIC, SUPPORT, DEBUFF, CRIME, PHYSICAL, }
@@ -2343,6 +2346,7 @@ public static class Extensions {
             case RACE.HUMANS:
             case RACE.ELVES:
             case RACE.LESSER_DEMON:
+            case RACE.ANGEL:
                 return false;
             default:
                 return true;

@@ -291,6 +291,9 @@ namespace Locations.Settlements {
             }
             return UtilityScripts.CollectionUtilities.GetRandomElement(choices);
         }
+        public HexTile GetRandomHexTile() {
+            return tiles[UnityEngine.Random.Range(0, tiles.Count)];
+        }
         #endregion
     }
 }

@@ -368,6 +368,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         }
         return string.Empty;
     }
+    public LocationGridTile GetRandomTile() {
+        return locationGridTiles[UnityEngine.Random.Range(0, locationGridTiles.Count)];
+    }
     #endregion
 
     #region Pathfinding

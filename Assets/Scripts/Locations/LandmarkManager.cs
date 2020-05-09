@@ -313,6 +313,20 @@ public partial class LandmarkManager : MonoBehaviour {
         allSettlements.Add(newPlayerSettlement);
         return newPlayerSettlement;
     }
+    public NPCSettlement GetRandomVillageSettlement() {
+        List<NPCSettlement> villages = null;
+        for (int i = 0; i < allNonPlayerSettlements.Count; i++) {
+            NPCSettlement settlement = allNonPlayerSettlements[i];
+            if(settlement.locationType == LOCATION_TYPE.ELVEN_SETTLEMENT || settlement.locationType == LOCATION_TYPE.HUMAN_SETTLEMENT) {
+                if(villages == null) { villages = new List<NPCSettlement>(); }
+                villages.Add(settlement);
+            }
+        }
+        if(villages != null && villages.Count > 0) {
+            return villages[UnityEngine.Random.Range(0, villages.Count)];
+        }
+        return null;
+    }
     public void RemoveArea(NPCSettlement npcSettlement) {
         allSettlements.Remove(npcSettlement);
     }

@@ -915,6 +915,52 @@ MonoBehaviour:
       characterClassAssets:
         m_keys: []
         m_values: []
+  - raceName: ANGEL
+    race: 32
+    neutralAssets:
+      characterClassAssets:
+        m_keys: []
+        m_values: []
+    maleAssets:
+      characterClassAssets:
+        m_keys:
+        - Magical Angel
+        - Warrior Angel
+        m_values:
+        - defaultSprite: {fileID: 21300000, guid: b58910e08ee05da49b680c531776495b,
+            type: 3}
+          animationSprites:
+          - {fileID: 21300000, guid: e93e3ab4008ba5d458384bf91c3b643f, type: 3}
+          - {fileID: 21300000, guid: b58910e08ee05da49b680c531776495b, type: 3}
+          - {fileID: 21300000, guid: 9b538f98413888a4888f66d32ee86d57, type: 3}
+          - {fileID: 21300000, guid: 0b71f35e9687644418587c26f99f7cd7, type: 3}
+        - defaultSprite: {fileID: 21300000, guid: 5a8342a70ea51bd45924b3c74cb4d151,
+            type: 3}
+          animationSprites:
+          - {fileID: 21300000, guid: b34c86f3026a06e419484c77557f36e9, type: 3}
+          - {fileID: 21300000, guid: 5a8342a70ea51bd45924b3c74cb4d151, type: 3}
+          - {fileID: 21300000, guid: 0ac49d59e13d0264da710037e93db174, type: 3}
+          - {fileID: 21300000, guid: f20d3ff4f6ac247419646b998b65e52b, type: 3}
+    femaleAssets:
+      characterClassAssets:
+        m_keys:
+        - Magical Angel
+        - Warrior Angel
+        m_values:
+        - defaultSprite: {fileID: 21300000, guid: 6d1aa4c2ff0b3644793186c7c236a032,
+            type: 3}
+          animationSprites:
+          - {fileID: 21300000, guid: f08266425a0cb8d498561893e0036e65, type: 3}
+          - {fileID: 21300000, guid: 6d1aa4c2ff0b3644793186c7c236a032, type: 3}
+          - {fileID: 21300000, guid: f8954202eaa743340b28c3deee996523, type: 3}
+          - {fileID: 21300000, guid: d21b9b75929782c4ea0ef4e9a80baf08, type: 3}
+        - defaultSprite: {fileID: 21300000, guid: 761f029ba815b9640ab2b6cf994dc4ce,
+            type: 3}
+          animationSprites:
+          - {fileID: 21300000, guid: 72282f8627d997c469e269cbbdb72fbe, type: 3}
+          - {fileID: 21300000, guid: 761f029ba815b9640ab2b6cf994dc4ce, type: 3}
+          - {fileID: 21300000, guid: d6e6ce7a7004ceb4b98ee842a07b9129, type: 3}
+          - {fileID: 21300000, guid: 3ceb8e019ce930f4e9a34a6cbb8b983f, type: 3}
   - raceName: CHICKEN
     race: 26
     neutralAssets:

@@ -450,7 +450,8 @@ public class CombatState : CharacterState {
             //stateComponent.character.PrintLogIfActive(log);
         } else {
             //Character closestHostile = stateComponent.character.marker.GetNearestValidAvoid();
-            if (stateComponent.character.combatComponent.avoidInRange.Count <= 0) {
+            List<IPointOfInterest> avoidInRange = stateComponent.character.combatComponent.avoidInRange;
+            if (avoidInRange.Count <= 0) {
                 log += "\nNo more avoid characters, exiting combat state...";
                 stateComponent.character.logComponent.PrintLogIfActive(log);
                 endedInternally = true;
@@ -469,14 +470,15 @@ public class CombatState : CharacterState {
             }
             log += $"\n{stateComponent.character.name} is fleeing!";
             stateComponent.character.logComponent.PrintLogIfActive(log);
+
+            IPointOfInterest objToAvoid = avoidInRange[avoidInRange.Count - 1];
+
             if (isFleeToHome) {
                 stateComponent.character.marker.OnStartFleeToHome();
             } else {
                 stateComponent.character.marker.OnStartFlee();
             }
 
-
-            IPointOfInterest objToAvoid = stateComponent.character.combatComponent.avoidInRange[stateComponent.character.combatComponent.avoidInRange.Count - 1];
             string avoidReason = "got scared";
             CombatData combatData = stateComponent.character.combatComponent.GetCombatData(objToAvoid);
             if(combatData != null && combatData.avoidReason != string.Empty) {

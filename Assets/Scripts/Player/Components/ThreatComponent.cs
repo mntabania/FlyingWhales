@@ -56,7 +56,7 @@ public class ThreatComponent {
     }
 
     private void AssaultDemonicStructure(out List<Character> attackingCharacters) {
-        string debugLog = string.Empty;
+        string debugLog = GameManager.Instance.TodayLogString() + "Assault Demonic Structure";
         LocationStructure targetDemonicStructure = null;
         if (InnerMapManager.Instance.HasExistingWorldKnownDemonicStructure()) {
             targetDemonicStructure = InnerMapManager.Instance.worldKnownDemonicStructures[UnityEngine.Random.Range(0, InnerMapManager.Instance.worldKnownDemonicStructures.Count)];
@@ -69,24 +69,55 @@ public class ThreatComponent {
             attackingCharacters = null;
             return;
         }
-        debugLog += "TARGET: " + targetDemonicStructure.name;
-        List<Character> characters = new List<Character>();
+        debugLog += "\n-TARGET: " + targetDemonicStructure.name;
+        List<Character> characters = null;
         int count = 0;
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
             Character character = CharacterManager.Instance.allCharacters[i];
-            if(character.canPerform && character.canMove && character.canWitness && character.faction.isMajorNonPlayerFriendlyNeutral
+            if (character.canPerform && character.canMove && character.canWitness && character.faction.isMajorNonPlayerFriendlyNeutral
                 && (character.race == RACE.HUMANS || character.race == RACE.ELVES) && !character.isInCombat
                 && !(character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.DOUSE_FIRE)
                 && character.traitContainer.HasTrait("Combatant")) {
                 count++;
-                debugLog += "RETALIATOR: " + character.name;
+                debugLog += "\n-RETALIATOR: " + character.name;
+                if (characters == null) { characters = new List<Character>(); }
                 characters.Add(character);
-                character.behaviourComponent.SetIsAttackingDemonicStructure(true, targetDemonicStructure as DemonicStructure);
-                if(count >= 5) {
+                //character.behaviourComponent.SetIsAttackingDemonicStructure(true, targetDemonicStructure as DemonicStructure);
+                if (count >= 5) {
                     break;
                 }
             }
         }
+        if (characters == null || characters.Count < 3) {
+            //Create Angels
+            Region region = null;
+            CharacterManager.Instance.SetCurrentDemonicStructureTargetOfAngels(targetDemonicStructure as DemonicStructure);
+            //NPCSettlement spawnSettlement = LandmarkManager.Instance.GetRandomVillageSettlement();
+            //region = spawnSettlement.region;
+            region = targetDemonicStructure.location;
+            HexTile spawnHex = null;
+            spawnHex = targetDemonicStructure.location.GetRandomPlainHex();
+            //if (spawnSettlement != null) {
+            //    spawnHex = spawnSettlement.GetRandomHexTile();
+            //} else {
+            //    spawnHex = targetDemonicStructure.location.GetRandomPlainHex();
+            //}
+
+            int angelCount = UnityEngine.Random.Range(3, 6);
+            for (int i = 0; i < angelCount; i++) {
+                SUMMON_TYPE angelType = SUMMON_TYPE.Warrior_Angel;
+                if(UnityEngine.Random.Range(0, 2) == 0) { angelType = SUMMON_TYPE.Magical_Angel; }
+                LocationGridTile spawnTile = spawnHex.GetRandomTile();
+                Summon angel = CharacterManager.Instance.CreateNewSummon(angelType, FactionManager.Instance.friendlyNeutralFaction, homeRegion: region);
+                CharacterManager.Instance.PlaceSummon(angel, spawnTile);
+                angel.behaviourComponent.SetIsAttackingDemonicStructure(true, CharacterManager.Instance.currentDemonicStructureTargetOfAngels);
+            }
+        } else {
+            for (int i = 0; i < characters.Count; i++) {
+                characters[i].behaviourComponent.SetIsAttackingDemonicStructure(true, targetDemonicStructure as DemonicStructure);
+            }
+        }
+
         // if (characters.Count > 0) {
             // Character chosenCharacter = CollectionUtilities.GetRandomElement(characters);
             // UIManager.Instance.ShowYesNoConfirmation("Threat Response", 
@@ -95,7 +126,7 @@ public class ThreatComponent {
             //     showCover:true, pauseAndResume: true);    
         // }
         attackingCharacters = characters;
-        if (attackingCharacters.Count > 0) {
+        if (attackingCharacters != null && attackingCharacters.Count > 0) {
             Messenger.Broadcast(Signals.CHARACTERS_ATTACKING_DEMONIC_STRUCTURE, attackingCharacters, targetDemonicStructure as DemonicStructure);    
         }
         // PlayerUI.Instance.ShowGeneralConfirmation("Threat Response", "Your threat level has reached maximum. The people will now retaliate!");

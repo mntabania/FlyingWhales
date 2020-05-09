@@ -61,6 +61,7 @@ public class CharacterManager : MonoBehaviour {
     public int CHARACTER_MISSING_THRESHOLD { get; private set; }
     public COMBAT_MODE[] combatModes { get; private set; }
     public List<string> rumorWorthyActions { get; private set; }
+    public DemonicStructure currentDemonicStructureTargetOfAngels { get; private set; }
 
     private Dictionary<System.Type, CharacterBehaviourComponent> behaviourComponents;
     private Dictionary<string, System.Type[]> defaultBehaviourSets = new Dictionary<string, Type[]>() {
@@ -516,6 +517,22 @@ public class CharacterManager : MonoBehaviour {
         summon.CreateMarker();
         summon.marker.InitialPlaceMarkerAt(locationTile);
         summon.OnPlaceSummon(locationTile);
+    }
+    public void SetCurrentDemonicStructureTargetOfAngels(DemonicStructure demonicStructure) {
+        currentDemonicStructureTargetOfAngels = demonicStructure;
+    }
+    public void SetNewCurrentDemonicStructureTargetOfAngels() {
+        LocationStructure targetDemonicStructure = null;
+        if (InnerMapManager.Instance.HasExistingWorldKnownDemonicStructure()) {
+            targetDemonicStructure = InnerMapManager.Instance.worldKnownDemonicStructures[UnityEngine.Random.Range(0, InnerMapManager.Instance.worldKnownDemonicStructures.Count)];
+        } else {
+            targetDemonicStructure = PlayerManager.Instance.player.playerSettlement.GetRandomStructure();
+        }
+        if(targetDemonicStructure != null) {
+            SetCurrentDemonicStructureTargetOfAngels(targetDemonicStructure as DemonicStructure);
+        } else {
+            SetCurrentDemonicStructureTargetOfAngels(null);
+        }
     }
     #endregion
 

@@ -12,6 +12,24 @@ public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
     public override bool TryDoBehaviour(Character character, ref string log) {
         log += $"\n-{character.name} will attack demonic structure";
         if (character.behaviourComponent.attackDemonicStructureTarget.hasBeenDestroyed) {
+            log += $"\n-Demonic structure target is already destroyed";
+            if (character is Summon summon) {
+                if(summon.summonType == SUMMON_TYPE.Magical_Angel || summon.summonType == SUMMON_TYPE.Warrior_Angel) {
+                    log += $"\n-Character is angel, will check if there is more demonic structure to be attacked";
+                    if(CharacterManager.Instance.currentDemonicStructureTargetOfAngels == null) {
+                        log += $"\n-No current structure target of angels, will try to set one";
+                        CharacterManager.Instance.SetNewCurrentDemonicStructureTargetOfAngels();
+                    }
+                    if (CharacterManager.Instance.currentDemonicStructureTargetOfAngels != null) {
+                        log += $"\n-New target demonic structure is set: " + CharacterManager.Instance.currentDemonicStructureTargetOfAngels.structureType.ToString();
+                        character.behaviourComponent.SetDemonicStructureTarget(CharacterManager.Instance.currentDemonicStructureTargetOfAngels);
+                        return true;
+                    } else {
+                        log += $"\n-Still no target structure";
+                    }
+                }
+            }
+            log += $"\n-No more demonic structure to be attacked, will remove this behaviour";
             character.marker.visionCollider.VoteToFilterVision();
             character.behaviourComponent.SetIsAttackingDemonicStructure(false, null);
         } else {

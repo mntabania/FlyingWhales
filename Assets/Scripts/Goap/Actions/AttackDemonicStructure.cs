@@ -10,7 +10,7 @@ public class AttackDemonicStructure : GoapAction {
 		actionIconString = GoapActionStateDB.Hostile_Icon;
 		doesNotStopTargetCharacter = true;
 		advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-		racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, };
+		racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.ANGEL };
 	}
 
 	#region Overrides

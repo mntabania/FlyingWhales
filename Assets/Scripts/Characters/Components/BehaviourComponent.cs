@@ -260,7 +260,7 @@ public class BehaviourComponent {
     public void SetIsAttackingDemonicStructure(bool state, DemonicStructure target) {
         if (isAttackingDemonicStructure != state) {
             isAttackingDemonicStructure = state;
-            attackDemonicStructureTarget = target;
+            SetDemonicStructureTarget(target);
             owner.CancelAllJobs();
             if (isAttackingDemonicStructure) {
                 combatModeBeforeAttackingDemonicStructure = owner.combatComponent.combatMode;
@@ -275,6 +275,9 @@ public class BehaviourComponent {
                 StopCheckingIfShouldStopAttackingDemonicStructure();
             }
         }
+    }
+    public void SetDemonicStructureTarget(DemonicStructure target) {
+        attackDemonicStructureTarget = target;
     }
     private void StartCheckingIfShouldStopAttackingDemonicStructure() {
         Messenger.AddListener<Character, ActualGoapNode>(Signals.CHARACTER_DOING_ACTION, OnActionStartedWhileAttackingDemonicStructure);
@@ -300,15 +303,15 @@ public class BehaviourComponent {
     }
     private void OnJobRemovedFromCharacter(JobQueueItem job, Character character) {
         if (character == owner) {
-            if (job is GoapPlanJob goapJob) {
-                if (job.jobType == JOB_TYPE.ASSAULT_DEMONIC_STRUCTURE && goapJob.finishedSuccessfully == false) {
-                    SetIsAttackingDemonicStructure(false, null);
-                }    
-            } else if (job is CharacterStateJob stateJob) {
-                if (stateJob.assignedState is CombatState combatState && combatState.endedInternally == false) {
-                    SetIsAttackingDemonicStructure(false, null);
-                }
-            }    
+            //if (job is GoapPlanJob goapJob) {
+            //    if (job.jobType == JOB_TYPE.ASSAULT_DEMONIC_STRUCTURE && goapJob.finishedSuccessfully == false) {
+            //        SetIsAttackingDemonicStructure(false, null);
+            //    }    
+            //} else if (job is CharacterStateJob stateJob) {
+            //    if (stateJob.assignedState is CombatState combatState && combatState.endedInternally == false) {
+            //        SetIsAttackingDemonicStructure(false, null);
+            //    }
+            //}    
         }
     }
     #endregion

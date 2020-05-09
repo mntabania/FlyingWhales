@@ -18,8 +18,12 @@ namespace Inner_Maps.Location_Structures {
             base.ConstructDefaultActions();
             AddPlayerAction(SPELL_TYPE.DEFEND);
         }
+        protected override void DestroyStructure() {
+            base.DestroyStructure();
+            CharacterManager.Instance.SetNewCurrentDemonicStructureTargetOfAngels();
+        }
         #endregion
-        
+
         #region Listeners
         protected override void SubscribeListeners() {
             Messenger.AddListener<IPointOfInterest, int>(Signals.OBJECT_DAMAGED, OnObjectDamaged);
