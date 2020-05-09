@@ -4,9 +4,8 @@ using UnityEngine;
 
 public class KnockoutData : PlayerAction {
     public override SPELL_TYPE type => SPELL_TYPE.KNOCKOUT;
-    public override string name { get { return "Knockout"; } }
-    public override string description { get { return "This Action can be used to summon Demons or Minions to Knockout a Resident."; } }
-
+    public override string name => "Knockout";
+    public override string description => "This Action can be used to summon Demons or Minions to Knockout a Resident.";
     public KnockoutData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
     }

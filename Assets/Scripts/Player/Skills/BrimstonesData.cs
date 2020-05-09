@@ -7,7 +7,7 @@ public class BrimstonesData : SpellData {
     public override SPELL_TYPE type => SPELL_TYPE.BRIMSTONES;
     public override string name => "Brimstones";
     public override string description => "This Spell will make dozens of burning rocks come crashing down from space onto a target area, dealing Fire damage to anything they hit.";
-    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.SPELL; } }
+    public override SPELL_CATEGORY category => SPELL_CATEGORY.SPELL;
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
     public virtual int abilityRadius => 1;
 

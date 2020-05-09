@@ -1306,6 +1306,7 @@ public class Player : ILeader, IObjectManipulator {
         mana += amount;
         mana = Mathf.Clamp(mana, 0, EditableValuesManager.Instance.maximumMana);
         Messenger.Broadcast(Signals.PLAYER_ADJUSTED_MANA);
+        Messenger.Broadcast(Signals.FORCE_RELOAD_PLAYER_ACTIONS);
     }
     public int GetManaCostForInterventionAbility(SPELL_TYPE ability) {
         int tier = PlayerManager.Instance.GetSpellTier(ability);

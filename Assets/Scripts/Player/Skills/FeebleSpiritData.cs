@@ -5,9 +5,9 @@ using Inner_Maps;
 
 public class FeebleSpiritData : SpellData {
     public override SPELL_TYPE type => SPELL_TYPE.FEEBLE_SPIRIT;
-    public override string name { get { return "Feeble Spirit"; } }
-    public override string description { get { return "This Spell summons a Feeble Spirit that will drain Energy from a nearby Resident."; } }
-    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.SPELL; } }
+    public override string name => "Feeble Spirit";
+    public override string description => "This Spell summons a Feeble Spirit that will drain Energy from a nearby Resident.";
+    public override SPELL_CATEGORY category => SPELL_CATEGORY.SPELL;
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
     public virtual int abilityRadius => 1;
 

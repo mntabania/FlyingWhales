@@ -5,7 +5,7 @@ using Traits;
 
 public class SerialKillerBehaviour : CharacterBehaviourComponent {
     public SerialKillerBehaviour() {
-        priority = 45;
+        priority = 12;
         //attributes = new BEHAVIOUR_COMPONENT_ATTRIBUTE[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.WITHIN_HOME_SETTLEMENT_ONLY };
     }
     public override bool TryDoBehaviour(Character character, ref string log) {

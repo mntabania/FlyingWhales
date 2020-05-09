@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class MovementProcessing : CharacterBehaviourComponent {
     public MovementProcessing() {
-        priority = 0;
+        priority = 8;
     }
 
     public override bool TryDoBehaviour(Character character, ref string log) {

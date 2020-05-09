@@ -6,9 +6,9 @@ using Traits;
 
 public class LightningData : SpellData {
     public override SPELL_TYPE type => SPELL_TYPE.LIGHTNING;
-    public override string name { get { return "Lightning"; } }
-    public override string description { get { return "This Spell triggers a lightning strike at the target spot. Deals major Electric damage."; } }
-    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.SPELL; } }
+    public override string name => "Lightning";
+    public override string description => "This Spell triggers a lightning strike at the target spot. Deals major Electric damage.";
+    public override SPELL_CATEGORY category => SPELL_CATEGORY.SPELL;
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
     public virtual int abilityRadius => 1;
 

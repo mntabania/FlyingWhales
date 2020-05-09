@@ -72,7 +72,7 @@ public class JobQueue {
         }
 
         job.OnAddJobToQueue();
-        job.originalOwner.OnJobAddedToCharacterJobQueue(job, owner);
+        job.originalOwner?.OnJobAddedToCharacterJobQueue(job, owner);
         //if(quest != null) {
         //    quest.OnAddJob(job);
         //}
@@ -145,17 +145,24 @@ public class JobQueue {
         return false;
     }
     private bool IsJobTopPriorityWhenAdded(JobQueueItem newJob) {
-        if (jobsInQueue.Count > 0) { //characterOwner.CanCurrentJobBeOverriddenByJob(job))
-            JobQueueItem topJob = jobsInQueue[0];
-            if (newJob.priority > topJob.priority) {
-                if (topJob.CanBeInterruptedBy(newJob.jobType)) {
-                    return true;
-                }
-            }
+        int highestBehaviourPriority = owner.behaviourComponent.GetHighestBehaviourPriority();
+        if (highestBehaviourPriority > newJob.priority) {
+            //if the highest priority behaviour is higher than the new job, then the new job should not be considered as top priority.
+            //NOTE: If the new job has the same priority as the highest priority behaviour, then the new job will be processed as normal.
             return false;
+        } else {
+            if (jobsInQueue.Count > 0) { //characterOwner.CanCurrentJobBeOverriddenByJob(job))
+                JobQueueItem topJob = jobsInQueue[0];
+                if (newJob.priority > topJob.priority) {
+                    if (topJob.CanBeInterruptedBy(newJob.jobType)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            //If there are no jobs in queue, the new job is automatically the top priority
+            return true;    
         }
-        //If there are no jobs in queue, the new job is automatically the top priority
-        return true;
     }
     public bool IsJobTopTypePriorityWhenAdded(JOB_TYPE jobType) {
         if (jobsInQueue.Count > 0) { //characterOwner.CanCurrentJobBeOverriddenByJob(job))
@@ -206,7 +213,7 @@ public class JobQueue {
         //        }
         //    }
         //}
-        if (jobsInQueue.Count > 0) {
+        if (jobsInQueue.Count > 0 && owner.HasSameOrHigherPriorityJobThanBehaviour()) {
             jobsInQueue[0].ProcessJob();
             return true;
         }

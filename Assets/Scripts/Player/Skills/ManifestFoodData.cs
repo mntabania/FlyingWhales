@@ -4,9 +4,9 @@ using UnityEngine;
 using Inner_Maps;
 public class ManifestFoodData : SpellData {
     public override SPELL_TYPE type => SPELL_TYPE.MANIFEST_FOOD;
-    public override string name { get { return "Manifest Food"; } }
-    public override string description { get { return "This Spell produces a pile of food out of thin air. Use it to lure characters."; } }
-    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.SPELL; } }
+    public override string name => "Manifest Food";
+    public override string description => "This Spell produces a pile of food out of thin air. Use it to lure characters.";
+    public override SPELL_CATEGORY category => SPELL_CATEGORY.SPELL;
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
     public virtual int abilityRadius => 1;
 

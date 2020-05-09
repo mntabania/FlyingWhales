@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class DefaultExtraCatcher : CharacterBehaviourComponent {
     public DefaultExtraCatcher() {
-        priority = 70;
+        priority = 0;
         //attributes = new BEHAVIOUR_COMPONENT_ATTRIBUTE[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.OUTSIDE_SETTLEMENT_ONLY };
     }
     public override bool TryDoBehaviour(Character character, ref string log) {

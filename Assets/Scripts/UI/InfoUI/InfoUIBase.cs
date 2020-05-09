@@ -22,6 +22,7 @@ public abstract class InfoUIBase : MonoBehaviour {
         Messenger.AddListener<InfoUIBase>(Signals.BEFORE_MENU_OPENED, BeforeMenuOpens);
         Messenger.AddListener<PlayerAction>(Signals.ON_EXECUTE_PLAYER_ACTION, OnExecutePlayerAction);
         Messenger.AddListener<IPlayerActionTarget>(Signals.RELOAD_PLAYER_ACTIONS, ReloadPlayerActions);
+        Messenger.AddListener(Signals.FORCE_RELOAD_PLAYER_ACTIONS, ForceReloadPlayerActions);
         Messenger.AddListener<SPELL_TYPE, IPlayerActionTarget>(Signals.PLAYER_ACTION_ADDED_TO_TARGET, OnPlayerActionAddedToTarget);
         Messenger.AddListener<SPELL_TYPE, IPlayerActionTarget>(Signals.PLAYER_ACTION_REMOVED_FROM_TARGET, OnPlayerActionRemovedFromTarget);
         Messenger.AddListener(Signals.HIDE_MENUS, OnReceiveHideMenuSignal);
@@ -130,6 +131,11 @@ public abstract class InfoUIBase : MonoBehaviour {
     private void ReloadPlayerActions(IPlayerActionTarget actionTarget) {
         if (_playerActionTarget == actionTarget && isShowing) {
             LoadActions(actionTarget);
+        }
+    }
+    private void ForceReloadPlayerActions() {
+        if (isShowing && _playerActionTarget != null) {
+            LoadActions(_playerActionTarget);
         }
     }
     protected ActionItem GetActiveActionItem(PlayerAction action) {

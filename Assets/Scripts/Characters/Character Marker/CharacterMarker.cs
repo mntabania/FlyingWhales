@@ -1559,15 +1559,19 @@ public class CharacterMarker : MapObjectVisual<Character> {
         Profiler.EndSample();
         
         Profiler.BeginSample($"{character.name} Raycast");
+        float distance = rayDistance;
+        if (target is BlockWall) {
+            distance += 1.5f;
+        }
         //do the ray test
-        var size = Physics2D.RaycastNonAlloc(start, direction, linOfSightHitObjects, rayDistance, 
+        var size = Physics2D.RaycastNonAlloc(start, direction, linOfSightHitObjects, distance, 
             GameUtilities.Line_Of_Sight_Layer_Mask);
         Profiler.EndSample();
         
         Profiler.BeginSample($"{character.name} Raycast result loop");
         for (int i = 0; i < size; i++) {
             RaycastHit2D hit = linOfSightHitObjects[i];
-            if(hit.collider.gameObject.layer == LayerMask.NameToLayer("Unpassable")) {
+            if((target is BlockWall) == false && hit.collider.gameObject.layer == LayerMask.NameToLayer("Unpassable")) {
                 return false;
             } else if (hit.transform.IsChildOf(target.mapObjectVisual.transform)) {
                 return true;

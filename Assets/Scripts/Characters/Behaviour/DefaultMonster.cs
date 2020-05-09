@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class DefaultMonster : CharacterBehaviourComponent {
 	public DefaultMonster() {
-		priority = 2;
+		priority = 8;
 		// attributes = new[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.WITHIN_HOME_SETTLEMENT_ONLY };
 	}
 	public override bool TryDoBehaviour(Character character, ref string log) {

@@ -317,6 +317,7 @@ public static class Signals {
     /// parameters (IPlayerActionTarget)
     /// </summary>
     public static string RELOAD_PLAYER_ACTIONS = "ReloadPlayerActions";
+    public static string FORCE_RELOAD_PLAYER_ACTIONS = "ForceReloadPlayerActions";
     /// <summary>
     /// parameters (PlayerAction, IPlayerActionTarget)
     /// </summary>

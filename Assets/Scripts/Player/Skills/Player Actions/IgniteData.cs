@@ -7,10 +7,9 @@ using Traits;
 
 public class IgniteData : PlayerAction {
     public override SPELL_TYPE type => SPELL_TYPE.IGNITE;
-    public override string name { get { return "Ignite"; } }
-    public override string description { get { return "This Action can be used to apply Burning to an object."; } }
-    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.PLAYER_ACTION; } }
-
+    public override string name => "Ignite";
+    public override string description => "This Action can be used to apply Burning to an object.";
+    public override SPELL_CATEGORY category => SPELL_CATEGORY.PLAYER_ACTION;
     public IgniteData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
     }

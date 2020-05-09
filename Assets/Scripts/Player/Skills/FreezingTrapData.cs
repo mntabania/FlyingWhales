@@ -5,9 +5,9 @@ using Inner_Maps;
 
 public class FreezingTrapData : SpellData {
     public override SPELL_TYPE type => SPELL_TYPE.FREEZING_TRAP;
-    public override string name { get { return "Freezing Trap"; } }
-    public override string description { get { return "This Spell places an invisible trap on a target unoccupied tile. Any character that walks into the tile will activate it and become Frozen."; } }
-    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.SPELL; } }
+    public override string name => "Freezing Trap";
+    public override string description => "This Spell places an invisible trap on a target unoccupied tile. Any character that walks into the tile will activate it and become Frozen.";
+    public override SPELL_CATEGORY category => SPELL_CATEGORY.SPELL;
     public virtual int abilityRadius => 1;
 
     public FreezingTrapData() : base() {

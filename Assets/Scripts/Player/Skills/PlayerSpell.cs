@@ -338,6 +338,7 @@ public class SpellData : IPlayerSkill {
         currentCooldownTick++;
         if(currentCooldownTick == cooldown) {
             Messenger.RemoveListener(Signals.TICK_STARTED, PerTickCooldown);
+            Messenger.Broadcast(Signals.FORCE_RELOAD_PLAYER_ACTIONS);
         }
     }
     public string GetManaCostChargesCooldownStr() {

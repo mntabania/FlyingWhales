@@ -107,9 +107,9 @@ public class Vampirism : PlayerSpell {
 
 public class VampirismData : SpellData {
     public override SPELL_TYPE type => SPELL_TYPE.VAMPIRISM;
-    public override string name { get { return "Vampirism"; } }
-    public override string description { get { return "Makes a character have uncontrollable urge to drink blood for sustenance."; } }
-    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.AFFLICTION; } }
+    public override string name => "Vampirism";
+    public override string description => "This Affliction will turn a Villager into a Vampire. Vampires Energy no longer drops but they have to drink other Villager's blood to survive.";
+    public override SPELL_CATEGORY category => SPELL_CATEGORY.AFFLICTION;
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.AFFLICTION;
 
     public VampirismData() : base() {
