@@ -5,10 +5,9 @@ using Inner_Maps;
 
 public class DestroyData : PlayerAction {
     public override SPELL_TYPE type => SPELL_TYPE.DESTROY;
-    public override string name { get { return "Destroy"; } }
-    public override string description { get { return "This Action destroys an object."; } }
-    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.PLAYER_ACTION; } }
-
+    public override string name => "Destroy";
+    public override string description => "This Action destroys an object.";
+    public override SPELL_CATEGORY category => SPELL_CATEGORY.PLAYER_ACTION;
     public DestroyData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE_OBJECT };
     }
