@@ -70,7 +70,7 @@ public class ThreatComponent {
             return;
         }
         debugLog += "\n-TARGET: " + targetDemonicStructure.name;
-        List<Character> characters = null;
+        List<Character> characters = new List<Character>();
         int count = 0;
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
             Character character = CharacterManager.Instance.allCharacters[i];
@@ -80,7 +80,6 @@ public class ThreatComponent {
                 && character.traitContainer.HasTrait("Combatant")) {
                 count++;
                 debugLog += "\n-RETALIATOR: " + character.name;
-                if (characters == null) { characters = new List<Character>(); }
                 characters.Add(character);
                 //character.behaviourComponent.SetIsAttackingDemonicStructure(true, targetDemonicStructure as DemonicStructure);
                 if (count >= 5) {
@@ -88,21 +87,19 @@ public class ThreatComponent {
                 }
             }
         }
-        if (characters == null || characters.Count < 3) {
+        if (characters.Count < 3) {
             //Create Angels
-            Region region = null;
             CharacterManager.Instance.SetCurrentDemonicStructureTargetOfAngels(targetDemonicStructure as DemonicStructure);
             //NPCSettlement spawnSettlement = LandmarkManager.Instance.GetRandomVillageSettlement();
             //region = spawnSettlement.region;
-            region = targetDemonicStructure.location;
-            HexTile spawnHex = null;
-            spawnHex = targetDemonicStructure.location.GetRandomPlainHex();
+            Region region = targetDemonicStructure.location;
+            HexTile spawnHex = targetDemonicStructure.location.GetRandomPlainHex();
             //if (spawnSettlement != null) {
             //    spawnHex = spawnSettlement.GetRandomHexTile();
             //} else {
             //    spawnHex = targetDemonicStructure.location.GetRandomPlainHex();
             //}
-
+            characters.Clear();
             int angelCount = UnityEngine.Random.Range(3, 6);
             for (int i = 0; i < angelCount; i++) {
                 SUMMON_TYPE angelType = SUMMON_TYPE.Warrior_Angel;
@@ -111,25 +108,18 @@ public class ThreatComponent {
                 Summon angel = CharacterManager.Instance.CreateNewSummon(angelType, FactionManager.Instance.friendlyNeutralFaction, homeRegion: region);
                 CharacterManager.Instance.PlaceSummon(angel, spawnTile);
                 angel.behaviourComponent.SetIsAttackingDemonicStructure(true, CharacterManager.Instance.currentDemonicStructureTargetOfAngels);
+                characters.Add(angel);
             }
+            attackingCharacters = characters;
+            Messenger.Broadcast(Signals.ANGELS_ATTACKING_DEMONIC_STRUCTURE, characters);
         } else {
             for (int i = 0; i < characters.Count; i++) {
                 characters[i].behaviourComponent.SetIsAttackingDemonicStructure(true, targetDemonicStructure as DemonicStructure);
             }
+            attackingCharacters = characters;
+            Messenger.Broadcast(Signals.CHARACTERS_ATTACKING_DEMONIC_STRUCTURE, characters, targetDemonicStructure as DemonicStructure);    
         }
 
-        // if (characters.Count > 0) {
-            // Character chosenCharacter = CollectionUtilities.GetRandomElement(characters);
-            // UIManager.Instance.ShowYesNoConfirmation("Threat Response", 
-            //     "Your threat level has reached maximum. The people will now retaliate!", 
-            //     onClickNoAction: chosenCharacter.CenterOnCharacter, yesBtnText: "OK", noBtnText: "Jump to an attacker", 
-            //     showCover:true, pauseAndResume: true);    
-        // }
-        attackingCharacters = characters;
-        if (attackingCharacters != null && attackingCharacters.Count > 0) {
-            Messenger.Broadcast(Signals.CHARACTERS_ATTACKING_DEMONIC_STRUCTURE, attackingCharacters, targetDemonicStructure as DemonicStructure);    
-        }
-        // PlayerUI.Instance.ShowGeneralConfirmation("Threat Response", "Your threat level has reached maximum. The people will now retaliate!");
         Debug.Log(debugLog);
     }
 }

@@ -284,6 +284,13 @@ public class Summon : Character, IWorldObject {
         AddPlayerAction(SPELL_TYPE.SEIZE_MONSTER);
     }
     #endregion
+
+    #region Selecatble
+    public override bool IsCurrentlySelected() {
+        return UIManager.Instance.monsterInfoUI.isShowing &&
+               UIManager.Instance.monsterInfoUI.activeMonster == this;
+    }
+    #endregion
 }
 
 public class SummonSlot {

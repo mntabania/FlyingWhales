@@ -21,17 +21,19 @@ namespace Quests {
             Messenger.AddListener<List<Character>, DemonicStructure>(Signals.CHARACTERS_ATTACKING_DEMONIC_STRUCTURE, 
                 OnCharactersAttackingDemonicStructure);
             Messenger.AddListener<LocationStructure, Character, GoapPlanJob>(Signals.DEMONIC_STRUCTURE_DISCOVERED, OnDemonicStructureDiscovered);
+            Messenger.AddListener<List<Character>>(Signals.ANGELS_ATTACKING_DEMONIC_STRUCTURE, 
+                OnAngelsAttackingDemonicStructure);
         }
         #endregion
         
         #region Activation
-        public void ActivateQuest(Quest quest) {
+        private void ActivateQuest(Quest quest) {
             _activeQuests.Add(quest);
             quest.Activate();
             QuestItem questItem = UIManager.Instance.questUI.ShowQuest(quest, true);
             quest.SetTutorialQuestItem(questItem);
         }
-        public void ActivateQuest<T>(params object[] arguments) where T : Quest {
+        private void ActivateQuest<T>(params object[] arguments) where T : Quest {
             Quest quest = System.Activator.CreateInstance(typeof(T), arguments) as Quest;
             _activeQuests.Add(quest);
             quest.Activate();
@@ -83,6 +85,12 @@ namespace Quests {
         #region Report Demonic Structure
         private void OnDemonicStructureDiscovered(LocationStructure structure, Character reporter, GoapPlanJob job) {
             ActivateQuest<DemonicStructureDiscovered>(structure, reporter, job);
+        }
+        #endregion
+
+        #region Divine Intervention
+        private void OnAngelsAttackingDemonicStructure(List<Character> angels) {
+            ActivateQuest<DivineIntervention>(angels);
         }
         #endregion
     }

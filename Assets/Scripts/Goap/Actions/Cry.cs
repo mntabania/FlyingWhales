@@ -25,15 +25,15 @@ public class Cry : GoapAction {
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}:";
-        int cost = 5; //UtilityScripts.Utilities.Rng.Next(90, 131)
-        costLog += $" +{cost}(Initial)";
-        //int timesCost = 10 * actor.jobComponent.GetNumOfTimesActionDone(this);
-        //cost += timesCost;
-        //costLog += $" +{timesCost}(10 x Times Cried)";
-        //if (actor.moodComponent.moodState != MOOD_STATE.LOW && actor.moodComponent.moodState != MOOD_STATE.CRITICAL) {
-        //    cost += 2000;
-        //    costLog += " +2000(not Low and Crit mood)";
-        //}
+        int cost = UtilityScripts.Utilities.Rng.Next(90, 131);
+        costLog += $" +{cost.ToString()}(Initial)";
+        int timesCost = 10 * actor.jobComponent.GetNumOfTimesActionDone(this);
+        cost += timesCost;
+        costLog += $" +{timesCost.ToString()}(10 x Times Cried)";
+        if (actor.moodComponent.moodState != MOOD_STATE.LOW && actor.moodComponent.moodState != MOOD_STATE.CRITICAL) {
+            cost += 2000;
+            costLog += " +2000(not Low and Critical mood)";
+        }
         actor.logComponent.AppendCostLog(costLog);
         return cost;
     }

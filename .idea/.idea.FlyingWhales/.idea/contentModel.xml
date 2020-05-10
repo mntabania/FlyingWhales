@@ -2020,6 +2020,10 @@
             </e>
             <e p="Summons" t="Include">
               <e p="Abomination.cs" t="Include" />
+              <e p="Angels" t="Include">
+                <e p="MagicalAngel.cs" t="Include" />
+                <e p="WarriorAngel.cs" t="Include" />
+              </e>
               <e p="Animals" t="Include">
                 <e p="Animal.cs" t="Include" />
                 <e p="Chicken.cs" t="Include" />

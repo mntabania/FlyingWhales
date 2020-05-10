@@ -5719,7 +5719,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #endregion
     
     #region Selectable
-    public bool IsCurrentlySelected() {
+    public virtual bool IsCurrentlySelected() {
         return UIManager.Instance.characterInfoUI.isShowing &&
                UIManager.Instance.characterInfoUI.activeCharacter == this;
     }

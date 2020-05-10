@@ -496,6 +496,10 @@ public static class Signals {
     /// Parameters: QuestStepCollection completedCollection
     /// </summary>
     public static string STEP_COLLECTION_COMPLETED = "StepCollectionCompleted";
+    /// <summary>
+    /// Parameters: List[Character]
+    /// </summary>
+    public static string ANGELS_ATTACKING_DEMONIC_STRUCTURE = "OnAngelsAttackingDemonicStructure";
     #endregion
     
     #region Tutorial

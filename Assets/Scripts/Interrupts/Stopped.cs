@@ -24,6 +24,12 @@ namespace Interrupts {
             actor.currentJob?.StopJobNotDrop();
             return executed;
         }
+        public override Log CreateEffectLog(Character actor, IPointOfInterest target) {
+            if (actor == target) {
+                return null; //do not create log if actor was stopped by itself.
+            }
+            return base.CreateEffectLog(actor, target);
+        }
         #endregion
     }
 }
