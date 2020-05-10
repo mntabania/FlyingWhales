@@ -2347,7 +2347,6 @@ public static class Extensions {
             case RACE.HUMANS:
             case RACE.ELVES:
             case RACE.LESSER_DEMON:
-            case RACE.ANGEL:
                 return false;
             default:
                 return true;

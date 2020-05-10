@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 891be410796e8554eafb2611643cc64f, type: 3}
-    totalSpriteSurfaceArea: 3578498
+    totalSpriteSurfaceArea: 3601826
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -307,6 +307,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: eaba41ada2c3c80489aa61144942ef90, type: 3}
   - {fileID: 21300000, guid: a634caadee87a2a4cb80088f4ccd619c, type: 3}
   - {fileID: 21300000, guid: 6bacb8bd4f3ec954a940598485382ad0, type: 3}
+  - {fileID: 21300000, guid: 815519bddcb4aad47ab2af8b83324dfb, type: 3}
   - {fileID: 21300000, guid: dfc0dadde54370f469219a045b6f4d6d, type: 3}
   - {fileID: 21300000, guid: 9d587aedde59e4e45885cde1e5758b37, type: 3}
   - {fileID: 21300000, guid: ef66d9fdaf1929f42947f5556ffa6218, type: 3}
@@ -339,6 +340,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 1d37b84fd68656a419ee4584a44e02df, type: 3}
   - {fileID: 21300000, guid: a2a9035f5a469f34299c98fa2ab01083, type: 3}
   - {fileID: 21300000, guid: 8f23255f41b2c7142baee139fca327ed, type: 3}
+  - {fileID: 21300000, guid: d4a2b85f04c8ab648b7a67249d128e4e, type: 3}
   - {fileID: 21300000, guid: f20a0b5fb87e29342832df6364258a61, type: 3}
   - {fileID: 21300000, guid: b6b3676f0c4bbc947b13e3338a34f48c, type: 3}
   - {fileID: 21300000, guid: c18f5d6f944cfbc48819debe987cdaba, type: 3}
@@ -617,6 +619,7 @@ SpriteAtlas:
   - mail_human_hair8
   - female_human_nose2
   - TheNeedle
+  - M-AngelA
   - female_human_head5
   - tempest
   - female_human_mouth1
@@ -649,6 +652,7 @@ SpriteAtlas:
   - elf_m_top
   - demon_lust_portrait
   - female_human_mouth7
+  - M-AngelB
   - mail_human_beard7
   - female_human_brows1
   - portrait_container_gray_locked
