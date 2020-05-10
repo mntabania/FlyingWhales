@@ -150,6 +150,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     private void OnCharacterClassChange(Character character, CharacterClass previousClass, CharacterClass currentClass) {
         if (character.homeSettlement == this) {
             classManager.OnResidentChangeClass(character, previousClass, currentClass);
+            jobPriorityComponent.ChangeClassResidentResetPrimaryJob(character);
         }
     }
     public override bool AddResident(Character character, LocationStructure chosenHome = null, bool ignoreCapacity = true) {
