@@ -205,13 +205,14 @@ public class Region {
         return borders;
     }
     public List<Region> AdjacentRegions() {
-        List<Region> adjacent = new List<Region>();
+        List<Region> adjacent = null;
         for (int i = 0; i < tiles.Count; i++) {
             HexTile currTile = tiles[i];
             List<Region> regions;
             if (currTile.TryGetDifferentRegionNeighbours(out regions)) {
                 for (int j = 0; j < regions.Count; j++) {
                     Region currRegion = regions[j];
+                    if(adjacent == null) { adjacent = new List<Region>(); }
                     if (!adjacent.Contains(currRegion)) {
                         adjacent.Add(currRegion);
                     }

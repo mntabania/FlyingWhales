@@ -1113,6 +1113,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
                     }
                 }
             }
+        } else {
+            //If already has a Visit Different Region Job in queue, return true so that the character will not Roam Around Tile
+            return true;
         }
         return false;
     }

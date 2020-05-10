@@ -501,7 +501,7 @@ public class Island {
         for (int i = 0; i < regionsInIsland.Count; i++) {
             Region currRegion = regionsInIsland[i];
             List<Region> adjacent = currRegion.AdjacentRegions().Where(x => LandmarkManager.Instance.GetIslandOfRegion(x, allIslands) != this).ToList(); //get all adjacent regions, that does not belong to this island.
-            if (adjacent.Count > 0) {
+            if (adjacent != null && adjacent.Count > 0) {
                 regionToConnectTo = adjacent[Random.Range(0, adjacent.Count)];
                 regionThatWillConnect = currRegion;
                 return true;
