@@ -17,7 +17,8 @@ public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
             if (character is Summon summon) {
                 if(summon.summonType == SUMMON_TYPE.Magical_Angel || summon.summonType == SUMMON_TYPE.Warrior_Angel) {
                     log += $"\n-Character is angel, will check if there is more demonic structure to be attacked";
-                    if(CharacterManager.Instance.currentDemonicStructureTargetOfAngels == null) {
+                    if(CharacterManager.Instance.currentDemonicStructureTargetOfAngels == null 
+                        || CharacterManager.Instance.currentDemonicStructureTargetOfAngels == character.behaviourComponent.attackDemonicStructureTarget) {
                         log += $"\n-No current structure target of angels, will try to set one";
                         CharacterManager.Instance.SetNewCurrentDemonicStructureTargetOfAngels();
                     }
