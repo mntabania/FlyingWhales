@@ -33,6 +33,10 @@ public class SettlementJobPriorityComponent
     public void OnRemoveResident(Character character) {
         UnassignResidentToPrimaryJob(character);
     }
+    public void ChangeClassResidentResetPrimaryJob(Character character) {
+        UnassignResidentToPrimaryJob(character);
+        AssignResidentToPrimaryJob(character);
+    }
     private void AssignResidentToPrimaryJob(Character character) {
         JOB_TYPE[] priorityJobs = character.characterClass.priorityJobs;
         if (priorityJobs != null && priorityJobs.Length > 0) {

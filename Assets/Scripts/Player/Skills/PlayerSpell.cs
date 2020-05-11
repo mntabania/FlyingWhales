@@ -324,7 +324,7 @@ public class SpellData : IPlayerSkill {
         }
         PlayerManager.Instance.player.threatComponent.AdjustThreatPerHour(threatPerHour);
         PlayerManager.Instance.player.threatComponent.AdjustThreat(threat);
-        PlayerManager.Instance.player.threatComponent.AdjustThreat(50);
+        //PlayerManager.Instance.player.threatComponent.AdjustThreat(50);
 
         if (category == SPELL_CATEGORY.PLAYER_ACTION) {
             Messenger.Broadcast(Signals.ON_EXECUTE_PLAYER_ACTION, this as PlayerAction);
