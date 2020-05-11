@@ -708,6 +708,9 @@ public class ReactionComponent {
             //Minions or Summons cannot react to objects
             return;
         }
+        if(owner.isDead || !owner.canPerform) {
+            return;
+        }
         Character attacker = combat.stateComponent.character;
         Character reactor = owner;
         string log = reactor.name + " is reacting to combat of " + attacker.name + " against " + characterHit.name;

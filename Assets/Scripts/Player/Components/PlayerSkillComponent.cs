@@ -107,8 +107,8 @@ public class PlayerSkillComponent {
                     //if demo world, spell should be added if it is not a minion type. If it is, check if that spell is in
                     //the available set of spells for the demo. Other spells are added because in the demo, their buttons should still
                     //be seen, but instead, should not be clickable.
-                    shouldAddSpell = PlayerSkillManager.Instance.IsMinion(item.Key) == false ||
-                                     WorldConfigManager.Instance.availableSpellsInDemoBuild.Contains(item.Key);
+                    shouldAddSpell = (PlayerSkillManager.Instance.IsMinion(item.Key) == false ||
+                                     WorldConfigManager.Instance.availableSpellsInDemoBuild.Contains(item.Key)) && item.Key != SPELL_TYPE.KNOCKOUT;
                 }
                 if (shouldAddSpell) {
                     SetPlayerSkillData(item.Key, item.Value);
