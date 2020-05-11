@@ -11,6 +11,7 @@ using UtilityScripts;
 
 public class LandmarkStructureGeneration : MapGenerationComponent {
 	public override IEnumerator Execute(MapGenerationData data) {
+		LevelLoaderManager.Instance.UpdateLoadingInfo("Creating structures...");
 		List<BaseLandmark> landmarks = LandmarkManager.Instance.GetAllLandmarks();
 		for (int i = 0; i < landmarks.Count; i++) {
 			BaseLandmark landmark = landmarks[i];

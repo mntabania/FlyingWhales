@@ -11,6 +11,7 @@ using UtilityScripts;
 public class MonsterGeneration : MapGenerationComponent {
 
 	public override IEnumerator Execute(MapGenerationData data) {
+		LevelLoaderManager.Instance.UpdateLoadingInfo("Placing monsters...");
 		yield return MapGenerator.Instance.StartCoroutine(RegionalMonsterGeneration());
 		yield return MapGenerator.Instance.StartCoroutine(LandmarkMonsterGeneration());
 		yield return MapGenerator.Instance.StartCoroutine(CaveMonsterGeneration());

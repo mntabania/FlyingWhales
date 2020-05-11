@@ -7,6 +7,7 @@ using UtilityScripts;
 public class FamilyTreeGeneration : MapGenerationComponent {
 
     public override IEnumerator Execute(MapGenerationData data) {
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Generating families...");
         data.InitializeFamilyTrees();
         
         //human family trees

@@ -5,6 +5,7 @@ using UtilityScripts;
 
 public class WorldMapBiomeGeneration : MapGenerationComponent {
 	public override IEnumerator Execute(MapGenerationData data) {
+		LevelLoaderManager.Instance.UpdateLoadingInfo("Generating biomes...");
 		int batchCount = 0;
 		List<BIOMES> choices;
 		choices = WorldConfigManager.Instance.isDemoWorld ? 

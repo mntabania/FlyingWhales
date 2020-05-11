@@ -8,6 +8,7 @@ using UtilityScripts;
 public class TileFeatureGeneration : MapGenerationComponent {
 
 	public override IEnumerator Execute(MapGenerationData data) {
+		LevelLoaderManager.Instance.UpdateLoadingInfo("Generating tile features...");
 		yield return MapGenerator.Instance.StartCoroutine(GenerateFeaturesForAllTiles());
 		if (WorldConfigManager.Instance.isDemoWorld) {
 			DetermineSettlementsForDemo();

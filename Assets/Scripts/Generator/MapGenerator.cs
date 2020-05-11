@@ -38,9 +38,13 @@ public class MapGenerator : MonoBehaviour {
         
         MapGenerationData data = new MapGenerationData();
         System.Diagnostics.Stopwatch componentWatch = new System.Diagnostics.Stopwatch();
+        float progressPerComponent = 1f / components.Length;
+        float currentProgress = 0f;
         for (int i = 0; i < components.Length; i++) {
             MapGenerationComponent currComponent = components[i];
             componentWatch.Start();
+            currentProgress += progressPerComponent;
+            LevelLoaderManager.Instance.UpdateLoadingBar(currentProgress, 2f);
             yield return StartCoroutine(currComponent.Execute(data));
             componentWatch.Stop();
             loadingDetails += $"\n{currComponent.ToString()} took {componentWatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.";
@@ -54,6 +58,9 @@ public class MapGenerator : MonoBehaviour {
                 break;
             }
         }
+        LevelLoaderManager.Instance.UpdateLoadingBar(1f, 0.5f);
+        componentWatch.Stop();
+        yield return new WaitForSeconds(0.5f);
         if (componentFailed) {
             //reload scene
             Debug.LogWarning("A component in world generation failed! Reloading scene...");

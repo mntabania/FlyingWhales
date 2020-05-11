@@ -507,12 +507,21 @@ public class PlayerUI : MonoBehaviour {
 
     #region End Game Mechanics
     public void WinGameOver() {
-        UIManager.Instance.Pause();
-        winGameOver.Open();
+        if (WorldConfigManager.Instance.isDemoWorld) {
+            UIManager.Instance.ShowEndDemoScreen();
+        } else {
+            UIManager.Instance.Pause();
+            winGameOver.Open();    
+        }
+        
     }
     public void LoseGameOver() {
-        UIManager.Instance.Pause();
-        loseGameOver.Open();
+        if (WorldConfigManager.Instance.isDemoWorld) {
+            UIManager.Instance.ShowEndDemoScreen();
+        } else {
+            UIManager.Instance.Pause();
+            loseGameOver.Open();
+        }
     }
     #endregion
 

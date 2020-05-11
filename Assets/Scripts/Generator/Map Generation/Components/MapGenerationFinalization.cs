@@ -9,6 +9,7 @@ using UtilityScripts;
 
 public class MapGenerationFinalization : MapGenerationComponent {
 	public override IEnumerator Execute(MapGenerationData data) {
+		LevelLoaderManager.Instance.UpdateLoadingInfo("Finalizing world...");
 		yield return MapGenerator.Instance.StartCoroutine(FinalizeInnerMaps());
 		yield return MapGenerator.Instance.StartCoroutine(ExecuteFeatureInitialActions());
 		yield return MapGenerator.Instance.StartCoroutine(RegionalItemGeneration());
