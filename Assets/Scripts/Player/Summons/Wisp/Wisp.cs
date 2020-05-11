@@ -9,8 +9,11 @@ public abstract class Wisp : Summon {
     protected Wisp(SUMMON_TYPE summonType, string className) : base(summonType, className, RACE.WISP,
         UtilityScripts.Utilities.GetRandomGender()) {
         combatComponent.SetCombatMode(COMBAT_MODE.Passive);
+        visuals.SetHasBlood(false);
     }
-    protected Wisp(SaveDataCharacter data) : base(data) { }
+    protected Wisp(SaveDataCharacter data) : base(data) {
+        visuals.SetHasBlood(false);
+    }
 
     #region Overrides
     public override void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null,

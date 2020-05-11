@@ -7,8 +7,12 @@ using Random = UnityEngine.Random;
 public class Ghost : Summon {
     public override string raceClassName => characterClass.className;
     public Ghost() : base(SUMMON_TYPE.Ghost, "Ghost", RACE.GHOST,
-        UtilityScripts.Utilities.GetRandomGender()) { }
-    public Ghost(SaveDataCharacter data) : base(data) { }
+        UtilityScripts.Utilities.GetRandomGender()) {
+        visuals.SetHasBlood(false);
+    }
+    public Ghost(SaveDataCharacter data) : base(data) {
+        visuals.SetHasBlood(false);
+    }
 
     #region Overrides
     public override void SubscribeToSignals() {

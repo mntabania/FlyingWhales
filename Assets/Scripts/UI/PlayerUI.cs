@@ -22,7 +22,7 @@ public class PlayerUI : MonoBehaviour {
     public HoverHandler regionNameHoverHandler;
     
     [Header("Currencies")]
-    [SerializeField] private TextMeshProUGUI manaLbl;
+    public TextMeshProUGUI manaLbl;
 
     [Header("Intel")]
     [SerializeField] private GameObject intelContainer;

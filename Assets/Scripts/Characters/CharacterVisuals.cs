@@ -17,16 +17,19 @@ public class CharacterVisuals {
     public Material wholeImageMaterial { get; private set; }
     public Dictionary<string, Sprite> markerAnimations { get; private set; }
     public Sprite defaultSprite { get; private set; }
-
+    
+    private bool _hasBlood;
 
     public CharacterVisuals(Character character) {
         _owner = character;
         portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(character.race, character.gender, character.characterClass.className);
+        _hasBlood = true;
         CreateHairMaterial();
         UpdateMarkerAnimations(character);
     }
     public CharacterVisuals(SaveDataCharacter data) {
         portraitSettings = data.portraitSettings;
+        _hasBlood = true;
         CreateHairMaterial();
     }
     private void UpdatePortraitSettings(Character character) {
@@ -71,8 +74,16 @@ public class CharacterVisuals {
             Sprite currSprite = assets.animationSprites[i];
             markerAnimations.Add(currSprite.name, currSprite);
         }
-        
     }
+
+    #region Blood
+    public bool HasBlood() {
+        return _hasBlood;
+    }
+    public void SetHasBlood(bool state) {
+        _hasBlood = state;
+    }
+    #endregion
 
     #region UI
     public string GetNameplateName() {

@@ -23,7 +23,6 @@ public class LevelLoaderManager : MonoBehaviour {
         } else {
             Destroy(this.gameObject);
         }
-
     }
 
     public void LoadLevel(string sceneName, bool updateSceneProgress = false) {

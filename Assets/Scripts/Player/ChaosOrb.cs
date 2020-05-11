@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using EZObjectPools;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -16,6 +17,7 @@ public class ChaosOrb : PooledObject {
 	private Vector3 randomPos;
 	private Vector3 velocity = Vector3.zero;
 	[SerializeField] private Collider2D _collider;
+	[SerializeField] private TrailRenderer _trail;
 	
 	public void Initialize() {
 		GameDate expiry = GameManager.Instance.Today();
@@ -26,6 +28,8 @@ public class ChaosOrb : PooledObject {
 		randomPos.x += Random.Range(-1.5f, 1.5f);
 		randomPos.y += Random.Range(-1.5f, 1.5f);
 		positionCoroutine = StartCoroutine(GoTo(randomPos, 0.5f));
+		_collider.enabled = true;
+		_trail.enabled = false;
 	}
 	private IEnumerator GoTo(Vector3 targetPos, float smoothTime, System.Action onReachAction = null) {
 		while (Mathf.Approximately(transform.position.x, targetPos.x) == false && 
@@ -49,21 +53,34 @@ public class ChaosOrb : PooledObject {
 		ObjectPoolManager.Instance.DestroyObject(this);
 	}
 	public void OnPointerClick(BaseEventData data) {
-		// if (positionCoroutine != null) {
-		// 	StopCoroutine(positionCoroutine);	
-		// }
-		// _collider.enabled = false;
-		// Vector3 manaContainerPos = PlayerUI.Instance.manaContainer.TransformPoint(PlayerUI.Instance.manaContainer.rect.center);
+		if (positionCoroutine != null) {
+			StopCoroutine(positionCoroutine);	
+		}
+		_collider.enabled = false;
+		_trail.enabled = true;
+		Vector3 manaContainerPos = InnerMapCameraMove.Instance.innerMapsCamera.ScreenToWorldPoint(PlayerUI.Instance.manaLbl.transform.position);
+
+		Vector3 controlPointA = transform.position;
+		controlPointA.x += 5f;
+		
+		Vector3 controlPointB = manaContainerPos;
+		controlPointB.y -= 5f;
+		
+		transform.DOPath(new[] {manaContainerPos, controlPointA, controlPointB}, 0.7f, PathType.CubicBezier)
+			.SetEase(Ease.InSine)
+			.OnComplete(GainMana);
 		// StartCoroutine(GoTo(manaContainerPos, 0.7f, GainMana));
-		GainMana();
+		// GainMana();
 	}
 	private void GainMana() {
 		int randomMana = Random.Range(5, 11);
 		PlayerManager.Instance.player.AdjustMana(randomMana);
+		PlayerUI.Instance.manaLbl.transform.DOPunchScale(new Vector3(1.2f, 1.2f, 1.2f), 0.5f);
 		Destroy();
 	}
 	public override void Reset() {
 		base.Reset();
+		_trail.Clear();
 		_collider.enabled = true;
 		positionCoroutine = null;
 	}

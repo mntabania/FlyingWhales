@@ -100,6 +100,7 @@ public class Projectile : PooledObject {
         collisionParticles.Clear();
         onHitAction = null;
         _timeAlive = 0f;
+        _lineRenderer.Clear();
         _lineRenderer.enabled = false;
     }
     #endregion
