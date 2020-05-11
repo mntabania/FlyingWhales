@@ -1893,7 +1893,6 @@ public static class Extensions {
     public static int GetJobTypePriority(this JOB_TYPE jobType) {
         int priority = 0;
         switch (jobType) {
-            case JOB_TYPE.ASSAULT_DEMONIC_STRUCTURE:
             case JOB_TYPE.FLEE_TO_HOME:
                 priority = 1200;
                 break;
@@ -1902,6 +1901,9 @@ public static class Extensions {
                 break;
             case JOB_TYPE.COMBAT:
                 priority = 1090;
+                break;
+            case JOB_TYPE.ASSAULT_DEMONIC_STRUCTURE:
+                priority = 1080;
                 break;
             case JOB_TYPE.TRIGGER_FLAW:
                 priority = 1050;

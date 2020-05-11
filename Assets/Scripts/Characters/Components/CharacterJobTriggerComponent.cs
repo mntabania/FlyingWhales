@@ -699,7 +699,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ASSAULT_DEMONIC_STRUCTURE, INTERACTION_TYPE.ATTACK_DEMONIC_STRUCTURE, _owner, _owner);
             goapPlan.SetDoNotRecalculate(true);
-            job.SetCannotBePushedBack(true);
+            // job.SetCannotBePushedBack(true);
             job.SetAssignedPlan(goapPlan);
             _owner.jobQueue.AddJobInQueue(job);
             return true;
