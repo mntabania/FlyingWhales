@@ -26,10 +26,10 @@ public class Alcoholic : PlayerSpell {
             for (int i = 0; i < targets.Count; i++) {
                 Character currTarget = targets[i];
                 if (CanPerformActionTowards(currTarget)) {
-                    currTarget.traitContainer.AddTrait(currTarget, "Drunkard");
+                    currTarget.traitContainer.AddTrait(currTarget, "Alcoholic");
                     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted");
                     log.AddToFillers(currTarget, currTarget.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    log.AddToFillers(null, "Drunkard", LOG_IDENTIFIER.STRING_1);
+                    log.AddToFillers(null, "Alcoholic", LOG_IDENTIFIER.STRING_1);
                     log.AddLogToInvolvedObjects();
                     PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
                 }
@@ -58,7 +58,7 @@ public class Alcoholic : PlayerSpell {
         if (targetCharacter.isDead) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
             return false;
         }
-        if (targetCharacter.traitContainer.HasTrait("Drunkard")) {
+        if (targetCharacter.traitContainer.HasTrait("Alcoholic")) {
             return false;
         }
         return base.CanTarget(targetCharacter, ref hoverText);
@@ -67,7 +67,7 @@ public class Alcoholic : PlayerSpell {
         if (targetPOI.isDead) {
             return false;
         }
-        if (!(targetPOI is Character) || targetPOI.traitContainer.HasTrait("Drunkard")) {
+        if (!(targetPOI is Character) || targetPOI.traitContainer.HasTrait("Alcoholic")) {
             return false;
         }
         return base.CanPerformActionTowards(targetPOI);
@@ -101,16 +101,16 @@ public class AlcoholicData : SpellData {
 
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
-        targetPOI.traitContainer.AddTrait(targetPOI, "Drunkard");
+        targetPOI.traitContainer.AddTrait(targetPOI, "Alcoholic");
         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted");
         log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        log.AddToFillers(null, "Drunkard", LOG_IDENTIFIER.STRING_1);
+        log.AddToFillers(null, "Alcoholic", LOG_IDENTIFIER.STRING_1);
         log.AddLogToInvolvedObjects();
         PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
         base.ActivateAbility(targetPOI);
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
-        if (targetCharacter.isDead || targetCharacter.traitContainer.HasTrait("Drunkard")) {
+        if (targetCharacter.isDead || targetCharacter.traitContainer.HasTrait("Alcoholic")) {
             return false;
         }
         return base.CanPerformAbilityTowards(targetCharacter);

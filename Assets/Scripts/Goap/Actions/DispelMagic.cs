@@ -41,7 +41,7 @@ public class DispelMagic : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
-            return poiTarget.traitContainer.HasTrait("Reanimated", "Cursed") && actor.currentRegion.GetTileObjectsOfType(TILE_OBJECT_TYPE.MAGIC_CIRCLE).Count > 0;
+            return poiTarget.traitContainer.HasTrait("Cursed") && actor.currentRegion.GetTileObjectsOfType(TILE_OBJECT_TYPE.MAGIC_CIRCLE).Count > 0;
         }
         return false;
     }
@@ -79,6 +79,6 @@ public class DispelMagicData : GoapActionData {
         requirementAction = Requirement;
     }
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return poiTarget.traitContainer.HasTrait("Reanimated", "Cursed");
+        return poiTarget.traitContainer.HasTrait("Cursed");
     }
 }

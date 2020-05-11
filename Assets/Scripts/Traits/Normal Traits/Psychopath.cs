@@ -6,8 +6,7 @@ using System.Linq;
 using Inner_Maps.Location_Structures;
 
 namespace Traits {
-    public class 
-        Psychopath : Trait {
+    public class Psychopath : Trait {
 
         public SerialVictim victim1Requirement { get; private set; }
         //public SerialVictim victim2Requirement { get; private set; }

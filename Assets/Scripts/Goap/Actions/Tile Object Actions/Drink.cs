@@ -55,7 +55,7 @@ public class Drink : GoapAction {
         actor.needsComponent.AdjustDoNotGetBored(-1);
     }
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
-        if (witness.traitContainer.HasTrait("Drunkard")) {
+        if (witness.traitContainer.HasTrait("Alcoholic")) {
             return REACTABLE_EFFECT.Positive;
         }
         return REACTABLE_EFFECT.Neutral;
@@ -80,7 +80,7 @@ public class Drink : GoapAction {
         goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Drunk");
         int chance = UnityEngine.Random.Range(0, 100);
         if ((goapNode.actor.moodComponent.moodState == MOOD_STATE.LOW && chance < 2) || goapNode.actor.moodComponent.moodState == MOOD_STATE.CRITICAL && chance < 4) {
-            goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Drunkard");
+            goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Alcoholic");
         }
         //TODO: Remove all Withdrawal stacks
         

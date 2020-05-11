@@ -5,6 +5,7 @@ using System;
 using UnityEngine;
 using System.Linq;
 using Traits;
+using UnityEngine.Assertions;
 using UnityEngine.Serialization;
 using UtilityScripts;
 
@@ -33,7 +34,7 @@ public class TraitManager : MonoBehaviour {
     public static string[] instancedTraits = new string[] {
         //"Builder",
         //"Grudge", "Patrolling Character",
-        "Reanimated", "Restrained",
+        "Restrained",
         //"Assaulter",
         //"AttemptedMurderer",
         "Cursed", "Injured", "Kleptomaniac", "Lycanthrope", "Vampiric",
@@ -46,9 +47,9 @@ public class TraitManager : MonoBehaviour {
         //"Healer",
         "Diplomatic",
         // "AccidentProne",
-        "Wet", "Character Trait", "Nocturnal", "Herbalist", "Hardworking", "Glutton", "Suspicious", "Narcoleptic", "Hothead",
-        "Inspiring", "Pyrophobic", "Angry", "Drunkard", "Pessimist", "Lazy", "Coward", "Berserked", "Catatonic", "Griefstricken", "Heartbroken", "Cultist",
-        //"Disillusioned", "Elemental Master"
+        "Wet", "Character Trait", "Nocturnal", "Glutton", "Suspicious", "Narcoleptic", "Hothead",
+        "Inspiring", "Pyrophobic", "Angry", "Alcoholic", "Pessimist", "Lazy", "Coward", "Berserked", "Catatonic", "Griefstricken", "Heartbroken",
+        //"Disillusioned", 
         "Chaste", "Lustful", "Edible", "Paralyzed", "Malnourished", "Withdrawal", "Suicidal", "Criminal", "Dazed", "Hiding", "Bored", "Overheating",
         "Freezing", "Frozen", "Ravenous", "Feeble", "Forlorn", "Accident Prone", "Disoriented", "Consumable",
         "Fire Prone", "Electric", "Venomous", "Booby Trapped", "Betrayed", "Abomination Germ", "Ensnared", "Melting",
@@ -65,8 +66,8 @@ public class TraitManager : MonoBehaviour {
     
     //list of traits that a character can gain on their own
     public readonly string[] traitPool = new string[] { "Vigilant", "Diplomatic",
-        "Fireproof", "Accident Prone", "Unfaithful", "Drunkard", "Music Lover", "Music Hater", "Ugly", "Blessed", "Nocturnal",
-        "Herbalist", "Optimist", "Pessimist", "Fast", "Chaste", "Lustful", "Coward", "Lazy", "Hardworking", "Glutton", "Robust", "Suspicious" , "Inspiring", "Pyrophobic",
+        "Fireproof", "Accident Prone", "Unfaithful", "Alcoholic", "Music Lover", "Music Hater", "Ugly", "Blessed", "Nocturnal",
+        "Optimist", "Pessimist", "Fast", "Chaste", "Lustful", "Coward", "Lazy", "Glutton", "Robust", "Suspicious" , "Inspiring", "Pyrophobic",
         "Narcoleptic", "Hothead", "Evil", "Treacherous", "Ambitious", "Authoritative", "Fire Prone" //, "Electric", "Venomous"
     };
     //"Kleptomaniac","Curious", "Craftsman", "Disillusioned",
@@ -163,6 +164,7 @@ public class TraitManager : MonoBehaviour {
         string noSpacesTraitName = UtilityScripts.Utilities.RemoveAllWhiteSpace(traitName);
         string typeName = $"Traits.{ noSpacesTraitName }";
         Type type = System.Type.GetType(typeName);
+        Assert.IsNotNull(type, $"No instanced trait with type, {typeName}");
         return System.Activator.CreateInstance(type) as Trait;
     }
     public List<Trait> GetAllTraitsOfType(TRAIT_TYPE type) {
