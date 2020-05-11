@@ -12,6 +12,7 @@ public class SettlementGeneration : MapGenerationComponent {
 
 	private List<RACE> raceChoices = new List<RACE>() {RACE.HUMANS, RACE.ELVES};
 	public override IEnumerator Execute(MapGenerationData data) {
+		LevelLoaderManager.Instance.UpdateLoadingInfo("Creating settlements...");
 		for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
 			Region region = GridMap.Instance.allRegions[i];
 			if (region.HasTileWithFeature(TileFeatureDB.Inhabited_Feature)) {

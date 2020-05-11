@@ -9,6 +9,7 @@ using UtilityScripts;
 
 public class PortalLandmarkGeneration : MapGenerationComponent {
 	public override IEnumerator Execute(MapGenerationData data) {
+		LevelLoaderManager.Instance.UpdateLoadingInfo("Generating landmarks...");
 		PlacePortal(data);
 		yield return null;
 	}

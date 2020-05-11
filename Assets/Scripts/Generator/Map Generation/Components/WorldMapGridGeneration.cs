@@ -5,6 +5,7 @@ using UnityEngine;
 public class WorldMapGridGeneration : MapGenerationComponent {
 
 	public override IEnumerator Execute(MapGenerationData data) {
+		LevelLoaderManager.Instance.UpdateLoadingInfo("Generating world map...");
 		if (WorldConfigManager.Instance.isDemoWorld) {
 			data.regionCount = 1;
 			data.width = 8;

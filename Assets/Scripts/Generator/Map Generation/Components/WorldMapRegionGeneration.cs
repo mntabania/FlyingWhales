@@ -55,6 +55,7 @@ public class WorldMapRegionGeneration : MapGenerationComponent {
 	};
 	
 	public override IEnumerator Execute(MapGenerationData data) {
+		LevelLoaderManager.Instance.UpdateLoadingInfo("Generating regions...");
 		WorldMapTemplate chosenTemplate;
 		if (WorldConfigManager.Instance.isDemoWorld) {
 			chosenTemplate = new WorldMapTemplate() {

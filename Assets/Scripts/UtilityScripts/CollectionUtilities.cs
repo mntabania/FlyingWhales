@@ -14,6 +14,17 @@ namespace UtilityScripts {
             }
             return collection[index + 1];
         }
+        public static T GetNextElementCyclic<T>(T[] collection, int index) {
+            if (index > collection.Length) {
+                throw new ArgumentOutOfRangeException("Trying to get next element cyclic, but provided index is greater than the size of the collection!");
+            }
+            if (index == collection.Length - 1) {
+                //if index provided is equal to the number of elements in the list,
+                //then the next element is the first element
+                return collection[0]; 
+            }
+            return collection[index + 1];
+        }
         public static bool ContainsRange<T>(List<T> sourceList, List<T> otherList) {
             //this is used to check whether a list has all the values in another list
             for (int i = 0; i < otherList.Count; i++) {

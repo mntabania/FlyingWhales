@@ -22,10 +22,12 @@ public class MainMenuUI : MonoBehaviour {
     [SerializeField] private Button newGameButton;
     [SerializeField] private Button invadeButton;
     [SerializeField] private Button researchButton;
-
-
+    
     [Header("Archetypes")]
     [SerializeField] private SkillTreeSelector _skillTreeSelector;
+    
+    [Header("Demo")]
+    [SerializeField] private Button startButton;
     
     private void Awake() {
         Instance = this;
@@ -35,11 +37,16 @@ public class MainMenuUI : MonoBehaviour {
         loadGameButton.interactable = false;
     }
     public void ShowMenuButtons() {
-        buttonsTween.OnValueChangedAnimation(true);
-        titleTween.OnValueChangedAnimation(true);
-        glowTween.OnValueChangedAnimation(true);
+        if (WorldConfigManager.Instance.isDemoWorld) {
+            (startButton.transform as RectTransform).DOAnchorPosY(40f, 1f).SetEase(Ease.OutBack);
+        } else {
+            buttonsTween.OnValueChangedAnimation(true);
+            titleTween.OnValueChangedAnimation(true);
+            glowTween.OnValueChangedAnimation(true);    
+        }
+        
     }
-    public void HideMenuButtons() {
+    private void HideMenuButtons() {
         buttonsTween.OnValueChangedAnimation(false);
     }
     public void ExitGame() {
