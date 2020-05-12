@@ -5753,8 +5753,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return true;
     }
     #endregion
-
-
+    
     #region Territorries
     public void AddTerritory([NotNull]HexTile tile) {
         if (territorries.Contains(tile) == false) {

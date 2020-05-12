@@ -746,7 +746,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
         if (character.isDead) {
             PlaySleepGround();
-            StartCoroutine(StartBlood());
+            if (character.visuals.HasBlood()) {
+                StartCoroutine(StartBlood());    
+            }
         } else {
             ResetBlood();
             if (character.isStoppedByOtherCharacter > 0) {

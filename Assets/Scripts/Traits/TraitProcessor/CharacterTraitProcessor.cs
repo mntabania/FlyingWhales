@@ -82,7 +82,7 @@ namespace Traits {
             //}
             if (trait.name == "Abducted" || trait.name == "Restrained") {
                 character.needsComponent.AdjustDoNotGetTired(1);
-            } else if (trait.name == "Packaged" || trait.name == "Hibernating" || trait.name == "Reanimated") {
+            } else if (trait.name == "Packaged" || trait.name == "Hibernating") {
                 character.needsComponent.AdjustDoNotGetTired(1);
                 character.needsComponent.AdjustDoNotGetHungry(1);
                 character.needsComponent.AdjustDoNotGetBored(1);
@@ -203,7 +203,7 @@ namespace Traits {
             //}
             if (trait.name == "Abducted" || trait.name == "Restrained") {
                 character.needsComponent.AdjustDoNotGetTired(-1);
-            } else if (trait.name == "Packaged" || trait.name == "Hibernating" || trait.name == "Reanimated") {
+            } else if (trait.name == "Packaged" || trait.name == "Hibernating") {
                 character.needsComponent.AdjustDoNotGetTired(-1);
                 character.needsComponent.AdjustDoNotGetHungry(-1);
                 character.needsComponent.AdjustDoNotGetBored(-1);

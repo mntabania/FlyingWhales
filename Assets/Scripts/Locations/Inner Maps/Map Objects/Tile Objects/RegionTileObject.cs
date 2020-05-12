@@ -29,9 +29,7 @@ public class RegionTileObject : TileObject {
             if (region.mainLandmark != null) {
                 if (region.mainLandmark.specificLandmarkType != LANDMARK_TYPE.NONE) {
                     advertisedActions.Add(INTERACTION_TYPE.ATTACK_REGION);
-                } else if (region.mainLandmark.specificLandmarkType == LANDMARK_TYPE.THE_PROFANE) {
-                    advertisedActions.Add(INTERACTION_TYPE.CORRUPT_CULTIST);
-                }    
+                }
             }
 
             //features

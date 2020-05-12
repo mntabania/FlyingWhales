@@ -1296,8 +1296,6 @@
                 <e p="ChopWoodRegion.cs" t="Include" />
                 <e p="ClaimRegion.cs" t="Include" />
                 <e p="CleanseRegion.cs" t="Include" />
-                <e p="CorruptCultist.cs" t="Include" />
-                <e p="DemonicIncantation.cs" t="Include" />
                 <e p="ForageFoodRegion.cs" t="Include" />
                 <e p="HarvestFoodRegion.cs" t="Include" />
                 <e p="HolyIncantation.cs" t="Include" />
@@ -2232,6 +2230,7 @@
               <e p="AbominationGerm.cs" t="Include" />
               <e p="AccidentProne.cs" t="Include" />
               <e p="Agoraphobic.cs" t="Include" />
+              <e p="Alcoholic.cs" t="Include" />
               <e p="Angry.cs" t="Include" />
               <e p="Berserked.cs" t="Include" />
               <e p="Betrayed.cs" t="Include" />
@@ -2246,17 +2245,14 @@
               <e p="Consumable.cs" t="Include" />
               <e p="Coward.cs" t="Include" />
               <e p="Criminal.cs" t="Include" />
-              <e p="Cultist.cs" t="Include" />
               <e p="Cursed.cs" t="Include" />
               <e p="Dazed.cs" t="Include" />
               <e p="Dead.cs" t="Include" />
               <e p="Diplomatic.cs" t="Include" />
               <e p="Disoriented.cs" t="Include" />
               <e p="Drunk.cs" t="Include" />
-              <e p="Drunkard.cs" t="Include" />
               <e p="Edible.cs" t="Include" />
               <e p="Electric.cs" t="Include" />
-              <e p="ElementalMaster.cs" t="Include" />
               <e p="Ensnared.cs" t="Include" />
               <e p="Feeble.cs" t="Include" />
               <e p="Fervor.cs" t="Include" />
@@ -2266,9 +2262,7 @@
               <e p="Frozen.cs" t="Include" />
               <e p="Glutton.cs" t="Include" />
               <e p="Griefstricken.cs" t="Include" />
-              <e p="Hardworking.cs" t="Include" />
               <e p="Heartbroken.cs" t="Include" />
-              <e p="Herbalist.cs" t="Include" />
               <e p="Hiding.cs" t="Include" />
               <e p="Hothead.cs" t="Include" />
               <e p="Infected.cs" t="Include" />
@@ -2290,12 +2284,11 @@
               <e p="Pessimist.cs" t="Include" />
               <e p="Plagued.cs" t="Include" />
               <e p="Poisoned.cs" t="Include" />
+              <e p="Psychopath.cs" t="Include" />
               <e p="Pyrophobic.cs" t="Include" />
               <e p="Ravenous.cs" t="Include" />
-              <e p="Reanimated.cs" t="Include" />
               <e p="Resting.cs" t="Include" />
               <e p="Restrained.cs" t="Include" />
-              <e p="SerialKiller.cs" t="Include" />
               <e p="Sick.cs" t="Include" />
               <e p="Spooked.cs" t="Include" />
               <e p="Suicidal.cs" t="Include" />

@@ -37,12 +37,12 @@ public class MainMenuUI : MonoBehaviour {
         loadGameButton.interactable = false;
     }
     public void ShowMenuButtons() {
+        titleTween.OnValueChangedAnimation(true);
+        glowTween.OnValueChangedAnimation(true);
         if (WorldConfigManager.Instance.isDemoWorld) {
             (startButton.transform as RectTransform).DOAnchorPosY(40f, 1f).SetEase(Ease.OutBack);
         } else {
             buttonsTween.OnValueChangedAnimation(true);
-            titleTween.OnValueChangedAnimation(true);
-            glowTween.OnValueChangedAnimation(true);    
         }
         
     }

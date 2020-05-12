@@ -13,7 +13,6 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
             canBeTriggered = true;
-            mutuallyExclusive = new string[] { "Hardworking" };
         }
 
         #region Overrides

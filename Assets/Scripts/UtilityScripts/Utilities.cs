@@ -1444,7 +1444,6 @@ namespace UtilityScripts {
         #region Character Tags
         public static int GetTagWorldGenChance(ATTRIBUTE tag){
             switch(tag){
-                //case ATTRIBUTE.HERBALIST:
                 //case ATTRIBUTE.RITUALIST:
                 //	return 13;
                 default:

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Inner_Maps;
+using UnityEngine.Assertions;
 namespace Traits {
     public class TraitContainer : ITraitContainer {
 
@@ -222,6 +223,7 @@ namespace Traits {
             if (TraitManager.Instance.IsInstancedTrait(traitName)) {
                 return AddTraitRoot(addTo, TraitManager.Instance.CreateNewInstancedTraitClass(traitName), characterResponsible, gainedFromDoing, overrideDuration);
             } else {
+                Assert.IsTrue(TraitManager.Instance.allTraits.ContainsKey(traitName), $"No trait named {traitName} in all traits");
                 return AddTraitRoot(addTo, TraitManager.Instance.allTraits[traitName], characterResponsible, gainedFromDoing, overrideDuration);
             }
         }
@@ -230,6 +232,7 @@ namespace Traits {
                 trait = TraitManager.Instance.CreateNewInstancedTraitClass(traitName);
                 return AddTraitRoot(addTo, trait, characterResponsible, gainedFromDoing, overrideDuration);
             } else {
+                Assert.IsTrue(TraitManager.Instance.allTraits.ContainsKey(traitName), $"No trait named {traitName} in all traits");
                 trait = TraitManager.Instance.allTraits[traitName];
                 return AddTraitRoot(addTo, trait, characterResponsible, gainedFromDoing, overrideDuration);
             }

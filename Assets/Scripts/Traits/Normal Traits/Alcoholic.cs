@@ -4,13 +4,13 @@ using System.Linq;
 using UnityEngine;
 
 namespace Traits {
-    public class Drunkard : Trait {
+    public class Alcoholic : Trait {
 
         private bool hasDrankWithinTheDay;
         private Character owner;
 
-        public Drunkard() {
-            name = "Drunkard";
+        public Alcoholic() {
+            name = "Alcoholic";
             description = "Drunkards enjoy drinking.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEGATIVE;

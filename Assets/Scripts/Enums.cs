@@ -1800,10 +1800,10 @@ public static class Extensions {
             return false;
         }
         TileObjectData data = TileObjectDB.GetTileObjectData(type);
-        if (data.neededTraitTypes == null || data.neededTraitTypes.Length <= 0) {
+        if (data.neededCharacterClass == null || data.neededCharacterClass.Length <= 0) {
             return true;
         }
-        return character.traitContainer.HasTrait(data.neededTraitTypes);
+        return data.neededCharacterClass.Contains(character.characterClass.className);
     }
     #endregion
 
@@ -1893,7 +1893,6 @@ public static class Extensions {
     public static int GetJobTypePriority(this JOB_TYPE jobType) {
         int priority = 0;
         switch (jobType) {
-            case JOB_TYPE.ASSAULT_DEMONIC_STRUCTURE:
             case JOB_TYPE.FLEE_TO_HOME:
                 priority = 1200;
                 break;
@@ -1902,6 +1901,9 @@ public static class Extensions {
                 break;
             case JOB_TYPE.COMBAT:
                 priority = 1090;
+                break;
+            case JOB_TYPE.ASSAULT_DEMONIC_STRUCTURE:
+                priority = 1080;
                 break;
             case JOB_TYPE.TRIGGER_FLAW:
                 priority = 1050;

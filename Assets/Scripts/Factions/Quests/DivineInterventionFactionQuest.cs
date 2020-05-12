@@ -185,17 +185,7 @@ public class DivineInterventionFactionQuest : FactionQuest {
     //     SchedulingManager.Instance.AddEntry(expiryDate, () => CheckIfJobWillExpire(job), this);
     // }
     // #endregion
-
-    #region Sabotage Faction
-    public void CreateSabotageFactionJob() {
-        if (!HasJob(JOB_TYPE.CORRUPT_CULTIST_SABOTAGE_FACTION)) {
-            Region target = LandmarkManager.Instance.GetRandomRegionWithFeature(TileFeatureDB.Hallowed_Ground_Feature);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CORRUPT_CULTIST_SABOTAGE_FACTION, INTERACTION_TYPE.DEMONIC_INCANTATION, target.regionTileObject, this);
-            job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoSabotageFactionJob);
-            AddToAvailableJobs(job);
-        }
-    }
-    #endregion
+    
 
     #region Utilities
     private void CheckIfJobWillExpire(JobQueueItem item) {

@@ -6,7 +6,7 @@ namespace Interrupts {
     public class BeingTortured : Interrupt {
 
         private readonly string[] _negativeTraits = new[] {
-            "Agoraphobic", "Pyrophobic", "Coward", "Hothead", "Psychopath", "Drunkard",
+            "Agoraphobic", "Pyrophobic", "Coward", "Hothead", "Psychopath", "Alcoholic",
             "Glutton", "Suspicious", "Music Hater", "Evil"
         };
         private readonly string[] _negativeStatus = new[] {

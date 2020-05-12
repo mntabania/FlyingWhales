@@ -9,7 +9,7 @@ public static class TileObjectDB {
         constructionCost = 10,
         constructionTime = 12,
         maxHP = 200,
-        neededTraitTypes = new string[] { "Builder" },
+        neededCharacterClass = new string[] { "Craftsman" },
         providedFacilities = null,
         occupiedSize = new Point(1, 1),
         itemRequirementsForCreation = null,
@@ -21,7 +21,7 @@ public static class TileObjectDB {
             constructionCost = 10,
             constructionTime = 12,
             maxHP = 600,
-            neededTraitTypes =  new string[] { "Builder" },
+            neededCharacterClass =  new string[] { "Craftsman" },
         } },
         { TILE_OBJECT_TYPE.FOOD_PILE, new TileObjectData() {
             maxHP = 300,
@@ -36,7 +36,7 @@ public static class TileObjectDB {
             constructionCost = 10,
             constructionTime = 12,
             maxHP = 400,
-            neededTraitTypes =  new string[] { "Builder" },
+            neededCharacterClass =  new string[] { "Craftsman" },
             providedFacilities = new ProvidedFacility[] {
                 new ProvidedFacility() { type = FACILITY_TYPE.TIREDNESS_RECOVERY, value = 20 }
             }
@@ -46,7 +46,7 @@ public static class TileObjectDB {
             constructionCost = 10,
             constructionTime = 12,
             maxHP = 250,
-            neededTraitTypes =  new string[] { "Builder" },
+            neededCharacterClass =  new string[] { "Craftsman" },
             providedFacilities = new ProvidedFacility[] {
                  new ProvidedFacility() { type = FACILITY_TYPE.SIT_DOWN_SPOT, value = 10 }
             }
@@ -56,7 +56,7 @@ public static class TileObjectDB {
             constructionCost = 10,
             constructionTime = 12,
             maxHP = 120,
-            neededTraitTypes =  new string[] { "Builder" },
+            neededCharacterClass =  new string[] { "Craftsman" },
             providedFacilities = new ProvidedFacility[] {
                 new ProvidedFacility() { type = FACILITY_TYPE.HAPPINESS_RECOVERY, value = 10 }
             }
@@ -65,7 +65,7 @@ public static class TileObjectDB {
             constructionCost = 10,
             constructionTime = 12,
             maxHP = 250,
-            neededTraitTypes =  new string[] { "Builder" },
+            neededCharacterClass =  new string[] { "Craftsman" },
             providedFacilities = new ProvidedFacility[] {
                 new ProvidedFacility() { type = FACILITY_TYPE.FULLNESS_RECOVERY, value = 20 },
                 new ProvidedFacility() { type = FACILITY_TYPE.SIT_DOWN_SPOT, value = 5 }
@@ -75,34 +75,34 @@ public static class TileObjectDB {
             constructionCost = 10,
             constructionTime = 12,
             maxHP = 600,
-            neededTraitTypes =  new string[] { "Builder" },
+            neededCharacterClass =  new string[] { "Craftsman" },
         } },
         { TILE_OBJECT_TYPE.BIG_TREE_OBJECT, new TileObjectData() {
             constructionCost = 10,
             constructionTime = 12,
             maxHP = 1200,
-            neededTraitTypes =  new string[] { "Builder" },
+            neededCharacterClass =  new string[] { "Craftsman" },
             occupiedSize =  new Point(2, 2),
         } },
         { TILE_OBJECT_TYPE.HEALING_POTION, new TileObjectData() {
             constructionCost = 25,
             constructionTime = 12,
             maxHP = 150,
-            neededTraitTypes = null,
+            neededCharacterClass = null,
             itemRequirementsForCreation = new[] { "Water Flask", "Herb Plant" },
         } },
         { TILE_OBJECT_TYPE.POISON_FLASK, new TileObjectData() {
             constructionCost = 10,
             constructionTime = 12,
             maxHP = 150,
-            neededTraitTypes = null,
+            neededCharacterClass = null,
             itemRequirementsForCreation = new[] { "Water Flask", "Herb Plant" },
         } },
          { TILE_OBJECT_TYPE.ANTIDOTE, new TileObjectData() {
             constructionCost = 10,
             constructionTime = 12,
             maxHP = 150,
-            neededTraitTypes = null,
+            neededCharacterClass = null,
             itemRequirementsForCreation = new[] { "Poison Flask" },
         } },
         { TILE_OBJECT_TYPE.LOCUST_SWARM, new TileObjectData() {
@@ -226,7 +226,7 @@ public static class TileObjectDB {
         //    constructionCost = 25,
         //    constructionTime = 12,
         //    maxHP = 1000,
-        //    neededTraitTypes =  new string[] { "Builder" },
+        //    neededTraitTypes =  new string[] { "Craftsman" },
         //} },
     };
 
@@ -254,7 +254,7 @@ public class TileObjectData {
     public int constructionCost;
     public int constructionTime; //in ticks
     public int maxHP;
-    public string[] neededTraitTypes;
+    public string[] neededCharacterClass;
     public string[] itemRequirementsForCreation;
     public ProvidedFacility[] providedFacilities;
     //when this object is placed, how many tiles does it occupy? (Default is 0,0) meaning this object only occupies 1 tile.

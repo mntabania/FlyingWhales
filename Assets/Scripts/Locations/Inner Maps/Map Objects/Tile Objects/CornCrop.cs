@@ -12,7 +12,7 @@ public class CornCrop : Crops {
     }
 
     #region Growth State
-    protected override int GetRipeningTicks() {
+    public override int GetRipeningTicks() {
         int ticks;
         if (gridTileLocation.collectionOwner.isPartOfParentRegionMap 
             && gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.

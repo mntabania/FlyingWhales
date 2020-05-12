@@ -20,7 +20,7 @@ public class BerryShrub : Crops {
     #endregion
 
     #region Growth State
-    protected override int GetRipeningTicks() {
+    public override int GetRipeningTicks() {
         return GameManager.Instance.GetTicksBasedOnHour(24);
     }
     #endregion

@@ -674,13 +674,6 @@ public class CharacterNeedsComponent {
                         triggerBrokenhearted = UnityEngine.Random.Range(0, 100) < (25 * character.traitContainer.stacks[heartbroken.name]);
                     }
                     if (!triggerBrokenhearted) {
-                        Hardworking hardworking = character.traitContainer.GetNormalTrait<Hardworking>("Hardworking");
-                        if (hardworking != null) {
-                            bool isPlanningRecoveryProcessed = false;
-                            if (hardworking.ProcessHardworkingTrait(character, ref isPlanningRecoveryProcessed)) {
-                                return isPlanningRecoveryProcessed;
-                            }
-                        }
                         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY, new GoapEffect(GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), _character, _character);
                         character.jobQueue.AddJobInQueue(job);
                     } else {

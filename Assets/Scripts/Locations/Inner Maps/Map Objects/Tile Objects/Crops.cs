@@ -1,9 +1,14 @@
 ﻿public abstract class Crops : TileObject {
     public enum Growth_State { Growing, Ripe }
     public Growth_State currentGrowthState { get; private set; }
+    
     private int _remainingRipeningTicks;
     private int _growthRate; //how fast does this crop grow? (aka how many ticks are subtracted from the remaining ripening ticks per tick)
 
+    #region getters
+    public int remainingRipeningTicks => _remainingRipeningTicks;
+    #endregion
+    
     protected Crops() {
         SetGrowthRate(1);
     }
@@ -27,12 +32,13 @@
     /// function to get how many ticks until this crop becomes ripe.
     /// </summary>
     /// <returns></returns>
-    protected abstract int GetRipeningTicks();
+    public abstract int GetRipeningTicks();
     private void PerTickGrowth() {
-        if (_remainingRipeningTicks <= 0) {
+        if (remainingRipeningTicks <= 0) {
             SetGrowthState(Growth_State.Ripe);
         }
-        _remainingRipeningTicks -= _growthRate;
+        _remainingRipeningTicks = remainingRipeningTicks - _growthRate;
+        mapVisual.UpdateTileObjectVisual(this);
     }
     public void SetGrowthRate(int growthRate) {
         _growthRate = growthRate;
@@ -54,7 +60,7 @@
         data += $"\n\tGrowth State {currentGrowthState.ToString()}";
         data += $"\n\tGrowth Rate {_growthRate.ToString()}";
         data += $"\n\tRipening ticks: {GetRipeningTicks().ToString()}";
-        data += $"\n\tRemaining ticks until ripe: {_remainingRipeningTicks.ToString()}";
+        data += $"\n\tRemaining ticks until ripe: {remainingRipeningTicks.ToString()}";
         return data;
     }
     #endregion
