@@ -1,27 +1,29 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 
-public class UnleashSummonUI : PopupMenuBase {
+public class UnleashSummonUI : MonoBehaviour  { //PopupMenuBase
     [Header("General")]
     public ScrollRect summonsScrollRect;
+    public ScrollRect summonMinionsScrollRect;
     public Button summonButton;
     public TextMeshProUGUI summonButtonText;
     public TextMeshProUGUI titleText;
     public GameObject characterNameplateItemPrefab;
-    public GameObject spellNameplateItemPrefab;
+    public GameObject summonMinionNameplateItemPrefab;
     //public Image summonIcon;
     //public TextMeshProUGUI summonText;
     //private Summon summon;
     private bool isGamePausedOnShowUI;
     public List<CharacterNameplateItem> characterNameplateItems { get; private set; }
-    public List<SpellNameplateItem> spellNameplateItems { get; private set; }
+    public List<SummonMinionPlayerSkillNameplateItem> summonMinionNameplateItems { get; private set; }
     private List<Character> chosenSummons = new List<Character>();
-    private List<SpellData> chosenMinionMonsters = new List<SpellData>();
+    private Dictionary<SpellData, int> chosenMinionMonsters = new Dictionary<SpellData, int>();
     private List<LocationGridTile> entrances = new List<LocationGridTile>();
     private int manaCost => chosenSummons.Count * 50;
 
@@ -35,8 +37,8 @@ public class UnleashSummonUI : PopupMenuBase {
         if (characterNameplateItems == null) {
             characterNameplateItems = new List<CharacterNameplateItem>();
         }
-        if (spellNameplateItems == null) {
-            spellNameplateItems = new List<SpellNameplateItem>();
+        if (summonMinionNameplateItems == null) {
+            summonMinionNameplateItems = new List<SummonMinionPlayerSkillNameplateItem>();
         }
         chosenSummons.Clear();
         chosenMinionMonsters.Clear();
@@ -52,15 +54,50 @@ public class UnleashSummonUI : PopupMenuBase {
         //SetSummon(summon);
         PopulateMinionsMonstersSummons();
         UpdateSummonButton();
-        base.Open();
+        this.gameObject.SetActive(true);
+        //base.Open();
+    }
+    public void OnClickClose() {
+        Close();
+    }
+    public void Close() {
+        gameObject.SetActive(false);
+        if (!PlayerUI.Instance.TryShowPendingUI()) {
+            if (!isGamePausedOnShowUI) {
+                UIManager.Instance.ResumeLastProgressionSpeed(); //if no other UI was shown, unpause game
+            }
+        }
+    }
+    public void OnClickConfirm() {
+        if (identifier == "knockout") {
+            Knockout();
+        } else if (identifier == "kill") {
+            Kill();
+        } else {
+            HarassDefendInvade();
+        }
+        OnClickClose();
+        //if (PlayerManager.Instance.player.mana >= manaCost) {
+        //    Close();
+        //    PlayerManager.Instance.player.AdjustMana(-manaCost);
+        //    AttackRegion();
+        //} else {
+        //    PlayerUI.Instance.ShowGeneralConfirmation("Mana Cost", "NOT ENOUGH MANA!");
+        //}
+
+        //if(summon != null) {
+        //    PlayerUI.Instance.TryPlaceSummon(summon);
+        //}
     }
     public void SetTargetCharacter(Character character) {
         _targetCharacter = character;
     }
     private void PopulateMinionsMonstersSummons() {
         UtilityScripts.Utilities.DestroyChildren(summonsScrollRect.content);
+        UtilityScripts.Utilities.DestroyChildren(summonMinionsScrollRect.content);
+
         characterNameplateItems.Clear();
-        spellNameplateItems.Clear();
+        summonMinionNameplateItems.Clear();
         for (int i = 0; i < PlayerManager.Instance.player.playerSkillComponent.summons.Count; i++) {
             Summon summon = PlayerManager.Instance.player.playerSkillComponent.summons[i];
             CharacterNameplateItem item = CreateNewCharacterNameplateItem();
@@ -72,18 +109,30 @@ public class UnleashSummonUI : PopupMenuBase {
         }
         for (int i = 0; i < PlayerManager.Instance.player.playerSkillComponent.minionsSkills.Count; i++) {
             MinionPlayerSkill minionPlayerSkill = PlayerSkillManager.Instance.GetMinionPlayerSkillData(PlayerManager.Instance.player.playerSkillComponent.minionsSkills[i]);
-            SpellNameplateItem item = CreateNewSpellNameplateItem();
-            item.SetSpell(minionPlayerSkill);
-            item.SetToggleAction(OnToggleMinionMonster);
-            item.UpdateInteractability();
+            SummonMinionPlayerSkillNameplateItem item = CreateNewSummonMinionNameplateItem();
+            item.SetObject(minionPlayerSkill);
+            item.SetCount(0);
+            item.SetAsButton();
+            item.ClearAllOnClickActions();
+            item.ClearAllHoverEnterActions();
+            item.AddOnClickAction((spellData) => OnLeftClickSummonMinion(spellData, item));
+            item.AddOnRightClickAction((spellData) => OnRightClickSummonMinion(spellData, item));
+            item.AddHoverEnterAction(OnHoverEnterSummonMinion);
+            item.AddHoverExitAction(OnHoverExitSummonMinion);
             item.gameObject.SetActive(true);
         }
         for (int i = 0; i < PlayerManager.Instance.player.playerSkillComponent.summonsSkills.Count; i++) {
             SummonPlayerSkill summonPlayerSkill = PlayerSkillManager.Instance.GetSummonPlayerSkillData(PlayerManager.Instance.player.playerSkillComponent.summonsSkills[i]);
-            SpellNameplateItem item = CreateNewSpellNameplateItem();
-            item.SetSpell(summonPlayerSkill);
-            item.SetToggleAction(OnToggleMinionMonster);
-            item.UpdateInteractability();
+            SummonMinionPlayerSkillNameplateItem item = CreateNewSummonMinionNameplateItem();
+            item.SetObject(summonPlayerSkill);
+            item.SetCount(0);
+            item.SetAsButton();
+            item.ClearAllOnClickActions();
+            item.ClearAllHoverEnterActions();
+            item.AddOnClickAction((spellData) => OnLeftClickSummonMinion(spellData, item));
+            item.AddOnRightClickAction((spellData) => OnRightClickSummonMinion(spellData, item));
+            item.AddHoverEnterAction(OnHoverEnterSummonMinion);
+            item.AddHoverExitAction(OnHoverExitSummonMinion);
             item.gameObject.SetActive(true);
         }
     }
@@ -95,13 +144,35 @@ public class UnleashSummonUI : PopupMenuBase {
         }
         UpdateSummonButton();
     }
-    private void OnToggleMinionMonster(SpellData spellData, bool isOn) {
-        if (isOn) {
-            chosenMinionMonsters.Add(spellData);
-        } else {
-            chosenMinionMonsters.Remove(spellData);
+    private void OnLeftClickSummonMinion(SpellData spellData, SummonMinionPlayerSkillNameplateItem nameplate) {
+        if (!chosenMinionMonsters.ContainsKey(spellData)) {
+            if(spellData.charges > 0) {
+                chosenMinionMonsters.Add(spellData, 1);
+                nameplate.SetCount(chosenMinionMonsters[spellData]);
+            }
+        } else if (chosenMinionMonsters[spellData] < spellData.charges) {
+            chosenMinionMonsters[spellData]++;
+            nameplate.SetCount(chosenMinionMonsters[spellData]);
         }
         UpdateSummonButton();
+    }
+    private void OnRightClickSummonMinion(SpellData spellData, SummonMinionPlayerSkillNameplateItem nameplate) {
+        if (chosenMinionMonsters.ContainsKey(spellData)) {
+            chosenMinionMonsters[spellData]--;
+
+            int count = chosenMinionMonsters[spellData];
+            nameplate.SetCount(count);
+            if (count <= 0) {
+                chosenMinionMonsters.Remove(spellData);
+            }
+        }
+        UpdateSummonButton();
+    }
+    private void OnHoverEnterSummonMinion(SpellData spellData) {
+        PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(spellData);
+    }
+    private void OnHoverExitSummonMinion(SpellData spellData) {
+        PlayerUI.Instance.skillDetailsTooltip.HidePlayerSkillDetails();
     }
     private void UpdateSummonButton() {
         if(chosenSummons.Count > 0 || chosenMinionMonsters.Count > 0) {
@@ -109,7 +180,7 @@ public class UnleashSummonUI : PopupMenuBase {
         } else {
             summonButton.interactable = false;
         }
-        summonButtonText.text = "CONFIRM";
+        //summonButtonText.text = "SUMMON";
     }
     private CharacterNameplateItem CreateNewCharacterNameplateItem() {
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(characterNameplateItemPrefab.name, Vector3.zero, Quaternion.identity, summonsScrollRect.content);
@@ -118,86 +189,22 @@ public class UnleashSummonUI : PopupMenuBase {
         characterNameplateItems.Add(item);
         return item;
     }
-    private SpellNameplateItem CreateNewSpellNameplateItem() {
-        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(spellNameplateItemPrefab.name, Vector3.zero, Quaternion.identity, summonsScrollRect.content);
-        SpellNameplateItem item = go.GetComponent<SpellNameplateItem>();
+    private SummonMinionPlayerSkillNameplateItem CreateNewSummonMinionNameplateItem() {
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(summonMinionNameplateItemPrefab.name, Vector3.zero, Quaternion.identity, summonMinionsScrollRect.content);
+        SummonMinionPlayerSkillNameplateItem item = go.GetComponent<SummonMinionPlayerSkillNameplateItem>();
         go.SetActive(false);
-        spellNameplateItems.Add(item);
+        summonMinionNameplateItems.Add(item);
         return item;
-    }
-    private void HarassDefendInvade() {
-        HexTile targetHex = PlayerUI.Instance.harassDefendInvadeTargetHex;
-        Character spawnedCharacter = null;
-
-        if (identifier == "harass") {
-            PopulateEntrances(targetHex);
-            for (int i = 0; i < chosenSummons.Count; i++) {
-                Summon summon = chosenSummons[i] as Summon;
-                TryPlaceSummon(summon, entrances[0]);
-                summon.behaviourComponent.SetIsHarassing(true, targetHex);
-                entrances.RemoveAt(0);
-            }
-            for (int i = 0; i < chosenMinionMonsters.Count; i++) {
-                SpellData minionMonsterPlayerSkll = chosenMinionMonsters[i];
-                minionMonsterPlayerSkll.ActivateAbility(entrances[0], ref spawnedCharacter);
-                spawnedCharacter.behaviourComponent.SetIsHarassing(true, targetHex);
-                entrances.RemoveAt(0);
-            }
-            PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.HARASS).OnExecuteSpellActionAffliction();
-        } else if (identifier == "defend") {
-            for (int i = 0; i < chosenSummons.Count; i++) {
-                if(entrances.Count <= 0) {
-                    entrances.AddRange(targetHex.borderTiles);
-                }
-                Summon summon = chosenSummons[i] as Summon;
-                TryPlaceSummon(summon, entrances[0]);
-                summon.behaviourComponent.SetIsDefending(true, targetHex);
-                entrances.RemoveAt(0);
-            }
-            for (int i = 0; i < chosenMinionMonsters.Count; i++) {
-                if (entrances.Count <= 0) {
-                    entrances.AddRange(targetHex.borderTiles);
-                }
-                SpellData minionMonsterPlayerSkll = chosenMinionMonsters[i];
-                minionMonsterPlayerSkll.ActivateAbility(entrances[0], ref spawnedCharacter);
-                spawnedCharacter.behaviourComponent.SetIsDefending(true, targetHex);
-                entrances.RemoveAt(0);
-            }
-            PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.DEFEND).OnExecuteSpellActionAffliction();
-        } else if (identifier == "invade") {
-            PopulateEntrances(targetHex);
-            for (int i = 0; i < chosenSummons.Count; i++) {
-                Summon summon = chosenSummons[i] as Summon;
-                TryPlaceSummon(summon, entrances[0]);
-                summon.behaviourComponent.SetIsInvading(true, targetHex);
-                entrances.RemoveAt(0);
-            }
-            for (int i = 0; i < chosenMinionMonsters.Count; i++) {
-                SpellData minionMonsterPlayerSkll = chosenMinionMonsters[i];
-                minionMonsterPlayerSkll.ActivateAbility(entrances[0], ref spawnedCharacter);
-                spawnedCharacter.behaviourComponent.SetIsInvading(true, targetHex);
-                entrances.RemoveAt(0);
-            }
-            PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.INVADE).OnExecuteSpellActionAffliction();
-        }
-        PlayerManager.Instance.player.threatComponent.AdjustThreat(5 + (5 * chosenSummons.Count));
-
-        if(spawnedCharacter != null) {
-            spawnedCharacter.CenterOnCharacter();
-        } else if (chosenSummons.Count > 0) {
-            chosenSummons[0].CenterOnCharacter();
-        }
-        Close();
     }
     private void PopulateEntrances(HexTile targetHex) {
         entrances.Clear();
-        if(identifier == "defend") {
+        if (identifier == "defend") {
             entrances.AddRange(targetHex.borderTiles);
         } else {
             LocationGridTile mainEntrance = targetHex.GetCenterLocationGridTile();
             entrances.Add(mainEntrance);
 
-            int totalEntrances = chosenSummons.Count + chosenMinionMonsters.Count;
+            int totalEntrances = chosenSummons.Count + chosenMinionMonsters.Sum(x => x.Value);
             for (int i = 0; i < entrances.Count; i++) {
                 if (entrances.Count == totalEntrances) {
                     break;
@@ -213,6 +220,96 @@ public class UnleashSummonUI : PopupMenuBase {
                     }
                 }
             }
+        }
+    }
+    private void HarassDefendInvade() {
+        HexTile targetHex = PlayerUI.Instance.harassDefendInvadeTargetHex;
+        Character spawnedCharacter = null;
+
+        if (identifier == "harass") {
+            PopulateEntrances(targetHex);
+            for (int i = 0; i < chosenSummons.Count; i++) {
+                Summon summon = chosenSummons[i] as Summon;
+                TryPlaceSummon(summon, entrances[0]);
+                summon.behaviourComponent.SetIsHarassing(true, targetHex);
+                entrances.RemoveAt(0);
+            }
+            foreach (KeyValuePair<SpellData, int> item in chosenMinionMonsters) {
+                for (int i = 0; i < item.Value; i++) {
+                    SpellData minionMonsterPlayerSkll = item.Key;
+                    minionMonsterPlayerSkll.ActivateAbility(entrances[0], ref spawnedCharacter);
+                    spawnedCharacter.behaviourComponent.SetIsHarassing(true, targetHex);
+                    entrances.RemoveAt(0);
+                }
+            }
+            //for (int i = 0; i < chosenMinionMonsters.Count; i++) {
+            //    SpellData minionMonsterPlayerSkll = chosenMinionMonsters[i];
+            //    minionMonsterPlayerSkll.ActivateAbility(entrances[0], ref spawnedCharacter);
+            //    spawnedCharacter.behaviourComponent.SetIsHarassing(true, targetHex);
+            //    entrances.RemoveAt(0);
+            //}
+            PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.HARASS).OnExecuteSpellActionAffliction();
+        } else if (identifier == "defend") {
+            for (int i = 0; i < chosenSummons.Count; i++) {
+                if(entrances.Count <= 0) {
+                    entrances.AddRange(targetHex.borderTiles);
+                }
+                Summon summon = chosenSummons[i] as Summon;
+                TryPlaceSummon(summon, entrances[0]);
+                summon.behaviourComponent.SetIsDefending(true, targetHex);
+                entrances.RemoveAt(0);
+            }
+            foreach (KeyValuePair<SpellData, int> item in chosenMinionMonsters) {
+                for (int i = 0; i < item.Value; i++) {
+                    if (entrances.Count <= 0) {
+                        entrances.AddRange(targetHex.borderTiles);
+                    }
+                    SpellData minionMonsterPlayerSkll = item.Key;
+                    minionMonsterPlayerSkll.ActivateAbility(entrances[0], ref spawnedCharacter);
+                    spawnedCharacter.behaviourComponent.SetIsDefending(true, targetHex);
+                    entrances.RemoveAt(0);
+                }
+            }
+            //for (int i = 0; i < chosenMinionMonsters.Count; i++) {
+            //    if (entrances.Count <= 0) {
+            //        entrances.AddRange(targetHex.borderTiles);
+            //    }
+            //    SpellData minionMonsterPlayerSkll = chosenMinionMonsters[i];
+            //    minionMonsterPlayerSkll.ActivateAbility(entrances[0], ref spawnedCharacter);
+            //    spawnedCharacter.behaviourComponent.SetIsDefending(true, targetHex);
+            //    entrances.RemoveAt(0);
+            //}
+            PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.DEFEND).OnExecuteSpellActionAffliction();
+        } else if (identifier == "invade") {
+            PopulateEntrances(targetHex);
+            for (int i = 0; i < chosenSummons.Count; i++) {
+                Summon summon = chosenSummons[i] as Summon;
+                TryPlaceSummon(summon, entrances[0]);
+                summon.behaviourComponent.SetIsInvading(true, targetHex);
+                entrances.RemoveAt(0);
+            }
+            foreach (KeyValuePair<SpellData, int> item in chosenMinionMonsters) {
+                for (int i = 0; i < item.Value; i++) {
+                    SpellData minionMonsterPlayerSkll = item.Key;
+                    minionMonsterPlayerSkll.ActivateAbility(entrances[0], ref spawnedCharacter);
+                    spawnedCharacter.behaviourComponent.SetIsInvading(true, targetHex);
+                    entrances.RemoveAt(0);
+                }
+            }
+            //for (int i = 0; i < chosenMinionMonsters.Count; i++) {
+            //    SpellData minionMonsterPlayerSkll = chosenMinionMonsters[i];
+            //    minionMonsterPlayerSkll.ActivateAbility(entrances[0], ref spawnedCharacter);
+            //    spawnedCharacter.behaviourComponent.SetIsInvading(true, targetHex);
+            //    entrances.RemoveAt(0);
+            //}
+            PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.INVADE).OnExecuteSpellActionAffliction();
+        }
+        PlayerManager.Instance.player.threatComponent.AdjustThreat(5 + (5 * chosenSummons.Count));
+
+        if(spawnedCharacter != null) {
+            spawnedCharacter.CenterOnCharacter();
+        } else if (chosenSummons.Count > 0) {
+            chosenSummons[0].CenterOnCharacter();
         }
     }
     private void Knockout() {
@@ -246,14 +343,23 @@ public class UnleashSummonUI : PopupMenuBase {
             summon.SetDestroyMarkerOnDeath(true);
             //entrances.RemoveAt(0);
         }
-        for (int i = 0; i < chosenMinionMonsters.Count; i++) {
-            SpellData minionMonsterPlayerSkll = chosenMinionMonsters[i];
-            minionMonsterPlayerSkll.ActivateAbility(entrances[UnityEngine.Random.Range(0, entrances.Count)], ref spawnedCharacter);
-            GoapPlanJob job = spawnedCharacter.jobComponent.CreateKnockoutJob(_targetCharacter);
-            spawnedCharacter.jobComponent.SetFinalJobAssignment(job);
-            spawnedCharacter.SetDestroyMarkerOnDeath(true);
-            //entrances.RemoveAt(0);
+        foreach (KeyValuePair<SpellData, int> item in chosenMinionMonsters) {
+            for (int i = 0; i < item.Value; i++) {
+                SpellData minionMonsterPlayerSkll = item.Key;
+                minionMonsterPlayerSkll.ActivateAbility(entrances[UnityEngine.Random.Range(0, entrances.Count)], ref spawnedCharacter);
+                GoapPlanJob job = spawnedCharacter.jobComponent.CreateKnockoutJob(_targetCharacter);
+                spawnedCharacter.jobComponent.SetFinalJobAssignment(job);
+                spawnedCharacter.SetDestroyMarkerOnDeath(true);
+            }
         }
+        //for (int i = 0; i < chosenMinionMonsters.Count; i++) {
+        //    SpellData minionMonsterPlayerSkll = chosenMinionMonsters[i];
+        //    minionMonsterPlayerSkll.ActivateAbility(entrances[UnityEngine.Random.Range(0, entrances.Count)], ref spawnedCharacter);
+        //    GoapPlanJob job = spawnedCharacter.jobComponent.CreateKnockoutJob(_targetCharacter);
+        //    spawnedCharacter.jobComponent.SetFinalJobAssignment(job);
+        //    spawnedCharacter.SetDestroyMarkerOnDeath(true);
+        //    //entrances.RemoveAt(0);
+        //}
         PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.KNOCKOUT).OnExecuteSpellActionAffliction();
 
         if (spawnedCharacter != null) {
@@ -261,7 +367,6 @@ public class UnleashSummonUI : PopupMenuBase {
         } else if (chosenSummons.Count > 0) {
             chosenSummons[0].CenterOnCharacter();
         }
-        Close();
     }
     private void Kill() {
         entrances.Clear();
@@ -296,14 +401,23 @@ public class UnleashSummonUI : PopupMenuBase {
             summon.SetDestroyMarkerOnDeath(true);
             //entrances.RemoveAt(0);
         }
-        for (int i = 0; i < chosenMinionMonsters.Count; i++) {
-            SpellData minionMonsterPlayerSkll = chosenMinionMonsters[i];
-            minionMonsterPlayerSkll.ActivateAbility(entrances[UnityEngine.Random.Range(0, entrances.Count)], ref spawnedCharacter);
-            GoapPlanJob job = spawnedCharacter.jobComponent.CreateKillJob(_targetCharacter);
-            spawnedCharacter.jobComponent.SetFinalJobAssignment(job);
-            spawnedCharacter.SetDestroyMarkerOnDeath(true);
-            //entrances.RemoveAt(0);
+        foreach (KeyValuePair<SpellData, int> item in chosenMinionMonsters) {
+            for (int i = 0; i < item.Value; i++) {
+                SpellData minionMonsterPlayerSkll = item.Key;
+                minionMonsterPlayerSkll.ActivateAbility(entrances[UnityEngine.Random.Range(0, entrances.Count)], ref spawnedCharacter);
+                GoapPlanJob job = spawnedCharacter.jobComponent.CreateKillJob(_targetCharacter);
+                spawnedCharacter.jobComponent.SetFinalJobAssignment(job);
+                spawnedCharacter.SetDestroyMarkerOnDeath(true);
+            }
         }
+        //for (int i = 0; i < chosenMinionMonsters.Count; i++) {
+        //    SpellData minionMonsterPlayerSkll = chosenMinionMonsters[i];
+        //    minionMonsterPlayerSkll.ActivateAbility(entrances[UnityEngine.Random.Range(0, entrances.Count)], ref spawnedCharacter);
+        //    GoapPlanJob job = spawnedCharacter.jobComponent.CreateKillJob(_targetCharacter);
+        //    spawnedCharacter.jobComponent.SetFinalJobAssignment(job);
+        //    spawnedCharacter.SetDestroyMarkerOnDeath(true);
+        //    //entrances.RemoveAt(0);
+        //}
         PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.KILL).OnExecuteSpellActionAffliction();
 
         if (spawnedCharacter != null) {
@@ -311,7 +425,6 @@ public class UnleashSummonUI : PopupMenuBase {
         } else if (chosenSummons.Count > 0) {
             chosenSummons[0].CenterOnCharacter();
         }
-        Close();
     }
     private void TryPlaceSummon(Summon summon, LocationGridTile locationTile) {
         summon.SetHomeRegion(locationTile.structure.location);
@@ -329,38 +442,4 @@ public class UnleashSummonUI : PopupMenuBase {
     //        summonText.text = text;
     //    }
     //}
-    
-    public void OnClickConfirm() {
-        if(identifier == "knockout") {
-            Knockout();
-        } else if (identifier == "kill") {
-            Kill();
-        } else {
-            HarassDefendInvade();
-        }
-
-        //if (PlayerManager.Instance.player.mana >= manaCost) {
-        //    Close();
-        //    PlayerManager.Instance.player.AdjustMana(-manaCost);
-        //    AttackRegion();
-        //} else {
-        //    PlayerUI.Instance.ShowGeneralConfirmation("Mana Cost", "NOT ENOUGH MANA!");
-        //}
-
-        //if(summon != null) {
-        //    PlayerUI.Instance.TryPlaceSummon(summon);
-        //}
-    }
-    public void OnClickClose() {
-        Close();
-    }
-
-    public override void Close() {
-        gameObject.SetActive(false);
-        if (!PlayerUI.Instance.TryShowPendingUI()) {
-            if (!isGamePausedOnShowUI) {
-                UIManager.Instance.ResumeLastProgressionSpeed(); //if no other UI was shown, unpause game
-            }
-        }
-    }
 }

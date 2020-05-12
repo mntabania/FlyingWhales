@@ -96,7 +96,7 @@ public class UIManager : MonoBehaviour {
     [Header("Nameplate Prefabs")]
     public GameObject characterNameplatePrefab;
     public GameObject stringNameplatePrefab;
-    public GameObject unsummonedMinionNameplatePrefab;
+    public GameObject summonMinionPlayerSkillPrefab;
     public GameObject worldEventNameplatePrefab;
     public GameObject factionNameplatePrefab;
 
