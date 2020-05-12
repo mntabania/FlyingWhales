@@ -275,7 +275,11 @@ public class Summon : Character, IWorldObject {
 
     #region Player Action Target
     public override void ConstructDefaultActions() {
-        actions = new List<SPELL_TYPE>();
+        if (actions == null) {
+            actions = new List<SPELL_TYPE>();
+        } else {
+            actions.Clear();
+        }
         //PlayerAction seizeAction = new PlayerAction(PlayerDB.Seize_Character_Action,
         //() => !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && !this.traitContainer.HasTrait("Leader", "Blessed"),
         //null,

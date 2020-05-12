@@ -287,7 +287,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     /// Characters that are not monsters or minions.
     /// </summary>
     /// <returns></returns>
-    public bool isNormalCharacter => (this is Summon) == false && minion == null;
+    public bool isNormalCharacter => (this is Summon) == false && minion == null && faction != FactionManager.Instance.zombieFaction;
     //public JobQueueItem currentJob => jobQueue.jobsInQueue.Count > 0 ? jobQueue.jobsInQueue[0] : null; //The current job is always the top of the queue
     public JobTriggerComponent jobTriggerComponent => jobComponent;
     public GameObject visualGO => marker.gameObject;
@@ -802,6 +802,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             needsComponent.SetFullnessForcedTick(0);
             needsComponent.SetHasCancelledSleepSchedule(false);
             needsComponent.ResetSleepTicks();
+            ConstructDefaultActions();
             Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
             //MigrateHomeTo(null);
             //AddInitialAwareness(gloomhollow);
@@ -5675,7 +5676,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         get { return _overrideThoughts; }
     }
     public virtual void ConstructDefaultActions() {
-        actions = new List<SPELL_TYPE>();
+        if (actions == null) {
+            actions = new List<SPELL_TYPE>();
+        } else {
+            actions.Clear();
+        }
 
         if (race == RACE.DEMON) {
             //PlayerAction stopAction = new PlayerAction(PlayerDB.Stop_Action, 
@@ -5709,11 +5714,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //    null,
             //    () => PlayerManager.Instance.player.seizeComponent.SeizePOI(this));
             // PlayerAction shareIntelAction = new PlayerAction("Share Intel", () => false, null);
-            AddPlayerAction(SPELL_TYPE.AFFLICT);
-            AddPlayerAction(SPELL_TYPE.ZAP);
+            if (isNormalCharacter) {
+                AddPlayerAction(SPELL_TYPE.AFFLICT);
+                AddPlayerAction(SPELL_TYPE.ZAP);
+                AddPlayerAction(SPELL_TYPE.KNOCKOUT);
+                AddPlayerAction(SPELL_TYPE.KILL);
+            }
             AddPlayerAction(SPELL_TYPE.SEIZE_CHARACTER);
-            AddPlayerAction(SPELL_TYPE.KNOCKOUT);
-            AddPlayerAction(SPELL_TYPE.KILL);
         }
         // AddPlayerAction(shareIntelAction);
     }

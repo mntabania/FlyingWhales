@@ -24,7 +24,7 @@ public class ReactionComponent {
         // else if (targetTileObject.poiType == POINT_OF_INTEREST_TYPE.ITEM) {
         //     ReactTo(targetTileObject as SpecialToken, ref debugLog);
         // }
-        if (!owner.isNormalCharacter || owner.faction == FactionManager.Instance.zombieFaction /*|| owner.race == RACE.SKELETON*/) {
+        if (!owner.isNormalCharacter /*|| owner.race == RACE.SKELETON*/) {
             //Minions or Summons cannot react to its own traits
             return;
         }
@@ -54,7 +54,7 @@ public class ReactionComponent {
         //}
     }
     public string ReactTo(IReactable reactable, REACTION_STATUS status, bool addLog = true) {
-        if (!owner.isNormalCharacter || owner.faction == FactionManager.Instance.zombieFaction /*|| owner.race == RACE.SKELETON*/) {
+        if (!owner.isNormalCharacter /*|| owner.race == RACE.SKELETON*/) {
             //Minions or Summons cannot react to actions
             return string.Empty;
         }
@@ -259,7 +259,7 @@ public class ReactionComponent {
         if (owner.isInCombat) {
             return string.Empty;
         }
-        if (!owner.isNormalCharacter || owner.faction == FactionManager.Instance.zombieFaction /*|| owner.race == RACE.SKELETON*/) {
+        if (!owner.isNormalCharacter /*|| owner.race == RACE.SKELETON*/) {
             //Minions or Summons cannot react to interrupts
             return string.Empty;
         }
@@ -569,7 +569,7 @@ public class ReactionComponent {
         }
     }
     private void ReactTo(TileObject targetTileObject, ref string debugLog) {
-        if (!owner.isNormalCharacter || owner.faction == FactionManager.Instance.zombieFaction /*|| owner.race == RACE.SKELETON*/) {
+        if (!owner.isNormalCharacter /*|| owner.race == RACE.SKELETON*/) {
             //Minions or Summons cannot react to objects
             return;
         }
@@ -704,7 +704,7 @@ public class ReactionComponent {
     }
     //The reason why we pass the character that was hit instead of just getting the current closest hostile in combat state is because 
     public void ReactToCombat(CombatState combat, Character characterHit) {
-        if (!owner.isNormalCharacter || owner.faction == FactionManager.Instance.zombieFaction /*|| owner.race == RACE.SKELETON*/) {
+        if (!owner.isNormalCharacter /*|| owner.race == RACE.SKELETON*/) {
             //Minions or Summons cannot react to objects
             return;
         }

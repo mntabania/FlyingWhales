@@ -7,9 +7,12 @@ using TMPro;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
-public class SummonMinionPlayerSkillButton : MonoBehaviour, IPointerClickHandler {
-    public SummonMinionPlayerSkillNameplateItem nameplateItem;
+public class NameplateButton : MonoBehaviour, IPointerClickHandler {
+    public INameplateItem nameplateItem;
 
+    public void SetNameplateItem(INameplateItem nameplateItem) {
+        this.nameplateItem = nameplateItem;
+    }
     public void OnPointerClick(PointerEventData eventData) {
         nameplateItem.OnPointerClick(eventData);
     }

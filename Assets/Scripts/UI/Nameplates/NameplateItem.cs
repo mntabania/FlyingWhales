@@ -11,7 +11,7 @@ using UnityEngine.EventSystems;
 /// <summary>
 /// This is the base class for all nameplates, regardless of what type of nameplate it is.
 /// </summary>
-public class NameplateItem<T> : PooledObject {
+public class NameplateItem<T> : PooledObject, INameplateItem {
 
     [Header("Main Content")]
     [SerializeField] protected TextMeshProUGUI mainLbl;
@@ -19,6 +19,7 @@ public class NameplateItem<T> : PooledObject {
     [SerializeField] protected TextMeshProUGUI supportingLbl;
     [SerializeField] protected RectTransform supportingLblRT;
     [SerializeField] protected RectTransform supportingLblContainer;
+    [SerializeField] protected NameplateButton nameplateButton;
 
     [Header("Button")]
     [SerializeField] protected Button button;
@@ -58,9 +59,11 @@ public class NameplateItem<T> : PooledObject {
     #region Virtuals
     public virtual void SetObject(T o) {
         obj = o;
+        nameplateButton.SetNameplateItem(this);
     }
     public virtual void UpdateObject(T o) {
         obj = o;
+        nameplateButton.SetNameplateItem(this);
     }
     #endregion
 
@@ -260,4 +263,9 @@ public class NameplateItem<T> : PooledObject {
         supportingLbl.gameObject.SetActive(state);
     }
     #endregion
+}
+
+public interface INameplateItem {
+    //This is only for reference, so that we can reference the Generic Class of NameplateItem<T>, since we cannot declare Nameplate<T> in a variable
+    void OnPointerClick(PointerEventData eventData);
 }

@@ -18,6 +18,7 @@ MonoBehaviour:
   supportingLbl: {fileID: 4743185990657489046}
   supportingLblRT: {fileID: 4852692961183273218}
   supportingLblContainer: {fileID: 4852692961183273218}
+  nameplateButton: {fileID: 7442424765685457741}
   button: {fileID: 4743307967486682156}
   toggle: {fileID: 4743343008275877912}
   coverGO: {fileID: 4629891706913246540}
@@ -255,6 +256,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7442424765685457741 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2814199998290790649, guid: 6fae4ada810dac340b9dde00ae3d39d4,
+    type: 3}
+  m_PrefabInstance: {fileID: 4631607075112709044}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93d6a8e3a92783e4ca283c8acbec0b8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &4743343008275877912 stripped
