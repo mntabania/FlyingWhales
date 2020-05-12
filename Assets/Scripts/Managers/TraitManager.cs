@@ -32,7 +32,6 @@ public class TraitManager : MonoBehaviour {
     public const string See_Poi_Cannot_Witness_Trait = "See_Poi_Cannot_Witness_Trait";
 
     public static string[] instancedTraits = new string[] {
-        //"Builder",
         //"Grudge", "Patrolling Character",
         "Restrained",
         //"Assaulter",

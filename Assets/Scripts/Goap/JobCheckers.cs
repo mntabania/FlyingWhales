@@ -30,11 +30,11 @@ public partial class InteractionManager {
         //return character.traitContainer.HasTrait("Combatant");
     }
     public bool CanDoProduceWoodJob(Character character) {
-        return character.traitContainer.HasTrait("Logger");
+        return character.characterClass.className == "Miner" || character.characterClass.className == "Peasant";
         //return character.role.roleType == CHARACTER_ROLE.SOLDIER;
     }
     public bool CanDoProduceMetalJob(Character character) {
-        return character.traitContainer.HasTrait("Miner");
+        return character.characterClass.className == "Miner";
         //return character.role.roleType == CHARACTER_ROLE.SOLDIER;
     }
     public bool CanBrewPotion(Character character) {
@@ -112,7 +112,7 @@ public partial class InteractionManager {
         //       character.role.roleType == CHARACTER_ROLE.ADVENTURER; // && !HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.POSITIVE)
     }
     public bool CanCharacterTakeRepairStructureJob(Character character) {
-        return character.traitContainer.HasTrait("Builder");
+        return character.characterClass.className == "Craftsman";
     }
 
 

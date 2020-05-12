@@ -1800,10 +1800,10 @@ public static class Extensions {
             return false;
         }
         TileObjectData data = TileObjectDB.GetTileObjectData(type);
-        if (data.neededTraitTypes == null || data.neededTraitTypes.Length <= 0) {
+        if (data.neededCharacterClass == null || data.neededCharacterClass.Length <= 0) {
             return true;
         }
-        return character.traitContainer.HasTrait(data.neededTraitTypes);
+        return data.neededCharacterClass.Contains(character.characterClass.className);
     }
     #endregion
 
