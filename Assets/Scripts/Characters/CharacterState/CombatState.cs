@@ -238,7 +238,7 @@ public class CombatState : CharacterState {
                 } else if (character.combatComponent.hostilesInRange.Count > 0) {
                     summary += "\n-Has hostile in list";
                     summary += "\n-Attack nereast one";
-                    SetClosestHostile(null);
+                    //SetClosestHostile(null);
                     SetIsAttacking(true);
                 } else {
                     summary += "\n-Has no hostile or avoid in list";
@@ -287,7 +287,7 @@ public class CombatState : CharacterState {
             if (HasStillHostilePOIThatIsInRange()) {
                 debugLog += "\n-Has hostile that is still in range";
                 debugLog += "\n-Attack nearest one";
-                SetClosestHostile(null);
+                //SetClosestHostile(null);
                 SetIsAttacking(true);
             } else {
                 debugLog += "\n-Has no hostile that is still in range";
@@ -409,11 +409,14 @@ public class CombatState : CharacterState {
                 log +=
                     $"\n{stateComponent.character.name} is taunted. Setting {taunted.responsibleCharacter.name} as target.";
                 SetClosestHostile(taunted.responsibleCharacter);
-            } else if (currentClosestHostile != null && 
-                       (!stateComponent.character.combatComponent.hostilesInRange.Contains(currentClosestHostile) 
-                        || currentClosestHostile.isDead)) {
+            } else if (currentClosestHostile != null && !stateComponent.character.combatComponent.hostilesInRange.Contains(currentClosestHostile)) {
                 log +=
                     $"\nCurrent closest hostile: {currentClosestHostile.name} is no longer in hostile list, setting another closest hostile...";
+                SetClosestHostile();
+            } else if (currentClosestHostile != null && currentClosestHostile.isDead) {
+                log +=
+                    $"\nCurrent closest hostile: {currentClosestHostile.name} is no longer in hostile list, setting another closest hostile...";
+                stateComponent.character.combatComponent.RemoveHostileInRange(currentClosestHostile, false);
                 SetClosestHostile();
             } else if (currentClosestHostile != null && (!currentClosestHostile.mapObjectVisual || !currentClosestHostile.mapObjectVisual.gameObject)) {
                 log +=
