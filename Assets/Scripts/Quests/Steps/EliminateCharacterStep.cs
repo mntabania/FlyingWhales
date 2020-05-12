@@ -14,8 +14,14 @@ namespace Quests.Steps {
         public EliminateCharacterStep(Func<List<Character>, int, string> descriptionGetter, List<Character> targets) 
             : base(string.Empty) {
             _descriptionGetter = descriptionGetter;
-            _targets = targets;
+            _targets = new List<Character>(targets);
             _initialCharactersToEliminate = _targets.Count;
+            for (int i = 0; i < targets.Count; i++) {
+                Character target = targets[i];
+                if (target.isDead) {
+                    CheckForCompletion(target);
+                }
+            }
         }
         
         
