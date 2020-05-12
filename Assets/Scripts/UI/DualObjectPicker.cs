@@ -332,56 +332,105 @@ public class DualObjectPicker : PopupMenuBase {
         }
     }
     private void ShowUnsummonedMinionItems<T>(List<UnsummonedMinionData> validItems, List<UnsummonedMinionData> invalidItems, Action<T> onHoverItemAction, Action<T> onHoverExitItemAction, ScrollRect column, ToggleGroup toggleGroup) {
-        Action<UnsummonedMinionData> convertedHoverAction = null;
-        if (onHoverItemAction != null) {
-            convertedHoverAction = ConvertToUnsummonedMinion(onHoverItemAction);
-        }
-        Action<UnsummonedMinionData> convertedHoverExitAction = null;
-        if (onHoverExitItemAction != null) {
-            convertedHoverExitAction = ConvertToUnsummonedMinion(onHoverExitItemAction);
-        }
-        for (int i = 0; i < validItems.Count; i++) {
-            UnsummonedMinionData minion = validItems[i];
-            GameObject characterItemGO = UIManager.Instance.InstantiateUIObject(UIManager.Instance.unsummonedMinionNameplatePrefab.name, column.content);
-            UnsummonedMinionNameplateItem item = characterItemGO.GetComponent<UnsummonedMinionNameplateItem>();
-            item.SetObject(minion);
-            item.ClearAllOnClickActions();
+        //Action<UnsummonedMinionData> convertedHoverAction = null;
+        //if (onHoverItemAction != null) {
+        //    convertedHoverAction = ConvertToUnsummonedMinion(onHoverItemAction);
+        //}
+        //Action<UnsummonedMinionData> convertedHoverExitAction = null;
+        //if (onHoverExitItemAction != null) {
+        //    convertedHoverExitAction = ConvertToUnsummonedMinion(onHoverExitItemAction);
+        //}
+        //for (int i = 0; i < validItems.Count; i++) {
+        //    UnsummonedMinionData minion = validItems[i];
+        //    GameObject characterItemGO = UIManager.Instance.InstantiateUIObject(UIManager.Instance.unsummonedMinionNameplatePrefab.name, column.content);
+        //    UnsummonedMinionNameplateItem item = characterItemGO.GetComponent<UnsummonedMinionNameplateItem>();
+        //    item.SetObject(minion);
+        //    item.ClearAllOnClickActions();
 
-            item.ClearAllHoverEnterActions();
-            if (convertedHoverAction != null) {
-                item.AddHoverEnterAction(convertedHoverAction.Invoke);
-            }
+        //    item.ClearAllHoverEnterActions();
+        //    if (convertedHoverAction != null) {
+        //        item.AddHoverEnterAction(convertedHoverAction.Invoke);
+        //    }
 
-            item.ClearAllHoverExitActions();
-            if (convertedHoverExitAction != null) {
-                item.AddHoverExitAction(convertedHoverExitAction.Invoke);
-            }
-            item.SetAsToggle();
-            item.AddOnToggleAction((character, isOn) => OnToggleItem(character, isOn, column));
-            item.SetToggleGroup(toggleGroup);
-            item.SetInteractableState(true);
-            item.AddHoverEnterAction(ShowMinionCardTooltip);
-            item.AddHoverExitAction(HideMinionCardTooltip);
-        }
-        for (int i = 0; i < invalidItems.Count; i++) {
-            UnsummonedMinionData minion = invalidItems[i];
-            GameObject characterItemGO = UIManager.Instance.InstantiateUIObject(UIManager.Instance.unsummonedMinionNameplatePrefab.name, column.content);
-            UnsummonedMinionNameplateItem characterItem = characterItemGO.GetComponent<UnsummonedMinionNameplateItem>();
-            characterItem.SetObject(minion);
-            characterItem.ClearAllOnClickActions();
+        //    item.ClearAllHoverExitActions();
+        //    if (convertedHoverExitAction != null) {
+        //        item.AddHoverExitAction(convertedHoverExitAction.Invoke);
+        //    }
+        //    item.SetAsToggle();
+        //    item.AddOnToggleAction((character, isOn) => OnToggleItem(character, isOn, column));
+        //    item.SetToggleGroup(toggleGroup);
+        //    item.SetInteractableState(true);
+        //    item.AddHoverEnterAction(ShowMinionCardTooltip);
+        //    item.AddHoverExitAction(HideMinionCardTooltip);
+        //}
+        //for (int i = 0; i < invalidItems.Count; i++) {
+        //    UnsummonedMinionData minion = invalidItems[i];
+        //    GameObject characterItemGO = UIManager.Instance.InstantiateUIObject(UIManager.Instance.unsummonedMinionNameplatePrefab.name, column.content);
+        //    UnsummonedMinionNameplateItem characterItem = characterItemGO.GetComponent<UnsummonedMinionNameplateItem>();
+        //    characterItem.SetObject(minion);
+        //    characterItem.ClearAllOnClickActions();
 
-            characterItem.ClearAllHoverEnterActions();
-            if (convertedHoverAction != null) {
-                characterItem.AddHoverEnterAction(convertedHoverAction.Invoke);
-            }
+        //    characterItem.ClearAllHoverEnterActions();
+        //    if (convertedHoverAction != null) {
+        //        characterItem.AddHoverEnterAction(convertedHoverAction.Invoke);
+        //    }
 
-            characterItem.ClearAllHoverExitActions();
-            if (convertedHoverExitAction != null) {
-                characterItem.AddHoverExitAction(convertedHoverExitAction.Invoke);
-            }
-            characterItem.SetInteractableState(false);
-        }
+        //    characterItem.ClearAllHoverExitActions();
+        //    if (convertedHoverExitAction != null) {
+        //        characterItem.AddHoverExitAction(convertedHoverExitAction.Invoke);
+        //    }
+        //    characterItem.SetInteractableState(false);
+        //}
     }
+    //private void ShowSummonMinionPlayerSkillItems<T>(List<SPELL_TYPE> validItems, List<SPELL_TYPE> invalidItems, Action<T> onHoverItemAction, Action<T> onHoverExitItemAction, ScrollRect column, ToggleGroup toggleGroup) {
+    //    Action<SPELL_TYPE> convertedHoverAction = null;
+    //    if (onHoverItemAction != null) {
+    //        convertedHoverAction = ConvertToSummonMinionPlayerSkill(onHoverItemAction);
+    //    }
+    //    Action<SPELL_TYPE> convertedHoverExitAction = null;
+    //    if (onHoverExitItemAction != null) {
+    //        convertedHoverExitAction = ConvertToSummonMinionPlayerSkill(onHoverExitItemAction);
+    //    }
+    //    for (int i = 0; i < validItems.Count; i++) {
+    //        SPELL_TYPE playerSkillType = validItems[i];
+    //        GameObject itemGO = UIManager.Instance.InstantiateUIObject(UIManager.Instance.summonMinionPlayerSkillPrefab.name, column.content);
+    //        SummonMinionPlayerSkillNameplateItem item = itemGO.GetComponent<SummonMinionPlayerSkillNameplateItem>();
+    //        item.SetObject(playerSkillType);
+    //        item.ClearAllOnClickActions();
+
+    //        item.ClearAllHoverEnterActions();
+    //        if (convertedHoverAction != null) {
+    //            item.AddHoverEnterAction(convertedHoverAction.Invoke);
+    //        }
+
+    //        item.ClearAllHoverExitActions();
+    //        if (convertedHoverExitAction != null) {
+    //            item.AddHoverExitAction(convertedHoverExitAction.Invoke);
+    //        }
+    //        item.SetAsToggle();
+    //        item.AddOnToggleAction((character, isOn) => OnToggleItem(character, isOn, column));
+    //        item.SetToggleGroup(toggleGroup);
+    //        item.SetInteractableState(true);
+    //    }
+    //    for (int i = 0; i < invalidItems.Count; i++) {
+    //        SPELL_TYPE minion = invalidItems[i];
+    //        GameObject itemGO = UIManager.Instance.InstantiateUIObject(UIManager.Instance.summonMinionPlayerSkillPrefab.name, column.content);
+    //        SummonMinionPlayerSkillNameplateItem characterItem = itemGO.GetComponent<SummonMinionPlayerSkillNameplateItem>();
+    //        characterItem.SetObject(minion);
+    //        characterItem.ClearAllOnClickActions();
+
+    //        characterItem.ClearAllHoverEnterActions();
+    //        if (convertedHoverAction != null) {
+    //            characterItem.AddHoverEnterAction(convertedHoverAction.Invoke);
+    //        }
+
+    //        characterItem.ClearAllHoverExitActions();
+    //        if (convertedHoverExitAction != null) {
+    //            characterItem.AddHoverExitAction(convertedHoverExitAction.Invoke);
+    //        }
+    //        characterItem.SetInteractableState(false);
+    //    }
+    //}
     private void ShowFactionItems<T>(List<Faction> validItems, List<Faction> invalidItems, Action<T> onHoverItemAction, Action<T> onHoverExitItemAction, ScrollRect column, ToggleGroup toggleGroup) {
         Action<Faction> convertedHoverAction = null;
         if (onHoverItemAction != null) {
@@ -565,6 +614,10 @@ public class DualObjectPicker : PopupMenuBase {
     public Action<Faction> ConvertToFaction<T>(Action<T> myActionT) {
         if (myActionT == null) return null;
         else return new Action<Faction>(o => myActionT((T) (object) o));
+    }
+    public Action<SPELL_TYPE> ConvertToSummonMinionPlayerSkill<T>(Action<T> myActionT) {
+        if (myActionT == null) return null;
+        else return new Action<SPELL_TYPE>(o => myActionT((T) (object) o));
     }
     #endregion
 }

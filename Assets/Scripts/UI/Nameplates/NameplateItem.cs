@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
+using UnityEngine.EventSystems;
 
 /// <summary>
 /// This is the base class for all nameplates, regardless of what type of nameplate it is.
@@ -37,6 +39,9 @@ public class NameplateItem<T> : PooledObject {
     public delegate void OnClickNameplate(T obj);
     private OnClickNameplate onClickNameplate;
 
+    public delegate void OnRightClickNameplate(T obj);
+    private OnRightClickNameplate onRightClickNameplate;
+
     //Toggle Delegates
     public delegate void OnToggleNameplate(T obj, bool isOn);
     private OnToggleNameplate onToggleNameplate;
@@ -65,6 +70,7 @@ public class NameplateItem<T> : PooledObject {
         onHoverEnterNameplate = null;
         onHoverExitNameplate = null;
         onClickNameplate = null;
+        onRightClickNameplate = null;
         onToggleNameplate = null;
         toggle.isOn = false;
         obj = default(T);
@@ -120,18 +126,37 @@ public class NameplateItem<T> : PooledObject {
     public void AddOnClickAction(OnClickNameplate action) {
         onClickNameplate += action;
     }
+    public void AddOnRightClickAction(OnRightClickNameplate action) {
+        onRightClickNameplate += action;
+    }
     public void RemoveOnClickAction(OnClickNameplate action) {
         onClickNameplate -= action;
     }
+    public void RemoveOnRightClickAction(OnRightClickNameplate action) {
+        onRightClickNameplate -= action;
+    }
     public void ClearAllOnClickActions() {
         onClickNameplate = null;
+        onRightClickNameplate = null;
     }
+
+    //public void OnClick() {
+    //    onClickNameplate?.Invoke(obj);
+    //    Messenger.Broadcast(Signals.NAMEPLATE_CLICKED, mainLbl.text);
+    //}
+
     /// <summary>
     /// This is called to invoke all click actions.
     /// </summary>
-    public void OnClick() {
-        onClickNameplate?.Invoke(obj);
-        Messenger.Broadcast(Signals.NAMEPLATE_CLICKED, mainLbl.text);
+    public void OnPointerClick(PointerEventData eventData) {
+        if (button.gameObject.activeSelf) {
+            if(eventData.button == PointerEventData.InputButton.Left) {
+                onClickNameplate?.Invoke(obj);
+                Messenger.Broadcast(Signals.NAMEPLATE_CLICKED, mainLbl.text);
+            } else if (eventData.button == PointerEventData.InputButton.Right) {
+                onRightClickNameplate?.Invoke(obj);
+            }
+        }
     }
     #endregion
 

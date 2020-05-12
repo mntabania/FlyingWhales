@@ -138,7 +138,7 @@ MonoBehaviour:
     - manaCost: -1
       charges: 10
       cooldown: 3
-      threat: 2
+      threat: 5
       threatPerHour: 0
       expCost: 300
       buttonSprite: {fileID: 21300000, guid: 1de8b7335028dce4b8e2c6254181530f, type: 3}
@@ -146,7 +146,7 @@ MonoBehaviour:
     - manaCost: -1
       charges: 10
       cooldown: 3
-      threat: 2
+      threat: 5
       threatPerHour: 0
       expCost: 300
       buttonSprite: {fileID: 21300000, guid: 1de8b7335028dce4b8e2c6254181530f, type: 3}
@@ -154,7 +154,7 @@ MonoBehaviour:
     - manaCost: -1
       charges: 10
       cooldown: 3
-      threat: 2
+      threat: 5
       threatPerHour: 0
       expCost: 300
       buttonSprite: {fileID: 21300000, guid: 1de8b7335028dce4b8e2c6254181530f, type: 3}
@@ -178,7 +178,7 @@ MonoBehaviour:
     - manaCost: -1
       charges: -1
       cooldown: -1
-      threat: 2
+      threat: 5
       threatPerHour: 0
       expCost: 0
       buttonSprite: {fileID: 21300000, guid: e82f28130057b894cb52771c34d33c2d, type: 3}
@@ -242,7 +242,7 @@ MonoBehaviour:
     - manaCost: -1
       charges: 10
       cooldown: 3
-      threat: 2
+      threat: 5
       threatPerHour: 0
       expCost: 300
       buttonSprite: {fileID: 21300000, guid: 1721f25e3f54f78489f9a120a49a68f7, type: 3}

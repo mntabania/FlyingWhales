@@ -54,33 +54,44 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         Messenger.AddListener<Character>(Signals.ON_SET_AS_FACTION_LEADER, OnCharacterSetAsFactionLeader);
         Messenger.AddListener<Character>(Signals.ON_SET_AS_SETTLEMENT_RULER, OnCharacterSetAsSettlementRuler);
     }
-
+    public void GeneratePortrait(PortraitSettings portraitSettings, bool makePixelPerfect = true) {
+        _portraitSettings = portraitSettings;
+        UpdatePortrait(makePixelPerfect);
+    }
     public void GeneratePortrait(Character character, bool makePixelPerfect = true) {
         _character = character;
         _portraitSettings = character.visuals.portraitSettings;
-        
+        UpdatePortrait(makePixelPerfect);
+    }
+
+    private void UpdatePortrait(bool makePixelPerfect) {
         isPixelPerfect = makePixelPerfect;
 
         if (string.IsNullOrEmpty(_portraitSettings.wholeImage) == false) {
             //use whole image
             SetWholeImageSprite(CharacterManager.Instance.GetWholeImagePortraitSprite(_portraitSettings.wholeImage));
-            SetWholeImageMaterial(character.visuals.wholeImageMaterial);
+            if (character != null) {
+                SetWholeImageMaterial(character.visuals.wholeImageMaterial);
+            }
             SetWholeImageState(true);
             SetFaceObjectStates(false);
         } else {
             SetWholeImageSprite(null);
             SetWholeImageState(false);
-            SetHairMaterial(character.visuals.hairUIMaterial);
-            
-            SetPortraitAsset("head", character.visuals.portraitSettings.head, _portraitSettings.race, _portraitSettings.gender, head);
-            SetPortraitAsset("brows", character.visuals.portraitSettings.brows, _portraitSettings.race, _portraitSettings.gender, brows);
-            SetPortraitAsset("eyes", character.visuals.portraitSettings.eyes, _portraitSettings.race, _portraitSettings.gender, eyes);
-            SetPortraitAsset("mouth", character.visuals.portraitSettings.mouth, _portraitSettings.race, _portraitSettings.gender, mouth);
-            SetPortraitAsset("nose", character.visuals.portraitSettings.nose, _portraitSettings.race, _portraitSettings.gender, nose);
-            SetPortraitAsset("hair", character.visuals.portraitSettings.hair, _portraitSettings.race, _portraitSettings.gender, hair);
-            SetPortraitAsset("mustache", character.visuals.portraitSettings.mustache, _portraitSettings.race, _portraitSettings.gender, mustache);
-            SetPortraitAsset("beard", character.visuals.portraitSettings.beard, _portraitSettings.race, _portraitSettings.gender, beard);
-            
+
+            if(character != null) {
+                SetHairMaterial(character.visuals.hairUIMaterial);
+            }
+
+            SetPortraitAsset("head", _portraitSettings.head, _portraitSettings.race, _portraitSettings.gender, head);
+            SetPortraitAsset("brows", _portraitSettings.brows, _portraitSettings.race, _portraitSettings.gender, brows);
+            SetPortraitAsset("eyes", _portraitSettings.eyes, _portraitSettings.race, _portraitSettings.gender, eyes);
+            SetPortraitAsset("mouth", _portraitSettings.mouth, _portraitSettings.race, _portraitSettings.gender, mouth);
+            SetPortraitAsset("nose", _portraitSettings.nose, _portraitSettings.race, _portraitSettings.gender, nose);
+            SetPortraitAsset("hair", _portraitSettings.hair, _portraitSettings.race, _portraitSettings.gender, hair);
+            SetPortraitAsset("mustache", _portraitSettings.mustache, _portraitSettings.race, _portraitSettings.gender, mustache);
+            SetPortraitAsset("beard", _portraitSettings.beard, _portraitSettings.race, _portraitSettings.gender, beard);
+
             if (makePixelPerfect) {
                 head.SetNativeSize();
                 brows.SetNativeSize();
@@ -155,10 +166,14 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         baseBG.gameObject.SetActive(state);
     }
     public void ShowCharacterInfo() {
-        UIManager.Instance.ShowSmallInfo(_character.name);
+        if(_character != null) {
+            UIManager.Instance.ShowSmallInfo(_character.name);
+        }
     }
     public void HideCharacterInfo() {
-        UIManager.Instance.HideSmallInfo();
+        if (_character != null) {
+            UIManager.Instance.HideSmallInfo();
+        }
     }
     public void SetImageRaycastTargetState(bool state) {
         Image[] targets = this.GetComponentsInChildren<Image>();
@@ -289,7 +304,12 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         }
     }
     private void UpdateFactionEmblem() {
-        factionEmblem.SetFaction(_character.faction);
+        if (_character != null) {
+            factionEmblem.SetFaction(_character.faction);
+            factionEmblem.gameObject.SetActive(true);
+        } else {
+            factionEmblem.gameObject.SetActive(false);
+        }
     }
     #endregion
 
