@@ -89,7 +89,7 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 4691589913767788}
+  - component: {fileID: 2577081769204473958}
   m_Layer: 14
   m_Name: Text Container
   m_TagString: Character Marker
@@ -97,7 +97,7 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4691589913767788
+--- !u!4 &2577081769204473958
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -143,7 +143,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 4691589913767788}
+  m_Father: {fileID: 2577081769204473958}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -859,7 +859,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4833690815638556}
-  - {fileID: 4691589913767788}
+  - {fileID: 2577081769204473958}
   - {fileID: 9100811082952450312}
   - {fileID: 4968866154022664}
   - {fileID: 4343832300210686}
@@ -891,6 +891,7 @@ MonoBehaviour:
   statusIconsParent: {fileID: 2600264644750238789}
   visualsParent: {fileID: 4833690815638556}
   nameLbl: {fileID: 114873295937025758}
+  nameContainer: {fileID: 2577081769204473958}
   mainImg: {fileID: 212044654499763036}
   hairImg: {fileID: 212069551861907514}
   knockedOutHairImg: {fileID: 212674958508238394}

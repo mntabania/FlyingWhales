@@ -25,22 +25,19 @@ public class BrimstonesParticleEffect : BaseParticleEffect {
     }
     private void BrimstoneEffect(ITraitable traitable, ref BurningSource bs) {
         if (traitable is TileObject obj) {
-            if (obj.tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
-                BurningSource burningSource = bs;
-                obj.AdjustHP(-obj.currentHP, ELEMENTAL_TYPE.Fire, true, elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref burningSource), showHPBar: true);
-                bs = burningSource;
-                // if (obj.gridTileLocation == null) {
-                //     continue; //object was destroyed, do not add burning trait
-                // }
-            } else {
+            if (obj.tileObjectType == TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
                 BurningSource burningSource = bs;
                 CombatManager.Instance.ApplyElementalDamage(0, ELEMENTAL_TYPE.Fire, obj,
                     elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref burningSource));
                 bs = burningSource;
+            } else {
+                BurningSource burningSource = bs;
+                obj.AdjustHP(-240, ELEMENTAL_TYPE.Fire, true, elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref burningSource), showHPBar: true);
+                bs = burningSource;
             }
         } else if (traitable is Character character) {
             BurningSource burningSource = bs;
-            character.AdjustHP(-(int) (character.maxHP * 0.4f), ELEMENTAL_TYPE.Fire, true, 
+            character.AdjustHP(-240, ELEMENTAL_TYPE.Fire, true, 
                 elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref burningSource), showHPBar: true);
             bs = burningSource;
             if (Random.Range(0, 100) < 25) {
@@ -48,7 +45,7 @@ public class BrimstonesParticleEffect : BaseParticleEffect {
             }
         } else {
             BurningSource burningSource = bs;
-            traitable.AdjustHP(-traitable.currentHP, ELEMENTAL_TYPE.Fire, true, 
+            traitable.AdjustHP(-240, ELEMENTAL_TYPE.Fire, true, 
                 elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref burningSource), showHPBar: true);
             bs = burningSource;
         }

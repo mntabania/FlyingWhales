@@ -19,6 +19,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
 
     public Transform visualsParent;
     public TextMeshPro nameLbl;
+    [SerializeField] private Transform nameContainer;
     [SerializeField] private SpriteRenderer mainImg;
     [SerializeField] private SpriteRenderer hairImg;
     [SerializeField] private SpriteRenderer knockedOutHairImg;
@@ -119,6 +120,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
 
         AddListeners();
         PathfindingManager.Instance.AddAgent(pathfindingAI);
+        UpdateNameplatePosition();
     }
 
     #region Monobehavior
@@ -419,6 +421,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
         UpdateSpeed();
         UpdateAnimationSpeed();
+    }
+    public void UpdateNameplatePosition() {
+        nameContainer.localPosition = new Vector3(nameContainer.localPosition.x, mainImg.sprite.rect.height * -0.0075f, 0f);
     }
     #endregion
 

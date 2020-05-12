@@ -18,9 +18,13 @@ public class IceteroidParticleEffect : BaseParticleEffect {
         targetTile.PerformActionOnTraitables(DealDamage);
     }
     private void DealDamage(ITraitable traitable) {
-        traitable.AdjustHP(-50, ELEMENTAL_TYPE.Ice, true, showHPBar: true);
-        if (traitable is Character character && character.isDead == false && Random.Range(0, 100) < 25) {
-            character.traitContainer.AddTrait(character, "Injured");
+        traitable.AdjustHP(-240, ELEMENTAL_TYPE.Ice, true, showHPBar: true);
+        if (traitable is Character character && character.isDead == false) {
+            traitable.traitContainer.AddTrait(traitable, "Freezing", null, null, true);
+            traitable.traitContainer.AddTrait(traitable, "Freezing", null, null, true);
+            if (Random.Range(0, 100) < 25) {
+                character.traitContainer.AddTrait(character, "Injured");
+            }
         }
     }
 }
