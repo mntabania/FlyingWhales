@@ -83,8 +83,8 @@ namespace Inner_Maps.Location_Structures {
                 LocationGridTile outsideTile = tortureChamber.location.innerMap.map[modifiedX, tortureChamber.entrance.localPlace.y];
 
                 List<LocationGridTile> dropChoices = outsideTile
-                    .GetTilesInRadius(4, includeCenterTile: true, includeTilesInDifferentStructure: false).Where(t =>
-                         t.objHere == null && t.structure.structureType == STRUCTURE_TYPE.WILDERNESS).ToList();
+                    .GetTilesInRadius(7, includeCenterTile: true, includeTilesInDifferentStructure: false).Where(t =>
+                         t.objHere == null && t.structure.structureType == STRUCTURE_TYPE.WILDERNESS && t.collectionOwner.partOfHextile != parentStructure.occupiedHexTile).ToList();
                 
                 CharacterManager.Instance.PlaceSummon(_skeleton, CollectionUtilities.GetRandomElement(tilesInRoom));
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MOVE_CHARACTER,
