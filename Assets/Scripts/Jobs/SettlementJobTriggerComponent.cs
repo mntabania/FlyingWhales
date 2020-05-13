@@ -286,11 +286,12 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		if (_owner.HasJob(jobType) == false) {
 			ResourcePile targetPile = _owner.mainStorage.GetTileObjectOfType<ResourcePile>(resourcePile);
 			if (targetPile == null) {
-				//creation of job will be handled by OnTileObjectPlaced, when unbuilt object is placed.
 				ResourcePile newPile = InnerMapManager.Instance.CreateNewTileObject<ResourcePile>(resourcePile);
 				_owner.mainStorage.AddPOI(newPile);
 				newPile.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT, IsResourcePileStillValid);
-			} else {
+				targetPile = newPile;
+			}
+			if (_owner.HasJob(jobType) == false) {
 				GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(
 					GetProduceResourceGoapEffect(resourceType), string.Empty, 
 					false, GOAP_EFFECT_TARGET.ACTOR), targetPile, _owner);
@@ -298,8 +299,10 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 					job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoProduceWoodJob);
 				} else if (jobType == JOB_TYPE.PRODUCE_METAL) {
 					job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoProduceMetalJob);
+				} else if (jobType == JOB_TYPE.PRODUCE_STONE) {
+					job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoProduceStoneJob);
 				} else {
-					job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoObtainSupplyJob);	
+					job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoProduceFoodJob);	
 				}
 			
 				job.SetStillApplicableChecker(() => IsProduceResourceJobStillValid(resourceType));
@@ -473,7 +476,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 			job.AddOtherData(INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE, 
 				new object[] { targetPile });
 			job.SetStillApplicableChecker(() => IsCombineStockpileStillApplicable(targetPile, pile, _owner));
-			job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoObtainSupplyJob);
+			job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoProduceFoodJob);
 			_owner.AddToAvailableJobs(job);
 		}
 	}

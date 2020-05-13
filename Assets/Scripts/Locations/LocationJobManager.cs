@@ -87,9 +87,9 @@ public class LocationJobManager {
         if (Random.Range(0, 2) <= 0) {
             Region region;
             if (TryGetCorruptedRegionWithoutLandmark(out region)) {
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CLEANSE_CORRUPTION, INTERACTION_TYPE.CLEANSE_REGION, region.regionTileObject, location);
-                job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoCleanseRegionJob);
-                location.AddToAvailableJobs(job);
+                // GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CLEANSE_CORRUPTION, INTERACTION_TYPE.CLEANSE_REGION, region.regionTileObject, location);
+                // job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoCleanseRegionJob);
+                // location.AddToAvailableJobs(job);
                 return true;
             }
         }
@@ -99,9 +99,9 @@ public class LocationJobManager {
         if (Random.Range(0, 2) == 0) {
             Region region;
             if (TryGetAdjacentRegionWithoutFactionOwner(out region)) {
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CLAIM_REGION, INTERACTION_TYPE.CLAIM_REGION, region.regionTileObject, location);
-                job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoClaimRegionJob);
-                location.AddToAvailableJobs(job);
+                // GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CLAIM_REGION, INTERACTION_TYPE.CLAIM_REGION, region.regionTileObject, location);
+                // job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoClaimRegionJob);
+                // location.AddToAvailableJobs(job);
                 return true;
             }
         }

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 
 public class CharacterClass {
     [SerializeField] private string _className;
@@ -217,6 +218,8 @@ public class CharacterClass {
 
         //this._jobType = (JOB) System.Enum.Parse(typeof(JOB), ClassPanelUI.Instance.jobTypeOptions.options[ClassPanelUI.Instance.jobTypeOptions.value].text);
     }
+
+    #region Utilities
     public bool IsCombatant() {
         if(_traitNames != null) {
             for (int i = 0; i < _traitNames.Length; i++) {
@@ -227,6 +230,10 @@ public class CharacterClass {
         }
         return false;
     }
+    public bool CanDoJob(JOB_TYPE jobType) {
+        return priorityJobs.Contains(jobType) || ableJobs.Contains(jobType) || secondaryJobs.Contains(jobType);
+    }
+    #endregion
     //public void ConstructData() {
     //    ConstructSkills();
     //}
