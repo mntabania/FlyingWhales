@@ -1,5 +1,6 @@
 ﻿using Inner_Maps;
 using Traits;
+using System.Collections.Generic;
 
 public class MagicalAngel : Summon {
     public override string raceClassName => $"Magical Angel";
@@ -11,4 +12,15 @@ public class MagicalAngel : Summon {
         UtilityScripts.Utilities.GetRandomGender()) {
     }
 
+    #region Overrides
+    public override void ConstructDefaultActions() {
+        if (actions == null) {
+            actions = new List<SPELL_TYPE>();
+        } else {
+            actions.Clear();
+        }
+        AddPlayerAction(SPELL_TYPE.ZAP);
+        AddPlayerAction(SPELL_TYPE.SEIZE_CHARACTER);
+    }
+    #endregion  
 }

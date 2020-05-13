@@ -108,7 +108,8 @@ public class PlayerSkillComponent {
                     //the available set of spells for the demo. Other spells are added because in the demo, their buttons should still
                     //be seen, but instead, should not be clickable.
                     shouldAddSpell = (PlayerSkillManager.Instance.IsMinion(item.Key) == false ||
-                                     WorldConfigManager.Instance.availableSpellsInDemoBuild.Contains(item.Key)) && item.Key != SPELL_TYPE.KNOCKOUT;
+                                     WorldConfigManager.Instance.availableSpellsInDemoBuild.Contains(item.Key)) 
+                                     && item.Key != SPELL_TYPE.KNOCKOUT && item.Key != SPELL_TYPE.HARASS;
                 }
                 if (shouldAddSpell) {
                     SetPlayerSkillData(item.Key, item.Value);
