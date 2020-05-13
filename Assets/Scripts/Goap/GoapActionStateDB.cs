@@ -452,7 +452,7 @@ public static class GoapActionStateDB {
             new StateNameAndDuration(){ name = "Whip Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(5) },
         } },
         {INTERACTION_TYPE.TEND, new[]{
-            new StateNameAndDuration(){ name = "Tend Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(10) },
+            new StateNameAndDuration(){ name = "Tend Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(5) },
         } },
         {INTERACTION_TYPE.START_TEND, new[]{
             new StateNameAndDuration(){ name = "Start Tend Success", status = InteractionManager.Goap_State_Success, duration = 0 },

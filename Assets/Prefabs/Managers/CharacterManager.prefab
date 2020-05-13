@@ -2513,24 +2513,10 @@ MonoBehaviour:
         - defaultSprite: {fileID: 21300000, guid: 0dd8eeb71999a4f4fa41723c609850c8,
             type: 3}
           animationSprites:
-          - {fileID: 21300000, guid: cdebb4e3794bad5458deac4f759f2672, type: 3}
-          - {fileID: 21300000, guid: 56083c38b844fea468faa9d8e2261d69, type: 3}
-          - {fileID: 21300000, guid: 5acb547e70f9ab740bbdaea905055bd1, type: 3}
-          - {fileID: 21300000, guid: 8979dd8e73a7c0d4d945f8c886d220e1, type: 3}
+          - {fileID: 21300000, guid: 5d9b66e940250e94b95a79cf7eb47982, type: 3}
           - {fileID: 21300000, guid: 0dd8eeb71999a4f4fa41723c609850c8, type: 3}
-          - {fileID: 21300000, guid: e41a7ff5e0b342841b4253dc84234f3f, type: 3}
-          - {fileID: 21300000, guid: 3eb04f51bfb57fa44b7a71c108f3c708, type: 3}
-          - {fileID: 21300000, guid: ef6502e6c3af93c419037d92f26c17db, type: 3}
-          - {fileID: 21300000, guid: 1446b12eb24c8d046ad1561582bd395c, type: 3}
-          - {fileID: 21300000, guid: f94f2b4f75720594a9015607a60f84b5, type: 3}
-          - {fileID: 21300000, guid: cd87aef90e1171142a5c547c523d9347, type: 3}
-          - {fileID: 21300000, guid: 491e09e496ab5c9458af9726975fbf52, type: 3}
           - {fileID: 21300000, guid: 45ff72b30d583844790d1d220ec68f88, type: 3}
           - {fileID: 21300000, guid: a7752b8ce1153bd4e8b714d4062c9396, type: 3}
-          - {fileID: 21300000, guid: 9eb1d93a356d4fb40a56cecdd6f5ebfa, type: 3}
-          - {fileID: 21300000, guid: 5bc37cd1531df9e4fa54998f3407f990, type: 3}
-          - {fileID: 21300000, guid: 9389e248693b12d478d622001f3de92e, type: 3}
-          - {fileID: 21300000, guid: 4b4f38e33a36a7543957baff8e93519c, type: 3}
     femaleAssets:
       characterClassAssets:
         m_keys:
@@ -2539,24 +2525,10 @@ MonoBehaviour:
         - defaultSprite: {fileID: 21300000, guid: d90de9c8d6ba0f84c812a3f6af914fef,
             type: 3}
           animationSprites:
-          - {fileID: 21300000, guid: c4e939c01e43e6c479df98a6092d56fe, type: 3}
-          - {fileID: 21300000, guid: e7e31d0833712354485870cde284c33e, type: 3}
-          - {fileID: 21300000, guid: 8a8c5c4260eb0e445a96b49659a016c4, type: 3}
-          - {fileID: 21300000, guid: fad42d84ba6717a4688a14f3c1cf15eb, type: 3}
+          - {fileID: 21300000, guid: eb7254244880c694f82c522756f59a78, type: 3}
           - {fileID: 21300000, guid: d90de9c8d6ba0f84c812a3f6af914fef, type: 3}
-          - {fileID: 21300000, guid: 8034bfb86f28ed146a221ed6068e476f, type: 3}
-          - {fileID: 21300000, guid: d083ec8016e93fb42991208945e06f8b, type: 3}
-          - {fileID: 21300000, guid: 7458bb39f31807f418c6b31d8c63a8f3, type: 3}
-          - {fileID: 21300000, guid: bcdf9d1ca140dd94d8ce33d2bcfff21a, type: 3}
-          - {fileID: 21300000, guid: e29e06ab45905f046a8914751bad6d3d, type: 3}
-          - {fileID: 21300000, guid: 7e3282af974cdec45a2d9b0af1b844bc, type: 3}
-          - {fileID: 21300000, guid: 649e945730541a0459aeca53260b14e4, type: 3}
           - {fileID: 21300000, guid: a51b7ff7049ca0b4b92f9b01c37f6782, type: 3}
           - {fileID: 21300000, guid: f3fe959433a7d1d418ef7e48e06d0889, type: 3}
-          - {fileID: 21300000, guid: 1d30eb6d9c617224382a2552fd2ccef3, type: 3}
-          - {fileID: 21300000, guid: 2a4301b6225ac7d4ba766ff15f33e61f, type: 3}
-          - {fileID: 21300000, guid: 889769800ac991e48b48023c5c1fc0a1, type: 3}
-          - {fileID: 21300000, guid: aa71db8ab5f490247b2448ea054d5ce4, type: 3}
   - raceName: MIMIC
     race: 21
     neutralAssets:
