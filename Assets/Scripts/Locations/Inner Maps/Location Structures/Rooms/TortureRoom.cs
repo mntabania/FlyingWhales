@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+using UnityEngine.Assertions;
 using UtilityScripts;
 namespace Inner_Maps.Location_Structures {
     public class TortureRoom : StructureRoom {
@@ -64,12 +67,7 @@ namespace Inner_Maps.Location_Structures {
                 //open door
                 DoorTileObject door = GetTileObjectInRoom<DoorTileObject>();
                 door?.Open();
-
-                // //close after 5 ticks
-                // GameDate closeDate = GameManager.Instance.Today();
-                // closeDate.AddTicks(7);
-                // SchedulingManager.Instance.AddEntry(closeDate, () => door.Close(), this);
-
+                
                 _skeleton = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Skeleton,
                     FactionManager.Instance.friendlyNeutralFaction, null, character.currentRegion, className: "Archer");
                 _skeleton.combatComponent.SetCombatMode(COMBAT_MODE.Passive);
@@ -78,14 +76,22 @@ namespace Inner_Maps.Location_Structures {
 
                 // GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Zombie_Transformation);
 
-                HexTile parentTile = tilesInRoom[0].collectionOwner.partOfHextile.hexTileOwner;
+                TortureChambers tortureChamber = parentStructure as TortureChambers;
+                Assert.IsNotNull(tortureChamber, $"Parent structure of torture room is not torture chamber! {parentStructure?.ToString() ?? "Null"}");
+                int modifiedX = tortureChamber.entrance.localPlace.x - 2;
+                modifiedX = Mathf.Max(modifiedX, 0);
+                LocationGridTile outsideTile = tortureChamber.location.innerMap.map[modifiedX, tortureChamber.entrance.localPlace.y];
 
+                List<LocationGridTile> dropChoices = outsideTile
+                    .GetTilesInRadius(4, includeCenterTile: true, includeTilesInDifferentStructure: false).Where(t =>
+                         t.objHere == null && t.structure.structureType == STRUCTURE_TYPE.WILDERNESS).ToList();
+                
                 CharacterManager.Instance.PlaceSummon(_skeleton, CollectionUtilities.GetRandomElement(tilesInRoom));
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MOVE_CHARACTER,
                     INTERACTION_TYPE.DROP, character, _skeleton);
                 job.AddOtherData(INTERACTION_TYPE.DROP, new object[] {
                     _skeleton.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS), 
-                    CollectionUtilities.GetRandomElement(parentTile.borderTiles)
+                    CollectionUtilities.GetRandomElement(dropChoices)
                 });
                 _skeleton.jobQueue.AddJobInQueue(job);
                 

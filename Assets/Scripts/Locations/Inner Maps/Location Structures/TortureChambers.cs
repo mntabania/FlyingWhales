@@ -7,7 +7,9 @@ namespace Inner_Maps.Location_Structures {
     public class TortureChambers : DemonicStructure {
         public override Vector2 selectableSize { get; }
         private TortureChamberStructureObject _tortureChamberStructureObject;
-
+        public LocationGridTile entrance => _tortureChamberStructureObject.entrance;
+        
+        
         public TortureChambers(Region location) : base(STRUCTURE_TYPE.TORTURE_CHAMBERS, location){
             selectableSize = new Vector2(10f, 10f);
         }
@@ -29,6 +31,9 @@ namespace Inner_Maps.Location_Structures {
         public override void SetStructureObject(LocationStructureObject structureObj) {
             base.SetStructureObject(structureObj);
             _tortureChamberStructureObject = structureObj as TortureChamberStructureObject;
+        }
+        public override void OnBuiltStructure() {
+            _tortureChamberStructureObject.SetEntrance(location.innerMap);
         }
         #endregion
 

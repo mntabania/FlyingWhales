@@ -312,6 +312,19 @@ public class LocationStructureObject : PooledObject {
         }
         return occupiedTiles;
     }
+    protected LocationGridTile ConvertLocalPointInStructureToTile(Vector3Int coordinates, InnerTileMap map) {
+        var localPosition = map.transform.InverseTransformPoint(transform.position);
+        Vector3Int actualLocation = new Vector3Int(Mathf.FloorToInt(localPosition.x), Mathf.FloorToInt(localPosition.y), 0);
+        Vector3Int gridTileLocation = actualLocation;
+
+        //get difference from center
+        int xDiffFromCenter = coordinates.x - center.x;
+        int yDiffFromCenter = coordinates.y - center.y;
+        gridTileLocation.x += xDiffFromCenter;
+        gridTileLocation.y += yDiffFromCenter;
+        
+        return map.map[gridTileLocation.x, gridTileLocation.y];
+    }
     public List<LocationGridTile> GetTilesOccupiedByRoom(InnerTileMap map, RoomTemplate roomTemplate) {
         List<LocationGridTile> occupiedTiles = new List<LocationGridTile>();
         List<Vector3Int> occupiedCoordinates = new List<Vector3Int>(roomTemplate.coordinatesInRoom);
