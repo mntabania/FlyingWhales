@@ -35,7 +35,7 @@ namespace Tutorial {
                 criteria.Enable();
             }
         }
-        private void StopCheckingCriteria() {
+        protected void StopCheckingCriteria() {
             Messenger.RemoveListener<TutorialQuestCriteria>(Signals.TUTORIAL_QUEST_CRITERIA_MET, OnCriteriaMet);
             Messenger.RemoveListener<TutorialQuestCriteria>(Signals.TUTORIAL_QUEST_CRITERIA_UNMET, OnCriteriaUnMet);
             for (int i = 0; i < _activationCriteria.Count; i++) {

@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelUserStore">
-    <attachedFolders />
+    <attachedFolders>
+      <Path>Assets/Scripts/Locations/Inner Maps/Location Structures/Rooms</Path>
+    </attachedFolders>
     <explicitIncludes>
       <Path>Library/PackageCache/com.unity.ads@2.0.8</Path>
       <Path>Library/PackageCache/com.unity.analytics@3.3.5</Path>
@@ -32,10 +34,10 @@
       <Path>Debug</Path>
       <Path>Library</Path>
       <Path>Logs</Path>
+      <Path>Steamworks</Path>
       <Path>Temp</Path>
       <Path>bin</Path>
       <Path>obj</Path>
-      <Path>steamworks_sdk_142</Path>
     </explicitExcludes>
   </component>
 </project>

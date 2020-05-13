@@ -21,7 +21,8 @@ namespace Tutorial {
             Trigger_Poison_Explosion = 7,
             Share_An_Intel = 9,
             Apply_An_Affliction = 10,
-            Torture_Chambers = 11
+            Torture_Chambers = 11,
+            Threat = 12,
         }
 
         private List<TutorialQuest> _activeTutorials;
@@ -47,6 +48,7 @@ namespace Tutorial {
         public Texture buildStructureButton;
         public VideoClip chambersVideo;
         public Texture tortureButton;
+        public Texture threatPicture;
 
         #region Monobehaviours
         private void Awake() {
