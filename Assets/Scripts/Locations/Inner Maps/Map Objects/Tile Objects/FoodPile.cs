@@ -10,7 +10,7 @@ public class FoodPile : ResourcePile {
         //AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         traitContainer.RemoveTrait(this, "Flammable");
         traitContainer.AddTrait(this, "Edible");
-        SetResourceInPile(100);
+        SetResourceInPile(20);
     }
     //public FoodPile(SaveDataTileObject data) : base(RESOURCE.FOOD) {
     //    Initialize(data, false);

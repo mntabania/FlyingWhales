@@ -9,7 +9,7 @@ namespace Quests {
         #region Properties
         protected List<TutorialQuestCriteria> _activationCriteria;
         public string questName { get; }
-        public bool isAvailable { get; private set; }
+        public bool isAvailable { get; protected set; }
         /// <summary>
         /// Is this quest activated? In other words, is this quest currently being shown to the player.
         /// </summary>

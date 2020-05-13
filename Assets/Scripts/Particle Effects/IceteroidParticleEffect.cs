@@ -22,6 +22,7 @@ public class IceteroidParticleEffect : BaseParticleEffect {
         if (traitable is Character character && character.isDead == false) {
             traitable.traitContainer.AddTrait(traitable, "Freezing", null, null, true);
             traitable.traitContainer.AddTrait(traitable, "Freezing", null, null, true);
+            traitable.traitContainer.AddTrait(traitable, "Freezing", null, null, true);
             if (Random.Range(0, 100) < 25) {
                 character.traitContainer.AddTrait(character, "Injured");
             }

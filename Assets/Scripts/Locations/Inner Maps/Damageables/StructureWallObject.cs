@@ -51,6 +51,12 @@ public class StructureWallObject : MapObject<StructureWallObject>, ITraitable {
             return; //ignore
         }
         CombatManager.Instance.DamageModifierByElements(ref amount, elementalDamageType, this);
+        if (amount < 0 && Mathf.Abs(amount) > currentHP) {
+            //if the damage amount is greater than this object's hp, set the damage to this object's
+            //hp instead, this is so that if this object contributes to a structure's hp, it will not deal the excess damage
+            //to the structure
+            amount = -currentHP;
+        }
         currentHP += amount;
         currentHP = Mathf.Clamp(currentHP, 0, maxHP);
         if (amount <= 0) {

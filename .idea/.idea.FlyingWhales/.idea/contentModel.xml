@@ -1529,6 +1529,10 @@
                 <e p="Pond.cs" t="Include" />
                 <e p="Prison.cs" t="Include" />
                 <e p="RaiderCamp.cs" t="Include" />
+                <e p="Rooms" t="Include">
+                  <e p="StructureRoom.cs" t="Include" />
+                  <e p="TortureRoom.cs" t="Include" />
+                </e>
                 <e p="Smithy.cs" t="Include" />
                 <e p="Structure Objects" t="Include">
                   <e p="LocationStructureObject.cs" t="Include" />
@@ -1541,7 +1545,7 @@
                 <e p="TheKennel.cs" t="Include" />
                 <e p="ThePortal.cs" t="Include" />
                 <e p="TheSpire.cs" t="Include" />
-                <e p="TortureChamber.cs" t="Include" />
+                <e p="TortureChambers.cs" t="Include" />
                 <e p="Warehouse.cs" t="Include" />
                 <e p="Wilderness.cs" t="Include" />
               </e>
@@ -1614,6 +1618,7 @@
                   <e p="DemonRack.cs" t="Include" />
                   <e p="DesertRose.cs" t="Include" />
                   <e p="Desk.cs" t="Include" />
+                  <e p="DoorTileObject.cs" t="Include" />
                   <e p="Elemental Crystals" t="Include">
                     <e p="ElectricCrystal.cs" t="Include" />
                     <e p="ElementalCrystal.cs" t="Include" />
@@ -2083,8 +2088,10 @@
               <e p="ClickOnCharacterStep.cs" t="Include" />
               <e p="ClickOnEmptyAreaStep.cs" t="Include" />
               <e p="ClickOnObjectStep.cs" t="Include" />
+              <e p="ClickOnRoomStep.cs" t="Include" />
               <e p="ClickOnStructureStep.cs" t="Include" />
               <e p="DoubleClickHexTileStep.cs" t="Include" />
+              <e p="DropCharacterAtStructureRoomStep.cs" t="Include" />
               <e p="DropCharacterAtStructureStep.cs" t="Include" />
               <e p="EliminateCharacterStep.cs" t="Include" />
               <e p="ExecuteAfflictionStep.cs" t="Include" />
@@ -2109,6 +2116,10 @@
               <e p="UnpauseStep.cs" t="Include" />
             </e>
             <e p="Tutorial" t="Include">
+              <e p="Popup Tutorials" t="Include">
+                <e p="Threat.cs" t="Include" />
+              </e>
+              <e p="PopupTutorial.cs" t="Include" />
               <e p="Tutorial Quests" t="Include">
                 <e p="ApplyAnAffliction.cs" t="Include" />
                 <e p="BasicControls.cs" t="Include" />
@@ -2119,6 +2130,7 @@
                 <e p="HarassAVillage.cs" t="Include" />
                 <e p="RegionalMap.cs" t="Include" />
                 <e p="ShareAnIntel.cs" t="Include" />
+                <e p="TortureChambers.cs" t="Include" />
                 <e p="TriggerPoisonExplosion.cs" t="Include" />
                 <e p="WinCondition.cs" t="Include" />
               </e>
@@ -2133,6 +2145,7 @@
                 <e p="PlayerHasNotCompletedTutorialInSeconds.cs" t="Include" />
                 <e p="PlayerIsInInnerMap.cs" t="Include" />
                 <e p="SpellExecuted.cs" t="Include" />
+                <e p="ThreatIncreased.cs" t="Include" />
                 <e p="ThreatMaxedOut.cs" t="Include" />
                 <e p="TutorialQuestCriteria.cs" t="Include" />
               </e>
@@ -2330,7 +2343,6 @@
             <e p="AreaEmblem.cs" t="Include" />
             <e p="AreaPickerItem.cs" t="Include" />
             <e p="ArtifactItem.cs" t="Include" />
-            <e p="ArtifactPickerItem.cs" t="Include" />
             <e p="AttackPickerItem.cs" t="Include" />
             <e p="Button Clicks" t="Include">
               <e p="AttributeBtn.cs" t="Include" />
@@ -2397,6 +2409,7 @@
               <e p="QuestInfoUI.cs" t="Include" />
               <e p="RegionInfoUI.cs" t="Include" />
               <e p="StructureInfoUI.cs" t="Include" />
+              <e p="StructureRoomInfoUI.cs" t="Include" />
               <e p="TileObjectInfoUI.cs" t="Include" />
             </e>
             <e p="IntelItem.cs" t="Include" />
@@ -2404,7 +2417,6 @@
             <e p="InvestigationMinionDraggableItem.cs" t="Include" />
             <e p="ISelectable.cs" t="Include" />
             <e p="ItemItem.cs" t="Include" />
-            <e p="KillCountCharacterItem.cs" t="Include" />
             <e p="LandmarkCharacterItem.cs" t="Include" />
             <e p="LandmarkNameplate.cs" t="Include" />
             <e p="LevelCollapseUI.cs" t="Include" />
@@ -2423,7 +2435,6 @@
             <e p="MeterMark.cs" t="Include" />
             <e p="MinionAbilityChoiceItem.cs" t="Include" />
             <e p="MinionCard.cs" t="Include" />
-            <e p="MinionCharacterItem.cs" t="Include" />
             <e p="MinionCommandsUI.cs" t="Include" />
             <e p="MinionLeaderPicker.cs" t="Include" />
             <e p="MinionPicker.cs" t="Include" />
@@ -2431,14 +2442,21 @@
               <e p="LogItem.cs" t="Include" />
             </e>
             <e p="Nameplates" t="Include">
+              <e p="ArtifactPickerItem.cs" t="Include" />
               <e p="CharacterNameplateItem.cs" t="Include" />
               <e p="EnumNameplateItem.cs" t="Include" />
               <e p="FactionNameplateItem.cs" t="Include" />
+              <e p="KillCountCharacterItem.cs" t="Include" />
+              <e p="MinionCharacterItem.cs" t="Include" />
+              <e p="NameplateButton.cs" t="Include" />
               <e p="NameplateItem.cs" t="Include" />
               <e p="RaceClassNameplate.cs" t="Include" />
+              <e p="RegionNameplateItem.cs" t="Include" />
               <e p="SpellNameplateItem.cs" t="Include" />
               <e p="StringNameplateItem.cs" t="Include" />
-              <e p="UnsummonedMinionNameplateItem.cs" t="Include" />
+              <e p="SummonMinionPlayerSkillNameplateItem.cs" t="Include" />
+              <e p="SummonSlotPickerItem.cs" t="Include" />
+              <e p="WorldEventNameplate.cs" t="Include" />
             </e>
             <e p="NewAbilityUI.cs" t="Include" />
             <e p="NewMinionAbilityUI.cs" t="Include" />
@@ -2484,7 +2502,6 @@
               <e p="QuestStepItem.cs" t="Include" />
               <e p="QuestUI.cs" t="Include" />
             </e>
-            <e p="RegionNameplateItem.cs" t="Include" />
             <e p="ReplaceChoiceItem.cs" t="Include" />
             <e p="ReplaceUI.cs" t="Include" />
             <e p="ResearchAbilityUI.cs" t="Include" />
@@ -2498,7 +2515,6 @@
             <e p="SpellItem.cs" t="Include" />
             <e p="StringPickerItem.cs" t="Include" />
             <e p="SummonItem.cs" t="Include" />
-            <e p="SummonSlotPickerItem.cs" t="Include" />
             <e p="TheEyeUI.cs" t="Include" />
             <e p="TheFingersUI.cs" t="Include" />
             <e p="TheNeedlesUI.cs" t="Include" />
@@ -2509,7 +2525,6 @@
             <e p="UnleashSummonUI.cs" t="Include" />
             <e p="WinGameOverItem.cs" t="Include" />
             <e p="WorldEventIcon.cs" t="Include" />
-            <e p="WorldEventNameplate.cs" t="Include" />
           </e>
           <e p="UtilityScripts" t="Include">
             <e p="ActionOptionHoverHandler.cs" t="Include" />

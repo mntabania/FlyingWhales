@@ -110,6 +110,7 @@ GameObject:
   - component: {fileID: 5209382302878072113}
   - component: {fileID: 5207169722301603027}
   - component: {fileID: 5387086755495849923}
+  - component: {fileID: 6332637352802500167}
   m_Layer: 5
   m_Name: BG
   m_TagString: Untagged
@@ -138,7 +139,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.000024438, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 916.7, y: 368.3}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5207169722301603027
@@ -177,6 +178,18 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!225 &6332637352802500167
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5426855453351609613}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &5426989043078913189
 GameObject:
   m_ObjectHideFlags: 0
@@ -796,7 +809,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &5209333432563556783
 RectTransform:
   m_ObjectHideFlags: 0
@@ -873,6 +886,7 @@ MonoBehaviour:
   picture: {fileID: 4539394535541510335}
   _videoPlayer: {fileID: 527911354}
   _renderTexture: {fileID: 8400000, guid: 55b65aaea7192b04cbd5b8e0bd9b7617, type: 2}
+  _canvasGroup: {fileID: 6332637352802500167}
 --- !u!1 &5428478581117070924
 GameObject:
   m_ObjectHideFlags: 0

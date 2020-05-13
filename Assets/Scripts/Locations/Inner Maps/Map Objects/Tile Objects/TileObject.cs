@@ -470,6 +470,12 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         if (CanBeDamaged()) {
             //only added checking here because even if objects cannot be damaged,
             //they should still be able to react to the elements
+            if (amount < 0 &&  Mathf.Abs(amount) > currentHP) {
+                //if the damage amount is greater than this object's hp, set the damage to this object's
+                //hp instead, this is so that if this object contributes to a structure's hp, it will not deal the excess damage
+                //to the structure
+                amount = -currentHP;
+            }
             currentHP += amount;
             currentHP = Mathf.Clamp(currentHP, 0, maxHP);
             if (mapVisual && mapVisual.hpBarGO && showHPBar) {

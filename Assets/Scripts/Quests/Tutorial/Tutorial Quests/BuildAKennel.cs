@@ -8,12 +8,12 @@ using UnityEngine;
 namespace Tutorial {
     public class BuildAKennel : TutorialQuest {
 
-        public BuildAKennel() : base("Build A Kennel", TutorialManager.Tutorial.Build_A_Kennel) { }
+        public BuildAKennel() : base("Kennel", TutorialManager.Tutorial.Build_A_Kennel) { }
 
         #region Criteria
         protected override void ConstructCriteria() {
             _activationCriteria = new List<TutorialQuestCriteria>() {
-                new HasCompletedTutorialQuest(TutorialManager.Tutorial.Basic_Controls)
+                new HasCompletedTutorialQuest(TutorialManager.Tutorial.Torture_Chambers)
             };
             Messenger.AddListener<LocationStructure>(Signals.STRUCTURE_OBJECT_PLACED, OnAlreadyBuiltStructure);
         }
@@ -32,7 +32,7 @@ namespace Tutorial {
                     new ClickOnEmptyAreaStep(), 
                     new ObjectPickerShownStep("Click on Build Structure button", "Demonic Structure"), 
                     new StructureBuiltStep(STRUCTURE_TYPE.THE_KENNEL, "Build a Kennel")
-                        .SetCompleteAction(OnKennelBuilt)),
+                    ),
                 new QuestStepCollection(new DropCharacterAtStructureStep(STRUCTURE_TYPE.THE_KENNEL, typeof(Summon), "Seize a monster and drop it at the Kennel."))
             };
         }
@@ -49,8 +49,8 @@ namespace Tutorial {
 
         #region Availability Listeners
         private void OnAlreadyBuiltStructure(LocationStructure structure) {
-            if (structure is DemonicStructure) {
-                CompleteQuest(); //player already built a structure
+            if (structure is Inner_Maps.Location_Structures.TheKennel) {
+                CompleteQuest(); //player already built a kennel
             }
         }
         #endregion

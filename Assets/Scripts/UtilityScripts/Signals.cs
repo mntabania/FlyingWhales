@@ -249,6 +249,7 @@ public static class Signals {
     public static string PLAYER_OBTAINED_INTEL = "OnPlayerObtainedIntel"; //Parameters (InteractionIntel)
     public static string PLAYER_REMOVED_INTEL = "OnPlayerRemovedIntel"; //Parameters (InteractionIntel)
     public static string THREAT_UPDATED = "OnThreatUpdated";
+    public static string THREAT_INCREASED = "OnThreadtIncreased";
     /// <summary>
     /// Parameters (List<Character> attacking characters)
     /// </summary>

@@ -36,6 +36,11 @@ public class ThreatComponent {
         threat = supposedThreat;
         threat = Mathf.Clamp(threat, 0, 100);
         Messenger.Broadcast(Signals.THREAT_UPDATED);
+
+        if (amount > 0) {
+            Messenger.Broadcast(Signals.THREAT_INCREASED);
+        }
+        
         if (hasReachedMax) {
             AssaultDemonicStructure(out List<Character> _attackingCharacters);
             attackingCharacters = _attackingCharacters;
