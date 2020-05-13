@@ -219,7 +219,7 @@ namespace Ruinarch {
                         return;
                     }
                     //close all other menus
-                    Messenger.Broadcast(Signals.HIDE_MENUS);    
+                    Messenger.Broadcast(Signals.HIDE_MENUS);
                 }
             }
         }

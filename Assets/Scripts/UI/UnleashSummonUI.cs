@@ -109,7 +109,7 @@ public class UnleashSummonUI : MonoBehaviour  { //PopupMenuBase
         }
         for (int i = 0; i < PlayerManager.Instance.player.playerSkillComponent.minionsSkills.Count; i++) {
             MinionPlayerSkill minionPlayerSkill = PlayerSkillManager.Instance.GetMinionPlayerSkillData(PlayerManager.Instance.player.playerSkillComponent.minionsSkills[i]);
-            SummonMinionPlayerSkillNameplateItem item = CreateNewSummonMinionNameplateItem();
+            SummonMinionPlayerSkillNameplateItem item = CreateNewMinionNameplateItem();
             item.SetObject(minionPlayerSkill);
             item.SetCount(0);
             item.SetAsButton();
@@ -123,7 +123,7 @@ public class UnleashSummonUI : MonoBehaviour  { //PopupMenuBase
         }
         for (int i = 0; i < PlayerManager.Instance.player.playerSkillComponent.summonsSkills.Count; i++) {
             SummonPlayerSkill summonPlayerSkill = PlayerSkillManager.Instance.GetSummonPlayerSkillData(PlayerManager.Instance.player.playerSkillComponent.summonsSkills[i]);
-            SummonMinionPlayerSkillNameplateItem item = CreateNewSummonMinionNameplateItem();
+            SummonMinionPlayerSkillNameplateItem item = CreateNewSummonNameplateItem();
             item.SetObject(summonPlayerSkill);
             item.SetCount(0);
             item.SetAsButton();
@@ -189,7 +189,14 @@ public class UnleashSummonUI : MonoBehaviour  { //PopupMenuBase
         characterNameplateItems.Add(item);
         return item;
     }
-    private SummonMinionPlayerSkillNameplateItem CreateNewSummonMinionNameplateItem() {
+    private SummonMinionPlayerSkillNameplateItem CreateNewSummonNameplateItem() {
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(summonMinionNameplateItemPrefab.name, Vector3.zero, Quaternion.identity, summonsScrollRect.content);
+        SummonMinionPlayerSkillNameplateItem item = go.GetComponent<SummonMinionPlayerSkillNameplateItem>();
+        go.SetActive(false);
+        summonMinionNameplateItems.Add(item);
+        return item;
+    }
+    private SummonMinionPlayerSkillNameplateItem CreateNewMinionNameplateItem() {
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(summonMinionNameplateItemPrefab.name, Vector3.zero, Quaternion.identity, summonMinionsScrollRect.content);
         SummonMinionPlayerSkillNameplateItem item = go.GetComponent<SummonMinionPlayerSkillNameplateItem>();
         go.SetActive(false);

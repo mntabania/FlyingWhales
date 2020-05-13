@@ -2713,58 +2713,65 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (!characterThatAttacked.combatComponent.IsLethalCombatForTarget(this)) {
                 traitContainer.AddTrait(this, "Unconscious", responsibleCharacter);
             } else {
-                if(combatResultWeights == null) {
-                    combatResultWeights = new WeightedDictionary<string>();
-                } else {
-                    combatResultWeights.Clear();
-                }
-                int deathWeight = 70; //70
-                int unconsciousWeight = 30; //30
-                // if (!characterThatAttacked.combatComponent.IsLethalCombatForTarget(this)) {
-                //     deathWeight = 5;
-                //     unconsciousWeight = 95;
-                // }
-                string rollLog =
-                    $"{characterThatAttacked.name} attacked {name}, death weight: {deathWeight}, unconscious weight: {unconsciousWeight}, isLethal: {characterThatAttacked.combatComponent.IsLethalCombatForTarget(this)}";
-
-                if (minion == null && !traitContainer.HasTrait("Unconscious")) {
-                    combatResultWeights.AddElement("Unconscious", unconsciousWeight);
-                    rollLog += "\n- Unconscious weight will be added";
-                }
-                //if (currentClosestHostile.GetNormalTrait<Trait>("Injured") == null) {
-                //    loserResults.AddElement("Injured", 10);
-                //}
                 if (!isDead) {
-                    combatResultWeights.AddElement("Death", deathWeight);
-                    rollLog += "\n- Death weight will be added";
-                }
-
-                if (combatResultWeights.Count > 0) {
-                    string result = combatResultWeights.PickRandomElementGivenWeights();
-                    rollLog += $"\n- Pick result is: {result}";
-                    characterThatAttacked.logComponent.PrintLogIfActive(rollLog);
-                    attackSummary += $"\ncombat result is {result}"; ;
-                    switch (result) {
-                        case "Unconscious":
-                            //Unconscious unconscious = new Unconscious();
-                            traitContainer.AddTrait(this, "Unconscious", responsibleCharacter);
-                            break;
-                        case "Injured":
-                            //Injured injured = new Injured();
-                            traitContainer.AddTrait(this, "Injured", responsibleCharacter);
-                            break;
-                        case "Death":
-                            string deathReason = "attacked";
-                            if (!characterThatAttacked.combatComponent.IsLethalCombatForTarget(this)) {
-                                deathReason = "accidental_attacked";
-                            }
-                            Death(deathReason, responsibleCharacter: responsibleCharacter);
-                            break;
+                    string deathReason = "attacked";
+                    if (!characterThatAttacked.combatComponent.IsLethalCombatForTarget(this)) {
+                        deathReason = "accidental_attacked";
                     }
-                } else {
-                    rollLog += "\n- Dictionary is empty, no result!";
-                    characterThatAttacked.logComponent.PrintLogIfActive(rollLog);
+                    Death(deathReason, responsibleCharacter: responsibleCharacter);
                 }
+                //if(combatResultWeights == null) {
+                //    combatResultWeights = new WeightedDictionary<string>();
+                //} else {
+                //    combatResultWeights.Clear();
+                //}
+                //int deathWeight = 70; //70
+                //int unconsciousWeight = 30; //30
+                //// if (!characterThatAttacked.combatComponent.IsLethalCombatForTarget(this)) {
+                ////     deathWeight = 5;
+                ////     unconsciousWeight = 95;
+                //// }
+                //string rollLog =
+                //    $"{characterThatAttacked.name} attacked {name}, death weight: {deathWeight}, unconscious weight: {unconsciousWeight}, isLethal: {characterThatAttacked.combatComponent.IsLethalCombatForTarget(this)}";
+
+                //if (minion == null && !traitContainer.HasTrait("Unconscious")) {
+                //    combatResultWeights.AddElement("Unconscious", unconsciousWeight);
+                //    rollLog += "\n- Unconscious weight will be added";
+                //}
+                ////if (currentClosestHostile.GetNormalTrait<Trait>("Injured") == null) {
+                ////    loserResults.AddElement("Injured", 10);
+                ////}
+                //if (!isDead) {
+                //    combatResultWeights.AddElement("Death", deathWeight);
+                //    rollLog += "\n- Death weight will be added";
+                //}
+
+                //if (combatResultWeights.Count > 0) {
+                //    string result = combatResultWeights.PickRandomElementGivenWeights();
+                //    rollLog += $"\n- Pick result is: {result}";
+                //    characterThatAttacked.logComponent.PrintLogIfActive(rollLog);
+                //    attackSummary += $"\ncombat result is {result}"; ;
+                //    switch (result) {
+                //        case "Unconscious":
+                //            //Unconscious unconscious = new Unconscious();
+                //            traitContainer.AddTrait(this, "Unconscious", responsibleCharacter);
+                //            break;
+                //        case "Injured":
+                //            //Injured injured = new Injured();
+                //            traitContainer.AddTrait(this, "Injured", responsibleCharacter);
+                //            break;
+                //        case "Death":
+                //            string deathReason = "attacked";
+                //            if (!characterThatAttacked.combatComponent.IsLethalCombatForTarget(this)) {
+                //                deathReason = "accidental_attacked";
+                //            }
+                //            Death(deathReason, responsibleCharacter: responsibleCharacter);
+                //            break;
+                //    }
+                //} else {
+                //    rollLog += "\n- Dictionary is empty, no result!";
+                //    characterThatAttacked.logComponent.PrintLogIfActive(rollLog);
+                //}
             }
         }
         if (characterThatAttacked.marker) {

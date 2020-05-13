@@ -12,6 +12,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
     public TextMeshProUGUI manaCostText;
     public TextMeshProUGUI cooldownText;
     public TextMeshProUGUI threatText;
+    public TextMeshProUGUI threatPerHourText;
 
     private SpellData skillData;
 
@@ -28,6 +29,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         titleText.text = skillData.name;
         descriptionText.text = skillData.description;
         threatText.text = "" + skillData.threat;
+        threatPerHourText.text = "" + skillData.threatPerHour;
 
         int charges = skillData.charges;
         int manaCost = skillData.manaCost;
