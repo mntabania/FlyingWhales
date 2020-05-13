@@ -1,1 +1,0 @@
-{"items":[{"key":"event_title","value":"Traders of %04@"},{"key":"start","value":"A trading caravan left %04@ towards %14@."},{"key":"trade_success","value":"The caravan reached %14@ and made some successful deals."},{"key":"trade_fail","value":"%04@ and %14@ are no longer elligible for trade."},{"key":"trader_died","value":"The traders died before they could reach %14@."}]}
