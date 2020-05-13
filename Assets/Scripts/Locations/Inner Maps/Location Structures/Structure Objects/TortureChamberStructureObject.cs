@@ -12,5 +12,6 @@ namespace Inner_Maps.Location_Structures {
         public void DeactivateShroudParticles() {
             _shroudParticles.Stop();
         }
+        
     }
 }

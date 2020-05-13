@@ -1,1 +1,0 @@
-{"name":"Zombie Phobia","description":"Reduced effectiveness for each Zombie in combat","type":2,"daysDuration":0,"effects":[{"stat":3,"amount":-15.0,"isPercentage":true,"target":8,"description":"-15% POW for each other Zombie in combat","hasRequirement":true,"isNot":false,"requirementType":0,"requirementSeparator":0,"requirements":["ZOMBIE"]}]}

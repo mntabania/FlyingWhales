@@ -6,7 +6,7 @@ namespace Interrupts {
     public class BeingTortured : Interrupt {
 
         private readonly string[] _negativeTraits = new[] {
-            "Agoraphobic", "Pyrophobic", "Coward", "Hothead", "Psychopath", "Alcoholic",
+            "Agoraphobic", "Pyrophobic", "Coward", "Hothead", "Alcoholic", //"Psychopath"
             "Glutton", "Suspicious", "Music Hater", "Evil"
         };
         private readonly string[] _negativeStatus = new[] {
@@ -17,7 +17,7 @@ namespace Interrupts {
             duration = 24;
             doesStopCurrentAction = true;
             doesDropCurrentJob = true;
-            interruptIconString = GoapActionStateDB.Flirt_Icon;
+            interruptIconString = GoapActionStateDB.Sad_Icon;
         }
 
         #region Overrides

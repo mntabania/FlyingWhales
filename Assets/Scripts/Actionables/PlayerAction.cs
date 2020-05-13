@@ -35,6 +35,8 @@ public class PlayerAction : SpellData {
             ActivateAbility(targetHex);
         } else if (target is LocationStructure targetStructure) {
             ActivateAbility(targetStructure);
+        } else if (target is StructureRoom room) {
+            ActivateAbility(room);
         }
         Messenger.Broadcast(Signals.PLAYER_ACTION_ACTIVATED, this);
 	}
@@ -45,6 +47,8 @@ public class PlayerAction : SpellData {
             return CanPerformAbilityTowards(targetHex);
         } else if (target is LocationStructure targetStructure) {
             return CanPerformAbilityTowards(targetStructure);
+        } else if (target is StructureRoom room) {
+            return CanPerformAbilityTowards(room);
         }
         return CanPerformAbility();
     }

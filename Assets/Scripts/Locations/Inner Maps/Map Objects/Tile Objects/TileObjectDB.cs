@@ -127,7 +127,7 @@ public static class TileObjectDB {
             maxHP = 3000,
         } },
         { TILE_OBJECT_TYPE.PORTAL_TILE_OBJECT, new TileObjectData() {
-            maxHP = 5000,
+            maxHP = 16000,
         } },
         { TILE_OBJECT_TYPE.FIRE_CRYSTAL, new TileObjectData() {
             maxHP = 300,

@@ -1,1 +1,0 @@
-{"name":"Spider Resistance","description":"Bonus HP against Spiders","type":1,"daysDuration":0,"effects":[{"stat":0,"amount":25.0,"isPercentage":true,"target":0,"description":"25% HP vs Giant Spiders","hasRequirement":true,"isNot":false,"requirementType":0,"requirementSeparator":0,"requirements":["SPIDER"]}]}

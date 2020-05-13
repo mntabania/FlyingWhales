@@ -462,7 +462,7 @@ namespace Inner_Maps {
                 if(!character.behaviourComponent.isAttackingDemonicStructure 
                    && character.homeSettlement != null 
                    && (character.race == RACE.HUMANS || character.race == RACE.ELVES) && mostImportantStructureOnTile is DemonicStructure
-                   && character.marker != null) {
+                   && character.marker != null && character.IsInOwnParty()) {
                     if (!InnerMapManager.Instance.HasWorldKnownDemonicStructure(mostImportantStructureOnTile)) {
                         character.jobComponent.CreateReportDemonicStructure(mostImportantStructureOnTile);
                     }

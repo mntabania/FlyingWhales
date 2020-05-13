@@ -1140,6 +1140,7 @@ public enum SPELL_TARGET {
     TILE,
     HEX,
     STRUCTURE,
+    ROOM,
 }
 public enum STRUCTURE_TYPE {
     INN = 1,
@@ -1338,6 +1339,7 @@ public enum TILE_OBJECT_TYPE {
     WINTER_ROSE = 136,
     DESERT_ROSE = 137,
     MIMIC_TILE_OBJECT = 138,
+    DOOR_TILE_OBJECT
 }
 public enum POI_STATE {
     ACTIVE,

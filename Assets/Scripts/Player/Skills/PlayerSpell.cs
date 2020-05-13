@@ -244,7 +244,9 @@ public class SpellData : IPlayerSkill {
     public virtual void ActivateAbility(LocationStructure targetStructure) {
         OnExecuteSpellActionAffliction();
     }
-
+    public virtual void ActivateAbility(StructureRoom room) {
+        OnExecuteSpellActionAffliction();
+    }
     public virtual bool CanPerformAbilityTowards(Character targetCharacter) {
         //(targetCharacter.race != RACE.HUMANS && targetCharacter.race != RACE.ELVES)
         if(targetCharacter.traitContainer.HasTrait("Blessed")) {
@@ -256,6 +258,7 @@ public class SpellData : IPlayerSkill {
     public virtual bool CanPerformAbilityTowards(LocationGridTile targetTile) { return CanPerformAbility(); }
     public virtual bool CanPerformAbilityTowards(HexTile targetHex) { return CanPerformAbility(); }
     public virtual bool CanPerformAbilityTowards(LocationStructure targetStructure) { return CanPerformAbility(); }
+    public virtual bool CanPerformAbilityTowards(StructureRoom room) { return CanPerformAbility(); }
     /// <summary>
     /// Highlight the affected area of this spell given a tile.
     /// </summary>

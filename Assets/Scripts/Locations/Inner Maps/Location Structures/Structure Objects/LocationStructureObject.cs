@@ -45,6 +45,9 @@ public class LocationStructureObject : PooledObject {
     [Tooltip("If this has elements, then only the provided coordinates will be set as part of the actual structure. Otherwise all the tiles inside the ground tilemap will be considered as part of the structure.")]
     [SerializeField] private List<Vector3Int> predeterminedOccupiedCoordinates;
 
+    [FormerlySerializedAs("rooms")] [Header("Rooms")] 
+    public RoomTemplate[] roomTemplates; //if this is null then it means that this structure object has no rooms.
+    
     private StructureTemplate _parentTemplate;
 
     #region Properties
@@ -285,6 +288,33 @@ public class LocationStructureObject : PooledObject {
                 }
             }    
         }
+
+        var localPosition = map.transform.InverseTransformPoint(transform.position);
+        Vector3Int actualLocation = new Vector3Int(Mathf.FloorToInt(localPosition.x), Mathf.FloorToInt(localPosition.y), 0);
+        for (int i = 0; i < occupiedCoordinates.Count; i++) {
+            Vector3Int currCoordinate = occupiedCoordinates[i];
+
+            Vector3Int gridTileLocation = actualLocation;
+
+            //get difference from center
+            int xDiffFromCenter = currCoordinate.x - center.x;
+            int yDiffFromCenter = currCoordinate.y - center.y;
+            gridTileLocation.x += xDiffFromCenter;
+            gridTileLocation.y += yDiffFromCenter;
+
+            if (UtilityScripts.Utilities.IsInRange(gridTileLocation.x, 0, map.width) 
+                && UtilityScripts.Utilities.IsInRange(gridTileLocation.y, 0, map.height)) {
+                LocationGridTile tile = map.map[gridTileLocation.x, gridTileLocation.y];
+                occupiedTiles.Add(tile);    
+            } else {
+                throw new Exception($"IndexOutOfRangeException when trying to place structure object {name} at {map.region.name}");
+            }
+        }
+        return occupiedTiles;
+    }
+    public List<LocationGridTile> GetTilesOccupiedByRoom(InnerTileMap map, RoomTemplate roomTemplate) {
+        List<LocationGridTile> occupiedTiles = new List<LocationGridTile>();
+        List<Vector3Int> occupiedCoordinates = new List<Vector3Int>(roomTemplate.coordinatesInRoom);
 
         var localPosition = map.transform.InverseTransformPoint(transform.position);
         Vector3Int actualLocation = new Vector3Int(Mathf.FloorToInt(localPosition.x), Mathf.FloorToInt(localPosition.y), 0);
@@ -593,4 +623,9 @@ public class LocationStructureObject : PooledObject {
     }
     #endregion
 
+}
+
+[System.Serializable]
+public struct RoomTemplate {
+    public Vector3Int[] coordinatesInRoom;
 }

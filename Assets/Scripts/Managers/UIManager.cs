@@ -912,6 +912,25 @@ public class UIManager : MonoBehaviour {
     }
     #endregion
 
+    #region Structure Room Info
+    [Space(10)]
+    [Header("Structure Room Info")]
+    public StructureRoomInfoUI structureRoomInfoUI;
+    public void ShowStructureRoomInfo(StructureRoom room) {
+        if (tempDisableShowInfoUI) {
+            SetTempDisableShowInfoUI(false);
+            return;
+        }
+        structureRoomInfoUI.SetData(room);
+        structureRoomInfoUI.OpenMenu();
+    }
+    public void UpdateStructureRoomInfo() {
+        if (structureRoomInfoUI.isShowing) {
+            structureRoomInfoUI.UpdateInfo();
+        }
+    }
+    #endregion
+    
     #region Console
     [Space(10)]
     [Header("Console")]

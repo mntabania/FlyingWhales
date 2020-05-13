@@ -119,6 +119,8 @@ public class PlayerSkillComponent {
         CategorizePlayerSkill(afflict);
         SpellData buildDemonicStructure = PlayerSkillManager.Instance.GetPlayerSkillData(SPELL_TYPE.BUILD_DEMONIC_STRUCTURE);
         CategorizePlayerSkill(buildDemonicStructure);
+        SpellData torture = PlayerSkillManager.Instance.GetPlayerSkillData(SPELL_TYPE.TORTURE);
+        CategorizePlayerSkill(torture);
         
         //For Demo
         if (WorldConfigManager.Instance.isDemoWorld) {
