@@ -253,7 +253,7 @@ public class MonsterInfoUI : InfoUIBase {
         itemsLbl.text = string.Empty;
         for (int i = 0; i < _activeMonster.items.Count; i++) {
             TileObject currInventoryItem = _activeMonster.items[i];
-            itemsLbl.text = $"{itemsLbl.text} {currInventoryItem.name}";
+            itemsLbl.text = $"{itemsLbl.text}{currInventoryItem.name}";
             if (i < _activeMonster.items.Count - 1) {
                 itemsLbl.text = $"{itemsLbl.text}, ";
             }

@@ -432,11 +432,13 @@ public class ReactionComponent {
                 debugLog += "\n-Fight or Flight response";
                 //Fight or Flight
                 if (owner.combatComponent.combatMode == COMBAT_MODE.Aggressive) {
+                    //If the source is harassing or defending, combat should not be lethal;
                     bool isLethal = !owner.behaviourComponent.isHarassing && !owner.behaviourComponent.isDefending;
                     bool isTopPrioJobLethal = owner.jobQueue.jobsInQueue.Count <= 0 || owner.jobQueue.jobsInQueue[0].jobType.IsJobLethal();
                     if (owner.jobQueue.jobsInQueue.Count > 0) {
                         debugLog += $"\n-{owner.jobQueue.jobsInQueue[0].jobType}";
                     }
+                    //If the target is already unconscious (it cannot fight back), attack it again only if the source is not harassing and not defending and the top priority job is considered lethal
                     if (!targetCharacter.traitContainer.HasTrait("Unconscious") || (isLethal && isTopPrioJobLethal)) {
                         owner.combatComponent.FightOrFlight(targetCharacter, CombatManager.Hostility, isLethal: isLethal);
                     }

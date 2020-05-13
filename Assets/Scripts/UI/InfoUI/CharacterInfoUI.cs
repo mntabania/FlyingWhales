@@ -422,7 +422,7 @@ public class CharacterInfoUI : InfoUIBase {
         itemsLbl.text = string.Empty;
         for (int i = 0; i < _activeCharacter.items.Count; i++) {
             TileObject currInventoryItem = _activeCharacter.items[i];
-            itemsLbl.text = $"{itemsLbl.text} {currInventoryItem.name}";
+            itemsLbl.text = $"{itemsLbl.text}{currInventoryItem.name}";
             if (i < _activeCharacter.items.Count - 1) {
                 itemsLbl.text = $"{itemsLbl.text}, ";
             }
