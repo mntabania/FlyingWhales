@@ -82,6 +82,9 @@ public class StructureWallObject : MapObject<StructureWallObject>, ITraitable {
             //wall has been destroyed
             gridTileLocation.SetTileType(LocationGridTile.Tile_Type.Empty);
             gridTileLocation.CreateSeamlessEdgesForSelfAndNeighbours();
+        } else if (currentHP >= maxHP) {
+            gridTileLocation.SetTileType(LocationGridTile.Tile_Type.Wall);
+            gridTileLocation.CreateSeamlessEdgesForSelfAndNeighbours();
         }
     }
     public void OnHitByAttackFrom(Character characterThatAttacked, CombatState state, ref string attackSummary) {

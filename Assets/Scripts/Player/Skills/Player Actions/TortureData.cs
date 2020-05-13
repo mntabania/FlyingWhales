@@ -11,20 +11,23 @@ public class TortureData : PlayerAction {
     public override string description { get { return "Torture"; } }
 
     public TortureData() : base() {
-        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.STRUCTURE };
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.ROOM };
+        //TODO: Move this when torture has been moved to skill trees
+        SetManaCost(10);
     }
 
     #region Overrides
-    public override void ActivateAbility(LocationStructure structure) {
-        if (structure is TortureChamber tortureChamber) {
-            tortureChamber.ChooseTortureTarget();
+    public override void ActivateAbility(StructureRoom room) {
+        if (room is TortureRoom tortureRoom) {
+            tortureRoom.BeginTorture();
         }
+        base.ActivateAbility(room);
     }
-    public override bool CanPerformAbilityTowards(LocationStructure structure) {
-        bool canPerform = base.CanPerformAbilityTowards(structure);
+    public override bool CanPerformAbilityTowards(StructureRoom room) {
+        bool canPerform = base.CanPerformAbilityTowards(room);
         if (canPerform) {
-            if (structure is TortureChamber tortureChamber) {
-                return tortureChamber.currentTortureTarget == null;
+            if (room is TortureRoom tortureRoom) {
+                return tortureRoom.currentTortureTarget == null && tortureRoom.HasValidTortureTarget();
             }
             return false;
         }

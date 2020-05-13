@@ -39,7 +39,7 @@ public class BlockWall : TileObject {
     protected override void OnPlaceTileObjectAtTile(LocationGridTile tile) {
         tile.parentMap.structureTilemap.SetTile(tile.localPlace, InnerMapManager.Instance.assetManager.GetWallAssetBasedOnWallType(wallType));
         tile.SetTileType(LocationGridTile.Tile_Type.Wall);
-        mapVisual.InitializeGUS(Vector2.zero, wallType == WALL_TYPE.Flesh ? new Vector2(0.5f, 0.5f) : Vector2.one);
+        mapVisual.InitializeGUS(Vector2.zero, wallType == WALL_TYPE.Flesh ? new Vector2(0.5f, 0.5f) : new Vector2(1.5f, 1.5f));
 
         base.OnPlaceTileObjectAtTile(tile);
     }

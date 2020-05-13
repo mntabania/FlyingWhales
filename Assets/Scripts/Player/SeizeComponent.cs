@@ -4,6 +4,7 @@ using UnityEngine;
 using Inner_Maps;
 using Ruinarch;
 using DG.Tweening;
+using Inner_Maps.Location_Structures;
 
 public class SeizeComponent {
     public IPointOfInterest seizedPOI { get; private set; }
@@ -128,6 +129,13 @@ public class SeizeComponent {
                 }
             }
             return false;
+        } else if (tileLocation.structure.structureType == STRUCTURE_TYPE.TORTURE_CHAMBER) {
+            if (tileLocation.structure.IsTilePartOfARoom(tileLocation, out var room)) {
+                if (room is TortureRoom tortureRoom && seizedPOI is Character character) {
+                    return tortureRoom.CanUnseizeCharacterInRoom(character);
+                }
+            }
+            return true;
         }
         return true;
     }

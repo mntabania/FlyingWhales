@@ -147,11 +147,20 @@ namespace Inner_Maps {
             if (tile.collectionOwner.isPartOfParentRegionMap) {
                 if (tile.collectionOwner.partOfHextile.hexTileOwner.landmarkOnTile != null 
                     && tile.collectionOwner.partOfHextile.hexTileOwner.landmarkOnTile.specificLandmarkType.IsPlayerLandmark()) {
-                    return tile.structure;
+                    if (tile.structure.IsTilePartOfARoom(tile, out var room)) {
+                        return room;
+                    } else {
+                        return tile.structure;    
+                    }
+                    
                 }
                 else {
-                    if (tile.structure != null && ReferenceEquals(tile.structure.structureObj, null) == false) {
-                        return tile.structure;
+                    if (tile.structure != null) {
+                        if (tile.structure.IsTilePartOfARoom(tile, out var room)) {
+                            return room;
+                        } else if (ReferenceEquals(tile.structure.structureObj, null) == false) {
+                            return tile.structure;    
+                        }
                     }
                     return tile.collectionOwner.partOfHextile.hexTileOwner;
                 }
@@ -188,13 +197,21 @@ namespace Inner_Maps {
             if (tile.collectionOwner.isPartOfParentRegionMap) {
                 if (tile.collectionOwner.partOfHextile.hexTileOwner.landmarkOnTile != null 
                     && tile.collectionOwner.partOfHextile.hexTileOwner.landmarkOnTile.specificLandmarkType.IsPlayerLandmark()) {
+                    if (tile.structure.IsTilePartOfARoom(tile, out var room)) {
+                        selectables.Add(room);
+                    }
                     selectables.Add(tile.structure is DemonicStructure
                         ? tile.structure
                         : tile.collectionOwner.partOfHextile.hexTileOwner.GetMostImportantStructureOnTile());
                 }
                 else {
-                    if (tile.structure != null && ReferenceEquals(tile.structure.structureObj, null) == false) {
-                        selectables.Add(tile.structure);
+                    if (tile.structure != null) {
+                        if (tile.structure.IsTilePartOfARoom(tile, out var room)) {
+                            selectables.Add(room);
+                        }
+                        if (ReferenceEquals(tile.structure.structureObj, null) == false) {
+                            selectables.Add(tile.structure);
+                        }
                     }
                     selectables.Add(tile.collectionOwner.partOfHextile.hexTileOwner);
                 }

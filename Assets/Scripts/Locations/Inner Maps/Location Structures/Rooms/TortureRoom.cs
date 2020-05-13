@@ -1,0 +1,107 @@
+﻿using System;
+using System.Collections.Generic;
+using UtilityScripts;
+namespace Inner_Maps.Location_Structures {
+    public class TortureRoom : StructureRoom {
+        
+        public Character currentTortureTarget { get; private set; }
+        private Summon _skeleton;
+
+        public TortureRoom(List<LocationGridTile> tilesInRoom) : base("Torture Room", tilesInRoom) { }
+        
+        public override void ConstructDefaultActions() {
+            base.ConstructDefaultActions();
+            AddPlayerAction(SPELL_TYPE.TORTURE);
+        }
+
+        #region Seize
+        public bool CanUnseizeCharacterInRoom(Character character) {
+            if (charactersInRoom.Count > 0) {
+                return false;
+            }
+            return character.isNormalCharacter;
+        }
+        #endregion
+
+        #region Torture
+        public void BeginTorture() {
+            List<Character> characters = charactersInRoom;
+            Character chosenTarget = CollectionUtilities.GetRandomElement(characters);
+            StartTorture(chosenTarget);
+        }
+        public bool HasValidTortureTarget() {
+            List<Character> characters = charactersInRoom;
+            for (int i = 0; i < characters.Count; i++) {
+                Character character = characters[i];
+                if (character.isNormalCharacter) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        private void StartTorture(Character target) {
+            currentTortureTarget = target;
+            currentTortureTarget.interruptComponent.TriggerInterrupt(INTERRUPT.Being_Tortured, currentTortureTarget);
+            Messenger.AddListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, CheckIfTortureInterruptFinished);
+            Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
+        }
+        private void StopTorture() {
+            currentTortureTarget = null;
+            Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
+        }
+        private void CheckIfTortureInterruptFinished(INTERRUPT interrupt, Character character) {
+            if (character == currentTortureTarget && interrupt == INTERRUPT.Being_Tortured) {
+                Messenger.RemoveListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, CheckIfTortureInterruptFinished);
+
+                character.traitContainer.AddTrait(character, "Restrained");
+                
+                //open door
+                DoorTileObject door = GetTileObjectInRoom<DoorTileObject>();
+                door?.Open();
+
+                // //close after 5 ticks
+                // GameDate closeDate = GameManager.Instance.Today();
+                // closeDate.AddTicks(7);
+                // SchedulingManager.Instance.AddEntry(closeDate, () => door.Close(), this);
+
+                _skeleton = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Skeleton,
+                    FactionManager.Instance.friendlyNeutralFaction, null, character.currentRegion, className: "Archer");
+                _skeleton.combatComponent.SetCombatMode(COMBAT_MODE.Passive);
+                _skeleton.SetDestroyMarkerOnDeath(true);
+                _skeleton.ClearPlayerActions();
+
+                // GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Zombie_Transformation);
+
+                HexTile parentTile = tilesInRoom[0].collectionOwner.partOfHextile.hexTileOwner;
+
+                CharacterManager.Instance.PlaceSummon(_skeleton, CollectionUtilities.GetRandomElement(tilesInRoom));
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MOVE_CHARACTER,
+                    INTERACTION_TYPE.DROP, character, _skeleton);
+                job.AddOtherData(INTERACTION_TYPE.DROP, new object[] {
+                    _skeleton.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS), 
+                    CollectionUtilities.GetRandomElement(parentTile.borderTiles)
+                });
+                _skeleton.jobQueue.AddJobInQueue(job);
+                
+                Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
+            }
+        }
+        private void OnJobRemovedFromCharacter(JobQueueItem job, Character character) {
+            if (character == _skeleton && job.jobType == JOB_TYPE.MOVE_CHARACTER) {
+                Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
+                //close door
+                DoorTileObject door = GetTileObjectInRoom<DoorTileObject>();
+                door?.Close();
+                
+                //kill skeleton
+                // GameManager.Instance.CreateParticleEffectAt(_skeleton.gridTileLocation, PARTICLE_EFFECT.Zombie_Transformation);
+                _skeleton.Death();
+                currentTortureTarget.traitContainer.RemoveTrait(currentTortureTarget, "Restrained");
+                
+                _skeleton = null;
+                StopTorture();
+            }
+        }
+        #endregion
+    }
+}

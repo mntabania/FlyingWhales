@@ -45,7 +45,6 @@ namespace Inner_Maps.Location_Structures {
          #region HP
          private void OnWallRepaired(StructureWallObject structureWall, int amount) {
             if (structureObj.walls.Contains(structureWall)) {
-                structureWall.gridTileLocation.SetTileType(LocationGridTile.Tile_Type.Wall);
                 structureObj.RescanPathfindingGridOfStructure();
                 CheckInteriorState();
             }

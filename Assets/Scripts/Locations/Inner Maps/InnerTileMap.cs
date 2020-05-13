@@ -386,6 +386,7 @@ namespace Inner_Maps {
                 structure.SetStructureObject(structureObject);
                 structure.SetOccupiedHexTile(hexTile.innerMapHexTile);
                 structureObject.OnBuiltStructureObjectPlaced(this, structure);
+                structure.CreateRoomsBasedOnStructureObject(structureObject);
                 structure.OnBuiltStructure();
             }
 

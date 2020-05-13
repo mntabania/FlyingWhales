@@ -69,6 +69,9 @@ public class MapVisualFactory {
             case TILE_OBJECT_TYPE.BLOCK_WALL:
                 obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("BlockWallGameObject", Vector3.zero, Quaternion.identity);
                 break;
+            case TILE_OBJECT_TYPE.DOOR_TILE_OBJECT:
+                obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("DoorGameObject", Vector3.zero, Quaternion.identity);
+                break;
             default:
                 obj = ObjectPoolManager.Instance.InstantiateObjectFromPool(Tile_Object_Prefab_Name, Vector3.zero, Quaternion.identity);
                 break;

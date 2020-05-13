@@ -34,6 +34,7 @@ namespace Inner_Maps.Location_Structures {
         public int currentHP { get; protected set; }
         public HashSet<IDamageable> objectsThatContributeToDamage { get; private set; }
         public List<Character> residents { get; protected set; }
+        public StructureRoom[] rooms { get; protected set; }
 
         #region getters
         public virtual bool isDwelling => false;
@@ -820,6 +821,35 @@ namespace Inner_Maps.Location_Structures {
         //    }
         //    return validTiles;
         //}
+        #endregion
+
+        #region Rooms
+        public void CreateRoomsBasedOnStructureObject(LocationStructureObject structureObject) {
+            if (structureObject.roomTemplates == null || structureObject.roomTemplates.Length == 0) { return; }
+            rooms = new StructureRoom[structureObject.roomTemplates.Length];
+            for (int i = 0; i < rooms.Length; i++) {
+                RoomTemplate roomTemplate = structureObject.roomTemplates[i];
+                StructureRoom newRoom =
+                    CreteNewRoomForStructure(structureObject.GetTilesOccupiedByRoom(location.innerMap, roomTemplate));
+                rooms[i] = newRoom;
+            }
+        }
+        protected virtual StructureRoom CreteNewRoomForStructure(List<LocationGridTile> tilesInRoom) { return null; }
+        public bool IsTilePartOfARoom(LocationGridTile tile, out StructureRoom room) {
+            if (rooms == null) {
+                room = null;
+                return false;
+            }
+            for (int i = 0; i < rooms.Length; i++) {
+                StructureRoom currentRoom = rooms[i];
+                if (currentRoom.tilesInRoom.Contains(tile)) {
+                    room = currentRoom;
+                    return true;
+                }
+            }
+            room = null;
+            return false;
+        }
         #endregion
     }
 }

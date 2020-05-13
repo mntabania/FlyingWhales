@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using EZObjectPools;
 using Pathfinding;
 using UnityEngine;
@@ -14,13 +15,27 @@ namespace Inner_Maps {
             gus.setWalkability = false;
             transform.localPosition = Vector3.zero;
             gameObject.SetActive(true);
-            PathfindingManager.Instance.ApplyGraphUpdateSceneCoroutine(gus);
+            ApplyCoroutine();
         }
 
         public void Destroy() {
             gus.setWalkability = true;
-            PathfindingManager.Instance.ApplyGraphUpdateScene(gus);
+            Apply();
             ObjectPoolManager.Instance.DestroyObject(this);
+        }
+
+        [ContextMenu("Apply")]
+        private void Apply() {
+            PathfindingManager.Instance.ApplyGraphUpdateScene(gus);
+        }
+        [ContextMenu("Apply Coroutine")]
+        private void ApplyCoroutine() {
+            StartCoroutine(UpdateGraph());
+        }
+        
+        private IEnumerator UpdateGraph() {
+            yield return new WaitForSeconds(1f);
+            gus.Apply();
         }
     }
 }
