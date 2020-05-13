@@ -821,7 +821,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     #region Abduct
     public void CreateAbductJob(Character target) {
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ABDUCT, INTERACTION_TYPE.DROP, target, _owner);
-        LocationStructure dropLocationStructure = PlayerManager.Instance.player.portalTile.region.GetRandomStructureOfType(STRUCTURE_TYPE.TORTURE_CHAMBER);
+        LocationStructure dropLocationStructure = PlayerManager.Instance.player.portalTile.region.GetRandomStructureOfType(STRUCTURE_TYPE.TORTURE_CHAMBERS);
         if (dropLocationStructure == null) {
 	        dropLocationStructure = PlayerManager.Instance.player.portalTile.locationGridTiles[0].structure;
         }

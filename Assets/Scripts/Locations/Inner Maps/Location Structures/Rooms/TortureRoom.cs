@@ -7,7 +7,7 @@ namespace Inner_Maps.Location_Structures {
         public Character currentTortureTarget { get; private set; }
         private Summon _skeleton;
 
-        public TortureRoom(List<LocationGridTile> tilesInRoom) : base("Torture Room", tilesInRoom) { }
+        public TortureRoom(List<LocationGridTile> tilesInRoom) : base("Torture Chamber", tilesInRoom) { }
         
         public override void ConstructDefaultActions() {
             base.ConstructDefaultActions();

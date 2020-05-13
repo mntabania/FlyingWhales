@@ -1176,7 +1176,7 @@ public enum STRUCTURE_TYPE {
     THE_ANVIL = 34,
     THE_EYE = 35,
     THE_NEEDLES = 36,
-    TORTURE_CHAMBER = 37,
+    TORTURE_CHAMBERS = 37,
     DEMONIC_PRISON = 38,
     FARM = 39,
     LUMBERYARD = 40,
@@ -1661,7 +1661,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.HUNTER_LODGE:
             case STRUCTURE_TYPE.ASSASSIN_GUILD:
             case STRUCTURE_TYPE.DEMONIC_PRISON:
-            case STRUCTURE_TYPE.TORTURE_CHAMBER:
+            case STRUCTURE_TYPE.TORTURE_CHAMBERS:
             case STRUCTURE_TYPE.MAGE_TOWER:
             case STRUCTURE_TYPE.ABANDONED_MINE:
             case STRUCTURE_TYPE.LUMBERYARD:

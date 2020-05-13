@@ -4,11 +4,11 @@ using Traits;
 using UnityEngine;
 using UnityEngine.Assertions;
 namespace Inner_Maps.Location_Structures {
-    public class TortureChamber : DemonicStructure {
+    public class TortureChambers : DemonicStructure {
         public override Vector2 selectableSize { get; }
         private TortureChamberStructureObject _tortureChamberStructureObject;
 
-        public TortureChamber(Region location) : base(STRUCTURE_TYPE.TORTURE_CHAMBER, location){
+        public TortureChambers(Region location) : base(STRUCTURE_TYPE.TORTURE_CHAMBERS, location){
             selectableSize = new Vector2(10f, 10f);
         }
 

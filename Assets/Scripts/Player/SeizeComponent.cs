@@ -129,7 +129,7 @@ public class SeizeComponent {
                 }
             }
             return false;
-        } else if (tileLocation.structure.structureType == STRUCTURE_TYPE.TORTURE_CHAMBER) {
+        } else if (tileLocation.structure.structureType == STRUCTURE_TYPE.TORTURE_CHAMBERS) {
             if (tileLocation.structure.IsTilePartOfARoom(tileLocation, out var room)) {
                 if (room is TortureRoom tortureRoom && seizedPOI is Character character) {
                     return tortureRoom.CanUnseizeCharacterInRoom(character);

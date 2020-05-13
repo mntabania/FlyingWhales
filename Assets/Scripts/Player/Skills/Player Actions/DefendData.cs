@@ -19,7 +19,7 @@ public class DefendData : PlayerAction {
     public override bool CanPerformAbilityTowards(LocationStructure targetStructure) {
         bool canPerform = base.CanPerformAbilityTowards(targetStructure);
         if (canPerform) {
-            return !targetStructure.occupiedHexTile.hexTileOwner.isBeingDefended;
+            return targetStructure.hasBeenDestroyed == false && !targetStructure.occupiedHexTile.hexTileOwner.isBeingDefended;
         }
         return canPerform;
     }

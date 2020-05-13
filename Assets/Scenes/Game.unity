@@ -38772,6 +38772,10 @@ MonoBehaviour:
   afflictButtonVideoClip: {fileID: 32900000, guid: faa7a4e2f2b9ece4698d2dd21be74b89,
     type: 3}
   spellsTabVideoClip: {fileID: 32900000, guid: 34bab97629f177041971f4b1c90d74a6, type: 3}
+  buildStructureButton: {fileID: 2800000, guid: a5fafa9d29ac82745b929daf2934ed2f,
+    type: 3}
+  chambersVideo: {fileID: 32900000, guid: 3455cbfa84b8c1b4e8c936fd4959c0aa, type: 3}
+  tortureButton: {fileID: 2800000, guid: 8767417bc992b4649894b621be2cf3dd, type: 3}
 --- !u!4 &711025101 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4243562867990628, guid: c51738521ec0ac14abf6fc9fd57b44d9,
