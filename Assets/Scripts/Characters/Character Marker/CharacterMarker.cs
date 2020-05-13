@@ -828,7 +828,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         hoveredImg.sortingOrder = sortingOrder - 1;
         clickedImg.sortingOrder = sortingOrder - 1;
         colorHighlight.sortingOrder = sortingOrder - 1;
-        bloodSplatterEffectRenderer.sortingOrder = InnerMapManager.GroundTilemapSortingOrder + 5;
+        bloodSplatterEffectRenderer.sortingOrder = InnerMapManager.DetailsTilemapSortingOrder + 5;
         hpBarGO.GetComponent<Canvas>().sortingOrder = sortingOrder;
     }
     private float GetSpeed() {

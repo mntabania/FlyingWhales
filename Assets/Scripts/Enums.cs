@@ -1534,7 +1534,8 @@ public enum PARTICLE_EFFECT { None, Poison, Freezing, Fire, Burning, Explode, El
     Desert_Rose,
     Winter_Rose,
     Build_Demonic_Structure,
-    Zombie_Transformation
+    Zombie_Transformation,
+    Torture_Cloud
 }
 public enum PLAYER_SKILL_STATE { Locked, Unlocked, Learned, }
 public enum REACTABLE_EFFECT { Neutral, Positive, Negative, }

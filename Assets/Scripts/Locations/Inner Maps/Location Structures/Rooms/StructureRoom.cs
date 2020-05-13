@@ -16,8 +16,7 @@ namespace Inner_Maps.Location_Structures {
             this.name = name;
             this.tilesInRoom = tilesInRoom;
             actions = new List<SPELL_TYPE>();
-            worldPosition = GameUtilities.GetCenterTile(tilesInRoom, tilesInRoom[0].parentMap.map)
-                .centeredWorldLocation;
+            worldPosition = GetCenterTile().centeredWorldLocation;
             int maxX = tilesInRoom.Max(t => t.localPlace.x);
             int minX = tilesInRoom.Min(t => t.localPlace.x);
             int maxY = tilesInRoom.Max(t => t.localPlace.y);
@@ -59,8 +58,7 @@ namespace Inner_Maps.Location_Structures {
             return true;
         }
         #endregion
-
-
+        
         #region Characters
         private List<Character> GetCharactersInRoom() {
             List<Character> characters = new List<Character>();
@@ -82,6 +80,11 @@ namespace Inner_Maps.Location_Structures {
             return null;
         }
         #endregion
-        
+
+        #region Utilities
+        protected LocationGridTile GetCenterTile() {
+            return GameUtilities.GetCenterTile(tilesInRoom, tilesInRoom[0].parentMap.map);
+        }
+        #endregion
     }
 }

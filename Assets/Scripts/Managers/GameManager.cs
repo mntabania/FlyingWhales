@@ -439,6 +439,27 @@ public class GameManager : MonoBehaviour {
     }
 
     #region Particle Effects
+    public GameObject CreateParticleEffectAt(Vector3 worldLocation, InnerTileMap innerTileMap, PARTICLE_EFFECT particle, int sortingOrder = -1) {
+        GameObject prefab = null;
+        GameObject go = null;
+        if (particleEffectsDictionary.ContainsKey(particle)) {
+            prefab = particleEffectsDictionary[particle];
+        } else {
+            Debug.LogError("No prefab for particle effect: " + particle.ToString());
+            return null;
+        }
+        go = ObjectPoolManager.Instance.InstantiateObjectFromPool(prefab.name, Vector3.zero, Quaternion.identity, innerTileMap.objectsParent);
+        go.transform.position = worldLocation;
+        go.SetActive(true);
+        BaseParticleEffect particleEffectScript = go.GetComponent<BaseParticleEffect>();
+        if (particleEffectScript) {
+            if(sortingOrder != -1) {
+                particleEffectScript.SetSortingOrder(sortingOrder);
+            }
+            particleEffectScript.PlayParticleEffect();
+        }
+        return go;
+    }
     public GameObject CreateParticleEffectAt(LocationGridTile tile, PARTICLE_EFFECT particle, int sortingOrder = -1) {
         GameObject prefab = null;
         GameObject go = null;

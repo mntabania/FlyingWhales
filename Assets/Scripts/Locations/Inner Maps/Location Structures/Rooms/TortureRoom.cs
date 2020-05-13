@@ -6,6 +6,7 @@ namespace Inner_Maps.Location_Structures {
         
         public Character currentTortureTarget { get; private set; }
         private Summon _skeleton;
+        private AutoDestroyParticle _particleEffect;
 
         public TortureRoom(List<LocationGridTile> tilesInRoom) : base("Torture Chamber", tilesInRoom) { }
         
@@ -44,6 +45,8 @@ namespace Inner_Maps.Location_Structures {
             currentTortureTarget.interruptComponent.TriggerInterrupt(INTERRUPT.Being_Tortured, currentTortureTarget);
             Messenger.AddListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, CheckIfTortureInterruptFinished);
             Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
+            LocationGridTile centerTile = GetCenterTile();
+            _particleEffect = GameManager.Instance.CreateParticleEffectAt(centerTile.worldLocation, centerTile.parentMap, PARTICLE_EFFECT.Torture_Cloud).GetComponent<AutoDestroyParticle>();
         }
         private void StopTorture() {
             currentTortureTarget = null;
@@ -51,6 +54,9 @@ namespace Inner_Maps.Location_Structures {
         }
         private void CheckIfTortureInterruptFinished(INTERRUPT interrupt, Character character) {
             if (character == currentTortureTarget && interrupt == INTERRUPT.Being_Tortured) {
+                _particleEffect.StopEmission();
+                _particleEffect = null;
+                
                 Messenger.RemoveListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, CheckIfTortureInterruptFinished);
 
                 character.traitContainer.AddTrait(character, "Restrained");
