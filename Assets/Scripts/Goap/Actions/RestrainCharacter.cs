@@ -17,7 +17,7 @@ public class RestrainCharacter : GoapAction {
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
         AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Unconscious", target = GOAP_EFFECT_TARGET.TARGET }, CannotMove);
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", target = GOAP_EFFECT_TARGET.TARGET });
+        AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Restrained", false, GOAP_EFFECT_TARGET.TARGET));
         AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.CANNOT_MOVE, string.Empty, false, GOAP_EFFECT_TARGET.TARGET));
         //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = poiTarget });
     }
@@ -127,8 +127,8 @@ public class RestrainCharacter : GoapAction {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             if (actor != poiTarget) {
-                Character target = poiTarget as Character;
-                return !target.traitContainer.HasTrait("Restrained");
+                //Character target = poiTarget as Character;
+                return !poiTarget.traitContainer.HasTrait("Restrained");
             }
             return false;
         }
@@ -137,9 +137,9 @@ public class RestrainCharacter : GoapAction {
     #endregion
 
     #region State Effects
-    public void PreRestrainSuccess(ActualGoapNode goapNode) {
-        //TODO: currentState.SetIntelReaction(SuccessReactions);
-    }
+    //public void PreRestrainSuccess(ActualGoapNode goapNode) {
+    //    //TODO: currentState.SetIntelReaction(SuccessReactions);
+    //}
     public void AfterRestrainSuccess(ActualGoapNode goapNode) {
         //**Effect 1**: Target gains Restrained trait.
         goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, "Restrained", goapNode.actor);

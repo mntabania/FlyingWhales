@@ -363,6 +363,7 @@ public class Minion {
         character.CreateMarker();
         character.marker.visionCollider.VoteToUnFilterVision();
 
+        character.ConstructInitialGoapAdvertisementActions();
         character.marker.InitialPlaceMarkerAt(tile);
         character.SetIsDead(false);
 
