@@ -32,12 +32,6 @@ public class EditableValuesManager : MonoBehaviour {
 	[SerializeField] private int _corruptTileManaCost;
 	[SerializeField] private int _triggerFlawManaCost;
 	[SerializeField] private int _buildStructureManaCost;
-	[SerializeField] private int _learnSpellManaCost;
-	[SerializeField] private int _demonicCultRecruitmentManaCost;
-	[SerializeField] private int _makeCharacterJoinCultManaCost;
-	[SerializeField] private int _monsterBreedingManaCost;
-	[SerializeField] private int _unlockWorldMapManaCost;
-	[SerializeField] private int _unlockRegionManaCost;
 
 	[Header("Visuals")] 
 	[SerializeField] private int _sortingOrdersInBetweenHexTileRows = 20; //this is the number of sorting orders in between rows of the world map.
@@ -66,13 +60,7 @@ public class EditableValuesManager : MonoBehaviour {
 	public int corruptTileManaCost => _corruptTileManaCost;
 	public int triggerFlawManaCost => _triggerFlawManaCost;
 	public int buildStructureManaCost => _buildStructureManaCost;
-	public int learnSpellManaCost => _learnSpellManaCost;
-	public int demonicCultRecruitmentManaCost => _demonicCultRecruitmentManaCost;
-	public int makeCharacterJoinCultManaCost => _makeCharacterJoinCultManaCost;
-	public int monsterBreedingManaCost => _monsterBreedingManaCost;
-	public int unlockWorldMapManaCost => _unlockWorldMapManaCost;
-	public int unlockRegionManaCost => _unlockRegionManaCost;
-	
+
 	//visuals
 	public int sortingOrdersInBetweenHexTileRows => _sortingOrdersInBetweenHexTileRows;
 	private void Awake() {

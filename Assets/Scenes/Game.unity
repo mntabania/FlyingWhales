@@ -79781,7 +79781,7 @@ MonoBehaviour:
   _maximumMana: 500
   _summonMinionManaCost: 80
   _corruptTileManaCost: 0
-  _triggerFlawManaCost: 0
+  _triggerFlawManaCost: 25
   _buildStructureManaCost: 0
   _learnSpellManaCost: 0
   _demonicCultRecruitmentManaCost: 0
