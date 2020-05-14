@@ -252,10 +252,6 @@ public class SpellData : IPlayerSkill {
         if(targetCharacter.traitContainer.HasTrait("Blessed")) {
             return false;
         }
-        if (targetCharacter.interruptComponent.isInterrupted && targetCharacter.interruptComponent.currentInterrupt.interrupt == INTERRUPT.Being_Tortured) {
-            //do not allow cast on character if it is being tortured.
-            return false;
-        }
         return CanPerformAbility();
     }
     public virtual bool CanPerformAbilityTowards(TileObject tileObject) { return CanPerformAbility(); }
@@ -331,7 +327,7 @@ public class SpellData : IPlayerSkill {
         }
         PlayerManager.Instance.player.threatComponent.AdjustThreatPerHour(threatPerHour);
         PlayerManager.Instance.player.threatComponent.AdjustThreat(threat);
-        //PlayerManager.Instance.player.threatComponent.AdjustThreat(50);
+        //PlayerManager.Instance.player.threatComponent.AdjustThreat(20);
 
         if (category == SPELL_CATEGORY.PLAYER_ACTION) {
             Messenger.Broadcast(Signals.ON_EXECUTE_PLAYER_ACTION, this as PlayerAction);
