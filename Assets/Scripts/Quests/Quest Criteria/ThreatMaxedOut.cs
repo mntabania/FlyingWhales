@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
-namespace Tutorial {
-    public class ThreatMaxedOut : TutorialQuestCriteria {
+﻿namespace Quests {
+    public class ThreatMaxedOut : QuestCriteria {
         public override void Enable() {
             Messenger.AddListener(Signals.THREAT_MAXED_OUT, OnThreatMaxedOut);
         }

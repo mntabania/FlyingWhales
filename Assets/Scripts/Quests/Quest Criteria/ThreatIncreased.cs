@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
-namespace Tutorial {
-    public class ThreatIncreased : TutorialQuestCriteria {
+﻿namespace Quests {
+    public class ThreatIncreased : QuestCriteria {
         public override void Enable() {
             Messenger.AddListener(Signals.THREAT_INCREASED, OnThreatIncreased);
         }

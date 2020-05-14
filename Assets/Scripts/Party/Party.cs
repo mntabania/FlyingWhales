@@ -175,9 +175,11 @@ public class Party {
             }
             //tileObject.SetGridTileLocation(owner.gridTileLocation);
             tileObject.visionTrigger.SetCollidersState(false);
-            tileObject.mapVisual.transform.SetParent(_owner.marker.visualsParent);
-            tileObject.mapVisual.transform.localPosition = new Vector3(0f, 0.5f, 0f);
-            tileObject.mapVisual.transform.eulerAngles = Vector3.zero;
+            Transform mapVisualTransform;
+            (mapVisualTransform = tileObject.mapVisual.transform).SetParent(_owner.marker.visualsParent);
+            mapVisualTransform.localPosition = new Vector3(0f, 0.5f, 0f);
+            mapVisualTransform.eulerAngles = Vector3.zero;
+            tileObject.mapVisual.UpdateSortingOrders(tileObject);
             return true;
         }
         return false;

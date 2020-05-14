@@ -1,7 +1,7 @@
 ﻿using System;
 using Inner_Maps;
-namespace Tutorial {
-    public class PlayerIsInInnerMap : TutorialQuestCriteria {
+namespace Quests {
+    public class PlayerIsInInnerMap : QuestCriteria {
         private readonly Func<Region, bool> _validityChecker;
         public PlayerIsInInnerMap(Func<Region, bool> validityChecker = null) {
             _validityChecker = validityChecker;

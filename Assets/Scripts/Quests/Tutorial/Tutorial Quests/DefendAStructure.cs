@@ -9,7 +9,7 @@ namespace Tutorial {
 
         #region Criteria
         protected override void ConstructCriteria() {
-            _activationCriteria = new List<TutorialQuestCriteria>() {
+            _activationCriteria = new List<QuestCriteria>() {
                 new DemonicStructurePlaced()
             };
         }

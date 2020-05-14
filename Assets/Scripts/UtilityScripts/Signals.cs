@@ -251,6 +251,10 @@ public static class Signals {
     public static string THREAT_UPDATED = "OnThreatUpdated";
     public static string THREAT_INCREASED = "OnThreadtIncreased";
     /// <summary>
+    /// Parameters (Summon)
+    /// </summary>
+    public static string SUMMON_REMOVED = "OnSummonRemoved";
+    /// <summary>
     /// Parameters (List<Character> attacking characters)
     /// </summary>
     public static string THREAT_MAXED_OUT = "OnThreatMaxedOut";
@@ -510,6 +514,10 @@ public static class Signals {
     /// Parameters: List[Character]
     /// </summary>
     public static string ANGELS_ATTACKING_DEMONIC_STRUCTURE = "OnAngelsAttackingDemonicStructure";
+    /// <summary>
+    /// Parameters: Quest
+    /// </summary>
+    public static string REACTION_QUEST_ACTIVATED = "OnReactionQuestActivated";
     #endregion
     
     #region Tutorial
@@ -530,11 +538,11 @@ public static class Signals {
     /// <summary>
     /// Parameters (TutorialQuestCriteria)
     /// </summary>
-    public static string TUTORIAL_QUEST_CRITERIA_MET = "OnTutorialQuestCriteriaMet";
+    public static string QUEST_CRITERIA_MET = "OnTutorialQuestCriteriaMet";
     /// <summary>
     /// Parameters (TutorialQuestCriteria)
     /// </summary>
-    public static string TUTORIAL_QUEST_CRITERIA_UNMET = "OnTutorialQuestCriteriaUnMet";
+    public static string QUEST_CRITERIA_UNMET = "OnTutorialQuestCriteriaUnMet";
     public static string METEOR_FELL = "OnMeteorFell";
     /// <summary>
     /// Parameters (QuestStep)

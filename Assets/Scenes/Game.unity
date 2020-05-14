@@ -22292,7 +22292,7 @@ RectTransform:
   m_Father: {fileID: 1029836721}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 0.0012024641}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
@@ -32843,7 +32843,7 @@ MonoBehaviour:
   spellListHoverPosition: {fileID: 1945906832}
   summonsScrollRect: {fileID: 1851510777}
   summonsContainerGO: {fileID: 2108155052}
-  summonItemPrefab: {fileID: 7867000607274661362, guid: 2c138307ddb4ca444a9544227950281d,
+  characterNameplateItem: {fileID: 1716271878575152, guid: 192605b2e90f468409baf06dedf19376,
     type: 3}
   itemsScrollRect: {fileID: 1865900464}
   itemsContainerGO: {fileID: 1214886497}
@@ -38830,6 +38830,10 @@ MonoBehaviour:
   chambersVideo: {fileID: 32900000, guid: 3455cbfa84b8c1b4e8c936fd4959c0aa, type: 3}
   tortureButton: {fileID: 2800000, guid: 8767417bc992b4649894b621be2cf3dd, type: 3}
   threatPicture: {fileID: 2800000, guid: 5836b49ea4ed8b344a378ed211aa9b5a, type: 3}
+  counterattackPicture: {fileID: 2800000, guid: 7b0559d52e7d37d4b85277a862cd8127,
+    type: 3}
+  divineInterventionPicture: {fileID: 2800000, guid: b16b6e2c2c40e6645b65827cbb2b7636,
+    type: 3}
 --- !u!4 &711025101 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4243562867990628, guid: c51738521ec0ac14abf6fc9fd57b44d9,
@@ -59419,8 +59423,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -0.34991455, y: 381.62997}
-  m_SizeDelta: {x: -288.71, y: 0}
+  m_AnchoredPosition: {x: -0.34991455, y: 382.54996}
+  m_SizeDelta: {x: -383.2, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1033665910
 MonoBehaviour:
@@ -66280,8 +66284,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 433066502}
   m_HandleRect: {fileID: 433066500}
   m_Direction: 2
-  m_Value: 0
-  m_Size: 1
+  m_Value: 1
+  m_Size: 0.99879754
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -112886,8 +112890,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 7.25, y: -12.920013}
-  m_SizeDelta: {x: -39.29, y: -70.74}
+  m_AnchoredPosition: {x: 5, y: -12}
+  m_SizeDelta: {x: -34.8, y: -68.9}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1851510779
 CanvasRenderer:
@@ -131370,7 +131374,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: ef581cca56aaa3544add2b31eba6cba9, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f844eeee9e0b19c4f989583fdd94b719, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -131406,8 +131410,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 163.60156, y: -470}
-  m_SizeDelta: {x: 328, y: 834}
+  m_AnchoredPosition: {x: 208.59766, y: -465}
+  m_SizeDelta: {x: 418, y: 834}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &2108681640
 GameObject:

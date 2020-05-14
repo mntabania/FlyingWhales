@@ -1,5 +1,5 @@
-﻿namespace Tutorial {
-    public abstract class TutorialQuestCriteria {
+﻿namespace Quests {
+    public abstract class QuestCriteria {
         
         public bool hasCriteriaBeenMet { get; private set; }
 
@@ -14,11 +14,11 @@
         
         protected virtual void SetCriteriaAsMet() {
             hasCriteriaBeenMet = true;
-            Messenger.Broadcast(Signals.TUTORIAL_QUEST_CRITERIA_MET, this);
+            Messenger.Broadcast(Signals.QUEST_CRITERIA_MET, this);
         }
         protected virtual void SetCriteriaAsUnMet() {
             hasCriteriaBeenMet = false;
-            Messenger.Broadcast(Signals.TUTORIAL_QUEST_CRITERIA_UNMET, this);
+            Messenger.Broadcast(Signals.QUEST_CRITERIA_UNMET, this);
         }
 
     }

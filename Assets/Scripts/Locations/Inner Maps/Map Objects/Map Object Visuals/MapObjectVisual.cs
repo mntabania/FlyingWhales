@@ -15,7 +15,7 @@ public abstract class MapObjectVisual<T> : BaseMapObjectVisual where T : IDamage
 
     #region Visuals
     public abstract void UpdateTileObjectVisual(T obj);
-    protected virtual void UpdateSortingOrders(T obj) {
+    public virtual void UpdateSortingOrders(T obj) {
         if (objectVisual != null) {
             objectVisual.sortingLayerName = "Area Maps";
             objectVisual.sortingOrder = InnerMapManager.DetailsTilemapSortingOrder;    

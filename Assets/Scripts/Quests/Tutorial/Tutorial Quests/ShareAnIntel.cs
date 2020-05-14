@@ -10,7 +10,7 @@ namespace Tutorial {
 
         #region Criteria
         protected override void ConstructCriteria() {
-            _activationCriteria = new List<TutorialQuestCriteria>() {
+            _activationCriteria = new List<QuestCriteria>() {
                 new PlayerHasNotCastedForSeconds(15f),
                 new PlayerHasNotCompletedTutorialInSeconds(15f),
                 new HasCompletedTutorialQuest(TutorialManager.Tutorial.Build_A_Kennel)

@@ -9,7 +9,7 @@ namespace Tutorial {
 
         public BasicControls() : base("Basic Controls", TutorialManager.Tutorial.Basic_Controls) { }
         protected override void ConstructCriteria() {
-            _activationCriteria = new List<TutorialQuestCriteria>() {
+            _activationCriteria = new List<QuestCriteria>() {
                 new GameHasBeenRunningForSeconds(WorldConfigManager.Instance.isDemoWorld ? 1f : 8f)
             };
         }

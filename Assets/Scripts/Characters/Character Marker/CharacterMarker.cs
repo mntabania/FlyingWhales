@@ -84,6 +84,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             }
         } 
     }
+    public int sortingOrder => mainImg.sortingOrder;
     private LocationGridTile _previousGridTile;
     private float progressionSpeedMultiplier;
     public bool useCanTraverse;

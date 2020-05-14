@@ -8,18 +8,23 @@ namespace Quests {
 
         private readonly List<Character> _angels;
 
+        #region getters
+        public List<Character> angels => _angels;
+        #endregion
+        
         public DivineIntervention(List<Character> angels) : base("Divine Intervention") {
             _angels = angels;
         }
+        
         protected override void ConstructSteps() {
             CharacterBehaviourComponent attackDemonicStructureBehaviour =
                 CharacterManager.Instance.GetCharacterBehaviourComponent(typeof(AttackDemonicStructureBehaviour));
             steps = new List<QuestStepCollection>() {
                 new QuestStepCollection(
-                    new EliminateCharacterStep(GetStopCharactersDescription, _angels)
+                    new EliminateCharacterStep(GetStopCharactersDescription, angels)
                         .SetHoverOverAction(OnHoverEliminateItem)
                         .SetHoverOutAction(() => UIManager.Instance.HideSmallInfo())
-                        .SetObjectsToCenter(_angels.Select(x => x as ISelectable).ToArray())    
+                        .SetObjectsToCenter(angels.Select(x => x as ISelectable).ToArray())    
                 )
             };
         }
@@ -30,7 +35,7 @@ namespace Quests {
         }
         private void OnHoverEliminateItem(QuestStepItem item) {
             UIManager.Instance.ShowSmallInfo(
-                $"The Divine has sent down {_angels.Count.ToString()} Angels to stop you from further transgressions. " +
+                $"The Divine has sent down {angels.Count.ToString()} Angels to stop you from further transgressions. " +
                 "Eliminate all of them before they destroy your demonic structures.",
                 pos: item.hoverPosition
             );

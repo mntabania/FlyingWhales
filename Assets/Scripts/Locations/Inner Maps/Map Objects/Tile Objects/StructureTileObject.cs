@@ -29,6 +29,9 @@ public class StructureTileObject : TileObject {
     public override bool CanBeSelected() {
         return false;
     }
+    public override bool OccupiesTile() {
+        return false;
+    }
     #endregion
 
     // public void SetBuildingSpot(BuildingSpot spot) {

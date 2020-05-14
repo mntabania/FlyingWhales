@@ -1,7 +1,8 @@
 ﻿using System.Collections;
+using Tutorial;
 using UnityEngine;
-namespace Tutorial {
-    public class GameHasBeenRunningForSeconds : TutorialQuestCriteria {
+namespace Quests {
+    public class GameHasBeenRunningForSeconds : QuestCriteria {
         private readonly float _neededSeconds;
         public GameHasBeenRunningForSeconds(float neededSeconds) {
             _neededSeconds = neededSeconds;

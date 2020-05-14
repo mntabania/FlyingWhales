@@ -7,7 +7,7 @@ namespace Quests {
     public abstract class Quest {
 
         #region Properties
-        protected List<TutorialQuestCriteria> _activationCriteria;
+        protected List<QuestCriteria> _activationCriteria;
         public string questName { get; }
         public bool isAvailable { get; protected set; }
         /// <summary>

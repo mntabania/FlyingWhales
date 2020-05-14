@@ -37,8 +37,7 @@ public class SpiritGameObject : MapObjectVisual<TileObject> {
         _isMenuShowing = () => IsMenuShowing(tileObject);
         UpdateSortingOrders(tileObject);
     }
-
-    protected override void UpdateSortingOrders(TileObject obj) {
+    public override void UpdateSortingOrders(TileObject obj) {
         if (objectVisual != null) {
             objectVisual.sortingLayerName = "Area Maps";
             objectVisual.sortingOrder = InnerMapManager.DefaultCharacterSortingOrder;

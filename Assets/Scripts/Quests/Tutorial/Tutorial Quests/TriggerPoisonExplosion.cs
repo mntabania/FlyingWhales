@@ -8,7 +8,7 @@ namespace Tutorial {
 
         #region Criteria
         protected override void ConstructCriteria() {
-            _activationCriteria = new List<TutorialQuestCriteria>() {
+            _activationCriteria = new List<QuestCriteria>() {
                 new SpellExecuted(new [] {SPELL_TYPE.POISON, SPELL_TYPE.SPLASH_POISON})
             };
         }
