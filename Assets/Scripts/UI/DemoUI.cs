@@ -105,6 +105,7 @@ public class DemoUI : MonoBehaviour {
     
     public void OnClickReturnToMainMenu() {
         DOTween.Clear(true);
+        LevelLoaderManager.Instance.UpdateLoadingInfo(string.Empty);
         LevelLoaderManager.Instance.LoadLevel("MainMenu");
     }
     public void OnClickWishList() {
