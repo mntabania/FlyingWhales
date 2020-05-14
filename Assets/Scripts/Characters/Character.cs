@@ -2067,6 +2067,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return name;
     }
     private LocationGridTile GetLocationGridTileByXY(int x, int y, bool throwOnException = true) {
+        if (currentRegion == null) {
+            return null;
+        }
         if (UtilityScripts.Utilities.IsInRange(x, 0, currentRegion.innerMap.width)
             && UtilityScripts.Utilities.IsInRange(y, 0, currentRegion.innerMap.height)) {
             return currentRegion.innerMap.map[x, y];

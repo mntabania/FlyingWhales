@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 4296650793600353224}
   - component: {fileID: 278970236909829792}
   - component: {fileID: 7844954377415541601}
-  - component: {fileID: 6562965168128519280}
   - component: {fileID: 4956583678138607019}
   m_Layer: 14
   m_Name: Poison Bomb
@@ -250,7 +249,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1
+      scalar: 3
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -1332,7 +1331,7 @@ ParticleSystem:
   UVModule:
     serializedVersion: 2
     enabled: 1
-    mode: 1
+    mode: 0
     timeMode: 0
     fps: 30
     frameOverTime:
@@ -1433,27 +1432,27 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     speedRange: {x: 0, y: 1}
-    tilesX: 8
-    tilesY: 1
+    tilesX: 1
+    tilesY: 7
     animationType: 0
     rowIndex: 0
     cycles: 1
     uvChannelMask: -1
     rowMode: 1
     sprites:
-    - sprite: {fileID: 6304326657655299308, guid: e0def6a20a9dab747a7ac185c751e775,
+    - sprite: {fileID: -5223843582227905167, guid: 623a9c381976bbb45aa552db07797531,
         type: 3}
-    - sprite: {fileID: 6306954075617243965, guid: e0def6a20a9dab747a7ac185c751e775,
+    - sprite: {fileID: -6620288192961724022, guid: 623a9c381976bbb45aa552db07797531,
         type: 3}
-    - sprite: {fileID: -2645487434396742007, guid: e0def6a20a9dab747a7ac185c751e775,
+    - sprite: {fileID: -7137935638225318803, guid: 623a9c381976bbb45aa552db07797531,
         type: 3}
-    - sprite: {fileID: 5825907045803026397, guid: e0def6a20a9dab747a7ac185c751e775,
+    - sprite: {fileID: -7538080047781406068, guid: 623a9c381976bbb45aa552db07797531,
         type: 3}
-    - sprite: {fileID: -8642194086536131060, guid: e0def6a20a9dab747a7ac185c751e775,
+    - sprite: {fileID: 5977508088431758310, guid: 623a9c381976bbb45aa552db07797531,
         type: 3}
-    - sprite: {fileID: -3538642814588961902, guid: e0def6a20a9dab747a7ac185c751e775,
+    - sprite: {fileID: -4654897070287600574, guid: 623a9c381976bbb45aa552db07797531,
         type: 3}
-    - sprite: {fileID: -4222175053655546447, guid: e0def6a20a9dab747a7ac185c751e775,
+    - sprite: {fileID: 233369529654927667, guid: 623a9c381976bbb45aa552db07797531,
         type: 3}
     flipU: 0
     flipV: 0
@@ -4584,7 +4583,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: cf5265d855dda7a428be8695b66af914, type: 2}
   - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -4629,22 +4628,6 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
---- !u!114 &6562965168128519280
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9161742000421339240}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: af49abe683bd31f4a9c471199b4375bd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ParentPool: {fileID: 0}
-  particleSystems:
-  - {fileID: 278970236909829792}
-  pauseOnGamePaused: 0
 --- !u!114 &4956583678138607019
 MonoBehaviour:
   m_ObjectHideFlags: 0

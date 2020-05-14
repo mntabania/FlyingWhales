@@ -1011,7 +1011,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
     #region Heal Self
     public void OnHPReduced() {
-	    if (_owner.jobQueue.HasJob(JOB_TYPE.RECOVER_HP) == false && _owner.currentHP < Mathf.FloorToInt(_owner.maxHP * 0.5f)) {
+	    if (_owner.jobQueue.HasJob(JOB_TYPE.RECOVER_HP) == false && _owner.currentHP > 0 && _owner.currentHP < Mathf.FloorToInt(_owner.maxHP * 0.5f)) {
 		    CreateHealSelfJob();	
 	    }
     }
