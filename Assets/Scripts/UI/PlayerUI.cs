@@ -104,6 +104,7 @@ public class PlayerUI : MonoBehaviour {
     public GameObject spellsContainerGO;
     public GameObject spellItemPrefab;
     public PlayerSkillDetailsTooltip skillDetailsTooltip;
+    public UIHoverPosition spellListHoverPosition;
     private List<SpellItem> _spellItems;
 
     [Header("Summons")]
@@ -977,8 +978,8 @@ public class PlayerUI : MonoBehaviour {
         }
         return null;
     }
-    public void OnHoverSpell(SpellData skillData) {
-        skillDetailsTooltip.ShowPlayerSkillDetails(skillData);
+    public void OnHoverSpell(SpellData skillData, UIHoverPosition position = null) {
+        skillDetailsTooltip.ShowPlayerSkillDetails(skillData, position);
     }
     public void OnHoverOutSpell(SpellData skillData) {
         skillDetailsTooltip.HidePlayerSkillDetails();

@@ -99,6 +99,8 @@ public class MainMenuUI : MonoBehaviour {
         newGameButton.interactable = false;
         loadGameButton.interactable = false;
         AudioManager.Instance.TransitionTo("Loading", 10);
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Initializing data...");
+        LevelLoaderManager.Instance.UpdateLoadingBar(0.1f, 3f);
         MainMenuManager.Instance.LoadMainGameScene();
     }
 }

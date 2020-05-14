@@ -38,7 +38,7 @@ public class SpellItem : PooledObject {
     public void OnHoverSpell() {
         //string hoverShow = spellData.description + "\n" + spellData.GetManaCostChargesCooldownStr();
         //UIManager.Instance.ShowSmallInfo(hoverShow);
-        PlayerUI.Instance.OnHoverSpell(spellData);
+        PlayerUI.Instance.OnHoverSpell(spellData, PlayerUI.Instance.spellListHoverPosition);
     }
     public void OnHoverOutSpell() {
         //UIManager.Instance.HideSmallInfo();

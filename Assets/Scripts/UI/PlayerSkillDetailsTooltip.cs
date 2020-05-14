@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Debug = System.Diagnostics.Debug;
 
 public class PlayerSkillDetailsTooltip : MonoBehaviour {
     public TextMeshProUGUI titleText;
@@ -13,13 +14,32 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
     public TextMeshProUGUI cooldownText;
     public TextMeshProUGUI threatText;
     public TextMeshProUGUI threatPerHourText;
-
+    public UIHoverPosition defaultPosition;
+    
+    
     private SpellData skillData;
 
-    public void ShowPlayerSkillDetails(SpellData skillData) {
+    public void ShowPlayerSkillDetails(SpellData skillData, UIHoverPosition position = null) {
         this.skillData = skillData;
         UpdateData();
         gameObject.SetActive(true);
+        UIHoverPosition positionToUse = position;
+        if (positionToUse == null) {
+            positionToUse = defaultPosition;
+        }
+
+        RectTransform thisRect = transform as RectTransform;
+        Debug.Assert(thisRect != null, nameof(thisRect) + " != null");
+        thisRect.SetParent(positionToUse.transform);
+        
+        thisRect.pivot = positionToUse.pivot;
+        Vector2 anchorMin = Vector2.zero;
+        Vector2 anchorMax = Vector2.zero;
+        UtilityScripts.Utilities.GetAnchorMinMax(positionToUse.anchor, ref anchorMin, ref anchorMax);
+        thisRect.anchorMin = anchorMin;
+        thisRect.anchorMax = anchorMax;
+        thisRect.anchoredPosition = Vector2.zero;
+        
     }
     public void HidePlayerSkillDetails() {
         gameObject.SetActive(false);
