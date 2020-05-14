@@ -203,6 +203,7 @@ public class SpellData : IPlayerSkill {
     public SPELL_TARGET[] targetTypes { get; protected set; }
     public int radius { get; protected set; }
 
+    public int maxCharges { get; private set; }
     public int charges { get; private set; }
     public int manaCost { get; private set; }
     public int cooldown { get; private set; }
@@ -250,10 +251,6 @@ public class SpellData : IPlayerSkill {
     public virtual bool CanPerformAbilityTowards(Character targetCharacter) {
         //(targetCharacter.race != RACE.HUMANS && targetCharacter.race != RACE.ELVES)
         if(targetCharacter.traitContainer.HasTrait("Blessed")) {
-            return false;
-        }
-        if (targetCharacter.interruptComponent.isInterrupted && targetCharacter.interruptComponent.currentInterrupt.interrupt == INTERRUPT.Being_Tortured) {
-            //do not allow cast on character if it is being tortured.
             return false;
         }
         return CanPerformAbility();
@@ -357,6 +354,9 @@ public class SpellData : IPlayerSkill {
     #endregion
 
     #region Attributes
+    public void SetMaxCharges(int amount) {
+        maxCharges = amount;
+    }
     public void SetCharges(int amount) {
         charges = amount;
     }

@@ -139,6 +139,7 @@ public class PlayerSkillComponent {
     private void SetPlayerSkillData(PlayerSkillTreeNodeData node) {
         SpellData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(node.skill);
         CategorizePlayerSkill(spellData);
+        spellData.SetMaxCharges(node.charges);
         spellData.SetCharges(node.charges);
         spellData.SetCooldown(node.cooldown);
         spellData.SetManaCost(node.manaCost);
@@ -149,6 +150,7 @@ public class PlayerSkillComponent {
     private void SetPlayerSkillData(SPELL_TYPE skill, PlayerSkillTreeNode node) {
         SpellData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(skill);
         CategorizePlayerSkill(spellData);
+        spellData.SetMaxCharges(node.charges);
         spellData.SetCharges(node.charges);
         spellData.SetCooldown(node.cooldown);
         spellData.SetManaCost(node.manaCost);

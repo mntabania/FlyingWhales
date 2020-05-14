@@ -53,12 +53,20 @@ public class PlayerSkillDetails : MonoBehaviour {
         //}
 
         categoryText.text = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(skillData.category.ToString());
-        chargesText.text = "" + (charges != -1 ? charges : 0);
-        manaCostText.text = "" + (manaCost != -1 ? manaCost : 0);
+
+        chargesText.text = "N/A";
+        if (charges != -1) {
+            chargesText.text = charges + "/" + charges;
+        }
+
+        manaCostText.text = "N/A";
+        if (manaCost != -1) {
+            manaCostText.text = "" + manaCost;
+        }
 
         string cdText = string.Empty;
-        if(cooldown == -1) {
-            cdText = "0 mins";
+        if (cooldown == -1) {
+            cdText = "N/A";
         } else {
             cdText = GameManager.GetTimeAsWholeDuration(cooldown) + " " + GameManager.GetTimeIdentifierAsWholeDuration(cooldown);
         }

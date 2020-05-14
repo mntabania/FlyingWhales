@@ -504,6 +504,14 @@ public class PlayerUI : MonoBehaviour {
     //public void UpdateThreatMeter() {
     //    threatMeter.value = PlayerManager.Instance.player.threat;
     //}
+    public void OnHoverEnterThreat() {
+        string text = "The amount of threat you've generated in this world. Once this reaches 100, characters will start attacking your structures. " +
+            "Your recent actions are generating " + PlayerManager.Instance.player.threatComponent.threatPerHour + " Threat every hour.";
+        UIManager.Instance.ShowSmallInfo(text);
+    }
+    public void OnHoverExitThreat() {
+        UIManager.Instance.HideSmallInfo();
+    }
     #endregion
 
     #region End Game Mechanics
