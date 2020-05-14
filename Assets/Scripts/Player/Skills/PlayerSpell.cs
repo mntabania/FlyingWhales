@@ -252,6 +252,10 @@ public class SpellData : IPlayerSkill {
         if(targetCharacter.traitContainer.HasTrait("Blessed")) {
             return false;
         }
+        if (targetCharacter.interruptComponent.isInterrupted && targetCharacter.interruptComponent.currentInterrupt.interrupt == INTERRUPT.Being_Tortured) {
+            //do not allow cast on character if it is being tortured.
+            return false;
+        }
         return CanPerformAbility();
     }
     public virtual bool CanPerformAbilityTowards(TileObject tileObject) { return CanPerformAbility(); }
