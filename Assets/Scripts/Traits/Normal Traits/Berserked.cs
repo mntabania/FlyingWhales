@@ -21,7 +21,7 @@ namespace Traits {
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(6);
             hindersWitness = true;
             AddTraitOverrideFunctionIdentifier(TraitManager.Tick_Started_Trait);
-            AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Cannot_Witness_Trait);
+            //AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Cannot_Witness_Trait);
         }
 
         #region Overrides
@@ -69,8 +69,11 @@ namespace Traits {
                 character.needsComponent.CheckExtremeNeeds();
             }
         }
-        public override void OnSeePOIEvenCannotWitness(IPointOfInterest targetPOI, Character character) {
-            base.OnSeePOIEvenCannotWitness(targetPOI, character);
+        //public override void OnSeePOIEvenCannotWitness(IPointOfInterest targetPOI, Character character) {
+        //    base.OnSeePOIEvenCannotWitness(targetPOI, character);
+        //    BerserkCombat(targetPOI, character);
+        //}
+        public void BerserkCombat(IPointOfInterest targetPOI, Character character) {
             if (targetPOI is Character) {
                 Character targetCharacter = targetPOI as Character;
                 if (!targetCharacter.isDead) {
