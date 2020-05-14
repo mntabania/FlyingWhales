@@ -12,7 +12,7 @@ namespace Tutorial {
             _activationCriteria = new List<TutorialQuestCriteria>() {
                 new HasCompletedTutorialQuest(TutorialManager.Tutorial.Basic_Controls)
             };
-            // Messenger.AddListener<LocationStructure>(Signals.STRUCTURE_OBJECT_PLACED, OnAlreadyBuiltStructure);
+            Messenger.AddListener<LocationStructure>(Signals.STRUCTURE_OBJECT_PLACED, OnAlreadyBuiltStructure);
         }
         protected override bool HasMetAllCriteria() {
             bool hasMetAllCriteria = base.HasMetAllCriteria();
@@ -43,24 +43,24 @@ namespace Tutorial {
                 )
             };
         }
-        // public override void Activate() {
-        //     base.Activate();
-        //     //stop listening for structure building, since another listener will be used to listen for step completion
-        //     Messenger.RemoveListener<LocationStructure>(Signals.STRUCTURE_OBJECT_PLACED, OnAlreadyBuiltStructure);
-        // }
-        // public override void Deactivate() {
-        //     base.Deactivate();
-        //     //remove listener, this is for when the tutorial is completed without it being activated 
-        //     Messenger.RemoveListener<LocationStructure>(Signals.STRUCTURE_OBJECT_PLACED, OnAlreadyBuiltStructure);
-        // }
+        public override void Activate() {
+            base.Activate();
+            //stop listening for structure building, since another listener will be used to listen for step completion
+            Messenger.RemoveListener<LocationStructure>(Signals.STRUCTURE_OBJECT_PLACED, OnAlreadyBuiltStructure);
+        }
+        public override void Deactivate() {
+            base.Deactivate();
+            //remove listener, this is for when the tutorial is completed without it being activated 
+            Messenger.RemoveListener<LocationStructure>(Signals.STRUCTURE_OBJECT_PLACED, OnAlreadyBuiltStructure);
+        }
 
-        // #region Availability Listeners
-        // private void OnAlreadyBuiltStructure(LocationStructure structure) {
-        //     if (structure is DemonicStructure) {
-        //         CompleteQuest(); //player already built a structure
-        //     }
-        // }
-        // #endregion
+        #region Availability Listeners
+        private void OnAlreadyBuiltStructure(LocationStructure structure) {
+            if (structure is Inner_Maps.Location_Structures.TortureChambers) {
+                CompleteQuest(); //player already built a structure
+            }
+        }
+        #endregion
 
         #region Step Helpers
         private bool IsClickedRoomValid(StructureRoom room) {

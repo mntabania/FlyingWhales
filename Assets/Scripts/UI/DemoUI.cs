@@ -86,6 +86,8 @@ public class DemoUI : MonoBehaviour {
         fromColor.a = 0f;
         bgImage.color = fromColor;
         bgImage.DOFade(1f, 2f).SetEase(Ease.InQuint).OnComplete(ShowLogoAndThankYou);
+        
+        UIManager.Instance.HideSmallInfo();
     }
 
     private void ShowLogoAndThankYou() {
@@ -105,6 +107,7 @@ public class DemoUI : MonoBehaviour {
     
     public void OnClickReturnToMainMenu() {
         DOTween.Clear(true);
+        LevelLoaderManager.Instance.UpdateLoadingInfo(string.Empty);
         LevelLoaderManager.Instance.LoadLevel("MainMenu");
     }
     public void OnClickWishList() {

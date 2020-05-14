@@ -316,6 +316,14 @@ public static class Signals {
     /// </summary>
     public static string ON_EXECUTE_SPELL = "OnExecuteSpell";
     /// <summary>
+    /// parameters (SpellData)
+    /// </summary>
+    public static string SPELL_COOLDOWN_FINISHED = "OnSpellCooldownFinished";
+    /// <summary>
+    /// parameters (SpellData)
+    /// </summary>
+    public static string SPELL_COOLDOWN_STARTED = "OnSpellCooldownStarted";
+    /// <summary>
     /// parameters (IPlayerActionTarget)
     /// </summary>
     public static string RELOAD_PLAYER_ACTIONS = "ReloadPlayerActions";
