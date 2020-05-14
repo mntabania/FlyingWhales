@@ -476,7 +476,14 @@ namespace Inner_Maps {
 
         #region Points of Interest
         public void SetObjectHere(IPointOfInterest poi) {
-            objHere = poi;
+            if (poi is TileObject tileObject) {
+                if (tileObject.OccupiesTile()) {
+                    objHere = poi;
+                }
+            } else {
+                objHere = poi;    
+            }
+            
             poi.SetGridTileLocation(this);
             poi.OnPlacePOI();
             SetTileState(Tile_State.Occupied);

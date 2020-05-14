@@ -1,7 +1,8 @@
 ﻿using System.Collections;
+using Tutorial;
 using UnityEngine;
-namespace Tutorial {
-    public class PlayerHasNotCompletedTutorialInSeconds : TutorialQuestCriteria {
+namespace Quests {
+    public class PlayerHasNotCompletedTutorialInSeconds : QuestCriteria {
         
         private readonly float _neededSeconds;
         private Coroutine _timerCoroutine;

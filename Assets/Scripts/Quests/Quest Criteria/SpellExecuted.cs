@@ -1,7 +1,6 @@
-﻿using System;
-using System.Linq;
-namespace Tutorial {
-    public class SpellExecuted : TutorialQuestCriteria {
+﻿using System.Linq;
+namespace Quests {
+    public class SpellExecuted : QuestCriteria {
         private readonly SPELL_TYPE[] _spellTypes;
         
         public SpellExecuted(SPELL_TYPE[] spellTypes) {

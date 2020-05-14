@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Inner_Maps.Location_Structures;
 using Tutorial;
 using UnityEngine;
+using Debug = System.Diagnostics.Debug;
 namespace Quests {
     public class QuestManager : MonoBehaviour {
 
@@ -25,6 +26,18 @@ namespace Quests {
                 OnAngelsAttackingDemonicStructure);
         }
         #endregion
+
+        #region Inquiry
+        public T GetActiveQuest<T>() where T : Quest {
+            for (int i = 0; i < _activeQuests.Count; i++) {
+                Quest quest = _activeQuests[i];
+                if (quest is T validQuest) {
+                    return validQuest;
+                }
+            }
+            return null;
+        }
+        #endregion
         
         #region Activation
         private void ActivateQuest(Quest quest) {
@@ -35,10 +48,12 @@ namespace Quests {
         }
         private void ActivateQuest<T>(params object[] arguments) where T : Quest {
             Quest quest = System.Activator.CreateInstance(typeof(T), arguments) as Quest;
+            Debug.Assert(quest != null, nameof(quest) + " != null");
             _activeQuests.Add(quest);
             quest.Activate();
             QuestItem questItem = UIManager.Instance.questUI.ShowQuest(quest, true);
             quest.SetTutorialQuestItem(questItem);
+            Messenger.Broadcast(Signals.REACTION_QUEST_ACTIVATED, quest);
         }
         private void DeactivateQuest(Quest quest) {
             _activeQuests.Remove(quest);
@@ -62,15 +77,22 @@ namespace Quests {
                 CreateEliminateAllVillagersQuest();
             } else {
                 Messenger.AddListener<TutorialQuest>(Signals.TUTORIAL_QUEST_COMPLETED, OnTutorialQuestCompleted);
+                Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
             }
         }
         private void OnTutorialQuestCompleted(TutorialQuest completedQuest) {
             if (completedQuest.tutorialType == TutorialManager.Tutorial.Build_A_Kennel) {
-                Messenger.RemoveListener<TutorialQuest>(Signals.TUTORIAL_QUEST_COMPLETED, OnTutorialQuestCompleted);
+                CreateEliminateAllVillagersQuest();
+            }
+        }
+        private void OnCharacterDied(Character character) {
+            if (character.isNormalCharacter) {
                 CreateEliminateAllVillagersQuest();
             }
         }
         private void CreateEliminateAllVillagersQuest() {
+            Messenger.RemoveListener<TutorialQuest>(Signals.TUTORIAL_QUEST_COMPLETED, OnTutorialQuestCompleted);
+            Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
             EliminateAllVillagers eliminateAllVillagers = new EliminateAllVillagers();
             ActivateQuest(eliminateAllVillagers);
         }

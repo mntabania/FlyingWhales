@@ -1,6 +1,6 @@
 ﻿using System;
-namespace Tutorial {
-    public class CharacterDied : TutorialQuestCriteria {
+namespace Quests {
+    public class CharacterDied : QuestCriteria {
         private readonly Func<Character, bool> _validityChecker;
         public CharacterDied(Func<Character, bool> validityChecker) {
             _validityChecker = validityChecker;

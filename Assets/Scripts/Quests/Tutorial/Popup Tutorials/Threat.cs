@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using Quests;
 namespace Tutorial {
     public class Threat : PopupTutorial {
         public Threat() : base("Threat", TutorialManager.Tutorial.Threat) { }
         protected override void ConstructCriteria() {
-            _activationCriteria = new List<TutorialQuestCriteria>(
+            _activationCriteria = new List<QuestCriteria>(
                 new [] {
                     new ThreatIncreased(), 
                 }    

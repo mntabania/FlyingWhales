@@ -34,52 +34,29 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
         UpdateSortingOrders(tileObject);
     }
 
-    protected override void UpdateSortingOrders(TileObject obj) {
-        if (obj.tileObjectType == TILE_OBJECT_TYPE.TREE_OBJECT) {
-            if (objectVisual != null) {
-                objectVisual.sortingLayerName = "Area Maps";
-                objectVisual.sortingOrder = InnerMapManager.DetailsTilemapSortingOrder + 5;    
-            }
-            if (hoverObject != null) {
-                hoverObject.sortingLayerName = "Area Maps";
-                hoverObject.sortingOrder = objectVisual.sortingOrder - 1;    
-            }   
+    private void SetSortingOrder(int sortingOrder, string layerName = "Area Maps") {
+        if (objectVisual != null) {
+            objectVisual.sortingLayerName = layerName;
+            objectVisual.sortingOrder = sortingOrder;    
+        }
+        if (hoverObject != null) {
+            hoverObject.sortingLayerName = layerName;
+            hoverObject.sortingOrder = objectVisual.sortingOrder - 1;    
+        }   
+    }
+    public override void UpdateSortingOrders(TileObject obj) {
+        if (obj.isBeingCarriedBy != null) {
+            SetSortingOrder(obj.isBeingCarriedBy.marker.sortingOrder);
+        } else if (obj.tileObjectType == TILE_OBJECT_TYPE.TREE_OBJECT) {
+            SetSortingOrder(InnerMapManager.DetailsTilemapSortingOrder + 5);
         } else if (obj.tileObjectType == TILE_OBJECT_TYPE.BIG_TREE_OBJECT) {
-            if (objectVisual != null) {
-                objectVisual.sortingLayerName = "Area Maps";
-                objectVisual.sortingOrder = InnerMapManager.DetailsTilemapSortingOrder + 10;    
-            }
-            if (hoverObject != null) {
-                hoverObject.sortingLayerName = "Area Maps";
-                hoverObject.sortingOrder = objectVisual.sortingOrder - 1;    
-            }   
+            SetSortingOrder(InnerMapManager.DetailsTilemapSortingOrder + 10);
         } else if (obj.tileObjectType == TILE_OBJECT_TYPE.MAGIC_CIRCLE) {
-            if (objectVisual != null) {
-                objectVisual.sortingLayerName = "Area Maps";
-                objectVisual.sortingOrder = InnerMapManager.DetailsTilemapSortingOrder - 1;    
-            }
-            if (hoverObject != null) {
-                hoverObject.sortingLayerName = "Area Maps";
-                hoverObject.sortingOrder = objectVisual.sortingOrder - 1;    
-            }   
+            SetSortingOrder(InnerMapManager.DetailsTilemapSortingOrder - 1);
         } else if (obj.tileObjectType == TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
-            if (objectVisual != null) {
-                objectVisual.sortingLayerName = "Area Maps";
-                objectVisual.sortingOrder = InnerMapManager.GroundTilemapSortingOrder + 2;    
-            }
-            if (hoverObject != null) {
-                hoverObject.sortingLayerName = "Area Maps";
-                hoverObject.sortingOrder = objectVisual.sortingOrder - 1;    
-            }
+            SetSortingOrder(InnerMapManager.GroundTilemapSortingOrder + 2);
         } else if (obj.tileObjectType == TILE_OBJECT_TYPE.PORTAL_TILE_OBJECT) {
-            if (objectVisual != null) {
-                objectVisual.sortingLayerName = "Area Maps";
-                objectVisual.sortingOrder = InnerMapManager.GroundTilemapSortingOrder + 3;    
-            }
-            if (hoverObject != null) {
-                hoverObject.sortingLayerName = "Area Maps";
-                hoverObject.sortingOrder = objectVisual.sortingOrder - 1;    
-            }
+            SetSortingOrder(InnerMapManager.GroundTilemapSortingOrder + 3);
         } else {
             base.UpdateSortingOrders(obj);
         }

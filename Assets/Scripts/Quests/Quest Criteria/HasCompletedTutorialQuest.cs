@@ -1,6 +1,6 @@
-﻿using System;
-namespace Tutorial {
-    public class HasCompletedTutorialQuest : TutorialQuestCriteria {
+﻿using Tutorial;
+namespace Quests {
+    public class HasCompletedTutorialQuest : QuestCriteria {
         private readonly TutorialManager.Tutorial _tutorialToComplete;
         
         public HasCompletedTutorialQuest(TutorialManager.Tutorial tutorialToComplete) {

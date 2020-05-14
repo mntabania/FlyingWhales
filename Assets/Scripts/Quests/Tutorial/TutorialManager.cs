@@ -23,6 +23,8 @@ namespace Tutorial {
             Apply_An_Affliction = 10,
             Torture_Chambers = 11,
             Threat = 12,
+            Counterattack = 13,
+            Divine_Intervention = 14,
         }
 
         private List<TutorialQuest> _activeTutorials;
@@ -49,6 +51,8 @@ namespace Tutorial {
         public VideoClip chambersVideo;
         public Texture tortureButton;
         public Texture threatPicture;
+        public Texture counterattackPicture;
+        public Texture divineInterventionPicture;
 
         #region Monobehaviours
         private void Awake() {

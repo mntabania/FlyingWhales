@@ -17,6 +17,7 @@ public class SummonPlayerSkill : SpellData {
         CharacterManager.Instance.PlaceSummon(summon, targetTile);
         //summon.behaviourComponent.AddBehaviourComponent(typeof(DefaultMinion));
         spawnedCharacter = summon;
+        Messenger.Broadcast(Signals.PLAYER_PLACED_SUMMON, summon);
         base.ActivateAbility(targetTile, ref spawnedCharacter);
     }
 }

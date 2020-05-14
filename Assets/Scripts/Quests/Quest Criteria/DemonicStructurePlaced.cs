@@ -1,7 +1,6 @@
-﻿using System;
-using Inner_Maps.Location_Structures;
-namespace Tutorial {
-    public class DemonicStructurePlaced : TutorialQuestCriteria {
+﻿using Inner_Maps.Location_Structures;
+namespace Quests {
+    public class DemonicStructurePlaced : QuestCriteria {
         public override void Enable() {
             Messenger.AddListener<LocationStructure>(Signals.STRUCTURE_OBJECT_PLACED, OnStructurePlaced);
         }

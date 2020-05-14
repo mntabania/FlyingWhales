@@ -184,6 +184,7 @@ public class PlayerSkillComponent {
             if (removeOnSaveFile) {
                 SaveManager.Instance.currentSaveDataPlayer.RemoveKennelSummon(summon);
             }
+            Messenger.Broadcast(Signals.SUMMON_REMOVED, summon);
         }
     }
     public string GetSummonDescription(SUMMON_TYPE currentlySelectedSummon) {

@@ -12,7 +12,7 @@ namespace Tutorial {
 
         #region Criteria
         protected override void ConstructCriteria() {
-            _activationCriteria = new List<TutorialQuestCriteria>() {
+            _activationCriteria = new List<QuestCriteria>() {
                 new HasCompletedTutorialQuest(TutorialManager.Tutorial.Torture_Chambers)
             };
             Messenger.AddListener<LocationStructure>(Signals.STRUCTURE_OBJECT_PLACED, OnAlreadyBuiltStructure);

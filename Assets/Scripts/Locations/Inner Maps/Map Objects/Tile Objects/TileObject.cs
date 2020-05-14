@@ -158,7 +158,12 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     /// </summary>
     /// <param name="action">The finished action</param>
     public virtual void OnCancelActionTowardsObject(ActualGoapNode action) { }
-
+    /// <summary>
+    /// When this tile object is placed on a tile, should it be set as that tile's object.
+    /// <see cref="LocationGridTile.objHere"/>
+    /// </summary>
+    /// <returns></returns>
+    public virtual bool OccupiesTile() { return true;}
     public virtual void OnDestroyPOI() {
         //DisableGameObject();
         OnRemoveTileObject(null, previousTile);
@@ -181,6 +186,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             gridTileLocation.parentMap.region.AddPendingAwareness(this);
         }
         PlaceMapObjectAt(gridTileLocation);
+        mapVisual.UpdateSortingOrders(this);
         OnPlaceTileObjectAtTile(gridTileLocation);
         TileObjectData objData;
         if (TileObjectDB.TryGetTileObjectData(tileObjectType, out objData)) {

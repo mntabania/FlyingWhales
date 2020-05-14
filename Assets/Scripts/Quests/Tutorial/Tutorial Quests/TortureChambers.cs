@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Inner_Maps.Location_Structures;
+using Quests;
 using Quests.Steps;
 
 namespace Tutorial {
@@ -9,7 +10,7 @@ namespace Tutorial {
 
         #region Criteria
         protected override void ConstructCriteria() {
-            _activationCriteria = new List<TutorialQuestCriteria>() {
+            _activationCriteria = new List<QuestCriteria>() {
                 new HasCompletedTutorialQuest(TutorialManager.Tutorial.Basic_Controls)
             };
             Messenger.AddListener<LocationStructure>(Signals.STRUCTURE_OBJECT_PLACED, OnAlreadyBuiltStructure);

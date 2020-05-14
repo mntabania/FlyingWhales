@@ -28,22 +28,22 @@ namespace Tutorial {
         /// Make this quest start checking for it's criteria
         /// </summary>
         private void StartCheckingCriteria() {
-            Messenger.AddListener<TutorialQuestCriteria>(Signals.TUTORIAL_QUEST_CRITERIA_MET, OnCriteriaMet);
-            Messenger.AddListener<TutorialQuestCriteria>(Signals.TUTORIAL_QUEST_CRITERIA_UNMET, OnCriteriaUnMet);
+            Messenger.AddListener<QuestCriteria>(Signals.QUEST_CRITERIA_MET, OnCriteriaMet);
+            Messenger.AddListener<QuestCriteria>(Signals.QUEST_CRITERIA_UNMET, OnCriteriaUnMet);
             for (int i = 0; i < _activationCriteria.Count; i++) {
-                TutorialQuestCriteria criteria = _activationCriteria[i];
+                QuestCriteria criteria = _activationCriteria[i];
                 criteria.Enable();
             }
         }
         protected void StopCheckingCriteria() {
-            Messenger.RemoveListener<TutorialQuestCriteria>(Signals.TUTORIAL_QUEST_CRITERIA_MET, OnCriteriaMet);
-            Messenger.RemoveListener<TutorialQuestCriteria>(Signals.TUTORIAL_QUEST_CRITERIA_UNMET, OnCriteriaUnMet);
+            Messenger.RemoveListener<QuestCriteria>(Signals.QUEST_CRITERIA_MET, OnCriteriaMet);
+            Messenger.RemoveListener<QuestCriteria>(Signals.QUEST_CRITERIA_UNMET, OnCriteriaUnMet);
             for (int i = 0; i < _activationCriteria.Count; i++) {
-                TutorialQuestCriteria criteria = _activationCriteria[i];
+                QuestCriteria criteria = _activationCriteria[i];
                 criteria.Disable();
             }
         }
-        private void OnCriteriaMet(TutorialQuestCriteria criteria) {
+        private void OnCriteriaMet(QuestCriteria criteria) {
             if (isAvailable) { return; } //do not check criteria completion if tutorial has already been made available
             if (_activationCriteria.Contains(criteria)) {
                 //check if all criteria has been met
@@ -52,7 +52,7 @@ namespace Tutorial {
                 }
             }
         }
-        private void OnCriteriaUnMet(TutorialQuestCriteria criteria) {
+        private void OnCriteriaUnMet(QuestCriteria criteria) {
             if (_activationCriteria.Contains(criteria)) {
                 if (isAvailable) {
                     MakeUnavailable();
@@ -62,7 +62,7 @@ namespace Tutorial {
         protected virtual bool HasMetAllCriteria() {
             bool hasMetAllCriteria = true;
             for (int i = 0; i < _activationCriteria.Count; i++) {
-                TutorialQuestCriteria c = _activationCriteria[i];
+                QuestCriteria c = _activationCriteria[i];
                 if (c.hasCriteriaBeenMet == false) {
                     hasMetAllCriteria = false;
                     break;
