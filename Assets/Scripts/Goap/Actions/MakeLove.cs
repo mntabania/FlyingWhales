@@ -353,7 +353,7 @@ public class MakeLove : GoapAction {
                 Bed actorBed = actor.homeStructure.GetTileObjectOfType<Bed>(TILE_OBJECT_TYPE.BED);
                 if (actorBed != null && actorBed.GetActiveUserCount() == 0) {
                     return actorBed;
-                } else {
+                } else if (target.homeStructure != null){
                     Bed targetBed = target.homeStructure.GetTileObjectOfType<Bed>(TILE_OBJECT_TYPE.BED);
                     if (targetBed != null && targetBed.GetActiveUserCount() == 0) {
                         return targetBed;
