@@ -20,6 +20,7 @@ public class BrimstonesParticleEffect : BaseParticleEffect {
     }
     public void OnBrimstoneFell() {
         // List<ITraitable> traitables = targetTile.GetTraitablesOnTile();
+        targetTile.genericTileObject.traitContainer.AddTrait(targetTile.genericTileObject, "Danger Remnant");
         BurningSource bs = null;
         targetTile.PerformActionOnTraitables((traitable) => BrimstoneEffect(traitable, ref bs));
     }

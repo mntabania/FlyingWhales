@@ -26,14 +26,13 @@ namespace Traits {
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
-            if(addedTo is IPointOfInterest poi) {
-                _freezingGO = GameManager.Instance.CreateParticleEffectAt(poi, PARTICLE_EFFECT.Freezing);
-            }
-            if(addedTo is Character) {
-                Character character = addedTo as Character;
+            if (addedTo is Character character) {
+                _freezingGO = GameManager.Instance.CreateParticleEffectAt(character, PARTICLE_EFFECT.Freezing);
                 character.needsComponent.AdjustComfortDecreaseRate(1f);
                 character.needsComponent.AdjustTirednessDecreaseRate(1f);
                 character.AdjustSpeedModifier(-0.15f);
+            } else if (addedTo is IPointOfInterest poi) {
+                _freezingGO = GameManager.Instance.CreateParticleEffectAt(poi, PARTICLE_EFFECT.Freezing_Object);
             }
         }
         public override void OnStackStatus(ITraitable addedTo) {
@@ -56,8 +55,7 @@ namespace Traits {
                 ObjectPoolManager.Instance.DestroyObject(_freezingGO);
                 _freezingGO = null;
             }
-            if (removedFrom is Character) {
-                Character character = removedFrom as Character;
+            if (removedFrom is Character character) {
                 character.needsComponent.AdjustComfortDecreaseRate(-1f);
                 character.needsComponent.AdjustTirednessDecreaseRate(-1f);
                 character.AdjustSpeedModifier(0.15f);
@@ -69,7 +67,11 @@ namespace Traits {
                     ObjectPoolManager.Instance.DestroyObject(_freezingGO);
                     _freezingGO = null;
                 }
-                _freezingGO = GameManager.Instance.CreateParticleEffectAt(poi, PARTICLE_EFFECT.Freezing);
+                PARTICLE_EFFECT particleEffect = PARTICLE_EFFECT.Freezing_Object;
+                if(poi is Character) {
+                    particleEffect = PARTICLE_EFFECT.Freezing;
+                }
+                _freezingGO = GameManager.Instance.CreateParticleEffectAt(poi, particleEffect);
             }
         }
         public override void OnDestroyMapObjectVisual(ITraitable traitable) {

@@ -15,6 +15,7 @@ public class IceteroidParticleEffect : BaseParticleEffect {
         ObjectPoolManager.Instance.DestroyObject(gameObject);
     }
     public void OnIceteroidFell() {
+        targetTile.genericTileObject.traitContainer.AddTrait(targetTile.genericTileObject, "Danger Remnant");
         targetTile.PerformActionOnTraitables(DealDamage);
     }
     private void DealDamage(ITraitable traitable) {

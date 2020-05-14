@@ -1063,6 +1063,7 @@ namespace Inner_Maps {
         }
         private IEnumerator TriggerLandmine(Character triggeredBy) {
             GameManager.Instance.CreateParticleEffectAt(this, PARTICLE_EFFECT.Landmine_Explosion);
+            genericTileObject.traitContainer.AddTrait(genericTileObject, "Danger Remnant");
             yield return new WaitForSeconds(0.5f);
             SetHasLandmine(false);
             List<LocationGridTile> tiles = GetTilesInRadius(3, includeCenterTile: true, includeTilesInDifferentStructure: true);
