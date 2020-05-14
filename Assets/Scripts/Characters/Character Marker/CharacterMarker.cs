@@ -1508,17 +1508,17 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
         pathfindingAI.ClearAllCurrentPathData();
         SetHasFleePath(true);
-        LocationGridTile chosenTile;
-        if(character is Summon summon) {
-            chosenTile = summon.GetRandomLocationGridTileWithPath();
-        } else {
+        LocationGridTile chosenTile = null;
+        if(character.homeStructure != null) {
             chosenTile = character.homeStructure.GetRandomTile();
-            
+        } else if (character.HasTerritory()) {
+            chosenTile = character.GetRandomLocationGridTileWithPath();
         }
-        if(chosenTile == null) {
-            chosenTile = character.currentStructure.GetRandomTile();
+        if (chosenTile != null) {
+            GoTo(chosenTile, OnFinishedTraversingFleePath);
+        } else {
+            OnStartFlee();
         }
-        GoTo(chosenTile, OnFinishedTraversingFleePath);
     }
     public void OnFleePathComputed(Path path) {
         if (character == null || !character.canPerform || !character.canMove) {
