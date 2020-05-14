@@ -12,6 +12,8 @@ public class RainData : SpellData {
 
     public RainData() : base() {
         targetTypes = new[] { SPELL_TARGET.HEX };
+        SetCharges(10);
+        SetCooldown(3);
     }
 
     public override void ActivateAbility(HexTile targetHex) {

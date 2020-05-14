@@ -15,6 +15,7 @@ public class ActionItem : PooledObject {
 	[SerializeField] private Image coverImg;
     [SerializeField] private Image highlightImg;
     [SerializeField] private TextMeshProUGUI actionLbl;
+    [SerializeField] private UIHoverPosition _hoverPosition;
 
 	private string expiryKey;
 	
@@ -70,7 +71,7 @@ public class ActionItem : PooledObject {
         }
     }
     public void OnHover() {
-        PlayerUI.Instance.OnHoverSpell(playerAction);
+        PlayerUI.Instance.OnHoverSpell(playerAction, _hoverPosition);
         //UIManager.Instance.ShowSmallInfo(playerAction.description + "\n" + playerAction.GetManaCostChargesCooldownStr());
     }
     public void OnHoverOut() {
