@@ -432,8 +432,10 @@ public class ReactionComponent {
                 debugLog += "\n-Fight or Flight response";
                 //Fight or Flight
                 if (owner.combatComponent.combatMode == COMBAT_MODE.Aggressive) {
-                    //If the source is harassing or defending, combat should not be lethal;
-                    bool isLethal = !owner.behaviourComponent.isHarassing && !owner.behaviourComponent.isDefending;
+                    //If the source is harassing or defending, combat should not be lethal
+                    //There is a special case, even if the source is defending if he/she is a demon and the target is an angel and vice versa, make the combat lethal
+                    bool isLethal = (!owner.behaviourComponent.isHarassing && !owner.behaviourComponent.isDefending)
+                        || (owner.behaviourComponent.isDefending && (owner.race == RACE.DEMON && targetCharacter.race == RACE.ANGEL) || (owner.race == RACE.ANGEL && targetCharacter.race == RACE.DEMON));
                     bool isTopPrioJobLethal = owner.jobQueue.jobsInQueue.Count <= 0 || owner.jobQueue.jobsInQueue[0].jobType.IsJobLethal();
                     if (owner.jobQueue.jobsInQueue.Count > 0) {
                         debugLog += $"\n-{owner.jobQueue.jobsInQueue[0].jobType}";

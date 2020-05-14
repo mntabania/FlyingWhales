@@ -90,8 +90,8 @@ public class CombatComponent {
                             debugLog += "\n-Character is immune to target elemental damage";
                             Fight(target, fightReason, connectedAction, isLethal);
                         } else {
-                            if (owner.currentHP >= Mathf.CeilToInt(owner.maxHP * 0.5f)) {
-                                debugLog += "\n-Character's hp is greater than or equal to 50% of its max hp";
+                            if (owner.currentHP >= Mathf.CeilToInt(owner.maxHP * 0.3f)) {
+                                debugLog += "\n-Character's hp is greater than or equal to 30% of its max hp";
                                 Fight(target, fightReason, connectedAction, isLethal);
                             } else {
                                 int fightChance = 25;

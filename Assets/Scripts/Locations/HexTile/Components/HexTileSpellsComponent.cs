@@ -371,6 +371,7 @@ public class HexTileSpellsComponent {
             yield return new WaitForSeconds(UnityEngine.Random.Range(0.1f, 0.7f));
             LocationGridTile chosenTile = owner.locationGridTiles[UnityEngine.Random.Range(0, owner.locationGridTiles.Count)];
             GameManager.Instance.CreateParticleEffectAt(chosenTile, PARTICLE_EFFECT.Lightning_Strike);
+            chosenTile.genericTileObject.traitContainer.AddTrait(chosenTile.genericTileObject, "Danger Remnant");
             // List<IPointOfInterest> pois = chosenTile.GetPOIsOnTile();
             // for (int i = 0; i < pois.Count; i++) {
             //     pois[i].AdjustHP(-175, ELEMENTAL_TYPE.Electric, true, showHPBar: true);
