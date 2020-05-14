@@ -18,6 +18,7 @@ public class StringNameplateItem : NameplateItem<string> {
         identifier = string.Empty;
         mainLbl.text = str;
         subLbl.text = string.Empty;
+        
     }
 
     public void SetIdentifier(string id) {

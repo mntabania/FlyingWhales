@@ -1142,7 +1142,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     }
     private bool CanChooseLandmark(SPELL_TYPE structureType) {
         if (WorldConfigManager.Instance.isDemoWorld) {
-            return WorldConfigManager.Instance.availableSpellsInDemoBuild.Contains(structureType);
+            return WorldConfigManager.Instance.availableSpellsInDemoBuild.Contains(structureType) 
+                   && PlayerSkillManager.Instance.GetDemonicStructureSkillData(structureType).CanPerformAbility();
         } else {
             if (structureType == SPELL_TYPE.THE_EYE && region.HasStructure(STRUCTURE_TYPE.THE_EYE)) {
                 return false; //only 1 eye per region.

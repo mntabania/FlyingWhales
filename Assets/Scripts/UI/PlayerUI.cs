@@ -958,6 +958,7 @@ public class PlayerUI : MonoBehaviour {
             if (isInteractable) {
                 item.transform.SetAsFirstSibling();
             } else {
+                item.SetLockedState(true);
                 item.transform.SetAsLastSibling();
             }
         }

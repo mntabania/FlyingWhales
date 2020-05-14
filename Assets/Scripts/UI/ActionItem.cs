@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using EZObjectPools;
 using TMPro;
@@ -16,23 +17,19 @@ public class ActionItem : PooledObject {
     [SerializeField] private Image highlightImg;
     [SerializeField] private TextMeshProUGUI actionLbl;
     [SerializeField] private UIHoverPosition _hoverPosition;
-
+    [SerializeField] private Image cooldownImage;
 	private string expiryKey;
 	
 	public void SetAction(PlayerAction playerAction, IPlayerActionTarget playerActionTarget) {
         this.playerAction = playerAction;
         this.playerActionTarget = playerActionTarget;
         UnToggleHighlight();
-        //if (playerAction.actions != null) {
-        //    button.onClick.AddListener(playerAction.Execute);
-        //}
-        // if (icon != null) {
-        // 	actionImg.sprite = icon;	
-        // }
         actionImg.sprite = PlayerUI.Instance.playerActionsIconDictionary[playerAction.type];
         actionLbl.text = playerAction.GetLabelName(playerActionTarget);
 		SetAsClickable();
-        // Messenger.AddListener<PlayerAction>(Signals.PLAYER_ACTION_UNTOGGLE, ListenUntoggleHighlight);
+		SetCooldownState(playerAction.isInCooldown);
+        Messenger.AddListener<SpellData>(Signals.SPELL_COOLDOWN_STARTED, OnSpellCooldownStarted);
+        Messenger.AddListener<SpellData>(Signals.SPELL_COOLDOWN_FINISHED, OnSpellCooldownFinished);
 	}
 	public void SetAsUninteractableUntil(int ticks) {
 		GameDate date = GameManager.Instance.Today();
@@ -52,14 +49,18 @@ public class ActionItem : PooledObject {
     }
     public void ToggleHighlight() {
         //if (!playerAction.isInstant) {
-        highlightImg.gameObject.SetActive(true);
+        if (button.interactable) {
+	        highlightImg.gameObject.SetActive(true);    
+        }
         OnHover();
             // UpdateState();
         //}
     }
     public void UnToggleHighlight() {
         //if (!playerAction.isInstant) {
-        highlightImg.gameObject.SetActive(false);
+        if (button.interactable) {
+	        highlightImg.gameObject.SetActive(false);    
+        }
         OnHoverOut();
             // UpdateState();
         //}
@@ -85,6 +86,22 @@ public class ActionItem : PooledObject {
             UnToggleHighlight();
         }
     }
+    private void OnSpellCooldownStarted(SpellData spellData) {
+	    if (this.playerAction == spellData) {
+		    SetCooldownState(spellData.isInCooldown);
+	    }
+    }
+    private void OnSpellCooldownFinished(SpellData spellData) {
+	    if (playerAction == spellData) {
+		    SetCooldownState(playerAction.isInCooldown);
+	    }
+    }
+    #endregion
+
+    #region Cooldown
+    private void SetCooldownState(bool state) {
+	    cooldownImage.gameObject.SetActive(state);
+    }
     #endregion
 
     public override void Reset() {
@@ -94,5 +111,7 @@ public class ActionItem : PooledObject {
 			SchedulingManager.Instance.RemoveSpecificEntry(expiryKey);
 		}
 		expiryKey = string.Empty;
+		Messenger.RemoveListener<SpellData>(Signals.SPELL_COOLDOWN_STARTED, OnSpellCooldownStarted);
+		Messenger.RemoveListener<SpellData>(Signals.SPELL_COOLDOWN_FINISHED, OnSpellCooldownFinished);
 	}
 }

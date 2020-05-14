@@ -174,6 +174,9 @@ public class PlayerSkillManager : MonoBehaviour {
     public bool IsPlayerAction(SPELL_TYPE type) {
         return allPlayerActions.Contains(type);
     }
+    public bool IsDemonicStructure(SPELL_TYPE type) {
+        return allDemonicStructureSkills.Contains(type);
+    }
     public SpellData GetPlayerSkillData(SPELL_TYPE type) {
         if (allPlayerSkillsData.ContainsKey(type)) {
             return allPlayerSkillsData[type];

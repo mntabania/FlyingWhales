@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: d64d057451588de47862f92a337b5fc0, type: 3}
-    totalSpriteSurfaceArea: 17741180
+    totalSpriteSurfaceArea: 17750920
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -284,6 +284,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 6aca1a47d3d91344980a247eec42a050, type: 3}
   - {fileID: 21300000, guid: 2ab2f057ce6d28f448e14c6b86c2396a, type: 3}
   - {fileID: 21300000, guid: 59eb3357f074984418a3530799e1c4f5, type: 3}
+  - {fileID: 21300000, guid: dcd47457e540a7942a47e22ea2f534a1, type: 3}
   - {fileID: 21300000, guid: 0ee02a6799947f7469948108ae499dfb, type: 3}
   - {fileID: 21300000, guid: 50b2cb67d1cfb3f488173915ee7185e5, type: 3}
   - {fileID: 21300000, guid: 276870770cad95e4583fd7d81613ee9f, type: 3}
@@ -351,6 +352,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 28cc7759c7471904995643cab466b2b4, type: 3}
   - {fileID: 21300000, guid: 7991875980df4d14eacffc56736fa8b8, type: 3}
   - {fileID: 21300000, guid: b336d26960e5d6145a43ebf94eed1b44, type: 3}
+  - {fileID: 21300000, guid: 6dcd4669a0b8ea24d916fafcbccd8827, type: 3}
   - {fileID: 21300000, guid: 4432c37922078ff41be90c424c35bdfb, type: 3}
   - {fileID: 21300000, guid: 2b69cd79f80140d4983bf65836b234c6, type: 3}
   - {fileID: 21300000, guid: eacc0e79510daf84a80ae8a35e2f0a77, type: 3}
@@ -864,6 +866,7 @@ SpriteAtlas:
   - button_anvil_hover
   - intel_button_default
   - share_intel
+  - Locked_Icon
   - button_needle_clicked
   - button_back_clicked
   - event_active_button_enabled
@@ -931,6 +934,7 @@ SpriteAtlas:
   - button1_off
   - sidebar_container
   - tab_status_default
+  - CooldownIcon
   - button_kennels_clicked
   - button_reroll_default
   - caeven

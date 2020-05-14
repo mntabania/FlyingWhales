@@ -72,7 +72,7 @@ public class CharacterInfoUI : InfoUIBase {
 
     public Character activeCharacter => _activeCharacter;
     public Character previousCharacter => _previousCharacter;
-    private List<string> afflictions;
+    private List<SPELL_TYPE> afflictions;
     private List<string> combatModes;
 
     internal override void Initialize() {
@@ -136,7 +136,7 @@ public class CharacterInfoUI : InfoUIBase {
         
         InitializeLogsMenu();
 
-        afflictions = new List<string>();
+        afflictions = new List<SPELL_TYPE>();
         ConstructCombatModes();
     }
 
@@ -668,7 +668,7 @@ public class CharacterInfoUI : InfoUIBase {
         List<SPELL_TYPE> afflictionTypes = PlayerManager.Instance.player.playerSkillComponent.afflictions;
         for (int i = 0; i < afflictionTypes.Count; i++) {
             SPELL_TYPE spellType = afflictionTypes[i];
-            afflictions.Add(PlayerSkillManager.Instance.GetAfflictionData(spellType).name);
+            afflictions.Add(spellType);
         }
         //foreach (SpellData abilityData in PlayerManager.Instance.allSpellsData.Values) {
         //    if (abilityData.type == INTERVENTION_ABILITY_TYPE.AFFLICTION) {
@@ -676,11 +676,14 @@ public class CharacterInfoUI : InfoUIBase {
         //    }
         //}
         UIManager.Instance.ShowClickableObjectPicker(afflictions, ActivateAfflictionConfirmation, null, CanActivateAffliction,
-            "Select Affliction", OnHoverAffliction, OnHoverOutAffliction, identifier: "Intervention Ability", showCover: true, layer: 19, shouldConfirmOnPick: true, asButton: true);
+            "Select Affliction", OnHoverAffliction, OnHoverOutAffliction, portraitGetter: GetAfflictionPortrait, identifier: "Intervention Ability", showCover: true, layer: 19, shouldConfirmOnPick: true, asButton: true);
+    }
+    private Sprite GetAfflictionPortrait(string str) {
+        return PlayerManager.Instance.GetJobActionSprite(UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(str));
     }
     private void ActivateAfflictionConfirmation(object o) {
-        string afflictionName = (string) o;
-        SPELL_TYPE afflictionType = (SPELL_TYPE) System.Enum.Parse(typeof(SPELL_TYPE), afflictionName.ToUpper().Replace(' ', '_'));
+        SPELL_TYPE afflictionType = (SPELL_TYPE)o;
+        string afflictionName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(afflictionType.ToString());
         UIManager.Instance.ShowYesNoConfirmation("Affliction Confirmation", "Are you sure you want to afflict " + afflictionName + "?", () => ActivateAffliction(afflictionType));
     }
     private void ActivateAffliction(SPELL_TYPE afflictionType) {
@@ -688,21 +691,19 @@ public class CharacterInfoUI : InfoUIBase {
         PlayerSkillManager.Instance.GetAfflictionData(afflictionType).ActivateAbility(activeCharacter);
         PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.AFFLICT).OnExecuteSpellActionAffliction();
     }
-    private bool CanActivateAffliction(string afflictionName) {
-        SPELL_TYPE afflictionType = (SPELL_TYPE) System.Enum.Parse(typeof(SPELL_TYPE), afflictionName.ToUpper().Replace(' ', '_'));
+    private bool CanActivateAffliction(SPELL_TYPE afflictionType) {
         if (WorldConfigManager.Instance.isDemoWorld) {
             return WorldConfigManager.Instance.availableSpellsInDemoBuild.Contains(afflictionType) 
                    && PlayerSkillManager.Instance.GetAfflictionData(afflictionType).CanPerformAbilityTowards(activeCharacter);
         }
         return PlayerSkillManager.Instance.GetAfflictionData(afflictionType).CanPerformAbilityTowards(activeCharacter);
     }
-    private void OnHoverAffliction(string afflictionName) {
-        SPELL_TYPE afflictionType = (SPELL_TYPE) System.Enum.Parse(typeof(SPELL_TYPE), afflictionName.ToUpper().Replace(' ', '_'));
+    private void OnHoverAffliction(SPELL_TYPE afflictionType) {
         SpellData affliction = PlayerSkillManager.Instance.GetAfflictionData(afflictionType);
         //UIManager.Instance.ShowSmallInfo(affliction.description + "\n" + affliction.GetManaCostChargesCooldownStr());
         PlayerUI.Instance.OnHoverSpell(affliction);
     }
-    private void OnHoverOutAffliction(string afflictionName) {
+    private void OnHoverOutAffliction(SPELL_TYPE afflictionType) {
         UIManager.Instance.HideSmallInfo();
         PlayerUI.Instance.OnHoverOutSpell(null);
     }
