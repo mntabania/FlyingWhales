@@ -61,7 +61,7 @@ public class CombatComponent {
                 Flight(target, "character is a coward");
             } else {
                 debugLog += "\n-Character is not coward";
-                if (!owner.traitContainer.HasTrait("Combatant")) {
+                if (!owner.traitContainer.HasTrait("Combatant", "Royalty")) {
                     debugLog += "\n-Character is not combatant, 20% to Fight";
                     int chance = UnityEngine.Random.Range(0, 100);
                     debugLog += $"\n-Roll: {chance}";
@@ -75,7 +75,7 @@ public class CombatComponent {
                         Flight(target, "got scared");
                     }
                 } else {
-                    debugLog += "\n-Character is combatant";
+                    debugLog += "\n-Character is combatant or royalty";
                     if (owner.currentHP > targetCharacter.currentHP) {
                         debugLog += "\n-Character hp is higher than target";
                         debugLog += "\n-FIGHT";

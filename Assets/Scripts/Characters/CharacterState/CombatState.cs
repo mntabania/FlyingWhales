@@ -125,7 +125,7 @@ public class CombatState : CharacterState {
                 stateComponent.character.MigrateHomeTo(null);
 
                 string log =
-                    $"{stateComponent.character.name} is a criminal and survived being apprehended. Changed faction to: {stateComponent.character.faction.name} and home to: {stateComponent.character.homeRegion.name}";
+                    $"{stateComponent.character.name} is a criminal and survived being apprehended. Changed faction to: {stateComponent.character.faction.name} and home to: null";
                 stateComponent.character.logComponent.PrintLogIfActive(log);
 
                 //stateComponent.character.CancelAllJobsAndPlans();

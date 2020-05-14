@@ -200,7 +200,7 @@ namespace Interrupts {
                         }
                     }
                 } else {
-                    log += "\n-Character is a monster";
+                    log += "\n-Character is a resident";
                     log += "\n-If possible, choose a random settlement whose Settlement Ruler is a member of the Faction";
                     LocationStructure chosenHomeStructure = null;
                     NPCSettlement chosenSettlement = GetNewSettlementHomeFromFactionMember(actor);
@@ -272,6 +272,11 @@ namespace Interrupts {
                     }
                 }
             }
+            //If all else fails, check if character has home structure and if it is already destroyed, set it to null
+            if (actor.homeStructure != null && actor.homeStructure.hasBeenDestroyed) {
+                actor.MigrateHomeStructureTo(null);
+            }
+            actor.logComponent.PrintLogIfActive(log);
         }
 
         private NPCSettlement GetNewSettlementHomeFromFactionMember(Character actor) {
