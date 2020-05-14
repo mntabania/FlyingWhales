@@ -691,7 +691,8 @@ public class CharacterInfoUI : InfoUIBase {
     private bool CanActivateAffliction(string afflictionName) {
         SPELL_TYPE afflictionType = (SPELL_TYPE) System.Enum.Parse(typeof(SPELL_TYPE), afflictionName.ToUpper().Replace(' ', '_'));
         if (WorldConfigManager.Instance.isDemoWorld) {
-            return WorldConfigManager.Instance.availableSpellsInDemoBuild.Contains(afflictionType);
+            return WorldConfigManager.Instance.availableSpellsInDemoBuild.Contains(afflictionType) 
+                   && PlayerSkillManager.Instance.GetAfflictionData(afflictionType).CanPerformAbilityTowards(activeCharacter);
         }
         return PlayerSkillManager.Instance.GetAfflictionData(afflictionType).CanPerformAbilityTowards(activeCharacter);
     }
