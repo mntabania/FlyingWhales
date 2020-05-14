@@ -22,5 +22,9 @@ public class WarriorAngel : Summon {
         AddPlayerAction(SPELL_TYPE.ZAP);
         AddPlayerAction(SPELL_TYPE.SEIZE_CHARACTER);
     }
+    public override void Initialize() {
+        base.Initialize();
+        behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Default_Angel_Behaviour);
+    }
     #endregion  
 }

@@ -148,8 +148,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	}
 	private void OnCharacterExitedHexTile(Character character, HexTile tile) {
 		if (character == _owner) {
-			// Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.RESTRAIN, _owner as IPointOfInterest);
-		}
+            Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.RESTRAIN, _owner as IPointOfInterest);
+        }
 	}
     private void OnSeizePOI(IPointOfInterest poi) {
         if(poi is Character) {

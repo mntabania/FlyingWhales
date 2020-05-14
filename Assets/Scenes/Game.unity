@@ -9474,9 +9474,9 @@ MonoBehaviour:
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 195780686}
-        m_MethodName: ShowSmallInfoInSpecificPosition
-        m_Mode: 5
+      - m_Target: {fileID: 606078598}
+        m_MethodName: OnHoverEnterThreat
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -9489,8 +9489,8 @@ MonoBehaviour:
   onHoverExitAction:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 195780686}
-        m_MethodName: HideSmallInfoString
+      - m_Target: {fileID: 606078598}
+        m_MethodName: OnHoverExitThreat
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -32816,7 +32816,7 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 623d4fe6fa7f3264d8a883e12f3774f4, type: 3}
     - {fileID: 21300000, guid: 00c146ecfee6b7c4fb1138f861d0a9f4, type: 3}
     - {fileID: 21300000, guid: a85b0710644af4c48a2a7f742a32da7e, type: 3}
-    - {fileID: 21300000, guid: 8f5344dcd2d2212439068edd05e22193, type: 3}
+    - {fileID: 21300000, guid: a85b0710644af4c48a2a7f742a32da7e, type: 3}
     - {fileID: 21300000, guid: 425077bbaa6443144a6a7bc4c13caccd, type: 3}
     - {fileID: 21300000, guid: 623d4fe6fa7f3264d8a883e12f3774f4, type: 3}
     - {fileID: 21300000, guid: 175be3da23178ae4096b6cc3d20b459f, type: 3}
@@ -133542,15 +133542,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1538653384}
     m_Modifications:
-    - target: {fileID: 1835510576233291764, guid: 29c4742b647766648a7a78449f3565eb,
-        type: 3}
-      propertyPath: defaultPosition
-      value: 
-      objectReference: {fileID: 384644718}
     - target: {fileID: 3822016584043078813, guid: 29c4742b647766648a7a78449f3565eb,
         type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5490087281256822442, guid: 29c4742b647766648a7a78449f3565eb,
         type: 3}
@@ -133560,6 +133555,31 @@ PrefabInstance:
     - target: {fileID: 5490087281256822442, guid: 29c4742b647766648a7a78449f3565eb,
         type: 3}
       propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5650337273591572892, guid: 29c4742b647766648a7a78449f3565eb,
+        type: 3}
+      propertyPath: m_textInfo.characterCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5650337273591572892, guid: 29c4742b647766648a7a78449f3565eb,
+        type: 3}
+      propertyPath: m_textInfo.spaceCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5650337273591572892, guid: 29c4742b647766648a7a78449f3565eb,
+        type: 3}
+      propertyPath: m_textInfo.wordCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5650337273591572892, guid: 29c4742b647766648a7a78449f3565eb,
+        type: 3}
+      propertyPath: m_textInfo.lineCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5650337273591572892, guid: 29c4742b647766648a7a78449f3565eb,
+        type: 3}
+      propertyPath: m_textInfo.pageCount
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7147031280361248744, guid: 29c4742b647766648a7a78449f3565eb,

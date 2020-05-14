@@ -429,10 +429,14 @@ public class GameManager : MonoBehaviour {
         //If ticks exceeds a day, returns time as day
         //If ticks exceeds an hour, returns time as hour
         //If ticks exceeds a mins, returns time as mins
-        if (ticks >= ticksPerDay) {
+        if (ticks > ticksPerDay) {
             return "days";
-        } else if (ticks >= ticksPerHour) {
+        } else if (ticks == ticksPerDay) {
+            return "day";
+        } else if (ticks > ticksPerHour) {
             return "hours";
+        } else if (ticks == ticksPerHour) {
+            return "hour";
         } else {
             return "mins";
         }

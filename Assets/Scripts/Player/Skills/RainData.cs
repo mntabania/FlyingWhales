@@ -12,6 +12,7 @@ public class RainData : SpellData {
 
     public RainData() : base() {
         targetTypes = new[] { SPELL_TARGET.HEX };
+        SetMaxCharges(10);
         SetCharges(10);
         SetCooldown(3);
     }
