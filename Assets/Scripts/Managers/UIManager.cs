@@ -435,7 +435,7 @@ public class UIManager : MonoBehaviour {
         }
     }
     public bool IsSmallInfoShowing() {
-        return smallInfoGO.activeSelf || smallInfoVisualGO.activeSelf;
+        return (smallInfoGO != null && smallInfoGO.activeSelf) || (smallInfoVisualGO != null && smallInfoVisualGO.activeSelf);
     }
     public void ShowCharacterPortraitHoverInfo(Character character) {
         characterPortraitHoverInfo.GeneratePortrait(character);

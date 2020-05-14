@@ -30780,7 +30780,7 @@ MonoBehaviour:
   startMonth: 1
   startDay: 1
   startYear: 80
-  startTick: 144
+  startTick: 96
   continuousDays: 1
   currProgressionSpeed: 0
   progressionSpeed: 1
