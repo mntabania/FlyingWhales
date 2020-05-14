@@ -2067,9 +2067,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return name;
     }
     private LocationGridTile GetLocationGridTileByXY(int x, int y, bool throwOnException = true) {
-        if (currentRegion == null) {
-            return null;
-        }
         if (UtilityScripts.Utilities.IsInRange(x, 0, currentRegion.innerMap.width)
             && UtilityScripts.Utilities.IsInRange(y, 0, currentRegion.innerMap.height)) {
             return currentRegion.innerMap.map[x, y];
@@ -3271,8 +3268,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //character's home was destroyed.
         if (structure == homeStructure) {
             // MigrateHomeStructureTo(null);
-            MigrateHomeTo(null);
-            //interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, this);
+            //MigrateHomeTo(null);
+            interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
         }
     }
     #endregion
@@ -3591,7 +3588,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return true;
     }
     public bool PlanIdleReturnHome() { //bool forceDoAction = false
-        if (homeStructure != null && homeStructure.tiles.Count > 0) {
+        if (homeStructure != null && homeStructure.tiles.Count > 0 && !homeStructure.hasBeenDestroyed) {
             LocationGridTile tile = CollectionUtilities.GetRandomElement(homeStructure.tiles);
             if (PathfindingManager.Instance.HasPathEvenDiffRegion(gridTileLocation, tile) || currentRegion != homeStructure.location.coreTile.region) {
                 ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RETURN_HOME], this, this, null, 0);
@@ -3605,13 +3602,16 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         } else {
             //NOTE: this is a temporary fix because a character sometimes cannot return home because his/her home was destroyed, but he/she was not migrated to a new home. 
-            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RETURN_HOME], this, this, null, 0);
-            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, this);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE_RETURN_HOME, INTERACTION_TYPE.RETURN_HOME, this, this);
-            goapPlan.SetDoNotRecalculate(true);
-            job.SetCannotBePushedBack(true);
-            job.SetAssignedPlan(goapPlan);
-            jobQueue.AddJobInQueue(job);
+            //ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RETURN_HOME], this, this, null, 0);
+            //GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, this);
+            //GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE_RETURN_HOME, INTERACTION_TYPE.RETURN_HOME, this, this);
+            //goapPlan.SetDoNotRecalculate(true);
+            //job.SetCannotBePushedBack(true);
+            //job.SetAssignedPlan(goapPlan);
+            //jobQueue.AddJobInQueue(job);
+
+            //If character cannot return home roam around tile instead
+            jobComponent.TriggerRoamAroundTile();
             return true;
         }
         
@@ -5786,6 +5786,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     homeRegion.RemoveResident(this);
                 }
                 firstTerritory.region.AddResident(this);
+            }
+            if (homeStructure != null && homeStructure.hasBeenDestroyed) {
+                MigrateHomeStructureTo(null);
             }
         }
     }
