@@ -22,9 +22,16 @@ public class LightingManager : MonoBehaviour {
     private int _lightToDarkTickDifference;
 
     public enum Light_State { Dark, Bright }
-    public Light_State currentLightState = Light_State.Bright;
-    [SerializeField] private bool isTransitioning;
+    public Light_State currentGlobalLightState = Light_State.Bright;
+    [SerializeField] private bool _isTransitioning;
+    [SerializeField] private Light_State _transitioningTo;
+    
     private Tweener _currentTween;
+    
+    #region getters
+    public bool isTransitioning => _isTransitioning;
+    public Light_State transitioningTo => _transitioningTo;
+    #endregion
     
     private void Awake() {
         Instance = this;
@@ -55,19 +62,20 @@ public class LightingManager : MonoBehaviour {
         }
         else {
             if (isTransitioning) { return; }
-            isTransitioning = true;
+            _isTransitioning = true;
             //transitioning
             Light_State targetLightState =
-                currentLightState == Light_State.Dark ? Light_State.Bright : Light_State.Dark;
+                currentGlobalLightState == Light_State.Dark ? Light_State.Bright : Light_State.Dark;
+            _transitioningTo = targetLightState;
             Messenger.Broadcast(Signals.UPDATE_INNER_MAP_LIGHT, targetLightState); //update other lights based on target light state
-            var targetIntensity = currentLightState == Light_State.Dark ? _brightestIntensity : _darkestIntensity;
+            var targetIntensity = currentGlobalLightState == Light_State.Dark ? _brightestIntensity : _darkestIntensity;
             _currentTween = DOTween.To(SetGlobalLightIntensity, _globalLight.intensity, targetIntensity, 
                 _darkToLightTickDifference * GameManager.Instance.GetTickSpeed(PROGRESSION_SPEED.X1)).OnComplete(OnDoneTransition);
             OnProgressionSpeedChanged(GameManager.Instance.currProgressionSpeed);
         }
     }
     private void OnDoneTransition() {
-        isTransitioning = false;
+        _isTransitioning = false;
         _currentTween = null;
     }
     private void OnGamePaused(bool isPaused) {
@@ -95,8 +103,8 @@ public class LightingManager : MonoBehaviour {
         _globalLight.intensity = intensity;
     }
     private void SetCurrentLightState(Light_State lightState) {
-        if (currentLightState == lightState) { return; }
-        currentLightState = lightState;
+        if (currentGlobalLightState == lightState) { return; }
+        currentGlobalLightState = lightState;
     }
     
 }
