@@ -1960,6 +1960,7 @@ MonoBehaviour:
     type: 3}
   assetsToConsiderAsStructure:
   - {fileID: 11400000, guid: e9aeaeaa8bd8b1a4e97e3d0b29552f1c, type: 2}
+  entranceCoordinates: {x: 1, y: 5, z: 0}
 --- !u!114 &8964402363234127252
 MonoBehaviour:
   m_ObjectHideFlags: 0

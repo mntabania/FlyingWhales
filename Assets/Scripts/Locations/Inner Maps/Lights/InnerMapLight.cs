@@ -13,7 +13,7 @@ public class InnerMapLight : MonoBehaviour{
     [SerializeField] private float _darkestIntensity;
     
     private void OnEnable() {
-        InstantUpdateLightBasedOnGlobalLight(LightingManager.Instance.currentLightState);
+        InstantUpdateLightBasedOnGlobalLight(LightingManager.Instance.isTransitioning ? LightingManager.Instance.transitioningTo : LightingManager.Instance.currentGlobalLightState);
         Messenger.AddListener<LightingManager.Light_State>(Signals.UPDATE_INNER_MAP_LIGHT, UpdateLightBasedOnGlobalLight);
     }
     private void OnDisable() {

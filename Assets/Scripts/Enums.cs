@@ -243,7 +243,7 @@ public enum LANDMARK_TYPE {
     LUMBERYARD = 57,
     QUARRY = 58,
     HOUSES,
-    TORTURE_CHAMBER,
+    TORTURE_CHAMBERS,
     DEMONIC_PRISON,
     MINE,
 }
@@ -2268,6 +2268,7 @@ public static class Extensions {
             case LANDMARK_TYPE.THE_EYE:
             case LANDMARK_TYPE.THE_PROFANE:
             case LANDMARK_TYPE.THE_NEEDLES:
+            case LANDMARK_TYPE.TORTURE_CHAMBERS:
                 return true;
             default:
                 return false;

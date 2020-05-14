@@ -3526,6 +3526,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         string idleLog = OtherIdlePlans();
         logComponent.PrintLogIfActive(idleLog);
+        
+        //perform created jobs if any.
+        EndTickPerformJobs();
+        
+        
         //if (!PlanJobQueueFirst()) {
         //    if (!PlanFullnessRecoveryActions()) {
         //        if (!PlanTirednessRecoveryActions()) {

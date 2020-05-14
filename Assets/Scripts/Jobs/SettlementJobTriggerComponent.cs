@@ -42,7 +42,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		Messenger.AddListener<Table>(Signals.FOOD_IN_DWELLING_CHANGED, OnFoodInDwellingChanged);
 		Messenger.AddListener<NPCSettlement, bool>(Signals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, OnSettlementUnderSiegeChanged);
 		Messenger.AddListener<Character, IPointOfInterest>(Signals.CHARACTER_SAW, OnCharacterSaw);
-		Messenger.AddListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJobSuccessfully);
+		// Messenger.AddListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJobSuccessfully);
 		Messenger.AddListener<NPCSettlement>(Signals.SETTLEMENT_CHANGE_STORAGE, OnSettlementChangedStorage);
 		Messenger.AddListener<BurningSource>(Signals.BURNING_SOURCE_INACTIVE, OnBurningSourceInactive);
 		Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
@@ -60,13 +60,14 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
 		Messenger.RemoveListener<Table>(Signals.FOOD_IN_DWELLING_CHANGED, OnFoodInDwellingChanged);
 		Messenger.RemoveListener<NPCSettlement, bool>(Signals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, OnSettlementUnderSiegeChanged);
-		Messenger.RemoveListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJobSuccessfully);
+		// Messenger.RemoveListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJobSuccessfully);
 		Messenger.RemoveListener<NPCSettlement>(Signals.SETTLEMENT_CHANGE_STORAGE, OnSettlementChangedStorage);
 		Messenger.RemoveListener<BurningSource>(Signals.BURNING_SOURCE_INACTIVE, OnBurningSourceInactive);
 	}
 	private void OnGameLoaded() {
 		Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoaded);
 		CheckIfFarmShouldBeTended(true);
+		ScheduledCheckResource();
 	}
 	private void HourlyJobActions() {
 		CreatePatrolJobs();
@@ -98,8 +99,8 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 				Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.HAUL, resourcePile as IPointOfInterest);
 				Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.COMBINE_STOCKPILE, resourcePile as IPointOfInterest);
 				if (tile.IsPartOfSettlement(_owner)) {
-					CheckResource(resourcePile.tileObjectType, resourcePile.providedResource);
 					if (_owner.mainStorage == resourcePile.structureLocation) {
+						CheckResource(resourcePile.tileObjectType, resourcePile.providedResource);
 						TryCreateCombineStockpile(resourcePile);	
 					}
 				}
@@ -108,9 +109,8 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		}
 	}
 	private void OnTileObjectRemoved(TileObject tileObject, Character removedBy, LocationGridTile removedFrom) {
-		if (tileObject is ResourcePile) {
-			ResourcePile resourcePile = tileObject as ResourcePile;
-			if (removedFrom.parentMap.region == _owner.region) {
+		if (tileObject is ResourcePile resourcePile) {
+			if (removedFrom.parentMap.region == _owner.region && removedFrom.structure == _owner.mainStorage) {
 				CheckResource(resourcePile.tileObjectType, resourcePile.providedResource);	
 			}
 		}
@@ -178,15 +178,15 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 			}	
 		}
 	}
-	private void OnCharacterFinishedJobSuccessfully(Character character, GoapPlanJob goapPlanJob) {
-		if (goapPlanJob.originalOwner == _owner) {
-			if (goapPlanJob.jobType == JOB_TYPE.PRODUCE_FOOD || goapPlanJob.jobType == JOB_TYPE.PRODUCE_WOOD ||
-			    goapPlanJob.jobType == JOB_TYPE.PRODUCE_METAL || goapPlanJob.jobType == JOB_TYPE.PRODUCE_STONE) {
-				ResourcePile resourcePile = goapPlanJob.targetPOI as ResourcePile;
-				CheckResource(resourcePile.tileObjectType, resourcePile.providedResource);
-			}
-		}
-	}
+	// private void OnCharacterFinishedJobSuccessfully(Character character, GoapPlanJob goapPlanJob) {
+	// 	if (goapPlanJob.originalOwner == _owner) {
+	// 		if (goapPlanJob.jobType == JOB_TYPE.PRODUCE_FOOD || goapPlanJob.jobType == JOB_TYPE.PRODUCE_WOOD ||
+	// 		    goapPlanJob.jobType == JOB_TYPE.PRODUCE_METAL || goapPlanJob.jobType == JOB_TYPE.PRODUCE_STONE) {
+	// 			ResourcePile resourcePile = goapPlanJob.targetPOI as ResourcePile;
+	// 			CheckResource(resourcePile.tileObjectType, resourcePile.providedResource);
+	// 		}
+	// 	}
+	// }
 	private void OnSettlementChangedStorage(NPCSettlement npcSettlement) {
 		if (npcSettlement == _owner) {
 			List<ResourcePile> resourcePiles = _owner.region.GetTileObjectsOfType<ResourcePile>();
@@ -254,7 +254,18 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		}
 		throw new Exception($"There is no produce resource goap effect type for {resource.ToString()}");
 	}
-	
+	private void ScheduledCheckResource() {
+		CheckAllResources();
+		GameDate dueDate = GameManager.Instance.Today();
+		dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(12));
+		SchedulingManager.Instance.AddEntry(dueDate, ScheduledCheckResource, this);
+	}
+	private void CheckAllResources() {
+		CheckResource(TILE_OBJECT_TYPE.FOOD_PILE, RESOURCE.FOOD);
+		CheckResource(TILE_OBJECT_TYPE.WOOD_PILE, RESOURCE.WOOD);
+		CheckResource(TILE_OBJECT_TYPE.STONE_PILE, RESOURCE.STONE);
+		CheckResource(TILE_OBJECT_TYPE.METAL_PILE, RESOURCE.METAL);
+	}
 	private void CheckResource(TILE_OBJECT_TYPE resourcePile, RESOURCE resource) {
 		int totalResource = GetTotalResource(resource);
 		int minimumResource = GetMinimumResource(resource);
@@ -280,19 +291,24 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 				newPile.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT, IsResourcePileStillValid);
 				targetPile = newPile;
 			}
-			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(
-				GetProduceResourceGoapEffect(resourceType), string.Empty, 
-				false, GOAP_EFFECT_TARGET.ACTOR), targetPile, _owner);
-			if (jobType == JOB_TYPE.PRODUCE_WOOD) {
-				job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoProduceWoodJob);
-			} else if (jobType == JOB_TYPE.PRODUCE_METAL) {
-				job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoProduceMetalJob);
-			} else {
-				job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoObtainSupplyJob);	
-			}
+			if (_owner.HasJob(jobType) == false) {
+				GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(
+					GetProduceResourceGoapEffect(resourceType), string.Empty, 
+					false, GOAP_EFFECT_TARGET.ACTOR), targetPile, _owner);
+				if (jobType == JOB_TYPE.PRODUCE_WOOD) {
+					job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoProduceWoodJob);
+				} else if (jobType == JOB_TYPE.PRODUCE_METAL) {
+					job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoProduceMetalJob);
+				} else if (jobType == JOB_TYPE.PRODUCE_STONE) {
+					job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoProduceStoneJob);
+				} else {
+					job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoProduceFoodJob);	
+				}
 			
-			job.SetStillApplicableChecker(() => IsProduceResourceJobStillValid(resourceType));
-			_owner.AddToAvailableJobs(job);	
+				job.SetStillApplicableChecker(() => IsProduceResourceJobStillValid(resourceType));
+				_owner.AddToAvailableJobs(job);	
+			}
+				
 		}
 	}
 	private bool IsProduceResourceJobStillValid(RESOURCE resource) {
@@ -460,7 +476,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 			job.AddOtherData(INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE, 
 				new object[] { targetPile });
 			job.SetStillApplicableChecker(() => IsCombineStockpileStillApplicable(targetPile, pile, _owner));
-			job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoObtainSupplyJob);
+			job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoProduceFoodJob);
 			_owner.AddToAvailableJobs(job);
 		}
 	}

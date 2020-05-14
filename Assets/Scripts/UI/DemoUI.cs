@@ -31,6 +31,8 @@ public class DemoUI : MonoBehaviour {
         startMessageWindow.gameObject.SetActive(true);
         startGameButton.gameObject.SetActive(true);
         
+        startGameButton.interactable = false;
+        
         //set image starting size
         RectTransform startWindowRT = startMessageWindow.rectTransform;
         startWindowRT.anchoredPosition = new Vector2(0f, -100f);
@@ -50,7 +52,7 @@ public class DemoUI : MonoBehaviour {
         sequence.Join(DOTween.ToAlpha(() => startMessageWindow.color, x => startMessageWindow.color = x, 1f, 0.5f)
             .SetEase(Ease.InSine));
         
-        sequence.Append(startGameButton.targetGraphic.DOFade(1f, 2f).SetEase(Ease.InCirc).SetDelay(5f));
+        sequence.Append(startGameButton.targetGraphic.DOFade(1f, 2f).SetEase(Ease.InCirc).SetDelay(5f).OnComplete(() => startGameButton.interactable = true));
         sequence.Join(DOTween.ToAlpha(() => startGameButtonLbl.color, x => startGameButtonLbl.color = x, 1f, 2f).SetEase(Ease.InCirc));
         sequence.Play();
     }

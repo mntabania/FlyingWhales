@@ -30,6 +30,16 @@ public class PlayerDataGeneration : MapGenerationComponent {
 	
 	private IEnumerator LoadArtifacts() {
 		List<ARTIFACT_TYPE> artifactChoices = WorldConfigManager.Instance.initialArtifactChoices;
+
+		if (WorldConfigManager.Instance.isDemoWorld) {
+			//if demo build, always spawn necronomicon at ancient ruins
+			artifactChoices.Remove(ARTIFACT_TYPE.Necronomicon);
+			Region randomRegion = CollectionUtilities.GetRandomElement(GridMap.Instance.allRegions);
+			LocationStructure ancientRuin = randomRegion.GetRandomStructureOfType(STRUCTURE_TYPE.ANCIENT_RUIN);
+			Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(ARTIFACT_TYPE.Necronomicon);
+			ancientRuin.AddPOI(artifact);
+		}
+		
 		//randomly generate 3 Artifacts
 		for (int i = 0; i < 3; i++) {
 			if (artifactChoices.Count == 0) { break; }
