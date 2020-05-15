@@ -370,7 +370,7 @@ public class PlayerManager : MonoBehaviour {
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
             Character character = CharacterManager.Instance.allCharacters[i];
             if(character.faction.isMajorNonPlayerFriendlyNeutral && !(character is Summon) && character.minion == null) {
-                if(!character.isDead || character.canPerform || character.canMove) {
+                if(!character.isDead) {
                     return false;
                 }
             }
@@ -379,7 +379,7 @@ public class PlayerManager : MonoBehaviour {
     }
     private void CreateWinCheckTimer() {
         GameDate dueDate = GameManager.Instance.Today();
-        dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(1));
+        dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnMinutes(15));
         SchedulingManager.Instance.AddEntry(dueDate, FinalCheckWinCondition, this);
         _hasWinCheckTimer = true;
     }
