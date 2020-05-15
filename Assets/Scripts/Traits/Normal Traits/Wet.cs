@@ -62,7 +62,7 @@ namespace Traits {
         #endregion
         
         private void UpdateVisualsOnAdd(ITraitable addedTo) {
-            if (addedTo is Character character && _statusIcon == null) {
+            if (addedTo is Character character && _statusIcon == null && character.marker != null) {
                 _statusIcon = character.marker.AddStatusIcon(this.name);
             } else if (addedTo is TileObject tileObject) {
                 if (tileObject is GenericTileObject) {
