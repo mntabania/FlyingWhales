@@ -7,6 +7,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
+using UtilityScripts;
 
 public class RegionInfoUI : InfoUIBase {
 
@@ -479,10 +480,14 @@ public class RegionInfoUI : InfoUIBase {
 
     #region For Testing
     public void ShowLocationInfo() {
+#if UNITY_EDITOR
         UtilityScripts.TestingUtilities.ShowLocationInfo(activeRegion);
+#endif
     }
     public void HideLocationInfo() {
-        UtilityScripts.TestingUtilities.HideLocationInfo();
+#if UNITY_EDITOR
+        TestingUtilities.HideLocationInfo();
+#endif
     }
     #endregion
 

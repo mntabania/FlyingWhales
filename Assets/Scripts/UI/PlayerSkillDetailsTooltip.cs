@@ -59,25 +59,50 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
 
         chargesText.text = "N/A";
         if(charges != -1) {
-            chargesText.text = charges + "/" + skillData.maxCharges;
+            chargesText.text = $"{charges.ToString()}/{skillData.maxCharges.ToString()}";
         }
 
         manaCostText.text = "N/A";
         if (manaCost != -1) {
-            manaCostText.text = "" + manaCost;
+            manaCostText.text = HasEnoughMana() ? "<color=\"green\">" : "<color=\"red\">";
+            manaCostText.text += $"{manaCost.ToString()}</color>" ;
         }
 
-        string cdText = string.Empty;
-        if(cooldown == -1) {
-            cdText = "N/A";
-        } else {
-            cdText = GameManager.GetTimeAsWholeDuration(cooldown) + " " + GameManager.GetTimeIdentifierAsWholeDuration(cooldown);
-        }
+        string cdText = cooldown == -1 ? "N/A" : $"{GameManager.GetTimeAsWholeDuration(cooldown).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(cooldown)}";
         cooldownText.text = cdText;
 
         additionalText.text = string.Empty;
-        if(PlayerManager.Instance.player.mana < manaCost) {
-            additionalText.text = "Not enough mana.";
+        if (skillData is PlayerAction && UIManager.Instance.characterInfoUI.isShowing) {
+            if (UIManager.Instance.characterInfoUI.activeCharacter.traitContainer.HasTrait("Blessed")) {
+                additionalText.text += "<color=\"red\">Blessed Villagers are protected from your powers.</color>\n";    
+            }
         }
+        if(HasEnoughMana() == false) {
+            additionalText.text += "<color=\"red\">Not enough mana.</color>\n";
+        }
+        if(HasEnoughCharges() == false) {
+            additionalText.text += "<color=\"red\">Not enough charges.</color>\n";
+        }
+    }
+
+    private bool HasEnoughMana() {
+        if (skillData.hasManaCost) {
+            if (PlayerManager.Instance.player.mana >= skillData.manaCost) {
+                return true;
+            }
+            return false;
+        }
+        //if skill has no mana cost then always has enough mana
+        return true;
+    }
+    private bool HasEnoughCharges() {
+        if (skillData.hasCharges) {
+            if (skillData.charges > 0) {
+                return true;
+            }
+            return false;
+        }
+        //if skill has no charges then always has enough charges
+        return true;
     }
 }
