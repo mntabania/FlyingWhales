@@ -140,15 +140,15 @@ public class ShareIntelMenu : PopupMenuBase {
             }
             response = CharacterManager.Instance.TriggerEmotion(EMOTION.Disinterest, targetCharacter, intel.actor, REACTION_STATUS.INFORMED, action);
         }
-        StartCoroutine(ShowReaction(response, intel));
+        StartCoroutine(ShowReaction(response, intel, targetCharacter));
     }
-    private IEnumerator ShowReaction(string reaction, IIntel intel) {
+    private IEnumerator ShowReaction(string reaction, IIntel intel, Character reactor) {
         if (reaction == string.Empty) {
             //character had no reaction
             reaction = intel.actor == targetCharacter ? "I know what I did." : "A proper response to this information has not been implemented yet.";
         } else {
             if (reaction == "aware") {
-                reaction = "I already know this.";
+                reaction = $"{reactor.name} already know this.";
             } else {
                 string[] emotionsToActorAndTarget = reaction.Split('/');
                 string finalReaction = string.Empty;
@@ -169,11 +169,11 @@ public class ShareIntelMenu : PopupMenuBase {
                                 finalReaction += "\n";
                             }
                             finalReaction +=
-                                $"I feel {responses} towards {(i == 0 ? intel.actor.name : intel.target.name)}.";
+                                $"{reactor.name} felt {responses} towards {(i == 0 ? intel.actor.name : intel.target.name)}.";
                         }
                     }
                 }
-                reaction = finalReaction != string.Empty ? finalReaction : $"I feel disinterest towards this.";
+                reaction = finalReaction != string.Empty ? finalReaction : $"{reactor.name} felt disinterest towards this.";
             }
         }
         GameObject targetDialog = ObjectPoolManager.Instance.InstantiateObjectFromPool(dialogItemPrefab.name, Vector3.zero, Quaternion.identity, dialogScrollView.content);

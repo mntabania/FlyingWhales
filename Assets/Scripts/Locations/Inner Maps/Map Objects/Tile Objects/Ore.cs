@@ -13,6 +13,7 @@ public class Ore : TileObject {
         //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.MINE_METAL, INTERACTION_TYPE.ASSAULT, };
         Initialize(TILE_OBJECT_TYPE.ORE, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
+        AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
         AddAdvertisedAction(INTERACTION_TYPE.MINE_METAL);
 
         SetYield(50);

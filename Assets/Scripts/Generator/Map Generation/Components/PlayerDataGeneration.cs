@@ -33,10 +33,10 @@ public class PlayerDataGeneration : MapGenerationComponent {
 
 		if (WorldConfigManager.Instance.isDemoWorld) {
 			//if demo build, always spawn necronomicon at ancient ruins
-			artifactChoices.Remove(ARTIFACT_TYPE.Necronomicon);
+			artifactChoices.Remove(ARTIFACT_TYPE.Berserk_Orb);
 			Region randomRegion = CollectionUtilities.GetRandomElement(GridMap.Instance.allRegions);
 			LocationStructure ancientRuin = randomRegion.GetRandomStructureOfType(STRUCTURE_TYPE.ANCIENT_RUIN);
-			Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(ARTIFACT_TYPE.Necronomicon);
+			Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(ARTIFACT_TYPE.Berserk_Orb);
 			ancientRuin.AddPOI(artifact);
 			
 			//place berserk orb at monster lair

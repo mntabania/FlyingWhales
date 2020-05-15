@@ -11,12 +11,14 @@ public class TreeObject : TileObject {
         Initialize(TILE_OBJECT_TYPE.TREE_OBJECT, false);
         AddAdvertisedAction(INTERACTION_TYPE.CHOP_WOOD);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
+        AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
         SetYield(100);
     }
     public TreeObject(SaveDataTileObject data) {
         Initialize(data, false);
         AddAdvertisedAction(INTERACTION_TYPE.CHOP_WOOD);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
+        AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
     }
 
     public override string ToString() {

@@ -29,11 +29,13 @@ public class TreasureChest : TileObject {
     public TreasureChest() {
         Initialize(TILE_OBJECT_TYPE.TREASURE_CHEST, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
+        AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
         AddAdvertisedAction(INTERACTION_TYPE.OPEN);
     }
     public TreasureChest(SaveDataTileObject data) {
         Initialize(data, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
+        AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
         AddAdvertisedAction(INTERACTION_TYPE.OPEN);
     }
     protected override string GenerateName() { return "Treasure Chest"; }

@@ -17,6 +17,7 @@ public sealed class PoisonCloudTileObject : MovingTileObject {
     public PoisonCloudTileObject() {
         Initialize(TILE_OBJECT_TYPE.POISON_CLOUD, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
+        AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
         SetDurationInTicks(GameManager.Instance.GetTicksBasedOnHour(2));
         maxSize = 6;
     }

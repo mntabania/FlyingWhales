@@ -20,6 +20,7 @@ public class Artifact : TileObject {
         //advertisedActions = new List<INTERACTION_TYPE>();
         Initialize(TILE_OBJECT_TYPE.ARTIFACT, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
+        AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
         AddAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
         AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
         AddAdvertisedAction(INTERACTION_TYPE.BOOBY_TRAP);

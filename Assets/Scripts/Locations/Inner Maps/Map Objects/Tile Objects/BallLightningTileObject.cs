@@ -12,6 +12,7 @@ public class BallLightningTileObject : MovingTileObject {
     public BallLightningTileObject() {
         Initialize(TILE_OBJECT_TYPE.BALL_LIGHTNING, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
+        AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
     }
     protected override void CreateMapObjectVisual() {
         base.CreateMapObjectVisual();

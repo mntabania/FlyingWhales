@@ -707,7 +707,7 @@ public class ReactionComponent {
         }
     }
     //The reason why we pass the character that was hit instead of just getting the current closest hostile in combat state is because 
-    public void ReactToCombat(CombatState combat, Character characterHit) {
+    public void ReactToCombat(CombatState combat, IPointOfInterest poiHit) {
         if (!owner.isNormalCharacter /*|| owner.race == RACE.SKELETON*/) {
             //Minions or Summons cannot react to objects
             return;
@@ -717,7 +717,7 @@ public class ReactionComponent {
         }
         Character attacker = combat.stateComponent.character;
         Character reactor = owner;
-        string log = reactor.name + " is reacting to combat of " + attacker.name + " against " + characterHit.name;
+        string log = reactor.name + " is reacting to combat of " + attacker.name + " against " + poiHit.nameWithID;
         if (reactor.isInCombat) {
             log += "\n-In combat, will skip processing";
             reactor.logComponent.PrintLogIfActive(log);
@@ -733,90 +733,108 @@ public class ReactionComponent {
             reactor.logComponent.PrintLogIfActive(log);
             return;
         }
-        if (combat.DidCharacterAlreadyReactToThisCombat(reactor)) {
-            log += "\n-Already reacted to the combat, will skip processing";
+        if (poiHit is Character targetHit && reactor.IsHostileWith(targetHit)) {
+            log += "\n-Attacker is hostile with the hit character, will skip processing";
             reactor.logComponent.PrintLogIfActive(log);
             return;
         }
         combat.AddCharacterThatReactedToThisCombat(reactor);
-        if (combat.currentClosestHostile != characterHit) {
-            log += "\n-Hit Character is not the same as the actual target which is: " + combat.currentClosestHostile?.name;
-            if (characterHit.isInCombat) {
-                log += "\n-Hit Character is in combat";
-                log += "\n-Do nothing";
-            } else {
-                log += "\n-Reactor felt Shocked";
-                CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, reactor, attacker, REACTION_STATUS.WITNESSED);
-            }
-        } else {
-            CombatData combatDataAgainstCharacterHit = attacker.combatComponent.GetCombatData(characterHit);
-            if(combatDataAgainstCharacterHit != null && combatDataAgainstCharacterHit.connectedAction != null && combatDataAgainstCharacterHit.connectedAction.associatedJobType == JOB_TYPE.APPREHEND) {
-                log += "\n-Combat is part of Apprehend Job";
-                log += "\n-Reactor felt Shocked";
-                CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, reactor, attacker, REACTION_STATUS.WITNESSED);
-            } else {
-                if(characterHit == reactor) {
-                    log += "\n-Hit Character is the Reactor";
-                    if (characterHit.relationshipContainer.IsFriendsWith(attacker)) {
-                        log += "\n-Hit Character is Friends/Close Friends with Attacker";
-                        log += "\n-Reactor felt Betrayal";
-                        CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, reactor, attacker, REACTION_STATUS.WITNESSED);
-                    } else if (characterHit.relationshipContainer.IsEnemiesWith(attacker)) {
-                        log += "\n-Hit Character is Enemies/Rivals with Attacker";
-                        log += "\n-Reactor felt Anger";
-                        CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, reactor, attacker, REACTION_STATUS.WITNESSED);
-                    }
+        if(poiHit is Character characterHit) {
+            if (combat.currentClosestHostile != characterHit) {
+                log += "\n-Hit Character is not the same as the actual target which is: " + combat.currentClosestHostile?.name;
+                if (characterHit.isInCombat) {
+                    log += "\n-Hit Character is in combat";
+                    log += "\n-Do nothing";
                 } else {
-                    log += "\n-Hit Character is NOT the Reactor";
-                    if (reactor.relationshipContainer.IsFriendsWith(characterHit)) {
-                        log += "\n-Reactor is Friends/Close Friends with Hit Character";
-                        if (reactor.relationshipContainer.IsFriendsWith(attacker)) {
-                            log += "\n-Reactor is Friends/Close Friends with Attacker";
-                            log += "\n-Reactor felt Shock, Disappointment";
-                            CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, reactor, attacker, REACTION_STATUS.WITNESSED);
-                            CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, reactor, attacker, REACTION_STATUS.WITNESSED);
-                        } else if (reactor.relationshipContainer.IsEnemiesWith(attacker)) {
-                            log += "\n-Reactor is Enemies/Rivals with Attacker";
-                            log += "\n-Reactor felt Rage";
-                            CharacterManager.Instance.TriggerEmotion(EMOTION.Rage, reactor, attacker, REACTION_STATUS.WITNESSED);
-                        } else {
+                    log += "\n-Reactor felt Shocked";
+                    CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, reactor, attacker, REACTION_STATUS.WITNESSED);
+                }
+            } else {
+                CombatData combatDataAgainstCharacterHit = attacker.combatComponent.GetCombatData(characterHit);
+                if (combatDataAgainstCharacterHit != null && combatDataAgainstCharacterHit.connectedAction != null && combatDataAgainstCharacterHit.connectedAction.associatedJobType == JOB_TYPE.APPREHEND) {
+                    log += "\n-Combat is part of Apprehend Job";
+                    log += "\n-Reactor felt Shocked";
+                    CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, reactor, attacker, REACTION_STATUS.WITNESSED);
+                } else {
+                    if (characterHit == reactor) {
+                        log += "\n-Hit Character is the Reactor";
+                        if (characterHit.relationshipContainer.IsFriendsWith(attacker)) {
+                            log += "\n-Hit Character is Friends/Close Friends with Attacker";
+                            log += "\n-Reactor felt Betrayal";
+                            CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, reactor, attacker, REACTION_STATUS.WITNESSED);
+                        } else if (characterHit.relationshipContainer.IsEnemiesWith(attacker)) {
+                            log += "\n-Hit Character is Enemies/Rivals with Attacker";
                             log += "\n-Reactor felt Anger";
                             CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, reactor, attacker, REACTION_STATUS.WITNESSED);
                         }
-                    } else if (reactor.relationshipContainer.IsEnemiesWith(characterHit)) {
-                        log += "\n-Reactor is Enemies/Rivals with Hit Character";
-                        if (reactor.relationshipContainer.IsFriendsWith(attacker)) {
-                            log += "\n-Reactor is Friends/Close Friends with Attacker";
-                            log += "\n-Reactor felt Approval";
-                            CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, reactor, attacker, REACTION_STATUS.WITNESSED);
-                        } else if (reactor.relationshipContainer.IsEnemiesWith(attacker)) {
-                            log += "\n-Reactor is Enemies/Rivals with Attacker";
+                    } else {
+                        log += "\n-Hit Character is NOT the Reactor";
+                        if (reactor.relationshipContainer.IsFriendsWith(characterHit)) {
+                            log += "\n-Reactor is Friends/Close Friends with Hit Character";
+                            if (reactor.relationshipContainer.IsFriendsWith(attacker)) {
+                                log += "\n-Reactor is Friends/Close Friends with Attacker";
+                                log += "\n-Reactor felt Shock, Disappointment";
+                                CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, reactor, attacker, REACTION_STATUS.WITNESSED);
+                                CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, reactor, attacker, REACTION_STATUS.WITNESSED);
+                            } else if (reactor.relationshipContainer.IsEnemiesWith(attacker)) {
+                                log += "\n-Reactor is Enemies/Rivals with Attacker";
+                                log += "\n-Reactor felt Rage";
+                                CharacterManager.Instance.TriggerEmotion(EMOTION.Rage, reactor, attacker, REACTION_STATUS.WITNESSED);
+                            } else {
+                                log += "\n-Reactor felt Anger";
+                                CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, reactor, attacker, REACTION_STATUS.WITNESSED);
+                            }
+                        } else if (reactor.relationshipContainer.IsEnemiesWith(characterHit)) {
+                            log += "\n-Reactor is Enemies/Rivals with Hit Character";
+                            if (reactor.relationshipContainer.IsFriendsWith(attacker)) {
+                                log += "\n-Reactor is Friends/Close Friends with Attacker";
+                                log += "\n-Reactor felt Approval";
+                                CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, reactor, attacker, REACTION_STATUS.WITNESSED);
+                            } else if (reactor.relationshipContainer.IsEnemiesWith(attacker)) {
+                                log += "\n-Reactor is Enemies/Rivals with Attacker";
+                                log += "\n-Reactor felt Shock";
+                                CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, reactor, attacker, REACTION_STATUS.WITNESSED);
+                            } else {
+                                log += "\n-Reactor felt Approval";
+                                CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, reactor, attacker, REACTION_STATUS.WITNESSED);
+                            }
+                        } else {
                             log += "\n-Reactor felt Shock";
                             CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, reactor, attacker, REACTION_STATUS.WITNESSED);
-                        } else {
-                            log += "\n-Reactor felt Approval";
-                            CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, reactor, attacker, REACTION_STATUS.WITNESSED);
                         }
-                    } else {
-                        log += "\n-Reactor felt Shock";
-                        CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, reactor, attacker, REACTION_STATUS.WITNESSED);
                     }
                 }
             }
-        }
+            //Check for crime
+            if ((reactor.faction != null && reactor.faction == attacker.faction) || (reactor.homeSettlement != null && reactor.homeSettlement == attacker.homeSettlement)) {
+                log += "\n-Reactor is the same faction/home settlement as Attacker";
+                log += "\n-Reactor is checking for crime";
+                CombatData combatDataAgainstPOIHit = attacker.combatComponent.GetCombatData(characterHit);
+                if (combatDataAgainstPOIHit != null && combatDataAgainstPOIHit.connectedAction != null) {
+                    ActualGoapNode possibleCrimeAction = combatDataAgainstPOIHit.connectedAction;
+                    CRIME_TYPE crimeType = CrimeManager.Instance.GetCrimeTypeConsideringAction(possibleCrimeAction);
+                    log += "\n-Crime committed is: " + crimeType.ToString();
+                    if (crimeType != CRIME_TYPE.NONE) {
+                        log += "\n-Reactor will react to crime";
+                        CrimeManager.Instance.ReactToCrime(reactor, attacker, possibleCrimeAction, possibleCrimeAction.associatedJobType, crimeType);
+                    }
+                }
+            }
 
-        //Check for crime
-        if((reactor.faction != null && reactor.faction == attacker.faction) || (reactor.homeSettlement != null && reactor.homeSettlement == attacker.homeSettlement)) {
-            log += "\n-Reactor is the same faction/home settlement as Attacker";
-            log += "\n-Reactor is checking for crime";
-            CombatData combatDataAgainstCharacterHit = attacker.combatComponent.GetCombatData(characterHit);
-            if(combatDataAgainstCharacterHit != null && combatDataAgainstCharacterHit.connectedAction != null) {
-                ActualGoapNode possibleCrimeAction = combatDataAgainstCharacterHit.connectedAction;
-                CRIME_TYPE crimeType = CrimeManager.Instance.GetCrimeTypeConsideringAction(possibleCrimeAction);
-                log += "\n-Crime committed is: " + crimeType.ToString();
-                if (crimeType != CRIME_TYPE.NONE) {
-                    log += "\n-Reactor will react to crime";
-                    CrimeManager.Instance.ReactToCrime(reactor, attacker, possibleCrimeAction, possibleCrimeAction.associatedJobType, crimeType);
+        } else if (poiHit is TileObject objectHit) {
+            if(objectHit.characterOwner != attacker) {
+                //CrimeManager.Instance.ReactToCrime()
+                log += "\n-Object Hit is not owned by the Attacker";
+                log += "\n-Reactor is checking for crime";
+                CombatData combatDataAgainstPOIHit = attacker.combatComponent.GetCombatData(objectHit);
+                if (combatDataAgainstPOIHit != null && combatDataAgainstPOIHit.connectedAction != null) {
+                    ActualGoapNode possibleCrimeAction = combatDataAgainstPOIHit.connectedAction;
+                    CRIME_TYPE crimeType = CrimeManager.Instance.GetCrimeTypeConsideringAction(possibleCrimeAction);
+                    log += "\n-Crime committed is: " + crimeType.ToString();
+                    if (crimeType != CRIME_TYPE.NONE) {
+                        log += "\n-Reactor will react to crime";
+                        CrimeManager.Instance.ReactToCrime(reactor, attacker, possibleCrimeAction, possibleCrimeAction.associatedJobType, crimeType);
+                    }
                 }
             }
         }

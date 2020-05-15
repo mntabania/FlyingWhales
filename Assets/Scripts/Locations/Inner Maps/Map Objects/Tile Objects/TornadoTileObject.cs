@@ -15,6 +15,7 @@ public class TornadoTileObject : MovingTileObject {
         //advertisedActions = new List<INTERACTION_TYPE>(){ INTERACTION_TYPE.NEUTRALIZE };
         Initialize(TILE_OBJECT_TYPE.TORNADO, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
+        AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
     }
     protected override void CreateMapObjectVisual() {
         base.CreateMapObjectVisual();

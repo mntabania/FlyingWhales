@@ -11,6 +11,7 @@ public class BigTreeObject : TreeObject {
 		Initialize(TILE_OBJECT_TYPE.BIG_TREE_OBJECT, false);
         AddAdvertisedAction(INTERACTION_TYPE.CHOP_WOOD);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
+        AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
         SetYield(InnerMapManager.Big_Tree_Yield);
 		traitContainer.AddTrait(this, "Immovable");
 	}
@@ -19,6 +20,7 @@ public class BigTreeObject : TreeObject {
 		Initialize(data, false);
         AddAdvertisedAction(INTERACTION_TYPE.CHOP_WOOD);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
+        AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
         traitContainer.AddTrait(this, "Immovable");
 	}
 

@@ -11,6 +11,7 @@ public class Rock : TileObject{
         Initialize(TILE_OBJECT_TYPE.ROCK, false);
         //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.MINE_STONE, INTERACTION_TYPE.ASSAULT, };
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
+        AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
         AddAdvertisedAction(INTERACTION_TYPE.MINE_STONE);
 
         SetYield(50);
@@ -19,6 +20,7 @@ public class Rock : TileObject{
         //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.MINE_STONE, INTERACTION_TYPE.ASSAULT, };
         Initialize(data, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
+        AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
         AddAdvertisedAction(INTERACTION_TYPE.MINE_STONE);
     }
 

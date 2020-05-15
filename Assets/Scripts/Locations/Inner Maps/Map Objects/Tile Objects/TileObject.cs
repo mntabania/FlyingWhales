@@ -112,6 +112,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     }
     private void AddCommonAdvertisements() {
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
+        AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
         //AddAdvertisedAction(INTERACTION_TYPE.POISON);
         //AddAdvertisedAction(INTERACTION_TYPE.REMOVE_POISON);
         AddAdvertisedAction(INTERACTION_TYPE.REPAIR);
@@ -123,6 +124,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     }
     protected void RemoveCommonAdvertisements() {
         RemoveAdvertisedAction(INTERACTION_TYPE.ASSAULT);
+        RemoveAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
         //RemoveAdvertisedAction(INTERACTION_TYPE.POISON);
         //RemoveAdvertisedAction(INTERACTION_TYPE.REMOVE_POISON);
         RemoveAdvertisedAction(INTERACTION_TYPE.REPAIR);
@@ -528,7 +530,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         //     demonicStructure.AdjustHP(amount);
         // }
     }
-    public void OnHitByAttackFrom(Character characterThatAttacked, CombatState state, ref string attackSummary) {
+    public void OnHitByAttackFrom(Character characterThatAttacked, CombatState combat, ref string attackSummary) {
         ELEMENTAL_TYPE elementalType = characterThatAttacked.combatComponent.elementalDamage.type;
         //GameManager.Instance.CreateHitEffectAt(this, elementalType);
         if (currentHP <= 0) {
@@ -538,6 +540,12 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         attackSummary = $"{attackSummary}\nDealt damage {characterThatAttacked.attackPower.ToString()}";
         if (currentHP <= 0) {
             attackSummary = $"{attackSummary}\n{name}'s hp has reached 0.";
+        }
+        if (characterThatAttacked.marker) {
+            for (int i = 0; i < characterThatAttacked.marker.inVisionCharacters.Count; i++) {
+                Character inVision = characterThatAttacked.marker.inVisionCharacters[i];
+                inVision.reactionComponent.ReactToCombat(combat, this);
+            }
         }
         //Messenger.Broadcast(Signals.CHARACTER_WAS_HIT, this, characterThatAttacked);
     }

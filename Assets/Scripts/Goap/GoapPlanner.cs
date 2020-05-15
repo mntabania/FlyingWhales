@@ -114,11 +114,16 @@ public class GoapPlanner {
                 //This means that the created plan is a recalculated plan
                 goapThread.createdPlan.SetIsBeingRecalculated(false);
             }
-            if (!owner.canWitness) {
-                owner.logComponent.PrintLogIfActive(
-                    $"{owner.name} is scrapping plan since {owner.name} cannot witness. {goapThread.job.name} is the job.");
-                goapThread.job.CancelJob(false);
-                return;
+            if (!owner.canPerform) {
+                int canPerformValue = owner.GetCanPerformValue();
+                if(canPerformValue == -1 && owner.traitContainer.HasTrait("Paralyzed")) {
+                    //If the owner is paralyzed and the only reason he cannot perform is because of that paralyzed, the plan must not be scrapped
+                } else {
+                    owner.logComponent.PrintLogIfActive($"{owner.name} is scrapping plan since {owner.name} cannot perform. {goapThread.job.name} is the job.");
+                    goapThread.job.CancelJob(false);
+                    return;
+                }
+
             }
             int jobIndex = owner.jobQueue.GetJobQueueIndex(goapThread.job);
             if(jobIndex != -1) {
