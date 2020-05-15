@@ -15,7 +15,7 @@ public class BerserkOrb : Artifact {
     public override void ActivateTileObject() {
         if (gridTileLocation != null) {
             base.ActivateTileObject();
-            List<LocationGridTile> tilesInRange = gridTileLocation.GetTilesInRadius(1);
+            List<LocationGridTile> tilesInRange = gridTileLocation.GetTilesInRadius(3);
             for (int i = 0; i < tilesInRange.Count; i++) {
                 LocationGridTile currTile = tilesInRange[i];
                 if(currTile.charactersHere.Count > 0) {

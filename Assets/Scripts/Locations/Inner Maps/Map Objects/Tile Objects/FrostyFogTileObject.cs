@@ -14,6 +14,7 @@ public class FrostyFogTileObject : MovingTileObject {
     public FrostyFogTileObject() {
         Initialize(TILE_OBJECT_TYPE.FROSTY_FOG, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
+        AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
         traitContainer.RemoveTrait(this, "Flammable");
         maxSize = 6;
     }

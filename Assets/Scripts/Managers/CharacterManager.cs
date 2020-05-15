@@ -99,7 +99,7 @@ public class CharacterManager : MonoBehaviour {
         },
         { Default_Angel_Behaviour,
             new []{
-                typeof(AttackDemonicStructure),
+                typeof(AttackDemonicStructureBehaviour),
             }
         },
     };

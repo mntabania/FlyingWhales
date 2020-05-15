@@ -8,10 +8,12 @@ public class DesertRose : TileObject {
     public DesertRose() {
         Initialize(TILE_OBJECT_TYPE.DESERT_ROSE, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
+        AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
     }
     public DesertRose(SaveDataTileObject data) {
         Initialize(data, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
+        AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
     }
 
     public void DesertRoseEffect() {

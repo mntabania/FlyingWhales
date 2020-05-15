@@ -855,6 +855,14 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    }
         return null;
     }
+    public GoapPlanJob CreateBerserkAttackJob(IPointOfInterest targetPOI) {
+        if (!_owner.jobQueue.HasJob(JOB_TYPE.BERSERK_ATTACK, targetPOI)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BERSERK_ATTACK, new GoapEffect(GOAP_EFFECT_CONDITION.DEATH, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), targetPOI, _owner);
+            _owner.jobQueue.AddJobInQueue(job);
+            return job;
+        }
+        return null;
+    }
     #endregion
 
     #region Needs
