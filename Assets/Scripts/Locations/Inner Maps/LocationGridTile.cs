@@ -286,7 +286,7 @@ namespace Inner_Maps {
             previousGroundVisual = tileBase;
         }
         public void RevertToPreviousGroundVisual() {
-            if (ReferenceEquals(previousGroundVisual, null) == false) {
+            if (previousGroundVisual != null) {
                 SetGroundTilemapVisual(previousGroundVisual);
             }
             CreateSeamlessEdgesForSelfAndNeighbours();
@@ -323,9 +323,9 @@ namespace Inner_Maps {
                             createEdge = false;
                         } else if (groundType != Ground_Type.Water && currNeighbour.groundType == Ground_Type.Water) {
                             createEdge = true;
-                        } else if (groundType == Ground_Type.Corrupted && currNeighbour.groundType != Ground_Type.Bone) {
+                        } else if (groundType == Ground_Type.Corrupted && currNeighbour.groundType != Ground_Type.Bone && currNeighbour.groundType != Ground_Type.Corrupted) {
                             createEdge = true;
-                        } else if (groundType == Ground_Type.Demon_Stone && currNeighbour.groundType != Ground_Type.Corrupted) {
+                        } else if (groundType == Ground_Type.Demon_Stone && currNeighbour.groundType != Ground_Type.Corrupted && currNeighbour.groundType != Ground_Type.Demon_Stone) {
                             createEdge = true;
                         } else if (groundType == Ground_Type.Bone) {
                             createEdge = true;
@@ -394,6 +394,12 @@ namespace Inner_Maps {
                 }
                 // Debug.Log(summary);    
             }
+            else {
+                map.northEdgeTilemap.SetTile(localPlace, null);
+                map.southEdgeTilemap.SetTile(localPlace, null);
+                map.westEdgeTilemap.SetTile(localPlace, null);
+                map.eastEdgeTilemap.SetTile(localPlace, null);
+            }
         }
         private BIOMES GetBiomeOfGroundType(Ground_Type groundType) {
             switch (groundType) {
@@ -411,6 +417,14 @@ namespace Inner_Maps {
                 default:
                     return BIOMES.NONE;
             }
+        }
+        /// <summary>
+        /// Set this tile to the ground that it originally was, aka before anything was put on it.
+        /// </summary>
+        private void RevertTileToOriginalPerlin() {
+             TileBase groundTile = InnerTileMap.GetGroundAssetPerlin(floorSample, parentMap.region.coreTile.biomeType);
+             SetGroundTilemapVisual(groundTile);
+             SetPreviousGroundVisual(null);
         }
         #endregion
 
@@ -943,44 +957,6 @@ namespace Inner_Maps {
         //}
         #endregion
 
-        #region Mouse Actions
-        //        public void OnClickTileActions(PointerEventData.InputButton inputButton) {
-        //            if (InnerMapManager.Instance.IsMouseOnMarker()) {
-        //                return;
-        //            }
-        //            if (objHere == null) {
-        //#if UNITY_EDITOR
-        //                if (inputButton == PointerEventData.InputButton.Right) {
-        //                    UIManager.Instance.poiTestingUI.ShowUI(this);
-        //                } else {
-        //                    Messenger.Broadcast(Signals.HIDE_MENUS);
-        //                }
-        //#else
-        //             Messenger.Broadcast(Signals.HIDE_MENUS);
-        //#endif
-        //            } else if (objHere is TileObject || objHere is SpecialToken) {
-        //#if UNITY_EDITOR
-        //                if (inputButton == PointerEventData.InputButton.Right) {
-        //                    if (objHere is TileObject) {
-        //                        UIManager.Instance.poiTestingUI.ShowUI(objHere);
-        //                    }
-        //                }
-        //                //else {
-        //                //    if (objHere is TileObject) {
-        //                //        UIManager.Instance.ShowTileObjectInfo(objHere as TileObject);
-        //                //    }
-        //                //}
-        //#else
-        //              //if (inputButton == PointerEventData.InputButton.Left) {
-        //              //   if (objHere is TileObject) {
-        //              //       UIManager.Instance.ShowTileObjectInfo(objHere as TileObject);
-        //              //   }
-        //              //}
-        //#endif
-        //            }
-        //        }
-        #endregion
-
         #region Tile Objects
         public void SetReservedType(TILE_OBJECT_TYPE reservedType) {
             if (structure != null) {
@@ -1052,6 +1028,13 @@ namespace Inner_Maps {
                 } else {
                     structure.RemovePOI(objHere);
                 }
+            }
+        }
+        public void UnCorruptTile() {
+            RevertTileToOriginalPerlin();
+            CreateSeamlessEdgesForSelfAndNeighbours();
+            if (objHere != null) {
+                structure.RemovePOI(objHere);
             }
         }
         #endregion
