@@ -25,6 +25,9 @@ public class RaiseDeadData : PlayerAction {
         log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddLogToInvolvedObjects();
         PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+        if (UIManager.Instance.characterInfoUI.isShowing) {
+            UIManager.Instance.characterInfoUI.CloseMenu();
+        }
         base.ActivateAbility(targetPOI);
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
