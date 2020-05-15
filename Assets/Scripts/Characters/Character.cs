@@ -1613,8 +1613,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //        (ownParty as CharacterParty).actionData.currentAction.EndAction(ownParty, (ownParty as CharacterParty).actionData.currentTargetObject);
         //    }
         //}
-        marker.visionTrigger.SetCollidersState(true);
-        marker.UpdateAnimation();
+        if (marker) {
+            marker.visionTrigger.SetCollidersState(true);
+            marker.UpdateAnimation();
+        }
+
         //if (this.minion != null) {
         //    this.minion.SetEnabledState(true); //reenable this minion, since it could've been disabled because it was part of another party
         //}
@@ -2292,6 +2295,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 Trait trait = traitOverrideFunctions[i];
                 trait.OnSeePOIEvenCannotWitness(target, this);
             }
+        }
+
+        //This is a temporary fix for berserk behaviour where in the berserked character can add hostiles even when cannot witness
+        //I did this because the cannot witness part affects all traits that has cannot witness, like Frozen
+        //Ex: Even when Frozen, the character can add hostiles/combat job which is not suppose to happen
+        if (canPerform && traitContainer.HasTrait("Berserked")) {
+            Berserked berserked = traitContainer.GetNormalTrait<Berserked>("Berserked");
+            berserked.BerserkCombat(target, this);
         }
         //for (int i = 0; i < traitContainer.statuses.Count; i++) {
         //    traitContainer.statuses[i].OnSeePOIEvenCannotWitness(target, this);
