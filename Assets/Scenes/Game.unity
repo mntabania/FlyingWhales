@@ -103867,7 +103867,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cameraPanSpeed: 50
   isDragging: 0
-  _minFov: 6
+  _minFov: 7
   _maxFov: 13
   zoomSensitivity: 35
   _zoomSpeed: 30
