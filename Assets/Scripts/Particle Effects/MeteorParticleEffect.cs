@@ -61,7 +61,7 @@ public class MeteorParticleEffect : BaseParticleEffect {
     private void MeteorEffect(ITraitable traitable, ref BurningSource bs) {
         if (traitable.gridTileLocation == null) { return; }
         BurningSource burningSource = bs;
-        traitable.AdjustHP(-500, ELEMENTAL_TYPE.Fire, true, elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref burningSource), showHPBar: true);
+        traitable.AdjustHP(-400, ELEMENTAL_TYPE.Fire, true, elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref burningSource), showHPBar: true);
         //if (traitable is TileObject obj) {
         //    if (obj.tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
         //        obj.AdjustHP(-500, ELEMENTAL_TYPE.Fire, 

@@ -38,6 +38,12 @@ public class PlayerDataGeneration : MapGenerationComponent {
 			LocationStructure ancientRuin = randomRegion.GetRandomStructureOfType(STRUCTURE_TYPE.ANCIENT_RUIN);
 			Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(ARTIFACT_TYPE.Necronomicon);
 			ancientRuin.AddPOI(artifact);
+			
+			//place berserk orb at monster lair
+			artifactChoices.Remove(ARTIFACT_TYPE.Berserk_Orb);
+			LocationStructure monsterLair = randomRegion.GetRandomStructureOfType(STRUCTURE_TYPE.MONSTER_LAIR);
+			artifact = InnerMapManager.Instance.CreateNewArtifact(ARTIFACT_TYPE.Berserk_Orb);
+			monsterLair.AddPOI(artifact);
 		}
 		
 		//randomly generate 3 Artifacts
