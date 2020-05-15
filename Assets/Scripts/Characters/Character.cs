@@ -2300,10 +2300,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //This is a temporary fix for berserk behaviour where in the berserked character can add hostiles even when cannot witness
         //I did this because the cannot witness part affects all traits that has cannot witness, like Frozen
         //Ex: Even when Frozen, the character can add hostiles/combat job which is not suppose to happen
-        //if (canPerform && traitContainer.HasTrait("Berserked")) {
-        //    Berserked berserked = traitContainer.GetNormalTrait<Berserked>("Berserked");
-        //    berserked.BerserkCombat(target, this);
-        //}
+        // if (canPerform && traitContainer.HasTrait("Berserked")) {
+        //     Berserked berserked = traitContainer.GetNormalTrait<Berserked>("Berserked");
+        //     berserked.BerserkCombat(target, this);
+        // }
         //for (int i = 0; i < traitContainer.statuses.Count; i++) {
         //    traitContainer.statuses[i].OnSeePOIEvenCannotWitness(target, this);
         //}
@@ -5586,9 +5586,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             Messenger.Broadcast(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, this);
         }
     }
-    public int GetCanPerformValue() {
-        return _canPerformValue;
-    }
     public void IncreaseCanTakeJobs() {
         canTakeJobsValue++;
     }
@@ -5844,4 +5841,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return chosenTile;
     }
     #endregion
+    
+    public int GetCanPerformValue() {
+        return _canPerformValue;
+    }
 }

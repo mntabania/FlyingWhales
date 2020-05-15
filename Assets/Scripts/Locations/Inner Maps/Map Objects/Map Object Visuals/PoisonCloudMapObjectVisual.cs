@@ -16,6 +16,8 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
     private Tweener _movement;
     private List<ITraitable> _objsInRange;
     private PoisonCloudTileObject _poisonCloud;
+    
+    public bool wasJustPlaced { get; private set; }
 
     #region Abstract Members Implementation
     public override void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) { }
@@ -45,6 +47,12 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
     }
     public override void PlaceObjectAt(LocationGridTile tile) {
         base.PlaceObjectAt(tile);
+
+        wasJustPlaced = true;
+
+        GameDate dueDate = GameManager.Instance.Today().AddTicks(1);
+        SchedulingManager.Instance.AddEntry(dueDate, () => wasJustPlaced = false, this);
+        
         _cloudEffect.gameObject.SetActive(true);
         _cloudEffect.Play();
         MoveToRandomDirection();
@@ -161,7 +169,9 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
         BaseVisionTrigger collidedWith = collision.gameObject.GetComponent<BaseVisionTrigger>();
         if (collidedWith != null) {
             if(collidedWith.damageable is PoisonCloudTileObject otherPoisonCloud && otherPoisonCloud != _poisonCloud) {
-                CollidedWithPoisonCloud(otherPoisonCloud);
+                if (wasJustPlaced == false) {
+                    CollidedWithPoisonCloud(otherPoisonCloud);    
+                }
             } else if (collidedWith.damageable is ITraitable traitable) {
                 AddObject(traitable);
             }

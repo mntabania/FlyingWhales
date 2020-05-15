@@ -501,6 +501,7 @@ public class CharacterInfoUI : InfoUIBase {
 
     #region For Testing
     public void ShowCharacterTestingInfo() {
+#if UNITY_EDITOR
         string summary = $"Home structure: {activeCharacter.homeStructure}" ?? "None";
         summary = $"{summary}{($"\nCurrent structure: {activeCharacter.currentStructure}" ?? "None")}";
         summary = $"{summary}{("\nPOI State: " + activeCharacter.state.ToString())}";
@@ -554,6 +555,7 @@ public class CharacterInfoUI : InfoUIBase {
         }
         // summary += "\n" + activeCharacter.needsComponent.GetNeedsSummary();
         UIManager.Instance.ShowSmallInfo(summary);
+#endif
     }
     public void HideCharacterTestingInfo() {
         UIManager.Instance.HideSmallInfo();
