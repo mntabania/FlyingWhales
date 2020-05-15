@@ -3482,7 +3482,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void EndTickPerformJobs() {
         if (CanPerformEndTickJobs() && HasSameOrHigherPriorityJobThanBehaviour()) {
-            if (jobQueue.jobsInQueue[0].ProcessJob() == false) {
+            if (jobQueue.jobsInQueue[0].ProcessJob() == false && jobQueue.jobsInQueue.Count > 0) {
                 PerformTopPriorityJob();
             }
         }

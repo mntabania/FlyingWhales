@@ -117,7 +117,7 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
             return;
         }
         int roll = Random.Range(0, 100);
-        if (roll < 15 && _objsInRange.Count > 0) {
+        if (roll < 30 && _objsInRange.Count > 0) {
             string summary = $"{GameManager.Instance.TodayLogString()}Per tick check of poison cloud. Roll is {roll.ToString()}.";
             ITraitable traitable = UtilityScripts.CollectionUtilities.GetRandomElement(_objsInRange);
             traitable.traitContainer.AddTrait(traitable, "Poisoned");

@@ -50,8 +50,11 @@ public class PlayGuitar : GoapAction {
                     cost += 20; 
                     costLog += " +20 Guitar is in friend/close friends home";
                 } else if (actor.relationshipContainer.IsEnemiesWith(dwellingOwner)) {
-                    cost += 100; 
-                    costLog += " +100 Guitar is in enemy/rivals home";
+                    cost += 2000; 
+                    costLog += " +2000 Guitar is in enemy/rivals home";
+                } else {
+                    cost += 200;
+                    costLog += " +200 guitar is in an owned structure but not friend or enemy";
                 }
             }
         }

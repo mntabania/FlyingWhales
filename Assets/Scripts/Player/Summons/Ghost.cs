@@ -40,7 +40,7 @@ public class Ghost : Summon {
     
     private void FearCheck() {
         if (UtilityScripts.Utilities.IsEven(GameManager.Instance.Today().tick)) {
-            if (UnityEngine.Random.Range(0, 100) < 100) {
+            if (UnityEngine.Random.Range(0, 100) < 15) {
                 //cast fear on random hostile
                 List<Character> choices = new List<Character>();
                 for (int i = 0; i < combatComponent.hostilesInRange.Count; i++) {

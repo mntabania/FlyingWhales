@@ -36,14 +36,20 @@ public class SpellItem : PooledObject {
     }
     private void OnSpellCooldownStarted(SpellData spellData) {
         if (this.spellData == spellData) {
-            SetCooldownState(spellData.isInCooldown);
-            SetInteractableState(spellData.isInCooldown == false);
+            if (spellData.hasCharges && spellData.charges <= 0) {
+                //if spell uses charges, but has no more, do not show cooldown icon even if it is in cooldown
+                SetCooldownState(false);
+            } else {
+                SetCooldownState(spellData.isInCooldown);
+            }
+            
+            SetInteractableState(spellData.CanPerformAbility());
         }
     }
     private void OnSpellCooldownFinished(SpellData spellData) {
         if (this.spellData == spellData) {
             SetCooldownState(spellData.isInCooldown);
-            SetInteractableState(spellData.isInCooldown == false);
+            SetInteractableState(spellData.CanPerformAbility());
         }
     }
     #endregion

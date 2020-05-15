@@ -7,9 +7,8 @@ using Inner_Maps.Location_Structures;
 
 public class AfflictData : PlayerAction {
     public override SPELL_TYPE type => SPELL_TYPE.AFFLICT;
-    public override string name { get { return "Afflict"; } }
-    public override string description { get { return "Afflict"; } }
-
+    public override string name => "Afflict";
+    public override string description => "Afflict a Villager with a negative Trait.";
     public AfflictData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
     }

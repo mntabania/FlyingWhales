@@ -40,6 +40,6 @@ public class EnvelopContentUnityUI : MonoBehaviour {
             newSize.y = otherTransform.sizeDelta.y;
             newSize.y += padding.y;
         }
-        (this.transform as RectTransform).sizeDelta = newSize;
+        thisTransform.sizeDelta = newSize;
     }
 }

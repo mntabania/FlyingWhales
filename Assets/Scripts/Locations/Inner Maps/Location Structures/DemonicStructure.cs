@@ -19,8 +19,14 @@ namespace Inner_Maps.Location_Structures {
             AddPlayerAction(SPELL_TYPE.DEFEND);
         }
         protected override void DestroyStructure() {
+            if (hasBeenDestroyed) {
+                return;
+            }
+            HexTile hexTile = occupiedHexTile.hexTileOwner;
             base.DestroyStructure();
+            hexTile.RemoveCorruption();
             CharacterManager.Instance.SetNewCurrentDemonicStructureTargetOfAngels();
+            Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
         }
         #endregion
 

@@ -1909,6 +1909,7 @@ public static class Extensions {
             case JOB_TYPE.BERSERK_ATTACK:
                 priority = 1086;
                 break;
+            case JOB_TYPE.REPORT_CORRUPTED_STRUCTURE:
             case JOB_TYPE.ASSAULT_DEMONIC_STRUCTURE:
                 priority = 1080;
                 break;
@@ -1970,9 +1971,6 @@ public static class Extensions {
             case JOB_TYPE.BUILD_BLUEPRINT:
             case JOB_TYPE.PLACE_BLUEPRINT:
                 priority = 850;
-                break;
-            case JOB_TYPE.REPORT_CORRUPTED_STRUCTURE:
-                priority = 855;
                 break;
             case JOB_TYPE.PRODUCE_FOOD:
             case JOB_TYPE.PRODUCE_METAL:

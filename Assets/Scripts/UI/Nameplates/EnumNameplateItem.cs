@@ -30,7 +30,13 @@ public class EnumNameplateItem : NameplateItem<Enum> {
                 spellData = PlayerSkillManager.Instance.GetSpellData(spellType);
             }
             Assert.IsNotNull(spellData, $"There is no spellData for {spellType.ToString()}");
-            SetCooldownState(spellData.isInCooldown);
+            if (spellData.hasCharges && spellData.charges <= 0) {
+                //if spell uses charges, but has no more, do not show cooldown icon even if it is in cooldown
+                SetCooldownState(false);
+            } else {
+                SetCooldownState(spellData.isInCooldown);
+            }
+            
         } else {
             SetLockedState(false);
             SetCooldownState(false);

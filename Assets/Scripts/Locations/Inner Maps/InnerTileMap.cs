@@ -290,9 +290,9 @@ namespace Inner_Maps {
         public void AddActiveBurningSource(BurningSource bs) {
             if (!activeBurningSources.Contains(bs)) {
                 activeBurningSources.Add(bs);
-                Log log = new Log(GameManager.Instance.Today(), "General", "Location", "Fire");
-                log.AddToFillers(region, region.name, LOG_IDENTIFIER.LANDMARK_1);
-                PlayerManager.Instance.player.ShowNotificationFrom(region, log);
+                // Log log = new Log(GameManager.Instance.Today(), "General", "Location", "Fire");
+                // log.AddToFillers(region, region.name, LOG_IDENTIFIER.LANDMARK_1);
+                // PlayerManager.Instance.player.ShowNotificationFrom(region, log);
             }
         }
         public void RemoveActiveBurningSources(BurningSource bs) {

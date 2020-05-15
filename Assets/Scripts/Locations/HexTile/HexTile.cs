@@ -845,6 +845,13 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         InstantlyCorruptAllOwnedInnerMapTiles();
         OnCorruptSuccess();
     }
+    public void RemoveCorruption() {
+        PlayerManager.Instance.player.playerSettlement.RemoveTileFromSettlement(this);
+        for (int i = 0; i < locationGridTiles.Count; i++) {
+            LocationGridTile tile = locationGridTiles[i];
+            tile.UnCorruptTile();
+        }
+    }
     public void InstantlyCorruptAllOwnedInnerMapTiles() {
         for (int i = 0; i < locationGridTiles.Count; i++) {
             LocationGridTile tile = locationGridTiles[i];
