@@ -48,6 +48,9 @@ public class GoapPlan {
         allNodes = nodes;
     }
     public void SetNextNode() {
+        if (currentNode == null) {
+            return;
+        }
         if(currentNode.singleNode != null || currentNode.currentNodeIndex >= (currentNode.multiNode.Length - 1)) {
             previousNode = currentNode;
             int nextNodeIndex = currentNodeIndex + 1;

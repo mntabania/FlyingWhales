@@ -56,6 +56,7 @@ namespace Inner_Maps.Location_Structures {
             Assert.IsNotNull(structureObj, $"Wall of {this.ToString()} was damaged, but it has no structure object");
             if (structureObj.walls.Contains(structureWall)) {
                 //create repair job
+                structureObj.RescanPathfindingGridOfStructure();
                 OnStructureDamaged();
             }
             if (objectsThatContributeToDamage.Contains(structureWall)) {
