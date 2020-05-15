@@ -47,6 +47,7 @@ public class Necronomicon : Artifact {
             skeleton2.InitialCharacterPlacement(tile2);
             skeleton3.InitialCharacterPlacement(tile3);
 
+            GameManager.Instance.CreateParticleEffectAt(gridTileLocation, PARTICLE_EFFECT.Necronomicon_Activate);
             gridTileLocation.structure.RemovePOI(this);
         }
     }

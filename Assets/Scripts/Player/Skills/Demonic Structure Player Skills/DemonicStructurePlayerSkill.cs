@@ -18,7 +18,7 @@ public class DemonicStructurePlayerSkill : SpellData {
         // BaseLandmark newLandmark =
         //     LandmarkManager.Instance.CreateNewLandmarkOnTile(this, landmarkData.landmarkType);
         LandmarkManager.Instance.PlaceBuiltStructureForSettlement(targetHex.settlementOnTile, targetHex.region.innerMap, targetHex, structureType);
-        PlayerManager.Instance.player.AdjustMana(-EditableValuesManager.Instance.buildStructureManaCost);
+        //PlayerManager.Instance.player.AdjustMana(-EditableValuesManager.Instance.buildStructureManaCost);
         targetHex.landmarkOnTile?.OnFinishedBuilding();
         base.ActivateAbility(targetHex);
     }

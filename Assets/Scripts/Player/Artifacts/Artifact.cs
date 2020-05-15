@@ -7,7 +7,9 @@ using UnityEngine;
 public class Artifact : TileObject {
     public ArtifactData data { get; private set; }
     public bool hasBeenActivated { get; private set; }
-    
+
+    private GameObject _artifactEffectGO;
+
     #region getters/setters
     public string worldObjectName => name;
     public WORLD_OBJECT_TYPE worldObjectType => WORLD_OBJECT_TYPE.ARTIFACT;
@@ -59,6 +61,21 @@ public class Artifact : TileObject {
         //    ActivateArtifactEffect);
         AddPlayerAction(SPELL_TYPE.ACTIVATE_TILE_OBJECT);
         AddPlayerAction(SPELL_TYPE.SEIZE_OBJECT);
+    }
+    public override void OnPlacePOI() {
+        base.OnPlacePOI();
+        if (_artifactEffectGO) {
+            ObjectPoolManager.Instance.DestroyObject(_artifactEffectGO);
+            _artifactEffectGO = null;
+        }
+        _artifactEffectGO = GameManager.Instance.CreateParticleEffectAt(this, PARTICLE_EFFECT.Artifact);
+    }
+    public override void OnDestroyPOI() {
+        base.OnDestroyPOI();
+        if (_artifactEffectGO) {
+            ObjectPoolManager.Instance.DestroyObject(_artifactEffectGO);
+            _artifactEffectGO = null;
+        }
     }
     #endregion
 
@@ -118,7 +135,7 @@ public class Artifact : TileObject {
     //            break;
     //    }
     //}
-    
+
 }
 
 public class ArtifactSlot {

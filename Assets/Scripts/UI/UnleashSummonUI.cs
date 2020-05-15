@@ -344,6 +344,7 @@ public class UnleashSummonUI : MonoBehaviour  { //PopupMenuBase
         //}
         for (int i = 0; i < chosenSummons.Count; i++) {
             Summon summon = chosenSummons[i] as Summon;
+            summon.combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
             TryPlaceSummon(summon, entrances[UnityEngine.Random.Range(0, entrances.Count)]);
             GoapPlanJob job = summon.jobComponent.CreateKnockoutJob(_targetCharacter);
             summon.jobComponent.SetFinalJobAssignment(job);
@@ -355,6 +356,7 @@ public class UnleashSummonUI : MonoBehaviour  { //PopupMenuBase
                 SpellData minionMonsterPlayerSkll = item.Key;
                 minionMonsterPlayerSkll.ActivateAbility(entrances[UnityEngine.Random.Range(0, entrances.Count)], ref spawnedCharacter);
                 GoapPlanJob job = spawnedCharacter.jobComponent.CreateKnockoutJob(_targetCharacter);
+                spawnedCharacter.combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
                 spawnedCharacter.jobComponent.SetFinalJobAssignment(job);
                 spawnedCharacter.SetDestroyMarkerOnDeath(true);
             }
@@ -404,6 +406,7 @@ public class UnleashSummonUI : MonoBehaviour  { //PopupMenuBase
             Summon summon = chosenSummons[i] as Summon;
             TryPlaceSummon(summon, entrances[UnityEngine.Random.Range(0, entrances.Count)]);
             GoapPlanJob job = summon.jobComponent.CreateKillJob(_targetCharacter);
+            summon.combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
             summon.jobComponent.SetFinalJobAssignment(job);
             summon.SetDestroyMarkerOnDeath(true);
             //entrances.RemoveAt(0);
@@ -413,6 +416,7 @@ public class UnleashSummonUI : MonoBehaviour  { //PopupMenuBase
                 SpellData minionMonsterPlayerSkll = item.Key;
                 minionMonsterPlayerSkll.ActivateAbility(entrances[UnityEngine.Random.Range(0, entrances.Count)], ref spawnedCharacter);
                 GoapPlanJob job = spawnedCharacter.jobComponent.CreateKillJob(_targetCharacter);
+                spawnedCharacter.combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
                 spawnedCharacter.jobComponent.SetFinalJobAssignment(job);
                 spawnedCharacter.SetDestroyMarkerOnDeath(true);
             }

@@ -15,18 +15,23 @@ public class BerserkOrb : Artifact {
     public override void ActivateTileObject() {
         if (gridTileLocation != null) {
             base.ActivateTileObject();
-            List<LocationGridTile> tilesInRange = gridTileLocation.GetTilesInRadius(3);
-            for (int i = 0; i < tilesInRange.Count; i++) {
-                LocationGridTile currTile = tilesInRange[i];
-                if(currTile.charactersHere.Count > 0) {
-                    for (int j = 0; j < currTile.charactersHere.Count; j++) {
-                        Character character = currTile.charactersHere[j];
-                        character.traitContainer.AddTrait(character, "Berserked");
-                    }
+            GameManager.Instance.CreateParticleEffectAt(gridTileLocation, PARTICLE_EFFECT.Berserk_Orb_Activate);
+            GameManager.Instance.StartCoroutine(BerserkOrbEffect(gridTileLocation));
+        }
+    }
+    private IEnumerator BerserkOrbEffect(LocationGridTile tileLocation) {
+        yield return new WaitForSeconds(0.5f);
+        List<LocationGridTile> tilesInRange = tileLocation.GetTilesInRadius(3);
+        for (int i = 0; i < tilesInRange.Count; i++) {
+            LocationGridTile currTile = tilesInRange[i];
+            if (currTile.charactersHere.Count > 0) {
+                for (int j = 0; j < currTile.charactersHere.Count; j++) {
+                    Character character = currTile.charactersHere[j];
+                    character.traitContainer.AddTrait(character, "Berserked");
                 }
             }
-            gridTileLocation.structure.RemovePOI(this);
         }
+        tileLocation.structure.RemovePOI(this);
     }
     #endregion
 }

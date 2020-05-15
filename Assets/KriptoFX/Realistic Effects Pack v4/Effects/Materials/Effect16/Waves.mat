@@ -151,4 +151,4 @@ Material:
     - _HeightUVScrollDistort: {r: 8, g: 12, b: 0, a: 0}
     - _MainColor: {r: 1, g: 1, b: 1, a: 1}
     - _Tiling: {r: 800, g: 800, b: 8, a: 8}
-    - _TintColor: {r: 0.27453905, g: 0.77603036, b: 0.5324478, a: 1}
+    - _TintColor: {r: 0.40963185, g: 0, b: 0.9528302, a: 1}

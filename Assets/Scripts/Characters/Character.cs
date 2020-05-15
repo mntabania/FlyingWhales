@@ -5601,7 +5601,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void OnJobAddedToCharacterJobQueue(JobQueueItem job, Character character) {
     }
     public void OnJobRemovedFromCharacterJobQueue(JobQueueItem job, Character character) {
-        if(job == jobComponent.finalJobAssignment) {
+        if(this == character && job == jobComponent.finalJobAssignment) {
+            jobComponent.SetFinalJobAssignment(null);
             Messenger.AddListener(Signals.TICK_STARTED, DissipateAfterFinalJobAssignment);
         }
         JobManager.Instance.OnFinishJob(job);
@@ -5609,7 +5610,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     private void DissipateAfterFinalJobAssignment() {
         Messenger.RemoveListener(Signals.TICK_STARTED, DissipateAfterFinalJobAssignment);
         LocationGridTile deathTile = gridTileLocation;
-        jobComponent.SetFinalJobAssignment(null);
         Death();
         if (deathTile != null && this is Summon) {
             GameManager.Instance.CreateParticleEffectAt(deathTile, PARTICLE_EFFECT.Minion_Dissipate);

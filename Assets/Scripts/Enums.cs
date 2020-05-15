@@ -1537,6 +1537,9 @@ public enum PARTICLE_EFFECT { None, Poison, Freezing, Fire, Burning, Explode, El
     Zombie_Transformation,
     Torture_Cloud,
     Freezing_Object,
+    Necronomicon_Activate,
+    Berserk_Orb_Activate,
+    Artifact,
 }
 public enum PLAYER_SKILL_STATE { Locked, Unlocked, Learned, }
 public enum REACTABLE_EFFECT { Neutral, Positive, Negative, }

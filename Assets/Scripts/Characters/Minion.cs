@@ -367,7 +367,7 @@ public class Minion {
         character.marker.InitialPlaceMarkerAt(tile);
         character.SetIsDead(false);
 
-        PlayerManager.Instance.player.AdjustMana(-EditableValuesManager.Instance.summonMinionManaCost);
+        //PlayerManager.Instance.player.AdjustMana(-EditableValuesManager.Instance.summonMinionManaCost);
 
         SubscribeListeners();
         SetIsSummoned(true);
