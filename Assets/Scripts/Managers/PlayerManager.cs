@@ -346,10 +346,10 @@ public class PlayerManager : MonoBehaviour {
         CheckWinCondition();
     }
     private void OnCharacterCanNoLongerPerform(Character character) {
-        CheckWinCondition();
+        //CheckWinCondition();
     }
     private void OnCharacterCanNoLongerMove(Character character) {
-        CheckWinCondition();
+        //CheckWinCondition();
     }
     private void CheckWinCondition() {
         if (DoesPlayerWin()) {
