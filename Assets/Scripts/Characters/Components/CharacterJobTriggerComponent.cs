@@ -1143,7 +1143,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    }
     }
     private bool IsBuryJobStillApplicable(Character target, NPCSettlement npcSettlement) {
-	    return target.gridTileLocation != null && target.gridTileLocation.IsNextToOrPartOfSettlement(npcSettlement);
+	    return target.gridTileLocation != null && target.gridTileLocation.IsNextToOrPartOfSettlement(npcSettlement) && target.marker != null;
     }
     #endregion
 }

@@ -45,17 +45,20 @@ public class PlayerDataGeneration : MapGenerationComponent {
 			artifact = InnerMapManager.Instance.CreateNewArtifact(ARTIFACT_TYPE.Berserk_Orb);
 			monsterLair.AddPOI(artifact);
 		}
-		
-		//randomly generate 3 Artifacts
-		for (int i = 0; i < 3; i++) {
-			if (artifactChoices.Count == 0) { break; }
-			Region randomRegion = CollectionUtilities.GetRandomElement(GridMap.Instance.allRegions);
-			LocationStructure wilderness = randomRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-			ARTIFACT_TYPE randomArtifact = CollectionUtilities.GetRandomElement(artifactChoices);
-			Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(randomArtifact);
-			wilderness.AddPOI(artifact);
-			artifactChoices.Remove(randomArtifact);
+		else {
+			//randomly generate 3 Artifacts
+			for (int i = 0; i < 3; i++) {
+				if (artifactChoices.Count == 0) { break; }
+				Region randomRegion = CollectionUtilities.GetRandomElement(GridMap.Instance.allRegions);
+				LocationStructure wilderness = randomRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+				ARTIFACT_TYPE randomArtifact = CollectionUtilities.GetRandomElement(artifactChoices);
+				Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(randomArtifact);
+				wilderness.AddPOI(artifact);
+				artifactChoices.Remove(randomArtifact);
+			}
 		}
+		
+		
 		
 		// List<ARTIFACT_TYPE> artifactChoices = UtilityScripts.CollectionUtilities.GetEnumValues<ARTIFACT_TYPE>().ToList();
 		// artifactChoices.Remove(ARTIFACT_TYPE.None);

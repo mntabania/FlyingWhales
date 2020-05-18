@@ -3,17 +3,14 @@ using Quests;
 using Quests.Steps;
 using UnityEngine;
 namespace Tutorial {
-    public class ApplyAnAffliction : TutorialQuest {
-        public override int priority => 40;
+    public class Afflictions : TutorialQuest {
         
-        public ApplyAnAffliction() : base("Apply an Affliction", TutorialManager.Tutorial.Apply_An_Affliction) { }
-
+        public Afflictions() : base("Afflictions", TutorialManager.Tutorial.Afflictions) { }
 
         #region Criteria
         protected override void ConstructCriteria() {
             _activationCriteria = new List<QuestCriteria>() {
-                new PlayerHasNotCastedForSeconds(15f),
-                new PlayerHasNotCompletedTutorialInSeconds(15f)
+                new HasCompletedTutorialQuest(TutorialManager.Tutorial.Torture_Chambers),
             };
         }
         protected override bool HasMetAllCriteria() {
@@ -37,7 +34,14 @@ namespace Tutorial {
                         .SetHoverOverAction(OnHoverAfflictButtonStep)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo),
                     new ExecuteAfflictionStep("Choose an Affliction to apply").SetCompleteAction(OnCompleteExecuteAffliction)
+                ),
+                new QuestStepCollection(
+                    new FlawClickedStep("Click on the added Affliction")
+                        .SetHoverOverAction(OnHoverAfflictDetails)
+                        .SetHoverOutAction(UIManager.Instance.HideSmallInfo),
+                    new FlawTriggeredStep("Trigger it")
                 )
+                
             };
         }
 
@@ -62,6 +66,10 @@ namespace Tutorial {
         private void OnHoverAfflictButtonStep(QuestStepItem item) {
             UIManager.Instance.ShowSmallInfo("The afflict button can be seen beside the selected character's nameplate",
                 TutorialManager.Instance.afflictButtonVideoClip, "How to Afflict", item.hoverPosition);
+        }
+        private void OnHoverAfflictDetails(QuestStepItem item) {
+            UIManager.Instance.ShowSmallInfo("Open the Villager's Info Menu and click on the recently added Affliction.",
+                TutorialManager.Instance.afflictionDetailsVideoClip, "Affliction Details", item.hoverPosition);
         }
         #endregion
     }

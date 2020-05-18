@@ -6,6 +6,7 @@ using Traits;
 using Inner_Maps;
 using Interrupts;
 using Inner_Maps.Location_Structures;
+using UnityEngine.Assertions;
 
 public class ReactionComponent {
     public Character owner { get; private set; }
@@ -588,6 +589,9 @@ public class ReactionComponent {
                 debugLog += "\n-Target is Burning and Character is not Pyrophobic";
                 owner.SetHasSeenFire(true);
                 owner.homeSettlement.settlementJobTriggerComponent.TriggerDouseFire();
+                if (owner.homeSettlement.HasJob(JOB_TYPE.DOUSE_FIRE) == false) {
+                    Debug.LogWarning($"{owner.name} saw a fire in a settlement but no douse fire jobs were created.");
+                }
                 for (int i = 0; i < owner.homeSettlement.availableJobs.Count; i++) {
                     JobQueueItem job = owner.homeSettlement.availableJobs[i];
                     if (job.jobType == JOB_TYPE.DOUSE_FIRE) {

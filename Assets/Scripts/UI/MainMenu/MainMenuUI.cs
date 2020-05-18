@@ -28,6 +28,7 @@ public class MainMenuUI : MonoBehaviour {
     
     [Header("Demo")]
     [SerializeField] private Button startButton;
+    [SerializeField] private Button settingsButton;
     
     private void Awake() {
         Instance = this;
@@ -40,7 +41,8 @@ public class MainMenuUI : MonoBehaviour {
         titleTween.OnValueChangedAnimation(true);
         glowTween.OnValueChangedAnimation(true);
         if (WorldConfigManager.Instance.isDemoWorld) {
-            (startButton.transform as RectTransform).DOAnchorPosY(40f, 1f).SetEase(Ease.OutBack);
+            (startButton.transform as RectTransform).DOAnchorPosY(136f, 1f).SetEase(Ease.Linear);
+            (settingsButton.transform as RectTransform).DOAnchorPosY(92f, 1f).SetEase(Ease.Linear).SetDelay(0.5f);
         } else {
             buttonsTween.OnValueChangedAnimation(true);
         }
