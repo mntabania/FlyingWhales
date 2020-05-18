@@ -208,6 +208,7 @@ public static class Signals {
     /// Parameters: Region selectedRegion
     /// </summary>
     public static string REGION_SELECTED = "OnRegionSelected";
+    public static string FLAW_CLICKED = "OnFlawClicked";
     #endregion
 
     #region Quest Signals
@@ -364,6 +365,7 @@ public static class Signals {
     public static string HARASS_ACTIVATED = "OnHarassActivated";
     public static string DEFEND_ACTIVATED = "OnDefendActivated";
     public static string INVADE_ACTIVATED = "OnInvadeActivated";
+    public static string FLAW_TRIGGERED_BY_PLAYER = "OnFlawTriggeredByPlayer";
     #endregion
 
     #region Interaction

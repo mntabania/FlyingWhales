@@ -377,6 +377,9 @@ public class CharacterInfoUI : InfoUIBase {
                 yesBtnInactiveHoverExitAction: UIManager.Instance.HideSmallInfo
             );
             normalTraitsEventLbl.ResetHighlightValues();
+            if (trait.type == TRAIT_TYPE.FLAW) {
+                Messenger.Broadcast(Signals.FLAW_CLICKED);
+            }
         }
     }
     private IEnumerator HoverOutTraitAfterClick() {
@@ -406,6 +409,7 @@ public class CharacterInfoUI : InfoUIBase {
                 noBtnActive: false
             );
         }
+        Messenger.Broadcast(Signals.FLAW_TRIGGERED_BY_PLAYER);
     }
     private void OnClickRemoveTrait(Trait trait) {
         activeCharacter.traitContainer.RemoveTrait(activeCharacter, trait);

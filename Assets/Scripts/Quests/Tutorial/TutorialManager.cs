@@ -19,7 +19,7 @@ namespace Tutorial {
             Invade_A_Village = 5,
             Regional_Map = 6,
             Share_An_Intel = 9,
-            Apply_An_Affliction = 10,
+            Afflictions = 10,
             Torture_Chambers = 11,
             Threat = 12,
             Counterattack = 13,
@@ -53,6 +53,7 @@ namespace Tutorial {
         public Texture counterattackPicture;
         public Texture divineInterventionPicture;
         public Texture seizeImage;
+        public VideoClip afflictionDetailsVideoClip;
 
         #region Monobehaviours
         private void Awake() {
