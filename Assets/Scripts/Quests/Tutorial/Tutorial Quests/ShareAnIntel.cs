@@ -11,9 +11,7 @@ namespace Tutorial {
         #region Criteria
         protected override void ConstructCriteria() {
             _activationCriteria = new List<QuestCriteria>() {
-                new PlayerHasNotCastedForSeconds(15f),
-                new PlayerHasNotCompletedTutorialInSeconds(15f),
-                new HasCompletedTutorialQuest(TutorialManager.Tutorial.Build_A_Kennel)
+                new HasCompletedTutorialQuest(TutorialManager.Tutorial.Apply_An_Affliction)
             };
             Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, CompleteQuest);
         }

@@ -363,6 +363,7 @@ public static class Signals {
     public static string ACTIVE_INTEL_SET = "OnPlayerActiveIntelSet";
     public static string HARASS_ACTIVATED = "OnHarassActivated";
     public static string DEFEND_ACTIVATED = "OnDefendActivated";
+    public static string INVADE_ACTIVATED = "OnInvadeActivated";
     #endregion
 
     #region Interaction
@@ -518,6 +519,10 @@ public static class Signals {
     /// Parameters: Quest
     /// </summary>
     public static string REACTION_QUEST_ACTIVATED = "OnReactionQuestActivated";
+    /// <summary>
+    /// Parameters: QuestItem
+    /// </summary>
+    public static string QUEST_STEP_HOVERED = "OnQuestStepHovered";
     #endregion
     
     #region Tutorial
@@ -563,6 +568,7 @@ public static class Signals {
     /// Parameters IPointOfInterest target
     /// </summary>
     public static string POISON_EXPLOSION_TRIGGERED = "OnPoisonExplosionTriggered";
+    public static string ELECTRIC_CHAIN_TRIGGERED = "OnElectricChainTriggered";
     #endregion
 
     public static Dictionary<string, SignalMethod[]> orderedSignalExecution = new Dictionary<string, SignalMethod[]>() {

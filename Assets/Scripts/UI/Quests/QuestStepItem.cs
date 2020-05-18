@@ -79,10 +79,10 @@ public class QuestStepItem : PooledObject {
 
     #region Hover
     public void ShowTooltip() {
-        _step.onHoverOverAction?.Invoke(this);
+        _step.ExecuteHoverAction(this);
     }
     public void HideTooltip() {
-        _step.onHoverOutAction?.Invoke();
+        _step.ExecuteHoverOutAction();
     }
     #endregion
 

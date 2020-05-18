@@ -68,6 +68,13 @@ namespace Quests.Steps {
             this.onHoverOutAction = onHoverOutAction;
             return this;
         }
+        public void ExecuteHoverAction(QuestStepItem item) {
+            onHoverOverAction?.Invoke(item);
+            Messenger.Broadcast(Signals.QUEST_STEP_HOVERED, this);
+        }
+        public void ExecuteHoverOutAction() {
+            onHoverOutAction?.Invoke();
+        }
         #endregion
         
         #region Cleanup

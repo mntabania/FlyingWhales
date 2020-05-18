@@ -13,6 +13,7 @@ public class InvadeData : PlayerAction {
     #region Overrides
     public override void ActivateAbility(HexTile targetHex) {
         PlayerUI.Instance.OnClickHarassDefendInvade(targetHex, "invade");
+        Messenger.Broadcast(Signals.INVADE_ACTIVATED);
     }
     public override bool CanPerformAbilityTowards(HexTile targetHex) {
         bool canPerform = base.CanPerformAbilityTowards(targetHex);

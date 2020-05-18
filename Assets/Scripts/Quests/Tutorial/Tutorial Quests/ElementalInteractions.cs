@@ -1,21 +1,21 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using Quests;
 using Quests.Steps;
 using UnityEngine;
 namespace Tutorial {
-    public class CastMeteor : TutorialQuest {
+    [UsedImplicitly]
+    public class ElementalInteractions : TutorialQuest {
 
         public override int priority => 1;
         
-        public CastMeteor() : base("Cast Meteor", TutorialManager.Tutorial.Cast_Meteor) { }
+        public ElementalInteractions() : base("Elemental Interactions", TutorialManager.Tutorial.Elemental_Interactions) { }
 
         #region Criteria
         protected override void ConstructCriteria() {
             _activationCriteria = new List<QuestCriteria>() {
-                new HasCompletedTutorialQuest(TutorialManager.Tutorial.Basic_Controls),
-                new PlayerHasNotCastedForSeconds(15f),
-                new PlayerHasNotCompletedTutorialInSeconds(15f)
+                new HasCompletedTutorialQuest(TutorialManager.Tutorial.Share_An_Intel)
             };
         }
         #endregion
@@ -27,9 +27,19 @@ namespace Tutorial {
                     .SetHoverOverAction(OnHoverShowSpell)
                     .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
                 ),
-                new QuestStepCollection(new ChooseSpellStep(SPELL_TYPE.METEOR, "Click on Meteor")),
-                new QuestStepCollection(new ExecuteSpellStep(SPELL_TYPE.METEOR, "Cast on any tile")
-                    .SetCompleteAction(OnCompleteExecuteSpell))
+                new QuestStepCollection(
+                    new ExecuteSpellStep(SPELL_TYPE.RAIN, "Cast Rain")
+                        .SetCompleteAction(OnCompleteExecuteSpell),
+                    new TriggerElectricChainStep("Electrocute Wet Tiles")
+                        .SetHoverOverAction(OnHoverElectric)
+                        .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
+                ),
+                new QuestStepCollection(
+                    new ExecuteSpellStep(SPELL_TYPE.SPLASH_POISON, "Cast Splash Poison"),
+                     new TriggerPoisonExplosionStep("Ignite Poisoned Tiles")
+                        .SetHoverOverAction(OnHoverFire)
+                        .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
+                ),
             };
         }
         #endregion
@@ -48,6 +58,14 @@ namespace Tutorial {
                 "These are powerful magic that you may cast on a tile or an area of the map. " +
                 "Spells do not have any Mana Cost but they have a limited number of Charges. " +
                 "All Spells also have a short Cooldown.", TutorialManager.Instance.spellsVideoClip);
+        }
+        private void OnHoverElectric(QuestStepItem item) {
+            UIManager.Instance.ShowSmallInfo("You can spread Electric damage and zap characters on Wet tiles. Try to cast Lightning on a Wet tile.", 
+                item.hoverPosition, "Electric");
+        }
+        private void OnHoverFire(QuestStepItem item) {
+            UIManager.Instance.ShowSmallInfo("You can trigger a powerful explosion by applying Fire damage to a Poisoned tile or object. Try to cast a Meteor on a Poisoned tile.", 
+                item.hoverPosition, "Fire");
         }
         #endregion
     }

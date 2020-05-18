@@ -34,8 +34,11 @@ namespace Tutorial {
                     new StructureBuiltStep(STRUCTURE_TYPE.TORTURE_CHAMBERS, "Choose the Torture Chamber")
                         .SetCompleteAction(OnStructureBuilt)),
                 new QuestStepCollection(
-                    new DropCharacterAtStructureRoomStep<TortureRoom>("Seize a Villager.")
+                    new ExecutedPlayerActionStep(SPELL_TYPE.SEIZE_CHARACTER, "Seize a Villager.")
                         .SetHoverOverAction(OnHoverSeizeCharacter)
+                        .SetHoverOutAction(UIManager.Instance.HideSmallInfo),
+                    new DropCharacterAtStructureRoomStep<TortureRoom>("Drop at a Chamber")
+                        .SetHoverOverAction(OnHoverChamber)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo),
                     new ClickOnRoomStep("Click on that chamber", IsClickedRoomValid),
                     new ExecutedPlayerActionStep(SPELL_TYPE.TORTURE, "Click on Torture button")
@@ -72,6 +75,10 @@ namespace Tutorial {
                 TutorialManager.Instance.buildStructureButton, "Building Structures", stepItem.hoverPosition);
         }
         private void OnHoverSeizeCharacter(QuestStepItem stepItem) {
+            UIManager.Instance.ShowSmallInfo("You can seize a villager and then drop it at any empty tile.", 
+                TutorialManager.Instance.seizeImage, "Seize", stepItem.hoverPosition);
+        }
+        private void OnHoverChamber(QuestStepItem stepItem) {
             UIManager.Instance.ShowSmallInfo("The Torture Chambers have 3 separate rooms. Each one can be occupied by one Villager. Drop a seized Villager at one of the chambers to proceed.", 
                 TutorialManager.Instance.chambersVideo, "Chambers", stepItem.hoverPosition);
         }

@@ -211,6 +211,7 @@ public class CombatManager : MonoBehaviour {
         if(damage >= 0) {
             damage = -1;
         }
+        Messenger.Broadcast(Signals.ELECTRIC_CHAIN_TRIGGERED);
         List<ITraitable> traitables = new List<ITraitable>();
         if (traitable.gridTileLocation != null) {
             List<LocationGridTile> tiles = traitable.gridTileLocation.GetTilesInRadius(1, includeTilesInDifferentStructure: true);

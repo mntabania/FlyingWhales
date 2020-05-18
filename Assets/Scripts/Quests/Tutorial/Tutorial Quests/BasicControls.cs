@@ -14,6 +14,9 @@ namespace Tutorial {
             };
         }
         protected override void ConstructSteps() {
+            QuestStep hoveredStep = new QuestStepHoveredStep()
+                .SetHoverOverAction(OnHoverHoverThis)
+                .SetHoverOutAction(UIManager.Instance.HideSmallInfo);
             QuestStep look = new LookAroundStep()
                 .SetHoverOverAction(OnHoverLookAround)
                 .SetHoverOutAction(UIManager.Instance.HideSmallInfo);
@@ -30,13 +33,20 @@ namespace Tutorial {
             }
 
             steps = new List<QuestStepCollection>() {
-                new QuestStepCollection(look, unpause),
+                new QuestStepCollection(hoveredStep, look, unpause),
                 new QuestStepCollection(objectClick, characterClick),
                 new QuestStepCollection(structureClick, hexTileClick),
             };
         }
 
         #region Step Helpers
+        private void OnHoverHoverThis(QuestStepItem stepItem) {
+            UIManager.Instance.ShowSmallInfo(
+                "Some steps in a checklist will have a different text color, like this one. " +
+                "These steps provide you with more information on how to complete them when you hover over it.", 
+                stepItem.hoverPosition, "Checklist Help"
+            );
+        }
         private void OnHoverLookAround(QuestStepItem stepItem) {
             UIManager.Instance.ShowSmallInfo(
                  "You can move the camera around by doing any of the following: " +

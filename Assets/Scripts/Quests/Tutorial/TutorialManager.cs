@@ -14,11 +14,10 @@ namespace Tutorial {
             Basic_Controls = 0, 
             Build_A_Kennel = 1, 
             Defend_A_Structure = 2, 
-            Cast_Meteor = 3, 
+            Elemental_Interactions = 3, 
             Character_Info = 4,
-            Harass_A_Village = 5,
+            Invade_A_Village = 5,
             Regional_Map = 6,
-            Trigger_Poison_Explosion = 7,
             Share_An_Intel = 9,
             Apply_An_Affliction = 10,
             Torture_Chambers = 11,
@@ -53,6 +52,7 @@ namespace Tutorial {
         public Texture threatPicture;
         public Texture counterattackPicture;
         public Texture divineInterventionPicture;
+        public Texture seizeImage;
 
         #region Monobehaviours
         private void Awake() {
