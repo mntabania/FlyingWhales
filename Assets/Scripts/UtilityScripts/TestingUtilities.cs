@@ -3,8 +3,20 @@ namespace UtilityScripts {
     public static class TestingUtilities {
         
         public static void ShowLocationInfo(Region region) {
+            string summary = $"{region.name} Info:";
+            summary += $"\nActive burning sources {region.innerMap.activeBurningSources.Count.ToString()}";
+
+            for (int i = 0; i < region.innerMap.activeBurningSources.Count; i++) {
+                BurningSource source = region.innerMap.activeBurningSources[i];
+                summary += $"\n{source}: ";
+                for (int j = 0; j < source.objectsOnFire.Count; j++) {
+                    summary += $"\n\t{source.objectsOnFire[j]}";    
+                }
+            }
+            
             List<NPCSettlement> settlements = GetSettlementsInRegion(region);
-            string summary = "Locations Job Queue";
+            summary += $"\n-----------------------------";
+            summary += "\nLocations Job Queue";
             for (int i = 0; i < settlements.Count; i++) {
                 NPCSettlement npcSettlement = settlements[i];
                 summary += $"\n{npcSettlement.name} Location Job Queue: ";

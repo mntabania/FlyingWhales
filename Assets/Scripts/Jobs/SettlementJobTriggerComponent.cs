@@ -569,7 +569,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 			List<JobQueueItem> jobs = _owner.GetJobs(JOB_TYPE.DOUSE_FIRE);
 			for (int i = 0; i < jobs.Count; i++) {
 				JobQueueItem jqi = jobs[i];
-				if (jqi.assignedCharacter == null) {
+				if (jqi.assignedCharacter == null || (jqi.assignedCharacter.stateComponent.currentState is DouseFireState) == false) {
 					jqi.ForceCancelJob(false, "no more fires");	
 				}
 			}

@@ -31,6 +31,14 @@ public class StructureWallObject : MapObject<StructureWallObject>, ITraitable {
         visual.Initialize(this);
     }
 
+    #region Events
+    private void OnWallDestroyed() {
+        gridTileLocation.SetTileType(LocationGridTile.Tile_Type.Empty);
+        gridTileLocation.CreateSeamlessEdgesForSelfAndNeighbours();
+        traitContainer.RemoveAllTraits(this);
+    }
+    #endregion
+
     #region HP
     private void UpdateMaxHPBasedOnResource() {
         switch (madeOf) {
@@ -59,7 +67,7 @@ public class StructureWallObject : MapObject<StructureWallObject>, ITraitable {
         }
         currentHP += amount;
         currentHP = Mathf.Clamp(currentHP, 0, maxHP);
-        if (amount <= 0) {
+        if (amount <= 0 && currentHP > 0) {
             //ELEMENTAL_TYPE elementalType = ELEMENTAL_TYPE.Normal;
             //if(source != null && source is Character) {
             //    elementalType = (source as Character).combatComponent.elementalDamage.type;
@@ -86,8 +94,7 @@ public class StructureWallObject : MapObject<StructureWallObject>, ITraitable {
         
         if (currentHP <= 0) {
             //wall has been destroyed
-            gridTileLocation.SetTileType(LocationGridTile.Tile_Type.Empty);
-            gridTileLocation.CreateSeamlessEdgesForSelfAndNeighbours();
+            OnWallDestroyed();
         } else if (currentHP >= maxHP) {
             gridTileLocation.SetTileType(LocationGridTile.Tile_Type.Wall);
             gridTileLocation.CreateSeamlessEdgesForSelfAndNeighbours();

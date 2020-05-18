@@ -143,8 +143,8 @@ namespace Traits {
         }
         public void SetSourceOfBurning(BurningSource source, ITraitable obj) {
             sourceOfBurning = source;
-            if (sourceOfBurning != null && obj is IPointOfInterest poiOnFire) {
-                source.AddObjectOnFire(poiOnFire);
+            if (sourceOfBurning != null) {
+                source.AddObjectOnFire(obj);
             }
         }
         private void PerTickEnded() {

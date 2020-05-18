@@ -16,7 +16,9 @@ public class BurningSource {
         Messenger.AddListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
     }
     public void AddObjectOnFire(ITraitable poi) {
-        objectsOnFire.Add(poi);
+        if (objectsOnFire.Contains(poi) == false) {
+            objectsOnFire.Add(poi);    
+        }
     }
     private void RemoveObjectOnFire(ITraitable poi) {
         if (objectsOnFire.Remove(poi)) {
