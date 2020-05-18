@@ -1122,8 +1122,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     public bool CanBuildDemonicStructure() {
         //Cannot build on settlements and hextiles with blueprints right now
         if(/*isCorrupted && isCurrentlyBeingCorrupted == false &&*/ settlementOnTile == null && landmarkOnTile == null 
-               && elevationType != ELEVATION.WATER && elevationType != ELEVATION.MOUNTAIN &&
-            PlayerManager.Instance.player.mana >= EditableValuesManager.Instance.buildStructureManaCost && _buildParticles == null) {
+               && elevationType != ELEVATION.WATER && elevationType != ELEVATION.MOUNTAIN 
+               /*&& PlayerManager.Instance.player.mana >= EditableValuesManager.Instance.buildStructureManaCost*/ && _buildParticles == null) {
 
             //TODO:
             // //if it has any build spots that have a blueprint on them, do not allow

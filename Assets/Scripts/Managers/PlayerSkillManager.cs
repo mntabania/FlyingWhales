@@ -51,7 +51,13 @@ public class PlayerSkillManager : MonoBehaviour {
         , SPELL_TYPE.DEMON_GLUTTONY, SPELL_TYPE.DEMON_SLOTH, SPELL_TYPE.DEMON_ENVY, SPELL_TYPE.DEMON_GREED,
     };
 
-    private SPELL_TYPE[] allSummonPlayerSkills = { SPELL_TYPE.SKELETON_MARAUDER, };
+    private SPELL_TYPE[] allSummonPlayerSkills = { SPELL_TYPE.SKELETON_MARAUDER, SPELL_TYPE.WOLF, SPELL_TYPE.GOLEM, SPELL_TYPE.INCUBUS, SPELL_TYPE.SUCCUBUS, SPELL_TYPE.FIRE_ELEMENTAL, SPELL_TYPE.KOBOLD, SPELL_TYPE.GHOST,
+    SPELL_TYPE.ABOMINATION, SPELL_TYPE.MIMIC, SPELL_TYPE.PIG, SPELL_TYPE.CHICKEN, SPELL_TYPE.SHEEP, SPELL_TYPE.SLUDGE,
+    SPELL_TYPE.WATER_NYMPH, SPELL_TYPE.WIND_NYMPH, SPELL_TYPE.ICE_NYMPH,
+    SPELL_TYPE.ELECTRIC_WISP, SPELL_TYPE.EARTHEN_WISP, SPELL_TYPE.FIRE_WISP,
+    SPELL_TYPE.GRASS_ENT, SPELL_TYPE.SNOW_ENT, SPELL_TYPE.CORRUPT_ENT, SPELL_TYPE.DESERT_ENT, SPELL_TYPE.FOREST_ENT,
+    SPELL_TYPE.GIANT_SPIDER, SPELL_TYPE.SMALL_SPIDER,
+    SPELL_TYPE.SKELETON_ARCHER, SPELL_TYPE.SKELETON_BARBARIAN, SPELL_TYPE.SKELETON_CRAFTSMAN, SPELL_TYPE.SKELETON_DRUID, SPELL_TYPE.SKELETON_HUNTER, SPELL_TYPE.SKELETON_MAGE, SPELL_TYPE.SKELETON_KNIGHT, SPELL_TYPE.SKELETON_MINER, SPELL_TYPE.SKELETON_NOBLE, SPELL_TYPE.SKELETON_PEASANT, SPELL_TYPE.SKELETON_SHAMAN, SPELL_TYPE.SKELETON_STALKER, };
 
     private void Awake() {
         if (Instance == null) {
@@ -216,6 +222,14 @@ public class PlayerSkillManager : MonoBehaviour {
     public SummonPlayerSkill GetSummonPlayerSkillData(SPELL_TYPE type) {
         if (allSummonPlayerSkillsData.ContainsKey(type)) {
             return allSummonPlayerSkillsData[type];
+        }
+        return null;
+    }
+    public SummonPlayerSkill GetSummonPlayerSkillData(RACE race, string className) {
+        foreach (SummonPlayerSkill value in allSummonPlayerSkillsData.Values) {
+            if(value.race == race && value.className == className) {
+                return value;
+            }
         }
         return null;
     }

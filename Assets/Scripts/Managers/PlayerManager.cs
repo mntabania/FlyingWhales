@@ -360,7 +360,7 @@ public class PlayerManager : MonoBehaviour {
     }
     private void FinalCheckWinCondition() {
         if (DoesPlayerWin()) {
-            player.SaveSummons();
+            //player.SaveSummons();
             player.SaveTileObjects();
             PlayerUI.Instance.WinGameOver();
         }

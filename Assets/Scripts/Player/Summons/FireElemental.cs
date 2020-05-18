@@ -3,13 +3,13 @@ using Traits;
 
 public class FireElemental : Summon {
 
-    public const string ClassName = "FireElemental";
+    public const string ClassName = "Fire Elemental";
     
     public override string raceClassName => $"Fire Elemental";
     
-    public FireElemental() : base(SUMMON_TYPE.FireElemental, "FireElemental", RACE.ELEMENTAL,
+    public FireElemental() : base(SUMMON_TYPE.Fire_Elemental, ClassName, RACE.ELEMENTAL,
         UtilityScripts.Utilities.GetRandomGender()) { }
-    public FireElemental(string className) : base(SUMMON_TYPE.FireElemental, className, RACE.ELEMENTAL,
+    public FireElemental(string className) : base(SUMMON_TYPE.Fire_Elemental, className, RACE.ELEMENTAL,
         UtilityScripts.Utilities.GetRandomGender()) { }
     public FireElemental(SaveDataCharacter data) : base(data) { }
     public override void Initialize() {

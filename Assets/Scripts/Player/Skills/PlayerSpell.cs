@@ -209,6 +209,7 @@ public class SpellData : IPlayerSkill {
     public int cooldown { get; private set; }
     public int threat { get; private set; }
     public int threatPerHour { get; private set; }
+    public bool isInUse { get; private set; }
 
     public int currentCooldownTick { get; private set; }
     public bool hasCharges => charges != -1;
@@ -223,6 +224,7 @@ public class SpellData : IPlayerSkill {
         threat = 0;
         threatPerHour = 0;
         currentCooldownTick = cooldown;
+        isInUse = false;
     }
 
     #region Virtuals
@@ -363,6 +365,9 @@ public class SpellData : IPlayerSkill {
     public void SetCharges(int amount) {
         charges = amount;
     }
+    public void AdjustCharges(int amount) {
+        charges += amount;
+    }
     public void SetManaCost(int amount) {
         manaCost = amount;
     }
@@ -375,6 +380,9 @@ public class SpellData : IPlayerSkill {
     }
     public void SetThreatPerHour(int amount) {
         threatPerHour = amount;
+    }
+    public void SetIsInUse(bool state) {
+        isInUse = state;
     }
     #endregion
 }

@@ -28,7 +28,8 @@ public class SaveDataPlayer {
         learnedSkills.Add(afflict);
         PlayerSkillTreeNodeData buildDemonicStructure = new PlayerSkillTreeNodeData() { skill = SPELL_TYPE.BUILD_DEMONIC_STRUCTURE, charges = -1, cooldown = -1, manaCost = -1 };
         learnedSkills.Add(buildDemonicStructure);
-
+        PlayerSkillTreeNodeData breedMonster = new PlayerSkillTreeNodeData() { skill = SPELL_TYPE.BREED_MONSTER, charges = -1, cooldown = 48, manaCost = 10 };
+        learnedSkills.Add(breedMonster);
         InitializeTutorialData();
     }
 

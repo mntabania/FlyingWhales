@@ -3,13 +3,13 @@ using Traits;
 
 public class GiantSpider : Summon {
 
-    public const string ClassName = "GiantSpider";
+    public const string ClassName = "Giant Spider";
     
     public override string raceClassName => $"Giant Spider";
     
-    public GiantSpider() : base(SUMMON_TYPE.GiantSpider, ClassName, RACE.SPIDER,
+    public GiantSpider() : base(SUMMON_TYPE.Giant_Spider, ClassName, RACE.SPIDER,
         UtilityScripts.Utilities.GetRandomGender()) { }
-    public GiantSpider(string className) : base(SUMMON_TYPE.GiantSpider, className, RACE.SPIDER,
+    public GiantSpider(string className) : base(SUMMON_TYPE.Giant_Spider, className, RACE.SPIDER,
         UtilityScripts.Utilities.GetRandomGender()) { }
     public GiantSpider(SaveDataCharacter data) : base(data) { }
 

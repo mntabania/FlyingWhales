@@ -5,6 +5,7 @@ using Inner_Maps;
 
 public class SummonPlayerSkill : SpellData {
     public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.SUMMON; } }
+    public RACE race { get; protected set; }
     public string className { get; protected set; }
     public SUMMON_TYPE summonType { get; protected set; }
 

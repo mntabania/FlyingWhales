@@ -18,16 +18,28 @@ public class SummonMinionPlayerSkillNameplateItem : NameplateItem<SpellData> {
     public override void SetObject(SpellData o) {
         base.SetObject(o);
         spellData = o;
-        mainLbl.text = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(spellData.type.ToString());
+        mainLbl.text = spellData.name;
         subLbl.text = string.Empty;
         SetPortrait();
     }
     private void SetPortrait() {
-        string[] raceClass = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(spellData.type.ToString()).Split(' ');
-        string race = raceClass[0];
-        string className = raceClass[1];
+        //string[] raceClass = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(spellData.type.ToString()).Split(' ');
+        RACE race = RACE.NONE;
+        string className = string.Empty;
 
-        classPortrait.GeneratePortrait(CharacterManager.Instance.GenerateRandomPortrait((RACE)System.Enum.Parse(typeof(RACE), race.ToUpper()), GENDER.MALE, className));
+        if(spellData is MinionPlayerSkill minionPlayerSkill) {
+            race = minionPlayerSkill.race;
+            className = minionPlayerSkill.className;
+        } else if (spellData is SummonPlayerSkill summonPlayerSkill) {
+            race = summonPlayerSkill.race;
+            className = summonPlayerSkill.className;
+        }
+
+        if(race != RACE.NONE && className != string.Empty) {
+            classPortrait.GeneratePortrait(CharacterManager.Instance.GenerateRandomPortrait(race, GENDER.MALE, className));
+        } else {
+            throw new System.Exception("Trying to create portrait for " + spellData.name + " but Race or Class is None");
+        }
         //string className = string.Empty;
         //if (spellData is SummonPlayerSkill summonSkill) {
         //    className = summonSkill.className;

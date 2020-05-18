@@ -5,7 +5,7 @@ using UnityEngine.Assertions;
 
 public class PlayerSkillComponent {
     public Player player { get; private set; }
-    public List<PlayerSkillTreeNodeData> nodesData { get; protected set; }
+    //public List<PlayerSkillTreeNodeData> nodesData { get; protected set; }
     public List<SPELL_TYPE> spells { get; protected set; }
     public List<SPELL_TYPE> afflictions { get; protected set; }
     public List<SPELL_TYPE> playerActions { get; protected set; }
@@ -18,7 +18,7 @@ public class PlayerSkillComponent {
 
     public PlayerSkillComponent(Player player) {
         this.player = player;
-        nodesData = new List<PlayerSkillTreeNodeData>();
+        //nodesData = new List<PlayerSkillTreeNodeData>();
         spells = new List<SPELL_TYPE>();
         afflictions = new List<SPELL_TYPE>();
         playerActions = new List<SPELL_TYPE>();
@@ -31,30 +31,28 @@ public class PlayerSkillComponent {
     }
 
     #region Skill Tree
-    public void AddPlayerSkillTreeNodeData(PlayerSkillTreeNodeData node) {
-        nodesData.Add(node);
-        SetPlayerSkillData(node);
-        //TODO: Save
-        //SaveManager.Instance.SaveCurrentStateOfWorld();
+    public void AddPlayerSkill(SpellData spellData, int charges, int manaCost, int cooldown, int threat, int threatPerHour) {
+        CategorizePlayerSkill(spellData);
+        spellData.SetMaxCharges(charges);
+        spellData.SetCharges(charges);
+        spellData.SetCooldown(cooldown);
+        spellData.SetManaCost(manaCost);
+        spellData.SetThreat(threat);
+        spellData.SetThreatPerHour(threatPerHour);
     }
-    public bool RemovePlayerSkillTreeNodeData(PlayerSkillTreeNodeData node) {
-        return nodesData.Remove(node);
-    }
-    public bool RemovePlayerSkillTreeNodeData(SPELL_TYPE skillType) {
-        for (int i = 0; i < nodesData.Count; i++) {
-            if (nodesData[i].skill == skillType) {
-                nodesData.RemoveAt(i);
-                return true;
-            }
+    public void AddCharges(SPELL_TYPE spellType, int amount) {
+        SpellData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(spellType);
+        if (spellData.isInUse) {
+            spellData.AdjustCharges(amount);
+        } else {
+            AddPlayerSkill(spellData, amount, -1, -1, 0, 0);
         }
-        return false;
     }
     public void LoadPlayerSkillTreeNodeData(SaveDataPlayer save) {
-        nodesData = save.learnedSkills;
         if (PlayerSkillManager.Instance.unlockAllSkills || WorldConfigManager.Instance.isDemoWorld) {
             PopulateDevModeSkills();
         } else {
-            PopulateAllSkills();
+            PopulateAllSkills(save.learnedSkills);
         }
     }
     public void LoadSummons(SaveDataPlayer save) {
@@ -70,16 +68,16 @@ public class PlayerSkillComponent {
 
     #region Utilities
     public bool CanAfflict(SPELL_TYPE type) {
-        return afflictions.Contains(type);
+        return PlayerSkillManager.Instance.GetAfflictionData(type).isInUse;
     }
     public bool CanDoPlayerAction(SPELL_TYPE type) {
-        return playerActions.Contains(type);
+        return PlayerSkillManager.Instance.GetPlayerActionData(type).isInUse;
     }
     public bool CanBuildDemonicStructure(SPELL_TYPE type) {
-        return demonicStructuresSkills.Contains(type);
+        return PlayerSkillManager.Instance.GetDemonicStructureSkillData(type).isInUse;
     }
     public bool CanCastSpell(SPELL_TYPE type) {
-        return spells.Contains(type);
+        return PlayerSkillManager.Instance.GetSpellData(type).isInUse;
     }
     public bool HasAnyAvailableAffliction() {
         for (int i = 0; i < afflictions.Count; i++) {
@@ -122,14 +120,16 @@ public class PlayerSkillComponent {
         CategorizePlayerSkill(buildDemonicStructure);
         SpellData torture = PlayerSkillManager.Instance.GetPlayerSkillData(SPELL_TYPE.TORTURE);
         CategorizePlayerSkill(torture);
-        
+        SpellData breedMonster = PlayerSkillManager.Instance.GetPlayerSkillData(SPELL_TYPE.BREED_MONSTER);
+        AddPlayerSkill(breedMonster, -1, 10, 48, 0, 0);
+
         //For Demo
         if (WorldConfigManager.Instance.isDemoWorld) {
             SpellData rain = PlayerSkillManager.Instance.GetPlayerSkillData(SPELL_TYPE.RAIN);
             CategorizePlayerSkill(rain);    
         }
     }
-    private void PopulateAllSkills() {
+    private void PopulateAllSkills(List<PlayerSkillTreeNodeData> nodesData) {
         if (nodesData != null) {
             for (int i = 0; i < nodesData.Count; i++) {
                 SetPlayerSkillData(nodesData[i]);
@@ -145,7 +145,6 @@ public class PlayerSkillComponent {
         spellData.SetManaCost(node.manaCost);
         spellData.SetThreat(node.threat);
         spellData.SetThreatPerHour(node.threatPerHour);
-
     }
     private void SetPlayerSkillData(SPELL_TYPE skill, PlayerSkillTreeNode node) {
         SpellData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(skill);
@@ -159,6 +158,7 @@ public class PlayerSkillComponent {
     }
     private void CategorizePlayerSkill(SpellData spellData) {
         Assert.IsNotNull(spellData, "Given spell data in CategorizePlayerSkill is null!");
+        spellData.SetIsInUse(true);
         if (spellData.category == SPELL_CATEGORY.AFFLICTION) {
             afflictions.Add(spellData.type);
         } else if (spellData.category == SPELL_CATEGORY.DEMONIC_STRUCTURE) {

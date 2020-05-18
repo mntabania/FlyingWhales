@@ -5,12 +5,14 @@ using UnityEngine;
 
 public class MinionPlayerSkill : SpellData {
     public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.MINION; } }
+    public RACE race { get; protected set; }
     public string className { get; protected set; }
     public int spawnCooldown { get; protected set; }
 
     private int _currentSpawnCooldown;
 
     public MinionPlayerSkill() : base() {
+        race = RACE.DEMON;
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
         spawnCooldown = 48;
     }

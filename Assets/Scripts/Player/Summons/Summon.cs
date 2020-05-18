@@ -286,6 +286,7 @@ public class Summon : Character, IWorldObject {
         //() => PlayerManager.Instance.player.seizeComponent.SeizePOI(this));
 
         AddPlayerAction(SPELL_TYPE.SEIZE_MONSTER);
+        AddPlayerAction(SPELL_TYPE.BREED_MONSTER);
     }
     #endregion
 
