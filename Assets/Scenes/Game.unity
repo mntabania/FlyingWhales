@@ -38840,6 +38840,7 @@ MonoBehaviour:
   seizeImage: {fileID: 2800000, guid: 888f32f7b8a145e46903afea021a6af7, type: 3}
   afflictionDetailsVideoClip: {fileID: 32900000, guid: 18d4774d355cfcc41bf4e4a016ee7d91,
     type: 3}
+  breedVideoClip: {fileID: 32900000, guid: aa8529621f6941a4fa8bbdfd65609b99, type: 3}
 --- !u!4 &711025101 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4243562867990628, guid: c51738521ec0ac14abf6fc9fd57b44d9,

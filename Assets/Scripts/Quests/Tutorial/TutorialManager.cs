@@ -54,6 +54,7 @@ namespace Tutorial {
         public Texture divineInterventionPicture;
         public Texture seizeImage;
         public VideoClip afflictionDetailsVideoClip;
+        public VideoClip breedVideoClip;
 
         #region Monobehaviours
         private void Awake() {

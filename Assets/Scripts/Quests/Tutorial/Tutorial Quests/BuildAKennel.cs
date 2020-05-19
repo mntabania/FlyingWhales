@@ -31,9 +31,15 @@ namespace Tutorial {
                 new QuestStepCollection(
                     new ClickOnEmptyAreaStep(), 
                     new ObjectPickerShownStep("Click on Build Structure button", "Demonic Structure"), 
-                    new StructureBuiltStep(STRUCTURE_TYPE.THE_KENNEL, "Build a Kennel")
-                    ),
-                new QuestStepCollection(new DropCharacterAtStructureStep(STRUCTURE_TYPE.THE_KENNEL, typeof(Summon), "Seize a monster and drop it at the Kennel."))
+                    new StructureBuiltStep(STRUCTURE_TYPE.THE_KENNEL, "Choose the Kennel")
+                ),
+                new QuestStepCollection(
+                    new DropCharacterAtStructureStep(STRUCTURE_TYPE.THE_KENNEL, typeof(Summon), "Seize a monster and drop it at the Kennel."),
+                    new ClickOnCharacterStep("Click on the monster", IsCharacterValid),
+                    new ExecutedPlayerActionStep(SPELL_TYPE.BREED_MONSTER, "Breed it.")
+                        .SetHoverOverAction(OnHoverBreed)
+                        .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
+                )
             };
         }
         public override void Activate() {
@@ -56,13 +62,15 @@ namespace Tutorial {
         #endregion
 
         #region Step Completion Actions
-        private void OnKennelBuilt() {
-            UIManager.Instance.generalConfirmationWithVisual.ShowGeneralConfirmation("Demonic Structures",
-                "These are unique demonic structures that you can build on unoccupied Areas. " +
-                "Each structure type has a unique use that may aid you in your invasion. For example, " +
-                "the Kennel allows you to take any monster you manage to keep within it, " +
-                "and retain it for future use in a different playthrough.",
-                TutorialManager.Instance.demonicStructureVideoClip);
+        private bool IsCharacterValid(Character character) {
+            return character is Summon && character.currentStructure is Inner_Maps.Location_Structures.TheKennel;
+        }
+        private void OnHoverBreed(QuestStepItem stepItem) {
+            UIManager.Instance.ShowSmallInfo(
+                "Breeding a monster inside the Kennel gives you 1 Summon Charge of that monster type. " +
+                "You can use this charge for various actions - defend Structures, invade Villages, kill Villagers.",
+                TutorialManager.Instance.breedVideoClip, "Breeding", stepItem.hoverPosition
+            );
         }
         #endregion
     }
