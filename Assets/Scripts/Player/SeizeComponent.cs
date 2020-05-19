@@ -103,6 +103,9 @@ public class SeizeComponent {
         }
         _seizedPOISprite = null;
         Messenger.Broadcast(Signals.ON_UNSEIZE_POI, seizedPOI);
+        if (seizedPOI is IPlayerActionTarget playerActionTarget) {
+            Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, playerActionTarget);    
+        }
         seizedPOI = null;
         //PlayerUI.Instance.HideSeizedObjectUI();
         InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
