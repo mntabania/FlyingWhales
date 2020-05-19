@@ -57,7 +57,7 @@ namespace Traits {
         #endregion
         
         private void PerTickEffect() {
-            if (owner != null && owner.marker.inVisionTileObjects.Count > 0 && Random.Range(0, 100) < 3) {
+            if (owner != null && owner.marker != null && owner.marker.inVisionTileObjects.Count > 0 && Random.Range(0, 100) < 3) {
                 List<TileObject> choices = owner.marker.inVisionTileObjects
                     .Where(x => x.tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT).ToList();
                 if (choices.Count > 0 && owner.jobQueue.HasJob(JOB_TYPE.DESTROY) == false) {
