@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: d64d057451588de47862f92a337b5fc0, type: 3}
-    totalSpriteSurfaceArea: 17750920
+    totalSpriteSurfaceArea: 17759559
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -180,6 +180,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: c2ef68e33150b744d82714e8a7ec4675, type: 3}
   - {fileID: 21300000, guid: 3e5fb104e05f42a4daa91213c335a35d, type: 3}
   - {fileID: 21300000, guid: 3eb28a04324abd547a200406c98fcd13, type: 3}
+  - {fileID: 21300000, guid: ce133d0448c529c43a5a2acb53a31543, type: 3}
   - {fileID: 21300000, guid: 50e9bf049ac33d549a26a04145a2c972, type: 3}
   - {fileID: 21300000, guid: 50b2e9143d30d444581537d6fbb83b9c, type: 3}
   - {fileID: 21300000, guid: 2d268f1405957354594a0f0804fd3b00, type: 3}
@@ -762,6 +763,7 @@ SpriteAtlas:
   - world_button_hover
   - faction_ui_top_cover_container
   - ge_icon-18
+  - mana_container
   - ge_icon-03
   - player_s
   - ge_icon-20
