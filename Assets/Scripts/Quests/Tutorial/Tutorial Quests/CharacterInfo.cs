@@ -6,17 +6,12 @@ using UnityEngine;
 namespace Tutorial {
     public class CharacterInfo : TutorialQuest {
         
-        private Coroutine availabilityTimer;
-        public override int priority => 5;
-        
         public CharacterInfo() : base("Character Info", TutorialManager.Tutorial.Character_Info) { }
 
         #region Criteria
         protected override void ConstructCriteria() {
             _activationCriteria = new List<QuestCriteria>() {
-                new HasCompletedTutorialQuest(TutorialManager.Tutorial.Basic_Controls),
-                new PlayerHasNotCastedForSeconds(15f),
-                new PlayerHasNotCompletedTutorialInSeconds(15f)
+                new HasCompletedTutorialQuest(TutorialManager.Tutorial.Torture_Chambers),
             };
         }
         #endregion

@@ -33,10 +33,11 @@ namespace Tutorial {
                     new ObjectPickerShownStep("Click on Afflict button", "Intervention Ability")
                         .SetHoverOverAction(OnHoverAfflictButtonStep)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo),
-                    new ExecuteAfflictionStep("Choose an Affliction to apply").SetCompleteAction(OnCompleteExecuteAffliction)
+                    new ExecuteAfflictionStep("Apply Vampirism", SPELL_TYPE.VAMPIRISM)
+                        .SetCompleteAction(OnCompleteExecuteAffliction)
                 ),
                 new QuestStepCollection(
-                    new FlawClickedStep("Click on the added Affliction")
+                    new FlawClickedStep("Click on the added Affliction", "Vampiric")
                         .SetHoverOverAction(OnHoverAfflictDetails)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo),
                     new FlawTriggeredStep("Trigger it")
@@ -53,7 +54,8 @@ namespace Tutorial {
             UIManager.Instance.ShowSmallInfo("There are some characters that are <color=\"green\">Blessed</color>. " +
                                              "These characters cannot be directly affected by your spells. " +
                                              "You will need to find other ways to deal with them.",
-                TutorialManager.Instance.blessedVideoClip, "Blessed Characters", item.hoverPosition);
+                TutorialManager.Instance.blessedVideoClip, "Blessed Characters", item.hoverPosition
+            );
         }
         private void OnCompleteExecuteAffliction() {
             UIManager.Instance.generalConfirmationWithVisual.ShowGeneralConfirmation("Afflictions",
@@ -61,15 +63,18 @@ namespace Tutorial {
                 "Afflictions do not have any Mana Cost but they have a limited number of Charges.\n\n" +
                 "There are a vast number of different types of Afflictions you may experiment with. " +
                 "You can turn someone into a Psychopath or a Vampire, or you can afflict one with a Zombie Virus.",
-                TutorialManager.Instance.afflictionsVideoClip);
+                TutorialManager.Instance.afflictionsVideoClip
+            );
         }
         private void OnHoverAfflictButtonStep(QuestStepItem item) {
             UIManager.Instance.ShowSmallInfo("The afflict button can be seen beside the selected character's nameplate",
-                TutorialManager.Instance.afflictButtonVideoClip, "How to Afflict", item.hoverPosition);
+                TutorialManager.Instance.afflictButtonVideoClip, "How to Afflict", item.hoverPosition
+            );
         }
         private void OnHoverAfflictDetails(QuestStepItem item) {
             UIManager.Instance.ShowSmallInfo("Open the Villager's Info Menu and click on the recently added Affliction.",
-                TutorialManager.Instance.afflictionDetailsVideoClip, "Affliction Details", item.hoverPosition);
+                TutorialManager.Instance.afflictionDetailsVideoClip, "Affliction Details", item.hoverPosition
+            );
         }
         #endregion
     }
