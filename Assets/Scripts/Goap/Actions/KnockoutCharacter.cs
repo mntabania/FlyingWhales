@@ -29,16 +29,18 @@ public class KnockoutCharacter : GoapAction {
         if (target is Character) {
             Character targetCharacter = target as Character;
             string opinionLabel = actor.relationshipContainer.GetOpinionLabel(targetCharacter);
-            if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend || opinionLabel == RelationshipManager.Acquaintance
-                || actor.faction == targetCharacter.faction || actor.homeSettlement == targetCharacter.homeSettlement) {
-                cost += 15;
-                costLog += " +15(Friend/Close/Acquaintance/Same Faction/NPCSettlement)";
-            } else if (job.jobType == JOB_TYPE.UNDERMINE) {
-                cost += UtilityScripts.Utilities.Rng.Next(80, 121);
-                costLog += $" +{cost}(Undermine)";
+            if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
+                cost += 35;
+                costLog += " +35(Friend/Close Friend)";
+            } else if (opinionLabel == RelationshipManager.Enemy || opinionLabel == RelationshipManager.Rival) {
+                cost += 0;
+                costLog += $" +0(Enemy/Rival)";
+            } else if (opinionLabel == RelationshipManager.Acquaintance || actor.faction == targetCharacter.faction) {
+                cost += 20;
+                costLog += $" +20(Acquaintance/Same Faction)";
             } else {
-                cost += 2000;
-                costLog += " +2000(Else)";
+                cost += 10;
+                costLog += " +10(Else)";
             }
         }
         actor.logComponent.AppendCostLog(costLog);
