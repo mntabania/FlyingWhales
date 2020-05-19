@@ -851,6 +851,8 @@ namespace Inner_Maps.Location_Structures {
             return false;
         }
         #endregion
+
+        public virtual void OnCharacterUnSeizedHere(Character character) { }
     }
 }
 

@@ -250,6 +250,7 @@ public class CharacterState {
     public void SetJob(CharacterStateJob job) {
         this.job = job;
         if (job != null) {
+            Debug.Log($"{GameManager.Instance.TodayLogString()}{this} Set job to {job}!");
             OnJobSet();
         } else {
             Debug.Log($"{GameManager.Instance.TodayLogString()}{this} Set job to null!");

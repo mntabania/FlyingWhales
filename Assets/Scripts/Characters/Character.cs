@@ -5205,6 +5205,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         } else {
             marker.InitialPlaceMarkerAt(tileLocation, false);
         }
+        tileLocation.structure.OnCharacterUnSeizedHere(this);
         needsComponent.CheckExtremeNeeds();
         if (isDead) {
             Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.BURY, this as IPointOfInterest);
