@@ -723,7 +723,25 @@ public class ReactionComponent {
         Character reactor = owner;
         string log = reactor.name + " is reacting to combat of " + attacker.name + " against " + poiHit.nameWithID;
         if (reactor.isInCombat) {
-            log += "\n-In combat, will skip processing";
+            log += "\n-In combat, will check for reaction";
+            if(reactor == poiHit) {
+                log += "\n-Reactor is the Hit Character";
+                CombatState reactorCombat = reactor.stateComponent.currentState as CombatState;
+                if (reactorCombat.isAttacking && reactorCombat.currentClosestHostile != null && reactorCombat.currentClosestHostile != attacker) {
+                    log += "\n-Reactor is currently attacking another character";
+                    if(reactorCombat.currentClosestHostile is Character currentPursuingCharacter) {
+                        if(currentPursuingCharacter.isInCombat && (currentPursuingCharacter.stateComponent.currentState as CombatState).isAttacking == false) {
+                            log += "\n-Character that is being attacked by reactor is currently fleeing";
+                            log += "\n-Reactor will determine combat reaction";
+                            reactor.combatComponent.SetWillProcessCombat(true);
+                            //if (reactor.combatComponent.hostilesInRange.Contains(attacker) || reactor.combatComponent.avoidInRange.Contains(attacker)) {
+                                //log += "\n-Attacker of reactor is in hostile/avoid list of the reactor, rector will determine combat reaction";
+                            //}
+                        }
+                    }
+                }
+            }
+
             reactor.logComponent.PrintLogIfActive(log);
             return;
         }
