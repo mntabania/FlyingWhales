@@ -351,6 +351,30 @@ public class CombatComponent {
         }
         return nearest;
     }
+    public IPointOfInterest GetNearestValidHostilePriorityNotFleeing() {
+        IPointOfInterest nearest = null;
+        float nearestDist = 9999f;
+        //first check only the hostiles that are in the same npcSettlement as this character
+        for (int i = 0; i < hostilesInRange.Count; i++) {
+            IPointOfInterest poi = hostilesInRange[i];
+            if (poi.IsValidCombatTarget()) {
+                if(poi is Character hostileCharacter) {
+                    if(hostileCharacter.isInCombat && (hostileCharacter.stateComponent.currentState as CombatState).isAttacking == false) {
+                        continue;
+                    }
+                }
+                float dist = Vector2.Distance(owner.marker.transform.position, poi.worldPosition);
+                if (nearest == null || dist < nearestDist) {
+                    nearest = poi;
+                    nearestDist = dist;
+                }
+            }
+        }
+        if(nearest != null) {
+            return nearest;
+        }
+        return GetNearestValidHostile();
+    }
     //public void OnItemRemovedFromTile(SpecialToken token, LocationGridTile removedFrom) {
     //    if (hostilesInRange.Contains(token)) {
     //        RemoveHostileInRange(token);

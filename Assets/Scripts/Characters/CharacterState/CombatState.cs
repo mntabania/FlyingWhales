@@ -405,6 +405,7 @@ public class CombatState : CharacterState {
             if (forcedTarget != null) {
                 log += $"\n{stateComponent.character.name} has a forced target. Setting {forcedTarget.name} as target.";
                 SetClosestHostile(forcedTarget);
+                SetForcedTarget(null);
             } else if (taunted != null) {
                 log +=
                     $"\n{stateComponent.character.name} is taunted. Setting {taunted.responsibleCharacter.name} as target.";
@@ -423,6 +424,11 @@ public class CombatState : CharacterState {
                     $"\nCurrent closest hostile: {currentClosestHostile.name} no longer has a map object visual, setting another closest hostile...";
                 stateComponent.character.combatComponent.RemoveHostileInRange(currentClosestHostile, false);
                 SetClosestHostile();
+            } else if (currentClosestHostile != null && currentClosestHostile is Character targetCharacter) {
+                if(targetCharacter.isInCombat && (targetCharacter.stateComponent.currentState as CombatState).isAttacking == false)
+                log +=
+                    $"\nCurrent closest hostile: {currentClosestHostile.name} is already fleeing, will try to set another hostile character that is not fleeing...";
+                SetClosestHostilePriorityNotFleeing();
             } else if (currentClosestHostile == null) {
                 log += "\nNo current closest hostile, setting one...";
                 SetClosestHostile();
@@ -501,6 +507,19 @@ public class CombatState : CharacterState {
     private void PursueClosestHostile() {
         if (!stateComponent.character.currentParty.icon.isTravelling || stateComponent.character.marker.targetPOI != currentClosestHostile) {
             stateComponent.character.marker.GoToPOI(currentClosestHostile);    
+        }
+    }
+    private void SetClosestHostilePriorityNotFleeing() {
+        IPointOfInterest newClosestHostile = stateComponent.character.combatComponent.GetNearestValidHostilePriorityNotFleeing();
+        if (newClosestHostile == currentClosestHostile) { return; } // ignore change
+        IPointOfInterest previousClosestHostile = currentClosestHostile;
+        currentClosestHostile = newClosestHostile;
+        StopPursueTimer(); //stop pursue timer, any time target changes. This is so that pursue timer is reset when target changes
+        if (currentClosestHostile != null && previousClosestHostile != currentClosestHostile) {
+            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "new_combat_target");
+            log.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddToFillers(currentClosestHostile, currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            stateComponent.character.logComponent.RegisterLog(log, null, false);
         }
     }
     private void SetClosestHostile() {
@@ -698,9 +717,9 @@ public class CombatState : CharacterState {
     }
     public void SetForcedTarget(Character character) {
         forcedTarget = character;
-        if (forcedTarget == null) {
-            stateComponent.character.SetIsFollowingPlayerInstruction(false); //the force target has been removed.
-        }
+        //if (forcedTarget == null) {
+        //    stateComponent.character.SetIsFollowingPlayerInstruction(false); //the force target has been removed.
+        //}
     }
     public void AddCharacterThatDegradedRel(Character character) {
         if (!allCharactersThatDegradedRel.Contains(character)) {
