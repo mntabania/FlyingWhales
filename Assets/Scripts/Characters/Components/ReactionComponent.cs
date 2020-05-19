@@ -712,6 +712,30 @@ public class ReactionComponent {
     }
     //The reason why we pass the character that was hit instead of just getting the current closest hostile in combat state is because 
     public void ReactToCombat(CombatState combat, IPointOfInterest poiHit) {
+        Character attacker = combat.stateComponent.character;
+        Character reactor = owner;
+        if (reactor.isInCombat) {
+            string inCombatLog = reactor.name + " is in combat and reacting to combat of " + attacker.name + " against " + poiHit.nameWithID;
+            if (reactor == poiHit) {
+                inCombatLog += "\n-Reactor is the Hit Character";
+                CombatState reactorCombat = reactor.stateComponent.currentState as CombatState;
+                if (reactorCombat.isAttacking && reactorCombat.currentClosestHostile != null && reactorCombat.currentClosestHostile != attacker) {
+                    inCombatLog += "\n-Reactor is currently attacking another character";
+                    if (reactorCombat.currentClosestHostile is Character currentPursuingCharacter) {
+                        if (currentPursuingCharacter.isInCombat && (currentPursuingCharacter.stateComponent.currentState as CombatState).isAttacking == false) {
+                            inCombatLog += "\n-Character that is being attacked by reactor is currently fleeing";
+                            inCombatLog += "\n-Reactor will determine combat reaction";
+                            reactor.combatComponent.SetWillProcessCombat(true);
+                            //if (reactor.combatComponent.hostilesInRange.Contains(attacker) || reactor.combatComponent.avoidInRange.Contains(attacker)) {
+                            //log += "\n-Attacker of reactor is in hostile/avoid list of the reactor, rector will determine combat reaction";
+                            //}
+                        }
+                    }
+                }
+            }
+            reactor.logComponent.PrintLogIfActive(inCombatLog);
+            return;
+        }
         if (!owner.isNormalCharacter /*|| owner.race == RACE.SKELETON*/) {
             //Minions or Summons cannot react to objects
             return;
@@ -719,32 +743,7 @@ public class ReactionComponent {
         if(owner.isDead || !owner.canPerform) {
             return;
         }
-        Character attacker = combat.stateComponent.character;
-        Character reactor = owner;
         string log = reactor.name + " is reacting to combat of " + attacker.name + " against " + poiHit.nameWithID;
-        if (reactor.isInCombat) {
-            log += "\n-In combat, will check for reaction";
-            if(reactor == poiHit) {
-                log += "\n-Reactor is the Hit Character";
-                CombatState reactorCombat = reactor.stateComponent.currentState as CombatState;
-                if (reactorCombat.isAttacking && reactorCombat.currentClosestHostile != null && reactorCombat.currentClosestHostile != attacker) {
-                    log += "\n-Reactor is currently attacking another character";
-                    if(reactorCombat.currentClosestHostile is Character currentPursuingCharacter) {
-                        if(currentPursuingCharacter.isInCombat && (currentPursuingCharacter.stateComponent.currentState as CombatState).isAttacking == false) {
-                            log += "\n-Character that is being attacked by reactor is currently fleeing";
-                            log += "\n-Reactor will determine combat reaction";
-                            reactor.combatComponent.SetWillProcessCombat(true);
-                            //if (reactor.combatComponent.hostilesInRange.Contains(attacker) || reactor.combatComponent.avoidInRange.Contains(attacker)) {
-                                //log += "\n-Attacker of reactor is in hostile/avoid list of the reactor, rector will determine combat reaction";
-                            //}
-                        }
-                    }
-                }
-            }
-
-            reactor.logComponent.PrintLogIfActive(log);
-            return;
-        }
         if (reactor.IsHostileWith(attacker)) {
             log += "\n-Hostile with attacker, will skip processing";
             reactor.logComponent.PrintLogIfActive(log);
