@@ -1046,7 +1046,7 @@ MonoBehaviour:
     neutralAssets:
       characterClassAssets:
         m_keys:
-        - FireElemental
+        - Fire Elemental
         m_values:
         - defaultSprite: {fileID: 21300000, guid: fa90f25a85821a24eb82370847b0aebb,
             type: 3}
@@ -2701,7 +2701,7 @@ MonoBehaviour:
     neutralAssets:
       characterClassAssets:
         m_keys:
-        - GiantSpider
+        - Giant Spider
         - Small Spider
         m_values:
         - defaultSprite: {fileID: 21300000, guid: bba1220a0ad4d6a4fa65e41c1189c284,

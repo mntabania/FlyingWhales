@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps.Location_Structures;
 using UnityEngine;
 using Traits;
 using Interrupts;
@@ -60,10 +61,14 @@ public class CrimeManager : MonoBehaviour {
                     if (!actor.IsHostileWith(targetCharacter)) {
                         return CRIME_TYPE.MISDEMEANOR;
                     }
-                } else if (target is TileObject targetTileObject && targetTileObject.characterOwner != actor
-                    && targetTileObject.structureLocation != null && targetTileObject.structureLocation.settlementLocation != null
-                    && (targetTileObject.structureLocation.settlementLocation.locationType == LOCATION_TYPE.ELVEN_SETTLEMENT || targetTileObject.structureLocation.settlementLocation.locationType == LOCATION_TYPE.HUMAN_SETTLEMENT)) {
-                    return CRIME_TYPE.MISDEMEANOR;
+                } else if (target is TileObject targetTileObject && targetTileObject.characterOwner != actor) {
+                    //added checking for gridTileLocation because targetTileObject could've been destroyed already. 
+                    LocationStructure structureLocation = targetTileObject.gridTileLocation != null ? targetTileObject.structureLocation : targetTileObject.previousTile.structure;
+                    if (structureLocation?.settlementLocation != null
+                        && (targetTileObject.structureLocation.settlementLocation.locationType == LOCATION_TYPE.ELVEN_SETTLEMENT 
+                            || targetTileObject.structureLocation.settlementLocation.locationType == LOCATION_TYPE.HUMAN_SETTLEMENT)) {
+                        return CRIME_TYPE.MISDEMEANOR;    
+                    }
                 }
             }
         } else if ((actionType == INTERACTION_TYPE.STRANGLE && actor != target)
