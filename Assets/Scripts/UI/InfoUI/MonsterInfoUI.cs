@@ -303,7 +303,8 @@ public class MonsterInfoUI : InfoUIBase {
 
     #region For Testing
     public void ShowCharacterTestingInfo() {
-        string summary = $"Home structure: {activeMonster.homeStructure}" ?? "None";
+#if UNITY_EDITOR
+string summary = $"Home structure: {activeMonster.homeStructure}" ?? "None";
         summary = $"{summary}{($"\nCurrent structure: {activeMonster.currentStructure}" ?? "None")}";
         summary = $"{summary}{("\nPOI State: " + activeMonster.state.ToString())}";
         summary = $"{summary}{("\nDo Not Get Hungry: " + activeMonster.needsComponent.doNotGetHungry)}";
@@ -357,9 +358,13 @@ public class MonsterInfoUI : InfoUIBase {
         //     summary += "\n" + activeCharacter.alterEgos.Values.ElementAt(i).GetAlterEgoSummary();
         // }
         UIManager.Instance.ShowSmallInfo(summary);
+#endif
     }
     public void HideCharacterTestingInfo() {
+#if UNITY_EDITOR
         UIManager.Instance.HideSmallInfo();
+#endif
+        
     }
     #endregion
 

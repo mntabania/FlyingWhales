@@ -41,7 +41,13 @@ public class BlockWall : TileObject {
     protected override void OnPlaceTileObjectAtTile(LocationGridTile tile) {
         tile.parentMap.structureTilemap.SetTile(tile.localPlace, InnerMapManager.Instance.assetManager.GetWallAssetBasedOnWallType(wallType));
         tile.SetTileType(LocationGridTile.Tile_Type.Wall);
-        mapVisual.InitializeGUS(Vector2.zero, wallType == WALL_TYPE.Flesh ? new Vector2(0.5f, 0.5f) : new Vector2(1.5f, 1.5f));
+        Vector2 size = new Vector2(1.5f, 1.5f);
+        if (wallType == WALL_TYPE.Flesh) {
+            size = new Vector2(0.5f, 0.5f);
+        } else if (wallType == WALL_TYPE.Demon_Stone) {
+            size = new Vector2(1f, 1f);
+        }
+        mapVisual.InitializeGUS(Vector2.zero, size);
 
         base.OnPlaceTileObjectAtTile(tile);
     }
