@@ -55,6 +55,10 @@ namespace Tutorial {
         public Texture seizeImage;
         public VideoClip afflictionDetailsVideoClip;
         public VideoClip breedVideoClip;
+        public Texture infoTab;
+        public Texture moodTab;
+        public Texture relationsTab;
+        public Texture logsTab;
 
         #region Monobehaviours
         private void Awake() {
