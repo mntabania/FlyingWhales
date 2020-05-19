@@ -254,6 +254,9 @@ namespace EZObjectPools
             GameObject g = (GameObject)Instantiate(Template);
             g.transform.SetParent(transform);
 
+            //added this because for some reason the instantiated game object will change it's scale when it's parent was set to this transform.
+            g.transform.localScale = Template.transform.localScale;
+            
             PooledObject[] p = g.GetComponents<PooledObject>();
 
             if (p != null && p.Length > 0)

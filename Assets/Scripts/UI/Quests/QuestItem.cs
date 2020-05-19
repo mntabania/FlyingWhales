@@ -71,6 +71,7 @@ public class QuestItem : PooledObject {
             QuestStep step = _quest.activeStepCollection.steps[i];
             GameObject stepGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(questStepPrefab.name,
                 Vector3.zero, Quaternion.identity, stepsParent);
+            stepGO.transform.localScale = Vector3.one;
             QuestStepItem stepItem = stepGO.GetComponent<QuestStepItem>();
             stepItem.SetStep(step);
         }
@@ -96,6 +97,7 @@ public class QuestItem : PooledObject {
             QuestStep step = _quest.activeStepCollection.steps[i];
             GameObject stepGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(questStepPrefab.name,
                 Vector3.zero, Quaternion.identity, stepsParent);
+            stepGO.transform.localScale = Vector3.one;
             QuestStepItem stepItem = stepGO.GetComponent<QuestStepItem>();
             stepItem.SetStep(step);
             stepItem.TweenIn();

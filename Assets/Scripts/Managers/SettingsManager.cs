@@ -41,9 +41,9 @@ public class SettingsManager : MonoBehaviour {
         }
     }
     public void OnToggleFullscreen(bool state) {
-        if(resolutionsDropdown.value == (resolutionsDropdown.options.Count - 1)) {
-            fullscreenToggle.isOn = true;
-        }
+        // if(resolutionsDropdown.value == (resolutionsDropdown.options.Count - 1)) {
+        //     fullscreenToggle.isOn = true;
+        // }
     }
 
     private void ConstructResolutions() {
