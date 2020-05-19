@@ -42,9 +42,17 @@ public class CharacterStateJob : JobQueueItem {
     }
 
     #region Overrides
+    //Returns true if we don't want to perform top prio, false if we want the character to perform top prio job after this
     public override bool ProcessJob() {
         if (hasBeenReset) { return true; }
         if (assignedState == null) {
+            if (targetState == CHARACTER_STATE.COMBAT && assignedCharacter.combatComponent.hostilesInRange.Count <= 0 && assignedCharacter.combatComponent.avoidInRange.Count <= 0) {
+                //Added a checker here because there are times that the combat job still persist even though the hostile/avoid list is empty
+                //So if this happens, we must cancel job
+                CancelJob(false);
+                return true;
+            }
+
             CharacterState newState = assignedCharacter.stateComponent.SwitchToState(targetState, targetPOI);
             if (hasBeenReset) { return true; } //Need to check since job can be reset when the assignedCharacter switches states.
             //check if the new state is the assigned character's state, before assigning the state to this job.
