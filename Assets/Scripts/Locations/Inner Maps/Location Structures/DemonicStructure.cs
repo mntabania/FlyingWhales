@@ -5,11 +5,11 @@ using UnityEngine;
 namespace Inner_Maps.Location_Structures {
     public class DemonicStructure : LocationStructure {
         protected DemonicStructure(STRUCTURE_TYPE structureType, Region location) : base(structureType, location) {
-            maxHP = 8000;
+            maxHP = 6000;
             currentHP = maxHP;
         }
         public DemonicStructure(Region location, SaveDataLocationStructure data) : base(location, data) {
-            maxHP = 8000;
+            maxHP = 6000;
             currentHP = maxHP;
         }
 

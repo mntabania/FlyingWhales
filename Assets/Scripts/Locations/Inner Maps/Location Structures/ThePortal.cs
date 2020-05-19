@@ -10,7 +10,7 @@ namespace Inner_Maps.Location_Structures {
         public ThePortal(Region location) : base(STRUCTURE_TYPE.THE_PORTAL, location){
             selectableSize = new Vector2(10f, 10f);
             name = "The Portal";
-            maxHP = 16000;
+            maxHP = 12000;
             currentHP = maxHP;
         }
         //public override void ConstructDefaultActions() {

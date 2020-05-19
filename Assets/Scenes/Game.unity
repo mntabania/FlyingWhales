@@ -28352,10 +28352,10 @@ RectTransform:
   m_Father: {fileID: 1538653384}
   m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 673.4, y: 57.4}
-  m_SizeDelta: {x: 573.2, y: 573.9}
+  m_AnchorMin: {x: 1, y: 0.5}
+  m_AnchorMax: {x: 1, y: 0.5}
+  m_AnchoredPosition: {x: -286.60156, y: 57.4}
+  m_SizeDelta: {x: 573.19995, y: 573.9}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &509764151
 MonoBehaviour:
@@ -38841,6 +38841,10 @@ MonoBehaviour:
   afflictionDetailsVideoClip: {fileID: 32900000, guid: 18d4774d355cfcc41bf4e4a016ee7d91,
     type: 3}
   breedVideoClip: {fileID: 32900000, guid: aa8529621f6941a4fa8bbdfd65609b99, type: 3}
+  infoTab: {fileID: 2800000, guid: a9260e35ec16f604bb9b0ab35ec36980, type: 3}
+  moodTab: {fileID: 2800000, guid: e0b2998af995557438773f75d19dc119, type: 3}
+  relationsTab: {fileID: 2800000, guid: fcc7fcbc96a67964d91e98453dc13ab8, type: 3}
+  logsTab: {fileID: 2800000, guid: 7aee7ce54defa9340bef1e3dc1cf8457, type: 3}
 --- !u!4 &711025101 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4243562867990628, guid: c51738521ec0ac14abf6fc9fd57b44d9,
@@ -99480,12 +99484,12 @@ PrefabInstance:
     - target: {fileID: 224632036395511240, guid: bb062f8c3be91104299ceda438b731f4,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -484
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224632036395511240, guid: bb062f8c3be91104299ceda438b731f4,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 93.40039
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224632036395511240, guid: bb062f8c3be91104299ceda438b731f4,
         type: 3}
@@ -99520,12 +99524,12 @@ PrefabInstance:
     - target: {fileID: 224632036395511240, guid: bb062f8c3be91104299ceda438b731f4,
         type: 3}
       propertyPath: m_Pivot.x
-      value: 0.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 224632036395511240, guid: bb062f8c3be91104299ceda438b731f4,
         type: 3}
       propertyPath: m_Pivot.y
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224657538717953538, guid: bb062f8c3be91104299ceda438b731f4,
         type: 3}
