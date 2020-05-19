@@ -368,7 +368,7 @@ namespace Inner_Maps {
                 Quaternion.identity, structureParent);
         
             StructureTemplate structureTemplate = structureTemplateGO.GetComponent<StructureTemplate>();
-
+            structureTemplate.transform.localScale = Vector3.one;
             for (int i = 0; i < structureTemplate.structureObjects.Length; i++) {
                 LocationStructureObject structureObject = structureTemplate.structureObjects[i];
                 structureObject.RefreshAllTilemaps();

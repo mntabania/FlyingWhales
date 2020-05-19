@@ -57,6 +57,7 @@ public class ObjectPoolManager : MonoBehaviour {
                 if(ReferenceEquals(parent, null) == false) {
                     instantiatedObj.transform.SetParent(parent, false);
                 }
+                instantiatedObj.transform.localScale = objectPoolToUse.Template.transform.localScale;
                 if (isWorldPosition) {
                     instantiatedObj.transform.position = position;
                 } else {
