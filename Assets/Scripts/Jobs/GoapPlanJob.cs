@@ -242,6 +242,19 @@ public class GoapPlanJob : JobQueueItem {
         }
     }
     public override bool OnRemoveJobFromQueue() {
+        //if(assignedPlan != null && assignedPlan.allNodes != null) {
+        //    for (int i = 0; i < assignedPlan.allNodes.Count; i++) {
+        //        JobNode jobNode = assignedPlan.allNodes[i];
+        //        if(jobNode.singleNode != null) {
+        //            jobNode.singleNode.SetJob(null);
+        //        }
+        //        if (jobNode.multiNode != null) {
+        //            for (int j = 0; j < jobNode.multiNode.Length; j++) {
+        //                jobNode.multiNode[j].SetJob(null);
+        //            }
+        //        }
+        //    }
+        //}
         if (originalOwner.ownerType == JOB_OWNER.CHARACTER && assignedPlan == null) { //|| jobQueueParent.character.currentSleepTicks == CharacterManager.Instance.defaultSleepTicks
             //If original owner is character just get the assignedCharacter because for personal jobs, the assignedCharacter is always the owner
             //No need to cast the owner anymore
@@ -375,9 +388,14 @@ public class GoapPlanJob : JobQueueItem {
         //if (plan != null) {
         //    plan.SetJob(this);
         //}
+        GoapPlan prevPlan = assignedPlan;
         assignedPlan = plan;
-        if(assignedPlan != null) {
+        if(plan != null) {
             plan.OnAttachPlanToJob(this);
+        } else {
+            if(prevPlan != null) {
+                prevPlan.OnUnattachPlanToJob(this);
+            }
         }
     }
     public void SetFinishedSuccessfully(bool state) {

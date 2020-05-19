@@ -47,6 +47,11 @@ public class MultiJobNode : JobNode{
             nodes[i].OnAttachPlanToJob(job);
         }
     }
+    public override void OnUnattachPlanToJob(GoapPlanJob job) {
+        for (int i = 0; i < nodes.Length; i++) {
+            nodes[i].OnUnattachPlanToJob(job);
+        }
+    }
     public override void SetNextActualNode() {
         currentIndex += 1;
     }
@@ -75,6 +80,9 @@ public class SingleJobNode : JobNode {
     public override void OnAttachPlanToJob(GoapPlanJob job) {
         node.OnAttachPlanToJob(job);
     }
+    public override void OnUnattachPlanToJob(GoapPlanJob job) {
+        node.OnUnattachPlanToJob(job);
+    }
     public override void SetNextActualNode() {
         //Not Applicable
     }
@@ -88,6 +96,7 @@ public abstract class JobNode {
     public abstract ActualGoapNode[] multiNode { get; }
     public abstract int currentNodeIndex { get; }
     public abstract void OnAttachPlanToJob(GoapPlanJob job);
+    public abstract void OnUnattachPlanToJob(GoapPlanJob job);
     public abstract void SetNextActualNode();
     public abstract bool IsCurrentActionNode(ActualGoapNode node);
 }
@@ -110,7 +119,9 @@ public class ActualGoapNode : IReactable, IRumorable {
     public LocationStructure targetStructure { get; private set; }
     public LocationGridTile targetTile { get; private set; }
     public IPointOfInterest targetPOIToGoTo { get; private set; }
-    public JobQueueItem associatedJob { get; private set; }
+    public JOB_TYPE associatedJobType { get; private set; }
+    public JobQueueItem associatedJob { get { return _associatedJob; } }
+
 
     public string currentStateName { get; private set; }
     public int currentStateDuration { get; private set; }
@@ -118,6 +129,7 @@ public class ActualGoapNode : IReactable, IRumorable {
     
     public List<Character> awareCharacters { get; private set; }
 
+    private JobQueueItem _associatedJob;
     //public CRIME_TYPE crimeType { get; private set; }
 
     #region getters
@@ -134,7 +146,6 @@ public class ActualGoapNode : IReactable, IRumorable {
     public bool isDone => actionStatus == ACTION_STATUS.SUCCESS || actionStatus == ACTION_STATUS.FAIL;
     public INTERACTION_TYPE goapType => action.goapType;
     public string goapName => action.goapName;
-    public JOB_TYPE associatedJobType => associatedJob != null ? associatedJob.jobType : JOB_TYPE.NONE;
     public bool isRumor => rumor != null;
     public string name => action.goapName;
     public string classificationName => "News";
@@ -161,7 +172,8 @@ public class ActualGoapNode : IReactable, IRumorable {
     #region Action
     public virtual void DoAction(JobQueueItem job, GoapPlan plan) {
         actionStatus = ACTION_STATUS.STARTED;
-        associatedJob = job;
+        associatedJobType = job.jobType; //We create a separate field for the job type that this action is connected instead of getting the job type from the associtatedJob because since the JobQueueItem is object pooled, there will be a time that the job will be brought back to the object pool when that happens the jobType will go back to NONE if we do not store it separately
+        SetJob(job);
         //Temporary only, create a system for this
         if(action.goapType == INTERACTION_TYPE.STEAL || action.goapType == INTERACTION_TYPE.DRINK_BLOOD) {
             isStealth = true;
@@ -739,6 +751,19 @@ public class ActualGoapNode : IReactable, IRumorable {
     public void OnAttachPlanToJob(GoapPlanJob job) {
         isStealth = job.isStealth;
     }
+    public void OnUnattachPlanToJob(GoapPlanJob job) {
+        if(_associatedJob == job) {
+            SetJob(null);
+        }
+    }
+    public void SetJob(JobQueueItem job) {
+        _associatedJob = job;
+    }
+    //private JobQueueItem GetAssociatedJob () {
+    //    if(_associatedJob != null && _associatedJob.originalOwner) {
+            
+    //    }
+    //}
     #endregion
     
     #region Character

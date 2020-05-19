@@ -142,6 +142,11 @@ public class GoapPlan {
             allNodes[i].OnAttachPlanToJob(job);
         }
     }
+    public void OnUnattachPlanToJob(GoapPlanJob job) {
+        for (int i = 0; i < allNodes.Count; i++) {
+            allNodes[i].OnUnattachPlanToJob(job);
+        }
+    }
     public string LogPlan() {
         //string log = "\n--------------------- PLAN OF " + endNode.singleNode.actor.name + " FOR " + endNode.singleNode.action.goapName + " WITH TARGET " + target.name + " (" + endNode.singleNode.actor.specificLocation.name + ")--------------------------";
         string log = string.Empty;

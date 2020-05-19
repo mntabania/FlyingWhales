@@ -59,7 +59,6 @@ public class CharacterStateComponent {
         if(!character.canPerform) { //character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
             return null;
         }
-
         //Before switching character must end current action first because once a character is in a state in cannot make plans
         if (character.currentActionNode != null) { // && character.currentActionNode.action.goapType.ShouldBeStoppedWhenSwitchingStates() //removed this because it is no longer needed
             character.StopCurrentActionNode();
