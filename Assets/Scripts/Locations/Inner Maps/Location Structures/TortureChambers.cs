@@ -8,8 +8,8 @@ namespace Inner_Maps.Location_Structures {
         public override Vector2 selectableSize { get; }
         private TortureChamberStructureObject _tortureChamberStructureObject;
         public LocationGridTile entrance => _tortureChamberStructureObject.entrance;
-        
-        
+
+
         public TortureChambers(Region location) : base(STRUCTURE_TYPE.TORTURE_CHAMBERS, location){
             selectableSize = new Vector2(10f, 10f);
         }
@@ -42,6 +42,7 @@ namespace Inner_Maps.Location_Structures {
             if (structure == this && character.isNormalCharacter) {
                 // character.trapStructure.SetForcedStructure(this);
                 character.DecreaseCanTakeJobs();
+                character.traitContainer.AddTrait(character, "Restrained");
             }
         }
         private void OnCharacterLeftStructure(Character character, LocationStructure structure) {

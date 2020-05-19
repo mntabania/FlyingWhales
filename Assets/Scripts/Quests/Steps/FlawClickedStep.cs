@@ -1,11 +1,23 @@
-﻿namespace Quests.Steps {
+﻿using Traits;
+namespace Quests.Steps {
     public class FlawClickedStep : QuestStep {
-        public FlawClickedStep(string stepDescription) : base(stepDescription) { }
+        private readonly string _requiredTraitName;
+        public FlawClickedStep(string stepDescription, string requiredTraitName) : base(stepDescription) {
+            _requiredTraitName = requiredTraitName;
+        }
         protected override void SubscribeListeners() {
-            Messenger.AddListener(Signals.FLAW_CLICKED, Complete);
+            Messenger.AddListener<Trait>(Signals.FLAW_CLICKED, CheckForCompletion);
         }
         protected override void UnSubscribeListeners() {
-            Messenger.RemoveListener(Signals.FLAW_CLICKED, Complete);
+            Messenger.RemoveListener<Trait>(Signals.FLAW_CLICKED, CheckForCompletion);
         }
+
+        #region Completion
+        private void CheckForCompletion(Trait trait) {
+            if (_requiredTraitName == trait.name) {
+                Complete();
+            }
+        }
+        #endregion
     }
 }

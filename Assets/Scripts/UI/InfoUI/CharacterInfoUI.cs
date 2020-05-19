@@ -378,7 +378,7 @@ public class CharacterInfoUI : InfoUIBase {
             );
             normalTraitsEventLbl.ResetHighlightValues();
             if (trait.type == TRAIT_TYPE.FLAW) {
-                Messenger.Broadcast(Signals.FLAW_CLICKED);
+                Messenger.Broadcast(Signals.FLAW_CLICKED, trait);
             }
         }
     }

@@ -60,10 +60,12 @@ namespace Inner_Maps.Location_Structures {
                 _particleEffect.StopEmission();
                 _particleEffect = null;
                 
-                Messenger.RemoveListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, CheckIfTortureInterruptFinished);
-
-                character.traitContainer.AddTrait(character, "Restrained");
+                TortureChambers tortureChamber = parentStructure as TortureChambers;
+                Assert.IsNotNull(tortureChamber, $"Parent structure of torture room is not torture chamber! {parentStructure?.ToString() ?? "Null"}");
                 
+                Messenger.RemoveListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, CheckIfTortureInterruptFinished);
+                character.traitContainer.AddTrait(character, "Restrained");
+
                 //open door
                 DoorTileObject door = GetTileObjectInRoom<DoorTileObject>();
                 door?.Open();
@@ -76,8 +78,6 @@ namespace Inner_Maps.Location_Structures {
 
                 // GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Zombie_Transformation);
 
-                TortureChambers tortureChamber = parentStructure as TortureChambers;
-                Assert.IsNotNull(tortureChamber, $"Parent structure of torture room is not torture chamber! {parentStructure?.ToString() ?? "Null"}");
                 int modifiedX = tortureChamber.entrance.localPlace.x - 2;
                 modifiedX = Mathf.Max(modifiedX, 0);
                 LocationGridTile outsideTile = tortureChamber.location.innerMap.map[modifiedX, tortureChamber.entrance.localPlace.y];
