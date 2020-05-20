@@ -19,7 +19,7 @@ public class CornCrop : Crops {
                 featureComponent.HasFeature(TileFeatureDB.Fertile_Feature)) {
             ticks = GameManager.Instance.GetTicksBasedOnHour(96);
         } else {
-            ticks = GameManager.Instance.GetTicksBasedOnHour(192);
+            ticks = GameManager.Instance.GetTicksBasedOnHour(120);
         }
         return ticks;
     }
