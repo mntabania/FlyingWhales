@@ -31,8 +31,14 @@ public class ReturnHome : GoapAction {
         Character actor = node.actor;
         if (actor.homeStructure != null) {
             return actor.homeStructure;
-        } else {
+        } 
+        //else if (actor.territorries.Count > 0) {
+        //    return actor.territorries[0].GetMostImportantStructureOnTile();
+        //} 
+        else if (actor.homeRegion != null) {
             return actor.homeRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+        } else {
+            return actor.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
         }
     }
     #endregion

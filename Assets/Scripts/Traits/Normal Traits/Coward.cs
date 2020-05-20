@@ -20,7 +20,7 @@ namespace Traits {
         public override string TriggerFlaw(Character character) {
             //If outside and the character lives in a house, the character will flee and go back home.
             string successLogKey = base.TriggerFlaw(character);
-            if (character.homeStructure != null) {
+            if (character.homeStructure != null && !character.homeStructure.hasBeenDestroyed && character.homeStructure.tiles.Count > 0) {
                 if (character.currentStructure != character.homeStructure) {
                     if (character.currentActionNode.action != null) {
                         character.StopCurrentActionNode(false);

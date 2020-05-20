@@ -91,7 +91,9 @@ namespace Traits {
             character.jobQueue.CancelAllJobs();
             character.traitContainer.AddTrait(character, "Anxious");
             if(character.homeStructure != null && character.currentStructure != character.homeStructure) {
-                character.jobComponent.TriggerFleeHome(jobType);
+                if (!character.jobComponent.TriggerFleeHome(jobType)) {
+                    character.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, character);
+                }
             } else {
                 character.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, character);
             }

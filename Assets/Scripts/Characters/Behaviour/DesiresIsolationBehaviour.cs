@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Inner_Maps;
+using Inner_Maps.Location_Structures;
 
 public class DesiresIsolationBehaviour : CharacterBehaviourComponent {
     public DesiresIsolationBehaviour() {
@@ -30,7 +32,12 @@ public class DesiresIsolationBehaviour : CharacterBehaviourComponent {
             
         } else {
             log += $"{character.name} is not at home. Plan Hide At Home.";
-            (character.jobTriggerComponent as CharacterJobTriggerComponent).CreateHideAtHomeJob();
+            if(!(character.jobTriggerComponent as CharacterJobTriggerComponent).CreateHideAtHomeJob()) {
+                log += $"{character.name} cannot hide at home because he does not have a home";
+                log += $"{character.name} will roam to a tile outside settlement";
+                LocationGridTile tileToGoTo = character.currentRegion.GetRandomOutsideSettlementLocationGridTileWithPathTo(character.gridTileLocation);
+                character.jobComponent.TriggerRoamAroundTile(tileToGoTo);
+            }
         }
         return true;
     }

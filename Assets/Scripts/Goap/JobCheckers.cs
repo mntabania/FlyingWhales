@@ -3,7 +3,7 @@
 public partial class InteractionManager {
     
     public bool CanDoPatrol(Character character) {
-        return character.characterClass.CanDoJob(JOB_TYPE.PATROL);
+        return true; //character.characterClass.CanDoJob(JOB_TYPE.PATROL);
     }
     public bool CanDoCraftFurnitureJob(Character character, JobQueueItem item) {
         TILE_OBJECT_TYPE furnitureToCreate = ((item as GoapPlanJob).targetPOI as TileObject).tileObjectType;
@@ -14,19 +14,19 @@ public partial class InteractionManager {
                character.isFactionLeader; //|| character.characterClass.className == "Noble";
     }
     public bool CanCraftTool(Character character) {
-        return character.characterClass.CanDoJob(JOB_TYPE.CRAFT_OBJECT) && TILE_OBJECT_TYPE.TOOL.CanBeCraftedBy(character);
+        return /*character.characterClass.CanDoJob(JOB_TYPE.CRAFT_OBJECT) &&*/ TILE_OBJECT_TYPE.TOOL.CanBeCraftedBy(character);
     }
     public bool CanDoProduceFoodJob(Character character) {
-        return character.characterClass.CanDoJob(JOB_TYPE.PRODUCE_FOOD);
+        return true; //character.characterClass.CanDoJob(JOB_TYPE.PRODUCE_FOOD);
     }
     public bool CanDoProduceWoodJob(Character character) {
-        return character.characterClass.CanDoJob(JOB_TYPE.PRODUCE_WOOD);
+        return true; //character.characterClass.CanDoJob(JOB_TYPE.PRODUCE_WOOD);
     }
     public bool CanDoProduceMetalJob(Character character) {
-        return character.characterClass.CanDoJob(JOB_TYPE.PRODUCE_METAL);
+        return true; //character.characterClass.CanDoJob(JOB_TYPE.PRODUCE_METAL);
     }
     public bool CanDoProduceStoneJob(Character character) {
-        return character.characterClass.CanDoJob(JOB_TYPE.PRODUCE_STONE);
+        return true; //character.characterClass.CanDoJob(JOB_TYPE.PRODUCE_STONE);
     }
     public bool CanBrewPotion(Character character) {
         return TILE_OBJECT_TYPE.HEALING_POTION.CanBeCraftedBy(character);
@@ -34,7 +34,7 @@ public partial class InteractionManager {
     public bool CanTakeBuryJob(Character character) {
         if (!character.traitContainer.HasTrait("Criminal") && character.isAtHomeRegion &&
             character.isPartOfHomeFaction && !character.traitContainer.HasTrait("Beast")) {
-            return character.characterClass.CanDoJob(JOB_TYPE.BURY);
+            return true; //character.characterClass.CanDoJob(JOB_TYPE.BURY);
         }
         return false;
     }
@@ -53,7 +53,7 @@ public partial class InteractionManager {
             !character.traitContainer.HasTrait("Coward") && character.homeSettlement != null && character.homeSettlement.prison != null) {
             Restrained restrainedTrait = targetCharacter.traitContainer.GetNormalTrait<Restrained>("Restrained");
             if (restrainedTrait == null || !restrainedTrait.isPrisoner) {
-                return character.characterClass.CanDoJob(JOB_TYPE.APPREHEND) &&
+                return /*character.characterClass.CanDoJob(JOB_TYPE.APPREHEND) &&*/
                    character.relationshipContainer.GetRelationshipEffectWith(targetCharacter) !=
                    RELATIONSHIP_EFFECT.POSITIVE;
             }
@@ -64,7 +64,7 @@ public partial class InteractionManager {
         return character.faction.IsHostileWith(targetCharacter.faction)
                && character.isAtHomeRegion
                && character.isPartOfHomeFaction && character.currentSettlement is NPCSettlement
-               && character.characterClass.CanDoJob(JOB_TYPE.RESTRAIN)
+               //&& character.characterClass.CanDoJob(JOB_TYPE.RESTRAIN)
                && character.relationshipContainer.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.POSITIVE 
                && !character.traitContainer.HasTrait("Criminal")
                && !targetCharacter.traitContainer.HasTrait("Restrained");
@@ -76,16 +76,16 @@ public partial class InteractionManager {
                 canTakeRepairJob = targetTileObject.canBeRepaired;
             }
         }
-        return canTakeRepairJob && character.characterClass.CanDoJob(JOB_TYPE.REPAIR);
+        return canTakeRepairJob /*&& character.characterClass.CanDoJob(JOB_TYPE.REPAIR)*/;
     }
     public bool CanCharacterTakeRepairJob(Character character, TileObject targetTileObject) {
-        return targetTileObject.canBeRepaired && character.characterClass.CanDoJob(JOB_TYPE.REPAIR);
+        return targetTileObject.canBeRepaired /*&& character.characterClass.CanDoJob(JOB_TYPE.REPAIR)*/;
     }
     public bool CanCharacterTakeKnockoutJob(Character character, Character targetCharacter) {
-        return character.characterClass.CanDoJob(JOB_TYPE.RESTRAIN);
+        return true; //character.characterClass.CanDoJob(JOB_TYPE.RESTRAIN);
     }
     public bool CanCharacterTakeRepairStructureJob(Character character) {
-        return character.characterClass.CanDoJob(JOB_TYPE.REPAIR);
+        return true; //character.characterClass.CanDoJob(JOB_TYPE.REPAIR);
     }
 
 

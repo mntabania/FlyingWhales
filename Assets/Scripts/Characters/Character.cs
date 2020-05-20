@@ -3622,6 +3622,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //jobQueue.AddJobInQueue(job);
 
             //If character cannot return home roam around tile instead
+            interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
             jobComponent.TriggerRoamAroundTile();
             return true;
         }
