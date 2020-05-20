@@ -7,7 +7,7 @@ using UnityEngine.UI;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 
-public class UnleashSummonUI : MonoBehaviour  { //PopupMenuBase
+public class UnleashSummonUI : PopupMenuBase { //MonoBehaviour
     [Header("General")]
     public ScrollRect summonsScrollRect;
     public ScrollRect summonMinionsScrollRect;
@@ -55,13 +55,13 @@ public class UnleashSummonUI : MonoBehaviour  { //PopupMenuBase
         PopulateMinionsMonstersSummons();
         UpdateSummonButton();
         this.gameObject.SetActive(true);
-        //base.Open();
+        base.Open();
     }
     public void OnClickClose() {
         Close();
     }
-    public void Close() {
-        gameObject.SetActive(false);
+    public override void Close() {
+        base.Close();
         if (!PlayerUI.Instance.TryShowPendingUI()) {
             if (!isGamePausedOnShowUI) {
                 UIManager.Instance.ResumeLastProgressionSpeed(); //if no other UI was shown, unpause game
