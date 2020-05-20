@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Locations.Features;
 
 public class RegionTileObject : TileObject {
 

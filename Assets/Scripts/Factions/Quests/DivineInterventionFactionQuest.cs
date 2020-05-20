@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Factions;
 using Inner_Maps;
+using Locations.Features;
 using UnityEngine;
 
 public class DivineInterventionFactionQuest : FactionQuest {

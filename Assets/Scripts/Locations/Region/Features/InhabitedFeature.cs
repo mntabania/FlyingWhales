@@ -1,11 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿namespace Locations.Features {
+	public class InhabitedFeature : TileFeature {
 
-public class InhabitedFeature : TileFeature {
-
-	public InhabitedFeature() {
-		name = "Inhabited";
-		description = "This tile has inhabitants.";
-	}  
+		public InhabitedFeature() {
+			name = "Inhabited";
+			description = "This tile has inhabitants.";
+		}  
+	}
 }

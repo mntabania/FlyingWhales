@@ -1,11 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿namespace Locations.Features {
+    public class StoneSourceFeature : TileFeature {
 
-public class StoneSourceFeature : TileFeature {
-
-    public StoneSourceFeature() {
-        name = "Stone Source";
-        description = "Provides stone.";
-    }  
+        public StoneSourceFeature() {
+            name = "Stone Source";
+            description = "Provides stone.";
+        }  
+    }
 }

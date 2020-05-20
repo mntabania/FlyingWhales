@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Locations.Features;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UtilityScripts;
@@ -77,6 +78,27 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			tile.featureComponent.AddFeature(TileFeatureDB.Game_Feature, tile);
 			gameChoices.Remove(tile);
 		}
+		
+		//vents
+		if (WorldConfigManager.Instance.isDemoWorld) {
+			//add vapor vent to 1 tile in demo build
+			HexTile tile = GridMap.Instance.map[7, 5];
+			tile.featureComponent.AddFeature(TileFeatureDB.Vapor_Vent_Feature, tile);
+		} else {
+			List<HexTile> ventChoices = GridMap.Instance.normalHexTiles.Where(h => 
+				h.featureComponent.HasFeature(TileFeatureDB.Poison_Vent_Feature) == false 
+				&& h.featureComponent.HasFeature(TileFeatureDB.Vapor_Vent_Feature) == false
+			).ToList();
+			int ventFeatures = Random.Range(1, 6);
+			for (int i = 0; i < ventFeatures; i++) {
+				if (ventChoices.Count <= 0) { break; }
+				HexTile tile = CollectionUtilities.GetRandomElement(ventChoices);
+				tile.featureComponent.AddFeature(
+					Random.Range(0, 2) == 0 ? TileFeatureDB.Poison_Vent_Feature : TileFeatureDB.Vapor_Vent_Feature, tile);
+				ventChoices.Remove(tile);
+			}	
+		}
+		
 	}
 	private IEnumerator ComputeHabitabilityValues(MapGenerationData data) {
 		data.habitabilityValues = new int[data.width, data.height];
@@ -85,8 +107,10 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		for (int x = 0; x < data.width; x++) {
 			for (int y = 0; y < data.height; y++) {
 				HexTile tile = GridMap.Instance.map[x, y];
+				string summary = $"Computing habitability for {tile}";
 				int habitability = 0;
 				if (tile.elevationType == ELEVATION.WATER || tile.elevationType == ELEVATION.MOUNTAIN || tile.elevationType == ELEVATION.TREES) {
+					summary += "\n - 0 Elevation type is not plain";
 					habitability = 0;
 				} else {
 					int adjacentWaterTiles = 0;
@@ -94,6 +118,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 					for (int i = 0; i < tile.AllNeighbours.Count; i++) {
 						HexTile neighbour = tile.AllNeighbours[i];
 						if (neighbour.elevationType == ELEVATION.PLAIN) {
+							summary += "\n - +2 Has adjacent flat tile";
 							habitability += 2;
 							adjacentFlatTiles += 1;
 						} else if (neighbour.elevationType == ELEVATION.WATER) {
@@ -101,28 +126,37 @@ public class TileFeatureGeneration : MapGenerationComponent {
 						}
 						if (neighbour.featureComponent.HasFeature(TileFeatureDB.Wood_Source_Feature)) {
 							habitability += 3;
+							summary += "\n - +3 Has adjacent wood source";
 						}
 						if (neighbour.featureComponent.HasFeature(TileFeatureDB.Stone_Source_Feature)) {
 							habitability += 3;
+							summary += "\n - +3 Has adjacent stone source";
 						}
 						if (neighbour.featureComponent.HasFeature(TileFeatureDB.Metal_Source_Feature)) {
 							habitability += 4;
+							summary += "\n - +4 Has adjacent metal source";
 						}
 						if (neighbour.featureComponent.HasFeature(TileFeatureDB.Fertile_Feature)) {
 							habitability += 5;
+							summary += "\n - +5 Has adjacent Fertile";
 						}
 						if (neighbour.featureComponent.HasFeature(TileFeatureDB.Game_Feature)) {
 							habitability += 4;
+							summary += "\n - +4 Has adjacent Game";
 						}
 					}
 					if (adjacentWaterTiles == 1) {
 						habitability += 5;
+						summary += "\n - +5 Has 1 adjacent water tile";
 					}
 					if (adjacentFlatTiles < 2) {
 						habitability -= 10;
+						summary += "\n - -10 Has less than 2 adjacent flat tiles.";
 					}
 				}
 				data.habitabilityValues[x, y] = habitability;
+				summary += $"\nTotal Habitability is {habitability.ToString()}";
+				// Debug.Log(summary);
 				batchCount++;
 				if (batchCount >= MapGenerationData.WorldMapHabitabilityGenerationBatches) {
 					batchCount = 0;
@@ -144,6 +178,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 				}
 			}
 			if (hasHabitableTile == false) {
+				Debug.LogWarning($"{region.name} has no habitable tiles");
 				//current region has no habitable tile
 				return false;
 			}

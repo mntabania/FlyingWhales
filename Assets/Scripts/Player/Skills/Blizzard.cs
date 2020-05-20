@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Inner_Maps;
+using Locations.Features;
 using UnityEngine;
 
 public class Blizzard : PlayerSpell {

@@ -1,4 +1,6 @@
-﻿public class HolyIncantation : GoapAction {
+﻿using Locations.Features;
+
+public class HolyIncantation : GoapAction {
     
     public HolyIncantation() : base(INTERACTION_TYPE.HOLY_INCANTATION) {
         actionIconString = GoapActionStateDB.Work_Icon;

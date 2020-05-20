@@ -6,6 +6,7 @@ using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using JetBrains.Annotations;
+using Locations.Features;
 using Locations.Settlements;
 using SpriteGlow;
 using UnityEngine.Assertions;
@@ -766,22 +767,11 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     }
     public void ShowTileInfo() {
         string summary = $"{ToString()}";
-        summary += $"\nLeft Most: {(region.GetLeftMostTile()?.ToString() ?? "Null")}";
-        summary += $"\nRight Most: {(region.GetRightMostTile()?.ToString() ?? "Null")}";
+        summary += $"\nElevation: {elevationType.ToString()}";
         summary += "\nFeatures:";
         for (int i = 0; i < featureComponent.features.Count; i++) {
             TileFeature feature = featureComponent.features[i];
             summary += $"{feature.name}, ";
-        }
-        summary += "\nLeft Most Rows:";
-        List<int> leftMostRows = region.GetLeftMostRows();
-        for (int i = 0; i < leftMostRows.Count; i++) {
-            summary += $"{leftMostRows[i].ToString()}, ";
-        }
-        summary += "\nRight Most Rows:";
-        List<int> rightMostRows = region.GetRightMostRows();
-        for (int i = 0; i < rightMostRows.Count; i++) {
-            summary += $"{rightMostRows[i].ToString()}, ";
         }
         UIManager.Instance.ShowSmallInfo(summary);
         
