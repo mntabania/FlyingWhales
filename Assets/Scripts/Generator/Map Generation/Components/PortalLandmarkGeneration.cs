@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Locations.Features;
 using Locations.Settlements;
 using UnityEngine;
 using UnityEngine.Assertions;

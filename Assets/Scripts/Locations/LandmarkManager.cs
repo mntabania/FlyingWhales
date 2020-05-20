@@ -6,6 +6,7 @@ using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using JetBrains.Annotations;
+using Locations.Features;
 using Locations.Settlements;
 using UnityEngine.Tilemaps;
 using Unity.Jobs;
@@ -464,13 +465,10 @@ public partial class LandmarkManager : MonoBehaviour {
 
     #region Regions
     public TileFeature CreateTileFeature([NotNull] string featureName) {
-        try {
-            Debug.Assert(featureName != null, $"{nameof(featureName)} != null");
-            return System.Activator.CreateInstance(System.Type.GetType(featureName)) as TileFeature;
-        } catch {
-            throw new System.Exception($"Cannot create region feature with name {featureName}");
-        }
-        
+        string typeName = $"Locations.Features.{featureName}";
+        System.Type type = System.Type.GetType(typeName);
+        Assert.IsNotNull(type, $"type for {featureName} is null!");
+        return System.Activator.CreateInstance(type) as TileFeature;
     }
     public Region GetRandomRegionWithFeature(string feature) {
         List<Region> choices = new List<Region>();

@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 129c2b5e0c8f0e14d9fb8b1c30296b6d, type: 3}
-    totalSpriteSurfaceArea: 3468437
+    totalSpriteSurfaceArea: 3476629
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -128,6 +128,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 02f0b4d1b676fd14cba7eceb09ad03c3, type: 3}
   - {fileID: 21300000, guid: dc30e0e162d93854db99983f2914be7b, type: 3}
   - {fileID: 21300000, guid: c89da1e1ddf8f5247ba2269139aa2f2c, type: 3}
+  - {fileID: 21300000, guid: ea5715e1a0a6ca44bb8c1ad27a529ccc, type: 3}
   - {fileID: 21300000, guid: 4d0116e17878b1040b25456d3cb9bef7, type: 3}
   - {fileID: 21300000, guid: 813919e1ed727c34393ab4a38bab6b8d, type: 3}
   - {fileID: 21300000, guid: faf88fe157e6b274095fe1c97e56a706, type: 3}
@@ -398,6 +399,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 5274dc57ab8285046bed37ceb3fe073d, type: 3}
   - {fileID: 21300000, guid: 2c0dbd579f0fd1d49b5b2cf8194cb866, type: 3}
   - {fileID: 21300000, guid: af90af57ba13ab84c94e104cbdbf6380, type: 3}
+  - {fileID: 21300000, guid: fc2db867a23918f4fbb4670f577c5b01, type: 3}
   - {fileID: 21300000, guid: 33750a67a94ff56448262d2d58e2fa0f, type: 3}
   - {fileID: 21300000, guid: 1572937726e25fc48b5316b837c3a653, type: 3}
   - {fileID: 21300000, guid: ea5810873ef701945be81f151b98c1a0, type: 3}
@@ -865,6 +867,7 @@ SpriteAtlas:
   - caveWallA-11100000-00
   - horizontal_1
   - boneGround_decor03
+  - vent_poison
   - corruptedGround05
   - laidWallA10111011-00
   - stains01
@@ -1135,6 +1138,7 @@ SpriteAtlas:
   - tundraDirt_v01
   - well05
   - laidWallA10101000-00
+  - vent_vapor
   - tundraDirt02
   - TRASH#3
   - corruptedGround02

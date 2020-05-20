@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Locations.Features;
 using UnityEngine;
 
 public class TileFeatureComponent {
@@ -14,6 +15,7 @@ public class TileFeatureComponent {
 	public void AddFeature(TileFeature feature, HexTile tile) {
 		if (!features.Contains(feature)) {
 			features.Add(feature);
+			Debug.Log($"{GameManager.Instance.TodayLogString()}{feature.name} was added to {tile}");
 			feature.OnAddFeature(tile);
 		}
 	}
@@ -56,7 +58,8 @@ public class TileFeatureComponent {
 	public TileFeature GetFeature(string featureName) {
 		for (int i = 0; i < features.Count; i++) {
 			TileFeature f = features[i];
-			if (f.GetType().ToString() == featureName || f.name == featureName) {
+			string typeString = f.GetType().Name; 
+			if (typeString == featureName || f.name == featureName) {
 				return f;
 			}
 		}

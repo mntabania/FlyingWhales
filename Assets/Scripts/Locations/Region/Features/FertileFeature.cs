@@ -1,11 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿namespace Locations.Features {
+    public class FertileFeature : TileFeature {
 
-public class FertileFeature : TileFeature {
-
-    public FertileFeature() {
-        name = "Fertile";
-        description = "Farms can be built here.";
-    }  
+        public FertileFeature() {
+            name = "Fertile";
+            description = "Farms can be built here.";
+        }  
+    }
 }
