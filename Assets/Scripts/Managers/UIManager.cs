@@ -117,8 +117,10 @@ public class UIManager : MonoBehaviour {
     public QuestUI questUI;
 
     public bool isShowingAreaTooltip { get; private set; } //is the tooltip for npcSettlement double clicks showing?
+    public PopupMenuBase latestOpenedPopup { get; private set; }
+    public InfoUIBase latestOpenedInfoUI { get; private set; }
     private InfoUIBase _lastOpenedInfoUI;
-    public List<PopupMenuBase> openedPopups { get; private set; }
+    //public List<PopupMenuBase> openedPopups { get; private set; }
     private PointerEventData _pointer;
     private List<RaycastResult> _raycastResults;
     
@@ -129,7 +131,7 @@ public class UIManager : MonoBehaviour {
         Instance = this;
     }
     private void Start() {
-        openedPopups = new List<PopupMenuBase>();
+        //openedPopups = new List<PopupMenuBase>();
         Messenger.AddListener<bool>(Signals.PAUSED, UpdateSpeedToggles);
         Messenger.AddListener(Signals.UPDATE_UI, UpdateUI);
         Messenger.AddListener(Signals.INSPECT_ALL, UpdateInteractableInfoUI);
@@ -564,13 +566,23 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     #region UI Utilities
-    private void OnUIMenuOpened(InfoUIBase menu) { }
-    private void OnUIMenuClosed(InfoUIBase menu) { }
+    private void OnUIMenuOpened(InfoUIBase menu) {
+        latestOpenedInfoUI = menu;
+    }
+    private void OnUIMenuClosed(InfoUIBase menu) {
+        if (latestOpenedInfoUI == menu) {
+            latestOpenedInfoUI = null;
+        }
+    }
     private void OnPopupMenuOpened(PopupMenuBase menu) {
-        openedPopups.Add(menu);
+        //openedPopups.Add(menu);
+        latestOpenedPopup = menu;
     }
     private void OnPopupMenuClosed(PopupMenuBase menu) {
-        openedPopups.Remove(menu);
+        if(latestOpenedPopup == menu) {
+            latestOpenedPopup = null;
+        }
+        //openedPopups.Remove(menu);
     }
     /// <summary>
     /// Checker for if the mouse is currently over a UI Object. 

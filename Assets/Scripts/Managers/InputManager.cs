@@ -4,6 +4,8 @@ using Inner_Maps;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+
 namespace Ruinarch {
     public class InputManager : MonoBehaviour {
 
@@ -210,17 +212,34 @@ namespace Ruinarch {
             } else if (PlayerManager.Instance.player.currentActiveArtifact != ARTIFACT_TYPE.None) {
                 PlayerManager.Instance.player.SetCurrentlyActiveArtifact(ARTIFACT_TYPE.None);
             } else {
-                if (UIManager.Instance.openedPopups.Count > 0) {
-                    //close latest popup
-                    UIManager.Instance.openedPopups.Last().Close();
-                } else {
-                    if (UIManager.Instance.poiTestingUI.gameObject.activeSelf ||
-                        UIManager.Instance.minionCommandsUI.gameObject.activeSelf) {
-                        return;
+                CustomStandaloneInputModule customModule = EventSystem.current.currentInputModule as CustomStandaloneInputModule;
+                if (!EventSystem.current.IsPointerOverGameObject() || customModule.GetPointerData().pointerEnter.GetComponent<Button>() == null) {
+                    if (UIManager.Instance.latestOpenedPopup != null) {
+                        //close latest popup
+                        UIManager.Instance.latestOpenedPopup.Close();
+                    } else {
+                        if (UIManager.Instance.poiTestingUI.gameObject.activeSelf ||
+                            UIManager.Instance.minionCommandsUI.gameObject.activeSelf) {
+                            return;
+                        }
+                        //close latest Info UI
+                        if (UIManager.Instance.latestOpenedInfoUI != null) {
+                            //close latest popup
+                            UIManager.Instance.latestOpenedInfoUI.OnClickCloseMenu();
+                        }
                     }
-                    //close all other menus
-                    Messenger.Broadcast(Signals.HIDE_MENUS);
                 }
+                //if (UIManager.Instance.openedPopups.Count > 0) {
+                //    //close latest popup
+                //    UIManager.Instance.openedPopups.Last().Close();
+                //} else {
+                //    if (UIManager.Instance.poiTestingUI.gameObject.activeSelf ||
+                //        UIManager.Instance.minionCommandsUI.gameObject.activeSelf) {
+                //        return;
+                //    }
+                //    //close all other menus
+                //    Messenger.Broadcast(Signals.HIDE_MENUS);
+                //}
             }
         }
 

@@ -154,6 +154,11 @@ public class JobQueueItem {
             CancelJob(false);
         } else {
             string stopText = "Have something important to do";
+            if(assignedCharacter != null) {
+                if(jobThatPushedBack is CharacterStateJob stateJob && stateJob.targetState == CHARACTER_STATE.COMBAT && assignedCharacter.combatComponent.avoidInRange.Count > 0) {
+                    stopText = "Fled from something";
+                }
+            }
             // if (jobThatPushedBack.IsAnInterruptionJob()) {
             //     stopText = "Interrupted";
             // }
