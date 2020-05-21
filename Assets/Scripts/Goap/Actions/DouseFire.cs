@@ -6,8 +6,9 @@ using Traits;
 public class DouseFire : GoapAction {
 
     public DouseFire() : base(INTERACTION_TYPE.DOUSE_FIRE) {
+        canBeAdvertisedEvenIfActorIsUnavailable = true;
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
-        actionIconString = GoapActionStateDB.Cure_Icon;
+        actionIconString = GoapActionStateDB.Douse_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, };
     }
@@ -30,8 +31,7 @@ public class DouseFire : GoapAction {
         GoapActionInvalidity goapActionInvalidity = base.IsInvalid(node);
         IPointOfInterest poiTarget = node.poiTarget;
         if (goapActionInvalidity.isInvalid == false) {
-            if (poiTarget.traitContainer.HasTrait("Burning") == false ||
-                (poiTarget as Character).IsInOwnParty() == false) {
+            if (poiTarget.traitContainer.HasTrait("Burning") == false) {
                 goapActionInvalidity.isInvalid = true;
             }
         }
@@ -40,9 +40,9 @@ public class DouseFire : GoapAction {
     #endregion
 
     #region State Effects
-    //public void PreCureSuccess(ActualGoapNode goapNode) { }
     public void AfterDouseSuccess(ActualGoapNode goapNode) {
         goapNode.poiTarget.traitContainer.RemoveStatusAndStacks(goapNode.poiTarget, "Burning", goapNode.actor);
+        goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, "Wet", goapNode.actor);
         goapNode.actor.UnobtainItem(TILE_OBJECT_TYPE.WATER_FLASK);
     }
     #endregion
@@ -57,7 +57,7 @@ public class DouseFire : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
-            return poiTarget is Character;
+            return poiTarget.traitContainer.HasTrait("Burning");
         }
         return false;
     }

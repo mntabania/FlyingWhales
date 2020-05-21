@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps.Location_Structures;
+using Locations.Settlements;
 
 public class BehaviourComponent {
 
@@ -16,7 +17,14 @@ public class BehaviourComponent {
     public bool isInvading { get; private set; }
     public bool isAttackingDemonicStructure { get; private set; }
     public string defaultBehaviourSetName { get; private set; }
-
+    
+    //douse fire
+    public NPCSettlement dousingFireForSettlement { get; private set; }
+    //cleanse tiles
+    public NPCSettlement cleansingTilesForSettlement { get; private set; }
+    //cleanse tiles
+    public NPCSettlement dryingTilesForSettlement { get; private set; }
+    
     private COMBAT_MODE combatModeBeforeHarassRaidInvade;
     private COMBAT_MODE combatModeBeforeAttackingDemonicStructure;
 
@@ -325,4 +333,43 @@ public class BehaviourComponent {
         return -1;
     }
     #endregion
+
+    #region Douse Fire
+    public void SetDouseFireSettlement(NPCSettlement settlement) {
+        if (settlement == null) {
+            //remove douser from previous settlements list, if any.
+            dousingFireForSettlement?.settlementJobTriggerComponent.RemoveDouser(owner);
+        } else {
+            settlement.settlementJobTriggerComponent.AddDouser(owner);
+        }
+        dousingFireForSettlement = settlement;
+    }
+    #endregion
+
+    #region Cleanse Tiles
+    public void SetCleansingTilesForSettlement(NPCSettlement settlement) {
+        if (settlement == null) {
+            //remove poison cleanser from previous settlements list, if any.
+            cleansingTilesForSettlement?.settlementJobTriggerComponent.RemovePoisonCleanser(owner);
+        } else {
+            settlement.settlementJobTriggerComponent.AddPoisonCleanser(owner);
+        }
+        cleansingTilesForSettlement = settlement;
+        
+    }
+    #endregion
+    
+    #region Dry Tiles
+    public void SetDryingTilesForSettlement(NPCSettlement settlement) {
+        if (settlement == null) {
+            //remove tile dryer from previous settlements list, if any.
+            dryingTilesForSettlement?.settlementJobTriggerComponent.RemoveTileDryer(owner);
+        } else {
+            settlement.settlementJobTriggerComponent.AddTileDryer(owner);
+        }
+        dryingTilesForSettlement = settlement;
+        
+    }
+    #endregion
+    
 }

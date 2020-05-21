@@ -15,28 +15,28 @@ public class BurningSource {
         location.innerMap.AddActiveBurningSource(this);
         Messenger.AddListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
     }
-    public void AddObjectOnFire(ITraitable poi) {
-        if (objectsOnFire.Contains(poi) == false) {
-            objectsOnFire.Add(poi);    
+    public void AddObjectOnFire(ITraitable traitable) {
+        if (objectsOnFire.Contains(traitable) == false) {
+            objectsOnFire.Add(traitable);    
         }
     }
-    private void RemoveObjectOnFire(ITraitable poi) {
-        if (objectsOnFire.Remove(poi)) {
+    private void RemoveObjectOnFire(ITraitable traitable) {
+        if (objectsOnFire.Remove(traitable)) {
             if (objectsOnFire.Count == 0) {
                 location.innerMap.RemoveActiveBurningSources(this);
                 SetAsInactive();
             }
         }
     }
-    public bool HasFireInSettlement(NPCSettlement npcSettlement) {
-        for (int i = 0; i < objectsOnFire.Count; i++) {
-            ITraitable traitable = objectsOnFire[i];
-            if (traitable.gridTileLocation != null && traitable.gridTileLocation.IsPartOfSettlement(npcSettlement)) {
-                return true;
-            }
-        }
-        return false;
-    }
+    // public bool HasFireInSettlement(NPCSettlement npcSettlement) {
+    //     for (int i = 0; i < objectsOnFire.Count; i++) {
+    //         ITraitable poi = objectsOnFire[i];
+    //         if (poi.gridTileLocation != null && poi.gridTileLocation.IsPartOfSettlement(npcSettlement)) {
+    //             return true;
+    //         }
+    //     }
+    //     return false;
+    // }
 
     private void SetAsInactive() {
         Messenger.RemoveListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Inner_Maps.Location_Structures;
+using Traits;
 using UnityEngine;
 using UtilityScripts;
 namespace Locations.Settlements {
@@ -14,7 +15,11 @@ namespace Locations.Settlements {
         public List<Character> residents { get; }
         public Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures { get; protected set; }
         public Region region { get; protected set; }
+        public List<IPointOfInterest> firesInSettlement { get; }
+        
         private List<LocationStructure> _allStructures;
+        
+        
         
         protected BaseSettlement(LOCATION_TYPE locationType, int citizenCount) {
             id = UtilityScripts.Utilities.SetID(this);
@@ -23,8 +28,10 @@ namespace Locations.Settlements {
             tiles = new List<HexTile>();
             residents = new List<Character>();
             structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
+            firesInSettlement = new List<IPointOfInterest>();
             _allStructures = new List<LocationStructure>();
             SetLocationType(locationType);
+            StartListeningForFires();
         }
         protected BaseSettlement(SaveDataArea saveDataArea) {
             SetName(RandomNameGenerator.GenerateCityName(RACE.HUMANS));
@@ -33,8 +40,10 @@ namespace Locations.Settlements {
             tiles = new List<HexTile>();
             residents = new List<Character>();
             structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
+            firesInSettlement = new List<IPointOfInterest>();
             _allStructures = new List<LocationStructure>();
             SetLocationType(saveDataArea.locationType);
+            StartListeningForFires();
         }
 
         #region Settlement Info
@@ -46,7 +55,6 @@ namespace Locations.Settlements {
         }
         #endregion
         
-
         #region Residents
         public void SetInitialResidentCount(int count) {
             citizenCount = count;
@@ -293,6 +301,35 @@ namespace Locations.Settlements {
         }
         public HexTile GetRandomHexTile() {
             return tiles[UnityEngine.Random.Range(0, tiles.Count)];
+        }
+        #endregion
+
+        #region Fire
+        private void StartListeningForFires() {
+            Messenger.AddListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
+            Messenger.AddListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
+        }
+        private void OnTraitableLostTrait(ITraitable traitable, Trait trait, Character removedBy) {
+            //added checker for null so that if an object has been destroyed and lost the burning trait, it will still be removed from the list
+            if (trait is Burning && (traitable.gridTileLocation == null || traitable.gridTileLocation.IsPartOfSettlement(this))) {
+                RemoveObjectOnFire(traitable);
+            }
+        }
+        private void OnTraitableGainedTrait(ITraitable traitable, Trait trait) {
+            if (trait is Burning && traitable.gridTileLocation.IsPartOfSettlement(this)) {
+                AddObjectOnFire(traitable);
+            }
+        }
+        private void AddObjectOnFire(ITraitable traitable) {
+            if (traitable is IPointOfInterest fire && firesInSettlement.Contains(fire) == false) {
+                firesInSettlement.Add(fire);
+            }
+        }
+        private void RemoveObjectOnFire(ITraitable traitable) {
+            if (traitable is IPointOfInterest poi) {
+                firesInSettlement.Remove(poi);    
+            }
+            
         }
         #endregion
     }

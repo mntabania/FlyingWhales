@@ -73,6 +73,7 @@ public class JobQueue {
 
         job.OnAddJobToQueue();
         job.originalOwner?.OnJobAddedToCharacterJobQueue(job, owner);
+        Messenger.Broadcast(Signals.JOB_ADDED_TO_QUEUE, job, owner);
         //if(quest != null) {
         //    quest.OnAddJob(job);
         //}

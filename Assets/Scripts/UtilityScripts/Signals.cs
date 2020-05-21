@@ -160,6 +160,10 @@ public static class Signals {
     /// Parameters (Character, CharacterBehaviourComponent)
     /// </summary>
     public static string CHARACTER_REMOVED_BEHAVIOUR = "OnCharacterRemovedBehaviour";
+    /// <summary>
+    /// Parameters (Character)
+    /// </summary>
+    public static string CHARACTER_CAN_NO_LONGER_COMBAT = "OnCharacterCanNoLongerCombat";
     #endregion
 
     #region UI
@@ -401,6 +405,10 @@ public static class Signals {
     /// Parameters (JobQueueItem, Character)
     /// </summary>
     public static string JOB_REMOVED_FROM_QUEUE = "OnJobRemovedFromQueue";
+    /// <summary>
+    /// Parameters (JobQueueItem, Character)
+    /// </summary>
+    public static string JOB_ADDED_TO_QUEUE = "OnJobAddedToQueue";
     #endregion
 
     #region Location Grid Tile

@@ -857,9 +857,12 @@ public class CharacterMarker : MapObjectVisual<Character> {
                     }
                 }
                 if (character.currentActionNode != null) {
-                    if (character.currentActionNode.action.goapType == INTERACTION_TYPE.RETURN_HOME) {
+                    if (character.currentActionNode.action.goapType == INTERACTION_TYPE.RETURN_HOME ||
+                        character.currentActionNode.action.goapType == INTERACTION_TYPE.DOUSE_FIRE) {
                         //Run
                         speed = character.runSpeed;
+                    } else if (character.currentActionNode.action.goapType == INTERACTION_TYPE.PATROL) {
+                        speed = character.walkSpeed;
                     }
                 }
             }

@@ -35,15 +35,17 @@ namespace Traits {
         public override void OnAddTrait(ITraitable addedTo) {
             owner = addedTo;
             if (addedTo is IPointOfInterest poi) {
+                poi.AddAdvertisedAction(INTERACTION_TYPE.DOUSE_FIRE);
                 burningEffect = GameManager.Instance.CreateParticleEffectAt(poi, PARTICLE_EFFECT.Burning, false);
                 if (poi is Character character) {
                     character.AdjustDoNotRecoverHP(1);
                     if(character.canMove && character.canWitness && character.canPerform) {
                         CreateJobsOnEnterVisionBasedOnTrait(character, character);
                     }
-                } else {
-                    poi.SetPOIState(POI_STATE.INACTIVE);
-                }
+                } 
+                // else {
+                //     poi.SetPOIState(POI_STATE.INACTIVE);
+                // }
                 if(poi is WinterRose winterRose) {
                     winterRose.WinterRoseEffect();
                 } else {
@@ -72,12 +74,14 @@ namespace Traits {
                 burningEffect = null;
             }
             if (removedFrom is IPointOfInterest obj) {
+                obj.RemoveAdvertisedAction(INTERACTION_TYPE.DOUSE_FIRE);
                 if (removedFrom is Character character) {
                     // character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.REMOVE_STATUS);
                     character.AdjustDoNotRecoverHP(-1);
-                } else {
-                    obj.SetPOIState(POI_STATE.ACTIVE);   
                 }
+                // else {
+                //     obj.SetPOIState(POI_STATE.ACTIVE);   
+                // }
             } 
         }
         public override void OnRemoveStatusBySchedule(ITraitable removedFrom) {
@@ -160,68 +164,46 @@ namespace Traits {
             }
             
             if(owner.gridTileLocation == null) {
-                //Messenger.RemoveListener(Signals.TICK_ENDED, PerTickEnded);
-                //Temporary fix only, if the burning object has no longer have a tile location (presumably destroyed), spreading of fire should not trigger, and remove listener for per tick
+                //Temporary fix only, if the burning object has no longer have a tile location (presumably destroyed), spreading of fire should not trigger
                 return;
             }
             //TODO: CAN BE OPTIMIZED?
             _burningSpreadChoices.Clear();
-            LocationGridTile origin = owner.gridTileLocation;
-            List<LocationGridTile> affectedTiles = origin.GetTilesInRadius(1, includeCenterTile: true, includeTilesInDifferentStructure: true);
-            for (int i = 0; i < affectedTiles.Count; i++) {
-                _burningSpreadChoices.AddRange(affectedTiles[i].GetTraitablesOnTile());
-            }
-            //choices.AddRange(origin.GetTraitablesOnTileWithTrait("Flammable"));
-            //List<LocationGridTile> neighbours = origin.FourNeighbours();
-            //for (int i = 0; i < neighbours.Count; i++) {
-            //    choices.AddRange(neighbours[i].GetTraitablesOnTileWithTrait("Flammable"));
-            //}
-            //choices = choices.Where(x => !x.traitContainer.HasTrait("Burning", "Burnt", "Wet", "Fireproof")).ToList();
-            if (_burningSpreadChoices.Count > 0) {
-                ITraitable chosen = _burningSpreadChoices[Random.Range(0, _burningSpreadChoices.Count)];
-                chosen.traitContainer.AddTrait(chosen, "Burning", out var trait);
-                (trait as Burning)?.SetSourceOfBurning(sourceOfBurning, chosen);
+            if (ShouldSpreadFire()) {
+                LocationGridTile origin = owner.gridTileLocation;
+                List<LocationGridTile> affectedTiles = origin.GetTilesInRadius(1, includeCenterTile: true, includeTilesInDifferentStructure: true);
+                for (int i = 0; i < affectedTiles.Count; i++) {
+                    _burningSpreadChoices.AddRange(affectedTiles[i].GetTraitablesOnTile());
+                }
+                if (_burningSpreadChoices.Count > 0) {
+                    ITraitable chosen = _burningSpreadChoices[Random.Range(0, _burningSpreadChoices.Count)];
+                    chosen.traitContainer.AddTrait(chosen, "Burning", out var trait);
+                    (trait as Burning)?.SetSourceOfBurning(sourceOfBurning, chosen);
+                }    
             }
 
             owner.AdjustHP(-(int)(owner.maxHP * 0.02f), ELEMENTAL_TYPE.Normal, true, this, showHPBar: true);
-            //if (owner is Character) {
-            //    //Burning characters reduce their current hp by 2% of maxhp every tick. 
-            //    //They also have a 6% chance to remove Burning effect but will not gain a Burnt trait afterwards. 
-            //    //If a character dies and becomes a corpse, it may still continue to burn.
-            //    if (Random.Range(0, 100) < 6) {
-            //        owner.traitContainer.RemoveTrait(owner, this);
-            //    }
-            //} else {
-            //    if (owner.currentHP == 0) {
-            //        owner.traitContainer.RemoveTrait(owner, this);
-            //        // owner.traitContainer.AddTrait(owner, "Burnt");
-            //    } else {
-            //        //Every tick, a Burning tile or object also has a 3% chance to remove Burning effect. 
-            //        //Afterwards, it will have a Burnt trait, which disables its Flammable trait (meaning it can no longer gain a Burning status).
-            //        if (Random.Range(0, 100) < 3) {
-            //            owner.traitContainer.RemoveTrait(owner, this);
-            //            owner.traitContainer.AddTrait(owner, "Burnt");
-            //        }
-            //    }
-                
-            //}
         }
 
         #region Douser
         public void SetDouser(Character character) {
             douser = character;
             if (douser == null) {
-                Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterExitedState);
+                Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
             } else {
-                Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterExitedState);
+                Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
             }
         }
-        private void OnCharacterExitedState(Character character, CharacterState state) {
-            if (state.characterState == CHARACTER_STATE.DOUSE_FIRE && douser == character) {
-                SetDouser(null); //character that exited douse fire state is this fires' douser, set douser to null.
+        private void OnJobRemovedFromCharacter(JobQueueItem jqi, Character character) {
+            if (douser == character && jqi.jobType == JOB_TYPE.DOUSE_FIRE) {
+                SetDouser(null); 
             }
         }
         #endregion
+
+        private bool ShouldSpreadFire() {
+            return owner is IPointOfInterest; //only spread fire of this is owned by a POI
+        }
 
     }
 

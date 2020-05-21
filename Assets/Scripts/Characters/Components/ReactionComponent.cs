@@ -592,6 +592,7 @@ public class ReactionComponent {
                 if (owner.homeSettlement.HasJob(JOB_TYPE.DOUSE_FIRE) == false) {
                     Debug.LogWarning($"{owner.name} saw a fire in a settlement but no douse fire jobs were created.");
                 }
+                
                 for (int i = 0; i < owner.homeSettlement.availableJobs.Count; i++) {
                     JobQueueItem job = owner.homeSettlement.availableJobs[i];
                     if (job.jobType == JOB_TYPE.DOUSE_FIRE) {

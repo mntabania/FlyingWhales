@@ -20,11 +20,17 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 
 	public List<LocationGridTile> wetTiles { get; }
 	public List<LocationGridTile> poisonedTiles { get; }
+	public List<Character> poisonCleansers { get; }
+	public List<Character> tileDryers { get; set; }
+	public List<Character> dousers { get; }
 	
 	public SettlementJobTriggerComponent(NPCSettlement owner) {
 		_owner = owner;
 		wetTiles = new List<LocationGridTile>();
 		poisonedTiles = new List<LocationGridTile>();
+		poisonCleansers = new List<Character>();
+		tileDryers = new List<Character>();
+		dousers = new List<Character>();
 	}
 	
 	#region Listeners
@@ -417,11 +423,11 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	#region Patrol
 	private void CreatePatrolJobs() {
 		int patrolChance = UnityEngine.Random.Range(0, 100);
-		if (patrolChance < 15 && _owner.GetNumberOfJobsWith(CHARACTER_STATE.PATROL) < 2) {
-			CharacterStateJob stateJob = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.PATROL, CHARACTER_STATE.PATROL, _owner);
-			stateJob.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoPatrol);
-			stateJob.SetCannotBePushedBack(true);
-			_owner.AddToAvailableJobs(stateJob);
+		if (patrolChance < 15 && _owner.GetNumberOfJobsWith(JOB_TYPE.PATROL) < 2) {
+			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PATROL, INTERACTION_TYPE.START_PATROL, null, _owner);
+			job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoPatrol);
+			job.SetCannotBePushedBack(true);
+			_owner.AddToAvailableJobs(job);
 		}
 	}
 	#endregion
@@ -549,33 +555,35 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 
 	#region Douse Fire
 	public void TriggerDouseFire() {
-        if (_owner.region.innerMap.activeBurningSources.Count(x => x.HasFireInSettlement(_owner)) > 0) {
-			int existingDouseFire = _owner.GetNumberOfJobsWith(CHARACTER_STATE.DOUSE_FIRE);
-			int douseFireJobs = 3;
-			if (existingDouseFire < douseFireJobs) {
-				int missing = douseFireJobs - existingDouseFire;
+        if (_owner.firesInSettlement.Count > 0) {
+			int existingDouseFire = dousers.Count + _owner.GetNumberOfJobsWith(JOB_TYPE.DOUSE_FIRE);
+			int maxDouseFireJobs = 3;
+			if (existingDouseFire < maxDouseFireJobs) {
+				int missing = maxDouseFireJobs - existingDouseFire;
 				for (int i = 0; i < missing; i++) {
-					CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.DOUSE_FIRE, 
-						CHARACTER_STATE.DOUSE_FIRE, _owner);
+					GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DOUSE_FIRE, 
+						INTERACTION_TYPE.START_DOUSE, null, _owner);
 					job.SetCanTakeThisJobChecker(CanTakeRemoveFireJob);
+					job.SetOnTakeJobAction(OnTakeDouseFireJob);
 					_owner.AddToAvailableJobs(job, 0);
 				}	
 			}	
 		}
 	}
 	private void CheckDouseFireJobsValidity() {
-		if (_owner.region.innerMap.activeBurningSources.Count(x => x.HasFireInSettlement(_owner)) == 0) {
+		if (_owner.firesInSettlement.Count == 0) {
 			//cancel all douse fire jobs
 			List<JobQueueItem> jobs = _owner.GetJobs(JOB_TYPE.DOUSE_FIRE);
 			for (int i = 0; i < jobs.Count; i++) {
 				JobQueueItem jqi = jobs[i];
-				if (jqi.assignedCharacter == null || (jqi.assignedCharacter.stateComponent.currentState is DouseFireState) == false) {
+				if (jqi.assignedCharacter == null) {
 					jqi.ForceCancelJob(false, "no more fires");	
 				}
 			}
 		}
 	}
 	private bool CanTakeRemoveFireJob(Character character, IPointOfInterest target) {
+		if (character.jobQueue.HasJob(JOB_TYPE.DOUSE_FIRE)) { return false; }
 		if (target is Character targetCharacter) {
 			if (character == targetCharacter) {
 				//the burning character is himself
@@ -593,6 +601,15 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	}
 	private bool HasWaterAvailable(Character character) {
 		return character.currentRegion.HasTileObjectOfType(TILE_OBJECT_TYPE.WATER_WELL);
+	}
+	private void OnTakeDouseFireJob(Character character, JobQueueItem jqi) {
+		character.behaviourComponent.SetDouseFireSettlement(_owner);
+	}
+	public void AddDouser(Character character) {
+		dousers.Add(character);
+	}
+	public void RemoveDouser(Character character) {
+		dousers.Remove(character);
 	}
 	#endregion
 
@@ -613,17 +630,21 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	}
 	public void TriggerDryTiles() {
 		if (wetTiles.Count > 0) {
-			int existingJobs = _owner.GetNumberOfJobsWith(CHARACTER_STATE.DRY_TILES);
-			int jobsToCreate = 1;
-			if (existingJobs < jobsToCreate) {
-				int missing = jobsToCreate - existingJobs;
+			int dryerCount = tileDryers.Count + _owner.GetNumberOfJobsWith(JOB_TYPE.DRY_TILES);
+			int maxDryers = 1;
+			if (dryerCount < maxDryers) {
+				int missing = maxDryers - dryerCount;
 				for (int i = 0; i < missing; i++) {
-					CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.DRY_TILES, 
-						CHARACTER_STATE.DRY_TILES, _owner);
+					GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DRY_TILES, 
+						INTERACTION_TYPE.START_DRY, null, _owner);
+					job.SetOnTakeJobAction(OnTakeDryTileJob);
 					_owner.AddToAvailableJobs(job);
 				}	
 			}	
 		}
+	}
+	private void OnTakeDryTileJob(Character character, JobQueueItem jqi) {
+		character.behaviourComponent.SetDryingTilesForSettlement(_owner);
 	}
 	private void CheckDryTilesValidity() {
 		if (wetTiles.Count == 0) {
@@ -636,6 +657,12 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 				}
 			}
 		}
+	}
+	public void AddTileDryer(Character character) {
+		tileDryers.Add(character);
+	}
+	public void RemoveTileDryer(Character character) {
+		tileDryers.Remove(character);
 	}
 	#endregion
 	
@@ -656,21 +683,25 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	}
 	public void TriggerCleanseTiles() {
 		if (poisonedTiles.Count > 0) {
-			int existingJobs = _owner.GetNumberOfJobsWith(CHARACTER_STATE.CLEANSE_TILES);
-			int jobsToCreate = 1;
-			if (existingJobs < jobsToCreate) {
-				int missing = jobsToCreate - existingJobs;
+			int cleansersCount = poisonCleansers.Count + _owner.GetNumberOfJobsWith(JOB_TYPE.CLEANSE_TILES);
+			int maxCleansers = 1;
+			if (cleansersCount < maxCleansers) {
+				int missing = maxCleansers - cleansersCount;
 				for (int i = 0; i < missing; i++) {
-					CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.CLEANSE_TILES, 
-						CHARACTER_STATE.CLEANSE_TILES, _owner);
+					GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CLEANSE_TILES, 
+						INTERACTION_TYPE.START_CLEANSE, null, _owner);
+					job.SetOnTakeJobAction(OnTakeCleanseTileJob);
 					_owner.AddToAvailableJobs(job);
 				}	
 			}	
 		}
 	}
+	private void OnTakeCleanseTileJob(Character character, JobQueueItem jobQueueItem) {
+		character.behaviourComponent.SetCleansingTilesForSettlement(_owner);
+	}
 	private void CheckCleanseTilesValidity() {
 		if (poisonedTiles.Count == 0) {
-			//cancel all dry tiles jobs
+			//cancel all cleanse tiles jobs
 			List<JobQueueItem> jobs = _owner.GetJobs(JOB_TYPE.CLEANSE_TILES);
 			for (int i = 0; i < jobs.Count; i++) {
 				JobQueueItem jqi = jobs[i];
@@ -679,6 +710,12 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 				}
 			}
 		}
+	}
+	public void AddPoisonCleanser(Character character) {
+		poisonCleansers.Add(character);
+	}
+	public void RemovePoisonCleanser(Character character) {
+		poisonCleansers.Remove(character);
 	}
 	#endregion
 

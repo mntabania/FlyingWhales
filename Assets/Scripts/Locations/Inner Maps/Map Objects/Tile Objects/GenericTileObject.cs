@@ -25,6 +25,7 @@ public class GenericTileObject : TileObject {
     public override void OnPlacePOI() {
         SetPOIState(POI_STATE.ACTIVE);
     }
+    protected override string GenerateName() { return "the floor"; }
     protected override void OnPlaceTileObjectAtTile(LocationGridTile tile) { } //overridden this to reduce unnecessary processing 
     public override void OnDestroyPOI() {
         DisableGameObject();

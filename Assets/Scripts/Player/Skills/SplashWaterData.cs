@@ -11,5 +11,29 @@ public class SplashWaterData : SpellData {
     public SplashWaterData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
     }
+    public override void ActivateAbility(LocationGridTile targetTile) {
+        List<LocationGridTile> tiles = targetTile.GetTilesInRadius(1, includeCenterTile: true, includeTilesInDifferentStructure: true);
+        for (int i = 0; i < tiles.Count; i++) {
+            LocationGridTile tile = tiles[i];
+            tile.PerformActionOnTraitables(MakeTraitbleWet);
+        }
+        GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Water_Bomb);
+        targetTile.genericTileObject.traitContainer.AddTrait(targetTile.genericTileObject, "Surprised Remnant");
+        //IncreaseThreatThatSeesTile(targetTile, 10);
+        base.ActivateAbility(targetTile);
+    }
+    private void MakeTraitbleWet(ITraitable traitable) {
+        traitable.traitContainer.AddTrait(traitable, "Wet");
+    }
+    public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
+        bool canPerform = base.CanPerformAbilityTowards(targetTile);
+        if (canPerform) {
+            return targetTile.structure != null;
+        }
+        return canPerform;
+    }
+    public override void HighlightAffectedTiles(LocationGridTile tile) {
+        TileHighlighter.Instance.PositionHighlight(1, tile);
+    }
 }
 
