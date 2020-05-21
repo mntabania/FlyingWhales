@@ -339,6 +339,13 @@ public class GoapAction : ICrimeable {
                     int preconditionInt = int.Parse(precondition.conditionKey);
                     return effectInt >= preconditionInt;
                 } else {
+                    if (precondition.conditionKey == "Food Pile") {
+                        //if precondition is looking for a food pile, allow actions that have the following effects:
+                        //TODO: There might be a better way to do this?
+                        return effect.conditionKey == "Animal Meat" || effect.conditionKey == "Human Meat" ||
+                               effect.conditionKey == "Elf Meat" || effect.conditionKey == "Vegetables" ||
+                               effect.conditionKey == "Fish Pile" || effect.conditionKey == "Food Pile";
+                    }
                     return effect.conditionKey == precondition.conditionKey;
                 }
                 //switch (effect.conditionType) {

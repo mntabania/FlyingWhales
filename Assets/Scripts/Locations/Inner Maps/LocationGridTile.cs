@@ -90,7 +90,7 @@ namespace Inner_Maps {
             tileState = Tile_State.Empty;
             charactersHere = new List<Character>();
             walls = new List<StructureWallObject>();
-            SetReservedType(TILE_OBJECT_TYPE.NONE);
+            // SetReservedType(TILE_OBJECT_TYPE.NONE);
             defaultTileColor = Color.white;
         }
         public LocationGridTile(SaveDataLocationGridTile data, Tilemap tilemap, InnerTileMap parentMap) {
@@ -103,7 +103,7 @@ namespace Inner_Maps {
             centeredWorldLocation = data.centeredWorldLocation;
             tileType = data.tileType;
             tileState = data.tileState;
-            SetReservedType(data.reservedObjectType);
+            // SetReservedType(data.reservedObjectType);
             charactersHere = new List<Character>();
             walls = new List<StructureWallObject>();
             defaultTileColor = Color.white;
@@ -957,18 +957,18 @@ namespace Inner_Maps {
         //}
         #endregion
 
-        #region Tile Objects
-        public void SetReservedType(TILE_OBJECT_TYPE reservedType) {
-            if (structure != null) {
-                if (reservedObjectType != TILE_OBJECT_TYPE.NONE && reservedType == TILE_OBJECT_TYPE.NONE && tileState == Tile_State.Empty) {
-                    structure.AddUnoccupiedTile(this);
-                } else if (reservedObjectType == TILE_OBJECT_TYPE.NONE && reservedType != TILE_OBJECT_TYPE.NONE) {
-                    structure.RemoveUnoccupiedTile(this);
-                }
-            }
-            reservedObjectType = reservedType;
-        }
-        #endregion
+        // #region Tile Objects
+        // public void SetReservedType(TILE_OBJECT_TYPE reservedType) {
+        //     if (structure != null) {
+        //         if (reservedObjectType != TILE_OBJECT_TYPE.NONE && reservedType == TILE_OBJECT_TYPE.NONE && tileState == Tile_State.Empty) {
+        //             structure.AddUnoccupiedTile(this);
+        //         } else if (reservedObjectType == TILE_OBJECT_TYPE.NONE && reservedType != TILE_OBJECT_TYPE.NONE) {
+        //             structure.RemoveUnoccupiedTile(this);
+        //         }
+        //     }
+        //     reservedObjectType = reservedType;
+        // }
+        // #endregion
 
         #region Furniture Spots
         public void SetFurnitureSpot(FurnitureSpot spot) {

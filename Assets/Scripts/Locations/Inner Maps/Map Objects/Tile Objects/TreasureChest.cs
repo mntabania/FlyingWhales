@@ -22,7 +22,7 @@ public class TreasureChest : TileObject {
         TILE_OBJECT_TYPE.WOOD_PILE,
         TILE_OBJECT_TYPE.STONE_PILE,
         TILE_OBJECT_TYPE.METAL_PILE,
-        TILE_OBJECT_TYPE.FOOD_PILE,
+        TILE_OBJECT_TYPE.ANIMAL_MEAT,
         TILE_OBJECT_TYPE.MIMIC_TILE_OBJECT,
     };
     

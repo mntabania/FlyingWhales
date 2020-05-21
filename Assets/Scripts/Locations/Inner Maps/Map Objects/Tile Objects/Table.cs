@@ -80,7 +80,7 @@ public class Table : TileObject {
 
         }
     }
-    public override bool CanBeReplaced() {
+    public virtual bool CanBeReplaced() {
         return true;
     }
     protected override void OnPlaceTileObjectAtTile(LocationGridTile tile) {

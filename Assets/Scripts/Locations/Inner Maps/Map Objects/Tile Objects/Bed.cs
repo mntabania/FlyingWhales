@@ -93,7 +93,7 @@ public class Bed : TileObject {
             Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "bed is burning");
         }
     }
-    public override bool CanBeReplaced() {
+    public virtual bool CanBeReplaced() {
         return true;
     }
     #endregion

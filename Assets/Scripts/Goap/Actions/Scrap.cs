@@ -94,7 +94,7 @@ public class Scrap : GoapAction {
         StonePile stonePile = InnerMapManager.Instance.CreateNewTileObject<StonePile>(TILE_OBJECT_TYPE.STONE_PILE);
         stonePile.SetResourceInPile(Mathf.CeilToInt(craftCost * 0.5f));
         tile.structure.AddPOI(stonePile, tile);
-        stonePile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.STONE_PILE);
+        // stonePile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.STONE_PILE);
     }
     #endregion
 }

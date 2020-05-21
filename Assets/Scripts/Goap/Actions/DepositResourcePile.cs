@@ -196,22 +196,29 @@ public class DepositResourcePile : GoapAction {
         Character actor = goapNode.actor;
         ResourcePile poiTarget = goapNode.poiTarget as ResourcePile;
         object[] otherData = goapNode.otherData;
-        ResourcePile pileToBeDepositTo = null;
+        ResourcePile pileToBeDepositedTo = null;
         if (otherData != null && otherData.Length == 1 && otherData[0] is ResourcePile) {
-            pileToBeDepositTo = otherData[0] as ResourcePile;
+            pileToBeDepositedTo = otherData[0] as ResourcePile;
         }
-        if(pileToBeDepositTo != null && pileToBeDepositTo.gridTileLocation == goapNode.targetTile) {
-            //Deposit resource pile
-            if(pileToBeDepositTo.IsAtMaxResource(poiTarget.providedResource) == false) {
-                if (pileToBeDepositTo.mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
-                    pileToBeDepositTo.SetMapObjectState(MAP_OBJECT_STATE.BUILT);
-                }
-                pileToBeDepositTo.AdjustResourceInPile(poiTarget.resourceInPile);
-                TraitManager.Instance.CopyStatuses(poiTarget, pileToBeDepositTo);
-                actor.UncarryPOI(poiTarget, addToLocation: false);
+        if(pileToBeDepositedTo != null && pileToBeDepositedTo.gridTileLocation == goapNode.targetTile) {
+            if (pileToBeDepositedTo.mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
+                //remove unbuilt pile, since it is no longer needed, then place carried pile in its place
+                pileToBeDepositedTo.gridTileLocation.structure.RemovePOI(pileToBeDepositedTo);
+                actor.UncarryPOI(poiTarget, addToLocation: false, dropLocation: goapNode.targetTile);
             } else {
-                actor.UncarryPOI(poiTarget);
+                //Deposit resource pile
+                if(pileToBeDepositedTo.IsAtMaxResource(poiTarget.providedResource) == false) {
+                    if (pileToBeDepositedTo.mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
+                        pileToBeDepositedTo.SetMapObjectState(MAP_OBJECT_STATE.BUILT);
+                    }
+                    pileToBeDepositedTo.AdjustResourceInPile(poiTarget.resourceInPile);
+                    TraitManager.Instance.CopyStatuses(poiTarget, pileToBeDepositedTo);
+                    actor.UncarryPOI(poiTarget, addToLocation: false);
+                } else {
+                    actor.UncarryPOI(poiTarget);
+                }
             }
+            
         } else {
             actor.UncarryPOI(poiTarget);
         }

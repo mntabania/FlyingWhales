@@ -109,7 +109,7 @@ public class LocationStructureObject : PooledObject {
             StructureTemplateObjectData preplacedObj = preplacedObjs[i];
             Vector3Int tileCoords = innerMap.groundTilemap.WorldToCell(preplacedObj.transform.position);
             LocationGridTile tile = innerMap.map[tileCoords.x, tileCoords.y];
-            tile.SetReservedType(preplacedObj.tileObjectType);
+            // tile.SetReservedType(preplacedObj.tileObjectType);
 
             TileObject newTileObject = InnerMapManager.Instance.CreateNewTileObject<TileObject>(preplacedObj.tileObjectType);
             newTileObject.SetIsPreplaced(true, structure);
@@ -130,7 +130,7 @@ public class LocationStructureObject : PooledObject {
             StructureTemplateObjectData preplacedObj = preplacedObjs[i];
             Vector3Int tileCoords = areaMap.groundTilemap.WorldToCell(preplacedObj.transform.position);
             LocationGridTile tile = areaMap.map[tileCoords.x, tileCoords.y];
-            tile.SetReservedType(preplacedObj.tileObjectType);
+            // tile.SetReservedType(preplacedObj.tileObjectType);
 
             TileObject newTileObject = InnerMapManager.Instance.CreateNewTileObject<TileObject>(preplacedObj.tileObjectType);
             structure.AddPOI(newTileObject, tile);

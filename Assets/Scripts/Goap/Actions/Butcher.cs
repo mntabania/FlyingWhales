@@ -199,10 +199,10 @@ public class Butcher : GoapAction {
             tileLocation.structure.RemovePOI(poiTarget, goapNode.actor);
         }
 
-        FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(TILE_OBJECT_TYPE.FOOD_PILE);
+        FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(TILE_OBJECT_TYPE.ANIMAL_MEAT);
         foodPile.SetResourceInPile(transformedFood);
         tileLocation.structure.AddPOI(foodPile, tileLocation);
-        foodPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.FOOD_PILE);
+        // foodPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.FOOD_PILE);
     }
     //public void PreTargetMissing() {
     //    goapNode.descriptionLog.AddToFillers(deadCharacter, deadCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);

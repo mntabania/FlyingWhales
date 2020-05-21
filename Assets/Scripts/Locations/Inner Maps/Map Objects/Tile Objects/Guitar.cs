@@ -19,7 +19,7 @@ public class Guitar : TileObject {
         return $"Guitar {id}";
     }
 
-    public override bool CanBeReplaced() {
+    public virtual bool CanBeReplaced() {
         return true;
     }
 }

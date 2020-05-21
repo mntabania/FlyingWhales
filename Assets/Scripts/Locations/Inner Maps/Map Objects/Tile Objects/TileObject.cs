@@ -331,9 +331,6 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             traitContainer.RemoveAllTraitsAndStatuses(this);
         }
     }
-    public virtual bool CanBeReplaced() {
-        return false;
-    }
     public virtual void OnTileObjectGainedTrait(Trait trait) {
         if (trait is Status status && status.isTangible && mapObjectVisual != null) {
             mapObjectVisual.visionTrigger.VoteToMakeVisibleToCharacters();

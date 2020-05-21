@@ -55,7 +55,7 @@ public class MineMetal : GoapAction {
         MetalPile metalPile = InnerMapManager.Instance.CreateNewTileObject<MetalPile>(TILE_OBJECT_TYPE.METAL_PILE);
         metalPile.SetResourceInPile(metal);
         tile.structure.AddPOI(metalPile, tile);
-        metalPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.METAL_PILE);
+        // metalPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.METAL_PILE);
     }
     #endregion
 }

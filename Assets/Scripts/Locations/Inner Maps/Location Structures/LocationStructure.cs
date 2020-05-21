@@ -423,21 +423,35 @@ namespace Inner_Maps.Location_Structures {
             }
             return count;
         }
-        public ResourcePile GetResourcePileObjectWithLowestCount(TILE_OBJECT_TYPE type, bool excludeMaximum = true) {
+        public T GetResourcePileObjectWithLowestCount<T>(bool excludeMaximum = true) where T : ResourcePile {
+            T chosenPile = null;
+            int lowestCount = 0;
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest poi = pointsOfInterest.ElementAt(i); 
+                if (poi is T obj) {
+                    if (excludeMaximum && obj.IsAtMaxResource(obj.providedResource)) {
+                        continue; //skip
+                    }
+                    if(chosenPile == null || obj.resourceInPile <= lowestCount) {
+                        chosenPile = obj;
+                        lowestCount = obj.resourceInPile;
+                    }
+                }
+            }
+            return chosenPile;
+        }
+        public ResourcePile GetResourcePileObjectWithLowestCount(TILE_OBJECT_TYPE tileObjectType, bool excludeMaximum = true){
             ResourcePile chosenPile = null;
             int lowestCount = 0;
             for (int i = 0; i < pointsOfInterest.Count; i++) {
                 IPointOfInterest poi = pointsOfInterest.ElementAt(i); 
-                if (poi is ResourcePile) {
-                    ResourcePile obj = poi as ResourcePile;
+                if (poi is ResourcePile obj && obj.tileObjectType == tileObjectType) {
                     if (excludeMaximum && obj.IsAtMaxResource(obj.providedResource)) {
                         continue; //skip
                     }
-                    if (obj.tileObjectType == type) {
-                        if(chosenPile == null || obj.resourceInPile <= lowestCount) {
-                            chosenPile = obj;
-                            lowestCount = obj.resourceInPile;
-                        }
+                    if(chosenPile == null || obj.resourceInPile <= lowestCount) {
+                        chosenPile = obj;
+                        lowestCount = obj.resourceInPile;
                     }
                 }
             }
