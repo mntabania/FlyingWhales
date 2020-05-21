@@ -259,16 +259,20 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		});
 		_owner.jobQueue.AddJobInQueue(job);
 	}
-	public void TriggerFleeHome(JOB_TYPE jobType = JOB_TYPE.FLEE_TO_HOME) {
-		if (!_owner.jobQueue.HasJob(jobType)) {
-			ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RETURN_HOME], _owner, _owner, null, 0);
-			GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.RETURN_HOME, _owner, _owner);
-			goapPlan.SetDoNotRecalculate(true);
-			job.SetCannotBePushedBack(true);
-			job.SetAssignedPlan(goapPlan);
-			_owner.jobQueue.AddJobInQueue(job);
-		}
+	public bool TriggerFleeHome(JOB_TYPE jobType = JOB_TYPE.FLEE_TO_HOME) {
+        if(_owner.homeStructure != null && !_owner.homeStructure.hasBeenDestroyed && _owner.homeStructure.tiles.Count > 0) {
+            if (!_owner.jobQueue.HasJob(jobType)) {
+                ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RETURN_HOME], _owner, _owner, null, 0);
+                GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.RETURN_HOME, _owner, _owner);
+                goapPlan.SetDoNotRecalculate(true);
+                job.SetCannotBePushedBack(true);
+                job.SetAssignedPlan(goapPlan);
+                _owner.jobQueue.AddJobInQueue(job);
+            }
+            return true;
+        }
+        return false;
 	}
 	public bool TriggerDestroy(IPointOfInterest target) {
 		if (!_owner.jobQueue.HasJob(JOB_TYPE.DESTROY, target)) {
@@ -910,9 +914,14 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     #endregion
 
     #region Hide At Home
-    public void CreateHideAtHomeJob() {
-	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HIDE_AT_HOME, INTERACTION_TYPE.RETURN_HOME, _owner, _owner);
-	    _owner.jobQueue.AddJobInQueue(job);
+    public bool CreateHideAtHomeJob() {
+        if (_owner.homeStructure != null && !_owner.homeStructure.hasBeenDestroyed && _owner.homeStructure.tiles.Count > 0) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HIDE_AT_HOME, INTERACTION_TYPE.RETURN_HOME, _owner, _owner);
+            _owner.jobQueue.AddJobInQueue(job);
+            return true;
+        }
+        return false;
+
     }
     #endregion
 

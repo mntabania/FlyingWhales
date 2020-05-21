@@ -220,7 +220,7 @@ public class ActualGoapNode : IReactable, IRumorable {
                 targetTile = actor.gridTileLocation;
             }
         } else if (action.actionLocationType == ACTION_LOCATION_TYPE.RANDOM_LOCATION) {
-            List<LocationGridTile> choices = targetStructure.unoccupiedTiles.ToList();
+            List<LocationGridTile> choices = targetStructure.tiles; //targetStructure.unoccupiedTiles.ToList();
             if (choices.Count > 0) {
                 targetTile = choices[UtilityScripts.Utilities.Rng.Next(0, choices.Count)];
             } else {
@@ -237,14 +237,6 @@ public class ActualGoapNode : IReactable, IRumorable {
                     throw new System.Exception(
                         $"{actor.name} target tile of action {action.goapName} for {action.actionLocationType} is null.");
                 }
-            }
-        } else if (action.actionLocationType == ACTION_LOCATION_TYPE.RANDOM_LOCATION_B) {
-            List<LocationGridTile> choices = targetStructure.unoccupiedTiles.Where(x => x.UnoccupiedNeighbours.Count > 0).ToList();
-            if (choices.Count > 0) {
-                targetTile = choices[UtilityScripts.Utilities.Rng.Next(0, choices.Count)];
-            } else {
-                throw new System.Exception(
-                    $"{actor.name} target tile of action {action.goapName} for {action.actionLocationType} is null.");
             }
         } else if (action.actionLocationType == ACTION_LOCATION_TYPE.TARGET_IN_VISION) {
             if (actor.marker.inVisionPOIs.Contains(poiTarget)) {

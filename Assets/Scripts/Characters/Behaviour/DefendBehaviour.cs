@@ -14,10 +14,15 @@ public class DefendBehaviour : CharacterBehaviourComponent {
     }
     public override bool TryDoBehaviour(Character character, ref string log) {
         log += $"\n-{character.name} will defend";
-        if (character.behaviourComponent.assignedTargetHex != null) {
-            HexTile chosenHex = character.behaviourComponent.assignedTargetHex;
-            LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(chosenHex.borderTiles);
-            character.jobComponent.TriggerRoamAroundTile(chosenTile);
+        HexTile chosenHex = character.behaviourComponent.assignedTargetHex;
+        if (chosenHex != null) {
+            Character chosenTarget = chosenHex.GetFirstCharacterInsideHexThatIsHostileWith(character);
+            if(chosenTarget != null) {
+                character.combatComponent.Fight(chosenTarget, CombatManager.Hostility);
+            } else {
+                LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(chosenHex.borderTiles);
+                character.jobComponent.TriggerRoamAroundTile(chosenTile);
+            }
             return true;
         }
         return false;
