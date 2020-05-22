@@ -556,6 +556,12 @@ namespace Inner_Maps {
         #endregion
 
         #region Utilities
+        public LocationGridTile GetNeighbourAtDirection(GridNeighbourDirection dir) {
+            if (neighbours.ContainsKey(dir)) {
+                return neighbours[dir];
+            }
+            return null;
+        }
         public bool TryGetNeighbourDirection(LocationGridTile tile, out GridNeighbourDirection dir) {
             foreach (KeyValuePair<GridNeighbourDirection, LocationGridTile> keyValuePair in neighbours) {
                 if (keyValuePair.Value == tile) {

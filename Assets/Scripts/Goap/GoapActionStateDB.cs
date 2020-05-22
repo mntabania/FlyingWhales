@@ -479,6 +479,12 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.PATROL, new[]{
             new StateNameAndDuration(){ name = "Patrol Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
+        {INTERACTION_TYPE.MINE, new[]{
+            new StateNameAndDuration(){ name = "Mine Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(15) },
+        } },
+        {INTERACTION_TYPE.DIG, new[]{
+            new StateNameAndDuration(){ name = "Dig Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(15) },
+        } },
     };
 }
 

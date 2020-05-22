@@ -980,7 +980,9 @@ public enum INTERACTION_TYPE {
     DRY_TILE,
     START_DRY,
     PATROL,
-    START_PATROL
+    START_PATROL,
+    MINE,
+    DIG
 }
 
 public enum INTERACTION_CATEGORY {
@@ -1187,7 +1189,7 @@ public enum STRUCTURE_TYPE {
     DEMONIC_PRISON = 38,
     FARM = 39,
     LUMBERYARD = 40,
-    MINE = 41,
+    MINE_SHACK = 41,
 }
 public enum RELATIONSHIP_TYPE {
     NONE = 0,
@@ -1353,6 +1355,8 @@ public enum TILE_OBJECT_TYPE {
     HUMAN_MEAT = 143,
     VEGETABLES = 144,
     FISH_PILE = 145,
+    DIAMOND = 146,
+    GOLD = 147
 }
 public enum POI_STATE {
     ACTIVE,
@@ -1382,7 +1386,7 @@ public enum JOB_TYPE { NONE, UNDERMINE, ENERGY_RECOVERY_URGENT, FULLNESS_RECOVER
         , IDLE_RETURN_HOME, IDLE_NAP, IDLE_SIT, IDLE_STAND, IDLE_GO_TO_INN, COMBINE_STOCKPILE, ROAM_AROUND_TERRITORY, ROAM_AROUND_CORRUPTION, ROAM_AROUND_PORTAL, ROAM_AROUND_TILE, RETURN_TERRITORY, RETURN_PORTAL
         , STAND, ABDUCT, LEARN_MONSTER, TAKE_ARTIFACT, TAKE_ITEM, HIDE_AT_HOME, STAND_STILL, SUICIDE_FOLLOW
         , DRY_TILES, CLEANSE_TILES, MONSTER_ABDUCT, REPORT_CORRUPTED_STRUCTURE, ASSAULT_DEMONIC_STRUCTURE, RECOVER_HP, POISON_FOOD
-        , BRAWL, PLACE_TRAP, SPREAD_RUMOR, CONFIRM_RUMOR, OPEN_CHEST, TEND_FARM, VISIT_DIFFERENT_REGION, BERSERK_ATTACK,
+        , BRAWL, PLACE_TRAP, SPREAD_RUMOR, CONFIRM_RUMOR, OPEN_CHEST, TEND_FARM, VISIT_DIFFERENT_REGION, BERSERK_ATTACK, MINE, DIG_THROUGH
 }
 public enum JOB_OWNER { CHARACTER, LOCATION, QUEST, }
 public enum Cardinal_Direction { North, South, East, West };
@@ -1645,7 +1649,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.MAGE_QUARTERS:
             case STRUCTURE_TYPE.FARM:
             case STRUCTURE_TYPE.LUMBERYARD:
-            case STRUCTURE_TYPE.MINE:
+            case STRUCTURE_TYPE.MINE_SHACK:
                 return true;
             default:
                 return false;
@@ -1690,7 +1694,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.MAGE_TOWER:
             case STRUCTURE_TYPE.ABANDONED_MINE:
             case STRUCTURE_TYPE.LUMBERYARD:
-            case STRUCTURE_TYPE.MINE:
+            case STRUCTURE_TYPE.MINE_SHACK:
             case STRUCTURE_TYPE.MAGE_QUARTERS:
             case STRUCTURE_TYPE.THE_PORTAL:
             case STRUCTURE_TYPE.THE_EYE:
@@ -2036,6 +2040,8 @@ public static class Extensions {
             case JOB_TYPE.PATROL:
                 priority = 450;
                 break;
+            case JOB_TYPE.DIG_THROUGH:
+            case JOB_TYPE.MINE:
             case JOB_TYPE.TEND_FARM:
                 priority = 440;
                 break;

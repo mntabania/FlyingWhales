@@ -297,7 +297,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             if (isBeingCarriedBy != null) {
                 tileLocation = isBeingCarriedBy.gridTileLocation;
             }
-            if(PathfindingManager.Instance.HasPathEvenDiffRegion(actor.gridTileLocation, tileLocation)) {
+            if(action.canBePerformedEvenIfPathImpossible || PathfindingManager.Instance.HasPathEvenDiffRegion(actor.gridTileLocation, tileLocation)) {
                 object[] data = null;
                 if (otherData != null) {
                     if (otherData.ContainsKey(action.goapType)) {

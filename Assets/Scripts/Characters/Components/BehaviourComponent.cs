@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using UnityEngine;
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
+using Pathfinding;
 
 public class BehaviourComponent {
 
@@ -24,6 +26,9 @@ public class BehaviourComponent {
     public NPCSettlement cleansingTilesForSettlement { get; private set; }
     //cleanse tiles
     public NPCSettlement dryingTilesForSettlement { get; private set; }
+    //mining
+    public LocationGridTile targetMiningTile { get; private set; }
+    public ABPath currentMiningPath { get; private set; }
     
     private COMBAT_MODE combatModeBeforeHarassRaidInvade;
     private COMBAT_MODE combatModeBeforeAttackingDemonicStructure;
@@ -369,6 +374,15 @@ public class BehaviourComponent {
         }
         dryingTilesForSettlement = settlement;
         
+    }
+    #endregion
+
+    #region Mining
+    public void SetTargetMiningTile(LocationGridTile tile) {
+        targetMiningTile = tile;
+    }
+    public void SetCurrentMiningPath(ABPath path) {
+        currentMiningPath = path;
     }
     #endregion
     

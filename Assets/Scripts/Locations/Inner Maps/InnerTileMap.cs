@@ -359,6 +359,10 @@ namespace Inner_Maps {
         private void HidePath() {
             pathLineRenderer.gameObject.SetActive(false);
         }
+        public LocationGridTile GetTile(Vector3 worldPosition) {
+            Vector3Int cell = groundTilemap.WorldToCell(worldPosition);
+            return map[cell.x, cell.y];
+        }
         #endregion
 
         #region Structures

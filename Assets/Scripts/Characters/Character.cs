@@ -4263,7 +4263,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             && advertisedActions != null && advertisedActions.Contains(action.goapType)
             && actor.trapStructure.SatisfiesForcedStructure(this)
             && RaceManager.Instance.CanCharacterDoGoapAction(actor, action.goapType)
-            && PathfindingManager.Instance.HasPathEvenDiffRegion(actor.gridTileLocation, gridTileLocation)) {
+            && (action.canBePerformedEvenIfPathImpossible || PathfindingManager.Instance.HasPathEvenDiffRegion(actor.gridTileLocation, gridTileLocation))) {
             object[] data = null;
             if (otherData != null) {
                 if (otherData.ContainsKey(action.goapType)) {

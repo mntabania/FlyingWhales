@@ -4,61 +4,64 @@ using UnityEngine;
 namespace Inner_Maps.Location_Structures {
     public class Cave : NaturalStructure {
 
-        //#region getters
-        //public override bool isDwelling => true;
-        //public List<Character> residents => null;
-        //#endregion
+        public const string Yield_Nothing = "Nothing";
+        public const string Yield_Metal = "Metal";
+        public const string Yield_Diamond = "Diamond";
+        public const string Yield_Gold = "Gold";
 
-        public Cave(Region location)
-            : base(STRUCTURE_TYPE.CAVE, location) {
+        public WeightedDictionary<string> resourceYield { get; }
+
+        public Cave(Region location) : base(STRUCTURE_TYPE.CAVE, location) {
+            resourceYield = GetRandomResourceYield();
         }
 
-        public Cave(Region location, SaveDataLocationStructure data)
-            : base(location, data) {
+        public Cave(Region location, SaveDataLocationStructure data) : base(location, data) { }
+
+        private WeightedDictionary<string> GetRandomResourceYield() {
+            WeightedDictionary<string> randomYield = new WeightedDictionary<string>();
+            
+            WeightedDictionary<int> chances = new WeightedDictionary<int>();
+            chances.AddElement(0, 20);
+            chances.AddElement(1, 20);
+            chances.AddElement(2, 20);
+            chances.AddElement(3, 20);
+            chances.AddElement(4, 20);
+            int chosen = chances.PickRandomElementGivenWeights();
+            if (chosen == 0) {
+                randomYield.AddElement(Yield_Nothing, 100);
+                randomYield.AddElement(Yield_Metal, 20);
+                randomYield.AddElement(Yield_Diamond, 2);
+                randomYield.AddElement(Yield_Gold, 0);
+            } else if (chosen == 1) {
+                randomYield.AddElement(Yield_Nothing, 100);
+                randomYield.AddElement(Yield_Metal, 0);
+                randomYield.AddElement(Yield_Diamond, 0);
+                randomYield.AddElement(Yield_Gold, 10);
+            } else if (chosen == 2) {
+                randomYield.AddElement(Yield_Nothing, 100);
+                randomYield.AddElement(Yield_Metal, 0);
+                randomYield.AddElement(Yield_Diamond, 10);
+                randomYield.AddElement(Yield_Gold, 0);
+            } else if (chosen == 3) {
+                randomYield.AddElement(Yield_Nothing, 100);
+                randomYield.AddElement(Yield_Metal, 30);
+                randomYield.AddElement(Yield_Diamond, 0);
+                randomYield.AddElement(Yield_Gold, 0);
+            } else if (chosen == 4) {
+                randomYield.AddElement(Yield_Nothing, 100);
+                randomYield.AddElement(Yield_Metal, 20);
+                randomYield.AddElement(Yield_Diamond, 0);
+                randomYield.AddElement(Yield_Gold, 2);
+            }
+            return randomYield;
         }
-
-        //public void AddResident(Character character) {
-        //    //Not Applicable
-        //    character.SetHomeStructure(this);
-        //}
-        //public void RemoveResident(Character character) {
-        //    //Not Applicable
-        //    character.SetHomeStructure(null);
-        //}
-        //public bool CanBeResidentHere(Character character) {
-        //    return false;
-        //}
-
-        public FACILITY_TYPE GetMostNeededValidFacility() {
-            return FACILITY_TYPE.NONE;
+        protected override void OnTileAddedToStructure(LocationGridTile tile) {
+            base.OnTileAddedToStructure(tile);
+            tile.genericTileObject.AddAdvertisedAction(INTERACTION_TYPE.MINE);
         }
-
-        public List<LocationGridTile> GetUnoccupiedFurnitureSpotsThatCanProvide(FACILITY_TYPE type) {
-            return null;
-        }
-
-        //public bool HasEnemyOrNoRelationshipWithAnyResident(Character character) {
-        //    return false;
-        //}
-
-        public bool HasFacilityDeficit() {
-            return false;
-        }
-
-        //public bool HasPositiveRelationshipWithAnyResident(Character character) {
-        //    return false;
-        //}
-
-        //public bool HasUnoccupiedFurnitureSpot() {
-        //    return false;
-        //}
-
-        //public bool IsResident(Character character) {
-        //    return character.homeStructure == this;
-        //}
-
-        public LocationStructure GetLocationStructure() {
-            return this;
+        protected override void OnTileRemovedFromStructure(LocationGridTile tile) {
+            base.OnTileRemovedFromStructure(tile);
+            tile.genericTileObject.RemoveAdvertisedAction(INTERACTION_TYPE.MINE);
         }
         public override void SetStructureObject(LocationStructureObject structureObj) {
             base.SetStructureObject(structureObj);

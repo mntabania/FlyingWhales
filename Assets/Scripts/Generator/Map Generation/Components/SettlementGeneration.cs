@@ -40,7 +40,7 @@ public class SettlementGeneration : MapGenerationComponent {
 		npcSettlement.AddStructure(region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
 		LandmarkManager.Instance.OwnSettlement(faction, npcSettlement);
 		var structureTypes = WorldConfigManager.Instance.isDemoWorld ? 
-			new List<STRUCTURE_TYPE>() {STRUCTURE_TYPE.CITY_CENTER, STRUCTURE_TYPE.FARM, STRUCTURE_TYPE.MINE} : 
+			new List<STRUCTURE_TYPE>() {STRUCTURE_TYPE.CITY_CENTER, STRUCTURE_TYPE.FARM, STRUCTURE_TYPE.MINE_SHACK} : 
 			GenerateStructures(npcSettlement);
 		yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.PlaceBuiltStructuresForSettlement(npcSettlement, region.innerMap, structureTypes.ToArray()));
 		yield return MapGenerator.Instance.StartCoroutine(npcSettlement.PlaceObjects());
@@ -107,7 +107,7 @@ public class SettlementGeneration : MapGenerationComponent {
 			structureWeights.AddElement(STRUCTURE_TYPE.FARM, 15);
 		}
 		if (tile.HasNeighbourWithFeature(TileFeatureDB.Metal_Source_Feature)) {
-			structureWeights.AddElement(STRUCTURE_TYPE.MINE, 15);
+			structureWeights.AddElement(STRUCTURE_TYPE.MINE_SHACK, 15);
 		}
 		if (tile.HasNeighbourWithFeature(TileFeatureDB.Wood_Source_Feature)) {
 			structureWeights.AddElement(STRUCTURE_TYPE.LUMBERYARD, 15);

@@ -308,7 +308,8 @@ public class ActualGoapNode : IReactable, IRumorable {
                     actor.marker.StopMovement();
                     actor.PerformGoapAction();
                 } else {
-                    if (!PathfindingManager.Instance.HasPath(actor.gridTileLocation, targetTile)) {
+                    if (action.canBePerformedEvenIfPathImpossible == false && 
+                        !PathfindingManager.Instance.HasPath(actor.gridTileLocation, targetTile)) {
                         return false;
                     }
                     actor.marker.GoTo(targetTile, OnArriveAtTargetLocation);
@@ -318,7 +319,8 @@ public class ActualGoapNode : IReactable, IRumorable {
                     actor.marker.StopMovement();
                     actor.PerformGoapAction();
                 } else {
-                    if (!PathfindingManager.Instance.HasPath(actor.gridTileLocation, targetPOIToGoTo.gridTileLocation)) {
+                    if (action.canBePerformedEvenIfPathImpossible == false && 
+                        !PathfindingManager.Instance.HasPath(actor.gridTileLocation, targetPOIToGoTo.gridTileLocation)) {
                         return false;
                     }
                     actor.marker.GoToPOI(targetPOIToGoTo, OnArriveAtTargetLocation);

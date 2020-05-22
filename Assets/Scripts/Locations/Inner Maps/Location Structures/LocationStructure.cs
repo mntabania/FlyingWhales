@@ -532,19 +532,17 @@ namespace Inner_Maps.Location_Structures {
                 if (structureType != STRUCTURE_TYPE.WILDERNESS && tile.IsPartOfSettlement(out var settlement)) {
                     SetSettlementLocation(settlement);
                 }
-                //if (tile.HasDifferentDwellingOrOutsideNeighbour()) {
-                //    outerTiles.Add(tile);
-                //    tile.SetIsOuterTile(true);
-                //}
+                OnTileAddedToStructure(tile);
             }
         }
         public void RemoveTile(LocationGridTile tile) {
-            tiles.Remove(tile);
+            if (tiles.Remove(tile)) {
+                OnTileRemovedFromStructure(tile);
+            }
             RemoveUnoccupiedTile(tile);
-            //if (outerTiles.Remove(tile)) {
-            //    tile.SetIsOuterTile(false);
-            //}
         }
+        protected virtual void OnTileAddedToStructure(LocationGridTile tile) { }
+        protected virtual void OnTileRemovedFromStructure(LocationGridTile tile) { }
         public void AddUnoccupiedTile(LocationGridTile tile) {
             unoccupiedTiles.AddLast(tile);
         }
