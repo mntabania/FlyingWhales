@@ -113,13 +113,15 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private GameObject characterNameplateItem;
     private List<CharacterNameplateItem> _summonItems;
 
-    [Header("Items")]
+    [Header("Items")] 
+    public Toggle itemsToggle;
     public ScrollRect itemsScrollRect;
     public GameObject itemsContainerGO;
     public GameObject itemItemPrefab;
     private List<ItemItem> _itemItems;
 
     [Header("Artifacts")]
+    public Toggle artifactsToggle;
     public ScrollRect artifactsScrollRect;
     public GameObject artifactsContainerGO;
     public GameObject artifactItemPrefab;
@@ -192,8 +194,15 @@ public class PlayerUI : MonoBehaviour {
         UpdateIntel();
         CreateInitialSpells();
         // CreateSummonsForTesting();
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        itemsToggle.gameObject.SetActive(true);
+        artifactsToggle.gameObject.SetActive(true);
         CreateItemsForTesting();
         CreateArtifactsForTesting();
+#else
+        itemsToggle.gameObject.SetActive(false);
+        artifactsToggle.gameObject.SetActive(false);        
+#endif
         OnThreatUpdated();
     }
 

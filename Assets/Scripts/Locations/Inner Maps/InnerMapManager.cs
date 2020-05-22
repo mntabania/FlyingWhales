@@ -349,7 +349,7 @@ namespace Inner_Maps {
             }
 
             Profiler.BeginSample("Show Tile Data Sample");
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#if UNITY_EDITOR
             HexTile hexTile = tile.collectionOwner.partOfHextile?.hexTileOwner;
             string summary = tile.localPlace.ToString();
             summary = $"{summary}\n<b>HexTile:</b>{(hexTile?.ToString() ?? "None")}";

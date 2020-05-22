@@ -79,6 +79,8 @@ public class SpellSpriteDictionary : SerializableDictionary<SPELL_TYPE, Sprite> 
 public class PlayerSkillTreeNodeDictionary : SerializableDictionary<SPELL_TYPE, PlayerSkillTreeNode> { }
 [System.Serializable]
 public class PlayerSkillTreeNodeItemDictionary : SerializableDictionary<SPELL_TYPE, PlayerSkillTreeItem> { }
+[System.Serializable]
+public class PlayerSkillTreeAssetsDictionary : SerializableDictionary<SPELL_TYPE, PlayerSkillAssets> { }
 
 //List storage
 [System.Serializable]

@@ -329,7 +329,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -206.20001, y: 0}
+  m_AnchoredPosition: {x: -206.2002, y: 0}
   m_SizeDelta: {x: 163, y: 53}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &4452501
@@ -30195,7 +30195,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &547005291
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -32848,10 +32848,12 @@ MonoBehaviour:
   summonsContainerGO: {fileID: 2108155052}
   characterNameplateItem: {fileID: 1716271878575152, guid: 192605b2e90f468409baf06dedf19376,
     type: 3}
+  itemsToggle: {fileID: 547005291}
   itemsScrollRect: {fileID: 1865900464}
   itemsContainerGO: {fileID: 1214886497}
   itemItemPrefab: {fileID: 2387985080987894716, guid: a6fd47a5530de1b4a8f38c2b1b3f4b8d,
     type: 3}
+  artifactsToggle: {fileID: 1612921080}
   artifactsScrollRect: {fileID: 162330746}
   artifactsContainerGO: {fileID: 2000592668}
   artifactItemPrefab: {fileID: 6719058857249138774, guid: 63cba2d20cb31484299b14cd2fd30fb9,
@@ -95925,7 +95927,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1612921080
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -133454,7 +133456,7 @@ PrefabInstance:
     - target: {fileID: 7147031280361248744, guid: 29c4742b647766648a7a78449f3565eb,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 84.5
+      value: -40.33999
       objectReference: {fileID: 0}
     - target: {fileID: 7147031280361248744, guid: 29c4742b647766648a7a78449f3565eb,
         type: 3}
@@ -133464,7 +133466,7 @@ PrefabInstance:
     - target: {fileID: 7147031280361248744, guid: 29c4742b647766648a7a78449f3565eb,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 498
+      value: 747.68
       objectReference: {fileID: 0}
     - target: {fileID: 7147031280361248744, guid: 29c4742b647766648a7a78449f3565eb,
         type: 3}

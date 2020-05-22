@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.Video;
 using Debug = System.Diagnostics.Debug;
 
 public class PlayerSkillDetailsTooltip : MonoBehaviour {
@@ -16,13 +17,16 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
     public TextMeshProUGUI threatPerHourText;
     public TextMeshProUGUI additionalText;
     public UIHoverPosition defaultPosition;
-    
-    
+    public RawImage tooltipImage;
+    public VideoPlayer tooltipVideoPlayer;
+    public RenderTexture tooltipVideoRenderTexture;
+
     private SpellData skillData;
 
     public void ShowPlayerSkillDetails(SpellData skillData, UIHoverPosition position = null) {
         this.skillData = skillData;
         UpdateData();
+        bool wasActiveBefore = gameObject.activeSelf;
         gameObject.SetActive(true);
         UIHoverPosition positionToUse = position;
         if (positionToUse == null) {
@@ -40,7 +44,23 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         thisRect.anchorMin = anchorMin;
         thisRect.anchorMax = anchorMax;
         thisRect.anchoredPosition = Vector2.zero;
-        
+
+        if (wasActiveBefore == false) {
+            PlayerSkillAssets skillAssets = PlayerSkillManager.Instance.GetPlayerSkillAsset(skillData.type);
+            if (skillAssets != null) {
+                if (skillAssets.tooltipImage != null) {
+                    tooltipImage.texture = skillAssets.tooltipImage;
+                } else if (skillAssets.tooltipVideoClip != null) {
+                    tooltipVideoPlayer.clip = skillAssets.tooltipVideoClip;
+                    tooltipImage.texture = tooltipVideoRenderTexture;
+                    tooltipVideoPlayer.Play();
+                } else {
+                    tooltipImage.texture = null;
+                }    
+            } else {
+                tooltipImage.texture = null;
+            }
+        }
     }
     public void HidePlayerSkillDetails() {
         gameObject.SetActive(false);
