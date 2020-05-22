@@ -13,6 +13,7 @@ public class Betrayal : Emotion {
         ActualGoapNode goapNode = null) {
         if (target is Character) {
             Character targetCharacter = target as Character;
+            witness.needsComponent.AdjustHope(-10);
             witness.relationshipContainer.AdjustOpinion(witness, targetCharacter, "Base", -60);
             witness.traitContainer.AddTrait(witness, "Betrayed");
             if (UnityEngine.Random.Range(0, 100) < 50) {

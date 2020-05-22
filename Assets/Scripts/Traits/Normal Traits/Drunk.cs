@@ -23,11 +23,11 @@ namespace Traits {
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
             Character owner = addedTo as Character;
-            owner.AdjustSpeedModifier(-0.4f);
+            owner.movementComponent.AdjustSpeedModifier(-0.4f);
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             Character owner = removedFrom as Character;
-            owner.AdjustSpeedModifier(0.4f);
+            owner.movementComponent.AdjustSpeedModifier(0.4f);
             base.OnRemoveTrait(removedFrom, removedBy);
         }
         public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {

@@ -28,9 +28,10 @@ namespace Traits {
             base.OnAddTrait(addedTo);
             addedTo.traitContainer.RemoveTrait(addedTo, "Burning");
             addedTo.traitContainer.RemoveStatusAndStacks(addedTo, "Overheating");
-            if (addedTo is Character character) {
-                character.needsComponent.AdjustComfortDecreaseRate(2f);
-            } else if (addedTo is GenericTileObject genericTileObject) {
+            //if (addedTo is Character character) {
+            //    character.needsComponent.AdjustStaminaDecreaseRate(2f);
+            //}
+            if (addedTo is GenericTileObject genericTileObject) {
                 genericTileObject.AddAdvertisedAction(INTERACTION_TYPE.DRY_TILE);
             }
             UpdateVisualsOnAdd(addedTo);
@@ -48,9 +49,10 @@ namespace Traits {
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
-            if (removedFrom is Character character) {
-                character.needsComponent.AdjustComfortDecreaseRate(-2f);
-            } else if (removedFrom is GenericTileObject genericTileObject) {
+            //if (removedFrom is Character character) {
+            //    character.needsComponent.AdjustStaminaDecreaseRate(-2f);
+            //}
+            if (removedFrom is GenericTileObject genericTileObject) {
                 genericTileObject.RemoveAdvertisedAction(INTERACTION_TYPE.DRY_TILE);
             }
             UpdateVisualsOnRemove(removedFrom);

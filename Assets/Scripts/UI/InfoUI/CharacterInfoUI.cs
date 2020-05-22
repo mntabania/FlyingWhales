@@ -64,7 +64,7 @@ public class CharacterInfoUI : InfoUIBase {
     [SerializeField] private MarkedMeter fullnessMeter;
     [SerializeField] private MarkedMeter happinessMeter;
     [SerializeField] private MarkedMeter hopeMeter;
-    [SerializeField] private MarkedMeter comfortMeter;
+    [SerializeField] private MarkedMeter staminaMeter;
     
     
     private Character _activeCharacter;
@@ -124,10 +124,10 @@ public class CharacterInfoUI : InfoUIBase {
         happinessMeter.AddMark(CharacterNeedsComponent.BORED_UPPER_LIMIT/100f, Color.yellow);
         happinessMeter.AddMark(CharacterNeedsComponent.SULKING_UPPER_LIMIT/100f, Color.red);
         
-        comfortMeter.ResetMarks();
-        comfortMeter.AddMark(CharacterNeedsComponent.RELAXED_LOWER_LIMIT/100f, Color.green);
-        comfortMeter.AddMark(CharacterNeedsComponent.UNCOMFORTABLE_UPPER_LIMIT/100f, Color.yellow);
-        comfortMeter.AddMark(CharacterNeedsComponent.AGONIZING_UPPER_LIMIT/100f, Color.red);
+        staminaMeter.ResetMarks();
+        staminaMeter.AddMark(CharacterNeedsComponent.SPRIGHTLY_LOWER_LIMIT/100f, Color.green);
+        staminaMeter.AddMark(CharacterNeedsComponent.SPENT_UPPER_LIMIT/100f, Color.yellow);
+        staminaMeter.AddMark(CharacterNeedsComponent.DRAINED_UPPER_LIMIT/100f, Color.red);
         
         hopeMeter.ResetMarks();
         hopeMeter.AddMark(CharacterNeedsComponent.HOPEFUL_LOWER_LIMIT/100f, Color.green);
@@ -518,6 +518,7 @@ public class CharacterInfoUI : InfoUIBase {
         summary = $"{summary}{("\nCan Be Attacked: " + activeCharacter.canBeAtttacked)}";
         summary = $"{summary}{("\nCan Perform: " + activeCharacter.canPerform)}";
         summary = $"{summary}{("\nIs Missing: " + activeCharacter.isMissing)}";
+        summary = $"{summary}{("\nIs Running: " + activeCharacter.movementComponent.isRunning)}";
         summary = $"{summary}{("\n" + activeCharacter.needsComponent.GetNeedsSummary())}";
         summary = $"{summary}{("\nFullness Time: " + (activeCharacter.needsComponent.fullnessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.needsComponent.fullnessForcedTick)))}";
         summary = $"{summary}{("\nTiredness Time: " + (activeCharacter.needsComponent.tirednessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.needsComponent.tirednessForcedTick)))}";
@@ -754,7 +755,7 @@ public class CharacterInfoUI : InfoUIBase {
         fullnessMeter.SetFillAmount(_activeCharacter.needsComponent.fullness/CharacterNeedsComponent.FULLNESS_DEFAULT);
         happinessMeter.SetFillAmount(_activeCharacter.needsComponent.happiness/CharacterNeedsComponent.HAPPINESS_DEFAULT);
         hopeMeter.SetFillAmount(_activeCharacter.needsComponent.hope/CharacterNeedsComponent.HOPE_DEFAULT);
-        comfortMeter.SetFillAmount(_activeCharacter.needsComponent.comfort/CharacterNeedsComponent.COMFORT_DEFAULT);
+        staminaMeter.SetFillAmount(_activeCharacter.needsComponent.stamina/CharacterNeedsComponent.STAMINA_DEFAULT);
     }
     public void ShowEnergyTooltip() {
         UIManager.Instance.ShowSmallInfo($"{_activeCharacter.needsComponent.tiredness.ToString(CultureInfo.InvariantCulture)}/100");
@@ -768,8 +769,8 @@ public class CharacterInfoUI : InfoUIBase {
     public void ShowHopeTooltip() {
         UIManager.Instance.ShowSmallInfo($"{_activeCharacter.needsComponent.hope.ToString(CultureInfo.InvariantCulture)}/100");
     }
-    public void ShowComfortTooltip() {
-        UIManager.Instance.ShowSmallInfo($"{_activeCharacter.needsComponent.comfort.ToString(CultureInfo.InvariantCulture)}/100");
+    public void ShowStaminaTooltip() {
+        UIManager.Instance.ShowSmallInfo($"{_activeCharacter.needsComponent.stamina.ToString(CultureInfo.InvariantCulture)}/100");
     }
     #endregion
 

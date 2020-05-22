@@ -20,13 +20,13 @@ namespace Traits {
             base.OnAddTrait(sourceCharacter);
             if (sourceCharacter is Character) {
                 Character character = sourceCharacter as Character;
-                character.AdjustSpeedModifier(-0.5f);
+                character.movementComponent.AdjustSpeedModifier(-0.5f);
             }
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
             if (sourceCharacter is Character) {
                 Character character = sourceCharacter as Character;
-                character.AdjustSpeedModifier(0.5f);
+                character.movementComponent.AdjustSpeedModifier(0.5f);
             }
             base.OnRemoveTrait(sourceCharacter, removedBy);
         }

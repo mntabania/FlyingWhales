@@ -45,9 +45,9 @@ public class ResolveCombat : GoapAction {
     #endregion
 
     #region Effects
-    public void AfterCombatSuccess(ActualGoapNode goapNode) {
+    //public void AfterCombatSuccess(ActualGoapNode goapNode) {
 
-    }
+    //}
     #endregion
 
     #region Preconditions

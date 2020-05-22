@@ -20,7 +20,7 @@ public class Daydream : GoapAction {
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, target = GOAP_EFFECT_TARGET.ACTOR });
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.COMFORT_RECOVERY, target = GOAP_EFFECT_TARGET.ACTOR });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.STAMINA_RECOVERY, target = GOAP_EFFECT_TARGET.ACTOR });
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
@@ -58,7 +58,7 @@ public class Daydream : GoapAction {
     }
     public void PerTickDaydreamSuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustHappiness(3.35f);
-        goapNode.actor.needsComponent.AdjustComfort(1f);
+        goapNode.actor.needsComponent.AdjustStamina(1f);
     }
     public void AfterDaydreamSuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);

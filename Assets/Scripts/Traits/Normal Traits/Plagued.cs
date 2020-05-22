@@ -24,21 +24,21 @@ namespace Traits {
         }
 
         #region Overrides
-        public override void OnAddTrait(ITraitable addedTo) {
-            base.OnAddTrait(addedTo);
-            if (addedTo is Character character) {
-                character.needsComponent.AdjustComfortDecreaseRate(10);
-            } 
-            //else if (addedTo is TileObject) {
-            //    ticksDuration = GameManager.Instance.GetTicksBasedOnHour(12);
-            //}
-        }
-        public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
-            if (removedFrom is Character character) {
-                character.needsComponent.AdjustComfortDecreaseRate(10);
-            }
-            base.OnRemoveTrait(removedFrom, removedBy);
-        }
+        //public override void OnAddTrait(ITraitable addedTo) {
+        //    base.OnAddTrait(addedTo);
+        //    if (addedTo is Character character) {
+        //        character.needsComponent.AdjustStaminaDecreaseRate(10);
+        //    } 
+        //    //else if (addedTo is TileObject) {
+        //    //    ticksDuration = GameManager.Instance.GetTicksBasedOnHour(12);
+        //    //}
+        //}
+        //public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
+        //    if (removedFrom is Character character) {
+        //        character.needsComponent.AdjustStaminaDecreaseRate(10);
+        //    }
+        //    base.OnRemoveTrait(removedFrom, removedBy);
+        //}
         // protected override void OnChangeLevel() {
         //     if (level == 1) {
         //         pukeChance = 5f;

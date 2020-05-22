@@ -1124,7 +1124,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 114933447515422220}
-        m_MethodName: ShowComfortTooltip
+        m_MethodName: ShowStaminaTooltip
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1984,7 +1984,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Comfort
+  m_text: Stamina
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: f8d165fc58518da4b871ca2551648bf9, type: 2}
   m_sharedMaterial: {fileID: 21189737157306288, guid: f8d165fc58518da4b871ca2551648bf9,
@@ -5247,7 +5247,7 @@ MonoBehaviour:
   fullnessMeter: {fileID: 114115457676300066}
   happinessMeter: {fileID: 114821554679032036}
   hopeMeter: {fileID: 114735127856624918}
-  comfortMeter: {fileID: 114208010824853518}
+  staminaMeter: {fileID: 114208010824853518}
 --- !u!222 &222743773353660620
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -12739,7 +12739,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224845215200441858}
   m_Layer: 5
-  m_Name: Comfort
+  m_Name: Stamina
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

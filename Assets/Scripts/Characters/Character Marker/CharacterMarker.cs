@@ -71,8 +71,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public Vector2 anchoredPos { get; private set; }
     public Vector3 centeredWorldPos { get; private set; }
     public LocationGridTile destinationTile { get; private set; }
-    public int useWalkSpeed { get; private set; }
-    public int targettedByRemoveNegativeTraitActionsCounter { get; private set; }
+    public float progressionSpeedMultiplier { get; private set; }
     //public List<IPointOfInterest> terrifyingObjects { get; private set; } //list of objects that this character is terrified of and must avoid
     public bool isMoving { get; private set; }
     public LocationGridTile previousGridTile {
@@ -86,7 +85,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     public int sortingOrder => mainImg.sortingOrder;
     private LocationGridTile _previousGridTile;
-    private float progressionSpeedMultiplier;
     public bool useCanTraverse;
 
     public float attackSpeedMeter { get; private set; }
@@ -420,7 +418,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         } else if (progSpeed == PROGRESSION_SPEED.X4) {
             progressionSpeedMultiplier = 2f;
         }
-        UpdateSpeed();
+        character.movementComponent.UpdateSpeed();
         UpdateAnimationSpeed();
     }
     public void UpdateNameplatePosition() {
@@ -615,7 +613,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     private void StartMovement() {
         isMoving = true;
-        UpdateSpeed();
+        character.movementComponent.UpdateSpeed();
         pathfindingAI.SetIsStopMovement(false);
         character.currentParty.icon.SetIsTravelling(true);
         UpdateAnimation();
@@ -832,55 +830,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
         bloodSplatterEffectRenderer.sortingOrder = InnerMapManager.DetailsTilemapSortingOrder + 5;
         hpBarGO.GetComponent<Canvas>().sortingOrder = sortingOrder;
     }
-    private float GetSpeed() {
-        float speed = GetSpeedWithoutProgressionMultiplier();
-        speed *= progressionSpeedMultiplier;
-        return speed;
-    }
-    private float GetSpeedWithoutProgressionMultiplier() {
-        float speed = character.runSpeed;
-        if (targettedByRemoveNegativeTraitActionsCounter > 0) {
-            speed = character.walkSpeed;
-        } else {
-            if (useWalkSpeed > 0) {
-                speed = character.walkSpeed;
-            } else {
-                if (character.stateComponent.currentState != null) {
-                    if (character.stateComponent.currentState.characterState == CHARACTER_STATE.PATROL
-                        || character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL
-                        || character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL_OUTSIDE) {
-                        //Walk
-                        speed = character.walkSpeed;
-                    }else if (character.stateComponent.currentState.characterState == CHARACTER_STATE.DOUSE_FIRE) {
-                        //Run
-                        speed = character.runSpeed;
-                    }
-                }
-                if (character.currentActionNode != null) {
-                    if (character.currentActionNode.action.goapType == INTERACTION_TYPE.RETURN_HOME ||
-                        character.currentActionNode.action.goapType == INTERACTION_TYPE.DOUSE_FIRE) {
-                        //Run
-                        speed = character.runSpeed;
-                    } else if (character.currentActionNode.action.goapType == INTERACTION_TYPE.PATROL) {
-                        speed = character.walkSpeed;
-                    }
-                }
-            }
-        }
-        speed += (speed * character.speedModifier);
-        if (speed <= 0f) {
-            speed = 0.5f;
-        }
-        return speed;
-    }
-    public void UpdateSpeed() {
-        pathfindingAI.speed = GetSpeed();
-        //Debug.Log("Updated speed of " + character.name + ". New speed is: " + pathfindingAI.speed.ToString());
-    }
-    public void AdjustUseWalkSpeed(int amount) {
-        useWalkSpeed += amount;
-        useWalkSpeed = Mathf.Max(0, useWalkSpeed);
-    }
     public new void SetActiveState(bool state) {
         Debug.Log($"Set active state of {this.name} to {state.ToString()}");
         this.gameObject.SetActive(state);
@@ -948,7 +897,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         SetCollidersState(true);
         visionCollider.Initialize();
         CreateCollisionTrigger();
-        UpdateSpeed();
+        character.movementComponent.UpdateSpeed();
     }
     public void PlaceMarkerAt(LocationGridTile tile, bool addToLocation = true) {
         this.gameObject.transform.SetParent(tile.parentMap.objectsParent);
@@ -972,7 +921,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         SetCollidersState(true);
         visionCollider.Initialize();
         CreateCollisionTrigger();
-        UpdateSpeed();
+        character.movementComponent.UpdateSpeed();
     }
     public void PlaceMarkerAt(Vector3 worldPosition, Region region, bool addToLocation = true) {
         Vector3 localPos = region.innerMap.grid.WorldToLocal(worldPosition);
@@ -1033,27 +982,62 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     private bool CanDoStealthActionToTarget(Character target) {
         if (!target.isDead) {
-            if (target.marker.inVisionCharacters.Count > 1) {
-                return false; //if there are 2 or more in vision of target character it means he is not alone anymore
-            } else if (target.marker.inVisionCharacters.Count == 1) {
+            int inVisionNormalCharacterCount = 0;
+            for (int i = 0; i < target.marker.inVisionCharacters.Count; i++) {
+                Character inVision = target.marker.inVisionCharacters[i];
+                if (inVision.isNormalCharacter) {
+                    inVisionNormalCharacterCount++;
+                    if (inVisionNormalCharacterCount > 1) {
+                        return false; //if there are 2 or more in vision of target character it means he is not alone anymore
+                    }
+                }
+            }
+            if (inVisionNormalCharacterCount == 1) {
                 if (!target.marker.inVisionCharacters.Contains(character)) {
                     return false; //if there is only one in vision of target character and it is not this character, it means he is not alone
                 }
             }
         } else {
-            if (inVisionCharacters.Count > 1) {
-                return false;
+            int inVisionNormalCharacterCount = 0;
+            for (int i = 0; i < inVisionCharacters.Count; i++) {
+                Character inVision = inVisionCharacters[i];
+                if (inVision.isNormalCharacter) {
+                    inVisionNormalCharacterCount++;
+                    if (inVisionNormalCharacterCount > 1) {
+                        return false;
+                    }
+                }
             }
         }
         return true;
+        //if (!target.isDead) {
+        //    if (target.marker.inVisionCharacters.Count > 1) {
+        //        return false; //if there are 2 or more in vision of target character it means he is not alone anymore
+        //    } else if (target.marker.inVisionCharacters.Count == 1) {
+        //        if (!target.marker.inVisionCharacters.Contains(character)) {
+        //            return false; //if there is only one in vision of target character and it is not this character, it means he is not alone
+        //        }
+        //    }
+        //} else {
+        //    if (inVisionCharacters.Count > 1) {
+        //        return false;
+        //    }
+        //}
+        //return true;
     }
     public bool CanDoStealthActionToTarget(IPointOfInterest target) {
         if(target is Character) {
             return CanDoStealthActionToTarget(target as Character);
         }
-        if (inVisionCharacters.Count > 0) {
-            return false;
+        for (int i = 0; i < inVisionCharacters.Count; i++) {
+            Character inVision = inVisionCharacters[i];
+            if (inVision.isNormalCharacter) {
+                return false;
+            }
         }
+        //if (inVisionCharacters.Count > 0) {
+        //    return false;
+        //}
         return true;
     }
     public void SetMarkerColor(Color color) {

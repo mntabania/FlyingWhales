@@ -29,13 +29,13 @@ namespace Traits {
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
             owner = addedTo as Character;
-            owner.needsComponent.AdjustComfortDecreaseRate(2);
+            //owner.needsComponent.AdjustStaminaDecreaseRate(2);
             Messenger.AddListener(Signals.HOUR_STARTED, HourlyCheck);
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
             owner.marker.SetMarkerColor(Color.white);
-            owner.needsComponent.AdjustComfortDecreaseRate(-2);
+            //owner.needsComponent.AdjustStaminaDecreaseRate(-2);
             if (Messenger.eventTable.ContainsKey(Signals.HOUR_STARTED)) {
                 Messenger.RemoveListener(Signals.HOUR_STARTED, HourlyCheck);
             }
@@ -58,8 +58,8 @@ namespace Traits {
             if (!_hasAlreadyDied) {
                 if(UnityEngine.Random.Range(0, 100) < 20) { //20
                     owner.interruptComponent.TriggerInterrupt(INTERRUPT.Zombie_Death, owner);
-                    owner.AdjustRunSpeedModifier(1f);
-                    owner.AdjustWalkSpeedModifier(-0.5f);
+                    owner.movementComponent.AdjustRunSpeedModifier(1f);
+                    owner.movementComponent.AdjustWalkSpeedModifier(-0.5f);
                 }
             } else {
                 int todayTick = GameManager.Instance.Today().tick;

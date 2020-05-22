@@ -241,11 +241,11 @@ public class GoapAction : ICrimeable {
                                             && (actionCategory == ACTION_CATEGORY.DIRECT || actionCategory == ACTION_CATEGORY.CONSUME));
         if (requirementActionSatisfied) {
             requirementActionSatisfied = AreRequirementsSatisfied(actor, poiTarget, otherData);
-            if (requirementActionSatisfied) {
-                if (goapType.IsDirectCombatAction()) { //Reference: https://trello.com/c/uxZxcOEo/2343-critical-characters-shouldnt-attempt-hostile-actions
-                    requirementActionSatisfied = actor.IsCombatReady();
-                }
-            }
+            //if (requirementActionSatisfied) {
+            //    if (goapType.IsDirectCombatAction()) { //Reference: https://trello.com/c/uxZxcOEo/2343-critical-characters-shouldnt-attempt-hostile-actions
+            //        requirementActionSatisfied = actor.IsCombatReady();
+            //    }
+            //}
         }
         return requirementActionSatisfied; //&& (validTimeOfDays == null || validTimeOfDays.Contains(GameManager.GetCurrentTimeInWordsOfTick()));
     }
@@ -592,11 +592,11 @@ public class GoapActionData {
         if (requirementAction != null) {
             requirementActionSatisfied = requirementAction.Invoke(actor, poiTarget, otherData);
         }
-        if (requirementActionSatisfied) {
-            if (goapType.IsDirectCombatAction()) { //Reference: https://trello.com/c/uxZxcOEo/2343-critical-characters-shouldnt-attempt-hostile-actions
-                requirementActionSatisfied = actor.IsCombatReady();
-            }
-        }
+        //if (requirementActionSatisfied) {
+        //    if (goapType.IsDirectCombatAction()) { //Reference: https://trello.com/c/uxZxcOEo/2343-critical-characters-shouldnt-attempt-hostile-actions
+        //        requirementActionSatisfied = actor.IsCombatReady();
+        //    }
+        //}
         return requirementActionSatisfied;
     }
     public bool CanSatisfyRequirementOnBuildGoapTree(Character actor, IPointOfInterest poiTarget, object[] otherData) {
@@ -604,11 +604,11 @@ public class GoapActionData {
         if (requirementOnBuildGoapTreeAction != null) {
             requirementActionSatisfied = requirementOnBuildGoapTreeAction.Invoke(actor, poiTarget, otherData);
         }
-        if (requirementActionSatisfied) {
-            if (goapType.IsDirectCombatAction()) { //Reference: https://trello.com/c/uxZxcOEo/2343-critical-characters-shouldnt-attempt-hostile-actions
-                requirementActionSatisfied = actor.IsCombatReady();
-            }
-        }
+        //if (requirementActionSatisfied) {
+        //    if (goapType.IsDirectCombatAction()) { //Reference: https://trello.com/c/uxZxcOEo/2343-critical-characters-shouldnt-attempt-hostile-actions
+        //        requirementActionSatisfied = actor.IsCombatReady();
+        //    }
+        //}
         return requirementActionSatisfied;
     }
 }

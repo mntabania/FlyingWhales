@@ -56,7 +56,7 @@ namespace Traits {
             base.ExecuteActionPerTickEffects(action, goapNode);
             if (action == INTERACTION_TYPE.EAT) {
                 goapNode.actor.needsComponent.AdjustFullness(8.5f);
-                goapNode.actor.needsComponent.AdjustComfort(2f);
+                //goapNode.actor.needsComponent.AdjustStamina(2f);
                 if(owner is Table || owner is FoodPile) {
                     owner.AdjustResource(RESOURCE.FOOD, -1);
                 }

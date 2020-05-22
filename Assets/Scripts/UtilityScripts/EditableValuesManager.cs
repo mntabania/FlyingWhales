@@ -23,7 +23,7 @@ public class EditableValuesManager : MonoBehaviour {
 	[SerializeField] private float _baseFullnessDecreaseRate;
 	[SerializeField] private float _baseTirednessDecreaseRate;
 	[SerializeField] private float _baseHappinessDecreaseRate;
-	[SerializeField] private float _baseComfortDecreaseRate;
+	[SerializeField] private float _baseStaminaDecreaseRate;
 
 	[Header("Mana")] 
 	[SerializeField] private int _startingMana;
@@ -51,7 +51,7 @@ public class EditableValuesManager : MonoBehaviour {
 	public float baseFullnessDecreaseRate => _baseFullnessDecreaseRate;
 	public float baseTirednessDecreaseRate => _baseTirednessDecreaseRate;
 	public float baseHappinessDecreaseRate => _baseHappinessDecreaseRate;
-	public float baseComfortDecreaseRate => _baseComfortDecreaseRate;
+	public float baseStaminaDecreaseRate => _baseStaminaDecreaseRate;
 
 	//mana
 	public int summonMinionManaCost => _summonMinionManaCost;

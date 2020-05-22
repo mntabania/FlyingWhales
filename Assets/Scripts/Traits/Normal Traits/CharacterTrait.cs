@@ -162,7 +162,9 @@ namespace Traits {
                 }
                 // CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.RETURN_HOME, CHARACTER_STATE.MOVE_OUT, owner);
                 // owner.jobQueue.AddJobInQueue(job);
-                owner.PlanIdleReturnHome();
+                if (owner.canPerform && owner.canMove) {
+                    owner.PlanIdleReturnHome();
+                }
             } else if (owner.isAtHomeRegion) {
                 SetHasSurvivedApprehension(false);
             }

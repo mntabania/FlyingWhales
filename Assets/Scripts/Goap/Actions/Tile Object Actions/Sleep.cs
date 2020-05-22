@@ -20,7 +20,7 @@ public class Sleep : GoapAction {
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.ACTOR });
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.COMFORT_RECOVERY, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.ACTOR });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.STAMINA_RECOVERY, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.ACTOR });
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
@@ -165,19 +165,19 @@ public class Sleep : GoapAction {
         needsComponent.AdjustTiredness(1.1f);
         needsComponent.AdjustSleepTicks(-1);
 
-        float comfortAdjustment = 0f;
-        if(actor.currentStructure == actor.homeStructure) {
-            comfortAdjustment = 1f;
-        } else if (actor.currentStructure is Dwelling && actor.currentStructure != actor.homeStructure) {
-            comfortAdjustment = 0.5f;
-        } else if (actor.currentStructure.structureType == STRUCTURE_TYPE.INN) {
-            comfortAdjustment = 0.8f;
-        } else if (actor.currentStructure.structureType == STRUCTURE_TYPE.PRISON) {
-            comfortAdjustment = 0.4f;
-        } else if (actor.currentStructure.structureType.IsOpenSpace()) {
-            comfortAdjustment = 0.3f;
-        }
-        needsComponent.AdjustComfort(comfortAdjustment);
+        //float staminaAdjustment = 0f;
+        //if(actor.currentStructure == actor.homeStructure) {
+        //    staminaAdjustment = 1f;
+        //} else if (actor.currentStructure is Dwelling && actor.currentStructure != actor.homeStructure) {
+        //    staminaAdjustment = 0.5f;
+        //} else if (actor.currentStructure.structureType == STRUCTURE_TYPE.INN) {
+        //    staminaAdjustment = 0.8f;
+        //} else if (actor.currentStructure.structureType == STRUCTURE_TYPE.PRISON) {
+        //    staminaAdjustment = 0.4f;
+        //} else if (actor.currentStructure.structureType.IsOpenSpace()) {
+        //    staminaAdjustment = 0.3f;
+        //}
+        //needsComponent.AdjustStamina(staminaAdjustment);
     }
     public void AfterRestSuccess(ActualGoapNode goapNode) {
         goapNode.actor.traitContainer.RemoveTrait(goapNode.actor, "Resting");

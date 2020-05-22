@@ -41,9 +41,9 @@ public class Sit : GoapAction {
     #endregion
 
     #region Effects
-    public void PerTickSitSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustComfort(0.3f);
-    }
+    //public void PerTickSitSuccess(ActualGoapNode goapNode) {
+    //    goapNode.actor.needsComponent.AdjustStamina(0.3f);
+    //}
     //public void PreSitFail(ActualGoapNode goapNode) {
     //    goapNode.descriptionLog.AddToFillers(null, goapNode.poiTarget.name, LOG_IDENTIFIER.STRING_1);
     //}
