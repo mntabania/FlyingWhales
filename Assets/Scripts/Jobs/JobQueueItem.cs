@@ -27,6 +27,7 @@ public class JobQueueItem {
     public System.Func<Character, Character, bool> canTakeThisJobWithTarget { get; protected set; }
     public System.Func<bool> stillApplicable { get; protected set; }
     public System.Action<Character, JobQueueItem> onTakeJobAction { get; protected set; }
+    public System.Action<Character, JobQueueItem> onUnassignJobAction { get; protected set; }
 
     protected int _priority; //The lower the amount the higher the priority
 
@@ -112,7 +113,9 @@ public class JobQueueItem {
     public virtual void OnCharacterAssignedToJob(Character character) {
         onTakeJobAction?.Invoke(character, this);
     }
-    public virtual void OnCharacterUnassignedToJob(Character character) { }
+    public virtual void OnCharacterUnassignedToJob(Character character) {
+        onUnassignJobAction?.Invoke(character, this);
+    }
     public virtual bool ProcessJob() { return false; }
 
     //Returns true or false if job was really removed in queue
@@ -222,6 +225,9 @@ public class JobQueueItem {
     }
     public void SetOnTakeJobAction(System.Action<Character, JobQueueItem> action) {
         onTakeJobAction = action;
+    }
+    public void SetOnUnassignJobAction(System.Action<Character, JobQueueItem> action) {
+        onUnassignJobAction = action;
     }
     public void SetCannotBePushedBack (bool state) {
         cannotBePushedBack = state;

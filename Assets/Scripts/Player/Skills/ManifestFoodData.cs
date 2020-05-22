@@ -15,10 +15,10 @@ public class ManifestFoodData : SpellData {
     }
 
     public override void ActivateAbility(LocationGridTile targetTile) {
-        FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(TILE_OBJECT_TYPE.FOOD_PILE);
+        FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(TILE_OBJECT_TYPE.ANIMAL_MEAT);
         foodPile.SetResourceInPile(15);
         targetTile.structure.AddPOI(foodPile, targetTile);
-        foodPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.FOOD_PILE);
+        // foodPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.FOOD_PILE);
         GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Smoke_Effect);
         //IncreaseThreatThatSeesTile(targetTile, 10);
         base.ActivateAbility(targetTile);

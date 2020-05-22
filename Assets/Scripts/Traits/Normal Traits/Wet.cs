@@ -31,6 +31,9 @@ namespace Traits {
             //if (addedTo is Character character) {
             //    character.needsComponent.AdjustStaminaDecreaseRate(2f);
             //}
+            if (addedTo is GenericTileObject genericTileObject) {
+                genericTileObject.AddAdvertisedAction(INTERACTION_TYPE.DRY_TILE);
+            }
             UpdateVisualsOnAdd(addedTo);
             if (addedTo is DesertRose desertRose) {
                 desertRose.DesertRoseEffect();
@@ -49,18 +52,13 @@ namespace Traits {
             //if (removedFrom is Character character) {
             //    character.needsComponent.AdjustStaminaDecreaseRate(-2f);
             //}
+            if (removedFrom is GenericTileObject genericTileObject) {
+                genericTileObject.RemoveAdvertisedAction(INTERACTION_TYPE.DRY_TILE);
+            }
             UpdateVisualsOnRemove(removedFrom);
         }
         #endregion
 
-        #region Listeners
-        private void OnCharacterChangedState(Character character, CharacterState state) {
-            if (state.characterState == CHARACTER_STATE.DRY_TILES && dryer == character) {
-                SetDryer(null); 
-            }
-        }
-        #endregion
-        
         private void UpdateVisualsOnAdd(ITraitable addedTo) {
             if (addedTo is Character character && _statusIcon == null && character.marker != null) {
                 _statusIcon = character.marker.AddStatusIcon(this.name);
@@ -93,11 +91,17 @@ namespace Traits {
         public void SetDryer(Character character) {
             dryer = character;
             if (dryer == null) {
-                Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterChangedState);
-                Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_PAUSED_STATE, OnCharacterChangedState);
+                Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
             } else {
-                Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterChangedState);
-                Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_PAUSED_STATE, OnCharacterChangedState);
+                Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
+            }
+        }
+        #endregion
+        
+        #region Listeners
+        private void OnJobRemovedFromCharacter(JobQueueItem jqi, Character character) {
+            if (dryer == character && jqi.jobType == JOB_TYPE.DRY_TILES) {
+                SetDryer(null); 
             }
         }
         #endregion

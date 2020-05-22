@@ -47,6 +47,6 @@ public abstract class Ent : Summon {
         WoodPile woodPile = InnerMapManager.Instance.CreateNewTileObject<WoodPile>(TILE_OBJECT_TYPE.WOOD_PILE);
         woodPile.SetResourceInPile(wood);
         placeForWoodPile.structure.AddPOI(woodPile, placeForWoodPile);
-        placeForWoodPile.SetReservedType(TILE_OBJECT_TYPE.WOOD_PILE);
+        // placeForWoodPile.SetReservedType(TILE_OBJECT_TYPE.WOOD_PILE);
     }
 }

@@ -1,1 +1,1 @@
-{"items":[{"key":"patrol success_description","value":"%00@ patrolled around %04@."},{"key":"patrol fail_description","value":"%00@ wanted to patrol around %04@ but was unable to find a spot to go to."},{"key":"thought_bubble","value":"%00@ is patrolling around %04@."},{"key":"thought_bubble_m","value":"%00@ is patrolling around %04@."}]}
+{"items":[{"key":"thought_bubble_m","value":"%00@ is patrolling."},{"key":"thought_bubble","value":"%00@ is patrolling the area."},{"key":"patrol success_description","value":"%00@ patrolled the area."}]}

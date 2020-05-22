@@ -82,13 +82,12 @@ public class MovementComponent {
                     return;
                 }
             }
-            //if (owner.currentActionNode != null) {
-            //    if (owner.currentActionNode.action.goapType == INTERACTION_TYPE.RETURN_HOME) {
-            //        //Walk
-            //        SetIsRunning(false);
-            //        return;
-            //    }
-            //}
+            if (owner.currentActionNode != null) {
+                if (owner.currentActionNode.action.goapType == INTERACTION_TYPE.PATROL) {
+                    SetIsRunning(false);
+                    return;
+                }
+            }
         }
     }
     public void AdjustUseWalkSpeed(int amount) {

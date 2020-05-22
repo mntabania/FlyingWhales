@@ -45,7 +45,7 @@ public class HarvestFoodRegion : GoapAction {
     public void AfterHarvestSuccess(ActualGoapNode goapNode) {
         //**After Effect 1**: Produce Food random between 200 - 500
         var randomFood = UnityEngine.Random.Range(200, 501);
-        var foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(TILE_OBJECT_TYPE.FOOD_PILE);
+        var foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(TILE_OBJECT_TYPE.ANIMAL_MEAT);
         foodPile.SetResourceInPile(randomFood);
         goapNode.actor.gridTileLocation.structure.AddPOI(foodPile);
         goapNode.descriptionLog.AddToFillers(null, randomFood.ToString(), LOG_IDENTIFIER.STRING_1);

@@ -58,7 +58,7 @@ public class ChopWood : GoapAction {
         WoodPile woodPile = InnerMapManager.Instance.CreateNewTileObject<WoodPile>(TILE_OBJECT_TYPE.WOOD_PILE);
         woodPile.SetResourceInPile(wood);
         tile.structure.AddPOI(woodPile, tile);
-        woodPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.WOOD_PILE);
+        // woodPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.WOOD_PILE);
     }
     //public void PreTargetMissing(ActualGoapNode goapNode) {
     //    goapNode.descriptionLog.AddToFillers(actor.currentStructure.location, actor.currentStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);

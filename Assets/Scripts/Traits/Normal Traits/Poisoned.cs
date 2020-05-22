@@ -48,7 +48,9 @@ namespace Traits {
                 if (!_isVenomous) {
                     characterOwner.AdjustDoNotRecoverHP(1);
                 }
-            } 
+            } else if (traitable is GenericTileObject genericTileObject) {
+                genericTileObject.AddAdvertisedAction(INTERACTION_TYPE.CLEANSE_TILE);
+            }
             //else if (addedTo is TileObject) {
             //    ticksDuration = GameManager.Instance.GetTicksBasedOnHour(24);
             //}
@@ -66,6 +68,9 @@ namespace Traits {
             UpdateVisualsOnRemove(removedFrom);
             if (!_isVenomous) {
                 characterOwner?.AdjustDoNotRecoverHP(-1);
+            }
+            if (traitable is GenericTileObject genericTileObject) {
+                genericTileObject.RemoveAdvertisedAction(INTERACTION_TYPE.CLEANSE_TILE);
             }
             awareCharacters.Clear();
             responsibleCharacters?.Clear(); //Cleared list, for garbage collection
@@ -158,18 +163,16 @@ namespace Traits {
         public void SetCleanser(Character character) {
             cleanser = character;
             if (cleanser == null) {
-                Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterChangedState);
-                Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_PAUSED_STATE, OnCharacterChangedState);
+                Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
             } else {
-                Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterChangedState);
-                Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_PAUSED_STATE, OnCharacterChangedState);
+                Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
             }
         }
         #endregion
         
         #region Listeners
-        private void OnCharacterChangedState(Character character, CharacterState state) {
-            if (state.characterState == CHARACTER_STATE.CLEANSE_TILES && cleanser == character) {
+        private void OnJobRemovedFromCharacter(JobQueueItem jqi, Character character) {
+            if (cleanser == character && jqi.jobType == JOB_TYPE.CLEANSE_TILES) {
                 SetCleanser(null); 
             }
         }

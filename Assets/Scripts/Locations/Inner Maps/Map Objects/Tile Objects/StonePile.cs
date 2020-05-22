@@ -26,7 +26,7 @@ public class StonePile : ResourcePile {
     public override string ToString() {
         return $"Stone Pile {id}";
     }
-    public override bool CanBeReplaced() {
+    public virtual bool CanBeReplaced() {
         return true;
     }
 }

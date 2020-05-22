@@ -20,11 +20,17 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 
 	public List<LocationGridTile> wetTiles { get; }
 	public List<LocationGridTile> poisonedTiles { get; }
+	public List<Character> poisonCleansers { get; }
+	public List<Character> tileDryers { get; set; }
+	public List<Character> dousers { get; }
 	
 	public SettlementJobTriggerComponent(NPCSettlement owner) {
 		_owner = owner;
 		wetTiles = new List<LocationGridTile>();
 		poisonedTiles = new List<LocationGridTile>();
+		poisonCleansers = new List<Character>();
+		tileDryers = new List<Character>();
+		dousers = new List<Character>();
 	}
 	
 	#region Listeners
@@ -74,7 +80,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	}
 	private void OnResourceInPileChanged(ResourcePile resourcePile) {
 		if (resourcePile.gridTileLocation != null && resourcePile.structureLocation == _owner.mainStorage) {
-			CheckResource(resourcePile.tileObjectType, resourcePile.providedResource);
+			CheckResource(resourcePile.providedResource);
 			Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.COMBINE_STOCKPILE, resourcePile as IPointOfInterest);
 			TryCreateCombineStockpile(resourcePile);
 		}
@@ -100,7 +106,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 				Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.COMBINE_STOCKPILE, resourcePile as IPointOfInterest);
 				if (tile.IsPartOfSettlement(_owner)) {
 					if (_owner.mainStorage == resourcePile.structureLocation) {
-						CheckResource(resourcePile.tileObjectType, resourcePile.providedResource);
+						CheckResource(resourcePile.providedResource);
 						TryCreateCombineStockpile(resourcePile);	
 					}
 				}
@@ -111,7 +117,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	private void OnTileObjectRemoved(TileObject tileObject, Character removedBy, LocationGridTile removedFrom) {
 		if (tileObject is ResourcePile resourcePile) {
 			if (removedFrom.parentMap.region == _owner.region && removedFrom.structure == _owner.mainStorage) {
-				CheckResource(resourcePile.tileObjectType, resourcePile.providedResource);	
+				CheckResource(resourcePile.providedResource);	
 			}
 		}
 	}
@@ -261,32 +267,62 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		SchedulingManager.Instance.AddEntry(dueDate, ScheduledCheckResource, this);
 	}
 	private void CheckAllResources() {
-		CheckResource(TILE_OBJECT_TYPE.FOOD_PILE, RESOURCE.FOOD);
-		CheckResource(TILE_OBJECT_TYPE.WOOD_PILE, RESOURCE.WOOD);
-		CheckResource(TILE_OBJECT_TYPE.STONE_PILE, RESOURCE.STONE);
-		CheckResource(TILE_OBJECT_TYPE.METAL_PILE, RESOURCE.METAL);
+		CheckResource(RESOURCE.FOOD);
+		CheckResource(RESOURCE.WOOD);
+		CheckResource(RESOURCE.STONE);
+		CheckResource(RESOURCE.METAL);
 	}
-	private void CheckResource(TILE_OBJECT_TYPE resourcePile, RESOURCE resource) {
+	private void CheckResource(RESOURCE resource) {
+		switch (resource) {
+			case RESOURCE.FOOD:
+				CheckResource<FoodPile>(resource);
+				break;
+			case RESOURCE.WOOD:
+				CheckResource<WoodPile>(resource);
+				break;
+			case RESOURCE.STONE:
+				CheckResource<StonePile>(resource);
+				break;
+			case RESOURCE.METAL:
+				CheckResource<MetalPile>(resource);
+				break;
+		}
+	}
+	private void CheckResource<T>(RESOURCE resource) where T : ResourcePile{
 		int totalResource = GetTotalResource(resource);
 		int minimumResource = GetMinimumResource(resource);
 		JOB_TYPE jobType = GetProduceResourceJobType(resource);
 		if (totalResource < minimumResource) {
-			TriggerProduceResource(resource, resourcePile, jobType);
+			TriggerProduceResource<T>(resource, jobType);
 		} else {
-			ResourcePile pile = _owner.mainStorage.GetResourcePileObjectWithLowestCount(resourcePile, false);
-			Assert.IsNotNull(pile, $"{_owner.name} is trying to cancel produce resource {resource.ToString()}, but could not find any pile of type {resourcePile.ToString()}");
+			ResourcePile pile = _owner.mainStorage.GetResourcePileObjectWithLowestCount<T>(false);
+			Assert.IsNotNull(pile, $"{_owner.name} is trying to cancel produce resource {resource.ToString()}, but could not find any pile that produces {resource.ToString()}");
 			Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, jobType, pile as IPointOfInterest);
 			Messenger.Broadcast(Signals.CHECK_UNBUILT_OBJECT_VALIDITY);
-			// if (IsProduceResourceJobStillValid(resource) == false && pile.mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
-			// 	_owner.mainStorage.RemovePOI(pile); //remove unbuilt pile
-			// }
 		}
 	}
-	private void TriggerProduceResource(RESOURCE resourceType, TILE_OBJECT_TYPE resourcePile, JOB_TYPE jobType) {
+	private void TriggerProduceResource<T>(RESOURCE resourceType, JOB_TYPE jobType) where T : ResourcePile {
 		if (_owner.HasJob(jobType) == false) {
-			ResourcePile targetPile = _owner.mainStorage.GetTileObjectOfType<ResourcePile>(resourcePile);
+			ResourcePile targetPile = _owner.mainStorage.GetTileObjectOfType<T>();
 			if (targetPile == null) {
-				ResourcePile newPile = InnerMapManager.Instance.CreateNewTileObject<ResourcePile>(resourcePile);
+				TILE_OBJECT_TYPE tileObjectType;
+				switch (resourceType) {
+					case RESOURCE.FOOD:
+						tileObjectType = TILE_OBJECT_TYPE.ANIMAL_MEAT;
+						break;
+					case RESOURCE.WOOD:
+						tileObjectType = TILE_OBJECT_TYPE.WOOD_PILE;
+						break;
+					case RESOURCE.STONE:
+						tileObjectType = TILE_OBJECT_TYPE.STONE_PILE;
+						break;
+					case RESOURCE.METAL:
+						tileObjectType = TILE_OBJECT_TYPE.METAL_PILE;
+						break;
+					default:
+						throw new Exception($"There was no tile object type found for resource {resourceType.ToString()}");
+				}
+				ResourcePile newPile = InnerMapManager.Instance.CreateNewTileObject<ResourcePile>(tileObjectType);
 				_owner.mainStorage.AddPOI(newPile);
 				newPile.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT, IsResourcePileStillValid);
 				targetPile = newPile;
@@ -360,13 +396,13 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		                         || (target.gridTileLocation.IsPartOfSettlement(_owner) == false &&
 		                             target.gridTileLocation.structure.isInterior == false);
 		if (isAtValidLocation && _owner.HasJob(JOB_TYPE.HAUL, target) == false && target.gridTileLocation.parentMap.region == _owner.region) {
-			ResourcePile chosenPileToBeDeposited = _owner.mainStorage.GetResourcePileObjectWithLowestCount(target.tileObjectType);
+			ResourcePile chosenPileToDepositTo = _owner.mainStorage.GetResourcePileObjectWithLowestCount(target.tileObjectType);
 			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAUL, 
 				new GoapEffect(GOAP_EFFECT_CONDITION.DEPOSIT_RESOURCE, string.Empty, 
 					false, GOAP_EFFECT_TARGET.TARGET), 
 				target, _owner);
-			if (chosenPileToBeDeposited != null) {
-			    job.AddOtherData(INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE, new object[] { chosenPileToBeDeposited });
+			if (chosenPileToDepositTo != null) {
+			    job.AddOtherData(INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE, new object[] { chosenPileToDepositTo });
 			}
 			job.SetStillApplicableChecker(() => IsHaulResourcePileStillApplicable(target));
 			_owner.AddToAvailableJobs(job);
@@ -417,11 +453,11 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	#region Patrol
 	private void CreatePatrolJobs() {
 		int patrolChance = UnityEngine.Random.Range(0, 100);
-		if (patrolChance < 15 && _owner.GetNumberOfJobsWith(CHARACTER_STATE.PATROL) < 2) {
-			CharacterStateJob stateJob = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.PATROL, CHARACTER_STATE.PATROL, _owner);
-			stateJob.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoPatrol);
-			stateJob.SetCannotBePushedBack(true);
-			_owner.AddToAvailableJobs(stateJob);
+		if (patrolChance < 15 && _owner.GetNumberOfJobsWith(JOB_TYPE.PATROL) < 2) {
+			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PATROL, INTERACTION_TYPE.START_PATROL, null, _owner);
+			job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoPatrol);
+			job.SetCannotBePushedBack(true);
+			_owner.AddToAvailableJobs(job);
 		}
 	}
 	#endregion
@@ -549,33 +585,35 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 
 	#region Douse Fire
 	public void TriggerDouseFire() {
-        if (_owner.region.innerMap.activeBurningSources.Count(x => x.HasFireInSettlement(_owner)) > 0) {
-			int existingDouseFire = _owner.GetNumberOfJobsWith(CHARACTER_STATE.DOUSE_FIRE);
-			int douseFireJobs = 3;
-			if (existingDouseFire < douseFireJobs) {
-				int missing = douseFireJobs - existingDouseFire;
+        if (_owner.firesInSettlement.Count > 0) {
+			int existingDouseFire = dousers.Count + _owner.GetNumberOfJobsWith(JOB_TYPE.DOUSE_FIRE);
+			int maxDouseFireJobs = 3;
+			if (existingDouseFire < maxDouseFireJobs) {
+				int missing = maxDouseFireJobs - existingDouseFire;
 				for (int i = 0; i < missing; i++) {
-					CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.DOUSE_FIRE, 
-						CHARACTER_STATE.DOUSE_FIRE, _owner);
+					GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DOUSE_FIRE, 
+						INTERACTION_TYPE.START_DOUSE, null, _owner);
 					job.SetCanTakeThisJobChecker(CanTakeRemoveFireJob);
+					job.SetOnTakeJobAction(OnTakeDouseFireJob);
 					_owner.AddToAvailableJobs(job, 0);
 				}	
 			}	
 		}
 	}
 	private void CheckDouseFireJobsValidity() {
-		if (_owner.region.innerMap.activeBurningSources.Count(x => x.HasFireInSettlement(_owner)) == 0) {
+		if (_owner.firesInSettlement.Count == 0) {
 			//cancel all douse fire jobs
 			List<JobQueueItem> jobs = _owner.GetJobs(JOB_TYPE.DOUSE_FIRE);
 			for (int i = 0; i < jobs.Count; i++) {
 				JobQueueItem jqi = jobs[i];
-				if (jqi.assignedCharacter == null || (jqi.assignedCharacter.stateComponent.currentState is DouseFireState) == false) {
+				if (jqi.assignedCharacter == null) {
 					jqi.ForceCancelJob(false, "no more fires");	
 				}
 			}
 		}
 	}
 	private bool CanTakeRemoveFireJob(Character character, IPointOfInterest target) {
+		if (character.jobQueue.HasJob(JOB_TYPE.DOUSE_FIRE)) { return false; }
 		if (target is Character targetCharacter) {
 			if (character == targetCharacter) {
 				//the burning character is himself
@@ -593,6 +631,15 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	}
 	private bool HasWaterAvailable(Character character) {
 		return character.currentRegion.HasTileObjectOfType(TILE_OBJECT_TYPE.WATER_WELL);
+	}
+	private void OnTakeDouseFireJob(Character character, JobQueueItem jqi) {
+		character.behaviourComponent.SetDouseFireSettlement(_owner);
+	}
+	public void AddDouser(Character character) {
+		dousers.Add(character);
+	}
+	public void RemoveDouser(Character character) {
+		dousers.Remove(character);
 	}
 	#endregion
 
@@ -613,17 +660,21 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	}
 	public void TriggerDryTiles() {
 		if (wetTiles.Count > 0) {
-			int existingJobs = _owner.GetNumberOfJobsWith(CHARACTER_STATE.DRY_TILES);
-			int jobsToCreate = 1;
-			if (existingJobs < jobsToCreate) {
-				int missing = jobsToCreate - existingJobs;
+			int dryerCount = tileDryers.Count + _owner.GetNumberOfJobsWith(JOB_TYPE.DRY_TILES);
+			int maxDryers = 1;
+			if (dryerCount < maxDryers) {
+				int missing = maxDryers - dryerCount;
 				for (int i = 0; i < missing; i++) {
-					CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.DRY_TILES, 
-						CHARACTER_STATE.DRY_TILES, _owner);
+					GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DRY_TILES, 
+						INTERACTION_TYPE.START_DRY, null, _owner);
+					job.SetOnTakeJobAction(OnTakeDryTileJob);
 					_owner.AddToAvailableJobs(job);
 				}	
 			}	
 		}
+	}
+	private void OnTakeDryTileJob(Character character, JobQueueItem jqi) {
+		character.behaviourComponent.SetDryingTilesForSettlement(_owner);
 	}
 	private void CheckDryTilesValidity() {
 		if (wetTiles.Count == 0) {
@@ -636,6 +687,12 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 				}
 			}
 		}
+	}
+	public void AddTileDryer(Character character) {
+		tileDryers.Add(character);
+	}
+	public void RemoveTileDryer(Character character) {
+		tileDryers.Remove(character);
 	}
 	#endregion
 	
@@ -656,21 +713,25 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	}
 	public void TriggerCleanseTiles() {
 		if (poisonedTiles.Count > 0) {
-			int existingJobs = _owner.GetNumberOfJobsWith(CHARACTER_STATE.CLEANSE_TILES);
-			int jobsToCreate = 1;
-			if (existingJobs < jobsToCreate) {
-				int missing = jobsToCreate - existingJobs;
+			int cleansersCount = poisonCleansers.Count + _owner.GetNumberOfJobsWith(JOB_TYPE.CLEANSE_TILES);
+			int maxCleansers = 1;
+			if (cleansersCount < maxCleansers) {
+				int missing = maxCleansers - cleansersCount;
 				for (int i = 0; i < missing; i++) {
-					CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.CLEANSE_TILES, 
-						CHARACTER_STATE.CLEANSE_TILES, _owner);
+					GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CLEANSE_TILES, 
+						INTERACTION_TYPE.START_CLEANSE, null, _owner);
+					job.SetOnTakeJobAction(OnTakeCleanseTileJob);
 					_owner.AddToAvailableJobs(job);
 				}	
 			}	
 		}
 	}
+	private void OnTakeCleanseTileJob(Character character, JobQueueItem jobQueueItem) {
+		character.behaviourComponent.SetCleansingTilesForSettlement(_owner);
+	}
 	private void CheckCleanseTilesValidity() {
 		if (poisonedTiles.Count == 0) {
-			//cancel all dry tiles jobs
+			//cancel all cleanse tiles jobs
 			List<JobQueueItem> jobs = _owner.GetJobs(JOB_TYPE.CLEANSE_TILES);
 			for (int i = 0; i < jobs.Count; i++) {
 				JobQueueItem jqi = jobs[i];
@@ -679,6 +740,12 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 				}
 			}
 		}
+	}
+	public void AddPoisonCleanser(Character character) {
+		poisonCleansers.Add(character);
+	}
+	public void RemovePoisonCleanser(Character character) {
+		poisonCleansers.Remove(character);
 	}
 	#endregion
 

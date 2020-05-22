@@ -16,24 +16,33 @@ namespace UtilityScripts {
             
             List<NPCSettlement> settlements = GetSettlementsInRegion(region);
             summary += $"\n-----------------------------";
-            summary += "\nLocations Job Queue";
+            summary += "\nLocations Info:";
             for (int i = 0; i < settlements.Count; i++) {
                 NPCSettlement npcSettlement = settlements[i];
+                if (npcSettlement.owner == null) { continue; }
+                summary += $"\n{npcSettlement.name}";
+                summary += $"\nDryers: {npcSettlement.settlementJobTriggerComponent.tileDryers.Count.ToString()}";
+                summary += $"\nCleansers: {npcSettlement.settlementJobTriggerComponent.poisonCleansers.Count.ToString()}";
+                summary += $"\nDousers: {npcSettlement.settlementJobTriggerComponent.dousers.Count.ToString()}";
+                for (int j = 0; j < npcSettlement.settlementJobTriggerComponent.dousers.Count; j++) {
+                    Character douser = npcSettlement.settlementJobTriggerComponent.dousers[j];
+                    summary += $"\n\t-{douser.name}";    
+                }
                 summary += $"\n{npcSettlement.name} Location Job Queue: ";
                 if (npcSettlement.availableJobs.Count > 0) {
                     for (int j = 0; j < npcSettlement.availableJobs.Count; j++) {
                         JobQueueItem jqi = npcSettlement.availableJobs[j];
                         if (jqi is GoapPlanJob) {
                             GoapPlanJob gpj = jqi as GoapPlanJob;
-                            summary += $"\n{gpj.name} Targeting {gpj.targetPOI}" ?? "None";
+                            summary += $"\n{gpj.name} Targeting {gpj.targetPOI?.ToString() ?? "None"}" ;
                         } else {
                             summary += $"\n{jqi.name}";
                         }
-                        summary += $"\nAssigned Character: {jqi.assignedCharacter?.name}" ?? "None";
-                        if (UIManager.Instance.characterInfoUI.isShowing) {
-                            summary +=
-                                $"\nCan character take job? {jqi.CanCharacterDoJob(UIManager.Instance.characterInfoUI.activeCharacter)}";
-                        }
+                        summary += $"\nAssigned Character: {jqi.assignedCharacter?.name}";
+                        // if (UIManager.Instance.characterInfoUI.isShowing) {
+                        //     summary +=
+                        //         $"\nCan character take job? {jqi.CanCharacterDoJob(UIManager.Instance.characterInfoUI.activeCharacter)}";
+                        // }
             
                     }
                 } else {

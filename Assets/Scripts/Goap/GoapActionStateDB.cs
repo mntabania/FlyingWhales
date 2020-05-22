@@ -457,6 +457,28 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.START_TEND, new[]{
             new StateNameAndDuration(){ name = "Start Tend Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
+        {INTERACTION_TYPE.START_DOUSE, new[]{
+            new StateNameAndDuration(){ name = "Start Douse Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
+        {INTERACTION_TYPE.START_CLEANSE, new[]{
+            new StateNameAndDuration(){ name = "Start Cleanse Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
+        {INTERACTION_TYPE.START_DRY, new[]{
+            new StateNameAndDuration(){ name = "Start Dry Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
+        {INTERACTION_TYPE.START_PATROL, new[]{
+            new StateNameAndDuration(){ name = "Start Patrol Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
+        {INTERACTION_TYPE.CLEANSE_TILE, new[]{
+            new StateNameAndDuration(){ name = "Cleanse Success", status = InteractionManager.Goap_State_Success, duration = 3 },
+            new StateNameAndDuration(){ name = "Ice Cleanse Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
+        {INTERACTION_TYPE.DRY_TILE, new[]{
+            new StateNameAndDuration(){ name = "Dry Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
+        {INTERACTION_TYPE.PATROL, new[]{
+            new StateNameAndDuration(){ name = "Patrol Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
     };
 }
 

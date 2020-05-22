@@ -54,7 +54,7 @@ public class Desk : TileObject {
 
         }
     }
-    public override bool CanBeReplaced() {
+    public virtual bool CanBeReplaced() {
         return true;
     }
     //private bool IsSlotAvailable() {

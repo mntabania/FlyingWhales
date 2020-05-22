@@ -23,7 +23,7 @@ public class WoodPile : ResourcePile {
     public override string ToString() {
         return $"Wood Pile {id}";
     }
-    public override bool CanBeReplaced() {
+    public virtual bool CanBeReplaced() {
         return true;
     }
 }

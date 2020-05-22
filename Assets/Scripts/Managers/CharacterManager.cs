@@ -343,7 +343,30 @@ public class CharacterManager : MonoBehaviour {
             targetTile = targetTile.GetNearestUnoccupiedTileFromThis();
         }
         int food = GetFoodAmountTakenFromDead(deadCharacter);
-        FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(TILE_OBJECT_TYPE.FOOD_PILE);
+        
+        //determine tile object type based on what poi to convert to food pile.
+        TILE_OBJECT_TYPE tileObjectType;
+        if (deadCharacter != null) {
+            if (deadCharacter.isNormalCharacter) {
+                switch (deadCharacter.race) {
+                    case RACE.HUMANS:
+                        tileObjectType = TILE_OBJECT_TYPE.HUMAN_MEAT;
+                        break;
+                    case RACE.ELVES:
+                        tileObjectType = TILE_OBJECT_TYPE.ELF_MEAT;
+                        break;
+                    default:
+                        tileObjectType = TILE_OBJECT_TYPE.ANIMAL_MEAT;
+                        break;
+                }
+            } else {
+                tileObjectType = TILE_OBJECT_TYPE.ANIMAL_MEAT;    
+            }
+        } else {
+            tileObjectType = TILE_OBJECT_TYPE.ANIMAL_MEAT;
+        }
+        
+        FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(tileObjectType);
         if (deadCharacter != null) {
             Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "became_food_pile");
             log.AddToFillers(deadCharacter, deadCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -352,7 +375,7 @@ public class CharacterManager : MonoBehaviour {
         }
         foodPile.SetResourceInPile(food);
         targetTile.structure.AddPOI(foodPile, targetTile);
-        targetTile.SetReservedType(TILE_OBJECT_TYPE.FOOD_PILE);
+        // targetTile.SetReservedType(TILE_OBJECT_TYPE.FOOD_PILE);
     }
     public void RaiseFromDeath(Character characterToCopy, Faction faction, RACE race = RACE.SKELETON, string className = "") {
         StartCoroutine(Raise(characterToCopy, faction, race, className));

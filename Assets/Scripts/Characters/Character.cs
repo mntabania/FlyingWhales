@@ -2066,6 +2066,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         bool combatState = traitContainer.HasTrait("Combatant") && !traitContainer.HasTrait("Injured");
         if (canCombat != combatState) {
             canCombat = combatState;
+            if (canCombat == false) {
+                Messenger.Broadcast(Signals.CHARACTER_CAN_NO_LONGER_COMBAT, this);
+            }
             //if (canCombat && marker) {
             //    marker.ClearTerrifyingObjects();
             //}
@@ -4310,7 +4313,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         AddAdvertisedAction(INTERACTION_TYPE.EXECUTE);
         AddAdvertisedAction(INTERACTION_TYPE.ABSOLVE);
         AddAdvertisedAction(INTERACTION_TYPE.START_TEND);
-        
+        AddAdvertisedAction(INTERACTION_TYPE.START_DOUSE);
+        AddAdvertisedAction(INTERACTION_TYPE.START_CLEANSE);
+        AddAdvertisedAction(INTERACTION_TYPE.START_DRY);
+        AddAdvertisedAction(INTERACTION_TYPE.START_PATROL);
+        AddAdvertisedAction(INTERACTION_TYPE.PATROL);
+
         if (this is Summon) {
             AddAdvertisedAction(INTERACTION_TYPE.PLAY);
         }
@@ -5581,8 +5589,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #endregion
 
     #region IJobOwner
-    public void OnJobAddedToCharacterJobQueue(JobQueueItem job, Character character) {
-    }
+    public void OnJobAddedToCharacterJobQueue(JobQueueItem job, Character character) { }
     public void OnJobRemovedFromCharacterJobQueue(JobQueueItem job, Character character) {
         if(this == character && job == jobComponent.finalJobAssignment) {
             jobComponent.SetFinalJobAssignment(null);

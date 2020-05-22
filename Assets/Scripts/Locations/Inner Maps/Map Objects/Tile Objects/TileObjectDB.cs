@@ -23,7 +23,19 @@ public static class TileObjectDB {
             maxHP = 600,
             neededCharacterClass =  new string[] { "Craftsman" },
         } },
-        { TILE_OBJECT_TYPE.FOOD_PILE, new TileObjectData() {
+        { TILE_OBJECT_TYPE.ANIMAL_MEAT, new TileObjectData() {
+            maxHP = 300,
+        } },
+        { TILE_OBJECT_TYPE.ELF_MEAT, new TileObjectData() {
+            maxHP = 300,
+        } },
+        { TILE_OBJECT_TYPE.HUMAN_MEAT, new TileObjectData() {
+            maxHP = 300,
+        } },
+        { TILE_OBJECT_TYPE.VEGETABLES, new TileObjectData() {
+            maxHP = 300,
+        } },
+        { TILE_OBJECT_TYPE.FISH_PILE, new TileObjectData() {
             maxHP = 300,
         } },
         { TILE_OBJECT_TYPE.STONE_PILE, new TileObjectData() {
