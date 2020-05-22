@@ -18,8 +18,11 @@ public class BerserkBehaviour : CharacterBehaviourComponent {
                 if(!character.combatComponent.hostilesInRange.Contains(inVisionPOI) && !character.combatComponent.avoidInRange.Contains(inVisionPOI)) {
                     if (inVisionPOI is Character targetCharacter) {
                         if (!targetCharacter.isDead) {
-                            character.jobComponent.CreateBerserkAttackJob(targetCharacter);
-                            hasCreatedJob = true;
+                            if (character.jobComponent.CreateBerserkAttackJob(targetCharacter) != null) {
+                                hasCreatedJob = true;
+                                //character.combatComponent.Fight(targetPOI, CombatManager.Berserked, isLethal: false);
+                                break;
+                            }
                             //if (character.faction.isPlayerFaction) {
                             //    character.jobComponent.CreateBerserkAttackJob(targetCharacter);
                             //    //character.combatComponent.Fight(targetCharacter, CombatManager.Berserked, isLethal: true); //check hostility if from player faction, so as not to attack other characters that are also from the same faction.
@@ -30,22 +33,22 @@ public class BerserkBehaviour : CharacterBehaviourComponent {
                             //        break;
                             //    }
                             //}
-                            break;
                         }
                     } else if (inVisionPOI is TileObject targetPOI) { // || targetPOI is SpecialToken
                         if (Random.Range(0, 100) < 35) {
                             //character.jobComponent.TriggerDestroy(targetPOI);
-                            character.jobComponent.CreateBerserkAttackJob(targetPOI);
-                            hasCreatedJob = true;
-                            //character.combatComponent.Fight(targetPOI, CombatManager.Berserked, isLethal: false);
-                            break;
+                            if (character.jobComponent.CreateBerserkAttackJob(targetPOI) != null) {
+                                hasCreatedJob = true;
+                                //character.combatComponent.Fight(targetPOI, CombatManager.Berserked, isLethal: false);
+                                break;
+                            }
                         }
                     }
                 }
-                if (!hasCreatedJob) {
-                    log += $"\n-{character.name} did not create berserk attack job, will stroll instead";
-                    character.PlanIdleStrollOutside();
-                }
+            }
+            if (!hasCreatedJob) {
+                log += $"\n-{character.name} did not create berserk attack job, will stroll instead";
+                character.PlanIdleStrollOutside();
             }
         }
         return true;

@@ -174,10 +174,7 @@ public class ActualGoapNode : IReactable, IRumorable {
         actionStatus = ACTION_STATUS.STARTED;
         associatedJobType = job.jobType; //We create a separate field for the job type that this action is connected instead of getting the job type from the associtatedJob because since the JobQueueItem is object pooled, there will be a time that the job will be brought back to the object pool when that happens the jobType will go back to NONE if we do not store it separately
         SetJob(job);
-        //Temporary only, create a system for this
-        if(action.goapType == INTERACTION_TYPE.STEAL || action.goapType == INTERACTION_TYPE.DRINK_BLOOD) {
-            isStealth = true;
-        }
+        isStealth = IsActionStealth(job);
         actor.SetCurrentActionNode(this, job, plan);
         // CreateThoughtBubbleLog(targetStructure);
         //parentPlan?.SetPlanState(GOAP_PLAN_STATE.IN_PROGRESS);
@@ -475,6 +472,14 @@ public class ActualGoapNode : IReactable, IRumorable {
             action.OnStopWhileStarted(this);
             //actor.DropPlan(parentPlan, forceProcessPlanJob: true); //TODO: Try to push back instead of dropping plan immediately, only drop plan if push back fails (fail: if no other plan replaces this plan)
         }
+    }
+    private bool IsActionStealth(JobQueueItem job) {
+        if (action.goapType == INTERACTION_TYPE.STEAL || action.goapType == INTERACTION_TYPE.DRINK_BLOOD) {
+            return true;
+        } else if (action.goapType == INTERACTION_TYPE.KNOCKOUT_CHARACTER && job.jobType != JOB_TYPE.APPREHEND) {
+            return true;
+        }
+        return false;
     }
     #endregion
 

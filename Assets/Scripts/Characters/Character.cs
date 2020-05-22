@@ -74,9 +74,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public List<Trait> traitsNeededToBeRemoved { get; private set; }
     public TrapStructure trapStructure { get; private set; }
     public bool isDisabledByPlayer { get; protected set; }
-    public float speedModifier { get; private set; }
-    public float walkSpeedModifier { get; private set; }
-    public float runSpeedModifier { get; private set; }
     public string deathStr { get; private set; }
     public TileObject tileObjectLocation { get; private set; }
     public CharacterTrait defaultCharacterTrait { get; private set; }
@@ -150,7 +147,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public LogComponent logComponent { get; private set; }
     public CombatComponent combatComponent { get; private set; }
     public RumorComponent rumorComponent { get; private set; }
-
+    public MovementComponent movementComponent { get; private set; }
 
     #region getters / setters
     public override string relatableName => _firstName;
@@ -269,8 +266,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             return _currentStructure;
         }
     }
-    public float walkSpeed => raceSetting.walkSpeed + (raceSetting.walkSpeed * walkSpeedModifier);
-    public float runSpeed => raceSetting.runSpeed + (raceSetting.runSpeed * runSpeedModifier);
     public Vector3 worldPosition => marker.transform.position;
     public Vector2 selectableSize => Vector2Int.one;
     public ProjectileReceiver projectileReceiver => marker.visionTrigger.projectileReceiver;
@@ -395,6 +390,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         logComponent = new LogComponent(this);
         combatComponent = new CombatComponent(this);
         rumorComponent = new RumorComponent(this);
+        movementComponent = new MovementComponent(this);
     }
 
     //This is done separately after all traits have been loaded so that the data will be accurate
@@ -426,7 +422,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         supply = data.supply;
         canCombat = data.isCombatant;
         isDisabledByPlayer = data.isDisabledByPlayer;
-        speedModifier = data.speedModifier;
+        //speedModifier = data.speedModifier;
         deathStr = data.deathStr;
         _state = data.state;
 
@@ -698,18 +694,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     private void SetCharacterMarker(CharacterMarker marker) {
         this.marker = marker;
-    }
-    public void AdjustSpeedModifier(float amount) {
-        speedModifier += amount;
-        if (marker) {
-            marker.UpdateSpeed();
-        }
-    }
-    public void AdjustWalkSpeedModifier(float amount) {
-        walkSpeedModifier += amount;
-    }
-    public void AdjustRunSpeedModifier(float amount) {
-        runSpeedModifier += amount;
     }
     public virtual void PerTickDuringMovement() {
         for (int i = 0; i < traitContainer.allTraitsAndStatuses.Count; i++) {
@@ -2320,7 +2304,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 }
             } else {
                 //Upon seeing other characters while target of stealth action is already in vision, automatically cancel job
-                if (target is Character) {
+                if (target is Character seenCharacter && seenCharacter.isNormalCharacter) {
                     if (marker.inVisionCharacters.Contains(currentActionNode.poiTarget)) {
                         currentJob.CancelJob(reason: "There is a witness around");
                     }

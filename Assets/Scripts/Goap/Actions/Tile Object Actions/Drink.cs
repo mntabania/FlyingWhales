@@ -69,7 +69,7 @@ public class Drink : GoapAction {
     }
     public void PerTickDrinkSuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustHappiness(3.35f);
-        goapNode.actor.needsComponent.AdjustComfort(2f);
+        goapNode.actor.needsComponent.AdjustStamina(2f);
         if (goapNode.poiTarget is Table) {
             Table table = goapNode.poiTarget as Table;
             table.AdjustResource(RESOURCE.FOOD, -1);

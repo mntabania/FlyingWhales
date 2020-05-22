@@ -32,7 +32,7 @@ namespace Traits {
                 //_sourceCharacter.CreateRemoveTraitJob(name);
                 character.AddTraitNeededToBeRemoved(this);
                 character.RegisterLog("NonIntel", "add_trait", null, name.ToLower());
-                character.needsComponent.AdjustComfortDecreaseRate(20);
+                //character.needsComponent.AdjustStaminaDecreaseRate(20);
             } else if (sourcePOI is TileObject) {
                 Messenger.AddListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedInteraction);
             }
@@ -43,7 +43,7 @@ namespace Traits {
                 //character.CancelAllJobsTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, name);
                 character.RemoveTraitNeededToBeRemoved(this);
                 character.RegisterLog("NonIntel", "remove_trait", null, name.ToLower());
-                character.needsComponent.AdjustComfortDecreaseRate(-20);
+                //character.needsComponent.AdjustStaminaDecreaseRate(-20);
             } else if (sourceCharacter is TileObject) {
                 Messenger.RemoveListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedInteraction);
             }

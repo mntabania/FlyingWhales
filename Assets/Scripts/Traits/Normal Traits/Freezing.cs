@@ -28,9 +28,9 @@ namespace Traits {
             base.OnAddTrait(addedTo);
             if (addedTo is Character character) {
                 _freezingGO = GameManager.Instance.CreateParticleEffectAt(character, PARTICLE_EFFECT.Freezing);
-                character.needsComponent.AdjustComfortDecreaseRate(1f);
+                //character.needsComponent.AdjustStaminaDecreaseRate(1f);
                 character.needsComponent.AdjustTirednessDecreaseRate(1f);
-                character.AdjustSpeedModifier(-0.15f);
+                character.movementComponent.AdjustSpeedModifier(-0.15f);
             } else if (addedTo is IPointOfInterest poi) {
                 _freezingGO = GameManager.Instance.CreateParticleEffectAt(poi, PARTICLE_EFFECT.Freezing_Object);
             }
@@ -39,14 +39,14 @@ namespace Traits {
             base.OnStackStatus(addedTo);
             if (addedTo is Character) {
                 Character character = addedTo as Character;
-                character.AdjustSpeedModifier(-0.15f);
+                character.movementComponent.AdjustSpeedModifier(-0.15f);
             }
         }
         public override void OnUnstackStatus(ITraitable addedTo) {
             base.OnUnstackStatus(addedTo);
             if (addedTo is Character) {
                 Character character = addedTo as Character;
-                character.AdjustSpeedModifier(0.15f);
+                character.movementComponent.AdjustSpeedModifier(0.15f);
             }
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
@@ -56,9 +56,9 @@ namespace Traits {
                 _freezingGO = null;
             }
             if (removedFrom is Character character) {
-                character.needsComponent.AdjustComfortDecreaseRate(-1f);
+                //character.needsComponent.AdjustStaminaDecreaseRate(-1f);
                 character.needsComponent.AdjustTirednessDecreaseRate(-1f);
-                character.AdjustSpeedModifier(0.15f);
+                character.movementComponent.AdjustSpeedModifier(0.15f);
             }
         }
         public override void OnInitiateMapObjectVisual(ITraitable traitable) {

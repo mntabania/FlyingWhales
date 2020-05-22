@@ -192,7 +192,7 @@ public class SaveDataCharacter {
         moodValue = character.moodComponent.moodValue;
         isCombatant = character.canCombat;
         isDisabledByPlayer = character.isDisabledByPlayer;
-        speedModifier = character.speedModifier;
+        //speedModifier = character.speedModifier;
         deathStr = character.deathStr;
 
         state = character.state;

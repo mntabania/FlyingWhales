@@ -11,25 +11,25 @@ public class CharacterNeedsComponent {
     public int doNotGetHungry { get; private set; }
     public int doNotGetTired{ get; private set; }
     public int doNotGetBored{ get; private set; }
-    public int doNotGetUncomfortable { get; private set; }
+    public int doNotGetDrained { get; private set; }
     public int doNotGetDiscouraged { get; private set; }
 
     public bool isStarving => fullness >= 0f && fullness <= STARVING_UPPER_LIMIT;
     public bool isExhausted => tiredness >= 0f && tiredness <= EXHAUSTED_UPPER_LIMIT;
     public bool isSulking => happiness >= 0f && happiness <= SULKING_UPPER_LIMIT;
-    public bool isAgonizing => comfort >= 0f && comfort <= AGONIZING_UPPER_LIMIT;
+    public bool isDrained => stamina >= 0f && stamina <= DRAINED_UPPER_LIMIT;
     public bool isHopeless => hope >= 0f && hope <= HOPELESS_UPPER_LIMIT;
 
     public bool isHungry => fullness > STARVING_UPPER_LIMIT && fullness <= HUNGRY_UPPER_LIMIT;
     public bool isTired => tiredness > EXHAUSTED_UPPER_LIMIT && tiredness <= TIRED_UPPER_LIMIT;
     public bool isBored => happiness > SULKING_UPPER_LIMIT && happiness <= BORED_UPPER_LIMIT;
-    public bool isUncomfortable => comfort > AGONIZING_UPPER_LIMIT && comfort <= UNCOMFORTABLE_UPPER_LIMIT;
+    public bool isSpent => stamina > DRAINED_UPPER_LIMIT && stamina <= SPENT_UPPER_LIMIT;
     public bool isDiscouraged => hope > HOPELESS_UPPER_LIMIT && hope <= DISCOURAGED_UPPER_LIMIT;
 
     public bool isFull => fullness >= FULL_LOWER_LIMIT && fullness <= 100f;
     public bool isRefreshed => tiredness >= REFRESHED_LOWER_LIMIT && tiredness <= 100f;
     public bool isEntertained => happiness >= ENTERTAINED_LOWER_LIMIT && happiness <= 100f;
-    public bool isRelaxed => comfort >= RELAXED_LOWER_LIMIT && comfort <= 100f;
+    public bool isSprightly => stamina >= SPRIGHTLY_LOWER_LIMIT && stamina <= 100f;
     public bool isHopeful => hope >= HOPEFUL_LOWER_LIMIT && hope <= 100f;
 
 
@@ -66,13 +66,13 @@ public class CharacterNeedsComponent {
     public const float ENTERTAINED_LOWER_LIMIT = 91f;
 
     //Comfort
-    public float comfort { get; private set; }
-    public float comfortDecreaseRate { get; private set; }
-    private float comfortLowerBound; //how low can this characters happiness go
-    public const float COMFORT_DEFAULT = 100f;
-    public const float AGONIZING_UPPER_LIMIT = 20f;
-    public const float UNCOMFORTABLE_UPPER_LIMIT = 40f;
-    public const float RELAXED_LOWER_LIMIT = 91f;
+    public float stamina { get; private set; }
+    public float staminaDecreaseRate { get; private set; }
+    private float staminaLowerBound; //how low can this characters happiness go
+    public const float STAMINA_DEFAULT = 100f;
+    public const float DRAINED_UPPER_LIMIT = 20f;
+    public const float SPENT_UPPER_LIMIT = 40f;
+    public const float SPRIGHTLY_LOWER_LIMIT = 91f;
 
     //Hope
     public float hope { get; private set; }
@@ -92,7 +92,7 @@ public class CharacterNeedsComponent {
         SetTirednessLowerBound(0f);
         SetFullnessLowerBound(0f);
         SetHappinessLowerBound(0f);
-        SetComfortLowerBound(0f);
+        SetStaminaLowerBound(0f);
         SetHopeLowerBound(0f);
         SetForcedFullnessRecoveryTimeInWords(TIME_IN_WORDS.LUNCH_TIME);
         SetForcedTirednessRecoveryTimeInWords(TIME_IN_WORDS.LATE_NIGHT);
@@ -127,7 +127,7 @@ public class CharacterNeedsComponent {
         SetTiredness(UnityEngine.Random.Range(50, 101));
         SetFullness(UnityEngine.Random.Range(50, 101));
         SetHappiness(UnityEngine.Random.Range(50, 101));
-        SetComfort(UnityEngine.Random.Range(50, 101));
+        SetStamina(UnityEngine.Random.Range(50, 101));
     }
     #endregion
 
@@ -185,15 +185,23 @@ public class CharacterNeedsComponent {
         if (doNotGetBored <= 0) {
             AdjustHappiness(-(EditableValuesManager.Instance.baseHappinessDecreaseRate + happinessDecreaseRate));
         }
-        if (doNotGetUncomfortable <= 0) {
-            AdjustComfort(-(EditableValuesManager.Instance.baseComfortDecreaseRate + comfortDecreaseRate));
+        if (doNotGetDrained <= 0) {
+            if(_character.marker && _character.marker.isMoving) {
+                if (_character.movementComponent.isRunning) {
+                    AdjustStamina(-(EditableValuesManager.Instance.baseStaminaDecreaseRate + staminaDecreaseRate));
+                } else {
+                    AdjustStamina(2f);
+                }
+            } else {
+                AdjustStamina(10f);
+            }
         }
     }
     public string GetNeedsSummary() {
         string summary = $"Fullness: {fullness.ToString(CultureInfo.InvariantCulture)}/{FULLNESS_DEFAULT.ToString(CultureInfo.InvariantCulture)}";
         summary += $"\nTiredness: {tiredness.ToString(CultureInfo.InvariantCulture)}/{TIREDNESS_DEFAULT.ToString(CultureInfo.InvariantCulture)}";
         summary += $"\nHappiness: {happiness.ToString(CultureInfo.InvariantCulture)}/{HAPPINESS_DEFAULT.ToString(CultureInfo.InvariantCulture)}";
-        summary += $"\nComfort: {comfort.ToString(CultureInfo.InvariantCulture)}/{COMFORT_DEFAULT.ToString(CultureInfo.InvariantCulture)}";
+        summary += $"\nStamina: {stamina.ToString(CultureInfo.InvariantCulture)}/{STAMINA_DEFAULT.ToString(CultureInfo.InvariantCulture)}";
         summary += $"\nHope: {hope.ToString(CultureInfo.InvariantCulture)}/{HOPE_DEFAULT.ToString(CultureInfo.InvariantCulture)}";
         return summary;
     }
@@ -206,8 +214,8 @@ public class CharacterNeedsComponent {
     public void AdjustHappinessDecreaseRate(float amount) {
         happinessDecreaseRate += amount;
     }
-    public void AdjustComfortDecreaseRate(float amount) {
-        comfortDecreaseRate += amount;
+    public void AdjustStaminaDecreaseRate(float amount) {
+        staminaDecreaseRate += amount;
     }
     private void SetTirednessLowerBound(float amount) {
         tirednessLowerBound = amount;
@@ -218,8 +226,8 @@ public class CharacterNeedsComponent {
     private void SetHappinessLowerBound(float amount) {
         happinessLowerBound = amount;
     }
-    private void SetComfortLowerBound(float amount) {
-        comfortLowerBound = amount;
+    private void SetStaminaLowerBound(float amount) {
+        staminaLowerBound = amount;
     }
     private void SetHopeLowerBound(float amount) {
         hopeLowerBound = amount;
@@ -994,99 +1002,105 @@ public class CharacterNeedsComponent {
 
     #endregion
 
-    #region Comfort
-    public void ResetComfortMeter() {
-        bool wasUncomfortable = isUncomfortable;
-        bool wasAgonizing = isAgonizing;
-        bool wasRelaxed = isRelaxed;
+    #region Stamina
+    public void ResetStaminaMeter() {
+        bool wasSpent = isSpent;
+        bool wasDrained = isDrained;
+        bool wasSprightly = isSprightly;
 
-        comfort = COMFORT_DEFAULT;
+        stamina = STAMINA_DEFAULT;
 
-        OnRelaxed(wasRelaxed, wasUncomfortable, wasAgonizing);
+        OnSprightly(wasSprightly, wasSpent, wasDrained);
     }
-    public void AdjustComfort(float amount) {
-        bool wasUncomfortable = isUncomfortable;
-        bool wasAgonizing = isAgonizing;
-        bool wasRelaxed = isRelaxed;
+    public void AdjustStamina(float amount) {
+        bool wasSpent = isSpent;
+        bool wassDrained = isDrained;
+        bool wasSprightly = isSprightly;
 
-        comfort += amount;
-        comfort = Mathf.Clamp(comfort, comfortLowerBound, COMFORT_DEFAULT);
+        stamina += amount;
+        stamina = Mathf.Clamp(stamina, staminaLowerBound, STAMINA_DEFAULT);
 
-        if (isRelaxed) {
-            OnRelaxed(wasRelaxed, wasUncomfortable, wasAgonizing);
-        } else if (isUncomfortable) {
-            OnUncomfortable(wasRelaxed, wasUncomfortable, wasAgonizing);
-        } else if (isAgonizing) {
-            OnAgonizing(wasRelaxed, wasUncomfortable, wasAgonizing);
+        if (isSprightly) {
+            OnSprightly(wasSprightly, wasSpent, wassDrained);
+        } else if (isSpent) {
+            OnSpent(wasSprightly, wasSpent, wassDrained);
+        } else if (isDrained) {
+            OnDrained(wasSprightly, wasSpent, wassDrained);
         } else {
-            OnNormalComfort(wasRelaxed, wasUncomfortable, wasAgonizing);
+            OnNormalStamina(wasSprightly, wasSpent, wassDrained);
         }
     }
-    public void SetComfort(float amount) {
-        bool wasUncomfortable = isUncomfortable;
-        bool wasAgonizing = isAgonizing;
-        bool wasRelaxed = isRelaxed;
+    public void SetStamina(float amount) {
+        bool wasSpent = isSpent;
+        bool wasDrained = isDrained;
+        bool wasSprightly = isSprightly;
 
-        comfort = amount;
-        comfort = Mathf.Clamp(comfort, comfortLowerBound, COMFORT_DEFAULT);
+        stamina = amount;
+        stamina = Mathf.Clamp(stamina, staminaLowerBound, STAMINA_DEFAULT);
 
-        if (isRelaxed) {
-            OnRelaxed(wasRelaxed, wasUncomfortable, wasAgonizing);
-        } else if (isUncomfortable) {
-            OnUncomfortable(wasRelaxed, wasUncomfortable, wasAgonizing);
-        } else if (isAgonizing) {
-            OnAgonizing(wasRelaxed, wasUncomfortable, wasAgonizing);
+        if (isSprightly) {
+            OnSprightly(wasSprightly, wasSpent, wasDrained);
+        } else if (isSpent) {
+            OnSpent(wasSprightly, wasSpent, wasDrained);
+        } else if (isDrained) {
+            OnDrained(wasSprightly, wasSpent, wasDrained);
         } else {
-            OnNormalComfort(wasRelaxed, wasUncomfortable, wasAgonizing);
+            OnNormalStamina(wasSprightly, wasSpent, wasDrained);
         }
     }
-    private void OnRelaxed(bool wasRelaxed, bool wasUncomfortable, bool wasAgonizing) {
-        if (!wasRelaxed) {
-            _character.traitContainer.AddTrait(_character, "Relaxed");
+    private void OnSprightly(bool wasSprightly, bool wasSpent, bool wasDrained) {
+        if (!wasSprightly) {
+            _character.traitContainer.AddTrait(_character, "Sprightly");
+            _character.movementComponent.SetNoRunExceptCombat(false);
+            _character.movementComponent.SetNoRunWithoutException(false);
         }
-        if (wasUncomfortable) {
-            _character.traitContainer.RemoveTrait(_character, "Uncomfortable");
+        if (wasSpent) {
+            _character.traitContainer.RemoveTrait(_character, "Spent");
         }
-        if (wasAgonizing) {
-            _character.traitContainer.RemoveTrait(_character, "Agonizing");
-        }
-    }
-    private void OnUncomfortable(bool wasRelaxed, bool wasUncomfortable, bool wasAgonizing) {
-        if (!wasUncomfortable) {
-            _character.traitContainer.AddTrait(_character, "Uncomfortable");
-        }
-        if (wasRelaxed) {
-            _character.traitContainer.RemoveTrait(_character, "Relaxed");
-        }
-        if (wasAgonizing) {
-            _character.traitContainer.RemoveTrait(_character, "Agonizing");
+        if (wasDrained) {
+            _character.traitContainer.RemoveTrait(_character, "Drained");
         }
     }
-    private void OnAgonizing(bool wasRelaxed, bool wasUncomfortable, bool wasAgonizing) {
-        if (!wasAgonizing) {
-            _character.traitContainer.AddTrait(_character, "Agonizing");
+    private void OnSpent(bool wasSprightly, bool wasSpent, bool wasDrained) {
+        if (!wasSpent) {
+            _character.traitContainer.AddTrait(_character, "Spent");
+            _character.movementComponent.SetNoRunExceptCombat(true);
+            _character.movementComponent.SetNoRunWithoutException(false);
         }
-        if (wasRelaxed) {
-            _character.traitContainer.RemoveTrait(_character, "Relaxed");
+        if (wasSprightly) {
+            _character.traitContainer.RemoveTrait(_character, "Sprightly");
         }
-        if (wasUncomfortable) {
-            _character.traitContainer.RemoveTrait(_character, "Uncomfortable");
-        }
-    }
-    private void OnNormalComfort(bool wasRelaxed, bool wasUncomfortable, bool wasAgonizing) {
-        if (wasAgonizing) {
-            _character.traitContainer.RemoveTrait(_character, "Agonizing");
-        }
-        if (wasRelaxed) {
-            _character.traitContainer.RemoveTrait(_character, "Relaxed");
-        }
-        if (wasUncomfortable) {
-            _character.traitContainer.RemoveTrait(_character, "Uncomfortable");
+        if (wasDrained) {
+            _character.traitContainer.RemoveTrait(_character, "Drained");
         }
     }
-    public void AdjustDoNotGetUncomfortable(int amount) {
-        doNotGetUncomfortable += amount;
-        doNotGetUncomfortable = Math.Max(doNotGetUncomfortable, 0);
+    private void OnDrained(bool wasSprightly, bool wasSpent, bool wasDrained) {
+        if (!wasDrained) {
+            _character.traitContainer.AddTrait(_character, "Drained");
+            _character.movementComponent.SetNoRunExceptCombat(false);
+            _character.movementComponent.SetNoRunWithoutException(true);
+        }
+        if (wasSprightly) {
+            _character.traitContainer.RemoveTrait(_character, "Sprightly");
+        }
+        if (wasSpent) {
+            _character.traitContainer.RemoveTrait(_character, "Spent");
+        }
+    }
+    private void OnNormalStamina(bool wasSprightly, bool wasSpent, bool wasDrained) {
+        if (wasDrained) {
+            _character.traitContainer.RemoveTrait(_character, "Drained");
+        }
+        if (wasSprightly) {
+            _character.traitContainer.RemoveTrait(_character, "Sprightly");
+        }
+        if (wasSpent) {
+            _character.traitContainer.RemoveTrait(_character, "Spent");
+        }
+    }
+    public void AdjustDoNotGetDrained(int amount) {
+        doNotGetDrained += amount;
+        doNotGetDrained = Math.Max(doNotGetDrained, 0);
     }
     #endregion
 

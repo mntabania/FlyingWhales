@@ -248,7 +248,7 @@ public class Summon : Character, IWorldObject {
         //    DecreaseCanMove(); //TODO: Handle this somehwere better?
         //    marker.PauseAnimation();
         //}
-        marker.UpdateSpeed();
+        movementComponent.UpdateSpeed();
     }
     protected virtual void AfterDeath(LocationGridTile deathTileLocation) { }
     #endregion

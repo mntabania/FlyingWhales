@@ -33,10 +33,10 @@ namespace Traits {
             if (traitable is Character) {
                 _sourceCharacter = traitable as Character;
                 _sourceCharacter.UpdateCanCombatState();
-                _sourceCharacter.AdjustSpeedModifier(-0.15f);
+                _sourceCharacter.movementComponent.AdjustSpeedModifier(-0.15f);
                 //_sourceCharacter.CreateRemoveTraitJob(name);
                 _sourceCharacter.AddTraitNeededToBeRemoved(this);
-                _sourceCharacter.needsComponent.AdjustComfortDecreaseRate(5);
+                //_sourceCharacter.needsComponent.AdjustStaminaDecreaseRate(5);
 
                 if (gainedFromDoing == null) { //TODO: || gainedFromDoing.poiTarget != _sourceCharacter
                     _sourceCharacter.RegisterLog("NonIntel", "add_trait", null, name.ToLower());
@@ -53,9 +53,9 @@ namespace Traits {
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
             _sourceCharacter.UpdateCanCombatState();
-            _sourceCharacter.AdjustSpeedModifier(0.15f);
+            _sourceCharacter.movementComponent.AdjustSpeedModifier(0.15f);
             _sourceCharacter.RemoveTraitNeededToBeRemoved(this);
-            _sourceCharacter.needsComponent.AdjustComfortDecreaseRate(-5);
+            //_sourceCharacter.needsComponent.AdjustStaminaDecreaseRate(-5);
             _sourceCharacter.RegisterLog("NonIntel", "remove_trait", null, name.ToLower());
             base.OnRemoveTrait(sourceCharacter, removedBy);
         }

@@ -70,7 +70,7 @@ public class ConsoleBase : InfoUIBase {
             {"/set_fullness", SetFullness },
             {"/set_tiredness", SetTiredness },
             {"/set_happiness", SetHappiness },
-            {"/set_comfort", SetComfort },
+            {"/set_comfort", SetStamina },
             {"/set_hope", SetHope },
             {"/gain_i_ability", GainInterventionAbility },
             {"/destroy_tile_obj", DestroyTileObj },
@@ -776,10 +776,10 @@ public class ConsoleBase : InfoUIBase {
         character.needsComponent.SetTiredness(tiredness);
         AddSuccessMessage($"Set Tiredness Value of {character.name} to {tiredness}");
     }
-    private void SetComfort(string[] parameters) {
+    private void SetStamina(string[] parameters) {
         if (parameters.Length != 2) { //parameters command, item
             AddCommandHistory(consoleLbl.text);
-            AddErrorMessage("There was an error in the command format of SetComfort");
+            AddErrorMessage("There was an error in the command format of SetStamina");
             return;
         }
         string characterParameterString = parameters[0];
@@ -790,15 +790,15 @@ public class ConsoleBase : InfoUIBase {
             AddErrorMessage($"There is no character named {characterParameterString}");
             return;
         }
-        string comfortParameterString = parameters[1];
+        string staminaParameterString = parameters[1];
 
-        float comfort = character.needsComponent.comfort;
-        if (!float.TryParse(comfortParameterString, out comfort)) {
-            AddErrorMessage($"Comfort parameter is not a float: {comfortParameterString}");
+        float stamina = character.needsComponent.stamina;
+        if (!float.TryParse(staminaParameterString, out stamina)) {
+            AddErrorMessage($"Stamina parameter is not a float: {staminaParameterString}");
             return;
         }
-        character.needsComponent.SetComfort(comfort);
-        AddSuccessMessage($"Set Comfort Value of {character.name} to {comfort}");
+        character.needsComponent.SetStamina(stamina);
+        AddSuccessMessage($"Set Stamina Value of {character.name} to {stamina}");
     }
     private void SetHope(string[] parameters) {
         if (parameters.Length != 2) { //parameters command, item

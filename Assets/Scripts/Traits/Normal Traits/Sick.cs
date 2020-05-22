@@ -29,10 +29,10 @@ namespace Traits {
             base.OnAddTrait(sourceCharacter);
             if (sourceCharacter is Character) {
                 owner = sourceCharacter as Character;
-                owner.AdjustSpeedModifier(-0.10f);
+                owner.movementComponent.AdjustSpeedModifier(-0.10f);
                 //_sourceCharacter.CreateRemoveTraitJob(name);
                 owner.AddTraitNeededToBeRemoved(this);
-                owner.needsComponent.AdjustComfortDecreaseRate(5);
+                //owner.needsComponent.AdjustStaminaDecreaseRate(5);
 
                 if (gainedFromDoing == null) {
                     owner.RegisterLog("NonIntel", "add_trait", null, name.ToLower());
@@ -49,9 +49,9 @@ namespace Traits {
             }
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
-            owner.AdjustSpeedModifier(0.10f);
+            owner.movementComponent.AdjustSpeedModifier(0.10f);
             owner.RemoveTraitNeededToBeRemoved(this);
-            owner.needsComponent.AdjustComfortDecreaseRate(-5);
+            //owner.needsComponent.AdjustStaminaDecreaseRate(-5);
             owner.RegisterLog("NonIntel", "remove_trait", null, name.ToLower());
             base.OnRemoveTrait(sourceCharacter, removedBy);
         }

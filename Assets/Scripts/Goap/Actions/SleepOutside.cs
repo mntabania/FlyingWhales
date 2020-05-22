@@ -23,7 +23,7 @@ public class SleepOutside : GoapAction {
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.ACTOR });
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.COMFORT_RECOVERY, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.ACTOR });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.STAMINA_RECOVERY, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.ACTOR });
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
@@ -68,7 +68,7 @@ public class SleepOutside : GoapAction {
         }
         needsComponent.AdjustTiredness(1f);
         needsComponent.AdjustSleepTicks(-1);
-        needsComponent.AdjustComfort(0.2f);
+        //needsComponent.AdjustStamina(0.2f);
     }
     public void AfterRestSuccess(ActualGoapNode goapNode) {
         goapNode.actor.traitContainer.RemoveTrait(goapNode.actor, "Resting");

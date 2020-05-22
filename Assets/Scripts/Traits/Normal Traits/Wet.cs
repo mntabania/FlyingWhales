@@ -28,9 +28,9 @@ namespace Traits {
             base.OnAddTrait(addedTo);
             addedTo.traitContainer.RemoveTrait(addedTo, "Burning");
             addedTo.traitContainer.RemoveStatusAndStacks(addedTo, "Overheating");
-            if (addedTo is Character character) {
-                character.needsComponent.AdjustComfortDecreaseRate(2f);
-            }
+            //if (addedTo is Character character) {
+            //    character.needsComponent.AdjustStaminaDecreaseRate(2f);
+            //}
             UpdateVisualsOnAdd(addedTo);
             if (addedTo is DesertRose desertRose) {
                 desertRose.DesertRoseEffect();
@@ -46,9 +46,9 @@ namespace Traits {
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
-            if (removedFrom is Character character) {
-                character.needsComponent.AdjustComfortDecreaseRate(-2f);
-            }
+            //if (removedFrom is Character character) {
+            //    character.needsComponent.AdjustStaminaDecreaseRate(-2f);
+            //}
             UpdateVisualsOnRemove(removedFrom);
         }
         #endregion

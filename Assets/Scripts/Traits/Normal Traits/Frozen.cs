@@ -35,7 +35,7 @@ namespace Traits {
                 character.needsComponent.AdjustDoNotGetBored(1);
                 character.needsComponent.AdjustDoNotGetHungry(1);
                 character.needsComponent.AdjustDoNotGetTired(1);
-                character.needsComponent.AdjustDoNotGetUncomfortable(1);
+                character.needsComponent.AdjustDoNotGetDrained(1);
             }
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
@@ -49,7 +49,7 @@ namespace Traits {
                 character.needsComponent.AdjustDoNotGetBored(-1);
                 character.needsComponent.AdjustDoNotGetHungry(-1);
                 character.needsComponent.AdjustDoNotGetTired(-1);
-                character.needsComponent.AdjustDoNotGetUncomfortable(-1);
+                character.needsComponent.AdjustDoNotGetDrained(-1);
             }
         }
         public override void OnInitiateMapObjectVisual(ITraitable traitable) {

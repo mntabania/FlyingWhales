@@ -62,7 +62,7 @@ public class Pray : GoapAction {
     }
     public void PerTickPraySuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustHappiness(3.55f);
-        goapNode.actor.needsComponent.AdjustComfort(0.5f);
+        //goapNode.actor.needsComponent.AdjustStamina(0.5f);
     }
     public void AfterPraySuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
