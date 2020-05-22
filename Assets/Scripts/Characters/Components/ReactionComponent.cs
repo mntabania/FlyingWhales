@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 using UnityEngine;
 using Traits;
 using Inner_Maps;
@@ -592,19 +593,30 @@ public class ReactionComponent {
                 if (owner.homeSettlement.HasJob(JOB_TYPE.DOUSE_FIRE) == false) {
                     Debug.LogWarning($"{owner.name} saw a fire in a settlement but no douse fire jobs were created.");
                 }
-                
-                for (int i = 0; i < owner.homeSettlement.availableJobs.Count; i++) {
-                    JobQueueItem job = owner.homeSettlement.availableJobs[i];
-                    if (job.jobType == JOB_TYPE.DOUSE_FIRE) {
-                        if (job.assignedCharacter == null && owner.jobQueue.CanJobBeAddedToQueue(job)) {
-                            owner.jobQueue.AddJobInQueue(job);
-                        } else {
-                            if (owner.combatComponent.combatMode == COMBAT_MODE.Aggressive) {
-                                owner.combatComponent.Flight(targetTileObject, "saw fire");
-                            }
-                        }
+
+                List<JobQueueItem> douseFireJobs = owner.homeSettlement.GetJobs(JOB_TYPE.DOUSE_FIRE)
+                    .Where(j => j.assignedCharacter == null && owner.jobQueue.CanJobBeAddedToQueue(j)).ToList();
+
+                if (douseFireJobs.Count > 0) {
+                    owner.jobQueue.AddJobInQueue(douseFireJobs[0]);
+                } else {
+                    if (owner.combatComponent.combatMode == COMBAT_MODE.Aggressive) {
+                        owner.combatComponent.Flight(targetTileObject, "saw fire");
                     }
                 }
+                
+                // for (int i = 0; i < owner.homeSettlement.availableJobs.Count; i++) {
+                //     JobQueueItem job = owner.homeSettlement.availableJobs[i];
+                //     if (job.jobType == JOB_TYPE.DOUSE_FIRE) {
+                //         if (job.assignedCharacter == null && owner.jobQueue.CanJobBeAddedToQueue(job)) {
+                //             owner.jobQueue.AddJobInQueue(job);
+                //         } else {
+                //             if (owner.combatComponent.combatMode == COMBAT_MODE.Aggressive) {
+                //                 owner.combatComponent.Flight(targetTileObject, "saw fire");
+                //             }
+                //         }
+                //     }
+                // }
             }
         }
         if (!owner.isInCombat && !owner.hasSeenWet) {
