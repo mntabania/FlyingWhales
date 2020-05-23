@@ -16448,6 +16448,39 @@ MonoBehaviour:
   - {fileID: 11400000, guid: bf56438e4caa69f448508406f75ac271, type: 2}
   - {fileID: 11400000, guid: 30189063000958a4aa46188960846076, type: 2}
   unlockAllSkills: 1
+  _playerSkillTreeAssets:
+    m_keys: 3d0000000a0000002100000006000000330000003200000034000000080000000700000057000000
+    m_values:
+    - tooltipVideoClip: {fileID: 32900000, guid: b043658b3fb99e54e904d8046727dc45,
+        type: 3}
+      tooltipImage: {fileID: 0}
+    - tooltipVideoClip: {fileID: 32900000, guid: 5a3333c7232bbb94894fcc20adc3c147,
+        type: 3}
+      tooltipImage: {fileID: 0}
+    - tooltipVideoClip: {fileID: 32900000, guid: f69a4274a12a0e8449dc859b7676242c,
+        type: 3}
+      tooltipImage: {fileID: 0}
+    - tooltipVideoClip: {fileID: 32900000, guid: c8b107a0040a3364dbb25786c75dbfee,
+        type: 3}
+      tooltipImage: {fileID: 0}
+    - tooltipVideoClip: {fileID: 32900000, guid: a14060dfc0f2e8547b5338c56363ab8a,
+        type: 3}
+      tooltipImage: {fileID: 0}
+    - tooltipVideoClip: {fileID: 32900000, guid: 984ebb07caa6367499acc9bfaef5aeee,
+        type: 3}
+      tooltipImage: {fileID: 0}
+    - tooltipVideoClip: {fileID: 32900000, guid: 0395346f7571d724f9c91404dc1a09eb,
+        type: 3}
+      tooltipImage: {fileID: 0}
+    - tooltipVideoClip: {fileID: 32900000, guid: a90d5c3791159d4439bb47def0d27362,
+        type: 3}
+      tooltipImage: {fileID: 0}
+    - tooltipVideoClip: {fileID: 32900000, guid: cf1c29e91becf7b468ed9942a26b8448,
+        type: 3}
+      tooltipImage: {fileID: 0}
+    - tooltipVideoClip: {fileID: 32900000, guid: 2b14377845568364d95340e8c2082fac,
+        type: 3}
+      tooltipImage: {fileID: 0}
 --- !u!4 &895236705
 Transform:
   m_ObjectHideFlags: 0

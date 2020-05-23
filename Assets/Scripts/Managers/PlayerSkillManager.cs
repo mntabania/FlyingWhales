@@ -17,6 +17,7 @@ public class PlayerSkillManager : MonoBehaviour {
     public Dictionary<SPELL_TYPE, MinionPlayerSkill> allMinionPlayerSkillsData;
     public Dictionary<SPELL_TYPE, SummonPlayerSkill> allSummonPlayerSkillsData;
     public Dictionary<SPELL_TYPE, SpellData> allPlayerSkillsData;
+    [SerializeField] private PlayerSkillTreeAssetsDictionary _playerSkillTreeAssets; 
 
     private SPELL_TYPE[] allSpells = { SPELL_TYPE.METEOR
             , SPELL_TYPE.TORNADO, SPELL_TYPE.RAVENOUS_SPIRIT, SPELL_TYPE.FEEBLE_SPIRIT, SPELL_TYPE.FORLORN_SPIRIT
@@ -239,6 +240,15 @@ public class PlayerSkillManager : MonoBehaviour {
             if (skillTree.nodes.ContainsKey(skillType)) {
                 return skillTree.nodes[skillType];
             }
+        }
+        return null;
+    }
+    #endregion
+
+    #region Assets
+    public PlayerSkillAssets GetPlayerSkillAsset(SPELL_TYPE spellType) {
+        if (_playerSkillTreeAssets.ContainsKey(spellType)) {
+            return _playerSkillTreeAssets[spellType];    
         }
         return null;
     }
