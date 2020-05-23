@@ -108,10 +108,11 @@ public class PlayerUI : MonoBehaviour {
     private List<SpellItem> _spellItems;
 
     [Header("Summons")]
-    public ScrollRect summonsScrollRect;
-    public GameObject summonsContainerGO;
-    [SerializeField] private GameObject characterNameplateItem;
-    private List<CharacterNameplateItem> _summonItems;
+    [SerializeField] private SummonListUI summonList;
+    //public ScrollRect summonsScrollRect;
+    //public GameObject summonsContainerGO;
+    //[SerializeField] private GameObject characterNameplateItem;
+    //private List<CharacterNameplateItem> _summonItems;
 
     [Header("Items")]
     public ScrollRect itemsScrollRect;
@@ -145,9 +146,12 @@ public class PlayerUI : MonoBehaviour {
     public void Initialize() {
         pendingUIToShow = new List<Action>();
         _spellItems = new List<SpellItem>();
-        _summonItems = new List<CharacterNameplateItem>();
+        //_summonItems = new List<CharacterNameplateItem>();
         _itemItems = new List<ItemItem>();
         _artifactItems = new List<ArtifactItem>();
+
+        minionList.Initialize();
+        summonList.Initialize();
 
         Messenger.AddListener<InfoUIBase>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<InfoUIBase>(Signals.MENU_CLOSED, OnMenuClosed);
@@ -163,7 +167,6 @@ public class PlayerUI : MonoBehaviour {
         
         Messenger.AddListener<SPELL_TYPE>(Signals.PLAYER_GAINED_SPELL, OnGainSpell);
         Messenger.AddListener<SPELL_TYPE>(Signals.PLAYER_LOST_SPELL, OnLostSpell);
-        minionList.Initialize();
     }
 
     public void InitializeAfterGameLoaded() {
@@ -181,7 +184,7 @@ public class PlayerUI : MonoBehaviour {
         Messenger.AddListener(Signals.THREAT_UPDATED, OnThreatUpdated);
         Messenger.AddListener<IPointOfInterest>(Signals.ON_SEIZE_POI, OnSeizePOI);
         Messenger.AddListener<IPointOfInterest>(Signals.ON_UNSEIZE_POI, OnUnseizePOI);
-        Messenger.AddListener<Summon>(Signals.PLAYER_PLACED_SUMMON, CreateNewSummonItem);
+        //Messenger.AddListener<Summon>(Signals.PLAYER_PLACED_SUMMON, CreateNewSummonItem);
 
         //key presses
         Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressed);
@@ -218,9 +221,9 @@ public class PlayerUI : MonoBehaviour {
     private void OnCharacterDied(Character character) {
         TransferCharacterFromActiveToInactive(character);
         UpdateKillCount();
-        if (character is Summon summon) {
-            RemoveSummonItem(summon);
-        }
+        //if (character is Summon summon) {
+        //    RemoveSummonItem(summon);
+        //}
     }
     private void OnCharacterGainedTrait(Character character, Trait trait) {
         //if (trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
@@ -1002,37 +1005,37 @@ public class PlayerUI : MonoBehaviour {
     #endregion
 
     #region Summons
-    public void OnToggleSummons(bool isOn) {
-        if (isOn) {
-            ShowSummons();
-        } else {
-            HideSummons();
-        }
-    }
-    private void ShowSummons() {
-        summonsContainerGO.SetActive(true);
-    }
-    private void HideSummons() {
-        summonsContainerGO.SetActive(false);
-    }
-    private void CreateNewSummonItem(Summon summon) {
-        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(characterNameplateItem.name, Vector3.zero, Quaternion.identity, summonsScrollRect.content);
-        CharacterNameplateItem item = go.GetComponent<CharacterNameplateItem>();
-        item.SetAsDefaultBehaviour();
-        item.SetObject(summon);
-        item.gameObject.SetActive(true);
-        _summonItems.Add(item);
-    }
-    private void RemoveSummonItem(Summon summon) {
-        for (int i = 0; i < _summonItems.Count; i++) {
-            CharacterNameplateItem summonItem = _summonItems[i];
-            if (summonItem.character == summon) {
-                _summonItems.Remove(summonItem); 
-                ObjectPoolManager.Instance.DestroyObject(summonItem.gameObject);
-                break;
-            }
-        }
-    }
+    //public void OnToggleSummons(bool isOn) {
+    //    if (isOn) {
+    //        ShowSummons();
+    //    } else {
+    //        HideSummons();
+    //    }
+    //}
+    //private void ShowSummons() {
+    //    summonsContainerGO.SetActive(true);
+    //}
+    //private void HideSummons() {
+    //    summonsContainerGO.SetActive(false);
+    //}
+    //private void CreateNewSummonItem(Summon summon) {
+    //    GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(characterNameplateItem.name, Vector3.zero, Quaternion.identity, summonsScrollRect.content);
+    //    CharacterNameplateItem item = go.GetComponent<CharacterNameplateItem>();
+    //    item.SetAsDefaultBehaviour();
+    //    item.SetObject(summon);
+    //    item.gameObject.SetActive(true);
+    //    _summonItems.Add(item);
+    //}
+    //private void RemoveSummonItem(Summon summon) {
+    //    for (int i = 0; i < _summonItems.Count; i++) {
+    //        CharacterNameplateItem summonItem = _summonItems[i];
+    //        if (summonItem.character == summon) {
+    //            _summonItems.Remove(summonItem); 
+    //            ObjectPoolManager.Instance.DestroyObject(summonItem.gameObject);
+    //            break;
+    //        }
+    //    }
+    //}
     
     // public void CreateSummonsForTesting() {
     //     SUMMON_TYPE[] summons = (SUMMON_TYPE[]) System.Enum.GetValues(typeof(SUMMON_TYPE));

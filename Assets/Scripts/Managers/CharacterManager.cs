@@ -466,12 +466,12 @@ public class CharacterManager : MonoBehaviour {
         Region homeRegion = null, LocationStructure homeStructure = null, string className = "") {
         Summon newCharacter = CreateNewSummonClassFromType(summonType, className) as Summon;
         newCharacter.Initialize();
+        newCharacter.ownParty.CreateIcon();
         if (faction != null) {
             faction.JoinFaction(newCharacter);
         } else {
             FactionManager.Instance.neutralFaction.JoinFaction(newCharacter);
         }
-        newCharacter.ownParty.CreateIcon();
         if (homeLocation != null) {
             newCharacter.MigrateHomeTo(homeLocation, homeStructure, false);
         }
@@ -490,12 +490,12 @@ public class CharacterManager : MonoBehaviour {
         newCharacter.ChangeRace(data.race);
         newCharacter.SetFirstAndLastName(data.firstName, data.surName);
         newCharacter.Initialize();
+        newCharacter.ownParty.CreateIcon();
         if (faction != null) {
             faction.JoinFaction(newCharacter);
         } else {
             FactionManager.Instance.neutralFaction.JoinFaction(newCharacter);
         }
-        newCharacter.ownParty.CreateIcon();
         if (homeLocation != null) {
             newCharacter.MigrateHomeTo(homeLocation, homeStructure, false);
         }

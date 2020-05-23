@@ -165,12 +165,14 @@ public class PlayerSkillComponent {
             demonicStructuresSkills.Add(spellData.type);
         } else if (spellData.category == SPELL_CATEGORY.MINION) {
             minionsSkills.Add(spellData.type);
+            Messenger.Broadcast(Signals.ADDED_PLAYER_MINION_SKILL, spellData.type);
         } else if (spellData.category == SPELL_CATEGORY.PLAYER_ACTION) {
             playerActions.Add(spellData.type);
         } else if (spellData.category == SPELL_CATEGORY.SPELL) {
             spells.Add(spellData.type);
         } else if (spellData.category == SPELL_CATEGORY.SUMMON) {
             summonsSkills.Add(spellData.type);
+            Messenger.Broadcast(Signals.ADDED_PLAYER_SUMMON_SKILL, spellData.type);
         }
     }
     #endregion

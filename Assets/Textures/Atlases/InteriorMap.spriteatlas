@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 129c2b5e0c8f0e14d9fb8b1c30296b6d, type: 3}
-    totalSpriteSurfaceArea: 3493013
+    totalSpriteSurfaceArea: 3501205
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -366,6 +366,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 2a1da2a6d9ae66a488d21d80692d0014, type: 3}
   - {fileID: 21300000, guid: 0e8d4aa687d52cf4c98149a91eff5eeb, type: 3}
   - {fileID: 21300000, guid: 00761ba6bb004494db6b4ebd41cb77be, type: 3}
+  - {fileID: 21300000, guid: 8d184ca62d240cc44a193819b0148bee, type: 3}
   - {fileID: 21300000, guid: dfcda6b645a3552499614a53362befdd, type: 3}
   - {fileID: 21300000, guid: d294a7b6319977843a85eb1a556f432e, type: 3}
   - {fileID: 21300000, guid: 8c52fab61c7d6d8478dad9cda239a048, type: 3}
@@ -634,6 +635,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 079ce5cc13bbd324fa99a5820bda0d54, type: 3}
   - {fileID: 21300000, guid: 6b0d9acc33c3f924faa7c6840e010066, type: 3}
   - {fileID: 21300000, guid: 84f05dcc9c0d83649b36ca1b5f4a6803, type: 3}
+  - {fileID: 21300000, guid: 17f7cdcc11cf1d84fb9e1e53c4e326b2, type: 3}
   - {fileID: 21300000, guid: 28111fccc68dc8f488f5fb0e4955c044, type: 3}
   - {fileID: 21300000, guid: 01f0efcc5652ee84cb4381a9e942e3e3, type: 3}
   - {fileID: 21300000, guid: dfb644dc3c34ecd48ac208a0bac35803, type: 3}
@@ -1109,6 +1111,7 @@ SpriteAtlas:
   - ROCK#5
   - GRAVE#3
   - cobble02
+  - diamond
   - poison01110101-00
   - corruptedTendrils02
   - dirt01
@@ -1377,6 +1380,7 @@ SpriteAtlas:
   - bed00
   - berryBush00
   - Top
+  - goldBar
   - TORCH#4
   - spirits_red_idle
   - shore01011111-00
