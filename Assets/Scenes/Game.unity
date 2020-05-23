@@ -33157,10 +33157,12 @@ MonoBehaviour:
   skillDetailsTooltip: {fileID: 987550247809319610}
   spellListHoverPosition: {fileID: 1945906832}
   summonList: {fileID: 2108155053}
+  itemsToggle: {fileID: 547005291}
   itemsScrollRect: {fileID: 1865900464}
   itemsContainerGO: {fileID: 1214886497}
   itemItemPrefab: {fileID: 2387985080987894716, guid: a6fd47a5530de1b4a8f38c2b1b3f4b8d,
     type: 3}
+  artifactsToggle: {fileID: 1612921080}
   artifactsScrollRect: {fileID: 162330746}
   artifactsContainerGO: {fileID: 2000592668}
   artifactItemPrefab: {fileID: 6719058857249138774, guid: 63cba2d20cb31484299b14cd2fd30fb9,
