@@ -21,13 +21,13 @@ public class Player : ILeader, IObjectManipulator {
     public int experience { get; private set; }
     public List<IIntel> allIntel { get; private set; }
     public List<Minion> minions { get; private set; }
-    //public List<Summon> summons { get; private set; }
+    public List<Summon> summons { get; private set; }
     public List<Artifact> artifacts { get; private set; }
     private int currentCorruptionDuration { get; set; }
     private int currentCorruptionTick { get; set; }
     private bool isTileCurrentlyBeingCorrupted { get; set; }
     public HexTile currentTileBeingCorrupted { get; private set; }
-    public Minion currentMinionLeader { get; private set; }
+    //public Minion currentMinionLeader { get; private set; }
     public NPCSettlement currentNpcSettlementBeingInvaded { get; private set; }
     public CombatAbility currentActiveCombatAbility { get; private set; }
     public IIntel currentActiveIntel { get; private set; }
@@ -57,7 +57,7 @@ public class Player : ILeader, IObjectManipulator {
     public Player() {
         allIntel = new List<IIntel>();
         minions = new List<Minion>();
-        //summons = new List<Summon>();
+        summons = new List<Summon>();
         artifacts = new List<Artifact>();
         interventionAbilitySlots = new PlayerJobActionSlot[PlayerDB.MAX_INTERVENTION_ABILITIES];
         //maxSummonSlots = 0;
@@ -97,6 +97,12 @@ public class Player : ILeader, IObjectManipulator {
         //minions
         Messenger.AddListener<Minion, BaseLandmark>(Signals.MINION_ASSIGNED_PLAYER_LANDMARK, OnMinionAssignedToPlayerLandmark);
         Messenger.AddListener<Minion, BaseLandmark>(Signals.MINION_UNASSIGNED_PLAYER_LANDMARK, OnMinionUnassignedFromPlayerLandmark);
+        Messenger.AddListener<Minion>(Signals.SUMMON_MINION, OnSummonMinion);
+        Messenger.AddListener<Minion>(Signals.UNSUMMON_MINION, OnUnsummonMinion);
+
+        Messenger.AddListener<Character, Faction>(Signals.CHARACTER_ADDED_TO_FACTION, OnCharacterAddedToFaction);
+        Messenger.AddListener<Character, Faction>(Signals.CHARACTER_REMOVED_FROM_FACTION, OnCharacterRemovedFromFaction);
+        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
     }
     #endregion
 
@@ -151,6 +157,24 @@ public class Player : ILeader, IObjectManipulator {
     //public void SetPlayerTargetFaction(Faction faction) {
     //    currentTargetFaction = faction;
     //}
+    private void OnCharacterAddedToFaction(Character character, Faction faction) {
+        if(faction == playerFaction) {
+            if(character.minion != null) {
+                AddMinion(character.minion);
+            } else if(character is Summon summon) {
+                AddSummon(summon);
+            }
+        }
+    }
+    private void OnCharacterRemovedFromFaction(Character character, Faction faction) {
+        if (faction == playerFaction) {
+            if (character.minion != null) {
+                RemoveMinion(character.minion);
+            } else if (character is Summon summon) {
+                RemoveSummon(summon);
+            }
+        }
+    }
     #endregion
 
     #region Minions
@@ -177,46 +201,56 @@ public class Player : ILeader, IObjectManipulator {
     private void InitializeMinion(SaveDataMinion data, Minion minion) {
         data.combatAbility.Load(minion);
     }
-    public void AddMinion(Minion minion, bool showNewMinionUI = false) {
-        if(minions.Count < PlayerDB.MAX_MINIONS) {
-            if (!minions.Contains(minion)) {
-                minions.Add(minion);
-                if (showNewMinionUI) {
-                    PlayerUI.Instance.ShowNewMinionUI(minion);
-                }
-                //PlayerUI.Instance.UpdateRoleSlots();
-                Messenger.Broadcast(Signals.PLAYER_GAINED_MINION, minion);
-            }
-        } else {
-            PlayerUI.Instance.replaceUI.ShowReplaceUI(minions, minion, ReplaceMinion, RejectMinion);
+    public void AddMinion(Minion minion) {
+        if (!minions.Contains(minion)) {
+            minions.Add(minion);
+            Messenger.Broadcast(Signals.PLAYER_GAINED_MINION, minion);
         }
+        //if(minions.Count < PlayerDB.MAX_MINIONS) {
+        //    if (!minions.Contains(minion)) {
+        //        minions.Add(minion);
+        //        if (showNewMinionUI) {
+        //            PlayerUI.Instance.ShowNewMinionUI(minion);
+        //        }
+        //        //PlayerUI.Instance.UpdateRoleSlots();
+        //        Messenger.Broadcast(Signals.PLAYER_GAINED_MINION, minion);
+        //    }
+        //} else {
+        //    PlayerUI.Instance.replaceUI.ShowReplaceUI(minions, minion, ReplaceMinion, RejectMinion);
+        //}
     }
     public void RemoveMinion(Minion minion) {
         if (minions.Remove(minion)) {
-            if (currentMinionLeader == minion) {
-                SetMinionLeader(null);
-            }
+            //if (currentMinionLeader == minion) {
+            //    SetMinionLeader(null);
+            //}
             Messenger.Broadcast(Signals.PLAYER_LOST_MINION, minion);
         }
     }
-    public void SetMinionLeader(Minion minion) {
-        currentMinionLeader = minion;
+    private void OnSummonMinion(Minion minion) {
+        AddMinion(minion);
     }
-    private void ReplaceMinion(object objToReplace, object objToAdd) {
-        Minion minionToBeReplaced = objToReplace as Minion;
-        Minion minionToBeAdded = objToAdd as Minion;
+    private void OnUnsummonMinion(Minion minion) {
+        RemoveMinion(minion);
+    }
+    //public void SetMinionLeader(Minion minion) {
+    //    currentMinionLeader = minion;
+    //}
+    //private void ReplaceMinion(object objToReplace, object objToAdd) {
+    //    Minion minionToBeReplaced = objToReplace as Minion;
+    //    Minion minionToBeAdded = objToAdd as Minion;
 
-        for (int i = 0; i < minions.Count; i++) {
-            if(minions[i] == minionToBeReplaced) {
-                minionToBeAdded.SetIndexDefaultSort(i);
-                minions[i] = minionToBeAdded;
-                if(currentMinionLeader == minionToBeReplaced) {
-                    SetMinionLeader(minionToBeAdded);
-                }
-                break;
-            }
-        }
-    }
+    //    for (int i = 0; i < minions.Count; i++) {
+    //        if(minions[i] == minionToBeReplaced) {
+    //            minionToBeAdded.SetIndexDefaultSort(i);
+    //            minions[i] = minionToBeAdded;
+    //            if(currentMinionLeader == minionToBeReplaced) {
+    //                SetMinionLeader(minionToBeAdded);
+    //            }
+    //            break;
+    //        }
+    //    }
+    //}
     private void RejectMinion(object obj) { }
     #endregion
 
@@ -571,6 +605,22 @@ public class Player : ILeader, IObjectManipulator {
             CharacterManager.Instance.PlaceSummon(summon, hoveredTile);
         }
     }
+    public void AddSummon(Summon summon) {
+        if (!summons.Contains(summon)) {
+            summons.Add(summon);
+            Messenger.Broadcast(Signals.PLAYER_GAINED_SUMMON, summon);
+        }
+    }
+    public void RemoveSummon(Summon summon) {
+        if (summons.Remove(summon)) {
+            Messenger.Broadcast(Signals.PLAYER_LOST_SUMMON, summon);
+        }
+    }
+    private void OnCharacterDied(Character character) {
+        if(character.faction == playerFaction && character is Summon summon) {
+            RemoveSummon(summon);
+        }
+    }
     //private void GainSummonSlot(bool showUI = true) {
     //    SummonSlot newSlot = new SummonSlot();
     //    summons.Add(newSlot);
@@ -618,16 +668,16 @@ public class Player : ILeader, IObjectManipulator {
     //    AddSummon(newSummon, showNewSummonUI);
     //}
     //public void GainSummon(Summon summon) {
-        //if (maxSummonSlots == 0) {
-        //    //no summon slots yet
-        //    PlayerUI.Instance.ShowGeneralConfirmation("New Summon", "You gained a new summon but do not yet have a summon slot! " + summon.summonType.SummonName() + " will be discarded.");
-        //    RejectSummon(summon);
-        //} else if (GetTotalSummonsCount() < maxSummonSlots) {
-        //    AddSummon(summon, showNewSummonUI);
-        //} else {
-        //    Debug.LogWarning("Max summons has been reached!");
-        //    PlayerUI.Instance.replaceUI.ShowReplaceUI(GetAllSummons(), summon, ReplaceSummon, RejectSummon);
-        //}
+    //if (maxSummonSlots == 0) {
+    //    //no summon slots yet
+    //    PlayerUI.Instance.ShowGeneralConfirmation("New Summon", "You gained a new summon but do not yet have a summon slot! " + summon.summonType.SummonName() + " will be discarded.");
+    //    RejectSummon(summon);
+    //} else if (GetTotalSummonsCount() < maxSummonSlots) {
+    //    AddSummon(summon, showNewSummonUI);
+    //} else {
+    //    Debug.LogWarning("Max summons has been reached!");
+    //    PlayerUI.Instance.replaceUI.ShowReplaceUI(GetAllSummons(), summon, ReplaceSummon, RejectSummon);
+    //}
     //}
     //public bool HasSpaceForNewSummon() {
     //    return GetTotalSummonsCount() < maxSummonSlots; //if the total summons count is less than the summon slots
@@ -904,9 +954,9 @@ public class Player : ILeader, IObjectManipulator {
         if (!HasArtifactOfType(newArtifact.type)) {
             artifacts.Add(newArtifact);
             Messenger.Broadcast<Artifact>(Signals.PLAYER_GAINED_ARTIFACT, newArtifact);
-            if (showNewArtifactUI) {
-                PlayerUI.Instance.newAbilityUI.ShowNewAbilityUI(currentMinionLeader, newArtifact);
-            }
+            //if (showNewArtifactUI) {
+            //    PlayerUI.Instance.newAbilityUI.ShowNewAbilityUI(currentMinionLeader, newArtifact);
+            //}
         }
     }
     public void AddArtifact(ARTIFACT_TYPE artifactType, bool showNewArtifactUI = false) {
@@ -914,9 +964,9 @@ public class Player : ILeader, IObjectManipulator {
             Artifact newArtifact = InnerMapManager.Instance.CreateNewArtifact(artifactType);
             artifacts.Add(newArtifact);
             Messenger.Broadcast(Signals.PLAYER_GAINED_ARTIFACT, newArtifact);
-            if (showNewArtifactUI) {
-                PlayerUI.Instance.newAbilityUI.ShowNewAbilityUI(currentMinionLeader, newArtifact);
-            }
+            //if (showNewArtifactUI) {
+            //    PlayerUI.Instance.newAbilityUI.ShowNewAbilityUI(currentMinionLeader, newArtifact);
+            //}
         }
     }
     public bool RemoveArtifact(Artifact removedArtifact) {

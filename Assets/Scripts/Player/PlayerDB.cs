@@ -7,7 +7,7 @@ public static class PlayerDB {
     public const int MAX_LEVEL_INTERVENTION_ABILITY = 3;
     public const int DIVINE_INTERVENTION_DURATION = 2880; //4320;
     public const int MAX_INTEL = 3;
-    public const int MAX_MINIONS = 7;
+    //public const int MAX_MINIONS = 7;
     public const int MAX_INTERVENTION_ABILITIES = 4;
     
     //actions

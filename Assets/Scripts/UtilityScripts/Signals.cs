@@ -267,6 +267,8 @@ public static class Signals {
     /// Parameters (Summon placedSummon)
     /// </summary>
     public static string PLAYER_PLACED_SUMMON = "OnPlayerPlacedSummon";
+    public static string PLAYER_GAINED_SUMMON = "OnPlayerGainedSummon";
+    public static string PLAYER_LOST_SUMMON = "OnPlayerLostSummon";
     /// <summary>
     /// Parameters (Artifact newArtifact)
     /// </summary>
@@ -579,6 +581,12 @@ public static class Signals {
     /// </summary>
     public static string POISON_EXPLOSION_TRIGGERED = "OnPoisonExplosionTriggered";
     public static string ELECTRIC_CHAIN_TRIGGERED = "OnElectricChainTriggered";
+    #endregion
+
+    #region Player Skills
+    public static string ADDED_PLAYER_MINION_SKILL = "OnAddPlayerMinionSkill";
+    public static string ADDED_PLAYER_SUMMON_SKILL = "OnAddPlayerSummonSkill";
+
     #endregion
 
     public static Dictionary<string, SignalMethod[]> orderedSignalExecution = new Dictionary<string, SignalMethod[]>() {

@@ -48,8 +48,12 @@ public class SummonMinionPlayerSkillNameplateItem : NameplateItem<SpellData> {
         //}
         //classPortrait.sprite = CharacterManager.Instance.GetWholeImagePortraitSprite(className);
     }
-    public void SetCount(int count) {
-        countText.text = count + "/" + spellData.charges;
+    public void SetCount(int count, bool useCountOnly = false) {
+        if (!useCountOnly) {
+            countText.text = count + "/" + spellData.charges;
+        } else {
+            countText.text = "" + count;
+        }
     }
     //public override void OnHoverEnter() {
     //    hoverPortrait.SetActive(true);
