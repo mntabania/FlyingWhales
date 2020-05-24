@@ -5,7 +5,7 @@ using Inner_Maps;
 
 public class HarassBehaviour : CharacterBehaviourComponent {
     public HarassBehaviour() {
-        priority = 0;
+        priority = 9;
     }
     public override bool TryDoBehaviour(Character character, ref string log) {
         log += $"\n-{character.name} will harass";

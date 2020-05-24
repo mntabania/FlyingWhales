@@ -10,7 +10,7 @@ using UtilityScripts;
 
 public class DefendBehaviour : CharacterBehaviourComponent {
     public DefendBehaviour() {
-        priority = 0;
+        priority = 9;
     }
     public override bool TryDoBehaviour(Character character, ref string log) {
         log += $"\n-{character.name} will defend";
