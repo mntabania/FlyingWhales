@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Inner_Maps;
 
 namespace Inner_Maps.Location_Structures {
     public class DemonicStructure : LocationStructure {
@@ -22,6 +23,7 @@ namespace Inner_Maps.Location_Structures {
             if (hasBeenDestroyed) {
                 return;
             }
+            InnerMapManager.Instance.RemoveWorldKnownDemonicStructure(this);
             HexTile hexTile = occupiedHexTile.hexTileOwner;
             base.DestroyStructure();
             hexTile.RemoveCorruption();
