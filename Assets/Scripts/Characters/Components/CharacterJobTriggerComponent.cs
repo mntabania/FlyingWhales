@@ -1141,7 +1141,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
     #region Bury
     public void TriggerBuryMe() {
-	    if (_owner.minion == null && _owner.gridTileLocation != null && _owner.gridTileLocation.IsNextToOrPartOfSettlement(out var settlement)
+	    if (_owner.minion == null && !(_owner is Animal) && _owner.gridTileLocation != null && _owner.gridTileLocation.IsNextToOrPartOfSettlement(out var settlement)
 	        && settlement is NPCSettlement npcSettlement) {
 		    LocationStructure targetStructure = npcSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.CEMETERY) ??
 		                                        npcSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);

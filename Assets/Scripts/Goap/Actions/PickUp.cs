@@ -56,7 +56,7 @@ public class PickUp : GoapAction {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             TileObject item = poiTarget as TileObject;
-            return poiTarget.gridTileLocation != null && !actor.HasItem(item);
+            return poiTarget.gridTileLocation != null && !actor.HasItem(item) && poiTarget.numOfActionsBeingPerformedOnThis <= 0;
         }
         return false;
         

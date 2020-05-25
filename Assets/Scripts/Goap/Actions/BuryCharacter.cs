@@ -124,7 +124,7 @@ public class BuryCharacter : GoapAction {
             if (targetCharacter.grave != null) {
                 return false;
             }
-            if (targetCharacter.isStoppedByOtherCharacter > 0) {
+            if (targetCharacter.numOfActionsBeingPerformedOnThis > 0) {
                 return false;
             }
             if (targetCharacter.marker == null) {
