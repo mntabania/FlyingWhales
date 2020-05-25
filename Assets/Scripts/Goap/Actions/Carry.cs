@@ -62,7 +62,7 @@ public class Carry : GoapAction {
             //     TileObject tileObj = poiTarget as TileObject;
             //     return tileObj.isBeingCarriedBy == null && tileObj.gridTileLocation != null;
             // }
-            return actor != poiTarget && poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER;
+            return actor != poiTarget && poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER && poiTarget.mapObjectVisual && poiTarget.numOfActionsBeingPerformedOnThis <= 0;
         }
         return false;
     }
@@ -89,7 +89,7 @@ public class Carry : GoapAction {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
         return poiTarget.gridTileLocation == null || actor.currentRegion != poiTarget.currentRegion
-                    || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation));
+                    || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) || !poiTarget.mapObjectVisual;
     }
 }
 

@@ -755,7 +755,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             }
         } else {
             ResetBlood();
-            if (character.isStoppedByOtherCharacter > 0) {
+            if (character.numOfActionsBeingPerformedOnThis > 0) {
                 if (character.canMove == false || (!character.canPerform && !character.canWitness)) {
                     PlaySleepGround();
                 } else {

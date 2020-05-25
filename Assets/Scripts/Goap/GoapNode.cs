@@ -363,10 +363,13 @@ public class ActualGoapNode : IReactable, IRumorable {
                     targetCharacter.DecreaseCanMove();
                     InnerMapManager.Instance.FaceTarget(targetCharacter, actor);
                 }
-                targetCharacter.AdjustIsStoppedByOtherCharacter(1);
+                targetCharacter.AdjustNumOfActionsBeingPerformedOnThis(1);
             }
-        } else if (poiTarget is TileObject targetTileObject) {
-            targetTileObject.AdjustRepairCounter(1);
+        } else {
+            poiTarget.AdjustNumOfActionsBeingPerformedOnThis(1);
+            if (poiTarget is TileObject targetTileObject) {
+                targetTileObject.AdjustRepairCounter(1);
+            }
         }
         if(associatedJobType != JOB_TYPE.REMOVE_STATUS && associatedJobType != JOB_TYPE.REPAIR && associatedJobType != JOB_TYPE.FEED) {
             poiTarget.CancelRemoveStatusFeedAndRepairJobsTargetingThis();
@@ -391,15 +394,18 @@ public class ActualGoapNode : IReactable, IRumorable {
             actionStatus = ACTION_STATUS.FAIL;
         }
         StopPerTickEffect();
-        if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER && !action.doesNotStopTargetCharacter && actor != poiTarget) {
-            Character targetCharacter = poiTarget as Character;
-            if (!targetCharacter.isDead) {
-                if (targetCharacter.stateComponent.currentState != null && targetCharacter.stateComponent.currentState.isPaused) {
-                    targetCharacter.stateComponent.currentState.ResumeState();
+        if (poiTarget is Character targetCharacter) {
+            if (!action.doesNotStopTargetCharacter && actor != poiTarget) {
+                if (!targetCharacter.isDead) {
+                    if (targetCharacter.stateComponent.currentState != null && targetCharacter.stateComponent.currentState.isPaused) {
+                        targetCharacter.stateComponent.currentState.ResumeState();
+                    }
+                    targetCharacter.IncreaseCanMove();
                 }
-                targetCharacter.IncreaseCanMove();
+                targetCharacter.AdjustNumOfActionsBeingPerformedOnThis(-1);
             }
-            targetCharacter.AdjustIsStoppedByOtherCharacter(-1);
+        } else {
+            poiTarget.AdjustNumOfActionsBeingPerformedOnThis(-1);
         }
         OnFinishActionTowardsTarget();
         GoapPlanJob job = actor.currentJob as GoapPlanJob;
@@ -421,16 +427,29 @@ public class ActualGoapNode : IReactable, IRumorable {
         StopPerTickEffect();
         //endedAtState = currentState;
         //actor.PrintLogIfActive(action.goapType.ToString() + " action by " + this.actor.name + " Summary: \n" + actionSummary);
-        if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER && !action.doesNotStopTargetCharacter && actor != poiTarget) {
-            Character targetCharacter = poiTarget as Character;
-            if (!targetCharacter.isDead) {
-                if (targetCharacter.stateComponent.currentState != null && targetCharacter.stateComponent.currentState.isPaused) {
-                    targetCharacter.stateComponent.currentState.ResumeState();
+        if (poiTarget is Character targetCharacter) {
+            if (!action.doesNotStopTargetCharacter && actor != poiTarget) {
+                if (!targetCharacter.isDead) {
+                    if (targetCharacter.stateComponent.currentState != null && targetCharacter.stateComponent.currentState.isPaused) {
+                        targetCharacter.stateComponent.currentState.ResumeState();
+                    }
+                    targetCharacter.IncreaseCanMove();
                 }
-                targetCharacter.IncreaseCanMove();
+                targetCharacter.AdjustNumOfActionsBeingPerformedOnThis(-1);
             }
-            targetCharacter.AdjustIsStoppedByOtherCharacter(-1);
+        } else {
+            poiTarget.AdjustNumOfActionsBeingPerformedOnThis(-1);
         }
+        //if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER && !action.doesNotStopTargetCharacter && actor != poiTarget) {
+        //    Character targetCharacter = poiTarget as Character;
+        //    if (!targetCharacter.isDead) {
+        //        if (targetCharacter.stateComponent.currentState != null && targetCharacter.stateComponent.currentState.isPaused) {
+        //            targetCharacter.stateComponent.currentState.ResumeState();
+        //        }
+        //        targetCharacter.IncreaseCanMove();
+        //    }
+        //    targetCharacter.AdjustNumOfActionsBeingPerformedOnThis(-1);
+        //}
         //else {
         //    Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
         //    Messenger.RemoveListener<TileObject, Character>(Signals.TILE_OBJECT_DISABLED, OnTileObjectDisabled);

@@ -162,7 +162,7 @@ public class SaveDataCharacter {
         // roleType = character.role.roleType;
         portraitSettings = character.visuals.portraitSettings;
         //characterColor = character.characterColor;
-        isStoppedByOtherCharacter = character.isStoppedByOtherCharacter;
+        isStoppedByOtherCharacter = character.numOfActionsBeingPerformedOnThis;
 
         normalTraits = new List<SaveDataTrait>();
         for (int i = 0; i < character.traitContainer.allTraitsAndStatuses.Count; i++) {

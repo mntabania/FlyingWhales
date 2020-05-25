@@ -260,7 +260,7 @@ public class BaseRelationshipContainer : IRelationshipContainer {
                     return;
                 }
             }
-            int chance = 1;
+            int chance = 5;
             int roll = UnityEngine.Random.Range(0, 100);
             MOOD_STATE ownerMood = owner.moodComponent.moodState;
             string opinionLabel = owner.relationshipContainer.GetOpinionLabel(targetCharacter);
@@ -287,7 +287,7 @@ public class BaseRelationshipContainer : IRelationshipContainer {
                         return;
                     }
                 }
-                if (UnityEngine.Random.Range(0, 100) < 50) {
+                if (UnityEngine.Random.Range(0, 100) < 25) {
                     if (owner.jobComponent.CreatePlaceTrapJob(targetCharacter)) {
                         return;
                     }

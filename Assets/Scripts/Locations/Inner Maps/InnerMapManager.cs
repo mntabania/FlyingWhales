@@ -561,6 +561,9 @@ namespace Inner_Maps {
         public void AddWorldKnownDemonicStructure(LocationStructure structure) {
             worldKnownDemonicStructures.Add(structure);
         }
+        public void RemoveWorldKnownDemonicStructure(LocationStructure structure) {
+            worldKnownDemonicStructures.Remove(structure);
+        }
         public bool HasWorldKnownDemonicStructure(LocationStructure structure) {
             return worldKnownDemonicStructures.Contains(structure);
         }

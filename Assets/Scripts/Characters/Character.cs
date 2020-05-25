@@ -77,7 +77,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public string deathStr { get; private set; }
     public TileObject tileObjectLocation { get; private set; }
     public CharacterTrait defaultCharacterTrait { get; private set; }
-    public int isStoppedByOtherCharacter { get; private set; } //this is increased, when the action of another character stops this characters movement
+    public int numOfActionsBeingPerformedOnThis { get; private set; } //this is increased, when the action of another character stops this characters movement
     public Party ownParty { get; protected set; }
     public Party currentParty { get; protected set; }
     public Dictionary<RESOURCE, int> storedResources { get; protected set; }
@@ -322,7 +322,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         SetName(data.name);
         visuals = new CharacterVisuals(data);
         
-        isStoppedByOtherCharacter = data.isStoppedByOtherCharacter;
+        numOfActionsBeingPerformedOnThis = data.isStoppedByOtherCharacter;
 
         _overrideThoughts = new List<string>();
         advertisedActions = new List<INTERACTION_TYPE>();
@@ -2145,9 +2145,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void SetTileObjectLocation(TileObject tileObject) {
         tileObjectLocation = tileObject;
     }
-    public void AdjustIsStoppedByOtherCharacter(int amount) {
-        isStoppedByOtherCharacter += amount;
-        isStoppedByOtherCharacter = Mathf.Max(0, isStoppedByOtherCharacter);
+    public void AdjustNumOfActionsBeingPerformedOnThis(int amount) {
+        numOfActionsBeingPerformedOnThis += amount;
+        numOfActionsBeingPerformedOnThis = Mathf.Max(0, numOfActionsBeingPerformedOnThis);
         if (marker) {
             marker.UpdateAnimation();
         }
@@ -3462,7 +3462,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //If there is no npcSettlement, it means that there is no inner map, so character must not do goap actions, jobs, and plans
         //characters that cannot witness, cannot plan actions.
         //minion == null &&
-        return !isDead && isStoppedByOtherCharacter <= 0 && canPerform
+        return !isDead && numOfActionsBeingPerformedOnThis <= 0 && canPerform
             && currentActionNode == null && planner.status == GOAP_PLANNING_STATUS.NONE  
             && (jobQueue.jobsInQueue.Count <= 0 || behaviourComponent.GetHighestBehaviourPriority() > jobQueue.jobsInQueue[0].priority)
             && !marker.hasFleePath && stateComponent.currentState == null && IsInOwnParty() && !interruptComponent.isInterrupted;
@@ -3475,7 +3475,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     public bool CanPerformEndTickJobs() {
-        bool canPerformEndTickJobs = !isDead && isStoppedByOtherCharacter <= 0 /*&& canWitness*/
+        bool canPerformEndTickJobs = !isDead && numOfActionsBeingPerformedOnThis <= 0 /*&& canWitness*/
          && currentActionNode == null && planner.status == GOAP_PLANNING_STATUS.NONE && jobQueue.jobsInQueue.Count > 0 
          && currentParty.icon.isTravellingOutside == false && !marker.hasFleePath 
          && stateComponent.currentState == null && IsInOwnParty() && !interruptComponent.isInterrupted; //minion == null && doNotDisturb <= 0 

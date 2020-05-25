@@ -8,21 +8,23 @@ public interface IPointOfInterest : ITraitable, ISelectable {
     new string name { get; }
     int id { get; } //Be careful with how you handle this since this can duplicate depending on its poiType
     string nameWithID { get; }
-    GameObject visualGO { get; }
-    POINT_OF_INTEREST_TYPE poiType { get; }
-    POI_STATE state { get; }
-    Region currentRegion { get; }
-    new LocationGridTile gridTileLocation { get; }
-    List<INTERACTION_TYPE> advertisedActions { get; }
-    List<JobQueueItem> allJobsTargetingThis { get; }
-    Dictionary<RESOURCE, int> storedResources { get; }
-    Faction factionOwner { get; }
-    Character characterOwner { get; }
     bool isDisabledByPlayer { get; }
     //Vector3 worldPosition { get; }
     bool isDead { get; }
+    int numOfActionsBeingPerformedOnThis { get; } //this is increased, when the action of another character stops this characters movement
+    POINT_OF_INTEREST_TYPE poiType { get; }
+    POI_STATE state { get; }
+    Region currentRegion { get; }
+    Faction factionOwner { get; }
+    Character characterOwner { get; }
     Character isBeingCarriedBy { get; }
     LogComponent logComponent { get; }
+    GameObject visualGO { get; }
+    new LocationGridTile gridTileLocation { get; }
+    //List<INTERACTION_TYPE> advertisedActions { get; }
+    List<JobQueueItem> allJobsTargetingThis { get; }
+    Dictionary<RESOURCE, int> storedResources { get; }
+
 
     void SetGridTileLocation(LocationGridTile tile);
     void AddJobTargetingThis(JobQueueItem job);
@@ -47,6 +49,7 @@ public interface IPointOfInterest : ITraitable, ISelectable {
     void OnSeizePOI();
     void OnUnseizePOI(LocationGridTile tileLocation);
     void CancelRemoveStatusFeedAndRepairJobsTargetingThis();
+    void AdjustNumOfActionsBeingPerformedOnThis(int amount);
     /// <summary>
     /// Does this POI collect Logs aka. History
     /// </summary>

@@ -53,6 +53,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public List<SPELL_TYPE> actions { get; protected set; }
     public int repairCounter { get; protected set; } //If greater than zero, this tile object cannot be repaired
     public bool isSaved { get; private set; }
+    public int numOfActionsBeingPerformedOnThis { get; private set; } //this is increased, when the action of another character stops this characters movement
 
     private bool hasSubscribedToListeners;
 
@@ -584,6 +585,10 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
                 }
             }
         }
+    }
+    public void AdjustNumOfActionsBeingPerformedOnThis(int amount) {
+        numOfActionsBeingPerformedOnThis += amount;
+        numOfActionsBeingPerformedOnThis = Mathf.Max(0, numOfActionsBeingPerformedOnThis);
     }
     #endregion
 
