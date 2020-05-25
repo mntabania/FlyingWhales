@@ -96,7 +96,7 @@ namespace Quests {
         #endregion
 
         #region UI
-        public void SetTutorialQuestItem(QuestItem questItem) {
+        public void SetQuestItem(QuestItem questItem) {
             this.questItem = questItem;
         }
         #endregion

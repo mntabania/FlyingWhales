@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Settings;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.Video;
@@ -83,8 +84,12 @@ namespace Tutorial {
             if (WorldConfigManager.Instance.isDemoWorld == false) {
                 InstantiatePendingTutorials();
             }
+            Messenger.AddListener<bool>(Signals.ON_SKIP_TUTORIALS_CHANGED, OnSkipTutorialsChanged);
         }
         public void InstantiatePendingTutorials() {
+            if (SettingsManager.Instance.settings.skipTutorials) {
+                return;
+            }
             //Create instances for all uncompleted tutorials.
             List<Tutorial> completedTutorials = SaveManager.Instance.currentSaveDataPlayer.completedTutorials;
             Tutorial[] allTutorials = CollectionUtilities.GetEnumValues<Tutorial>();
@@ -162,7 +167,7 @@ namespace Tutorial {
             RemoveTutorialFromWaitList(tutorialQuest);
             tutorialQuest.Activate();
             QuestItem questItem = UIManager.Instance.questUI.ShowQuest(tutorialQuest);
-            tutorialQuest.SetTutorialQuestItem(questItem);
+            tutorialQuest.SetQuestItem(questItem);
         }
         private void DeactivateTutorial(TutorialQuest tutorialQuest) {
             _activeTutorials.Remove(tutorialQuest);
@@ -190,6 +195,21 @@ namespace Tutorial {
                     TutorialQuest tutorialQuest = InstantiateTutorial(tutorial);
                     _instantiatedTutorials.Add(tutorialQuest);
                 }
+            }
+        }
+        #endregion
+
+        #region Listeners
+        private void OnSkipTutorialsChanged(bool skipTutorials) {
+            if (skipTutorials) {
+                //remove all showing tutorials
+                List<TutorialQuest> tutorialsToDeactivate = new List<TutorialQuest>(_instantiatedTutorials);
+                for (int i = 0; i < tutorialsToDeactivate.Count; i++) {
+                    DeactivateTutorial(tutorialsToDeactivate[i]);
+                }
+            } else {
+                //instantiate incomplete tutorials
+                InstantiatePendingTutorials();
             }
         }
         #endregion

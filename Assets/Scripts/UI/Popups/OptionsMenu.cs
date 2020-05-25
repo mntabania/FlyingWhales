@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
+using Settings;
 using UnityEngine;
 
 public class OptionsMenu : PopupMenuBase {
@@ -14,13 +15,8 @@ public class OptionsMenu : PopupMenuBase {
         UIManager.Instance.ResumeLastProgressionSpeed();
         base.Close();
     }
-    
-    public void ToggleMute(bool state) {
-        AudioManager.Instance.SetMute(state);
-    }
-    public void ToggleEdgePanning(bool state) {
-        CameraMove.Instance.AllowEdgePanning(state);
-        InnerMapCameraMove.Instance.AllowEdgePanning(state);
+    public void OpenSettings() {
+        SettingsManager.Instance.OpenSettings();
     }
     public void SaveGame() {
         SaveManager.Instance.Save();

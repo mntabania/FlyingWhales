@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using Settings;
 
 public class MainMenuUI : MonoBehaviour {
 
@@ -93,14 +94,17 @@ public class MainMenuUI : MonoBehaviour {
     public void OnClickLoadGame() {
         newGameButton.interactable = false;
         loadGameButton.interactable = false;
-        AudioManager.Instance.TransitionTo("Loading", 10, MainMenuManager.Instance.LoadMainGameScene);
+        AudioManager.Instance.TransitionToLoading();
+        MainMenuManager.Instance.LoadMainGameScene();
     }
-
+    public void OnClickSettings() {
+        SettingsManager.Instance.OpenSettings();
+    }
     public void StartNewGame() {
         //SaveManager.Instance.SetCurrentSave(null);
         newGameButton.interactable = false;
         loadGameButton.interactable = false;
-        AudioManager.Instance.TransitionTo("Loading", 10);
+        AudioManager.Instance.TransitionToLoading();
         LevelLoaderManager.Instance.UpdateLoadingInfo("Initializing data...");
         LevelLoaderManager.Instance.UpdateLoadingBar(0.1f, 3f);
         MainMenuManager.Instance.LoadMainGameScene();

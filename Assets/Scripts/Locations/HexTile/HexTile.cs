@@ -659,7 +659,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
 
     #region Monobehaviour Functions
     private void LeftClick() {
-        if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing() || CameraMove.Instance.isDragging) {
+        if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing() || WorldMapCameraMove.Instance.isDragging) {
             return;
         }
         Messenger.Broadcast(Signals.TILE_LEFT_CLICKED, this);
@@ -738,7 +738,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
             InnerMapManager.Instance.HideAreaMap();
             UIManager.Instance.OnCameraOutOfFocus();
         }
-        CameraMove.Instance.CenterCameraOn(gameObject);
+        WorldMapCameraMove.Instance.CenterCameraOn(gameObject);
     }
     #endregion
 

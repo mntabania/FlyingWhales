@@ -589,6 +589,13 @@ public static class Signals {
 
     #endregion
 
+    #region Settings
+    public static string ON_SKIP_TUTORIALS_CHANGED = "OnSkipTutorialsChanged";
+    public static string EDGE_PANNING_TOGGLED = "OnEdgePanningToggled";
+    public static string MUSIC_VOLUME_CHANGED = "OnMusicVolumeChanged";
+    public static string MASTER_VOLUME_CHANGED = "OnSFXVolumeChanged";
+    #endregion
+
     public static Dictionary<string, SignalMethod[]> orderedSignalExecution = new Dictionary<string, SignalMethod[]>() {
         { HOUR_STARTED, new[] {
             new SignalMethod() { methodName = "HourlyJobActions", objectType = typeof(NPCSettlement) },

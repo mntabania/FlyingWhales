@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Linq;
 using BayatGames.SaveGameFree;
+using Settings;
 using TMPro;
 
 public class MainMenuManager : MonoBehaviour {
@@ -34,7 +35,8 @@ public class MainMenuManager : MonoBehaviour {
         Instance = this;
     }
     private void Start() {
-        AudioManager.Instance.PlayFade("Main Menu", 5, () => MainMenuUI.Instance.ShowMenuButtons());
+        AudioManager.Instance.TransitionToMainMenu();
+        MainMenuUI.Instance.ShowMenuButtons();
         LevelLoaderManager.Instance.SetLoadingState(false);
         Initialize();
     }

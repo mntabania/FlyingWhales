@@ -1,102 +1,81 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Settings;
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class AudioManager : MonoBehaviour {
 
-    public static AudioManager Instance = null;
+    public static AudioManager Instance;
+    
+    private const string MusicVolume = "musicMasterVolume";
+    private const string MasterVolume = "masterVolume";
+    
+    [Header("Mixers")] 
+    [SerializeField] private AudioMixer masterMixer;
+    [SerializeField] private AudioMixer musicMixer;
 
-    private Dictionary<string, AudioSource> audioSources;
-    private IEnumerator currentTransition;
-    private AudioSource currentActiveMusic;
-
+    [Header("Audio Sources")] 
+    [SerializeField] private AudioSource worldMusic;
+    
+    [Header("Snapshots")] 
+    [SerializeField] private AudioMixerSnapshot mainMenuSnapShot;
+    [SerializeField] private AudioMixerSnapshot loadingSnapShot;
+    [SerializeField] private AudioMixerSnapshot worldSnapShot;
+    
     private void Awake() {
         if (Instance == null) {
             Instance = this;
             DontDestroyOnLoad(this.gameObject);
-            LoadAllAudioSources();
         } else {
             Destroy(this.gameObject);
         }
+    }
+
+    private void Start() {
+        Initialize();
+    }
+    
+    #region Initialization
+    private void Initialize() {
+        Messenger.MarkAsPermanent(Signals.MASTER_VOLUME_CHANGED);
+        Messenger.MarkAsPermanent(Signals.MUSIC_VOLUME_CHANGED);
+        Messenger.AddListener<float>(Signals.MASTER_VOLUME_CHANGED, SetMasterVolume);
+        Messenger.AddListener<float>(Signals.MUSIC_VOLUME_CHANGED, SetMusicVolume);
         
+        SetMasterVolume(SettingsManager.Instance.settings.masterVolume);
+        SetMusicVolume(SettingsManager.Instance.settings.musicVolume);
     }
+    #endregion
+    
 
-    private void LoadAllAudioSources() {
-        AudioSource[] audio = this.GetComponentsInChildren<AudioSource>();
-        audioSources = new Dictionary<string, AudioSource>();
-        for (int i = 0; i < audio.Length; i++) {
-            AudioSource currSource = audio[i];
-            audioSources.Add(currSource.gameObject.name, currSource);
-            currSource.volume = 0f; //set all music to 0 at initialization
-        }
+    #region Music
+    public void TransitionToLoading() {
+        loadingSnapShot.TransitionTo(2f);
     }
-
-    //private void Start() {
-    //    audioSources["Main Menu"].Play();
-    //}
-
-    public void Play(string audioName) {
-        if (currentActiveMusic != null) {
-            currentActiveMusic.Stop();
-            currentActiveMusic.volume = 0f;
-        }
-
-        audioSources[audioName].Play();
-        currentActiveMusic = audioSources[audioName];
-        currentActiveMusic.volume = 1f;
+    public void TransitionToWorld() {
+        worldSnapShot.TransitionTo(2f);
+        ResetAndPlayWorldMusic();
     }
-    public void PlayFade(string audioName, int fadeDuration, System.Action actionOnFinish = null) {
-        if (currentActiveMusic != null) {
-            currentActiveMusic.Stop();
-            currentActiveMusic.volume = 0f;
-        }
-
-        StartCoroutine(fadeIn(audioSources[audioName], fadeDuration, actionOnFinish));
+    public void TransitionToMainMenu() {
+        mainMenuSnapShot.TransitionTo(1f);
     }
-    public void TransitionTo(string to, int duration, System.Action actionOnFinish = null) {
-        if (currentTransition != null) {
-            StopCoroutine(currentTransition);
-        }
-        currentTransition = transition(currentActiveMusic, audioSources[to], duration, actionOnFinish);
-        StartCoroutine(currentTransition);
+    private void ResetAndPlayWorldMusic() {
+        worldMusic.Stop();
+        worldMusic.Play();
     }
+    #endregion
 
-    IEnumerator transition(AudioSource from, AudioSource to, int transitionDuration, System.Action actionOnFinish) {
-        float volumeIncrements = 1f / transitionDuration;
-        to.Play();
-        for (int i = 0; i < transitionDuration; i++) {
-            from.volume -= volumeIncrements;
-            to.volume += volumeIncrements;
-
-            yield return new WaitForSecondsRealtime(0.1f);
-        }
-
-        from.Stop();
-        currentTransition = null;
-        currentActiveMusic = to;
-        if (actionOnFinish != null) {
-            actionOnFinish();
-        }
+    #region Volume
+    private void SetMasterVolume(float volume) {
+        masterMixer.SetFloat(MasterVolume, volume);
     }
-    IEnumerator fadeIn(AudioSource to, int transitionDuration, System.Action actionOnFinish) {
-        float volumeIncrements = 1f / transitionDuration;
-        to.Play();
-        for (int i = 0; i < transitionDuration; i++) {
-            to.volume += volumeIncrements;
-
-            yield return new WaitForSecondsRealtime(0.1f);
-        }
-
-        currentTransition = null;
-        currentActiveMusic = to;
-        if (actionOnFinish != null) {
-            actionOnFinish();
-        }
+    private void SetMusicVolume(float volume) {
+        masterMixer.SetFloat(MusicVolume, volume);
     }
+    #endregion
+    
 
-    public void SetMute(bool state) {
-        AudioListener.pause = state;
-        AudioListener.volume = state ? 0 : 1;
-    }
+   
 
 }
