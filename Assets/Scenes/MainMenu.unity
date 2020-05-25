@@ -16449,7 +16449,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 30189063000958a4aa46188960846076, type: 2}
   unlockAllSkills: 1
   _playerSkillTreeAssets:
-    m_keys: 3d0000000a00000021000000060000003300000032000000340000000800000007000000570000001c000000090000001500000014000000130000002b00000029000000120000002c0000002a0000002d0000001f000000160000001e0000005d000000560000005e000000490000004d0000004a000000480000004c0000004e0000004f00000050000000510000005200000053000000
+    m_keys: 3d0000000a00000021000000060000003300000032000000340000000800000007000000570000001c000000090000001500000014000000130000002b00000029000000120000002c0000002a0000002d0000001f000000160000001e0000005d000000560000005e000000490000004d0000004a000000480000004c0000004e0000004f00000050000000510000005200000053000000040000001000000002000000260000002200000019000000280000001d0000002e0000001700000023000000
     m_values:
     - tooltipVideoClip: {fileID: 32900000, guid: b043658b3fb99e54e904d8046727dc45,
         type: 3}
@@ -16551,6 +16551,35 @@ MonoBehaviour:
       tooltipImage: {fileID: 2800000, guid: 30cecfefb0cb50c499ce68beba7f14f2, type: 3}
     - tooltipVideoClip: {fileID: 0}
       tooltipImage: {fileID: 2800000, guid: 24bee9441e97ecf45a70b48e6220ae0b, type: 3}
+    - tooltipVideoClip: {fileID: 0}
+      tooltipImage: {fileID: 2800000, guid: 9a9ad4ca071597c4587b94bc22e82ee4, type: 3}
+    - tooltipVideoClip: {fileID: 0}
+      tooltipImage: {fileID: 2800000, guid: 8532199a2f193704f9534fc0dcb9141c, type: 3}
+    - tooltipVideoClip: {fileID: 32900000, guid: 0c3cd62299a7377498d755f69a0c917b,
+        type: 3}
+      tooltipImage: {fileID: 0}
+    - tooltipVideoClip: {fileID: 0}
+      tooltipImage: {fileID: 2800000, guid: e6f93c759c8666047a52f6ae49ad5dd5, type: 3}
+    - tooltipVideoClip: {fileID: 0}
+      tooltipImage: {fileID: 2800000, guid: f21263d2f6c8e8d45bdf5d97d4e0fdd2, type: 3}
+    - tooltipVideoClip: {fileID: 32900000, guid: 8af767764b17fe644806f95feb79e451,
+        type: 3}
+      tooltipImage: {fileID: 0}
+    - tooltipVideoClip: {fileID: 32900000, guid: 51e39c49a21f99843a71a864d6f1467f,
+        type: 3}
+      tooltipImage: {fileID: 0}
+    - tooltipVideoClip: {fileID: 32900000, guid: fb10ab6a8dc94554c821fe35d455c5ef,
+        type: 3}
+      tooltipImage: {fileID: 0}
+    - tooltipVideoClip: {fileID: 32900000, guid: 4dfd6d54c6573d64f98dfaf987bb675d,
+        type: 3}
+      tooltipImage: {fileID: 0}
+    - tooltipVideoClip: {fileID: 32900000, guid: fe93d2c868609304880632137115e0cd,
+        type: 3}
+      tooltipImage: {fileID: 0}
+    - tooltipVideoClip: {fileID: 32900000, guid: eb9b0cf342db4f242996861a944bf25c,
+        type: 3}
+      tooltipImage: {fileID: 0}
 --- !u!4 &895236705
 Transform:
   m_ObjectHideFlags: 0

@@ -1191,6 +1191,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2bd47457c333f2d43a83e4e513642fbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  thisRect: {fileID: 7147031280361248744}
   titleText: {fileID: 4461199858322002000}
   descriptionText: {fileID: 3537869056275528087}
   categoryText: {fileID: 2898885431043725957}
@@ -1264,7 +1265,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
