@@ -7,6 +7,7 @@ using UnityEngine.Video;
 using Debug = System.Diagnostics.Debug;
 
 public class PlayerSkillDetailsTooltip : MonoBehaviour {
+    public RectTransform thisRect;
     public TextMeshProUGUI titleText;
     public TextMeshProUGUI descriptionText;
     public TextMeshProUGUI categoryText;
@@ -50,15 +51,23 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
             if (skillAssets != null) {
                 if (skillAssets.tooltipImage != null) {
                     tooltipImage.texture = skillAssets.tooltipImage;
+                    thisRect.sizeDelta = new Vector2(thisRect.sizeDelta.x, 727f);
+                    tooltipImage.gameObject.SetActive(true);
                 } else if (skillAssets.tooltipVideoClip != null) {
                     tooltipVideoPlayer.clip = skillAssets.tooltipVideoClip;
                     tooltipImage.texture = tooltipVideoRenderTexture;
                     tooltipVideoPlayer.Play();
+                    thisRect.sizeDelta = new Vector2(thisRect.sizeDelta.x, 727f);
+                    tooltipImage.gameObject.SetActive(true);
                 } else {
+                    thisRect.sizeDelta = new Vector2(thisRect.sizeDelta.x, 494f);
                     tooltipImage.texture = null;
+                    tooltipImage.gameObject.SetActive(false);
                 }    
             } else {
+                thisRect.sizeDelta = new Vector2(thisRect.sizeDelta.x, 494f);
                 tooltipImage.texture = null;
+                tooltipImage.gameObject.SetActive(false);
             }
         }
     }
