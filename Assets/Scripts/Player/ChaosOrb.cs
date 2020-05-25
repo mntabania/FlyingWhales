@@ -51,6 +51,7 @@ public class ChaosOrb : PooledObject {
 			SchedulingManager.Instance.RemoveSpecificEntry(expiryKey);	
 		}
 		ObjectPoolManager.Instance.DestroyObject(this);
+		PlayerManager.Instance.RemoveChaosOrbFromAvailability(this);
 	}
 	public void OnPointerClick(BaseEventData data) {
 		if (positionCoroutine != null) {
@@ -69,8 +70,7 @@ public class ChaosOrb : PooledObject {
 		transform.DOPath(new[] {manaContainerPos, controlPointA, controlPointB}, 0.7f, PathType.CubicBezier)
 			.SetEase(Ease.InSine)
 			.OnComplete(GainMana);
-		// StartCoroutine(GoTo(manaContainerPos, 0.7f, GainMana));
-		// GainMana();
+		Messenger.Broadcast(Signals.CHAOS_ORB_CLICKED);
 	}
 	private void GainMana() {
 		int randomMana = Random.Range(5, 11);

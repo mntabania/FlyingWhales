@@ -372,6 +372,9 @@ public static class Signals {
     public static string DEFEND_ACTIVATED = "OnDefendActivated";
     public static string INVADE_ACTIVATED = "OnInvadeActivated";
     public static string FLAW_TRIGGERED_BY_PLAYER = "OnFlawTriggeredByPlayer";
+    public static string CHAOS_ORB_SPAWNED = "OnChaosOrbSpawned";
+    public static string CHAOS_ORB_DESPAWNED = "OnChaosOrbDespawned";
+    public static string CHAOS_ORB_CLICKED = "OnChaosOrbClicked";
     #endregion
 
     #region Interaction

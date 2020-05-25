@@ -35,7 +35,7 @@ public class QuestStepItem : PooledObject {
         _stepLbl.raycastTarget = step.hasHoverAction;
         
         //update center button based on the number of selectable objects the step has.
-        centerButton.gameObject.SetActive(step.objectsToCenter != null && step.objectsToCenter.Count > 0);
+        centerButton.gameObject.SetActive(step.HasObjectsToCenter());
         
         Messenger.AddListener<QuestStep>(Signals.QUEST_STEP_COMPLETED, OnStepCompleted);
         Messenger.AddListener<QuestStep>(Signals.QUEST_STEP_FAILED, OnStepFailed);

@@ -35,13 +35,12 @@ public class PlayerManager : MonoBehaviour {
         Instance = this;
     }
     public void Initialize() {
-        //Unit Selection
+        availableChaosOrbs = new List<ChaosOrb>();
         Messenger.AddListener<InfoUIBase>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<InfoUIBase>(Signals.MENU_CLOSED, OnMenuClosed);
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterCanNoLongerMove);
         Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterCanNoLongerPerform);
-        // Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressedDown);
         Messenger.AddListener<Vector3, int, InnerTileMap>(Signals.CREATE_CHAOS_ORBS, CreateChaosOrbsAt);
         Messenger.AddListener<Character, ActualGoapNode>(Signals.CHARACTER_DID_ACTION_SUCCESSFULLY, OnCharacterDidActionSuccess);
     }
@@ -286,6 +285,7 @@ public class PlayerManager : MonoBehaviour {
     #endregion
 
     #region Chaos Orbs
+    public List<ChaosOrb> availableChaosOrbs;
     private void CreateChaosOrbsAt(Vector3 worldPos, int amount, InnerTileMap mapLocation) {
         StartCoroutine(ChaosOrbCreationCoroutine(worldPos, amount, mapLocation));
     }
@@ -296,6 +296,7 @@ public class PlayerManager : MonoBehaviour {
             chaosOrbGO.transform.position = worldPos;
             ChaosOrb chaosOrb = chaosOrbGO.GetComponent<ChaosOrb>();
             chaosOrb.Initialize();
+            AddAvailableChaosOrb(chaosOrb);
             yield return null;
         }
         Debug.Log($"Created {amount.ToString()} chaos orbs at {mapLocation.region.name}. Position {worldPos.ToString()}");
@@ -326,6 +327,14 @@ public class PlayerManager : MonoBehaviour {
 
             }    
         }
+    }
+    private void AddAvailableChaosOrb(ChaosOrb chaosOrb) {
+        availableChaosOrbs.Add(chaosOrb);
+        Messenger.Broadcast(Signals.CHAOS_ORB_SPAWNED);
+    }
+    public void RemoveChaosOrbFromAvailability(ChaosOrb chaosOrb) {
+        availableChaosOrbs.Remove(chaosOrb);
+        Messenger.Broadcast(Signals.CHAOS_ORB_DESPAWNED);
     }
     #endregion
 

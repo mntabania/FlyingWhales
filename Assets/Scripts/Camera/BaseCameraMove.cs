@@ -35,8 +35,8 @@ public abstract class BaseCameraMove : MonoBehaviour{
     [Header("Targeting")]
     [SerializeField] private float dampTime = 0.2f;
     [SerializeField] private Vector3 velocity = Vector3.zero;
-    
-    private Transform _target;
+    [SerializeField] private Transform _target;
+    public Transform lastCenteredTarget { get; private set; }
     private bool isMovementDisabled;
     
     public Transform target {
@@ -181,7 +181,7 @@ public abstract class BaseCameraMove : MonoBehaviour{
     }
     protected void Targeting(Camera camera) {
         if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow) ||
-            Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.D) || isDragging || Input.GetMouseButtonDown(0)) {
+            Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.D) || isDragging) { //|| Input.GetMouseButtonDown(0)
             //reset target when player pushes a button to pan the camera
             target = null;
         }
@@ -194,6 +194,7 @@ public abstract class BaseCameraMove : MonoBehaviour{
             Vector3 destination = thisPosition + delta;
             transform.position = Vector3.SmoothDamp(thisPosition, destination, ref velocity, dampTime);
             if (HasReachedBounds() || (Mathf.Approximately(transform.position.x, destination.x) && Mathf.Approximately(transform.position.y, destination.y))) {
+                lastCenteredTarget = target;
                 target = null;
             }
         }

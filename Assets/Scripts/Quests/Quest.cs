@@ -100,5 +100,17 @@ namespace Quests {
             this.questItem = questItem;
         }
         #endregion
+        
+        #region Failure
+        protected virtual void FailQuest() {
+            //fail uncompleted steps.
+            for (int i = 0; i < activeStepCollection.steps.Count; i++) {
+                QuestStep step = activeStepCollection.steps[i];
+                if (step.isCompleted == false) {
+                    step.FailStep();
+                }
+            }
+        }
+        #endregion
     }
 }
