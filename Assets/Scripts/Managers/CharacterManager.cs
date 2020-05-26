@@ -22,7 +22,8 @@ public class CharacterManager : MonoBehaviour {
         Place_Trap = "Place Trap", Flirt = "Flirt", Transform_To_Wolf = "Transform To Wolf", Drink_Blood = "Drink Blood",
         Destroy_Action = "Destroy";
     public const string Default_Resident_Behaviour = "Default Resident Behaviour", Default_Monster_Behaviour = "Default Monster Behaviour",
-        Default_Minion_Behaviour = "Default Minion Behaviour", Default_Wanderer_Behaviour = "Default Wanderer Behaviour", Default_Angel_Behaviour = "Default Angel Behaviour";
+        Default_Minion_Behaviour = "Default Minion Behaviour", Default_Wanderer_Behaviour = "Default Wanderer Behaviour", Default_Angel_Behaviour = "Default Angel Behaviour",
+        Default_Wolf_Behaviour = "Default Wolf Behaviour";
     public const int MAX_HISTORY_LOGS = 300;
 
     
@@ -100,6 +101,13 @@ public class CharacterManager : MonoBehaviour {
         { Default_Angel_Behaviour,
             new []{
                 typeof(AttackDemonicStructureBehaviour),
+            }
+        },
+        { Default_Wolf_Behaviour,
+            new []{
+                typeof(WolfBehaviour),
+                typeof(MovementProcessing),
+                typeof(DefaultMonster)
             }
         },
     };

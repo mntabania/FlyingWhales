@@ -21,11 +21,11 @@ public class MonsterGeneration : MapGenerationComponent {
 	#region Helpers
 	private void CreateMonster(SUMMON_TYPE summonType, BaseSettlement settlementOnTile, BaseLandmark monsterLair,
 		LocationStructure monsterLairStructure) {
-		Summon summon = CharacterManager.Instance.CreateNewSummon(summonType, FactionManager.Instance.neutralFaction, settlementOnTile, monsterLair.tileLocation.region);
+		Summon summon = CharacterManager.Instance.CreateNewSummon(summonType, FactionManager.Instance.neutralFaction, settlementOnTile, monsterLair.tileLocation.region, monsterLairStructure);
 		LocationGridTile targetTile = CollectionUtilities.GetRandomElement(monsterLairStructure.unoccupiedTiles);
 		CharacterManager.Instance.PlaceSummon(summon, targetTile);
 		//summon.AddTerritory(monsterLair.tileLocation);
-        summon.MigrateHomeStructureTo(monsterLairStructure);
+        // summon.MigrateHomeStructureTo(monsterLairStructure);
         //summon.ChangeHomeStructure(monsterLairStructure);
 
         //if (monsterLairStructure is LocationStructure homeStructure) {

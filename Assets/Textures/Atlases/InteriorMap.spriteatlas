@@ -1233,7 +1233,7 @@ SpriteAtlas:
   - rug02
   - poison11111111-00
   - boneGround_decor02
-  - tableDecor00
+  - table2Slots
   - MAGIC_CIRCLE#2
   - shore00011111-00
   - snow_v01
@@ -1474,7 +1474,7 @@ SpriteAtlas:
   - BIG_TREE_OBJECT#2
   - TRAINING_DUMMY#2
   - horizontal_1
-  - tableDecor01
+  - table4Slots
   - snow_mound
   - poison11010111-00
   - caveWallA-10001011-00
