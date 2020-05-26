@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using Inner_Maps;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.UI;
@@ -198,6 +199,14 @@ namespace UtilityScripts {
         }
 
         public static int GetOptionIndex(Dropdown dropdown, string option) {
+            for (int i = 0; i < dropdown.options.Count; i++) {
+                if (dropdown.options[i].text.Equals(option)) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+        public static int GetOptionIndex(TMP_Dropdown dropdown, string option) {
             for (int i = 0; i < dropdown.options.Count; i++) {
                 if (dropdown.options[i].text.Equals(option)) {
                     return i;

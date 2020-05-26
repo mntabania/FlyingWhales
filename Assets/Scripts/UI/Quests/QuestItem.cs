@@ -59,7 +59,7 @@ public class QuestItem : PooledObject {
     private void OnCompleteEaseOutHeight(Quest quest) {
         if (quest.questItem != null) {
             ObjectPoolManager.Instance.DestroyObject(quest.questItem);
-            quest.SetTutorialQuestItem(null);    
+            quest.SetQuestItem(null);    
         }
     }
     #endregion

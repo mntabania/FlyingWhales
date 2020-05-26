@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Settings;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.Video;
@@ -24,6 +25,7 @@ namespace Tutorial {
             Threat = 12,
             Counterattack = 13,
             Divine_Intervention = 14,
+            Chaos_Orbs_Tutorial = 15,
         }
 
         private List<TutorialQuest> _activeTutorials;
@@ -83,8 +85,12 @@ namespace Tutorial {
             if (WorldConfigManager.Instance.isDemoWorld == false) {
                 InstantiatePendingTutorials();
             }
+            Messenger.AddListener<bool>(Signals.ON_SKIP_TUTORIALS_CHANGED, OnSkipTutorialsChanged);
         }
         public void InstantiatePendingTutorials() {
+            if (SettingsManager.Instance.settings.skipTutorials) {
+                return;
+            }
             //Create instances for all uncompleted tutorials.
             List<Tutorial> completedTutorials = SaveManager.Instance.currentSaveDataPlayer.completedTutorials;
             Tutorial[] allTutorials = CollectionUtilities.GetEnumValues<Tutorial>();
@@ -96,18 +102,19 @@ namespace Tutorial {
                     instantiateTutorial = WorldConfigManager.Instance.demoTutorials.Contains(tutorial);
                 }
                 if (instantiateTutorial) {
-                    TutorialQuest tutorialQuest = InstantiateTutorial(tutorial);
-                    _instantiatedTutorials.Add(tutorialQuest);
+                    InstantiateTutorial(tutorial);
                 }
             }
         }
-        private TutorialQuest InstantiateTutorial(Tutorial tutorial) {
+        public TutorialQuest InstantiateTutorial(Tutorial tutorial) {
             string noSpacesName = UtilityScripts.Utilities.RemoveAllWhiteSpace(UtilityScripts.Utilities.
                 NormalizeStringUpperCaseFirstLettersNoSpace(tutorial.ToString()));
             string typeName = $"Tutorial.{ noSpacesName }";
             Type type = Type.GetType(typeName);
             if (type != null) {
-                return Activator.CreateInstance(type) as TutorialQuest;    
+                TutorialQuest tutorialQuest = Activator.CreateInstance(type) as TutorialQuest;
+                _instantiatedTutorials.Add(tutorialQuest);
+                return tutorialQuest;
             }
             throw new Exception($"Could not instantiate tutorial quest {noSpacesName}");
         }
@@ -124,6 +131,12 @@ namespace Tutorial {
             SaveManager.Instance.currentSaveDataPlayer.AddTutorialAsCompleted(tutorial.tutorialType);
             DeactivateTutorial(tutorial);
             Messenger.Broadcast(Signals.TUTORIAL_QUEST_COMPLETED, tutorial);
+        }
+        #endregion
+
+        #region Failure
+        public void FailTutorialQuest(TutorialQuest tutorial) {
+            DeactivateTutorial(tutorial);
         }
         #endregion
 
@@ -162,7 +175,7 @@ namespace Tutorial {
             RemoveTutorialFromWaitList(tutorialQuest);
             tutorialQuest.Activate();
             QuestItem questItem = UIManager.Instance.questUI.ShowQuest(tutorialQuest);
-            tutorialQuest.SetTutorialQuestItem(questItem);
+            tutorialQuest.SetQuestItem(questItem);
         }
         private void DeactivateTutorial(TutorialQuest tutorialQuest) {
             _activeTutorials.Remove(tutorialQuest);
@@ -187,9 +200,23 @@ namespace Tutorial {
             for (int i = 0; i < allTutorials.Length; i++) {
                 Tutorial tutorial = allTutorials[i];
                 if (completedTutorials.Contains(tutorial)) {
-                    TutorialQuest tutorialQuest = InstantiateTutorial(tutorial);
-                    _instantiatedTutorials.Add(tutorialQuest);
+                   InstantiateTutorial(tutorial);
                 }
+            }
+        }
+        #endregion
+
+        #region Listeners
+        private void OnSkipTutorialsChanged(bool skipTutorials) {
+            if (skipTutorials) {
+                //remove all showing tutorials
+                List<TutorialQuest> tutorialsToDeactivate = new List<TutorialQuest>(_instantiatedTutorials);
+                for (int i = 0; i < tutorialsToDeactivate.Count; i++) {
+                    DeactivateTutorial(tutorialsToDeactivate[i]);
+                }
+            } else {
+                //instantiate incomplete tutorials
+                InstantiatePendingTutorials();
             }
         }
         #endregion

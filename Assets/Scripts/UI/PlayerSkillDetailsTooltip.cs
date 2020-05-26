@@ -34,7 +34,6 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
             positionToUse = defaultPosition;
         }
 
-        RectTransform thisRect = transform as RectTransform;
         Debug.Assert(thisRect != null, nameof(thisRect) + " != null");
         thisRect.SetParent(positionToUse.transform);
         

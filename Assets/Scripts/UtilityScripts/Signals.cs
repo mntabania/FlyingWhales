@@ -372,6 +372,9 @@ public static class Signals {
     public static string DEFEND_ACTIVATED = "OnDefendActivated";
     public static string INVADE_ACTIVATED = "OnInvadeActivated";
     public static string FLAW_TRIGGERED_BY_PLAYER = "OnFlawTriggeredByPlayer";
+    public static string CHAOS_ORB_SPAWNED = "OnChaosOrbSpawned";
+    public static string CHAOS_ORB_DESPAWNED = "OnChaosOrbDespawned";
+    public static string CHAOS_ORB_CLICKED = "OnChaosOrbClicked";
     #endregion
 
     #region Interaction
@@ -587,6 +590,13 @@ public static class Signals {
     public static string ADDED_PLAYER_MINION_SKILL = "OnAddPlayerMinionSkill";
     public static string ADDED_PLAYER_SUMMON_SKILL = "OnAddPlayerSummonSkill";
 
+    #endregion
+
+    #region Settings
+    public static string ON_SKIP_TUTORIALS_CHANGED = "OnSkipTutorialsChanged";
+    public static string EDGE_PANNING_TOGGLED = "OnEdgePanningToggled";
+    public static string MUSIC_VOLUME_CHANGED = "OnMusicVolumeChanged";
+    public static string MASTER_VOLUME_CHANGED = "OnSFXVolumeChanged";
     #endregion
 
     public static Dictionary<string, SignalMethod[]> orderedSignalExecution = new Dictionary<string, SignalMethod[]>() {

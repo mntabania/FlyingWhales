@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Quests;
+using Quests.Steps;
 using UnityEngine.Assertions;
 
 namespace Tutorial {
@@ -100,6 +101,13 @@ namespace Tutorial {
                 //only stop waiting for availability only if tutorial has not yet been made available but has been deactivated.  
                 StopCheckingCriteria();    
             }
+        }
+        #endregion
+
+        #region Failure
+        protected override void FailQuest() {
+            base.FailQuest();
+            TutorialManager.Instance.FailTutorialQuest(this);
         }
         #endregion
         

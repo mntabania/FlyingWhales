@@ -36,7 +36,7 @@ namespace Tutorial {
                 ),
                 new QuestStepCollection(
                     new ExecuteSpellStep(SPELL_TYPE.SPLASH_POISON, "Cast Splash Poison"),
-                     new TriggerPoisonExplosionStep("Ignite Poisoned Tiles")
+                     new TriggerPoisonExplosionStep("Burn Poisoned Tiles")
                         .SetHoverOverAction(OnHoverFire)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
                 ),

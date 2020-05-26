@@ -68,16 +68,36 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			flatTilesWithNoFeatures.Remove(tile);
 		}
 
+		//game
 		List<HexTile> gameChoices = GridMap.Instance.normalHexTiles.Where(h =>
 			h.elevationType == ELEVATION.PLAIN || h.elevationType == ELEVATION.TREES).ToList();
 		yield return null;
-		//game
-		for (int i = 0; i < gameCount; i++) {
-			if (gameChoices.Count <= 0) { break; }
-			HexTile tile = CollectionUtilities.GetRandomElement(gameChoices);
-			tile.featureComponent.AddFeature(TileFeatureDB.Game_Feature, tile);
-			gameChoices.Remove(tile);
+		if (WorldConfigManager.Instance.isDemoWorld) {
+			if (gameChoices.Count > 0) {
+				//pigs
+				HexTile tile = CollectionUtilities.GetRandomElement(gameChoices);
+				GameFeature gameFeature = LandmarkManager.Instance.CreateTileFeature<GameFeature>(TileFeatureDB.Game_Feature);
+				gameFeature.SetSpawnType(SUMMON_TYPE.Pig);
+				tile.featureComponent.AddFeature(gameFeature, tile);
+				gameChoices.Remove(tile);
+			}
+			if (gameChoices.Count > 0) {
+				//sheep
+				HexTile tile = CollectionUtilities.GetRandomElement(gameChoices);
+				GameFeature gameFeature = LandmarkManager.Instance.CreateTileFeature<GameFeature>(TileFeatureDB.Game_Feature);
+				gameFeature.SetSpawnType(SUMMON_TYPE.Sheep);
+				tile.featureComponent.AddFeature(gameFeature, tile);
+				gameChoices.Remove(tile);
+			}
+		} else {
+			for (int i = 0; i < gameCount; i++) {
+				if (gameChoices.Count <= 0) { break; }
+				HexTile tile = CollectionUtilities.GetRandomElement(gameChoices);
+				tile.featureComponent.AddFeature(TileFeatureDB.Game_Feature, tile);
+				gameChoices.Remove(tile);
+			}	
 		}
+		
 		
 		//vents
 		if (WorldConfigManager.Instance.isDemoWorld) {
@@ -222,7 +242,8 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		List<HexTile> chosenTiles = new List<HexTile> {
 			GridMap.Instance.map[4, 5],
 			GridMap.Instance.map[5, 5],
-			GridMap.Instance.map[4, 6]
+			GridMap.Instance.map[4, 6],
+			GridMap.Instance.map[3, 5],
 		};
 
 		for (int i = 0; i < chosenTiles.Count; i++) {

@@ -1654,7 +1654,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     InnerMapManager.Instance.HideAreaMap();
                 }
                 //CameraMove.Instance.CenterCameraOn(currentParty.icon.travelLine.iconImg.gameObject);
-                CameraMove.Instance.CenterCameraOn(currentParty.icon.targetLocation.coreTile.gameObject);
+                WorldMapCameraMove.Instance.CenterCameraOn(currentParty.icon.targetLocation.coreTile.gameObject);
             } else if (currentParty != null && currentParty.icon != null && currentParty.icon.isTravelling) {
                 if (marker.gameObject.activeInHierarchy) {
                     bool instantCenter = !InnerMapManager.Instance.IsShowingInnerMap(currentRegion);
@@ -1674,7 +1674,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 if (InnerMapManager.Instance.isAnInnerMapShowing) {
                     InnerMapManager.Instance.HideAreaMap();
                 }
-                CameraMove.Instance.CenterCameraOn(currentRegion.coreTile.gameObject);
+                WorldMapCameraMove.Instance.CenterCameraOn(currentRegion.coreTile.gameObject);
             }
         } 
         // else {

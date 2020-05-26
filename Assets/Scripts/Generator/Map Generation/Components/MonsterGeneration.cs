@@ -67,50 +67,105 @@ public class MonsterGeneration : MapGenerationComponent {
 				Debug.LogWarning($"Could not find valid tiles to place monsters at {region.name}");
 				continue;
 			}
-			MonsterGenerationSetting monsterGenerationSetting =
-				WorldConfigManager.Instance.worldWideMonsterGenerationSetting;
-			List<MonsterSetting> monsterChoices = monsterGenerationSetting.GetMonsterChoicesForBiome(region.coreTile.biomeType);
-			if (monsterChoices != null) {
-				int iterations = monsterGenerationSetting.iterations.Random();
-				for (int j = 0; j < iterations; j++) {
-					MonsterSetting randomMonsterSetting = CollectionUtilities.GetRandomElement(monsterChoices);
-					int randomAmount = randomMonsterSetting.minMaxRange.Random();
-					for (int k = 0; k < randomAmount; k++) {
-						Summon summon = CreateMonster(randomMonsterSetting.monsterType, locationChoices);
-						locationChoices.Remove(summon.gridTileLocation);
-					}
-					if (locationChoices.Count == 0) {
-						Debug.LogWarning($"Ran out of grid tiles to place monsters at region {region.name}");
-						break;
-					}
+
+			if (WorldConfigManager.Instance.isDemoWorld) {
+				//nymphs
+				int randomNymphs = Random.Range(3, 7);
+				SUMMON_TYPE[] nymphChoices = new[]
+					{SUMMON_TYPE.Ice_Nymph, SUMMON_TYPE.Water_Nymph, SUMMON_TYPE.Wind_Nymph};
+				for (int k = 0; k < randomNymphs; k++) {
+					if (locationChoices.Count == 0) { break; }
+					Summon summon = CreateMonster(CollectionUtilities.GetRandomElement(nymphChoices), locationChoices);
+					locationChoices.Remove(summon.gridTileLocation);
+				}
+				//sludge
+				int randomSludge = Random.Range(3, 7);
+				for (int k = 0; k < randomSludge; k++) {
+					if (locationChoices.Count == 0) { break; }
+					Summon summon = CreateMonster(SUMMON_TYPE.Sludge, locationChoices);
+					locationChoices.Remove(summon.gridTileLocation);
+				}
+				//wisps
+				int randomWisp = Random.Range(3, 7);
+				SUMMON_TYPE[] wispChoices = new[]
+					{SUMMON_TYPE.Earthen_Wisp, SUMMON_TYPE.Electric_Wisp, SUMMON_TYPE.Fire_Wisp};
+				for (int k = 0; k < randomWisp; k++) {
+					if (locationChoices.Count == 0) { break; }
+					Summon summon = CreateMonster(CollectionUtilities.GetRandomElement(wispChoices), locationChoices);
+					locationChoices.Remove(summon.gridTileLocation);
+				}
+			}
+			else {
+				MonsterGenerationSetting monsterGenerationSetting =
+					WorldConfigManager.Instance.worldWideMonsterGenerationSetting;
+				List<MonsterSetting> monsterChoices = monsterGenerationSetting.GetMonsterChoicesForBiome(region.coreTile.biomeType);
+				if (monsterChoices != null) {
+					int iterations = monsterGenerationSetting.iterations.Random();
+					for (int j = 0; j < iterations; j++) {
+						MonsterSetting randomMonsterSetting = CollectionUtilities.GetRandomElement(monsterChoices);
+						int randomAmount = randomMonsterSetting.minMaxRange.Random();
+						for (int k = 0; k < randomAmount; k++) {
+							Summon summon = CreateMonster(randomMonsterSetting.monsterType, locationChoices);
+							locationChoices.Remove(summon.gridTileLocation);
+						}
+						if (locationChoices.Count == 0) {
+							Debug.LogWarning($"Ran out of grid tiles to place monsters at region {region.name}");
+							break;
+						}
+					}	
 				}	
 			}
+			
 			yield return null;
 		}
 	}
 	private IEnumerator LandmarkMonsterGeneration() {
-		List<BaseLandmark> allLandmarks = LandmarkManager.Instance.GetAllLandmarks();
-		for (int i = 0; i < allLandmarks.Count; i++) {
-			BaseLandmark landmark = allLandmarks[i];
-			if (landmark.specificLandmarkType != LANDMARK_TYPE.CAVE) {
+		if (WorldConfigManager.Instance.isDemoWorld) {
+			//wolves at monster lair
+			List<BaseLandmark> monsterLairs = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.MONSTER_LAIR);
+			for (int i = 0; i < monsterLairs.Count; i++) {
+				BaseLandmark landmark = monsterLairs[i];
 				LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
-				LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmark.specificLandmarkType);
-				if (landmarkData.monsterGenerationSetting != null) {
-					List<MonsterSetting> monsterChoices = landmarkData.monsterGenerationSetting.
-						GetMonsterChoicesForBiome(landmark.tileLocation.biomeType);
-					if (monsterChoices != null) {
-						int iterations = landmarkData.monsterGenerationSetting.iterations.Random();
-						for (int j = 0; j < iterations; j++) {
-							MonsterSetting randomMonsterSetting = CollectionUtilities.GetRandomElement(monsterChoices);
-							int randomAmount = randomMonsterSetting.minMaxRange.Random();
-							for (int k = 0; k < randomAmount; k++) {
-								CreateMonster(randomMonsterSetting.monsterType, landmark.tileLocation.settlementOnTile, landmark, structure);	
-							}
-						}
-						yield return null;
-					}
+				int randomAmount = Random.Range(3, 6);
+				for (int k = 0; k < randomAmount; k++) {
+					CreateMonster(SUMMON_TYPE.Wolf, landmark.tileLocation.settlementOnTile, landmark, structure);	
 				}
 			}
+			//kobolds at ancient ruin
+			List<BaseLandmark> ancientRuins = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.ANCIENT_RUIN);
+			for (int i = 0; i < ancientRuins.Count; i++) {
+				BaseLandmark landmark = ancientRuins[i];
+				LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
+				int randomAmount = Random.Range(2, 4);
+				for (int k = 0; k < randomAmount; k++) {
+					CreateMonster(SUMMON_TYPE.Kobold, landmark.tileLocation.settlementOnTile, landmark, structure);	
+				}
+			}
+		}
+		else {
+			List<BaseLandmark> allLandmarks = LandmarkManager.Instance.GetAllLandmarks();
+			for (int i = 0; i < allLandmarks.Count; i++) {
+				BaseLandmark landmark = allLandmarks[i];
+				if (landmark.specificLandmarkType != LANDMARK_TYPE.CAVE) {
+					LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
+					LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmark.specificLandmarkType);
+					if (landmarkData.monsterGenerationSetting != null) {
+						List<MonsterSetting> monsterChoices = landmarkData.monsterGenerationSetting.
+							GetMonsterChoicesForBiome(landmark.tileLocation.biomeType);
+						if (monsterChoices != null) {
+							int iterations = landmarkData.monsterGenerationSetting.iterations.Random();
+							for (int j = 0; j < iterations; j++) {
+								MonsterSetting randomMonsterSetting = CollectionUtilities.GetRandomElement(monsterChoices);
+								int randomAmount = randomMonsterSetting.minMaxRange.Random();
+								for (int k = 0; k < randomAmount; k++) {
+									CreateMonster(randomMonsterSetting.monsterType, landmark.tileLocation.settlementOnTile, landmark, structure);	
+								}
+							}
+							yield return null;
+						}
+					}
+				}
+			}	
 		}
 	}
 	private IEnumerator CaveMonsterGeneration() {
@@ -119,17 +174,56 @@ public class MonsterGeneration : MapGenerationComponent {
 			Region region = GridMap.Instance.allRegions[i];
 			if (region.HasStructure(STRUCTURE_TYPE.CAVE)) {
 				List<LocationStructure> caves = region.GetStructuresAtLocation<LocationStructure>(STRUCTURE_TYPE.CAVE);
-				List<MonsterSetting> monsterChoices = caveData.monsterGenerationSetting.GetMonsterChoicesForBiome(region.coreTile.biomeType);
-				for (int j = 0; j < caves.Count; j++) {
-					LocationStructure cave = caves[j];
-					List<HexTile> hexTilesOfCave = GetHexTileCountOfCave(cave);
-					for (int k = 0; k < hexTilesOfCave.Count; k++) {
-						MonsterSetting randomMonsterSetting = CollectionUtilities.GetRandomElement(monsterChoices);
-						int randomAmount = randomMonsterSetting.minMaxRange.Random();
-						for (int l = 0; l < randomAmount; l++) {
-							CreateMonster(randomMonsterSetting.monsterType, cave.unoccupiedTiles.ToList(), cave, hexTilesOfCave.ToArray());	
+				caves = caves.OrderByDescending(x => x.tiles.Count).ToList();
+				if (WorldConfigManager.Instance.isDemoWorld) {
+					bool hasSpawnedSpiders = false;
+					bool hasSpawnedGolems = false;
+					for (int j = 0; j < caves.Count; j++) {
+						LocationStructure cave = caves[j];
+						List<HexTile> hexTilesOfCave = GetHexTileCountOfCave(cave);
+						if (hasSpawnedSpiders == false) {
+							hasSpawnedSpiders = true;
+							//Giant spiders	
+							int randomGiantSpider = Random.Range(2, 5);
+							for (int k = 0; k < randomGiantSpider; k++) {
+								CreateMonster(SUMMON_TYPE.Giant_Spider, cave.unoccupiedTiles.ToList(), cave, hexTilesOfCave.ToArray());
+							}
+							//Small spiders	
+							int randomSmallSpider = Random.Range(3, 8);
+							for (int k = 0; k < randomSmallSpider; k++) {
+								CreateMonster(SUMMON_TYPE.Small_Spider, cave.unoccupiedTiles.ToList(), cave, hexTilesOfCave.ToArray());
+							}
+						} else if (hasSpawnedGolems == false) {
+							hasSpawnedGolems = true;
+							//Golem	
+							int randomGolem = Random.Range(1, 3);
+							for (int k = 0; k < randomGolem; k++) {
+								CreateMonster(SUMMON_TYPE.Golem, cave.unoccupiedTiles.ToList(), cave, hexTilesOfCave.ToArray());
+							}
+							//Abomination	
+							int randomAbomination = Random.Range(1, 3);
+							for (int k = 0; k < randomAbomination; k++) {
+								CreateMonster(SUMMON_TYPE.Abomination, cave.unoccupiedTiles.ToList(), cave, hexTilesOfCave.ToArray());
+							}
+						}
+						if (hasSpawnedGolems && hasSpawnedSpiders) {
+							break;
 						}
 					}
+				}
+				else {
+					List<MonsterSetting> monsterChoices = caveData.monsterGenerationSetting.GetMonsterChoicesForBiome(region.coreTile.biomeType);
+					for (int j = 0; j < caves.Count; j++) {
+						LocationStructure cave = caves[j];
+						List<HexTile> hexTilesOfCave = GetHexTileCountOfCave(cave);
+						for (int k = 0; k < hexTilesOfCave.Count; k++) {
+							MonsterSetting randomMonsterSetting = CollectionUtilities.GetRandomElement(monsterChoices);
+							int randomAmount = randomMonsterSetting.minMaxRange.Random();
+							for (int l = 0; l < randomAmount; l++) {
+								CreateMonster(randomMonsterSetting.monsterType, cave.unoccupiedTiles.ToList(), cave, hexTilesOfCave.ToArray());	
+							}
+						}
+					}	
 				}
 			}
 			yield return null;

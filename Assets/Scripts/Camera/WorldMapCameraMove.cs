@@ -1,0 +1,123 @@
+﻿using System;
+using Ruinarch;
+using UnityEngine;
+using UnityEngine.EventSystems;
+
+public class WorldMapCameraMove : BaseCameraMove {
+
+	public static WorldMapCameraMove Instance;
+    [SerializeField] private Physics2DRaycaster _raycaster;
+
+    [Header("Zooming")]
+    [SerializeField] private bool allowZoom = true;
+    [SerializeField] private float _zoomSpeed = 5f;
+    [SerializeField] private float sensitivity;
+
+    //private properties
+    private float previousCameraFOV;
+    private bool cameraControlEnabled = true;
+    private int defaultMask;
+    private Camera _mainCamera;
+    private Transform _mainCameraTransform;
+
+    private void Awake(){
+		Instance = this;
+        _mainCamera = Camera.main;
+        _mainCameraTransform = _mainCamera.transform;
+        defaultMask = _mainCamera.cullingMask;
+    }
+    private void Update() {
+        if (!cameraControlEnabled) {
+            return;
+        }
+        ArrowKeysMovement();
+        Dragging(_mainCamera);
+        Edging();
+        Zooming();
+        Targeting(_mainCamera);
+        ConstrainCameraBounds(_mainCamera);
+    }
+    private void OnDestroy() {
+        RemoveListeners();
+    }
+
+    public override void Initialize() {
+        base.Initialize();
+        Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
+        Messenger.AddListener<InfoUIBase>(Signals.MENU_OPENED, OnMenuOpened);
+        Messenger.AddListener<InfoUIBase>(Signals.MENU_CLOSED, OnMenuClosed);
+        Messenger.AddListener<Region>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
+        Messenger.AddListener<Region>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
+    }
+
+    private void RemoveListeners() {
+        Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoaded);
+        Messenger.RemoveListener<InfoUIBase>(Signals.MENU_OPENED, OnMenuOpened);
+        Messenger.RemoveListener<InfoUIBase>(Signals.MENU_CLOSED, OnMenuClosed);
+        Messenger.RemoveListener<Region>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
+        Messenger.RemoveListener<Region>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
+    }
+
+    #region Utilities
+    public void ToggleMainCameraLayer(string layerName) {
+        int cullingMask = _mainCamera.cullingMask;
+        cullingMask ^= 1 << LayerMask.NameToLayer(layerName);
+        _mainCamera.cullingMask = cullingMask;
+        defaultMask = cullingMask;
+    }
+    #endregion
+
+    #region Positioning
+    private void OnGameLoaded() {
+        Vector3 initialPos = new Vector3(-2.35f, -1.02f, -10f);
+        this.transform.position = initialPos;
+        _raycaster.enabled = true;
+        CalculateCameraBounds(_mainCamera);
+    }
+    private void Zooming() {
+        Rect screenRect = new Rect(0, 0, Screen.width, Screen.height);
+        if (allowZoom && screenRect.Contains(Input.mousePosition)) {
+            //camera scrolling code
+            float fov = _mainCamera.orthographicSize;
+            float adjustment = Input.GetAxis("Mouse ScrollWheel") * (sensitivity);
+            if (Math.Abs(adjustment) > 0.1f && !UIManager.Instance.IsMouseOnUI()) {
+                fov -= adjustment;
+                fov = Mathf.Clamp(fov, _minFov, _maxFov);
+
+                if (!Mathf.Approximately(previousCameraFOV, fov)) {
+                    previousCameraFOV = fov;
+                    _mainCamera.orthographicSize = Mathf.Lerp(_mainCamera.orthographicSize, fov, Time.deltaTime * _zoomSpeed);
+                } else {
+                    _mainCamera.orthographicSize = fov;
+                }
+                CalculateCameraBounds(_mainCamera);
+            }
+        }
+    }
+    #endregion
+
+    
+
+    #region Listeners
+    private void OnMenuOpened(InfoUIBase openedBase) { }
+    private void OnMenuClosed(InfoUIBase openedBase) { }
+    private void OnInnerMapOpened(Region location) {
+        // _mainCamera.cullingMask = 0;
+        _raycaster.enabled = false;
+        gameObject.SetActive(false);
+        SetCameraControlState(false);
+    }
+    private void OnInnerMapClosed(Region location) {
+        // _mainCamera.cullingMask = defaultMask;
+        _raycaster.enabled = true;
+        gameObject.SetActive(true);
+        SetCameraControlState(true);
+    }
+    #endregion
+
+    #region Camera Control
+    private void SetCameraControlState(bool state) {
+        cameraControlEnabled = state;
+    }
+    #endregion
+}

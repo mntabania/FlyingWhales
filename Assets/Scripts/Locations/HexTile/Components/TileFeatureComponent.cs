@@ -20,7 +20,7 @@ public class TileFeatureComponent {
 		}
 	}
 	public void AddFeature(string featureName, HexTile tile) {
-		AddFeature(LandmarkManager.Instance.CreateTileFeature(featureName), tile);
+		AddFeature(LandmarkManager.Instance.CreateTileFeature<TileFeature>(featureName), tile);
 	}
 	public bool RemoveFeature(TileFeature feature, HexTile tile) {
 		if (features.Remove(feature)) {

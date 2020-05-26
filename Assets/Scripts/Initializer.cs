@@ -18,7 +18,7 @@ public class Initializer : MonoBehaviour {
         PlayerManager.Instance.Initialize();
         TimerHubUI.Instance.Initialize();
 
-        CameraMove.Instance.Initialize();
+        WorldMapCameraMove.Instance.Initialize();
         InnerMapManager.Instance.Initialize();
         ObjectPoolManager.Instance.InitializeObjectPools();
 

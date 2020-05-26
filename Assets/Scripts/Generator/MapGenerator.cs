@@ -71,10 +71,10 @@ public class MapGenerator : MonoBehaviour {
                 $"{loadingDetails}\nTotal loading time is {loadingWatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
 
             LevelLoaderManager.Instance.SetLoadingState(false);
-            CameraMove.Instance.CenterCameraOn(data.portal.tileLocation.gameObject);
+            WorldMapCameraMove.Instance.CenterCameraOn(data.portal.tileLocation.gameObject);
             InnerMapManager.Instance.TryShowLocationMap(data.portal.tileLocation.region);
             InnerMapCameraMove.Instance.CenterCameraOnTile(data.portal.tileLocation);
-            AudioManager.Instance.TransitionTo("World Music", 10);
+            AudioManager.Instance.TransitionToWorld();
 
             for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
                 Faction faction = FactionManager.Instance.allFactions[i];
@@ -117,7 +117,7 @@ public class MapGenerator : MonoBehaviour {
         LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Map...");
         GridMap.Instance.SetupInitialData(data.width, data.height);
         yield return null;
-        CameraMove.Instance.Initialize();
+        WorldMapCameraMove.Instance.Initialize();
         InnerMapManager.Instance.Initialize();
         InteractionManager.Instance.Initialize();
         ObjectPoolManager.Instance.InitializeObjectPools();
@@ -185,7 +185,7 @@ public class MapGenerator : MonoBehaviour {
         LevelLoaderManager.Instance.SetLoadingState(false);
         //TODO:
         // CameraMove.Instance.CenterCameraOn(PlayerManager.Instance.player.playerNpcSettlement.coreTile.gameObject);
-        AudioManager.Instance.TransitionTo("World Music", 10);
+        AudioManager.Instance.TransitionToWorld();
         yield return new WaitForSeconds(1f);
         GameManager.Instance.StartProgression();
         UIManager.Instance.SetSpeedTogglesState(true);

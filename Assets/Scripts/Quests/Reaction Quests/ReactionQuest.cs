@@ -11,14 +11,8 @@ namespace Quests {
         protected override void CompleteQuest() {
             QuestManager.Instance.CompleteQuest(this);
         }
-        protected void FailQuest() {
-            //fail uncompleted steps.
-            for (int i = 0; i < activeStepCollection.steps.Count; i++) {
-                QuestStep step = activeStepCollection.steps[i];
-                if (step.isCompleted == false) {
-                    step.FailStep();
-                }
-            }
+        protected override void FailQuest() {
+            base.FailQuest();
             QuestManager.Instance.CompleteQuest(this);
         }
     }

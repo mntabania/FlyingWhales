@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Inner_Maps.Location_Structures;
+using Settings;
 using Tutorial;
 using UnityEngine;
 using Debug = System.Diagnostics.Debug;
@@ -44,7 +45,7 @@ namespace Quests {
             _activeQuests.Add(quest);
             quest.Activate();
             QuestItem questItem = UIManager.Instance.questUI.ShowQuest(quest, true);
-            quest.SetTutorialQuestItem(questItem);
+            quest.SetQuestItem(questItem);
         }
         private void ActivateQuest<T>(params object[] arguments) where T : Quest {
             Quest quest = System.Activator.CreateInstance(typeof(T), arguments) as Quest;
@@ -52,7 +53,7 @@ namespace Quests {
             _activeQuests.Add(quest);
             quest.Activate();
             QuestItem questItem = UIManager.Instance.questUI.ShowQuest(quest, true);
-            quest.SetTutorialQuestItem(questItem);
+            quest.SetQuestItem(questItem);
             Messenger.Broadcast(Signals.REACTION_QUEST_ACTIVATED, quest);
         }
         private void DeactivateQuest(Quest quest) {
@@ -73,11 +74,12 @@ namespace Quests {
         #region Eliminate All Villagers Quest
         private void CheckEliminateAllVillagersQuest() {
             if (SaveManager.Instance.currentSaveDataPlayer.completedTutorials
-                .Contains(TutorialManager.Tutorial.Build_A_Kennel)) {
+                .Contains(TutorialManager.Tutorial.Build_A_Kennel) || SettingsManager.Instance.settings.skipTutorials) {
                 CreateEliminateAllVillagersQuest();
             } else {
                 Messenger.AddListener<TutorialQuest>(Signals.TUTORIAL_QUEST_COMPLETED, OnTutorialQuestCompleted);
                 Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+                Messenger.AddListener<bool>(Signals.ON_SKIP_TUTORIALS_CHANGED, OnSkipTutorialsToggled);
             }
         }
         private void OnTutorialQuestCompleted(TutorialQuest completedQuest) {
@@ -90,9 +92,15 @@ namespace Quests {
                 CreateEliminateAllVillagersQuest();
             }
         }
+        private void OnSkipTutorialsToggled(bool skipTutorials) {
+            if (skipTutorials) {
+                CreateEliminateAllVillagersQuest();
+            }
+        }
         private void CreateEliminateAllVillagersQuest() {
             Messenger.RemoveListener<TutorialQuest>(Signals.TUTORIAL_QUEST_COMPLETED, OnTutorialQuestCompleted);
             Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+            Messenger.RemoveListener<bool>(Signals.ON_SKIP_TUTORIALS_CHANGED, OnSkipTutorialsToggled);
             EliminateAllVillagers eliminateAllVillagers = new EliminateAllVillagers();
             ActivateQuest(eliminateAllVillagers);
         }
