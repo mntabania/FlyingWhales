@@ -601,6 +601,17 @@ public class Region {
         }
         return null;
     }
+    public LocationStructure GetFirstUnoccupiedStructureOfType(STRUCTURE_TYPE type) {
+        if (structures.ContainsKey(type)) {
+            List<LocationStructure> structuresOfType = structures[type];
+            for (int i = 0; i < structuresOfType.Count; i++) {
+                if (!structuresOfType[i].IsOccupied()) {
+                    return structuresOfType[i];
+                }
+            }
+        }
+        return null;
+    }
     public LocationStructure GetRandomStructure() {
         LocationStructure randomStructure = null;
         while (randomStructure == null) {

@@ -1156,4 +1156,14 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    return target.gridTileLocation != null && target.gridTileLocation.IsNextToOrPartOfSettlement(npcSettlement) && target.marker != null;
     }
     #endregion
+
+    #region Go To
+    public bool CreateGoToJob(IPointOfInterest target) {
+        if(!_owner.jobQueue.HasJob(JOB_TYPE.GO_TO, target)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.GO_TO, INTERACTION_TYPE.GO_TO, target, _owner);
+            return _owner.jobQueue.AddJobInQueue(job);
+        }
+        return false;
+    }
+    #endregion
 }

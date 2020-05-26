@@ -37,9 +37,9 @@ public class Necronomicon : Artifact {
                 tile3 = tilesInRange[index3];
             }
 
-            Character skeleton1 = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Skeleton, FactionManager.Instance.neutralFaction, homeRegion: gridTileLocation.parentMap.region, className: "Marauder");
-            Character skeleton2 = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Skeleton, FactionManager.Instance.neutralFaction, homeRegion: gridTileLocation.parentMap.region, className: "Archer");
-            Character skeleton3 = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Skeleton, FactionManager.Instance.neutralFaction, homeRegion: gridTileLocation.parentMap.region, className: "Mage");
+            Character skeleton1 = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Skeleton, FactionManager.Instance.undeadFaction, homeRegion: gridTileLocation.parentMap.region, className: "Marauder");
+            Character skeleton2 = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Skeleton, FactionManager.Instance.undeadFaction, homeRegion: gridTileLocation.parentMap.region, className: "Archer");
+            Character skeleton3 = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Skeleton, FactionManager.Instance.undeadFaction, homeRegion: gridTileLocation.parentMap.region, className: "Mage");
             skeleton1.CreateMarker();
             skeleton2.CreateMarker();
             skeleton3.CreateMarker();
@@ -48,7 +48,16 @@ public class Necronomicon : Artifact {
             skeleton3.InitialCharacterPlacement(tile3);
 
             GameManager.Instance.CreateParticleEffectAt(gridTileLocation, PARTICLE_EFFECT.Necronomicon_Activate);
-            gridTileLocation.structure.RemovePOI(this);
+            //gridTileLocation.structure.RemovePOI(this);
+        }
+    }
+    public override void OnTileObjectAddedToInventoryOf(Character inventoryOwner) {
+        base.OnTileObjectAddedToInventoryOf(inventoryOwner);
+        if(CharacterManager.Instance.necromancerInTheWorld == null) {
+            if (inventoryOwner.traitContainer.HasTrait("Evil") || (inventoryOwner.traitContainer.HasTrait("Treacherous") && inventoryOwner.traitContainer.HasTrait("Betrayed", "Heartbroken", "Griefstricken"))) {
+                //Necromantic Transformation
+                inventoryOwner.interruptComponent.TriggerInterrupt(INTERRUPT.Necromantic_Transformation, inventoryOwner);
+            }
         }
     }
     #endregion

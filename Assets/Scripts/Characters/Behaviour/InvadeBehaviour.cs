@@ -6,7 +6,7 @@ using Locations.Settlements;
 
 public class InvadeBehaviour : CharacterBehaviourComponent {
     public InvadeBehaviour() {
-        priority = 9;
+        priority = 10;
     }
     public override bool TryDoBehaviour(Character character, ref string log) {
         log += $"\n-{character.name} will invade";

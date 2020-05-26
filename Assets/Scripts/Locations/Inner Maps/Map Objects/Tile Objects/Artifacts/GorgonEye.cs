@@ -26,7 +26,7 @@ public class GorgonEye : Artifact {
                 }
             }
             GameManager.Instance.CreateParticleEffectAt(gridTileLocation, PARTICLE_EFFECT.Gorgon_Eye);
-            gridTileLocation.structure.RemovePOI(this);
+            //gridTileLocation.structure.RemovePOI(this);
         }
     }
     #endregion

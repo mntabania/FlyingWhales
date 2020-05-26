@@ -168,7 +168,7 @@ public class CharacterNeedsComponent {
     }
 
     public bool HasNeeds() {
-        return _character.race != RACE.SKELETON && _character.characterClass.className != "Zombie" && !_character.returnedToLife && _character.minion == null && !(_character is Summon)
+        return _character.race != RACE.SKELETON && _character.characterClass.className != "Zombie" && _character.characterClass.className != "Necromancer" && !_character.returnedToLife && _character.minion == null && !(_character is Summon)
             && !_character.traitContainer.HasTrait("Fervor")
             /*&& _character.isAtHomeRegion && _character.homeNpcSettlement != null*/; //Characters living on a region without a npcSettlement must not decrease needs
     }

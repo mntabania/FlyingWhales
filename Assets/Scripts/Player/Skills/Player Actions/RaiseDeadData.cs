@@ -18,7 +18,7 @@ public class RaiseDeadData : PlayerAction {
         } else if (targetPOI is Tombstone) {
             target = (targetPOI as Tombstone).character;
         }
-        CharacterManager.Instance.RaiseFromDeath(target, PlayerManager.Instance.player.playerFaction, className: target.characterClass.className);
+        CharacterManager.Instance.RaiseFromDeath(target, FactionManager.Instance.undeadFaction, className: target.characterClass.className);
         //target.RaiseFromDeath(1, faction: PlayerManager.Instance.player.playerFaction, className: target.characterClass.className);
 
         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_raise_dead");

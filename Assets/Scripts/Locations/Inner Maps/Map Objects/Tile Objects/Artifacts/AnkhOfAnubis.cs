@@ -19,7 +19,7 @@ public class AnkhOfAnubis : Artifact {
             quicksand.SetGridTileLocation(gridTileLocation);
             quicksand.OnPlacePOI();
 
-            gridTileLocation.structure.RemovePOI(this);
+            //gridTileLocation.structure.RemovePOI(this);
         }
     }
     #endregion

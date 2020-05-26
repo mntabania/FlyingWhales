@@ -70,7 +70,7 @@ namespace Inner_Maps.Location_Structures {
             List<Faction> viableFactions = new List<Faction>();
             for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
                 Faction faction = FactionManager.Instance.allFactions[i];
-                if (faction.isMajorNonPlayer && faction.name != "Zombies") {
+                if (faction.isMajorNonPlayer && faction.name != "Undead") {
                     viableFactions.Add(faction);
                 }
             }
@@ -105,7 +105,7 @@ namespace Inner_Maps.Location_Structures {
             List<Faction> viableFactions = new List<Faction>();
             for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
                 Faction faction = FactionManager.Instance.allFactions[i];
-                if (faction.isMajorNonPlayer && faction.name != "Zombies") {
+                if (faction.isMajorNonPlayer && faction.name != "Undead") {
                     viableFactions.Add(faction);
                 }
             }

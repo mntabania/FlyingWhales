@@ -1050,6 +1050,8 @@ public enum INTERRUPT {
     Abomination_Death,
     Cry,
     Surprised,
+    Necromantic_Transformation,
+    Set_Lair,
 }
 
 public enum TRAIT_TYPE {
