@@ -464,11 +464,11 @@ public partial class LandmarkManager : MonoBehaviour {
     #endregion
 
     #region Regions
-    public TileFeature CreateTileFeature([NotNull] string featureName) {
+    public T CreateTileFeature<T>([NotNull] string featureName) where T : TileFeature {
         string typeName = $"Locations.Features.{featureName}";
         System.Type type = System.Type.GetType(typeName);
         Assert.IsNotNull(type, $"type for {featureName} is null!");
-        return System.Activator.CreateInstance(type) as TileFeature;
+        return System.Activator.CreateInstance(type) as T;
     }
     public Region GetRandomRegionWithFeature(string feature) {
         List<Region> choices = new List<Region>();

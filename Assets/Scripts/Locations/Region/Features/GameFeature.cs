@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
+using UnityEditor.VersionControl;
 using UnityEngine.Assertions;
 using UtilityScripts;
 using Random = UnityEngine.Random;
@@ -25,13 +26,13 @@ namespace Locations.Features {
         public GameFeature() {
             name = "Game";
             description = "Hunters can obtain food here.";
+            ownedAnimals = new List<Animal>();
+            SetSpawnType(CollectionUtilities.GetRandomElement(_spawnChoices));
         }
     
         #region Overrides
         public override void GameStartActions(HexTile tile) {
             owner = tile;
-            ownedAnimals = new List<Animal>();
-            animalTypeBeingSpawned = CollectionUtilities.GetRandomElement(_spawnChoices);
             //Spawn initial animals
             //since max animals are spawned at start, starting per hour generation is unnecessary
             //only when an animal is removed from the owned animals list, is the check for starting production performed
@@ -57,6 +58,11 @@ namespace Locations.Features {
             }
         }
         #endregion
+
+        public void SetSpawnType(SUMMON_TYPE summon) {
+            Assert.IsTrue(_spawnChoices.Contains(summon), $"Setting spawn type of Game Feature to {summon.ToString()} but it is not part of the given spawn choices!");
+            animalTypeBeingSpawned = summon;
+        }
 
         private void RemoveOwnedAnimal(Animal animal) {
             if (ownedAnimals.Remove(animal)) {
