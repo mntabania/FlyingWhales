@@ -42,10 +42,9 @@ namespace Traits {
                     if(character.canMove && character.canWitness && character.canPerform) {
                         CreateJobsOnEnterVisionBasedOnTrait(character, character);
                     }
-                } 
-                // else {
-                //     poi.SetPOIState(POI_STATE.INACTIVE);
-                // }
+                } else {
+                    poi.SetPOIState(POI_STATE.INACTIVE);
+                }
                 if(poi is WinterRose winterRose) {
                     winterRose.WinterRoseEffect();
                 } else {
@@ -78,10 +77,9 @@ namespace Traits {
                 if (removedFrom is Character character) {
                     // character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.REMOVE_STATUS);
                     character.AdjustDoNotRecoverHP(-1);
+                } else {
+                    obj.SetPOIState(POI_STATE.ACTIVE);   
                 }
-                // else {
-                //     obj.SetPOIState(POI_STATE.ACTIVE);   
-                // }
             } 
         }
         public override void OnRemoveStatusBySchedule(ITraitable removedFrom) {

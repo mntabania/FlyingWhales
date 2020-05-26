@@ -242,7 +242,8 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		List<HexTile> chosenTiles = new List<HexTile> {
 			GridMap.Instance.map[4, 5],
 			GridMap.Instance.map[5, 5],
-			GridMap.Instance.map[4, 6]
+			GridMap.Instance.map[4, 6],
+			GridMap.Instance.map[3, 5],
 		};
 
 		for (int i = 0; i < chosenTiles.Count; i++) {
