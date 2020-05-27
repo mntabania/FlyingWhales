@@ -101,10 +101,10 @@ namespace Locations.Settlements {
             //     Debug.LogWarning($"{name} doesn't have any dwellings for {character.name}");
             //     return;
             // }
-            if (character.isFactionless) {
-                character.SetHomeStructure(null);
-                return;
-            }
+            // if (character.isFactionless) {
+            //     character.SetHomeStructure(null);
+            //     return;
+            // }
             LocationStructure chosenDwelling = dwellingOverride;
             if (chosenDwelling == null) {
                 Character lover = CharacterManager.Instance.GetCharacterByID(character.relationshipContainer

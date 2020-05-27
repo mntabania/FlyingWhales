@@ -26,5 +26,9 @@ public class Wolf : Summon {
     //    //state.SetIsUnending(true);
     //    GoToWorkArea();
     //}
+    public override void Initialize() {
+	    base.Initialize();
+	    behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Default_Wolf_Behaviour);
+    }
     #endregion
 }

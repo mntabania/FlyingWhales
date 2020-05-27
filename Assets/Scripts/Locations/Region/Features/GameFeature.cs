@@ -15,7 +15,7 @@ namespace Locations.Features {
         private bool isGeneratingPerHour;
     
         private SUMMON_TYPE animalTypeBeingSpawned;
-        private List<Animal> ownedAnimals; //list of animals that have been spawned by this feature
+        public List<Animal> ownedAnimals { get; private set; } //list of animals that have been spawned by this feature
 
         private static readonly SUMMON_TYPE[] _spawnChoices = new[] {
             SUMMON_TYPE.Pig,

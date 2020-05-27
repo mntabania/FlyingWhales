@@ -348,6 +348,17 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         }
         return false;
     }
+    public bool HasActiveSettlementNeighbour() {
+        for (int i = 0; i < AllNeighbours.Count; i++) {
+            HexTile neighbour = AllNeighbours[i];
+            if (neighbour.settlementOnTile?.owner != null 
+                && (neighbour.settlementOnTile.locationType == LOCATION_TYPE.ELVEN_SETTLEMENT 
+                    || neighbour.settlementOnTile.locationType == LOCATION_TYPE.HUMAN_SETTLEMENT)) {
+                return true;
+            }
+        }
+        return false;
+    }
     public string GetDisplayName() {
         if (settlementOnTile != null) {
             return settlementOnTile.name;
@@ -1343,6 +1354,22 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
                 if (character is T converted) {
                     if (characters == null) { characters = new List<T>(); }
                     characters.Add(converted);    
+                }
+            }
+        }
+        return characters;
+    }
+    public List<T> GetAllDeadAndAliveCharactersInsideHex<T>() where T : Character {
+        List<T> characters = null;
+        for (int i = 0; i < locationGridTiles.Count; i++) {
+            LocationGridTile tile = locationGridTiles[i];
+            if (tile.charactersHere.Count > 0) {
+                for (int j = 0; j < tile.charactersHere.Count; j++) {
+                    Character character = tile.charactersHere[j];
+                    if (character is T validCharacter) {
+                        if (characters == null) { characters = new List<T>(); }
+                        characters.Add(validCharacter);
+                    }
                 }
             }
         }

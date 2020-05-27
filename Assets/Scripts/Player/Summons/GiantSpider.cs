@@ -17,7 +17,8 @@ public class GiantSpider : Summon {
     public override void Initialize() {
         base.Initialize();
         //behaviourComponent.RemoveBehaviourComponent(typeof(DefaultMonster));
-        behaviourComponent.AddBehaviourComponent(typeof(AbductorMonster));
+        // behaviourComponent.AddBehaviourComponent(typeof(AbductorMonster));
+        behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Default_Giant_Spider_Behaviour);
     }
     #endregion
 }
