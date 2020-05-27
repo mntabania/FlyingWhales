@@ -982,7 +982,11 @@ public enum INTERACTION_TYPE {
     PATROL,
     START_PATROL,
     MINE,
-    DIG
+    DIG,
+    BUILD_LAIR,
+    ABSORB_LIFE,
+    SPAWN_SKELETON,
+    RAISE_CORPSE,
 }
 
 public enum INTERACTION_CATEGORY {
@@ -1052,6 +1056,7 @@ public enum INTERRUPT {
     Surprised,
     Necromantic_Transformation,
     Set_Lair,
+    Order_Attack,
 }
 
 public enum TRAIT_TYPE {
@@ -1375,6 +1380,7 @@ public enum GOAP_EFFECT_CONDITION { NONE, REMOVE_TRAIT, HAS_TRAIT, FULLNESS_RECO
         , PRODUCE_FOOD, PRODUCE_WOOD, PRODUCE_STONE, PRODUCE_METAL, DEPOSIT_RESOURCE, REMOVE_REGION_CORRUPTION, CLEAR_REGION_FACTION_OWNER, REGION_OWNED_BY_ACTOR_FACTION, FACTION_QUEST_DURATION_INCREASE
         , FACTION_QUEST_DURATION_DECREASE, DESTROY_REGION_LANDMARK, CHARACTER_TO_MINION, SEARCH
         , HAS_POI, TAKE_POI //The process of "take" in this manner is different from simply carrying the poi. In technicality, since the actor will only get an amount from the poi target, the actor will not carry the whole poi instead he/she will create a new poi with the amount that he/she needs while simultaneously reducing that amount from the poi target
+        , ABSORB_LIFE, RAISE_CORPSE
 }
 public enum GOAP_EFFECT_TARGET { ACTOR, TARGET, }
 public enum GOAP_PLAN_STATE { IN_PROGRESS, SUCCESS, FAILED, CANCELLED, }
@@ -1388,7 +1394,7 @@ public enum JOB_TYPE { NONE, UNDERMINE, ENERGY_RECOVERY_URGENT, FULLNESS_RECOVER
         , IDLE_RETURN_HOME, IDLE_NAP, IDLE_SIT, IDLE_STAND, IDLE_GO_TO_INN, COMBINE_STOCKPILE, ROAM_AROUND_TERRITORY, ROAM_AROUND_CORRUPTION, ROAM_AROUND_PORTAL, ROAM_AROUND_TILE, RETURN_TERRITORY, RETURN_PORTAL
         , STAND, ABDUCT, LEARN_MONSTER, TAKE_ARTIFACT, TAKE_ITEM, HIDE_AT_HOME, STAND_STILL, SUICIDE_FOLLOW
         , DRY_TILES, CLEANSE_TILES, MONSTER_ABDUCT, REPORT_CORRUPTED_STRUCTURE, ASSAULT_DEMONIC_STRUCTURE, RECOVER_HP, POISON_FOOD
-        , BRAWL, PLACE_TRAP, SPREAD_RUMOR, CONFIRM_RUMOR, OPEN_CHEST, TEND_FARM, VISIT_DIFFERENT_REGION, BERSERK_ATTACK, MINE, DIG_THROUGH
+        , BRAWL, PLACE_TRAP, SPREAD_RUMOR, CONFIRM_RUMOR, OPEN_CHEST, TEND_FARM, VISIT_DIFFERENT_REGION, BERSERK_ATTACK, MINE, DIG_THROUGH, SPAWN_LAIR, ABSORB_LIFE, SPAWN_SKELETON, RAISE_CORPSE
 }
 public enum JOB_OWNER { CHARACTER, LOCATION, QUEST, }
 public enum Cardinal_Direction { North, South, East, West };
@@ -1960,6 +1966,9 @@ public static class Extensions {
                 break;
             case JOB_TYPE.KNOCKOUT:
             case JOB_TYPE.BRAWL:
+            case JOB_TYPE.ABSORB_LIFE:
+            case JOB_TYPE.SPAWN_SKELETON:
+            case JOB_TYPE.RAISE_CORPSE:
                 priority = 970;
                 break;
             case JOB_TYPE.DOUSE_FIRE:
@@ -1999,6 +2008,7 @@ public static class Extensions {
                 break;
             case JOB_TYPE.BUILD_BLUEPRINT:
             case JOB_TYPE.PLACE_BLUEPRINT:
+            case JOB_TYPE.SPAWN_LAIR:
                 priority = 850;
                 break;
             case JOB_TYPE.PRODUCE_FOOD:

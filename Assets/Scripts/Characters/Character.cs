@@ -762,9 +762,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     protected void OnUpdateCharacterClass() {
-        if (_currentHP > maxHP) {
-            _currentHP = maxHP;
-        }
+        UpdateMaxHPAndReset();
+        //if (_currentHP > maxHP) {
+        //    _currentHP = maxHP;
+        //}
         //if (_sp > _maxSP) {
         //    _sp = _maxSP;
         //}

@@ -39994,6 +39994,7 @@ MonoBehaviour:
     m_values: 0100000001000000010000000100000001000000010000000100000002000000020000000200000002000000020000000200000002000000030000000300000003000000030000000300000003000000030000000300000003000000030000000100000001000000
   chaosOrbPrefab: {fileID: 1969525015451714, guid: 9d5aaca52e9a40742a8a193fd001aa13,
     type: 3}
+  availableChaosOrbs: []
 --- !u!1 &719186660
 GameObject:
   m_ObjectHideFlags: 0
@@ -53052,6 +53053,7 @@ MonoBehaviour:
   allowEdgePanning: 0
   dampTime: 0.2
   velocity: {x: 0, y: 0, z: 0}
+  _target: {fileID: 0}
   _raycaster: {fileID: 930355347}
   allowZoom: 1
   _zoomSpeed: 15
@@ -105275,6 +105277,7 @@ MonoBehaviour:
   allowEdgePanning: 0
   dampTime: 0.2
   velocity: {x: 0, y: 0, z: 0}
+  _target: {fileID: 0}
   zoomSensitivity: 35
   _zoomSpeed: 30
   innerMapsCamera: {fileID: 1713567858}

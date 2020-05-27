@@ -7,7 +7,6 @@ public class BuildStructure : GoapAction {
 
     public BuildStructure() : base(INTERACTION_TYPE.BUILD_STRUCTURE) {
         actionIconString = GoapActionStateDB.Build_Icon;
-        
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
         validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.MORNING, TIME_IN_WORDS.LUNCH_TIME, TIME_IN_WORDS.AFTERNOON, TIME_IN_WORDS.EARLY_NIGHT };

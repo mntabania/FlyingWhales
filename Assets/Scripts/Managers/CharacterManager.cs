@@ -103,12 +103,6 @@ public class CharacterManager : MonoBehaviour {
                 typeof(AttackDemonicStructureBehaviour),
             }
         },
-        { Default_Monster_Behaviour,
-            new []{
-                typeof(MovementProcessing),
-                typeof(DefaultMonster)
-            }
-        },
     };
 
     #region getters/setters
