@@ -15,7 +15,8 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
             if (character.marker) {
                 Character deadCharacter = null;
                 for (int i = 0; i < character.marker.inVisionCharacters.Count; i++) {
-                    if (character.marker.inVisionCharacters[i].isDead) {
+                    Character inVision = character.marker.inVisionCharacters[i];
+                    if (inVision.isDead && !(inVision is Summon)) {
                         deadCharacter = character.marker.inVisionCharacters[i];
                         break;
                     }
@@ -31,8 +32,11 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                     Tombstone tomb = null;
                     for (int i = 0; i < character.marker.inVisionTileObjects.Count; i++) {
                         if (character.marker.inVisionTileObjects[i] is Tombstone tombstone) {
-                            tomb = tombstone;
-                            break;
+                            Character dead = tombstone.character;
+                            if (!(dead is Summon)) {
+                                tomb = tombstone;
+                                break;
+                            }
                         }
                     }
                     if (tomb != null) {
@@ -94,8 +98,18 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                 character.PlanIdleReturnHome();
             } else {
                 log += $"\n-Lair is not set, will spawn lair";
-                HexTile chosenHex = GetNoStructurePlainHexInRegion(character.currentRegion);
-                if(chosenHex == null) {
+
+                HexTile chosenHex = null;
+                if(character.gridTileLocation.collectionOwner.partOfHextile != null) {
+                    HexTile targetHex = character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
+                    if(targetHex != null && targetHex.elevationType != ELEVATION.WATER && targetHex.elevationType != ELEVATION.MOUNTAIN && targetHex.landmarkOnTile == null && !targetHex.IsNextToOrPartOfVillage()) {
+                        chosenHex = targetHex;
+                    }
+                }
+                if (chosenHex == null) {
+                    chosenHex = GetNoStructurePlainHexInRegion(character.currentRegion);
+                }
+                if (chosenHex == null) {
                     chosenHex = GetNoStructurePlainHexInAllRegions();
                 }
                 LocationGridTile centerTileOfHex = chosenHex.GetCenterLocationGridTile();

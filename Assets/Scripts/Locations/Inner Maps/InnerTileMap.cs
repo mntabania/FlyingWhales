@@ -255,6 +255,16 @@ namespace Inner_Maps {
                     } else {
                         throw new Exception($"{character.name} is going to tile {to} which does not have a structure!");
                     }
+                } else if (character.currentStructure != to.structure) {
+                    //Added this because there are times when a structure is built on a tile where the character is standing, when this happens, the structures of the tiles are changed (that is why it will not go through the first if statement because the from and to structure will be the same) but the current structure of the character will not
+                    //So, in order for the current structure of the character to update, we added this condition
+                    //Current example: When a necromancer builds a lair
+                    character.currentStructure?.RemoveCharacterAtLocation(character);
+                    if (to.structure != null) {
+                        to.structure.AddCharacterAtLocation(character);
+                    } else {
+                        throw new Exception($"{character.name} is going to tile {to} which does not have a structure!");
+                    }
                 }
                 if (from.collectionOwner.partOfHextile != to.collectionOwner.partOfHextile) {
                     if (from.collectionOwner.isPartOfParentRegionMap) {

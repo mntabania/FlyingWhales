@@ -59,13 +59,15 @@ public class BuildLair : GoapAction {
         LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(targetHex.region, STRUCTURE_TYPE.MONSTER_LAIR);
         settlement.GenerateStructures(structure);
 
-        List<LocationGridTile> locationGridTiles = new List<LocationGridTile>(targetHex.locationGridTiles);
+        List<LocationGridTile> locationGridTiles = targetHex.locationGridTiles; // new List<LocationGridTile>(targetHex.locationGridTiles);
 
         LocationStructure wilderness = targetHex.region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
         InnerMapManager.Instance.MonsterLairCellAutomata(locationGridTiles, structure, targetHex.region, wilderness);
 
         structure.SetOccupiedHexTile(targetHex.innerMapHexTile);
         targetHex.innerMapHexTile.Occupy();
+
+        targetHex.UpdatePathfindingGraph();
 
         goapNode.actor.necromancerTrait.SetLairStructure(structure);
         goapNode.actor.MigrateHomeStructureTo(structure);
