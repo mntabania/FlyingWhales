@@ -10,6 +10,7 @@ public class SeizeComponent {
     public IPointOfInterest seizedPOI { get; private set; }
     public bool isPreparingToBeUnseized { get; private set; }
     private Sprite _seizedPOISprite;
+    private int _seizedPOIVisionVotes;
 
     private Vector3 followOffset;
     private Tween tween;
@@ -33,8 +34,9 @@ public class SeizeComponent {
             if (poi.gridTileLocation != null) {
                 Messenger.Broadcast(Signals.BEFORE_SEIZING_POI, poi);
                 _seizedPOISprite = poi.mapObjectVisual.usedSprite;
-                poi.OnSeizePOI();
                 if (poi is BaseMapObject baseMapObject) { baseMapObject.OnManipulatedBy(PlayerManager.Instance.player); }
+                _seizedPOIVisionVotes = poi.mapObjectVisual.visionTrigger.filterVotes;
+                poi.OnSeizePOI();
                 Messenger.Broadcast(Signals.ON_SEIZE_POI, poi);
                 //if(poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
                 //} else {
@@ -100,8 +102,10 @@ public class SeizeComponent {
         seizedPOI.OnUnseizePOI(hoveredTile);
         if (seizedPOI.mapObjectVisual != null) {
             seizedPOI.mapObjectVisual.SetVisual(_seizedPOISprite);    
+            seizedPOI.mapObjectVisual.visionTrigger.SetFilterVotes(_seizedPOIVisionVotes);
         }
         _seizedPOISprite = null;
+        _seizedPOIVisionVotes = 0;
         Messenger.Broadcast(Signals.ON_UNSEIZE_POI, seizedPOI);
         if (seizedPOI is IPlayerActionTarget playerActionTarget) {
             Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, playerActionTarget);    

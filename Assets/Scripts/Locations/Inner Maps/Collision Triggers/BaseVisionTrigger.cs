@@ -39,6 +39,10 @@ public abstract class BaseVisionTrigger : MonoBehaviour{
     }
 
     #region Layers
+    public void SetFilterVotes(int votes) {
+        _filterVotes = votes;
+        DetermineLayerBasedOnVotes();
+    }
     /// <summary>
     /// Vote to transfer this object to the filtered layer.
     /// Normally, all characters vision only see filtered objects.
