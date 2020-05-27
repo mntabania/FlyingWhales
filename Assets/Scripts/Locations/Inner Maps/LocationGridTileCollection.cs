@@ -104,6 +104,12 @@ namespace Inner_Maps {
             return null;
         }
         #endregion
+
+        #region Pathfinding Updates
+        public void UpdatePathfindingGraph() {
+            locationGridTileCollectionItem.UpdatePathfindingGraph();
+        }
+        #endregion
         
     }
 }

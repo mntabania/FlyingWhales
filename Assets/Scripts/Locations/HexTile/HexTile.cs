@@ -531,6 +531,12 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         }
         return null;
     }
+    public void UpdatePathfindingGraph() {
+        for (int i = 0; i < innerMapHexTile.gridTileCollections.Length; i++) {
+            LocationGridTileCollection collection = innerMapHexTile.gridTileCollections[i];
+            collection.UpdatePathfindingGraph();
+        }
+    }
     #endregion
 
     #region Tile Visuals
