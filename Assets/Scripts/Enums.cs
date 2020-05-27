@@ -982,7 +982,8 @@ public enum INTERACTION_TYPE {
     PATROL,
     START_PATROL,
     MINE,
-    DIG
+    DIG,
+    PLACE_FREEZING_TRAP
 }
 
 public enum INTERACTION_CATEGORY {

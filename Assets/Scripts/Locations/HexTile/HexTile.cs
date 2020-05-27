@@ -348,6 +348,17 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         }
         return false;
     }
+    public bool HasActiveSettlementNeighbour() {
+        for (int i = 0; i < AllNeighbours.Count; i++) {
+            HexTile neighbour = AllNeighbours[i];
+            if (neighbour.settlementOnTile?.owner != null 
+                && (neighbour.settlementOnTile.locationType == LOCATION_TYPE.ELVEN_SETTLEMENT 
+                    || neighbour.settlementOnTile.locationType == LOCATION_TYPE.HUMAN_SETTLEMENT)) {
+                return true;
+            }
+        }
+        return false;
+    }
     public string GetDisplayName() {
         if (settlementOnTile != null) {
             return settlementOnTile.name;

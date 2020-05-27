@@ -21,6 +21,7 @@ public class Kobold : Summon {
     public override void Initialize() {
         base.Initialize();
         traitContainer.AddTrait(this, "Cold Blooded");
+        behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Default_Kobold_Behaviour);
     }
 }
 

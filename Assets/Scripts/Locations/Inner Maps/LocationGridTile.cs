@@ -64,6 +64,8 @@ namespace Inner_Maps {
         private GameObject _freezingTrapEffect;
         private GameObject _snareTrapEffect;
 
+        private TrapChecker _freezingTrapChecker;
+        
         #region Pathfinding
         public List<LocationGridTile> ValidTiles { get { return FourNeighbours().Where(o => o.tileType == Tile_Type.Empty).ToList(); } }
         public List<LocationGridTile> UnoccupiedNeighbours { get { return neighbours.Values.Where(o => !o.isOccupied && o.structure == structure).ToList(); } }
@@ -464,7 +466,7 @@ namespace Inner_Maps {
             if (hasLandmine) {
                 GameManager.Instance.StartCoroutine(TriggerLandmine(character));
             }
-            if (hasFreezingTrap) {
+            if (hasFreezingTrap && (_freezingTrapChecker == null || _freezingTrapChecker.CanTrapAffectCharacter(character))) {
                 TriggerFreezingTrap(character);
             }
             if (hasSnareTrap) {
@@ -909,6 +911,15 @@ namespace Inner_Maps {
             settlement = null;
             return false;
         }
+        public bool IsNextToSettlement() {
+            for (int i = 0; i < neighbourList.Count; i++) {
+                LocationGridTile tile = neighbourList[i];
+                if (tile.IsPartOfSettlement()) {
+                    return true;
+                }
+            }
+            return false;
+        }
         public bool IsNextToSettlement(BaseSettlement settlement) {
             for (int i = 0; i < neighbourList.Count; i++) {
                 LocationGridTile tile = neighbourList[i];
@@ -1093,14 +1104,16 @@ namespace Inner_Maps {
         #endregion
 
         #region Freezing Trap
-        public void SetHasFreezingTrap(bool state) {
+        public void SetHasFreezingTrap(bool state, TrapChecker freezingTrapChecker = null) {
             if (hasFreezingTrap != state) {
                 hasFreezingTrap = state;
                 if (hasFreezingTrap) {
+                    _freezingTrapChecker = freezingTrapChecker;
                     _freezingTrapEffect = GameManager.Instance.CreateParticleEffectAt(this, PARTICLE_EFFECT.Freezing_Trap, InnerMapManager.DetailsTilemapSortingOrder - 1);
                 } else {
                     ObjectPoolManager.Instance.DestroyObject(_freezingTrapEffect);
                     _freezingTrapEffect = null;
+                    _freezingTrapChecker = null;
                 }
             }
         }

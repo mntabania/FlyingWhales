@@ -141,6 +141,7 @@ public class GenericTileObject : TileObject {
         hasBeenInitialized = true;
         Initialize(TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT, false);
         SetGridTileLocation(tile);
+        AddAdvertisedAction(INTERACTION_TYPE.PLACE_FREEZING_TRAP);
         // OnPlacePOI();
         // DisableGameObject();
         // RemoveCommonAdvertisements();
