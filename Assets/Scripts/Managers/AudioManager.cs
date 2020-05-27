@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Ruinarch.Custom_UI;
 using Settings;
 using UnityEngine;
 using UnityEngine.Audio;
@@ -15,8 +16,11 @@ public class AudioManager : MonoBehaviour {
     [SerializeField] private AudioMixer masterMixer;
     [SerializeField] private AudioMixer musicMixer;
 
-    [Header("Audio Sources")] 
+    [Header("Music Audio Sources")] 
     [SerializeField] private AudioSource worldMusic;
+    
+    [Header("UI Audio Sources")] 
+    [SerializeField] private AudioSource buttonClick;
     
     [Header("Snapshots")] 
     [SerializeField] private AudioMixerSnapshot mainMenuSnapShot;
@@ -40,14 +44,18 @@ public class AudioManager : MonoBehaviour {
     private void Initialize() {
         Messenger.MarkAsPermanent(Signals.MASTER_VOLUME_CHANGED);
         Messenger.MarkAsPermanent(Signals.MUSIC_VOLUME_CHANGED);
+        Messenger.MarkAsPermanent(Signals.BUTTON_CLICKED);
+        Messenger.MarkAsPermanent(Signals.TOGGLE_CLICKED);
+        
         Messenger.AddListener<float>(Signals.MASTER_VOLUME_CHANGED, SetMasterVolume);
         Messenger.AddListener<float>(Signals.MUSIC_VOLUME_CHANGED, SetMusicVolume);
+        Messenger.AddListener<RuinarchButton>(Signals.BUTTON_CLICKED, OnButtonClicked);
+        Messenger.AddListener<RuinarchToggle>(Signals.TOGGLE_CLICKED, OnToggleClicked);
         
         SetMasterVolume(SettingsManager.Instance.settings.masterVolume);
         SetMusicVolume(SettingsManager.Instance.settings.musicVolume);
     }
     #endregion
-    
 
     #region Music
     public void TransitionToLoading() {
@@ -74,8 +82,15 @@ public class AudioManager : MonoBehaviour {
         masterMixer.SetFloat(MusicVolume, volume);
     }
     #endregion
-    
 
-   
+    #region UI
+    private void OnButtonClicked(RuinarchButton button) {
+        buttonClick.Play();
+    }
+    private void OnToggleClicked(RuinarchToggle toggle) {
+        // buttonClick.Play();
+    }
+    #endregion
+    
 
 }

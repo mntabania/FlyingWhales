@@ -34,7 +34,7 @@ namespace Inner_Maps {
         }
         
         private IEnumerator UpdateGraph() {
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(0.5f);
             gus.Apply();
         }
     }

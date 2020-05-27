@@ -213,6 +213,14 @@ public static class Signals {
     /// </summary>
     public static string REGION_SELECTED = "OnRegionSelected";
     public static string FLAW_CLICKED = "OnFlawClicked";
+    /// <summary>
+    /// Parameters: Ruinarch.UI.RuinarchButton ClickedButton 
+    /// </summary>
+    public static string BUTTON_CLICKED = "OnButtonClicked";
+    /// <summary>
+    /// Parameters: Ruinarch.UI.RuinarchToggle ClickedToggle 
+    /// </summary>
+    public static string TOGGLE_CLICKED = "OnToggleClicked";
     #endregion
 
     #region Quest Signals
