@@ -63,6 +63,7 @@ public class CharacterManager : MonoBehaviour {
     public COMBAT_MODE[] combatModes { get; private set; }
     public List<string> rumorWorthyActions { get; private set; }
     public DemonicStructure currentDemonicStructureTargetOfAngels { get; private set; }
+    public Character necromancerInTheWorld { get; private set; }
 
     private Dictionary<System.Type, CharacterBehaviourComponent> behaviourComponents;
     private Dictionary<string, System.Type[]> defaultBehaviourSets = new Dictionary<string, Type[]>() {
@@ -983,6 +984,12 @@ public class CharacterManager : MonoBehaviour {
             }
         }
         return true;
+    }
+    #endregion
+
+    #region Necromancer
+    public void SetNecromancerInTheWorld(Character character) {
+        necromancerInTheWorld = character;
     }
     #endregion
 
