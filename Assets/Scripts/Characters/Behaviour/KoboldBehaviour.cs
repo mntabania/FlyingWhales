@@ -10,7 +10,7 @@ public class KoboldBehaviour : CharacterBehaviourComponent {
     }
     
     public override bool TryDoBehaviour(Character character, ref string log) {
-        if (UnityEngine.Random.Range(0, 100) < 5) {
+        if (UnityEngine.Random.Range(0, 100) < 10) {
             // List<HexTile> hexTileChoices = GetTilesNextToActiveSettlement(character.currentRegion);
             List<HexTile> hexTileChoices = GetTilesNextToHome(character);
             if (hexTileChoices.Count > 0) {

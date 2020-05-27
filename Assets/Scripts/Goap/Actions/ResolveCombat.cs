@@ -11,7 +11,7 @@ public class ResolveCombat : GoapAction {
         actionIconString = GoapActionStateDB.Hostile_Icon;
         doesNotStopTargetCharacter = true;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER, POINT_OF_INTEREST_TYPE.TILE_OBJECT };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.DEMON, RACE.SPIDER, RACE.SKELETON };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.DEMON, RACE.SPIDER, RACE.SKELETON, RACE.WOLF };
         canBeAdvertisedEvenIfActorIsUnavailable = true;
     }
 
@@ -52,8 +52,7 @@ public class ResolveCombat : GoapAction {
 
     #region Preconditions
     private bool IsCombatFinished(Character actor, IPointOfInterest target, object[] otherData) {
-        if (target is Character) {
-            Character targetCharacter = target as Character;
+        if (target is Character targetCharacter) {
             //target character must be
             // - unable to move
             //to consider the combat as finished

@@ -82,7 +82,7 @@ public class KnockoutCharacter : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
-            return actor != poiTarget && (actor.traitContainer.HasTrait("Psychopath") || actor.traitContainer.HasTrait("Vampiric"));
+            return actor != poiTarget && (actor.traitContainer.HasTrait("Psychopath") || actor.traitContainer.HasTrait("Vampiric") || actor.isNormalCharacter == false);
         }
         return false;
     }

@@ -488,6 +488,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.PLACE_FREEZING_TRAP, new[]{
             new StateNameAndDuration(){ name = "Place Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
+        {INTERACTION_TYPE.EAT_CORPSE, new[]{
+            new StateNameAndDuration(){ name = "Eat Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(15) },
+        } },
     };
 }
 

@@ -4326,6 +4326,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         if (this is Animal) {
             AddAdvertisedAction(INTERACTION_TYPE.BUTCHER);
+            AddAdvertisedAction(INTERACTION_TYPE.EAT_CORPSE);
         }
         if (!(this is Summon) && race != RACE.SKELETON) {
             AddAdvertisedAction(INTERACTION_TYPE.DAYDREAM);

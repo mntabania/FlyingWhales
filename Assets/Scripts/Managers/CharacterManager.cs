@@ -23,7 +23,7 @@ public class CharacterManager : MonoBehaviour {
         Destroy_Action = "Destroy";
     public const string Default_Resident_Behaviour = "Default Resident Behaviour", Default_Monster_Behaviour = "Default Monster Behaviour",
         Default_Minion_Behaviour = "Default Minion Behaviour", Default_Wanderer_Behaviour = "Default Wanderer Behaviour", Default_Angel_Behaviour = "Default Angel Behaviour",
-        Default_Wolf_Behaviour = "Default Wolf Behaviour", Default_Kobold_Behaviour = "Default Kobold Behaviour";
+        Default_Wolf_Behaviour = "Default Wolf Behaviour", Default_Kobold_Behaviour = "Default Kobold Behaviour", Default_Giant_Spider_Behaviour = "Default Giant Spider Behaviour";
     public const int MAX_HISTORY_LOGS = 300;
 
     
@@ -113,6 +113,13 @@ public class CharacterManager : MonoBehaviour {
         { Default_Kobold_Behaviour,
             new []{
                 typeof(KoboldBehaviour),
+                typeof(MovementProcessing),
+                typeof(DefaultMonster)
+            }
+        },
+        { Default_Giant_Spider_Behaviour,
+            new []{
+                typeof(GiantSpiderBehaviour),
                 typeof(MovementProcessing),
                 typeof(DefaultMonster)
             }
