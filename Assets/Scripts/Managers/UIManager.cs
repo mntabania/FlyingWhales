@@ -1177,31 +1177,6 @@ public class UIManager : MonoBehaviour {
     public void HidePlayerNotificationArea() {
         playerNotifGO.SetActive(false);
     }
-    private void MoveNotificationMenuToDefaultPos() {
-        playerNotificationParent.anchoredPosition = new Vector2(506f, 170f);
-    }
-    private void MoveNotificationMenuToModifiedPos() {
-        playerNotificationParent.anchoredPosition = new Vector2(930f, 170f);
-    }
-    #endregion
-
-    #region Interior Map Loading
-    [Header("Interior Map Loading")]
-    [SerializeField] private GameObject interiorMapLoadingGO;
-    [SerializeField] private Image interiorMapLoadingBGImage;
-    [SerializeField] private GameObject interiorMapLoadingDetailsGO;
-    public void SetInteriorMapLoadingState(bool state) {
-        interiorMapLoadingGO.SetActive(state);
-        //if (state) {
-        //    interiorMapLoadingGO.SetActive(true);
-        //    //StartCoroutine(LoadingCoroutine(128f/ 255f));
-        //    //interiorMapLoadingTween.PlayForward();
-        //} else {
-        //    //interiorMapLoadingTween.PlayReverse();
-        //    //interiorMapLoadingBGImage.CrossFadeAlpha(0, 0.5f, true);
-        //    //StartCoroutine(LoadingCoroutine(0f / 255f));
-        //}
-    }
     #endregion
 
     #region Yes/No

@@ -54,7 +54,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13bc074f95c8e2d4a91942241629b06f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  skillTree: {fileID: 11400000, guid: 7d1c50c07a6c8a846a98324818442b50, type: 2}
+  parentSkillTreeUI: {fileID: 0}
   skillTreeItems:
     m_keys: 170000002200000006000000230000002c00000012000000
     m_values:
@@ -116,7 +116,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13bc074f95c8e2d4a91942241629b06f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  skillTree: {fileID: 11400000, guid: 7d1c50c07a6c8a846a98324818442b50, type: 2}
+  parentSkillTreeUI: {fileID: 0}
   skillTreeItems:
     m_keys: 4a00000049000000070000004e000000
     m_values:
@@ -868,7 +868,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13bc074f95c8e2d4a91942241629b06f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  skillTree: {fileID: 11400000, guid: 7d1c50c07a6c8a846a98324818442b50, type: 2}
+  parentSkillTreeUI: {fileID: 0}
   skillTreeItems:
     m_keys: 090000002e000000260000000a0000001d000000
     m_values:
@@ -1464,7 +1464,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13bc074f95c8e2d4a91942241629b06f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  skillTree: {fileID: 11400000, guid: 7d1c50c07a6c8a846a98324818442b50, type: 2}
+  parentSkillTreeUI: {fileID: 0}
   skillTreeItems:
     m_keys: 3800000037000000540000001900000028000000
     m_values:
