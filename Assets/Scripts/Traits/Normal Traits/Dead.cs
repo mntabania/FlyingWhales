@@ -14,6 +14,7 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
             //effects = new List<TraitEffect>();
+            advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.RAISE_CORPSE };
             charactersThatSawThisDead = new List<Character>();
             hindersMovement = true;
             hindersWitness = true;

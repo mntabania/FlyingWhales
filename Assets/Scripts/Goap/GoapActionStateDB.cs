@@ -485,6 +485,18 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.DIG, new[]{
             new StateNameAndDuration(){ name = "Dig Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(15) },
         } },
+        {INTERACTION_TYPE.BUILD_LAIR, new[]{
+            new StateNameAndDuration(){ name = "Build Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
+        } },
+        {INTERACTION_TYPE.ABSORB_LIFE, new[]{
+            new StateNameAndDuration(){ name = "Absorb Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1) },
+        } },
+        {INTERACTION_TYPE.SPAWN_SKELETON, new[]{
+            new StateNameAndDuration(){ name = "Spawn Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
+        } },
+        {INTERACTION_TYPE.RAISE_CORPSE, new[]{
+            new StateNameAndDuration(){ name = "Raise Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
+        } },
         {INTERACTION_TYPE.PLACE_FREEZING_TRAP, new[]{
             new StateNameAndDuration(){ name = "Place Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },

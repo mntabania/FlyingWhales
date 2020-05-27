@@ -90,7 +90,7 @@ namespace Interrupts {
                     if (!actor.HasTerritory()) {
                         if (UnityEngine.Random.Range(0, 2) == 0) {
                             log += "\n-Getting structureless hex tile in current region: " + currentRegion.name;
-                            HexTile hex = currentRegion.GetRandomNoStructurePlainHex();
+                            HexTile hex = currentRegion.GetRandomNoStructureNotPartOrNextToVillagePlainHex();
                             if (hex != null) {
                                 actor.AddTerritory(hex);
                                 log += "\n-Hex tile found: " + hex.tileName;
@@ -126,7 +126,7 @@ namespace Interrupts {
                     if (!actor.HasTerritory()) {
                         if (UnityEngine.Random.Range(0, 2) == 0) {
                             log += "\n-Getting structureless hex tile in current region: " + currentRegion.name;
-                            HexTile hex = currentRegion.GetRandomNoStructurePlainHex();
+                            HexTile hex = currentRegion.GetRandomNoStructureNotPartOrNextToVillagePlainHex();
                             if (hex != null) {
                                 actor.AddTerritory(hex);
                                 log += "\n-Hex tile found: " + hex.tileName;
@@ -179,7 +179,7 @@ namespace Interrupts {
                     if (!actor.HasTerritory()) {
                         if (UnityEngine.Random.Range(0, 2) == 0) {
                             log += "\n-Getting structureless hex tile in current region: " + currentRegion.name;
-                            HexTile hex = currentRegion.GetRandomNoStructurePlainHex();
+                            HexTile hex = currentRegion.GetRandomNoStructureNotPartOrNextToVillagePlainHex();
                             if (hex != null) {
                                 actor.AddTerritory(hex);
                                 log += "\n-Hex tile found: " + hex.tileName;
@@ -250,7 +250,7 @@ namespace Interrupts {
                     if (!actor.HasTerritory()) {
                         if(UnityEngine.Random.Range(0, 2) == 0) {
                             log += "\n-Getting structureless hex tile in current region: " + currentRegion.name;
-                            HexTile hex = currentRegion.GetRandomNoStructurePlainHex();
+                            HexTile hex = currentRegion.GetRandomNoStructureNotPartOrNextToVillagePlainHex();
                             if(hex != null) {
                                 actor.AddTerritory(hex);
                                 log += "\n-Hex tile found: " + hex.tileName;

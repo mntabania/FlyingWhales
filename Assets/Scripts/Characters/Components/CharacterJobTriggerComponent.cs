@@ -1156,4 +1156,46 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    return target.gridTileLocation != null && target.gridTileLocation.IsNextToOrPartOfSettlement(npcSettlement) && target.marker != null;
     }
     #endregion
+
+    #region Go To
+    public bool CreateGoToJob(IPointOfInterest target) {
+        if(!_owner.jobQueue.HasJob(JOB_TYPE.GO_TO, target)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.GO_TO, INTERACTION_TYPE.GO_TO, target, _owner);
+            return _owner.jobQueue.AddJobInQueue(job);
+        }
+        return false;
+    }
+    #endregion
+
+    #region Build
+    public void TriggerSpawnLair(LocationGridTile targetTile) {
+        if (!_owner.jobQueue.HasJob(JOB_TYPE.SPAWN_LAIR)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SPAWN_LAIR, INTERACTION_TYPE.BUILD_LAIR, _owner, _owner);
+            job.AddOtherData(INTERACTION_TYPE.BUILD_LAIR, new object[] { targetTile });
+            _owner.jobQueue.AddJobInQueue(job);
+        }
+    }
+    #endregion
+
+    #region Necromancer
+    public void TriggerAbsorbLife() {
+        if (!_owner.jobQueue.HasJob(JOB_TYPE.ABSORB_LIFE)) {
+            GoapEffect effect = new GoapEffect(GOAP_EFFECT_CONDITION.ABSORB_LIFE, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ABSORB_LIFE, effect, _owner, _owner);
+            _owner.jobQueue.AddJobInQueue(job);
+        }
+    }
+    public void TriggerSpawnSkeleton() {
+        if (!_owner.jobQueue.HasJob(JOB_TYPE.SPAWN_SKELETON)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SPAWN_SKELETON, INTERACTION_TYPE.SPAWN_SKELETON, _owner, _owner);
+            _owner.jobQueue.AddJobInQueue(job);
+        }
+    }
+    public void TriggerRaiseCorpse(IPointOfInterest target) {
+        if (!_owner.jobQueue.HasJob(JOB_TYPE.RAISE_CORPSE)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RAISE_CORPSE, INTERACTION_TYPE.RAISE_CORPSE, target, _owner);
+            _owner.jobQueue.AddJobInQueue(job);
+        }
+    }
+    #endregion
 }

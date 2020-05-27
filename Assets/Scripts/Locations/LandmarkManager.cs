@@ -328,6 +328,29 @@ public partial class LandmarkManager : MonoBehaviour {
         }
         return null;
     }
+    public NPCSettlement GetRandomVillageSettlementInRegion(Region region) {
+        List<NPCSettlement> villages = null;
+        for (int i = 0; i < allNonPlayerSettlements.Count; i++) {
+            NPCSettlement settlement = allNonPlayerSettlements[i];
+            if (settlement.region == region && (settlement.locationType == LOCATION_TYPE.ELVEN_SETTLEMENT || settlement.locationType == LOCATION_TYPE.HUMAN_SETTLEMENT)) {
+                if (villages == null) { villages = new List<NPCSettlement>(); }
+                villages.Add(settlement);
+            }
+        }
+        if (villages != null && villages.Count > 0) {
+            return villages[UnityEngine.Random.Range(0, villages.Count)];
+        }
+        return null;
+    }
+    public NPCSettlement GetFirstVillageSettlementInRegion(Region region) {
+        for (int i = 0; i < allNonPlayerSettlements.Count; i++) {
+            NPCSettlement settlement = allNonPlayerSettlements[i];
+            if (settlement.region == region && (settlement.locationType == LOCATION_TYPE.ELVEN_SETTLEMENT || settlement.locationType == LOCATION_TYPE.HUMAN_SETTLEMENT)) {
+                return settlement;
+            }
+        }
+        return null;
+    }
     public void RemoveArea(NPCSettlement npcSettlement) {
         allSettlements.Remove(npcSettlement);
     }

@@ -21,7 +21,7 @@ public class HeartOfTheWind : Artifact {
             tornadoTileObject.SetGridTileLocation(gridTileLocation);
             tornadoTileObject.OnPlacePOI();
 
-            gridTileLocation.structure.RemovePOI(this);
+            //gridTileLocation.structure.RemovePOI(this);
         }
     }
     #endregion

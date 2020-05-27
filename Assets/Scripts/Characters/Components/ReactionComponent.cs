@@ -453,7 +453,7 @@ public class ReactionComponent {
             }
         } else if (!owner.isInCombat) {
             debugLog += "\n-Target is not hostile and Character is not in combat";
-            if (owner.minion == null && !(owner is Summon) && owner.faction != FactionManager.Instance.zombieFaction && !IsPOICurrentlyTargetedByAPerformingAction(targetCharacter)) {
+            if (owner.minion == null && !(owner is Summon) && owner.faction != FactionManager.Instance.undeadFaction && !IsPOICurrentlyTargetedByAPerformingAction(targetCharacter)) {
                 debugLog += "\n-Character is not minion and not summon and Target is not being targeted by an action, continue reaction";
                 if (!targetCharacter.isDead) {
                     debugLog += "\n-Target is not dead";
@@ -688,7 +688,7 @@ public class ReactionComponent {
         if (targetTileObject.tileObjectType.IsTileObjectAnItem()) {
             if (targetTileObject.gridTileLocation != null && owner.homeSettlement != null
                 && targetTileObject.gridTileLocation.structure != owner.homeSettlement.mainStorage
-                && targetTileObject.gridTileLocation.structure is Dwelling) {
+                && !(targetTileObject.gridTileLocation.structure is Dwelling)) {
                 owner.jobComponent.CreateTakeItemJob(targetTileObject);
             }
         }

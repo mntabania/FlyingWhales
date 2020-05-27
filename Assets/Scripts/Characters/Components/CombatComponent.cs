@@ -44,7 +44,7 @@ public class CombatComponent {
             owner.logComponent.PrintLogIfActive(debugLog);
             return;
         }
-        if (owner.faction == FactionManager.Instance.zombieFaction || owner.race == RACE.SKELETON) {
+        if (owner.faction == FactionManager.Instance.undeadFaction || owner.race == RACE.SKELETON) {
             debugLog += "\n-Character is zombie";
             debugLog += "\n-FIGHT";
             owner.logComponent.PrintLogIfActive(debugLog);

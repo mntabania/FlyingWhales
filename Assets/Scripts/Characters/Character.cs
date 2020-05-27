@@ -90,11 +90,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool hasSeenWet { get; protected set; }
     public bool hasSeenPoisoned { get; protected set; }
     public bool destroyMarkerOnDeath { get; protected set; }
-    public LycanthropeData lycanData { get; protected set; }
+    public bool isWanderer { get; private set; }
+
     public List<JobQueueItem> forcedCancelJobsOnTickEnded { get; private set; }
     public List<HexTile> territorries { get; private set; }
     public NPCSettlement ruledSettlement { get; private set; }
-    public bool isWanderer { get; private set; }
+
+    public LycanthropeData lycanData { get; protected set; }
+    public Necromancer necromancerTrait { get; protected set; }
+
 
     private List<Action> onLeaveAreaActions;
     private POI_STATE _state;
@@ -282,7 +286,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     /// Characters that are not monsters or minions.
     /// </summary>
     /// <returns></returns>
-    public bool isNormalCharacter => (this is Summon) == false && minion == null && faction != FactionManager.Instance.zombieFaction;
+    public bool isNormalCharacter => (this is Summon) == false && minion == null && faction != FactionManager.Instance.undeadFaction;
     //public JobQueueItem currentJob => jobQueue.jobsInQueue.Count > 0 ? jobQueue.jobsInQueue[0] : null; //The current job is always the top of the queue
     public JobTriggerComponent jobTriggerComponent => jobComponent;
     public GameObject visualGO => marker.gameObject;
@@ -705,306 +709,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     #endregion
 
-    //Changes character's side
-    //public void SetSide(SIDES side) {
-    //    this._currentSide = side;
-    //}
-    //Character's death
-    public void SetIsDead(bool isDead) {
-        if(_isDead != isDead) {
-            _isDead = isDead;
-            if (_isDead) {
-                if (race == RACE.HUMANS || race == RACE.ELVES) {
-                    //PlayerAction raiseAction = new PlayerAction(PlayerDB.Raise_Skeleton_Action
-                    //    , () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.RAISE_DEAD].CanPerformAbilityTowards(this)
-                    //    , null
-                    //    , () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.RAISE_DEAD].ActivateAbility(this));
-                    AddPlayerAction(SPELL_TYPE.RAISE_DEAD);
-                }
-            } else {
-                RemovePlayerAction(SPELL_TYPE.RAISE_DEAD);
-            }
-        }
-    }
-    public void RaiseFromDeath(Action<Character> onReturnToLifeAction = null, Faction faction = null, RACE race = RACE.SKELETON, string className = "") {
-        GameManager.Instance.StartCoroutine(faction == null
-            ? Raise(this, onReturnToLifeAction, FactionManager.Instance.neutralFaction, race, className)
-            : Raise(this, onReturnToLifeAction, faction, race, className));
-    }
-    private IEnumerator Raise(Character target, Action<Character> onReturnToLifeAction, Faction faction, RACE race, string className) {
-        if (className == "Zombie") {
-            LocationGridTile tile = grave != null ? grave.gridTileLocation : target.gridTileLocation;
-            GameManager.Instance.CreateParticleEffectAt(tile, PARTICLE_EFFECT.Zombie_Transformation);
-            yield return new WaitForSeconds(5f);
-            target.marker.PlayAnimation("Raise Dead");
-        } else {
-            target.marker.PlayAnimation("Raise Dead");
-            yield return new WaitForSeconds(0.7f);    
-        }
-        target.ReturnToLife(faction, race, className);
-        target.UpdateMaxHPAndReset();
-        yield return null;
-        onReturnToLifeAction?.Invoke(this);
-    }
-    private void ReturnToLife(Faction faction, RACE race, string className) {
-        if (_isDead) {
-            returnedToLife = true;
-            SetIsDead(false);
-            SubscribeToSignals();
-            ResetToFullHP();
-            SetPOIState(POI_STATE.ACTIVE);
-            ChangeFactionTo(faction);
-            ChangeRace(race);
-            // AssignRole(CharacterRole.SOLDIER);
-            // if (string.IsNullOrEmpty(className)) {
-            //     AssignClassByRole(this.role);
-            // } else {
-            //     AssignClass(className);
-            // }
-            AssignClass(className);
-            needsComponent.ResetFullnessMeter();
-            needsComponent.ResetTirednessMeter();
-            needsComponent.ResetHappinessMeter();
-            ownParty.ReturnToLife();
-            marker.OnReturnToLife();
-            if (grave != null) {
-                Tombstone tombstone = grave;
-                grave.gridTileLocation.structure.RemovePOI(grave);
-                SetGrave(null);
-                marker.PlaceMarkerAt(tombstone.previousTile);
-            }
-            traitContainer.RemoveTrait(this, "Dead");
-            for (int i = 0; i < traitContainer.traits.Count; i++) {
-                traitContainer.traits[i].OnReturnToLife(this);
-            }
-            //RemoveAllNonPersistentTraits();
-            //ClearAllAwareness();
-            //NPCSettlement gloomhollow = LandmarkManager.Instance.GetAreaByName("Gloomhollow");
-            //ChangeHomeStructure(null);
-            MigrateHomeStructureTo(null);
-            needsComponent.SetTirednessForcedTick(0);
-            needsComponent.SetFullnessForcedTick(0);
-            needsComponent.SetHasCancelledSleepSchedule(false);
-            needsComponent.ResetSleepTicks();
-            ConstructDefaultActions();
-            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
-            //MigrateHomeTo(null);
-            //AddInitialAwareness(gloomhollow);
-            Messenger.Broadcast(Signals.CHARACTER_RETURNED_TO_LIFE, this);
-        }
-    }
-    public virtual void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null, LogFiller[] deathLogFillers = null, Interrupt interrupt = null) {
-        if (minion != null) {
-            minion.Death(cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers);
-            return;
-        }
-        if (!_isDead) {
-            //if (currentAlterEgoName != CharacterManager.Original_Alter_Ego) {
-            //    SwitchAlterEgo(CharacterManager.Original_Alter_Ego); //revert the character to his/her original alter ego
-            //}
-            SetIsConversing(false);
-            //SetIsFlirting(false);
-            Region deathLocation = currentRegion;
-            LocationStructure deathStructure = currentStructure;
-            LocationGridTile deathTile = gridTileLocation;
-
-            List<Trait> traitOverrideFunctions = traitContainer.GetTraitOverrideFunctions(TraitManager.Death_Trait);
-            if (traitOverrideFunctions != null) {
-                for (int i = 0; i < traitOverrideFunctions.Count; i++) {
-                    Trait trait = traitOverrideFunctions[i];
-                    if (trait.OnDeath(this)) {
-                        i--;
-                    }
-                }
-            }
-            //for (int i = 0; i < traitContainer.allTraitsAndStatuses.Count; i++) {
-            //    if (traitContainer.allTraitsAndStatuses[i].OnDeath(this)) {
-            //        i--;
-            //    }
-            //}
-            if (lycanData != null) {
-                lycanData.LycanDies(this, cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers);
-            }
-            //------------------------ Things that are above this line are called before letting the character die so that if we need things done before actually setting the death of character we can do it here like cleaning up necessary things, etc.
-            SetIsDead(true);
-            if (isLimboCharacter && isInLimbo) {
-                //If a limbo character dies while in limbo, that character should not process death, instead he/she will be removed from the list
-                CharacterManager.Instance.RemoveLimboCharacter(this);
-                return;
-            }
-            UnsubscribeSignals();
-            SetPOIState(POI_STATE.INACTIVE);
-            //CombatManager.Instance.ReturnCharacterColorToPool(_characterColor);
-
-            if (currentRegion == null) {
-                throw new Exception(
-                    $"Current Region Location of {name} is null! Please use command /l_character_location_history [Character Name/ID] in console menu to log character's location history. (Use '~' to show console menu)");
-            }
-            if (stateComponent.currentState != null) {
-                stateComponent.ExitCurrentState();
-            }
-            //else if (stateComponent.stateToDo != null) {
-            //    stateComponent.SetStateToDo(null);
-            //}
-            //if (deathFromAction != null) { //if this character died from an action, do not cancel the action that he/she died from. so that the action will just end as normal.
-            //    CancelAllJobsTargettingThisCharacterExcept(deathFromAction, "target is already dead", false);
-            //} else {
-            //    CancelAllJobsTargettingThisCharacter("target is already dead", false);
-            //}
-            //StopCurrentActionNode();
-            //ForceCancelAllJobsTargettingCharacter(false, "target is already dead");
-            ////Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, this, "target is already dead");
-            //if (jobQueue.jobsInQueue.Count > 0) {
-            //    jobQueue.CancelAllJobs();
-            //}
-            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "target is already dead");
-            CancelAllJobs();
-
-            if (currentSettlement != null && isHoldingItem) {
-                DropAllItems(deathTile);
-            } else {
-                for (int i = 0; i < items.Count; i++) {
-                    if (RemoveItem(i)) {
-                        i--;
-                    }
-                }
-            }
-            //if (currentRegion == null) {
-            //    if (currentArea != null && isHoldingItem) {
-            //        DropAllTokens(currentArea, currentStructure, deathTile, true);
-            //    } else {
-            //        for (int i = 0; i < items.Count; i++) {
-            //            if (RemoveToken(i)) {
-            //                i--;
-            //            }
-            //        }
-            //    }
-            //} else {
-            //    List<SpecialToken> all = new List<SpecialToken>(items);
-            //    for (int i = 0; i < all.Count; i++) {
-            //        RemoveToken(all[i]);
-            //    }
-            //}
-
-
-            //clear traits that need to be removed
-            traitsNeededToBeRemoved.Clear();
-
-            bool wasOutsideSettlement = currentSettlement == null;
-
-            //bool wasOutsideSettlement = false;
-            //if (currentRegion != null) {
-            //    wasOutsideSettlement = true;
-            //    currentRegion.RemoveCharacterFromLocation(this);
-            //}
-            UncarryPOI();
-            Character carrier = isBeingCarriedBy;
-            if (carrier != null) {
-                carrier.UncarryPOI(this);
-            }
-            ownParty.PartyDeath();
-            currentRegion?.RemoveCharacterFromLocation(this);
-            SetRegionLocation(deathLocation); //set the specific location of this party, to the location it died at
-            SetCurrentStructureLocation(deathStructure, false);
-
-            //if (this.race != RACE.SKELETON) {
-            //    deathLocation.AddCorpse(this, deathStructure, deathTile);
-            //}
-
-
-            //if (faction != null) {
-            //    faction.LeaveFaction(this); //remove this character from it's factions list of characters
-            //}
-            //if (faction != null && faction.leader == this) {
-            //    faction.SetNewLeader();
-            //}
-
-            // if (_role != null) {
-            //     _role.OnDeath(this);
-            // }
-
-            if (homeRegion != null) {
-                Region home = homeRegion;
-                LocationStructure homeStructure = this.homeStructure;
-                homeRegion.RemoveResident(this);
-                SetHomeRegion(home); //keep this data with character to prevent errors
-                SetHomeStructure(homeStructure); //keep this data with character to prevent errors
-            }
-            if(homeSettlement != null) {
-                homeSettlement.jobPriorityComponent.UnassignResidentToPrimaryJob(this);
-            }
-            //if (homeNpcSettlement != null) {
-            //    NPCSettlement home = homeNpcSettlement;
-            //    Dwelling homeStructure = this.homeStructure;
-            //    homeNpcSettlement.RemoveResident(this);
-            //    SetHome(home); //keep this data with character to prevent errors
-            //    SetHomeStructure(homeStructure); //keep this data with character to prevent errors
-            //}
-
-            //List<Character> characterRels = new List<Character>(this.relationships.Keys.ToList());
-            //for (int i = 0; i < characterRels.Count; i++) {
-            //    RemoveRelationship(characterRels[i]);
-            //}
-
-            //if (_minion != null) {
-            //    PlayerManager.Instance.player.RemoveMinion(_minion);
-            //}
-
-            //ObjectPoolManager.Instance.DestroyObject(marker.gameObject);
-            //deathTile.RemoveCharacterHere(this);
-
-            //RemoveAllTraitsByType(TRAIT_TYPE.CRIMINAL); //remove all criminal type traits
-
-            //RemoveAllNonPersistentTraits();
-
-            SetHP(0);
-
-            marker.OnDeath(deathTile);
-
-            if (interruptComponent.isInterrupted && interruptComponent.currentInterrupt != interrupt) {
-                interruptComponent.ForceEndNonSimultaneousInterrupt();
-            }
-
-            //SetNumWaitingForGoapThread(0); //for raise dead
-            //Dead dead = new Dead();
-            //dead.SetCharacterResponsibleForTrait(responsibleCharacter);
-            traitContainer.AddTrait(this, "Dead", responsibleCharacter, gainedFromDoing: deathFromAction);
-
-            logComponent.PrintLogIfActive($"{name} died of {cause}");
-            Log deathLog;
-            if (_deathLog == null) {
-                deathLog = new Log(GameManager.Instance.Today(), "Character", "Generic", $"death_{cause}");
-                deathLog.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                if (responsibleCharacter != null) {
-                    deathLog.AddToFillers(responsibleCharacter, responsibleCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                }
-                if (deathLogFillers != null) {
-                    for (int i = 0; i < deathLogFillers.Length; i++) {
-                        deathLog.AddToFillers(deathLogFillers[i]);
-                    }
-                }
-                //will only add death log to history if no death log is provided. NOTE: This assumes that if a death log is provided, it has already been added to this characters history.
-                //AddHistory(deathLog);
-                deathLog.AddLogToInvolvedObjects();
-                //specificLocation.AddHistory(deathLog);
-                PlayerManager.Instance.player.ShowNotificationFrom(this, deathLog);
-            } else {
-                deathLog = _deathLog;
-            }
-            deathStr = UtilityScripts.Utilities.LogReplacer(deathLog);
-            Messenger.Broadcast(Signals.CHARACTER_DEATH, this);
-
-            //for (int i = 0; i < traitContainer.allTraits.Count; i++) {
-            //    if (traitContainer.allTraits[i].OnAfterDeath(this, cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers)) {
-            //        i--;
-            //    }
-            //}
-        }
-    }
-    public void SetGrave(Tombstone grave) {
-        this.grave = grave;
-    }
-
     #region Roles
     // public void AssignRole(CharacterRole role, bool updateCombatantState = true) {
     //     bool wasRoleChanged = false;
@@ -1058,9 +762,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     protected void OnUpdateCharacterClass() {
-        if (_currentHP > maxHP) {
-            _currentHP = maxHP;
-        }
+        UpdateMaxHPAndReset();
+        //if (_currentHP > maxHP) {
+        //    _currentHP = maxHP;
+        //}
         //if (_sp > _maxSP) {
         //    _sp = _maxSP;
         //}
@@ -1530,12 +1235,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //ignore change, because character is already part of that faction
             return;
         }
+        Faction prevFaction = _faction;
         _faction = newFaction;
         //currentAlterEgo.SetFaction(faction);
-        OnChangeFaction();
+        OnChangeFaction(prevFaction, newFaction);
         // UpdateItemFactionOwner();
         if (_faction != null) {
-            Messenger.Broadcast<Character>(Signals.FACTION_SET, this);
+            Messenger.Broadcast(Signals.FACTION_SET, this);
         }
     }
     public bool ChangeFactionTo(Faction newFaction) {
@@ -1546,11 +1252,17 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         newFaction.JoinFaction(this);
         return true;
     }
-    private void OnChangeFaction() {
+    private void OnChangeFaction(Faction prevFaction, Faction newFaction) {
         //check if this character has a Criminal Trait, if so, remove it
         Trait criminal = traitContainer.GetNormalTrait<Trait>("Criminal");
         if (criminal != null) {
             traitContainer.RemoveTrait(this, criminal);
+        }
+        if(prevFaction != null && prevFaction == FactionManager.Instance.undeadFaction) {
+            behaviourComponent.RemoveBehaviourComponent(typeof(UndeadBehaviour));
+        }
+        if (newFaction != null && newFaction == FactionManager.Instance.undeadFaction) {
+            behaviourComponent.AddBehaviourComponent(typeof(UndeadBehaviour));
         }
         // if (PlayerManager.Instance.player != null && this.faction == PlayerManager.Instance.player.playerFaction) {
         //     ClearPlayerActions();
@@ -2192,6 +1904,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Default_Resident_Behaviour);
             }
         }
+    }
+    public int GetCanPerformValue() {
+        return _canPerformValue;
     }
     #endregion    
 
@@ -3830,6 +3545,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     private bool AddItem(TileObject item) {
         if (!items.Contains(item)) {
             items.Add(item);
+            item.OnTileObjectAddedToInventoryOf(this);
             Messenger.Broadcast(Signals.CHARACTER_OBTAINED_ITEM, item, this);
             return true;
         }
@@ -5131,8 +4847,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             canReact = false;
         }
         if (canReact) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.GO_TO, INTERACTION_TYPE.GO_TO, characterThatScreamed, this);
-            jobQueue.AddJobInQueue(job);
+            jobComponent.CreateGoToJob(characterThatScreamed);
+            //GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.GO_TO, INTERACTION_TYPE.GO_TO, characterThatScreamed, this);
+            //jobQueue.AddJobInQueue(job);
             //if (CanCurrentJobBeOverriddenByJob(job)) {
             //    jobQueue.AddJobInQueue(job, false);
             //    jobQueue.CurrentTopPriorityIsPushedBackBy(job, this);
@@ -5837,8 +5554,311 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return chosenTile;
     }
     #endregion
-    
-    public int GetCanPerformValue() {
-        return _canPerformValue;
+
+    #region Death
+    //Changes character's side
+    //public void SetSide(SIDES side) {
+    //    this._currentSide = side;
+    //}
+    //Character's death
+    public void SetIsDead(bool isDead) {
+        if (_isDead != isDead) {
+            _isDead = isDead;
+            if (_isDead) {
+                if (race == RACE.HUMANS || race == RACE.ELVES) {
+                    //PlayerAction raiseAction = new PlayerAction(PlayerDB.Raise_Skeleton_Action
+                    //    , () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.RAISE_DEAD].CanPerformAbilityTowards(this)
+                    //    , null
+                    //    , () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.RAISE_DEAD].ActivateAbility(this));
+                    AddPlayerAction(SPELL_TYPE.RAISE_DEAD);
+                }
+            } else {
+                RemovePlayerAction(SPELL_TYPE.RAISE_DEAD);
+            }
+        }
     }
+    public void RaiseFromDeath(Action<Character> onReturnToLifeAction = null, Faction faction = null, RACE race = RACE.SKELETON, string className = "") {
+        GameManager.Instance.StartCoroutine(faction == null
+            ? Raise(this, onReturnToLifeAction, FactionManager.Instance.neutralFaction, race, className)
+            : Raise(this, onReturnToLifeAction, faction, race, className));
+    }
+    private IEnumerator Raise(Character target, Action<Character> onReturnToLifeAction, Faction faction, RACE race, string className) {
+        if (className == "Zombie") {
+            LocationGridTile tile = grave != null ? grave.gridTileLocation : target.gridTileLocation;
+            GameManager.Instance.CreateParticleEffectAt(tile, PARTICLE_EFFECT.Zombie_Transformation);
+            yield return new WaitForSeconds(5f);
+            target.marker.PlayAnimation("Raise Dead");
+        } else {
+            target.marker.PlayAnimation("Raise Dead");
+            yield return new WaitForSeconds(0.7f);
+        }
+        target.ReturnToLife(faction, race, className);
+        target.UpdateMaxHPAndReset();
+        yield return null;
+        onReturnToLifeAction?.Invoke(this);
+    }
+    private void ReturnToLife(Faction faction, RACE race, string className) {
+        if (_isDead) {
+            returnedToLife = true;
+            SetIsDead(false);
+            SubscribeToSignals();
+            ResetToFullHP();
+            SetPOIState(POI_STATE.ACTIVE);
+            ChangeFactionTo(faction);
+            ChangeRace(race);
+            // AssignRole(CharacterRole.SOLDIER);
+            // if (string.IsNullOrEmpty(className)) {
+            //     AssignClassByRole(this.role);
+            // } else {
+            //     AssignClass(className);
+            // }
+            AssignClass(className);
+            needsComponent.ResetFullnessMeter();
+            needsComponent.ResetTirednessMeter();
+            needsComponent.ResetHappinessMeter();
+            ownParty.ReturnToLife();
+            marker.OnReturnToLife();
+            if (grave != null) {
+                Tombstone tombstone = grave;
+                grave.gridTileLocation.structure.RemovePOI(grave);
+                SetGrave(null);
+                marker.PlaceMarkerAt(tombstone.previousTile);
+            }
+            traitContainer.RemoveTrait(this, "Dead");
+            for (int i = 0; i < traitContainer.traits.Count; i++) {
+                traitContainer.traits[i].OnReturnToLife(this);
+            }
+            //RemoveAllNonPersistentTraits();
+            //ClearAllAwareness();
+            //NPCSettlement gloomhollow = LandmarkManager.Instance.GetAreaByName("Gloomhollow");
+            //ChangeHomeStructure(null);
+            MigrateHomeStructureTo(null);
+            needsComponent.SetTirednessForcedTick(0);
+            needsComponent.SetFullnessForcedTick(0);
+            needsComponent.SetHasCancelledSleepSchedule(false);
+            needsComponent.ResetSleepTicks();
+            ConstructDefaultActions();
+            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
+            //MigrateHomeTo(null);
+            //AddInitialAwareness(gloomhollow);
+            Messenger.Broadcast(Signals.CHARACTER_RETURNED_TO_LIFE, this);
+        }
+    }
+    public virtual void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null, LogFiller[] deathLogFillers = null, Interrupt interrupt = null) {
+        if (minion != null) {
+            minion.Death(cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers);
+            return;
+        }
+        if (!_isDead) {
+            //if (currentAlterEgoName != CharacterManager.Original_Alter_Ego) {
+            //    SwitchAlterEgo(CharacterManager.Original_Alter_Ego); //revert the character to his/her original alter ego
+            //}
+            SetIsConversing(false);
+            //SetIsFlirting(false);
+            Region deathLocation = currentRegion;
+            LocationStructure deathStructure = currentStructure;
+            LocationGridTile deathTile = gridTileLocation;
+
+            List<Trait> traitOverrideFunctions = traitContainer.GetTraitOverrideFunctions(TraitManager.Death_Trait);
+            if (traitOverrideFunctions != null) {
+                for (int i = 0; i < traitOverrideFunctions.Count; i++) {
+                    Trait trait = traitOverrideFunctions[i];
+                    if (trait.OnDeath(this)) {
+                        i--;
+                    }
+                }
+            }
+            //for (int i = 0; i < traitContainer.allTraitsAndStatuses.Count; i++) {
+            //    if (traitContainer.allTraitsAndStatuses[i].OnDeath(this)) {
+            //        i--;
+            //    }
+            //}
+            if (lycanData != null) {
+                lycanData.LycanDies(this, cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers);
+            }
+            //------------------------ Things that are above this line are called before letting the character die so that if we need things done before actually setting the death of character we can do it here like cleaning up necessary things, etc.
+            SetIsDead(true);
+            if (isLimboCharacter && isInLimbo) {
+                //If a limbo character dies while in limbo, that character should not process death, instead he/she will be removed from the list
+                CharacterManager.Instance.RemoveLimboCharacter(this);
+                return;
+            }
+            UnsubscribeSignals();
+            SetPOIState(POI_STATE.INACTIVE);
+            traitContainer.RemoveTrait(this, "Necromancer"); //Necromancer trait must be removed when the necromancer dies so that another necromancer can take its place
+            if (currentRegion == null) {
+                throw new Exception(
+                    $"Current Region Location of {name} is null! Please use command /l_character_location_history [Character Name/ID] in console menu to log character's location history. (Use '~' to show console menu)");
+            }
+            if (stateComponent.currentState != null) {
+                stateComponent.ExitCurrentState();
+            }
+            //else if (stateComponent.stateToDo != null) {
+            //    stateComponent.SetStateToDo(null);
+            //}
+            //if (deathFromAction != null) { //if this character died from an action, do not cancel the action that he/she died from. so that the action will just end as normal.
+            //    CancelAllJobsTargettingThisCharacterExcept(deathFromAction, "target is already dead", false);
+            //} else {
+            //    CancelAllJobsTargettingThisCharacter("target is already dead", false);
+            //}
+            //StopCurrentActionNode();
+            //ForceCancelAllJobsTargettingCharacter(false, "target is already dead");
+            ////Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, this, "target is already dead");
+            //if (jobQueue.jobsInQueue.Count > 0) {
+            //    jobQueue.CancelAllJobs();
+            //}
+            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "target is already dead");
+            CancelAllJobs();
+
+            if (currentSettlement != null && isHoldingItem) {
+                DropAllItems(deathTile);
+            } else {
+                for (int i = 0; i < items.Count; i++) {
+                    if (RemoveItem(i)) {
+                        i--;
+                    }
+                }
+            }
+            //if (currentRegion == null) {
+            //    if (currentArea != null && isHoldingItem) {
+            //        DropAllTokens(currentArea, currentStructure, deathTile, true);
+            //    } else {
+            //        for (int i = 0; i < items.Count; i++) {
+            //            if (RemoveToken(i)) {
+            //                i--;
+            //            }
+            //        }
+            //    }
+            //} else {
+            //    List<SpecialToken> all = new List<SpecialToken>(items);
+            //    for (int i = 0; i < all.Count; i++) {
+            //        RemoveToken(all[i]);
+            //    }
+            //}
+
+
+            //clear traits that need to be removed
+            traitsNeededToBeRemoved.Clear();
+
+            bool wasOutsideSettlement = currentSettlement == null;
+
+            //bool wasOutsideSettlement = false;
+            //if (currentRegion != null) {
+            //    wasOutsideSettlement = true;
+            //    currentRegion.RemoveCharacterFromLocation(this);
+            //}
+            UncarryPOI();
+            Character carrier = isBeingCarriedBy;
+            if (carrier != null) {
+                carrier.UncarryPOI(this);
+            }
+            ownParty.PartyDeath();
+            currentRegion?.RemoveCharacterFromLocation(this);
+            SetRegionLocation(deathLocation); //set the specific location of this party, to the location it died at
+            SetCurrentStructureLocation(deathStructure, false);
+
+            //if (this.race != RACE.SKELETON) {
+            //    deathLocation.AddCorpse(this, deathStructure, deathTile);
+            //}
+
+
+            //if (faction != null) {
+            //    faction.LeaveFaction(this); //remove this character from it's factions list of characters
+            //}
+            //if (faction != null && faction.leader == this) {
+            //    faction.SetNewLeader();
+            //}
+
+            // if (_role != null) {
+            //     _role.OnDeath(this);
+            // }
+
+            if (homeRegion != null) {
+                Region home = homeRegion;
+                LocationStructure homeStructure = this.homeStructure;
+                homeRegion.RemoveResident(this);
+                SetHomeRegion(home); //keep this data with character to prevent errors
+                SetHomeStructure(homeStructure); //keep this data with character to prevent errors
+            }
+            if (homeSettlement != null) {
+                homeSettlement.jobPriorityComponent.UnassignResidentToPrimaryJob(this);
+            }
+            //if (homeNpcSettlement != null) {
+            //    NPCSettlement home = homeNpcSettlement;
+            //    Dwelling homeStructure = this.homeStructure;
+            //    homeNpcSettlement.RemoveResident(this);
+            //    SetHome(home); //keep this data with character to prevent errors
+            //    SetHomeStructure(homeStructure); //keep this data with character to prevent errors
+            //}
+
+            //List<Character> characterRels = new List<Character>(this.relationships.Keys.ToList());
+            //for (int i = 0; i < characterRels.Count; i++) {
+            //    RemoveRelationship(characterRels[i]);
+            //}
+
+            //if (_minion != null) {
+            //    PlayerManager.Instance.player.RemoveMinion(_minion);
+            //}
+
+            //ObjectPoolManager.Instance.DestroyObject(marker.gameObject);
+            //deathTile.RemoveCharacterHere(this);
+
+            //RemoveAllTraitsByType(TRAIT_TYPE.CRIMINAL); //remove all criminal type traits
+
+            //RemoveAllNonPersistentTraits();
+
+            SetHP(0);
+
+            marker.OnDeath(deathTile);
+
+            if (interruptComponent.isInterrupted && interruptComponent.currentInterrupt != interrupt) {
+                interruptComponent.ForceEndNonSimultaneousInterrupt();
+            }
+
+            //SetNumWaitingForGoapThread(0); //for raise dead
+            //Dead dead = new Dead();
+            //dead.SetCharacterResponsibleForTrait(responsibleCharacter);
+            traitContainer.AddTrait(this, "Dead", responsibleCharacter, gainedFromDoing: deathFromAction);
+
+            logComponent.PrintLogIfActive($"{name} died of {cause}");
+            Log deathLog;
+            if (_deathLog == null) {
+                deathLog = new Log(GameManager.Instance.Today(), "Character", "Generic", $"death_{cause}");
+                deathLog.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                if (responsibleCharacter != null) {
+                    deathLog.AddToFillers(responsibleCharacter, responsibleCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                }
+                if (deathLogFillers != null) {
+                    for (int i = 0; i < deathLogFillers.Length; i++) {
+                        deathLog.AddToFillers(deathLogFillers[i]);
+                    }
+                }
+                //will only add death log to history if no death log is provided. NOTE: This assumes that if a death log is provided, it has already been added to this characters history.
+                //AddHistory(deathLog);
+                deathLog.AddLogToInvolvedObjects();
+                //specificLocation.AddHistory(deathLog);
+                PlayerManager.Instance.player.ShowNotificationFrom(this, deathLog);
+            } else {
+                deathLog = _deathLog;
+            }
+            deathStr = UtilityScripts.Utilities.LogReplacer(deathLog);
+            Messenger.Broadcast(Signals.CHARACTER_DEATH, this);
+
+            //for (int i = 0; i < traitContainer.allTraits.Count; i++) {
+            //    if (traitContainer.allTraits[i].OnAfterDeath(this, cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers)) {
+            //        i--;
+            //    }
+            //}
+        }
+    }
+    public void SetGrave(Tombstone grave) {
+        this.grave = grave;
+    }
+    #endregion
+
+    #region Necromancer
+    public void SetNecromancerTrait(Necromancer necromancer) {
+        necromancerTrait = necromancer;
+    }
+    #endregion
 }

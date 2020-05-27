@@ -12,7 +12,7 @@ public class FactionManager : MonoBehaviour {
     public Faction neutralFaction { get; private set; }
     public Faction friendlyNeutralFaction { get; private set; }
     public Faction disguisedFaction { get; private set; }
-    private Faction _zombieFaction;
+    private Faction _undeadFaction;
 
     [Space(10)]
     [Header("Visuals")]
@@ -28,12 +28,12 @@ public class FactionManager : MonoBehaviour {
     };
 
     #region getters
-    public Faction zombieFaction {
+    public Faction undeadFaction {
         get {
-            if (_zombieFaction == null) {
-                _zombieFaction = CreateZombieFaction();
+            if (_undeadFaction == null) {
+                _undeadFaction = CreateUndeadFaction();
             }
-            return _zombieFaction;
+            return _undeadFaction;
         }
     }
     #endregion
@@ -101,13 +101,13 @@ public class FactionManager : MonoBehaviour {
         }
         return newFaction;
     }
-    private Faction CreateZombieFaction() {
-        Faction zombies = CreateNewFaction(RACE.NONE, factionName: "Zombies");
-        zombies.SetIsMajorFaction(false);
-        foreach (KeyValuePair<Faction,FactionRelationship> pair in zombies.relationships) {
-            zombies.SetRelationshipFor(pair.Key, FACTION_RELATIONSHIP_STATUS.HOSTILE);
+    private Faction CreateUndeadFaction() {
+        Faction undead = CreateNewFaction(RACE.NONE, factionName: "Undead");
+        undead.SetIsMajorFaction(false);
+        foreach (KeyValuePair<Faction,FactionRelationship> pair in undead.relationships) {
+            undead.SetRelationshipFor(pair.Key, FACTION_RELATIONSHIP_STATUS.HOSTILE);
         }
-        return zombies;
+        return undead;
     }
     public Faction CreateNewFaction(SaveDataFaction data) {
         Faction newFaction = new Faction(data);
@@ -223,7 +223,7 @@ public class FactionManager : MonoBehaviour {
         faction2.AddNewRelationship(faction1, newRel);
         // if(faction1.isPlayerFaction || faction2.isPlayerFaction) {
             if(faction1.isPlayerFaction || faction2.isPlayerFaction || faction1 == neutralFaction || faction2 == neutralFaction
-            || faction1 == _zombieFaction || faction2 == _zombieFaction) {
+            || faction1 == _undeadFaction || faction2 == _undeadFaction) {
                 faction1.SetRelationshipFor(faction2, FACTION_RELATIONSHIP_STATUS.HOSTILE);
                 faction2.SetRelationshipFor(faction1, FACTION_RELATIONSHIP_STATUS.HOSTILE);
             }

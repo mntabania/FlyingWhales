@@ -601,6 +601,17 @@ public class Region {
         }
         return null;
     }
+    public LocationStructure GetFirstUnoccupiedStructureOfType(STRUCTURE_TYPE type) {
+        if (structures.ContainsKey(type)) {
+            List<LocationStructure> structuresOfType = structures[type];
+            for (int i = 0; i < structuresOfType.Count; i++) {
+                if (!structuresOfType[i].IsOccupied()) {
+                    return structuresOfType[i];
+                }
+            }
+        }
+        return null;
+    }
     public LocationStructure GetRandomStructure() {
         LocationStructure randomStructure = null;
         while (randomStructure == null) {
@@ -973,11 +984,11 @@ public class Region {
         }
         return count;
     }
-    public HexTile GetRandomNoStructurePlainHex() {
+    public HexTile GetRandomNoStructureNotPartOrNextToVillagePlainHex() {
         List<HexTile> hexes = null;
         for (int i = 0; i < tiles.Count; i++) {
             HexTile currHex = tiles[i];
-            if(currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && currHex.landmarkOnTile == null) {
+            if(currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && currHex.landmarkOnTile == null && !currHex.IsNextToOrPartOfVillage()) {
                 if(hexes == null) { hexes = new List<HexTile>(); }
                 hexes.Add(currHex);
             }

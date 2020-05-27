@@ -31,7 +31,7 @@ public class BerserkOrb : Artifact {
                 }
             }
         }
-        tileLocation.structure.RemovePOI(this);
+        //tileLocation.structure.RemovePOI(this);
     }
     #endregion
 }

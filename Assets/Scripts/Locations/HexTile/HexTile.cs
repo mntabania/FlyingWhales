@@ -20,7 +20,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     private NPCSettlement _npcSettlementOfTile;
     public SpriteRenderer spriteRenderer;
     private bool _isCorrupted = false;
-    
+
     [Space(10)]
     [Header("Tile Visuals")]
     [SerializeField] private GameObject _centerPiece;
@@ -131,7 +131,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         SubscribeListeners();
         SetBordersState(false, false, Color.red);
         if (landmarkOnTile != null && landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.VILLAGE) {
-            CheckIfStructureVisualsAreStillValid();    
+            CheckIfStructureVisualsAreStillValid();
         }
     }
 
@@ -188,7 +188,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
             landmarkOnTile.SetLandmarkPortrait(landmarkData.defaultLandmarkPortrait);
         } else {
             LandmarkStructureSprite chosenAssets =
-                UtilityScripts.CollectionUtilities.GetRandomElement(landmarkTileSprites); 
+                UtilityScripts.CollectionUtilities.GetRandomElement(landmarkTileSprites);
             SetLandmarkTileSprite(chosenAssets);
             landmarkOnTile.landmarkVisual.SetIconState(false);
             landmarkOnTile.SetLandmarkPortrait(chosenAssets.overrideLandmarkPortrait != null ? chosenAssets.overrideLandmarkPortrait : landmarkData.defaultLandmarkPortrait);
@@ -218,7 +218,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         structureTint.sprite = sprites.tintSprite;
         mainStructure.gameObject.SetActive(true);
         structureTint.gameObject.SetActive(true);
-        
+
         if (sprites.animation == null) {
             mainStructure.enabled = true;
             structureAnimation.gameObject.SetActive(false);
@@ -382,6 +382,21 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     }
     public LocationGridTile GetRandomTile() {
         return locationGridTiles[UnityEngine.Random.Range(0, locationGridTiles.Count)];
+    }
+    public bool IsNextToOrPartOfVillage() {
+        return IsPartOfVillage() || IsNextToVillage();
+    }
+    public bool IsPartOfVillage() {
+        return settlementOnTile != null && (settlementOnTile.locationType == LOCATION_TYPE.ELVEN_SETTLEMENT || settlementOnTile.locationType == LOCATION_TYPE.HUMAN_SETTLEMENT);
+    }
+    public bool IsNextToVillage() {
+        for (int i = 0; i < AllNeighbours.Count; i++) {
+            HexTile neighbour = AllNeighbours[i];
+            if(neighbour.region == region && neighbour.IsPartOfVillage()) {
+                return true;
+            }
+        }
+        return false;
     }
     #endregion
 

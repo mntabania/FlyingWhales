@@ -113,7 +113,7 @@ namespace Traits {
         }
 
         private void Reanimate() {
-            owner.RaiseFromDeath(faction: FactionManager.Instance.zombieFaction, race: owner.race, className: "Zombie");
+            owner.RaiseFromDeath(faction: FactionManager.Instance.undeadFaction, race: owner.race, className: "Zombie");
             SetIsLiving(true);
         }
 

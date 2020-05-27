@@ -1082,6 +1082,7 @@ MonoBehaviour:
         - Mage
         - Marauder
         - Miner
+        - Necromancer
         - Noble
         - Peasant
         - Shaman
@@ -1307,6 +1308,28 @@ MonoBehaviour:
           - {fileID: 21300000, guid: dc1ab8e4d7f886e42b7591deda0db17a, type: 3}
           - {fileID: 21300000, guid: 896b2b57bf60b37488d2ae6f75120bb2, type: 3}
           - {fileID: 21300000, guid: edf0946fa0c5d6140a3ed03ad448eebb, type: 3}
+        - defaultSprite: {fileID: 21300000, guid: cd262d5a9ad484945b8ff21a474ed844,
+            type: 3}
+          animationSprites:
+          - {fileID: 21300000, guid: 6a716d63d8c3899449875d4a8b78f08c, type: 3}
+          - {fileID: 21300000, guid: bfc22f6852aa6a94a8e9b0461e7d1d4f, type: 3}
+          - {fileID: 21300000, guid: 715dd18a50f244447bcee34abaf94689, type: 3}
+          - {fileID: 21300000, guid: 2f998821c68c832468c8c0e80f13e0d9, type: 3}
+          - {fileID: 21300000, guid: cd262d5a9ad484945b8ff21a474ed844, type: 3}
+          - {fileID: 21300000, guid: e98b2cb947995784298d72f44b743b12, type: 3}
+          - {fileID: 21300000, guid: 1ac89429314ee994287d66c30e79e443, type: 3}
+          - {fileID: 21300000, guid: 7773f9b964afca742b50ca950c37da0d, type: 3}
+          - {fileID: 21300000, guid: 60bfb0e7ff316d841b127490756267b7, type: 3}
+          - {fileID: 21300000, guid: c89f00ea68d538041a870c6c31dfd0bd, type: 3}
+          - {fileID: 21300000, guid: abd1aba9b31af8e4bac36f356aea7e7e, type: 3}
+          - {fileID: 21300000, guid: 385e6bd0a86a49742bf81c9517ca8646, type: 3}
+          - {fileID: 21300000, guid: b78f8d5bbe6a43c4fb75160d13ccc52d, type: 3}
+          - {fileID: 21300000, guid: 005b843478f945f4ead0757ae1d09856, type: 3}
+          - {fileID: 21300000, guid: a6d0818e7e61f20458486ef20bafa42c, type: 3}
+          - {fileID: 21300000, guid: 67562d5b37587af4ba941d054ebe185e, type: 3}
+          - {fileID: 21300000, guid: abd38314fbed0c94e9b5b421cd407c76, type: 3}
+          - {fileID: 21300000, guid: e68540e60d848974e8c738f6d6b6ba7e, type: 3}
+          - {fileID: 21300000, guid: 068db8232e75d7d4aae2a3c9b40d44f8, type: 3}
         - defaultSprite: {fileID: 21300000, guid: 3e4bf49265af5f644ae3d3247646aa2f,
             type: 3}
           animationSprites:
@@ -1408,6 +1431,7 @@ MonoBehaviour:
         - Mage
         - Marauder
         - Miner
+        - Necromancer
         - Noble
         - Peasant
         - Shaman
@@ -1633,6 +1657,28 @@ MonoBehaviour:
           - {fileID: 21300000, guid: 2b14577335688dd4488ba6f9873c15a8, type: 3}
           - {fileID: 21300000, guid: 810dcc14fa6c7bd46b6461152761ee42, type: 3}
           - {fileID: 21300000, guid: 09ca956493cff8d4f92097e119a87de3, type: 3}
+        - defaultSprite: {fileID: 21300000, guid: 4e6e48b9940ff9a40a66a35d0f810874,
+            type: 3}
+          animationSprites:
+          - {fileID: 21300000, guid: a57d69a1b23654e41b0f05acaef73396, type: 3}
+          - {fileID: 21300000, guid: ace0232642536ba43a0701e3da121fd4, type: 3}
+          - {fileID: 21300000, guid: ae89228d20a7bf44d8e9d8e41377ae6e, type: 3}
+          - {fileID: 21300000, guid: f9a27ffd3b6c0d640bfefc00c5c583a4, type: 3}
+          - {fileID: 21300000, guid: 4e6e48b9940ff9a40a66a35d0f810874, type: 3}
+          - {fileID: 21300000, guid: 61550948c5c1dcf4d8638fd3dea57ad0, type: 3}
+          - {fileID: 21300000, guid: 77c6cbc03455475438d3f6107dcfd461, type: 3}
+          - {fileID: 21300000, guid: 7b583143f7259604f990404c063e5036, type: 3}
+          - {fileID: 21300000, guid: aa259b32b55282c439e15f5e7f7a9083, type: 3}
+          - {fileID: 21300000, guid: ed7d3c02d0def7e43aa5c172b41a82ed, type: 3}
+          - {fileID: 21300000, guid: 6312771a1a77a134b813681e09eb2e20, type: 3}
+          - {fileID: 21300000, guid: 3a0ec23466d41b64e8f053ab57eb85f8, type: 3}
+          - {fileID: 21300000, guid: b28f7c74048914e4fb88f907fbd8a2d0, type: 3}
+          - {fileID: 21300000, guid: 3869438d5a5b4bc45a4b8f72c5b486a1, type: 3}
+          - {fileID: 21300000, guid: 686200e48d9c8254691248dd2a4e9540, type: 3}
+          - {fileID: 21300000, guid: db50c6d736fa2354287653c042ce3a3e, type: 3}
+          - {fileID: 21300000, guid: 08e02355cad41b84d9d56e52a52ee35d, type: 3}
+          - {fileID: 21300000, guid: 8b06beed07978f14ebeee9e9d3b4bfac, type: 3}
+          - {fileID: 21300000, guid: 4610ef57915419a47b37d4465151cc0c, type: 3}
         - defaultSprite: {fileID: 21300000, guid: 52059d4197410f94e82950e6ecbb1d91,
             type: 3}
           animationSprites:
@@ -1838,6 +1884,7 @@ MonoBehaviour:
         - Mage
         - Marauder
         - Miner
+        - Necromancer
         - Noble
         - Peasant
         - Shaman
@@ -2063,6 +2110,28 @@ MonoBehaviour:
           - {fileID: 21300000, guid: 2f88cfd2184da18429ba980cb8160396, type: 3}
           - {fileID: 21300000, guid: 688db087ffa04f7438baba62e2f6e50f, type: 3}
           - {fileID: 21300000, guid: efe1f7c45ff24f5418ed02bd9120ed3d, type: 3}
+        - defaultSprite: {fileID: 21300000, guid: 865dc34a9a34d9449a60a849b09a39b0,
+            type: 3}
+          animationSprites:
+          - {fileID: 21300000, guid: 48d9d027d5087ac48891ffe0f8eb704e, type: 3}
+          - {fileID: 21300000, guid: cb3f10da76558ef43aa3a2b92981a414, type: 3}
+          - {fileID: 21300000, guid: fb525f7cd0b7b824c8c6711744a315fd, type: 3}
+          - {fileID: 21300000, guid: 1231d7c95a49bbf4da7a2f25d17a14f9, type: 3}
+          - {fileID: 21300000, guid: 865dc34a9a34d9449a60a849b09a39b0, type: 3}
+          - {fileID: 21300000, guid: 2944dd50464665a4481b4a689944e017, type: 3}
+          - {fileID: 21300000, guid: 1fdebed9a82c5824da075523462ab95a, type: 3}
+          - {fileID: 21300000, guid: 488615b81c26317498038bce55938f96, type: 3}
+          - {fileID: 21300000, guid: 21e9dfc11c9c2d147a04997bba17f10b, type: 3}
+          - {fileID: 21300000, guid: 1f97ed004925bcc4e95a3a86711ddd39, type: 3}
+          - {fileID: 21300000, guid: d9011ea9e9708544991bab8897bec8b3, type: 3}
+          - {fileID: 21300000, guid: 54fe0cb348a31744a85500be18f14789, type: 3}
+          - {fileID: 21300000, guid: 620247d1d8def774280273caf719c7f3, type: 3}
+          - {fileID: 21300000, guid: d72f15686a0f49d4797f1eb849ee3a49, type: 3}
+          - {fileID: 21300000, guid: d4ac0e9e1900ca84486fd64ef518e317, type: 3}
+          - {fileID: 21300000, guid: 44694eb659e9f234fa5cc3e22096e553, type: 3}
+          - {fileID: 21300000, guid: 23ac5d8320574fe47a17474049b98ffa, type: 3}
+          - {fileID: 21300000, guid: 933a949b6f710a947ab83defd6bfe9a9, type: 3}
+          - {fileID: 21300000, guid: 3a6b3abc1b8cf9544a0b2ca1ff4656a0, type: 3}
         - defaultSprite: {fileID: 21300000, guid: 53b5603b03901c7488259c08b8f3b8ea,
             type: 3}
           animationSprites:
@@ -2164,6 +2233,7 @@ MonoBehaviour:
         - Mage
         - Marauder
         - Miner
+        - Necromancer
         - Noble
         - Peasant
         - Shaman
@@ -2389,6 +2459,28 @@ MonoBehaviour:
           - {fileID: 21300000, guid: 2b378e10fbf186c40b3692863b0e5dd0, type: 3}
           - {fileID: 21300000, guid: fd21286882ae66d41b200d14642c15a3, type: 3}
           - {fileID: 21300000, guid: df32bff98d127ee44b9d7e84521a10ff, type: 3}
+        - defaultSprite: {fileID: 21300000, guid: 3432bf45137147847a62517b7a24943f,
+            type: 3}
+          animationSprites:
+          - {fileID: 21300000, guid: 7b313886def61ca41ace908cd3be0345, type: 3}
+          - {fileID: 21300000, guid: b703290c50c94ee448cb13acde0ad489, type: 3}
+          - {fileID: 21300000, guid: b6f057c835e1ced4cbf81902dceb9acd, type: 3}
+          - {fileID: 21300000, guid: 2a83f06de1892584e8aa325eb5cfd203, type: 3}
+          - {fileID: 21300000, guid: 3432bf45137147847a62517b7a24943f, type: 3}
+          - {fileID: 21300000, guid: b5f1cbeeee567ae438cd4fa5efa38329, type: 3}
+          - {fileID: 21300000, guid: 365d6fbe9ffcff1449a3a418d63a558f, type: 3}
+          - {fileID: 21300000, guid: cc4f3fc06697c0b4d95c0a2aba2e9e9f, type: 3}
+          - {fileID: 21300000, guid: b8c65e25a97be3f49b47043a4755604f, type: 3}
+          - {fileID: 21300000, guid: 930c99d3b4fc0a84eb323616873aa8af, type: 3}
+          - {fileID: 21300000, guid: 90811c8a67af81b47b6bf97928466865, type: 3}
+          - {fileID: 21300000, guid: 96d4be31f98970b43a8f0ba9e7423417, type: 3}
+          - {fileID: 21300000, guid: 708cbc669481cf449a7a33a7cd587c6a, type: 3}
+          - {fileID: 21300000, guid: 4c2810eb5ce45224bb3ffcf28ac11f8f, type: 3}
+          - {fileID: 21300000, guid: 5a59f43546842864f9e1f257221d288a, type: 3}
+          - {fileID: 21300000, guid: 19ed090638fb14b4cab8b8af326209db, type: 3}
+          - {fileID: 21300000, guid: 584b57295c278544cae41c8957c50955, type: 3}
+          - {fileID: 21300000, guid: 7a6bcfc08fb5de64fa9d1a0ae4202642, type: 3}
+          - {fileID: 21300000, guid: a26bfa64a67131448ac2bd45c0d8bd56, type: 3}
         - defaultSprite: {fileID: 21300000, guid: 7feb250dd5ba1844ca7b6ee0a8368abe,
             type: 3}
           animationSprites:

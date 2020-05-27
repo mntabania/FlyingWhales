@@ -12,6 +12,7 @@ public class BehaviourComponent {
 	public Character owner { get; private set; }
     public List<CharacterBehaviourComponent> currentBehaviourComponents { get; private set; }
     public NPCSettlement assignedTargetSettlement { get; private set; }
+    public NPCSettlement attackVillageTarget { get; private set; }
     public HexTile assignedTargetHex { get; private set; }
     public DemonicStructure attackDemonicStructureTarget { get; private set; }
     public bool isHarassing { get; private set; }
@@ -385,5 +386,11 @@ public class BehaviourComponent {
         currentMiningPath = path;
     }
     #endregion
-    
+
+    #region Attack Village
+    public void SetAttackVillageTarget(NPCSettlement npcSettlement) {
+        attackVillageTarget = npcSettlement;
+    }
+    #endregion
+
 }

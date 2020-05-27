@@ -22,6 +22,9 @@ public class DefaultMinion : CharacterBehaviourComponent {
             LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(chosenHex.locationGridTiles);
             character.jobComponent.TriggerRoamAroundTile(chosenTile);
             return true;
+        } else {
+            character.jobComponent.TriggerRoamAroundTile();
+            return true;
         }
         //      if (character.minion != null) {
         //	log += $"\n-{character.name} is minion";
