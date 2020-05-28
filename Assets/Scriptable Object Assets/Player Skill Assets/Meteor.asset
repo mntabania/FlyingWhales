@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09f023a34db245a3accd1d23be4c0822, type: 3}
+  m_Name: Meteor
+  m_EditorClassIdentifier: 
+  tooltipVideoClip: {fileID: 32900000, guid: 3a9d7052cb7ee0343b1da53d3b8d6639, type: 3}
+  tooltipImage: {fileID: 0}
+  impactSounds:
+  - {fileID: 8300000, guid: 584d7df54b0e6ba468199f66277304e0, type: 3}
+  - {fileID: 8300000, guid: e85cc59650fe25a4d96062d7b5e9b010, type: 3}
+  - {fileID: 8300000, guid: 375f7d3ee754c9d47af5cc63324a1ee4, type: 3}

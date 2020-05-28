@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Scriptable_Object_Scripts;
 using UnityEngine;
 
 public class PlayerSkillManager : MonoBehaviour {
@@ -246,9 +247,9 @@ public class PlayerSkillManager : MonoBehaviour {
     #endregion
 
     #region Assets
-    public PlayerSkillAssets GetPlayerSkillAsset(SPELL_TYPE spellType) {
+    public T GetPlayerSkillAsset<T>(SPELL_TYPE spellType) where T : PlayerSkillAssets {
         if (_playerSkillTreeAssets.ContainsKey(spellType)) {
-            return _playerSkillTreeAssets[spellType];    
+            return _playerSkillTreeAssets[spellType] as T;    
         }
         return null;
     }

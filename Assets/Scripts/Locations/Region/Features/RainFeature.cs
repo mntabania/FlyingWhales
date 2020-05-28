@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Scriptable_Object_Scripts;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -10,7 +11,7 @@ namespace Locations.Features {
         private List<Character> _charactersOutside;
         private string _currentRainCheckSchedule;
         private GameObject _effect;
-        private SpellAudioObject _spellAudioObject;
+        private AudioObject _audioObject;
 
         public RainFeature() {
             name = "Rain";
@@ -41,7 +42,7 @@ namespace Locations.Features {
             SchedulingManager.Instance.AddEntry(expiryDate, () => tile.featureComponent.RemoveFeature(this, tile), this);
             LocationGridTile centerTile = tile.GetCenterLocationGridTile();
             GameObject go = GameManager.Instance.CreateParticleEffectAt(centerTile, PARTICLE_EFFECT.Rain);
-            _spellAudioObject = AudioManager.Instance.CreateSpellAudioObject(SPELL_TYPE.RAIN, centerTile, 7, true);
+            _audioObject = AudioManager.Instance.CreateSpellAudioObject(PlayerSkillManager.Instance.GetPlayerSkillAsset<RainAssets>(SPELL_TYPE.RAIN).rainSoundEffect, centerTile, 7, true);
             _effect = go;
 
         }
@@ -61,7 +62,7 @@ namespace Locations.Features {
                 SchedulingManager.Instance.RemoveSpecificEntry(_currentRainCheckSchedule); //this will stop the freezing check loop 
             }
             ObjectPoolManager.Instance.DestroyObject(_effect);
-            ObjectPoolManager.Instance.DestroyObject(_spellAudioObject);
+            ObjectPoolManager.Instance.DestroyObject(_audioObject);
         }
         #endregion
 

@@ -18269,191 +18269,57 @@ MonoBehaviour:
   _playerSkillTreeAssets:
     m_keys: 3d0000000a00000021000000060000003300000032000000340000000800000007000000570000001c000000090000001500000014000000130000002b00000029000000120000002c0000002a0000002d0000001f000000160000001e0000005d000000560000005e000000490000004d0000004a000000480000004c0000004e0000004f00000050000000510000005200000053000000040000001000000002000000260000002200000019000000280000001d0000002e00000017000000230000000300000020000000
     m_values:
-    - tooltipVideoClip: {fileID: 32900000, guid: b043658b3fb99e54e904d8046727dc45,
-        type: 3}
-      tooltipImage: {fileID: 0}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 32900000, guid: 5a3333c7232bbb94894fcc20adc3c147,
-        type: 3}
-      tooltipImage: {fileID: 0}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 32900000, guid: f69a4274a12a0e8449dc859b7676242c,
-        type: 3}
-      tooltipImage: {fileID: 0}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 32900000, guid: c8b107a0040a3364dbb25786c75dbfee,
-        type: 3}
-      tooltipImage: {fileID: 0}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 32900000, guid: a14060dfc0f2e8547b5338c56363ab8a,
-        type: 3}
-      tooltipImage: {fileID: 0}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 32900000, guid: 984ebb07caa6367499acc9bfaef5aeee,
-        type: 3}
-      tooltipImage: {fileID: 0}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 32900000, guid: 0395346f7571d724f9c91404dc1a09eb,
-        type: 3}
-      tooltipImage: {fileID: 0}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 32900000, guid: a90d5c3791159d4439bb47def0d27362,
-        type: 3}
-      tooltipImage: {fileID: 0}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 32900000, guid: cf1c29e91becf7b468ed9942a26b8448,
-        type: 3}
-      tooltipImage: {fileID: 0}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 32900000, guid: 2b14377845568364d95340e8c2082fac,
-        type: 3}
-      tooltipImage: {fileID: 0}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 32900000, guid: 5c71a5f9a309fbd41abbbc0858f349f5,
-        type: 3}
-      tooltipImage: {fileID: 0}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 32900000, guid: 3a9d7052cb7ee0343b1da53d3b8d6639,
-        type: 3}
-      tooltipImage: {fileID: 0}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 32900000, guid: 48456bb4732772e4e847e1b39d3f4448,
-        type: 3}
-      tooltipImage: {fileID: 0}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 32900000, guid: eee5f9c843bb74a4db21ee6e2cf27f2f,
-        type: 3}
-      tooltipImage: {fileID: 0}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 32900000, guid: b64404b9652ee4041b7a05b05a1560fc,
-        type: 3}
-      tooltipImage: {fileID: 0}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 32900000, guid: ded5df83e36f3bc448a89bed4f98796f,
-        type: 3}
-      tooltipImage: {fileID: 0}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 32900000, guid: 399742a414679f242a1d8b2f772c5b3e,
-        type: 3}
-      tooltipImage: {fileID: 0}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 32900000, guid: 95d6d7649422fb142bc71230ebf80ee6,
-        type: 3}
-      tooltipImage: {fileID: 0}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 32900000, guid: b123165bb9b9c484fb83dd83c3153ee3,
-        type: 3}
-      tooltipImage: {fileID: 0}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 32900000, guid: 2a59907804a32e9469e0d8125ec3a388,
-        type: 3}
-      tooltipImage: {fileID: 0}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 32900000, guid: f0dcf5b0b408d6641b9c6ecac91f583e,
-        type: 3}
-      tooltipImage: {fileID: 0}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 32900000, guid: 8ae6a672ae29080409a6c7b51ea9d5cb,
-        type: 3}
-      tooltipImage: {fileID: 0}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 0}
-      tooltipImage: {fileID: 2800000, guid: 8977fb14cb02f304a94dabeedbeaaa0d, type: 3}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 0}
-      tooltipImage: {fileID: 2800000, guid: 9de0da6bd9a533047aaae90d282cd00a, type: 3}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 0}
-      tooltipImage: {fileID: 2800000, guid: 19332b0e5f6824745b5df8852a4c3bab, type: 3}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 32900000, guid: 6e155a61f8d1e1944a4be59ab5734fae,
-        type: 3}
-      tooltipImage: {fileID: 0}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 32900000, guid: 7052e15c383a67a4c82e06ca0e890d0e,
-        type: 3}
-      tooltipImage: {fileID: 0}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 0}
-      tooltipImage: {fileID: 2800000, guid: 9a971c7bb375fdc40bd4d049e4d9c877, type: 3}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 0}
-      tooltipImage: {fileID: 2800000, guid: 63a7fe6b31e32224186f4e5fabc78bb3, type: 3}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 0}
-      tooltipImage: {fileID: 2800000, guid: bedf94a57c4466a4cb5fee2b0be7aeb8, type: 3}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 0}
-      tooltipImage: {fileID: 2800000, guid: 03002c2b7c5aeb84580a9d1ebcbc06b3, type: 3}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 0}
-      tooltipImage: {fileID: 2800000, guid: 63aaa910edd263f4cb0e51c87d98d267, type: 3}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 0}
-      tooltipImage: {fileID: 2800000, guid: 970fb647944a5aa47af37832491cfccb, type: 3}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 0}
-      tooltipImage: {fileID: 2800000, guid: 38871bed60d850340a993436a461daed, type: 3}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 0}
-      tooltipImage: {fileID: 2800000, guid: ab8cf953884ca4b4996b145cd00470f2, type: 3}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 0}
-      tooltipImage: {fileID: 2800000, guid: 9eae0d3a668f5724eb820c01c29c7838, type: 3}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 0}
-      tooltipImage: {fileID: 2800000, guid: 30cecfefb0cb50c499ce68beba7f14f2, type: 3}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 0}
-      tooltipImage: {fileID: 2800000, guid: 24bee9441e97ecf45a70b48e6220ae0b, type: 3}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 0}
-      tooltipImage: {fileID: 2800000, guid: 9a9ad4ca071597c4587b94bc22e82ee4, type: 3}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 0}
-      tooltipImage: {fileID: 2800000, guid: 8532199a2f193704f9534fc0dcb9141c, type: 3}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 32900000, guid: 0c3cd62299a7377498d755f69a0c917b,
-        type: 3}
-      tooltipImage: {fileID: 0}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 0}
-      tooltipImage: {fileID: 2800000, guid: e6f93c759c8666047a52f6ae49ad5dd5, type: 3}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 0}
-      tooltipImage: {fileID: 2800000, guid: f21263d2f6c8e8d45bdf5d97d4e0fdd2, type: 3}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 32900000, guid: 8af767764b17fe644806f95feb79e451,
-        type: 3}
-      tooltipImage: {fileID: 0}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 32900000, guid: 51e39c49a21f99843a71a864d6f1467f,
-        type: 3}
-      tooltipImage: {fileID: 0}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 32900000, guid: fb10ab6a8dc94554c821fe35d455c5ef,
-        type: 3}
-      tooltipImage: {fileID: 0}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 32900000, guid: 4dfd6d54c6573d64f98dfaf987bb675d,
-        type: 3}
-      tooltipImage: {fileID: 0}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 32900000, guid: fe93d2c868609304880632137115e0cd,
-        type: 3}
-      tooltipImage: {fileID: 0}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 32900000, guid: eb9b0cf342db4f242996861a944bf25c,
-        type: 3}
-      tooltipImage: {fileID: 0}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 0}
-      tooltipImage: {fileID: 2800000, guid: 99f084d7ef03bc44893dac78e8ad1015, type: 3}
-      audioClips: []
-    - tooltipVideoClip: {fileID: 0}
-      tooltipImage: {fileID: 0}
-      audioClips:
-      - {fileID: 8300000, guid: a512f029a3def8646857bf320b125283, type: 3}
+    - {fileID: 11400000, guid: 8a1bf7d9e402cb749bd7af3507d35dd5, type: 2}
+    - {fileID: 11400000, guid: 7575bdf4f7f8b684282889a422095c10, type: 2}
+    - {fileID: 11400000, guid: 8d9fceac6ffa5e74284f3115f0fcdb12, type: 2}
+    - {fileID: 11400000, guid: ea0c4e5e364a799418d27198fc22d81c, type: 2}
+    - {fileID: 11400000, guid: 3b5b84a5adf926543941b32bb461d81a, type: 2}
+    - {fileID: 11400000, guid: 7971be7ac86b66142a1a157099a2c4bd, type: 2}
+    - {fileID: 11400000, guid: d0f7b130cd4aff144af4bf3825f359b1, type: 2}
+    - {fileID: 11400000, guid: b684e9b8e5cc80f4b83ed5084607ddc0, type: 2}
+    - {fileID: 11400000, guid: f67da6849516a0e4981d1330ef8a3bc6, type: 2}
+    - {fileID: 11400000, guid: 546cf4a13cf939f4aa53aca6f387c923, type: 2}
+    - {fileID: 11400000, guid: 8a742e17f12ad174da37103fc64847fc, type: 2}
+    - {fileID: 11400000, guid: 47defffae68bda24286cbfb15ba9a3b4, type: 2}
+    - {fileID: 11400000, guid: f2b75cf117f9666489463d3a352e514a, type: 2}
+    - {fileID: 11400000, guid: cafdf0b503b8e1643993b42b55caf3ef, type: 2}
+    - {fileID: 11400000, guid: 5d23fc2865b86c342af038e49103d100, type: 2}
+    - {fileID: 11400000, guid: 0f39ab8a50909794e9577ed22bd1df77, type: 2}
+    - {fileID: 11400000, guid: 1b47a2c915c5b9445a439f491dfc9dfe, type: 2}
+    - {fileID: 11400000, guid: da76e12e326a95a49b38c1fe864bc3b4, type: 2}
+    - {fileID: 11400000, guid: 1bae18bc25de499488c35db53748cd81, type: 2}
+    - {fileID: 11400000, guid: 64f785359618db8479955e15d5c2f351, type: 2}
+    - {fileID: 11400000, guid: 1d1fda843c4356f4f81e5e84a83f19f3, type: 2}
+    - {fileID: 11400000, guid: 35b39fb07839df143acb1d8d429eeca7, type: 2}
+    - {fileID: 11400000, guid: e107c76fa3fe0e5408b2c4462ac1c802, type: 2}
+    - {fileID: 11400000, guid: f99dba89f54a1044d808ecfbc9fe95ba, type: 2}
+    - {fileID: 11400000, guid: 399075ae705c21a4087bad6eb025f262, type: 2}
+    - {fileID: 11400000, guid: b31c0f4123e39814cb873028ba210f3e, type: 2}
+    - {fileID: 11400000, guid: 7620caeccc6db6e4893c8b26ed6ee842, type: 2}
+    - {fileID: 11400000, guid: e10d1ec404e5c8b4eaa08b6056da9ec5, type: 2}
+    - {fileID: 11400000, guid: 18adee79aa54ebc4e9c80ef1c10b787a, type: 2}
+    - {fileID: 11400000, guid: eef4e226d109b3f4798138863dc7d110, type: 2}
+    - {fileID: 11400000, guid: 5a570df595074094abbd87397fb77966, type: 2}
+    - {fileID: 11400000, guid: 200a48d3a38b5ac4bb2807718decb60c, type: 2}
+    - {fileID: 11400000, guid: 1f753a1ca564b824a9b8cac385caef1f, type: 2}
+    - {fileID: 11400000, guid: 98486cc568a749649835110f5b643973, type: 2}
+    - {fileID: 11400000, guid: 3ea9a79823b22e4479c116adae907b31, type: 2}
+    - {fileID: 11400000, guid: c8694db33feda5545bbf91a9385a32e0, type: 2}
+    - {fileID: 11400000, guid: 82b2a7fc12957b4429dc9a17e31fb46a, type: 2}
+    - {fileID: 11400000, guid: f6a3033750273c04fb94f138b1e6015e, type: 2}
+    - {fileID: 11400000, guid: 9409ef1b3ff0a0e4291bf21a19de8ead, type: 2}
+    - {fileID: 11400000, guid: c2a10844ed72dc741af6eae26c2eb903, type: 2}
+    - {fileID: 11400000, guid: 34ffeedb9b034d74b87f7e4ac62e4ecb, type: 2}
+    - {fileID: 11400000, guid: 36565a8a1bceb7b45909fbcc4ca79151, type: 2}
+    - {fileID: 11400000, guid: 1857ae661135f0147bfdaca3784f2118, type: 2}
+    - {fileID: 11400000, guid: 030728bc08c623e43b1eafb0f56c35a6, type: 2}
+    - {fileID: 11400000, guid: c97631e7e2279c349a207ee39c755cfb, type: 2}
+    - {fileID: 11400000, guid: 6d9c2dffa20ac444a95cac292f4811b8, type: 2}
+    - {fileID: 11400000, guid: 7f02473f74ba7524ab9b7907471c356a, type: 2}
+    - {fileID: 11400000, guid: 71a41ee7aef959f4bb60d2f2a465ad68, type: 2}
+    - {fileID: 11400000, guid: ab04b0071c66166498eecefe11732019, type: 2}
+    - {fileID: 11400000, guid: 763b3f8d46cf6c042aa7dc74b3349b35, type: 2}
+    - {fileID: 11400000, guid: 2642ef79f1399e140b9505ba78a80fb8, type: 2}
 --- !u!4 &895236705
 Transform:
   m_ObjectHideFlags: 0

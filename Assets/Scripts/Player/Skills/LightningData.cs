@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps;
+using Scriptable_Object_Scripts;
 using Traits;
+using UtilityScripts;
 
 public class LightningData : SpellData {
     public override SPELL_TYPE type => SPELL_TYPE.LIGHTNING;
@@ -17,6 +19,10 @@ public class LightningData : SpellData {
     }
 
     public override void ActivateAbility(LocationGridTile targetTile) {
+        AudioManager.Instance.CreateSpellAudioObject(
+            CollectionUtilities.GetRandomElement(PlayerSkillManager.Instance.GetPlayerSkillAsset<LightningAssets>(SPELL_TYPE.LIGHTNING).thunderAudioClips), 
+            targetTile, 1, false
+        );
         GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Lightning_Strike);
         // List<IPointOfInterest> pois = targetTile.GetPOIsOnTile();
         // for (int i = 0; i < pois.Count; i++) {

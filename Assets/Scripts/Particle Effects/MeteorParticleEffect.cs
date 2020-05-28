@@ -5,6 +5,8 @@ using DG.Tweening;
 using UnityEngine;
 using Traits;
 using Inner_Maps;
+using Scriptable_Object_Scripts;
+using UtilityScripts;
 
 public class MeteorParticleEffect : BaseParticleEffect {
     public ParticleSystem meteorParticle;
@@ -40,6 +42,11 @@ public class MeteorParticleEffect : BaseParticleEffect {
     }
     private void OnMeteorFell() {
         hasMeteorFell = true;
+        AudioManager.Instance.CreateSpellAudioObject(
+            CollectionUtilities.GetRandomElement(PlayerSkillManager.Instance
+                .GetPlayerSkillAsset<MeteorAssets>(SPELL_TYPE.METEOR).impactSounds),
+            targetTile, 3, false
+        );
         //for (int i = 0; i < meteorExplosionParticles.Length; i++) {
         //    meteorExplosionParticles[i].Play();
         //}

@@ -80,7 +80,7 @@ public class PlayerSkillTreeNodeDictionary : SerializableDictionary<SPELL_TYPE, 
 [System.Serializable]
 public class PlayerSkillTreeNodeItemDictionary : SerializableDictionary<SPELL_TYPE, PlayerSkillTreeItem> { }
 [System.Serializable]
-public class PlayerSkillTreeAssetsDictionary : SerializableDictionary<SPELL_TYPE, PlayerSkillAssets> { }
+public class PlayerSkillTreeAssetsDictionary : SerializableDictionary<SPELL_TYPE, Scriptable_Object_Scripts.PlayerSkillAssets> { }
 
 //List storage
 [System.Serializable]

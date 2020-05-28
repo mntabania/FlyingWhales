@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps;
+using Scriptable_Object_Scripts;
 
 public class FreezingTrapData : SpellData {
     public override SPELL_TYPE type => SPELL_TYPE.FREEZING_TRAP;
@@ -15,6 +16,8 @@ public class FreezingTrapData : SpellData {
     }
     public override void ActivateAbility(LocationGridTile targetTile) {
         targetTile.SetHasFreezingTrap(true);
+        AudioManager.Instance.CreateSpellAudioObject(
+            PlayerSkillManager.Instance.GetPlayerSkillAsset<FreezingTrapAssets>(SPELL_TYPE.FREEZING_TRAP).placeTrapSound, targetTile, 1, false);
         //IncreaseThreatThatSeesTile(targetTile, 10);
         base.ActivateAbility(targetTile);
     }
