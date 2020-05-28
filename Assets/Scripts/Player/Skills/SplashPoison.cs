@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using Inner_Maps;
+using Scriptable_Object_Scripts;
 using Traits;
+using UtilityScripts;
 
 public class SplashPoison : PlayerSpell {
 
@@ -24,6 +26,11 @@ public class SplashPoisonData : SpellData {
     }
 
     public override void ActivateAbility(LocationGridTile targetTile) {
+        AudioManager.Instance.CreateSpellAudioObject(
+            CollectionUtilities.GetRandomElement(PlayerSkillManager.Instance
+                .GetPlayerSkillAsset<SplashPoisonAssets>(SPELL_TYPE.SPLASH_POISON).splashSounds),
+            targetTile, 3, false
+        );
         List<LocationGridTile> tiles = targetTile.GetTilesInRadius(1, includeCenterTile: true, includeTilesInDifferentStructure: true);
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile tile = tiles[i];

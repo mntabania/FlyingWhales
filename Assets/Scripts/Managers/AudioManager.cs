@@ -125,17 +125,12 @@ public class AudioManager : MonoBehaviour {
     #endregion
 
     #region Spells
-    public SpellAudioObject CreateSpellAudioObject(SPELL_TYPE spellType, LocationGridTile centerTile, int tileRange, bool loopAudio = true) {
-        PlayerSkillAssets assets = PlayerSkillManager.Instance.GetPlayerSkillAsset(spellType);
-        if (assets.audioClips.Length > 0) {
-            AudioClip audioClip = CollectionUtilities.GetRandomElement(assets.audioClips);
-            GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(spellAudioObjectPrefab.name,
-                centerTile.centeredWorldLocation, Quaternion.identity, centerTile.parentMap.objectsParent, true);
-            SpellAudioObject spellAudioObject = go.GetComponent<SpellAudioObject>();
-            spellAudioObject.Initialize(audioClip, tileRange, loopAudio);
-            return spellAudioObject;
-        }
-        return null;
+    public AudioObject CreateSpellAudioObject(AudioClip audioClip, LocationGridTile centerTile, int tileRange, bool loopAudio = true) {
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(spellAudioObjectPrefab.name,
+            centerTile.centeredWorldLocation, Quaternion.identity, centerTile.parentMap.objectsParent, true);
+        AudioObject audioObject = go.GetComponent<AudioObject>();
+        audioObject.Initialize(audioClip, tileRange, loopAudio);
+        return audioObject;
     }
     #endregion
 

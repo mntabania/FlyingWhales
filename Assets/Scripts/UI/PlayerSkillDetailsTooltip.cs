@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Scriptable_Object_Scripts;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -46,7 +47,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         thisRect.anchoredPosition = Vector2.zero;
 
         if (wasActiveBefore == false) {
-            PlayerSkillAssets skillAssets = PlayerSkillManager.Instance.GetPlayerSkillAsset(skillData.type);
+            PlayerSkillAssets skillAssets = PlayerSkillManager.Instance.GetPlayerSkillAsset<PlayerSkillAssets>(skillData.type);
             if (skillAssets != null) {
                 if (skillAssets.tooltipImage != null) {
                     tooltipImage.texture = skillAssets.tooltipImage;

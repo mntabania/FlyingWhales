@@ -1,6 +1,8 @@
 ﻿using System.Collections;
+using Scriptable_Object_Scripts;
 using UnityEngine;
 using Traits;
+using UtilityScripts;
 
 public class IceteroidParticleEffect : BaseParticleEffect {
     protected override void PlayParticle() {
@@ -15,6 +17,12 @@ public class IceteroidParticleEffect : BaseParticleEffect {
         ObjectPoolManager.Instance.DestroyObject(gameObject);
     }
     public void OnIceteroidFell() {
+        AudioManager.Instance.CreateSpellAudioObject(
+            CollectionUtilities.GetRandomElement(
+                PlayerSkillManager.Instance.GetPlayerSkillAsset<IceteroidAssets>(SPELL_TYPE.ICETEROIDS).impactClips
+            ), 
+            targetTile, 1, false
+        );
         targetTile.genericTileObject.traitContainer.AddTrait(targetTile.genericTileObject, "Danger Remnant");
         targetTile.PerformActionOnTraitables(DealDamage);
     }

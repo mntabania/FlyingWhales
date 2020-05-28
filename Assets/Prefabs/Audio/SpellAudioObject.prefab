@@ -141,4 +141,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be4c6748a13f0a541a0cf3f0e2c859b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spellAudio: {fileID: 1749460641892555091}
+  ParentPool: {fileID: 0}
+  audioSource: {fileID: 1749460641892555091}
