@@ -17,18 +17,19 @@ public class HuntPreyBehaviour : CharacterBehaviourComponent {
             if (animals != null) {
                 animals = animals.Where(x => x.race != character.race).ToList();
                 if (animals.Count > 0) {
-                    List<Animal> deadAnimals = animals.Where(x => x.isDead && x.numOfActionsBeingPerformedOnThis == 0).ToList();
+                    List<Animal> deadAnimals = animals.Where(x => x.isDead).ToList();
                     if (deadAnimals.Count > 0) {
                         Animal deadAnimal = CollectionUtilities.GetRandomElement(deadAnimals);
                         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HUNT_PREY,
                             INTERACTION_TYPE.EAT_CORPSE, deadAnimal, character);
                         character.jobQueue.AddJobInQueue(job);
                     } else {
+                        //only make wolf assault because job to hunt prey will be cancelled after the target animal dies.
+                        //eat corpse will be triggered above.
                         Animal animalToHunt = CollectionUtilities.GetRandomElement(animals);
                         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HUNT_PREY,
-                            INTERACTION_TYPE.EAT_CORPSE, animalToHunt, character);
+                            INTERACTION_TYPE.ASSAULT, animalToHunt, character);
                         character.jobQueue.AddJobInQueue(job);
-                        // character.combatComponent.Fight(animalToHunt, "Hunting");
                     }
                 }
             } else {

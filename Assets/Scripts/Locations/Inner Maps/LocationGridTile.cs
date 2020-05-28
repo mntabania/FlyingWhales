@@ -1112,9 +1112,15 @@ namespace Inner_Maps {
             if (hasFreezingTrap != state) {
                 hasFreezingTrap = state;
                 if (hasFreezingTrap) {
+                    if (collectionOwner.isPartOfParentRegionMap) {
+                        collectionOwner.partOfHextile.hexTileOwner.AddFreezingTrapInHexTile();
+                    }
                     _freezingTrapChecker = freezingTrapChecker;
                     _freezingTrapEffect = GameManager.Instance.CreateParticleEffectAt(this, PARTICLE_EFFECT.Freezing_Trap, InnerMapManager.DetailsTilemapSortingOrder - 1);
                 } else {
+                    if (collectionOwner.isPartOfParentRegionMap) {
+                        collectionOwner.partOfHextile.hexTileOwner.RemoveFreezingTrapInHexTile();
+                    }
                     ObjectPoolManager.Instance.DestroyObject(_freezingTrapEffect);
                     _freezingTrapEffect = null;
                     _freezingTrapChecker = null;

@@ -47,7 +47,7 @@ public class QuestStepItem : PooledObject {
         }
     }
     private void UpdateDescription() {
-        _stepLbl.text = _step.hasHoverAction ? $"<link=\"1\"><#CEB67C>{_step.stepDescription}</color></link>" : _step.stepDescription;
+        _stepLbl.text = _step.hasHoverAction ? $"<link=\"1\"><#FFFB00>{_step.stepDescription}</color></link>" : _step.stepDescription;
     }
     private void OnStepCompleted(QuestStep step) {
         if (_step == step) {

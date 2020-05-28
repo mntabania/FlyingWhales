@@ -32,15 +32,19 @@ namespace Tutorial {
                         .SetHoverOverAction(OnHoverBuildStructure)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo), 
                     new StructureBuiltStep(STRUCTURE_TYPE.TORTURE_CHAMBERS, "Choose the Torture Chamber")
-                        .SetCompleteAction(OnStructureBuilt)),
+                        .SetCompleteAction(OnStructureBuilt)
+                ),
+                new QuestStepCollection(
+                    new ClickOnRoomStep("Click on a Torture Room", room => room is TortureRoom)
+                        .SetHoverOverAction(OnHoverChamber)
+                        .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
+                ),
                 new QuestStepCollection(
                     new ExecutedPlayerActionStep(SPELL_TYPE.SEIZE_CHARACTER, "Seize a Villager.")
                         .SetHoverOverAction(OnHoverSeizeCharacter)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo),
-                    new DropCharacterAtStructureRoomStep<TortureRoom>("Drop at a Chamber")
-                        .SetHoverOverAction(OnHoverChamber)
-                        .SetHoverOutAction(UIManager.Instance.HideSmallInfo),
-                    new ClickOnRoomStep("Click on that chamber", IsClickedRoomValid),
+                    new DropCharacterAtStructureRoomStep<TortureRoom>("Drop at a Torture Room"),
+                new ClickOnRoomStep("Click on that Room", IsClickedRoomValid),
                     new ExecutedPlayerActionStep(SPELL_TYPE.TORTURE, "Click on Torture button")
                         .SetHoverOverAction(OnHoverBeginTorture)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
@@ -79,7 +83,7 @@ namespace Tutorial {
                 TutorialManager.Instance.seizeImage, "Seize", stepItem.hoverPosition);
         }
         private void OnHoverChamber(QuestStepItem stepItem) {
-            UIManager.Instance.ShowSmallInfo("The Torture Chambers have 3 separate rooms. Each one can be occupied by one Villager. Drop a seized Villager at one of the chambers to proceed.", 
+            UIManager.Instance.ShowSmallInfo("The Torture Chambers have 3 separate rooms. Each one can be occupied by one Villager.", 
                 TutorialManager.Instance.chambersVideo, "Chambers", stepItem.hoverPosition);
         }
         private void OnHoverBeginTorture(QuestStepItem stepItem) {
