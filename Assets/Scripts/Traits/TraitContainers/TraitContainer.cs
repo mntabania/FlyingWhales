@@ -190,7 +190,7 @@ namespace Traits {
                     return true;
                 }
                 int roll = UnityEngine.Random.Range(0, 100);
-                int chance = GetElementalTraitChanceToBeAdded(traitName);
+                int chance = GetElementalTraitChanceToBeAdded(traitName, addTo);
                 if (roll < chance) {
                     return true;
                 }
@@ -274,7 +274,7 @@ namespace Traits {
             }
             return true;
         }
-        private int GetElementalTraitChanceToBeAdded(string traitName) {
+        private int GetElementalTraitChanceToBeAdded(string traitName, ITraitable addTo) {
             int chance = 100;
             if (traitName == "Burning") {
                 chance = 15;
@@ -296,6 +296,11 @@ namespace Traits {
                     chance = 0;
                 } else if (HasTrait("Wet")) {
                     chance = 100;
+                }
+            } else if (traitName == "Poisoned") {
+                chance = 100;
+                if (addTo is Character) {
+                    chance = 25;
                 }
             }
             return chance;

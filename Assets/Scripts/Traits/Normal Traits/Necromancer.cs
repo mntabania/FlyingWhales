@@ -65,6 +65,16 @@ namespace Traits {
             }
             return count;
         }
+        public int GetNumOfSkeletonFollowersThatAreNotAttackingAndIsAlive() {
+            int count = 0;
+            for (int i = 0; i < owner.faction.characters.Count; i++) {
+                Character factionMember = owner.faction.characters[i];
+                if (factionMember.race == RACE.SKELETON && !factionMember.isDead && !factionMember.behaviourComponent.HasBehaviour(typeof(AttackVillageBehaviour))) {
+                    count++;
+                }
+            }
+            return count;
+        }
         public void SetAttackVillageTarget(NPCSettlement npcSettlement) {
             attackVillageTarget = npcSettlement;
         }

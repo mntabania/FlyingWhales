@@ -364,10 +364,19 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     private bool HasCanPerformOrAliveResidentInsideSettlement() {
         for (int i = 0; i < residents.Count; i++) {
             Character resident = residents[i];
-            if((resident.canPerform || !resident.isDead) 
+            if(resident.canPerform && !resident.isDead 
                 && resident.gridTileLocation != null 
                 && resident.gridTileLocation.collectionOwner.isPartOfParentRegionMap
                 && resident.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile == this) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool HasAliveResident() {
+        for (int i = 0; i < residents.Count; i++) {
+            Character resident = residents[i];
+            if (!resident.isDead) {
                 return true;
             }
         }

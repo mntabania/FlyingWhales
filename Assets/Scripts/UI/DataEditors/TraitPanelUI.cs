@@ -25,6 +25,7 @@ public class TraitPanelUI : MonoBehaviour {
     public Dropdown traitTriggerOptions;
     public Dropdown advertisedInteractionOptions;
     public Dropdown crimeSeverityOptions;
+    public Dropdown elementOptions;
     public TextMeshProUGUI advertisedInteractionsText;
 
     //Effects
@@ -91,6 +92,7 @@ public class TraitPanelUI : MonoBehaviour {
         statOptions.ClearOptions();
         traitTypeOptions.ClearOptions();
         traitEffectOptions.ClearOptions();
+        elementOptions.ClearOptions();
         traitTriggerOptions.ClearOptions();
         advertisedInteractionOptions.ClearOptions();
         crimeSeverityOptions.ClearOptions();
@@ -104,6 +106,7 @@ public class TraitPanelUI : MonoBehaviour {
         string[] stats = System.Enum.GetNames(typeof(STAT));
         string[] traitTypes = System.Enum.GetNames(typeof(TRAIT_TYPE));
         string[] traitEffects = System.Enum.GetNames(typeof(TRAIT_EFFECT));
+        string[] elements = System.Enum.GetNames(typeof(ELEMENTAL_TYPE));
         string[] traitTriggers = System.Enum.GetNames(typeof(TRAIT_TRIGGER));
         string[] actions = System.Enum.GetNames(typeof(INTERACTION_TYPE));
         string[] crimeSeverities = System.Enum.GetNames(typeof(CRIME_TYPE));
@@ -116,6 +119,7 @@ public class TraitPanelUI : MonoBehaviour {
         statOptions.AddOptions(stats.ToList());
         traitTypeOptions.AddOptions(traitTypes.ToList());
         traitEffectOptions.AddOptions(traitEffects.ToList());
+        elementOptions.AddOptions(elements.ToList());
         traitTriggerOptions.AddOptions(traitTriggers.ToList());
         advertisedInteractionOptions.AddOptions(actions.ToList());
         crimeSeverityOptions.AddOptions(crimeSeverities.ToList());
@@ -137,6 +141,7 @@ public class TraitPanelUI : MonoBehaviour {
         statOptions.value = 0;
         traitTypeOptions.value = 0;
         traitEffectOptions.value = 0;
+        elementOptions.value = 0;
         traitTriggerOptions.value = 0;
         advertisedInteractionOptions.value = 0;
         crimeSeverityOptions.value = 0;
@@ -217,6 +222,7 @@ public class TraitPanelUI : MonoBehaviour {
                 thoughtText = thoughtInput.text,
                 type = traitType,
                 effect = (TRAIT_EFFECT) System.Enum.Parse(typeof(TRAIT_EFFECT), traitEffectOptions.options[traitEffectOptions.value].text),
+                elementalType = (ELEMENTAL_TYPE) System.Enum.Parse(typeof(ELEMENTAL_TYPE), elementOptions.options[elementOptions.value].text),
                 ticksDuration = int.Parse(durationInput.text),
                 //effects = _effects,
                 isHidden = isHiddenToggle.isOn,
@@ -237,6 +243,7 @@ public class TraitPanelUI : MonoBehaviour {
                 thoughtText = thoughtInput.text,
                 type = traitType,
                 effect = (TRAIT_EFFECT) System.Enum.Parse(typeof(TRAIT_EFFECT), traitEffectOptions.options[traitEffectOptions.value].text),
+                elementalType = (ELEMENTAL_TYPE) System.Enum.Parse(typeof(ELEMENTAL_TYPE), elementOptions.options[elementOptions.value].text),
                 ticksDuration = int.Parse(durationInput.text),
                 //effects = _effects,
                 isHidden = isHiddenToggle.isOn,
@@ -283,6 +290,7 @@ public class TraitPanelUI : MonoBehaviour {
         thoughtInput.text = trait.thoughtText;
         traitTypeOptions.value = GetOptionIndex(trait.type.ToString(), traitTypeOptions);
         traitEffectOptions.value = GetOptionIndex(trait.effect.ToString(), traitEffectOptions);
+        elementOptions.value = GetOptionIndex(trait.elementalType.ToString(), elementOptions);
         durationInput.text = trait.ticksDuration.ToString();
         mutuallyExclusiveInput.text = ConvertMutuallyExclusiveTraitsToText(trait);
         _advertisedInteractions = trait.advertisedInteractions;
@@ -296,6 +304,7 @@ public class TraitPanelUI : MonoBehaviour {
         thoughtInput.text = status.thoughtText;
         traitTypeOptions.value = GetOptionIndex(status.type.ToString(), traitTypeOptions);
         traitEffectOptions.value = GetOptionIndex(status.effect.ToString(), traitEffectOptions);
+        elementOptions.value = GetOptionIndex(status.elementalType.ToString(), elementOptions);
         durationInput.text = status.ticksDuration.ToString();
         mutuallyExclusiveInput.text = ConvertMutuallyExclusiveTraitsToText(status);
         _advertisedInteractions = status.advertisedInteractions;

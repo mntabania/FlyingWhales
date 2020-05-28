@@ -174,6 +174,15 @@ public class Faction {
         //    SetLeader(null);
         //}
     }
+    public void ClearAllDeadCharactersFromFaction() {
+        for (int i = 0; i < characters.Count; i++) {
+            if (characters[i].isDead) {
+                if (LeaveFaction(characters[i])) {
+                    i--;
+                }
+            }
+        }
+    }
 
     // public List<Character> GetCharactersOfType(CHARACTER_ROLE role) {
     //     List<Character> chars = new List<Character>();

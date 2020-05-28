@@ -1185,6 +1185,12 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             _owner.jobQueue.AddJobInQueue(job);
         }
     }
+    public void TriggerAbsorbLife(IPointOfInterest target) {
+        if (!_owner.jobQueue.HasJob(JOB_TYPE.ABSORB_LIFE)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ABSORB_LIFE, INTERACTION_TYPE.ABSORB_LIFE, target, _owner);
+            _owner.jobQueue.AddJobInQueue(job);
+        }
+    }
     public void TriggerSpawnSkeleton() {
         if (!_owner.jobQueue.HasJob(JOB_TYPE.SPAWN_SKELETON)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SPAWN_SKELETON, INTERACTION_TYPE.SPAWN_SKELETON, _owner, _owner);
@@ -1194,6 +1200,12 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     public void TriggerRaiseCorpse(IPointOfInterest target) {
         if (!_owner.jobQueue.HasJob(JOB_TYPE.RAISE_CORPSE)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RAISE_CORPSE, INTERACTION_TYPE.RAISE_CORPSE, target, _owner);
+            _owner.jobQueue.AddJobInQueue(job);
+        }
+    }
+    public void TriggerAbsorbPower(IPointOfInterest target) {
+        if (!_owner.jobQueue.HasJob(JOB_TYPE.ABSORB_POWER)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ABSORB_POWER, INTERACTION_TYPE.ABSORB_POWER, target, _owner);
             _owner.jobQueue.AddJobInQueue(job);
         }
     }
