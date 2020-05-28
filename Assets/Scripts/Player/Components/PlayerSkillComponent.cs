@@ -32,13 +32,13 @@ public class PlayerSkillComponent {
 
     #region Skill Tree
     public void AddPlayerSkill(SpellData spellData, int charges, int manaCost, int cooldown, int threat, int threatPerHour) {
-        CategorizePlayerSkill(spellData);
         spellData.SetMaxCharges(charges);
         spellData.SetCharges(charges);
         spellData.SetCooldown(cooldown);
         spellData.SetManaCost(manaCost);
         spellData.SetThreat(threat);
         spellData.SetThreatPerHour(threatPerHour);
+        CategorizePlayerSkill(spellData);
     }
     public void AddCharges(SPELL_TYPE spellType, int amount) {
         SpellData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(spellType);
@@ -138,23 +138,23 @@ public class PlayerSkillComponent {
     }
     private void SetPlayerSkillData(PlayerSkillTreeNodeData node) {
         SpellData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(node.skill);
-        CategorizePlayerSkill(spellData);
         spellData.SetMaxCharges(node.charges);
         spellData.SetCharges(node.charges);
         spellData.SetCooldown(node.cooldown);
         spellData.SetManaCost(node.manaCost);
         spellData.SetThreat(node.threat);
         spellData.SetThreatPerHour(node.threatPerHour);
+        CategorizePlayerSkill(spellData);
     }
     private void SetPlayerSkillData(SPELL_TYPE skill, PlayerSkillTreeNode node) {
         SpellData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(skill);
-        CategorizePlayerSkill(spellData);
         spellData.SetMaxCharges(node.charges);
         spellData.SetCharges(node.charges);
         spellData.SetCooldown(node.cooldown);
         spellData.SetManaCost(node.manaCost);
         spellData.SetThreat(node.threat);
         spellData.SetThreatPerHour(node.threatPerHour);
+        CategorizePlayerSkill(spellData);
     }
     private void CategorizePlayerSkill(SpellData spellData) {
         Assert.IsNotNull(spellData, "Given spell data in CategorizePlayerSkill is null!");

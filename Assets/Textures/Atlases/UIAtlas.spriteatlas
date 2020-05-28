@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: d64d057451588de47862f92a337b5fc0, type: 3}
-    totalSpriteSurfaceArea: 17266520
+    totalSpriteSurfaceArea: 17280080
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -51,6 +51,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 5b6a9120e63507d4283bd6d9395709ad, type: 3}
   - {fileID: 21300000, guid: 87bb45208dd227c4692921a192026acb, type: 3}
   - {fileID: 21300000, guid: 2914eb20255e070448ce2bab92c250a6, type: 3}
+  - {fileID: 21300000, guid: 418892401ce8da24c962f5914893fc8d, type: 3}
   - {fileID: 21300000, guid: 6d10ef4089d0f8346b6a18e874054bcf, type: 3}
   - {fileID: 21300000, guid: 156be6504b128844f92cbe17f7abd617, type: 3}
   - {fileID: 21300000, guid: d0ba9750b0ed851448bb340925586867, type: 3}
@@ -136,6 +137,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 5767b2c2db928c446b1558b601f40b9f, type: 3}
   - {fileID: 21300000, guid: febd7bc28a21ea044a06f7266d76b729, type: 3}
   - {fileID: 21300000, guid: 93b34ec21c0450c49b3150771af2a182, type: 3}
+  - {fileID: 21300000, guid: cf959dd20f459e847b8754e9da3f89e9, type: 3}
   - {fileID: 21300000, guid: b4bb50e205556bc449958a52cd6caabe, type: 3}
   - {fileID: 21300000, guid: e2a2c2e2ab5b93248bbfcc2d9cf70732, type: 3}
   - {fileID: 21300000, guid: 3b5634e2dfad1964c8eb70354f6f1bbf, type: 3}
@@ -383,6 +385,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: e6b4163aa5fd32c45965f7bcff0da048, type: 3}
   - {fileID: 21300000, guid: 3019df3a0d16ebe4bb961b8cf3eed969, type: 3}
   - {fileID: 21300000, guid: da6c824a7f9020249beb8ba8d728310c, type: 3}
+  - {fileID: 21300000, guid: 961e805ade57dfc409271e027df24371, type: 3}
   - {fileID: 21300000, guid: 56f8e76a2999fbc48a7232f935a520a0, type: 3}
   - {fileID: 21300000, guid: fe6ad67aaec6d6a4b9661a841197d8a9, type: 3}
   - {fileID: 21300000, guid: 5ed93a7acf0e2644d8412e493d5c4e9b, type: 3}
@@ -405,6 +408,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: de7b70fa81dbbb74ab7858b6c8cd4783, type: 3}
   - {fileID: 21300000, guid: f3d10cfae10019d42954e3bf94a00a44, type: 3}
   - {fileID: 21300000, guid: 18e9b10b227ae5740b4dde269bc2c67f, type: 3}
+  - {fileID: 21300000, guid: d5cb941bdcfc72741a9040167bab6896, type: 3}
   - {fileID: 21300000, guid: 0568a81b755cd124dae814785d3e3578, type: 3}
   - {fileID: 21300000, guid: 0e6ced1ba182ea940bd952984f04771d, type: 3}
   - {fileID: 21300000, guid: 66eee42b119875741897db5441e55335, type: 3}
@@ -445,6 +449,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 4e862e4ca18156648bc6399151215394, type: 3}
   - {fileID: 21300000, guid: aad8d75c17585ae42924bf422178e989, type: 3}
   - {fileID: 21300000, guid: 41b46e5c79a790a4587ee7aef9acb301, type: 3}
+  - {fileID: 21300000, guid: 106f3f5cecbd75f4fa34469d673a1b59, type: 3}
   - {fileID: 21300000, guid: 5982206c24543a34eb45b8b331a6b4b7, type: 3}
   - {fileID: 21300000, guid: 46656e6c44cf95949865accdc617d6e4, type: 3}
   - {fileID: 21300000, guid: 4123647c73b8de4439e9bd0d54fa8c80, type: 3}
@@ -620,6 +625,7 @@ SpriteAtlas:
   - ge_cont-05B
   - assault_icon
   - footprint_icon
+  - button_demons_default
   - fyn_s
   - minion_tab_items_default
   - generic_side_container
@@ -705,6 +711,7 @@ SpriteAtlas:
   - event_active_button_clicked
   - White_square
   - button_speed1_off
+  - button_demons_hover
   - abducted_restrained_icon
   - button_goader_clicked
   - 4x_button_clicked
@@ -952,6 +959,7 @@ SpriteAtlas:
   - pause_button_clicked
   - button_goader_disabled
   - Normal-Border-Gold
+  - icon_charges
   - tab_status_active
   - button_extract_clicked
   - ge_cont-06B
@@ -974,6 +982,7 @@ SpriteAtlas:
   - button_start_game_default
   - 9-Corrupted
   - button_crypts_default
+  - button_demons_clicked
   - button_close_default
   - button_events_default
   - button_skills_hover
@@ -1014,6 +1023,7 @@ SpriteAtlas:
   - faction_ui_resident_default
   - 4x_button_default
   - minion_icon_instigator
+  - button_demons_disabled
   - faction_relationship_container
   - scroll_button_right_off
   - button_spire_default
