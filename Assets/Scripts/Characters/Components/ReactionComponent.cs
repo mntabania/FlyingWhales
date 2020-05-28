@@ -688,7 +688,9 @@ public class ReactionComponent {
         if (targetTileObject.tileObjectType.IsTileObjectAnItem()) {
             if (targetTileObject.gridTileLocation != null && owner.homeSettlement != null
                 && targetTileObject.gridTileLocation.structure != owner.homeSettlement.mainStorage
-                && !(targetTileObject.gridTileLocation.structure is Dwelling)) {
+                && !(targetTileObject.gridTileLocation.structure is Dwelling) 
+                && !owner.IsInventoryAtFullCapacity()
+                && (owner.jobQueue.jobsInQueue.Count == 0 || owner.jobQueue.jobsInQueue[0].priority < JOB_TYPE.TAKE_ITEM.GetJobTypePriority())) {
                 owner.jobComponent.CreateTakeItemJob(targetTileObject);
             }
         }

@@ -11,8 +11,8 @@ public class KoboldBehaviour : CharacterBehaviourComponent {
     
     public override bool TryDoBehaviour(Character character, ref string log) {
         if (UnityEngine.Random.Range(0, 100) < 10) {
-            // List<HexTile> hexTileChoices = GetTilesNextToActiveSettlement(character.currentRegion);
-            List<HexTile> hexTileChoices = GetTilesNextToHome(character);
+            // List<HexTile> hexTileChoices = GetTilesNextToActiveSetztlement(character.currentRegion);
+            List<HexTile> hexTileChoices = GetValidHexTilesNextToHome(character);
             if (hexTileChoices.Count > 0) {
                 HexTile chosenTile = CollectionUtilities.GetRandomElement(hexTileChoices);
                 List<LocationGridTile> locationGridTileChoices =
@@ -46,13 +46,13 @@ public class KoboldBehaviour : CharacterBehaviourComponent {
         }
         return hexTiles;
     }
-    private List<HexTile> GetTilesNextToHome(Character character) {
+    private List<HexTile> GetValidHexTilesNextToHome(Character character) {
         if (character.homeStructure?.occupiedHexTile != null) {
             HexTile homeTile = character.homeStructure.occupiedHexTile.hexTileOwner;
-            return homeTile.AllNeighbours.Where(x => x.region == homeTile.region).ToList();
+            return homeTile.AllNeighbours.Where(x => x.region == homeTile.region && x.freezingTraps < 4).ToList();
         } else if (character.territorries != null && character.territorries.Count > 0) {
             HexTile homeTile = CollectionUtilities.GetRandomElement(character.territorries);
-            return homeTile.AllNeighbours.Where(x => x.region == homeTile.region).ToList();
+            return homeTile.AllNeighbours.Where(x => x.region == homeTile.region && x.freezingTraps < 4).ToList();
         }
         return null;
     }

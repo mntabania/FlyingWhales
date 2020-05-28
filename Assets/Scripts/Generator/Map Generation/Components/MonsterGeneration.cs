@@ -70,7 +70,7 @@ public class MonsterGeneration : MapGenerationComponent {
 
 			if (WorldConfigManager.Instance.isDemoWorld) {
 				//nymphs
-				int randomNymphs = Random.Range(3, 7);
+				int randomNymphs = 2;
 				SUMMON_TYPE[] nymphChoices = new[]
 					{SUMMON_TYPE.Ice_Nymph, SUMMON_TYPE.Water_Nymph, SUMMON_TYPE.Wind_Nymph};
 				for (int k = 0; k < randomNymphs; k++) {
@@ -79,14 +79,14 @@ public class MonsterGeneration : MapGenerationComponent {
 					locationChoices.Remove(summon.gridTileLocation);
 				}
 				//sludge
-				int randomSludge = Random.Range(3, 7);
+				int randomSludge = 3;
 				for (int k = 0; k < randomSludge; k++) {
 					if (locationChoices.Count == 0) { break; }
 					Summon summon = CreateMonster(SUMMON_TYPE.Sludge, locationChoices);
 					locationChoices.Remove(summon.gridTileLocation);
 				}
 				//wisps
-				int randomWisp = Random.Range(3, 7);
+				int randomWisp = 3;
 				SUMMON_TYPE[] wispChoices = new[]
 					{SUMMON_TYPE.Earthen_Wisp, SUMMON_TYPE.Electric_Wisp, SUMMON_TYPE.Fire_Wisp};
 				for (int k = 0; k < randomWisp; k++) {
@@ -126,7 +126,7 @@ public class MonsterGeneration : MapGenerationComponent {
 			for (int i = 0; i < monsterLairs.Count; i++) {
 				BaseLandmark landmark = monsterLairs[i];
 				LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
-				int randomAmount = Random.Range(3, 6);
+				int randomAmount = 4;
 				for (int k = 0; k < randomAmount; k++) {
 					CreateMonster(SUMMON_TYPE.Wolf, landmark.tileLocation.settlementOnTile, landmark, structure);	
 				}
@@ -136,7 +136,7 @@ public class MonsterGeneration : MapGenerationComponent {
 			for (int i = 0; i < ancientRuins.Count; i++) {
 				BaseLandmark landmark = ancientRuins[i];
 				LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
-				int randomAmount = Random.Range(2, 4);
+				int randomAmount = 3;
 				for (int k = 0; k < randomAmount; k++) {
 					CreateMonster(SUMMON_TYPE.Kobold, landmark.tileLocation.settlementOnTile, landmark, structure);	
 				}

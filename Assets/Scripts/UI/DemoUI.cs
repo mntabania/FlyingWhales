@@ -113,5 +113,11 @@ public class DemoUI : MonoBehaviour {
     public void OnClickWishList() {
         Application.OpenURL("https://store.steampowered.com/app/909320/Ruinarch/");
     }
+    public void OnClickLeaveFeedback() {
+        Application.OpenURL("https://forms.gle/vxD913oe3jBhkCE66");
+    }
+    public void OnClickJoinDiscord() {
+        Application.OpenURL("http://discord.ruinarch.com/");
+    }
     #endregion
 }

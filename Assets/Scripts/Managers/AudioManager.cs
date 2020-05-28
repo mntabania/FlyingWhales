@@ -37,15 +37,19 @@ public class AudioManager : MonoBehaviour {
         if (Instance == null) {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            Initialize();
         } else {
             Destroy(gameObject);
         }
     }
-
-    private void Start() {
-        Initialize();
+    private void OnDestroy() {
+        Messenger.RemoveListener<float>(Signals.MASTER_VOLUME_CHANGED, SetMasterVolume);
+        Messenger.RemoveListener<float>(Signals.MUSIC_VOLUME_CHANGED, SetMusicVolume);
+        Messenger.RemoveListener<RuinarchButton>(Signals.BUTTON_CLICKED, OnButtonClicked);
+        Messenger.RemoveListener<RuinarchToggle>(Signals.TOGGLE_CLICKED, OnToggleClicked);
+        Messenger.RemoveListener<string>(Signals.STARTED_LOADING_SCENE, OnSceneStartedLoading);
     }
-    
+
     #region Initialization
     private void Initialize() {
         Messenger.MarkAsPermanent(Signals.MASTER_VOLUME_CHANGED);
@@ -59,8 +63,6 @@ public class AudioManager : MonoBehaviour {
         Messenger.AddListener<RuinarchButton>(Signals.BUTTON_CLICKED, OnButtonClicked);
         Messenger.AddListener<RuinarchToggle>(Signals.TOGGLE_CLICKED, OnToggleClicked);
         Messenger.AddListener<string>(Signals.STARTED_LOADING_SCENE, OnSceneStartedLoading);
-        
-        
         SetMasterVolume(SettingsManager.Instance.settings.masterVolume);
         SetMusicVolume(SettingsManager.Instance.settings.musicVolume);
     }
@@ -89,10 +91,10 @@ public class AudioManager : MonoBehaviour {
     #endregion
 
     #region Volume
-    private void SetMasterVolume(float volume) {
+    public void SetMasterVolume(float volume) {
         masterMixer.SetFloat(MasterVolume, volume);
     }
-    private void SetMusicVolume(float volume) {
+    public void SetMusicVolume(float volume) {
         masterMixer.SetFloat(MusicVolume, volume);
     }
     #endregion

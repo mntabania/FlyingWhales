@@ -1468,4 +1468,14 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         _isBeingDefendedCount--;
     }
     #endregion
+
+    #region Freezing Trap
+    public int freezingTraps { get; private set; }
+    public void AddFreezingTrapInHexTile() {
+        freezingTraps++;
+    }
+    public void RemoveFreezingTrapInHexTile() {
+        freezingTraps--;
+    }
+    #endregion
 }

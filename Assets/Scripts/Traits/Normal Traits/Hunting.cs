@@ -19,18 +19,26 @@
             if (addedTo is Character character) {
                 _owner = character;
                 character.behaviourComponent.AddBehaviourComponent(typeof(HuntPreyBehaviour));
+                Messenger.AddListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJobSuccessfully);
             }
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
             if (removedFrom is Character character) {
                 character.behaviourComponent.RemoveBehaviourComponent(typeof(HuntPreyBehaviour));
+                Messenger.RemoveListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJobSuccessfully);
             }
         }
         #endregion
 
         public void SetTargetTile(HexTile hexTile) {
             targetTile = hexTile;
+        }
+        
+        private void OnCharacterFinishedJobSuccessfully(Character character, GoapPlanJob goapPlanJob) {
+            if (character == _owner && goapPlanJob.targetInteractionType == INTERACTION_TYPE.EAT_CORPSE) {
+                character.traitContainer.RemoveTrait(character, this);
+            }
         }
     }
 }
