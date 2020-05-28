@@ -10,7 +10,7 @@ using UnityEngine.Assertions;
 public class CombatManager : MonoBehaviour {
     public static CombatManager Instance;
 
-    public const int pursueDuration = 10;
+    public const int pursueDuration = 5;
     public const string Hostility = "Hostility", Retaliation = "Retaliation", Berserked = "Berserked", Action = "Action",
         Threatened = "Threatened", Anger = "Anger", Join_Combat = "Join Combat", Drunk = "Drunk", Rage = "Rage";
 
