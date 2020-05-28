@@ -14,6 +14,7 @@ public class AbsorbLife : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
+        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.TARGET }, IsTargetDead);
         AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.ABSORB_LIFE, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR));
     }
     public override void Perform(ActualGoapNode goapNode) {
@@ -31,16 +32,29 @@ public class AbsorbLife : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
-            return actor != poiTarget && poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER && poiTarget.mapObjectVisual && !(poiTarget as Character).isDead;
+            if(poiTarget is Animal) {
+                return actor != poiTarget && poiTarget.mapObjectVisual;
+            } else if (poiTarget is Summon summon) {
+                return actor != poiTarget && poiTarget.mapObjectVisual && summon.isDead;
+            }
         }
         return false;
     }
     #endregion
 
+    #region Preconditions
+    private bool IsTargetDead(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        if (poiTarget is Character character) {
+            return character.isDead;
+        }
+        return true;
+    }
+    #endregion
+
     #region State Effects
     public void AfterAbsorbSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.necromancerTrait.AdjustLifeAbsorbed(1);
-        (goapNode.poiTarget as Character).Death(deathFromAction: goapNode);
+        goapNode.actor.necromancerTrait.AdjustLifeAbsorbed(2);
+        (goapNode.poiTarget as Character).DestroyMarker();
     }
     #endregion
 

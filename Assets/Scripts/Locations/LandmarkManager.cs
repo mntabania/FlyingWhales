@@ -342,10 +342,11 @@ public partial class LandmarkManager : MonoBehaviour {
         }
         return null;
     }
-    public NPCSettlement GetFirstVillageSettlementInRegion(Region region) {
+    public NPCSettlement GetFirstVillageSettlementInRegionWithAliveResident(Region region) {
         for (int i = 0; i < allNonPlayerSettlements.Count; i++) {
             NPCSettlement settlement = allNonPlayerSettlements[i];
-            if (settlement.region == region && (settlement.locationType == LOCATION_TYPE.ELVEN_SETTLEMENT || settlement.locationType == LOCATION_TYPE.HUMAN_SETTLEMENT)) {
+            if (settlement.region == region && (settlement.locationType == LOCATION_TYPE.ELVEN_SETTLEMENT || settlement.locationType == LOCATION_TYPE.HUMAN_SETTLEMENT)
+                && settlement.HasAliveResident()) {
                 return settlement;
             }
         }

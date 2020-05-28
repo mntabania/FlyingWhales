@@ -14,11 +14,18 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
             log += $"\n-Character has a home structure/territory";
             if (character.marker) {
                 Character deadCharacter = null;
+                Character deadSummon = null;
                 for (int i = 0; i < character.marker.inVisionCharacters.Count; i++) {
                     Character inVision = character.marker.inVisionCharacters[i];
-                    if (inVision.isDead && !(inVision is Summon)) {
-                        deadCharacter = character.marker.inVisionCharacters[i];
-                        break;
+                    if (inVision.isDead) {
+                        if(!(inVision is Summon)) {
+                            deadCharacter = inVision;
+                            break;
+                        } else {
+                            if (deadSummon == null) {
+                                deadSummon = inVision;
+                            }
+                        }
                     }
                 }
                 if(deadCharacter != null) {
@@ -48,17 +55,31 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                         }
                     }
                 }
+
+                if(deadSummon != null) {
+                    log += $"\n-Character saw a dead summon will try to absorb power";
+                    if (deadSummon.characterClass.elementalType != ELEMENTAL_TYPE.Normal) {
+                        if (!character.traitContainer.HasTrait(deadSummon.characterClass.elementalType.ToString() + " Attacker")) {
+                            character.jobComponent.TriggerAbsorbPower(deadSummon);
+                            return true;
+                        }
+                    }
+                    character.jobComponent.TriggerAbsorbLife(deadSummon);
+                    return true;
+                }
             }
 
             TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();
             if(currentTime == TIME_IN_WORDS.EARLY_NIGHT || currentTime == TIME_IN_WORDS.LATE_NIGHT || currentTime == TIME_IN_WORDS.AFTER_MIDNIGHT) {
                 log += $"\n-It is Early Night, Late Night, or After Midnight";
-                int skeletonFollowers = character.necromancerTrait.numOfSkeletonFollowers;
-                if (skeletonFollowers > 5) {
+                int skeletonFollowers = character.necromancerTrait.GetNumOfSkeletonFollowersThatAreNotAttackingAndIsAlive();
+                if (skeletonFollowers > 3) {
                     log += $"\n-Skeleton followers are more than 5, attack village";
                     //Attack
-                    NPCSettlement attackVillageTarget = LandmarkManager.Instance.GetFirstVillageSettlementInRegion(character.currentRegion);
+                    character.faction.ClearAllDeadCharactersFromFaction();
+                    NPCSettlement attackVillageTarget = LandmarkManager.Instance.GetFirstVillageSettlementInRegionWithAliveResident(character.currentRegion);
                     if(attackVillageTarget != null) {
+                        character.necromancerTrait.SetAttackVillageTarget(attackVillageTarget);
                         character.interruptComponent.TriggerInterrupt(INTERRUPT.Order_Attack, character);
                     }
                 } else {
@@ -68,7 +89,7 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                         character.jobComponent.TriggerAbsorbLife();
                     } else {
                         log += $"\n-There is life absorbed, 80% to create skeleton follower, 20% chance to absorb more life";
-                        if (UnityEngine.Random.Range(0, 100) < 20) {
+                        if (UnityEngine.Random.Range(0, 100) < 10) {
                             log += $"\n-Absorb life";
                             character.jobComponent.TriggerAbsorbLife();
                         } else {
@@ -84,6 +105,14 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                     log += $"\n-Character is not at home, return home";
                     character.PlanIdleReturnHome();
                 } else {
+                    for (int i = 0; i < character.faction.characters.Count; i++) {
+                        if(character.faction.characters[i].race == RACE.SKELETON && !character.faction.characters[i].isDead && character.behaviourComponent.attackVillageTarget != null) {
+                            log += $"\n-Character will recall his undead followers";
+                            character.necromancerTrait.SetAttackVillageTarget(null);
+                            character.interruptComponent.TriggerInterrupt(INTERRUPT.Recall_Attack, character);
+                            break;
+                        }
+                    }
                     log += $"\n-Character is at home, roam";
                     character.jobComponent.TriggerRoamAroundTile();
                 }

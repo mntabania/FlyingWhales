@@ -491,6 +491,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.ABSORB_LIFE, new[]{
             new StateNameAndDuration(){ name = "Absorb Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1) },
         } },
+        {INTERACTION_TYPE.ABSORB_POWER, new[]{
+            new StateNameAndDuration(){ name = "Absorb Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1) },
+        } },
         {INTERACTION_TYPE.SPAWN_SKELETON, new[]{
             new StateNameAndDuration(){ name = "Spawn Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
         } },
