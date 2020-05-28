@@ -113,6 +113,18 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                             break;
                         }
                     }
+                    if (character.HasItem("Necronomicon")) {
+                        if (UnityEngine.Random.Range(0, 100) < 30) {
+                            log += $"\n-Character is at home, read necronomicon";
+                            character.jobComponent.TriggerReadNecronomicon();
+                            return true;
+                        }
+                    }
+                    if (UnityEngine.Random.Range(0, 100) < 40) {
+                        log += $"\n-Character is at home, meditate";
+                        character.jobComponent.TriggerMeditate();
+                        return true;
+                    }
                     log += $"\n-Character is at home, roam";
                     character.jobComponent.TriggerRoamAroundTile();
                 }

@@ -124,7 +124,7 @@ public class ExtractItem : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
-            return actor != poiTarget;
+            return actor != poiTarget && (poiTarget.traitContainer.HasTrait("Wet", "Burning", "Frozen") || poiTarget is SnowMound);
         }
         return false;
     }

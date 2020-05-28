@@ -39,7 +39,8 @@ public static class GoapActionStateDB {
     public static string Restrain_Icon = "Restrain";
     public static string Steal_Icon = "Steal";
     public static string Stealth_Icon = "Stealth";
-   
+    public static string Joy_Icon = "Joy";
+
 
     public static string GetStateResult(INTERACTION_TYPE goapType, string stateName) {
         if (goapActionStates.ContainsKey(goapType)) {
@@ -489,13 +490,13 @@ public static class GoapActionStateDB {
             new StateNameAndDuration(){ name = "Build Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
         } },
         {INTERACTION_TYPE.ABSORB_LIFE, new[]{
-            new StateNameAndDuration(){ name = "Absorb Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1) },
+            new StateNameAndDuration(){ name = "Absorb Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
         } },
         {INTERACTION_TYPE.ABSORB_POWER, new[]{
-            new StateNameAndDuration(){ name = "Absorb Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1) },
+            new StateNameAndDuration(){ name = "Absorb Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
         } },
         {INTERACTION_TYPE.SPAWN_SKELETON, new[]{
-            new StateNameAndDuration(){ name = "Spawn Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
+            new StateNameAndDuration(){ name = "Spawn Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1) },
         } },
         {INTERACTION_TYPE.RAISE_CORPSE, new[]{
             new StateNameAndDuration(){ name = "Raise Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
@@ -508,6 +509,12 @@ public static class GoapActionStateDB {
         } },
         {INTERACTION_TYPE.BEGIN_MINE, new[]{
             new StateNameAndDuration(){ name = "Begin Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
+        {INTERACTION_TYPE.READ_NECRONOMICON, new[]{
+            new StateNameAndDuration(){ name = "Read Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
+        } },
+        {INTERACTION_TYPE.MEDITATE, new[]{
+            new StateNameAndDuration(){ name = "Meditate Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
         } },
     };
 }

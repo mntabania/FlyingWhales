@@ -1209,5 +1209,17 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             _owner.jobQueue.AddJobInQueue(job);
         }
     }
+    public void TriggerReadNecronomicon() {
+        if (!_owner.jobQueue.HasJob(JOB_TYPE.IDLE)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE, INTERACTION_TYPE.READ_NECRONOMICON, _owner, _owner);
+            _owner.jobQueue.AddJobInQueue(job);
+        }
+    }
+    public void TriggerMeditate() {
+        if (!_owner.jobQueue.HasJob(JOB_TYPE.IDLE)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE, INTERACTION_TYPE.MEDITATE, _owner, _owner);
+            _owner.jobQueue.AddJobInQueue(job);
+        }
+    }
     #endregion
 }
