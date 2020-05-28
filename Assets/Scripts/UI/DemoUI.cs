@@ -102,7 +102,7 @@ public class DemoUI : MonoBehaviour {
         
         //thank you
         thankYouWindow.anchoredPosition = new Vector2(0f, -300f);
-        thankYouWindow.DOAnchorPosY(278f, 1f).SetEase(Ease.OutQuad);
+        thankYouWindow.DOAnchorPosY(360f, 1f).SetEase(Ease.OutQuad);
     }
     
     public void OnClickReturnToMainMenu() {
