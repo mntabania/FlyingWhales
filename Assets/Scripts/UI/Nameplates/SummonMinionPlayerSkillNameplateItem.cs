@@ -10,6 +10,7 @@ public class SummonMinionPlayerSkillNameplateItem : NameplateItem<SpellData> {
     [Header("Summon/Minion PlayerSkill Nameplate Attributes")]
     [SerializeField] private CharacterPortrait classPortrait;
     [SerializeField] private TextMeshProUGUI countText;
+    [SerializeField] private TextMeshProUGUI countTextWithIcon;
     //[SerializeField] private GameObject hoverPortrait;
 
     public SpellData spellData { get; private set; }
@@ -51,8 +52,12 @@ public class SummonMinionPlayerSkillNameplateItem : NameplateItem<SpellData> {
     public void SetCount(int count, bool useCountOnly = false) {
         if (!useCountOnly) {
             countText.text = count + "/" + spellData.charges;
+            countTextWithIcon.gameObject.SetActive(false);
+            countText.gameObject.SetActive(true);
         } else {
-            countText.text = "" + count;
+            countTextWithIcon.text = "" + count;
+            countTextWithIcon.gameObject.SetActive(true);
+            countText.gameObject.SetActive(false);
         }
     }
     //public override void OnHoverEnter() {
