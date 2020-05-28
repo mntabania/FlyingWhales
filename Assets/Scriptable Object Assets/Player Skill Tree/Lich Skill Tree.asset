@@ -18,7 +18,7 @@ MonoBehaviour:
     - manaCost: 10
       charges: -1
       cooldown: 12
-      threat: 0
+      threat: 2
       threatPerHour: 0
       expCost: 0
       buttonSprite: {fileID: 21300000, guid: 1de8b7335028dce4b8e2c6254181530f, type: 3}
@@ -42,8 +42,8 @@ MonoBehaviour:
     - manaCost: -1
       charges: -1
       cooldown: 48
-      threat: 0
-      threatPerHour: 2
+      threat: 5
+      threatPerHour: 0
       expCost: 300
       buttonSprite: {fileID: 21300000, guid: 1de8b7335028dce4b8e2c6254181530f, type: 3}
       unlockedSkills: 5100000033000000
@@ -64,17 +64,17 @@ MonoBehaviour:
       buttonSprite: {fileID: 21300000, guid: 992919969a7c793459af04ed04633657, type: 3}
       unlockedSkills: 1e00000029000000
     - manaCost: -1
-      charges: 10
+      charges: 6
       cooldown: 3
-      threat: 3
+      threat: 0
       threatPerHour: 0
       expCost: 300
       buttonSprite: {fileID: 21300000, guid: 992919969a7c793459af04ed04633657, type: 3}
       unlockedSkills: 1600000003000000
     - manaCost: -1
-      charges: 10
+      charges: 6
       cooldown: 3
-      threat: 9
+      threat: 5
       threatPerHour: 0
       expCost: 300
       buttonSprite: {fileID: 21300000, guid: 992919969a7c793459af04ed04633657, type: 3}
@@ -96,9 +96,9 @@ MonoBehaviour:
       buttonSprite: {fileID: 21300000, guid: 1de8b7335028dce4b8e2c6254181530f, type: 3}
       unlockedSkills: 
     - manaCost: -1
-      charges: 10
+      charges: 6
       cooldown: 3
-      threat: 6
+      threat: 5
       threatPerHour: 0
       expCost: 300
       buttonSprite: {fileID: 21300000, guid: 1de8b7335028dce4b8e2c6254181530f, type: 3}
@@ -122,7 +122,7 @@ MonoBehaviour:
     - manaCost: 25
       charges: -1
       cooldown: 48
-      threat: 6
+      threat: 5
       threatPerHour: 0
       expCost: 300
       buttonSprite: {fileID: 21300000, guid: 1de8b7335028dce4b8e2c6254181530f, type: 3}
@@ -144,23 +144,23 @@ MonoBehaviour:
       buttonSprite: {fileID: 21300000, guid: f3d10cfae10019d42954e3bf94a00a44, type: 3}
       unlockedSkills: 1f000000
     - manaCost: -1
-      charges: 10
+      charges: 6
       cooldown: 3
-      threat: 9
+      threat: 5
       threatPerHour: 0
       expCost: 300
       buttonSprite: {fileID: 21300000, guid: dd9654e584df8c445b6bc2411c7b6c47, type: 3}
       unlockedSkills: 2d0000002a000000
     - manaCost: -1
-      charges: 10
+      charges: 6
       cooldown: 3
-      threat: 0
-      threatPerHour: 2
+      threat: 5
+      threatPerHour: 0
       expCost: 300
       buttonSprite: {fileID: 21300000, guid: dd9654e584df8c445b6bc2411c7b6c47, type: 3}
       unlockedSkills: 
     - manaCost: -1
-      charges: 10
+      charges: 6
       cooldown: 3
       threat: 0
       threatPerHour: 0
@@ -178,7 +178,7 @@ MonoBehaviour:
     - manaCost: 20
       charges: -1
       cooldown: 12
-      threat: 6
+      threat: 5
       threatPerHour: 0
       expCost: 300
       buttonSprite: {fileID: 21300000, guid: e82f28130057b894cb52771c34d33c2d, type: 3}

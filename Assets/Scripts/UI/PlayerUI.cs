@@ -319,6 +319,7 @@ public class PlayerUI : MonoBehaviour {
     }
     private void OnThreatUpdated() {
         threatLbl.text = PlayerManager.Instance.player.threatComponent.threat.ToString();
+        threatLbl.transform.DOPunchScale(new Vector3(1.2f, 1.2f, 1.2f), 0.5f);
     }
     #endregion
 
