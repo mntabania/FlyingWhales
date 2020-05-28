@@ -531,10 +531,22 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         }
         return null;
     }
+    [ContextMenu("Update Pathfinding Graph")]
     public void UpdatePathfindingGraph() {
         for (int i = 0; i < innerMapHexTile.gridTileCollections.Length; i++) {
             LocationGridTileCollection collection = innerMapHexTile.gridTileCollections[i];
             collection.UpdatePathfindingGraph();
+        }
+    }
+    public void UpdatePathfindingGraphCoroutine() {
+        StartCoroutine(UpdatePathfinding());
+    }
+    private IEnumerator UpdatePathfinding() {
+        yield return null;
+        for (int i = 0; i < innerMapHexTile.gridTileCollections.Length; i++) {
+            LocationGridTileCollection collection = innerMapHexTile.gridTileCollections[i];
+            collection.UpdatePathfindingGraph();
+            yield return null;
         }
     }
     #endregion

@@ -221,6 +221,10 @@ public static class Signals {
     /// Parameters: Ruinarch.UI.RuinarchToggle ClickedToggle 
     /// </summary>
     public static string TOGGLE_CLICKED = "OnToggleClicked";
+    /// <summary>
+    /// Parameters: string sceneName
+    /// </summary>
+    public static string STARTED_LOADING_SCENE = "OnStartedLoadingScene";
     #endregion
 
     #region Quest Signals

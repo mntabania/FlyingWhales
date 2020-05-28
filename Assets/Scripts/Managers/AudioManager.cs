@@ -1,9 +1,12 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using Ruinarch.Custom_UI;
 using Settings;
 using UnityEngine;
 using UnityEngine.Audio;
+using UtilityScripts;
 
 public class AudioManager : MonoBehaviour {
 
@@ -26,13 +29,16 @@ public class AudioManager : MonoBehaviour {
     [SerializeField] private AudioMixerSnapshot mainMenuSnapShot;
     [SerializeField] private AudioMixerSnapshot loadingSnapShot;
     [SerializeField] private AudioMixerSnapshot worldSnapShot;
+
+    [Header("Audio Objects")] 
+    [SerializeField] private GameObject spellAudioObjectPrefab;
     
     private void Awake() {
         if (Instance == null) {
             Instance = this;
-            DontDestroyOnLoad(this.gameObject);
+            DontDestroyOnLoad(gameObject);
         } else {
-            Destroy(this.gameObject);
+            Destroy(gameObject);
         }
     }
 
@@ -46,14 +52,22 @@ public class AudioManager : MonoBehaviour {
         Messenger.MarkAsPermanent(Signals.MUSIC_VOLUME_CHANGED);
         Messenger.MarkAsPermanent(Signals.BUTTON_CLICKED);
         Messenger.MarkAsPermanent(Signals.TOGGLE_CLICKED);
+        Messenger.MarkAsPermanent(Signals.STARTED_LOADING_SCENE);
         
         Messenger.AddListener<float>(Signals.MASTER_VOLUME_CHANGED, SetMasterVolume);
         Messenger.AddListener<float>(Signals.MUSIC_VOLUME_CHANGED, SetMusicVolume);
         Messenger.AddListener<RuinarchButton>(Signals.BUTTON_CLICKED, OnButtonClicked);
         Messenger.AddListener<RuinarchToggle>(Signals.TOGGLE_CLICKED, OnToggleClicked);
+        Messenger.AddListener<string>(Signals.STARTED_LOADING_SCENE, OnSceneStartedLoading);
+        
         
         SetMasterVolume(SettingsManager.Instance.settings.masterVolume);
         SetMusicVolume(SettingsManager.Instance.settings.musicVolume);
+    }
+    public void OnGameLoaded() {
+        Messenger.AddListener<Region>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
+        Messenger.AddListener<Region>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
+        SetCameraParent(InnerMapCameraMove.Instance);
     }
     #endregion
 
@@ -91,6 +105,38 @@ public class AudioManager : MonoBehaviour {
         // buttonClick.Play();
     }
     #endregion
-    
+
+    #region Camera
+    private void OnInnerMapOpened(Region region) {
+        SetCameraParent(InnerMapCameraMove.Instance);
+    }
+    private void OnInnerMapClosed(Region region) {
+        SetCameraParent(WorldMapCameraMove.Instance);
+    }
+    private void OnSceneStartedLoading(string sceneName) {
+        if (sceneName == "MainMenu") {
+            transform.SetParent(null);
+        }
+    }
+    private void SetCameraParent(BaseCameraMove cameraMove) {
+        transform.SetParent(cameraMove.transform);
+        transform.localPosition = Vector3.zero;
+    }
+    #endregion
+
+    #region Spells
+    public SpellAudioObject CreateSpellAudioObject(SPELL_TYPE spellType, LocationGridTile centerTile, int tileRange, bool loopAudio = true) {
+        PlayerSkillAssets assets = PlayerSkillManager.Instance.GetPlayerSkillAsset(spellType);
+        if (assets.audioClips.Length > 0) {
+            AudioClip audioClip = CollectionUtilities.GetRandomElement(assets.audioClips);
+            GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(spellAudioObjectPrefab.name,
+                centerTile.centeredWorldLocation, Quaternion.identity, centerTile.parentMap.objectsParent, true);
+            SpellAudioObject spellAudioObject = go.GetComponent<SpellAudioObject>();
+            spellAudioObject.Initialize(audioClip, tileRange, loopAudio);
+            return spellAudioObject;
+        }
+        return null;
+    }
+    #endregion
 
 }

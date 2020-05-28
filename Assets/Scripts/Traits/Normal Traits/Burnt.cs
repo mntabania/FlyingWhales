@@ -16,6 +16,7 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = 0;
             isTangible = true;
+            moodEffect = -10;
             //effects = new List<TraitEffect>();
         }
 

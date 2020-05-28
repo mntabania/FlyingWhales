@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Pathfinding;
@@ -18,9 +19,16 @@ public class MineBehaviour : CharacterBehaviourComponent {
         }
         LocationGridTile targetTile = character.behaviourComponent.targetMiningTile;
         if (targetTile == null) {
-            Cave cave = character.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.CAVE) as Cave;
-            Assert.IsNotNull(cave, $"Cave in mine behaviour of {character} is null");
-            targetTile = CollectionUtilities.GetRandomElement(cave.unoccupiedTiles);    
+            HexTile nearestCaveTile = GetNearestCaveTile(character);
+            if (nearestCaveTile != null) {
+                List<LocationGridTile> tileChoices = nearestCaveTile.locationGridTiles
+                    .Where(x => x.isOccupied == false && x.structure.structureType == STRUCTURE_TYPE.CAVE).ToList();
+                targetTile = CollectionUtilities.GetRandomElement(tileChoices);
+            } else {
+                Cave cave = character.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.CAVE) as Cave;
+                Assert.IsNotNull(cave, $"Cave in mine behaviour of {character} is null");
+                targetTile = CollectionUtilities.GetRandomElement(cave.unoccupiedTiles);
+            }
             character.behaviourComponent.SetTargetMiningTile(targetTile);
         }
 
@@ -40,7 +48,6 @@ public class MineBehaviour : CharacterBehaviourComponent {
         
         return true;
     }
-
     private void OnPathComplete(Path path, Character character) {
         //current mining path was set to null because path towards mining target is already possible, do not process this
         if (character.behaviourComponent.currentMiningPath == null) { return; } 
@@ -78,5 +85,25 @@ public class MineBehaviour : CharacterBehaviourComponent {
             targetTile.objHere, character);
         character.jobQueue.AddJobInQueue(job);
         character.behaviourComponent.SetCurrentMiningPath(null); //so behaviour can be run again after job has been added
+    }
+
+    private HexTile GetNearestCaveTile(Character character) {
+        if (character.gridTileLocation != null && character.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+            HexTile originTile = character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
+            HexTile nearestTile = null;
+            float nearestDist = 9999f;
+            for (int i = 0; i < character.currentRegion.tiles.Count; i++) {
+                HexTile tile = character.currentRegion.tiles[i];
+                if (tile.elevationType == ELEVATION.MOUNTAIN) {
+                    float distance = Vector2.Distance(originTile.transform.position, tile.transform.position);
+                    if (nearestTile == null || distance < nearestDist) {
+                        nearestDist = distance;
+                        nearestTile = tile;
+                    }    
+                }
+            }
+            return nearestTile;
+        }
+        return null;
     }
 }

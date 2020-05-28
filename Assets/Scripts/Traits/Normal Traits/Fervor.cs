@@ -12,6 +12,7 @@ namespace Traits {
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
+            moodEffect = 20;
         }
 
         #region Overrides

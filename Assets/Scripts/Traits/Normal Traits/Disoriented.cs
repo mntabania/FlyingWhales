@@ -11,7 +11,7 @@ namespace Traits {
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = GameManager.Instance.GetTicksBasedOnMinutes(30);
-            moodEffect = -10;
+            moodEffect = -5;
             hindersMovement = true;
             hindersPerform = true;
         }

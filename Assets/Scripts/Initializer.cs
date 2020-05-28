@@ -38,5 +38,6 @@ public class Initializer : MonoBehaviour {
         LightingManager.Instance.Initialize();
         TutorialManager.Instance.Initialize();
         QuestManager.Instance.InitializeAfterGameLoaded();
+        AudioManager.Instance.OnGameLoaded();
     }
 }

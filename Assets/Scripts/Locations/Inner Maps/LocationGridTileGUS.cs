@@ -25,7 +25,7 @@ namespace Inner_Maps {
         }
 
         [ContextMenu("Apply")]
-        private void Apply() {
+        public void Apply() {
             PathfindingManager.Instance.ApplyGraphUpdateScene(gus);
         }
         [ContextMenu("Apply Coroutine")]

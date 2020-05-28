@@ -5,4 +5,5 @@ using UnityEngine.Video;
 public class PlayerSkillAssets {
     public VideoClip tooltipVideoClip;
     public Texture tooltipImage;
+    public AudioClip[] audioClips;
 }

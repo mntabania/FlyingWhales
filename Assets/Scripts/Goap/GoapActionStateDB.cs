@@ -503,6 +503,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.EAT_CORPSE, new[]{
             new StateNameAndDuration(){ name = "Eat Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(15) },
         } },
+        {INTERACTION_TYPE.BEGIN_MINE, new[]{
+            new StateNameAndDuration(){ name = "Begin Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
     };
 }
 

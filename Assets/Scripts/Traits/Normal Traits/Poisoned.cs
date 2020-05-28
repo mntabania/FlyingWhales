@@ -26,7 +26,7 @@ namespace Traits {
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.REMOVE_POISON, };
             awareCharacters = new List<Character>();
             mutuallyExclusive = new string[] { "Robust" };
-            moodEffect = -12;
+            moodEffect = -6;
             isStacking = true;
             stackLimit = 5;
             stackModifier = 0.5f;

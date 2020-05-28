@@ -66,8 +66,13 @@ public class BuildLair : GoapAction {
 
         structure.SetOccupiedHexTile(targetHex.innerMapHexTile);
         targetHex.innerMapHexTile.Occupy();
-
-        targetHex.UpdatePathfindingGraph();
+        
+        List<BlockWall> walls = structure.GetTileObjectsOfType<BlockWall>();
+        for (int i = 0; i < walls.Count; i++) {
+            BlockWall blockWall = walls[i];
+            blockWall.baseMapObjectVisual.ApplyGraphUpdate();
+        }
+        targetHex.UpdatePathfindingGraphCoroutine();
 
         goapNode.actor.necromancerTrait.SetLairStructure(structure);
         goapNode.actor.MigrateHomeStructureTo(structure);

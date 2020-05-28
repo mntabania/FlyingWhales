@@ -74,9 +74,11 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoaded);
 		CheckIfFarmShouldBeTended(true);
 		ScheduledCheckResource();
+		TryCreateMiningJob();
 	}
 	private void HourlyJobActions() {
 		CreatePatrolJobs();
+		TryCreateMiningJob();
 	}
 	private void OnResourceInPileChanged(ResourcePile resourcePile) {
 		if (resourcePile.gridTileLocation != null && resourcePile.structureLocation == _owner.mainStorage) {
@@ -803,6 +805,20 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 			JobQueueItem job = jobs[i];
 			job.ForceCancelJob(false);
 		}
+	}
+	#endregion
+
+	#region Mining
+	private void TryCreateMiningJob() {
+		if (GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.Today().tick) == 6) {
+			GoapPlanJob job =
+				JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MINE, INTERACTION_TYPE.BEGIN_MINE, null, _owner);
+			job.SetCanTakeThisJobChecker(CanTakeMineJob);
+			_owner.AddToAvailableJobs(job);
+		}
+	}
+	private bool CanTakeMineJob(Character character, IPointOfInterest target) {
+		return character.characterClass.CanDoJob(JOB_TYPE.MINE);
 	}
 	#endregion
 }

@@ -92250,9 +92250,6 @@ MonoBehaviour:
   - {fileID: 0}
   maxPlayerNotif: 20
   activeNotifications: []
-  interiorMapLoadingGO: {fileID: 0}
-  interiorMapLoadingBGImage: {fileID: 0}
-  interiorMapLoadingDetailsGO: {fileID: 0}
   yesNoGO: {fileID: 1888469451}
   yesNoCover: {fileID: 890882650}
   yesNoHeaderLbl: {fileID: 1440462253}

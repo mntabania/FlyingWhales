@@ -247,5 +247,8 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
         graphUpdateScene.Destroy();
         graphUpdateScene = null;
     }
+    public void ApplyGraphUpdate() {
+        graphUpdateScene.Apply();
+    }
     #endregion
 }

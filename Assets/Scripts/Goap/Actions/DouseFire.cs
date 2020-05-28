@@ -28,14 +28,40 @@ public class DouseFire : GoapAction {
         return 10;
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
-        GoapActionInvalidity goapActionInvalidity = base.IsInvalid(node);
+        Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
+        string stateName = "Target Missing";
+        bool defaultTargetMissing = IsTargetMissing(node);
+        GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(defaultTargetMissing, stateName);
         if (goapActionInvalidity.isInvalid == false) {
             if (poiTarget.traitContainer.HasTrait("Burning") == false) {
                 goapActionInvalidity.isInvalid = true;
             }
         }
         return goapActionInvalidity;
+    }
+    private bool IsTargetMissing(ActualGoapNode node) {
+        Character actor = node.actor;
+        IPointOfInterest poiTarget = node.poiTarget;
+        if (poiTarget.gridTileLocation == null) {
+            return true;
+        }
+        if (!actor.currentRegion.IsSameCoreLocationAs(poiTarget.gridTileLocation.structure.location)) {
+            return true;
+        }
+        
+        if (actionLocationType == ACTION_LOCATION_TYPE.NEAR_TARGET) {
+            //if the action type is NEAR_TARGET, then check if the actor is near the target, if not, this action is invalid.
+            if (actor.gridTileLocation != poiTarget.gridTileLocation && actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation) == false) {
+                return true;
+            }
+        } else if (actionLocationType == ACTION_LOCATION_TYPE.NEAR_OTHER_TARGET) {
+            //if the action type is NEAR_TARGET, then check if the actor is near the target, if not, this action is invalid.
+            if (actor.gridTileLocation != node.targetTile && actor.gridTileLocation.IsNeighbour(node.targetTile) == false) {
+                return true;
+            }
+        }
+        return false;
     }
     #endregion
 

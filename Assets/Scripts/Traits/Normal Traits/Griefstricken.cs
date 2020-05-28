@@ -12,7 +12,7 @@ namespace Traits {
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(24);
-            moodEffect = -12;
+            moodEffect = -6;
             isStacking = true;
             stackLimit = 5;
             stackModifier = 0.25f;

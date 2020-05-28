@@ -733,12 +733,24 @@ namespace Inner_Maps {
 		    }
 	    }
 	    private void SetAsWall(LocationGridTile tile, LocationStructure structure) {
+            if (GameManager.Instance.gameHasStarted) {
+                if (tile.objHere != null) {
+                    tile.structure.RemovePOI(tile.objHere);
+                }
+                tile.CreateSeamlessEdgesForSelfAndNeighbours();
+            }
 		    tile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.monsterLairGroundTile);	
 		    tile.SetTileType(LocationGridTile.Tile_Type.Wall);
 		    tile.SetTileState(LocationGridTile.Tile_State.Occupied);
 		    tile.SetStructure(structure);
 	    }
 	    private void SetAsGround(LocationGridTile tile, LocationStructure structure) {
+            if (GameManager.Instance.gameHasStarted) {
+                if (tile.objHere != null) {
+                    tile.structure.RemovePOI(tile.objHere);
+                }
+                tile.CreateSeamlessEdgesForSelfAndNeighbours();
+            }
 		    tile.SetStructure(structure);
 		    tile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.monsterLairGroundTile);
 		    // tile.SetStructure(structure);
