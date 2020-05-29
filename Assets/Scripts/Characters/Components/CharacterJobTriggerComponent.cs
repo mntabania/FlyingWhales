@@ -133,7 +133,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		}
 	}
 	private void OnSettlementUnderSiegeChanged(NPCSettlement npcSettlement, bool siegeState) {
-		if (npcSettlement == _owner.currentSettlement && siegeState && (_owner.stateComponent.currentState is CombatState) == false) {
+		if (npcSettlement == _owner.currentSettlement && siegeState 
+			&& (_owner.stateComponent.currentState is CombatState) == false && _owner.isNormalCharacter) {
             //characters current npcSettlement is under siege
             if (!_owner.isInCombat) {
                 _owner.interruptComponent.TriggerInterrupt(INTERRUPT.Stopped, _owner);
