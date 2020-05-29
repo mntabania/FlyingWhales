@@ -19,10 +19,6 @@ MonoBehaviour:
     m_keys: 06000000030000000100000002000000
     m_values:
     - data:
-      - itemType: 87
-        minMaxRange:
-          lowerBound: 0
-          upperBound: 1
       - itemType: 103
         minMaxRange:
           lowerBound: 5

@@ -20,19 +20,19 @@ namespace Locations.Features {
         #region Overrides
         public override void GameStartActions(HexTile tile) {
             owner = tile;
-            Messenger.AddListener<TileObject, LocationGridTile>(Signals.TILE_OBJECT_PLACED, OnTileObjectPlaced);
-            Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
-        
-            List<TileObject> ores = tile.GetTileObjectsInHexTile(TILE_OBJECT_TYPE.ORE);
-            currentOreCount = ores.Count;
-            if (ores.Count < MaxOres) {
-                int missingOres = MaxOres - ores.Count;
-                for (int i = 0; i <= missingOres; i++) {
-                    if (CreateNewOre() == false) {
-                        break;
-                    }
-                }
-            }
+            // Messenger.AddListener<TileObject, LocationGridTile>(Signals.TILE_OBJECT_PLACED, OnTileObjectPlaced);
+            // Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
+            //
+            // List<TileObject> ores = tile.GetTileObjectsInHexTile(TILE_OBJECT_TYPE.ORE);
+            // currentOreCount = ores.Count;
+            // if (ores.Count < MaxOres) {
+            //     int missingOres = MaxOres - ores.Count;
+            //     for (int i = 0; i <= missingOres; i++) {
+            //         if (CreateNewOre() == false) {
+            //             break;
+            //         }
+            //     }
+            // }
         }
         #endregion
     

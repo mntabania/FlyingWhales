@@ -352,6 +352,7 @@ public class CharacterInfoUI : InfoUIBase {
         UIManager.Instance.HideSmallInfo();
     }
     private void OnClickTrait(object obj) {
+        return;
         if (obj is string text) {
             int index = int.Parse(text);
             Trait trait = activeCharacter.traitContainer.traits[index];

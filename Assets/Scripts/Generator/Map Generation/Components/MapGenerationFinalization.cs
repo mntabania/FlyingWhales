@@ -83,7 +83,17 @@ public class MapGenerationFinalization : MapGenerationComponent {
 							locationChoices.Remove(chosenTile);
 						}
 					}	
-				}		
+				}
+				if (WorldConfigManager.Instance.isDemoWorld && locationChoices.Count > 0) {
+					//spawn 7 chests randomly
+					for (int j = 0; j < 7; j++) {
+						if (locationChoices.Count == 0) { break; } //no more location choices
+						LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(locationChoices);
+						chosenTile.structure.AddPOI(
+							InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.TREASURE_CHEST), chosenTile);
+						locationChoices.Remove(chosenTile);
+					}
+				}
 			}
 			yield return null;
 		}
@@ -135,7 +145,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 				}
 			}
 			yield return null;
-		}
+		}	
 	}
 	private int GetHexTileCountOfCave(LocationStructure caveStructure) {
 		List<HexTile> tiles = new List<HexTile>();
@@ -151,28 +161,30 @@ public class MapGenerationFinalization : MapGenerationComponent {
 
 	#region Character
 	private IEnumerator CharacterFinalization() {
-		bool hasEvilCharacter = false;
-		List<Character> characterChoices = new List<Character>(CharacterManager.Instance.allCharacters.Where(x => x.isNormalCharacter));
-		for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
-			Character character = CharacterManager.Instance.allCharacters[i];
-			if (character.traitContainer.HasTrait("Evil")) {
-				hasEvilCharacter = true;
+		if (WorldConfigManager.Instance.isDemoWorld) {
+			bool hasEvilCharacter = false;
+			List<Character> characterChoices = new List<Character>(CharacterManager.Instance.allCharacters.Where(x => x.isNormalCharacter));
+			for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+				Character character = CharacterManager.Instance.allCharacters[i];
+				if (character.traitContainer.HasTrait("Evil")) {
+					hasEvilCharacter = true;
+				}
 			}
-		}
 		
-		//evil character
-		if (hasEvilCharacter == false) {
-			Character character = CollectionUtilities.GetRandomElement(characterChoices);
-			character.traitContainer.AddTrait(character, "Evil");
-			characterChoices.Remove(character);
-			Debug.Log($"Added evil trait to {character.name}");
-		}
+			//evil character
+			if (hasEvilCharacter == false) {
+				Character character = CollectionUtilities.GetRandomElement(characterChoices);
+				character.traitContainer.AddTrait(character, "Evil");
+				characterChoices.Remove(character);
+				Debug.Log($"Added evil trait to {character.name}");
+			}
 		
-		//treacherous
-		if (characterChoices.Count > 0) {
-			Character character = CollectionUtilities.GetRandomElement(characterChoices);
-			character.traitContainer.AddTrait(character, "Treacherous");
-			Debug.Log($"Added treacherous trait to {character.name}");
+			//treacherous
+			if (characterChoices.Count > 0) {
+				Character character = CollectionUtilities.GetRandomElement(characterChoices);
+				character.traitContainer.AddTrait(character, "Treacherous");
+				Debug.Log($"Added treacherous trait to {character.name}");
+			}	
 		}
 		
 		yield return null;

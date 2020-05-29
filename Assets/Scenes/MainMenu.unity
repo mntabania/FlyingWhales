@@ -31209,6 +31209,9 @@ MonoBehaviour:
   - {fileID: 8300000, guid: aed8bafdcebfe0744a938b31d39e71ae, type: 3}
   - {fileID: 8300000, guid: af06d22c87c797249881604748254ba0, type: 3}
   - {fileID: 8300000, guid: f55b4b7790f69b1469c866b1e0a38373, type: 3}
+  zapAudio:
+  - {fileID: 8300000, guid: ad473465088e8a94298e19df1342ab78, type: 3}
+  - {fileID: 8300000, guid: ee5edb64574f8bd4892ab70cbc808dc4, type: 3}
   bowAndArrowAudio:
   - {fileID: 8300000, guid: efa8730f0034b8e418e1fd7af5ee5d62, type: 3}
   - {fileID: 8300000, guid: a6a43c6638c737e44b3a876785e8083b, type: 3}
@@ -31226,6 +31229,22 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 8516fc72a8fe22a4282b406f88ce8733, type: 3}
   - {fileID: 8300000, guid: 47dd4089412538a4fa470c97b56b4cae, type: 3}
   - {fileID: 8300000, guid: 06b1eee2bb34f40439c6c99614f298c6, type: 3}
+  bluntWeaponAudio:
+  - {fileID: 8300000, guid: cffa28d7a054b7f4ba173724088e6d1f, type: 3}
+  - {fileID: 8300000, guid: 5a0018de6b7bb8547bb9bdd2d1fbd2f6, type: 3}
+  - {fileID: 8300000, guid: bce12fec0bb45ae4d9a719b0380adbd9, type: 3}
+  - {fileID: 8300000, guid: aa0c4df074c67c6459996829f1f77f78, type: 3}
+  - {fileID: 8300000, guid: 51b11d28764e9d942867b6d136516f8a, type: 3}
+  - {fileID: 8300000, guid: 0d0bbe21a4d703242bdbe5bcd8dbabaa, type: 3}
+  - {fileID: 8300000, guid: b9968334f2984ac4fa1aba4cf02c6f23, type: 3}
+  punchAudio:
+  - {fileID: 8300000, guid: cffa28d7a054b7f4ba173724088e6d1f, type: 3}
+  - {fileID: 8300000, guid: 5a0018de6b7bb8547bb9bdd2d1fbd2f6, type: 3}
+  - {fileID: 8300000, guid: bce12fec0bb45ae4d9a719b0380adbd9, type: 3}
+  - {fileID: 8300000, guid: aa0c4df074c67c6459996829f1f77f78, type: 3}
+  - {fileID: 8300000, guid: 51b11d28764e9d942867b6d136516f8a, type: 3}
+  - {fileID: 8300000, guid: 0d0bbe21a4d703242bdbe5bcd8dbabaa, type: 3}
+  - {fileID: 8300000, guid: b9968334f2984ac4fa1aba4cf02c6f23, type: 3}
 --- !u!4 &1979265921
 Transform:
   m_ObjectHideFlags: 0

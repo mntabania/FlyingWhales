@@ -512,8 +512,8 @@ public class ReactionComponent {
                             }
                         } else if (!owner.traitContainer.HasTrait("Psychopath")) {
                             debugLog += "\n-Character is not Psychopath and does not consider Target as Enemy or Rival";
-                            if (!targetCharacter.canMove/* || !targetCharacter.canWitness*/) {
-                                debugLog += "\n-Target cannot move"; // or cannot witness
+                            if (targetCharacter.traitContainer.HasTrait("Restrained", "Paralyzed", "Ensnared")) { //!targetCharacter.canMove
+                                debugLog += "\n-Target is Restrained, Paralyzed or Ensnared"; //cannot move or cannot witness
                                 if (targetCharacter.needsComponent.isHungry || targetCharacter.needsComponent.isStarving) {
                                     debugLog += "\n-Target is hungry or starving, will create feed job";
                                     owner.jobComponent.TryTriggerFeed(targetCharacter);
@@ -586,7 +586,7 @@ public class ReactionComponent {
                 && owner.homeSettlement != null
                 && targetTileObject.gridTileLocation.IsPartOfSettlement(owner.homeSettlement)
                 && !owner.traitContainer.HasTrait("Pyrophobic")
-                && !owner.jobQueue.HasJob(JOB_TYPE.DOUSE_FIRE)) {
+                && !owner.traitContainer.HasTrait("Dousing")) {
                 debugLog += "\n-Target is Burning and Character is not Pyrophobic";
                 owner.SetHasSeenFire(true);
                 owner.homeSettlement.settlementJobTriggerComponent.TriggerDouseFire();
