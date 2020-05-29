@@ -141,7 +141,7 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                 log += $"\n-Lair is not set, will spawn lair";
 
                 HexTile chosenHex = null;
-                if(character.gridTileLocation.collectionOwner.partOfHextile != null) {
+                if(character.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
                     HexTile targetHex = character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
                     if(targetHex != null && targetHex.elevationType != ELEVATION.WATER && targetHex.elevationType != ELEVATION.MOUNTAIN && targetHex.landmarkOnTile == null && !targetHex.IsNextToOrPartOfVillage()) {
                         chosenHex = targetHex;

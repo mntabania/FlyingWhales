@@ -26,7 +26,7 @@ public class SpiritGameObject : MapObjectVisual<TileObject> {
             isCorrupted = tileObject.gridTileLocation.isCorrupted;
         }
         HexTile hex = tileObject.structureLocation.location.coreTile;
-        if (tileObject.gridTileLocation.collectionOwner != null && tileObject.gridTileLocation.collectionOwner.partOfHextile != null) {
+        if (tileObject.gridTileLocation.collectionOwner != null && tileObject.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
             hex = tileObject.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
         }
         SetVisual(InnerMapManager.Instance.GetTileObjectAsset(tileObject, 
@@ -72,7 +72,7 @@ public class SpiritGameObject : MapObjectVisual<TileObject> {
     
     public override void UpdateTileObjectVisual(TileObject tileObject) {
         HexTile hex = tileObject.structureLocation.location.coreTile;
-        if (tileObject.gridTileLocation.collectionOwner != null && tileObject.gridTileLocation.collectionOwner.partOfHextile != null) {
+        if (tileObject.gridTileLocation.collectionOwner != null && tileObject.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
             hex = tileObject.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
         }
         SetVisual(InnerMapManager.Instance.GetTileObjectAsset(tileObject,

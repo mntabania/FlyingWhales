@@ -10,7 +10,7 @@ public class AttackVillageBehaviour : CharacterBehaviourComponent {
     }
     public override bool TryDoBehaviour(Character character, ref string log) {
         log += $"\n-{character.name} will attack village";
-        if (character.gridTileLocation.collectionOwner.partOfHextile != null 
+        if (character.gridTileLocation.collectionOwner.isPartOfParentRegionMap
             && character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner 
             && character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile == character.behaviourComponent.attackVillageTarget) {
             log += "\n-Already in the target npcSettlement, will try to combat residents";

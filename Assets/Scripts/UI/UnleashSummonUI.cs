@@ -239,6 +239,7 @@ public class UnleashSummonUI : PopupMenuBase { //MonoBehaviour
                 Summon summon = chosenSummons[i] as Summon;
                 TryPlaceSummon(summon, entrances[0]);
                 summon.behaviourComponent.SetIsHarassing(true, targetHex);
+                summon.SetDestroyMarkerOnDeath(true);
                 entrances.RemoveAt(0);
             }
             foreach (KeyValuePair<SpellData, int> item in chosenMinionMonsters) {
@@ -246,6 +247,7 @@ public class UnleashSummonUI : PopupMenuBase { //MonoBehaviour
                     SpellData minionMonsterPlayerSkll = item.Key;
                     minionMonsterPlayerSkll.ActivateAbility(entrances[0], ref spawnedCharacter);
                     spawnedCharacter.behaviourComponent.SetIsHarassing(true, targetHex);
+                    spawnedCharacter.SetDestroyMarkerOnDeath(true);
                     entrances.RemoveAt(0);
                 }
             }
@@ -264,6 +266,7 @@ public class UnleashSummonUI : PopupMenuBase { //MonoBehaviour
                 Summon summon = chosenSummons[i] as Summon;
                 TryPlaceSummon(summon, entrances[0]);
                 summon.behaviourComponent.SetIsDefending(true, targetHex);
+                summon.SetDestroyMarkerOnDeath(true);
                 entrances.RemoveAt(0);
             }
             foreach (KeyValuePair<SpellData, int> item in chosenMinionMonsters) {
@@ -274,6 +277,7 @@ public class UnleashSummonUI : PopupMenuBase { //MonoBehaviour
                     SpellData minionMonsterPlayerSkll = item.Key;
                     minionMonsterPlayerSkll.ActivateAbility(entrances[0], ref spawnedCharacter);
                     spawnedCharacter.behaviourComponent.SetIsDefending(true, targetHex);
+                    spawnedCharacter.SetDestroyMarkerOnDeath(true);
                     entrances.RemoveAt(0);
                 }
             }
@@ -293,6 +297,7 @@ public class UnleashSummonUI : PopupMenuBase { //MonoBehaviour
                 Summon summon = chosenSummons[i] as Summon;
                 TryPlaceSummon(summon, entrances[0]);
                 summon.behaviourComponent.SetIsInvading(true, targetHex);
+                summon.SetDestroyMarkerOnDeath(true);
                 entrances.RemoveAt(0);
             }
             foreach (KeyValuePair<SpellData, int> item in chosenMinionMonsters) {
@@ -300,6 +305,7 @@ public class UnleashSummonUI : PopupMenuBase { //MonoBehaviour
                     SpellData minionMonsterPlayerSkll = item.Key;
                     minionMonsterPlayerSkll.ActivateAbility(entrances[0], ref spawnedCharacter);
                     spawnedCharacter.behaviourComponent.SetIsInvading(true, targetHex);
+                    spawnedCharacter.SetDestroyMarkerOnDeath(true);
                     entrances.RemoveAt(0);
                 }
             }

@@ -87,7 +87,7 @@ namespace Inner_Maps {
 
         #region Data Getting
         public HexTile GetNearestHexTileWithinRegion() {
-            if(partOfHextile != null) { return partOfHextile.hexTileOwner; }
+            if(isPartOfParentRegionMap) { return partOfHextile.hexTileOwner; }
             foreach (LocationGridTileCollection collection in neighbours.Values) {
                 if(collection.partOfHextile != null && collection.region == region) {
                     return collection.partOfHextile.hexTileOwner;

@@ -386,12 +386,13 @@ public class Player : ILeader, IObjectManipulator {
         }
         IIntel previousIntel = currentActiveIntel;
         currentActiveIntel = intel;
-        if (currentActiveIntel == null) {
+        if(previousIntel != null) {
             IntelItem intelItem = PlayerUI.Instance.GetIntelItemWithIntel(previousIntel);
             intelItem?.SetClickedState(false);
             Messenger.RemoveListener<KeyCode>(Signals.KEY_DOWN, OnIntelCast);
             InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
-        } else {
+        }
+        if (currentActiveIntel != null) {
             Messenger.Broadcast(Signals.ACTIVE_INTEL_SET, currentActiveIntel);
             IntelItem intelItem = PlayerUI.Instance.GetIntelItemWithIntel(currentActiveIntel);
             intelItem?.SetClickedState(true);
@@ -415,6 +416,9 @@ public class Player : ILeader, IObjectManipulator {
     }
     public bool CanShareIntel(IPointOfInterest poi, ref string hoverText) {
         if(poi is Character character) {
+            if (!character.isNormalCharacter) {
+                return false;
+            }
             hoverText = string.Empty;
             if(character.traitContainer.HasTrait("Blessed", "Catatonic")) {
                 hoverText = "Blessed/Catatonic characters cannot be targeted.";

@@ -14,7 +14,7 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
         this.name = tileObject.ToString();
         if (tileObject.gridTileLocation != null) {
             HexTile hex = tileObject.structureLocation.location.coreTile;
-            if(tileObject.gridTileLocation.collectionOwner != null && tileObject.gridTileLocation.collectionOwner.partOfHextile != null) {
+            if(tileObject.gridTileLocation.collectionOwner != null && tileObject.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
                 hex = tileObject.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
             }
             var isCorrupted = tileObject.gridTileLocation.isCorrupted;
@@ -65,7 +65,7 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
     
     public override void UpdateTileObjectVisual(TileObject tileObject) {
         HexTile hex = tileObject.structureLocation.location.coreTile;
-        if (tileObject.gridTileLocation.collectionOwner != null && tileObject.gridTileLocation.collectionOwner.partOfHextile != null) {
+        if (tileObject.gridTileLocation.collectionOwner != null && tileObject.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
             hex = tileObject.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
         }
         SetVisual(InnerMapManager.Instance.GetTileObjectAsset(tileObject, 

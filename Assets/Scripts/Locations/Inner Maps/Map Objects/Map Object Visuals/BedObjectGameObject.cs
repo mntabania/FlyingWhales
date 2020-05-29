@@ -11,7 +11,7 @@ public class BedObjectGameObject : TileObjectGameObject {
 
     public override void UpdateTileObjectVisual(TileObject bed) {
         HexTile hex = bed.structureLocation.location.coreTile;
-        if (bed.gridTileLocation.collectionOwner != null && bed.gridTileLocation.collectionOwner.partOfHextile != null) {
+        if (bed.gridTileLocation.collectionOwner != null && bed.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
             hex = bed.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
         }
         int userCount = bed.users.Length;
