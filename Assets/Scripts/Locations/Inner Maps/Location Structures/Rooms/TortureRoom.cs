@@ -72,6 +72,7 @@ namespace Inner_Maps.Location_Structures {
                 
                 _skeleton = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Skeleton,
                     FactionManager.Instance.friendlyNeutralFaction, null, character.currentRegion, className: "Archer");
+                _skeleton.SetShowNotificationOnDeath(false);
                 _skeleton.combatComponent.SetCombatMode(COMBAT_MODE.Passive);
                 _skeleton.SetDestroyMarkerOnDeath(true);
                 _skeleton.ClearPlayerActions();

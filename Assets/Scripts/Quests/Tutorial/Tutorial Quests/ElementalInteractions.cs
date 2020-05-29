@@ -30,13 +30,13 @@ namespace Tutorial {
                 new QuestStepCollection(
                     new ExecuteSpellStep(SPELL_TYPE.RAIN, "Cast Rain")
                         .SetCompleteAction(OnCompleteExecuteSpell),
-                    new TriggerElectricChainStep("Electrocute Wet Tiles")
+                    new TriggerElectricChainStep("Electrocute Wet Floor")
                         .SetHoverOverAction(OnHoverElectric)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
                 ),
                 new QuestStepCollection(
                     new ExecuteSpellStep(SPELL_TYPE.SPLASH_POISON, "Cast Splash Poison"),
-                     new TriggerPoisonExplosionStep("Burn Poisoned Tiles")
+                     new TriggerPoisonExplosionStep("Burn Poisoned Floor")
                         .SetHoverOverAction(OnHoverFire)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
                 ),
