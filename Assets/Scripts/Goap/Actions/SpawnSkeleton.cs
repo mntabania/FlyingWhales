@@ -41,8 +41,12 @@ public class SpawnSkeleton : GoapAction {
 
     #region State Effects
     public void AfterSpawnSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.necromancerTrait.AdjustLifeAbsorbed(-1);
-        LocationGridTile gridTile = goapNode.actor.gridTileLocation.GetRandomNeighbor();
+        //goapNode.actor.necromancerTrait.AdjustLifeAbsorbed(-1);
+        goapNode.actor.necromancerTrait.AdjustEnergy(-1);
+        LocationGridTile gridTile = goapNode.actor.gridTileLocation.GetRandomUnoccupiedNeighbor();
+        if(gridTile == null) {
+            gridTile = goapNode.actor.gridTileLocation;
+        }
         Character skeleton = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Skeleton, FactionManager.Instance.undeadFaction, homeRegion: gridTile.parentMap.region);
         skeleton.CreateMarker();
         skeleton.InitialCharacterPlacement(gridTile);

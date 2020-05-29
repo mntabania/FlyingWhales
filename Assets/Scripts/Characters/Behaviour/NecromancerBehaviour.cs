@@ -73,7 +73,7 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
             if(currentTime == TIME_IN_WORDS.EARLY_NIGHT || currentTime == TIME_IN_WORDS.LATE_NIGHT || currentTime == TIME_IN_WORDS.AFTER_MIDNIGHT) {
                 log += $"\n-It is Early Night, Late Night, or After Midnight";
                 int skeletonFollowers = character.necromancerTrait.GetNumOfSkeletonFollowersThatAreNotAttackingAndIsAlive();
-                if (skeletonFollowers >= 5) {
+                if (skeletonFollowers > 5 && UnityEngine.Random.Range(0, 100) < 65) {
                     log += $"\n-Skeleton followers are more than 5, attack village";
                     //Attack
                     character.faction.ClearAllDeadCharactersFromFaction();
@@ -84,20 +84,29 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                     }
                 } else {
                     log += $"\n-Not enough skeleton followers, will try to create more";
-                    if (character.necromancerTrait.lifeAbsorbed <= 0) {
-                        log += $"\n-Life absorbed is none, will try to absorb life";
-                        character.jobComponent.TriggerAbsorbLife();
+                    bool hasCreated = false;
+                    if (character.necromancerTrait.energy > 0) {
+                        hasCreated = character.jobComponent.TriggerSpawnSkeleton();
                     } else {
-                        log += $"\n-There is life absorbed, 80% to create skeleton follower, 20% chance to absorb more life";
-                        if (UnityEngine.Random.Range(0, 100) < 10) {
-                            log += $"\n-Absorb life";
-                            character.jobComponent.TriggerAbsorbLife();
-                        } else {
-                            log += $"\n-Spawn skeleton";
-                            //Create Skeleton
-                            character.jobComponent.TriggerSpawnSkeleton();
-                        }
+                        hasCreated = character.jobComponent.TriggerRegainEnergy();
                     }
+                    if (!hasCreated) {
+                        character.jobComponent.TriggerRoamAroundTile();
+                    }
+                    //if (character.necromancerTrait.lifeAbsorbed <= 0) {
+                    //    log += $"\n-Life absorbed is none, will try to absorb life";
+                    //    character.jobComponent.TriggerAbsorbLife();
+                    //} else {
+                    //    log += $"\n-There is life absorbed, 80% to create skeleton follower, 20% chance to absorb more life";
+                    //    if (UnityEngine.Random.Range(0, 100) < 10) {
+                    //        log += $"\n-Absorb life";
+                    //        character.jobComponent.TriggerAbsorbLife();
+                    //    } else {
+                    //        log += $"\n-Spawn skeleton";
+                    //        //Create Skeleton
+                    //        character.jobComponent.TriggerSpawnSkeleton();
+                    //    }
+                    //}
                 }
             } else {
                 log += $"\n-It is not Early Night, Late Night, or After Midnight";
@@ -116,14 +125,16 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                     if (character.HasItem("Necronomicon")) {
                         if (UnityEngine.Random.Range(0, 100) < 30) {
                             log += $"\n-Character is at home, read necronomicon";
-                            character.jobComponent.TriggerReadNecronomicon();
-                            return true;
+                            if (character.jobComponent.TriggerReadNecronomicon()) {
+                                return true;
+                            }
                         }
                     }
                     if (UnityEngine.Random.Range(0, 100) < 40) {
                         log += $"\n-Character is at home, meditate";
-                        character.jobComponent.TriggerMeditate();
-                        return true;
+                        if (character.jobComponent.TriggerMeditate()) {
+                            return true;
+                        }
                     }
                     log += $"\n-Character is at home, roam";
                     character.jobComponent.TriggerRoamAroundTile();

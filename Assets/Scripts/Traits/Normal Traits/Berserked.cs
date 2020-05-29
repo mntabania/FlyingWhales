@@ -51,7 +51,7 @@ namespace Traits {
                     if (poi is Character) {
                         //poi is a character, check for hostilities
                         Character otherCharacter = poi as Character;
-                        if (character.IsHostileWith(otherCharacter) == false) {
+                        if (character.IsHostileWith(otherCharacter) == false || otherCharacter.isDead) {
                             hostilesToRemove.Add(otherCharacter);
                         }    
                     } else {

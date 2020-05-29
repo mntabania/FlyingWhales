@@ -16,7 +16,7 @@ public class DefendBehaviour : CharacterBehaviourComponent {
         log += $"\n-{character.name} will defend";
         HexTile chosenHex = character.behaviourComponent.assignedTargetHex;
         if (chosenHex != null) {
-            Character chosenTarget = chosenHex.GetFirstCharacterInsideHexThatIsHostileWith(character);
+            Character chosenTarget = chosenHex.GetFirstCharacterThatIsNotDeadInsideHexThatIsHostileWith(character);
             if(chosenTarget != null) {
                 character.combatComponent.Fight(chosenTarget, CombatManager.Hostility);
             } else {

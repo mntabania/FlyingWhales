@@ -27,5 +27,11 @@ public class BreedMonsterData : PlayerAction {
         }
         return canPerform;
     }
+    public override bool IsValid(IPlayerActionTarget target) {
+        if(target is Summon targetCharacter) {
+            return (targetCharacter is Summon) && targetCharacter.gridTileLocation != null && targetCharacter.gridTileLocation.structure != null && targetCharacter.gridTileLocation.structure.structureType == STRUCTURE_TYPE.THE_KENNEL;
+        }
+        return false;
+    }
     #endregion
 }

@@ -51,6 +51,11 @@ public class BuildLair : GoapAction {
     #region Effects
     public void AfterBuildSuccess(ActualGoapNode goapNode) {
         object[] otherData = goapNode.otherData;
+        Character actor = goapNode.actor;
+
+        actor.ChangeFactionTo(FactionManager.Instance.undeadFaction);
+        FactionManager.Instance.undeadFaction.OnlySetLeader(actor);
+
         LocationGridTile targetTile = otherData[0] as LocationGridTile;
         HexTile targetHex = targetTile.collectionOwner.partOfHextile.hexTileOwner;
         LandmarkManager.Instance.CreateNewLandmarkOnTile(targetHex, LANDMARK_TYPE.MONSTER_LAIR);

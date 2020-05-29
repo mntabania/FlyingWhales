@@ -277,7 +277,7 @@ public class GoapAction : ICrimeable {
         return 3;
     }
     private int PreconditionCostMultiplier() {
-        return 1;// Math.Max(basePreconditions.Count * 2, 1);
+        return 1; //Math.Max(basePreconditions.Count * 2, 1);
     }
     public void LogActionInvalid(GoapActionInvalidity goapActionInvalidity, ActualGoapNode node) {
         Log log = new Log(GameManager.Instance.Today(), "GoapAction", "Generic", "Invalid");

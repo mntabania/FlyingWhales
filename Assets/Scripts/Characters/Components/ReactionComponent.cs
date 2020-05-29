@@ -512,8 +512,8 @@ public class ReactionComponent {
                             }
                         } else if (!owner.traitContainer.HasTrait("Psychopath")) {
                             debugLog += "\n-Character is not Psychopath and does not consider Target as Enemy or Rival";
-                            if (targetCharacter.traitContainer.HasTrait("Restrained", "Paralyzed", "Ensnared")) { //!targetCharacter.canMove
-                                debugLog += "\n-Target is Restrained, Paralyzed or Ensnared"; //cannot move or cannot witness
+                            if (!targetCharacter.canMove/* || !targetCharacter.canWitness*/) {
+                                debugLog += "\n-Target cannot move"; // or cannot witness
                                 if (targetCharacter.needsComponent.isHungry || targetCharacter.needsComponent.isStarving) {
                                     debugLog += "\n-Target is hungry or starving, will create feed job";
                                     owner.jobComponent.TryTriggerFeed(targetCharacter);
@@ -586,7 +586,7 @@ public class ReactionComponent {
                 && owner.homeSettlement != null
                 && targetTileObject.gridTileLocation.IsPartOfSettlement(owner.homeSettlement)
                 && !owner.traitContainer.HasTrait("Pyrophobic")
-                && !owner.traitContainer.HasTrait("Dousing")) {
+                && !owner.jobQueue.HasJob(JOB_TYPE.DOUSE_FIRE)) {
                 debugLog += "\n-Target is Burning and Character is not Pyrophobic";
                 owner.SetHasSeenFire(true);
                 owner.homeSettlement.settlementJobTriggerComponent.TriggerDouseFire();
@@ -641,7 +641,6 @@ public class ReactionComponent {
         if (!owner.isInCombat && !owner.hasSeenPoisoned) {
             if (targetTileObject.traitContainer.HasTrait("Poisoned")
                 && targetTileObject.gridTileLocation != null
-                && owner.homeSettlement != null
                 && targetTileObject.gridTileLocation.IsPartOfSettlement(owner.homeSettlement)
                 && !owner.jobQueue.HasJob(JOB_TYPE.CLEANSE_TILES)) {
                 debugLog += "\n-Target is Poisoned";
@@ -686,15 +685,15 @@ public class ReactionComponent {
                 }
             }
         }
-        if (targetTileObject.tileObjectType.IsTileObjectAnItem()) {
-            if (targetTileObject.gridTileLocation != null && owner.homeSettlement != null
-                && targetTileObject.gridTileLocation.structure != owner.homeSettlement.mainStorage
-                && !(targetTileObject.gridTileLocation.structure is Dwelling) 
-                && !owner.IsInventoryAtFullCapacity()
-                && (owner.jobQueue.jobsInQueue.Count == 0 || owner.jobQueue.jobsInQueue[0].priority < JOB_TYPE.TAKE_ITEM.GetJobTypePriority())) {
-                owner.jobComponent.CreateTakeItemJob(targetTileObject);
-            }
-        }
+        //if (targetTileObject.tileObjectType.IsTileObjectAnItem()) {
+        //    if (targetTileObject.gridTileLocation != null && owner.homeSettlement != null
+        //        && targetTileObject.gridTileLocation.structure != owner.homeSettlement.mainStorage
+        //        && !(targetTileObject.gridTileLocation.structure is Dwelling) 
+        //        && !owner.IsInventoryAtFullCapacity()
+        //        && (owner.jobQueue.jobsInQueue.Count == 0 || owner.jobQueue.jobsInQueue[0].priority < JOB_TYPE.TAKE_ITEM.GetJobTypePriority())) {
+        //        owner.jobComponent.CreateTakeItemJob(targetTileObject);
+        //    }
+        //}
         if(targetTileObject.traitContainer.HasTrait("Danger Remnant")) {
             if (!owner.traitContainer.HasTrait("Berserked")) {
                 if (owner.traitContainer.HasTrait("Coward")) {
@@ -771,7 +770,7 @@ public class ReactionComponent {
             return;
         }
         if (poiHit is Character targetHit && reactor.IsHostileWith(targetHit)) {
-            log += "\n-Attacker is hostile with the hit character, will skip processing";
+            log += "\n-Reactor is hostile with the hit character, will skip processing";
             reactor.logComponent.PrintLogIfActive(log);
             return;
         }

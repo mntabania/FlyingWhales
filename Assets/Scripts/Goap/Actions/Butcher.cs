@@ -52,21 +52,21 @@ public class Butcher : GoapAction {
                 }
             }
             if(deadCharacter.race == RACE.HUMANS) {
-                cost += UtilityScripts.Utilities.Rng.Next(40, 51);
+                cost += UtilityScripts.Utilities.Rng.Next(80, 101);
                 costLog += $" +{cost}(Human)";
             } else if (deadCharacter.race == RACE.ELVES) {
-                cost += UtilityScripts.Utilities.Rng.Next(40, 51);
+                cost += UtilityScripts.Utilities.Rng.Next(80, 101);
                 costLog += $" +{cost}(Elf)";
             } else if (deadCharacter.race == RACE.WOLF) {
-                cost += UtilityScripts.Utilities.Rng.Next(20, 31);
+                cost += UtilityScripts.Utilities.Rng.Next(50, 81);
                 costLog += $" +{cost}(Wolf)";
             } else if (deadCharacter.race == RACE.DEMON) {
-                cost += UtilityScripts.Utilities.Rng.Next(80, 91);
+                cost += UtilityScripts.Utilities.Rng.Next(90, 111);
                 costLog += $" +{cost}(Demon)";
             }
         }
         if (target is Animal) {
-            cost += UtilityScripts.Utilities.Rng.Next(0, 11);
+            cost += UtilityScripts.Utilities.Rng.Next(40, 61);
             costLog += $" +{cost}(Animal)";
         }
         actor.logComponent.AppendCostLog(costLog);

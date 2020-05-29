@@ -496,7 +496,7 @@ public static class GoapActionStateDB {
             new StateNameAndDuration(){ name = "Absorb Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
         } },
         {INTERACTION_TYPE.SPAWN_SKELETON, new[]{
-            new StateNameAndDuration(){ name = "Spawn Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1) },
+            new StateNameAndDuration(){ name = "Spawn Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
         } },
         {INTERACTION_TYPE.RAISE_CORPSE, new[]{
             new StateNameAndDuration(){ name = "Raise Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
@@ -515,6 +515,9 @@ public static class GoapActionStateDB {
         } },
         {INTERACTION_TYPE.MEDITATE, new[]{
             new StateNameAndDuration(){ name = "Meditate Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
+        } },
+        {INTERACTION_TYPE.REGAIN_ENERGY, new[]{
+            new StateNameAndDuration(){ name = "Regain Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(90) },
         } },
     };
 }

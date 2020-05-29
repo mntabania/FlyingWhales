@@ -1341,7 +1341,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         }
         return characters;
     }
-    public Character GetFirstCharacterInsideHexThatIsHostileWith(Character source) {
+    public Character GetFirstCharacterThatIsNotDeadInsideHexThatIsHostileWith(Character source) {
         LocationGridTile lowerLeftCornerTile = innerMapHexTile.gridTileCollections[0].tilesInTerritory[0];
         int xMin = lowerLeftCornerTile.localPlace.x;
         int yMin = lowerLeftCornerTile.localPlace.y;
@@ -1351,7 +1351,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         for (int i = 0; i < region.charactersAtLocation.Count; i++) {
             Character character = region.charactersAtLocation[i];
             if (character.gridTileLocation.localPlace.x >= xMin && character.gridTileLocation.localPlace.x <= xMax
-                && character.gridTileLocation.localPlace.y >= yMin && character.gridTileLocation.localPlace.y <= yMax && source.IsHostileWith(character)) {
+                && character.gridTileLocation.localPlace.y >= yMin && character.gridTileLocation.localPlace.y <= yMax && source.IsHostileWith(character) && !character.isDead) {
                 return character;
             }
         }
