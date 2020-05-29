@@ -14,13 +14,17 @@ public class Sludge : Summon {
     #region Overrides
     public override void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null,
         Log _deathLog = null, LogFiller[] deathLogFillers = null, Interrupt interrupt = null) {
+        if (isDead) {
+            return;
+        }
+        LocationGridTile deathTile = gridTileLocation;
+        base.Death(cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers, interrupt);
         List<LocationGridTile> affectedTiles =
-            gridTileLocation.GetTilesInRadius(1, includeCenterTile: true, includeTilesInDifferentStructure: true);
+            deathTile.GetTilesInRadius(1, includeCenterTile: true, includeTilesInDifferentStructure: true);
         for (int i = 0; i < affectedTiles.Count; i++) {
             LocationGridTile tile = affectedTiles[i];
             tile.PerformActionOnTraitables(ApplyDamageTo);
         }
-        base.Death(cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers, interrupt);
     }
     #endregion
 
