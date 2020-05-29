@@ -42,8 +42,9 @@ namespace Tutorial {
         #region Step Helpers
         private void OnHoverHoverThis(QuestStepItem stepItem) {
             UIManager.Instance.ShowSmallInfo(
-                "Some steps in a checklist will have a different text color, like this one. " +
-                "These steps provide you with more information on how to complete them when you hover over it.", 
+                "Some steps in a checklist will have a different text color," +
+                "\n- <#FFFB00>Text with this color provide more information when hovered</color>" +
+                "\n- <#FFFFFF>Text with this color does not.</color>",
                 stepItem.hoverPosition, "Checklist Help"
             );
         }

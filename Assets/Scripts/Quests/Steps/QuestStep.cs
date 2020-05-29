@@ -88,6 +88,7 @@ namespace Quests.Steps {
         }
         public void ExecuteHoverOutAction() {
             onHoverOutAction?.Invoke();
+            Messenger.Broadcast(Signals.QUEST_STEP_HOVERED_OUT, this);
         }
         #endregion
         

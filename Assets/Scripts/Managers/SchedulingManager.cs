@@ -104,6 +104,7 @@ public class SchedulingManager : MonoBehaviour {
         Assert.IsTrue(expectedIterations == actualIterations, $"Scheduling Manager inconsistency with performing scheduled actions! Performed actions were {actualIterations} but expected actions were {expectedIterations.ToString()}");
 	}
     public void ClearAllSchedulesBy(Character character) {
+        Debug.Log($"Clearing all schedules by {character.name}");
         Dictionary<GameDate, List<ScheduledAction>> temp = new Dictionary<GameDate, List<ScheduledAction>>(schedules);
         foreach (KeyValuePair<GameDate, List<ScheduledAction>> kvp in temp) {
             List<ScheduledAction> newList = new List<ScheduledAction>(kvp.Value);
@@ -116,6 +117,7 @@ public class SchedulingManager : MonoBehaviour {
         }
     }
     public void ClearAllSchedulesBy(object obj) {
+        Debug.Log($"Clearing all schedules by {obj.ToString()}");
         Dictionary<GameDate, List<ScheduledAction>> temp = new Dictionary<GameDate, List<ScheduledAction>>(schedules);
         foreach (KeyValuePair<GameDate, List<ScheduledAction>> kvp in temp) {
             List<ScheduledAction> newList = new List<ScheduledAction>(kvp.Value);
@@ -153,7 +155,7 @@ public struct ScheduledAction {
     
     public bool IsScheduleStillValid() {
         if (scheduler is Character character) {
-            return !character.isDead;
+            return character.gridTileLocation != null;
         } else if (scheduler is TileObject tileObject) {
             return tileObject.gridTileLocation != null;
         }

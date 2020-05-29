@@ -48,7 +48,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
     [Header("For Testing")]
     [SerializeField] private SpriteRenderer colorHighlight;
 
-
+    private string _destroySchedule;
+    
+    
     //vision colliders
     public List<IPointOfInterest> inVisionPOIs { get; private set; } //POI's in this characters vision collider
     public List<IPointOfInterest> unprocessedVisionPOIs { get; private set; } //POI's in this characters vision collider
@@ -493,7 +495,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
 
     #region Object Pool
     public override void Reset() {
-        base.Reset();
+        base.Reset(); 
+        TryCancelExpiry();
         destinationTile = null;
         //onProcessCombat = null;
         character.combatComponent.SetOnProcessCombatAction(null);
@@ -635,11 +638,11 @@ public class CharacterMarker : MapObjectVisual<Character> {
         //     Messenger.RemoveListener(Signals.TICK_ENDED, PerTickMovement);
         //     return;
         // }
-        Profiler.BeginSample($"{character.name} PerTickMovement");
         if (isMoving) {
+            Profiler.BeginSample($"{character.name} PerTickMovement");
             character.PerTickDuringMovement();    
+            Profiler.EndSample();
         }
-        Profiler.EndSample();
     }
     /// <summary>
     /// Make this marker look at a specific point (In World Space).
@@ -945,6 +948,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         if (character.minion != null || character.destroyMarkerOnDeath) {
             character.DestroyMarker();
         } else {
+            ScheduleExpiry();
             SetCollidersState(false);
             //onProcessCombat = null;
             character.combatComponent.SetOnProcessCombatAction(null);
@@ -1171,6 +1175,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
     }
     private void ProcessAllUnprocessedVisionPOIs() {
+        if (character == null) { return; }
         Profiler.BeginSample($"{character.name} ProcessAllUnprocessedVisionPOIs");
         string log = $"{character.name} tick ended! Processing all unprocessed in visions...";
         if (unprocessedVisionPOIs.Count > 0) {
@@ -1610,6 +1615,28 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     public void OnUnseize() {
         buttonCollider.enabled = true;
+        if (character.isDead) {
+            ScheduleExpiry();
+        }
+    }
+    #endregion
+
+    #region Expiry
+    public void TryCancelExpiry() {
+        if (String.IsNullOrEmpty(_destroySchedule) == false) {
+            SchedulingManager.Instance.RemoveSpecificEntry(_destroySchedule);
+            _destroySchedule = string.Empty;
+        }
+    }
+    public void ScheduleExpiry() {
+        if (String.IsNullOrEmpty(_destroySchedule)) {
+            GameDate date = GameManager.Instance.Today();
+            date.AddDays(3);
+            _destroySchedule = SchedulingManager.Instance.AddEntry(date, Expire, character);    
+        }
+    }
+    private void Expire() {
+        character.DestroyMarker();
     }
     #endregion
 

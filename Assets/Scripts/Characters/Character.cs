@@ -692,6 +692,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void DisableMarker() {
         marker.gameObject.SetActive(false);
         gridTileLocation.RemoveCharacterHere(this);
+        
     }
     public void EnableMarker() {
         marker.gameObject.SetActive(true);
@@ -1312,6 +1313,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (marker) {
             marker.visionTrigger.SetCollidersState(true);
             marker.UpdateAnimation();
+            if (isDead) {
+                marker.ScheduleExpiry();
+            }
         }
 
         //if (this.minion != null) {
@@ -1325,6 +1329,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //ownParty.icon.SetVisualState(false);
             marker.visionTrigger.SetCollidersState(false);
             marker.UpdateAnimation();
+            marker.TryCancelExpiry();
         }
     }
     public bool IsInParty() {
