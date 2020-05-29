@@ -19,8 +19,10 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                     Character inVision = character.marker.inVisionCharacters[i];
                     if (inVision.isDead) {
                         if(!(inVision is Summon)) {
-                            deadCharacter = inVision;
-                            break;
+                            if (!inVision.hasRisen) {
+                                deadCharacter = inVision;
+                                break;
+                            }
                         } else {
                             if (deadSummon == null) {
                                 deadSummon = inVision;
@@ -41,8 +43,10 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                         if (character.marker.inVisionTileObjects[i] is Tombstone tombstone) {
                             Character dead = tombstone.character;
                             if (!(dead is Summon)) {
-                                tomb = tombstone;
-                                break;
+                                if (!dead.hasRisen) {
+                                    tomb = tombstone;
+                                    break;
+                                }
                             }
                         }
                     }

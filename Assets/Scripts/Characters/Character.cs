@@ -91,6 +91,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool hasSeenPoisoned { get; protected set; }
     public bool destroyMarkerOnDeath { get; protected set; }
     public bool isWanderer { get; private set; }
+    public bool hasRisen { get; private set; }
 
     public List<JobQueueItem> forcedCancelJobsOnTickEnded { get; private set; }
     public List<HexTile> territorries { get; private set; }
@@ -1911,6 +1912,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public int GetCanPerformValue() {
         return _canPerformValue;
+    }
+    public void SetHasRisen(bool state) {
+        hasRisen = state;
     }
     #endregion    
 
@@ -4912,7 +4916,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.RemoveListener(Signals.TICK_STARTED, OnTickStartedWhileSeized);
         needsComponent.OnCharacterArrivedAtLocation(tileLocation.structure.location.coreTile.region);
         if (minion == null) {
-            SubscribeToSignals();    
+            if (!isDead) {
+                SubscribeToSignals();
+            }
         }
         SetPOIState(POI_STATE.ACTIVE);
         if (!marker) {

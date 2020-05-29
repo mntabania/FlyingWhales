@@ -401,7 +401,10 @@ public class CharacterManager : MonoBehaviour {
         // targetTile.SetReservedType(TILE_OBJECT_TYPE.FOOD_PILE);
     }
     public void RaiseFromDeath(Character characterToCopy, Faction faction, RACE race = RACE.SKELETON, string className = "") {
-        StartCoroutine(Raise(characterToCopy, faction, race, className));
+        if (!characterToCopy.hasRisen) {
+            characterToCopy.SetHasRisen(true);
+            StartCoroutine(Raise(characterToCopy, faction, race, className));
+        }
     }
     private IEnumerator Raise(Character target, Faction faction, RACE race, string className) {
         target.marker.PlayAnimation("Raise Dead");
@@ -415,8 +418,8 @@ public class CharacterManager : MonoBehaviour {
             target.grave.gridTileLocation.structure.RemovePOI(target.grave);
             target.SetGrave(null);
         }
-        target.DestroyMarker();
         summon.InitialCharacterPlacement(tile);
+        target.DestroyMarker();
         RemoveCharacter(target);
     }
     public List<Character> GetAllNormalCharacters() {
