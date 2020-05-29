@@ -26,7 +26,7 @@ public class SplashPoisonData : SpellData {
     }
 
     public override void ActivateAbility(LocationGridTile targetTile) {
-        AudioManager.Instance.CreateSpellAudioObject(
+        AudioManager.Instance.CreateAudioObject(
             CollectionUtilities.GetRandomElement(PlayerSkillManager.Instance
                 .GetPlayerSkillAsset<SplashPoisonAssets>(SPELL_TYPE.SPLASH_POISON).splashSounds),
             targetTile, 3, false

@@ -140,6 +140,7 @@ public class CombatManager : MonoBehaviour {
             yield return null;
         }
         yield return new WaitForSeconds(0.2f);
+        AudioManager.Instance.CreatePoisonExplosionAudio(targetTile);
         GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Poison_Explosion);
         List<ITraitable> traitables = new List<ITraitable>();
         List<LocationGridTile> affectedTiles = targetTile.GetTilesInRadius(1, includeTilesInDifferentStructure: true);

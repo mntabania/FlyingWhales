@@ -17,6 +17,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 		yield return MapGenerator.Instance.StartCoroutine(LandmarkItemGeneration());
 		yield return MapGenerator.Instance.StartCoroutine(CaveItemGeneration());
 		yield return MapGenerator.Instance.StartCoroutine(LoadItems());
+		yield return MapGenerator.Instance.StartCoroutine(CharacterFinalization());
 		for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
 			Region region = GridMap.Instance.allRegions[i]; 
 			region.GenerateOuterBorders();
@@ -54,25 +55,6 @@ public class MapGenerationFinalization : MapGenerationComponent {
 				yield return null;	
 			}
 		}
-		
-		// TILE_OBJECT_TYPE[] crystalChoices = new[] {
-		// 	TILE_OBJECT_TYPE.FIRE_CRYSTAL, TILE_OBJECT_TYPE.ICE_CRYSTAL, TILE_OBJECT_TYPE.ELECTRIC_CRYSTAL,
-		// 	TILE_OBJECT_TYPE.POISON_CRYSTAL, TILE_OBJECT_TYPE.WATER_CRYSTAL
-		// };
-		// for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
-		// 	Region region = GridMap.Instance.allRegions[i];
-		// 	LocationStructure wilderness = region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-		// 	for (int j = 0; j < 3; j++) {
-		// 		wilderness.AddPOI(
-		// 			InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.MIMIC_TILE_OBJECT));	
-		// 	}
-		// 	
-		// 	for (int j = 0; j < 30; j++) {
-		// 		TILE_OBJECT_TYPE crystalType = CollectionUtilities.GetRandomElement(crystalChoices);
-		// 		wilderness.AddPOI(
-		// 			InnerMapManager.Instance.CreateNewTileObject<TileObject>(crystalType));
-		// 	}
-		// }
 	}
 	private IEnumerator RegionalItemGeneration() {
 		for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
@@ -164,6 +146,36 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			}
 		}
 		return tiles.Count;
+	}
+	#endregion
+
+	#region Character
+	private IEnumerator CharacterFinalization() {
+		bool hasEvilCharacter = false;
+		List<Character> characterChoices = new List<Character>(CharacterManager.Instance.allCharacters.Where(x => x.isNormalCharacter));
+		for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+			Character character = CharacterManager.Instance.allCharacters[i];
+			if (character.traitContainer.HasTrait("Evil")) {
+				hasEvilCharacter = true;
+			}
+		}
+		
+		//evil character
+		if (hasEvilCharacter == false) {
+			Character character = CollectionUtilities.GetRandomElement(characterChoices);
+			character.traitContainer.AddTrait(character, "Evil");
+			characterChoices.Remove(character);
+			Debug.Log($"Added evil trait to {character.name}");
+		}
+		
+		//treacherous
+		if (characterChoices.Count > 0) {
+			Character character = CollectionUtilities.GetRandomElement(characterChoices);
+			character.traitContainer.AddTrait(character, "Treacherous");
+			Debug.Log($"Added treacherous trait to {character.name}");
+		}
+		
+		yield return null;
 	}
 	#endregion
 	

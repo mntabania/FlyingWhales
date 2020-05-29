@@ -36,12 +36,12 @@ namespace Tutorial {
                     new ExecuteAfflictionStep("Apply Vampirism", SPELL_TYPE.VAMPIRISM)
                         .SetCompleteAction(OnCompleteExecuteAffliction)
                 ),
-                new QuestStepCollection(
-                    new FlawClickedStep("Click on the added Affliction", "Vampiric")
-                        .SetHoverOverAction(OnHoverAfflictDetails)
-                        .SetHoverOutAction(UIManager.Instance.HideSmallInfo),
-                    new FlawTriggeredStep("Trigger it")
-                )
+                // new QuestStepCollection(
+                //     new FlawClickedStep("Click on the added Affliction", "Vampiric")
+                //         .SetHoverOverAction(OnHoverAfflictDetails)
+                //         .SetHoverOutAction(UIManager.Instance.HideSmallInfo),
+                //     new FlawTriggeredStep("Trigger it")
+                // )
                 
             };
         }
