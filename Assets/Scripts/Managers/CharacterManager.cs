@@ -351,7 +351,7 @@ public class CharacterManager : MonoBehaviour {
                 return 200;
             }
         }
-        return 100;
+        return 30;
     }
     public void CreateFoodPileForPOI(IPointOfInterest poi, LocationGridTile tileOverride = null) {
         LocationGridTile targetTile = tileOverride;

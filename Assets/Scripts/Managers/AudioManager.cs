@@ -36,6 +36,7 @@ public class AudioManager : MonoBehaviour {
     [Header("Unique Audio")] 
     [SerializeField] private AudioClip[] poisonExplosionAudio;
     [SerializeField] private AudioClip[] zapAudio;
+    [SerializeField] private AudioClip[] frozenExplosionAudio;
     
     [Header("Combat Audio")]
     [SerializeField] private AudioClip[] bowAndArrowAudio;
@@ -151,6 +152,12 @@ public class AudioManager : MonoBehaviour {
     #region Poison Explosion
     public void CreatePoisonExplosionAudio(LocationGridTile tile) {
         CreateAudioObject(CollectionUtilities.GetRandomElement(poisonExplosionAudio), tile, 1, false);
+    }
+    #endregion
+    
+    #region Frozen Explosion
+    public void CreateFrozenExplosionAudio(LocationGridTile tile) {
+        CreateAudioObject(CollectionUtilities.GetRandomElement(frozenExplosionAudio), tile, 1, false);
     }
     #endregion
 
