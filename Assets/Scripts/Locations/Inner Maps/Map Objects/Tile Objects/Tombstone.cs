@@ -25,6 +25,7 @@ public class Tombstone : TileObject {
     public override void OnPlacePOI() {
         base.OnPlacePOI();
         character.DisableMarker();
+        character.marker.TryCancelExpiry();
         character.SetGrave(this);
         if (character.race == RACE.HUMANS || character.race == RACE.ELVES) {
             AddPlayerAction(SPELL_TYPE.RAISE_DEAD);
@@ -34,6 +35,7 @@ public class Tombstone : TileObject {
         base.OnDestroyPOI();
         RemovePlayerAction(SPELL_TYPE.RAISE_DEAD);
         character.EnableMarker();
+        character.marker.ScheduleExpiry();
         LocationGridTile tile = previousTile;
         if (tile.isOccupied) {
             tile = previousTile.GetRandomUnoccupiedNeighbor();

@@ -34,7 +34,8 @@ namespace Tutorial {
                     new StructureBuiltStep(STRUCTURE_TYPE.THE_KENNEL, "Choose the Kennel")
                 ),
                 new QuestStepCollection(
-                    new DropCharacterAtStructureStep(STRUCTURE_TYPE.THE_KENNEL, typeof(Summon), "Drop a monster at the Kennel."),
+                    new ExecutedPlayerActionStep(SPELL_TYPE.SEIZE_MONSTER, "Seize a monster."),
+                    new DropCharacterAtStructureStep(STRUCTURE_TYPE.THE_KENNEL, typeof(Summon), "Drop at the Kennel."),
                     new ClickOnCharacterStep("Click on the monster", IsCharacterValid),
                     new ExecutedPlayerActionStep(SPELL_TYPE.BREED_MONSTER, "Breed it.")
                         .SetHoverOverAction(OnHoverBreed)
