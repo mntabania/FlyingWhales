@@ -196,22 +196,22 @@ public class BehaviourComponent {
                 //TODO: Optimize this to not always create new instance if playeraction, or if it can't be helped, do object pool
                 //owner.AddPlayerAction(new PlayerAction(PlayerDB.End_Invade_Action, () => true, null, () => SetIsInvading(false, null)));
                 //owner.AddPlayerAction(SPELL_TYPE.END_INVADE);
-                Messenger.AddListener<NPCSettlement>(Signals.NO_ABLE_CHARACTER_INSIDE_SETTLEMENT, OnNoLongerAbleResidentsInsideSettlement);
+                //Messenger.AddListener<NPCSettlement>(Signals.NO_ABLE_CHARACTER_INSIDE_SETTLEMENT, OnNoLongerAbleResidentsInsideSettlement);
             } else {
                 previousTarget.DecreaseIsBeingInvadedCount();
                 owner.combatComponent.SetCombatMode(combatModeBeforeHarassRaidInvade);
                 RemoveBehaviourComponent(typeof(InvadeBehaviour));
                 //owner.RemovePlayerAction(PlayerDB.End_Invade_Action);
                 //owner.RemovePlayerAction(SPELL_TYPE.END_INVADE);
-                Messenger.RemoveListener<NPCSettlement>(Signals.NO_ABLE_CHARACTER_INSIDE_SETTLEMENT, OnNoLongerAbleResidentsInsideSettlement);
+                //Messenger.RemoveListener<NPCSettlement>(Signals.NO_ABLE_CHARACTER_INSIDE_SETTLEMENT, OnNoLongerAbleResidentsInsideSettlement);
             }
         }
     }
-    private void OnNoLongerAbleResidentsInsideSettlement(NPCSettlement npcSettlement) {
-        if(assignedTargetSettlement == npcSettlement) {
-            SetIsInvading(false, null);
-        }
-    }
+    //private void OnNoLongerAbleResidentsInsideSettlement(NPCSettlement npcSettlement) {
+    //    if(assignedTargetSettlement == npcSettlement) {
+    //        SetIsInvading(false, null);
+    //    }
+    //}
     public void ChangeDefaultBehaviourSet(string setName) {
         if(defaultBehaviourSetName != setName) {
             RemoveDefaultBehaviourSet(defaultBehaviourSetName);

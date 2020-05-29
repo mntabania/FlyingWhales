@@ -37,9 +37,11 @@ public class InvadeBehaviour : CharacterBehaviourComponent {
             } else if (chosenNonCombatantTarget != null) {
                 log += "\n-Will attack non-combatant resident: " + chosenNonCombatantTarget.name;
                 character.combatComponent.Fight(chosenNonCombatantTarget, CombatManager.Hostility);
+                //character.Death();
             } else {
-                log += "\n-No resident found in settlement, Roam";
-                character.jobComponent.TriggerRoamAroundTile();
+                log += "\n-No resident found in settlement, dissipate";
+                //character.jobComponent.TriggerRoamAroundTile();
+                character.Death();
             }
         } else {
             log += "\n-Is not in the target npcSettlement";
