@@ -24,6 +24,7 @@ public class AudioManager : MonoBehaviour {
     
     [Header("UI Audio Sources")] 
     [SerializeField] private AudioSource buttonClick;
+    [SerializeField] private AudioSource toggleClick;
     
     [Header("Snapshots")] 
     [SerializeField] private AudioMixerSnapshot mainMenuSnapShot;
@@ -119,7 +120,7 @@ public class AudioManager : MonoBehaviour {
         buttonClick.Play();
     }
     private void OnToggleClicked(RuinarchToggle toggle) {
-        // buttonClick.Play();
+        toggleClick.Play();
     }
     #endregion
 

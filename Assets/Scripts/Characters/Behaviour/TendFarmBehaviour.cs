@@ -34,6 +34,6 @@ public class TendFarmBehaviour : CharacterBehaviourComponent {
     }
 
     private bool IsCornCropUntended(CornCrop crop) {
-        return crop.traitContainer.HasTrait("Tended") == false;
+        return crop.traitContainer.HasTrait("Tended") == false && crop.state == POI_STATE.ACTIVE;
     }
 }

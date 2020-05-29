@@ -148,7 +148,7 @@ public class GoapPlanJob : JobQueueItem {
     #region Overrides 
     public override bool ProcessJob() {
         if (hasBeenReset) { return false; }
-        if(assignedPlan == null && originalOwner != null) {
+        if(assignedPlan == null && originalOwner != null && assignedCharacter != null) {
             Character characterOwner = assignedCharacter;
             bool isPersonal = originalOwner.ownerType == JOB_OWNER.CHARACTER;
             IPointOfInterest target = targetPOI ?? assignedCharacter; //if provided target is null, default to the assigned character.

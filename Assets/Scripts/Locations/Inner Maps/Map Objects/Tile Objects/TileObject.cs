@@ -643,7 +643,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         } else {
             CreateTileObjectSlots();
         }
-        UpdateOwners();
+        if (GameManager.Instance.gameHasStarted == false) { //only update owners on initialization.
+            UpdateOwners();
+        }
         Messenger.Broadcast(Signals.TILE_OBJECT_PLACED, this, tile);
     }
     private bool HasSlotSettings() {
@@ -786,7 +788,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             if (dwelling.residents.Count > 0 && dwelling.residents.Contains(characterOwner) == false) {
                 SetCharacterOwner(CollectionUtilities.GetRandomElement(dwelling.residents));    
             }
-        }
+        }    
+        
     }
     // public void SetIsBeingCarriedBy(Character carrier) {
     //     isBeingCarriedBy = carrier;
