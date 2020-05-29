@@ -92,9 +92,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
                 character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.KNOCKOUT);
             }
 
-            _owner.behaviourComponent.SetIsHarassing(false, null);
-            _owner.behaviourComponent.SetIsInvading(false, null);
-            _owner.behaviourComponent.SetIsDefending(false, null);
+            //_owner.behaviourComponent.SetIsHarassing(false, null);
+            //_owner.behaviourComponent.SetIsInvading(false, null);
+            //_owner.behaviourComponent.SetIsDefending(false, null);
             // TryTriggerRestrain();
         }
 	}

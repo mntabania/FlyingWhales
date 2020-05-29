@@ -73,7 +73,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
         Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
         Messenger.AddListener(Signals.DAY_STARTED, OnDayStarted);
-        Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterCanNoLongerPerform);
+        //Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterCanNoLongerPerform);
         // Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
         // Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_EXITED_HEXTILE, OnCharacterExitedHexTile);
         settlementJobTriggerComponent.SubscribeToListeners();
@@ -87,7 +87,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
         Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
         Messenger.RemoveListener(Signals.DAY_STARTED, OnDayStarted);
-        Messenger.RemoveListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterCanNoLongerPerform);
+        //Messenger.RemoveListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterCanNoLongerPerform);
         // Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
         // Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_EXITED_HEXTILE, OnCharacterExitedHexTile);
         settlementJobTriggerComponent.UnsubscribeListeners();
@@ -181,11 +181,11 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         if (ruler != null && deadCharacter == ruler) {
             SetRuler(null);
         }
-        if(deadCharacter.homeSettlement == this) {
-            if (!HasCanPerformOrAliveResidentInsideSettlement()) {
-                Messenger.Broadcast(Signals.NO_ABLE_CHARACTER_INSIDE_SETTLEMENT, this);
-            }
-        }
+        //if(deadCharacter.homeSettlement == this) {
+        //    if (!HasCanPerformOrAliveResidentInsideSettlement()) {
+        //        Messenger.Broadcast(Signals.NO_ABLE_CHARACTER_INSIDE_SETTLEMENT, this);
+        //    }
+        //}
     }
     public void SetRuler(Character newRuler) {
         ruler?.SetRuledSettlement(null);
@@ -354,14 +354,14 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             }
         }
     }
-    private void OnCharacterCanNoLongerPerform(Character character) {
-        if (character.homeSettlement == this) {
-            if (!HasCanPerformOrAliveResidentInsideSettlement()) {
-                Messenger.Broadcast(Signals.NO_ABLE_CHARACTER_INSIDE_SETTLEMENT, this);
-            }
-        }
-    }
-    private bool HasCanPerformOrAliveResidentInsideSettlement() {
+    //private void OnCharacterCanNoLongerPerform(Character character) {
+    //    if (character.homeSettlement == this) {
+    //        if (!HasCanPerformOrAliveResidentInsideSettlement()) {
+    //            Messenger.Broadcast(Signals.NO_ABLE_CHARACTER_INSIDE_SETTLEMENT, this);
+    //        }
+    //    }
+    //}
+    public bool HasCanPerformOrAliveResidentInsideSettlement() {
         for (int i = 0; i < residents.Count; i++) {
             Character resident = residents[i];
             if(resident.canPerform && !resident.isDead 
