@@ -76,7 +76,7 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                 if (skeletonFollowers > 5 && UnityEngine.Random.Range(0, 100) < 65) {
                     log += $"\n-Skeleton followers are more than 5, attack village";
                     //Attack
-                    character.faction.ClearAllDeadCharactersFromFaction();
+                    //character.faction.ClearAllDeadCharactersFromFaction();
                     NPCSettlement attackVillageTarget = LandmarkManager.Instance.GetFirstVillageSettlementInRegionWithAliveResident(character.currentRegion);
                     if(attackVillageTarget != null) {
                         character.necromancerTrait.SetAttackVillageTarget(attackVillageTarget);

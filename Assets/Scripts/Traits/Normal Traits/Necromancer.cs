@@ -39,7 +39,7 @@ namespace Traits {
             CharacterManager.Instance.SetNecromancerInTheWorld(owner);
             owner.MigrateHomeStructureTo(null);
             owner.ClearTerritory();
-            AdjustEnergy(8);
+            AdjustEnergy(5);
             owner.CancelAllJobs();
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {

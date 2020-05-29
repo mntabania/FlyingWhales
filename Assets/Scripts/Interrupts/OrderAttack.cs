@@ -16,7 +16,7 @@ namespace Interrupts {
             ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             for (int i = 0; i < actor.faction.characters.Count; i++) {
                 Character follower = actor.faction.characters[i];
-                if (follower.race == RACE.SKELETON) {
+                if (follower.race == RACE.SKELETON && !follower.isDead && !follower.behaviourComponent.HasBehaviour(typeof(AttackVillageBehaviour))) {
                     follower.behaviourComponent.SetAttackVillageTarget(actor.necromancerTrait.attackVillageTarget);
                     follower.behaviourComponent.AddBehaviourComponent(typeof(AttackVillageBehaviour));
                 }

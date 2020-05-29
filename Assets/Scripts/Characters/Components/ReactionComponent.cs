@@ -641,6 +641,7 @@ public class ReactionComponent {
         if (!owner.isInCombat && !owner.hasSeenPoisoned) {
             if (targetTileObject.traitContainer.HasTrait("Poisoned")
                 && targetTileObject.gridTileLocation != null
+                && owner.homeSettlement != null
                 && targetTileObject.gridTileLocation.IsPartOfSettlement(owner.homeSettlement)
                 && !owner.jobQueue.HasJob(JOB_TYPE.CLEANSE_TILES)) {
                 debugLog += "\n-Target is Poisoned";
