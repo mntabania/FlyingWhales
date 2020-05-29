@@ -495,11 +495,12 @@ public class ActualGoapNode : IReactable, IRumorable {
         }
     }
     private bool IsActionStealth(JobQueueItem job) {
-        if (action.goapType == INTERACTION_TYPE.STEAL || action.goapType == INTERACTION_TYPE.DRINK_BLOOD) {
-            return true;
-        } else if (action.goapType == INTERACTION_TYPE.KNOCKOUT_CHARACTER && job.jobType != JOB_TYPE.APPREHEND) {
-            return true;
-        }
+        //Temporarily remove this for Demo, actions are not stealth
+        //if (action.goapType == INTERACTION_TYPE.STEAL || action.goapType == INTERACTION_TYPE.DRINK_BLOOD) {
+        //    return true;
+        //} else if (action.goapType == INTERACTION_TYPE.KNOCKOUT_CHARACTER && job.jobType != JOB_TYPE.APPREHEND) {
+        //    return true;
+        //}
         return false;
     }
     #endregion

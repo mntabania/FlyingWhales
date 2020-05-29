@@ -10,6 +10,10 @@ public class Ghost : Summon {
         UtilityScripts.Utilities.GetRandomGender()) {
         visuals.SetHasBlood(false);
     }
+    public Ghost(string className) : base(SUMMON_TYPE.Ghost, className, RACE.GHOST,
+    UtilityScripts.Utilities.GetRandomGender()) {
+        visuals.SetHasBlood(false);
+    }
     public Ghost(SaveDataCharacter data) : base(data) {
         visuals.SetHasBlood(false);
     }

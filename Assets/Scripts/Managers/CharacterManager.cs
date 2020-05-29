@@ -404,6 +404,7 @@ public class CharacterManager : MonoBehaviour {
         StartCoroutine(Raise(characterToCopy, faction, race, className));
     }
     private IEnumerator Raise(Character target, Faction faction, RACE race, string className) {
+        target.DestroyMarker();
         target.marker.PlayAnimation("Raise Dead");
         yield return new WaitForSeconds(0.7f);
         Summon summon = CreateNewSummon(SUMMON_TYPE.Skeleton, faction, homeRegion: target.homeRegion, className: target.characterClass.className);
@@ -416,7 +417,6 @@ public class CharacterManager : MonoBehaviour {
             target.SetGrave(null);
         }
         summon.InitialCharacterPlacement(tile);
-        target.DestroyMarker();
         RemoveCharacter(target);
     }
     public List<Character> GetAllNormalCharacters() {
