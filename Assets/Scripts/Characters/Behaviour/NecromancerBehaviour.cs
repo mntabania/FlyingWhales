@@ -73,7 +73,7 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
             if(currentTime == TIME_IN_WORDS.EARLY_NIGHT || currentTime == TIME_IN_WORDS.LATE_NIGHT || currentTime == TIME_IN_WORDS.AFTER_MIDNIGHT) {
                 log += $"\n-It is Early Night, Late Night, or After Midnight";
                 int skeletonFollowers = character.necromancerTrait.GetNumOfSkeletonFollowersThatAreNotAttackingAndIsAlive();
-                if (skeletonFollowers > 3) {
+                if (skeletonFollowers >= 5) {
                     log += $"\n-Skeleton followers are more than 5, attack village";
                     //Attack
                     character.faction.ClearAllDeadCharactersFromFaction();
@@ -141,7 +141,7 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                 log += $"\n-Lair is not set, will spawn lair";
 
                 HexTile chosenHex = null;
-                if(character.gridTileLocation.collectionOwner.partOfHextile != null) {
+                if(character.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
                     HexTile targetHex = character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
                     if(targetHex != null && targetHex.elevationType != ELEVATION.WATER && targetHex.elevationType != ELEVATION.MOUNTAIN && targetHex.landmarkOnTile == null && !targetHex.IsNextToOrPartOfVillage()) {
                         chosenHex = targetHex;

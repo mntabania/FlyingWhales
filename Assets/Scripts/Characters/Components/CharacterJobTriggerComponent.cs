@@ -483,7 +483,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
 	#region Remove Status
 	private void TryCreateRemoveStatusJob(Trait trait) {
-		if (_owner.homeSettlement != null && _owner.gridTileLocation.IsNextToOrPartOfSettlement(_owner.homeSettlement)
+		if (_owner.homeSettlement != null && _owner.gridTileLocation != null && _owner.gridTileLocation.IsNextToOrPartOfSettlement(_owner.homeSettlement)
 		    && _owner.traitContainer.HasTrait("Criminal") == false) {
 			TriggerRemoveStatus(trait);
 		}

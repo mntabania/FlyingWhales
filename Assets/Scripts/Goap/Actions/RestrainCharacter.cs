@@ -11,7 +11,7 @@ public class RestrainCharacter : GoapAction {
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.DEMON, RACE.SPIDER };
         isNotificationAnIntel = true;
-        canBeAdvertisedEvenIfActorIsUnavailable = true;
+        canBeAdvertisedEvenIfTargetIsUnavailable = true;
     }
 
     #region Overrides

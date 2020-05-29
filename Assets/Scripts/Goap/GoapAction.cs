@@ -26,7 +26,7 @@ public class GoapAction : ICrimeable {
     public string actionIconString { get; protected set; }
     public string animationName { get; protected set; } //what animation should the character be playing while doing this action
     public bool doesNotStopTargetCharacter { get; protected set; }
-    public bool canBeAdvertisedEvenIfActorIsUnavailable { get; protected set; }
+    public bool canBeAdvertisedEvenIfTargetIsUnavailable { get; protected set; }
     public bool canBePerformedEvenIfPathImpossible { get; protected set; } //can this action still be advertised even if there is no path towards the target
     protected TIME_IN_WORDS[] validTimeOfDays;
     public POINT_OF_INTEREST_TYPE[] advertisedBy { get; protected set; } //list of poi types that can advertise this action
@@ -45,7 +45,7 @@ public class GoapAction : ICrimeable {
         possibleExpectedEffectsTypeAndTargetMatching = new List<GoapEffectConditionTypeAndTargetType>();
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
         actionIconString = GoapActionStateDB.No_Icon;
-        canBeAdvertisedEvenIfActorIsUnavailable = false;
+        canBeAdvertisedEvenIfTargetIsUnavailable = false;
         canBePerformedEvenIfPathImpossible = false;
         animationName = "Interacting";
         ConstructBasePreconditionsAndEffects();

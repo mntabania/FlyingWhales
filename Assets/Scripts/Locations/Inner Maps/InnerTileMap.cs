@@ -453,7 +453,7 @@ namespace Inner_Maps {
             for (int i = 0; i < tiles.Count; i++) {
                 LocationGridTile currTile = tiles[i];
                 HexTile hex = region.coreTile;
-                if(currTile.collectionOwner != null && currTile.collectionOwner.partOfHextile != null) {
+                if(currTile.collectionOwner != null && currTile.collectionOwner.isPartOfParentRegionMap) {
                     hex = currTile.collectionOwner.partOfHextile.hexTileOwner;
                 }
                 float xCoord = (float)currTile.localPlace.x / xSize * 11f + offsetX;

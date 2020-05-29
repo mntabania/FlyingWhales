@@ -14,7 +14,7 @@ public class BuryCharacter : GoapAction {
     public BuryCharacter() : base(INTERACTION_TYPE.BURY_CHARACTER) {
         actionLocationType = ACTION_LOCATION_TYPE.RANDOM_LOCATION_B;
         actionIconString = GoapActionStateDB.Bury_Icon;
-        canBeAdvertisedEvenIfActorIsUnavailable = true;
+        canBeAdvertisedEvenIfTargetIsUnavailable = true;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
     }

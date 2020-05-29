@@ -16,7 +16,7 @@ public class Assault : GoapAction {
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.DEMON, RACE.SPIDER, RACE.SKELETON, RACE.WOLF };
         isNotificationAnIntel = true;
         doesNotStopTargetCharacter = true;
-        canBeAdvertisedEvenIfActorIsUnavailable = true;
+        canBeAdvertisedEvenIfTargetIsUnavailable = true;
     }
 
     #region Overrides
