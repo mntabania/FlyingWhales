@@ -300,7 +300,7 @@ namespace Traits {
             } else {
                 job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { character.homeStructure });
             }
-            job.SetIsStealth(true);
+            //job.SetIsStealth(true);
             character.jobQueue.AddJobInQueue(job);
             return true;
             //GoapAction goapAction6 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.BURY_CHARACTER, character, targetVictim);
