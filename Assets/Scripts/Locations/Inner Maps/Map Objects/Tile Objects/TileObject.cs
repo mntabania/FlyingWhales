@@ -862,7 +862,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         if (character.characterClass.className.Equals("Zombie")) {
             return false;
         }
-        if (characterOwner == null) {
+        if (characterOwner == null || characterOwner == character) {
             //if the item is at a tile that is part of a npcSettlement and that tile is part of that settlements main storage, do not allow pick up
             if (gridTileLocation != null && gridTileLocation.IsPartOfSettlement(out var settlement) 
                 && settlement is NPCSettlement npcSettlement

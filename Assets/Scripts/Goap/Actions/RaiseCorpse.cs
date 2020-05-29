@@ -26,6 +26,12 @@ public class RaiseCorpse : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return 10;
     }
+    public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
+        string stateName = "Target Missing";
+        GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(false, stateName);
+        //raise corpse cannot be invalid because all cases are handled by the requirements of the action
+        return goapActionInvalidity;
+    }
     #endregion
 
     #region Requirements

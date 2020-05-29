@@ -99,7 +99,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public LycanthropeData lycanData { get; protected set; }
     public Necromancer necromancerTrait { get; protected set; }
 
-
     private List<Action> onLeaveAreaActions;
     private POI_STATE _state;
     // public Dictionary<int, Combat> combatHistory;
@@ -692,7 +691,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void DisableMarker() {
         marker.gameObject.SetActive(false);
         gridTileLocation.RemoveCharacterHere(this);
-        
     }
     public void EnableMarker() {
         marker.gameObject.SetActive(true);
@@ -1313,9 +1311,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (marker) {
             marker.visionTrigger.SetCollidersState(true);
             marker.UpdateAnimation();
-            if (isDead) {
-                marker.ScheduleExpiry();
-            }
         }
 
         //if (this.minion != null) {
@@ -1329,7 +1324,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //ownParty.icon.SetVisualState(false);
             marker.visionTrigger.SetCollidersState(false);
             marker.UpdateAnimation();
-            marker.TryCancelExpiry();
         }
     }
     public bool IsInParty() {
@@ -3319,8 +3313,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public bool PlanIdleReturnHome() { //bool forceDoAction = false
         if (homeStructure != null && homeStructure.tiles.Count > 0 && !homeStructure.hasBeenDestroyed) {
-            LocationGridTile tile = CollectionUtilities.GetRandomElement(homeStructure.tiles);
-            if (PathfindingManager.Instance.HasPathEvenDiffRegion(gridTileLocation, tile) || currentRegion != homeStructure.location.coreTile.region) {
+            //LocationGridTile tile = CollectionUtilities.GetRandomElement(homeStructure.tiles);
+            //if (PathfindingManager.Instance.HasPathEvenDiffRegion(gridTileLocation, tile) || currentRegion != homeStructure.location) { //Removed this checker because we already have a handle if character cannot do an action because he cannot go to it (See: NoPathToDoJobOrAction)
                 ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RETURN_HOME], this, this, null, 0);
                 GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, this);
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE_RETURN_HOME, INTERACTION_TYPE.RETURN_HOME, this, this);
@@ -3329,7 +3323,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 job.SetAssignedPlan(goapPlan);
                 jobQueue.AddJobInQueue(job);
                 return true;
-            }
+            //}
         } else {
             //NOTE: this is a temporary fix because a character sometimes cannot return home because his/her home was destroyed, but he/she was not migrated to a new home. 
             //ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RETURN_HOME], this, this, null, 0);
@@ -5010,9 +5004,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     /// <param name="character">Character in question.</param>
     public bool IsHostileWith(Character character, bool checkIgnoreHostility = true) {
         //return true;
-        if (character.isDead || isDead) {
-            return false;
-        }
+
+        //Removed this checker because when checking hostility there is no need to check if either character is dead anymore, the only thing that matters is the faction
+        //if (character.isDead || isDead) {
+        //    return false;
+        //}
 
         //if (character.ignoreHostility > 0) {
         //    //if the other character is set to ignore hostilities, check if the character's current action is a combat action or state is a combat state

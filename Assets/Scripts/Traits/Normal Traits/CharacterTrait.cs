@@ -56,12 +56,11 @@ namespace Traits {
                         //if character is non suspicious, create an open chest job.
                         characterThatWillDoJob.jobComponent.CreateOpenChestJob(item);
                     }
-                } else if (!characterThatWillDoJob.IsInventoryAtFullCapacity() && characterThatWillDoJob.IsItemInteresting(item.name) 
-                        && (characterThatWillDoJob.jobQueue.jobsInQueue.Count == 0 || characterThatWillDoJob.jobQueue.jobsInQueue[0].priority < JOB_TYPE.TAKE_ITEM.GetJobTypePriority())) {
-                    if (!characterThatWillDoJob.traitContainer.HasTrait("Beast") /*characterThatWillDoJob.role.roleType != CHARACTER_ROLE.BEAST*/) {
+                }  else if (!characterThatWillDoJob.IsInventoryAtFullCapacity() && characterThatWillDoJob.IsItemInteresting(item.name) && (characterThatWillDoJob.jobQueue.jobsInQueue.Count == 0 || characterThatWillDoJob.jobQueue.jobsInQueue[0].priority < JOB_TYPE.TAKE_ITEM.GetJobTypePriority())) {
+                    if (!characterThatWillDoJob.traitContainer.HasTrait("Beast") && characterThatWillDoJob.traitContainer.HasTrait("Suspicious") == false /*characterThatWillDoJob.role.roleType != CHARACTER_ROLE.BEAST*/) {
                         if (item.CanBePickedUpNormallyUponVisionBy(characterThatWillDoJob)
-                            && !characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.TAKE_ITEM, INTERACTION_TYPE.PICK_UP)) {
-                            characterThatWillDoJob.jobComponent.CreatePickUpJob(item);
+                            && !characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.TAKE_ITEM)) {
+                            characterThatWillDoJob.jobComponent.CreateTakeItemJob(item);
                             return true;
                         }
                     }

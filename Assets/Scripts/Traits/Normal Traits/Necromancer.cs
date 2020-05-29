@@ -10,6 +10,7 @@ namespace Traits {
         public NPCSettlement attackVillageTarget { get; private set; }
         public string prevClassName { get; private set; }
         public int lifeAbsorbed { get; private set; }
+        public int energy { get; private set; }
 
         #region getters
         public int numOfSkeletonFollowers { get { return GetNumOfSkeletonFollowers(); } }
@@ -21,7 +22,7 @@ namespace Traits {
             type = TRAIT_TYPE.NEUTRAL;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
-            advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.BUILD_LAIR, INTERACTION_TYPE.SPAWN_SKELETON, INTERACTION_TYPE.READ_NECRONOMICON, INTERACTION_TYPE.MEDITATE };
+            advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.BUILD_LAIR, INTERACTION_TYPE.SPAWN_SKELETON, INTERACTION_TYPE.READ_NECRONOMICON, INTERACTION_TYPE.MEDITATE, INTERACTION_TYPE.REGAIN_ENERGY };
         }
 
         #region Overrides
@@ -32,11 +33,14 @@ namespace Traits {
             owner.AssignClass("Necromancer");
             owner.behaviourComponent.AddBehaviourComponent(typeof(NecromancerBehaviour));
             owner.SetNecromancerTrait(this);
-            owner.ChangeFactionTo(FactionManager.Instance.undeadFaction);
-            FactionManager.Instance.undeadFaction.OnlySetLeader(owner);
+            //Temporary fix: Change faction to undead when the necromancer sucessfully built his lair so that the other characters in the village will not attack him
+            //owner.ChangeFactionTo(FactionManager.Instance.undeadFaction);
+            //FactionManager.Instance.undeadFaction.OnlySetLeader(owner);
             CharacterManager.Instance.SetNecromancerInTheWorld(owner);
             owner.MigrateHomeStructureTo(null);
             owner.ClearTerritory();
+            AdjustEnergy(8);
+            owner.CancelAllJobs();
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
@@ -55,6 +59,9 @@ namespace Traits {
         }
         public void AdjustLifeAbsorbed(int amount) {
             lifeAbsorbed += amount;
+        }
+        public void AdjustEnergy(int amount) {
+            energy += amount;
         }
         private int GetNumOfSkeletonFollowers() {
             int count = 0;

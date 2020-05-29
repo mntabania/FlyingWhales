@@ -27,7 +27,8 @@ public class UndeadBehaviour : CharacterBehaviourComponent {
                         log += $"\n-Character and faction leader is in lair, roam";
                         character.jobComponent.TriggerRoamAroundTile();
                     } else {
-                        if (!undeadFactionLeader.isBeingSeized && undeadFactionLeader.marker && undeadFactionLeader.gridTileLocation != null && !undeadFactionLeader.isDead) {
+                        if (!undeadFactionLeader.isBeingSeized && undeadFactionLeader.marker && undeadFactionLeader.gridTileLocation != null && !undeadFactionLeader.isDead
+                            && character.gridTileLocation != null && PathfindingManager.Instance.HasPathEvenDiffRegion(character.gridTileLocation, undeadFactionLeader.gridTileLocation)) {
                             if (character.marker.inVisionCharacters.Contains(undeadFactionLeader)) {
                                 log += $"\n-Character can see faction leader, do nothing";
                                 return true;
@@ -36,6 +37,12 @@ public class UndeadBehaviour : CharacterBehaviourComponent {
                                 if (character.jobComponent.CreateGoToJob(undeadFactionLeader)) {
                                     return true;
                                 }
+                            }
+                        } else {
+                            if(character.currentStructure != lair) {
+                                character.PlanIdleReturnHome();
+                            } else {
+                                character.jobComponent.TriggerRoamAroundTile();
                             }
                         }
                     }

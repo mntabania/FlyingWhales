@@ -5,10 +5,10 @@ using UnityEngine;
 using Traits;
 using Inner_Maps;
 
-public class Meditate : GoapAction {
+public class RegainEnergy : GoapAction {
 
-    public Meditate() : base(INTERACTION_TYPE.MEDITATE) {
-        actionIconString = GoapActionStateDB.Sad_Icon;
+    public RegainEnergy() : base(INTERACTION_TYPE.REGAIN_ENERGY) {
+        actionIconString = GoapActionStateDB.Magic_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.NEARBY;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON, RACE.DEMON };
@@ -17,7 +17,7 @@ public class Meditate : GoapAction {
     #region Overrides
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
-        SetState("Meditate Success", goapNode);
+        SetState("Regain Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
@@ -36,14 +36,12 @@ public class Meditate : GoapAction {
     }
     #endregion
 
-    //#region State Effects
-    //public void AfterReadSuccess(ActualGoapNode goapNode) {
-    //    goapNode.actor.necromancerTrait.AdjustLifeAbsorbed(-1);
-    //    LocationGridTile gridTile = goapNode.actor.gridTileLocation.GetRandomNeighbor();
-    //    Character skeleton = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Skeleton, FactionManager.Instance.undeadFaction, homeRegion: gridTile.parentMap.region);
-    //    skeleton.CreateMarker();
-    //    skeleton.InitialCharacterPlacement(gridTile);
-    //}
-    //#endregion
+    #region State Effects
+    public void PerTickRegainSuccess(ActualGoapNode goapNode) {
+        if(goapNode.actor.necromancerTrait != null && goapNode.actor.necromancerTrait.energy < 10) {
+            goapNode.actor.necromancerTrait.AdjustEnergy(1);
+        }
+    }
+    #endregion
 
 }

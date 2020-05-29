@@ -389,12 +389,12 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			GoapPlanJob goapPlanJob = job as GoapPlanJob;
 			Character targetCharacter = goapPlanJob.targetPOI as Character;
 			// if (character != targetCharacter) {
-				bool isHostile = character.IsHostileWith(targetCharacter, false);
+				bool isNotHostileAndNotDead = !character.IsHostileWith(targetCharacter, false) && !targetCharacter.isDead;
 				bool isResponsibleForTrait = trait.IsResponsibleForTrait(character);
 
 				//if special illness, check if character is healer
 				if (TraitManager.Instance.specialIllnessTraits.Contains(trait.name)) {
-					return isHostile == false &&
+					return isNotHostileAndNotDead &&
 					       character.relationshipContainer.HasOpinionLabelWithCharacter(targetCharacter,
 						       RelationshipManager.Rival, RelationshipManager.Enemy) == false 
 					       && isResponsibleForTrait == false
@@ -402,7 +402,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
                            && character.traitContainer.HasTrait("Healing Expert");	
 				}
 				
-				return isHostile == false &&
+				return isNotHostileAndNotDead &&
 				       character.relationshipContainer.HasOpinionLabelWithCharacter(targetCharacter,
 					       RelationshipManager.Rival, RelationshipManager.Enemy) == false 
 				       && isResponsibleForTrait == false
@@ -800,10 +800,10 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         job.AddOtherData(INTERACTION_TYPE.DROP_ITEM, new object[] { dropLocation });
         _owner.jobQueue.AddJobInQueue(job);
     }
-    public void CreatePickUpJob(TileObject target) {
-        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TAKE_ITEM, INTERACTION_TYPE.PICK_UP, target, _owner);
-        _owner.jobQueue.AddJobInQueue(job);
-    }
+    //public void CreatePickUpJob(TileObject target) {
+    //    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TAKE_ITEM, INTERACTION_TYPE.PICK_UP, target, _owner);
+    //    _owner.jobQueue.AddJobInQueue(job);
+    //}
     public void CreateOpenChestJob(TileObject target) {
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.OPEN_CHEST, INTERACTION_TYPE.OPEN, target, _owner);
         _owner.jobQueue.AddJobInQueue(job);
@@ -1192,11 +1192,13 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             _owner.jobQueue.AddJobInQueue(job);
         }
     }
-    public void TriggerSpawnSkeleton() {
+    public bool TriggerSpawnSkeleton() {
         if (!_owner.jobQueue.HasJob(JOB_TYPE.SPAWN_SKELETON)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SPAWN_SKELETON, INTERACTION_TYPE.SPAWN_SKELETON, _owner, _owner);
             _owner.jobQueue.AddJobInQueue(job);
+            return true;
         }
+        return false;
     }
     public void TriggerRaiseCorpse(IPointOfInterest target) {
         if (!_owner.jobQueue.HasJob(JOB_TYPE.RAISE_CORPSE)) {
@@ -1210,17 +1212,29 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             _owner.jobQueue.AddJobInQueue(job);
         }
     }
-    public void TriggerReadNecronomicon() {
+    public bool TriggerReadNecronomicon() {
         if (!_owner.jobQueue.HasJob(JOB_TYPE.IDLE)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE, INTERACTION_TYPE.READ_NECRONOMICON, _owner, _owner);
             _owner.jobQueue.AddJobInQueue(job);
+            return true;
         }
+        return false;
     }
-    public void TriggerMeditate() {
+    public bool TriggerMeditate() {
         if (!_owner.jobQueue.HasJob(JOB_TYPE.IDLE)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE, INTERACTION_TYPE.MEDITATE, _owner, _owner);
             _owner.jobQueue.AddJobInQueue(job);
+            return true;
         }
+        return false;
+    }
+    public bool TriggerRegainEnergy() {
+        if (!_owner.jobQueue.HasJob(JOB_TYPE.IDLE)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE, INTERACTION_TYPE.REGAIN_ENERGY, _owner, _owner);
+            _owner.jobQueue.AddJobInQueue(job);
+            return true;
+        }
+        return false;
     }
     #endregion
 }

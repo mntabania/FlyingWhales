@@ -17,7 +17,7 @@ namespace Traits {
 
         #region Overrides
         public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
-            if (targetPOI is TileObject objectToBeInspected) {
+            if (characterThatWillDoJob.canPerform && characterThatWillDoJob.canMove && !characterThatWillDoJob.isDead && targetPOI is TileObject objectToBeInspected) {
                 if (objectToBeInspected.lastManipulatedBy is Player) {
                     characterThatWillDoJob.jobComponent.TriggerDestroy(objectToBeInspected);
                 }
