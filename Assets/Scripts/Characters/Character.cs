@@ -2926,7 +2926,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         bool sameRegionLocationAlready = false;
         if (homeSettlement != null) {
             previousHome = homeSettlement;
-            previousHome.RemoveResident(this);
+            if (previousHome.RemoveResident(this)) {
+                if(previousHome != newHomeSettlement) {
+                    //If previous home and new home is just the same, do not remove as settlement ruler, but if it is, then remove the character as settlement ruler
+                    if (previousHome is NPCSettlement previousHomeSettlement && previousHomeSettlement.ruler == this) {
+                        previousHomeSettlement.SetRuler(null);
+                    }
+                }
+            }
 
             if(previousHome.region != null) {
                 if(newHomeSettlement != null && previousHome.region == newHomeSettlement.region) {

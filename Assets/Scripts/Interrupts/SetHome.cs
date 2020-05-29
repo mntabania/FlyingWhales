@@ -281,16 +281,18 @@ namespace Interrupts {
 
         private NPCSettlement GetNewSettlementHomeFromFactionMember(Character actor) {
             NPCSettlement chosenSettlement = null;
-            List<NPCSettlement> npcSettlements = null;
-            for (int i = 0; i < actor.faction.characters.Count; i++) {
-                Character factionMember = actor.faction.characters[i];
-                if (factionMember.isSettlementRuler) {
-                    if(npcSettlements == null) { npcSettlements = new List<NPCSettlement>(); }
-                    npcSettlements.Add(factionMember.ruledSettlement);
+            if (actor.faction.isMajorNonPlayer) {
+                List<NPCSettlement> npcSettlements = null;
+                for (int i = 0; i < actor.faction.characters.Count; i++) {
+                    Character factionMember = actor.faction.characters[i];
+                    if (factionMember.isSettlementRuler) {
+                        if (npcSettlements == null) { npcSettlements = new List<NPCSettlement>(); }
+                        npcSettlements.Add(factionMember.ruledSettlement);
+                    }
                 }
-            }
-            if (npcSettlements != null && npcSettlements.Count > 0) {
-                chosenSettlement = npcSettlements[UnityEngine.Random.Range(0, npcSettlements.Count)];
+                if (npcSettlements != null && npcSettlements.Count > 0) {
+                    chosenSettlement = npcSettlements[UnityEngine.Random.Range(0, npcSettlements.Count)];
+                }
             }
             return chosenSettlement;
         }

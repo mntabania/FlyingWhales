@@ -119,7 +119,10 @@ public class CombatState : CharacterState {
             if (isBeingApprehended && stateComponent.character.traitContainer.HasTrait("Criminal") && stateComponent.character.canPerform && stateComponent.character.canMove) { //!stateComponent.character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
                 //If this criminal character is being apprehended and survived (meaning he did not die, or is not unconscious or restrained)
                 if (!stateComponent.character.isFriendlyFactionless) {
-                    //Leave current faction
+                    //Leave current faction and become banned from the current faction
+                    if(stateComponent.character.faction != null) {
+                        stateComponent.character.faction.AddBannedCharacter(stateComponent.character);
+                    }
                     stateComponent.character.ChangeFactionTo(FactionManager.Instance.friendlyNeutralFaction);
                 }
                 stateComponent.character.MigrateHomeTo(null);
@@ -131,6 +134,11 @@ public class CombatState : CharacterState {
                 //stateComponent.character.CancelAllJobsAndPlans();
                 //stateComponent.character.PlanIdleReturnHome(true);
                 stateComponent.character.defaultCharacterTrait.SetHasSurvivedApprehension(true);
+
+                Log successfulEscapeLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "successful_escape_crime");
+                successfulEscapeLog.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                successfulEscapeLog.AddLogToInvolvedObjects();
+                PlayerManager.Instance.player.ShowNotificationFrom(stateComponent.character, successfulEscapeLog);
                 return;
             }
 
