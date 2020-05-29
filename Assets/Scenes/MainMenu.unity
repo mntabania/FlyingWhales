@@ -31203,6 +31203,29 @@ MonoBehaviour:
     type: 2}
   spellAudioObjectPrefab: {fileID: 7614644448172475504, guid: 3a68cd0c86742e54fa6a5c1030980842,
     type: 3}
+  poisonExplosionAudio:
+  - {fileID: 8300000, guid: 63603a9911a3b264cad19a51fa6c952c, type: 3}
+  - {fileID: 8300000, guid: 640d4a0b460555b4fa03c8bf6481aa4e, type: 3}
+  - {fileID: 8300000, guid: aed8bafdcebfe0744a938b31d39e71ae, type: 3}
+  - {fileID: 8300000, guid: af06d22c87c797249881604748254ba0, type: 3}
+  - {fileID: 8300000, guid: f55b4b7790f69b1469c866b1e0a38373, type: 3}
+  bowAndArrowAudio:
+  - {fileID: 8300000, guid: efa8730f0034b8e418e1fd7af5ee5d62, type: 3}
+  - {fileID: 8300000, guid: a6a43c6638c737e44b3a876785e8083b, type: 3}
+  - {fileID: 8300000, guid: 35d7ac587746a524cb4fc0659c3f6f67, type: 3}
+  arrowImpactAudio:
+  - {fileID: 8300000, guid: 17d64785c1897354b95b84f3abea3096, type: 3}
+  swordFleshCombatAudio:
+  - {fileID: 8300000, guid: de70588d41f6deb4fa42049ce6ea4a09, type: 3}
+  - {fileID: 8300000, guid: 0634bb3622f22f540aacd30a336ff424, type: 3}
+  swordObjectCombatAudio:
+  - {fileID: 8300000, guid: f83c3429fbdf0424ea00804441a80cfc, type: 3}
+  - {fileID: 8300000, guid: b60d92fedcdc59d41861c1fd81e0c495, type: 3}
+  - {fileID: 8300000, guid: 799a7c913bf397b458ad2634875cc459, type: 3}
+  - {fileID: 8300000, guid: 2e890c7bedcbfe04b976c6015c20160b, type: 3}
+  - {fileID: 8300000, guid: 8516fc72a8fe22a4282b406f88ce8733, type: 3}
+  - {fileID: 8300000, guid: 47dd4089412538a4fa470c97b56b4cae, type: 3}
+  - {fileID: 8300000, guid: 06b1eee2bb34f40439c6c99614f298c6, type: 3}
 --- !u!4 &1979265921
 Transform:
   m_ObjectHideFlags: 0

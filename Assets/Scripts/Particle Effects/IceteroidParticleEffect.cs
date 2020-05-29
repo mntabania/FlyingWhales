@@ -17,7 +17,7 @@ public class IceteroidParticleEffect : BaseParticleEffect {
         ObjectPoolManager.Instance.DestroyObject(gameObject);
     }
     public void OnIceteroidFell() {
-        AudioManager.Instance.CreateSpellAudioObject(
+        AudioManager.Instance.CreateAudioObject(
             CollectionUtilities.GetRandomElement(
                 PlayerSkillManager.Instance.GetPlayerSkillAsset<IceteroidAssets>(SPELL_TYPE.ICETEROIDS).impactClips
             ), 

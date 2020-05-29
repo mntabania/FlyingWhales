@@ -32,6 +32,15 @@ public class AudioManager : MonoBehaviour {
 
     [Header("Audio Objects")] 
     [SerializeField] private GameObject spellAudioObjectPrefab;
+
+    [Header("Unique Audio")] 
+    [SerializeField] private AudioClip[] poisonExplosionAudio;
+    
+    [Header("Combat Audio")]
+    [SerializeField] private AudioClip[] bowAndArrowAudio;
+    [SerializeField] private AudioClip[] arrowImpactAudio;
+    [SerializeField] private AudioClip[] swordFleshCombatAudio;
+    [SerializeField] private AudioClip[] swordObjectCombatAudio;
     
     private void Awake() {
         if (Instance == null) {
@@ -127,12 +136,33 @@ public class AudioManager : MonoBehaviour {
     #endregion
 
     #region Spells
-    public AudioObject CreateSpellAudioObject(AudioClip audioClip, LocationGridTile centerTile, int tileRange, bool loopAudio = true) {
+    public AudioObject CreateAudioObject(AudioClip audioClip, LocationGridTile centerTile, int tileRange, bool loopAudio = true) {
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(spellAudioObjectPrefab.name,
             centerTile.centeredWorldLocation, Quaternion.identity, centerTile.parentMap.objectsParent, true);
         AudioObject audioObject = go.GetComponent<AudioObject>();
         audioObject.Initialize(audioClip, tileRange, loopAudio);
         return audioObject;
+    }
+    #endregion
+
+    #region Poison Explosion
+    public void CreatePoisonExplosionAudio(LocationGridTile tile) {
+        CreateAudioObject(CollectionUtilities.GetRandomElement(poisonExplosionAudio), tile, 1, false);
+    }
+    #endregion
+
+    #region Combat
+    public AudioClip GetRandomBowAndArrowAudio() {
+        return CollectionUtilities.GetRandomElement(bowAndArrowAudio);
+    }
+    public AudioClip GetRandomArrowImpactAudio() {
+        return CollectionUtilities.GetRandomElement(arrowImpactAudio);
+    }
+    public AudioClip GetRandomSwordAgainstFleshAudio() {
+        return CollectionUtilities.GetRandomElement(swordFleshCombatAudio);
+    }
+    public AudioClip GetRandomSwordAgainstObjectAudio() {
+        return CollectionUtilities.GetRandomElement(swordObjectCombatAudio);
     }
     #endregion
 

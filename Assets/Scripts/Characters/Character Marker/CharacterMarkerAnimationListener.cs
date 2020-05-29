@@ -20,6 +20,14 @@ public class CharacterMarkerAnimationListener : MonoBehaviour {
             } else {
                 combatState.isExecutingAttack = false;
                 combatState.OnAttackHit(combatState.currentClosestHostile);
+                if (combatState.currentClosestHostile is Character) {
+                    AudioManager.Instance.CreateAudioObject(AudioManager.Instance.GetRandomSwordAgainstFleshAudio(),
+                        parentMarker.character.gridTileLocation, 1, false);    
+                } else {
+                    AudioManager.Instance.CreateAudioObject(AudioManager.Instance.GetRandomSwordAgainstObjectAudio(),
+                        parentMarker.character.gridTileLocation, 1, false);
+                }
+                
             }
         }
     }
@@ -44,6 +52,8 @@ public class CharacterMarkerAnimationListener : MonoBehaviour {
         Projectile projectile = CombatManager.Instance.CreateNewProjectile(parentMarker.character.combatComponent.elementalDamage.type, parentMarker.character.currentRegion.innerMap.objectsParent, parentMarker.projectileParent.transform.position);
         projectile.SetTarget(target.projectileReceiver.transform, target, state);
         projectile.onHitAction = OnProjectileHit;
+        AudioManager.Instance.CreateAudioObject(AudioManager.Instance.GetRandomBowAndArrowAudio(),
+            parentMarker.character.gridTileLocation, 1, false);
     }
     /// <summary>
     /// Called when an attack that this character does, hits another character.
@@ -52,6 +62,8 @@ public class CharacterMarkerAnimationListener : MonoBehaviour {
     /// <param name="fromState">The projectile was created from this combat state.</param>
     private void OnProjectileHit(IDamageable target, CombatState fromState) {
         //fromState.OnAttackHit(character);
+        AudioManager.Instance.CreateAudioObject(AudioManager.Instance.GetRandomArrowImpactAudio(),
+            parentMarker.character.gridTileLocation, 1, false);
         if (parentMarker.character.stateComponent.currentState is CombatState combatState) {
             combatState.OnAttackHit(target);
         } else if (target != null) {
