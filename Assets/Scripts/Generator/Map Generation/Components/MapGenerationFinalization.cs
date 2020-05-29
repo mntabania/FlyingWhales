@@ -83,7 +83,17 @@ public class MapGenerationFinalization : MapGenerationComponent {
 							locationChoices.Remove(chosenTile);
 						}
 					}	
-				}		
+				}
+				if (WorldConfigManager.Instance.isDemoWorld && locationChoices.Count > 0) {
+					//spawn 7 chests randomly
+					for (int j = 0; j < 7; j++) {
+						if (locationChoices.Count == 0) { break; } //no more location choices
+						LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(locationChoices);
+						chosenTile.structure.AddPOI(
+							InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.TREASURE_CHEST), chosenTile);
+						locationChoices.Remove(chosenTile);
+					}
+				}
 			}
 			yield return null;
 		}
@@ -135,7 +145,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 				}
 			}
 			yield return null;
-		}
+		}	
 	}
 	private int GetHexTileCountOfCave(LocationStructure caveStructure) {
 		List<HexTile> tiles = new List<HexTile>();

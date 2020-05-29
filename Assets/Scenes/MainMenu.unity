@@ -31230,8 +31230,13 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 47dd4089412538a4fa470c97b56b4cae, type: 3}
   - {fileID: 8300000, guid: 06b1eee2bb34f40439c6c99614f298c6, type: 3}
   bluntWeaponAudio:
-  - {fileID: 8300000, guid: 261748be85090014a803bf18fc12f8cd, type: 3}
-  - {fileID: 8300000, guid: 1c2a06889dab78443963781340fa7156, type: 3}
+  - {fileID: 8300000, guid: cffa28d7a054b7f4ba173724088e6d1f, type: 3}
+  - {fileID: 8300000, guid: 5a0018de6b7bb8547bb9bdd2d1fbd2f6, type: 3}
+  - {fileID: 8300000, guid: bce12fec0bb45ae4d9a719b0380adbd9, type: 3}
+  - {fileID: 8300000, guid: aa0c4df074c67c6459996829f1f77f78, type: 3}
+  - {fileID: 8300000, guid: 51b11d28764e9d942867b6d136516f8a, type: 3}
+  - {fileID: 8300000, guid: 0d0bbe21a4d703242bdbe5bcd8dbabaa, type: 3}
+  - {fileID: 8300000, guid: b9968334f2984ac4fa1aba4cf02c6f23, type: 3}
   punchAudio:
   - {fileID: 8300000, guid: cffa28d7a054b7f4ba173724088e6d1f, type: 3}
   - {fileID: 8300000, guid: 5a0018de6b7bb8547bb9bdd2d1fbd2f6, type: 3}
