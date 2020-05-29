@@ -98,7 +98,7 @@ public class DemoUI : MonoBehaviour {
         ruinarchLogo.DOFade(1f, 1f);
         RectTransform logoRT = ruinarchLogo.transform as RectTransform;
         logoRT.anchoredPosition = Vector2.zero;
-        logoRT.DOAnchorPosY(119f, 0.5f).SetEase(Ease.OutQuad);
+        logoRT.DOAnchorPosY(221f, 0.5f).SetEase(Ease.OutQuad);
         
         //thank you
         thankYouWindow.anchoredPosition = new Vector2(0f, -300f);

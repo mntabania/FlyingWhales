@@ -170,8 +170,10 @@ namespace Tutorial {
                 }
             }
         }
-        private void ActivateTutorial(TutorialQuest tutorialQuest) {
-            _activeTutorials.Add(tutorialQuest);
+        public void ActivateTutorial(TutorialQuest tutorialQuest) {
+            if ((tutorialQuest is ChaosOrbsTutorial) == false) {
+                _activeTutorials.Add(tutorialQuest);    
+            }
             RemoveTutorialFromWaitList(tutorialQuest);
             tutorialQuest.Activate();
             QuestItem questItem = UIManager.Instance.questUI.ShowQuest(tutorialQuest);

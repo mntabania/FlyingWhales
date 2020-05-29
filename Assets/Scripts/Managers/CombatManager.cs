@@ -183,6 +183,7 @@ public class CombatManager : MonoBehaviour {
             yield return null;
         }
         yield return new WaitForSeconds(0.2f);
+        AudioManager.Instance.CreateFrozenExplosionAudio(targetTile);
         GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Frozen_Explosion);
         List<ITraitable> traitables = new List<ITraitable>();
         List<LocationGridTile> affectedTiles = targetTile.GetTilesInRadius(2, includeTilesInDifferentStructure: true);

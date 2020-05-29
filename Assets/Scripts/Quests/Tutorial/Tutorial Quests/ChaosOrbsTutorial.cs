@@ -18,6 +18,17 @@ namespace Tutorial {
         }
         #endregion
 
+        #region Availability
+        protected override void MakeAvailable() {
+            if (isAvailable) {
+                return;
+            }
+            isAvailable = true;
+            ConstructSteps();
+            TutorialManager.Instance.ActivateTutorial(this);
+        }
+        #endregion
+        
         #region Activation
         public override void Activate() {
             base.Activate();

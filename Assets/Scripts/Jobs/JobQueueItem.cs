@@ -306,6 +306,7 @@ public class JobQueueItem {
         canTakeThisJobWithTarget = null;
         onTakeJobAction = null;
         assignedCharacter = null;
+        onUnassignJobAction = null;
         SetIsStealth(false);
         SetPriority(-1);
         SetCannotBePushedBack(false);

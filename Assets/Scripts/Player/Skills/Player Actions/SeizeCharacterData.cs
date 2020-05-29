@@ -7,7 +7,7 @@ using Inner_Maps.Location_Structures;
 
 public class SeizeCharacterData : PlayerAction {
     public override SPELL_TYPE type => SPELL_TYPE.SEIZE_CHARACTER;
-    public override string name => "Seize Character";
+    public override string name => "Seize Villager";
     public override string description => "This Action can be used to take a Resident and then transfer it to an unoccupied tile.";
     public SeizeCharacterData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };

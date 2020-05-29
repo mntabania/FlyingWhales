@@ -36,6 +36,7 @@ public class AudioManager : MonoBehaviour {
     [Header("Unique Audio")] 
     [SerializeField] private AudioClip[] poisonExplosionAudio;
     [SerializeField] private AudioClip[] zapAudio;
+    [SerializeField] private AudioClip[] frozenExplosionAudio;
     
     [Header("Combat Audio")]
     [SerializeField] private AudioClip[] bowAndArrowAudio;
@@ -61,6 +62,10 @@ public class AudioManager : MonoBehaviour {
         Messenger.RemoveListener<RuinarchToggle>(Signals.TOGGLE_CLICKED, OnToggleClicked);
         Messenger.RemoveListener<string>(Signals.STARTED_LOADING_SCENE, OnSceneStartedLoading);
     }
+    private void Start() {
+        SetMasterVolume(SettingsManager.Instance.settings.masterVolume);
+        SetMusicVolume(SettingsManager.Instance.settings.musicVolume);
+    }
 
     #region Initialization
     private void Initialize() {
@@ -75,8 +80,6 @@ public class AudioManager : MonoBehaviour {
         Messenger.AddListener<RuinarchButton>(Signals.BUTTON_CLICKED, OnButtonClicked);
         Messenger.AddListener<RuinarchToggle>(Signals.TOGGLE_CLICKED, OnToggleClicked);
         Messenger.AddListener<string>(Signals.STARTED_LOADING_SCENE, OnSceneStartedLoading);
-        SetMasterVolume(SettingsManager.Instance.settings.masterVolume);
-        SetMusicVolume(SettingsManager.Instance.settings.musicVolume);
     }
     public void OnGameLoaded() {
         Messenger.AddListener<Region>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
@@ -151,6 +154,12 @@ public class AudioManager : MonoBehaviour {
     #region Poison Explosion
     public void CreatePoisonExplosionAudio(LocationGridTile tile) {
         CreateAudioObject(CollectionUtilities.GetRandomElement(poisonExplosionAudio), tile, 1, false);
+    }
+    #endregion
+    
+    #region Frozen Explosion
+    public void CreateFrozenExplosionAudio(LocationGridTile tile) {
+        CreateAudioObject(CollectionUtilities.GetRandomElement(frozenExplosionAudio), tile, 1, false);
     }
     #endregion
 
