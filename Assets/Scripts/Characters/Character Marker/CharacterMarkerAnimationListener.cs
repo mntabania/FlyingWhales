@@ -20,14 +20,32 @@ public class CharacterMarkerAnimationListener : MonoBehaviour {
             } else {
                 combatState.isExecutingAttack = false;
                 combatState.OnAttackHit(combatState.currentClosestHostile);
-                if (combatState.currentClosestHostile is Character) {
-                    AudioManager.Instance.CreateAudioObject(AudioManager.Instance.GetRandomSwordAgainstFleshAudio(),
+                if (parentMarker.character is Summon) {
+                    AudioManager.Instance.CreateAudioObject(AudioManager.Instance.GetRandomPunchAudio(),
                         parentMarker.character.gridTileLocation, 1, false);    
                 } else {
-                    AudioManager.Instance.CreateAudioObject(AudioManager.Instance.GetRandomSwordAgainstObjectAudio(),
-                        parentMarker.character.gridTileLocation, 1, false);
+                    switch (parentMarker.character.characterClass.className) {
+                        case "Craftsman":
+                        case "Miner":
+                            AudioManager.Instance.CreateAudioObject(AudioManager.Instance.GetRandomBluntWeaponAudio(),
+                                parentMarker.character.gridTileLocation, 1, false);
+                            break;
+                        case "Noble":
+                        case "Knight":
+                        case "Barbarian":
+                        case "Marauder":
+                            AudioManager.Instance.CreateAudioObject(
+                                combatState.currentClosestHostile is Character
+                                    ? AudioManager.Instance.GetRandomSwordAgainstFleshAudio()
+                                    : AudioManager.Instance.GetRandomSwordAgainstObjectAudio(),
+                                parentMarker.character.gridTileLocation, 1, false);
+                            break;
+                        default:
+                            AudioManager.Instance.CreateAudioObject(AudioManager.Instance.GetRandomPunchAudio(),
+                                parentMarker.character.gridTileLocation, 1, false);
+                            break;
+                    }
                 }
-                
             }
         }
     }

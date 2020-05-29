@@ -35,13 +35,16 @@ public class AudioManager : MonoBehaviour {
 
     [Header("Unique Audio")] 
     [SerializeField] private AudioClip[] poisonExplosionAudio;
+    [SerializeField] private AudioClip[] zapAudio;
     
     [Header("Combat Audio")]
     [SerializeField] private AudioClip[] bowAndArrowAudio;
     [SerializeField] private AudioClip[] arrowImpactAudio;
     [SerializeField] private AudioClip[] swordFleshCombatAudio;
     [SerializeField] private AudioClip[] swordObjectCombatAudio;
-    
+    [SerializeField] private AudioClip[] bluntWeaponAudio;
+    [SerializeField] private AudioClip[] punchAudio;
+
     private void Awake() {
         if (Instance == null) {
             Instance = this;
@@ -151,6 +154,12 @@ public class AudioManager : MonoBehaviour {
     }
     #endregion
 
+    #region Zap
+    public AudioClip GetRandomZapAudio() {
+        return CollectionUtilities.GetRandomElement(zapAudio);
+    }
+    #endregion
+
     #region Combat
     public AudioClip GetRandomBowAndArrowAudio() {
         return CollectionUtilities.GetRandomElement(bowAndArrowAudio);
@@ -163,6 +172,12 @@ public class AudioManager : MonoBehaviour {
     }
     public AudioClip GetRandomSwordAgainstObjectAudio() {
         return CollectionUtilities.GetRandomElement(swordObjectCombatAudio);
+    }
+    public AudioClip GetRandomPunchAudio() {
+        return CollectionUtilities.GetRandomElement(punchAudio);
+    }
+    public AudioClip GetRandomBluntWeaponAudio() {
+        return CollectionUtilities.GetRandomElement(bluntWeaponAudio);
     }
     #endregion
 

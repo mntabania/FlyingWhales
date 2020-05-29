@@ -151,28 +151,30 @@ public class MapGenerationFinalization : MapGenerationComponent {
 
 	#region Character
 	private IEnumerator CharacterFinalization() {
-		bool hasEvilCharacter = false;
-		List<Character> characterChoices = new List<Character>(CharacterManager.Instance.allCharacters.Where(x => x.isNormalCharacter));
-		for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
-			Character character = CharacterManager.Instance.allCharacters[i];
-			if (character.traitContainer.HasTrait("Evil")) {
-				hasEvilCharacter = true;
+		if (WorldConfigManager.Instance.isDemoWorld) {
+			bool hasEvilCharacter = false;
+			List<Character> characterChoices = new List<Character>(CharacterManager.Instance.allCharacters.Where(x => x.isNormalCharacter));
+			for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+				Character character = CharacterManager.Instance.allCharacters[i];
+				if (character.traitContainer.HasTrait("Evil")) {
+					hasEvilCharacter = true;
+				}
 			}
-		}
 		
-		//evil character
-		if (hasEvilCharacter == false) {
-			Character character = CollectionUtilities.GetRandomElement(characterChoices);
-			character.traitContainer.AddTrait(character, "Evil");
-			characterChoices.Remove(character);
-			Debug.Log($"Added evil trait to {character.name}");
-		}
+			//evil character
+			if (hasEvilCharacter == false) {
+				Character character = CollectionUtilities.GetRandomElement(characterChoices);
+				character.traitContainer.AddTrait(character, "Evil");
+				characterChoices.Remove(character);
+				Debug.Log($"Added evil trait to {character.name}");
+			}
 		
-		//treacherous
-		if (characterChoices.Count > 0) {
-			Character character = CollectionUtilities.GetRandomElement(characterChoices);
-			character.traitContainer.AddTrait(character, "Treacherous");
-			Debug.Log($"Added treacherous trait to {character.name}");
+			//treacherous
+			if (characterChoices.Count > 0) {
+				Character character = CollectionUtilities.GetRandomElement(characterChoices);
+				character.traitContainer.AddTrait(character, "Treacherous");
+				Debug.Log($"Added treacherous trait to {character.name}");
+			}	
 		}
 		
 		yield return null;

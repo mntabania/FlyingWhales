@@ -6,6 +6,7 @@ namespace Traits {
     public class Zapped : Status {
 
         private GameObject electricEffectGO;
+        private AudioObject _audioObject;
         public Zapped() {
             name = "Zapped";
             description = "This character cannot move.";
@@ -26,6 +27,8 @@ namespace Traits {
             if(sourcePOI is IPointOfInterest poi) {
                 electricEffectGO = GameManager.Instance.CreateParticleEffectAt(poi, PARTICLE_EFFECT.Electric);
             }
+            _audioObject = AudioManager.Instance.CreateAudioObject(AudioManager.Instance.GetRandomZapAudio(),
+                sourcePOI.gridTileLocation, 1, true);
             if (sourcePOI is Character) {
                 Character character = sourcePOI as Character;
                 if (character.currentParty.icon.isTravelling) {
@@ -48,6 +51,10 @@ namespace Traits {
             if (electricEffectGO != null) {
                 ObjectPoolManager.Instance.DestroyObject(electricEffectGO);
                 electricEffectGO = null;
+            }
+            if (_audioObject != null) {
+                ObjectPoolManager.Instance.DestroyObject(_audioObject);
+                _audioObject = null;
             }
             if (sourcePOI is Character) {
                 Character character = sourcePOI as Character;
