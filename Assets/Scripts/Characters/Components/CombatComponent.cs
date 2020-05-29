@@ -256,7 +256,7 @@ public class CombatComponent {
     //    //}
     //    return false;
     //}
-    public void RemoveHostileInRange(IPointOfInterest poi, bool processCombatBehavior = true) {
+    public bool RemoveHostileInRange(IPointOfInterest poi, bool processCombatBehavior = true) {
         if (hostilesInRange.Remove(poi)) {
             //if (poi is Character character) {
             //    fightCombatData.Remove(character);
@@ -280,7 +280,9 @@ public class CombatComponent {
                 }
                 SetWillProcessCombat(true);
             }
+            return true;
         }
+        return false;
     }
     public void ClearHostilesInRange(bool processCombatBehavior = true) {
         if (hostilesInRange.Count > 0) {
@@ -331,8 +333,12 @@ public class CombatComponent {
                     nearest = poi;
                     nearestDist = dist;
                 }
+            } else {
+                //If poi in the list is no longer a valid combat target, remove it because there is no sense in keeping it in the list if you can't attack it
+                if(RemoveHostileInRange(poi, false)) {
+                    i--;
+                }
             }
-
         }
         //if no character was returned, choose at random from the list, since we are sure that all characters in the list are not in the same npcSettlement as this character
         if (nearest == null) {
@@ -341,11 +347,17 @@ public class CombatComponent {
             //    nearest = hostileCharacters[UnityEngine.Random.Range(0, hostileCharacters.Count)];
             //}
             for (int i = 0; i < hostilesInRange.Count; i++) {
-                IPointOfInterest pointOfInterest = hostilesInRange[i];
-                if(pointOfInterest.IsValidCombatTarget() && 
-                   pointOfInterest.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-                    nearest = hostilesInRange[i];
-                    break;
+                IPointOfInterest poi = hostilesInRange[i];
+                if(poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+                    if (poi.IsValidCombatTarget()) {
+                        nearest = hostilesInRange[i];
+                        break;
+                    } else {
+                        //If poi in the list is no longer a valid combat target, remove it because there is no sense in keeping it in the list if you can't attack it
+                        if (RemoveHostileInRange(poi, false)) {
+                            i--;
+                        }
+                    }
                 }
             }
         }
@@ -367,6 +379,11 @@ public class CombatComponent {
                 if (nearest == null || dist < nearestDist) {
                     nearest = poi;
                     nearestDist = dist;
+                }
+            } else {
+                //If poi in the list is no longer a valid combat target, remove it because there is no sense in keeping it in the list if you can't attack it
+                if (RemoveHostileInRange(poi, false)) {
+                    i--;
                 }
             }
         }

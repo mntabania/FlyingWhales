@@ -519,6 +519,7 @@ public class CharacterInfoUI : InfoUIBase {
         summary = $"{summary}{("\nCan Perform: " + activeCharacter.canPerform)}";
         summary = $"{summary}{("\nIs Missing: " + activeCharacter.isMissing)}";
         summary = $"{summary}{("\nIs Running: " + activeCharacter.movementComponent.isRunning)}";
+        summary = $"{summary}{("\nPOI State: " + activeCharacter.state.ToString())}";
         summary = $"{summary}{("\n" + activeCharacter.needsComponent.GetNeedsSummary())}";
         summary = $"{summary}{("\nFullness Time: " + (activeCharacter.needsComponent.fullnessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.needsComponent.fullnessForcedTick)))}";
         summary = $"{summary}{("\nTiredness Time: " + (activeCharacter.needsComponent.tirednessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.needsComponent.tirednessForcedTick)))}";

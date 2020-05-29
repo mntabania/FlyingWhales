@@ -6,7 +6,7 @@ using Traits;
 public class DouseFire : GoapAction {
 
     public DouseFire() : base(INTERACTION_TYPE.DOUSE_FIRE) {
-        canBeAdvertisedEvenIfActorIsUnavailable = true;
+        canBeAdvertisedEvenIfTargetIsUnavailable = true;
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
         actionIconString = GoapActionStateDB.Douse_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };

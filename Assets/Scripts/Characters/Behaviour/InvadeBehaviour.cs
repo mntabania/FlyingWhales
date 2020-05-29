@@ -10,7 +10,9 @@ public class InvadeBehaviour : CharacterBehaviourComponent {
     }
     public override bool TryDoBehaviour(Character character, ref string log) {
         log += $"\n-{character.name} will invade";
-        if (character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner && character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile == character.behaviourComponent.assignedTargetSettlement) {
+        if (character.gridTileLocation.collectionOwner.partOfHextile != null
+            && character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner 
+            && character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile == character.behaviourComponent.assignedTargetSettlement) {
             log += "\n-Already in the target npcSettlement, will try to combat residents";
             //It will only go here if the invader is not combat anymore, meaning there are no more hostiles in his vision, so we must make sure that he attacks a resident in the settlement even though he can't see it
             Character chosenNonCombatantTarget = null;

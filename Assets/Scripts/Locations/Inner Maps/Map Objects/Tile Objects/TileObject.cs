@@ -241,7 +241,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             for (int i = 0; i < advertisedActions.Count; i++) {
                 INTERACTION_TYPE currType = advertisedActions[i];
                 GoapAction action = InteractionManager.Instance.goapActionData[currType];
-                if (!isCharacterAvailable && !action.canBeAdvertisedEvenIfActorIsUnavailable) {
+                if (!isCharacterAvailable && !action.canBeAdvertisedEvenIfTargetIsUnavailable) {
                     //if this character is not available, check if the current action type can be advertised even when the character is inactive.
                     continue; //skip
                 }
@@ -290,7 +290,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     }
     public bool CanAdvertiseActionToActor(Character actor, GoapAction action, JobQueueItem job,
         Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost) {
-        if ((IsAvailable() || action.canBeAdvertisedEvenIfActorIsUnavailable)
+        if ((IsAvailable() || action.canBeAdvertisedEvenIfTargetIsUnavailable)
             && advertisedActions != null && advertisedActions.Contains(action.goapType)
             && actor.trapStructure.SatisfiesForcedStructure(this)
             && RaceManager.Instance.CanCharacterDoGoapAction(actor, action.goapType)) {

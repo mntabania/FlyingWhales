@@ -1,6 +1,6 @@
 ﻿public class EatCorpse : GoapAction {
     public EatCorpse() : base(INTERACTION_TYPE.EAT_CORPSE) {
-        canBeAdvertisedEvenIfActorIsUnavailable = true;
+        canBeAdvertisedEvenIfTargetIsUnavailable = true;
         actionIconString = GoapActionStateDB.Eat_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.WOLF };

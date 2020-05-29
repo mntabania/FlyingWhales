@@ -4,6 +4,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 namespace Ruinarch.Custom_UI {
+#if UNITY_EDITOR
     [ExecuteInEditMode]
     public class ButtonConverter : MonoBehaviour {
 
@@ -36,6 +37,7 @@ namespace Ruinarch.Custom_UI {
             return objectsInScene;
         }
     }
+#endif
 }
 
 public class ButtonSettings {

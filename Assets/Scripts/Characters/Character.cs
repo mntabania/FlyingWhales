@@ -1687,6 +1687,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     private void OnOtherCharacterDied(Character characterThatDied) {
         if (characterThatDied.id != id) {
+            if (isDead) {
+                return;
+            }
             string opinionLabel = relationshipContainer.GetOpinionLabel(characterThatDied);
             if (opinionLabel == RelationshipManager.Close_Friend
                 || (relationshipContainer.HasSpecialPositiveRelationshipWith(characterThatDied) 
@@ -1706,7 +1709,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 }
             }
             //RemoveRelationship(characterThatDied); //do not remove relationships when dying
-            marker.OnOtherCharacterDied(characterThatDied);
+            if (marker) {
+                marker.OnOtherCharacterDied(characterThatDied);
+            }
         }
     }
     private void OnBeforeSeizingPOI(IPointOfInterest poi) {
@@ -3916,7 +3921,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             for (int i = 0; i < advertisedActions.Count; i++) {
                 INTERACTION_TYPE currType = advertisedActions[i];
                 GoapAction action = InteractionManager.Instance.goapActionData[currType];
-                if (!isCharacterAvailable && !action.canBeAdvertisedEvenIfActorIsUnavailable) {
+                if (!isCharacterAvailable && !action.canBeAdvertisedEvenIfTargetIsUnavailable) {
                     //if this character is not available, check if the current action type can be advertised even when the character is inactive.
                     continue; //skip
                 }
@@ -3961,7 +3966,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public bool CanAdvertiseActionToActor(Character actor, GoapAction action, JobQueueItem job,
         Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost) {
-        if((IsAvailable() || action.canBeAdvertisedEvenIfActorIsUnavailable) 
+        if((IsAvailable() || action.canBeAdvertisedEvenIfTargetIsUnavailable) 
             && advertisedActions != null && advertisedActions.Contains(action.goapType)
             && actor.trapStructure.SatisfiesForcedStructure(this)
             && RaceManager.Instance.CanCharacterDoGoapAction(actor, action.goapType)
