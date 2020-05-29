@@ -11,6 +11,7 @@ public class Summon : Character, IWorldObject {
 
 	public SUMMON_TYPE summonType { get; private set; }
     public bool hasBeenUsed { get; private set; } //has this summon been used in the current map. TODO: Set this to false at end of invasion of map.
+    public bool showNotificationOnDeath { get; private set; }
     
     #region getters/setters
     public virtual string worldObjectName {
@@ -27,6 +28,7 @@ public class Summon : Character, IWorldObject {
     // }
     protected Summon(SUMMON_TYPE summonType, string className, RACE race, GENDER gender) : base(className, race, gender) {
         this.summonType = summonType;
+        showNotificationOnDeath = true;
         //territorries = new List<HexTile>();
     }
     protected Summon(SaveDataCharacter data) : base(data) {
@@ -191,7 +193,9 @@ public class Summon : Character, IWorldObject {
                 }
                 //will only add death log to history if no death log is provided. NOTE: This assumes that if a death log is provided, it has already been added to this characters history.
                 logComponent.AddHistory(deathLog);
-                PlayerManager.Instance.player.ShowNotificationFrom(this, deathLog);
+                if (showNotificationOnDeath) {
+                    PlayerManager.Instance.player.ShowNotificationFrom(this, deathLog);    
+                }
             } else {
                 deathLog = _deathLog;
             }
@@ -297,6 +301,12 @@ public class Summon : Character, IWorldObject {
     public override bool IsCurrentlySelected() {
         return UIManager.Instance.monsterInfoUI.isShowing &&
                UIManager.Instance.monsterInfoUI.activeMonster == this;
+    }
+    #endregion
+
+    #region Utilities
+    public void SetShowNotificationOnDeath(bool showNotificationOnDeath) {
+        this.showNotificationOnDeath = showNotificationOnDeath;
     }
     #endregion
 }

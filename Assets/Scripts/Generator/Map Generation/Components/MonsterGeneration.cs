@@ -38,15 +38,20 @@ public class MonsterGeneration : MapGenerationComponent {
 		Assert.IsTrue(chosenTile.collectionOwner.isPartOfParentRegionMap, $"Chosen tile for {summonType.ToString()} is not part of the region map!");
 		Summon summon = CharacterManager.Instance.CreateNewSummon(summonType, FactionManager.Instance.neutralFaction, null, chosenTile.parentMap.region);
 		CharacterManager.Instance.PlaceSummon(summon, chosenTile);
-		//summon.AddTerritory(chosenTile.collectionOwner.partOfHextile.hexTileOwner);
-		//if (territories != null) {
-		//	for (int i = 0; i < territories.Length; i++) {
-		//		HexTile territory = territories[i];
-		//		summon.AddTerritory(territory);
-		//	}
-		//}
-        summon.MigrateHomeStructureTo(homeStructure);
-        //summon.ChangeHomeStructure(homeStructure);
+		if (homeStructure != null) {
+			summon.MigrateHomeStructureTo(homeStructure);	
+		} else {
+			summon.AddTerritory(chosenTile.collectionOwner.partOfHextile.hexTileOwner);
+			if (territories != null) {
+				for (int i = 0; i < territories.Length; i++) {
+					HexTile territory = territories[i];
+					summon.AddTerritory(territory);
+				}
+			}	
+		}
+
+
+		//summon.ChangeHomeStructure(homeStructure);
   //      if (homeStructure is IDwelling structure) {
 		//	summon.MigrateHomeStructureTo(structure);
 		//}
