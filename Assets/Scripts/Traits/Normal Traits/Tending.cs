@@ -35,7 +35,7 @@
                 character.behaviourComponent.RemoveBehaviourComponent(typeof(TendFarmBehaviour));
                 Messenger.RemoveListener<Character, ActualGoapNode>(Signals.CHARACTER_DOING_ACTION, OnActionStarted);
                 Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
-                character.homeSettlement.settlementJobTriggerComponent.CheckIfFarmShouldBeTended(false);
+                character.homeSettlement?.settlementJobTriggerComponent.CheckIfFarmShouldBeTended(false);
             }
         }
         #endregion

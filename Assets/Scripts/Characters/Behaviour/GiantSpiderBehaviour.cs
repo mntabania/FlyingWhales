@@ -21,7 +21,7 @@ public class GiantSpiderBehaviour : CharacterBehaviourComponent {
                         INTERACTION_TYPE.DROP, chosenCharacter, character);
                     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] {character.homeStructure});
                     job.SetOnUnassignJobAction(OnUnassignAbductJob);
-                    character.combatComponent.SetCombatMode(COMBAT_MODE.Defend);
+                    character.combatComponent.SetCombatMode(COMBAT_MODE.Passive);
                     character.jobQueue.AddJobInQueue(job);
                     return true;
                 }
