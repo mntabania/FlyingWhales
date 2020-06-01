@@ -66,6 +66,9 @@ namespace Tutorial {
         private void Awake() {
             Instance = this;
         }
+        private void OnDestroy() {
+            Messenger.RemoveListener<bool>(Signals.ON_SKIP_TUTORIALS_CHANGED, OnSkipTutorialsChanged);
+        }
         private void LateUpdate() {
             if (GameManager.Instance.gameHasStarted) {
                 CheckIfNewTutorialCanBeActivated();    

@@ -106,6 +106,7 @@ public class DemoUI : MonoBehaviour {
         DOTween.Clear(true);
         LevelLoaderManager.Instance.UpdateLoadingInfo(string.Empty);
         LevelLoaderManager.Instance.LoadLevel("MainMenu");
+        Messenger.Cleanup();
     }
     public void OnClickWishList() {
         Application.OpenURL("https://store.steampowered.com/app/909320/Ruinarch/");
