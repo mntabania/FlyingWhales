@@ -91078,7 +91078,7 @@ GameObject:
   - component: {fileID: 1364062465}
   - component: {fileID: 1364062464}
   m_Layer: 0
-  m_Name: BaseHP
+  m_Name: HP Multiplier
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -91122,7 +91122,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'HP Mod:'
+  m_text: 'HP Mult:'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -91191,7 +91191,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 1364062464}
-    characterCount: 7
+    characterCount: 8
     spriteCount: 0
     spaceCount: 1
     wordCount: 2
@@ -95186,7 +95186,7 @@ GameObject:
   - component: {fileID: 1438230899}
   - component: {fileID: 1438230898}
   m_Layer: 0
-  m_Name: BaseAttack
+  m_Name: Attack Multiplier
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -95230,7 +95230,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Attack Mod:'
+  m_text: 'Attack Mult:'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -95299,7 +95299,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 1438230898}
-    characterCount: 11
+    characterCount: 12
     spriteCount: 0
     spaceCount: 1
     wordCount: 2
@@ -129061,9 +129061,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   raceOptions: {fileID: 1848066443}
   traitOptions: {fileID: 1911670868}
-  attackModifierInput: {fileID: 1009096824}
+  attackMultiplierInput: {fileID: 1009096824}
+  hpMultiplierInput: {fileID: 823611950}
   speedModifierInput: {fileID: 1735147024}
-  hpModifierInput: {fileID: 823611950}
   hpPerLevelInput: {fileID: 1808842556}
   attackPerLevelInput: {fileID: 749000823}
   neutralSpawnLevelModInput: {fileID: 1867315572}

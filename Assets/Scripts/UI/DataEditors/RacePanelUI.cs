@@ -17,9 +17,10 @@ public class RacePanelUI : MonoBehaviour {
     public Dropdown raceOptions;
     public Dropdown traitOptions;
 
-    public InputField attackModifierInput;
+    public InputField attackMultiplierInput;
+    public InputField hpMultiplierInput;
+
     public InputField speedModifierInput;
-    public InputField hpModifierInput;
     public InputField hpPerLevelInput;
     public InputField attackPerLevelInput;
     public InputField neutralSpawnLevelModInput;
@@ -71,9 +72,9 @@ public class RacePanelUI : MonoBehaviour {
         _hpPerLevel = new List<int>();
         _attackPerLevel = new List<int>();
 
-        attackModifierInput.text = "0";
+        attackMultiplierInput.text = "0";
         speedModifierInput.text = "0";
-        hpModifierInput.text = "0";
+        hpMultiplierInput.text = "0";
         hpPerLevelInput.text = "0";
         attackPerLevelInput.text = "0";
         neutralSpawnLevelModInput.text = "0";
@@ -91,9 +92,9 @@ public class RacePanelUI : MonoBehaviour {
         currentSelectedHPPerLevelButton = null;
         currentSelectedAttackPerLevelButton = null;
 
-        attackModifierInput.text = "0";
+        attackMultiplierInput.text = "0";
         speedModifierInput.text = "0";
-        hpModifierInput.text = "0";
+        hpMultiplierInput.text = "0";
         hpPerLevelInput.text = "0";
         attackPerLevelInput.text = "0";
         neutralSpawnLevelModInput.text = "0";
@@ -165,11 +166,11 @@ public class RacePanelUI : MonoBehaviour {
     }
     private void LoadRaceDataToUI(RaceSetting raceSetting) {
         raceOptions.value = GetDropdownIndex(raceOptions, raceSetting.race.ToString());
-        //attackModifierInput.text = raceSetting.attackPowerModifier.ToString();
+        attackMultiplierInput.text = raceSetting.attackMultiplier.ToString();
+        hpMultiplierInput.text = raceSetting.hpMultiplier.ToString();
         //speedModifierInput.text = raceSetting.speedModifier.ToString();
         runSpeedInput.text = raceSetting.runSpeed.ToString();
         walkSpeedInput.text = raceSetting.walkSpeed.ToString();
-        //hpModifierInput.text = raceSetting.hpModifier.ToString();
         //neutralSpawnLevelModInput.text = raceSetting.neutralSpawnLevelModifier.ToString();
 
         for (int i = 0; i < raceSetting.traitNames.Length; i++) {

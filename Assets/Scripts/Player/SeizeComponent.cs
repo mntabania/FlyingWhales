@@ -90,7 +90,7 @@ public class SeizeComponent {
             return false;
         }
         // isPreparingToBeUnseized = false;
-
+        IPointOfInterest prevSeizedPOI = seizedPOI;
         LocationGridTile hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
         if(hoveredTile.objHere != null) {
             return false;
@@ -107,12 +107,12 @@ public class SeizeComponent {
         _seizedPOISprite = null;
         _seizedPOIVisionVotes = 0;
         Messenger.Broadcast(Signals.ON_UNSEIZE_POI, seizedPOI);
-        if (seizedPOI is IPlayerActionTarget playerActionTarget) {
-            Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, playerActionTarget);    
-        }
         seizedPOI = null;
         //PlayerUI.Instance.HideSeizedObjectUI();
         InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
+        if (prevSeizedPOI is IPlayerActionTarget playerActionTarget) {
+            Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, playerActionTarget);
+        }
         return true;
     }
     public bool CanUnseize(LocationGridTile tileLocation) {

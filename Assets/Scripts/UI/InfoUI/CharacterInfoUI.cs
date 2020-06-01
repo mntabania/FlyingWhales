@@ -301,6 +301,11 @@ public class CharacterInfoUI : InfoUIBase {
                 continue; //skip
             }
             string color = UIManager.normalTextColor;
+            if (currStatus.moodEffect > 0) {
+                color = UIManager.buffTextColor;
+            } else if (currStatus.moodEffect < 0) {
+                color = UIManager.flawTextColor;
+            }
             if (!string.IsNullOrEmpty(statusTraits)) {
                 statusTraits = $"{statusTraits}, ";
             }

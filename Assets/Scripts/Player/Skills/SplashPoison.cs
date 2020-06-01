@@ -42,7 +42,7 @@ public class SplashPoisonData : SpellData {
         base.ActivateAbility(targetTile);
     }
     private void MakeTraitblePoisoned(ITraitable traitable) {
-        traitable.traitContainer.AddTrait(traitable, "Poisoned");
+        traitable.traitContainer.AddTrait(traitable, "Poisoned", bypassElementalChance: true);
     }
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
         bool canPerform = base.CanPerformAbilityTowards(targetTile);
