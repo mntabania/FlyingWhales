@@ -32576,7 +32576,7 @@ RectTransform:
   - {fileID: 2016958464}
   - {fileID: 947456804}
   m_Father: {fileID: 1538653384}
-  m_RootOrder: 39
+  m_RootOrder: 36
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
@@ -92613,10 +92613,10 @@ RectTransform:
   - {fileID: 1720977188}
   - {fileID: 936039755}
   - {fileID: 61644418}
+  - {fileID: 603002083}
   - {fileID: 657376939}
   - {fileID: 431201650}
   - {fileID: 2082434080}
-  - {fileID: 603002083}
   - {fileID: 1747130003}
   m_Father: {fileID: 0}
   m_RootOrder: 8
@@ -92795,7 +92795,7 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
-  m_AdditionalShaderChannelsFlag: 25
+  m_AdditionalShaderChannelsFlag: -1
   m_SortingLayerID: 1007957311
   m_SortingOrder: 2
   m_TargetDisplay: 0

@@ -134,7 +134,7 @@ namespace Settings {
             } else {
                  _settings = new Settings {
                      fullscreen = true,
-                     graphicsQuality = QualitySettings.GetQualityLevel(),
+                     graphicsQuality = 2,
                      resolution = $"{Screen.currentResolution.width.ToString()}x{Screen.currentResolution.height.ToString()}",
                      skipTutorials = false,
                      useEdgePanning = false,

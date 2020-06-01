@@ -163,7 +163,7 @@ public class CombatManager : MonoBehaviour {
     }
     private void PoisonExplosionEffect(ITraitable traitable, float damagePercentage, ref BurningSource bs) {
         int damage = Mathf.RoundToInt(traitable.maxHP * damagePercentage);
-        traitable.AdjustHP(-damage, ELEMENTAL_TYPE.Fire, showHPBar: true);
+        traitable.AdjustHP(-damage, ELEMENTAL_TYPE.Fire, true, showHPBar: true);
         Burning burningTrait = traitable.traitContainer.GetNormalTrait<Burning>("Burning");
         if (burningTrait != null && burningTrait.sourceOfBurning == null) {
             if (bs == null) {
@@ -206,7 +206,7 @@ public class CombatManager : MonoBehaviour {
     }
     private void FrozenExplosionEffect(ITraitable traitable, float damagePercentage) {
         int damage = Mathf.RoundToInt(traitable.maxHP * damagePercentage);
-        traitable.AdjustHP(-damage, ELEMENTAL_TYPE.Water, showHPBar: true);
+        traitable.AdjustHP(-damage, ELEMENTAL_TYPE.Water, true, showHPBar: true);
     }
     public void ChainElectricDamage(ITraitable traitable, int damage) {
         damage = Mathf.RoundToInt(damage * 0.2f);
