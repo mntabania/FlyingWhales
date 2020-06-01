@@ -646,9 +646,7 @@ namespace Inner_Maps {
             }
         }
         #endregion
-
-        #region Artifacts
-
+        
         #region Artifacts
         public Artifact CreateNewArtifact(ARTIFACT_TYPE artifactType) {
             Artifact newArtifact = CreateNewArtifactFromType(artifactType);
@@ -667,7 +665,6 @@ namespace Inner_Maps {
         //    var typeName = UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(data.artifactType.ToString());
         //    return System.Activator.CreateInstance(System.Type.GetType(typeName), data);
         //}
-        #endregion
         #endregion
 
         #region Monster Lair
