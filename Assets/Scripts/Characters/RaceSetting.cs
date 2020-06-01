@@ -8,6 +8,8 @@ public class RaceSetting {
     //public float attackPowerModifier;
     //public float speedModifier;
     //public float hpModifier;
+    public float hpMultiplier;
+    public float attackMultiplier;
     public float walkSpeed;
     public float runSpeed;
     //public int neutralSpawnLevelModifier;
@@ -27,6 +29,8 @@ public class RaceSetting {
         //newRaceSetting.attackPowerModifier = this.attackPowerModifier;
         //newRaceSetting.speedModifier = this.speedModifier;
         //newRaceSetting.hpModifier = this.hpModifier;
+        newRaceSetting.hpMultiplier = this.hpMultiplier;
+        newRaceSetting.attackMultiplier = this.attackMultiplier;
         newRaceSetting.runSpeed = this.runSpeed;
         newRaceSetting.walkSpeed = this.walkSpeed;
         //newRaceSetting.hpPerLevel = this.hpPerLevel;
@@ -37,9 +41,9 @@ public class RaceSetting {
 
     public void SetDataFromRacePanelUI() {
         this.race = (RACE) System.Enum.Parse(typeof(RACE), RacePanelUI.Instance.raceOptions.options[RacePanelUI.Instance.raceOptions.value].text);
-        //this.attackPowerModifier = float.Parse(RacePanelUI.Instance.attackModifierInput.text);
+        this.hpMultiplier = float.Parse(RacePanelUI.Instance.hpMultiplierInput.text);
+        this.attackMultiplier = float.Parse(RacePanelUI.Instance.attackMultiplierInput.text);
         //this.speedModifier = float.Parse(RacePanelUI.Instance.speedModifierInput.text);
-        //this.hpModifier = float.Parse(RacePanelUI.Instance.hpModifierInput.text);
         this.runSpeed = float.Parse(RacePanelUI.Instance.runSpeedInput.text);
         this.walkSpeed = float.Parse(RacePanelUI.Instance.walkSpeedInput.text);
         //this.hpPerLevel = RacePanelUI.Instance.hpPerLevel.ToArray();

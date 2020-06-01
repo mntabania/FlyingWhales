@@ -77,6 +77,13 @@ public class Artifact : TileObject {
             _artifactEffectGO = null;
         }
     }
+    public override void DestroyMapVisualGameObject() {
+        base.DestroyMapVisualGameObject();
+        if (_artifactEffectGO) {
+            ObjectPoolManager.Instance.DestroyObject(_artifactEffectGO);
+            _artifactEffectGO = null;
+        }
+    }
     #endregion
 
     //public virtual void Activate() {

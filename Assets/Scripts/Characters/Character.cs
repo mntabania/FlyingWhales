@@ -220,7 +220,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //}
     public int attackPower {
         get {
-            return _characterClass.baseAttackPower;
+            return Mathf.RoundToInt(_characterClass.baseAttackPower * (_raceSetting.attackMultiplier == 0f ? 1f : _raceSetting.attackMultiplier));
             //int total = (int) ((_characterClass.baseAttackPower + attackPowerMod) * (1f + ((_raceSetting.attackPowerModifier + attackPowerPercentMod) / 100f)));
             //if (total < 0) {
             //    return 1;
@@ -2848,7 +2848,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     public void UpdateMaxHP() {
-        _maxHP = _characterClass.baseHP;
+        _maxHP = Mathf.RoundToInt(_characterClass.baseHP * (_raceSetting.hpMultiplier == 0f ? 1f : _raceSetting.hpMultiplier));
         //_maxHP = (int) (((_characterClass.baseHP + maxHPMod) * (1f + ((_raceSetting.hpModifier + maxHPPercentMod) / 100f))) * 4f);
         if (_maxHP < 0) {
             _maxHP = 1;

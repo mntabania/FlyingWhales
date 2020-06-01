@@ -23,7 +23,7 @@ public class SplashWaterData : SpellData {
         base.ActivateAbility(targetTile);
     }
     private void MakeTraitbleWet(ITraitable traitable) {
-        traitable.traitContainer.AddTrait(traitable, "Wet");
+        traitable.traitContainer.AddTrait(traitable, "Wet", bypassElementalChance: true);
     }
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
         bool canPerform = base.CanPerformAbilityTowards(targetTile);

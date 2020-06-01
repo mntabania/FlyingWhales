@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Interrupts;
+using Inner_Maps;
 
 public class InterruptComponent {
     public Character owner { get; private set; }
@@ -101,6 +102,7 @@ public class InterruptComponent {
         if (owner.marker) {
             owner.marker.UpdateActionIcon();
         }
+        InnerMapManager.Instance.FaceTarget(owner, targetPOI);
     }
     public void OnTickEnded() {
         if (isInterrupted) {
