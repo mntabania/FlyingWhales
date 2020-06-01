@@ -15,6 +15,13 @@ namespace Quests {
         private void Awake() {
             Instance = this;
         }
+        private void OnDestroy() {
+            Messenger.RemoveListener<List<Character>, DemonicStructure>(Signals.CHARACTERS_ATTACKING_DEMONIC_STRUCTURE, 
+                OnCharactersAttackingDemonicStructure);
+            Messenger.RemoveListener<LocationStructure, Character, GoapPlanJob>(Signals.DEMONIC_STRUCTURE_DISCOVERED, OnDemonicStructureDiscovered);
+            Messenger.RemoveListener<List<Character>>(Signals.ANGELS_ATTACKING_DEMONIC_STRUCTURE, 
+                OnAngelsAttackingDemonicStructure);
+        }
 
         #region Initialization
         public void InitializeAfterGameLoaded() {

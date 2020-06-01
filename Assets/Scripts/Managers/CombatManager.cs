@@ -163,7 +163,7 @@ public class CombatManager : MonoBehaviour {
     }
     private void PoisonExplosionEffect(ITraitable traitable, float damagePercentage, ref BurningSource bs) {
         int damage = Mathf.RoundToInt(traitable.maxHP * damagePercentage);
-        traitable.AdjustHP(-damage, ELEMENTAL_TYPE.Fire, showHPBar: true);
+        traitable.AdjustHP(-damage, ELEMENTAL_TYPE.Fire, true, showHPBar: true);
         Burning burningTrait = traitable.traitContainer.GetNormalTrait<Burning>("Burning");
         if (burningTrait != null && burningTrait.sourceOfBurning == null) {
             if (bs == null) {
@@ -206,7 +206,7 @@ public class CombatManager : MonoBehaviour {
     }
     private void FrozenExplosionEffect(ITraitable traitable, float damagePercentage) {
         int damage = Mathf.RoundToInt(traitable.maxHP * damagePercentage);
-        traitable.AdjustHP(-damage, ELEMENTAL_TYPE.Water, showHPBar: true);
+        traitable.AdjustHP(-damage, ELEMENTAL_TYPE.Water, true, showHPBar: true);
     }
     public void ChainElectricDamage(ITraitable traitable, int damage) {
         damage = Mathf.RoundToInt(damage * 0.2f);
@@ -232,6 +232,7 @@ public class CombatManager : MonoBehaviour {
         }
     }
     private IEnumerator ChainElectricDamageCoroutine(List<LocationGridTile> tiles, int damage) {
+        HashSet<ITraitable> completedTiles = new HashSet<ITraitable>();
         for (int i = 0; i < tiles.Count; i++) {
             while (GameManager.Instance.isPaused) {
                 //Pause coroutine while game is paused
@@ -240,11 +241,12 @@ public class CombatManager : MonoBehaviour {
             }
             yield return new WaitForSeconds(0.1f);
             LocationGridTile tile = tiles[i];
-            tile.PerformActionOnTraitables((traitable) => ChainElectricEffect(traitable, damage));
+            tile.PerformActionOnTraitables((traitable) => ChainElectricEffect(traitable, damage, ref completedTiles));
         }
     }
-    private void ChainElectricEffect(ITraitable traitable, int damage) {
-        if (!traitable.traitContainer.HasTrait("Zapped")) {
+    private void ChainElectricEffect(ITraitable traitable, int damage, ref HashSet<ITraitable> completedObjects) {
+        if (completedObjects.Contains(traitable) == false) { //!traitable.traitContainer.HasTrait("Zapped")
+            completedObjects.Add(traitable);
             traitable.AdjustHP(damage, ELEMENTAL_TYPE.Electric, true, showHPBar: true);
         }
     }

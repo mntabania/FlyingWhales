@@ -32,7 +32,10 @@ public class GeneralConfirmationWithVisual : GeneralConfirmation {
         SetVisual(videoClip);
         TweenIn();
     }
-
+    public override void Close() {
+        _videoPlayer.Stop();
+        base.Close();
+    }
     private void TweenIn() {
         _canvasGroup.alpha = 0;
         RectTransform rectTransform = _canvasGroup.transform as RectTransform; 

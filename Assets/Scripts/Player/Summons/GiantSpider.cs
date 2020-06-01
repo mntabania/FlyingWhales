@@ -6,11 +6,15 @@ public class GiantSpider : Summon {
     public const string ClassName = "Giant Spider";
     
     public override string raceClassName => $"Giant Spider";
-    
+
     public GiantSpider() : base(SUMMON_TYPE.Giant_Spider, ClassName, RACE.SPIDER,
-        UtilityScripts.Utilities.GetRandomGender()) { }
+        UtilityScripts.Utilities.GetRandomGender()) {
+        combatComponent.SetCombatMode(COMBAT_MODE.Defend);
+    }
     public GiantSpider(string className) : base(SUMMON_TYPE.Giant_Spider, className, RACE.SPIDER,
-        UtilityScripts.Utilities.GetRandomGender()) { }
+        UtilityScripts.Utilities.GetRandomGender()) {
+        combatComponent.SetCombatMode(COMBAT_MODE.Defend);
+    }
     public GiantSpider(SaveDataCharacter data) : base(data) { }
 
     #region Overrides

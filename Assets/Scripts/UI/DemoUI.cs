@@ -29,9 +29,6 @@ public class DemoUI : MonoBehaviour {
         InnerMapCameraMove.Instance.DisableMovement();
         startScreen.gameObject.SetActive(true);
         startMessageWindow.gameObject.SetActive(true);
-        startGameButton.gameObject.SetActive(true);
-        
-        startGameButton.interactable = false;
         
         //set image starting size
         RectTransform startWindowRT = startMessageWindow.rectTransform;
@@ -40,20 +37,20 @@ public class DemoUI : MonoBehaviour {
         color.a = 0f;
         startMessageWindow.color = color;
         
-        //set button starting alpha
-        Graphic graphic = startGameButton.targetGraphic; 
-        color = graphic.color;
-        color.a = 0f;
-        graphic.color = new Color(color.r, color.g, color.b, color.a);
-        startGameButtonLbl.alpha = 0f;
+        // //set button starting alpha
+        // Graphic graphic = startGameButton.targetGraphic; 
+        // color = graphic.color;
+        // color.a = 0f;
+        // graphic.color = new Color(color.r, color.g, color.b, color.a);
+        // startGameButtonLbl.alpha = 0f;
         
         Sequence sequence = DOTween.Sequence();
         sequence.Append(startWindowRT.DOAnchorPos(Vector2.zero, 0.5f).SetEase(Ease.OutBack));
         sequence.Join(DOTween.ToAlpha(() => startMessageWindow.color, x => startMessageWindow.color = x, 1f, 0.5f)
             .SetEase(Ease.InSine));
         
-        sequence.Append(startGameButton.targetGraphic.DOFade(1f, 2f).SetEase(Ease.InCirc).SetDelay(3f).OnComplete(() => startGameButton.interactable = true));
-        sequence.Join(DOTween.ToAlpha(() => startGameButtonLbl.color, x => startGameButtonLbl.color = x, 1f, 2f).SetEase(Ease.InCirc));
+        // sequence.Append(startGameButton.targetGraphic.DOFade(1f, 2f).SetEase(Ease.InCirc).SetDelay(3f).OnComplete(() => startGameButton.interactable = true));
+        // sequence.Join(DOTween.ToAlpha(() => startGameButtonLbl.color, x => startGameButtonLbl.color = x, 1f, 2f).SetEase(Ease.InCirc));
         sequence.Play();
     }
     public void OnClickStartGameButton() {
@@ -109,6 +106,7 @@ public class DemoUI : MonoBehaviour {
         DOTween.Clear(true);
         LevelLoaderManager.Instance.UpdateLoadingInfo(string.Empty);
         LevelLoaderManager.Instance.LoadLevel("MainMenu");
+        Messenger.Cleanup();
     }
     public void OnClickWishList() {
         Application.OpenURL("https://store.steampowered.com/app/909320/Ruinarch/");

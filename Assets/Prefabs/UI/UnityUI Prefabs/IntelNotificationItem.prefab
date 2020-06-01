@@ -628,6 +628,8 @@ MonoBehaviour:
   logItem: {fileID: 114091602978153694}
   getIntelBtn: {fileID: 114111695253146942}
   convertTooltip: {fileID: 1999433499704826}
+  effectPrefab: {fileID: 2871024722848407621, guid: 6d4f58b47be4dcb4dac33aa43df45eb9,
+    type: 3}
 --- !u!114 &114981217077860274
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -802,7 +804,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 656.6, y: 0}
   m_SizeDelta: {x: 656.6, y: 0}
   m_Pivot: {x: 1, y: 0}
 --- !u!114 &114239628207696090

@@ -39,5 +39,6 @@ public class WinGameOverItem : MonoBehaviour {
 
     public void BackToMainMenu() {
         LevelLoaderManager.Instance.LoadLevel("MainMenu");
+        Messenger.Cleanup();
     }
 }

@@ -32,5 +32,6 @@ public class OptionsMenu : PopupMenuBase {
         SaveManager.Instance.Save();
         LevelLoaderManager.Instance.UpdateLoadingInfo(string.Empty);
         LevelLoaderManager.Instance.LoadLevel("MainMenu", true);
+        Messenger.Cleanup();
     }
 }

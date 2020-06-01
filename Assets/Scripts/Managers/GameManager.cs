@@ -123,8 +123,8 @@ public class GameManager : MonoBehaviour {
         //TimerHubUI.Instance.AddItem("Until Divine Intervention", 4320, null);
         if (WorldConfigManager.Instance.isDemoWorld) {
             UIManager.Instance.ShowStartDemoScreen();
-            //schedule game over at end of day 2
-            GameDate dueDate = new GameDate(startMonth, 4, startYear, ticksPerDay);
+            //schedule game over at end of day 6
+            GameDate dueDate = new GameDate(startMonth, 6, startYear, ticksPerDay);
             SchedulingManager.Instance.AddEntry(dueDate, () => UIManager.Instance.ShowEndDemoScreen(), this);
         }
     }

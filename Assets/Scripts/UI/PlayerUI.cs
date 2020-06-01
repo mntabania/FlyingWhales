@@ -27,7 +27,7 @@ public class PlayerUI : MonoBehaviour {
     [Header("Intel")]
     [SerializeField] private GameObject intelContainer;
     [SerializeField] private IntelItem[] intelItems;
-    [SerializeField] private Toggle intelToggle;
+    public Toggle intelToggle;
 
     [Header("Provoke")]
     [SerializeField] private ProvokeMenu provokeMenu;

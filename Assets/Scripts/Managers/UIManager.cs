@@ -51,14 +51,9 @@ public class UIManager : MonoBehaviour {
     public GameObject characterPortraitHoverInfoGO;
     public CharacterPortrait characterPortraitHoverInfo;
     public RectTransform characterPortraitHoverInfoRT;
-    
-    [Header("Small Info with Visual")]
-    [SerializeField] private GameObject smallInfoVisualGO;
-    [SerializeField] private RectTransform smallInfoVisualRT;
-    [SerializeField] private VideoPlayer smallInfoVideoPlayer;
-    [SerializeField] private RenderTexture smallInfoVisualRenderTexture;
-    [SerializeField] private RawImage smallInfoVisualImage;
-    [SerializeField] private TextMeshProUGUI smallInfoVisualLbl;
+
+    [Header("Small Info with Visual")] 
+    [SerializeField] private SmallInfoWithVisual _smallInfoWithVisual;
 
     [Space(10)]
     [Header("Other NPCSettlement Info")]
@@ -381,63 +376,20 @@ public class UIManager : MonoBehaviour {
     }
     public void ShowSmallInfo(string info, [NotNull]VideoClip videoClip, string header = "", UIHoverPosition pos = null) {
         Assert.IsNotNull(videoClip, "Small info with visual was called but no video clip was provided");
-        string message = string.Empty;
-        if (!string.IsNullOrEmpty(header)) {
-            message = $"<font=\"Eczar-Medium\"><line-height=100%><size=18>{header}</font>\n";
-        }
-        message = $"{message}<line-height=70%><size=16>{info}";
-
-        message = message.Replace("\\n", "\n");
-
-        smallInfoVisualLbl.text = message;
-        if (!IsSmallInfoShowing()) {
-            smallInfoVisualGO.transform.SetParent(transform);
-            smallInfoVisualGO.SetActive(true);
-        }
-        if (pos == null) {
-            PositionTooltip(smallInfoVisualGO, smallInfoVisualRT, smallInfoVisualRT);    
-        } else {
-            PositionTooltip(pos, smallInfoVisualGO, smallInfoVisualRT);
-        }
-        if (smallInfoVisualImage.texture != smallInfoVisualRenderTexture) {
-            smallInfoVisualImage.texture = smallInfoVisualRenderTexture;    
-        }
-        if (smallInfoVideoPlayer.clip != videoClip) {
-            smallInfoVideoPlayer.clip = videoClip;
-            smallInfoVideoPlayer.Stop();
-            smallInfoVideoPlayer.Play();    
-        }
+        _smallInfoWithVisual.ShowSmallInfo(info, videoClip, header, pos);
     }
     public void ShowSmallInfo(string info, Texture visual, string header = "", UIHoverPosition pos = null) {
         Assert.IsNotNull(visual, "Small info with visual was called but no visual was provided");
-        string message = string.Empty;
-        if (!string.IsNullOrEmpty(header)) {
-            message = $"<font=\"Eczar-Medium\"><line-height=100%><size=18>{header}</font>\n";
-        }
-        message = $"{message}<line-height=70%><size=16>{info}";
-
-        message = message.Replace("\\n", "\n");
-
-        smallInfoVisualLbl.text = message;
-        if (!IsSmallInfoShowing()) {
-            smallInfoVisualGO.transform.SetParent(transform);
-            smallInfoVisualGO.SetActive(true);
-        }
-        if (pos == null) {
-            PositionTooltip(smallInfoVisualGO, smallInfoVisualRT, smallInfoVisualRT);    
-        } else {
-            PositionTooltip(pos, smallInfoVisualGO, smallInfoVisualRT);
-        }
-        smallInfoVisualImage.texture = visual;
+        _smallInfoWithVisual.ShowSmallInfo(info, visual, header, pos);
     }
     public void HideSmallInfo() {
         if (IsSmallInfoShowing()) {
             smallInfoGO.SetActive(false);
-            smallInfoVisualGO.SetActive(false);
+            _smallInfoWithVisual.Hide();
         }
     }
     public bool IsSmallInfoShowing() {
-        return (smallInfoGO != null && smallInfoGO.activeSelf) || (smallInfoVisualGO != null && smallInfoVisualGO.activeSelf);
+        return (smallInfoGO != null && smallInfoGO.activeSelf) || (_smallInfoWithVisual != null && _smallInfoWithVisual.gameObject.activeSelf);
     }
     public void ShowCharacterPortraitHoverInfo(Character character) {
         characterPortraitHoverInfo.GeneratePortrait(character);
@@ -452,7 +404,7 @@ public class UIManager : MonoBehaviour {
     public void PositionTooltip(GameObject tooltipParent, RectTransform rtToReposition, RectTransform boundsRT) {
         PositionTooltip(Input.mousePosition, tooltipParent, rtToReposition, boundsRT);
     }
-    private void PositionTooltip(Vector3 position, GameObject tooltipParent, RectTransform rtToReposition, RectTransform boundsRT) {
+    public void PositionTooltip(Vector3 position, GameObject tooltipParent, RectTransform rtToReposition, RectTransform boundsRT) {
         var v3 = position;
 
         rtToReposition.pivot = new Vector2(0f, 1f);
@@ -504,7 +456,7 @@ public class UIManager : MonoBehaviour {
             rtToReposition.localPosition = Vector3.zero;
         }
     }
-    private void PositionTooltip(UIHoverPosition position, GameObject tooltipParent, RectTransform rt) {
+    public void PositionTooltip(UIHoverPosition position, GameObject tooltipParent, RectTransform rt) {
         tooltipParent.transform.SetParent(position.transform);
         RectTransform tooltipParentRT = tooltipParent.transform as RectTransform;
         tooltipParentRT.pivot = position.pivot;
@@ -852,25 +804,6 @@ public class UIManager : MonoBehaviour {
     }
     #endregion
 
-    // #region Item Info
-    // [Space(10)]
-    // [Header("Item Object Info")]
-    // [SerializeField] internal ItemInfoUI itemInfoUI;
-    // public void ShowItemInfo(SpecialToken item) {
-    //     if (tempDisableShowInfoUI) {
-    //         SetTempDisableShowInfoUI(false);
-    //         return;
-    //     }
-    //     itemInfoUI.SetData(item);
-    //     itemInfoUI.OpenMenu();
-    // }
-    // public void UpdateItemInfo() {
-    //     if (itemInfoUI.isShowing) {
-    //         itemInfoUI.UpdateInfo();
-    //     }
-    // }
-    // #endregion
-
     #region Quest Info
     [Space(10)]
     [Header("Quest UI")]
@@ -1003,12 +936,6 @@ public class UIManager : MonoBehaviour {
         }
     }
     #endregion
-
-    //#region Player
-    //private void OnCombatDone(Combat combat) {
-    //    ShowDeveloperNotification($"Combat at <b>{combat.location.name}</b>!", 5, () => ShowCombatLog(combat));
-    //}
-    //#endregion1
 
     #region Inner Map
     [Header("Inner Maps")]

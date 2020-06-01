@@ -39,7 +39,7 @@ namespace Traits {
 
         private void PerTick() {
             if (traitable.gridTileLocation != null) {
-                traitable.AdjustHP(-50, ELEMENTAL_TYPE.Normal, showHPBar: true);
+                traitable.AdjustHP(-50, ELEMENTAL_TYPE.Normal, true, showHPBar: true);
             }
         }
     }

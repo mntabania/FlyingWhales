@@ -73,6 +73,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
     }
     public void HidePlayerSkillDetails() {
         gameObject.SetActive(false);
+        tooltipVideoPlayer.Stop();
     }
 
     private void UpdateData() {

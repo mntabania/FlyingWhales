@@ -614,29 +614,32 @@ namespace Inner_Maps {
 
         #region Monobehaviours
         public void Update() {
-            if (UIManager.Instance.characterInfoUI.isShowing 
-                && UIManager.Instance.characterInfoUI.activeCharacter.currentRegion == region.coreTile.region
-                && !UIManager.Instance.characterInfoUI.activeCharacter.isDead
-                //&& UIManager.Instance.characterInfoUI.activeCharacter.isWaitingForInteraction <= 0
-                && UIManager.Instance.characterInfoUI.activeCharacter.marker
-                && UIManager.Instance.characterInfoUI.activeCharacter.marker.pathfindingAI.hasPath
-                && (UIManager.Instance.characterInfoUI.activeCharacter.stateComponent.currentState == null 
-                    || (UIManager.Instance.characterInfoUI.activeCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.PATROL 
-                        && UIManager.Instance.characterInfoUI.activeCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.STROLL
-                        && UIManager.Instance.characterInfoUI.activeCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.STROLL_OUTSIDE
-                        && UIManager.Instance.characterInfoUI.activeCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.BERSERKED))) {
-
-                if (UIManager.Instance.characterInfoUI.activeCharacter.marker.pathfindingAI.currentPath != null
-                    && UIManager.Instance.characterInfoUI.activeCharacter.currentParty.icon.isTravelling) {
-                    //ShowPath(UIManager.Instance.characterInfoUI.activeCharacter.marker.currentPath);
-                    ShowPath(UIManager.Instance.characterInfoUI.activeCharacter);
-                    //UIManager.Instance.characterInfoUI.activeCharacter.marker.HighlightHostilesInRange();
+            Character activeCharacter = GetCurrentlySelectedCharacter();
+            if (activeCharacter != null && activeCharacter.currentRegion == region.coreTile.region
+                && !activeCharacter.isDead
+                && activeCharacter.marker
+                && activeCharacter.marker.pathfindingAI.hasPath
+                && (activeCharacter.stateComponent.currentState == null 
+                    || (activeCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.PATROL 
+                        && activeCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.STROLL
+                        && activeCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.STROLL_OUTSIDE
+                        && activeCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.BERSERKED))) {
+                if (activeCharacter.marker.pathfindingAI.currentPath != null && activeCharacter.currentParty.icon.isTravelling) {
+                    ShowPath(activeCharacter);
                 } else {
                     HidePath();
                 }
             } else {
                 HidePath();
             }
+        }
+        private Character GetCurrentlySelectedCharacter() {
+            if (UIManager.Instance.characterInfoUI.isShowing) {
+                return UIManager.Instance.characterInfoUI.activeCharacter;
+            } else if (UIManager.Instance.monsterInfoUI.isShowing) {
+                return UIManager.Instance.monsterInfoUI.activeMonster;
+            }
+            return null;
         }
         #endregion
         
