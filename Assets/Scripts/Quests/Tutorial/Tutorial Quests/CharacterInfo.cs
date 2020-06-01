@@ -27,7 +27,7 @@ namespace Tutorial {
                         .SetCompleteAction(OnClickMood),
                     new ToggleTurnedOnStep("CharacterInfo_Relations", "Open its Relations tab")
                         .SetCompleteAction(OnClickRelations),
-                    new ToggleTurnedOnStep("CharacterInfo_Logs", "Open its Logs tab")
+                    new ToggleTurnedOnStep("CharacterInfo_Logs", "Open its Log tab")
                         .SetCompleteAction(OnClickLogs)
                 )
             };
@@ -63,8 +63,8 @@ namespace Tutorial {
                 TutorialManager.Instance.relationsTab);
         }
         private void OnClickLogs() {
-            UIManager.Instance.generalConfirmationWithVisual.ShowGeneralConfirmation("Logs Tab",
-                "The Logs tab provides you with a timestamped list of what a Villager has done.",
+            UIManager.Instance.generalConfirmationWithVisual.ShowGeneralConfirmation("Log Tab",
+                "The Log tab provides you with a timestamped list of what a Villager has done.",
                 TutorialManager.Instance.logsTab);
         }
         #endregion

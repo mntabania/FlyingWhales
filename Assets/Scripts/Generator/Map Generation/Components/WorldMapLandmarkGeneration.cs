@@ -24,7 +24,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 				List<HexTile> choices;
 				if (WorldConfigManager.Instance.isDemoWorld) {
 					choices = new List<HexTile>() {
-						GridMap.Instance.map[3, 3]
+						GridMap.Instance.map[2, 2]
 					};
 				} else {
 					choices = GridMap.Instance.normalHexTiles

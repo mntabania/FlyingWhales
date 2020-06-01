@@ -67,29 +67,23 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			tile.featureComponent.AddFeature(TileFeatureDB.Fertile_Feature, tile);
 			flatTilesWithNoFeatures.Remove(tile);
 		}
-
-		//game
-		List<HexTile> gameChoices = GridMap.Instance.normalHexTiles.Where(h =>
-			h.elevationType == ELEVATION.PLAIN || h.elevationType == ELEVATION.TREES).ToList();
+		
 		yield return null;
 		if (WorldConfigManager.Instance.isDemoWorld) {
-			if (gameChoices.Count > 0) {
-				//pigs
-				HexTile tile = CollectionUtilities.GetRandomElement(gameChoices);
-				GameFeature gameFeature = LandmarkManager.Instance.CreateTileFeature<GameFeature>(TileFeatureDB.Game_Feature);
-				gameFeature.SetSpawnType(SUMMON_TYPE.Pig);
-				tile.featureComponent.AddFeature(gameFeature, tile);
-				gameChoices.Remove(tile);
-			}
-			if (gameChoices.Count > 0) {
-				//sheep
-				HexTile tile = CollectionUtilities.GetRandomElement(gameChoices);
-				GameFeature gameFeature = LandmarkManager.Instance.CreateTileFeature<GameFeature>(TileFeatureDB.Game_Feature);
-				gameFeature.SetSpawnType(SUMMON_TYPE.Sheep);
-				tile.featureComponent.AddFeature(gameFeature, tile);
-				gameChoices.Remove(tile);
-			}
+			//pigs
+			HexTile pigTile = GridMap.Instance.map[2, 4];
+			GameFeature pigGameFeature = LandmarkManager.Instance.CreateTileFeature<GameFeature>(TileFeatureDB.Game_Feature);
+			pigGameFeature.SetSpawnType(SUMMON_TYPE.Pig);
+			pigTile.featureComponent.AddFeature(pigGameFeature, pigTile);
+			
+			//sheep
+			HexTile sheepTile = GridMap.Instance.map[4, 3];
+			GameFeature sheepGameFeature = LandmarkManager.Instance.CreateTileFeature<GameFeature>(TileFeatureDB.Game_Feature);
+			sheepGameFeature.SetSpawnType(SUMMON_TYPE.Sheep);
+			sheepTile.featureComponent.AddFeature(sheepGameFeature, sheepTile);
 		} else {
+			List<HexTile> gameChoices = GridMap.Instance.normalHexTiles.Where(h =>
+				h.elevationType == ELEVATION.PLAIN || h.elevationType == ELEVATION.TREES).ToList();
 			for (int i = 0; i < gameCount; i++) {
 				if (gameChoices.Count <= 0) { break; }
 				HexTile tile = CollectionUtilities.GetRandomElement(gameChoices);
