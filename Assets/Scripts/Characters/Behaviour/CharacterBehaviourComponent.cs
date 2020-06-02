@@ -42,7 +42,7 @@ public abstract class CharacterBehaviourComponent {
     public bool WillContinueProcess() {
         return HasAttribute(BEHAVIOUR_COMPONENT_ATTRIBUTE.DO_NOT_SKIP_PROCESSING);
     }
-    public void PostProcessAfterSucessfulDoBehaviour(Character character) {
+    public void PostProcessAfterSuccessfulDoBehaviour(Character character) {
         if (HasAttribute(BEHAVIOUR_COMPONENT_ATTRIBUTE.ONCE_PER_DAY)) {
             DisableFor(character);
 

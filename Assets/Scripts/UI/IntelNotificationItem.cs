@@ -39,15 +39,14 @@ public class IntelNotificationItem : PlayerNotificationItem {
 		
         effectGO.transform.DOPath(new[] {intelTabPos, controlPointA, controlPointB}, 0.7f, PathType.CubicBezier)
             .SetEase(Ease.InSine)
-            .OnComplete(() => PlayerUI.Instance.intelToggle.transform.DOPunchScale(new Vector3(2f,2f,1f), 0.2f));
-
-        // effectGO.transform.DOPath(new[] {intelTabPos}, 0.7f);
-        
-        
-        
+            .OnComplete(() => OnReachIntelTab(effectGO));
         
         PlayerManager.Instance.player.AddIntel(intel);
         DeleteNotification();
+    }
+    private void OnReachIntelTab(GameObject effectGO) {
+        PlayerUI.Instance.intelToggle.transform.DOPunchScale(new Vector3(2f, 2f, 1f), 0.2f);
+        ObjectPoolManager.Instance.DestroyObject(effectGO);
     }
     public override void Reset() {
         base.Reset();

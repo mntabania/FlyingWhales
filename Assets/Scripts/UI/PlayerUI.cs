@@ -90,6 +90,7 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private Toggle[] topMenuButtons;
     [SerializeField] private SpellListUI spellList;
     [SerializeField] private CustomDropdownList customDropdownList;
+    public Toggle monsterToggle;
     
     [Header("Minion List")]
     [SerializeField] private MinionListUI minionList;

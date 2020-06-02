@@ -251,7 +251,7 @@ public class BehaviourComponent {
                 continue; //skip component
             }
             if (component.TryDoBehaviour(owner, ref log)) {
-                component.PostProcessAfterSucessfulDoBehaviour(owner);
+                component.PostProcessAfterSuccessfulDoBehaviour(owner);
                 if (!component.WillContinueProcess()) { break; }
             }
         }

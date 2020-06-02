@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using UnityEngine;
 using Inner_Maps.Location_Structures;
 
@@ -17,6 +18,12 @@ public class BreedMonsterData : PlayerAction {
         if(targetPOI is Summon summon) {
             SummonPlayerSkill summonPlayerSkill = PlayerSkillManager.Instance.GetSummonPlayerSkillData(summon.race, summon.characterClass.className);
             PlayerManager.Instance.player.playerSkillComponent.AddCharges(summonPlayerSkill.type, 1);
+
+            GameObject effect = ObjectPoolManager.Instance.InstantiateObjectFromPool("Breed Effect",
+                summon.worldPosition, Quaternion.identity, summon.currentRegion.innerMap.objectsParent, true);
+            BreedEffect breedEffect = effect.GetComponent<BreedEffect>();
+            breedEffect.PlayEffect(summon.marker.usedSprite);
+            
             base.ActivateAbility(targetPOI);
         }
     }
