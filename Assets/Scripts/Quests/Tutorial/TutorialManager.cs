@@ -134,7 +134,9 @@ namespace Tutorial {
             SaveManager.Instance.currentSaveDataPlayer.AddTutorialAsCompleted(tutorial.tutorialType);
             DeactivateTutorial(tutorial);
             Messenger.Broadcast(Signals.TUTORIAL_QUEST_COMPLETED, tutorial);
-            CheckIfAllTutorialsCompleted();
+            if (IsBonusTutorial(tutorial.tutorialType) == false) {
+                CheckIfAllTutorialsCompleted();    
+            }
         }
         private void CheckIfAllTutorialsCompleted() {
             if (_instantiatedTutorials.Count == 0 || _instantiatedTutorials.Count(x => IsBonusTutorial(x.tutorialType) == false) == 0) {

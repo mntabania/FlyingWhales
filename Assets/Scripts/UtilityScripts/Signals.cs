@@ -225,6 +225,14 @@ public static class Signals {
     /// Parameters: string sceneName
     /// </summary>
     public static string STARTED_LOADING_SCENE = "OnStartedLoadingScene";
+    /// <summary>
+    /// Parameters: string buttonName
+    /// </summary>
+    public static string SHOW_SELECTABLE_GLOW = "ShowSelectableGlow";
+    /// <summary>
+    /// Parameters: string buttonName
+    /// </summary>
+    public static string HIDE_SELECTABLE_GLOW = "HideSelectableGlow";
     #endregion
 
     #region Quest Signals

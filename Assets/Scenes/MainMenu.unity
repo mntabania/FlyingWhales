@@ -99,7 +99,7 @@ LightmapSettings:
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 112000002, guid: 9252122cd68805a4891073545c6d21fc,
     type: 2}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -360,6 +360,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  shineEffect: {fileID: 0}
 --- !u!114 &33524109
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -489,6 +490,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  shineEffect: {fileID: 0}
 --- !u!114 &34324861
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -619,6 +621,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  shineEffect: {fileID: 0}
 --- !u!114 &37480460
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -789,6 +792,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   m_IsOn: 0
+  shineEffect: {fileID: 0}
 --- !u!1 &62779571
 GameObject:
   m_ObjectHideFlags: 0
@@ -1189,6 +1193,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   m_IsOn: 0
+  shineEffect: {fileID: 0}
 --- !u!1001 &89920247
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2035,6 +2040,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   m_IsOn: 0
+  shineEffect: {fileID: 0}
 --- !u!1 &208156932
 GameObject:
   m_ObjectHideFlags: 0
@@ -2831,6 +2837,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_IsOn: 1
+  shineEffect: {fileID: 0}
 --- !u!114 &303486111
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4490,6 +4497,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_IsOn: 1
+  shineEffect: {fileID: 0}
 --- !u!222 &447629302
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4593,6 +4601,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_IsOn: 1
+  shineEffect: {fileID: 0}
 --- !u!1 &477485175
 GameObject:
   m_ObjectHideFlags: 0
@@ -11467,6 +11476,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   m_IsOn: 0
+  shineEffect: {fileID: 0}
 --- !u!1 &636834073
 GameObject:
   m_ObjectHideFlags: 0
@@ -16858,6 +16868,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_IsOn: 0
+  shineEffect: {fileID: 0}
 --- !u!114 &769278726
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17929,6 +17940,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  shineEffect: {fileID: 0}
 --- !u!114 &864275874
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18408,6 +18420,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  shineEffect: {fileID: 0}
 --- !u!114 &907672821
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18505,6 +18518,7 @@ MonoBehaviour:
     - {fileID: 2800000, guid: 99e3ce0acc1035a46ab37689cb0032d0, type: 3}
     - {fileID: 0}
     - {fileID: 2800000, guid: b33ec1abe5ab0074cabacda5d3da1c27, type: 3}
+  buttonGlowImage: {fileID: 0}
   currentCursorType: 0
   previousCursorType: 0
 --- !u!4 &910776552
@@ -18880,6 +18894,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  shineEffect: {fileID: 0}
 --- !u!114 &946698400
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19577,7 +19592,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -63.80078}
+  m_AnchoredPosition: {x: 0, y: -63.800842}
   m_SizeDelta: {x: 0, y: -127.599976}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1038629340
@@ -19734,6 +19749,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_IsOn: 0
+  shineEffect: {fileID: 0}
 --- !u!114 &1046637473
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20202,6 +20218,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  shineEffect: {fileID: 0}
 --- !u!114 &1082269581
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20619,6 +20636,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  shineEffect: {fileID: 0}
 --- !u!114 &1239574001
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21404,6 +21422,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+  shineEffect: {fileID: 0}
 --- !u!114 &1337302659
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22253,6 +22272,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  shineEffect: {fileID: 0}
 --- !u!114 &1535423293
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -28293,6 +28313,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  shineEffect: {fileID: 0}
 --- !u!114 &1708245837
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -28841,6 +28862,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  shineEffect: {fileID: 0}
 --- !u!114 &1776760836
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -30000,6 +30022,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  shineEffect: {fileID: 0}
 --- !u!114 &1903149707
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -30264,6 +30287,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_IsOn: 0
+  shineEffect: {fileID: 0}
 --- !u!114 &1927332584
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -30855,6 +30879,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  shineEffect: {fileID: 0}
 --- !u!114 &1970938202
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -31060,6 +31085,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   m_IsOn: 1
+  shineEffect: {fileID: 0}
 --- !u!1 &1977014428
 GameObject:
   m_ObjectHideFlags: 0
@@ -31485,6 +31511,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+  shineEffect: {fileID: 0}
 --- !u!114 &1998720004
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -31607,6 +31634,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_IsOn: 0
+  shineEffect: {fileID: 0}
 --- !u!1 &2008648926
 GameObject:
   m_ObjectHideFlags: 0

@@ -1545,7 +1545,7 @@ namespace UtilityScripts {
                 (Vector2)scrollRect.transform.InverseTransformPoint(scrollRect.content.position)
                 - (Vector2)scrollRect.transform.InverseTransformPoint(target.position);
         }
-        public static void GetAnchorMinMax(TextAnchor type, ref Vector2 anchorMin, ref Vector2 anchorMax) {
+        public static void GetAnchorMinMax(TextAnchor type, out Vector2 anchorMin, out Vector2 anchorMax) {
             switch (type) {
                 case TextAnchor.UpperLeft:
                     anchorMin = new Vector2(0f, 1f);

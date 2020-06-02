@@ -32,9 +32,11 @@ namespace Tutorial {
                 new QuestStepCollection(
                     new ObjectPickerShownStep("Click on Afflict button", "Intervention Ability")
                         .SetHoverOverAction(OnHoverAfflictButtonStep)
-                        .SetHoverOutAction(UIManager.Instance.HideSmallInfo),
+                        .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
+                        .SetOnTopmostActions(OnTopMostAfflict, OnNoLongerTopMostAfflict),
                     new ExecuteAfflictionStep("Apply Vampirism", SPELL_TYPE.VAMPIRISM)
                         .SetCompleteAction(OnCompleteExecuteAffliction)
+                        .SetOnTopmostActions(OnTopMostVampirism, OnNoLongerTopMostVampirism)
                 ),
                 // new QuestStepCollection(
                 //     new FlawClickedStep("Click on the added Affliction", "Vampiric")
@@ -75,6 +77,24 @@ namespace Tutorial {
             UIManager.Instance.ShowSmallInfo("Open the Villager's Info Menu and click on the recently added Affliction.",
                 TutorialManager.Instance.afflictionDetailsVideoClip, "Affliction Details", item.hoverPosition
             );
+        }
+        #endregion
+
+        #region Affliction Button
+        private void OnTopMostAfflict() {
+            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Afflict");
+        }
+        private void OnNoLongerTopMostAfflict() {
+            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Afflict");
+        }
+        #endregion
+        
+        #region Vampirism Button
+        private void OnTopMostVampirism() {
+            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Vampirism");
+        }
+        private void OnNoLongerTopMostVampirism() {
+            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Vampirism");
         }
         #endregion
     }

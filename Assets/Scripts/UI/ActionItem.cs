@@ -21,6 +21,7 @@ public class ActionItem : PooledObject {
 	private string expiryKey;
 	
 	public void SetAction(PlayerAction playerAction, IPlayerActionTarget playerActionTarget) {
+		name = playerAction.name;
         this.playerAction = playerAction;
         this.playerActionTarget = playerActionTarget;
         UnToggleHighlight();
@@ -28,6 +29,7 @@ public class ActionItem : PooledObject {
         actionLbl.text = playerAction.GetLabelName(playerActionTarget);
 		SetAsClickable();
 		SetCooldownState(playerAction.isInCooldown);
+		gameObject.SetActive(true);
         Messenger.AddListener<SpellData>(Signals.SPELL_COOLDOWN_STARTED, OnSpellCooldownStarted);
         Messenger.AddListener<SpellData>(Signals.SPELL_COOLDOWN_FINISHED, OnSpellCooldownFinished);
 	}
@@ -111,6 +113,7 @@ public class ActionItem : PooledObject {
 
     public override void Reset() {
 		base.Reset();
+		name = "Action Item";
 		button.onClick.RemoveAllListeners();
 		if (string.IsNullOrEmpty(expiryKey) == false) {
 			SchedulingManager.Instance.RemoveSpecificEntry(expiryKey);

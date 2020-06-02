@@ -88,6 +88,7 @@ public class QuestStepItem : PooledObject {
 
     #region Center
     public void OnClickCenter() {
+        QuestManager.Instance.OnClickCenterButton();
         _step.CenterCycle();
     }
     #endregion

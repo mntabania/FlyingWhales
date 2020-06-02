@@ -103,6 +103,7 @@ public abstract class InfoUIBase : MonoBehaviour {
     protected ActionItem AddNewAction(PlayerAction playerAction, IPlayerActionTarget target) {
         GameObject obj = ObjectPoolManager.Instance.InstantiateObjectFromPool(actionItemPrefab.name, Vector3.zero,
             Quaternion.identity, actionsTransform);
+        obj.SetActive(false);
         ActionItem item = obj.GetComponent<ActionItem>();
         item.SetAction(playerAction, target);
         //playerAction.SetActionItem(item);

@@ -32,9 +32,11 @@ namespace Tutorial {
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo), 
                     new ObjectPickerShownStep("Click on Build Structure button", "Demonic Structure")
                         .SetHoverOverAction(OnHoverBuildStructure)
-                        .SetHoverOutAction(UIManager.Instance.HideSmallInfo), 
+                        .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
+                        .SetOnTopmostActions(OnTopMostBuildStructure, OnNoLongerTopMostBuildStructure), 
                     new StructureBuiltStep(STRUCTURE_TYPE.TORTURE_CHAMBERS, "Choose the Torture Chamber")
                         .SetCompleteAction(OnStructureBuilt)
+                        .SetOnTopmostActions(OnTopMostChooseTorture, OnNoLongerTopMostChooseTorture)
                 ),
                 new QuestStepCollection(
                     new ClickOnRoomStep("Click on a Torture Room", room => room is TortureRoom)
@@ -44,12 +46,14 @@ namespace Tutorial {
                 new QuestStepCollection(
                     new ExecutedPlayerActionStep(SPELL_TYPE.SEIZE_CHARACTER, "Seize a Villager.")
                         .SetHoverOverAction(OnHoverSeizeCharacter)
-                        .SetHoverOutAction(UIManager.Instance.HideSmallInfo),
+                        .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
+                        .SetOnTopmostActions(OnTopMostSeizeVillager, OnNoLongerTopMostSeizeVillager),
                     new DropCharacterAtStructureRoomStep<TortureRoom>("Drop at a Torture Room"),
                 new ClickOnRoomStep("Click on that Room", IsClickedRoomValid),
                     new ExecutedPlayerActionStep(SPELL_TYPE.TORTURE, "Click on Torture button")
                         .SetHoverOverAction(OnHoverBeginTorture)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
+                        .SetOnTopmostActions(OnTopMostTorture, OnNoLongerTopMostTorture)
                 )
             };
         }
@@ -106,6 +110,42 @@ namespace Tutorial {
                 "For example, the Torture Chambers allow you to torture Villagers to afflict them with negative Traits and Statuses.\n\n" +
                 "You have limited Charges per demonic structure so protect them from attacks!",
                 TutorialManager.Instance.demonicStructureVideoClip);
+        }
+        #endregion
+
+        #region Build Structure Button
+        private void OnTopMostBuildStructure() {
+            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Build Structure");
+        }
+        private void OnNoLongerTopMostBuildStructure() {
+            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Build Structure");
+        }
+        #endregion
+
+        #region Choose Torture
+        private void OnTopMostChooseTorture() {
+            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Torture Chamber");
+        }
+        private void OnNoLongerTopMostChooseTorture() {
+            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Torture Chamber");
+        }
+        #endregion
+        
+        #region Seize Villager
+        private void OnTopMostSeizeVillager() {
+            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Seize Villager");
+        }
+        private void OnNoLongerTopMostSeizeVillager() {
+            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Seize Villager");
+        }
+        #endregion
+
+        #region Torture Button
+        private void OnTopMostTorture() {
+            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Torture");
+        }
+        private void OnNoLongerTopMostTorture() {
+            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Torture");
         }
         #endregion
     }

@@ -26,6 +26,7 @@ namespace Tutorial {
                 new QuestStepCollection(new ShowSpellMenuStep()
                     .SetHoverOverAction(OnHoverShowSpell)
                     .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
+                    .SetOnTopmostActions(OnTopMostSpellTab, OnNoLongerTopMostSpellTab)
                 ),
                 new QuestStepCollection(
                     new ExecuteSpellStep(SPELL_TYPE.RAIN, "Cast Rain")
@@ -66,6 +67,15 @@ namespace Tutorial {
         private void OnHoverFire(QuestStepItem item) {
             UIManager.Instance.ShowSmallInfo("You can trigger a powerful explosion by applying Fire damage to a Poisoned tile or object. Try to cast a Meteor on a Poisoned tile.", 
                 item.hoverPosition, "Fire");
+        }
+        #endregion
+
+        #region Spell Tab
+        private void OnTopMostSpellTab() {
+            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Spells Tab");
+        }
+        private void OnNoLongerTopMostSpellTab() {
+            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Spells Tab");
         }
         #endregion
     }

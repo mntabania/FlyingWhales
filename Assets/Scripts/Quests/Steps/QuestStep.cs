@@ -28,7 +28,16 @@ namespace Quests.Steps {
         /// Helper function for <see cref="_objectsToCenterGetter"/>, this is used to dictate how the selected object will be centered
         /// </summary>
         private System.Action<GameObject> _centerGameObjectAction;
-
+        /// <summary>
+        /// Action to perform when this step is set as the top most incomplete one
+        /// </summary>
+        private System.Action _setAsTopmostIncompleteStepAction;
+        /// <summary>
+        /// Action to perform when this step is no longer the top most incomplete one
+        /// </summary>
+        private System.Action _noLongerTopmostIncompleteStepAction;
+        
+        
         private readonly string _stepDescription;
         
         #region getters
@@ -94,7 +103,7 @@ namespace Quests.Steps {
         #endregion
         
         #region Cleanup
-        public void Cleanup() {
+        public void Deactivate() {
             UnSubscribeListeners();
         }
         #endregion
@@ -161,6 +170,26 @@ namespace Quests.Steps {
         #region Description
         protected virtual string GetStepDescription() {
             return _stepDescription;
+        }
+        #endregion
+
+        #region Utilities
+        /// <summary>
+        /// Set this step as the top most incomplete step in the quest checklist.
+        /// </summary>
+        public void SetAsTopMostIncompleteStep() {
+            _setAsTopmostIncompleteStepAction?.Invoke();   
+        }
+        /// <summary>
+        /// This is called when this step was previously the topmost incomplete one, but is not anymore. 
+        /// </summary>
+        public void NoLongerTopMostIncompleteStep() {
+            _noLongerTopmostIncompleteStepAction?.Invoke();
+        }
+        public QuestStep SetOnTopmostActions(System.Action setAsTopmostAction, System.Action noLongerTopMostAction) {
+            _setAsTopmostIncompleteStepAction = setAsTopmostAction;
+            _noLongerTopmostIncompleteStepAction = noLongerTopMostAction;
+            return this;
         }
         #endregion
         
