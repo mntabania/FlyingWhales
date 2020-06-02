@@ -29,7 +29,9 @@ namespace Tutorial {
         protected override void ConstructSteps() {
             steps = new List<QuestStepCollection>() {
                 new QuestStepCollection(
-                    new ClickOnEmptyAreaStep(), 
+                    new ClickOnEmptyAreaStep()
+                        .SetHoverOverAction(OnHoverClickEmptyTile)
+                        .SetHoverOutAction(UIManager.Instance.HideSmallInfo), 
                     new ObjectPickerShownStep("Click on Build Structure button", "Demonic Structure"), 
                     new StructureBuiltStep(STRUCTURE_TYPE.THE_KENNEL, "Choose the Kennel")
                 ),
@@ -66,12 +68,19 @@ namespace Tutorial {
         private bool IsCharacterValid(Character character) {
             return character is Summon && character.currentStructure is Inner_Maps.Location_Structures.TheKennel;
         }
+        #endregion
+
+        #region Step Helpers
         private void OnHoverBreed(QuestStepItem stepItem) {
             UIManager.Instance.ShowSmallInfo(
                 "Breeding a monster inside the Kennel gives you 1 Summon Charge of that monster type. " +
                 "You can use this charge for various actions - defend Structures, invade Villages, kill Villagers.",
                 TutorialManager.Instance.breedVideoClip, "Breeding", stepItem.hoverPosition
             );
+        }
+        private void OnHoverClickEmptyTile(QuestStepItem stepItem) {
+            UIManager.Instance.ShowSmallInfo("Suggestion: choose an empty area far away from the Village", 
+                stepItem.hoverPosition, "Choosing where to Build");
         }
         #endregion
     }

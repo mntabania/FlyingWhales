@@ -27,7 +27,9 @@ namespace Tutorial {
         protected override void ConstructSteps() {
             steps = new List<QuestStepCollection>() {
                 new QuestStepCollection(
-                    new ClickOnEmptyAreaStep(), 
+                    new ClickOnEmptyAreaStep()
+                        .SetHoverOverAction(OnHoverClickEmptyTile)
+                        .SetHoverOutAction(UIManager.Instance.HideSmallInfo), 
                     new ObjectPickerShownStep("Click on Build Structure button", "Demonic Structure")
                         .SetHoverOverAction(OnHoverBuildStructure)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo), 
@@ -73,6 +75,10 @@ namespace Tutorial {
         #region Step Helpers
         private bool IsClickedRoomValid(StructureRoom room) {
             return room is TortureRoom tortureRoom && tortureRoom.HasValidTortureTarget();
+        }
+        private void OnHoverClickEmptyTile(QuestStepItem stepItem) {
+            UIManager.Instance.ShowSmallInfo("Suggestion: choose an empty area far away from the Village", 
+                stepItem.hoverPosition, "Choosing where to Build");
         }
         private void OnHoverBuildStructure(QuestStepItem stepItem) {
             UIManager.Instance.ShowSmallInfo("The Build Structure button can be found beside the current Area nameplate.", 

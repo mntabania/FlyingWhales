@@ -131,7 +131,7 @@ public class MonsterGeneration : MapGenerationComponent {
 			for (int i = 0; i < monsterLairs.Count; i++) {
 				BaseLandmark landmark = monsterLairs[i];
 				LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
-				int randomAmount = 4;
+				int randomAmount = 3;
 				for (int k = 0; k < randomAmount; k++) {
 					CreateMonster(SUMMON_TYPE.Wolf, landmark.tileLocation.settlementOnTile, landmark, structure);	
 				}
@@ -141,7 +141,7 @@ public class MonsterGeneration : MapGenerationComponent {
 			for (int i = 0; i < ancientRuins.Count; i++) {
 				BaseLandmark landmark = ancientRuins[i];
 				LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
-				int randomAmount = 3;
+				int randomAmount = 2;
 				for (int k = 0; k < randomAmount; k++) {
 					CreateMonster(SUMMON_TYPE.Kobold, landmark.tileLocation.settlementOnTile, landmark, structure);	
 				}

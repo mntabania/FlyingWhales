@@ -628,7 +628,7 @@ namespace Inner_Maps {
 
         #region POI
         public void FaceTarget(IPointOfInterest actor, IPointOfInterest target) {
-            if (actor != target && actor.gridTileLocation != null && target.gridTileLocation != null) {
+            if (target != null && actor != target && actor.gridTileLocation != null && target.gridTileLocation != null) {
                 BaseMapObjectVisual objectToLookAt = target.mapObjectVisual;
                 if(target.isBeingCarriedBy != null) {
                     objectToLookAt = target.isBeingCarriedBy.mapObjectVisual;

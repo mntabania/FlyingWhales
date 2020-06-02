@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,6 +11,7 @@ public class GeneralConfirmation : PopupMenuBase {
     [SerializeField] protected TextMeshProUGUI generalConfirmationBodyText;
     [SerializeField] protected Button generalConfirmationButton;
     [SerializeField] protected TextMeshProUGUI generalConfirmationButtonText;
+    [SerializeField] protected CanvasGroup _canvasGroup;
     
     public virtual void ShowGeneralConfirmation(string header, string body, string buttonText = "OK", System.Action onClickOK = null) {
         if (PlayerUI.Instance.IsMajorUIShowing()) {
@@ -30,7 +32,22 @@ public class GeneralConfirmation : PopupMenuBase {
             generalConfirmationButton.onClick.AddListener(onClickOK.Invoke);
         }
         base.Open();
+        TweenIn();
     }
+    
+    private void TweenIn() {
+        _canvasGroup.alpha = 0;
+        RectTransform rectTransform = _canvasGroup.transform as RectTransform; 
+        rectTransform.anchoredPosition = new Vector2(0f, -30f);
+        
+        Sequence sequence = DOTween.Sequence();
+        sequence.Append(rectTransform.DOAnchorPos(Vector2.zero, 0.5f).SetEase(Ease.OutBack));
+        sequence.Join(DOTween.To(() => _canvasGroup.alpha, x => _canvasGroup.alpha = x, 1f, 0.5f)
+            .SetEase(Ease.InSine));
+        sequence.PrependInterval(0.2f);
+        sequence.Play();
+    }
+    
     public void OnClickOKGeneralConfirmation() {
         Close();    
     }

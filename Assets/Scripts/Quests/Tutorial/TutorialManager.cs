@@ -134,6 +134,16 @@ namespace Tutorial {
             SaveManager.Instance.currentSaveDataPlayer.AddTutorialAsCompleted(tutorial.tutorialType);
             DeactivateTutorial(tutorial);
             Messenger.Broadcast(Signals.TUTORIAL_QUEST_COMPLETED, tutorial);
+            CheckIfAllTutorialsCompleted();
+        }
+        private void CheckIfAllTutorialsCompleted() {
+            if (_instantiatedTutorials.Count == 0 || _instantiatedTutorials.Count(x => IsBonusTutorial(x.tutorialType) == false) == 0) {
+                //all non-bonus tutorials completed
+                PlayerUI.Instance.ShowGeneralConfirmation("Finished Tutorial",
+                    "You're done with the Tutorials! " +
+                    "Feel free to use the remaining time to play around with the various unlocked options... " +
+                    "or just wipe out all Villagers as soon as possible!");
+            }
         }
         #endregion
 
@@ -174,7 +184,8 @@ namespace Tutorial {
             }
         }
         public void ActivateTutorial(TutorialQuest tutorialQuest) {
-            if ((tutorialQuest is ChaosOrbsTutorial) == false) {
+            if (IsBonusTutorial(tutorialQuest.tutorialType) == false) {
+                //if tutorial is not a bonus tutorial, do not add it to active tutorials list, because it should not add to that count.
                 _activeTutorials.Add(tutorialQuest);    
             }
             RemoveTutorialFromWaitList(tutorialQuest);
@@ -225,6 +236,21 @@ namespace Tutorial {
             }
         }
         #endregion
+
+        #region Utilities
+        private bool IsBonusTutorial(Tutorial type) {
+            switch (type) {
+                case Tutorial.Chaos_Orbs_Tutorial:
+                case Tutorial.Counterattack:
+                case Tutorial.Divine_Intervention:
+                case Tutorial.Threat:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+        #endregion
+        
 
     }
 }

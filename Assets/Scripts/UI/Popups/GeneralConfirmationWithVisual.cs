@@ -10,8 +10,7 @@ public class GeneralConfirmationWithVisual : GeneralConfirmation {
     [SerializeField] private RawImage picture;
     [SerializeField] private VideoPlayer _videoPlayer;
     [SerializeField] private RenderTexture _renderTexture;
-    [SerializeField] private CanvasGroup _canvasGroup;
-    
+
     public void ShowGeneralConfirmation(string header, string body, [NotNull]Texture sprite, string buttonText = "OK", System.Action onClickOK = null) {
         Assert.IsNotNull(sprite, "Trying to show general confirmation with visual, but no visual was provided");
         if (PlayerUI.Instance.IsMajorUIShowing()) {
@@ -20,7 +19,6 @@ public class GeneralConfirmationWithVisual : GeneralConfirmation {
         }
         base.ShowGeneralConfirmation(header, body, buttonText, onClickOK);
         SetVisual(sprite);
-        TweenIn();
     }
     public void ShowGeneralConfirmation(string header, string body, [NotNull]VideoClip videoClip, string buttonText = "OK", System.Action onClickOK = null) {
         Assert.IsNotNull(videoClip, "Trying to show general confirmation with visual, but no visual was provided");
@@ -30,23 +28,10 @@ public class GeneralConfirmationWithVisual : GeneralConfirmation {
         }
         base.ShowGeneralConfirmation(header, body, buttonText, onClickOK);
         SetVisual(videoClip);
-        TweenIn();
     }
     public override void Close() {
         _videoPlayer.Stop();
         base.Close();
-    }
-    private void TweenIn() {
-        _canvasGroup.alpha = 0;
-        RectTransform rectTransform = _canvasGroup.transform as RectTransform; 
-        rectTransform.anchoredPosition = new Vector2(0f, -30f);
-        
-        Sequence sequence = DOTween.Sequence();
-        sequence.Append(rectTransform.DOAnchorPos(Vector2.zero, 0.5f).SetEase(Ease.OutBack));
-        sequence.Join(DOTween.To(() => _canvasGroup.alpha, x => _canvasGroup.alpha = x, 1f, 0.5f)
-            .SetEase(Ease.InSine));
-        sequence.PrependInterval(0.2f);
-        sequence.Play();
     }
 
     #region Visual
