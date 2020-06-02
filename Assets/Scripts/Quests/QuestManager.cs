@@ -85,7 +85,7 @@ namespace Quests {
                 CreateEliminateAllVillagersQuest();
             } else {
                 Messenger.AddListener<TutorialQuest>(Signals.TUTORIAL_QUEST_COMPLETED, OnTutorialQuestCompleted);
-                Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+                // Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
                 Messenger.AddListener<bool>(Signals.ON_SKIP_TUTORIALS_CHANGED, OnSkipTutorialsToggled);
             }
         }
@@ -94,11 +94,11 @@ namespace Quests {
                 CreateEliminateAllVillagersQuest();
             }
         }
-        private void OnCharacterDied(Character character) {
-            if (character.isNormalCharacter) {
-                CreateEliminateAllVillagersQuest();
-            }
-        }
+        // private void OnCharacterDied(Character character) {
+        //     if (character.isNormalCharacter) {
+        //         CreateEliminateAllVillagersQuest();
+        //     }
+        // }
         private void OnSkipTutorialsToggled(bool skipTutorials) {
             if (skipTutorials) {
                 CreateEliminateAllVillagersQuest();
@@ -106,7 +106,7 @@ namespace Quests {
         }
         private void CreateEliminateAllVillagersQuest() {
             Messenger.RemoveListener<TutorialQuest>(Signals.TUTORIAL_QUEST_COMPLETED, OnTutorialQuestCompleted);
-            Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+            // Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
             Messenger.RemoveListener<bool>(Signals.ON_SKIP_TUTORIALS_CHANGED, OnSkipTutorialsToggled);
             EliminateAllVillagers eliminateAllVillagers = new EliminateAllVillagers();
             ActivateQuest(eliminateAllVillagers);

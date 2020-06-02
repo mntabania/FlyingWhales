@@ -1,4 +1,5 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+using JetBrains.Annotations;
 namespace Quests.Steps {
     public class GoapJobFailed : QuestStep {
         
@@ -12,14 +13,21 @@ namespace Quests.Steps {
         
         protected override void SubscribeListeners() {
             Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
+            Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         }
         protected override void UnSubscribeListeners() {
             Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
+            Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         }
 
         #region Completion
         private void OnJobRemovedFromCharacter(JobQueueItem job, Character character) {
             if (_target == character && job == _job && _job.finishedSuccessfully == false) {
+                Complete();
+            }
+        }
+        private void OnCharacterDied(Character character) {
+            if (_target == character) {
                 Complete();
             }
         }

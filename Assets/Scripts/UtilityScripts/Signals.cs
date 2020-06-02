@@ -554,6 +554,10 @@ public static class Signals {
     /// Parameters: QuestItem
     /// </summary>
     public static string QUEST_STEP_HOVERED_OUT = "OnQuestStepHoveredOut";
+    /// <summary>
+    /// Parameters: QuestStep
+    /// </summary>
+    public static string QUEST_STEP_ACTIVATED = "OnQuestStepActivated";
     #endregion
     
     #region Tutorial

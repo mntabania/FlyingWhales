@@ -54,8 +54,7 @@ namespace Tutorial {
             };
         }
         #endregion
-
-
+        
         #region Step Helpers
         private bool IsSelectedAreaValid(HexTile tile) {
             return tile.region.HasActiveSettlement();
