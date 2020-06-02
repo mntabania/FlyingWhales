@@ -103,13 +103,13 @@ namespace Traits {
             //} else if (trait.name == "Lonely") {
             //    character.AdjustMoodValue(-20, trait, trait.gainedFromDoing);
             //} 
-            else if (trait.name == "Exhausted") {
-                character.movementComponent.AdjustUseWalkSpeed(1);
-                //character.AdjustMoodValue(-35, trait, trait.gainedFromDoing);
-            } else if (trait.name == "Tired") {
-                character.movementComponent.AdjustSpeedModifier(-0.2f);
-                //character.AdjustMoodValue(-10, trait, trait.gainedFromDoing);
-            } 
+            //else if (trait.name == "Exhausted") {
+            //    character.movementComponent.AdjustUseWalkSpeed(1);
+            //    //character.AdjustMoodValue(-35, trait, trait.gainedFromDoing);
+            //} else if (trait.name == "Tired") {
+            //    character.movementComponent.AdjustSpeedModifier(-0.2f);
+            //    //character.AdjustMoodValue(-10, trait, trait.gainedFromDoing);
+            //} 
             //else if (trait.name == "Starving") {
             //    character.AdjustMoodValue(-25, trait, trait.gainedFromDoing);
             //} else if (trait.name == "Hungry") {
@@ -224,13 +224,13 @@ namespace Traits {
             //} else if (trait.name == "Lonely") {
             //    character.AdjustMoodValue(20, trait, trait.gainedFromDoing);
             //}
-            else if (trait.name == "Exhausted") {
-                character.movementComponent.AdjustUseWalkSpeed(-1);
-                //character.AdjustMoodValue(35, trait, trait.gainedFromDoing);
-            } else if (trait.name == "Tired") {
-                character.movementComponent.AdjustSpeedModifier(0.2f);
-                //character.AdjustMoodValue(10, trait, trait.gainedFromDoing);
-            } 
+            //else if (trait.name == "Exhausted") {
+            //    character.movementComponent.AdjustUseWalkSpeed(-1);
+            //    //character.AdjustMoodValue(35, trait, trait.gainedFromDoing);
+            //} else if (trait.name == "Tired") {
+            //    character.movementComponent.AdjustSpeedModifier(0.2f);
+            //    //character.AdjustMoodValue(10, trait, trait.gainedFromDoing);
+            //} 
             //else if (trait.name == "Starving") {
             //    character.AdjustMoodValue(25, trait, trait.gainedFromDoing);
             //} else if (trait.name == "Hungry") {

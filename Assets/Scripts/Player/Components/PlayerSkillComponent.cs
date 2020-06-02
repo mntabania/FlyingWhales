@@ -107,7 +107,7 @@ public class PlayerSkillComponent {
                     //be seen, but instead, should not be clickable.
                     shouldAddSpell = (PlayerSkillManager.Instance.IsMinion(item.Key) == false ||
                                      WorldConfigManager.Instance.availableSpellsInDemoBuild.Contains(item.Key)) 
-                                     && item.Key != SPELL_TYPE.KNOCKOUT && item.Key != SPELL_TYPE.HARASS;
+                                     && item.Key != SPELL_TYPE.KNOCKOUT && item.Key != SPELL_TYPE.HARASS && item.Key != SPELL_TYPE.SKELETON_MARAUDER;
                 }
                 if (shouldAddSpell) {
                     SetPlayerSkillData(item.Key, item.Value);

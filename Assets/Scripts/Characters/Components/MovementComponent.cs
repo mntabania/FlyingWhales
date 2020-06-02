@@ -8,7 +8,7 @@ public class MovementComponent {
     public bool isRunning { get; private set; }
     public bool noRunExceptCombat { get; private set; }
     public bool noRunWithoutException { get; private set; }
-    public int useWalkSpeed { get; private set; }
+    public int useRunSpeed { get; private set; }
     public float speedModifier { get; private set; }
     public float walkSpeedModifier { get; private set; }
     public float runSpeedModifier { get; private set; }
@@ -68,30 +68,41 @@ public class MovementComponent {
 
     //Sets if character should walk or run
     private void SetMovementState() {
-        SetIsRunning(true);
-        if (useWalkSpeed > 0 || noRunWithoutException || (noRunExceptCombat && !owner.isInCombat)) {
-            SetIsRunning(false);
+        SetIsRunning(false);
+        if (noRunWithoutException || (noRunExceptCombat && !owner.isInCombat)) {
+            return;
+        }
+        if (useRunSpeed > 0) {
+            SetIsRunning(true);
             return;
         } else {
-            if (owner.stateComponent.currentState != null) {
-                if (owner.stateComponent.currentState.characterState == CHARACTER_STATE.PATROL
-                    || owner.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL
-                    || owner.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL_OUTSIDE) {
-                    //Walk
-                    SetIsRunning(false);
+            //If character is in combat/fleeing or character has urgent recovery, douse fire, remove status, neutralize danger, apprehend, report corrupted structure, restrain jobs
+            //Set running to TRUE
+            if (owner.isInCombat) {
+                SetIsRunning(true);
+                return;
+            } else if (owner.currentActionNode != null) {
+                if (owner.currentActionNode.associatedJobType == JOB_TYPE.ENERGY_RECOVERY_URGENT
+                    || owner.currentActionNode.associatedJobType == JOB_TYPE.FULLNESS_RECOVERY_URGENT
+                    || owner.currentActionNode.associatedJobType == JOB_TYPE.DOUSE_FIRE
+                    || owner.currentActionNode.associatedJobType == JOB_TYPE.REMOVE_STATUS
+                    || owner.currentActionNode.associatedJobType == JOB_TYPE.NEUTRALIZE_DANGER
+                    || owner.currentActionNode.associatedJobType == JOB_TYPE.APPREHEND
+                    || owner.currentActionNode.associatedJobType == JOB_TYPE.REPORT_CORRUPTED_STRUCTURE
+                    || owner.currentActionNode.associatedJobType == JOB_TYPE.RESTRAIN) {
+                    SetIsRunning(true);
                     return;
                 }
-            }
-            if (owner.currentActionNode != null) {
-                if (owner.currentActionNode.action.goapType == INTERACTION_TYPE.PATROL) {
-                    SetIsRunning(false);
+            } else if (owner.stateComponent.currentState != null) {
+                if (owner.stateComponent.currentState.characterState == CHARACTER_STATE.DOUSE_FIRE) {
+                    SetIsRunning(true);
                     return;
                 }
             }
         }
     }
-    public void AdjustUseWalkSpeed(int amount) {
-        useWalkSpeed += amount;
-        useWalkSpeed = Mathf.Max(0, useWalkSpeed);
+    public void AdjustUseRunSpeed(int amount) {
+        useRunSpeed += amount;
+        useRunSpeed = Mathf.Max(0, useRunSpeed);
     }
 }

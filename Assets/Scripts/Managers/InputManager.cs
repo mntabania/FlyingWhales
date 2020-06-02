@@ -65,7 +65,7 @@ namespace Ruinarch {
                         PlayerManager.Instance.player.seizeComponent.FollowMousePosition();
                         LocationGridTile hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
                         if (hoveredTile != null) {
-                            SetCursorTo(hoveredTile.objHere == null && PlayerManager.Instance.player.seizeComponent.CanUnseize(hoveredTile) ? Cursor_Type.Check : Cursor_Type.Cross);
+                            SetCursorTo(PlayerManager.Instance.player.seizeComponent.CanUnseizeHere(hoveredTile) ? Cursor_Type.Check : Cursor_Type.Cross);
                         } else {
                             SetCursorTo(Cursor_Type.Cross);
                         }

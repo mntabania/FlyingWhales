@@ -1060,6 +1060,7 @@ public class CharacterNeedsComponent {
         if (wasDrained) {
             _character.traitContainer.RemoveTrait(_character, "Drained");
         }
+        _character.movementComponent.UpdateSpeed();
     }
     private void OnSpent(bool wasSprightly, bool wasSpent, bool wasDrained) {
         if (!wasSpent) {
@@ -1073,6 +1074,7 @@ public class CharacterNeedsComponent {
         if (wasDrained) {
             _character.traitContainer.RemoveTrait(_character, "Drained");
         }
+        _character.movementComponent.UpdateSpeed();
     }
     private void OnDrained(bool wasSprightly, bool wasSpent, bool wasDrained) {
         if (!wasDrained) {
@@ -1086,6 +1088,7 @@ public class CharacterNeedsComponent {
         if (wasSpent) {
             _character.traitContainer.RemoveTrait(_character, "Spent");
         }
+        _character.movementComponent.UpdateSpeed();
     }
     private void OnNormalStamina(bool wasSprightly, bool wasSpent, bool wasDrained) {
         if (wasDrained) {
@@ -1097,6 +1100,7 @@ public class CharacterNeedsComponent {
         if (wasSpent) {
             _character.traitContainer.RemoveTrait(_character, "Spent");
         }
+        _character.movementComponent.UpdateSpeed();
     }
     public void AdjustDoNotGetDrained(int amount) {
         doNotGetDrained += amount;
