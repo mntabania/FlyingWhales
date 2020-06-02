@@ -628,7 +628,7 @@ namespace Inner_Maps {
 
         #region POI
         public void FaceTarget(IPointOfInterest actor, IPointOfInterest target) {
-            if (actor != target && actor.gridTileLocation != null && target.gridTileLocation != null) {
+            if (actor != target && actor != null && target != null && actor.gridTileLocation != null && target.gridTileLocation != null) {
                 BaseMapObjectVisual objectToLookAt = target.mapObjectVisual;
                 if(target.isBeingCarriedBy != null) {
                     objectToLookAt = target.isBeingCarriedBy.mapObjectVisual;
@@ -639,7 +639,7 @@ namespace Inner_Maps {
             }
         }
         public void FaceTarget(IPointOfInterest actor, LocationGridTile target) {
-            if (actor.gridTileLocation != null && target != null) {
+            if (actor != null && target != null && actor.gridTileLocation != null) {
                 if (target != actor.gridTileLocation) {
                     actor.mapObjectVisual.LookAt(target.centeredWorldLocation);
                 }

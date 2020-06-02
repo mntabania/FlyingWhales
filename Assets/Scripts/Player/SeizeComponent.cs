@@ -82,20 +82,13 @@ public class SeizeComponent {
         }
     }
     private bool UnseizePOI() {
-        if(seizedPOI == null) {
-            //Debug.LogError("Cannot unseize. Not holding seized object");
-            return false;
-        }
-        if (!InnerMapManager.Instance.isAnInnerMapShowing || UIManager.Instance.IsMouseOnUIOrMapObject()) {
+        if (!CanUnseize()) {
             return false;
         }
         // isPreparingToBeUnseized = false;
         IPointOfInterest prevSeizedPOI = seizedPOI;
         LocationGridTile hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
-        if(hoveredTile.objHere != null) {
-            return false;
-        }
-        if (!CanUnseize(hoveredTile)) {
+        if (!CanUnseizeHere(hoveredTile)) {
             return false;
         }
         DisableFollowMousePosition();
@@ -115,7 +108,30 @@ public class SeizeComponent {
         }
         return true;
     }
-    public bool CanUnseize(LocationGridTile tileLocation) {
+    public bool CanUnseize() {
+        if (!hasSeizedPOI) {
+            //Debug.LogError("Cannot unseize. Not holding seized object");
+            return false;
+        }
+        if (!InnerMapManager.Instance.isAnInnerMapShowing || UIManager.Instance.IsMouseOnUI()) {
+            return false;
+        }
+        //if (seizedPOI.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT && UIManager.Instance.IsMouseOnMapObject()) {
+        //    return false;
+        //}
+        return true;
+    }
+    public bool CanUnseizeHere(LocationGridTile tileLocation) {
+        if (seizedPOI.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+            if (tileLocation.objHere != null) {
+                return false;
+            }
+        } else if (seizedPOI.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+            if ((tileLocation.objHere != null && tileLocation.objHere is BlockWall)
+                || tileLocation.groundType == LocationGridTile.Ground_Type.Water) {
+                return false;
+            }
+        }
         if (tileLocation.structure.structureType == STRUCTURE_TYPE.THE_KENNEL) {
             if (seizedPOI is Summon summon) {
                 int numOfSummons = tileLocation.structure.GetNumberOfSummonsHere();

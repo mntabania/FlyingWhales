@@ -1,1 +1,1 @@
-{"race":14,"attackPowerModifier":0.0,"speedModifier":0.0,"hpModifier":0.0,"walkSpeed":1.0,"runSpeed":2.0,"neutralSpawnLevelModifier":0,"traitNames":["Combatant"]}
+{"race":14,"hpMultiplier":0.0,"attackMultiplier":0.0,"walkSpeed":2.0,"runSpeed":4.0,"traitNames":["Combatant"]}

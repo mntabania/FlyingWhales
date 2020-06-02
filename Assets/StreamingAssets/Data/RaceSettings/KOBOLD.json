@@ -1,10 +1,1 @@
-﻿{
-  "race": 20,
-  "attackPowerModifier": 0.0,
-  "speedModifier": 0.0,
-  "hpModifier": 10.0,
-  "walkSpeed": 2,
-  "runSpeed": 3,
-  "neutralSpawnLevelModifier": 2,
-  "traitNames": []
-}
+{"race":20,"hpMultiplier":0.0,"attackMultiplier":0.0,"walkSpeed":3.0,"runSpeed":5.0,"traitNames":[]}
