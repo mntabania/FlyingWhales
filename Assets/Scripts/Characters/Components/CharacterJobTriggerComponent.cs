@@ -997,9 +997,10 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     }
     #endregion
 
-    #region Report Demonic Structure
+    #region Report Demonic Structure\
+    private bool _canReportDemonicStructure;
     public void CreateReportDemonicStructure(LocationStructure structureToReport) {
-	    if (!_owner.jobQueue.HasJob(JOB_TYPE.REPORT_CORRUPTED_STRUCTURE)) {
+	    if (_canReportDemonicStructure && !_owner.jobQueue.HasJob(JOB_TYPE.REPORT_CORRUPTED_STRUCTURE)) {
 		    // UIManager.Instance.ShowYesNoConfirmation("Demonic Structure Seen", 
 			   //  $"Your demonic structure {structureToReport.name} has been seen by {_owner.name}!", 
 			   //  onClickNoAction: _owner.CenterOnCharacter, yesBtnText: "OK", noBtnText: $"Jump to {_owner}", 
@@ -1009,6 +1010,24 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             _owner.jobQueue.AddJobInQueue(job);
             Messenger.Broadcast(Signals.DEMONIC_STRUCTURE_DISCOVERED, structureToReport, _owner, job);
         }
+    }
+    /// <summary>
+    /// Disable report demonic structure until this character steps foot in his/her home.
+    /// </summary>
+    public void DisableReportStructure() {
+	    _canReportDemonicStructure = false;
+	    Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, TryEnableReportStructure);
+    }
+    private void EnableReportStructure() {
+	    _canReportDemonicStructure = true;
+	    Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, TryEnableReportStructure);
+    }
+    private void TryEnableReportStructure(Character character, LocationStructure structure) {
+	    if (character == _owner) {
+		    if (character.homeStructure != null && structure == character.homeStructure) {
+			    EnableReportStructure();    
+		    }
+	    }
     }
     #endregion
 

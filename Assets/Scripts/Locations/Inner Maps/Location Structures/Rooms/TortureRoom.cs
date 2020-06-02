@@ -111,6 +111,8 @@ namespace Inner_Maps.Location_Structures {
                 _skeleton.Death();
                 currentTortureTarget.traitContainer.RemoveTrait(currentTortureTarget, "Restrained");
                 
+                currentTortureTarget.jobComponent.DisableReportStructure();
+                
                 _skeleton = null;
                 StopTorture();
             }

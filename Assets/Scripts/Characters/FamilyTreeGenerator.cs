@@ -14,6 +14,10 @@ public static class FamilyTreeGenerator {
         {2, 50},
         {3, 20},
     });
+    private static WeightedDictionary<int> demoChildCountWeights = new WeightedDictionary<int>(new Dictionary<int, int>() {
+        {2, 50},
+        {3, 50},
+    });
     private static WeightedDictionary<SEXUALITY> childSexuality = new WeightedDictionary<SEXUALITY>(new Dictionary<SEXUALITY, int>() {
         {SEXUALITY.STRAIGHT, 80},
         {SEXUALITY.BISEXUAL, 10},
@@ -32,7 +36,7 @@ public static class FamilyTreeGenerator {
         father.AddRelationship(RELATIONSHIP_TYPE.LOVER, mother);
         mother.AddRelationship(RELATIONSHIP_TYPE.LOVER, father);
 
-        int randomChildren = childCountWeights.PickRandomElementGivenWeights();
+        int randomChildren = WorldConfigManager.Instance.isDemoWorld ? demoChildCountWeights.PickRandomElementGivenWeights() : childCountWeights.PickRandomElementGivenWeights();
         List<PreCharacterData> children = new List<PreCharacterData>();
         for (int i = 0; i < randomChildren; i++) {
             PreCharacterData child = new PreCharacterData(race, UtilityScripts.Utilities.GetRandomGender(), childSexuality);

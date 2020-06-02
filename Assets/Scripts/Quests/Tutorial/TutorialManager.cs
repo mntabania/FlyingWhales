@@ -244,6 +244,7 @@ namespace Tutorial {
                 case Tutorial.Counterattack:
                 case Tutorial.Divine_Intervention:
                 case Tutorial.Threat:
+                case Tutorial.Share_An_Intel:
                     return true;
                 default:
                     return false;

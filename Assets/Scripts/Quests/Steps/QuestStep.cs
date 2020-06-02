@@ -46,6 +46,7 @@ namespace Quests.Steps {
         /// </summary>
         public void Activate() {
             SubscribeListeners();
+            Messenger.Broadcast(Signals.QUEST_STEP_ACTIVATED, this);
         }
         #endregion
 

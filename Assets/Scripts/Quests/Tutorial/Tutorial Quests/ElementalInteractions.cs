@@ -15,7 +15,7 @@ namespace Tutorial {
         #region Criteria
         protected override void ConstructCriteria() {
             _activationCriteria = new List<QuestCriteria>() {
-                new HasCompletedTutorialQuest(TutorialManager.Tutorial.Share_An_Intel)
+                new QuestStepActivated<StoreIntelStep>()
             };
         }
         #endregion
