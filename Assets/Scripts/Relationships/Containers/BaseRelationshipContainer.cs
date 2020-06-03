@@ -184,10 +184,10 @@ public class BaseRelationshipContainer : IRelationshipContainer {
         }
         relationshipData.opinions.AdjustOpinion(opinionText, opinionValue);
         if (opinionValue > 0) {
-            OnOpinionChanged(owner, target, lastStrawReason);
+            //OnOpinionReduced(owner, target, lastStrawReason);
             Messenger.Broadcast(Signals.OPINION_INCREASED, owner, target, lastStrawReason);
         } else if (opinionValue < 0) {
-            OnOpinionChanged(owner, target, lastStrawReason);
+            OnOpinionReduced(owner, target, lastStrawReason, opinionValue);
             Messenger.Broadcast(Signals.OPINION_DECREASED, owner, target, lastStrawReason);
         }
         if (target.relationshipContainer.HasRelationshipWith(owner) == false) {
@@ -208,10 +208,10 @@ public class BaseRelationshipContainer : IRelationshipContainer {
         }
         relationshipData.opinions.SetOpinion(opinionText, opinionValue);
         if (opinionValue > 0) {
-            OnOpinionChanged(owner, target, lastStrawReason);
+            //OnOpinionReduced(owner, target, lastStrawReason);
             Messenger.Broadcast(Signals.OPINION_INCREASED, owner, target, lastStrawReason);
         } else if (opinionValue < 0) {
-            OnOpinionChanged(owner, target, lastStrawReason);
+            OnOpinionReduced(owner, target, lastStrawReason, opinionValue);
             Messenger.Broadcast(Signals.OPINION_DECREASED, owner, target, lastStrawReason);
         }
         if (target.relationshipContainer.HasRelationshipWith(owner) == false) {
@@ -235,16 +235,16 @@ public class BaseRelationshipContainer : IRelationshipContainer {
             relationshipData.opinions.SetOpinion(opinionText, opinionValue);
             if (!isInitial) {
                 if (opinionValue > 0) {
-                    OnOpinionChanged(owner, targetCharacter, lastStrawReason);
+                    //OnOpinionChanged(owner, targetCharacter, lastStrawReason);
                     Messenger.Broadcast<Character, Character, string>(Signals.OPINION_INCREASED, owner, null, lastStrawReason);
                 } else if (opinionValue < 0) {
-                    OnOpinionChanged(owner, targetCharacter, lastStrawReason);
+                    OnOpinionReduced(owner, targetCharacter, lastStrawReason, opinionValue);
                     Messenger.Broadcast<Character, Character, string>(Signals.OPINION_DECREASED, owner, null, lastStrawReason);
                 }
             }
         }
     }
-    public void OnOpinionChanged(Character owner, Character targetCharacter, string reason) {
+    public void OnOpinionReduced(Character owner, Character targetCharacter, string reason, int amountReduced) {
         if (owner.relationshipContainer.IsEnemiesWith(targetCharacter)) {
             //Character spreadRumorTarget = owner.rumorComponent.GetRandomSpreadRumorTarget(targetCharacter);
             //if (spreadRumorTarget != null) {
@@ -272,6 +272,8 @@ public class BaseRelationshipContainer : IRelationshipContainer {
             if (opinionLabel == RelationshipManager.Rival) {
                 chance *= 2;
             }
+
+            chance += Mathf.RoundToInt((amountReduced * -1) / 3f);
             if (roll < chance) {
                 if (owner.marker && owner.marker.inVisionCharacters.Contains(targetCharacter)) {
                     if (targetCharacter.isInCombat) {
