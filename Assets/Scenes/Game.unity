@@ -96109,6 +96109,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: CharacterInfo
       objectReference: {fileID: 0}
+    - target: {fileID: 1322962351353356, guid: 806752206f775b240af4069999713824, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 224579316077557694, guid: 806752206f775b240af4069999713824,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -111056,6 +111060,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31ea0b868668492390576cd4f7beda13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hasClickedCenterButtonAtLastOnce: 0
 --- !u!1 &1788548032
 GameObject:
   m_ObjectHideFlags: 0

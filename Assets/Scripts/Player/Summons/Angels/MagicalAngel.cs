@@ -20,7 +20,7 @@ public class MagicalAngel : Summon {
             actions.Clear();
         }
         AddPlayerAction(SPELL_TYPE.ZAP);
-        AddPlayerAction(SPELL_TYPE.SEIZE_CHARACTER);
+        //AddPlayerAction(SPELL_TYPE.SEIZE_CHARACTER);
     }
     public override void Initialize() {
         base.Initialize();

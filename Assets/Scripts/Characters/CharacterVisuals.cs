@@ -90,20 +90,21 @@ public class CharacterVisuals {
 
     #region UI
     public string GetNameplateName() {
-        string name = _owner.fullname;
-        if(_owner.isSettlementRuler || _owner.isFactionLeader) {
-            string additionalText = string.Empty;
-            if (_owner.isSettlementRuler) {
-                additionalText = $"{additionalText}Settlement Ruler";
-            }
-            if (_owner.isFactionLeader) {
-                if(additionalText != string.Empty) {
-                    additionalText = $"{additionalText}, ";
-                }
-                additionalText = $"{additionalText}Faction Leader";
-            }
-            name = $"{name} ({additionalText})";
-        }
+        string name = _owner.firstName;
+        //Temporarily removed this because we will put the race/class text beside the name so that we can increase the font size of "currently doing action" text of the character 
+        //if(_owner.isSettlementRuler || _owner.isFactionLeader) {
+        //    string additionalText = string.Empty;
+        //    if (_owner.isSettlementRuler) {
+        //        additionalText = $"{additionalText}Settlement Ruler";
+        //    }
+        //    if (_owner.isFactionLeader) {
+        //        if(additionalText != string.Empty) {
+        //            additionalText = $"{additionalText}, ";
+        //        }
+        //        additionalText = $"{additionalText}Faction Leader";
+        //    }
+        //    name = $"{name} ({additionalText})";
+        //}
         return name;
     }
     public string GetThoughtBubble(out Log log) {
