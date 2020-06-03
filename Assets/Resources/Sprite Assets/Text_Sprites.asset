@@ -94,7 +94,7 @@ MonoBehaviour:
       m_Width: 24
       m_Height: 24
       m_HorizontalBearingX: -1.5
-      m_HorizontalBearingY: 20
+      m_HorizontalBearingY: 23
       m_HorizontalAdvance: 18
     m_GlyphRect:
       m_X: 4
@@ -110,7 +110,7 @@ MonoBehaviour:
       m_Width: 24
       m_Height: 24
       m_HorizontalBearingX: -1.5
-      m_HorizontalBearingY: 20
+      m_HorizontalBearingY: 22
       m_HorizontalAdvance: 18
     m_GlyphRect:
       m_X: 30

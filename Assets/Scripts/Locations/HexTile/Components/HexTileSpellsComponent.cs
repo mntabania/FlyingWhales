@@ -381,7 +381,7 @@ public class HexTileSpellsComponent {
     }
     private void ElectricStormEffect(ITraitable traitable) {
         if (traitable is IPointOfInterest poi) {
-            poi.AdjustHP(-175, ELEMENTAL_TYPE.Electric, true, showHPBar: true);
+            poi.AdjustHP(-350, ELEMENTAL_TYPE.Electric, true, showHPBar: true);
         }
     }
     private void PerTickElectricStorm() {

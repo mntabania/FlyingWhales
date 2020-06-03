@@ -61,7 +61,8 @@ namespace Tutorial {
         }
         private void OnCompleteExecuteAffliction() {
             UIManager.Instance.generalConfirmationWithVisual.ShowGeneralConfirmation("Afflictions",
-                $"These are negative Traits that you may apply to a world's {UtilityScripts.Utilities.VillagerIcon()}Villager that will affect their behavior. " +
+                $"These are negative Traits that you may apply to a world's " +
+                $"\n{UtilityScripts.Utilities.VillagerIcon()}Villager that will affect their behavior. " +
                 "Afflictions do not have any Mana Cost but they have a limited number of Charges.\n\n" +
                 "There are a vast number of different types of Afflictions you may experiment with. " +
                 "You can turn someone into a Psychopath or a Vampire, or you can afflict one with a Zombie Virus.",

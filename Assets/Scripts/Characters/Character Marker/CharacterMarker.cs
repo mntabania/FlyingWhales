@@ -431,7 +431,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         if (character.isNormalCharacter == false) {
             icon = UtilityScripts.Utilities.MonsterIcon();
         }
-        nameLbl.SetText($"{icon}{character.name}");
+        nameLbl.SetText($"{icon} {character.name}");
     }
     #endregion
 

@@ -27,7 +27,7 @@ public class IceteroidParticleEffect : BaseParticleEffect {
         targetTile.PerformActionOnTraitables(DealDamage);
     }
     private void DealDamage(ITraitable traitable) {
-        traitable.AdjustHP(-240, ELEMENTAL_TYPE.Ice, true, showHPBar: true);
+        traitable.AdjustHP(-400, ELEMENTAL_TYPE.Ice, true, showHPBar: true);
         if (traitable is Character character && character.isDead == false) {
             traitable.traitContainer.AddTrait(traitable, "Freezing", null, null, true);
             traitable.traitContainer.AddTrait(traitable, "Freezing", null, null, true);

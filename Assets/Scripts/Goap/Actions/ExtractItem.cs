@@ -100,7 +100,13 @@ public class ExtractItem : GoapAction {
         Character actor = goapNode.actor;
         IPointOfInterest target = goapNode.poiTarget;
         if (target.traitContainer.HasTrait("Wet")) {
-            actor.ObtainItem(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.WATER_FLASK));
+            if (goapNode.associatedJobType == JOB_TYPE.DOUSE_FIRE) {
+                actor.ObtainItem(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.WATER_FLASK));
+                actor.ObtainItem(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.WATER_FLASK));
+                actor.ObtainItem(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.WATER_FLASK));
+            } else {
+                actor.ObtainItem(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.WATER_FLASK));
+            }
         }
         if (target.traitContainer.HasTrait("Burning")) {
             actor.ObtainItem(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.EMBER));

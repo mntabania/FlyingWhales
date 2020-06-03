@@ -32,7 +32,9 @@ public abstract class Nymph : Summon {
     }
     public override void OnUnseizePOI(LocationGridTile tileLocation) {
         base.OnUnseizePOI(tileLocation);
-        ScheduleAOEEffect();
+        if (isDead == false) {
+            ScheduleAOEEffect();    
+        }
     }
     #endregion
 
