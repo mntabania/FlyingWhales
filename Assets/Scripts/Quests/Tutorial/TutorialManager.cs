@@ -128,6 +128,9 @@ namespace Tutorial {
         public bool HasTutorialBeenCompleted(Tutorial tutorial) {
             return SaveManager.Instance.currentSaveDataPlayer.completedTutorials.Contains(tutorial);
         }
+        public bool IsTutorialCurrentlyActive(Tutorial tutorial) {
+            return _instantiatedTutorials.Any(t => t.tutorialType == tutorial && t.isActivated);
+        }
         #endregion
 
         #region Completion

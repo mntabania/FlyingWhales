@@ -375,7 +375,7 @@ namespace Inner_Maps {
             } else {
                 summary = $"{summary}None";
             }
-
+            
             IPointOfInterest poi = tile.objHere ?? tile.genericTileObject;
             summary = $"{summary}\nContent: {poi}";
             if (poi != null) {
@@ -424,7 +424,17 @@ namespace Inner_Maps {
 #else
          //For build only
         if (tile.objHere != null) {
-            UIManager.Instance.ShowSmallInfo(tile.objHere.ToString());
+            string tooltip =  tile.objHere.ToString();
+            if (tile.objHere is TileObject tileObject && tileObject.users != null && tileObject.users.Length > 0) {
+                tooltip += " used by:";
+                for (int i = 0; i < tileObject.users.Length; i++) {
+                    Character user = tileObject.users[i];
+                    if (user != null) {
+                        tooltip += $"\n\t- {user.name}";
+                    }
+                }
+            }
+            UIManager.Instance.ShowSmallInfo(tooltip);
         }
 #endif
         }

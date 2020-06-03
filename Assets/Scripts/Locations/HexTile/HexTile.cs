@@ -8,7 +8,9 @@ using Inner_Maps.Location_Structures;
 using JetBrains.Annotations;
 using Locations.Features;
 using Locations.Settlements;
+using Settings;
 using SpriteGlow;
+using Tutorial;
 using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -1177,24 +1179,44 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         //for (int i = 0; i < demonicLandmarkTypes.Count; i++) {
         //    demonicLandmarksThatCanBeBuilt.Add(UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(demonicLandmarkTypes[i].ToString()));
         //}
-        UIManager.Instance.ShowClickableObjectPicker(PlayerManager.Instance.player.playerSkillComponent.demonicStructuresSkills
-            , StartBuildConfirmation, null, CanChooseLandmark, "Choose a structure to build"
-            , OnHoverStructureChoice, OnHoverExitStructureChoice, portraitGetter: GetStructurePortrait, showCover: true, shouldConfirmOnPick: true, asButton: true, identifier: "Demonic Structure");
+        UIManager.Instance.ShowClickableObjectPicker(PlayerManager.Instance.player.playerSkillComponent.demonicStructuresSkills, 
+            StartBuildConfirmation, null, CanChooseLandmark, "Choose a structure to build"
+            , OnHoverStructureChoice, OnHoverExitStructureChoice, portraitGetter: GetStructurePortrait, 
+            showCover: true, shouldConfirmOnPick: true, asButton: true, identifier: "Demonic Structure");
     }
     private bool CanChooseLandmark(SPELL_TYPE structureType) {
+        bool canChooseLandmark = true;
         if (WorldConfigManager.Instance.isDemoWorld) {
-            return WorldConfigManager.Instance.availableSpellsInDemoBuild.Contains(structureType) 
+            canChooseLandmark = WorldConfigManager.Instance.availableSpellsInDemoBuild.Contains(structureType) 
                    && PlayerSkillManager.Instance.GetDemonicStructureSkillData(structureType).CanPerformAbility();
         } else {
             if (structureType == SPELL_TYPE.THE_EYE && region.HasStructure(STRUCTURE_TYPE.THE_EYE)) {
-                return false; //only 1 eye per region.
+                canChooseLandmark = false; //only 1 eye per region.
             }
             if (structureType == SPELL_TYPE.THE_GOADER && PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.THE_GOADER)) {
-                return false; //only 1 finger at a time.
+                canChooseLandmark = false; //only 1 finger at a time.
             }    
         }
         
-        return true;
+        if (canChooseLandmark) {
+            if (structureType == SPELL_TYPE.TORTURE_CHAMBER) {
+                return
+                    TutorialManager.Instance.HasTutorialBeenCompleted(TutorialManager.Tutorial.Torture_Chambers) ||
+                    TutorialManager.Instance.IsTutorialCurrentlyActive(TutorialManager.Tutorial.Torture_Chambers) ||
+                    SettingsManager.Instance.settings.skipTutorials;
+            } else if (structureType == SPELL_TYPE.THE_KENNEL) {
+                return
+                    TutorialManager.Instance.HasTutorialBeenCompleted(TutorialManager.Tutorial.Build_A_Kennel) ||
+                    TutorialManager.Instance.IsTutorialCurrentlyActive(TutorialManager.Tutorial.Build_A_Kennel) ||
+                    SettingsManager.Instance.settings.skipTutorials;
+            } else if (structureType == SPELL_TYPE.THE_EYE) {
+                return
+                    TutorialManager.Instance.HasTutorialBeenCompleted(TutorialManager.Tutorial.Share_An_Intel) ||
+                    TutorialManager.Instance.IsTutorialCurrentlyActive(TutorialManager.Tutorial.Share_An_Intel) ||
+                    SettingsManager.Instance.settings.skipTutorials;
+            }
+        }
+        return canChooseLandmark;
     }
     private void OnHoverStructureChoice(SPELL_TYPE structureType) {
         //string landmarkName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString());
