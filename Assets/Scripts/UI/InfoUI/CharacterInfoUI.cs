@@ -738,10 +738,12 @@ public class CharacterInfoUI : InfoUIBase {
         string summary = string.Empty;
         foreach (KeyValuePair<string, int> pair in _activeCharacter.moodComponent.moodModificationsSummary) {
             string color = "green";
+            string text = "+" + pair.Value;
             if (pair.Value < 0) {
                 color = "red";
+                text = pair.Value.ToString();
             }
-            summary += $"<color={color}>{pair.Value.ToString()}</color> {pair.Key}\n";
+            summary += $"<color={color}>{text}</color> {pair.Key}\n";
         }
         moodSummary.text = summary;
     }
@@ -765,19 +767,19 @@ public class CharacterInfoUI : InfoUIBase {
         staminaMeter.SetFillAmount(_activeCharacter.needsComponent.stamina/CharacterNeedsComponent.STAMINA_DEFAULT);
     }
     public void ShowEnergyTooltip() {
-        UIManager.Instance.ShowSmallInfo($"{_activeCharacter.needsComponent.tiredness.ToString(CultureInfo.InvariantCulture)}/100");
+        UIManager.Instance.ShowSmallInfo($"{_activeCharacter.needsComponent.tiredness.ToString("N0")}/100");
     }
     public void ShowFullnessTooltip() {
-        UIManager.Instance.ShowSmallInfo($"{_activeCharacter.needsComponent.fullness.ToString(CultureInfo.InvariantCulture)}/100");
+        UIManager.Instance.ShowSmallInfo($"{_activeCharacter.needsComponent.fullness.ToString("N0")}/100");
     }
     public void ShowHappinessTooltip() {
-        UIManager.Instance.ShowSmallInfo($"{_activeCharacter.needsComponent.happiness.ToString(CultureInfo.InvariantCulture)}/100");
+        UIManager.Instance.ShowSmallInfo($"{_activeCharacter.needsComponent.happiness.ToString("N0")}/100");
     }
     public void ShowHopeTooltip() {
-        UIManager.Instance.ShowSmallInfo($"{_activeCharacter.needsComponent.hope.ToString(CultureInfo.InvariantCulture)}/100");
+        UIManager.Instance.ShowSmallInfo($"{_activeCharacter.needsComponent.hope.ToString("N0")}/100");
     }
     public void ShowStaminaTooltip() {
-        UIManager.Instance.ShowSmallInfo($"{_activeCharacter.needsComponent.stamina.ToString(CultureInfo.InvariantCulture)}/100");
+        UIManager.Instance.ShowSmallInfo($"{_activeCharacter.needsComponent.stamina.ToString("N0")}/100");
     }
     #endregion
 

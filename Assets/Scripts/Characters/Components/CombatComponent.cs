@@ -463,10 +463,12 @@ public class CombatComponent {
         }
     }
     public void RemoveHostileInRangeSchedule(IPointOfInterest poi, bool processCombatBehavior = true) {
-        if (hostilesInRange.Contains(poi) && fightCombatData[poi].connectedAction == null) {
-            GameDate dueDate = GameManager.Instance.Today();
-            dueDate.AddTicks(2);
-            SchedulingManager.Instance.AddEntry(dueDate, () => FinalCheckForRemoveHostileSchedule(poi, processCombatBehavior), owner);
+        if (hostilesInRange.Contains(poi)) {
+            if(fightCombatData.ContainsKey(poi) && fightCombatData[poi].connectedAction == null) {
+                GameDate dueDate = GameManager.Instance.Today();
+                dueDate.AddTicks(2);
+                SchedulingManager.Instance.AddEntry(dueDate, () => FinalCheckForRemoveHostileSchedule(poi, processCombatBehavior), owner);
+            }
         }
     }
     private void FinalCheckForRemoveHostileSchedule(IPointOfInterest poi, bool processCombatBehavior) {

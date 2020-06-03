@@ -2766,8 +2766,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 275.23, y: -83.14}
-  m_SizeDelta: {x: 268.35, y: 41.08}
+  m_AnchoredPosition: {x: 278.43988, y: -77.083}
+  m_SizeDelta: {x: 274.77, y: 53.206}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &222680689196355098
 CanvasRenderer:
@@ -2797,8 +2797,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Marvin is planning to abduct someone and bring him back to Cardell
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 199bd5f6bc317894daa134b01e2206a1, type: 2}
-  m_sharedMaterial: {fileID: 21181686491601084, guid: 199bd5f6bc317894daa134b01e2206a1,
+  m_fontAsset: {fileID: 11400000, guid: f8d165fc58518da4b871ca2551648bf9, type: 2}
+  m_sharedMaterial: {fileID: 21189737157306288, guid: f8d165fc58518da4b871ca2551648bf9,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -2824,8 +2824,8 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 12
-  m_fontSizeBase: 12
+  m_fontSize: 16
+  m_fontSizeBase: 16
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -2862,7 +2862,7 @@ MonoBehaviour:
   m_firstVisibleCharacter: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 11, y: 0, z: 10, w: 0}
+  m_margin: {x: 0.060180664, y: 0, z: -0.088134766, w: 0}
   m_textInfo:
     textComponent: {fileID: 114418987349231008}
     characterCount: 66
@@ -5084,7 +5084,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &224579316077557694
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7654,8 +7654,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 268, y: -51.1}
-  m_SizeDelta: {x: 253.9, y: 33.300003}
+  m_AnchoredPosition: {x: 268.01, y: -27.790009}
+  m_SizeDelta: {x: 253.9, y: 45.38}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &222911243743445772
 CanvasRenderer:
@@ -7719,7 +7719,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_textAlignment: 513
+  m_textAlignment: 516
   m_characterSpacing: 0
   m_wordSpacing: 0
   m_lineSpacing: 0
@@ -7750,7 +7750,7 @@ MonoBehaviour:
   m_firstVisibleCharacter: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 11, y: 0, z: 15, w: 0}
+  m_margin: {x: -0.11053467, y: 0, z: 0.08013916, w: 0}
   m_textInfo:
     textComponent: {fileID: 114073762202928504}
     characterCount: 12
@@ -10598,8 +10598,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 268, y: -30.65001}
-  m_SizeDelta: {x: 253.9, y: 40.7}
+  m_AnchoredPosition: {x: 268.01, y: -27.79}
+  m_SizeDelta: {x: 253.9, y: 45.38}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &222178911441619200
 CanvasRenderer:
@@ -10694,7 +10694,7 @@ MonoBehaviour:
   m_firstVisibleCharacter: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 11, y: 0, z: -0.1665039, w: 0}
+  m_margin: {x: 0.3140869, y: 0, z: -0.1665039, w: 0}
   m_textInfo:
     textComponent: {fileID: 114417390388132134}
     characterCount: 6
