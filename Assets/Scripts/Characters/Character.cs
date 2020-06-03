@@ -3615,7 +3615,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         for (int i = 0; i < items.Count; i++) {
             if (items[i].tileObjectType == itemType) {
                 removedItem = items[i];
-                RemoveItem(i);
+                if (RemoveItem(i)) {
+                    break;    
+                }
             }
         }
         return removedItem;
@@ -3625,7 +3627,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         for (int i = 0; i < items.Count; i++) {
             if (items[i].name == name) {
                 removedItem = items[i];
-                RemoveItem(i);
+                if (RemoveItem(i)) {
+                    break;
+                }
             }
         }
         return removedItem;
