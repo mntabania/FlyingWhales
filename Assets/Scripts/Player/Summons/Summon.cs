@@ -207,9 +207,9 @@ public class Summon : Character, IWorldObject {
         //What happens every start of tick
 
         //Out of combat hp recovery
-        if (!isDead && !isInCombat) {
-            HPRecovery(0.0025f);
-        }
+        //if (!isDead && !isInCombat) {
+        //    HPRecovery(0.0025f);
+        //}
         ProcessTraitsOnTickStarted();
         StartTickGoapPlanGeneration();
         // if (!ownParty.icon.isTravelling && !isInCombat) {

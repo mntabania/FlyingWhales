@@ -3145,9 +3145,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         trapStructure.IncrementCurrentDuration(1);
 
         //Out of combat hp recovery
-        if (!isDead && !isInCombat) {
-            HPRecovery(0.0025f);
-        }
+        //if (!isDead && !isInCombat) {
+        //    HPRecovery(0.0025f);
+        //}
         CheckMissing();
         ProcessTraitsOnTickStarted();
         StartTickGoapPlanGeneration();

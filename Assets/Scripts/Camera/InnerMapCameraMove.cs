@@ -118,6 +118,7 @@ public class InnerMapCameraMove : BaseCameraMove {
                     innerMapsCamera.orthographicSize = fov;
                 }
                 // CalculateCameraBounds();
+                Messenger.Broadcast(Signals.ZOOM_INNER_MAP_CAMERA, innerMapsCamera);
             }
         }
     }

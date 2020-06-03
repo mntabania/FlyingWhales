@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
+using DG.Tweening;
 
 public class PlayerNotificationItem : PooledObject {
 
@@ -16,6 +18,8 @@ public class PlayerNotificationItem : PooledObject {
     //[SerializeField] private EnvelopContentUnityUI logEnvelopContent;
     [SerializeField] private TextMeshProUGUI logLbl;
     [SerializeField] private LogItem logItem;
+    [SerializeField] private RectTransform _container;
+    [SerializeField] private LayoutElement _layoutElement;
 
     private System.Action<PlayerNotificationItem> onDestroyAction;
 
@@ -35,6 +39,12 @@ public class PlayerNotificationItem : PooledObject {
         //}
 
         this.onDestroyAction = onDestroyAction;
+        StartCoroutine(TweenHeight());
+    }
+    IEnumerator TweenHeight() {
+        yield return null;
+        _layoutElement.DOPreferredSize(new Vector2(0f, (logLbl.transform as RectTransform).sizeDelta.y), 0.5f);
+        //_layoutElement.preferredHeight = (logLbl.transform as RectTransform).sizeDelta.y;
     }
     public void SetTickShown(int tick) {
         tickShown = tick;
@@ -54,6 +64,7 @@ public class PlayerNotificationItem : PooledObject {
     public override void Reset() {
         base.Reset();
         //getIntelBtn.interactable = true;
+        _container.anchoredPosition = Vector2.zero;
         ticksAlive = 0;
         this.transform.localScale = Vector3.one;
     }
@@ -63,5 +74,9 @@ public class PlayerNotificationItem : PooledObject {
         //}
         onDestroyAction?.Invoke(this);
         ObjectPoolManager.Instance.DestroyObject(this);
+    }
+    public void TweenIn() {
+        _container.anchoredPosition = new Vector2(450f, 0f);
+        _container.DOAnchorPosX(0f, 0.5f);
     }
 }
