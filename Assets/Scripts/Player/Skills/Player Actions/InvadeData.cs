@@ -19,7 +19,7 @@ public class InvadeData : PlayerAction {
         bool canPerform = base.CanPerformAbilityTowards(targetHex);
         if (canPerform) {
             if (targetHex.settlementOnTile != null && targetHex.settlementOnTile is NPCSettlement npcSettlement) {
-                return !npcSettlement.isBeingInvaded;
+                return !npcSettlement.isBeingInvaded && npcSettlement.HasAliveResidentInsideSettlement();
             }
             return false;
         }
