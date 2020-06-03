@@ -55,8 +55,7 @@ namespace Inner_Maps.Location_Structures {
             objectsThatContributeToDamage = new HashSet<IDamageable>();
             structureTags = new List<STRUCTURE_TAG>();
             residents = new List<Character>();
-            maxHP = 3000;
-            currentHP = maxHP;
+            SetMaxHPAndReset(3000);
             //outerTiles = new List<LocationGridTile>();
             SetInteriorState(structureType.IsInterior());
         }
@@ -73,8 +72,7 @@ namespace Inner_Maps.Location_Structures {
             tiles = new List<LocationGridTile>();
             objectsThatContributeToDamage = new HashSet<IDamageable>();
             residents = new List<Character>();
-            maxHP = 3000;
-            currentHP = maxHP;
+            SetMaxHPAndReset(3000);
             SetInteriorState(structureType.IsInterior());
         }
 
@@ -738,6 +736,13 @@ namespace Inner_Maps.Location_Structures {
             if (currentHP == 0) {
                 DestroyStructure();
             }
+        }
+        public void SetMaxHP(int amount) {
+            maxHP = amount;
+        }
+        public void SetMaxHPAndReset(int amount) {
+            SetMaxHP(amount);
+            currentHP = maxHP;
         }
         #endregion
 
