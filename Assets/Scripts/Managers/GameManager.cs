@@ -124,7 +124,7 @@ public class GameManager : MonoBehaviour {
         if (WorldConfigManager.Instance.isDemoWorld) {
             UIManager.Instance.ShowStartDemoScreen();
             //schedule game over at end of day 6
-            GameDate dueDate = new GameDate(startMonth, 6, startYear, ticksPerDay);
+            GameDate dueDate = new GameDate(startMonth, 5, startYear, ticksPerDay);
             SchedulingManager.Instance.AddEntry(dueDate, () => UIManager.Instance.ShowEndDemoScreen(), this);
         }
     }

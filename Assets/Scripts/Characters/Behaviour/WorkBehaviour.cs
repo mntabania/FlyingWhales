@@ -9,11 +9,11 @@ public class WorkBehaviour : CharacterBehaviourComponent {
         //attributes = new[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.WITHIN_HOME_SETTLEMENT_ONLY };
     }
     
-    public override bool TryDoBehaviour(Character character, ref string log) {
+    public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         log += $"\n-{character.name} will try to do settlement work...";
         if (character.moodComponent.moodState == MOOD_STATE.NORMAL) {
             log += $"\n-{character.name} is in normal mood, will do settlement work";
-            return PlanWorkActions(character);
+            return PlanWorkActions(character, out producedJob);
         } else {
             log += $"\n-{character.name} is low/critical mood, 4% chance - flaw, 4% chance - undermine";
             bool triggeredFlaw = false;
@@ -46,6 +46,7 @@ public class WorkBehaviour : CharacterBehaviourComponent {
             }
 
             if (triggeredFlaw) {
+                producedJob = null;
                 return true;
             } else {
                 if (character.traitContainer.HasTrait("Diplomatic") == false) {
@@ -58,10 +59,12 @@ public class WorkBehaviour : CharacterBehaviourComponent {
                             Character chosenEnemy = CollectionUtilities.GetRandomElement(enemies);
                             if(UnityEngine.Random.Range(0, 2) == 0) {
                                 //Place Trap
-                                character.jobComponent.CreatePlaceTrapJob(chosenEnemy);
+                                character.jobComponent.CreatePlaceTrapJob(chosenEnemy, out producedJob);
+                                return true;
                             } else {
                                 //Poison Food
-                                character.jobComponent.CreatePoisonFoodJob(chosenEnemy);
+                                character.jobComponent.CreatePoisonFoodJob(chosenEnemy, out producedJob);
+                                return true;
                             }
                             //if (chosenEnemy.homeRegion.GetFirstTileObjectOnTheFloorOwnedBy(chosenEnemy) != null) {
                             //    if (character.jobComponent.CreateUndermineJob(chosenEnemy, "normal")) {
@@ -92,9 +95,10 @@ public class WorkBehaviour : CharacterBehaviourComponent {
         //        }
         //    }
         //}
+        producedJob = null;
         return false;
     }
-    private bool PlanWorkActions(Character character) {
+    private bool PlanWorkActions(Character character, out JobQueueItem producedJob) {
         if (character.isAtHomeRegion && character.homeSettlement != null && character.canTakeJobs) { //&& this.faction.id != FactionManager.Instance.neutralFaction.id
             //check npcSettlement job queue, if it has any jobs that target an object that is in view of the character
             JobQueueItem jobToAssign = character.homeSettlement.GetFirstJobBasedOnVision(character);
@@ -105,7 +109,7 @@ public class WorkBehaviour : CharacterBehaviourComponent {
                 }
             }
             if (jobToAssign != null) {
-                character.jobQueue.AddJobInQueue(jobToAssign);
+                producedJob = jobToAssign;
                 //took job based from vision
                 return true;
             } else {
@@ -118,11 +122,12 @@ public class WorkBehaviour : CharacterBehaviourComponent {
                     }
                 }
                 if (jobToAssign != null) {
-                    character.jobQueue.AddJobInQueue(jobToAssign);
+                    producedJob = jobToAssign;
                     return true;
                 }    
             }
         }
+        producedJob = null;
         return false;
     }
 }

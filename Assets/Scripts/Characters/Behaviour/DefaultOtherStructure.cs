@@ -7,7 +7,7 @@ public class DefaultOtherStructure : CharacterBehaviourComponent {
         priority = 8;
         attributes = new BEHAVIOUR_COMPONENT_ATTRIBUTE[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.WITHIN_HOME_SETTLEMENT_ONLY };
     }
-    public override bool TryDoBehaviour(Character character, ref string log) {
+    public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         if (character.currentStructure.isInterior && character.currentStructure != character.homeStructure
              && character.trapStructure.IsTrapped() == false) {
             // if (((character.currentStructure.structureType == STRUCTURE_TYPE.DWELLING && character.currentStructure != character.homeStructure)
@@ -20,8 +20,10 @@ public class DefaultOtherStructure : CharacterBehaviourComponent {
             log +=
                 $"\n-{character.name} is in Interior Structure and Base Structure is empty";
             log += "\n-100% chance to return home";
-            character.PlanIdleReturnHome();
+            character.PlanIdleReturnHome(out producedJob);
             return true;
+        } else {
+            producedJob = null;
         }
         return false;
     }

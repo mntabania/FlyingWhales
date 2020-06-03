@@ -9,14 +9,14 @@ public class PatrolBehaviour : CharacterBehaviourComponent {
     public PatrolBehaviour() {
         priority = 450;
     }
-    public override bool TryDoBehaviour(Character character, ref string log) {
+    public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         LocationStructure chosenStructure = character.currentRegion.GetRandomStructure();
         LocationGridTile chosenTile = chosenStructure.GetRandomTile();
         GoapPlanJob job =
             JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PATROL, INTERACTION_TYPE.PATROL, character, character);
         job.AddOtherData(INTERACTION_TYPE.PATROL, new object[]{ chosenTile });
         job.SetCannotBePushedBack(true);
-        character.jobQueue.AddJobInQueue(job);
+        producedJob = job;
         return true;
     }
 

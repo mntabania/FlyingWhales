@@ -8,7 +8,7 @@ public abstract class CharacterBehaviourComponent {
     protected BEHAVIOUR_COMPONENT_ATTRIBUTE[] attributes;
     public int priority { get; protected set; }
 
-    public abstract bool TryDoBehaviour(Character character, ref string log);
+    public abstract bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob);
 
     #region Enabling/Disabling
     protected void DisableFor(Character character) {

@@ -10,9 +10,10 @@ public class DouseFireBehaviour : CharacterBehaviourComponent {
     public DouseFireBehaviour() {
         priority = 950;
     }
-    public override bool TryDoBehaviour(Character character, ref string log) {
+    public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
+        producedJob = null;
         if (StillHasFire(character)) {
-            if (DouseNearestFire(character) == false) {
+            if (DouseNearestFire(character, out producedJob) == false) {
                 //could not find any fires to douse
                 character.traitContainer.RemoveTrait(character, "Dousing");
             }
@@ -36,7 +37,7 @@ public class DouseFireBehaviour : CharacterBehaviourComponent {
     #endregion
 
     #region Douse Fire
-    private bool DouseNearestFire(Character character) {
+    private bool DouseNearestFire(Character character, out JobQueueItem producedJob) {
         IPointOfInterest nearestFire = null;
         float nearest = 99999f;
 
@@ -58,9 +59,10 @@ public class DouseFireBehaviour : CharacterBehaviourComponent {
             burning.SetDouser(character);
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DOUSE_FIRE, INTERACTION_TYPE.DOUSE_FIRE,
                 nearestFire, character);
-            character.jobQueue.AddJobInQueue(job);
+            producedJob = job;
             return true;
         }
+        producedJob = null;
         return false;
     }
     #endregion

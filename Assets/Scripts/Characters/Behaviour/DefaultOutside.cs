@@ -7,7 +7,7 @@ public class DefaultOutside : CharacterBehaviourComponent {
         priority = 4;
         //attributes = new BEHAVIOUR_COMPONENT_ATTRIBUTE[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.WITHIN_HOME_SETTLEMENT_ONLY };
     }
-    public override bool TryDoBehaviour(Character character, ref string log) {
+    public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         if (!character.currentStructure.isInterior && character.isAtHomeRegion) {
             // if ((character.currentStructure.structureType == STRUCTURE_TYPE.WORK_AREA || character.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS || 
             //      character.currentStructure.structureType == STRUCTURE_TYPE.CEMETERY || character.currentStructure.structureType == STRUCTURE_TYPE.CITY_CENTER) && character.isAtHomeRegion) {
@@ -21,7 +21,7 @@ public class DefaultOutside : CharacterBehaviourComponent {
                 log += $"\n  -RNG roll: {chance}";
                 if (chance < 25) {
                     log += $"\n  -Morning or Afternoon: {character.name} will enter Stroll Outside State";
-                    character.PlanIdleStrollOutside(); //character.currentStructure
+                    character.PlanIdleStrollOutside(out producedJob); //character.currentStructure
                     return true;
                 }
             } else {
@@ -47,8 +47,10 @@ public class DefaultOutside : CharacterBehaviourComponent {
             // }
             log += "\n-Otherwise, return home";
             log += $"\n  -{character.name} will do action Return Home";
-            character.PlanIdleReturnHome();
+            character.PlanIdleReturnHome(out producedJob);
             return true;
+        } else {
+            producedJob = null;
         }
         return false;
     }

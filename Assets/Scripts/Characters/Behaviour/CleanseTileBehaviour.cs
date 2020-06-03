@@ -11,11 +11,12 @@ public class CleanseTileBehaviour : CharacterBehaviourComponent {
     public CleanseTileBehaviour() {
         priority = 630;
     }
-    public override bool TryDoBehaviour(Character character, ref string log) {
+    public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         if (StillHasPoisonedTile(character)) {
             //cleanse nearest poisoned tile
-            CleanseNearestTile(character);
+            producedJob = CleanseNearestTile(character);
         } else {
+            producedJob = null;
             character.traitContainer.RemoveTrait(character, "Cleansing");
         }
         return true;
@@ -25,7 +26,7 @@ public class CleanseTileBehaviour : CharacterBehaviourComponent {
     private bool StillHasPoisonedTile(Character character) {
         return character.behaviourComponent.cleansingTilesForSettlement.settlementJobTriggerComponent.poisonedTiles.Count > 0;
     }
-    private void CleanseNearestTile(Character character) {
+    private JobQueueItem CleanseNearestTile(Character character) {
         LocationGridTile nearestTile = null;
         float nearest = 99999f;
 
@@ -46,8 +47,10 @@ public class CleanseTileBehaviour : CharacterBehaviourComponent {
             poisoned.SetCleanser(character);
             GoapPlanJob goapPlanJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CLEANSE_TILES,
                 INTERACTION_TYPE.CLEANSE_TILE, nearestTile.genericTileObject, character);
-            character.jobQueue.AddJobInQueue(goapPlanJob);
-        } 
+            // character.jobQueue.AddJobInQueue(goapPlanJob);
+            return goapPlanJob;
+        }
+        return null;
     }
 
 }

@@ -999,7 +999,24 @@ public class CharacterNeedsComponent {
             }
         }
     }
-
+    public void PlanFullnessRecoveryNormal(out JobQueueItem producedJob) {
+        producedJob = null;
+        if (!_character.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_NORMAL)) {
+            JOB_TYPE jobType = JOB_TYPE.FULLNESS_RECOVERY_NORMAL;
+            bool triggerGrieving = false;
+            Griefstricken griefstricken = _character.traitContainer.GetNormalTrait<Griefstricken>("Griefstricken");
+            if (griefstricken != null) {
+                triggerGrieving = UnityEngine.Random.Range(0, 100) < (25 * _character.traitContainer.stacks[griefstricken.name]);
+            }
+            if (!triggerGrieving) {
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), _character, _character);
+                job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 12 });
+                producedJob = job;
+            } else {
+                griefstricken.TriggerGrieving();
+            }
+        }
+    }
     #endregion
 
     #region Stamina

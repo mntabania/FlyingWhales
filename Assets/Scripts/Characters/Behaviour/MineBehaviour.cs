@@ -13,7 +13,8 @@ public class MineBehaviour : CharacterBehaviourComponent {
         priority = 440;
         // attributes = new[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.WITHIN_HOME_SETTLEMENT_ONLY };
     }
-    public override bool TryDoBehaviour(Character character, ref string log) {
+    public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
+        producedJob = null;
         if (character.behaviourComponent.currentMiningPath != null) {
             return true; //wait for path to finish.
         }
@@ -38,14 +39,12 @@ public class MineBehaviour : CharacterBehaviourComponent {
             //create job to mine target tile.
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MINE, INTERACTION_TYPE.MINE,
                 character.behaviourComponent.targetMiningTile.genericTileObject, character);
-            character.jobQueue.AddJobInQueue(job);
+            producedJob = job;
         } else {
             ABPath p = ABPath.Construct(character.worldPosition, targetTile.centeredWorldLocation, (path) => OnPathComplete(path, character));
             AstarPath.StartPath(p);
             character.behaviourComponent.SetCurrentMiningPath(p);    
         }
-        
-        
         return true;
     }
     private void OnPathComplete(Path path, Character character) {

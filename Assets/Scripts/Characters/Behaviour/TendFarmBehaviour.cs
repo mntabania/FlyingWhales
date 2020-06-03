@@ -8,9 +8,10 @@ public class TendFarmBehaviour : CharacterBehaviourComponent {
         priority = 440;
         // attributes = new[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.WITHIN_HOME_SETTLEMENT_ONLY };
     }
-    public override bool TryDoBehaviour(Character character, ref string log) {
+    public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         if (character.homeSettlement == null) {
             //cancel tend farm job
+            producedJob = null;
             character.traitContainer.RemoveTrait(character, "Tending");
         } else {
             List<CornCrop> crops = character.homeSettlement.GetTileObjectsFromStructures<CornCrop>(STRUCTURE_TYPE.FARM, IsCornCropUntended);
@@ -22,10 +23,10 @@ public class TendFarmBehaviour : CharacterBehaviourComponent {
                 goapPlan.SetDoNotRecalculate(true);
                 job.SetCannotBePushedBack(true);
                 job.SetAssignedPlan(goapPlan);
-            
-                character.jobQueue.AddJobInQueue(job);
+                producedJob = job;
             } else {
                 //cancel tend farm job
+                producedJob = null;
                 character.traitContainer.RemoveTrait(character, "Tending");
             }    
         }

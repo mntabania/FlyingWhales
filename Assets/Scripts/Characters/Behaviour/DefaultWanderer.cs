@@ -8,7 +8,8 @@ public class DefaultWanderer : CharacterBehaviourComponent {
 		priority = 25;
 		// attributes = new[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.WITHIN_HOME_SETTLEMENT_ONLY };
 	}
-	public override bool TryDoBehaviour(Character character, ref string log) {
+	public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
+        producedJob = null;
         log += $"\n-{character.name} is wanderer";
         if (character.gridTileLocation != null) {
             if (character.homeStructure == null && !character.HasTerritory()) {
@@ -21,12 +22,12 @@ public class DefaultWanderer : CharacterBehaviourComponent {
                     int roll = UnityEngine.Random.Range(0, 100);
                     log += "\n-Roll: " + roll;
                     if (roll < 50) {
-                        character.jobComponent.TriggerRoamAroundTile();
+                        character.jobComponent.TriggerRoamAroundTile(out producedJob);
                     } else {
                         log += "\n-Otherwise, Visit Different Region";
                         if (!character.jobComponent.TriggerVisitDifferentRegion()) {
                             log += "\n-Cannot perform Visit Different Region, Roam Around Tile";
-                            character.jobComponent.TriggerRoamAroundTile();
+                            character.jobComponent.TriggerRoamAroundTile(out producedJob);
                         }
                     }
                     return true;
@@ -42,11 +43,11 @@ public class DefaultWanderer : CharacterBehaviourComponent {
                         log += "\n-Sit if there is still an unoccupied Table or Desk in the current location";
                         if (deskOrTable != null) {
                             log += $"\n-{character.name} will do action Sit on {deskOrTable}";
-                            character.PlanIdle(JOB_TYPE.IDLE_SIT, INTERACTION_TYPE.SIT, deskOrTable);
+                            character.PlanIdle(JOB_TYPE.IDLE_SIT, INTERACTION_TYPE.SIT, deskOrTable, out producedJob);
                         } else {
                             log += "\n-Otherwise, stand idle";
                             log += $"\n-{character.name} will do action Stand";
-                            character.PlanIdle(JOB_TYPE.IDLE_STAND, INTERACTION_TYPE.STAND, character);
+                            character.PlanIdle(JOB_TYPE.IDLE_STAND, INTERACTION_TYPE.STAND, character, out producedJob);
                         }
                         return true;
                     } else {
@@ -65,7 +66,7 @@ public class DefaultWanderer : CharacterBehaviourComponent {
                                         log += "\n  -Character is vampiric, cannot do nap action";
                                     } else {
                                         log += $"\n  -Afternoon: {character.name} will do action Nap on {bed}";
-                                        character.PlanIdle(JOB_TYPE.IDLE_NAP, INTERACTION_TYPE.NAP, bed);
+                                        character.PlanIdle(JOB_TYPE.IDLE_NAP, INTERACTION_TYPE.NAP, bed, out producedJob);
                                         return true;
                                     }
                                 } else {
@@ -81,7 +82,7 @@ public class DefaultWanderer : CharacterBehaviourComponent {
                             int chance = Random.Range(0, 100);
                             log += $"\n  -RNG roll: {chance.ToString()}";
                             if (chance < 25) {
-                                if (character.jobComponent.TryCreateObtainPersonalItemJob()) {
+                                if (character.jobComponent.TryCreateObtainPersonalItemJob(out producedJob)) {
                                     log += $"\n  -Created Obtain Personal Item Job";
                                     return true;
                                 } else {
@@ -102,7 +103,7 @@ public class DefaultWanderer : CharacterBehaviourComponent {
                             if (chance < 25 && character.trapStructure.IsTrapped() == false) {
                                 log +=
                                     $"\n  -Morning, Afternoon, or Early Night: {character.name} will enter Stroll Outside Mode";
-                                character.PlanIdleStrollOutside(); //character.currentStructure
+                                character.PlanIdleStrollOutside(out producedJob); //character.currentStructure
                                 return true;
                             }
                         } else {
@@ -141,7 +142,7 @@ public class DefaultWanderer : CharacterBehaviourComponent {
                                     if (targetStructure != null) {
                                         log +=
                                             $"\n  -Morning or Afternoon: {character.name} will go to dwelling of character with positive relationship, {targetCharacter.name} and set Base Structure for 2.5 hours";
-                                        character.PlanIdle(JOB_TYPE.VISIT_FRIEND, INTERACTION_TYPE.VISIT, targetCharacter, new object[] { targetStructure, targetCharacter });
+                                        character.PlanIdle(JOB_TYPE.VISIT_FRIEND, INTERACTION_TYPE.VISIT, targetCharacter, out producedJob, new object[] { targetStructure, targetCharacter });
                                         return true;
                                     }
                                     log += "\n  -No positive relationship with home structure";
@@ -157,14 +158,14 @@ public class DefaultWanderer : CharacterBehaviourComponent {
                         TileObject deskOrTable = character.currentStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.DESK, TILE_OBJECT_TYPE.TABLE);
                         if (deskOrTable != null) {
                             log += $"\n  -{character.name} will do action Sit on {deskOrTable}";
-                            character.PlanIdle(JOB_TYPE.IDLE_SIT, INTERACTION_TYPE.SIT, deskOrTable);
+                            character.PlanIdle(JOB_TYPE.IDLE_SIT, INTERACTION_TYPE.SIT, deskOrTable, out producedJob);
                             return true;
                         }
                         log += "\n  -No unoccupied Table or Desk";
 
                         log += "\n-Otherwise, stand idle";
                         log += $"\n  -{character.name} will do action Stand";
-                        character.PlanIdle(JOB_TYPE.IDLE_STAND, INTERACTION_TYPE.STAND, character);
+                        character.PlanIdle(JOB_TYPE.IDLE_STAND, INTERACTION_TYPE.STAND, character, out producedJob);
                         return true;
                     }
                 } else {
@@ -172,10 +173,10 @@ public class DefaultWanderer : CharacterBehaviourComponent {
                     if (character.currentHP < (character.maxHP * 0.5f)) {
                         log += "\n-HP is less than 50% of max hp, Return Home/Territory";
                         if (character.homeStructure != null) {
-                            character.PlanIdleReturnHome();
+                            character.PlanIdleReturnHome(out producedJob);
                             return true;
                         } else if (character.HasTerritory()) {
-                            character.jobComponent.TriggerReturnTerritory();
+                            character.jobComponent.TriggerReturnTerritory(out producedJob);
                             return true;
                         } else {
                             log += "\n-No home structure or territory: THIS MUST NOT HAPPEN!";
@@ -185,15 +186,15 @@ public class DefaultWanderer : CharacterBehaviourComponent {
                         int roll = UnityEngine.Random.Range(0, 100);
                         log += "\n-Roll: " + roll;
                         if (roll < 50) {
-                            character.jobComponent.TriggerRoamAroundTile();
+                            character.jobComponent.TriggerRoamAroundTile(out producedJob);
                             return true;
                         } else {
                             log += "\n-Otherwise, Return Home/Territory";
                             if (character.homeStructure != null) {
-                                character.PlanIdleReturnHome();
+                                character.PlanIdleReturnHome(out producedJob);
                                 return true;
                             } else if (character.HasTerritory()) {
-                                character.jobComponent.TriggerReturnTerritory();
+                                character.jobComponent.TriggerReturnTerritory(out producedJob);
                                 return true;
                             } else {
                                 log += "\n-No home structure or territory: THIS MUST NOT HAPPEN!";
