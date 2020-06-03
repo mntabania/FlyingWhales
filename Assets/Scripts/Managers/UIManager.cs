@@ -1065,12 +1065,13 @@ public class UIManager : MonoBehaviour {
         //    (newNotif.gameObject.transform as RectTransform).SetAsLastSibling();
         //}
         activeNotifications.Add(newNotif);
-        if (!notifExpandButton.gameObject.activeSelf) {
-            //notifExpandButton.gameObject.SetActive(true);
-        }
+        //if (!notifExpandButton.gameObject.activeSelf) {
+        //    //notifExpandButton.gameObject.SetActive(true);
+        //}
         if (activeNotifications.Count > maxPlayerNotif) {
             activeNotifications[0].DeleteNotification();
         }
+        newNotif.TweenIn();
     }
     private void OnNotificationDestroyed(PlayerNotificationItem item) {
         activeNotifications.Remove(item);

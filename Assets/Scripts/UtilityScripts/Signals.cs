@@ -283,6 +283,7 @@ public static class Signals {
     /// Parameters (List<Character> attacking characters)
     /// </summary>
     public static string THREAT_MAXED_OUT = "OnThreatMaxedOut";
+    public static string THREAT_RESET = "OnThreatReset";
     /// <summary>
     /// Parameters (Summon placedSummon)
     /// </summary>
@@ -625,6 +626,11 @@ public static class Signals {
     public static string EDGE_PANNING_TOGGLED = "OnEdgePanningToggled";
     public static string MUSIC_VOLUME_CHANGED = "OnMusicVolumeChanged";
     public static string MASTER_VOLUME_CHANGED = "OnSFXVolumeChanged";
+    #endregion
+
+    #region Basic Controls
+    public static string ZOOM_INNER_MAP_CAMERA = "OnZoomInnerMapCamera";
+    public static string ZOOM_WORLD_MAP_CAMERA = "OnZoomWorldMapCamera";
     #endregion
 
     public static Dictionary<string, SignalMethod[]> orderedSignalExecution = new Dictionary<string, SignalMethod[]>() {

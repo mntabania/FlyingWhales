@@ -17,25 +17,26 @@ public class WorldMapCameraMove : BaseCameraMove {
     private float previousCameraFOV;
     private bool cameraControlEnabled = true;
     private int defaultMask;
-    private Camera _mainCamera;
     private Transform _mainCameraTransform;
+
+    public Camera mainCamera { get; private set; }
 
     private void Awake(){
 		Instance = this;
-        _mainCamera = Camera.main;
-        _mainCameraTransform = _mainCamera.transform;
-        defaultMask = _mainCamera.cullingMask;
+        mainCamera = Camera.main;
+        _mainCameraTransform = mainCamera.transform;
+        defaultMask = mainCamera.cullingMask;
     }
     private void Update() {
         if (!cameraControlEnabled) {
             return;
         }
         ArrowKeysMovement();
-        Dragging(_mainCamera);
+        Dragging(mainCamera);
         Edging();
         Zooming();
-        Targeting(_mainCamera);
-        ConstrainCameraBounds(_mainCamera);
+        Targeting(mainCamera);
+        ConstrainCameraBounds(mainCamera);
     }
     private void OnDestroy() {
         RemoveListeners();
@@ -60,9 +61,9 @@ public class WorldMapCameraMove : BaseCameraMove {
 
     #region Utilities
     public void ToggleMainCameraLayer(string layerName) {
-        int cullingMask = _mainCamera.cullingMask;
+        int cullingMask = mainCamera.cullingMask;
         cullingMask ^= 1 << LayerMask.NameToLayer(layerName);
-        _mainCamera.cullingMask = cullingMask;
+        mainCamera.cullingMask = cullingMask;
         defaultMask = cullingMask;
     }
     #endregion
@@ -72,13 +73,13 @@ public class WorldMapCameraMove : BaseCameraMove {
         Vector3 initialPos = new Vector3(-2.35f, -1.02f, -10f);
         this.transform.position = initialPos;
         _raycaster.enabled = true;
-        CalculateCameraBounds(_mainCamera);
+        CalculateCameraBounds(mainCamera);
     }
     private void Zooming() {
         Rect screenRect = new Rect(0, 0, Screen.width, Screen.height);
         if (allowZoom && screenRect.Contains(Input.mousePosition)) {
             //camera scrolling code
-            float fov = _mainCamera.orthographicSize;
+            float fov = mainCamera.orthographicSize;
             float adjustment = Input.GetAxis("Mouse ScrollWheel") * (sensitivity);
             if (Math.Abs(adjustment) > 0.1f && !UIManager.Instance.IsMouseOnUI()) {
                 fov -= adjustment;
@@ -86,11 +87,12 @@ public class WorldMapCameraMove : BaseCameraMove {
 
                 if (!Mathf.Approximately(previousCameraFOV, fov)) {
                     previousCameraFOV = fov;
-                    _mainCamera.orthographicSize = Mathf.Lerp(_mainCamera.orthographicSize, fov, Time.deltaTime * _zoomSpeed);
+                    mainCamera.orthographicSize = Mathf.Lerp(mainCamera.orthographicSize, fov, Time.deltaTime * _zoomSpeed);
                 } else {
-                    _mainCamera.orthographicSize = fov;
+                    mainCamera.orthographicSize = fov;
                 }
-                CalculateCameraBounds(_mainCamera);
+                CalculateCameraBounds(mainCamera);
+                Messenger.Broadcast(Signals.ZOOM_WORLD_MAP_CAMERA, mainCamera);
             }
         }
     }

@@ -28,24 +28,20 @@ public class ThreatComponent {
     }
 
     public void AdjustThreat(int amount) {
-        int supposedThreat = threat + amount;
-        bool hasReachedMax = false;
         if (threat != MAX_THREAT) {
-            hasReachedMax = supposedThreat >= MAX_THREAT;
-        }
-        threat = supposedThreat;
-        threat = Mathf.Clamp(threat, 0, 100);
+            int supposedThreat = threat + amount;
+            bool hasReachedMax = supposedThreat >= MAX_THREAT;
+            threat = supposedThreat;
+            threat = Mathf.Clamp(threat, 0, 100);
 
-        if (amount > 0) {
-            Messenger.Broadcast(Signals.THREAT_INCREASED);
-        }
-        
-        if (hasReachedMax) {
-            AssaultDemonicStructure(out List<Character> _attackingCharacters);
-            attackingCharacters = _attackingCharacters;
-            Messenger.Broadcast(Signals.THREAT_MAXED_OUT);
-            ResetThreat();
-        } else {
+            if (amount > 0) {
+                Messenger.Broadcast(Signals.THREAT_INCREASED);
+            }
+
+            if (hasReachedMax) {
+                OnMaxThreat();
+                Messenger.Broadcast(Signals.THREAT_MAXED_OUT);
+            }
             Messenger.Broadcast(Signals.THREAT_UPDATED);
         }
     }
@@ -55,10 +51,21 @@ public class ThreatComponent {
     public void SetThreatPerHour(int amount) {
         threatPerHour = amount;
     }
+    private void OnMaxThreat() {
+        AssaultDemonicStructure(out List<Character> _attackingCharacters);
+        attackingCharacters = _attackingCharacters;
+        ResetThreatAfterHours(2);
+    }
+    private void ResetThreatAfterHours(int hours) {
+        GameDate dueDate = GameManager.Instance.Today();
+        dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(hours));
+        SchedulingManager.Instance.AddEntry(dueDate, ResetThreat, player);
+    }
     public void ResetThreat() {
         threat = 0;
         SetThreatPerHour(0);
         Messenger.Broadcast(Signals.THREAT_UPDATED);
+        Messenger.Broadcast(Signals.THREAT_RESET);
     }
 
     private void AssaultDemonicStructure(out List<Character> attackingCharacters) {

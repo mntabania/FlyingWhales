@@ -14,12 +14,11 @@ public class IntelNotificationItem : PlayerNotificationItem {
     [SerializeField] private Button getIntelBtn;
     [SerializeField] private GameObject convertTooltip;
     [SerializeField] private GameObject effectPrefab;
-    
+
     public void Initialize(IIntel intel, bool hasExpiry = true, System.Action<PlayerNotificationItem> onDestroyAction = null) {
         this.intel = intel;
         base.Initialize(intel.log, hasExpiry, onDestroyAction);
     }
-   
     public void GetIntel() {
         Vector3 pos = InnerMapCameraMove.Instance.innerMapsCamera.ScreenToWorldPoint(getIntelBtn.transform.position);
         pos.z = 0f;
