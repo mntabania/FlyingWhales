@@ -965,6 +965,7 @@ public class PlayerUI : MonoBehaviour {
     private void CreateNewSpellItem(SPELL_TYPE spell) {
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(spellItemPrefab.name, Vector3.zero, Quaternion.identity, spellsScrollRect.content);
         SpellItem item = go.GetComponent<SpellItem>();
+        go.SetActive(false);
         SpellData spellData = PlayerSkillManager.Instance.GetSpellData(spell);
         if (spellData != null) {
             item.SetSpell(spellData);
@@ -979,6 +980,7 @@ public class PlayerUI : MonoBehaviour {
                 }
             }
         }
+        go.SetActive(true);
         if (WorldConfigManager.Instance.isDemoWorld) {
             //in demo world, only allow spells that are set to be available.
             bool isInteractable = WorldConfigManager.Instance.availableSpellsInDemoBuild.Contains(spell);

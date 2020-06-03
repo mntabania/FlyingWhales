@@ -35,6 +35,7 @@ namespace Quests.Steps {
         #region Listeners
         private void CheckForCompletion(Character character) {
             if (_targets.Remove(character)) {
+                objectsToCenter?.Remove(character);
                 Messenger.Broadcast(Signals.UPDATE_QUEST_STEP_ITEM, this as QuestStep);
                 if (_targets.Count == 0) {
                     Complete();    

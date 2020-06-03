@@ -96,8 +96,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public void SetCharacter(Character character) {
         base.Initialize(character);
         this.name = $"{character.name}'s Marker";
-        nameLbl.SetText(character.name);
         this.character = character;
+        UpdateName();
         UpdateSortingOrder();
         UpdateMarkerVisuals();
         UpdateActionIcon();
@@ -425,6 +425,13 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     public void UpdateNameplatePosition() {
         nameContainer.localPosition = new Vector3(nameContainer.localPosition.x, mainImg.sprite.rect.height * -0.0075f, 0f);
+    }
+    public void UpdateName() {
+        string icon = UtilityScripts.Utilities.VillagerIcon();
+        if (character.isNormalCharacter == false) {
+            icon = UtilityScripts.Utilities.MonsterIcon();
+        }
+        nameLbl.SetText($"{icon}{character.name}");
     }
     #endregion
 
@@ -821,17 +828,21 @@ public class CharacterMarker : MapObjectVisual<Character> {
 
     #region Utilities
     private void UpdateSortingOrder() {
-        var sortingOrder = InnerMapManager.DefaultCharacterSortingOrder + character.id;
-        mainImg.sortingOrder = sortingOrder;
-        hairImg.sortingOrder = sortingOrder + 1;
-        knockedOutHairImg.sortingOrder = sortingOrder + 1;
-        nameLbl.sortingOrder = sortingOrder;
-        actionIcon.sortingOrder = sortingOrder;
-        hoveredImg.sortingOrder = sortingOrder - 1;
-        clickedImg.sortingOrder = sortingOrder - 1;
-        colorHighlight.sortingOrder = sortingOrder - 1;
+        var characterSortingOrder = InnerMapManager.DefaultCharacterSortingOrder + character.id;
+        mainImg.sortingOrder = characterSortingOrder;
+        hairImg.sortingOrder = characterSortingOrder + 1;
+        knockedOutHairImg.sortingOrder = characterSortingOrder + 1;
+        nameLbl.sortingOrder = characterSortingOrder;
+        TMP_SubMesh nameSubMesh = nameLbl.GetComponentInChildren<TMP_SubMesh>();
+        if (nameSubMesh != null) {
+            nameSubMesh.renderer.sortingOrder = characterSortingOrder;    
+        }
+        actionIcon.sortingOrder = characterSortingOrder;
+        hoveredImg.sortingOrder = characterSortingOrder - 1;
+        clickedImg.sortingOrder = characterSortingOrder - 1;
+        colorHighlight.sortingOrder = characterSortingOrder - 1;
         bloodSplatterEffectRenderer.sortingOrder = InnerMapManager.DetailsTilemapSortingOrder + 5;
-        hpBarGO.GetComponent<Canvas>().sortingOrder = sortingOrder;
+        hpBarGO.GetComponent<Canvas>().sortingOrder = characterSortingOrder;
     }
     public new void SetActiveState(bool state) {
         Debug.Log($"Set active state of {this.name} to {state.ToString()}");

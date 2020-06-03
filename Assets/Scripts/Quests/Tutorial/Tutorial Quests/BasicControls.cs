@@ -25,7 +25,7 @@ namespace Tutorial {
                 .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
                 .SetOnTopmostActions(OnTopMostUnpause, OnNopLongerTopMostUnpause);
             QuestStep objectClick = new ClickOnObjectStep();
-            QuestStep characterClick = new ClickOnCharacterStep("Click on a Villager", character => character.isNormalCharacter);
+            QuestStep characterClick = new ClickOnCharacterStep($"Click on a {UtilityScripts.Utilities.VillagerIcon()}Villager", character => character.isNormalCharacter);
             QuestStep structureClick = new ClickOnStructureStep();
             QuestStep hexTileClick = new ClickOnAreaStep().SetHoverOverAction(OnHoverClickArea)
                 .SetHoverOutAction(UIManager.Instance.HideSmallInfo);

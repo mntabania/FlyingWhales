@@ -1,9 +1,57 @@
 {
   "frames": {
-    "A Key.png": {
+    "icon_monster.png": {
       "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 24,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
         "x": 0,
         "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 24,
+        "h": 24
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "icon_villager.png": {
+      "frame": {
+        "x": 27,
+        "y": 1,
+        "w": 24,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 24,
+        "h": 24
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "A Key.png": {
+      "frame": {
+        "x": 53,
+        "y": 1,
         "w": 32,
         "h": 32
       },
@@ -26,8 +74,8 @@
     },
     "D Key.png": {
       "frame": {
-        "x": 0,
-        "y": 32,
+        "x": 87,
+        "y": 1,
         "w": 32,
         "h": 32
       },
@@ -50,8 +98,8 @@
     },
     "S Key.png": {
       "frame": {
-        "x": 32,
-        "y": 0,
+        "x": 121,
+        "y": 1,
         "w": 32,
         "h": 32
       },
@@ -74,8 +122,8 @@
     },
     "W Key.png": {
       "frame": {
-        "x": 32,
-        "y": 32,
+        "x": 155,
+        "y": 1,
         "w": 32,
         "h": 32
       },
@@ -100,11 +148,11 @@
   "meta": {
     "app": "http://free-tex-packer.com",
     "version": "0.6.5",
-    "image": "Text_Sprites.png",
+    "image": "texture.png",
     "format": "RGBA8888",
     "size": {
-      "w": 64,
-      "h": 64
+      "w": 188,
+      "h": 34
     },
     "scale": 1
   }

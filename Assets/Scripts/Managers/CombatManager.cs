@@ -293,6 +293,7 @@ public class CombatManager : MonoBehaviour {
             vaporTileObject.SetGridTileLocation(target.gridTileLocation);
             vaporTileObject.OnPlacePOI();
             vaporTileObject.SetStacks(stacks);
+            Messenger.Broadcast(Signals.VAPOR_FROM_WIND_TRIGGERED);
         }
     }
     private void FireElementProcess(ITraitable target) {
