@@ -154,12 +154,12 @@ public class CombatManager : MonoBehaviour {
             // traitables.AddRange(tile.GetTraitablesOnTile());
             tile.PerformActionOnTraitables((traitable) => PoisonExplosionEffect(traitable, damagePercentage, ref bs));
         }
-        if(!(target is GenericTileObject)) {
-            Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Poison Explosion", "effect");
-            log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
-            log.AddLogToInvolvedObjects();
-        }
+        // if(!(target is GenericTileObject)) {
+        //     Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Poison Explosion", "effect");
+        //     log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        //     PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+        //     log.AddLogToInvolvedObjects();
+        // }
     }
     private void PoisonExplosionEffect(ITraitable traitable, float damagePercentage, ref BurningSource bs) {
         int damage = Mathf.RoundToInt(traitable.maxHP * damagePercentage);
@@ -197,12 +197,12 @@ public class CombatManager : MonoBehaviour {
             tile.PerformActionOnTraitables((traitable) => FrozenExplosionEffect(traitable, damagePercentage));
         }
 
-        if (!(target is GenericTileObject)) {
-            Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Frozen Explosion", "effect");
-            log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
-            log.AddLogToInvolvedObjects();
-        }
+        // if (!(target is GenericTileObject)) {
+        //     Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Frozen Explosion", "effect");
+        //     log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        //     PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+        //     log.AddLogToInvolvedObjects();
+        // }
     }
     private void FrozenExplosionEffect(ITraitable traitable, float damagePercentage) {
         int damage = Mathf.RoundToInt(traitable.maxHP * damagePercentage);
@@ -293,6 +293,7 @@ public class CombatManager : MonoBehaviour {
             vaporTileObject.SetGridTileLocation(target.gridTileLocation);
             vaporTileObject.OnPlacePOI();
             vaporTileObject.SetStacks(stacks);
+            Messenger.Broadcast(Signals.VAPOR_FROM_WIND_TRIGGERED);
         }
     }
     private void FireElementProcess(ITraitable target) {

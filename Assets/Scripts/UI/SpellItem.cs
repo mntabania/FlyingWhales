@@ -16,6 +16,7 @@ public class SpellItem : PooledObject {
     public SpellData spellData { get; private set; }
 
     public void SetSpell(SpellData spellData) {
+        name = spellData.name;
         this.spellData = spellData;
         UpdateData();
         Messenger.AddListener<SpellData>(Signals.PLAYER_NO_ACTIVE_SPELL, OnPlayerNoActiveSpell);

@@ -38,10 +38,10 @@ namespace Tutorial {
                         .SetOnTopmostActions(OnTopMostKennel, OnNoLongerTopMostKennel)
                 ),
                 new QuestStepCollection(
-                    new ExecutedPlayerActionStep(SPELL_TYPE.SEIZE_MONSTER, "Seize a monster.")
+                    new ExecutedPlayerActionStep(SPELL_TYPE.SEIZE_MONSTER, $"Seize a {UtilityScripts.Utilities.MonsterIcon()}monster.")
                         .SetOnTopmostActions(OnTopMostSeizeMonster, OnNoLongerTopMostSeizeMonster),
                     new DropCharacterAtStructureStep(STRUCTURE_TYPE.THE_KENNEL, typeof(Summon), "Drop at the Kennel."),
-                    new ClickOnCharacterStep("Click on the monster", IsCharacterValid),
+                    new ClickOnCharacterStep($"Click on the {UtilityScripts.Utilities.MonsterIcon()}monster", IsCharacterValid),
                     new ExecutedPlayerActionStep(SPELL_TYPE.BREED_MONSTER, "Breed it.")
                         .SetHoverOverAction(OnHoverBreed)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
@@ -77,8 +77,8 @@ namespace Tutorial {
         #region Step Helpers
         private void OnHoverBreed(QuestStepItem stepItem) {
             UIManager.Instance.ShowSmallInfo(
-                "Breeding a monster inside the Kennel gives you 1 Summon Charge of that monster type. " +
-                "You can use this charge for various actions - defend Structures, invade Villages, kill Villagers.",
+                $"Breeding a {UtilityScripts.Utilities.MonsterIcon()}monster inside the Kennel gives you 1 Summon Charge of that {UtilityScripts.Utilities.MonsterIcon()}monster type. " +
+                $"You can use this charge for various actions - defend Structures, invade Villages, kill {UtilityScripts.Utilities.VillagerIcon()}Villagers.",
                 TutorialManager.Instance.breedVideoClip, "Breeding", stepItem.hoverPosition
             );
         }

@@ -8,7 +8,7 @@ using Inner_Maps.Location_Structures;
 public class TortureData : PlayerAction {
     public override SPELL_TYPE type => SPELL_TYPE.TORTURE;
     public override string name => "Torture";
-    public override string description => "Torture a Villager to afflict it with a random negative Trait and a random negative Status.";
+    public override string description => $"Torture a {UtilityScripts.Utilities.VillagerIcon()}Villager to afflict it with a random negative Trait and a random negative Status.";
     public TortureData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.ROOM };
         //TODO: Move this when torture has been moved to skill trees

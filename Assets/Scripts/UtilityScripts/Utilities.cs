@@ -793,6 +793,12 @@ namespace UtilityScripts {
         #endregion
 
         #region String Utilities
+        public static string MonsterIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"Monster_Icon\"> ";
+        }
+        public static string VillagerIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"Villager_Icon\"> ";
+        }
         public static string NormalizeNoSpaceString(string s) {
             string[] words = System.Text.RegularExpressions.Regex.Split(s, @"(?<!^)(?=[A-Z])");
             string normalizedString = Utilities.FirstLetterToUpperCase(words.First());

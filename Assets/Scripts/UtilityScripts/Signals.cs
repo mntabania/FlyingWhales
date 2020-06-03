@@ -613,6 +613,7 @@ public static class Signals {
     /// </summary>
     public static string POISON_EXPLOSION_TRIGGERED = "OnPoisonExplosionTriggered";
     public static string ELECTRIC_CHAIN_TRIGGERED = "OnElectricChainTriggered";
+    public static string VAPOR_FROM_WIND_TRIGGERED = "OnVaporFromWindTriggered";
     #endregion
 
     #region Player Skills

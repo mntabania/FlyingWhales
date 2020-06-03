@@ -101,7 +101,7 @@ public class ZombieVirus : PlayerSpell {
 public class ZombieVirusData : SpellData {
     public override SPELL_TYPE type => SPELL_TYPE.ZOMBIE_VIRUS;
     public override string name => "Zombie Virus";
-    public override string description => "This Affliction will inoculate a Villager with the Zombie Virus. This Virus will cause the Villager to eventually die. Once dead, it will reanimate during nighttime and may spread the Virus to other Villagers that it attacks.";
+    public override string description => $"This Affliction will inoculate a {UtilityScripts.Utilities.VillagerIcon()}Villager with the Zombie Virus. This Virus will cause the {UtilityScripts.Utilities.VillagerIcon()}Villager to eventually die. Once dead, it will reanimate during nighttime and may spread the Virus to other {UtilityScripts.Utilities.VillagerIcon()}Villagers that it attacks.";
     public override SPELL_CATEGORY category => SPELL_CATEGORY.AFFLICTION;
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.AFFLICTION;
 

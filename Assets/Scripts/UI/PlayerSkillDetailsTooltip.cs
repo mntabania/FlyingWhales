@@ -102,7 +102,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         additionalText.text = string.Empty;
         if (skillData is PlayerAction && UIManager.Instance.characterInfoUI.isShowing) {
             if (UIManager.Instance.characterInfoUI.activeCharacter.traitContainer.HasTrait("Blessed")) {
-                additionalText.text += "<color=\"red\">Blessed Villagers are protected from your powers.</color>\n";    
+                additionalText.text += $"<color=\"red\">Blessed {UtilityScripts.Utilities.VillagerIcon()}Villagers are protected from your powers.</color>\n";    
             }
         }
         if(HasEnoughMana() == false) {

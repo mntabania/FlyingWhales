@@ -53,7 +53,7 @@ namespace Tutorial {
                     new ShowIntelMenuStep()
                         .SetOnTopmostActions(OnTopMostIntelTab, OnNoLongerTopMostIntelTab),
                     new SelectIntelStep("Choose the stored intel"),
-                    new ShareIntelStep("Share to a Villager")
+                    new ShareIntelStep($"Share to a {UtilityScripts.Utilities.VillagerIcon()}Villager")
                         .SetHoverOverAction(OnHoverShareIntel)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
                 )

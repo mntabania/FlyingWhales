@@ -33,12 +33,12 @@ public class BrimstonesParticleEffect : BaseParticleEffect {
                 bs = burningSource;
             } else {
                 BurningSource burningSource = bs;
-                obj.AdjustHP(-240, ELEMENTAL_TYPE.Fire, true, elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref burningSource), showHPBar: true);
+                obj.AdjustHP(-400, ELEMENTAL_TYPE.Fire, true, elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref burningSource), showHPBar: true);
                 bs = burningSource;
             }
         } else if (traitable is Character character) {
             BurningSource burningSource = bs;
-            character.AdjustHP(-240, ELEMENTAL_TYPE.Fire, true, 
+            character.AdjustHP(-400, ELEMENTAL_TYPE.Fire, true, 
                 elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref burningSource), showHPBar: true);
             bs = burningSource;
             if (Random.Range(0, 100) < 25) {
@@ -46,7 +46,7 @@ public class BrimstonesParticleEffect : BaseParticleEffect {
             }
         } else {
             BurningSource burningSource = bs;
-            traitable.AdjustHP(-240, ELEMENTAL_TYPE.Fire, true, 
+            traitable.AdjustHP(-400, ELEMENTAL_TYPE.Fire, true, 
                 elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref burningSource), showHPBar: true);
             bs = burningSource;
         }

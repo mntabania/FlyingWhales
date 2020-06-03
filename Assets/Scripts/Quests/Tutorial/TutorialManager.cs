@@ -61,6 +61,7 @@ namespace Tutorial {
         public Texture moodTab;
         public Texture relationsTab;
         public Texture logsTab;
+        public VideoClip homeStructureVideo;
 
         #region Monobehaviours
         private void Awake() {
@@ -144,7 +145,7 @@ namespace Tutorial {
                 PlayerUI.Instance.ShowGeneralConfirmation("Finished Tutorial",
                     "You're done with the Tutorials! " +
                     "Feel free to use the remaining time to play around with the various unlocked options... " +
-                    "or just wipe out all Villagers as soon as possible!");
+                    $"or just wipe out all {UtilityScripts.Utilities.VillagerIcon()}Villagers as soon as possible!");
             }
         }
         #endregion

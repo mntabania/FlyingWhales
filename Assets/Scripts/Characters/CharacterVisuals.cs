@@ -75,6 +75,7 @@ public class CharacterVisuals {
             markerAnimations.Add(currSprite.name, currSprite);
         }
         if (character.marker != null) {
+            character.marker.UpdateName();    
             character.marker.UpdateNameplatePosition();    
         }
     }

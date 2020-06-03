@@ -44,7 +44,7 @@ namespace Tutorial {
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
                 ),
                 new QuestStepCollection(
-                    new ExecutedPlayerActionStep(SPELL_TYPE.SEIZE_CHARACTER, "Seize a Villager.")
+                    new ExecutedPlayerActionStep(SPELL_TYPE.SEIZE_CHARACTER, $"Seize a {UtilityScripts.Utilities.VillagerIcon()}Villager.")
                         .SetHoverOverAction(OnHoverSeizeCharacter)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
                         .SetOnTopmostActions(OnTopMostSeizeVillager, OnNoLongerTopMostSeizeVillager),
@@ -93,7 +93,7 @@ namespace Tutorial {
                 TutorialManager.Instance.seizeImage, "Seize", stepItem.hoverPosition);
         }
         private void OnHoverChamber(QuestStepItem stepItem) {
-            UIManager.Instance.ShowSmallInfo("The Torture Chambers have 3 separate rooms. Each one can be occupied by one Villager.", 
+            UIManager.Instance.ShowSmallInfo($"The Torture Chambers have 3 separate rooms. Each one can be occupied by one {UtilityScripts.Utilities.VillagerIcon()}Villager.", 
                 TutorialManager.Instance.chambersVideo, "Chambers", stepItem.hoverPosition);
         }
         private void OnHoverBeginTorture(QuestStepItem stepItem) {
@@ -107,7 +107,7 @@ namespace Tutorial {
             UIManager.Instance.generalConfirmationWithVisual.ShowGeneralConfirmation("Demonic Structures",
                 "These are unique demonic structures that you can build on unoccupied Areas. " +
                 "Each structure type has a unique use that may aid you in your invasion. " +
-                "For example, the Torture Chambers allow you to torture Villagers to afflict them with negative Traits and Statuses.\n\n" +
+                $"For example, the Torture Chambers allow you to torture {UtilityScripts.Utilities.VillagerIcon()}Villagers to afflict them with negative Traits and Statuses.\n\n" +
                 "You have limited Charges per demonic structure so protect them from attacks!",
                 TutorialManager.Instance.demonicStructureVideoClip);
         }
