@@ -274,6 +274,11 @@ public class BaseRelationshipContainer : IRelationshipContainer {
             }
             if (roll < chance) {
                 if (owner.marker && owner.marker.inVisionCharacters.Contains(targetCharacter)) {
+                    if (targetCharacter.isInCombat) {
+                        if (owner.jobComponent.CreateBrawlJob(targetCharacter) != null) {
+                            return;
+                        }
+                    }
                     if (owner.traitContainer.HasTrait("Combatant")) {
                         if (UnityEngine.Random.Range(0, 100) < 50) {
                             if (owner.jobComponent.CreateBrawlJob(targetCharacter) != null) {

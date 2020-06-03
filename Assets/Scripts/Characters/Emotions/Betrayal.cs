@@ -16,16 +16,16 @@ public class Betrayal : Emotion {
             witness.needsComponent.AdjustHope(-10);
             witness.relationshipContainer.AdjustOpinion(witness, targetCharacter, "Base", -60);
             witness.traitContainer.AddTrait(witness, "Betrayed");
-            if (UnityEngine.Random.Range(0, 100) < 50) {
-                int chance = UnityEngine.Random.Range(0, 3);
-                if (chance == 0) {
-                    witness.jobComponent.CreateKnockoutJob(targetCharacter);
-                } else if (chance == 1) {
-                    witness.jobComponent.CreateKillJob(targetCharacter);
-                } else if (chance == 2) {
-                    witness.jobComponent.CreateUndermineJob(targetCharacter, "normal");
-                }
-            }
+            //if (UnityEngine.Random.Range(0, 100) < 50) {
+            //    int chance = UnityEngine.Random.Range(0, 3);
+            //    if (chance == 0) {
+            //        witness.jobComponent.CreateKnockoutJob(targetCharacter);
+            //    } else if (chance == 1) {
+            //        witness.jobComponent.CreateKillJob(targetCharacter);
+            //    } else if (chance == 2) {
+            //        witness.jobComponent.CreateUndermineJob(targetCharacter, "normal");
+            //    }
+            //}
         }
         return base.ProcessEmotion(witness, target, status, goapNode);
     }

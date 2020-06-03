@@ -375,7 +375,7 @@ public class Minion {
     }
     private void Unsummon() {
         character.SetHP(0);
-        Messenger.AddListener(Signals.TICK_ENDED, UnsummonedHPRecovery);
+        //Messenger.AddListener(Signals.TICK_ENDED, UnsummonedHPRecovery);
         UnSubscribeListeners();
         SetIsSummoned(false);
         character.behaviourComponent.SetIsHarassing(false, null);

@@ -24,15 +24,19 @@ public class Anger : Emotion {
             );
             
             witness.traitContainer.AddTrait(witness, "Angry");
-            if(UnityEngine.Random.Range(0, 100) < 25) {
-                int chance = UnityEngine.Random.Range(0, 3);
-                if(chance == 0) {
-                    witness.jobComponent.CreateKnockoutJob(targetCharacter);
-                }else if (chance == 1) {
-                    witness.jobComponent.CreateKillJob(targetCharacter);
-                } else if (chance == 2) {
-                    witness.jobComponent.CreateUndermineJob(targetCharacter, "normal");
-                }
+            //if(UnityEngine.Random.Range(0, 100) < 25) {
+            //    int chance = UnityEngine.Random.Range(0, 3);
+            //    if(chance == 0) {
+            //        witness.jobComponent.CreateKnockoutJob(targetCharacter);
+            //    }else if (chance == 1) {
+            //        witness.jobComponent.CreateKillJob(targetCharacter);
+            //    } else if (chance == 2) {
+            //        witness.jobComponent.CreateUndermineJob(targetCharacter, "normal");
+            //    }
+            //}
+        } else if (target is TileObject tileObject) {
+            if (UnityEngine.Random.Range(0, 100) < 25) {
+                witness.combatComponent.Fight(tileObject, CombatManager.Anger);
             }
         }
         return base.ProcessEmotion(witness, target, status, goapNode);
