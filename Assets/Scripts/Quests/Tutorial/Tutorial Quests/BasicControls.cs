@@ -26,7 +26,9 @@ namespace Tutorial {
                 .SetOnTopmostActions(OnTopMostUnpause, OnNopLongerTopMostUnpause);
             QuestStep objectClick = new ClickOnObjectStep();
             QuestStep characterClick = new ClickOnCharacterStep($"Click on a {UtilityScripts.Utilities.VillagerIcon()}Villager", character => character.isNormalCharacter);
-            QuestStep structureClick = new ClickOnStructureStep();
+            QuestStep structureClick = new ClickOnStructureStep("Click on a House", validityChecker: IsSelectedStructureAHouse)
+                .SetHoverOverAction(OnHoverClickHouse)
+                .SetHoverOutAction(UIManager.Instance.HideSmallInfo);
             QuestStep hexTileClick = new ClickOnAreaStep().SetHoverOverAction(OnHoverClickArea)
                 .SetHoverOutAction(UIManager.Instance.HideSmallInfo);
             if (WorldConfigManager.Instance.isDemoWorld == false) {
@@ -77,6 +79,17 @@ namespace Tutorial {
                 "Areas have representations in both the Interior Map and World Map. " +
                 "An Area in the World Map is represented by a Hex Tile and an Area in the Interior Map is represented by a Square when selected.", 
                 TutorialManager.Instance.areaVideoClip);
+        }
+        private bool IsSelectedStructureAHouse(LocationStructure structure) {
+            return structure is Dwelling;
+        }
+        private void OnHoverClickHouse(QuestStepItem stepItem) {
+            UIManager.Instance.ShowSmallInfo(
+                "There are varied structures existing in the world such as Houses, Taverns, Monster Lairs and more. " +
+                "To click on one, simply click on an empty tile inside it.",
+                TutorialManager.Instance.homeStructureVideo, "Structures",
+                stepItem.hoverPosition
+            );
         }
         #endregion
 

@@ -39539,6 +39539,7 @@ MonoBehaviour:
   moodTab: {fileID: 2800000, guid: e0b2998af995557438773f75d19dc119, type: 3}
   relationsTab: {fileID: 2800000, guid: fcc7fcbc96a67964d91e98453dc13ab8, type: 3}
   logsTab: {fileID: 2800000, guid: 7aee7ce54defa9340bef1e3dc1cf8457, type: 3}
+  homeStructureVideo: {fileID: 32900000, guid: b08af4031c74c78469eb4af307bb8fd7, type: 3}
 --- !u!4 &711025101 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4243562867990628, guid: c51738521ec0ac14abf6fc9fd57b44d9,
@@ -111978,7 +111979,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1024382313
   m_SortingLayer: 19
-  m_SortingOrder: 1000
+  m_SortingOrder: 80
   m_Sprite: {fileID: 21300000, guid: c2e9bd5e9e210a7408ea8b5ed8f5d19a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0

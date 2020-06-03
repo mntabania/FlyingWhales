@@ -61,6 +61,7 @@ namespace Tutorial {
         public Texture moodTab;
         public Texture relationsTab;
         public Texture logsTab;
+        public VideoClip homeStructureVideo;
 
         #region Monobehaviours
         private void Awake() {
