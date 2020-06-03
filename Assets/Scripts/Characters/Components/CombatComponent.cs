@@ -9,6 +9,7 @@ public class CombatComponent {
     public COMBAT_MODE combatMode { get; private set; }
     public List<IPointOfInterest> hostilesInRange { get; private set; } //POI's in this characters hostility collider
     public List<IPointOfInterest> avoidInRange { get; private set; } //POI's in this characters hostility collider
+    public List<IPointOfInterest> bannedFromHostileList { get; private set; }
     public Dictionary<IPointOfInterest, CombatData> fightCombatData { get; private set; }
     //public string avoidReason { get; private set; }
     public ElementalDamageData elementalDamage { get; private set; }
@@ -26,6 +27,7 @@ public class CombatComponent {
 		this.owner = owner;
         hostilesInRange = new List<IPointOfInterest>();
         avoidInRange = new List<IPointOfInterest>();
+        bannedFromHostileList = new List<IPointOfInterest>();
         fightCombatData = new Dictionary<IPointOfInterest, CombatData>();
         SetCombatMode(COMBAT_MODE.Aggressive);
         SetElementalType(ELEMENTAL_TYPE.Normal);
@@ -145,7 +147,7 @@ public class CombatComponent {
     }
     public bool Fight(IPointOfInterest target, string reason, ActualGoapNode connectedAction = null, bool isLethal = true) {
         bool hasFought = false;
-        if (!hostilesInRange.Contains(target)) {
+        if (!hostilesInRange.Contains(target) && !bannedFromHostileList.Contains(target)) {
             string debugLog = $"Triggered FIGHT response for {owner.name} against {target.nameWithID}";
             hostilesInRange.Add(target);
             avoidInRange.Remove(target);
@@ -182,6 +184,10 @@ public class CombatComponent {
             //} else 
             if (target is TileObject targetTileObject) {
                 targetTileObject.AdjustRepairCounter(-1);
+            } else if (target is Character targetCharacter) {
+                if (fightCombatData[targetCharacter].reasonForCombat == CombatManager.Hostility) {
+                    AddPOIToBannedFromHostile(targetCharacter);
+                }
             }
         }
         if (!avoidInRange.Contains(target)) {
@@ -263,6 +269,10 @@ public class CombatComponent {
             //} else 
             if (poi is TileObject targetTileObject) {
                 targetTileObject.AdjustRepairCounter(-1);
+            } else if (poi is Character targetCharacter) {
+                if (fightCombatData[targetCharacter].reasonForCombat == CombatManager.Hostility) {
+                    AddPOIToBannedFromHostile(targetCharacter);
+                }
             }
             string removeHostileSummary = $"{poi.name} was removed from {owner.name}'s hostile range.";
             owner.logComponent.PrintLogIfActive(removeHostileSummary);
@@ -289,6 +299,10 @@ public class CombatComponent {
             for (int i = 0; i < hostilesInRange.Count; i++) {
                 if (hostilesInRange[i] is TileObject targetTileObject) {
                     targetTileObject.AdjustRepairCounter(-1);
+                } else if (hostilesInRange[i] is Character targetCharacter) {
+                    if (fightCombatData[targetCharacter].reasonForCombat == CombatManager.Hostility) {
+                        AddPOIToBannedFromHostile(targetCharacter);
+                    }
                 }
             }
             hostilesInRange.Clear();
@@ -397,6 +411,17 @@ public class CombatComponent {
     //        RemoveHostileInRange(token);
     //    }
     //}
+    private void AddPOIToBannedFromHostile(IPointOfInterest poi) {
+        if (!bannedFromHostileList.Contains(poi)) {
+            bannedFromHostileList.Add(poi);
+            GameDate dueDate = GameManager.Instance.Today();
+            dueDate.AddTicks(4);
+            SchedulingManager.Instance.AddEntry(dueDate, () => RemovePOIToBannedFromHostile(poi), owner);
+        }
+    }
+    private bool RemovePOIToBannedFromHostile(IPointOfInterest poi) {
+        return bannedFromHostileList.Remove(poi);
+    }
     #endregion
 
     #region Avoid
@@ -434,6 +459,20 @@ public class CombatComponent {
         if (owner.marker) {
             if (!owner.marker.inVisionPOIs.Contains(poi)) {
                 RemoveAvoidInRange(poi, processCombatBehavior);
+            }
+        }
+    }
+    public void RemoveHostileInRangeSchedule(IPointOfInterest poi, bool processCombatBehavior = true) {
+        if (hostilesInRange.Contains(poi) && fightCombatData[poi].connectedAction == null) {
+            GameDate dueDate = GameManager.Instance.Today();
+            dueDate.AddTicks(2);
+            SchedulingManager.Instance.AddEntry(dueDate, () => FinalCheckForRemoveHostileSchedule(poi, processCombatBehavior), owner);
+        }
+    }
+    private void FinalCheckForRemoveHostileSchedule(IPointOfInterest poi, bool processCombatBehavior) {
+        if (owner.marker) {
+            if (!owner.marker.inVisionPOIs.Contains(poi)) {
+                RemoveHostileInRange(poi, processCombatBehavior);
             }
         }
     }

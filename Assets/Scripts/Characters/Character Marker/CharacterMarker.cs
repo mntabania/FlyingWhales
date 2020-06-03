@@ -1094,6 +1094,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public bool RemovePOIFromInVisionRange(IPointOfInterest poi) {
         if (inVisionPOIs.Remove(poi)) {
             RemoveUnprocessedPOI(poi);
+            character.combatComponent.RemoveHostileInRangeSchedule(poi);
             character.combatComponent.RemoveAvoidInRangeSchedule(poi);
             if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
                 Character target = poi as Character;
