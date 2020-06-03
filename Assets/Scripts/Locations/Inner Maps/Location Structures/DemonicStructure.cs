@@ -6,12 +6,10 @@ using Inner_Maps;
 namespace Inner_Maps.Location_Structures {
     public class DemonicStructure : LocationStructure {
         protected DemonicStructure(STRUCTURE_TYPE structureType, Region location) : base(structureType, location) {
-            maxHP = 6000;
-            currentHP = maxHP;
+            SetMaxHPAndReset(3000);
         }
         public DemonicStructure(Region location, SaveDataLocationStructure data) : base(location, data) {
-            maxHP = 6000;
-            currentHP = maxHP;
+            SetMaxHPAndReset(3000);
         }
 
         #region Overrides

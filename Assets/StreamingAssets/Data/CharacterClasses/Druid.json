@@ -1,7 +1,7 @@
 {
     "_className": "Druid",
     "_baseAttackPower": 80,
-    "_baseHP": 570,
+    "_baseHP": 750,
     "_baseAttackSpeed": 750,
     "_attackRange": 3.0,
     "_inventoryCapacity": 5,

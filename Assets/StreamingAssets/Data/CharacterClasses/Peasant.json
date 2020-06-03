@@ -1,7 +1,7 @@
 {
     "_className": "Peasant",
     "_baseAttackPower": 45,
-    "_baseHP": 400,
+    "_baseHP": 500,
     "_baseAttackSpeed": 700,
     "_attackRange": 0.800000011920929,
     "_inventoryCapacity": 3,
