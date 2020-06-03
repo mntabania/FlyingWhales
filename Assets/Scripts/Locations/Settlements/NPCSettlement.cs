@@ -367,7 +367,19 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             if(resident.canPerform && !resident.isDead 
                 && resident.gridTileLocation != null 
                 && resident.gridTileLocation.collectionOwner.isPartOfParentRegionMap
-                && resident.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile == this) {
+                && resident.gridTileLocation.IsPartOfSettlement(this)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool HasAliveResidentInsideSettlement() {
+        for (int i = 0; i < residents.Count; i++) {
+            Character resident = residents[i];
+            if (!resident.isDead
+                && resident.gridTileLocation != null
+                && resident.gridTileLocation.collectionOwner.isPartOfParentRegionMap
+                && resident.gridTileLocation.IsPartOfSettlement(this)) {
                 return true;
             }
         }

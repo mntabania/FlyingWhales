@@ -91,7 +91,7 @@ public class CharacterVisuals {
 
     #region UI
     public string GetNameplateName() {
-        string name = _owner.firstName;
+        string name = _owner.firstName + " - " + _owner.raceClassName;
         //Temporarily removed this because we will put the race/class text beside the name so that we can increase the font size of "currently doing action" text of the character 
         //if(_owner.isSettlementRuler || _owner.isFactionLeader) {
         //    string additionalText = string.Empty;
