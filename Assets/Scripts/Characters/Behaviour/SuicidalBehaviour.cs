@@ -9,7 +9,7 @@ public class SuicidalBehaviour : CharacterBehaviourComponent {
         priority = 8;
         //attributes = new BEHAVIOUR_COMPONENT_ATTRIBUTE[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.WITHIN_HOME_SETTLEMENT_ONLY };
     }
-    public override bool TryDoBehaviour(Character character, ref string log) {
+    public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         if (character.currentStructure == character.homeStructure) {
             if (character.previousCurrentActionNode != null && character.previousCurrentActionNode.action.goapType == INTERACTION_TYPE.RETURN_HOME) {
                 log += $"\n-{character.name} is in home structure and just returned home";
@@ -20,7 +20,7 @@ public class SuicidalBehaviour : CharacterBehaviourComponent {
                     TileObject deskOrTable = character.currentStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.DESK, TILE_OBJECT_TYPE.TABLE);
                     if (deskOrTable != null) {
                         log += $"\n  -{character.name} will do action Sit on {deskOrTable}";
-                        character.PlanIdle(JOB_TYPE.IDLE_SIT, INTERACTION_TYPE.SIT, deskOrTable);
+                        character.PlanIdle(JOB_TYPE.IDLE_SIT, INTERACTION_TYPE.SIT, deskOrTable, out producedJob);
                         return true;
                     } else {
                         log += "\n  -No unoccupied table or desk";
@@ -28,7 +28,7 @@ public class SuicidalBehaviour : CharacterBehaviourComponent {
                 }
                 log += "\n-Otherwise, stand idle";
                 log += $"\n  -{character.name} will do action Stand";
-                character.PlanIdle(JOB_TYPE.IDLE_STAND, INTERACTION_TYPE.STAND, character);
+                character.PlanIdle(JOB_TYPE.IDLE_STAND, INTERACTION_TYPE.STAND, character, out producedJob);
                 return true;
             } else {
                 log += $"\n-{character.name} is in home structure and previous action is not returned home";
@@ -46,7 +46,7 @@ public class SuicidalBehaviour : CharacterBehaviourComponent {
                                 log += "\n  -Character is vampiric, cannot do nap action";
                             } else {
                                 log += $"\n  -Afternoon: {character.name} will do action Nap on {bed}";
-                                character.PlanIdle(JOB_TYPE.IDLE_NAP, INTERACTION_TYPE.NAP, bed);
+                                character.PlanIdle(JOB_TYPE.IDLE_NAP, INTERACTION_TYPE.NAP, bed, out producedJob);
                                 return true;
                             }
                         } else {
@@ -66,10 +66,10 @@ public class SuicidalBehaviour : CharacterBehaviourComponent {
                         if (chosenCharacter != null) {
                             if (chosenCharacter.homeStructure != null) {
                                 log += $"\n  -Will visit house of Disabled Character {chosenCharacter.name}";
-                                character.PlanIdle(JOB_TYPE.CHECK_PARALYZED_FRIEND, INTERACTION_TYPE.VISIT, character, new object[] { chosenCharacter.homeStructure, chosenCharacter });
+                                character.PlanIdle(JOB_TYPE.CHECK_PARALYZED_FRIEND, INTERACTION_TYPE.VISIT, character, out producedJob, new object[] { chosenCharacter.homeStructure, chosenCharacter });
                             } else {
                                 log += $"\n  -{chosenCharacter.name} has no house. Will check out character instead";
-                                character.PlanIdle(JOB_TYPE.CHECK_PARALYZED_FRIEND,  new GoapEffect(GOAP_EFFECT_CONDITION.IN_VISION, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), chosenCharacter);
+                                character.PlanIdle(JOB_TYPE.CHECK_PARALYZED_FRIEND,  new GoapEffect(GOAP_EFFECT_CONDITION.IN_VISION, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), chosenCharacter, out producedJob);
                             }
                             return true;
                         } else {
@@ -87,7 +87,7 @@ public class SuicidalBehaviour : CharacterBehaviourComponent {
                     if (chance < 25) {
                         log +=
                             $"\n  -Morning, Afternoon, or Early Night: {character.name} will enter Stroll Outside Mode";
-                        character.PlanIdleStrollOutside(); //character.currentStructure
+                        character.PlanIdleStrollOutside(out producedJob); //character.currentStructure
                         return true;
                     }
                 } else {
@@ -124,7 +124,7 @@ public class SuicidalBehaviour : CharacterBehaviourComponent {
                             if (targetStructure != null) {
                                 log +=
                                     $"\n  -Morning or Afternoon: {character.name} will go to dwelling of character with positive relationship and set Base Structure for 2.5 hours";
-                                character.PlanIdle(JOB_TYPE.VISIT_FRIEND,  INTERACTION_TYPE.VISIT, character, new object[] { targetStructure, targetCharacter });
+                                character.PlanIdle(JOB_TYPE.VISIT_FRIEND,  INTERACTION_TYPE.VISIT, character, out producedJob, new object[] { targetStructure, targetCharacter });
                                 return true;
                             } else {
                                 log += "\n  -No positive relationship with home structure";
@@ -143,7 +143,7 @@ public class SuicidalBehaviour : CharacterBehaviourComponent {
                     TileObject deskOrTable = character.currentStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.DESK, TILE_OBJECT_TYPE.TABLE);
                     if (deskOrTable != null) {
                         log += $"\n  -{character.name} will do action Sit on {deskOrTable}";
-                        character.PlanIdle(JOB_TYPE.IDLE_SIT, INTERACTION_TYPE.SIT, deskOrTable);
+                        character.PlanIdle(JOB_TYPE.IDLE_SIT, INTERACTION_TYPE.SIT, deskOrTable, out producedJob);
                         return true;
                     } else {
                         log += "\n  -No unoccupied Table or Desk";
@@ -155,14 +155,15 @@ public class SuicidalBehaviour : CharacterBehaviourComponent {
                 log += $"\n  -RNG roll: {standChance}";
                 if (standChance < 25) {
                     log += $"\n  -{character.name} will do action Stand";
-                    character.PlanIdle(JOB_TYPE.IDLE_STAND, INTERACTION_TYPE.STAND, character);
+                    character.PlanIdle(JOB_TYPE.IDLE_STAND, INTERACTION_TYPE.STAND, character, out producedJob);
                     return true;
                 }
-                character.jobComponent.TriggerSuicideJob();
+                producedJob = character.jobComponent.TriggerSuicideJob();
                 //PlanIdleStroll(currentStructure);
                 return true;
             }
         }
+        producedJob = null;
         return false;
     }
 }

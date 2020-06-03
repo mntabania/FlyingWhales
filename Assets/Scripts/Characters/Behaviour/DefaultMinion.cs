@@ -9,21 +9,21 @@ public class DefaultMinion : CharacterBehaviourComponent {
 		priority = 8;
 		// attributes = new[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.WITHIN_HOME_SETTLEMENT_ONLY };
 	}
-	public override bool TryDoBehaviour(Character character, ref string log) {
+	public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         log += $"\n-{character.name} will roam around assigned area!";
         if(character.behaviourComponent.assignedTargetSettlement != null) {
             NPCSettlement assignedSettlement = character.behaviourComponent.assignedTargetSettlement;
             HexTile chosenHex = CollectionUtilities.GetRandomElement(assignedSettlement.tiles);
             LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(chosenHex.locationGridTiles);
-            character.jobComponent.TriggerRoamAroundTile(chosenTile);
+            character.jobComponent.TriggerRoamAroundTile(out producedJob, chosenTile);
             return true;
         } else if (character.behaviourComponent.assignedTargetHex != null) {
             HexTile chosenHex = character.behaviourComponent.assignedTargetHex;
             LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(chosenHex.locationGridTiles);
-            character.jobComponent.TriggerRoamAroundTile(chosenTile);
+            character.jobComponent.TriggerRoamAroundTile(out producedJob, chosenTile);
             return true;
         } else {
-            character.jobComponent.TriggerRoamAroundTile();
+            character.jobComponent.TriggerRoamAroundTile(out producedJob);
             return true;
         }
         //      if (character.minion != null) {

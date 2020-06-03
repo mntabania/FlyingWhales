@@ -11,7 +11,8 @@ public class WolfBehaviour : CharacterBehaviourComponent {
         priority = 9;
     }
     
-    public override bool TryDoBehaviour(Character character, ref string log) {
+    public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
+        producedJob = null;
         if (UtilityScripts.Utilities.IsEven(GameManager.Instance.Today().day) &&
             GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.Today().tick) == 6 && Random.Range(0, 2) == 1) {
             List<HexTile> choices = character.currentRegion.GetTilesWithFeature(TileFeatureDB.Game_Feature).OrderBy(x =>

@@ -586,7 +586,7 @@ public class ReactionComponent {
                 && owner.homeSettlement != null
                 && targetTileObject.gridTileLocation.IsPartOfSettlement(owner.homeSettlement)
                 && !owner.traitContainer.HasTrait("Pyrophobic")
-                && !owner.jobQueue.HasJob(JOB_TYPE.DOUSE_FIRE)) {
+                && !owner.traitContainer.HasTrait("Dousing")) {
                 debugLog += "\n-Target is Burning and Character is not Pyrophobic";
                 owner.SetHasSeenFire(true);
                 owner.homeSettlement.settlementJobTriggerComponent.TriggerDouseFire();

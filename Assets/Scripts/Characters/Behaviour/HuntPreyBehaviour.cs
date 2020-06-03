@@ -10,7 +10,8 @@ public class HuntPreyBehaviour : CharacterBehaviourComponent {
         priority = 10;
     }
     
-    public override bool TryDoBehaviour(Character character, ref string log) {
+    public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
+        producedJob = null;
         Hunting hunting = character.traitContainer.GetNormalTrait<Hunting>("Hunting");
         if (hunting != null) {
             List<Animal> animals = hunting.targetTile.GetAllDeadAndAliveCharactersInsideHex<Animal>();
@@ -22,14 +23,14 @@ public class HuntPreyBehaviour : CharacterBehaviourComponent {
                         Animal deadAnimal = CollectionUtilities.GetRandomElement(deadAnimals);
                         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HUNT_PREY,
                             INTERACTION_TYPE.EAT_CORPSE, deadAnimal, character);
-                        character.jobQueue.AddJobInQueue(job);
+                        producedJob = job;
                     } else {
                         //only make wolf assault because job to hunt prey will be cancelled after the target animal dies.
                         //eat corpse will be triggered above.
                         Animal animalToHunt = CollectionUtilities.GetRandomElement(animals);
                         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HUNT_PREY,
                             INTERACTION_TYPE.ASSAULT, animalToHunt, character);
-                        character.jobQueue.AddJobInQueue(job);
+                        producedJob = job;
                     }
                 }
             } else {

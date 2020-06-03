@@ -10,7 +10,8 @@ public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
     public AttackDemonicStructureBehaviour() {
         priority = 1080;
     }
-    public override bool TryDoBehaviour(Character character, ref string log) {
+    public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
+        producedJob = null;
         log += $"\n-{character.name} will attack demonic structure";
         if (character.behaviourComponent.attackDemonicStructureTarget.hasBeenDestroyed) {
             log += $"\n-Demonic structure target is already destroyed";
@@ -25,6 +26,7 @@ public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
                     if (CharacterManager.Instance.currentDemonicStructureTargetOfAngels != null) {
                         log += $"\n-New target demonic structure is set: " + CharacterManager.Instance.currentDemonicStructureTargetOfAngels.structureType.ToString();
                         character.behaviourComponent.SetDemonicStructureTarget(CharacterManager.Instance.currentDemonicStructureTargetOfAngels);
+                        producedJob = null;
                         return true;
                     } else {
                         log += $"\n-Still no target structure";
@@ -62,12 +64,12 @@ public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
                     } else {
                         log += "\n-No preplaced tile object in vision";
                         log += "\n-Roam";
-                        character.jobComponent.TriggerAttackDemonicStructure();
+                        character.jobComponent.TriggerAttackDemonicStructure(out producedJob);
                     }
                 } else {
                     log += "\n-No tile object in vision";
                     log += "\n-Roam";
-                    character.jobComponent.TriggerAttackDemonicStructure();
+                    character.jobComponent.TriggerAttackDemonicStructure(out producedJob);
                 }
             } else {
                 log += "\n-Is not in the target demonic structure";
@@ -75,7 +77,7 @@ public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
                 List<LocationGridTile> tileChoices = character.behaviourComponent.attackDemonicStructureTarget.tiles
                     .Where(x => PathfindingManager.Instance.HasPathEvenDiffRegion(character.gridTileLocation, x)).ToList();
                 LocationGridTile targetTile = CollectionUtilities.GetRandomElement(tileChoices);
-                character.jobComponent.TriggerAttackDemonicStructure(targetTile);
+                character.jobComponent.TriggerAttackDemonicStructure(out producedJob, targetTile);
             }
         }
         return true;

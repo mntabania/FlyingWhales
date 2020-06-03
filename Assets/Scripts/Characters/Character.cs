@@ -3315,6 +3315,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //}
         return true;
     }
+    public bool PlanIdleStrollOutside(out JobQueueItem producedJob) {
+        CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.STROLL, CHARACTER_STATE.STROLL_OUTSIDE, this);
+        producedJob = job;
+        return true;
+    }
     public bool PlanIdleReturnHome() { //bool forceDoAction = false
         if (homeStructure != null && homeStructure.tiles.Count > 0 && !homeStructure.hasBeenDestroyed) {
             //LocationGridTile tile = CollectionUtilities.GetRandomElement(homeStructure.tiles);
@@ -3362,6 +3367,25 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //}
         //PlanGoapActions(goapAction);
         //}
+        return false;
+    }
+    public bool PlanIdleReturnHome(out JobQueueItem producedJob) { //bool forceDoAction = false
+        if (homeStructure != null && homeStructure.tiles.Count > 0 && !homeStructure.hasBeenDestroyed) {
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RETURN_HOME], this, this, null, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, this);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE_RETURN_HOME, INTERACTION_TYPE.RETURN_HOME, this, this);
+            goapPlan.SetDoNotRecalculate(true);
+            job.SetCannotBePushedBack(true);
+            job.SetAssignedPlan(goapPlan);
+            producedJob = job;
+            return true;
+        } else {
+            producedJob = null;
+            //If character cannot return home roam around tile instead
+            if(territorries.Count <= 0) {
+                interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
+            }
+        }
         return false;
     }
     private string OtherIdlePlans() {
@@ -3416,6 +3440,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //AddPlan(goapPlan);
         //PlanGoapActions(goapAction);
     }
+    public void PlanIdle(JOB_TYPE jobType, INTERACTION_TYPE type, IPointOfInterest target, out JobQueueItem producedJob, object[] otherData = null) {
+        ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[type], this, target, otherData, 0);
+        GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, target);
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, type, target, this);
+        goapPlan.SetDoNotRecalculate(true);
+        job.SetCannotBePushedBack(true);
+        job.SetAssignedPlan(goapPlan);
+        producedJob = job;
+    }
     public void PlanIdle(JOB_TYPE jobType, GoapEffect effect, IPointOfInterest target) {
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, effect, target, this);
         jobQueue.AddJobInQueue(job);
@@ -3430,6 +3463,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //goapPlan.ConstructAllNodes();
         //AddPlan(goapPlan);
         //PlanGoapActions(goapAction);
+    }
+    public void PlanIdle(JOB_TYPE jobType, GoapEffect effect, IPointOfInterest target, out JobQueueItem producedJob) {
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, effect, target, this);
+        producedJob = job;
     }
     public void PlanAction(JOB_TYPE jobType, INTERACTION_TYPE type, IPointOfInterest target, object[] otherData = null) {
         ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[type], this, target, otherData, 0);

@@ -8,9 +8,9 @@ public class MinionBehaviour : CharacterBehaviourComponent {
 		priority = 8;
 	}
     
-    public override bool TryDoBehaviour(Character character, ref string log) {
+    public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         log += $"\n-{character.name} is going to stroll...";
-        character.PlanIdleStrollOutside();
+        character.PlanIdleStrollOutside(out producedJob);
         return true;
     }
 }

@@ -7,7 +7,7 @@ public class UndeadBehaviour : CharacterBehaviourComponent {
 	public UndeadBehaviour() {
 		priority = 9;
 	}
-	public override bool TryDoBehaviour(Character character, ref string log) {
+	public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         log += $"\n-{character.name} is an undead";
         if (character.race == RACE.SKELETON) {
             log += $"\n-Character is a skeleton";
@@ -25,30 +25,35 @@ public class UndeadBehaviour : CharacterBehaviourComponent {
                     }
                     if (character.currentStructure == lair && undeadFactionLeader.currentStructure == lair) {
                         log += $"\n-Character and faction leader is in lair, roam";
-                        character.jobComponent.TriggerRoamAroundTile();
+                        character.jobComponent.TriggerRoamAroundTile(out producedJob);
                     } else {
                         if (!undeadFactionLeader.isBeingSeized && undeadFactionLeader.marker && undeadFactionLeader.gridTileLocation != null && !undeadFactionLeader.isDead
                             && character.gridTileLocation != null && PathfindingManager.Instance.HasPathEvenDiffRegion(character.gridTileLocation, undeadFactionLeader.gridTileLocation)) {
                             if (character.marker.inVisionCharacters.Contains(undeadFactionLeader)) {
                                 log += $"\n-Character can see faction leader, do nothing";
+                                producedJob = null;
                                 return true;
                             } else {
                                 log += $"\n-Character cannot see faction leader, go to him";
                                 if (character.jobComponent.CreateGoToJob(undeadFactionLeader)) {
+                                    producedJob = null;
                                     return true;
                                 }
                             }
                         } else {
                             if(character.currentStructure != lair) {
-                                character.PlanIdleReturnHome();
+                                character.PlanIdleReturnHome(out producedJob);
+                                return true;
                             } else {
-                                character.jobComponent.TriggerRoamAroundTile();
+                                character.jobComponent.TriggerRoamAroundTile(out producedJob);
+                                return true;
                             }
                         }
                     }
                 }
             }
         }
+        producedJob = null;
         return false;
 	}
 }

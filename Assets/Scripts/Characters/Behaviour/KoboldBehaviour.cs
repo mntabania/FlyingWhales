@@ -9,7 +9,7 @@ public class KoboldBehaviour : CharacterBehaviourComponent {
         priority = 9;
     }
     
-    public override bool TryDoBehaviour(Character character, ref string log) {
+    public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         if (UnityEngine.Random.Range(0, 100) < 10) {
             // List<HexTile> hexTileChoices = GetTilesNextToActiveSetztlement(character.currentRegion);
             List<HexTile> hexTileChoices = GetValidHexTilesNextToHome(character);
@@ -24,15 +24,18 @@ public class KoboldBehaviour : CharacterBehaviourComponent {
                         INTERACTION_TYPE.PLACE_FREEZING_TRAP, targetTile.genericTileObject, character);
                     job.AddOtherData(INTERACTION_TYPE.PLACE_FREEZING_TRAP,  
                         new object[] { new TrapChecker(c => c.race != RACE.KOBOLD) });
-                    character.jobQueue.AddJobInQueue(job);
+                    producedJob = job;
                     return true;
                 } else {
+                    producedJob = null;
                     return false;
                 }
             } else {
+                producedJob = null;
                 return false;
             }
         }
+        producedJob = null;
         return false;
     }
     

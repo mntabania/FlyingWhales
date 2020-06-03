@@ -11,10 +11,11 @@ public class DryTilesBehaviour : CharacterBehaviourComponent {
     public DryTilesBehaviour() {
         priority = 430;
     }
-    public override bool TryDoBehaviour(Character character, ref string log) {
+    public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
+        producedJob = null;
         if (StillHasWetTile(character)) {
             //dry nearest wet tile
-            if (DryNearestTile(character) == false) {
+            if (DryNearestTile(character, out producedJob) == false) {
                 //could not find a tile to dry
                 character.traitContainer.RemoveTrait(character, "Drying");
             }
@@ -29,7 +30,7 @@ public class DryTilesBehaviour : CharacterBehaviourComponent {
         return character.behaviourComponent.dryingTilesForSettlement.settlementJobTriggerComponent.wetTiles.Count > 0;
     }
     
-    private bool DryNearestTile(Character character) {
+    private bool DryNearestTile(Character character, out JobQueueItem producedJob) {
         LocationGridTile nearestTile = null;
         float nearest = 99999f;
 
@@ -51,9 +52,10 @@ public class DryTilesBehaviour : CharacterBehaviourComponent {
             wet.SetDryer(character);
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DRY_TILES, INTERACTION_TYPE.DRY_TILE,
                 nearestTile.genericTileObject, character);
-            character.jobQueue.AddJobInQueue(job);
+            producedJob = job;
             return true;
         }
+        producedJob = null;
         return false;
     }
 

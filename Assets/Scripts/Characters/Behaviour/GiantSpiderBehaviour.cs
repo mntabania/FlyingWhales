@@ -9,7 +9,8 @@ public class GiantSpiderBehaviour : CharacterBehaviourComponent {
         priority = 9;
     }
     
-    public override bool TryDoBehaviour(Character character, ref string log) {
+    public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
+        producedJob = null;
         TIME_IN_WORDS timeInWords = GameManager.GetCurrentTimeInWordsOfTick();
         if (timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
             if (character.homeStructure != null && UnityEngine.Random.Range(0, 100) < 20) {
@@ -20,7 +21,7 @@ public class GiantSpiderBehaviour : CharacterBehaviourComponent {
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MONSTER_ABDUCT,
                         INTERACTION_TYPE.DROP, chosenCharacter, character);
                     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] {character.homeStructure});
-                    character.jobQueue.AddJobInQueue(job);
+                    producedJob = job;
                     return true;
                 }
             }

@@ -7,18 +7,19 @@ public class BerserkBehaviour : CharacterBehaviourComponent {
         priority = 1085;
         // attributes = new[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.WITHIN_HOME_SETTLEMENT_ONLY };
     }
-    public override bool TryDoBehaviour(Character character, ref string log) {
+    public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
+        producedJob = null;
         log += $"\n-{character.name} is berserked";
         if (!character.isInCombat) {
             log += $"\n-{character.name} is not in combat will try to attack nearby characters/objects";
-
             bool hasCreatedJob = false;
             for (int i = 0; i < character.marker.inVisionPOIs.Count; i++) {
                 IPointOfInterest inVisionPOI = character.marker.inVisionPOIs[i];
                 if(!character.combatComponent.hostilesInRange.Contains(inVisionPOI) && !character.combatComponent.avoidInRange.Contains(inVisionPOI)) {
                     if (inVisionPOI is Character targetCharacter) {
                         if (!targetCharacter.isDead) {
-                            if (character.jobComponent.CreateBerserkAttackJob(targetCharacter) != null) {
+                            producedJob = character.jobComponent.CreateBerserkAttackJob(targetCharacter);
+                            if (producedJob != null) {
                                 hasCreatedJob = true;
                                 //character.combatComponent.Fight(targetPOI, CombatManager.Berserked, isLethal: false);
                                 break;
@@ -37,7 +38,8 @@ public class BerserkBehaviour : CharacterBehaviourComponent {
                     } else if (inVisionPOI is TileObject targetPOI) { // || targetPOI is SpecialToken
                         if (Random.Range(0, 100) < 35) {
                             //character.jobComponent.TriggerDestroy(targetPOI);
-                            if (character.jobComponent.CreateBerserkAttackJob(targetPOI) != null) {
+                            producedJob = character.jobComponent.CreateBerserkAttackJob(targetPOI);
+                            if (producedJob != null) {
                                 hasCreatedJob = true;
                                 //character.combatComponent.Fight(targetPOI, CombatManager.Berserked, isLethal: false);
                                 break;
@@ -48,7 +50,7 @@ public class BerserkBehaviour : CharacterBehaviourComponent {
             }
             if (!hasCreatedJob) {
                 log += $"\n-{character.name} did not create berserk attack job, will stroll instead";
-                character.PlanIdleStrollOutside();
+                character.PlanIdleStrollOutside(out producedJob);
             }
         }
         return true;

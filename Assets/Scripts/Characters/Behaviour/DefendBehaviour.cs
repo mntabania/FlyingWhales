@@ -12,7 +12,8 @@ public class DefendBehaviour : CharacterBehaviourComponent {
     public DefendBehaviour() {
         priority = 10;
     }
-    public override bool TryDoBehaviour(Character character, ref string log) {
+    public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
+        producedJob = null;
         log += $"\n-{character.name} will defend";
         HexTile chosenHex = character.behaviourComponent.assignedTargetHex;
         if (chosenHex != null) {
@@ -21,7 +22,7 @@ public class DefendBehaviour : CharacterBehaviourComponent {
                 character.combatComponent.Fight(chosenTarget, CombatManager.Hostility);
             } else {
                 LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(chosenHex.borderTiles);
-                character.jobComponent.TriggerRoamAroundTile(chosenTile);
+                character.jobComponent.TriggerRoamAroundTile(out producedJob, chosenTile);
             }
             return true;
         }

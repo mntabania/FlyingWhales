@@ -8,7 +8,8 @@ public class AttackVillageBehaviour : CharacterBehaviourComponent {
     public AttackVillageBehaviour() {
         priority = 30;
     }
-    public override bool TryDoBehaviour(Character character, ref string log) {
+    public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
+        producedJob = null;
         log += $"\n-{character.name} will attack village";
         if (character.gridTileLocation.collectionOwner.isPartOfParentRegionMap
             && character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner 
@@ -47,7 +48,7 @@ public class AttackVillageBehaviour : CharacterBehaviourComponent {
             log += "\n-Roam there";
             HexTile targetHex = character.behaviourComponent.attackVillageTarget.tiles[UnityEngine.Random.Range(0, character.behaviourComponent.attackVillageTarget.tiles.Count)];
             LocationGridTile targetTile = targetHex.locationGridTiles[UnityEngine.Random.Range(0, targetHex.locationGridTiles.Count)];
-            character.jobComponent.TriggerRoamAroundTile(targetTile);
+            character.jobComponent.TriggerRoamAroundTile(out producedJob, targetTile);
         }
         return true;
     }

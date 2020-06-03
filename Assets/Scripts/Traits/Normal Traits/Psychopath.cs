@@ -303,62 +303,29 @@ namespace Traits {
             //job.SetIsStealth(true);
             character.jobQueue.AddJobInQueue(job);
             return true;
-            //GoapAction goapAction6 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.BURY_CHARACTER, character, targetVictim);
-            //GoapAction goapAction5 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.CARRY_CORPSE, character, targetVictim);
-            //GoapAction goapAction4 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.RITUAL_KILLING, character, targetVictim);
-            //GoapAction goapAction3 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.ABDUCT_CHARACTER, character, targetVictim);
-            //GoapAction goapAction2 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.RESTRAIN_CARRY_CHARACTER, character, targetVictim);
-            ////GoapAction goapAction2 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.RESTRAIN_CHARACTER, character, targetVictim);
-            //GoapAction goapAction1 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.KNOCKOUT_CHARACTER, character, targetVictim);
-
-            ////goapAction3.SetWillAvoidCharactersWhileMoving(true);
-            ////goapAction6.SetWillAvoidCharactersWhileMoving(true);
-
-            //goapAction6.InitializeOtherData(new object[] { wilderness });
-
-            //GoapNode goalNode = new GoapNode(null, goapAction6.cost, goapAction6);
-            ////GoapNode sixthNode = new GoapNode(goalNode, goapAction5.cost, goapAction5);
-            //GoapNode fifthNode = new GoapNode(goalNode, goapAction5.cost, goapAction5);
-            //GoapNode fourthNode = new GoapNode(fifthNode, goapAction4.cost, goapAction4);
-            //GoapNode thirdNode = new GoapNode(fourthNode, goapAction3.cost, goapAction3);
-            //GoapNode secondNode = new GoapNode(thirdNode, goapAction2.cost, goapAction2);
-            //GoapNode startingNode = new GoapNode(secondNode, goapAction1.cost, goapAction1);
-
-            //GoapPlan plan = new GoapPlan(startingNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY }, GOAP_CATEGORY.WORK);
-            //plan.ConstructAllNodes();
-            //plan.SetDoNotRecalculate(true);
-            //job.AllowDeadTargets();
+        }
+        public bool CreateHuntVictimJob(out JobQueueItem producedJob) {
+            if (character.jobQueue.HasJob(JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM)) {
+                producedJob = null;
+                return false;
+            }
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM, INTERACTION_TYPE.RITUAL_KILLING, targetVictim, character);
+            if (character.homeStructure?.residents == null || character.homeStructure.residents.Count > 1) {
+                LocationGridTile outsideSettlementTile = character.currentRegion.GetRandomOutsideSettlementLocationGridTileWithPathTo(character.gridTileLocation);
+                if(outsideSettlementTile != null) {
+                    job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { outsideSettlementTile.structure, outsideSettlementTile });
+                } else if (character.homeStructure != null) {
+                    job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { character.homeStructure });
+                } else {
+                    LocationStructure structure = character.currentRegion.GetStructureOfTypeWithoutSettlement(STRUCTURE_TYPE.WILDERNESS);
+                    job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { structure });
+                }
+            } else {
+                job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { character.homeStructure });
+            }
             //job.SetIsStealth(true);
-            //job.SetAssignedPlan(plan);
-            //job.SetAssignedCharacter(character);
-            //job.SetCancelOnFail(true);
-
-
-            //character.AdjustIsWaitingForInteraction(1);
-            //if (character.stateComponent.currentState != null) {
-            //    character.stateComponent.currentState.OnExitThisState();
-            //    //This call is doubled so that it will also exit the previous major state if there's any
-            //    if (character.stateComponent.currentState != null) {
-            //        character.stateComponent.currentState.OnExitThisState();
-            //    }
-            //} else {
-            //    if (character.currentParty.icon.isTravelling) {
-            //        if (character.currentParty.icon.travelLine == null) {
-            //            character.marker.StopMovement();
-            //        } else {
-            //            character.currentParty.icon.SetOnArriveAction(() => character.OnArriveAtAreaStopMovement());
-            //        }
-            //    }
-            //    character.StopCurrentAction(false);
-            //}
-            //character.AdjustIsWaitingForInteraction(-1);
-
-            //character.AddPlan(plan, true);
-
-            //if (hasStartedFollowing) {
-            //    StopFollowing();
-            //    SetHasStartedFollowing(false);
-            //}
+            producedJob = job;
+            return true;
         }
         //private void GenerateSerialVictims() {
         //    SetVictim1Requirement(new SerialVictim(RandomizeVictimType(true), RandomizeVictimType(false)));

@@ -7,7 +7,8 @@ public class HarassBehaviour : CharacterBehaviourComponent {
     public HarassBehaviour() {
         priority = 10;
     }
-    public override bool TryDoBehaviour(Character character, ref string log) {
+    public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
+        producedJob = null;
         log += $"\n-{character.name} will harass";
         if (character.gridTileLocation.collectionOwner.partOfHextile != null
             && character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner 
@@ -20,14 +21,14 @@ public class HarassBehaviour : CharacterBehaviourComponent {
             } else {
                 log += "\n-No tile object in vision";
                 log += "\n-Roam";
-                character.jobComponent.TriggerRoamAroundTile();
+                character.jobComponent.TriggerRoamAroundTile(out producedJob);
             }
         } else {
             log += "\n-Is not in the target npcSettlement";
             log += "\n-Roam there";
             HexTile targetHex = character.behaviourComponent.assignedTargetSettlement.tiles[UnityEngine.Random.Range(0, character.behaviourComponent.assignedTargetSettlement.tiles.Count)];
             LocationGridTile targetTile = targetHex.locationGridTiles[UnityEngine.Random.Range(0, targetHex.locationGridTiles.Count)];
-            character.jobComponent.TriggerRoamAroundTile(targetTile);
+            character.jobComponent.TriggerRoamAroundTile(out producedJob, targetTile);
 
         }
         return true;

@@ -28,8 +28,8 @@ public class BreedEffect : PooledObject {
         controlPointB.y -= 5f;
 
         Sequence sequence = DOTween.Sequence();
-        sequence.Append(DOTween.To(value => glowEffect.AlphaThreshold = value, 0f, 0.9f, 1f));
-        sequence.Append(monsterSprite.transform.DOScale(new Vector3(0.5f, 0.5f, 0.5f), 0.5f).SetEase(Ease.InBounce));
+        sequence.Append(DOTween.To(value => glowEffect.AlphaThreshold = value, 0f, 0.2f, 1f));
+        sequence.Append(monsterSprite.transform.DOScale(new Vector3(0.5f, 0.5f, 0.5f), 0.1f).SetEase(Ease.InBounce));
         sequence.Append(transform.DOPath(new[] {targetPos, controlPointA, controlPointB}, 0.7f, PathType.CubicBezier)
             .SetEase(Ease.InSine));
         sequence.OnComplete(OnCompleteSequence);

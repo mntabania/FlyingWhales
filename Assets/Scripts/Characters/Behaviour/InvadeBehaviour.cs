@@ -8,7 +8,8 @@ public class InvadeBehaviour : CharacterBehaviourComponent {
     public InvadeBehaviour() {
         priority = 10;
     }
-    public override bool TryDoBehaviour(Character character, ref string log) {
+    public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
+        producedJob = null;
         log += $"\n-{character.name} will invade";
         if (character.gridTileLocation.collectionOwner.isPartOfParentRegionMap
             && character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner 
@@ -48,7 +49,7 @@ public class InvadeBehaviour : CharacterBehaviourComponent {
             log += "\n-Roam there";
             HexTile targetHex = character.behaviourComponent.assignedTargetSettlement.tiles[UnityEngine.Random.Range(0, character.behaviourComponent.assignedTargetSettlement.tiles.Count)];
             LocationGridTile targetTile = targetHex.locationGridTiles[UnityEngine.Random.Range(0, targetHex.locationGridTiles.Count)];
-            character.jobComponent.TriggerRoamAroundTile(targetTile);
+            character.jobComponent.TriggerRoamAroundTile(out producedJob, targetTile);
         }
         return true;
     }

@@ -8,7 +8,8 @@ public class DesiresIsolationBehaviour : CharacterBehaviourComponent {
     public DesiresIsolationBehaviour() {
         priority = 5;
     }
-    public override bool TryDoBehaviour(Character character, ref string log) {
+    public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
+        producedJob = null;
         log += $"{character.name} Desires isolation behaviour.";
         if (character.currentStructure == character.homeStructure) {
             log += $"\n{character.name} is at home structure.";   
@@ -20,7 +21,7 @@ public class DesiresIsolationBehaviour : CharacterBehaviourComponent {
                 log += "\n-Sit if there is still an unoccupied Table or Desk in the current location";
                 if (deskOrTable != null) {
                     log += $"\n  -{character.name} will do action Sit on {deskOrTable}";
-                    character.PlanIdle(JOB_TYPE.IDLE_SIT, INTERACTION_TYPE.SIT, deskOrTable);
+                    character.PlanIdle(JOB_TYPE.IDLE_SIT, INTERACTION_TYPE.SIT, deskOrTable, out producedJob);
                     return true;
                 }
                 log += "\n-No available desk or table at location.";
@@ -36,7 +37,7 @@ public class DesiresIsolationBehaviour : CharacterBehaviourComponent {
                 log += $"{character.name} cannot hide at home because he does not have a home";
                 log += $"{character.name} will roam to a tile outside settlement";
                 LocationGridTile tileToGoTo = character.currentRegion.GetRandomOutsideSettlementLocationGridTileWithPathTo(character.gridTileLocation);
-                character.jobComponent.TriggerRoamAroundTile(tileToGoTo);
+                character.jobComponent.TriggerRoamAroundTile(out producedJob, tileToGoTo);
             }
         }
         return true;

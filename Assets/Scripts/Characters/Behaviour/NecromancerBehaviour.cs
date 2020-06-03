@@ -8,7 +8,8 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
 	public NecromancerBehaviour() {
 		priority = 30;
 	}
-	public override bool TryDoBehaviour(Character character, ref string log) {
+	public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
+        producedJob = null;
         log += $"\n-{character.name} is a necromancer";
         if (character.homeStructure != null && !character.homeStructure.hasBeenDestroyed && character.homeStructure.tiles.Count > 0 && character.homeStructure == character.necromancerTrait.lairStructure) {
             log += $"\n-Character has a home structure/territory";
@@ -34,7 +35,7 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                     log += $"\n-Character saw a dead character, has a 80% chance to raise corpse";
                     if (UnityEngine.Random.Range(0, 100) < 80) {
                         log += $"\n-Character will raise corpse";
-                        character.jobComponent.TriggerRaiseCorpse(deadCharacter);
+                        character.jobComponent.TriggerRaiseCorpse(deadCharacter, out producedJob);
                         return true;
                     }
                 } else {
@@ -54,7 +55,7 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                         log += $"\n-Character saw a tombstone, has a 80% chance to raise corpse";
                         if (UnityEngine.Random.Range(0, 100) < 80) {
                             log += $"\n-Character will raise corpse";
-                            character.jobComponent.TriggerRaiseCorpse(tomb);
+                            character.jobComponent.TriggerRaiseCorpse(tomb, out producedJob);
                             return true;
                         }
                     }
@@ -64,11 +65,11 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                     log += $"\n-Character saw a dead summon will try to absorb power";
                     if (deadSummon.characterClass.elementalType != ELEMENTAL_TYPE.Normal) {
                         if (!character.traitContainer.HasTrait(deadSummon.characterClass.elementalType.ToString() + " Attacker")) {
-                            character.jobComponent.TriggerAbsorbPower(deadSummon);
+                            character.jobComponent.TriggerAbsorbPower(deadSummon, out producedJob);
                             return true;
                         }
                     }
-                    character.jobComponent.TriggerAbsorbLife(deadSummon);
+                    character.jobComponent.TriggerAbsorbLife(deadSummon, out producedJob);
                     return true;
                 }
             }
@@ -90,12 +91,12 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                     log += $"\n-Not enough skeleton followers, will try to create more";
                     bool hasCreated = false;
                     if (character.necromancerTrait.energy > 0) {
-                        hasCreated = character.jobComponent.TriggerSpawnSkeleton();
+                        hasCreated = character.jobComponent.TriggerSpawnSkeleton(out producedJob);
                     } else {
-                        hasCreated = character.jobComponent.TriggerRegainEnergy();
+                        hasCreated = character.jobComponent.TriggerRegainEnergy(out producedJob);
                     }
                     if (!hasCreated) {
-                        character.jobComponent.TriggerRoamAroundTile();
+                        character.jobComponent.TriggerRoamAroundTile(out producedJob);
                     }
                     //if (character.necromancerTrait.lifeAbsorbed <= 0) {
                     //    log += $"\n-Life absorbed is none, will try to absorb life";
@@ -129,19 +130,19 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                     if (character.HasItem("Necronomicon")) {
                         if (UnityEngine.Random.Range(0, 100) < 30) {
                             log += $"\n-Character is at home, read necronomicon";
-                            if (character.jobComponent.TriggerReadNecronomicon()) {
+                            if (character.jobComponent.TriggerReadNecronomicon(out producedJob)) {
                                 return true;
                             }
                         }
                     }
                     if (UnityEngine.Random.Range(0, 100) < 40) {
                         log += $"\n-Character is at home, meditate";
-                        if (character.jobComponent.TriggerMeditate()) {
+                        if (character.jobComponent.TriggerMeditate(out producedJob)) {
                             return true;
                         }
                     }
                     log += $"\n-Character is at home, roam";
-                    character.jobComponent.TriggerRoamAroundTile();
+                    character.jobComponent.TriggerRoamAroundTile(out producedJob);
                 }
             }
         } else {
@@ -151,7 +152,7 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
             if(character.necromancerTrait.lairStructure != null && character.homeStructure == character.necromancerTrait.lairStructure) {
                 log += $"\n-Lair is set, character home structure is set as the lair";
                 log += $"\n-Character will return home";
-                character.PlanIdleReturnHome();
+                character.PlanIdleReturnHome(out producedJob);
             } else {
                 log += $"\n-Lair is not set, will spawn lair";
 
@@ -169,7 +170,7 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                     chosenHex = GetNoStructurePlainHexInAllRegions();
                 }
                 LocationGridTile centerTileOfHex = chosenHex.GetCenterLocationGridTile();
-                character.jobComponent.TriggerSpawnLair(centerTileOfHex);
+                character.jobComponent.TriggerSpawnLair(centerTileOfHex, out producedJob);
             }
         }
         return true;

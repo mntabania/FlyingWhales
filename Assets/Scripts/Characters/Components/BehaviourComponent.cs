@@ -6,6 +6,7 @@ using UnityEngine;
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
 using Pathfinding;
+using UtilityScripts;
 
 public class BehaviourComponent {
 
@@ -250,12 +251,40 @@ public class BehaviourComponent {
                 log += $"\nBehaviour Component: {component.ToString()} cannot be done by {owner.name} skipping it...";
                 continue; //skip component
             }
-            if (component.TryDoBehaviour(owner, ref log)) {
-                component.PostProcessAfterSuccessfulDoBehaviour(owner);
-                if (!component.WillContinueProcess()) { break; }
+            if (component.TryDoBehaviour(owner, ref log, out JobQueueItem producedJob)) {
+                if (producedJob == null || IsProducedJobValid(producedJob, owner)) {
+                    if (producedJob != null) {
+                        owner.jobQueue.AddJobInQueue(producedJob);
+                    }
+                    component.PostProcessAfterSuccessfulDoBehaviour(owner);
+                    if (!component.WillContinueProcess()) { break; }    
+                }
+
             }
         }
         return log;
+    }
+    private bool IsProducedJobValid(JobQueueItem job, Character character) {
+        if (job is CharacterStateJob) {
+            return true;
+        } else if (job is GoapPlanJob goapPlanJob) {
+            if (goapPlanJob.jobType == JOB_TYPE.IDLE_RETURN_HOME) {
+                if (character.homeStructure != null) {
+                    return PathfindingManager.Instance.HasPathEvenDiffRegion(character.gridTileLocation,
+                        character.homeStructure.GetRandomUnoccupiedTile());
+                } else if (character.territorries != null && character.territorries.Count > 0) {
+                    HexTile randomTerritory = CollectionUtilities.GetRandomElement(character.territorries);
+                    return PathfindingManager.Instance.HasPathEvenDiffRegion(character.gridTileLocation,
+                        CollectionUtilities.GetRandomElement(randomTerritory.locationGridTiles));
+                }
+            }
+            if (character == goapPlanJob.targetPOI || goapPlanJob.targetPOI == null) {
+                return true;
+            }
+            return PathfindingManager.Instance.HasPathEvenDiffRegion(character.gridTileLocation,
+                goapPlanJob.targetPOI.gridTileLocation);
+        }
+        return false;
     }
     #endregion
 

@@ -7,7 +7,8 @@ public class DefaultBaseStructure : CharacterBehaviourComponent {
         priority = 8;
         //attributes = new BEHAVIOUR_COMPONENT_ATTRIBUTE[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.WITHIN_HOME_SETTLEMENT_ONLY };
     }
-    public override bool TryDoBehaviour(Character character, ref string log) {
+    public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
+        producedJob = null;
         if (character.trapStructure.structure != null && character.currentStructure == character.trapStructure.structure) {
             log += $"\n-{character.name}'s Base Structure is not empty and current structure is the Base Structure";
             log += "\n-15% chance to trigger a Chat conversation if there is anyone chat-compatible in range";
@@ -41,14 +42,14 @@ public class DefaultBaseStructure : CharacterBehaviourComponent {
             TileObject deskOrTable = character.currentStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.DESK, TILE_OBJECT_TYPE.TABLE);
             if (deskOrTable != null) {
                 log += $"\n  -{character.name} will do action Sit on {deskOrTable}";
-                character.PlanIdle(JOB_TYPE.IDLE_SIT, INTERACTION_TYPE.SIT, deskOrTable);
+                character.PlanIdle(JOB_TYPE.IDLE_SIT, INTERACTION_TYPE.SIT, deskOrTable, out producedJob);
                 return true;
             } else {
                 log += "\n  -No unoccupied Table or Desk";
             }
             log += "\n-Otherwise, stand idle";
             log += $"\n  -{character.name} will do action Stand";
-            character.PlanIdle(JOB_TYPE.IDLE_STAND, INTERACTION_TYPE.STAND, character);
+            character.PlanIdle(JOB_TYPE.IDLE_STAND, INTERACTION_TYPE.STAND, character, out producedJob);
             return true;
         }
         return false;
