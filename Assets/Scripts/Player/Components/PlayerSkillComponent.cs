@@ -121,7 +121,7 @@ public class PlayerSkillComponent {
         SpellData torture = PlayerSkillManager.Instance.GetPlayerSkillData(SPELL_TYPE.TORTURE);
         CategorizePlayerSkill(torture);
         SpellData breedMonster = PlayerSkillManager.Instance.GetPlayerSkillData(SPELL_TYPE.BREED_MONSTER);
-        AddPlayerSkill(breedMonster, -1, 10, 48, 0, 0);
+        AddPlayerSkill(breedMonster, -1, 10, 24, 0, 0);
 
         //For Demo
         if (WorldConfigManager.Instance.isDemoWorld) {
