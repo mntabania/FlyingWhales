@@ -76,6 +76,7 @@ public class SmallInfoWithVisual : MonoBehaviour {
 
     #region Monobehaviours
     private void OnDisable() {
+        smallInfoVideoPlayer.clip = null;
         smallInfoVideoPlayer.Stop();
     }
     #endregion
