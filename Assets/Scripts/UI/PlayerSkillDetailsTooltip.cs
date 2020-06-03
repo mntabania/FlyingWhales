@@ -39,9 +39,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         thisRect.SetParent(positionToUse.transform);
         
         thisRect.pivot = positionToUse.pivot;
-        Vector2 anchorMin = Vector2.zero;
-        Vector2 anchorMax = Vector2.zero;
-        UtilityScripts.Utilities.GetAnchorMinMax(positionToUse.anchor, ref anchorMin, ref anchorMax);
+        UtilityScripts.Utilities.GetAnchorMinMax(positionToUse.anchor, out var anchorMin, out var anchorMax);
         thisRect.anchorMin = anchorMin;
         thisRect.anchorMax = anchorMax;
         thisRect.anchoredPosition = Vector2.zero;

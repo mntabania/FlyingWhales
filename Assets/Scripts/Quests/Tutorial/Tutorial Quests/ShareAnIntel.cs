@@ -39,13 +39,19 @@ namespace Tutorial {
                     new ClickOnEmptyAreaStep(validityChecker: IsSelectedAreaValid)
                         .SetHoverOverAction(OnHoverEmptyArea)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo),
-                    new ObjectPickerShownStep("Click on Build Structure button", "Demonic Structure"), 
+                    new ObjectPickerShownStep("Click on Build Structure button", "Demonic Structure")
+                        .SetOnTopmostActions(OnTopMostBuildStructure, OnNoLongerTopMostBuildStructure), 
                     new StructureBuiltStep(STRUCTURE_TYPE.THE_EYE, "Build The Eye")
+                        .SetOnTopmostActions(OnTopMostTheEye, OnNoLongerTopMostTheEye)
                 ),
                 new QuestStepCollection (new StoreIntelStep()
                     .SetHoverOverAction(OnHoverStoreIntel)
-                    .SetHoverOutAction(UIManager.Instance.HideSmallInfo)),
-                new QuestStepCollection(new ShowIntelMenuStep(),
+                    .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
+                    .SetOnTopmostActions(OnTopMostStoreIntel, OnNoLongerTopMostStoreIntel)
+                ),
+                new QuestStepCollection(
+                    new ShowIntelMenuStep()
+                        .SetOnTopmostActions(OnTopMostIntelTab, OnNoLongerTopMostIntelTab),
                     new SelectIntelStep("Choose the stored intel"),
                     new ShareIntelStep("Share to a Villager")
                         .SetHoverOverAction(OnHoverShareIntel)
@@ -76,6 +82,42 @@ namespace Tutorial {
                                              "Just hover your cursor over a character and click on them to share your selected intel. " +
                                              "\n\nNOTE: your cursor will change based on if your target is valid or not.", 
                 TutorialManager.Instance.shareIntelVideoClip, "Sharing Intel", item.hoverPosition);
+        }
+        #endregion
+        
+        #region Build Structure Button
+        private void OnTopMostBuildStructure() {
+            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Build Structure");
+        }
+        private void OnNoLongerTopMostBuildStructure() {
+            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Build Structure");
+        }
+        #endregion
+        
+        #region The Eye
+        private void OnTopMostTheEye() {
+            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "The Eye");
+        }
+        private void OnNoLongerTopMostTheEye() {
+            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "The Eye");
+        }
+        #endregion
+        
+        #region Store Intel
+        private void OnTopMostStoreIntel() {
+            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Store Intel Button");
+        }
+        private void OnNoLongerTopMostStoreIntel() {
+            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Store Intel Button");
+        }
+        #endregion
+        
+        #region Intel Tab
+        private void OnTopMostIntelTab() {
+            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Intel Tab");
+        }
+        private void OnNoLongerTopMostIntelTab() {
+            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Intel Tab");
         }
         #endregion
     }

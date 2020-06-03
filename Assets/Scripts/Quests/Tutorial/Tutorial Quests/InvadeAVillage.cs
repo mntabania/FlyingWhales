@@ -32,7 +32,8 @@ namespace Tutorial {
             steps = new List<QuestStepCollection>() {
                 new QuestStepCollection(new ClickOnAreaStep("Click on a Village area", validityChecker: IsHexTileAVillage)),
                 new QuestStepCollection(
-                    new ActivateInvadeStep(),
+                    new ActivateInvadeStep()
+                        .SetOnTopmostActions(OnTopMostInvade, OnNoLongerTopMostInvade),
                     new ExecutedPlayerActionStep(SPELL_TYPE.INVADE, "Summon at least one invader")
                 )
             };
@@ -58,6 +59,15 @@ namespace Tutorial {
             if (playerAction.type == SPELL_TYPE.INVADE) {
                 CompleteQuest();
             }
+        }
+        #endregion
+        
+        #region Build Structure Button
+        private void OnTopMostInvade() {
+            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Invade");
+        }
+        private void OnNoLongerTopMostInvade() {
+            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Invade");
         }
         #endregion
     }

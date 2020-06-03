@@ -11,7 +11,11 @@ public class EnumNameplateItem : NameplateItem<Enum> {
     
     public override void SetObject(Enum o) {
         base.SetObject(o);
-        mainLbl.text = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(o.ToString());
+        string gameObjectName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(o.ToString());
+        name = gameObjectName;
+        button.name = gameObjectName;
+        toggle.name = gameObjectName;
+        mainLbl.text = gameObjectName;
         subLbl.text = string.Empty;
 
         //TODO: Make this better
@@ -53,6 +57,9 @@ public class EnumNameplateItem : NameplateItem<Enum> {
     }
     private void SetCooldownState(bool state) {
         cooldownImage.gameObject.SetActive(state);
-        
+    }
+    public override void Reset() {
+        base.Reset();
+        name = "Nameplate Item";
     }
 }

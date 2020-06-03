@@ -22,7 +22,8 @@ namespace Tutorial {
                 .SetHoverOutAction(UIManager.Instance.HideSmallInfo);
             QuestStep unpause = new UnpauseStep()
                 .SetHoverOverAction(OnHoverUnpause)
-                .SetHoverOutAction(UIManager.Instance.HideSmallInfo);
+                .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
+                .SetOnTopmostActions(OnTopMostUnpause, OnNopLongerTopMostUnpause);
             QuestStep objectClick = new ClickOnObjectStep();
             QuestStep characterClick = new ClickOnCharacterStep("Click on a Villager", character => character.isNormalCharacter);
             QuestStep structureClick = new ClickOnStructureStep();
@@ -62,12 +63,6 @@ namespace Tutorial {
                 "Camera Movement"
             );
         }
-        private void OnHoverUnpause(QuestStepItem stepItem) {
-            UIManager.Instance.ShowSmallInfo("You can Pause/Unpause the game using the Space Bar. Alternatively, " +
-                                             "you can also use the Time Control buttons on the right of your screen.", 
-                TutorialManager.Instance.timeControlsVideoClip,
-                "Controlling Time", stepItem.hoverPosition);
-        }
         private void OnHoverClickArea(QuestStepItem stepItem) {
             UIManager.Instance.ShowSmallInfo("You can select an area by clicking empty spaces in the Interior Map.", 
                 stepItem.hoverPosition,
@@ -82,6 +77,25 @@ namespace Tutorial {
                 "Areas have representations in both the Interior Map and World Map. " +
                 "An Area in the World Map is represented by a Hex Tile and an Area in the Interior Map is represented by a Square when selected.", 
                 TutorialManager.Instance.areaVideoClip);
+        }
+        #endregion
+
+        #region Unpause Step
+        private void OnHoverUnpause(QuestStepItem stepItem) {
+            UIManager.Instance.ShowSmallInfo("You can Pause/Unpause the game using the Space Bar. Alternatively, " +
+                                             "you can also use the Time Control buttons on the right of your screen.", 
+                TutorialManager.Instance.timeControlsVideoClip,
+                "Controlling Time", stepItem.hoverPosition);
+        }
+        private void OnTopMostUnpause() {
+            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "1x");
+            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "2x");
+            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "4x");
+        }
+        private void OnNopLongerTopMostUnpause() {
+            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "1x");
+            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "2x");
+            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "4x");
         }
         #endregion
     }

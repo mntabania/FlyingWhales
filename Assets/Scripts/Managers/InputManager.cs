@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
+using Ruinarch.Custom_UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
@@ -18,8 +19,15 @@ namespace Ruinarch {
         private readonly List<System.Action> _pendingLeftClickActions = new List<System.Action>();
         private readonly List<System.Action> _rightClickActions = new List<System.Action>();
 
+        [Space(10)] 
+        [Header("Cursors")] 
         [SerializeField] private CursorTextureDictionary cursors;
-
+        
+        [Space(10)] 
+        [Header("Buttons")] 
+        public Sprite buttonGlowImage;
+        
+        public List<string> buttonsToHighlight { get; private set; }
         public GameObject lastClickedObject { get; private set; }
         
         public enum Cursor_Type {
@@ -40,6 +48,7 @@ namespace Ruinarch {
                 previousCursorType = Cursor_Type.Default;
                 // Cursor.lockState = CursorLockMode.Confined;
                 SceneManager.activeSceneChanged += OnActiveSceneChanged;
+                Initialize();
             } else {
                 Destroy(gameObject);
             }
@@ -165,6 +174,22 @@ namespace Ruinarch {
         }
         #endregion
 
+        #region Initialization
+        private void Initialize() {
+            buttonsToHighlight = new List<string>();
+            Messenger.MarkAsPermanent(Signals.SHOW_SELECTABLE_GLOW);
+            Messenger.MarkAsPermanent(Signals.HIDE_SELECTABLE_GLOW);
+            Messenger.AddListener<string>(Signals.SHOW_SELECTABLE_GLOW, OnReceiveHighlightSignal);
+            Messenger.AddListener<string>(Signals.HIDE_SELECTABLE_GLOW, OnReceiveUnHighlightSignal);
+        }
+        private void OnReceiveHighlightSignal(string name) {
+            buttonsToHighlight.Add(name);
+        }
+        private void OnReceiveUnHighlightSignal(string name) {
+            buttonsToHighlight.Remove(name);
+        }
+        #endregion
+
         public void SetCursorTo(Cursor_Type type) {
             if (currentCursorType == type) {
                 return; //ignore 
@@ -250,6 +275,12 @@ namespace Ruinarch {
             } else {
                 runUpdate = false;
             }
+        }
+        public bool ShouldBeHighlighted(RuinarchButton button) {
+            return buttonsToHighlight.Contains(button.name);
+        }
+        public bool ShouldBeHighlighted(RuinarchToggle button) {
+            return buttonsToHighlight.Contains(button.name);
         }
         #endregion
 

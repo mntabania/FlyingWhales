@@ -32,16 +32,20 @@ namespace Tutorial {
                     new ClickOnEmptyAreaStep()
                         .SetHoverOverAction(OnHoverClickEmptyTile)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo), 
-                    new ObjectPickerShownStep("Click on Build Structure button", "Demonic Structure"), 
+                    new ObjectPickerShownStep("Click on Build Structure button", "Demonic Structure")
+                        .SetOnTopmostActions(OnTopMostBuildStructure, OnNoLongerTopMostBuildStructure), 
                     new StructureBuiltStep(STRUCTURE_TYPE.THE_KENNEL, "Choose the Kennel")
+                        .SetOnTopmostActions(OnTopMostKennel, OnNoLongerTopMostKennel)
                 ),
                 new QuestStepCollection(
-                    new ExecutedPlayerActionStep(SPELL_TYPE.SEIZE_MONSTER, "Seize a monster."),
+                    new ExecutedPlayerActionStep(SPELL_TYPE.SEIZE_MONSTER, "Seize a monster.")
+                        .SetOnTopmostActions(OnTopMostSeizeMonster, OnNoLongerTopMostSeizeMonster),
                     new DropCharacterAtStructureStep(STRUCTURE_TYPE.THE_KENNEL, typeof(Summon), "Drop at the Kennel."),
                     new ClickOnCharacterStep("Click on the monster", IsCharacterValid),
                     new ExecutedPlayerActionStep(SPELL_TYPE.BREED_MONSTER, "Breed it.")
                         .SetHoverOverAction(OnHoverBreed)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
+                        .SetOnTopmostActions(OnTopMostBreedMonster, OnNoLongerTopMostBreedMonster)
                 )
             };
         }
@@ -81,6 +85,42 @@ namespace Tutorial {
         private void OnHoverClickEmptyTile(QuestStepItem stepItem) {
             UIManager.Instance.ShowSmallInfo("Suggestion: choose an empty area far away from the Village", 
                 stepItem.hoverPosition, "Choosing where to Build");
+        }
+        #endregion
+        
+        #region Build Structure Button
+        private void OnTopMostBuildStructure() {
+            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Build Structure");
+        }
+        private void OnNoLongerTopMostBuildStructure() {
+            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Build Structure");
+        }
+        #endregion
+        
+        #region Choose Kennel
+        private void OnTopMostKennel() {
+            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "The Kennel");
+        }
+        private void OnNoLongerTopMostKennel() {
+            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "The Kennel");
+        }
+        #endregion
+        
+        #region Seize Montser
+        private void OnTopMostSeizeMonster() {
+            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Seize Monster");
+        }
+        private void OnNoLongerTopMostSeizeMonster() {
+            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Seize Monster");
+        }
+        #endregion
+        
+        #region Breed Monster
+        private void OnTopMostBreedMonster() {
+            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Breed Monster");
+        }
+        private void OnNoLongerTopMostBreedMonster() {
+            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Breed Monster");
         }
         #endregion
     }

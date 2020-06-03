@@ -120,6 +120,7 @@ public class UIManager : MonoBehaviour {
     private List<RaycastResult> _raycastResults;
     
     public bool tempDisableShowInfoUI { get; private set; }
+    
 
     #region Monobehaviours
     private void Awake() {
@@ -461,9 +462,7 @@ public class UIManager : MonoBehaviour {
         RectTransform tooltipParentRT = tooltipParent.transform as RectTransform;
         tooltipParentRT.pivot = position.pivot;
 
-        Vector2 anchorMin = Vector2.zero;
-        Vector2 anchorMax = Vector2.zero;
-        UtilityScripts.Utilities.GetAnchorMinMax(position.anchor, ref anchorMin, ref anchorMax);
+        UtilityScripts.Utilities.GetAnchorMinMax(position.anchor, out var anchorMin, out var anchorMax);
         tooltipParentRT.anchorMin = anchorMin;
         tooltipParentRT.anchorMax = anchorMax;
         tooltipParentRT.anchoredPosition = Vector2.zero;
@@ -1304,9 +1303,7 @@ public class UIManager : MonoBehaviour {
         RectTransform tooltipParentRT = minionCardTooltip.transform as RectTransform;
         tooltipParentRT.pivot = position.pivot;
 
-        Vector2 anchorMin = Vector2.zero;
-        Vector2 anchorMax = Vector2.zero;
-        UtilityScripts.Utilities.GetAnchorMinMax(position.anchor, ref anchorMin, ref anchorMax);
+        UtilityScripts.Utilities.GetAnchorMinMax(position.anchor, out var anchorMin, out var anchorMax);
         tooltipParentRT.anchorMin = anchorMin;
         tooltipParentRT.anchorMax = anchorMax;
         tooltipParentRT.anchoredPosition = Vector2.zero;

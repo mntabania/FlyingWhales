@@ -11,6 +11,8 @@ namespace Quests {
         public static QuestManager Instance;
 
         private List<Quest> _activeQuests;
+
+        public bool hasClickedCenterButtonAtLastOnce;
         
         private void Awake() {
             Instance = this;
@@ -32,6 +34,7 @@ namespace Quests {
             Messenger.AddListener<LocationStructure, Character, GoapPlanJob>(Signals.DEMONIC_STRUCTURE_DISCOVERED, OnDemonicStructureDiscovered);
             Messenger.AddListener<List<Character>>(Signals.ANGELS_ATTACKING_DEMONIC_STRUCTURE, 
                 OnAngelsAttackingDemonicStructure);
+            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "CenterButton");
         }
         #endregion
 
@@ -128,6 +131,13 @@ namespace Quests {
         #region Divine Intervention
         private void OnAngelsAttackingDemonicStructure(List<Character> angels) {
             ActivateQuest<DivineIntervention>(angels);
+        }
+        #endregion
+
+        #region Center Button
+        public void OnClickCenterButton() {
+            hasClickedCenterButtonAtLastOnce = true;
+            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "CenterButton");
         }
         #endregion
     }

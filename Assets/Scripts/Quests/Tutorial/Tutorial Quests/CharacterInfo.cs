@@ -22,13 +22,17 @@ namespace Tutorial {
                 new QuestStepCollection(
                     new ClickOnCharacterStep("Click on a Villager", validityChecker: IsSelectedCharacterValid),
                     new ToggleTurnedOnStep("CharacterInfo_Info", "Open its Info tab")
-                        .SetCompleteAction(OnClickInfo),
+                        .SetCompleteAction(OnClickInfo)
+                        .SetOnTopmostActions(OnTopMostInfo, OnNoLongerTopMostInfo),
                     new ToggleTurnedOnStep("CharacterInfo_Mood", "Open its Mood tab")
-                        .SetCompleteAction(OnClickMood),
+                        .SetCompleteAction(OnClickMood)
+                        .SetOnTopmostActions(OnTopMostMood, OnNoLongerTopMostMood),
                     new ToggleTurnedOnStep("CharacterInfo_Relations", "Open its Relations tab")
-                        .SetCompleteAction(OnClickRelations),
+                        .SetCompleteAction(OnClickRelations)
+                        .SetOnTopmostActions(OnTopMostRelations, OnNoLongerTopMostRelations),
                     new ToggleTurnedOnStep("CharacterInfo_Logs", "Open its Log tab")
                         .SetCompleteAction(OnClickLogs)
+                        .SetOnTopmostActions(OnTopMostLogs, OnNoLongerTopMostLogs)
                 )
             };
         }
@@ -66,6 +70,42 @@ namespace Tutorial {
             UIManager.Instance.generalConfirmationWithVisual.ShowGeneralConfirmation("Log Tab",
                 "The Log tab provides you with a timestamped list of what a Villager has done.",
                 TutorialManager.Instance.logsTab);
+        }
+        #endregion
+
+        #region Info Tab
+        private void OnTopMostInfo() {
+            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Info Toggle");
+        }
+        private void OnNoLongerTopMostInfo() {
+            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Info Toggle");
+        }
+        #endregion
+        
+        #region Mood Tab
+        private void OnTopMostMood() {
+            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Mood Toggle");
+        }
+        private void OnNoLongerTopMostMood() {
+            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Mood Toggle");
+        }
+        #endregion
+        
+        #region Relations Tab
+        private void OnTopMostRelations() {
+            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Relations Toggle");
+        }
+        private void OnNoLongerTopMostRelations() {
+            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Relations Toggle");
+        }
+        #endregion
+        
+        #region Logs Tab
+        private void OnTopMostLogs() {
+            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Logs Toggle");
+        }
+        private void OnNoLongerTopMostLogs() {
+            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Logs Toggle");
         }
         #endregion
     }
