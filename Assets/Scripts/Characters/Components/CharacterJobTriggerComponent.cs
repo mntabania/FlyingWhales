@@ -24,6 +24,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
     public CharacterJobTriggerComponent(Character owner) {
 		_owner = owner;
+        _canReportDemonicStructure = true;
         numOfTimesActionDone = new Dictionary<GoapAction, int>();
         primaryJobCandidates = new List<JOB_TYPE>();
         priorityJobs = new List<JOB_TYPE>();
@@ -1198,7 +1199,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     }
     #endregion
 
-    #region Report Demonic Structure\
+    #region Report Demonic Structure
     private bool _canReportDemonicStructure;
     public void CreateReportDemonicStructure(LocationStructure structureToReport) {
 	    if (_canReportDemonicStructure && !_owner.jobQueue.HasJob(JOB_TYPE.REPORT_CORRUPTED_STRUCTURE)) {

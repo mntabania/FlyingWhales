@@ -478,7 +478,7 @@ namespace Inner_Maps {
                     collectionOwner.partOfHextile.hexTileOwner.GetMostImportantStructureOnTile();
                 if(!character.behaviourComponent.isAttackingDemonicStructure 
                    && character.homeSettlement != null 
-                   && character.faction.isMajorNonPlayer
+                   //&& character.faction.isMajorNonPlayer
                    && character.necromancerTrait == null
                    && (character.race == RACE.HUMANS || character.race == RACE.ELVES) && mostImportantStructureOnTile is DemonicStructure
                    && character.marker != null && character.IsInOwnParty()) {
