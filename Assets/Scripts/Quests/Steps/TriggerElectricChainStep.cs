@@ -2,10 +2,10 @@
     public class TriggerElectricChainStep : QuestStep {
         public TriggerElectricChainStep(string stepDescription = "Trigger Electric Chain") : base(stepDescription) { }
         protected override void SubscribeListeners() {
-            Messenger.AddListener(Signals.ELECTRIC_CHAIN_TRIGGERED, Complete);
+            Messenger.AddListener(Signals.ELECTRIC_CHAIN_TRIGGERED_BY_PLAYER, Complete);
         }
         protected override void UnSubscribeListeners() {
-            Messenger.RemoveListener(Signals.ELECTRIC_CHAIN_TRIGGERED, Complete);
+            Messenger.RemoveListener(Signals.ELECTRIC_CHAIN_TRIGGERED_BY_PLAYER, Complete);
         }
     }
 }

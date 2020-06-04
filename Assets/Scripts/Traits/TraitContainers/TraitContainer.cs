@@ -68,7 +68,7 @@ namespace Traits {
             if (addTo is MovingTileObject || addTo is Quicksand) {
                 return false;
             }
-            bool shouldAddTrait = ProcessBeforeAddingElementalStatus(addTo, traitName, bypassElementalChance);
+            bool shouldAddTrait = ProcessBeforeAddingElementalStatus(addTo, traitName, bypassElementalChance, characterResponsible);
             if (shouldAddTrait) {
                 shouldAddTrait = ProcessBeforeSuccessfullyAddingElementalStatus(addTo, traitName, ref overrideDuration);
                 if (shouldAddTrait) {
@@ -87,7 +87,7 @@ namespace Traits {
             if(addTo is MovingTileObject || addTo is Quicksand) {
                 return false;
             }
-            bool shouldAddTrait = ProcessBeforeAddingElementalStatus(addTo, traitName, bypassElementalChance);
+            bool shouldAddTrait = ProcessBeforeAddingElementalStatus(addTo, traitName, bypassElementalChance, characterResponsible);
             if (shouldAddTrait) {
                 shouldAddTrait = ProcessBeforeSuccessfullyAddingElementalStatus(addTo, traitName, ref overrideDuration);
                 if (shouldAddTrait) {
@@ -101,7 +101,7 @@ namespace Traits {
         }
         private bool TryAddElementalStatus(ITraitable addTo, Trait trait, Character characterResponsible, 
             ActualGoapNode gainedFromDoing, bool bypassElementalChance, int overrideDuration) {
-            bool shouldAddTrait = ProcessBeforeAddingElementalStatus(addTo, trait.name, bypassElementalChance);
+            bool shouldAddTrait = ProcessBeforeAddingElementalStatus(addTo, trait.name, bypassElementalChance, characterResponsible);
             if (shouldAddTrait) {
                 shouldAddTrait = ProcessBeforeSuccessfullyAddingElementalStatus(addTo, trait.name, ref overrideDuration);
                 if (shouldAddTrait) {
@@ -114,7 +114,8 @@ namespace Traits {
             return shouldAddTrait;
         }
         //Returns true or false, if trait should be added or not
-        private bool ProcessBeforeAddingElementalStatus(ITraitable addTo, string traitName, bool bypassElementalChance) {
+        private bool ProcessBeforeAddingElementalStatus(ITraitable addTo, string traitName, bool bypassElementalChance,
+            Character characterResponsible) {
             bool shouldAddTrait = true;
             if (addTo is TileObject tileObject && tileObject.CanBeAffectedByElementalStatus(traitName) == false) {
                 //Hidden Well Spots in Water Tiles should not receive elemental damage and status effects
@@ -134,7 +135,7 @@ namespace Traits {
                     int poisonStacks = stacks["Poisoned"];
                     RemoveStatusAndStacks(addTo, "Poisoned");
                     if (addTo is IPointOfInterest to) {
-                        CombatManager.Instance.PoisonExplosion(to, addTo.gridTileLocation, poisonStacks);
+                        CombatManager.Instance.PoisonExplosion(to, addTo.gridTileLocation, poisonStacks, characterResponsible);
                     }
                     shouldAddTrait = false;
                 }

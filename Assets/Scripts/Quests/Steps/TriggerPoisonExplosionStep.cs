@@ -2,10 +2,10 @@
     public class TriggerPoisonExplosionStep : QuestStep {
         public TriggerPoisonExplosionStep(string stepDescription = "Trigger Poison Explosion") : base(stepDescription) { }
         protected override void SubscribeListeners() {
-            Messenger.AddListener<IPointOfInterest>(Signals.POISON_EXPLOSION_TRIGGERED, CheckForCompletion);
+            Messenger.AddListener<IPointOfInterest>(Signals.POISON_EXPLOSION_TRIGGERED_BY_PLAYER, CheckForCompletion);
         }
         protected override void UnSubscribeListeners() {
-            Messenger.RemoveListener<IPointOfInterest>(Signals.POISON_EXPLOSION_TRIGGERED, CheckForCompletion);
+            Messenger.RemoveListener<IPointOfInterest>(Signals.POISON_EXPLOSION_TRIGGERED_BY_PLAYER, CheckForCompletion);
         }
 
         #region Listeners

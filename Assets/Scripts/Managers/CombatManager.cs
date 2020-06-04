@@ -23,7 +23,7 @@ public class CombatManager : MonoBehaviour {
     }
 
     public void ApplyElementalDamage(int damage, ELEMENTAL_TYPE elementalType, ITraitable target, 
-        Character responsibleCharacter = null, ElementalTraitProcessor elementalTraitProcessor = null) { 
+        Character characterResponsible = null, ElementalTraitProcessor elementalTraitProcessor = null) { 
         
         ElementalDamageData elementalDamage = ScriptableObjectsManager.Instance.GetElementalDamageData(elementalType);
         if (target != null) {
@@ -39,10 +39,10 @@ public class CombatManager : MonoBehaviour {
         }
         if (!string.IsNullOrEmpty(elementalDamage.addedTraitName)) {
             bool hasSuccessfullyAdded = target.traitContainer.AddTrait(target, elementalDamage.addedTraitName, 
-                out Trait trait, responsibleCharacter); //, out trait
+                out Trait trait, characterResponsible); //, out trait
             if (hasSuccessfullyAdded) {
                 if (elementalType == ELEMENTAL_TYPE.Electric) {
-                    ChainElectricDamage(target, damage);
+                    ChainElectricDamage(target, damage, characterResponsible);
                 }
                 elementalTraitProcessor?.Invoke(target, trait);
             }
@@ -50,7 +50,7 @@ public class CombatManager : MonoBehaviour {
         if(elementalType == ELEMENTAL_TYPE.Earth) {
             EarthElementProcess(target);
         } else if (elementalType == ELEMENTAL_TYPE.Wind) {
-            WindElementProcess(target);
+            WindElementProcess(target, characterResponsible);
         } else if (elementalType == ELEMENTAL_TYPE.Fire) {
             FireElementProcess(target);
         } else if (elementalType == ELEMENTAL_TYPE.Water) {
@@ -129,11 +129,13 @@ public class CombatManager : MonoBehaviour {
     }
     
     #region Explosion
-    public void PoisonExplosion(IPointOfInterest target, LocationGridTile targetTile, int stacks) {
-        StartCoroutine(PoisonExplosionCoroutine(target, targetTile, stacks));
-        Messenger.Broadcast(Signals.POISON_EXPLOSION_TRIGGERED, target);
+    public void PoisonExplosion(IPointOfInterest target, LocationGridTile targetTile, int stacks, Character characterResponsible) {
+        StartCoroutine(PoisonExplosionCoroutine(target, targetTile, stacks, characterResponsible));
+        if (characterResponsible == null) {
+            Messenger.Broadcast(Signals.POISON_EXPLOSION_TRIGGERED_BY_PLAYER, target);    
+        }
     }
-    private IEnumerator PoisonExplosionCoroutine(IPointOfInterest target, LocationGridTile targetTile, int stacks) {
+    private IEnumerator PoisonExplosionCoroutine(IPointOfInterest target, LocationGridTile targetTile, int stacks, Character characterResponsible) {
         while (GameManager.Instance.isPaused) {
             //Pause coroutine while game is paused
             //Might be performance heavy, needs testing
@@ -152,7 +154,7 @@ public class CombatManager : MonoBehaviour {
         for (int i = 0; i < affectedTiles.Count; i++) {
             LocationGridTile tile = affectedTiles[i];
             // traitables.AddRange(tile.GetTraitablesOnTile());
-            tile.PerformActionOnTraitables((traitable) => PoisonExplosionEffect(traitable, damagePercentage, ref bs));
+            tile.PerformActionOnTraitables((traitable) => PoisonExplosionEffect(traitable, damagePercentage, characterResponsible, ref bs));
         }
         // if(!(target is GenericTileObject)) {
         //     Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Poison Explosion", "effect");
@@ -161,9 +163,9 @@ public class CombatManager : MonoBehaviour {
         //     log.AddLogToInvolvedObjects();
         // }
     }
-    private void PoisonExplosionEffect(ITraitable traitable, float damagePercentage, ref BurningSource bs) {
+    private void PoisonExplosionEffect(ITraitable traitable, float damagePercentage, Character characterResponsible, ref BurningSource bs) {
         int damage = Mathf.RoundToInt(traitable.maxHP * damagePercentage);
-        traitable.AdjustHP(-damage, ELEMENTAL_TYPE.Fire, true, showHPBar: true);
+        traitable.AdjustHP(-damage, ELEMENTAL_TYPE.Fire, true, characterResponsible, showHPBar: true);
         Burning burningTrait = traitable.traitContainer.GetNormalTrait<Burning>("Burning");
         if (burningTrait != null && burningTrait.sourceOfBurning == null) {
             if (bs == null) {
@@ -208,12 +210,14 @@ public class CombatManager : MonoBehaviour {
         int damage = Mathf.RoundToInt(traitable.maxHP * damagePercentage);
         traitable.AdjustHP(-damage, ELEMENTAL_TYPE.Water, true, showHPBar: true);
     }
-    public void ChainElectricDamage(ITraitable traitable, int damage) {
+    public void ChainElectricDamage(ITraitable traitable, int damage, Character characterResponsible) {
         damage = Mathf.RoundToInt(damage * 0.2f);
         if(damage >= 0) {
             damage = -1;
         }
-        Messenger.Broadcast(Signals.ELECTRIC_CHAIN_TRIGGERED);
+        if (characterResponsible == null) {
+            Messenger.Broadcast(Signals.ELECTRIC_CHAIN_TRIGGERED_BY_PLAYER);    
+        }
         List<ITraitable> traitables = new List<ITraitable>();
         if (traitable.gridTileLocation != null) {
             List<LocationGridTile> tiles = traitable.gridTileLocation.GetTilesInRadius(1, includeTilesInDifferentStructure: true);
@@ -227,11 +231,11 @@ public class CombatManager : MonoBehaviour {
                 }
             }
             if (affectedTiles.Count > 0) {
-                StartCoroutine(ChainElectricDamageCoroutine(affectedTiles, damage));
+                StartCoroutine(ChainElectricDamageCoroutine(affectedTiles, damage, characterResponsible));
             }
         }
     }
-    private IEnumerator ChainElectricDamageCoroutine(List<LocationGridTile> tiles, int damage) {
+    private IEnumerator ChainElectricDamageCoroutine(List<LocationGridTile> tiles, int damage, Character characterResponsible) {
         HashSet<ITraitable> completedTiles = new HashSet<ITraitable>();
         for (int i = 0; i < tiles.Count; i++) {
             while (GameManager.Instance.isPaused) {
@@ -241,13 +245,13 @@ public class CombatManager : MonoBehaviour {
             }
             yield return new WaitForSeconds(0.1f);
             LocationGridTile tile = tiles[i];
-            tile.PerformActionOnTraitables((traitable) => ChainElectricEffect(traitable, damage, ref completedTiles));
+            tile.PerformActionOnTraitables((traitable) => ChainElectricEffect(traitable, damage, characterResponsible, ref completedTiles));
         }
     }
-    private void ChainElectricEffect(ITraitable traitable, int damage, ref HashSet<ITraitable> completedObjects) {
+    private void ChainElectricEffect(ITraitable traitable, int damage, Character responsibleCharacter, ref HashSet<ITraitable> completedObjects) {
         if (completedObjects.Contains(traitable) == false) { //!traitable.traitContainer.HasTrait("Zapped")
             completedObjects.Add(traitable);
-            traitable.AdjustHP(damage, ELEMENTAL_TYPE.Electric, true, showHPBar: true);
+            traitable.AdjustHP(damage, ELEMENTAL_TYPE.Electric, true, source:responsibleCharacter, showHPBar: true);
         }
     }
     #endregion
@@ -276,7 +280,7 @@ public class CombatManager : MonoBehaviour {
             target.traitContainer.RemoveTrait(target, elementsArray[UnityEngine.Random.Range(0, elementsArray.Length)]);
         }
     }
-    private void WindElementProcess(ITraitable target) {
+    private void WindElementProcess(ITraitable target, Character responsibleCharacter) {
         if (target.traitContainer.HasTrait("Poisoned")) {
             int stacks = target.traitContainer.stacks["Poisoned"];
             target.traitContainer.RemoveStatusAndStacks(target, "Poisoned");
@@ -293,7 +297,9 @@ public class CombatManager : MonoBehaviour {
             vaporTileObject.SetGridTileLocation(target.gridTileLocation);
             vaporTileObject.OnPlacePOI();
             vaporTileObject.SetStacks(stacks);
-            Messenger.Broadcast(Signals.VAPOR_FROM_WIND_TRIGGERED);
+            if (responsibleCharacter == null) {
+                Messenger.Broadcast(Signals.VAPOR_FROM_WIND_TRIGGERED_BY_PLAYER);    
+            }
         }
     }
     private void FireElementProcess(ITraitable target) {
