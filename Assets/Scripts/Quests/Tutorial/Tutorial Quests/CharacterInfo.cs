@@ -68,7 +68,7 @@ namespace Tutorial {
         }
         private void OnClickLogs() {
             UIManager.Instance.generalConfirmationWithVisual.ShowGeneralConfirmation("Log Tab",
-                $"The Log tab provides you with a timestamped list of what a {UtilityScripts.Utilities.VillagerIcon()}Villager has done.",
+                $"The Log tab provides you with a timestamped list of what a \n{UtilityScripts.Utilities.VillagerIcon()}Villager has done.",
                 TutorialManager.Instance.logsTab);
         }
         #endregion
