@@ -17,7 +17,7 @@ namespace Interrupts {
             if(target != null) {
                 //This means that the new home is predetermined
                 if(target is Character targetCharacter) {
-                    actor.MigrateHomeTo(targetCharacter.homeSettlement, targetCharacter.homeStructure);
+                    actor.MigrateHomeStructureTo(targetCharacter.homeStructure);
                 }
             } else {
                 SetNewHomeSettlement(actor);
@@ -80,8 +80,7 @@ namespace Interrupts {
                     Region currentRegion = actor.currentRegion;
                     LocationStructure chosenHomeStructure = currentRegion.GetRandomUnoccupiedStructureWithTags();
                     if (chosenHomeStructure != null) {
-                        actor.MigrateHomeStructureTo(chosenHomeStructure);
-                        actor.ClearTerritory();
+                        actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
                         log += "\n-Special Structure found: " + chosenHomeStructure.ToString();
                         actor.logComponent.PrintLogIfActive(log);
                         return;
@@ -116,8 +115,7 @@ namespace Interrupts {
                     Region currentRegion = actor.currentRegion;
                     LocationStructure chosenHomeStructure = currentRegion.GetRandomUnoccupiedStructureWithTag(STRUCTURE_TAG.Shelter);
                     if (chosenHomeStructure != null) {
-                        actor.MigrateHomeStructureTo(chosenHomeStructure);
-                        actor.ClearTerritory();
+                        actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
                         log += "\n-Habitable Special Structure found: " + chosenHomeStructure.ToString();
                         actor.logComponent.PrintLogIfActive(log);
                         return;
@@ -169,8 +167,7 @@ namespace Interrupts {
                     Region currentRegion = actor.currentRegion;
                     LocationStructure chosenHomeStructure = currentRegion.GetRandomUnoccupiedStructureWithTags();
                     if (chosenHomeStructure != null) {
-                        actor.MigrateHomeStructureTo(chosenHomeStructure);
-                        actor.ClearTerritory();
+                        actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
                         log += "\n-Special Structure found: " + chosenHomeStructure.ToString();
                         actor.logComponent.PrintLogIfActive(log);
                         return;
@@ -208,8 +205,7 @@ namespace Interrupts {
                         log += "\n-If that settlement has at least one unoccupied dwelling, choose one at random and set that as its new Home Structure. Clear out Territory data if it has one.";
                         chosenHomeStructure = GetUnoccupiedDwelling(chosenSettlement);
                         if (chosenHomeStructure != null) {
-                            actor.MigrateHomeTo(chosenSettlement, chosenHomeStructure);
-                            actor.ClearTerritory();
+                            actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
                             log += "\n-Structure Found: " + chosenHomeStructure.ToString();
                             actor.logComponent.PrintLogIfActive(log);
                             return;
@@ -217,8 +213,7 @@ namespace Interrupts {
                             log += "\n-Otherwise, if settlement has a dwelling occupied by just one character who is a non-Enemy and non-Rival relative of the character, choose one at random and set that as its new Home Structure. Clear out Territory data if it has one.";
                             chosenHomeStructure = GetDwellingWithNonRivalEnemyRelative(chosenSettlement, actor);
                             if (chosenHomeStructure != null) {
-                                actor.MigrateHomeTo(chosenSettlement, chosenHomeStructure);
-                                actor.ClearTerritory();
+                                actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
                                 log += "\n-Structure Found: " + chosenHomeStructure.ToString();
                                 actor.logComponent.PrintLogIfActive(log);
                                 return;
@@ -226,8 +221,7 @@ namespace Interrupts {
                                 log += "\n-Otherwise, if village center is only occupied by 2 or less residents, set that as its new Home Structure. Clear out Territory data if it has one..";
                                 if (chosenSettlement.cityCenter.residents.Count <= 2) {
                                     chosenHomeStructure = chosenSettlement.cityCenter;
-                                    actor.MigrateHomeTo(chosenSettlement, chosenHomeStructure);
-                                    actor.ClearTerritory();
+                                    actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
                                     log += "\n-Structure Found: " + chosenHomeStructure.ToString();
                                     actor.logComponent.PrintLogIfActive(log);
                                     return;
@@ -240,8 +234,7 @@ namespace Interrupts {
                     Region currentRegion = actor.currentRegion;
                     chosenHomeStructure = currentRegion.GetRandomUnoccupiedStructureWithTag(STRUCTURE_TAG.Shelter);
                     if(chosenHomeStructure != null) {
-                        actor.MigrateHomeStructureTo(chosenHomeStructure);
-                        actor.ClearTerritory();
+                        actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
                         log += "\n-Habitable Special Structure found: " + chosenHomeStructure.ToString();
                         actor.logComponent.PrintLogIfActive(log);
                         return;

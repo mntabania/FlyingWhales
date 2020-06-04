@@ -9,7 +9,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
-        if(character.homeStructure == null) {
+        if((character.homeStructure == null || character.homeStructure.hasBeenDestroyed) && !character.HasTerritory()) {
             log += $"\n-No home structure";
             log += $"\n-25% chance to Set Home";
             int roll = Random.Range(0, 100);
@@ -22,7 +22,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                 character.PlanIdle(JOB_TYPE.IDLE_STAND, INTERACTION_TYPE.STAND, character, out producedJob);
             }
             return true;
-        } else if (character.currentStructure == character.homeStructure) {
+        } else if (character.currentStructure == character.homeStructure || character.IsInTerritory()) {
             if (character.previousCurrentActionNode != null && character.previousCurrentActionNode.action.goapType == INTERACTION_TYPE.RETURN_HOME) {
                 log += $"\n-{character.name} is in home structure and just returned home";
                 TileObject deskOrTable = character.currentStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.DESK, TILE_OBJECT_TYPE.TABLE);

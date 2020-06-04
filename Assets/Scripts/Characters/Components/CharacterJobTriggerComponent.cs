@@ -840,7 +840,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     public bool TriggerReturnTerritory() {
         if (!_owner.jobQueue.HasJob(JOB_TYPE.RETURN_TERRITORY)) {
             LocationGridTile chosenTile;
-            if (_owner.homeStructure != null) {
+            if (_owner.homeStructure != null && !_owner.homeStructure.hasBeenDestroyed) {
                 chosenTile = CollectionUtilities.GetRandomElement(_owner.homeStructure.unoccupiedTiles);
             } else {
                 if (_owner.territorries.Count > 0) {
