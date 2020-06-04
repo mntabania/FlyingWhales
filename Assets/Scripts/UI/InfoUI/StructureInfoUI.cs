@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using System;
+using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 
@@ -48,4 +49,21 @@ public class StructureInfoUI : InfoUIBase {
     private void UpdateBasicInfo() {
         nameLbl.text = $"{activeStructure.nameplateName} ({activeStructure.currentHP.ToString()}/{activeStructure.maxHP.ToString()})";
     }
+    
+     #region For Testing
+    public void ShowStructureTestingInfo() {
+#if UNITY_EDITOR
+        string summary = $"{activeStructure.name} Info:";
+        summary += "\nDamage Contributing Objects:";
+        for (int i = 0; i < activeStructure.objectsThatContributeToDamage.Count; i++) {
+            IDamageable damageable = activeStructure.objectsThatContributeToDamage.ElementAt(i);
+            summary += $"\n\t- {damageable}";
+        }
+        UIManager.Instance.ShowSmallInfo(summary);
+#endif
+    }
+    public void HideStructureTestingInfo() {
+        UIManager.Instance.HideSmallInfo();
+    }
+    #endregion
 }

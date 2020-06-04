@@ -115,7 +115,11 @@ public class WorkBehaviour : CharacterBehaviourComponent {
             } else {
                 //if none of the jobs targets can be seen by the character, try and get a job from the npcSettlement or faction
                 //regardless of vision instead.
-                jobToAssign = character.homeSettlement.GetFirstUnassignedJobToCharacterJob(character);
+                if (character.homeSettlement.HasPathTowardsTileInSettlement(character, 2)) {
+                    //Characters should only take non-vision settlement jobs if they have a path towards the settlement
+                    //Reference: https://trello.com/c/SSYDok6x/1106-characters-should-only-take-non-vision-settlement-jobs-if-they-have-a-path-towards-the-settlement
+                    jobToAssign = character.homeSettlement.GetFirstUnassignedJobToCharacterJob(character);    
+                }
                 if (jobToAssign == null) {
                     if (character.faction?.activeFactionQuest != null) {
                         jobToAssign = character.faction.activeFactionQuest.GetFirstUnassignedJobToCharacterJob(character);

@@ -18,11 +18,19 @@ public class WorldConfigManager : MonoBehaviour {
     [SerializeField] private bool _isDemoWorld;
     [SerializeField] private List<SPELL_TYPE> _availableSpellsInDemoBuild;
     [SerializeField] private List<TutorialManager.Tutorial> _demoTutorials;
+
+    [Header("Testing")] 
+    [SerializeField] private bool _unlimitedCast;
     
     #region Getters
     public bool isDemoWorld => _isDemoWorld;
     public List<SPELL_TYPE> availableSpellsInDemoBuild => _availableSpellsInDemoBuild;
     public List<TutorialManager.Tutorial> demoTutorials => _demoTutorials;
+#if UNITY_EDITOR
+    public bool unlimitedCast => _unlimitedCast;
+#else
+    public bool unlimitedCast => false;
+#endif
     #endregion
     
     private void Awake() {
