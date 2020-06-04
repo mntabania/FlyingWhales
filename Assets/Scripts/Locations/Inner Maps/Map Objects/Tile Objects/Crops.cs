@@ -1,4 +1,6 @@
-﻿public abstract class Crops : TileObject {
+﻿using Inner_Maps;
+
+public abstract class Crops : TileObject {
     public enum Growth_State { Growing, Ripe }
     public Growth_State currentGrowthState { get; private set; }
     
@@ -34,9 +36,6 @@
     /// <returns></returns>
     public abstract int GetRipeningTicks();
     private void PerTickGrowth() {
-        if (gridTileLocation == null) {
-            return;
-        }
         if (remainingRipeningTicks <= 0) {
             SetGrowthState(Growth_State.Ripe);
         }
@@ -48,13 +47,18 @@
     }
     #endregion
     
-    public override void OnDestroyPOI() {
-        base.OnDestroyPOI();
+    public override void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom, bool removeTraits = true,
+        bool destroyTileSlots = true) {
+        base.OnRemoveTileObject(removedBy, removedFrom, removeTraits, destroyTileSlots);
         Messenger.RemoveListener(Signals.TICK_ENDED, PerTickGrowth);
     }
     public override void OnPlacePOI() {
         base.OnPlacePOI();
-        SetGrowthState(Growth_State.Growing);
+        if (GameManager.Instance.gameHasStarted == false) { //set crop as growing on its initial placement
+            SetGrowthState(Growth_State.Growing);    
+        } else {
+            Messenger.AddListener(Signals.TICK_ENDED, PerTickGrowth);    
+        }
     }
     
     #region Testing

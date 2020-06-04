@@ -32,7 +32,7 @@ namespace Quests.Steps {
             }
         }
         private IEnumerator Wait() {
-            yield return new WaitForSeconds(1.75f);
+            yield return new WaitForSeconds(1f);
             Complete();
         }
         

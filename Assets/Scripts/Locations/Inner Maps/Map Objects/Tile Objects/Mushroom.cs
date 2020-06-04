@@ -19,7 +19,9 @@ public class Mushroom : Crops {
     }
     public override void OnPlacePOI() {
         base.OnPlacePOI();
-        SetGrowthState(Growth_State.Ripe);
+        if (GameManager.Instance.gameHasStarted == false) { //set mushroom as ripe on its initial placement
+            SetGrowthState(Growth_State.Ripe);    
+        }
     }
     #endregion
 

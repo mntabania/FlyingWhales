@@ -5,7 +5,7 @@ using UnityEngine;
 public class Scorn : Emotion {
 
     public Scorn() : base(EMOTION.Scorn) {
-
+        responses = new[] {"Scornful"};
     }
 
     #region Overrides

@@ -5,7 +5,7 @@ using UnityEngine;
 public class Shock : Emotion {
 
     public Shock() : base(EMOTION.Shock) {
-
+        responses = new[] {"Shocked"};
     }
 
     #region Overrides

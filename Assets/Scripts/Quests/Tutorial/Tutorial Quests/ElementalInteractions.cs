@@ -34,7 +34,8 @@ namespace Tutorial {
                         .SetOnTopmostActions(OnTopMostRainSpell, OnNoLongerTopMostRainSpell),
                     new TriggerVaporFromWindStep()
                         .SetHoverOverAction(OnHoverWind)
-                        .SetHoverOutAction(UIManager.Instance.HideSmallInfo),
+                        .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
+                        .SetOnTopmostActions(OnTopMostWindBlast, OnNoLongerTopMostWindBlast),
                     new TriggerElectricChainStep("Electrocute Wet Floor")
                         .SetHoverOverAction(OnHoverElectric)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
@@ -103,6 +104,15 @@ namespace Tutorial {
         }
         private void OnNoLongerTopMostSplashPoison() {
             Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Splash Poison");
+        }
+        #endregion
+
+        #region Wind Blast
+        private void OnTopMostWindBlast() {
+            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Wind Blast");
+        }
+        private void OnNoLongerTopMostWindBlast() {
+            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Wind Blast");
         }
         #endregion
     }
