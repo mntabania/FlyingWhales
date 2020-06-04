@@ -187,11 +187,11 @@ namespace Traits {
                 }
             }
             if (shouldAddTrait) {
-                if (bypassElementalChance) {
-                    return true;
-                }
+                // if (bypassElementalChance) {
+                //     return true;
+                // }
                 int roll = UnityEngine.Random.Range(0, 100);
-                int chance = GetElementalTraitChanceToBeAdded(traitName, addTo);
+                int chance = GetElementalTraitChanceToBeAdded(traitName, addTo, bypassElementalChance);
                 if (roll < chance) {
                     return true;
                 }
@@ -275,24 +275,24 @@ namespace Traits {
             }
             return true;
         }
-        private int GetElementalTraitChanceToBeAdded(string traitName, ITraitable addTo) {
+        private int GetElementalTraitChanceToBeAdded(string traitName, ITraitable addTo, bool bypassElementalChance) {
             int chance = 100;
             if (traitName == "Burning") {
-                chance = 15;
+                chance = bypassElementalChance ? 100 : 15;
                 if(HasTrait("Fireproof", "Wet", "Burnt") || !HasTrait("Flammable")) {
                     chance = 0;
                 } else if (HasTrait("Poisoned")) {
                     chance = 100;
                 }
             } else if (traitName == "Freezing") {
-                chance = 20;
+                chance = bypassElementalChance ? 100 : 20;
                 if (HasTrait("Cold Blooded", "Burning")) {
                     chance = 0;
                 } else if (HasTrait("Wet")) {
                     chance = 100;
                 }
             } else if (traitName == "Zapped") {
-                chance = 15;
+                chance = bypassElementalChance ? 100 : 15;
                 if (HasTrait("Electric")) {
                     chance = 0;
                 } else if (HasTrait("Wet")) {

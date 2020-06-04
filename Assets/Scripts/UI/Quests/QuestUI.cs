@@ -29,6 +29,7 @@ public class QuestUI : MonoBehaviour {
         QuestItem questItem = questGO.GetComponent<QuestItem>();
         questItem.SetQuest(quest);
         questItem.TweenIn();
+        Messenger.Broadcast(Signals.QUEST_SHOWN, quest);
         return questItem;
     }
     public void HideQuestDelayed(Quest quest) {

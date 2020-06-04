@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
+using Quests;
 using Ruinarch.Custom_UI;
 using Settings;
 using UnityEngine;
@@ -25,6 +26,9 @@ public class AudioManager : MonoBehaviour {
     [Header("UI Audio Sources")] 
     [SerializeField] private AudioSource buttonClick;
     [SerializeField] private AudioSource toggleClick;
+    [SerializeField] private AudioSource questNotificationSound;
+    [SerializeField] private AudioSource positiveNotificationSound;
+    [SerializeField] private AudioSource negativeNotificationSound;
     
     [Header("Snapshots")] 
     [SerializeField] private AudioMixerSnapshot mainMenuSnapShot;
@@ -85,6 +89,7 @@ public class AudioManager : MonoBehaviour {
     public void OnGameLoaded() {
         Messenger.AddListener<Region>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
         Messenger.AddListener<Region>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
+        Messenger.AddListener<Quest>(Signals.QUEST_SHOWN, OnQuestShown);
         SetCameraParent(InnerMapCameraMove.Instance);
     }
     #endregion
@@ -121,6 +126,9 @@ public class AudioManager : MonoBehaviour {
     }
     private void OnToggleClicked(RuinarchToggle toggle) {
         toggleClick.Play();
+    }
+    private void OnQuestShown(Quest quest) {
+        questNotificationSound.Play();
     }
     #endregion
 
