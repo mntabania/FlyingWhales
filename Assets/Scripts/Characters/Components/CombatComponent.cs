@@ -185,7 +185,7 @@ public class CombatComponent {
             if (target is TileObject targetTileObject) {
                 targetTileObject.AdjustRepairCounter(-1);
             } else if (target is Character targetCharacter) {
-                if (fightCombatData[targetCharacter].reasonForCombat == CombatManager.Hostility) {
+                if (fightCombatData.ContainsKey(targetCharacter) && fightCombatData[targetCharacter].reasonForCombat == CombatManager.Hostility) {
                     AddPOIToBannedFromHostile(targetCharacter);
                 }
             }
@@ -270,7 +270,7 @@ public class CombatComponent {
             if (poi is TileObject targetTileObject) {
                 targetTileObject.AdjustRepairCounter(-1);
             } else if (poi is Character targetCharacter) {
-                if (fightCombatData[targetCharacter].reasonForCombat == CombatManager.Hostility) {
+                if (fightCombatData.ContainsKey(targetCharacter) && fightCombatData[targetCharacter].reasonForCombat == CombatManager.Hostility) {
                     AddPOIToBannedFromHostile(targetCharacter);
                 }
             }

@@ -165,7 +165,9 @@ namespace Traits {
                 //Temporary fix only, if the burning object has no longer have a tile location (presumably destroyed), spreading of fire should not trigger
                 return;
             }
-            if(UnityEngine.Random.Range(0, 100) >= 7) {
+            owner.AdjustHP(-(int) (owner.maxHP * 0.02f), ELEMENTAL_TYPE.Normal, true, this, showHPBar: true);
+
+            if (UnityEngine.Random.Range(0, 100) >= 7) {
                 return;
             }
             //TODO: CAN BE OPTIMIZED?
@@ -183,7 +185,6 @@ namespace Traits {
                 }    
             }
 
-            owner.AdjustHP(-(int)(owner.maxHP * 0.02f), ELEMENTAL_TYPE.Normal, true, this, showHPBar: true);
         }
 
         #region Douser

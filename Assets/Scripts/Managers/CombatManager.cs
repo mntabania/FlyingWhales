@@ -211,7 +211,7 @@ public class CombatManager : MonoBehaviour {
         traitable.AdjustHP(-damage, ELEMENTAL_TYPE.Water, true, showHPBar: true);
     }
     public void ChainElectricDamage(ITraitable traitable, int damage, Character characterResponsible) {
-        damage = Mathf.RoundToInt(damage * 0.2f);
+        damage = Mathf.RoundToInt(damage * 0.8f);
         if(damage >= 0) {
             damage = -1;
         }
