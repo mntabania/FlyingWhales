@@ -5,7 +5,7 @@ using UnityEngine;
 public class Betrayal : Emotion {
 
     public Betrayal() : base(EMOTION.Betrayal) {
-
+        responses = new[] {"Betrayed"};
     }
 
     #region Overrides

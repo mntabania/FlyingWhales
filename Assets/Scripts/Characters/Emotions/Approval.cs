@@ -5,7 +5,7 @@ using UnityEngine;
 public class Approval : Emotion {
 
     public Approval() : base(EMOTION.Approval) {
-
+        responses = new[] {"Approving"};
     }
 
     #region Overrides

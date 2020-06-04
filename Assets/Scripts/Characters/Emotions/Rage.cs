@@ -2,7 +2,7 @@
 public class Rage : Emotion {
 
     public Rage() : base(EMOTION.Rage) {
-
+        responses = new[] {"Enraged"};
     }
 
     #region Overrides

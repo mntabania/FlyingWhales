@@ -5,7 +5,7 @@ using UnityEngine;
 public class Disgust : Emotion {
 
     public Disgust() : base(EMOTION.Disgust) {
-
+        responses = new[] {"Disgusted"};
     }
 
     #region Overrides

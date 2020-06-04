@@ -5,7 +5,7 @@ using UnityEngine;
 public class Gratefulness : Emotion {
 
     public Gratefulness() : base(EMOTION.Gratefulness) {
-
+        responses = new[] {"Grateful"};
     }
 
     #region Overrides

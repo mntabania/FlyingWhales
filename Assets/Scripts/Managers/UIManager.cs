@@ -976,9 +976,6 @@ public class UIManager : MonoBehaviour {
     #region Share Intel
     [Header("Share Intel")]
     [SerializeField] private ShareIntelMenu shareIntelMenu;
-    public void OpenShareIntelMenu(Character targetCharacter) {
-        shareIntelMenu.Open(targetCharacter);
-    }
     public void OpenShareIntelMenu(Character targetCharacter, Character actor, IIntel intel) {
         shareIntelMenu.Open(targetCharacter, actor, intel);
     }

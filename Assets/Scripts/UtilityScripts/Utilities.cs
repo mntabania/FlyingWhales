@@ -849,6 +849,7 @@ namespace UtilityScripts {
                     finalReaction += $"{word}, ";
                 }
             }
+            finalReaction = finalReaction.Replace('_', ' ');
             return finalReaction;
         }
         public static string NormalizeStringUpperCaseFirstLettersNoSpace(string s) {
