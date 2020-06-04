@@ -2,10 +2,10 @@
     public class TriggerVaporFromWindStep : QuestStep {
         public TriggerVaporFromWindStep(string stepDescription = "Huff Wet Floor") : base(stepDescription) { }
         protected override void SubscribeListeners() {
-            Messenger.AddListener(Signals.VAPOR_FROM_WIND_TRIGGERED, Complete);
+            Messenger.AddListener(Signals.VAPOR_FROM_WIND_TRIGGERED_BY_PLAYER, Complete);
         }
         protected override void UnSubscribeListeners() {
-            Messenger.RemoveListener(Signals.VAPOR_FROM_WIND_TRIGGERED, Complete);
+            Messenger.RemoveListener(Signals.VAPOR_FROM_WIND_TRIGGERED_BY_PLAYER, Complete);
         }
     }
 }

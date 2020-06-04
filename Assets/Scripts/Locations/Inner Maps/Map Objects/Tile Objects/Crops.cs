@@ -34,6 +34,9 @@
     /// <returns></returns>
     public abstract int GetRipeningTicks();
     private void PerTickGrowth() {
+        if (gridTileLocation == null) {
+            return;
+        }
         if (remainingRipeningTicks <= 0) {
             SetGrowthState(Growth_State.Ripe);
         }

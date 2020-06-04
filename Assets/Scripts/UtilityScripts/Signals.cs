@@ -611,9 +611,9 @@ public static class Signals {
     /// <summary>
     /// Parameters IPointOfInterest target
     /// </summary>
-    public static string POISON_EXPLOSION_TRIGGERED = "OnPoisonExplosionTriggered";
-    public static string ELECTRIC_CHAIN_TRIGGERED = "OnElectricChainTriggered";
-    public static string VAPOR_FROM_WIND_TRIGGERED = "OnVaporFromWindTriggered";
+    public static string POISON_EXPLOSION_TRIGGERED_BY_PLAYER = "OnPoisonExplosionTriggeredByPlayer";
+    public static string ELECTRIC_CHAIN_TRIGGERED_BY_PLAYER = "OnElectricChainTriggeredByPlayer";
+    public static string VAPOR_FROM_WIND_TRIGGERED_BY_PLAYER = "OnVaporFromWindTriggeredByPlayer";
     #endregion
 
     #region Player Skills

@@ -468,6 +468,38 @@ public class ObjectPicker : PopupMenuBase {
         if (onHoverExitItemAction != null) {
             convertedHoverExitAction = ConvertToEnum(onHoverExitItemAction);
         }
+        
+        for (int i = 0; i < invalidItems.Count; i++) {
+            Enum enumerator = invalidItems[i];
+            GameObject itemGO = UIManager.Instance.InstantiateUIObject(objectPickerEnumItemPrefab.name, objectPickerScrollView.content);
+            EnumNameplateItem item = itemGO.GetComponent<EnumNameplateItem>();
+            item.SetObject(enumerator);
+            item.ClearAllOnClickActions();
+
+            item.SetPortrait(portraitGetter?.Invoke(enumerator.ToString()));
+            
+            item.ClearAllHoverEnterActions();
+            if (convertedHoverAction != null) {
+                item.AddHoverEnterAction(convertedHoverAction.Invoke);
+            }
+
+            item.ClearAllHoverExitActions();
+            if (convertedHoverExitAction != null) {
+                item.AddHoverExitAction(convertedHoverExitAction.Invoke);
+            }
+            if (asButton) {
+                item.SetAsButton();
+            } else {
+                item.SetAsToggle();
+            }
+            item.SetInteractableState(false);
+            if (item.isLocked) {
+                item.transform.SetAsLastSibling();
+            } else {
+                item.transform.SetAsFirstSibling();
+            }
+        }
+        
         for (int i = 0; i < validItems.Count; i++) {
             Enum enumerator = validItems[i];
             GameObject itemGO = UIManager.Instance.InstantiateUIObject(objectPickerEnumItemPrefab.name, objectPickerScrollView.content);
@@ -494,31 +526,7 @@ public class ObjectPicker : PopupMenuBase {
                 item.SetAsToggle();
                 item.SetToggleGroup(toggleGroup);
             }
-        }
-        for (int i = 0; i < invalidItems.Count; i++) {
-            Enum enumerator = invalidItems[i];
-            GameObject itemGO = UIManager.Instance.InstantiateUIObject(objectPickerEnumItemPrefab.name, objectPickerScrollView.content);
-            EnumNameplateItem item = itemGO.GetComponent<EnumNameplateItem>();
-            item.SetObject(enumerator);
-            item.ClearAllOnClickActions();
-
-            item.SetPortrait(portraitGetter?.Invoke(enumerator.ToString()));
-            
-            item.ClearAllHoverEnterActions();
-            if (convertedHoverAction != null) {
-                item.AddHoverEnterAction(convertedHoverAction.Invoke);
-            }
-
-            item.ClearAllHoverExitActions();
-            if (convertedHoverExitAction != null) {
-                item.AddHoverExitAction(convertedHoverExitAction.Invoke);
-            }
-            if (asButton) {
-                item.SetAsButton();
-            } else {
-                item.SetAsToggle();
-            }
-            item.SetInteractableState(false);
+            item.transform.SetAsFirstSibling();
         }
     }
     private void ShowRaceClassItems<T>(List<RaceClass> validItems, List<RaceClass> invalidItems, Action<T> onHoverItemAction, Action<T> onHoverExitItemAction, string identifier, bool asButton) {

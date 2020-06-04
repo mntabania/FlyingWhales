@@ -8,6 +8,8 @@ public class EnumNameplateItem : NameplateItem<Enum> {
     [SerializeField] private Image portrait;
     [SerializeField] private Image cooldownImage;
     [SerializeField] private Image lockedImage;
+
+    public bool isLocked => lockedImage.gameObject.activeSelf;
     
     public override void SetObject(Enum o) {
         base.SetObject(o);
