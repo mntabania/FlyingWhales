@@ -300,7 +300,7 @@ public class CombatComponent {
                 if (hostilesInRange[i] is TileObject targetTileObject) {
                     targetTileObject.AdjustRepairCounter(-1);
                 } else if (hostilesInRange[i] is Character targetCharacter) {
-                    if (fightCombatData[targetCharacter].reasonForCombat == CombatManager.Hostility) {
+                    if (fightCombatData.ContainsKey(targetCharacter) && fightCombatData[targetCharacter].reasonForCombat == CombatManager.Hostility) {
                         AddPOIToBannedFromHostile(targetCharacter);
                     }
                 }

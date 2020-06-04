@@ -19,7 +19,7 @@ namespace Traits {
             description = "This character is on fire!";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
-            ticksDuration = GameManager.Instance.GetTicksBasedOnHour(1);
+            ticksDuration = GameManager.Instance.GetTicksBasedOnHour(3);
             isTangible = true;
             moodEffect = -25;
             _burningSpreadChoices = new List<ITraitable>();
@@ -165,6 +165,9 @@ namespace Traits {
                 //Temporary fix only, if the burning object has no longer have a tile location (presumably destroyed), spreading of fire should not trigger
                 return;
             }
+            if(UnityEngine.Random.Range(0, 100) >= 7) {
+                return;
+            }
             //TODO: CAN BE OPTIMIZED?
             _burningSpreadChoices.Clear();
             if (ShouldSpreadFire()) {
@@ -175,7 +178,7 @@ namespace Traits {
                 }
                 if (_burningSpreadChoices.Count > 0) {
                     ITraitable chosen = _burningSpreadChoices[Random.Range(0, _burningSpreadChoices.Count)];
-                    chosen.traitContainer.AddTrait(chosen, "Burning", out var trait);
+                    chosen.traitContainer.AddTrait(chosen, "Burning", out var trait, bypassElementalChance: true);
                     (trait as Burning)?.SetSourceOfBurning(sourceOfBurning, chosen);
                 }    
             }
