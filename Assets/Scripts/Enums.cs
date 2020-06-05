@@ -1962,6 +1962,10 @@ public static class Extensions {
             case JOB_TYPE.BURY_SERIAL_KILLER_VICTIM:
                 priority = 1010;
                 break;
+            case JOB_TYPE.REMOVE_STATUS:
+            case JOB_TYPE.RECOVER_HP:
+                priority = 1005;
+                break;
             case JOB_TYPE.ENERGY_RECOVERY_URGENT:
             case JOB_TYPE.FULLNESS_RECOVERY_URGENT:
             case JOB_TYPE.HUNT_PREY:
@@ -1983,15 +1987,14 @@ public static class Extensions {
                 priority = 940;
                 break;
             case JOB_TYPE.KILL:
-            case JOB_TYPE.REMOVE_STATUS:
                 priority = 930;
                 break;
             case JOB_TYPE.GO_TO:
                 priority = 925;
                 break;
-            case JOB_TYPE.RECOVER_HP:
-                priority = 920;
-                break;
+            //case JOB_TYPE.RECOVER_HP:
+            //    priority = 920;
+            //    break;
             case JOB_TYPE.UNDERMINE:
             case JOB_TYPE.POISON_FOOD:
             case JOB_TYPE.PLACE_TRAP:

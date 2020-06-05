@@ -1008,7 +1008,12 @@ public class CharacterManager : MonoBehaviour {
         }
     }
     public string TriggerEmotion(EMOTION emotionType, Character emoter, IPointOfInterest target, REACTION_STATUS status, ActualGoapNode action = null) {
-        return $" {GetEmotion(emotionType).ProcessEmotion(emoter, target, status, action)}";
+        if (emoter.isNormalCharacter) {
+            return $" {GetEmotion(emotionType).ProcessEmotion(emoter, target, status, action)}";
+        } else {
+            //Non villager characters cannot feel emotion
+            return string.Empty;
+        }
     }
     public Emotion GetEmotion(string name) {
         for (int i = 0; i < allEmotions.Count; i++) {

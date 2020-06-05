@@ -1685,17 +1685,19 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (isDead) {
                 return;
             }
-            string opinionLabel = relationshipContainer.GetOpinionLabel(characterThatDied);
-            if (opinionLabel == RelationshipManager.Close_Friend
-                || (relationshipContainer.HasSpecialPositiveRelationshipWith(characterThatDied) 
-                    && relationshipContainer.IsEnemiesWith(characterThatDied) == false)) {
-                needsComponent.AdjustHope(-10f);
-                if (!traitContainer.HasTrait("Psychopath")) {
-                    traitContainer.AddTrait(this, "Griefstricken", characterThatDied);
+            if (isNormalCharacter) {
+                string opinionLabel = relationshipContainer.GetOpinionLabel(characterThatDied);
+                if (opinionLabel == RelationshipManager.Close_Friend
+                    || (relationshipContainer.HasSpecialPositiveRelationshipWith(characterThatDied)
+                        && relationshipContainer.IsEnemiesWith(characterThatDied) == false)) {
+                    needsComponent.AdjustHope(-10f);
+                    if (!traitContainer.HasTrait("Psychopath")) {
+                        traitContainer.AddTrait(this, "Griefstricken", characterThatDied);
+                    }
+                } else if (opinionLabel == RelationshipManager.Friend) {
+                    needsComponent.AdjustHope(-5f);
                 }
-            } else if (opinionLabel == RelationshipManager.Friend) {
-                needsComponent.AdjustHope(-5f);
-            } 
+            }
 
             if (characterThatDied.currentRegion == homeRegion) {
                 //if a hostile character has been killed within the character's home npcSettlement, Hope increases by XX amount.

@@ -262,7 +262,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		_owner.jobQueue.AddJobInQueue(job);
 	}
 	public bool TriggerFleeHome(JOB_TYPE jobType = JOB_TYPE.FLEE_TO_HOME) {
-        if(_owner.homeStructure != null && !_owner.homeStructure.hasBeenDestroyed && _owner.homeStructure.tiles.Count > 0) {
+        if(_owner.homeStructure != null && !_owner.homeStructure.hasBeenDestroyed && _owner.homeStructure.tiles.Count > 0 && !_owner.isAtHomeStructure) {
             if (!_owner.jobQueue.HasJob(jobType)) {
                 ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RETURN_HOME], _owner, _owner, null, 0);
                 GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
