@@ -142,6 +142,7 @@ namespace Inner_Maps {
                     case Ground_Type.Sand:
                     case Ground_Type.Desert_Grass:
                     case Ground_Type.Soil:
+                    case Ground_Type.Structure_Stone:
                         genericTileObject.traitContainer.AddTrait(genericTileObject, "Flammable");
                         break;
                     default:

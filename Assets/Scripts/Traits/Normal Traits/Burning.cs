@@ -204,7 +204,7 @@ namespace Traits {
         #endregion
 
         private bool ShouldSpreadFire() {
-            return owner is IPointOfInterest; //only spread fire of this is owned by a POI
+            return owner is IPointOfInterest && owner.gridTileLocation != null; //only spread fire of this is owned by a POI
         }
 
     }
