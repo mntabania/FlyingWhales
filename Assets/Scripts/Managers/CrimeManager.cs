@@ -64,10 +64,12 @@ public class CrimeManager : MonoBehaviour {
                 } else if (target is TileObject targetTileObject && targetTileObject.characterOwner != actor) {
                     //added checking for gridTileLocation because targetTileObject could've been destroyed already. 
                     LocationStructure structureLocation = targetTileObject.gridTileLocation != null ? targetTileObject.structureLocation : targetTileObject.previousTile.structure;
-                    if (structureLocation?.settlementLocation != null
-                        && (targetTileObject.structureLocation.settlementLocation.locationType == LOCATION_TYPE.ELVEN_SETTLEMENT 
-                            || targetTileObject.structureLocation.settlementLocation.locationType == LOCATION_TYPE.HUMAN_SETTLEMENT)) {
-                        return CRIME_TYPE.MISDEMEANOR;    
+                    if(structureLocation != null) {
+                        if (structureLocation.settlementLocation != null
+                        && (structureLocation.settlementLocation.locationType == LOCATION_TYPE.ELVEN_SETTLEMENT
+                            || structureLocation.settlementLocation.locationType == LOCATION_TYPE.HUMAN_SETTLEMENT)) {
+                            return CRIME_TYPE.MISDEMEANOR;
+                        }
                     }
                 }
             }

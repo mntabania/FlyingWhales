@@ -194,7 +194,12 @@ public class CharacterManager : MonoBehaviour {
             homeStructure.location.AddCharacterToLocation(newCharacter);
         } else if (homeLocation != null) {
             newCharacter.MigrateHomeTo(homeLocation, homeStructure, false, true);
-            homeLocation.region.AddCharacterToLocation(newCharacter);
+            if(homeLocation is NPCSettlement homeNPCSettlement) {
+                homeNPCSettlement.region.AddCharacterToLocation(newCharacter);
+            } else if (homeRegion != null) {
+                homeRegion.AddResident(newCharacter);
+                homeRegion.AddCharacterToLocation(newCharacter);
+            }
         } else if (homeRegion != null) {
             homeRegion.AddResident(newCharacter);
             homeRegion.AddCharacterToLocation(newCharacter);
@@ -514,7 +519,12 @@ public class CharacterManager : MonoBehaviour {
             homeStructure.location.AddCharacterToLocation(newCharacter);
         } else if (homeLocation != null) {
             newCharacter.MigrateHomeTo(homeLocation, homeStructure, false, true);
-            homeLocation.region.AddCharacterToLocation(newCharacter);
+            if (homeLocation is NPCSettlement homeNPCSettlement) {
+                homeNPCSettlement.region.AddCharacterToLocation(newCharacter);
+            } else if (homeRegion != null) {
+                homeRegion.AddResident(newCharacter);
+                homeRegion.AddCharacterToLocation(newCharacter);
+            }
         } else if (homeRegion != null) {
             homeRegion.AddResident(newCharacter);
             homeRegion.AddCharacterToLocation(newCharacter);
@@ -549,7 +559,12 @@ public class CharacterManager : MonoBehaviour {
             homeStructure.location.AddCharacterToLocation(newCharacter);
         } else if (homeLocation != null) {
             newCharacter.MigrateHomeTo(homeLocation, homeStructure, false, true);
-            homeLocation.region.AddCharacterToLocation(newCharacter);
+            if (homeLocation is NPCSettlement homeNPCSettlement) {
+                homeNPCSettlement.region.AddCharacterToLocation(newCharacter);
+            } else if (homeRegion != null) {
+                homeRegion.AddResident(newCharacter);
+                homeRegion.AddCharacterToLocation(newCharacter);
+            }
         } else if (homeRegion != null) {
             homeRegion.AddResident(newCharacter);
             homeRegion.AddCharacterToLocation(newCharacter);
