@@ -16,6 +16,7 @@ public class CharacterThoughtTooltip : MonoBehaviour {
         gameObject.SetActive(true);
         UpdateText(character);
         Reposition(character);
+        rectTransform.SetAsLastSibling();
     }
     private void Update() {
         UpdateText(activeCharacter);
@@ -30,7 +31,7 @@ public class CharacterThoughtTooltip : MonoBehaviour {
             InnerMapCameraMove.Instance.innerMapsCamera.WorldToScreenPoint(character.marker.transform.position);
         float fovDiff = InnerMapCameraMove.Instance.currentFOV - InnerMapCameraMove.Instance.minFOV;
         float diff = fovDiff / 3.5f;
-        screenPoint.y -= (105f - (diff * 12f));
+        screenPoint.y -= (125f - (diff * 12f));
         rectTransform.position = screenPoint;
     }
     private void UpdateText(Character character) {

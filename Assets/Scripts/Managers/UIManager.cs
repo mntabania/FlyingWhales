@@ -1353,7 +1353,7 @@ public class UIManager : MonoBehaviour {
         if (GetTooltipOwnedBy(character) == null) {
             CharacterThoughtTooltip availableTooltip = GetAvailableThoughtTooltip();
             Assert.IsNotNull(availableTooltip, $"There is no available thought tooltip for {character.name}!");
-            availableTooltip.Show(character);    
+            availableTooltip.Show(character);
         }
     }
     public void HideCharacterThoughtTooltip(Character character) {
