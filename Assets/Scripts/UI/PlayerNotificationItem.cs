@@ -1,4 +1,5 @@
-﻿using EZObjectPools;
+﻿using System;
+using EZObjectPools;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -20,6 +21,7 @@ public class PlayerNotificationItem : PooledObject {
     [SerializeField] private LogItem logItem;
     [SerializeField] private RectTransform _container;
     [SerializeField] private LayoutElement _layoutElement;
+    private UIHoverPosition _hoverPosition;
 
     private System.Action<PlayerNotificationItem> onDestroyAction;
 
@@ -40,6 +42,9 @@ public class PlayerNotificationItem : PooledObject {
 
         this.onDestroyAction = onDestroyAction;
         StartCoroutine(TweenHeight());
+    }
+    public void SetHoverPosition(UIHoverPosition hoverPosition) {
+        _hoverPosition = hoverPosition;
     }
     IEnumerator TweenHeight() {
         yield return null;
@@ -78,5 +83,18 @@ public class PlayerNotificationItem : PooledObject {
     public void TweenIn() {
         _container.anchoredPosition = new Vector2(450f, 0f);
         _container.DOAnchorPosX(0f, 0.5f);
+    }
+    
+    public void OnHoverOverLog(object obj) {
+        if (obj is string indexText) {
+            int index = Int32.Parse(indexText);
+            LogFiller logFiller = logItem.log.fillers[index];
+            if (logFiller.obj is Character character && _hoverPosition != null) {
+                UIManager.Instance.ShowCharacterNameplateTooltip(character, _hoverPosition);
+            }
+        }
+    }
+    public void OnHoverOutLog() {
+        UIManager.Instance.HideCharacterNameplateTooltip();
     }
 }

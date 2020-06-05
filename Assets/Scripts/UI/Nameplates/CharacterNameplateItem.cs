@@ -60,6 +60,10 @@ public class CharacterNameplateItem : NameplateItem<Character> {
     }
     #endregion
 
+    public void SetPosition(UIHoverPosition position) {
+        UIManager.Instance.PositionTooltip(position, gameObject, this.transform as RectTransform);
+    }
+
     public void SetIsActive(bool state) {
         isActive = state;
     }

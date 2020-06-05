@@ -17,6 +17,7 @@ using UtilityScripts;
 public class CharacterMarker : MapObjectVisual<Character> {
     public Character character { get; private set; }
 
+    [Header("Character Marker Assets")]
     public Transform visualsParent;
     public TextMeshPro nameLbl;
     [SerializeField] private Transform nameContainer;
@@ -49,8 +50,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     [SerializeField] private SpriteRenderer colorHighlight;
 
     private string _destroySchedule;
-    
-    
+
     //vision colliders
     public List<IPointOfInterest> inVisionPOIs { get; private set; } //POI's in this characters vision collider
     public List<IPointOfInterest> unprocessedVisionPOIs { get; private set; } //POI's in this characters vision collider
@@ -183,10 +183,14 @@ public class CharacterMarker : MapObjectVisual<Character> {
             }
         }
     }
-    protected override void OnPointerEnter(Character poi) {
-        base.OnPointerEnter(poi);
-        InnerMapManager.Instance.SetCurrentlyHoveredPOI(poi);
-        InnerMapManager.Instance.ShowTileData(character.gridTileLocation, character);
+    protected override void OnPointerEnter(Character character) {
+        base.OnPointerEnter(character);
+        InnerMapManager.Instance.SetCurrentlyHoveredPOI(character);
+        InnerMapManager.Instance.ShowTileData(this.character.gridTileLocation, this.character);
+        if (UIManager.Instance.GetCurrentlySelectedCharacter() != character) {
+            //only process hover tooltips if character is not the currently selected character
+            UIManager.Instance.ShowCharacterThoughtTooltip(character);    
+        }
     }
     protected override void OnPointerExit(Character poi) {
         base.OnPointerExit(poi);
@@ -194,6 +198,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
             InnerMapManager.Instance.SetCurrentlyHoveredPOI(null);
         }
         UIManager.Instance.HideSmallInfo();
+        if (UIManager.Instance.GetCurrentlySelectedCharacter() != character) {
+            //only process hover tooltips if character is not the currently selected character
+            UIManager.Instance.HideCharacterThoughtTooltip(character);
+        }
     }
     #endregion
 

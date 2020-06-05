@@ -24,6 +24,7 @@ public class MonsterInfoUI : InfoUIBase {
     [SerializeField] private GameObject logParentGO;
     [SerializeField] private GameObject logHistoryPrefab;
     [SerializeField] private ScrollRect historyScrollView;
+    [SerializeField] private UIHoverPosition logHoverPosition;
     private LogHistoryItem[] logHistoryItems;
 
     [Space(10)]
@@ -74,11 +75,16 @@ public class MonsterInfoUI : InfoUIBase {
             && InnerMapCameraMove.Instance.target == _activeMonster.marker.gameObject.transform) {
             InnerMapCameraMove.Instance.CenterCameraOn(null);
         }
+        UIManager.Instance.HideCharacterThoughtTooltip(_activeMonster);
         _activeMonster = null;
     }
     public override void OpenMenu() {
+        Character previousMonster = _activeMonster;
         _activeMonster = _data as Character;
         base.OpenMenu();
+        if (previousMonster != null) {
+            UIManager.Instance.HideCharacterThoughtTooltip(previousMonster);
+        }
         if (UIManager.Instance.IsShareIntelMenuOpen()) {
             backButton.interactable = false;
         }
@@ -276,6 +282,7 @@ public class MonsterInfoUI : InfoUIBase {
                 Log currLog = _activeMonster.logComponent.history[historyLastIndex - i];
                 currItem.gameObject.SetActive(true);
                 currItem.SetLog(currLog);
+                currItem.SetHoverPosition(logHoverPosition);
             } else {
                 currItem.gameObject.SetActive(false);
             }

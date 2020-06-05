@@ -128,32 +128,10 @@ MonoBehaviour:
   ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 114423875959117946}
-        m_MethodName: ShowLogDebugInfo
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   onHoverExitAction:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 114423875959117946}
-        m_MethodName: HideLogDebugInfo
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!1 &1569723179621366
 GameObject:
   m_ObjectHideFlags: 0
@@ -559,10 +537,32 @@ MonoBehaviour:
   allowClickAction: 1
   hoverAction:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 114423875959117946}
+        m_MethodName: OnHoverOverLog
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   hoverOutAction:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 114423875959117946}
+        m_MethodName: OnHoverOutLog
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &114566273824674128
 MonoBehaviour:
   m_ObjectHideFlags: 0

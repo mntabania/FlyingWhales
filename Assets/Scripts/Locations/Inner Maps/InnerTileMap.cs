@@ -614,7 +614,7 @@ namespace Inner_Maps {
 
         #region Monobehaviours
         public void Update() {
-            Character activeCharacter = GetCurrentlySelectedCharacter();
+            Character activeCharacter = UIManager.Instance.GetCurrentlySelectedCharacter();
             if (activeCharacter != null && activeCharacter.currentRegion == region.coreTile.region
                 && !activeCharacter.isDead
                 && activeCharacter.marker
@@ -632,14 +632,6 @@ namespace Inner_Maps {
             } else {
                 HidePath();
             }
-        }
-        private Character GetCurrentlySelectedCharacter() {
-            if (UIManager.Instance.characterInfoUI.isShowing) {
-                return UIManager.Instance.characterInfoUI.activeCharacter;
-            } else if (UIManager.Instance.monsterInfoUI.isShowing) {
-                return UIManager.Instance.monsterInfoUI.activeMonster;
-            }
-            return null;
         }
         #endregion
         

@@ -28,7 +28,7 @@ public abstract class MapObjectVisual<T> : BaseMapObjectVisual where T : IDamage
     #endregion
 
     #region Pointer Functions
-    protected virtual void OnPointerEnter(T poi) {
+    protected virtual void OnPointerEnter(T character) {
         SetHoverObjectState(true);
     }
     protected virtual void OnPointerExit(T poi) {

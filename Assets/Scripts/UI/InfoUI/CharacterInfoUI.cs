@@ -33,6 +33,7 @@ public class CharacterInfoUI : InfoUIBase {
     [SerializeField] private GameObject logParentGO;
     [SerializeField] private GameObject logHistoryPrefab;
     [SerializeField] private ScrollRect historyScrollView;
+    [SerializeField] private UIHoverPosition logHoverPosition;
     private LogHistoryItem[] logHistoryItems;
 
     [Space(10)] [Header("Stats")]
@@ -54,7 +55,8 @@ public class CharacterInfoUI : InfoUIBase {
     [SerializeField] private TextMeshProUGUI relationshipTypesLbl;
     [SerializeField] private TextMeshProUGUI relationshipNamesLbl;
     [SerializeField] private TextMeshProUGUI relationshipValuesLbl;
-
+    [SerializeField] private UIHoverPosition relationshipNameplateItemPosition;
+    
     [Space(10)] [Header("Mood")] 
     [SerializeField] private MarkedMeter moodMeter;
     [SerializeField] private TextMeshProUGUI moodSummary;
@@ -65,8 +67,7 @@ public class CharacterInfoUI : InfoUIBase {
     [SerializeField] private MarkedMeter happinessMeter;
     [SerializeField] private MarkedMeter hopeMeter;
     [SerializeField] private MarkedMeter staminaMeter;
-    
-    
+
     private Character _activeCharacter;
     private Character _previousCharacter;
 
@@ -148,12 +149,16 @@ public class CharacterInfoUI : InfoUIBase {
             && InnerMapCameraMove.Instance.target == _activeCharacter.marker.gameObject.transform) {
             InnerMapCameraMove.Instance.CenterCameraOn(null);
         }
+        UIManager.Instance.HideCharacterThoughtTooltip(_activeCharacter);
         _activeCharacter = null;
     }
     public override void OpenMenu() {
         _previousCharacter = _activeCharacter;
         _activeCharacter = _data as Character;
         base.OpenMenu();
+        if (_previousCharacter != null) {
+            UIManager.Instance.HideCharacterThoughtTooltip(_previousCharacter);
+        }
         if (UIManager.Instance.IsShareIntelMenuOpen()) {
             backButton.interactable = false;
         }
@@ -161,7 +166,8 @@ public class CharacterInfoUI : InfoUIBase {
             UIManager.Instance.HideObjectPicker();
         }
         if (_activeCharacter.marker && _activeCharacter.marker.transform != null) {
-            Selector.Instance.Select(_activeCharacter, _activeCharacter.marker.transform);    
+            Selector.Instance.Select(_activeCharacter, _activeCharacter.marker.transform);
+            UIManager.Instance.ShowCharacterThoughtTooltip(_activeCharacter);
         }
         UpdateCharacterInfo();
         UpdateTraits();
@@ -465,6 +471,7 @@ public class CharacterInfoUI : InfoUIBase {
                 Log currLog = _activeCharacter.logComponent.history[historyLastIndex - i];
                 currItem.gameObject.SetActive(true);
                 currItem.SetLog(currLog);
+                currItem.SetHoverPosition(logHoverPosition);
             } else {
                 currItem.gameObject.SetActive(false);
             }
@@ -615,6 +622,13 @@ public class CharacterInfoUI : InfoUIBase {
             ShowOpinionData(id);
         }
     }
+    public void OnHoverRelationshipName(object obj) {
+        if (obj is string text) {
+            int index = int.Parse(text);
+            int characterID = _activeCharacter.relationshipContainer.relationships.Keys.ElementAtOrDefault(index);
+            OnHoverCharacterNameInRelationships(characterID);
+        }
+    }
     private void OnOpinionChanged(Character owner, Character target, string reason) {
         if (isShowing && (owner == activeCharacter || target == activeCharacter)) {
             UpdateRelationships();
@@ -674,6 +688,20 @@ public class CharacterInfoUI : InfoUIBase {
                 UIManager.Instance.ShowCharacterInfo(target,true);    
             }
         }
+    }
+    private void OnHoverCharacterNameInRelationships(int id) {
+        Character target = CharacterManager.Instance.GetCharacterByID(id);
+        if (target != null) {
+            UIManager.Instance.ShowCharacterNameplateTooltip(target, relationshipNameplateItemPosition);
+        } else {
+            //character has not yet been spawned
+            IRelationshipData relationshipData = _activeCharacter.relationshipContainer.relationships[id];
+            UIManager.Instance.ShowSmallInfo($"{relationshipData.targetName} is not yet in this region.", relationshipNameplateItemPosition);
+        }
+    }
+    public void HideRelationshipNameplate() {
+        UIManager.Instance.HideSmallInfo();
+        UIManager.Instance.HideCharacterNameplateTooltip();
     }
     #endregion
 
