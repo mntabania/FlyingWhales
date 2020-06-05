@@ -117,7 +117,7 @@ public class CharacterVisuals {
             return _owner.overrideThoughts[0];
         }
         if (_owner.isDead) {
-            return $"{_owner.name} has died.";
+            return $"<b>{_owner.name}</b> has died.";
         }
         //Interrupt
         if (_owner.interruptComponent.isInterrupted && _owner.interruptComponent.thoughtBubbleLog != null) {
@@ -139,25 +139,25 @@ public class CharacterVisuals {
         }
         //fleeing
         if (_owner.marker && _owner.marker.hasFleePath) {
-            return $"{_owner.name} is fleeing.";
+            return $"<b>{_owner.name}</b> is fleeing.";
         }
 
         //Travelling
         if (_owner.currentParty.icon.isTravelling) {
             if (_owner.currentParty.owner.marker.destinationTile != null) {
-                return $"{_owner.name} is going to {_owner.currentParty.owner.marker.destinationTile.structure.GetNameRelativeTo(_owner)}";
+                return $"<b>{_owner.name}</b> is going to {_owner.currentParty.owner.marker.destinationTile.structure.GetNameRelativeTo(_owner)}";
             }
         }
 
         //Default - Do nothing/Idle
         if (_owner.currentStructure != null) {
-            return $"{_owner.name} is in {_owner.currentStructure.GetNameRelativeTo(_owner)}";
+            return $"<b>{_owner.name}</b> is in {_owner.currentStructure.GetNameRelativeTo(_owner)}";
         }
 
         if(_owner.minion != null && !_owner.minion.isSummoned) {
-            return $"{_owner.name} is unsummoned";
+            return $"<b>{_owner.name}</b> is unsummoned";
         }
-        return $"{_owner.name} is in {_owner.currentRegion?.name}";
+        return $"<b>{_owner.name}</b> is in {_owner.currentRegion?.name}";
     }
     #endregion
 }

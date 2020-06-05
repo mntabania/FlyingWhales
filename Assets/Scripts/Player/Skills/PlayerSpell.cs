@@ -251,6 +251,7 @@ public class SpellData : IPlayerSkill {
     public virtual void ActivateAbility(StructureRoom room) {
         OnExecuteSpellActionAffliction();
     }
+    public virtual string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) { return null; }
     public virtual bool CanPerformAbilityTowards(Character targetCharacter) {
         //(targetCharacter.race != RACE.HUMANS && targetCharacter.race != RACE.ELVES)
         if(targetCharacter.traitContainer.HasTrait("Blessed")) {

@@ -116,10 +116,10 @@ public class ReactionComponent {
                     owner.logComponent.PrintLogErrorIfActive(error);
                 } else {
                     //add log of emotions felt
-                    Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction");
+                    Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction_witness");
                     log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(reactable.actor, reactable.actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                    log.AddToFillers(null, UtilityScripts.Utilities.Comafy(emotionsToActor), LOG_IDENTIFIER.STRING_1);
+                    log.AddToFillers(null, UtilityScripts.Utilities.GetFirstFewEmotionsAndComafy(emotionsToActor, 2), LOG_IDENTIFIER.STRING_1);
                     log.AddLogToInvolvedObjects();
                 }
             }
@@ -134,7 +134,7 @@ public class ReactionComponent {
                     owner.logComponent.PrintLogErrorIfActive(error);
                 } else {
                     //add log of emotions felt
-                    Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction");
+                    Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction_witness");
                     log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(reactable.target, reactable.target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                     log.AddToFillers(null, UtilityScripts.Utilities.Comafy(emotionsToTarget), LOG_IDENTIFIER.STRING_1);
@@ -157,7 +157,7 @@ public class ReactionComponent {
                         owner.logComponent.PrintLogErrorIfActive(error);
                     } else {
                         //add log of emotions felt
-                        Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction");
+                        Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction_witness");
                         log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                         log.AddToFillers(reactable.actor, reactable.actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                         log.AddToFillers(null, UtilityScripts.Utilities.Comafy(emotionsOfTarget), LOG_IDENTIFIER.STRING_1);
@@ -204,7 +204,7 @@ public class ReactionComponent {
                     Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction");
                     log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(reactable.actor, reactable.actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                    log.AddToFillers(null, UtilityScripts.Utilities.Comafy(emotionsToActor), LOG_IDENTIFIER.STRING_1);
+                    log.AddToFillers(null, UtilityScripts.Utilities.GetFirstFewEmotionsAndComafy(emotionsToActor, 2), LOG_IDENTIFIER.STRING_1);
                     log.AddLogToInvolvedObjects();
                 }
             }
@@ -222,7 +222,7 @@ public class ReactionComponent {
                     Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction");
                     log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(reactable.target, reactable.target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                    log.AddToFillers(null, UtilityScripts.Utilities.Comafy(emotionsToTarget), LOG_IDENTIFIER.STRING_1);
+                    log.AddToFillers(null, UtilityScripts.Utilities.GetFirstFewEmotionsAndComafy(emotionsToTarget, 2), LOG_IDENTIFIER.STRING_1);
                     log.AddLogToInvolvedObjects();
                 }
             }
@@ -242,7 +242,7 @@ public class ReactionComponent {
                     Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction");
                     log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(reactable.actor, reactable.actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                    log.AddToFillers(null, UtilityScripts.Utilities.Comafy(emotionsOfTarget), LOG_IDENTIFIER.STRING_1);
+                    log.AddToFillers(null, UtilityScripts.Utilities.GetFirstFewEmotionsAndComafy(emotionsOfTarget, 2), LOG_IDENTIFIER.STRING_1);
                     log.AddLogToInvolvedObjects();
                 }
             }
@@ -295,10 +295,10 @@ public class ReactionComponent {
                     error += $"\n-Target: {target.nameWithID}";
                     owner.logComponent.PrintLogErrorIfActive(error);
                 } else {
-                    Log emotionsLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction");
+                    Log emotionsLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction_witness");
                     emotionsLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     emotionsLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                    emotionsLog.AddToFillers(null, UtilityScripts.Utilities.Comafy(emotionsToActor), LOG_IDENTIFIER.STRING_1);
+                    emotionsLog.AddToFillers(null, UtilityScripts.Utilities.GetFirstFewEmotionsAndComafy(emotionsToActor, 2), LOG_IDENTIFIER.STRING_1);
                     emotionsLog.AddLogToInvolvedObjects();
                 }
             }
@@ -312,10 +312,10 @@ public class ReactionComponent {
                     error += $"\n-Target: {target.nameWithID}";
                     owner.logComponent.PrintLogErrorIfActive(error);
                 } else {
-                    Log emotionsLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction");
+                    Log emotionsLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction_witness");
                     emotionsLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     emotionsLog.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                    emotionsLog.AddToFillers(null, UtilityScripts.Utilities.Comafy(emotionsToTarget), LOG_IDENTIFIER.STRING_1);
+                    emotionsLog.AddToFillers(null, UtilityScripts.Utilities.GetFirstFewEmotionsAndComafy(emotionsToTarget, 2), LOG_IDENTIFIER.STRING_1);
                     emotionsLog.AddLogToInvolvedObjects();
                 }
             }
@@ -333,10 +333,10 @@ public class ReactionComponent {
                     error += $"\n-Target: {target.nameWithID}";
                     owner.logComponent.PrintLogErrorIfActive(error);
                 } else {
-                    Log emotionsLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction");
+                    Log emotionsLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction_witness");
                     emotionsLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     emotionsLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                    emotionsLog.AddToFillers(null, UtilityScripts.Utilities.Comafy(emotionsOfTarget), LOG_IDENTIFIER.STRING_1);
+                    emotionsLog.AddToFillers(null, UtilityScripts.Utilities.GetFirstFewEmotionsAndComafy(emotionsOfTarget, 2), LOG_IDENTIFIER.STRING_1);
                     emotionsLog.AddLogToInvolvedObjects();
                 }
             }
@@ -371,7 +371,7 @@ public class ReactionComponent {
                     Log emotionsLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction");
                     emotionsLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     emotionsLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                    emotionsLog.AddToFillers(null, UtilityScripts.Utilities.Comafy(emotionsToActor), LOG_IDENTIFIER.STRING_1);
+                    emotionsLog.AddToFillers(null, UtilityScripts.Utilities.GetFirstFewEmotionsAndComafy(emotionsToActor, 2), LOG_IDENTIFIER.STRING_1);
                     emotionsLog.AddLogToInvolvedObjects();
                 }
             }
@@ -388,7 +388,7 @@ public class ReactionComponent {
                     Log emotionsLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction");
                     emotionsLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     emotionsLog.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                    emotionsLog.AddToFillers(null, UtilityScripts.Utilities.Comafy(emotionsToTarget), LOG_IDENTIFIER.STRING_1);
+                    emotionsLog.AddToFillers(null, UtilityScripts.Utilities.GetFirstFewEmotionsAndComafy(emotionsToTarget, 2), LOG_IDENTIFIER.STRING_1);
                     emotionsLog.AddLogToInvolvedObjects();
                 }
             }
@@ -408,7 +408,7 @@ public class ReactionComponent {
                     Log emotionsLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction");
                     emotionsLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     emotionsLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                    emotionsLog.AddToFillers(null, UtilityScripts.Utilities.Comafy(emotionsOfTarget), LOG_IDENTIFIER.STRING_1);
+                    emotionsLog.AddToFillers(null, UtilityScripts.Utilities.GetFirstFewEmotionsAndComafy(emotionsOfTarget, 2), LOG_IDENTIFIER.STRING_1);
                     emotionsLog.AddLogToInvolvedObjects();
                 }
             }

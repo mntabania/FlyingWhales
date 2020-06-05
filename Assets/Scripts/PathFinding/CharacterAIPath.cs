@@ -141,6 +141,8 @@ public class CharacterAIPath : AILerp {
         if (marker.character.canMove == false || isStopMovement || GameManager.Instance.isPaused) { return; }
         UpdateRotation();
         base.UpdateMe();
+        Vector3 markerPos = marker.transform.position; 
+        marker.transform.position = new Vector3(markerPos.x, markerPos.y, 0f);
     }
     private void UpdateRotation() {
         if (marker.character.currentParty.icon.isTravelling && marker.character.IsInOwnParty() && currentPath != null) { //only rotate if character is travelling

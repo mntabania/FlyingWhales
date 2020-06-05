@@ -448,7 +448,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 24
   m_fontStyle: 0
-  m_textAlignment: 513
+  m_textAlignment: 257
   m_characterSpacing: 0
   m_wordSpacing: 0
   m_lineSpacing: -10
@@ -809,7 +809,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &5209333432563556783
 RectTransform:
   m_ObjectHideFlags: 0
@@ -883,10 +883,10 @@ MonoBehaviour:
   generalConfirmationBodyText: {fileID: 5387427064077473023}
   generalConfirmationButton: {fileID: 5387229076090402377}
   generalConfirmationButtonText: {fileID: 5387043285486356109}
+  _canvasGroup: {fileID: 6332637352802500167}
   picture: {fileID: 4539394535541510335}
   _videoPlayer: {fileID: 527911354}
   _renderTexture: {fileID: 8400000, guid: 55b65aaea7192b04cbd5b8e0bd9b7617, type: 2}
-  _canvasGroup: {fileID: 6332637352802500167}
 --- !u!1 &5428478581117070924
 GameObject:
   m_ObjectHideFlags: 0

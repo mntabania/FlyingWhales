@@ -32,6 +32,10 @@ public class BehaviourComponent {
     public LocationGridTile targetMiningTile { get; private set; }
     public ABPath currentMiningPath { get; private set; }
     
+    //Abduct
+    public ABPath currentAbductDigPath { get; private set; }
+    public Character currentAbductTarget { get; private set; }
+    
     private COMBAT_MODE combatModeBeforeHarassRaidInvade;
     private COMBAT_MODE combatModeBeforeAttackingDemonicStructure;
 
@@ -419,6 +423,15 @@ public class BehaviourComponent {
     #region Attack Village
     public void SetAttackVillageTarget(NPCSettlement npcSettlement) {
         attackVillageTarget = npcSettlement;
+    }
+    #endregion
+    
+    #region Abduction
+    public void SetDigForAbductionPath(ABPath path) {
+        currentAbductDigPath = path;
+    }
+    public void SetAbductionTarget(Character character) {
+        currentAbductTarget = character;
     }
     #endregion
 

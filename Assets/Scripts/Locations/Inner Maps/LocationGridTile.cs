@@ -42,7 +42,7 @@ namespace Inner_Maps {
         public IPointOfInterest objHere { get; private set; }
         public List<Character> charactersHere { get; }
         public bool isOccupied => tileState == Tile_State.Occupied;
-        public TILE_OBJECT_TYPE reservedObjectType { get; private set; } //the only type of tile object that can be placed here
+        // public TILE_OBJECT_TYPE reservedObjectType { get; private set; } //the only type of tile object that can be placed here
         public FurnitureSpot furnitureSpot { get; private set; }
         public bool hasFurnitureSpot { get; private set; }
         public List<Trait> normalTraits => genericTileObject.traitContainer.allTraitsAndStatuses;
@@ -443,7 +443,7 @@ namespace Inner_Maps {
             if (structure != null) {
                 if (tileState == Tile_State.Empty && state == Tile_State.Occupied) {
                     structure.RemoveUnoccupiedTile(this);
-                } else if (tileState == Tile_State.Occupied && state == Tile_State.Empty && reservedObjectType == TILE_OBJECT_TYPE.NONE) {
+                } else if (tileState == Tile_State.Occupied && state == Tile_State.Empty) { //&& reservedObjectType == TILE_OBJECT_TYPE.NONE
                     structure.AddUnoccupiedTile(this);
                 }
             }
@@ -1234,7 +1234,7 @@ namespace Inner_Maps {
             tileType = gridTile.tileType;
             tileState = gridTile.tileState;
             groundType = gridTile.groundType;
-            reservedObjectType = gridTile.reservedObjectType;
+            // reservedObjectType = gridTile.reservedObjectType;
             furnitureSpot = gridTile.furnitureSpot;
             hasFurnitureSpot = gridTile.hasFurnitureSpot;
             hasDetail = gridTile.hasDetail;
