@@ -31994,8 +31994,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: af06d22c87c797249881604748254ba0, type: 3}
   - {fileID: 8300000, guid: f55b4b7790f69b1469c866b1e0a38373, type: 3}
   zapAudio:
-  - {fileID: 8300000, guid: ad473465088e8a94298e19df1342ab78, type: 3}
-  - {fileID: 8300000, guid: ee5edb64574f8bd4892ab70cbc808dc4, type: 3}
+  - {fileID: 8300000, guid: 8fd1850703ada46458deb8d2d181855e, type: 3}
   frozenExplosionAudio:
   - {fileID: 8300000, guid: fadc2acc3308b3646bdc57f6d3b4546e, type: 3}
   bowAndArrowAudio:
