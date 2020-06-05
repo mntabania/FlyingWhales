@@ -28,7 +28,7 @@
         target.traitContainer.RemoveTrait(target, "Restrained", goapNode.actor);
         Faction oldFaction = target.faction;
         oldFaction.KickOutCharacter(target);
-        target.MigrateHomeTo(null, null);
+        target.MigrateHomeStructureTo(null);
         target.ClearTerritory();
     }
     #endregion

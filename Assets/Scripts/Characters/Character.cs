@@ -1212,14 +1212,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //}
     public void NoPathToDoJobOrAction(JobQueueItem job, ActualGoapNode action) {
         if(job.jobType == JOB_TYPE.RETURN_PORTAL || job.jobType == JOB_TYPE.RETURN_TERRITORY) {
-            interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
+            //interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
             jobComponent.TriggerRoamAroundTile();
         } else if (job.jobType == JOB_TYPE.ROAM_AROUND_TERRITORY 
             || job.jobType == JOB_TYPE.ROAM_AROUND_CORRUPTION
             || job.jobType == JOB_TYPE.ROAM_AROUND_PORTAL) {
             jobComponent.TriggerRoamAroundTile();
         } else if (action.goapType == INTERACTION_TYPE.RETURN_HOME) {
-            interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
+            //interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
             jobComponent.TriggerRoamAroundTile();
         } else {
             jobComponent.TriggerStand();
@@ -2959,12 +2959,16 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return false;
     }
-    public void MigrateHomeStructureTo(LocationStructure dwelling) {
+    public void ClearTerritoryAndMigrateHomeStructureTo(LocationStructure dwelling) {
+        MigrateHomeStructureTo(null);
+        ClearTerritory();
+    }
+    public void MigrateHomeStructureTo(LocationStructure dwelling, bool broadcast = true, bool addToRegionResidents = true) {
         if(dwelling == null) {
             MigrateHomeTo(null);
         } else {
             if (dwelling.settlementLocation != null) {
-                MigrateHomeTo(dwelling.settlementLocation, dwelling);
+                MigrateHomeTo(dwelling.settlementLocation, dwelling, broadcast, addToRegionResidents);
             } else {
                 bool sameLocationAlready = false;
                 if (homeStructure != null && homeStructure.location != null) {
@@ -2995,9 +2999,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     private void OnStructureDestroyed(LocationStructure structure) {
         //character's home was destroyed.
         if (structure == homeStructure) {
-            // MigrateHomeStructureTo(null);
+            MigrateHomeStructureTo(null);
             //MigrateHomeTo(null);
-            interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
+            //interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
         }
     }
     #endregion
@@ -3322,51 +3326,17 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public bool PlanIdleReturnHome() { //bool forceDoAction = false
         if (homeStructure != null && homeStructure.tiles.Count > 0 && !homeStructure.hasBeenDestroyed) {
-            //LocationGridTile tile = CollectionUtilities.GetRandomElement(homeStructure.tiles);
-            //if (PathfindingManager.Instance.HasPathEvenDiffRegion(gridTileLocation, tile) || currentRegion != homeStructure.location) { //Removed this checker because we already have a handle if character cannot do an action because he cannot go to it (See: NoPathToDoJobOrAction)
-                ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RETURN_HOME], this, this, null, 0);
-                GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, this);
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE_RETURN_HOME, INTERACTION_TYPE.RETURN_HOME, this, this);
-                goapPlan.SetDoNotRecalculate(true);
-                job.SetCannotBePushedBack(true);
-                job.SetAssignedPlan(goapPlan);
-                jobQueue.AddJobInQueue(job);
-                return true;
-            //}
-        } else {
-            //NOTE: this is a temporary fix because a character sometimes cannot return home because his/her home was destroyed, but he/she was not migrated to a new home. 
-            //ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RETURN_HOME], this, this, null, 0);
-            //GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, this);
-            //GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE_RETURN_HOME, INTERACTION_TYPE.RETURN_HOME, this, this);
-            //goapPlan.SetDoNotRecalculate(true);
-            //job.SetCannotBePushedBack(true);
-            //job.SetAssignedPlan(goapPlan);
-            //jobQueue.AddJobInQueue(job);
-
-            //If character cannot return home roam around tile instead
-            if(territorries.Count <= 0) {
-                interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
-            }
-            //jobComponent.TriggerRoamAroundTile();
-            //return true;
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RETURN_HOME], this, this, null, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, this);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE_RETURN_HOME, INTERACTION_TYPE.RETURN_HOME, this, this);
+            goapPlan.SetDoNotRecalculate(true);
+            job.SetCannotBePushedBack(true);
+            job.SetAssignedPlan(goapPlan);
+            jobQueue.AddJobInQueue(job);
+            return true;
+        } else if (HasTerritory()) {
+            return jobComponent.TriggerReturnTerritory();
         }
-        
-        //if (GetTrait("Berserker") != null) {
-        //    //Return home becomes stroll if the character has berserker trait
-        //    PlanIdleStroll(currentStructure);
-        //} else {
-        //GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.RETURN_HOME, this, this);
-        //goapAction.SetTargetStructure();
-        //GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
-        //GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.IDLE);
-        //goapPlan.ConstructAllNodes();
-        ////AddPlan(goapPlan, true);
-        //AddPlan(goapPlan);
-        //if (forceDoAction) {
-        //    PerformTopPriorityJob();
-        //}
-        //PlanGoapActions(goapAction);
-        //}
         return false;
     }
     public bool PlanIdleReturnHome(out JobQueueItem producedJob) { //bool forceDoAction = false
@@ -3379,13 +3349,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             job.SetAssignedPlan(goapPlan);
             producedJob = job;
             return true;
-        } else {
-            producedJob = null;
-            //If character cannot return home roam around tile instead
-            if(territorries.Count <= 0) {
-                interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
-            }
+        } else if (HasTerritory()) {
+            return jobComponent.TriggerReturnTerritory(out producedJob);
         }
+        producedJob = null;
         return false;
     }
     private string OtherIdlePlans() {

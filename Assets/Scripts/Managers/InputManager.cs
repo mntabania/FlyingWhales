@@ -176,6 +176,7 @@ namespace Ruinarch {
 
         #region Initialization
         private void Initialize() {
+            Cursor.lockState = CursorLockMode.Confined;
             buttonsToHighlight = new List<string>();
             Messenger.MarkAsPermanent(Signals.SHOW_SELECTABLE_GLOW);
             Messenger.MarkAsPermanent(Signals.HIDE_SELECTABLE_GLOW);

@@ -2,6 +2,7 @@
 using Ruinarch;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using DG.Tweening;
 
 public class WorldMapCameraMove : BaseCameraMove {
 
@@ -85,12 +86,13 @@ public class WorldMapCameraMove : BaseCameraMove {
                 fov -= adjustment;
                 fov = Mathf.Clamp(fov, _minFov, _maxFov);
 
-                if (!Mathf.Approximately(previousCameraFOV, fov)) {
-                    previousCameraFOV = fov;
-                    mainCamera.orthographicSize = Mathf.Lerp(mainCamera.orthographicSize, fov, Time.deltaTime * _zoomSpeed);
-                } else {
-                    mainCamera.orthographicSize = fov;
-                }
+                mainCamera.DOOrthoSize(fov, 0.5f).OnUpdate(() => OnZoom(mainCamera));
+                //if (!Mathf.Approximately(previousCameraFOV, fov)) {
+                //    previousCameraFOV = fov;
+                //    mainCamera.orthographicSize = Mathf.Lerp(mainCamera.orthographicSize, fov, Time.deltaTime * _zoomSpeed);
+                //} else {
+                //    mainCamera.orthographicSize = fov;
+                //}
                 CalculateCameraBounds(mainCamera);
                 Messenger.Broadcast(Signals.ZOOM_WORLD_MAP_CAMERA, mainCamera);
             }

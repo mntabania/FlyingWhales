@@ -2,6 +2,7 @@
 using Ruinarch;
 using Settings;
 using UnityEngine;
+using DG.Tweening;
 
 public abstract class BaseCameraMove : MonoBehaviour{
 
@@ -36,9 +37,17 @@ public abstract class BaseCameraMove : MonoBehaviour{
     [SerializeField] private float dampTime = 0.2f;
     [SerializeField] private Vector3 velocity = Vector3.zero;
     [SerializeField] private Transform _target;
+
+    [Header("Threat")]
+    [SerializeField] protected ThreatParticleEffect threatEffect;
+
+
     public Transform lastCenteredTarget { get; private set; }
     private bool isMovementDisabled;
-    
+
+    public bool allowSmoothCameraFollow;
+    public float smoothFollowSpeed;
+
     public Transform target {
         get => _target;
         protected set {
@@ -62,10 +71,14 @@ public abstract class BaseCameraMove : MonoBehaviour{
     protected void ArrowKeysMovement() {
         if (isMovementDisabled) { return; }
         if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S)) {
-            if (!UIManager.Instance.IsConsoleShowing()) { 
+            if (!UIManager.Instance.IsConsoleShowing()) {
                 float yAxisValue = Input.GetAxis("Vertical");
                 Vector3 targetPos = new Vector3(0f, yAxisValue * Time.deltaTime * cameraPanSpeed, 0f);
-                transform.Translate(targetPos);
+                if (allowSmoothCameraFollow) {
+                    transform.DOBlendableMoveBy(targetPos, smoothFollowSpeed);
+                } else {
+                    transform.Translate(targetPos);
+                }
                 Messenger.Broadcast(Signals.CAMERA_MOVED_BY_PLAYER, targetPos);
             }
         }
@@ -74,7 +87,11 @@ public abstract class BaseCameraMove : MonoBehaviour{
             if (!UIManager.Instance.IsConsoleShowing()) {
                 float xAxisValue = Input.GetAxis("Horizontal");
                 Vector3 targetPos = new Vector3(xAxisValue * Time.deltaTime * cameraPanSpeed, 0f, 0f);
-                transform.Translate(targetPos);
+                if (allowSmoothCameraFollow) {
+                    transform.DOBlendableMoveBy(targetPos, smoothFollowSpeed);
+                } else {
+                    transform.Translate(targetPos);
+                }
                 Messenger.Broadcast(Signals.CAMERA_MOVED_BY_PLAYER, targetPos);
             }
         }
@@ -148,27 +165,32 @@ public abstract class BaseCameraMove : MonoBehaviour{
         }
         bool isEdging = false;
         Vector3 newPos = transform.position;
-        if (Input.mousePosition.x > Screen.width - edgeBoundary) {
+        if (Input.mousePosition.x >= Screen.width - edgeBoundary) {
             newPos.x += edgingSpeed * Time.deltaTime;
             isEdging = true;
         }
-        if (Input.mousePosition.x < 0 + edgeBoundary) {
+        if (Input.mousePosition.x <= 0 + edgeBoundary) {
             newPos.x -= edgingSpeed * Time.deltaTime;
             isEdging = true;
         }
 
-        if (Input.mousePosition.y > Screen.height - edgeBoundary) {
+        if (Input.mousePosition.y >= Screen.height - edgeBoundary) {
             newPos.y += edgingSpeed * Time.deltaTime;
             isEdging = true;
         }
-        if (Input.mousePosition.y < 0 + edgeBoundary) {
+        if (Input.mousePosition.y <= 0 + (edgeBoundary + 5f)) {
             newPos.y -= edgingSpeed * Time.deltaTime;
             isEdging = true;
         }
         if (isEdging) {
             target = null; //reset target
         }
-        transform.position = newPos;
+        if (allowSmoothCameraFollow) {
+            Vector3 pos = newPos - transform.position;
+            transform.DOBlendableMoveBy(pos, smoothFollowSpeed);
+        } else {
+            transform.position = newPos;
+        }
     }
     public void AllowEdgePanning(bool state) {
         allowEdgePanning = state;
@@ -262,6 +284,14 @@ public abstract class BaseCameraMove : MonoBehaviour{
         MAX_X = bounds.max.x - horzExtent + (halfOfHexagon); //removed -1 because of UI
         MIN_Y = bounds.min.y + vertExtent - (halfOfHexagon * 1.5f);
         MAX_Y = bounds.max.y - vertExtent + (halfOfHexagon * 1.5f);
+    }
+    #endregion
+
+    #region Zoom
+    protected void OnZoom(Camera camera) {
+        if(threatEffect != null) {
+            threatEffect.OnZoomCamera(camera);
+        }
     }
     #endregion
 }

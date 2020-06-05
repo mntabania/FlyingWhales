@@ -12,7 +12,7 @@ public class DefaultMonster : CharacterBehaviourComponent {
 		if (character is Summon summon) {
 			log += $"\n-{summon.name} is monster";
 			if (summon.gridTileLocation != null) {
-                if(summon.homeStructure == null && !summon.HasTerritory()) {
+                if((summon.homeStructure == null || summon.homeStructure.hasBeenDestroyed) && !summon.HasTerritory()) {
                     log += "\n-No home structure and territory";
                     log += "\n-Trigger Set Home interrupt";
                     summon.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
@@ -76,12 +76,8 @@ public class DefaultMonster : CharacterBehaviourComponent {
                         int fiftyPercentOfMaxHP = Mathf.RoundToInt(summon.maxHP * 0.5f);
                         if (summon.currentHP < fiftyPercentOfMaxHP) {
                             log += "\n-Less than 50% of Max HP, Return Territory or Home";
-                            if (summon.homeStructure != null) {
-                                summon.PlanIdleReturnHome(out producedJob);
-                                return true;
-                            } else if (summon.HasTerritory()) {
-                                summon.jobComponent.TriggerReturnTerritory(out producedJob);
-                                return true;
+                            if (summon.homeStructure != null || summon.HasTerritory()) {
+                                return summon.PlanIdleReturnHome(out producedJob);
                             } else {
                                 log += "\n-No home structure or territory: THIS MUST NOT HAPPEN!";
                             }
@@ -94,12 +90,8 @@ public class DefaultMonster : CharacterBehaviourComponent {
                                 return true;
                             } else {
                                 log += "\n-Return Territory or Home";
-                                if (summon.homeStructure != null) {
-                                    summon.PlanIdleReturnHome(out producedJob);
-                                    return true;
-                                } else if (character.HasTerritory()) {
-                                    summon.jobComponent.TriggerReturnTerritory(out producedJob);
-                                    return true;
+                                if (summon.homeStructure != null || summon.HasTerritory()) {
+                                    return summon.PlanIdleReturnHome(out producedJob);
                                 } else {
                                     log += "\n-No home structure or territory: THIS MUST NOT HAPPEN!";
                                 }

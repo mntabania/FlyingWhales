@@ -125,7 +125,7 @@ public class CombatState : CharacterState {
                     }
                     stateComponent.character.ChangeFactionTo(FactionManager.Instance.friendlyNeutralFaction);
                 }
-                stateComponent.character.MigrateHomeTo(null);
+                stateComponent.character.MigrateHomeStructureTo(null);
 
                 string log =
                     $"{stateComponent.character.name} is a criminal and survived being apprehended. Changed faction to: {stateComponent.character.faction.name} and home to: null";
