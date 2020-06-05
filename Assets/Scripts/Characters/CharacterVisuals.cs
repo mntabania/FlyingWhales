@@ -145,19 +145,19 @@ public class CharacterVisuals {
         //Travelling
         if (_owner.currentParty.icon.isTravelling) {
             if (_owner.currentParty.owner.marker.destinationTile != null) {
-                return $"<b>{_owner.name}</b> is going to {_owner.currentParty.owner.marker.destinationTile.structure.GetNameRelativeTo(_owner)}";
+                return $"<b>{_owner.name}</b> is going to {_owner.currentParty.owner.marker.destinationTile.structure.GetNameRelativeTo(_owner)}.";
             }
         }
 
         //Default - Do nothing/Idle
         if (_owner.currentStructure != null) {
-            return $"<b>{_owner.name}</b> is in {_owner.currentStructure.GetNameRelativeTo(_owner)}";
+            return $"<b>{_owner.name}</b> is in {_owner.currentStructure.GetNameRelativeTo(_owner)}.";
         }
 
         if(_owner.minion != null && !_owner.minion.isSummoned) {
-            return $"<b>{_owner.name}</b> is unsummoned";
+            return $"<b>{_owner.name}</b> is unsummoned.";
         }
-        return $"<b>{_owner.name}</b> is in {_owner.currentRegion?.name}";
+        return $"<b>{_owner.name}</b> is in {_owner.currentRegion?.name}.";
     }
     #endregion
 }

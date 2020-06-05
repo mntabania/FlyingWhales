@@ -18,7 +18,9 @@ public class GiantSpiderBehaviour : CharacterBehaviourComponent {
         producedJob = null;
         TIME_IN_WORDS timeInWords = GameManager.GetCurrentTimeInWordsOfTick();
         if (timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
-            if (character.behaviourComponent.currentAbductTarget != null && character.behaviourComponent.currentAbductTarget.isDead) {
+            if (character.behaviourComponent.currentAbductTarget != null 
+                && (character.behaviourComponent.currentAbductTarget.isDead 
+                    || character.behaviourComponent.currentAbductTarget.traitContainer.HasTrait("Restrained"))) {
                 character.behaviourComponent.SetAbductionTarget(null);
             }
             
@@ -51,8 +53,6 @@ public class GiantSpiderBehaviour : CharacterBehaviourComponent {
                 }    
                 return true;
             }
-            
-            
         }
         return false;
     }
@@ -70,7 +70,7 @@ public class GiantSpiderBehaviour : CharacterBehaviourComponent {
         if (tile.objHere is BlockWall) {
             targetTile = tile;
         } else {
-            Vector2 direction = character.behaviourComponent.currentAbductTarget.worldPosition - tile.centeredWorldLocation;
+            Vector2 direction = lastPositionInPath - tile.centeredWorldLocation; //character.behaviourComponent.currentAbductTarget.worldPosition - tile.centeredWorldLocation;
             if (direction.y > 0) {
                 //north
                 targetTile = tile.GetNeighbourAtDirection(GridNeighbourDirection.North);
@@ -84,10 +84,19 @@ public class GiantSpiderBehaviour : CharacterBehaviourComponent {
                 //west
                 targetTile = tile.GetNeighbourAtDirection(GridNeighbourDirection.West);
             }
+            if (targetTile != null && targetTile.objHere == null) {
+                for (int i = 0; i < targetTile.neighbourList.Count; i++) {
+                    LocationGridTile neighbour = targetTile.neighbourList[i];
+                    if (neighbour.objHere is BlockWall) {
+                        targetTile = neighbour;
+                        break;
+                    }
+                }
+            }
         }
         
         
-        Debug.Log($"No Path found for {character.name} towards {character.behaviourComponent.targetMiningTile}! Last position in path is {lastPositionInPath.ToString()}. Wall to dig is at {targetTile}");
+        Debug.Log($"No Path found for {character.name} towards {character.behaviourComponent.currentAbductTarget?.name ?? "null"}! Last position in path is {lastPositionInPath.ToString()}. Wall to dig is at {targetTile}");
         Assert.IsNotNull(targetTile.objHere, $"Object at {targetTile} is null, but {character.name} wants to dig it.");
         
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DIG_THROUGH, INTERACTION_TYPE.DIG,
