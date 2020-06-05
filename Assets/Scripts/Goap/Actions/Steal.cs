@@ -92,7 +92,7 @@ public class Steal : GoapAction {
         if (witness.relationshipContainer.IsFriendsWith(actor)) {
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor, status, node);
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status, node);
-            if (witness == target || (target is TileObject tileObject && witness == tileObject.characterOwner))) {
+            if (witness == target || (target is TileObject tileObject && witness == tileObject.characterOwner)) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor, status, node);
             }
         }
