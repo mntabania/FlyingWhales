@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using Inner_Maps;
+using Scriptable_Object_Scripts;
 using Traits;
+using UtilityScripts;
 
 public class WindBlastData : SpellData {
     public override SPELL_TYPE type => SPELL_TYPE.WIND_BLAST;
@@ -13,6 +15,11 @@ public class WindBlastData : SpellData {
     }
 
     public override void ActivateAbility(LocationGridTile targetTile) {
+        AudioManager.Instance.CreateAudioObject(
+            PlayerSkillManager.Instance.GetPlayerSkillAsset<WindBlastAssets>(SPELL_TYPE.WIND_BLAST).blastSound,
+            targetTile, 3, false
+        );
+        
         GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Wind_Blast);
         List<LocationGridTile> tiles = targetTile.GetTilesInRadius(1, includeCenterTile: true, includeTilesInDifferentStructure: true);
         for (int i = 0; i < tiles.Count; i++) {
