@@ -104,6 +104,12 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
             if (UIManager.Instance.characterInfoUI.activeCharacter.traitContainer.HasTrait("Blessed")) {
                 additionalText.text += $"<color=\"red\">Blessed {UtilityScripts.Utilities.VillagerIcon()}Villagers are protected from your powers.</color>\n";    
             }
+            if (skillData.CanPerformAbilityTowards(UIManager.Instance.characterInfoUI.activeCharacter) == false) {
+                string otherReasons = skillData.GetReasonsWhyCannotPerformAbilityTowards(UIManager.Instance.characterInfoUI.activeCharacter);
+                if (string.IsNullOrEmpty(otherReasons) == false) {
+                    additionalText.text += $"<color=\"red\">{otherReasons}</color>\n";    
+                }
+            }
         }
         if(HasEnoughMana() == false) {
             additionalText.text += "<color=\"red\">Not enough mana.</color>\n";

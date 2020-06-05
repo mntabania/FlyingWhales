@@ -95,7 +95,7 @@ public class ShareIntelMenu : PopupMenuBase {
             CreateDialogItem(reactor, intel.actor == targetCharacter ? "I know what I did." : "A proper response to this information has not been implemented yet.");
         } else {
             if (reaction == "aware") {
-                CreateDialogItem(reactor, $"{reactor.name} already knows this.");
+                CreateDialogItem(reactor, $"<b>{reactor.name}</b> already knows this.");
             } else {
                 string[] emotionsToActorAndTarget = reaction.Split('/');
 
@@ -107,37 +107,13 @@ public class ShareIntelMenu : PopupMenuBase {
                 
                 if (hasReactionToActor == false && hasReactionToTarget == false) {
                     //has no reactions to actor and target
-                    CreateDialogItem(reactor, $"{reactor.name} seemed Disinterested towards this.");
+                    CreateDialogItem(reactor, $"<b>{reactor.name}</b> seemed Disinterested towards this.");
                 } else {
                     if (hasReactionToActor) {
-                        string[] emotions = emotionsTowardsActor.Split(' ');
-                        string trimmedEmotions = string.Empty;
-                        int obtainedEmotions = 0;
-                        for (int i = 0; i < emotions.Length; i++) {
-                            string emotion = emotions[i];
-                            if (string.IsNullOrEmpty(emotion) || string.IsNullOrWhiteSpace(emotion)) { continue; }
-                            trimmedEmotions += $"{emotion} ";
-                            obtainedEmotions++;
-                            if (obtainedEmotions == 2) {
-                                break; //only get up to 2 emotions
-                            }
-                        }
-                        CreateDialogItem(reactor, $"{reactor.name} seemed {UtilityScripts.Utilities.Comafy(trimmedEmotions)} at {intel.actor.name} after receiving the new information.");    
+                        CreateDialogItem(reactor, $"<b>{reactor.name}</b> seemed {UtilityScripts.Utilities.GetFirstFewEmotionsAndComafy(emotionsTowardsActor, 2)} at <b>{intel.actor.name}</b> after receiving the new information.");    
                     }
                     if (hasReactionToTarget) {
-                        string[] emotions = emotionsTowardsTarget.Split(' ');
-                        string trimmedEmotions = string.Empty;
-                        int obtainedEmotions = 0;
-                        for (int i = 0; i < emotions.Length; i++) {
-                            string emotion = emotions[i];
-                            if (string.IsNullOrEmpty(emotion) || string.IsNullOrWhiteSpace(emotion)) { continue; }
-                            trimmedEmotions += $"{emotion} ";
-                            obtainedEmotions++;
-                            if (obtainedEmotions == 2) {
-                                break; //only get up to 2 emotions
-                            }
-                        }
-                        CreateDialogItem(reactor, $"{reactor.name} seemed {UtilityScripts.Utilities.Comafy(trimmedEmotions)} at {intel.target.name} after receiving the new information.");
+                        CreateDialogItem(reactor, $"<b>{reactor.name}</b> seemed {UtilityScripts.Utilities.GetFirstFewEmotionsAndComafy(emotionsTowardsTarget, 2)} at <b>{intel.target.name}</b> after receiving the new information.");
                     }
                 }
                 

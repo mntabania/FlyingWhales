@@ -4,9 +4,9 @@ using UnityEngine.Assertions;
 
 public class Dig : GoapAction {
     public Dig() : base(INTERACTION_TYPE.DIG) {
-        actionIconString = GoapActionStateDB.Mine_Icon;
+        actionIconString = GoapActionStateDB.Bury_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SPIDER };
         canBePerformedEvenIfPathImpossible = true;
     }
     

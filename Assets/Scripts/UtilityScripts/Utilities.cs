@@ -799,6 +799,21 @@ namespace UtilityScripts {
         public static string VillagerIcon() {
             return "<sprite=\"Text_Sprites\" name=\"Villager_Icon\"> ";
         }
+        public static string GetFirstFewEmotionsAndComafy(string emotionsStr, int emotionCount) {
+            string[] emotions = emotionsStr.Split(' ');
+            string trimmedEmotions = string.Empty;
+            int obtainedEmotions = 0;
+            for (int i = 0; i < emotions.Length; i++) {
+                string emotion = emotions[i];
+                if (string.IsNullOrEmpty(emotion) || string.IsNullOrWhiteSpace(emotion)) { continue; }
+                trimmedEmotions += $"{emotion} ";
+                obtainedEmotions++;
+                if (obtainedEmotions == emotionCount) {
+                    break; //only get up to 2 emotions
+                }
+            }
+            return Comafy(trimmedEmotions);
+        }
         public static string NormalizeNoSpaceString(string s) {
             string[] words = System.Text.RegularExpressions.Regex.Split(s, @"(?<!^)(?=[A-Z])");
             string normalizedString = Utilities.FirstLetterToUpperCase(words.First());

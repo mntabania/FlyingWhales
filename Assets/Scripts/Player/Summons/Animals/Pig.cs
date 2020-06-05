@@ -30,7 +30,7 @@ public class Pig : Animal {
             (gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.biomeType == BIOMES.GRASSLAND 
              || gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.biomeType == BIOMES.FOREST 
              || gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.biomeType == BIOMES.DESERT) && 
-            UnityEngine.Random.Range(0, 100) < 15 && gridTileLocation.structure.isInterior == false 
+            UnityEngine.Random.Range(0, 100) < 5 && gridTileLocation.structure.isInterior == false 
             && gridTileLocation.HasUnoccupiedNeighbour(out var tiles, true)) {
             LocationGridTile randomTile = CollectionUtilities.GetRandomElement(tiles);
             randomTile.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.TREE_OBJECT), randomTile);

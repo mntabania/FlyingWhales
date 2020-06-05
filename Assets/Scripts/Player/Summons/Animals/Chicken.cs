@@ -27,7 +27,7 @@ public class Chicken : Animal {
     private void OnCharacterFinishedAction(ActualGoapNode goapNode) {
         if (goapNode.actor == this && goapNode.action.goapType == INTERACTION_TYPE.STAND &&
             gridTileLocation.collectionOwner.isPartOfParentRegionMap &&
-            UnityEngine.Random.Range(0, 100) < 15 && gridTileLocation.HasUnoccupiedNeighbour
+            UnityEngine.Random.Range(0, 100) < 5 && gridTileLocation.HasUnoccupiedNeighbour
                 (out var tiles, true)) {
             LocationGridTile randomTile = CollectionUtilities.GetRandomElement(tiles);
             if (gridTileLocation.structure.structureType == STRUCTURE_TYPE.CAVE) {

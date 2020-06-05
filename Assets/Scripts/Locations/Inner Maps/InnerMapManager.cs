@@ -361,7 +361,7 @@ namespace Inner_Maps {
             summary = $"{summary} <b>Is Occupied:</b>{tile.isOccupied.ToString()}";
             summary = $"{summary} <b>Tile Type:</b>{tile.tileType.ToString()}";
             summary = $"{summary} <b>Tile State:</b>{tile.tileState.ToString()}";
-            summary = $"{summary} <b>Reserved Tile Object Type:</b>{tile.reservedObjectType.ToString()}";
+            // summary = $"{summary} <b>Reserved Tile Object Type:</b>{tile.reservedObjectType.ToString()}";
             summary = $"{summary} <b>Previous Tile Asset:</b>{(tile.previousGroundVisual?.name ?? "Null")}";
             summary =
                 $"{summary} <b>Current Tile Asset:</b>{(tile.parentTileMap.GetSprite(tile.localPlace)?.name ?? "Null")}";

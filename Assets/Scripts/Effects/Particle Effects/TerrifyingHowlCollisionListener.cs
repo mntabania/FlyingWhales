@@ -16,7 +16,8 @@ public class TerrifyingHowlCollisionListener : ParticleCollisionListener {
     protected override void OnParticleCollision(GameObject other) {
         if (other.CompareTag("Character Marker")) {
             CharacterMarker characterMarker = other.GetComponent<CharacterMarker>();
-            if (affectedCharacters.Contains(characterMarker.character) == false) {
+            //do not allow minions to be affected by terrifying howl.
+            if (affectedCharacters.Contains(characterMarker.character) == false && characterMarker.character.minion == null) {
                 CombatManager.Instance.CreateHitEffectAt(characterMarker.character, ELEMENTAL_TYPE.Normal);
                 characterMarker.character.traitContainer.AddTrait(characterMarker.character, "Spooked");
                 characterMarker.character.marker.AddPOIAsInVisionRange(_baseParticleEffect.targetTile.genericTileObject);

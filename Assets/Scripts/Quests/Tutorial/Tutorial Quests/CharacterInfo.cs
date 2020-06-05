@@ -47,7 +47,7 @@ namespace Tutorial {
         #region Step Completion Actions
         private void OnClickInfo() {
             UIManager.Instance.generalConfirmationWithVisual.ShowGeneralConfirmation("Info Tab",
-                $"The Info tab provides you with basic information about the {UtilityScripts.Utilities.VillagerIcon()}Villager such as its Combat Stats, " +
+                $"The Info tab provides you with basic information about the \n{UtilityScripts.Utilities.VillagerIcon()}Villager such as its Combat Stats, " +
                 "Affiliations, temporary Statuses, permanent Traits and Items held.",
                 TutorialManager.Instance.infoTab);
         }
