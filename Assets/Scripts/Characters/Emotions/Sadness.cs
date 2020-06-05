@@ -12,7 +12,7 @@ public class Sadness : Emotion {
     public override string ProcessEmotion(Character witness, IPointOfInterest target, REACTION_STATUS status,
         ActualGoapNode goapNode = null) {
         witness.needsComponent.AdjustHappiness(-10);
-        witness.interruptComponent.TriggerInterrupt(INTERRUPT.Cry, witness, "feeling sad");
+        witness.interruptComponent.TriggerInterrupt(INTERRUPT.Cry, target, "feeling sad");
         return base.ProcessEmotion(witness, target, status, goapNode);
     }
     #endregion

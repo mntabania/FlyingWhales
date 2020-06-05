@@ -31,16 +31,10 @@ namespace Traits {
             }
 
         }
-        //public override void OnRemoveTrait(ITraitable sourcePOI, Character removedBy) {
-        //    if (sourcePOI is Character) {
-        //        Character sourceCharacter = sourcePOI as Character;
-        //        //When a character loses this Trait, add this log to the location and the character:
-        //        Log addLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "remove_criminal");
-        //        addLog.AddToFillers(sourceCharacter, sourceCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        //        sourceCharacter.AddHistory(addLog);
-        //    }
-        //    base.OnRemoveTrait(sourcePOI, removedBy);
-        //}
+        public override void OnRemoveTrait(ITraitable sourcePOI, Character removedBy) {
+            owner.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.APPREHEND);
+            base.OnRemoveTrait(sourcePOI, removedBy);
+        }
         public override string GetNameInUI(ITraitable traitable) {
             if(crimeData != null) {
                 return $"{name}:{crimeData.strCrimeType}";

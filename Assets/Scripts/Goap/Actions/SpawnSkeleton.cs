@@ -49,7 +49,7 @@ public class SpawnSkeleton : GoapAction {
         }
         Character skeleton = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Skeleton, FactionManager.Instance.undeadFaction, homeRegion: gridTile.parentMap.region);
         skeleton.CreateMarker();
-        skeleton.InitialCharacterPlacement(gridTile);
+        skeleton.InitialCharacterPlacement(gridTile, true);
     }
     #endregion
 

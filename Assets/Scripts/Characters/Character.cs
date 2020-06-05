@@ -456,13 +456,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //supply
         SetSupply(UnityEngine.Random.Range(10, 61)); //Randomize initial supply per character (Random amount between 10 to 60.)
     }
-    public virtual void InitialCharacterPlacement(LocationGridTile tile) {
+    public virtual void InitialCharacterPlacement(LocationGridTile tile, bool addToRegionLocation) {
         if (needsComponent.HasNeeds()) {
             needsComponent.InitialCharacterPlacement();    
         }
         
         ConstructInitialGoapAdvertisementActions();
-        marker.InitialPlaceMarkerAt(tile, false); //since normal characters are already placed in their areas.
+        marker.InitialPlaceMarkerAt(tile, addToRegionLocation); //since normal characters are already placed in their areas.
         //AddInitialAwareness();
         SubscribeToSignals();
         for (int i = 0; i < traitContainer.allTraitsAndStatuses.Count; i++) {
@@ -1253,11 +1253,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return true;
     }
     private void OnChangeFaction(Faction prevFaction, Faction newFaction) {
-        //check if this character has a Criminal Trait, if so, remove it
-        Trait criminal = traitContainer.GetNormalTrait<Trait>("Criminal");
-        if (criminal != null) {
-            traitContainer.RemoveTrait(this, criminal);
-        }
         if(prevFaction != null && prevFaction == FactionManager.Instance.undeadFaction) {
             behaviourComponent.RemoveBehaviourComponent(typeof(UndeadBehaviour));
         }

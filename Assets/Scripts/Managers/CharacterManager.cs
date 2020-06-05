@@ -347,13 +347,13 @@ public class CharacterManager : MonoBehaviour {
                 //place the character at a random unoccupied tile in his/her home
                 List<LocationGridTile> choices = character.homeStructure.unoccupiedTiles.Where(x => x.charactersHere.Count == 0).ToList();
                 LocationGridTile chosenTile = choices[UnityEngine.Random.Range(0, choices.Count)];
-                character.InitialCharacterPlacement(chosenTile);
+                character.InitialCharacterPlacement(chosenTile, false);
             } else {
                 //place the character at a random unoccupied tile in the npcSettlement's wilderness
                 LocationStructure wilderness = npcSettlement.region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
                 List<LocationGridTile> choices = wilderness.unoccupiedTiles.Where(x => x.charactersHere.Count == 0).ToList();
                 LocationGridTile chosenTile = choices[UnityEngine.Random.Range(0, choices.Count)];
-                character.InitialCharacterPlacement(chosenTile);
+                character.InitialCharacterPlacement(chosenTile, false);
             }
         }
     }
@@ -434,7 +434,7 @@ public class CharacterManager : MonoBehaviour {
             target.grave.gridTileLocation.structure.RemovePOI(target.grave);
             target.SetGrave(null);
         }
-        summon.InitialCharacterPlacement(tile);
+        summon.InitialCharacterPlacement(tile, true);
         target.DestroyMarker();
         RemoveCharacter(target);
     }
