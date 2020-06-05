@@ -15,12 +15,9 @@ namespace Locations.Settlements {
         public List<HexTile> tiles { get; }
         public List<Character> residents { get; }
         public Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures { get; protected set; }
-        public Region region { get; protected set; }
         public List<IPointOfInterest> firesInSettlement { get; }
-        
+
         private List<LocationStructure> _allStructures;
-        
-        
         
         protected BaseSettlement(LOCATION_TYPE locationType, int citizenCount) {
             id = UtilityScripts.Utilities.SetID(this);

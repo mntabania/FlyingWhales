@@ -2938,18 +2938,18 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 }
             }
 
-            if(previousHome.region != null) {
-                if(newHomeSettlement != null && previousHome.region == newHomeSettlement.region) {
+            if(previousHome is NPCSettlement previousNPCSettlement) {
+                if(newHomeSettlement != null && newHomeSettlement is NPCSettlement newNPCSettlement && previousNPCSettlement.region == newNPCSettlement.region) {
                     sameRegionLocationAlready = true;
                 } else {
-                    previousHome.region.RemoveResident(this);
+                    previousNPCSettlement.region.RemoveResident(this);
                 }
             }
         }
         if (newHomeSettlement != null && newHomeSettlement.AddResident(this, homeStructure)) {
-            if (addToRegionResidents && newHomeSettlement.region != null) {
+            if (addToRegionResidents && newHomeSettlement is NPCSettlement newNPCSettlement) {
                 if (!sameRegionLocationAlready) {
-                    newHomeSettlement.region.AddResident(this);
+                    newNPCSettlement.region.AddResident(this);
                 }
             }
             if (broadcast) {

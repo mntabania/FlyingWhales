@@ -558,21 +558,23 @@ public class CombatState : CharacterState {
     private float timeElapsed;
     public void LateUpdate() {
         if (GameManager.Instance.isPaused) { return; }
-        timeElapsed += Time.deltaTime;
-        if (timeElapsed >= 0.3f) {
-            timeElapsed = 0;
-            Profiler.BeginSample($"{stateComponent.character.name} Combat State Late Update");
-            if (currentClosestHostile != null) {
-                if (currentClosestHostile.isDead) {
-                    stateComponent.character.combatComponent.RemoveHostileInRange(currentClosestHostile);
-                } else if (currentClosestHostile.currentRegion != stateComponent.character.currentRegion) {
-                    stateComponent.character.combatComponent.RemoveHostileInRange(currentClosestHostile);
-                } else if (isAttacking && isExecutingAttack == false) {
-                    //If character is attacking and distance is within the attack range of this character, attack
-                    //else, pursue again
-                    // Profiler.BeginSample($"{stateComponent.character.name} Distance Computation");
-                    // float distance = Vector2.Distance(stateComponent.character.marker.transform.position, currentClosestHostile.worldPosition);
-                    // Profiler.EndSample();
+        //timeElapsed += Time.deltaTime;
+        //if (timeElapsed >= 0.3f) {
+        //    timeElapsed = 0;
+            //Profiler.BeginSample($"{stateComponent.character.name} Combat State Late Update");
+        if (currentClosestHostile != null) {
+            if (currentClosestHostile.isDead) {
+                stateComponent.character.combatComponent.RemoveHostileInRange(currentClosestHostile);
+            } else if (currentClosestHostile.currentRegion != stateComponent.character.currentRegion) {
+                stateComponent.character.combatComponent.RemoveHostileInRange(currentClosestHostile);
+            } else if (isAttacking && isExecutingAttack == false) {
+                //If character is attacking and distance is within the attack range of this character, attack
+                //else, pursue again
+                // Profiler.BeginSample($"{stateComponent.character.name} Distance Computation");
+                // float distance = Vector2.Distance(stateComponent.character.marker.transform.position, currentClosestHostile.worldPosition);
+                // Profiler.EndSample();
+                float distance = Vector2.Distance(stateComponent.character.marker.transform.position, currentClosestHostile.worldPosition);
+                if (distance <= stateComponent.character.characterClass.attackRange) {
                     Profiler.BeginSample($"{stateComponent.character.name} Line of Sight Check");
                     bool isInLineOfSight =
                         stateComponent.character.marker.IsCharacterInLineOfSightWith(currentClosestHostile, stateComponent.character.characterClass.attackRange);
@@ -583,11 +585,13 @@ public class CombatState : CharacterState {
                     } else {
                         PursueClosestHostile();
                     }
+                } else {
+                    PursueClosestHostile();
                 }
             }
-            Profiler.EndSample();
         }
-        
+            //Profiler.EndSample();
+        //}
     }
     
     //Will be constantly checked every frame

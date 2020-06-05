@@ -14,6 +14,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public LocationStructure prison { get; private set; }
     public LocationStructure mainStorage { get; private set; }
     public CityCenter cityCenter { get; private set; }
+    public Region region { get; private set; }
 
     //Data that are only referenced from this npcSettlement's region
     //These are only getter data, meaning it cannot be stored

@@ -52,7 +52,7 @@ public class MeteorParticleEffect : BaseParticleEffect {
         //}
         List<ITraitable> traitables = new List<ITraitable>();
         BurningSource bs = null;
-        List<LocationGridTile> tiles = targetTile.GetTilesInRadius(1, 0, true); //radius
+        List<LocationGridTile> tiles = targetTile.GetTilesInRadius(1, 0, true, true); //radius
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile tile = tiles[i];
             tile.PerformActionOnTraitables((traitable) => MeteorEffect(traitable, ref bs));
