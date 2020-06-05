@@ -1541,7 +1541,6 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     public bool TriggerMeditate(out JobQueueItem producedJob) {
 	    if (!_owner.jobQueue.HasJob(JOB_TYPE.IDLE)) {
 		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE, INTERACTION_TYPE.MEDITATE, _owner, _owner);
-		    _owner.jobQueue.AddJobInQueue(job);
 		    producedJob = job;
 		    return true;
 	    }

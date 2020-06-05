@@ -37,6 +37,7 @@ public class BreedEffect : PooledObject {
     }
 
     private void OnCompleteSequence() {
+        AudioManager.Instance.PlayParticleMagnet();
         PlayerUI.Instance.monsterToggle.transform.DOPunchScale(new Vector3(2f, 2f, 1f), 0.2f);
         ObjectPoolManager.Instance.DestroyObject(this);
     }

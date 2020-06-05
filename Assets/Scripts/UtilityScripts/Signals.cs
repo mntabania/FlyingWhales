@@ -233,6 +233,10 @@ public static class Signals {
     /// Parameters: string buttonName
     /// </summary>
     public static string HIDE_SELECTABLE_GLOW = "HideSelectableGlow";
+    /// <summary>
+    /// Parameters: Quest quest
+    /// </summary>
+    public static string QUEST_SHOWN = "OnQuestShown";
     #endregion
 
     #region Quest Signals

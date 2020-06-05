@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Traits;
 using UnityEngine;
@@ -302,6 +303,19 @@ namespace Locations.Settlements {
         public HexTile GetRandomHexTile() {
             return tiles[UnityEngine.Random.Range(0, tiles.Count)];
         }
+        private List<LocationGridTile> GetLocationGridTilesInSettlement(System.Func<LocationGridTile, bool> validityChecker) {
+            List<LocationGridTile> locationGridTiles = new List<LocationGridTile>();
+            for (int i = 0; i < tiles.Count; i++) {
+                HexTile tile = tiles[i];
+                for (int j = 0; j < tile.locationGridTiles.Count; j++) {
+                    LocationGridTile locationGridTile = tile.locationGridTiles[j];
+                    if (validityChecker.Invoke(locationGridTile)) {
+                        locationGridTiles.Add(locationGridTile);
+                    }
+                }
+            }
+            return locationGridTiles;
+        }
         #endregion
 
         #region Fire
@@ -330,6 +344,28 @@ namespace Locations.Settlements {
                 firesInSettlement.Remove(poi);    
             }
             
+        }
+        #endregion
+
+        #region Utilities
+        public bool HasPathTowardsTileInSettlement(Character character, int tileCount) {
+            List<LocationGridTile> locationGridTilesInSettlement = GetLocationGridTilesInSettlement(tile => tile.isOccupied == false);
+            if (locationGridTilesInSettlement.Count > 0) {
+                for (int i = 0; i < tileCount; i++) {
+                    if (locationGridTilesInSettlement.Count == 0) {
+                        //no more unoccupied tiles, but other tiles passed, return true
+                        return true;
+                    }
+                    LocationGridTile randomTile = CollectionUtilities.GetRandomElement(locationGridTilesInSettlement);
+                    if (PathfindingManager.Instance.HasPathEvenDiffRegion(character.gridTileLocation, randomTile) == false) {
+                        //no path towards random unoccupied tile in settlement, return false
+                        return false;
+                    }
+                    locationGridTilesInSettlement.Remove(randomTile);
+                }    
+            }
+            //default to true even if there are nounoccupied tiles in settlement 
+            return true;
         }
         #endregion
     }

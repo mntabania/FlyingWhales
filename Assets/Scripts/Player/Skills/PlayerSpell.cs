@@ -319,16 +319,18 @@ public class SpellData : IPlayerSkill {
     //    Messenger.Broadcast(Signals.INCREASE_THREAT_THAT_SEES_TILE, targetTile, amount);
     //}
     public void OnExecuteSpellActionAffliction() {
-        if(hasCharges && charges > 0) {
-            charges--;
-        }
-        if (hasManaCost) {
-            PlayerManager.Instance.player.AdjustMana(-manaCost);
-        }
-        if (hasCooldown) {
-            currentCooldownTick = 0;
-            Messenger.Broadcast(Signals.SPELL_COOLDOWN_STARTED, this);
-            Messenger.AddListener(Signals.TICK_STARTED, PerTickCooldown);
+        if (WorldConfigManager.Instance.unlimitedCast == false) {
+            if(hasCharges && charges > 0) {
+                charges--;
+            }
+            if (hasManaCost) {
+                PlayerManager.Instance.player.AdjustMana(-manaCost);
+            }
+            if (hasCooldown) {
+                currentCooldownTick = 0;
+                Messenger.Broadcast(Signals.SPELL_COOLDOWN_STARTED, this);
+                Messenger.AddListener(Signals.TICK_STARTED, PerTickCooldown);
+            }
         }
         PlayerManager.Instance.player.threatComponent.AdjustThreatPerHour(threatPerHour);
         PlayerManager.Instance.player.threatComponent.AdjustThreat(threat);

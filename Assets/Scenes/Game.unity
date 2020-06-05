@@ -8956,11 +8956,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: StructureInfoUI
       objectReference: {fileID: 0}
-    - target: {fileID: 1086249575366272666, guid: af544682ce629014cbd330544a76975d,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: af544682ce629014cbd330544a76975d, type: 3}
 --- !u!114 &179873882 stripped
@@ -22367,6 +22362,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: GeneralConfirmation
       objectReference: {fileID: 0}
+    - target: {fileID: 1711417101825226, guid: 7511ffd1c2e29104984bfa8e0750239f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 224777192084830466, guid: 7511ffd1c2e29104984bfa8e0750239f,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -22471,6 +22470,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7902367552859759101, guid: 7511ffd1c2e29104984bfa8e0750239f,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7511ffd1c2e29104984bfa8e0750239f, type: 3}
@@ -135758,11 +135762,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: MinionInfo
-      objectReference: {fileID: 0}
-    - target: {fileID: 1354186188852219001, guid: b029ec5865ca327468e73d3be5ee78e2,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b029ec5865ca327468e73d3be5ee78e2, type: 3}

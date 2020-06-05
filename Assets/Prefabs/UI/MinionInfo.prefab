@@ -3400,7 +3400,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1284202786584909259
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7117,7 +7117,7 @@ MonoBehaviour:
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1121928512982375776}
         m_MethodName: ShowCharacterTestingInfo
         m_Mode: 1
         m_Arguments:
@@ -7131,7 +7131,7 @@ MonoBehaviour:
   onHoverExitAction:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1121928512982375776}
         m_MethodName: HideCharacterTestingInfo
         m_Mode: 1
         m_Arguments:

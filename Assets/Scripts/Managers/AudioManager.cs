@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
+using Quests;
+using Quests.Steps;
 using Ruinarch.Custom_UI;
 using Settings;
 using UnityEngine;
@@ -14,6 +16,7 @@ public class AudioManager : MonoBehaviour {
     
     private const string MusicVolume = "musicMasterVolume";
     private const string MasterVolume = "masterVolume";
+    private const string ThreatMusicVolume = "threatMusicVolume";
     
     [Header("Mixers")] 
     [SerializeField] private AudioMixer masterMixer;
@@ -25,11 +28,17 @@ public class AudioManager : MonoBehaviour {
     [Header("UI Audio Sources")] 
     [SerializeField] private AudioSource buttonClick;
     [SerializeField] private AudioSource toggleClick;
+    [SerializeField] private AudioSource questNotificationSound;
+    [SerializeField] private AudioSource positiveNotificationSound;
+    [SerializeField] private AudioSource negativeNotificationSound;
+    [SerializeField] private AudioSource shareIntel;
+    [SerializeField] private AudioSource particleMagnet;
     
     [Header("Snapshots")] 
     [SerializeField] private AudioMixerSnapshot mainMenuSnapShot;
     [SerializeField] private AudioMixerSnapshot loadingSnapShot;
     [SerializeField] private AudioMixerSnapshot worldSnapShot;
+    [SerializeField] private AudioMixerSnapshot threatSnapShot;
 
     [Header("Audio Objects")] 
     [SerializeField] private GameObject spellAudioObjectPrefab;
@@ -85,6 +94,13 @@ public class AudioManager : MonoBehaviour {
     public void OnGameLoaded() {
         Messenger.AddListener<Region>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
         Messenger.AddListener<Region>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
+        Messenger.AddListener<Quest>(Signals.QUEST_SHOWN, OnQuestShown);
+        Messenger.AddListener<QuestStep>(Signals.QUEST_STEP_COMPLETED, OnQuestStepCompleted);
+        Messenger.AddListener<QuestStep>(Signals.QUEST_STEP_FAILED, OnQuestStepFailed);
+        Messenger.AddListener(Signals.THREAT_MAXED_OUT, OnThreatMaxedOut);
+        Messenger.AddListener(Signals.THREAT_RESET, OnThreatReset);
+        Messenger.AddListener<IIntel>(Signals.PLAYER_OBTAINED_INTEL, OnObtainIntel);
+        Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, OnOpenShareIntel);
         SetCameraParent(InnerMapCameraMove.Instance);
     }
     #endregion
@@ -104,6 +120,12 @@ public class AudioManager : MonoBehaviour {
         worldMusic.Stop();
         worldMusic.Play();
     }
+    private void OnThreatReset() {
+        worldSnapShot.TransitionTo(0.5f);
+    }
+    private void OnThreatMaxedOut() {
+        threatSnapShot.TransitionTo(0.5f);
+    }
     #endregion
 
     #region Volume
@@ -121,6 +143,24 @@ public class AudioManager : MonoBehaviour {
     }
     private void OnToggleClicked(RuinarchToggle toggle) {
         toggleClick.Play();
+    }
+    private void OnQuestShown(Quest quest) {
+        questNotificationSound.Play();
+    }
+    private void OnQuestStepCompleted(QuestStep questStep) {
+        // positiveNotificationSound.Play();
+    }
+    private void OnQuestStepFailed(QuestStep questStep) {
+        negativeNotificationSound.Play();
+    }
+    private void OnObtainIntel(IIntel intel) {
+        particleMagnet.Play();
+    }
+    private void OnOpenShareIntel() {
+        shareIntel.Play();
+    }
+    public void PlayParticleMagnet() {
+        particleMagnet.Play();
     }
     #endregion
 

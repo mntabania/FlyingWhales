@@ -58,6 +58,7 @@ public class GoapPlan {
                 currentNode = allNodes[nextNodeIndex];
                 currentNodeIndex = nextNodeIndex;
             } else {
+                Debug.Log($"{GameManager.Instance.TodayLogString()} current node of Plan was set to null {GetPlanSummary()}");
                 currentNode = null;
             }
         } else {

@@ -89,7 +89,7 @@ AudioMixerGroupController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Button Clicks
+  m_Name: UI SFX
   m_AudioMixer: {fileID: 24100000}
   m_GroupID: 2d721350b986ed44cb101938711dcf98
   m_Children: []

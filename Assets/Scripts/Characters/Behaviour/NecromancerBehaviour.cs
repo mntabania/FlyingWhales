@@ -117,7 +117,7 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                 log += $"\n-It is not Early Night, Late Night, or After Midnight";
                 if (character.currentStructure != character.homeStructure) {
                     log += $"\n-Character is not at home, return home";
-                    character.PlanIdleReturnHome();
+                    character.PlanIdleReturnHome(out producedJob);
                 } else {
                     for (int i = 0; i < character.faction.characters.Count; i++) {
                         if(character.faction.characters[i].race == RACE.SKELETON && !character.faction.characters[i].isDead && character.behaviourComponent.attackVillageTarget != null) {

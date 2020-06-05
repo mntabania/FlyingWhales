@@ -141,6 +141,11 @@ namespace Tutorial {
             if (IsBonusTutorial(tutorial.tutorialType) == false) {
                 CheckIfAllTutorialsCompleted();    
             }
+            if (_instantiatedTutorials.Count == 0) {
+                //All tutorials finished, including bonus ones, switch on skip tutorials switch so tutorials will be skipped next playthrough
+                SettingsManager.Instance.OnToggleSkipTutorials(true);
+                
+            }
         }
         private void CheckIfAllTutorialsCompleted() {
             if (_instantiatedTutorials.Count == 0 || _instantiatedTutorials.Count(x => IsBonusTutorial(x.tutorialType) == false) == 0) {
@@ -234,7 +239,8 @@ namespace Tutorial {
                 //remove all showing tutorials
                 List<TutorialQuest> tutorialsToDeactivate = new List<TutorialQuest>(_instantiatedTutorials);
                 for (int i = 0; i < tutorialsToDeactivate.Count; i++) {
-                    DeactivateTutorial(tutorialsToDeactivate[i]);
+                    TutorialQuest tutorialQuest = tutorialsToDeactivate[i];
+                    DeactivateTutorial(tutorialQuest);    
                 }
             } else {
                 //instantiate incomplete tutorials
