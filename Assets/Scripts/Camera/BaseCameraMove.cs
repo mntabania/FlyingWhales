@@ -165,7 +165,7 @@ public abstract class BaseCameraMove : MonoBehaviour{
         }
         bool isEdging = false;
         Vector3 newPos = transform.position;
-        if (Input.mousePosition.x >= Screen.width - edgeBoundary) {
+        if (Input.mousePosition.x >= (Screen.width - (edgeBoundary + 5f))) {
             newPos.x += edgingSpeed * Time.deltaTime;
             isEdging = true;
         }
@@ -178,7 +178,7 @@ public abstract class BaseCameraMove : MonoBehaviour{
             newPos.y += edgingSpeed * Time.deltaTime;
             isEdging = true;
         }
-        if (Input.mousePosition.y <= 0 + (edgeBoundary + 5f)) {
+        if (Input.mousePosition.y <= 0 + edgeBoundary) {
             newPos.y -= edgingSpeed * Time.deltaTime;
             isEdging = true;
         }
