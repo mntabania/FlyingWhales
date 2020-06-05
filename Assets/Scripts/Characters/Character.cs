@@ -1685,7 +1685,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (isDead) {
                 return;
             }
-            if (isNormalCharacter) {
+            //Non villagers should not feel griefstricken
+            //https://trello.com/c/U0gnV2Rs/1116-zombies-should-no-longer-become-griefstricken-betrayed-etc
+
+            //No more griefstricken feeling to a target that is not a villager anymore
+            //https://trello.com/c/CxFjFHtv/1121-no-more-griefstricken-if-a-zombie-died-unlike-its-first-death
+            if (isNormalCharacter && characterThatDied.isNormalCharacter) {
                 string opinionLabel = relationshipContainer.GetOpinionLabel(characterThatDied);
                 if (opinionLabel == RelationshipManager.Close_Friend
                     || (relationshipContainer.HasSpecialPositiveRelationshipWith(characterThatDied)
@@ -2425,6 +2430,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         ELEMENTAL_TYPE elementalType = characterThatAttacked.combatComponent.elementalDamage.type;
         AdjustHP(-characterThatAttacked.attackPower, elementalType, source: characterThatAttacked, showHPBar: true);
         attackSummary += $"\nDealt damage {stateComponent.character.attackPower}";
+
         //If the hostile reaches 0 hp, evalueate if he/she dies, get knock out, or get injured
         if (currentHP <= 0) {
             attackSummary += $"\n{name}'s hp has reached 0.";
@@ -2438,58 +2444,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     }
                     Death(deathReason, responsibleCharacter: responsibleCharacter);
                 }
-                //if(combatResultWeights == null) {
-                //    combatResultWeights = new WeightedDictionary<string>();
-                //} else {
-                //    combatResultWeights.Clear();
-                //}
-                //int deathWeight = 70; //70
-                //int unconsciousWeight = 30; //30
-                //// if (!characterThatAttacked.combatComponent.IsLethalCombatForTarget(this)) {
-                ////     deathWeight = 5;
-                ////     unconsciousWeight = 95;
-                //// }
-                //string rollLog =
-                //    $"{characterThatAttacked.name} attacked {name}, death weight: {deathWeight}, unconscious weight: {unconsciousWeight}, isLethal: {characterThatAttacked.combatComponent.IsLethalCombatForTarget(this)}";
-
-                //if (minion == null && !traitContainer.HasTrait("Unconscious")) {
-                //    combatResultWeights.AddElement("Unconscious", unconsciousWeight);
-                //    rollLog += "\n- Unconscious weight will be added";
-                //}
-                ////if (currentClosestHostile.GetNormalTrait<Trait>("Injured") == null) {
-                ////    loserResults.AddElement("Injured", 10);
-                ////}
-                //if (!isDead) {
-                //    combatResultWeights.AddElement("Death", deathWeight);
-                //    rollLog += "\n- Death weight will be added";
-                //}
-
-                //if (combatResultWeights.Count > 0) {
-                //    string result = combatResultWeights.PickRandomElementGivenWeights();
-                //    rollLog += $"\n- Pick result is: {result}";
-                //    characterThatAttacked.logComponent.PrintLogIfActive(rollLog);
-                //    attackSummary += $"\ncombat result is {result}"; ;
-                //    switch (result) {
-                //        case "Unconscious":
-                //            //Unconscious unconscious = new Unconscious();
-                //            traitContainer.AddTrait(this, "Unconscious", responsibleCharacter);
-                //            break;
-                //        case "Injured":
-                //            //Injured injured = new Injured();
-                //            traitContainer.AddTrait(this, "Injured", responsibleCharacter);
-                //            break;
-                //        case "Death":
-                //            string deathReason = "attacked";
-                //            if (!characterThatAttacked.combatComponent.IsLethalCombatForTarget(this)) {
-                //                deathReason = "accidental_attacked";
-                //            }
-                //            Death(deathReason, responsibleCharacter: responsibleCharacter);
-                //            break;
-                //    }
-                //} else {
-                //    rollLog += "\n- Dictionary is empty, no result!";
-                //    characterThatAttacked.logComponent.PrintLogIfActive(rollLog);
-                //}
+            }
+        } else {
+            //Each non lethal attack has a 15% chance of unconscious
+            //https://trello.com/c/qxXVulZl/1126-each-non-lethal-attack-has-a-15-chance-of-making-target-unconscious
+            if(UnityEngine.Random.Range(0, 100) < 15) {
+                if (!characterThatAttacked.combatComponent.IsLethalCombatForTarget(this)) {
+                    traitContainer.AddTrait(this, "Unconscious", responsibleCharacter);
+                }
             }
         }
         if (characterThatAttacked.marker) {
