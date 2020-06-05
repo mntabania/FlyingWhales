@@ -109,12 +109,12 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
             }
         }
     }
-    protected override void OnPointerEnter(TileObject poi) {
-        if (poi.mapObjectState == MAP_OBJECT_STATE.UNBUILT) { return; }
-        if (poi.CanBeSelected() == false) { return; }
-        base.OnPointerEnter(poi);
-        InnerMapManager.Instance.SetCurrentlyHoveredPOI(poi);
-        InnerMapManager.Instance.ShowTileData(poi.gridTileLocation);
+    protected override void OnPointerEnter(TileObject character) {
+        if (character.mapObjectState == MAP_OBJECT_STATE.UNBUILT) { return; }
+        if (character.CanBeSelected() == false) { return; }
+        base.OnPointerEnter(character);
+        InnerMapManager.Instance.SetCurrentlyHoveredPOI(character);
+        InnerMapManager.Instance.ShowTileData(character.gridTileLocation);
     }
     protected override void OnPointerExit(TileObject poi) {
         if (poi.mapObjectState == MAP_OBJECT_STATE.UNBUILT) { return; }

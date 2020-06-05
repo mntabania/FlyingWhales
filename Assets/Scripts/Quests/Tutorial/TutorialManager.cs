@@ -68,7 +68,7 @@ namespace Tutorial {
             Instance = this;
         }
         private void OnDestroy() {
-            Messenger.RemoveListener<bool>(Signals.ON_SKIP_TUTORIALS_CHANGED, OnSkipTutorialsChanged);
+            Messenger.RemoveListener<bool, bool>(Signals.ON_SKIP_TUTORIALS_CHANGED, OnSkipTutorialsChanged);
         }
         private void LateUpdate() {
             if (GameManager.Instance.gameHasStarted) {
@@ -89,7 +89,7 @@ namespace Tutorial {
             if (WorldConfigManager.Instance.isDemoWorld == false) {
                 InstantiatePendingTutorials();
             }
-            Messenger.AddListener<bool>(Signals.ON_SKIP_TUTORIALS_CHANGED, OnSkipTutorialsChanged);
+            Messenger.AddListener<bool, bool>(Signals.ON_SKIP_TUTORIALS_CHANGED, OnSkipTutorialsChanged);
         }
         public void InstantiatePendingTutorials() {
             if (SettingsManager.Instance.settings.skipTutorials) {
@@ -141,11 +141,10 @@ namespace Tutorial {
             if (IsBonusTutorial(tutorial.tutorialType) == false) {
                 CheckIfAllTutorialsCompleted();    
             }
-            if (_instantiatedTutorials.Count == 0) {
-                //All tutorials finished, including bonus ones, switch on skip tutorials switch so tutorials will be skipped next playthrough
-                SettingsManager.Instance.OnToggleSkipTutorials(true);
-                
-            }
+            // if (_instantiatedTutorials.Count == 0) {
+            //     //All tutorials finished, including bonus ones, switch on skip tutorials switch so tutorials will be skipped next playthrough
+            //     SettingsManager.Instance.OnToggleSkipTutorials(true);
+            // }
         }
         private void CheckIfAllTutorialsCompleted() {
             if (_instantiatedTutorials.Count == 0 || _instantiatedTutorials.Count(x => IsBonusTutorial(x.tutorialType) == false) == 0) {
@@ -154,6 +153,7 @@ namespace Tutorial {
                     "You're done with the Tutorials! " +
                     "Feel free to use the remaining time to play around with the various unlocked options... " +
                     $"or just wipe out all {UtilityScripts.Utilities.VillagerIcon()}Villagers as soon as possible!");
+                SettingsManager.Instance.OnToggleSkipTutorials(true, false);
             }
         }
         #endregion
@@ -234,13 +234,15 @@ namespace Tutorial {
         #endregion
 
         #region Listeners
-        private void OnSkipTutorialsChanged(bool skipTutorials) {
+        private void OnSkipTutorialsChanged(bool skipTutorials, bool deSpawnExisting) {
             if (skipTutorials) {
-                //remove all showing tutorials
-                List<TutorialQuest> tutorialsToDeactivate = new List<TutorialQuest>(_instantiatedTutorials);
-                for (int i = 0; i < tutorialsToDeactivate.Count; i++) {
-                    TutorialQuest tutorialQuest = tutorialsToDeactivate[i];
-                    DeactivateTutorial(tutorialQuest);    
+                if (deSpawnExisting) {
+                    //remove all showing tutorials
+                    List<TutorialQuest> tutorialsToDeactivate = new List<TutorialQuest>(_instantiatedTutorials);
+                    for (int i = 0; i < tutorialsToDeactivate.Count; i++) {
+                        TutorialQuest tutorialQuest = tutorialsToDeactivate[i];
+                        DeactivateTutorial(tutorialQuest);    
+                    }    
                 }
             } else {
                 //instantiate incomplete tutorials

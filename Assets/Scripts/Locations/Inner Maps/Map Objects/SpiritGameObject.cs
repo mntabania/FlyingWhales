@@ -117,13 +117,13 @@ public class SpiritGameObject : MapObjectVisual<TileObject> {
             }
         }
     }
-    protected override void OnPointerEnter(TileObject poi) {
-        if (poi.mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
+    protected override void OnPointerEnter(TileObject character) {
+        if (character.mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
             return;
         }
-        base.OnPointerEnter(poi);
-        InnerMapManager.Instance.SetCurrentlyHoveredPOI(poi);
-        InnerMapManager.Instance.ShowTileData(poi.gridTileLocation);
+        base.OnPointerEnter(character);
+        InnerMapManager.Instance.SetCurrentlyHoveredPOI(character);
+        InnerMapManager.Instance.ShowTileData(character.gridTileLocation);
     }
     protected override void OnPointerExit(TileObject poi) {
         if (poi.mapObjectState == MAP_OBJECT_STATE.UNBUILT) {

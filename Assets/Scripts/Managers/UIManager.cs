@@ -54,7 +54,10 @@ public class UIManager : MonoBehaviour {
 
     [Header("Small Info with Visual")] 
     [SerializeField] private SmallInfoWithVisual _smallInfoWithVisual;
-
+    
+    [Header("Character Nameplate Tooltip")]
+    [SerializeField] private CharacterNameplateItem _characterNameplateTooltip;
+    
     [Space(10)]
     [Header("Other NPCSettlement Info")]
     public Sprite[] areaCenterSprites;
@@ -494,6 +497,14 @@ public class UIManager : MonoBehaviour {
         }
         return null;
     }
+    public void ShowCharacterNameplateTooltip(Character character, UIHoverPosition position) {
+        _characterNameplateTooltip.SetObject(character);
+        _characterNameplateTooltip.gameObject.SetActive(true);
+        _characterNameplateTooltip.SetPosition(position);
+    }
+    public void HideCharacterNameplateTooltip() {
+        _characterNameplateTooltip.gameObject.SetActive(false);
+    }
     #endregion
 
     #region Developer Notifications NPCSettlement
@@ -602,6 +613,14 @@ public class UIManager : MonoBehaviour {
     }
     public void SetTempDisableShowInfoUI(bool state) {
         tempDisableShowInfoUI = state;
+    }
+    public Character GetCurrentlySelectedCharacter() {
+        if (characterInfoUI.isShowing) {
+            return characterInfoUI.activeCharacter;
+        } else if (monsterInfoUI.isShowing) {
+            return monsterInfoUI.activeMonster;
+        }
+        return null;
     }
     #endregion
 
@@ -1005,6 +1024,7 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private GameObject intelPrefab;
     [SerializeField] private GameObject defaultNotificationPrefab;
     [SerializeField] private Button notifExpandButton;
+    [SerializeField] private UIHoverPosition notificationHoverPos;
 
     //public ScrollRect playerNotifScrollView;
     public GameObject playerNotifGO;
@@ -1017,6 +1037,7 @@ public class UIManager : MonoBehaviour {
         GameObject newIntelGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(intelPrefab.name, Vector3.zero, Quaternion.identity, playerNotifScrollRect.content);
         IntelNotificationItem newItem = newIntelGO.GetComponent<IntelNotificationItem>();
         newItem.Initialize(intel, true, OnNotificationDestroyed);
+        newItem.SetHoverPosition(notificationHoverPos);
         newIntelGO.transform.localScale = Vector3.one;
         PlaceNewNotification(newItem);
     }
@@ -1024,6 +1045,7 @@ public class UIManager : MonoBehaviour {
         GameObject newIntelGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(defaultNotificationPrefab.name, Vector3.zero, Quaternion.identity, playerNotifScrollRect.content);
         PlayerNotificationItem newItem = newIntelGO.GetComponent<PlayerNotificationItem>();
         newItem.Initialize(log, true, OnNotificationDestroyed);
+        newItem.SetHoverPosition(notificationHoverPos);
         newIntelGO.transform.localScale = Vector3.one;
         PlaceNewNotification(newItem);        
     }
@@ -1031,6 +1053,7 @@ public class UIManager : MonoBehaviour {
         GameObject newIntelGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(defaultNotificationPrefab.name, Vector3.zero, Quaternion.identity, playerNotifScrollRect.content);
         PlayerNotificationItem newItem = newIntelGO.GetComponent<PlayerNotificationItem>();
         newItem.Initialize(log, true, OnNotificationDestroyed);
+        newItem.SetHoverPosition(notificationHoverPos);
         newItem.SetTickShown(tick);
         newIntelGO.transform.localScale = Vector3.one;
         PlaceNewNotification(newItem);
@@ -1320,6 +1343,42 @@ public class UIManager : MonoBehaviour {
     }
     public void ShowEndDemoScreen() {
         _demoUI.ShowEndScreen();
+    }
+    #endregion
+
+    #region Character Thought Tooltip
+    [Header("Character Thought Tooltip")] 
+    [SerializeField] private CharacterThoughtTooltip[] characterThoughtTooltips;
+    public void ShowCharacterThoughtTooltip(Character character) {
+        if (GetTooltipOwnedBy(character) == null) {
+            CharacterThoughtTooltip availableTooltip = GetAvailableThoughtTooltip();
+            Assert.IsNotNull(availableTooltip, $"There is no available thought tooltip for {character.name}!");
+            availableTooltip.Show(character);    
+        }
+    }
+    public void HideCharacterThoughtTooltip(Character character) {
+        CharacterThoughtTooltip thoughtTooltip = GetTooltipOwnedBy(character);
+        if (thoughtTooltip != null) {
+            thoughtTooltip.Hide();
+        }
+    }
+    private CharacterThoughtTooltip GetAvailableThoughtTooltip() {
+        for (int i = 0; i < characterThoughtTooltips.Length; i++) {
+            CharacterThoughtTooltip thoughtTooltip = characterThoughtTooltips[i];
+            if (thoughtTooltip.gameObject.activeSelf == false) {
+                return thoughtTooltip;
+            }
+        }
+        return null;
+    }
+    private CharacterThoughtTooltip GetTooltipOwnedBy(Character character) {
+        for (int i = 0; i < characterThoughtTooltips.Length; i++) {
+            CharacterThoughtTooltip thoughtTooltip = characterThoughtTooltips[i];
+            if (thoughtTooltip.gameObject.activeSelf && thoughtTooltip.activeCharacter == character) {
+                return thoughtTooltip;
+            }
+        }
+        return null;
     }
     #endregion
 }

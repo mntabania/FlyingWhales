@@ -654,6 +654,7 @@ MonoBehaviour:
   logItem: {fileID: 114091602978153694}
   _container: {fileID: 26294381911162399}
   _layoutElement: {fileID: 43991465327477566}
+  _hoverPosition: {fileID: 0}
   getIntelBtn: {fileID: 114111695253146942}
   convertTooltip: {fileID: 1999433499704826}
   effectPrefab: {fileID: 2871024722848407621, guid: 6d4f58b47be4dcb4dac33aa43df45eb9,
@@ -1108,10 +1109,32 @@ MonoBehaviour:
   allowClickAction: 1
   hoverAction:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 114662136373322912}
+        m_MethodName: OnHoverOverLog
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   hoverOutAction:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 114662136373322912}
+        m_MethodName: OnHoverOutLog
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &114091602978153694
 MonoBehaviour:
   m_ObjectHideFlags: 0

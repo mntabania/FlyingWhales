@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 using TMPro;
 using UnityEngine.UI;
@@ -10,6 +11,7 @@ public class LogHistoryItem : LogItem {
     [SerializeField] private TextMeshProUGUI dateLbl;
     [SerializeField] private Image logBG;
     [SerializeField] private EnvelopContentUnityUI envelopContent;
+    private UIHoverPosition _hoverPosition;
 
     //private bool _isInspected;
 
@@ -43,9 +45,26 @@ public class LogHistoryItem : LogItem {
     public void EnvelopContentExecute() {
         envelopContent.Execute();
     }
-
+    public void SetHoverPosition(UIHoverPosition hoverPosition) {
+        _hoverPosition = hoverPosition;
+    }
+    
     public void SetLogColor(Color color) {
         //logBG.color = color;
     }
+
+    public void OnHoverOverLog(object obj) {
+        if (obj is string indexText) {
+            int index = Int32.Parse(indexText);
+            LogFiller logFiller = log.fillers[index];
+            if (logFiller.obj is Character character && _hoverPosition != null) {
+                UIManager.Instance.ShowCharacterNameplateTooltip(character, _hoverPosition);
+            }
+        }
+    }
+    public void OnHoverOutLog() {
+        UIManager.Instance.HideCharacterNameplateTooltip();
+    }
+    
 
 }
