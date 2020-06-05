@@ -54,6 +54,12 @@ public class CrimeManager : MonoBehaviour {
         } else if (actionType == INTERACTION_TYPE.STEAL
             || actionType == INTERACTION_TYPE.POISON) {
             return CRIME_TYPE.MISDEMEANOR;
+        } else if (actionType == INTERACTION_TYPE.PICK_UP) {
+            if(consideredAction.poiTarget is TileObject targetTileObject) {
+                if(targetTileObject.characterOwner != null && targetTileObject.characterOwner != consideredAction.actor) {
+                    return CRIME_TYPE.MISDEMEANOR;
+                }
+            }
         } else if (actionType == INTERACTION_TYPE.KNOCKOUT_CHARACTER
             || actionType == INTERACTION_TYPE.ASSAULT) {
             if(consideredAction.associatedJobType != JOB_TYPE.APPREHEND) {

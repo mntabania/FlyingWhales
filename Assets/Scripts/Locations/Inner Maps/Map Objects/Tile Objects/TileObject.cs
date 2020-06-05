@@ -853,13 +853,24 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         if (tileObjectType.IsTileObjectAnItem() == false) {
             return false;
         }
-        if (GameUtilities.IsRaceBeast(character.race)) {
+        if (!character.isNormalCharacter) {
             return false;
         }
-        if (character.race == RACE.SKELETON) {
+        //if (GameUtilities.IsRaceBeast(character.race)) {
+        //    return false;
+        //}
+        //if (character.race == RACE.SKELETON) {
+        //    return false;
+        //}
+        //if (character.characterClass.className.Equals("Zombie")) {
+        //    return false;
+        //}
+
+        //characters should not pick up items if that item is the target of it's current action
+        if (character.currentActionNode != null && character.currentActionNode.poiTarget == this) {
             return false;
         }
-        if (character.characterClass.className.Equals("Zombie")) {
+        if (Advertises(INTERACTION_TYPE.PICK_UP) == false) {
             return false;
         }
         if (characterOwner == null || characterOwner == character) {
@@ -869,15 +880,13 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
                 && gridTileLocation.structure == npcSettlement.mainStorage) {
                 return false;
             }
-            
-            //characters should not pick up items if that item is the target of it's current action
-            if (character.currentActionNode != null && character.currentActionNode.poiTarget == this) {
-                return false;
-            }
-            if (Advertises(INTERACTION_TYPE.PICK_UP) == false) {
-                return false;
-            }
             return true;
+        } else {
+            //https://www.notion.so/ruinarch/c818a20f153d4b6ea49e823a04515394?v=5767c0da06f347549ce48dd37384af59&p=7e7a8a17d989411eaec3ebe4ba4b5460
+            //Can be picked up even if item has owner if character is Evil, Treacherous or Kleptomaniac
+            if(character.traitContainer.HasTrait("Evil", "Treacherous", "Kleptomaniac")) {
+                return true;
+            }
         }
         return false;
     }

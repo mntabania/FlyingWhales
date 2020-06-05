@@ -54,7 +54,7 @@ public class Necronomicon : Artifact {
     public override void OnTileObjectAddedToInventoryOf(Character inventoryOwner) {
         base.OnTileObjectAddedToInventoryOf(inventoryOwner);
         if(CharacterManager.Instance.necromancerInTheWorld == null) {
-            if (inventoryOwner.traitContainer.HasTrait("Evil") || (inventoryOwner.traitContainer.HasTrait("Treacherous") && inventoryOwner.traitContainer.HasTrait("Betrayed", "Heartbroken", "Griefstricken"))) {
+            if (inventoryOwner.traitContainer.HasTrait("Evil") || inventoryOwner.traitContainer.HasTrait("Treacherous")) { //|| (inventoryOwner.traitContainer.HasTrait("Treacherous") && inventoryOwner.traitContainer.HasTrait("Betrayed", "Heartbroken", "Griefstricken"))
                 //Necromantic Transformation
                 inventoryOwner.interruptComponent.TriggerInterrupt(INTERRUPT.Necromantic_Transformation, inventoryOwner);
             }

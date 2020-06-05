@@ -59,6 +59,28 @@ public class PickUp : GoapAction {
         }
         return REACTABLE_EFFECT.Neutral;
     }
+    public override string ReactionToActor(Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionToActor(witness, node, status);
+        Character actor = node.actor;
+        IPointOfInterest target = node.poiTarget;
+
+        if(target is TileObject targetTileObject) {
+            if (targetTileObject.characterOwner != null && targetTileObject.characterOwner != node.actor) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status);
+                if (witness.relationshipContainer.IsFriendsWith(actor)) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor, status);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status);
+                    if (witness == targetTileObject.characterOwner) {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor, status);
+                    }
+                } else if (witness == targetTileObject.characterOwner) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status);
+                }
+                CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.MISDEMEANOR);
+            }
+        }
+        return response;
+    }
     #endregion
 
     #region Requirements
