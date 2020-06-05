@@ -36,9 +36,9 @@ namespace Traits {
             base.OnRemoveTrait(sourcePOI, removedBy);
         }
         public override string GetNameInUI(ITraitable traitable) {
-            if(crimeData != null) {
-                return $"{name}:{crimeData.strCrimeType}";
-            }
+            //if(crimeData != null) {
+            //    return $"{name}:{crimeData.strCrimeType}";
+            //}
             return name;
         }
         #endregion
