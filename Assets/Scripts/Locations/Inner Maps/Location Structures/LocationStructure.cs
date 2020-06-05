@@ -565,6 +565,7 @@ namespace Inner_Maps.Location_Structures {
             if (tile.genericTileObject.currentHP >= tile.genericTileObject.maxHP) {
                 // ReSharper disable once Unity.NoNullPropagation
                 structureObj?.ApplyGroundTileAssetForTile(tile);    
+                tile.CreateSeamlessEdgesForSelfAndNeighbours();
             }
         }
         #endregion

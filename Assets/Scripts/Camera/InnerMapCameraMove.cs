@@ -26,12 +26,9 @@ public class InnerMapCameraMove : BaseCameraMove {
     public Tweener innerMapCameraShakeMeteorTween { get; private set; }
 
     #region getters/setters
-    public float currentFOV {
-        get { return innerMapsCamera.orthographicSize; }
-    }
-    public float maxFOV {
-        get { return _maxFov; }
-    }
+    public float currentFOV => innerMapsCamera.orthographicSize;
+    public float maxFOV => _maxFov;
+    public float minFOV => _minFov;
     #endregion
 
     private void Awake(){

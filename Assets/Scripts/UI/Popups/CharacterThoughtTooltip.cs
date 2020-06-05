@@ -28,7 +28,9 @@ public class CharacterThoughtTooltip : MonoBehaviour {
     private void Reposition(Character character) {
         Vector3 screenPoint =
             InnerMapCameraMove.Instance.innerMapsCamera.WorldToScreenPoint(character.marker.transform.position);
-        screenPoint.y += 20f;
+        float fovDiff = InnerMapCameraMove.Instance.currentFOV - InnerMapCameraMove.Instance.minFOV;
+        float diff = fovDiff / 3.5f;
+        screenPoint.y -= (105f - (diff * 12f));
         rectTransform.position = screenPoint;
     }
     private void UpdateText(Character character) {
