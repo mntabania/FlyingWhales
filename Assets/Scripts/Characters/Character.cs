@@ -1864,9 +1864,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             marker.UpdateAnimation();
         }
     }
-    public virtual bool IsValidCombatTarget() {
+    public virtual bool IsValidCombatTargetFor(IPointOfInterest source) {
         return isDead == false && (canPerform || canMove) && marker != null 
-                && gridTileLocation != null; //traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) == false
+                && gridTileLocation != null && source.gridTileLocation != null && PathfindingManager.Instance.HasPathEvenDiffRegion(source.gridTileLocation, gridTileLocation); //traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) == false
     }
     public void ExecutePendingActionsAfterMultithread() {
         for (int i = 0; i < pendingActionsAfterMultiThread.Count; i++) {
@@ -2774,7 +2774,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 Death();
             }
         } else if (amount < 0 && IsHealthCriticallyLow()) {
-            combatComponent.FlightAll("got scared");
+            combatComponent.FlightAll("critically low health");
             // Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, this, "critically low health");
         }
     }

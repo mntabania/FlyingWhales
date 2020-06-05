@@ -564,7 +564,7 @@ public class ReactionComponent {
                             debugLog += "\n-Target is Friend/Close Friend";
                             if (UnityEngine.Random.Range(0, 2) == 0) {
                                 debugLog += "\n-Target will Cry";
-                                owner.interruptComponent.TriggerInterrupt(INTERRUPT.Cry, targetCharacter);
+                                owner.interruptComponent.TriggerInterrupt(INTERRUPT.Cry, targetCharacter, "saw a dead loved one");
                             } else {
                                 debugLog += "\n-Target will Puke";
                                 owner.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, targetCharacter);

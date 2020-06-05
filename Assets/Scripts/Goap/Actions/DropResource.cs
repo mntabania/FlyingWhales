@@ -81,7 +81,7 @@ public class DropResource : GoapAction {
             if (poiTarget.gridTileLocation == null) {
                 return false;
             }
-            return actor.homeRegion.IsSameCoreLocationAs(poiTarget.gridTileLocation.structure.location);
+            return actor.homeRegion != poiTarget.gridTileLocation.structure.location;
         }
         return false;
     }

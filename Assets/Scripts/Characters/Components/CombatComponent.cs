@@ -58,9 +58,16 @@ public class CombatComponent {
             Character targetCharacter = target as Character;
             if (owner.traitContainer.HasTrait("Coward")) {
                 debugLog += "\n-Character is coward";
-                debugLog += "\n-FLIGHT";
-                owner.logComponent.PrintLogIfActive(debugLog);
-                Flight(target, "character is a coward");
+                if(owner.race == RACE.DEMON) {
+                    debugLog += "\n-Character is a demon";
+                    debugLog += "\n-FIGHT";
+                    owner.logComponent.PrintLogIfActive(debugLog);
+                    Fight(target, fightReason, connectedAction, isLethal);
+                } else {
+                    debugLog += "\n-FLIGHT";
+                    owner.logComponent.PrintLogIfActive(debugLog);
+                    Flight(target, "character is a coward");
+                }
             } else {
                 debugLog += "\n-Character is not coward";
                 if (!owner.traitContainer.HasTrait("Combatant", "Royalty")) {
@@ -72,9 +79,16 @@ public class CombatComponent {
                         owner.logComponent.PrintLogIfActive(debugLog);
                         Fight(target, fightReason, connectedAction, isLethal);
                     } else {
-                        debugLog += "\n-FLIGHT";
-                        owner.logComponent.PrintLogIfActive(debugLog);
-                        Flight(target, "got scared");
+                        if (owner.race == RACE.DEMON) {
+                            debugLog += "\n-Character is a demon";
+                            debugLog += "\n-FIGHT";
+                            owner.logComponent.PrintLogIfActive(debugLog);
+                            Fight(target, fightReason, connectedAction, isLethal);
+                        } else {
+                            debugLog += "\n-FLIGHT";
+                            owner.logComponent.PrintLogIfActive(debugLog);
+                            Flight(target, "got scared");
+                        }
                     }
                 } else {
                     debugLog += "\n-Character is combatant or royalty";
@@ -87,13 +101,26 @@ public class CombatComponent {
                         debugLog += "\n-Character hp is lower or equal than target";
                         if (CombatManager.Instance.IsImmuneToElement(targetCharacter, elementalDamage.type)) {
                             debugLog += "\n-Target is immune to character elemental damage";
-                            Flight(target, "got scared");
+                            if (owner.race == RACE.DEMON) {
+                                debugLog += "\n-Character is a demon";
+                                debugLog += "\n-FIGHT";
+                                owner.logComponent.PrintLogIfActive(debugLog);
+                                Fight(target, fightReason, connectedAction, isLethal);
+                            } else {
+                                debugLog += "\n-FLIGHT";
+                                owner.logComponent.PrintLogIfActive(debugLog);
+                                Flight(target, "got scared");
+                            }
                         } else if (CombatManager.Instance.IsImmuneToElement(owner, targetCharacter.combatComponent.elementalDamage.type)) {
                             debugLog += "\n-Character is immune to target elemental damage";
+                            debugLog += "\n-FIGHT";
+                            owner.logComponent.PrintLogIfActive(debugLog);
                             Fight(target, fightReason, connectedAction, isLethal);
                         } else {
                             if (owner.currentHP >= Mathf.CeilToInt(owner.maxHP * 0.3f)) {
                                 debugLog += "\n-Character's hp is greater than or equal to 30% of its max hp";
+                                debugLog += "\n-FIGHT";
+                                owner.logComponent.PrintLogIfActive(debugLog);
                                 Fight(target, fightReason, connectedAction, isLethal);
                             } else {
                                 int fightChance = 25;
@@ -112,9 +139,16 @@ public class CombatComponent {
                                     owner.logComponent.PrintLogIfActive(debugLog);
                                     Fight(target, fightReason, connectedAction, isLethal);
                                 } else {
-                                    debugLog += "\n-FLIGHT";
-                                    owner.logComponent.PrintLogIfActive(debugLog);
-                                    Flight(target, "got scared");
+                                    if (owner.race == RACE.DEMON) {
+                                        debugLog += "\n-Character is a demon";
+                                        debugLog += "\n-FIGHT";
+                                        owner.logComponent.PrintLogIfActive(debugLog);
+                                        Fight(target, fightReason, connectedAction, isLethal);
+                                    } else {
+                                        debugLog += "\n-FLIGHT";
+                                        owner.logComponent.PrintLogIfActive(debugLog);
+                                        Flight(target, "got scared");
+                                    }
                                 }
                             }
                         }
@@ -125,9 +159,16 @@ public class CombatComponent {
             debugLog += "\n-Target is object";
             if (owner.traitContainer.HasTrait("Coward")) {
                 debugLog += "\n-Character is coward";
-                debugLog += "\n-FLIGHT";
-                owner.logComponent.PrintLogIfActive(debugLog);
-                Flight(target, "character is a coward");
+                if (owner.race == RACE.DEMON) {
+                    debugLog += "\n-Character is a demon";
+                    debugLog += "\n-FIGHT";
+                    owner.logComponent.PrintLogIfActive(debugLog);
+                    Fight(target, fightReason, connectedAction, isLethal);
+                } else {
+                    debugLog += "\n-FLIGHT";
+                    owner.logComponent.PrintLogIfActive(debugLog);
+                    Flight(target, "character is a coward");
+                }
             } else if (tileObject.traitContainer.HasTrait("Dangerous")) {
                 debugLog += "\n-Object is dangerous";
                 if (string.IsNullOrEmpty(tileObject.neutralizer) == false && 
@@ -135,7 +176,16 @@ public class CombatComponent {
                     debugLog += $"\n-Character has neutralizer trait {tileObject.neutralizer}";    
                     Fight(target, fightReason, connectedAction, isLethal);
                 } else {
-                    Flight(target, "got scared");
+                    if (owner.race == RACE.DEMON) {
+                        debugLog += "\n-Character is a demon";
+                        debugLog += "\n-FIGHT";
+                        owner.logComponent.PrintLogIfActive(debugLog);
+                        Fight(target, fightReason, connectedAction, isLethal);
+                    } else {
+                        debugLog += "\n-FLIGHT";
+                        owner.logComponent.PrintLogIfActive(debugLog);
+                        Flight(target, "got scared");
+                    }
                 }
                 owner.logComponent.PrintLogIfActive(debugLog);
             } else {
@@ -218,6 +268,11 @@ public class CombatComponent {
         return hasFled;
     }
     public void FlightAll(string reason = "") {
+        //Demons no longer trigger Flight
+        //https://trello.com/c/D4bdwPhH/1104-demons-and-monsters-no-longer-trigger-flight
+        if (owner.race == RACE.DEMON) {
+            return;
+        }
         if (hostilesInRange.Count > 0) {
             if (owner.canMove) {
                 for (int i = 0; i < hostilesInRange.Count; i++) {
@@ -341,7 +396,7 @@ public class CombatComponent {
         //first check only the hostiles that are in the same npcSettlement as this character
         for (int i = 0; i < hostilesInRange.Count; i++) {
             IPointOfInterest poi = hostilesInRange[i];
-            if (poi.IsValidCombatTarget()) {
+            if (poi.IsValidCombatTargetFor(owner)) {
                 float dist = Vector2.Distance(owner.marker.transform.position, poi.worldPosition);
                 if (nearest == null || dist < nearestDist) {
                     nearest = poi;
@@ -363,7 +418,7 @@ public class CombatComponent {
             for (int i = 0; i < hostilesInRange.Count; i++) {
                 IPointOfInterest poi = hostilesInRange[i];
                 if(poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-                    if (poi.IsValidCombatTarget()) {
+                    if (poi.IsValidCombatTargetFor(owner)) {
                         nearest = hostilesInRange[i];
                         break;
                     } else {
@@ -383,7 +438,7 @@ public class CombatComponent {
         //first check only the hostiles that are in the same npcSettlement as this character
         for (int i = 0; i < hostilesInRange.Count; i++) {
             IPointOfInterest poi = hostilesInRange[i];
-            if (poi.IsValidCombatTarget()) {
+            if (poi.IsValidCombatTargetFor(owner)) {
                 if(poi is Character hostileCharacter) {
                     if(hostileCharacter.isInCombat && (hostileCharacter.stateComponent.currentState as CombatState).isAttacking == false) {
                         continue;

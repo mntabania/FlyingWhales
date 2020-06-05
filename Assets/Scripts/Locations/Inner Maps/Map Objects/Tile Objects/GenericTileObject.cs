@@ -38,7 +38,7 @@ public class GenericTileObject : TileObject {
         OnRemoveTileObject(removedBy, previousTile);
         SetPOIState(POI_STATE.INACTIVE);
     }
-    public override bool IsValidCombatTarget() {
+    public override bool IsValidCombatTargetFor(IPointOfInterest source) {
         return false;
     }
     public override void OnTileObjectGainedTrait(Trait trait) {

@@ -81683,7 +81683,7 @@ MonoBehaviour:
   _baseFullnessDecreaseRate: 0.42
   _baseTirednessDecreaseRate: 0.34
   _baseHappinessDecreaseRate: 0.21
-  _baseStaminaDecreaseRate: 2.5
+  _baseStaminaDecreaseRate: 7.5
   _startingMana: 250
   _maximumMana: 500
   _summonMinionManaCost: 80
