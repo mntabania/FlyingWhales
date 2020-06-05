@@ -76,11 +76,11 @@ namespace Traits {
             if (removedFrom is Character) {
                 Character character = removedFrom as Character;
                 character.moodComponent.RemoveMoodEffect(-moodEffect, this);    
-                if (name == "Criminal") {
-                    if (!character.traitContainer.HasTrait("Criminal")) {
-                        character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.APPREHEND);
-                    }
-                }
+                //if (name == "Criminal") {
+                //    if (!character.traitContainer.HasTrait("Criminal")) {
+                //        character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.APPREHEND);
+                //    }
+                //}
                 if (string.IsNullOrEmpty(thoughtText) == false) {
                     character.RemoveOverrideThought(thoughtText);
                 }

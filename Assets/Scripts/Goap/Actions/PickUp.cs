@@ -37,9 +37,19 @@ public class PickUp : GoapAction {
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}:";
         int cost = UtilityScripts.Utilities.Rng.Next(80, 121);
-        costLog += $" +{cost}(RNG)";
+        costLog += $" +{cost}(Initial)";
+        int numOfTimesActionDone = actor.jobComponent.GetNumOfTimesActionDone(this);
+        if (job != null && job.jobType == JOB_TYPE.OBTAIN_PERSONAL_ITEM && !target.gridTileLocation.IsPartOfSettlement(actor.homeSettlement)) {
+            cost += 2000;
+            costLog += " +2000(Object is not part of home settlement and job is Obtain Personal Item)";
+        }
         actor.logComponent.AppendCostLog(costLog);
         return cost;
+
+        //int cost = UtilityScripts.Utilities.Rng.Next(80, 121);
+        //costLog += $" +{cost}(RNG)";
+        //actor.logComponent.AppendCostLog(costLog);
+        //return cost;
     }
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
         if (node.poiTarget is TileObject tileObject) {

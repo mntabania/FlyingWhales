@@ -66,68 +66,84 @@ namespace Traits {
                     }
                 }
             }
-            if (targetPOI is Character || targetPOI is Tombstone) {
-                Character targetCharacter = null;
-                if (targetPOI is Character character) {
-                    targetCharacter = character;
-                } else {
-                    targetCharacter = (targetPOI as Tombstone).character;
-                }
-                if (targetCharacter.isDead) {
-                    Dead deadTrait = targetCharacter.traitContainer.GetNormalTrait<Dead>("Dead");
-                    if (deadTrait != null && deadTrait.responsibleCharacter != characterThatWillDoJob 
-                                          && !deadTrait.charactersThatSawThisDead.Contains(characterThatWillDoJob)) {
-                        deadTrait.AddCharacterThatSawThisDead(characterThatWillDoJob);
-                    
-                        // Log sawDeadLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "saw_dead");
-                        // sawDeadLog.AddToFillers(characterThatWillDoJob, characterThatWillDoJob.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                        // sawDeadLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                        // characterThatWillDoJob.logComponent.AddHistory(sawDeadLog);
-                        // PlayerManager.Instance.player.ShowNotificationFrom(sawDeadLog, characterThatWillDoJob, false);
-                        //
-                        //
-                        // if (characterThatWillDoJob.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER)) {
-                        //     characterThatWillDoJob.traitContainer.AddTrait(characterThatWillDoJob, "Heartbroken");
-                        //     bool hasCreatedJob = RandomizeBetweenShockAndCryJob(characterThatWillDoJob);
-                        //     //characterThatWillDoJob.needsComponent.AdjustHappiness(-6000);
-                        //     return hasCreatedJob;
-                        // } else if (characterThatWillDoJob.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.RELATIVE)) {
-                        //     characterThatWillDoJob.traitContainer.AddTrait(characterThatWillDoJob, "Griefstricken");
-                        //     bool hasCreatedJob = RandomizeBetweenShockAndCryJob(characterThatWillDoJob);
-                        //     //characterThatWillDoJob.needsComponent.AdjustHappiness(-4000);
-                        //     return hasCreatedJob;
-                        // } else if (characterThatWillDoJob.RelationshipManager.IsFriendsWith(targetCharacter)) {
-                        //     characterThatWillDoJob.traitContainer.AddTrait(characterThatWillDoJob, "Griefstricken");
-                        //     bool hasCreatedJob = CreatePrioritizedShockJob(characterThatWillDoJob);
-                        //     //characterThatWillDoJob.needsComponent.AdjustHappiness(-2000);
-                        //     return hasCreatedJob;
-                        // }
-                    }
-                } else { 
-                    //character is not dead
-                    // if (targetCharacter.canMove == false || targetCharacter.canWitness == false) {
-                    //     if (characterThatWillDoJob.jobComponent.TryTriggerFeed(targetCharacter) == false) {
-                    //         if (characterThatWillDoJob.jobComponent.TryTriggerMoveCharacterTirednessRecovery(targetCharacter) == false) {
-                    //             characterThatWillDoJob.jobComponent.TryTriggerMoveCharacterHappinessRecovery(targetCharacter);
-                    //         }    
-                    //     }
-                    // }
-                    if (targetCharacter.race == RACE.SKELETON || targetCharacter.characterClass.className == "Zombie") {
-                        string opinionLabel = characterThatWillDoJob.relationshipContainer.GetOpinionLabel(targetCharacter);
-                        if (opinionLabel == RelationshipManager.Friend) {
-                            if (!charactersAlreadySawForHope.Contains(targetCharacter)) {
-                                charactersAlreadySawForHope.Add(targetCharacter);
-                                characterThatWillDoJob.needsComponent.AdjustHope(-5f);
-                            }
-                        } else if (opinionLabel == RelationshipManager.Close_Friend) {
-                            if (!charactersAlreadySawForHope.Contains(targetCharacter)) {
-                                charactersAlreadySawForHope.Add(targetCharacter);
-                                characterThatWillDoJob.needsComponent.AdjustHope(-10f);
-                            }
+            if(targetPOI is Character targetCharacter && !targetCharacter.isDead) {
+                if (targetCharacter.race == RACE.SKELETON || targetCharacter.characterClass.className == "Zombie") {
+                    string opinionLabel = characterThatWillDoJob.relationshipContainer.GetOpinionLabel(targetCharacter);
+                    if (opinionLabel == RelationshipManager.Friend) {
+                        if (!charactersAlreadySawForHope.Contains(targetCharacter)) {
+                            charactersAlreadySawForHope.Add(targetCharacter);
+                            characterThatWillDoJob.needsComponent.AdjustHope(-5f);
+                        }
+                    } else if (opinionLabel == RelationshipManager.Close_Friend) {
+                        if (!charactersAlreadySawForHope.Contains(targetCharacter)) {
+                            charactersAlreadySawForHope.Add(targetCharacter);
+                            characterThatWillDoJob.needsComponent.AdjustHope(-10f);
                         }
                     }
                 }
             }
+            //if (targetPOI is Character || targetPOI is Tombstone) {
+            //    Character targetCharacter = null;
+            //    if (targetPOI is Character character) {
+            //        targetCharacter = character;
+            //    } else {
+            //        targetCharacter = (targetPOI as Tombstone).character;
+            //    }
+            //    if (targetCharacter.isDead) {
+            //        Dead deadTrait = targetCharacter.traitContainer.GetNormalTrait<Dead>("Dead");
+            //        if (deadTrait != null && deadTrait.responsibleCharacter != characterThatWillDoJob 
+            //                              && !deadTrait.charactersThatSawThisDead.Contains(characterThatWillDoJob)) {
+            //            deadTrait.AddCharacterThatSawThisDead(characterThatWillDoJob);
+                    
+            //            // Log sawDeadLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "saw_dead");
+            //            // sawDeadLog.AddToFillers(characterThatWillDoJob, characterThatWillDoJob.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            //            // sawDeadLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            //            // characterThatWillDoJob.logComponent.AddHistory(sawDeadLog);
+            //            // PlayerManager.Instance.player.ShowNotificationFrom(sawDeadLog, characterThatWillDoJob, false);
+            //            //
+            //            //
+            //            // if (characterThatWillDoJob.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER)) {
+            //            //     characterThatWillDoJob.traitContainer.AddTrait(characterThatWillDoJob, "Heartbroken");
+            //            //     bool hasCreatedJob = RandomizeBetweenShockAndCryJob(characterThatWillDoJob);
+            //            //     //characterThatWillDoJob.needsComponent.AdjustHappiness(-6000);
+            //            //     return hasCreatedJob;
+            //            // } else if (characterThatWillDoJob.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.RELATIVE)) {
+            //            //     characterThatWillDoJob.traitContainer.AddTrait(characterThatWillDoJob, "Griefstricken");
+            //            //     bool hasCreatedJob = RandomizeBetweenShockAndCryJob(characterThatWillDoJob);
+            //            //     //characterThatWillDoJob.needsComponent.AdjustHappiness(-4000);
+            //            //     return hasCreatedJob;
+            //            // } else if (characterThatWillDoJob.RelationshipManager.IsFriendsWith(targetCharacter)) {
+            //            //     characterThatWillDoJob.traitContainer.AddTrait(characterThatWillDoJob, "Griefstricken");
+            //            //     bool hasCreatedJob = CreatePrioritizedShockJob(characterThatWillDoJob);
+            //            //     //characterThatWillDoJob.needsComponent.AdjustHappiness(-2000);
+            //            //     return hasCreatedJob;
+            //            // }
+            //        }
+            //    } else { 
+            //        //character is not dead
+            //        // if (targetCharacter.canMove == false || targetCharacter.canWitness == false) {
+            //        //     if (characterThatWillDoJob.jobComponent.TryTriggerFeed(targetCharacter) == false) {
+            //        //         if (characterThatWillDoJob.jobComponent.TryTriggerMoveCharacterTirednessRecovery(targetCharacter) == false) {
+            //        //             characterThatWillDoJob.jobComponent.TryTriggerMoveCharacterHappinessRecovery(targetCharacter);
+            //        //         }    
+            //        //     }
+            //        // }
+            //        if (targetCharacter.race == RACE.SKELETON || targetCharacter.characterClass.className == "Zombie") {
+            //            string opinionLabel = characterThatWillDoJob.relationshipContainer.GetOpinionLabel(targetCharacter);
+            //            if (opinionLabel == RelationshipManager.Friend) {
+            //                if (!charactersAlreadySawForHope.Contains(targetCharacter)) {
+            //                    charactersAlreadySawForHope.Add(targetCharacter);
+            //                    characterThatWillDoJob.needsComponent.AdjustHope(-5f);
+            //                }
+            //            } else if (opinionLabel == RelationshipManager.Close_Friend) {
+            //                if (!charactersAlreadySawForHope.Contains(targetCharacter)) {
+            //                    charactersAlreadySawForHope.Add(targetCharacter);
+            //                    characterThatWillDoJob.needsComponent.AdjustHope(-10f);
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
             return base.OnSeePOI(targetPOI, characterThatWillDoJob);
         }
         public override bool OnStartPerformGoapAction(ActualGoapNode node, ref bool willStillContinueAction) {

@@ -48,6 +48,13 @@ public class CombatState : CharacterState {
         StartCombatMovement();
     }
     public override void PerTickInState() {
+        if (currentClosestHostile != null && stateComponent.character.gridTileLocation != null && currentClosestHostile.gridTileLocation != null) {
+            if (!PathfindingManager.Instance.HasPathEvenDiffRegion(stateComponent.character.gridTileLocation, currentClosestHostile.gridTileLocation)) {
+                SetClosestHostile(null);
+                stateComponent.character.combatComponent.RemoveHostileInRange(currentClosestHostile);
+                return;
+            }
+        }
         if (_hasTimerStarted) {
             //timer has been started, increment timer
             _currentAttackTimer += 1;
@@ -117,6 +124,8 @@ public class CombatState : CharacterState {
         base.AfterExitingState();
         if (!stateComponent.character.isDead) {
             if (isBeingApprehended && stateComponent.character.traitContainer.HasTrait("Criminal") && stateComponent.character.canPerform && stateComponent.character.canMove) { //!stateComponent.character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
+                //stateComponent.character.traitContainer.RemoveTrait(stateComponent.character, "Criminal");
+
                 //If this criminal character is being apprehended and survived (meaning he did not die, or is not unconscious or restrained)
                 if (!stateComponent.character.isFriendlyFactionless) {
                     //Leave current faction and become banned from the current faction

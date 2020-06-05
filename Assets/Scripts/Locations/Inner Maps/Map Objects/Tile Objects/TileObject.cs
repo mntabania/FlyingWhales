@@ -342,8 +342,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             mapObjectVisual.visionTrigger.VoteToMakeInvisibleToCharacters();
         }
     }
-    public virtual bool IsValidCombatTarget() {
-        return gridTileLocation != null;
+    public virtual bool IsValidCombatTargetFor(IPointOfInterest source) {
+        return gridTileLocation != null && source.gridTileLocation != null && PathfindingManager.Instance.HasPathEvenDiffRegion(source.gridTileLocation, gridTileLocation);
     }
     public virtual bool IsStillConsideredPartOfAwarenessByCharacter(Character character) {
         if(mapVisual == null) {

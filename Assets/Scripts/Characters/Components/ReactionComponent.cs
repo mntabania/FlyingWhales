@@ -453,8 +453,8 @@ public class ReactionComponent {
             }
         } else if (!owner.isInCombat) {
             debugLog += "\n-Target is not hostile and Character is not in combat";
-            if (owner.minion == null && !(owner is Summon) && owner.faction != FactionManager.Instance.undeadFaction && !IsPOICurrentlyTargetedByAPerformingAction(targetCharacter)) {
-                debugLog += "\n-Character is not minion and not summon and Target is not being targeted by an action, continue reaction";
+            if (owner.isNormalCharacter && !IsPOICurrentlyTargetedByAPerformingAction(targetCharacter)) {
+                debugLog += "\n-Character is a villager and Target is not being targeted by an action, continue reaction";
                 if (!targetCharacter.isDead) {
                     debugLog += "\n-Target is not dead";
                     if (!owner.isConversing && !targetCharacter.isConversing && owner.nonActionEventsComponent.CanInteract(targetCharacter) 
@@ -552,22 +552,34 @@ public class ReactionComponent {
                                 }
                             }
                         }
-                    } else {
-                        //debugLog += "\n-Character and Target are not with the same faction and npcSettlement";
-                        //if (owner.relationshipContainer.IsEnemiesWith(targetCharacter)) {
-                        //    debugLog += "\n-Character considers Target as Enemy or Rival, will trigger Fight or Flight response";
-                        //    //Fight or Flight
-                        //    if (owner.combatComponent.combatMode == COMBAT_MODE.Aggressive) {
-                        //        bool isTopPrioJobLethal = owner.jobQueue.jobsInQueue.Count <= 0 || owner.jobQueue.jobsInQueue[0].jobType.IsJobLethal();
-                        //        if (!targetCharacter.traitContainer.HasTrait("Unconscious") || isTopPrioJobLethal) {
-                        //            owner.combatComponent.FightOrFlight(targetCharacter, CombatManager.Hostility);
-                        //        }
-                        //    }
-                        //}
                     }
                 } else {
                     debugLog += "\n-Target is dead";
-                    debugLog += "\n-Do nothing";
+                    Dead targetDeadTrait = targetCharacter.traitContainer.GetNormalTrait<Dead>("Dead");
+                    if(targetDeadTrait != null && !targetDeadTrait.charactersThatSawThisDead.Contains(owner)) {
+                        targetDeadTrait.AddCharacterThatSawThisDead(owner);
+                        debugLog += "\n-Target saw for the first time";
+                        string opinionLabel = owner.relationshipContainer.GetOpinionLabel(targetCharacter);
+                        if(opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
+                            debugLog += "\n-Target is Friend/Close Friend";
+                            if (UnityEngine.Random.Range(0, 2) == 0) {
+                                debugLog += "\n-Target will Cry";
+                                owner.interruptComponent.TriggerInterrupt(INTERRUPT.Cry, targetCharacter, "saw a dead loved one");
+                            } else {
+                                debugLog += "\n-Target will Puke";
+                                owner.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, targetCharacter);
+                            }
+                        } else if (opinionLabel == RelationshipManager.Rival) {
+                            debugLog += "\n-Target is Rival";
+                            if (UnityEngine.Random.Range(0, 2) == 0) {
+                                debugLog += "\n-Target will Mock";
+                                owner.interruptComponent.TriggerInterrupt(INTERRUPT.Mock, targetCharacter);
+                            } else {
+                                debugLog += "\n-Target will Laugh At";
+                                owner.interruptComponent.TriggerInterrupt(INTERRUPT.Laugh_At, targetCharacter);
+                            }
+                        }
+                    }
                 }
             } else {
                 debugLog += "\n-Character is minion or summon or Target is currently being targeted by an action, not going to react";
@@ -657,32 +669,34 @@ public class ReactionComponent {
                 }
             }
         }
-        if (targetTileObject.traitContainer.HasTrait("Dangerous")) {
-            if (owner.traitContainer.HasTrait("Berserked")) {
-                owner.combatComponent.FightOrFlight(targetTileObject, CombatManager.Berserked);
-            } else if(owner.stateComponent.currentState == null || owner.stateComponent.currentState.characterState != CHARACTER_STATE.FOLLOW){
-                if (owner.traitContainer.HasTrait("Suicidal")) {
-                    if (!owner.jobQueue.HasJob(JOB_TYPE.SUICIDE_FOLLOW)) {
-                        CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.SUICIDE_FOLLOW, CHARACTER_STATE.FOLLOW, targetTileObject, owner);
-                        owner.jobQueue.AddJobInQueue(job);
-                    }
-                } else if (owner.moodComponent.moodState == MOOD_STATE.NORMAL) {
-                    string neutralizingTraitName = TraitManager.Instance.GetNeutralizingTraitFor(targetTileObject);
-                    if (neutralizingTraitName != string.Empty) {
-                        if (owner.traitContainer.HasTrait(neutralizingTraitName)) {
-                            if (!owner.jobQueue.HasJob(JOB_TYPE.NEUTRALIZE_DANGER, targetTileObject)) {
-                                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.NEUTRALIZE_DANGER,
-                                    INTERACTION_TYPE.NEUTRALIZE, targetTileObject, owner);
-                                owner.jobQueue.AddJobInQueue(job);
+        if (targetTileObject.traitContainer.HasTrait("Dangerous") && targetTileObject.gridTileLocation != null) {
+            if(targetTileObject is TornadoTileObject || owner.currentStructure == targetTileObject.gridTileLocation.structure || (!owner.currentStructure.isInterior && !targetTileObject.gridTileLocation.structure.isInterior)) {
+                if (owner.traitContainer.HasTrait("Berserked")) {
+                    owner.combatComponent.FightOrFlight(targetTileObject, CombatManager.Berserked);
+                } else if (owner.stateComponent.currentState == null || owner.stateComponent.currentState.characterState != CHARACTER_STATE.FOLLOW) {
+                    if (owner.traitContainer.HasTrait("Suicidal")) {
+                        if (!owner.jobQueue.HasJob(JOB_TYPE.SUICIDE_FOLLOW)) {
+                            CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.SUICIDE_FOLLOW, CHARACTER_STATE.FOLLOW, targetTileObject, owner);
+                            owner.jobQueue.AddJobInQueue(job);
+                        }
+                    } else if (owner.moodComponent.moodState == MOOD_STATE.NORMAL) {
+                        string neutralizingTraitName = TraitManager.Instance.GetNeutralizingTraitFor(targetTileObject);
+                        if (neutralizingTraitName != string.Empty) {
+                            if (owner.traitContainer.HasTrait(neutralizingTraitName)) {
+                                if (!owner.jobQueue.HasJob(JOB_TYPE.NEUTRALIZE_DANGER, targetTileObject)) {
+                                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.NEUTRALIZE_DANGER,
+                                        INTERACTION_TYPE.NEUTRALIZE, targetTileObject, owner);
+                                    owner.jobQueue.AddJobInQueue(job);
+                                }
+                            } else {
+                                owner.combatComponent.Flight(targetTileObject, "saw a " + targetTileObject.name);
                             }
                         } else {
-                            owner.combatComponent.Flight(targetTileObject, "saw a " + targetTileObject.name);
+                            throw new Exception("Trying to neutralize " + targetTileObject.nameWithID + " but it does not have a neutralizing trait!");
                         }
                     } else {
-                        throw new Exception("Trying to neutralize " + targetTileObject.nameWithID + " but it does not have a neutralizing trait!");
+                        owner.combatComponent.Flight(targetTileObject, "saw a " + targetTileObject.name);
                     }
-                } else {
-                    owner.combatComponent.Flight(targetTileObject, "saw a " + targetTileObject.name);
                 }
             }
         }

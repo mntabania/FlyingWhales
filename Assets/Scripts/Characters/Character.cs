@@ -456,13 +456,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //supply
         SetSupply(UnityEngine.Random.Range(10, 61)); //Randomize initial supply per character (Random amount between 10 to 60.)
     }
-    public virtual void InitialCharacterPlacement(LocationGridTile tile) {
+    public virtual void InitialCharacterPlacement(LocationGridTile tile, bool addToRegionLocation) {
         if (needsComponent.HasNeeds()) {
             needsComponent.InitialCharacterPlacement();    
         }
         
         ConstructInitialGoapAdvertisementActions();
-        marker.InitialPlaceMarkerAt(tile, false); //since normal characters are already placed in their areas.
+        marker.InitialPlaceMarkerAt(tile, addToRegionLocation); //since normal characters are already placed in their areas.
         //AddInitialAwareness();
         SubscribeToSignals();
         for (int i = 0; i < traitContainer.allTraitsAndStatuses.Count; i++) {
@@ -1253,11 +1253,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return true;
     }
     private void OnChangeFaction(Faction prevFaction, Faction newFaction) {
-        //check if this character has a Criminal Trait, if so, remove it
-        Trait criminal = traitContainer.GetNormalTrait<Trait>("Criminal");
-        if (criminal != null) {
-            traitContainer.RemoveTrait(this, criminal);
-        }
         if(prevFaction != null && prevFaction == FactionManager.Instance.undeadFaction) {
             behaviourComponent.RemoveBehaviourComponent(typeof(UndeadBehaviour));
         }
@@ -1690,17 +1685,19 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (isDead) {
                 return;
             }
-            string opinionLabel = relationshipContainer.GetOpinionLabel(characterThatDied);
-            if (opinionLabel == RelationshipManager.Close_Friend
-                || (relationshipContainer.HasSpecialPositiveRelationshipWith(characterThatDied) 
-                    && relationshipContainer.IsEnemiesWith(characterThatDied) == false)) {
-                needsComponent.AdjustHope(-10f);
-                if (!traitContainer.HasTrait("Psychopath")) {
-                    traitContainer.AddTrait(this, "Griefstricken", characterThatDied);
+            if (isNormalCharacter) {
+                string opinionLabel = relationshipContainer.GetOpinionLabel(characterThatDied);
+                if (opinionLabel == RelationshipManager.Close_Friend
+                    || (relationshipContainer.HasSpecialPositiveRelationshipWith(characterThatDied)
+                        && relationshipContainer.IsEnemiesWith(characterThatDied) == false)) {
+                    needsComponent.AdjustHope(-10f);
+                    if (!traitContainer.HasTrait("Psychopath")) {
+                        traitContainer.AddTrait(this, "Griefstricken", characterThatDied);
+                    }
+                } else if (opinionLabel == RelationshipManager.Friend) {
+                    needsComponent.AdjustHope(-5f);
                 }
-            } else if (opinionLabel == RelationshipManager.Friend) {
-                needsComponent.AdjustHope(-5f);
-            } 
+            }
 
             if (characterThatDied.currentRegion == homeRegion) {
                 //if a hostile character has been killed within the character's home npcSettlement, Hope increases by XX amount.
@@ -1869,9 +1866,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             marker.UpdateAnimation();
         }
     }
-    public virtual bool IsValidCombatTarget() {
+    public virtual bool IsValidCombatTargetFor(IPointOfInterest source) {
         return isDead == false && (canPerform || canMove) && marker != null 
-                && gridTileLocation != null; //traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) == false
+                && gridTileLocation != null && source.gridTileLocation != null && PathfindingManager.Instance.HasPathEvenDiffRegion(source.gridTileLocation, gridTileLocation); //traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) == false
     }
     public void ExecutePendingActionsAfterMultithread() {
         for (int i = 0; i < pendingActionsAfterMultiThread.Count; i++) {
@@ -2779,7 +2776,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 Death();
             }
         } else if (amount < 0 && IsHealthCriticallyLow()) {
-            combatComponent.FlightAll("got scared");
+            combatComponent.FlightAll("critically low health");
             // Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, this, "critically low health");
         }
     }

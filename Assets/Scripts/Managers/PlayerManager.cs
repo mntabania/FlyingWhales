@@ -311,13 +311,13 @@ public class PlayerManager : MonoBehaviour {
                         orbsToCreate = 2;
                         break;
                     case CRIME_TYPE.MISDEMEANOR:
-                        orbsToCreate = 3;
+                        orbsToCreate = 2;
                         break;
                     case CRIME_TYPE.SERIOUS:
-                        orbsToCreate = 4;
+                        orbsToCreate = 3;
                         break;
                     case CRIME_TYPE.HEINOUS:
-                        orbsToCreate = 5;
+                        orbsToCreate = 3;
                         break;
                     default:
                         orbsToCreate = 0;

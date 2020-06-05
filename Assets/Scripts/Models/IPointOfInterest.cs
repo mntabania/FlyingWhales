@@ -38,7 +38,7 @@ public interface IPointOfInterest : ITraitable, ISelectable {
         Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost, ref string log);
     bool CanAdvertiseActionToActor(Character actor, GoapAction action, JobQueueItem job,
         Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost);
-    bool IsValidCombatTarget();
+    bool IsValidCombatTargetFor(IPointOfInterest source);
     bool IsStillConsideredPartOfAwarenessByCharacter(Character character);
     void OnPlacePOI();
     void OnDestroyPOI();
