@@ -53315,12 +53315,15 @@ MonoBehaviour:
   _maxFov: 10
   cameraPanSpeed: 50
   isDragging: 0
-  edgeBoundary: 1
+  edgeBoundary: 5
   edgingSpeed: 25
   allowEdgePanning: 0
-  dampTime: 0.2
+  dampTime: 0.4
   velocity: {x: 0, y: 0, z: 0}
   _target: {fileID: 0}
+  threatEffect: {fileID: 7078545548615980126}
+  allowSmoothCameraFollow: 1
+  smoothFollowSpeed: 0.5
   _raycaster: {fileID: 930355347}
   allowZoom: 1
   _zoomSpeed: 15
@@ -105319,12 +105322,15 @@ MonoBehaviour:
   _maxFov: 16
   cameraPanSpeed: 50
   isDragging: 0
-  edgeBoundary: 1
+  edgeBoundary: 5
   edgingSpeed: 25
   allowEdgePanning: 0
-  dampTime: 0.2
+  dampTime: 0.4
   velocity: {x: 0, y: 0, z: 0}
   _target: {fileID: 0}
+  threatEffect: {fileID: 7078545548615980126}
+  allowSmoothCameraFollow: 1
+  smoothFollowSpeed: 0.5
   zoomSensitivity: 35
   _zoomSpeed: 30
   innerMapsCamera: {fileID: 1713567858}
@@ -136691,6 +136697,18 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 7078545548615980124}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &7078545548615980126 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7672381903390168128, guid: 199a545920335c545a2f6aa9f23344f3,
+    type: 3}
+  m_PrefabInstance: {fileID: 7078545548615980124}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee02933442f567a4a9a337d168143094, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &7302078505817939179
 PrefabInstance:
   m_ObjectHideFlags: 0

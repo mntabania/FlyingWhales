@@ -13,8 +13,8 @@ public class ThreatParticleEffect : MonoBehaviour {
         Messenger.AddListener(Signals.THREAT_RESET, OnThreatReset);
         Messenger.AddListener<Region>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
         Messenger.AddListener<Region>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
-        Messenger.AddListener<Camera>(Signals.ZOOM_INNER_MAP_CAMERA, OnZoomInnerMapCamera);
-        Messenger.AddListener<Camera>(Signals.ZOOM_WORLD_MAP_CAMERA, OnZoomWorldMapCamera);
+        //Messenger.AddListener<Camera>(Signals.ZOOM_INNER_MAP_CAMERA, OnZoomInnerMapCamera);
+        //Messenger.AddListener<Camera>(Signals.ZOOM_WORLD_MAP_CAMERA, OnZoomWorldMapCamera);
     }
     private void OnDestroy() {
         Messenger.RemoveListener(Signals.THREAT_MAXED_OUT, OnThreatMaxed);
@@ -30,10 +30,7 @@ public class ThreatParticleEffect : MonoBehaviour {
         gameObject.transform.localPosition = Vector3.zero;
         UpdatePosition(WorldMapCameraMove.Instance.mainCamera);
     }
-    private void OnZoomInnerMapCamera(Camera camera) {
-        UpdatePosition(camera);
-    }
-    private void OnZoomWorldMapCamera(Camera camera) {
+    public void OnZoomCamera(Camera camera) {
         UpdatePosition(camera);
     }
     private void UpdatePosition(Camera camera) {

@@ -111,14 +111,16 @@ public class InnerMapCameraMove : BaseCameraMove {
                 //fov = Mathf.Round(fov * 100f) / 100f;
                 fov = Mathf.Clamp(fov, _minFov, _maxFov);
 
-                if (!Mathf.Approximately(previousCameraFOV, fov)) {
-                    previousCameraFOV = fov;
-                    innerMapsCamera.orthographicSize = Mathf.Lerp(innerMapsCamera.orthographicSize, fov, Time.deltaTime * _zoomSpeed);
-                } else {
-                    innerMapsCamera.orthographicSize = fov;
-                }
+                innerMapsCamera.DOOrthoSize(fov, 0.5f).OnUpdate(() => OnZoom(innerMapsCamera));
+
+                //if (!Mathf.Approximately(previousCameraFOV, fov)) {
+                //    previousCameraFOV = fov;
+                //    innerMapsCamera.orthographicSize = Mathf.Lerp(innerMapsCamera.orthographicSize, fov, Time.deltaTime * _zoomSpeed);
+                //} else {
+                //    innerMapsCamera.orthographicSize = fov;
+                //}
                 // CalculateCameraBounds();
-                Messenger.Broadcast(Signals.ZOOM_INNER_MAP_CAMERA, innerMapsCamera);
+                
             }
         }
     }
