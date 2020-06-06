@@ -1341,8 +1341,8 @@ public class UIManager : MonoBehaviour {
     public void ShowStartDemoScreen() {
         _demoUI.ShowStartScreen();
     }
-    public void ShowEndDemoScreen() {
-        _demoUI.ShowEndScreen();
+    public void ShowEndDemoScreen(string summary) {
+        _demoUI.ShowSummaryThenEndScreen(summary);
     }
     #endregion
 

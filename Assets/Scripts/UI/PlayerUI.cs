@@ -549,7 +549,7 @@ public class PlayerUI : MonoBehaviour {
     #region End Game Mechanics
     public void WinGameOver() {
         if (WorldConfigManager.Instance.isDemoWorld) {
-            UIManager.Instance.ShowEndDemoScreen();
+            UIManager.Instance.ShowEndDemoScreen("You managed to wipe out all Villagers. Congratulations!");
         } else {
             UIManager.Instance.Pause();
             winGameOver.Open();    
@@ -558,7 +558,7 @@ public class PlayerUI : MonoBehaviour {
     }
     public void LoseGameOver() {
         if (WorldConfigManager.Instance.isDemoWorld) {
-            UIManager.Instance.ShowEndDemoScreen();
+            UIManager.Instance.ShowEndDemoScreen("The Portal is in ruins! Your invasion has ended prematurely.");
         } else {
             UIManager.Instance.Pause();
             loseGameOver.Open();

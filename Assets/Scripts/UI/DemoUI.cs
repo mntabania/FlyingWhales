@@ -9,6 +9,10 @@ using UnityEngine.UI;
 
 public class DemoUI : MonoBehaviour {
 
+    [Header("Summary Screen")]
+    [SerializeField] private CanvasGroup summaryScreen;
+    [SerializeField] private TextMeshProUGUI summaryLbl;
+    
     [Header("Start Screen")] 
     [SerializeField] private GameObject startScreen;
     [SerializeField] private Image startMessageWindow;
@@ -72,10 +76,29 @@ public class DemoUI : MonoBehaviour {
     #endregion
     
     #region End Screen
-    public void ShowEndScreen() {
+    public void ShowSummaryThenEndScreen(string summary) {
         GameManager.Instance.SetPausedState(true);
         UIManager.Instance.SetSpeedTogglesState(false);
+        UIManager.Instance.HideSmallInfo();
         
+        summaryScreen.alpha = 0f;
+        summaryScreen.gameObject.SetActive(true);
+        
+        summaryLbl.text = summary;
+        
+        RectTransform summaryLblRT = summaryLbl.rectTransform;
+        summaryLblRT.anchoredPosition = new Vector2(0f, -100f);
+
+        Sequence sequence = DOTween.Sequence();
+        sequence.Append(summaryScreen.DOFade(1f, 0.5f));
+        sequence.Append(summaryLblRT.DOAnchorPosY(0f, 0.5f).SetEase(Ease.OutBack));
+        sequence.Join(DOTween.ToAlpha(() => summaryLbl.color, value => summaryLbl.color = value, 1f, 0.5f));
+        sequence.AppendInterval(1.5f);
+        sequence.OnComplete(ShowEndScreen);
+        sequence.Play();
+    }
+    
+    private void ShowEndScreen() {
         endScreen.SetActive(true);
 
         //bg image
@@ -84,7 +107,7 @@ public class DemoUI : MonoBehaviour {
         bgImage.color = fromColor;
         bgImage.DOFade(1f, 2f).SetEase(Ease.InQuint).OnComplete(ShowLogoAndThankYou);
         
-        UIManager.Instance.HideSmallInfo();
+        
     }
 
     private void ShowLogoAndThankYou() {
