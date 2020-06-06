@@ -33,6 +33,7 @@ public class AudioManager : MonoBehaviour {
     [SerializeField] private AudioSource negativeNotificationSound;
     [SerializeField] private AudioSource shareIntel;
     [SerializeField] private AudioSource particleMagnet;
+    [SerializeField] private AudioSource worldSelectableClick;
     
     [Header("Snapshots")] 
     [SerializeField] private AudioMixerSnapshot mainMenuSnapShot;
@@ -101,6 +102,7 @@ public class AudioManager : MonoBehaviour {
         Messenger.AddListener(Signals.THREAT_RESET, OnThreatReset);
         Messenger.AddListener<IIntel>(Signals.PLAYER_OBTAINED_INTEL, OnObtainIntel);
         Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, OnOpenShareIntel);
+        Messenger.AddListener<ISelectable>(Signals.SELECTABLE_LEFT_CLICKED, WorldSelectableLeftClicked);
         SetCameraParent(InnerMapCameraMove.Instance);
     }
     #endregion
@@ -175,6 +177,9 @@ public class AudioManager : MonoBehaviour {
         if (sceneName == "MainMenu") {
             transform.SetParent(null);
         }
+    }
+    private void WorldSelectableLeftClicked(ISelectable selectable) {
+        worldSelectableClick.Play();
     }
     private void SetCameraParent(BaseCameraMove cameraMove) {
         transform.SetParent(cameraMove.transform);

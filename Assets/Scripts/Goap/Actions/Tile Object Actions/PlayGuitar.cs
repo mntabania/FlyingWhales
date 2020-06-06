@@ -92,7 +92,13 @@ public class PlayGuitar : GoapAction {
         Trait trait = witness.traitContainer.GetNormalTrait<Trait>("Music Hater", "Music Lover");
         if (trait != null) {
             if (trait.name == "Music Hater") {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
+                if (witness.moodComponent.moodState == MOOD_STATE.LOW) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);    
+                } else if (witness.moodComponent.moodState == MOOD_STATE.CRITICAL) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Rage, witness, actor, status, node);    
+                } else {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);    
+                }
             } else {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status, node);
                 SEXUALITY sexuality1 = witness.sexuality;

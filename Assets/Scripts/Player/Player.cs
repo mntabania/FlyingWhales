@@ -420,8 +420,8 @@ public class Player : ILeader, IObjectManipulator {
                 return false;
             }
             hoverText = string.Empty;
-            if(character.traitContainer.HasTrait("Blessed", "Catatonic")) {
-                hoverText = "Blessed/Catatonic characters cannot be targeted.";
+            if(character.traitContainer.HasTrait("Catatonic")) { //"Blessed"
+                hoverText = "Catatonic characters cannot be targeted."; //Blessed/
                 return false;
             }
             if(!character.faction.isPlayerFaction && !GameUtilities.IsRaceBeast(character.race)) { //character.role.roleType != CHARACTER_ROLE.BEAST && character.role.roleType != CHARACTER_ROLE.PLAYER
