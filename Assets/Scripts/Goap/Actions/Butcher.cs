@@ -7,7 +7,7 @@ using Traits;
 public class Butcher : GoapAction {
 
     public Butcher() : base(INTERACTION_TYPE.BUTCHER) {
-        actionIconString = GoapActionStateDB.Work_Icon;
+        actionIconString = GoapActionStateDB.Hostile_Icon;
         canBeAdvertisedEvenIfTargetIsUnavailable = true;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER, POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
@@ -36,33 +36,59 @@ public class Butcher : GoapAction {
                 costLog += " +2000(Actor/Target Same)";
             } else {
                 if (actor.traitContainer.HasTrait("Cannibal")) {
-                    if (actor.relationshipContainer.IsFriendsWith(deadCharacter)) {
-                        cost += 2000;
-                        costLog += " +2000(Cannibal, Friend/Close)";
-                    } else if ((deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES) &&
-                               !actor.needsComponent.isStarving) {
-                        cost += 2000;
-                        costLog += " +2000(Cannibal, Human/Elf, not Starving)";
+                    if (actor.traitContainer.HasTrait("Malnourished")) {
+                        if (actor.relationshipContainer.IsFriendsWith(deadCharacter)) {
+                            int currCost = UtilityScripts.Utilities.Rng.Next(100, 151);
+                            cost += currCost;
+                            costLog += $" +{currCost}(Cannibal, Malnourished, Friend/Close)";
+                        } else if (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES) {
+                            cost += 300;
+                            costLog += " +300(Cannibal, Malnourished, Human/Elf)";
+                        }
+                    } else {
+                        if (actor.relationshipContainer.IsFriendsWith(deadCharacter)) {
+                            cost += 2000;
+                            costLog += " +2000(Cannibal, Friend/Close)";
+                        } else if ((deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES) &&
+                                   !actor.needsComponent.isStarving) {
+                            cost += 2000;
+                            costLog += " +2000(Cannibal, Human/Elf, not Starving)";
+                        }
                     }
                 } else {
-                    if (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES) {
-                        cost += 2000;
-                        costLog += " +2000(not Cannibal, Human/Elf)";
+                    if (actor.traitContainer.HasTrait("Malnourished")) {
+                        if (actor.relationshipContainer.IsFriendsWith(deadCharacter)) {
+                            int currCost = UtilityScripts.Utilities.Rng.Next(100, 151);
+                            cost += currCost;
+                            costLog += $" +{currCost}(not Cannibal, Malnourished, Friend/Close)";
+                        } else if (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES) {
+                            cost += 500;
+                            costLog += " +500(not Cannibal, Malnourished, Human/Elf)";
+                        }
+                    } else {
+                        if (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES) {
+                            cost += 2000;
+                            costLog += " +2000(not Cannibal, Human/Elf)";
+                        }
                     }
                 }
             }
             if(deadCharacter.race == RACE.HUMANS) {
-                cost += UtilityScripts.Utilities.Rng.Next(80, 101);
-                costLog += $" +{cost}(Human)";
+                int currCost = UtilityScripts.Utilities.Rng.Next(80, 101);
+                cost += currCost;
+                costLog += $" +{currCost}(Human)";
             } else if (deadCharacter.race == RACE.ELVES) {
-                cost += UtilityScripts.Utilities.Rng.Next(80, 101);
-                costLog += $" +{cost}(Elf)";
+                int currCost = UtilityScripts.Utilities.Rng.Next(80, 101);
+                cost += currCost;
+                costLog += $" +{currCost}(Elf)";
             } else if (deadCharacter.race == RACE.WOLF) {
-                cost += UtilityScripts.Utilities.Rng.Next(50, 81);
-                costLog += $" +{cost}(Wolf)";
+                int currCost = UtilityScripts.Utilities.Rng.Next(50, 81);
+                cost += currCost;
+                costLog += $" +{currCost}(Wolf)";
             } else if (deadCharacter.race == RACE.DEMON) {
-                cost += UtilityScripts.Utilities.Rng.Next(90, 111);
-                costLog += $" +{cost}(Demon)";
+                int currCost = UtilityScripts.Utilities.Rng.Next(90, 111);
+                cost += currCost;
+                costLog += $" +{currCost}(Demon)";
             }
         }
         if (target is Animal) {
@@ -178,11 +204,6 @@ public class Butcher : GoapAction {
         Character deadCharacter = GetDeadCharacter(goapNode.poiTarget);
         int transformedFood = CharacterManager.Instance.GetFoodAmountTakenFromDead(deadCharacter);
 
-        //if (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES) {
-        //    currentState.SetIntelReaction(CannibalTransformSuccessIntelReaction);
-        //} else {
-        //    currentState.SetIntelReaction(NormalTransformSuccessIntelReaction);
-        //}
         goapNode.descriptionLog.AddToFillers(goapNode.poiTarget, goapNode.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         goapNode.descriptionLog.AddToFillers(null, transformedFood.ToString(), LOG_IDENTIFIER.STRING_1);
     }
@@ -191,7 +212,19 @@ public class Butcher : GoapAction {
         LocationGridTile tileLocation = poiTarget.gridTileLocation;
         Character deadCharacter = GetDeadCharacter(poiTarget);
         int transformedFood = CharacterManager.Instance.GetFoodAmountTakenFromDead(deadCharacter);
-        //goapNode.actor.AdjustFood(transformedFood);
+        bool isTargetElfOrHuman = false;
+
+        TILE_OBJECT_TYPE foodType = TILE_OBJECT_TYPE.ANIMAL_MEAT;
+
+        if(deadCharacter != null) {
+            if(deadCharacter.race == RACE.HUMANS) {
+                isTargetElfOrHuman = true;
+                foodType = TILE_OBJECT_TYPE.HUMAN_MEAT;
+            } else if (deadCharacter.race == RACE.ELVES) {
+                isTargetElfOrHuman = true;
+                foodType = TILE_OBJECT_TYPE.ELF_MEAT;
+            }
+        }
 
         if (poiTarget is Character character) {
             character.DestroyMarker();
@@ -199,116 +232,15 @@ public class Butcher : GoapAction {
             tileLocation.structure.RemovePOI(poiTarget, goapNode.actor);
         }
 
-        FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(TILE_OBJECT_TYPE.ANIMAL_MEAT);
+        FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(foodType);
         foodPile.SetResourceInPile(transformedFood);
         tileLocation.structure.AddPOI(foodPile, tileLocation);
-        // foodPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.FOOD_PILE);
+
+        if(isTargetElfOrHuman && !goapNode.actor.traitContainer.HasTrait("Cannibal")) {
+            goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Traumatized");
+        }
     }
-    //public void PreTargetMissing() {
-    //    goapNode.descriptionLog.AddToFillers(deadCharacter, deadCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-    //}
     #endregion
-    //#region Intel Reactions
-    //private List<string> NormalTransformSuccessIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
-    //    List<string> reactions = new List<string>();
-
-    //    if (isOldNews) {
-    //        //Old News
-    //        reactions.Add("This is old news.");
-    //    } else {
-    //        //Not Yet Old News
-    //        if (awareCharactersOfThisAction.Contains(recipient)) {
-    //            //- If Recipient is Aware
-    //            reactions.Add("I know that already.");
-    //        } else {
-    //            reactions.Add("This isn't important.");
-    //        }
-    //    }
-    //    return reactions;
-    //}
-    //private List<string> CannibalTransformSuccessIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
-    //    List<string> reactions = new List<string>();
-    //    Character targetCharacter = poiTarget as Character;
-
-    //    RELATIONSHIP_EFFECT relWithActor = recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo);
-    //    RELATIONSHIP_EFFECT relWithTarget = recipient.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo);
-
-    //    if (isOldNews) {
-    //        //Old News
-    //        reactions.Add("This is old news.");
-    //    } else {
-    //        //Not Yet Old News
-    //        if (awareCharactersOfThisAction.Contains(recipient)) {
-    //            //- If Recipient is Aware
-    //            reactions.Add("I know that already.");
-    //        } else {
-    //            //- Recipient is Actor
-    //            if (recipient == actor) {
-    //                reactions.Add("Do not tell anybody, please!");
-    //            }
-    //            //- Positive Relationship with Actor
-    //            else if (relWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
-    //                recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
-    //                if (status == SHARE_INTEL_STATUS.WITNESSED) {
-    //                    recipient.combatComponent.AddAvoidInRange(actor, reason: "saw something shameful");
-    //                }
-    //                reactions.Add(string.Format("What a sick monster! {0} should be restrained!", actor.name));
-    //            }
-    //            //- Negative Relationship with Actor
-    //            else if (relWithActor == RELATIONSHIP_EFFECT.NEGATIVE) {
-    //                if (relWithTarget == RELATIONSHIP_EFFECT.POSITIVE) {
-    //                    recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
-    //                    if (status == SHARE_INTEL_STATUS.WITNESSED) {
-    //                        recipient.CreateKnockoutJob(actor);
-    //                    } else if (status == SHARE_INTEL_STATUS.INFORMED) {
-    //                        recipient.CreateUndermineJobOnly(actor, "informed");
-    //                    }
-    //                    reactions.Add(string.Format("What a sick monster! {0} should be restrained!", actor.name));
-    //                } else if (relWithTarget == RELATIONSHIP_EFFECT.NEGATIVE) {
-    //                    recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
-    //                    if (status == SHARE_INTEL_STATUS.WITNESSED) {
-    //                        recipient.combatComponent.AddAvoidInRange(actor, reason: "saw something shameful");
-    //                    }
-    //                    reactions.Add(string.Format("What a sick monster! {0} should be restrained!", actor.name));
-    //                } else {
-    //                    recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
-    //                    if (status == SHARE_INTEL_STATUS.WITNESSED) {
-    //                        recipient.CreateKnockoutJob(actor);
-    //                    } else if (status == SHARE_INTEL_STATUS.INFORMED) {
-    //                        recipient.CreateUndermineJobOnly(actor, "informed");
-    //                    }
-    //                    reactions.Add(string.Format("What a sick monster! {0} should be restrained!", actor.name));
-    //                }
-    //            }
-    //            //- No Relationship with Actor
-    //            else if (relWithActor == RELATIONSHIP_EFFECT.NONE) {
-    //                if (relWithTarget == RELATIONSHIP_EFFECT.POSITIVE) {
-    //                    recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
-    //                    if (status == SHARE_INTEL_STATUS.WITNESSED) {
-    //                        recipient.CreateKnockoutJob(actor);
-    //                    } else if (status == SHARE_INTEL_STATUS.INFORMED) {
-    //                        recipient.CreateUndermineJobOnly(actor, "informed");
-    //                    }
-    //                    reactions.Add(string.Format("What a sick monster! {0} should be restrained!", actor.name));
-    //                } else if (relWithTarget == RELATIONSHIP_EFFECT.NEGATIVE) {
-    //                    recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
-    //                    if (status == SHARE_INTEL_STATUS.WITNESSED) {
-    //                        recipient.combatComponent.AddAvoidInRange(actor, reason: "saw something shameful");
-    //                    }
-    //                    reactions.Add(string.Format("What a sick monster! {0} should be restrained!", actor.name));
-    //                } else {
-    //                    recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
-    //                    if (status == SHARE_INTEL_STATUS.WITNESSED) {
-    //                        recipient.combatComponent.AddAvoidInRange(actor, reason: "saw something shameful");
-    //                    }
-    //                    reactions.Add(string.Format("What a sick monster! {0} should be restrained!", actor.name));
-    //                }
-    //            }
-    //        }
-    //    }
-    //    return reactions;
-    //}
-    //#endregion
 }
 
 public class ButcherData : GoapActionData {

@@ -82,13 +82,15 @@ public class CharacterManager : MonoBehaviour {
         { Default_Monster_Behaviour,
             new []{
                 typeof(MovementProcessing),
-                typeof(DefaultMonster)
+                typeof(DefaultMonster),
+                typeof(DefaultExtraCatcher),
             }
         },
         { Default_Minion_Behaviour,
             new []{
                 typeof(MovementProcessing),
-                typeof(DefaultMinion)
+                typeof(DefaultMinion),
+                typeof(DefaultExtraCatcher),
             }
         },
         { Default_Wanderer_Behaviour,
@@ -96,32 +98,37 @@ public class CharacterManager : MonoBehaviour {
                 typeof(MovementProcessing),
                 typeof(DefaultFactionRelated),
                 typeof(DefaultWanderer),
+                typeof(DefaultExtraCatcher),
             }
         },
         { Default_Angel_Behaviour,
             new []{
                 typeof(AttackDemonicStructureBehaviour),
+                typeof(DefaultExtraCatcher),
             }
         },
         { Default_Wolf_Behaviour,
             new []{
                 typeof(WolfBehaviour),
                 typeof(MovementProcessing),
-                typeof(DefaultMonster)
+                typeof(DefaultMonster),
+                typeof(DefaultExtraCatcher),
             }
         },
         { Default_Kobold_Behaviour,
             new []{
                 typeof(KoboldBehaviour),
                 typeof(MovementProcessing),
-                typeof(DefaultMonster)
+                typeof(DefaultMonster),
+                typeof(DefaultExtraCatcher),
             }
         },
         { Default_Giant_Spider_Behaviour,
             new []{
                 typeof(GiantSpiderBehaviour),
                 typeof(MovementProcessing),
-                typeof(DefaultMonster)
+                typeof(DefaultMonster),
+                typeof(DefaultExtraCatcher),
             }
         },
     };
