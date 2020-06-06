@@ -685,6 +685,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         } else {
             destroyedAt.RemoveCharacterHere(this);
         }
+        UIManager.Instance.HideCharacterThoughtTooltip(this);
         ObjectPoolManager.Instance.DestroyObject(marker);
         SetCharacterMarker(null);
         Messenger.Broadcast(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, this as IPointOfInterest);

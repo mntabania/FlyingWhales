@@ -15,8 +15,8 @@ public class CharacterThoughtTooltip : MonoBehaviour {
         activeCharacter = character;
         gameObject.SetActive(true);
         UpdateText(character);
-        Reposition(character);
         rectTransform.SetAsLastSibling();
+        Reposition(character);
     }
     private void Update() {
         UpdateText(activeCharacter);

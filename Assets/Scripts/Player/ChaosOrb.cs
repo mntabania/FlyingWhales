@@ -75,7 +75,7 @@ public class ChaosOrb : PooledObject {
 	private void GainMana() {
 		int randomMana = Random.Range(5, 11);
 		PlayerManager.Instance.player.AdjustMana(randomMana);
-		PlayerUI.Instance.manaLbl.transform.DOPunchScale(new Vector3(1.2f, 1.2f, 1.2f), 0.5f);
+		PlayerUI.Instance.DoManaPunchEffect();
 		AudioManager.Instance.PlayParticleMagnet();
 		Destroy();
 	}

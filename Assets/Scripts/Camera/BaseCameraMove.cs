@@ -188,8 +188,10 @@ public abstract class BaseCameraMove : MonoBehaviour{
         if (allowSmoothCameraFollow) {
             Vector3 pos = newPos - transform.position;
             transform.DOBlendableMoveBy(pos, smoothFollowSpeed);
+            Messenger.Broadcast(Signals.CAMERA_MOVED_BY_PLAYER, pos);
         } else {
             transform.position = newPos;
+            Messenger.Broadcast(Signals.CAMERA_MOVED_BY_PLAYER, newPos);
         }
     }
     public void AllowEdgePanning(bool state) {

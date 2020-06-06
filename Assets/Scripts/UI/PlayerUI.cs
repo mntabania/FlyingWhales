@@ -351,6 +351,12 @@ public class PlayerUI : MonoBehaviour {
     private void UpdateMana() {
         manaLbl.text = PlayerManager.Instance.player.mana.ToString();
     }
+    private Tweener _currentManaPunchTween;
+    public void DoManaPunchEffect() {
+        if (_currentManaPunchTween == null) {
+            _currentManaPunchTween = manaLbl.transform.DOPunchScale(new Vector3(1.2f, 1.2f, 1.2f), 0.5f).OnComplete(() => _currentManaPunchTween = null);    
+        }
+    }
     #endregion
 
     #region Miscellaneous
@@ -465,6 +471,12 @@ public class PlayerUI : MonoBehaviour {
             }
         }
         return null;
+    }
+    private Tweener _currentIntelPunchEffect;
+    public void DoIntelTabPunchEffect() {
+        if (_currentIntelPunchEffect == null) {
+            _currentIntelPunchEffect = intelToggle.transform.DOPunchScale(new Vector3(2f, 2f, 1f), 0.2f).OnComplete(() => _currentIntelPunchEffect = null);
+        }
     }
     #endregion
 

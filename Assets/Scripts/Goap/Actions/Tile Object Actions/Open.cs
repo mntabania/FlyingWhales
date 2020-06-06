@@ -30,7 +30,7 @@ public class Open  : GoapAction {
     }
     public override void AddFillersToLog(Log log, ActualGoapNode node) {
         base.AddFillersToLog(log, node);
-        if (node.poiTarget is TreasureChest treasureChest) {
+        if (node.poiTarget is TreasureChest treasureChest && treasureChest.objectThatWasObtained != null) {
             log.AddToFillers(treasureChest.objectThatWasObtained, treasureChest.objectThatWasObtained.name, LOG_IDENTIFIER.CHARACTER_3);
         }
     }

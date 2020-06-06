@@ -43,7 +43,7 @@ public class IntelNotificationItem : PlayerNotificationItem {
         DeleteNotification();
     }
     private void OnReachIntelTab(GameObject effectGO) {
-        PlayerUI.Instance.intelToggle.transform.DOPunchScale(new Vector3(2f, 2f, 1f), 0.2f);
+        PlayerUI.Instance.DoIntelTabPunchEffect();
         ObjectPoolManager.Instance.DestroyObject(effectGO);
         PlayerManager.Instance.player.AddIntel(intel);
     }
