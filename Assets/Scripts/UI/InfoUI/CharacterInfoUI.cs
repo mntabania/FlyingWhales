@@ -778,8 +778,8 @@ public class CharacterInfoUI : InfoUIBase {
     }
     public void ShowMoodTooltip() {
         string summary = $"{_activeCharacter.moodComponent.moodValue.ToString()}/100 ({_activeCharacter.moodComponent.moodState})";
-        summary +=
-            $"\nChance to trigger Major Mental Break {_activeCharacter.moodComponent.currentCriticalMoodEffectChance.ToString(CultureInfo.InvariantCulture)}";
+        // summary +=
+        //     $"\nChance to trigger Major Mental Break {_activeCharacter.moodComponent.currentCriticalMoodEffectChance.ToString(CultureInfo.InvariantCulture)}";
         UIManager.Instance.ShowSmallInfo(summary);
     }
     public void HideSmallInfo() {
