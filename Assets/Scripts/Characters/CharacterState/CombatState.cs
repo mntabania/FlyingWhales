@@ -48,13 +48,11 @@ public class CombatState : CharacterState {
         StartCombatMovement();
     }
     public override void PerTickInState() {
-        if (currentClosestHostile != null && stateComponent.character.gridTileLocation != null && currentClosestHostile.gridTileLocation != null) {
-            if (!PathfindingManager.Instance.HasPathEvenDiffRegion(stateComponent.character.gridTileLocation, currentClosestHostile.gridTileLocation)) {
-                SetClosestHostile(null);
-                stateComponent.character.combatComponent.RemoveHostileInRange(currentClosestHostile);
-                return;
-            }
-        }
+        //if (currentClosestHostile != null && !PathfindingManager.Instance.HasPathEvenDiffRegion(stateComponent.character.gridTileLocation, currentClosestHostile.gridTileLocation)) {
+        //    SetClosestHostile(null);
+        //    stateComponent.character.combatComponent.RemoveHostileInRange(currentClosestHostile);
+        //    return;
+        //}
         if (_hasTimerStarted) {
             //timer has been started, increment timer
             _currentAttackTimer += 1;

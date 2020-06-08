@@ -617,7 +617,11 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     public void ArrivedAtTarget() {
         if (character.isInCombat) {
-            if((character.stateComponent.currentState as CombatState).isAttacking){
+            CombatState combatState = character.stateComponent.currentState as CombatState;
+            if (combatState.isAttacking){
+                if(combatState.currentClosestHostile != null && !PathfindingManager.Instance.HasPathEvenDiffRegion(character.gridTileLocation, combatState.currentClosestHostile.gridTileLocation)) {
+                    character.combatComponent.RemoveHostileInRange(combatState.currentClosestHostile);
+                }
                 return;
             }
         }
