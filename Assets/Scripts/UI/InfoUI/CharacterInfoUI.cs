@@ -694,11 +694,13 @@ public class CharacterInfoUI : InfoUIBase {
     private void OnHoverCharacterNameInRelationships(int id) {
         Character target = CharacterManager.Instance.GetCharacterByID(id);
         if (target != null) {
+            UIManager.Instance.HideSmallInfo();
             UIManager.Instance.ShowCharacterNameplateTooltip(target, relationshipNameplateItemPosition);
         } else {
             //character has not yet been spawned
             IRelationshipData relationshipData = _activeCharacter.relationshipContainer.relationships[id];
             UIManager.Instance.ShowSmallInfo($"{relationshipData.targetName} is not yet in this region.", relationshipNameplateItemPosition);
+            UIManager.Instance.HideCharacterNameplateTooltip();
         }
     }
     public void HideRelationshipNameplate() {
