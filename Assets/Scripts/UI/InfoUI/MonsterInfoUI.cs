@@ -71,19 +71,20 @@ public class MonsterInfoUI : InfoUIBase {
     public override void CloseMenu() {
         base.CloseMenu();
         Selector.Instance.Deselect();
-        if (_activeMonster != null && ReferenceEquals(_activeMonster.marker, null) == false 
-            && InnerMapCameraMove.Instance.target == _activeMonster.marker.gameObject.transform) {
-            InnerMapCameraMove.Instance.CenterCameraOn(null);
+        if (_activeMonster != null && ReferenceEquals(_activeMonster.marker, null) == false) {
+            if (InnerMapCameraMove.Instance.target == _activeMonster.marker.gameObject.transform) {
+                InnerMapCameraMove.Instance.CenterCameraOn(null);
+            }
+            _activeMonster.marker.HideThoughts();
         }
-        UIManager.Instance.HideCharacterThoughtTooltip(_activeMonster);
         _activeMonster = null;
     }
     public override void OpenMenu() {
         Character previousMonster = _activeMonster;
         _activeMonster = _data as Character;
         base.OpenMenu();
-        if (previousMonster != null) {
-            UIManager.Instance.HideCharacterThoughtTooltip(previousMonster);
+        if (previousMonster != null && previousMonster.marker != null) {
+            previousMonster.marker.HideThoughts();
         }
         if (UIManager.Instance.IsShareIntelMenuOpen()) {
             backButton.interactable = false;
@@ -92,7 +93,8 @@ public class MonsterInfoUI : InfoUIBase {
             UIManager.Instance.HideObjectPicker();
         }
         if (_activeMonster.marker && _activeMonster.marker.transform != null) {
-            Selector.Instance.Select(_activeMonster, _activeMonster.marker.transform);    
+            Selector.Instance.Select(_activeMonster, _activeMonster.marker.transform);
+            _activeMonster.marker.ShowThoughts();
         }
         UpdateMonsterInfo();
         UpdateTraits();

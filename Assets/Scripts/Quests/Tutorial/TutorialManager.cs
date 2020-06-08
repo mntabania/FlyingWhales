@@ -26,6 +26,7 @@ namespace Tutorial {
             Counterattack = 13,
             Divine_Intervention = 14,
             Chaos_Orbs_Tutorial = 15,
+            Special_Events = 16
         }
 
         private List<TutorialQuest> _activeTutorials;
@@ -62,6 +63,7 @@ namespace Tutorial {
         public Texture relationsTab;
         public Texture logsTab;
         public VideoClip homeStructureVideo;
+        public Texture necronomiconPicture;
 
         #region Monobehaviours
         private void Awake() {
@@ -138,22 +140,19 @@ namespace Tutorial {
             SaveManager.Instance.currentSaveDataPlayer.AddTutorialAsCompleted(tutorial.tutorialType);
             DeactivateTutorial(tutorial);
             Messenger.Broadcast(Signals.TUTORIAL_QUEST_COMPLETED, tutorial);
-            if (IsBonusTutorial(tutorial.tutorialType) == false) {
+            if (IsBonusTutorial(tutorial) == false) {
                 CheckIfAllTutorialsCompleted();    
             }
-            // if (_instantiatedTutorials.Count == 0) {
-            //     //All tutorials finished, including bonus ones, switch on skip tutorials switch so tutorials will be skipped next playthrough
-            //     SettingsManager.Instance.OnToggleSkipTutorials(true);
-            // }
         }
         private void CheckIfAllTutorialsCompleted() {
-            if (_instantiatedTutorials.Count == 0 || _instantiatedTutorials.Count(x => IsBonusTutorial(x.tutorialType) == false) == 0) {
+            if (_instantiatedTutorials.Count == 0 || _instantiatedTutorials.Count(x => IsBonusTutorial(x) == false) == 0) {
                 //all non-bonus tutorials completed
                 PlayerUI.Instance.ShowGeneralConfirmation("Finished Tutorial",
                     "You're done with the Tutorials! " +
                     "Feel free to use the remaining time to play around with the various unlocked options... " +
                     $"or just wipe out all {UtilityScripts.Utilities.VillagerIcon()}Villagers as soon as possible!");
                 SettingsManager.Instance.OnToggleSkipTutorials(true, false);
+                Messenger.Broadcast(Signals.FINISHED_IMPORTANT_TUTORIALS);
             }
         }
         #endregion
@@ -195,7 +194,7 @@ namespace Tutorial {
             }
         }
         public void ActivateTutorial(TutorialQuest tutorialQuest) {
-            if (IsBonusTutorial(tutorialQuest.tutorialType) == false) {
+            if (IsBonusTutorial(tutorialQuest) == false) {
                 //if tutorial is not a bonus tutorial, do not add it to active tutorials list, because it should not add to that count.
                 _activeTutorials.Add(tutorialQuest);    
             }
@@ -252,17 +251,8 @@ namespace Tutorial {
         #endregion
 
         #region Utilities
-        private bool IsBonusTutorial(Tutorial type) {
-            switch (type) {
-                case Tutorial.Chaos_Orbs_Tutorial:
-                case Tutorial.Counterattack:
-                case Tutorial.Divine_Intervention:
-                case Tutorial.Threat:
-                case Tutorial.Share_An_Intel:
-                    return true;
-                default:
-                    return false;
-            }
+        private bool IsBonusTutorial(TutorialQuest tutorialQuest) {
+            return tutorialQuest is PopupTutorial || tutorialQuest.tutorialType == Tutorial.Chaos_Orbs_Tutorial || tutorialQuest.tutorialType == Tutorial.Share_An_Intel;
         }
         #endregion
         

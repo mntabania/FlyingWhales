@@ -201,6 +201,11 @@ namespace Ruinarch {
                 case Cursor_Type.Drag_Clicked:
                     isDraggingItem = true;
                     break;
+                case Cursor_Type.Check:
+                case Cursor_Type.Cross:
+                case Cursor_Type.Link:
+                    hotSpot = new Vector2(12f, 10f);
+                    break;
                 case Cursor_Type.Target:
                     hotSpot = new Vector2(29f, 29f);
                     break;

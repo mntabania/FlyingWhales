@@ -196,14 +196,14 @@ public class Party {
             character.marker.transform.localPosition = new Vector3(0f, 0.5f, 0f);
             character.marker.visualsParent.eulerAngles = Vector3.zero;
             character.marker.transform.eulerAngles = Vector3.zero;
-            character.marker.nameLbl.gameObject.SetActive(false);
+            character.marker.SetNameState(false);
 
             Plagued targetPlagued = character.traitContainer.GetNormalTrait<Plagued>("Plagued");
             if (targetPlagued != null) {
                 string plaguedSummary = $"{owner.name} carried a plagued character. Rolling for infection.";
                 int roll = UnityEngine.Random.Range(0, 100);
                 int carryInfectChance = targetPlagued.GetCarryInfectChance();
-                plaguedSummary += $"\nRoll is: {roll}, Chance is: {carryInfectChance}";
+                plaguedSummary += $"\nRoll is: {roll.ToString()}, Chance is: {carryInfectChance.ToString()}";
                 if (roll < carryInfectChance) {
                     //carrier will be infected with plague
                     plaguedSummary += $"\nWill infect {owner.name} with plague!";
@@ -291,7 +291,7 @@ public class Party {
         }
 
         character.marker.transform.eulerAngles = Vector3.zero;
-        character.marker.nameLbl.gameObject.SetActive(true);
+        character.marker.SetNameState(true);
 
         character.ownParty.icon.transform.position = owner.currentRegion.coreTile.transform.position;
         Messenger.Broadcast(Signals.CHARACTER_LEFT_PARTY, character, this);

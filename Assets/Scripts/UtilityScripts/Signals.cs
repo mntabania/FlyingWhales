@@ -558,7 +558,11 @@ public static class Signals {
     /// <summary>
     /// Parameters: Quest
     /// </summary>
-    public static string REACTION_QUEST_ACTIVATED = "OnReactionQuestActivated";
+    public static string QUEST_ACTIVATED = "OnQuestActivated";
+    /// <summary>
+    /// Parameters: Quest
+    /// </summary>
+    public static string QUEST_DEACTIVATED = "OnQuestDeactivated";
     /// <summary>
     /// Parameters: QuestItem
     /// </summary>
@@ -609,6 +613,11 @@ public static class Signals {
     /// Parameters (LocationStructure, Character, GoapPlanJob)
     /// </summary>
     public static string DEMONIC_STRUCTURE_DISCOVERED = "DemonicStructureDiscovered";
+    public static string FINISHED_IMPORTANT_TUTORIALS = "FinishedImportantTutorials";
+    /// <summary>
+    /// Parameters (Character necromancer)
+    /// </summary>
+    public static string NECROMANCER_SPAWNED = "OnNecromancerSpawned";
     #endregion
 
     #region Elements
@@ -633,9 +642,12 @@ public static class Signals {
     public static string MASTER_VOLUME_CHANGED = "OnSFXVolumeChanged";
     #endregion
 
-    #region Basic Controls
-    public static string ZOOM_INNER_MAP_CAMERA = "OnZoomInnerMapCamera";
+    #region Camera
     public static string ZOOM_WORLD_MAP_CAMERA = "OnZoomWorldMapCamera";
+    /// <summary>
+    /// Parameters: Camera
+    /// </summary>
+    public static string CAMERA_ZOOM_CHANGED = "OnCameraZoomChanged";
     #endregion
 
     public static Dictionary<string, SignalMethod[]> orderedSignalExecution = new Dictionary<string, SignalMethod[]>() {

@@ -19,14 +19,12 @@ public class CharacterMarker : MapObjectVisual<Character> {
 
     [Header("Character Marker Assets")]
     public Transform visualsParent;
-    public TextMeshPro nameLbl;
-    [SerializeField] private Transform nameContainer;
     [SerializeField] private SpriteRenderer mainImg;
     [SerializeField] private SpriteRenderer hairImg;
     [SerializeField] private SpriteRenderer knockedOutHairImg;
     [SerializeField] private SpriteRenderer hoveredImg;
     [SerializeField] private SpriteRenderer clickedImg;
-    [SerializeField] private SpriteRenderer actionIcon;
+    // [SerializeField] private SpriteRenderer actionIcon;
     [SerializeField] private BoxCollider2D buttonCollider;
     [SerializeField] private ParticleSystem bloodSplatterEffect;
     [SerializeField] private ParticleSystemRenderer bloodSplatterEffectRenderer;
@@ -54,29 +52,20 @@ public class CharacterMarker : MapObjectVisual<Character> {
     //vision colliders
     public List<IPointOfInterest> inVisionPOIs { get; private set; } //POI's in this characters vision collider
     public List<IPointOfInterest> unprocessedVisionPOIs { get; private set; } //POI's in this characters vision collider
-    public List<IPointOfInterest> unprocessedVisionPOIInterruptsOnly { get; private set; } //POI's in this characters vision collider
-    public List<ActualGoapNode> unprocessedActionsOnly { get; private set; } //POI's in this characters vision collider
+    private List<IPointOfInterest> unprocessedVisionPOIInterruptsOnly { get; set; } //POI's in this characters vision collider
+    private List<ActualGoapNode> unprocessedActionsOnly { get; set; } //POI's in this characters vision collider
     public List<Character> inVisionCharacters { get; private set; } //POI's in this characters vision collider
     public List<TileObject> inVisionTileObjects { get; private set; } //POI's in this characters vision collider
-    //public List<IPointOfInterest> hostilesInRange { get; private set; } //POI's in this characters hostility collider
-    //public List<IPointOfInterest> avoidInRange { get; private set; } //POI's in this characters hostility collider
-    //// public List<ActualGoapNode> alreadyWitnessedActions { get; private set; } //List of actions this character can witness, and has not been processed yet. Will be cleared after processing
-    //public Dictionary<Character, bool> lethalCharacters { get; private set; }
-    //public string avoidReason { get; private set; }
-    //public bool willProcessCombat { get; private set; }
     public Action arrivalAction { get; private set; }
-    public Action failedToComputePathAction { get; private set; }
+    private Action failedToComputePathAction { get; set; }
 
     //movement
     public IPointOfInterest targetPOI { get; private set; }
-    //public CharacterCollisionTrigger collisionTrigger { get; private set; }
     public Vector2 anchoredPos { get; private set; }
-    public Vector3 centeredWorldPos { get; private set; }
     public LocationGridTile destinationTile { get; private set; }
     public float progressionSpeedMultiplier { get; private set; }
-    //public List<IPointOfInterest> terrifyingObjects { get; private set; } //list of objects that this character is terrified of and must avoid
     public bool isMoving { get; private set; }
-    public LocationGridTile previousGridTile {
+    private LocationGridTile previousGridTile {
         get => _previousGridTile;
         set {
             _previousGridTile = value;
@@ -88,15 +77,16 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public int sortingOrder => mainImg.sortingOrder;
     private LocationGridTile _previousGridTile;
     public bool useCanTraverse;
-
-    public float attackSpeedMeter { get; private set; }
+    private float attackSpeedMeter { get; set; }
     private AnimatorOverrideController animatorOverrideController; //this is the controller that is made per character
     private HexTile _previousHexTileLocation;
+    private CharacterMarkerNameplate _nameplate;
     
     public void SetCharacter(Character character) {
         base.Initialize(character);
-        this.name = $"{character.name}'s Marker";
+        name = $"{character.name}'s Marker";
         this.character = character;
+        CreateNameplate();
         UpdateName();
         UpdateSortingOrder();
         UpdateMarkerVisuals();
@@ -109,19 +99,13 @@ public class CharacterMarker : MapObjectVisual<Character> {
         inVisionPOIs = new List<IPointOfInterest>();
         inVisionCharacters = new List<Character>();
         inVisionTileObjects = new List<TileObject>();
-        //hostilesInRange = new List<IPointOfInterest>();
-        //terrifyingObjects = new List<IPointOfInterest>();
-        //avoidInRange = new List<IPointOfInterest>();
-        //lethalCharacters = new Dictionary<Character, bool>();
-        // alreadyWitnessedActions = new List<ActualGoapNode>();
-        //avoidReason = string.Empty;
         attackSpeedMeter = 0f;
         OnProgressionSpeedChanged(GameManager.Instance.currProgressionSpeed);
         UpdateHairState();
 
         AddListeners();
         PathfindingManager.Instance.AddAgent(pathfindingAI);
-        UpdateNameplatePosition();
+        // UpdateNameplatePosition();
     }
 
     #region Monobehavior
@@ -189,7 +173,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         InnerMapManager.Instance.ShowTileData(this.character.gridTileLocation, this.character);
         if (UIManager.Instance.GetCurrentlySelectedCharacter() != character) {
             //only process hover tooltips if character is not the currently selected character
-            UIManager.Instance.ShowCharacterThoughtTooltip(character);    
+            ShowThoughts();    
         }
     }
     protected override void OnPointerExit(Character poi) {
@@ -200,116 +184,59 @@ public class CharacterMarker : MapObjectVisual<Character> {
         UIManager.Instance.HideSmallInfo();
         if (UIManager.Instance.GetCurrentlySelectedCharacter() != character) {
             //only process hover tooltips if character is not the currently selected character
-            UIManager.Instance.HideCharacterThoughtTooltip(character);
+            HideThoughts();
         }
     }
     #endregion
 
     #region Listeners
     private void AddListeners() {
-        Messenger.AddListener<InfoUIBase>(Signals.MENU_OPENED, OnMenuOpened);
-        Messenger.AddListener<InfoUIBase>(Signals.MENU_CLOSED, OnMenuClosed);
         Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
         Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_REMOVED, OnCharacterLostTrait);
-        //Messenger.AddListener<Character, string>(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, TransferEngageToFleeList);
         Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
         Messenger.AddListener(Signals.TICK_ENDED, ProcessAllUnprocessedVisionPOIs);
-        // Messenger.AddListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
         Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED,
             OnTileObjectRemovedFromTile);
         Messenger.AddListener<IPointOfInterest>(Signals.REPROCESS_POI, ReprocessPOI);
         Messenger.AddListener(Signals.TICK_ENDED, PerTickMovement);
     }
     private void RemoveListeners() {
-        Messenger.RemoveListener<InfoUIBase>(Signals.MENU_OPENED, OnMenuOpened);
-        Messenger.RemoveListener<InfoUIBase>(Signals.MENU_CLOSED, OnMenuClosed);
         Messenger.RemoveListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         Messenger.RemoveListener<Character, Trait>(Signals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
         Messenger.RemoveListener<Character, Trait>(Signals.CHARACTER_TRAIT_REMOVED, OnCharacterLostTrait);
         Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
-        //Messenger.RemoveListener<Character, string>(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, TransferEngageToFleeList);
         Messenger.RemoveListener(Signals.TICK_ENDED, ProcessAllUnprocessedVisionPOIs);
-        // Messenger.RemoveListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
         Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemovedFromTile);
         Messenger.RemoveListener<IPointOfInterest>(Signals.REPROCESS_POI, ReprocessPOI);
         Messenger.RemoveListener(Signals.TICK_ENDED, PerTickMovement);
     }
-    public void OnCharacterGainedTrait(Character characterThatGainedTrait, Trait trait) {
-        //this will make this character flee when he/she gains an injured trait
+    private void OnCharacterGainedTrait(Character characterThatGainedTrait, Trait trait) {
         if (characterThatGainedTrait == this.character) {
             SelfGainedTrait(characterThatGainedTrait, trait);
         } else {
             OtherCharacterGainedTrait(characterThatGainedTrait, trait);
         }
-        //if(trait.type == TRAIT_TYPE.DISABLER && terrifyingObjects.Count > 0) {
-        //    RemoveTerrifyingObject(characterThatGainedTrait);
-        //}
     }
-    public void OnCharacterLostTrait(Character character, Trait trait) {
+    private void OnCharacterLostTrait(Character character, Trait trait) {
         if (character == this.character) {
             string lostTraitSummary =
                 $"{character.name} has <color=red>lost</color> trait <b>{trait.name}</b>";
-            //if the character does not have any other negative disabler trait
-            //check for reactions.
-            //switch (trait.name) {
-            //    case "Unconscious":
-            //    case "Resting":
-            //        lostTraitSummary += "\n" + character.name + " is checking for reactions towards characters in vision...";
-            //        for (int i = 0; i < inVisionCharacters.Count; i++) {
-            //            Character currCharacter = inVisionCharacters[i];
-            //            if (!AddHostileInRange(currCharacter)) {
-            //                //If not hostile, try to react to character's action
-            //                AddUnprocessedPOI(currCharacter);
-            //            }
-            //        }
-            //        break;
-            //}
             character.logComponent.PrintLogIfActive(lostTraitSummary);
             UpdateAnimation();
             UpdateActionIcon();
-        } 
-        //else if (inVisionCharacters.Contains(character)) {
-        //    //if the character that lost a trait is not this character and that character is in this character's hostility range
-        //    //and the trait that was lost is a negative disabler trait, react to them.
-        //    AddHostileInRange(character);
-        //}
+        }
     }
     /// <summary>
     /// Listener for when a party starts travelling towards another npcSettlement.
     /// </summary>
     /// <param name="travellingParty">The travelling party.</param>
     private void OnCharacterAreaTravelling(Party travellingParty) {
-        //if (targetPOI is Character) {
-        //    Character targetCharacter = targetPOI as Character;
-        //    if (travellingParty.IsPOICarried(targetCharacter)) {
-        //        Action action = failedToComputePathAction;
-        //        if(action != null) {
-        //            if (character.currentParty.icon.isTravelling) {
-        //                if(character.currentParty.icon.travelLine != null) {
-        //                    character.currentParty.icon.SetOnArriveAction(() => character.OnArriveAtAreaStopMovement());
-        //                } else {
-        //                    StopMovement();
-        //                }
-        //            }
-        //        }
-        //        //set arrival action to null, because some arrival actions set it when executed
-        //        ClearArrivalAction();
-        //        action?.Invoke();
-        //    }
-        //}
         if (travellingParty.isCarryingAnyPOI) {
             if (travellingParty.IsPOICarried(targetPOI)) {
                 //If the travelling party is travelling outside and is carrying a poi that is being targetted by this marker, this marker should fail to compute path
                 Action action = failedToComputePathAction;
                 if (action != null) {
-                    //if (character.currentParty.icon.isTravellingOutside) {
-                    //    if (character.currentParty.icon.travelLine != null) {
-                    //        character.currentParty.icon.SetOnArriveAction(() => character.OnArriveAtAreaStopMovement());
-                    //    } else {
-                    //        StopMovement();
-                    //    }
-                    //}
                     if (character.currentParty.icon.isTravellingOutside) {
                         character.currentParty.icon.SetOnArriveAction(() => character.OnArriveAtAreaStopMovement());
                     } else {
@@ -328,31 +255,14 @@ public class CharacterMarker : MapObjectVisual<Character> {
                 visionCollider.RemovePOIAsInRangeButDifferentStructure(carriedCharacter);
             }
         }
-        //for (int i = 0; i < travellingParty.characters.Count; i++) {
-        //    Character traveller = travellingParty.characters[i];
-        //    if(traveller != character) {
-        //        RemoveHostileInRange(traveller); //removed hostile because he/she left the npcSettlement.
-        //        RemoveAvoidInRange(traveller);
-        //        RemovePOIFromInVisionRange(traveller);
-        //        visionCollision.RemovePOIAsInRangeButDifferentStructure(traveller);
-        //    }
-        //}
-
     }
     private void SelfGainedTrait(Character characterThatGainedTrait, Trait trait) {
         string gainTraitSummary =
             $"{GameManager.Instance.TodayLogString()}{characterThatGainedTrait.name} has <color=green>gained</color> trait <b>{trait.name}</b>";
-        //if (trait.type == TRAIT_TYPE.DISABLER) { //if the character gained a disabler trait, hinder movement
-        //    pathfindingAI.ClearAllCurrentPathData();
-        //    pathfindingAI.canSearch = false;
-        //    pathfindingAI.AdjustDoNotMove(1);
-        //    gainTraitSummary += "\nGained trait is a disabler trait, adjusting do not move value.";
-        //}
-        if (!characterThatGainedTrait.canPerform) { //trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE
-            //if the character gained an unconscious trait, exit current state if it is flee
+        if (!characterThatGainedTrait.canPerform) {
             if (character.isInCombat) {
                 characterThatGainedTrait.stateComponent.ExitCurrentState();
-                gainTraitSummary += "\nGained trait is unconscious, and characters current state is combat, exiting combat state.";
+                gainTraitSummary += "\nGained trait hinders performance, and characters current state is combat, exiting combat state.";
             }
 
             //Once a character has a negative disabler trait, clear hostile and avoid list
@@ -369,9 +279,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
             character.combatComponent.RemoveAvoidInRange(otherCharacter);
             RemovePOIFromInVisionRange(otherCharacter);
         } else {
-            //if (inVisionCharacters.Contains(otherCharacter)) {
-            //    character.CreateJobsOnEnterVisionWith(otherCharacter);
-            //}
             if (inVisionCharacters.Contains(otherCharacter)) {
                 character.CreateJobsOnTargetGainTrait(otherCharacter, trait);
             }
@@ -389,12 +296,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
             
         }
     }
-    // private void OnItemRemovedFromTile(SpecialToken token, LocationGridTile removedFrom) {
-    //     character.combatComponent.RemoveHostileInRange(token);
-    //     //if (hostilesInRange.Contains(token)) {
-    //     //    RemoveHostileInRange(token);
-    //     //}
-    // }
     private void OnTileObjectRemovedFromTile(TileObject obj, Character removedBy, LocationGridTile removedFrom) {
         character.combatComponent.RemoveHostileInRange(obj);
         character.combatComponent.RemoveAvoidInRange(obj);
@@ -404,22 +305,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
     #endregion
 
     #region UI
-    private void OnMenuOpened(InfoUIBase @base) {
-        // if (menu is CharacterInfoUI) {
-        //     if ((menu as CharacterInfoUI).activeCharacter.id == character.id) {
-        //         clickedImg.gameObject.SetActive(true);
-        //     } else {
-        //         clickedImg.gameObject.SetActive(false);
-        //     }
-        //
-        // }
-    }
-    private void OnMenuClosed(InfoUIBase @base) {
-        // if (menu is CharacterInfoUI) {
-        //     clickedImg.gameObject.SetActive(false);
-        //     //UnhighlightMarker();
-        // }
-    }
     private void OnProgressionSpeedChanged(PROGRESSION_SPEED progSpeed) {
         if (progSpeed == PROGRESSION_SPEED.X1) {
             progressionSpeedMultiplier = 1f;
@@ -431,80 +316,23 @@ public class CharacterMarker : MapObjectVisual<Character> {
         character.movementComponent.UpdateSpeed();
         UpdateAnimationSpeed();
     }
-    public void UpdateNameplatePosition() {
-        nameContainer.localPosition = new Vector3(nameContainer.localPosition.x, mainImg.sprite.rect.height * -0.0075f, 0f);
-    }
     public void UpdateName() {
-        string icon = UtilityScripts.Utilities.VillagerIcon();
-        if (character.isNormalCharacter == false) {
-            icon = UtilityScripts.Utilities.MonsterIcon();
-        }
-        nameLbl.SetText($"{icon} {character.name}");
+        _nameplate.UpdateName();
+    }
+    public void SetNameState(bool state) {
+        _nameplate.SetNameState(state);
+    }
+    private void CreateNameplate() {
+        GameObject nameplateGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterMarkerNameplate", transform.position,
+            Quaternion.identity, UIManager.Instance.characterMarkerNameplateParent);
+        _nameplate = nameplateGO.GetComponent<CharacterMarkerNameplate>();
+        _nameplate.Initialize(this);
     }
     #endregion
 
     #region Action Icon
     public void UpdateActionIcon() {
-        if (character == null) {
-            return;
-        }
-        //int negativeDisablerCount = character.traitContainer.GetAllTraitsOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE).Count;
-        //if ((negativeDisablerCount >= 2 || (negativeDisablerCount == 1 && character.traitContainer.GetNormalTrait<Trait>("Paralyzed") == null)) || character.isDead) {
-        //    actionIcon.gameObject.SetActive(false);
-        //    return;
-        //}
-        if (character.isConversing && !character.isInCombat) {
-            actionIcon.sprite = InteractionManager.Instance.actionIconDictionary[GoapActionStateDB.Social_Icon];
-            //if (character.isFlirting) {
-            //    actionIcon.sprite = actionIconDictionary[GoapActionStateDB.Flirt_Icon];
-            //} else {
-            //    actionIcon.sprite = actionIconDictionary[GoapActionStateDB.Social_Icon];
-            //}
-            actionIcon.gameObject.SetActive(true);
-            return;
-        }
-        
-        if (character.interruptComponent.isInterrupted) {
-            if (character.interruptComponent.currentInterrupt.interruptIconString != GoapActionStateDB.No_Icon) {
-                actionIcon.sprite = InteractionManager.Instance.actionIconDictionary[character.interruptComponent.currentInterrupt.interruptIconString];
-                actionIcon.gameObject.SetActive(true);
-            } else {
-                actionIcon.gameObject.SetActive(false);
-            }
-            return;
-        } else if (character.interruptComponent.hasTriggeredSimultaneousInterrupt) {
-            if (character.interruptComponent.triggeredSimultaneousInterrupt.interruptIconString != GoapActionStateDB.No_Icon) {
-                actionIcon.sprite = InteractionManager.Instance.actionIconDictionary[character.interruptComponent.triggeredSimultaneousInterrupt.interruptIconString];
-                actionIcon.gameObject.SetActive(true);
-            } else {
-                actionIcon.gameObject.SetActive(false);
-            }
-            return;
-        } else {
-            actionIcon.gameObject.SetActive(false);
-        }
-        
-        if (character.currentActionNode != null) {
-            if (character.currentActionNode.action.actionIconString != GoapActionStateDB.No_Icon) {
-                actionIcon.sprite = InteractionManager.Instance.actionIconDictionary[character.currentActionNode.action.actionIconString];
-                actionIcon.gameObject.SetActive(true);
-            } else {
-                actionIcon.gameObject.SetActive(false);
-            }
-        } else if (character.stateComponent.currentState != null) {
-            if (character.stateComponent.currentState.actionIconString != GoapActionStateDB.No_Icon) {
-                actionIcon.sprite = InteractionManager.Instance.actionIconDictionary[character.stateComponent.currentState.actionIconString];
-                actionIcon.gameObject.SetActive(true);
-            } else {
-                actionIcon.gameObject.SetActive(false);
-            }
-        } else if (hasFleePath) {
-            actionIcon.sprite = InteractionManager.Instance.actionIconDictionary[GoapActionStateDB.Flee_Icon];
-            actionIcon.gameObject.SetActive(true);
-        } else {
-            //no action or state
-            actionIcon.gameObject.SetActive(false);
-        }
+        _nameplate.UpdateActionIcon();
     }
     #endregion
 
@@ -516,7 +344,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
         //onProcessCombat = null;
         character.combatComponent.SetOnProcessCombatAction(null);
         SetMarkerColor(Color.white);
-        actionIcon.gameObject.SetActive(false);
+        ObjectPoolManager.Instance.DestroyObject(_nameplate);
+        _nameplate = null;
         PathfindingManager.Instance.RemoveAgent(pathfindingAI);
         RemoveListeners();
         HideHPBar();
@@ -844,19 +673,19 @@ public class CharacterMarker : MapObjectVisual<Character> {
         mainImg.sortingOrder = characterSortingOrder;
         hairImg.sortingOrder = characterSortingOrder + 1;
         knockedOutHairImg.sortingOrder = characterSortingOrder + 1;
-        nameLbl.sortingOrder = characterSortingOrder;
-        TMP_SubMesh nameSubMesh = nameLbl.GetComponentInChildren<TMP_SubMesh>();
-        if (nameSubMesh != null) {
-            nameSubMesh.renderer.sortingOrder = characterSortingOrder;    
-        }
-        actionIcon.sortingOrder = characterSortingOrder;
+        // nameLbl.sortingOrder = characterSortingOrder;
+        // TMP_SubMesh nameSubMesh = nameLbl.GetComponentInChildren<TMP_SubMesh>();
+        // if (nameSubMesh != null) {
+        //     nameSubMesh.renderer.sortingOrder = characterSortingOrder;    
+        // }
+        // actionIcon.sortingOrder = characterSortingOrder;
         hoveredImg.sortingOrder = characterSortingOrder - 1;
         clickedImg.sortingOrder = characterSortingOrder - 1;
         colorHighlight.sortingOrder = characterSortingOrder - 1;
         bloodSplatterEffectRenderer.sortingOrder = InnerMapManager.DetailsTilemapSortingOrder + 5;
         hpBarGO.GetComponent<Canvas>().sortingOrder = characterSortingOrder;
     }
-    public new void SetActiveState(bool state) {
+    private new void SetActiveState(bool state) {
         Debug.Log($"Set active state of {this.name} to {state.ToString()}");
         this.gameObject.SetActive(state);
     }
@@ -866,8 +695,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
     /// <param name="state">The state the visuals should be in (active or inactive)</param>
     public void SetVisualState(bool state) {
         mainImg.gameObject.SetActive(state);
-        nameLbl.gameObject.SetActive(state);
-        actionIcon.enabled = state;
+        _nameplate.SetActiveState(state);
+        // actionIcon.enabled = state;
         hoveredImg.enabled = state;
         // clickedImg.enabled = state;
     }
@@ -1000,9 +829,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
         SetCollidersState(true);
         UpdateAnimation();
         UpdateActionIcon();
-    }
-    public void UpdateCenteredWorldPos() {
-        centeredWorldPos = character.gridTileLocation.centeredWorldLocation;
     }
     public void SetTargetPOI(IPointOfInterest poi) {
         this.targetPOI = poi;
@@ -1664,4 +1490,13 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     #endregion
 
+    #region Nameplate
+    public void ShowThoughts() {
+        _nameplate.ShowThoughts();
+    }
+    public void HideThoughts() {
+        _nameplate.HideThoughts();
+    }
+    #endregion
+    
 }

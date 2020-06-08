@@ -58,6 +58,9 @@ public class UIManager : MonoBehaviour {
     [Header("Character Nameplate Tooltip")]
     [SerializeField] private CharacterNameplateItem _characterNameplateTooltip;
     
+    [Header("Character Marker Nameplate")]
+    public Transform characterMarkerNameplateParent;
+    
     [Space(10)]
     [Header("Other NPCSettlement Info")]
     public Sprite[] areaCenterSprites;
@@ -1343,42 +1346,6 @@ public class UIManager : MonoBehaviour {
     }
     public void ShowEndDemoScreen(string summary) {
         _demoUI.ShowSummaryThenEndScreen(summary);
-    }
-    #endregion
-
-    #region Character Thought Tooltip
-    [Header("Character Thought Tooltip")] 
-    [SerializeField] private CharacterThoughtTooltip[] characterThoughtTooltips;
-    public void ShowCharacterThoughtTooltip(Character character) {
-        if (GetTooltipOwnedBy(character) == null) {
-            CharacterThoughtTooltip availableTooltip = GetAvailableThoughtTooltip();
-            Assert.IsNotNull(availableTooltip, $"There is no available thought tooltip for {character.name}!");
-            availableTooltip.Show(character);
-        }
-    }
-    public void HideCharacterThoughtTooltip(Character character) {
-        CharacterThoughtTooltip thoughtTooltip = GetTooltipOwnedBy(character);
-        if (thoughtTooltip != null) {
-            thoughtTooltip.Hide();
-        }
-    }
-    private CharacterThoughtTooltip GetAvailableThoughtTooltip() {
-        for (int i = 0; i < characterThoughtTooltips.Length; i++) {
-            CharacterThoughtTooltip thoughtTooltip = characterThoughtTooltips[i];
-            if (thoughtTooltip.gameObject.activeSelf == false) {
-                return thoughtTooltip;
-            }
-        }
-        return null;
-    }
-    private CharacterThoughtTooltip GetTooltipOwnedBy(Character character) {
-        for (int i = 0; i < characterThoughtTooltips.Length; i++) {
-            CharacterThoughtTooltip thoughtTooltip = characterThoughtTooltips[i];
-            if (thoughtTooltip.gameObject.activeSelf && thoughtTooltip.activeCharacter == character) {
-                return thoughtTooltip;
-            }
-        }
-        return null;
     }
     #endregion
 }

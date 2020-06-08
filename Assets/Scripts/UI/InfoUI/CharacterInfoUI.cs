@@ -145,19 +145,21 @@ public class CharacterInfoUI : InfoUIBase {
     public override void CloseMenu() {
         base.CloseMenu();
         Selector.Instance.Deselect();
-        if (_activeCharacter != null && ReferenceEquals(_activeCharacter.marker, null) == false 
-            && InnerMapCameraMove.Instance.target == _activeCharacter.marker.gameObject.transform) {
-            InnerMapCameraMove.Instance.CenterCameraOn(null);
+        if (_activeCharacter != null && ReferenceEquals(_activeCharacter.marker, null) == false) {
+            if (InnerMapCameraMove.Instance.target == _activeCharacter.marker.gameObject.transform) {
+                InnerMapCameraMove.Instance.CenterCameraOn(null);
+            }
+            _activeCharacter.marker.HideThoughts();
         }
-        UIManager.Instance.HideCharacterThoughtTooltip(_activeCharacter);
+        
         _activeCharacter = null;
     }
     public override void OpenMenu() {
         _previousCharacter = _activeCharacter;
         _activeCharacter = _data as Character;
         base.OpenMenu();
-        if (_previousCharacter != null) {
-            UIManager.Instance.HideCharacterThoughtTooltip(_previousCharacter);
+        if (_previousCharacter != null && _previousCharacter.marker != null) {
+            _previousCharacter.marker.HideThoughts();
         }
         if (UIManager.Instance.IsShareIntelMenuOpen()) {
             backButton.interactable = false;
@@ -167,7 +169,7 @@ public class CharacterInfoUI : InfoUIBase {
         }
         if (_activeCharacter.marker && _activeCharacter.marker.transform != null) {
             Selector.Instance.Select(_activeCharacter, _activeCharacter.marker.transform);
-            UIManager.Instance.ShowCharacterThoughtTooltip(_activeCharacter);
+            _activeCharacter.marker.ShowThoughts();
         }
         UpdateCharacterInfo();
         UpdateTraits();
@@ -692,11 +694,13 @@ public class CharacterInfoUI : InfoUIBase {
     private void OnHoverCharacterNameInRelationships(int id) {
         Character target = CharacterManager.Instance.GetCharacterByID(id);
         if (target != null) {
+            UIManager.Instance.HideSmallInfo();
             UIManager.Instance.ShowCharacterNameplateTooltip(target, relationshipNameplateItemPosition);
         } else {
             //character has not yet been spawned
             IRelationshipData relationshipData = _activeCharacter.relationshipContainer.relationships[id];
             UIManager.Instance.ShowSmallInfo($"{relationshipData.targetName} is not yet in this region.", relationshipNameplateItemPosition);
+            UIManager.Instance.HideCharacterNameplateTooltip();
         }
     }
     public void HideRelationshipNameplate() {

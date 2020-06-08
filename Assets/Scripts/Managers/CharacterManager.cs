@@ -64,6 +64,7 @@ public class CharacterManager : MonoBehaviour {
     public List<string> rumorWorthyActions { get; private set; }
     public DemonicStructure currentDemonicStructureTargetOfAngels { get; private set; }
     public Character necromancerInTheWorld { get; private set; }
+    public bool hasSpawnedNecromancerOnce { get; private set; }
 
     private Dictionary<System.Type, CharacterBehaviourComponent> behaviourComponents;
     private Dictionary<string, System.Type[]> defaultBehaviourSets = new Dictionary<string, Type[]>() {
@@ -1053,6 +1054,10 @@ public class CharacterManager : MonoBehaviour {
     #region Necromancer
     public void SetNecromancerInTheWorld(Character character) {
         necromancerInTheWorld = character;
+        if (necromancerInTheWorld != null) {
+            hasSpawnedNecromancerOnce = true;
+            Messenger.Broadcast(Signals.NECROMANCER_SPAWNED, character);
+        }
     }
     #endregion
 
