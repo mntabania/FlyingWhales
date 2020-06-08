@@ -175,8 +175,8 @@ public class GoapPlanner {
             }
             goapThread.job.CancelJob(false);
 
-            if(jobType == JOB_TYPE.FULLNESS_RECOVERY_URGENT) {
-                //Special case for when a character cannot do hunger recovery urgent, he/she must produce food instead
+            if(jobType == JOB_TYPE.FULLNESS_RECOVERY_URGENT || jobType == JOB_TYPE.FULLNESS_RECOVERY_NORMAL) {
+                //Special case for when a character cannot do hunger recovery, he/she must produce food instead
                 owner.jobComponent.CreateProduceFoodJob();
             }
         }

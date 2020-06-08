@@ -7,7 +7,6 @@ public class DropResource : GoapAction {
 
     public DropResource() : base(INTERACTION_TYPE.DROP_RESOURCE) {
         actionIconString = GoapActionStateDB.Haul_Icon;
-        
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
     }
@@ -81,7 +80,8 @@ public class DropResource : GoapAction {
             if (poiTarget.gridTileLocation == null) {
                 return false;
             }
-            return actor.homeRegion != poiTarget.gridTileLocation.structure.location;
+            //return actor.homeRegion != poiTarget.gridTileLocation.structure.location;
+            return true;
         }
         return false;
     }
