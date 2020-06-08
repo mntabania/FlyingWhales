@@ -633,9 +633,12 @@ public static class Signals {
     public static string MASTER_VOLUME_CHANGED = "OnSFXVolumeChanged";
     #endregion
 
-    #region Basic Controls
-    public static string ZOOM_INNER_MAP_CAMERA = "OnZoomInnerMapCamera";
+    #region Camera
     public static string ZOOM_WORLD_MAP_CAMERA = "OnZoomWorldMapCamera";
+    /// <summary>
+    /// Parameters: Camera
+    /// </summary>
+    public static string CAMERA_ZOOM_CHANGED = "OnCameraZoomChanged";
     #endregion
 
     public static Dictionary<string, SignalMethod[]> orderedSignalExecution = new Dictionary<string, SignalMethod[]>() {

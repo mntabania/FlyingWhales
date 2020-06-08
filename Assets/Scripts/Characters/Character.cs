@@ -271,7 +271,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     public Vector3 worldPosition => marker.transform.position;
-    public Vector2 selectableSize => Vector2Int.one;
+    public Vector2 selectableSize => visuals.selectableSize;
     public ProjectileReceiver projectileReceiver => marker.visionTrigger.projectileReceiver;
     public JOB_OWNER ownerType => JOB_OWNER.CHARACTER;
     public bool isInCombat => stateComponent.currentState != null && stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT;
@@ -685,17 +685,18 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         } else {
             destroyedAt.RemoveCharacterHere(this);
         }
-        UIManager.Instance.HideCharacterThoughtTooltip(this);
         ObjectPoolManager.Instance.DestroyObject(marker);
         SetCharacterMarker(null);
         Messenger.Broadcast(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, this as IPointOfInterest);
     }
     public void DisableMarker() {
-        marker.gameObject.SetActive(false);
+        // marker.gameObject.SetActive(false);
+        marker.SetVisualState(false);
         gridTileLocation.RemoveCharacterHere(this);
     }
     public void EnableMarker() {
-        marker.gameObject.SetActive(true);
+        marker.SetVisualState(true);
+        // marker.gameObject.SetActive(true);
     }
     private void SetCharacterMarker(CharacterMarker marker) {
         this.marker = marker;

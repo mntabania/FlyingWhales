@@ -294,6 +294,7 @@ public abstract class BaseCameraMove : MonoBehaviour{
         if(threatEffect != null) {
             threatEffect.OnZoomCamera(camera);
         }
+        Messenger.Broadcast(Signals.CAMERA_ZOOM_CHANGED, camera);
     }
     #endregion
 }

@@ -61,10 +61,10 @@ public class TileObjectInfoUI : InfoUIBase {
     }
     public override void CloseMenu() {
         base.CloseMenu();
+        Selector.Instance.Deselect();
         if(activeTileObject != null && activeTileObject.mapVisual != null) {
             // activeTileObject.mapVisual.UnlockHoverObject();
             // activeTileObject.mapVisual.SetHoverObjectState(false);
-            Selector.Instance.Deselect();
             if (InnerMapCameraMove.Instance.target == activeTileObject.mapObjectVisual.transform) {
                 InnerMapCameraMove.Instance.CenterCameraOn(null);
             }

@@ -17,6 +17,7 @@ public class CharacterVisuals {
     public Material wholeImageMaterial { get; private set; }
     public Dictionary<string, Sprite> markerAnimations { get; private set; }
     public Sprite defaultSprite { get; private set; }
+    public Vector2 selectableSize { get; private set; }
     
     private bool _hasBlood;
 
@@ -69,6 +70,8 @@ public class CharacterVisuals {
     private void UpdateMarkerAnimations(Character character) {
         CharacterClassAsset assets = CharacterManager.Instance.GetMarkerAsset(character.race, character.gender, character.characterClass.className);
         defaultSprite = assets.defaultSprite;
+        float size = defaultSprite.rect.width / 100f;
+        selectableSize = new Vector2(size, size);
         markerAnimations = new Dictionary<string, Sprite>();
         for (int i = 0; i < assets.animationSprites.Count; i++) {
             Sprite currSprite = assets.animationSprites[i];
@@ -76,7 +79,7 @@ public class CharacterVisuals {
         }
         if (character.marker != null) {
             character.marker.UpdateName();    
-            character.marker.UpdateNameplatePosition();    
+            // character.marker.UpdateNameplatePosition();    
         }
     }
 
