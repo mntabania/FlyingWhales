@@ -125,7 +125,7 @@ public class GameManager : MonoBehaviour {
             UIManager.Instance.ShowStartDemoScreen();
             //schedule game over at end of day 6
             GameDate dueDate = new GameDate(startMonth, 5, startYear, ticksPerDay); //5, ticksPerDay
-            SchedulingManager.Instance.AddEntry(dueDate, () => UIManager.Instance.ShowEndDemoScreen("Sorry! You've reached the end of Day 5!"), this);
+            SchedulingManager.Instance.AddEntry(dueDate, () => UIManager.Instance.ShowEndDemoScreen("You've reached the end of Day 5!"), this);
         }
     }
     public GameDate Today() {
