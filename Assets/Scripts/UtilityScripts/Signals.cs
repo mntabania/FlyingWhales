@@ -558,7 +558,11 @@ public static class Signals {
     /// <summary>
     /// Parameters: Quest
     /// </summary>
-    public static string REACTION_QUEST_ACTIVATED = "OnReactionQuestActivated";
+    public static string QUEST_ACTIVATED = "OnQuestActivated";
+    /// <summary>
+    /// Parameters: Quest
+    /// </summary>
+    public static string QUEST_DEACTIVATED = "OnQuestDeactivated";
     /// <summary>
     /// Parameters: QuestItem
     /// </summary>

@@ -6,9 +6,12 @@ using Quests;
 using Quests.Steps;
 using Ruinarch.Custom_UI;
 using Settings;
+using Tutorial;
 using UnityEngine;
 using UnityEngine.Audio;
 using UtilityScripts;
+using Counterattack = Quests.Counterattack;
+using DivineIntervention = Quests.DivineIntervention;
 
 public class AudioManager : MonoBehaviour {
 
@@ -57,6 +60,8 @@ public class AudioManager : MonoBehaviour {
     [SerializeField] private AudioClip[] bluntWeaponAudio;
     [SerializeField] private AudioClip[] punchAudio;
 
+    private bool isPlayingThreatMusic;
+    
     private void Awake() {
         if (Instance == null) {
             Instance = this;
@@ -103,6 +108,8 @@ public class AudioManager : MonoBehaviour {
         Messenger.AddListener<IIntel>(Signals.PLAYER_OBTAINED_INTEL, OnObtainIntel);
         Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, OnOpenShareIntel);
         Messenger.AddListener<ISelectable>(Signals.SELECTABLE_LEFT_CLICKED, WorldSelectableLeftClicked);
+        Messenger.AddListener<Quest>(Signals.QUEST_ACTIVATED, OnQuestActivated);
+        Messenger.AddListener<Quest>(Signals.QUEST_DEACTIVATED, OnQuestDeactivated);
         SetCameraParent(InnerMapCameraMove.Instance);
     }
     #endregion
@@ -122,11 +129,41 @@ public class AudioManager : MonoBehaviour {
         worldMusic.Stop();
         worldMusic.Play();
     }
-    private void OnThreatReset() {
+    private void PlayThreatMusic() {
+        if (isPlayingThreatMusic) { return; } //already playing threat music
+        isPlayingThreatMusic = true;
+        threatSnapShot.TransitionTo(0.5f);
+    }
+    private void StopThreatMusic() {
+        if (isPlayingThreatMusic == false) { return; } //already not playing threat music
+        isPlayingThreatMusic = false;
         worldSnapShot.TransitionTo(0.5f);
     }
+    private void OnThreatReset() {
+        CheckThreatMusic();
+    }
     private void OnThreatMaxedOut() {
-        threatSnapShot.TransitionTo(0.5f);
+        CheckThreatMusic();
+    }
+    private void OnQuestActivated(Quest quest) {
+        if (quest is Counterattack || quest is DivineIntervention) {
+            CheckThreatMusic();
+        }
+    }
+    private void OnQuestDeactivated(Quest quest) {
+        if (quest is Counterattack || quest is DivineIntervention) {
+            CheckThreatMusic();
+        }
+    }
+    private void CheckThreatMusic() {
+        if (QuestManager.Instance.IsQuestActive<Counterattack>() 
+            || QuestManager.Instance.IsQuestActive<DivineIntervention>() 
+            || PlayerManager.Instance.player.threatComponent.threat >= ThreatComponent.MAX_THREAT) {
+            //play threat music if threat is at max or counterattack quest is active or divine intervention quest is active
+            PlayThreatMusic();
+        } else {
+            StopThreatMusic();
+        }
     }
     #endregion
 

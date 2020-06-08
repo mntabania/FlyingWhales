@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using Quests;
 using UnityEngine;
 
 public class ThreatParticleEffect : MonoBehaviour {
@@ -7,12 +9,15 @@ public class ThreatParticleEffect : MonoBehaviour {
     public GameObject leftParticleGO;
     public GameObject rightParticleGO;
     public GameObject bottomParticleGO;
-
+    private bool _isPlaying;
+    
     private void Start() {
         Messenger.AddListener(Signals.THREAT_MAXED_OUT, OnThreatMaxed);
         Messenger.AddListener(Signals.THREAT_RESET, OnThreatReset);
         Messenger.AddListener<Region>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
         Messenger.AddListener<Region>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
+        Messenger.AddListener<Quest>(Signals.QUEST_ACTIVATED, OnQuestActivated);
+        Messenger.AddListener<Quest>(Signals.QUEST_DEACTIVATED, OnQuestDeactivated);
         //Messenger.AddListener<Camera>(Signals.ZOOM_INNER_MAP_CAMERA, OnZoomInnerMapCamera);
         //Messenger.AddListener<Camera>(Signals.ZOOM_WORLD_MAP_CAMERA, OnZoomWorldMapCamera);
     }
@@ -46,12 +51,47 @@ public class ThreatParticleEffect : MonoBehaviour {
         rightParticleGO.transform.position = new Vector3((rightViewPoint.x + 1f), rightParticleGO.transform.position.y, rightParticleGO.transform.position.z);
         bottomParticleGO.transform.position = new Vector3(bottomParticleGO.transform.position.x, (bottomViewPoint.y - 1f), bottomParticleGO.transform.position.z);
     }
+
+    #region Listeners
     private void OnThreatMaxed() {
+        CheckEffectState();
+    }
+    private void OnThreatReset() {
+        CheckEffectState();
+    }
+    private void OnQuestActivated(Quest quest) {
+        if (quest is Counterattack || quest is DivineIntervention) {
+            CheckEffectState();
+        }
+    }
+    private void OnQuestDeactivated(Quest quest) {
+        if (quest is Counterattack || quest is DivineIntervention) {
+            CheckEffectState();
+        }
+    }
+    #endregion
+    
+    private void CheckEffectState() {
+        if (QuestManager.Instance.IsQuestActive<Counterattack>() 
+            || QuestManager.Instance.IsQuestActive<DivineIntervention>() 
+            || PlayerManager.Instance.player.threatComponent.threat >= ThreatComponent.MAX_THREAT) {
+            //play effect if threat is at max or counterattack quest is active or divine intervention quest is active
+            PlayEffect();
+        } else {
+            StopEffect();
+        }
+    }
+    
+    private void PlayEffect() {
+        if (_isPlaying) { return; } //effect is already playing
+        _isPlaying = true;
         for (int i = 0; i < threatParticleSystems.Length; i++) {
             threatParticleSystems[i].Play();
         }
     }
-    private void OnThreatReset() {
+    private void StopEffect() {
+        if (_isPlaying == false) { return; } //effect isn't playing
+        _isPlaying = false;
         for (int i = 0; i < threatParticleSystems.Length; i++) {
             threatParticleSystems[i].Stop(true, ParticleSystemStopBehavior.StopEmitting);
         }

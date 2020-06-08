@@ -10,6 +10,9 @@ namespace Quests {
 
         public static QuestManager Instance;
 
+        /// <summary>
+        /// List of active quests. NOTE: this does not include tutorials.
+        /// </summary>
         private List<Quest> _activeQuests;
 
         public bool hasClickedCenterButtonAtLastOnce;
@@ -48,6 +51,15 @@ namespace Quests {
             }
             return null;
         }
+        public bool IsQuestActive<T>() where T : Quest {
+            for (int i = 0; i < _activeQuests.Count; i++) {
+                Quest quest = _activeQuests[i];
+                if (quest is T) {
+                    return true;
+                }
+            }
+            return false;
+        }
         #endregion
         
         #region Activation
@@ -64,7 +76,7 @@ namespace Quests {
             quest.Activate();
             QuestItem questItem = UIManager.Instance.questUI.ShowQuest(quest, true);
             quest.SetQuestItem(questItem);
-            Messenger.Broadcast(Signals.REACTION_QUEST_ACTIVATED, quest);
+            Messenger.Broadcast(Signals.QUEST_ACTIVATED, quest);
         }
         private void DeactivateQuest(Quest quest) {
             _activeQuests.Remove(quest);
@@ -72,6 +84,7 @@ namespace Quests {
                 UIManager.Instance.questUI.HideQuestDelayed(quest);
             }
             quest.Deactivate();
+            Messenger.Broadcast(Signals.QUEST_DEACTIVATED, quest);
         }
         #endregion
         
