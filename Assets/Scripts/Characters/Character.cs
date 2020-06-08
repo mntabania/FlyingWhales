@@ -690,13 +690,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.Broadcast(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, this as IPointOfInterest);
     }
     public void DisableMarker() {
-        // marker.gameObject.SetActive(false);
-        marker.SetVisualState(false);
+        marker.gameObject.SetActive(false);
+        // marker.SetVisualState(false);
         gridTileLocation.RemoveCharacterHere(this);
     }
     public void EnableMarker() {
-        marker.SetVisualState(true);
-        // marker.gameObject.SetActive(true);
+        // marker.SetVisualState(true);
+        marker.gameObject.SetActive(true);
     }
     private void SetCharacterMarker(CharacterMarker marker) {
         this.marker = marker;
