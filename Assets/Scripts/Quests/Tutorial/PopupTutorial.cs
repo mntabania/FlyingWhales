@@ -1,6 +1,6 @@
 ﻿namespace Tutorial {
     public abstract class PopupTutorial : TutorialQuest {
-        public PopupTutorial(string _questName, TutorialManager.Tutorial _tutorialType) : base(_questName, _tutorialType) { }
+        protected PopupTutorial(string _questName, TutorialManager.Tutorial _tutorialType) : base(_questName, _tutorialType) { }
         protected override void ConstructSteps() {
             steps = null;
         }

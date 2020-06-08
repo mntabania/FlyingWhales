@@ -609,6 +609,11 @@ public static class Signals {
     /// Parameters (LocationStructure, Character, GoapPlanJob)
     /// </summary>
     public static string DEMONIC_STRUCTURE_DISCOVERED = "DemonicStructureDiscovered";
+    public static string FINISHED_IMPORTANT_TUTORIALS = "FinishedImportantTutorials";
+    /// <summary>
+    /// Parameters (Character necromancer)
+    /// </summary>
+    public static string NECROMANCER_SPAWNED = "OnNecromancerSpawned";
     #endregion
 
     #region Elements
