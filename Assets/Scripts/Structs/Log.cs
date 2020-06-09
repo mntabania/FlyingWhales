@@ -178,6 +178,15 @@ public class Log {
         }
         return false;
     }
+    public bool HasFillerThatMeetsRequirement(System.Func<object, bool> requirement) {
+        for (int i = 0; i < fillers.Count; i++) {
+            LogFiller filler = fillers[i];
+            if (filler.obj != null && requirement.Invoke(filler.obj)) {
+                return true;
+            }
+        }
+        return false;
+    } 
     private ActualGoapNode GetNodeAssociatedWithThisLog() {
         //if(_node != null) {
         //    if(_node.goapType == INTERACTION_TYPE.SHARE_INFORMATION) {

@@ -92,6 +92,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool destroyMarkerOnDeath { get; protected set; }
     public bool isWanderer { get; private set; }
     public bool hasRisen { get; private set; }
+    public Log deathLog { get; private set; }
 
     public List<JobQueueItem> forcedCancelJobsOnTickEnded { get; private set; }
     public List<HexTile> territorries { get; private set; }
@@ -5830,6 +5831,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             } else {
                 deathLog = _deathLog;
             }
+            SetDeathLog(deathLog);
             deathStr = UtilityScripts.Utilities.LogReplacer(deathLog);
             Messenger.Broadcast(Signals.CHARACTER_DEATH, this);
 
@@ -5839,6 +5841,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //    }
             //}
         }
+    }
+    public void SetDeathLog(Log log) {
+        deathLog = log;
     }
     public void SetGrave(Tombstone grave) {
         this.grave = grave;

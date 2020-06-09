@@ -1212,7 +1212,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &224725604692175578
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1795,7 +1795,7 @@ GameObject:
   - component: {fileID: 224107819321460698}
   - component: {fileID: 114418289278751442}
   m_Layer: 5
-  m_Name: Characters Toggle
+  m_Name: TileObject_Characters
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5840,7 +5840,7 @@ GameObject:
   - component: {fileID: 1449326524654297907}
   - component: {fileID: 547437645737320580}
   m_Layer: 5
-  m_Name: Info Toggle
+  m_Name: TileObject_Info
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6948,7 +6948,7 @@ GameObject:
   - component: {fileID: 4989898367083756389}
   - component: {fileID: 1556480726888220358}
   m_Layer: 5
-  m_Name: Logs Toggle
+  m_Name: TileObject_Logs
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

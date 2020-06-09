@@ -1,4 +1,5 @@
-﻿namespace Quests.Steps {
+﻿using Ruinarch.Custom_UI;
+namespace Quests.Steps {
     public class ToggleTurnedOnStep : QuestStep {
         
         private readonly string _neededIdentifier;
@@ -8,15 +9,15 @@
             _neededIdentifier = neededIdentifier;
         }
         protected override void SubscribeListeners() {
-            Messenger.AddListener<string>(Signals.TOGGLE_TURNED_ON, CheckForCompletion);
+            Messenger.AddListener<RuinarchToggle>(Signals.TOGGLE_CLICKED, CheckForCompletion);
         }
         protected override void UnSubscribeListeners() {
-            Messenger.RemoveListener<string>(Signals.TOGGLE_TURNED_ON, CheckForCompletion);
+            Messenger.RemoveListener<RuinarchToggle>(Signals.TOGGLE_CLICKED, CheckForCompletion);
         }
 
         #region Listeners
-        private void CheckForCompletion(string identifier) {
-            if (identifier == _neededIdentifier) {
+        private void CheckForCompletion(RuinarchToggle toggle) {
+            if (toggle.isOn && toggle.name == _neededIdentifier) {
                 Complete();
             }
         }

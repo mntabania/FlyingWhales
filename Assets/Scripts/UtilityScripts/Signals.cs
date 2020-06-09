@@ -175,6 +175,10 @@ public static class Signals {
     /// </summary>
     public static string SHOW_DEVELOPER_NOTIFICATION = "ShowNotification";
     public static string LOG_ADDED = "OnLogAdded"; //Parameters (object itemThatHadHistoryAdded) either a character or a landmark
+    /// <summary>
+    /// Parameters Log, IPointOfInterest
+    /// </summary>
+    public static string LOG_REMOVED = "OnLogRemoved";
     public static string PAUSED = "OnPauseChanged"; //Parameters (bool isGamePaused)
     public static string PROGRESSION_SPEED_CHANGED = "OnProgressionSpeedChanged"; //Parameters (PROGRESSION_SPEED progressionSpeed)
     public static string BEFORE_MENU_OPENED = "BeforeMenuOpened"; //Parameters (UIMenu openedMenu)
@@ -205,10 +209,6 @@ public static class Signals {
     public static string NAMEPLATE_CLICKED = "OnNameplateClicked";
     public static string SPELLS_MENU_SHOWN = "OnSpellsMenuShown";
     /// <summary>
-    /// Parameters: string activatedToggle
-    /// </summary>
-    public static string TOGGLE_TURNED_ON = "ToggleTurnedOn";
-    /// <summary>
     /// Parameters: Region selectedRegion
     /// </summary>
     public static string REGION_SELECTED = "OnRegionSelected";
@@ -237,6 +237,10 @@ public static class Signals {
     /// Parameters: Quest quest
     /// </summary>
     public static string QUEST_SHOWN = "OnQuestShown";
+    /// <summary>
+    /// Parameters: Object, Log, Character
+    /// </summary>
+    public static string LOG_HISTORY_OBJECT_CLICKED = "OnLogObjectClicked";
     #endregion
 
     #region Quest Signals

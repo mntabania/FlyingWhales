@@ -250,9 +250,11 @@ public class FactionInfoUI : InfoUIBase {
         //}
         for (int i = 0; i < activeFaction.ideologyComponent.currentIdeologies.Length; i++) {
             FactionIdeology ideology = activeFaction.ideologyComponent.currentIdeologies[i];
-            summary += $"\n{ideology.name}";
-            summary += "\nRequirements for joining:";
-            summary += $"\n\t{ideology.GetRequirementsForJoiningAsString()}";
+            if (ideology != null) {
+                summary += $"\n{ideology.name}";
+                summary += "\nRequirements for joining:";
+                summary += $"\n\t{ideology.GetRequirementsForJoiningAsString()}";    
+            }
         }
 
         UIManager.Instance.ShowSmallInfo(summary);
@@ -263,7 +265,7 @@ public class FactionInfoUI : InfoUIBase {
     #endregion
 
     private void OnOpenShareIntelMenu() {
-        backButton.interactable = false;
+        // backButton.interactable = false;
     }
     private void OnCloseShareIntelMenu() { }
 }

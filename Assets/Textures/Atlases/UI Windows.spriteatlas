@@ -1,0 +1,78 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: UI Windows
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 0
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings:
+    - serializedVersion: 3
+      m_BuildTarget: DefaultTexturePlatform
+      m_MaxTextureSize: 2048
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: -1
+      m_TextureCompression: 0
+      m_CompressionQuality: 50
+      m_CrunchedCompression: 1
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 0
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
+    packingSettings:
+      serializedVersion: 2
+      padding: 8
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 0
+      enableTightPacking: 0
+    variantMultiplier: 1
+    packables:
+    - {fileID: 102900000, guid: 4b18ba5513d55364284cd64228896343, type: 3}
+    totalSpriteSurfaceArea: 3501453
+    bindAsDefault: 1
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: 21300000, guid: ae43244188953b94ca4bfbb6e53e17b1, type: 3}
+  - {fileID: 21300000, guid: ad0ba403edcb24941bfe8c77517193b9, type: 3}
+  - {fileID: 21300000, guid: 86897a3345403f240a98a45707546524, type: 3}
+  - {fileID: 21300000, guid: 84a8b484387d6314e8a900ded3746834, type: 3}
+  - {fileID: 21300000, guid: 89d6a3c4d4377b44bb70a0f25aaedb7c, type: 3}
+  - {fileID: 21300000, guid: 04a7bd3537fad7f45b0401c30872d926, type: 3}
+  - {fileID: 21300000, guid: 67ebbc854a9df3c4e858dd63c5bf03f3, type: 3}
+  - {fileID: 21300000, guid: 4ad043e7f6d9df24d91e3edcd0385832, type: 3}
+  - {fileID: 21300000, guid: c01396480b0e11e48aec5b89a59ded67, type: 3}
+  - {fileID: 21300000, guid: ef581cca56aaa3544add2b31eba6cba9, type: 3}
+  - {fileID: 21300000, guid: dbe0987dc8cc34441938f371b77893c1, type: 3}
+  - {fileID: 21300000, guid: 6ae7e28e53de7564f9cd5da42b57c804, type: 3}
+  - {fileID: 21300000, guid: f844eeee9e0b19c4f989583fdd94b719, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - demonic_structure_popup_container
+  - skill_details_tooltip_container
+  - Tabs Container
+  - topbar_container
+  - subtab_container
+  - share_intel_container_big
+  - intel_container
+  - minion_info_tooltip_container
+  - corrupt_rile_up_container
+  - spell_list_container
+  - share_intel_container
+  - log_panel
+  - minion_list_container
+  m_Tag: UI Windows
+  m_IsVariant: 0

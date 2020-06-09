@@ -107,7 +107,7 @@ public class ShareIntelMenu : PopupMenuBase {
                 
                 if (hasReactionToActor == false && hasReactionToTarget == false) {
                     //has no reactions to actor and target
-                    CreateDialogItem(reactor, $"<b>{reactor.name}</b> seemed Disinterested towards this.");
+                    CreateDialogItem(reactor, $"<b>{reactor.name}</b> seemed Disinterested about this.");
                 } else {
                     if (hasReactionToActor) {
                         CreateDialogItem(reactor, $"<b>{reactor.name}</b> seemed {UtilityScripts.Utilities.GetFirstFewEmotionsAndComafy(emotionsTowardsActor, 2)} at <b>{intel.actor.name}</b> after receiving the new information.");    

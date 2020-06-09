@@ -1365,7 +1365,7 @@ GameObject:
   - component: {fileID: 3531784789730651746}
   - component: {fileID: 5829892276880275153}
   m_Layer: 5
-  m_Name: Mood Toggle
+  m_Name: CharacterInfo_Mood
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6372,7 +6372,7 @@ GameObject:
   - component: {fileID: 2033020589232847325}
   - component: {fileID: 6886447668669738837}
   m_Layer: 5
-  m_Name: Relations Toggle
+  m_Name: CharacterInfo_Relations
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6775,7 +6775,7 @@ GameObject:
   - component: {fileID: 1362982043593001382}
   - component: {fileID: 8744637653518206043}
   m_Layer: 5
-  m_Name: Info Toggle
+  m_Name: CharacterInfo_Info
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13181,7 +13181,7 @@ GameObject:
   - component: {fileID: 4197655504069006554}
   - component: {fileID: 4677520868120660416}
   m_Layer: 5
-  m_Name: Logs Toggle
+  m_Name: CharacterInfo_Logs
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

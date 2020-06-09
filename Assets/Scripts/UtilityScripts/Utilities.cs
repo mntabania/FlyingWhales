@@ -799,6 +799,9 @@ namespace UtilityScripts {
         public static string VillagerIcon() {
             return "<sprite=\"Text_Sprites\" name=\"Villager_Icon\"> ";
         }
+        public static string ColorizeAction(string actionString) {
+            return $"<color=#f87f43>{actionString}</color>";
+        }
         public static string GetFirstFewEmotionsAndComafy(string emotionsStr, int emotionCount) {
             string[] emotions = emotionsStr.Split(' ');
             string trimmedEmotions = string.Empty;

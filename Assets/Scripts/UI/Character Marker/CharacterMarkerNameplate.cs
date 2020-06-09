@@ -40,6 +40,7 @@ public class CharacterMarkerNameplate : PooledObject {
     private void LateUpdate() {
         Vector3 markerScreenPosition =
             InnerMapCameraMove.Instance.innerMapsCamera.WorldToScreenPoint(_parentMarker.transform.position);
+        markerScreenPosition.z = 0f;
         transform.position = markerScreenPosition;
         if (thoughtGO.activeSelf) {
             UpdateThoughtText();

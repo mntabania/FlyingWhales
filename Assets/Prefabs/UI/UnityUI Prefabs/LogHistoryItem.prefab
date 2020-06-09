@@ -95,6 +95,7 @@ MonoBehaviour:
   dateLbl: {fileID: 114473622418350672}
   logBG: {fileID: 114936726904009210}
   envelopContent: {fileID: 114396178705656716}
+  eventLabel: {fileID: 114120045973968478}
 --- !u!114 &114396178705656716
 MonoBehaviour:
   m_ObjectHideFlags: 0

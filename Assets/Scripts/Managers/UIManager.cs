@@ -558,7 +558,29 @@ public class UIManager : MonoBehaviour {
         _raycastResults.Clear();
         EventSystem.current.RaycastAll(_pointer, _raycastResults);
 
-        return _raycastResults.Count > 0 && _raycastResults.Any(go => go.gameObject.layer == LayerMask.NameToLayer("UI") || go.gameObject.layer == LayerMask.NameToLayer("WorldUI") || go.gameObject.layer == LayerMask.NameToLayer("Map_Click_Blocker"));
+        return _raycastResults.Count > 0 && _raycastResults.Any(
+            go => go.gameObject.layer == LayerMask.NameToLayer("UI") || 
+                  go.gameObject.layer == LayerMask.NameToLayer("WorldUI") || 
+                  go.gameObject.CompareTag("Map_Click_Blocker"));
+    }
+    public void OpenObjectUI(object obj) {
+        if (obj is Character character) {
+            ShowCharacterInfo(character, true);
+        } else if (obj is NPCSettlement settlement) {
+            ShowRegionInfo(settlement.region);
+        } else if (obj is Faction faction) {
+            ShowFactionInfo(faction);
+        } else if (obj is Minion minion) {
+            ShowCharacterInfo(minion.character, true);
+        } else if (obj is Party party) {
+            ShowCharacterInfo(party.owner, true);
+        } else if (obj is TileObject tileObject) {
+            ShowTileObjectInfo(tileObject);
+        } else if (obj is Region region) {
+            ShowRegionInfo(region);
+        } else if (obj is LocationStructure structure) {
+            structure.CenterOnStructure();
+        }
     }
     public bool IsMouseOnMapObject() {
         PointerEventData pointer = new PointerEventData(EventSystem.current);
@@ -622,6 +644,16 @@ public class UIManager : MonoBehaviour {
             return characterInfoUI.activeCharacter;
         } else if (monsterInfoUI.isShowing) {
             return monsterInfoUI.activeMonster;
+        }
+        return null;
+    }
+    public IPointOfInterest GetCurrentlySelectedPOI() {
+        if (characterInfoUI.isShowing) {
+            return characterInfoUI.activeCharacter;
+        } else if (monsterInfoUI.isShowing) {
+            return monsterInfoUI.activeMonster;
+        } else if (tileObjectInfoUI.isShowing) {
+            return tileObjectInfoUI.activeTileObject;
         }
         return null;
     }
