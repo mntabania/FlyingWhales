@@ -248,8 +248,8 @@ public class CharacterInfoUI : InfoUIBase {
     #region Stats
     private void UpdateStatInfo() {
         hpLbl.text = $"{_activeCharacter.currentHP.ToString()}/{_activeCharacter.maxHP.ToString()}";
-        attackLbl.text = $"{_activeCharacter.attackPower.ToString()}";
-        speedLbl.text =  $"{_activeCharacter.attackSpeed / 1000f}s";
+        attackLbl.text = $"{_activeCharacter.combatComponent.attack.ToString()}";
+        speedLbl.text =  $"{_activeCharacter.combatComponent.attackSpeed / 1000f}s";
         //if(characterPortrait.character != null) {
         //    characterPortrait.UpdateLvl();
         //}
@@ -547,7 +547,7 @@ public class CharacterInfoUI : InfoUIBase {
         summary = $"{summary}{("\nHP: " + activeCharacter.currentHP.ToString() + "/" + activeCharacter.maxHP.ToString())}";
         summary = $"{summary}{("\nIgnore Hostiles: " + activeCharacter.ignoreHostility.ToString())}";
         summary = $"{summary}{("\nAttack Range: " + activeCharacter.characterClass.attackRange.ToString(CultureInfo.InvariantCulture))}";
-        summary = $"{summary}{("\nAttack Speed: " + activeCharacter.attackSpeed.ToString())}";
+        summary = $"{summary}{("\nAttack Speed: " + activeCharacter.combatComponent.attackSpeed.ToString())}";
         summary = $"{summary}{("\nCombat Mode: " + activeCharacter.combatComponent.combatMode.ToString())}";
         summary = $"{summary}{("\nElemental Type: " + activeCharacter.combatComponent.elementalDamage.name)}";
         summary = $"{summary}{("\nPrimary Job: " + activeCharacter.jobComponent.primaryJob.ToString())}";

@@ -36,20 +36,32 @@ public class PickUp : GoapAction {
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}:";
-        int cost = UtilityScripts.Utilities.Rng.Next(80, 121);
-        costLog += $" +{cost}(Initial)";
-        int numOfTimesActionDone = actor.jobComponent.GetNumOfTimesActionDone(this);
+        int cost = 0;
         if (job != null && job.jobType == JOB_TYPE.OBTAIN_PERSONAL_ITEM && !target.gridTileLocation.IsPartOfSettlement(actor.homeSettlement)) {
             cost += 2000;
             costLog += " +2000(Object is not part of home settlement and job is Obtain Personal Item)";
         }
+        if(target is TileObject targetTileObject) {
+            if(targetTileObject.characterOwner == null) {
+                cost += UtilityScripts.Utilities.Rng.Next(80, 121);
+                costLog += $" +{cost}(No personal owner)";
+            } else {
+                if(targetTileObject.characterOwner == actor) {
+                    cost += UtilityScripts.Utilities.Rng.Next(20, 61);
+                    costLog += $" +{cost}(Personal owner is actor)";
+                } else {
+                    if(actor.traitContainer.HasTrait("Kleptomaniac") || !actor.relationshipContainer.HasRelationshipWith(targetTileObject.characterOwner)) {
+                        cost += UtilityScripts.Utilities.Rng.Next(80, 121);
+                        costLog += $" +{cost}(Kleptomaniac/No rel with owner)";
+                    } else {
+                        cost += 2000;
+                        costLog += " +2000(Not Kleptomanic/Has rel with owner)";
+                    }
+                }
+            }
+        }
         actor.logComponent.AppendCostLog(costLog);
         return cost;
-
-        //int cost = UtilityScripts.Utilities.Rng.Next(80, 121);
-        //costLog += $" +{cost}(RNG)";
-        //actor.logComponent.AppendCostLog(costLog);
-        //return cost;
     }
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
         if (node.poiTarget is TileObject tileObject) {

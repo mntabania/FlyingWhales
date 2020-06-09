@@ -168,8 +168,8 @@ public class MonsterInfoUI : InfoUIBase {
     #region Stats
     private void UpdateStatInfo() {
         hpLbl.text = $"{_activeMonster.currentHP.ToString()}/{_activeMonster.maxHP.ToString()}";
-        attackLbl.text = $"{_activeMonster.attackPower.ToString()}";
-        speedLbl.text = $"{_activeMonster.attackSpeed / 1000f}s";
+        attackLbl.text = $"{_activeMonster.combatComponent.attack.ToString()}";
+        speedLbl.text = $"{_activeMonster.combatComponent.attackSpeed / 1000f}s";
         //if(characterPortrait.character != null) {
         //    characterPortrait.UpdateLvl();
         //}
@@ -336,7 +336,7 @@ public class MonsterInfoUI : InfoUIBase {
         summary = $"{summary}{("\nHP: " + activeMonster.currentHP + "/" + activeMonster.maxHP)}";
         summary = $"{summary}{("\nIgnore Hostiles: " + activeMonster.ignoreHostility)}";
         summary = $"{summary}{("\nAttack Range: " + activeMonster.characterClass.attackRange)}";
-        summary = $"{summary}{("\nAttack Speed: " + activeMonster.attackSpeed)}";
+        summary = $"{summary}{("\nAttack Speed: " + activeMonster.combatComponent.attackSpeed)}";
         summary = $"{summary}{("\nCombat Mode: " + activeMonster.combatComponent.combatMode.ToString())}";
         summary = $"{summary}{("\nElemental Type: " + activeMonster.combatComponent.elementalDamage.name)}";
 

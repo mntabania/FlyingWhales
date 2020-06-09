@@ -26,6 +26,7 @@ public class MovementComponent {
         if (owner.marker) {
             SetMovementState();
             owner.marker.pathfindingAI.speed = GetSpeed();
+            Messenger.Broadcast(Signals.UPDATE_MOVEMENT_STATE, owner);
         }
         //Debug.Log("Updated speed of " + character.name + ". New speed is: " + pathfindingAI.speed.ToString());
     }
@@ -104,5 +105,12 @@ public class MovementComponent {
     public void AdjustUseRunSpeed(int amount) {
         useRunSpeed += amount;
         useRunSpeed = Mathf.Max(0, useRunSpeed);
+    }
+    public bool CanStillPursueTarget(Character target) {
+        if (isRunning) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

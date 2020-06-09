@@ -47,29 +47,29 @@ public class CombatState : CharacterState {
         stateComponent.character.combatComponent.SetWillProcessCombat(false);
         StartCombatMovement();
     }
-    public override void PerTickInState() {
-        //if (currentClosestHostile != null && !PathfindingManager.Instance.HasPathEvenDiffRegion(stateComponent.character.gridTileLocation, currentClosestHostile.gridTileLocation)) {
-        //    SetClosestHostile(null);
-        //    stateComponent.character.combatComponent.RemoveHostileInRange(currentClosestHostile);
-        //    return;
-        //}
-        if (_hasTimerStarted) {
-            //timer has been started, increment timer
-            _currentAttackTimer += 1;
-            if (_currentAttackTimer >= CombatManager.pursueDuration) {
-                StopPursueTimer();
-                //When pursue timer reaches max, character must remove the current closest hostile in hostile list, then stop pursue timer
-                stateComponent.character.combatComponent.RemoveHostileInRange(currentClosestHostile);
-            }
-        } else {
-            //If character is pursuing the current closest hostile, check if that hostile is in range, if it is, start pursue timer
-            //&& stateComponent.character.currentParty.icon.isTravelling
-            if (isAttacking && currentClosestHostile != null && stateComponent.character.marker.targetPOI == currentClosestHostile &&
-                stateComponent.character.marker.inVisionPOIs.Contains(currentClosestHostile)) {
-                StartPursueTimer();
-            }
-        }
-    }
+    //public override void PerTickInState() {
+    //    //if (currentClosestHostile != null && !PathfindingManager.Instance.HasPathEvenDiffRegion(stateComponent.character.gridTileLocation, currentClosestHostile.gridTileLocation)) {
+    //    //    SetClosestHostile(null);
+    //    //    stateComponent.character.combatComponent.RemoveHostileInRange(currentClosestHostile);
+    //    //    return;
+    //    //}
+    //    if (_hasTimerStarted) {
+    //        //timer has been started, increment timer
+    //        _currentAttackTimer += 1;
+    //        if (_currentAttackTimer >= CombatManager.pursueDuration) {
+    //            StopPursueTimer();
+    //            //When pursue timer reaches max, character must remove the current closest hostile in hostile list, then stop pursue timer
+    //            stateComponent.character.combatComponent.RemoveHostileInRange(currentClosestHostile);
+    //        }
+    //    } else {
+    //        //If character is pursuing the current closest hostile, check if that hostile is in range, if it is, start pursue timer
+    //        //&& stateComponent.character.currentParty.icon.isTravelling
+    //        if (isAttacking && currentClosestHostile != null && stateComponent.character.marker.targetPOI == currentClosestHostile &&
+    //            stateComponent.character.marker.inVisionPOIs.Contains(currentClosestHostile)) {
+    //            StartPursueTimer();
+    //        }
+    //    }
+    //}
     protected override void StartState() {
         stateComponent.character.logComponent.PrintLogIfActive(
             $"Starting combat state for {stateComponent.character.name}");
@@ -79,6 +79,7 @@ public class CombatState : CharacterState {
         stateComponent.character.marker.visionCollider.VoteToUnFilterVision();
         //Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, stateComponent.character, "combat");
         Messenger.AddListener<Character>(Signals.DETERMINE_COMBAT_REACTION, DetermineReaction);
+        Messenger.AddListener<Character>(Signals.UPDATE_MOVEMENT_STATE, OnUpdateMovementState);
         base.StartState();
         //if (stateComponent.character.currentActionNode is Assault && !stateComponent.character.currentActionNode.isPerformingActualAction) {
         //    stateComponent.character.currentActionNode.Perform(); //this is for when a character will assault a target, but his/her attack range is less than his/her vision range. (Because end reached distance of assault action is set to attack range)
@@ -105,6 +106,7 @@ public class CombatState : CharacterState {
         stateComponent.character.logComponent.PrintLogIfActive(
             $"Ending combat state for {stateComponent.character.name}");
         Messenger.RemoveListener<Character>(Signals.DETERMINE_COMBAT_REACTION, DetermineReaction);
+        Messenger.RemoveListener<Character>(Signals.UPDATE_MOVEMENT_STATE, OnUpdateMovementState);
         base.EndState();
     }
     //public override void OnExitThisState() {
@@ -294,6 +296,14 @@ public class CombatState : CharacterState {
             //    stateComponent.character.logComponent.PrintLogIfActive(summary);
             //    stateComponent.ExitCurrentState();
             //}
+        }
+    }
+    private void OnUpdateMovementState(Character character) {
+        //Will stop pursuing only if current closest hostile is character, if current closest hostile is an object, whether or not the source can run, he/she will still pursue
+        if (character == stateComponent.character && stateComponent.currentState == this && !isPaused && !isDone && currentClosestHostile != null && currentClosestHostile is Character targetCharacter && isAttacking) {
+            if (!stateComponent.character.movementComponent.CanStillPursueTarget(targetCharacter)) {
+                stateComponent.character.combatComponent.RemoveHostileInRange(currentClosestHostile);
+            }
         }
     }
     public void CheckFlee(ref string debugLog) {
@@ -529,7 +539,7 @@ public class CombatState : CharacterState {
         if (newClosestHostile == currentClosestHostile) { return; } // ignore change
         IPointOfInterest previousClosestHostile = currentClosestHostile;
         currentClosestHostile = newClosestHostile;
-        StopPursueTimer(); //stop pursue timer, any time target changes. This is so that pursue timer is reset when target changes
+        //StopPursueTimer(); //stop pursue timer, any time target changes. This is so that pursue timer is reset when target changes
         if (currentClosestHostile != null && previousClosestHostile != currentClosestHostile) {
             Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "new_combat_target");
             log.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -542,7 +552,7 @@ public class CombatState : CharacterState {
         if (newClosestHostile == currentClosestHostile) { return; } // ignore change
         IPointOfInterest previousClosestHostile = currentClosestHostile;
         currentClosestHostile = newClosestHostile;
-        StopPursueTimer(); //stop pursue timer, any time target changes. This is so that pursue timer is reset when target changes
+        //StopPursueTimer(); //stop pursue timer, any time target changes. This is so that pursue timer is reset when target changes
         if (currentClosestHostile != null && previousClosestHostile != currentClosestHostile) {
             Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "new_combat_target");
             log.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -554,7 +564,7 @@ public class CombatState : CharacterState {
         if (poi == currentClosestHostile) { return; } //ignore change
         IPointOfInterest previousClosestHostile = currentClosestHostile;
         currentClosestHostile = poi;
-        StopPursueTimer(); //stop pursue timer, any time target changes. This is so that pursue timer is reset when target changes
+        //StopPursueTimer(); //stop pursue timer, any time target changes. This is so that pursue timer is reset when target changes
         if (currentClosestHostile != null && previousClosestHostile != currentClosestHostile) {
             Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "new_combat_target");
             log.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -612,7 +622,7 @@ public class CombatState : CharacterState {
             stateComponent.character.marker.SetTargetPOI(null);
         }
         //When the character stops movement, stop pursue timer
-        StopPursueTimer();
+        //StopPursueTimer();
 
         //Check attack speed
         if (!stateComponent.character.marker.CanAttackByAttackSpeed()) {
@@ -681,22 +691,22 @@ public class CombatState : CharacterState {
         // }
         //Debug.Log(attackSummary);
     }
-    private void StartPursueTimer() {
-        if (!_hasTimerStarted) {
-            stateComponent.character.logComponent.PrintLogIfActive(
-                $"Starting pursue timer for {stateComponent.character.name} targeting {currentClosestHostile?.name ?? "Null"}");
-            _currentAttackTimer = 0;
-            _hasTimerStarted = true;
-        }
-    }
-    private void StopPursueTimer() {
-        if (_hasTimerStarted) {
-            stateComponent.character.logComponent.PrintLogIfActive(
-                $"Stopping pursue timer for {stateComponent.character.name}");
-            _hasTimerStarted = false;
-            _currentAttackTimer = 0;
-        }
-    }
+    //private void StartPursueTimer() {
+    //    if (!_hasTimerStarted) {
+    //        stateComponent.character.logComponent.PrintLogIfActive(
+    //            $"Starting pursue timer for {stateComponent.character.name} targeting {currentClosestHostile?.name ?? "Null"}");
+    //        _currentAttackTimer = 0;
+    //        _hasTimerStarted = true;
+    //    }
+    //}
+    //private void StopPursueTimer() {
+    //    if (_hasTimerStarted) {
+    //        stateComponent.character.logComponent.PrintLogIfActive(
+    //            $"Stopping pursue timer for {stateComponent.character.name}");
+    //        _hasTimerStarted = false;
+    //        _currentAttackTimer = 0;
+    //    }
+    //}
     #endregion
 
     #region Flee

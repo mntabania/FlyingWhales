@@ -553,7 +553,7 @@ public class CharacterManager : MonoBehaviour {
         Region homeRegion = null, LocationStructure homeStructure = null) {
         Summon newCharacter = CreateNewSummonClassFromType(data.summonType, data.className) as Summon;
         newCharacter.ChangeGender(data.gender);
-        newCharacter.ChangeRace(data.race);
+        newCharacter.AssignRace(data.race);
         newCharacter.SetFirstAndLastName(data.firstName, data.surName);
         newCharacter.Initialize();
         newCharacter.ownParty.CreateIcon();

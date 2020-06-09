@@ -104,7 +104,8 @@ public static class Signals {
     public static string ON_SET_AS_SETTLEMENT_RULER = "OnSetAsFactionLeader";
     public static string ON_SWITCH_FROM_LIMBO = "OnSwitchFromLimbo";
     public static string INCREASE_THREAT_THAT_SEES_POI = "IncreaseThreatThatSeesPOI";
-    public static string INCREASE_THREAT_THAT_SEES_TILE = "IncreaseThreatThatSeesTILE";
+    public static string INCREASE_THREAT_THAT_SEES_TILE = "IncreaseThreatThatSeesTile";
+    public static string UPDATE_MOVEMENT_STATE = "OnUpdateMovementState"; //Parameters (Character character)
     /// <summary>
     /// Parameters (MoodComponent moodComponentModified)
     /// </summary>
