@@ -6,6 +6,10 @@ using Inner_Maps;
 
 public class CombatComponent {
 	public Character owner { get; private set; }
+    public int attack { get; private set; }
+    public int maxHP { get; private set; }
+    public int attackSpeed { get; private set; }  //in milliseconds, The lower the amount the faster the attack rate
+
     public COMBAT_MODE combatMode { get; private set; }
     public List<IPointOfInterest> hostilesInRange { get; private set; } //POI's in this characters hostility collider
     public List<IPointOfInterest> avoidInRange { get; private set; } //POI's in this characters hostility collider
@@ -31,6 +35,7 @@ public class CombatComponent {
         fightCombatData = new Dictionary<IPointOfInterest, CombatData>();
         SetCombatMode(COMBAT_MODE.Aggressive);
         SetElementalType(ELEMENTAL_TYPE.Normal);
+        //UpdateBasicData(true);
 	}
 
     #region Fight or Flight
@@ -637,6 +642,35 @@ public class CombatComponent {
             ObjectPoolManager.Instance.ReturnCombatDataToPool(combatData);
         }
         fightCombatData.Clear();
+    }
+    #endregion
+
+    #region Basic Data
+    public void UpdateBasicData(bool resetHP) {
+        UpdateAttack();
+        UpdateAttackSpeed();
+        if (resetHP) {
+            UpdateMaxHPAndReset();
+        } else {
+            UpdateMaxHP();
+        }
+    }
+    public void UpdateAttack() {
+        attack = Mathf.RoundToInt(owner.characterClass.baseAttackPower * (owner.raceSetting.attackMultiplier == 0f ? 1f : owner.raceSetting.attackMultiplier));
+    }
+    public void UpdateMaxHP() {
+        maxHP = Mathf.RoundToInt(owner.characterClass.baseHP * (owner.raceSetting.hpMultiplier == 0f ? 1f : owner.raceSetting.hpMultiplier));
+        if (maxHP < 0) {
+            maxHP = 1;
+        }
+    }
+    public void UpdateAttackSpeed() {
+        attackSpeed = owner.characterClass.baseAttackSpeed;
+        //attackSpeed = Mathf.RoundToInt(owner.characterClass.baseAttackSpeed * (owner.raceSetting.attackSpeedMultiplier == 0f ? 1f : owner.raceSetting.attackSpeedMultiplier));
+    }
+    public void UpdateMaxHPAndReset() {
+        UpdateMaxHP();
+        owner.ResetToFullHP();
     }
     #endregion
 }

@@ -17,6 +17,7 @@ public class CharacterClass {
     [SerializeField] private int _inventoryCapacity;
     //[SerializeField] private float _runSpeedMod;
     //[SerializeField] private float _walkSpeedMod;
+    [SerializeField] private float _staminaReduction;
 
     [SerializeField] private string[] _traitNames;
     [SerializeField] private string[] _interestedItemNames;
@@ -74,6 +75,9 @@ public class CharacterClass {
     //}
     public float attackRange {
         get { return _attackRange; }
+    }
+    public float staminaReduction {
+        get { return _staminaReduction; }
     }
     //public float runSpeedMod {
     //    get { return _runSpeedMod; }
@@ -166,6 +170,7 @@ public class CharacterClass {
         newClass._priorityJobs = this._priorityJobs;
         newClass._secondaryJobs = this._secondaryJobs;
         newClass._ableJobs = this._ableJobs;
+        newClass._staminaReduction = this._staminaReduction;
         //newClass._jobType = this._jobType;
         //Array.Copy(this._traitNames, newClass._traitNames, this._traitNames.Length);
         return newClass;
@@ -198,6 +203,7 @@ public class CharacterClass {
         //this._hpPerLevel = int.Parse(ClassPanelUI.Instance.hpPerLevelInput.text);
         this._baseAttackSpeed = int.Parse(ClassPanelUI.Instance.baseAttackSpeedInput.text);
         this._attackRange = float.Parse(ClassPanelUI.Instance.attackRangeInput.text);
+        this._staminaReduction = float.Parse(ClassPanelUI.Instance.staminaReductionInput.text);
         //this._runSpeedMod = float.Parse(ClassPanelUI.Instance.runSpeedModInput.text);
         this._inventoryCapacity = int.Parse(ClassPanelUI.Instance.inventoryCapacityInput.text);
         this._elementalType = (ELEMENTAL_TYPE) System.Enum.Parse(typeof(ELEMENTAL_TYPE), ClassPanelUI.Instance.elementalTypeOptions.options[ClassPanelUI.Instance.elementalTypeOptions.value].text);

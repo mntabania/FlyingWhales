@@ -19,6 +19,8 @@ public class RacePanelUI : MonoBehaviour {
 
     public InputField attackMultiplierInput;
     public InputField hpMultiplierInput;
+    public InputField attackSpeedMultiplierInput;
+    public InputField staminaReductionMultiplierInput;
 
     public InputField speedModifierInput;
     public InputField hpPerLevelInput;
@@ -73,8 +75,11 @@ public class RacePanelUI : MonoBehaviour {
         _attackPerLevel = new List<int>();
 
         attackMultiplierInput.text = "0";
-        speedModifierInput.text = "0";
         hpMultiplierInput.text = "0";
+        attackSpeedMultiplierInput.text = "0";
+        staminaReductionMultiplierInput.text = "0";
+
+        speedModifierInput.text = "0";
         hpPerLevelInput.text = "0";
         attackPerLevelInput.text = "0";
         neutralSpawnLevelModInput.text = "0";
@@ -93,8 +98,11 @@ public class RacePanelUI : MonoBehaviour {
         currentSelectedAttackPerLevelButton = null;
 
         attackMultiplierInput.text = "0";
-        speedModifierInput.text = "0";
         hpMultiplierInput.text = "0";
+        attackSpeedMultiplierInput.text = "0";
+        staminaReductionMultiplierInput.text = "0";
+
+        speedModifierInput.text = "0";
         hpPerLevelInput.text = "0";
         attackPerLevelInput.text = "0";
         neutralSpawnLevelModInput.text = "0";
@@ -168,6 +176,8 @@ public class RacePanelUI : MonoBehaviour {
         raceOptions.value = GetDropdownIndex(raceOptions, raceSetting.race.ToString());
         attackMultiplierInput.text = raceSetting.attackMultiplier.ToString();
         hpMultiplierInput.text = raceSetting.hpMultiplier.ToString();
+        attackSpeedMultiplierInput.text = raceSetting.attackSpeedMultiplier.ToString();
+        staminaReductionMultiplierInput.text = raceSetting.staminaReductionMultiplier.ToString();
         //speedModifierInput.text = raceSetting.speedModifier.ToString();
         runSpeedInput.text = raceSetting.runSpeed.ToString();
         walkSpeedInput.text = raceSetting.walkSpeed.ToString();

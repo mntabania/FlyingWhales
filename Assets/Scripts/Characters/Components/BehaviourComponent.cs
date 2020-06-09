@@ -50,30 +50,30 @@ public class BehaviourComponent {
     public void PopulateInitialBehaviourComponents() {
         ChangeDefaultBehaviourSet(CharacterManager.Default_Resident_Behaviour);
     }
-    public void OnChangeClass(CharacterClass newClass, CharacterClass oldClass) {
-        if(oldClass == newClass) {
-            return;
-        }
-        //if(oldClass != null && newClass != null) {
-        //    string oldClassBehaviourComponentKey = CharacterManager.Instance.GetClassBehaviourComponentKey(oldClass.className);
-        //    string newClassBehaviourComponentKey = CharacterManager.Instance.GetClassBehaviourComponentKey(newClass.className);
-        //    if (oldClassBehaviourComponentKey == newClassBehaviourComponentKey) {
-        //        return;
-        //    }
-        //}
-        //if (oldClass != null) {
-        //    System.Type[] classBehaviourComponents = CharacterManager.Instance.GetDefaultBehaviourSet(oldClass.className);
-        //    for (int i = 0; i < classBehaviourComponents.Length; i++) {
-        //        RemoveBehaviourComponent(CharacterManager.Instance.GetCharacterBehaviourComponent(classBehaviourComponents[i]));
-        //    }
-        //}
-        //if(newClass != null) {
-        //    System.Type[] classBehaviourComponents = CharacterManager.Instance.GetDefaultBehaviourSet(newClass.className);
-        //    for (int i = 0; i < classBehaviourComponents.Length; i++) {
-        //        AddBehaviourComponent(CharacterManager.Instance.GetCharacterBehaviourComponent(classBehaviourComponents[i]));
-        //    }
-        //}
-    }
+    //public void OnChangeClass(CharacterClass newClass, CharacterClass oldClass) {
+    //    if(oldClass == newClass) {
+    //        return;
+    //    }
+    //    //if(oldClass != null && newClass != null) {
+    //    //    string oldClassBehaviourComponentKey = CharacterManager.Instance.GetClassBehaviourComponentKey(oldClass.className);
+    //    //    string newClassBehaviourComponentKey = CharacterManager.Instance.GetClassBehaviourComponentKey(newClass.className);
+    //    //    if (oldClassBehaviourComponentKey == newClassBehaviourComponentKey) {
+    //    //        return;
+    //    //    }
+    //    //}
+    //    //if (oldClass != null) {
+    //    //    System.Type[] classBehaviourComponents = CharacterManager.Instance.GetDefaultBehaviourSet(oldClass.className);
+    //    //    for (int i = 0; i < classBehaviourComponents.Length; i++) {
+    //    //        RemoveBehaviourComponent(CharacterManager.Instance.GetCharacterBehaviourComponent(classBehaviourComponents[i]));
+    //    //    }
+    //    //}
+    //    //if(newClass != null) {
+    //    //    System.Type[] classBehaviourComponents = CharacterManager.Instance.GetDefaultBehaviourSet(newClass.className);
+    //    //    for (int i = 0; i < classBehaviourComponents.Length; i++) {
+    //    //        AddBehaviourComponent(CharacterManager.Instance.GetCharacterBehaviourComponent(classBehaviourComponents[i]));
+    //    //    }
+    //    //}
+    //}
     public bool AddBehaviourComponent(CharacterBehaviourComponent component) {
         if(component == null) {
             throw new System.Exception(

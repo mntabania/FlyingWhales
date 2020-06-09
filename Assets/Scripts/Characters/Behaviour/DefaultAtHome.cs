@@ -139,7 +139,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                 } else {
                     log += $"\n  -Time of Day: {currentTimeOfDay}";
                 }
-                log += "\n-Otherwise, if it is Morning or Afternoon, 25% chance to someone with a positive relationship in current location and then set it as the Base Structure for 2.5 hours";
+                log += "\n-Otherwise, if it is Morning, Lunch Time or Afternoon, 25% chance to someone with a positive relationship in current location and then set it as the Base Structure for 2.5 hours";
                 if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.LUNCH_TIME || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON) {
                     log += $"\n  -Time of Day: {currentTimeOfDay}";
                     int chance = Random.Range(0, 100);
@@ -181,6 +181,23 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                 } else {
                     log += $"\n  -Time of Day: {currentTimeOfDay}";
                 }
+                log += "\n-Otherwise, if character has at least one item in his inventory, 15% chance (multiplied by number of items in inventory, but cap at 4) to add a Drop Item job";
+                if (character.HasItem()) {
+                    log += $"\n  -Has " + character.items.Count + " items in inventory";
+                    int multiplier = character.items.Count > 4 ? 4 : character.items.Count;
+                    int chance = multiplier * 15;
+                    int roll = UnityEngine.Random.Range(0, 100);
+                    log += $"\n  -Chance: {chance.ToString()}";
+                    log += $"\n  -Roll: {roll.ToString()}";
+                    if (roll < chance) {
+                        log += $"\n  -Will create Drop Item job";
+                        character.jobComponent.CreateDropItemJob(character.GetRandomItem(), character.homeStructure);
+                        return true;
+                    } 
+                } else {
+                    log += $"\n  -Has no item in inventory";
+                }
+
                 log += "\n-Otherwise, sit if there is still an unoccupied Table or Desk";
                 TileObject deskOrTable = character.currentStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.DESK, TILE_OBJECT_TYPE.TABLE);
                 if (deskOrTable != null) {

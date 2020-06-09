@@ -535,8 +535,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         if (currentHP <= 0) {
             return; //if hp is already 0, do not deal damage
         }
-        AdjustHP(-characterThatAttacked.attackPower, elementalType, source: characterThatAttacked, showHPBar: true);
-        attackSummary = $"{attackSummary}\nDealt damage {characterThatAttacked.attackPower.ToString()}";
+        AdjustHP(-characterThatAttacked.combatComponent.attack, elementalType, source: characterThatAttacked, showHPBar: true);
+        attackSummary = $"{attackSummary}\nDealt damage {characterThatAttacked.combatComponent.attack.ToString()}";
         if (currentHP <= 0) {
             attackSummary = $"{attackSummary}\n{name}'s hp has reached 0.";
         }

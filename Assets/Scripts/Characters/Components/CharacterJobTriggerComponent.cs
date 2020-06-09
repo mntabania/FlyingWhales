@@ -935,9 +935,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         _owner.jobQueue.AddJobInQueue(job);
     }
     public void CreateTakeArtifactJob(TileObject target, LocationStructure dropLocation) {
-        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TAKE_ARTIFACT, INTERACTION_TYPE.DROP_ITEM, target, _owner);
-        job.AddOtherData(INTERACTION_TYPE.DROP_ITEM, new object[] { dropLocation });
-        _owner.jobQueue.AddJobInQueue(job);
+        //GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TAKE_ARTIFACT, INTERACTION_TYPE.DROP_ITEM, target, _owner);
+        //job.AddOtherData(INTERACTION_TYPE.DROP_ITEM, new object[] { dropLocation });
+        //_owner.jobQueue.AddJobInQueue(job);
     }
     //public void CreatePickUpJob(TileObject target) {
     //    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TAKE_ITEM, INTERACTION_TYPE.PICK_UP, target, _owner);
@@ -1079,6 +1079,13 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    producedJob = null;
 	    return false;
 
+    }
+    public void CreateDropItemJob(TileObject target, LocationStructure dropLocation) {
+        if(!_owner.jobQueue.HasJob(JOB_TYPE.DROP_ITEM, target)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DROP_ITEM, INTERACTION_TYPE.DROP_ITEM, target, _owner);
+            job.AddOtherData(INTERACTION_TYPE.DROP_ITEM, new object[] { dropLocation });
+            _owner.jobQueue.AddJobInQueue(job);
+        }
     }
     #endregion
 
@@ -1426,6 +1433,15 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     }
     private bool IsBuryJobStillApplicable(Character target, NPCSettlement npcSettlement) {
 	    return target.gridTileLocation != null && target.gridTileLocation.IsNextToOrPartOfSettlement(npcSettlement) && target.marker != null;
+    }
+    public void TriggerPersonalBuryJob(Character targetCharacter) {
+        if (_owner.gridTileLocation != null) {
+            LocationStructure targetStructure = _owner.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.CEMETERY) ??
+                                                _owner.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+            GoapPlanJob buryJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BURY, INTERACTION_TYPE.BURY_CHARACTER, targetCharacter, _owner);
+            buryJob.AddOtherData(INTERACTION_TYPE.BURY_CHARACTER, new object[] { targetStructure });
+            _owner.jobQueue.AddJobInQueue(buryJob);
+        }
     }
     #endregion
 

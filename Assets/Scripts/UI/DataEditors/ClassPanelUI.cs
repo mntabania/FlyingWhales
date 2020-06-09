@@ -28,6 +28,7 @@ public class ClassPanelUI : MonoBehaviour {
     public InputField attackRangeInput;
     public InputField inventoryCapacityInput;
     public InputField interestedItemNamesInput;
+    public InputField staminaReductionInput;
 
     //public Toggle nonCombatantToggle;
 
@@ -237,6 +238,7 @@ public class ClassPanelUI : MonoBehaviour {
         baseAttackSpeedInput.text = "1";
         attackRangeInput.text = "1";
         inventoryCapacityInput.text = "0";
+        staminaReductionInput.text = "0";
 
         //weaponsOptions.value = 0;
         //armorsOptions.value = 0;
@@ -346,6 +348,7 @@ public class ClassPanelUI : MonoBehaviour {
         //hpPerLevelInput.text = characterClass.hpPerLevel.ToString();
         baseAttackSpeedInput.text = characterClass.baseAttackSpeed.ToString();
         attackRangeInput.text = characterClass.attackRange.ToString();
+        staminaReductionInput.text = characterClass.staminaReduction.ToString();
         //interestedItemNamesInput.text = characterClass.runSpeedMod.ToString();
         inventoryCapacityInput.text = characterClass.inventoryCapacity.ToString();
         interestedItemNamesInput.text = UtilityScripts.Utilities.ConvertArrayToString(characterClass.interestedItemNames, ',');

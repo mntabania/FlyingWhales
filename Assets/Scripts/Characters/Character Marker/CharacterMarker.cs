@@ -124,7 +124,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public void ManualUpdate() {
         if (GameManager.Instance.gameHasStarted && !GameManager.Instance.isPaused) {
             if (character.isBeingSeized) { return; }
-            if (attackSpeedMeter < character.attackSpeed) {
+            if (attackSpeedMeter < character.combatComponent.attackSpeed) {
                 attackSpeedMeter += ((Time.deltaTime * 1000f) * progressionSpeedMultiplier);
                 UpdateAttackSpeedMeter();
             }
@@ -1383,7 +1383,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     #region Combat
     public void UpdateAttackSpeedMeter() {
         if (hpBarGO.activeSelf) {
-            aspeedFill.fillAmount = attackSpeedMeter / character.attackSpeed;
+            aspeedFill.fillAmount = attackSpeedMeter / character.combatComponent.attackSpeed;
         }
     }
     public void ResetAttackSpeed() {
@@ -1391,7 +1391,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         UpdateAttackSpeedMeter();
     }
     public bool CanAttackByAttackSpeed() {
-        return attackSpeedMeter >= character.attackSpeed;
+        return attackSpeedMeter >= character.combatComponent.attackSpeed;
     }
     private readonly RaycastHit2D[] linOfSightHitObjects = new RaycastHit2D[5];
     public bool IsCharacterInLineOfSightWith(IPointOfInterest target, float rayDistance = 5f) {

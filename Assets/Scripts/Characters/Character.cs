@@ -32,18 +32,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     protected LocationStructure _currentStructure; //what structure is this character currently in.
     protected Region _currentRegion;
 
-    //Stats
-    //protected SIDES _currentSide;
-    protected int _currentHP;
-    protected int _maxHP;
-    //protected int _level;
-    //protected int _experience;
-    //protected int _maxExperience;
-    protected int _sp;
-
     //visuals
     public CharacterVisuals visuals { get; }
     public BaseMapObjectVisual mapObjectVisual => marker;
+    public int currentHP { get; protected set; }
     public int doNotRecoverHP { get; protected set; }
     public SEXUALITY sexuality { get; private set; }
     public int attackPowerMod { get; protected set; }
@@ -206,31 +198,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public BaseSettlement currentSettlement => gridTileLocation != null 
         && gridTileLocation.collectionOwner.isPartOfParentRegionMap ? 
         gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile : null;
-    //public int level => _level;
-    //public int experience => _experience;
-    //public int maxExperience => _maxExperience;
-    //public int speed {
-    //    get {
-    //        int total = (int) ((_characterClass.baseSpeed + speedMod) * (1f + ((_raceSetting.speedModifier + speedPercentMod) / 100f)));
-    //        if (total < 0) {
-    //            return 1;
-    //        }
-    //        return total;
-    //    }
-    //}
-    public int attackPower {
-        get {
-            return Mathf.RoundToInt(_characterClass.baseAttackPower * (_raceSetting.attackMultiplier == 0f ? 1f : _raceSetting.attackMultiplier));
-            //int total = (int) ((_characterClass.baseAttackPower + attackPowerMod) * (1f + ((_raceSetting.attackPowerModifier + attackPowerPercentMod) / 100f)));
-            //if (total < 0) {
-            //    return 1;
-            //}
-            //return total;
-        }
-    }
-    public int maxHP => _maxHP;
-    public int currentHP => _currentHP;
-    public int attackSpeed => _characterClass.baseAttackSpeed; //in milliseconds, The lower the amount the faster the attack rate
     public Minion minion => _minion;
     public POINT_OF_INTEREST_TYPE poiType => POINT_OF_INTEREST_TYPE.CHARACTER;
     public LocationGridTile gridTileLocation {
@@ -270,6 +237,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             return _currentStructure;
         }
     }
+    public int maxHP => combatComponent.maxHP;
     public Vector3 worldPosition => marker.transform.position;
     public Vector2 selectableSize => visuals.selectableSize;
     public ProjectileReceiver projectileReceiver => marker.visionTrigger.projectileReceiver;
@@ -294,35 +262,85 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool isSettlementRuler => ruledSettlement != null;
     #endregion
 
-    public Character(string className, RACE race, GENDER gender) : this() {
-        _id = UtilityScripts.Utilities.SetID(this);
-        _gender = gender;
-        RaceSetting raceSetting = RaceManager.Instance.racesDictionary[race.ToString()];
-        _raceSetting = raceSetting.CreateNewCopy();
-        AssignClass(className, true);
-        SetName(RandomNameGenerator.GenerateRandomName(_raceSetting.race, _gender));
-        GenerateSexuality();
-        UpdateMaxHPAndReset();
-        visuals = new CharacterVisuals(this);
-    }
     public Character(string className, RACE race, GENDER gender, SEXUALITY sexuality, int id = -1) : this() {
         _id = id == -1 ? UtilityScripts.Utilities.SetID(this) : id;
         _gender = gender;
-        RaceSetting raceSetting = RaceManager.Instance.racesDictionary[race.ToString()];
-        _raceSetting = raceSetting.CreateNewCopy();
         AssignClass(className, true);
+        AssignRace(race, true);
         SetName(RandomNameGenerator.GenerateRandomName(_raceSetting.race, _gender));
         SetSexuality(sexuality);
-        UpdateMaxHPAndReset();
         visuals = new CharacterVisuals(this);
+        needsComponent.UpdateBaseStaminaDecreaseRate();
+        combatComponent.UpdateBasicData(true);
+    }
+    public Character(string className, RACE race, GENDER gender) : this() {
+        _id = UtilityScripts.Utilities.SetID(this);
+        _gender = gender;
+        AssignClass(className, true);
+        AssignRace(race, true);
+        SetName(RandomNameGenerator.GenerateRandomName(_raceSetting.race, _gender));
+        GenerateSexuality();
+        visuals = new CharacterVisuals(this);
+        needsComponent.UpdateBaseStaminaDecreaseRate();
+        combatComponent.UpdateBasicData(true);
+    }
+    private Character() {
+        SetIsDead(false);
+        _overrideThoughts = new List<string>();
+
+        //Needs
+
+        //RPG
+        //SetExperience(0);
+
+        //Traits
+        CreateTraitContainer();
+
+        // combatHistory = new Dictionary<int, Combat>();
+        advertisedActions = new List<INTERACTION_TYPE>();
+        items = new List<TileObject>();
+        ownedItems = new List<TileObject>();
+        allJobsTargetingThis = new List<JobQueueItem>();
+        traitsNeededToBeRemoved = new List<Trait>();
+        onLeaveAreaActions = new List<Action>();
+        pendingActionsAfterMultiThread = new List<Action>();
+        forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
+        territorries = new List<HexTile>();
+        SetPOIState(POI_STATE.ACTIVE);
+        ConstructResources();
+
+        //for testing
+        locationHistory = new List<string>();
+        actionHistory = new List<string>();
+
+        //hostiltiy
+        ignoreHostility = 0;
+
+        //Components
+        needsComponent = new CharacterNeedsComponent(this);
+        stateComponent = new CharacterStateComponent(this);
+        jobQueue = new JobQueue(this);
+        trapStructure = new TrapStructure();
+        planner = new GoapPlanner(this);
+        nonActionEventsComponent = new NonActionEventsComponent(this);
+        interruptComponent = new InterruptComponent(this);
+        behaviourComponent = new BehaviourComponent(this);
+        moodComponent = new MoodComponent(this);
+        jobComponent = new CharacterJobTriggerComponent(this);
+        reactionComponent = new ReactionComponent(this);
+        logComponent = new LogComponent(this);
+        combatComponent = new CombatComponent(this);
+        rumorComponent = new RumorComponent(this);
+        movementComponent = new MovementComponent(this);
+
+        needsComponent.ResetSleepTicks();
     }
     public Character(SaveDataCharacter data) {
         _id = UtilityScripts.Utilities.SetID(this, data.id);
         _gender = data.gender;
         SetSexuality(data.sexuality);
         AssignClass(data.className, true);
-        RaceSetting raceSetting = RaceManager.Instance.racesDictionary[data.race.ToString()];
-        _raceSetting = raceSetting.CreateNewCopy();
+        AssignRace(race, true);
         SetName(data.name);
         visuals = new CharacterVisuals(data);
         
@@ -346,56 +364,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
         SetIsDead(data.isDead);
     }
-    private Character() {
-        SetIsDead(false);
-        _overrideThoughts = new List<string>();
-        
-        //Needs
-        needsComponent = new CharacterNeedsComponent(this);
-        
-        //RPG
-        //SetExperience(0);
-
-        //Traits
-        CreateTraitContainer();
-
-        // combatHistory = new Dictionary<int, Combat>();
-        advertisedActions = new List<INTERACTION_TYPE>();
-        items = new List<TileObject>();
-        ownedItems = new List<TileObject>();
-        allJobsTargetingThis = new List<JobQueueItem>();
-        traitsNeededToBeRemoved = new List<Trait>();
-        onLeaveAreaActions = new List<Action>();
-        pendingActionsAfterMultiThread = new List<Action>();
-        forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
-        territorries = new List<HexTile>();
-        SetPOIState(POI_STATE.ACTIVE);
-        needsComponent.ResetSleepTicks();
-        ConstructResources();
-
-        //for testing
-        locationHistory = new List<string>();
-        actionHistory = new List<string>();
-
-        //hostiltiy
-        ignoreHostility = 0;
-
-        //Components
-        stateComponent = new CharacterStateComponent(this);
-        jobQueue = new JobQueue(this);
-        trapStructure = new TrapStructure();
-        planner = new GoapPlanner(this);
-        nonActionEventsComponent = new NonActionEventsComponent(this);
-        interruptComponent = new InterruptComponent(this);
-        behaviourComponent = new BehaviourComponent(this);
-        moodComponent = new MoodComponent(this);
-        jobComponent = new CharacterJobTriggerComponent(this);
-        reactionComponent = new ReactionComponent(this);
-        logComponent = new LogComponent(this);
-        combatComponent = new CombatComponent(this);
-        rumorComponent = new RumorComponent(this);
-        movementComponent = new MovementComponent(this);
-    }
 
     //This is done separately after all traits have been loaded so that the data will be accurate
     //It is because all traits are added again, this would mean that OnAddedTrait will also be called
@@ -410,8 +378,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //_doNotGetLonely = data.doNotGetLonely;
         //_doNotGetTired = data.doNotGetTired;
 
-        _maxHP = data.maxHP;
-        _currentHP = data.currentHP;
+        currentHP = data.currentHP;
         //_level = data.level;
         //_experience = data.experience;
         //_maxExperience = data.maxExperience;
@@ -764,13 +731,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     protected void OnUpdateCharacterClass() {
-        UpdateMaxHPAndReset();
-        //if (_currentHP > maxHP) {
-        //    _currentHP = maxHP;
-        //}
-        //if (_sp > _maxSP) {
-        //    _sp = _maxSP;
-        //}
+        combatComponent.UpdateBasicData(true);
+        needsComponent.UpdateBaseStaminaDecreaseRate();
         for (int i = 0; i < _characterClass.traitNames.Length; i++) {
             traitContainer.AddTrait(this, _characterClass.traitNames[i]);
         }
@@ -789,7 +751,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
         _characterClass = characterClass;
-        behaviourComponent.OnChangeClass(_characterClass, previousClass);
+        //behaviourComponent.OnChangeClass(_characterClass, previousClass);
         if (!isInitial) {
             OnUpdateCharacterClass();
             Messenger.Broadcast(Signals.CHARACTER_CLASS_CHANGE, this, previousClass, _characterClass);
@@ -1584,7 +1546,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #endregion
 
     #region Utilities
-    public bool ChangeRace(RACE race) {
+    public bool AssignRace(RACE race, bool isInitial = false) {
         if(_raceSetting == null || _raceSetting.race != race) {
             if (_raceSetting != null) {
                 if (_raceSetting.race == race) {
@@ -1596,13 +1558,17 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
             RaceSetting rs = RaceManager.Instance.racesDictionary[race.ToString()];
             _raceSetting = rs.CreateNewCopy();
-            OnUpdateRace();
-            Messenger.Broadcast(Signals.CHARACTER_CHANGED_RACE, this);
+            if (!isInitial) {
+                OnUpdateRace();
+                Messenger.Broadcast(Signals.CHARACTER_CHANGED_RACE, this);
+            }
             return true;
         }
         return false;
     }
     protected void OnUpdateRace() {
+        combatComponent.UpdateBasicData(true);
+        needsComponent.UpdateBaseStaminaDecreaseRate();
         for (int i = 0; i < _raceSetting.traitNames.Length; i++) {
             traitContainer.AddTrait(this, _raceSetting.traitNames[i]);
         }
@@ -1621,12 +1587,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         } else {
             RemoveAdvertisedAction(INTERACTION_TYPE.REPORT_CORRUPTED_STRUCTURE);
         }
-    }
-    private void ChangeClass(string className) {
-        //string previousClassName = _characterClass.className;
-        AssignClass(className);
-        //_characterClass = charClass.CreateNewCopy();
-
     }
     public void ChangeGender(GENDER gender) {
         _gender = gender;
@@ -2430,8 +2390,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
         ELEMENTAL_TYPE elementalType = characterThatAttacked.combatComponent.elementalDamage.type;
-        AdjustHP(-characterThatAttacked.attackPower, elementalType, source: characterThatAttacked, showHPBar: true);
-        attackSummary += $"\nDealt damage {stateComponent.character.attackPower}";
+        AdjustHP(-characterThatAttacked.combatComponent.attack, elementalType, source: characterThatAttacked, showHPBar: true);
+        attackSummary += $"\nDealt damage {stateComponent.character.combatComponent.attack}";
 
         //If the hostile reaches 0 hp, evalueate if he/she dies, get knock out, or get injured
         if (currentHP <= 0) {
@@ -2485,226 +2445,26 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #endregion
 
     #region RPG
-    public void UpdateMaxHPAndReset() {
-        //_level = 1;
-        UpdateMaxHP();
-        ResetToFullHP();
-    }
-
-    //private bool hpMagicRangedStatMod;
-    //public virtual void LevelUp() {
-    //    //Only level up once per day
-    //    if (_level < CharacterManager.Instance.maxLevel) {
-    //        _level += 1;
-    //        //Add stats per level from class
-    //        if (_characterClass.rangeType == RANGE_TYPE.MELEE) {//_characterClass.attackType == ATTACK_TYPE.PHYSICAL &&  = Commented this because if the character is a MAGICAL MELEE, he cannot level up
-    //            AdjustAttackMod(_characterClass.attackPowerPerLevel);
-    //            AdjustSpeedMod(_characterClass.speedPerLevel);
-    //            AdjustMaxHPMod(_characterClass.hpPerLevel);
-    //        } else if (_characterClass.attackType == ATTACK_TYPE.PHYSICAL && _characterClass.rangeType == RANGE_TYPE.RANGED) {
-    //            if (_level % 2 == 0) {
-    //                //even
-    //                AdjustMaxHPMod(_characterClass.hpPerLevel);
-    //            } else {
-    //                //odd
-    //                AdjustAttackMod(_characterClass.attackPowerPerLevel);
-    //            }
-    //            AdjustSpeedMod(_characterClass.speedPerLevel);
-    //        } else if (_characterClass.attackType == ATTACK_TYPE.MAGICAL && _characterClass.rangeType == RANGE_TYPE.RANGED) {
-    //            if (!hpMagicRangedStatMod) {
-    //                AdjustAttackMod(_characterClass.attackPowerPerLevel);
-    //            } else {
-    //                AdjustMaxHPMod(_characterClass.hpPerLevel);
-    //            }
-    //            if ((_level - 1) % 2 == 0) {
-    //                hpMagicRangedStatMod = !hpMagicRangedStatMod;
-    //            }
-    //            AdjustSpeedMod(_characterClass.speedPerLevel);
-    //        }
-    //        UpdateMaxHP();
-    //        //Reset to full health and sp
-    //        ResetToFullHP();
-
-    //        Messenger.Broadcast(Signals.CHARACTER_LEVEL_CHANGED, this);
-    //    }
-    //}
-    //public void LevelUp(int amount) {
-    //    //Only level up once per day
-    //    //if (_lastLevelUpDay == GameManager.Instance.continuousDays) {
-    //    //    return;
-    //    //}
-    //    //_lastLevelUpDay = GameManager.Instance.continuousDays;
-    //    int supposedLevel = _level + amount;
-    //    if (supposedLevel > CharacterManager.Instance.maxLevel) {
-    //        amount = CharacterManager.Instance.maxLevel - level;
-    //    } else if (supposedLevel < 0) {
-    //        amount -= (supposedLevel - 1);
-    //    }
-    //    //Add stats per level from class
-    //    if (_characterClass.rangeType == RANGE_TYPE.MELEE) {//_characterClass.attackType == ATTACK_TYPE.PHYSICAL &&  = Commented this because if the character is a MAGICAL MELEE, he cannot level up
-    //        AdjustAttackMod(_characterClass.attackPowerPerLevel * amount);
-    //        AdjustSpeedMod(_characterClass.speedPerLevel * amount);
-    //        AdjustMaxHPMod(_characterClass.hpPerLevel * amount);
-    //    } else if (_characterClass.attackType == ATTACK_TYPE.PHYSICAL && _characterClass.rangeType == RANGE_TYPE.RANGED) {
-    //        int multiplier = (amount < 0 ? -1 : 1);
-    //        int range = amount * multiplier;
-    //        if (range > 0) {
-    //            for (int i = 0; i < range; i++) {
-    //                if (i % 2 == 0) {
-    //                    //even
-    //                    AdjustMaxHPMod(_characterClass.hpPerLevel * multiplier);
-    //                } else {
-    //                    //odd
-    //                    AdjustAttackMod(_characterClass.attackPowerPerLevel * multiplier);
-    //                }
-    //            }
-    //        }
-    //        AdjustSpeedMod(_characterClass.speedPerLevel * amount);
-    //    } else if (_characterClass.attackType == ATTACK_TYPE.MAGICAL && _characterClass.rangeType == RANGE_TYPE.RANGED) {
-    //        int multiplier = (amount < 0 ? -1 : 1);
-    //        int range = amount * multiplier;
-    //        if (range > 0) {
-    //            for (int i = _level; i <= _level + range; i++) {
-    //                if (!hpMagicRangedStatMod) {
-    //                    AdjustAttackMod(_characterClass.attackPowerPerLevel * multiplier);
-    //                } else {
-    //                    AdjustMaxHPMod(_characterClass.hpPerLevel * multiplier);
-    //                }
-    //                if (i != 1 && (i - 1) % 2 == 0) {
-    //                    hpMagicRangedStatMod = !hpMagicRangedStatMod;
-    //                }
-    //            }
-    //        }
-    //        AdjustSpeedMod(_characterClass.speedPerLevel * amount);
-    //    }
-    //    _level += amount;
-
-    //    UpdateMaxHP();
-    //    //Reset to full health and sp
-    //    ResetToFullHP();
-    //    //ResetToFullSP();
-    //    Messenger.Broadcast(Signals.CHARACTER_LEVEL_CHANGED, this);
-    //    //if (_playerCharacterItem != null) {
-    //    //    _playerCharacterItem.UpdateMinionItem();
-    //    //}
-    //}
-    //public void SetLevel(int amount) {
-        //int previousLevel = _level;
-        //_level = amount;
-        //if (_level < 1) {
-        //    _level = 1;
-        //} else if (_level > CharacterManager.Instance.maxLevel) {
-        //    _level = CharacterManager.Instance.maxLevel;
-        //}
-
-        ////Add stats per level from class
-        //int difference = _level - previousLevel;
-        //if (_characterClass.rangeType == RANGE_TYPE.MELEE) {//_characterClass.attackType == ATTACK_TYPE.PHYSICAL &&  = Commented this because if the character is a MAGICAL MELEE, he cannot level up
-        //    AdjustAttackMod(_characterClass.attackPowerPerLevel * difference);
-        //    AdjustSpeedMod(_characterClass.speedPerLevel * difference);
-        //    AdjustMaxHPMod(_characterClass.hpPerLevel * difference);
-        //} else if (_characterClass.attackType == ATTACK_TYPE.PHYSICAL && _characterClass.rangeType == RANGE_TYPE.RANGED) {
-        //    int multiplier = (difference < 0 ? -1 : 1);
-        //    int range = difference * multiplier;
-        //    if (range > 0) {
-        //        for (int i = 0; i < range; i++) {
-        //            if (i % 2 == 0) {
-        //                //even
-        //                AdjustMaxHPMod(_characterClass.hpPerLevel * multiplier);
-        //            } else {
-        //                //odd
-        //                AdjustAttackMod(_characterClass.attackPowerPerLevel * multiplier);
-        //            }
-        //        }
-        //    }
-        //    AdjustSpeedMod(_characterClass.speedPerLevel * difference);
-        //} else if (_characterClass.attackType == ATTACK_TYPE.MAGICAL && _characterClass.rangeType == RANGE_TYPE.RANGED) {
-        //    int multiplier = (difference < 0 ? -1 : 1);
-        //    int range = difference * multiplier;
-        //    if (range > 0) {
-        //        for (int i = _level; i <= _level + range; i++) {
-        //            if (!hpMagicRangedStatMod) {
-        //                AdjustAttackMod(_characterClass.attackPowerPerLevel * multiplier);
-        //            } else {
-        //                AdjustMaxHPMod(_characterClass.hpPerLevel * multiplier);
-        //            }
-        //            if (i != 1 && (i - 1) % 2 == 0) {
-        //                hpMagicRangedStatMod = !hpMagicRangedStatMod;
-        //            }
-        //        }
-        //    }
-        //    AdjustSpeedMod(_characterClass.speedPerLevel * difference);
-        //}
-
-        //UpdateMaxHP();
-        ////Reset to full health and sp
-        //ResetToFullHP();
-        ////ResetToFullSP();
-        //Messenger.Broadcast(Signals.CHARACTER_LEVEL_CHANGED, this);
-        ////if (_playerCharacterItem != null) {
-        ////    _playerCharacterItem.UpdateMinionItem();
-        ////}
-
-        ////Reset Experience
-        ////_experience = 0;
-        ////RecomputeMaxExperience();
-    //}
-    //public void AdjustExperience(int amount) {
-    //    _experience += amount;
-    //    if (_experience >= _maxExperience) {
-    //        SetExperience(0);
-    //        //LevelUp();
-    //    }
-    //}
-    //public void SetExperience(int amount) {
-    //    _experience = amount;
-    //}
-    //private void RecomputeMaxExperience() {
-    //    _maxExperience = Mathf.CeilToInt(100f * ((Mathf.Pow((float) _level, 1.25f)) / 1.1f));
-    //}
-    //public void SetMaxExperience(int amount) {
-    //    _maxExperience = amount;
-    //}
-    //public void AdjustElementalWeakness(ELEMENT element, float amount) {
-    //    _elementalWeaknesses[element] += amount;
-    //}
-    //public void AdjustElementalResistance(ELEMENT element, float amount) {
-    //    _elementalResistances[element] += amount;
-    //}
-    //public void AdjustSP(int amount) {
-    //    _sp += amount;
-    //    _sp = Mathf.Clamp(_sp, 0, _maxSP);
-    //}
     public void ResetToFullHP() {
         SetHP(maxHP);
     }
-    //public void ResetToFullSP() {
-    //    AdjustSP(_maxSP);
-    //}
-    //private float GetComputedPower() {
-    //    float compPower = 0f;
-    //    for (int i = 0; i < currentParty.characters.Count; i++) {
-    //        compPower += currentParty.characters[i].attackPower;
-    //    }
-    //    return compPower;
-    //}
     public void SetHP(int amount) {
-        _currentHP = amount;
+        currentHP = amount;
     }
     //Adjust current HP based on specified paramater, but HP must not go below 0
     public virtual void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false,
         object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false) {
         
         CombatManager.Instance.DamageModifierByElements(ref amount, elementalDamageType, this);
-        int previous = _currentHP;
-        _currentHP += amount;
-        _currentHP = Mathf.Clamp(_currentHP, 0, maxHP);
+        int previous = currentHP;
+        currentHP += amount;
+        currentHP = Mathf.Clamp(currentHP, 0, maxHP);
         Messenger.Broadcast(Signals.ADJUSTED_HP, this);
         if (marker && showHPBar) {
             if (marker.hpBarGO.activeSelf) {
                 marker.UpdateHP(this);
             } else {
-                if (amount < 0 && _currentHP > 0) {
+                if (amount < 0 && currentHP > 0) {
                     //only show hp bar if hp was reduced and hp is greater than 0
                     marker.QuickShowHPBar(this);
                 }
@@ -2727,7 +2487,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //hp was increased
             Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.RECOVER_HP, this as IPointOfInterest);
         }
-        if (triggerDeath && _currentHP <= 0) {
+        if (triggerDeath && currentHP <= 0) {
             if(source != null) {
                 if (source is Character character) {
                     Death("attacked", responsibleCharacter: character);
@@ -2744,104 +2504,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             // Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, this, "critically low health");
         }
     }
-    public void AdjustAttackMod(int amount) {
-        attackPowerMod += amount;
-        //currentAlterEgo.SetAttackPowerMod(attackPowerMod);
-    }
-    public void AdjustAttackPercentMod(int amount) {
-        attackPowerPercentMod += amount;
-        //currentAlterEgo.SetAttackPowerPercentMod(attackPowerPercentMod);
-    }
-    public void SetAttackMod(int amount) {//, bool includeAlterEgo = true
-        attackPowerMod = amount;
-        //if (includeAlterEgo) {
-        //currentAlterEgo.SetAttackPowerMod(attackPowerMod);
-        //}
-    }
-    public void SetAttackPercentMod(int amount) {//, bool includeAlterEgo = true
-        attackPowerPercentMod = amount;
-        //if (includeAlterEgo) {
-        //currentAlterEgo.SetAttackPowerPercentMod(attackPowerPercentMod);
-        //}
-    }
-    public void AdjustMaxHPMod(int amount) {
-        int previousMaxHP = maxHP;
-        maxHPMod += amount;
-        //currentAlterEgo.SetMaxHPMod(maxHPMod);
-        UpdateMaxHP();
-        int currentMaxHP = maxHP;
-        if (_currentHP > currentMaxHP || _currentHP == previousMaxHP) {
-            _currentHP = currentMaxHP;
-        }
-    }
-    public void AdjustMaxHPPercentMod(int amount) {
-        int previousMaxHP = maxHP;
-        maxHPPercentMod += amount;
-        //currentAlterEgo.SetMaxHPPercentMod(maxHPPercentMod);
-        UpdateMaxHP();
-        int currentMaxHP = maxHP;
-        if (_currentHP > currentMaxHP || _currentHP == previousMaxHP) {
-            _currentHP = currentMaxHP;
-        }
-    }
-    public void SetMaxHPMod(int amount) {//, bool includeAlterEgo = true
-        int previousMaxHP = maxHP;
-        maxHPMod = amount;
-        //if (includeAlterEgo) {
-        //currentAlterEgo.SetMaxHPMod(maxHPMod);
-        //}
-        UpdateMaxHP();
-        int currentMaxHP = maxHP;
-        if (_currentHP > currentMaxHP || _currentHP == previousMaxHP) {
-            _currentHP = currentMaxHP;
-        }
-    }
-    public void SetMaxHPPercentMod(int amount) {//, bool includeAlterEgo = true
-        int previousMaxHP = maxHP;
-        maxHPPercentMod = amount;
-        //if (includeAlterEgo) {
-        //currentAlterEgo.SetMaxHPPercentMod(maxHPPercentMod);
-        //}
-        UpdateMaxHP();
-        int currentMaxHP = maxHP;
-        if (_currentHP > currentMaxHP || _currentHP == previousMaxHP) {
-            _currentHP = currentMaxHP;
-        }
-    }
-    public void UpdateMaxHP() {
-        _maxHP = Mathf.RoundToInt(_characterClass.baseHP * (_raceSetting.hpMultiplier == 0f ? 1f : _raceSetting.hpMultiplier));
-        //_maxHP = (int) (((_characterClass.baseHP + maxHPMod) * (1f + ((_raceSetting.hpModifier + maxHPPercentMod) / 100f))) * 4f);
-        if (_maxHP < 0) {
-            _maxHP = 1;
-        }
-    }
     public void HPRecovery(float maxHPPercentage) {
         if (doNotRecoverHP <= 0 && currentHP < maxHP && currentHP > 0) {
             AdjustHP(Mathf.CeilToInt(maxHPPercentage * maxHP), ELEMENTAL_TYPE.Normal);
         }
     }
-    public void AdjustSpeedMod(int amount) {
-        speedMod += amount;
-        //currentAlterEgo.SetSpeedMod(speedMod);
-    }
-    public void AdjustSpeedPercentMod(int amount) {
-        speedPercentMod += amount;
-        //currentAlterEgo.SetSpeedPercentMod(speedPercentMod);
-    }
-    public void SetSpeedMod(int amount) { //, bool includeAlterEgo = true
-        speedMod = amount;
-        //if (includeAlterEgo) {
-        //currentAlterEgo.SetSpeedMod(speedMod);
-        //}
-    }
-    public void SetSpeedPercentMod(int amount) { //, bool includeAlterEgo = true
-        speedPercentMod = amount;
-        //if (includeAlterEgo) {
-        //currentAlterEgo.SetSpeedPercentMod(speedPercentMod);
-        //}
-    }
     public bool IsHealthFull() {
-        return _currentHP >= maxHP;
+        return currentHP >= maxHP;
     }
     public bool IsHealthCriticallyLow() {
         //chance based dependent on the character
@@ -3666,6 +3335,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return null;
     }
+    public TileObject GetRandomItem() {
+        if(items.Count > 0) {
+            return items[UnityEngine.Random.Range(0, items.Count)];
+        }
+        return null;
+    }
     public bool HasItem(TileObject item) {
         return GetItem(item) != null;
     }
@@ -3674,6 +3349,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public bool HasItem(string itemName) {
         return GetItem(itemName) != null;
+    }
+    public bool HasItem() {
+        return items.Count > 0;
     }
     public bool IsInventoryAtFullCapacity() {
         return items.Count >= characterClass.inventoryCapacity;
@@ -5582,7 +5260,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             yield return new WaitForSeconds(0.7f);
         }
         target.ReturnToLife(faction, race, className);
-        target.UpdateMaxHPAndReset();
+        target.combatComponent.UpdateMaxHPAndReset();
         yield return null;
         onReturnToLifeAction?.Invoke(this);
     }
@@ -5594,7 +5272,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             ResetToFullHP();
             SetPOIState(POI_STATE.ACTIVE);
             ChangeFactionTo(faction);
-            ChangeRace(race);
+            AssignRace(race);
             // AssignRole(CharacterRole.SOLDIER);
             // if (string.IsNullOrEmpty(className)) {
             //     AssignClassByRole(this.role);

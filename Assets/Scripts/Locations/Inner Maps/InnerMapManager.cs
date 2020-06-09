@@ -452,7 +452,7 @@ namespace Inner_Maps {
             summary = $"{summary} <b>Can Be Attacked:</b>{character.canBeAtttacked.ToString()}";
             summary = $"{summary} <b>Move Speed:</b>{character.marker.pathfindingAI.speed.ToString()}";
             summary = $"{summary} <b>Attack Range:</b>{character.characterClass.attackRange.ToString()}";
-            summary = $"{summary} <b>Attack Speed:</b>{character.attackSpeed.ToString()}";
+            summary = $"{summary} <b>Attack Speed:</b>{character.combatComponent.attackSpeed.ToString()}";
             summary = $"{summary} <b>Target POI:</b>{(character.marker.targetPOI?.name ?? "None")}";
             summary =
                 $"{summary} <b>Base Structure:</b>{(character.trapStructure.structure != null ? character.trapStructure.structure.ToString() : "None")}";

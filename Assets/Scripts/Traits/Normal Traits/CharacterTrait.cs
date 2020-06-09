@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Inner_Maps;
 using UnityEngine;
+using Locations.Settlements;
 
 namespace Traits {
     //This trait is present in all characters
@@ -66,19 +67,29 @@ namespace Traits {
                     }
                 }
             }
-            if(targetPOI is Character targetCharacter && !targetCharacter.isDead) {
-                if (targetCharacter.race == RACE.SKELETON || targetCharacter.characterClass.className == "Zombie") {
-                    string opinionLabel = characterThatWillDoJob.relationshipContainer.GetOpinionLabel(targetCharacter);
-                    if (opinionLabel == RelationshipManager.Friend) {
-                        if (!charactersAlreadySawForHope.Contains(targetCharacter)) {
-                            charactersAlreadySawForHope.Add(targetCharacter);
-                            characterThatWillDoJob.needsComponent.AdjustHope(-5f);
+            if(targetPOI is Character targetCharacter) {
+                if (!targetCharacter.isDead) {
+                    if (!targetCharacter.isNormalCharacter) {
+                        string opinionLabel = characterThatWillDoJob.relationshipContainer.GetOpinionLabel(targetCharacter);
+                        if (opinionLabel == RelationshipManager.Friend) {
+                            if (!charactersAlreadySawForHope.Contains(targetCharacter)) {
+                                charactersAlreadySawForHope.Add(targetCharacter);
+                                characterThatWillDoJob.needsComponent.AdjustHope(-5f);
+                            }
+                        } else if (opinionLabel == RelationshipManager.Close_Friend) {
+                            if (!charactersAlreadySawForHope.Contains(targetCharacter)) {
+                                charactersAlreadySawForHope.Add(targetCharacter);
+                                characterThatWillDoJob.needsComponent.AdjustHope(-10f);
+                            }
                         }
-                    } else if (opinionLabel == RelationshipManager.Close_Friend) {
-                        if (!charactersAlreadySawForHope.Contains(targetCharacter)) {
-                            charactersAlreadySawForHope.Add(targetCharacter);
-                            characterThatWillDoJob.needsComponent.AdjustHope(-10f);
-                        }
+                    }
+                } else {
+                    //If a villager is dead and is seen outside the village, bury it
+                    if(owner.isNormalCharacter 
+                        && targetCharacter.isNormalCharacter 
+                        && targetCharacter.gridTileLocation != null 
+                        && (!targetCharacter.gridTileLocation.IsPartOfSettlement() || (targetCharacter.gridTileLocation.IsPartOfSettlement(out BaseSettlement settlement) && settlement.locationType != LOCATION_TYPE.ELVEN_SETTLEMENT && settlement.locationType != LOCATION_TYPE.HUMAN_SETTLEMENT))) {
+                        owner.jobComponent.TriggerPersonalBuryJob(targetCharacter);
                     }
                 }
             }

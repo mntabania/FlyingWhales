@@ -26,7 +26,7 @@ public class BuryCharacter : GoapAction {
         if (otherData != null && otherData.Length >= 1 && otherData[0] is LocationStructure) {
             return otherData[0] as LocationStructure;
         } else {
-            return actor.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.CEMETERY);
+            return actor.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.CEMETERY) ?? actor.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
         }
     }
     public override LocationGridTile GetTargetTileToGoTo(ActualGoapNode goapNode) {
@@ -34,20 +34,23 @@ public class BuryCharacter : GoapAction {
             return goapNode.otherData[1] as LocationGridTile;
         } else {
             LocationStructure targetStructure = GetTargetStructure(goapNode);
-            if (targetStructure.structureType == STRUCTURE_TYPE.WILDERNESS && goapNode.actor.homeSettlement != null) {
-                List<LocationGridTile> validTiles = targetStructure.unoccupiedTiles
-                    .Where(tile => tile.IsNextToSettlement(goapNode.actor.homeSettlement)).ToList();
-                // List<LocationGridTile> validTiles = new List<LocationGridTile>();
-                // goapNode.actor.homeNpcSettlement.tiles.ForEach(t => 
-                //     validTiles.AddRange(
-                //         t.locationGridTiles.Where(x => targetStructure.unoccupiedTiles.Contains(x))
-                //     )
-                // );
-                return CollectionUtilities.GetRandomElement(validTiles);
+            if (targetStructure.structureType == STRUCTURE_TYPE.WILDERNESS) {
+                if(goapNode.actor.homeSettlement != null) {
+                    List<LocationGridTile> validTiles = targetStructure.unoccupiedTiles.Where(tile => tile.IsNextToSettlement(goapNode.actor.homeSettlement)).ToList();
+                    // List<LocationGridTile> validTiles = new List<LocationGridTile>();
+                    // goapNode.actor.homeNpcSettlement.tiles.ForEach(t => 
+                    //     validTiles.AddRange(
+                    //         t.locationGridTiles.Where(x => targetStructure.unoccupiedTiles.Contains(x))
+                    //     )
+                    // );
+                    return CollectionUtilities.GetRandomElement(validTiles);
+                } else if (goapNode.poiTarget.gridTileLocation != null) {
+                    return goapNode.poiTarget.gridTileLocation.GetNearestUnoccupiedTileFromThisWithStructure(targetStructure.structureType);
+                } else if (goapNode.actor.gridTileLocation != null) {
+                    return goapNode.actor.gridTileLocation.GetNearestUnoccupiedTileFromThisWithStructure(targetStructure.structureType);
+                }
             }
         }
-        
-        
         return null; //allow normal logic to pick target tile
     }
     protected override void ConstructBasePreconditionsAndEffects() {
@@ -100,6 +103,11 @@ public class BuryCharacter : GoapAction {
         Tombstone tombstone = new Tombstone();
         tombstone.SetCharacter(targetCharacter);
         goapNode.actor.currentStructure.AddPOI(tombstone, chosenLocation);
+
+        //Note: Added this because it is stated in the Bury Job document that all other bury jobs must be cancelled instantaneously when the character is buried
+        //This might cause some problems because it is a bad form to call cancelling jobs whenever an action of the same type is being done
+        //The other solution is to just let the other systems handle the bury job that is still lingering. It might not be instantaneous, but at least it is not prone to errors
+        targetCharacter.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.BURY);
     }
     #endregion
 

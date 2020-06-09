@@ -754,6 +754,29 @@ namespace Inner_Maps {
             }
             return null;
         }
+        public LocationGridTile GetNearestUnoccupiedTileFromThisWithStructure(STRUCTURE_TYPE structureType) {
+            List<LocationGridTile> unoccupiedNeighbours = UnoccupiedNeighbours;
+            if (unoccupiedNeighbours.Count == 0) {
+                if (structure != null) {
+                    LocationGridTile nearestTile = null;
+                    float nearestDist = 99999f;
+                    for (int i = 0; i < structure.unoccupiedTiles.Count; i++) {
+                        LocationGridTile currTile = structure.unoccupiedTiles.ElementAt(i);
+                        if (currTile != this && currTile.groundType != Ground_Type.Water && currTile.structure != null && currTile.structure.structureType == structureType) {
+                            float dist = Vector2.Distance(currTile.localLocation, localLocation);
+                            if (dist < nearestDist) {
+                                nearestTile = currTile;
+                                nearestDist = dist;
+                            }
+                        }
+                    }
+                    return nearestTile;
+                }
+            } else {
+                return unoccupiedNeighbours[Random.Range(0, unoccupiedNeighbours.Count)];
+            }
+            return null;
+        }
         public LocationGridTile GetNearestEdgeTileFromThis() {
             if (IsAtEdgeOfWalkableMap() && structure != null) {
                 return this;
