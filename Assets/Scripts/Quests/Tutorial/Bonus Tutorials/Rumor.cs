@@ -8,7 +8,7 @@ namespace Tutorial {
 
         private ActualGoapNode _targetAction;
         
-        public Rumor() : base("Log Quest - Rumor", TutorialManager.Tutorial.Rumor) { }
+        public Rumor() : base("Rumor", TutorialManager.Tutorial.Rumor) { }
 
         #region Criteria
         protected override void ConstructCriteria() {

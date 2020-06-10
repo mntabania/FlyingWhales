@@ -9,7 +9,7 @@ namespace Tutorial {
 
         private ActualGoapNode _targetAction;
         
-        public BoobyTrap() : base("Log Quest - Booby Trap", TutorialManager.Tutorial.Booby_Trap) { }
+        public BoobyTrap() : base("Booby Trap", TutorialManager.Tutorial.Booby_Trap) { }
 
         #region Criteria
         protected override void ConstructCriteria() {

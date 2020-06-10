@@ -7,7 +7,7 @@ namespace Tutorial {
 
         private Character _targetCharacter;
         
-        public Griefstricken() : base("Log Quest - Griefstricken", TutorialManager.Tutorial.Griefstricken) { }
+        public Griefstricken() : base("Griefstricken", TutorialManager.Tutorial.Griefstricken) { }
 
         #region Criteria
         protected override void ConstructCriteria() {

@@ -35,7 +35,7 @@ public class ThreatComponent {
             threat = Mathf.Clamp(threat, 0, 100);
 
             if (amount > 0) {
-                Messenger.Broadcast(Signals.THREAT_INCREASED);
+                Messenger.Broadcast(Signals.THREAT_INCREASED, amount);
             }
 
             if (hasReachedMax) {
