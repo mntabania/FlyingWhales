@@ -38,7 +38,8 @@ namespace Tutorial {
                             && tileObject.characterOwner.isDead == false && tileObject.characterOwner.traitContainer.HasTrait("Blessed") == false)
                         .SetHoverOverAction(OnHoverOwnership)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo),
-                    new DropPOIAtStructureStep(IsDroppedAtStructureValid, poi => poi is TileObject tileObject && tileObject.characterOwner != null,
+                    new DropPOIAtStructureStep(IsDroppedAtStructureValid, poi => poi is TileObject tileObject && tileObject.characterOwner != null
+                            && tileObject.characterOwner.isDead == false && tileObject.characterOwner.traitContainer.HasTrait("Blessed") == false,
                         "Drop at another one's house")
                         .SetHoverOverAction(OnHoverStructureOwnership)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
