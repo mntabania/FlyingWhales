@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Quests;
 using Quests.Steps;
+using UnityEngine;
 namespace Tutorial {
     public class FrameUp : BonusTutorial {
 
@@ -47,6 +49,7 @@ namespace Tutorial {
                     new DropPOIAtStructureStep(IsDroppedAtSameStructure, poi => _droppedObject.characterOwner == poi,
                             "Drop at the same house")
                         .SetObjectsToCenter(GetHouseToCenter)
+                        .SetCompleteAction(OnCompleteDropAtSameHouse)
                 ),
             };
         }
@@ -109,6 +112,20 @@ namespace Tutorial {
         }
         private List<ISelectable> GetHouseToCenter() {
             return new List<ISelectable>() { _droppedAtStructure };
+        }
+        private void OnCompleteDropAtSameHouse() {
+            TutorialManager.Instance.StartCoroutine(DelayedFrameUpPopup());
+        }
+        private IEnumerator DelayedFrameUpPopup() {
+            yield return new WaitForSecondsRealtime(1.5f);
+            PlayerUI.Instance.ShowGeneralConfirmation("Frame Up", 
+                $"{UtilityScripts.Utilities.VillagerIcon()}Villagers are prone to making suspicious assumptions " +
+                $"especially when they are in Bad or Critical Mood!\n\n" +
+                $"{UtilityScripts.Utilities.ColorizeAction(_droppedObject.characterOwner.name)} just saw " +
+                $"{UtilityScripts.Utilities.GetPronounString(_droppedObject.characterOwner.gender, PRONOUN_TYPE.POSSESSIVE, false)} " +
+                $"{_droppedObject.name} in {UtilityScripts.Utilities.ColorizeAction(_droppedAtStructure.GetNameRelativeTo(_droppedObject.characterOwner))} " +
+                $"and has now assumed that it has been {UtilityScripts.Utilities.ColorizeAction("stolen")}!"
+            );
         }
         #endregion
 

@@ -17,9 +17,9 @@ namespace Tutorial {
         public override void Activate() {
             StopCheckingCriteria();
             UIManager.Instance.generalConfirmationWithVisual.ShowGeneralConfirmation("Threat", 
-                "Careful, your Threat Level has increased! Many of the things you do generate Threat. " +
+                $"Careful, your {UtilityScripts.Utilities.ColorizeAction("Threat Level")} has increased! Many of the things you do generate Threat. " +
                 "Some generate a large fixed amount once you perform it, while some generate small amounts each hour afterwards." +
-                "Something interesting will happen once your Threat Level has reached 100. Be ready!", 
+                $"Something interesting will happen once your Threat Level has reached {UtilityScripts.Utilities.ColorizeAction(ThreatComponent.MAX_THREAT.ToString())}. Be ready!", 
                 TutorialManager.Instance.threatPicture);
             CompleteQuest();
         }
