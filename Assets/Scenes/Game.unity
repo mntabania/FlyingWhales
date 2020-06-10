@@ -33498,6 +33498,11 @@ PrefabInstance:
       propertyPath: characterIconsParent
       value: 
       objectReference: {fileID: 939821326}
+    - target: {fileID: 114341627776737400, guid: e8ad7cb09054f7040b035fdb676023f2,
+        type: 3}
+      propertyPath: lessenCharacterLogs
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e8ad7cb09054f7040b035fdb676023f2, type: 3}
 --- !u!4 &607353880 stripped

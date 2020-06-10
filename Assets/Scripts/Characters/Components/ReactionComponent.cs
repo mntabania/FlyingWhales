@@ -103,7 +103,9 @@ public class ReactionComponent {
         if(reactable.actor != owner && target != owner) {
             if (addLog) {
                 //Only log witness event if event is not an action. If it is an action, the CharacterManager.Instance.CanAddCharacterLogOrShowNotif must return true
-                if (!(reactable is ActualGoapNode action && !CharacterManager.Instance.CanAddCharacterLogOrShowNotif(action.goapType))) {
+                if (reactable is ActualGoapNode action && !CharacterManager.Instance.CanAddCharacterLogOrShowNotif(action.goapType)) {
+                    //Should not add witness log
+                } else {
                     Log witnessLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "witness_event", reactable as ActualGoapNode);
                     witnessLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.PARTY_1); //Used Party 1 identifier so there will be no conflict if reactable.informationLog is a Rumor
                     witnessLog.AddToFillers(null, UtilityScripts.Utilities.LogDontReplace(reactable.informationLog), LOG_IDENTIFIER.APPEND);
