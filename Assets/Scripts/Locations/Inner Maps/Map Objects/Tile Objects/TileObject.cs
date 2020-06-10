@@ -643,9 +643,10 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         } else {
             CreateTileObjectSlots();
         }
-        if (GameManager.Instance.gameHasStarted == false) { //only update owners on initialization.
-            UpdateOwners();
-        }
+        //Moved this to Settlement Generation:
+        // if (GameManager.Instance.gameHasStarted == false) { //only update owners on initialization.
+        //     UpdateOwners();
+        // }
         Messenger.Broadcast(Signals.TILE_OBJECT_PLACED, this, tile);
     }
     private bool HasSlotSettings() {

@@ -31,7 +31,10 @@ namespace Inner_Maps.Location_Structures {
             List<TileObject> objs = GetTileObjects();
             for (int i = 0; i < objs.Count; i++) {
                 TileObject obj = objs[i];
-                obj.UpdateOwners();
+                if (obj.isPreplaced) {
+                    //only update owners of objects that were preplaced
+                    obj.UpdateOwners();    
+                }
             }
         }
         protected override void OnRemoveResident(Character newResident) {
@@ -39,7 +42,10 @@ namespace Inner_Maps.Location_Structures {
             List<TileObject> objs = GetTileObjects();
             for (int i = 0; i < objs.Count; i++) {
                 TileObject obj = objs[i];
-                obj.UpdateOwners();
+                if (obj.isPreplaced) {
+                    //only update owners of objects that were preplaced
+                    obj.UpdateOwners();
+                }
             }
         }
         public override bool CanBeResidentHere(Character character) {

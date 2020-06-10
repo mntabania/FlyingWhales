@@ -115,7 +115,8 @@ public class Butcher : GoapAction {
     }
     private bool IsTargetMissing(Character actor, IPointOfInterest poiTarget) {
         return poiTarget.gridTileLocation == null || actor.currentRegion != poiTarget.currentRegion
-              || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) || (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER && !(poiTarget as Character).isDead);
+              || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) 
+              || (poiTarget is Character character && !character.isDead) || poiTarget.numOfActionsBeingPerformedOnThis > 0;
     }
     public override string ReactionToActor(Character witness, ActualGoapNode node, REACTION_STATUS status) {
         string response = base.ReactionToActor(witness, node, status);

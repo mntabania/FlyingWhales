@@ -456,6 +456,8 @@ namespace Inner_Maps {
             summary = $"{summary} <b>Target POI:</b>{(character.marker.targetPOI?.name ?? "None")}";
             summary =
                 $"{summary} <b>Base Structure:</b>{(character.trapStructure.structure != null ? character.trapStructure.structure.ToString() : "None")}";
+            summary =
+                $"{summary} <b>Actions Being Performed on this:</b>{character.numOfActionsBeingPerformedOnThis.ToString()}";
 
             summary = $"{summary}\n\tDestination Tile: ";
             summary = character.marker.destinationTile == null ? $"{summary}None" : $"{summary}{character.marker.destinationTile} at {character.marker.destinationTile.parentMap.region.name}";

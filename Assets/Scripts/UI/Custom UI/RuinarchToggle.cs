@@ -22,6 +22,7 @@ namespace Ruinarch.Custom_UI {
                 if (InputManager.Instance.ShouldBeHighlighted(this)) {
                     StartGlow();
                 }
+                Messenger.Broadcast(Signals.TOGGLE_SHOWN, this);
             }
         }
         protected override void OnDisable() {
