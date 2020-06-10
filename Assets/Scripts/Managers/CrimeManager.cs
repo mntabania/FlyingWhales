@@ -80,7 +80,7 @@ public class CrimeManager : MonoBehaviour {
                 }
             }
         } else if ((actionType == INTERACTION_TYPE.STRANGLE && actor != target)
-         || actionType == INTERACTION_TYPE.RITUAL_KILLING) {
+         || actionType == INTERACTION_TYPE.RITUAL_KILLING || actionType == INTERACTION_TYPE.MURDER) {
             return CRIME_TYPE.SERIOUS;
         } else if (actionType == INTERACTION_TYPE.TRANSFORM_TO_WOLF_FORM
             || actionType == INTERACTION_TYPE.REVERT_TO_NORMAL_FORM

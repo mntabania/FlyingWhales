@@ -126,7 +126,8 @@ public class ActualGoapNode : IReactable, IRumorable {
     public string currentStateName { get; private set; }
     public int currentStateDuration { get; private set; }
     public Rumor rumor { get; private set; }
-    
+    public Assumption assumption { get; private set; }
+
     public List<Character> awareCharacters { get; private set; }
 
     private JobQueueItem _associatedJob;
@@ -147,6 +148,7 @@ public class ActualGoapNode : IReactable, IRumorable {
     public INTERACTION_TYPE goapType => action.goapType;
     public string goapName => action.goapName;
     public bool isRumor => rumor != null;
+    public bool isAssumption => assumption != null;
     public string name => action.goapName;
     public string classificationName => "News";
     public IPointOfInterest target => poiTarget;
@@ -802,6 +804,19 @@ public class ActualGoapNode : IReactable, IRumorable {
         if(rumor != newRumor) {
             rumor = newRumor;
             if(rumor != null) {
+                actionStatus = ACTION_STATUS.SUCCESS;
+                currentStateName = GoapActionStateDB.goapActionStates[goapType][0].name;
+                CreateDescriptionLog(currentState);
+            }
+        }
+    }
+    #endregion
+
+    #region Assumption
+    public void SetAsAssumption(Assumption newAssumption) {
+        if (assumption != newAssumption) {
+            assumption = newAssumption;
+            if (assumption != null) {
                 actionStatus = ACTION_STATUS.SUCCESS;
                 currentStateName = GoapActionStateDB.goapActionStates[goapType][0].name;
                 CreateDescriptionLog(currentState);

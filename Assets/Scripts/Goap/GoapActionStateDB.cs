@@ -519,6 +519,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.REGAIN_ENERGY, new[]{
             new StateNameAndDuration(){ name = "Regain Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(90) },
         } },
+        {INTERACTION_TYPE.MURDER, new[]{
+            new StateNameAndDuration(){ name = "Murder Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(15) },
+        } },
     };
 }
 

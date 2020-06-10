@@ -240,9 +240,10 @@ public class CombatComponent {
             if (target is TileObject targetTileObject) {
                 targetTileObject.AdjustRepairCounter(-1);
             } else if (target is Character targetCharacter) {
-                if (fightCombatData.ContainsKey(targetCharacter) && fightCombatData[targetCharacter].reasonForCombat == CombatManager.Hostility) {
-                    AddPOIToBannedFromHostile(targetCharacter);
-                }
+                AddPOIToBannedFromHostile(targetCharacter);
+                //if (fightCombatData.ContainsKey(targetCharacter) && fightCombatData[targetCharacter].reasonForCombat == CombatManager.Hostility) {
+                //    AddPOIToBannedFromHostile(targetCharacter);
+                //}
             }
         }
         if (!avoidInRange.Contains(target)) {
@@ -330,9 +331,10 @@ public class CombatComponent {
             if (poi is TileObject targetTileObject) {
                 targetTileObject.AdjustRepairCounter(-1);
             } else if (poi is Character targetCharacter) {
-                if (fightCombatData.ContainsKey(targetCharacter) && fightCombatData[targetCharacter].reasonForCombat == CombatManager.Hostility) {
-                    AddPOIToBannedFromHostile(targetCharacter);
-                }
+                AddPOIToBannedFromHostile(targetCharacter);
+                //if (fightCombatData.ContainsKey(targetCharacter) && fightCombatData[targetCharacter].reasonForCombat == CombatManager.Hostility) {
+                //    AddPOIToBannedFromHostile(targetCharacter);
+                //}
             }
             string removeHostileSummary = $"{poi.name} was removed from {owner.name}'s hostile range.";
             owner.logComponent.PrintLogIfActive(removeHostileSummary);
@@ -360,9 +362,10 @@ public class CombatComponent {
                 if (hostilesInRange[i] is TileObject targetTileObject) {
                     targetTileObject.AdjustRepairCounter(-1);
                 } else if (hostilesInRange[i] is Character targetCharacter) {
-                    if (fightCombatData.ContainsKey(targetCharacter) && fightCombatData[targetCharacter].reasonForCombat == CombatManager.Hostility) {
-                        AddPOIToBannedFromHostile(targetCharacter);
-                    }
+                    AddPOIToBannedFromHostile(targetCharacter);
+                    //if (fightCombatData.ContainsKey(targetCharacter) && fightCombatData[targetCharacter].reasonForCombat == CombatManager.Hostility) {
+                    //    AddPOIToBannedFromHostile(targetCharacter);
+                    //}
                 }
             }
             hostilesInRange.Clear();

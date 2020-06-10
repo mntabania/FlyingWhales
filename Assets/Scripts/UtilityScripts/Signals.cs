@@ -94,6 +94,7 @@ public static class Signals {
     public static string CHARACTER_ENDED_STATE = "OnCharacterEndedState"; //Parameters (Character character, CharacterState state)
     public static string CHARACTER_SWITCHED_ALTER_EGO = "OnCharacterSwitchedAlterEgo"; //Parameters (Character character)
     public static string DETERMINE_COMBAT_REACTION = "DetermineCombatReaction"; //Parameters (Character character)
+    public static string START_FLEE = "OnStartFlee"; //Parameters (Character character)
     public static string CHARACTER_CLASS_CHANGE = "CharacterClassChange";
     public static string BEFORE_SEIZING_POI = "BeforeSeizingPOI";
     public static string ON_SEIZE_POI = "OnSeizePOI";
