@@ -91,6 +91,7 @@ MonoBehaviour:
   characterIconPrefab: {fileID: 1000012712350628, guid: 5372250d22a51bc40a200236eee58ac2,
     type: 3}
   characterIconsParent: {fileID: 0}
+  lessenCharacterLogs: 0
   maxLevel: 30
   _characterPortraitPrefab: {fileID: 1995387493181358, guid: cdfed07929227104599994075478446b,
     type: 3}

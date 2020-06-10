@@ -146,7 +146,7 @@ public class GoapPlanner {
             if (goapThread.recalculationPlan == null) {
                 //This means that the planner cannot create a new plan
                 bool logCancelJobNoPlan = !(jobType == JOB_TYPE.DOUSE_FIRE && goapThread.job.targetPOI.gridTileLocation == null);
-                if (logCancelJobNoPlan) {
+                if (logCancelJobNoPlan && !CharacterManager.Instance.lessenCharacterLogs) {
                     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "cancel_job_no_plan");
                     log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(null, goapThread.job.GetJobDetailString(), LOG_IDENTIFIER.STRING_1);

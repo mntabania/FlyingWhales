@@ -80,6 +80,7 @@ public class CombatState : CharacterState {
         //Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, stateComponent.character, "combat");
         Messenger.AddListener<Character>(Signals.DETERMINE_COMBAT_REACTION, DetermineReaction);
         Messenger.AddListener<Character>(Signals.UPDATE_MOVEMENT_STATE, OnUpdateMovementState);
+        Messenger.AddListener<Character>(Signals.START_FLEE, OnCharacterStartFleeing);
         base.StartState();
         //if (stateComponent.character.currentActionNode is Assault && !stateComponent.character.currentActionNode.isPerformingActualAction) {
         //    stateComponent.character.currentActionNode.Perform(); //this is for when a character will assault a target, but his/her attack range is less than his/her vision range. (Because end reached distance of assault action is set to attack range)
@@ -107,6 +108,7 @@ public class CombatState : CharacterState {
             $"Ending combat state for {stateComponent.character.name}");
         Messenger.RemoveListener<Character>(Signals.DETERMINE_COMBAT_REACTION, DetermineReaction);
         Messenger.RemoveListener<Character>(Signals.UPDATE_MOVEMENT_STATE, OnUpdateMovementState);
+        Messenger.RemoveListener<Character>(Signals.START_FLEE, OnCharacterStartFleeing);
         base.EndState();
     }
     //public override void OnExitThisState() {
@@ -301,8 +303,18 @@ public class CombatState : CharacterState {
     private void OnUpdateMovementState(Character character) {
         //Will stop pursuing only if current closest hostile is character, if current closest hostile is an object, whether or not the source can run, he/she will still pursue
         if (character == stateComponent.character && stateComponent.currentState == this && !isPaused && !isDone && currentClosestHostile != null && currentClosestHostile is Character targetCharacter && isAttacking) {
-            if (!stateComponent.character.movementComponent.CanStillPursueTarget(targetCharacter)) {
-                stateComponent.character.combatComponent.RemoveHostileInRange(currentClosestHostile);
+            if(targetCharacter.isInCombat && !(targetCharacter.stateComponent.currentState as CombatState).isAttacking) {
+                if (!stateComponent.character.movementComponent.CanStillPursueTarget(targetCharacter)) {
+                    stateComponent.character.combatComponent.RemoveHostileInRange(currentClosestHostile);
+                }
+            }
+        }
+    }
+    private void OnCharacterStartFleeing(Character character) {
+        //Will stop pursuing only if current closest hostile is character, if current closest hostile is an object, whether or not the source can run, he/she will still pursue
+        if (stateComponent.currentState == this && !isPaused && !isDone && stateComponent.character.combatComponent.hostilesInRange.Contains(character)) {
+            if (!stateComponent.character.movementComponent.CanStillPursueTarget(character)) {
+                stateComponent.character.combatComponent.RemoveHostileInRange(character);
             }
         }
     }
@@ -512,6 +524,7 @@ public class CombatState : CharacterState {
             } else {
                 stateComponent.character.marker.OnStartFlee();
             }
+            Messenger.Broadcast(Signals.START_FLEE, stateComponent.character);
 
             string avoidReason = "got scared";
             CombatData combatData = stateComponent.character.combatComponent.GetCombatData(objToAvoid);

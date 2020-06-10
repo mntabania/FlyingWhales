@@ -12,8 +12,11 @@ using UnityEngine.Assertions;
 public class ReactionComponent {
     public Character owner { get; private set; }
 
+    private List<Character> _assumptionSuspects;
+
     public ReactionComponent(Character owner) {
         this.owner = owner;
+        _assumptionSuspects = new List<Character>();
     }
 
     #region Processes
@@ -99,11 +102,14 @@ public class ReactionComponent {
         }
         if(reactable.actor != owner && target != owner) {
             if (addLog) {
-                Log witnessLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "witness_event", reactable as ActualGoapNode);
-                witnessLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.OTHER);
-                witnessLog.AddToFillers(null, UtilityScripts.Utilities.LogDontReplace(reactable.informationLog), LOG_IDENTIFIER.APPEND);
-                witnessLog.AddToFillers(reactable.informationLog.fillers);
-                owner.logComponent.AddHistory(witnessLog);
+                //Only log witness event if event is not an action. If it is an action, the CharacterManager.Instance.CanAddCharacterLogOrShowNotif must return true
+                if (!(reactable is ActualGoapNode action && !CharacterManager.Instance.CanAddCharacterLogOrShowNotif(action.goapType))) {
+                    Log witnessLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "witness_event", reactable as ActualGoapNode);
+                    witnessLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.PARTY_1); //Used Party 1 identifier so there will be no conflict if reactable.informationLog is a Rumor
+                    witnessLog.AddToFillers(null, UtilityScripts.Utilities.LogDontReplace(reactable.informationLog), LOG_IDENTIFIER.APPEND);
+                    witnessLog.AddToFillers(reactable.informationLog.fillers);
+                    owner.logComponent.AddHistory(witnessLog);
+                }
             }
             string emotionsToActor = reactable.ReactionToActor(owner, REACTION_STATUS.WITNESSED);
             if(emotionsToActor != string.Empty) {
@@ -183,7 +189,7 @@ public class ReactionComponent {
         if (addLog) {
             Log informedLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "informed_event", reactable as ActualGoapNode);
             informedLog.AddToFillers(reactable.informationLog.fillers);
-            informedLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.OTHER);
+            informedLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.PARTY_1); //Used Party 1 identifier so there will be no conflict if reactable.informationLog is a Rumor
             informedLog.AddToFillers(null, UtilityScripts.Utilities.LogDontReplace(reactable.informationLog), LOG_IDENTIFIER.APPEND);
             owner.logComponent.AddHistory(informedLog);
         }
@@ -280,7 +286,7 @@ public class ReactionComponent {
         if (actor != owner && target != owner) {
             if (actor.interruptComponent.currentInterrupt == interrupt && log != null) {
                 Log witnessLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "witness_event");
-                witnessLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.OTHER);
+                witnessLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.PARTY_1); //Used Party 1 identifier so there will be no conflict if reactable.informationLog is a Rumor
                 witnessLog.AddToFillers(null, UtilityScripts.Utilities.LogDontReplace(log), LOG_IDENTIFIER.APPEND);
                 witnessLog.AddToFillers(log.fillers);
                 owner.logComponent.AddHistory(witnessLog);
@@ -352,7 +358,7 @@ public class ReactionComponent {
         }
         Log informedLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "informed_event");
         informedLog.AddToFillers(log.fillers);
-        informedLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.OTHER);
+        informedLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.PARTY_1); //Used Party 1 identifier so there will be no conflict if reactable.informationLog is a Rumor
         informedLog.AddToFillers(null, UtilityScripts.Utilities.LogDontReplace(log), LOG_IDENTIFIER.APPEND);
         owner.logComponent.AddHistory(informedLog);
 
@@ -558,13 +564,13 @@ public class ReactionComponent {
                     Dead targetDeadTrait = targetCharacter.traitContainer.GetNormalTrait<Dead>("Dead");
                     if(targetDeadTrait != null && !targetDeadTrait.charactersThatSawThisDead.Contains(owner)) {
                         targetDeadTrait.AddCharacterThatSawThisDead(owner);
-                        debugLog += "\n-Target saw for the first time";
+                        debugLog += "\n-Target saw dead for the first time";
                         string opinionLabel = owner.relationshipContainer.GetOpinionLabel(targetCharacter);
                         if(opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
                             debugLog += "\n-Target is Friend/Close Friend";
                             if (UnityEngine.Random.Range(0, 2) == 0) {
                                 debugLog += "\n-Target will Cry";
-                                owner.interruptComponent.TriggerInterrupt(INTERRUPT.Cry, targetCharacter, "saw a dead loved one");
+                                owner.interruptComponent.TriggerInterrupt(INTERRUPT.Cry, targetCharacter, "saw dead " + targetCharacter.name);
                             } else {
                                 debugLog += "\n-Target will Puke";
                                 owner.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, targetCharacter);
@@ -578,6 +584,30 @@ public class ReactionComponent {
                                 debugLog += "\n-Target will Laugh At";
                                 owner.interruptComponent.TriggerInterrupt(INTERRUPT.Laugh_At, targetCharacter);
                             }
+                        }
+
+                        if (owner.marker && targetCharacter.isNormalCharacter) {
+                            if(owner.traitContainer.HasTrait("Suspicious") 
+                                || owner.moodComponent.moodState == MOOD_STATE.CRITICAL 
+                                || (owner.moodComponent.moodState == MOOD_STATE.LOW && UnityEngine.Random.Range(0, 2) == 0)) {
+                                debugLog += "\n-Owner is Suspicious or Critical Mood or Low Mood";
+
+                                _assumptionSuspects.Clear();
+                                for (int i = 0; i < owner.marker.inVisionCharacters.Count; i++) {
+                                    Character inVision = owner.marker.inVisionCharacters[i];
+                                    if (inVision != targetCharacter && inVision.relationshipContainer.IsEnemiesWith(targetCharacter)) {
+                                        _assumptionSuspects.Add(inVision);
+                                    }
+                                }
+                                if(_assumptionSuspects.Count > 0) {
+                                    debugLog += "\n-There are in vision characters that considers target character as Enemy/Rival";
+                                    Character chosenSuspect = _assumptionSuspects[UnityEngine.Random.Range(0, _assumptionSuspects.Count)];
+
+                                    debugLog += "\n-Will create Murder assumption on " + chosenSuspect.name;
+                                    owner.assumptionComponent.CreateAndReactToNewAssumption(chosenSuspect, targetCharacter, INTERACTION_TYPE.MURDER, REACTION_STATUS.WITNESSED);
+                                }
+                            }
+
                         }
                     }
                 }
@@ -616,7 +646,7 @@ public class ReactionComponent {
                         owner.combatComponent.Flight(targetTileObject, "saw fire");
                     }
                 }
-                
+
                 // for (int i = 0; i < owner.homeSettlement.availableJobs.Count; i++) {
                 //     JobQueueItem job = owner.homeSettlement.availableJobs[i];
                 //     if (job.jobType == JOB_TYPE.DOUSE_FIRE) {
@@ -670,7 +700,7 @@ public class ReactionComponent {
             }
         }
         if (targetTileObject.traitContainer.HasTrait("Dangerous") && targetTileObject.gridTileLocation != null) {
-            if(targetTileObject is TornadoTileObject || owner.currentStructure == targetTileObject.gridTileLocation.structure || (!owner.currentStructure.isInterior && !targetTileObject.gridTileLocation.structure.isInterior)) {
+            if (targetTileObject is TornadoTileObject || owner.currentStructure == targetTileObject.gridTileLocation.structure || (!owner.currentStructure.isInterior && !targetTileObject.gridTileLocation.structure.isInterior)) {
                 if (owner.traitContainer.HasTrait("Berserked")) {
                     owner.combatComponent.FightOrFlight(targetTileObject, CombatManager.Berserked);
                 } else if (owner.stateComponent.currentState == null || owner.stateComponent.currentState.characterState != CHARACTER_STATE.FOLLOW) {
@@ -709,7 +739,7 @@ public class ReactionComponent {
         //        owner.jobComponent.CreateTakeItemJob(targetTileObject);
         //    }
         //}
-        if(targetTileObject.traitContainer.HasTrait("Danger Remnant")) {
+        if (targetTileObject.traitContainer.HasTrait("Danger Remnant")) {
             if (!owner.traitContainer.HasTrait("Berserked")) {
                 if (owner.traitContainer.HasTrait("Coward")) {
                     CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, owner, targetTileObject, REACTION_STATUS.WITNESSED);
@@ -737,6 +767,56 @@ public class ReactionComponent {
                         CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, owner, targetTileObject, REACTION_STATUS.WITNESSED);
                     }
                 }
+            }
+        }
+
+
+        if (targetTileObject is Tombstone tombstone) {
+            Character targetCharacter = tombstone.character;
+            Dead targetDeadTrait = targetCharacter.traitContainer.GetNormalTrait<Dead>("Dead");
+            if (targetDeadTrait != null && !targetDeadTrait.charactersThatSawThisDead.Contains(owner)) {
+                targetDeadTrait.AddCharacterThatSawThisDead(owner);
+                debugLog += "\n-Target saw dead for the first time";
+                string opinionLabel = owner.relationshipContainer.GetOpinionLabel(targetCharacter);
+                if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
+                    debugLog += "\n-Target is Friend/Close Friend";
+                    if (UnityEngine.Random.Range(0, 2) == 0) {
+                        debugLog += "\n-Target will Cry";
+                        owner.interruptComponent.TriggerInterrupt(INTERRUPT.Cry, targetCharacter, "saw a dead loved one");
+                    } else {
+                        debugLog += "\n-Target will Puke";
+                        owner.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, targetCharacter);
+                    }
+                } else if (opinionLabel == RelationshipManager.Rival) {
+                    debugLog += "\n-Target is Rival";
+                    if (UnityEngine.Random.Range(0, 2) == 0) {
+                        debugLog += "\n-Target will Mock";
+                        owner.interruptComponent.TriggerInterrupt(INTERRUPT.Mock, targetCharacter);
+                    } else {
+                        debugLog += "\n-Target will Laugh At";
+                        owner.interruptComponent.TriggerInterrupt(INTERRUPT.Laugh_At, targetCharacter);
+                    }
+                }
+            }
+        }
+
+        if (targetTileObject.characterOwner == owner 
+            && targetTileObject.gridTileLocation != null 
+            && targetTileObject.gridTileLocation.structure != null
+            && targetTileObject.gridTileLocation.structure is Dwelling
+            && targetTileObject.gridTileLocation.structure != owner.homeStructure
+            && targetTileObject.gridTileLocation.structure.residents.Count > 0) {
+
+            if (owner.traitContainer.HasTrait("Suspicious")
+                || owner.moodComponent.moodState == MOOD_STATE.CRITICAL
+                || (owner.moodComponent.moodState == MOOD_STATE.LOW && UnityEngine.Random.Range(0, 2) == 0)) {
+                debugLog += "\n-Owner is Suspicious or Critical Mood or Low Mood";
+
+                debugLog += "\n-There is at least 1 resident of the structure";
+                Character chosenSuspect = targetTileObject.gridTileLocation.structure.residents[UnityEngine.Random.Range(0, targetTileObject.gridTileLocation.structure.residents.Count)];
+
+                debugLog += "\n-Will create Steal assumption on " + chosenSuspect.name;
+                owner.assumptionComponent.CreateAndReactToNewAssumption(chosenSuspect, targetTileObject, INTERACTION_TYPE.STEAL, REACTION_STATUS.WITNESSED);
             }
         }
     }

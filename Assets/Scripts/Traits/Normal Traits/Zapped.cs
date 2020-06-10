@@ -68,7 +68,7 @@ namespace Traits {
         }
         public override void OnEnterGridTile(IPointOfInterest poiWhoEntered, IPointOfInterest owner) {
             if (!poiWhoEntered.traitContainer.HasTrait("Zapped")) {
-                poiWhoEntered.traitContainer.AddTrait(poiWhoEntered as ITraitable, "Zapped");
+                poiWhoEntered.traitContainer.AddTrait(poiWhoEntered as ITraitable, "Zapped", bypassElementalChance: true);
             }
         }
         public override void OnInitiateMapObjectVisual(ITraitable traitable) {

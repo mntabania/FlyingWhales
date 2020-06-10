@@ -144,6 +144,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public LogComponent logComponent { get; private set; }
     public CombatComponent combatComponent { get; private set; }
     public RumorComponent rumorComponent { get; private set; }
+    public AssumptionComponent assumptionComponent { get; private set; }
     public MovementComponent movementComponent { get; private set; }
 
     #region getters / setters
@@ -332,6 +333,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         logComponent = new LogComponent(this);
         combatComponent = new CombatComponent(this);
         rumorComponent = new RumorComponent(this);
+        assumptionComponent = new AssumptionComponent(this);
         movementComponent = new MovementComponent(this);
 
         needsComponent.ResetSleepTicks();
