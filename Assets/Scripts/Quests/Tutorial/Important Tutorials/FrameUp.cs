@@ -99,7 +99,7 @@ namespace Tutorial {
         }
         private void OnHoverStructureOwnership(QuestStepItem stepItem) {
             UIManager.Instance.ShowSmallInfo(
-                $"Check a structure's residents in its {UtilityScripts.Utilities.ColorizeAction("Info tab")}. " +
+                $"Check a structure's residents in its {UtilityScripts.Utilities.ColorizeAction("Residents tab")}. " +
                 "Drop the item at someone else's house.", TutorialManager.Instance.structureInfoResidents, "Structure Owner",
                 stepItem.hoverPosition
             );
