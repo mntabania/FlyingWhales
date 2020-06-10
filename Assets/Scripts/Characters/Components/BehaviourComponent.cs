@@ -350,7 +350,11 @@ public class BehaviourComponent {
     }
     private void OnCharacterCanNoLongerPerform(Character character) {
         if (character == owner) {
-            SetIsAttackingDemonicStructure(false, null);
+            if(owner is Summon summon && (summon.summonType == SUMMON_TYPE.Magical_Angel || summon.summonType == SUMMON_TYPE.Warrior_Angel)) {
+                //Angels should not remove attack demonic structure
+            } else {
+                SetIsAttackingDemonicStructure(false, null);
+            }
         }
     }
     private void OnJobRemovedFromCharacter(JobQueueItem job, Character character) {

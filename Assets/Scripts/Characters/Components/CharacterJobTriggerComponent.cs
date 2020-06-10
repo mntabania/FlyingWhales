@@ -85,8 +85,10 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			} else {
 				character.jobQueue.CancelAllJobs();
 			}
-			character.marker.StopMovement();
-			character.marker.pathfindingAI.ClearAllCurrentPathData();
+            if (character.marker) {
+                character.marker.StopMovement();
+                character.marker.pathfindingAI.ClearAllCurrentPathData();
+            }
 
             character.UncarryPOI();
             if (character.traitContainer.HasTrait("Unconscious")) {
