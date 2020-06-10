@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Interrupts {
     public class Puke : Interrupt {
         public Puke() : base(INTERRUPT.Puke) {
-            duration = 2;
+            duration = 3;
             doesStopCurrentAction = true;
             interruptIconString = GoapActionStateDB.Sick_Icon;
             isIntel = true;

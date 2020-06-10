@@ -127,8 +127,7 @@ public class SeizeComponent {
                 return false;
             }
         } else if (seizedPOI.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-            if ((tileLocation.objHere != null && tileLocation.objHere is BlockWall)
-                || tileLocation.groundType == LocationGridTile.Ground_Type.Water) {
+            if (!tileLocation.IsPassable()) {
                 return false;
             }
         }

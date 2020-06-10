@@ -1086,7 +1086,7 @@ public class CharacterNeedsComponent {
         if (!wasSpent) {
             _owner.traitContainer.AddTrait(_owner, "Spent");
             _owner.movementComponent.SetNoRunExceptCombat(true);
-            _owner.movementComponent.SetNoRunWithoutException(false);
+            //_owner.movementComponent.SetNoRunWithoutException(false);
         }
         if (wasSprightly) {
             _owner.traitContainer.RemoveTrait(_owner, "Sprightly");
@@ -1099,7 +1099,7 @@ public class CharacterNeedsComponent {
     private void OnDrained(bool wasSprightly, bool wasSpent, bool wasDrained) {
         if (!wasDrained) {
             _owner.traitContainer.AddTrait(_owner, "Drained");
-            _owner.movementComponent.SetNoRunExceptCombat(false);
+            _owner.movementComponent.SetNoRunExceptCombat(true);
             _owner.movementComponent.SetNoRunWithoutException(true);
         }
         if (wasSprightly) {

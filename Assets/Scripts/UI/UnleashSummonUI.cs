@@ -389,7 +389,7 @@ public class UnleashSummonUI : PopupMenuBase { //MonoBehaviour
         Character spawnedCharacter = null;
         //LocationGridTile mainEntrance = targetHex.GetCenterLocationGridTile();
         //entrances.Add(mainEntrance);
-        entrances.AddRange(_targetCharacter.gridTileLocation.GetTilesInRadius(3, includeTilesInDifferentStructure: true));
+        entrances.AddRange(_targetCharacter.gridTileLocation.GetTilesInRadius(3, includeTilesInDifferentStructure: true, includeImpassable: false));
 
         //int totalEntrances = chosenSummons.Count + chosenMinionMonsters.Count;
         //for (int i = 0; i < entrances.Count; i++) {

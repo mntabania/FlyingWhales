@@ -6,8 +6,9 @@ using Traits;
 namespace Interrupts {
     public class Cry : Interrupt {
         public Cry() : base(INTERRUPT.Cry) {
-            duration = 0;
-            isSimulateneous = true;
+            duration = 3;
+            doesStopCurrentAction = true;
+            //isSimulateneous = true;
             interruptIconString = GoapActionStateDB.Sad_Icon;
             //isIntel = true;
         }

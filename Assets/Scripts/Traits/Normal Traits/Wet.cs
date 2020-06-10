@@ -14,7 +14,7 @@ namespace Traits {
             description = "This is soaking wet.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEUTRAL;
-            ticksDuration = GameManager.Instance.GetTicksBasedOnHour(2); //if this trait is only temporary, then it should not advertise GET_WATER
+            ticksDuration = GameManager.Instance.GetTicksBasedOnHour(6); //if this trait is only temporary, then it should not advertise GET_WATER
             isTangible = true;
             isStacking = true;
             moodEffect = -6;

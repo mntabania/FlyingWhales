@@ -965,7 +965,7 @@ namespace Inner_Maps {
         public bool IsNextToOrPartOfSettlement(BaseSettlement settlement) {
             return IsPartOfSettlement(settlement) || IsNextToSettlement(settlement);
         }
-        public List<LocationGridTile> GetTilesInRadius(int radius, int radiusLimit = 0, bool includeCenterTile = false, bool includeTilesInDifferentStructure = false) {
+        public List<LocationGridTile> GetTilesInRadius(int radius, int radiusLimit = 0, bool includeCenterTile = false, bool includeTilesInDifferentStructure = false, bool includeImpassable = true) {
             List<LocationGridTile> tiles = new List<LocationGridTile>();
             int mapSizeX = parentMap.map.GetUpperBound(0);
             int mapSizeY = parentMap.map.GetUpperBound(1);
@@ -993,6 +993,7 @@ namespace Inner_Maps {
                         if (result.structure == null) { continue; } //do not include tiles with no structures
                         if (!includeTilesInDifferentStructure 
                             && (result.structure != structure && (!result.structure.structureType.IsOpenSpace() || !structure.structureType.IsOpenSpace()))) { continue; }
+                        if(!includeImpassable && !result.IsPassable()) { continue; }
                         tiles.Add(result);
                     }
                 }
@@ -1002,6 +1003,9 @@ namespace Inner_Maps {
         //public void SetIsOuterTile(bool state) {
         //    isOuterTile = state;
         //}
+        public bool IsPassable() {
+            return (objHere == null || !(objHere is BlockWall)) && groundType != Ground_Type.Water;
+        }
         #endregion
 
         // #region Tile Objects

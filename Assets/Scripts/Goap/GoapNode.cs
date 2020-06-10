@@ -579,22 +579,12 @@ public class ActualGoapNode : IReactable, IRumorable {
             return;
         }
         if (shouldDoAfterEffect) {
-            if (descriptionLog != null && action.shouldAddLogs) { //only add logs if both the parent action and this state should add logs
-                //if (descriptionLog != null) {
-                //    AddArrangedLog("description", descriptionLog, null);
-                //}
-                if (!action.isNotificationAnIntel) {
-                    // PlayerManager.Instance.player.ShowNotificationFrom(descriptionLog, actor);
-                    // Messenger.Broadcast(Signals.SHOW_PLAYER_NOTIFICATION, descriptionLog);
-                } else {
+            if (descriptionLog != null && action.shouldAddLogs && CharacterManager.Instance.CanAddCharacterLogOrShowNotif(action.goapType)) { //only add logs if both the parent action and this state should add logs
+                //Only show notif if an action can be stored as an intel to reduce notifications and info overload to the player
+                if (action.isNotificationAnIntel) {
                     PlayerManager.Instance.player.ShowNotificationFrom(actor, InteractionManager.Instance.CreateNewIntel(this) as IIntel);
-                    // Messenger.Broadcast(Signals.SHOW_INTEL_NOTIFICATION, InteractionManager.Instance.CreateNewIntel(this));
                 }
                 descriptionLog.AddLogToInvolvedObjects();
-                //for (int i = 0; i < arrangedLogs.Count; i++) {
-                //    arrangedLogs[i].log.SetDate(GameManager.Instance.Today());
-                //    arrangedLogs[i].log.AddLogToInvolvedObjects();
-                //}
             }
         }
         GoapActionState currentState = action.states[currentStateName];

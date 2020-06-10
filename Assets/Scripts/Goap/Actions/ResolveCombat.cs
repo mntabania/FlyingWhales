@@ -68,4 +68,14 @@ public class ResolveCombat : GoapAction {
         return false;
     }
     #endregion
+
+    #region Requirement
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
+        if (satisfied) {
+            return !actor.combatComponent.bannedFromHostileList.Contains(poiTarget);
+        }
+        return false;
+    }
+    #endregion
 }

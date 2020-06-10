@@ -29,6 +29,7 @@ public class CharacterManager : MonoBehaviour {
     
     public GameObject characterIconPrefab;
     public Transform characterIconsParent;
+    public bool lessenCharacterLogs;
 
     public int maxLevel;
     private List<CharacterAvatar> _allCharacterAvatars;
@@ -672,6 +673,17 @@ public class CharacterManager : MonoBehaviour {
             }
         }
         return null;
+    }
+    public bool CanAddCharacterLogOrShowNotif(INTERACTION_TYPE actionType) {
+        if (!lessenCharacterLogs) {
+            return true;
+        } else {
+            if(actionType != INTERACTION_TYPE.SIT && actionType != INTERACTION_TYPE.STAND && actionType != INTERACTION_TYPE.RETURN_HOME && actionType != INTERACTION_TYPE.SLEEP
+                && actionType != INTERACTION_TYPE.SLEEP_OUTSIDE && actionType != INTERACTION_TYPE.NAP) {
+                return true;
+            }
+        }
+        return false;
     }
     #endregion
 
