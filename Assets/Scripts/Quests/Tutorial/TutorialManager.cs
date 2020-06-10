@@ -32,7 +32,8 @@ namespace Tutorial {
             Killed_By_Monster,
             Booby_Trap,
             Rumor,
-            Zombie_Virus
+            Zombie_Virus,
+            Frame_Up
         }
 
         private List<ImportantTutorial> _activeImportantTutorials;
@@ -74,6 +75,7 @@ namespace Tutorial {
         public VideoClip griefstrickenLog;
         public VideoClip killedByMonsterLog;
         public Texture tileObjectOwner;
+        public Texture structureInfoResidents;
 
         #region Monobehaviours
         private void Awake() {

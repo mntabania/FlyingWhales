@@ -7,10 +7,19 @@ namespace Quests.Steps {
         public bool isComplete { get; private set; }
 
         private QuestStep _topMostIncompleteStep;
-
+        private System.Action _onCollectionActivatedAction;
+        private System.Action _onCollectionDeactivatedAction;
+        
+        
         public QuestStepCollection(params QuestStep[] _steps) {
             steps = new List<QuestStep>(_steps);
             isComplete = false;
+        }
+        public QuestStepCollection(System.Action onCollectionActivatedAction, System.Action onCollectionDeactivatedAction, params QuestStep[] _steps) {
+            steps = new List<QuestStep>(_steps);
+            isComplete = false;
+            _onCollectionActivatedAction = onCollectionActivatedAction;
+            _onCollectionDeactivatedAction = onCollectionDeactivatedAction;
         }
 
         public void Activate() {
@@ -22,6 +31,7 @@ namespace Quests.Steps {
                     SetTopMostIncompleteStep(step);        
                 }
             }
+            _onCollectionActivatedAction?.Invoke();
         }
         public void Deactivate() {
             Messenger.RemoveListener<QuestStep>(Signals.QUEST_STEP_COMPLETED, OnTutorialStepCompleted);
@@ -30,6 +40,7 @@ namespace Quests.Steps {
                 QuestStep step = steps[i];
                 step.Deactivate();
             }
+            _onCollectionDeactivatedAction?.Invoke();
         }
 
         #region Listeners

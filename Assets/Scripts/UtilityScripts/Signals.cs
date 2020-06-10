@@ -223,6 +223,10 @@ public static class Signals {
     /// </summary>
     public static string TOGGLE_CLICKED = "OnToggleClicked";
     /// <summary>
+    /// Parameters: Ruinarch.UI.RuinarchToggle shownToggle 
+    /// </summary>
+    public static string TOGGLE_SHOWN = "OnToggleShown";
+    /// <summary>
     /// Parameters: string sceneName
     /// </summary>
     public static string STARTED_LOADING_SCENE = "OnStartedLoadingScene";

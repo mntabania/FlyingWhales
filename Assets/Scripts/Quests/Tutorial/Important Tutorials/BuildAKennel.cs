@@ -40,7 +40,8 @@ namespace Tutorial {
                 new QuestStepCollection(
                     new ExecutedPlayerActionStep(SPELL_TYPE.SEIZE_MONSTER, $"Seize a {UtilityScripts.Utilities.MonsterIcon()}monster.")
                         .SetOnTopmostActions(OnTopMostSeizeMonster, OnNoLongerTopMostSeizeMonster),
-                    new DropCharacterAtStructureStep(STRUCTURE_TYPE.THE_KENNEL, typeof(Summon), "Drop at the Kennel."),
+                    new DropPOIAtStructureStep((structure, pointOfInterest) => structure.structureType == STRUCTURE_TYPE.THE_KENNEL,
+                        poi => poi is Summon, "Drop at the Kennel."),
                     new ClickOnCharacterStep($"Click on the {UtilityScripts.Utilities.MonsterIcon()}monster", IsCharacterValid),
                     new ExecutedPlayerActionStep(SPELL_TYPE.BREED_MONSTER, "Breed it.")
                         .SetHoverOverAction(OnHoverBreed)

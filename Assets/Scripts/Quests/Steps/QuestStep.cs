@@ -17,6 +17,10 @@ namespace Quests.Steps {
         /// </summary>
         public List<ISelectable> objectsToCenter { get; private set; }
         /// <summary>
+        /// Getter for list of selectables to center, this is for when objects to center are determined after this step was made.
+        /// </summary>
+        private System.Func<List<ISelectable>> _selectablesToCenterGetter;
+        /// <summary>
         /// Getter for list of objects to center, if <see cref="objectsToCenter"/> is null, then this will be checked.
         /// </summary>
         private System.Func<List<GameObject>> _objectsToCenterGetter;
@@ -110,7 +114,7 @@ namespace Quests.Steps {
 
         #region Center Actions
         public bool HasObjectsToCenter() {
-            return (objectsToCenter != null && objectsToCenter.Count > 0) || _objectsToCenterGetter != null;
+            return (objectsToCenter != null && objectsToCenter.Count > 0) || _objectsToCenterGetter != null || _selectablesToCenterGetter != null;
         }
         public QuestStep SetObjectsToCenter(List<ISelectable> objectsToCenter) {
             this.objectsToCenter = objectsToCenter;
@@ -122,6 +126,10 @@ namespace Quests.Steps {
             this.objectsToCenter = new List<ISelectable>(objectsToCenter);
             return this;
         }
+        public QuestStep SetObjectsToCenter([NotNull]System.Func<List<ISelectable>> objectsToCenterGetter) {
+            _selectablesToCenterGetter = objectsToCenterGetter;
+            return this;
+        }
         public QuestStep SetObjectsToCenter([NotNull]System.Func<List<GameObject>> objectsToCenterGetter, 
             [NotNull]System.Func<GameObject, bool> isGameObjectSelected, [NotNull]System.Action<GameObject> centerGameObjectAction) {
             _objectsToCenterGetter = objectsToCenterGetter;
@@ -131,22 +139,13 @@ namespace Quests.Steps {
         }
         public void CenterCycle() {
             if (objectsToCenter != null) {
-                ISelectable objToSelect = null;
-                for (int i = 0; i < objectsToCenter.Count; i++) {
-                    ISelectable currentSelectable = objectsToCenter[i];
-                    if (currentSelectable.IsCurrentlySelected()) {
-                        //set next selectable in list to be selected.
-                        objToSelect = CollectionUtilities.GetNextElementCyclic(objectsToCenter, i);
-                        break;
-                    }
-                }
-                if (objToSelect == null) {
-                    objToSelect = objectsToCenter[0];
-                }
+                //normal objects to center
+                ISelectable objToSelect = GetNextObjectToCenter(objectsToCenter);
                 if (objToSelect != null) {
                     InputManager.Instance.Select(objToSelect);
                 }    
             } else if (_objectsToCenterGetter != null) {
+                //game objects to center getter
                 GameObject objToSelect = null;
                 List<GameObject> gameObjects = _objectsToCenterGetter.Invoke();
                 for (int i = 0; i < gameObjects.Count; i++) {
@@ -163,7 +162,29 @@ namespace Quests.Steps {
                 if (objToSelect != null) {
                     _centerGameObjectAction.Invoke(objToSelect);
                 }    
+            } else if (_selectablesToCenterGetter != null) {
+                //selectables to center getter
+                List<ISelectable> selectables = _selectablesToCenterGetter.Invoke();
+                ISelectable objToSelect = GetNextObjectToCenter(selectables);
+                if (objToSelect != null) {
+                    InputManager.Instance.Select(objToSelect);
+                }    
             }
+        }
+        private ISelectable GetNextObjectToCenter(List<ISelectable> selectables) {
+            ISelectable objToSelect = null;
+            for (int i = 0; i < selectables.Count; i++) {
+                ISelectable currentSelectable = selectables[i];
+                if (currentSelectable.IsCurrentlySelected()) {
+                    //set next selectable in list to be selected.
+                    objToSelect = CollectionUtilities.GetNextElementCyclic(selectables, i);
+                    break;
+                }
+            }
+            if (objToSelect == null) {
+                objToSelect = selectables[0];
+            }
+            return objToSelect;
         }
         #endregion
 

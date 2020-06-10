@@ -13,9 +13,11 @@ namespace Quests.Steps {
         }
         protected override void SubscribeListeners() {
             Messenger.AddListener<RuinarchToggle>(Signals.TOGGLE_CLICKED, CheckForCompletion);
+            Messenger.AddListener<RuinarchToggle>(Signals.TOGGLE_SHOWN, CheckForCompletion);
         }
         protected override void UnSubscribeListeners() {
             Messenger.RemoveListener<RuinarchToggle>(Signals.TOGGLE_CLICKED, CheckForCompletion);
+            Messenger.RemoveListener<RuinarchToggle>(Signals.TOGGLE_SHOWN, CheckForCompletion);
         }
 
         #region Listeners

@@ -68,6 +68,13 @@ public class SettlementGeneration : MapGenerationComponent {
 			string randomClass = randomUnlockedClasses[i];
 			npcSettlement.classManager.RemoveCombatantClass(randomClass);
 		}
+
+		List<TileObject> objectsInDwellings =
+			npcSettlement.GetTileObjectsFromStructures<TileObject>(STRUCTURE_TYPE.DWELLING, o => true);
+		for (int i = 0; i < objectsInDwellings.Count; i++) {
+			TileObject tileObject = objectsInDwellings[i];
+			tileObject.UpdateOwners();
+		}
 		
 		CharacterManager.Instance.PlaceInitialCharacters(faction.characters, npcSettlement);
 		npcSettlement.Initialize();
