@@ -14,14 +14,14 @@ public class LearnSpellData : PlayerAction {
 
     #region Overrides
     public override void ActivateAbility(LocationStructure structure) {
-        if (structure is Inner_Maps.Location_Structures.TheSpire theSpire) {
+        if (structure is Inner_Maps.Location_Structures.Ostracizer theSpire) {
             theSpire.TryLearnASpellOrAffliction();
         }
     }
     public override bool CanPerformAbilityTowards(LocationStructure structure) {
         bool canPerform = base.CanPerformAbilityTowards(structure);
         if (canPerform) {
-            if (structure is Inner_Maps.Location_Structures.TheSpire theSpire) {
+            if (structure is Inner_Maps.Location_Structures.Ostracizer theSpire) {
                 return theSpire.CanLearnSpell();
             }
             return false;

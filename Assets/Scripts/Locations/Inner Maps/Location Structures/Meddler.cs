@@ -3,9 +3,9 @@ using System.Linq;
 using Traits;
 using UnityEngine;
 namespace Inner_Maps.Location_Structures {
-    public class TheGoader : DemonicStructure {
+    public class Meddler : DemonicStructure {
         public override Vector2 selectableSize { get; }
-        public TheGoader(Region location) : base(STRUCTURE_TYPE.THE_GOADER, location){
+        public Meddler(Region location) : base(STRUCTURE_TYPE.MEDDLER, location){
             selectableSize = new Vector2(10f, 10f);
         }
 

@@ -2741,6 +2741,7 @@ MonoBehaviour:
   - {x: 12, y: 6, z: 0}
   - {x: 12, y: 8, z: 0}
   - {x: 12, y: 10, z: 0}
+  roomTemplates: []
   wallTileMap: {fileID: 8195094279513397296}
   leftWall: {fileID: 1585498277213060, guid: 2e2e9509b5333aa4bbbeeabbd9cbec70, type: 3}
   rightWall: {fileID: 1585498277213060, guid: 70407332126550d4b81db31716c0b3fe, type: 3}

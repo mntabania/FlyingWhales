@@ -1190,26 +1190,26 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
             canChooseLandmark = WorldConfigManager.Instance.availableSpellsInDemoBuild.Contains(structureType) 
                    && PlayerSkillManager.Instance.GetDemonicStructureSkillData(structureType).CanPerformAbility();
         } else {
-            if (structureType == SPELL_TYPE.THE_EYE && region.HasStructure(STRUCTURE_TYPE.THE_EYE)) {
+            if (structureType == SPELL_TYPE.EYE && region.HasStructure(STRUCTURE_TYPE.EYE)) {
                 canChooseLandmark = false; //only 1 eye per region.
             }
-            if (structureType == SPELL_TYPE.THE_GOADER && PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.THE_GOADER)) {
+            if (structureType == SPELL_TYPE.MEDDLER && PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.MEDDLER)) {
                 canChooseLandmark = false; //only 1 finger at a time.
             }    
         }
         
         if (canChooseLandmark) {
-            if (structureType == SPELL_TYPE.TORTURE_CHAMBER) {
+            if (structureType == SPELL_TYPE.TORTURE_CHAMBERS) {
                 return
                     TutorialManager.Instance.HasTutorialBeenCompleted(TutorialManager.Tutorial.Torture_Chambers) ||
                     TutorialManager.Instance.IsTutorialCurrentlyActive(TutorialManager.Tutorial.Torture_Chambers) ||
                     SettingsManager.Instance.settings.skipTutorials;
-            } else if (structureType == SPELL_TYPE.THE_KENNEL) {
+            } else if (structureType == SPELL_TYPE.KENNEL) {
                 return
                     TutorialManager.Instance.HasTutorialBeenCompleted(TutorialManager.Tutorial.Build_A_Kennel) ||
                     TutorialManager.Instance.IsTutorialCurrentlyActive(TutorialManager.Tutorial.Build_A_Kennel) ||
                     SettingsManager.Instance.settings.skipTutorials;
-            } else if (structureType == SPELL_TYPE.THE_EYE) {
+            } else if (structureType == SPELL_TYPE.EYE) {
                 return
                     TutorialManager.Instance.HasTutorialBeenCompleted(TutorialManager.Tutorial.Share_An_Intel) ||
                     TutorialManager.Instance.IsTutorialCurrentlyActive(TutorialManager.Tutorial.Share_An_Intel) ||
@@ -1253,6 +1253,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         _buildParticles = GameManager.Instance.CreateParticleEffectAt(GetCenterLocationGridTile(),
             PARTICLE_EFFECT.Build_Demonic_Structure).GetComponent<AutoDestroyParticle>();
         UIManager.Instance.HideObjectPicker();
+        //Moved this here so skill cannot be chosen again while the build coroutine is running 
+        PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.BUILD_DEMONIC_STRUCTURE).OnExecuteSpellActionAffliction();
         StartCoroutine(BuildCoroutine(structureType));
     }
     private IEnumerator BuildCoroutine(SPELL_TYPE structureType) {
@@ -1260,7 +1262,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         _buildParticles.StopEmission();
         DemonicStructurePlayerSkill demonicStructureSkill = PlayerSkillManager.Instance.GetDemonicStructureSkillData(structureType);
         demonicStructureSkill.ActivateAbility(this);
-        PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.BUILD_DEMONIC_STRUCTURE).OnExecuteSpellActionAffliction();
         _buildParticles = null;
     }
     #endregion

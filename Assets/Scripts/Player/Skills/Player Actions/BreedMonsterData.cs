@@ -29,13 +29,13 @@ public class BreedMonsterData : PlayerAction {
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
         bool canPerform = base.CanPerformAbilityTowards(targetCharacter);
         if (canPerform) {
-            return (targetCharacter is Summon) && !targetCharacter.isDead && targetCharacter.gridTileLocation != null && targetCharacter.gridTileLocation.structure != null && targetCharacter.gridTileLocation.structure.structureType == STRUCTURE_TYPE.THE_KENNEL;
+            return (targetCharacter is Summon) && !targetCharacter.isDead && targetCharacter.gridTileLocation != null && targetCharacter.gridTileLocation.structure != null && targetCharacter.gridTileLocation.structure.structureType == STRUCTURE_TYPE.KENNEL;
         }
         return canPerform;
     }
     public override bool IsValid(IPlayerActionTarget target) {
         if(target is Summon targetCharacter) {
-            return (targetCharacter is Summon) && targetCharacter.gridTileLocation != null && targetCharacter.gridTileLocation.structure != null && targetCharacter.gridTileLocation.structure.structureType == STRUCTURE_TYPE.THE_KENNEL;
+            return (targetCharacter is Summon) && targetCharacter.gridTileLocation != null && targetCharacter.gridTileLocation.structure != null && targetCharacter.gridTileLocation.structure.structureType == STRUCTURE_TYPE.KENNEL;
         }
         return false;
     }

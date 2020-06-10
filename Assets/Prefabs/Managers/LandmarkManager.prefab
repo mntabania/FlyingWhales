@@ -316,7 +316,7 @@ MonoBehaviour:
       type: 2}
     itemGenerationSetting: {fileID: 11400000, guid: a6ad65290fd985f46a9259117663375d,
       type: 2}
-  - landmarkTypeString: The Spire
+  - landmarkTypeString: Ostracizer
     landmarkType: 48
     buildDuration: 48
     description: Unlocks new Spells and Afflictions.
@@ -337,7 +337,7 @@ MonoBehaviour:
     elvenLandmarkTileSprites: []
     monsterGenerationSetting: {fileID: 0}
     itemGenerationSetting: {fileID: 0}
-  - landmarkTypeString: The Crypt
+  - landmarkTypeString: Crypt
     landmarkType: 49
     buildDuration: 48
     description: You can store items from a world and keep them here for future use.
@@ -358,7 +358,7 @@ MonoBehaviour:
     elvenLandmarkTileSprites: []
     monsterGenerationSetting: {fileID: 0}
     itemGenerationSetting: {fileID: 0}
-  - landmarkTypeString: The Kennel
+  - landmarkTypeString: Kennel
     landmarkType: 50
     buildDuration: 48
     description: You can capture monsters from a world and keep them here for future
@@ -401,7 +401,7 @@ MonoBehaviour:
     elvenLandmarkTileSprites: []
     monsterGenerationSetting: {fileID: 0}
     itemGenerationSetting: {fileID: 0}
-  - landmarkTypeString: The Goader
+  - landmarkTypeString: Meddler
     landmarkType: 52
     buildDuration: 48
     description: Manipulate characters into joining or leaving factions.
@@ -422,7 +422,7 @@ MonoBehaviour:
     elvenLandmarkTileSprites: []
     monsterGenerationSetting: {fileID: 0}
     itemGenerationSetting: {fileID: 0}
-  - landmarkTypeString: The Eye
+  - landmarkTypeString: Eye
     landmarkType: 53
     buildDuration: 48
     description: Notifies of significant events in its region and allows Intel to
@@ -444,7 +444,7 @@ MonoBehaviour:
     elvenLandmarkTileSprites: []
     monsterGenerationSetting: {fileID: 0}
     itemGenerationSetting: {fileID: 0}
-  - landmarkTypeString: The Profane
+  - landmarkTypeString: Defiler
     landmarkType: 54
     buildDuration: 48
     description: The Ruinarch may assign a minion to delay Heroic Quests on the Profane.
@@ -707,7 +707,7 @@ MonoBehaviour:
         type: 3}
     monsterGenerationSetting: {fileID: 0}
     itemGenerationSetting: {fileID: 0}
-  - landmarkTypeString: Torture Chamber
+  - landmarkTypeString: Torture Chambers
     landmarkType: 60
     buildDuration: 0
     description: Inflict a random painful experience on a captured character.

@@ -1465,7 +1465,7 @@ public class Player : ILeader, IObjectManipulator {
         SaveManager.Instance.currentSaveDataPlayer.SetExp(experience);
     }
     public void SaveSummons() {
-        List<LocationStructure> kennels = playerSettlement.GetStructuresOfType(STRUCTURE_TYPE.THE_KENNEL);
+        List<LocationStructure> kennels = playerSettlement.GetStructuresOfType(STRUCTURE_TYPE.KENNEL);
         List<Summon> kennelSummons = null;
         if(kennels != null) {
             for (int i = 0; i < kennels.Count; i++) {
@@ -1488,7 +1488,7 @@ public class Player : ILeader, IObjectManipulator {
         }
     }
     public void SaveTileObjects() {
-        List<LocationStructure> crypts = playerSettlement.GetStructuresOfType(STRUCTURE_TYPE.THE_CRYPT);
+        List<LocationStructure> crypts = playerSettlement.GetStructuresOfType(STRUCTURE_TYPE.CRYPT);
         List<TileObject> cryptTileObjects = null;
         if (crypts != null) {
             for (int i = 0; i < crypts.Count; i++) {

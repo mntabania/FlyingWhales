@@ -4,13 +4,13 @@ using UnityEngine;
 using UtilityScripts;
 using Random = UnityEngine.Random;
 namespace Inner_Maps.Location_Structures {
-    public class TheSpire : DemonicStructure {
+    public class Ostracizer : DemonicStructure {
         public override Vector2 selectableSize { get; }
 
         private bool _isLearnSpellInCooldown;
         private string _cooldownScheduleKey;
         
-        public TheSpire(Region location) : base(STRUCTURE_TYPE.THE_SPIRE, location){
+        public Ostracizer(Region location) : base(STRUCTURE_TYPE.OSTRACIZER, location){
             selectableSize = new Vector2(10f, 10f);
         }
 

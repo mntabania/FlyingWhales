@@ -46244,12 +46244,12 @@ Canvas:
   m_PlaneDistance: 100
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
-  m_OverrideSorting: 0
+  m_OverrideSorting: 1
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_TargetDisplay: 0
 --- !u!1 &813045182
 GameObject:
@@ -92320,7 +92320,7 @@ MonoBehaviour:
     - data:
       - {fileID: 1052932554014340, guid: 85982449947d1e34d83d066c18cfda10, type: 3}
     - data:
-      - {fileID: 1052932554014340, guid: 2aa6e5b9629ba644fa12bcd8dda836f0, type: 3}
+      - {fileID: 4161023896611396535, guid: 95c22bad701e8ab408dac40a2753949e, type: 3}
     - data:
       - {fileID: 1052932554014340, guid: 618e3581df021fa45adcf52b2c96cf5c, type: 3}
     - data:
