@@ -95,7 +95,7 @@ public class ShareIntelMenu : PopupMenuBase {
             CreateDialogItem(reactor, intel.actor == targetCharacter ? "I know what I did." : "A proper response to this information has not been implemented yet.");
         } else {
             if (reaction == "aware") {
-                CreateDialogItem(reactor, $"<b>{reactor.name}</b> already knows this.");
+                CreateDialogItem(reactor, $"<b>{UtilityScripts.Utilities.ColorizeName(reactor.name)}</b> already knows this.");
             } else {
                 string[] emotionsToActorAndTarget = reaction.Split('/');
 
@@ -107,13 +107,13 @@ public class ShareIntelMenu : PopupMenuBase {
                 
                 if (hasReactionToActor == false && hasReactionToTarget == false) {
                     //has no reactions to actor and target
-                    CreateDialogItem(reactor, $"<b>{reactor.name}</b> seemed Disinterested about this.");
+                    CreateDialogItem(reactor, $"<b>{UtilityScripts.Utilities.ColorizeName(reactor.name)}</b> seemed Disinterested about this.");
                 } else {
                     if (hasReactionToActor) {
-                        CreateDialogItem(reactor, $"<b>{reactor.name}</b> seemed {UtilityScripts.Utilities.GetFirstFewEmotionsAndComafy(emotionsTowardsActor, 2)} at <b>{intel.actor.name}</b> after receiving the new information.");    
+                        CreateDialogItem(reactor, $"<b>{UtilityScripts.Utilities.ColorizeName(reactor.name)}</b> seemed {UtilityScripts.Utilities.GetFirstFewEmotionsAndComafy(emotionsTowardsActor, 2)} at <b>{UtilityScripts.Utilities.ColorizeName(intel.actor.name)}</b> after receiving the new information.");    
                     }
                     if (hasReactionToTarget) {
-                        CreateDialogItem(reactor, $"<b>{reactor.name}</b> seemed {UtilityScripts.Utilities.GetFirstFewEmotionsAndComafy(emotionsTowardsTarget, 2)} at <b>{intel.target.name}</b> after receiving the new information.");
+                        CreateDialogItem(reactor, $"<b>{UtilityScripts.Utilities.ColorizeName(reactor.name)}</b> seemed {UtilityScripts.Utilities.GetFirstFewEmotionsAndComafy(emotionsTowardsTarget, 2)} at <b>{UtilityScripts.Utilities.ColorizeName(intel.target.name)}</b> after receiving the new information.");
                     }
                 }
                 

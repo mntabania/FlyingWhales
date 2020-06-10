@@ -199,76 +199,6 @@ namespace UtilityScripts {
         #endregion
 
         #region Log Utilities
-        //	public static string StringReplacer(string text, LogFiller[] logFillers){
-        //		List<int> specificWordIndexes = new List<int> ();
-        //		string newText = text;
-        //		bool hasPeriod = newText.EndsWith (".");
-        //		if (!string.IsNullOrEmpty (newText)) {
-        //			string[] words = Utilities.SplitAndKeepDelimiters(newText, new char[]{' ', '.', ','});
-        //			for (int i = 0; i < words.Length; i++) {
-        //				if (words [i].Contains ("(%")) {
-        //					specificWordIndexes.Add (i);
-        //				}else if(words [i].Contains ("(*")){
-        //					string strIndex = Utilities.GetStringBetweenTwoChars (words [i], '-', '-');
-        //					int index = 0;
-        //					bool isIndex = int.TryParse (strIndex, out index);
-        //					if(isIndex){
-        //						words [i] = Utilities.PronounReplacer (words [i], logFillers [index].obj);
-        //					}
-        //				}
-        //			}
-        //			if(specificWordIndexes.Count == logFillers.Length){
-        //				for (int i = 0; i < logFillers.Length; i++) {
-        //					string replacedWord = Utilities.CustomStringReplacer (words [specificWordIndexes [i]], logFillers [i], i);
-        //					if(!string.IsNullOrEmpty(replacedWord)){
-        //						words [specificWordIndexes [i]] = replacedWord;
-        //					}
-        //				}
-        //			}
-        //			newText = string.Empty;
-        //			for (int i = 0; i < words.Length; i++) {
-        //				newText += words [i];
-        //			}
-        //			newText = newText.Trim (' ');
-        //		}
-        //
-        //		return newText;
-        //	}
-        //	public static string LogReplacer(Log log){
-        //		List<int> specificWordIndexes = new List<int> ();
-        //		string newText = LocalizationManager.Instance.GetLocalizedValue (log.category, log.file, log.key);
-        //		bool hasPeriod = newText.EndsWith (".");
-        //		if (!string.IsNullOrEmpty (newText)) {
-        //			string[] words = Utilities.SplitAndKeepDelimiters(newText, new char[]{' ', '.', ','});
-        //			for (int i = 0; i < words.Length; i++) {
-        //				if (words [i].Contains ("(%")) {
-        //					specificWordIndexes.Add (i);
-        //				}else if(words [i].Contains ("(*")){
-        //					string strIndex = Utilities.GetStringBetweenTwoChars (words [i], '-', '-');
-        //					int index = 0;
-        //					bool isIndex = int.TryParse (strIndex, out index);
-        //					if(isIndex){
-        //						words [i] = Utilities.PronounReplacer (words [i], log.fillers [index].obj);
-        //					}
-        //				}
-        //			}
-        //			if(specificWordIndexes.Count == log.fillers.Count){
-        //				for (int i = 0; i < log.fillers.Count; i++) {
-        //					string replacedWord = Utilities.CustomStringReplacer (words [specificWordIndexes [i]], log.fillers [i], i);
-        //					if(!string.IsNullOrEmpty(replacedWord)){
-        //						words [specificWordIndexes [i]] = replacedWord;
-        //					}
-        //				}
-        //			}
-        //			newText = string.Empty;
-        //			for (int i = 0; i < words.Length; i++) {
-        //				newText += words [i];
-        //			}
-        //			newText = newText.Trim (' ');
-        //		}
-        //
-        //		return newText;
-        //	}
         public static string LogReplacer(Log log) {
             if (log == null) {
                 return string.Empty;
@@ -289,10 +219,13 @@ namespace UtilityScripts {
                 string[] words = SplitAndKeepDelimiters(newText, ' ', '.', ',', '\'', '!', '"', ':');
                 for (int i = 0; i < words.Length; i++) {
                     var replacedWord = string.Empty;
-                    if (words[i].StartsWith("%") && (words[i].EndsWith("%") || words[i].EndsWith("@"))) { //OBJECT
-                        replacedWord = CustomStringReplacer(words[i], log.fillers);
-                    } else if (words[i].StartsWith("%") && (words[i].EndsWith("a") || words[i].EndsWith("b"))) { //PRONOUN
-                        replacedWord = CustomPronounReplacer(words[i], log.fillers);
+                    string word = words[i];
+                    if (word.StartsWith("%") && (word.EndsWith("%") || word.EndsWith("@"))) { //OBJECT
+                        replacedWord = CustomStringReplacer(word, log.fillers);
+                    } else if (word.StartsWith("%") && (word.EndsWith("a") || word.EndsWith("b"))) { //PRONOUN
+                        replacedWord = CustomPronounReplacer(word, log.fillers);
+                    } else if (IsWordAVerb(word)) {
+                        replacedWord = ColorizeAction(word);
                     }
                     if (!string.IsNullOrEmpty(replacedWord)) {
                         words[i] = replacedWord;
@@ -307,6 +240,20 @@ namespace UtilityScripts {
             log.SetLogText(newText);
             return newText;
         }
+        private static bool IsWordAVerb(string word) {
+            if (InteractionManager.Instance.ignoredActionNames.Contains(word)) {
+                return false;
+            }
+            if (InteractionManager.Instance.forcedActionNames.Contains(word)) {
+                return true;
+            }
+            if (word.EndsWith("ing") || word.EndsWith("ed")) {
+                return true;
+            } else if (InteractionManager.Instance.actionNames.Contains(word)) {
+                return true;
+            }
+            return false;
+        }
         public static string StringReplacer(string text, List<LogFiller> fillers) {
             if (string.IsNullOrEmpty(text)) {
                 return string.Empty;
@@ -320,10 +267,13 @@ namespace UtilityScripts {
                 string[] words = SplitAndKeepDelimiters(newText, new char[] { ' ', '.', ',', '\'', '!', '"', ':' });
                 for (int i = 0; i < words.Length; i++) {
                     replacedWord = string.Empty;
-                    if (words[i].StartsWith("%") && (words[i].EndsWith("%") || words[i].EndsWith("@"))) { //OBJECT
-                        replacedWord = CustomStringReplacer(words[i], fillers);
-                    } else if (words[i].StartsWith("%") && (words[i].EndsWith("a") || words[i].EndsWith("b"))) { //PRONOUN
-                        replacedWord = CustomPronounReplacer(words[i], fillers);
+                    string word = words[i];
+                    if (word.StartsWith("%") && (word.EndsWith("%") || word.EndsWith("@"))) { //OBJECT
+                        replacedWord = CustomStringReplacer(word, fillers);
+                    } else if (word.StartsWith("%") && (word.EndsWith("a") || word.EndsWith("b"))) { //PRONOUN
+                        replacedWord = CustomPronounReplacer(word, fillers);
+                    } else if (IsWordAVerb(word)) {
+                        replacedWord = ColorizeAction(word);
                     }
                     if (!string.IsNullOrEmpty(replacedWord)) {
                         words[i] = replacedWord;
@@ -386,14 +336,15 @@ namespace UtilityScripts {
             if (identifier.ToString().Contains("LIST")) {
                 int listCount = 0;
                 for (int i = 0; i < objectLog.Count; i++) {
-                    if (objectLog[i].identifier == identifier) {
+                    LogFiller logFiller = objectLog[i];
+                    if (logFiller.identifier == identifier) {
                         if (wordToReplace != string.Empty) {
                             wordToReplace += ", ";
                         }
-                        if(objectLog[i].obj != null) {
-                            wordToReplace += $"<b><link={'"'}{i}{'"'}>{objectLog[i].value}</link></b>";
+                        if(logFiller.obj != null) {
+                            wordToReplace += $"{ColorizeName($"<b><link=\"{i}\">{logFiller.value}</link></b>")}";
                         } else {
-                            wordToReplace += $"<b>{objectLog[i].value}</b>";
+                            wordToReplace += $"{ColorizeName($"<b>{logFiller.value}</b>")}";
                         }
                         listCount++;
                     }
@@ -405,19 +356,25 @@ namespace UtilityScripts {
                 }
             } else if (identifier == LOG_IDENTIFIER.APPEND) {
                 for (int i = 0; i < objectLog.Count; i++) {
-                    if (objectLog[i].identifier == identifier) {
-                        wordToReplace = StringReplacer(objectLog[i].value, objectLog);
+                    LogFiller logFiller = objectLog[i];
+                    if (logFiller.identifier == identifier) {
+                        wordToReplace = StringReplacer(logFiller.value, objectLog);
                         break;
                     }
                 }
             } else {
                 for (int i = 0; i < objectLog.Count; i++) {
-                    if (objectLog[i].identifier == identifier) {
-                        if (objectLog[i].obj != null) {
-                            wordToReplace = $"<b><link={'"'}{i}{'"'}>{objectLog[i].value}</link></b>";
+                    LogFiller logFiller = objectLog[i];
+                    if (logFiller.identifier == identifier) {
+                        if (logFiller.obj != null) {
+                            wordToReplace = $"<b><link=\"{i}\">{logFiller.value}</link></b>";
+                            if (logFiller.obj is Character || logFiller.obj is TileObject) {
+                                wordToReplace = ColorizeName(wordToReplace);
+                            }
                         } else {
-                            wordToReplace = $"<b>{objectLog[i].value}</b>";
+                            wordToReplace = $"<b>{logFiller.value}</b>";
                         }
+                        
                         break;
                     }
                 }
@@ -801,6 +758,9 @@ namespace UtilityScripts {
         }
         public static string ColorizeAction(string actionString) {
             return $"<color=#f87f43>{actionString}</color>";
+        }
+        public static string ColorizeName(string name) {
+            return $"<color=#f8ed43>{name}</color>";
         }
         public static string GetFirstFewEmotionsAndComafy(string emotionsStr, int emotionCount) {
             string[] emotions = emotionsStr.Split(' ');

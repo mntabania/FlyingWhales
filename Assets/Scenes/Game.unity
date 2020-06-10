@@ -22486,10 +22486,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: GeneralConfirmation
       objectReference: {fileID: 0}
-    - target: {fileID: 1711417101825226, guid: 7511ffd1c2e29104984bfa8e0750239f, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 224777192084830466, guid: 7511ffd1c2e29104984bfa8e0750239f,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -22594,11 +22590,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 7902367552859759101, guid: 7511ffd1c2e29104984bfa8e0750239f,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7511ffd1c2e29104984bfa8e0750239f, type: 3}
@@ -136876,11 +136867,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: GeneralConfirmationWithVisual
-      objectReference: {fileID: 0}
-    - target: {fileID: 5427893099512573031, guid: 8550405a61e2d7b4db84a14a7c674ebe,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8550405a61e2d7b4db84a14a7c674ebe, type: 3}

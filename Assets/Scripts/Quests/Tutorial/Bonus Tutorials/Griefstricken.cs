@@ -68,7 +68,7 @@ namespace Tutorial {
             steps = new List<QuestStepCollection>() {
                 new QuestStepCollection(
                     new ClickOnCharacterStep("Find the griefstricken", IsCharacterValid).SetObjectsToCenter(_targetCharacter),
-                    new ToggleTurnedOnStep("CharacterInfo_Logs", "Click on Log tab"),
+                    new ToggleTurnedOnStep("CharacterInfo_Logs", "Click on Log tab", () => UIManager.Instance.GetCurrentlySelectedPOI() == _targetCharacter),
                     new LogHistoryItemClicked("Find the cause", IsClickedLogObjectValid)
                         .SetHoverOverAction(OnHoverFindCause)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)

@@ -7,11 +7,13 @@ using Inner_Maps.Location_Structures;
 public class PlayerAction : SpellData {
     public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.PLAYER_ACTION; } }
 
-    public PlayerAction() {
-	}
-
     #region Virtuals
     public virtual bool IsValid(IPlayerActionTarget target) {
+        if (target is Character character) {
+            return character.marker != null;
+        } else if (target is TileObject tileObject) {
+            return tileObject.mapObjectVisual != null;
+        }
         return true;
     }
     public virtual string GetLabelName(IPlayerActionTarget target) {

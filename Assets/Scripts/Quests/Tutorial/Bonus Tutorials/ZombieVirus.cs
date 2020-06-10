@@ -69,7 +69,7 @@ namespace Tutorial {
             steps = new List<QuestStepCollection>() {
                 new QuestStepCollection(
                     new ClickOnCharacterStep("Find a newly Infected character", IsCharacterValid).SetObjectsToCenter(_targetCharacter),
-                    new ToggleTurnedOnStep("CharacterInfo_Logs", "Click on Log tab"),
+                    new ToggleTurnedOnStep("CharacterInfo_Logs", "Click on Log tab", () => UIManager.Instance.GetCurrentlySelectedPOI() == _targetCharacter),
                     new LogHistoryItemClicked("Click on Infected source", IsClickedLogObjectValid)
                         .SetCompleteAction(OnCompleteFindInfectedSource)
                 )

@@ -66,7 +66,7 @@ namespace Tutorial {
                     new ClickOnCharacterStep("Find the Rumormonger", character => character == _targetAction.actor)
                         .SetCompleteAction(OnCompleteFindRumormonger)
                         .SetObjectsToCenter(_targetAction.actor),
-                    new ToggleTurnedOnStep("CharacterInfo_Logs", "Click on Log tab"),
+                    new ToggleTurnedOnStep("CharacterInfo_Logs", "Click on Log tab", () => UIManager.Instance.GetCurrentlySelectedPOI() == _targetAction.actor),
                     new LogHistoryItemClicked("Click on Rumor recipient", IsClickedLogObjectValid)
                         .SetCompleteAction(OnCompleteReceiveRumor)
                 )

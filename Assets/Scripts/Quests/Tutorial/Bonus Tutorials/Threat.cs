@@ -10,6 +10,10 @@ namespace Tutorial {
                 }    
             );
         }
+        protected override void MakeAvailable() {
+            base.MakeAvailable();
+            TutorialManager.Instance.ActivateTutorialButDoNotShow(this);
+        }
         public override void Activate() {
             StopCheckingCriteria();
             UIManager.Instance.generalConfirmationWithVisual.ShowGeneralConfirmation("Threat", 

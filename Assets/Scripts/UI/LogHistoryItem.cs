@@ -49,9 +49,11 @@ public class LogHistoryItem : LogItem {
     public void OnHoverOverLog(object obj) {
         if (obj is string indexText) {
             int index = Int32.Parse(indexText);
-            LogFiller logFiller = log.fillers[index];
-            if (logFiller.obj is Character character && _hoverPosition != null) {
-                UIManager.Instance.ShowCharacterNameplateTooltip(character, _hoverPosition);
+            if (index >= 0 && index < log.fillers.Count) {
+                LogFiller logFiller = log.fillers[index];
+                if (logFiller.obj is Character character && _hoverPosition != null) {
+                    UIManager.Instance.ShowCharacterNameplateTooltip(character, _hoverPosition);
+                }    
             }
         }
     }

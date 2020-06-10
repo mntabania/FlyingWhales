@@ -22,7 +22,7 @@ namespace Tutorial {
             bool hasMetAllCriteria = base.HasMetAllCriteria();
             if (hasMetAllCriteria) {
                 //No necromancers have been spawned yet
-                return CharacterManager.Instance.hasSpawnedNecromancerOnce == false;
+                return GameManager.Instance.Today().day >= 3 && CharacterManager.Instance.hasSpawnedNecromancerOnce == false;
             }
             return false;
         }
@@ -30,7 +30,10 @@ namespace Tutorial {
         private void OnNecromancerSpawned(Character necromancer) {
             CompleteQuest();
         }
-        
+        protected override void MakeAvailable() {
+            base.MakeAvailable();
+            TutorialManager.Instance.ActivateTutorialButDoNotShow(this);
+        }
         public override void Activate() {
             StopCheckingCriteria();
             UIManager.Instance.generalConfirmationWithVisual.ShowGeneralConfirmation("Special Events", 

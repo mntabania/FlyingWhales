@@ -66,12 +66,12 @@ namespace Tutorial {
                 new QuestStepCollection(
                     new ClickOnObjectStep("Find the trapped object", tileObject => tileObject == _targetAction.poiTarget)
                         .SetObjectsToCenter(_targetAction.poiTarget),
-                    new ToggleTurnedOnStep("TileObject_Info", "Click its Info tab")
+                    new ToggleTurnedOnStep("TileObject_Info", "Click its Info tab", () => UIManager.Instance.GetCurrentlySelectedPOI() == _targetAction.poiTarget)
                         .SetHoverOverAction(OnHoverOwner)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo),
-                    new ToggleTurnedOnStep("TileObject_Logs", "Click on Log tab"),
+                    new ToggleTurnedOnStep("TileObject_Logs", "Click on Log tab", () => UIManager.Instance.GetCurrentlySelectedPOI() == _targetAction.poiTarget),
                     new LogHistoryItemClicked("Click Culprit's name", IsClickedLogObjectValid),
-                    new ToggleTurnedOnStep("CharacterInfo_Relations", "Click on Relations tab")
+                    new ToggleTurnedOnStep("CharacterInfo_Relations", "Click on Relations tab", () => UIManager.Instance.GetCurrentlySelectedPOI() == _targetAction.actor)
                         .SetCompleteAction(OnCompletePlaceTrap)
                 )
             };

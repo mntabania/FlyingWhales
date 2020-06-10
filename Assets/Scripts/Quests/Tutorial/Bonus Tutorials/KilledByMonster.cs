@@ -76,7 +76,7 @@ namespace Tutorial {
                 new QuestStepCollection(
                     new ClickOnCharacterStep($"Find the dead {UtilityScripts.Utilities.VillagerIcon()}Villager", IsCharacterValid)
                         .SetObjectsToCenter(_targetCharacter),
-                    new ToggleTurnedOnStep("CharacterInfo_Logs", "Click on Log tab"),
+                    new ToggleTurnedOnStep("CharacterInfo_Logs", "Click on Log tab", () => UIManager.Instance.GetCurrentlySelectedPOI() == _targetCharacter),
                     new LogHistoryItemClicked("Find its killer", IsClickedLogObjectValid)
                         .SetHoverOverAction(OnHoverFindKiller)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)

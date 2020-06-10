@@ -5153,8 +5153,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                UIManager.Instance.characterInfoUI.activeCharacter == this;
     }
     public void LeftSelectAction() {
-        mapObjectVisual.ExecuteClickAction(PointerEventData.InputButton.Left);
-        // UIManager.Instance.ShowCharacterInfo(this);
+        if (mapObjectVisual != null) {
+            mapObjectVisual.ExecuteClickAction(PointerEventData.InputButton.Left);    
+        } else {
+            UIManager.Instance.ShowCharacterInfo(this); 
+        }
     }
     public void RightSelectAction() {
         mapObjectVisual.ExecuteClickAction(PointerEventData.InputButton.Right);
