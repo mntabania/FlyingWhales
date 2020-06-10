@@ -486,6 +486,9 @@ public static class Signals {
     /// </summary>
     public static string STRUCTURE_OBJECT_PLACED = "OnStructureObjectPlaced";
     public static string STRUCTURE_OBJECT_REMOVED = "OnStructureObjectRemoved";
+
+    public static string ADDED_STRUCTURE_RESIDENT = "OnAddedStructureResident";
+    public static string REMOVED_STRUCTURE_RESIDENT = "OnRemoveStructureResident";
     #endregion
 
     #region POI

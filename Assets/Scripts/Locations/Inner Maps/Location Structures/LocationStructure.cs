@@ -753,12 +753,14 @@ namespace Inner_Maps.Location_Structures {
                 residents.Add(character);
                 character.SetHomeStructure(this);
                 OnAddResident(character);
+                Messenger.Broadcast(Signals.ADDED_STRUCTURE_RESIDENT, character, this);
             }
         }
         public void RemoveResident(Character character) {
             if (residents.Remove(character)) {
                 character.SetHomeStructure(null);
                 OnRemoveResident(character);
+                Messenger.Broadcast(Signals.REMOVED_STRUCTURE_RESIDENT, character, this);
             }
         }
         public bool IsResident(Character character) {

@@ -905,7 +905,7 @@ public class UIManager : MonoBehaviour {
     }
     public void UpdateStructureInfo() {
         if (structureInfoUI.isShowing) {
-            structureInfoUI.UpdateInfo();
+            structureInfoUI.UpdateStructureInfoUI();
         }
     }
     #endregion
