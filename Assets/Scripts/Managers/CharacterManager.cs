@@ -105,7 +105,7 @@ public class CharacterManager : MonoBehaviour {
         },
         { Default_Angel_Behaviour,
             new []{
-                typeof(AttackDemonicStructureBehaviour),
+                //typeof(AttackDemonicStructureBehaviour), //Removed this because SetIsAttackingDemonicStructure must still be called even on angels to activate certain calls, if we keep this, there will be double AttackDemonicStructureBehaviour in the character which must never happen!
                 typeof(DefaultExtraCatcher),
             }
         },
