@@ -12,6 +12,8 @@ public class BehaviourComponent {
 
 	public Character owner { get; private set; }
     public List<CharacterBehaviourComponent> currentBehaviourComponents { get; private set; }
+    public List<Character> invadeCombatantTargetList { get; private set; }
+    public List<Character> invadeNonCombatantTargetList { get; private set; }
     public NPCSettlement assignedTargetSettlement { get; private set; }
     public NPCSettlement attackVillageTarget { get; private set; }
     public HexTile assignedTargetHex { get; private set; }
@@ -43,6 +45,8 @@ public class BehaviourComponent {
         this.owner = owner;
         defaultBehaviourSetName = string.Empty;
         currentBehaviourComponents = new List<CharacterBehaviourComponent>();
+        invadeCombatantTargetList = new List<Character>();
+        invadeNonCombatantTargetList = new List<Character>();
         PopulateInitialBehaviourComponents();
     }
 

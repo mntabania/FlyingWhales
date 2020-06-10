@@ -88,6 +88,8 @@ public class CharacterNeedsComponent {
     public TIME_IN_WORDS forcedFullnessRecoveryTimeInWords { get; private set; }
     public TIME_IN_WORDS forcedTirednessRecoveryTimeInWords { get; private set; }
 
+    private bool _hasTriggeredThisHour;
+
     public CharacterNeedsComponent(Character character) {
         this._owner = character;
         SetTirednessLowerBound(0f);
@@ -105,10 +107,12 @@ public class CharacterNeedsComponent {
     #region Initialization
     public void SubscribeToSignals() {
         Messenger.AddListener(Signals.TICK_STARTED, DecreaseNeeds);
+        Messenger.AddListener(Signals.HOUR_STARTED, PerHour);
         Messenger.AddListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJob);
     }
     public void UnsubscribeToSignals() {
         Messenger.RemoveListener(Signals.TICK_STARTED, DecreaseNeeds);
+        Messenger.RemoveListener(Signals.HOUR_STARTED, PerHour);
         Messenger.RemoveListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJob);
     }
     public void DailyGoapProcesses() {
@@ -128,7 +132,7 @@ public class CharacterNeedsComponent {
         SetTiredness(UnityEngine.Random.Range(50, 101));
         SetFullness(UnityEngine.Random.Range(50, 101));
         SetHappiness(UnityEngine.Random.Range(50, 101));
-        SetStamina(UnityEngine.Random.Range(50, 101));
+        SetStamina(100);
     }
     #endregion
 
@@ -150,6 +154,18 @@ public class CharacterNeedsComponent {
     }
     #endregion
 
+    private void PerHour() {
+        if (!_hasTriggeredThisHour) {
+            _hasTriggeredThisHour = true;
+            EveryOtherHour();
+        } else {
+            _hasTriggeredThisHour = false;
+        }
+    }
+    private void EveryOtherHour() {
+        CheckStarving();
+    }
+
     public void CheckExtremeNeeds(Interrupt interruptThatTriggered = null) {
         if (HasNeeds() == false) { return; }
         string summary = $"{GameManager.Instance.TodayLogString()}{_owner.name} will check his/her needs.";
@@ -166,6 +182,11 @@ public class CharacterNeedsComponent {
             PlanHappinessRecoveryActions(_owner);
         }
         Debug.Log(summary);
+    }
+    private void CheckStarving() {
+        if (isStarving) {
+            PlanFullnessRecoveryActions(_owner);
+        }
     }
 
     public bool HasNeeds() {

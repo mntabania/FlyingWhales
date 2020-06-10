@@ -16,28 +16,27 @@ public class InvadeBehaviour : CharacterBehaviourComponent {
             && character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile == character.behaviourComponent.assignedTargetSettlement) {
             log += "\n-Already in the target npcSettlement, will try to combat residents";
             //It will only go here if the invader is not combat anymore, meaning there are no more hostiles in his vision, so we must make sure that he attacks a resident in the settlement even though he can't see it
-            Character chosenNonCombatantTarget = null;
-            Character chosenCombatantTarget = null;
+            character.behaviourComponent.invadeCombatantTargetList.Clear();
+            character.behaviourComponent.invadeNonCombatantTargetList.Clear();
             BaseSettlement settlement = character.behaviourComponent.assignedTargetSettlement;
             for (int i = 0; i < settlement.residents.Count; i++) {
                 Character resident = settlement.residents[i];
                 if (!resident.isDead && resident.gridTileLocation != null && resident.gridTileLocation.IsPartOfSettlement(settlement)) {
                     if (resident.traitContainer.HasTrait("Combatant")) {
-                        chosenCombatantTarget = resident;
-                        break;
+                        character.behaviourComponent.invadeCombatantTargetList.Add(resident);
                     } else {
-                        if(chosenNonCombatantTarget == null) {
-                            chosenNonCombatantTarget = resident;
-                        }
+                        character.behaviourComponent.invadeNonCombatantTargetList.Add(resident);
                     }
                 }
             }
-            if(chosenCombatantTarget != null) {
-                log += "\n-Will attack combatant resident: " + chosenCombatantTarget.name;
-                character.combatComponent.Fight(chosenCombatantTarget, CombatManager.Hostility);
-            } else if (chosenNonCombatantTarget != null) {
-                log += "\n-Will attack non-combatant resident: " + chosenNonCombatantTarget.name;
-                character.combatComponent.Fight(chosenNonCombatantTarget, CombatManager.Hostility);
+            if(character.behaviourComponent.invadeCombatantTargetList.Count > 0) {
+                Character chosenTarget = character.behaviourComponent.invadeCombatantTargetList[UnityEngine.Random.Range(0, character.behaviourComponent.invadeCombatantTargetList.Count)];
+                log += "\n-Will attack combatant resident: " + chosenTarget.name;
+                character.combatComponent.Fight(chosenTarget, CombatManager.Hostility);
+            } else if (character.behaviourComponent.invadeNonCombatantTargetList.Count > 0) {
+                Character chosenTarget = character.behaviourComponent.invadeNonCombatantTargetList[UnityEngine.Random.Range(0, character.behaviourComponent.invadeNonCombatantTargetList.Count)];
+                log += "\n-Will attack non-combatant resident: " + chosenTarget.name;
+                character.combatComponent.Fight(chosenTarget, CombatManager.Hostility);
                 //character.Death();
             } else {
                 log += "\n-No resident found in settlement, dissipate";
