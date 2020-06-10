@@ -163,6 +163,7 @@ public class CharacterNeedsComponent {
         }
     }
     private void EveryOtherHour() {
+        if (HasNeeds() == false) { return; }
         CheckStarving();
     }
 
