@@ -41,6 +41,9 @@ public class CharacterMarkerNameplate : PooledObject {
         Vector3 markerScreenPosition =
             InnerMapCameraMove.Instance.innerMapsCamera.WorldToScreenPoint(_parentMarker.transform.position);
         markerScreenPosition.z = 0f;
+        if (_parentMarker.character != null && _parentMarker.character.grave != null) {
+            markerScreenPosition.y += 15f;
+        }
         transform.position = markerScreenPosition;
         if (thoughtGO.activeSelf) {
             UpdateThoughtText();

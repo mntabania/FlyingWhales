@@ -5,7 +5,14 @@ using Inner_Maps;
 using UnityEngine;
 
 public class Tombstone : TileObject {
-
+    public override Vector2 selectableSize => new Vector2(1f, 0.8f);
+    public override Vector3 worldPosition {
+        get {
+            Vector3 pos = mapVisual.transform.position;
+            pos.y += 0.15f;
+            return pos;
+        }
+    }
     public override Character[] users {
         get { return new[] { character }; }
     }

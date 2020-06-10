@@ -61,7 +61,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     
     #region getters
     public POINT_OF_INTEREST_TYPE poiType => POINT_OF_INTEREST_TYPE.TILE_OBJECT;
-    public Vector3 worldPosition => mapVisual.transform.position;
+    public virtual Vector3 worldPosition => mapVisual.transform.position;
     public virtual Vector2 selectableSize => Vector2Int.one;
     public bool isDead => gridTileLocation == null; //Consider the object as dead if it no longer has a tile location (has been removed)
     public ProjectileReceiver projectileReceiver => mapVisual.visionTrigger.projectileReceiver;
