@@ -61,8 +61,7 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
             object obj = null;
             if (logItem == null) {
                 string linkText = linkInfo.GetLinkID();
-                int idToUse;
-                if (!int.TryParse(linkText, out idToUse)) {
+                if (!int.TryParse(linkText, out var idToUse)) {
                     if (linkText.Contains("_") && linkText.Length > 1) {
                         string id = linkText.Substring(0, linkText.IndexOf('_'));
                         idToUse = int.Parse(id);
@@ -77,25 +76,16 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
                 } else if (linkText.Contains("_hextile")) {
                     HexTile tile = GridMap.Instance.allTiles[idToUse];
                     obj = tile;
-                } 
-                // else if (linkText.Contains("_combat")) {
-                //     if (UIManager.Instance.characterInfoUI.activeCharacter != null) {
-                //         if (UIManager.Instance.characterInfoUI.activeCharacter.combatHistory.ContainsKey(idToUse)) {
-                //             UIManager.Instance.ShowCombatLog(UIManager.Instance.characterInfoUI.activeCharacter.combatHistory[idToUse]);
-                //         }
-                //     }
-                // } 
+                }
                 else {
                     obj = linkInfo.GetLinkID();
                 }
             } else if (logItem.log != null) {
                 string linkText = linkInfo.GetLinkID();
-                int idToUse;
-                if (!int.TryParse(linkText, out idToUse)) {
+                if (!int.TryParse(linkText, out var idToUse)) {
                     string id = linkText.Substring(0, linkText.IndexOf('_'));
                     idToUse = int.Parse(id);
                 }
-                //int indexToUse = int.Parse(linkInfo.GetLinkID());
                 LogFiller lf = logItem.log.fillers[idToUse];
                 obj = lf.obj;
             }
@@ -105,28 +95,13 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
                 }
             } else {
                 if(obj != null) {
-                    if (obj is Character character) {
-                        UIManager.Instance.ShowCharacterInfo(character, true);
-                    } else if (obj is NPCSettlement settlement) {
-                        UIManager.Instance.ShowRegionInfo(settlement.region);
-                    } else if (obj is Faction faction) {
-                        UIManager.Instance.ShowFactionInfo(faction);
-                    } else if (obj is Minion minion) {
-                        UIManager.Instance.ShowCharacterInfo(minion.character, true);
-                    } else if (obj is Party party) {
-                        UIManager.Instance.ShowCharacterInfo(party.owner, true);
-                    } else if (obj is TileObject tileObject) {
-                            UIManager.Instance.ShowTileObjectInfo(tileObject);
-                    } else if (obj is Region region) {
-                        UIManager.Instance.ShowRegionInfo(region);
-                    } else if (obj is LocationStructure structure) {
-                        structure.CenterOnStructure();
-                    }
+                    UIManager.Instance.OpenObjectUI(obj);
                 }
             }
             ResetHighlightValues();
         }
     }
+    
     public void OnPointerEnter(PointerEventData eventData) {
         if (!allowClickAction) {
             return;

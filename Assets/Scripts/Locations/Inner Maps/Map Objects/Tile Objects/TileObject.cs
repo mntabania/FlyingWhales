@@ -1059,8 +1059,11 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
                UIManager.Instance.tileObjectInfoUI.activeTileObject == this;
     }
     public void LeftSelectAction() {
-        mapObjectVisual.ExecuteClickAction(PointerEventData.InputButton.Left);
-        // UIManager.Instance.ShowTileObjectInfo(this);
+        if (mapObjectVisual != null) {
+            mapObjectVisual.ExecuteClickAction(PointerEventData.InputButton.Left);    
+        } else {
+            UIManager.Instance.ShowTileObjectInfo(this);    
+        }
     }
     public void RightSelectAction() {
         mapObjectVisual.ExecuteClickAction(PointerEventData.InputButton.Right);

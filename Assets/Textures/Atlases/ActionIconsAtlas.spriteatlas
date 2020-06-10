@@ -1,0 +1,126 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: ActionIconsAtlas
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 0
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings:
+    - serializedVersion: 3
+      m_BuildTarget: DefaultTexturePlatform
+      m_MaxTextureSize: 2048
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: -1
+      m_TextureCompression: 0
+      m_CompressionQuality: 50
+      m_CrunchedCompression: 0
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 0
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
+    packingSettings:
+      serializedVersion: 2
+      padding: 4
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 0
+      enableTightPacking: 0
+    variantMultiplier: 1
+    packables:
+    - {fileID: 102900000, guid: 6b88faf7d1b6b4c41a84ee00017c671f, type: 3}
+    totalSpriteSurfaceArea: 170940
+    bindAsDefault: 1
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: 21300000, guid: abd97990b07f57849b3c5ec8e58ae570, type: 3}
+  - {fileID: 21300000, guid: b4cfeca0d4e8cfa458e389f4903fa890, type: 3}
+  - {fileID: 21300000, guid: 8abf9ac056a94364ca1ba402b951f22d, type: 3}
+  - {fileID: 21300000, guid: 019388d01ffc1134bbfed1d2f413e19e, type: 3}
+  - {fileID: 21300000, guid: 95f79231f93a3f0499e46aa40e19fcef, type: 3}
+  - {fileID: 21300000, guid: f73219a174dca49489ec11e6d5c62e46, type: 3}
+  - {fileID: 21300000, guid: bc7f90f1b9be3404485e4de86fff5b35, type: 3}
+  - {fileID: 21300000, guid: b4f2c5f24d7b89045aac39d116bfb8c2, type: 3}
+  - {fileID: 21300000, guid: 5a786d93d2807cf40b59d2f8e2175578, type: 3}
+  - {fileID: 21300000, guid: d7d4d5448e2a2604c95aad638d97ddd4, type: 3}
+  - {fileID: 21300000, guid: 1605f245bccd651418a6da868ce4c504, type: 3}
+  - {fileID: 21300000, guid: 40a05016a0c63df4a9cec8988924ab11, type: 3}
+  - {fileID: 21300000, guid: e46f0a460945f654384cefc0e6c410a6, type: 3}
+  - {fileID: 21300000, guid: 0d63b4565c710da43ad864486aed4127, type: 3}
+  - {fileID: 21300000, guid: c84e5847398fb8b4f99cdef74326146b, type: 3}
+  - {fileID: 21300000, guid: b8a1dfc70f25b144fbbad2ea3892376b, type: 3}
+  - {fileID: 21300000, guid: 28f8c9f7d1cd3b34d9b092f15c276d8e, type: 3}
+  - {fileID: 21300000, guid: cf39aa580a482b743bbf80920ec0814c, type: 3}
+  - {fileID: 21300000, guid: b53ae4d8efa07034fab7abae49e4a756, type: 3}
+  - {fileID: 21300000, guid: bee8aa795ec3e18458fce4bf84697bf8, type: 3}
+  - {fileID: 21300000, guid: c015668983091ca4983942f51044d8bd, type: 3}
+  - {fileID: 21300000, guid: 926c1799cbb535247b4995e06413c418, type: 3}
+  - {fileID: 21300000, guid: d0440b2a2239fdc4d9c82c807fb76a59, type: 3}
+  - {fileID: 21300000, guid: a37c8faae3749b943b722a020c453f46, type: 3}
+  - {fileID: 21300000, guid: 1cce23fa43f5f8d4098a394573311fa6, type: 3}
+  - {fileID: 21300000, guid: 8f376b7b2ce182042be10ffc0f1a307b, type: 3}
+  - {fileID: 21300000, guid: b6fc588bdc1dda14a9e12c28752c9654, type: 3}
+  - {fileID: 21300000, guid: 966231cba479ae54e9c349f1adcca162, type: 3}
+  - {fileID: 21300000, guid: 4155cf0c332b7864d9c20452435e1894, type: 3}
+  - {fileID: 21300000, guid: 8d39531c7a7c13a44bd46ffc73a27fb9, type: 3}
+  - {fileID: 21300000, guid: 5a6c315d820be4a47be6b608d557c894, type: 3}
+  - {fileID: 21300000, guid: 5395d83e70672be4484df767e840dd66, type: 3}
+  - {fileID: 21300000, guid: 7d8bb54ee481ae448bd0c3866adc496f, type: 3}
+  - {fileID: 21300000, guid: 4a350f5e5db0b524b8f529b0332d1359, type: 3}
+  - {fileID: 21300000, guid: f521dc0fe05fcd841adca17c3297d6b1, type: 3}
+  - {fileID: 21300000, guid: a0bf001f1e836dd4fb26d8cdbda6577a, type: 3}
+  - {fileID: 21300000, guid: e1e2629f3b2fa3a4eb4330d424520b2d, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - explore
+  - action_icon_harvest
+  - action_icon_mock
+  - action_icon_repair
+  - action_icon_hostile
+  - stealth
+  - action_icon_clean
+  - flee
+  - action_icon_eat
+  - action_icon_sick
+  - entertain
+  - action_icon_magic
+  - pray
+  - action_icon_cowering
+  - patrol
+  - action_icon_bury
+  - action_icon_chop
+  - first_aid
+  - action_icon_anger
+  - action_icon_build
+  - action_icon_mine
+  - action_icon_douse
+  - action_icon_work
+  - action_icon_haul
+  - action_icon_cure
+  - drink
+  - flirt
+  - action_icon_approval
+  - steal
+  - action_icon_sad
+  - action_icon_social
+  - drink_blood
+  - restrain
+  - action_icon_joy
+  - action_icon_watch
+  - action_icon_sleep
+  - action_icon_shock
+  m_Tag: ActionIconsAtlas
+  m_IsVariant: 0

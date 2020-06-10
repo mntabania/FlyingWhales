@@ -84,6 +84,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool destroyMarkerOnDeath { get; protected set; }
     public bool isWanderer { get; private set; }
     public bool hasRisen { get; private set; }
+    public Log deathLog { get; private set; }
 
     public List<JobQueueItem> forcedCancelJobsOnTickEnded { get; private set; }
     public List<HexTile> territorries { get; private set; }
@@ -5154,8 +5155,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                UIManager.Instance.characterInfoUI.activeCharacter == this;
     }
     public void LeftSelectAction() {
-        mapObjectVisual.ExecuteClickAction(PointerEventData.InputButton.Left);
-        // UIManager.Instance.ShowCharacterInfo(this);
+        if (mapObjectVisual != null) {
+            mapObjectVisual.ExecuteClickAction(PointerEventData.InputButton.Left);    
+        } else {
+            UIManager.Instance.ShowCharacterInfo(this); 
+        }
     }
     public void RightSelectAction() {
         mapObjectVisual.ExecuteClickAction(PointerEventData.InputButton.Right);
@@ -5510,6 +5514,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             } else {
                 deathLog = _deathLog;
             }
+            SetDeathLog(deathLog);
             deathStr = UtilityScripts.Utilities.LogReplacer(deathLog);
             Messenger.Broadcast(Signals.CHARACTER_DEATH, this);
 
@@ -5519,6 +5524,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //    }
             //}
         }
+    }
+    public void SetDeathLog(Log log) {
+        deathLog = log;
     }
     public void SetGrave(Tombstone grave) {
         this.grave = grave;

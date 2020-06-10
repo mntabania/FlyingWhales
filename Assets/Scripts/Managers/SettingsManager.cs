@@ -103,7 +103,7 @@ namespace Settings {
             settingsGO.SetActive(false);
         }
         private void UpdateUI() {
-            skipTutorialsToggle.isOn = settings.skipTutorials;
+            skipTutorialsToggle.SetIsOnWithoutNotify(settings.skipTutorials);
             edgePanningToggle.isOn = settings.useEdgePanning;
 
             resolutionsDropdown.value =

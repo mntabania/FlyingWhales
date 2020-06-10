@@ -73,16 +73,16 @@ namespace Tutorial {
         }
         #endregion
         
-        #region Availability
-        protected override void MakeAvailable() {
-            base.MakeAvailable();
-            TutorialManager.Instance.AddTutorialToWaitList(this);
-        }
-        protected override void MakeUnavailable() {
-            base.MakeUnavailable();
-            TutorialManager.Instance.RemoveTutorialFromWaitList(this);
-        }
-        #endregion
+        // #region Availability
+        // protected override void MakeAvailable() {
+        //     base.MakeAvailable();
+        //     TutorialManager.Instance.AddTutorialToWaitList(this);
+        // }
+        // protected override void MakeUnavailable() {
+        //     base.MakeUnavailable();
+        //     TutorialManager.Instance.RemoveTutorialFromWaitList(this);
+        // }
+        // #endregion
 
         #region Completion
         protected override void CompleteQuest() {
@@ -98,7 +98,7 @@ namespace Tutorial {
         public override void Deactivate() {
             base.Deactivate();
             if (isAvailable == false) {
-                //only stop waiting for availability only if tutorial has not yet been made available but has been deactivated.  
+                //only stop checking criteria only if tutorial has not yet been made available but has been deactivated.  
                 StopCheckingCriteria();    
             }
         }

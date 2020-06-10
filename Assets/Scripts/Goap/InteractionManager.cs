@@ -21,7 +21,14 @@ public partial class InteractionManager : MonoBehaviour {
     public Dictionary<INTERACTION_TYPE, GoapAction> goapActionData { get; private set; }
     public Dictionary<POINT_OF_INTEREST_TYPE, List<GoapAction>> allGoapActionAdvertisements { get; private set; }
     public Dictionary<INTERRUPT, Interrupt> interruptData { get; private set; }
+    public HashSet<string> actionNames { get; private set; }
 
+    public HashSet<string> ignoredActionNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
+        "witnessed", "going", "fish", "seemed"
+    };
+    public HashSet<string> forcedActionNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
+        "sat", "ate", "pick", "share", "sang"
+    };
 
     [Header("Actions")]
     public StringSpriteDictionary actionIconDictionary;
@@ -52,10 +59,14 @@ public partial class InteractionManager : MonoBehaviour {
     }
     private void ConstructGoapActionData() {
         goapActionData = new Dictionary<INTERACTION_TYPE, GoapAction>();
+        actionNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         INTERACTION_TYPE[] allGoapActions = CollectionUtilities.GetEnumValues<INTERACTION_TYPE>();
         for (int i = 0; i < allGoapActions.Length; i++) {
             INTERACTION_TYPE currType = allGoapActions[i];
-            var typeName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(currType.ToString());
+            string typeString = currType.ToString();
+            var typeName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(typeString);
+            actionNames.Add(UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(typeString));
+            
             System.Type type = System.Type.GetType(typeName);
             if (type != null) {
                 GoapAction data = System.Activator.CreateInstance(type) as GoapAction;

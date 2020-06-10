@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Settings;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.Serialization;
 using UnityEngine.Video;
 using UtilityScripts;
@@ -26,11 +27,17 @@ namespace Tutorial {
             Counterattack = 13,
             Divine_Intervention = 14,
             Chaos_Orbs_Tutorial = 15,
-            Special_Events = 16
+            Special_Events = 16,
+            Griefstricken,
+            Killed_By_Monster,
+            Booby_Trap,
+            Rumor,
+            Zombie_Virus
         }
 
-        private List<TutorialQuest> _activeTutorials;
-        private List<TutorialQuest> _waitingTutorials;
+        private List<ImportantTutorial> _activeImportantTutorials;
+        private List<ImportantTutorial> _waitingImportantTutorials;
+        private List<BonusTutorial> _activeBonusTutorials;
         private List<TutorialQuest> _instantiatedTutorials;
 
         public bool alwaysResetTutorialsOnStart;
@@ -64,6 +71,9 @@ namespace Tutorial {
         public Texture logsTab;
         public VideoClip homeStructureVideo;
         public Texture necronomiconPicture;
+        public VideoClip griefstrickenLog;
+        public VideoClip killedByMonsterLog;
+        public Texture tileObjectOwner;
 
         #region Monobehaviours
         private void Awake() {
@@ -81,8 +91,9 @@ namespace Tutorial {
 
         #region Initialization
         public void Initialize() {
-            _activeTutorials = new List<TutorialQuest>();
-            _waitingTutorials = new List<TutorialQuest>();
+            _activeImportantTutorials = new List<ImportantTutorial>();
+            _waitingImportantTutorials = new List<ImportantTutorial>();
+            _activeBonusTutorials = new List<BonusTutorial>();
             _instantiatedTutorials = new List<TutorialQuest>();
             
             if (SaveManager.Instance.currentSaveDataPlayer.completedTutorials == null || alwaysResetTutorialsOnStart) {
@@ -133,6 +144,17 @@ namespace Tutorial {
         public bool IsTutorialCurrentlyActive(Tutorial tutorial) {
             return _instantiatedTutorials.Any(t => t.tutorialType == tutorial && t.isActivated);
         }
+        private bool IsBonusTutorial(TutorialQuest tutorialQuest) {
+            return tutorialQuest is BonusTutorial;
+        }
+        public bool HasActiveLogQuest() {
+            for (int i = 0; i < _activeBonusTutorials.Count; i++) {
+                if (_activeBonusTutorials[i] is LogQuest) {
+                    return true;
+                }
+            }
+            return false;
+        }
         #endregion
 
         #region Completion
@@ -164,56 +186,64 @@ namespace Tutorial {
         #endregion
 
         #region Availability
-        public void AddTutorialToWaitList(TutorialQuest tutorialQuest) {
-            _waitingTutorials.Add(tutorialQuest);
-            _waitingTutorials = _waitingTutorials.OrderBy(q => q.priority).ToList();
+        public void AddTutorialToWaitList(ImportantTutorial tutorialQuest) {
+            _waitingImportantTutorials.Add(tutorialQuest);
+            _waitingImportantTutorials = _waitingImportantTutorials.OrderBy(q => q.priority).ToList();
         }
-        public void RemoveTutorialFromWaitList(TutorialQuest tutorialQuest) {
-            _waitingTutorials.Remove(tutorialQuest);
-        }
-        public bool IsInWaitList(TutorialQuest tutorialQuest) {
-            return _waitingTutorials.Contains(tutorialQuest);
+        public void RemoveTutorialFromWaitList(ImportantTutorial tutorialQuest) {
+            _waitingImportantTutorials.Remove(tutorialQuest);
         }
         #endregion
 
         #region Presentation
         private void CheckIfNewTutorialCanBeActivated() {
-            if (_waitingTutorials.Count > 0 && _activeTutorials.Count < MaxActiveTutorials) {
+            if (_waitingImportantTutorials.Count > 0 && _activeImportantTutorials.Count < MaxActiveTutorials) {
                 //new tutorial can be shown.
                 //check number of tutorials that can be shown. 3 at maximum
-                int missingTutorials = MaxActiveTutorials - _activeTutorials.Count;
-                if (missingTutorials > _waitingTutorials.Count) {
+                int missingTutorials = MaxActiveTutorials - _activeImportantTutorials.Count;
+                if (missingTutorials > _waitingImportantTutorials.Count) {
                     //if number of missing tutorials is greater than the available tutorials, then just show the available ones.
-                    missingTutorials = _waitingTutorials.Count;
+                    missingTutorials = _waitingImportantTutorials.Count;
                 }
                 for (int i = 0; i < missingTutorials; i++) {
                     //get first tutorial in list, since tutorials are sorted by priority beforehand.
-                    TutorialQuest availableTutorial = _waitingTutorials[0];
+                    ImportantTutorial availableTutorial = _waitingImportantTutorials[0];
                     ActivateTutorial(availableTutorial);        
                 }
             }
         }
-        public void ActivateTutorial(TutorialQuest tutorialQuest) {
-            if (IsBonusTutorial(tutorialQuest) == false) {
-                //if tutorial is not a bonus tutorial, do not add it to active tutorials list, because it should not add to that count.
-                _activeTutorials.Add(tutorialQuest);    
-            }
+        private void ActivateTutorial(ImportantTutorial tutorialQuest) {
+            _activeImportantTutorials.Add(tutorialQuest);    
             RemoveTutorialFromWaitList(tutorialQuest);
             tutorialQuest.Activate();
+            ShowTutorial(tutorialQuest);
+        }
+        public void ActivateTutorial(BonusTutorial bonusTutorial) {
+            _activeBonusTutorials.Add(bonusTutorial);
+            bonusTutorial.Activate();
+            ShowTutorial(bonusTutorial);
+        }
+        public void ActivateTutorialButDoNotShow(BonusTutorial bonusTutorial) {
+            _activeBonusTutorials.Add(bonusTutorial);
+            bonusTutorial.Activate();
+        }
+        public void ShowTutorial(TutorialQuest tutorialQuest) {
+            Assert.IsTrue(tutorialQuest.isActivated, $"{tutorialQuest.questName} is being shown, but has not yet been activated.");
             QuestItem questItem = UIManager.Instance.questUI.ShowQuest(tutorialQuest);
             tutorialQuest.SetQuestItem(questItem);
         }
         private void DeactivateTutorial(TutorialQuest tutorialQuest) {
-            _activeTutorials.Remove(tutorialQuest);
-            _waitingTutorials.Remove(tutorialQuest); //this is for cases when a tutorial is in the waiting list, but has been deactivated.
+            if (tutorialQuest is ImportantTutorial importantTutorial) {
+                _activeImportantTutorials.Remove(importantTutorial);
+                _waitingImportantTutorials.Remove(importantTutorial); //this is for cases when a tutorial is in the waiting list, but has been deactivated.    
+            } else if (tutorialQuest is BonusTutorial bonusTutorial) {
+                _activeBonusTutorials.Remove(bonusTutorial);
+            }
             _instantiatedTutorials.Remove(tutorialQuest);
             if (tutorialQuest.questItem != null) {
                 UIManager.Instance.questUI.HideQuestDelayed(tutorialQuest);
             }
             tutorialQuest.Deactivate();
-        }
-        public bool HasActiveTutorial() {
-            return _activeTutorials.Count > 0;
         }
         #endregion
 
@@ -250,12 +280,6 @@ namespace Tutorial {
         }
         #endregion
 
-        #region Utilities
-        private bool IsBonusTutorial(TutorialQuest tutorialQuest) {
-            return tutorialQuest is PopupTutorial || tutorialQuest.tutorialType == Tutorial.Chaos_Orbs_Tutorial || tutorialQuest.tutorialType == Tutorial.Share_An_Intel;
-        }
-        #endregion
-        
 
     }
 }

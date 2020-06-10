@@ -2,6 +2,7 @@
 namespace Quests {
     public class CharacterDied : QuestCriteria {
         private readonly Func<Character, bool> _validityChecker;
+        public Character character { get; private set; }
         public CharacterDied(Func<Character, bool> validityChecker) {
             _validityChecker = validityChecker;
         }
@@ -16,9 +17,11 @@ namespace Quests {
         private void OnCharacterDied(Character character) {
             if (_validityChecker != null) {
                 if (_validityChecker.Invoke(character)) {
+                    this.character = character;
                     SetCriteriaAsMet();
                 }
             } else {
+                this.character = character;
                 SetCriteriaAsMet();
             }
         }

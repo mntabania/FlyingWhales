@@ -164,6 +164,7 @@ public class Minion {
             } else {
                 deathLog = _deathLog;
             }
+            character.SetDeathLog(deathLog);
             Unsummon();
             GameManager.Instance.CreateParticleEffectAt(deathTile, PARTICLE_EFFECT.Minion_Dissipate);
         }

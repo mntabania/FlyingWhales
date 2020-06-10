@@ -1,16 +1,23 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class LogComponent  {
-    public IPointOfInterest owner { get; private set; }
-    public List<Log> history { get; private set; }
+    public IPointOfInterest owner { get; }
+    public List<Log> history { get; }
+    /// <summary>
+    /// History categorized by files
+    /// </summary>
+    private readonly Dictionary<string, List<Log>> _categorizedHistory;
 
     private string _planCostLog;
-
+    private const int MaxLogs = 300; 
+    
     public LogComponent(IPointOfInterest owner) {
         this.owner = owner;
+        _categorizedHistory = new Dictionary<string, List<Log>>();
         history = new List<Log>();
         ClearCostLog();
     }
@@ -20,12 +27,13 @@ public class LogComponent  {
         if (!history.Contains(log)) {
             log.SetDate(GameManager.Instance.Today());
             history.Add(log);
-            if (history.Count > 300) {
-                history.RemoveAt(0);
+            CategorizeLog(log);
+            if (history.Count > MaxLogs) {
+                // history.RemoveAt(0);
+                RemoveLog(history[0]);
             }
             Messenger.Broadcast(Signals.LOG_ADDED, owner);
-            if (owner.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-                Character character = owner as Character;
+            if (owner is Character character) {
                 if (character.isLycanthrope) {
                     character.lycanData.limboForm.logComponent.AddHistory(log);
                 }
@@ -34,7 +42,24 @@ public class LogComponent  {
         }
         return false;
     }
-
+    private void RemoveLog(Log log) {
+        if (history.Remove(log)) {
+            RemoveLogFromCategorizedList(log);
+            Messenger.Broadcast(Signals.LOG_REMOVED, log, owner);
+        }
+    }
+    private void CategorizeLog(Log log) {
+        if (_categorizedHistory.ContainsKey(log.file) == false) {
+            _categorizedHistory.Add(log.file, new List<Log>());
+        }
+        _categorizedHistory[log.file].Add(log);
+    }
+    private void RemoveLogFromCategorizedList(Log log) {
+        if (_categorizedHistory.ContainsKey(log.file)) {
+            _categorizedHistory[log.file].Remove(log);
+        }
+    }
+    
     /// <summary>
     /// What should happen if another character sees this character?
     /// </summary>
@@ -92,6 +117,21 @@ public class LogComponent  {
     }
     public void PrintCostLog(){
         PrintLogIfActive(_planCostLog);   
+    }
+    #endregion
+
+    #region Data Getting
+    public Log GetLatestLogInCategory(string category) {
+        if (_categorizedHistory.ContainsKey(category)) {
+            return _categorizedHistory[category].Last();
+        }
+        return null;
+    }
+    public List<Log> GetLogsInCategory(string category) {
+        if (_categorizedHistory.ContainsKey(category)) {
+            return _categorizedHistory[category];
+        }
+        return null;
     }
     #endregion
 }

@@ -127,10 +127,10 @@ namespace Traits {
                 if (hitCharacter.isDead) {
                     chance = 80;
                 }
+                // chance = 100;
                 if (roll < chance) { //15
                     summary += $"\nChance met, {hitCharacter.name} will turn into a zombie.";
-                    Trait infectedTrait = null;
-                    if (hitCharacter.traitContainer.AddTrait(hitCharacter, "Infected", out infectedTrait, characterResponsible: hitBy)) {
+                    if (hitCharacter.traitContainer.AddTrait(hitCharacter, "Infected", out var infectedTrait, characterResponsible: hitBy)) {
                         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "contracted_zombie");
                         log.AddToFillers(hitCharacter, hitCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                         log.AddToFillers(hitBy, hitBy.name, LOG_IDENTIFIER.TARGET_CHARACTER);

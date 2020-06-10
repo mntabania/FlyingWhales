@@ -199,7 +199,7 @@ public class Summon : Character, IWorldObject {
             } else {
                 deathLog = _deathLog;
             }
-
+            SetDeathLog(deathLog);
             AfterDeath(deathTile);
         }
     }

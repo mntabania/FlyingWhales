@@ -850,24 +850,24 @@ public class CharacterInfoUI : InfoUIBase {
 
     #region Tabs
     public void OnToggleInfo(bool isOn) {
-        if (isOn) {
-            Messenger.Broadcast(Signals.TOGGLE_TURNED_ON, "CharacterInfo_Info");    
-        }
+        // if (isOn) {
+        //     Messenger.Broadcast(Signals.TOGGLE_TURNED_ON, "CharacterInfo_Info");    
+        // }
     }
     public void OnToggleMood(bool isOn) {
-        if (isOn) {
-            Messenger.Broadcast(Signals.TOGGLE_TURNED_ON, "CharacterInfo_Mood");    
-        }
+        // if (isOn) {
+        //     Messenger.Broadcast(Signals.TOGGLE_TURNED_ON, "CharacterInfo_Mood");    
+        // }
     }
     public void OnToggleRelations(bool isOn) {
-        if (isOn) {
-            Messenger.Broadcast(Signals.TOGGLE_TURNED_ON, "CharacterInfo_Relations");    
-        }
+        // if (isOn) {
+        //     Messenger.Broadcast(Signals.TOGGLE_TURNED_ON, "CharacterInfo_Relations");    
+        // }
     }
     public void OnToggleLogs(bool isOn) {
-        if (isOn) {
-            Messenger.Broadcast(Signals.TOGGLE_TURNED_ON, "CharacterInfo_Logs");    
-        }
+        // if (isOn) {
+        //     Messenger.Broadcast(Signals.TOGGLE_TURNED_ON, "CharacterInfo_Logs");    
+        // }
     }
     #endregion
 }
