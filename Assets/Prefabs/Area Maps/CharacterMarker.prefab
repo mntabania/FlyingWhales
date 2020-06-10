@@ -664,6 +664,8 @@ MonoBehaviour:
   animator: {fileID: 95186138413260264}
   animationListener: {fileID: 114755964225770220}
   currentAnimation: 
+  defaultController: {fileID: 9100000, guid: ffe6e2853385f4440abc8c2b55a9068f, type: 2}
+  monsterController: {fileID: 22100000, guid: 3540b1e5362ee6a4ab77e360bc0c8108, type: 2}
   pathfindingAI: {fileID: 114720397635659402}
   destinationSetter: {fileID: 114167030245026914}
   seeker: {fileID: 114578536136533292}

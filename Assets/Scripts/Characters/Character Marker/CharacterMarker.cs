@@ -10,6 +10,7 @@ using Pathfinding;
 using System.Linq;
 using Inner_Maps;
 using Traits;
+using UnityEditor.Animations;
 using UnityEngine.Profiling;
 using UnityEngine.Serialization;
 using UtilityScripts;
@@ -33,7 +34,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public Animator animator;
     [SerializeField] private CharacterMarkerAnimationListener animationListener;
     [SerializeField] private string currentAnimation;
-
+    [SerializeField] private RuntimeAnimatorController defaultController;
+    [SerializeField] private RuntimeAnimatorController monsterController;
+    
     [Header("Pathfinding")]
     public CharacterAIPath pathfindingAI;    
     public AIDestinationSetter destinationSetter;
@@ -78,7 +81,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
     private LocationGridTile _previousGridTile;
     public bool useCanTraverse;
     private float attackSpeedMeter { get; set; }
-    private AnimatorOverrideController animatorOverrideController; //this is the controller that is made per character
     private HexTile _previousHexTileLocation;
     private CharacterMarkerNameplate _nameplate;
     
@@ -90,6 +92,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         UpdateName();
         UpdateSortingOrder();
         UpdateMarkerVisuals();
+        UpdateAnimatorController();
         UpdateActionIcon();
         ForceUpdateMarkerVisualsBasedOnAnimation();
 
@@ -561,6 +564,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
     #endregion
 
     #region Animation
+    private void UpdateAnimatorController() {
+        animator.runtimeAnimatorController = character.isNormalCharacter || character.characterClass.rangeType == RANGE_TYPE.RANGED ? defaultController : monsterController;
+    }
     private void UpdateVisualBasedOnCurrentAnimationFrame() {
         string currSpriteName = mainImg.sprite.name;
         if (character.visuals.markerAnimations.ContainsKey(currSpriteName)) {
