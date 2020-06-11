@@ -1964,6 +1964,8 @@ public static class Extensions {
                 priority = 1010;
                 break;
             case JOB_TYPE.REMOVE_STATUS:
+                priority = 1008;
+                break;
             case JOB_TYPE.RECOVER_HP:
                 priority = 1005;
                 break;

@@ -285,6 +285,14 @@ public class UIManager : MonoBehaviour {
         Unpause();
         GameManager.Instance.SetProgressionSpeed(PROGRESSION_SPEED.X4);
     }
+    /// <summary>
+    /// Helper function to call if the player is the one that paused the game.
+    /// </summary>
+    public void PauseByPlayer() {
+        Pause();
+        Debug.Log("Game was paused by player.");
+        Messenger.Broadcast(Signals.PAUSED_BY_PLAYER);
+    }
     public void Pause() {
         GameManager.Instance.SetPausedState(true);
     }

@@ -65,6 +65,7 @@ public class TileObjectInfoUI : InfoUIBase {
         if(activeTileObject != null && activeTileObject.mapVisual != null) {
             // activeTileObject.mapVisual.UnlockHoverObject();
             // activeTileObject.mapVisual.SetHoverObjectState(false);
+            activeTileObject.mapVisual.UpdateSortingOrders(activeTileObject);
             if (InnerMapCameraMove.Instance.target == activeTileObject.mapObjectVisual.transform) {
                 InnerMapCameraMove.Instance.CenterCameraOn(null);
             }
@@ -80,6 +81,9 @@ public class TileObjectInfoUI : InfoUIBase {
         // }
         
         activeTileObject = _data as TileObject;
+        if (previousTileObject != null && previousTileObject.mapVisual != null) {
+            previousTileObject.mapVisual.UpdateSortingOrders(previousTileObject);
+        }
         if(activeTileObject.gridTileLocation != null && activeTileObject.mapObjectVisual != null) {
             bool instantCenter = !InnerMapManager.Instance.IsShowingInnerMap(activeTileObject.currentRegion);
             InnerMapCameraMove.Instance.CenterCameraOn(activeTileObject.mapObjectVisual.gameObject, instantCenter);
@@ -88,7 +92,8 @@ public class TileObjectInfoUI : InfoUIBase {
         // activeTileObject.mapVisual.LockHoverObject();
         base.OpenMenu();
         if (activeTileObject.mapObjectVisual != null) {
-            Selector.Instance.Select(activeTileObject);    
+            Selector.Instance.Select(activeTileObject, activeTileObject.mapObjectVisual.transform);    
+            activeTileObject.mapVisual.UpdateSortingOrders(activeTileObject);
         }
         UIManager.Instance.HideObjectPicker();
         UpdateTabs();

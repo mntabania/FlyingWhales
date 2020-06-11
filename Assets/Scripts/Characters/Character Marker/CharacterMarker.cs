@@ -679,12 +679,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
         mainImg.sortingOrder = characterSortingOrder;
         hairImg.sortingOrder = characterSortingOrder + 1;
         knockedOutHairImg.sortingOrder = characterSortingOrder + 1;
-        // nameLbl.sortingOrder = characterSortingOrder;
-        // TMP_SubMesh nameSubMesh = nameLbl.GetComponentInChildren<TMP_SubMesh>();
-        // if (nameSubMesh != null) {
-        //     nameSubMesh.renderer.sortingOrder = characterSortingOrder;    
-        // }
-        // actionIcon.sortingOrder = characterSortingOrder;
         hoveredImg.sortingOrder = characterSortingOrder - 1;
         clickedImg.sortingOrder = characterSortingOrder - 1;
         colorHighlight.sortingOrder = characterSortingOrder - 1;

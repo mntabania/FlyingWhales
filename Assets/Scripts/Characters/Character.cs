@@ -5151,8 +5151,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     
     #region Selectable
     public virtual bool IsCurrentlySelected() {
-        return UIManager.Instance.characterInfoUI.isShowing &&
-               UIManager.Instance.characterInfoUI.activeCharacter == this;
+        if (isNormalCharacter) {
+            return UIManager.Instance.characterInfoUI.isShowing &&
+                   UIManager.Instance.characterInfoUI.activeCharacter == this;    
+        } else {
+            return UIManager.Instance.monsterInfoUI.isShowing &&
+                   UIManager.Instance.monsterInfoUI.activeMonster == this;
+        }
+        
     }
     public void LeftSelectAction() {
         if (mapObjectVisual != null) {

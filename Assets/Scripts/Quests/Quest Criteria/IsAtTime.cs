@@ -8,7 +8,7 @@ namespace Quests {
         public IsAtTime(int[] validTimes) {
             _validTimes = validTimes;
         }
-        
+
         public override void Enable() {
             Messenger.AddListener(Signals.TICK_STARTED, CheckCriteria);
         }

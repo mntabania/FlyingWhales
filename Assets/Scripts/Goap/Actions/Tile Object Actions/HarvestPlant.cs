@@ -51,12 +51,23 @@ public class HarvestPlant : GoapAction {
         IPointOfInterest poiTarget = goapNode.poiTarget;
         //EdiblePlant plant = goapNode.poiTarget as EdiblePlant;
         //goapNode.actor.AdjustSupply(ore.GetSupplyPerMine());
-        LocationGridTile tile = poiTarget.gridTileLocation;
-        tile.structure.RemovePOI(poiTarget);
+        if (poiTarget is Crops crop) {
+            crop.SetGrowthState(Crops.Growth_State.Growing);
+            
+            FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(TILE_OBJECT_TYPE.VEGETABLES);
+            foodPile.SetResourceInPile(50);
+            crop.gridTileLocation.structure.AddPOI(foodPile);
+        }else {
+            LocationGridTile tile = poiTarget.gridTileLocation;
+            tile.structure.RemovePOI(poiTarget);
+            
+            FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(TILE_OBJECT_TYPE.VEGETABLES);
+            foodPile.SetResourceInPile(50);
+            tile.structure.AddPOI(foodPile, tile);
+        }
+        
 
-        FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(TILE_OBJECT_TYPE.VEGETABLES);
-        foodPile.SetResourceInPile(50);
-        tile.structure.AddPOI(foodPile, tile);
+        
         // foodPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.FOOD_PILE);
     }
     //public void PreTargetMissing(ActualGoapNode goapNode) {

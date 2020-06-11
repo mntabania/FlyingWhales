@@ -71,9 +71,9 @@ public abstract class BaseMapObject {
 
     #region Testing
     public virtual string GetAdditionalTestingData() {
-        string data = $"\n\tLast Manipulated by: {lastManipulatedBy}";
+        string data = $"<b>Last Manipulated by:</b> {lastManipulatedBy}";
         if (baseMapObjectVisual != null) {
-            data += $"\n\tVision Votes: {baseMapObjectVisual.visionTrigger.filterVotes.ToString()}";    
+            data += $"<b>Vision Votes:</b> {baseMapObjectVisual.visionTrigger.filterVotes.ToString()}";    
         }
         return data;
     }

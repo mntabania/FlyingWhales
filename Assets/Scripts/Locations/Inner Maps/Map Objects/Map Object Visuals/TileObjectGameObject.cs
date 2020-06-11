@@ -45,7 +45,9 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
         }   
     }
     public override void UpdateSortingOrders(TileObject obj) {
-        if (obj.isBeingCarriedBy != null) {
+        if (obj.IsCurrentlySelected()) {
+            SetSortingOrder(InnerMapManager.SelectedSortingOrder);
+        } else if (obj.isBeingCarriedBy != null) {
             SetSortingOrder(obj.isBeingCarriedBy.marker.sortingOrder);
         } else if (obj.tileObjectType == TILE_OBJECT_TYPE.TREE_OBJECT) {
             SetSortingOrder(InnerMapManager.DetailsTilemapSortingOrder + 5);
