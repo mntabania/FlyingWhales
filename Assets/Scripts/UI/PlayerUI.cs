@@ -12,6 +12,7 @@ using Ruinarch;
 using Traits;
 using UnityEngine.Assertions;
 using UtilityScripts;
+using Random = UnityEngine.Random;
 
 public class PlayerUI : MonoBehaviour {
     public static PlayerUI Instance;
@@ -23,6 +24,7 @@ public class PlayerUI : MonoBehaviour {
     
     [Header("Mana")]
     public TextMeshProUGUI manaLbl;
+    [SerializeField] private RectTransform manaContainer;
 
     [Header("Intel")]
     [SerializeField] private GameObject intelContainer;
@@ -132,6 +134,7 @@ public class PlayerUI : MonoBehaviour {
     [Header("Threat")]
     [SerializeField] private TextMeshProUGUI threatLbl;
     [SerializeField] private UIHoverPosition threatHoverPos;
+    [SerializeField] private RectTransform threatContainer;
 
     private PlayerJobActionButton[] interventionAbilityBtns;
     //public Minion harassRaidInvadeLeaderMinion { get; private set; }
@@ -329,13 +332,21 @@ public class PlayerUI : MonoBehaviour {
         var text = $"<color=\"red\">+{amount.ToString()}</color>";
         GameObject effectGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("AdjustmentEffectLbl", threatLbl.transform.position,
             Quaternion.identity, transform, true);
-        effectGO.GetComponent<AdjustmentEffectLabel>().PlayEffect(text, new Vector2(0f, -70f));
+        effectGO.GetComponent<AdjustmentEffectLabel>().PlayEffect(text, new Vector2(Random.Range(-0.5f, 0.5f), -70f));
+        DoThreatPunchEffect();
+    }
+    private Tweener _currentThreatPunchTween;
+    public void DoThreatPunchEffect() {
+        if (_currentThreatPunchTween == null) {
+            _currentThreatPunchTween = threatContainer.DOPunchScale(new Vector3(0.8f, 0.8f, 0.8f), 0.5f).OnComplete(() => _currentThreatPunchTween = null);    
+        }
     }
     private void OnThreatReset() {
         var text = $"<color=\"green\">-{ThreatComponent.MAX_THREAT.ToString()}</color>";
         GameObject effectGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("AdjustmentEffectLbl", threatLbl.transform.position,
             Quaternion.identity, transform, true);
-        effectGO.GetComponent<AdjustmentEffectLabel>().PlayEffect(text, new Vector2(0f, -70f));
+        effectGO.GetComponent<AdjustmentEffectLabel>().PlayEffect(text, new Vector2(Random.Range(-0.5f, 0.5f), -70f));
+        DoThreatPunchEffect();
     }
     #endregion
 
@@ -366,6 +377,8 @@ public class PlayerUI : MonoBehaviour {
     private void OnManaAdjusted(int adjustedAmount) {
         UpdateMana();
         ShowManaAdjustEffect(adjustedAmount);
+        DoManaPunchEffect();
+        AudioManager.Instance.PlayParticleMagnet();
     }
     private void UpdateMana() {
         manaLbl.text = PlayerManager.Instance.player.mana.ToString();
@@ -373,14 +386,14 @@ public class PlayerUI : MonoBehaviour {
     private Tweener _currentManaPunchTween;
     public void DoManaPunchEffect() {
         if (_currentManaPunchTween == null) {
-            _currentManaPunchTween = manaLbl.transform.DOPunchScale(new Vector3(1.2f, 1.2f, 1.2f), 0.5f).OnComplete(() => _currentManaPunchTween = null);    
+            _currentManaPunchTween = manaContainer.DOPunchScale(new Vector3(0.8f, 0.8f, 0.8f), 0.5f).OnComplete(() => _currentManaPunchTween = null);    
         }
     }
     private void ShowManaAdjustEffect(int adjustmentAmount) {
         var text = adjustmentAmount > 0 ? $"<color=\"green\">+{adjustmentAmount.ToString()}</color>" : $"<color=\"red\">{adjustmentAmount.ToString()}</color>";
         GameObject effectGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("AdjustmentEffectLbl", manaLbl.transform.position,
             Quaternion.identity, transform, true);
-        effectGO.GetComponent<AdjustmentEffectLabel>().PlayEffect(text, new Vector2(0f, -70f));
+        effectGO.GetComponent<AdjustmentEffectLabel>().PlayEffect(text, new Vector2(Random.Range(-0.5f, 0.5f), -70f));
     }
     #endregion
 
