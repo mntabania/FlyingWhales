@@ -20,11 +20,11 @@ public class ReactionComponent {
     }
 
     #region Processes
-    public void ReactTo(IPointOfInterest targetTileObject, ref string debugLog) {
-        if (targetTileObject.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-            ReactTo(targetTileObject as Character, ref debugLog);
-        } else if (targetTileObject.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
-            ReactTo(targetTileObject as TileObject, ref debugLog);
+    public void ReactTo(IPointOfInterest target, ref string debugLog) {
+        if (target.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+            ReactTo(target as Character, ref debugLog);
+        } else if (target.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+            ReactTo(target as TileObject, ref debugLog);
         } 
         // else if (targetTileObject.poiType == POINT_OF_INTEREST_TYPE.ITEM) {
         //     ReactTo(targetTileObject as SpecialToken, ref debugLog);
@@ -42,7 +42,7 @@ public class ReactionComponent {
             for (int i = 0; i < traitOverrideFunctions.Count; i++) {
                 Trait trait = traitOverrideFunctions[i];
                 debugLog += $"\n - {trait.name}";
-                if (trait.OnSeePOI(targetTileObject, owner)) {
+                if (trait.OnSeePOI(target, owner)) {
                     debugLog += ": triggered";
                 } else {
                     debugLog += ": not triggered";

@@ -81,7 +81,7 @@ MonoBehaviour:
       unlockedSkills: 0a0000001d000000
     - manaCost: 15
       charges: -1
-      cooldown: 12
+      cooldown: 36
       threat: 5
       threatPerHour: 0
       expCost: 300
@@ -113,7 +113,7 @@ MonoBehaviour:
       unlockedSkills: 0600000023000000
     - manaCost: 10
       charges: -1
-      cooldown: 12
+      cooldown: 36
       threat: 3
       threatPerHour: 0
       expCost: 300
@@ -161,7 +161,7 @@ MonoBehaviour:
       unlockedSkills: 
     - manaCost: 15
       charges: -1
-      cooldown: 12
+      cooldown: 36
       threat: 5
       threatPerHour: 0
       expCost: 300

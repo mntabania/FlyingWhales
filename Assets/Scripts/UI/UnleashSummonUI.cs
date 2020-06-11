@@ -411,7 +411,7 @@ public class UnleashSummonUI : PopupMenuBase { //MonoBehaviour
         for (int i = 0; i < chosenSummons.Count; i++) {
             Summon summon = chosenSummons[i] as Summon;
             TryPlaceSummon(summon, entrances[UnityEngine.Random.Range(0, entrances.Count)]);
-            GoapPlanJob job = summon.jobComponent.CreateKillJob(_targetCharacter);
+            GoapPlanJob job = summon.jobComponent.CreateDemonKillJob(_targetCharacter);
             summon.combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
             summon.jobComponent.SetFinalJobAssignment(job);
             summon.SetDestroyMarkerOnDeath(true);
@@ -421,7 +421,7 @@ public class UnleashSummonUI : PopupMenuBase { //MonoBehaviour
             for (int i = 0; i < item.Value; i++) {
                 SpellData minionMonsterPlayerSkll = item.Key;
                 minionMonsterPlayerSkll.ActivateAbility(entrances[UnityEngine.Random.Range(0, entrances.Count)], ref spawnedCharacter);
-                GoapPlanJob job = spawnedCharacter.jobComponent.CreateKillJob(_targetCharacter);
+                GoapPlanJob job = spawnedCharacter.jobComponent.CreateDemonKillJob(_targetCharacter);
                 spawnedCharacter.combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
                 spawnedCharacter.jobComponent.SetFinalJobAssignment(job);
                 spawnedCharacter.SetDestroyMarkerOnDeath(true);

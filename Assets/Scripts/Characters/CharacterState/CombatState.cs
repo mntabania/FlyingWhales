@@ -301,20 +301,30 @@ public class CombatState : CharacterState {
         }
     }
     private void OnUpdateMovementState(Character character) {
+        Character owner = stateComponent.character;
         //Will stop pursuing only if current closest hostile is character, if current closest hostile is an object, whether or not the source can run, he/she will still pursue
-        if (character == stateComponent.character && stateComponent.currentState == this && !isPaused && !isDone && currentClosestHostile != null && currentClosestHostile is Character targetCharacter && isAttacking) {
+        if (character == owner && stateComponent.currentState == this && !isPaused && !isDone && currentClosestHostile != null && currentClosestHostile is Character targetCharacter && isAttacking) {
             if(targetCharacter.isInCombat && !(targetCharacter.stateComponent.currentState as CombatState).isAttacking) {
-                if (!stateComponent.character.movementComponent.CanStillPursueTarget(targetCharacter)) {
-                    stateComponent.character.combatComponent.RemoveHostileInRange(currentClosestHostile);
+                if (!owner.movementComponent.CanStillPursueTarget(targetCharacter)) {
+                    if(owner.combatComponent.fightCombatData.ContainsKey(currentClosestHostile) && owner.combatComponent.fightCombatData[currentClosestHostile].reasonForCombat == CombatManager.Demon_Kill) {
+                        //If the reason for combat is Demon Kill, the hostile should not be removed from hostile range, regardless if he/she can still run
+                    } else {
+                        owner.combatComponent.RemoveHostileInRange(currentClosestHostile);
+                    }
                 }
             }
         }
     }
     private void OnCharacterStartFleeing(Character character) {
+        Character owner = stateComponent.character;
         //Will stop pursuing only if current closest hostile is character, if current closest hostile is an object, whether or not the source can run, he/she will still pursue
-        if (stateComponent.currentState == this && !isPaused && !isDone && stateComponent.character.combatComponent.hostilesInRange.Contains(character)) {
-            if (!stateComponent.character.movementComponent.CanStillPursueTarget(character)) {
-                stateComponent.character.combatComponent.RemoveHostileInRange(character);
+        if (stateComponent.currentState == this && !isPaused && !isDone && owner.combatComponent.hostilesInRange.Contains(character)) {
+            if (!owner.movementComponent.CanStillPursueTarget(character)) {
+                if (owner.combatComponent.fightCombatData.ContainsKey(currentClosestHostile) && owner.combatComponent.fightCombatData[currentClosestHostile].reasonForCombat == CombatManager.Demon_Kill) {
+                    //If the reason for combat is Demon Kill, the hostile should not be removed from hostile range, regardless if he/she can still run
+                } else {
+                    owner.combatComponent.RemoveHostileInRange(currentClosestHostile);
+                }
             }
         }
     }

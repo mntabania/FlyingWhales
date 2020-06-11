@@ -1194,11 +1194,11 @@ public class CharacterMarker : MapObjectVisual<Character> {
         character.combatComponent.RemoveAvoidInRange(otherCharacter);
     }
     public void OnBeforeSeizingOtherCharacter(Character otherCharacter) {
-        if (character.faction != null && character.faction.isMajorNonPlayerFriendlyNeutral) {
-            if (inVisionCharacters.Contains(otherCharacter)) {
-                PlayerManager.Instance.player.threatComponent.AdjustThreat(10);
-            }
-        }
+        //if (character.faction != null && character.faction.isMajorNonPlayerFriendlyNeutral) {
+        //    if (inVisionCharacters.Contains(otherCharacter)) {
+        //        PlayerManager.Instance.player.threatComponent.AdjustThreat(10);
+        //    }
+        //}
     }
     public void OnBeforeSeizingThisCharacter() {
         for (int i = 0; i < inVisionCharacters.Count; i++) {

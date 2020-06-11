@@ -123,7 +123,7 @@ public class MinionCommandsUI : MonoBehaviour {
         if (CanIssueCommand()) {
             if (targetPOI is Character) {
             Character actor = UIManager.Instance.characterInfoUI.activeCharacter;
-                actor.jobComponent.CreateKillJob(targetPOI as Character);
+                actor.jobComponent.CreateDemonKillJob(targetPOI as Character);
             } else {
                 Debug.LogError($"{targetPOI.name} is not a character!");
             }
