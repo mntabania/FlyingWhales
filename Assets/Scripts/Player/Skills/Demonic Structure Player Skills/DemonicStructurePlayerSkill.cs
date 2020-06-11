@@ -12,14 +12,20 @@ public class DemonicStructurePlayerSkill : SpellData {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.HEX };
     }
 
-    public override void ActivateAbility(HexTile targetHex) {
+    // public override void ActivateAbility(HexTile targetHex) {
+    //     targetHex.StartCorruption();
+    //     //LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkObj as string);
+    //     // BaseLandmark newLandmark =
+    //     //     LandmarkManager.Instance.CreateNewLandmarkOnTile(this, landmarkData.landmarkType);
+    //     LandmarkManager.Instance.PlaceBuiltStructureForSettlement(targetHex.settlementOnTile, targetHex.region.innerMap, targetHex, structureType);
+    //     //PlayerManager.Instance.player.AdjustMana(-EditableValuesManager.Instance.buildStructureManaCost);
+    //     targetHex.landmarkOnTile?.OnFinishedBuilding();
+    //     base.ActivateAbility(targetHex);
+    // }
+
+    public void BuildDemonicStructureAt(HexTile targetHex) {
         targetHex.StartCorruption();
-        //LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkObj as string);
-        // BaseLandmark newLandmark =
-        //     LandmarkManager.Instance.CreateNewLandmarkOnTile(this, landmarkData.landmarkType);
         LandmarkManager.Instance.PlaceBuiltStructureForSettlement(targetHex.settlementOnTile, targetHex.region.innerMap, targetHex, structureType);
-        //PlayerManager.Instance.player.AdjustMana(-EditableValuesManager.Instance.buildStructureManaCost);
         targetHex.landmarkOnTile?.OnFinishedBuilding();
-        base.ActivateAbility(targetHex);
     }
 }

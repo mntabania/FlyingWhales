@@ -46,12 +46,50 @@ namespace Traits {
             //        return characterThatWillDoJob.jobComponent.TriggerDestroy(targetPOI);
             //    }
             //} else 
-            if (targetPOI is Character) {
-                Character targetCharacter = targetPOI as Character;
-                if (Random.Range(0, 100) < 10 && characterThatWillDoJob.relationshipContainer.IsEnemiesWith(targetCharacter)
-                    && !targetCharacter.traitContainer.HasTrait("Unconscious")) {
-                    characterThatWillDoJob.combatComponent.Fight(targetCharacter, CombatManager.Anger, isLethal: false);
+            if (targetPOI is Character targetCharacter) {
+                string log = $"{GameManager.Instance.TodayLogString()}{characterThatWillDoJob.name} saw {targetCharacter.name}";
+                if (characterThatWillDoJob.moodComponent.moodState == MOOD_STATE.CRITICAL) {
+                    log += "\n -In critical mood";
+                    int combatChance = 0;
+                    if (characterThatWillDoJob.relationshipContainer.HasOpinionLabelWithCharacter(targetCharacter, BaseRelationshipContainer.Enemy)) {
+                        combatChance = 10;
+                    } else if (characterThatWillDoJob.relationshipContainer.HasOpinionLabelWithCharacter(targetCharacter, BaseRelationshipContainer.Rival)) {
+                        combatChance = 25;
+                    }
+                    int roll = Random.Range(0, 100);
+                    log += $"\nCombat chance is {combatChance.ToString()}. Roll is {roll.ToString()}";
+                    if (roll < combatChance) {
+                        characterThatWillDoJob.combatComponent.Fight(targetCharacter, CombatManager.Anger, isLethal: true);    
+                    }
+                } else if (characterThatWillDoJob.moodComponent.moodState == MOOD_STATE.LOW) {
+                    log += "\n -In low mood";
+                    int combatChance = 0;
+                    if (characterThatWillDoJob.relationshipContainer.HasOpinionLabelWithCharacter(targetCharacter, BaseRelationshipContainer.Enemy)) {
+                        if (targetCharacter.traitContainer.HasTrait("Unconscious") == false) {
+                            combatChance = 10;
+                        }
+                    } else if (characterThatWillDoJob.relationshipContainer.HasOpinionLabelWithCharacter(targetCharacter, BaseRelationshipContainer.Rival)) {
+                        if (targetCharacter.traitContainer.HasTrait("Unconscious") == false) {
+                            combatChance = 25;
+                        }
+                    }    
+                    int roll = Random.Range(0, 100);
+                    log += $"\nCombat chance is {combatChance.ToString()}. Roll is {roll.ToString()}";
+                    if (roll < combatChance) {
+                        characterThatWillDoJob.combatComponent.Fight(targetCharacter, CombatManager.Anger, isLethal: false);    
+                    }
+                } else {
+                    log += "\n -In normal mood";
+                    int combatChance = 5;
+                    int roll = Random.Range(0, 100);
+                    log += $"\nCombat chance is {combatChance.ToString()}. Roll is {roll.ToString()}";
+                    if (roll < combatChance && characterThatWillDoJob.relationshipContainer.IsEnemiesWith(targetCharacter)
+                        && !targetCharacter.traitContainer.HasTrait("Unconscious")) {
+                        characterThatWillDoJob.combatComponent.Fight(targetCharacter, CombatManager.Anger, isLethal: false);
+                    }
                 }
+                
+                Debug.Log(log);
             }
             return base.OnSeePOI(targetPOI, characterThatWillDoJob);
         }

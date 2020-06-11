@@ -1253,7 +1253,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         _buildParticles = GameManager.Instance.CreateParticleEffectAt(GetCenterLocationGridTile(),
             PARTICLE_EFFECT.Build_Demonic_Structure).GetComponent<AutoDestroyParticle>();
         UIManager.Instance.HideObjectPicker();
-        //Moved this here so skill cannot be chosen again while the build coroutine is running 
+        DemonicStructurePlayerSkill demonicStructureSkill = PlayerSkillManager.Instance.GetDemonicStructureSkillData(structureType);
+        demonicStructureSkill.ActivateAbility(this);
         PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.BUILD_DEMONIC_STRUCTURE).OnExecuteSpellActionAffliction();
         StartCoroutine(BuildCoroutine(structureType));
     }
@@ -1261,7 +1262,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         yield return new WaitForSeconds(3f);
         _buildParticles.StopEmission();
         DemonicStructurePlayerSkill demonicStructureSkill = PlayerSkillManager.Instance.GetDemonicStructureSkillData(structureType);
-        demonicStructureSkill.ActivateAbility(this);
+        demonicStructureSkill.BuildDemonicStructureAt(this);
         _buildParticles = null;
     }
     #endregion
