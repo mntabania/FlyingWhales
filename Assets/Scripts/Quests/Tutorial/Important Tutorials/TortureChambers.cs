@@ -107,7 +107,7 @@ namespace Tutorial {
             UIManager.Instance.generalConfirmationWithVisual.ShowGeneralConfirmation("Demonic Structures",
                 "These are unique demonic structures that you can build on unoccupied Areas. " +
                 "Each structure type has a unique use that may aid you in your invasion. " +
-                $"For example, the Torture Chambers allow you to torture {UtilityScripts.Utilities.VillagerIcon()}Villagers to afflict them with negative Traits and Statuses.\n\n" +
+                $"For example, the Torture Chambers allow you to torture \n{UtilityScripts.Utilities.VillagerIcon()}Villagers to afflict them with negative Traits and Statuses.\n\n" +
                 "You have limited Charges per demonic structure so protect them from attacks!",
                 TutorialManager.Instance.demonicStructureVideoClip);
         }
