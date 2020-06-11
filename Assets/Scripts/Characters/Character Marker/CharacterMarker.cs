@@ -724,20 +724,20 @@ public class CharacterMarker : MapObjectVisual<Character> {
 
         if (previousGridTile != character.gridTileLocation) {
             character.gridTileLocation.parentMap.region.innerMap.OnCharacterMovedTo(character, character.gridTileLocation, previousGridTile);
-            previousGridTile = character.gridTileLocation;
-            if (_previousHexTileLocation == null || (character.gridTileLocation.collectionOwner.isPartOfParentRegionMap && 
-                _previousHexTileLocation != character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner)) {
-                if (_previousHexTileLocation != null) {
-                    Messenger.Broadcast(Signals.CHARACTER_EXITED_HEXTILE, character, _previousHexTileLocation);    
+            if(character != null) {
+                previousGridTile = character.gridTileLocation;
+                if (_previousHexTileLocation == null || (character.gridTileLocation.collectionOwner.isPartOfParentRegionMap &&
+                    _previousHexTileLocation != character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner)) {
+                    if (_previousHexTileLocation != null) {
+                        Messenger.Broadcast(Signals.CHARACTER_EXITED_HEXTILE, character, _previousHexTileLocation);
+                    }
+                    if (character.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+                        _previousHexTileLocation = character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
+                        Messenger.Broadcast(Signals.CHARACTER_ENTERED_HEXTILE, character, character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner);
+                    } else {
+                        _previousHexTileLocation = null;
+                    }
                 }
-                if (character.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-                    _previousHexTileLocation = character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
-                    Messenger.Broadcast(Signals.CHARACTER_ENTERED_HEXTILE, character, character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner);
-                } else {
-                    _previousHexTileLocation = null;
-                }
-                
-                
             }
         }
     }

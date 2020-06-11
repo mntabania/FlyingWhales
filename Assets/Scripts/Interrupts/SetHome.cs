@@ -122,7 +122,7 @@ namespace Interrupts {
                     }
                     log += "\n-If none available and character does not have a Territory, 50% chance to set a random structure-less Area as its Territory";
                     if (!actor.HasTerritory()) {
-                        if (UnityEngine.Random.Range(0, 2) == 0) {
+                        if (UnityEngine.Random.Range(0, 100) < 100) {
                             log += "\n-Getting structureless hex tile in current region: " + currentRegion.name;
                             HexTile hex = currentRegion.GetRandomNoStructureNotPartOrNextToVillagePlainHex();
                             if (hex != null) {

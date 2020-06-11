@@ -144,7 +144,7 @@ public class CombatState : CharacterState {
 
                 //stateComponent.character.CancelAllJobsAndPlans();
                 //stateComponent.character.PlanIdleReturnHome(true);
-                stateComponent.character.defaultCharacterTrait.SetHasSurvivedApprehension(true);
+                //stateComponent.character.defaultCharacterTrait.SetHasSurvivedApprehension(true);
 
                 Log successfulEscapeLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "successful_escape_crime");
                 successfulEscapeLog.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
