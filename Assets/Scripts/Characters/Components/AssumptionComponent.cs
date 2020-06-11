@@ -17,7 +17,8 @@ public class AssumptionComponent : MonoBehaviour {
         assumptionLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.PARTY_1); //Used Party 1 identifier so there will be no conflict if reactable.informationLog is a Rumor
         assumptionLog.AddToFillers(null, UtilityScripts.Utilities.LogDontReplace(newAssumption.informationLog), LOG_IDENTIFIER.APPEND);
         assumptionLog.AddToFillers(newAssumption.informationLog.fillers);
-        owner.logComponent.AddHistory(assumptionLog);
+        assumptionLog.AddLogToInvolvedObjects();
+        //owner.logComponent.AddHistory(assumptionLog);
 
         owner.reactionComponent.ReactTo(newAssumption, reactionStatus, false);
     }

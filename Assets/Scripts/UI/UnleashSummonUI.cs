@@ -232,9 +232,9 @@ public class UnleashSummonUI : PopupMenuBase { //MonoBehaviour
     private void HarassDefendInvade() {
         HexTile targetHex = PlayerUI.Instance.harassDefendInvadeTargetHex;
         Character spawnedCharacter = null;
+        PopulateEntrances(targetHex);
 
         if (identifier == "harass") {
-            PopulateEntrances(targetHex);
             for (int i = 0; i < chosenSummons.Count; i++) {
                 Summon summon = chosenSummons[i] as Summon;
                 TryPlaceSummon(summon, entrances[0]);
@@ -251,12 +251,6 @@ public class UnleashSummonUI : PopupMenuBase { //MonoBehaviour
                     entrances.RemoveAt(0);
                 }
             }
-            //for (int i = 0; i < chosenMinionMonsters.Count; i++) {
-            //    SpellData minionMonsterPlayerSkll = chosenMinionMonsters[i];
-            //    minionMonsterPlayerSkll.ActivateAbility(entrances[0], ref spawnedCharacter);
-            //    spawnedCharacter.behaviourComponent.SetIsHarassing(true, targetHex);
-            //    entrances.RemoveAt(0);
-            //}
             PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.HARASS).OnExecuteSpellActionAffliction();
         } else if (identifier == "defend") {
             for (int i = 0; i < chosenSummons.Count; i++) {
@@ -281,18 +275,8 @@ public class UnleashSummonUI : PopupMenuBase { //MonoBehaviour
                     entrances.RemoveAt(0);
                 }
             }
-            //for (int i = 0; i < chosenMinionMonsters.Count; i++) {
-            //    if (entrances.Count <= 0) {
-            //        entrances.AddRange(targetHex.borderTiles);
-            //    }
-            //    SpellData minionMonsterPlayerSkll = chosenMinionMonsters[i];
-            //    minionMonsterPlayerSkll.ActivateAbility(entrances[0], ref spawnedCharacter);
-            //    spawnedCharacter.behaviourComponent.SetIsDefending(true, targetHex);
-            //    entrances.RemoveAt(0);
-            //}
             PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.DEFEND).OnExecuteSpellActionAffliction();
         } else if (identifier == "invade") {
-            PopulateEntrances(targetHex);
             for (int i = 0; i < chosenSummons.Count; i++) {
                 Summon summon = chosenSummons[i] as Summon;
                 TryPlaceSummon(summon, entrances[0]);
@@ -309,12 +293,6 @@ public class UnleashSummonUI : PopupMenuBase { //MonoBehaviour
                     entrances.RemoveAt(0);
                 }
             }
-            //for (int i = 0; i < chosenMinionMonsters.Count; i++) {
-            //    SpellData minionMonsterPlayerSkll = chosenMinionMonsters[i];
-            //    minionMonsterPlayerSkll.ActivateAbility(entrances[0], ref spawnedCharacter);
-            //    spawnedCharacter.behaviourComponent.SetIsInvading(true, targetHex);
-            //    entrances.RemoveAt(0);
-            //}
             PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.INVADE).OnExecuteSpellActionAffliction();
         }
         PlayerManager.Instance.player.threatComponent.AdjustThreat(5 + (5 * chosenSummons.Count));

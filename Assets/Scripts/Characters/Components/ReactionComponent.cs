@@ -8,6 +8,7 @@ using Inner_Maps;
 using Interrupts;
 using Inner_Maps.Location_Structures;
 using UnityEngine.Assertions;
+using Tutorial;
 
 public class ReactionComponent {
     public Character owner { get; private set; }
@@ -811,7 +812,8 @@ public class ReactionComponent {
 
             if (owner.traitContainer.HasTrait("Suspicious")
                 || owner.moodComponent.moodState == MOOD_STATE.CRITICAL
-                || (owner.moodComponent.moodState == MOOD_STATE.LOW && UnityEngine.Random.Range(0, 2) == 0)) {
+                || (owner.moodComponent.moodState == MOOD_STATE.LOW && UnityEngine.Random.Range(0, 2) == 0)
+                || TutorialManager.Instance.IsTutorialCurrentlyActive(TutorialManager.Tutorial.Frame_Up)) {
                 debugLog += "\n-Owner is Suspicious or Critical Mood or Low Mood";
 
                 debugLog += "\n-There is at least 1 resident of the structure";

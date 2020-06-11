@@ -135,7 +135,8 @@ namespace Traits {
                         log.AddToFillers(hitCharacter, hitCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                         log.AddToFillers(hitBy, hitBy.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                         log.AddLogToInvolvedObjects();
-                        if(hitCharacter.isDead && infectedTrait != null && infectedTrait is Infected infected) {
+                        PlayerManager.Instance.player.ShowNotificationFrom(hitBy, log);
+                        if (hitCharacter.isDead && infectedTrait != null && infectedTrait is Infected infected) {
                             infected.SetHasAlreadyDied(true);
                         }
                         // PlayerManager.Instance.player.ShowNotification(log);
