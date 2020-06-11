@@ -130,7 +130,10 @@ public class Bed : TileObject {
                 character.SetTileObjectLocation(null);
                 UpdateUsedBedAsset();
                 if (IsSlotAvailable()) {
-                    SetPOIState(POI_STATE.ACTIVE); //if a slots in the bed is unoccupied, set it as active
+                    //Must not set as active when bed is burning
+                    if (!traitContainer.HasTrait("Burning")) {
+                        SetPOIState(POI_STATE.ACTIVE); //if a slots in the bed is unoccupied, set it as active
+                    }
                 }
                 //enable the character's marker
                 character.marker.SetVisualState(true);

@@ -78,7 +78,13 @@ namespace Traits {
                     // character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.REMOVE_STATUS);
                     character.AdjustDoNotRecoverHP(-1);
                 } else {
-                    obj.SetPOIState(POI_STATE.ACTIVE);   
+                    if(obj is Bed bed) {
+                        if (bed.IsSlotAvailable()) {
+                            obj.SetPOIState(POI_STATE.ACTIVE);
+                        }
+                    } else {
+                        obj.SetPOIState(POI_STATE.ACTIVE);
+                    }
                 }
             } 
         }

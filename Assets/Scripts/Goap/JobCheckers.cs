@@ -54,8 +54,7 @@ public partial class InteractionManager {
             Restrained restrainedTrait = targetCharacter.traitContainer.GetNormalTrait<Restrained>("Restrained");
             if (restrainedTrait == null || !restrainedTrait.isPrisoner) {
                 return /*character.characterClass.CanDoJob(JOB_TYPE.APPREHEND) &&*/
-                   character.relationshipContainer.GetRelationshipEffectWith(targetCharacter) !=
-                   RELATIONSHIP_EFFECT.POSITIVE;
+                   !character.relationshipContainer.IsFriendsWith(targetCharacter);
             }
         }
         return false;
