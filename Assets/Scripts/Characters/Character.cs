@@ -1770,9 +1770,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //Cannot react if summon or minion
             return false;
         }
-        if (defaultCharacterTrait.hasSurvivedApprehension && !isAtHomeRegion) {
-            return false; //Must not react because he will only have one thing to do and that is to return home
-        }
+        //if (defaultCharacterTrait.hasSurvivedApprehension && !isAtHomeRegion) {
+        //    return false; //Must not react because he will only have one thing to do and that is to return home
+        //}
         if (stateComponent.currentState != null && !stateComponent.currentState.isDone) {
             if (stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
                 //Character must not react if he/she is in flee or engage state

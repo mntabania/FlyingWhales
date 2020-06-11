@@ -88,7 +88,7 @@ public class Steal : GoapAction {
         Character actor = node.actor;
         IPointOfInterest target = node.poiTarget;
 
-        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status);
+        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
         if (witness.relationshipContainer.IsFriendsWith(actor)) {
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor, status, node);
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status, node);

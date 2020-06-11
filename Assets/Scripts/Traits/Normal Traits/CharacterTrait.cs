@@ -12,7 +12,7 @@ namespace Traits {
         //Meaning that he/she cannot do the things specified in here anymore unless he/she switch to the ego which this trait is present
         public List<TileObject> alreadyInspectedTileObjects { get; private set; }
         public List<Character> charactersAlreadySawForHope { get; private set; }
-        public bool hasSurvivedApprehension { get; private set; } //If a criminal character (is in original alter ego), and survived being apprehended, this must be turned on
+        //public bool hasSurvivedApprehension { get; private set; } //If a criminal character (is in original alter ego), and survived being apprehended, this must be turned on
         public Character owner { get; private set; }
 
         public CharacterTrait() {
@@ -24,7 +24,7 @@ namespace Traits {
             alreadyInspectedTileObjects = new List<TileObject>();
             charactersAlreadySawForHope = new List<Character>();
             AddTraitOverrideFunctionIdentifier(TraitManager.Start_Perform_Trait);
-            AddTraitOverrideFunctionIdentifier(TraitManager.Tick_Started_Trait);
+            //AddTraitOverrideFunctionIdentifier(TraitManager.Tick_Started_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Trait);
         }
         public void AddAlreadyInspectedObject(TileObject to) {
@@ -175,12 +175,12 @@ namespace Traits {
             }
             return false;
         }
-        public override void OnTickStarted() {
-            base.OnTickStarted();
-            if (hasSurvivedApprehension) {
-                CheckAsCriminal();
-            }
-        }
+        //public override void OnTickStarted() {
+        //    base.OnTickStarted();
+        //    if (hasSurvivedApprehension) {
+        //        CheckAsCriminal();
+        //    }
+        //}
         #endregion
 
         private void CheckAsCriminal() {
@@ -193,23 +193,24 @@ namespace Traits {
                 if (owner.canPerform && owner.canMove) {
                     owner.PlanIdleReturnHome();
                 }
-            } else if (owner.isAtHomeRegion) {
-                SetHasSurvivedApprehension(false);
-            }
+            } 
+            //else if (owner.isAtHomeRegion) {
+            //    SetHasSurvivedApprehension(false);
+            //}
         }
 
-        public void SetHasSurvivedApprehension(bool state) {
-            if (hasSurvivedApprehension != state) {
-                hasSurvivedApprehension = state;
-                //if (hasSurvivedApprehension) {
-                //    Messenger.AddListener(Signals.TICK_STARTED, CheckAsCriminal);
-                //} else {
-                //    if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
-                //        Messenger.RemoveListener(Signals.TICK_STARTED, CheckAsCriminal);
-                //    }
-                //}
-            }
-        }
+        //public void SetHasSurvivedApprehension(bool state) {
+        //    if (hasSurvivedApprehension != state) {
+        //        hasSurvivedApprehension = state;
+        //        //if (hasSurvivedApprehension) {
+        //        //    Messenger.AddListener(Signals.TICK_STARTED, CheckAsCriminal);
+        //        //} else {
+        //        //    if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
+        //        //        Messenger.RemoveListener(Signals.TICK_STARTED, CheckAsCriminal);
+        //        //    }
+        //        //}
+        //    }
+        //}
         private bool CreateLaughAtJob(Character characterThatWillDoJob, Character target) {
             //if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.LAUGH_AT)) {
             //    GoapPlanJob laughJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.LAUGH_AT, target, characterThatWillDoJob);
@@ -235,7 +236,7 @@ namespace Traits {
 
     public class SaveDataCharacterTrait : SaveDataTrait {
         public List<TileObjectSerializableData> alreadyInspectedTileObjects;
-        public bool hasSurvivedApprehension;
+        //public bool hasSurvivedApprehension;
 
         public override void Save(Trait trait) {
             base.Save(trait);
@@ -249,7 +250,7 @@ namespace Traits {
                 };
                 alreadyInspectedTileObjects.Add(toData);
             }
-            hasSurvivedApprehension = derivedTrait.hasSurvivedApprehension;
+            //hasSurvivedApprehension = derivedTrait.hasSurvivedApprehension;
         }
 
         public override Trait Load(ref Character responsibleCharacter) {
@@ -259,7 +260,7 @@ namespace Traits {
                 TileObjectSerializableData toData = alreadyInspectedTileObjects[i];
                 derivedTrait.AddAlreadyInspectedObject(InnerMapManager.Instance.GetTileObject(toData.type, toData.id));
             }
-            derivedTrait.SetHasSurvivedApprehension(hasSurvivedApprehension);
+            //derivedTrait.SetHasSurvivedApprehension(hasSurvivedApprehension);
             return trait;
         }
     }
