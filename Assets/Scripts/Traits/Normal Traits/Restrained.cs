@@ -20,7 +20,7 @@ namespace Traits {
             description = "This character is restrained!";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
-            advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.FEED, INTERACTION_TYPE.RELEASE_CHARACTER };
+            advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.FEED, INTERACTION_TYPE.REMOVE_RESTRAINED };
             ticksDuration = 0;
             hindersMovement = true;
             hindersAttackTarget = true;

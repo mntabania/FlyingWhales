@@ -107,6 +107,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.REMOVE_UNCONSCIOUS, new[]{
             new StateNameAndDuration(){ name = "Remove Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
         } },
+        {INTERACTION_TYPE.REMOVE_RESTRAINED, new[]{
+            new StateNameAndDuration(){ name = "Remove Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(15) },
+        } },
         {INTERACTION_TYPE.POISON, new[]{
             new StateNameAndDuration(){ name = "Poison Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
         } },

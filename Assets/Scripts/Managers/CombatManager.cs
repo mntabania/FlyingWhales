@@ -218,10 +218,10 @@ public class CombatManager : MonoBehaviour {
         if (characterResponsible == null) {
             Messenger.Broadcast(Signals.ELECTRIC_CHAIN_TRIGGERED_BY_PLAYER);    
         }
-        List<ITraitable> traitables = new List<ITraitable>();
+        //List<ITraitable> traitables = new List<ITraitable>();
         if (traitable.gridTileLocation != null) {
             List<LocationGridTile> tiles = traitable.gridTileLocation.GetTilesInRadius(1, includeTilesInDifferentStructure: true);
-            traitables.Clear();
+            //traitables.Clear();
             List<LocationGridTile> affectedTiles = new List<LocationGridTile>();
             for (int i = 0; i < tiles.Count; i++) {
                 LocationGridTile tile = tiles[i];
@@ -249,7 +249,7 @@ public class CombatManager : MonoBehaviour {
         }
     }
     private void ChainElectricEffect(ITraitable traitable, int damage, Character responsibleCharacter, ref HashSet<ITraitable> completedObjects) {
-        if (completedObjects.Contains(traitable) == false) { //!traitable.traitContainer.HasTrait("Zapped")
+        if (completedObjects.Contains(traitable) == false && !traitable.traitContainer.HasTrait("Zapped")) {
             completedObjects.Add(traitable);
             traitable.AdjustHP(damage, ELEMENTAL_TYPE.Electric, true, source:responsibleCharacter, showHPBar: true);
         }

@@ -521,8 +521,8 @@ public class ReactionComponent {
                             }
                         } else if (!owner.traitContainer.HasTrait("Psychopath")) {
                             debugLog += "\n-Character is not Psychopath and does not consider Target as Enemy or Rival";
-                            if (!targetCharacter.canMove/* || !targetCharacter.canWitness*/) {
-                                debugLog += "\n-Target cannot move"; // or cannot witness
+                            if (targetCharacter.traitContainer.HasTrait("Paralyzed", "Ensnared") || (targetCharacter.traitContainer.HasTrait("Restrained") && targetCharacter.traitContainer.HasTrait("Criminal"))) {
+                                debugLog += "\n-Target is Restrained and a Criminal or Paralyzed or Ensnared";
                                 if (targetCharacter.needsComponent.isHungry || targetCharacter.needsComponent.isStarving) {
                                     debugLog += "\n-Target is hungry or starving, will create feed job";
                                     owner.jobComponent.TryTriggerFeed(targetCharacter);
@@ -560,6 +560,13 @@ public class ReactionComponent {
                                     }
                                 }
                             }
+
+                            //Add personal Remove Status - Restrained job when seeing a restrained non-enemy villager
+                            //https://trello.com/c/Pe6wuHQc/1197-add-personal-remove-status-restrained-job-when-seeing-a-restrained-non-enemy-villager
+                            if (owner.isNormalCharacter && targetCharacter.isNormalCharacter && targetCharacter.traitContainer.HasTrait("Restrained") && !targetCharacter.traitContainer.HasTrait("Criminal")) {
+                                owner.jobComponent.TriggerRemoveStatusTarget(targetCharacter, "Restrained");
+                            }
+
                         }
                     }
                 } else {
@@ -592,7 +599,8 @@ public class ReactionComponent {
                         if (owner.marker && targetCharacter.isNormalCharacter) {
                             if(owner.traitContainer.HasTrait("Suspicious") 
                                 || owner.moodComponent.moodState == MOOD_STATE.CRITICAL 
-                                || (owner.moodComponent.moodState == MOOD_STATE.LOW && UnityEngine.Random.Range(0, 2) == 0)) {
+                                || (owner.moodComponent.moodState == MOOD_STATE.LOW && UnityEngine.Random.Range(0, 2) == 0)
+                                || UnityEngine.Random.Range(0, 100) < 15) {
                                 debugLog += "\n-Owner is Suspicious or Critical Mood or Low Mood";
 
                                 _assumptionSuspects.Clear();
@@ -813,6 +821,7 @@ public class ReactionComponent {
             if (owner.traitContainer.HasTrait("Suspicious")
                 || owner.moodComponent.moodState == MOOD_STATE.CRITICAL
                 || (owner.moodComponent.moodState == MOOD_STATE.LOW && UnityEngine.Random.Range(0, 2) == 0)
+                || UnityEngine.Random.Range(0, 100) < 15
                 || TutorialManager.Instance.IsTutorialCurrentlyActive(TutorialManager.Tutorial.Frame_Up)) {
                 debugLog += "\n-Owner is Suspicious or Critical Mood or Low Mood";
 
