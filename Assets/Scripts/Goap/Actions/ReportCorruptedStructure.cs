@@ -45,7 +45,7 @@ public class ReportCorruptedStructure : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
-            return poiTarget == actor && poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
+            return poiTarget == actor && poiTarget.IsAvailable() && poiTarget.gridTileLocation != null && actor.homeSettlement != null;
         }
         return false;
     }

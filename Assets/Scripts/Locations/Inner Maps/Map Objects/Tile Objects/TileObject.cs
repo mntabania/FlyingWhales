@@ -325,6 +325,10 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         // Debug.Log(GameManager.Instance.TodayLogString() + "Tile Object " + this.name + " has been removed");
         this.removedBy = removedBy;
         Messenger.Broadcast(Signals.TILE_OBJECT_REMOVED, this, removedBy, removedFrom);
+        if (mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
+            //if object is unbuilt, and it was removed, stop checking for invalidity.
+            Messenger.RemoveListener(Signals.CHECK_UNBUILT_OBJECT_VALIDITY, CheckUnbuiltObjectValidity);
+        }
         if (hasCreatedSlots && destroyTileSlots) {
             DestroyTileSlots();
         }
@@ -985,7 +989,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
                     JobQueueItem jobQueueItem = jobs[i];
                     jobQueueItem.CancelJob(false);
                 }
-                gridTileLocation.structure.RemovePOI(this);
+                gridTileLocation?.structure.RemovePOI(this);
                 Debug.Log($"{GameManager.Instance.TodayLogString()}Unbuilt object {this} was removed!");
             }
         }

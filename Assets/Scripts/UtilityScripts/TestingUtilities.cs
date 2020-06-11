@@ -28,17 +28,17 @@ namespace UtilityScripts {
                     Character douser = npcSettlement.settlementJobTriggerComponent.dousers[j];
                     summary += $"\n\t-{douser.name}";    
                 }
-                summary += $"\n{npcSettlement.name} Location Job Queue: ";
+                summary += $"\n{npcSettlement.name} Location Job Queue:";
                 if (npcSettlement.availableJobs.Count > 0) {
                     for (int j = 0; j < npcSettlement.availableJobs.Count; j++) {
                         JobQueueItem jqi = npcSettlement.availableJobs[j];
                         if (jqi is GoapPlanJob) {
                             GoapPlanJob gpj = jqi as GoapPlanJob;
-                            summary += $"\n{gpj.name} Targeting {gpj.targetPOI?.ToString() ?? "None"}" ;
+                            summary += $"\n<b>{gpj.name} Targeting {gpj.targetPOI?.ToString() ?? "None"}</b>" ;
                         } else {
-                            summary += $"\n{jqi.name}";
+                            summary += $"\n<b>{jqi.name}</b>";
                         }
-                        summary += $"\nAssigned Character: {jqi.assignedCharacter?.name}";
+                        summary += $"\n Assigned Character: {jqi.assignedCharacter?.name}";
                         // if (UIManager.Instance.characterInfoUI.isShowing) {
                         //     summary +=
                         //         $"\nCan character take job? {jqi.CanCharacterDoJob(UIManager.Instance.characterInfoUI.activeCharacter)}";
