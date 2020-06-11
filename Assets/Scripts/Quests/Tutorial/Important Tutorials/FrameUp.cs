@@ -49,7 +49,11 @@ namespace Tutorial {
                         .SetObjectsToCenter(GetItemOwnerToCenter),
                     new DropPOIAtStructureStep(IsDroppedAtSameStructure, poi => _droppedObject.characterOwner == poi,
                             "Drop at the same house")
-                        .SetObjectsToCenter(GetHouseToCenter)
+                        .SetObjectsToCenter(GetHouseToCenter),
+                    new CharacterAssumedStep(poi => poi == _droppedObject 
+                                                    && _droppedObject.gridTileLocation.structure == _droppedAtStructure, 
+                            character => character == _droppedObject.characterOwner, 
+                            "Wait for the character's reaction")
                         .SetCompleteAction(OnCompleteDropAtSameHouse)
                 ),
             };

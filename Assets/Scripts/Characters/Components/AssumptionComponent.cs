@@ -21,6 +21,7 @@ public class AssumptionComponent : MonoBehaviour {
         //owner.logComponent.AddHistory(assumptionLog);
 
         owner.reactionComponent.ReactTo(newAssumption, reactionStatus, false);
+        Messenger.Broadcast(Signals.CHARACTER_ASSUMED, owner, assumedCharacter, targetOfAssumedCharacter);
     }
     public Assumption CreateNewAssumption(Character assumedCharacter, IPointOfInterest targetOfAssumedCharacter, INTERACTION_TYPE assumedActionType) {
         ActualGoapNode assumedAction = new ActualGoapNode(InteractionManager.Instance.goapActionData[assumedActionType], assumedCharacter, targetOfAssumedCharacter, null, 0);
