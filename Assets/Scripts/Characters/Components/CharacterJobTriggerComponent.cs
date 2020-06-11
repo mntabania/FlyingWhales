@@ -309,7 +309,15 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			}	
 		}
 	}
-	private void TriggerFeed(Character target) {
+    public void TriggerRemoveStatusTarget(Character targetCharacter, string traitName) {
+        GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = traitName, target = GOAP_EFFECT_TARGET.TARGET };
+        if (_owner.jobQueue.HasJob(goapEffect, _owner) == false) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REMOVE_STATUS, goapEffect, targetCharacter, _owner);
+            job.SetStillApplicableChecker(() => IsRemoveStatusSelfJobStillApplicable(targetCharacter, job, traitName));
+            _owner.jobQueue.AddJobInQueue(job);
+        }
+    }
+    private void TriggerFeed(Character target) {
 		GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, target = GOAP_EFFECT_TARGET.TARGET };
 		GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FEED, goapEffect, target, _owner);
 		job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 12 });
@@ -380,7 +388,16 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		}
 		return true;
 	}
-	private bool IsRestrainApplicable(Character target, NPCSettlement npcSettlement) {
+    private bool IsRemoveStatusSelfJobStillApplicable(Character target, GoapPlanJob job, string traitName) {
+        if (target.gridTileLocation == null || target.isDead) {
+            return false;
+        }
+        if (!target.traitContainer.HasTrait(traitName)) {
+            return false; //target no longer has the given trait
+        }
+        return true;
+    }
+    private bool IsRestrainApplicable(Character target, NPCSettlement npcSettlement) {
 		return target.canPerform == false && target.gridTileLocation != null &&
 		       target.gridTileLocation.IsNextToOrPartOfSettlement(npcSettlement);
 	}
