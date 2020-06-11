@@ -26,6 +26,7 @@ namespace Inner_Maps {
         public const int DefaultCharacterSortingOrder = 82;
         public const int GroundTilemapSortingOrder = 10;
         public const int DetailsTilemapSortingOrder = 40;
+        public const int SelectedSortingOrder = 900;
         public const int Big_Tree_Yield = 300;
    
         private Vector3 _nextMapPos = Vector3.zero;
