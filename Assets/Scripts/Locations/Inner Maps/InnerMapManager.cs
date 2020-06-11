@@ -361,13 +361,12 @@ namespace Inner_Maps {
             summary = $"{summary} <b>Is Occupied:</b>{tile.isOccupied.ToString()}";
             summary = $"{summary} <b>Tile Type:</b>{tile.tileType.ToString()}";
             summary = $"{summary} <b>Tile State:</b>{tile.tileState.ToString()}";
-            // summary = $"{summary} <b>Reserved Tile Object Type:</b>{tile.reservedObjectType.ToString()}";
             summary = $"{summary} <b>Previous Tile Asset:</b>{(tile.previousGroundVisual?.name ?? "Null")}";
             summary =
                 $"{summary} <b>Current Tile Asset:</b>{(tile.parentTileMap.GetSprite(tile.localPlace)?.name ?? "Null")}";
-            if (tile.hasFurnitureSpot) {
-                summary = $"{summary} <b>Furniture Spot:</b>{tile.furnitureSpot.ToString()}";
-            }
+            // if (tile.hasFurnitureSpot) {
+            //     summary = $"{summary} <b>Furniture Spot:</b>{tile.furnitureSpot.ToString()}";
+            // }
             summary = $"{summary}\nTile Traits: ";
             if (tile.genericTileObject != null && tile.normalTraits.Count > 0) {
                 summary = $"{summary}\n";
@@ -380,11 +379,11 @@ namespace Inner_Maps {
             summary = $"{summary}\nContent: {poi}";
             if (poi != null) {
                 summary = $"{summary}\nHP: {poi.currentHP.ToString()}/{poi.maxHP.ToString()}";
-                summary = $"{summary}\n\tObject State: {poi.state.ToString()}";
-                summary = $"{summary}\n\tIs Available: {poi.IsAvailable().ToString()}";
+                summary = $"{summary}<b>Object State:</b> {poi.state.ToString()}";
+                summary = $"{summary}<b>Is Available:</b> {poi.IsAvailable().ToString()}";
                 if (poi is TileObject tileObject) {
-                    summary = $"{summary}\n\tCharacter Owner: {tileObject.characterOwner?.name}" ?? "None";
-                    summary = $"{summary}\n\tFaction Owner: {tileObject.factionOwner?.name}" ?? "None";
+                    summary = $"{summary}<b>Character Owner:</b> {tileObject.characterOwner?.name}" ?? "None";
+                    summary = $"{summary}<b>Faction Owner:</b> {tileObject.factionOwner?.name}" ?? "None";
                 }
                 if (poi is BaseMapObject baseMapObject) {
                     summary = $"{summary}{baseMapObject.GetAdditionalTestingData()}";
@@ -400,8 +399,7 @@ namespace Inner_Maps {
             }
             if (tile.structure != null) {
                 summary =
-                    $"{summary}\nStructure: {tile.structure}, Occupied Build Spot: {tile.structure?.occupiedHexTile} " +
-                    $"Tiles: {tile.structure.tiles.Count.ToString()}, Has Owner: {tile.structure.IsOccupied().ToString()}, Is Interior: {tile.structure.isInterior.ToString()}";
+                    $"{summary}\nStructure: {tile.structure},Is Interior: {tile.structure.isInterior.ToString()}";
                 summary = $"{summary}\nCharacters at {tile.structure}: ";
                 if (tile.structure.charactersHere.Count > 0) {
                     for (int i = 0; i < tile.structure.charactersHere.Count; i++) {
@@ -462,6 +460,9 @@ namespace Inner_Maps {
             summary = $"{summary}\n\tDestination Tile: ";
             summary = character.marker.destinationTile == null ? $"{summary}None" : $"{summary}{character.marker.destinationTile} at {character.marker.destinationTile.parentMap.region.name}";
             
+            summary = $"{summary}\n\tPersonal Job Queue: ";
+            summary = character.jobQueue.jobsInQueue.Count > 0 ? character.jobQueue.jobsInQueue.Aggregate(summary, (current, poi) => $"{current}{poi}, ") : $"{summary}None";
+            
             summary = $"{summary}\n\tPOI's in Vision: ";
             summary = character.marker.inVisionPOIs.Count > 0 ? character.marker.inVisionPOIs.Aggregate(summary, (current, poi) => $"{current}{poi}, ") : $"{summary}None";
             
@@ -477,8 +478,6 @@ namespace Inner_Maps {
             summary = $"{summary}\n\tAvoid in Range: ";
             summary = character.combatComponent.avoidInRange.Count > 0 ? character.combatComponent.avoidInRange.Aggregate(summary, (current, poi) => $"{current}{poi.name}, ") : $"{summary}None";
             
-            summary = $"{summary}\n\tPersonal Job Queue: ";
-            summary = character.jobQueue.jobsInQueue.Count > 0 ? character.jobQueue.jobsInQueue.Aggregate(summary, (current, poi) => $"{current}{poi}, ") : $"{summary}None";
             return summary;
         }
         #endregion
