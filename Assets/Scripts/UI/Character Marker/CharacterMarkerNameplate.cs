@@ -79,7 +79,7 @@ public class CharacterMarkerNameplate : PooledObject {
     }
     private void UpdateSizeBasedOnZoom() {
         float fovDiff = InnerMapCameraMove.Instance.currentFOV - InnerMapCameraMove.Instance.minFOV;
-        float spriteSize = (_parentMarker.character.visuals.defaultSprite.rect.width - 30f);
+        float spriteSize = (_parentMarker.character.visuals.defaultSprite.rect.width - 20f);
         if (_parentMarker.character.grave != null) {
             spriteSize = DefaultSize;
         }

@@ -33,7 +33,8 @@ namespace Tutorial {
             Booby_Trap,
             Rumor,
             Zombie_Virus,
-            Frame_Up
+            Frame_Up,
+            Pause_Reminder
         }
 
         private List<ImportantTutorial> _activeImportantTutorials;

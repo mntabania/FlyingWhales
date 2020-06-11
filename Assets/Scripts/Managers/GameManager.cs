@@ -72,7 +72,7 @@ public class GameManager : MonoBehaviour {
                 if (isPaused) {
                     UIManager.Instance.Unpause();
                 } else {
-                    UIManager.Instance.Pause();
+                    UIManager.Instance.PauseByPlayer();
                 }
             }
         } else if (keyCode == KeyCode.Alpha1) {

@@ -182,6 +182,7 @@ public static class Signals {
     /// </summary>
     public static string LOG_REMOVED = "OnLogRemoved";
     public static string PAUSED = "OnPauseChanged"; //Parameters (bool isGamePaused)
+    public static string PAUSED_BY_PLAYER = "OnPausedByPlayer";
     public static string PROGRESSION_SPEED_CHANGED = "OnProgressionSpeedChanged"; //Parameters (PROGRESSION_SPEED progressionSpeed)
     public static string BEFORE_MENU_OPENED = "BeforeMenuOpened"; //Parameters (UIMenu openedMenu)
     public static string MENU_OPENED = "OnMenuOpened"; //Parameters (UIMenu openedMenu)

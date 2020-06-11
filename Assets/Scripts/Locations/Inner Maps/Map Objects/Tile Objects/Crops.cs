@@ -16,7 +16,7 @@ public abstract class Crops : TileObject {
     }
     
     #region Growth
-    protected void SetGrowthState(Growth_State growthState) {
+    public void SetGrowthState(Growth_State growthState) {
         currentGrowthState = growthState;
         if (growthState == Growth_State.Growing) {
             _remainingRipeningTicks = GetRipeningTicks();
