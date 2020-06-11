@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Inner_Maps;
 using UnityEngine;  
 using Traits;
+using UtilityScripts;
 
 public class HarvestPlant : GoapAction {
 
@@ -54,9 +55,12 @@ public class HarvestPlant : GoapAction {
         if (poiTarget is Crops crop) {
             crop.SetGrowthState(Crops.Growth_State.Growing);
             
-            FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(TILE_OBJECT_TYPE.VEGETABLES);
-            foodPile.SetResourceInPile(50);
-            crop.gridTileLocation.structure.AddPOI(foodPile);
+            List<LocationGridTile> choices = poiTarget.gridTileLocation.GetTilesInRadius(1, includeTilesInDifferentStructure: true, includeImpassable: false);
+            if (choices.Count > 0) {
+                FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(TILE_OBJECT_TYPE.VEGETABLES);
+                foodPile.SetResourceInPile(50);
+                crop.gridTileLocation.structure.AddPOI(foodPile, CollectionUtilities.GetRandomElement(choices));    
+            }
         }else {
             LocationGridTile tile = poiTarget.gridTileLocation;
             tile.structure.RemovePOI(poiTarget);

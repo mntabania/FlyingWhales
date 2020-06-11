@@ -425,7 +425,7 @@ namespace Inner_Maps {
         /// <summary>
         /// Set this tile to the ground that it originally was, aka before anything was put on it.
         /// </summary>
-        private void RevertTileToOriginalPerlin() {
+        public void RevertTileToOriginalPerlin() {
              TileBase groundTile = InnerTileMap.GetGroundAssetPerlin(floorSample, parentMap.region.coreTile.biomeType);
              SetGroundTilemapVisual(groundTile);
              SetPreviousGroundVisual(null);

@@ -329,9 +329,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -206.19922, y: 0}
+  m_AnchoredPosition: {x: -287.69922, y: 0}
   m_SizeDelta: {x: 163, y: 53}
-  m_Pivot: {x: 1, y: 1}
+  m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &4452501
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -33274,6 +33274,7 @@ MonoBehaviour:
   regionNameTopMenuText: {fileID: 190503514}
   regionNameHoverHandler: {fileID: 1701809092}
   manaLbl: {fileID: 2065112572}
+  manaContainer: {fileID: 4452500}
   intelContainer: {fileID: 2125100019}
   intelItems:
   - {fileID: 1726741769}
@@ -33364,6 +33365,7 @@ MonoBehaviour:
     type: 3}
   threatLbl: {fileID: 766297311}
   threatHoverPos: {fileID: 637732410}
+  threatContainer: {fileID: 1389034677}
   killSummaryToggle: {fileID: 1981778861}
   newMinionUIGO: {fileID: 2032635302}
   newMinionCard: {fileID: 777859330}
@@ -81713,9 +81715,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -394, y: 0}
+  m_AnchoredPosition: {x: -483, y: 0}
   m_SizeDelta: {x: 178, y: 53}
-  m_Pivot: {x: 1, y: 1}
+  m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1389034678
 MonoBehaviour:
   m_ObjectHideFlags: 0

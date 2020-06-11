@@ -93,8 +93,9 @@ public class GenericTileObject : TileObject {
         
         if (currentHP <= 0) {
             //floor has been destroyed
-            gridTileLocation.RevertToPreviousGroundVisual();
-            gridTileLocation.SetPreviousGroundVisual(null); //so that tile will never revert to old floor
+            gridTileLocation.RevertTileToOriginalPerlin();
+            gridTileLocation.CreateSeamlessEdgesForSelfAndNeighbours();
+            // gridTileLocation.SetPreviousGroundVisual(null); //so that tile will never revert to old floor
         } 
         if (amount < 0) {
             structureLocation.OnTileDamaged(gridTileLocation, amount);

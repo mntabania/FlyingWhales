@@ -25,7 +25,7 @@ public class GiantSpiderBehaviour : CharacterBehaviourComponent {
             }
             
             //set abduction target if none, and chance met
-            if (character.homeStructure != null && character.behaviourComponent.currentAbductTarget == null  && Random.Range(0, 100) < 20) {
+            if (character.homeStructure != null && character.behaviourComponent.currentAbductTarget == null  && Random.Range(0, 100) < 8) {
                 List<Character> characterChoices = character.currentRegion.charactersAtLocation
                     .Where(c => c.isNormalCharacter && c.canMove).ToList();
                 if (characterChoices.Count > 0) {
@@ -43,6 +43,7 @@ public class GiantSpiderBehaviour : CharacterBehaviourComponent {
                     //create job to abduct target character.
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MONSTER_ABDUCT,
                         INTERACTION_TYPE.DROP, targetCharacter, character);
+                    job.SetCannotBePushedBack(true);
                     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] {character.homeStructure});
                     producedJob = job;
                 } else {
