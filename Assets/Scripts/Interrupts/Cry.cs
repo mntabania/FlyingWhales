@@ -19,7 +19,7 @@ namespace Interrupts {
             Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, actor.marker.transform.position, 2, actor.currentRegion.innerMap);
             overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", name, "cry");
             overrideEffectLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            overrideEffectLog.AddToFillers(null, actor.interruptComponent.simultaneousIdentifier, LOG_IDENTIFIER.STRING_1);
+            overrideEffectLog.AddToFillers(null, actor.interruptComponent.identifier, LOG_IDENTIFIER.STRING_1);
             return true;
         }
         //public override string ReactionToActor(Character witness, Character actor, IPointOfInterest target, Interrupt interrupt, REACTION_STATUS status) {
