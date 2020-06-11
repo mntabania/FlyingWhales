@@ -993,9 +993,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         }
         return null;
     }
-    public GoapPlanJob CreateKillJob(Character targetCharacter) {
-	    if (!_owner.jobQueue.HasJob(JOB_TYPE.KILL, targetCharacter)) {
-		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.KILL, new GoapEffect(GOAP_EFFECT_CONDITION.DEATH, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), targetCharacter, _owner);
+    public GoapPlanJob CreateDemonKillJob(Character targetCharacter) {
+	    if (!_owner.jobQueue.HasJob(JOB_TYPE.DEMON_KILL, targetCharacter)) {
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DEMON_KILL, new GoapEffect(GOAP_EFFECT_CONDITION.DEATH, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), targetCharacter, _owner);
 		    _owner.jobQueue.AddJobInQueue(job);
             return job;
 	    }

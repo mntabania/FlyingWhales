@@ -12,7 +12,7 @@ public class CombatManager : MonoBehaviour {
 
     public const int pursueDuration = 4;
     public const string Hostility = "Hostility", Retaliation = "Retaliation", Berserked = "Berserked", Action = "Action",
-        Threatened = "Threatened", Anger = "Anger", Join_Combat = "Join Combat", Drunk = "Drunk", Rage = "Rage";
+        Threatened = "Threatened", Anger = "Anger", Join_Combat = "Join Combat", Drunk = "Drunk", Rage = "Rage", Demon_Kill = "Demon Kill";
 
     [SerializeField] private ProjectileDictionary _projectileDictionary;
 

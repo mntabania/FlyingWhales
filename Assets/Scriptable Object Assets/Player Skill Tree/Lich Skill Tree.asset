@@ -49,7 +49,7 @@ MonoBehaviour:
       unlockedSkills: 
     - manaCost: 10
       charges: -1
-      cooldown: 12
+      cooldown: 36
       threat: 3
       threatPerHour: 0
       expCost: 0

@@ -869,12 +869,25 @@ namespace Inner_Maps {
                 StructureWallObject structureWallObject = walls[i];
                 callback.Invoke(structureWallObject);
             }
-            if (objHere is TileObject tileObject && tileObject.mapObjectState == MAP_OBJECT_STATE.BUILT) {
-                callback.Invoke(objHere);
-            }
             for (int i = 0; i < charactersHere.Count; i++) {
                 Character character = charactersHere[i];
                 callback.Invoke(character);
+            }
+            if (objHere is TileObject tileObject && tileObject.mapObjectState == MAP_OBJECT_STATE.BUILT) {
+                callback.Invoke(objHere);
+                //Sleeping characters in bed should also receive damage
+                //https://trello.com/c/kFZAHo11/1203-sleeping-characters-in-bed-should-also-receive-damage
+                if (tileObject is Bed bed) {
+                    if (bed.users != null && bed.users.Length > 0) {
+                        for (int i = 0; i < bed.users.Length; i++) {
+                            Character user = bed.users[i];
+                            //Should only apply if user is not part of charactersHere list so that no duplicate calls shall take place
+                            if (!charactersHere.Contains(user)) {
+                                callback.Invoke(user);
+                            }
+                        }
+                    }
+                }
             }
             Messenger.Broadcast(Signals.ACTION_PERFORMED_ON_TILE_TRAITABLES, this, callback);
         }

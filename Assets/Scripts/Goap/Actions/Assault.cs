@@ -120,9 +120,13 @@ public class Assault : GoapAction {
     #region Effects
     public void AfterCombatStart(ActualGoapNode goapNode) {
         Debug.Log($"{goapNode.actor} will start combat towards {goapNode.poiTarget.name}");
+        string combatReason = CombatManager.Action;
         bool isLethal = goapNode.associatedJobType.IsJobLethal();
+        if(goapNode.associatedJobType == JOB_TYPE.DEMON_KILL) {
+            combatReason = CombatManager.Demon_Kill;
+        }
         //goapNode.actor.combatComponent.SetActionAndJobThatTriggeredCombat(goapNode, goapNode.actor.currentJob as GoapPlanJob);
-        goapNode.actor.combatComponent.Fight(goapNode.poiTarget, CombatManager.Action, connectedAction: goapNode, isLethal: isLethal);
+        goapNode.actor.combatComponent.Fight(goapNode.poiTarget, combatReason, connectedAction: goapNode, isLethal: isLethal);
         // if(goapNode.poiTarget is Character) {
         //     Character targetCharacter = goapNode.poiTarget as Character;
         //     if (goapNode.associatedJobType != JOB_TYPE.APPREHEND && !goapNode.actor.IsHostileWith(targetCharacter)) {

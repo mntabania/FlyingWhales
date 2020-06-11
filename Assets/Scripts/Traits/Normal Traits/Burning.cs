@@ -167,7 +167,18 @@ namespace Traits {
             }
             owner.AdjustHP(-(int) (owner.maxHP * 0.02f), ELEMENTAL_TYPE.Normal, true, this, showHPBar: true);
 
-            if (UnityEngine.Random.Range(0, 100) >= 7) {
+            //Sleeping characters in bed should also receive damage
+            //https://trello.com/c/kFZAHo11/1203-sleeping-characters-in-bed-should-also-receive-damage
+            if (owner is Bed bed) {
+                if(bed.users != null && bed.users.Length > 0) {
+                    for (int i = 0; i < bed.users.Length; i++) {
+                        Character user = bed.users[i];
+                        user.AdjustHP(-(int) (user.maxHP * 0.02f), ELEMENTAL_TYPE.Normal, true, this, showHPBar: true);
+                    }
+                }
+            }
+
+            if (UnityEngine.Random.Range(0, 100) >= 4) {
                 return;
             }
             //TODO: CAN BE OPTIMIZED?
