@@ -1436,12 +1436,16 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     private bool IsBuryJobStillApplicable(Character target, NPCSettlement npcSettlement) {
 	    return target.gridTileLocation != null && target.gridTileLocation.IsNextToOrPartOfSettlement(npcSettlement) && target.marker != null;
     }
+    private bool IsBuryJobStillApplicable(Character target) {
+        return target.gridTileLocation != null && target.marker != null;
+    }
     public void TriggerPersonalBuryJob(Character targetCharacter) {
         if (_owner.gridTileLocation != null) {
             LocationStructure targetStructure = _owner.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.CEMETERY) ??
                                                 _owner.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
             GoapPlanJob buryJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BURY, INTERACTION_TYPE.BURY_CHARACTER, targetCharacter, _owner);
             buryJob.AddOtherData(INTERACTION_TYPE.BURY_CHARACTER, new object[] { targetStructure });
+            buryJob.SetStillApplicableChecker(() => IsBuryJobStillApplicable(_owner));
             _owner.jobQueue.AddJobInQueue(buryJob);
         }
     }

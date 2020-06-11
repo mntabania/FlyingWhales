@@ -260,20 +260,20 @@ public class BaseRelationshipContainer : IRelationshipContainer {
                     return;
                 }
             }
-            int chance = 5;
+            int chance = 4;
             int roll = UnityEngine.Random.Range(0, 100);
             MOOD_STATE ownerMood = owner.moodComponent.moodState;
             string opinionLabel = owner.relationshipContainer.GetOpinionLabel(targetCharacter);
             if (ownerMood == MOOD_STATE.LOW) {
-                chance *= 10;
+                chance *= 5;
             } else if (ownerMood == MOOD_STATE.CRITICAL) {
-                chance *= 15;
+                chance *= 10;
             }
             if (opinionLabel == RelationshipManager.Rival) {
                 chance *= 2;
             }
 
-            chance += Mathf.RoundToInt((amountReduced * -1) / 3f);
+            chance += Mathf.RoundToInt((amountReduced * -1) / 5f);
             if (roll < chance) {
                 if (owner.marker && owner.marker.inVisionCharacters.Contains(targetCharacter)) {
                     if (targetCharacter.isInCombat) {

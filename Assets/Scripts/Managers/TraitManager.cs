@@ -75,8 +75,8 @@ public class TraitManager : MonoBehaviour {
     public List<string> neutralTraitPool { get; private set; }
 
     public List<string> removeStatusTraits = new List<string> {
-        "Unconscious", "Injured", "Poisoned","Plagued",
-        "Infected", "Cursed", "Freezing", "Frozen"
+        "Unconscious", "Injured", "Poisoned", "Plagued",
+        "Infected", "Cursed", "Freezing", "Frozen", "Burning",
     };
     public List<string> specialIllnessTraits = new List<string> {
         "Poisoned", "Plagued", "Infected"

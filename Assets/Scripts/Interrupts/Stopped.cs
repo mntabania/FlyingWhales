@@ -22,6 +22,12 @@ namespace Interrupts {
             }
             actor.currentJob?.CancelJob(false);
             actor.currentJob?.StopJobNotDrop();
+            if(actor != target && node != null) {
+                overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", name, "effect_with_action");
+                overrideEffectLog.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                overrideEffectLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                overrideEffectLog.AddToFillers(null, node.action.name, LOG_IDENTIFIER.STRING_1);
+            }
             return executed;
         }
         public override Log CreateEffectLog(Character actor, IPointOfInterest target) {
