@@ -8,7 +8,9 @@ public class PlayerSkillTreeUI : MonoBehaviour {
 
     public void LoadSkillTree() {
         foreach (KeyValuePair<SPELL_TYPE, PlayerSkillTreeItem> item in skillTreeItems) {
-            item.Value.SetData(item.Key, parentSkillTreeUI.skillTree.nodes[item.Key], OnClickSkillTreeButton);
+            if (parentSkillTreeUI.skillTree.nodes.ContainsKey(item.Key)) {
+                item.Value.SetData(item.Key, parentSkillTreeUI.skillTree.nodes[item.Key], OnClickSkillTreeButton);    
+            }
         }
     }
 

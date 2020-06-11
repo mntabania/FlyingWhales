@@ -344,6 +344,9 @@ public static class Signals {
     /// parameters (Minion, BaseLandmark)
     /// </summary>
     public static string MINION_UNASSIGNED_PLAYER_LANDMARK = "OnMinionUnassignedFromPlayerLandmark";
+    /// <summary>
+    /// parameters (int)
+    /// </summary>
     public static string PLAYER_ADJUSTED_MANA = "OnPlayerAdjustedMana";
     /// <summary>
     /// parameters (Minion)

@@ -48,7 +48,7 @@ public class PlayerBuildLandmarkUI : MonoBehaviour {
         if(landmarkName == "The Kennel" && !UIManager.Instance.regionInfoUI.activeRegion.HasTileWithFeature(TileFeatureDB.Summons_Feature)) {
             return false;
         }
-        if (landmarkName == "The Crypt" && (!UIManager.Instance.regionInfoUI.activeRegion.HasTileWithFeature(TileFeatureDB.Artifact_Feature) || PlayerManager.Instance.player.playerFaction.HasOwnedRegionWithLandmarkType(LANDMARK_TYPE.THE_CRYPT))) {
+        if (landmarkName == "The Crypt" && (!UIManager.Instance.regionInfoUI.activeRegion.HasTileWithFeature(TileFeatureDB.Artifact_Feature) || PlayerManager.Instance.player.playerFaction.HasOwnedRegionWithLandmarkType(LANDMARK_TYPE.CRYPT))) {
             return false;
         }
         return true;

@@ -8070,7 +8070,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ParentPool: {fileID: 0}
-  structureType: 38
+  structureType: 33
   _groundTileMap: {fileID: 5188964859820617585}
   _detailTileMap: {fileID: 5188964861269615487}
   _groundTileMapRenderer: {fileID: 820087690634341909}
@@ -8206,6 +8206,7 @@ MonoBehaviour:
   - {x: 12, y: 9, z: 0}
   - {x: 12, y: 10, z: 0}
   - {x: 12, y: 11, z: 0}
+  roomTemplates: []
   wallTileMap: {fileID: 5188964858969396229}
   leftWall: {fileID: 1585498277213060, guid: 2e2e9509b5333aa4bbbeeabbd9cbec70, type: 3}
   rightWall: {fileID: 1585498277213060, guid: 70407332126550d4b81db31716c0b3fe, type: 3}
@@ -8214,7 +8215,7 @@ MonoBehaviour:
   cornerPrefab: {fileID: 1038175435304820, guid: 551abd56996a3a749b77d74c5832fe15,
     type: 3}
   assetsToConsiderAsStructure: []
-  _shroudParticles: {fileID: 6130823944513892591}
+  entranceCoordinates: {x: 0, y: 0, z: 0}
 --- !u!114 &8576634444061358850
 MonoBehaviour:
   m_ObjectHideFlags: 0

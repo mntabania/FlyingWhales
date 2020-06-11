@@ -3,11 +3,11 @@ using UnityEngine;
 using Inner_Maps;
 
 namespace Inner_Maps.Location_Structures {
-    public class TheCrypt : DemonicStructure {
+    public class Crypt : DemonicStructure {
         public override Vector2 selectableSize { get; }
         private Artifact _activatedArtifact;
         
-        public TheCrypt(Region location) : base(STRUCTURE_TYPE.THE_CRYPT, location){
+        public Crypt(Region location) : base(STRUCTURE_TYPE.CRYPT, location){
             selectableSize = new Vector2(10f, 10f);
         }
 

@@ -9,7 +9,7 @@ namespace Tutorial {
 
         private Character _targetCharacter;
         
-        public ZombieVirus() : base("Log Quest - Zombie Virus", TutorialManager.Tutorial.Zombie_Virus) { }
+        public ZombieVirus() : base("Zombie Virus", TutorialManager.Tutorial.Zombie_Virus) { }
 
         #region Criteria
         protected override void ConstructCriteria() {

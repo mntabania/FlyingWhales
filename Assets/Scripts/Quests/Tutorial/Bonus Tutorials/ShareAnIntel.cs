@@ -18,7 +18,7 @@ namespace Tutorial {
         protected override bool HasMetAllCriteria() {
             bool hasMetAllCriteria = base.HasMetAllCriteria();
             if (hasMetAllCriteria) {
-                return PlayerSkillManager.Instance.GetPlayerSkillData(SPELL_TYPE.THE_EYE).charges > 0;
+                return PlayerSkillManager.Instance.GetPlayerSkillData(SPELL_TYPE.EYE).charges > 0;
             }
             return false;
         }
@@ -45,7 +45,7 @@ namespace Tutorial {
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo),
                     new ObjectPickerShownStep("Click on Build Structure button", "Demonic Structure")
                         .SetOnTopmostActions(OnTopMostBuildStructure, OnNoLongerTopMostBuildStructure), 
-                    new StructureBuiltStep(STRUCTURE_TYPE.THE_EYE, "Build The Eye")
+                    new StructureBuiltStep(STRUCTURE_TYPE.EYE, "Build the Eye")
                         .SetOnTopmostActions(OnTopMostTheEye, OnNoLongerTopMostTheEye)
                 ),
                 new QuestStepCollection (new StoreIntelStep()
@@ -100,10 +100,10 @@ namespace Tutorial {
         
         #region The Eye
         private void OnTopMostTheEye() {
-            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "The Eye");
+            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Eye");
         }
         private void OnNoLongerTopMostTheEye() {
-            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "The Eye");
+            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Eye");
         }
         #endregion
         

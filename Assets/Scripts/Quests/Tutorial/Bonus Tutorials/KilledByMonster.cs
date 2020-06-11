@@ -8,7 +8,7 @@ namespace Tutorial {
 
         private Character _targetCharacter;
         
-        public KilledByMonster() : base("Log Quest - Killed By a Monster", TutorialManager.Tutorial.Killed_By_Monster) { }
+        public KilledByMonster() : base("Killed By a Monster", TutorialManager.Tutorial.Killed_By_Monster) { }
 
         #region Criteria
         protected override void ConstructCriteria() {

@@ -126,8 +126,12 @@ public class PlayerSkillComponent {
         //For Demo
         if (WorldConfigManager.Instance.isDemoWorld) {
             SpellData rain = PlayerSkillManager.Instance.GetPlayerSkillData(SPELL_TYPE.RAIN);
-            CategorizePlayerSkill(rain);    
+            CategorizePlayerSkill(rain);
         }
+        SpellData meddler = PlayerSkillManager.Instance.GetPlayerSkillData(SPELL_TYPE.MEDDLER);
+        CategorizePlayerSkill(meddler);
+        SpellData ostracizer = PlayerSkillManager.Instance.GetPlayerSkillData(SPELL_TYPE.OSTRACIZER);
+        CategorizePlayerSkill(ostracizer);    
     }
     private void PopulateAllSkills(List<PlayerSkillTreeNodeData> nodesData) {
         if (nodesData != null) {

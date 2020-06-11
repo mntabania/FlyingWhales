@@ -14,14 +14,14 @@ public class InterfereData : PlayerAction {
 
     #region Overrides
     public override void ActivateAbility(LocationStructure structure) {
-        if (structure is Inner_Maps.Location_Structures.TheGoader goader) {
+        if (structure is Inner_Maps.Location_Structures.Meddler goader) {
             goader.ShowInterfereUI();
         }
     }
     public override bool CanPerformAbilityTowards(LocationStructure structure) {
         bool canPerform = base.CanPerformAbilityTowards(structure);
         if (canPerform) {
-            if (structure is Inner_Maps.Location_Structures.TheGoader) {
+            if (structure is Inner_Maps.Location_Structures.Meddler) {
                 return true;
             }
             return false;

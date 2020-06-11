@@ -21,7 +21,7 @@ public class PlayerUI : MonoBehaviour {
     public TextMeshProUGUI regionNameTopMenuText;
     public HoverHandler regionNameHoverHandler;
     
-    [Header("Currencies")]
+    [Header("Mana")]
     public TextMeshProUGUI manaLbl;
 
     [Header("Intel")]
@@ -131,6 +131,7 @@ public class PlayerUI : MonoBehaviour {
     
     [Header("Threat")]
     [SerializeField] private TextMeshProUGUI threatLbl;
+    [SerializeField] private UIHoverPosition threatHoverPos;
 
     private PlayerJobActionButton[] interventionAbilityBtns;
     //public Minion harassRaidInvadeLeaderMinion { get; private set; }
@@ -185,6 +186,8 @@ public class PlayerUI : MonoBehaviour {
         Messenger.AddListener<Character, CharacterClass, CharacterClass>(Signals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
         Messenger.AddListener<Character, Character>(Signals.ON_SWITCH_FROM_LIMBO, OnCharacterSwitchFromLimbo);
         Messenger.AddListener(Signals.THREAT_UPDATED, OnThreatUpdated);
+        Messenger.AddListener<int>(Signals.THREAT_INCREASED, OnThreatIncreased);
+        Messenger.AddListener(Signals.THREAT_RESET, OnThreatReset);
         Messenger.AddListener<IPointOfInterest>(Signals.ON_SEIZE_POI, OnSeizePOI);
         Messenger.AddListener<IPointOfInterest>(Signals.ON_UNSEIZE_POI, OnUnseizePOI);
         //Messenger.AddListener<Summon>(Signals.PLAYER_PLACED_SUMMON, CreateNewSummonItem);
@@ -193,7 +196,7 @@ public class PlayerUI : MonoBehaviour {
         Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressed);
 
         //currencies
-        Messenger.AddListener(Signals.PLAYER_ADJUSTED_MANA, UpdateMana);
+        Messenger.AddListener<int>(Signals.PLAYER_ADJUSTED_MANA, OnManaAdjusted);
         InitialUpdateKillCountCharacterItems();
         UpdateIntel();
         CreateInitialSpells();
@@ -322,6 +325,18 @@ public class PlayerUI : MonoBehaviour {
         threatLbl.text = PlayerManager.Instance.player.threatComponent.threat.ToString();
         //threatLbl.transform.DOPunchScale(new Vector3(1.2f, 1.2f, 1.2f), 0.5f);
     }
+    private void OnThreatIncreased(int amount) {
+        var text = $"<color=\"red\">+{amount.ToString()}</color>";
+        GameObject effectGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("AdjustmentEffectLbl", threatLbl.transform.position,
+            Quaternion.identity, transform, true);
+        effectGO.GetComponent<AdjustmentEffectLabel>().PlayEffect(text, new Vector2(0f, -70f));
+    }
+    private void OnThreatReset() {
+        var text = $"<color=\"green\">-{ThreatComponent.MAX_THREAT.ToString()}</color>";
+        GameObject effectGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("AdjustmentEffectLbl", threatLbl.transform.position,
+            Quaternion.identity, transform, true);
+        effectGO.GetComponent<AdjustmentEffectLabel>().PlayEffect(text, new Vector2(0f, -70f));
+    }
     #endregion
 
     private void UpdateRegionNameState() {
@@ -347,7 +362,11 @@ public class PlayerUI : MonoBehaviour {
         }
     }
 
-    #region Currencies
+    #region Mana
+    private void OnManaAdjusted(int adjustedAmount) {
+        UpdateMana();
+        ShowManaAdjustEffect(adjustedAmount);
+    }
     private void UpdateMana() {
         manaLbl.text = PlayerManager.Instance.player.mana.ToString();
     }
@@ -356,6 +375,12 @@ public class PlayerUI : MonoBehaviour {
         if (_currentManaPunchTween == null) {
             _currentManaPunchTween = manaLbl.transform.DOPunchScale(new Vector3(1.2f, 1.2f, 1.2f), 0.5f).OnComplete(() => _currentManaPunchTween = null);    
         }
+    }
+    private void ShowManaAdjustEffect(int adjustmentAmount) {
+        var text = adjustmentAmount > 0 ? $"<color=\"green\">+{adjustmentAmount.ToString()}</color>" : $"<color=\"red\">{adjustmentAmount.ToString()}</color>";
+        GameObject effectGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("AdjustmentEffectLbl", manaLbl.transform.position,
+            Quaternion.identity, transform, true);
+        effectGO.GetComponent<AdjustmentEffectLabel>().PlayEffect(text, new Vector2(0f, -70f));
     }
     #endregion
 
@@ -538,8 +563,8 @@ public class PlayerUI : MonoBehaviour {
     //}
     public void OnHoverEnterThreat() {
         string text = "The amount of threat you've generated in this world. Once this reaches 100, characters will start attacking your structures. " +
-            "Your recent actions are generating " + PlayerManager.Instance.player.threatComponent.threatPerHour + " Threat every hour.";
-        UIManager.Instance.ShowSmallInfo(text);
+            "Your recent actions are generating " + PlayerManager.Instance.player.threatComponent.threatPerHour.ToString() + " Threat every hour.";
+        UIManager.Instance.ShowSmallInfo(text, threatHoverPos);
     }
     public void OnHoverExitThreat() {
         UIManager.Instance.HideSmallInfo();

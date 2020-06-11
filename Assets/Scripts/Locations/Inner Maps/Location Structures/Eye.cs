@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
 
 namespace Inner_Maps.Location_Structures {
-    public class TheEye : DemonicStructure {
+    public class Eye : DemonicStructure {
         public override Vector2 selectableSize { get; }
 
-        public TheEye(Region location) : base(STRUCTURE_TYPE.THE_EYE, location){
+        public Eye(Region location) : base(STRUCTURE_TYPE.EYE, location){
             selectableSize = new Vector2(10f, 10f);
         }
 

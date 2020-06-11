@@ -18,7 +18,7 @@ namespace Tutorial {
         protected override bool HasMetAllCriteria() {
             bool hasMetAllCriteria = base.HasMetAllCriteria();
             if (hasMetAllCriteria) {
-                return PlayerSkillManager.Instance.GetDemonicStructureSkillData(SPELL_TYPE.TORTURE_CHAMBER).charges > 0;
+                return PlayerSkillManager.Instance.GetDemonicStructureSkillData(SPELL_TYPE.TORTURE_CHAMBERS).charges > 0;
             }
             return false;
         }
@@ -107,7 +107,7 @@ namespace Tutorial {
             UIManager.Instance.generalConfirmationWithVisual.ShowGeneralConfirmation("Demonic Structures",
                 "These are unique demonic structures that you can build on unoccupied Areas. " +
                 "Each structure type has a unique use that may aid you in your invasion. " +
-                $"For example, the Torture Chambers allow you to torture {UtilityScripts.Utilities.VillagerIcon()}Villagers to afflict them with negative Traits and Statuses.\n\n" +
+                $"For example, the Torture Chambers allow you to torture \n{UtilityScripts.Utilities.VillagerIcon()}Villagers to afflict them with negative Traits and Statuses.\n\n" +
                 "You have limited Charges per demonic structure so protect them from attacks!",
                 TutorialManager.Instance.demonicStructureVideoClip);
         }
@@ -124,10 +124,10 @@ namespace Tutorial {
 
         #region Choose Torture
         private void OnTopMostChooseTorture() {
-            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Torture Chamber");
+            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Torture Chambers");
         }
         private void OnNoLongerTopMostChooseTorture() {
-            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Torture Chamber");
+            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Torture Chambers");
         }
         #endregion
         

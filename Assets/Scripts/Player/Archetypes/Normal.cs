@@ -10,7 +10,7 @@ namespace Archetype {
             afflictions = PlayerDB.afflictions;
             spells = PlayerDB.spells;
             // SPELL_TYPE.THE_SPIRE,
-            demonicStructuresSkills = new List<SPELL_TYPE>() { SPELL_TYPE.THE_EYE, SPELL_TYPE.THE_KENNEL, SPELL_TYPE.THE_CRYPT, SPELL_TYPE.THE_GOADER, SPELL_TYPE.TORTURE_CHAMBER, SPELL_TYPE.DEMONIC_PRISON };
+            demonicStructuresSkills = new List<SPELL_TYPE>() { SPELL_TYPE.EYE, SPELL_TYPE.KENNEL, SPELL_TYPE.CRYPT, SPELL_TYPE.MEDDLER, SPELL_TYPE.TORTURE_CHAMBERS, SPELL_TYPE.DEMONIC_PRISON };
             monsters = new List<RaceClass>() {
                 new RaceClass(RACE.WOLF, "Ravager"), new RaceClass(RACE.GOLEM, "Golem"),
                 new RaceClass(RACE.SKELETON, "Archer"), new RaceClass(RACE.SKELETON, "Marauder"),

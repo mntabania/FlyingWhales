@@ -20,7 +20,7 @@ namespace Tutorial {
         protected override bool HasMetAllCriteria() {
             bool hasMetAllCriteria = base.HasMetAllCriteria();
             if (hasMetAllCriteria) {
-                return PlayerSkillManager.Instance.GetDemonicStructureSkillData(SPELL_TYPE.THE_KENNEL).charges > 0;
+                return PlayerSkillManager.Instance.GetDemonicStructureSkillData(SPELL_TYPE.KENNEL).charges > 0;
             }
             return false;
         }
@@ -34,13 +34,13 @@ namespace Tutorial {
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo), 
                     new ObjectPickerShownStep("Click on Build Structure button", "Demonic Structure")
                         .SetOnTopmostActions(OnTopMostBuildStructure, OnNoLongerTopMostBuildStructure), 
-                    new StructureBuiltStep(STRUCTURE_TYPE.THE_KENNEL, "Choose the Kennel")
+                    new StructureBuiltStep(STRUCTURE_TYPE.KENNEL, "Choose the Kennel")
                         .SetOnTopmostActions(OnTopMostKennel, OnNoLongerTopMostKennel)
                 ),
                 new QuestStepCollection(
                     new ExecutedPlayerActionStep(SPELL_TYPE.SEIZE_MONSTER, $"Seize a {UtilityScripts.Utilities.MonsterIcon()}monster.")
                         .SetOnTopmostActions(OnTopMostSeizeMonster, OnNoLongerTopMostSeizeMonster),
-                    new DropPOIAtStructureStep((structure, pointOfInterest) => structure.structureType == STRUCTURE_TYPE.THE_KENNEL,
+                    new DropPOIAtStructureStep((structure, pointOfInterest) => structure.structureType == STRUCTURE_TYPE.KENNEL,
                         poi => poi is Summon, "Drop at the Kennel."),
                     new ClickOnCharacterStep($"Click on the {UtilityScripts.Utilities.MonsterIcon()}monster", IsCharacterValid),
                     new ExecutedPlayerActionStep(SPELL_TYPE.BREED_MONSTER, "Breed it.")
@@ -63,7 +63,7 @@ namespace Tutorial {
 
         #region Availability Listeners
         private void OnAlreadyBuiltStructure(LocationStructure structure) {
-            if (structure is Inner_Maps.Location_Structures.TheKennel) {
+            if (structure is Inner_Maps.Location_Structures.Kennel) {
                 CompleteQuest(); //player already built a kennel
             }
         }
@@ -71,7 +71,7 @@ namespace Tutorial {
 
         #region Step Completion Actions
         private bool IsCharacterValid(Character character) {
-            return character is Summon && character.currentStructure is Inner_Maps.Location_Structures.TheKennel;
+            return character is Summon && character.currentStructure is Inner_Maps.Location_Structures.Kennel;
         }
         #endregion
 
@@ -100,10 +100,10 @@ namespace Tutorial {
         
         #region Choose Kennel
         private void OnTopMostKennel() {
-            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "The Kennel");
+            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Kennel");
         }
         private void OnNoLongerTopMostKennel() {
-            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "The Kennel");
+            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Kennel");
         }
         #endregion
         
