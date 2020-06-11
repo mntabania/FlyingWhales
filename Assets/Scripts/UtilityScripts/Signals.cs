@@ -667,6 +667,13 @@ public static class Signals {
     public static string CAMERA_ZOOM_CHANGED = "OnCameraZoomChanged";
     #endregion
 
+    #region Assumptions
+    /// <summary>
+    /// Parameters: Character assumer, Character target, IPointOfInterest poi
+    /// </summary>
+    public static string CHARACTER_ASSUMED = "OnCharacterAssumed";
+    #endregion
+
     public static Dictionary<string, SignalMethod[]> orderedSignalExecution = new Dictionary<string, SignalMethod[]>() {
         { HOUR_STARTED, new[] {
             new SignalMethod() { methodName = "HourlyJobActions", objectType = typeof(NPCSettlement) },
