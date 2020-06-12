@@ -34,6 +34,9 @@ public class HarvestPlant : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
+            if (poiTarget is Crops crops && crops.currentGrowthState != Crops.Growth_State.Ripe) {
+                return false;
+            }
             return poiTarget.IsAvailable() &&
                    poiTarget.gridTileLocation != null; //&& actor.traitContainer.HasTrait("Worker");
         }
