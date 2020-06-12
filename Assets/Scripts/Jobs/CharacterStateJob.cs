@@ -77,12 +77,8 @@ public class CharacterStateJob : JobQueueItem {
             } else if(assignedState.isPaused) {
                 assignedState.ResumeState();
                 if (assignedState != null) {
-                    if (!assignedState.isDone) {
-                        assignedCharacter.SetCurrentJob(this);
-                    } else {
-                        if (assignedCharacter.currentJob == this) {
-                            assignedCharacter.SetCurrentJob(null);
-                        }
+                    if (assignedState.isDone && assignedCharacter.currentJob == this) {
+                        assignedCharacter.SetCurrentJob(null);
                     }
                     return true;    
                 }
@@ -96,7 +92,7 @@ public class CharacterStateJob : JobQueueItem {
             CancelJob(false);
         } else if (assignedState != null){
             assignedState.PauseState();
-            assignedCharacter.stateComponent.SetCurrentState(null);
+            //assignedCharacter.stateComponent.SetCurrentState(null);
         }
     }
     public override void StopJobNotDrop() {
@@ -105,7 +101,7 @@ public class CharacterStateJob : JobQueueItem {
             CancelJob(false);
         } else if (assignedState != null) {
             assignedState.PauseState();
-            assignedCharacter.stateComponent.SetCurrentState(null);
+            //assignedCharacter.stateComponent.SetCurrentState(null);
         }
     }
     public override void UnassignJob(bool shouldDoAfterEffect, string reason) {

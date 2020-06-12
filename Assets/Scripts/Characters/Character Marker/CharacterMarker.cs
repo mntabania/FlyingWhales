@@ -1380,6 +1380,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public void OnFinishedTraversingFleePath() {
         if (character.isInCombat) {
             (character.stateComponent.currentState as CombatState).FinishedTravellingFleePath();
+        } else {
+            SetHasFleePath(false);
         }
     }
     public void SetHasFleePath(bool state) {
