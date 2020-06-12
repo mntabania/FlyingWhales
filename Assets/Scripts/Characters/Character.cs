@@ -4539,6 +4539,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public virtual void OnSeizePOI() {
         if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == this) {
             UIManager.Instance.characterInfoUI.CloseMenu();
+        } else if (UIManager.Instance.monsterInfoUI.isShowing && UIManager.Instance.monsterInfoUI.activeMonster == this) {
+            UIManager.Instance.monsterInfoUI.CloseMenu();
         }
         if (ownParty.icon.isTravelling) {
             marker.StopMovement();

@@ -8,6 +8,10 @@ namespace Quests.Steps {
         }
         protected override void SubscribeListeners() {
             Messenger.AddListener<ISelectable>(Signals.SELECTABLE_LEFT_CLICKED, CheckForCompletion);
+            Character selectedCharacter = UIManager.Instance.GetCurrentlySelectedCharacter();
+            if (selectedCharacter != null) {
+                CheckForCompletion(selectedCharacter);
+            }
         }
         protected override void UnSubscribeListeners() {
             Messenger.RemoveListener<ISelectable>(Signals.SELECTABLE_LEFT_CLICKED, CheckForCompletion);

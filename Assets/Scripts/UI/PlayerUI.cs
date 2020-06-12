@@ -28,7 +28,7 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private RectTransform manaContainer;
 
     [Header("Intel")]
-    [SerializeField] private GameObject intelContainer;
+    public GameObject intelContainer;
     [SerializeField] private IntelItem[] intelItems;
     public Toggle intelToggle;
 

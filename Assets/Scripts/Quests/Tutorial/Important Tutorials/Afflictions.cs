@@ -27,9 +27,7 @@ namespace Tutorial {
                 new QuestStepCollection(
                     new ClickOnCharacterStep($"Click on a {UtilityScripts.Utilities.VillagerIcon()}Villager", IsCharacterValid)
                         .SetHoverOverAction(OnHoverSelectCharacterStep)
-                        .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
-                    ),
-                new QuestStepCollection(
+                        .SetHoverOutAction(UIManager.Instance.HideSmallInfo),
                     new ObjectPickerShownStep("Click on Afflict button", "Intervention Ability")
                         .SetHoverOverAction(OnHoverAfflictButtonStep)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)

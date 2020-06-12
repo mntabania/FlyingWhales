@@ -58,8 +58,8 @@ namespace Quests.Steps {
         /// Activate this quest step. This means that this step will start listening for its completion.
         /// </summary>
         public void Activate() {
-            SubscribeListeners();
             Messenger.Broadcast(Signals.QUEST_STEP_ACTIVATED, this);
+            SubscribeListeners();
         }
         #endregion
 
