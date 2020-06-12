@@ -71,26 +71,31 @@ public class Nap : GoapAction {
                     cost += UtilityScripts.Utilities.Rng.Next(30, 36);
                     costLog += $" +{cost}(Owned)";
                 } else {
-                    List<Character> tableOwners = targetBed.GetOwners();
-                    bool isTargetObjectOwnedByFriend = false;
-                    bool isTargetObjectOwnedByEnemy = false;
-                    if (tableOwners != null) {
-                        for (int i = 0; i < tableOwners.Count; i++) {
-                            Character objectOwner = tableOwners[i];
-                            if (actor.relationshipContainer.IsFriendsWith(objectOwner)) {
-                                isTargetObjectOwnedByFriend = true;
-                                break;
-                            } else if (actor.relationshipContainer.IsEnemiesWith(objectOwner)) {
-                                isTargetObjectOwnedByEnemy = true;
-                            }
+                    //List<Character> tableOwners = targetBed.GetOwners();
+                    //bool isTargetObjectOwnedByFriend = false;
+                    //bool isTargetObjectOwnedByEnemy = false;
+                    //if (tableOwners != null) {
+                    //    for (int i = 0; i < tableOwners.Count; i++) {
+                    //        Character objectOwner = tableOwners[i];
+                    //        if (actor.relationshipContainer.IsFriendsWith(objectOwner)) {
+                    //            isTargetObjectOwnedByFriend = true;
+                    //            break;
+                    //        } else if (actor.relationshipContainer.IsEnemiesWith(objectOwner)) {
+                    //            isTargetObjectOwnedByEnemy = true;
+                    //        }
+                    //    }
+                    //}
+                    if (targetBed.characterOwner != null) {
+                        if (actor.relationshipContainer.IsFriendsWith(targetBed.characterOwner)) {
+                            cost += UtilityScripts.Utilities.Rng.Next(55, 66);
+                            costLog += $" +{cost}(Owned by Friend)";
+                        } else if (actor.relationshipContainer.IsEnemiesWith(targetBed.characterOwner)) {
+                            cost += 2000;
+                            costLog += " +2000(Owned by Enemy)";
+                        } else {
+                            cost = UtilityScripts.Utilities.Rng.Next(50, 71);
+                            costLog += $" +{cost}(Else)";
                         }
-                    }
-                    if (isTargetObjectOwnedByFriend) {
-                        cost = UtilityScripts.Utilities.Rng.Next(55, 66);
-                        costLog += $" +{cost}(Owned by Friend)";
-                    } else if (isTargetObjectOwnedByEnemy) {
-                        cost += 2000;
-                        costLog += " +2000(Owned by Enemy)";
                     } else {
                         cost = UtilityScripts.Utilities.Rng.Next(50, 71);
                         costLog += $" +{cost}(Else)";

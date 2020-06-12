@@ -46,7 +46,7 @@ public class PickUp : GoapAction {
                 cost += UtilityScripts.Utilities.Rng.Next(80, 121);
                 costLog += $" +{cost}(No personal owner)";
             } else {
-                if(targetTileObject.characterOwner == actor) {
+                if(targetTileObject.IsOwnedBy(actor)) {
                     cost += UtilityScripts.Utilities.Rng.Next(20, 61);
                     costLog += $" +{cost}(Personal owner is actor)";
                 } else {
@@ -65,7 +65,7 @@ public class PickUp : GoapAction {
     }
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
         if (node.poiTarget is TileObject tileObject) {
-            if (tileObject.characterOwner != null && tileObject.characterOwner != node.actor) {
+            if (tileObject.characterOwner != null && !tileObject.IsOwnedBy(node.actor)) {
                 return REACTABLE_EFFECT.Negative;
             }
         }
@@ -77,15 +77,15 @@ public class PickUp : GoapAction {
         IPointOfInterest target = node.poiTarget;
 
         if(target is TileObject targetTileObject) {
-            if (targetTileObject.characterOwner != null && targetTileObject.characterOwner != node.actor) {
+            if (targetTileObject.characterOwner != null && !targetTileObject.IsOwnedBy(node.actor)) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status);
                 if (witness.relationshipContainer.IsFriendsWith(actor)) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor, status);
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status);
-                    if (witness == targetTileObject.characterOwner) {
+                    if (targetTileObject.IsOwnedBy(witness)) {
                         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor, status);
                     }
-                } else if (witness == targetTileObject.characterOwner) {
+                } else if (targetTileObject.IsOwnedBy(witness)) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status);
                 }
                 CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.MISDEMEANOR);

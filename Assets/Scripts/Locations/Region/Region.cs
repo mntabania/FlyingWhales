@@ -717,7 +717,7 @@ public class Region {
                 if (currStructure.occupiedHexTile != null && currStructure.occupiedHexTile.hexTileOwner.settlementOnTile == character.homeSettlement) {
                     for (int j = 0; j < currStructure.pointsOfInterest.Count; j++) {
                         IPointOfInterest poi = currStructure.pointsOfInterest.ElementAt(j);
-                        if(poi.gridTileLocation != null && poi.characterOwner == character) {
+                        if(poi.gridTileLocation != null && poi.IsOwnedBy(character)) {
                             if (validityChecker != null) {
                                 if (validityChecker.Invoke(poi)) {
                                     return poi;

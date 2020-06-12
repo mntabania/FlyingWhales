@@ -3669,6 +3669,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return false;
     }
+    //Characters cannot be owned by other characters
+    public bool IsOwnedBy(Character character) { return false; }
     #endregion
 
     #region Goap

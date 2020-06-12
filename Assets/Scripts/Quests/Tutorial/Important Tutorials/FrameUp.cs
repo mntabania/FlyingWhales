@@ -88,7 +88,7 @@ namespace Tutorial {
             }
         }
         private void OnCharacterDied(Character character) {
-            if (character == _droppedObject.characterOwner) {
+            if (_droppedObject.IsOwnedBy(character)) {
                 FailQuest(); //the owner of the dropped object died, fail this quest.
             }
         }

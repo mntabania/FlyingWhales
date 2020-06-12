@@ -33,7 +33,7 @@ public class BoobyTrap : GoapAction {
         IPointOfInterest target = node.poiTarget;
 
         if (target is TileObject tileObject) {
-            if (tileObject.characterOwner == witness) {
+            if (tileObject.IsOwnedBy(witness)) {
                 if (witness.traitContainer.HasTrait("Coward")) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor, status, node);
                 } else {

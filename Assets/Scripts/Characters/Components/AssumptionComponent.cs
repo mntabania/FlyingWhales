@@ -21,6 +21,11 @@ public class AssumptionComponent : MonoBehaviour {
         //owner.logComponent.AddHistory(assumptionLog);
 
         owner.reactionComponent.ReactTo(newAssumption, reactionStatus, false);
+
+        if(targetOfAssumedCharacter is TileObject targetTileObject) {
+            targetTileObject.AddCharacterThatAlreadyAssumed(owner);
+        }
+
         Messenger.Broadcast(Signals.CHARACTER_ASSUMED, owner, assumedCharacter, targetOfAssumedCharacter);
     }
     public Assumption CreateNewAssumption(Character assumedCharacter, IPointOfInterest targetOfAssumedCharacter, INTERACTION_TYPE assumedActionType) {

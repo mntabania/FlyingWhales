@@ -41,7 +41,7 @@ public class CrimeManager : MonoBehaviour {
         } else if (consideredAction.associatedJobType == JOB_TYPE.DESTROY) {
             if (consideredAction.poiTarget is TileObject tileObject) {
                 if (tileObject.characterOwner != null && 
-                    tileObject.characterOwner != consideredAction.actor) {
+                    !tileObject.IsOwnedBy(consideredAction.actor)) {
                     //only consider destroy job as infraction if target object is owned by someone else
                     return CRIME_TYPE.INFRACTION;    
                 } else {
@@ -56,7 +56,7 @@ public class CrimeManager : MonoBehaviour {
             return CRIME_TYPE.MISDEMEANOR;
         } else if (actionType == INTERACTION_TYPE.PICK_UP) {
             if(consideredAction.poiTarget is TileObject targetTileObject) {
-                if(targetTileObject.characterOwner != null && targetTileObject.characterOwner != consideredAction.actor) {
+                if(targetTileObject.characterOwner != null && !targetTileObject.IsOwnedBy(consideredAction.actor)) {
                     return CRIME_TYPE.MISDEMEANOR;
                 }
             }
@@ -67,7 +67,7 @@ public class CrimeManager : MonoBehaviour {
                     if (!actor.IsHostileWith(targetCharacter)) {
                         return CRIME_TYPE.MISDEMEANOR;
                     }
-                } else if (target is TileObject targetTileObject && targetTileObject.characterOwner != actor) {
+                } else if (target is TileObject targetTileObject && !targetTileObject.IsOwnedBy(actor)) {
                     //added checking for gridTileLocation because targetTileObject could've been destroyed already. 
                     LocationStructure structureLocation = targetTileObject.gridTileLocation != null ? targetTileObject.structureLocation : targetTileObject.previousTile.structure;
                     if(structureLocation != null) {

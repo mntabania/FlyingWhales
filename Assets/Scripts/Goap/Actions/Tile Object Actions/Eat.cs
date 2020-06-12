@@ -59,7 +59,7 @@ public class Eat : GoapAction {
                     }
                 } else {
                     //not starving
-                    if (table.characterOwner != null && table.characterOwner != actor 
+                    if (table.characterOwner != null && !table.IsOwnedBy(actor)
                         && table.characterOwner.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR) == false
                         && table.characterOwner.relationshipContainer.IsFamilyMember(actor) == false) {
                         cost = 2000;
@@ -95,7 +95,7 @@ public class Eat : GoapAction {
     }
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
         if (node.poiTarget is TileObject tileObject) {
-            if (tileObject.characterOwner != null && tileObject.characterOwner != node.actor 
+            if (tileObject.characterOwner != null && !tileObject.IsOwnedBy(node.actor)
                 && tileObject.characterOwner.relationshipContainer.HasRelationshipWith(node.actor, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR) == false
                 && tileObject.characterOwner.relationshipContainer.IsFamilyMember(node.actor) == false) {
                 return REACTABLE_EFFECT.Negative;        

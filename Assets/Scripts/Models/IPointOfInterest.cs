@@ -40,6 +40,7 @@ public interface IPointOfInterest : ITraitable, ISelectable {
         Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost);
     bool IsValidCombatTargetFor(IPointOfInterest source);
     bool IsStillConsideredPartOfAwarenessByCharacter(Character character);
+    bool IsOwnedBy(Character character);
     void OnPlacePOI();
     void OnDestroyPOI();
     void ConstructResources();

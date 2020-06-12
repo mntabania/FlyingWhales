@@ -51,7 +51,7 @@ public class Scrap : GoapAction {
                     item.tileObjectType != TILE_OBJECT_TYPE.TOOL) {
                     return false;
                 }
-                if(item.characterOwner != null && item.characterOwner != actor) {
+                if(item.characterOwner != null && !item.IsOwnedBy(actor)) {
                     return false;
                 }
                 if (item.gridTileLocation == null) {

@@ -25,7 +25,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public bool isPreplaced { get; private set; }
     public LocationStructure preplacedLocationStructure { get; private set; }
     public List<JobQueueItem> allJobsTargetingThis { get; private set; }
-    private List<Character> owners { get; set; }
+    //private List<Character> owners { get; set; }
+    public List<Character> charactersThatAlreadyAssumed { get; private set; }
     public Character isBeingCarriedBy { get; private set; }
     public virtual Character[] users { //array of characters, currently using the tile object
         get {
@@ -79,7 +80,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         this.tileObjectType = tileObjectType;
         name = GenerateName();
         allJobsTargetingThis = new List<JobQueueItem>();
-        owners = new List<Character>();
+        charactersThatAlreadyAssumed = new List<Character>();
+        //owners = new List<Character>();
         hasCreatedSlots = false;
         maxHP = TileObjectDB.GetTileObjectData(tileObjectType).maxHP;
         currentHP = maxHP;
@@ -787,8 +789,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     }
     public void UpdateOwners() {
         if (gridTileLocation.structure is Dwelling dwelling) {
-            owners.Clear();
-            owners.AddRange(dwelling.residents);
+            //owners.Clear();
+            //owners.AddRange(dwelling.residents);
             //update character owner if object's current character owner is null or is not a resident of the dwelling that it is currently in.
             if (dwelling.residents.Count > 0 && dwelling.residents.Contains(characterOwner) == false) {
                 SetCharacterOwner(CollectionUtilities.GetRandomElement(dwelling.residents));    
@@ -817,17 +819,16 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
     }
     public bool IsOwnedBy(Character character) {
-        return owners != null && owners.Contains(character);
-        //return gridTileLocation != null && character.homeStructure == gridTileLocation.structure;
-        //return this.characterOwner == character;
+        //return owners != null && owners.Contains(character);
+        return characterOwner == character;
     }
-    public List<Character> GetOwners() {
-        //if(gridTileLocation != null && gridTileLocation.structure is Dwelling) {
-        //    return (gridTileLocation.structure as Dwelling).residents;
-        //}
-        //return null;
-        return owners;
-    }
+    //public List<Character> GetOwners() {
+    //    //if(gridTileLocation != null && gridTileLocation.structure is Dwelling) {
+    //    //    return (gridTileLocation.structure as Dwelling).residents;
+    //    //}
+    //    //return null;
+    //    return owners;
+    //}
     // public void SetFactionOwner(Faction factionOwner) {
     //     this.factionOwner = factionOwner;
     // }
@@ -878,7 +879,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         if (Advertises(INTERACTION_TYPE.PICK_UP) == false) {
             return false;
         }
-        if (characterOwner == null || characterOwner == character) {
+        if (characterOwner == null || IsOwnedBy(character)) {
             //if the item is at a tile that is part of a npcSettlement and that tile is part of that settlements main storage, do not allow pick up
             if (gridTileLocation != null && gridTileLocation.IsPartOfSettlement(out var settlement) 
                 && settlement is NPCSettlement npcSettlement
@@ -907,6 +908,12 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     }
     public void SetIsSaved(bool state) {
         isSaved = state;
+    }
+    public void AddCharacterThatAlreadyAssumed(Character character) {
+        charactersThatAlreadyAssumed.Add(character);
+    }
+    public bool HasCharacterAlreadyAssumed(Character character) {
+        return charactersThatAlreadyAssumed.Contains(character);
     }
     #endregion
 

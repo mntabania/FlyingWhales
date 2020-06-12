@@ -39,30 +39,47 @@ public class Sleep : GoapAction {
                     cost = UtilityScripts.Utilities.Rng.Next(10, 16);
                     costLog += $" +{cost}(Owned)";
                 } else {
-                    List<Character> tableOwners = bed.GetOwners();
-                    bool isTargetObjectOwnedByFriend = false;
-                    bool isTargetObjectOwnedByEnemy = false;
-                    if (tableOwners != null) {
-                        for (int i = 0; i < tableOwners.Count; i++) {
-                            Character objectOwner = tableOwners[i];
-                            if (actor.relationshipContainer.IsFriendsWith(objectOwner)) {
-                                isTargetObjectOwnedByFriend = true;
-                                break;
-                            } else if (actor.relationshipContainer.IsEnemiesWith(objectOwner)) {
-                                isTargetObjectOwnedByEnemy = true;
-                            }
+                    //List<Character> tableOwners = bed.GetOwners();
+                    //bool isTargetObjectOwnedByFriend = false;
+                    //bool isTargetObjectOwnedByEnemy = false;
+                    //if (tableOwners != null) {
+                    //    for (int i = 0; i < tableOwners.Count; i++) {
+                    //        Character objectOwner = tableOwners[i];
+                    //        if (actor.relationshipContainer.IsFriendsWith(objectOwner)) {
+                    //            isTargetObjectOwnedByFriend = true;
+                    //            break;
+                    //        } else if (actor.relationshipContainer.IsEnemiesWith(objectOwner)) {
+                    //            isTargetObjectOwnedByEnemy = true;
+                    //        }
+                    //    }
+                    //}
+                    //if (isTargetObjectOwnedByFriend) {
+                    //    cost = UtilityScripts.Utilities.Rng.Next(25, 46);
+                    //    costLog += $" +{cost}(Owned by Friend)";
+                    //} else if (isTargetObjectOwnedByEnemy) {
+                    //    cost += 2000;
+                    //    costLog += " +2000(Owned by Enemy)";
+                    //} else {
+                    //    cost += UtilityScripts.Utilities.Rng.Next(40, 51);
+                    //    costLog += $" +{cost}(Else)";
+                    //}
+
+                    if (bed.characterOwner != null) {
+                        if (actor.relationshipContainer.IsFriendsWith(bed.characterOwner)) {
+                            cost += UtilityScripts.Utilities.Rng.Next(25, 46);
+                            costLog += $" +{cost}(Owned by Friend)";
+                        } else if (actor.relationshipContainer.IsEnemiesWith(bed.characterOwner)) {
+                            cost += 2000;
+                            costLog += " +2000(Owned by Enemy)";
+                        } else {
+                            cost = UtilityScripts.Utilities.Rng.Next(40, 51);
+                            costLog += $" +{cost}(Else)";
                         }
-                    }
-                    if (isTargetObjectOwnedByFriend) {
-                        cost = UtilityScripts.Utilities.Rng.Next(25, 46);
-                        costLog += $" +{cost}(Owned by Friend)";
-                    } else if (isTargetObjectOwnedByEnemy) {
-                        cost += 2000;
-                        costLog += " +2000(Owned by Enemy)";
                     } else {
-                        cost += UtilityScripts.Utilities.Rng.Next(40, 51);
+                        cost = UtilityScripts.Utilities.Rng.Next(40, 51);
                         costLog += $" +{cost}(Else)";
                     }
+
 
                     Character alreadySleepingCharacter = null;
                     for (int i = 0; i < bed.users.Length; i++) {
