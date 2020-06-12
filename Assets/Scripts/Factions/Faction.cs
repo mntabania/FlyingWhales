@@ -317,6 +317,9 @@ public class Faction {
                     characterLeader.jobComponent.AddPriorityJob(JOB_TYPE.JUDGE_PRISONER);
                 }
             }
+            if (newLeader is Character character) {
+                Messenger.Broadcast(Signals.ON_SET_AS_FACTION_LEADER, character);
+            }
         }
     }
     private void OnCharacterClassChange(Character character, CharacterClass previousClass, CharacterClass currentClass) {
@@ -428,7 +431,7 @@ public class Faction {
                     if (Messenger.eventTable.ContainsKey(Signals.HOUR_STARTED)) {
                         Messenger.RemoveListener(Signals.HOUR_STARTED, CheckForNewLeaderDesignation);
                     }
-                    Messenger.Broadcast(Signals.ON_SET_AS_FACTION_LEADER, newRuler);
+                    //Messenger.Broadcast(Signals.ON_SET_AS_FACTION_LEADER, newRuler);
                 }
                 //if(characterLeader.currentRegion != null) {
                 //    characterLeader.currentRegion.AddFactionHere(characterLeader.faction);

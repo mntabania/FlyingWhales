@@ -120,7 +120,12 @@ public class CharacterVisuals {
             return _owner.overrideThoughts[0];
         }
         if (_owner.isDead) {
-            return $"<b>{_owner.name}</b> has died.";
+            if (_owner.deathLog != null) {
+                log = _owner.deathLog;
+                return UtilityScripts.Utilities.LogReplacer(_owner.deathLog);
+            } else {
+                return $"<b>{_owner.name}</b> has died.";    
+            }
         }
         //Interrupt
         if (_owner.interruptComponent.isInterrupted && _owner.interruptComponent.thoughtBubbleLog != null) {

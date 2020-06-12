@@ -38,7 +38,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     [SerializeField] private GameObject hoverObj;
 
     private System.Action onClickAction;
-
+    private bool _isSubscribedToListeners;
     #region getters/setters
     public Character character => _character;
     public PortraitSettings portraitSettings => _portraitSettings;
@@ -48,11 +48,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
 
     private void OnEnable() {
         //Messenger.AddListener<Character>(Signals.CHARACTER_LEVEL_CHANGED, OnCharacterLevelChanged);
-        Messenger.AddListener<Character>(Signals.FACTION_SET, OnFactionSet);
-        Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);
-        Messenger.AddListener<Character>(Signals.ROLE_CHANGED, OnCharacterChangedRole);
-        Messenger.AddListener<Character>(Signals.ON_SET_AS_FACTION_LEADER, OnCharacterSetAsFactionLeader);
-        Messenger.AddListener<Character>(Signals.ON_SET_AS_SETTLEMENT_RULER, OnCharacterSetAsSettlementRuler);
+        SubscribeListeners();
     }
     public void GeneratePortrait(PortraitSettings portraitSettings, bool makePixelPerfect = true) {
         _portraitSettings = portraitSettings;
@@ -273,13 +269,17 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     #endregion
 
     #region Listeners
-    //private void OnCharacterLevelChanged(Character character) {
-    //    if (_character != null && _character.id == character.id) {
-    //        UpdateLvl();
-    //    }
-    //}
+    private void SubscribeListeners() {
+        if (_isSubscribedToListeners) { return; }
+        _isSubscribedToListeners = true;
+        Messenger.AddListener<Character>(Signals.FACTION_SET, OnFactionSet);
+        Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);
+        Messenger.AddListener<Character>(Signals.ROLE_CHANGED, OnCharacterChangedRole);
+        Messenger.AddListener<Character>(Signals.ON_SET_AS_FACTION_LEADER, OnCharacterSetAsFactionLeader);
+        Messenger.AddListener<Character>(Signals.ON_SET_AS_SETTLEMENT_RULER, OnCharacterSetAsSettlementRuler);
+    }
     private void RemoveListeners() {
-        //Messenger.RemoveListener<Character>(Signals.CHARACTER_LEVEL_CHANGED, OnCharacterLevelChanged);
+        _isSubscribedToListeners = false;
         Messenger.RemoveListener<Character>(Signals.FACTION_SET, OnFactionSet);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);
         Messenger.RemoveListener<Character>(Signals.ROLE_CHANGED, OnCharacterChangedRole);
@@ -306,7 +306,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     private void UpdateFactionEmblem() {
         if (_character != null) {
             factionEmblem.SetFaction(_character.faction);
-            factionEmblem.gameObject.SetActive(true);
+            // factionEmblem.gameObject.SetActive(true);
         } else {
             factionEmblem.gameObject.SetActive(false);
         }
