@@ -28,16 +28,21 @@ namespace Traits {
         #region Override
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
-            owner = addedTo as Character;
-            //owner.needsComponent.AdjustStaminaDecreaseRate(2);
-            Messenger.AddListener(Signals.HOUR_STARTED, HourlyCheck);
+            if(addedTo is Character character) {
+                owner = character;
+                //owner.needsComponent.AdjustStaminaDecreaseRate(2);
+                Messenger.AddListener(Signals.HOUR_STARTED, HourlyCheck);
+            }
+
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
-            owner.marker.SetMarkerColor(Color.white);
-            //owner.needsComponent.AdjustStaminaDecreaseRate(-2);
-            if (Messenger.eventTable.ContainsKey(Signals.HOUR_STARTED)) {
-                Messenger.RemoveListener(Signals.HOUR_STARTED, HourlyCheck);
+            if(owner != null) {
+                owner.marker.SetMarkerColor(Color.white);
+                //owner.needsComponent.AdjustStaminaDecreaseRate(-2);
+                if (Messenger.eventTable.ContainsKey(Signals.HOUR_STARTED)) {
+                    Messenger.RemoveListener(Signals.HOUR_STARTED, HourlyCheck);
+                }
             }
         }
         public override bool OnDeath(Character character) {

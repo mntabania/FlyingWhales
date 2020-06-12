@@ -60,6 +60,11 @@ namespace Traits {
                 if(owner is Table || owner is FoodPile) {
                     owner.AdjustResource(RESOURCE.FOOD, -1);
                 }
+                if (!goapNode.actor.traitContainer.HasTrait("Infected")) {
+                    if (owner.traitContainer.HasTrait("Infected")) {
+                        goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Infected");
+                    }
+                }
             }
         }
         //public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode, ref bool isRemoved) {

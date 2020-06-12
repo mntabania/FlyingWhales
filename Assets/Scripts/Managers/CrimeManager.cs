@@ -23,6 +23,13 @@ public class CrimeManager : MonoBehaviour {
             Criminal criminalTrait = new Criminal();
             character.traitContainer.AddTrait(character, criminalTrait);
             criminalTrait.SetCrime(crimeType, committedCrime, target);
+
+            Log addLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "become_criminal");
+            addLog.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            addLog.AddToFillers(null, UtilityScripts.Utilities.GetArticleForWord(criminalTrait.crimeData.strCrimeType), LOG_IDENTIFIER.STRING_1);
+            addLog.AddToFillers(null, criminalTrait.crimeData.strCrimeType, LOG_IDENTIFIER.STRING_2);
+            addLog.AddLogToInvolvedObjects();
+            PlayerManager.Instance.player.ShowNotificationFrom(character, addLog);
         }
 
     }
@@ -208,6 +215,9 @@ public class CrimeData {
         this.criminal = criminal;
         this.target = target;
         strCrimeType = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(this.crimeType.ToString());
+        if(crimeType == CRIME_TYPE.SERIOUS || crimeType == CRIME_TYPE.HEINOUS) {
+            strCrimeType += " Crime";
+        }
         witnesses = new List<Character>();
         SetCrimeStatus(CRIME_STATUS.Unpunished);
     }
