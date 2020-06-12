@@ -10,7 +10,6 @@ using Pathfinding;
 using System.Linq;
 using Inner_Maps;
 using Traits;
-using UnityEditor.Animations;
 using UnityEngine.Profiling;
 using UnityEngine.Serialization;
 using UtilityScripts;

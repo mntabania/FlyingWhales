@@ -2210,7 +2210,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Marvin
+  m_text: Marvinasdasdasdasdasdadasdasdasd
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: f8d165fc58518da4b871ca2551648bf9, type: 2}
   m_sharedMaterial: {fileID: 21189737157306288, guid: f8d165fc58518da4b871ca2551648bf9,
@@ -2255,11 +2255,11 @@ MonoBehaviour:
   m_charWidthMaxAdj: 0
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
-  m_overflowMode: 3
+  m_overflowMode: 1
   m_firstOverflowCharacterIndex: -1
   m_linkedTextComponent: {fileID: 0}
   m_isLinkedTextComponent: 0
-  m_isTextTruncated: 0
+  m_isTextTruncated: 1
   m_enableKerning: 1
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
@@ -2280,7 +2280,7 @@ MonoBehaviour:
   m_margin: {x: 0.2033081, y: 0, z: -0.1665039, w: 0}
   m_textInfo:
     textComponent: {fileID: 114410504938561846}
-    characterCount: 6
+    characterCount: 24
     spriteCount: 0
     spaceCount: 0
     wordCount: 1

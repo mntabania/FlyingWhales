@@ -11,6 +11,7 @@ using Inner_Maps;
 using Ruinarch;
 using Traits;
 using UnityEngine.Assertions;
+using UnityEngine.Serialization;
 using UtilityScripts;
 using Random = UnityEngine.Random;
 
@@ -72,17 +73,15 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private WinGameOverItem winGameOver;
     [SerializeField] private LoseGameOverItem loseGameOver;
 
-    [Header("Kill Count UI")]
-    [SerializeField] private GameObject killCountGO;
-    [SerializeField] private TextMeshProUGUI killCountLbl;
-    [SerializeField] private GameObject killSummaryGO;
-    [SerializeField] private GameObject killCharacterItemPrefab;
-    [SerializeField] private ScrollRect killCountScrollView;
+    
+    [Header("Villagers")]
+    [FormerlySerializedAs("killSummaryGO")] [SerializeField] private GameObject villagerGO;
+    [SerializeField] private GameObject villagerItemPrefab;
+    [FormerlySerializedAs("killCountScrollView")] [SerializeField] private ScrollRect villagersScrollView;
     [SerializeField] private RectTransform aliveHeader;
     public RectTransform deadHeader;
-    private List<CharacterNameplateItem> killCountCharacterItems;
+    private List<CharacterNameplateItem> villagerItems;
     private int unusedKillCountCharacterItems;
-    private int aliveCount;
     private int allFilteredCharactersCount;
     
     [Header("Seize Object")]
@@ -236,10 +235,6 @@ public class PlayerUI : MonoBehaviour {
     }
     private void OnCharacterDied(Character character) {
         TransferCharacterFromActiveToInactive(character);
-        UpdateKillCount();
-        //if (character is Summon summon) {
-        //    RemoveSummonItem(summon);
-        //}
     }
     private void OnCharacterGainedTrait(Character character, Trait trait) {
         //if (trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
@@ -270,8 +265,6 @@ public class PlayerUI : MonoBehaviour {
         } else {
             TransferCharacterFromInactiveToActive(character);
         }
-        UpdateKillCount();
-        //CheckIfAllCharactersWipedOut();
     }
     private void OnCharacterClassChange(Character character, CharacterClass previousClass, CharacterClass currentClass) {
         CharacterNameplateItem item = GetActiveCharacterNameplateItem(character);
@@ -301,10 +294,9 @@ public class PlayerUI : MonoBehaviour {
         } else {
             TransferCharacterFromInactiveToActive(toCharacter);
         }
-        UpdateKillCount();
     }
     private void AddedNewCharacter(Character character) {
-        OnAddNewCharacter(character);
+        // OnAddNewCharacter(character);
     }
     private void CharacterBecomesMinionOrSummon(Character character) {
         //OnCharacterBecomesMinionOrSummon(character);
@@ -611,7 +603,7 @@ public class PlayerUI : MonoBehaviour {
         LoadKillSummaryCharacterItems();
     }
     private void LoadKillSummaryCharacterItems() {
-        CharacterNameplateItem[] items = UtilityScripts.GameUtilities.GetComponentsInDirectChildren<CharacterNameplateItem>(killCountScrollView.content.gameObject);
+        CharacterNameplateItem[] items = UtilityScripts.GameUtilities.GetComponentsInDirectChildren<CharacterNameplateItem>(villagersScrollView.content.gameObject);
         for (int i = 0; i < items.Length; i++) {
             CharacterNameplateItem item = items[i];
             item.transform.SetParent(killSummaryScrollView.content);
@@ -629,62 +621,35 @@ public class PlayerUI : MonoBehaviour {
     }
     #endregion
 
-    #region Kill Count
-    public bool isShowingKillSummary { get { return killCountGO.activeSelf; } }
-    [SerializeField] private Toggle killSummaryToggle;
-    private void UpdateKillCountActiveState() {
-        bool state = InnerMapManager.Instance.isAnInnerMapShowing;
-        killCountGO.SetActive(state);
-        killSummaryGO.SetActive(false);
-    }
-    private void LoadKillCountCharacterItems() {
-        aliveCount = 0;
+    #region Villagers
+    private void LoadVillagerItems(int itemsToCreate) {
         allFilteredCharactersCount = 0;
         unusedKillCountCharacterItems = 0;
-        killCountCharacterItems = new List<CharacterNameplateItem>();
+        villagerItems = new List<CharacterNameplateItem>();
         for (int i = 0; i < 20; i++) { //Initial number is 20
-            CreateNewKillCountCharacterItem();
+            CreateNewVillagerItem();
         }
     }
-    private CharacterNameplateItem CreateNewKillCountCharacterItem() {
-        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(killCharacterItemPrefab.name, Vector3.zero, Quaternion.identity, killCountScrollView.content);
+    private CharacterNameplateItem CreateNewVillagerItem() {
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(villagerItemPrefab.name, Vector3.zero, Quaternion.identity, villagersScrollView.content);
         CharacterNameplateItem item = go.GetComponent<CharacterNameplateItem>();
         go.SetActive(false);
-        killCountCharacterItems.Add(item);
+        villagerItems.Add(item);
         unusedKillCountCharacterItems++;
         return item;
     }
-    //This must only be called once during initialization
     private void InitialUpdateKillCountCharacterItems() {
-        //CharacterNameplateItem[] items = GameGameUtilities.GetComponentsInDirectChildren<CharacterNameplateItem>(killCountScrollView.content.gameObject);
-        //for (int i = 0; i < items.Length; i++) {
-        //    ObjectPoolManager.Instance.DestroyObject(items[i].gameObject);
-        //}
-        LoadKillCountCharacterItems();
+        List<Character> villagers = CharacterManager.Instance.allCharacters.Where(x => x.isNormalCharacter).ToList();
+        int allVillagersCount = villagers.Count;
+        LoadVillagerItems(allVillagersCount);
+        
         List<CharacterNameplateItem> alive = new List<CharacterNameplateItem>();
         List<CharacterNameplateItem> dead = new List<CharacterNameplateItem>();
-        List<Character> allCharacters = CharacterManager.Instance.allCharacters;
-        int allCharactersCount = CharacterManager.Instance.allCharacters.Count;
-        int killCountCharacterItemsCount = killCountCharacterItems.Count;
-        //if (allCharactersCount < killCountCharacterItemsCount) {
-        //    for (int i = allCharactersCount; i < killCountCharacterItemsCount; i++) {
-        //        killCountCharacterItems[i].gameObject.SetActive(false);
-        //    }
-        //}
-        string log = "Initial Kill Count UI";
-        for (int i = 0; i < allCharactersCount; i++) {
-            Character character = allCharacters[i];
-            log += $"\nCharacter: {character.name}";
-            if (i >= killCountCharacterItemsCount) {
-                CreateNewKillCountCharacterItem();
-            }
-            CharacterNameplateItem item = killCountCharacterItems[i];
-            if (!WillCharacterBeShownInKillCount(character)) {
-                //Do not show minions and summons
-                item.gameObject.SetActive(false);
-                log += " - do not show";
-                continue;
-            }
+
+        for (int i = 0; i < allVillagersCount; i++) {
+            Character character = villagers[i];
+            CharacterNameplateItem item = villagerItems[i];
+            
             item.SetObject(character);
             item.SetAsButton();
             item.ClearAllOnClickActions();
@@ -692,26 +657,12 @@ public class PlayerUI : MonoBehaviour {
             item.gameObject.SetActive(true);
             allFilteredCharactersCount++;
             unusedKillCountCharacterItems--;
-            if (/*character.isFactionless*/
-                //|| character.faction == PlayerManager.Instance.player.playerFaction
-                //|| character.faction == FactionManager.Instance.disguisedFaction
-                /*||*/ !character.IsAble()) { //added checking for faction in cases that the character was raised from dead (Myk, if the concern here is only from raise dead, I changed the checker to returnedToLife to avoid conflicts with factions, otherwise you can return it to normal. -Chy)
+            if (!character.IsAble()) {
                 dead.Add(item);
-                log += " - dead";
             } else {
-                aliveCount++;
                 alive.Add(item);
-                log += " - alive";
             }
-            //GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(killCharacterItemPrefab.name, Vector3.zero, Quaternion.identity, killCountScrollView.content);
-            //CharacterNameplateItem item = go.GetComponent<CharacterNameplateItem>();
-            //item.SetObject(character);
-            //item.SetAsButton();
-            //item.ClearAllOnClickActions();
-            //item.AddOnClickAction((c) => UIManager.Instance.ShowCharacterInfo(c, false));
         }
-        Debug.Log(log);
-        UpdateKillCount();
 
         aliveHeader.transform.SetAsFirstSibling();
         for (int i = 0; i < alive.Count; i++) {
@@ -725,8 +676,6 @@ public class PlayerUI : MonoBehaviour {
             currItem.SetIsActive(false);
             currItem.transform.SetSiblingIndex(alive.Count + i + 2);
         }
-        //OrderKillSummaryItems();
-        //UpdateKillCount();
     }
     private void OnAddNewCharacter(Character character) {
         if (!WillCharacterBeShownInKillCount(character)) {
@@ -738,7 +687,7 @@ public class PlayerUI : MonoBehaviour {
         if (unusedKillCountCharacterItems > 0) {
             item = GetUnusedCharacterNameplateItem();
         } else {
-            item = CreateNewKillCountCharacterItem();
+            item = CreateNewVillagerItem();
         }
         item.SetObject(character);
         item.SetAsButton();
@@ -746,18 +695,14 @@ public class PlayerUI : MonoBehaviour {
         item.AddOnClickAction((c) => UIManager.Instance.ShowCharacterInfo(c, false));
         item.gameObject.SetActive(true);
         unusedKillCountCharacterItems--;
-        if (/*character.isFactionless*/
-            //|| character.faction == PlayerManager.Instance.player.playerFaction
-            //|| character.faction == FactionManager.Instance.disguisedFaction
-            /*||*/ !character.IsAble()) { //added checking for faction in cases that the character was raised from dead (Myk, if the concern here is only from raise dead, I changed the checker to returnedToLife to avoid conflicts with factions, otherwise you can return it to normal. -Chy)
-            if (allFilteredCharactersCount == killCountCharacterItems.Count) {
+        if (!character.IsAble()) {
+            if (allFilteredCharactersCount == villagerItems.Count) {
                 item.transform.SetAsLastSibling();
             } else {
                 item.transform.SetSiblingIndex(allFilteredCharactersCount + 2);
             }
             item.SetIsActive(false);
         } else {
-            aliveCount++;
             item.transform.SetSiblingIndex(deadHeader.transform.GetSiblingIndex());
             item.SetIsActive(true);
         }
@@ -769,12 +714,11 @@ public class PlayerUI : MonoBehaviour {
         }
         CharacterNameplateItem item = GetActiveCharacterNameplateItem(character);
         if(item != null) {
-            if (allFilteredCharactersCount == killCountCharacterItems.Count) {
+            if (allFilteredCharactersCount == villagerItems.Count) {
                 item.transform.SetAsLastSibling();
             } else {
                 item.transform.SetSiblingIndex(allFilteredCharactersCount + 2);
             }
-            aliveCount--;
             item.SetIsActive(false);
         }
         //UpdateKillCount();
@@ -786,12 +730,11 @@ public class PlayerUI : MonoBehaviour {
         if (!nameplate.isActive) {
             return;
         }
-        if (allFilteredCharactersCount == killCountCharacterItems.Count) {
+        if (allFilteredCharactersCount == villagerItems.Count) {
             nameplate.transform.SetAsLastSibling();
         } else {
             nameplate.transform.SetSiblingIndex(allFilteredCharactersCount + 2);
         }
-        aliveCount--;
         nameplate.SetIsActive(false);
     }
     private void TransferCharacterFromInactiveToActive(Character character) {
@@ -803,7 +746,6 @@ public class PlayerUI : MonoBehaviour {
             int index = item.transform.GetSiblingIndex();
             int deadHeaderIndex = deadHeader.transform.GetSiblingIndex();
             item.transform.SetSiblingIndex(deadHeaderIndex);
-            aliveCount++;
             item.SetIsActive(true);
         }
         //UpdateKillCount();
@@ -818,7 +760,6 @@ public class PlayerUI : MonoBehaviour {
         int index = nameplate.transform.GetSiblingIndex();
         int deadHeaderIndex = deadHeader.transform.GetSiblingIndex();
         nameplate.transform.SetSiblingIndex(deadHeaderIndex);
-        aliveCount++;
         nameplate.SetIsActive(true);
         //UpdateKillCount();
     }
@@ -826,7 +767,6 @@ public class PlayerUI : MonoBehaviour {
         CharacterNameplateItem item = GetActiveCharacterNameplateItem(character);
         if (item != null) {
             item.gameObject.SetActive(false);
-            aliveCount--;
             allFilteredCharactersCount--;
             unusedKillCountCharacterItems++;
             //UpdateKillCount();
@@ -834,7 +774,6 @@ public class PlayerUI : MonoBehaviour {
             item = GetInactiveCharacterNameplateItem(character);
             if (item != null) {
                 item.gameObject.SetActive(false);
-                aliveCount--;
                 allFilteredCharactersCount--;
                 unusedKillCountCharacterItems++;
                 //UpdateKillCount();
@@ -842,12 +781,12 @@ public class PlayerUI : MonoBehaviour {
         }
     }
     private void OnCharacterBecomesNonMinionOrSummon(Character character) {
-        OnAddNewCharacter(character);
+        // OnAddNewCharacter(character);
     }
     private CharacterNameplateItem GetUnusedCharacterNameplateItem() {
-        int killCountCharacterItemsCount = killCountCharacterItems.Count;
+        int killCountCharacterItemsCount = villagerItems.Count;
         for (int i = killCountCharacterItemsCount - 1; i >= 0; i--) {
-            CharacterNameplateItem item = killCountCharacterItems[i];
+            CharacterNameplateItem item = villagerItems[i];
             if (!item.gameObject.activeSelf) {
                 return item;
             }
@@ -855,9 +794,9 @@ public class PlayerUI : MonoBehaviour {
         return null;
     }
     private CharacterNameplateItem GetActiveCharacterNameplateItem(Character character) {
-        int killCountCharacterItemsCount = killCountCharacterItems.Count;
+        int killCountCharacterItemsCount = villagerItems.Count;
         for (int i = 0; i < killCountCharacterItemsCount; i++) {
-            CharacterNameplateItem item = killCountCharacterItems[i];
+            CharacterNameplateItem item = villagerItems[i];
             if (item.gameObject.activeSelf && item.isActive && item.character == character) {
                 return item;
             }
@@ -865,9 +804,9 @@ public class PlayerUI : MonoBehaviour {
         return null;
     }
     private CharacterNameplateItem GetInactiveCharacterNameplateItem(Character character) {
-        int killCountCharacterItemsCount = killCountCharacterItems.Count;
+        int killCountCharacterItemsCount = villagerItems.Count;
         for (int i = killCountCharacterItemsCount - 1; i >= 0; i--) {
-            CharacterNameplateItem item = killCountCharacterItems[i];
+            CharacterNameplateItem item = villagerItems[i];
             if (item.gameObject.activeSelf && !item.isActive && item.character == character) {
                 return item;
             }
@@ -875,21 +814,20 @@ public class PlayerUI : MonoBehaviour {
         return null;
     }
     private void UpdateKillCount() {
-        int aliveCount = 0;
-        //TODO: Optimize this
-        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
-            Character character = CharacterManager.Instance.allCharacters[i];
-            if (/*!character.isFactionless &&*/ character.IsAble() && WillCharacterBeShownInKillCount(character)) {
-                aliveCount++;
-            }
-        }
-        killCountLbl.text = $"{aliveCount}/{allFilteredCharactersCount}";
-        if (aliveCount <= 0) {
-            //player has won
-            UIManager.Instance.Pause();
-            UIManager.Instance.SetSpeedTogglesState(false);
-            SuccessfulAreaCorruption();
-        }
+        // int aliveCount = 0;
+        // //TODO: Optimize this
+        // for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+        //     Character character = CharacterManager.Instance.allCharacters[i];
+        //     if (/*!character.isFactionless &&*/ character.IsAble() && WillCharacterBeShownInKillCount(character)) {
+        //         aliveCount++;
+        //     }
+        // }
+        // if (aliveCount <= 0) {
+        //     //player has won
+        //     UIManager.Instance.Pause();
+        //     UIManager.Instance.SetSpeedTogglesState(false);
+        //     SuccessfulAreaCorruption();
+        // }
     }
     //private void OrderKillSummaryItems() {
     //    CharacterNameplateItem[] items = GameGameUtilities.GetComponentsInDirectChildren<CharacterNameplateItem>(killCountScrollView.content.gameObject);
@@ -916,12 +854,7 @@ public class PlayerUI : MonoBehaviour {
     //    UpdateKillCount();
     //}
     public void ToggleKillSummary(bool isOn) {
-        killSummaryGO.SetActive(isOn);
-    }
-    public void HideKillSummary() {
-        if (killSummaryToggle.isOn) {
-            killSummaryToggle.isOn = false;
-        }
+        villagerGO.SetActive(isOn);
     }
     private bool WillCharacterBeShownInKillCount(Character character) {
         return character.isStillConsideredAlive;
