@@ -612,6 +612,21 @@ namespace Inner_Maps.Location_Structures {
             }
             return null;
         }
+        public IDamageable GetNearestDamageableThatContributeToHP(LocationGridTile fromTile) {
+            IDamageable nearest = null;
+            float nearestDist = 9999f;
+            for (int i = 0; i < objectsThatContributeToDamage.Count; i++) {
+                IDamageable poi = objectsThatContributeToDamage.ElementAt(i);
+                if (poi.gridTileLocation != null) {
+                    float dist = fromTile.GetDistanceTo(poi.gridTileLocation);
+                    if (nearest == null || dist < nearestDist) {
+                        nearest = poi;
+                        nearestDist = dist;
+                    }
+                }
+            }
+            return nearest;
+        }
         #endregion
 
         #region Structure Objects
