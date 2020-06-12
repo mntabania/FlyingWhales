@@ -19,26 +19,37 @@ namespace Tutorial {
             _activationCriteria = new List<QuestCriteria>() {
                 new HasCompletedTutorialQuest(TutorialManager.Tutorial.Elemental_Interactions)
             };
-            // Messenger.AddListener<Quest>(Signals.QUEST_DEACTIVATED, OnQuestDeactivated);
+            Messenger.AddListener<Quest>(Signals.QUEST_DEACTIVATED, OnQuestDeactivated);
         }
-        // private void OnQuestDeactivated(Quest quest) {
-        //     TryMakeAvailable();
-        // }
-        // protected override bool HasMetAllCriteria() {
-        //     bool hasMetAllCriteria = base.HasMetAllCriteria();
-        //     if (hasMetAllCriteria) {
-        //         int activeQuests = TutorialManager.Instance.GetAllActiveTutorialsCount() +
-        //                            QuestManager.Instance.GetActiveQuestsCount();
-        //         return activeQuests < 2;
-        //     }
-        //     return false;
-        // }
+        private void OnQuestDeactivated(Quest quest) {
+            TryMakeAvailable();
+        }
+        protected override bool HasMetAllCriteria() {
+            bool hasMetAllCriteria = base.HasMetAllCriteria();
+            if (hasMetAllCriteria) {
+                int activeQuests = TutorialManager.Instance.GetAllActiveTutorialsCount() +
+                                   QuestManager.Instance.GetActiveQuestsCount();
+                return activeQuests < 2;
+            }
+            return false;
+        }
         #endregion
 
         #region Availability
         protected override void MakeAvailable() {
             base.MakeAvailable();
             TutorialManager.Instance.ActivateTutorial(this);
+        }
+        #endregion
+
+        #region Activation
+        public override void Activate() {
+            base.Activate();
+            Messenger.RemoveListener<Quest>(Signals.QUEST_DEACTIVATED, OnQuestDeactivated);
+        }
+        public override void Deactivate() {
+            base.Deactivate();
+            Messenger.RemoveListener<Quest>(Signals.QUEST_DEACTIVATED, OnQuestDeactivated);
         }
         #endregion
         
@@ -69,7 +80,8 @@ namespace Tutorial {
                         .SetCompleteAction(OnCompleteDropAtSameHouse)
                 ),
                 new QuestStepCollection(
-                    new ClickOnCharacterStep("Click item owner", character => character == _droppedObject.characterOwner),
+                    new ClickOnCharacterStep("Click item owner", character => character == _droppedObject.characterOwner)
+                        .SetObjectsToCenter(GetItemOwnerToCenter),
                     new ToggleTurnedOnStep("CharacterInfo_Logs", "Click on Log tab", () => UIManager.Instance.GetCurrentlySelectedPOI() == _droppedObject.characterOwner),
                     new LogHistoryItemClicked("Click assumed thief's name", IsClickedLogObjectValid)
                 ),
