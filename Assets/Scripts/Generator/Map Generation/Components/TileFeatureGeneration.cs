@@ -95,9 +95,9 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		
 		//vents
 		if (WorldConfigManager.Instance.isDemoWorld) {
-			//add vapor vent to 1 tile in demo build
+			//add poison vent to 1 tile in demo build
 			HexTile tile = GridMap.Instance.map[7, 5];
-			tile.featureComponent.AddFeature(TileFeatureDB.Vapor_Vent_Feature, tile);
+			tile.featureComponent.AddFeature(TileFeatureDB.Poison_Vent_Feature, tile);
 		} else {
 			List<HexTile> ventChoices = GridMap.Instance.normalHexTiles.Where(h => 
 				h.featureComponent.HasFeature(TileFeatureDB.Poison_Vent_Feature) == false 
