@@ -159,15 +159,15 @@ namespace Tutorial {
             return false;
         }
         public int GetAllActiveTutorialsCount() {
-            return _activeBonusTutorials.Count + _activeImportantTutorials.Count;
+            return _activeBonusTutorials.Count + _activeImportantTutorials.Count + _waitingImportantTutorials.Count;
         }
         #endregion
 
         #region Completion
         public void CompleteTutorialQuest(TutorialQuest tutorial) {
             SaveManager.Instance.currentSaveDataPlayer.AddTutorialAsCompleted(tutorial.tutorialType);
-            DeactivateTutorial(tutorial);
             Messenger.Broadcast(Signals.TUTORIAL_QUEST_COMPLETED, tutorial);
+            DeactivateTutorial(tutorial);
             if (IsBonusTutorial(tutorial) == false) {
                 CheckIfAllTutorialsCompleted();    
             }

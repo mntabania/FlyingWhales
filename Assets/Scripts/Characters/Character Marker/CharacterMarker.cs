@@ -24,10 +24,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
     [SerializeField] private SpriteRenderer knockedOutHairImg;
     [SerializeField] private SpriteRenderer hoveredImg;
     [SerializeField] private SpriteRenderer clickedImg;
-    // [SerializeField] private SpriteRenderer actionIcon;
     [SerializeField] private BoxCollider2D buttonCollider;
     [SerializeField] private ParticleSystem bloodSplatterEffect;
     [SerializeField] private ParticleSystemRenderer bloodSplatterEffectRenderer;
+    [SerializeField] private SpriteRenderer additionalEffectsImg;
 
     [Header("Animation")]
     public Animator animator;
@@ -681,6 +681,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         hoveredImg.sortingOrder = characterSortingOrder - 1;
         clickedImg.sortingOrder = characterSortingOrder - 1;
         colorHighlight.sortingOrder = characterSortingOrder - 1;
+        additionalEffectsImg.sortingOrder = characterSortingOrder + 2;
         bloodSplatterEffectRenderer.sortingOrder = InnerMapManager.DetailsTilemapSortingOrder + 5;
         hpBarGO.GetComponent<Canvas>().sortingOrder = characterSortingOrder;
     }
@@ -712,6 +713,13 @@ public class CharacterMarker : MapObjectVisual<Character> {
         knockedOutHairImg.sprite = knockoutHair;
         knockedOutHairImg.color = Color.white;
         knockedOutHairImg.material = character.visuals.hairMaterial;
+    }
+    public void ShowAdditionalEffect(Sprite sprite) {
+        additionalEffectsImg.sprite = sprite;
+        additionalEffectsImg.gameObject.SetActive(true);
+    }
+    public void HideAdditionalEffect() {
+        additionalEffectsImg.gameObject.SetActive(false);
     }
     public void UpdateMarkerVisuals() {
         UpdateHairVisuals();

@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine.UI;
 using System;
 using System.Collections.Generic;
+using Ruinarch.Custom_UI;
 
 public abstract class InfoUIBase : MonoBehaviour {
     public Button backButton;
@@ -17,6 +18,8 @@ public abstract class InfoUIBase : MonoBehaviour {
     [SerializeField] protected RectTransform actionsTransform;
     [SerializeField] protected GameObject actionItemPrefab;
 
+    private RuinarchToggle[] _toggles;
+    
     #region virtuals
     internal virtual void Initialize() {
         Messenger.AddListener<InfoUIBase>(Signals.BEFORE_MENU_OPENED, BeforeMenuOpens);
@@ -26,6 +29,7 @@ public abstract class InfoUIBase : MonoBehaviour {
         Messenger.AddListener<SPELL_TYPE, IPlayerActionTarget>(Signals.PLAYER_ACTION_ADDED_TO_TARGET, OnPlayerActionAddedToTarget);
         Messenger.AddListener<SPELL_TYPE, IPlayerActionTarget>(Signals.PLAYER_ACTION_REMOVED_FROM_TARGET, OnPlayerActionRemovedFromTarget);
         Messenger.AddListener(Signals.HIDE_MENUS, OnReceiveHideMenuSignal);
+        _toggles = GetComponentsInChildren<RuinarchToggle>(true);
     }
     private void OnReceiveHideMenuSignal() {
         if (isShowing) {
@@ -35,7 +39,19 @@ public abstract class InfoUIBase : MonoBehaviour {
     public virtual void OpenMenu() {
         Messenger.Broadcast(Signals.BEFORE_MENU_OPENED, this);
         isShowing = true;
+        bool wasShowingBefore = gameObject.activeSelf;
         this.gameObject.SetActive(true);
+        if (wasShowingBefore) {
+            //if ui was showing before, fire show toggle signals of all child toggles, since their OnEnable function will not be called
+            //this is so that anything that listens to TOGGLE_SHOWN signal will receive it when this menu's data has changed but has not closed
+            if (_toggles != null) {
+                for (int i = 0; i < _toggles.Length; i++) {
+                    RuinarchToggle toggle = _toggles[i];
+                    toggle.FireToggleShownSignal();
+                }
+            }
+        }
+        
         if (openMenuAction != null) {
             openMenuAction();
             openMenuAction = null;

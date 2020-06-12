@@ -27,7 +27,7 @@ namespace Quests.Steps {
             for (int i = 0; i < steps.Count; i++) {
                 QuestStep step = steps[i];
                 step.Activate();
-                if (i == 0) {
+                if (step.isCompleted == false && _topMostIncompleteStep == null) {
                     SetTopMostIncompleteStep(step);        
                 }
             }

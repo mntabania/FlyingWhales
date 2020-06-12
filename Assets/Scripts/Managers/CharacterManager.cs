@@ -54,7 +54,8 @@ public class CharacterManager : MonoBehaviour {
     [SerializeField] private SummonSettingDictionary summonSettings;
     [Header("Artifact Settings")]
     [SerializeField] private ArtifactSettingDictionary artifactSettings;
-    
+    [Header("Character Marker Effects")] 
+    public Sprite webbedEffect;
     public Dictionary<string, DeadlySin> deadlySins { get; private set; }
     public Dictionary<EMOTION, Emotion> emotionData { get; private set; }
     public List<Emotion> allEmotions { get; private set; }

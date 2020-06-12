@@ -53,8 +53,7 @@ namespace Traits {
             }
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
-            if (sourceCharacter is Character) {
-                Character character = sourceCharacter as Character;
+            if (sourceCharacter is Character character) {
                 character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.FEED);
                 character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.JUDGE_PRISONER);
                 // if(!(removedBy != null && removedBy.currentActionNode.action.goapType == INTERACTION_TYPE.JUDGE_CHARACTER && removedBy.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING)) {
@@ -70,13 +69,13 @@ namespace Traits {
                 //But if he/she was a criminal, he/she cannot go back to being the ruler
                 //if (isLeader && !isCriminal) {
                 //    _sourceCharacter.faction.SetLeader(character);
-
                 //    Log logNotif = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "return_faction_leader");
                 //    logNotif.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 //    logNotif.AddToFillers(this, name, LOG_IDENTIFIER.FACTION_1);
                 //    _sourceCharacter.AddHistory(logNotif);
                 //    PlayerManager.Instance.player.ShowNotification(logNotif);
                 //}
+                character.traitContainer.RemoveTrait(character, "Webbed"); //always remove webbed trait after restrained has been removed
             }
             base.OnRemoveTrait(sourceCharacter, removedBy);
         }

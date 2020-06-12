@@ -23,12 +23,11 @@ namespace Tutorial {
         #region Overrides
         protected override void ConstructSteps() {
             steps = new List<QuestStepCollection>() {
-                new QuestStepCollection(new ShowSpellMenuStep()
-                    .SetHoverOverAction(OnHoverShowSpell)
-                    .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
-                    .SetOnTopmostActions(OnTopMostSpellTab, OnNoLongerTopMostSpellTab)
-                ),
                 new QuestStepCollection(
+                    new ShowSpellMenuStep()
+                        .SetHoverOverAction(OnHoverShowSpell)
+                        .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
+                        .SetOnTopmostActions(OnTopMostSpellTab, OnNoLongerTopMostSpellTab),
                     new ExecuteSpellStep(SPELL_TYPE.RAIN, "Cast Rain")
                         .SetCompleteAction(OnCompleteExecuteSpell)
                         .SetOnTopmostActions(OnTopMostRainSpell, OnNoLongerTopMostRainSpell),

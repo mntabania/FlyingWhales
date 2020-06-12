@@ -22,7 +22,7 @@ namespace Ruinarch.Custom_UI {
                 if (InputManager.Instance.ShouldBeHighlighted(this)) {
                     StartGlow();
                 }
-                Messenger.Broadcast(Signals.TOGGLE_SHOWN, this);
+                FireToggleShownSignal();
             }
         }
         protected override void OnDisable() {
@@ -60,6 +60,12 @@ namespace Ruinarch.Custom_UI {
             if (name == buttonName) {
                 HideGlow();
             }
+        }
+        #endregion
+
+        #region Signals
+        public void FireToggleShownSignal() {
+            Messenger.Broadcast(Signals.TOGGLE_SHOWN, this);
         }
         #endregion
     }

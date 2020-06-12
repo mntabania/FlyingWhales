@@ -484,16 +484,23 @@ public class ReactionComponent {
                                     || owner.traitContainer.HasTrait("Unfaithful")) {
                                     debugLog += "\n-Flirt has 1% (multiplied by Compatibility value) chance to trigger";
                                     int compatibility = RelationshipManager.Instance.GetCompatibilityBetween(owner, targetCharacter);
-                                    int value = 2;
-                                    if (compatibility != -1) {
-                                        value = 1 * compatibility;
-                                        debugLog += $"\n-Chance: {value}";
-                                    } else {
-                                        debugLog += $"\n-Chance: {value} (No Compatibility)";
+                                    int baseChance = 1;
+                                    if (owner.moodComponent.moodState == MOOD_STATE.NORMAL) {
+                                        debugLog += "\n-Flirt has +2% chance to trigger because character is in a normal mood";
+                                        baseChance += 2;
                                     }
-                                    int flirtChance = UnityEngine.Random.Range(0, 100);
-                                    debugLog += $"\n-Roll: {flirtChance.ToString()}";
-                                    if (flirtChance < value) {
+
+                                    int flirtChance;
+                                    if (compatibility != -1) {
+                                        flirtChance = baseChance * compatibility;
+                                        debugLog += $"\n-Chance: {flirtChance.ToString()}";
+                                    } else {
+                                        flirtChance = baseChance * 2;
+                                        debugLog += $"\n-Chance: {flirtChance.ToString()} (No Compatibility)";
+                                    }
+                                    int flirtRoll = UnityEngine.Random.Range(0, 100);
+                                    debugLog += $"\n-Roll: {flirtRoll.ToString()}";
+                                    if (flirtRoll < flirtChance) {
                                         owner.interruptComponent.TriggerInterrupt(INTERRUPT.Flirt, targetCharacter);
                                     } else {
                                         debugLog += "\n-Flirt did not trigger";
