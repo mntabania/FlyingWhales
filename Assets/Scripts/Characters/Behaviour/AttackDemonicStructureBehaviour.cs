@@ -46,19 +46,22 @@ public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
                     log += "\n-Has tile object in vision";
                     log += "\n-Adding tile object as hostile";
                     TileObject chosenTileObject = null;
-                    for (int i = 0; i < targetStructure.objectsThatContributeToDamage.Count; i++) {
-                        IDamageable damageable = targetStructure.objectsThatContributeToDamage.ElementAt(i);
-                        if (damageable is IPointOfInterest poi) {
-                            if(poi is TileObject tileObject) {
-                                if (tileObject.gridTileLocation != null 
-                                    && (tileObject.tileObjectType == TILE_OBJECT_TYPE.BLOCK_WALL ||
-                                        PathfindingManager.Instance.HasPath(tileObject.gridTileLocation, character.gridTileLocation))) {
-                                    chosenTileObject = tileObject;
-                                    break;
-                                }
-                            }    
-                        }
+                    IDamageable nearestDamageableObject = targetStructure.GetNearestDamageableThatContributeToHP(character.gridTileLocation);
+                    if(nearestDamageableObject != null && nearestDamageableObject is TileObject tileObject) {
+                        chosenTileObject = tileObject;
                     }
+                    //for (int i = 0; i < targetStructure.objectsThatContributeToDamage.Count; i++) {
+                    //    IDamageable damageable = targetStructure.objectsThatContributeToDamage.ElementAt(i);
+                    //    if (damageable is IPointOfInterest poi) {
+                    //        if(poi is TileObject tileObject) {
+                    //            if (tileObject.gridTileLocation != null && (tileObject.tileObjectType == TILE_OBJECT_TYPE.BLOCK_WALL ||
+                    //                    PathfindingManager.Instance.HasPath(tileObject.gridTileLocation, character.gridTileLocation))) {
+                    //                chosenTileObject = tileObject;
+                    //                break;
+                    //            }
+                    //        }    
+                    //    }
+                    //}
                     if (chosenTileObject != null) {
                         character.combatComponent.Fight(chosenTileObject, CombatManager.Hostility);
                     } else {

@@ -1738,13 +1738,16 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return name;
     }
     private LocationGridTile GetLocationGridTileByXY(int x, int y, bool throwOnException = true) {
-        if (UtilityScripts.Utilities.IsInRange(x, 0, currentRegion.innerMap.width)
-            && UtilityScripts.Utilities.IsInRange(y, 0, currentRegion.innerMap.height)) {
-            return currentRegion.innerMap.map[x, y];
+        if(currentRegion != null) {
+            if (UtilityScripts.Utilities.IsInRange(x, 0, currentRegion.innerMap.width)
+                && UtilityScripts.Utilities.IsInRange(y, 0, currentRegion.innerMap.height)) {
+                return currentRegion.innerMap.map[x, y];
+            }
+            int xCoordinate = Mathf.Clamp(x, 0, currentRegion.innerMap.width);
+            int yCoordinate = Mathf.Clamp(y, 0, currentRegion.innerMap.height);
+            return currentRegion.innerMap.map[xCoordinate, yCoordinate];
         }
-        int xCoordinate = Mathf.Clamp(x, 0, currentRegion.innerMap.width);
-        int yCoordinate = Mathf.Clamp(y, 0, currentRegion.innerMap.height);
-        return currentRegion.innerMap.map[xCoordinate, yCoordinate];;
+        return null;
     }
     public void UpdateCanCombatState() {
         bool combatState = traitContainer.HasTrait("Combatant") && !traitContainer.HasTrait("Injured");
