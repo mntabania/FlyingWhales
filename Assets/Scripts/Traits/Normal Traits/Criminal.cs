@@ -22,10 +22,6 @@ namespace Traits {
             base.OnAddTrait(sourcePOI);
             if (sourcePOI is Character) {
                 owner = sourcePOI as Character;
-                //When a character gains this Trait, add this log to the location and the character:
-                //Log addLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "add_criminal");
-                //addLog.AddToFillers(sourceCharacter, sourceCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                //sourceCharacter.AddHistory(addLog);
                 //TODO: sourceCharacter.homeNpcSettlement.jobQueue.UnassignAllJobsTakenBy(sourceCharacter);
                 owner.CancelOrUnassignRemoveTraitRelatedJobs();
             }

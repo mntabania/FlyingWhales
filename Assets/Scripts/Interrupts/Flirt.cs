@@ -20,15 +20,17 @@ namespace Interrupts {
         public override string ReactionToActor(Character witness, Character actor, IPointOfInterest target,
             Interrupt interrupt, REACTION_STATUS status) {
             string response = base.ReactionToActor(witness, actor, target, interrupt, status);
-            if(target != witness) {
-                bool isLoverOrAffair = witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR);
-                if (isLoverOrAffair) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status);
-                } else {
-                    //TODO: Cannot do this part since we cannot know the result of flirting in reactions
-                    //if (witness.relationshipContainer.IsFriendsWith(actor)) {
+            if(target != witness && target is Character targetCharacter) {
+                bool isActorLoverOrAffairOfWitness = witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR);
+                bool isTargetLoverOrAffairOfWitness = witness.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR);
 
-                    //}
+                if (isActorLoverOrAffairOfWitness) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status);
+                } else if (isTargetLoverOrAffairOfWitness) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor, status);
+                } else {
+                    //TODO: Positive/Negative Result
                 }
             }
             return response;

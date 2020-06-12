@@ -23,6 +23,13 @@ public class CrimeManager : MonoBehaviour {
             Criminal criminalTrait = new Criminal();
             character.traitContainer.AddTrait(character, criminalTrait);
             criminalTrait.SetCrime(crimeType, committedCrime, target);
+
+            Log addLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "become_criminal");
+            addLog.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            addLog.AddToFillers(null, UtilityScripts.Utilities.GetArticleForWord(criminalTrait.crimeData.strCrimeType), LOG_IDENTIFIER.STRING_1);
+            addLog.AddToFillers(null, criminalTrait.crimeData.strCrimeType, LOG_IDENTIFIER.STRING_2);
+            addLog.AddLogToInvolvedObjects();
+            PlayerManager.Instance.player.ShowNotificationFrom(character, addLog);
         }
 
     }
@@ -41,7 +48,7 @@ public class CrimeManager : MonoBehaviour {
         } else if (consideredAction.associatedJobType == JOB_TYPE.DESTROY) {
             if (consideredAction.poiTarget is TileObject tileObject) {
                 if (tileObject.characterOwner != null && 
-                    tileObject.characterOwner != consideredAction.actor) {
+                    !tileObject.IsOwnedBy(consideredAction.actor)) {
                     //only consider destroy job as infraction if target object is owned by someone else
                     return CRIME_TYPE.INFRACTION;    
                 } else {
@@ -56,7 +63,7 @@ public class CrimeManager : MonoBehaviour {
             return CRIME_TYPE.MISDEMEANOR;
         } else if (actionType == INTERACTION_TYPE.PICK_UP) {
             if(consideredAction.poiTarget is TileObject targetTileObject) {
-                if(targetTileObject.characterOwner != null && targetTileObject.characterOwner != consideredAction.actor) {
+                if(targetTileObject.characterOwner != null && !targetTileObject.IsOwnedBy(consideredAction.actor)) {
                     return CRIME_TYPE.MISDEMEANOR;
                 }
             }
@@ -67,7 +74,7 @@ public class CrimeManager : MonoBehaviour {
                     if (!actor.IsHostileWith(targetCharacter)) {
                         return CRIME_TYPE.MISDEMEANOR;
                     }
-                } else if (target is TileObject targetTileObject && targetTileObject.characterOwner != actor) {
+                } else if (target is TileObject targetTileObject && !targetTileObject.IsOwnedBy(actor)) {
                     //added checking for gridTileLocation because targetTileObject could've been destroyed already. 
                     LocationStructure structureLocation = targetTileObject.gridTileLocation != null ? targetTileObject.structureLocation : targetTileObject.previousTile.structure;
                     if(structureLocation != null) {
@@ -208,6 +215,9 @@ public class CrimeData {
         this.criminal = criminal;
         this.target = target;
         strCrimeType = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(this.crimeType.ToString());
+        if(crimeType == CRIME_TYPE.SERIOUS || crimeType == CRIME_TYPE.HEINOUS) {
+            strCrimeType += " Crime";
+        }
         witnesses = new List<Character>();
         SetCrimeStatus(CRIME_STATUS.Unpunished);
     }

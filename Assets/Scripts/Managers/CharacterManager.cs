@@ -415,6 +415,9 @@ public class CharacterManager : MonoBehaviour {
         }
         
         FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(tileObjectType);
+        if (poi.traitContainer.HasTrait("Infected")) {
+            foodPile.traitContainer.AddTrait(foodPile, "Infected");
+        }
         if (deadCharacter != null) {
             Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "became_food_pile");
             log.AddToFillers(deadCharacter, deadCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

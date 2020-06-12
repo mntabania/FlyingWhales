@@ -92,7 +92,7 @@ public class Steal : GoapAction {
         if (witness.relationshipContainer.IsFriendsWith(actor)) {
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor, status, node);
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status, node);
-            if (witness == target || (target is TileObject tileObject && witness == tileObject.characterOwner)) {
+            if (witness == target || (target is TileObject tileObject && tileObject.IsOwnedBy(witness))) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor, status, node);
             }
         }
@@ -126,9 +126,9 @@ public class Steal : GoapAction {
         if (satisfied) {
             TileObject item = poiTarget as TileObject;
             if (poiTarget.gridTileLocation != null) {
-                return item.characterOwner != null && item.characterOwner != actor;
+                return item.characterOwner != null && !item.IsOwnedBy(actor);
             } else {
-                return item.isBeingCarriedBy != null && item.characterOwner != null && item.characterOwner != actor;
+                return item.isBeingCarriedBy != null && item.characterOwner != null && !item.IsOwnedBy(actor);
             }
         }
         return false;
@@ -212,7 +212,7 @@ public class StealData : GoapActionData {
         if (poiTarget.gridTileLocation != null) {
             //return true;
             TileObject item = poiTarget as TileObject;
-            return item.characterOwner == null || item.characterOwner != actor;
+            return item.characterOwner == null || !item.IsOwnedBy(actor);
         }
         return false;
     }

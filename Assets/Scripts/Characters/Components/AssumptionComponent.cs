@@ -18,9 +18,15 @@ public class AssumptionComponent : MonoBehaviour {
         assumptionLog.AddToFillers(null, UtilityScripts.Utilities.LogDontReplace(newAssumption.informationLog), LOG_IDENTIFIER.APPEND);
         assumptionLog.AddToFillers(newAssumption.informationLog.fillers);
         assumptionLog.AddLogToInvolvedObjects();
+        PlayerManager.Instance.player.ShowNotificationFrom(owner, assumptionLog);
         //owner.logComponent.AddHistory(assumptionLog);
 
         owner.reactionComponent.ReactTo(newAssumption, reactionStatus, false);
+
+        if(targetOfAssumedCharacter is TileObject targetTileObject) {
+            targetTileObject.AddCharacterThatAlreadyAssumed(owner);
+        }
+
         Messenger.Broadcast(Signals.CHARACTER_ASSUMED, owner, assumedCharacter, targetOfAssumedCharacter);
     }
     public Assumption CreateNewAssumption(Character assumedCharacter, IPointOfInterest targetOfAssumedCharacter, INTERACTION_TYPE assumedActionType) {

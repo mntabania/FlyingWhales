@@ -812,12 +812,13 @@ public class ReactionComponent {
             }
         }
 
-        if (targetTileObject.characterOwner == owner 
+        if (targetTileObject.IsOwnedBy(owner)
             && targetTileObject.gridTileLocation != null 
             && targetTileObject.gridTileLocation.structure != null
             && targetTileObject.gridTileLocation.structure is Dwelling
             && targetTileObject.gridTileLocation.structure != owner.homeStructure
-            && targetTileObject.gridTileLocation.structure.residents.Count > 0) {
+            && targetTileObject.gridTileLocation.structure.residents.Count > 0
+            && !targetTileObject.HasCharacterAlreadyAssumed(owner)) {
 
             if (owner.traitContainer.HasTrait("Suspicious")
                 || owner.moodComponent.moodState == MOOD_STATE.CRITICAL
@@ -967,7 +968,7 @@ public class ReactionComponent {
             }
 
         } else if (poiHit is TileObject objectHit) {
-            if(objectHit.characterOwner != attacker) {
+            if(!objectHit.IsOwnedBy(attacker)) {
                 //CrimeManager.Instance.ReactToCrime()
                 log += "\n-Object Hit is not owned by the Attacker";
                 log += "\n-Reactor is checking for crime";
