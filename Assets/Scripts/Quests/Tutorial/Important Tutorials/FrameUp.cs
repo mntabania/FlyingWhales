@@ -19,6 +19,19 @@ namespace Tutorial {
             _activationCriteria = new List<QuestCriteria>() {
                 new HasCompletedTutorialQuest(TutorialManager.Tutorial.Elemental_Interactions)
             };
+            Messenger.AddListener<Quest>(Signals.QUEST_DEACTIVATED, OnQuestDeactivated);
+        }
+        private void OnQuestDeactivated(Quest quest) {
+            TryMakeAvailable();
+        }
+        protected override bool HasMetAllCriteria() {
+            bool hasMetAllCriteria = base.HasMetAllCriteria();
+            if (hasMetAllCriteria) {
+                int activeQuests = TutorialManager.Instance.GetAllActiveTutorialsCount() +
+                                   QuestManager.Instance.GetActiveQuestsCount();
+                return activeQuests < 2;
+            }
+            return false;
         }
         #endregion
 
@@ -26,6 +39,17 @@ namespace Tutorial {
         protected override void MakeAvailable() {
             base.MakeAvailable();
             TutorialManager.Instance.ActivateTutorial(this);
+        }
+        #endregion
+
+        #region Activation
+        public override void Activate() {
+            base.Activate();
+            Messenger.RemoveListener<Quest>(Signals.QUEST_DEACTIVATED, OnQuestDeactivated);
+        }
+        public override void Deactivate() {
+            base.Deactivate();
+            Messenger.RemoveListener<Quest>(Signals.QUEST_DEACTIVATED, OnQuestDeactivated);
         }
         #endregion
         
@@ -50,11 +74,16 @@ namespace Tutorial {
                     new DropPOIAtStructureStep(IsDroppedAtSameStructure, poi => _droppedObject.characterOwner == poi,
                             "Drop at the same house")
                         .SetObjectsToCenter(GetHouseToCenter),
-                    new CharacterAssumedStep(poi => poi == _droppedObject 
-                                                    && _droppedObject.gridTileLocation.structure == _droppedAtStructure, 
+                    new CharacterAssumedStep(poi => poi == _droppedObject && _droppedObject.gridTileLocation.structure == _droppedAtStructure, 
                             character => character == _droppedObject.characterOwner, 
                             "Wait for the character's reaction")
                         .SetCompleteAction(OnCompleteDropAtSameHouse)
+                ),
+                new QuestStepCollection(
+                    new ClickOnCharacterStep("Click item owner", character => character == _droppedObject.characterOwner)
+                        .SetObjectsToCenter(GetItemOwnerToCenter),
+                    new ToggleTurnedOnStep("CharacterInfo_Logs", "Click on Log tab", () => UIManager.Instance.GetCurrentlySelectedPOI() == _droppedObject.characterOwner),
+                    new LogHistoryItemClicked("Click assumed thief's name", IsClickedLogObjectValid)
                 ),
             };
         }
@@ -131,6 +160,14 @@ namespace Tutorial {
                 $"{_droppedObject.name} in {UtilityScripts.Utilities.ColorizeAction(_droppedAtStructure.GetNameRelativeTo(_droppedObject.characterOwner))} " +
                 $"and has now assumed that it has been {UtilityScripts.Utilities.ColorizeAction("stolen")}!"
             );
+        }
+        private bool IsClickedLogObjectValid(object obj, Log log, IPointOfInterest owner) {
+            if (owner == _droppedObject.characterOwner && obj is Character clickedCharacter 
+                && clickedCharacter != _droppedObject.characterOwner
+                && log.key.Equals("assumed_event")) {
+                return true;
+            }
+            return false;
         }
         #endregion
 

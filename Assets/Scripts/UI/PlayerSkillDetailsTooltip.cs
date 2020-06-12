@@ -100,15 +100,21 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         cooldownText.text = cdText;
 
         additionalText.text = string.Empty;
-        if (skillData is PlayerAction && UIManager.Instance.characterInfoUI.isShowing) {
+        if (UIManager.Instance.characterInfoUI.isShowing) {
             if (UIManager.Instance.characterInfoUI.activeCharacter.traitContainer.HasTrait("Blessed")) {
                 additionalText.text += $"<color=\"red\">Blessed {UtilityScripts.Utilities.VillagerIcon()}Villagers are protected from your powers.</color>\n";    
             }
             if (skillData.CanPerformAbilityTowards(UIManager.Instance.characterInfoUI.activeCharacter) == false) {
-                string otherReasons = skillData.GetReasonsWhyCannotPerformAbilityTowards(UIManager.Instance.characterInfoUI.activeCharacter);
-                if (string.IsNullOrEmpty(otherReasons) == false) {
-                    additionalText.text += $"<color=\"red\">{otherReasons}</color>\n";    
+                string wholeReason = skillData
+                    .GetReasonsWhyCannotPerformAbilityTowards(UIManager.Instance.characterInfoUI.activeCharacter);
+                if (string.IsNullOrEmpty(wholeReason) == false) {
+                    string[] reasons = wholeReason.Split(',');
+                    for (int i = 0; i < reasons.Length; i++) {
+                        string reason = reasons[i];
+                        additionalText.text += $"<color=\"red\">{reason}</color>\n";   
+                    }
                 }
+                
             }
         }
         if(HasEnoughMana() == false) {

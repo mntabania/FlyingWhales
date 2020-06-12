@@ -85,7 +85,7 @@ namespace Inner_Maps.Location_Structures {
 
                 List<LocationGridTile> dropChoices = outsideTile
                     .GetTilesInRadius(7, includeCenterTile: true, includeTilesInDifferentStructure: false).Where(t =>
-                         t.objHere == null && t.structure.structureType == STRUCTURE_TYPE.WILDERNESS && t.collectionOwner.partOfHextile != parentStructure.occupiedHexTile).ToList();
+                         t.objHere == null && t.structure.structureType == STRUCTURE_TYPE.WILDERNESS).ToList(); //&& t.collectionOwner.partOfHextile != parentStructure.occupiedHexTile
                 
                 CharacterManager.Instance.PlaceSummon(_skeleton, CollectionUtilities.GetRandomElement(tilesInRoom));
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MOVE_CHARACTER,

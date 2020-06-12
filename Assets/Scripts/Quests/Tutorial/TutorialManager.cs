@@ -122,7 +122,7 @@ namespace Tutorial {
                     instantiateTutorial = WorldConfigManager.Instance.demoTutorials.Contains(tutorial);
                 }
                 if (instantiateTutorial) {
-                    InstantiateTutorial(tutorial);
+                   InstantiateTutorial(tutorial);
                 }
             }
         }
@@ -158,6 +158,9 @@ namespace Tutorial {
             }
             return false;
         }
+        public int GetAllActiveTutorialsCount() {
+            return _activeBonusTutorials.Count + _activeImportantTutorials.Count;
+        }
         #endregion
 
         #region Completion
@@ -192,6 +195,7 @@ namespace Tutorial {
         public void AddTutorialToWaitList(ImportantTutorial tutorialQuest) {
             _waitingImportantTutorials.Add(tutorialQuest);
             _waitingImportantTutorials = _waitingImportantTutorials.OrderBy(q => q.priority).ToList();
+            CheckIfNewTutorialCanBeActivated();
         }
         public void RemoveTutorialFromWaitList(ImportantTutorial tutorialQuest) {
             _waitingImportantTutorials.Remove(tutorialQuest);

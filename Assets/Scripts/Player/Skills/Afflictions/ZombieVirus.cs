@@ -125,5 +125,12 @@ public class ZombieVirusData : SpellData {
         }
         return base.CanPerformAbilityTowards(targetCharacter);
     }
+    public override string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) {
+        string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter);
+        if (targetCharacter.traitContainer.HasTrait("Robust")) {
+            reasons += $"Cannot afflict Zombie Virus on Robust {UtilityScripts.Utilities.VillagerIcon()}Villagers,";
+        }
+        return reasons;
+    }
     #endregion
 }

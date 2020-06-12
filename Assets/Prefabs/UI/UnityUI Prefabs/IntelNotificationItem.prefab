@@ -476,7 +476,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.1254902, g: 0.1254902, b: 0.1254902, a: 0.4}
+  m_Color: {r: 0.1254902, g: 0.1254902, b: 0.1254902, a: 0.6862745}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -654,7 +654,6 @@ MonoBehaviour:
   logItem: {fileID: 114091602978153694}
   _container: {fileID: 26294381911162399}
   _layoutElement: {fileID: 43991465327477566}
-  _hoverPosition: {fileID: 0}
   getIntelBtn: {fileID: 114111695253146942}
   convertTooltip: {fileID: 1999433499704826}
   effectPrefab: {fileID: 2871024722848407621, guid: 6d4f58b47be4dcb4dac33aa43df45eb9,

@@ -225,7 +225,7 @@ namespace UtilityScripts {
                     } else if (word.StartsWith("%") && (word.EndsWith("a") || word.EndsWith("b"))) { //PRONOUN
                         replacedWord = CustomPronounReplacer(word, log.fillers);
                     } else if (IsWordAVerb(word)) {
-                        replacedWord = ColorizeAction(word);
+                        replacedWord = ColorizeActionInLog(word);
                     }
                     if (!string.IsNullOrEmpty(replacedWord)) {
                         words[i] = replacedWord;
@@ -273,7 +273,7 @@ namespace UtilityScripts {
                     } else if (word.StartsWith("%") && (word.EndsWith("a") || word.EndsWith("b"))) { //PRONOUN
                         replacedWord = CustomPronounReplacer(word, fillers);
                     } else if (IsWordAVerb(word)) {
-                        replacedWord = ColorizeAction(word);
+                        replacedWord = ColorizeActionInLog(word);
                     }
                     if (!string.IsNullOrEmpty(replacedWord)) {
                         words[i] = replacedWord;
@@ -758,6 +758,9 @@ namespace UtilityScripts {
         }
         public static string ColorizeAction(string actionString) {
             return $"<color=#f87f43>{actionString}</color>";
+        }
+        public static string ColorizeActionInLog(string actionString) {
+            return $"<color=#FFC700>{actionString}</color>";
         }
         public static string ColorizeName(string name) {
             return $"<color=#f8ed43>{name}</color>";
