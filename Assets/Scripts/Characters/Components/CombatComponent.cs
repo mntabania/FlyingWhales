@@ -571,9 +571,13 @@ public class CombatComponent {
             } else {
                 log += "\n-Character is not in combat, will add Combat job if there is a hostile or avoid in range";
                 if (hostilesInRange.Count > 0 || avoidInRange.Count > 0) {
-                    log += "\n-Combat job added";
-                    CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.COMBAT, CHARACTER_STATE.COMBAT, owner);
-                    owner.jobQueue.AddJobInQueue(job);
+                    if (!owner.jobQueue.HasJob(JOB_TYPE.COMBAT)) {
+                        log += "\n-No existing combat job, Combat job added";
+                        CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.COMBAT, CHARACTER_STATE.COMBAT, owner);
+                        owner.jobQueue.AddJobInQueue(job);
+                    } else {
+                        log += "\n-Has existing combat job, no combat job added";
+                    }
                 } else {
                     log += "\n-Combat job not added";
                     if (owner.marker.hasFleePath && owner.isInCombat) {

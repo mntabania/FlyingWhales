@@ -137,6 +137,12 @@ public class CharacterState {
         stateComponent.character.logComponent.PrintLogIfActive(
             $"Pausing {stateName} for {stateComponent.character.name}");
         isPaused = true;
+        if(stateComponent.currentState == this) {
+            stateComponent.SetCurrentState(null);
+        }
+        if(stateComponent.character.currentJob == job) {
+            stateComponent.character.SetCurrentJob(null);
+        }
         //StopStatePerTick();
         Messenger.Broadcast(Signals.CHARACTER_PAUSED_STATE, stateComponent.character, this);
     }
@@ -153,7 +159,13 @@ public class CharacterState {
         stateComponent.character.logComponent.PrintLogIfActive(
             $"Resuming {stateName} for {stateComponent.character.name}");
         isPaused = false;
-        stateComponent.SetCurrentState(this);
+        if (stateComponent.currentState != this) {
+            stateComponent.SetCurrentState(this);
+        }
+        if (stateComponent.character.currentJob != job) {
+            stateComponent.character.SetCurrentJob(job);
+        }
+        //stateComponent.SetCurrentState(this);
         //StartStatePerTick();
         DoMovementBehavior();
     }
