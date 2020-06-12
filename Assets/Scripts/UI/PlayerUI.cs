@@ -567,8 +567,8 @@ public class PlayerUI : MonoBehaviour {
     //    threatMeter.value = PlayerManager.Instance.player.threat;
     //}
     public void OnHoverEnterThreat() {
-        string text = "The amount of threat you've generated in this world. Once this reaches 100, characters will start attacking your structures. " +
-            "Your recent actions are generating " + PlayerManager.Instance.player.threatComponent.threatPerHour.ToString() + " Threat every hour.";
+        string text =
+            "The amount of threat you've generated in this world. Once this reaches 100, characters will start attacking your structures.";
         UIManager.Instance.ShowSmallInfo(text, threatHoverPos);
     }
     public void OnHoverExitThreat() {

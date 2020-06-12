@@ -781,10 +781,11 @@ public class CharacterInfoUI : InfoUIBase {
         moodSummary.text = summary;
     }
     public void ShowMoodTooltip() {
-        string summary = $"{_activeCharacter.moodComponent.moodValue.ToString()}/100 ({_activeCharacter.moodComponent.moodState})";
+        string summary = $"Represents the {UtilityScripts.Utilities.VillagerIcon()}Villager's overall state of mind. Lower a Villager's Mood to make him less effective and more volatile.\n\n" +
+                         $"{_activeCharacter.moodComponent.moodValue.ToString()}/100";
         // summary +=
         //     $"\nChance to trigger Major Mental Break {_activeCharacter.moodComponent.currentCriticalMoodEffectChance.ToString(CultureInfo.InvariantCulture)}";
-        UIManager.Instance.ShowSmallInfo(summary);
+        UIManager.Instance.ShowSmallInfo(summary, "MOOD");
     }
     public void HideSmallInfo() {
         UIManager.Instance.HideSmallInfo();
@@ -800,19 +801,29 @@ public class CharacterInfoUI : InfoUIBase {
         staminaMeter.SetFillAmount(_activeCharacter.needsComponent.stamina/CharacterNeedsComponent.STAMINA_DEFAULT);
     }
     public void ShowEnergyTooltip() {
-        UIManager.Instance.ShowSmallInfo($"{_activeCharacter.needsComponent.tiredness.ToString("N0")}/100");
+        string summary = $"{UtilityScripts.Utilities.VillagerIcon()}Villagers will become Unconscious once this Meter is empty. This is replenished through rest.\n\n" +
+                         $"Value: {_activeCharacter.needsComponent.tiredness.ToString("N0")}/100";
+        UIManager.Instance.ShowSmallInfo(summary, "ENERGY");
     }
     public void ShowFullnessTooltip() {
-        UIManager.Instance.ShowSmallInfo($"{_activeCharacter.needsComponent.fullness.ToString("N0")}/100");
+        string summary = $"{UtilityScripts.Utilities.VillagerIcon()}Villagers will become Malnourished and eventually die once this Meter is empty. This is replenished through eating.\n\n" +
+                         $"Value: {_activeCharacter.needsComponent.fullness.ToString("N0")}/100";
+        UIManager.Instance.ShowSmallInfo(summary, "FULLNESS");
     }
     public void ShowHappinessTooltip() {
-        UIManager.Instance.ShowSmallInfo($"{_activeCharacter.needsComponent.happiness.ToString("N0")}/100");
+        string summary = $"{UtilityScripts.Utilities.VillagerIcon()}Villager's Mood becomes significantly affected when this Meter goes down. This is replenished by doing fun activities.\n\n" +
+                         $"Value: {_activeCharacter.needsComponent.happiness.ToString("N0")}/100";
+        UIManager.Instance.ShowSmallInfo(summary, "ENTERTAINMENT");
     }
     public void ShowHopeTooltip() {
-        UIManager.Instance.ShowSmallInfo($"{_activeCharacter.needsComponent.hope.ToString("N0")}/100");
+        string summary = $"For future implementation.\n\n" +
+                         $"Value: {_activeCharacter.needsComponent.hope.ToString("N0")}/100";
+        UIManager.Instance.ShowSmallInfo(summary, "HOPE");
     }
     public void ShowStaminaTooltip() {
-        UIManager.Instance.ShowSmallInfo($"{_activeCharacter.needsComponent.stamina.ToString("N0")}/100");
+        string summary = $"{UtilityScripts.Utilities.VillagerIcon()}Villagers will be unable to run when this Meter is empty. This is used up when the Villager is running and quickly replenished when he isn't.\n\n" +
+                         $"Value: {_activeCharacter.needsComponent.stamina.ToString("N0")}/100";
+        UIManager.Instance.ShowSmallInfo(summary, "STAMINA");
     }
     #endregion
 

@@ -358,8 +358,9 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: Magical energy used by the Ruinarch in various actions.
-            Replenishes slowly over time.
+          m_StringArgument: Chaotic energy used by the Ruinarch in various actions.
+            Obtained when <sprite="Text_Sprites" name="Villager_Icon"> Villagers
+            cry out or commit crimes.
           m_BoolArgument: 0
         m_CallState: 2
   onHoverExitAction:
@@ -96678,9 +96679,67 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1538653384}
     m_Modifications:
+    - target: {fileID: 1239099528323172, guid: 806752206f775b240af4069999713824, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1322962351353356, guid: 806752206f775b240af4069999713824, type: 3}
       propertyPath: m_Name
       value: CharacterInfo
+      objectReference: {fileID: 0}
+    - target: {fileID: 1322962351353356, guid: 806752206f775b240af4069999713824, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1559174911204120, guid: 806752206f775b240af4069999713824, type: 3}
+      propertyPath: m_Name
+      value: TMP SubMeshUI [Eczar-SemiBold(Hinted Smooth 32) Material]
+      objectReference: {fileID: 0}
+    - target: {fileID: 114117123734177570, guid: 806752206f775b240af4069999713824,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114171283734189860, guid: 806752206f775b240af4069999713824,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114299929288733550, guid: 806752206f775b240af4069999713824,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114616487807409680, guid: 806752206f775b240af4069999713824,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114616487807409680, guid: 806752206f775b240af4069999713824,
+        type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 114616487807409680, guid: 806752206f775b240af4069999713824,
+        type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 8ebb5756f310c0743bf4ce729d27cfb9,
+        type: 2}
+    - target: {fileID: 114616487807409680, guid: 806752206f775b240af4069999713824,
+        type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 114676258155469292, guid: 806752206f775b240af4069999713824,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114713734186290214, guid: 806752206f775b240af4069999713824,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224579316077557694, guid: 806752206f775b240af4069999713824,
         type: 3}

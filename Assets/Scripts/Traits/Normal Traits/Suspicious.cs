@@ -7,7 +7,7 @@ namespace Traits {
 
         public Suspicious() {
             name = "Suspicious";
-            description = "Suspicious characters will destroy Artifacts placed by the Ruinarch instead of inspecting them.";
+            description = "Suspicious characters will destroy objects placed by the Ruinarch instead of inspecting them. They are also more likely to make false assumptions.";
             type = TRAIT_TYPE.BUFF;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
