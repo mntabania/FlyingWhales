@@ -80,7 +80,7 @@ namespace Traits {
                     }
                 } else {
                     log += "\n -In normal mood";
-                    int combatChance = 5;
+                    int combatChance = 2;
                     int roll = Random.Range(0, 100);
                     log += $"\nCombat chance is {combatChance.ToString()}. Roll is {roll.ToString()}";
                     if (roll < combatChance && characterThatWillDoJob.relationshipContainer.IsEnemiesWith(targetCharacter)

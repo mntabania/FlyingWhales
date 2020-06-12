@@ -60,6 +60,9 @@ namespace Quests {
             }
             return false;
         }
+        public int GetActiveQuestsCount() {
+            return _activeQuests.Count;
+        }
         #endregion
         
         #region Activation
@@ -84,7 +87,6 @@ namespace Quests {
                 UIManager.Instance.questUI.HideQuestDelayed(quest);
             }
             quest.Deactivate();
-            Messenger.Broadcast(Signals.QUEST_DEACTIVATED, quest);
         }
         #endregion
         

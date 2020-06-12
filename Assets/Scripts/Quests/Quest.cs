@@ -65,6 +65,7 @@ namespace Quests {
             isActivated = false;
             //cleanup steps
             activeStepCollection?.Deactivate();
+            Messenger.Broadcast(Signals.QUEST_DEACTIVATED, this);
         }
         private void OnStepCollectionCompleted(QuestStepCollection completedCollection) {
             if (steps.Contains(completedCollection)) {

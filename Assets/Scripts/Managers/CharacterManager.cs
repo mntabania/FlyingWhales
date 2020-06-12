@@ -624,7 +624,7 @@ public class CharacterManager : MonoBehaviour {
         return artifactSettings[type];
     }
     public void PlaceSummon(Summon summon, LocationGridTile locationTile) {
-        summon.homeRegion.RemoveCharacterFromLocation(summon);
+        summon.homeRegion?.RemoveCharacterFromLocation(summon);
         summon.CreateMarker();
         summon.marker.InitialPlaceMarkerAt(locationTile);
         summon.OnPlaceSummon(locationTile);

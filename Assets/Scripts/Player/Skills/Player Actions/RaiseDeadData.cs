@@ -37,11 +37,11 @@ public class RaiseDeadData : PlayerAction {
         return base.CanPerformAbilityTowards(targetCharacter);
     }
     public override string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) {
+        string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter); 
         if (targetCharacter.traitContainer.HasTrait("Infected")) {
-            return "Cannot use Raise Dead on Infected Villagers";
+            reasons += $"Cannot use Raise Dead on Infected {UtilityScripts.Utilities.VillagerIcon()}Villagers,";
         }
-        
-        return base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter);
+        return reasons;
     }
     public override bool CanPerformAbilityTowards(TileObject tileObject) {
         if(tileObject is Tombstone tombstone) {

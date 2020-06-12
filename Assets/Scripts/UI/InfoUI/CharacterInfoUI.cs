@@ -522,7 +522,7 @@ public class CharacterInfoUI : InfoUIBase {
     #region For Testing
     public void ShowCharacterTestingInfo() {
 #if UNITY_EDITOR
-        string summary = $"Home structure: {activeCharacter.homeStructure}" ?? "None";
+        string summary = $"Home structure: {activeCharacter.homeStructure?.ToString() ?? "None"}" ?? "None";
         summary = $"{summary}{($"\nCurrent structure: {activeCharacter.currentStructure}" ?? "None")}";
         summary = $"{summary}{("\nPOI State: " + activeCharacter.state.ToString())}";
         summary = $"{summary}{("\nDo Not Get Hungry: " + activeCharacter.needsComponent.doNotGetHungry.ToString())}";

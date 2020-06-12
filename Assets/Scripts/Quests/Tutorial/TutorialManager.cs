@@ -122,7 +122,7 @@ namespace Tutorial {
                     instantiateTutorial = WorldConfigManager.Instance.demoTutorials.Contains(tutorial);
                 }
                 if (instantiateTutorial) {
-                    InstantiateTutorial(tutorial);
+                   InstantiateTutorial(tutorial);
                 }
             }
         }
@@ -157,6 +157,9 @@ namespace Tutorial {
                 }
             }
             return false;
+        }
+        public int GetAllActiveTutorialsCount() {
+            return _activeBonusTutorials.Count + _activeImportantTutorials.Count;
         }
         #endregion
 

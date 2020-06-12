@@ -14,7 +14,7 @@ namespace Tutorial {
         }
 
         #region Initialization
-        private void Initialize() {
+        protected void Initialize() {
             ConstructCriteria();
             StartCheckingCriteria();
         }
@@ -47,10 +47,7 @@ namespace Tutorial {
         private void OnCriteriaMet(QuestCriteria criteria) {
             if (isAvailable) { return; } //do not check criteria completion if tutorial has already been made available
             if (_activationCriteria.Contains(criteria)) {
-                //check if all criteria has been met
-                if (HasMetAllCriteria()) {
-                    MakeAvailable();
-                }
+                TryMakeAvailable();
             }
         }
         private void OnCriteriaUnMet(QuestCriteria criteria) {
@@ -58,6 +55,16 @@ namespace Tutorial {
                 if (isAvailable) {
                     MakeUnavailable();
                 }
+            }
+        }
+        /// <summary>
+        /// Try and make this quest available, this will check if all criteria has been met. If it has
+        /// then make it available.
+        /// </summary>
+        protected void TryMakeAvailable() {
+            //check if all criteria has been met
+            if (HasMetAllCriteria()) {
+                MakeAvailable();
             }
         }
         protected virtual bool HasMetAllCriteria() {
