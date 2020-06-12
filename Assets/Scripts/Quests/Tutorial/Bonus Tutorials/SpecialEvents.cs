@@ -41,7 +41,7 @@ namespace Tutorial {
                 "events that can be triggered by certain criteria. " +
                 "As an example in this demo, you can turn an Evil or " +
                 $"Treacherous {UtilityScripts.Utilities.VillagerIcon()}Villager into a " +
-                "Necromancer if you manage to get him to pick up the Necronomicon. Can you do it?", 
+                "Necromancer if you manage to get him to pick up the Necronomicon. Try it!", 
                 TutorialManager.Instance.necronomiconPicture);
             CompleteQuest();
         }

@@ -18,7 +18,7 @@ public class BerserkBehaviour : CharacterBehaviourComponent {
                 if(!character.combatComponent.hostilesInRange.Contains(inVisionPOI) && !character.combatComponent.avoidInRange.Contains(inVisionPOI)) {
                     if (inVisionPOI is Character targetCharacter) {
                         if (!targetCharacter.isDead) {
-                            producedJob = character.jobComponent.CreateBerserkAttackJob(targetCharacter);
+                            producedJob = CreateBerserkAttackJob(character, targetCharacter);
                             if (producedJob != null) {
                                 hasCreatedJob = true;
                                 //character.combatComponent.Fight(targetPOI, CombatManager.Berserked, isLethal: false);
@@ -38,7 +38,7 @@ public class BerserkBehaviour : CharacterBehaviourComponent {
                     } else if (inVisionPOI is TileObject targetPOI) { // || targetPOI is SpecialToken
                         if (Random.Range(0, 100) < 35) {
                             //character.jobComponent.TriggerDestroy(targetPOI);
-                            producedJob = character.jobComponent.CreateBerserkAttackJob(targetPOI);
+                            producedJob = CreateBerserkAttackJob(character, targetPOI);
                             if (producedJob != null) {
                                 hasCreatedJob = true;
                                 //character.combatComponent.Fight(targetPOI, CombatManager.Berserked, isLethal: false);
@@ -54,5 +54,13 @@ public class BerserkBehaviour : CharacterBehaviourComponent {
             }
         }
         return true;
+    }
+    
+    private GoapPlanJob CreateBerserkAttackJob(Character character, IPointOfInterest targetPOI) {
+        if (!character.jobQueue.HasJob(JOB_TYPE.BERSERK_ATTACK, targetPOI)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BERSERK_ATTACK, new GoapEffect(GOAP_EFFECT_CONDITION.DEATH, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), targetPOI, character);
+            return job;
+        }
+        return null;
     }
 }

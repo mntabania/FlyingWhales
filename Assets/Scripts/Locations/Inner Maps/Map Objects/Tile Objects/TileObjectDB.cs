@@ -181,7 +181,7 @@ public static class TileObjectDB {
             maxHP = 100,
         } },
         { TILE_OBJECT_TYPE.CORN_CROP, new TileObjectData() {
-            maxHP = 100,
+            maxHP = 1000,
         } },
         { TILE_OBJECT_TYPE.SMITHING_FORGE, new TileObjectData() {
             maxHP = 350,
