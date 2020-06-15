@@ -64,8 +64,9 @@ public class TraitManager : MonoBehaviour {
     public static TraitProcessor defaultTraitProcessor;
     
     //list of traits that a character can gain on their own
+    //"Blessed" NOTE: Removed blessed for demo build
     public readonly string[] traitPool = new string[] { "Vigilant", "Diplomatic",
-        "Fireproof", "Accident Prone", "Unfaithful", "Alcoholic", "Music Lover", "Music Hater", "Ugly", "Blessed", "Nocturnal",
+        "Fireproof", "Accident Prone", "Unfaithful", "Alcoholic", "Music Lover", "Music Hater", "Ugly", "Nocturnal",
         "Optimist", "Pessimist", "Fast", "Chaste", "Lustful", "Coward", "Lazy", "Glutton", "Robust", "Suspicious" , "Inspiring", "Pyrophobic",
         "Narcoleptic", "Hothead", "Evil", "Treacherous", "Ambitious", "Authoritative", "Fire Prone" //, "Electric", "Venomous"
     };

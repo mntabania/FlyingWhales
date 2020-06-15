@@ -39644,6 +39644,7 @@ MonoBehaviour:
   tileObjectOwner: {fileID: 2800000, guid: a228a957aab4c3848b167369dd435409, type: 3}
   structureInfoResidents: {fileID: 2800000, guid: 65cbf1772d7d09146bac3d4eb86c1ac7,
     type: 3}
+  assumedThief: {fileID: 2800000, guid: 57644caa99356c045b538967996016af, type: 3}
 --- !u!4 &711025101 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4243562867990628, guid: c51738521ec0ac14abf6fc9fd57b44d9,

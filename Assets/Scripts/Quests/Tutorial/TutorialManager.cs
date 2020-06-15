@@ -77,6 +77,7 @@ namespace Tutorial {
         public VideoClip killedByMonsterLog;
         public Texture tileObjectOwner;
         public Texture structureInfoResidents;
+        public Texture assumedThief;
 
         #region Monobehaviours
         private void Awake() {
