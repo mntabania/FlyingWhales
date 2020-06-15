@@ -21,14 +21,6 @@ namespace Tutorial {
                 _targetAction = characterFinishedAction.finishedAction;
             }
         }
-        protected override bool HasMetAllCriteria() {
-            bool hasMetAllCriteria = base.HasMetAllCriteria();
-            if (hasMetAllCriteria) {
-                //no other active log quest
-                return TutorialManager.Instance.HasActiveLogQuest() == false;
-            }
-            return false;
-        }
         #endregion
         
         #region Activation

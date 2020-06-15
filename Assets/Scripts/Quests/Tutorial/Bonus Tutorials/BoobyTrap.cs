@@ -17,14 +17,6 @@ namespace Tutorial {
                 new CharacterFinishedAction(INTERACTION_TYPE.BOOBY_TRAP).SetOnMeetAction(OnCharacterFinishedAction)
             };
         }
-        protected override bool HasMetAllCriteria() {
-            bool hasMetAllCriteria = base.HasMetAllCriteria();
-            if (hasMetAllCriteria) {
-                //no other active log quest
-                return TutorialManager.Instance.HasActiveLogQuest() == false;
-            }
-            return false;
-        }
         private void OnCharacterFinishedAction(QuestCriteria criteria) {
             if (criteria is CharacterFinishedAction metCriteria) {
                 _targetAction = metCriteria.finishedAction;

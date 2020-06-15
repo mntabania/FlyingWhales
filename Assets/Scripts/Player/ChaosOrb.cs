@@ -66,6 +66,10 @@ public class ChaosOrb : PooledObject {
 		
 		Vector3 controlPointB = manaContainerPos;
 		controlPointB.y -= 5f;
+
+		if (InnerMapCameraMove.Instance.target == transform) {
+			InnerMapCameraMove.Instance.CenterCameraOn(null); //this is so that the camera will not follow this orb when it is animating towards the mana container.
+		}
 		
 		transform.DOPath(new[] {manaContainerPos, controlPointA, controlPointB}, 0.7f, PathType.CubicBezier)
 			.SetEase(Ease.InSine)

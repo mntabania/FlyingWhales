@@ -27,17 +27,6 @@ namespace Tutorial {
                 )
             };
         }
-        protected override bool HasMetAllCriteria() {
-            bool hasMetAllCriteria = base.HasMetAllCriteria();
-            if (hasMetAllCriteria) {
-                int activeQuestsCount = TutorialManager.Instance.GetAllActiveTutorialsCount() +
-                                   QuestManager.Instance.GetActiveQuestsCount();
-                bool hasActiveCounterattack = QuestManager.Instance.IsQuestActive<Quests.Counterattack>();
-                bool hasActiveDivineIntervention = QuestManager.Instance.IsQuestActive<Quests.DivineIntervention>();
-                return activeQuestsCount <= 1 && hasActiveCounterattack == false && hasActiveDivineIntervention == false;
-            }
-            return false;
-        }
         #endregion
 
         #region Availability

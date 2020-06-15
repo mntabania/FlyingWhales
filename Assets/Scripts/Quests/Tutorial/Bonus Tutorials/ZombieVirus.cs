@@ -14,17 +14,22 @@ namespace Tutorial {
         #region Criteria
         protected override void ConstructCriteria() {
             _activationCriteria = new List<QuestCriteria>() {
-                new CharacterGainedTrait("Infected", trait => trait.responsibleCharacter != null)
-                    .SetOnMeetAction(OnCharacterInfected)
+                new CharacterGainedTrait("Infected", trait => trait.responsibleCharacter != null || trait.gainedFromDoing != null)
+                    .SetOnMeetAction(OnCharacterInfected),
+                // new IsAtTime(new [] {
+                //     GameManager.Instance.GetTicksBasedOnHour(7),
+                //     GameManager.Instance.GetTicksBasedOnHour(13),
+                //     GameManager.Instance.GetTicksBasedOnHour(19)
+                // })
             };
+            Messenger.AddListener(Signals.HOUR_STARTED, OnHourStarted);
         }
-        protected override bool HasMetAllCriteria() {
-            bool hasMetAllCriteria = base.HasMetAllCriteria();
-            if (hasMetAllCriteria) {
-                //no other active log quest
-                return TutorialManager.Instance.HasActiveLogQuest() == false;
+        private void OnHourStarted() {
+            GameDate today = GameManager.Instance.Today();
+            int hour = GameManager.Instance.GetHoursBasedOnTicks(today.tick);
+            if (hour == 7 || hour == 13 || hour == 19) {
+                TryMakeAvailable();
             }
-            return false;
         }
         private void OnCharacterInfected(QuestCriteria criteria) {
             if (criteria is CharacterGainedTrait characterGainedTrait) {
@@ -36,6 +41,7 @@ namespace Tutorial {
         #region Availability
         protected override void MakeAvailable() {
             base.MakeAvailable();
+            Messenger.RemoveListener(Signals.HOUR_STARTED, OnHourStarted);
             TutorialManager.Instance.ActivateTutorialButDoNotShow(this);
             PlayerUI.Instance.ShowGeneralConfirmation("Infection", 
                 $"A character has just {UtilityScripts.Utilities.ColorizeAction("contracted the Zombie Virus")}! " +
@@ -48,10 +54,12 @@ namespace Tutorial {
         #region Activation
         public override void Activate() {
             base.Activate();
+            Messenger.RemoveListener(Signals.HOUR_STARTED, OnHourStarted);
             Messenger.AddListener<Log, IPointOfInterest>(Signals.LOG_REMOVED, OnLogRemoved);
         }
         public override void Deactivate() {
             base.Deactivate();
+            Messenger.RemoveListener(Signals.HOUR_STARTED, OnHourStarted);
             Messenger.RemoveListener<Log, IPointOfInterest>(Signals.LOG_REMOVED, OnLogRemoved);
         }
         private void OnLogRemoved(Log log, IPointOfInterest poi) {
