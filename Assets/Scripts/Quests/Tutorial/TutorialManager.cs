@@ -73,11 +73,14 @@ namespace Tutorial {
         public Texture logsTab;
         public VideoClip homeStructureVideo;
         public Texture necronomiconPicture;
-        public VideoClip griefstrickenLog;
-        public VideoClip killedByMonsterLog;
+        public Texture griefstrickenLog;
+        public Texture killedByMonsterLog;
         public Texture tileObjectOwner;
         public Texture structureInfoResidents;
         public Texture assumedThief;
+        public Texture boobyTrapLog;
+        public Texture infectedLog;
+        public Texture recipientLog;
 
         #region Monobehaviours
         private void Awake() {

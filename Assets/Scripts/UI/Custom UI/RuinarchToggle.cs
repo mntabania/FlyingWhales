@@ -18,23 +18,27 @@ namespace Ruinarch.Custom_UI {
         protected override void OnEnable() {
             base.OnEnable();
             if (Application.isPlaying && shineEffect != null) {
-                Messenger.AddListener<string>(Signals.SHOW_SELECTABLE_GLOW, OnReceiveShowGlowSignal);
-                Messenger.AddListener<string>(Signals.HIDE_SELECTABLE_GLOW, OnReceiveHideGlowSignal);
-                Messenger.AddListener<QuestStep>(Signals.QUEST_STEP_ACTIVATED, OnQuestStepActivated);
-                if (InputManager.Instance.ShouldBeHighlighted(this)) {
-                    StartGlow();
+                if (shineEffect != null) {
+                    Messenger.AddListener<string>(Signals.SHOW_SELECTABLE_GLOW, OnReceiveShowGlowSignal);
+                    Messenger.AddListener<string>(Signals.HIDE_SELECTABLE_GLOW, OnReceiveHideGlowSignal);
+                    if (InputManager.Instance.ShouldBeHighlighted(this)) {
+                        StartGlow();
+                    }
                 }
+                Messenger.AddListener<QuestStep>(Signals.QUEST_STEP_ACTIVATED, OnQuestStepActivated);
                 FireToggleShownSignal();
             }
         }
         
         protected override void OnDisable() {
             base.OnDisable();
-            if (Application.isPlaying && shineEffect != null) {
-                Messenger.RemoveListener<string>(Signals.SHOW_SELECTABLE_GLOW, OnReceiveShowGlowSignal);
-                Messenger.RemoveListener<string>(Signals.HIDE_SELECTABLE_GLOW, OnReceiveHideGlowSignal);
+            if (Application.isPlaying) {
+                if (shineEffect != null) {
+                    Messenger.RemoveListener<string>(Signals.SHOW_SELECTABLE_GLOW, OnReceiveShowGlowSignal);
+                    Messenger.RemoveListener<string>(Signals.HIDE_SELECTABLE_GLOW, OnReceiveHideGlowSignal);
+                    HideGlow();    
+                }
                 Messenger.RemoveListener<QuestStep>(Signals.QUEST_STEP_ACTIVATED, OnQuestStepActivated);
-                HideGlow();
             }
         }
         #endregion

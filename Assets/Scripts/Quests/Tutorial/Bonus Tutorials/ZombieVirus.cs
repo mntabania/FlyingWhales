@@ -71,6 +71,8 @@ namespace Tutorial {
                     new ClickOnCharacterStep("Find a newly Infected character", IsCharacterValid).SetObjectsToCenter(_targetCharacter),
                     new ToggleTurnedOnStep("CharacterInfo_Logs", "Click on Log tab", () => UIManager.Instance.GetCurrentlySelectedPOI() == _targetCharacter),
                     new LogHistoryItemClicked("Click on Infected source", IsClickedLogObjectValid)
+                        .SetHoverOverAction(OnHoverInfectionLog)
+                        .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
                         .SetCompleteAction(OnCompleteFindInfectedSource)
                 )
             };
@@ -98,6 +100,13 @@ namespace Tutorial {
                 $"They {UtilityScripts.Utilities.ColorizeAction("arise at dusk")} and then become {UtilityScripts.Utilities.ColorizeAction("lifeless again at dawn")}. " +
                 "They are hostile to everyone except other undead - that includes your minions. " +
                 $"They can {UtilityScripts.Utilities.ColorizeAction("infect those they attack")}, so go ahead and start your own zombie apocalypse!"
+            );
+        }
+        private void OnHoverInfectionLog(QuestStepItem item) {
+            UIManager.Instance.ShowSmallInfo(
+                $"An {UtilityScripts.Utilities.ColorizeAction("infection log")} should have been registered in the Villager's Log tab. " +
+                $"{UtilityScripts.Utilities.ColorizeAction("Click on the name")} of the Zombie that spread it.",
+                TutorialManager.Instance.infectedLog, "Infected Log", item.hoverPosition
             );
         }
         #endregion

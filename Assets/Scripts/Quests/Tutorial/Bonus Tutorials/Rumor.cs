@@ -68,6 +68,8 @@ namespace Tutorial {
                         .SetObjectsToCenter(_targetAction.actor),
                     new ToggleTurnedOnStep("CharacterInfo_Logs", "Click on Log tab", () => UIManager.Instance.GetCurrentlySelectedPOI() == _targetAction.actor),
                     new LogHistoryItemClicked("Click on Rumor recipient", IsClickedLogObjectValid)
+                        .SetHoverOverAction(OnHoverRecipient)
+                        .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
                         .SetCompleteAction(OnCompleteReceiveRumor)
                 )
             };
@@ -105,6 +107,13 @@ namespace Tutorial {
                 $"{UtilityScripts.Utilities.ColorizeAction("will evaluate it")} and may or may not believe it. " +
                 "If they don't, they may try to confirm it with the rumor victim. " +
                 "If they do, they will react to it as if it's true!"
+            );
+        }
+        private void OnHoverRecipient(QuestStepItem item) {
+            UIManager.Instance.ShowSmallInfo(
+                $"A {UtilityScripts.Utilities.ColorizeAction("rumor log")} should have been registered in the Villager's" +
+                $" Log tab. {UtilityScripts.Utilities.ColorizeAction("Click on the name")} of the Villager that receives it.",
+                TutorialManager.Instance.recipientLog, "Infected Log", item.hoverPosition
             );
         }
         #endregion
