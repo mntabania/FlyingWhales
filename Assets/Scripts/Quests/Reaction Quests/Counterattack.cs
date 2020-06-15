@@ -40,7 +40,7 @@ namespace Quests {
 
         #region Step Helpers
         private string GetStopCharactersDescription(List<Character> targets, int initialTargetCount) {
-            return $"Stop {(initialTargetCount - targets.Count).ToString()}/{initialTargetCount.ToString()} {UtilityScripts.Utilities.VillagerIcon()}Villagers.";
+            return $"Stop {(initialTargetCount - targets.Count).ToString()} {UtilityScripts.Utilities.VillagerIcon()}Villagers.";
         }
         private void OnHoverStopItem(QuestStepItem item) {
             UIManager.Instance.ShowSmallInfo(

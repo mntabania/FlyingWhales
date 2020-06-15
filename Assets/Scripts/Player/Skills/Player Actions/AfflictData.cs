@@ -19,5 +19,12 @@ public class AfflictData : PlayerAction {
             UIManager.Instance.characterInfoUI.ShowAfflictUI();
         }
     }
+    public override bool CanPerformAbilityTowards(Character targetCharacter) {
+        bool canPerform = base.CanPerformAbilityTowards(targetCharacter);
+        if (canPerform) {
+            return targetCharacter.isDead == false;
+        }
+        return false;
+    }
     #endregion
 }

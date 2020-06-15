@@ -7,6 +7,7 @@ public class HeartOfTheWind : Artifact {
 
     public HeartOfTheWind() : base(ARTIFACT_TYPE.Heart_Of_The_Wind) {
         maxHP = 700;
+        currentHP = maxHP;
     }
     //public HeartOfTheWind(SaveDataArtifact data) : base(data) {
     //}
