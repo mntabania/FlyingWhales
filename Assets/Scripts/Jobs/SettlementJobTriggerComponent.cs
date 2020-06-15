@@ -400,7 +400,8 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		                             target.gridTileLocation.structure.isInterior == false);
 		if (isAtValidLocation && _owner.HasJob(JOB_TYPE.HAUL, target) == false && target.gridTileLocation.parentMap.region == _owner.region) {
 			ResourcePile chosenPileToDepositTo = _owner.mainStorage.GetResourcePileObjectWithLowestCount(target.tileObjectType);
-			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAUL, 
+
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAUL, 
 				new GoapEffect(GOAP_EFFECT_CONDITION.DEPOSIT_RESOURCE, string.Empty, 
 					false, GOAP_EFFECT_TARGET.TARGET), 
 				target, _owner);
@@ -411,7 +412,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 			_owner.AddToAvailableJobs(job);
 		}
 	}
-	private bool IsHaulResourcePileStillApplicable(ResourcePile resourcePile) {
+    private bool IsHaulResourcePileStillApplicable(ResourcePile resourcePile) {
 		return resourcePile.isBeingCarriedBy != null || (resourcePile.gridTileLocation != null
 		       && resourcePile.gridTileLocation.structure != _owner.mainStorage);
 	}
