@@ -116,7 +116,8 @@ namespace Tutorial {
             Tutorial[] allTutorials = CollectionUtilities.GetEnumValues<Tutorial>();
             for (int i = 0; i < allTutorials.Length; i++) {
                 Tutorial tutorial = allTutorials[i];
-                bool instantiateTutorial = completedTutorials.Contains(tutorial) == false;
+                //only instantiate tutorial if it has not yet been completed and has not yet been instantiated
+                bool instantiateTutorial = completedTutorials.Contains(tutorial) == false && _instantiatedTutorials.Count(quest => quest.tutorialType == tutorial) == 0;
                 if (WorldConfigManager.Instance.isDemoWorld && instantiateTutorial) {
                     //if is demo world, check if tutorial should be enabled in demo
                     instantiateTutorial = WorldConfigManager.Instance.demoTutorials.Contains(tutorial);
@@ -179,7 +180,7 @@ namespace Tutorial {
                     "You're done with the Tutorials! " +
                     "Feel free to use the remaining time to play around with the various unlocked options... " +
                     $"or just wipe out all {UtilityScripts.Utilities.VillagerIcon()}Villagers as soon as possible!");
-                SettingsManager.Instance.OnToggleSkipTutorials(true, false);
+                SettingsManager.Instance.ManualToggleSkipTutorials(true, false);
                 Messenger.Broadcast(Signals.FINISHED_IMPORTANT_TUTORIALS);
             }
         }

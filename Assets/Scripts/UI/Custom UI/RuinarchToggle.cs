@@ -1,4 +1,5 @@
 ﻿using Coffee.UIExtensions;
+using Quests.Steps;
 using UnityEngine;
 using UnityEngine.EventSystems;
 namespace Ruinarch.Custom_UI {
@@ -19,17 +20,20 @@ namespace Ruinarch.Custom_UI {
             if (Application.isPlaying && shineEffect != null) {
                 Messenger.AddListener<string>(Signals.SHOW_SELECTABLE_GLOW, OnReceiveShowGlowSignal);
                 Messenger.AddListener<string>(Signals.HIDE_SELECTABLE_GLOW, OnReceiveHideGlowSignal);
+                Messenger.AddListener<QuestStep>(Signals.QUEST_STEP_ACTIVATED, OnQuestStepActivated);
                 if (InputManager.Instance.ShouldBeHighlighted(this)) {
                     StartGlow();
                 }
                 FireToggleShownSignal();
             }
         }
+        
         protected override void OnDisable() {
             base.OnDisable();
             if (Application.isPlaying && shineEffect != null) {
                 Messenger.RemoveListener<string>(Signals.SHOW_SELECTABLE_GLOW, OnReceiveShowGlowSignal);
                 Messenger.RemoveListener<string>(Signals.HIDE_SELECTABLE_GLOW, OnReceiveHideGlowSignal);
+                Messenger.RemoveListener<QuestStep>(Signals.QUEST_STEP_ACTIVATED, OnQuestStepActivated);
                 HideGlow();
             }
         }
@@ -66,6 +70,13 @@ namespace Ruinarch.Custom_UI {
         #region Signals
         public void FireToggleShownSignal() {
             Messenger.Broadcast(Signals.TOGGLE_SHOWN, this);
+        }
+        private void OnQuestStepActivated(QuestStep questStep) {
+            if (questStep is ToggleTurnedOnStep turnedOnStep) {
+                if (turnedOnStep.neededToggleName.Equals(name)) {
+                    FireToggleShownSignal();
+                }
+            }
         }
         #endregion
     }
