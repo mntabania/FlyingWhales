@@ -68,10 +68,16 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			}
 			// character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.RESTRAIN); //cancel all restrain jobs.
 			_owner.needsComponent.CheckExtremeNeeds();
-            for (int i = 0; i < _owner.marker.inVisionCharacters.Count; i++) {
-                Character inVisionCharacter = _owner.marker.inVisionCharacters[i];
-                _owner.marker.AddUnprocessedPOI(inVisionCharacter);
+
+            //Add all in vision poi to process again
+            for (int i = 0; i < _owner.marker.inVisionPOIs.Count; i++) {
+                IPointOfInterest inVision = _owner.marker.inVisionPOIs[i];
+                _owner.marker.AddUnprocessedPOI(inVision);
             }
+            //for (int i = 0; i < _owner.marker.inVisionCharacters.Count; i++) {
+            //    Character inVisionCharacter = _owner.marker.inVisionCharacters[i];
+            //    _owner.marker.AddUnprocessedPOI(inVisionCharacter);
+            //}
         }
 	}
 	private void OnCharacterCanNoLongerPerform(Character character) {

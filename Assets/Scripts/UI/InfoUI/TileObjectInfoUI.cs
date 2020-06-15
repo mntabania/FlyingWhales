@@ -147,8 +147,8 @@ public class TileObjectInfoUI : InfoUIBase {
         }
         quantityLbl.text = $"{quantity}";
 
-        ownerLbl.text = activeTileObject.characterOwner != null ? $"<link=\"1\">{activeTileObject.characterOwner.name}</link>" : "None";
-        carriedByLbl.text = activeTileObject.isBeingCarriedBy != null ? $"<link=\"1\">{activeTileObject.isBeingCarriedBy.name}</link>" : "None";
+        ownerLbl.text = activeTileObject.characterOwner != null ? $"<link=\"1\">{UtilityScripts.Utilities.ColorizeName(activeTileObject.characterOwner.name)}</link>" : "None";
+        carriedByLbl.text = activeTileObject.isBeingCarriedBy != null ? $"<link=\"1\">{UtilityScripts.Utilities.ColorizeName(activeTileObject.isBeingCarriedBy.name)}</link>" : "None";
     }
     private void UpdateTraits() {
         string statusTraits = string.Empty;

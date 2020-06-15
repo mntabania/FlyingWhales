@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;  
 using Traits;
+using Inner_Maps.Location_Structures;
 
 public class Eat : GoapAction {
 
@@ -59,9 +60,21 @@ public class Eat : GoapAction {
                     }
                 } else {
                     //not starving
-                    if (table.characterOwner != null && !table.IsOwnedBy(actor)
+                    bool isTrapped = false;
+                    if (actor.trapStructure.IsTrapped()) {
+                        LocationStructure trapStructure = actor.trapStructure.structure;
+                        if (trapStructure == null) {
+                            trapStructure = actor.trapStructure.forcedStructure;
+                        }
+                        isTrapped = table.gridTileLocation.structure == trapStructure;
+                    }
+                    if (isTrapped) {
+                        cost = UtilityScripts.Utilities.Rng.Next(50, 71);
+                        costLog += $" +{cost}(Actor is currently visiting)";
+                    } else if (table.characterOwner != null && !table.IsOwnedBy(actor)
                         && table.characterOwner.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR) == false
-                        && table.characterOwner.relationshipContainer.IsFamilyMember(actor) == false) {
+                        && table.characterOwner.relationshipContainer.IsFamilyMember(actor) == false 
+                        && !isTrapped) {
                         cost = 2000;
                         costLog += $" +{cost}(Table personally owned by someone else who is not the Actor's Lover, Affair or Relative)";
                     } else {

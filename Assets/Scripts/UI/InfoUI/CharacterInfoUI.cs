@@ -258,10 +258,12 @@ public class CharacterInfoUI : InfoUIBase {
 
     #region Location
     private void UpdateLocationInfo() {
-        factionLbl.text = _activeCharacter.faction != null ? $"<link=\"faction\">{_activeCharacter.faction.name}</link>" : "Factionless";
-        currentLocationLbl.text = $"<link=\"currLocation\">{_activeCharacter.currentRegion.name}</link>";
-        homeRegionLbl.text = _activeCharacter.homeRegion != null ? $"<link=\"home\">{_activeCharacter.homeRegion.name}</link>" : "Homeless";
-        houseLbl.text = _activeCharacter.homeStructure != null ? $"<link=\"house\">{_activeCharacter.homeStructure.name}</link>" : "Homeless";
+        factionLbl.text = _activeCharacter.faction != null ? $"<link=\"faction\">{UtilityScripts.Utilities.ColorizeName(_activeCharacter.faction.name)}</link>" : "Factionless";
+        currentLocationLbl.text = $"{_activeCharacter.currentRegion.name}";
+        homeRegionLbl.text = _activeCharacter.homeRegion != null ? $"{_activeCharacter.homeRegion.name}" : "Homeless";
+        //currentLocationLbl.text = $"<link=\"currLocation\">{UtilityScripts.Utilities.ColorizeName(_activeCharacter.currentRegion.name)}</link>";
+        //homeRegionLbl.text = _activeCharacter.homeRegion != null ? $"<link=\"home\">{UtilityScripts.Utilities.ColorizeName(_activeCharacter.homeRegion.name)}</link>" : "Homeless";
+        houseLbl.text = _activeCharacter.homeStructure != null ? $"<link=\"house\">{UtilityScripts.Utilities.ColorizeName(_activeCharacter.homeStructure.name)}</link>" : "Homeless";
     }
     private void OnClickFaction(object obj) {
         UIManager.Instance.ShowFactionInfo(activeCharacter.faction);
@@ -611,7 +613,7 @@ public class CharacterInfoUI : InfoUIBase {
                 opinionText = "???";
             }
             
-            relationshipNamesLbl.text += $"<link=\"{actualIndex.ToString()}\">{relationshipData.targetName}</link>\n";
+            relationshipNamesLbl.text += $"<link=\"{actualIndex.ToString()}\">{UtilityScripts.Utilities.ColorizeName(relationshipData.targetName)}</link>\n";
             relationshipValuesLbl.text +=
                 $"<link=\"{actualIndex.ToString()}\"><color={BaseRelationshipContainer.OpinionColor(activeCharacter.relationshipContainer.GetTotalOpinion(targetID))}> {GetOpinionText(activeCharacter.relationshipContainer.GetTotalOpinion(targetID))}</color> <color={BaseRelationshipContainer.OpinionColor(opinionOfOther)}>({opinionText})</color></link>\n";
         }

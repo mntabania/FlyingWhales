@@ -476,6 +476,18 @@ public class CombatComponent {
     //}
     private void AddPOIToBannedFromHostile(IPointOfInterest poi) {
         if (!bannedFromHostileList.Contains(poi)) {
+            if(poi is Character targetCharacter) {
+                //Dead/unconscious characters should not be banned because they can no longer be attacked anyway
+                if(targetCharacter.isDead || targetCharacter.traitContainer.HasTrait("Unconscious")) {
+                    return;
+                }
+
+                if(targetCharacter.isInCombat && !(targetCharacter.stateComponent.currentState as CombatState).isAttacking) {
+                    //Only ban characters that are already fleeing when you removed them from hostile list
+                } else {
+                    return;
+                }
+            }
             bannedFromHostileList.Add(poi);
             GameDate dueDate = GameManager.Instance.Today();
             dueDate.AddTicks(4);

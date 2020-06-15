@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AssumptionComponent : MonoBehaviour {
+public class AssumptionComponent {
     public Character owner { get; private set; }
 
     public AssumptionComponent(Character owner) {
