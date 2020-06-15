@@ -108,7 +108,7 @@ public class InnerMapCameraMove : BaseCameraMove {
                 //fov = Mathf.Round(fov * 100f) / 100f;
                 fov = Mathf.Clamp(fov, _minFov, _maxFov);
 
-                innerMapsCamera.DOOrthoSize(fov, 0.5f).OnUpdate(() => OnZoom(innerMapsCamera));
+                innerMapsCamera.DOOrthoSize(fov, 0.5f).OnUpdate(() => OnZoom(innerMapsCamera, adjustment));
 
                 //if (!Mathf.Approximately(previousCameraFOV, fov)) {
                 //    previousCameraFOV = fov;

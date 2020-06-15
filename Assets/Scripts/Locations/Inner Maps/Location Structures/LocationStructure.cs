@@ -12,6 +12,7 @@ namespace Inner_Maps.Location_Structures {
     public abstract class LocationStructure : IPlayerActionTarget, ISelectable {
         public int id { get; private set; }
         public string name { get; protected set; }
+        public string nameWithoutID { get; protected set; }
         public virtual string nameplateName => name;
         public STRUCTURE_TYPE structureType { get; private set; }
         public List<STRUCTURE_TAG> structureTags { get; protected set; }
@@ -45,7 +46,8 @@ namespace Inner_Maps.Location_Structures {
         protected LocationStructure(STRUCTURE_TYPE structureType, Region location) {
             id = UtilityScripts.Utilities.SetID(this);
             this.structureType = structureType;
-            name = $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString())} {id.ToString()}";
+            nameWithoutID = $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString())}";
+            name = $"{nameWithoutID} {id.ToString()}";
             this.location = location;
             charactersHere = new List<Character>();
             pointsOfInterest = new HashSet<IPointOfInterest>();
@@ -118,8 +120,14 @@ namespace Inner_Maps.Location_Structures {
                 case STRUCTURE_TYPE.CITY_CENTER:
                     return $"the {location.name} city center";
                 default:
-                    return
-                        $"the {UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString())}";
+                    string normalizedStructure =
+                        UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString());
+                    if (normalizedStructure.Contains("The")) {
+                        return normalizedStructure;
+                    } else {
+                        return
+                            $"the {normalizedStructure}";    
+                    }
             }
         }
         //public void SetOuterTiles() {

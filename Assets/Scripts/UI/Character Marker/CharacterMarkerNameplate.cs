@@ -26,11 +26,11 @@ public class CharacterMarkerNameplate : PooledObject {
         _parentMarker = characterMarker;
         UpdateName();
         UpdateSizeBasedOnZoom();
-        Messenger.AddListener<Camera>(Signals.CAMERA_ZOOM_CHANGED, OnCameraZoomChanged);
+        Messenger.AddListener<Camera, float>(Signals.CAMERA_ZOOM_CHANGED, OnCameraZoomChanged);
     }
 
     #region Listeners
-    private void OnCameraZoomChanged(Camera camera) {
+    private void OnCameraZoomChanged(Camera camera, float amount) {
         if (camera == InnerMapCameraMove.Instance.innerMapsCamera) {
             UpdateSizeBasedOnZoom();
         }
@@ -66,7 +66,7 @@ public class CharacterMarkerNameplate : PooledObject {
     public override void Reset() {
         base.Reset();
         _parentMarker = null;
-        Messenger.RemoveListener<Camera>(Signals.CAMERA_ZOOM_CHANGED, OnCameraZoomChanged);
+        Messenger.RemoveListener<Camera, float>(Signals.CAMERA_ZOOM_CHANGED, OnCameraZoomChanged);
     }
     #endregion
 

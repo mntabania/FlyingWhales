@@ -81341,7 +81341,7 @@ MonoBehaviour:
   _baseTirednessDecreaseRate: 0.34
   _baseHappinessDecreaseRate: 0.21
   _baseStaminaDecreaseRate: 7.5
-  _startingMana: 250
+  _startingMana: 350
   _maximumMana: 500
   _summonMinionManaCost: 80
   _corruptTileManaCost: 0

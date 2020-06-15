@@ -17,7 +17,7 @@ namespace Quests {
 
         #region Step Helpers
         private string GetEliminateAllVillagersDescription(List<Character> remainingTargets, int totalCharactersToEliminate) {
-            return $"{UtilityScripts.Utilities.VillagerIcon()}Villagers Remaining: {remainingTargets.Count.ToString()}/{totalCharactersToEliminate.ToString()}";
+            return $"{UtilityScripts.Utilities.VillagerIcon()}Villagers Remaining: {remainingTargets.Count.ToString()}"; // /{totalCharactersToEliminate.ToString()}
         }
         #endregion
     }

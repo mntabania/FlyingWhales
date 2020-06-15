@@ -290,11 +290,11 @@ public abstract class BaseCameraMove : MonoBehaviour{
     #endregion
 
     #region Zoom
-    protected void OnZoom(Camera camera) {
+    protected void OnZoom(Camera camera, float amount) {
         if(threatEffect != null) {
             threatEffect.OnZoomCamera(camera);
         }
-        Messenger.Broadcast(Signals.CAMERA_ZOOM_CHANGED, camera);
+        Messenger.Broadcast(Signals.CAMERA_ZOOM_CHANGED, camera, amount);
     }
     #endregion
 }
