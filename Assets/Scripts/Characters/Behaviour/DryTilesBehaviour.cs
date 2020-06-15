@@ -34,8 +34,8 @@ public class DryTilesBehaviour : CharacterBehaviourComponent {
         LocationGridTile nearestTile = null;
         float nearest = 99999f;
 
-        for (int i = 0; i < character.homeSettlement.settlementJobTriggerComponent.wetTiles.Count; i++) {
-            LocationGridTile wetTile = character.homeSettlement.settlementJobTriggerComponent.wetTiles[i];
+        for (int i = 0; i < character.behaviourComponent.dryingTilesForSettlement.settlementJobTriggerComponent.wetTiles.Count; i++) {
+            LocationGridTile wetTile = character.behaviourComponent.dryingTilesForSettlement.settlementJobTriggerComponent.wetTiles[i];
             Wet wet = wetTile.genericTileObject.traitContainer.GetNormalTrait<Wet>("Wet");
             if (wet != null && wet.dryer == null) {
                 //only consider dousing fire that is not yet assigned
