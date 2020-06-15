@@ -55,7 +55,7 @@ public class PickUp : GoapAction {
                     cost += UtilityScripts.Utilities.Rng.Next(20, 61);
                     costLog += $" +{cost}(Personal owner is actor)";
                 } else {
-                    if(actor.traitContainer.HasTrait("Kleptomaniac") || !actor.relationshipContainer.HasRelationshipWith(targetTileObject.characterOwner)) {
+                    if(actor.traitContainer.HasTrait("Kleptomaniac") || !actor.relationshipContainer.HasRelationshipWith(targetTileObject.characterOwner) || (job != null && job.jobType == JOB_TYPE.HAUL)) {
                         cost += UtilityScripts.Utilities.Rng.Next(80, 121);
                         costLog += $" +{cost}(Kleptomaniac/No rel with owner)";
                     } else {
@@ -119,7 +119,13 @@ public class PickUp : GoapAction {
         //goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
     }
     public void AfterTakeSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.PickUpItem(goapNode.poiTarget as TileObject);
+        //Picked up item when in haul job should not set its ownership to the actor because he/she will just deliver it to the main storage
+        //This will fix na assumption issues and the issue with other characters not being able to do haul job if the first character to haul dropped the item (first character will be the item owner) because of the pick up costing
+        bool setOwnership = true;
+        if(goapNode.associatedJobType == JOB_TYPE.HAUL) {
+            setOwnership = false;
+        }
+        goapNode.actor.PickUpItem(goapNode.poiTarget as TileObject, setOwnership: setOwnership);
     }
     #endregion
 }

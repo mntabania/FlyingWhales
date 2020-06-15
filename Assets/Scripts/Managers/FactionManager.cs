@@ -56,7 +56,7 @@ public class FactionManager : MonoBehaviour {
     }
     public void CreateFriendlyNeutralFaction() {
         Faction newFaction = new Faction(RACE.HUMANS);
-        newFaction.SetName("Friendly Neutral");
+        newFaction.SetName("Vagrants");
         newFaction.SetFactionActiveState(false);
         newFaction.SetEmblem(GetFactionEmblem(4));
         allFactions.Add(newFaction);

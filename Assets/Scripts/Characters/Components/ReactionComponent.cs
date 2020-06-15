@@ -527,7 +527,7 @@ public class ReactionComponent {
                                 }
                             }
                         } else if (targetCharacter.traitContainer.HasTrait("Criminal") && !targetCharacter.traitContainer.HasTrait("Restrained")) {
-                            if(owner.relationshipContainer.GetOpinionLabel(targetCharacter) == RelationshipManager.Close_Friend) {
+                            if(owner.relationshipContainer.IsFriendsWith(targetCharacter)) {
                                 owner.interruptComponent.TriggerInterrupt(INTERRUPT.Worried, targetCharacter);
                             } else {
                                 bool hasCreatedPersonalApprehend = false;

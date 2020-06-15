@@ -1302,11 +1302,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return false;
     }
-    public void CarryPOI(IPointOfInterest poi, bool changeOwnership = false) {
+    public void CarryPOI(IPointOfInterest poi, bool changeOwnership = false, bool setOwnership = true) {
         if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             ownParty.AddPOI(poi);
         } else if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
-            PickUpItem(poi as TileObject, changeOwnership);
+            PickUpItem(poi as TileObject, changeOwnership, setOwnership);
         }
     }
     public bool IsPOICarriedOrInInventory(IPointOfInterest poi) {
@@ -1711,11 +1711,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     private void OnBeforeSeizingTileObject(TileObject tileObject) {
-        if(faction != null && faction.isMajorNonPlayerFriendlyNeutral && marker) {
-            if (marker.inVisionTileObjects.Contains(tileObject)) {
-                PlayerManager.Instance.player.threatComponent.AdjustThreat(5);
-            }
-        }
+        //if(faction != null && faction.isMajorNonPlayerFriendlyNeutral && marker) {
+        //    if (marker.inVisionTileObjects.Contains(tileObject)) {
+        //        PlayerManager.Instance.player.threatComponent.AdjustThreat(5);
+        //    }
+        //}
     }
     private void OnSeizeTileObject(TileObject tileObject) {
         if(currentActionNode != null && currentActionNode.poiTarget == tileObject) {
@@ -3133,15 +3133,17 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool RemoveOwnedItem(TileObject item) {
         return ownedItems.Remove(item);
     }
-    public bool ObtainItem(TileObject item, bool changeCharacterOwnership = false) {
+    public bool ObtainItem(TileObject item, bool changeCharacterOwnership = false, bool setOwnership = true) {
         if (AddItem(item)) {
             // item.SetFactionOwner(this.faction);
             item.SetInventoryOwner(this);
             if (changeCharacterOwnership) {
                 item.SetCharacterOwner(this);
             } else {
-                if (item.characterOwner == null) {
-                    item.SetCharacterOwner(this);
+                if (setOwnership) {
+                    if (item.characterOwner == null) {
+                        item.SetCharacterOwner(this);
+                    }
                 }
             }
             return true;
@@ -3282,9 +3284,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //     }
         // }
     }
-    public void PickUpItem(TileObject item, bool changeCharacterOwnership = false) {
+    public void PickUpItem(TileObject item, bool changeCharacterOwnership = false, bool setOwnership = true) {
         item.isBeingCarriedBy?.UnobtainItem(item);
-        if (ObtainItem(item, changeCharacterOwnership)) {
+        if (ObtainItem(item, changeCharacterOwnership, setOwnership)) {
             item.gridTileLocation?.structure.RemovePOIDestroyVisualOnly(item, this);
             item.SetPOIState(POI_STATE.ACTIVE);
         }

@@ -12,6 +12,7 @@ public class MovementComponent {
     public float speedModifier { get; private set; }
     public float walkSpeedModifier { get; private set; }
     public float runSpeedModifier { get; private set; }
+    public bool hasMovedOnCorruption { get; private set; }
 
     #region getters
     public float walkSpeed => owner.raceSetting.walkSpeed + (owner.raceSetting.walkSpeed * walkSpeedModifier);
@@ -112,5 +113,8 @@ public class MovementComponent {
         } else {
             return false;
         }
+    }
+    public void SetHasMovedOnCorruption(bool state) {
+        hasMovedOnCorruption = state;
     }
 }

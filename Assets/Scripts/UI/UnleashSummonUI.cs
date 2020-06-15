@@ -295,7 +295,7 @@ public class UnleashSummonUI : PopupMenuBase { //MonoBehaviour
             }
             PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.INVADE).OnExecuteSpellActionAffliction();
         }
-        PlayerManager.Instance.player.threatComponent.AdjustThreat(5 + (5 * chosenSummons.Count));
+        //PlayerManager.Instance.player.threatComponent.AdjustThreat(5 + (5 * chosenSummons.Count));
 
         if(spawnedCharacter != null) {
             spawnedCharacter.CenterOnCharacter();
