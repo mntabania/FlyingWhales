@@ -605,6 +605,7 @@ GameObject:
   - component: {fileID: 224798557353797020}
   - component: {fileID: 222437543241827454}
   - component: {fileID: 114580514230089582}
+  - component: {fileID: 7042244241396105920}
   m_Layer: 5
   m_Name: BG
   m_TagString: Untagged
@@ -671,6 +672,18 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!225 &7042244241396105920
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1623748545158560}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1711417101825226
 GameObject:
   m_ObjectHideFlags: 0
@@ -682,7 +695,6 @@ GameObject:
   - component: {fileID: 224777192084830466}
   - component: {fileID: 222707390006494274}
   - component: {fileID: 1615250794623998077}
-  - component: {fileID: 5989649088564143792}
   m_Layer: 5
   m_Name: GeneralConfirmation
   m_TagString: Untagged
@@ -735,19 +747,7 @@ MonoBehaviour:
   generalConfirmationBodyText: {fileID: 114323768670604370}
   generalConfirmationButton: {fileID: 114451253942103780}
   generalConfirmationButtonText: {fileID: 114643680270638624}
-  _canvasGroup: {fileID: 5989649088564143792}
---- !u!225 &5989649088564143792
-CanvasGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1711417101825226}
-  m_Enabled: 1
-  m_Alpha: 1
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
-  m_IgnoreParentGroups: 0
+  _canvasGroup: {fileID: 7042244241396105920}
 --- !u!1 &1862608771795860
 GameObject:
   m_ObjectHideFlags: 0
