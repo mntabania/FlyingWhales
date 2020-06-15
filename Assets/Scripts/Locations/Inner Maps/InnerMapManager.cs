@@ -422,8 +422,8 @@ namespace Inner_Maps {
             UIManager.Instance.ShowSmallInfo(summary);
 #else
          //For build only
-        if (tile.objHere != null) {
-            string tooltip =  tile.objHere.ToString();
+        if (character == null && tile.objHere != null) {
+            string tooltip =  tile.objHere.name;
             if (tile.objHere is TileObject tileObject && tileObject.users != null && tileObject.users.Length > 0) {
                 tooltip += " used by:";
                 for (int i = 0; i < tileObject.users.Length; i++) {

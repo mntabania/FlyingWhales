@@ -5,6 +5,8 @@ namespace Quests.Steps {
         
         private readonly string _neededIdentifier;
         private readonly Func<bool> _isToggleValid;
+
+        public string neededToggleName => _neededIdentifier;
         
         public ToggleTurnedOnStep(string neededIdentifier, string stepDescription, System.Func<bool> isToggleValid = null) 
             : base(stepDescription) {

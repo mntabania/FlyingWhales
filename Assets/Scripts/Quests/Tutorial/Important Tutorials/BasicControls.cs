@@ -20,6 +20,9 @@ namespace Tutorial {
             QuestStep look = new LookAroundStep()
                 .SetHoverOverAction(OnHoverLookAround)
                 .SetHoverOutAction(UIManager.Instance.HideSmallInfo);
+            QuestStep zoom = new ZoomStep()
+                .SetHoverOverAction(OnHoverHoverZoom)
+                .SetHoverOutAction(UIManager.Instance.HideSmallInfo);
             QuestStep unpause = new UnpauseStep()
                 .SetHoverOverAction(OnHoverUnpause)
                 .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
@@ -36,7 +39,7 @@ namespace Tutorial {
             }
 
             steps = new List<QuestStepCollection>() {
-                new QuestStepCollection(hoveredStep, look, unpause),
+                new QuestStepCollection(hoveredStep, look, zoom, unpause),
                 new QuestStepCollection(objectClick, characterClick),
                 new QuestStepCollection(structureClick, hexTileClick),
             };
@@ -49,6 +52,12 @@ namespace Tutorial {
                 "\n- <#FFFB00>Text with this color provide more information when hovered</color>" +
                 "\n- <#FFFFFF>Text with this color does not.</color>",
                 stepItem.hoverPosition, "Checklist Help"
+            );
+        }
+        private void OnHoverHoverZoom(QuestStepItem stepItem) {
+            UIManager.Instance.ShowSmallInfo(
+                "You can zoom in and out using the Scroll Wheel",
+                stepItem.hoverPosition, "Zooming"
             );
         }
         private void OnHoverLookAround(QuestStepItem stepItem) {

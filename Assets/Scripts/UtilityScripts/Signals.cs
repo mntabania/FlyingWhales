@@ -662,7 +662,7 @@ public static class Signals {
     #region Camera
     public static string ZOOM_WORLD_MAP_CAMERA = "OnZoomWorldMapCamera";
     /// <summary>
-    /// Parameters: Camera
+    /// Parameters: Camera, float amount
     /// </summary>
     public static string CAMERA_ZOOM_CHANGED = "OnCameraZoomChanged";
     #endregion

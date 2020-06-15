@@ -122,7 +122,7 @@ namespace Settings {
             _settings.skipTutorials = isOn;
             Messenger.Broadcast(Signals.ON_SKIP_TUTORIALS_CHANGED, isOn, true);
         }
-        public void OnToggleSkipTutorials(bool isOn, bool deSpawnExisting) {
+        public void ManualToggleSkipTutorials(bool isOn, bool deSpawnExisting) {
             _settings.skipTutorials = isOn;
             Messenger.Broadcast(Signals.ON_SKIP_TUTORIALS_CHANGED, isOn, deSpawnExisting);
         }

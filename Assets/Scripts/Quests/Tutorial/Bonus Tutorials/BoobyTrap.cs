@@ -17,14 +17,6 @@ namespace Tutorial {
                 new CharacterFinishedAction(INTERACTION_TYPE.BOOBY_TRAP).SetOnMeetAction(OnCharacterFinishedAction)
             };
         }
-        protected override bool HasMetAllCriteria() {
-            bool hasMetAllCriteria = base.HasMetAllCriteria();
-            if (hasMetAllCriteria) {
-                //no other active log quest
-                return TutorialManager.Instance.HasActiveLogQuest() == false;
-            }
-            return false;
-        }
         private void OnCharacterFinishedAction(QuestCriteria criteria) {
             if (criteria is CharacterFinishedAction metCriteria) {
                 _targetAction = metCriteria.finishedAction;
@@ -70,7 +62,9 @@ namespace Tutorial {
                         .SetHoverOverAction(OnHoverOwner)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo),
                     new ToggleTurnedOnStep("TileObject_Logs", "Click on Log tab", () => UIManager.Instance.GetCurrentlySelectedPOI() == _targetAction.poiTarget),
-                    new LogHistoryItemClicked("Click Culprit's name", IsClickedLogObjectValid),
+                    new LogHistoryItemClicked("Click Culprit's name", IsClickedLogObjectValid)
+                        .SetHoverOverAction(OnHoverCulprit)
+                        .SetHoverOutAction(UIManager.Instance.HideSmallInfo),
                     new ToggleTurnedOnStep("CharacterInfo_Relations", "Click on Relations tab", () => UIManager.Instance.GetCurrentlySelectedPOI() == _targetAction.actor)
                         .SetCompleteAction(OnCompletePlaceTrap)
                 )
@@ -101,6 +95,13 @@ namespace Tutorial {
                 $"{UtilityScripts.Utilities.ColorizeAction("Check out the relationship")} between the Culprit and the object's Owner. " +
                 "You may also find some hints in the Culprit's Log about their history.\n\n" +
                 $"Create more tensions between {UtilityScripts.Utilities.VillagerIcon()}Villagers to induce more of them to do dastardly deeds like this!"
+            );
+        }
+        private void OnHoverCulprit(QuestStepItem item) {
+            UIManager.Instance.ShowSmallInfo(
+                $"A {UtilityScripts.Utilities.ColorizeAction("booby-trap log")} should have been registered in the object's Log tab. " +
+                $"{UtilityScripts.Utilities.ColorizeAction("Click on the name")} of the Villager that placed it.",
+                TutorialManager.Instance.boobyTrapLog, "The culprit", item.hoverPosition
             );
         }
         #endregion

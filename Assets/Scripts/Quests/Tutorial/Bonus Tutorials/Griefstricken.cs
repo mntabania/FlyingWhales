@@ -15,14 +15,6 @@ namespace Tutorial {
                 new CharacterGainedTrait("Griefstricken").SetOnMeetAction(OnCharacterGriefstricken)
             };
         }
-        protected override bool HasMetAllCriteria() {
-            bool hasMetAllCriteria = base.HasMetAllCriteria();
-            if (hasMetAllCriteria) {
-                //no other active log quest
-                return TutorialManager.Instance.HasActiveLogQuest() == false;
-            }
-            return false;
-        }
         private void OnCharacterGriefstricken(QuestCriteria criteria) {
             if (criteria is CharacterGainedTrait characterGainedTrait) {
                 _targetCharacter = characterGainedTrait.character;

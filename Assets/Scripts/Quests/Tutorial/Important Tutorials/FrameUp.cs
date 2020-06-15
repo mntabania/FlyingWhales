@@ -7,7 +7,7 @@ using Quests;
 using Quests.Steps;
 using UnityEngine;
 namespace Tutorial {
-    public class FrameUp : BonusTutorial {
+    public class FrameUp : LogQuest {
 
         private TileObject _droppedObject;
         private LocationStructure _droppedAtStructure;
@@ -17,21 +17,15 @@ namespace Tutorial {
         #region Criteria
         protected override void ConstructCriteria() {
             _activationCriteria = new List<QuestCriteria>() {
-                new HasCompletedTutorialQuest(TutorialManager.Tutorial.Elemental_Interactions)
+                new HasFinishedImportantTutorials(),
+                new IsAtTime(
+                    new [] {
+                        GameManager.Instance.GetTicksBasedOnHour(7),
+                        GameManager.Instance.GetTicksBasedOnHour(13),
+                        GameManager.Instance.GetTicksBasedOnHour(19)
+                    }
+                )
             };
-            Messenger.AddListener<Quest>(Signals.QUEST_DEACTIVATED, OnQuestDeactivated);
-        }
-        private void OnQuestDeactivated(Quest quest) {
-            TryMakeAvailable();
-        }
-        protected override bool HasMetAllCriteria() {
-            bool hasMetAllCriteria = base.HasMetAllCriteria();
-            if (hasMetAllCriteria) {
-                int activeQuests = TutorialManager.Instance.GetAllActiveTutorialsCount() +
-                                   QuestManager.Instance.GetActiveQuestsCount();
-                return activeQuests < 2;
-            }
-            return false;
         }
         #endregion
 
@@ -42,17 +36,6 @@ namespace Tutorial {
         }
         #endregion
 
-        #region Activation
-        public override void Activate() {
-            base.Activate();
-            Messenger.RemoveListener<Quest>(Signals.QUEST_DEACTIVATED, OnQuestDeactivated);
-        }
-        public override void Deactivate() {
-            base.Deactivate();
-            Messenger.RemoveListener<Quest>(Signals.QUEST_DEACTIVATED, OnQuestDeactivated);
-        }
-        #endregion
-        
         #region Steps
         protected override void ConstructSteps() {
             steps = new List<QuestStepCollection>() {
@@ -84,6 +67,8 @@ namespace Tutorial {
                         .SetObjectsToCenter(GetItemOwnerToCenter),
                     new ToggleTurnedOnStep("CharacterInfo_Logs", "Click on Log tab", () => UIManager.Instance.GetCurrentlySelectedPOI() == _droppedObject.characterOwner),
                     new LogHistoryItemClicked("Click assumed thief's name", IsClickedLogObjectValid)
+                        .SetHoverOverAction(OnHoverAssumedThief)
+                        .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
                 ),
             };
         }
@@ -168,6 +153,16 @@ namespace Tutorial {
                 return true;
             }
             return false;
+        }
+        private void OnHoverAssumedThief(QuestStepItem stepItem) {
+            Character owner = _droppedObject.characterOwner;
+            UIManager.Instance.ShowSmallInfo(
+                $"An {UtilityScripts.Utilities.ColorizeAction("assumption log")} should have been registered in " +
+                $"{owner.name}'s Log tab. {UtilityScripts.Utilities.ColorizeAction("Click on the name")} of the " +
+                $"Villager that he thought stole {UtilityScripts.Utilities.GetPronounString(owner.gender, PRONOUN_TYPE.POSSESSIVE, false)} {_droppedObject.name}.", 
+                TutorialManager.Instance.assumedThief, "Assumption Logs",
+                stepItem.hoverPosition
+            );
         }
         #endregion
 

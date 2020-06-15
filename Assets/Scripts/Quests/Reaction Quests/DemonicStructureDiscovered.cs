@@ -14,7 +14,7 @@ namespace Quests {
         private readonly GoapPlanJob _targetJob;
         
         public DemonicStructureDiscovered(LocationStructure targetStructure, Character reporter, GoapPlanJob targetJob)
-            : base($"{targetStructure.name} Discovered!") {
+            : base($"{targetStructure.nameWithoutID} Discovered!") {
             _targetStructure = targetStructure;
             _reporter = reporter;
             _targetJob = targetJob;

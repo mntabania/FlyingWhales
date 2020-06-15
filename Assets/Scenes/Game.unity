@@ -39307,11 +39307,15 @@ MonoBehaviour:
   logsTab: {fileID: 2800000, guid: 7aee7ce54defa9340bef1e3dc1cf8457, type: 3}
   homeStructureVideo: {fileID: 32900000, guid: b08af4031c74c78469eb4af307bb8fd7, type: 3}
   necronomiconPicture: {fileID: 2800000, guid: 244e9dff3c5fca941a4888c8ef9d2249, type: 3}
-  griefstrickenLog: {fileID: 32900000, guid: e10ab630f3eb9c14a9556011d2121835, type: 3}
-  killedByMonsterLog: {fileID: 32900000, guid: 45c35168cbe8e024abbf4d882b8b8432, type: 3}
+  griefstrickenLog: {fileID: 2800000, guid: cfe4e1deaac96cd44b4d2faf88133aed, type: 3}
+  killedByMonsterLog: {fileID: 2800000, guid: 185b6ff715f5c8542bac1630c910745f, type: 3}
   tileObjectOwner: {fileID: 2800000, guid: a228a957aab4c3848b167369dd435409, type: 3}
   structureInfoResidents: {fileID: 2800000, guid: 65cbf1772d7d09146bac3d4eb86c1ac7,
     type: 3}
+  assumedThief: {fileID: 2800000, guid: 57644caa99356c045b538967996016af, type: 3}
+  boobyTrapLog: {fileID: 2800000, guid: 988be33a00d7c4347a5820d683542259, type: 3}
+  infectedLog: {fileID: 2800000, guid: 2375e9f03b5293a47b0d3a143955fe12, type: 3}
+  recipientLog: {fileID: 2800000, guid: d76bdbed07fe7e94e9c9cbf9baa3b218, type: 3}
 --- !u!4 &711025101 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4243562867990628, guid: c51738521ec0ac14abf6fc9fd57b44d9,
@@ -80640,7 +80644,7 @@ MonoBehaviour:
   _baseTirednessDecreaseRate: 0.34
   _baseHappinessDecreaseRate: 0.21
   _baseStaminaDecreaseRate: 7.5
-  _startingMana: 250
+  _startingMana: 350
   _maximumMana: 500
   _summonMinionManaCost: 80
   _corruptTileManaCost: 0

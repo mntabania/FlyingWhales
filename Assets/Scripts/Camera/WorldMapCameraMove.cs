@@ -86,7 +86,7 @@ public class WorldMapCameraMove : BaseCameraMove {
                 fov -= adjustment;
                 fov = Mathf.Clamp(fov, _minFov, _maxFov);
 
-                mainCamera.DOOrthoSize(fov, 0.5f).OnUpdate(() => OnZoom(mainCamera));
+                mainCamera.DOOrthoSize(fov, 0.5f).OnUpdate(() => OnZoom(mainCamera, adjustment));
                 //if (!Mathf.Approximately(previousCameraFOV, fov)) {
                 //    previousCameraFOV = fov;
                 //    mainCamera.orthographicSize = Mathf.Lerp(mainCamera.orthographicSize, fov, Time.deltaTime * _zoomSpeed);

@@ -13,7 +13,7 @@ public class LogComponent  {
     private readonly Dictionary<string, List<Log>> _categorizedHistory;
 
     private string _planCostLog;
-    private const int MaxLogs = 300; 
+    private const int MaxLogs = 100; 
     
     public LogComponent(IPointOfInterest owner) {
         this.owner = owner;
