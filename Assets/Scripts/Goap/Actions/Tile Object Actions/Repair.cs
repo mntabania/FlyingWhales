@@ -126,7 +126,7 @@ public class Repair : GoapAction {
     #endregion
 
     #region Preconditions
-    private bool HasSupply(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    private bool HasSupply(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
         TileObject tileObj = poiTarget as TileObject;
         TileObjectData data = TileObjectDB.GetTileObjectData(tileObj.tileObjectType);
         int craftCost = (int)(data.constructionCost * 0.5f);

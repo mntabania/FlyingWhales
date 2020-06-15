@@ -201,7 +201,7 @@ public class DrinkBlood : GoapAction {
     #endregion
 
     #region Preconditions
-    private bool HasUnconsciousOrRestingTarget(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    private bool HasUnconsciousOrRestingTarget(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
         Character target = poiTarget as Character;
         return target.traitContainer.HasTrait("Unconscious", "Resting");
     }

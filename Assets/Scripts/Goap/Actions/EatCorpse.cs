@@ -27,7 +27,7 @@
     #endregion
 
     #region Preconditions
-    private bool IsTargetDead(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    private bool IsTargetDead(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
         if (poiTarget is Character character) {
             return character.isDead;
         }

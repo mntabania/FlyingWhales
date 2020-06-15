@@ -108,7 +108,7 @@ public class FirstAidCharacter : GoapAction {
     #endregion
 
     #region Precondition
-    private bool HasHealingPotion(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    private bool HasHealingPotion(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
         return actor.HasItem(TILE_OBJECT_TYPE.HEALING_POTION);
     }
     #endregion

@@ -209,7 +209,7 @@ public class Feed : GoapAction {
     //#endregion
 
     #region Preconditions
-    private bool ActorHasFood(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    private bool ActorHasFood(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
         if (poiTarget.HasResourceAmount(RESOURCE.FOOD, 12)) {
             return true;
         }

@@ -290,13 +290,13 @@ public class GoapAction : ICrimeable {
     #endregion
 
     #region Preconditions
-    protected void AddPrecondition(GoapEffect effect, Func<Character, IPointOfInterest, object[], bool> condition) {
+    protected void AddPrecondition(GoapEffect effect, Func<Character, IPointOfInterest, object[], JOB_TYPE, bool> condition) {
         basePreconditions.Add(new Precondition(effect, condition));
     }
-    public bool CanSatisfyAllPreconditions(Character actor, IPointOfInterest target, object[] otherData) {
+    public bool CanSatisfyAllPreconditions(Character actor, IPointOfInterest target, object[] otherData, JOB_TYPE jobType) {
         List<Precondition> preconditions = GetPreconditions(actor, target, otherData);
         for (int i = 0; i < preconditions.Count; i++) {
-            if (!preconditions[i].CanSatisfyCondition(actor, target, otherData)) {
+            if (!preconditions[i].CanSatisfyCondition(actor, target, otherData, jobType)) {
                 return false;
             }
         }

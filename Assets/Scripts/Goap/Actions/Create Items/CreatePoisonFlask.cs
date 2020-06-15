@@ -50,10 +50,10 @@ public class CreatePoisonFlask : GoapAction {
     #endregion
 
     #region Preconditions
-    private bool HasHerbPlant (Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    private bool HasHerbPlant (Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
         return actor.HasItem("Herb Plant");
     }
-    private bool HasWaterFlask(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    private bool HasWaterFlask(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
         return actor.HasItem("Water Flask");
     }
     #endregion

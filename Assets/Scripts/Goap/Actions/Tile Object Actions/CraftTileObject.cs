@@ -24,7 +24,7 @@ public class CraftTileObject : GoapAction {
                 List<Precondition> p = new List<Precondition>();
                 for (int i = 0; i < data.itemRequirementsForCreation.Length; i++) {
                     string req = data.itemRequirementsForCreation[i];
-                    p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, req, false, GOAP_EFFECT_TARGET.ACTOR), (thisActor, thisTarget, thisOtherData) => IsCarriedOrInInventory(thisActor, thisTarget, thisOtherData, req)));
+                    p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, req, false, GOAP_EFFECT_TARGET.ACTOR), (thisActor, thisTarget, thisOtherData, jobType) => IsCarriedOrInInventory(thisActor, thisTarget, thisOtherData, req)));
                 }
                 return p;
             }

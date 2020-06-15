@@ -64,7 +64,7 @@ public class RemoveFreezing : GoapAction {
     #endregion
 
     #region Preconditions
-    private bool HasEmber(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    private bool HasEmber(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
         return actor.HasItem(TILE_OBJECT_TYPE.EMBER);
     }
     #endregion

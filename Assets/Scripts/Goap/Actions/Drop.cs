@@ -103,7 +103,7 @@ public class Drop : GoapAction {
     #endregion
 
     #region Preconditions
-    private bool IsCarriedOrInInventory(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    private bool IsCarriedOrInInventory(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
         // if (poiTarget is Character) {
         //     Character target = poiTarget as Character;
         //     return target.currentParty == actor.currentParty;    

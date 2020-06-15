@@ -77,7 +77,7 @@ public class Carry : GoapAction {
     #endregion
 
     #region Precondition
-    private bool TargetCannotMove(Character actor, IPointOfInterest target, object[] otherData) {
+    private bool TargetCannotMove(Character actor, IPointOfInterest target, object[] otherData, JOB_TYPE jobType) {
         if(target is Character) {
             return (target as Character).canMove == false;
         }

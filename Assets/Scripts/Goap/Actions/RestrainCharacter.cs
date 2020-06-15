@@ -147,7 +147,7 @@ public class RestrainCharacter : GoapAction {
     #endregion
 
     #region Preconditions
-    private bool CannotMove(Character actor, IPointOfInterest target, object[] otherData) {
+    private bool CannotMove(Character actor, IPointOfInterest target, object[] otherData, JOB_TYPE jobType) {
         return target.traitContainer.HasTrait("Unconscious");
     }
     #endregion

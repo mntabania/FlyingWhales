@@ -64,7 +64,7 @@ public class RemovePoison : GoapAction {
     #endregion
 
     #region Preconditions
-    private bool HasAntidote(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    private bool HasAntidote(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
         return actor.HasItem(TILE_OBJECT_TYPE.ANTIDOTE);
     }
     #endregion

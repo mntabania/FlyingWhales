@@ -38,7 +38,7 @@ public class HealSelf : GoapAction {
     #endregion
 
     #region Preconditions
-    private bool HasItemInInventory(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    private bool HasItemInInventory(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
         return actor.HasItem(TILE_OBJECT_TYPE.HEALING_POTION);
     }
     #endregion

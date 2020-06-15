@@ -59,7 +59,7 @@ public class BuildStructure : GoapAction {
     #endregion
 
     #region Preconditions
-    private bool HasSupply(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    private bool HasSupply(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
         if (poiTarget.HasResourceAmount(RESOURCE.WOOD, 50)) {
             return true;
         }

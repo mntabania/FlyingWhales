@@ -48,7 +48,7 @@ public class CreateAntidote : GoapAction {
     #endregion
 
     #region Preconditions
-    private bool HasPoisonFlask(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    private bool HasPoisonFlask(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
         return actor.HasItem("Poison Flask");
     }
     #endregion

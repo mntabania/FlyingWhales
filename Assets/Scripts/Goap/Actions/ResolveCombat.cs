@@ -55,14 +55,19 @@ public class ResolveCombat : GoapAction {
     #endregion
 
     #region Preconditions
-    private bool IsCombatFinished(Character actor, IPointOfInterest target, object[] otherData) {
+    private bool IsCombatFinished(Character actor, IPointOfInterest target, object[] otherData, JOB_TYPE jobType) {
         if (target is Character targetCharacter) {
-            //target character must be
-            // - unable to move
-            //to consider the combat as finished
-            if (targetCharacter.traitContainer.HasTrait("Unconscious") || targetCharacter.isDead) {
-                return true;
+            if (jobType.IsJobLethal()) {
+                //if job type is lethal, this precondition should only be met if the target is dead.
+                if (targetCharacter.isDead) {
+                    return true;
+                }    
+            } else {
+                if (targetCharacter.traitContainer.HasTrait("Unconscious") || targetCharacter.isDead) {
+                    return true;
+                }    
             }
+            
         } else {
             return target.gridTileLocation == null;
         }

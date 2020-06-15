@@ -62,7 +62,7 @@ public class RepairStructure : GoapAction {
     #endregion
     
     #region Preconditions
-    private bool HasResource(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    private bool HasResource(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
         StructureTileObject tileObj = poiTarget as StructureTileObject;
         TileObjectData data = TileObjectDB.GetTileObjectData(tileObj.tileObjectType);
         int craftCost = (int)(data.constructionCost * 0.5f);
