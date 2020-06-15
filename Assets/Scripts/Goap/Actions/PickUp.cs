@@ -37,9 +37,14 @@ public class PickUp : GoapAction {
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}:";
         int cost = 0;
-        if (job != null && job.jobType == JOB_TYPE.OBTAIN_PERSONAL_ITEM && !target.gridTileLocation.IsPartOfSettlement(actor.homeSettlement)) {
-            cost += 2000;
-            costLog += " +2000(Object is not part of home settlement and job is Obtain Personal Item)";
+        if (job != null && job.jobType == JOB_TYPE.OBTAIN_PERSONAL_ITEM) {
+            if (!target.gridTileLocation.IsPartOfSettlement(actor.homeSettlement)) {
+                cost += 2000;
+                costLog += " +2000(Object is not part of home settlement and job is Obtain Personal Item)";
+            } else if (target.IsOwnedBy(actor) && target.gridTileLocation.structure == actor.homeStructure) {
+                cost += 2000;
+                costLog += " +2000(Object is owned by actor and object is in home and job is Obtain Personal Item)";
+            }
         }
         if(target is TileObject targetTileObject) {
             if(targetTileObject.characterOwner == null) {

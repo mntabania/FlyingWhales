@@ -526,6 +526,18 @@ public class ReactionComponent {
                                     owner.interruptComponent.TriggerInterrupt(INTERRUPT.Laugh_At, targetCharacter);
                                 }
                             }
+                        } else if (targetCharacter.traitContainer.HasTrait("Criminal") && !targetCharacter.traitContainer.HasTrait("Restrained")) {
+                            if(owner.relationshipContainer.GetOpinionLabel(targetCharacter) == RelationshipManager.Close_Friend) {
+                                owner.interruptComponent.TriggerInterrupt(INTERRUPT.Worried, targetCharacter);
+                            } else {
+                                bool hasCreatedPersonalApprehend = false;
+                                if (owner.currentSettlement != null && owner.currentSettlement is NPCSettlement settlement && (settlement.locationType == LOCATION_TYPE.ELVEN_SETTLEMENT || settlement.locationType == LOCATION_TYPE.HUMAN_SETTLEMENT)) {
+                                    hasCreatedPersonalApprehend = owner.jobComponent.TryCreateApprehend(targetCharacter, settlement);
+                                }
+                                if (!hasCreatedPersonalApprehend) {
+                                    owner.combatComponent.Flight(targetCharacter, "saw criminal " + targetCharacter.name);
+                                }
+                            }
                         } else if (!owner.traitContainer.HasTrait("Psychopath")) {
                             debugLog += "\n-Character is not Psychopath and does not consider Target as Enemy or Rival";
                             if (targetCharacter.traitContainer.HasTrait("Paralyzed", "Ensnared") || (targetCharacter.traitContainer.HasTrait("Restrained") && targetCharacter.traitContainer.HasTrait("Criminal"))) {
@@ -760,30 +772,39 @@ public class ReactionComponent {
         //}
         if (targetTileObject.traitContainer.HasTrait("Danger Remnant")) {
             if (!owner.traitContainer.HasTrait("Berserked")) {
-                if (owner.traitContainer.HasTrait("Coward")) {
+                if (targetTileObject.gridTileLocation != null && targetTileObject.gridTileLocation.isCorrupted) {
                     CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, owner, targetTileObject, REACTION_STATUS.WITNESSED);
                 } else {
-                    int shockChance = 30;
-                    if (owner.traitContainer.HasTrait("Combatant")) {
-                        shockChance = 70;
-                    }
-                    if (UnityEngine.Random.Range(0, 100) < shockChance) {
-                        CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, owner, targetTileObject, REACTION_STATUS.WITNESSED);
-                    } else {
+                    if (owner.traitContainer.HasTrait("Coward")) {
                         CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, owner, targetTileObject, REACTION_STATUS.WITNESSED);
+                    } else {
+                        int shockChance = 30;
+                        if (owner.traitContainer.HasTrait("Combatant")) {
+                            shockChance = 70;
+                        }
+                        if (UnityEngine.Random.Range(0, 100) < shockChance) {
+                            CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, owner, targetTileObject, REACTION_STATUS.WITNESSED);
+                        } else {
+                            CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, owner, targetTileObject, REACTION_STATUS.WITNESSED);
+                        }
                     }
                 }
+                
             }
         }
         if (targetTileObject.traitContainer.HasTrait("Surprised Remnant")) {
             if (!owner.traitContainer.HasTrait("Berserked")) {
-                if (owner.traitContainer.HasTrait("Coward")) {
+                if (targetTileObject.gridTileLocation != null && targetTileObject.gridTileLocation.isCorrupted) {
                     CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, owner, targetTileObject, REACTION_STATUS.WITNESSED);
                 } else {
-                    if (UnityEngine.Random.Range(0, 100) < 95) {
-                        CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, owner, targetTileObject, REACTION_STATUS.WITNESSED);
-                    } else {
+                    if (owner.traitContainer.HasTrait("Coward")) {
                         CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, owner, targetTileObject, REACTION_STATUS.WITNESSED);
+                    } else {
+                        if (UnityEngine.Random.Range(0, 100) < 95) {
+                            CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, owner, targetTileObject, REACTION_STATUS.WITNESSED);
+                        } else {
+                            CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, owner, targetTileObject, REACTION_STATUS.WITNESSED);
+                        }
                     }
                 }
             }
@@ -823,22 +844,25 @@ public class ReactionComponent {
             && targetTileObject.gridTileLocation != null 
             && targetTileObject.gridTileLocation.structure != null
             && targetTileObject.gridTileLocation.structure is Dwelling
-            && targetTileObject.gridTileLocation.structure != owner.homeStructure
-            && targetTileObject.gridTileLocation.structure.residents.Count > 0
-            && !targetTileObject.HasCharacterAlreadyAssumed(owner)) {
+            && targetTileObject.gridTileLocation.structure != owner.homeStructure) {
 
-            if (owner.traitContainer.HasTrait("Suspicious")
+            if (targetTileObject.gridTileLocation.structure.residents.Count > 0 && !targetTileObject.HasCharacterAlreadyAssumed(owner)) {
+                if (owner.traitContainer.HasTrait("Suspicious")
                 || owner.moodComponent.moodState == MOOD_STATE.CRITICAL
                 || (owner.moodComponent.moodState == MOOD_STATE.LOW && UnityEngine.Random.Range(0, 2) == 0)
                 || UnityEngine.Random.Range(0, 100) < 15
                 || TutorialManager.Instance.IsTutorialCurrentlyActive(TutorialManager.Tutorial.Frame_Up)) {
-                debugLog += "\n-Owner is Suspicious or Critical Mood or Low Mood";
+                    debugLog += "\n-Owner is Suspicious or Critical Mood or Low Mood";
 
-                debugLog += "\n-There is at least 1 resident of the structure";
-                Character chosenSuspect = targetTileObject.gridTileLocation.structure.residents[UnityEngine.Random.Range(0, targetTileObject.gridTileLocation.structure.residents.Count)];
+                    debugLog += "\n-There is at least 1 resident of the structure";
+                    Character chosenSuspect = targetTileObject.gridTileLocation.structure.residents[UnityEngine.Random.Range(0, targetTileObject.gridTileLocation.structure.residents.Count)];
 
-                debugLog += "\n-Will create Steal assumption on " + chosenSuspect.name;
-                owner.assumptionComponent.CreateAndReactToNewAssumption(chosenSuspect, targetTileObject, INTERACTION_TYPE.STEAL, REACTION_STATUS.WITNESSED);
+                    debugLog += "\n-Will create Steal assumption on " + chosenSuspect.name;
+                    owner.assumptionComponent.CreateAndReactToNewAssumption(chosenSuspect, targetTileObject, INTERACTION_TYPE.STEAL, REACTION_STATUS.WITNESSED);
+                }
+            }
+            if(targetTileObject.tileObjectType.IsTileObjectAnItem() && !owner.jobQueue.HasJob(JOB_TYPE.TAKE_ITEM, targetTileObject)) {
+                owner.jobComponent.CreateTakeItemJob(targetTileObject);
             }
         }
     }

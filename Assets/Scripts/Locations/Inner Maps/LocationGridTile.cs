@@ -475,6 +475,9 @@ namespace Inner_Maps {
                 TriggerSnareTrap(character);
             }
             if (isCorrupted) {
+                //Reporting does not trigger until Tutorial is over
+                //https://trello.com/c/OmmyR6go/1239-reporting-does-not-trigger-until-tutorial-is-over
+
                 LocationStructure mostImportantStructureOnTile =
                     collectionOwner.partOfHextile.hexTileOwner.GetMostImportantStructureOnTile();
                 if(!character.behaviourComponent.isAttackingDemonicStructure 
@@ -482,10 +485,13 @@ namespace Inner_Maps {
                    //&& character.faction.isMajorNonPlayer
                    && character.necromancerTrait == null
                    && (character.race == RACE.HUMANS || character.race == RACE.ELVES) && mostImportantStructureOnTile is DemonicStructure
-                   && character.marker != null && character.IsInOwnParty()) {
-                    if (!InnerMapManager.Instance.HasWorldKnownDemonicStructure(mostImportantStructureOnTile)) {
-                        character.jobComponent.CreateReportDemonicStructure(mostImportantStructureOnTile);
-                    }
+                   && character.marker != null && character.IsInOwnParty()
+                   && !InnerMapManager.Instance.HasWorldKnownDemonicStructure(mostImportantStructureOnTile)
+                   && (Tutorial.TutorialManager.Instance.HasTutorialBeenCompleted(Tutorial.TutorialManager.Tutorial.Invade_A_Village) || Settings.SettingsManager.Instance.settings.skipTutorials)) {
+                    character.jobComponent.CreateReportDemonicStructure(mostImportantStructureOnTile);
+                } else {
+                    //If cannot report flee instead
+                    genericTileObject.traitContainer.AddTrait(genericTileObject, "Danger Remnant");
                 }
             }
         }

@@ -132,7 +132,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			}
 			TryStartScreamCheck();
 		}
-	}
+    }
 	private void OnTraitableLostTrait(ITraitable traitable, Trait trait, Character removedBy) {
 		if (traitable == _owner) {
 			TryStopScreamCheck();
@@ -1608,6 +1608,20 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    }
 	    producedJob = null;
 	    return false;
+    }
+    #endregion
+
+    #region Apprehend
+    public bool TryCreateApprehend(Character target, NPCSettlement settlement) {
+        if (target.traitContainer.HasTrait("Criminal") && InteractionManager.Instance.CanCharacterTakeApprehendJob(_owner, target)) {
+            if (_owner.jobQueue.HasJob(JOB_TYPE.APPREHEND, target) == false) {
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP,
+                    target, _owner);
+                job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { settlement.prison });
+                return _owner.jobQueue.AddJobInQueue(job);
+            }
+        }
+        return false;
     }
     #endregion
 }

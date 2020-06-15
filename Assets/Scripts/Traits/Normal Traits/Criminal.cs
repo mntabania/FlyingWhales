@@ -24,6 +24,7 @@ namespace Traits {
                 owner = sourcePOI as Character;
                 //TODO: sourceCharacter.homeNpcSettlement.jobQueue.UnassignAllJobsTakenBy(sourceCharacter);
                 owner.CancelOrUnassignRemoveTraitRelatedJobs();
+                CharacterApprehension();
             }
 
         }
@@ -47,6 +48,32 @@ namespace Traits {
                 return;
             }
             crimeData = new CrimeData(crimeType, crime, owner, crimeTarget);
+        }
+        private void CharacterApprehension() {
+            if(owner.currentSettlement != null && owner.currentSettlement is NPCSettlement settlement && (settlement.locationType == LOCATION_TYPE.ELVEN_SETTLEMENT || settlement.locationType == LOCATION_TYPE.HUMAN_SETTLEMENT)) {
+                bool hasCreatedPersonalApprehend = false;
+                if (owner.marker) {
+                    for (int i = 0; i < owner.marker.inVisionCharacters.Count; i++) {
+                        Character inVision = owner.marker.inVisionCharacters[i];
+                        if(inVision.relationshipContainer.GetOpinionLabel(owner) == RelationshipManager.Close_Friend) {
+                            inVision.interruptComponent.TriggerInterrupt(INTERRUPT.Worried, owner);
+                        } else {
+                            if (!hasCreatedPersonalApprehend) {
+                                hasCreatedPersonalApprehend = inVision.jobComponent.TryCreateApprehend(owner, settlement);
+                                if (!hasCreatedPersonalApprehend) {
+                                    inVision.combatComponent.Flight(owner, "fleeing crime scene");
+                                }
+                            } else {
+                                inVision.combatComponent.Flight(owner, "fleeing crime scene");
+                            }
+                        }
+                    }
+                }
+                if (!hasCreatedPersonalApprehend) {
+                    settlement.settlementJobTriggerComponent.TryCreateApprehend(owner);
+                }
+            }
+
         }
         #endregion
     }

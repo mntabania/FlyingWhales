@@ -1067,6 +1067,7 @@ public enum INTERRUPT {
     Set_Lair,
     Order_Attack,
     Recall_Attack,
+    Worried,
 }
 
 public enum TRAIT_TYPE {

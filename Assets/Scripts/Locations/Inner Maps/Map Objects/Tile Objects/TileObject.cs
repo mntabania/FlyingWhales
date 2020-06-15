@@ -879,13 +879,18 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         if (Advertises(INTERACTION_TYPE.PICK_UP) == false) {
             return false;
         }
+        bool cannotBePickedUp = IsOwnedBy(character) && gridTileLocation != null && gridTileLocation.structure == character.homeStructure;
+        if (cannotBePickedUp) {
+            return false;
+        }
         if (characterOwner == null || IsOwnedBy(character)) {
             //if the item is at a tile that is part of a npcSettlement and that tile is part of that settlements main storage, do not allow pick up
-            if (gridTileLocation != null && gridTileLocation.IsPartOfSettlement(out var settlement) 
-                && settlement is NPCSettlement npcSettlement
-                && gridTileLocation.structure == npcSettlement.mainStorage) {
-                return false;
-            }
+            //Temporarily removed this because when the player unseize a necronomicon in the storage area, it does not get picked up
+            //if (gridTileLocation != null && gridTileLocation.IsPartOfSettlement(out var settlement) 
+            //    && settlement is NPCSettlement npcSettlement
+            //    && gridTileLocation.structure == npcSettlement.mainStorage) {
+            //    return false;
+            //}
             return true;
         } else {
             //https://www.notion.so/ruinarch/c818a20f153d4b6ea49e823a04515394?v=5767c0da06f347549ce48dd37384af59&p=7e7a8a17d989411eaec3ebe4ba4b5460

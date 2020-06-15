@@ -134,9 +134,10 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		if (traitable is Character target) {
 			if (trait is Restrained) {
 				TryCreateJudgePrisoner(target);
-			} else if (trait is Criminal) {
-				TryCreateApprehend(target);
-			}
+			} 
+   //         else if (trait is Criminal) {
+			//	TryCreateApprehend(target);
+			//}
 		} else if (traitable is TileObject) {
 			if (traitable is GenericTileObject) {
 				if (trait is Wet) {
@@ -435,7 +436,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	#endregion
 
 	#region Apprehend
-	private void TryCreateApprehend(Character target) {
+	public void TryCreateApprehend(Character target) {
 		if (target.currentSettlement == _owner && target.traitContainer.HasTrait("Criminal")) {
 			if (_owner.HasJob(JOB_TYPE.APPREHEND, target) == false) {
 				GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP, 
@@ -448,7 +449,8 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		}
 	}
 	private bool IsApprehendStillApplicable(Character target) {
-		return target.gridTileLocation != null && target.gridTileLocation.IsNextToOrPartOfSettlement(_owner);
+        bool isApplicable = !target.traitContainer.HasTrait("Restrained") || target.currentStructure != _owner.prison;
+        return target.gridTileLocation != null && target.gridTileLocation.IsNextToOrPartOfSettlement(_owner) && isApplicable;
 	}
 	#endregion
 
