@@ -7,6 +7,7 @@ public class BerserkOrb : Artifact {
 
     public BerserkOrb() : base(ARTIFACT_TYPE.Berserk_Orb) {
         maxHP = 700;
+        currentHP = maxHP;
     }
     //public BerserkOrb(SaveDataArtifact data) : base(data) {
     //}

@@ -7,6 +7,7 @@ public class Necronomicon : Artifact {
 
     public Necronomicon() : base(ARTIFACT_TYPE.Necronomicon) {
         maxHP = 700;
+        currentHP = maxHP;
     }
     //public Necronomicon(SaveDataArtifact data) : base(data) {
     //}
