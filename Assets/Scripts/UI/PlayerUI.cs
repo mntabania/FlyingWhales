@@ -180,11 +180,11 @@ public class PlayerUI : MonoBehaviour {
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
         Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_REMOVED, OnCharacterLostTrait);
-        Messenger.AddListener<Character, Faction>(Signals.CHARACTER_REMOVED_FROM_FACTION, OnCharacterRemovedFromFaction);
-        Messenger.AddListener<Character, Faction>(Signals.CHARACTER_ADDED_TO_FACTION, OnCharacterAddedToFaction);
+        // Messenger.AddListener<Character, Faction>(Signals.CHARACTER_REMOVED_FROM_FACTION, OnCharacterRemovedFromFaction);
+        // Messenger.AddListener<Character, Faction>(Signals.CHARACTER_ADDED_TO_FACTION, OnCharacterAddedToFaction);
         Messenger.AddListener<Character>(Signals.CHARACTER_CREATED, AddedNewCharacter);
-        Messenger.AddListener<Character>(Signals.CHARACTER_BECOMES_MINION_OR_SUMMON, CharacterBecomesMinionOrSummon);
-        Messenger.AddListener<Character>(Signals.CHARACTER_BECOMES_NON_MINION_OR_SUMMON, CharacterBecomesNonMinionOrSummon);
+        // Messenger.AddListener<Character>(Signals.CHARACTER_BECOMES_MINION_OR_SUMMON, CharacterBecomesMinionOrSummon);
+        // Messenger.AddListener<Character>(Signals.CHARACTER_BECOMES_NON_MINION_OR_SUMMON, CharacterBecomesNonMinionOrSummon);
         Messenger.AddListener<Character, CharacterClass, CharacterClass>(Signals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
         Messenger.AddListener<Character, Character>(Signals.ON_SWITCH_FROM_LIMBO, OnCharacterSwitchFromLimbo);
         Messenger.AddListener(Signals.THREAT_UPDATED, OnThreatUpdated);
@@ -287,13 +287,13 @@ public class PlayerUI : MonoBehaviour {
                 item.UpdateObject(toCharacter);
             }
         }
-        if (!toCharacter.IsAble()/* || toCharacter.isFactionless*/) {
-            TransferCharacterFromActiveToInactive(toCharacter);
-        } else if (toCharacter.faction.isPlayerFaction /*|| faction == FactionManager.Instance.friendlyNeutralFaction*/) {
-            OnCharacterBecomesMinionOrSummon(toCharacter);
-        } else {
-            TransferCharacterFromInactiveToActive(toCharacter);
-        }
+        // if (!toCharacter.IsAble()/* || toCharacter.isFactionless*/) {
+        //     TransferCharacterFromActiveToInactive(toCharacter);
+        // } else if (toCharacter.faction.isPlayerFaction /*|| faction == FactionManager.Instance.friendlyNeutralFaction*/) {
+        //     OnCharacterBecomesMinionOrSummon(toCharacter);
+        // } else {
+        //     TransferCharacterFromInactiveToActive(toCharacter);
+        // }
     }
     private void AddedNewCharacter(Character character) {
         // OnAddNewCharacter(character);
@@ -626,7 +626,7 @@ public class PlayerUI : MonoBehaviour {
         allFilteredCharactersCount = 0;
         unusedKillCountCharacterItems = 0;
         villagerItems = new List<CharacterNameplateItem>();
-        for (int i = 0; i < 20; i++) { //Initial number is 20
+        for (int i = 0; i < itemsToCreate; i++) {
             CreateNewVillagerItem();
         }
     }
@@ -714,28 +714,15 @@ public class PlayerUI : MonoBehaviour {
         }
         CharacterNameplateItem item = GetActiveCharacterNameplateItem(character);
         if(item != null) {
-            if (allFilteredCharactersCount == villagerItems.Count) {
-                item.transform.SetAsLastSibling();
-            } else {
-                item.transform.SetSiblingIndex(allFilteredCharactersCount + 2);
-            }
-            item.SetIsActive(false);
+            // if (allFilteredCharactersCount == villagerItems.Count) {
+            //     item.transform.SetAsLastSibling();
+            // } else {
+            //     item.transform.SetSiblingIndex(allFilteredCharactersCount + 2);
+            // }
+            // item.SetIsActive(false);
+            item.transform.SetAsLastSibling(); //put character item at the bottom of the list.
         }
         //UpdateKillCount();
-    }
-    private void TransferCharacterFromActiveToInactive(CharacterNameplateItem nameplate) {
-        if (!WillCharacterBeShownInKillCount(nameplate.character)) {
-            return;
-        }
-        if (!nameplate.isActive) {
-            return;
-        }
-        if (allFilteredCharactersCount == villagerItems.Count) {
-            nameplate.transform.SetAsLastSibling();
-        } else {
-            nameplate.transform.SetSiblingIndex(allFilteredCharactersCount + 2);
-        }
-        nameplate.SetIsActive(false);
     }
     private void TransferCharacterFromInactiveToActive(Character character) {
         if (!WillCharacterBeShownInKillCount(character)) {
@@ -748,19 +735,6 @@ public class PlayerUI : MonoBehaviour {
             item.transform.SetSiblingIndex(deadHeaderIndex);
             item.SetIsActive(true);
         }
-        //UpdateKillCount();
-    }
-    private void TransferCharacterFromInactiveToActive(CharacterNameplateItem nameplate) {
-        if (!WillCharacterBeShownInKillCount(nameplate.character)) {
-            return;
-        }
-        if (nameplate.isActive) {
-            return;
-        }
-        int index = nameplate.transform.GetSiblingIndex();
-        int deadHeaderIndex = deadHeader.transform.GetSiblingIndex();
-        nameplate.transform.SetSiblingIndex(deadHeaderIndex);
-        nameplate.SetIsActive(true);
         //UpdateKillCount();
     }
     private void OnCharacterBecomesMinionOrSummon(Character character) {

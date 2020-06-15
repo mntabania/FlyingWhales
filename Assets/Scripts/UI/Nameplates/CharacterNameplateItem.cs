@@ -16,6 +16,9 @@ public class CharacterNameplateItem : NameplateItem<Character> {
 
     private void OnEnable() {
         Messenger.AddListener(Signals.TICK_ENDED, UpdateText);
+        if (character != null) {
+            UpdateText();    
+        }
     }
     private void OnDisable() {
         Messenger.RemoveListener(Signals.TICK_ENDED, UpdateText);
