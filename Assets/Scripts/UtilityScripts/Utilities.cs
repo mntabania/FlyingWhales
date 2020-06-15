@@ -765,6 +765,9 @@ namespace UtilityScripts {
         public static string ColorizeName(string name) {
             return $"<color=#f8ed43>{name}</color>";
         }
+        public static string ColorizeAndBoldName(string name) {
+            return $"<b>{ColorizeName(name)}</b>";
+        }
         public static string GetFirstFewEmotionsAndComafy(string emotionsStr, int emotionCount) {
             string[] emotions = emotionsStr.Split(' ');
             string trimmedEmotions = string.Empty;

@@ -491,8 +491,15 @@ namespace Inner_Maps {
                     character.jobComponent.CreateReportDemonicStructure(mostImportantStructureOnTile);
                 } else {
                     //If cannot report flee instead
-                    genericTileObject.traitContainer.AddTrait(genericTileObject, "Danger Remnant");
+                    if (!character.behaviourComponent.isAttackingDemonicStructure) {
+                        if (!character.movementComponent.hasMovedOnCorruption) {
+                            character.movementComponent.SetHasMovedOnCorruption(true);
+                            genericTileObject.traitContainer.AddTrait(genericTileObject, "Danger Remnant");
+                        }
+                    }
                 }
+            } else {
+                character.movementComponent.SetHasMovedOnCorruption(false);
             }
         }
         public void RemoveCharacterHere(Character character) {

@@ -1711,11 +1711,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     private void OnBeforeSeizingTileObject(TileObject tileObject) {
-        if(faction != null && faction.isMajorNonPlayerFriendlyNeutral && marker) {
-            if (marker.inVisionTileObjects.Contains(tileObject)) {
-                PlayerManager.Instance.player.threatComponent.AdjustThreat(5);
-            }
-        }
+        //if(faction != null && faction.isMajorNonPlayerFriendlyNeutral && marker) {
+        //    if (marker.inVisionTileObjects.Contains(tileObject)) {
+        //        PlayerManager.Instance.player.threatComponent.AdjustThreat(5);
+        //    }
+        //}
     }
     private void OnSeizeTileObject(TileObject tileObject) {
         if(currentActionNode != null && currentActionNode.poiTarget == tileObject) {

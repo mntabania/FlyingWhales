@@ -55,7 +55,7 @@ namespace Traits {
                 if (owner.marker) {
                     for (int i = 0; i < owner.marker.inVisionCharacters.Count; i++) {
                         Character inVision = owner.marker.inVisionCharacters[i];
-                        if(inVision.relationshipContainer.GetOpinionLabel(owner) == RelationshipManager.Close_Friend) {
+                        if(inVision.relationshipContainer.IsFriendsWith(owner)) {
                             inVision.interruptComponent.TriggerInterrupt(INTERRUPT.Worried, owner);
                         } else {
                             if (!hasCreatedPersonalApprehend) {

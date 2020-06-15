@@ -1246,9 +1246,12 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         SPELL_TYPE structureType = (SPELL_TYPE) structureObj;
         string landmarkName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString());
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkName);
-        string question = "Are you sure you want to build " + landmarkName + "?";
+        string question = string.Empty;
         if (IsNextToOrPartOfVillage()) {
-            question += $"\n<color=\"red\">Warning: You are building too close to a village!</color>";
+            question = $"<color=\"red\">Warning: You are building too close to a village!</color>";
+            question += "\nAre you sure you want to build " + landmarkName + "?";
+        } else {
+            question = "Are you sure you want to build " + landmarkName + "?";
         }
         UIManager.Instance.ShowYesNoConfirmation("Build Structure Confirmation", question, () => StartBuild(structureType));
     }
