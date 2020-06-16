@@ -16,7 +16,7 @@ public class RemoveFreezing : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_POI, conditionKey = "Ember", target = GOAP_EFFECT_TARGET.ACTOR }, HasEmber);
+        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_POI, conditionKey = "Water Flask", target = GOAP_EFFECT_TARGET.ACTOR }, HasEmber);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Freezing", target = GOAP_EFFECT_TARGET.TARGET });
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Frozen", target = GOAP_EFFECT_TARGET.TARGET });
     }
@@ -65,7 +65,7 @@ public class RemoveFreezing : GoapAction {
 
     #region Preconditions
     private bool HasEmber(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
-        return actor.HasItem(TILE_OBJECT_TYPE.EMBER);
+        return actor.HasItem(TILE_OBJECT_TYPE.WATER_FLASK);
     }
     #endregion
 }

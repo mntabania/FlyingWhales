@@ -28,6 +28,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
     [SerializeField] private ParticleSystem bloodSplatterEffect;
     [SerializeField] private ParticleSystemRenderer bloodSplatterEffectRenderer;
     [SerializeField] private SpriteRenderer additionalEffectsImg;
+    public Transform particleEffectParent;
+    public Transform particleEffectParentAllowRotation;
 
     [Header("Animation")]
     public Animator animator;
@@ -698,6 +700,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
         _nameplate.SetActiveState(state);
         // actionIcon.enabled = state;
         hoveredImg.enabled = state;
+        particleEffectParent.gameObject.SetActive(state);
+        particleEffectParentAllowRotation.gameObject.SetActive(state);
         // clickedImg.enabled = state;
     }
     public bool IsShowingVisuals() {

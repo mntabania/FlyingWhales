@@ -518,9 +518,9 @@ public class GameManager : MonoBehaviour {
             if (!character.marker) {
                 return null;
             }
-            Transform parent = character.marker.visualsParent.transform;
+            Transform parent = character.marker.particleEffectParentAllowRotation;
             if (!allowRotation) {
-                parent = character.marker.transform;
+                parent = character.marker.particleEffectParent;
             }
             go = ObjectPoolManager.Instance.InstantiateObjectFromPool(prefab.name, Vector3.zero, Quaternion.identity, parent);
             go.transform.localPosition = Vector3.zero;

@@ -380,7 +380,7 @@ public class PlayerManager : MonoBehaviour {
     private bool DoesPlayerWin() {
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
             Character character = CharacterManager.Instance.allCharacters[i];
-            if(character.faction.isMajorNonPlayerFriendlyNeutral && !(character is Summon) && character.minion == null) {
+            if(character.faction.isMajorNonPlayerFriendlyNeutral && character.isNormalCharacter) {
                 if(!character.isDead) {
                     return false;
                 }

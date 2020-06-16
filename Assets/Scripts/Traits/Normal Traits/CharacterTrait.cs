@@ -57,12 +57,20 @@ namespace Traits {
                         //if character is non suspicious, create an open chest job.
                         characterThatWillDoJob.jobComponent.CreateOpenChestJob(item);
                     }
-                }  else if (!characterThatWillDoJob.IsInventoryAtFullCapacity() && characterThatWillDoJob.IsItemInteresting(item.name) && (characterThatWillDoJob.jobQueue.jobsInQueue.Count == 0 || characterThatWillDoJob.jobQueue.jobsInQueue[0].priority < JOB_TYPE.TAKE_ITEM.GetJobTypePriority())) {
-                    if (!characterThatWillDoJob.traitContainer.HasTrait("Beast") && characterThatWillDoJob.traitContainer.HasTrait("Suspicious") == false /*characterThatWillDoJob.role.roleType != CHARACTER_ROLE.BEAST*/) {
+                }  else if (!characterThatWillDoJob.IsInventoryAtFullCapacity() && characterThatWillDoJob.IsItemInteresting(item.name)) {
+                    if ((characterThatWillDoJob.jobQueue.jobsInQueue.Count == 0 || characterThatWillDoJob.jobQueue.jobsInQueue[0].priority < JOB_TYPE.TAKE_ITEM.GetJobTypePriority()) 
+                        && !characterThatWillDoJob.traitContainer.HasTrait("Beast") 
+                        && characterThatWillDoJob.traitContainer.HasTrait("Suspicious") == false /*characterThatWillDoJob.role.roleType != CHARACTER_ROLE.BEAST*/) {
                         if (item.CanBePickedUpNormallyUponVisionBy(characterThatWillDoJob)
                             && !characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.TAKE_ITEM)) {
-                            characterThatWillDoJob.jobComponent.CreateTakeItemJob(item);
-                            return true;
+                            int chance = 100;
+                            if (characterThatWillDoJob.HasItem(item.name)) {
+                                chance = 25;
+                            }
+                            if (UnityEngine.Random.Range(0, 100) < chance) {
+                                characterThatWillDoJob.jobComponent.CreateTakeItemJob(item);
+                                return true;
+                            }
                         }
                     }
                 }
