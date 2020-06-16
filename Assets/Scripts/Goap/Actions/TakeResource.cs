@@ -171,7 +171,16 @@ public class TakeResource : GoapAction {
         //    CarryResourcePile(goapNode.actor, resourcePile, takenResource);
         //}
         goapNode.actor.UncarryPOI(bringBackToInventory: true);
-        CarryResourcePile(goapNode.actor, resourcePile, takenResource);
+
+        bool setOwnership = true;
+        if (goapNode.associatedJobType == JOB_TYPE.HAUL
+            || goapNode.associatedJobType == JOB_TYPE.FULLNESS_RECOVERY_NORMAL
+            || goapNode.associatedJobType == JOB_TYPE.FULLNESS_RECOVERY_URGENT
+            || goapNode.associatedJobType == JOB_TYPE.OBTAIN_PERSONAL_FOOD) {
+            setOwnership = false;
+        }
+
+        CarryResourcePile(goapNode.actor, resourcePile, takenResource, setOwnership);
         //goapNode.actor.AdjustResource(resourcePile.providedResource, takenResource);
 
         //goapNode.descriptionLog.AddToFillers(null, takenResource.ToString(), LOG_IDENTIFIER.STRING_1);
@@ -179,7 +188,7 @@ public class TakeResource : GoapAction {
     }
     #endregion
 
-    private void CarryResourcePile(Character carrier, ResourcePile pile, int amount) {
+    private void CarryResourcePile(Character carrier, ResourcePile pile, int amount, bool setOwnership) {
         if (pile.isBeingCarriedBy == null || pile.isBeingCarriedBy != carrier) {
             ResourcePile newPile = InnerMapManager.Instance.CreateNewTileObject<ResourcePile>(pile.tileObjectType);
             newPile.SetResourceInPile(amount);
@@ -195,7 +204,7 @@ public class TakeResource : GoapAction {
             newPile.SetGridTileLocation(null);
 
             // carrier.ownParty.AddPOI(newPile);
-            carrier.CarryPOI(newPile);
+            carrier.CarryPOI(newPile, setOwnership: setOwnership);
             carrier.ShowItemVisualCarryingPOI(newPile);
             TraitManager.Instance.CopyStatuses(pile, newPile);
             pile.AdjustResourceInPile(-amount);
