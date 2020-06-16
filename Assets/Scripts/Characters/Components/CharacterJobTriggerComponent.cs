@@ -63,9 +63,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	}
 	private void OnCharacterCanPerformAgain(Character character) {
 		if (character == _owner) {
-			if (_owner.currentSettlement is NPCSettlement npcSettlement && npcSettlement.isUnderSiege) {
-				TriggerFleeHome();	
-			}
+			// if (_owner.currentSettlement is NPCSettlement npcSettlement && npcSettlement.isUnderSiege) {
+			// 	TriggerFleeHome();	
+			// }
 			// character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.RESTRAIN); //cancel all restrain jobs.
 			_owner.needsComponent.CheckExtremeNeeds();
 
@@ -147,7 +147,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             //characters current npcSettlement is under siege
             if (!_owner.isInCombat) {
                 _owner.interruptComponent.TriggerInterrupt(INTERRUPT.Stopped, _owner);
-                Messenger.AddListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, CheckIfStopInterruptFinished);
+                // Messenger.AddListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, CheckIfStopInterruptFinished);
             }
         }
 	}
@@ -497,16 +497,16 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	}
 	#endregion
 
-	#region Flee to home
-	private void CheckIfStopInterruptFinished(INTERRUPT interrupt, Character character) {
-		if (character == _owner && interrupt == INTERRUPT.Stopped) {
-			Messenger.RemoveListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, CheckIfStopInterruptFinished);
-			if (_owner.canPerform) {
-				TriggerFleeHome();	
-			}
-		}
-	}
-	#endregion
+	// #region Flee to home
+	// private void CheckIfStopInterruptFinished(INTERRUPT interrupt, Character character) {
+	// 	if (character == _owner && interrupt == INTERRUPT.Stopped) {
+	// 		Messenger.RemoveListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, CheckIfStopInterruptFinished);
+	// 		if (_owner.canPerform) {
+	// 			TriggerFleeHome();	
+	// 		}
+	// 	}
+	// }
+	// #endregion
 
 	#region Remove Status
 	private void TryCreateRemoveStatusJob(Trait trait) {
