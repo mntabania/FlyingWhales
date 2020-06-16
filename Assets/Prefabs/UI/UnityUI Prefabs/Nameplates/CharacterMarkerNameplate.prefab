@@ -636,6 +636,7 @@ MonoBehaviour:
   actionIcon: {fileID: 3965943091753506778}
   thoughtGO: {fileID: 5757456883282874753}
   thoughtLbl: {fileID: 2099476249996806663}
+  contentSizeFitter: {fileID: 1554361333763114027}
 --- !u!1 &5757456883282874753
 GameObject:
   m_ObjectHideFlags: 0

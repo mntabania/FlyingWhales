@@ -15,6 +15,7 @@ public class VaporMapObjectVisual : MovingMapObjectVisual<TileObject> {
     private int _size;
     private VaporTileObject _vaporTileObject;
 
+    public bool wasJustPlaced { get; private set; }
 
     #region Abstract Members Implementation
     public override void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) { }
@@ -43,6 +44,11 @@ public class VaporMapObjectVisual : MovingMapObjectVisual<TileObject> {
     }
     public override void PlaceObjectAt(LocationGridTile tile) {
         base.PlaceObjectAt(tile);
+        
+        wasJustPlaced = true;
+        GameDate dueDate = GameManager.Instance.Today().AddTicks(1);
+        SchedulingManager.Instance.AddEntry(dueDate, () => wasJustPlaced = false, this);
+        
         MoveToRandomDirection();
         GameDate expiry = GameManager.Instance.Today();
         expiry.AddTicks(GameManager.Instance.GetTicksBasedOnHour(2));
@@ -154,7 +160,9 @@ public class VaporMapObjectVisual : MovingMapObjectVisual<TileObject> {
         if (isSpawned == false) { return; }
         BaseVisionTrigger collidedWith = collision.gameObject.GetComponent<BaseVisionTrigger>();
         if (collidedWith != null && collidedWith.damageable is VaporTileObject otherVapor && otherVapor != _vaporTileObject) {
-            CollidedWithVapor(otherVapor);
+            if (wasJustPlaced == false) {
+                CollidedWithVapor(otherVapor);
+            }
         }
     }
     private void CollidedWithVapor(VaporTileObject otherVapor) {

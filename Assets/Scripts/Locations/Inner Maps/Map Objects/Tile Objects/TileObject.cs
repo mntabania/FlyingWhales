@@ -832,7 +832,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     // public void SetFactionOwner(Faction factionOwner) {
     //     this.factionOwner = factionOwner;
     // }
-    public void SetCharacterOwner(Character characterOwner) {
+    public virtual void SetCharacterOwner(Character characterOwner) {
         if(this.characterOwner != characterOwner) {
             Character prevOwner = this.characterOwner;
             this.characterOwner = characterOwner;

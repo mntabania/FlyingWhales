@@ -1947,6 +1947,7 @@ public static class Extensions {
                 priority = 1090;
                 break;
             case JOB_TYPE.BERSERK_ATTACK:
+            case JOB_TYPE.DESTROY:
                 priority = 1086;
                 break;
             case JOB_TYPE.REPORT_CORRUPTED_STRUCTURE:
@@ -1987,9 +1988,6 @@ public static class Extensions {
             case JOB_TYPE.DOUSE_FIRE:
             case JOB_TYPE.SUICIDE_FOLLOW:
                 priority = 950;
-                break;
-            case JOB_TYPE.DESTROY:
-                priority = 940;
                 break;
             case JOB_TYPE.DEMON_KILL:
                 priority = 930;

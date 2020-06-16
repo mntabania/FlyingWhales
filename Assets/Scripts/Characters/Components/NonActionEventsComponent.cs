@@ -335,50 +335,38 @@ public class NonActionEventsComponent {
         owner.relationshipContainer.AdjustOpinion(owner, target, "Base", 2);
         target.relationshipContainer.AdjustOpinion(target, owner, "Base", 4);
         
-        string opinionLabel = owner.relationshipContainer.GetOpinionLabel(target);
+        string relationshipName = owner.relationshipContainer.GetRelationshipNameWith(target);
 
         // If Opinion of Target towards Actor is already in Acquaintance range
-        if (opinionLabel == RelationshipManager.Acquaintance)
-        {
-            // 15% chance to develop Lover relationship if both characters have no Lover yet
-            if (UnityEngine.Random.Range(0, 100) < 25)
-            {
-                if (owner.relationshipValidator.CanHaveRelationship(owner, target, RELATIONSHIP_TYPE.LOVER)
-                    && target.relationshipValidator.CanHaveRelationship(target, owner, RELATIONSHIP_TYPE.LOVER))
-                {
+        if (relationshipName == RelationshipManager.Acquaintance) {
+            // 25% chance to develop Lover relationship if both characters have no Lover yet
+            if (owner.relationshipValidator.CanHaveRelationship(owner, target, RELATIONSHIP_TYPE.LOVER)
+                && target.relationshipValidator.CanHaveRelationship(target, owner, RELATIONSHIP_TYPE.LOVER)) {
+                if (UnityEngine.Random.Range(0, 100) < 25) {
                     RelationshipManager.Instance.CreateNewRelationshipBetween(owner, target, RELATIONSHIP_TYPE.LOVER);
                 }
-
             }
-            // 20% chance to develop Affair if at least one of the characters already have a Lover 
-            else if (UnityEngine.Random.Range(0, 100) < 35)
-            {
-                if (owner.relationshipValidator.CanHaveRelationship(owner, target, RELATIONSHIP_TYPE.AFFAIR)
-                    && target.relationshipValidator.CanHaveRelationship(target, owner, RELATIONSHIP_TYPE.AFFAIR))
-                {
+            // 35% chance to develop Affair if at least one of the characters already have a Lover
+            else if (owner.relationshipValidator.CanHaveRelationship(owner, target, RELATIONSHIP_TYPE.AFFAIR)
+                     && target.relationshipValidator.CanHaveRelationship(target, owner, RELATIONSHIP_TYPE.AFFAIR)) {
+                if (UnityEngine.Random.Range(0, 100) < 35) {
                     RelationshipManager.Instance.CreateNewRelationshipBetween(owner, target, RELATIONSHIP_TYPE.AFFAIR);
                 }
             }
         }
         // If Opinion of Target towards Actor is already in Friend or Close Friend range
-        else if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend)
-        {
-            // 25 % chance to develop Lover relationship if both characters have no Lover yet
-            if (UnityEngine.Random.Range(0, 100) < 35)
-            {
-                if (owner.relationshipValidator.CanHaveRelationship(owner, target, RELATIONSHIP_TYPE.LOVER)
-                    && target.relationshipValidator.CanHaveRelationship(target, owner, RELATIONSHIP_TYPE.LOVER))
-                {
+        else if (relationshipName == RelationshipManager.Friend || relationshipName == RelationshipManager.Close_Friend) {
+            // 35 % chance to develop Lover relationship if both characters have no Lover yet
+            if (owner.relationshipValidator.CanHaveRelationship(owner, target, RELATIONSHIP_TYPE.LOVER)
+                && target.relationshipValidator.CanHaveRelationship(target, owner, RELATIONSHIP_TYPE.LOVER)) {
+                if (UnityEngine.Random.Range(0, 100) < 35) {
                     RelationshipManager.Instance.CreateNewRelationshipBetween(owner, target, RELATIONSHIP_TYPE.LOVER);
                 }
-
             }
-            // 35% chance to develop Affair if at least one of the characters already have a Lover 
-            else if (UnityEngine.Random.Range(0, 100) < 50)
-            {
-                if (owner.relationshipValidator.CanHaveRelationship(owner, target, RELATIONSHIP_TYPE.AFFAIR)
-                    && target.relationshipValidator.CanHaveRelationship(target, owner, RELATIONSHIP_TYPE.AFFAIR))
-                {
+            // 50% chance to develop Affair if at least one of the characters already have a Lover 
+            else if (owner.relationshipValidator.CanHaveRelationship(owner, target, RELATIONSHIP_TYPE.AFFAIR)
+                     && target.relationshipValidator.CanHaveRelationship(target, owner, RELATIONSHIP_TYPE.AFFAIR)) { 
+                if (UnityEngine.Random.Range(0, 100) < 50) {
                     RelationshipManager.Instance.CreateNewRelationshipBetween(owner, target, RELATIONSHIP_TYPE.AFFAIR);
                 }
             }

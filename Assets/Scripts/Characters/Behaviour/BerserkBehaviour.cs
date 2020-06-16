@@ -15,6 +15,10 @@ public class BerserkBehaviour : CharacterBehaviourComponent {
             bool hasCreatedJob = false;
             for (int i = 0; i < character.marker.inVisionPOIs.Count; i++) {
                 IPointOfInterest inVisionPOI = character.marker.inVisionPOIs[i];
+                if (inVisionPOI is MovingTileObject || inVisionPOI is GenericTileObject) {
+                    //should not target moving tile objects and generic tile objects
+                    continue;
+                }
                 if(!character.combatComponent.hostilesInRange.Contains(inVisionPOI) && !character.combatComponent.avoidInRange.Contains(inVisionPOI)) {
                     if (inVisionPOI is Character targetCharacter) {
                         if (!targetCharacter.isDead) {
