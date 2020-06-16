@@ -512,6 +512,38 @@ public class ReactionComponent {
                         }
                     }
 
+                    if (targetCharacter.isNormalCharacter && owner.isNormalCharacter && targetCharacter.traitContainer.HasTrait("Criminal")
+                        && !targetCharacter.traitContainer.HasTrait("Restrained")) {
+                        debugLog += "\n-Target Character is a criminal and is not restrained";
+                        bool cannotReactToCriminal = false;
+                        if (owner.currentJob != null && owner.currentJob is GoapPlanJob planJob) {
+                            cannotReactToCriminal = planJob.jobType == JOB_TYPE.APPREHEND && planJob.targetPOI == targetCharacter;
+                            debugLog += "\n-Character is current job is already apprehend targeting target";
+                        }
+                        if (!cannotReactToCriminal) {
+                            if (owner.relationshipContainer.IsFriendsWith(targetCharacter)) {
+                                debugLog += "\n-Character is friends with target";
+                                Criminal criminalTrait = targetCharacter.traitContainer.GetNormalTrait<Criminal>("Criminal");
+                                if (!criminalTrait.HasCharacterThatIsAlreadyWorried(owner)) {
+                                    debugLog += "\n-Character will worry";
+                                    criminalTrait.AddCharacterThatIsAlreadyWorried(owner);
+                                    owner.interruptComponent.TriggerInterrupt(INTERRUPT.Worried, targetCharacter);
+                                } else {
+                                    debugLog += "\n-Character already worried about this target";
+                                }
+                            } else {
+                                debugLog += "\n-Character is not friends with target";
+                                debugLog += "\n-Character will try to apprehend";
+                                bool canDoJob = false;
+                                owner.jobComponent.TryCreateApprehend(targetCharacter, ref canDoJob);
+                                if (!canDoJob) {
+                                    debugLog += "\n-Character cannot do apprehend, will flee instead";
+                                    owner.combatComponent.Flight(targetCharacter, "saw criminal " + targetCharacter.name);
+                                }
+                            }
+                        }
+                    }
+
                     if (owner.faction == targetCharacter.faction || owner.homeSettlement == targetCharacter.homeSettlement) {
                         debugLog += "\n-Character and Target are with the same faction or npcSettlement";
                         if (owner.relationshipContainer.IsEnemiesWith(targetCharacter)) {
@@ -524,27 +556,6 @@ public class ReactionComponent {
                                 } else {
                                     debugLog += "\n-Character triggered Laugh At interrupt";
                                     owner.interruptComponent.TriggerInterrupt(INTERRUPT.Laugh_At, targetCharacter);
-                                }
-                            }
-                        } else if (targetCharacter.traitContainer.HasTrait("Criminal") 
-                            && !targetCharacter.traitContainer.HasTrait("Restrained")) {
-                            bool cannotReactToCriminal = false;
-                            if (owner.currentJob != null && owner.currentJob is GoapPlanJob planJob) {
-                                cannotReactToCriminal = planJob.jobType == JOB_TYPE.APPREHEND && planJob.targetPOI == targetCharacter;
-                            }
-                            if (!cannotReactToCriminal) {
-                                if (owner.relationshipContainer.IsFriendsWith(targetCharacter)) {
-                                    Criminal criminalTrait = targetCharacter.traitContainer.GetNormalTrait<Criminal>("Criminal");
-                                    if (!criminalTrait.HasCharacterThatIsAlreadyWorried(owner)) {
-                                        criminalTrait.AddCharacterThatIsAlreadyWorried(owner);
-                                        owner.interruptComponent.TriggerInterrupt(INTERRUPT.Worried, targetCharacter);
-                                    }
-                                } else {
-                                    bool canDoJob = false;
-                                    owner.jobComponent.TryCreateApprehend(targetCharacter, ref canDoJob);
-                                    if (!canDoJob) {
-                                        owner.combatComponent.Flight(targetCharacter, "saw criminal " + targetCharacter.name);
-                                    }
                                 }
                             }
                         } else if (!owner.traitContainer.HasTrait("Psychopath")) {
