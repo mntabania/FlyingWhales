@@ -23,7 +23,7 @@ namespace Inner_Maps.Location_Structures {
             if (charactersInRoom.Count > 0) {
                 return false;
             }
-            return character.isNormalCharacter;
+            return character.isNormalCharacter && character.isDead == false;
         }
         #endregion
 
@@ -37,7 +37,7 @@ namespace Inner_Maps.Location_Structures {
             List<Character> characters = charactersInRoom;
             for (int i = 0; i < characters.Count; i++) {
                 Character character = characters[i];
-                if (character.isNormalCharacter) {
+                if (character.isNormalCharacter && character.isDead == false) {
                     return true;
                 }
             }
