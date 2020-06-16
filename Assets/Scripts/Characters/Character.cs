@@ -1840,7 +1840,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     public virtual bool IsValidCombatTargetFor(IPointOfInterest source) {
-        return isDead == false && (canPerform || canMove) && marker != null 
+        return isDead == false /*&& (canPerform || canMove)*/ && marker != null 
                 && gridTileLocation != null && source.gridTileLocation != null && PathfindingManager.Instance.HasPathEvenDiffRegion(source.gridTileLocation, gridTileLocation); //traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) == false
     }
     public void ExecutePendingActionsAfterMultithread() {
