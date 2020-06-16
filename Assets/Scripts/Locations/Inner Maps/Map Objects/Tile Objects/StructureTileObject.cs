@@ -32,6 +32,7 @@ public class StructureTileObject : TileObject {
     public override bool OccupiesTile() {
         return false;
     }
+    public override void SetCharacterOwner(Character characterOwner) { } //do not set character owner of this
     #endregion
 
     // public void SetBuildingSpot(BuildingSpot spot) {

@@ -99,7 +99,7 @@ namespace Quests {
         #region Eliminate All Villagers Quest
         private void CheckEliminateAllVillagersQuest() {
             if (SaveManager.Instance.currentSaveDataPlayer.completedTutorials
-                .Contains(TutorialManager.Tutorial.Build_A_Kennel) || SettingsManager.Instance.settings.skipTutorials) {
+                .Contains(TutorialManager.Tutorial.Invade_A_Village) || SettingsManager.Instance.settings.skipTutorials) {
                 CreateEliminateAllVillagersQuest();
             } else {
                 Messenger.AddListener<TutorialQuest>(Signals.TUTORIAL_QUEST_COMPLETED, OnTutorialQuestCompleted);
@@ -108,7 +108,7 @@ namespace Quests {
             }
         }
         private void OnTutorialQuestCompleted(TutorialQuest completedQuest) {
-            if (completedQuest.tutorialType == TutorialManager.Tutorial.Build_A_Kennel) {
+            if (completedQuest.tutorialType == TutorialManager.Tutorial.Invade_A_Village) {
                 CreateEliminateAllVillagersQuest();
             }
         }
