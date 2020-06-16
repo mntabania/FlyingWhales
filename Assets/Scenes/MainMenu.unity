@@ -3586,7 +3586,7 @@ MonoBehaviour:
   m_FillRect: {fileID: 1264352890}
   m_HandleRect: {fileID: 399674070}
   m_Direction: 0
-  m_MinValue: -50
+  m_MinValue: -80
   m_MaxValue: 0
   m_WholeNumbers: 0
   m_Value: 0
@@ -4541,7 +4541,7 @@ MonoBehaviour:
   m_FillRect: {fileID: 1287872045}
   m_HandleRect: {fileID: 323631261}
   m_Direction: 0
-  m_MinValue: -50
+  m_MinValue: -80
   m_MaxValue: 0
   m_WholeNumbers: 0
   m_Value: 0
@@ -23684,6 +23684,7 @@ MonoBehaviour:
   _availableSpellsInDemoBuild: 10000000040000000200000009000000170000002c0000001e000000200000002d0000002a000000160000004e0000004f00000050000000030000004a000000480000004c000000
   _demoTutorials: 00000000010000000300000004000000090000000a0000000b0000000c0000000d0000000e000000050000000f0000001000000011000000120000001300000014000000150000001600000017000000
   _unlimitedCast: 1
+  _disableLogs: 0
 --- !u!1 &1640311955
 GameObject:
   m_ObjectHideFlags: 0
