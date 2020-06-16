@@ -16,6 +16,7 @@ public class CharacterMarkerNameplate : PooledObject {
     [Header("Thoughts")] 
     [SerializeField] private GameObject thoughtGO;
     [SerializeField] private TextMeshProUGUI thoughtLbl;
+    [SerializeField] private ContentSizeFitter contentSizeFitter;
     
     private CharacterMarker _parentMarker;
 
@@ -38,6 +39,11 @@ public class CharacterMarkerNameplate : PooledObject {
     #endregion
 
     #region Monobehaviours
+    private void Update() {
+        if (thoughtGO.activeSelf) {
+            UpdateThoughtText();
+        }
+    }
     private void LateUpdate() {
         Vector3 markerScreenPosition =
             InnerMapCameraMove.Instance.innerMapsCamera.WorldToScreenPoint(_parentMarker.transform.position);
@@ -46,9 +52,6 @@ public class CharacterMarkerNameplate : PooledObject {
             markerScreenPosition.y += 15f;
         }
         transform.position = markerScreenPosition;
-        if (thoughtGO.activeSelf) {
-            UpdateThoughtText();
-        }
     }
     #endregion
 
@@ -160,9 +163,17 @@ public class CharacterMarkerNameplate : PooledObject {
     }
     public void HideThoughts() {
         thoughtGO.SetActive(false);
+        thoughtLbl.text = string.Empty;
     }
     private void UpdateThoughtText() {
-        thoughtLbl.text = _parentMarker.character.visuals.GetThoughtBubble(out var log);
+        string thoughts = _parentMarker.character.visuals.GetThoughtBubble(out var log);
+        if (thoughtLbl.text.Equals(thoughts) == false) {
+            //thoughts changed
+            thoughtLbl.text = thoughts;
+            contentSizeFitter.SetLayoutVertical();
+            contentSizeFitter.SetLayoutHorizontal();
+        }
+        
     }
     #endregion
 }
