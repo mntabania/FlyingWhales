@@ -202,7 +202,8 @@ public class CombatComponent {
     }
     public bool Fight(IPointOfInterest target, string reason, ActualGoapNode connectedAction = null, bool isLethal = true) {
         bool hasFought = false;
-        if (!hostilesInRange.Contains(target) && !bannedFromHostileList.Contains(target)) {
+        bool cannotFight = reason == CombatManager.Hostility && bannedFromHostileList.Contains(target);
+        if (!hostilesInRange.Contains(target) && !cannotFight) {
             string debugLog = $"Triggered FIGHT response for {owner.name} against {target.nameWithID}";
             hostilesInRange.Add(target);
             avoidInRange.Remove(target);

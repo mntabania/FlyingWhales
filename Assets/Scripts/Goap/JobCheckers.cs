@@ -57,7 +57,7 @@ public partial class InteractionManager {
             && !character.traitContainer.HasTrait("Coward") 
             && character.homeSettlement != null 
             && character.homeSettlement.prison != null
-            && !character.combatComponent.bannedFromHostileList.Contains(targetCharacter)) {
+            /*&& !character.combatComponent.bannedFromHostileList.Contains(targetCharacter)*/) {
             Restrained restrainedTrait = targetCharacter.traitContainer.GetNormalTrait<Restrained>("Restrained");
             if (restrainedTrait == null || !restrainedTrait.isPrisoner) {
                 return /*character.characterClass.CanDoJob(JOB_TYPE.APPREHEND) &&*/
@@ -74,7 +74,7 @@ public partial class InteractionManager {
                && character.relationshipContainer.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.POSITIVE 
                && !character.traitContainer.HasTrait("Criminal")
                && !targetCharacter.traitContainer.HasTrait("Restrained")
-               && !character.combatComponent.bannedFromHostileList.Contains(targetCharacter);
+               /*&& !character.combatComponent.bannedFromHostileList.Contains(targetCharacter)*/;
     }
     public bool CanCharacterTakeRepairJob(Character character, JobQueueItem job) {
         bool canTakeRepairJob = false;
