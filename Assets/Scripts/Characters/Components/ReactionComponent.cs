@@ -626,6 +626,10 @@ public class ReactionComponent {
                                 for (int i = 0; i < owner.marker.inVisionCharacters.Count; i++) {
                                     Character inVision = owner.marker.inVisionCharacters[i];
                                     if (inVision != targetCharacter && inVision.relationshipContainer.IsEnemiesWith(targetCharacter)) {
+                                        if(inVision.currentJob != null && inVision.currentJob.jobType == JOB_TYPE.BURY) {
+                                            //If the in vision character is going to bury the dead, do not assume
+                                            continue;
+                                        }
                                         _assumptionSuspects.Add(inVision);
                                     }
                                 }

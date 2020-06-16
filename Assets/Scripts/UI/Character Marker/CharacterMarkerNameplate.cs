@@ -55,10 +55,12 @@ public class CharacterMarkerNameplate : PooledObject {
     #region Name
     public void UpdateName() {
         string icon = UtilityScripts.Utilities.VillagerIcon();
+        string name = UtilityScripts.Utilities.ColorizeName(_parentMarker.character.name);
         if (_parentMarker.character.isNormalCharacter == false) {
             icon = UtilityScripts.Utilities.MonsterIcon();
+            name = $"<color=#820000>{_parentMarker.character.name}</color>";
         }
-        nameLbl.SetText($"{icon} {_parentMarker.character.name}");
+        nameLbl.SetText($"{icon} {name}");
     }
     #endregion
 
