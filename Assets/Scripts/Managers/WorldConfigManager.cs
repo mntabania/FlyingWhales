@@ -29,13 +29,15 @@ public class WorldConfigManager : MonoBehaviour {
     public List<TutorialManager.Tutorial> demoTutorials => _demoTutorials;
 #if UNITY_EDITOR
     public bool unlimitedCast => _unlimitedCast;
+    public bool disableLogs => _disableLogs;
 #else
     public bool unlimitedCast => false;
+    public bool disableLogs => true;
 #endif
     #endregion
     
     private void Awake() {
-        if (_disableLogs) {
+        if (disableLogs) {
             Debug.unityLogger.logEnabled = false; 
         }
         if (Instance == null) {
