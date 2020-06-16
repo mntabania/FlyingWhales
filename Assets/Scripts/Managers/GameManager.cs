@@ -55,7 +55,6 @@ public class GameManager : MonoBehaviour {
 
     #region Monobehaviours
     private void Awake() {
-        // Debug.unityLogger.logEnabled = false;
         Instance = this;
         timeElapsed = 0f;
         _gameHasStarted = false;
