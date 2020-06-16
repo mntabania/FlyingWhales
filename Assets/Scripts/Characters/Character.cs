@@ -2430,24 +2430,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         Messenger.Broadcast(Signals.CHARACTER_WAS_HIT, this, characterThatAttacked);
     }
-    /// <summary>
-    /// Function to check what a character will do when he/she sees a hostile.
-    /// </summary>
-    /// <returns>True or False(True if the character will not flee, and false if otherwise).</returns>
-    public bool IsCombatReady() {
-        if (IsHealthCriticallyLow()) {
-            return false;
-        }
-        if (needsComponent.HasNeeds()) {
-            if (needsComponent.isStarving && !traitContainer.HasTrait("Vampiric")) {
-                return false; //only characters that are not vampires will flee if they are starving
-            }
-            if (needsComponent.isExhausted) {
-                return false;
-            }
-        }
-        return true;
-    }
     #endregion
 
     #region RPG
@@ -2505,7 +2487,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             } else {
                 Death();
             }
-        } else if (amount < 0 && IsHealthCriticallyLow()) {
+        } else if (amount < 0 && IsHealthCriticallyLow() && traitContainer.HasTrait("Berserked") == false) { //do not make berserked characters trigger flight
             combatComponent.FlightAll("critically low health");
             // Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, this, "critically low health");
         }
@@ -3834,7 +3816,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             ActualGoapNode currentNode = plan.currentActualNode;
             if (RaceManager.Instance.CanCharacterDoGoapAction(this, currentNode.action.goapType)
                 && InteractionManager.Instance.CanSatisfyGoapActionRequirements(currentNode.action.goapType, currentNode.actor, currentNode.poiTarget, currentNode.otherData)) {
-                bool preconditionsSatisfied = plan.currentActualNode.action.CanSatisfyAllPreconditions(currentNode.actor, currentNode.poiTarget, currentNode.otherData);
+                bool preconditionsSatisfied = plan.currentActualNode.action.CanSatisfyAllPreconditions(currentNode.actor, currentNode.poiTarget, currentNode.otherData, currentTopPrioJob.jobType);
                 if (!preconditionsSatisfied) {
                     log =
                         $"{log}\n - {plan.currentActualNode} Action's preconditions are not all satisfied, trying to recalculate plan...";
@@ -4021,7 +4003,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             return;
         }
         if (InteractionManager.Instance.CanSatisfyGoapActionRequirements(currentActionNode.action.goapType, currentActionNode.actor, currentActionNode.poiTarget, currentActionNode.otherData)
-            && currentActionNode.action.CanSatisfyAllPreconditions(currentActionNode.actor, currentActionNode.poiTarget, currentActionNode.otherData)) {
+            && currentActionNode.action.CanSatisfyAllPreconditions(currentActionNode.actor, currentActionNode.poiTarget, currentActionNode.otherData, currentActionNode.associatedJobType)) {
             log +=
                 $"\nAction satisfies all requirements and preconditions, proceeding to perform actual action: {currentActionNode.action.goapName} to {currentActionNode.poiTarget.name} at {currentActionNode.poiTarget.gridTileLocation}" ?? "No Tile Location";
             logComponent.PrintLogIfActive(log);

@@ -66,7 +66,7 @@ public class CraftFurniture : GoapAction {
     #endregion
 
     #region Preconditions
-    private bool HasSupply(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    private bool HasSupply(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
         TILE_OBJECT_TYPE furnitureToCreate = (TILE_OBJECT_TYPE)otherData[1];
         int cost = TileObjectDB.GetTileObjectData(furnitureToCreate).constructionCost;
         if (poiTarget.HasResourceAmount(RESOURCE.WOOD, cost)) {

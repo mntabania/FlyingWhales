@@ -133,7 +133,7 @@ public class Poison : GoapAction {
     #endregion
 
     #region Precondition
-    private bool HasTool(Character character, IPointOfInterest poiTarget, object[] otherData) {
+    private bool HasTool(Character character, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
         return character.HasItem(TILE_OBJECT_TYPE.TOOL);
     }
     #endregion

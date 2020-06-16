@@ -38,7 +38,7 @@ public class ReleaseCharacter : GoapAction {
     #endregion
 
     #region Preconditions
-    private bool HasItemTool(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    private bool HasItemTool(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
         return actor.HasItem(TILE_OBJECT_TYPE.TOOL);
     }
     #endregion

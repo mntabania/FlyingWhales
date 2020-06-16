@@ -21,6 +21,7 @@ public class WorldConfigManager : MonoBehaviour {
 
     [Header("Testing")] 
     [SerializeField] private bool _unlimitedCast;
+    [SerializeField] private bool _disableLogs;
     
     #region Getters
     public bool isDemoWorld => _isDemoWorld;
@@ -28,12 +29,17 @@ public class WorldConfigManager : MonoBehaviour {
     public List<TutorialManager.Tutorial> demoTutorials => _demoTutorials;
 #if UNITY_EDITOR
     public bool unlimitedCast => _unlimitedCast;
+    public bool disableLogs => _disableLogs;
 #else
     public bool unlimitedCast => false;
+    public bool disableLogs => true;
 #endif
     #endregion
     
     private void Awake() {
+        if (disableLogs) {
+            Debug.unityLogger.logEnabled = false; 
+        }
         if (Instance == null) {
             Instance = this;
         } else if (Instance != this) {

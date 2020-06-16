@@ -31,6 +31,7 @@ public class GoapPlanner {
             job.SetAssignedPlan(null);
         }
         status = GOAP_PLANNING_STATUS.RUNNING;
+        
         //_numOfWaitingForGoapThread++;
         //Debug.LogWarning(name + " sent a plan to other thread(" + _numOfWaitingForGoapThread + ")");
         MultiThreadPool.Instance.AddToThreadPool(new GoapThread(owner, target, goal, isPersonalPlan, job));
@@ -639,7 +640,7 @@ public class GoapPlanner {
 
             for (int i = 0; i < preconditions.Count; i++) {
                 Precondition precondition = preconditions[i];
-                if (!precondition.CanSatisfyCondition(actor, target, preconditionActionData)) {
+                if (!precondition.CanSatisfyCondition(actor, target, preconditionActionData, job.jobType)) {
                     GoapEffect preconditionEffect = precondition.goapEffect;
                     log +=
                         $"\n--Could not satisfy condition {preconditionEffect}, will look for action to satisfy it...";

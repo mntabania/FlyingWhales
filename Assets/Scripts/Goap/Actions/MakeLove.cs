@@ -290,7 +290,7 @@ public class MakeLove : GoapAction {
     #endregion
 
     #region Preconditions
-    private bool IsTargetInvited(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    private bool IsTargetInvited(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
         return actor.ownParty.IsPOICarried(poiTarget);
     }
     #endregion

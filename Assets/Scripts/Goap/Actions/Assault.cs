@@ -32,7 +32,10 @@ public class Assault : GoapAction {
         IPointOfInterest poiTarget = node.poiTarget;
         if (goapActionInvalidity.isInvalid == false) {
             if (actor.IsHealthCriticallyLow()) {
-                goapActionInvalidity.isInvalid = true;
+                //only block assault action if character is not berserked
+                if (actor.traitContainer.HasTrait("Berserked") == false) {
+                    goapActionInvalidity.isInvalid = true;    
+                }
             }
         }
         return goapActionInvalidity;

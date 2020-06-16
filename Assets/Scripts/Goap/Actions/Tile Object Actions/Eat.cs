@@ -180,7 +180,7 @@ public class Eat : GoapAction {
     #endregion
     
     #region Preconditions
-    private bool HasFood(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    private bool HasFood(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
         return poiTarget.HasResourceAmount(RESOURCE.FOOD, 12);
     }
     #endregion

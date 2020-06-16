@@ -112,7 +112,7 @@ public class BuryCharacter : GoapAction {
     #endregion
 
     #region Preconditions
-    private bool IsCarried(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    private bool IsCarried(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
         // Character target = poiTarget as Character;
         // return target.currentParty == actor.currentParty;
         return actor.IsPOICarriedOrInInventory(poiTarget);
