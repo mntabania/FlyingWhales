@@ -8,6 +8,7 @@ namespace Traits {
         private Character owner;
         private bool _hasAlreadyDied;
         public bool isLiving { get; private set; }
+        private GameObject _infectedEffectGO;
 
         public override bool isPersistent { get { return true; } }
 
@@ -22,6 +23,8 @@ namespace Traits {
             moodEffect = -5;
             _hasAlreadyDied = false;
             AddTraitOverrideFunctionIdentifier(TraitManager.Death_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Initiate_Map_Visual_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Destroy_Map_Visual_Trait);
             //AddTraitOverrideFunctionIdentifier(TraitManager.Hour_Started_Trait);
         }
 
@@ -32,12 +35,16 @@ namespace Traits {
                 owner = character;
                 //owner.needsComponent.AdjustStaminaDecreaseRate(2);
                 Messenger.AddListener(Signals.HOUR_STARTED, HourlyCheck);
+                _infectedEffectGO = GameManager.Instance.CreateParticleEffectAt(character, PARTICLE_EFFECT.Infected, false);
             }
-
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
-            if(owner != null) {
+            if (_infectedEffectGO) {
+                ObjectPoolManager.Instance.DestroyObject(_infectedEffectGO);
+                _infectedEffectGO = null;
+            }
+            if (owner != null) {
                 owner.marker.SetMarkerColor(Color.white);
                 //owner.needsComponent.AdjustStaminaDecreaseRate(-2);
                 if (Messenger.eventTable.ContainsKey(Signals.HOUR_STARTED)) {
@@ -52,6 +59,21 @@ namespace Traits {
                 SetHasAlreadyDied(true);
             }
             return base.OnDeath(character);
+        }
+        public override void OnInitiateMapObjectVisual(ITraitable traitable) {
+            if (traitable is Character character) {
+                if (_infectedEffectGO) {
+                    ObjectPoolManager.Instance.DestroyObject(_infectedEffectGO);
+                    _infectedEffectGO = null;
+                }
+                _infectedEffectGO = GameManager.Instance.CreateParticleEffectAt(character, PARTICLE_EFFECT.Infected, false);
+            }
+        }
+        public override void OnDestroyMapObjectVisual(ITraitable traitable) {
+            if (_infectedEffectGO) {
+                ObjectPoolManager.Instance.DestroyObject(_infectedEffectGO);
+                _infectedEffectGO = null;
+            }
         }
         #endregion
 
