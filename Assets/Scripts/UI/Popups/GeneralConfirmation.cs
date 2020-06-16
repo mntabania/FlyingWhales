@@ -20,8 +20,9 @@ public class GeneralConfirmation : PopupMenuBase {
         }
         if (!GameManager.Instance.isPaused) {
             UIManager.Instance.Pause();
-            UIManager.Instance.SetSpeedTogglesState(false);
         }
+        UIManager.Instance.SetSpeedTogglesState(false);
+        
         UIManager.Instance.HideSmallInfo();
         generalConfirmationTitleText.text = header.ToUpper();
         generalConfirmationBodyText.text = body;

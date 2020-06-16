@@ -31,6 +31,9 @@ public partial class InteractionManager {
     public bool CanBrewPotion(Character character) {
         return TILE_OBJECT_TYPE.HEALING_POTION.CanBeCraftedBy(character);
     }
+    public bool CanBrewAntidote(Character character) {
+        return TILE_OBJECT_TYPE.ANTIDOTE.CanBeCraftedBy(character);
+    }
     public bool CanTakeBuryJob(Character character) {
         if (!character.traitContainer.HasTrait("Criminal") && character.isAtHomeRegion &&
             character.isPartOfHomeFaction && !character.traitContainer.HasTrait("Beast")) {

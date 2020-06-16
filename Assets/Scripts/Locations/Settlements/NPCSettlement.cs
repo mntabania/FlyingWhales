@@ -910,7 +910,8 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     private void CheckAreaInventoryJobs(LocationStructure affectedStructure, TileObject objectThatTriggeredChange) {
         if (affectedStructure == mainStorage && (objectThatTriggeredChange == null 
              || objectThatTriggeredChange.tileObjectType == TILE_OBJECT_TYPE.HEALING_POTION 
-             || objectThatTriggeredChange.tileObjectType == TILE_OBJECT_TYPE.TOOL)) {
+             || objectThatTriggeredChange.tileObjectType == TILE_OBJECT_TYPE.TOOL
+             || objectThatTriggeredChange.tileObjectType == TILE_OBJECT_TYPE.ANTIDOTE)) {
             //brew potion
             if (affectedStructure.GetTileObjectsOfTypeCount(TILE_OBJECT_TYPE.HEALING_POTION) < 2) {
                 //create an un crafted potion and place it at the main storage structure, then use that as the target for the job.
@@ -935,6 +936,20 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, item, this);
                     //job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.TOOL).constructionCost });
                     job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCraftTool);
+                    AddToAvailableJobs(job);
+                }
+            }
+            
+            //brew antidote
+            if (affectedStructure.GetTileObjectsOfTypeCount(TILE_OBJECT_TYPE.ANTIDOTE) < 2) {
+                if (!HasJob(JOB_TYPE.CRAFT_OBJECT)) {
+                    //create an un crafted antidote and place it at the main storage structure, then use that as the target for the job.
+                    TileObject item = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.ANTIDOTE);
+                    item.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
+                    affectedStructure.AddPOI(item);
+
+                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, item, this);
+                    job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanBrewAntidote);
                     AddToAvailableJobs(job);
                 }
             }

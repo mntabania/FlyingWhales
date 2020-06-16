@@ -405,7 +405,8 @@ public class PlayerUI : MonoBehaviour {
     public bool IsMajorUIShowing() {
         return levelUpUI.gameObject.activeInHierarchy || newAbilityUI.gameObject.activeInHierarchy || 
                newMinionAbilityUI.gameObject.activeInHierarchy || replaceUI.gameObject.activeInHierarchy || 
-               _generalConfirmation.isShowing || newMinionUIGO.activeInHierarchy || UIManager.Instance.generalConfirmationWithVisual.isShowing;
+               _generalConfirmation.isShowing || newMinionUIGO.activeInHierarchy || 
+               UIManager.Instance.generalConfirmationWithVisual.isShowing || unleashSummonUI.isShowing;
     }
     #endregion
 
@@ -588,7 +589,7 @@ public class PlayerUI : MonoBehaviour {
     }
     public void LoseGameOver() {
         if (WorldConfigManager.Instance.isDemoWorld) {
-            UIManager.Instance.ShowEndDemoScreen("The Portal is in ruins! Your invasion has ended prematurely.");
+            UIManager.Instance.ShowEndDemoScreen("The Portal is in ruins! \nYour invasion has ended prematurely.");
         } else {
             UIManager.Instance.Pause();
             loseGameOver.Open();
