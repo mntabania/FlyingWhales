@@ -549,12 +549,17 @@ public class ReactionComponent {
                             }
                         } else if (!owner.traitContainer.HasTrait("Psychopath")) {
                             debugLog += "\n-Character is not Psychopath and does not consider Target as Enemy or Rival";
-                            if (targetCharacter.traitContainer.HasTrait("Paralyzed", "Ensnared") || (targetCharacter.traitContainer.HasTrait("Restrained") && targetCharacter.traitContainer.HasTrait("Criminal"))) {
-                                debugLog += "\n-Target is Restrained and a Criminal or Paralyzed or Ensnared";
+                            bool targetIsParalyzedOrEnsnared =
+                                targetCharacter.traitContainer.HasTrait("Paralyzed", "Ensnared");
+                            bool targetIsRestrainedCriminal =
+                                (targetCharacter.traitContainer.HasTrait("Restrained") &&
+                                 targetCharacter.traitContainer.HasTrait("Criminal"));
+                            if (targetIsParalyzedOrEnsnared || targetIsRestrainedCriminal) {
+                                debugLog += $"\n-Target is Restrained Criminal({targetIsRestrainedCriminal.ToString()}) or is Paralyzed or Ensnared({targetIsParalyzedOrEnsnared.ToString()})";
                                 if (targetCharacter.needsComponent.isHungry || targetCharacter.needsComponent.isStarving) {
                                     debugLog += "\n-Target is hungry or starving, will create feed job";
                                     owner.jobComponent.TryTriggerFeed(targetCharacter);
-                                } else if (targetCharacter.needsComponent.isTired || targetCharacter.needsComponent.isExhausted) {
+                                } else if ((targetCharacter.needsComponent.isTired || targetCharacter.needsComponent.isExhausted) && targetIsParalyzedOrEnsnared) {
                                     debugLog += "\n-Target is tired or exhausted, will create Move Character job to bed if Target has a home and an available bed";
                                     if (targetCharacter.homeStructure != null) {
                                         Bed bed = targetCharacter.homeStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.BED) as Bed;
@@ -567,7 +572,7 @@ public class ReactionComponent {
                                     } else {
                                         debugLog += "\n-Target does not have a home, will not trigger Move Character job";
                                     }
-                                } else if (targetCharacter.needsComponent.isBored || targetCharacter.needsComponent.isSulking) {
+                                } else if ((targetCharacter.needsComponent.isBored || targetCharacter.needsComponent.isSulking) && targetIsParalyzedOrEnsnared) {
                                     debugLog += "\n-Target is bored or sulking, will trigger Move Character job if character is not in the right place to do Daydream or Pray";
                                     if (UnityEngine.Random.Range(0, 2) == 0 && targetCharacter.homeStructure != null) {
                                         //Pray
