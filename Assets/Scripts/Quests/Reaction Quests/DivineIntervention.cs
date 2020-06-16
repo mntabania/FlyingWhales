@@ -31,7 +31,7 @@ namespace Quests {
 
         #region Step Helpers
         private string GetStopCharactersDescription(List<Character> targets, int initialTargetCount) {
-            return $"Eliminate {(initialTargetCount - targets.Count).ToString()} Angels.";
+            return $"Eliminate {targets.Count.ToString()} Angels.";
         }
         private void OnHoverEliminateItem(QuestStepItem item) {
             UIManager.Instance.ShowSmallInfo(
