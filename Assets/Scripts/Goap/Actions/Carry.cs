@@ -72,7 +72,14 @@ public class Carry : GoapAction {
     public void AfterCarrySuccess(ActualGoapNode goapNode) {
         //Character target = goapNode.poiTarget as Character;
         // goapNode.actor.ownParty.AddPOI(goapNode.poiTarget);
-        goapNode.actor.CarryPOI(goapNode.poiTarget);
+        bool setOwnership = true;
+        if (goapNode.associatedJobType == JOB_TYPE.HAUL
+            || goapNode.associatedJobType == JOB_TYPE.FULLNESS_RECOVERY_NORMAL
+            || goapNode.associatedJobType == JOB_TYPE.FULLNESS_RECOVERY_URGENT
+            || goapNode.associatedJobType == JOB_TYPE.OBTAIN_PERSONAL_FOOD) {
+            setOwnership = false;
+        }
+        goapNode.actor.CarryPOI(goapNode.poiTarget, setOwnership: setOwnership);
     }
     #endregion
 
