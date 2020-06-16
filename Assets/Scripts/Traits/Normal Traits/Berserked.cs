@@ -31,8 +31,8 @@ namespace Traits {
                 _owner = character;
                 if (character.marker) {
                     character.marker.BerserkedMarker();
+                    character.marker.visionCollider.VoteToUnFilterVision();
                 }
-                character.marker.visionCollider.VoteToUnFilterVision();
                 character.CancelAllJobs();
                 character.behaviourComponent.AddBehaviourComponent(typeof(BerserkBehaviour));
             }
