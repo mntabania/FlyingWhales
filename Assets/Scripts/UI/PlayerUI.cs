@@ -405,7 +405,8 @@ public class PlayerUI : MonoBehaviour {
     public bool IsMajorUIShowing() {
         return levelUpUI.gameObject.activeInHierarchy || newAbilityUI.gameObject.activeInHierarchy || 
                newMinionAbilityUI.gameObject.activeInHierarchy || replaceUI.gameObject.activeInHierarchy || 
-               _generalConfirmation.isShowing || newMinionUIGO.activeInHierarchy || UIManager.Instance.generalConfirmationWithVisual.isShowing;
+               _generalConfirmation.isShowing || newMinionUIGO.activeInHierarchy || 
+               UIManager.Instance.generalConfirmationWithVisual.isShowing || unleashSummonUI.isShowing;
     }
     #endregion
 

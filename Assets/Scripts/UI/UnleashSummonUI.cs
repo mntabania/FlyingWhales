@@ -49,8 +49,8 @@ public class UnleashSummonUI : PopupMenuBase { //MonoBehaviour
         isGamePausedOnShowUI = GameManager.Instance.isPaused;
         if (!isGamePausedOnShowUI) {
             UIManager.Instance.Pause();
-            UIManager.Instance.SetSpeedTogglesState(false);
         }
+        UIManager.Instance.SetSpeedTogglesState(false);
         //SetSummon(summon);
         PopulateMinionsMonstersSummons();
         UpdateSummonButton();
@@ -63,9 +63,7 @@ public class UnleashSummonUI : PopupMenuBase { //MonoBehaviour
     public override void Close() {
         base.Close();
         if (!PlayerUI.Instance.TryShowPendingUI()) {
-            if (!isGamePausedOnShowUI) {
-                UIManager.Instance.ResumeLastProgressionSpeed(); //if no other UI was shown, unpause game
-            }
+            UIManager.Instance.ResumeLastProgressionSpeed(); //if no other UI was shown, unpause game
         }
     }
     public void OnClickConfirm() {
