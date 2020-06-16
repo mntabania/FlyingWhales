@@ -54,7 +54,7 @@ public class BerserkBehaviour : CharacterBehaviourComponent {
             }
             if (!hasCreatedJob) {
                 log += $"\n-{character.name} did not create berserk attack job, will stroll instead";
-                character.PlanIdleStrollOutside(out producedJob);
+                character.PlanIdleBerserkStrollOutside(out producedJob);
             }
         }
         return true;

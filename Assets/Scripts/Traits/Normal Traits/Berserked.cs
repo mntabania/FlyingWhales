@@ -21,6 +21,8 @@ namespace Traits {
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(6);
             hindersWitness = true;
             AddTraitOverrideFunctionIdentifier(TraitManager.Tick_Started_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Initiate_Map_Visual_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Destroy_Map_Visual_Trait);
             //AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Cannot_Witness_Trait);
         }
 
@@ -67,6 +69,21 @@ namespace Traits {
                 }
                 character.behaviourComponent.RemoveBehaviourComponent(typeof(BerserkBehaviour));
                 character.needsComponent.CheckExtremeNeeds();
+            }
+        }
+        public override void OnInitiateMapObjectVisual(ITraitable traitable) {
+            if (traitable is Character character) {
+                if (character.marker) {
+                    character.marker.BerserkedMarker();
+                }
+            }
+        }
+        public override void OnDestroyMapObjectVisual(ITraitable traitable) {
+            if (_owner != null) {
+                if (_owner.marker) {
+                    _owner.marker.UnberserkedMarker();
+                    _owner.marker.visionCollider.VoteToFilterVision();
+                }
             }
         }
         //public override void OnSeePOIEvenCannotWitness(IPointOfInterest targetPOI, Character character) {

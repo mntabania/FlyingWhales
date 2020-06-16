@@ -2942,6 +2942,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         producedJob = job;
         return true;
     }
+    public bool PlanIdleBerserkStrollOutside(out JobQueueItem producedJob) {
+        CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.BERSERK_STROLL, CHARACTER_STATE.STROLL_OUTSIDE, this);
+        producedJob = job;
+        return true;
+    }
     public bool PlanIdleReturnHome() { //bool forceDoAction = false
         if (homeStructure != null && homeStructure.tiles.Count > 0 && !homeStructure.hasBeenDestroyed) {
             ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RETURN_HOME], this, this, null, 0);
@@ -4551,6 +4556,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             Messenger.Broadcast(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, this as IPointOfInterest);
         }
         Messenger.AddListener(Signals.TICK_STARTED, OnTickStartedWhileSeized);
+        //List<Trait> traitOverrideFunctions = traitContainer.GetTraitOverrideFunctions(TraitManager.Destroy_Map_Visual_Trait);
+        //if (traitOverrideFunctions != null) {
+        //    for (int i = 0; i < traitOverrideFunctions.Count; i++) {
+        //        Trait trait = traitOverrideFunctions[i];
+        //        trait.OnDestroyMapObjectVisual(this);
+        //    }
+        //}
         //Messenger.Broadcast(Signals.ON_SEIZE_CHARACTER, this);
     }
     public virtual void OnUnseizePOI(LocationGridTile tileLocation) {
@@ -4583,6 +4595,19 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.BURY, this as IPointOfInterest);
             jobComponent.TriggerBuryMe();    
         }
+
+        if (traitContainer.HasTrait("Berserked")) {
+            if (marker) {
+                marker.BerserkedMarker();
+            }
+        }
+        //List<Trait> traitOverrideFunctions = traitContainer.GetTraitOverrideFunctions(TraitManager.Initiate_Map_Visual_Trait);
+        //if (traitOverrideFunctions != null) {
+        //    for (int i = 0; i < traitOverrideFunctions.Count; i++) {
+        //        Trait trait = traitOverrideFunctions[i];
+        //        trait.OnInitiateMapObjectVisual(this);
+        //    }
+        //}
         //Messenger.Broadcast(Signals.ON_UNSEIZE_CHARACTER, this);
     }
     public bool CollectsLogs() {
