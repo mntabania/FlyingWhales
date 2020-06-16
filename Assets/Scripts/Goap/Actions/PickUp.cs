@@ -122,7 +122,10 @@ public class PickUp : GoapAction {
         //Picked up item when in haul job should not set its ownership to the actor because he/she will just deliver it to the main storage
         //This will fix na assumption issues and the issue with other characters not being able to do haul job if the first character to haul dropped the item (first character will be the item owner) because of the pick up costing
         bool setOwnership = true;
-        if(goapNode.associatedJobType == JOB_TYPE.HAUL) {
+        if(goapNode.associatedJobType == JOB_TYPE.HAUL 
+            || goapNode.associatedJobType == JOB_TYPE.FULLNESS_RECOVERY_NORMAL 
+            || goapNode.associatedJobType == JOB_TYPE.FULLNESS_RECOVERY_URGENT
+            || goapNode.associatedJobType == JOB_TYPE.OBTAIN_PERSONAL_FOOD) {
             setOwnership = false;
         }
         goapNode.actor.PickUpItem(goapNode.poiTarget as TileObject, setOwnership: setOwnership);

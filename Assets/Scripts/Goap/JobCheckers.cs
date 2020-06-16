@@ -52,8 +52,12 @@ public partial class InteractionManager {
         return false;
     }
     public bool CanCharacterTakeApprehendJob(Character character, Character targetCharacter) {
-        if (character.isAtHomeRegion && !character.traitContainer.HasTrait("Criminal") &&
-            !character.traitContainer.HasTrait("Coward") && character.homeSettlement != null && character.homeSettlement.prison != null) {
+        if (character.isAtHomeRegion 
+            && !character.traitContainer.HasTrait("Criminal") 
+            && !character.traitContainer.HasTrait("Coward") 
+            && character.homeSettlement != null 
+            && character.homeSettlement.prison != null
+            && !character.combatComponent.bannedFromHostileList.Contains(targetCharacter)) {
             Restrained restrainedTrait = targetCharacter.traitContainer.GetNormalTrait<Restrained>("Restrained");
             if (restrainedTrait == null || !restrainedTrait.isPrisoner) {
                 return /*character.characterClass.CanDoJob(JOB_TYPE.APPREHEND) &&*/
@@ -69,7 +73,8 @@ public partial class InteractionManager {
                //&& character.characterClass.CanDoJob(JOB_TYPE.RESTRAIN)
                && character.relationshipContainer.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.POSITIVE 
                && !character.traitContainer.HasTrait("Criminal")
-               && !targetCharacter.traitContainer.HasTrait("Restrained");
+               && !targetCharacter.traitContainer.HasTrait("Restrained")
+               && !character.combatComponent.bannedFromHostileList.Contains(targetCharacter);
     }
     public bool CanCharacterTakeRepairJob(Character character, JobQueueItem job) {
         bool canTakeRepairJob = false;

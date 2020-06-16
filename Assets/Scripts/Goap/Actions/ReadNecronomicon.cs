@@ -8,7 +8,7 @@ using Inner_Maps;
 public class ReadNecronomicon : GoapAction {
 
     public ReadNecronomicon() : base(INTERACTION_TYPE.READ_NECRONOMICON) {
-        actionIconString = GoapActionStateDB.Entertain_Icon;
+        actionIconString = GoapActionStateDB.Magic_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.NEARBY;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON, RACE.DEMON };
