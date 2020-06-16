@@ -61,12 +61,11 @@ namespace Tutorial {
         }
         private IEnumerator DelayedChaosOrbTooltip() {
             yield return new WaitForSeconds(1f);
-            UIManager.Instance.generalConfirmationWithVisual.ShowGeneralConfirmation("Chaos Orbs",
+            PlayerUI.Instance.ShowGeneralConfirmation("Chaos Orbs",
                 "You start a playthrough with limited amount of Mana. " +
                 "The primary way of gaining more Mana is by finding Chaos Orbs. " +
                 $"These are Mana-filled orbs that are produced by {UtilityScripts.Utilities.VillagerIcon()}Villagers whenever they perform criminal acts. " +
-                "They also produce these when they cry so try to make them miserable.",
-                TutorialManager.Instance.afflictionsVideoClip
+                "They also produce these when they cry so try to make them miserable."
             );
         }
         private bool IsChaosOrbSelected(GameObject gameObject) {
