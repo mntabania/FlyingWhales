@@ -113,7 +113,7 @@ public class ThreatComponent {
             //NPCSettlement spawnSettlement = LandmarkManager.Instance.GetRandomVillageSettlement();
             //region = spawnSettlement.region;
             Region region = targetDemonicStructure.location;
-            HexTile spawnHex = targetDemonicStructure.location.GetRandomPlainHex();
+            HexTile spawnHex = targetDemonicStructure.location.GetRandomUncorruptedPlainHex();
             //if (spawnSettlement != null) {
             //    spawnHex = spawnSettlement.GetRandomHexTile();
             //} else {
