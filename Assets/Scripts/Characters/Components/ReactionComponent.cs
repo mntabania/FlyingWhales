@@ -526,31 +526,35 @@ public class ReactionComponent {
                                     owner.interruptComponent.TriggerInterrupt(INTERRUPT.Laugh_At, targetCharacter);
                                 }
                             }
-                        } else if (targetCharacter.traitContainer.HasTrait("Criminal") && !targetCharacter.traitContainer.HasTrait("Restrained")) {
-                            if(owner.relationshipContainer.IsFriendsWith(targetCharacter)) {
-                                owner.interruptComponent.TriggerInterrupt(INTERRUPT.Worried, targetCharacter);
-                            } else {
-                                bool hasCreatedPersonalApprehend = false;
-                                if (owner.currentSettlement != null && owner.currentSettlement is NPCSettlement settlement && (settlement.locationType == LOCATION_TYPE.ELVEN_SETTLEMENT || settlement.locationType == LOCATION_TYPE.HUMAN_SETTLEMENT)) {
-                                    hasCreatedPersonalApprehend = owner.jobComponent.TryCreateApprehend(targetCharacter, settlement);
-                                }
-                                if (!hasCreatedPersonalApprehend) {
-                                    owner.combatComponent.Flight(targetCharacter, "saw criminal " + targetCharacter.name);
+                        } else if (targetCharacter.traitContainer.HasTrait("Criminal") 
+                            && !targetCharacter.traitContainer.HasTrait("Restrained")) {
+                            bool cannotReactToCriminal = false;
+                            if (owner.currentJob != null && owner.currentJob is GoapPlanJob planJob) {
+                                cannotReactToCriminal = planJob.jobType == JOB_TYPE.APPREHEND && planJob.targetPOI == targetCharacter;
+                            }
+                            if (!cannotReactToCriminal) {
+                                if (owner.relationshipContainer.IsFriendsWith(targetCharacter)) {
+                                    Criminal criminalTrait = targetCharacter.traitContainer.GetNormalTrait<Criminal>("Criminal");
+                                    if (!criminalTrait.HasCharacterThatIsAlreadyWorried(owner)) {
+                                        criminalTrait.AddCharacterThatIsAlreadyWorried(owner);
+                                        owner.interruptComponent.TriggerInterrupt(INTERRUPT.Worried, targetCharacter);
+                                    }
+                                } else {
+                                    bool canDoJob = false;
+                                    owner.jobComponent.TryCreateApprehend(targetCharacter, ref canDoJob);
+                                    if (!canDoJob) {
+                                        owner.combatComponent.Flight(targetCharacter, "saw criminal " + targetCharacter.name);
+                                    }
                                 }
                             }
                         } else if (!owner.traitContainer.HasTrait("Psychopath")) {
                             debugLog += "\n-Character is not Psychopath and does not consider Target as Enemy or Rival";
-                            bool targetIsParalyzedOrEnsnared =
-                                targetCharacter.traitContainer.HasTrait("Paralyzed", "Ensnared");
-                            bool targetIsRestrainedCriminal =
-                                (targetCharacter.traitContainer.HasTrait("Restrained") &&
-                                 targetCharacter.traitContainer.HasTrait("Criminal"));
-                            if (targetIsParalyzedOrEnsnared || targetIsRestrainedCriminal) {
-                                debugLog += $"\n-Target is Restrained Criminal({targetIsRestrainedCriminal.ToString()}) or is Paralyzed or Ensnared({targetIsParalyzedOrEnsnared.ToString()})";
+                            if (targetCharacter.traitContainer.HasTrait("Paralyzed", "Ensnared") || (targetCharacter.traitContainer.HasTrait("Restrained") && targetCharacter.traitContainer.HasTrait("Criminal"))) {
+                                debugLog += "\n-Target is Restrained and a Criminal or Paralyzed or Ensnared";
                                 if (targetCharacter.needsComponent.isHungry || targetCharacter.needsComponent.isStarving) {
                                     debugLog += "\n-Target is hungry or starving, will create feed job";
                                     owner.jobComponent.TryTriggerFeed(targetCharacter);
-                                } else if ((targetCharacter.needsComponent.isTired || targetCharacter.needsComponent.isExhausted) && targetIsParalyzedOrEnsnared) {
+                                } else if (targetCharacter.needsComponent.isTired || targetCharacter.needsComponent.isExhausted) {
                                     debugLog += "\n-Target is tired or exhausted, will create Move Character job to bed if Target has a home and an available bed";
                                     if (targetCharacter.homeStructure != null) {
                                         Bed bed = targetCharacter.homeStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.BED) as Bed;
@@ -563,7 +567,7 @@ public class ReactionComponent {
                                     } else {
                                         debugLog += "\n-Target does not have a home, will not trigger Move Character job";
                                     }
-                                } else if ((targetCharacter.needsComponent.isBored || targetCharacter.needsComponent.isSulking) && targetIsParalyzedOrEnsnared) {
+                                } else if (targetCharacter.needsComponent.isBored || targetCharacter.needsComponent.isSulking) {
                                     debugLog += "\n-Target is bored or sulking, will trigger Move Character job if character is not in the right place to do Daydream or Pray";
                                     if (UnityEngine.Random.Range(0, 2) == 0 && targetCharacter.homeStructure != null) {
                                         //Pray

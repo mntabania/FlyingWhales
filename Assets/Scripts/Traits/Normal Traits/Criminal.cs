@@ -8,6 +8,7 @@ namespace Traits {
 
         public CrimeData crimeData { get; protected set; }
         public Character owner { get; private set; }
+        public List<Character> charactersThatAreAlreadyWorried { get; private set; }
 
         public Criminal() {
             name = "Criminal";
@@ -15,6 +16,7 @@ namespace Traits {
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = 0;
+            charactersThatAreAlreadyWorried = new List<Character>();
         }
 
         #region Overrides
@@ -41,6 +43,12 @@ namespace Traits {
         #endregion
 
         #region General
+        public void AddCharacterThatIsAlreadyWorried(Character character) {
+            charactersThatAreAlreadyWorried.Add(character);
+        }
+        public bool HasCharacterThatIsAlreadyWorried(Character character) {
+            return charactersThatAreAlreadyWorried.Contains(character);
+        }
         public void SetCrime(CRIME_TYPE crimeType, ICrimeable crime, IPointOfInterest crimeTarget) {
             if(crimeData != null) {
                 Debug.LogError(
@@ -50,30 +58,33 @@ namespace Traits {
             crimeData = new CrimeData(crimeType, crime, owner, crimeTarget);
         }
         private void CharacterApprehension() {
-            if(owner.currentSettlement != null && owner.currentSettlement is NPCSettlement settlement && (settlement.locationType == LOCATION_TYPE.ELVEN_SETTLEMENT || settlement.locationType == LOCATION_TYPE.HUMAN_SETTLEMENT)) {
-                bool hasCreatedPersonalApprehend = false;
-                if (owner.marker) {
-                    for (int i = 0; i < owner.marker.inVisionCharacters.Count; i++) {
-                        Character inVision = owner.marker.inVisionCharacters[i];
-                        if(inVision.relationshipContainer.IsFriendsWith(owner)) {
+            bool hasCreatedPersonalApprehend = false;
+            if (owner.marker) {
+                for (int i = 0; i < owner.marker.inVisionCharacters.Count; i++) {
+                    Character inVision = owner.marker.inVisionCharacters[i];
+                    if (inVision.relationshipContainer.IsFriendsWith(owner)) {
+                        if (!HasCharacterThatIsAlreadyWorried(inVision)) {
+                            AddCharacterThatIsAlreadyWorried(inVision);
                             inVision.interruptComponent.TriggerInterrupt(INTERRUPT.Worried, owner);
-                        } else {
-                            if (!hasCreatedPersonalApprehend) {
-                                hasCreatedPersonalApprehend = inVision.jobComponent.TryCreateApprehend(owner, settlement);
-                                if (!hasCreatedPersonalApprehend) {
-                                    inVision.combatComponent.Flight(owner, "fleeing crime scene");
-                                }
-                            } else {
+                        }
+                    } else {
+                        if (!hasCreatedPersonalApprehend) {
+                            bool canDoJob = false;
+                            hasCreatedPersonalApprehend = inVision.jobComponent.TryCreateApprehend(owner, ref canDoJob);
+                            if (!canDoJob) {
                                 inVision.combatComponent.Flight(owner, "fleeing crime scene");
                             }
+                        } else {
+                            inVision.combatComponent.Flight(owner, "fleeing crime scene");
                         }
                     }
                 }
-                if (!hasCreatedPersonalApprehend) {
+            }
+            if (!hasCreatedPersonalApprehend) {
+                if (owner.currentSettlement != null && owner.currentSettlement is NPCSettlement settlement && (settlement.locationType == LOCATION_TYPE.ELVEN_SETTLEMENT || settlement.locationType == LOCATION_TYPE.HUMAN_SETTLEMENT)) {
                     settlement.settlementJobTriggerComponent.TryCreateApprehend(owner);
                 }
             }
-
         }
         #endregion
     }

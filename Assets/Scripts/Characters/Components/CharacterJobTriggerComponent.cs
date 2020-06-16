@@ -1612,16 +1612,32 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     #endregion
 
     #region Apprehend
-    public bool TryCreateApprehend(Character target, NPCSettlement settlement) {
-        if (target.traitContainer.HasTrait("Criminal") && InteractionManager.Instance.CanCharacterTakeApprehendJob(_owner, target)) {
+    public bool TryCreateApprehend(Character target, ref bool canDoJob) {
+        NPCSettlement settlementToGoTo = target.currentSettlement as NPCSettlement;
+        if(settlementToGoTo == null || (settlementToGoTo.locationType != LOCATION_TYPE.ELVEN_SETTLEMENT && settlementToGoTo.locationType != LOCATION_TYPE.HUMAN_SETTLEMENT)) {
+            settlementToGoTo = _owner.homeSettlement;
+            if (settlementToGoTo == null || (settlementToGoTo.locationType != LOCATION_TYPE.ELVEN_SETTLEMENT && settlementToGoTo.locationType != LOCATION_TYPE.HUMAN_SETTLEMENT)) {
+                settlementToGoTo = null;
+            }
+        }
+        canDoJob = InteractionManager.Instance.CanCharacterTakeApprehendJob(_owner, target) && settlementToGoTo != null;
+        if (target.traitContainer.HasTrait("Criminal") && canDoJob) {
             if (_owner.jobQueue.HasJob(JOB_TYPE.APPREHEND, target) == false) {
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP,
-                    target, _owner);
-                job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { settlement.prison });
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP, target, _owner);
+                job.SetStillApplicableChecker(() => IsApprehendStillApplicable(target, settlementToGoTo));
+                job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { settlementToGoTo.prison });
                 return _owner.jobQueue.AddJobInQueue(job);
             }
         }
         return false;
+    }
+    public bool TryCreateApprehend(Character target) {
+        bool canDoJob = false;
+        return TryCreateApprehend(target, ref canDoJob);
+    }
+    private bool IsApprehendStillApplicable(Character target, NPCSettlement settlement) {
+        bool isApplicable = !target.traitContainer.HasTrait("Restrained") || target.currentStructure != settlement.prison;
+        return target.gridTileLocation != null && target.gridTileLocation.IsNextToOrPartOfSettlement(settlement) && isApplicable;
     }
     #endregion
 }
