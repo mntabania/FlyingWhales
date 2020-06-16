@@ -10,6 +10,7 @@ using UtilityScripts;
 public abstract class BaseVisionCollider : MonoBehaviour {
 
     private int _filterVisionVotes;
+    public int filterVotes => _filterVisionVotes;
     
     protected abstract void OnTriggerEnter2D(Collider2D collider2D);
     protected abstract void OnTriggerExit2D(Collider2D collider2D);
@@ -41,6 +42,10 @@ public abstract class BaseVisionCollider : MonoBehaviour {
     /// </summary>
     private void UnFilterVision() {
         gameObject.layer = LayerMask.NameToLayer(GameUtilities.Unfiltered_Vision_Layer);
+    }
+    public void SetFilterVisionVotes(int amount) {
+        _filterVisionVotes = amount;
+        DetermineVisionLayerGivenVotes();
     }
     #endregion
 

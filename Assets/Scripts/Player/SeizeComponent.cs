@@ -10,7 +10,8 @@ public class SeizeComponent {
     public IPointOfInterest seizedPOI { get; private set; }
     public bool isPreparingToBeUnseized { get; private set; }
     private Sprite _seizedPOISprite;
-    private int _seizedPOIVisionVotes;
+    private int _seizedPOIVisionTriggerVotes;
+    private int _seizedCharacterVisionVotes;
 
     private Vector3 followOffset;
     private Tween tween;
@@ -35,7 +36,10 @@ public class SeizeComponent {
                 Messenger.Broadcast(Signals.BEFORE_SEIZING_POI, poi);
                 _seizedPOISprite = poi.mapObjectVisual.usedSprite;
                 if (poi is BaseMapObject baseMapObject) { baseMapObject.OnManipulatedBy(PlayerManager.Instance.player); }
-                _seizedPOIVisionVotes = poi.mapObjectVisual.visionTrigger.filterVotes;
+                _seizedPOIVisionTriggerVotes = poi.mapObjectVisual.visionTrigger.filterVotes;
+                if (seizedPOI is Character character) {
+                    _seizedCharacterVisionVotes = character.marker.visionCollider.filterVotes;
+                }
                 poi.OnSeizePOI();
                 Messenger.Broadcast(Signals.ON_SEIZE_POI, poi);
                 //if(poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
@@ -95,10 +99,14 @@ public class SeizeComponent {
         seizedPOI.OnUnseizePOI(hoveredTile);
         if (seizedPOI.mapObjectVisual != null) {
             seizedPOI.mapObjectVisual.SetVisual(_seizedPOISprite);    
-            seizedPOI.mapObjectVisual.visionTrigger.SetFilterVotes(_seizedPOIVisionVotes);
+            seizedPOI.mapObjectVisual.visionTrigger.SetFilterVotes(_seizedPOIVisionTriggerVotes);
+        }
+        if (seizedPOI is Character character) {
+            character.marker.visionCollider.SetFilterVisionVotes(_seizedCharacterVisionVotes);
         }
         _seizedPOISprite = null;
-        _seizedPOIVisionVotes = 0;
+        _seizedPOIVisionTriggerVotes = 0;
+        _seizedCharacterVisionVotes = 0;
         Messenger.Broadcast(Signals.ON_UNSEIZE_POI, seizedPOI);
         seizedPOI = null;
         //PlayerUI.Instance.HideSeizedObjectUI();
