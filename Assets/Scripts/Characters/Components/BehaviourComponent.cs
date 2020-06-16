@@ -260,12 +260,19 @@ public class BehaviourComponent {
                 continue; //skip component
             }
             if (component.TryDoBehaviour(owner, ref log, out JobQueueItem producedJob)) {
-                if (producedJob == null || IsProducedJobValid(producedJob, owner)) {
+                bool isProducedJobValid = IsProducedJobValid(producedJob, owner);
+                if (producedJob == null || isProducedJobValid) {
                     if (producedJob != null) {
                         owner.jobQueue.AddJobInQueue(producedJob);
                     }
                     component.PostProcessAfterSuccessfulDoBehaviour(owner);
                     if (!component.WillContinueProcess()) { break; }    
+                }
+                if (isProducedJobValid == false && producedJob != null) { //if produced valid is not valid and produced job is not null
+                    //add character to blacklist if job is owned by a settlement
+                    if (producedJob.originalOwner != null && producedJob.originalOwner.ownerType != JOB_OWNER.CHARACTER) {
+                        producedJob.AddBlacklistedCharacter(owner);
+                    }
                 }
 
             }
