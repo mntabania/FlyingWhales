@@ -588,7 +588,7 @@ public class PlayerUI : MonoBehaviour {
     }
     public void LoseGameOver() {
         if (WorldConfigManager.Instance.isDemoWorld) {
-            UIManager.Instance.ShowEndDemoScreen("The Portal is in ruins! Your invasion has ended prematurely.");
+            UIManager.Instance.ShowEndDemoScreen("The Portal is in ruins! \nYour invasion has ended prematurely.");
         } else {
             UIManager.Instance.Pause();
             loseGameOver.Open();

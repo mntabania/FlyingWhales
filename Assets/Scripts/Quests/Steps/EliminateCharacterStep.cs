@@ -27,19 +27,24 @@ namespace Quests.Steps {
         
         protected override void SubscribeListeners() {
             Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, CheckForCompletion);
+            Messenger.AddListener<Character>(Signals.FACTION_SET, CheckForCompletion);
         }
         protected override void UnSubscribeListeners() {
             Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, CheckForCompletion);
+            Messenger.RemoveListener<Character>(Signals.FACTION_SET, CheckForCompletion);
         }
 
         #region Listeners
         private void CheckForCompletion(Character character) {
-            if (_targets.Remove(character)) {
-                objectsToCenter?.Remove(character);
-                Messenger.Broadcast(Signals.UPDATE_QUEST_STEP_ITEM, this as QuestStep);
-                if (_targets.Count == 0) {
-                    Complete();    
-                }
+            //remove character if character is dead or if he/she is no longer part of a major non player faction
+            if (character.isDead || (character.faction != null && character.faction.isMajorNonPlayerFriendlyNeutral == false)) {
+                if (_targets.Remove(character)) {
+                    objectsToCenter?.Remove(character);
+                    Messenger.Broadcast(Signals.UPDATE_QUEST_STEP_ITEM, this as QuestStep);
+                    if (_targets.Count == 0) {
+                        Complete();    
+                    }
+                }    
             }
         }
         #endregion

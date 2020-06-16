@@ -24,6 +24,7 @@ public class DemoUI : MonoBehaviour {
     [SerializeField] private Image bgImage;
     [SerializeField] private Image ruinarchLogo;
     [SerializeField] private RectTransform thankYouWindow;
+    [SerializeField] private CanvasGroup endScreenCanvasGroup;
 
     #region Start Screen
     public void ShowStartScreen() {
@@ -101,13 +102,14 @@ public class DemoUI : MonoBehaviour {
     private void ShowEndScreen() {
         endScreen.SetActive(true);
 
-        //bg image
-        Color fromColor = bgImage.color;
-        fromColor.a = 0f;
-        bgImage.color = fromColor;
-        bgImage.DOFade(1f, 2f).SetEase(Ease.InQuint).OnComplete(ShowLogoAndThankYou);
-        
-        
+        // //bg image
+        // Color fromColor = bgImage.color;
+        // fromColor.a = 0f;
+        // bgImage.color = fromColor;
+        // bgImage.DOFade(1f, 2f).SetEase(Ease.InQuint).OnComplete(ShowLogoAndThankYou);
+        endScreenCanvasGroup.alpha = 0f;
+        endScreenCanvasGroup.DOFade(1f, 2f).SetEase(Ease.InQuint).OnComplete(ShowLogoAndThankYou);
+
     }
 
     private void ShowLogoAndThankYou() {
