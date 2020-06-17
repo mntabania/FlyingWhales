@@ -10,6 +10,7 @@ using UnityEngine.UI;
 public class CharacterMarkerNameplate : PooledObject {
 
     [SerializeField] private RectTransform thisRect;
+    [SerializeField] private GameObject visualsParent;
     [SerializeField] private TextMeshProUGUI nameLbl;
     [SerializeField] private Image actionIcon;
 
@@ -28,12 +29,36 @@ public class CharacterMarkerNameplate : PooledObject {
         UpdateName();
         UpdateSizeBasedOnZoom();
         Messenger.AddListener<Camera, float>(Signals.CAMERA_ZOOM_CHANGED, OnCameraZoomChanged);
+        Messenger.AddListener<Region>(Signals.LOCATION_MAP_OPENED, OnLocationMapOpened);
+        Messenger.AddListener<Region>(Signals.LOCATION_MAP_CLOSED, OnLocationMapClosed);
+        Messenger.AddListener<Character, Region>(Signals.CHARACTER_ENTERED_REGION, OnCharacterEnteredRegion);
+        Messenger.AddListener<Character, Region>(Signals.CHARACTER_EXITED_REGION, OnCharacterExitedRegion);
     }
 
     #region Listeners
     private void OnCameraZoomChanged(Camera camera, float amount) {
         if (camera == InnerMapCameraMove.Instance.innerMapsCamera) {
             UpdateSizeBasedOnZoom();
+        }
+    }
+    private void OnLocationMapClosed(Region location) {
+        if (location == _parentMarker.character.currentRegion) {
+            SetGameObjectActiveState(false);
+        }        
+    }
+    private void OnLocationMapOpened(Region location) {
+        if (location == _parentMarker.character.currentRegion) {
+            SetGameObjectActiveState(true);
+        }        
+    }
+    private void OnCharacterExitedRegion(Character character, Region region) {
+        if (character == _parentMarker.character) {
+            SetGameObjectActiveState(false);
+        }
+    }
+    private void OnCharacterEnteredRegion(Character character, Region region) {
+        if (character == _parentMarker.character && InnerMapManager.Instance.currentlyShowingLocation == region) {
+            SetGameObjectActiveState(true);
         }
     }
     #endregion
@@ -73,12 +98,25 @@ public class CharacterMarkerNameplate : PooledObject {
         base.Reset();
         _parentMarker = null;
         Messenger.RemoveListener<Camera, float>(Signals.CAMERA_ZOOM_CHANGED, OnCameraZoomChanged);
+        Messenger.RemoveListener<Region>(Signals.LOCATION_MAP_OPENED, OnLocationMapOpened);
+        Messenger.RemoveListener<Region>(Signals.LOCATION_MAP_CLOSED, OnLocationMapClosed);
+        Messenger.RemoveListener<Character, Region>(Signals.CHARACTER_ENTERED_REGION, OnCharacterEnteredRegion);
+        Messenger.RemoveListener<Character, Region>(Signals.CHARACTER_EXITED_REGION, OnCharacterExitedRegion);
     }
     #endregion
 
     #region Utilities
-    public void SetActiveState(bool state) {
+    /// <summary>
+    /// Set the active state of this game object.
+    /// </summary>
+    private void SetGameObjectActiveState(bool state) {
         gameObject.SetActive(state);
+    }
+    /// <summary>
+    /// Only Set the active state of all objects under the visuals parent. 
+    /// </summary>
+    public void SetVisualsState(bool state) {
+        visualsParent.gameObject.SetActive(state);
     }
     public void SetNameState(bool state) {
         nameLbl.gameObject.SetActive(state);
