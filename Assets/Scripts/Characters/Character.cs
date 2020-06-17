@@ -2578,7 +2578,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return false;
     }
     public void ClearTerritoryAndMigrateHomeStructureTo(LocationStructure dwelling) {
-        MigrateHomeStructureTo(null);
+        MigrateHomeStructureTo(dwelling);
         ClearTerritory();
     }
     public void MigrateHomeStructureTo(LocationStructure dwelling, bool broadcast = true, bool addToRegionResidents = true) {
