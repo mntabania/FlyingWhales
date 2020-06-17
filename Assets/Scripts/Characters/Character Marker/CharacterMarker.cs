@@ -697,7 +697,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     /// <param name="state">The state the visuals should be in (active or inactive)</param>
     public void SetVisualState(bool state) {
         mainImg.gameObject.SetActive(state);
-        _nameplate.SetActiveState(state);
+        _nameplate.SetVisualsState(state);
         // actionIcon.enabled = state;
         hoveredImg.enabled = state;
         particleEffectParent.gameObject.SetActive(state);

@@ -24,6 +24,17 @@
         Character actor = node.actor;
         actor.needsComponent.AdjustDoNotGetHungry(-1);
     }
+    public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
+        GoapActionInvalidity invalidity = base.IsInvalid(node);
+        if (invalidity.isInvalid == false) {
+            if (node.poiTarget is Character targetCharacter) {
+                if (targetCharacter.numOfActionsBeingPerformedOnThis > 0) {
+                    invalidity.isInvalid = true;
+                }
+            }    
+        }
+        return invalidity;
+    }
     #endregion
 
     #region Preconditions
@@ -48,21 +59,6 @@
             character.DestroyMarker();
             Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, goapNode.poiTarget, "target is already dead");
         }
-    }
-    #endregion
-
-    #region Requirements
-    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest target, object[] otherData) {
-        bool satisfied = base.AreRequirementsSatisfied(actor, target, otherData);
-        if (satisfied) {
-            if (target is Character targetCharacter) {
-                if (targetCharacter.numOfActionsBeingPerformedOnThis > 0) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        return false;
     }
     #endregion
 }

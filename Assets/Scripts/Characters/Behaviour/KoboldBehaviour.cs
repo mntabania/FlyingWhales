@@ -13,7 +13,7 @@ public class KoboldBehaviour : CharacterBehaviourComponent {
         if (UnityEngine.Random.Range(0, 100) < 10) {
             // List<HexTile> hexTileChoices = GetTilesNextToActiveSetztlement(character.currentRegion);
             List<HexTile> hexTileChoices = GetValidHexTilesNextToHome(character);
-            if (hexTileChoices.Count > 0) {
+            if (hexTileChoices != null && hexTileChoices.Count > 0) {
                 HexTile chosenTile = CollectionUtilities.GetRandomElement(hexTileChoices);
                 List<LocationGridTile> locationGridTileChoices =
                     chosenTile.locationGridTiles.Where(x => 
