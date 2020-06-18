@@ -24,12 +24,18 @@ public class LightningData : SpellData {
             targetTile, 1, false
         );
         GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Lightning_Strike);
+        targetTile.PerformActionOnTraitables(LightningDamage);
+        targetTile.genericTileObject.traitContainer.AddTrait(targetTile.genericTileObject, "Danger Remnant");
+
+        List<LocationGridTile> crossNeighbours = targetTile.GetCrossNeighbours();
+        for (int i = 0; i < crossNeighbours.Count; i++) {
+            LocationGridTile neighbour = crossNeighbours[i];
+            neighbour.PerformActionOnTraitables(LightningDamage);
+        }
         // List<IPointOfInterest> pois = targetTile.GetPOIsOnTile();
         // for (int i = 0; i < pois.Count; i++) {
         //     pois[i].AdjustHP(-350, ELEMENTAL_TYPE.Electric, showHPBar: true);
         // }
-        targetTile.PerformActionOnTraitables(LightningDamage);
-        targetTile.genericTileObject.traitContainer.AddTrait(targetTile.genericTileObject, "Danger Remnant");
         //IncreaseThreatThatSeesTile(targetTile, 10);
         base.ActivateAbility(targetTile);
     }
