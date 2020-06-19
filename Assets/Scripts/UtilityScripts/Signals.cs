@@ -248,6 +248,7 @@ public static class Signals {
     /// Parameters: Object, Log, Character
     /// </summary>
     public static string LOG_HISTORY_OBJECT_CLICKED = "OnLogObjectClicked";
+    public static string UPDATE_BUILD_LIST = "UpdateBuildList";
     #endregion
 
     #region Quest Signals

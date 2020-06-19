@@ -29,13 +29,18 @@ namespace Tutorial {
         protected override void ConstructSteps() {
             steps = new List<QuestStepCollection>() {
                 new QuestStepCollection(
-                    new ClickOnEmptyAreaStep()
-                        .SetHoverOverAction(OnHoverClickEmptyTile)
-                        .SetHoverOutAction(UIManager.Instance.HideSmallInfo), 
-                    new ObjectPickerShownStep("Click on Build Structure button", "Demonic Structure")
-                        .SetOnTopmostActions(OnTopMostBuildStructure, OnNoLongerTopMostBuildStructure), 
-                    new StructureBuiltStep(STRUCTURE_TYPE.KENNEL, "Choose the Kennel")
-                        .SetOnTopmostActions(OnTopMostKennel, OnNoLongerTopMostKennel)
+                    // new ClickOnEmptyAreaStep()
+                    //     .SetHoverOverAction(OnHoverClickEmptyTile)
+                    //     .SetHoverOutAction(UIManager.Instance.HideSmallInfo), 
+                    // new ObjectPickerShownStep("Click on Build Structure button", "Demonic Structure")
+                    //     .SetOnTopmostActions(OnTopMostBuildStructure, OnNoLongerTopMostBuildStructure), 
+                    // new StructureBuiltStep(STRUCTURE_TYPE.KENNEL, "Choose the Kennel")
+                    //     .SetOnTopmostActions(OnTopMostKennel, OnNoLongerTopMostKennel)
+                    new ToggleTurnedOnStep("Build Tab", "Click on the Build tab")
+                        .SetOnTopmostActions(OnTopMostBuildTab, OnNoLongerTopMostBuildTab),
+                    new ToggleTurnedOnStep("Kennel", "Choose the Kennel")
+                        .SetOnTopmostActions(OnTopMostKennel, OnNoLongerTopMostKennel),
+                    new StructureBuiltStep(STRUCTURE_TYPE.KENNEL, "Build the Kennel")
                 ),
                 new QuestStepCollection(
                     new ExecutedPlayerActionStep(SPELL_TYPE.SEIZE_MONSTER, $"Seize a {UtilityScripts.Utilities.MonsterIcon()}monster.")
@@ -52,6 +57,7 @@ namespace Tutorial {
         }
         public override void Activate() {
             base.Activate();
+            Messenger.Broadcast(Signals.UPDATE_BUILD_LIST);
             //stop listening for structure building, since another listener will be used to listen for step completion
             Messenger.RemoveListener<LocationStructure>(Signals.STRUCTURE_OBJECT_PLACED, OnAlreadyBuiltStructure);
         }
@@ -122,6 +128,15 @@ namespace Tutorial {
         }
         private void OnNoLongerTopMostBreedMonster() {
             Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Breed Monster");
+        }
+        #endregion
+        
+        #region Build Tab
+        private void OnTopMostBuildTab() {
+            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Build Tab");
+        }
+        private void OnNoLongerTopMostBuildTab() {
+            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Build Tab");
         }
         #endregion
     }

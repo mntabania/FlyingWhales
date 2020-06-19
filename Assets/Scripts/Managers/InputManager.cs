@@ -105,7 +105,9 @@ namespace Ruinarch {
                         if (canTarget) {
                             PlayerManager.Instance.player.currentActivePlayerSpell.HighlightAffectedTiles(hoveredTile);
                         } else {
-                            PlayerManager.Instance.player.currentActivePlayerSpell.UnhighlightAffectedTiles();
+                            if (hoveredTile == null || PlayerManager.Instance.player.currentActivePlayerSpell.InvalidHighlight(hoveredTile) == false) {
+                                PlayerManager.Instance.player.currentActivePlayerSpell.UnhighlightAffectedTiles();    
+                            }
                         }
                         if(hoveredPOI != null) { 
                             if (hoverText != string.Empty) { 

@@ -1136,7 +1136,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         AddPlayerAction(SPELL_TYPE.HARASS);
         //AddPlayerAction(SPELL_TYPE.DEFEND);
         AddPlayerAction(SPELL_TYPE.INVADE);
-        AddPlayerAction(SPELL_TYPE.BUILD_DEMONIC_STRUCTURE);
+        // AddPlayerAction(SPELL_TYPE.BUILD_DEMONIC_STRUCTURE);
     }
     public void AddPlayerAction(SPELL_TYPE action) {
         if (actions.Contains(action) == false) {
@@ -1256,13 +1256,13 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         UIManager.Instance.ShowYesNoConfirmation("Build Structure Confirmation", question, () => StartBuild(structureType));
     }
     private AutoDestroyParticle _buildParticles;
-    private void StartBuild(SPELL_TYPE structureType) {
+    public void StartBuild(SPELL_TYPE structureType) {
         _buildParticles = GameManager.Instance.CreateParticleEffectAt(GetCenterLocationGridTile(),
             PARTICLE_EFFECT.Build_Demonic_Structure).GetComponent<AutoDestroyParticle>();
-        UIManager.Instance.HideObjectPicker();
+        // UIManager.Instance.HideObjectPicker();
         DemonicStructurePlayerSkill demonicStructureSkill = PlayerSkillManager.Instance.GetDemonicStructureSkillData(structureType);
-        demonicStructureSkill.ActivateAbility(this);
-        PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.BUILD_DEMONIC_STRUCTURE).OnExecuteSpellActionAffliction();
+        demonicStructureSkill.OnExecuteSpellActionAffliction();
+        // PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.BUILD_DEMONIC_STRUCTURE).OnExecuteSpellActionAffliction();
         StartCoroutine(BuildCoroutine(structureType));
     }
     private IEnumerator BuildCoroutine(SPELL_TYPE structureType) {
