@@ -15,10 +15,12 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 3311556091725058138}
   hoverObject: {fileID: 3311553673523847828}
+  clickCollider: {fileID: 0}
   hpBarGO: {fileID: 3696244732525481535}
   hpFill: {fileID: 2438038570028579946}
   aspeedFill: {fileID: 9070921881876816135}
   statusIconsParent: {fileID: 7891523105887240218}
+  defaultBed: {fileID: 21300000, guid: 079ce5cc13bbd324fa99a5820bda0d54, type: 3}
   bed1Sleeping: {fileID: 21300000, guid: fd2146d69e98e394f8dc1ce405b2ab76, type: 3}
   bed2Sleeping: {fileID: 21300000, guid: c4fff26a111b1064ba5d9df5e610fd7a, type: 3}
 --- !u!1001 &3388935614611859160

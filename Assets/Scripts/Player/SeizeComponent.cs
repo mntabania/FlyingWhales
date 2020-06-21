@@ -34,7 +34,8 @@ public class SeizeComponent {
             poi.isBeingCarriedBy?.UncarryPOI();
             if (poi.gridTileLocation != null) {
                 Messenger.Broadcast(Signals.BEFORE_SEIZING_POI, poi);
-                _seizedPOISprite = poi.mapObjectVisual.usedSprite;
+                _seizedPOISprite = poi.mapObjectVisual.GetSeizeSprite(poi);
+                poi.mapObjectVisual.SetVisual(_seizedPOISprite);
                 if (poi is BaseMapObject baseMapObject) { baseMapObject.OnManipulatedBy(PlayerManager.Instance.player); }
                 _seizedPOIVisionTriggerVotes = poi.mapObjectVisual.visionTrigger.filterVotes;
                 if (seizedPOI is Character character) {

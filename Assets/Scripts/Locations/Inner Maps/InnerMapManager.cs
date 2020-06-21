@@ -135,7 +135,7 @@ namespace Inner_Maps {
                 foreach (var go in raycastResults) {
                     if (go.gameObject.CompareTag("Character Marker") || go.gameObject.CompareTag("Map Object")) {
                         BaseMapObjectVisual visual = go.gameObject.GetComponent<BaseMapObjectVisual>();
-                        if (visual.IsInvisible()) {
+                        if (visual.IsInvisibleToPlayer()) {
                             continue; //skip
                         }
                         //assume that all objects that have the specified tags have the BaseMapObjectVisual class
@@ -183,7 +183,7 @@ namespace Inner_Maps {
                 foreach (var go in raycastResults) {
                     if (go.gameObject.CompareTag("Character Marker") || go.gameObject.CompareTag("Map Object")) {
                         BaseMapObjectVisual visual = go.gameObject.GetComponent<BaseMapObjectVisual>();
-                        if (visual.IsInvisible()) {
+                        if (visual.IsInvisibleToPlayer()) {
                             continue; //skip
                         }
                         //assume that all objects that have the specified tags have the BaseMapObjectVisual class
@@ -683,7 +683,7 @@ namespace Inner_Maps {
         public void MonsterLairCellAutomata(List<LocationGridTile> locationGridTiles, LocationStructure structure, Region region, LocationStructure wilderness) {
 		    LocationGridTile[,] tileMap = CellularAutomataGenerator.ConvertListToGridMap(locationGridTiles);
 		    int[,] cellMap = CellularAutomataGenerator.GenerateMap(tileMap, locationGridTiles, 2, 15);
-		    
+            
 		    Assert.IsNotNull(cellMap, $"There was no cellmap generated for monster lair structure {structure.ToString()}");
 		    
 		    CellularAutomataGenerator.DrawMap(tileMap, cellMap, InnerMapManager.Instance.assetManager.monsterLairWallTile, 
