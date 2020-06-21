@@ -581,6 +581,22 @@ namespace Inner_Maps {
             }
             return null;
         }
+        public List<LocationGridTile> GetCrossNeighbours() {
+            List<LocationGridTile> crossNeighbours = new List<LocationGridTile>();
+            if (neighbours.ContainsKey(GridNeighbourDirection.North)) {
+                crossNeighbours.Add(neighbours[GridNeighbourDirection.North]);
+            }
+            if (neighbours.ContainsKey(GridNeighbourDirection.South)) {
+                crossNeighbours.Add(neighbours[GridNeighbourDirection.South]);
+            }
+            if (neighbours.ContainsKey(GridNeighbourDirection.East)) {
+                crossNeighbours.Add(neighbours[GridNeighbourDirection.East]);
+            }
+            if (neighbours.ContainsKey(GridNeighbourDirection.West)) {
+                crossNeighbours.Add(neighbours[GridNeighbourDirection.West]);
+            }
+            return crossNeighbours;
+        }
         public bool TryGetNeighbourDirection(LocationGridTile tile, out GridNeighbourDirection dir) {
             foreach (KeyValuePair<GridNeighbourDirection, LocationGridTile> keyValuePair in neighbours) {
                 if (keyValuePair.Value == tile) {

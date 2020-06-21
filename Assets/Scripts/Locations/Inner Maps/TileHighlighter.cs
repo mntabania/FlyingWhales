@@ -10,6 +10,7 @@ public class TileHighlighter : MonoBehaviour {
 
     [SerializeField] private Transform parentTransform;
     [SerializeField] private ParticleSystem[] _particleSystems;
+    [SerializeField] private SpriteRenderer innerImage;
 
     [SerializeField] private BiomeHighlightColorDictionary _biomeHighlightColor;
     private void Awake() {
@@ -25,7 +26,7 @@ public class TileHighlighter : MonoBehaviour {
         if (diameter == 0) {
             diameter = 1;
         }
-
+        innerImage.gameObject.SetActive(false);  
         Vector3 scale = new Vector3(diameter, 1f, diameter);
         for (int i = 0; i < _particleSystems.Length; i++) {
             ParticleSystem p = _particleSystems[i];
@@ -55,6 +56,12 @@ public class TileHighlighter : MonoBehaviour {
             emissionModule.rateOverTime = rateOverTime;
         }
     }
+    private void SetupHighlight(int radius, BIOMES biome, Color innerImageColor) {
+        SetupHighlight(radius, biome);
+        innerImage.color = innerImageColor;
+        innerImage.gameObject.SetActive(true);  
+        
+    }
     public void PositionHighlight(int radius, LocationGridTile centerTile) {
         SetupHighlight(radius, centerTile.parentMap.region.coreTile.biomeType);
         parentTransform.transform.position = centerTile.centeredWorldLocation;
@@ -62,6 +69,11 @@ public class TileHighlighter : MonoBehaviour {
     }
     public void PositionHighlight(HexTile tile) {
         SetupHighlight(InnerMapManager.BuildingSpotSize.x - 1, tile.biomeType);
+        parentTransform.transform.position = tile.worldPosition;
+        parentTransform.gameObject.SetActive(true);
+    }
+    public void PositionHighlight(HexTile tile, Color color) {
+        SetupHighlight(InnerMapManager.BuildingSpotSize.x - 1, tile.biomeType, color);
         parentTransform.transform.position = tile.worldPosition;
         parentTransform.gameObject.SetActive(true);
     }

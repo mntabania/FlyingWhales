@@ -54,6 +54,7 @@ public class SpellItem : PooledObject {
         }
     }
     #endregion
+    
     public void OnToggleSpell(bool state) {
         PlayerManager.Instance.player.SetCurrentlyActivePlayerSpell(null);
         if (state) {

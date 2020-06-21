@@ -9,7 +9,9 @@ using System;
 using DG.Tweening;
 using Inner_Maps;
 using Ruinarch;
+using Settings;
 using Traits;
+using Tutorial;
 using UnityEngine.Assertions;
 using UnityEngine.Serialization;
 using UtilityScripts;
@@ -135,8 +137,10 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private UIHoverPosition threatHoverPos;
     [SerializeField] private RectTransform threatContainer;
 
+    [Header("Building")] 
+    [SerializeField] private BuildListUI _buildListUI;
+    
     private PlayerJobActionButton[] interventionAbilityBtns;
-    //public Minion harassRaidInvadeLeaderMinion { get; private set; }
     public HexTile harassDefendInvadeTargetHex { get; private set; }
 
     void Awake() {
@@ -152,7 +156,6 @@ public class PlayerUI : MonoBehaviour {
     public void Initialize() {
         pendingUIToShow = new List<Action>();
         _spellItems = new List<SpellItem>();
-        //_summonItems = new List<CharacterNameplateItem>();
         _itemItems = new List<ItemItem>();
         _artifactItems = new List<ArtifactItem>();
 
@@ -202,6 +205,7 @@ public class PlayerUI : MonoBehaviour {
         InitialUpdateKillCountCharacterItems();
         UpdateIntel();
         CreateInitialSpells();
+        _buildListUI.Initialize();
         // CreateSummonsForTesting();
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         itemsToggle.gameObject.SetActive(true);
@@ -597,7 +601,7 @@ public class PlayerUI : MonoBehaviour {
     }
     #endregion
 
-    #region NPCSettlement Corruption
+    #region Settlement Corruption
     public void SuccessfulAreaCorruption() {
         successfulAreaCorruptionGO.SetActive(true);
         //Utilities.DestroyChildren(killSummaryScrollView.content);
@@ -1111,7 +1115,7 @@ public class PlayerUI : MonoBehaviour {
     }
     #endregion
 
-    #region NPCSettlement Actions
+    #region Settlement Actions
     public void OnClickHarassDefendInvade(HexTile targetHex, string identifier) {
         harassDefendInvadeTargetHex = targetHex;
         unleashSummonUI.ShowUnleashSummonUI(identifier);
@@ -1143,5 +1147,15 @@ public class PlayerUI : MonoBehaviour {
             
     //    }
     //}
+    #endregion
+
+    #region Build List
+    public void OnToggleBuildList(bool isOn) {
+        if (isOn) {
+            _buildListUI.Open();
+        } else {
+            _buildListUI.Close();
+        }
+    }
     #endregion
 }
