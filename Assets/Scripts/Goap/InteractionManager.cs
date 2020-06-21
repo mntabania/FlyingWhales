@@ -64,7 +64,7 @@ public partial class InteractionManager : MonoBehaviour {
         for (int i = 0; i < allGoapActions.Length; i++) {
             INTERACTION_TYPE currType = allGoapActions[i];
             string typeString = currType.ToString();
-            var typeName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(typeString);
+            var typeName = $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(typeString)}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
             actionNames.Add(UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(typeString));
             
             System.Type type = System.Type.GetType(typeName);
@@ -81,7 +81,7 @@ public partial class InteractionManager : MonoBehaviour {
         INTERRUPT[] allInterrupts = CollectionUtilities.GetEnumValues<INTERRUPT>();
         for (int i = 0; i < allInterrupts.Length; i++) {
             INTERRUPT interrupt = allInterrupts[i];
-            var typeName = $"Interrupts.{ UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(interrupt.ToString()) }"; ;
+            var typeName = $"Interrupts.{ UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(interrupt.ToString()) }, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"; ;
             System.Type type = System.Type.GetType(typeName);
             if (type != null) {
                 Interrupt data = System.Activator.CreateInstance(type) as Interrupt;

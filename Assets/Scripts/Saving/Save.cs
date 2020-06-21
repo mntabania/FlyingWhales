@@ -60,7 +60,7 @@ public class Save {
         if(landmarkSaves == null) {
             landmarkSaves = new List<SaveDataLandmark>();
         }
-        var typeName = $"SaveData{landmark.GetType()}";
+        var typeName = $"SaveData{landmark.GetType()}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
         System.Type type = System.Type.GetType(typeName);
         SaveDataLandmark newSaveData = null;
         if (type != null) {

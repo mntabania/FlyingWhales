@@ -615,7 +615,7 @@ public class CharacterManager : MonoBehaviour {
         return null;
     }
     private object CreateNewSummonClassFromType(SUMMON_TYPE summonType, string className) {
-        var typeName = UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(summonType.ToString());
+        var typeName = $"{UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(summonType.ToString())}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
         if(className != "") {
             return Activator.CreateInstance(Type.GetType(typeName) ?? throw new Exception($"provided summon type was invalid! {typeName}"), className);
         }
@@ -989,7 +989,7 @@ public class CharacterManager : MonoBehaviour {
         }
     }
     private DeadlySin CreateNewDeadlySin(string deadlySin) {
-        Type type = Type.GetType(deadlySin);
+        Type type = Type.GetType($"{deadlySin}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
         if(type != null) {
             DeadlySin sin = Activator.CreateInstance(type) as DeadlySin;
             return sin;
@@ -1020,7 +1020,7 @@ public class CharacterManager : MonoBehaviour {
         EMOTION[] enumValues = CollectionUtilities.GetEnumValues<EMOTION>();
         for (int i = 0; i < enumValues.Length; i++) {
             EMOTION emotion = enumValues[i];
-            var typeName = UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(emotion.ToString());
+            var typeName = $"{UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(emotion.ToString())}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
             Type type = Type.GetType(typeName);
             if (type != null) {
                 Emotion data = Activator.CreateInstance(type) as Emotion;

@@ -342,7 +342,7 @@ public class PlayerManager : MonoBehaviour {
 
     #region Archetypes
     public static PlayerArchetype CreateNewArchetype(PLAYER_ARCHETYPE archetype) {
-        string typeName = $"Archetype.{ UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(archetype.ToString()) }";
+        string typeName = $"Archetype.{ UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(archetype.ToString()) }, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
         System.Type type = System.Type.GetType(typeName);
         if (type != null) {
             PlayerArchetype obj = System.Activator.CreateInstance(type) as PlayerArchetype;

@@ -162,7 +162,7 @@ public class TraitManager : MonoBehaviour {
     }
     public Trait CreateNewInstancedTraitClass(string traitName) {
         string noSpacesTraitName = UtilityScripts.Utilities.RemoveAllWhiteSpace(traitName);
-        string typeName = $"Traits.{ noSpacesTraitName }";
+        string typeName = $"Traits.{ noSpacesTraitName }, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
         Type type = System.Type.GetType(typeName);
         Assert.IsNotNull(type, $"No instanced trait with type, {typeName}");
         return System.Activator.CreateInstance(type) as Trait;

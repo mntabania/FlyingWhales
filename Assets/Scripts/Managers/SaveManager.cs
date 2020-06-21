@@ -88,7 +88,7 @@ public class SaveManager : MonoBehaviour {
             return null;
         }
         SaveDataTrait saveDataTrait = null;
-        System.Type type = System.Type.GetType($"SaveData{trait.name}");
+        System.Type type = System.Type.GetType($"SaveData{trait.name}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
         if (type != null) {
             saveDataTrait = System.Activator.CreateInstance(type) as SaveDataTrait;
         } else {

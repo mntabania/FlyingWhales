@@ -8,14 +8,9 @@ using Inner_Maps.Location_Structures;
 using JetBrains.Annotations;
 using Locations.Features;
 using Locations.Settlements;
-using UnityEngine.Tilemaps;
-using Unity.Jobs;
-using Unity.Collections;
 using UnityEngine.Assertions;
 using UtilityScripts;
-using Debug = System.Diagnostics.Debug;
 using Random = UnityEngine.Random;
-using ThePortal = Inner_Maps.Location_Structures.ThePortal;
 
 public partial class LandmarkManager : MonoBehaviour {
 
@@ -145,7 +140,7 @@ public partial class LandmarkManager : MonoBehaviour {
     }
     public BaseLandmark CreateNewLandmarkInstance(HexTile location, SaveDataLandmark data) {
         if (data.landmarkType.IsPlayerLandmark()) {
-            var typeName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(data.landmarkType.ToString());
+            var typeName = $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(data.landmarkType.ToString())}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
             System.Type systemType = System.Type.GetType(typeName);
             if (systemType != null) {
                 return System.Activator.CreateInstance(systemType, location, data) as BaseLandmark;
@@ -408,7 +403,7 @@ public partial class LandmarkManager : MonoBehaviour {
     public LocationStructure CreateNewStructureAt(Region location, STRUCTURE_TYPE structureType, BaseSettlement settlement = null) {
         string noSpacesTypeName = UtilityScripts.Utilities.RemoveAllWhiteSpace(UtilityScripts.Utilities
             .NormalizeStringUpperCaseFirstLettersNoSpace(structureType.ToString()));
-        string typeName = $"Inner_Maps.Location_Structures.{ noSpacesTypeName }";
+        string typeName = $"Inner_Maps.Location_Structures.{ noSpacesTypeName }, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
         Type type = Type.GetType(typeName);
         if (type != null) {
             var structure = Activator.CreateInstance(type, location) as LocationStructure;
@@ -489,7 +484,7 @@ public partial class LandmarkManager : MonoBehaviour {
 
     #region Regions
     public T CreateTileFeature<T>([NotNull] string featureName) where T : TileFeature {
-        string typeName = $"Locations.Features.{featureName}";
+        string typeName = $"Locations.Features.{featureName}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
         System.Type type = System.Type.GetType(typeName);
         Assert.IsNotNull(type, $"type for {featureName} is null!");
         return System.Activator.CreateInstance(type) as T;
