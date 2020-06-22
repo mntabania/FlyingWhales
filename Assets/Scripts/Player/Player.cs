@@ -276,6 +276,7 @@ public class Player : ILeader, IObjectManipulator {
             SpellData previousActiveAction = currentActivePlayerSpell;
             currentActivePlayerSpell = action;
             if (currentActivePlayerSpell == null) {
+                UIManager.Instance.SetTempDisableShowInfoUI(false); //allow UI clicks again after active spell has been set to null
                 Messenger.RemoveListener<KeyCode>(Signals.KEY_DOWN, OnSpellCast);
             	InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
                 previousActiveAction.UnhighlightAffectedTiles();
@@ -351,7 +352,7 @@ public class Player : ILeader, IObjectManipulator {
         }
         
         InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
-        if (currentActivePlayerSpell.CanPerformAbility() == false) {
+        if (currentActivePlayerSpell.CanPerformAbility() == false || currentActivePlayerSpell is DemonicStructurePlayerSkill) {
             //if player can no longer cast spell after casting it, set active spell to null.
             SetCurrentlyActivePlayerSpell(null);
         }

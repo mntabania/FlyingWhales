@@ -6,6 +6,7 @@ using UnityEngine.EventSystems;
 
 public class BedObjectGameObject : TileObjectGameObject {
 
+    [SerializeField] private Sprite defaultBed;
     [SerializeField] private Sprite bed1Sleeping;
     [SerializeField] private Sprite bed2Sleeping;
 
@@ -25,5 +26,9 @@ public class BedObjectGameObject : TileObjectGameObject {
         } else if (userCount == 2) {
             SetVisual(bed2Sleeping);
         }
+    }
+    
+    public override Sprite GetSeizeSprite(IPointOfInterest poi) {
+        return defaultBed;
     }
 }

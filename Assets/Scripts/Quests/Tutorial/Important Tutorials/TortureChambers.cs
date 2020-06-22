@@ -27,16 +27,12 @@ namespace Tutorial {
         protected override void ConstructSteps() {
             steps = new List<QuestStepCollection>() {
                 new QuestStepCollection(
-                    new ClickOnEmptyAreaStep()
-                        .SetHoverOverAction(OnHoverClickEmptyTile)
-                        .SetHoverOutAction(UIManager.Instance.HideSmallInfo), 
-                    new ObjectPickerShownStep("Click on Build Structure button", "Demonic Structure")
-                        .SetHoverOverAction(OnHoverBuildStructure)
-                        .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
-                        .SetOnTopmostActions(OnTopMostBuildStructure, OnNoLongerTopMostBuildStructure), 
-                    new StructureBuiltStep(STRUCTURE_TYPE.TORTURE_CHAMBERS, "Choose the Torture Chamber")
+                    new ToggleTurnedOnStep("Build Tab", "Click on the Build tab")
+                        .SetOnTopmostActions(OnTopMostBuildTab, OnNoLongerTopMostBuildTab),
+                    new ToggleTurnedOnStep("Torture Chambers", "Choose Torture Chambers")
+                        .SetOnTopmostActions(OnTopMostChooseTorture, OnNoLongerTopMostChooseTorture),
+                    new StructureBuiltStep(STRUCTURE_TYPE.TORTURE_CHAMBERS, "Build the Torture Chambers")
                         .SetCompleteAction(OnStructureBuilt)
-                        .SetOnTopmostActions(OnTopMostChooseTorture, OnNoLongerTopMostChooseTorture)
                 ),
                 new QuestStepCollection(
                     new ClickOnRoomStep("Click on a Torture Room", room => room is TortureRoom)
@@ -59,6 +55,7 @@ namespace Tutorial {
         }
         public override void Activate() {
             base.Activate();
+            Messenger.Broadcast(Signals.UPDATE_BUILD_LIST);
             //stop listening for structure building, since another listener will be used to listen for step completion
             Messenger.RemoveListener<LocationStructure>(Signals.STRUCTURE_OBJECT_PLACED, OnAlreadyBuiltStructure);
         }
@@ -128,6 +125,15 @@ namespace Tutorial {
         }
         private void OnNoLongerTopMostChooseTorture() {
             Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Torture Chambers");
+        }
+        #endregion
+
+        #region Build Tab
+        private void OnTopMostBuildTab() {
+            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Build Tab");
+        }
+        private void OnNoLongerTopMostBuildTab() {
+            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Build Tab");
         }
         #endregion
         

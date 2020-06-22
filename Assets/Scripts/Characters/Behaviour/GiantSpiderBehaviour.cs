@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using Pathfinding;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -16,6 +17,9 @@ public class GiantSpiderBehaviour : CharacterBehaviourComponent {
     
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
+        if (character.currentStructure is Kennel) {
+            return false;
+        }
         TIME_IN_WORDS timeInWords = GameManager.GetCurrentTimeInWordsOfTick();
         if (timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
             if (character.behaviourComponent.currentAbductTarget != null 
@@ -53,6 +57,20 @@ public class GiantSpiderBehaviour : CharacterBehaviourComponent {
                     character.behaviourComponent.SetDigForAbductionPath(p);    
                 }    
                 return true;
+            }
+        } else {
+            //Try and eat a webbed character at this spiders home cave
+            if (character.homeStructure != null) {
+                List<Character> webbedCharacters =
+                    character.homeStructure.GetCharactersThatMeetCriteria(c => c.traitContainer.HasTrait("Webbed"));
+                if (webbedCharacters.Count > 0) {
+                    Character webbedCharacter = CollectionUtilities.GetRandomElement(webbedCharacters);
+                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MONSTER_ABDUCT,
+                        INTERACTION_TYPE.EAT_ALIVE, webbedCharacter, character);
+                    // job.SetCannotBePushedBack(true);
+                    producedJob = job;
+                    return true;
+                }
             }
         }
         return false;

@@ -3705,6 +3705,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         AddAdvertisedAction(INTERACTION_TYPE.START_PATROL);
         AddAdvertisedAction(INTERACTION_TYPE.PATROL);
         AddAdvertisedAction(INTERACTION_TYPE.BEGIN_MINE);
+        AddAdvertisedAction(INTERACTION_TYPE.EAT_ALIVE);
 
         if (this is Summon) {
             AddAdvertisedAction(INTERACTION_TYPE.PLAY);

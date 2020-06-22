@@ -54,6 +54,10 @@ public class BlockWall : TileObject {
     public override bool CollectsLogs() {
         return false;
     }
+    public override void ConstructDefaultActions() {
+        base.ConstructDefaultActions();
+        RemovePlayerAction(SPELL_TYPE.SEIZE_OBJECT);
+    }
     #endregion
 
     public void UpdateVisual(LocationGridTile tile) {

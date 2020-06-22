@@ -134,7 +134,7 @@ namespace Tutorial {
         public TutorialQuest InstantiateTutorial(Tutorial tutorial) {
             string noSpacesName = UtilityScripts.Utilities.RemoveAllWhiteSpace(UtilityScripts.Utilities.
                 NormalizeStringUpperCaseFirstLettersNoSpace(tutorial.ToString()));
-            string typeName = $"Tutorial.{ noSpacesName }";
+            string typeName = $"Tutorial.{ noSpacesName }, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
             Type type = Type.GetType(typeName);
             if (type != null) {
                 TutorialQuest tutorialQuest = Activator.CreateInstance(type) as TutorialQuest;

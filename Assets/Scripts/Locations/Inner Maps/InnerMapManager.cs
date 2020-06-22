@@ -135,7 +135,7 @@ namespace Inner_Maps {
                 foreach (var go in raycastResults) {
                     if (go.gameObject.CompareTag("Character Marker") || go.gameObject.CompareTag("Map Object")) {
                         BaseMapObjectVisual visual = go.gameObject.GetComponent<BaseMapObjectVisual>();
-                        if (visual.IsInvisible()) {
+                        if (visual.IsInvisibleToPlayer()) {
                             continue; //skip
                         }
                         //assume that all objects that have the specified tags have the BaseMapObjectVisual class
@@ -183,7 +183,7 @@ namespace Inner_Maps {
                 foreach (var go in raycastResults) {
                     if (go.gameObject.CompareTag("Character Marker") || go.gameObject.CompareTag("Map Object")) {
                         BaseMapObjectVisual visual = go.gameObject.GetComponent<BaseMapObjectVisual>();
-                        if (visual.IsInvisible()) {
+                        if (visual.IsInvisibleToPlayer()) {
                             continue; //skip
                         }
                         //assume that all objects that have the specified tags have the BaseMapObjectVisual class
@@ -521,7 +521,7 @@ namespace Inner_Maps {
             return null;
         }
         public T CreateNewTileObject<T>(TILE_OBJECT_TYPE tileObjectType) where T : TileObject {
-            var typeName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(tileObjectType.ToString());
+            var typeName = $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(tileObjectType.ToString())}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
             System.Type type = System.Type.GetType(typeName);
             if (type != null) {
                 T obj = System.Activator.CreateInstance(type) as T;
@@ -670,7 +670,7 @@ namespace Inner_Maps {
         //    return newArtifact;
         //}
         private Artifact CreateNewArtifactFromType(ARTIFACT_TYPE artifactType) {
-            var typeName = UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(artifactType.ToString());
+            var typeName = $"{UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(artifactType.ToString())}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
             return System.Activator.CreateInstance(System.Type.GetType(typeName)) as Artifact;
         }
         //private object CreateNewArtifactClassFromType(SaveDataArtifact data) {
@@ -683,7 +683,7 @@ namespace Inner_Maps {
         public void MonsterLairCellAutomata(List<LocationGridTile> locationGridTiles, LocationStructure structure, Region region, LocationStructure wilderness) {
 		    LocationGridTile[,] tileMap = CellularAutomataGenerator.ConvertListToGridMap(locationGridTiles);
 		    int[,] cellMap = CellularAutomataGenerator.GenerateMap(tileMap, locationGridTiles, 2, 15);
-		    
+            
 		    Assert.IsNotNull(cellMap, $"There was no cellmap generated for monster lair structure {structure.ToString()}");
 		    
 		    CellularAutomataGenerator.DrawMap(tileMap, cellMap, InnerMapManager.Instance.assetManager.monsterLairWallTile, 

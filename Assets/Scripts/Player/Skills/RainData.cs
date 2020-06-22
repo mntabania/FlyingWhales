@@ -26,7 +26,7 @@ public class RainData : SpellData {
                    && targetHex.biomeType != BIOMES.DESERT
                    && targetHex.featureComponent.HasFeature(TileFeatureDB.Rain_Feature) == false;
         }
-        return canPerform;
+        return false;
     }
     public override void HighlightAffectedTiles(LocationGridTile tile) {
         TileHighlighter.Instance.PositionHighlight(tile.collectionOwner.partOfHextile.hexTileOwner);

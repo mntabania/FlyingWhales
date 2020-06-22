@@ -32,6 +32,8 @@ namespace Tutorial {
         public override void Activate() {
             Messenger.RemoveListener(Signals.ON_OPEN_SHARE_INTEL, CompleteQuest);
             base.Activate();
+            Messenger.Broadcast(Signals.UPDATE_BUILD_LIST);
+
         }
         public override void Deactivate() {
             base.Deactivate();
@@ -40,13 +42,11 @@ namespace Tutorial {
         protected override void ConstructSteps() {
             steps = new List<QuestStepCollection>() {
                 new QuestStepCollection (
-                    new ClickOnEmptyAreaStep(validityChecker: IsSelectedAreaValid)
-                        .SetHoverOverAction(OnHoverEmptyArea)
-                        .SetHoverOutAction(UIManager.Instance.HideSmallInfo),
-                    new ObjectPickerShownStep("Click on Build Structure button", "Demonic Structure")
-                        .SetOnTopmostActions(OnTopMostBuildStructure, OnNoLongerTopMostBuildStructure), 
+                    new ToggleTurnedOnStep("Build Tab", "Click on the Build tab")
+                        .SetOnTopmostActions(OnTopMostBuildTab, OnNoLongerTopMostBuildTab),
+                    new ToggleTurnedOnStep("Eye", "Choose the Eye")
+                        .SetOnTopmostActions(OnTopMostTheEye, OnNoLongerTopMostTheEye),
                     new StructureBuiltStep(STRUCTURE_TYPE.EYE, "Build the Eye")
-                        .SetOnTopmostActions(OnTopMostTheEye, OnNoLongerTopMostTheEye)
                 ),
                 new QuestStepCollection (new StoreIntelStep()
                     .SetHoverOverAction(OnHoverStoreIntel)
@@ -122,6 +122,15 @@ namespace Tutorial {
         }
         private void OnNoLongerTopMostIntelTab() {
             Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Intel Tab");
+        }
+        #endregion
+        
+        #region Build Tab
+        private void OnTopMostBuildTab() {
+            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Build Tab");
+        }
+        private void OnNoLongerTopMostBuildTab() {
+            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Build Tab");
         }
         #endregion
     }

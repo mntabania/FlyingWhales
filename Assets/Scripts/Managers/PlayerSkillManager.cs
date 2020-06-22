@@ -102,7 +102,7 @@ public class PlayerSkillManager : MonoBehaviour {
             SPELL_TYPE spellType = allSpells[i];
             if (spellType != SPELL_TYPE.NONE) {
                 var typeName =
-                    $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(spellType.ToString())}Data";
+                    $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(spellType.ToString())}Data, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
                 SpellData spellData = System.Activator.CreateInstance(System.Type.GetType(typeName) ??
                    throw new Exception($"Problem with creating spell data for {typeName}")) as SpellData;
                 allSpellsData.Add(spellType, spellData);
@@ -116,7 +116,7 @@ public class PlayerSkillManager : MonoBehaviour {
             SPELL_TYPE spellType = allPlayerActions[i];
             if (spellType != SPELL_TYPE.NONE) {
                 var typeName =
-                    $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(spellType.ToString())}Data";
+                    $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(spellType.ToString())}Data, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
 
                 PlayerAction playerAction = System.Activator.CreateInstance(System.Type.GetType(typeName) ??
                    throw new Exception($"Problem with creating spell data for {typeName}")) as PlayerAction;
@@ -131,7 +131,7 @@ public class PlayerSkillManager : MonoBehaviour {
             SPELL_TYPE spellType = allDemonicStructureSkills[i];
             if (spellType != SPELL_TYPE.NONE) {
                 var typeName =
-                    $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(spellType.ToString())}Data";
+                    $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(spellType.ToString())}Data, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
                 DemonicStructurePlayerSkill demonicStructureSkill = System.Activator.CreateInstance(System.Type.GetType(typeName) ??
                    throw new Exception($"Problem with creating spell data for {typeName}")) as DemonicStructurePlayerSkill;
                 allDemonicStructureSkillsData.Add(spellType, demonicStructureSkill);
@@ -145,7 +145,7 @@ public class PlayerSkillManager : MonoBehaviour {
             SPELL_TYPE spellType = allAfflictions[i];
             if (spellType != SPELL_TYPE.NONE) {
                 var typeName =
-                    $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(spellType.ToString())}Data";
+                    $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(spellType.ToString())}Data, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
                 SpellData affliction = System.Activator.CreateInstance(System.Type.GetType(typeName) ??
                    throw new Exception($"Problem with creating spell data for {typeName}")) as SpellData;
                 allAfflictionsData.Add(spellType, affliction);
@@ -159,7 +159,7 @@ public class PlayerSkillManager : MonoBehaviour {
             SPELL_TYPE spellType = allMinionPlayerSkills[i];
             if (spellType != SPELL_TYPE.NONE) {
                 var typeName =
-                    $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(spellType.ToString())}Data";
+                    $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(spellType.ToString())}Data, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
                 MinionPlayerSkill minionPlayerSkill = System.Activator.CreateInstance(System.Type.GetType(typeName) ??
                    throw new Exception($"Problem with creating spell data for {typeName}")) as MinionPlayerSkill;
                 allMinionPlayerSkillsData.Add(spellType, minionPlayerSkill);
@@ -173,7 +173,7 @@ public class PlayerSkillManager : MonoBehaviour {
             SPELL_TYPE spellType = allSummonPlayerSkills[i];
             if (spellType != SPELL_TYPE.NONE) {
                 var typeName =
-                    $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(spellType.ToString())}Data";
+                    $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(spellType.ToString())}Data, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
                 SummonPlayerSkill summonPlayerSkill = System.Activator.CreateInstance(System.Type.GetType(typeName) ??
                    throw new Exception($"Problem with creating spell data for {typeName}")) as SummonPlayerSkill;
                 allSummonPlayerSkillsData.Add(spellType, summonPlayerSkill);

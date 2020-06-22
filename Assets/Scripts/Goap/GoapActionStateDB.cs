@@ -525,6 +525,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.MURDER, new[]{
             new StateNameAndDuration(){ name = "Murder Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(15) },
         } },
+        {INTERACTION_TYPE.EAT_ALIVE, new[]{
+            new StateNameAndDuration(){ name = "Eat Alive Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
+        } },
     };
 }
 

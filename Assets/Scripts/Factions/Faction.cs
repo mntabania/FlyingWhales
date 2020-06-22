@@ -834,7 +834,7 @@ public class Faction {
 
     #region Quests
     public void CreateAndSetActiveQuest(string name, Region region) {
-        var typeName = $"{UtilityScripts.Utilities.RemoveAllWhiteSpace(name)}Quest";
+        var typeName = $"{UtilityScripts.Utilities.RemoveAllWhiteSpace(name)}Quest, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
         System.Type type = System.Type.GetType(typeName);
         FactionQuest factionQuest = null;
         if(type != null) {

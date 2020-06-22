@@ -272,6 +272,12 @@ public class SpellData : IPlayerSkill {
     public virtual void UnhighlightAffectedTiles() {
         TileHighlighter.Instance.HideHighlight();
     }
+    /// <summary>
+    /// Show an invalid highlight.
+    /// </summary>
+    /// <param name="tile"></param>
+    /// <returns>True or false (Whether or not this spell showed an invalid highlight)</returns>
+    public virtual bool InvalidHighlight(LocationGridTile tile) { return false; }
     #endregion
 
     #region General

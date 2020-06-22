@@ -250,6 +250,7 @@ public static class Signals {
     public static string LOG_HISTORY_OBJECT_CLICKED = "OnLogObjectClicked";
     public static string SKILL_SLOT_ITEM_CLICKED = "OnSkillSlotItemClicked";
     public static string START_GAME_AFTER_LOADOUT_SELECT = "OnStartGameAfterLoadoutSelect";
+    public static string UPDATE_BUILD_LIST = "UpdateBuildList";
     #endregion
 
     #region Quest Signals

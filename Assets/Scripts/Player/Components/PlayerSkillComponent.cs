@@ -149,8 +149,8 @@ public class PlayerSkillComponent {
         //}
         //SpellData afflict = PlayerSkillManager.Instance.GetPlayerSkillData(SPELL_TYPE.AFFLICT);
         //CategorizePlayerSkill(afflict);
-        //SpellData buildDemonicStructure = PlayerSkillManager.Instance.GetPlayerSkillData(SPELL_TYPE.BUILD_DEMONIC_STRUCTURE);
-        //CategorizePlayerSkill(buildDemonicStructure);
+        ////SpellData buildDemonicStructure = PlayerSkillManager.Instance.GetPlayerSkillData(SPELL_TYPE.BUILD_DEMONIC_STRUCTURE);
+        ////CategorizePlayerSkill(buildDemonicStructure);
         //SpellData torture = PlayerSkillManager.Instance.GetPlayerSkillData(SPELL_TYPE.TORTURE);
         //CategorizePlayerSkill(torture);
         //SpellData breedMonster = PlayerSkillManager.Instance.GetPlayerSkillData(SPELL_TYPE.BREED_MONSTER);

@@ -47,6 +47,9 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
     #endregion
     
     #region Visuals
+    public virtual Sprite GetSeizeSprite(IPointOfInterest poi) {
+        return objectVisual.sprite;
+    }
     public void SetRotation(float rotation) {
         Quaternion quaternion = Quaternion.Euler(0f, 0f, rotation);
         objectVisual.transform.localRotation = quaternion;
@@ -113,7 +116,7 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
     #endregion
 
     #region Inquiry
-    public bool IsInvisible() {
+    public bool IsInvisibleToPlayer() {
         if (ReferenceEquals(objectVisual, null) == false) {
             return Mathf.Approximately(objectVisual.color.a, 0f);    
         }

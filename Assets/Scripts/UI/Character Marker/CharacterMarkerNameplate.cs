@@ -52,7 +52,7 @@ public class CharacterMarkerNameplate : PooledObject {
         }        
     }
     private void OnCharacterExitedRegion(Character character, Region region) {
-        if (character == _parentMarker.character) {
+        if (character == _parentMarker.character && character.isDead == false) { //added checking for isDead so nameplate is not deactivated when a character dies.
             SetGameObjectActiveState(false);
         }
     }
