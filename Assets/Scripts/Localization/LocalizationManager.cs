@@ -1,8 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.IO;
+using System.Threading;
 
 public class LocalizationManager : MonoBehaviour {
 	public static LocalizationManager Instance;
@@ -21,6 +23,7 @@ public class LocalizationManager : MonoBehaviour {
 	}
 
 	void Awake(){
+		Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
         if (Instance == null) {
             Instance = this;
             DontDestroyOnLoad(this.gameObject);
