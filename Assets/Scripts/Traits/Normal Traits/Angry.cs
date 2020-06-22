@@ -34,7 +34,9 @@ namespace Traits {
             base.OnRemoveTrait(removedFrom, removedBy);
             if (removedFrom is Character character) {
                 owner = null;
-                character.marker.visionCollider.VoteToFilterVision();
+                if (character.marker != null) { //TODO: Find out why character.marker can be null in this situation. Bug happened when this trait was removed (by schedule) from a character that no longer has a marker 
+                    character.marker.visionCollider.VoteToFilterVision();    
+                }
                 Messenger.RemoveListener(Signals.HOUR_STARTED, PerHourEffect);
             }
         }
