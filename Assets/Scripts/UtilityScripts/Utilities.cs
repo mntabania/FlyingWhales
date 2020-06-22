@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using System.Globalization;
 using System.Text;
 using System.Linq;
 using System.Reflection;
@@ -792,26 +793,26 @@ namespace UtilityScripts {
             return normalizedString;
         }
         public static string NormalizeStringUpperCaseFirstLetterOnly(string s) {
-            //s = s.ToLower();
+            //s = s.ToLowerInvariant();
             //string[] words = s.Split('_');
             //string normalizedString = Utilities.FirstLetterToUpperCase(words[0]);
             //for (int i = 1; i < words.Length; i++) {
             //    normalizedString += " " + words[i];
             //}
             //return normalizedString;
-            string normalizedString = s.Replace('_', ' ').ToLower();
+            string normalizedString = s.Replace('_', ' ').ToLowerInvariant();
             normalizedString = FirstLetterToUpperCase(normalizedString);
             return normalizedString;
         }
         public static string NormalizeStringUpperCaseFirstLetters(string s) {
-            //s = s.ToLower();
+            //s = s.ToLowerInvariant();
             //string[] words = s.Split('_');
             //string normalizedString = Utilities.FirstLetterToUpperCase(words[0]);
             //for (int i = 1; i < words.Length; i++) {
             //    normalizedString += " " + Utilities.FirstLetterToUpperCase(words[i]);
             //}
             //return normalizedString;
-            string normalizedString = s.Replace('_', ' ').ToLower();
+            string normalizedString = s.Replace('_', ' ').ToLowerInvariant();
             normalizedString = UpperCaseFirstLetters(normalizedString);
             return normalizedString;
         }
@@ -837,7 +838,7 @@ namespace UtilityScripts {
             return finalReaction;
         }
         public static string NormalizeStringUpperCaseFirstLettersNoSpace(string s) {
-            s = s.ToLower();
+            s = s.ToLowerInvariant();
             string[] words = s.Split('_');
             string normalizedString = Utilities.FirstLetterToUpperCase(words[0]);
             for (int i = 1; i < words.Length; i++) {
@@ -860,11 +861,11 @@ namespace UtilityScripts {
                 throw new ArgumentException("There is no first letter");
 
             char[] a = s.ToCharArray();
-            a[0] = char.ToUpper(a[0]);
+            a[0] = char.ToUpperInvariant(a[0]);
             return new string(a);
         }
         public static string UpperCaseFirstLetters(string s) { //Upper case first letters following spaces
-            //s = s.ToLower();
+            //s = s.ToLowerInvariant();
             //string[] words = s.Split('_');
             //string normalizedString = Utilities.FirstLetterToUpperCase(words[0]);
             //for (int i = 1; i < words.Length; i++) {
@@ -872,13 +873,13 @@ namespace UtilityScripts {
             //}
             //return normalizedString;
             if (s.Length == 1) {
-                return s.ToUpper();
+                return s.ToUpperInvariant();
             } else if (s.Length > 1) {
                 char[] strCharacters = s.ToCharArray();
-                if (char.IsLower(strCharacters[0])) { strCharacters[0] = char.ToUpper(strCharacters[0]); }
+                if (char.IsLower(strCharacters[0])) { strCharacters[0] = char.ToUpperInvariant(strCharacters[0]); }
                 for (int i = 1; i < strCharacters.Length; i++) {
                     if (strCharacters[i - 1] == ' ' && char.IsLower(strCharacters[i])) {
-                        strCharacters[i] = char.ToUpper(strCharacters[i]);
+                        strCharacters[i] = char.ToUpperInvariant(strCharacters[i]);
                     }
                 }
                 return new string(strCharacters);
@@ -935,7 +936,7 @@ namespace UtilityScripts {
             return matched;
         }
         public static string GetArticleForWord(string word, bool capitalized = false) {
-            char firstCharacter = word.ToLower().First();
+            char firstCharacter = word.ToLowerInvariant().First();
             if (firstCharacter == 'a' || firstCharacter == 'e' || firstCharacter == 'i' || firstCharacter == 'o' || firstCharacter == 'u') {
                 if (capitalized) {
                     return "An";
