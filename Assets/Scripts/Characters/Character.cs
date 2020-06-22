@@ -2817,7 +2817,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return !isDead && numOfActionsBeingPerformedOnThis <= 0 && canPerform
             && currentActionNode == null && planner.status == GOAP_PLANNING_STATUS.NONE  
             && (jobQueue.jobsInQueue.Count <= 0 || behaviourComponent.GetHighestBehaviourPriority() > jobQueue.jobsInQueue[0].priority)
-            && !marker.hasFleePath && stateComponent.currentState == null && IsInOwnParty() && !interruptComponent.isInterrupted;
+            && (marker && !marker.hasFleePath) && stateComponent.currentState == null && IsInOwnParty() && !interruptComponent.isInterrupted;
     }
     public void EndTickPerformJobs() {
         if (CanPerformEndTickJobs() && HasSameOrHigherPriorityJobThanBehaviour()) {
@@ -2829,7 +2829,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool CanPerformEndTickJobs() {
         bool canPerformEndTickJobs = !isDead && numOfActionsBeingPerformedOnThis <= 0 /*&& canWitness*/
          && currentActionNode == null && planner.status == GOAP_PLANNING_STATUS.NONE && jobQueue.jobsInQueue.Count > 0 
-         && currentParty.icon.isTravellingOutside == false && !marker.hasFleePath 
+         && (currentParty.icon && currentParty.icon.isTravellingOutside == false) && (marker && !marker.hasFleePath) 
          && stateComponent.currentState == null && IsInOwnParty() && !interruptComponent.isInterrupted; //minion == null && doNotDisturb <= 0 
         return canPerformEndTickJobs;
     }
