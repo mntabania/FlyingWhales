@@ -134,6 +134,10 @@ public class Drop : GoapAction {
             Restrained restrainedTrait = goapNode.poiTarget.traitContainer.GetNormalTrait<Restrained>("Restrained");
             if (restrainedTrait != null) {
                 restrainedTrait.SetIsPrisoner(true);
+            } else {
+                Trait restrained;
+                goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, "Restrained", out restrained, goapNode.actor);
+                (restrained as Restrained).SetIsPrisoner(true);
             }
         }
     }
