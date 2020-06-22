@@ -76,7 +76,7 @@ public class Player : ILeader, IObjectManipulator {
     public void LoadPlayerData(SaveDataPlayer save) {
         if(save != null) {
             experience = save.exp;
-            playerSkillComponent.LoadPlayerSkillTreeNodeData(save);
+            playerSkillComponent.LoadPlayerSkillTreeOrLoadout(save);
             playerSkillComponent.LoadSummons(save);
         }
     }

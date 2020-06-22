@@ -23,11 +23,24 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
     public VideoPlayer tooltipVideoPlayer;
     public RenderTexture tooltipVideoRenderTexture;
 
-    private SpellData skillData;
+    private SpellData spellData;
+    private PlayerSkillData skillData;
 
-    public void ShowPlayerSkillDetails(SpellData skillData, UIHoverPosition position = null) {
+    public void ShowPlayerSkillDetails(SpellData spellData, UIHoverPosition position = null) {
+        this.spellData = spellData;
+        UpdateData(spellData);
+        UpdatePlayerSkillDetails(position);
+    }
+    public void ShowPlayerSkillDetails(PlayerSkillData skillData, UIHoverPosition position = null) {
         this.skillData = skillData;
-        UpdateData();
+        UpdateData(skillData);
+        UpdatePlayerSkillDetails(position);
+    }
+    public void HidePlayerSkillDetails() {
+        gameObject.SetActive(false);
+        tooltipVideoPlayer.Stop();
+    }
+    private void UpdatePlayerSkillDetails(UIHoverPosition position) {
         bool wasActiveBefore = gameObject.activeSelf;
         gameObject.SetActive(true);
         UIHoverPosition positionToUse = position;
@@ -37,7 +50,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
 
         Debug.Assert(thisRect != null, nameof(thisRect) + " != null");
         thisRect.SetParent(positionToUse.transform);
-        
+
         thisRect.pivot = positionToUse.pivot;
         UtilityScripts.Utilities.GetAnchorMinMax(positionToUse.anchor, out var anchorMin, out var anchorMax);
         thisRect.anchorMin = anchorMin;
@@ -45,14 +58,20 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         thisRect.anchoredPosition = Vector2.zero;
 
         if (wasActiveBefore == false) {
-            PlayerSkillAssets skillAssets = PlayerSkillManager.Instance.GetPlayerSkillAsset<PlayerSkillAssets>(skillData.type);
-            if (skillAssets != null) {
-                if (skillAssets.tooltipImage != null) {
-                    tooltipImage.texture = skillAssets.tooltipImage;
+            SPELL_TYPE skillType = SPELL_TYPE.NONE;
+            if(spellData != null) {
+                skillType = spellData.type;
+            } else if (this.skillData != null) {
+                skillType = this.skillData.skill;
+            }
+            PlayerSkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(skillType);
+            if (skillData != null) {
+                if (skillData.tooltipImage != null) {
+                    tooltipImage.texture = skillData.tooltipImage;
                     thisRect.sizeDelta = new Vector2(thisRect.sizeDelta.x, 727f);
                     tooltipImage.gameObject.SetActive(true);
-                } else if (skillAssets.tooltipVideoClip != null) {
-                    tooltipVideoPlayer.clip = skillAssets.tooltipVideoClip;
+                } else if (skillData.tooltipVideoClip != null) {
+                    tooltipVideoPlayer.clip = skillData.tooltipVideoClip;
                     tooltipImage.texture = tooltipVideoRenderTexture;
                     tooltipVideoPlayer.Play();
                     thisRect.sizeDelta = new Vector2(thisRect.sizeDelta.x, 727f);
@@ -61,7 +80,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
                     thisRect.sizeDelta = new Vector2(thisRect.sizeDelta.x, 494f);
                     tooltipImage.texture = null;
                     tooltipImage.gameObject.SetActive(false);
-                }    
+                }
             } else {
                 thisRect.sizeDelta = new Vector2(thisRect.sizeDelta.x, 494f);
                 tooltipImage.texture = null;
@@ -69,25 +88,45 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
             }
         }
     }
-    public void HidePlayerSkillDetails() {
-        gameObject.SetActive(false);
-        tooltipVideoPlayer.Stop();
-    }
-
-    private void UpdateData() {
+    private void UpdateData(PlayerSkillData skillData) {
         titleText.text = skillData.name;
-        descriptionText.text = skillData.description;
+        descriptionText.text = PlayerSkillManager.Instance.GetPlayerSpellData(skillData.skill).description;
         threatText.text = "" + skillData.threat;
         threatPerHourText.text = "" + skillData.threatPerHour;
 
         int charges = skillData.charges;
         int manaCost = skillData.manaCost;
         int cooldown = skillData.cooldown;
-        categoryText.text = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(skillData.category.ToString());
+        categoryText.text = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(PlayerSkillManager.Instance.GetPlayerSpellData(skillData.skill).category.ToString());
+
+        chargesText.text = "N/A";
+        if (charges != -1) {
+            chargesText.text = $"{charges.ToString()}";
+        }
+
+        manaCostText.text = "N/A";
+        if (manaCost != -1) {
+            manaCostText.text += $"{manaCost.ToString()}";
+        }
+
+        string cdText = cooldown == -1 ? "N/A" : $"{GameManager.GetTimeAsWholeDuration(cooldown).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(cooldown)}";
+        cooldownText.text = cdText;
+
+    }
+    private void UpdateData(SpellData spellData) {
+        titleText.text = spellData.name;
+        descriptionText.text = spellData.description;
+        threatText.text = "" + spellData.threat;
+        threatPerHourText.text = "" + spellData.threatPerHour;
+
+        int charges = spellData.charges;
+        int manaCost = spellData.manaCost;
+        int cooldown = spellData.cooldown;
+        categoryText.text = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(spellData.category.ToString());
 
         chargesText.text = "N/A";
         if(charges != -1) {
-            chargesText.text = $"{charges.ToString()}/{skillData.maxCharges.ToString()}";
+            chargesText.text = $"{charges.ToString()}/{spellData.maxCharges.ToString()}";
         }
 
         manaCostText.text = "N/A";
@@ -104,8 +143,8 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
             if (UIManager.Instance.characterInfoUI.activeCharacter.traitContainer.HasTrait("Blessed")) {
                 additionalText.text += $"<color=\"red\">Blessed {UtilityScripts.Utilities.VillagerIcon()}Villagers are protected from your powers.</color>\n";    
             }
-            if (skillData.CanPerformAbilityTowards(UIManager.Instance.characterInfoUI.activeCharacter) == false) {
-                string wholeReason = skillData
+            if (spellData.CanPerformAbilityTowards(UIManager.Instance.characterInfoUI.activeCharacter) == false) {
+                string wholeReason = spellData
                     .GetReasonsWhyCannotPerformAbilityTowards(UIManager.Instance.characterInfoUI.activeCharacter);
                 if (string.IsNullOrEmpty(wholeReason) == false) {
                     string[] reasons = wholeReason.Split(',');
@@ -126,8 +165,8 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
     }
 
     private bool HasEnoughMana() {
-        if (skillData.hasManaCost) {
-            if (PlayerManager.Instance.player.mana >= skillData.manaCost) {
+        if (spellData.hasManaCost) {
+            if (PlayerManager.Instance.player.mana >= spellData.manaCost) {
                 return true;
             }
             return false;
@@ -136,8 +175,8 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         return true;
     }
     private bool HasEnoughCharges() {
-        if (skillData.hasCharges) {
-            if (skillData.charges > 0) {
+        if (spellData.hasCharges) {
+            if (spellData.charges > 0) {
                 return true;
             }
             return false;

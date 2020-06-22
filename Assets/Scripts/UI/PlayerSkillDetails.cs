@@ -20,11 +20,13 @@ public class PlayerSkillDetails : MonoBehaviour {
     public Sprite notLearnedButtonSprite;
     public GameObject confirmationGO;
 
-    private SpellData skillData;
+    private SpellData spellData;
+    private PlayerSkillData skillData;
     private PlayerSkillTreeNode skillTreeNode;
-    private bool _useSkillData;
+    //private bool _useSkillData;
 
-    public void ShowPlayerSkillDetails(SpellData skillData, PlayerSkillTreeNode skillTreeNode) {
+    public void ShowPlayerSkillDetails(SpellData spellData, PlayerSkillData skillData, PlayerSkillTreeNode skillTreeNode) {
+        this.spellData = spellData;
         this.skillData = skillData;
         this.skillTreeNode = skillTreeNode;
         UpdateData();
@@ -35,13 +37,13 @@ public class PlayerSkillDetails : MonoBehaviour {
     }
 
     private void UpdateData() {
-        titleText.text = skillData.name;
-        descriptionText.text = skillData.description;
-        expText.text = skillTreeNode?.expCost + " XP";
+        titleText.text = spellData.name;
+        descriptionText.text = spellData.description;
+        expText.text = skillData.expCost + " XP";
 
-        int charges = skillTreeNode.charges;
-        int manaCost = skillTreeNode.manaCost;
-        int cooldown = skillTreeNode.cooldown;
+        int charges = skillData.charges;
+        int manaCost = skillData.manaCost;
+        int cooldown = skillData.cooldown;
 
         //int charges = skillData.charges;
         //int manaCost = skillData.manaCost;
@@ -52,7 +54,7 @@ public class PlayerSkillDetails : MonoBehaviour {
         //    cooldown = skillTreeNode.cooldown;
         //}
 
-        categoryText.text = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(skillData.category.ToString());
+        categoryText.text = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(spellData.category.ToString());
 
         chargesText.text = "N/A";
         if (charges != -1) {
@@ -73,7 +75,7 @@ public class PlayerSkillDetails : MonoBehaviour {
         cooldownText.text = cdText;
 
         SaveDataPlayer saveDataPlayer = SaveManager.Instance.currentSaveDataPlayer;
-        if (saveDataPlayer.IsSkillLearned(skillData.type) || saveDataPlayer.exp < skillTreeNode.expCost) {
+        if (saveDataPlayer.IsSkillLearned(spellData.type) || saveDataPlayer.exp < skillData.expCost) {
             SpriteState newSpriteState = new SpriteState();
             newSpriteState.highlightedSprite = unlockButton.spriteState.highlightedSprite;
             newSpriteState.pressedSprite = unlockButton.spriteState.pressedSprite;
@@ -90,17 +92,17 @@ public class PlayerSkillDetails : MonoBehaviour {
             newSpriteState.disabledSprite = notLearnedButtonSprite;
             unlockButton.spriteState = newSpriteState;
             unlockButton.interactable = true;
-            unlockButton.gameObject.SetActive(saveDataPlayer.IsSkillUnlocked(skillData.type));
+            unlockButton.gameObject.SetActive(saveDataPlayer.IsSkillUnlocked(spellData.type));
         }
     }
 
     public void OnClickUnlock() {
-        confirmationTitleText.text = "Are you sure you want to unlock " + skillData.name + "?";
+        confirmationTitleText.text = "Are you sure you want to unlock " + spellData.name + "?";
         confirmationGO.SetActive(true);
     }
     public void OnClickYes() {
-        SaveManager.Instance.currentSaveDataPlayer.LearnSkill(skillData.type, skillTreeNode);
-        parentPlayerSkillTreeUI.OnLearnSkill(skillData.type);
+        SaveManager.Instance.currentSaveDataPlayer.LearnSkill(spellData.type, skillTreeNode);
+        parentPlayerSkillTreeUI.OnLearnSkill(spellData.type);
         confirmationGO.SetActive(false);
     }
     public void OnClickNo() {

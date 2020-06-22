@@ -73,9 +73,10 @@ public class SpellSpriteDictionaryDictionaryPropertyDrawer : SerializableDiction
 public class PlayerSkillTreeNodeDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(PlayerSkillTreeNodeItemDictionary))]
 public class PlayerSkillTreeNodeItemDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
-[CustomPropertyDrawer(typeof(PlayerSkillTreeAssetsDictionary))]
-public class PlayerSkillTreeAssetsDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
-
+[CustomPropertyDrawer(typeof(PlayerSkillDataDictionary))]
+public class PlayerSkillDataDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(PlayerArchetypeLoadoutDictionary))]
+public class PlayerArchetypeLoadoutDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 //list storage
 [CustomPropertyDrawer(typeof(LandmarkSpriteListStorage))]
 public class LandmarkSpriteListStorageStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }

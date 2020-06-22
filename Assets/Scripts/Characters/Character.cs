@@ -84,6 +84,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool destroyMarkerOnDeath { get; protected set; }
     public bool isWanderer { get; private set; }
     public bool hasRisen { get; private set; }
+    public bool hasSubscribedToSignals { get; private set; }
     public Log deathLog { get; private set; }
 
     public List<JobQueueItem> forcedCancelJobsOnTickEnded { get; private set; }
@@ -459,6 +460,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (minion != null) {
             logComponent.PrintLogErrorIfActive($"{name} is a minion and has subscribed to the signals!");
         }
+        if (hasSubscribedToSignals) {
+            return;
+        }
+        hasSubscribedToSignals = true; //This is done so there will be no duplication of listening to signals
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
         Messenger.AddListener(Signals.TICK_STARTED, OnTickStarted);
         Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
@@ -492,6 +497,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         jobComponent.SubscribeToListeners();
     }
     public virtual void UnsubscribeSignals() {
+        if (!hasSubscribedToSignals) {
+            return;
+        }
+        hasSubscribedToSignals = false; //This is done so there will be no duplication of listening to signals
         Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
         Messenger.RemoveListener(Signals.TICK_STARTED, OnTickStarted);
         Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
@@ -2817,7 +2826,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return !isDead && numOfActionsBeingPerformedOnThis <= 0 && canPerform
             && currentActionNode == null && planner.status == GOAP_PLANNING_STATUS.NONE  
             && (jobQueue.jobsInQueue.Count <= 0 || behaviourComponent.GetHighestBehaviourPriority() > jobQueue.jobsInQueue[0].priority)
-            && !marker.hasFleePath && stateComponent.currentState == null && IsInOwnParty() && !interruptComponent.isInterrupted;
+            && (marker && !marker.hasFleePath) && stateComponent.currentState == null && IsInOwnParty() && !interruptComponent.isInterrupted;
     }
     public void EndTickPerformJobs() {
         if (CanPerformEndTickJobs() && HasSameOrHigherPriorityJobThanBehaviour()) {
@@ -2829,7 +2838,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool CanPerformEndTickJobs() {
         bool canPerformEndTickJobs = !isDead && numOfActionsBeingPerformedOnThis <= 0 /*&& canWitness*/
          && currentActionNode == null && planner.status == GOAP_PLANNING_STATUS.NONE && jobQueue.jobsInQueue.Count > 0 
-         && currentParty.icon.isTravellingOutside == false && !marker.hasFleePath 
+         && (currentParty.icon && currentParty.icon.isTravellingOutside == false) && (marker && !marker.hasFleePath)
          && stateComponent.currentState == null && IsInOwnParty() && !interruptComponent.isInterrupted; //minion == null && doNotDisturb <= 0 
         return canPerformEndTickJobs;
     }

@@ -42,7 +42,7 @@ namespace Locations.Features {
             SchedulingManager.Instance.AddEntry(expiryDate, () => tile.featureComponent.RemoveFeature(this, tile), this);
             LocationGridTile centerTile = tile.GetCenterLocationGridTile();
             GameObject go = GameManager.Instance.CreateParticleEffectAt(centerTile, PARTICLE_EFFECT.Rain);
-            _audioObject = AudioManager.Instance.CreateAudioObject(PlayerSkillManager.Instance.GetPlayerSkillAsset<RainAssets>(SPELL_TYPE.RAIN).rainSoundEffect, centerTile, 7, true);
+            _audioObject = AudioManager.Instance.CreateAudioObject(PlayerSkillManager.Instance.GetPlayerSkillData<RainSkillData>(SPELL_TYPE.RAIN).rainSoundEffect, centerTile, 7, true);
             _effect = go;
 
         }

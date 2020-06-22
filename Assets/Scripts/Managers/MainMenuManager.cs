@@ -14,6 +14,7 @@ public class MainMenuManager : MonoBehaviour {
     public static MainMenuManager Instance;
 
     public ParentPlayerSkillTreeUI[] parentPlayerSkillTrees;
+
     public TextMeshProUGUI expText;
 
     [ContextMenu("Get Combinations")]

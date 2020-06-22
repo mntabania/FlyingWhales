@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40ee7df74a7f1344b807bb806c238de7, type: 3}
+  m_Name: Puppetmaster Loadout
+  m_EditorClassIdentifier: 
+  archetype: 3
+  spells:
+    extraSlots: 4
+    fixedSkills: 
+  afflictions:
+    extraSlots: 2
+    fixedSkills: 0400000011000000020000000f0000005a000000
+  minions:
+    extraSlots: 1
+    fixedSkills: 500000004f000000
+  structures:
+    extraSlots: 2
+    fixedSkills: 48000000470000004b000000
+  miscs:
+    extraSlots: 2
+    fixedSkills: 3300000034000000320000003d000000

@@ -248,6 +248,8 @@ public static class Signals {
     /// Parameters: Object, Log, Character
     /// </summary>
     public static string LOG_HISTORY_OBJECT_CLICKED = "OnLogObjectClicked";
+    public static string SKILL_SLOT_ITEM_CLICKED = "OnSkillSlotItemClicked";
+    public static string START_GAME_AFTER_LOADOUT_SELECT = "OnStartGameAfterLoadoutSelect";
     #endregion
 
     #region Quest Signals

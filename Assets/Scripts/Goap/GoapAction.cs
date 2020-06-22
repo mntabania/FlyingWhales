@@ -218,7 +218,7 @@ public class GoapAction : ICrimeable {
         if (poiTarget.IsAvailable() == false || poiTarget.gridTileLocation == null) {
             return true;
         }
-        if (!actor.currentRegion.IsSameCoreLocationAs(poiTarget.gridTileLocation.structure.location)) {
+        if (actor.currentRegion != poiTarget.gridTileLocation.structure.location) {
             return true;
         }
         
@@ -263,7 +263,7 @@ public class GoapAction : ICrimeable {
         if (actor.gridTileLocation != null && tile != null) {
             int distance = Mathf.RoundToInt(Vector2.Distance(actor.gridTileLocation.centeredWorldLocation, tile.centeredWorldLocation));
             distance = (int) (distance * 0.25f);
-            if (!actor.currentRegion.IsSameCoreLocationAs(tile.structure.location)) {
+            if (actor.currentRegion != tile.structure.location) {
                 return distance + 100;
             }
             return distance;

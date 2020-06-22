@@ -33,7 +33,7 @@ public class ObjectPicker : PopupMenuBase {
 
     private object _pickedObj;
     private System.Action<object> onConfirmAction;
-    private bool _shouldConfirmOnPick;
+    private bool _shouldShowConfirmationWindowOnPick;
 
     public object pickedObj {
         get { return _pickedObj; }
@@ -42,17 +42,30 @@ public class ObjectPicker : PopupMenuBase {
             UpdateConfirmBtnState();
         }
     }
-
+    public void ShowClickable<T>(T[] items, Action<object> onConfirmAction, IComparer<T> comparer = null, Func<T, bool> validityChecker = null,
+    string title = "", Action<T> onHoverItemAction = null, Action<T> onHoverExitItemAction = null, string identifier = "",
+    bool showCover = false, int layer = 9, Func<string, Sprite> portraitGetter = null, bool asButton = false, bool shouldShowConfirmationWindowOnPick = false) {
+        OrganizeList(items, out var validItems, out var invalidItems, comparer, validityChecker);
+        UpdateClickable(validItems, invalidItems, onConfirmAction, comparer, validityChecker, title, onHoverItemAction, onHoverExitItemAction, identifier
+            , showCover, layer, portraitGetter, asButton, shouldShowConfirmationWindowOnPick);
+    }
     public void ShowClickable<T>(List<T> items, Action<object> onConfirmAction, IComparer<T> comparer = null, Func<T, bool> validityChecker = null,
         string title = "", Action<T> onHoverItemAction = null, Action<T> onHoverExitItemAction = null, string identifier = "",
-        bool showCover = false, int layer = 9, Func<string, Sprite> portraitGetter = null, bool asButton = false, bool shouldConfirmOnPick = false) {
+        bool showCover = false, int layer = 9, Func<string, Sprite> portraitGetter = null, bool asButton = false, bool shouldShowConfirmationWindowOnPick = false) {
+        OrganizeList(items, out var validItems, out var invalidItems, comparer, validityChecker);
+        UpdateClickable(validItems, invalidItems, onConfirmAction, comparer, validityChecker, title, onHoverItemAction, onHoverExitItemAction, identifier
+            , showCover, layer, portraitGetter, asButton, shouldShowConfirmationWindowOnPick);
+
+    }
+    private void UpdateClickable<T>(List<T> validItems, List<T> invalidItems, Action<object> onConfirmAction, IComparer<T> comparer = null, Func<T, bool> validityChecker = null,
+        string title = "", Action<T> onHoverItemAction = null, Action<T> onHoverExitItemAction = null, string identifier = "",
+        bool showCover = false, int layer = 9, Func<string, Sprite> portraitGetter = null, bool asButton = false, bool shouldShowConfirmationWindowOnPick = false) {
         UtilityScripts.Utilities.DestroyChildren(objectPickerScrollView.content);
 
-        _shouldConfirmOnPick = shouldConfirmOnPick;
+        _shouldShowConfirmationWindowOnPick = shouldShowConfirmationWindowOnPick;
         pickedObj = null;
         this.onConfirmAction = onConfirmAction;
 
-        OrganizeList(items, out var validItems, out var invalidItems, comparer, validityChecker);
         Type type = typeof(T);
         if (type == typeof(Character)) {
             ShowCharacterItems(validItems.Cast<Character>().ToList(), invalidItems.Cast<Character>().ToList(), onHoverItemAction, onHoverExitItemAction, identifier, asButton);
@@ -76,14 +89,18 @@ public class ObjectPicker : PopupMenuBase {
         titleLbl.text = title;
         if (!gameObject.activeSelf) {
             base.Open();
-            _isGamePausedBeforeOpeningPicker = GameManager.Instance.isPaused;
-            GameManager.Instance.SetPausedState(true);
-            UIManager.Instance.SetSpeedTogglesState(false);
+            if (GameManager.Instance != null) {
+                _isGamePausedBeforeOpeningPicker = GameManager.Instance.isPaused;
+                GameManager.Instance.SetPausedState(true);
+            }
+            if (UIManager.Instance != null) {
+                UIManager.Instance.SetSpeedTogglesState(false);
+            }
         }
         cover.SetActive(showCover);
         this.gameObject.transform.SetSiblingIndex(layer);
         // closeBtn.interactable = closable;
-        if (_shouldConfirmOnPick) {
+        if (_shouldShowConfirmationWindowOnPick) {
             confirmBtn.gameObject.SetActive(false);
         } else {
             confirmBtn.gameObject.SetActive(true);
@@ -92,8 +109,12 @@ public class ObjectPicker : PopupMenuBase {
     public override void Close() {
         if (gameObject.activeSelf) {
             base.Close();
-            GameManager.Instance.SetPausedState(_isGamePausedBeforeOpeningPicker);
-            UIManager.Instance.SetSpeedTogglesState(true);
+            if (GameManager.Instance != null) {
+                GameManager.Instance.SetPausedState(_isGamePausedBeforeOpeningPicker);
+            }
+            if (UIManager.Instance != null) {
+                UIManager.Instance.SetSpeedTogglesState(true);
+            }
         }
     }
 
@@ -102,6 +123,27 @@ public class ObjectPicker : PopupMenuBase {
         invalidItems = new List<T>();
         if (validityChecker != null) {
             for (int i = 0; i < items.Count; i++) {
+                T currItem = items[i];
+                if (validityChecker(currItem)) {
+                    validItems.Add(currItem);
+                } else {
+                    invalidItems.Add(currItem);
+                }
+            }
+        } else {
+            validItems.AddRange(items);
+        }
+
+        if (comparer != null) {
+            validItems.Sort(comparer);
+            invalidItems.Sort(comparer);
+        }
+    }
+    private void OrganizeList<T>(T[] items, out List<T> validItems, out List<T> invalidItems, IComparer<T> comparer = null, Func<T, bool> validityChecker = null) {
+        validItems = new List<T>();
+        invalidItems = new List<T>();
+        if (validityChecker != null) {
+            for (int i = 0; i < items.Length; i++) {
                 T currItem = items[i];
                 if (validityChecker(currItem)) {
                     validItems.Add(currItem);
@@ -596,7 +638,7 @@ public class ObjectPicker : PopupMenuBase {
     public void OnPickObject(object obj, bool isOn) {
         if (isOn) {
             pickedObj = obj;
-            if (_shouldConfirmOnPick) {
+            if (_shouldShowConfirmationWindowOnPick) {
                 OnClickConfirm();
             }
         } else {
@@ -607,20 +649,20 @@ public class ObjectPicker : PopupMenuBase {
     }
     public void OnPickObject(object obj) {
         pickedObj = obj;
-        if (pickedObj != null && _shouldConfirmOnPick) {
+        if (pickedObj != null && _shouldShowConfirmationWindowOnPick) {
             OnClickConfirm();
         }
     }
     public void OnPickObject(RaceClass obj) {
         pickedObj = obj;
-        if (pickedObj != null && _shouldConfirmOnPick) {
+        if (pickedObj != null && _shouldShowConfirmationWindowOnPick) {
             OnClickConfirm();
         }
     }
     public void OnPickObject(RaceClass obj, bool isOn) {
         if (isOn) {
             pickedObj = obj;
-            if (_shouldConfirmOnPick) {
+            if (_shouldShowConfirmationWindowOnPick) {
                 OnClickConfirm();
             }
         } else {

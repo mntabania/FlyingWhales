@@ -16,7 +16,7 @@ public class WindBlastData : SpellData {
 
     public override void ActivateAbility(LocationGridTile targetTile) {
         AudioManager.Instance.CreateAudioObject(
-            PlayerSkillManager.Instance.GetPlayerSkillAsset<WindBlastAssets>(SPELL_TYPE.WIND_BLAST).blastSound,
+            PlayerSkillManager.Instance.GetPlayerSkillData<WindBlastSkillData>(SPELL_TYPE.WIND_BLAST).blastSound,
             targetTile, 3, false
         );
         

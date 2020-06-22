@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40ee7df74a7f1344b807bb806c238de7, type: 3}
+  m_Name: Ravager Loadout
+  m_EditorClassIdentifier: 
+  archetype: 1
+  spells:
+    extraSlots: 4
+    fixedSkills: 0900000012000000170000001d0000002800000018000000
+  afflictions:
+    extraSlots: 2
+    fixedSkills: 
+  minions:
+    extraSlots: 2
+    fixedSkills: 4e0000005100000052000000
+  structures:
+    extraSlots: 2
+    fixedSkills: 4a000000
+  miscs:
+    extraSlots: 1
+    fixedSkills: 0a000000340000000700000006000000

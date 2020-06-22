@@ -46,7 +46,7 @@ public class DouseFire : GoapAction {
         if (poiTarget.gridTileLocation == null) {
             return true;
         }
-        if (!actor.currentRegion.IsSameCoreLocationAs(poiTarget.gridTileLocation.structure.location)) {
+        if (actor.currentRegion != poiTarget.gridTileLocation.structure.location) {
             return true;
         }
         

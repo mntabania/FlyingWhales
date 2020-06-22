@@ -35,6 +35,9 @@ public class StringNameplateItem : NameplateItem<string> {
         } else if (identifier == "Intervention Ability") {
             img.gameObject.SetActive(true);
             img.sprite = PlayerManager.Instance.GetJobActionSprite(str);
+        } else if (identifier == "player skill") {
+            img.gameObject.SetActive(true);
+            img.sprite = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>((SPELL_TYPE) System.Enum.Parse(typeof(SPELL_TYPE), UtilityScripts.Utilities.NotNormalizedConversionStringToEnum(str).ToUpper())).buttonSprite;
         }
     }
 }

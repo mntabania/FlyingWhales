@@ -1669,6 +1669,7 @@ namespace UtilityScripts {
         }
         #endregion
 
+
         /// <summary>
         /// Method to create lists containing possible combinations of an input list of items. This is 
         /// basically copied from code by user "jaolho" on this thread:

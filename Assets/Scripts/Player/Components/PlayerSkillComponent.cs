@@ -41,18 +41,33 @@ public class PlayerSkillComponent {
         CategorizePlayerSkill(spellData);
     }
     public void AddCharges(SPELL_TYPE spellType, int amount) {
-        SpellData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(spellType);
+        SpellData spellData = PlayerSkillManager.Instance.GetPlayerSpellData(spellType);
         if (spellData.isInUse) {
             spellData.AdjustCharges(amount);
         } else {
             AddPlayerSkill(spellData, amount, -1, -1, 0, 0);
         }
     }
-    public void LoadPlayerSkillTreeNodeData(SaveDataPlayer save) {
+    public void LoadPlayerSkillTreeOrLoadout(SaveDataPlayer save) {
         if (PlayerSkillManager.Instance.unlockAllSkills || WorldConfigManager.Instance.isDemoWorld) {
             PopulateDevModeSkills();
         } else {
-            PopulateAllSkills(save.learnedSkills);
+            //PopulateAllSkills(save.learnedSkills);
+            PlayerSkillLoadout loadout = PlayerSkillManager.Instance.GetSelectedLoadout();
+            PopulateAllSkills(loadout.spells.fixedSkills);
+            PopulateAllSkills(loadout.afflictions.fixedSkills);
+            PopulateAllSkills(loadout.minions.fixedSkills);
+            PopulateAllSkills(loadout.structures.fixedSkills);
+            PopulateAllSkills(loadout.miscs.fixedSkills);
+
+            LoadoutSaveData loadoutSaveData = save.GetLoadout(PlayerSkillManager.Instance.selectedArchetype);
+            PopulateAllSkills(loadoutSaveData.extraSpells);
+            PopulateAllSkills(loadoutSaveData.extraAfflictions);
+            PopulateAllSkills(loadoutSaveData.extraMinions);
+            PopulateAllSkills(loadoutSaveData.extraStructures);
+            PopulateAllSkills(loadoutSaveData.extraMiscs);
+
+            PopulateAllSkills(PlayerSkillManager.Instance.constantSkills);
         }
     }
     public void LoadSummons(SaveDataPlayer save) {
@@ -81,7 +96,7 @@ public class PlayerSkillComponent {
     }
     public bool HasAnyAvailableAffliction() {
         for (int i = 0; i < afflictions.Count; i++) {
-            SpellData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(afflictions[i]);
+            SpellData spellData = PlayerSkillManager.Instance.GetPlayerSpellData(afflictions[i]);
             if (spellData.hasCharges == false) {
                 return true;
             } else {
@@ -97,67 +112,86 @@ public class PlayerSkillComponent {
 
     #region Skills
     private void PopulateDevModeSkills() {
-        for (int i = 0; i < PlayerSkillManager.Instance.allSkillTrees.Length; i++) {
-            PlayerSkillTree skillTree = PlayerSkillManager.Instance.allSkillTrees[i];
-            foreach (KeyValuePair<SPELL_TYPE, PlayerSkillTreeNode> item in skillTree.nodes) {
-                bool shouldAddSpell = true;
-                if (WorldConfigManager.Instance.isDemoWorld) {
-                    //if demo world, spell should be added if it is not a minion type. If it is, check if that spell is in
-                    //the available set of spells for the demo. Other spells are added because in the demo, their buttons should still
-                    //be seen, but instead, should not be clickable.
-                    shouldAddSpell = (PlayerSkillManager.Instance.IsMinion(item.Key) == false ||
-                                     WorldConfigManager.Instance.availableSpellsInDemoBuild.Contains(item.Key)) 
-                                     && item.Key != SPELL_TYPE.KNOCKOUT && item.Key != SPELL_TYPE.HARASS && item.Key != SPELL_TYPE.SKELETON_MARAUDER;
-                }
-                if (shouldAddSpell) {
-                    SetPlayerSkillData(item.Key, item.Value);
-                }
+        foreach (PlayerSkillData data in PlayerSkillManager.Instance.playerSkillDataDictionary.Values) {
+            bool shouldAddSpell = true;
+            if (WorldConfigManager.Instance.isDemoWorld) {
+                //if demo world, spell should be added if it is not a minion type. If it is, check if that spell is in
+                //the available set of spells for the demo. Other spells are added because in the demo, their buttons should still
+                //be seen, but instead, should not be clickable.
+                shouldAddSpell = (PlayerSkillManager.Instance.IsMinion(data.skill) == false ||
+                                 WorldConfigManager.Instance.availableSpellsInDemoBuild.Contains(data.skill))
+                                 && data.skill != SPELL_TYPE.KNOCKOUT && data.skill != SPELL_TYPE.HARASS && data.skill != SPELL_TYPE.SKELETON_MARAUDER;
+            } else {
+                shouldAddSpell = data.skill != SPELL_TYPE.RAIN;
+            }
+            if (shouldAddSpell) {
+                SetPlayerSkillData(data);
             }
         }
-        SpellData afflict = PlayerSkillManager.Instance.GetPlayerSkillData(SPELL_TYPE.AFFLICT);
-        CategorizePlayerSkill(afflict);
-        SpellData buildDemonicStructure = PlayerSkillManager.Instance.GetPlayerSkillData(SPELL_TYPE.BUILD_DEMONIC_STRUCTURE);
-        CategorizePlayerSkill(buildDemonicStructure);
-        SpellData torture = PlayerSkillManager.Instance.GetPlayerSkillData(SPELL_TYPE.TORTURE);
-        CategorizePlayerSkill(torture);
-        SpellData breedMonster = PlayerSkillManager.Instance.GetPlayerSkillData(SPELL_TYPE.BREED_MONSTER);
-        AddPlayerSkill(breedMonster, -1, 10, 24, 0, 0);
+        //for (int i = 0; i < PlayerSkillManager.Instance.allSkillTrees.Length; i++) {
+        //    PlayerSkillTree skillTree = PlayerSkillManager.Instance.allSkillTrees[i];
+        //    foreach (KeyValuePair<SPELL_TYPE, PlayerSkillTreeNode> item in skillTree.nodes) {
+        //        bool shouldAddSpell = true;
+        //        if (WorldConfigManager.Instance.isDemoWorld) {
+        //            //if demo world, spell should be added if it is not a minion type. If it is, check if that spell is in
+        //            //the available set of spells for the demo. Other spells are added because in the demo, their buttons should still
+        //            //be seen, but instead, should not be clickable.
+        //            shouldAddSpell = (PlayerSkillManager.Instance.IsMinion(item.Key) == false ||
+        //                             WorldConfigManager.Instance.availableSpellsInDemoBuild.Contains(item.Key)) 
+        //                             && item.Key != SPELL_TYPE.KNOCKOUT && item.Key != SPELL_TYPE.HARASS && item.Key != SPELL_TYPE.SKELETON_MARAUDER;
+        //        } else {
+        //            shouldAddSpell = item.Key != SPELL_TYPE.RAIN;
+        //        }
+        //        if (shouldAddSpell) {
+        //            SetPlayerSkillData(item.Key);
+        //        }
+        //    }
+        //}
+        //SpellData afflict = PlayerSkillManager.Instance.GetPlayerSkillData(SPELL_TYPE.AFFLICT);
+        //CategorizePlayerSkill(afflict);
+        //SpellData buildDemonicStructure = PlayerSkillManager.Instance.GetPlayerSkillData(SPELL_TYPE.BUILD_DEMONIC_STRUCTURE);
+        //CategorizePlayerSkill(buildDemonicStructure);
+        //SpellData torture = PlayerSkillManager.Instance.GetPlayerSkillData(SPELL_TYPE.TORTURE);
+        //CategorizePlayerSkill(torture);
+        //SpellData breedMonster = PlayerSkillManager.Instance.GetPlayerSkillData(SPELL_TYPE.BREED_MONSTER);
+        //AddPlayerSkill(breedMonster, -1, 10, 24, 0, 0);
 
         //For Demo
-        if (WorldConfigManager.Instance.isDemoWorld) {
-            SpellData rain = PlayerSkillManager.Instance.GetPlayerSkillData(SPELL_TYPE.RAIN);
-            CategorizePlayerSkill(rain);
-        }
-        SpellData meddler = PlayerSkillManager.Instance.GetPlayerSkillData(SPELL_TYPE.MEDDLER);
-        CategorizePlayerSkill(meddler);
-        SpellData ostracizer = PlayerSkillManager.Instance.GetPlayerSkillData(SPELL_TYPE.OSTRACIZER);
-        CategorizePlayerSkill(ostracizer);    
+        //if (WorldConfigManager.Instance.isDemoWorld) {
+        //    SpellData rain = PlayerSkillManager.Instance.GetPlayerSpellData(SPELL_TYPE.RAIN);
+        //    CategorizePlayerSkill(rain);
+        //}
+        //SpellData meddler = PlayerSkillManager.Instance.GetPlayerSpellData(SPELL_TYPE.MEDDLER);
+        //CategorizePlayerSkill(meddler);
+        //SpellData ostracizer = PlayerSkillManager.Instance.GetPlayerSpellData(SPELL_TYPE.OSTRACIZER);
+        //CategorizePlayerSkill(ostracizer);    
     }
-    private void PopulateAllSkills(List<PlayerSkillTreeNodeData> nodesData) {
-        if (nodesData != null) {
-            for (int i = 0; i < nodesData.Count; i++) {
-                SetPlayerSkillData(nodesData[i]);
+    private void PopulateAllSkills(List<SPELL_TYPE> skillTypes) {
+        if (skillTypes != null) {
+            for (int i = 0; i < skillTypes.Count; i++) {
+                SetPlayerSkillData(skillTypes[i]);
             }
         }
     }
-    private void SetPlayerSkillData(PlayerSkillTreeNodeData node) {
-        SpellData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(node.skill);
-        spellData.SetMaxCharges(node.charges);
-        spellData.SetCharges(node.charges);
-        spellData.SetCooldown(node.cooldown);
-        spellData.SetManaCost(node.manaCost);
-        spellData.SetThreat(node.threat);
-        spellData.SetThreatPerHour(node.threatPerHour);
+    private void SetPlayerSkillData(SPELL_TYPE skillType) {
+        PlayerSkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(skillType);
+        SpellData spellData = PlayerSkillManager.Instance.GetPlayerSpellData(skillType);
+        spellData.SetMaxCharges(skillData.charges);
+        spellData.SetCharges(skillData.charges);
+        spellData.SetCooldown(skillData.cooldown);
+        spellData.SetManaCost(skillData.manaCost);
+        spellData.SetThreat(skillData.threat);
+        spellData.SetThreatPerHour(skillData.threatPerHour);
         CategorizePlayerSkill(spellData);
     }
-    private void SetPlayerSkillData(SPELL_TYPE skill, PlayerSkillTreeNode node) {
-        SpellData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(skill);
-        spellData.SetMaxCharges(node.charges);
-        spellData.SetCharges(node.charges);
-        spellData.SetCooldown(node.cooldown);
-        spellData.SetManaCost(node.manaCost);
-        spellData.SetThreat(node.threat);
-        spellData.SetThreatPerHour(node.threatPerHour);
+    private void SetPlayerSkillData(PlayerSkillData skillData) {
+        SpellData spellData = PlayerSkillManager.Instance.GetPlayerSpellData(skillData.skill);
+        spellData.SetMaxCharges(skillData.charges);
+        spellData.SetCharges(skillData.charges);
+        spellData.SetCooldown(skillData.cooldown);
+        spellData.SetManaCost(skillData.manaCost);
+        spellData.SetThreat(skillData.threat);
+        spellData.SetThreatPerHour(skillData.threatPerHour);
         CategorizePlayerSkill(spellData);
     }
     private void CategorizePlayerSkill(SpellData spellData) {

@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40ee7df74a7f1344b807bb806c238de7, type: 3}
+  m_Name: Lich Loadout
+  m_EditorClassIdentifier: 
+  archetype: 2
+  spells:
+    extraSlots: 3
+    fixedSkills: 160000001e0000002d0000001f000000
+  afflictions:
+    extraSlots: 2
+    fixedSkills: 0e000000100000000300000001000000
+  minions:
+    extraSlots: 1
+    fixedSkills: 5400000053000000
+  structures:
+    extraSlots: 2
+    fixedSkills: 4c00000060000000
+  miscs:
+    extraSlots: 2
+    fixedSkills: 33000000590000000800000021000000

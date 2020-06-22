@@ -29,7 +29,7 @@ public class EnumNameplateItem : NameplateItem<Enum> {
             if (PlayerSkillManager.Instance.IsAffliction(spellType)) {
                 spellData = PlayerSkillManager.Instance.GetAfflictionData(spellType);
             } else if (PlayerSkillManager.Instance.IsPlayerAction(spellType)) {
-                spellData = PlayerSkillManager.Instance.GetPlayerSkillData(spellType);
+                spellData = PlayerSkillManager.Instance.GetPlayerSpellData(spellType);
             } else if (PlayerSkillManager.Instance.IsDemonicStructure(spellType)) {
                 spellData = PlayerSkillManager.Instance.GetDemonicStructureSkillData(spellType);
             } else {

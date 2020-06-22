@@ -276,7 +276,7 @@ public class ActualGoapNode : IReactable, IRumorable {
     //We only pass the job because we need to cancel it if the target tile is null
     private bool MoveToDoAction(JobQueueItem job) {
         //Only create thought bubble log when characters starts the action/moves to do the action so we can pass the target structure
-        if (!actor.currentRegion.IsSameCoreLocationAs(targetTile.structure.location)) { //different core locations
+        if (actor.currentRegion != targetTile.structure.location) { //different core locations
             if (actor.currentParty.GoToLocation(targetTile.structure.location, PATHFINDING_MODE.NORMAL, doneAction: () => CheckAndMoveToDoAction(job)) == false) {
                 //character cannot exit region.
                 return false;

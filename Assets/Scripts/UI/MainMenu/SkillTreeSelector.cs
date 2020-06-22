@@ -13,7 +13,12 @@ public class SkillTreeSelector : MonoBehaviour {
 
     [SerializeField] private Toggle[] archetypeToggles;
 
+    public PlayerSkillLoadoutUI[] playerLoadoutUI;
+
     public void Show() {
+        for (int i = 0; i < playerLoadoutUI.Length; i++) {
+            playerLoadoutUI[i].Initialize();
+        }
         this.gameObject.SetActive(true);
         _horizontalScrollSnap.GoToScreen(0);
     }
@@ -25,12 +30,13 @@ public class SkillTreeSelector : MonoBehaviour {
     public void OnClickContinue() {
         // Hide();
         continueBtn.interactable = false;
-        //for (int i = 0; i < archetypeToggles.Length; i++) {
-        //    if (archetypeToggles[i].isOn) {
-        //        InputManager.Instance.SetSelectedArchetype((PLAYER_ARCHETYPE) System.Enum.Parse(typeof(PLAYER_ARCHETYPE), UtilityScripts.Utilities.NotNormalizedConversionStringToEnum(archetypeToggles[i].gameObject.name)));
-        //        break;
-        //    }
-        //}
+        for (int i = 0; i < archetypeToggles.Length; i++) {
+            if (archetypeToggles[i].isOn) {
+                PlayerSkillManager.Instance.SetSelectedArchetype((PLAYER_ARCHETYPE) System.Enum.Parse(typeof(PLAYER_ARCHETYPE), UtilityScripts.Utilities.NotNormalizedConversionStringToEnum(archetypeToggles[i].gameObject.name)));
+                break;
+            }
+        }
+        Messenger.Broadcast(Signals.START_GAME_AFTER_LOADOUT_SELECT);
         MainMenuUI.Instance.StartNewGame();
     }
 

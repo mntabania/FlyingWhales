@@ -1182,7 +1182,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         UIManager.Instance.ShowClickableObjectPicker(PlayerManager.Instance.player.playerSkillComponent.demonicStructuresSkills, 
             StartBuildConfirmation, null, CanChooseLandmark, "Choose a structure to build"
             , OnHoverStructureChoice, OnHoverExitStructureChoice, portraitGetter: GetStructurePortrait, 
-            showCover: true, shouldConfirmOnPick: true, asButton: true, identifier: "Demonic Structure");
+            showCover: true, shouldShowConfirmationWindowOnPick: true, asButton: true, identifier: "Demonic Structure");
     }
     private bool CanChooseLandmark(SPELL_TYPE structureType) {
         bool canChooseLandmark = true;

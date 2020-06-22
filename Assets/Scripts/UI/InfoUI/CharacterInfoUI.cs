@@ -724,7 +724,7 @@ public class CharacterInfoUI : InfoUIBase {
         //    }
         //}
         UIManager.Instance.ShowClickableObjectPicker(afflictions, ActivateAfflictionConfirmation, null, CanActivateAffliction,
-            "Select Affliction", OnHoverAffliction, OnHoverOutAffliction, portraitGetter: GetAfflictionPortrait, identifier: "Intervention Ability", showCover: true, layer: 19, shouldConfirmOnPick: true, asButton: true);
+            "Select Affliction", OnHoverAffliction, OnHoverOutAffliction, portraitGetter: GetAfflictionPortrait, identifier: "Intervention Ability", showCover: true, layer: 19, shouldShowConfirmationWindowOnPick: true, asButton: true);
     }
     private Sprite GetAfflictionPortrait(string str) {
         return PlayerManager.Instance.GetJobActionSprite(UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(str));

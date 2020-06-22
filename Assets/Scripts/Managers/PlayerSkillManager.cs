@@ -9,18 +9,29 @@ public class PlayerSkillManager : MonoBehaviour {
     public static PlayerSkillManager Instance;
 
     public PlayerSkillTree[] allSkillTrees;
+    public PlayerArchetypeLoadoutDictionary allSkillLoadouts;
+
+    public PLAYER_ARCHETYPE selectedArchetype { get; private set; }
+
     public bool unlockAllSkills;
+    //public List<PlayerSkillData> allPlayerSkillsData;
 
-    public Dictionary<SPELL_TYPE, SpellData> allSpellsData;
-    public Dictionary<SPELL_TYPE, PlayerAction> allPlayerActionsData;
-    public Dictionary<SPELL_TYPE, SpellData> allAfflictionsData;
-    public Dictionary<SPELL_TYPE, DemonicStructurePlayerSkill> allDemonicStructureSkillsData;
-    public Dictionary<SPELL_TYPE, MinionPlayerSkill> allMinionPlayerSkillsData;
-    public Dictionary<SPELL_TYPE, SummonPlayerSkill> allSummonPlayerSkillsData;
-    public Dictionary<SPELL_TYPE, SpellData> allPlayerSkillsData;
-    [SerializeField] private PlayerSkillTreeAssetsDictionary _playerSkillTreeAssets; 
+    [SerializeField] private PlayerSkillDataDictionary _playerSkillDataDictionary;
 
-    private SPELL_TYPE[] allSpells = { SPELL_TYPE.METEOR
+    public List<SPELL_TYPE> constantSkills = new List<SPELL_TYPE> { SPELL_TYPE.AFFLICT, SPELL_TYPE.BUILD_DEMONIC_STRUCTURE };
+    public Dictionary<SPELL_TYPE, SpellData> allSpellsData { get; private set; }
+    public Dictionary<SPELL_TYPE, PlayerAction> allPlayerActionsData { get; private set; }
+    public Dictionary<SPELL_TYPE, SpellData> allAfflictionsData { get; private set; }
+    public Dictionary<SPELL_TYPE, DemonicStructurePlayerSkill> allDemonicStructureSkillsData { get; private set; }
+    public Dictionary<SPELL_TYPE, MinionPlayerSkill> allMinionPlayerSkillsData { get; private set; }
+    public Dictionary<SPELL_TYPE, SummonPlayerSkill> allSummonPlayerSkillsData { get; private set; }
+    public Dictionary<SPELL_TYPE, SpellData> allPlayerSkillsData { get; private set; }
+
+    #region getters
+    public PlayerSkillDataDictionary playerSkillDataDictionary => _playerSkillDataDictionary;
+    #endregion
+
+    public SPELL_TYPE[] allSpells = { SPELL_TYPE.METEOR
             , SPELL_TYPE.TORNADO, SPELL_TYPE.RAVENOUS_SPIRIT, SPELL_TYPE.FEEBLE_SPIRIT, SPELL_TYPE.FORLORN_SPIRIT
             , SPELL_TYPE.LIGHTNING, SPELL_TYPE.POISON_CLOUD, SPELL_TYPE.EARTHQUAKE
             , SPELL_TYPE.SPAWN_BOULDER, SPELL_TYPE.WATER_BOMB, SPELL_TYPE.MANIFEST_FOOD
@@ -30,7 +41,7 @@ public class PlayerSkillManager : MonoBehaviour {
             , SPELL_TYPE.ICETEROIDS, SPELL_TYPE.HEAT_WAVE, SPELL_TYPE.SPLASH_WATER, SPELL_TYPE.WALL
     };
 
-    private SPELL_TYPE[] allPlayerActions = { SPELL_TYPE.ZAP, SPELL_TYPE.RAISE_DEAD, SPELL_TYPE.DESTROY, SPELL_TYPE.IGNITE, SPELL_TYPE.POISON
+    public SPELL_TYPE[] allPlayerActions = { SPELL_TYPE.ZAP, SPELL_TYPE.RAISE_DEAD, SPELL_TYPE.DESTROY, SPELL_TYPE.IGNITE, SPELL_TYPE.POISON
             , SPELL_TYPE.TORTURE, SPELL_TYPE.SUMMON_MINION, SPELL_TYPE.STOP, SPELL_TYPE.SEIZE_OBJECT, SPELL_TYPE.SEIZE_CHARACTER, SPELL_TYPE.SEIZE_MONSTER
             /*, SPELL_TYPE.RETURN_TO_PORTAL*/, SPELL_TYPE.DEFEND, SPELL_TYPE.HARASS, SPELL_TYPE.INVADE, SPELL_TYPE.LEARN_SPELL/*, SPELL_TYPE.CHANGE_COMBAT_MODE*/
             , SPELL_TYPE.BUILD_DEMONIC_STRUCTURE, SPELL_TYPE.AFFLICT, SPELL_TYPE.ACTIVATE_TILE_OBJECT, SPELL_TYPE.BREED_MONSTER
@@ -38,22 +49,22 @@ public class PlayerSkillManager : MonoBehaviour {
             , SPELL_TYPE.AGITATE, SPELL_TYPE.KNOCKOUT, SPELL_TYPE.KILL, SPELL_TYPE.HEAL, SPELL_TYPE.ABDUCT, SPELL_TYPE.ANIMATE, SPELL_TYPE.EMPOWER
     };
 
-    private SPELL_TYPE[] allAfflictions = { SPELL_TYPE.CANNIBALISM
+    public SPELL_TYPE[] allAfflictions = { SPELL_TYPE.CANNIBALISM
             , SPELL_TYPE.LYCANTHROPY, SPELL_TYPE.VAMPIRISM, SPELL_TYPE.KLEPTOMANIA
             , SPELL_TYPE.UNFAITHFULNESS, SPELL_TYPE.CURSED_OBJECT, SPELL_TYPE.ALCOHOLIC
             , SPELL_TYPE.AGORAPHOBIA, SPELL_TYPE.PARALYSIS, SPELL_TYPE.ZOMBIE_VIRUS
             , SPELL_TYPE.PESTILENCE, SPELL_TYPE.PSYCHOPATHY, SPELL_TYPE.COWARDICE, SPELL_TYPE.PYROPHOBIA
             , SPELL_TYPE.NARCOLEPSY, SPELL_TYPE.HOTHEADED, SPELL_TYPE.LAZINESS, SPELL_TYPE.MUSIC_HATER, SPELL_TYPE.GLUTTONY
     };
-    private SPELL_TYPE[] allDemonicStructureSkills = { SPELL_TYPE.MEDDLER, SPELL_TYPE.EYE, SPELL_TYPE.CRYPT,
+    public SPELL_TYPE[] allDemonicStructureSkills = { SPELL_TYPE.MEDDLER, SPELL_TYPE.EYE, SPELL_TYPE.CRYPT,
         SPELL_TYPE.KENNEL, SPELL_TYPE.OSTRACIZER, SPELL_TYPE.TORTURE_CHAMBERS, SPELL_TYPE.DEMONIC_PRISON, SPELL_TYPE.DEFILER
     };
 
-    private SPELL_TYPE[] allMinionPlayerSkills = { SPELL_TYPE.DEMON_WRATH, SPELL_TYPE.DEMON_PRIDE, SPELL_TYPE.DEMON_LUST
+    public SPELL_TYPE[] allMinionPlayerSkills = { SPELL_TYPE.DEMON_WRATH, SPELL_TYPE.DEMON_PRIDE, SPELL_TYPE.DEMON_LUST
         , SPELL_TYPE.DEMON_GLUTTONY, SPELL_TYPE.DEMON_SLOTH, SPELL_TYPE.DEMON_ENVY, SPELL_TYPE.DEMON_GREED,
     };
 
-    private SPELL_TYPE[] allSummonPlayerSkills = { SPELL_TYPE.SKELETON_MARAUDER, SPELL_TYPE.WOLF, SPELL_TYPE.GOLEM, SPELL_TYPE.INCUBUS, SPELL_TYPE.SUCCUBUS, SPELL_TYPE.FIRE_ELEMENTAL, SPELL_TYPE.KOBOLD, SPELL_TYPE.GHOST,
+    public SPELL_TYPE[] allSummonPlayerSkills = { SPELL_TYPE.SKELETON_MARAUDER, SPELL_TYPE.WOLF, SPELL_TYPE.GOLEM, SPELL_TYPE.INCUBUS, SPELL_TYPE.SUCCUBUS, SPELL_TYPE.FIRE_ELEMENTAL, SPELL_TYPE.KOBOLD, SPELL_TYPE.GHOST,
     SPELL_TYPE.ABOMINATION, SPELL_TYPE.MIMIC, SPELL_TYPE.PIG, SPELL_TYPE.CHICKEN, SPELL_TYPE.SHEEP, SPELL_TYPE.SLUDGE,
     SPELL_TYPE.WATER_NYMPH, SPELL_TYPE.WIND_NYMPH, SPELL_TYPE.ICE_NYMPH,
     SPELL_TYPE.ELECTRIC_WISP, SPELL_TYPE.EARTHEN_WISP, SPELL_TYPE.FIRE_WISP,
@@ -185,7 +196,7 @@ public class PlayerSkillManager : MonoBehaviour {
     public bool IsDemonicStructure(SPELL_TYPE type) {
         return allDemonicStructureSkills.Contains(type);
     }
-    public SpellData GetPlayerSkillData(SPELL_TYPE type) {
+    public SpellData GetPlayerSpellData(SPELL_TYPE type) {
         if (allPlayerSkillsData.ContainsKey(type)) {
             return allPlayerSkillsData[type];
         }
@@ -244,12 +255,18 @@ public class PlayerSkillManager : MonoBehaviour {
         }
         return null;
     }
+    public void SetSelectedArchetype(PLAYER_ARCHETYPE archetype) {
+        selectedArchetype = archetype;
+    }
+    public PlayerSkillLoadout GetSelectedLoadout() {
+        return allSkillLoadouts[selectedArchetype];
+    }
     #endregion
 
     #region Assets
-    public T GetPlayerSkillAsset<T>(SPELL_TYPE spellType) where T : PlayerSkillAssets {
-        if (_playerSkillTreeAssets.ContainsKey(spellType)) {
-            return _playerSkillTreeAssets[spellType] as T;    
+    public T GetPlayerSkillData<T>(SPELL_TYPE spellType) where T : PlayerSkillData {
+        if (_playerSkillDataDictionary.ContainsKey(spellType)) {
+            return _playerSkillDataDictionary[spellType] as T;    
         }
         return null;
     }

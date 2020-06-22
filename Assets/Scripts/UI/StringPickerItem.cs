@@ -51,6 +51,9 @@ public class StringPickerItem : ObjectPickerItem<string>, IPointerClickHandler {
             } else if (identifier == "minion") {
                 iconImg.sprite = CharacterManager.Instance.GetWholeImagePortraitSprite(str);
                 iconImg.gameObject.SetActive(true);
+            } else if (identifier == "player skill") {
+                iconImg.sprite = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>((SPELL_TYPE) System.Enum.Parse(typeof(SPELL_TYPE), UtilityScripts.Utilities.NotNormalizedConversionStringToEnum(str).ToUpper())).buttonSprite;
+                iconImg.gameObject.SetActive(true);
             }
             iconImg.SetNativeSize();
             if (iconImg.sprite == null) {

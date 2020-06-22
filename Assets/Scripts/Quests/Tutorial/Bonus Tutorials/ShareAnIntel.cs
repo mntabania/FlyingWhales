@@ -18,7 +18,7 @@ namespace Tutorial {
         protected override bool HasMetAllCriteria() {
             bool hasMetAllCriteria = base.HasMetAllCriteria();
             if (hasMetAllCriteria) {
-                return PlayerSkillManager.Instance.GetPlayerSkillData(SPELL_TYPE.EYE).charges > 0;
+                return PlayerSkillManager.Instance.GetPlayerSpellData(SPELL_TYPE.EYE).charges > 0;
             }
             return false;
         }

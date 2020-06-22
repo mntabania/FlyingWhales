@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 4b18ba5513d55364284cd64228896343, type: 3}
-    totalSpriteSurfaceArea: 3501453
+    totalSpriteSurfaceArea: 3947045
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -57,6 +57,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 4ad043e7f6d9df24d91e3edcd0385832, type: 3}
   - {fileID: 21300000, guid: c01396480b0e11e48aec5b89a59ded67, type: 3}
   - {fileID: 21300000, guid: ef581cca56aaa3544add2b31eba6cba9, type: 3}
+  - {fileID: 21300000, guid: 0a1aae3d96b0c3344b903bac422c2fc6, type: 3}
   - {fileID: 21300000, guid: dbe0987dc8cc34441938f371b77893c1, type: 3}
   - {fileID: 21300000, guid: 6ae7e28e53de7564f9cd5da42b57c804, type: 3}
   - {fileID: 21300000, guid: f844eeee9e0b19c4f989583fdd94b719, type: 3}
@@ -71,6 +72,7 @@ SpriteAtlas:
   - minion_info_tooltip_container
   - corrupt_rile_up_container
   - spell_list_container
+  - skill_tree_tooltip_container
   - share_intel_container
   - log_panel
   - minion_list_container

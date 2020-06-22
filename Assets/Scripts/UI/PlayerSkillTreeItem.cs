@@ -12,13 +12,15 @@ public class PlayerSkillTreeItem : MonoBehaviour {
     public Image buttonBorderImg;
     public Button button;
 
+    private PlayerSkillData skillData;
     private SPELL_TYPE skillType;
     private System.Action<SPELL_TYPE, PlayerSkillTreeItem> onClick;
 
     public void SetData(SPELL_TYPE skillType, PlayerSkillTreeNode data, System.Action<SPELL_TYPE, PlayerSkillTreeItem> onClick) {
         this.skillType = skillType;
+        skillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(this.skillType);
         this.onClick = onClick;
-        SetButtonImg(data.buttonSprite);
+        SetButtonImg(skillData.buttonSprite);
         SetSkillState();
     }
 

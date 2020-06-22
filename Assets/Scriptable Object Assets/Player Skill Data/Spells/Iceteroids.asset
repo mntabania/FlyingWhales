@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d41b605dd2e075a49bb4bd2fc6ff4068, type: 3}
+  m_Name: Iceteroids
+  m_EditorClassIdentifier: 
+  skill: 45
+  manaCost: -1
+  charges: 6
+  cooldown: 3
+  threat: 5
+  threatPerHour: 0
+  expCost: 300
+  buttonSprite: {fileID: 21300000, guid: dd9654e584df8c445b6bc2411c7b6c47, type: 3}
+  tooltipVideoClip: {fileID: 32900000, guid: f0dcf5b0b408d6641b9c6ecac91f583e, type: 3}
+  tooltipImage: {fileID: 0}
+  impactClips:
+  - {fileID: 8300000, guid: 223a75f1a728b7b41a220ffb28352a14, type: 3}
+  - {fileID: 8300000, guid: 3db7dde05eba5e647b04319782e405c5, type: 3}
+  - {fileID: 8300000, guid: 3285fb48d04ac7140aa75b2e08a048cc, type: 3}
+  - {fileID: 8300000, guid: a011fa33a0f8c2c419c860b0fb43d6b0, type: 3}
+  - {fileID: 8300000, guid: 655510bd9d36c68409d5f3274edd0d7f, type: 3}

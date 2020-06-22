@@ -80,8 +80,9 @@ public class PlayerSkillTreeNodeDictionary : SerializableDictionary<SPELL_TYPE, 
 [System.Serializable]
 public class PlayerSkillTreeNodeItemDictionary : SerializableDictionary<SPELL_TYPE, PlayerSkillTreeItem> { }
 [System.Serializable]
-public class PlayerSkillTreeAssetsDictionary : SerializableDictionary<SPELL_TYPE, Scriptable_Object_Scripts.PlayerSkillAssets> { }
-
+public class PlayerSkillDataDictionary : SerializableDictionary<SPELL_TYPE, PlayerSkillData> { }
+[System.Serializable]
+public class PlayerArchetypeLoadoutDictionary : SerializableDictionary<PLAYER_ARCHETYPE, PlayerSkillLoadout> { }
 //List storage
 [System.Serializable]
 public class LandmarkSpriteListStorage : SerializableDictionary.Storage<List<LandmarkStructureSprite>> { }

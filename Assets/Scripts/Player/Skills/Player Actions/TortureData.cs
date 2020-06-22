@@ -11,8 +11,6 @@ public class TortureData : PlayerAction {
     public override string description => $"Torture a {UtilityScripts.Utilities.VillagerIcon()}Villager to afflict it with a random negative Trait and a random negative Status.";
     public TortureData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.ROOM };
-        //TODO: Move this when torture has been moved to skill trees
-        SetManaCost(10);
     }
 
     #region Overrides
