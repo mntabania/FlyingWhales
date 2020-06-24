@@ -13,6 +13,7 @@ namespace Inner_Maps.Location_Structures {
         public int id { get; private set; }
         public string name { get; protected set; }
         public string nameWithoutID { get; protected set; }
+        public int maxResidentCapacity { get; protected set; }
         public virtual string nameplateName => name;
         public STRUCTURE_TYPE structureType { get; private set; }
         public List<STRUCTURE_TAG> structureTags { get; protected set; }
@@ -37,10 +38,13 @@ namespace Inner_Maps.Location_Structures {
         public List<Character> residents { get; protected set; }
         public StructureRoom[] rooms { get; protected set; }
 
+        protected Faction _owner;
+
         #region getters
         public virtual bool isDwelling => false;
         public virtual Vector3 worldPosition { get; protected set; }
         public virtual Vector2 selectableSize => structureObj.size;
+        public Faction owner => settlementLocation != null ? settlementLocation.owner : _owner;
         #endregion
 
         protected LocationStructure(STRUCTURE_TYPE structureType, Region location) {
@@ -60,6 +64,7 @@ namespace Inner_Maps.Location_Structures {
             SetMaxHPAndReset(3000);
             //outerTiles = new List<LocationGridTile>();
             SetInteriorState(structureType.IsInterior());
+            maxResidentCapacity = 5;
         }
         protected LocationStructure(Region location, SaveDataLocationStructure data) {
             this.location = location;
@@ -76,6 +81,7 @@ namespace Inner_Maps.Location_Structures {
             residents = new List<Character>();
             SetMaxHPAndReset(3000);
             SetInteriorState(structureType.IsInterior());
+            maxResidentCapacity = 5;
         }
 
         #region Virtuals
@@ -781,18 +787,34 @@ namespace Inner_Maps.Location_Structures {
         #endregion
 
         #region Residents
-        public void AddResident(Character character) {
-            if (!residents.Contains(character)) {
+        public bool AddResident(Character character) {
+            if (!residents.Contains(character)) { //residents.Count < maxResidentCapacity && 
                 residents.Add(character);
                 character.SetHomeStructure(this);
                 OnAddResident(character);
+                if(settlementLocation == null) {
+                    //Only set/unset faction owner for structures that do not have a settlement, if a structure has a settlement, the settlement should be the one being owned by the faction not the specific structure
+                    if (owner == null && character.faction != null && character.faction.isMajorNonPlayer) {
+                        //If a character becomes a resident and he/she has a faction and this structure has no faction owner yet, set it as the faction owner
+                        LandmarkManager.Instance.OwnStructure(character.faction, this);
+                    }
+                }
                 Messenger.Broadcast(Signals.ADDED_STRUCTURE_RESIDENT, character, this);
+                return true;
             }
+            return false;
         }
         public void RemoveResident(Character character) {
             if (residents.Remove(character)) {
                 character.SetHomeStructure(null);
                 OnRemoveResident(character);
+                if (settlementLocation == null) {
+                    //Only set/unset faction owner for structures that do not have a settlement, if a structure has a settlement, the settlement should be the one being owned by the faction not the specific structure
+                    if (residents.Count <= 0 && owner != null) {
+                        //if all residents of a settlement is removed, then remove faction owner
+                        LandmarkManager.Instance.UnownStructure(this);
+                    }
+                }
                 Messenger.Broadcast(Signals.REMOVED_STRUCTURE_RESIDENT, character, this);
             }
         }
@@ -902,6 +924,12 @@ namespace Inner_Maps.Location_Structures {
             }
             room = null;
             return false;
+        }
+        #endregion
+
+        #region Faction
+        public void SetOwner(Faction owner) {
+            _owner = owner;
         }
         #endregion
 

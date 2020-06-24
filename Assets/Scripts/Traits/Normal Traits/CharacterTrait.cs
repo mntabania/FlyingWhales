@@ -199,7 +199,7 @@ namespace Traits {
                 // CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.RETURN_HOME, CHARACTER_STATE.MOVE_OUT, owner);
                 // owner.jobQueue.AddJobInQueue(job);
                 if (owner.canPerform && owner.canMove) {
-                    owner.PlanIdleReturnHome();
+                    owner.jobComponent.PlanIdleReturnHome();
                 }
             } 
             //else if (owner.isAtHomeRegion) {

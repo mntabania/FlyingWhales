@@ -41,10 +41,10 @@ public class SaveDataFaction {
         name = faction.name;
         description = faction.description;
         //initialLeaderClass = faction.initialLeaderClass;
-        level = faction.level;
+        //level = faction.level;
         isPlayerFaction = faction.isPlayerFaction;
-        initialLeaderGender = faction.initialLeaderGender;
-        initialLeaderRace = faction.initialLeaderRace;
+        //initialLeaderGender = faction.initialLeaderGender;
+        //initialLeaderRace = faction.initialLeaderRace;
         race = faction.race;
         emblemIndex = FactionManager.Instance.GetFactionEmblemIndex(faction.emblem);
         factionColor = faction.factionColor;
@@ -55,8 +55,8 @@ public class SaveDataFaction {
         //requirementForJoining = faction.requirementForJoining;
 
         ownedLandmarkIDs = new List<int>();
-        for (int i = 0; i < faction.ownedLandmarks.Count; i++) {
-            ownedLandmarkIDs.Add(faction.ownedLandmarks[i].id);
+        for (int i = 0; i < faction.ownedStructures.Count; i++) {
+            ownedLandmarkIDs.Add(faction.ownedStructures[i].id);
         }
 
         //characterIDs = new List<int>();
@@ -79,15 +79,15 @@ public class SaveDataFaction {
     public void Load(List<BaseLandmark> allLandmarks) {
         Faction faction = FactionManager.Instance.CreateNewFaction(this);
 
-        for (int i = 0; i < ownedLandmarkIDs.Count; i++) {
-            for (int j = 0; j < allLandmarks.Count; j++) {
-                BaseLandmark landmark = allLandmarks[j];
-                if (landmark.id == ownedLandmarkIDs[i]) {
-                    faction.OwnLandmark(landmark);
-                    break;
-                }
-            }
-        }
+        //for (int i = 0; i < ownedLandmarkIDs.Count; i++) {
+        //    for (int j = 0; j < allLandmarks.Count; j++) {
+        //        BaseLandmark landmark = allLandmarks[j];
+        //        if (landmark.id == ownedLandmarkIDs[i]) {
+        //            faction.OwnStructure(landmark);
+        //            break;
+        //        }
+        //    }
+        //}
 
         // for (int i = 0; i < ownedRegionIDs.Count; i++) {
         //     Region region = GridMap.Instance.GetRegionByID(ownedRegionIDs[i]);

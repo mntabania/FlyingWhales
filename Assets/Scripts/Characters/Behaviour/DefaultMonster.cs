@@ -77,7 +77,7 @@ public class DefaultMonster : CharacterBehaviourComponent {
                         if (summon.currentHP < fiftyPercentOfMaxHP) {
                             log += "\n-Less than 50% of Max HP, Return Territory or Home";
                             if (summon.homeStructure != null || summon.HasTerritory()) {
-                                return summon.PlanIdleReturnHome(out producedJob);
+                                return summon.jobComponent.PlanIdleReturnHome(out producedJob);
                             } else {
                                 log += "\n-No home structure or territory: THIS MUST NOT HAPPEN!";
                             }
@@ -91,7 +91,7 @@ public class DefaultMonster : CharacterBehaviourComponent {
                             } else {
                                 log += "\n-Return Territory or Home";
                                 if (summon.homeStructure != null || summon.HasTerritory()) {
-                                    return summon.PlanIdleReturnHome(out producedJob);
+                                    return summon.jobComponent.PlanIdleReturnHome(out producedJob);
                                 } else {
                                     log += "\n-No home structure or territory: THIS MUST NOT HAPPEN!";
                                 }

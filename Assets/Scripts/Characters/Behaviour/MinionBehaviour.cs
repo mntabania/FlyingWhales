@@ -10,7 +10,7 @@ public class MinionBehaviour : CharacterBehaviourComponent {
     
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         log += $"\n-{character.name} is going to stroll...";
-        character.PlanIdleStrollOutside(out producedJob);
+        character.jobComponent.PlanIdleStrollOutside(out producedJob);
         return true;
     }
 }

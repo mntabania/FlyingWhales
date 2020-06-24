@@ -984,16 +984,30 @@ public class Region {
         }
         return count;
     }
-    public HexTile GetRandomNoStructureNotPartOrNextToVillagePlainHex() {
+    public HexTile GetRandomNoStructureUncorruptedNotPartOrNextToVillagePlainHex() {
         List<HexTile> hexes = null;
         for (int i = 0; i < tiles.Count; i++) {
             HexTile currHex = tiles[i];
-            if(currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && currHex.landmarkOnTile == null && !currHex.IsNextToOrPartOfVillage()) {
+            if(currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && currHex.landmarkOnTile == null && !currHex.IsNextToOrPartOfVillage() && !currHex.isCorrupted) {
                 if(hexes == null) { hexes = new List<HexTile>(); }
                 hexes.Add(currHex);
             }
         }
         if(hexes != null && hexes.Count > 0) {
+            return hexes[UnityEngine.Random.Range(0, hexes.Count)];
+        }
+        return null;
+    }
+    public HexTile GetRandomNoStructureUncorruptedPlainHex() {
+        List<HexTile> hexes = null;
+        for (int i = 0; i < tiles.Count; i++) {
+            HexTile currHex = tiles[i];
+            if (currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && currHex.landmarkOnTile == null && !currHex.isCorrupted) {
+                if (hexes == null) { hexes = new List<HexTile>(); }
+                hexes.Add(currHex);
+            }
+        }
+        if (hexes != null && hexes.Count > 0) {
             return hexes[UnityEngine.Random.Range(0, hexes.Count)];
         }
         return null;

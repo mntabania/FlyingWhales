@@ -157,6 +157,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public override bool AddResident(Character character, LocationStructure chosenHome = null, bool ignoreCapacity = true) {
         if (base.AddResident(character, chosenHome, ignoreCapacity)) {
             //region.AddResident(character);
+            character.SetHomeSettlement(this);
             if (character.race == RACE.DEMON || character is Summon) { return true; }
             classManager.OnAddResident(character);
             jobPriorityComponent.OnAddResident(character);
@@ -167,6 +168,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public override bool RemoveResident(Character character) {
         if (base.RemoveResident(character)) {
             //region.RemoveResident(character);
+            character.SetHomeSettlement(null);
             classManager.OnRemoveResident(character);
             jobPriorityComponent.OnRemoveResident(character);
             return true;

@@ -12,26 +12,38 @@ public class DefaultWanderer : CharacterBehaviourComponent {
         producedJob = null;
         log += $"\n-{character.name} is wanderer";
         if (character.gridTileLocation != null) {
-            if (character.homeStructure == null && !character.HasTerritory()) {
+            if ((character.homeStructure == null || character.homeStructure.hasBeenDestroyed) && !character.HasTerritory()) {
                 log += "\n-No home structure and territory";
-                log += "\n-Trigger Set Home interrupt";
-                character.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
-                if (character.homeStructure == null && !character.HasTerritory()) {
-                    log += "\n-Still no home structure and territory";
-                    log += "\n-50% chance to Roam Around Tile";
-                    int roll = UnityEngine.Random.Range(0, 100);
-                    log += "\n-Roll: " + roll;
-                    if (roll < 50) {
+                log += "\n-50% chance to Roam Around Tile";
+                int roll = UnityEngine.Random.Range(0, 100);
+                log += "\n-Roll: " + roll;
+                if (roll < 50) {
+                    character.jobComponent.TriggerRoamAroundTile(out producedJob);
+                } else {
+                    log += "\n-Otherwise, Visit Different Region";
+                    if (!character.jobComponent.TriggerVisitDifferentRegion()) {
+                        log += "\n-Cannot perform Visit Different Region, Roam Around Tile";
                         character.jobComponent.TriggerRoamAroundTile(out producedJob);
-                    } else {
-                        log += "\n-Otherwise, Visit Different Region";
-                        if (!character.jobComponent.TriggerVisitDifferentRegion()) {
-                            log += "\n-Cannot perform Visit Different Region, Roam Around Tile";
-                            character.jobComponent.TriggerRoamAroundTile(out producedJob);
-                        }
                     }
-                    return true;
                 }
+                //log += "\n-Trigger Set Home interrupt";
+                //character.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
+                //if (character.homeStructure == null && !character.HasTerritory()) {
+                //    log += "\n-Still no home structure and territory";
+                //    log += "\n-50% chance to Roam Around Tile";
+                //    int roll = UnityEngine.Random.Range(0, 100);
+                //    log += "\n-Roll: " + roll;
+                //    if (roll < 50) {
+                //        character.jobComponent.TriggerRoamAroundTile(out producedJob);
+                //    } else {
+                //        log += "\n-Otherwise, Visit Different Region";
+                //        if (!character.jobComponent.TriggerVisitDifferentRegion()) {
+                //            log += "\n-Cannot perform Visit Different Region, Roam Around Tile";
+                //            character.jobComponent.TriggerRoamAroundTile(out producedJob);
+                //        }
+                //    }
+                //    return true;
+                //}
                 return true;
             } else {
                 log += "\n-Has home structure or territory";
@@ -103,7 +115,7 @@ public class DefaultWanderer : CharacterBehaviourComponent {
                             if (chance < 25 && character.trapStructure.IsTrapped() == false) {
                                 log +=
                                     $"\n  -Morning, Afternoon, or Early Night: {character.name} will enter Stroll Outside Mode";
-                                character.PlanIdleStrollOutside(out producedJob); //character.currentStructure
+                                character.jobComponent.PlanIdleStrollOutside(out producedJob); //character.currentStructure
                                 return true;
                             }
                         } else {
@@ -173,7 +185,7 @@ public class DefaultWanderer : CharacterBehaviourComponent {
                     if (character.currentHP < (character.maxHP * 0.5f)) {
                         log += "\n-HP is less than 50% of max hp, Return Home/Territory";
                         if (character.homeStructure != null) {
-                            character.PlanIdleReturnHome(out producedJob);
+                            character.jobComponent.PlanIdleReturnHome(out producedJob);
                             return true;
                         } else if (character.HasTerritory()) {
                             character.jobComponent.TriggerReturnTerritory(out producedJob);
@@ -191,7 +203,7 @@ public class DefaultWanderer : CharacterBehaviourComponent {
                         } else {
                             log += "\n-Otherwise, Return Home/Territory";
                             if (character.homeStructure != null) {
-                                character.PlanIdleReturnHome(out producedJob);
+                                character.jobComponent.PlanIdleReturnHome(out producedJob);
                                 return true;
                             } else if (character.HasTerritory()) {
                                 character.jobComponent.TriggerReturnTerritory(out producedJob);

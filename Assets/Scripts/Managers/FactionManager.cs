@@ -245,11 +245,11 @@ public class FactionManager : MonoBehaviour {
         }
         throw new System.Exception($"{faction1.name} does not have the same relationship object as {faction2.name}!");
     }
-    public int GetAverageFactionLevel() {
-        int activeFactionsCount = allFactions.Where(x => x.isActive).Count();
-        int totalFactionLvl = allFactions.Where(x => x.isActive).Sum(x => x.level);
-        return totalFactionLvl / activeFactionsCount;
-    }
+    //public int GetAverageFactionLevel() {
+    //    int activeFactionsCount = allFactions.Where(x => x.isActive).Count();
+    //    int totalFactionLvl = allFactions.Where(x => x.isActive).Sum(x => x.level);
+    //    return totalFactionLvl / activeFactionsCount;
+    //}
     #endregion
 
     #region Faction Ideologies

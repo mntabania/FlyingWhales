@@ -87,7 +87,7 @@ public class SuicidalBehaviour : CharacterBehaviourComponent {
                     if (chance < 25) {
                         log +=
                             $"\n  -Morning, Afternoon, or Early Night: {character.name} will enter Stroll Outside Mode";
-                        character.PlanIdleStrollOutside(out producedJob); //character.currentStructure
+                        character.jobComponent.PlanIdleStrollOutside(out producedJob); //character.currentStructure
                         return true;
                     }
                 } else {

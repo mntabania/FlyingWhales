@@ -73,6 +73,7 @@ public class CharacterManager : MonoBehaviour {
         { Default_Resident_Behaviour,
             new []{
                 typeof(DefaultFactionRelated),
+                typeof(DefaultHomeless),
                 typeof(WorkBehaviour),
                 typeof(DefaultAtHome),
                 typeof(DefaultOutside),
@@ -100,6 +101,7 @@ public class CharacterManager : MonoBehaviour {
             new []{
                 typeof(MovementProcessing),
                 typeof(DefaultFactionRelated),
+                typeof(DefaultHomeless),
                 typeof(DefaultWanderer),
                 typeof(DefaultExtraCatcher),
             }

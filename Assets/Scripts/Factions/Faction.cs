@@ -9,6 +9,7 @@ using System;
 using Factions;
 using Locations.Settlements;
 using Traits;
+using Inner_Maps.Location_Structures;
 
 
 public class Faction {
@@ -16,18 +17,18 @@ public class Faction {
     public string name { get; protected set; }
     public string description { get; protected set; }
     //public string initialLeaderClass { get; protected set; }
-    public int level { get; protected set; }
+    //public int level { get; protected set; }
     public bool isPlayerFaction { get; protected set; }
     public bool isMajorFaction { get; protected set; }
-    public GENDER initialLeaderGender { get; protected set; }
-    public RACE initialLeaderRace { get; protected set; }
+    //public GENDER initialLeaderGender { get; protected set; }
+    //public RACE initialLeaderRace { get; protected set; }
     public RACE race { get; protected set; }
     public ILeader leader { get; protected set; }
     public Sprite emblem { get; protected set; }
-    public List<BaseLandmark> ownedLandmarks { get; protected set; }
     public Color factionColor { get; protected set; }
     public List<Character> characters { get; protected set; }//List of characters that are part of the faction
     public List<BaseSettlement> ownedSettlements { get; protected set; }
+    public List<LocationStructure> ownedStructures { get; protected set; }
     //public List<RACE> recruitableRaces { get; protected set; }
     //public List<RACE> startingFollowers { get; protected set; }
     public List<Character> bannedCharacters { get; protected set; }
@@ -74,10 +75,10 @@ public class Faction {
         SetMorality(MORALITY.GOOD);
         SetSize(FACTION_SIZE.MAJOR);
         SetFactionActiveState(true);
-        level = 1;
+        //level = 1;
         factionType = UtilityScripts.Utilities.GetRandomEnumValue<FACTION_TYPE>();
         characters = new List<Character>();
-        ownedLandmarks = new List<BaseLandmark>();
+        ownedStructures = new List<LocationStructure>();
         relationships = new Dictionary<Faction, FactionRelationship>();
         ownedSettlements = new List<BaseSettlement>();
         bannedCharacters = new List<Character>();
@@ -101,13 +102,13 @@ public class Faction {
         SetSize(data.size);
         SetFactionActiveState(data.isActive);
         //initialLeaderClass = data.initialLeaderClass;
-        initialLeaderRace = data.initialLeaderRace;
-        initialLeaderGender = data.initialLeaderGender;
-        level = data.level;
+        //initialLeaderRace = data.initialLeaderRace;
+        //initialLeaderGender = data.initialLeaderGender;
+        //level = data.level;
         factionType = data.factionType;
 
         characters = new List<Character>();
-        ownedLandmarks = new List<BaseLandmark>();
+        ownedStructures = new List<LocationStructure>();
         relationships = new Dictionary<Faction, FactionRelationship>();
         ownedSettlements = new List<BaseSettlement>();
         bannedCharacters = new List<Character>();
@@ -120,14 +121,19 @@ public class Faction {
         AddListeners();
     }
 
-    #region Landmarks
-    public void OwnLandmark(BaseLandmark landmark) {
-        if (!ownedLandmarks.Contains(landmark)) {
-            ownedLandmarks.Add(landmark);
+    #region Structures
+    public void OwnStructure(LocationStructure structure) {
+        if (!ownedStructures.Contains(structure)) {
+            ownedStructures.Add(structure);
+            structure.SetOwner(this);
         }
     }
-    public void UnownLandmark(BaseLandmark landmark) {
-        ownedLandmarks.Remove(landmark);
+    public bool UnownStructure(LocationStructure structure) {
+        if (ownedStructures.Remove(structure)) {
+            structure.SetOwner(null);
+            return true;
+        }
+        return false;
     }
     #endregion
 
@@ -166,6 +172,11 @@ public class Faction {
                 SetLeader(null); //so a new leader can be set if the leader is ever removed from the list of characters of this faction
             }
             character.SetFaction(null);
+            //Once a character leave a faction and that faction is the owner of the home settlement, leave the settlement also
+            //Reason: One village = One faction, no other faction can co exist in a village, for simplification
+            if (character.homeSettlement != null && character.homeSettlement.owner != null && character.homeSettlement.owner == this) {
+                character.MigrateHomeStructureTo(null);
+            }
             Messenger.Broadcast(Signals.CHARACTER_REMOVED_FROM_FACTION, character, this);
             return true;
         }
@@ -174,16 +185,6 @@ public class Faction {
         //    SetLeader(null);
         //}
     }
-    public void ClearAllDeadCharactersFromFaction() {
-        for (int i = 0; i < characters.Count; i++) {
-            if (characters[i].isDead) {
-                if (LeaveFaction(characters[i])) {
-                    i--;
-                }
-            }
-        }
-    }
-
     // public List<Character> GetCharactersOfType(CHARACTER_ROLE role) {
     //     List<Character> chars = new List<Character>();
     //     for (int i = 0; i < characters.Count; i++) {
@@ -606,18 +607,18 @@ public class Faction {
     public void SetDescription(string description) {
         this.description = description;
     }
-    public void SetInitialFactionLeaderGender(GENDER gender) {
-        initialLeaderGender = gender;
-    }
+    //public void SetInitialFactionLeaderGender(GENDER gender) {
+    //    initialLeaderGender = gender;
+    //}
     public void SetIsMajorFaction(bool state) {
         isMajorFaction = state;
     }
     //public void SetInitialFactionLeaderClass(string className) {
     //    initialLeaderClass = className;
     //}
-    public void SetInitialFactionLeaderRace(RACE race) {
-        initialLeaderRace = race;
-    }
+    //public void SetInitialFactionLeaderRace(RACE race) {
+    //    initialLeaderRace = race;
+    //}
     public Character GetCharacterByID(int id) {
         for (int i = 0; i < characters.Count; i++) {
             if (characters[i].id == id) {
@@ -633,15 +634,15 @@ public class Faction {
         FactionRelationship rel = GetRelationshipWith(faction);
         return rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE;
     }
-    public bool HasLandmarkOfType(LANDMARK_TYPE landmarkType) {
-        for (int i = 0; i < ownedLandmarks.Count; i++) {
-            BaseLandmark currLandmark = ownedLandmarks[i];
-            if (currLandmark.specificLandmarkType == landmarkType) {
-                return true;
-            }
-        }
-        return false;
-    }
+    //public bool HasLandmarkOfType(LANDMARK_TYPE landmarkType) {
+    //    for (int i = 0; i < ownedStructures.Count; i++) {
+    //        BaseLandmark currLandmark = ownedStructures[i];
+    //        if (currLandmark.specificLandmarkType == landmarkType) {
+    //            return true;
+    //        }
+    //    }
+    //    return false;
+    //}
     public override string ToString() {
         return name;
     }
@@ -656,15 +657,15 @@ public class Faction {
     //    SetNewLeader();
     //    //Messenger.Broadcast(Signals.FACTION_LEADER_DIED, this);
     //}
-    public void SetLevel(int amount) {
-        level = amount;
-    }
-    public void LevelUp() {
-        level++;
-    }
-    public void LevelUp(int amount) {
-        level += amount;
-    }
+    //public void SetLevel(int amount) {
+    //    level = amount;
+    //}
+    //public void LevelUp() {
+    //    level++;
+    //}
+    //public void LevelUp(int amount) {
+    //    level += amount;
+    //}
     public void SetFactionActiveState(bool state) {
         if (isActive == state) {
             return; //ignore change
@@ -768,17 +769,17 @@ public class Faction {
     }
     #endregion
 
-    #region Landmarks
-    public BaseLandmark GetOwnedLandmarkOfType(LANDMARK_TYPE landmarkType) {
-        for (int i = 0; i < ownedLandmarks.Count; i++) {
-            BaseLandmark currLandmark = ownedLandmarks[i];
-            if (currLandmark.specificLandmarkType == landmarkType) {
-                return currLandmark;
-            }
-        }
-        return null;
-    }
-    #endregion
+    //#region Landmarks
+    //public BaseLandmark GetOwnedLandmarkOfType(LANDMARK_TYPE landmarkType) {
+    //    for (int i = 0; i < ownedStructures.Count; i++) {
+    //        BaseLandmark currLandmark = ownedStructures[i];
+    //        if (currLandmark.specificLandmarkType == landmarkType) {
+    //            return currLandmark;
+    //        }
+    //    }
+    //    return null;
+    //}
+    //#endregion
 
     #region Areas
     public void AddToOwnedSettlements(BaseSettlement settlement) {
@@ -795,6 +796,42 @@ public class Faction {
     public bool HasOwnedRegionWithLandmarkType(LANDMARK_TYPE type) {
         for (int i = 0; i < ownedSettlements.Count; i++) {
             if (ownedSettlements[i].HasStructure(type.GetStructureType())) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool HasOwnedSettlementOrStructureInRegion(Region region) {
+        for (int i = 0; i < ownedSettlements.Count; i++) {
+            if(ownedSettlements[i] is NPCSettlement settlement) {
+                if(settlement.region == region) {
+                    return true;
+                }
+            }
+        }
+        for (int i = 0; i < ownedStructures.Count; i++) {
+            if (ownedStructures[i].location == region) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool HasOwnedSettlementExcept(NPCSettlement settlementException) {
+        for (int i = 0; i < ownedSettlements.Count; i++) {
+            if (ownedSettlements[i] is NPCSettlement settlement) {
+                if (settlement != settlementException) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    public bool HasOwnedStructures() {
+        return ownedStructures.Count > 0;
+    }
+    public bool HasOwnedStructureExcept(LocationStructure structureException) {
+        for (int i = 0; i < ownedStructures.Count; i++) {
+            if (ownedStructures[i] != structureException) {
                 return true;
             }
         }
