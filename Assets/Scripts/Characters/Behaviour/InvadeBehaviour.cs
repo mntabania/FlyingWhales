@@ -21,7 +21,8 @@ public class InvadeBehaviour : CharacterBehaviourComponent {
             BaseSettlement settlement = character.behaviourComponent.assignedTargetSettlement;
             for (int i = 0; i < settlement.residents.Count; i++) {
                 Character resident = settlement.residents[i];
-                if (!resident.isDead && resident.gridTileLocation != null && resident.gridTileLocation.IsPartOfSettlement(settlement)) {
+                if (!resident.isDead && resident.gridTileLocation != null && resident.gridTileLocation.IsPartOfSettlement(settlement) 
+                    && resident.isAlliedWithPlayer == false) {
                     if (resident.traitContainer.HasTrait("Combatant")) {
                         character.behaviourComponent.invadeCombatantTargetList.Add(resident);
                     } else {

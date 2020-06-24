@@ -66,16 +66,6 @@ public partial class InteractionManager {
         }
         return false;
     }
-    public bool CanCharacterTakeRestrainJob(Character character, Character targetCharacter) {
-        return character.faction.IsHostileWith(targetCharacter.faction)
-               && character.isAtHomeRegion
-               && character.isPartOfHomeFaction && character.currentSettlement is NPCSettlement
-               //&& character.characterClass.CanDoJob(JOB_TYPE.RESTRAIN)
-               && character.relationshipContainer.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.POSITIVE 
-               && !character.traitContainer.HasTrait("Criminal")
-               && !targetCharacter.traitContainer.HasTrait("Restrained")
-               /*&& !character.combatComponent.bannedFromHostileList.Contains(targetCharacter)*/;
-    }
     public bool CanCharacterTakeRepairJob(Character character, JobQueueItem job) {
         bool canTakeRepairJob = false;
         if(job is GoapPlanJob planJob) {
@@ -88,7 +78,11 @@ public partial class InteractionManager {
     public bool CanCharacterTakeRepairJob(Character character, TileObject targetTileObject) {
         return targetTileObject.canBeRepaired /*&& character.characterClass.CanDoJob(JOB_TYPE.REPAIR)*/;
     }
-    public bool CanCharacterTakeKnockoutJob(Character character, Character targetCharacter) {
+    public bool CanCharacterTakeRestrainJob(Character character, Character targetCharacter) {
+        if (targetCharacter.isAlliedWithPlayer) {
+            //if target character is allied with player, only take restrain job if character is not allied with player
+            return character.isAlliedWithPlayer == false;  
+        }
         return true; //character.characterClass.CanDoJob(JOB_TYPE.RESTRAIN);
     }
     public bool CanCharacterTakeRepairStructureJob(Character character) {

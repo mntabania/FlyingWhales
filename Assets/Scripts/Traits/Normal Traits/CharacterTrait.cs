@@ -57,7 +57,14 @@ namespace Traits {
                         //if character is non suspicious, create an open chest job.
                         characterThatWillDoJob.jobComponent.CreateOpenChestJob(item);
                     }
-                }  else if (!characterThatWillDoJob.IsInventoryAtFullCapacity() && characterThatWillDoJob.IsItemInteresting(item.name)) {
+                } else if (item is CultistKit && characterThatWillDoJob.traitContainer.HasTrait("Cultist") == false) {
+                    //When a non-cultist sees a Cultist Kit, they will destroy it.
+                    //Reference: https://www.notion.so/ruinarch/685c3fcca68545e285120e8778beed30?v=bc3ddbfa0b414ad881cc5e6d688bbe60&p=f4cd97ba9b53420fa6dedf0bf0650cb5
+                    if (characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.DESTROY, item) == false) {
+                        //if character is non suspicious, create an open chest job.
+                        characterThatWillDoJob.jobComponent.TriggerDestroy(item);
+                    }
+                } else if (!characterThatWillDoJob.IsInventoryAtFullCapacity() && characterThatWillDoJob.IsItemInteresting(item.name)) {
                     if ((characterThatWillDoJob.jobQueue.jobsInQueue.Count == 0 || characterThatWillDoJob.jobQueue.jobsInQueue[0].priority < JOB_TYPE.TAKE_ITEM.GetJobTypePriority()) 
                         && !characterThatWillDoJob.traitContainer.HasTrait("Beast") 
                         && characterThatWillDoJob.traitContainer.HasTrait("Suspicious") == false /*characterThatWillDoJob.role.roleType != CHARACTER_ROLE.BEAST*/) {

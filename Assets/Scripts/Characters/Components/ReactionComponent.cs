@@ -9,6 +9,7 @@ using Interrupts;
 using Inner_Maps.Location_Structures;
 using UnityEngine.Assertions;
 using Tutorial;
+using Random = System.Random;
 
 public class ReactionComponent {
     public Character owner { get; private set; }
@@ -438,8 +439,20 @@ public class ReactionComponent {
         debugLog += $"{owner.name} is reacting to {targetCharacter.name}";
         if(owner.faction.IsHostileWith(targetCharacter.faction)) {
             debugLog += "\n-Target is hostile";
-            if (!targetCharacter.isDead && targetCharacter.combatComponent.combatMode != COMBAT_MODE.Passive) {
-                debugLog += "\n-Target is not dead";
+            if (owner.traitContainer.HasTrait("Cultist") && (targetCharacter.faction.isPlayerFaction || targetCharacter.traitContainer.HasTrait("Cultist"))) {
+                debugLog += $"\n-{owner.name} is a cultist and {targetCharacter.name} is part of the demon faction or is also a cultist.";
+                int roll = UnityEngine.Random.Range(0, 100);
+                int inspireChance = 30;
+                if (roll < inspireChance) {
+                    debugLog += $"\n-{owner.name} triggered inspired.";
+                    owner.interruptComponent.TriggerInterrupt(INTERRUPT.Inspired, targetCharacter);
+                } else {
+                    //pray
+                    debugLog += $"\n-{owner.name} triggered pray.";
+                    owner.jobComponent.TriggerPray();
+                }
+            } else if (!targetCharacter.isDead && targetCharacter.combatComponent.combatMode != COMBAT_MODE.Passive) {
+                debugLog += "\n-If Target is alive and not in Passive State:";
                 debugLog += "\n-Fight or Flight response";
                 //Fight or Flight
                 if (owner.combatComponent.combatMode == COMBAT_MODE.Aggressive) {

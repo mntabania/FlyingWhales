@@ -87,5 +87,11 @@ namespace Inner_Maps.Location_Structures {
             return GameUtilities.GetCenterTile(tilesInRoom, tilesInRoom[0].parentMap.map);
         }
         #endregion
+
+        #region Seize
+        public virtual bool CanUnseizeCharacterInRoom(Character character) {
+            return true;
+        }
+        #endregion
     }
 }

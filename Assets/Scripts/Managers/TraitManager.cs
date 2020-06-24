@@ -32,27 +32,17 @@ public class TraitManager : MonoBehaviour {
     public const string See_Poi_Cannot_Witness_Trait = "See_Poi_Cannot_Witness_Trait";
 
     public static string[] instancedTraits = new string[] {
-        //"Grudge", "Patrolling Character",
-        "Restrained",
-        //"Assaulter",
-        //"AttemptedMurderer",
-        "Cursed", "Injured", "Kleptomaniac", "Lycanthrope", "Vampiric",
-        //"Murderer",
-        "Poisoned", "Resting", "Sick",
-        //"Thief", "Jolted", "Taunted", "Berserk Buff",
-        "Unconscious", "Zapped", "Spooked", "Cannibal", "Lethargic",
-        //"Aberration", "Disabled", "Invisible", "Curious",
-        "Dead", "Unfaithful", "Drunk", "Burning", "Burnt", "Agoraphobic", "Infected", "Music Lover", "Music Hater", "Psychopath", "Plagued", "Vigilant",
-        //"Healer",
-        "Diplomatic",
-        // "AccidentProne",
-        "Wet", "Character Trait", "Nocturnal", "Glutton", "Suspicious", "Narcoleptic", "Hothead",
-        "Inspiring", "Pyrophobic", "Angry", "Alcoholic", "Pessimist", "Lazy", "Coward", "Berserked", "Catatonic", "Griefstricken", "Heartbroken",
-        //"Disillusioned", 
-        "Chaste", "Lustful", "Edible", "Paralyzed", "Malnourished", "Withdrawal", "Suicidal", "Criminal", "Dazed", "Hiding", "Bored", "Overheating",
+        "Restrained", "Cursed", "Injured", "Kleptomaniac", "Lycanthrope", "Vampiric",
+        "Poisoned", "Resting", "Sick", "Unconscious", "Zapped", "Spooked", "Cannibal", "Lethargic",
+        "Dead", "Unfaithful", "Drunk", "Burning", "Burnt", "Agoraphobic", "Infected", "Music Lover", "Music Hater", 
+        "Psychopath", "Plagued", "Vigilant", "Diplomatic", "Wet", "Character Trait", "Nocturnal", "Glutton", 
+        "Suspicious", "Narcoleptic", "Hothead", "Inspiring", "Pyrophobic", "Angry", "Alcoholic", "Pessimist", "Lazy", 
+        "Coward", "Berserked", "Catatonic", "Griefstricken", "Heartbroken", "Chaste", "Lustful", "Edible", "Paralyzed", 
+        "Malnourished", "Withdrawal", "Suicidal", "Criminal", "Dazed", "Hiding", "Bored", "Overheating",
         "Freezing", "Frozen", "Ravenous", "Feeble", "Forlorn", "Accident Prone", "Disoriented", "Consumable",
         "Fire Prone", "Electric", "Venomous", "Booby Trapped", "Betrayed", "Abomination Germ", "Ensnared", "Melting",
-        "Fervor", "Tended", "Tending", "Cleansing", "Dousing", "Drying", "Patrolling", "Necromancer", "Mining", "Webbed"
+        "Fervor", "Tended", "Tending", "Cleansing", "Dousing", "Drying", "Patrolling", "Necromancer", "Mining", 
+        "Webbed", "Cultist"
     };
     [FormerlySerializedAs("traitIconDictionary")] [SerializeField] private StringSpriteDictionary traitPortraitDictionary;
     [SerializeField] private StringSpriteDictionary traitIconDictionary;
@@ -64,13 +54,11 @@ public class TraitManager : MonoBehaviour {
     public static TraitProcessor defaultTraitProcessor;
     
     //list of traits that a character can gain on their own
-    //"Blessed" NOTE: Removed blessed for demo build
-    public readonly string[] traitPool = new string[] { "Vigilant", "Diplomatic",
+    private readonly string[] traitPool = new string[] { "Vigilant", "Diplomatic",
         "Fireproof", "Accident Prone", "Unfaithful", "Alcoholic", "Music Lover", "Music Hater", "Ugly", "Nocturnal",
         "Optimist", "Pessimist", "Fast", "Chaste", "Lustful", "Coward", "Lazy", "Glutton", "Robust", "Suspicious" , "Inspiring", "Pyrophobic",
-        "Narcoleptic", "Hothead", "Evil", "Treacherous", "Ambitious", "Authoritative", "Fire Prone" //, "Electric", "Venomous"
+        "Narcoleptic", "Hothead", "Evil", "Treacherous", "Ambitious", "Authoritative", "Fire Prone", "Blessed" //, "Electric", "Venomous"
     };
-    //"Kleptomaniac","Curious", "Craftsman", "Disillusioned",
     public List<string> buffTraitPool { get; private set; }
     public List<string> flawTraitPool { get; private set; }
     public List<string> neutralTraitPool { get; private set; }

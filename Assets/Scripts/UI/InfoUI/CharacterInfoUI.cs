@@ -532,7 +532,7 @@ public class CharacterInfoUI : InfoUIBase {
         summary = $"{summary}{("\nDo Not Recover HP: " + activeCharacter.doNotRecoverHP.ToString())}";
         summary = $"{summary}{("\nCan Move: " + activeCharacter.canMove)}";
         summary = $"{summary}{("\nCan Witness: " + activeCharacter.canWitness)}";
-        summary = $"{summary}{("\nCan Be Attacked: " + activeCharacter.canBeAtttacked)}";
+        summary = $"{summary}{("\nCan Be Attacked: " + activeCharacter.canBeAttacked)}";
         summary = $"{summary}{("\nCan Perform: " + activeCharacter.canPerform)}";
         summary = $"{summary}{("\nIs Missing: " + activeCharacter.isMissing)}";
         summary = $"{summary}{("\nIs Running: " + activeCharacter.movementComponent.isRunning)}";
@@ -546,7 +546,6 @@ public class CharacterInfoUI : InfoUIBase {
         summary = $"{summary}{("\nSexuality: " + activeCharacter.sexuality.ToString())}";
         summary = $"{summary}{("\nMood: " + activeCharacter.moodComponent.moodValue + "/100" + "(" + activeCharacter.moodComponent.moodState.ToString() + ")")}";
         summary = $"{summary}{("\nHP: " + activeCharacter.currentHP.ToString() + "/" + activeCharacter.maxHP.ToString())}";
-        summary = $"{summary}{("\nIgnore Hostiles: " + activeCharacter.ignoreHostility.ToString())}";
         summary = $"{summary}{("\nAttack Range: " + activeCharacter.characterClass.attackRange.ToString(CultureInfo.InvariantCulture))}";
         summary = $"{summary}{("\nAttack Speed: " + activeCharacter.combatComponent.attackSpeed.ToString())}";
         summary = $"{summary}{("\nCombat Mode: " + activeCharacter.combatComponent.combatMode.ToString())}";
@@ -565,6 +564,11 @@ public class CharacterInfoUI : InfoUIBase {
         for (int i = 0; i < activeCharacter.behaviourComponent.currentBehaviourComponents.Count; i++) {
             CharacterBehaviourComponent component = activeCharacter.behaviourComponent.currentBehaviourComponents[i];
             summary += $"{component.ToString()}, ";
+        }
+        
+        summary += "\nInterested Items: ";
+        for (int i = 0; i < activeCharacter.interestedItemNames.Count; i++) {
+            summary += $"{activeCharacter.interestedItemNames[i]}, ";
         }
         
         summary += "\nPersonal Job Queue: ";

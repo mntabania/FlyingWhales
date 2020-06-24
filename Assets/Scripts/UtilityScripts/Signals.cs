@@ -72,7 +72,7 @@ public static class Signals {
     public static string CHARACTER_REMOVED = "OnCharacterRemoved"; //Parameters (Character removedCharacter)
     public static string CHARACTER_OBTAINED_ITEM = "OnCharacterObtainItem"; //Parameters (SpecialToken obtainedItem, Character characterThatObtainedItem)
     public static string CHARACTER_LOST_ITEM = "OnCharacterLostItem"; //Parameters (SpecialToken unobtainedItem, Character character)
-    public static string CHARACTER_TRAIT_ADDED = "OnCharacterTraitAdded";
+    public static string CHARACTER_TRAIT_ADDED = "OnCharacterTraitAdded"; //Parameters (Character, Trait)
     public static string CHARACTER_TRAIT_REMOVED = "OnCharacterTraitRemoved"; //Parameters (Character character, Trait)
     public static string CHARACTER_TRAIT_STACKED = "OnCharacterTraitStacked";
     public static string CHARACTER_TRAIT_UNSTACKED = "OnCharacterTraitUnstacked";
@@ -166,6 +166,10 @@ public static class Signals {
     /// Parameters (Character)
     /// </summary>
     public static string CHARACTER_CAN_NO_LONGER_COMBAT = "OnCharacterCanNoLongerCombat";
+    /// <summary>
+    /// Parameters (Character)
+    /// </summary>
+    public static string CHARACTER_ALLIANCE_WITH_PLAYER_CHANGED = "OnCharacterChangedAllianceWithPlayer";
     #endregion
 
     #region UI

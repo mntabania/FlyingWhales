@@ -7,6 +7,7 @@ using UnityEngine;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
+using UnityEngine.Assertions;
 using UtilityScripts;
 using Random = UnityEngine.Random;
 
@@ -329,15 +330,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 12 });
 		_owner.jobQueue.AddJobInQueue(job);
 	}
-	private void TriggerRestrain(NPCSettlement npcSettlement) {
-		if (npcSettlement.HasJob(JOB_TYPE.RESTRAIN, _owner) == false) {
-			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RESTRAIN, INTERACTION_TYPE.RESTRAIN_CHARACTER, _owner, npcSettlement);
-        	job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRestrainJob);
-        	job.SetStillApplicableChecker(() => IsRestrainApplicable(_owner, npcSettlement));
-        	npcSettlement.AddToAvailableJobs(job);	
-		}
-	}
-	//private bool TriggerMoveCharacterToBed(Character target) {
+    //private bool TriggerMoveCharacterToBed(Character target) {
 	//	if (target.homeStructure != null && target.HasJobTargetingThis(JOB_TYPE.MOVE_CHARACTER) == false) {
 	//		Bed bed = target.homeStructure.GetTileObjectOfType<Bed>(TILE_OBJECT_TYPE.BED);
 	//		if (bed != null && bed.CanSleepInBed(target)) {
@@ -415,7 +408,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			GoapPlanJob goapPlanJob = job as GoapPlanJob;
 			Character targetCharacter = goapPlanJob.targetPOI as Character;
 			// if (character != targetCharacter) {
-				bool isNotHostileAndNotDead = !character.IsHostileWith(targetCharacter, false) && !targetCharacter.isDead;
+				bool isNotHostileAndNotDead = !character.IsHostileWith(targetCharacter) && !targetCharacter.isDead;
 				bool isResponsibleForTrait = trait.IsResponsibleForTrait(character);
 
 				//if special illness, check if character is healer
@@ -536,21 +529,6 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			return _owner.jobQueue.AddJobInQueue(job);
 		}
 		return false;
-	}
-	#endregion
-
-	#region Restrain
-	private void TryTriggerRestrain() {
-		if (_owner.gridTileLocation.IsPartOfSettlement(out var nearSettlement) 
-		    || _owner.gridTileLocation.IsNextToSettlement(out nearSettlement)) {
-			if (nearSettlement is NPCSettlement npcSettlement && nearSettlement.owner != null 
-			    && _owner.faction != nearSettlement.owner) {
-				if (_owner.faction.IsHostileWith(nearSettlement.owner)) {
-					TriggerRestrain(npcSettlement);
-				}
-			}	
-		}
-		
 	}
 	#endregion
 
@@ -1050,14 +1028,14 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     }
     public bool TryCreateObtainPersonalItemJob() {
         if (!_owner.IsInventoryAtFullCapacity()) {
-            if(_owner.characterClass.interestedItemNames != null && _owner.characterClass.interestedItemNames.Length > 0) {
+            if(_owner.interestedItemNames != null && _owner.interestedItemNames.Count > 0) {
                 string chosenItemName;
                 if(obtainPersonalItemRandomList == null) {
                     obtainPersonalItemRandomList = new List<string>();
                 }
                 obtainPersonalItemRandomList.Clear();
-                for (int i = 0; i < _owner.characterClass.interestedItemNames.Length; i++) {
-                    string itemName = _owner.characterClass.interestedItemNames[i];
+                for (int i = 0; i < _owner.interestedItemNames.Count; i++) {
+                    string itemName = _owner.interestedItemNames[i];
                     if (!_owner.HasItem(itemName)) {
                         obtainPersonalItemRandomList.Add(itemName);
                     }
@@ -1065,7 +1043,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
                 if(obtainPersonalItemRandomList.Count > 0) {
                     chosenItemName = obtainPersonalItemRandomList[UnityEngine.Random.Range(0, obtainPersonalItemRandomList.Count)];
                 } else {
-                    chosenItemName = _owner.characterClass.interestedItemNames[UnityEngine.Random.Range(0, _owner.characterClass.interestedItemNames.Length)];
+                    chosenItemName = _owner.interestedItemNames[UnityEngine.Random.Range(0, _owner.interestedItemNames.Count)];
                 }
                 GoapEffect goapEffect = new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, chosenItemName, false, GOAP_EFFECT_TARGET.ACTOR);
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.OBTAIN_PERSONAL_ITEM, goapEffect, _owner, _owner);
@@ -1078,14 +1056,14 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     }
     public bool TryCreateObtainPersonalItemJob(out JobQueueItem producedJob) {
 	    if (!_owner.IsInventoryAtFullCapacity()) {
-		    if(_owner.characterClass.interestedItemNames != null && _owner.characterClass.interestedItemNames.Length > 0) {
+		    if(_owner.interestedItemNames != null && _owner.interestedItemNames.Count > 0) {
 			    string chosenItemName;
 			    if(obtainPersonalItemRandomList == null) {
 				    obtainPersonalItemRandomList = new List<string>();
 			    }
 			    obtainPersonalItemRandomList.Clear();
-			    for (int i = 0; i < _owner.characterClass.interestedItemNames.Length; i++) {
-				    string itemName = _owner.characterClass.interestedItemNames[i];
+			    for (int i = 0; i < _owner.interestedItemNames.Count; i++) {
+				    string itemName = _owner.interestedItemNames[i];
 				    if (!_owner.HasItem(itemName)) {
 					    obtainPersonalItemRandomList.Add(itemName);
 				    }
@@ -1093,13 +1071,24 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			    if(obtainPersonalItemRandomList.Count > 0) {
 				    chosenItemName = obtainPersonalItemRandomList[UnityEngine.Random.Range(0, obtainPersonalItemRandomList.Count)];
 			    } else {
-				    chosenItemName = _owner.characterClass.interestedItemNames[UnityEngine.Random.Range(0, _owner.characterClass.interestedItemNames.Length)];
+				    chosenItemName = _owner.interestedItemNames[UnityEngine.Random.Range(0, _owner.interestedItemNames.Count)];
 			    }
 			    GoapEffect goapEffect = new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, chosenItemName, false, GOAP_EFFECT_TARGET.ACTOR);
 			    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.OBTAIN_PERSONAL_ITEM, goapEffect, _owner, _owner);
 			    producedJob = job;
 			    return true;
 		    }
+	    }
+	    producedJob = null;
+	    return false;
+
+    }
+    public bool TryCreateObtainPersonalItemJob(string chosenItemName, out JobQueueItem producedJob) {
+	    if (!_owner.IsInventoryAtFullCapacity()) {
+		    GoapEffect goapEffect = new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, chosenItemName, false, GOAP_EFFECT_TARGET.ACTOR);
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.OBTAIN_PERSONAL_ITEM, goapEffect, _owner, _owner);
+		    producedJob = job;
+		    return true;
 	    }
 	    producedJob = null;
 	    return false;
@@ -1252,7 +1241,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    _canReportDemonicStructure = false;
 	    Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, TryEnableReportStructure);
     }
-    private void EnableReportStructure() {
+    public void EnableReportStructure() {
 	    _canReportDemonicStructure = true;
 	    Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, TryEnableReportStructure);
     }
@@ -1638,6 +1627,77 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     private bool IsApprehendStillApplicable(Character target, NPCSettlement settlement) {
         bool isApplicable = !target.traitContainer.HasTrait("Restrained") || target.currentStructure != settlement.prison;
         return target.gridTileLocation != null && target.gridTileLocation.IsNextToOrPartOfSettlement(settlement) && isApplicable;
+    }
+    #endregion
+
+    #region Sabotage
+    public bool TryCreateSabotageNeighbourJob(out JobQueueItem producedJob) {
+	    List<Character> choices = new List<Character>();
+	    for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+		    Character character = CharacterManager.Instance.allCharacters[i];
+		    if (character.isNormalCharacter && character.traitContainer.HasTrait("Resting", "Unconscious")
+		        && character.traitContainer.HasTraitOf(TRAIT_TYPE.BUFF) 
+		        && character.traitContainer.HasTrait("Cultist") == false && _owner.HasSameHomeAs(character)) {
+			    choices.Add(character);
+		    }
+	    }
+	    if (choices.Count > 0) {
+		    WeightedDictionary<Character> targetWeights = new WeightedDictionary<Character>();
+		    for (int i = 0; i < choices.Count; i++) {
+			    Character character = choices[i];
+			    int weight = 0;
+			    string opinionLabel = _owner.relationshipContainer.GetOpinionLabel(character);
+			    if (opinionLabel == BaseRelationshipContainer.Close_Friend) {
+				    weight += Random.Range(10, 51);
+			    } else if (opinionLabel == BaseRelationshipContainer.Friend) {
+				    weight += Random.Range(100, 151);
+			    } else if (opinionLabel == BaseRelationshipContainer.Acquaintance) {
+				    weight += Random.Range(150, 251);
+			    } else if (opinionLabel == BaseRelationshipContainer.Enemy || opinionLabel == BaseRelationshipContainer.Rival) {
+				    weight += Random.Range(200, 351);
+			    }
+			    targetWeights.AddElement(character, weight);
+		    }
+		    
+		    targetWeights.LogDictionaryValues($"{GameManager.Instance.TodayLogString()}{_owner.name}'s Sabotage Neighbour Weights:");
+		    
+		    Character target = targetWeights.PickRandomElementGivenWeights();
+		    
+		    //create predetermined plan and job
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SABOTAGE_NEIGHBOUR, INTERACTION_TYPE.REMOVE_BUFF, target, _owner);
+		    List<JobNode> jobNodes = new List<JobNode>();
+		    if (_owner.HasItem(TILE_OBJECT_TYPE.CULTIST_KIT) == false) {
+			    //Pick up cultist kit at home
+			    TileObject cultistKitAtHome = _owner.homeStructure?.GetTileObjectOfType<TileObject>(TILE_OBJECT_TYPE.CULTIST_KIT);
+			    Assert.IsNotNull(cultistKitAtHome, $"{_owner.name} wants to sabotage neighbour but has no cultist kit at home or in inventory. This should never happen, because the Cultist Behaviour checks this beforehand");
+			    ActualGoapNode pickupNode = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.PICK_UP], _owner, cultistKitAtHome, null, 0);
+			    jobNodes.Add(new SingleJobNode(pickupNode));
+		    }
+		    
+		    ActualGoapNode removeBuffNode = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.REMOVE_BUFF], _owner, target, null, 0);
+		    jobNodes.Add(new SingleJobNode(removeBuffNode));
+		    
+		    GoapPlan goapPlan = new GoapPlan(jobNodes, target);
+		    goapPlan.SetDoNotRecalculate(true);
+		    job.SetCannotBePushedBack(true);
+		    job.SetAssignedPlan(goapPlan);
+		    
+		    producedJob = job;
+		    return true;
+	    }
+	    producedJob = null;
+	    return false;
+    }
+    #endregion
+
+    #region Pray
+    public void TriggerPray() {
+	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY, INTERACTION_TYPE.PRAY, _owner, _owner);
+	    ActualGoapNode prayNode = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.PRAY], _owner, _owner, null, 0);
+	    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(prayNode) }, _owner);
+	    goapPlan.SetDoNotRecalculate(true);
+	    job.SetCannotBePushedBack(true);
+	    _owner.jobQueue.AddJobInQueue(job);
     }
     #endregion
 }

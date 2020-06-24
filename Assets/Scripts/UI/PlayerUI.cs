@@ -93,6 +93,7 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private Toggle[] topMenuButtons;
     [SerializeField] private SpellListUI spellList;
     [SerializeField] private CustomDropdownList customDropdownList;
+    [SerializeField] private CultistsListUI cultistsList;
     public Toggle monsterToggle;
     
     [Header("Minion List")]
@@ -183,11 +184,7 @@ public class PlayerUI : MonoBehaviour {
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
         Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_REMOVED, OnCharacterLostTrait);
-        // Messenger.AddListener<Character, Faction>(Signals.CHARACTER_REMOVED_FROM_FACTION, OnCharacterRemovedFromFaction);
-        // Messenger.AddListener<Character, Faction>(Signals.CHARACTER_ADDED_TO_FACTION, OnCharacterAddedToFaction);
         Messenger.AddListener<Character>(Signals.CHARACTER_CREATED, AddedNewCharacter);
-        // Messenger.AddListener<Character>(Signals.CHARACTER_BECOMES_MINION_OR_SUMMON, CharacterBecomesMinionOrSummon);
-        // Messenger.AddListener<Character>(Signals.CHARACTER_BECOMES_NON_MINION_OR_SUMMON, CharacterBecomesNonMinionOrSummon);
         Messenger.AddListener<Character, CharacterClass, CharacterClass>(Signals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
         Messenger.AddListener<Character, Character>(Signals.ON_SWITCH_FROM_LIMBO, OnCharacterSwitchFromLimbo);
         Messenger.AddListener(Signals.THREAT_UPDATED, OnThreatUpdated);
@@ -195,7 +192,6 @@ public class PlayerUI : MonoBehaviour {
         Messenger.AddListener(Signals.THREAT_RESET, OnThreatReset);
         Messenger.AddListener<IPointOfInterest>(Signals.ON_SEIZE_POI, OnSeizePOI);
         Messenger.AddListener<IPointOfInterest>(Signals.ON_UNSEIZE_POI, OnUnseizePOI);
-        //Messenger.AddListener<Summon>(Signals.PLAYER_PLACED_SUMMON, CreateNewSummonItem);
 
         //key presses
         Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressed);
@@ -206,6 +202,7 @@ public class PlayerUI : MonoBehaviour {
         UpdateIntel();
         CreateInitialSpells();
         _buildListUI.Initialize();
+        cultistsList.Initialize();
         // CreateSummonsForTesting();
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         itemsToggle.gameObject.SetActive(true);

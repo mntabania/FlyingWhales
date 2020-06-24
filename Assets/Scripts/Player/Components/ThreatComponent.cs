@@ -97,7 +97,8 @@ public class ThreatComponent {
                 && (character.race == RACE.HUMANS || character.race == RACE.ELVES) 
                 && !character.isInCombat
                 && !(character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.DOUSE_FIRE)
-                && character.traitContainer.HasTrait("Combatant")) {
+                && character.traitContainer.HasTrait("Combatant")
+                && character.isAlliedWithPlayer == false) {
                 count++;
                 debugLog += "\n-RETALIATOR: " + character.name;
                 characters.Add(character);

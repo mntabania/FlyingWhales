@@ -486,12 +486,14 @@ namespace Inner_Maps {
                    && character.necromancerTrait == null
                    && (character.race == RACE.HUMANS || character.race == RACE.ELVES) && mostImportantStructureOnTile is DemonicStructure
                    && character.marker != null && character.IsInOwnParty()
+                   && character.isAlliedWithPlayer == false
                    && !InnerMapManager.Instance.HasWorldKnownDemonicStructure(mostImportantStructureOnTile)
                    && (Tutorial.TutorialManager.Instance.HasTutorialBeenCompleted(Tutorial.TutorialManager.Tutorial.Invade_A_Village) || Settings.SettingsManager.Instance.settings.skipTutorials)) {
                     character.jobComponent.CreateReportDemonicStructure(mostImportantStructureOnTile);
                 } else {
                     //If cannot report flee instead
-                    if (!character.behaviourComponent.isAttackingDemonicStructure) {
+                    //do not make characters that are allied with the player or attacking a demonic structure flee from corruption.
+                    if (!character.behaviourComponent.isAttackingDemonicStructure && character.isAlliedWithPlayer == false) {
                         if (!character.movementComponent.hasMovedOnCorruption) {
                             character.movementComponent.SetHasMovedOnCorruption(true);
                             genericTileObject.traitContainer.AddTrait(genericTileObject, "Danger Remnant");

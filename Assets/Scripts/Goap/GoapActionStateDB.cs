@@ -528,6 +528,12 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.EAT_ALIVE, new[]{
             new StateNameAndDuration(){ name = "Eat Alive Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
         } },
+        {INTERACTION_TYPE.REMOVE_BUFF, new[]{
+            new StateNameAndDuration(){ name = "Remove Buff Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
+        } },
+        {INTERACTION_TYPE.CREATE_CULTIST_KIT, new[]{
+            new StateNameAndDuration(){ name = "Create Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
     };
 }
 
