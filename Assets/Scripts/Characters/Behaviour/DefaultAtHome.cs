@@ -11,16 +11,18 @@ public class DefaultAtHome : CharacterBehaviourComponent {
         producedJob = null;
         if((character.homeStructure == null || character.homeStructure.hasBeenDestroyed) && !character.HasTerritory()) {
             log += $"\n-No home structure";
-            log += $"\n-25% chance to Set Home";
-            int roll = Random.Range(0, 100);
-            log += $"\nRoll: {roll.ToString()}";
-            if(roll < 25) {
-                producedJob = null;
-                character.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
-            } else {
-                log += $"\n-Will do action Stand";
-                character.PlanIdle(JOB_TYPE.IDLE_STAND, INTERACTION_TYPE.STAND, character, out producedJob);
-            }
+            log += $"\n-Will do action Stand";
+            character.PlanIdle(JOB_TYPE.IDLE_STAND, INTERACTION_TYPE.STAND, character, out producedJob);
+            //log += $"\n-25% chance to Set Home";
+            //int roll = Random.Range(0, 100);
+            //log += $"\nRoll: {roll.ToString()}";
+            //if(roll < 25) {
+            //    producedJob = null;
+            //    character.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
+            //} else {
+            //    log += $"\n-Will do action Stand";
+            //    character.PlanIdle(JOB_TYPE.IDLE_STAND, INTERACTION_TYPE.STAND, character, out producedJob);
+            //}
             return true;
         } else if (character.currentStructure == character.homeStructure || character.IsInTerritory()) {
             if (character.previousCurrentActionNode != null && character.previousCurrentActionNode.action.goapType == INTERACTION_TYPE.RETURN_HOME) {
@@ -133,7 +135,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                     if (chance < 25 && character.trapStructure.IsTrapped() == false) {
                         log +=
                             $"\n  -Morning, Afternoon, or Early Night: {character.name} will enter Stroll Outside Mode";
-                        character.PlanIdleStrollOutside(out producedJob); //character.currentStructure
+                        character.jobComponent.PlanIdleStrollOutside(out producedJob); //character.currentStructure
                         return true;
                     }
                 } else {

@@ -42,7 +42,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public int speedPercentMod { get; protected set; }
     public int maxHPPercentMod { get; protected set; }
     public Region homeRegion { get; protected set; }
-    public NPCSettlement homeSettlement => homeStructure?.settlementLocation as NPCSettlement;
+    public NPCSettlement homeSettlement { get; protected set; }
     public LocationStructure homeStructure { get; protected set; }
     public List<INTERACTION_TYPE> advertisedActions { get; }
     public int supply { get; set; }
@@ -1221,6 +1221,29 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
     }
+    public Faction JoinFactionProcessing() {
+        List<Faction> viableFactions = new List<Faction>();
+        if (currentRegion != null) {
+            for (int i = 0; i < currentRegion.factionsHere.Count; i++) {
+                Faction potentialFaction = currentRegion.factionsHere[i];
+                if (potentialFaction.isMajorNonPlayer && !potentialFaction.isDestroyed
+                    && !potentialFaction.IsCharacterBannedFromJoining(this)
+                    && potentialFaction.ideologyComponent.DoesCharacterFitCurrentIdeologies(this)) {
+                    if (potentialFaction.HasOwnedSettlementOrStructureInRegion(currentRegion)) {
+                        if (!viableFactions.Contains(potentialFaction)) {
+                            viableFactions.Add(potentialFaction);
+                        }
+                    }
+                }
+            }
+        }
+        if (viableFactions.Count > 0) {
+            Faction chosenFaction = viableFactions[UnityEngine.Random.Range(0, viableFactions.Count)];
+            interruptComponent.TriggerInterrupt(INTERRUPT.Join_Faction, chosenFaction.characters[0], "join_faction_normal");
+            return chosenFaction;
+        }
+        return null;
+    }
     #endregion
 
     #region Party
@@ -1854,8 +1877,19 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if(isWanderer != state) {
             isWanderer = state;
             if (isWanderer) {
+                if (!HasTerritory() && currentRegion != null) {
+                    HexTile initialTerritory = currentRegion.GetRandomNoStructureUncorruptedPlainHex();
+                    if(initialTerritory != null) {
+                        AddTerritory(initialTerritory);
+                    } else {
+                        logComponent.PrintLogIfActive(name + " is a wanderer but could not set temporary territory");
+                    }
+                }
                 behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Default_Wanderer_Behaviour);
             } else {
+                if (HasTerritory()) {
+                    ClearTerritory();
+                }
                 behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Default_Resident_Behaviour);
             }
         }
@@ -2527,14 +2561,21 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         bool sameRegionLocationAlready = false;
         if (homeSettlement != null) {
             previousHome = homeSettlement;
-            if (previousHome.RemoveResident(this)) {
-                if(previousHome != newHomeSettlement) {
+            if(previousHome != newHomeSettlement) {
+                if (previousHome.RemoveResident(this)) {
                     //If previous home and new home is just the same, do not remove as settlement ruler, but if it is, then remove the character as settlement ruler
                     if (previousHome is NPCSettlement previousHomeSettlement && previousHomeSettlement.ruler == this) {
                         previousHomeSettlement.SetRuler(null);
                     }
                 }
+            } else {
+                //If migrating to the same settlement, do not process anymore, just process the home structure migration not the settlement because the settlement will not change
+                if(this.homeStructure != homeStructure) {
+                    newHomeSettlement.AssignCharacterToDwellingInArea(this, homeStructure);
+                }
+                return true;
             }
+
 
             if(previousHome is NPCSettlement previousNPCSettlement) {
                 if(newHomeSettlement != null && newHomeSettlement is NPCSettlement newNPCSettlement && previousNPCSettlement.region == newNPCSettlement.region) {
@@ -2557,16 +2598,24 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return false;
     }
-    public void ClearTerritoryAndMigrateHomeStructureTo(LocationStructure dwelling) {
-        MigrateHomeStructureTo(dwelling);
+    public void ClearTerritoryAndMigrateHomeStructureTo(LocationStructure dwelling, bool broadcast = true, bool addToRegionResidents = true, bool affectSettlement = true) {
+        MigrateHomeStructureTo(dwelling, broadcast, addToRegionResidents, affectSettlement);
         ClearTerritory();
     }
-    public void MigrateHomeStructureTo(LocationStructure dwelling, bool broadcast = true, bool addToRegionResidents = true) {
+    public void MigrateHomeStructureTo(LocationStructure dwelling, bool broadcast = true, bool addToRegionResidents = true, bool affectSettlement = true) {
         if(dwelling == null) {
-            MigrateHomeTo(null);
+            if (affectSettlement) {
+                MigrateHomeTo(null);
+            } else {
+                ChangeHomeStructure(dwelling);
+            }
         } else {
             if (dwelling.settlementLocation != null) {
-                MigrateHomeTo(dwelling.settlementLocation, dwelling, broadcast, addToRegionResidents);
+                if (affectSettlement) {
+                    MigrateHomeTo(dwelling.settlementLocation, dwelling, broadcast, addToRegionResidents);
+                } else {
+                    ChangeHomeStructure(dwelling);
+                }
             } else {
                 bool sameLocationAlready = false;
                 if (homeStructure != null && homeStructure.location != null) {
@@ -2583,21 +2632,38 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
     }
-    public void ChangeHomeStructure(LocationStructure dwelling) {
+    public bool ChangeHomeStructure(LocationStructure dwelling) {
         if (homeStructure != null) {
             if (homeStructure == dwelling) {
-                return; //ignore change
+                return true; //ignore change
             }
             //remove character from his/her old home
             homeStructure.RemoveResident(this);
         }
         //Added checking, because character can sometimes change home from dwelling to nothing.
-        dwelling?.AddResident(this);
+        if(dwelling != null && dwelling.AddResident(this)) {
+            jobComponent.PlanReturnHomeUrgent();
+            return true;
+        }
+        return false;
+    }
+    public void SetHomeSettlement(NPCSettlement settlement) {
+        if(homeSettlement != settlement) {
+            homeSettlement = settlement;
+            if (isNormalCharacter) {
+                if (homeSettlement != null) {
+                    SetIsWanderer(false);
+                } else {
+                    SetIsWanderer(true);
+                }
+            }
+        }
     }
     private void OnStructureDestroyed(LocationStructure structure) {
         //character's home was destroyed.
         if (structure == homeStructure) {
-            MigrateHomeStructureTo(null);
+            MigrateHomeStructureTo(null, affectSettlement: false);
+            interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
             //MigrateHomeTo(null);
             //interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
         }
@@ -2874,7 +2940,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //SetHasAlreadyAskedForPlan(true);
         if (returnedToLife) {
             //characters that have returned to life will just stroll.
-            PlanIdleStrollOutside(); //currentStructure
+            jobComponent.PlanIdleStrollOutside(); //currentStructure
             return;
         }
         string idleLog = OtherIdlePlans();
@@ -2919,68 +2985,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //    }
     //    return false;
     //}
-
-    public bool PlanIdleStroll(LocationStructure targetStructure, LocationGridTile targetTile = null) {
-        CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.STROLL, CHARACTER_STATE.STROLL, this);
-        jobQueue.AddJobInQueue(job);
-        //if (currentStructure == targetStructure) {
-        //    stateComponent.SwitchToState(CHARACTER_STATE.STROLL);
-        //} else {
-        //    MoveToAnotherStructure(targetStructure, targetTile, null, () => stateComponent.SwitchToState(CHARACTER_STATE.STROLL));
-        //}
-        return true;
-    }
-    public bool PlanIdleStrollOutside() {
-        CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.STROLL, CHARACTER_STATE.STROLL_OUTSIDE, this);
-        jobQueue.AddJobInQueue(job);
-        //if (currentStructure == targetStructure) {
-        //    stateComponent.SwitchToState(CHARACTER_STATE.STROLL_OUTSIDE);
-        //} else {
-        //    MoveToAnotherStructure(targetStructure, targetTile, null, () => stateComponent.SwitchToState(CHARACTER_STATE.STROLL_OUTSIDE));
-        //}
-        return true;
-    }
-    public bool PlanIdleStrollOutside(out JobQueueItem producedJob) {
-        CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.STROLL, CHARACTER_STATE.STROLL_OUTSIDE, this);
-        producedJob = job;
-        return true;
-    }
-    public bool PlanIdleBerserkStrollOutside(out JobQueueItem producedJob) {
-        CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.BERSERK_STROLL, CHARACTER_STATE.STROLL_OUTSIDE, this);
-        producedJob = job;
-        return true;
-    }
-    public bool PlanIdleReturnHome() { //bool forceDoAction = false
-        if (homeStructure != null && homeStructure.tiles.Count > 0 && !homeStructure.hasBeenDestroyed) {
-            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RETURN_HOME], this, this, null, 0);
-            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, this);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE_RETURN_HOME, INTERACTION_TYPE.RETURN_HOME, this, this);
-            goapPlan.SetDoNotRecalculate(true);
-            job.SetCannotBePushedBack(true);
-            job.SetAssignedPlan(goapPlan);
-            jobQueue.AddJobInQueue(job);
-            return true;
-        } else if (HasTerritory()) {
-            return jobComponent.TriggerReturnTerritory();
-        }
-        return false;
-    }
-    public bool PlanIdleReturnHome(out JobQueueItem producedJob) { //bool forceDoAction = false
-        if (homeStructure != null && homeStructure.tiles.Count > 0 && !homeStructure.hasBeenDestroyed) {
-            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RETURN_HOME], this, this, null, 0);
-            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, this);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE_RETURN_HOME, INTERACTION_TYPE.RETURN_HOME, this, this);
-            goapPlan.SetDoNotRecalculate(true);
-            job.SetCannotBePushedBack(true);
-            job.SetAssignedPlan(goapPlan);
-            producedJob = job;
-            return true;
-        } else if (HasTerritory()) {
-            return jobComponent.TriggerReturnTerritory(out producedJob);
-        }
-        producedJob = null;
-        return false;
-    }
     private string OtherIdlePlans() {
         string log = $" IDLE PLAN FOR {name}";
         if (isDead) {
@@ -5113,6 +5117,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //combatModeAction.SetLabelText(combatModeAction.actionName + ": " + UtilityScripts.Utilities.NotNormalizedConversionEnumToString(combatComponent.combatMode.ToString()));
 
             AddPlayerAction(SPELL_TYPE.STOP);
+            AddPlayerAction(SPELL_TYPE.UNSUMMON);
             //AddPlayerAction(SPELL_TYPE.RETURN_TO_PORTAL);
             //AddPlayerAction(SPELL_TYPE.CHANGE_COMBAT_MODE);
         } else {
@@ -5197,8 +5202,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 firstTerritory.region.AddResident(this);
             }
             if (homeStructure != null && homeStructure.hasBeenDestroyed) {
-                MigrateHomeStructureTo(null);
+                MigrateHomeStructureTo(null, affectSettlement: false);
             }
+            jobComponent.PlanReturnHomeUrgent();
         }
     }
     public void RemoveTerritory(HexTile tile) {

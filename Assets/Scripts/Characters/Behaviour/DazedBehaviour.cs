@@ -9,7 +9,7 @@ public class DazedBehaviour : CharacterBehaviourComponent {
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         log += $"\n-{character.name} is dazed, will only stroll";
-        character.PlanIdleStrollOutside(out producedJob);
+        character.jobComponent.PlanIdleStrollOutside(out producedJob);
         return true;
     }
 }

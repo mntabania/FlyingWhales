@@ -18,6 +18,7 @@ namespace Inner_Maps.Location_Structures {
         public Dwelling(Region location) : base(STRUCTURE_TYPE.DWELLING, location) {
             //residents = new List<Character>();
             InitializeFacilities();
+            maxResidentCapacity = 2;
         }
 
         public Dwelling(Region location, SaveDataLocationStructure data) : base(location, data) {

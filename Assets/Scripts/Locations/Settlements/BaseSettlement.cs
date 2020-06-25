@@ -74,6 +74,10 @@ namespace Locations.Settlements {
                 //region.AddResident(character);
                 residents.Add(character);
                 AssignCharacterToDwellingInArea(character, chosenHome);
+                if(owner == null && character.faction != null && character.faction.isMajorNonPlayer) {
+                    //If a character becomes a resident and he/she has a faction and this settlement has no faction owner yet, set it as the faction owner
+                    LandmarkManager.Instance.OwnSettlement(character.faction, this);
+                }
                 return true;
             }
             return false;
@@ -83,6 +87,10 @@ namespace Locations.Settlements {
                 //regio.RemoveResident(character);
                 if (character.homeStructure != null && character.homeSettlement == this) {
                     character.ChangeHomeStructure(null);
+                }
+                if(residents.Count <= 0 && owner != null) {
+                    //if all residents of a settlement is removed, then remove faction owner
+                    LandmarkManager.Instance.UnownSettlement(this);
                 }
                 return true;
             }
@@ -131,14 +139,23 @@ namespace Locations.Settlements {
             character.ChangeHomeStructure(chosenDwelling);
         }
         private bool CanCharacterBeAddedAsResidentBasedOnFaction(Character character) {
-            if (owner != null && character.faction != null) {
-                //If character's faction is hostile with region's ruling faction, character cannot be a resident
-                return !owner.IsHostileWith(character.faction);
+            if(character.isFriendlyFactionless || character.isFactionless || (character.faction != null && !character.faction.isMajorFaction)) {
+                if(owner == null) {
+                    return true;
+                }
+            } else if (character.faction.isPlayerFaction && owner != null && owner.isPlayerFaction) {
+                return true;
+            } else if (character.faction != null && character.faction == owner) {
+                return true;
             }
-            if (owner != null && character.faction == null) {
-                //If character has no faction and region has faction, character cannot be a resident
-                return false;
-            }
+            //if (owner != null && character.faction != null) {
+            //    //If character's faction is hostile with region's ruling faction, character cannot be a resident
+            //    return !owner.IsHostileWith(character.faction);
+            //}
+            //if (owner != null && character.faction == null) {
+            //    //If character has no faction and region has faction, character cannot be a resident
+            //    return false;
+            //}
             return true;
         }
         protected virtual bool IsResidentsFull() {

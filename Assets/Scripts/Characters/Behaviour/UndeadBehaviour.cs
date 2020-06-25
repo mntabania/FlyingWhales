@@ -42,7 +42,7 @@ public class UndeadBehaviour : CharacterBehaviourComponent {
                             }
                         } else {
                             if(character.currentStructure != lair) {
-                                character.PlanIdleReturnHome(out producedJob);
+                                character.jobComponent.PlanIdleReturnHome(out producedJob);
                                 return true;
                             } else {
                                 character.jobComponent.TriggerRoamAroundTile(out producedJob);

@@ -480,6 +480,13 @@ public partial class LandmarkManager : MonoBehaviour {
         GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
         innerTileMap.PlaceBuiltStructureTemplateAt(chosenStructurePrefab, tileLocation, settlement);
     }
+    public void OwnStructure(Faction newOwner, LocationStructure structure) {
+        UnownStructure(structure);
+        newOwner.OwnStructure(structure);
+    }
+    public bool UnownStructure(LocationStructure structure) {
+        return structure.owner != null && structure.owner.UnownStructure(structure);
+    }
     #endregion
 
     #region Regions
