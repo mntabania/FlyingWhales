@@ -1,57 +1,9 @@
 {
   "frames": {
-    "icon_monster.png": {
-      "frame": {
-        "x": 1,
-        "y": 1,
-        "w": 24,
-        "h": 24
-      },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 24,
-        "h": 24
-      },
-      "sourceSize": {
-        "w": 24,
-        "h": 24
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "icon_villager.png": {
-      "frame": {
-        "x": 27,
-        "y": 1,
-        "w": 24,
-        "h": 24
-      },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 24,
-        "h": 24
-      },
-      "sourceSize": {
-        "w": 24,
-        "h": 24
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
     "A Key.png": {
       "frame": {
-        "x": 53,
-        "y": 1,
+        "x": 2,
+        "y": 2,
         "w": 32,
         "h": 32
       },
@@ -74,8 +26,8 @@
     },
     "D Key.png": {
       "frame": {
-        "x": 87,
-        "y": 1,
+        "x": 38,
+        "y": 2,
         "w": 32,
         "h": 32
       },
@@ -98,8 +50,8 @@
     },
     "S Key.png": {
       "frame": {
-        "x": 121,
-        "y": 1,
+        "x": 2,
+        "y": 38,
         "w": 32,
         "h": 32
       },
@@ -122,8 +74,8 @@
     },
     "W Key.png": {
       "frame": {
-        "x": 155,
-        "y": 1,
+        "x": 38,
+        "y": 38,
         "w": 32,
         "h": 32
       },
@@ -143,6 +95,150 @@
         "x": 0.5,
         "y": 0.5
       }
+    },
+    "icon_chargesB.png": {
+      "frame": {
+        "x": 74,
+        "y": 2,
+        "w": 21,
+        "h": 31
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 21,
+        "h": 31
+      },
+      "sourceSize": {
+        "w": 21,
+        "h": 31
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "icon_threat.png": {
+      "frame": {
+        "x": 2,
+        "y": 74,
+        "w": 28,
+        "h": 26
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 28,
+        "h": 26
+      },
+      "sourceSize": {
+        "w": 28,
+        "h": 26
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "icon_cooldown.png": {
+      "frame": {
+        "x": 34,
+        "y": 74,
+        "w": 23,
+        "h": 26
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 23,
+        "h": 26
+      },
+      "sourceSize": {
+        "w": 23,
+        "h": 26
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "icon_mana.png": {
+      "frame": {
+        "x": 61,
+        "y": 74,
+        "w": 26,
+        "h": 26
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 26,
+        "h": 26
+      },
+      "sourceSize": {
+        "w": 26,
+        "h": 26
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "icon_monster.png": {
+      "frame": {
+        "x": 99,
+        "y": 2,
+        "w": 24,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 24,
+        "h": 24
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "icon_villager.png": {
+      "frame": {
+        "x": 99,
+        "y": 30,
+        "w": 24,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 24,
+        "h": 24
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
     }
   },
   "meta": {
@@ -151,8 +247,8 @@
     "image": "texture.png",
     "format": "RGBA8888",
     "size": {
-      "w": 188,
-      "h": 34
+      "w": 128,
+      "h": 128
     },
     "scale": 1
   }

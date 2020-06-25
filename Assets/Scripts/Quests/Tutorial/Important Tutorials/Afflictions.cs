@@ -25,7 +25,7 @@ namespace Tutorial {
         protected override void ConstructSteps() {
             steps = new List<QuestStepCollection>() {
                 new QuestStepCollection(
-                    new ClickOnCharacterStep($"Click on a {UtilityScripts.Utilities.VillagerIcon()}Villager", IsCharacterValid)
+                    new ClickOnCharacterStep($"Click on a Villager", IsCharacterValid)
                         .SetHoverOverAction(OnHoverSelectCharacterStep)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo),
                     new ObjectPickerShownStep("Click on Afflict button", "Intervention Ability")
@@ -60,8 +60,8 @@ namespace Tutorial {
         private void OnCompleteExecuteAffliction() {
             UIManager.Instance.generalConfirmationWithVisual.ShowGeneralConfirmation("Afflictions",
                 $"These are negative Traits that you may apply to a world's " +
-                $"\n{UtilityScripts.Utilities.VillagerIcon()}Villager that will affect their behavior. " +
-                "Afflictions do not have any Mana Cost but they have a limited number of Charges.\n\n" +
+                $"\nVillager that will affect their behavior. " +
+                "Afflictions do not have any\n Mana Cost but they have a limited number of Charges.\n\n" +
                 "There are a vast number of different types of Afflictions you may experiment with. " +
                 "You can turn someone into a Psychopath or a Vampire, or you can afflict one with a Zombie Virus.",
                 TutorialManager.Instance.afflictionsVideoClip
@@ -73,7 +73,7 @@ namespace Tutorial {
             );
         }
         private void OnHoverAfflictDetails(QuestStepItem item) {
-            UIManager.Instance.ShowSmallInfo($"Open the {UtilityScripts.Utilities.VillagerIcon()}Villager's Info Menu and click on the recently added Affliction.",
+            UIManager.Instance.ShowSmallInfo($"Open the Villager's Info Menu and click on the recently added Affliction.",
                 TutorialManager.Instance.afflictionDetailsVideoClip, "Affliction Details", item.hoverPosition
             );
         }

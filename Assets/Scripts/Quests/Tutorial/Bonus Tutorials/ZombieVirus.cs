@@ -104,7 +104,7 @@ namespace Tutorial {
         private IEnumerator DelayedFindInfectedSourcePopup() {
             yield return new WaitForSecondsRealtime(1.5f);
             PlayerUI.Instance.ShowGeneralConfirmation("Zombie Virus",
-                $"Infected {UtilityScripts.Utilities.VillagerIcon()}Villagers and Monsters become zombies when they die! " +
+                $"Infected Villagers and Monsters become zombies when they die! " +
                 $"They {UtilityScripts.Utilities.ColorizeAction("arise at dusk")} and then become {UtilityScripts.Utilities.ColorizeAction("lifeless again at dawn")}. " +
                 "They are hostile to everyone except other undead - that includes your minions. " +
                 $"They can {UtilityScripts.Utilities.ColorizeAction("infect those they attack")}, so go ahead and start your own zombie apocalypse!"

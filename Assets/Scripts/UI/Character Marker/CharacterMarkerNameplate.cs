@@ -89,7 +89,7 @@ public class CharacterMarkerNameplate : PooledObject {
             name = _parentMarker.character.name;
             //name = $"<color=#820000>{_parentMarker.character.name}</color>";
         }
-        nameLbl.SetText($"{icon} {name}");
+        nameLbl.text = $"{icon}{name}";
     }
     #endregion
 

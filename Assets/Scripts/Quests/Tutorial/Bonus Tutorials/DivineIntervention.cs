@@ -21,7 +21,7 @@ namespace Tutorial {
             Quests.DivineIntervention divineIntervention = QuestManager.Instance.GetActiveQuest<Quests.DivineIntervention>();
             UIManager.Instance.generalConfirmationWithVisual.ShowGeneralConfirmation("Divine Intervention!", 
                 "Your Threat Level has reached maximum! " +
-                $"Because there aren't enough combatant {UtilityScripts.Utilities.VillagerIcon()}Villagers to mount a counterattack, " +
+                $"Because there aren't enough combatant Villagers to mount a counterattack, " +
                 $"The Divine has sent down {divineIntervention.angels.Count.ToString()} Angels to stop you from further transgressions. " +
                 "Eliminate all of them before they destroy your demonic structures.", 
                 TutorialManager.Instance.divineInterventionPicture);

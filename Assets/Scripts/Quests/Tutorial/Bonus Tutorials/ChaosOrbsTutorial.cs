@@ -64,7 +64,7 @@ namespace Tutorial {
             PlayerUI.Instance.ShowGeneralConfirmation("Chaos Orbs",
                 "You start a playthrough with limited amount of Mana. " +
                 "The primary way of gaining more Mana is by finding Chaos Orbs. " +
-                $"These are Mana-filled orbs that are produced by {UtilityScripts.Utilities.VillagerIcon()}Villagers whenever they perform criminal acts. " +
+                $"These are Mana-filled orbs that are produced by Villagers whenever they perform criminal acts. " +
                 "They also produce these when they cry so try to make them miserable."
             );
         }

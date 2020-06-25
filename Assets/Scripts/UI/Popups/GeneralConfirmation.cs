@@ -7,10 +7,10 @@ using UnityEngine.UI;
 
 public class GeneralConfirmation : PopupMenuBase {
 
-    [SerializeField] protected TextMeshProUGUI generalConfirmationTitleText;
-    [SerializeField] protected TextMeshProUGUI generalConfirmationBodyText;
+    [SerializeField] protected RuinarchText generalConfirmationTitleText;
+    [SerializeField] protected RuinarchText generalConfirmationBodyText;
     [SerializeField] protected Button generalConfirmationButton;
-    [SerializeField] protected TextMeshProUGUI generalConfirmationButtonText;
+    [SerializeField] protected RuinarchText generalConfirmationButtonText;
     [SerializeField] protected CanvasGroup _canvasGroup;
     
     public virtual void ShowGeneralConfirmation(string header, string body, string buttonText = "OK", System.Action onClickOK = null) {
@@ -24,9 +24,9 @@ public class GeneralConfirmation : PopupMenuBase {
         UIManager.Instance.SetSpeedTogglesState(false);
         
         UIManager.Instance.HideSmallInfo();
-        generalConfirmationTitleText.text = header.ToUpper();
-        generalConfirmationBodyText.text = body;
-        generalConfirmationButtonText.text = buttonText;
+        generalConfirmationTitleText.SetText(header.ToUpper());
+        generalConfirmationBodyText.SetText(body);
+        generalConfirmationButtonText.SetText(buttonText);
         generalConfirmationButton.onClick.RemoveAllListeners();
         generalConfirmationButton.onClick.AddListener(OnClickOKGeneralConfirmation);
         if (onClickOK != null) {

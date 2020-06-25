@@ -15,7 +15,7 @@ using UtilityScripts;
 
 public class QuestItem : PooledObject {
 
-    [SerializeField] private TextMeshProUGUI headerLbl;
+    [SerializeField] private RuinarchText headerLbl;
     [SerializeField] private Transform stepsParent;
     [FormerlySerializedAs("tutorialQuestStepPrefab")] [SerializeField] private GameObject questStepPrefab;
     public ContentSizeFitter contentSizeFitter;
@@ -28,7 +28,7 @@ public class QuestItem : PooledObject {
     
     public void SetQuest(Quest quest) {
         _quest = quest;
-        headerLbl.text = quest.questName;
+        headerLbl.SetText(quest.questName);
         UpdateSteps();
     }
 

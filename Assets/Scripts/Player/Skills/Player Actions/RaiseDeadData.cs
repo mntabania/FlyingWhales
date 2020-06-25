@@ -39,7 +39,7 @@ public class RaiseDeadData : PlayerAction {
     public override string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) {
         string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter); 
         if (targetCharacter.traitContainer.HasTrait("Infected")) {
-            reasons += $"Cannot use Raise Dead on Infected {UtilityScripts.Utilities.VillagerIcon()}Villagers,";
+            reasons += $"Cannot use Raise Dead on Infected Villagers,";
         }
         return reasons;
     }

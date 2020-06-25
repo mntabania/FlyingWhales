@@ -4,7 +4,7 @@ using Quests.Steps;
 namespace Quests {
     public class EliminateAllVillagers : ReactionQuest {
         
-        public EliminateAllVillagers() : base($"Eliminate All {UtilityScripts.Utilities.VillagerIcon()}Villagers") { }
+        public EliminateAllVillagers() : base($"Eliminate All Villagers") { }
         protected override void ConstructSteps() {
             List<Character> villagers = CharacterManager.Instance.GetAllNormalCharacters();
             steps = new List<QuestStepCollection>() {
@@ -17,7 +17,7 @@ namespace Quests {
 
         #region Step Helpers
         private string GetEliminateAllVillagersDescription(List<Character> remainingTargets, int totalCharactersToEliminate) {
-            return $"{UtilityScripts.Utilities.VillagerIcon()}Villagers Remaining: {remainingTargets.Count.ToString()}"; // /{totalCharactersToEliminate.ToString()}
+            return $"Villagers Remaining: {remainingTargets.Count.ToString()}"; // /{totalCharactersToEliminate.ToString()}
         }
         #endregion
     }

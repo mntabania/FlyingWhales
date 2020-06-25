@@ -35,7 +35,7 @@ namespace Tutorial {
             base.MakeAvailable();
             TutorialManager.Instance.ActivateTutorialButDoNotShow(this);
             PlayerUI.Instance.ShowGeneralConfirmation("Killed by a Monster", 
-                $"A {UtilityScripts.Utilities.VillagerIcon()}Villager has been {UtilityScripts.Utilities.ColorizeAction("killed by a monster")}! " +
+                $"A Villager has been {UtilityScripts.Utilities.ColorizeAction("killed by a monster")}! " +
                 "A Tutorial Quest has been added to teach you how to figure out what happened.", 
                 onClickOK: () => TutorialManager.Instance.ShowTutorial(this)
             );
@@ -66,7 +66,7 @@ namespace Tutorial {
         protected override void ConstructSteps() {
             steps = new List<QuestStepCollection>() {
                 new QuestStepCollection(
-                    new ClickOnCharacterStep($"Find the dead {UtilityScripts.Utilities.VillagerIcon()}Villager", IsCharacterValid)
+                    new ClickOnCharacterStep($"Find the dead Villager", IsCharacterValid)
                         .SetObjectsToCenter(_targetCharacter),
                     new ToggleTurnedOnStep("CharacterInfo_Logs", "Click on Log tab", () => UIManager.Instance.GetCurrentlySelectedPOI() == _targetCharacter),
                     new LogHistoryItemClicked("Find its killer", IsClickedLogObjectValid)
@@ -89,8 +89,8 @@ namespace Tutorial {
         }
         private void OnHoverFindKiller(QuestStepItem item) {
             UIManager.Instance.ShowSmallInfo(
-                $"Check out the {UtilityScripts.Utilities.VillagerIcon()}Villager's Log to see which " +
-                $"{UtilityScripts.Utilities.MonsterIcon()}Monster killed it and then {UtilityScripts.Utilities.ColorizeAction("click on its name")} to find it.",
+                $"Check out the Villager's Log to see which " +
+                $"Monster killed it and then {UtilityScripts.Utilities.ColorizeAction("click on its name")} to find it.",
                 TutorialManager.Instance.killedByMonsterLog, "Browsing Logs", item.hoverPosition
             );
         }

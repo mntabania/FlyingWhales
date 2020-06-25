@@ -10,7 +10,7 @@ using UnityEngine.Events;
 public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler{
 
     [SerializeField] private LogItem logItem;
-	[SerializeField] private TextMeshProUGUI text;
+	[SerializeField] private RuinarchText text;
     [SerializeField] private bool allowClickAction = true;
     [SerializeField] private EventLabelHoverAction hoverAction;
     [SerializeField] private UnityEvent hoverOutAction;
@@ -29,7 +29,7 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
     private void Awake() {
         objectDictionary = new Dictionary<string, object>();
         if (text == null) {
-            text = gameObject.GetComponent<TextMeshProUGUI>();
+            text = gameObject.GetComponent<RuinarchText>();
         }
     }
     void Update() {
@@ -199,13 +199,13 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
     private void HighlightLink(TMP_LinkInfo linkInfo) {
         string oldText = $"{linkInfo.GetLinkText()}";
         string newText = $"<u>{oldText}</u>";
-        text.text = text.text.Replace(oldText, newText);
+        text.SetText(text.text.Replace(oldText, newText));
         InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Link);
     }
     private void UnhighlightLink(TMP_LinkInfo linkInfo) {
         string oldText = $"{linkInfo.GetLinkText()}";
         string newText = $"<u>{oldText}</u>";
-        text.text = text.text.Replace(newText, oldText);
+        text.SetText(text.text.Replace(newText, oldText));
         InputManager.Instance.RevertToPreviousCursor();
     }
     public void HoverOutAction() {

@@ -20,7 +20,7 @@ namespace Tutorial {
         protected override void ConstructSteps() {
             steps = new List<QuestStepCollection>() {
                 new QuestStepCollection(
-                    new ClickOnCharacterStep($"Click on a {UtilityScripts.Utilities.VillagerIcon()}Villager", validityChecker: IsSelectedCharacterValid),
+                    new ClickOnCharacterStep($"Click on a Villager", validityChecker: IsSelectedCharacterValid),
                     new ToggleTurnedOnStep("CharacterInfo_Info", "Open its Info tab")
                         .SetCompleteAction(OnClickInfo)
                         .SetOnTopmostActions(OnTopMostInfo, OnNoLongerTopMostInfo),
@@ -47,28 +47,28 @@ namespace Tutorial {
         #region Step Completion Actions
         private void OnClickInfo() {
             UIManager.Instance.generalConfirmationWithVisual.ShowGeneralConfirmation("Info Tab",
-                $"The Info tab provides you with basic information about the \n{UtilityScripts.Utilities.VillagerIcon()}Villager such as its Combat Stats, " +
+                $"The Info tab provides you with basic information about the \nVillager such as its Combat Stats, " +
                 "Affiliations, temporary Statuses, permanent Traits and Items held.",
                 TutorialManager.Instance.infoTab);
         }
         private void OnClickMood() {
             UIManager.Instance.generalConfirmationWithVisual.ShowGeneralConfirmation("Mood Tab",
-                $"The Mood tab provides you with an overview of the {UtilityScripts.Utilities.VillagerIcon()}Villager's current state of mind. " +
-                $"A {UtilityScripts.Utilities.VillagerIcon()}Villager's Mood is primarily affected by Statuses. " +
-                $"The lower a {UtilityScripts.Utilities.VillagerIcon()}Villager's Mood is, the less cooperative it is with others, and may even eventually run amok!" +
-                $"\n\nA {UtilityScripts.Utilities.VillagerIcon()}Villager also has several Needs that apply various Statuses depending on how high or low they are.",
+                $"The Mood tab provides you with an overview of the Villager's current state of mind. " +
+                $"A Villager's Mood is primarily affected by Statuses. " +
+                $"The lower a Villager's Mood is, the less cooperative it is with others, and may even eventually run amok!" +
+                $"\n\nA Villager also has several Needs that apply various Statuses depending on how high or low they are.",
                 TutorialManager.Instance.moodTab);
         }
         private void OnClickRelations() {
             UIManager.Instance.generalConfirmationWithVisual.ShowGeneralConfirmation("Relations Tab",
-                $"The Relations tab shows a {UtilityScripts.Utilities.VillagerIcon()}Villager's relationship with its neighbors. " +
-                $"A {UtilityScripts.Utilities.VillagerIcon()}Villager will not cooperate with its enemies, " +
+                $"The Relations tab shows a Villager's relationship with its neighbors. " +
+                $"A Villager will not cooperate with its enemies, " +
                 "so one subtle way of reducing a Village's power is by having its residents dislike each other.",
                 TutorialManager.Instance.relationsTab);
         }
         private void OnClickLogs() {
             UIManager.Instance.generalConfirmationWithVisual.ShowGeneralConfirmation("Log Tab",
-                $"The Log tab provides you with a timestamped list of what a \n{UtilityScripts.Utilities.VillagerIcon()}Villager has done.",
+                $"The Log tab provides you with a timestamped list of what a \nVillager has done.",
                 TutorialManager.Instance.logsTab);
         }
         #endregion

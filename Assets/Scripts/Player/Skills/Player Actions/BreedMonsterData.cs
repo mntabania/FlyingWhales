@@ -7,7 +7,7 @@ using Inner_Maps.Location_Structures;
 public class BreedMonsterData : PlayerAction {
     public override SPELL_TYPE type => SPELL_TYPE.BREED_MONSTER;
     public override string name => "Breed Monster";
-    public override string description => $"This Action adds 1 Charge of the current {UtilityScripts.Utilities.MonsterIcon()}monster to the player's Monsters List.";
+    public override string description => $"This Action adds 1 Charge of the current monster to the player's Monsters List.";
     public BreedMonsterData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
     }

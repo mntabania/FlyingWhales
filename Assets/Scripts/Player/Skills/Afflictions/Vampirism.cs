@@ -108,7 +108,7 @@ public class Vampirism : PlayerSpell {
 public class VampirismData : SpellData {
     public override SPELL_TYPE type => SPELL_TYPE.VAMPIRISM;
     public override string name => "Vampirism";
-    public override string description => $"This Affliction will turn a {UtilityScripts.Utilities.VillagerIcon()}Villager into a Vampire. A Vampire's Energy Meter no longer decreases but they have to drink other {UtilityScripts.Utilities.VillagerIcon()}Villager's blood to survive.";
+    public override string description => $"This Affliction will turn a Villager into a Vampire. A Vampire's Energy Meter no longer decreases but they have to drink other Villager's blood to survive.";
     public override SPELL_CATEGORY category => SPELL_CATEGORY.AFFLICTION;
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.AFFLICTION;
 

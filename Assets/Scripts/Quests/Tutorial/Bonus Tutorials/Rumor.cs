@@ -82,11 +82,11 @@ namespace Tutorial {
         private IEnumerator DelayedFindRumormongerPopup() {
             yield return new WaitForSecondsRealtime(1.5f);
             PlayerUI.Instance.ShowGeneralConfirmation("Rumormonger",
-                $"A {UtilityScripts.Utilities.VillagerIcon()}Villager may start spreading a rumor about " +
+                $"A Villager may start spreading a rumor about " +
                 $"someone that {UtilityScripts.Utilities.ColorizeAction("has recently offended them")}. " +
                 "The lower their Mood, the higher the chance that this may occur." +
                 $"\n\n{UtilityScripts.Utilities.ColorizeAction("Induce more negative interactions")} " +
-                $"between {UtilityScripts.Utilities.VillagerIcon()}Villagers to trigger more damaging rumors!"
+                $"between Villagers to trigger more damaging rumors!"
             );
         }
         private void OnCompleteReceiveRumor() {
@@ -95,7 +95,7 @@ namespace Tutorial {
         private IEnumerator DelayedReceiveRumorPopup() {
             yield return new WaitForSecondsRealtime(1.5f);
             PlayerUI.Instance.ShowGeneralConfirmation("Receiving Rumors",
-                $"A {UtilityScripts.Utilities.VillagerIcon()}Villager who receives a new rumor " +
+                $"A Villager who receives a new rumor " +
                 $"{UtilityScripts.Utilities.ColorizeAction("will evaluate it")} and may or may not believe it. " +
                 "If they don't, they may try to confirm it with the rumor victim. " +
                 "If they do, they will react to it as if it's true!"

@@ -112,7 +112,7 @@ namespace Tutorial {
         private void OnHoverOwnership(QuestStepItem stepItem) {
             UIManager.Instance.ShowSmallInfo(
                 $"Check an object's owner in its {UtilityScripts.Utilities.ColorizeAction("Info tab")}. " +
-                $"Find an object whose owner is a {UtilityScripts.Utilities.VillagerIcon()}Villager." +
+                $"Find an object whose owner is a Villager." +
                 $"Make sure that the owner is {UtilityScripts.Utilities.ColorizeAction("still alive")} " +
                 $"and does not have {UtilityScripts.Utilities.ColorizeAction("Blessed")} trait because we will be seizing him later.",
                 TutorialManager.Instance.tileObjectOwner, "Ownership",
@@ -138,7 +138,7 @@ namespace Tutorial {
         private IEnumerator DelayedFrameUpPopup() {
             yield return new WaitForSecondsRealtime(1.5f);
             PlayerUI.Instance.ShowGeneralConfirmation("Frame Up", 
-                $"{UtilityScripts.Utilities.VillagerIcon()}Villagers are prone to making suspicious assumptions " +
+                $"Villagers are prone to making suspicious assumptions " +
                 $"especially when they are in Bad or Critical Mood!\n\n" +
                 $"{UtilityScripts.Utilities.ColorizeAction(_droppedObject.characterOwner.name)} just saw " +
                 $"{UtilityScripts.Utilities.GetPronounString(_droppedObject.characterOwner.gender, PRONOUN_TYPE.POSSESSIVE, false)} " +

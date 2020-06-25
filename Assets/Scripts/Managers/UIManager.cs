@@ -45,7 +45,7 @@ public class UIManager : MonoBehaviour {
     public HorizontalLayoutGroup smallInfoBGParentLG;
     public VerticalLayoutGroup smallInfoVerticalLG;
     public RectTransform smallInfoBGRT;
-    public TextMeshProUGUI smallInfoLbl;
+    public RuinarchText smallInfoLbl;
     public LocationSmallInfo locationSmallInfo;
     public RectTransform locationSmallInfoRT;
     public GameObject characterPortraitHoverInfoGO;
@@ -355,7 +355,7 @@ public class UIManager : MonoBehaviour {
 
         message = message.Replace("\\n", "\n");
 
-        smallInfoLbl.text = message;
+        smallInfoLbl.SetText(message);
         if (!IsSmallInfoShowing()) {
             smallInfoGO.transform.SetParent(this.transform);
             smallInfoGO.SetActive(true);
@@ -374,7 +374,7 @@ public class UIManager : MonoBehaviour {
 
         message = message.Replace("\\n", "\n");
 
-        smallInfoLbl.text = message;
+        smallInfoLbl.SetText(message);
         
         PositionTooltip(pos, smallInfoGO, smallInfoRT);
         

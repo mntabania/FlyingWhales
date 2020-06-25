@@ -73,31 +73,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &4455639795607100789
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4630698722303704620}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c89808e7a2c64dd2a8dd6273fc9c446c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ParentPool: {fileID: 0}
-  mainLbl: {fileID: 4742818667136389332}
-  subLbl: {fileID: 4742662325418056698}
-  supportingLbl: {fileID: 4743185990657489046}
-  supportingLblRT: {fileID: 4852692961183273218}
-  supportingLblContainer: {fileID: 4852692961183273218}
-  nameplateButton: {fileID: 7442424765685457741}
-  button: {fileID: 4743307967486682156}
-  toggle: {fileID: 4743343008275877912}
-  coverGO: {fileID: 4629891706913246540}
-  portrait: {fileID: 4742333557798884930}
-  cooldownImage: {fileID: 1944533425248583071}
-  lockedImage: {fileID: 1485941165073812450}
 --- !u!114 &6309603948976169818
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -110,7 +85,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f19b7e2285c104f6ca47d583f3e5444f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_EffectFactor: 0.51
+  m_EffectFactor: 0
   m_Width: 0.25
   m_Rotation: 135
   m_Softness: 1
@@ -150,6 +125,31 @@ MonoBehaviour:
     loop: 1
     loopDelay: 0
     updateMode: 0
+--- !u!114 &4455639795607100789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4630698722303704620}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c89808e7a2c64dd2a8dd6273fc9c446c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ParentPool: {fileID: 0}
+  mainLbl: {fileID: 4742818667136389332}
+  subLbl: {fileID: 4742662325418056698}
+  supportingLbl: {fileID: 4743185990657489046}
+  supportingLblRT: {fileID: 4852692961183273218}
+  supportingLblContainer: {fileID: 4852692961183273218}
+  nameplateButton: {fileID: 7442424765685457741}
+  button: {fileID: 4743307967486682156}
+  toggle: {fileID: 4743343008275877912}
+  coverGO: {fileID: 4629891706913246540}
+  portrait: {fileID: 4742333557798884930}
+  cooldownImage: {fileID: 1944533425248583071}
+  lockedImage: {fileID: 1485941165073812450}
 --- !u!1 &4961035898925508613
 GameObject:
   m_ObjectHideFlags: 0
@@ -595,7 +595,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Script: {fileID: 11500000, guid: ba0368c7b6c604543b020e8a34f5ab84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &4742662325418056698 stripped
@@ -607,7 +607,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Script: {fileID: 11500000, guid: ba0368c7b6c604543b020e8a34f5ab84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!224 &4852692961183273218 stripped
@@ -625,7 +625,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Script: {fileID: 11500000, guid: ba0368c7b6c604543b020e8a34f5ab84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &4742333557798884930 stripped
