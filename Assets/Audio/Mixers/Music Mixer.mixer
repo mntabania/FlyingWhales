@@ -80,8 +80,9 @@ AudioMixerSnapshotController:
   m_AudioMixer: {fileID: 24100000}
   m_SnapshotID: 7293b483fadc32e4d9cbade8bab83622
   m_FloatValues:
-    3c1e5c36dbe31284bb2f758a5d4d0151: 0.04171297
-    eb024bb7b00308941a6af2ba2e4ecc67: -0.002441872
+    920e78440bbc9b449beea8a303fffd08: 0
+    3c1e5c36dbe31284bb2f758a5d4d0151: 0
+    eb024bb7b00308941a6af2ba2e4ecc67: 0
     26f6ecf87f0fb184bb4a23faaeecd225: -80
     c4c8bda9da7ee624eb8e1e4ac9a2b535: -80
     3ce2133b6ed6925469ee80cd0d8d1b03: -80
@@ -96,11 +97,12 @@ AudioMixerSnapshotController:
   m_AudioMixer: {fileID: 24100000}
   m_SnapshotID: 5f44e88ca545e974bb3523be71806a3e
   m_FloatValues:
-    3c1e5c36dbe31284bb2f758a5d4d0151: 0.04171297
+    920e78440bbc9b449beea8a303fffd08: 0
+    3c1e5c36dbe31284bb2f758a5d4d0151: 0
     eb024bb7b00308941a6af2ba2e4ecc67: -80
     26f6ecf87f0fb184bb4a23faaeecd225: -80
-    c4c8bda9da7ee624eb8e1e4ac9a2b535: -8.963343
-    3ce2133b6ed6925469ee80cd0d8d1b03: 0.025578512
+    c4c8bda9da7ee624eb8e1e4ac9a2b535: -10
+    3ce2133b6ed6925469ee80cd0d8d1b03: 0
   m_TransitionOverrides: {}
 --- !u!243 &-1787274942252732750
 AudioMixerGroupController:
@@ -169,7 +171,7 @@ AudioMixerController:
     - f9469999fa813694ba5d6de5e6e18e41
     name: View
   m_CurrentViewIndex: 0
-  m_TargetSnapshot: {fileID: 7575652200456227379}
+  m_TargetSnapshot: {fileID: -3303441298128720873}
 --- !u!243 &24300002
 AudioMixerGroupController:
   m_ObjectHideFlags: 0
@@ -228,7 +230,8 @@ AudioMixerSnapshotController:
   m_AudioMixer: {fileID: 24100000}
   m_SnapshotID: b9641efefb8070c44906998d246270a8
   m_FloatValues:
-    3c1e5c36dbe31284bb2f758a5d4d0151: 0.04171297
+    920e78440bbc9b449beea8a303fffd08: 0
+    3c1e5c36dbe31284bb2f758a5d4d0151: 0
     eb024bb7b00308941a6af2ba2e4ecc67: -80
     26f6ecf87f0fb184bb4a23faaeecd225: 0
     c4c8bda9da7ee624eb8e1e4ac9a2b535: -80
@@ -277,10 +280,11 @@ AudioMixerSnapshotController:
   m_AudioMixer: {fileID: 24100000}
   m_SnapshotID: ff979e9d767b5cd4ea80e3c2a60417a6
   m_FloatValues:
-    3c1e5c36dbe31284bb2f758a5d4d0151: 0.04171297
+    920e78440bbc9b449beea8a303fffd08: 0
+    3c1e5c36dbe31284bb2f758a5d4d0151: 0
     eb024bb7b00308941a6af2ba2e4ecc67: -80
     26f6ecf87f0fb184bb4a23faaeecd225: -80
-    c4c8bda9da7ee624eb8e1e4ac9a2b535: -0.002441872
+    c4c8bda9da7ee624eb8e1e4ac9a2b535: 0
     3ce2133b6ed6925469ee80cd0d8d1b03: -80
   m_TransitionOverrides: {}
 --- !u!243 &8600720685606366727
