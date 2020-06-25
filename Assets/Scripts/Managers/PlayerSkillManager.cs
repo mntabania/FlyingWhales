@@ -18,7 +18,7 @@ public class PlayerSkillManager : MonoBehaviour {
 
     [SerializeField] private PlayerSkillDataDictionary _playerSkillDataDictionary;
 
-    public List<SPELL_TYPE> constantSkills = new List<SPELL_TYPE> { SPELL_TYPE.AFFLICT, SPELL_TYPE.BUILD_DEMONIC_STRUCTURE };
+    public List<SPELL_TYPE> constantSkills = new List<SPELL_TYPE> { SPELL_TYPE.AFFLICT, SPELL_TYPE.BUILD_DEMONIC_STRUCTURE, SPELL_TYPE.UNSUMMON };
     public Dictionary<SPELL_TYPE, SpellData> allSpellsData { get; private set; }
     public Dictionary<SPELL_TYPE, PlayerAction> allPlayerActionsData { get; private set; }
     public Dictionary<SPELL_TYPE, SpellData> allAfflictionsData { get; private set; }
@@ -47,6 +47,7 @@ public class PlayerSkillManager : MonoBehaviour {
             , SPELL_TYPE.BUILD_DEMONIC_STRUCTURE, SPELL_TYPE.AFFLICT, SPELL_TYPE.ACTIVATE_TILE_OBJECT, SPELL_TYPE.BREED_MONSTER
             /*, SPELL_TYPE.END_RAID, SPELL_TYPE.END_HARASS, SPELL_TYPE.END_INVADE*/, SPELL_TYPE.INTERFERE, SPELL_TYPE.PLANT_GERM
             , SPELL_TYPE.AGITATE, SPELL_TYPE.KNOCKOUT, SPELL_TYPE.KILL, SPELL_TYPE.HEAL, SPELL_TYPE.ABDUCT, SPELL_TYPE.ANIMATE, SPELL_TYPE.EMPOWER
+            , SPELL_TYPE.BRAINWASH, SPELL_TYPE.UNSUMMON,
     };
 
     public SPELL_TYPE[] allAfflictions = { SPELL_TYPE.CANNIBALISM
@@ -120,6 +121,9 @@ public class PlayerSkillManager : MonoBehaviour {
 
                 PlayerAction playerAction = System.Activator.CreateInstance(System.Type.GetType(typeName) ??
                    throw new Exception($"Problem with creating spell data for {typeName}")) as PlayerAction;
+                if(spellType == SPELL_TYPE.UNSUMMON) {
+                    Debug.Log("unsummon");
+                }
                 allPlayerActionsData.Add(spellType, playerAction);
                 allPlayerSkillsData.Add(spellType, playerAction);
             }

@@ -15,10 +15,12 @@ public class ReactionComponent {
     public Character owner { get; private set; }
 
     private List<Character> _assumptionSuspects;
+    public List<Character> charactersThatSawThisDead { get; private set; }
 
     public ReactionComponent(Character owner) {
         this.owner = owner;
         _assumptionSuspects = new List<Character>();
+        charactersThatSawThisDead = new List<Character>();
     }
 
     #region Processes
@@ -628,9 +630,9 @@ public class ReactionComponent {
                     }
                 } else {
                     debugLog += "\n-Target is dead";
-                    Dead targetDeadTrait = targetCharacter.traitContainer.GetNormalTrait<Dead>("Dead");
-                    if(targetDeadTrait != null && !targetDeadTrait.charactersThatSawThisDead.Contains(owner)) {
-                        targetDeadTrait.AddCharacterThatSawThisDead(owner);
+                    //Dead targetDeadTrait = targetCharacter.traitContainer.GetNormalTrait<Dead>("Dead");
+                    if(!targetCharacter.reactionComponent.charactersThatSawThisDead.Contains(owner)) { //targetDeadTrait != null && !targetDeadTrait.charactersThatSawThisDead.Contains(owner)
+                        targetCharacter.reactionComponent.AddCharacterThatSawThisDead(owner);
                         debugLog += "\n-Target saw dead for the first time";
                         string opinionLabel = owner.relationshipContainer.GetOpinionLabel(targetCharacter);
                         if(opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
@@ -855,9 +857,9 @@ public class ReactionComponent {
 
         if (targetTileObject is Tombstone tombstone) {
             Character targetCharacter = tombstone.character;
-            Dead targetDeadTrait = targetCharacter.traitContainer.GetNormalTrait<Dead>("Dead");
-            if (targetDeadTrait != null && !targetDeadTrait.charactersThatSawThisDead.Contains(owner)) {
-                targetDeadTrait.AddCharacterThatSawThisDead(owner);
+            //Dead targetDeadTrait = targetCharacter.traitContainer.GetNormalTrait<Dead>("Dead");
+            if (!targetCharacter.reactionComponent.charactersThatSawThisDead.Contains(owner)) { //targetDeadTrait != null && !targetDeadTrait.charactersThatSawThisDead.Contains(owner)
+                targetCharacter.reactionComponent.AddCharacterThatSawThisDead(owner);
                 debugLog += "\n-Target saw dead for the first time";
                 string opinionLabel = owner.relationshipContainer.GetOpinionLabel(targetCharacter);
                 if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
@@ -1101,6 +1103,9 @@ public class ReactionComponent {
             }
         }
         return false;
+    }
+    public void AddCharacterThatSawThisDead(Character character) {
+        charactersThatSawThisDead.Add(character);
     }
     #endregion
 }

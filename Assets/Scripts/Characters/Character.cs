@@ -5117,6 +5117,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //combatModeAction.SetLabelText(combatModeAction.actionName + ": " + UtilityScripts.Utilities.NotNormalizedConversionEnumToString(combatComponent.combatMode.ToString()));
 
             AddPlayerAction(SPELL_TYPE.STOP);
+            AddPlayerAction(SPELL_TYPE.UNSUMMON);
             //AddPlayerAction(SPELL_TYPE.RETURN_TO_PORTAL);
             //AddPlayerAction(SPELL_TYPE.CHANGE_COMBAT_MODE);
         } else {

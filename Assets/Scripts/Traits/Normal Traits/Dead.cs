@@ -6,7 +6,6 @@ using UnityEngine;
 
 namespace Traits {
     public class Dead : Status {
-        public List<Character> charactersThatSawThisDead { get; private set; }
         public Dead() {
             name = "Dead";
             description = "This character's life has been extinguished.";
@@ -15,18 +14,11 @@ namespace Traits {
             ticksDuration = 0;
             //effects = new List<TraitEffect>();
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.RAISE_CORPSE };
-            charactersThatSawThisDead = new List<Character>();
             hindersMovement = true;
             hindersWitness = true;
             hindersAttackTarget = true;
             hindersPerform = true;
         }
-
-        #region General
-        public void AddCharacterThatSawThisDead(Character character) {
-            charactersThatSawThisDead.Add(character);
-        }
-        #endregion
 
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
@@ -53,25 +45,25 @@ namespace Traits {
         #endregion
     }
 
-    public class SaveDataDead : SaveDataTrait {
-        public List<int> characterIDsThatSawThisDead;
+    //public class SaveDataDead : SaveDataTrait {
+    //    public List<int> characterIDsThatSawThisDead;
 
-        public override void Save(Trait trait) {
-            base.Save(trait);
-            Dead dead = trait as Dead;
-            characterIDsThatSawThisDead = new List<int>();
-            for (int i = 0; i < dead.charactersThatSawThisDead.Count; i++) {
-                characterIDsThatSawThisDead.Add(dead.charactersThatSawThisDead[i].id);
-            }
-        }
+    //    public override void Save(Trait trait) {
+    //        base.Save(trait);
+    //        Dead dead = trait as Dead;
+    //        characterIDsThatSawThisDead = new List<int>();
+    //        for (int i = 0; i < dead.charactersThatSawThisDead.Count; i++) {
+    //            characterIDsThatSawThisDead.Add(dead.charactersThatSawThisDead[i].id);
+    //        }
+    //    }
 
-        public override Trait Load(ref Character responsibleCharacter) {
-            Trait trait = base.Load(ref responsibleCharacter);
-            Dead dead = trait as Dead;
-            for (int i = 0; i < characterIDsThatSawThisDead.Count; i++) {
-                dead.AddCharacterThatSawThisDead(CharacterManager.Instance.GetCharacterByID(characterIDsThatSawThisDead[i]));
-            }
-            return trait;
-        }
-    }
+    //    public override Trait Load(ref Character responsibleCharacter) {
+    //        Trait trait = base.Load(ref responsibleCharacter);
+    //        Dead dead = trait as Dead;
+    //        for (int i = 0; i < characterIDsThatSawThisDead.Count; i++) {
+    //            dead.AddCharacterThatSawThisDead(CharacterManager.Instance.GetCharacterByID(characterIDsThatSawThisDead[i]));
+    //        }
+    //        return trait;
+    //    }
+    //}
 }

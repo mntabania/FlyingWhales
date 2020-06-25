@@ -176,6 +176,9 @@ public class PlayerSkillComponent {
     private void SetPlayerSkillData(SPELL_TYPE skillType) {
         PlayerSkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(skillType);
         SpellData spellData = PlayerSkillManager.Instance.GetPlayerSpellData(skillType);
+        if (spellData == null) {
+            Debug.LogError(skillType.ToString() + " data is null!");
+        }
         spellData.SetMaxCharges(skillData.charges);
         spellData.SetCharges(skillData.charges);
         spellData.SetCooldown(skillData.cooldown);
@@ -186,6 +189,9 @@ public class PlayerSkillComponent {
     }
     private void SetPlayerSkillData(PlayerSkillData skillData) {
         SpellData spellData = PlayerSkillManager.Instance.GetPlayerSpellData(skillData.skill);
+        if(spellData == null) {
+            Debug.LogError(skillData.skill.ToString() + " data is null!");
+        }
         spellData.SetMaxCharges(skillData.charges);
         spellData.SetCharges(skillData.charges);
         spellData.SetCooldown(skillData.cooldown);

@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class DefaultFactionRelated : CharacterBehaviourComponent {
     public DefaultFactionRelated() {
-        priority = 10;
+        priority = 26;
         attributes = new BEHAVIOUR_COMPONENT_ATTRIBUTE[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.DO_NOT_SKIP_PROCESSING/*, BEHAVIOUR_COMPONENT_ATTRIBUTE.ONCE_PER_DAY*/ };
     }
 
