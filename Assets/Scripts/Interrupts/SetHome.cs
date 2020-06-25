@@ -337,14 +337,16 @@ namespace Interrupts {
         }
         private HexTile GetTerritoryInAdjacentRegions(Region region) {
             List<Region> adjacentRegions = region.AdjacentRegions();
-            while (adjacentRegions.Count > 0) {
-                Region chosenAdjacentRegion = adjacentRegions[UnityEngine.Random.Range(0, adjacentRegions.Count)];
-                HexTile hex = chosenAdjacentRegion.GetRandomNoStructureUncorruptedPlainHex();
-                if (hex != null) {
-                    return hex;
-                } else {
-                    adjacentRegions.Remove(chosenAdjacentRegion);
-                }
+            if (adjacentRegions != null) {
+                while (adjacentRegions.Count > 0) {
+                    Region chosenAdjacentRegion = adjacentRegions[UnityEngine.Random.Range(0, adjacentRegions.Count)];
+                    HexTile hex = chosenAdjacentRegion.GetRandomNoStructureUncorruptedPlainHex();
+                    if (hex != null) {
+                        return hex;
+                    } else {
+                        adjacentRegions.Remove(chosenAdjacentRegion);
+                    }
+                }    
             }
             return null;
         } 

@@ -19,7 +19,7 @@ public class Rage : Emotion {
                 this
             );
             
-            witness.traitContainer.AddTrait(witness, "Angry");
+            witness.traitContainer.AddTrait(witness, "Angry", targetCharacter);
             //int chance = UnityEngine.Random.Range(0, 2);
             //if(chance == 0) {
             //    witness.jobComponent.CreateKnockoutJob(targetCharacter);

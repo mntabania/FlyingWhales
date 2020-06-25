@@ -290,7 +290,7 @@ public class UIManager : MonoBehaviour {
     /// </summary>
     public void PauseByPlayer() {
         Pause();
-        Debug.Log("Game was paused by player.");
+        // Debug.Log("Game was paused by player.");
         Messenger.Broadcast(Signals.PAUSED_BY_PLAYER);
     }
     public void Pause() {

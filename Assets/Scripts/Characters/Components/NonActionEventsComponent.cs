@@ -14,9 +14,15 @@ public class NonActionEventsComponent {
 
     private readonly WeightedDictionary<string> chatWeights;
 
+    /// <summary>
+    /// When did this character last chat/flirt?
+    /// </summary>
+    public GameDate lastConversationDate { get; private set; }
+    
     public NonActionEventsComponent(Character owner) {
         this.owner = owner;
         chatWeights = new WeightedDictionary<string>();
+        lastConversationDate = GameManager.Instance.Today();
     }
 
     #region Utilities
@@ -251,6 +257,9 @@ public class NonActionEventsComponent {
         SchedulingManager.Instance.AddEntry(dueDate, () => owner.SetIsConversing(false), owner);
         SchedulingManager.Instance.AddEntry(dueDate, () => target.SetIsConversing(false), target);
 
+    }
+    public void SetLastConversationDate(GameDate date) {
+        lastConversationDate = date;
     }
     #endregion
 

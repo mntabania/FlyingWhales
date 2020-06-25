@@ -928,6 +928,19 @@ public class CharacterMarker : MapObjectVisual<Character> {
             
         }
     }
+    public List<Character> GetInVisionCharactersThatMeetCriteria(System.Func<Character, bool> criteria) {
+        List<Character> characters = null;
+        for (int i = 0; i < inVisionCharacters.Count; i++) {
+            Character c = inVisionCharacters[i];
+            if (criteria.Invoke(c)) {
+                if (characters == null) {
+                    characters = new List<Character>();
+                }
+                characters.Add(c);
+            }
+        }
+        return characters;
+    }
     #endregion
 
     #region Vision Collision
@@ -1511,5 +1524,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
         _nameplate.HideThoughts();
     }
     #endregion
+
     
 }

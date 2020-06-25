@@ -23,7 +23,7 @@ public class Anger : Emotion {
                 this
             );
             
-            witness.traitContainer.AddTrait(witness, "Angry");
+            witness.traitContainer.AddTrait(witness, "Angry", targetCharacter);
             //if(UnityEngine.Random.Range(0, 100) < 25) {
             //    int chance = UnityEngine.Random.Range(0, 3);
             //    if(chance == 0) {
