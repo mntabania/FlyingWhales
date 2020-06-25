@@ -231,15 +231,13 @@ public static class TileObjectDB {
         { TILE_OBJECT_TYPE.TREASURE_CHEST, new TileObjectData() {
             maxHP = 200,
         } },
-        
-        
-
-        //{ TILE_OBJECT_TYPE.WATER_BUCKET, new TileObjectData() {
-        //    constructionCost = 25,
-        //    constructionTime = 12,
-        //    maxHP = 1000,
-        //    neededTraitTypes =  new string[] { "Craftsman" },
-        //} },
+        { TILE_OBJECT_TYPE.CULTIST_KIT, new TileObjectData() {
+            constructionCost = 10,
+            constructionTime = 12,
+            maxHP = 150,
+            neededCharacterClass = null,
+            itemRequirementsForCreation = new[] { "Wood Pile", "Stone Pile" },
+        } },
     };
 
     public static bool HasTileObjectData(TILE_OBJECT_TYPE objType) {

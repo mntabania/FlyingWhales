@@ -448,7 +448,7 @@ namespace Inner_Maps {
             summary = $"{summary} <b>Supply:</b>{character.supply.ToString()}";
             summary = $"{summary} <b>Can Move:</b>{character.canMove.ToString()}";
             summary = $"{summary} <b>Can Witness:</b>{character.canWitness.ToString()}";
-            summary = $"{summary} <b>Can Be Attacked:</b>{character.canBeAtttacked.ToString()}";
+            summary = $"{summary} <b>Can Be Attacked:</b>{character.canBeAttacked.ToString()}";
             summary = $"{summary} <b>Move Speed:</b>{character.marker.pathfindingAI.speed.ToString()}";
             summary = $"{summary} <b>Attack Range:</b>{character.characterClass.attackRange.ToString()}";
             summary = $"{summary} <b>Attack Speed:</b>{character.combatComponent.attackSpeed.ToString()}";

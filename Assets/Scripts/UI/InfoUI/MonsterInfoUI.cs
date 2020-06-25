@@ -322,7 +322,7 @@ public class MonsterInfoUI : InfoUIBase {
         summary = $"{summary}{("\nDo Not Recover HP: " + activeMonster.doNotRecoverHP)}";
         summary = $"{summary}{("\nCan Move: " + activeMonster.canMove)}";
         summary = $"{summary}{("\nCan Witness: " + activeMonster.canWitness)}";
-        summary = $"{summary}{("\nCan Be Attacked: " + activeMonster.canBeAtttacked)}";
+        summary = $"{summary}{("\nCan Be Attacked: " + activeMonster.canBeAttacked)}";
         summary = $"{summary}{("\nCan Perform: " + activeMonster.canPerform)}";
         summary = $"{summary}{("\nIs Missing: " + activeMonster.isMissing)}";
         summary = $"{summary}{("\n" + activeMonster.needsComponent.GetNeedsSummary())}";
@@ -334,7 +334,6 @@ public class MonsterInfoUI : InfoUIBase {
         summary = $"{summary}{("\nSexuality: " + activeMonster.sexuality.ToString())}";
         summary = $"{summary}{("\nMood: " + activeMonster.moodComponent.moodValue + "/100" + "(" + activeMonster.moodComponent.moodState.ToString() + ")")}";
         summary = $"{summary}{("\nHP: " + activeMonster.currentHP + "/" + activeMonster.maxHP)}";
-        summary = $"{summary}{("\nIgnore Hostiles: " + activeMonster.ignoreHostility)}";
         summary = $"{summary}{("\nAttack Range: " + activeMonster.characterClass.attackRange)}";
         summary = $"{summary}{("\nAttack Speed: " + activeMonster.combatComponent.attackSpeed)}";
         summary = $"{summary}{("\nCombat Mode: " + activeMonster.combatComponent.combatMode.ToString())}";

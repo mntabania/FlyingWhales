@@ -532,7 +532,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	}
 	#endregion
 
-	#region Knockout
+	#region Knockout`
 	private void TryCreateRestrainJobs() {
 		string summary = $"{GameManager.Instance.TodayLogString()}{_owner.name} is under siege, trying to create knockout jobs...";
 		if (CanCreateRestrainJob()) {
@@ -579,7 +579,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 				false, GOAP_EFFECT_TARGET.TARGET), 
 			target, _owner);
 		job.SetStillApplicableChecker(() => IsRestrainJobStillApplicable(target));
-		job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeKnockoutJob);
+		job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRestrainJob);
 		_owner.AddToAvailableJobs(job, 0);
 	}
 	private bool IsRestrainJobStillApplicable(Character target) {

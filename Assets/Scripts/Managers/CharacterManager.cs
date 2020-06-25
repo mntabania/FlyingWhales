@@ -516,6 +516,12 @@ public class CharacterManager : MonoBehaviour {
         }
         return null;
     }
+    public T GetCharacterBehaviourComponent<T>(Type type) where T : CharacterBehaviourComponent {
+        if (behaviourComponents.ContainsKey(type) && behaviourComponents[type] is T component) {
+            return component;
+        }
+        return null;
+    }
     #endregion
 
     #region Summons

@@ -24,5 +24,12 @@ public class KnockoutData : PlayerAction {
         }
         return canPerform;
     }
+    public override bool IsValid(IPlayerActionTarget target) {
+        bool isValid = base.IsValid(target); 
+        if (isValid && target is Character character) {
+            return character.isAlliedWithPlayer == false;
+        }
+        return isValid;
+    }
     #endregion
 }

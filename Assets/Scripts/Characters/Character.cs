@@ -15,22 +15,19 @@ using UtilityScripts;
 using JetBrains.Annotations;
 
 public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlayerActionTarget, IObjectManipulator {
-
-    protected string _name;
-    protected string _firstName;
-    protected string _surName;
-    protected int _id;
-    protected float _actRate;
+    private string _name;
+    private string _firstName;
+    private string _surName;
+    private int _id;
     protected bool _isDead;
-    //protected bool _isFlirting;
-    protected GENDER _gender;
-    protected CharacterClass _characterClass;
-    protected RaceSetting _raceSetting;
-    // protected CharacterRole _role;
-    protected Faction _faction;
-    protected Minion _minion;
-    protected LocationStructure _currentStructure; //what structure is this character currently in.
-    protected Region _currentRegion;
+    private GENDER _gender;
+    private CharacterClass _characterClass;
+    private RaceSetting _raceSetting;
+    private Faction _faction;
+    private Minion _minion;
+    private LocationStructure _currentStructure; //what structure is this character currently in.
+    private Region _currentRegion;
+    private bool _isAlliedWithPlayer;
 
     //visuals
     public CharacterVisuals visuals { get; }
@@ -47,8 +44,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public Region homeRegion { get; protected set; }
     public NPCSettlement homeSettlement { get; protected set; }
     public LocationStructure homeStructure { get; protected set; }
-    //public IRelationshipContainer relationshipContainer => currentAlterEgo.relationshipContainer;
-    //public IRelationshipValidator relationshipValidator => currentAlterEgo.relationshipValidator;
     public List<INTERACTION_TYPE> advertisedActions { get; }
     public int supply { get; set; }
     public int food { get; set; }
@@ -86,6 +81,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool hasRisen { get; private set; }
     public bool hasSubscribedToSignals { get; private set; }
     public Log deathLog { get; private set; }
+    public List<string> interestedItemNames { get; }
 
     public List<JobQueueItem> forcedCancelJobsOnTickEnded { get; private set; }
     public List<HexTile> territorries { get; private set; }
@@ -96,28 +92,21 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     private List<Action> onLeaveAreaActions;
     private POI_STATE _state;
-    // public Dictionary<int, Combat> combatHistory;
 
     //limiters
     private int _canWitnessValue; //if this is >= 0 then character can witness events
     private int _canMoveValue; //if this is >= 0 then character can move
-    private int _canBeAtttackedValue; //if this is >= 0 then character can be attacked
+    private int _canBeAttackedValue; //if this is >= 0 then character can be attacked
     private int _canPerformValue; //if this is >= 0 then character can perform
     private int canTakeJobsValue; //if this is >= 0 then character can take jobs
 
     public bool canWitness => _canWitnessValue >= 0;
     public bool canMove => _canMoveValue >= 0;
-    public bool canBeAtttacked => _canBeAtttackedValue >= 0;
+    public bool canBeAttacked => _canBeAttackedValue >= 0;
     public bool canPerform => _canPerformValue >= 0;
     public bool canTakeJobs => canTakeJobsValue >= 0;
 
-    //hostility
-    public virtual int ignoreHostility { get; protected set; }
-
     //alter egos
-    //public string currentAlterEgoName { get; private set; } //this character's currently active alter ego. Usually just Original.
-    //public Dictionary<string, AlterEgoData> alterEgos { get; private set; }
-    //public string originalClassName { get; private set; } //the class that this character started with
     private List<Action> pendingActionsAfterMultiThread; //List of actions to perform after a character is finished with all his/her multithread processing (This is to prevent errors while the character has a thread running)
 
     //misc
@@ -133,7 +122,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     //Components / Managers
     public GoapPlanner planner { get; private set; }
-    public CharacterNeedsComponent needsComponent { get; private set; }
+    public CharacterNeedsComponent needsComponent { get; }
     public BuildStructureComponent buildStructureComponent { get; private set; }
     public CharacterStateComponent stateComponent { get; private set; }
     public NonActionEventsComponent nonActionEventsComponent { get; private set; }
@@ -148,6 +137,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public AssumptionComponent assumptionComponent { get; private set; }
     public MovementComponent movementComponent { get; private set; }
 
+    
     #region getters / setters
     public override string relatableName => _firstName;
     public virtual string name => _firstName;
@@ -157,16 +147,23 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public string nameWithID => name;
     public virtual string raceClassName => $"{GameUtilities.GetNormalizedRaceAdjective(race)} {characterClass.className}";
     public override int id => _id;
-    public bool isDead => _isDead;
-    public bool isFactionless { //is the character part of the neutral faction? or no faction?
+    /// <summary>
+    /// Is this character allied with the player? Whether secretly (not part of player faction)
+    /// or openly (part of player faction).
+    /// </summary>
+    public bool isAlliedWithPlayer {
         get {
-            if (faction == null || FactionManager.Instance.neutralFaction == faction) {
+            if (faction != null && faction.isPlayerFaction) {
                 return true;
-            } else {
-                return false;
             }
+            return _isAlliedWithPlayer;
         }
     }
+    public bool isDead => _isDead;
+    /// <summary>
+    /// Is the character part of the neutral faction? or no faction?
+    /// </summary>
+    public bool isFactionless => faction == null || FactionManager.Instance.neutralFaction == faction;
     public bool isFriendlyFactionless { //is the character part of the friendly neutral faction? or no faction?
         get {
             if (faction == null || FactionManager.Instance.friendlyNeutralFaction == faction) {
@@ -290,16 +287,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     private Character() {
         SetIsDead(false);
         _overrideThoughts = new List<string>();
-
-        //Needs
-
-        //RPG
-        //SetExperience(0);
+        _isAlliedWithPlayer = false;
 
         //Traits
         CreateTraitContainer();
 
-        // combatHistory = new Dictionary<int, Combat>();
         advertisedActions = new List<INTERACTION_TYPE>();
         items = new List<TileObject>();
         ownedItems = new List<TileObject>();
@@ -309,15 +301,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         pendingActionsAfterMultiThread = new List<Action>();
         forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
         territorries = new List<HexTile>();
+        interestedItemNames = new List<string>();
         SetPOIState(POI_STATE.ACTIVE);
         ConstructResources();
 
         //for testing
         locationHistory = new List<string>();
         actionHistory = new List<string>();
-
-        //hostiltiy
-        ignoreHostility = 0;
 
         //Components
         needsComponent = new CharacterNeedsComponent(this);
@@ -403,8 +393,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
         moodComponent.Load(data);
         needsComponent.LoadAllStatsOfCharacter(data);
-
-        ignoreHostility = data.ignoreHostility;
+        
         returnedToLife = data.returnedToLife;
         
     }
@@ -690,30 +679,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     #endregion
 
-    #region Roles
-    // public void AssignRole(CharacterRole role, bool updateCombatantState = true) {
-    //     bool wasRoleChanged = false;
-    //     if (_role != null) {
-    //         if (_role.roleType == role.roleType) {
-    //             //If character role is being changed to same role, do not change it
-    //             return;
-    //         }
-    //         _role.OnChange(this);
-    //         wasRoleChanged = true;
-    //     }
-    //     _role = role;
-    //     if (_role != null) {
-    //         _role.OnAssign(this);
-    //     }
-    //     if (wasRoleChanged) {
-    //         Messenger.Broadcast(Signals.ROLE_CHANGED, this);
-    //     }
-    //     //if (updateCombatantState) {
-    //     //    UpdateCanCombatantState();
-    //     //}
-    // }
-    #endregion
-
     #region Character Class
     public virtual string GetClassForRole(CharacterRole role) {
         if (role == CharacterRole.BEAST) {
@@ -748,6 +713,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         for (int i = 0; i < _characterClass.traitNames.Length; i++) {
             traitContainer.AddTrait(this, _characterClass.traitNames[i]);
         }
+        if (_characterClass.interestedItemNames != null) {
+            AddItemAsInteresting(_characterClass.interestedItemNames);    
+        }
         visuals.UpdateAllVisuals(this);
         if (minion != null) {
             minion.SetAssignedDeadlySinName(_characterClass.className);
@@ -760,6 +728,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //This means that the character currently has a class and it will be replaced with a new class
             for (int i = 0; i < previousClass.traitNames.Length; i++) {
                 traitContainer.RemoveTrait(this, previousClass.traitNames[i]); //Remove traits from class
+            }
+            if (previousClass.interestedItemNames != null) {
+                RemoveItemAsInteresting(previousClass.interestedItemNames);    
             }
         }
         _characterClass = characterClass;
@@ -2697,6 +2668,29 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
         }
     }
+    /// <summary>
+    /// Compare the homes of this character and another character.
+    /// This takes into account the homeSetttlement, then the homeStructure, then finally the territories.
+    /// </summary>
+    /// <param name="otherCharacter">The other character</param>
+    /// <returns>If the two characters share a home/home settlement/territory</returns>
+    public bool HasSameHomeAs(Character otherCharacter) {
+        if (homeSettlement != null) { //check home settlement first
+            return otherCharacter.homeSettlement == homeSettlement;
+        }
+        if (homeStructure != null) { //if no home settlement, check home structure
+            return otherCharacter.homeStructure == homeStructure;
+        }
+        if (territorries != null && otherCharacter.territorries != null) { //if no home settlement and home structure check territtories
+            for (int i = 0; i < territorries.Count; i++) {
+                HexTile territory = territorries[i];
+                if (otherCharacter.territorries.Contains(territory)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region Traits
@@ -2904,7 +2898,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool CanPerformEndTickJobs() {
         bool canPerformEndTickJobs = !isDead && numOfActionsBeingPerformedOnThis <= 0 /*&& canWitness*/
          && currentActionNode == null && planner.status == GOAP_PLANNING_STATUS.NONE && jobQueue.jobsInQueue.Count > 0 
-         && (currentParty.icon && currentParty.icon.isTravellingOutside == false) && (marker && !marker.hasFleePath)
+         && (currentParty.icon && currentParty.icon.isTravellingOutside == false) && (marker && !marker.hasFleePath) 
          && stateComponent.currentState == null && IsInOwnParty() && !interruptComponent.isInterrupted; //minion == null && doNotDisturb <= 0 
         return canPerformEndTickJobs;
     }
@@ -3365,7 +3359,25 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return items.Count >= characterClass.inventoryCapacity;
     }
     public bool IsItemInteresting(string itemName) {
-        return characterClass.interestedItemNames != null && characterClass.interestedItemNames.Contains(itemName);
+        return interestedItemNames != null && interestedItemNames.Contains(itemName);
+    }
+    public void AddItemAsInteresting(string itemName) {
+        if (interestedItemNames.Contains(itemName) == false) {
+            interestedItemNames.Add(itemName);    
+        }
+    }
+    public void AddItemAsInteresting(params string[] itemNames) {
+        for (int i = 0; i < itemNames.Length; i++) {
+            AddItemAsInteresting(itemNames[i]);
+        }
+    }
+    public void RemoveItemAsInteresting(params string[] itemNames) {
+        for (int i = 0; i < itemNames.Length; i++) {
+            RemoveItemAsInteresting(itemNames[i]);
+        }
+    }
+    public void RemoveItemAsInteresting(string itemName) {
+        interestedItemNames.Remove(itemName);
     }
     // public List<TileObject> GetItemsOwned() {
     //     List<TileObject> itemsOwned = new List<TileObject>();
@@ -3746,6 +3758,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             AddAdvertisedAction(INTERACTION_TYPE.BUTCHER);
             AddAdvertisedAction(INTERACTION_TYPE.HAVE_AFFAIR);
             AddAdvertisedAction(INTERACTION_TYPE.OPEN);
+            AddAdvertisedAction(INTERACTION_TYPE.CREATE_CULTIST_KIT);
+            AddAdvertisedAction(INTERACTION_TYPE.REMOVE_BUFF);
         }
         if (race == RACE.HUMANS || race == RACE.ELVES) {
             AddAdvertisedAction(INTERACTION_TYPE.REPORT_CORRUPTED_STRUCTURE);
@@ -4299,9 +4313,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (currentActionNode != null) {
             logComponent.PrintLogIfActive(
                 $"{name} will do action {actionNode.action.goapType} to {actionNode.poiTarget}");
-            if (currentActionNode.action.goapType.IsHostileAction()) { //if the character will do a combat action, remove all ignore hostilities value
-                ClearIgnoreHostilities();
-            }
             //stateComponent.SetStateToDo(null, stopMovement: false);
 
             //Current Job must always be the job in the top prio, if there is inconsistency with the currentActionNode, then the problem lies on what you set as the currentActionNode
@@ -4687,73 +4698,33 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     /// <summary>
     /// Function to encapsulate, whether or not this character treats another character as hostile.
     /// </summary>
-    /// <param name="character">Character in question.</param>
-    public bool IsHostileWith(Character character, bool checkIgnoreHostility = true) {
-        //return true;
-
+    /// <param name="otherCharacter">Character in question.</param>
+    public bool IsHostileWith(Character otherCharacter) {
         //Removed this checker because when checking hostility there is no need to check if either character is dead anymore, the only thing that matters is the faction
         //if (character.isDead || isDead) {
         //    return false;
         //}
 
-        //if (character.ignoreHostility > 0) {
-        //    //if the other character is set to ignore hostilities, check if the character's current action is a combat action or state is a combat state
-        //    //if it is, waive the ignore hostility value
-        //    if (true) {
-
-        //    }
-        //}
-
-        if (checkIgnoreHostility && (character.ignoreHostility > 0 || ignoreHostility > 0)) {
-            //if either the character in question or this character should ignore hostility, return false.
+        if (isAlliedWithPlayer && otherCharacter.isAlliedWithPlayer) {
+            //if both characters are allied with the player, do not consider each other as hostile.
             return false;
         }
-        if (isFactionless || character.isFactionless) {
-            //this character is unaligned
-            //if unaligned, hostile to all other characters, except those of same race
-            return character.race != race;
-        } else {
-            //this character has a faction
-            //if has a faction, is hostile to characters of every other faction
-            //return this.faction.id != character.faction.id;
-            
-            return faction.IsHostileWith(character.faction);
-            // if(faction == character.faction) {
-            //     return false;
-            // }
-            // return faction.GetRelationshipWith(character.faction).relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE;
-        }
-    }
-    /// <summary>
-    /// Adjusts value that ignores hostility. This character will ignore hostiles and will be ignored by other hostiles if
-    /// the value is greater than 0.
-    /// </summary>
-    /// <param name="amount">Amount to increase/decrease</param>
-    public void AdjustIgnoreHostilities(int amount) {
-        ignoreHostility += amount;
-        ignoreHostility = Mathf.Max(0, ignoreHostility);
-        //Debug.Log(GameManager.Instance.TodayLogString() + "Adjusted " + name + "'s ignore hostilities by " + amount + ". Ignore hostiles value is " + ignoreHostility.ToString());
-    }
-    public void SetIgnoreHostilities(int amount) {
-        ignoreHostility = amount;
-        ignoreHostility = Mathf.Max(0, ignoreHostility);
-        //Debug.Log(GameManager.Instance.TodayLogString() + "Adjusted " + name + "'s ignore hostilities by " + amount + ". Ignore hostiles value is " + ignoreHostility.ToString());
-    }
-    public void ClearIgnoreHostilities() {
-        ignoreHostility = 0;
-        //Debug.Log(GameManager.Instance.TodayLogString() + name + " clreared ignore hostiles.");
-    }
-    /// <summary>
-    /// Is the other character an outsider. (Not part of this character's faction)
-    /// </summary>
-    /// <param name="otherCharacter"></param>
-    /// <returns></returns>
-    public bool IsHostileOutsider(Character otherCharacter) {
-        //return true;
-        if (otherCharacter.isDead || isDead) {
+
+        if (faction == null || otherCharacter.faction == null) {
+            //if either character does not have a faction, do not consider them as hostile
+            //This should almost never happen since we expect that all characters should have a faction.
             return false;
         }
-        return faction.id != otherCharacter.faction.id;
+        
+        return faction.IsHostileWith(otherCharacter.faction);
+        
+        // if (isFactionless || otherCharacter.isFactionless) {
+        //     //this character is unaligned
+        //     //if unaligned, hostile to all other characters, except those of same race
+        //     return otherCharacter.race != race;
+        // } else {
+        //     return faction.IsHostileWith(otherCharacter.faction);
+        // }
     }
     #endregion
 
@@ -4798,7 +4769,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (characterThatStartedState == this) {
             marker.UpdateActionIcon();
             if (state.characterState.IsCombatState()) {
-                ClearIgnoreHostilities();
                 marker.visionCollider.TransferAllDifferentStructureCharacters();
             }
         } else {
@@ -4979,10 +4949,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     public void IncreaseCanBeAttacked() {
-        _canBeAtttackedValue++;
+        _canBeAttackedValue++;
     }
     public void DecreaseCanBeAttacked() {
-        _canBeAtttackedValue--;
+        _canBeAttackedValue--;
     }
     public void IncreaseCanPerform() {
         bool couldNotPerformBefore = canPerform == false;
@@ -5005,6 +4975,16 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void DecreaseCanTakeJobs() {
         canTakeJobsValue--;
+    }
+    /// <summary>
+    /// Set whether this character is allied with the player outside the faction system.
+    /// i.e. when we want that character to be considered as an ally to the player, but don't want to
+    /// change his/her faction to prevent other villagers from attacking him or her.
+    /// </summary>
+    /// <param name="state">Should this character be allied with the player.</param>
+    public void SetIsAlliedWithPlayer(bool state) {
+        _isAlliedWithPlayer = state;
+        Messenger.Broadcast(Signals.CHARACTER_ALLIANCE_WITH_PLAYER_CHANGED, this);
     }
     #endregion
 

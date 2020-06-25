@@ -19,7 +19,7 @@ namespace Inner_Maps.Location_Structures {
         }
 
         #region Seize
-        public bool CanUnseizeCharacterInRoom(Character character) {
+        public override bool CanUnseizeCharacterInRoom(Character character) {
             if (charactersInRoom.Count > 0) {
                 return false;
             }
@@ -76,9 +76,7 @@ namespace Inner_Maps.Location_Structures {
                 _skeleton.combatComponent.SetCombatMode(COMBAT_MODE.Passive);
                 _skeleton.SetDestroyMarkerOnDeath(true);
                 _skeleton.ClearPlayerActions();
-
-                // GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Zombie_Transformation);
-
+                
                 int modifiedX = tortureChamber.entrance.localPlace.x - 2;
                 modifiedX = Mathf.Max(modifiedX, 0);
                 LocationGridTile outsideTile = tortureChamber.location.innerMap.map[modifiedX, tortureChamber.entrance.localPlace.y];

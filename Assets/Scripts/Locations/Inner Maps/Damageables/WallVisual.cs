@@ -92,12 +92,8 @@ public class WallVisual : MapObjectVisual<StructureWallObject> {
         visionTrigger.gameObject.SetActive(false);
     }
 
-    public override void UpdateTileObjectVisual(StructureWallObject obj) {
-        throw new System.NotImplementedException();
-    }
-    public override void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) {
-        throw new System.NotImplementedException();
-    }
+    public override void UpdateTileObjectVisual(StructureWallObject obj) { }
+    public override void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) { }
     public virtual bool IsMapObjectMenuVisible() {
         return true; //always true so that this is skipped
     }

@@ -211,7 +211,6 @@ public class SaveDataCharacter {
         tirednessDecreaseRate = character.needsComponent.tirednessDecreaseRate;
         happinessDecreaseRate = character.needsComponent.happinessDecreaseRate;
 
-        ignoreHostility = character.ignoreHostility;
         //originalClassName = character.originalClassName;
         isMinion = character.minion != null;
         isSummon = character is Summon;

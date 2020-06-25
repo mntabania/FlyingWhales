@@ -503,6 +503,9 @@ public class ActualGoapNode : IReactable, IRumorable {
         //} else if (action.goapType == INTERACTION_TYPE.KNOCKOUT_CHARACTER && job.jobType != JOB_TYPE.APPREHEND) {
         //    return true;
         //}
+        if (action.goapType == INTERACTION_TYPE.REMOVE_BUFF) {
+            return true;
+        }
         return false;
     }
     #endregion
@@ -530,7 +533,8 @@ public class ActualGoapNode : IReactable, IRumorable {
             }
         }
 
-        if (isStealth && target.traitContainer.HasTrait("Vigilant")) {
+        if (isStealth && target.traitContainer.HasTrait("Vigilant") && target.traitContainer.HasTrait("Resting", "Unconscious") == false) {
+            //trigger vigilant, only if character is NOT resting or unconscious
             descriptionLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "vigilant", this);
             action.AddFillersToLog(descriptionLog, this);
             descriptionLog.AddToFillers(null, action.name, LOG_IDENTIFIER.STRING_1);
