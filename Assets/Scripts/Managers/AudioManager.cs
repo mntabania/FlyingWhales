@@ -20,6 +20,10 @@ public class AudioManager : MonoBehaviour {
     private const string MusicVolume = "musicMasterVolume";
     private const string MasterVolume = "masterVolume";
     private const string ThreatMusicVolume = "threatMusicVolume";
+
+    public static float Minimum_Volume_Level = -30f;
+    public static float Maximum_Volume_Level = -10f;
+    
     
     [Header("Mixers")] 
     [SerializeField] private AudioMixer masterMixer;
@@ -169,9 +173,15 @@ public class AudioManager : MonoBehaviour {
 
     #region Volume
     public void SetMasterVolume(float volume) {
+        if (Mathf.Approximately(volume, Minimum_Volume_Level)) {
+            volume = -80f; //mute the master volume.
+        }
         masterMixer.SetFloat(MasterVolume, volume);
     }
     public void SetMusicVolume(float volume) {
+        if (Mathf.Approximately(volume, Minimum_Volume_Level)) {
+            volume = -80f; //mute the music mixer.
+        }
         masterMixer.SetFloat(MusicVolume, volume);
     }
     #endregion

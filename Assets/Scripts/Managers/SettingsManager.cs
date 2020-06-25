@@ -62,6 +62,12 @@ namespace Settings {
 
         #region Initialization
         private void Initialize() {
+            //set min-max volume levels.
+            masterVolumeSlider.minValue = AudioManager.Minimum_Volume_Level;
+            masterVolumeSlider.maxValue = AudioManager.Maximum_Volume_Level;
+            musicVolumeSlider.minValue = AudioManager.Minimum_Volume_Level;
+            musicVolumeSlider.maxValue = AudioManager.Maximum_Volume_Level;
+            
             LoadSettings();
             ConstructGraphicsQuality();
             ConstructResolutions();
