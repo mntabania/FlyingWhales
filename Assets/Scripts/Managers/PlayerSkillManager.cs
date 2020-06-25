@@ -18,7 +18,6 @@ public class PlayerSkillManager : MonoBehaviour {
 
     [SerializeField] private PlayerSkillDataDictionary _playerSkillDataDictionary;
 
-    public List<SPELL_TYPE> constantSkills = new List<SPELL_TYPE> { SPELL_TYPE.AFFLICT, SPELL_TYPE.BUILD_DEMONIC_STRUCTURE, SPELL_TYPE.UNSUMMON };
     public Dictionary<SPELL_TYPE, SpellData> allSpellsData { get; private set; }
     public Dictionary<SPELL_TYPE, PlayerAction> allPlayerActionsData { get; private set; }
     public Dictionary<SPELL_TYPE, SpellData> allAfflictionsData { get; private set; }
@@ -31,6 +30,10 @@ public class PlayerSkillManager : MonoBehaviour {
     public PlayerSkillDataDictionary playerSkillDataDictionary => _playerSkillDataDictionary;
     #endregion
 
+    [NonSerialized]
+    public List<SPELL_TYPE> constantSkills = new List<SPELL_TYPE> { SPELL_TYPE.AFFLICT, SPELL_TYPE.BUILD_DEMONIC_STRUCTURE, SPELL_TYPE.UNSUMMON };
+
+    [NonSerialized]
     public SPELL_TYPE[] allSpells = { SPELL_TYPE.METEOR
             , SPELL_TYPE.TORNADO, SPELL_TYPE.RAVENOUS_SPIRIT, SPELL_TYPE.FEEBLE_SPIRIT, SPELL_TYPE.FORLORN_SPIRIT
             , SPELL_TYPE.LIGHTNING, SPELL_TYPE.POISON_CLOUD, SPELL_TYPE.EARTHQUAKE
@@ -41,6 +44,7 @@ public class PlayerSkillManager : MonoBehaviour {
             , SPELL_TYPE.ICETEROIDS, SPELL_TYPE.HEAT_WAVE, SPELL_TYPE.SPLASH_WATER, SPELL_TYPE.WALL
     };
 
+    [NonSerialized]
     public SPELL_TYPE[] allPlayerActions = { SPELL_TYPE.ZAP, SPELL_TYPE.RAISE_DEAD, SPELL_TYPE.DESTROY, SPELL_TYPE.IGNITE, SPELL_TYPE.POISON
             , SPELL_TYPE.TORTURE, SPELL_TYPE.SUMMON_MINION, SPELL_TYPE.STOP, SPELL_TYPE.SEIZE_OBJECT, SPELL_TYPE.SEIZE_CHARACTER, SPELL_TYPE.SEIZE_MONSTER
             /*, SPELL_TYPE.RETURN_TO_PORTAL*/, SPELL_TYPE.DEFEND, SPELL_TYPE.HARASS, SPELL_TYPE.INVADE, SPELL_TYPE.LEARN_SPELL/*, SPELL_TYPE.CHANGE_COMBAT_MODE*/
@@ -50,6 +54,7 @@ public class PlayerSkillManager : MonoBehaviour {
             , SPELL_TYPE.BRAINWASH, SPELL_TYPE.UNSUMMON,
     };
 
+    [NonSerialized]
     public SPELL_TYPE[] allAfflictions = { SPELL_TYPE.CANNIBALISM
             , SPELL_TYPE.LYCANTHROPY, SPELL_TYPE.VAMPIRISM, SPELL_TYPE.KLEPTOMANIA
             , SPELL_TYPE.UNFAITHFULNESS, SPELL_TYPE.CURSED_OBJECT, SPELL_TYPE.ALCOHOLIC
@@ -57,14 +62,18 @@ public class PlayerSkillManager : MonoBehaviour {
             , SPELL_TYPE.PESTILENCE, SPELL_TYPE.PSYCHOPATHY, SPELL_TYPE.COWARDICE, SPELL_TYPE.PYROPHOBIA
             , SPELL_TYPE.NARCOLEPSY, SPELL_TYPE.HOTHEADED, SPELL_TYPE.LAZINESS, SPELL_TYPE.MUSIC_HATER, SPELL_TYPE.GLUTTONY
     };
+
+    [NonSerialized]
     public SPELL_TYPE[] allDemonicStructureSkills = { SPELL_TYPE.MEDDLER, SPELL_TYPE.EYE, SPELL_TYPE.CRYPT,
         SPELL_TYPE.KENNEL, SPELL_TYPE.OSTRACIZER, SPELL_TYPE.TORTURE_CHAMBERS, SPELL_TYPE.DEMONIC_PRISON, SPELL_TYPE.DEFILER
     };
 
+    [NonSerialized]
     public SPELL_TYPE[] allMinionPlayerSkills = { SPELL_TYPE.DEMON_WRATH, SPELL_TYPE.DEMON_PRIDE, SPELL_TYPE.DEMON_LUST
         , SPELL_TYPE.DEMON_GLUTTONY, SPELL_TYPE.DEMON_SLOTH, SPELL_TYPE.DEMON_ENVY, SPELL_TYPE.DEMON_GREED,
     };
 
+    [NonSerialized]
     public SPELL_TYPE[] allSummonPlayerSkills = { SPELL_TYPE.SKELETON_MARAUDER, SPELL_TYPE.WOLF, SPELL_TYPE.GOLEM, SPELL_TYPE.INCUBUS, SPELL_TYPE.SUCCUBUS, SPELL_TYPE.FIRE_ELEMENTAL, SPELL_TYPE.KOBOLD, SPELL_TYPE.GHOST,
     SPELL_TYPE.ABOMINATION, SPELL_TYPE.MIMIC, SPELL_TYPE.PIG, SPELL_TYPE.CHICKEN, SPELL_TYPE.SHEEP, SPELL_TYPE.SLUDGE,
     SPELL_TYPE.WATER_NYMPH, SPELL_TYPE.WIND_NYMPH, SPELL_TYPE.ICE_NYMPH,
@@ -113,6 +122,14 @@ public class PlayerSkillManager : MonoBehaviour {
     }
     private void ConstructAllPlayerActionsData() {
         allPlayerActionsData = new Dictionary<SPELL_TYPE, PlayerAction>();
+        //SPELL_TYPE[] allPlayerActions = { SPELL_TYPE.ZAP, SPELL_TYPE.RAISE_DEAD, SPELL_TYPE.DESTROY, SPELL_TYPE.IGNITE, SPELL_TYPE.POISON
+        //    , SPELL_TYPE.TORTURE, SPELL_TYPE.SUMMON_MINION, SPELL_TYPE.STOP, SPELL_TYPE.SEIZE_OBJECT, SPELL_TYPE.SEIZE_CHARACTER, SPELL_TYPE.SEIZE_MONSTER
+        //    /*, SPELL_TYPE.RETURN_TO_PORTAL*/, SPELL_TYPE.DEFEND, SPELL_TYPE.HARASS, SPELL_TYPE.INVADE, SPELL_TYPE.LEARN_SPELL/*, SPELL_TYPE.CHANGE_COMBAT_MODE*/
+        //    , SPELL_TYPE.BUILD_DEMONIC_STRUCTURE, SPELL_TYPE.AFFLICT, SPELL_TYPE.ACTIVATE_TILE_OBJECT, SPELL_TYPE.BREED_MONSTER
+        //    /*, SPELL_TYPE.END_RAID, SPELL_TYPE.END_HARASS, SPELL_TYPE.END_INVADE*/, SPELL_TYPE.INTERFERE, SPELL_TYPE.PLANT_GERM
+        //    , SPELL_TYPE.AGITATE, SPELL_TYPE.KNOCKOUT, SPELL_TYPE.KILL, SPELL_TYPE.HEAL, SPELL_TYPE.ABDUCT, SPELL_TYPE.ANIMATE, SPELL_TYPE.EMPOWER
+        //    , SPELL_TYPE.BRAINWASH, SPELL_TYPE.UNSUMMON,
+        //};
         for (int i = 0; i < allPlayerActions.Length; i++) {
             SPELL_TYPE spellType = allPlayerActions[i];
             if (spellType != SPELL_TYPE.NONE) {
@@ -121,9 +138,6 @@ public class PlayerSkillManager : MonoBehaviour {
 
                 PlayerAction playerAction = System.Activator.CreateInstance(System.Type.GetType(typeName) ??
                    throw new Exception($"Problem with creating spell data for {typeName}")) as PlayerAction;
-                if(spellType == SPELL_TYPE.UNSUMMON) {
-                    Debug.Log("unsummon");
-                }
                 allPlayerActionsData.Add(spellType, playerAction);
                 allPlayerSkillsData.Add(spellType, playerAction);
             }
@@ -263,6 +277,9 @@ public class PlayerSkillManager : MonoBehaviour {
         selectedArchetype = archetype;
     }
     public PlayerSkillLoadout GetSelectedLoadout() {
+        if(selectedArchetype == PLAYER_ARCHETYPE.Normal) {
+            selectedArchetype = PLAYER_ARCHETYPE.Ravager;
+        }
         return allSkillLoadouts[selectedArchetype];
     }
     #endregion

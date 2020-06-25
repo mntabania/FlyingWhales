@@ -17,6 +17,9 @@ public class UnsummonData : PlayerAction {
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         if(targetPOI is Character character && character.minion != null) {
             character.minion.Death();
+            if (UIManager.Instance.monsterInfoUI.isShowing && UIManager.Instance.monsterInfoUI.activeMonster == character) {
+                UIManager.Instance.monsterInfoUI.CloseMenu();
+            }
         }
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
