@@ -564,10 +564,7 @@ public class CombatState : CharacterState {
         currentClosestHostile = newClosestHostile;
         //StopPursueTimer(); //stop pursue timer, any time target changes. This is so that pursue timer is reset when target changes
         if (currentClosestHostile != null && previousClosestHostile != currentClosestHostile) {
-            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "new_combat_target");
-            log.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            log.AddToFillers(currentClosestHostile, currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            stateComponent.character.logComponent.RegisterLog(log, null, false);
+            CreateNewCombatTargetLog();
         }
     }
     private void SetClosestHostile() {
@@ -577,10 +574,7 @@ public class CombatState : CharacterState {
         currentClosestHostile = newClosestHostile;
         //StopPursueTimer(); //stop pursue timer, any time target changes. This is so that pursue timer is reset when target changes
         if (currentClosestHostile != null && previousClosestHostile != currentClosestHostile) {
-            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "new_combat_target");
-            log.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            log.AddToFillers(currentClosestHostile, currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            stateComponent.character.logComponent.RegisterLog(log, null, false);
+            CreateNewCombatTargetLog();
         }
     }
     private void SetClosestHostile(IPointOfInterest poi) {
@@ -589,11 +583,48 @@ public class CombatState : CharacterState {
         currentClosestHostile = poi;
         //StopPursueTimer(); //stop pursue timer, any time target changes. This is so that pursue timer is reset when target changes
         if (currentClosestHostile != null && previousClosestHostile != currentClosestHostile) {
-            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "new_combat_target");
-            log.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            log.AddToFillers(currentClosestHostile, currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            stateComponent.character.logComponent.RegisterLog(log, null, false);
+            CreateNewCombatTargetLog();
         }
+    }
+    private void CreateNewCombatTargetLog() {
+        CombatData combatData = stateComponent.character.combatComponent.GetCombatData(currentClosestHostile);
+        Log log = null;
+        if (combatData != null) {
+            log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "new_combat_target_with_reason");
+            string combatReason = combatData.reasonForCombat;
+            if (combatReason == CombatManager.Action) {
+                switch (combatData.connectedAction.associatedJobType) {
+                    case JOB_TYPE.RESTRAIN:
+                        combatReason = "Restrain";
+                        break;
+                    case JOB_TYPE.PRODUCE_FOOD:
+                        combatReason = "Butcher";
+                        break;
+                    case JOB_TYPE.APPREHEND:
+                        combatReason = "Apprehend";
+                        break;
+                    case JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM:
+                        combatReason = "Ritual Killing";
+                        break;
+                    case JOB_TYPE.BERSERK_ATTACK:
+                        combatReason = "Berserked";
+                        break;
+                }
+            }
+            if (LocalizationManager.Instance.HasLocalizedValue("Character", "NonIntel", combatReason)) {
+                Log reasonLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", combatReason);
+                log.AddToFillers(null, UtilityScripts.Utilities.LogDontReplace(reasonLog), LOG_IDENTIFIER.APPEND);    
+            }
+            else {
+                //use default log instead, because no text for combat reason was provided. This is to prevent text with %125%.
+                log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "new_combat_target");
+            }
+        } else {
+            log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "new_combat_target");
+        }
+        log.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddToFillers(currentClosestHostile, currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        stateComponent.character.logComponent.RegisterLog(log, null, false);
     }
     private float timeElapsed;
     public void LateUpdate() {

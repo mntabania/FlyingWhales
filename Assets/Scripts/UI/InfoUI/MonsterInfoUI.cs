@@ -32,6 +32,8 @@ public class MonsterInfoUI : InfoUIBase {
     [SerializeField] private TextMeshProUGUI hpLbl;
     [SerializeField] private TextMeshProUGUI attackLbl;
     [SerializeField] private TextMeshProUGUI speedLbl;
+    [SerializeField] private TextMeshProUGUI raceLbl;
+    [SerializeField] private TextMeshProUGUI elementLbl;
 
     [Space(10)]
     [Header("Traits")]
@@ -170,6 +172,8 @@ public class MonsterInfoUI : InfoUIBase {
         hpLbl.text = $"{_activeMonster.currentHP.ToString()}/{_activeMonster.maxHP.ToString()}";
         attackLbl.text = $"{_activeMonster.combatComponent.attack.ToString()}";
         speedLbl.text = $"{_activeMonster.combatComponent.attackSpeed / 1000f}s";
+        raceLbl.text = $"{UtilityScripts.GameUtilities.GetNormalizedSingularRace(_activeMonster.race)}";
+        elementLbl.text = $"{_activeMonster.combatComponent.elementalDamage.type.ToString()}";
         //if(characterPortrait.character != null) {
         //    characterPortrait.UpdateLvl();
         //}

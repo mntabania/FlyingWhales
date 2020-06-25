@@ -10,7 +10,7 @@ using UnityEngine.Events;
 public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler{
 
     [SerializeField] private LogItem logItem;
-	[SerializeField] private RuinarchText text;
+	[SerializeField] private TextMeshProUGUI text;
     [SerializeField] private bool allowClickAction = true;
     [SerializeField] private EventLabelHoverAction hoverAction;
     [SerializeField] private UnityEvent hoverOutAction;
@@ -29,7 +29,7 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
     private void Awake() {
         objectDictionary = new Dictionary<string, object>();
         if (text == null) {
-            text = gameObject.GetComponent<RuinarchText>();
+            text = gameObject.GetComponent<TextMeshProUGUI>();
         }
     }
     void Update() {

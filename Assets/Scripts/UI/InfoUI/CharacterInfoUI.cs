@@ -40,6 +40,8 @@ public class CharacterInfoUI : InfoUIBase {
     [SerializeField] private TextMeshProUGUI hpLbl;
     [SerializeField] private TextMeshProUGUI attackLbl;
     [SerializeField] private TextMeshProUGUI speedLbl;
+    [SerializeField] private TextMeshProUGUI raceLbl;
+    [SerializeField] private TextMeshProUGUI elementLbl;
 
     [Space(10)] [Header("Traits")]
     [SerializeField] private TextMeshProUGUI statusTraitsLbl;
@@ -249,6 +251,8 @@ public class CharacterInfoUI : InfoUIBase {
         hpLbl.text = $"{_activeCharacter.currentHP.ToString()}/{_activeCharacter.maxHP.ToString()}";
         attackLbl.text = $"{_activeCharacter.combatComponent.attack.ToString()}";
         speedLbl.text =  $"{_activeCharacter.combatComponent.attackSpeed / 1000f}s";
+        raceLbl.text = $"{UtilityScripts.GameUtilities.GetNormalizedSingularRace(_activeCharacter.race)}";
+        elementLbl.text = $"{_activeCharacter.combatComponent.elementalDamage.type.ToString()}";
         //if(characterPortrait.character != null) {
         //    characterPortrait.UpdateLvl();
         //}
