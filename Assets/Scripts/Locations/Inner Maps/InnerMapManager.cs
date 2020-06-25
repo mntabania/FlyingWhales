@@ -309,6 +309,27 @@ namespace Inner_Maps {
         public bool IsShowingInnerMap(Region location) {
             return location != null && isAnInnerMapShowing && location.innerMap == currentlyShowingMap;
         }
+        public List<Vector3> GetTrimmedPath(Character character) {
+            List<Vector3> points = new List<Vector3>(character.marker.pathfindingAI.currentPath.vectorPath);
+            int indexAt = 0; //the index that the character is at.
+            float nearestDistance = 9999f;
+            //refine the current path to remove points that the character has passed.
+            //to do that, get the point in the list that the character is nearest to, then remove all other points before that point
+            for (int i = 0; i < points.Count; i++) {
+                Vector3 currPoint = points[i];
+                float distance = Vector3.Distance(character.marker.transform.position, currPoint);
+                if (distance < nearestDistance) {
+                    indexAt = i;
+                    nearestDistance = distance;
+                }
+            }
+            if (points.Count > 0) {
+                for (int i = 0; i <= indexAt; i++) {
+                    points.RemoveAt(0);
+                }
+            }
+            return points;
+        }
         #endregion
 
         #region UI

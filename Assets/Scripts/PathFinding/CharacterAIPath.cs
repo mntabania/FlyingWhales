@@ -59,11 +59,11 @@ public class CharacterAIPath : AILerp {
                 $"{marker.character.name} path request returned a path with errors! Arrival action is: {marker.arrivalAction?.Method.Name}" ??
                 $"NoneDestination is {destination}");
         }
+        currentPath = newPath;
         if (newPath is FleeMultiplePath) {
-            currentPath = newPath;
             marker.OnFleePathComputed(newPath);
         } else {
-            currentPath = newPath as CustomABPath;
+            // currentPath = newPath as CustomABPath;
             if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == marker.character && currentPath.traversalProvider != null) { //&& marker.terrifyingCharacters.Count > 0
                 for (int i = 0; i < currentPath.path.Count; i++) {
                     Vector3 nodePos = (Vector3)currentPath.path[i].position;

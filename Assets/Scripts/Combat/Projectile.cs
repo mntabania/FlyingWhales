@@ -5,6 +5,7 @@ using DG.Tweening;
 using EZObjectPools;
 using Inner_Maps;
 using UnityEngine;
+using Random = System.Random;
 
 public class Projectile : PooledObject {
     
@@ -62,8 +63,17 @@ public class Projectile : PooledObject {
         }
         // Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
         collisionParticleCallback.SetAction(DestroyProjectile); //when the collision particles have successfully stopped. Destroy this object.
-        
-        tween = transform.DOMove(target.position, 25f).SetSpeedBased(true).SetEase(Ease.Linear).SetAutoKill(true);
+
+        Vector2 targetPoint = target.position;
+        if (targetObject is Character character && character.marker.isMoving 
+            && character.marker.pathfindingAI.currentPath != null) {
+            List<Vector3> trimmedPath = InnerMapManager.Instance.GetTrimmedPath(character);
+            if (trimmedPath.Count > 0) {
+                targetPoint = trimmedPath.Count > 1 ? trimmedPath[1] : trimmedPath[0];    
+            }
+        }
+
+        tween = transform.DOMove(targetPoint, 25f).SetSpeedBased(true).SetEase(Ease.Linear).SetAutoKill(true);
         _lineRenderer.enabled = true;
     }
 
