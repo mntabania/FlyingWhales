@@ -1942,6 +1942,9 @@ public static class Extensions {
     public static int GetJobTypePriority(this JOB_TYPE jobType) {
         int priority = 0;
         switch (jobType) {
+            case JOB_TYPE.DIG_THROUGH:
+                priority = 1300;
+                break;
             case JOB_TYPE.FLEE_TO_HOME:
                 priority = 1200;
                 break;
@@ -2074,7 +2077,6 @@ public static class Extensions {
             case JOB_TYPE.PATROL:
                 priority = 450;
                 break;
-            case JOB_TYPE.DIG_THROUGH:
             case JOB_TYPE.MINE:
             case JOB_TYPE.TEND_FARM:
                 priority = 440;

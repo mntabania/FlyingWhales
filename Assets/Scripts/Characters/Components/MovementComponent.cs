@@ -1,6 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using Pathfinding;
+using Inner_Maps;
+using UnityEngine.Assertions;
 
 public class MovementComponent {
     public Character owner { get; private set; }
@@ -13,6 +17,8 @@ public class MovementComponent {
     public float walkSpeedModifier { get; private set; }
     public float runSpeedModifier { get; private set; }
     public bool hasMovedOnCorruption { get; private set; }
+    public bool enableDigging { get; private set; }
+    public ABPath currentDigPath { get; private set; }
 
     #region getters
     public float walkSpeed => owner.raceSetting.walkSpeed + (owner.raceSetting.walkSpeed * walkSpeedModifier);
@@ -117,4 +123,84 @@ public class MovementComponent {
     public void SetHasMovedOnCorruption(bool state) {
         hasMovedOnCorruption = state;
     }
+
+    #region Pathfinding
+    public bool HasPathTo(LocationGridTile toTile) {
+        LocationGridTile fromTile = owner.gridTileLocation;
+        if (!enableDigging) {
+            return PathfindingManager.Instance.HasPath(fromTile, toTile);
+        } else {
+            if (fromTile == null || toTile == null) { return false; }
+            if (fromTile == toTile) { return true; }
+
+            //If digging is enabled, always return true, because the digging will handle the blocked path
+            return true;
+        }
+    }
+    public bool HasPathToEvenIfDiffRegion(LocationGridTile toTile) {
+        LocationGridTile fromTile = owner.gridTileLocation;
+        if (!enableDigging) {
+            return PathfindingManager.Instance.HasPathEvenDiffRegion(fromTile, toTile);
+        } else {
+            if (fromTile == null || toTile == null) { return false; }
+            if (fromTile == toTile) { return true; }
+
+            //If digging is enabled, always return true, because the digging will handle the blocked path
+            return true;
+        }
+    }
+    #endregion
+
+    #region Dig
+    public void SetEnableDigging(bool state) {
+        enableDigging = state;
+    }
+    public void DigOnReachEndPath(Path path) {
+        Vector3 lastPositionInPath = path.vectorPath.Last();
+        //no path to target tile
+        //create job to dig wall
+        LocationGridTile targetTile;
+
+        LocationGridTile tile = owner.currentRegion.innerMap.GetTile(lastPositionInPath);
+        if (tile.objHere is BlockWall) {
+            targetTile = tile;
+        } else {
+            Vector2 direction = lastPositionInPath - tile.centeredWorldLocation; //character.behaviourComponent.currentAbductTarget.worldPosition - tile.centeredWorldLocation;
+            if (direction.y > 0) {
+                //north
+                targetTile = tile.GetNeighbourAtDirection(GridNeighbourDirection.North);
+            } else if (direction.y < 0) {
+                //south
+                targetTile = tile.GetNeighbourAtDirection(GridNeighbourDirection.South);
+            } else if (direction.x > 0) {
+                //east
+                targetTile = tile.GetNeighbourAtDirection(GridNeighbourDirection.East);
+            } else {
+                //west
+                targetTile = tile.GetNeighbourAtDirection(GridNeighbourDirection.West);
+            }
+            if (targetTile != null && targetTile.objHere == null) {
+                for (int i = 0; i < targetTile.neighbourList.Count; i++) {
+                    LocationGridTile neighbour = targetTile.neighbourList[i];
+                    if (neighbour.objHere is BlockWall) {
+                        targetTile = neighbour;
+                        break;
+                    }
+                }
+            }
+        }
+
+
+        //Debug.Log($"No Path found for {owner.name} towards {owner.behaviourComponent.currentAbductTarget?.name ?? "null"}! Last position in path is {lastPositionInPath.ToString()}. Wall to dig is at {targetTile}");
+        //Assert.IsNotNull(targetTile.objHere, $"Object at {targetTile} is null, but {owner.name} wants to dig it.");
+
+        if(targetTile != null) {
+            if (!owner.jobQueue.HasJob(JOB_TYPE.DIG_THROUGH)) {
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DIG_THROUGH, INTERACTION_TYPE.DIG, targetTile.objHere, owner);
+                owner.jobQueue.AddJobInQueue(job);
+            }
+        }
+        // character.behaviourComponent.SetDigForAbductionPath(null); //so behaviour can be run again after job has been added
+    }
+    #endregion
 }

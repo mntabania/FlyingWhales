@@ -288,7 +288,7 @@ namespace Traits {
             }
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM, INTERACTION_TYPE.RITUAL_KILLING, targetVictim, character);
             if (character.homeStructure?.residents == null || character.homeStructure.residents.Count > 1) {
-                LocationGridTile outsideSettlementTile = character.currentRegion.GetRandomOutsideSettlementLocationGridTileWithPathTo(character.gridTileLocation);
+                LocationGridTile outsideSettlementTile = character.currentRegion.GetRandomOutsideSettlementLocationGridTileWithPathTo(character);
                 if(outsideSettlementTile != null) {
                     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { outsideSettlementTile.structure, outsideSettlementTile });
                 } else if (character.homeStructure != null) {
@@ -311,7 +311,7 @@ namespace Traits {
             }
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM, INTERACTION_TYPE.RITUAL_KILLING, targetVictim, character);
             if (character.homeStructure?.residents == null || character.homeStructure.residents.Count > 1) {
-                LocationGridTile outsideSettlementTile = character.currentRegion.GetRandomOutsideSettlementLocationGridTileWithPathTo(character.gridTileLocation);
+                LocationGridTile outsideSettlementTile = character.currentRegion.GetRandomOutsideSettlementLocationGridTileWithPathTo(character);
                 if(outsideSettlementTile != null) {
                     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { outsideSettlementTile.structure, outsideSettlementTile });
                 } else if (character.homeStructure != null) {

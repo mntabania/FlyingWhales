@@ -78,7 +78,7 @@ public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
                 log += "\n-Is not in the target demonic structure";
                 log += "\n-Roam there";
                 List<LocationGridTile> tileChoices = character.behaviourComponent.attackDemonicStructureTarget.tiles
-                    .Where(x => PathfindingManager.Instance.HasPathEvenDiffRegion(character.gridTileLocation, x)).ToList();
+                    .Where(x => character.movementComponent.HasPathToEvenIfDiffRegion(x)).ToList();
                 LocationGridTile targetTile = CollectionUtilities.GetRandomElement(tileChoices);
                 character.jobComponent.TriggerAttackDemonicStructure(out producedJob, targetTile);
             }

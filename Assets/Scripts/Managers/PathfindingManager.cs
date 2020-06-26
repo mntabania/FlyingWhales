@@ -68,14 +68,14 @@ public class PathfindingManager : MonoBehaviour {
         AstarPath.active.UpdateGraphs(guo);
     }
     public bool HasPath(LocationGridTile fromTile, LocationGridTile toTile) {
-        if (fromTile == toTile) { return true; }
         if (fromTile == null || toTile == null) { return false; }
+        if (fromTile == toTile) { return true; }
         return PathUtilities.IsPathPossible(AstarPath.active.GetNearest(fromTile.centeredWorldLocation, NNConstraint.Default).node,
             AstarPath.active.GetNearest(toTile.centeredWorldLocation, NNConstraint.Default).node);
     }
     public bool HasPathEvenDiffRegion(LocationGridTile fromTile, LocationGridTile toTile) {
-        if (fromTile == toTile) { return true; }
         if (fromTile == null || toTile == null) { return false; }
+        if (fromTile == toTile) { return true; }
         if(fromTile.structure.location == toTile.structure.location) {
             return PathUtilities.IsPathPossible(AstarPath.active.GetNearest(fromTile.centeredWorldLocation, NNConstraint.Default).node,
                     AstarPath.active.GetNearest(toTile.centeredWorldLocation, NNConstraint.Default).node);

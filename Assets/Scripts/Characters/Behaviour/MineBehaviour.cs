@@ -33,7 +33,7 @@ public class MineBehaviour : CharacterBehaviourComponent {
             character.behaviourComponent.SetTargetMiningTile(targetTile);
         }
 
-        if (PathfindingManager.Instance.HasPath(character.gridTileLocation, character.behaviourComponent.targetMiningTile)) {
+        if (character.movementComponent.HasPathTo(character.behaviourComponent.targetMiningTile)) {
             character.behaviourComponent.SetCurrentMiningPath(null);
             Debug.Log($"Has Path for {character.name} towards {character.behaviourComponent.targetMiningTile}!");
             //create job to mine target tile.

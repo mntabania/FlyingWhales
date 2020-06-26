@@ -84,7 +84,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
     private float attackSpeedMeter { get; set; }
     private HexTile _previousHexTileLocation;
     private CharacterMarkerNameplate _nameplate;
-    
+    private LocationGridTile _destinationTile;
+
     public void SetCharacter(Character character) {
         base.Initialize(character);
         name = $"{character.name}'s Marker";
@@ -389,7 +390,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             ClearArrivalAction();
             action?.Invoke();
         } else {
-            SetDestination(destinationTile.centeredWorldLocation);
+            SetDestination(destinationTile.centeredWorldLocation, destinationTile);
             StartMovement();
         }
         
@@ -420,7 +421,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
                     if (targetPOI.gridTileLocation == null) {
                         throw new Exception($"{character.name} is trying to go to a {targetPOI.ToString()} but its tile location is null");
                     }
-                    SetDestination(targetPOI.gridTileLocation.centeredWorldLocation);
+                    SetDestination(targetPOI.gridTileLocation.centeredWorldLocation, targetPOI.gridTileLocation);
                 }
                 break;
         }
@@ -438,27 +439,42 @@ public class CharacterMarker : MapObjectVisual<Character> {
             StartMovement();
         }
     }
-    public void GoTo(Vector3 destination, Action arrivalAction = null, STRUCTURE_TYPE[] notAllowedStructures = null) {
-        pathfindingAI.ClearAllCurrentPathData();
-        pathfindingAI.SetNotAllowedStructures(notAllowedStructures);
-        this.destinationTile = destinationTile;
-        this.arrivalAction = arrivalAction;
-        SetTargetTransform(null);
-        SetDestination(destination);
-        StartMovement();
-
-    }
+    //public void GoTo(Vector3 destination, Action arrivalAction = null, STRUCTURE_TYPE[] notAllowedStructures = null) {
+    //    pathfindingAI.ClearAllCurrentPathData();
+    //    pathfindingAI.SetNotAllowedStructures(notAllowedStructures);
+    //    this.destinationTile = destinationTile;
+    //    this.arrivalAction = arrivalAction;
+    //    SetTargetTransform(null);
+    //    SetDestination(destination);
+    //    StartMovement();
+    //}
     public void ArrivedAtTarget() {
         if (character.isInCombat) {
             CombatState combatState = character.stateComponent.currentState as CombatState;
             if (combatState.isAttacking){
-                if(combatState.currentClosestHostile != null && !PathfindingManager.Instance.HasPathEvenDiffRegion(character.gridTileLocation, combatState.currentClosestHostile.gridTileLocation)) {
+                if(combatState.currentClosestHostile != null && !character.movementComponent.HasPathToEvenIfDiffRegion(combatState.currentClosestHostile.gridTileLocation)) {
                     character.combatComponent.RemoveHostileInRange(combatState.currentClosestHostile);
                 }
                 return;
             }
         }
         StopMovement();
+
+        if (character.movementComponent.enableDigging) {
+            LocationGridTile destinationTile = null;
+            if (targetPOI != null) {
+                destinationTile = targetPOI.gridTileLocation;
+            } else if (this.destinationTile != null) {
+                destinationTile = this.destinationTile;
+            }
+            if (character.gridTileLocation != null && character.gridTileLocation.GetDistanceTo(destinationTile) > 1f) {
+                //When path is completed and the distance between the actor and the target is still more than 1 tile, we need to assume the the path is blocked
+                character.movementComponent.DigOnReachEndPath(pathfindingAI.currentPath);
+                targetPOI = null;
+                return;
+            }
+        }
+
         Action action = arrivalAction;
         //set arrival action to null, because some arrival actions set it
         ClearArrivalAction();
@@ -526,7 +542,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
         visualsParent.rotation = target;
     }
-    public void SetDestination(Vector3 destination) {
+    public void SetDestination(Vector3 destination, LocationGridTile destinationTile) {
+        this.destinationTile = destinationTile;
         pathfindingAI.destination = destination;
         pathfindingAI.canSearch = true;
     }

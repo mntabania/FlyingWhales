@@ -175,7 +175,7 @@ public class CharacterAIPath : AILerp {
         path = null; //located at AILerp base class. Reference https://forum.arongranberg.com/t/how-to-stop-a-path-prematurely/1321/2
         _hasReachedTarget = false;
         marker.SetTargetTransform(null);
-        marker.SetDestination(Vector3.positiveInfinity);
+        marker.SetDestination(Vector3.positiveInfinity, null);
         marker.ClearArrivalAction();
         interpolator.SetPath(null);
         marker.StopMovement();

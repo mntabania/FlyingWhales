@@ -1844,7 +1844,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public virtual bool IsValidCombatTargetFor(IPointOfInterest source) {
         return isDead == false /*&& (canPerform || canMove)*/ && marker != null 
-                && gridTileLocation != null && source.gridTileLocation != null && PathfindingManager.Instance.HasPathEvenDiffRegion(source.gridTileLocation, gridTileLocation); //traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) == false
+                && gridTileLocation != null && source.gridTileLocation != null && (source is Character character && character.movementComponent.HasPathToEvenIfDiffRegion(gridTileLocation)); //traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) == false
     }
     public void ExecutePendingActionsAfterMultithread() {
         for (int i = 0; i < pendingActionsAfterMultiThread.Count; i++) {
@@ -3602,7 +3602,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     //if this character is not available, check if the current action type can be advertised even when the character is inactive.
                     continue; //skip
                 }
-                if (PathfindingManager.Instance.HasPathEvenDiffRegion(actor.gridTileLocation, gridTileLocation) && RaceManager.Instance.CanCharacterDoGoapAction(actor, currType)) {
+                if (actor.movementComponent.HasPathToEvenIfDiffRegion(gridTileLocation) && RaceManager.Instance.CanCharacterDoGoapAction(actor, currType)) {
                     object[] data = null;
                     if (otherData != null) {
                         if (otherData.ContainsKey(currType)) {
@@ -3647,7 +3647,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             && advertisedActions != null && advertisedActions.Contains(action.goapType)
             && actor.trapStructure.SatisfiesForcedStructure(this)
             && RaceManager.Instance.CanCharacterDoGoapAction(actor, action.goapType)
-            && (action.canBePerformedEvenIfPathImpossible || PathfindingManager.Instance.HasPathEvenDiffRegion(actor.gridTileLocation, gridTileLocation))) {
+            && (action.canBePerformedEvenIfPathImpossible || actor.movementComponent.HasPathToEvenIfDiffRegion(gridTileLocation))) {
             object[] data = null;
             if (otherData != null) {
                 if (otherData.ContainsKey(action.goapType)) {
@@ -5237,7 +5237,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //while (chosenTile == null) {
             HexTile chosenTerritory = territorries[UnityEngine.Random.Range(0, territorries.Count)];
             LocationGridTile chosenGridTile = chosenTerritory.locationGridTiles[UnityEngine.Random.Range(0, chosenTerritory.locationGridTiles.Count)];
-            if (PathfindingManager.Instance.HasPathEvenDiffRegion(gridTileLocation, chosenGridTile)) {
+            if (movementComponent.HasPathToEvenIfDiffRegion(chosenGridTile)) {
                 chosenTile = chosenGridTile;
             }
             //}

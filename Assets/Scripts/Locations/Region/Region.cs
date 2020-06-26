@@ -1043,14 +1043,14 @@ public class Region {
     #endregion
 
     #region Location Grid Tiles
-    public LocationGridTile GetRandomOutsideSettlementLocationGridTileWithPathTo(LocationGridTile fromTile) {
+    public LocationGridTile GetRandomOutsideSettlementLocationGridTileWithPathTo(Character character) {
         LocationGridTile chosenTile = null;
         //while(chosenTile == null) {
             for (int i = 0; i < shuffledNonMountainWaterTiles.Count; i++) {
                 if (shuffledNonMountainWaterTiles[i].settlementOnTile == null) {
                     HexTile hex = shuffledNonMountainWaterTiles[i];
                     LocationGridTile potentialTile = hex.locationGridTiles[UnityEngine.Random.Range(0, hex.locationGridTiles.Count)];
-                    if(PathfindingManager.Instance.HasPathEvenDiffRegion(fromTile, potentialTile)) {
+                    if(character.movementComponent.HasPathToEvenIfDiffRegion(potentialTile)) {
                         chosenTile = potentialTile;
                         break;
                     }

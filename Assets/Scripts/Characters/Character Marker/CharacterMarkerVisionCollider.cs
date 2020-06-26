@@ -116,7 +116,7 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
         if (parentMarker && poi.gridTileLocation != null && 
             poi.gridTileLocation.structure == parentMarker.character.gridTileLocation.structure || 
             (parentMarker.character.stateComponent.currentState != null && parentMarker.character.stateComponent.currentState is CombatState && 
-             PathfindingManager.Instance.HasPath(poi.gridTileLocation, parentMarker.character.gridTileLocation))|| 
+            parentMarker.character.movementComponent.HasPathTo(poi.gridTileLocation))|| 
             (poi.mapObjectVisual.visionTrigger as POIVisionTrigger).IgnoresStructureDifference()) {
             //if it is, just follow the normal procedure when a poi becomes in range
             NormalEnterHandling(poi);

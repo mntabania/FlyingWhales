@@ -35,7 +35,7 @@ public class BehaviourComponent {
     public ABPath currentMiningPath { get; private set; }
     
     //Abduct
-    public ABPath currentAbductDigPath { get; private set; }
+    //public ABPath currentAbductDigPath { get; private set; }
     public Character currentAbductTarget { get; private set; }
     
     private COMBAT_MODE combatModeBeforeHarassRaidInvade;
@@ -285,19 +285,16 @@ public class BehaviourComponent {
         } else if (job is GoapPlanJob goapPlanJob) {
             if (goapPlanJob.jobType == JOB_TYPE.IDLE_RETURN_HOME) {
                 if (character.homeStructure != null) {
-                    return PathfindingManager.Instance.HasPathEvenDiffRegion(character.gridTileLocation,
-                        character.homeStructure.GetRandomUnoccupiedTile());
+                    return character.movementComponent.HasPathToEvenIfDiffRegion(character.homeStructure.GetRandomUnoccupiedTile());
                 } else if (character.territorries != null && character.territorries.Count > 0) {
                     HexTile randomTerritory = CollectionUtilities.GetRandomElement(character.territorries);
-                    return PathfindingManager.Instance.HasPathEvenDiffRegion(character.gridTileLocation,
-                        CollectionUtilities.GetRandomElement(randomTerritory.locationGridTiles));
+                    return character.movementComponent.HasPathToEvenIfDiffRegion(CollectionUtilities.GetRandomElement(randomTerritory.locationGridTiles));
                 }
             }
             if (character == goapPlanJob.targetPOI || goapPlanJob.targetPOI == null) {
                 return true;
             }
-            return PathfindingManager.Instance.HasPathEvenDiffRegion(character.gridTileLocation,
-                goapPlanJob.targetPOI.gridTileLocation);
+            return character.movementComponent.HasPathToEvenIfDiffRegion(goapPlanJob.targetPOI.gridTileLocation);
         }
         return false;
     }
@@ -442,9 +439,9 @@ public class BehaviourComponent {
     #endregion
     
     #region Abduction
-    public void SetDigForAbductionPath(ABPath path) {
-        currentAbductDigPath = path;
-    }
+    //public void SetDigForAbductionPath(ABPath path) {
+    //    currentAbductDigPath = path;
+    //}
     public void SetAbductionTarget(Character character) {
         currentAbductTarget = character;
     }

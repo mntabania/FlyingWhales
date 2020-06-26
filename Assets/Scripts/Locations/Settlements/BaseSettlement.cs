@@ -371,7 +371,7 @@ namespace Locations.Settlements {
                         return true;
                     }
                     LocationGridTile randomTile = CollectionUtilities.GetRandomElement(locationGridTilesInSettlement);
-                    if (PathfindingManager.Instance.HasPathEvenDiffRegion(character.gridTileLocation, randomTile) == false) {
+                    if (character.movementComponent.HasPathToEvenIfDiffRegion(randomTile) == false) {
                         //no path towards random unoccupied tile in settlement, return false
                         return false;
                     }

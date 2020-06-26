@@ -156,27 +156,23 @@ public class JobQueueItem {
         return originalOwner.ForceCancelJob(this);
     }
     public virtual void PushedBack(JobQueueItem jobThatPushedBack) {
-        if (cannotBePushedBack) {
-            //If job is cannot be pushed back and it is pushed back, cancel it instead
-            CancelJob(false);
-        } else {
-            string stopText = "Have something important to do";
-            if(assignedCharacter != null) {
-                if(jobThatPushedBack is CharacterStateJob stateJob && stateJob.targetState == CHARACTER_STATE.COMBAT && assignedCharacter.combatComponent.avoidInRange.Count > 0) {
-                    stopText = "Fled from something";
+        if(!cannotBePushedBack || jobThatPushedBack.jobType == JOB_TYPE.DIG_THROUGH) {
+            string stopText = string.Empty;
+            if(jobThatPushedBack.jobType != JOB_TYPE.DIG_THROUGH) {
+                stopText = "Have something important to do";
+                if (assignedCharacter != null) {
+                    if (jobThatPushedBack is CharacterStateJob stateJob && stateJob.targetState == CHARACTER_STATE.COMBAT && assignedCharacter.combatComponent.avoidInRange.Count > 0) {
+                        stopText = "Fled from something";
+                    }
                 }
             }
             // if (jobThatPushedBack.IsAnInterruptionJob()) {
             //     stopText = "Interrupted";
             // }
             assignedCharacter?.StopCurrentActionNode(false, stopText);
-            //if (originalOwner.ownerType != JOB_OWNER.CHARACTER) {
-            //    //NOTE! This is temporary only! All jobs, even npcSettlement jobs are just pushed back right now
-            //    //assignedCharacter.jobQueue.RemoveJobInQueue(this, false, "Have something important to do");
-            //    assignedCharacter.StopCurrentActionNode(false, stopText);
-            //} else {
-            //    assignedCharacter.StopCurrentActionNode(false, stopText);
-            //}
+        } else {
+            //If job is cannot be pushed back and it is pushed back, cancel it instead
+            CancelJob(false);
         }
     }
     public virtual void StopJobNotDrop() {

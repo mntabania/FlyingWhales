@@ -96,7 +96,7 @@ public class MinionCommandsUI : MonoBehaviour {
     private bool CanIssueCommand() {
         bool canIssueCommand = true;
         Character actor = UIManager.Instance.characterInfoUI.activeCharacter;
-        if(!PathfindingManager.Instance.HasPathEvenDiffRegion(actor.gridTileLocation, targetPOI.gridTileLocation)) {
+        if(!actor.movementComponent.HasPathToEvenIfDiffRegion(targetPOI.gridTileLocation)) {
             canIssueCommand = false;
             PlayerUI.Instance.ShowGeneralConfirmation("Instruction Error", "Cannot instruct minion. It has no path towards the target.");
         }

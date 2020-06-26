@@ -28,7 +28,7 @@ public class UndeadBehaviour : CharacterBehaviourComponent {
                         character.jobComponent.TriggerRoamAroundTile(out producedJob);
                     } else {
                         if (!undeadFactionLeader.isBeingSeized && undeadFactionLeader.marker && undeadFactionLeader.gridTileLocation != null && !undeadFactionLeader.isDead
-                            && character.gridTileLocation != null && PathfindingManager.Instance.HasPathEvenDiffRegion(character.gridTileLocation, undeadFactionLeader.gridTileLocation)) {
+                            && character.gridTileLocation != null && character.movementComponent.HasPathToEvenIfDiffRegion(undeadFactionLeader.gridTileLocation)) {
                             if (character.marker.inVisionCharacters.Contains(undeadFactionLeader)) {
                                 log += $"\n-Character can see faction leader, do nothing";
                                 producedJob = null;

@@ -320,7 +320,7 @@ public class Party {
         } else {
             //_icon.SetActionOnTargetReached(doneAction);
             LocationGridTile exitTile = owner.GetTargetTileToGoToRegion(targetLocation.coreTile.region);
-            if (PathfindingManager.Instance.HasPath(owner.gridTileLocation, exitTile)) {
+            if (owner.movementComponent.HasPathTo(exitTile)) {
                 //check first if character has path toward the exit tile.
                 owner.marker.GoTo(exitTile, () => MoveToAnotherLocation(targetLocation.coreTile.region, pathfindingMode, targetStructure, doneAction, actionOnStartOfMovement, targetPOI, targetTile));
                 return true;

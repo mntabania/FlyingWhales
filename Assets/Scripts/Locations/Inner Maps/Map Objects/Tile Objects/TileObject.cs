@@ -251,7 +251,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
                 if(isBeingCarriedBy != null) {
                     tileLocation = isBeingCarriedBy.gridTileLocation;
                 }
-                if (PathfindingManager.Instance.HasPathEvenDiffRegion(actor.gridTileLocation, tileLocation) && RaceManager.Instance.CanCharacterDoGoapAction(actor, currType)) {
+                if (actor.movementComponent.HasPathToEvenIfDiffRegion(tileLocation) && RaceManager.Instance.CanCharacterDoGoapAction(actor, currType)) {
                     object[] data = null;
                     if (otherData != null) {
                         if (otherData.ContainsKey(currType)) {
@@ -300,7 +300,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             if (isBeingCarriedBy != null) {
                 tileLocation = isBeingCarriedBy.gridTileLocation;
             }
-            if(action.canBePerformedEvenIfPathImpossible || PathfindingManager.Instance.HasPathEvenDiffRegion(actor.gridTileLocation, tileLocation)) {
+            if(action.canBePerformedEvenIfPathImpossible || actor.movementComponent.HasPathToEvenIfDiffRegion(tileLocation)) {
                 object[] data = null;
                 if (otherData != null) {
                     if (otherData.ContainsKey(action.goapType)) {
@@ -349,7 +349,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
     }
     public virtual bool IsValidCombatTargetFor(IPointOfInterest source) {
-        return gridTileLocation != null && source.gridTileLocation != null && PathfindingManager.Instance.HasPathEvenDiffRegion(source.gridTileLocation, gridTileLocation);
+        return gridTileLocation != null && source.gridTileLocation != null && (source is Character character && character.movementComponent.HasPathToEvenIfDiffRegion(gridTileLocation));
     }
     public virtual bool IsStillConsideredPartOfAwarenessByCharacter(Character character) {
         if(mapVisual == null) {

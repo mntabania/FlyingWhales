@@ -1516,7 +1516,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
                 HexTile hex = chosenRegion.GetRandomPlainHex();
                 if(hex != null) {
                     LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(hex.locationGridTiles);
-                    if (_owner.gridTileLocation != null && PathfindingManager.Instance.HasPathEvenDiffRegion(_owner.gridTileLocation, chosenTile)) {
+                    if (_owner.gridTileLocation != null && _owner.movementComponent.HasPathToEvenIfDiffRegion(chosenTile)) {
                         ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], _owner, _owner, new object[] { chosenTile }, 0);
                         GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
                         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.VISIT_DIFFERENT_REGION, INTERACTION_TYPE.ROAM, _owner, _owner);

@@ -87,12 +87,14 @@ public class CharacterStateJob : JobQueueItem {
         return base.ProcessJob();
     }
     public override void PushedBack(JobQueueItem jobThatPushedBack) {
-        if (cannotBePushedBack) {
+        if (!cannotBePushedBack || jobThatPushedBack.jobType == JOB_TYPE.DIG_THROUGH) {
+            if (assignedState != null) {
+                assignedState.PauseState();
+                //assignedCharacter.stateComponent.SetCurrentState(null);
+            }
+        } else {
             //If job is cannot be pushed back and it is pushed back, cancel it instead
             CancelJob(false);
-        } else if (assignedState != null){
-            assignedState.PauseState();
-            //assignedCharacter.stateComponent.SetCurrentState(null);
         }
     }
     public override void StopJobNotDrop() {

@@ -36,7 +36,7 @@ public class DesiresIsolationBehaviour : CharacterBehaviourComponent {
             if(!(character.jobTriggerComponent as CharacterJobTriggerComponent).CreateHideAtHomeJob()) {
                 log += $"{character.name} cannot hide at home because he does not have a home";
                 log += $"{character.name} will roam to a tile outside settlement";
-                LocationGridTile tileToGoTo = character.currentRegion.GetRandomOutsideSettlementLocationGridTileWithPathTo(character.gridTileLocation);
+                LocationGridTile tileToGoTo = character.currentRegion.GetRandomOutsideSettlementLocationGridTileWithPathTo(character);
                 character.jobComponent.TriggerRoamAroundTile(out producedJob, tileToGoTo);
             }
         }
