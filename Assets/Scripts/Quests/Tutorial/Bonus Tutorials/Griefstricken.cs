@@ -27,8 +27,8 @@ namespace Tutorial {
             base.MakeAvailable();
             TutorialManager.Instance.ActivateTutorialButDoNotShow(this);
             PlayerUI.Instance.ShowGeneralConfirmation("Griefstricken Characters", 
-                $"A {UtilityScripts.Utilities.VillagerIcon()}Villager is {UtilityScripts.Utilities.ColorizeAction("Griefstricken")}! " +
-                $"Griefstricken {UtilityScripts.Utilities.VillagerIcon()}Villagers may sometimes {UtilityScripts.Utilities.ColorizeAction("refuse to eat")}. " +
+                $"A Villager is {UtilityScripts.Utilities.ColorizeAction("Griefstricken")}! " +
+                $"Griefstricken Villagers may sometimes {UtilityScripts.Utilities.ColorizeAction("refuse to eat")}. " +
                 "A Tutorial Quest has been added to teach you how to figure out what happened.", 
                 onClickOK: () => TutorialManager.Instance.ShowTutorial(this)
             );

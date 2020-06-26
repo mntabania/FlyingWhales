@@ -10,6 +10,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.UI;
 using Debug = UnityEngine.Debug;
+using Random = System.Random;
 namespace UtilityScripts {
     public static class GameUtilities {
 
@@ -292,6 +293,26 @@ namespace UtilityScripts {
             result.x = a.x - b.x;
             result.y = a.y - b.y;
             return result;
+        }
+        /// <summary>
+        /// Roll a chance. This rolls from 0 - 100.
+        /// </summary>
+        /// <param name="chance">The chance for this to return true.</param>
+        /// <param name="log">The log string to append this roll to.</param>
+        /// <returns>Whether or not the given chance was met.</returns>
+        public static bool RollChance(int chance, ref string log) {
+            int roll = UnityEngine.Random.Range(0, 100);
+            log += $"\nRoll is {roll.ToString()}. Chance is {chance.ToString()}";
+            return roll < chance;
+        }
+        /// <summary>
+        /// Roll a chance. This rolls from 0 - 100.
+        /// </summary>
+        /// <param name="chance">The chance for this to return true.</param>
+        /// <returns>Whether or not the given chance was met.</returns>
+        public static bool RollChance(int chance) {
+            int roll = UnityEngine.Random.Range(0, 100);
+            return roll < chance;
         }
     }    
 }

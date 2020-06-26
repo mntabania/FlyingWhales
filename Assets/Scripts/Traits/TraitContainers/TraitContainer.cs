@@ -242,7 +242,6 @@ namespace Traits {
             return AddTraitRoot(addTo, trait, characterResponsible, gainedFromDoing, overrideDuration);
         }
         private bool AddTraitRoot(ITraitable addTo, Trait trait, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration) {
-            //TODO: Either move or totally remove validation from inside this container
             if (TraitValidator.CanAddTrait(addTo, trait, this) == false) {
                 return false;
             }

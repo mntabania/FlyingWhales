@@ -21,10 +21,10 @@ namespace Tutorial {
             UIManager.Instance.generalConfirmationWithVisual.ShowGeneralConfirmation("Counterattack!", 
                 "Your Threat Level has reached maximum and has triggered a counterattack. " +
                 "Several hostile villagers are on their way to clear out your corruption!\n\n" +
-                $"There are several ways to distract a {UtilityScripts.Utilities.VillagerIcon()}Villager from its task. " +
+                $"There are several ways to distract a Villager from its task. " +
                 "An Exhausted, Starving or Sulking villager will drop what it's doing to recover. " +
-                $"Status Effects that temporarily stop a {UtilityScripts.Utilities.VillagerIcon()}Villager from moving (ex: Zapped) " +
-                $"will also make it forget its current action. Killing a {UtilityScripts.Utilities.VillagerIcon()}Villager, of course, is a permanent distraction.", 
+                $"Status Effects that temporarily stop a Villager from moving (ex: Zapped) " +
+                $"will also make it forget its current action. Killing a Villager, of course, is a permanent distraction.", 
                 TutorialManager.Instance.counterattackPicture);
             CompleteQuest();
         }

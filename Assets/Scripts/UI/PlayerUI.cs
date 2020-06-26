@@ -571,7 +571,7 @@ public class PlayerUI : MonoBehaviour {
     public void OnHoverEnterThreat() {
         string text =
             "The amount of threat you've generated in this world. Once this reaches 100, characters will start attacking your structures.";
-        UIManager.Instance.ShowSmallInfo(text, threatHoverPos);
+        UIManager.Instance.ShowSmallInfo(text, threatHoverPos, "Threat");
     }
     public void OnHoverExitThreat() {
         UIManager.Instance.HideSmallInfo();

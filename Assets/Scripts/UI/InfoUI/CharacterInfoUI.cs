@@ -40,6 +40,8 @@ public class CharacterInfoUI : InfoUIBase {
     [SerializeField] private TextMeshProUGUI hpLbl;
     [SerializeField] private TextMeshProUGUI attackLbl;
     [SerializeField] private TextMeshProUGUI speedLbl;
+    [SerializeField] private TextMeshProUGUI raceLbl;
+    [SerializeField] private TextMeshProUGUI elementLbl;
 
     [Space(10)] [Header("Traits")]
     [SerializeField] private TextMeshProUGUI statusTraitsLbl;
@@ -249,6 +251,8 @@ public class CharacterInfoUI : InfoUIBase {
         hpLbl.text = $"{_activeCharacter.currentHP.ToString()}/{_activeCharacter.maxHP.ToString()}";
         attackLbl.text = $"{_activeCharacter.combatComponent.attack.ToString()}";
         speedLbl.text =  $"{_activeCharacter.combatComponent.attackSpeed / 1000f}s";
+        raceLbl.text = $"{UtilityScripts.GameUtilities.GetNormalizedSingularRace(_activeCharacter.race)}";
+        elementLbl.text = $"{_activeCharacter.combatComponent.elementalDamage.type.ToString()}";
         //if(characterPortrait.character != null) {
         //    characterPortrait.UpdateLvl();
         //}
@@ -786,7 +790,7 @@ public class CharacterInfoUI : InfoUIBase {
         moodSummary.text = summary;
     }
     public void ShowMoodTooltip() {
-        string summary = $"Represents the {UtilityScripts.Utilities.VillagerIcon()}Villager's overall state of mind. Lower a Villager's Mood to make him less effective and more volatile.\n\n" +
+        string summary = $"Represents the Villager's overall state of mind. Lower a Villager's Mood to make him less effective and more volatile.\n\n" +
                          $"{_activeCharacter.moodComponent.moodValue.ToString()}/100";
         // summary +=
         //     $"\nChance to trigger Major Mental Break {_activeCharacter.moodComponent.currentCriticalMoodEffectChance.ToString(CultureInfo.InvariantCulture)}";
@@ -806,17 +810,17 @@ public class CharacterInfoUI : InfoUIBase {
         staminaMeter.SetFillAmount(_activeCharacter.needsComponent.stamina/CharacterNeedsComponent.STAMINA_DEFAULT);
     }
     public void ShowEnergyTooltip() {
-        string summary = $"{UtilityScripts.Utilities.VillagerIcon()}Villagers will become Unconscious once this Meter is empty. This is replenished through rest.\n\n" +
+        string summary = $"Villagers will become Unconscious once this Meter is empty. This is replenished through rest.\n\n" +
                          $"Value: {_activeCharacter.needsComponent.tiredness.ToString("N0")}/100";
         UIManager.Instance.ShowSmallInfo(summary, "ENERGY");
     }
     public void ShowFullnessTooltip() {
-        string summary = $"{UtilityScripts.Utilities.VillagerIcon()}Villagers will become Malnourished and eventually die once this Meter is empty. This is replenished through eating.\n\n" +
+        string summary = $"Villagers will become Malnourished and eventually die once this Meter is empty. This is replenished through eating.\n\n" +
                          $"Value: {_activeCharacter.needsComponent.fullness.ToString("N0")}/100";
         UIManager.Instance.ShowSmallInfo(summary, "FULLNESS");
     }
     public void ShowHappinessTooltip() {
-        string summary = $"{UtilityScripts.Utilities.VillagerIcon()}Villager's Mood becomes significantly affected when this Meter goes down. This is replenished by doing fun activities.\n\n" +
+        string summary = $"Villager's Mood becomes significantly affected when this Meter goes down. This is replenished by doing fun activities.\n\n" +
                          $"Value: {_activeCharacter.needsComponent.happiness.ToString("N0")}/100";
         UIManager.Instance.ShowSmallInfo(summary, "ENTERTAINMENT");
     }
@@ -826,7 +830,7 @@ public class CharacterInfoUI : InfoUIBase {
         UIManager.Instance.ShowSmallInfo(summary, "HOPE");
     }
     public void ShowStaminaTooltip() {
-        string summary = $"{UtilityScripts.Utilities.VillagerIcon()}Villagers will be unable to run when this Meter is empty. This is used up when the Villager is running and quickly replenished when he isn't.\n\n" +
+        string summary = $"Villagers will be unable to run when this Meter is empty. This is used up when the Villager is running and quickly replenished when he isn't.\n\n" +
                          $"Value: {_activeCharacter.needsComponent.stamina.ToString("N0")}/100";
         UIManager.Instance.ShowSmallInfo(summary, "STAMINA");
     }

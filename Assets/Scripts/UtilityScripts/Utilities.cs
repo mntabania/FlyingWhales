@@ -755,7 +755,19 @@ namespace UtilityScripts {
             return "<sprite=\"Text_Sprites\" name=\"Monster_Icon\"> ";
         }
         public static string VillagerIcon() {
-            return "<sprite=\"Text_Sprites\" name=\"Villager_Icon\"> ";
+            return "<sprite=\"Text_Sprites\" name=\"Villager_Icon\">";
+        }
+        public static string ManaIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"Mana_Icon\"> ";
+        }
+        public static string ChargesIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"Charges_Icon\"> ";
+        }
+        public static string ThreatIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"Threat_Icon\"> ";
+        }
+        public static string CooldownIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"Cooldown_Icon\"> ";
         }
         public static string ColorizeAction(string actionString) {
             return $"<color=#f87f43>{actionString}</color>";

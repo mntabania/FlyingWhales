@@ -3115,6 +3115,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if(marker) {
             marker.UpdateActionIcon();
         }
+        if (isConversing == false) {
+            //stopped conversing, set last conversation date
+            nonActionEventsComponent.SetLastConversationDate(GameManager.Instance.Today());
+        }
     }
     //public void SetIsFlirting(bool state) {
     //    _isFlirting = state;

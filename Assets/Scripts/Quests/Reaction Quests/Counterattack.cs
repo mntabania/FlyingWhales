@@ -40,15 +40,15 @@ namespace Quests {
 
         #region Step Helpers
         private string GetStopCharactersDescription(List<Character> targets, int initialTargetCount) {
-            return $"Stop {targets.Count.ToString()} {UtilityScripts.Utilities.VillagerIcon()}Villagers.";
+            return $"Stop {targets.Count.ToString()} Villagers.";
         }
         private void OnHoverStopItem(QuestStepItem item) {
             UIManager.Instance.ShowSmallInfo(
-                $"There are several ways to distract a {UtilityScripts.Utilities.VillagerIcon()}Villager from their tasks. " +
+                $"There are several ways to distract a Villager from their tasks. " +
                  "An Exhausted, Starving or Sulking villager will drop what it's doing to recover. " +
-                 $"Status Effects that temporarily stops a {UtilityScripts.Utilities.VillagerIcon()}Villager from moving " +
+                 $"Status Effects that temporarily stops a Villager from moving " +
                  "(ex: Unconscious, Zapped, Frozen) will also make it forget its current action. " +
-                 $"Killing a {UtilityScripts.Utilities.VillagerIcon()}Villager, of course, is a permanent distraction.",
+                 $"Killing a Villager, of course, is a permanent distraction.",
                 pos: item.hoverPosition
             );
         }

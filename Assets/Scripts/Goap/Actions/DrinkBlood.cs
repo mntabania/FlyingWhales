@@ -230,6 +230,9 @@ public class DrinkBlood : GoapAction {
             log.AddLogToInvolvedObjects();
             PlayerManager.Instance.player.ShowNotificationFrom(goapNode.actor, log);
         }
+
+        Infected infected = goapNode.poiTarget.traitContainer.GetNormalTrait<Infected>("Infected");
+        infected?.InfectTarget(goapNode.actor);
     }
     #endregion
 

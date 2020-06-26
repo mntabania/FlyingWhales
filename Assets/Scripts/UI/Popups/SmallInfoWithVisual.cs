@@ -16,7 +16,7 @@ public class SmallInfoWithVisual : MonoBehaviour {
     [SerializeField] private VideoPlayer smallInfoVideoPlayer;
     [SerializeField] private RenderTexture smallInfoVisualRenderTexture;
     [SerializeField] private RawImage smallInfoVisualImage;
-    [SerializeField] private TextMeshProUGUI smallInfoVisualLbl;
+    [SerializeField] private RuinarchText smallInfoVisualLbl;
 
     public void ShowSmallInfo(string info, [NotNull]VideoClip videoClip, string header = "", UIHoverPosition pos = null) {
         Assert.IsNotNull(videoClip, "Small info with visual was called but no video clip was provided");
@@ -28,7 +28,7 @@ public class SmallInfoWithVisual : MonoBehaviour {
 
         message = message.Replace("\\n", "\n");
 
-        smallInfoVisualLbl.text = message;
+        smallInfoVisualLbl.SetText(message);
         if (!UIManager.Instance.IsSmallInfoShowing()) {
             smallInfoVisualGO.transform.SetParent(transform);
             smallInfoVisualGO.SetActive(true);
@@ -57,7 +57,7 @@ public class SmallInfoWithVisual : MonoBehaviour {
 
         message = message.Replace("\\n", "\n");
 
-        smallInfoVisualLbl.text = message;
+        smallInfoVisualLbl.SetText(message);
         if (!UIManager.Instance.IsSmallInfoShowing()) {
             smallInfoVisualGO.transform.SetParent(transform);
             smallInfoVisualGO.SetActive(true);

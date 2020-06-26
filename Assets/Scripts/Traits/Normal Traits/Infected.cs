@@ -157,22 +157,21 @@ namespace Traits {
                 // chance = 100;
                 if (roll < chance) { //15
                     summary += $"\nChance met, {hitCharacter.name} will turn into a zombie.";
-                    if (hitCharacter.traitContainer.AddTrait(hitCharacter, "Infected", out var infectedTrait, characterResponsible: hitBy)) {
-                        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "contracted_zombie");
-                        log.AddToFillers(hitCharacter, hitCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                        log.AddToFillers(hitBy, hitBy.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                        log.AddLogToInvolvedObjects();
-                        PlayerManager.Instance.player.ShowNotificationFrom(hitBy, log);
-                        if (hitCharacter.isDead && infectedTrait != null && infectedTrait is Infected infected) {
-                            infected.SetHasAlreadyDied(true);
-                        }
-                        // PlayerManager.Instance.player.ShowNotification(log);
-                        //Debug.Log(GameManager.Instance.TodayLogString() + Utilities.LogReplacer(log));
-                    } else {
-                        summary += $"\n{hitCharacter.name} is already a zombie!";
-                    }
+                    InfectTarget(hitCharacter);
                 }
                 Debug.Log(GameManager.Instance.TodayLogString() + summary);
+            }
+        }
+        public void InfectTarget(Character target) {
+            if (target.traitContainer.AddTrait(target, "Infected", out var infectedTrait, characterResponsible: owner)) {
+                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "contracted_zombie");
+                log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                log.AddLogToInvolvedObjects();
+                PlayerManager.Instance.player.ShowNotificationFrom(owner, log);
+                if (target.isDead && infectedTrait != null && infectedTrait is Infected infected) {
+                    infected.SetHasAlreadyDied(true);
+                }
             }
         }
     }

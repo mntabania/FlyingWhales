@@ -10,7 +10,7 @@ using Debug = System.Diagnostics.Debug;
 public class PlayerSkillDetailsTooltip : MonoBehaviour {
     public RectTransform thisRect;
     public TextMeshProUGUI titleText;
-    public TextMeshProUGUI descriptionText;
+    public RuinarchText descriptionText;
     public TextMeshProUGUI categoryText;
     public TextMeshProUGUI chargesText;
     public TextMeshProUGUI manaCostText;
@@ -89,59 +89,59 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         }
     }
     private void UpdateData(PlayerSkillData skillData) {
-        titleText.text = skillData.name;
-        descriptionText.text = PlayerSkillManager.Instance.GetPlayerSpellData(skillData.skill).description;
-        threatText.text = "" + skillData.threat;
-        threatPerHourText.text = "" + skillData.threatPerHour;
+        titleText.SetText(skillData.name);
+        descriptionText.SetText(PlayerSkillManager.Instance.GetPlayerSpellData(skillData.skill).description);
+        threatText.SetText("" + skillData.threat);
+        threatPerHourText.SetText("" + skillData.threatPerHour);
 
         int charges = skillData.charges;
         int manaCost = skillData.manaCost;
         int cooldown = skillData.cooldown;
-        categoryText.text = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(PlayerSkillManager.Instance.GetPlayerSpellData(skillData.skill).category.ToString());
+        categoryText.SetText(UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(PlayerSkillManager.Instance.GetPlayerSpellData(skillData.skill).category.ToString()));
 
-        chargesText.text = "N/A";
+        chargesText.SetText("N/A");
         if (charges != -1) {
-            chargesText.text = $"{charges.ToString()}";
+            chargesText.SetText($"{charges.ToString()}");
         }
 
-        manaCostText.text = "N/A";
+        manaCostText.SetText("N/A");
         if (manaCost != -1) {
             manaCostText.text += $"{manaCost.ToString()}";
         }
 
         string cdText = cooldown == -1 ? "N/A" : $"{GameManager.GetTimeAsWholeDuration(cooldown).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(cooldown)}";
-        cooldownText.text = cdText;
+        cooldownText.SetText(cdText);
 
     }
     private void UpdateData(SpellData spellData) {
-        titleText.text = spellData.name;
-        descriptionText.text = spellData.description;
-        threatText.text = "" + spellData.threat;
-        threatPerHourText.text = "" + spellData.threatPerHour;
+        titleText.SetText(spellData.name);
+        descriptionText.SetText(spellData.description);
+        threatText.SetText("" + spellData.threat);
+        threatPerHourText.SetText("" + spellData.threatPerHour);
 
         int charges = spellData.charges;
         int manaCost = spellData.manaCost;
         int cooldown = spellData.cooldown;
-        categoryText.text = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(spellData.category.ToString());
+        categoryText.SetText(UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(spellData.category.ToString()));
 
-        chargesText.text = "N/A";
+        chargesText.SetText("N/A");
         if(charges != -1) {
-            chargesText.text = $"{charges.ToString()}/{spellData.maxCharges.ToString()}";
+            chargesText.SetText($"{charges.ToString()}/{spellData.maxCharges.ToString()}");
         }
 
-        manaCostText.text = "N/A";
+        manaCostText.SetText("N/A");
         if (manaCost != -1) {
-            manaCostText.text = HasEnoughMana() ? "<color=\"green\">" : "<color=\"red\">";
+            manaCostText.SetText(HasEnoughMana() ? "<color=\"green\">" : "<color=\"red\">");
             manaCostText.text += $"{manaCost.ToString()}</color>" ;
         }
 
         string cdText = cooldown == -1 ? "N/A" : $"{GameManager.GetTimeAsWholeDuration(cooldown).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(cooldown)}";
-        cooldownText.text = cdText;
+        cooldownText.SetText(cdText);
 
-        additionalText.text = string.Empty;
+        additionalText.SetText(string.Empty);
         if (UIManager.Instance.characterInfoUI.isShowing) {
             if (UIManager.Instance.characterInfoUI.activeCharacter.traitContainer.HasTrait("Blessed")) {
-                additionalText.text += $"<color=\"red\">Blessed {UtilityScripts.Utilities.VillagerIcon()}Villagers are protected from your powers.</color>\n";    
+                additionalText.text += $"<color=\"red\">Blessed Villagers are protected from your powers.</color>\n";    
             }
             if (spellData.CanPerformAbilityTowards(UIManager.Instance.characterInfoUI.activeCharacter) == false) {
                 string wholeReason = spellData

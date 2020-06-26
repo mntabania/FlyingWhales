@@ -43,11 +43,11 @@ namespace Tutorial {
                     new StructureBuiltStep(STRUCTURE_TYPE.KENNEL, "Build the Kennel")
                 ),
                 new QuestStepCollection(
-                    new ExecutedPlayerActionStep(SPELL_TYPE.SEIZE_MONSTER, $"Seize a {UtilityScripts.Utilities.MonsterIcon()}monster.")
+                    new ExecutedPlayerActionStep(SPELL_TYPE.SEIZE_MONSTER, $"Seize a monster.")
                         .SetOnTopmostActions(OnTopMostSeizeMonster, OnNoLongerTopMostSeizeMonster),
                     new DropPOIAtStructureStep((structure, pointOfInterest) => structure.structureType == STRUCTURE_TYPE.KENNEL,
                         poi => poi is Summon, "Drop at the Kennel."),
-                    new ClickOnCharacterStep($"Click on the {UtilityScripts.Utilities.MonsterIcon()}monster", IsCharacterValid),
+                    new ClickOnCharacterStep($"Click on the monster", IsCharacterValid),
                     new ExecutedPlayerActionStep(SPELL_TYPE.BREED_MONSTER, "Breed it.")
                         .SetHoverOverAction(OnHoverBreed)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
@@ -84,8 +84,8 @@ namespace Tutorial {
         #region Step Helpers
         private void OnHoverBreed(QuestStepItem stepItem) {
             UIManager.Instance.ShowSmallInfo(
-                $"Breeding a {UtilityScripts.Utilities.MonsterIcon()}monster inside the Kennel gives you 1 Summon Charge of that {UtilityScripts.Utilities.MonsterIcon()}monster type. " +
-                $"You can use this charge for various actions - defend Structures, invade Villages, kill {UtilityScripts.Utilities.VillagerIcon()}Villagers.",
+                $"Breeding a monster inside the Kennel gives you 1 Summon Charge of that monster type. " +
+                $"You can use this charge for various actions - defend Structures, invade Villages, kill Villagers.",
                 TutorialManager.Instance.breedVideoClip, "Breeding", stepItem.hoverPosition
             );
         }

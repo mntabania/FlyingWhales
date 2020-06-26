@@ -8,7 +8,7 @@ using Inner_Maps.Location_Structures;
 public class BrainwashData : PlayerAction {
     public override SPELL_TYPE type => SPELL_TYPE.BRAINWASH;
     public override string name => "Brainwash";
-    public override string description => $"Brainwash a {UtilityScripts.Utilities.VillagerIcon()}Villager.";
+    public override string description => $"Brainwash a Villager.";
     
     public BrainwashData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.ROOM };

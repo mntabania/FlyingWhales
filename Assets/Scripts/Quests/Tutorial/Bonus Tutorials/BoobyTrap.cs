@@ -94,7 +94,7 @@ namespace Tutorial {
             PlayerUI.Instance.ShowGeneralConfirmation("Placing Traps",
                 $"{UtilityScripts.Utilities.ColorizeAction("Check out the relationship")} between the Culprit and the object's Owner. " +
                 "You may also find some hints in the Culprit's Log about their history.\n\n" +
-                $"Create more tensions between {UtilityScripts.Utilities.VillagerIcon()}Villagers to induce more of them to do dastardly deeds like this!"
+                $"Create more tensions between Villagers to induce more of them to do dastardly deeds like this!"
             );
         }
         private void OnHoverCulprit(QuestStepItem item) {

@@ -116,6 +116,10 @@ namespace Traits {
                 //        return true;
                 //    }
                 //}
+                if (goapNode.action.goapType == INTERACTION_TYPE.DRINK_BLOOD) {
+                    chance = 100;
+                    return true;
+                }
                 if (goapNode.action.actionCategory == ACTION_CATEGORY.DIRECT || goapNode.action.actionCategory == ACTION_CATEGORY.CONSUME) {
                     chance = 35;
                     return true;
@@ -127,6 +131,7 @@ namespace Traits {
                     chance = 100;
                 }
             }
+            
             return true;
         }
 
