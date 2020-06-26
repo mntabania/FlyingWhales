@@ -536,6 +536,7 @@ public class ActualGoapNode : IReactable, IRumorable {
         if (isStealth && target.traitContainer.HasTrait("Vigilant") && target.traitContainer.HasTrait("Resting", "Unconscious") == false) {
             //trigger vigilant, only if character is NOT resting or unconscious
             descriptionLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "vigilant", this);
+            descriptionLog.SetLogType(LOG_TYPE.Action);
             action.AddFillersToLog(descriptionLog, this);
             descriptionLog.AddToFillers(null, action.name, LOG_IDENTIFIER.STRING_1);
         } else {
@@ -708,12 +709,14 @@ public class ActualGoapNode : IReactable, IRumorable {
         if(thoughtBubbleLog == null) {
             if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", action.goapName, "thought_bubble")) {
                 thoughtBubbleLog = new Log(GameManager.Instance.Today(), "GoapAction", action.goapName, "thought_bubble", this);
+                thoughtBubbleLog.SetLogType(LOG_TYPE.Action);
                 action.AddFillersToLog(thoughtBubbleLog, this);
             }
         }
         if (thoughtBubbleMovingLog == null) {
             if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", action.goapName, "thought_bubble_m")) {
                 thoughtBubbleMovingLog = new Log(GameManager.Instance.Today(), "GoapAction", action.goapName, "thought_bubble_m", this);
+                thoughtBubbleMovingLog.SetLogType(LOG_TYPE.Action);
                 action.AddFillersToLog(thoughtBubbleMovingLog, this);
             }
         }

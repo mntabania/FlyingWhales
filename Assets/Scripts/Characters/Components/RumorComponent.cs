@@ -7,15 +7,34 @@ public class RumorComponent {
     public Character owner { get; private set; }
 
     private List<string> _rumorPool;
+    private List<ActualGoapNode> _negativeInfoPool;
     private List<IPointOfInterest> _rumorTargetPool;
 
     public RumorComponent(Character owner) {
         this.owner = owner;
         _rumorPool = new List<string>();
         _rumorTargetPool = new List<IPointOfInterest>();
+        _negativeInfoPool = new List<ActualGoapNode>();
     }
 
     #region General
+    public ActualGoapNode GetRandomKnownNegativeInfo(Character spreadTargetCharacter, Character negativeCharacter) {
+        _negativeInfoPool.Clear();
+        for (int i = 0; i < owner.logComponent.history.Count; i++) {
+            Log history = owner.logComponent.history[i];
+            if(history.logType == LOG_TYPE.Assumption || history.logType == LOG_TYPE.Witness || history.logType == LOG_TYPE.Informed) {
+                if(history.node != null && history.node.descriptionLog != null) {
+                    if(history.node.actor == negativeCharacter && history.node.poiTarget != spreadTargetCharacter && history.node.GetReactableEffect(owner) == REACTABLE_EFFECT.Negative) {
+                        _negativeInfoPool.Add(history.node);
+                    }
+                }
+            }
+        }
+        if(_negativeInfoPool.Count > 0) {
+            return _negativeInfoPool[UnityEngine.Random.Range(0, _negativeInfoPool.Count)];
+        }
+        return null;
+    }
     public Rumor GenerateNewRandomRumor(Character spreadTargetCharacter, Character rumoredCharacter) {
         _rumorPool.Clear();
         _rumorPool.AddRange(CharacterManager.Instance.rumorWorthyActions);
@@ -122,7 +141,7 @@ public class RumorComponent {
         }
         return null;
     }
-    public Character GetRandomSpreadRumorTarget(Character rumoredCharacter) {
+    public Character GetRandomSpreadRumorOrNegativeInfoTarget(Character rumoredCharacter) {
         Character chosenCharacter = null;
         int charactersWithOpinionCount = owner.relationshipContainer.charactersWithOpinion.Count;
         if(charactersWithOpinionCount > 2) {

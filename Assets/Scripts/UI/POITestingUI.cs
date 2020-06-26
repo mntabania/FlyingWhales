@@ -62,7 +62,7 @@ public class POITestingUI : MonoBehaviour {
         HideUI();
     }
     public bool CreateKnockoutJob(Character character, Character targetCharacter) {
-        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.KNOCKOUT, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Unconscious", false, GOAP_EFFECT_TARGET.TARGET), targetCharacter, character);
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BRAWL, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Unconscious", false, GOAP_EFFECT_TARGET.TARGET), targetCharacter, character);
         character.jobQueue.AddJobInQueue(job);
         character.logComponent.PrintLogIfActive(
             $"Added a KNOCKOUT Job to {this.name} with target {targetCharacter.name}");
@@ -130,6 +130,13 @@ public class POITestingUI : MonoBehaviour {
         if (poi is Character targetCharacter) {
             Character rumoredCharacter = activeCharacter.relationshipContainer.GetRandomEnemyCharacter();
             if(rumoredCharacter != null) {
+                ActualGoapNode negativeInfo = activeCharacter.rumorComponent.GetRandomKnownNegativeInfo(targetCharacter, rumoredCharacter);
+                if (negativeInfo != null) {
+                    if (activeCharacter.jobComponent.CreateSpreadNegativeInfoJob(targetCharacter, negativeInfo)) {
+                        HideUI();
+                        return;
+                    }
+                }
                 Rumor rumor = activeCharacter.rumorComponent.GenerateNewRandomRumor(targetCharacter, rumoredCharacter);
                 activeCharacter.jobComponent.CreateSpreadRumorJob(targetCharacter, rumor);
             }

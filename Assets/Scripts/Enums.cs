@@ -1411,7 +1411,7 @@ public enum JOB_TYPE { NONE, UNDERMINE, ENERGY_RECOVERY_URGENT, FULLNESS_RECOVER
         , STAND, ABDUCT, LEARN_MONSTER, TAKE_ARTIFACT, TAKE_ITEM, HIDE_AT_HOME, STAND_STILL, SUICIDE_FOLLOW
         , DRY_TILES, CLEANSE_TILES, MONSTER_ABDUCT, REPORT_CORRUPTED_STRUCTURE, ASSAULT_DEMONIC_STRUCTURE, RECOVER_HP, POISON_FOOD
         , BRAWL, PLACE_TRAP, SPREAD_RUMOR, CONFIRM_RUMOR, OPEN_CHEST, TEND_FARM, VISIT_DIFFERENT_REGION, BERSERK_ATTACK, MINE, DIG_THROUGH, SPAWN_LAIR, ABSORB_LIFE, ABSORB_POWER
-        , SPAWN_SKELETON, RAISE_CORPSE, HUNT_PREY, DROP_ITEM, BERSERK_STROLL, RETURN_HOME_URGENT, SABOTAGE_NEIGHBOUR
+        , SPAWN_SKELETON, RAISE_CORPSE, HUNT_PREY, DROP_ITEM, BERSERK_STROLL, RETURN_HOME_URGENT, SABOTAGE_NEIGHBOUR, SHARE_NEGATIVE_INFO,
 }
 public enum JOB_OWNER { CHARACTER, LOCATION, QUEST, }
 public enum Cardinal_Direction { North, South, East, West };
@@ -1586,6 +1586,7 @@ public enum PARTICLE_EFFECT { None, Poison, Freezing, Fire, Burning, Explode, El
 public enum PLAYER_SKILL_STATE { Locked, Unlocked, Learned, }
 public enum REACTABLE_EFFECT { Neutral, Positive, Negative, }
 public enum STRUCTURE_TAG { Dangerous, Treasure, Monster_Spawner, Shelter, Physical_Power_Up, Magic_Power_Up, Counterattack, Resource }
+public enum LOG_TYPE { None, Action, Assumption, Witness, Informed }
 
 #region Crime Subcategories
 [System.AttributeUsage(System.AttributeTargets.Field)]
@@ -2096,6 +2097,7 @@ public static class Extensions {
                 break;
             case JOB_TYPE.SPREAD_RUMOR:
             case JOB_TYPE.CONFIRM_RUMOR:
+            case JOB_TYPE.SHARE_NEGATIVE_INFO:
                 priority = 270;
                 break;
             case JOB_TYPE.OBTAIN_PERSONAL_ITEM:

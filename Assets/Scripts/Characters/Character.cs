@@ -1912,6 +1912,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             return;
         }
         Log addLog = new Log(GameManager.Instance.Today(), "Character", fileName, key, node);
+        if(node != null) {
+            addLog.SetLogType(LOG_TYPE.Action);
+        }
         addLog.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         if (targetName != "") {
             addLog.AddToFillers(target, targetName, LOG_IDENTIFIER.TARGET_CHARACTER);

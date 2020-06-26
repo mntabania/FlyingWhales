@@ -54,6 +54,9 @@ public class GoapActionState {
             $"{stateNameLowercase}_description")) {
             Log _descriptionLog = new Log(GameManager.Instance.Today(), "GoapAction", actionName,
                 $"{stateNameLowercase}_description", goapNode);
+            if (goapNode != null) {
+                _descriptionLog.SetLogType(LOG_TYPE.Action);
+            }
             goapNode.action.AddFillersToLog(_descriptionLog, goapNode);
             return _descriptionLog;
         } else {

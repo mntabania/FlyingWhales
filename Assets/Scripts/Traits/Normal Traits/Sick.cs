@@ -39,6 +39,9 @@ namespace Traits {
                 } else {
                     if (gainedFromDoing.goapType == INTERACTION_TYPE.EAT) {
                         Log addLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "add_trait", gainedFromDoing);
+                        if (gainedFromDoing != null) {
+                            addLog.SetLogType(LOG_TYPE.Action);
+                        }
                         addLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                         addLog.AddToFillers(this, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                         //TODO: gainedFromDoing.states["Eat Poisoned"].AddArrangedLog("sick", addLog, () => PlayerManager.Instance.player.ShowNotificationFrom(addLog, owner, true));
