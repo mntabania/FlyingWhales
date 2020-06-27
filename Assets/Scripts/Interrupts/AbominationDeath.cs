@@ -8,7 +8,7 @@ namespace Interrupts {
         public AbominationDeath() : base(INTERRUPT.Abomination_Death) {
             duration = 3;
             doesStopCurrentAction = true;
-            interruptIconString = GoapActionStateDB.Flirt_Icon;
+            interruptIconString = GoapActionStateDB.Injured_Icon;
         }
 
         #region Overrides

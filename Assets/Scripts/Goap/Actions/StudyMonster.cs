@@ -6,7 +6,7 @@ using UnityEngine;
 public class StudyMonster : GoapAction {
 
     public StudyMonster() : base(INTERACTION_TYPE.STUDY_MONSTER) {
-        actionIconString = GoapActionStateDB.Work_Icon;
+        actionIconString = GoapActionStateDB.Inspect_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.DEMON };
         isNotificationAnIntel = true;

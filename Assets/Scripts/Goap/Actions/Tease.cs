@@ -8,7 +8,7 @@ public class Tease : GoapAction {
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.INDIRECT; } }
 
     public Tease() : base(INTERACTION_TYPE.TEASE) {
-        actionIconString = GoapActionStateDB.Entertain_Icon;
+        actionIconString = GoapActionStateDB.Mock_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         doesNotStopTargetCharacter = true;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };

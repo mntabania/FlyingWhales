@@ -7,7 +7,7 @@ namespace Interrupts {
         public Inspired() : base(INTERRUPT.Inspired) {
             duration = 0;
             isSimulateneous = true;
-            interruptIconString = GoapActionStateDB.Joy_Icon;
+            interruptIconString = GoapActionStateDB.Happy_Icon;
         }
 
         #region Overrides

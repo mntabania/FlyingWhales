@@ -40,6 +40,12 @@ public static class GoapActionStateDB {
     public static string Steal_Icon = "Steal";
     public static string Stealth_Icon = "Stealth";
     public static string Joy_Icon = "Joy";
+    public static string Fish_Icon = "Fish";
+    public static string Happy_Icon = "Happy";
+    public static string Inspect_Icon = "Inspect";
+    public static string Party_Icon = "Party";
+    public static string Heartbroken_Icon = "Heartbroken";
+    public static string Injured_Icon = "Injured";
 
 
     public static string GetStateResult(INTERACTION_TYPE goapType, string stateName) {

@@ -7,7 +7,7 @@ namespace Interrupts {
         public BreakUp() : base(INTERRUPT.Break_Up) {
             duration = 0;
             isSimulateneous = true;
-            interruptIconString = GoapActionStateDB.Flirt_Icon;
+            interruptIconString = GoapActionStateDB.Heartbroken_Icon;
         }
 
         #region Overrides

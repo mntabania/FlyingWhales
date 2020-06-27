@@ -102023,6 +102023,12 @@ MonoBehaviour:
     - Sad
     - Shock
     - Sick
+    - Fish
+    - Happy
+    - Inspect
+    - Party
+    - Heartbroken
+    - Injured
     m_values:
     - {fileID: 21300000, guid: 5a786d93d2807cf40b59d2f8e2175578, type: 3}
     - {fileID: 21300000, guid: 95f79231f93a3f0499e46aa40e19fcef, type: 3}
@@ -102061,6 +102067,12 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 8d39531c7a7c13a44bd46ffc73a27fb9, type: 3}
     - {fileID: 21300000, guid: e1e2629f3b2fa3a4eb4330d424520b2d, type: 3}
     - {fileID: 21300000, guid: d7d4d5448e2a2604c95aad638d97ddd4, type: 3}
+    - {fileID: 21300000, guid: 557556c1d415afd4dac2052d3c7d4836, type: 3}
+    - {fileID: 21300000, guid: 8978630eb6a2ee0478d7faa0bc8b5839, type: 3}
+    - {fileID: 21300000, guid: f5ad87401c481a24f91815b064dcbc37, type: 3}
+    - {fileID: 21300000, guid: 1334b33ccc7ae9445a18c4f79537d649, type: 3}
+    - {fileID: 21300000, guid: 339bc535661850c4eb9c442d35ce27e8, type: 3}
+    - {fileID: 21300000, guid: 79ef18e73e833ce41ab51b998163d5ee, type: 3}
 --- !u!1 &1682166116
 GameObject:
   m_ObjectHideFlags: 0

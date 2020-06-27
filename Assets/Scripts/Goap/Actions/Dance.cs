@@ -9,7 +9,7 @@ public class Dance : GoapAction {
     public Dance() : base(INTERACTION_TYPE.DANCE) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.LUNCH_TIME, TIME_IN_WORDS.AFTERNOON, TIME_IN_WORDS.EARLY_NIGHT, };
-        actionIconString = GoapActionStateDB.Entertain_Icon;
+        actionIconString = GoapActionStateDB.Party_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
     }
