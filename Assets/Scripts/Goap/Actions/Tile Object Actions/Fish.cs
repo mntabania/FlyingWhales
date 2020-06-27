@@ -45,7 +45,7 @@ public class Fish : GoapAction {
         goapNode.descriptionLog.AddToFillers(null, "50", LOG_IDENTIFIER.STRING_1);
     }
     public void AfterFishSuccess(ActualGoapNode goapNode) {
-        LocationGridTile tile = goapNode.poiTarget.gridTileLocation.GetNearestUnoccupiedTileFromThis() ?? goapNode.actor.gridTileLocation;
+        LocationGridTile tile = goapNode.actor.gridTileLocation.GetNearestUnoccupiedTileFromThis() ?? goapNode.actor.gridTileLocation;
 
         FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(TILE_OBJECT_TYPE.FISH_PILE);
         foodPile.SetResourceInPile(50);

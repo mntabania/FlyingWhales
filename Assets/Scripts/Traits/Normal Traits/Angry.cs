@@ -25,6 +25,9 @@ namespace Traits {
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
             if (addedTo is Character character) {
+                if (character.isDead) {
+                    Debug.LogWarning($"{GameManager.Instance.TodayLogString()}{character.name} is already dead but gained an angry status!");
+                }
                 owner = character;
                 character.marker.visionCollider.VoteToUnFilterVision();
                 Messenger.AddListener(Signals.HOUR_STARTED, PerHourEffect);
