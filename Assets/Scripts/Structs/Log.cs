@@ -16,6 +16,8 @@ public class Log {
 	public string file;
 	public string key;
 
+    public LOG_TYPE logType;
+
     public string message;
 
 	public List<LogFiller> fillers;
@@ -90,7 +92,11 @@ public class Log {
 
         //No goap action when loaded because we cannot save goap action
         _node = null;
-}
+    }
+
+    public void SetLogType(LOG_TYPE logType) {
+        this.logType = logType;
+    }
 
     internal void AddToFillers(object obj, string value, LOG_IDENTIFIER identifier, bool replaceExisting = true){
         //if (lockFillers) {

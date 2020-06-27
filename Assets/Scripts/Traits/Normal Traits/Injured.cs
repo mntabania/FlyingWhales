@@ -43,6 +43,9 @@ namespace Traits {
                 } else {
                     if (gainedFromDoing.goapType == INTERACTION_TYPE.ASSAULT) {
                         Log addLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "add_trait", gainedFromDoing);
+                        if(gainedFromDoing != null) {
+                            addLog.SetLogType(LOG_TYPE.Action);
+                        }
                         addLog.AddToFillers(_sourceCharacter, _sourceCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                         addLog.AddToFillers(this, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                         //TODO: gainedFromDoing.states["Target Injured"].AddArrangedLog("injured", addLog, () => PlayerManager.Instance.player.ShowNotificationFrom(addLog, _sourceCharacter, true));

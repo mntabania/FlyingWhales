@@ -13,7 +13,8 @@ public class AssumptionComponent {
     public void CreateAndReactToNewAssumption(Character assumedCharacter, IPointOfInterest targetOfAssumedCharacter, INTERACTION_TYPE assumedActionType, REACTION_STATUS reactionStatus) {
         Assumption newAssumption = CreateNewAssumption(assumedCharacter, targetOfAssumedCharacter, assumedActionType);
 
-        Log assumptionLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "assumed_event");
+        Log assumptionLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "assumed_event", newAssumption.assumedAction);
+        assumptionLog.SetLogType(LOG_TYPE.Assumption);
         assumptionLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.PARTY_1); //Used Party 1 identifier so there will be no conflict if reactable.informationLog is a Rumor
         assumptionLog.AddToFillers(null, UtilityScripts.Utilities.LogDontReplace(newAssumption.informationLog), LOG_IDENTIFIER.APPEND);
         assumptionLog.AddToFillers(newAssumption.informationLog.fillers);

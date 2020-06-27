@@ -299,11 +299,22 @@ public class BaseRelationshipContainer : IRelationshipContainer {
                         return;
                     }
                 }
+                //
+
                 //Spread Rumor
-                Character spreadRumorTarget = owner.rumorComponent.GetRandomSpreadRumorTarget(targetCharacter);
-                if (spreadRumorTarget != null) {
-                    Rumor rumor = owner.rumorComponent.GenerateNewRandomRumor(spreadRumorTarget, targetCharacter);
-                    owner.jobComponent.CreateSpreadRumorJob(spreadRumorTarget, rumor);
+                Character spreadRumorOrNegativeInfoTarget = owner.rumorComponent.GetRandomSpreadRumorOrNegativeInfoTarget(targetCharacter);
+                if (spreadRumorOrNegativeInfoTarget != null) {
+                    if(UnityEngine.Random.Range(0, 100) < 50) {
+                        ActualGoapNode negativeInfo = owner.rumorComponent.GetRandomKnownNegativeInfo(spreadRumorOrNegativeInfoTarget, targetCharacter);
+                        if(negativeInfo != null) {
+                            if(owner.jobComponent.CreateSpreadNegativeInfoJob(spreadRumorOrNegativeInfoTarget, negativeInfo)) {
+                                return;
+                            }
+                        }
+                    }
+
+                    Rumor rumor = owner.rumorComponent.GenerateNewRandomRumor(spreadRumorOrNegativeInfoTarget, targetCharacter);
+                    owner.jobComponent.CreateSpreadRumorJob(spreadRumorOrNegativeInfoTarget, rumor);
                     return;
                 }
             }

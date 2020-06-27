@@ -111,6 +111,7 @@ public class ReactionComponent {
                     //Should not add witness log if the action log itself is not added to the actor
                 } else {
                     Log witnessLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "witness_event", reactable as ActualGoapNode);
+                    witnessLog.SetLogType(LOG_TYPE.Witness);
                     witnessLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.PARTY_1); //Used Party 1 identifier so there will be no conflict if reactable.informationLog is a Rumor
                     witnessLog.AddToFillers(null, UtilityScripts.Utilities.LogDontReplace(reactable.informationLog), LOG_IDENTIFIER.APPEND);
                     witnessLog.AddToFillers(reactable.informationLog.fillers);
@@ -194,6 +195,7 @@ public class ReactionComponent {
         }
         if (addLog) {
             Log informedLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "informed_event", reactable as ActualGoapNode);
+            informedLog.SetLogType(LOG_TYPE.Informed);
             informedLog.AddToFillers(reactable.informationLog.fillers);
             informedLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.PARTY_1); //Used Party 1 identifier so there will be no conflict if reactable.informationLog is a Rumor
             informedLog.AddToFillers(null, UtilityScripts.Utilities.LogDontReplace(reactable.informationLog), LOG_IDENTIFIER.APPEND);
@@ -292,6 +294,7 @@ public class ReactionComponent {
         if (actor != owner && target != owner) {
             if (actor.interruptComponent.currentInterrupt == interrupt && log != null) {
                 Log witnessLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "witness_event");
+                witnessLog.SetLogType(LOG_TYPE.Witness);
                 witnessLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.PARTY_1); //Used Party 1 identifier so there will be no conflict if reactable.informationLog is a Rumor
                 witnessLog.AddToFillers(null, UtilityScripts.Utilities.LogDontReplace(log), LOG_IDENTIFIER.APPEND);
                 witnessLog.AddToFillers(log.fillers);
@@ -363,6 +366,7 @@ public class ReactionComponent {
                 $"{GameManager.Instance.TodayLogString()}{owner.name} informed interrupt {interrupt.name} by {actor.name} with target {target.name} but it does not have a log!");
         }
         Log informedLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "informed_event");
+        informedLog.SetLogType(LOG_TYPE.Informed);
         informedLog.AddToFillers(log.fillers);
         informedLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.PARTY_1); //Used Party 1 identifier so there will be no conflict if reactable.informationLog is a Rumor
         informedLog.AddToFillers(null, UtilityScripts.Utilities.LogDontReplace(log), LOG_IDENTIFIER.APPEND);

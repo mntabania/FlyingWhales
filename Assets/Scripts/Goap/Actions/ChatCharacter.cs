@@ -243,6 +243,9 @@ public class ChatCharacter : GoapAction {
 
     private void CreateChatLog(ActualGoapNode goapNode, string logKey) {
         Log log = new Log(GameManager.Instance.Today(), "GoapAction", goapName, logKey, goapNode);
+        if (goapNode != null) {
+            log.SetLogType(LOG_TYPE.Action);
+        }
         log.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(goapNode.poiTarget, goapNode.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         goapNode.OverrideDescriptionLog(log);

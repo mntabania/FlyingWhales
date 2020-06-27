@@ -1477,7 +1477,19 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     }
     #endregion
 
-    #region Rumor
+    #region Share Info
+    public bool CreateSpreadNegativeInfoJob(Character targetCharacter, ActualGoapNode negativeInfo) {
+        if (targetCharacter.isDead) {
+            return false;
+        }
+        if (negativeInfo == null) {
+            return false;
+        }
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SHARE_NEGATIVE_INFO, INTERACTION_TYPE.SHARE_INFORMATION, targetCharacter, _owner);
+        job.AddOtherData(INTERACTION_TYPE.SHARE_INFORMATION, new object[] { negativeInfo });
+        _owner.jobQueue.AddJobInQueue(job);
+        return true;
+    }
     public bool CreateSpreadRumorJob(Character targetCharacter, Rumor rumor) {
         if (targetCharacter.isDead) {
             return false;

@@ -9,7 +9,7 @@ public class Assumption : IReactable {
 
     #region getters
     public string name => assumedAction.name;
-    public string classificationName => "Rumor";
+    public string classificationName => "Assumption";
     public Character actor => assumedAction.actor;
     public IPointOfInterest target => assumedAction.target;
     public Log informationLog => assumedAction.informationLog;
