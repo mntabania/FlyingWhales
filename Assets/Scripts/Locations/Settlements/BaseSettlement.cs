@@ -16,8 +16,7 @@ namespace Locations.Settlements {
         public List<Character> residents { get; }
         public Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures { get; protected set; }
         public List<IPointOfInterest> firesInSettlement { get; }
-
-        private List<LocationStructure> _allStructures;
+        public List<LocationStructure> allStructures { get; protected set; }
         
         protected BaseSettlement(LOCATION_TYPE locationType, int citizenCount) {
             id = UtilityScripts.Utilities.SetID(this);
@@ -27,7 +26,7 @@ namespace Locations.Settlements {
             residents = new List<Character>();
             structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
             firesInSettlement = new List<IPointOfInterest>();
-            _allStructures = new List<LocationStructure>();
+            allStructures = new List<LocationStructure>();
             SetLocationType(locationType);
             StartListeningForFires();
         }
@@ -39,7 +38,7 @@ namespace Locations.Settlements {
             residents = new List<Character>();
             structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
             firesInSettlement = new List<IPointOfInterest>();
-            _allStructures = new List<LocationStructure>();
+            allStructures = new List<LocationStructure>();
             SetLocationType(saveDataArea.locationType);
             StartListeningForFires();
         }
@@ -220,14 +219,14 @@ namespace Locations.Settlements {
             }
             if (!structures[structure.structureType].Contains(structure)) {
                 structures[structure.structureType].Add(structure);
-                _allStructures.Add(structure);
+                allStructures.Add(structure);
                 OnStructureAdded(structure);
             }
         }
         public void RemoveStructure(LocationStructure structure) {
             if (structures.ContainsKey(structure.structureType)) {
                 if (structures[structure.structureType].Remove(structure)) {
-                    _allStructures.Remove(structure);
+                    allStructures.Remove(structure);
                     if (structures[structure.structureType].Count == 0) { //this is only for optimization
                         structures.Remove(structure.structureType);
                     }
@@ -244,7 +243,7 @@ namespace Locations.Settlements {
             return null;
         }
         public LocationStructure GetRandomStructure() {
-            return CollectionUtilities.GetRandomElement(_allStructures);;
+            return CollectionUtilities.GetRandomElement(allStructures);;
         }
         public LocationStructure GetStructureByID(STRUCTURE_TYPE type, int id) {
             if (structures.ContainsKey(type)) {

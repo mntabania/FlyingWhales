@@ -9,6 +9,7 @@ using TMPro;
 using Pathfinding;
 using System.Linq;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using Traits;
 using UnityEngine.Profiling;
 using UnityEngine.Serialization;
@@ -1381,6 +1382,25 @@ public class CharacterMarker : MapObjectVisual<Character> {
         pathfindingAI.ClearAllCurrentPathData();
         SetHasFleePath(true);
         pathfindingAI.canSearch = false; //set to false, because if this is true and a destination has been set in the ai path, the ai will still try and go to that point instead of the computed flee path
+
+        Vector3[] avoidThisPositions = new Vector3[character.combatComponent.avoidInRange.Count + PlayerManager.Instance.player.playerSettlement.allStructures.Count];
+        int lastIndex = 0;
+        if (character.combatComponent.avoidInRange.Count > 0) {
+            for (int i = 0; i < character.combatComponent.avoidInRange.Count; i++) {
+                avoidThisPositions[i] = character.combatComponent.avoidInRange[i].gridTileLocation.worldLocation;
+            }
+            lastIndex = character.combatComponent.avoidInRange.Count;
+        }
+
+        //Corrupted hexes should also be avoided
+        //https://trello.com/c/6WJtivlY/1274-fleeing-should-not-go-to-corrupted-structures
+        List<HexTile> playerHexes = PlayerManager.Instance.player.playerSettlement.tiles;
+        if(playerHexes.Count > 0) {
+            for (int i = 0; i < playerHexes.Count; i++) {
+                avoidThisPositions[i + lastIndex] = playerHexes[i].GetCenterLocationGridTile().worldLocation;
+            }
+        }
+
         FleeMultiplePath fleePath = FleeMultiplePath.Construct(this.transform.position, character.combatComponent.avoidInRange.Select(x => x.gridTileLocation.worldLocation).ToArray(), 20000);
         fleePath.aimStrength = 1;
         fleePath.spread = 4000;

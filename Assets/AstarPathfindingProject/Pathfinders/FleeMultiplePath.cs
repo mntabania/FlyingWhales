@@ -52,7 +52,7 @@ namespace Pathfinding {
 
 		protected void Setup (Vector3 start, Vector3[] avoid, int searchLength, OnPathDelegate callback) {
 			Setup(start, searchLength, callback);
-            // Set the aim to a point in the opposite direction from the point we to avoid
+            // Set the aim to a point in the opposite direction from the point we want to avoid
             // TODO: Why is this multiplication by 10 here?
             // Might want to remove it
             //aim = start - (avoid-start)*10;
