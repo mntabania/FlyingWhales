@@ -1898,6 +1898,17 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.TOOL:
             case TILE_OBJECT_TYPE.ARTIFACT:
             case TILE_OBJECT_TYPE.CULTIST_KIT:
+            case TILE_OBJECT_TYPE.ANTIDOTE:
+            case TILE_OBJECT_TYPE.WATER_FLASK:
+            case TILE_OBJECT_TYPE.EMBER:
+            case TILE_OBJECT_TYPE.HERB_PLANT:
+            case TILE_OBJECT_TYPE.POISON_FLASK:
+            case TILE_OBJECT_TYPE.POISON_CRYSTAL:
+            case TILE_OBJECT_TYPE.FIRE_CRYSTAL:
+            case TILE_OBJECT_TYPE.WATER_CRYSTAL:
+            case TILE_OBJECT_TYPE.ELECTRIC_CRYSTAL:
+            case TILE_OBJECT_TYPE.ICE_CRYSTAL:
+            case TILE_OBJECT_TYPE.ICE:
                 return true;
             default:
                 return false;

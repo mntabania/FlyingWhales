@@ -76,6 +76,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     public Sprite baseSprite { get; private set; }
     public Vector2 selectableSize { get; private set; }
     public InnerMapHexTile innerMapHexTile { get; private set; }
+    public List<TileObject> itemsInHex { get; protected set; }
 
     private List<LocationGridTile> corruptedTiles;
     private int _uncorruptibleLandmarkNeighbors = 0; //if 0, can be corrupted, otherwise, cannot be corrupted
@@ -123,6 +124,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     }
     public void Initialize() {
         featureComponent = new TileFeatureComponent();
+        itemsInHex = new List<TileObject>();
         spellsComponent = new HexTileSpellsComponent(this);
         //demonicLandmarksThatCanBeBuilt = new List<string>();
         selectableSize = new Vector2Int(12, 12);
@@ -1329,9 +1331,23 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     #region POI
     public void OnPlacePOIInHex(IPointOfInterest poi) {
         spellsComponent.OnPlacePOIInHex(poi);
+        if(poi is TileObject item && item.tileObjectType.IsTileObjectAnItem()) {
+            AddItemInHex(item);
+        }
     }
     public void OnRemovePOIInHex(IPointOfInterest poi) {
         spellsComponent.OnRemovePOIInHex(poi);
+        if (poi is TileObject item && item.tileObjectType.IsTileObjectAnItem()) {
+            RemoveItemInHex(item);
+        }
+    }
+    public void AddItemInHex(TileObject item) {
+        if (!itemsInHex.Contains(item)) {
+            itemsInHex.Add(item);
+        }
+    }
+    public bool RemoveItemInHex(TileObject item) {
+        return itemsInHex.Remove(item);
     }
     #endregion
 
