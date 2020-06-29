@@ -5,25 +5,20 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class SummonMinionPlayerSkillNameplateItem : NameplateItem<SpellData> {
+public class SummonMinionPlayerSkillNameplateItem : SpellItem {
 
     [Header("Summon/Minion PlayerSkill Nameplate Attributes")]
     [SerializeField] private CharacterPortrait classPortrait;
     [SerializeField] private TextMeshProUGUI countText;
-    //[SerializeField] private GameObject hoverPortrait;
-
-    public SpellData spellData { get; private set; }
-
+    
     #region Overrides
     public override void SetObject(SpellData o) {
         base.SetObject(o);
-        spellData = o;
         mainLbl.text = spellData.name;
         subLbl.text = string.Empty;
         SetPortrait();
     }
     private void SetPortrait() {
-        //string[] raceClass = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(spellData.type.ToString()).Split(' ');
         RACE race = RACE.NONE;
         string className = string.Empty;
 
@@ -40,14 +35,8 @@ public class SummonMinionPlayerSkillNameplateItem : NameplateItem<SpellData> {
         } else {
             throw new System.Exception("Trying to create portrait for " + spellData.name + " but Race or Class is None");
         }
-        //string className = string.Empty;
-        //if (spellData is SummonPlayerSkill summonSkill) {
-        //    className = summonSkill.className;
-        //} else if (spellData is MinionPlayerSkill minionSkill) {
-        //    className = minionSkill.className;
-        //}
-        //classPortrait.sprite = CharacterManager.Instance.GetWholeImagePortraitSprite(className);
     }
+    [System.Obsolete("Use UpdateData function instead")]
     public void SetCount(int count, bool useCountOnly = false) {
         if (!useCountOnly) {
             countText.text = count + "/" + spellData.charges;
@@ -55,15 +44,8 @@ public class SummonMinionPlayerSkillNameplateItem : NameplateItem<SpellData> {
             countText.text = "" + count;
         }
     }
-    //public override void OnHoverEnter() {
-    //    hoverPortrait.SetActive(true);
-    //    //UIManager.Instance.ShowMinionCardTooltip(minionData);
-    //    base.OnHoverEnter();
-    //}
-    //public override void OnHoverExit() {
-    //    hoverPortrait.SetActive(false);
-    //    //UIManager.Instance.HideMinionCardTooltip();
-    //    base.OnHoverExit();
-    //}
+    public override void OnHoverSpell() {
+        PlayerUI.Instance.OnHoverSpell(spellData, PlayerUI.Instance.minionListHoverPosition);
+    }
     #endregion
 }

@@ -33004,6 +33004,7 @@ MonoBehaviour:
   cultistsList: {fileID: 1291172670}
   monsterToggle: {fileID: 374432336}
   minionList: {fileID: 1888326232}
+  minionListHoverPosition: {fileID: 672329597}
   playerActionsIconDictionary:
     m_keys: 3c0000000600000030000000330000003200000034000000210000000a000000070000003b000000080000002f00000042000000390000003e0000003d000000370000003600000038000000400000003f0000004100000031000000350000003a0000004600000056000000570000008a0000008b0000008c000000
     m_values:
@@ -37369,6 +37370,56 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   m_IsOn: 0
+--- !u!1 &672329596
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 672329598}
+  - component: {fileID: 672329597}
+  m_Layer: 5
+  m_Name: MinionTooltipPos
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &672329597
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 672329596}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a81b96823c9c6704498c188c2c4b997d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pivot: {x: 0, y: 1}
+  anchor: 0
+--- !u!224 &672329598
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 672329596}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1310840202}
+  m_RootOrder: 11
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 426.3, y: -99}
+  m_SizeDelta: {x: 100, y: 50.18994}
+  m_Pivot: {x: 0, y: 1}
 --- !u!1 &672408560
 GameObject:
   m_ObjectHideFlags: 0
@@ -75399,6 +75450,7 @@ RectTransform:
   - {fileID: 1399175153}
   - {fileID: 1087159204}
   - {fileID: 637732409}
+  - {fileID: 672329598}
   m_Father: {fileID: 606078597}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -116980,13 +117032,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   activeMinionItemPrefab: {fileID: 1716271878575152, guid: 192605b2e90f468409baf06dedf19376,
     type: 3}
-  reserveMinionItemPrefab: {fileID: 1365955370331216, guid: c04f709275ab55a40a47f68a1fa005ce,
+  spellItemPrefab: {fileID: 1365955370331216, guid: c04f709275ab55a40a47f68a1fa005ce,
     type: 3}
   minionListScrollView: {fileID: 1888326226}
-  minionListGO: {fileID: 1888326228}
-  minionListCardTooltipPos: {fileID: 1399175154}
   minionListToggle: {fileID: 197814391}
-  activeHeader: {fileID: 1258919964}
   reserveHeader: {fileID: 1389792245}
 --- !u!1 &1890017710
 GameObject:

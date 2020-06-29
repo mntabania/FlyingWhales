@@ -215,7 +215,7 @@ public class SpellData : IPlayerSkill {
     public bool hasCharges => charges != -1;
     public bool hasCooldown => cooldown != -1;
     public bool hasManaCost => manaCost != -1;
-    public bool isInCooldown => hasCooldown && currentCooldownTick < cooldown;
+    public virtual bool isInCooldown => hasCooldown && currentCooldownTick < cooldown;
     
     protected SpellData() {
         charges = -1;
@@ -347,7 +347,7 @@ public class SpellData : IPlayerSkill {
             Messenger.Broadcast(Signals.ON_EXECUTE_PLAYER_ACTION, this as PlayerAction);
         } else if (category == SPELL_CATEGORY.AFFLICTION) {
             Messenger.Broadcast(Signals.ON_EXECUTE_AFFLICTION, this);
-        } else if (category == SPELL_CATEGORY.SPELL) {
+        } else if (category == SPELL_CATEGORY.SPELL || category == SPELL_CATEGORY.MINION || category == SPELL_CATEGORY.SUMMON) {
             Messenger.Broadcast(Signals.ON_EXECUTE_SPELL, this);
         }
     }

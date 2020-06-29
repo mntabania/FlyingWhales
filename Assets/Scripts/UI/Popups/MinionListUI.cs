@@ -8,59 +8,49 @@ public class MinionListUI : PopupMenuBase {
     
     [Header("Minion List")]
     [SerializeField] private GameObject activeMinionItemPrefab;
-    [SerializeField] private GameObject reserveMinionItemPrefab;
+    [SerializeField] private GameObject spellItemPrefab;
     [SerializeField] private ScrollRect minionListScrollView;
-    [SerializeField] private GameObject minionListGO;
-    [SerializeField] private UIHoverPosition minionListCardTooltipPos;
     [SerializeField] private Toggle minionListToggle;
-    [SerializeField] private RectTransform activeHeader;
     [SerializeField] private RectTransform reserveHeader;
 
-    private List<SummonMinionPlayerSkillNameplateItem> _minionPlayerSkillItems;
+    private List<SummonMinionPlayerSkillNameplateItem> _minionItems;
 
     public override void Open() {
         base.Open();
         UpdateMinionPlayerSkillItems();
     }
     public void Initialize() {
-        _minionPlayerSkillItems = new List<SummonMinionPlayerSkillNameplateItem>();
+        _minionItems = new List<SummonMinionPlayerSkillNameplateItem>();
         Messenger.AddListener<Minion>(Signals.PLAYER_GAINED_MINION, OnGainMinion);
         Messenger.AddListener<Minion>(Signals.PLAYER_LOST_MINION, OnLostMinion);
         Messenger.AddListener<SPELL_TYPE>(Signals.ADDED_PLAYER_MINION_SKILL, OnGainPlayerMinionSkill);
     }
 
     private void UpdateMinionPlayerSkillItems() {
-        for (int i = 0; i < _minionPlayerSkillItems.Count; i++) {
-            _minionPlayerSkillItems[i].SetCount(_minionPlayerSkillItems[i].spellData.charges, true);
+        for (int i = 0; i < _minionItems.Count; i++) {
+            _minionItems[i].UpdateData();
         }
     }
-    //private void UpdateMinionList() {
-    //    UtilityScripts.Utilities.DestroyChildren(minionListScrollView.content);
-    //    for (int i = 0; i < PlayerManager.Instance.player.minions.Count; i++) {
-    //        Minion currMinion = PlayerManager.Instance.player.minions[i];
-    //        CreateNewMinionItem(currMinion);
-    //    }
-    //}
     private void CreateNewActiveMinionItem(Minion minion) {
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(activeMinionItemPrefab.name, Vector3.zero, Quaternion.identity, minionListScrollView.content);
         CharacterNameplateItem item = go.GetComponent<CharacterNameplateItem>();
         item.SetObject(minion.character);
-        item.AddHoverEnterAction((character) => UIManager.Instance.ShowMinionCardTooltip(character.minion, minionListCardTooltipPos));
-        item.AddHoverExitAction((character) => UIManager.Instance.HideMinionCardTooltip());
         item.SetAsDefaultBehaviour();
         item.transform.SetSiblingIndex(reserveHeader.GetSiblingIndex());
     }
     private void CreateNewReserveMinionItem(SPELL_TYPE minionPlayerSkillType) {
         MinionPlayerSkill minionPlayerSkill = PlayerSkillManager.Instance.GetMinionPlayerSkillData(minionPlayerSkillType);
-        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(reserveMinionItemPrefab.name, Vector3.zero, Quaternion.identity, minionListScrollView.content);
-        SummonMinionPlayerSkillNameplateItem item = go.GetComponent<SummonMinionPlayerSkillNameplateItem>();
-        item.SetObject(minionPlayerSkill);
-        item.SetCount(minionPlayerSkill.charges, true);
-        item.ClearAllOnClickActions();
-        item.ClearAllHoverEnterActions();
-        item.AddHoverEnterAction(OnHoverEnterReserveMinion);
-        item.AddHoverExitAction(OnHoverExitReserveMinion);
-        _minionPlayerSkillItems.Add(item);
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(spellItemPrefab.name, Vector3.zero, Quaternion.identity, minionListScrollView.content);
+        SummonMinionPlayerSkillNameplateItem spellItem = go.GetComponent<SummonMinionPlayerSkillNameplateItem>();
+        spellItem.SetObject(minionPlayerSkill);
+        // SummonMinionPlayerSkillNameplateItem item = go.GetComponent<SummonMinionPlayerSkillNameplateItem>();
+        // item.SetObject(minionPlayerSkill);
+        // item.SetCount(minionPlayerSkill.charges, true);
+        // item.ClearAllOnClickActions();
+        // item.ClearAllHoverEnterActions();
+        // item.AddHoverEnterAction(OnHoverEnterReserveMinion);
+        // item.AddHoverExitAction(OnHoverExitReserveMinion);
+        _minionItems.Add(spellItem);
     }
     private void DeleteMinionItem(Minion minion) {
         CharacterNameplateItem item = GetMinionItem(minion);

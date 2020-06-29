@@ -12,7 +12,12 @@ public class SummonPlayerSkill : SpellData {
     public SummonPlayerSkill() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
     }
-
+    public override void ActivateAbility(LocationGridTile targetTile) {
+        Summon summon = CharacterManager.Instance.CreateNewSummon(summonType, PlayerManager.Instance.player.playerFaction, homeRegion: targetTile.parentMap.region as Region, className: className);
+        CharacterManager.Instance.PlaceSummon(summon, targetTile);
+        Messenger.Broadcast(Signals.PLAYER_PLACED_SUMMON, summon);
+        base.ActivateAbility(targetTile);
+    }
     public override void ActivateAbility(LocationGridTile targetTile, ref Character spawnedCharacter) {
         Summon summon = CharacterManager.Instance.CreateNewSummon(summonType, PlayerManager.Instance.player.playerFaction, homeRegion: targetTile.parentMap.region as Region, className: className);
         CharacterManager.Instance.PlaceSummon(summon, targetTile);
@@ -20,5 +25,8 @@ public class SummonPlayerSkill : SpellData {
         spawnedCharacter = summon;
         Messenger.Broadcast(Signals.PLAYER_PLACED_SUMMON, summon);
         base.ActivateAbility(targetTile, ref spawnedCharacter);
+    }
+    public override void HighlightAffectedTiles(LocationGridTile tile) {
+        TileHighlighter.Instance.PositionHighlight(0, tile);
     }
 }
