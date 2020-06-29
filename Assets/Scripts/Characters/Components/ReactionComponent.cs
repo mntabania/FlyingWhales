@@ -9,6 +9,7 @@ using Interrupts;
 using Inner_Maps.Location_Structures;
 using UnityEngine.Assertions;
 using Tutorial;
+using UtilityScripts;
 using Random = System.Random;
 
 public class ReactionComponent {
@@ -912,6 +913,27 @@ public class ReactionComponent {
             if(targetTileObject.tileObjectType.IsTileObjectAnItem() && !owner.jobQueue.HasJob(JOB_TYPE.TAKE_ITEM, targetTileObject)) {
                 owner.jobComponent.CreateTakeItemJob(targetTileObject);
             }
+        }
+
+        if (targetTileObject is CultistKit && targetTileObject.IsOwnedBy(owner) == false) {
+            if (targetTileObject.gridTileLocation != null) {
+                if (targetTileObject.structureLocation is ManMadeStructure && 
+                    targetTileObject.structureLocation.GetNumberOfResidentsExcluding(out var validResidents,owner) > 0) {
+                    int chanceToCreateAssumption = 0;
+                    if (owner.traitContainer.HasTrait("Suspicious") || owner.moodComponent.moodState == MOOD_STATE.CRITICAL) {
+                        chanceToCreateAssumption = 100;
+                    } else if (owner.moodComponent.moodState == MOOD_STATE.LOW) {
+                        chanceToCreateAssumption = 50;
+                    } else {
+                        chanceToCreateAssumption = 15;
+                    }
+                    chanceToCreateAssumption = 100;
+                    if (GameUtilities.RollChance(chanceToCreateAssumption, ref debugLog)) {
+                        Character chosenTarget = CollectionUtilities.GetRandomElement(validResidents);
+                        owner.assumptionComponent.CreateAndReactToNewAssumption(chosenTarget, targetTileObject, INTERACTION_TYPE.IS_CULTIST, REACTION_STATUS.WITNESSED);    
+                    }
+                }
+            } 
         }
     }
     //The reason why we pass the character that was hit instead of just getting the current closest hostile in combat state is because 

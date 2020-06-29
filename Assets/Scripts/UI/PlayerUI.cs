@@ -1039,8 +1039,12 @@ public class PlayerUI : MonoBehaviour {
     private void HideItems() {
         itemsContainerGO.SetActive(false);
     }
-    public void CreateItemsForTesting() {
-        TILE_OBJECT_TYPE[] items = new[] { TILE_OBJECT_TYPE.ELECTRIC_CRYSTAL, TILE_OBJECT_TYPE.FIRE_CRYSTAL, TILE_OBJECT_TYPE.ICE_CRYSTAL, TILE_OBJECT_TYPE.POISON_CRYSTAL, TILE_OBJECT_TYPE.WATER_CRYSTAL, TILE_OBJECT_TYPE.SNOW_MOUND, TILE_OBJECT_TYPE.WINTER_ROSE, TILE_OBJECT_TYPE.DESERT_ROSE };
+    private void CreateItemsForTesting() {
+        TILE_OBJECT_TYPE[] items = new[] {
+            TILE_OBJECT_TYPE.ELECTRIC_CRYSTAL, TILE_OBJECT_TYPE.FIRE_CRYSTAL, TILE_OBJECT_TYPE.ICE_CRYSTAL,
+            TILE_OBJECT_TYPE.POISON_CRYSTAL, TILE_OBJECT_TYPE.WATER_CRYSTAL, TILE_OBJECT_TYPE.SNOW_MOUND,
+            TILE_OBJECT_TYPE.WINTER_ROSE, TILE_OBJECT_TYPE.DESERT_ROSE, TILE_OBJECT_TYPE.CULTIST_KIT
+        };
         for (int i = 0; i < items.Length; i++) {
             CreateNewItemItem(items[i]);
         }

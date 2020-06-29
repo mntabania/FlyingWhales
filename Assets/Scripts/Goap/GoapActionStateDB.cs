@@ -540,6 +540,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.CREATE_CULTIST_KIT, new[]{
             new StateNameAndDuration(){ name = "Create Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
+        {INTERACTION_TYPE.IS_CULTIST, new[]{
+            new StateNameAndDuration(){ name = "Cultist Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(5) },
+        } },
     };
 }
 
