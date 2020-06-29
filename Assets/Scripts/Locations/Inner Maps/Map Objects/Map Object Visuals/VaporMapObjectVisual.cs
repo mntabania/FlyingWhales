@@ -129,7 +129,7 @@ public class VaporMapObjectVisual : MovingMapObjectVisual<TileObject> {
         Debug.Log($"{this.name} expired!");
         _vaporTileObject.OnExpire();
         _vaporEffect.Stop();
-        visionTrigger.SetCollidersState(false);
+        visionTrigger.SetAllCollidersState(false);
         isSpawned = false;
         if (string.IsNullOrEmpty(_expiryKey) == false) {
             SchedulingManager.Instance.RemoveSpecificEntry(_expiryKey);

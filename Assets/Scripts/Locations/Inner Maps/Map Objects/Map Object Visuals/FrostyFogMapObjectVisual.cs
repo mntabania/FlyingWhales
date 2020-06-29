@@ -176,7 +176,7 @@ public class FrostyFogMapObjectVisual : MovingMapObjectVisual<TileObject> {
         _frostyFogEffect.Stop();
         _snowFlakesEffect.Stop();
         _waveEffect.Stop();
-        visionTrigger.SetCollidersState(false);
+        visionTrigger.SetAllCollidersState(false);
         isSpawned = false;
         if (string.IsNullOrEmpty(_expiryKey) == false) {
             SchedulingManager.Instance.RemoveSpecificEntry(_expiryKey);

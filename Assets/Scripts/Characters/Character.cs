@@ -1275,7 +1275,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //    }
         //}
         if (marker) {
-            marker.visionTrigger.SetCollidersState(true);
+            marker.visionTrigger.SetAllCollidersState(true);
             marker.UpdateAnimation();
         }
 
@@ -1288,7 +1288,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //currentRegion.RemoveCharacterFromLocation(this); //Why are we removing the character from location if it is added to a party
             //ownParty.specificLocation.RemoveCharacterFromLocation(this);
             //ownParty.icon.SetVisualState(false);
-            marker.visionTrigger.SetCollidersState(false);
+            marker.visionTrigger.SetAllCollidersState(false);
             marker.UpdateAnimation();
         }
     }
@@ -2464,7 +2464,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         int previous = currentHP;
         currentHP += amount;
         currentHP = Mathf.Clamp(currentHP, 0, maxHP);
-        Messenger.Broadcast(Signals.ADJUSTED_HP, this);
+        Messenger.Broadcast(Signals.CHARACTER_ADJUSTED_HP, this, amount);
         if (marker && showHPBar) {
             if (marker.hpBarGO.activeSelf) {
                 marker.UpdateHP(this);

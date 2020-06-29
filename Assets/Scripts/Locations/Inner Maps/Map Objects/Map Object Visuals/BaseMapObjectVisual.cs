@@ -67,7 +67,7 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
     public void SetActiveState(bool state) {
         this.gameObject.SetActive(state);
     }
-    public void SetVisualAlpha(float alpha) {
+    public virtual void SetVisualAlpha(float alpha) {
         Color color = objectVisual.color;
         color.a = alpha;
         SetColor(color);
