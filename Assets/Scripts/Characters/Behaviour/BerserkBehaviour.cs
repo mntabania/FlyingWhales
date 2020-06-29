@@ -10,7 +10,7 @@ public class BerserkBehaviour : CharacterBehaviourComponent {
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
         log += $"\n-{character.name} is berserked";
-        if (!character.isInCombat) {
+        if (!character.combatComponent.isInCombat) {
             log += $"\n-{character.name} is not in combat will try to attack nearby characters/objects";
             bool hasCreatedJob = false;
             for (int i = 0; i < character.marker.inVisionPOIs.Count; i++) {

@@ -276,7 +276,7 @@ public class BaseRelationshipContainer : IRelationshipContainer {
             chance += Mathf.RoundToInt((amountReduced * -1) / 5f);
             if (roll < chance) {
                 if (owner.marker && owner.marker.inVisionCharacters.Contains(targetCharacter)) {
-                    if (targetCharacter.isInCombat) {
+                    if (targetCharacter.combatComponent.isInCombat) {
                         if (owner.jobComponent.CreateBrawlJob(targetCharacter) != null) {
                             return;
                         }

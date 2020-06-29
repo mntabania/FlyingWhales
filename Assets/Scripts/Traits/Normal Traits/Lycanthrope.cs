@@ -354,10 +354,10 @@ namespace Traits {
                         otherCharacter.marker.RemovePOIFromInVisionRange(form);
                     }
                 }
-                for (int i = 0; i < form.marker.visionCollider.poisInRangeButDiffStructure.Count; i++) {
-                    IPointOfInterest otherPOI = form.marker.visionCollider.poisInRangeButDiffStructure[i];
+                for (int i = 0; i < form.marker.inVisionPOIsButDiffStructure.Count; i++) {
+                    IPointOfInterest otherPOI = form.marker.inVisionPOIsButDiffStructure[i];
                     if (otherPOI is Character) {
-                        (otherPOI as Character).marker.visionCollider.RemovePOIAsInRangeButDifferentStructure(form);
+                        (otherPOI as Character).marker.RemovePOIAsInRangeButDifferentStructure(form);
                     }
                 }
                 form.DestroyMarker();

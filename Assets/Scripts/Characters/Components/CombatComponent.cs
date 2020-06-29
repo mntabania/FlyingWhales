@@ -27,6 +27,11 @@ public class CombatComponent {
 
     private bool _willProcessCombat;
 
+    #region getters
+    public bool isInCombat => owner.stateComponent.currentState != null && owner.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT;
+    public bool isInActualCombat => IsInActualCombat();
+    #endregion
+
     public CombatComponent(Character owner) {
 		this.owner = owner;
         hostilesInRange = new List<IPointOfInterest>();
@@ -37,6 +42,112 @@ public class CombatComponent {
         SetElementalType(ELEMENTAL_TYPE.Normal);
         //UpdateBasicData(true);
 	}
+
+
+    #region General
+    public void OnThisCharacterEndedCombatState() {
+        SetOnProcessCombatAction(null);
+    }
+    private void ProcessCombatBehavior() {
+        string log = $"{owner.name} process combat switch is turned on, processing combat...";
+        if (owner.interruptComponent.isInterrupted) {
+            log +=
+                $"\n-Character is interrupted: {owner.interruptComponent.currentInterrupt.name}, will not process combat";
+        } else {
+            if (owner.combatComponent.isInCombat) {
+                log += "\n-Character is already in combat, determining combat action to do";
+                Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, owner);
+            } else {
+                log += "\n-Character is not in combat, will add Combat job if there is a hostile or avoid in range";
+                if (hostilesInRange.Count > 0 || avoidInRange.Count > 0) {
+                    if (!owner.jobQueue.HasJob(JOB_TYPE.COMBAT)) {
+                        log += "\n-No existing combat job, Combat job added";
+                        CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.COMBAT, CHARACTER_STATE.COMBAT, owner);
+                        owner.jobQueue.AddJobInQueue(job);
+                    } else {
+                        log += "\n-Has existing combat job, no combat job added";
+                    }
+                } else {
+                    log += "\n-Combat job not added";
+                    if (owner.marker.hasFleePath && owner.combatComponent.isInCombat) {
+                        CombatState combatState = owner.stateComponent.currentState as CombatState;
+                        combatState.CheckFlee(ref log);
+                    }
+                }
+            }
+            //avoidReason = string.Empty;
+        }
+        owner.logComponent.PrintLogIfActive(log);
+        //execute any external combat actions. This assumes that this character entered combat state.
+
+        //NOTE: Commented this out temporarily because we no longer immediately switch the state of the character to combat, instead we create a job and add it to its job queue
+        //This means that the character will always have a null current state in this tick
+        //onProcessCombat?.Invoke(owner.stateComponent.currentState as CombatState);
+        //SetOnProcessCombatAction(null);
+    }
+    public void AddOnProcessCombatAction(OnProcessCombat action) {
+        onProcessCombat += action;
+    }
+    public void SetOnProcessCombatAction(OnProcessCombat action) {
+        onProcessCombat = action;
+    }
+    public void CheckCombatPerTickEnded() {
+        if (_willProcessCombat) {
+            SetWillProcessCombat(false); //Moved this up here, because ProcessCombatBehavior can set process combat to true again, and we don't want to overwrite that.
+            ProcessCombatBehavior();
+        }
+    }
+    public void SetCombatMode(COMBAT_MODE mode) {
+        combatMode = mode;
+    }
+    public void SetElementalType(ELEMENTAL_TYPE elementalType) {
+        elementalDamage = ScriptableObjectsManager.Instance.GetElementalDamageData(elementalType);
+    }
+    public void UpdateElementalType() {
+        bool hasSetElementalType = false;
+        for (int i = (owner.traitContainer.traits.Count - 1); i >= 0; i--) {
+            Trait currTrait = owner.traitContainer.traits[i];
+            if (currTrait.elementalType != ELEMENTAL_TYPE.Normal) {
+                SetElementalType(currTrait.elementalType);
+                hasSetElementalType = true;
+                break;
+            }
+        }
+        if (!hasSetElementalType) {
+            SetElementalType(owner.characterClass.elementalType);
+        }
+    }
+    //public void SetActionAndJobThatTriggeredCombat(ActualGoapNode node, GoapPlanJob job) {
+    //    actionThatTriggeredCombatState = node;
+    //    jobThatTriggeredCombatState = job;
+    //}
+    public void SetWillProcessCombat(bool state) {
+        _willProcessCombat = state;
+    }
+    private bool IsInActualCombat() {
+        if(owner.marker && owner.stateComponent.currentState != null && owner.stateComponent.currentState is CombatState combatState) {
+            if (combatState.isAttacking) {
+                //Only become in "actual" combat in attacking mode if character is already in vision of the target or if the target is fleeing
+                if(combatState.currentClosestHostile != null) {
+                    if (owner.marker.inVisionPOIs.Contains(combatState.currentClosestHostile)) {
+                        return true;
+                    } else if (owner.marker.inVisionPOIsButDiffStructure.Contains(combatState.currentClosestHostile)) {
+                        return true;
+                    } else if (combatState.currentClosestHostile is Character currentHostileCharacter && currentHostileCharacter.combatComponent.isInCombat) {
+                        CombatState combatStateOfCurrentHostile = currentHostileCharacter.stateComponent.currentState as CombatState;
+                        if (!combatStateOfCurrentHostile.isAttacking) {
+                            return true;
+                        }
+                    }
+                }
+            } else {
+                //If character is fleeing, he/she is always in actual combat
+                return true;
+            }
+        }
+        return false;
+    }
+    #endregion
 
     #region Fight or Flight
     public void FightOrFlight(IPointOfInterest target, string fightReason, ActualGoapNode connectedAction = null, bool isLethal = true) {
@@ -341,7 +452,7 @@ public class CombatComponent {
             owner.logComponent.PrintLogIfActive(removeHostileSummary);
             //When removing hostile in range, check if character is still in combat state, if it is, reevaluate combat behavior, if not, do nothing
             if (processCombatBehavior) {
-                if (owner.isInCombat) {
+                if (owner.combatComponent.isInCombat) {
                     CombatState combatState = owner.stateComponent.currentState as CombatState;
                     if (combatState.forcedTarget == poi) {
                         combatState.SetForcedTarget(null);
@@ -373,7 +484,7 @@ public class CombatComponent {
             //fightCombatData.Clear();
             //When adding hostile in range, check if character is already in combat state, if it is, only reevaluate combat behavior, if not, enter combat state
             if (processCombatBehavior) {
-                //if (owner.isInCombat) {
+                //if (owner.combatComponent.isInCombat) {
                 //    Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, owner);
                 //}
                 SetWillProcessCombat(true);
@@ -449,7 +560,7 @@ public class CombatComponent {
             IPointOfInterest poi = hostilesInRange[i];
             if (poi.IsValidCombatTargetFor(owner)) {
                 if(poi is Character hostileCharacter) {
-                    if(hostileCharacter.isInCombat && (hostileCharacter.stateComponent.currentState as CombatState).isAttacking == false) {
+                    if(hostileCharacter.combatComponent.isInCombat && (hostileCharacter.stateComponent.currentState as CombatState).isAttacking == false) {
                         continue;
                     }
                 }
@@ -483,7 +594,7 @@ public class CombatComponent {
                     return;
                 }
 
-                if(targetCharacter.isInCombat && !(targetCharacter.stateComponent.currentState as CombatState).isAttacking) {
+                if(targetCharacter.combatComponent.isInCombat && !(targetCharacter.stateComponent.currentState as CombatState).isAttacking) {
                     //Only ban characters that are already fleeing when you removed them from hostile list
                 } else {
                     return;
@@ -518,7 +629,7 @@ public class CombatComponent {
             if (processCombatBehavior) {
                 SetWillProcessCombat(true);
                 owner.logComponent.PrintLogIfActive($"{poi.name} was removed from {owner.name}'s avoid range!");
-                //if (owner.isInCombat) {
+                //if (owner.combatComponent.isInCombat) {
                 //    Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, owner);
                 //}
             }
@@ -533,7 +644,7 @@ public class CombatComponent {
     }
     private void FinalCheckForRemoveAvoidSchedule(IPointOfInterest poi, bool processCombatBehavior) {
         if (owner.marker) {
-            if (!owner.marker.inVisionPOIs.Contains(poi)) {
+            if (!owner.marker.IsStillInRange(poi)) {
                 RemoveAvoidInRange(poi, processCombatBehavior);
             }
         }
@@ -549,7 +660,7 @@ public class CombatComponent {
     }
     private void FinalCheckForRemoveHostileSchedule(IPointOfInterest poi, bool processCombatBehavior) {
         if (owner.marker) {
-            if (!owner.marker.inVisionPOIs.Contains(poi)) {
+            if (!owner.marker.IsStillInRange(poi)) {
                 RemoveHostileInRange(poi, processCombatBehavior);
             }
         }
@@ -560,93 +671,11 @@ public class CombatComponent {
             owner.logComponent.PrintLogIfActive($"{owner.name} cleared avoid range!");
             if (processCombatBehavior) {
                 SetWillProcessCombat(true);
-                //if (owner.isInCombat) {
+                //if (owner.combatComponent.isInCombat) {
                 //    Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, owner);
                 //}
             }
         }
-    }
-    #endregion
-
-    #region General
-    public void OnThisCharacterEndedCombatState() {
-        SetOnProcessCombatAction(null);
-    }
-    private void ProcessCombatBehavior() {
-        string log = $"{owner.name} process combat switch is turned on, processing combat...";
-        if (owner.interruptComponent.isInterrupted) {
-            log +=
-                $"\n-Character is interrupted: {owner.interruptComponent.currentInterrupt.name}, will not process combat";
-        } else {
-            if (owner.isInCombat) {
-                log += "\n-Character is already in combat, determining combat action to do";
-                Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, owner);
-            } else {
-                log += "\n-Character is not in combat, will add Combat job if there is a hostile or avoid in range";
-                if (hostilesInRange.Count > 0 || avoidInRange.Count > 0) {
-                    if (!owner.jobQueue.HasJob(JOB_TYPE.COMBAT)) {
-                        log += "\n-No existing combat job, Combat job added";
-                        CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.COMBAT, CHARACTER_STATE.COMBAT, owner);
-                        owner.jobQueue.AddJobInQueue(job);
-                    } else {
-                        log += "\n-Has existing combat job, no combat job added";
-                    }
-                } else {
-                    log += "\n-Combat job not added";
-                    if (owner.marker.hasFleePath && owner.isInCombat) {
-                        CombatState combatState = owner.stateComponent.currentState as CombatState;
-                        combatState.CheckFlee(ref log);
-                    }
-                }
-            }
-            //avoidReason = string.Empty;
-        }
-        owner.logComponent.PrintLogIfActive(log);
-        //execute any external combat actions. This assumes that this character entered combat state.
-        
-        //NOTE: Commented this out temporarily because we no longer immediately switch the state of the character to combat, instead we create a job and add it to its job queue
-        //This means that the character will always have a null current state in this tick
-        //onProcessCombat?.Invoke(owner.stateComponent.currentState as CombatState);
-        //SetOnProcessCombatAction(null);
-    }
-    public void AddOnProcessCombatAction(OnProcessCombat action) {
-        onProcessCombat += action;
-    }
-    public void SetOnProcessCombatAction(OnProcessCombat action) {
-        onProcessCombat = action;
-    }
-    public void CheckCombatPerTickEnded() {
-        if (_willProcessCombat) {
-            SetWillProcessCombat(false); //Moved this up here, because ProcessCombatBehavior can set process combat to true again, and we don't want to overwrite that.
-            ProcessCombatBehavior();
-        }
-    }
-    public void SetCombatMode(COMBAT_MODE mode) {
-        combatMode = mode;
-    }
-    public void SetElementalType(ELEMENTAL_TYPE elementalType) {
-        elementalDamage = ScriptableObjectsManager.Instance.GetElementalDamageData(elementalType);
-    }
-    public void UpdateElementalType() {
-        bool hasSetElementalType = false;
-        for (int i = (owner.traitContainer.traits.Count - 1); i >= 0; i--) {
-            Trait currTrait = owner.traitContainer.traits[i];
-            if(currTrait.elementalType != ELEMENTAL_TYPE.Normal) {
-                SetElementalType(currTrait.elementalType);
-                hasSetElementalType = true;
-                break;
-            }
-        }
-        if (!hasSetElementalType) {
-            SetElementalType(owner.characterClass.elementalType);
-        }
-    }
-    //public void SetActionAndJobThatTriggeredCombat(ActualGoapNode node, GoapPlanJob job) {
-    //    actionThatTriggeredCombatState = node;
-    //    jobThatTriggeredCombatState = job;
-    //}
-    public void SetWillProcessCombat(bool state) {
-        _willProcessCombat = state;
     }
     #endregion
 

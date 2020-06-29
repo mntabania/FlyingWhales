@@ -147,7 +147,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		if (npcSettlement == _owner.currentSettlement && siegeState 
 			&& (_owner.stateComponent.currentState is CombatState) == false && _owner.isNormalCharacter) {
             //characters current npcSettlement is under siege
-            if (!_owner.isInCombat) {
+            if (!_owner.combatComponent.isInCombat) {
                 _owner.interruptComponent.TriggerInterrupt(INTERRUPT.Stopped, _owner);
                 // Messenger.AddListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, CheckIfStopInterruptFinished);
             }

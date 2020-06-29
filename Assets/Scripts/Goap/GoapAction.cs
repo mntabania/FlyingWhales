@@ -128,7 +128,7 @@ public class GoapAction : ICrimeable {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
         if(poiTarget is Character targetCharacter) {
-            if (targetCharacter.isInCombat) {
+            if (targetCharacter.combatComponent.isInCombat) {
                 return true;
             }
         }
