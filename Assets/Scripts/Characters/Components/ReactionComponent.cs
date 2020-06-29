@@ -27,7 +27,12 @@ public class ReactionComponent {
     #region Processes
     public void ReactTo(IPointOfInterest target, ref string debugLog) {
         if (target.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-            ReactTo(target as Character, ref debugLog);
+            Character targetCharacter = target as Character; 
+            Assert.IsNotNull(targetCharacter);
+            ReactTo(targetCharacter, ref debugLog);
+            if (targetCharacter.ownParty.carriedPOI is TileObject tileObject) {
+                ReactToCarriedObject(tileObject, targetCharacter, ref debugLog);
+            }
         } else if (target.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
             ReactTo(target as TileObject, ref debugLog);
         } 
@@ -916,9 +921,11 @@ public class ReactionComponent {
         }
 
         if (targetTileObject is CultistKit && targetTileObject.IsOwnedBy(owner) == false) {
+            debugLog += "\n-Object is a cultist kit";
             if (targetTileObject.gridTileLocation != null) {
                 if (targetTileObject.structureLocation is ManMadeStructure && 
                     targetTileObject.structureLocation.GetNumberOfResidentsExcluding(out var validResidents,owner) > 0) {
+                    debugLog += "\n-Cultist kit is at structure with residents excluding the witness";
                     int chanceToCreateAssumption = 0;
                     if (owner.traitContainer.HasTrait("Suspicious") || owner.moodComponent.moodState == MOOD_STATE.CRITICAL) {
                         chanceToCreateAssumption = 100;
@@ -927,13 +934,20 @@ public class ReactionComponent {
                     } else {
                         chanceToCreateAssumption = 15;
                     }
-                    chanceToCreateAssumption = 100;
+                    debugLog += "\n-Rolling for chance to create assumption";
                     if (GameUtilities.RollChance(chanceToCreateAssumption, ref debugLog)) {
                         Character chosenTarget = CollectionUtilities.GetRandomElement(validResidents);
                         owner.assumptionComponent.CreateAndReactToNewAssumption(chosenTarget, targetTileObject, INTERACTION_TYPE.IS_CULTIST, REACTION_STATUS.WITNESSED);    
                     }
                 }
             } 
+        }
+    }
+    private void ReactToCarriedObject(TileObject targetTileObject, Character carrier, ref string debugLog) {
+        debugLog += $"{owner.name} is reacting to {targetTileObject.nameWithID} carried by {carrier.name}";
+        if (targetTileObject is CultistKit) {
+            debugLog += $"Object is cultist kit, creating assumption...";
+            owner.assumptionComponent.CreateAndReactToNewAssumption(carrier, targetTileObject, INTERACTION_TYPE.IS_CULTIST, REACTION_STATUS.WITNESSED); 
         }
     }
     //The reason why we pass the character that was hit instead of just getting the current closest hostile in combat state is because 
