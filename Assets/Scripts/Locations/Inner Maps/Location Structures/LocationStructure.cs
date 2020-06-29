@@ -847,6 +847,22 @@ namespace Inner_Maps.Location_Structures {
         public bool IsOccupied() {
             return residents.Count > 0;
         }
+        public int GetNumberOfResidentsExcluding(out List<Character> validResidents, params Character[] excludedCharacters) {
+            validResidents = null;
+            if (residents != null) {
+                validResidents = new List<Character>();
+                int residentCount = 0;
+                for (int i = 0; i < residents.Count; i++) {
+                    Character resident = residents[i];
+                    if (excludedCharacters.Contains(resident) == false) {
+                        residentCount++;
+                        validResidents.Add(resident);
+                    }
+                }
+                return residentCount;
+            }
+            return 0;
+        }
         #endregion
 
         #region Facilities
@@ -934,6 +950,7 @@ namespace Inner_Maps.Location_Structures {
         #endregion
 
         public virtual void OnCharacterUnSeizedHere(Character character) { }
+        
     }
 }
 

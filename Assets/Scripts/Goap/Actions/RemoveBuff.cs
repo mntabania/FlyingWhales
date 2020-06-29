@@ -9,6 +9,7 @@ public class RemoveBuff : GoapAction {
         actionIconString = GoapActionStateDB.Stealth_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
+        isNotificationAnIntel = true;
     }
     
     #region Overrides
