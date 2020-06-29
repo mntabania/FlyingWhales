@@ -24,15 +24,12 @@ namespace Traits {
         }
 
         #region Overrides
-        //public override void OnAddTrait(ITraitable addedTo) {
-        //    base.OnAddTrait(addedTo);
-        //    if (addedTo is Character character) {
-        //        character.needsComponent.AdjustStaminaDecreaseRate(10);
-        //    } 
-        //    //else if (addedTo is TileObject) {
-        //    //    ticksDuration = GameManager.Instance.GetTicksBasedOnHour(12);
-        //    //}
-        //}
+        public override void OnAddTrait(ITraitable addedTo) {
+            base.OnAddTrait(addedTo);
+            if (addedTo is IPointOfInterest poi) {
+                owner = poi;
+            }
+        }
         //public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
         //    if (removedFrom is Character character) {
         //        character.needsComponent.AdjustStaminaDecreaseRate(10);
@@ -109,29 +106,30 @@ namespace Traits {
                 target = goapNode.actor;
                 infector = goapNode.poiTarget;
             }
-            if(owner.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-                //if (goapNode.poiTarget == owner) {
-                //    if (goapNode.goapType == INTERACTION_TYPE.CARRY || goapNode.goapType == INTERACTION_TYPE.CARRY_CORPSE || goapNode.goapType == INTERACTION_TYPE.INVITE) {
-                //        chance = 50;
-                //        return true;
-                //    }
-                //}
-                if (goapNode.action.goapType == INTERACTION_TYPE.DRINK_BLOOD) {
-                    chance = 100;
-                    return true;
-                }
-                if (goapNode.action.actionCategory == ACTION_CATEGORY.DIRECT || goapNode.action.actionCategory == ACTION_CATEGORY.CONSUME) {
-                    chance = 35;
-                    return true;
-                }
-            } else if (owner.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
-                if (goapNode.action.actionCategory == ACTION_CATEGORY.DIRECT) {
-                    chance = 35;
-                } else if (goapNode.action.actionCategory == ACTION_CATEGORY.CONSUME) {
-                    chance = 100;
+            if(owner != null) {
+                if (owner.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+                    //if (goapNode.poiTarget == owner) {
+                    //    if (goapNode.goapType == INTERACTION_TYPE.CARRY || goapNode.goapType == INTERACTION_TYPE.CARRY_CORPSE || goapNode.goapType == INTERACTION_TYPE.INVITE) {
+                    //        chance = 50;
+                    //        return true;
+                    //    }
+                    //}
+                    if (goapNode.action.goapType == INTERACTION_TYPE.DRINK_BLOOD) {
+                        chance = 100;
+                        return true;
+                    }
+                    if (goapNode.action.actionCategory == ACTION_CATEGORY.DIRECT || goapNode.action.actionCategory == ACTION_CATEGORY.CONSUME) {
+                        chance = 35;
+                        return true;
+                    }
+                } else if (owner.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+                    if (goapNode.action.actionCategory == ACTION_CATEGORY.DIRECT) {
+                        chance = 35;
+                    } else if (goapNode.action.actionCategory == ACTION_CATEGORY.CONSUME) {
+                        chance = 100;
+                    }
                 }
             }
-            
             return true;
         }
 
