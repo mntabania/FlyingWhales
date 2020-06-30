@@ -38,13 +38,13 @@ namespace Inner_Maps.Location_Structures {
         public List<Character> residents { get; protected set; }
         public StructureRoom[] rooms { get; protected set; }
 
-        protected Faction _owner;
+        //protected Faction _owner;
 
         #region getters
         public virtual bool isDwelling => false;
         public virtual Vector3 worldPosition { get; protected set; }
         public virtual Vector2 selectableSize => structureObj.size;
-        public Faction owner => settlementLocation != null ? settlementLocation.owner : _owner;
+        //public Faction owner => settlementLocation != null ? settlementLocation.owner : _owner;
         #endregion
 
         protected LocationStructure(STRUCTURE_TYPE structureType, Region location) {
@@ -792,13 +792,13 @@ namespace Inner_Maps.Location_Structures {
                 residents.Add(character);
                 character.SetHomeStructure(this);
                 OnAddResident(character);
-                if(settlementLocation == null) {
-                    //Only set/unset faction owner for structures that do not have a settlement, if a structure has a settlement, the settlement should be the one being owned by the faction not the specific structure
-                    if (owner == null && character.faction != null && character.faction.isMajorNonPlayer) {
-                        //If a character becomes a resident and he/she has a faction and this structure has no faction owner yet, set it as the faction owner
-                        LandmarkManager.Instance.OwnStructure(character.faction, this);
-                    }
-                }
+                //if(settlementLocation == null) {
+                //    //Only set/unset faction owner for structures that do not have a settlement, if a structure has a settlement, the settlement should be the one being owned by the faction not the specific structure
+                //    if (owner == null && character.faction != null && character.faction.isMajorNonPlayer) {
+                //        //If a character becomes a resident and he/she has a faction and this structure has no faction owner yet, set it as the faction owner
+                //        LandmarkManager.Instance.OwnStructure(character.faction, this);
+                //    }
+                //}
                 Messenger.Broadcast(Signals.ADDED_STRUCTURE_RESIDENT, character, this);
                 return true;
             }
@@ -808,13 +808,13 @@ namespace Inner_Maps.Location_Structures {
             if (residents.Remove(character)) {
                 character.SetHomeStructure(null);
                 OnRemoveResident(character);
-                if (settlementLocation == null) {
-                    //Only set/unset faction owner for structures that do not have a settlement, if a structure has a settlement, the settlement should be the one being owned by the faction not the specific structure
-                    if (residents.Count <= 0 && owner != null) {
-                        //if all residents of a settlement is removed, then remove faction owner
-                        LandmarkManager.Instance.UnownStructure(this);
-                    }
-                }
+                //if (settlementLocation == null) {
+                //    //Only set/unset faction owner for structures that do not have a settlement, if a structure has a settlement, the settlement should be the one being owned by the faction not the specific structure
+                //    if (residents.Count <= 0 && owner != null) {
+                //        //if all residents of a settlement is removed, then remove faction owner
+                //        LandmarkManager.Instance.UnownStructure(this);
+                //    }
+                //}
                 Messenger.Broadcast(Signals.REMOVED_STRUCTURE_RESIDENT, character, this);
             }
         }
@@ -862,6 +862,24 @@ namespace Inner_Maps.Location_Structures {
                 return residentCount;
             }
             return 0;
+        }
+        public bool HasCloseFriendOrNonEnemyRivalRelative(Character character) {
+            for (int i = 0; i < residents.Count; i++) {
+                Character resident = residents[i];
+                if(character != resident) {
+                    if (character.relationshipContainer.IsEnemiesWith(resident)) {
+                        return false;
+                    } else {
+                        if(character.relationshipContainer.HasRelationshipWith(resident, RELATIONSHIP_TYPE.RELATIVE, RELATIONSHIP_TYPE.SIBLING, RELATIONSHIP_TYPE.CHILD, RELATIONSHIP_TYPE.PARENT)) {
+                            return true;
+                        }
+                        if(character.relationshipContainer.GetOpinionLabel(resident) == RelationshipManager.Close_Friend) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
         }
         #endregion
 
@@ -943,11 +961,11 @@ namespace Inner_Maps.Location_Structures {
         }
         #endregion
 
-        #region Faction
-        public void SetOwner(Faction owner) {
-            _owner = owner;
-        }
-        #endregion
+        //#region Faction
+        //public void SetOwner(Faction owner) {
+        //    _owner = owner;
+        //}
+        //#endregion
 
         public virtual void OnCharacterUnSeizedHere(Character character) { }
         

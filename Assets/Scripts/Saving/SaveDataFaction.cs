@@ -54,10 +54,10 @@ public class SaveDataFaction {
         isActive = faction.isActive;
         //requirementForJoining = faction.requirementForJoining;
 
-        ownedLandmarkIDs = new List<int>();
-        for (int i = 0; i < faction.ownedStructures.Count; i++) {
-            ownedLandmarkIDs.Add(faction.ownedStructures[i].id);
-        }
+        //ownedLandmarkIDs = new List<int>();
+        //for (int i = 0; i < faction.ownedStructures.Count; i++) {
+        //    ownedLandmarkIDs.Add(faction.ownedStructures[i].id);
+        //}
 
         //characterIDs = new List<int>();
         //for (int i = 0; i < faction.characters.Count; i++) {

@@ -1214,7 +1214,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 if (potentialFaction.isMajorNonPlayer && !potentialFaction.isDestroyed
                     && !potentialFaction.IsCharacterBannedFromJoining(this)
                     && potentialFaction.ideologyComponent.DoesCharacterFitCurrentIdeologies(this)) {
-                    if (potentialFaction.HasOwnedSettlementOrStructureInRegion(currentRegion)) {
+                    if (potentialFaction.HasOwnedSettlementInRegion(currentRegion)) {
                         if (!viableFactions.Contains(potentialFaction)) {
                             viableFactions.Add(potentialFaction);
                         }
