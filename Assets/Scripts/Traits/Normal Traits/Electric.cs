@@ -4,6 +4,8 @@ using UnityEngine;
 
 namespace Traits {
     public class Electric : Trait {
+        public override bool isSingleton => true;
+
         public Electric() {
             name = "Electric";
             description = "Damage dealt becomes electric.";

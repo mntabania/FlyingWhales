@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Traits {
     public class Drunk : Status {
+        public override bool isSingleton => true;
 
         public Drunk() {
             name = "Drunk";

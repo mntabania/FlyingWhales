@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 namespace Traits {
     public class Betrayed : Status {
+        public override bool isSingleton => true;
+
         public Betrayed() {
             name = "Betrayed";
             description = "This character is betrayed.";

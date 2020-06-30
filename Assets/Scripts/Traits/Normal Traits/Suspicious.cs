@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Traits {
     public class Suspicious : Trait {
+        public override bool isSingleton => true;
 
         public Suspicious() {
             name = "Suspicious";

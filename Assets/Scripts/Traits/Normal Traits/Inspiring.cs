@@ -4,6 +4,8 @@ using UnityEngine;
 
 namespace Traits {
     public class Inspiring : Trait {
+        public override bool isSingleton => true;
+
         public Inspiring() {
             name = "Inspiring";
             description = "Inspring characters make people around them feel happier.";

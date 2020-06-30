@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Traits {
     public class MusicHater : Trait {
-
+        public override bool isSingleton => true;
         //private Character owner;
 
         public MusicHater() {

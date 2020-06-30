@@ -6,6 +6,8 @@ using UnityEngine;
 
 namespace Traits {
     public class Dead : Status {
+        public override bool isSingleton => true;
+
         public Dead() {
             name = "Dead";
             description = "This character's life has been extinguished.";

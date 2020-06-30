@@ -1826,4 +1826,16 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    _owner.jobQueue.AddJobInQueue(job);
     }
     #endregion
+
+    #region Spawn Objects
+    public bool TriggerSpawnPoisonCloud(out JobQueueItem producedJob) {
+        if (!_owner.jobQueue.HasJob(JOB_TYPE.IDLE)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE, INTERACTION_TYPE.SPAWN_POISON_CLOUD, _owner, _owner);
+            producedJob = job;
+            return true;
+        }
+        producedJob = null;
+        return false;
+    }
+    #endregion
 }

@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Traits {
     public class Cannibal : Trait {
+        public override bool isSingleton => true;
 
         public Cannibal() {
             name = "Cannibal";

@@ -4,6 +4,8 @@ using UnityEngine;
 
 namespace Traits {
     public class Diplomatic : Trait {
+        public override bool isSingleton => true;
+
         public Diplomatic() {
             name = "Diplomatic";
             description = "Diplomatic characters do not have enemies and may improve relationship of other characters.";

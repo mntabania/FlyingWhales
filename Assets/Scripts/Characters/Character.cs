@@ -2653,11 +2653,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if(homeSettlement != settlement) {
             homeSettlement = settlement;
             if (isNormalCharacter) {
-                if (homeSettlement != null) {
-                    SetIsWanderer(false);
-                } else {
-                    SetIsWanderer(true);
-                }
+                behaviourComponent.UpdateDefaultBehaviourSet();
             }
         }
     }

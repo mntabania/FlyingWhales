@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Traits {
     public class Vigilant : Trait {
+        public override bool isSingleton => true;
 
         public Vigilant() {
             name = "Vigilant";

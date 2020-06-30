@@ -23,7 +23,8 @@ public class CharacterManager : MonoBehaviour {
         Destroy_Action = "Destroy";
     public const string Default_Resident_Behaviour = "Default Resident Behaviour", Default_Monster_Behaviour = "Default Monster Behaviour",
         Default_Minion_Behaviour = "Default Minion Behaviour", Default_Wanderer_Behaviour = "Default Wanderer Behaviour", Default_Angel_Behaviour = "Default Angel Behaviour",
-        Default_Wolf_Behaviour = "Default Wolf Behaviour", Default_Kobold_Behaviour = "Default Kobold Behaviour", Default_Giant_Spider_Behaviour = "Default Giant Spider Behaviour";
+        Ravager_Behaviour = "Ravager Behaviour", Kobold_Behaviour = "Kobold Behaviour", Giant_Spider_Behaviour = "Giant Spider Behaviour",
+        Noxious_Wanderer_Behaviour = "Noxious Wanderer Behaviour";
     public const int MAX_HISTORY_LOGS = 300;
 
     
@@ -112,7 +113,7 @@ public class CharacterManager : MonoBehaviour {
                 typeof(DefaultExtraCatcher),
             }
         },
-        { Default_Wolf_Behaviour,
+        { Ravager_Behaviour,
             new []{
                 typeof(WolfBehaviour),
                 typeof(MovementProcessing),
@@ -120,7 +121,7 @@ public class CharacterManager : MonoBehaviour {
                 typeof(DefaultExtraCatcher),
             }
         },
-        { Default_Kobold_Behaviour,
+        { Kobold_Behaviour,
             new []{
                 typeof(KoboldBehaviour),
                 typeof(MovementProcessing),
@@ -128,11 +129,18 @@ public class CharacterManager : MonoBehaviour {
                 typeof(DefaultExtraCatcher),
             }
         },
-        { Default_Giant_Spider_Behaviour,
+        { Giant_Spider_Behaviour,
             new []{
                 typeof(GiantSpiderBehaviour),
                 typeof(MovementProcessing),
                 typeof(DefaultMonster),
+                typeof(DefaultExtraCatcher),
+            }
+        },
+        { Noxious_Wanderer_Behaviour,
+            new []{
+                typeof(MovementProcessing),
+                typeof(NoxiousWandererBehaviour),
                 typeof(DefaultExtraCatcher),
             }
         },
@@ -506,6 +514,9 @@ public class CharacterManager : MonoBehaviour {
             return defaultBehaviourSets[setName];
         }
         return null;
+    }
+    public bool HasDefaultBehaviourSet(string setName) {
+        return defaultBehaviourSets.ContainsKey(setName);
     }
     //public System.Type[] GetTraitBehaviourComponents(string traitName) {
     //    return classManager.GetTraitBehaviourComponents(traitName);

@@ -42,7 +42,7 @@ public class TraitManager : MonoBehaviour {
         "Freezing", "Frozen", "Ravenous", "Feeble", "Forlorn", "Accident Prone", "Disoriented", "Consumable",
         "Fire Prone", "Electric", "Venomous", "Booby Trapped", "Betrayed", "Abomination Germ", "Ensnared", "Melting",
         "Fervor", "Tended", "Tending", "Cleansing", "Dousing", "Drying", "Patrolling", "Necromancer", "Mining", 
-        "Webbed", "Cultist"
+        "Webbed", "Cultist", "Noxious Wanderer",
     };
     [FormerlySerializedAs("traitIconDictionary")] [SerializeField] private StringSpriteDictionary traitPortraitDictionary;
     [SerializeField] private StringSpriteDictionary traitIconDictionary;
@@ -71,6 +71,11 @@ public class TraitManager : MonoBehaviour {
         "Poisoned", "Plagued", "Infected"
     };
 
+    //This is for instanced traits that do not have unique data
+    //In order to save some memory all instanced traits that do not have unique data must be stored here, they are identified by isSingleton
+    //If isSingleton returns true, they are stored here, and will share only 1 instance of the trait class
+    private Dictionary<string, Trait> instancedSingletonTraits;
+
     #region getters/setters
     public Dictionary<string, Trait> allTraits {
         get { return _allTraits; }
@@ -83,6 +88,7 @@ public class TraitManager : MonoBehaviour {
     }
 
     public void Initialize() {
+        instancedSingletonTraits = new Dictionary<string, Trait>();
         _allTraits = new Dictionary<string, Trait>();
         string path = $"{UtilityScripts.Utilities.dataPath}Traits/";
         string[] files = Directory.GetFiles(path, "*.json");
@@ -149,11 +155,19 @@ public class TraitManager : MonoBehaviour {
         return traitName == "Burning" || traitName == "Freezing" || traitName == "Poisoned" || traitName == "Wet" || traitName == "Zapped" || traitName == "Overheating";
     }
     public Trait CreateNewInstancedTraitClass(string traitName) {
-        string noSpacesTraitName = UtilityScripts.Utilities.RemoveAllWhiteSpace(traitName);
-        string typeName = $"Traits.{ noSpacesTraitName }, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
-        Type type = System.Type.GetType(typeName);
-        Assert.IsNotNull(type, $"No instanced trait with type, {typeName}");
-        return System.Activator.CreateInstance(type) as Trait;
+        if (instancedSingletonTraits.ContainsKey(traitName)) {
+            return instancedSingletonTraits[traitName];
+        } else {
+            string noSpacesTraitName = UtilityScripts.Utilities.RemoveAllWhiteSpace(traitName);
+            string typeName = $"Traits.{ noSpacesTraitName }, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+            Type type = System.Type.GetType(typeName);
+            Assert.IsNotNull(type, $"No instanced trait with type, {typeName}");
+            Trait trait = System.Activator.CreateInstance(type) as Trait;
+            if (trait.isSingleton) {
+                instancedSingletonTraits.Add(traitName, trait);
+            }
+            return trait;
+        }
     }
     public List<Trait> GetAllTraitsOfType(TRAIT_TYPE type) {
         List<Trait> traits = new List<Trait>();

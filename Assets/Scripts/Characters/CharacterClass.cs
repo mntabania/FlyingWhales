@@ -13,16 +13,18 @@ public class CharacterClass {
     //[SerializeField] private int _hpPerLevel;
     [SerializeField] private int _baseHP;
     [SerializeField] private int _baseAttackSpeed; //The lower the amount the faster the attack rate
-    [SerializeField] private float _attackRange;
     [SerializeField] private int _inventoryCapacity;
     //[SerializeField] private float _runSpeedMod;
     //[SerializeField] private float _walkSpeedMod;
+    [SerializeField] private float _attackRange;
     [SerializeField] private float _staminaReduction;
+
+    [SerializeField] private string _identifier;
+    [SerializeField] private string _traitNameOnTamedByPlayer; //If this is not empty, this trait will be added if the character is spawned in the player's side
 
     [SerializeField] private string[] _traitNames;
     [SerializeField] private string[] _interestedItemNames;
     [SerializeField] private STRUCTURE_TYPE[] _relatedStructures;
-    [SerializeField] private string _identifier;
     //[SerializeField] private bool _isNormalNonCombatant;
     [SerializeField] private ELEMENTAL_TYPE _elementalType;
     //[SerializeField] private JOB _jobType;
@@ -48,6 +50,9 @@ public class CharacterClass {
     }
     public string identifier {
         get { return _identifier; }
+    }
+    public string traitNameOnTamedByPlayer {
+        get { return _traitNameOnTamedByPlayer; }
     }
     //public bool isNormalNonCombatant {
     //    get { return _isNormalNonCombatant; }
@@ -171,6 +176,7 @@ public class CharacterClass {
         newClass._secondaryJobs = this._secondaryJobs;
         newClass._ableJobs = this._ableJobs;
         newClass._staminaReduction = this._staminaReduction;
+        newClass._traitNameOnTamedByPlayer = this._traitNameOnTamedByPlayer;
         //newClass._jobType = this._jobType;
         //Array.Copy(this._traitNames, newClass._traitNames, this._traitNames.Length);
         return newClass;
@@ -194,6 +200,7 @@ public class CharacterClass {
     public void SetDataFromClassPanelUI() {
         this._className = ClassPanelUI.Instance.classNameInput.text;
         this._identifier = ClassPanelUI.Instance.identifierInput.text;
+        this._traitNameOnTamedByPlayer = ClassPanelUI.Instance.tamedTraitInput.text;
         //this._isNormalNonCombatant = ClassPanelUI.Instance.nonCombatantToggle.isOn;
         this._baseAttackPower = int.Parse(ClassPanelUI.Instance.baseAttackPowerInput.text);
         //this._attackPowerPerLevel = int.Parse(ClassPanelUI.Instance.attackPowerPerLevelInput.text);

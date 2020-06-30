@@ -244,6 +244,29 @@ public class BehaviourComponent {
             }
         }
     }
+    public void UpdateDefaultBehaviourSet() {
+        if (owner.isNormalCharacter || owner.characterClass.className == "Zombie") {
+            if(owner.homeSettlement != null) {
+                owner.SetIsWanderer(false);
+            } else {
+                owner.SetIsWanderer(true);
+            }
+        } else {
+            
+            if (owner.minion != null) {
+                ChangeDefaultBehaviourSet(CharacterManager.Default_Minion_Behaviour);
+            } else if (owner.race == RACE.ANGEL) {
+                ChangeDefaultBehaviourSet(CharacterManager.Default_Angel_Behaviour);
+            } else {
+                string behaviourSetName = owner.characterClass.className + " Behaviour";
+                if (CharacterManager.Instance.HasDefaultBehaviourSet(behaviourSetName)) {
+                    ChangeDefaultBehaviourSet(behaviourSetName);
+                } else {
+                    ChangeDefaultBehaviourSet(CharacterManager.Default_Monster_Behaviour);
+                }
+            }
+        }
+    }
     #endregion
 
     #region Processes

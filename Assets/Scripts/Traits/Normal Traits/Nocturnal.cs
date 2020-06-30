@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Traits {
     public class Nocturnal : Trait {
+        public override bool isSingleton => true;
 
         public Nocturnal() {
             name = "Nocturnal";
