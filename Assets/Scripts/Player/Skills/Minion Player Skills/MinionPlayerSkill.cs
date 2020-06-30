@@ -23,6 +23,7 @@ public class MinionPlayerSkill : SpellData {
         minion.SetCombatAbility(COMBAT_ABILITY.FLAMESTRIKE);
         minion.Summon(targetTile);
         minion.SetMinionPlayerSkillType(type);
+        minion.character.AddTerritory(targetTile.collectionOwner.partOfHextile.hexTileOwner);
         base.ActivateAbility(targetTile);
     }
     public override void ActivateAbility(LocationGridTile targetTile, ref Character spawnedCharacter) {
@@ -37,6 +38,15 @@ public class MinionPlayerSkill : SpellData {
     public override void HighlightAffectedTiles(LocationGridTile tile) {
         TileHighlighter.Instance.PositionHighlight(0, tile);
     }
+    public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
+        bool canPerform = base.CanPerformAbilityTowards(targetTile);
+        if (canPerform) {
+            //only allow summoning on linked tiles
+            return targetTile.collectionOwner.isPartOfParentRegionMap;
+        }
+        return false;
+    }
+    
     public void StartCooldown() {
         _currentSpawnCooldown = 0;
         Messenger.AddListener(Signals.TICK_STARTED, PerTickCooldown);

@@ -3,6 +3,7 @@ namespace Traits {
     public class Invisible : Status {
 
         private IPointOfInterest _owner;
+        private COMBAT_MODE _originalCombatMode;
         
         public Invisible() {
             name = "Invisible";
@@ -10,6 +11,7 @@ namespace Traits {
             type = TRAIT_TYPE.BUFF;
             effect = TRAIT_EFFECT.POSITIVE;
             ticksDuration = 0;
+            AddTraitOverrideFunctionIdentifier(TraitManager.Initiate_Map_Visual_Trait);
         }
 
         #region Overrides
@@ -21,7 +23,9 @@ namespace Traits {
                     poi.mapObjectVisual.visionTrigger.SetVisionTriggerCollidersState(false);
                     poi.mapObjectVisual.SetVisualAlpha(0.45f);
                 }
-                if (poi is Character) {
+                if (poi is Character character) {
+                    _originalCombatMode = character.combatComponent.combatMode;
+                    character.combatComponent.SetCombatMode(COMBAT_MODE.Passive);
                     Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
                     Messenger.AddListener<Character, int>(Signals.CHARACTER_ADJUSTED_HP, OnCharacterAdjustedHP);
                     Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterCanNoLongerMove);
@@ -37,7 +41,8 @@ namespace Traits {
                     poi.mapObjectVisual.visionTrigger.SetVisionTriggerCollidersState(true);
                     poi.mapObjectVisual.SetVisualAlpha(1f);
                 }
-                if (poi is Character) {
+                if (poi is Character character) {
+                    character.combatComponent.SetCombatMode(_originalCombatMode);
                     Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
                     Messenger.RemoveListener<Character, int>(Signals.CHARACTER_ADJUSTED_HP, OnCharacterAdjustedHP);
                     Messenger.RemoveListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterCanNoLongerMove);
@@ -48,6 +53,13 @@ namespace Traits {
         public override bool OnDeath(Character character) {
             character.traitContainer.RemoveTrait(character, this);
             return base.OnDeath(character);
+        }
+        public override void OnInitiateMapObjectVisual(ITraitable traitable) {
+            if (traitable is IPointOfInterest poi) {
+                if (poi.mapObjectVisual != null) {
+                    poi.mapObjectVisual.SetVisualAlpha(0.45f);
+                }
+            }
         }
         #endregion
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Inner_Maps;
 using UnityEngine;
 using Inner_Maps.Location_Structures;
@@ -38,6 +39,12 @@ public class BehaviourComponent {
     //public ABPath currentAbductDigPath { get; private set; }
     public Character currentAbductTarget { get; private set; }
     
+    //De-Mood
+    public bool canDeMood => _currentDeMoodCooldown >= _deMoodCooldownPeriod;
+    private int _currentDeMoodCooldown;
+    private readonly int _deMoodCooldownPeriod;
+    public List<HexTile> deMoodVillageTarget { get; private set; }
+    
     private COMBAT_MODE combatModeBeforeHarassRaidInvade;
     private COMBAT_MODE combatModeBeforeAttackingDemonicStructure;
 
@@ -47,6 +54,11 @@ public class BehaviourComponent {
         currentBehaviourComponents = new List<CharacterBehaviourComponent>();
         invadeCombatantTargetList = new List<Character>();
         invadeNonCombatantTargetList = new List<Character>();
+        
+        //De-Mood
+        _deMoodCooldownPeriod = GameManager.ticksPerHour * 2; //2 hours
+        _currentDeMoodCooldown = _deMoodCooldownPeriod;
+        
         PopulateInitialBehaviourComponents();
     }
 
@@ -78,12 +90,16 @@ public class BehaviourComponent {
     //    //    }
     //    //}
     //}
-    public bool AddBehaviourComponent(CharacterBehaviourComponent component) {
+    private bool AddBehaviourComponent(CharacterBehaviourComponent component) {
         if(component == null) {
             throw new System.Exception(
                 $"{GameManager.Instance.TodayLogString()}{owner.name} is trying to add a new behaviour component but it is null!");
         }
-        return AddBehaviourComponentInOrder(component);
+        bool behaviourAdded = AddBehaviourComponentInOrder(component);
+        if (behaviourAdded) {
+            component.OnAddBehaviourToCharacter(owner);
+        }
+        return behaviourAdded;
     }
     public bool AddBehaviourComponent(System.Type componentType) {
         return AddBehaviourComponent(CharacterManager.Instance.GetCharacterBehaviourComponent(componentType));
@@ -92,6 +108,7 @@ public class BehaviourComponent {
         bool wasRemoved = currentBehaviourComponents.Remove(component);
         if (wasRemoved) {
             Debug.Log($"{owner.name} removed character behaviour {component}");
+            component.OnRemoveBehaviourFromCharacter(owner);
             Messenger.Broadcast(Signals.CHARACTER_REMOVED_BEHAVIOUR, owner, component);
         }
         return wasRemoved;
@@ -266,6 +283,41 @@ public class BehaviourComponent {
                 }
             }
         }
+    }
+    #endregion
+
+    #region Utilities
+    public List<HexTile> GetVillageTargetsByPriority() {
+        //get settlements in region that have normal characters living there.
+        List<BaseSettlement> settlementsInRegion = owner.currentRegion?.GetSettlementsInRegion(
+            settlement => settlement.residents.Count(c => c.isNormalCharacter && c.IsAble()) > 0);
+        if (settlementsInRegion != null) {
+            List<BaseSettlement> villageChoices = settlementsInRegion.Where(x =>
+                    x.locationType == LOCATION_TYPE.ELVEN_SETTLEMENT ||
+                    x.locationType == LOCATION_TYPE.HUMAN_SETTLEMENT)
+                .ToList();
+            if (villageChoices.Count > 0) {
+                //a random village occupied by Villagers within current region
+                BaseSettlement chosenVillage = CollectionUtilities.GetRandomElement(villageChoices);
+                return new List<HexTile>(chosenVillage.tiles);
+            } else {
+                //a random special structure occupied by Villagers within current region
+                List<BaseSettlement> specialStructureChoices = settlementsInRegion.Where(x =>
+                        x.locationType == LOCATION_TYPE.DUNGEON).ToList();
+                if (specialStructureChoices.Count > 0) {
+                    BaseSettlement chosenSpecialStructure = CollectionUtilities.GetRandomElement(specialStructureChoices);
+                    return new List<HexTile>(chosenSpecialStructure.tiles);
+                }
+            }
+        } 
+        //no settlements in region.
+        //a random area occupied by Villagers within current region
+        List<HexTile> occupiedAreas = owner.currentRegion?.GetAreasOccupiedByVillagers();
+        if (occupiedAreas != null) {
+            HexTile randomArea = CollectionUtilities.GetRandomElement(occupiedAreas);
+            return new List<HexTile>() { randomArea };
+        }
+        return null;
     }
     #endregion
 
@@ -467,6 +519,35 @@ public class BehaviourComponent {
     //}
     public void SetAbductionTarget(Character character) {
         currentAbductTarget = character;
+    }
+    #endregion
+
+    #region De-Mood
+    public void OnBecomeDeMooder() {
+        Messenger.AddListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfDeMoodJobFinished);
+    }
+    public void OnNoLongerDeMooder() {
+        Messenger.RemoveListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfDeMoodJobFinished);
+    }
+    private void CheckIfDeMoodJobFinished(Character character, GoapPlanJob job) {
+        if (character == owner && job.jobType == JOB_TYPE.DECREASE_MOOD) {
+            //character finished decrease mood job, start cooldown.
+            StartDeMoodCooldown();
+            SetDeMoodVillageTarget(null);
+        }
+    }
+    private void StartDeMoodCooldown() {
+        _currentDeMoodCooldown = 0;
+        Messenger.AddListener(Signals.TICK_ENDED, PerTickDeMoodCooldown);
+    }
+    private void PerTickDeMoodCooldown() {
+        if (_currentDeMoodCooldown >= _deMoodCooldownPeriod) {
+            Messenger.RemoveListener(Signals.TICK_ENDED, PerTickDeMoodCooldown);    
+        }
+        _currentDeMoodCooldown++;
+    }
+    public void SetDeMoodVillageTarget(List<HexTile> targets) {
+        deMoodVillageTarget = targets;
     }
     #endregion
 

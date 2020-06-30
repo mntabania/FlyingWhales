@@ -323,10 +323,6 @@ public static class Signals {
     public static string PLAYER_REMOVED_ARTIFACT = "OnPlayerRemovedArtifact";
     public static string PLAYER_USED_ARTIFACT = "OnPlayerUsedArtifact";
     /// <summary>
-    /// Parameters (NPCSettlement invadedArea)
-    /// </summary>
-    public static string SUCCESS_INVASION_AREA = "OnPlayerSuccessInvadeArea";
-    /// <summary>
     /// parameters (Minion affectedMinion, PlayerJobAction)
     /// </summary>
     public static string PLAYER_LEARNED_INTERVENE_ABILITY = "OnMinionLearnedInterveneAbility";

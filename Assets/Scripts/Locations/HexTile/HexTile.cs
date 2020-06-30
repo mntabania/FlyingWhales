@@ -921,7 +921,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     }
     #endregion
 
-    #region NPCSettlement
+    #region Settlement
     public void SetSettlementOnTile(BaseSettlement settlement) {
         settlementOnTile = settlement;
         landmarkOnTile?.nameplate.UpdateVisuals();
@@ -1364,6 +1364,25 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
             Character character = region.charactersAtLocation[i];
             if (character.gridTileLocation.localPlace.x >= xMin && character.gridTileLocation.localPlace.x <= xMax
                 && character.gridTileLocation.localPlace.y >= yMin && character.gridTileLocation.localPlace.y <= yMax) {
+                if (characters == null) { characters = new List<Character>(); }
+                characters.Add(character);
+            }
+        }
+        return characters;
+    }
+    public List<Character> GetAllCharactersInsideHexThatMeetCriteria(System.Func<Character, bool> validityChecker) {
+        List<Character> characters = null;
+        LocationGridTile lowerLeftCornerTile = innerMapHexTile.gridTileCollections[0].tilesInTerritory[0];
+        int xMin = lowerLeftCornerTile.localPlace.x;
+        int yMin = lowerLeftCornerTile.localPlace.y;
+        int xMax = xMin + (InnerMapManager.BuildingSpotSize.x * 2);
+        int yMax = yMin + (InnerMapManager.BuildingSpotSize.y * 2);
+
+        for (int i = 0; i < region.charactersAtLocation.Count; i++) {
+            Character character = region.charactersAtLocation[i];
+            if (character.gridTileLocation.localPlace.x >= xMin && character.gridTileLocation.localPlace.x <= xMax
+                && character.gridTileLocation.localPlace.y >= yMin && character.gridTileLocation.localPlace.y <= yMax
+                && validityChecker.Invoke(character)) {
                 if (characters == null) { characters = new List<Character>(); }
                 characters.Add(character);
             }

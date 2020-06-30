@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Locations.Settlements;
 using PathFind;
 using SpriteGlow;
 using UnityEngine;
@@ -14,7 +15,7 @@ public class Region {
     public string name { get; private set; }
     public string description => GetDescription();
     public List<HexTile> tiles { get; }
-    public List<HexTile> shuffledNonMountainWaterTiles { get; private set; }
+    public List<HexTile> shuffledNonMountainWaterTiles { get; }
     public HexTile coreTile { get; private set; }
     public LOCATION_TYPE locationType => LOCATION_TYPE.EMPTY;
     public Color regionColor { get; }
@@ -30,8 +31,8 @@ public class Region {
     public LocationStructure mainStorage { get; private set; }
     public bool canShowNotifications { get; private set; }
     public Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness { get; }
-    public List<IPointOfInterest> pendingAddAwareness { get; private set; }
-    public List<IPointOfInterest> pendingRemoveAwareness { get; private set; }
+    public List<IPointOfInterest> pendingAddAwareness { get; }
+    public List<IPointOfInterest> pendingRemoveAwareness { get; }
 
     private RegionInnerTileMap _regionInnerTileMap; //inner map of the region, this should only be used if this region does not have an npcSettlement. 
     private string _activeEventAfterEffectScheduleId;
@@ -275,6 +276,39 @@ public class Region {
             }
         }
         return false;
+    }
+    public List<BaseSettlement> GetSettlementsInRegion(System.Func<BaseSettlement, bool> validityChecker) {
+        List<BaseSettlement> settlements = null;
+        for (int i = 0; i < tiles.Count; i++) {
+            HexTile tile = tiles[i];
+            if (tile.settlementOnTile != null && validityChecker.Invoke(tile.settlementOnTile)) {
+                if (settlements == null) {
+                    settlements = new List<BaseSettlement>();
+                }
+                if (settlements.Contains(tile.settlementOnTile) == false) {
+                    settlements.Add(tile.settlementOnTile);    
+                }
+            }
+        }
+        return settlements;
+    }
+    public List<HexTile> GetAreasOccupiedByVillagers() {
+        List<HexTile> areas = null;
+        for (int i = 0; i < residents.Count; i++) {
+            Character regionResident = residents[i];
+            if (regionResident.territorries != null && regionResident.territorries.Count > 0) {
+                for (int j = 0; j < regionResident.territorries.Count; j++) {
+                    HexTile territory = regionResident.territorries[j];
+                    if (areas == null) {
+                        areas = new List<HexTile>();
+                    }
+                    if (areas.Contains(territory) == false) {
+                        areas.Add(territory);
+                    }
+                }
+            }
+        }
+        return areas;
     }
     #endregion
 

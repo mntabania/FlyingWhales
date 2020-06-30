@@ -38,8 +38,14 @@ public class Minion {
         // RemoveInvalidPlayerActions();
         character.needsComponent.SetFullnessForcedTick(0);
         character.needsComponent.SetTirednessForcedTick(0);
-        character.behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Default_Minion_Behaviour);
-        character.combatComponent.SetCombatMode(COMBAT_MODE.Defend);
+        if (character.behaviourComponent.defaultBehaviourSetName == CharacterManager.Default_Resident_Behaviour) {
+            //only change default behaviour set of minion if it is currently using the default resident behaviour.
+            character.behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Default_Minion_Behaviour);    
+        }
+        if (character.combatComponent.combatMode == COMBAT_MODE.Aggressive) {
+            //only change combat mode of minions that haven't already changed their combat mode
+            character.combatComponent.SetCombatMode(COMBAT_MODE.Defend);
+        }
         character.visuals.UpdateAllVisuals(character);
     }
     public Minion(SaveDataMinion data) {
@@ -60,25 +66,6 @@ public class Minion {
     public void SetPlayerCharacterItem(PlayerCharacterItem item) {
         //character.SetPlayerCharacterItem(item);
     }
-    //public void AdjustExp(int amount) {
-    //    exp += amount;
-    //    if(exp >= 100) {
-    //        LevelUp();
-    //        exp = 0;
-    //    }else if (exp < 0) {
-    //        exp = 0;
-    //    }
-    //    //_characterItem.UpdateMinionItem();
-    //}
-    //public void SetLevel(int level) {
-    //    character.SetLevel(level);
-    //}
-    //public void LevelUp() {
-    //    character.LevelUp();
-    //}
-    //public void LevelUp(int amount) {
-    //    character.LevelUp(amount);
-    //}
     public void SetIndexDefaultSort(int index) {
         indexDefaultSort = index;
     }
@@ -367,8 +354,6 @@ public class Minion {
         character.ConstructInitialGoapAdvertisementActions();
         character.marker.InitialPlaceMarkerAt(tile);
         character.SetIsDead(false);
-
-        //PlayerManager.Instance.player.AdjustMana(-EditableValuesManager.Instance.summonMinionManaCost);
 
         SubscribeListeners();
         SetIsSummoned(true);

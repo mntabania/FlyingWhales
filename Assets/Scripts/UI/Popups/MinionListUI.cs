@@ -19,6 +19,10 @@ public class MinionListUI : PopupMenuBase {
         base.Open();
         UpdateMinionPlayerSkillItems();
     }
+    public override void Close() {
+        base.Close();
+        HideMinionList();
+    }
     public void Initialize() {
         _minionItems = new List<SummonMinionPlayerSkillNameplateItem>();
         Messenger.AddListener<Minion>(Signals.PLAYER_GAINED_MINION, OnGainMinion);
