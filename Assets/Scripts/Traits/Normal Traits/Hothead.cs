@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Traits {
     public class Hothead : Trait {
+        public override bool isSingleton => true;
 
         public Hothead() {
             name = "Hothead";

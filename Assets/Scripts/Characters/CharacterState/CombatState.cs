@@ -304,7 +304,7 @@ public class CombatState : CharacterState {
         Character owner = stateComponent.character;
         //Will stop pursuing only if current closest hostile is character, if current closest hostile is an object, whether or not the source can run, he/she will still pursue
         if (character == owner && stateComponent.currentState == this && !isPaused && !isDone && currentClosestHostile != null && currentClosestHostile is Character targetCharacter && isAttacking) {
-            if(targetCharacter.isInCombat && !(targetCharacter.stateComponent.currentState as CombatState).isAttacking) {
+            if(targetCharacter.combatComponent.isInCombat && !(targetCharacter.stateComponent.currentState as CombatState).isAttacking) {
                 if (!owner.movementComponent.CanStillPursueTarget(targetCharacter)) {
                     if(owner.combatComponent.fightCombatData.ContainsKey(targetCharacter) && owner.combatComponent.fightCombatData[targetCharacter].reasonForCombat == CombatManager.Demon_Kill) {
                         //If the reason for combat is Demon Kill, the hostile should not be removed from hostile range, regardless if he/she can still run
@@ -354,7 +354,7 @@ public class CombatState : CharacterState {
     private bool HasStillAvoidPOIThatIsInRange() {
         for (int i = 0; i < stateComponent.character.combatComponent.avoidInRange.Count; i++) {
             IPointOfInterest poi = stateComponent.character.combatComponent.avoidInRange[i];
-            if (IsStillInRange(poi)) {
+            if (stateComponent.character.marker && stateComponent.character.marker.IsStillInRange(poi)) {
                 return true;
             }
         }
@@ -363,15 +363,11 @@ public class CombatState : CharacterState {
     private bool HasStillHostilePOIThatIsInRange() {
         for (int i = 0; i < stateComponent.character.combatComponent.hostilesInRange.Count; i++) {
             IPointOfInterest poi = stateComponent.character.combatComponent.hostilesInRange[i];
-            if (IsStillInRange(poi)) {
+            if (stateComponent.character.marker && stateComponent.character.marker.IsStillInRange(poi)) {
                 return true;
             }
         }
         return false;
-    }
-    private bool IsStillInRange(IPointOfInterest poi) {
-        //I added checking for poisInRangeButDiffStructure beacuse characters are being removed from the character's avoid range when they exit a structure. (Myk)
-        return stateComponent.character.marker.inVisionPOIs.Contains(poi) || stateComponent.character.marker.visionCollider.poisInRangeButDiffStructure.Contains(poi);
     }
 
     private void SetIsAttacking(bool state) {
@@ -397,7 +393,7 @@ public class CombatState : CharacterState {
         for (int i = 0; i < stateComponent.character.combatComponent.hostilesInRange.Count; i++) {
             IPointOfInterest poi = stateComponent.character.combatComponent.hostilesInRange[i];
             if (poi is Character hostile) {
-                if (hostile.isInCombat) {
+                if (hostile.combatComponent.isInCombat) {
                     CombatData combatData = hostile.combatComponent.GetCombatData(stateComponent.character);
                     if(combatData != null && combatData.connectedAction != null && combatData.connectedAction.associatedJobType == JOB_TYPE.APPREHEND) {
                         isBeingApprehended = true;
@@ -410,7 +406,7 @@ public class CombatState : CharacterState {
         for (int i = 0; i < stateComponent.character.combatComponent.avoidInRange.Count; i++) {
             IPointOfInterest poi = stateComponent.character.combatComponent.avoidInRange[i];
             if (poi is Character hostile) {
-                if (hostile.isInCombat) {
+                if (hostile.combatComponent.isInCombat) {
                     CombatData combatData = hostile.combatComponent.GetCombatData(stateComponent.character);
                     if (combatData != null && combatData.connectedAction != null && combatData.connectedAction.associatedJobType == JOB_TYPE.APPREHEND) {
                         isBeingApprehended = true;
@@ -472,7 +468,7 @@ public class CombatState : CharacterState {
                 stateComponent.character.combatComponent.RemoveHostileInRange(currentClosestHostile, false);
                 SetClosestHostile();
             } else if (currentClosestHostile != null && currentClosestHostile is Character targetCharacter) {
-                if(targetCharacter.isInCombat && (targetCharacter.stateComponent.currentState as CombatState).isAttacking == false)
+                if(targetCharacter.combatComponent.isInCombat && (targetCharacter.stateComponent.currentState as CombatState).isAttacking == false)
                 log +=
                     $"\nCurrent closest hostile: {currentClosestHostile.name} is already fleeing, will try to set another hostile character that is not fleeing...";
                 SetClosestHostilePriorityNotFleeing();

@@ -999,7 +999,8 @@ public enum INTERACTION_TYPE {
     EAT_ALIVE,
     REMOVE_BUFF,
     CREATE_CULTIST_KIT,
-    IS_CULTIST
+    IS_CULTIST,
+    SPAWN_POISON_CLOUD,
 }
 
 public enum INTERACTION_CATEGORY {
@@ -1380,7 +1381,8 @@ public enum TILE_OBJECT_TYPE {
     FISH_PILE = 145,
     DIAMOND = 146,
     GOLD = 147,
-    CULTIST_KIT
+    CULTIST_KIT = 148,
+    EGG = 149,
 }
 public enum POI_STATE {
     ACTIVE,

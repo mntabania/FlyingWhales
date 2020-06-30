@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Traits {
     public class Lustful : Trait {
+        public override bool isSingleton => true;
 
         public Lustful() {
             name = "Lustful";

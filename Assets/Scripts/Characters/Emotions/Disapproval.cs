@@ -15,7 +15,7 @@ public class Disapproval : Emotion {
             Character targetCharacter = target as Character;
             witness.relationshipContainer.AdjustOpinion(witness, targetCharacter, "Disapproval", -9);
             if(status == REACTION_STATUS.WITNESSED && (goapNode == null || !goapNode.isAssumption)) {
-                if (!targetCharacter.isInCombat) {
+                if (!targetCharacter.combatComponent.isInCombat) {
                     targetCharacter.interruptComponent.TriggerInterrupt(INTERRUPT.Stopped, witness, actionThatTriggered: goapNode);
                 }
             }

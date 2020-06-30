@@ -4,6 +4,8 @@ using UnityEngine;
 
 namespace Traits {
     public class FireProne : Trait {
+        public override bool isSingleton => true;
+
         public FireProne() {
             name = "Fire Prone";
             description = "Takes double damage from Fire.";

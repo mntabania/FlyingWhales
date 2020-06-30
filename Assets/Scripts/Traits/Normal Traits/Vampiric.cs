@@ -10,6 +10,7 @@ namespace Traits {
         //private int _flatAttackMod;
         //private int _flatHPMod;
         //private int _flatSpeedMod;
+        public override bool isSingleton => true;
 
         public Vampiric() {
             name = "Vampiric";

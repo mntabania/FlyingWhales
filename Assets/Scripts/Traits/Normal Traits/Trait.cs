@@ -49,7 +49,8 @@ namespace Traits {
         public string moodModificationDescription => name;
         public int moodModifier => moodEffect;
 
-        public virtual bool isPersistent { get { return false; } } //should this trait persist through all a character's alter egos
+        public virtual bool isPersistent => false; //should this trait persist through all a character's alter egos
+        public virtual bool isSingleton => false;
 
         #region Virtuals
         public virtual void OnAddTrait(ITraitable addedTo) {

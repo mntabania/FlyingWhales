@@ -1,6 +1,7 @@
 ﻿namespace Traits {
     public class Webbed : Status {
-        
+        public override bool isSingleton => true;
+
         public Webbed() {
             name = "Webbed";
             description = "This is Webbed.";

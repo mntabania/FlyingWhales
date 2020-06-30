@@ -492,7 +492,7 @@ namespace Inner_Maps {
             summary = character.marker.inVisionCharacters.Count > 0 ? character.marker.inVisionCharacters.Select((t, i) => (Character) character.marker.inVisionCharacters.ElementAt(i)).Aggregate(summary, (current, poi) => $"{current}{poi.name}, ") : $"{summary}None";
             
             summary = $"{summary}\n\tPOI's in Range but different structures: ";
-            summary = character.marker.visionCollider.poisInRangeButDiffStructure.Count > 0 ? character.marker.visionCollider.poisInRangeButDiffStructure.Aggregate(summary, (current, poi) => $"{current}{poi}, ") : $"{summary}None";
+            summary = character.marker.inVisionPOIsButDiffStructure.Count > 0 ? character.marker.inVisionPOIsButDiffStructure.Aggregate(summary, (current, poi) => $"{current}{poi}, ") : $"{summary}None";
             
             summary = $"{summary}\n\tHostiles in Range: ";
             summary = character.combatComponent.hostilesInRange.Count > 0 ? character.combatComponent.hostilesInRange.Aggregate(summary, (current, poi) => $"{current}{poi.name}, ") : $"{summary}None";

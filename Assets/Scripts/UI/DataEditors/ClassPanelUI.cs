@@ -15,6 +15,7 @@ public class ClassPanelUI : MonoBehaviour {
 
     public InputField classNameInput;
     public InputField identifierInput;
+    public InputField tamedTraitInput;
     public InputField baseAttackPowerInput;
     //public InputField attackPowerPerLevelInput;
     public InputField baseSpeedInput;
@@ -223,6 +224,7 @@ public class ClassPanelUI : MonoBehaviour {
         classNameInput.text = string.Empty;
         identifierInput.text = string.Empty;
         interestedItemNamesInput.text = string.Empty;
+        tamedTraitInput.text = string.Empty;
 
         //nonCombatantToggle.isOn = false;
 
@@ -338,6 +340,7 @@ public class ClassPanelUI : MonoBehaviour {
     private void LoadClassDataToUI(CharacterClass characterClass) {
         classNameInput.text = characterClass.className;
         identifierInput.text = characterClass.identifier;
+        tamedTraitInput.text = characterClass.traitNameOnTamedByPlayer;
         //nonCombatantToggle.isOn = characterClass.isNormalNonCombatant;
         baseAttackPowerInput.text = characterClass.baseAttackPower.ToString();
         //attackPowerPerLevelInput.text = characterClass.attackPowerPerLevel.ToString();

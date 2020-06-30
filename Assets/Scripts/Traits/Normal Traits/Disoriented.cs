@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Traits {
     public class Disoriented : Status {
+        public override bool isSingleton => true;
 
         public Disoriented() {
             name = "Disoriented";

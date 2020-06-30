@@ -230,7 +230,7 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
     private IEnumerator QuickShowHPBarCoroutine(IPointOfInterest poi) {
         ShowHPBar(poi);
         yield return new WaitForSeconds(2f);
-        if (!(poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER && (poi as Character).isInCombat)) {
+        if (!(poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER && (poi as Character).combatComponent.isInCombat)) {
             HideHPBar();
         }
     }

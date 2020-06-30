@@ -56,6 +56,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
 
     //vision colliders
     public List<IPointOfInterest> inVisionPOIs { get; private set; } //POI's in this characters vision collider
+    public List<IPointOfInterest> inVisionPOIsButDiffStructure { get; private set; } //POI's in this characters vision collider
     public List<IPointOfInterest> unprocessedVisionPOIs { get; private set; } //POI's in this characters vision collider
     private List<IPointOfInterest> unprocessedVisionPOIInterruptsOnly { get; set; } //POI's in this characters vision collider
     private List<ActualGoapNode> unprocessedActionsOnly { get; set; } //POI's in this characters vision collider
@@ -103,6 +104,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         unprocessedVisionPOIInterruptsOnly = new List<IPointOfInterest>();
         unprocessedActionsOnly = new List<ActualGoapNode>();
         inVisionPOIs = new List<IPointOfInterest>();
+        inVisionPOIsButDiffStructure = new List<IPointOfInterest>();
         inVisionCharacters = new List<Character>();
         inVisionTileObjects = new List<TileObject>();
         attackSpeedMeter = 0f;
@@ -258,7 +260,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
                 character.combatComponent.RemoveHostileInRange(carriedCharacter); //removed hostile because he/she left the npcSettlement.
                 character.combatComponent.RemoveAvoidInRange(carriedCharacter);
                 RemovePOIFromInVisionRange(carriedCharacter);
-                visionCollider.RemovePOIAsInRangeButDifferentStructure(carriedCharacter);
+                RemovePOIAsInRangeButDifferentStructure(carriedCharacter);
             }
         }
     }
@@ -266,7 +268,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         string gainTraitSummary =
             $"{GameManager.Instance.TodayLogString()}{characterThatGainedTrait.name} has <color=green>gained</color> trait <b>{trait.name}</b>";
         if (!characterThatGainedTrait.canPerform) {
-            if (character.isInCombat) {
+            if (character.combatComponent.isInCombat) {
                 characterThatGainedTrait.stateComponent.ExitCurrentState();
                 gainTraitSummary += "\nGained trait hinders performance, and characters current state is combat, exiting combat state.";
             }
@@ -306,7 +308,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         character.combatComponent.RemoveHostileInRange(obj);
         character.combatComponent.RemoveAvoidInRange(obj);
         RemovePOIFromInVisionRange(obj);
-        visionCollider.RemovePOIAsInRangeButDifferentStructure(obj);
+        RemovePOIAsInRangeButDifferentStructure(obj);
     }
     #endregion
 
@@ -450,7 +452,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     //    StartMovement();
     //}
     public void ArrivedAtTarget() {
-        if (character.isInCombat) {
+        if (character.combatComponent.isInCombat) {
             CombatState combatState = character.stateComponent.currentState as CombatState;
             if (combatState.isAttacking){
                 if(combatState.currentClosestHostile != null && !character.movementComponent.HasPathToEvenIfDiffRegion(combatState.currentClosestHostile.gridTileLocation)) {
@@ -959,6 +961,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
         return characters;
     }
+    public bool IsStillInRange(IPointOfInterest poi) {
+        //I added checking for poisInRangeButDiffStructure beacuse characters are being removed from the character's avoid range when they exit a structure. (Myk)
+        return inVisionPOIs.Contains(poi) || inVisionPOIsButDiffStructure.Contains(poi);
+    }
     #endregion
 
     #region Vision Collision
@@ -985,8 +991,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public bool RemovePOIFromInVisionRange(IPointOfInterest poi) {
         if (inVisionPOIs.Remove(poi)) {
             RemoveUnprocessedPOI(poi);
-            character.combatComponent.RemoveHostileInRangeSchedule(poi);
-            character.combatComponent.RemoveAvoidInRangeSchedule(poi);
+            if (!IsStillInRange(poi)) {
+                character.combatComponent.RemoveHostileInRangeSchedule(poi);
+                character.combatComponent.RemoveAvoidInRangeSchedule(poi);
+            }
             if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
                 Character target = poi as Character;
                 inVisionCharacters.Remove(target);
@@ -997,6 +1005,14 @@ public class CharacterMarker : MapObjectVisual<Character> {
             return true;
         }
         return false;
+    }
+    public void AddPOIAsInRangeButDifferentStructure(IPointOfInterest poi) {
+        if (inVisionPOIsButDiffStructure.Contains(poi) == false) {
+            inVisionPOIsButDiffStructure.Add(poi);
+        }
+    }
+    public bool RemovePOIAsInRangeButDifferentStructure(IPointOfInterest poi) {
+        return inVisionPOIsButDiffStructure.Remove(poi);
     }
     public void ClearPOIsInVisionRange() {
         inVisionPOIs.Clear();
@@ -1172,7 +1188,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     //        string removeHostileSummary = poi.name + " was removed from " + character.name + "'s hostile range.";
     //        character.logComponent.PrintLogIfActive(removeHostileSummary);
     //        //When removing hostile in range, check if character is still in combat state, if it is, reevaluate combat behavior, if not, do nothing
-    //        if (processCombatBehavior && character.isInCombat) {
+    //        if (processCombatBehavior && character.combatComponent.isInCombat) {
     //            CombatState combatState = character.stateComponent.currentState as CombatState;
     //            if (combatState.forcedTarget == poi) {
     //                combatState.SetForcedTarget(null);
@@ -1190,7 +1206,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     //        lethalCharacters.Clear();
     //        //When adding hostile in range, check if character is already in combat state, if it is, only reevaluate combat behavior, if not, enter combat state
     //        if (processCombatBehavior) {
-    //            if (character.isInCombat) {
+    //            if (character.combatComponent.isInCombat) {
     //                Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this.character);
     //            } 
     //            //else {
@@ -1350,7 +1366,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     //        //Debug.Log("Removed avoid in range " + poi.name + " from " + this.character.name);
     //        //When adding hostile in range, check if character is already in combat state, if it is, only reevaluate combat behavior, if not, enter combat state
     //        if (processCombatBehavior) {
-    //            if (character.isInCombat) {
+    //            if (character.combatComponent.isInCombat) {
     //                Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this.character);
     //            }
     //        }
@@ -1362,7 +1378,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
 
     //        //When adding hostile in range, check if character is already in combat state, if it is, only reevaluate combat behavior, if not, enter combat state
     //        if (processCombatBehavior) {
-    //            if (character.isInCombat) {
+    //            if (character.combatComponent.isInCombat) {
     //                Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this.character);
     //            } 
     //            //else {
@@ -1432,7 +1448,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         StartMovement();
     }
     public void OnFinishedTraversingFleePath() {
-        if (character.isInCombat) {
+        if (character.combatComponent.isInCombat) {
             (character.stateComponent.currentState as CombatState).FinishedTravellingFleePath();
         } else {
             SetHasFleePath(false);

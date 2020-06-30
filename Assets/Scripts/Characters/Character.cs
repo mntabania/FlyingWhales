@@ -242,7 +242,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public Vector2 selectableSize => visuals.selectableSize;
     public ProjectileReceiver projectileReceiver => marker.visionTrigger.projectileReceiver;
     public JOB_OWNER ownerType => JOB_OWNER.CHARACTER;
-    public bool isInCombat => stateComponent.currentState != null && stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT;
     public Transform worldObject => marker.transform;
     public bool isStillConsideredAlive => minion == null /*&& !(this is Summon)*/ && !faction.isPlayerFaction;
     public Character isBeingCarriedBy => IsInOwnParty() ? null : currentParty.owner;
@@ -2039,7 +2038,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 if (targetCharacterCurrentActionNode != null /*&& node.action.shouldAddLogs*/ && targetCharacterCurrentActionNode.actionStatus != ACTION_STATUS.STARTED && targetCharacterCurrentActionNode.actionStatus != ACTION_STATUS.NONE && targetCharacterCurrentActionNode.actor != this) {
                     reactionComponent.ReactTo(targetCharacterCurrentActionNode, REACTION_STATUS.WITNESSED);
                 } 
-                //else if (targetCharacter.isInCombat) {
+                //else if (targetCharacter.combatComponent.isInCombat) {
                 //    if (targetCharacter.stateComponent.currentState is CombatState combatState) {
                 //        targetCharacterCurrentActionNode = combatState.actionThatTriggeredThisState;
                 //        if (targetCharacterCurrentActionNode != null) {
@@ -2203,7 +2202,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             return;
         }
         if (action == null) {
-            if (targetCharacter != null && targetCharacter.isInCombat) {
+            if (targetCharacter != null && targetCharacter.combatComponent.isInCombat) {
                 CombatState targetCombatState = targetCharacter.stateComponent.currentState as CombatState;
                 if (targetCombatState.currentClosestHostile != null && targetCombatState.currentClosestHostile != this) {
                     if (targetCombatState.currentClosestHostile is Character) {
@@ -2654,11 +2653,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if(homeSettlement != settlement) {
             homeSettlement = settlement;
             if (isNormalCharacter) {
-                if (homeSettlement != null) {
-                    SetIsWanderer(false);
-                } else {
-                    SetIsWanderer(true);
-                }
+                behaviourComponent.UpdateDefaultBehaviourSet();
             }
         }
     }

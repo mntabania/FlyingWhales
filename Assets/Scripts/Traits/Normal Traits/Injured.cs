@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace Traits {
     public class Injured : Status {
-        private Character _sourceCharacter;
         //private GoapPlanJob _removeTraitJob;
 
         //#region getters/setters
@@ -12,6 +11,7 @@ namespace Traits {
         //    get { return true; }
         //}
         //#endregion
+        public override bool isSingleton => true;
 
         public Injured() {
             name = "Injured";
@@ -30,23 +30,22 @@ namespace Traits {
         #region Overrides
         public override void OnAddTrait(ITraitable traitable) {
             base.OnAddTrait(traitable);
-            if (traitable is Character) {
-                _sourceCharacter = traitable as Character;
-                _sourceCharacter.UpdateCanCombatState();
-                _sourceCharacter.movementComponent.AdjustSpeedModifier(-0.15f);
+            if (traitable is Character character) {
+                character.UpdateCanCombatState();
+                character.movementComponent.AdjustSpeedModifier(-0.15f);
                 //_sourceCharacter.CreateRemoveTraitJob(name);
-                _sourceCharacter.AddTraitNeededToBeRemoved(this);
+                character.AddTraitNeededToBeRemoved(this);
                 //_sourceCharacter.needsComponent.AdjustStaminaDecreaseRate(5);
 
                 if (gainedFromDoing == null) { //TODO: || gainedFromDoing.poiTarget != _sourceCharacter
-                    _sourceCharacter.RegisterLog("NonIntel", "add_trait", null, name.ToLower());
+                    character.RegisterLog("NonIntel", "add_trait", null, name.ToLower());
                 } else {
                     if (gainedFromDoing.goapType == INTERACTION_TYPE.ASSAULT) {
                         Log addLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "add_trait", gainedFromDoing);
                         if(gainedFromDoing != null) {
                             addLog.SetLogType(LOG_TYPE.Action);
                         }
-                        addLog.AddToFillers(_sourceCharacter, _sourceCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                        addLog.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                         addLog.AddToFillers(this, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                         //TODO: gainedFromDoing.states["Target Injured"].AddArrangedLog("injured", addLog, () => PlayerManager.Instance.player.ShowNotificationFrom(addLog, _sourceCharacter, true));
                     }
@@ -54,13 +53,15 @@ namespace Traits {
                 //Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, _sourceCharacter);
             }
         }
-        public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
-            _sourceCharacter.UpdateCanCombatState();
-            _sourceCharacter.movementComponent.AdjustSpeedModifier(0.15f);
-            _sourceCharacter.RemoveTraitNeededToBeRemoved(this);
-            //_sourceCharacter.needsComponent.AdjustStaminaDecreaseRate(-5);
-            _sourceCharacter.RegisterLog("NonIntel", "remove_trait", null, name.ToLower());
-            base.OnRemoveTrait(sourceCharacter, removedBy);
+        public override void OnRemoveTrait(ITraitable traitable, Character removedBy) {
+            if (traitable is Character character) {
+                character.UpdateCanCombatState();
+                character.movementComponent.AdjustSpeedModifier(0.15f);
+                character.RemoveTraitNeededToBeRemoved(this);
+                //_sourceCharacter.needsComponent.AdjustStaminaDecreaseRate(-5);
+                character.RegisterLog("NonIntel", "remove_trait", null, name.ToLower());
+            }
+            base.OnRemoveTrait(traitable, removedBy);
         }
         //public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
         //    if (traitOwner is Character) {

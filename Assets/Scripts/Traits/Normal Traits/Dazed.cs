@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace Traits {
     public class Dazed : Status {
-
         // private List<CharacterBehaviourComponent> _behaviourComponentsBeforeDazed;
-        
+        public override bool isSingleton => true;
+
         public Dazed() {
             name = "Dazed";
             description = "This character will attack anyone at random and may destroy objects.";

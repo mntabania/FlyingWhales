@@ -162,6 +162,9 @@ public class Player : ILeader, IObjectManipulator {
             } else if(character is Summon summon) {
                 AddSummon(summon);
             }
+            if (!string.IsNullOrEmpty(character.characterClass.traitNameOnTamedByPlayer)) {
+                character.traitContainer.AddTrait(character, character.characterClass.traitNameOnTamedByPlayer);
+            }
         }
     }
     private void OnCharacterRemovedFromFaction(Character character, Faction faction) {
@@ -170,6 +173,9 @@ public class Player : ILeader, IObjectManipulator {
                 RemoveMinion(character.minion);
             } else if (character is Summon summon) {
                 RemoveSummon(summon);
+            }
+            if (!string.IsNullOrEmpty(character.characterClass.traitNameOnTamedByPlayer)) {
+                character.traitContainer.RemoveTrait(character, character.characterClass.traitNameOnTamedByPlayer);
             }
         }
     }

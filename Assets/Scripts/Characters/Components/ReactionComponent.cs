@@ -43,7 +43,7 @@ public class ReactionComponent {
             //Minions or Summons cannot react to its own traits
             return;
         }
-        if (owner.isInCombat) {
+        if (owner.combatComponent.isInActualCombat) {
             return;
         }
         debugLog += "\n-Character will loop through all his/her traits to react to Target";
@@ -85,7 +85,7 @@ public class ReactionComponent {
         return string.Empty;
     }
     private void ReactToWitnessedReactable(IReactable reactable, bool addLog) {
-        if (owner.isInCombat) {
+        if (owner.combatComponent.isInActualCombat) {
             return;
         }
         if (owner.faction != reactable.actor.faction && owner.faction.IsHostileWith(reactable.actor.faction)) {
@@ -278,7 +278,7 @@ public class ReactionComponent {
         //}
     }
     public string ReactTo(Interrupt interrupt, Character actor, IPointOfInterest target, Log log, REACTION_STATUS status) {
-        if (owner.isInCombat) {
+        if (owner.combatComponent.isInActualCombat) {
             return string.Empty;
         }
         if (!owner.isNormalCharacter /*|| owner.race == RACE.SKELETON*/) {
@@ -485,7 +485,7 @@ public class ReactionComponent {
                 debugLog += "\n-Target is dead or is passive";
                 debugLog += "\n-Do nothing";
             }
-        } else if (!owner.isInCombat) {
+        } else if (!owner.combatComponent.isInActualCombat) {
             debugLog += "\n-Target is not hostile and Character is not in combat";
             if (owner.isNormalCharacter && !IsPOICurrentlyTargetedByAPerformingAction(targetCharacter)) {
                 debugLog += "\n-Character is a villager and Target is not being targeted by an action, continue reaction";
@@ -706,7 +706,7 @@ public class ReactionComponent {
             return;
         }
         debugLog += $"{owner.name} is reacting to {targetTileObject.nameWithID}";
-        if (!owner.isInCombat && !owner.hasSeenFire) {
+        if (!owner.combatComponent.isInActualCombat && !owner.hasSeenFire) {
             if (targetTileObject.traitContainer.HasTrait("Burning")
                 && targetTileObject.gridTileLocation != null
                 && owner.homeSettlement != null
@@ -746,7 +746,7 @@ public class ReactionComponent {
                 // }
             }
         }
-        if (!owner.isInCombat && !owner.hasSeenWet) {
+        if (!owner.combatComponent.isInActualCombat && !owner.hasSeenWet) {
             if (targetTileObject.traitContainer.HasTrait("Wet")
                 && targetTileObject.gridTileLocation != null
                 && owner.homeSettlement != null
@@ -765,7 +765,7 @@ public class ReactionComponent {
                 }
             }
         }
-        if (!owner.isInCombat && !owner.hasSeenPoisoned) {
+        if (!owner.combatComponent.isInActualCombat && !owner.hasSeenPoisoned) {
             if (targetTileObject.traitContainer.HasTrait("Poisoned")
                 && targetTileObject.gridTileLocation != null
                 && owner.homeSettlement != null
@@ -954,7 +954,7 @@ public class ReactionComponent {
     public void ReactToCombat(CombatState combat, IPointOfInterest poiHit) {
         Character attacker = combat.stateComponent.character;
         Character reactor = owner;
-        if (reactor.isInCombat) {
+        if (reactor.combatComponent.isInCombat) {
             string inCombatLog = reactor.name + " is in combat and reacting to combat of " + attacker.name + " against " + poiHit.nameWithID;
             if (reactor == poiHit) {
                 inCombatLog += "\n-Reactor is the Hit Character";
@@ -962,7 +962,7 @@ public class ReactionComponent {
                 if (reactorCombat.isAttacking && reactorCombat.currentClosestHostile != null && reactorCombat.currentClosestHostile != attacker) {
                     inCombatLog += "\n-Reactor is currently attacking another character";
                     if (reactorCombat.currentClosestHostile is Character currentPursuingCharacter) {
-                        if (currentPursuingCharacter.isInCombat && (currentPursuingCharacter.stateComponent.currentState as CombatState).isAttacking == false) {
+                        if (currentPursuingCharacter.combatComponent.isInCombat && (currentPursuingCharacter.stateComponent.currentState as CombatState).isAttacking == false) {
                             inCombatLog += "\n-Character that is being attacked by reactor is currently fleeing";
                             inCombatLog += "\n-Reactor will determine combat reaction";
                             reactor.combatComponent.SetWillProcessCombat(true);
@@ -1003,7 +1003,7 @@ public class ReactionComponent {
         if(poiHit is Character characterHit) {
             if (combat.currentClosestHostile != characterHit) {
                 log += "\n-Hit Character is not the same as the actual target which is: " + combat.currentClosestHostile?.name;
-                if (characterHit.isInCombat) {
+                if (characterHit.combatComponent.isInCombat) {
                     log += "\n-Hit Character is in combat";
                     log += "\n-Do nothing";
                 } else {

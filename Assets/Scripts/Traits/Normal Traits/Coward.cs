@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace Traits {
     public class Coward : Trait {
+        public override bool isSingleton => true;
 
         public Coward() {
             name = "Coward";

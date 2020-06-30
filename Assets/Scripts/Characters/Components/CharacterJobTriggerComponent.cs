@@ -147,7 +147,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		if (npcSettlement == _owner.currentSettlement && siegeState 
 			&& (_owner.stateComponent.currentState is CombatState) == false && _owner.isNormalCharacter) {
             //characters current npcSettlement is under siege
-            if (!_owner.isInCombat) {
+            if (!_owner.combatComponent.isInCombat) {
                 _owner.interruptComponent.TriggerInterrupt(INTERRUPT.Stopped, _owner);
                 // Messenger.AddListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, CheckIfStopInterruptFinished);
             }
@@ -1824,6 +1824,18 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    goapPlan.SetDoNotRecalculate(true);
 	    job.SetCannotBePushedBack(true);
 	    _owner.jobQueue.AddJobInQueue(job);
+    }
+    #endregion
+
+    #region Spawn Objects
+    public bool TriggerSpawnPoisonCloud(out JobQueueItem producedJob) {
+        if (!_owner.jobQueue.HasJob(JOB_TYPE.IDLE)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE, INTERACTION_TYPE.SPAWN_POISON_CLOUD, _owner, _owner);
+            producedJob = job;
+            return true;
+        }
+        producedJob = null;
+        return false;
     }
     #endregion
 }

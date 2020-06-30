@@ -543,6 +543,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.IS_CULTIST, new[]{
             new StateNameAndDuration(){ name = "Cultist Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(5) },
         } },
+        {INTERACTION_TYPE.SPAWN_POISON_CLOUD, new[]{
+            new StateNameAndDuration(){ name = "Spawn Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(15) },
+        } },
     };
 }
 
