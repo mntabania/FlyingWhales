@@ -291,7 +291,7 @@ public class Minion {
         if (character.CanPlanGoap()) {
             character.PerStartTickActionPlanning();
         }
-        character.AdjustHP(-5, ELEMENTAL_TYPE.Normal, triggerDeath: true);
+        character.AdjustHP(-5, ELEMENTAL_TYPE.Normal, triggerDeath: true, showHPBar: true);
     }
     public void SetAssignedRegion(Region region) {
         assignedRegion = region;
