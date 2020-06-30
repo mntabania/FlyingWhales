@@ -98,6 +98,7 @@ public class PlayerUI : MonoBehaviour {
     
     [Header("Minion List")]
     [SerializeField] private MinionListUI minionList;
+    public UIHoverPosition minionListHoverPosition;
     private readonly List<string> factionActionsList = new List<string>() { "Manage Cult", "Meddle" };
 
     [Header("Player Actions")]
@@ -927,15 +928,15 @@ public class PlayerUI : MonoBehaviour {
         go.SetActive(false);
         SpellData spellData = PlayerSkillManager.Instance.GetSpellData(spell);
         if (spellData != null) {
-            item.SetSpell(spellData);
+            item.SetObject(spellData);
         } else {
             spellData = PlayerSkillManager.Instance.GetAfflictionData(spell);
             if (spellData != null) {
-                item.SetSpell(spellData);
+                item.SetObject(spellData);
             } else {
                 spellData = PlayerSkillManager.Instance.GetPlayerActionData(spell);
                 if (spellData != null) {
-                    item.SetSpell(spellData);
+                    item.SetObject(spellData);
                 }
             }
         }

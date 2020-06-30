@@ -1520,18 +1520,23 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     public void SetAllColliderStates(bool state) {
         SetCollidersState(state);
-        visionTrigger.SetCollidersState(state);
+        visionTrigger.SetAllCollidersState(state);
     }
     #endregion
 
     #region Map Object Visual
     public override void UpdateTileObjectVisual(Character obj) { }
     public override void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) { }
-    public virtual bool IsMapObjectMenuVisible() {
-        if (UIManager.Instance.characterInfoUI.isShowing) {
-            return UIManager.Instance.characterInfoUI.activeCharacter == this.character;
-        }
-        return false;
+    public override void SetVisualAlpha(float alpha) {
+        base.SetVisualAlpha(alpha);
+        
+        Color color = hairImg.color;
+        color.a = alpha;
+        hairImg.color = color;
+        
+        color = knockedOutHairImg.color;
+        color.a = alpha;
+        knockedOutHairImg.color = color;
     }
     #endregion
 

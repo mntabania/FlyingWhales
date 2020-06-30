@@ -228,7 +228,7 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
         Debug.Log($"{this.name} expired!");
         _poisonCloud.OnExpire();
         _cloudEffect.Stop();
-        visionTrigger.SetCollidersState(false);
+        visionTrigger.SetAllCollidersState(false);
         isSpawned = false;
         if (string.IsNullOrEmpty(_expiryKey) == false) {
             SchedulingManager.Instance.RemoveSpecificEntry(_expiryKey);

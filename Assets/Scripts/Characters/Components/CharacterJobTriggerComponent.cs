@@ -978,7 +978,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		    } else {
 			    if (_owner.territorries.Count > 0) {
 				    HexTile chosenTerritory = _owner.territorries[UnityEngine.Random.Range(0, _owner.territorries.Count)];
-				    chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
+				    List<LocationGridTile> validTiles = chosenTerritory.locationGridTiles
+					    .Where(t => _owner.movementComponent.HasPathToEvenIfDiffRegion(t)).ToList();
+				    chosenTile = CollectionUtilities.GetRandomElement(validTiles.Count > 0 ? validTiles : chosenTerritory.locationGridTiles);
 			    } else {
 				    //If has no territory, roam around tile instead
 				    return TriggerRoamAroundTile(out producedJob);
@@ -1597,6 +1599,15 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         }
         return false;
     }
+    public bool CreateGoToJob(LocationGridTile tile, out JobQueueItem producedJob) {
+	    if(!_owner.jobQueue.HasJob(JOB_TYPE.GO_TO)) {
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.GO_TO, INTERACTION_TYPE.GO_TO_TILE, tile.genericTileObject, _owner);
+		    producedJob = job;
+		    return true;
+	    }
+	    producedJob = null;
+	    return false;
+    }
     #endregion
 
     #region Build
@@ -1836,6 +1847,25 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         }
         producedJob = null;
         return false;
+    }
+    #endregion
+    
+    #region Decrease Mood
+    public bool TriggerDecreaseMood(Character target, out JobQueueItem producedJob) {
+	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DECREASE_MOOD,
+		    INTERACTION_TYPE.DECREASE_MOOD, target, _owner);
+	    producedJob = job;
+	    return true;
+    }
+    public bool TriggerDecreaseMoodInTerritory(Character target, out JobQueueItem producedJob) {
+	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DECREASE_MOOD,
+		    INTERACTION_TYPE.DECREASE_MOOD, target, _owner);
+	    job.SetStillApplicableChecker(() => IsDecreaseMoodJobInTerritoryStillApplicable(target));
+	    producedJob = job;
+	    return true;
+    }
+    private bool IsDecreaseMoodJobInTerritoryStillApplicable(Character target) {
+	    return target.hexTileLocation != null && _owner.territorries.Contains(target.hexTileLocation);
     }
     #endregion
 }

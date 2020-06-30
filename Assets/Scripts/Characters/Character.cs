@@ -211,6 +211,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             return GetLocationGridTileByXY(gridTilePosition.x, gridTilePosition.y);
         }
     }
+    public HexTile hexTileLocation {
+        get {
+            if (gridTileLocation != null && gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+                return gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
+            }
+            return null;
+        }
+    }
     public Vector2Int gridTilePosition {
         get {
             if (!marker) {
@@ -462,7 +470,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.AddListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, ForceCancelAllJobsTargetingPOI);
         Messenger.AddListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI_EXCEPT_SELF, ForceCancelAllJobsTargetingPOIExceptSelf);
         //Messenger.AddListener<IPointOfInterest, string, JOB_TYPE>(Signals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, ForceCancelJobTypesTargetingPOI);
-        Messenger.AddListener<NPCSettlement>(Signals.SUCCESS_INVASION_AREA, OnSuccessInvadeArea);
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
         //Messenger.AddListener<Character>(Signals.SCREAM_FOR_HELP, HeardAScream);
@@ -499,7 +506,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.RemoveListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, ForceCancelAllJobsTargetingPOI);
         Messenger.RemoveListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI_EXCEPT_SELF, ForceCancelAllJobsTargetingPOIExceptSelf);
         //Messenger.RemoveListener<IPointOfInterest, string, JOB_TYPE>(Signals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, ForceCancelJobTypesTargetingPOI);
-        Messenger.RemoveListener<NPCSettlement>(Signals.SUCCESS_INVASION_AREA, OnSuccessInvadeArea);
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
         //Messenger.RemoveListener<Character>(Signals.SCREAM_FOR_HELP, HeardAScream);
@@ -548,34 +554,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //    //    marker.RemoveTerrifyingObject(party.characters[i]);
             //    //}
             //}
-        }
-    }
-    /// <summary>
-    /// Listener for when the player successfully invades an npcSettlement. And this character is still alive.
-    /// </summary>
-    /// <param name="settlementinvaded npcSettlement.</param>
-    protected virtual void OnSuccessInvadeArea(NPCSettlement npcSettlement) {
-        if (currentSettlement == npcSettlement && minion == null) {
-            StopCurrentActionNode(false);
-            if (stateComponent.currentState != null) {
-                stateComponent.ExitCurrentState();
-            }
-            //else if (stateComponent.stateToDo != null) {
-            //    stateComponent.SetStateToDo(null);
-            //}
-            currentRegion.RemoveCharacterFromLocation(this);
-            //combatComponent.ClearAvoidInRange(false);
-            //combatComponent.ClearHostilesInRange(false);
-            //marker.ClearPOIsInVisionRange();
-
-            UnsubscribeSignals();
-            traitContainer.RemoveAllNonPersistentTraitAndStatuses(this);
-            //ClearAllAwareness();
-            CancelAllJobs();
-            SchedulingManager.Instance.ClearAllSchedulesBy(this);
-            if (marker) {
-                DestroyMarker();
-            }
         }
     }
     private void OnStopCurrentActionTargetingPOI(IPointOfInterest poi) {
@@ -645,6 +623,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         CharacterMarker _marker = portraitGO.GetComponent<CharacterMarker>();
         _marker.SetCharacter(this);
         SetCharacterMarker(_marker);
+        
+        List<Trait> traitOverrideFunctions = traitContainer.GetTraitOverrideFunctions(TraitManager.Initiate_Map_Visual_Trait);
+        if (traitOverrideFunctions != null) {
+            for (int i = 0; i < traitOverrideFunctions.Count; i++) {
+                Trait trait = traitOverrideFunctions[i];
+                trait.OnInitiateMapObjectVisual(this);
+            }
+        }
     }
     public void DestroyMarker(LocationGridTile destroyedAt = null) {
         if (destroyedAt == null) {
@@ -1274,7 +1260,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //    }
         //}
         if (marker) {
-            marker.visionTrigger.SetCollidersState(true);
+            marker.visionTrigger.SetAllCollidersState(true);
             marker.UpdateAnimation();
         }
 
@@ -1287,7 +1273,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //currentRegion.RemoveCharacterFromLocation(this); //Why are we removing the character from location if it is added to a party
             //ownParty.specificLocation.RemoveCharacterFromLocation(this);
             //ownParty.icon.SetVisualState(false);
-            marker.visionTrigger.SetCollidersState(false);
+            marker.visionTrigger.SetAllCollidersState(false);
             marker.UpdateAnimation();
         }
     }
@@ -2463,7 +2449,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         int previous = currentHP;
         currentHP += amount;
         currentHP = Mathf.Clamp(currentHP, 0, maxHP);
-        Messenger.Broadcast(Signals.ADJUSTED_HP, this);
+        Messenger.Broadcast(Signals.CHARACTER_ADJUSTED_HP, this, amount);
         if (marker && showHPBar) {
             if (marker.hpBarGO.activeSelf) {
                 marker.UpdateHP(this);
@@ -3724,6 +3710,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         AddAdvertisedAction(INTERACTION_TYPE.PATROL);
         AddAdvertisedAction(INTERACTION_TYPE.BEGIN_MINE);
         AddAdvertisedAction(INTERACTION_TYPE.EAT_ALIVE);
+        AddAdvertisedAction(INTERACTION_TYPE.DECREASE_MOOD);
 
         if (this is Summon) {
             AddAdvertisedAction(INTERACTION_TYPE.PLAY);

@@ -9,10 +9,6 @@ public class SummonListUI : PopupMenuBase {
     [SerializeField] private GameObject activeSummonItemPrefab;
     [SerializeField] private GameObject reserveSummonItemPrefab;
     [SerializeField] private ScrollRect summonListScrollView;
-    [SerializeField] private GameObject summonListGO;
-    //[SerializeField] private UIHoverPosition summonListCardTooltipPos;
-    [SerializeField] private Toggle summonListToggle;
-    [SerializeField] private RectTransform activeHeader;
     [SerializeField] private RectTransform reserveHeader;
 
     private List<SummonMinionPlayerSkillNameplateItem> _summonPlayerSkillItems;
@@ -30,16 +26,9 @@ public class SummonListUI : PopupMenuBase {
 
     private void UpdateSummonPlayerSkillItems() {
         for (int i = 0; i < _summonPlayerSkillItems.Count; i++) {
-            _summonPlayerSkillItems[i].SetCount(_summonPlayerSkillItems[i].spellData.charges, true);
+            _summonPlayerSkillItems[i].UpdateData();
         }
     }
-    //private void UpdateMinionList() {
-    //    UtilityScripts.Utilities.DestroyChildren(minionListScrollView.content);
-    //    for (int i = 0; i < PlayerManager.Instance.player.minions.Count; i++) {
-    //        Minion currMinion = PlayerManager.Instance.player.minions[i];
-    //        CreateNewMinionItem(currMinion);
-    //    }
-    //}
     private void CreateNewActiveSummonItem(Summon summon) {
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(activeSummonItemPrefab.name, Vector3.zero, Quaternion.identity, summonListScrollView.content);
         CharacterNameplateItem item = go.GetComponent<CharacterNameplateItem>();
@@ -54,11 +43,11 @@ public class SummonListUI : PopupMenuBase {
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(reserveSummonItemPrefab.name, Vector3.zero, Quaternion.identity, summonListScrollView.content);
         SummonMinionPlayerSkillNameplateItem item = go.GetComponent<SummonMinionPlayerSkillNameplateItem>();
         item.SetObject(summonPlayerSkill);
-        item.SetCount(summonPlayerSkill.charges, true);
-        item.ClearAllOnClickActions();
-        item.ClearAllHoverEnterActions();
-        item.AddHoverEnterAction(OnHoverEnterReserveSummon);
-        item.AddHoverExitAction(OnHoverExitReserveSummon);
+        // item.SetCount(summonPlayerSkill.charges, true);
+        // item.ClearAllOnClickActions();
+        // item.ClearAllHoverEnterActions();
+        // item.AddHoverEnterAction(OnHoverEnterReserveSummon);
+        // item.AddHoverExitAction(OnHoverExitReserveSummon);
         _summonPlayerSkillItems.Add(item);
     }
     private void DeleteSummonItem(Summon summon) {
