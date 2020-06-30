@@ -53,7 +53,7 @@ public class ChaosOrb : PooledObject {
 		ObjectPoolManager.Instance.DestroyObject(this);
 		PlayerManager.Instance.RemoveChaosOrbFromAvailability(this);
 	}
-	public void OnPointerClick(BaseEventData data) {
+	public void OnPointerEnter(BaseEventData data) {
 		if (positionCoroutine != null) {
 			StopCoroutine(positionCoroutine);	
 		}

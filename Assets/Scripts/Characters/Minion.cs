@@ -291,6 +291,7 @@ public class Minion {
         if (character.CanPlanGoap()) {
             character.PerStartTickActionPlanning();
         }
+        character.AdjustHP(-5, ELEMENTAL_TYPE.Normal, triggerDeath: true, showHPBar: true);
     }
     public void SetAssignedRegion(Region region) {
         assignedRegion = region;
@@ -360,8 +361,10 @@ public class Minion {
         Messenger.Broadcast(Signals.SUMMON_MINION, this);
     }
     private void Unsummon() {
-        character.SetHP(0);
-        //Messenger.AddListener(Signals.TICK_ENDED, UnsummonedHPRecovery);
+        if(character.currentHP < 0) {
+            character.SetHP(0);
+        }
+        Messenger.AddListener(Signals.TICK_ENDED, UnsummonedHPRecovery);
         UnSubscribeListeners();
         SetIsSummoned(false);
         character.behaviourComponent.SetIsHarassing(false, null);
@@ -371,13 +374,14 @@ public class Minion {
         character.interruptComponent.ForceEndNonSimultaneousInterrupt();
         character.combatComponent.ClearAvoidInRange(false);
         character.combatComponent.ClearHostilesInRange(false);
-        PlayerSkillManager.Instance.GetMinionPlayerSkillData(minionPlayerSkillType).StartCooldown();
+        //PlayerSkillManager.Instance.GetMinionPlayerSkillData(minionPlayerSkillType).StartCooldown();
         Messenger.Broadcast(Signals.UNSUMMON_MINION, this);
     }
     private void UnsummonedHPRecovery() {
-        this.character.AdjustHP((int)(character.maxHP * 0.02f), ELEMENTAL_TYPE.Normal);
+        this.character.AdjustHP(25, ELEMENTAL_TYPE.Normal);
         if (character.currentHP >= character.maxHP) {
             //minion can be summoned again
+            PlayerSkillManager.Instance.GetMinionPlayerSkillData(minionPlayerSkillType).SetCharges(1);
             Messenger.RemoveListener(Signals.TICK_ENDED, UnsummonedHPRecovery);
         }
     }
