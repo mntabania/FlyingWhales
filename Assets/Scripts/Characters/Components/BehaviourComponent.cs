@@ -45,6 +45,9 @@ public class BehaviourComponent {
     private readonly int _deMoodCooldownPeriod;
     public List<HexTile> deMoodVillageTarget { get; private set; }
     
+    //invade
+    public List<HexTile> invadeVillageTarget { get; private set; }
+    
     private COMBAT_MODE combatModeBeforeHarassRaidInvade;
     private COMBAT_MODE combatModeBeforeAttackingDemonicStructure;
 
@@ -548,6 +551,12 @@ public class BehaviourComponent {
     }
     public void SetDeMoodVillageTarget(List<HexTile> targets) {
         deMoodVillageTarget = targets;
+    }
+    #endregion
+
+    #region Invade
+    public void SetInvadeVillageTarget(List<HexTile> targets) {
+        invadeVillageTarget = targets;
     }
     #endregion
 

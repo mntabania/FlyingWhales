@@ -1135,9 +1135,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         //PlayerAction invadeAction = new PlayerAction(PlayerDB.Invade_Action, CanDoInvade, IsHarassRaidInvadeValid, () => PlayerUI.Instance.OnClickHarassRaidInvade(this, "invade"));
         //PlayerAction buildAction = new PlayerAction(PlayerDB.Build_Demonic_Structure_Action, () => true, CanBuildDemonicStructure, OnClickBuild);
 
-        AddPlayerAction(SPELL_TYPE.HARASS);
+        // AddPlayerAction(SPELL_TYPE.HARASS);
         //AddPlayerAction(SPELL_TYPE.DEFEND);
-        AddPlayerAction(SPELL_TYPE.INVADE);
+        // AddPlayerAction(SPELL_TYPE.INVADE);
         // AddPlayerAction(SPELL_TYPE.BUILD_DEMONIC_STRUCTURE);
     }
     public void AddPlayerAction(SPELL_TYPE action) {

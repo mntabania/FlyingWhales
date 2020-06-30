@@ -42,10 +42,10 @@ public class Minion {
             //only change default behaviour set of minion if it is currently using the default resident behaviour.
             character.behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Default_Minion_Behaviour);    
         }
-        if (character.combatComponent.combatMode == COMBAT_MODE.Aggressive) {
-            //only change combat mode of minions that haven't already changed their combat mode
-            character.combatComponent.SetCombatMode(COMBAT_MODE.Defend);
-        }
+        // if (character.combatComponent.combatMode == COMBAT_MODE.Aggressive) {
+        //     //only change combat mode of minions that haven't already changed their combat mode
+        //     character.combatComponent.SetCombatMode(COMBAT_MODE.Defend);
+        // }
         character.visuals.UpdateAllVisuals(character);
     }
     public Minion(SaveDataMinion data) {
