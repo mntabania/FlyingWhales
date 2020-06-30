@@ -11,6 +11,7 @@ public sealed class PoisonCloudTileObject : MovingTileObject {
     public int size { get; private set; }
     public int stacks { get; private set; }
     public int maxSize { get; private set; }
+    public bool doExpireEffect { get; private set; }
     public override string neutralizer => "Poison Expert";
     protected override int affectedRange => size;
     
@@ -19,7 +20,19 @@ public sealed class PoisonCloudTileObject : MovingTileObject {
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
         SetDurationInTicks(GameManager.Instance.GetTicksBasedOnHour(2));
+        SetDoExpireEffect(true);
         maxSize = 6;
+    }
+
+    public void SetStacks(int stacks) {
+        this.stacks = stacks;
+        UpdateSizeBasedOnPoisonedStacks();
+    }
+    public void Explode() {
+        _poisonCloudVisual.Explode();
+    }
+    public void SetDoExpireEffect(bool state) {
+        doExpireEffect = state;
     }
 
     #region Overrides
@@ -40,6 +53,11 @@ public sealed class PoisonCloudTileObject : MovingTileObject {
     public override void Neutralize() {
         _poisonCloudVisual.Expire();
     }
+    public void OnExpire() {
+        if (doExpireEffect) {
+            ExpireEffect();
+        }
+    }
     public override bool CanBeAffectedByElementalStatus(string traitName) {
         return false;
     }
@@ -49,11 +67,6 @@ public sealed class PoisonCloudTileObject : MovingTileObject {
         traitContainer.RemoveTrait(this, "Flammable");
     }
     #endregion
-    
-    public void SetStacks(int stacks) {
-        this.stacks = stacks;
-        UpdateSizeBasedOnPoisonedStacks();
-    }
 
     #region Duration
     public void SetDurationInTicks(int duration) {
@@ -83,7 +96,29 @@ public sealed class PoisonCloudTileObject : MovingTileObject {
     }
     #endregion
 
-    public void Explode() {
-        _poisonCloudVisual.Explode();
+
+    #region Expire Effect
+    private void ExpireEffect() {
+        if (gridTileLocation != null) {
+            int radius = 0;
+            if (UtilityScripts.Utilities.IsEven(size)) {
+                //-3 because (-1 + -2), wherein -1 is the lower odd number, and -2 is the radius
+                //So if size is 4, that means that 4-3 is 1, the radius for the 4x4 is 1 meaning we will get the neighbours of the tile.
+                radius = size - 3;
+            } else {
+                //-2 because we will not need to get the lower odd number since this is already an odd number, just get the radius, hence, -2
+                radius = size - 2;
+            }
+            //If the radius is less than or equal to zero this means we will only get the gridTileLocation itself
+            if (radius <= 0) {
+                gridTileLocation.genericTileObject.traitContainer.AddTrait(gridTileLocation.genericTileObject, "Poisoned", bypassElementalChance: true);
+            } else {
+                List<LocationGridTile> tiles = gridTileLocation.GetTilesInRadius(radius, includeCenterTile: true, includeTilesInDifferentStructure: true);
+                for (int i = 0; i < tiles.Count; i++) {
+                    tiles[i].genericTileObject.traitContainer.AddTrait(tiles[i].genericTileObject, "Poisoned", bypassElementalChance: true);
+                }
+            }
+        }
     }
+    #endregion
 }

@@ -38,7 +38,7 @@ public class VaporTileObject : MovingTileObject {
     public void OnExpire() {
         //Messenger.Broadcast<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, this, null, base.gridTileLocation);
         if (doExpireEffect) {
-            Effect();
+            ExpireEffect();
         }
     }
     public override string ToString() {
@@ -126,7 +126,7 @@ public class VaporTileObject : MovingTileObject {
     #endregion
 
     #region Expire Effect
-    private void Effect() {
+    private void ExpireEffect() {
         if (gridTileLocation != null) {
             int radius = 0;
             if (UtilityScripts.Utilities.IsEven(size)) {

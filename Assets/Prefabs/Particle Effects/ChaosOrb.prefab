@@ -9576,12 +9576,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Delegates:
-  - eventID: 4
+  - eventID: 0
     callback:
       m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 114020084204728438}
-          m_MethodName: OnPointerClick
+          m_MethodName: OnPointerEnter
           m_Mode: 0
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
