@@ -63,7 +63,7 @@ namespace Interrupts {
                 //Character is a monster
                 log += "\n-Character is a monster";
                 log += "\n-Find an unoccupied Special Structure within the region and randomly select one. Clear out Territory data if it has one.";
-                LocationStructure chosenHomeStructure = currentRegion.GetRandomUnoccupiedStructureWithTags();
+                LocationStructure chosenHomeStructure = currentRegion.GetRandomUnoccupiedSpecialStructure();
                 if (chosenHomeStructure != null) {
                     actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
                     log += "\n-Special Structure found: " + chosenHomeStructure.ToString();
@@ -304,18 +304,34 @@ namespace Interrupts {
 
         private LocationStructure FindHabitableStructureOrUnoccupiedHouseInOneOfOwnedSettlementsProcessing(Character actor, ref string identifier) {
             LocationStructure chosenDwellingWithCloseFriendOrNonEnemyRivalRelative = null;
+            LocationStructure chosenHabitableSpecialWithCloseFriendOrNonEnemyRivalRelative = null;
             LocationStructure chosenDwelling = null;
             if (actor.faction.HasOwnedSettlementExcept(actor.homeSettlement)) {
                 for (int i = 0; i < actor.faction.ownedSettlements.Count; i++) {
                     BaseSettlement baseSettlement = actor.faction.ownedSettlements[i];
-                    if (baseSettlement != actor.homeSettlement && (baseSettlement.locationType == LOCATION_TYPE.ELVEN_SETTLEMENT || baseSettlement.locationType == LOCATION_TYPE.HUMAN_SETTLEMENT)) {
-                        if (baseSettlement is NPCSettlement npcSettlement) {
-                            chosenDwelling = GetUnoccupiedDwelling(npcSettlement);
-                            if (chosenDwelling != null) {
-                                identifier = "unoccupied";
-                                return chosenDwelling;
-                            } else {
-                                chosenDwellingWithCloseFriendOrNonEnemyRivalRelative = GetDwellingWithCloseFriendOrNonRivalEnemyRelative(npcSettlement, actor);
+                    if (baseSettlement != actor.homeSettlement) {
+                        if(baseSettlement.locationType == LOCATION_TYPE.ELVEN_SETTLEMENT || baseSettlement.locationType == LOCATION_TYPE.HUMAN_SETTLEMENT) {
+                            if (baseSettlement is NPCSettlement npcSettlement) {
+                                chosenDwelling = GetUnoccupiedDwelling(npcSettlement);
+                                if (chosenDwelling != null) {
+                                    identifier = "unoccupied";
+                                    return chosenDwelling;
+                                } else {
+                                    chosenDwellingWithCloseFriendOrNonEnemyRivalRelative = GetDwellingWithCloseFriendOrNonRivalEnemyRelative(npcSettlement, actor);
+                                }
+                            }
+                        }
+                    }
+                    if(chosenHabitableSpecialWithCloseFriendOrNonEnemyRivalRelative == null) {
+                        if (baseSettlement.locationType == LOCATION_TYPE.DUNGEON) {
+                            for (int j = 0; j < baseSettlement.allStructures.Count; j++) {
+                                LocationStructure structure = baseSettlement.allStructures[j];
+                                if (structure.residents.Count < structure.maxResidentCapacity) {
+                                    if (structure.HasCloseFriendOrNonEnemyRivalRelative(actor)) {
+                                        chosenHabitableSpecialWithCloseFriendOrNonEnemyRivalRelative = structure;
+                                        break;
+                                    }
+                                }
                             }
                         }
                     }
@@ -324,14 +340,9 @@ namespace Interrupts {
             if (chosenDwellingWithCloseFriendOrNonEnemyRivalRelative != null) {
                 identifier = "occupied";
                 return chosenDwellingWithCloseFriendOrNonEnemyRivalRelative;
-            } else if (actor.faction.HasOwnedStructures()) {
-                for (int i = 0; i < actor.faction.ownedStructures.Count; i++) {
-                    LocationStructure structure = actor.faction.ownedStructures[i];
-                    if (structure.residents.Count < structure.maxResidentCapacity) {
-                        identifier = "habitable";
-                        return structure;
-                    }
-                }
+            } else if (chosenHabitableSpecialWithCloseFriendOrNonEnemyRivalRelative != null) {
+                identifier = "habitable";
+                return chosenHabitableSpecialWithCloseFriendOrNonEnemyRivalRelative;
             }
             return null;
         }

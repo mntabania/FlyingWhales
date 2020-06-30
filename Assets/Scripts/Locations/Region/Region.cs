@@ -650,19 +650,19 @@ public class Region {
         }
         return null;
     }
-    public LocationStructure GetRandomUnoccupiedStructureWithTags() {
-        List<LocationStructure> structuresWithTag = null;
+    public LocationStructure GetRandomUnoccupiedSpecialStructure() {
+        List<LocationStructure> specialStructures = null;
         for (int i = 0; i < allStructures.Count; i++) {
             LocationStructure currStructure = allStructures[i];
             if (!currStructure.IsOccupied()) {
-                if (currStructure.HasStructureTags()) {
-                    if (structuresWithTag == null) { structuresWithTag = new List<LocationStructure>(); }
-                    structuresWithTag.Add(currStructure);
+                if (currStructure.settlementLocation != null && currStructure.settlementLocation.locationType == LOCATION_TYPE.DUNGEON) {
+                    if (specialStructures == null) { specialStructures = new List<LocationStructure>(); }
+                    specialStructures.Add(currStructure);
                 }
             }
         }
-        if (structuresWithTag != null && structuresWithTag.Count > 0) {
-            return structuresWithTag[UnityEngine.Random.Range(0, structuresWithTag.Count)];
+        if (specialStructures != null && specialStructures.Count > 0) {
+            return specialStructures[UnityEngine.Random.Range(0, specialStructures.Count)];
         }
         return null;
     }
