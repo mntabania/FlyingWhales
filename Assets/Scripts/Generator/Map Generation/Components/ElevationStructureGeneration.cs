@@ -18,7 +18,9 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 			for (int j = 0; j < islandsInRegion.Count; j++) {
 				ElevationIsland currIsland = islandsInRegion[j];
 				STRUCTURE_TYPE structureType = GetStructureTypeFor(currIsland.elevation);
-				LocationStructure elevationStructure = LandmarkManager.Instance.CreateNewStructureAt(region, structureType);
+				NPCSettlement settlement = LandmarkManager.Instance.CreateNewSettlement(region, LOCATION_TYPE.DUNGEON, 0,
+					currIsland.tilesInIsland.ToArray());
+				LocationStructure elevationStructure = LandmarkManager.Instance.CreateNewStructureAt(region, structureType, settlement);
 				
 				yield return MapGenerator.Instance.StartCoroutine(
 					GenerateElevationMap(currIsland, elevationStructure));
