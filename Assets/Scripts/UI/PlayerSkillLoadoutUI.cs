@@ -9,11 +9,11 @@ public class PlayerSkillLoadoutUI : MonoBehaviour {
     public PlayerSkillLoadoutObjectPicker objectPicker;
     public PlayerSkillDetailsTooltip skillDetailsTooltip;
 
-    public GridLayoutGroup spellsGrid;
-    public GridLayoutGroup afflictionsGrid;
-    public GridLayoutGroup minionsGrid;
-    public GridLayoutGroup structuresGrid;
-    public GridLayoutGroup miscsGrid;
+    public ScrollRect spellsScrollRect;
+    public ScrollRect afflictionsScrollRect;
+    public ScrollRect minionsScrollRect;
+    public ScrollRect structuresScrollRect;
+    public ScrollRect miscsScrollRect;
 
     public Toggle spellsTab;
     public Toggle afflictionsTab;
@@ -63,35 +63,35 @@ public class PlayerSkillLoadoutUI : MonoBehaviour {
     public void OnClickSpellsTab(bool state) {
         if (state) {
             if(spellsSkillSlotItems.fixedSkillSlotItems.Count <= 0 && spellsSkillSlotItems.extraSkillSlotItems.Count <= 0) {
-                LoadSkillDataToUI(loadout.spells.fixedSkills, loadout.spells.extraSlots, spellsSkillSlotItems, SaveManager.Instance.currentSaveDataPlayer.GetLoadoutExtraSpells(loadout.archetype), spellsGrid.transform);
+                LoadSkillDataToUI(loadout.spells.fixedSkills, loadout.spells.extraSlots, spellsSkillSlotItems, SaveManager.Instance.currentSaveDataPlayer.GetLoadoutExtraSpells(loadout.archetype), spellsScrollRect.content);
             }
         }
     }
     public void OnClickAfflictionsTab(bool state) {
         if (state) {
             if (afflictionsSkillSlotItems.fixedSkillSlotItems.Count <= 0 && afflictionsSkillSlotItems.extraSkillSlotItems.Count <= 0) {
-                LoadSkillDataToUI(loadout.afflictions.fixedSkills, loadout.afflictions.extraSlots, afflictionsSkillSlotItems, SaveManager.Instance.currentSaveDataPlayer.GetLoadoutExtraAfflictions(loadout.archetype), afflictionsGrid.transform);
+                LoadSkillDataToUI(loadout.afflictions.fixedSkills, loadout.afflictions.extraSlots, afflictionsSkillSlotItems, SaveManager.Instance.currentSaveDataPlayer.GetLoadoutExtraAfflictions(loadout.archetype), afflictionsScrollRect.content);
             }
         }
     }
     public void OnClickMinionsTab(bool state) {
         if (state) {
             if (minionsSkillSlotItems.fixedSkillSlotItems.Count <= 0 && minionsSkillSlotItems.extraSkillSlotItems.Count <= 0) {
-                LoadSkillDataToUI(loadout.minions.fixedSkills, loadout.minions.extraSlots, minionsSkillSlotItems, SaveManager.Instance.currentSaveDataPlayer.GetLoadoutExtraMinions(loadout.archetype), minionsGrid.transform);
+                LoadSkillDataToUI(loadout.minions.fixedSkills, loadout.minions.extraSlots, minionsSkillSlotItems, SaveManager.Instance.currentSaveDataPlayer.GetLoadoutExtraMinions(loadout.archetype), minionsScrollRect.content);
             }
         }
     }
     public void OnClickStructuresTab(bool state) {
         if (state) {
             if (structuresSkillSlotItems.fixedSkillSlotItems.Count <= 0 && structuresSkillSlotItems.extraSkillSlotItems.Count <= 0) {
-                LoadSkillDataToUI(loadout.structures.fixedSkills, loadout.structures.extraSlots, structuresSkillSlotItems, SaveManager.Instance.currentSaveDataPlayer.GetLoadoutExtraStructures(loadout.archetype), structuresGrid.transform);
+                LoadSkillDataToUI(loadout.structures.fixedSkills, loadout.structures.extraSlots, structuresSkillSlotItems, SaveManager.Instance.currentSaveDataPlayer.GetLoadoutExtraStructures(loadout.archetype), structuresScrollRect.content);
             }
         }
     }
     public void OnClickMiscsTab(bool state) {
         if (state) {
             if (miscsSkillSlotItems.fixedSkillSlotItems.Count <= 0 && miscsSkillSlotItems.extraSkillSlotItems.Count <= 0) {
-                LoadSkillDataToUI(loadout.miscs.fixedSkills, loadout.miscs.extraSlots, miscsSkillSlotItems, SaveManager.Instance.currentSaveDataPlayer.GetLoadoutExtraMiscs(loadout.archetype), miscsGrid.transform);
+                LoadSkillDataToUI(loadout.miscs.fixedSkills, loadout.miscs.extraSlots, miscsSkillSlotItems, SaveManager.Instance.currentSaveDataPlayer.GetLoadoutExtraMiscs(loadout.archetype), miscsScrollRect.content);
             }
         }
     }
