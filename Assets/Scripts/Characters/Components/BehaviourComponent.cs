@@ -61,6 +61,9 @@ public class BehaviourComponent {
     public bool hasEatenInTheMorning { get; private set; }
     public bool hasEatenInTheNight { get; private set; }
     
+    //arsonist
+    public List<HexTile> arsonVillageTarget { get; private set; }
+    
     private COMBAT_MODE combatModeBeforeHarassRaidInvade;
     private COMBAT_MODE combatModeBeforeAttackingDemonicStructure;
 
@@ -620,13 +623,14 @@ public class BehaviourComponent {
         _currentDisableCooldown++;
     }
     public void SetInvaderToFollow(Character characterToFollow) {
+        Character previousInvaderToFollow = invaderToFollow;
         invaderToFollow = characterToFollow;
+        previousInvaderToFollow?.behaviourComponent.RemoveFollower();
         if (invaderToFollow != null) {
             invaderToFollow.behaviourComponent.AddFollower();
             Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, CheckIfInvaderToFollowDied);
             Messenger.AddListener<Character>(Signals.START_FLEE, OnCharacterStartedFleeing);
         } else {
-            invaderToFollow.behaviourComponent.RemoveFollower();
             Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, CheckIfInvaderToFollowDied);
             Messenger.RemoveListener<Character>(Signals.START_FLEE, OnCharacterStartedFleeing);
         }
