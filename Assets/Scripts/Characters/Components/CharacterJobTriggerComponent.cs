@@ -1599,6 +1599,15 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         }
         return false;
     }
+    public bool CreateGoToJob(IPointOfInterest target, out JobQueueItem producedJob) {
+	    if(!_owner.jobQueue.HasJob(JOB_TYPE.GO_TO, target)) {
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.GO_TO, INTERACTION_TYPE.GO_TO, target, _owner);
+		    producedJob = job;
+		    return true;
+	    }
+	    producedJob = null;
+	    return false;
+    }
     public bool CreateGoToJob(LocationGridTile tile, out JobQueueItem producedJob) {
 	    if(!_owner.jobQueue.HasJob(JOB_TYPE.GO_TO)) {
 		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.GO_TO, INTERACTION_TYPE.GO_TO_TILE, tile.genericTileObject, _owner);
@@ -1866,6 +1875,15 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     }
     private bool IsDecreaseMoodJobInTerritoryStillApplicable(Character target) {
 	    return target.hexTileLocation != null && _owner.territorries.Contains(target.hexTileLocation);
+    }
+    #endregion
+
+    #region Disable
+    public bool TriggerDisable(Character target, out JobQueueItem producedJob) {
+	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DISABLE,
+		    INTERACTION_TYPE.DISABLE, target, _owner);
+	    producedJob = job;
+	    return true;
     }
     #endregion
 }

@@ -45,6 +45,15 @@ public class BehaviourComponent {
     private readonly int _deMoodCooldownPeriod;
     public List<HexTile> deMoodVillageTarget { get; private set; }
     
+    //invade
+    public List<HexTile> invadeVillageTarget { get; private set; }
+    
+    //disabler
+    public bool canDisable => _currentDisableCooldown >= _disableCooldownPeriod;
+    private int _currentDisableCooldown;
+    private readonly int _disableCooldownPeriod;
+    public Character invaderToFollow { get; private set; }
+    
     private COMBAT_MODE combatModeBeforeHarassRaidInvade;
     private COMBAT_MODE combatModeBeforeAttackingDemonicStructure;
 
@@ -58,6 +67,10 @@ public class BehaviourComponent {
         //De-Mood
         _deMoodCooldownPeriod = GameManager.ticksPerHour * 2; //2 hours
         _currentDeMoodCooldown = _deMoodCooldownPeriod;
+        
+        //Disabler
+        _disableCooldownPeriod = GameManager.ticksPerHour * 2; //2 hours
+        _currentDisableCooldown = _disableCooldownPeriod;
         
         PopulateInitialBehaviourComponents();
     }
@@ -548,6 +561,58 @@ public class BehaviourComponent {
     }
     public void SetDeMoodVillageTarget(List<HexTile> targets) {
         deMoodVillageTarget = targets;
+    }
+    #endregion
+
+    #region Invade
+    public void SetInvadeVillageTarget(List<HexTile> targets) {
+        invadeVillageTarget = targets;
+    }
+    #endregion
+
+    #region Disabler
+    public void OnBecomeDisabler() {
+        Messenger.AddListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfDisablerJobFinished);
+    }
+    public void OnNoLongerDisabler() {
+        Messenger.RemoveListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfDisablerJobFinished);
+    }
+    private void CheckIfDisablerJobFinished(Character character, GoapPlanJob job) {
+        if (character == owner && job.jobType == JOB_TYPE.DISABLE) {
+            //character finished disable job, start cooldown.
+            StartDisablerCooldown();
+        }
+    }
+    private void StartDisablerCooldown() {
+        _currentDisableCooldown = 0;
+        Messenger.AddListener(Signals.TICK_ENDED, PerTickDisablerCooldown);
+    }
+    private void PerTickDisablerCooldown() {
+        if (_currentDisableCooldown >= _disableCooldownPeriod) {
+            Messenger.RemoveListener(Signals.TICK_ENDED, PerTickDisablerCooldown);    
+        }
+        _currentDisableCooldown++;
+    }
+    public void SetInvaderToFollow(Character characterToFollow) {
+        invaderToFollow = characterToFollow;
+        if (invaderToFollow != null) {
+            Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, CheckIfInvaderToFollowDied);
+            Messenger.AddListener<Character>(Signals.START_FLEE, OnCharacterStartedFleeing);
+        } else {
+            Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, CheckIfInvaderToFollowDied);
+            Messenger.RemoveListener<Character>(Signals.START_FLEE, OnCharacterStartedFleeing);
+        }
+    }
+    private void OnCharacterStartedFleeing(Character character) {
+        if (character == owner) {
+            //if this character started fleeing, stop following target invader.
+            SetInvaderToFollow(null);   
+        }
+    }
+    private void CheckIfInvaderToFollowDied(Character character) {
+        if (character == invaderToFollow) {
+            SetInvaderToFollow(null);
+        }
     }
     #endregion
 

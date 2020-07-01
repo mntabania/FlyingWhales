@@ -552,6 +552,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.GO_TO_TILE, new[]{
             new StateNameAndDuration(){ name = "Go Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
+        {INTERACTION_TYPE.DISABLE, new[]{
+            new StateNameAndDuration(){ name = "Disable Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
     };
 }
 

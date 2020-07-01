@@ -782,7 +782,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
     }
-    private void ForceCancelAllJobsTargetingPOI(IPointOfInterest target, string reason) {
+    public void ForceCancelAllJobsTargetingPOI(IPointOfInterest target, string reason) {
         for (int i = 0; i < jobQueue.jobsInQueue.Count; i++) {
             JobQueueItem job = jobQueue.jobsInQueue[i];
             if (job is GoapPlanJob) {
@@ -1798,25 +1798,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void SetIsFollowingPlayerInstruction(bool state) {
         isFollowingPlayerInstruction = state;
     }
-    /// <summary>
-    /// Can this character be instructed by the player?
-    /// </summary>
-    /// <returns>True or false.</returns>
-    public virtual bool CanBeInstructedByPlayer() {
-        if (!faction.isPlayerFaction) {
-            return false;
-        }
-        if (isDead) {
-            return false;
-        }
-        if (stateComponent.currentState is CombatState && !(stateComponent.currentState as CombatState).isAttacking) {
-            return false; //character is fleeing
-        }
-        if (!canPerform || !canMove) { //traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
-            return false;
-        }
-        return true;
-    }
     public void SetTileObjectLocation(TileObject tileObject) {
         tileObjectLocation = tileObject;
     }
@@ -1884,6 +1865,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void SetHasRisen(bool state) {
         hasRisen = state;
+    }
+    public bool IsAtTerritory() {
+        return territorries.Count > 0 && hexTileLocation != null && territorries.Contains(hexTileLocation);
     }
     #endregion    
 
@@ -2449,7 +2433,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         int previous = currentHP;
         currentHP += amount;
         currentHP = Mathf.Clamp(currentHP, 0, maxHP);
-        Messenger.Broadcast(Signals.CHARACTER_ADJUSTED_HP, this, amount);
+        Messenger.Broadcast(Signals.CHARACTER_ADJUSTED_HP, this, amount, source);
         if (marker && showHPBar) {
             if (marker.hpBarGO.activeSelf) {
                 marker.UpdateHP(this);
@@ -2478,7 +2462,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.RECOVER_HP, this as IPointOfInterest);
         }
         if (triggerDeath && currentHP <= 0) {
-            if(source != null) {
+            if(source != null && source != this) {
                 if (source is Character character) {
                     Death("attacked", responsibleCharacter: character);
                 } else {
@@ -3711,6 +3695,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         AddAdvertisedAction(INTERACTION_TYPE.BEGIN_MINE);
         AddAdvertisedAction(INTERACTION_TYPE.EAT_ALIVE);
         AddAdvertisedAction(INTERACTION_TYPE.DECREASE_MOOD);
+        AddAdvertisedAction(INTERACTION_TYPE.DISABLE);
 
         if (this is Summon) {
             AddAdvertisedAction(INTERACTION_TYPE.PLAY);

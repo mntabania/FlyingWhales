@@ -24,6 +24,7 @@ public class MinionPlayerSkill : SpellData {
         minion.Summon(targetTile);
         minion.SetMinionPlayerSkillType(type);
         minion.character.AddTerritory(targetTile.collectionOwner.partOfHextile.hexTileOwner);
+        minion.character.jobQueue.CancelAllJobs();
         base.ActivateAbility(targetTile);
     }
     public override void ActivateAbility(LocationGridTile targetTile, ref Character spawnedCharacter) {

@@ -320,11 +320,18 @@ public class CombatState : CharacterState {
         //Will stop pursuing only if current closest hostile is character, if current closest hostile is an object, whether or not the source can run, he/she will still pursue
         if (stateComponent.currentState == this && !isPaused && !isDone && owner.combatComponent.hostilesInRange.Contains(characterThatFlee)) {
             if (!owner.movementComponent.CanStillPursueTarget(characterThatFlee)) {
-                if (owner.combatComponent.fightCombatData.ContainsKey(characterThatFlee) && owner.combatComponent.fightCombatData[characterThatFlee].reasonForCombat == CombatManager.Demon_Kill) {
-                    //If the reason for combat is Demon Kill, the hostile should not be removed from hostile range, regardless if he/she can still run
-                } else {
+                if (owner.behaviourComponent.HasBehaviour(typeof(DefendBehaviour))) {
+                    //if character is defending, always remove hostile that is already fleeing.
+                    //Reference: https://www.notion.so/ruinarch/59a7b75436bc491eab26e0d661f382f8?v=8dcc4b7119dc4c01ba67f35a54c5258b&p=6ec4e2b8234b4da59edb7d8460815216
                     owner.combatComponent.RemoveHostileInRange(characterThatFlee);
+                } else {
+                    if (owner.combatComponent.fightCombatData.ContainsKey(characterThatFlee) && owner.combatComponent.fightCombatData[characterThatFlee].reasonForCombat == CombatManager.Demon_Kill) {
+                        //If the reason for combat is Demon Kill, the hostile should not be removed from hostile range, regardless if he/she can still run
+                    } else {
+                        owner.combatComponent.RemoveHostileInRange(characterThatFlee);
+                    }    
                 }
+                
             }
         }
     }
@@ -468,10 +475,21 @@ public class CombatState : CharacterState {
                 stateComponent.character.combatComponent.RemoveHostileInRange(currentClosestHostile, false);
                 SetClosestHostile();
             } else if (currentClosestHostile != null && currentClosestHostile is Character targetCharacter) {
-                if(targetCharacter.combatComponent.isInCombat && (targetCharacter.stateComponent.currentState as CombatState).isAttacking == false)
-                log +=
-                    $"\nCurrent closest hostile: {currentClosestHostile.name} is already fleeing, will try to set another hostile character that is not fleeing...";
-                SetClosestHostilePriorityNotFleeing();
+                if (targetCharacter.combatComponent.isInCombat &&
+                    (targetCharacter.stateComponent.currentState as CombatState).isAttacking == false) {
+                    if (stateComponent.character.behaviourComponent.HasBehaviour(typeof(DefendBehaviour))) {
+                        log +=
+                            $"\nCurrent closest hostile: {targetCharacter.name} is already fleeing, and character is defending, remove character from hostile range, and set new target";
+                        stateComponent.character.combatComponent.RemoveHostileInRange(targetCharacter, false);
+                        SetClosestHostile();
+                    } else {
+                        log +=
+                            $"\nCurrent closest hostile: {currentClosestHostile.name} is already fleeing, will try to set another hostile character that is not fleeing...";
+                        SetClosestHostilePriorityNotFleeing();    
+                    }
+                    
+                        
+                }
             } else if (currentClosestHostile == null) {
                 log += "\nNo current closest hostile, setting one...";
                 SetClosestHostile();

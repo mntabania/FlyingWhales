@@ -1,12 +1,12 @@
 ﻿using System;
 namespace Traits {
-    public class DeMooder : Trait {
+    public class Disabler : Trait {
         
         public override bool isSingleton => true;
         
-        public DeMooder() {
-            name = "DeMooder";
-            description = "This is DeMooder.";
+        public Disabler() {
+            name = "Disabler";
+            description = "This is a Disabler.";
             type = TRAIT_TYPE.NEUTRAL;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
@@ -17,7 +17,7 @@ namespace Traits {
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
             if (addedTo is Character character) {
-                character.behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.DeMooder_Behaviour);
+                character.behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Disabler_Behaviour);
             }
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {

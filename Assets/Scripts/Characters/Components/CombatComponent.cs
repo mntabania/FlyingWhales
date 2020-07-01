@@ -169,6 +169,13 @@ public class CombatComponent {
             Fight(target, fightReason, connectedAction, isLethal);
             return;
         }
+        if (owner.behaviourComponent.HasBehaviour(typeof(DisablerBehaviour))) {
+            debugLog += "\n-Character is a Disabler";
+            debugLog += "\n-FLIGHT";
+            owner.logComponent.PrintLogIfActive(debugLog);
+            Flight(target);
+            return;
+        }
         if (target is Character) {
             debugLog += "\n-Target is character";
             Character targetCharacter = target as Character;

@@ -99,6 +99,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         UpdateAnimatorController();
         UpdateActionIcon();
         ForceUpdateMarkerVisualsBasedOnAnimation();
+        CreateCollisionTrigger();
 
         unprocessedVisionPOIs = new List<IPointOfInterest>();
         unprocessedVisionPOIInterruptsOnly = new List<IPointOfInterest>();
@@ -470,7 +471,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             } else if (this.destinationTile != null) {
                 destinationTile = this.destinationTile;
             }
-            if (character.gridTileLocation != null && character.gridTileLocation.GetDistanceTo(destinationTile) > 1f) {
+            if (character.gridTileLocation != null && destinationTile != null && character.gridTileLocation.GetDistanceTo(destinationTile) > 1f) {
                 //When path is completed and the distance between the actor and the target is still more than 1 tile, we need to assume the the path is blocked
                 character.movementComponent.DigOnReachEndPath(pathfindingAI.currentPath);
                 targetPOI = null;
@@ -782,7 +783,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
         pathfindingAI.UpdateMe();
         SetCollidersState(true);
         visionCollider.Initialize();
-        CreateCollisionTrigger();
         character.movementComponent.UpdateSpeed();
     }
     public void PlaceMarkerAt(LocationGridTile tile, bool addToLocation = true) {
@@ -800,14 +800,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
         UpdateActionIcon();
         SetCollidersState(true);
         tile.parentMap.region.AddPendingAwareness(character);
-    }
-    public void InitialPlaceMarkerAt(Vector3 worldPosition, Region region, bool addToLocation = true) {
-        PlaceMarkerAt(worldPosition, region, addToLocation);
-        pathfindingAI.UpdateMe();
-        SetCollidersState(true);
-        visionCollider.Initialize();
-        CreateCollisionTrigger();
-        character.movementComponent.UpdateSpeed();
     }
     public void PlaceMarkerAt(Vector3 worldPosition, Region region, bool addToLocation = true) {
         Vector3 localPos = region.innerMap.grid.WorldToLocal(worldPosition);
