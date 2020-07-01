@@ -7,6 +7,7 @@ using UnityEngine;
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
 using Pathfinding;
+using UnityEngine.WSA;
 using UtilityScripts;
 
 public class BehaviourComponent {
@@ -47,12 +48,18 @@ public class BehaviourComponent {
     
     //invade
     public List<HexTile> invadeVillageTarget { get; private set; }
+    public int followerCount { get; private set; }
     
     //disabler
     public bool canDisable => _currentDisableCooldown >= _disableCooldownPeriod;
     private int _currentDisableCooldown;
     private readonly int _disableCooldownPeriod;
     public Character invaderToFollow { get; private set; }
+    
+    //abductor
+    public LocationGridTile nest { get; private set; }
+    public bool hasEatenInTheMorning { get; private set; }
+    public bool hasEatenInTheNight { get; private set; }
     
     private COMBAT_MODE combatModeBeforeHarassRaidInvade;
     private COMBAT_MODE combatModeBeforeAttackingDemonicStructure;
@@ -297,6 +304,10 @@ public class BehaviourComponent {
             }
         }
     }
+    public void OnDeath() {
+        //update following invader count. NOTE: Note this is for disablers only
+        invaderToFollow?.behaviourComponent.RemoveFollower();
+    }
     #endregion
 
     #region Utilities
@@ -535,6 +546,15 @@ public class BehaviourComponent {
     }
     #endregion
 
+    #region Summon Specific
+    public void OnSummon(LocationGridTile tile) {
+        if (HasBehaviour(typeof(AbductorBehaviour))) {
+            //if character is an abductor, set its nest to where it was summoned
+            SetNest(tile);
+        }
+    }
+    #endregion
+    
     #region De-Mood
     public void OnBecomeDeMooder() {
         Messenger.AddListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfDeMoodJobFinished);
@@ -568,6 +588,12 @@ public class BehaviourComponent {
     public void SetInvadeVillageTarget(List<HexTile> targets) {
         invadeVillageTarget = targets;
     }
+    public void AddFollower() {
+        followerCount++;
+    }
+    public void RemoveFollower() {
+        followerCount--;
+    }
     #endregion
 
     #region Disabler
@@ -596,9 +622,11 @@ public class BehaviourComponent {
     public void SetInvaderToFollow(Character characterToFollow) {
         invaderToFollow = characterToFollow;
         if (invaderToFollow != null) {
+            invaderToFollow.behaviourComponent.AddFollower();
             Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, CheckIfInvaderToFollowDied);
             Messenger.AddListener<Character>(Signals.START_FLEE, OnCharacterStartedFleeing);
         } else {
+            invaderToFollow.behaviourComponent.RemoveFollower();
             Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, CheckIfInvaderToFollowDied);
             Messenger.RemoveListener<Character>(Signals.START_FLEE, OnCharacterStartedFleeing);
         }
@@ -616,4 +644,71 @@ public class BehaviourComponent {
     }
     #endregion
 
+    #region Abductor
+    private void SetNest(LocationGridTile tile) {
+        nest = tile;
+    }
+    public void OnBecomeAbductor() {
+        Messenger.AddListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfMonsterAte);
+    }
+    public void OnNoLongerAbductor() {
+        Messenger.RemoveListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfMonsterAte);
+    }
+    private void CheckIfMonsterAte(Character character, GoapPlanJob job) {
+        if (character == owner && job.jobType == JOB_TYPE.MONSTER_EAT) {
+            TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
+            switch (currentTimeInWords) {
+                case TIME_IN_WORDS.MORNING:
+                case TIME_IN_WORDS.AFTERNOON:
+                case TIME_IN_WORDS.LUNCH_TIME:
+                    SetHasEatenInTheMorning(true);
+                    break;
+                case TIME_IN_WORDS.EARLY_NIGHT:
+                case TIME_IN_WORDS.LATE_NIGHT:
+                    SetHasEatenInTheNight(true);
+                    break;
+            }
+        }
+    }
+    public bool AlreadyHasAbductedVictimAtNest(out Character target) {
+        for (int i = 0; i < nest.charactersHere.Count; i++) {
+            Character character = nest.charactersHere[i];
+            if (character.canMove == false) {
+                target = character;
+                return true;
+            }
+        }
+        target = null;
+        return false;
+    }
+    public bool IsNestBlocked(out IPointOfInterest blocker) {
+        if (nest.isOccupied) {
+            blocker = nest.objHere;
+            return true;
+        }
+        blocker = null;
+        return false;
+    }
+    private void SetHasEatenInTheMorning(bool state) {
+        hasEatenInTheMorning = state;
+        if (state) {
+            //reset value the next day
+            GameDate resetDate = GameManager.Instance.Today();
+            resetDate.AddDays(1);
+            resetDate.SetTicks(1);
+            SchedulingManager.Instance.AddEntry(resetDate, () => SetHasEatenInTheMorning(false), owner);
+        }
+    }
+    private void SetHasEatenInTheNight(bool state) {
+        hasEatenInTheNight = state;
+        if (state) {
+            //reset value the next day
+            GameDate resetDate = GameManager.Instance.Today();
+            resetDate.AddDays(1);
+            resetDate.SetTicks(1);
+            SchedulingManager.Instance.AddEntry(resetDate, () => SetHasEatenInTheNight(false), owner);
+        }
+    }
+    #endregion
+    
 }

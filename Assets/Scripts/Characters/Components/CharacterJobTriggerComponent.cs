@@ -374,6 +374,16 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		}
 		return false;
 	}
+	public bool TriggerDestroy(IPointOfInterest target, out JobQueueItem producedJob) {
+		if (!_owner.jobQueue.HasJob(JOB_TYPE.DESTROY, target)) {
+			GoapPlanJob destroyJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DESTROY, INTERACTION_TYPE.ASSAULT, target, _owner);
+			destroyJob.SetStillApplicableChecker(() => IsDestroyJobApplicable(target));
+			producedJob = destroyJob;
+			return true;
+		}
+		producedJob = null;
+		return false;
+	}
 	private void TriggerRemoveStatus(Trait trait) {
 		if (_owner.isDead) { return; }
 		if (trait.gainedFromDoing == null || trait.gainedFromDoing.isStealth == false) { //only create remove status job if trait was not gained from a stealth action
@@ -1882,6 +1892,24 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     public bool TriggerDisable(Character target, out JobQueueItem producedJob) {
 	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DISABLE,
 		    INTERACTION_TYPE.DISABLE, target, _owner);
+	    producedJob = job;
+	    return true;
+    }
+    #endregion
+
+    #region Monster Abduct
+    public bool TriggerMonsterAbduct(Character targetCharacter, out JobQueueItem producedJob, LocationGridTile targetTile = null) {
+	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MONSTER_ABDUCT,
+		    INTERACTION_TYPE.DROP, targetCharacter, _owner);
+	    job.SetCannotBePushedBack(true);
+	    job.AddOtherData(INTERACTION_TYPE.DROP,
+		    targetTile != null ? new object[] {targetTile.structure, targetTile} : new object[] {_owner.homeStructure});
+	    producedJob = job;
+	    return true;
+    }
+    public bool TriggerEatAlive(Character webbedCharacter, out JobQueueItem producedJob) {
+	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MONSTER_EAT,
+		    INTERACTION_TYPE.EAT_ALIVE, webbedCharacter, _owner);
 	    producedJob = job;
 	    return true;
     }

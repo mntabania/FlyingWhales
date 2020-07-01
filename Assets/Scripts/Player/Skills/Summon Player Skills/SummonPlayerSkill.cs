@@ -16,6 +16,7 @@ public class SummonPlayerSkill : SpellData {
         Summon summon = CharacterManager.Instance.CreateNewSummon(summonType, PlayerManager.Instance.player.playerFaction, homeRegion: targetTile.parentMap.region as Region, className: className);
         CharacterManager.Instance.PlaceSummon(summon, targetTile);
         summon.AddTerritory(targetTile.collectionOwner.partOfHextile.hexTileOwner);
+        summon.CancelAllJobs();
         Messenger.Broadcast(Signals.PLAYER_PLACED_SUMMON, summon);
         base.ActivateAbility(targetTile);
     }

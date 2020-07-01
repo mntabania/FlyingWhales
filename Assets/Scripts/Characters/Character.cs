@@ -5374,6 +5374,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //    jobQueue.CancelAllJobs();
             //}
             Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "target is already dead");
+            
+            behaviourComponent.OnDeath();
             CancelAllJobs();
 
             if (currentSettlement != null && isHoldingItem) {
