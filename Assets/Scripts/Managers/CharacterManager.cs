@@ -32,7 +32,8 @@ public class CharacterManager : MonoBehaviour {
         Noxious_Wanderer_Behaviour = "Noxious Wanderer Behaviour",
         DeMooder_Behaviour = "DeMooder Behaviour",
         Defender_Behaviour = "Defender Behaviour",
-        Invader_Behaviour = "Invader Behaviour";
+        Invader_Behaviour = "Invader Behaviour",
+        Disabler_Behaviour = "Disabler Behaviour";
     public const int MAX_HISTORY_LOGS = 300;
 
     
@@ -170,6 +171,13 @@ public class CharacterManager : MonoBehaviour {
             new []{
                 typeof(MovementProcessing),
                 typeof(InvadeBehaviour),
+                typeof(DefaultExtraCatcher),
+            }
+        },
+        { Disabler_Behaviour,
+            new []{
+                typeof(MovementProcessing),
+                typeof(DisablerBehaviour),
                 typeof(DefaultExtraCatcher),
             }
         },
