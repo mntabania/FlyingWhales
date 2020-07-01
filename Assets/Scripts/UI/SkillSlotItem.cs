@@ -7,10 +7,22 @@ using Ruinarch.Custom_UI;
 using TMPro;
 
 public class SkillSlotItem : MonoBehaviour {
-    public RuinarchButton button;
+    public RuinarchButton skillSlotItemButton;
+    public RuinarchButton minusButton;
+    public Image buttonImage;
     public Image icon;
     public Image fixedIcon;
-    public TextMeshProUGUI title;
+
+    public Sprite optionalButtonDefault;
+    public Sprite optionalButtonHighlighted;
+    public Sprite optionalButtonPressed;
+
+    public Sprite defaultButtonDefault;
+    public Sprite defaultButtonHighlighted;
+    public Sprite defaultButtonPressed;
+    public Sprite defaultButtonDisabled;
+
+    public TextMeshProUGUI spellText;
 
     public PlayerSkillData skillData { get; private set; }
 
@@ -32,15 +44,32 @@ public class SkillSlotItem : MonoBehaviour {
     public void SetOnHoverExitAction(Action<PlayerSkillData> onHoverExit) {
         this.onHoverExit = onHoverExit;
     }
-    public void SetInteractable(bool state) {
-        button.interactable = state;
-        UpdateText();
-    }
-
     private void UpdateSkillSlotItem() {
+        UpdateButtonSprites();
+        UpdateMinusButton();
         UpdateIcon();
         UpdateText();
         UpdateFixedIcon();
+    }
+    private void UpdateButtonSprites() {
+        SpriteState newSpriteState = new SpriteState();
+        if (!isFixed && skillData == null) {
+            newSpriteState.highlightedSprite = optionalButtonHighlighted;
+            newSpriteState.pressedSprite = optionalButtonPressed;
+            newSpriteState.selectedSprite = optionalButtonPressed;
+            newSpriteState.disabledSprite = optionalButtonDefault;
+            buttonImage.sprite = optionalButtonDefault;
+        } else {
+            newSpriteState.highlightedSprite = defaultButtonHighlighted;
+            newSpriteState.pressedSprite = defaultButtonPressed;
+            newSpriteState.selectedSprite = defaultButtonPressed;
+            newSpriteState.disabledSprite = defaultButtonDefault;
+            buttonImage.sprite = defaultButtonDefault;
+        }
+        skillSlotItemButton.spriteState = newSpriteState;
+    }
+    private void UpdateMinusButton() {
+        minusButton.gameObject.SetActive(!isFixed && skillData != null);
     }
     private void UpdateIcon() {
         if(skillData != null) {
@@ -53,20 +82,27 @@ public class SkillSlotItem : MonoBehaviour {
     private void UpdateFixedIcon() {
         fixedIcon.gameObject.SetActive(isFixed);
     }
+    private void ClearData() {
+        SetSkillSlotItem(null, isFixed);
+    }
     private void UpdateText() {
         if(skillData != null) {
-            title.text = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(skillData.skill.ToString());
+            spellText.text = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(skillData.skill.ToString());
         } else {
-            if (button.IsInteractable()) {
-                title.text = "Click to Assign";
+            if (!isFixed) {
+                spellText.text = "Click to Assign a Skill";
             } else {
-                title.text = "Unassigned";
+                spellText.text = "Unassigned";
             }
         }
     }
     public void OnClickThis() {
         if (isFixed) { return; }
         Messenger.Broadcast(Signals.SKILL_SLOT_ITEM_CLICKED, this);
+    }
+    public void OnClickMinus() {
+        if (isFixed) { return; }
+        ClearData();
     }
     public void OnHoverEnter() {
         onHoverEnter(skillData);

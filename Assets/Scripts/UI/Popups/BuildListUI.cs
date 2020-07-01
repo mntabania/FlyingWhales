@@ -37,7 +37,7 @@ public class BuildListUI : PopupMenuBase {
             GameObject spellNameplate = ObjectPoolManager.Instance.InstantiateObjectFromPool(spellItemPrefab.name,
                 Vector3.zero, Quaternion.identity, buildingsScrollRect.content);
             SpellItem spellItem = spellNameplate.GetComponent<SpellItem>();
-            spellItem.SetSpell(demonicStructurePlayerSkill);
+            spellItem.SetObject(demonicStructurePlayerSkill);
             spellItem.SetInteractableState(CanChooseLandmark(demonicStructurePlayerSkill.type));
             buildItems[i] = spellItem;
         }
@@ -46,7 +46,7 @@ public class BuildListUI : PopupMenuBase {
         for (int i = 0; i < buildItems.Length; i++) {
             SpellItem item = buildItems[i];
             item.SetInteractableState(CanChooseLandmark(item.spellData.type));
-            if (item.spellToggle.interactable) {
+            if (item.toggle.interactable) {
                 item.transform.SetAsFirstSibling();
             } else {
                 item.transform.SetAsLastSibling();

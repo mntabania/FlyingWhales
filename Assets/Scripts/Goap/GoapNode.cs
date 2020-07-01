@@ -232,9 +232,11 @@ public class ActualGoapNode : IReactable, IRumorable {
                 List<LocationGridTile> choices = targetStructure.unoccupiedTiles.Where(x => x.UnoccupiedNeighbours.Count > 0).ToList();
                 if (choices.Count > 0) {
                     targetTile = choices[UtilityScripts.Utilities.Rng.Next(0, choices.Count)];
+                } else if(targetStructure.unoccupiedTiles.Count > 0) {
+                    targetTile = targetStructure.unoccupiedTiles.ElementAt(UtilityScripts.Utilities.Rng.Next(0, targetStructure.unoccupiedTiles.Count));
                 } else {
                     throw new System.Exception(
-                        $"{actor.name} target tile of action {action.goapName} for {action.actionLocationType} is null.");
+                   $"{actor.name} target tile of action {action.goapName} for {action.actionLocationType} is null.");
                 }
             }
         } else if (action.actionLocationType == ACTION_LOCATION_TYPE.TARGET_IN_VISION) {

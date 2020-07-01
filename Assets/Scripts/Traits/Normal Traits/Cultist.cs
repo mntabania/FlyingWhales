@@ -5,7 +5,8 @@ using UtilityScripts;
 
 namespace Traits {
     public class Cultist : Trait {
-        
+        public override bool isSingleton => true;
+
         public Cultist() {
             name = "Cultist";
             description = "This character is a cultist.";

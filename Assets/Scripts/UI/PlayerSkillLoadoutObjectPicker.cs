@@ -64,12 +64,14 @@ public class PlayerSkillLoadoutObjectPicker : MonoBehaviour {
     private void OnPickSkill(PlayerSkillData skillData, bool isOn) {
         if (isOn) {
             pickedSkill = skillData;
-        } else {
-            if (pickedSkill == skillData) {
-                pickedSkill = null;
-            }
+            OnClickConfirm();
         }
-        UpdateConfirmBtnState();
+        //else {
+        //    if (pickedSkill == skillData) {
+        //        pickedSkill = null;
+        //    }
+        //}
+        //UpdateConfirmBtnState();
     }
     private void UpdateConfirmBtnState() {
         confirmBtn.interactable = pickedSkill != null;

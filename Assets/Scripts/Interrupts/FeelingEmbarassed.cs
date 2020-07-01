@@ -7,7 +7,7 @@ namespace Interrupts {
         public FeelingEmbarassed() : base(INTERRUPT.Feeling_Embarassed) {
             duration = 0;
             doesStopCurrentAction = true;
-            interruptIconString = GoapActionStateDB.Flirt_Icon;
+            interruptIconString = GoapActionStateDB.Shock_Icon;
         }
 
         #region Overrides

@@ -77,6 +77,7 @@ public class CharacterInfoUI : InfoUIBase {
     public Character previousCharacter => _previousCharacter;
     private List<SPELL_TYPE> afflictions;
     private List<string> combatModes;
+    private List<string> triggerFlawPool;
 
     internal override void Initialize() {
         base.Initialize();
@@ -100,7 +101,7 @@ public class CharacterInfoUI : InfoUIBase {
         Messenger.AddListener<Character>(Signals.UPDATE_THOUGHT_BUBBLE, UpdateThoughtBubbleFromSignal);
         Messenger.AddListener<MoodComponent>(Signals.MOOD_SUMMARY_MODIFIED, OnMoodModified);
 
-        normalTraitsEventLbl.SetOnClickAction(OnClickTrait);
+        //normalTraitsEventLbl.SetOnClickAction(OnClickTrait);
         relationshipNamesEventLbl.SetOnClickAction(OnClickCharacter);
         
         factionEventLbl.SetOnClickAction(OnClickFaction);
@@ -140,6 +141,7 @@ public class CharacterInfoUI : InfoUIBase {
         InitializeLogsMenu();
 
         afflictions = new List<SPELL_TYPE>();
+        triggerFlawPool = new List<string>();
         ConstructCombatModes();
     }
 
@@ -368,68 +370,6 @@ public class CharacterInfoUI : InfoUIBase {
     }
     public void OnHoverOutTrait() {
         UIManager.Instance.HideSmallInfo();
-    }
-    private void OnClickTrait(object obj) {
-#if UNITY_EDITOR
-        if (obj is string text) {
-            int index = int.Parse(text);
-            Trait trait = activeCharacter.traitContainer.traits[index];
-            string traitDescription = trait.description;
-            if (trait.canBeTriggered) {
-                traitDescription +=
-                    $"\n{trait.GetRequirementDescription(activeCharacter)}\n\n<b>Effect</b>: {trait.GetTriggerFlawEffectDescription(activeCharacter, "flaw_effect")}";
-            }
-
-            StartCoroutine(HoverOutTraitAfterClick());//Quick fix because tooltips do not disappear. Issue with hover out action in label not being called when other collider goes over it.
-            UIManager.Instance.ShowYesNoConfirmation(trait.name, traitDescription,
-                onClickYesAction: () => OnClickTriggerFlaw(trait),
-                onClickNoAction: () => OnClickRemoveTrait(trait),
-                showCover: true, layer: 25,
-                yesBtnText: $"Trigger ({EditableValuesManager.Instance.triggerFlawManaCost.ToString()} Mana)",
-                noBtnText: "Remove Trait",
-                yesBtnInteractable: PlayerManager.Instance.player.playerSkillComponent.canTriggerFlaw && trait.canBeTriggered && trait.CanFlawBeTriggered(activeCharacter) && TraitManager.Instance.CanStillTriggerFlaws(activeCharacter),
-                noBtnInteractable: PlayerManager.Instance.player.playerSkillComponent.canRemoveTraits,
-                pauseAndResume: true,
-                //noBtnActive: false,
-                //yesBtnActive: trait.canBeTriggered,
-                yesBtnInactiveHoverAction: () => ShowCannotTriggerFlawReason(trait),
-                yesBtnInactiveHoverExitAction: UIManager.Instance.HideSmallInfo
-            );
-            normalTraitsEventLbl.ResetHighlightValues();
-            if (trait.type == TRAIT_TYPE.FLAW) {
-                Messenger.Broadcast(Signals.FLAW_CLICKED, trait);
-            }
-        }
-#endif
-    }
-    private IEnumerator HoverOutTraitAfterClick() {
-        yield return new WaitForEndOfFrame();
-        OnHoverOutTrait();
-    }
-    private void ShowCannotTriggerFlawReason(Trait trait) {
-        string reason = $"You cannot trigger {activeCharacter.name}'s flaw because: ";
-        List<string> reasons = trait.GetCannotTriggerFlawReasons(activeCharacter);
-        for (int i = 0; i < reasons.Count; i++) {
-            reason = $"{reason}\n\t- {reasons[i]}";
-        }
-        UIManager.Instance.ShowSmallInfo(reason);
-    }
-    private void OnClickTriggerFlaw(Trait trait) {
-        string logKey = trait.TriggerFlaw(activeCharacter);
-        int manaCost = EditableValuesManager.Instance.triggerFlawManaCost;
-        PlayerManager.Instance.player.AdjustMana(-manaCost);
-        if (logKey != "flaw_effect") {
-            UIManager.Instance.ShowYesNoConfirmation(
-                trait.name,
-                trait.GetTriggerFlawEffectDescription(activeCharacter, logKey),
-                showCover: true,
-                layer: 25,
-                yesBtnText: "OK",
-                pauseAndResume: true,
-                noBtnActive: false
-            );
-        }
-        Messenger.Broadcast(Signals.FLAW_TRIGGERED_BY_PLAYER);
     }
     private void OnClickRemoveTrait(Trait trait) {
         activeCharacter.traitContainer.RemoveTrait(activeCharacter, trait);
@@ -763,6 +703,111 @@ public class CharacterInfoUI : InfoUIBase {
         UIManager.Instance.HideSmallInfo();
         PlayerUI.Instance.OnHoverOutSpell(null);
     }
+    #endregion
+
+    #region Trigger Flaw
+    public void ShowTriggerFlawUI() {
+        triggerFlawPool.Clear();
+        for (int i = 0; i < activeCharacter.traitContainer.traits.Count; i++) {
+            Trait trait = activeCharacter.traitContainer.traits[i];
+            if(trait.type == TRAIT_TYPE.FLAW) {
+                triggerFlawPool.Add(trait.name);
+            }
+        }
+        UIManager.Instance.ShowClickableObjectPicker(triggerFlawPool, ActivateTriggerFlawConfirmation, null, CanActivateTriggerFlaw,
+            "Select Flaw", OnHoverEnterFlaw, OnHoverExitFlaw, showCover: true, layer: 19, shouldShowConfirmationWindowOnPick: true, asButton: true);
+    }
+    private void ActivateTriggerFlawConfirmation(object o) {
+        string traitName = (string) o;
+        Trait trait = activeCharacter.traitContainer.GetNormalTrait<Trait>(traitName);
+        string question = "Are you sure you want to trigger " + traitName + "?";
+        question += $"\n<b>Effect</b>: {trait.GetTriggerFlawEffectDescription(activeCharacter, "flaw_effect")}";
+        question += $"\n<b>Mana Cost</b>: {PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.TRIGGER_FLAW).manaCost}";
+
+        UIManager.Instance.ShowYesNoConfirmation("Trigger Flaw Confirmation", question, () => ActivateTriggerFlaw(trait));
+    }
+    private void ActivateTriggerFlaw(Trait trait) {
+        UIManager.Instance.HideObjectPicker();
+        trait.TriggerFlaw(activeCharacter);
+        Messenger.Broadcast(Signals.FLAW_TRIGGERED_BY_PLAYER);
+        PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.TRIGGER_FLAW).OnExecuteSpellActionAffliction();
+    }
+    private bool CanActivateTriggerFlaw(string traitName) {
+        return true;
+    }
+    private void OnHoverEnterFlaw(string traitName) {
+        Trait trait = activeCharacter.traitContainer.GetNormalTrait<Trait>(traitName);
+        UIManager.Instance.ShowSmallInfo($"{trait.GetTriggerFlawEffectDescription(activeCharacter, "flaw_effect")}");
+    }
+    private void OnHoverExitFlaw(string traitName) {
+        UIManager.Instance.HideSmallInfo();
+    }
+    private Sprite GetTriggerFlawPortrait(string str) {
+        //TODO
+        return null;
+    }
+//    private void OnClickTrait(object obj) {
+//#if UNITY_EDITOR
+//        if (obj is string text) {
+//            int index = int.Parse(text);
+//            Trait trait = activeCharacter.traitContainer.traits[index];
+//            string traitDescription = trait.description;
+//            if (trait.canBeTriggered) {
+//                traitDescription +=
+//                    $"\n{trait.GetRequirementDescription(activeCharacter)}\n\n<b>Effect</b>: {trait.GetTriggerFlawEffectDescription(activeCharacter, "flaw_effect")}";
+//            }
+
+//            StartCoroutine(HoverOutTraitAfterClick());//Quick fix because tooltips do not disappear. Issue with hover out action in label not being called when other collider goes over it.
+//            UIManager.Instance.ShowYesNoConfirmation(trait.name, traitDescription,
+//                onClickYesAction: () => OnClickTriggerFlaw(trait),
+//                onClickNoAction: () => OnClickRemoveTrait(trait),
+//                showCover: true, layer: 25,
+//                yesBtnText: $"Trigger ({EditableValuesManager.Instance.triggerFlawManaCost.ToString()} Mana)",
+//                noBtnText: "Remove Trait",
+//                yesBtnInteractable: PlayerManager.Instance.player.playerSkillComponent.canTriggerFlaw && trait.canBeTriggered && trait.CanFlawBeTriggered(activeCharacter) && TraitManager.Instance.CanStillTriggerFlaws(activeCharacter),
+//                noBtnInteractable: PlayerManager.Instance.player.playerSkillComponent.canRemoveTraits,
+//                pauseAndResume: true,
+//                //noBtnActive: false,
+//                //yesBtnActive: trait.canBeTriggered,
+//                yesBtnInactiveHoverAction: () => ShowCannotTriggerFlawReason(trait),
+//                yesBtnInactiveHoverExitAction: UIManager.Instance.HideSmallInfo
+//            );
+//            normalTraitsEventLbl.ResetHighlightValues();
+//            if (trait.type == TRAIT_TYPE.FLAW) {
+//                Messenger.Broadcast(Signals.FLAW_CLICKED, trait);
+//            }
+//        }
+//#endif
+//    }
+//    private IEnumerator HoverOutTraitAfterClick() {
+//        yield return new WaitForEndOfFrame();
+//        OnHoverOutTrait();
+//    }
+//    private void ShowCannotTriggerFlawReason(Trait trait) {
+//        string reason = $"You cannot trigger {activeCharacter.name}'s flaw because: ";
+//        List<string> reasons = trait.GetCannotTriggerFlawReasons(activeCharacter);
+//        for (int i = 0; i < reasons.Count; i++) {
+//            reason = $"{reason}\n\t- {reasons[i]}";
+//        }
+//        UIManager.Instance.ShowSmallInfo(reason);
+//    }
+//    private void OnClickTriggerFlaw(Trait trait) {
+//        string logKey = trait.TriggerFlaw(activeCharacter);
+//        int manaCost = EditableValuesManager.Instance.triggerFlawManaCost;
+//        PlayerManager.Instance.player.AdjustMana(-manaCost);
+//        if (logKey != "flaw_effect") {
+//            UIManager.Instance.ShowYesNoConfirmation(
+//                trait.name,
+//                trait.GetTriggerFlawEffectDescription(activeCharacter, logKey),
+//                showCover: true,
+//                layer: 25,
+//                yesBtnText: "OK",
+//                pauseAndResume: true,
+//                noBtnActive: false
+//            );
+//        }
+//        Messenger.Broadcast(Signals.FLAW_TRIGGERED_BY_PLAYER);
+//    }
     #endregion
 
     #region Mood

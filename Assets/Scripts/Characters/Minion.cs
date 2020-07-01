@@ -38,8 +38,14 @@ public class Minion {
         // RemoveInvalidPlayerActions();
         character.needsComponent.SetFullnessForcedTick(0);
         character.needsComponent.SetTirednessForcedTick(0);
-        character.behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Default_Minion_Behaviour);
-        character.combatComponent.SetCombatMode(COMBAT_MODE.Defend);
+        if (character.behaviourComponent.defaultBehaviourSetName == CharacterManager.Default_Resident_Behaviour) {
+            //only change default behaviour set of minion if it is currently using the default resident behaviour.
+            character.behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Default_Minion_Behaviour);    
+        }
+        // if (character.combatComponent.combatMode == COMBAT_MODE.Aggressive) {
+        //     //only change combat mode of minions that haven't already changed their combat mode
+        //     character.combatComponent.SetCombatMode(COMBAT_MODE.Defend);
+        // }
         character.visuals.UpdateAllVisuals(character);
     }
     public Minion(SaveDataMinion data) {
@@ -60,25 +66,6 @@ public class Minion {
     public void SetPlayerCharacterItem(PlayerCharacterItem item) {
         //character.SetPlayerCharacterItem(item);
     }
-    //public void AdjustExp(int amount) {
-    //    exp += amount;
-    //    if(exp >= 100) {
-    //        LevelUp();
-    //        exp = 0;
-    //    }else if (exp < 0) {
-    //        exp = 0;
-    //    }
-    //    //_characterItem.UpdateMinionItem();
-    //}
-    //public void SetLevel(int level) {
-    //    character.SetLevel(level);
-    //}
-    //public void LevelUp() {
-    //    character.LevelUp();
-    //}
-    //public void LevelUp(int amount) {
-    //    character.LevelUp(amount);
-    //}
     public void SetIndexDefaultSort(int index) {
         indexDefaultSort = index;
     }
@@ -143,6 +130,7 @@ public class Minion {
             Messenger.Broadcast(Signals.CHARACTER_DEATH, character);
 
             Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, character as IPointOfInterest, "target is already dead");
+            character.behaviourComponent.OnDeath();
             character.CancelAllJobs();
             // StopInvasionProtocol(PlayerManager.Instance.player.currentNpcSettlementBeingInvaded);
 
@@ -304,6 +292,7 @@ public class Minion {
         if (character.CanPlanGoap()) {
             character.PerStartTickActionPlanning();
         }
+        character.AdjustHP(-5, ELEMENTAL_TYPE.Normal, triggerDeath: true, showHPBar: true, source: character);
     }
     public void SetAssignedRegion(Region region) {
         assignedRegion = region;
@@ -367,16 +356,17 @@ public class Minion {
         character.ConstructInitialGoapAdvertisementActions();
         character.marker.InitialPlaceMarkerAt(tile);
         character.SetIsDead(false);
-
-        //PlayerManager.Instance.player.AdjustMana(-EditableValuesManager.Instance.summonMinionManaCost);
+        character.behaviourComponent.OnSummon(tile);
 
         SubscribeListeners();
         SetIsSummoned(true);
         Messenger.Broadcast(Signals.SUMMON_MINION, this);
     }
     private void Unsummon() {
-        character.SetHP(0);
-        //Messenger.AddListener(Signals.TICK_ENDED, UnsummonedHPRecovery);
+        if(character.currentHP < 0) {
+            character.SetHP(0);
+        }
+        Messenger.AddListener(Signals.TICK_ENDED, UnsummonedHPRecovery);
         UnSubscribeListeners();
         SetIsSummoned(false);
         character.behaviourComponent.SetIsHarassing(false, null);
@@ -386,13 +376,14 @@ public class Minion {
         character.interruptComponent.ForceEndNonSimultaneousInterrupt();
         character.combatComponent.ClearAvoidInRange(false);
         character.combatComponent.ClearHostilesInRange(false);
-        PlayerSkillManager.Instance.GetMinionPlayerSkillData(minionPlayerSkillType).StartCooldown();
+        //PlayerSkillManager.Instance.GetMinionPlayerSkillData(minionPlayerSkillType).StartCooldown();
         Messenger.Broadcast(Signals.UNSUMMON_MINION, this);
     }
     private void UnsummonedHPRecovery() {
-        this.character.AdjustHP((int)(character.maxHP * 0.02f), ELEMENTAL_TYPE.Normal);
+        this.character.AdjustHP(25, ELEMENTAL_TYPE.Normal);
         if (character.currentHP >= character.maxHP) {
             //minion can be summoned again
+            PlayerSkillManager.Instance.GetMinionPlayerSkillData(minionPlayerSkillType).SetCharges(1);
             Messenger.RemoveListener(Signals.TICK_ENDED, UnsummonedHPRecovery);
         }
     }
@@ -415,12 +406,14 @@ public class Minion {
         Messenger.AddListener(Signals.TICK_STARTED, OnTickStarted);
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
+        Messenger.AddListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, character.ForceCancelAllJobsTargetingPOI);
     }
     private void UnSubscribeListeners() {
         Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
         Messenger.RemoveListener(Signals.TICK_STARTED, OnTickStarted);
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
+        Messenger.RemoveListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, character.ForceCancelAllJobsTargetingPOI);
     }
     private void OnCharacterStartedState(Character characterThatStartedState, CharacterState state) {
         if (characterThatStartedState == character) {

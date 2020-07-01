@@ -12,6 +12,8 @@ public class SeizeComponent {
     private Sprite _seizedPOISprite;
     private int _seizedPOIVisionTriggerVotes;
     private int _seizedCharacterVisionVotes;
+    private bool _seizedPOIVisionTriggerState;
+    private Color _seizedPOIColor;
 
     private Vector3 followOffset;
     private Tween tween;
@@ -38,9 +40,11 @@ public class SeizeComponent {
                 poi.mapObjectVisual.SetVisual(_seizedPOISprite);
                 if (poi is BaseMapObject baseMapObject) { baseMapObject.OnManipulatedBy(PlayerManager.Instance.player); }
                 _seizedPOIVisionTriggerVotes = poi.mapObjectVisual.visionTrigger.filterVotes;
+                _seizedPOIColor = poi.mapObjectVisual.objectSpriteRenderer.color;
                 if (seizedPOI is Character character) {
                     _seizedCharacterVisionVotes = character.marker.visionCollider.filterVotes;
                 }
+                _seizedPOIVisionTriggerState = poi.mapObjectVisual.visionTrigger.mainCollider.enabled;
                 poi.OnSeizePOI();
                 Messenger.Broadcast(Signals.ON_SEIZE_POI, poi);
                 //if(poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
@@ -101,6 +105,8 @@ public class SeizeComponent {
         if (seizedPOI.mapObjectVisual != null) {
             seizedPOI.mapObjectVisual.SetVisual(_seizedPOISprite);    
             seizedPOI.mapObjectVisual.visionTrigger.SetFilterVotes(_seizedPOIVisionTriggerVotes);
+            seizedPOI.mapObjectVisual.visionTrigger.SetVisionTriggerCollidersState(_seizedPOIVisionTriggerState);
+            seizedPOI.mapObjectVisual.SetColor(_seizedPOIColor);
         }
         if (seizedPOI is Character character) {
             character.marker.visionCollider.SetFilterVisionVotes(_seizedCharacterVisionVotes);
@@ -108,6 +114,8 @@ public class SeizeComponent {
         _seizedPOISprite = null;
         _seizedPOIVisionTriggerVotes = 0;
         _seizedCharacterVisionVotes = 0;
+        _seizedPOIVisionTriggerState = false;
+        _seizedPOIColor = Color.white;
         Messenger.Broadcast(Signals.ON_UNSEIZE_POI, seizedPOI);
         seizedPOI = null;
         //PlayerUI.Instance.HideSeizedObjectUI();

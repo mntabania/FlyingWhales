@@ -238,8 +238,6 @@ namespace Ruinarch {
             } else if (PlayerManager.Instance.player.currentActiveIntel != null) {
                 //cancel current intel
                 PlayerManager.Instance.player.SetCurrentActiveIntel(null);
-            } else if (PlayerManager.Instance.player.currentActiveSummon != SUMMON_TYPE.None) {
-                PlayerManager.Instance.player.SetCurrentlyActiveSummon(SUMMON_TYPE.None);
             } else if (PlayerManager.Instance.player.currentActiveItem != TILE_OBJECT_TYPE.NONE) {
                 PlayerManager.Instance.player.SetCurrentlyActiveItem(TILE_OBJECT_TYPE.NONE);
             } else if (PlayerManager.Instance.player.currentActiveArtifact != ARTIFACT_TYPE.None) {

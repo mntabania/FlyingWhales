@@ -4,6 +4,8 @@ using UnityEngine;
 
 namespace Traits {
     public class Lethargic : Status {
+        public override bool isSingleton => true;
+
         public Lethargic() {
             name = "Lethargic";
             description = "This character is feeling sluggish and apathetic.";

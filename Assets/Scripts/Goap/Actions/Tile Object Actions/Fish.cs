@@ -7,7 +7,7 @@ using Traits;
 public class Fish : GoapAction {
 
     public Fish() : base(INTERACTION_TYPE.FISH) {
-        actionIconString = GoapActionStateDB.Harvest_Icon;
+        actionIconString = GoapActionStateDB.Fish_Icon;
         advertisedBy = new[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
         validTimeOfDays = new[] { TIME_IN_WORDS.MORNING, TIME_IN_WORDS.LUNCH_TIME, TIME_IN_WORDS.AFTERNOON };
@@ -45,7 +45,7 @@ public class Fish : GoapAction {
         goapNode.descriptionLog.AddToFillers(null, "50", LOG_IDENTIFIER.STRING_1);
     }
     public void AfterFishSuccess(ActualGoapNode goapNode) {
-        LocationGridTile tile = goapNode.poiTarget.gridTileLocation.GetNearestUnoccupiedTileFromThis() ?? goapNode.actor.gridTileLocation;
+        LocationGridTile tile = goapNode.actor.gridTileLocation.GetNearestUnoccupiedTileFromThis() ?? goapNode.actor.gridTileLocation;
 
         FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(TILE_OBJECT_TYPE.FISH_PILE);
         foodPile.SetResourceInPile(50);

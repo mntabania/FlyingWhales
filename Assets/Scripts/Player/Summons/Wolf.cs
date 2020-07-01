@@ -28,7 +28,7 @@ public class Wolf : Summon {
     //}
     public override void Initialize() {
 	    base.Initialize();
-	    behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Default_Wolf_Behaviour);
+	    behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Ravager_Behaviour);
     }
     #endregion
 }

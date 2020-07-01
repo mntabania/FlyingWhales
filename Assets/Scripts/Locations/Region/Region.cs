@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Locations.Settlements;
 using PathFind;
 using SpriteGlow;
 using UnityEngine;
@@ -14,7 +15,7 @@ public class Region {
     public string name { get; private set; }
     public string description => GetDescription();
     public List<HexTile> tiles { get; }
-    public List<HexTile> shuffledNonMountainWaterTiles { get; private set; }
+    public List<HexTile> shuffledNonMountainWaterTiles { get; }
     public HexTile coreTile { get; private set; }
     public LOCATION_TYPE locationType => LOCATION_TYPE.EMPTY;
     public Color regionColor { get; }
@@ -30,8 +31,8 @@ public class Region {
     public LocationStructure mainStorage { get; private set; }
     public bool canShowNotifications { get; private set; }
     public Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness { get; }
-    public List<IPointOfInterest> pendingAddAwareness { get; private set; }
-    public List<IPointOfInterest> pendingRemoveAwareness { get; private set; }
+    public List<IPointOfInterest> pendingAddAwareness { get; }
+    public List<IPointOfInterest> pendingRemoveAwareness { get; }
 
     private RegionInnerTileMap _regionInnerTileMap; //inner map of the region, this should only be used if this region does not have an npcSettlement. 
     private string _activeEventAfterEffectScheduleId;
@@ -275,6 +276,39 @@ public class Region {
             }
         }
         return false;
+    }
+    public List<BaseSettlement> GetSettlementsInRegion(System.Func<BaseSettlement, bool> validityChecker) {
+        List<BaseSettlement> settlements = null;
+        for (int i = 0; i < tiles.Count; i++) {
+            HexTile tile = tiles[i];
+            if (tile.settlementOnTile != null && validityChecker.Invoke(tile.settlementOnTile)) {
+                if (settlements == null) {
+                    settlements = new List<BaseSettlement>();
+                }
+                if (settlements.Contains(tile.settlementOnTile) == false) {
+                    settlements.Add(tile.settlementOnTile);    
+                }
+            }
+        }
+        return settlements;
+    }
+    public List<HexTile> GetAreasOccupiedByVillagers() {
+        List<HexTile> areas = null;
+        for (int i = 0; i < residents.Count; i++) {
+            Character regionResident = residents[i];
+            if (regionResident.territorries != null && regionResident.territorries.Count > 0) {
+                for (int j = 0; j < regionResident.territorries.Count; j++) {
+                    HexTile territory = regionResident.territorries[j];
+                    if (areas == null) {
+                        areas = new List<HexTile>();
+                    }
+                    if (areas.Contains(territory) == false) {
+                        areas.Add(territory);
+                    }
+                }
+            }
+        }
+        return areas;
     }
     #endregion
 
@@ -650,19 +684,19 @@ public class Region {
         }
         return null;
     }
-    public LocationStructure GetRandomUnoccupiedStructureWithTags() {
-        List<LocationStructure> structuresWithTag = null;
+    public LocationStructure GetRandomUnoccupiedSpecialStructure() {
+        List<LocationStructure> specialStructures = null;
         for (int i = 0; i < allStructures.Count; i++) {
             LocationStructure currStructure = allStructures[i];
             if (!currStructure.IsOccupied()) {
-                if (currStructure.HasStructureTags()) {
-                    if (structuresWithTag == null) { structuresWithTag = new List<LocationStructure>(); }
-                    structuresWithTag.Add(currStructure);
+                if (currStructure.settlementLocation != null && currStructure.settlementLocation.locationType == LOCATION_TYPE.DUNGEON) {
+                    if (specialStructures == null) { specialStructures = new List<LocationStructure>(); }
+                    specialStructures.Add(currStructure);
                 }
             }
         }
-        if (structuresWithTag != null && structuresWithTag.Count > 0) {
-            return structuresWithTag[UnityEngine.Random.Range(0, structuresWithTag.Count)];
+        if (specialStructures != null && specialStructures.Count > 0) {
+            return specialStructures[UnityEngine.Random.Range(0, specialStructures.Count)];
         }
         return null;
     }

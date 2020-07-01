@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// This is the base class for all nameplates, regardless of what type of nameplate it is.
@@ -17,15 +18,14 @@ public class NameplateItem<T> : PooledObject, INameplateItem {
     [SerializeField] protected TextMeshProUGUI mainLbl;
     [SerializeField] protected TextMeshProUGUI subLbl;
     [SerializeField] protected TextMeshProUGUI supportingLbl;
-    [SerializeField] protected RectTransform supportingLblRT;
-    [SerializeField] protected RectTransform supportingLblContainer;
     [SerializeField] protected NameplateButton nameplateButton;
 
     [Header("Button")]
     [SerializeField] protected Button button;
 
+    [FormerlySerializedAs("toggle")]
     [Header("Toggle")]
-    [SerializeField] protected Toggle toggle;
+    [SerializeField] protected Toggle _toggle;
 
     [Header("Cover")]
     [SerializeField] private GameObject coverGO;   
@@ -52,9 +52,10 @@ public class NameplateItem<T> : PooledObject, INameplateItem {
 
     public virtual T obj { get; private set; }
 
-    public bool coverState {
-        get { return coverGO.activeSelf; }
-    }
+    #region Getters
+    public bool coverState => coverGO.activeSelf;
+    public Toggle toggle => _toggle;
+    #endregion
 
     #region Virtuals
     public virtual void SetObject(T o) {
@@ -143,11 +144,6 @@ public class NameplateItem<T> : PooledObject, INameplateItem {
         onRightClickNameplate = null;
     }
 
-    //public void OnClick() {
-    //    onClickNameplate?.Invoke(obj);
-    //    Messenger.Broadcast(Signals.NAMEPLATE_CLICKED, mainLbl.text);
-    //}
-
     /// <summary>
     /// This is called to invoke all click actions.
     /// </summary>
@@ -200,7 +196,9 @@ public class NameplateItem<T> : PooledObject, INameplateItem {
     public void SetToggleGroup(ToggleGroup group) {
         ToggleGroup previous = toggle.group;
         toggle.group = group;
-        previous?.UnregisterToggle(toggle);
+        if (previous != null) {
+            previous.UnregisterToggle(toggle);    
+        }
         if (group != null) {
             group.RegisterToggle(toggle);
             if (!group.allowSwitchOff && !group.AnyTogglesOn()) {
@@ -226,39 +224,39 @@ public class NameplateItem<T> : PooledObject, INameplateItem {
     #endregion
 
     #region Supporting Text
-    Coroutine scrollRoutine;
-    public void ScrollText() {
-        if (supportingLblRT.sizeDelta.x < supportingLblContainer.sizeDelta.x || scrollRoutine != null) {
-            return;
-        }
-        scrollRoutine = StartCoroutine(Scroll());
-    }
-    public void StopScroll() {
-        if (scrollRoutine != null) {
-            StopCoroutine(scrollRoutine);
-            scrollRoutine = null;
-        }
-        supportingLblRT.anchoredPosition = new Vector3(0f, supportingLblRT.anchoredPosition.y);
-    }
-    private IEnumerator Scroll() {
-        float width = supportingLbl.preferredWidth;
-        Vector3 startPosition = supportingLblRT.anchoredPosition;
-
-        float difference = supportingLblContainer.sizeDelta.x - supportingLblRT.sizeDelta.x;
-
-        float scrollDirection = -1f;
-
-        while (true) {
-            float newX = supportingLblRT.anchoredPosition.x + (0.5f * scrollDirection);
-            supportingLblRT.anchoredPosition = new Vector3(newX, startPosition.y, startPosition.z);
-            if (supportingLblRT.anchoredPosition.x < difference) {
-                scrollDirection = 1f;
-            } else if (supportingLblRT.anchoredPosition.x > 0) {
-                scrollDirection = -1f;
-            }
-            yield return null;
-        }
-    }
+    // Coroutine scrollRoutine;
+    // public void ScrollText() {
+    //     if (supportingLblRT.sizeDelta.x < supportingLblContainer.sizeDelta.x || scrollRoutine != null) {
+    //         return;
+    //     }
+    //     scrollRoutine = StartCoroutine(Scroll());
+    // }
+    // public void StopScroll() {
+    //     if (scrollRoutine != null) {
+    //         StopCoroutine(scrollRoutine);
+    //         scrollRoutine = null;
+    //     }
+    //     supportingLblRT.anchoredPosition = new Vector3(0f, supportingLblRT.anchoredPosition.y);
+    // }
+    // private IEnumerator Scroll() {
+    //     float width = supportingLbl.preferredWidth;
+    //     Vector3 startPosition = supportingLblRT.anchoredPosition;
+    //
+    //     float difference = supportingLblContainer.sizeDelta.x - supportingLblRT.sizeDelta.x;
+    //
+    //     float scrollDirection = -1f;
+    //
+    //     while (true) {
+    //         float newX = supportingLblRT.anchoredPosition.x + (0.5f * scrollDirection);
+    //         supportingLblRT.anchoredPosition = new Vector3(newX, startPosition.y, startPosition.z);
+    //         if (supportingLblRT.anchoredPosition.x < difference) {
+    //             scrollDirection = 1f;
+    //         } else if (supportingLblRT.anchoredPosition.x > 0) {
+    //             scrollDirection = -1f;
+    //         }
+    //         yield return null;
+    //     }
+    // }
     public void SetSupportingLabelState(bool state) {
         supportingLbl.gameObject.SetActive(state);
     }

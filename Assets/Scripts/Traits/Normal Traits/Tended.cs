@@ -1,6 +1,7 @@
 ﻿namespace Traits {
     public class Tended : Status {
-        
+        public override bool isSingleton => true;
+
         public Tended() {
             name = "Tended";
             description = "This is Tended.";

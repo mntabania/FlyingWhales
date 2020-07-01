@@ -7,7 +7,7 @@ namespace Interrupts {
         public FeelingConcerned() : base(INTERRUPT.Feeling_Concerned) {
             duration = 0;
             doesStopCurrentAction = true;
-            interruptIconString = GoapActionStateDB.Flirt_Icon;
+            interruptIconString = GoapActionStateDB.Sad_Icon;
             shouldAddLogs = false;
         }
 

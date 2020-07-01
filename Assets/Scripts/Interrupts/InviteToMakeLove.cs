@@ -18,7 +18,7 @@ namespace Interrupts {
                 string debugLog = $"{actor.name} invite to make love interrupt with {targetCharacter.name}";
 
                 //if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Unconscious") != null 
-                //    || targetCharacter.isInCombat
+                //    || targetCharacter.combatComponent.isInCombat
                 //    || (targetCharacter.stateComponent.currentState != null && targetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.DOUSE_FIRE)
                 //    || (targetCharacter.interruptComponent.isInterrupted && targetCharacter.interruptComponent.currentInterrupt.interrupt == INTERRUPT.Cowering)) {
                 //    debugLog += $"{targetCharacter.name} is unconscious/in combat/in douse fire state/cowering. Invite rejected.";

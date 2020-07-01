@@ -145,7 +145,7 @@ public class CharacterMarkerNameplate : PooledObject {
             actionIcon.gameObject.SetActive(false);
             return;
         }
-        if (character.isConversing && !character.isInCombat) {
+        if (character.isConversing && !character.combatComponent.isInCombat) {
             actionIcon.sprite = InteractionManager.Instance.actionIconDictionary[GoapActionStateDB.Social_Icon];
             actionIcon.gameObject.SetActive(true);
             return;

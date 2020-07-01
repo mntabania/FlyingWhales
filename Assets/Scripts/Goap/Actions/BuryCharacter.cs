@@ -98,7 +98,6 @@ public class BuryCharacter : GoapAction {
             if (choices.Count > 0) {
                 chosenLocation = choices[Random.Range(0, choices.Count)];
             }
-            
         }
         Tombstone tombstone = new Tombstone();
         tombstone.SetCharacter(targetCharacter);

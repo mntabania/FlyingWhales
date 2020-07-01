@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Traits {
     public class Overheating : Status {
+        public override bool isSingleton => true;
 
         public Overheating() {
             name = "Overheating";

@@ -49,7 +49,7 @@ public class Taunt : CombatAbility {
 
             //for (int i = 0; i < affectedByTaunt.Count; i++) {
             //    Character affected = affectedByTaunt[i];
-            //    if(affected.isInCombat) {
+            //    if(affected.combatComponent.isInCombat) {
             //        CombatState combatState = affected.stateComponent.currentState as CombatState;
             //        combatState.SwitchTarget(character);
             //    } else {

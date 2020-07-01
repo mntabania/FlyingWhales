@@ -40,6 +40,12 @@ public static class GoapActionStateDB {
     public static string Steal_Icon = "Steal";
     public static string Stealth_Icon = "Stealth";
     public static string Joy_Icon = "Joy";
+    public static string Fish_Icon = "Fish";
+    public static string Happy_Icon = "Happy";
+    public static string Inspect_Icon = "Inspect";
+    public static string Party_Icon = "Party";
+    public static string Heartbroken_Icon = "Heartbroken";
+    public static string Injured_Icon = "Injured";
 
 
     public static string GetStateResult(INTERACTION_TYPE goapType, string stateName) {
@@ -533,6 +539,21 @@ public static class GoapActionStateDB {
         } },
         {INTERACTION_TYPE.CREATE_CULTIST_KIT, new[]{
             new StateNameAndDuration(){ name = "Create Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
+        {INTERACTION_TYPE.IS_CULTIST, new[]{
+            new StateNameAndDuration(){ name = "Cultist Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(5) },
+        } },
+        {INTERACTION_TYPE.SPAWN_POISON_CLOUD, new[]{
+            new StateNameAndDuration(){ name = "Spawn Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(15) },
+        } },
+        {INTERACTION_TYPE.DECREASE_MOOD, new[]{
+            new StateNameAndDuration(){ name = "Decrease Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(5) },
+        } },
+        {INTERACTION_TYPE.GO_TO_TILE, new[]{
+            new StateNameAndDuration(){ name = "Go Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
+        {INTERACTION_TYPE.DISABLE, new[]{
+            new StateNameAndDuration(){ name = "Disable Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
     };
 }

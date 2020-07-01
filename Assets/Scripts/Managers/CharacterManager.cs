@@ -21,9 +21,20 @@ public class CharacterManager : MonoBehaviour {
     public const string Make_Love = "Make Love", Steal = "Steal", Poison_Food = "Poison Food",
         Place_Trap = "Place Trap", Flirt = "Flirt", Transform_To_Wolf = "Transform To Wolf", Drink_Blood = "Drink Blood",
         Destroy_Action = "Destroy";
-    public const string Default_Resident_Behaviour = "Default Resident Behaviour", Default_Monster_Behaviour = "Default Monster Behaviour",
-        Default_Minion_Behaviour = "Default Minion Behaviour", Default_Wanderer_Behaviour = "Default Wanderer Behaviour", Default_Angel_Behaviour = "Default Angel Behaviour",
-        Default_Wolf_Behaviour = "Default Wolf Behaviour", Default_Kobold_Behaviour = "Default Kobold Behaviour", Default_Giant_Spider_Behaviour = "Default Giant Spider Behaviour";
+    public const string Default_Resident_Behaviour = "Default Resident Behaviour",
+        Default_Monster_Behaviour = "Default Monster Behaviour",
+        Default_Minion_Behaviour = "Default Minion Behaviour",
+        Default_Wanderer_Behaviour = "Default Wanderer Behaviour",
+        Default_Angel_Behaviour = "Default Angel Behaviour",
+        Ravager_Behaviour = "Ravager Behaviour",
+        Kobold_Behaviour = "Kobold Behaviour",
+        Giant_Spider_Behaviour = "Giant Spider Behaviour",
+        Noxious_Wanderer_Behaviour = "Noxious Wanderer Behaviour",
+        DeMooder_Behaviour = "DeMooder Behaviour",
+        Defender_Behaviour = "Defender Behaviour",
+        Invader_Behaviour = "Invader Behaviour",
+        Disabler_Behaviour = "Disabler Behaviour",
+        Abductor_Behaviour = "Abductor Behaviour";
     public const int MAX_HISTORY_LOGS = 300;
 
     
@@ -112,7 +123,7 @@ public class CharacterManager : MonoBehaviour {
                 typeof(DefaultExtraCatcher),
             }
         },
-        { Default_Wolf_Behaviour,
+        { Ravager_Behaviour,
             new []{
                 typeof(WolfBehaviour),
                 typeof(MovementProcessing),
@@ -120,7 +131,7 @@ public class CharacterManager : MonoBehaviour {
                 typeof(DefaultExtraCatcher),
             }
         },
-        { Default_Kobold_Behaviour,
+        { Kobold_Behaviour,
             new []{
                 typeof(KoboldBehaviour),
                 typeof(MovementProcessing),
@@ -128,11 +139,53 @@ public class CharacterManager : MonoBehaviour {
                 typeof(DefaultExtraCatcher),
             }
         },
-        { Default_Giant_Spider_Behaviour,
+        { Giant_Spider_Behaviour,
             new []{
                 typeof(GiantSpiderBehaviour),
                 typeof(MovementProcessing),
                 typeof(DefaultMonster),
+                typeof(DefaultExtraCatcher),
+            }
+        },
+        { Noxious_Wanderer_Behaviour,
+            new []{
+                typeof(MovementProcessing),
+                typeof(NoxiousWandererBehaviour),
+                typeof(DefaultExtraCatcher),
+            }
+        },
+        { DeMooder_Behaviour,
+            new []{
+                typeof(MovementProcessing),
+                typeof(DeMooderBehaviour),
+                typeof(DefaultExtraCatcher),
+            }
+        },
+        { Defender_Behaviour,
+            new []{
+                typeof(MovementProcessing),
+                typeof(DefendBehaviour),
+                typeof(DefaultExtraCatcher),
+            }
+        },
+        { Invader_Behaviour,
+            new []{
+                typeof(MovementProcessing),
+                typeof(InvadeBehaviour),
+                typeof(DefaultExtraCatcher),
+            }
+        },
+        { Disabler_Behaviour,
+            new []{
+                typeof(MovementProcessing),
+                typeof(DisablerBehaviour),
+                typeof(DefaultExtraCatcher),
+            }
+        },
+        { Abductor_Behaviour,
+            new []{
+                typeof(MovementProcessing),
+                typeof(AbductorBehaviour),
                 typeof(DefaultExtraCatcher),
             }
         },
@@ -506,6 +559,9 @@ public class CharacterManager : MonoBehaviour {
             return defaultBehaviourSets[setName];
         }
         return null;
+    }
+    public bool HasDefaultBehaviourSet(string setName) {
+        return defaultBehaviourSets.ContainsKey(setName);
     }
     //public System.Type[] GetTraitBehaviourComponents(string traitName) {
     //    return classManager.GetTraitBehaviourComponents(traitName);

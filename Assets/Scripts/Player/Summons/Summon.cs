@@ -7,33 +7,17 @@ using Traits;
 using UnityEngine;
 using Interrupts;
 
-public class Summon : Character, IWorldObject {
+public class Summon : Character {
 
-	public SUMMON_TYPE summonType { get; private set; }
-    public bool hasBeenUsed { get; private set; } //has this summon been used in the current map. TODO: Set this to false at end of invasion of map.
-    public bool showNotificationOnDeath { get; private set; }
-    
-    #region getters/setters
-    public virtual string worldObjectName {
-        get { return $"{name} ({UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(summonType.ToString())})"; }
-    }
-    public WORLD_OBJECT_TYPE worldObjectType {
-        get { return WORLD_OBJECT_TYPE.SUMMON; }
-    }
-    #endregion
+	public SUMMON_TYPE summonType { get; }
+    private bool showNotificationOnDeath { get; set; }
 
-    // public Summon(SUMMON_TYPE summonType, CharacterRole role, RACE race, GENDER gender) : base(role, race, gender) {
-    //     this.summonType = summonType;
-    //     territorries = new List<HexTile>();
-    // }
     protected Summon(SUMMON_TYPE summonType, string className, RACE race, GENDER gender) : base(className, race, gender) {
         this.summonType = summonType;
         showNotificationOnDeath = true;
-        //territorries = new List<HexTile>();
     }
     protected Summon(SaveDataCharacter data) : base(data) {
         this.summonType = data.summonType;
-        //territorries = new List<HexTile>();
     }
 
     #region Overrides
@@ -50,7 +34,7 @@ public class Summon : Character, IWorldObject {
         needsComponent.Initialize();
         
         advertisedActions.Clear(); //This is so that any advertisements from OnUpdateRace will be negated. TODO: Make updating advertisements better.
-                                   //TODO: Put this in a system
+        //TODO: Put this in a system
         AddAdvertisedAction(INTERACTION_TYPE.ABSORB_LIFE);
         AddAdvertisedAction(INTERACTION_TYPE.ABSORB_POWER);
         ConstructInitialGoapAdvertisementActions();
@@ -60,14 +44,6 @@ public class Summon : Character, IWorldObject {
         //SubscribeToSignals(); //NOTE: Only made characters subscribe to signals when their npcSettlement is the one that is currently active. TODO: Also make sure to unsubscribe a character when the player has completed their map.
     }
     public override void OnActionPerformed(ActualGoapNode node) { } //overridden OnActionStateSet so that summons cannot witness other events.
-    protected override void OnSuccessInvadeArea(NPCSettlement npcSettlement) {
-        base.OnSuccessInvadeArea(npcSettlement);
-        //clean up
-        Reset();
-        //PlayerManager.Instance.player.playerNpcSettlement.AddCharacterToLocation(this);
-        //ResetToFullHP();
-        Death();
-    }
     public override void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null, LogFiller[] deathLogFillers = null, Interrupt interrupt = null) {
         if (!_isDead) {
             Region deathLocation = currentRegion;
@@ -176,6 +152,7 @@ public class Summon : Character, IWorldObject {
             traitContainer.AddTrait(this, dead, gainedFromDoing: deathFromAction);
             Messenger.Broadcast(Signals.CHARACTER_DEATH, this as Character);
 
+            behaviourComponent.OnDeath();
             CancelAllJobs();
 
             //Debug.Log(GameManager.Instance.TodayLogString() + this.name + " died of " + cause);
@@ -204,41 +181,9 @@ public class Summon : Character, IWorldObject {
         }
     }
     protected override void OnTickStarted() {
-        //What happens every start of tick
-
-        //Out of combat hp recovery
-        //if (!isDead && !isInCombat) {
-        //    HPRecovery(0.0025f);
-        //}
         ProcessTraitsOnTickStarted();
         StartTickGoapPlanGeneration();
-        // if (!ownParty.icon.isTravelling && !isInCombat) {
-        //     GoToWorkArea();
-        // }
-
-        //StartTickGoapPlanGeneration();
-
-        //if (isDead || minion != null) {
-        //    return;
-        //}
-
-        ////Out of combat hp recovery
-        //if (stateComponent.currentState == null || stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT) {
-        //    HPRecovery(0.0025f);
-        //}
-
-        ////This is to ensure that this character will not be idle forever
-        ////If at the start of the tick, the character is not currently doing any action, and is not waiting for any new plans, it means that the character will no longer perform any actions
-        ////so start doing actions again
-        //SetHasAlreadyAskedForPlan(false);
-        //if (CanPlanGoap()) {
-        //    PerStartTickActionPlanning();
-        //}
     }
-    //protected override void PerStartTickActionPlanning() {
-    //    //base.IdlePlans();
-    //    GoToWorkArea();
-    //}
     #endregion
 
     #region Virtuals
@@ -247,15 +192,10 @@ public class Summon : Character, IWorldObject {
     /// </summary>
     /// <param name="tile">The tile the summon was placed on.</param>
     public virtual void OnPlaceSummon(LocationGridTile tile) {
-        hasBeenUsed = true;
         SubscribeToSignals();
         Messenger.RemoveListener(Signals.HOUR_STARTED, () => needsComponent.DecreaseNeeds()); //do not make summons decrease needs
-        //Messenger.RemoveListener(Signals.TICK_STARTED, PerTickGoapPlanGeneration); //do not make summons plan goap actions by default
-        //if (GameManager.Instance.isPaused) {
-        //    DecreaseCanMove(); //TODO: Handle this somehwere better?
-        //    marker.PauseAnimation();
-        //}
         movementComponent.UpdateSpeed();
+        behaviourComponent.OnSummon(tile);
     }
     protected virtual void AfterDeath(LocationGridTile deathTileLocation) {
         if (marker == null && destroyMarkerOnDeath && (behaviourComponent.isInvading || behaviourComponent.isDefending || behaviourComponent.isHarassing)) {
@@ -264,26 +204,6 @@ public class Summon : Character, IWorldObject {
         behaviourComponent.SetIsHarassing(false, null);
         behaviourComponent.SetIsInvading(false, null);
         behaviourComponent.SetIsDefending(false, null);
-    }
-    #endregion
-
-    public void Reset() {
-        hasBeenUsed = false;
-        SetIsDead(false);
-        if (ownParty == null) {
-            CreateOwnParty();
-            ownParty.CreateIcon();
-        }
-        traitContainer.RemoveAllNonPersistentTraitAndStatuses(this);
-        //ClearAllAwareness();
-        CancelAllJobs();
-        ResetToFullHP();
-    }
-
-    #region World Object
-    public void Obtain() {
-        //invading a region with a summon will recruit that summon for the player
-        //UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Gained new Summon: " + this.summonType.SummonName(), () => PlayerManager.Instance.player.GainSummon(this, true));
     }
     #endregion
 
@@ -323,7 +243,6 @@ public class SummonSlot {
     public Summon summon;
     public bool isLocked {
         get { return false; }
-        //get { return PlayerManager.Instance.player.GetIndexForSummonSlot(this) >= PlayerManager.Instance.player.maxSummonSlots; }
     }
 
     public SummonSlot() {

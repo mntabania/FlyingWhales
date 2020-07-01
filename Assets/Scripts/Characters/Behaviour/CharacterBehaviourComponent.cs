@@ -10,12 +10,23 @@ public abstract class CharacterBehaviourComponent {
 
     public abstract bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob);
 
+    /// <summary>
+    /// Contains stuff to do to character when they ADD this behaviour to their list of behaviours.
+    /// </summary>
+    /// <param name="character">The character concerned.</param>
+    public virtual void OnAddBehaviourToCharacter(Character character) { }
+    /// <summary>
+    /// Contains stuff to do to character when they REMOVE this behaviour from their list of behaviours.
+    /// </summary>
+    /// <param name="character">The character concerned.</param>
+    public virtual void OnRemoveBehaviourFromCharacter(Character character) { }
+    
     #region Enabling/Disabling
-    protected void DisableFor(Character character) {
+    private void DisableFor(Character character) {
         if (_isDisabledFor == null) { _isDisabledFor = new List<Character>(); }
         _isDisabledFor.Add(character);
     }
-    protected void EnableFor(Character character) {
+    private void EnableFor(Character character) {
         _isDisabledFor.Remove(character);
     }
     public bool IsDisabledFor(Character character) {

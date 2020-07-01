@@ -27,8 +27,6 @@ public class Player : ILeader, IObjectManipulator {
     private int currentCorruptionTick { get; set; }
     private bool isTileCurrentlyBeingCorrupted { get; set; }
     public HexTile currentTileBeingCorrupted { get; private set; }
-    //public Minion currentMinionLeader { get; private set; }
-    public NPCSettlement currentNpcSettlementBeingInvaded { get; private set; }
     public CombatAbility currentActiveCombatAbility { get; private set; }
     public IIntel currentActiveIntel { get; private set; }
     //public int maxSummonSlots { get; private set; } //how many summons can the player have
@@ -164,6 +162,9 @@ public class Player : ILeader, IObjectManipulator {
             } else if(character is Summon summon) {
                 AddSummon(summon);
             }
+            if (!string.IsNullOrEmpty(character.characterClass.traitNameOnTamedByPlayer)) {
+                character.traitContainer.AddTrait(character, character.characterClass.traitNameOnTamedByPlayer);
+            }
         }
     }
     private void OnCharacterRemovedFromFaction(Character character, Faction faction) {
@@ -172,6 +173,9 @@ public class Player : ILeader, IObjectManipulator {
                 RemoveMinion(character.minion);
             } else if (character is Summon summon) {
                 RemoveSummon(summon);
+            }
+            if (!string.IsNullOrEmpty(character.characterClass.traitNameOnTamedByPlayer)) {
+                character.traitContainer.RemoveTrait(character, character.characterClass.traitNameOnTamedByPlayer);
             }
         }
     }
@@ -290,11 +294,11 @@ public class Player : ILeader, IObjectManipulator {
     }
     private void OnSpellCast(KeyCode key) {
         if (key == KeyCode.Mouse0) {
-            TryExecuteCurrentActiveAction();
+            TryExecuteCurrentActiveSpell();
         }
     }
 
-    private void TryExecuteCurrentActiveAction() {
+    private void TryExecuteCurrentActiveSpell() {
         if (UIManager.Instance.IsMouseOnUI() || !InnerMapManager.Instance.isAnInnerMapShowing) {
             return; //clicked on UI;
         }
@@ -580,43 +584,13 @@ public class Player : ILeader, IObjectManipulator {
     #endregion
 
     #region Summons
-    public SUMMON_TYPE currentActiveSummon { get; private set; }
-    public void SetCurrentlyActiveSummon(SUMMON_TYPE summon) {
-        if (currentActiveSummon != summon) {
-            SUMMON_TYPE previousActiveSummon = currentActiveSummon;
-            currentActiveSummon = summon;
-            if (currentActiveSummon == SUMMON_TYPE.None) {
-                Messenger.RemoveListener<KeyCode>(Signals.KEY_DOWN, OnSummonCast);
-                InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
-                Messenger.Broadcast(Signals.PLAYER_NO_ACTIVE_MONSTER, previousActiveSummon);
-            } else {
-                InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Check);
-                Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnSummonCast);
-            }
-        }
-    }
-    private void OnSummonCast(KeyCode key) {
-        if (key == KeyCode.Mouse0) {
-            TrySummonMonster();
-        }
-    }
-    private void TrySummonMonster() {
-        if (UIManager.Instance.IsMouseOnUI() || !InnerMapManager.Instance.isAnInnerMapShowing) {
-            return; //clicked on UI;
-        }
-        LocationGridTile hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
-        if (hoveredTile != null) {
-            Summon summon = CharacterManager.Instance.CreateNewSummon(currentActiveSummon, FactionManager.Instance.neutralFaction, homeRegion: hoveredTile.parentMap.region as Region);
-            CharacterManager.Instance.PlaceSummon(summon, hoveredTile);
-        }
-    }
-    public void AddSummon(Summon summon) {
+    private void AddSummon(Summon summon) {
         if (!summons.Contains(summon)) {
             summons.Add(summon);
             Messenger.Broadcast(Signals.PLAYER_GAINED_SUMMON, summon);
         }
     }
-    public void RemoveSummon(Summon summon) {
+    private void RemoveSummon(Summon summon) {
         if (summons.Remove(summon)) {
             Messenger.Broadcast(Signals.PLAYER_LOST_SUMMON, summon);
         }
@@ -626,229 +600,6 @@ public class Player : ILeader, IObjectManipulator {
             RemoveSummon(summon);
         }
     }
-    //private void GainSummonSlot(bool showUI = true) {
-    //    SummonSlot newSlot = new SummonSlot();
-    //    summons.Add(newSlot);
-    //    //if (showUI) {
-    //    //    PlayerUI.Instance.ShowGeneralConfirmation("New Summon Slot", "You gained a new summon slot!");
-    //    //}
-    //    UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "You gained a summon slot!", null);
-    //    Messenger.Broadcast<SummonSlot>(Signals.PLAYER_GAINED_SUMMON_SLOT, newSlot);
-    //}
-    //private void LoseSummonSlot() {
-    //    SummonSlot unusedSlot;
-    //    if (TryGetUnusedSummonSlot(out unusedSlot)) {
-    //        //lose the unused slot.
-    //        LoseSummonSlot(unusedSlot, true);
-    //    } else {
-    //        //no unused slot, show UI to pick slot to be discarded.
-    //        UIManager.Instance.ShowClickableObjectPicker(summons, ShowDiscardSummonConfirmation, title: "Discard a summon slot.", showCover: true, layer: 25, closable: false);
-    //    }
-    //}
-    //private void LoseSummonSlot(SummonSlot slot, bool showUI = false) {
-    //    if (summons.Remove(slot)) {
-    //        //PlayerUI.Instance.ShowGeneralConfirmation("Lost Summon Slot", "You lost a summon slot!");
-    //        UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "You lost a summon slot!", null);
-    //        if (slot.summon != null) {
-    //            ClearSummonData(slot.summon);
-    //        }
-    //        Messenger.Broadcast(Signals.PLAYER_LOST_SUMMON_SLOT, slot);
-    //    }
-    //}
-    //private void ShowDiscardSummonConfirmation(object s) {
-    //    SummonSlot slot = s as SummonSlot;
-    //    UIManager.Instance.ShowYesNoConfirmation("Discard summon slot", "Are you sure you want to discard your " + slot.summon.summonType.SummonName() + " summon?", () => OnClickYesDiscardSummon(slot), layer: 26);
-    //}
-    //private void OnClickYesDiscardSummon(SummonSlot slot) {
-    //    LoseSummonSlot(slot);
-    //    UIManager.Instance.HideObjectPicker();
-    //}
-    //public void AddSummon(SUMMON_TYPE type, bool showNewSummonUI = false) {
-    //    Faction faction = playerFaction;
-    //    if (type == SUMMON_TYPE.Incubus || type == SUMMON_TYPE.Succubus) {
-    //        faction = FactionManager.Instance.neutralFaction;
-    //    }
-    //    Summon newSummon = CharacterManager.Instance.CreateNewSummon(type, faction, playerSettlement);
-    //    //newSummon.SetLevel(level);
-    //    AddSummon(newSummon, showNewSummonUI);
-    //}
-    //public void GainSummon(Summon summon) {
-    //if (maxSummonSlots == 0) {
-    //    //no summon slots yet
-    //    PlayerUI.Instance.ShowGeneralConfirmation("New Summon", "You gained a new summon but do not yet have a summon slot! " + summon.summonType.SummonName() + " will be discarded.");
-    //    RejectSummon(summon);
-    //} else if (GetTotalSummonsCount() < maxSummonSlots) {
-    //    AddSummon(summon, showNewSummonUI);
-    //} else {
-    //    Debug.LogWarning("Max summons has been reached!");
-    //    PlayerUI.Instance.replaceUI.ShowReplaceUI(GetAllSummons(), summon, ReplaceSummon, RejectSummon);
-    //}
-    //}
-    //public bool HasSpaceForNewSummon() {
-    //    return GetTotalSummonsCount() < maxSummonSlots; //if the total summons count is less than the summon slots
-    //}
-    //private void ReplaceSummon(object summonToReplace, object summonToAdd) {
-    //    Summon replace = summonToReplace as Summon;
-    //    Summon add = summonToAdd as Summon;
-    //    RemoveSummon(replace);
-    //    AddSummon(add);
-    //}
-    //private void RejectSummon(object rejectedSummon) {
-    //    ClearSummonData(rejectedSummon as Summon);
-    //}
-    /// <summary>
-    /// Get total number of summons that the player has, regardless of them having been used or not.
-    /// </summary>
-    /// <returns></returns>
-    //public int GetTotalSummonsCount() {
-    //    int count = 0;
-    //    for (int i = 0; i < summons.Count; i++) {
-    //        if (summons[i].summon != null) {
-    //            count++;
-    //        }
-    //    }
-    //    return count;
-    //}
-    //public void AddSummon(Summon newSummon, bool showNewSummonUI = false) {
-    //    if (!summons.Contains(newSummon)) {
-    //        summons.Add(newSummon);
-    //        playerSettlement.AddResident(newSummon, ignoreCapacity: true);
-    //        Messenger.Broadcast(Signals.PLAYER_GAINED_SUMMON, newSummon);
-    //        if (showNewSummonUI) {
-    //            PlayerUI.Instance.newAbilityUI.ShowNewAbilityUI(currentMinionLeader, newSummon);
-    //        }
-    //    }
-    //    //for (int i = 0; i < summons.Count; i++) {
-    //    //    if (summons[i].summon == null) {
-    //    //        summons[i].SetSummon(newSummon);
-    //    //        playerNpcSettlement.AddResident(newSummon, ignoreCapacity:true);
-    //    //        Messenger.Broadcast(Signals.PLAYER_GAINED_SUMMON, newSummon);
-    //    //        if (showNewSummonUI) {
-    //    //            PlayerUI.Instance.newAbilityUI.ShowNewAbilityUI(currentMinionLeader, newSummon);
-    //    //        }
-    //    //        break;
-    //    //    }
-    //    //}
-    //}
-    ///// <summary>
-    ///// Remove summon from the players list of available summons.
-    ///// NOTE: Summons will be placed back on the list when the player is done with a map.
-    ///// </summary>
-    ///// <param name="summon">The summon to be removed.</param>
-    //public bool RemoveSummon(Summon summon) {
-    //    return summons.Remove(summon);
-    //    //for (int i = 0; i < summons.Count; i++) {
-    //    //    if (summons[i].summon == summon) {
-    //    //        summons[i].summon = null;
-    //    //        Messenger.Broadcast(Signals.PLAYER_REMOVED_SUMMON, summon);
-    //    //        break;
-    //    //    }
-    //    //}
-    //}
-    //public void RemoveSummon(SUMMON_TYPE summon) {
-    //    Summon chosenSummon = GetSummonOfType(summon);
-    //    if(chosenSummon != null) {
-    //        RemoveSummon(chosenSummon);
-    //    }
-    //}
-    ////public Summon GetAvailableSummonOfType(SUMMON_TYPE type) {
-    ////    List<SummonSlot> choices = summons.Where(x => x.summon != null && !x.summon.hasBeenUsed && x.summon.summonType == type).ToList();
-    ////    return choices[Random.Range(0, choices.Count)].summon;
-    ////}
-    //public bool HasSummonOfType(SUMMON_TYPE summonType) {
-    //    return GetSummonDescription(summonType) != null;
-    //}
-    //public Summon GetSummonOfType(SUMMON_TYPE summonType) {
-    //    for (int i = 0; i < summons.Count; i++) {
-    //        if (summons[i].summonType == summonType) {
-    //            return summons[i];
-    //        }
-    //    }
-    //    return null;
-    //}
-    //public bool HasAnySummon(params string[] summonName) {
-    //    SUMMON_TYPE type;
-    //    for (int i = 0; i < summonName.Length; i++) {
-    //        string currName = summonName[i];
-    //        if (System.Enum.TryParse(currName, out type)) {
-    //            return HasSummonOfType(type);
-    //        }
-    //    }
-    //    return false;
-    //}
-    //public List<Summon> GetAllSummons() {
-    //    List<Summon> all = new List<Summon>();
-    //    for (int i = 0; i < summons.Count; i++) {
-    //        if (summons[i].summon != null) {
-    //            all.Add(summons[i].summon);
-    //        }
-    //    }
-    //    return all;
-    //}
-    //public Summon GetRandomSummon() {
-    //    List<Summon> all = GetAllSummons();
-    //    return all[UnityEngine.Random.Range(0, all.Count)];
-    //}
-    //private void ResetSummons() {
-    //    for (int i = 0; i < summons.Count; i++) {
-    //        if (summons[i].summon != null) {
-    //            summons[i].summon.Reset();
-    //        }
-    //    }
-    //}
-    //public void IncreaseSummonSlot() {
-    //    maxSummonSlots += 1;
-    //    maxSummonSlots = Mathf.Max(maxSummonSlots, 0);
-    //    //validate if adjusted max summons can accomodate current summons
-    //    if (summons.Count < maxSummonSlots) {
-    //        //add new summon slot
-    //        GainSummonSlot();
-    //    }
-    //}
-    //public void DecreaseSummonSlot() {
-    //    maxSummonSlots -= 1;
-    //    maxSummonSlots = Mathf.Max(maxSummonSlots, 0);
-    //    //validate if adjusted max summons can accomodate current summons
-    //    if (summons.Count > maxSummonSlots) {
-    //        //remove summon slot
-    //        LoseSummonSlot();
-    //    }
-    //}
-    //public SummonSlot GetSummonSlotBySummon(Summon summon) {
-    //    for (int i = 0; i < summons.Count; i++) {
-    //        if (summons[i].summon == summon) {
-    //            return summons[i];
-    //        }
-    //    }
-    //    return null;
-    //}
-    //public int GetIndexForSummonSlot(SummonSlot slot) {
-    //    for (int i = 0; i < summons.Count; i++) {
-    //        if (summons[i] == slot) {
-    //            return i;
-    //        }
-    //    }
-    //    return 0;
-    //}
-    //public bool AreAllSummonSlotsMaxLevel() {
-    //    for (int i = 0; i < maxSummonSlots; i++) {
-    //        if (summons[i].level < PlayerDB.MAX_LEVEL_SUMMON) {
-    //            return false;
-    //        }
-    //    }
-    //    return true;
-    //}
-    //private bool TryGetUnusedSummonSlot(out SummonSlot unusedSlot) {
-    //    for (int i = 0; i < summons.Count; i++) {
-    //        SummonSlot currSlot = summons[i];
-    //        if (currSlot.summon == null) {
-    //            unusedSlot = currSlot;
-    //            return true;
-    //        }
-    //    }
-    //    unusedSlot = null; //no unused slot
-    //    return false;
-    //}
     #endregion
 
     #region Artifacts
@@ -1405,7 +1156,6 @@ public class Player : ILeader, IObjectManipulator {
         return PlayerManager.Instance.player.currentActivePlayerSpell != null
                || PlayerManager.Instance.player.seizeComponent.hasSeizedPOI
                || PlayerManager.Instance.player.currentActiveIntel != null
-               || PlayerManager.Instance.player.currentActiveSummon != SUMMON_TYPE.None
                || PlayerManager.Instance.player.currentActiveItem != TILE_OBJECT_TYPE.NONE
                || PlayerManager.Instance.player.currentActiveArtifact != ARTIFACT_TYPE.None;
     }

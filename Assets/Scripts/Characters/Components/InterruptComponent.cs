@@ -149,7 +149,7 @@ public class InterruptComponent {
         currentInterrupt = null;
         currentDuration = 0;
         if(!owner.isDead && owner.canPerform) {
-            if (owner.isInCombat) {
+            if (owner.combatComponent.isInCombat) {
                 Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, owner);
             } else {
                 if (owner.combatComponent.hostilesInRange.Count > 0 || owner.combatComponent.avoidInRange.Count > 0) {

@@ -77,7 +77,7 @@ public class MovementComponent {
     //Sets if character should walk or run
     private void SetMovementState() {
         SetIsRunning(false);
-        if (noRunWithoutException || (noRunExceptCombat && !owner.isInCombat)) {
+        if (noRunWithoutException || (noRunExceptCombat && !owner.combatComponent.isInCombat)) {
             return;
         }
         if (useRunSpeed > 0) {
@@ -86,7 +86,7 @@ public class MovementComponent {
         } else {
             //If character is in combat/fleeing or character has urgent recovery, douse fire, remove status, neutralize danger, apprehend, report corrupted structure, restrain jobs
             //Set running to TRUE
-            if (owner.isInCombat) {
+            if (owner.combatComponent.isInActualCombat) {
                 SetIsRunning(true);
                 return;
             } else if (owner.currentActionNode != null) {

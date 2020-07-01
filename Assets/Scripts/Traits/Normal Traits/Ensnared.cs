@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Traits {
     public class Ensnared : Status {
+        public override bool isSingleton => true;
 
         public Ensnared() {
             name = "Ensnared";

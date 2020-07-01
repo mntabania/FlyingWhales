@@ -43,7 +43,6 @@ public class KillCountCharacterItem : CharacterNameplateItem {
         Messenger.RemoveListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterChangedState);
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterChangedState);
-        StopScroll();
     }
     private void UpdateInfo() {
         if (character.isDead) {

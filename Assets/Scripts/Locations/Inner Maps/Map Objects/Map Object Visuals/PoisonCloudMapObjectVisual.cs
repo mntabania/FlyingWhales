@@ -136,6 +136,7 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
     public void Explode() {
         Debug.Log($"{GameManager.Instance.TodayLogString()}{this.name} has exploded!");
         _cloudEffect.TriggerSubEmitter(0);
+        _poisonCloud.SetDoExpireEffect(false);
         Expire();
         List<LocationGridTile> affectedTiles =
             gridTileLocation.GetTilesInRadius(_size, includeCenterTile: true, includeTilesInDifferentStructure: true);
@@ -190,6 +191,7 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
                 int stacksToCombine = otherPoisonCloud.stacks;
                 otherPoisonCloud.mapVisual.transform.DOKill();
                 otherPoisonCloud.mapVisual.transform.DOMove(transform.position, 4f);
+                otherPoisonCloud.SetDoExpireEffect(false);
                 otherPoisonCloud.Neutralize();
                 _poisonCloud.SetStacks(_poisonCloud.stacks + stacksToCombine);
             }
@@ -224,8 +226,9 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
     #region Expiration
     public void Expire() {
         Debug.Log($"{this.name} expired!");
+        _poisonCloud.OnExpire();
         _cloudEffect.Stop();
-        visionTrigger.SetCollidersState(false);
+        visionTrigger.SetAllCollidersState(false);
         isSpawned = false;
         if (string.IsNullOrEmpty(_expiryKey) == false) {
             SchedulingManager.Instance.RemoveSpecificEntry(_expiryKey);

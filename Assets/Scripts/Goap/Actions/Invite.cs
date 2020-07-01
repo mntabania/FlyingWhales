@@ -31,7 +31,7 @@ public class Invite : GoapAction {
         if (goapActionInvalidity.isInvalid == false) {
             Character targetCharacter = poiTarget as Character;
             if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Unconscious") != null
-                    || targetCharacter.isInCombat
+                    || targetCharacter.combatComponent.isInCombat
                     || (targetCharacter.stateComponent.currentState != null && targetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.DOUSE_FIRE)
                     || (targetCharacter.interruptComponent.isInterrupted && targetCharacter.interruptComponent.currentInterrupt.interrupt == INTERRUPT.Cowering)) {
                 string debugLog = $"{targetCharacter.name} is unconscious/in combat/in douse fire state/cowering. Invite fail.";

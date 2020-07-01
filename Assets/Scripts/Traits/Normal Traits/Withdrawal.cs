@@ -4,6 +4,8 @@ using UnityEngine;
 
 namespace Traits {
     public class Withdrawal : Status {
+        public override bool isSingleton => true;
+
         public Withdrawal() {
             name = "Withdrawal";
             description = "This character is in withdrawal.";

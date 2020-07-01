@@ -9,7 +9,7 @@ public class ZombieDeath : GoapAction {
 
     public ZombieDeath() : base(INTERACTION_TYPE.ZOMBIE_DEATH) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
-        actionIconString = GoapActionStateDB.No_Icon;
+        actionIconString = GoapActionStateDB.Injured_Icon;
         advertisedBy = new[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON };
     }

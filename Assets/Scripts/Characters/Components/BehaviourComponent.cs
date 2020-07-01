@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Inner_Maps;
 using UnityEngine;
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
 using Pathfinding;
+using UnityEngine.WSA;
 using UtilityScripts;
 
 public class BehaviourComponent {
@@ -38,6 +40,30 @@ public class BehaviourComponent {
     //public ABPath currentAbductDigPath { get; private set; }
     public Character currentAbductTarget { get; private set; }
     
+    //De-Mood
+    public bool canDeMood => _currentDeMoodCooldown >= _deMoodCooldownPeriod;
+    private int _currentDeMoodCooldown;
+    private readonly int _deMoodCooldownPeriod;
+    public List<HexTile> deMoodVillageTarget { get; private set; }
+    
+    //invade
+    public List<HexTile> invadeVillageTarget { get; private set; }
+    public int followerCount { get; private set; }
+    
+    //disabler
+    public bool canDisable => _currentDisableCooldown >= _disableCooldownPeriod;
+    private int _currentDisableCooldown;
+    private readonly int _disableCooldownPeriod;
+    public Character invaderToFollow { get; private set; }
+    
+    //abductor
+    public LocationGridTile nest { get; private set; }
+    public bool hasEatenInTheMorning { get; private set; }
+    public bool hasEatenInTheNight { get; private set; }
+    
+    //arsonist
+    public List<HexTile> arsonVillageTarget { get; private set; }
+    
     private COMBAT_MODE combatModeBeforeHarassRaidInvade;
     private COMBAT_MODE combatModeBeforeAttackingDemonicStructure;
 
@@ -47,6 +73,15 @@ public class BehaviourComponent {
         currentBehaviourComponents = new List<CharacterBehaviourComponent>();
         invadeCombatantTargetList = new List<Character>();
         invadeNonCombatantTargetList = new List<Character>();
+        
+        //De-Mood
+        _deMoodCooldownPeriod = GameManager.ticksPerHour * 2; //2 hours
+        _currentDeMoodCooldown = _deMoodCooldownPeriod;
+        
+        //Disabler
+        _disableCooldownPeriod = GameManager.ticksPerHour * 2; //2 hours
+        _currentDisableCooldown = _disableCooldownPeriod;
+        
         PopulateInitialBehaviourComponents();
     }
 
@@ -78,12 +113,16 @@ public class BehaviourComponent {
     //    //    }
     //    //}
     //}
-    public bool AddBehaviourComponent(CharacterBehaviourComponent component) {
+    private bool AddBehaviourComponent(CharacterBehaviourComponent component) {
         if(component == null) {
             throw new System.Exception(
                 $"{GameManager.Instance.TodayLogString()}{owner.name} is trying to add a new behaviour component but it is null!");
         }
-        return AddBehaviourComponentInOrder(component);
+        bool behaviourAdded = AddBehaviourComponentInOrder(component);
+        if (behaviourAdded) {
+            component.OnAddBehaviourToCharacter(owner);
+        }
+        return behaviourAdded;
     }
     public bool AddBehaviourComponent(System.Type componentType) {
         return AddBehaviourComponent(CharacterManager.Instance.GetCharacterBehaviourComponent(componentType));
@@ -92,6 +131,7 @@ public class BehaviourComponent {
         bool wasRemoved = currentBehaviourComponents.Remove(component);
         if (wasRemoved) {
             Debug.Log($"{owner.name} removed character behaviour {component}");
+            component.OnRemoveBehaviourFromCharacter(owner);
             Messenger.Broadcast(Signals.CHARACTER_REMOVED_BEHAVIOUR, owner, component);
         }
         return wasRemoved;
@@ -243,6 +283,68 @@ public class BehaviourComponent {
                 RemoveBehaviourComponent(defaultBehaviours[i]);
             }
         }
+    }
+    public void UpdateDefaultBehaviourSet() {
+        if (owner.isNormalCharacter || owner.characterClass.className == "Zombie") {
+            if(owner.homeSettlement != null) {
+                owner.SetIsWanderer(false);
+            } else {
+                owner.SetIsWanderer(true);
+            }
+        } else {
+            
+            if (owner.minion != null) {
+                ChangeDefaultBehaviourSet(CharacterManager.Default_Minion_Behaviour);
+            } else if (owner.race == RACE.ANGEL) {
+                ChangeDefaultBehaviourSet(CharacterManager.Default_Angel_Behaviour);
+            } else {
+                string behaviourSetName = owner.characterClass.className + " Behaviour";
+                if (CharacterManager.Instance.HasDefaultBehaviourSet(behaviourSetName)) {
+                    ChangeDefaultBehaviourSet(behaviourSetName);
+                } else {
+                    ChangeDefaultBehaviourSet(CharacterManager.Default_Monster_Behaviour);
+                }
+            }
+        }
+    }
+    public void OnDeath() {
+        //update following invader count. NOTE: Note this is for disablers only
+        invaderToFollow?.behaviourComponent.RemoveFollower();
+    }
+    #endregion
+
+    #region Utilities
+    public List<HexTile> GetVillageTargetsByPriority() {
+        //get settlements in region that have normal characters living there.
+        List<BaseSettlement> settlementsInRegion = owner.currentRegion?.GetSettlementsInRegion(
+            settlement => settlement.residents.Count(c => c.isNormalCharacter && c.IsAble()) > 0);
+        if (settlementsInRegion != null) {
+            List<BaseSettlement> villageChoices = settlementsInRegion.Where(x =>
+                    x.locationType == LOCATION_TYPE.ELVEN_SETTLEMENT ||
+                    x.locationType == LOCATION_TYPE.HUMAN_SETTLEMENT)
+                .ToList();
+            if (villageChoices.Count > 0) {
+                //a random village occupied by Villagers within current region
+                BaseSettlement chosenVillage = CollectionUtilities.GetRandomElement(villageChoices);
+                return new List<HexTile>(chosenVillage.tiles);
+            } else {
+                //a random special structure occupied by Villagers within current region
+                List<BaseSettlement> specialStructureChoices = settlementsInRegion.Where(x =>
+                        x.locationType == LOCATION_TYPE.DUNGEON).ToList();
+                if (specialStructureChoices.Count > 0) {
+                    BaseSettlement chosenSpecialStructure = CollectionUtilities.GetRandomElement(specialStructureChoices);
+                    return new List<HexTile>(chosenSpecialStructure.tiles);
+                }
+            }
+        } 
+        //no settlements in region.
+        //a random area occupied by Villagers within current region
+        List<HexTile> occupiedAreas = owner.currentRegion?.GetAreasOccupiedByVillagers();
+        if (occupiedAreas != null) {
+            HexTile randomArea = CollectionUtilities.GetRandomElement(occupiedAreas);
+            return new List<HexTile>() { randomArea };
+        }
+        return null;
     }
     #endregion
 
@@ -447,4 +549,170 @@ public class BehaviourComponent {
     }
     #endregion
 
+    #region Summon Specific
+    public void OnSummon(LocationGridTile tile) {
+        if (HasBehaviour(typeof(AbductorBehaviour))) {
+            //if character is an abductor, set its nest to where it was summoned
+            SetNest(tile);
+        }
+    }
+    #endregion
+    
+    #region De-Mood
+    public void OnBecomeDeMooder() {
+        Messenger.AddListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfDeMoodJobFinished);
+    }
+    public void OnNoLongerDeMooder() {
+        Messenger.RemoveListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfDeMoodJobFinished);
+    }
+    private void CheckIfDeMoodJobFinished(Character character, GoapPlanJob job) {
+        if (character == owner && job.jobType == JOB_TYPE.DECREASE_MOOD) {
+            //character finished decrease mood job, start cooldown.
+            StartDeMoodCooldown();
+            SetDeMoodVillageTarget(null);
+        }
+    }
+    private void StartDeMoodCooldown() {
+        _currentDeMoodCooldown = 0;
+        Messenger.AddListener(Signals.TICK_ENDED, PerTickDeMoodCooldown);
+    }
+    private void PerTickDeMoodCooldown() {
+        if (_currentDeMoodCooldown >= _deMoodCooldownPeriod) {
+            Messenger.RemoveListener(Signals.TICK_ENDED, PerTickDeMoodCooldown);    
+        }
+        _currentDeMoodCooldown++;
+    }
+    public void SetDeMoodVillageTarget(List<HexTile> targets) {
+        deMoodVillageTarget = targets;
+    }
+    #endregion
+
+    #region Invade
+    public void SetInvadeVillageTarget(List<HexTile> targets) {
+        invadeVillageTarget = targets;
+    }
+    public void AddFollower() {
+        followerCount++;
+    }
+    public void RemoveFollower() {
+        followerCount--;
+    }
+    #endregion
+
+    #region Disabler
+    public void OnBecomeDisabler() {
+        Messenger.AddListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfDisablerJobFinished);
+    }
+    public void OnNoLongerDisabler() {
+        Messenger.RemoveListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfDisablerJobFinished);
+    }
+    private void CheckIfDisablerJobFinished(Character character, GoapPlanJob job) {
+        if (character == owner && job.jobType == JOB_TYPE.DISABLE) {
+            //character finished disable job, start cooldown.
+            StartDisablerCooldown();
+        }
+    }
+    private void StartDisablerCooldown() {
+        _currentDisableCooldown = 0;
+        Messenger.AddListener(Signals.TICK_ENDED, PerTickDisablerCooldown);
+    }
+    private void PerTickDisablerCooldown() {
+        if (_currentDisableCooldown >= _disableCooldownPeriod) {
+            Messenger.RemoveListener(Signals.TICK_ENDED, PerTickDisablerCooldown);    
+        }
+        _currentDisableCooldown++;
+    }
+    public void SetInvaderToFollow(Character characterToFollow) {
+        Character previousInvaderToFollow = invaderToFollow;
+        invaderToFollow = characterToFollow;
+        previousInvaderToFollow?.behaviourComponent.RemoveFollower();
+        if (invaderToFollow != null) {
+            invaderToFollow.behaviourComponent.AddFollower();
+            Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, CheckIfInvaderToFollowDied);
+            Messenger.AddListener<Character>(Signals.START_FLEE, OnCharacterStartedFleeing);
+        } else {
+            Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, CheckIfInvaderToFollowDied);
+            Messenger.RemoveListener<Character>(Signals.START_FLEE, OnCharacterStartedFleeing);
+        }
+    }
+    private void OnCharacterStartedFleeing(Character character) {
+        if (character == owner) {
+            //if this character started fleeing, stop following target invader.
+            SetInvaderToFollow(null);   
+        }
+    }
+    private void CheckIfInvaderToFollowDied(Character character) {
+        if (character == invaderToFollow) {
+            SetInvaderToFollow(null);
+        }
+    }
+    #endregion
+
+    #region Abductor
+    private void SetNest(LocationGridTile tile) {
+        nest = tile;
+    }
+    public void OnBecomeAbductor() {
+        Messenger.AddListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfMonsterAte);
+    }
+    public void OnNoLongerAbductor() {
+        Messenger.RemoveListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfMonsterAte);
+    }
+    private void CheckIfMonsterAte(Character character, GoapPlanJob job) {
+        if (character == owner && job.jobType == JOB_TYPE.MONSTER_EAT) {
+            TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
+            switch (currentTimeInWords) {
+                case TIME_IN_WORDS.MORNING:
+                case TIME_IN_WORDS.AFTERNOON:
+                case TIME_IN_WORDS.LUNCH_TIME:
+                    SetHasEatenInTheMorning(true);
+                    break;
+                case TIME_IN_WORDS.EARLY_NIGHT:
+                case TIME_IN_WORDS.LATE_NIGHT:
+                    SetHasEatenInTheNight(true);
+                    break;
+            }
+        }
+    }
+    public bool AlreadyHasAbductedVictimAtNest(out Character target) {
+        for (int i = 0; i < nest.charactersHere.Count; i++) {
+            Character character = nest.charactersHere[i];
+            if (character.canMove == false) {
+                target = character;
+                return true;
+            }
+        }
+        target = null;
+        return false;
+    }
+    public bool IsNestBlocked(out IPointOfInterest blocker) {
+        if (nest.isOccupied) {
+            blocker = nest.objHere;
+            return true;
+        }
+        blocker = null;
+        return false;
+    }
+    private void SetHasEatenInTheMorning(bool state) {
+        hasEatenInTheMorning = state;
+        if (state) {
+            //reset value the next day
+            GameDate resetDate = GameManager.Instance.Today();
+            resetDate.AddDays(1);
+            resetDate.SetTicks(1);
+            SchedulingManager.Instance.AddEntry(resetDate, () => SetHasEatenInTheMorning(false), owner);
+        }
+    }
+    private void SetHasEatenInTheNight(bool state) {
+        hasEatenInTheNight = state;
+        if (state) {
+            //reset value the next day
+            GameDate resetDate = GameManager.Instance.Today();
+            resetDate.AddDays(1);
+            resetDate.SetTicks(1);
+            SchedulingManager.Instance.AddEntry(resetDate, () => SetHasEatenInTheNight(false), owner);
+        }
+    }
+    #endregion
+    
 }

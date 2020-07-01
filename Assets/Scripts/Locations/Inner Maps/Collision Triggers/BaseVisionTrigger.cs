@@ -10,32 +10,44 @@ using UtilityScripts;
 public abstract class BaseVisionTrigger : MonoBehaviour{
     [FormerlySerializedAs("_projectileReciever")] 
     [SerializeField] protected ProjectileReceiver _projectileReceiver;
-    [SerializeField] protected Collider2D mainCollider;
-    public ProjectileReceiver projectileReceiver => _projectileReceiver;
-    public IDamageable damageable { get; private set; }
-    public int filterVotes => _filterVotes;
-    
+    [FormerlySerializedAs("mainCollider")] [SerializeField] protected Collider2D _mainCollider;
     private int _filterVotes; //How many things has voted to make this part of the filtered layer?
+    public IDamageable damageable { get; private set; }
+
+    #region getters
+    public int filterVotes => _filterVotes;
+    public ProjectileReceiver projectileReceiver => _projectileReceiver;
+    public Collider2D mainCollider => _mainCollider;
+    #endregion
+
 
     public virtual void Initialize(IDamageable damageable) {
         this.name = $"{damageable} collision trigger";
         this.damageable = damageable;
         _projectileReceiver.gameObject.SetActive(true);
         _projectileReceiver.Initialize(damageable);
-        mainCollider.isTrigger = true; //vision triggers should always be set as triggers.
-        SetCollidersState(true);
+        _mainCollider.isTrigger = true; //vision triggers should always be set as triggers.
+        SetAllCollidersState(true);
     }
     /// <summary>
     /// Set the active state of both, this collider and the projectile
     /// receiver that is attached to this.
     /// </summary>
     /// <param name="state">The active state to put the colliders in.</param>
-    public void SetCollidersState(bool state) {
-        mainCollider.enabled = state;
+    public void SetAllCollidersState(bool state) {
+        _mainCollider.enabled = state;
         _projectileReceiver.SetColliderState(state);
+    }
+    /// <summary>
+    /// Set if this vision trigger should be active.
+    /// </summary>
+    /// <param name="state">The state to set the collider in.</param>
+    public void SetVisionTriggerCollidersState(bool state) {
+        _mainCollider.enabled = state;
     }
     public void Reset() {
         _filterVotes = 0;
+        _mainCollider.enabled = true;
     }
 
     #region Layers

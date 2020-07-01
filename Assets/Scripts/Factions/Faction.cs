@@ -28,7 +28,7 @@ public class Faction {
     public Color factionColor { get; protected set; }
     public List<Character> characters { get; protected set; }//List of characters that are part of the faction
     public List<BaseSettlement> ownedSettlements { get; protected set; }
-    public List<LocationStructure> ownedStructures { get; protected set; }
+    //public List<LocationStructure> ownedStructures { get; protected set; }
     //public List<RACE> recruitableRaces { get; protected set; }
     //public List<RACE> startingFollowers { get; protected set; }
     public List<Character> bannedCharacters { get; protected set; }
@@ -78,7 +78,7 @@ public class Faction {
         //level = 1;
         factionType = UtilityScripts.Utilities.GetRandomEnumValue<FACTION_TYPE>();
         characters = new List<Character>();
-        ownedStructures = new List<LocationStructure>();
+        //ownedStructures = new List<LocationStructure>();
         relationships = new Dictionary<Faction, FactionRelationship>();
         ownedSettlements = new List<BaseSettlement>();
         bannedCharacters = new List<Character>();
@@ -108,7 +108,7 @@ public class Faction {
         factionType = data.factionType;
 
         characters = new List<Character>();
-        ownedStructures = new List<LocationStructure>();
+        //ownedStructures = new List<LocationStructure>();
         relationships = new Dictionary<Faction, FactionRelationship>();
         ownedSettlements = new List<BaseSettlement>();
         bannedCharacters = new List<Character>();
@@ -121,21 +121,21 @@ public class Faction {
         AddListeners();
     }
 
-    #region Structures
-    public void OwnStructure(LocationStructure structure) {
-        if (!ownedStructures.Contains(structure)) {
-            ownedStructures.Add(structure);
-            structure.SetOwner(this);
-        }
-    }
-    public bool UnownStructure(LocationStructure structure) {
-        if (ownedStructures.Remove(structure)) {
-            structure.SetOwner(null);
-            return true;
-        }
-        return false;
-    }
-    #endregion
+    //#region Structures
+    //public void OwnStructure(LocationStructure structure) {
+    //    if (!ownedStructures.Contains(structure)) {
+    //        ownedStructures.Add(structure);
+    //        structure.SetOwner(this);
+    //    }
+    //}
+    //public bool UnownStructure(LocationStructure structure) {
+    //    if (ownedStructures.Remove(structure)) {
+    //        structure.SetOwner(null);
+    //        return true;
+    //    }
+    //    return false;
+    //}
+    //#endregion
 
     #region Characters
     public bool JoinFaction(Character character, bool broadcastSignal = true) {
@@ -801,7 +801,7 @@ public class Faction {
         }
         return false;
     }
-    public bool HasOwnedSettlementOrStructureInRegion(Region region) {
+    public bool HasOwnedSettlementInRegion(Region region) {
         for (int i = 0; i < ownedSettlements.Count; i++) {
             if(ownedSettlements[i] is NPCSettlement settlement) {
                 if(settlement.region == region) {
@@ -809,12 +809,15 @@ public class Faction {
                 }
             }
         }
-        for (int i = 0; i < ownedStructures.Count; i++) {
-            if (ownedStructures[i].location == region) {
-                return true;
-            }
-        }
+        //for (int i = 0; i < ownedStructures.Count; i++) {
+        //    if (ownedStructures[i].location == region) {
+        //        return true;
+        //    }
+        //}
         return false;
+    }
+    public bool HasOwnedSettlement() {
+        return ownedSettlements.Count > 0;
     }
     public bool HasOwnedSettlementExcept(NPCSettlement settlementException) {
         for (int i = 0; i < ownedSettlements.Count; i++) {
@@ -826,17 +829,17 @@ public class Faction {
         }
         return false;
     }
-    public bool HasOwnedStructures() {
-        return ownedStructures.Count > 0;
-    }
-    public bool HasOwnedStructureExcept(LocationStructure structureException) {
-        for (int i = 0; i < ownedStructures.Count; i++) {
-            if (ownedStructures[i] != structureException) {
-                return true;
-            }
-        }
-        return false;
-    }
+    //public bool HasOwnedStructures() {
+    //    return ownedStructures.Count > 0;
+    //}
+    //public bool HasOwnedStructureExcept(LocationStructure structureException) {
+    //    for (int i = 0; i < ownedStructures.Count; i++) {
+    //        if (ownedStructures[i] != structureException) {
+    //            return true;
+    //        }
+    //    }
+    //    return false;
+    //}
     #endregion
 
     #region Emblems

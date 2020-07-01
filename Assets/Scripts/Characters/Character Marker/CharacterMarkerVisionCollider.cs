@@ -9,7 +9,6 @@ using Traits;
 public class CharacterMarkerVisionCollider : BaseVisionCollider {
 
     public CharacterMarker parentMarker;
-    public List<IPointOfInterest> poisInRangeButDiffStructure = new List<IPointOfInterest>();
 
     private void OnDisable() {
         if (parentMarker.inVisionPOIs != null) {
@@ -74,7 +73,7 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
         if (collidedWith != null && collidedWith.poi != null
             && collidedWith.poi != parentMarker.character) {
             parentMarker.RemovePOIFromInVisionRange(collidedWith.poi);
-            RemovePOIAsInRangeButDifferentStructure(collidedWith.poi);
+            parentMarker.RemovePOIAsInRangeButDifferentStructure(collidedWith.poi);
         }
     }
     #endregion
@@ -84,12 +83,13 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
     }
     public void TransferAllDifferentStructureCharacters() {
         Debug.Log($"{GameManager.Instance.TodayLogString()} {parentMarker.character.name} is transferring all objects in different structures to its normal vision");
-        List<IPointOfInterest> diffStructurePOIs = new List<IPointOfInterest>(poisInRangeButDiffStructure);
-        for (int i = 0; i < diffStructurePOIs.Count; i++) {
-            IPointOfInterest poi = diffStructurePOIs[i];
+        for (int i = 0; i < parentMarker.inVisionPOIsButDiffStructure.Count; i++) {
+            IPointOfInterest poi = parentMarker.inVisionPOIsButDiffStructure[i];
             if (poi.gridTileLocation == null) { continue; }
             if (TryAddPOIToVision(poi)) {
-                RemovePOIAsInRangeButDifferentStructure(poi);
+                if (parentMarker.RemovePOIAsInRangeButDifferentStructure(poi)) {
+                    i--;
+                }
             }
         }
     }
@@ -131,29 +131,21 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
                 NormalEnterHandling(poi);
                 return true;
             } else {
-                AddPOIAsInRangeButDifferentStructure(poi);
+                parentMarker.AddPOIAsInRangeButDifferentStructure(poi);
                 return false;
             }
         }
     }
 
     #region Different Structure Handling
-    public void AddPOIAsInRangeButDifferentStructure(IPointOfInterest poi) {
-        if (poisInRangeButDiffStructure.Contains(poi) == false) {
-            poisInRangeButDiffStructure.Add(poi);    
-        }
-    }
-    public void RemovePOIAsInRangeButDifferentStructure(IPointOfInterest poi) {
-        poisInRangeButDiffStructure.Remove(poi);
-    }
     private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {
-        if (parentMarker.character.isInCombat) { return; } //if character is in combat, ignore this
+        if (parentMarker.character.combatComponent.isInCombat) { return; } //if character is in combat, ignore this
          //if the character that arrived at the new structure is in this character different structure list
          //check if that character now has the same structure as this character,
-        if (poisInRangeButDiffStructure.Contains(character) && (structure == parentMarker.character.currentStructure || (structure.structureType.IsOpenSpace() && parentMarker.character.currentStructure.structureType.IsOpenSpace()))) {
+        if (parentMarker.inVisionPOIsButDiffStructure.Contains(character) && (structure == parentMarker.character.currentStructure || (structure.structureType.IsOpenSpace() && parentMarker.character.currentStructure.structureType.IsOpenSpace()))) {
             //if it does, add as normal
             NormalEnterHandling(character);
-            RemovePOIAsInRangeButDifferentStructure(character);
+            parentMarker.RemovePOIAsInRangeButDifferentStructure(character);
         }
         //else if the character that arrived at the new structure is in this character's vision list and the character no longer has the same structure as this character, 
         else if (parentMarker.inVisionCharacters.Contains(character) && structure != parentMarker.character.currentStructure) {
@@ -163,33 +155,39 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
             }
             //remove from vision and hostile range
             parentMarker.RemovePOIFromInVisionRange(character);
-            AddPOIAsInRangeButDifferentStructure(character);
+            parentMarker.AddPOIAsInRangeButDifferentStructure(character);
         }
         //if the character that changed structures is this character
         else if (character.id == parentMarker.character.id) {
             //check all pois that were in different structures and revalidate them
-            List<IPointOfInterest> pois = new List<IPointOfInterest>(poisInRangeButDiffStructure);
-            for (int i = 0; i < pois.Count; i++) {
-                IPointOfInterest poi = pois[i];
+            for (int i = 0; i < parentMarker.inVisionPOIsButDiffStructure.Count; i++) {
+                IPointOfInterest poi = parentMarker.inVisionPOIsButDiffStructure[i];
                 if (poi.gridTileLocation == null || poi.gridTileLocation.structure == null) {
-                    RemovePOIAsInRangeButDifferentStructure(poi);
+                    if (parentMarker.RemovePOIAsInRangeButDifferentStructure(poi)) {
+                        i--;
+                    }
                 } else if (poi.gridTileLocation.structure == parentMarker.character.currentStructure
                     || (poi.gridTileLocation.structure.structureType.IsOpenSpace() && parentMarker.character.currentStructure.structureType.IsOpenSpace())) {
                     NormalEnterHandling(poi);
-                    RemovePOIAsInRangeButDifferentStructure(poi);
+                    if (parentMarker.RemovePOIAsInRangeButDifferentStructure(poi)) {
+                        i--;
+                    }
                 }
             }
             //also check all pois in vision
-            pois = new List<IPointOfInterest>(parentMarker.inVisionPOIs);
-            for (int i = 0; i < pois.Count; i++) {
-                IPointOfInterest poi = pois[i];
+            for (int i = 0; i < parentMarker.inVisionPOIs.Count; i++) {
+                IPointOfInterest poi = parentMarker.inVisionPOIs[i];
                 if (poi.gridTileLocation == null || poi.gridTileLocation.structure == null) {
-                    parentMarker.RemovePOIFromInVisionRange(poi);
+                    if (parentMarker.RemovePOIFromInVisionRange(poi)) {
+                        i--;
+                    }
                 } else if (poi.gridTileLocation.structure != parentMarker.character.currentStructure 
                     && (!poi.gridTileLocation.structure.structureType.IsOpenSpace() || !parentMarker.character.currentStructure.structureType.IsOpenSpace())) {
                     //if the character in vision no longer has the same structure as the character, and at least one of them is not in an open space structure
-                    parentMarker.RemovePOIFromInVisionRange(poi);
-                    AddPOIAsInRangeButDifferentStructure(poi);
+                    if (parentMarker.RemovePOIFromInVisionRange(poi)) {
+                        i--;
+                    }
+                    parentMarker.AddPOIAsInRangeButDifferentStructure(poi);
                 }
             }
         }
@@ -199,15 +197,15 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
     [ContextMenu("Log Diff Struct")]
     public void LogCharactersInDifferentStructures() {
         string summary = $"{parentMarker.character.name}'s diff structure pois";
-        for (int i = 0; i < poisInRangeButDiffStructure.Count; i++) {
-            summary += $"\n{poisInRangeButDiffStructure[i].name}";
+        for (int i = 0; i < parentMarker.inVisionPOIsButDiffStructure.Count; i++) {
+            summary += $"\n{parentMarker.inVisionPOIsButDiffStructure[i].name}";
         }
         Debug.Log(summary);
     }
 
     #region Utilities
     public void OnDeath() {
-        poisInRangeButDiffStructure.Clear();
+        parentMarker.inVisionPOIsButDiffStructure.Clear();
         OnDisable();
     }
     #endregion

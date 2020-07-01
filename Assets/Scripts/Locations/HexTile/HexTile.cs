@@ -76,6 +76,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     public Sprite baseSprite { get; private set; }
     public Vector2 selectableSize { get; private set; }
     public InnerMapHexTile innerMapHexTile { get; private set; }
+    public List<TileObject> itemsInHex { get; protected set; }
 
     private List<LocationGridTile> corruptedTiles;
     private int _uncorruptibleLandmarkNeighbors = 0; //if 0, can be corrupted, otherwise, cannot be corrupted
@@ -123,6 +124,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     }
     public void Initialize() {
         featureComponent = new TileFeatureComponent();
+        itemsInHex = new List<TileObject>();
         spellsComponent = new HexTileSpellsComponent(this);
         //demonicLandmarksThatCanBeBuilt = new List<string>();
         selectableSize = new Vector2Int(12, 12);
@@ -919,7 +921,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     }
     #endregion
 
-    #region NPCSettlement
+    #region Settlement
     public void SetSettlementOnTile(BaseSettlement settlement) {
         settlementOnTile = settlement;
         landmarkOnTile?.nameplate.UpdateVisuals();
@@ -1133,9 +1135,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         //PlayerAction invadeAction = new PlayerAction(PlayerDB.Invade_Action, CanDoInvade, IsHarassRaidInvadeValid, () => PlayerUI.Instance.OnClickHarassRaidInvade(this, "invade"));
         //PlayerAction buildAction = new PlayerAction(PlayerDB.Build_Demonic_Structure_Action, () => true, CanBuildDemonicStructure, OnClickBuild);
 
-        AddPlayerAction(SPELL_TYPE.HARASS);
+        // AddPlayerAction(SPELL_TYPE.HARASS);
         //AddPlayerAction(SPELL_TYPE.DEFEND);
-        AddPlayerAction(SPELL_TYPE.INVADE);
+        // AddPlayerAction(SPELL_TYPE.INVADE);
         // AddPlayerAction(SPELL_TYPE.BUILD_DEMONIC_STRUCTURE);
     }
     public void AddPlayerAction(SPELL_TYPE action) {
@@ -1329,9 +1331,23 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     #region POI
     public void OnPlacePOIInHex(IPointOfInterest poi) {
         spellsComponent.OnPlacePOIInHex(poi);
+        if(poi is TileObject item && item.tileObjectType.IsTileObjectAnItem()) {
+            AddItemInHex(item);
+        }
     }
     public void OnRemovePOIInHex(IPointOfInterest poi) {
         spellsComponent.OnRemovePOIInHex(poi);
+        if (poi is TileObject item && item.tileObjectType.IsTileObjectAnItem()) {
+            RemoveItemInHex(item);
+        }
+    }
+    public void AddItemInHex(TileObject item) {
+        if (!itemsInHex.Contains(item)) {
+            itemsInHex.Add(item);
+        }
+    }
+    public bool RemoveItemInHex(TileObject item) {
+        return itemsInHex.Remove(item);
     }
     #endregion
 
@@ -1348,6 +1364,25 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
             Character character = region.charactersAtLocation[i];
             if (character.gridTileLocation.localPlace.x >= xMin && character.gridTileLocation.localPlace.x <= xMax
                 && character.gridTileLocation.localPlace.y >= yMin && character.gridTileLocation.localPlace.y <= yMax) {
+                if (characters == null) { characters = new List<Character>(); }
+                characters.Add(character);
+            }
+        }
+        return characters;
+    }
+    public List<Character> GetAllCharactersInsideHexThatMeetCriteria(System.Func<Character, bool> validityChecker) {
+        List<Character> characters = null;
+        LocationGridTile lowerLeftCornerTile = innerMapHexTile.gridTileCollections[0].tilesInTerritory[0];
+        int xMin = lowerLeftCornerTile.localPlace.x;
+        int yMin = lowerLeftCornerTile.localPlace.y;
+        int xMax = xMin + (InnerMapManager.BuildingSpotSize.x * 2);
+        int yMax = yMin + (InnerMapManager.BuildingSpotSize.y * 2);
+
+        for (int i = 0; i < region.charactersAtLocation.Count; i++) {
+            Character character = region.charactersAtLocation[i];
+            if (character.gridTileLocation.localPlace.x >= xMin && character.gridTileLocation.localPlace.x <= xMax
+                && character.gridTileLocation.localPlace.y >= yMin && character.gridTileLocation.localPlace.y <= yMax
+                && validityChecker.Invoke(character)) {
                 if (characters == null) { characters = new List<Character>(); }
                 characters.Add(character);
             }
