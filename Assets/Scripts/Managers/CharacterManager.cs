@@ -33,7 +33,9 @@ public class CharacterManager : MonoBehaviour {
         DeMooder_Behaviour = "DeMooder Behaviour",
         Defender_Behaviour = "Defender Behaviour",
         Invader_Behaviour = "Invader Behaviour",
-        Disabler_Behaviour = "Disabler Behaviour";
+        Disabler_Behaviour = "Disabler Behaviour",
+        Infestor_Behaviour = "Infestor Behaviour";
+
     public const int MAX_HISTORY_LOGS = 300;
 
     
@@ -178,6 +180,13 @@ public class CharacterManager : MonoBehaviour {
             new []{
                 typeof(MovementProcessing),
                 typeof(DisablerBehaviour),
+                typeof(DefaultExtraCatcher),
+            }
+        },
+        { Infestor_Behaviour,
+            new []{
+                typeof(MovementProcessing),
+                typeof(InfestorBehaviour),
                 typeof(DefaultExtraCatcher),
             }
         },
@@ -703,6 +712,14 @@ public class CharacterManager : MonoBehaviour {
             SetCurrentDemonicStructureTargetOfAngels(targetDemonicStructure as DemonicStructure);
         } else {
             SetCurrentDemonicStructureTargetOfAngels(null);
+        }
+    }
+    public TILE_OBJECT_TYPE GetEggType(SUMMON_TYPE summonType) {
+        switch (summonType) {
+            case SUMMON_TYPE.Giant_Spider:
+                return TILE_OBJECT_TYPE.SPIDER_EGG;
+            default:
+                return TILE_OBJECT_TYPE.NONE;
         }
     }
     #endregion

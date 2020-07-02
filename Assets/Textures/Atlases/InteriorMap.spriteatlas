@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 129c2b5e0c8f0e14d9fb8b1c30296b6d, type: 3}
-    totalSpriteSurfaceArea: 3501205
+    totalSpriteSurfaceArea: 3513493
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -117,6 +117,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 208937719935c704f9021c1ce0937f28, type: 3}
   - {fileID: 21300000, guid: 0f942e7124c7aa34ea6d9823804ef426, type: 3}
   - {fileID: 21300000, guid: 9ff393812f83af14098e33d1d553bc79, type: 3}
+  - {fileID: 21300000, guid: 50629881a5fbaa842a1aa6aa26ccc1ec, type: 3}
   - {fileID: 21300000, guid: 461b1d81bc616a144b71f69e3cd63a36, type: 3}
   - {fileID: 21300000, guid: 797c7e8110f63d34c9fbba42fd8b2ac4, type: 3}
   - {fileID: 21300000, guid: b5c4cb9157cfa6644a6479fbe8c1df7d, type: 3}
@@ -268,6 +269,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 4c56eca481454084e84429c667d7b8d1, type: 3}
   - {fileID: 21300000, guid: 9a5e71c48adea0546b6041fd52a4ef5b, type: 3}
   - {fileID: 21300000, guid: a0b503c47c2f8df42b43008c5cd7df2c, type: 3}
+  - {fileID: 21300000, guid: 82d6f6c47a4db414599736d715179452, type: 3}
   - {fileID: 21300000, guid: f5a809c447efa534b9e9431fb172ef5b, type: 3}
   - {fileID: 21300000, guid: 2443d9c4477e19448bd34718de9b29b1, type: 3}
   - {fileID: 21300000, guid: 84873bd45ce77e74fb156d6f10c16c3b, type: 3}
@@ -436,6 +438,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 3e450938b85ae154ba26d1d712a0de2d, type: 3}
   - {fileID: 21300000, guid: 3ae05e38a27cf6649bff4837de03ed84, type: 3}
   - {fileID: 21300000, guid: 1acc93486d4890643a14e0d9c6313e8a, type: 3}
+  - {fileID: 21300000, guid: fac38448a0fce0c46b3d39d659f8618b, type: 3}
   - {fileID: 21300000, guid: 305cb9483d79f754ab650883f1a2c154, type: 3}
   - {fileID: 21300000, guid: 41f46d481e200ce45b314e252c5f9206, type: 3}
   - {fileID: 21300000, guid: d580ae4810022bf4fa2d9a66ebd14398, type: 3}
@@ -862,6 +865,7 @@ SpriteAtlas:
   - demonSigilSquare00
   - demonWallA-11101110-00
   - BIG_TREE_OBJECT#1
+  - spider_eggs
   - well00
   - corruptedSpike01
   - stone_h00
@@ -1013,6 +1017,7 @@ SpriteAtlas:
   - BANDAGES
   - CORN_CROP#2
   - TRASH#5
+  - goose_egg
   - CORN_CROP#1 Growing
   - demonWallA-11111110-00
   - poison00010111-00
@@ -1181,6 +1186,7 @@ SpriteAtlas:
   - TRASH#2
   - CRATE#3
   - fleshGround_v00
+  - reptile_egg
   - boneGround_decor00
   - ANVIL#1
   - skullsDisplay00

@@ -3221,6 +3221,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //    //location.AddSpecialTokenToLocation(token, structure, gridTile);
             //}
             LocationGridTile targetTile = gridTile;
+            if(gridTile == null) {
+                targetTile = gridTileLocation;
+            }
             if (targetTile == null || targetTile.objHere != null) {
                 targetTile = gridTileLocation.GetNearestUnoccupiedTileFromThis();
             }

@@ -13,7 +13,7 @@ public class MainMenuManager : MonoBehaviour {
 
     public static MainMenuManager Instance;
 
-    public ParentPlayerSkillTreeUI[] parentPlayerSkillTrees;
+    //public ParentPlayerSkillTreeUI[] parentPlayerSkillTrees;
 
     public TextMeshProUGUI expText;
 
@@ -45,9 +45,9 @@ public class MainMenuManager : MonoBehaviour {
 
     private void Initialize() {
         SaveManager.Instance.LoadSaveDataPlayer();
-        for (int i = 0; i < parentPlayerSkillTrees.Length; i++) {
-            parentPlayerSkillTrees[i].LoadSkillTree();
-        }
+        //for (int i = 0; i < parentPlayerSkillTrees.Length; i++) {
+        //    parentPlayerSkillTrees[i].LoadSkillTree();
+        //}
         UpdateExp();
         //loadGameButton.interactable = SaveManager.Instance.currentSave != null;
     }

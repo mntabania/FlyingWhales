@@ -1003,7 +1003,8 @@ public enum INTERACTION_TYPE {
     SPAWN_POISON_CLOUD,
     DECREASE_MOOD,
     GO_TO_TILE,
-    DISABLE
+    DISABLE,
+    LAY_EGG,
 }
 
 public enum INTERACTION_CATEGORY {
@@ -1385,7 +1386,9 @@ public enum TILE_OBJECT_TYPE {
     DIAMOND = 146,
     GOLD = 147,
     CULTIST_KIT = 148,
-    EGG = 149,
+    SPIDER_EGG = 149,
+    REPTILE_EGG = 150,
+    GOOSE_EGG = 151,
 }
 public enum POI_STATE {
     ACTIVE,

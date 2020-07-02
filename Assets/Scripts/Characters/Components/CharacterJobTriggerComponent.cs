@@ -1084,7 +1084,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     }
     #endregion
     
-    #region Other Characters
+    #region Violence
     public GoapPlanJob CreateKnockoutJob(Character targetCharacter) {
 	    if (!_owner.jobQueue.HasJob(JOB_TYPE.KNOCKOUT, targetCharacter)) {
 		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.KNOCKOUT, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Unconscious", false, GOAP_EFFECT_TARGET.TARGET), targetCharacter, _owner);
@@ -1884,6 +1884,18 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		    INTERACTION_TYPE.DISABLE, target, _owner);
 	    producedJob = job;
 	    return true;
+    }
+    #endregion
+
+    #region Monsters
+    public bool TriggerLayEgg(out JobQueueItem producedJob) {
+        if (!_owner.jobQueue.HasJob(JOB_TYPE.IDLE)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE, INTERACTION_TYPE.LAY_EGG, _owner, _owner);
+            producedJob = job;
+            return true;
+        }
+        producedJob = null;
+        return false;
     }
     #endregion
 }
