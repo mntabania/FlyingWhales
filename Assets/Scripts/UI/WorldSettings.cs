@@ -28,6 +28,9 @@ public class WorldSettings : MonoBehaviour {
     private List<BiomeWorldOptionItem> biomeWorldOptionItems;
     private List<string> numOfRegions;
 
+    private RACE[] races = { RACE.HUMANS, RACE.ELVES };
+    private BIOMES[] biomes = { BIOMES.GRASSLAND, BIOMES.FOREST, BIOMES.SNOW, BIOMES.DESERT };
+
     private void Awake() {
         if (Instance == null) {
             Instance = this;
@@ -88,7 +91,6 @@ public class WorldSettings : MonoBehaviour {
         numOfRegionsDropdown.AddOptions(numOfRegions);
     }
     private void PopulateRacesAndToggleOn() {
-        RACE[] races = (RACE[]) System.Enum.GetValues(typeof(RACE));
         for (int i = 0; i < races.Length; i++) {
             if(races[i] != RACE.NONE) {
                 RaceWorldOptionItem item = CreateNewRaceWorldOptionItem(races[i]);
@@ -102,7 +104,6 @@ public class WorldSettings : MonoBehaviour {
         }
     }
     private void PopulateBiomesAndToggleOn() {
-        BIOMES[] biomes = (BIOMES[]) System.Enum.GetValues(typeof(BIOMES));
         for (int i = 0; i < biomes.Length; i++) {
             if (biomes[i] != BIOMES.NONE) {
                 BiomeWorldOptionItem item = CreateNewBiomeWorldOptionItem(biomes[i]);

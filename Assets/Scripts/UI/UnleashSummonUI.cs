@@ -67,13 +67,7 @@ public class UnleashSummonUI : PopupMenuBase { //MonoBehaviour
         }
     }
     public void OnClickConfirm() {
-        if (identifier == "knockout") {
-            Knockout();
-        } else if (identifier == "kill") {
-            Kill();
-        } else {
-            HarassDefendInvade();
-        }
+        HarassDefendInvade();
         OnClickClose();
         //if (PlayerManager.Instance.player.mana >= manaCost) {
         //    Close();
@@ -301,138 +295,10 @@ public class UnleashSummonUI : PopupMenuBase { //MonoBehaviour
             chosenSummons[0].CenterOnCharacter();
         }
     }
-    private void Knockout() {
-        entrances.Clear();
-        //HexTile targetHex = _targetCharacter.gridTileLocation.GetTilesInRadius(5, includeTilesInDifferentStructure: true);
-        Character spawnedCharacter = null;
-        //LocationGridTile mainEntrance = targetHex.GetCenterLocationGridTile();
-        entrances.AddRange(_targetCharacter.gridTileLocation.GetTilesInRadius(3, includeTilesInDifferentStructure: true));
-
-        //int totalEntrances = chosenSummons.Count + chosenMinionMonsters.Count;
-        //for (int i = 0; i < entrances.Count; i++) {
-        //    if (entrances.Count == totalEntrances) {
-        //        break;
-        //    }
-        //    for (int j = 0; j < entrances[i].neighbourList.Count; j++) {
-        //        LocationGridTile newEntrance = entrances[i].neighbourList[j];
-        //        //if (newEntrance.objHere == null && newEntrance.charactersHere.Count == 0 && newEntrance.structure != null) {
-        //        if (!entrances.Contains(newEntrance)) {
-        //            entrances.Add(newEntrance);
-        //            if (entrances.Count == totalEntrances) {
-        //                break;
-        //            }
-        //        }
-        //    }
-        //}
-        for (int i = 0; i < chosenSummons.Count; i++) {
-            Summon summon = chosenSummons[i] as Summon;
-            summon.combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
-            TryPlaceSummon(summon, entrances[UnityEngine.Random.Range(0, entrances.Count)]);
-            GoapPlanJob job = summon.jobComponent.CreateKnockoutJob(_targetCharacter);
-            summon.jobComponent.SetFinalJobAssignment(job);
-            summon.SetDestroyMarkerOnDeath(true);
-            //entrances.RemoveAt(0);
-        }
-        foreach (KeyValuePair<SpellData, int> item in chosenMinionMonsters) {
-            for (int i = 0; i < item.Value; i++) {
-                SpellData minionMonsterPlayerSkll = item.Key;
-                minionMonsterPlayerSkll.ActivateAbility(entrances[UnityEngine.Random.Range(0, entrances.Count)], ref spawnedCharacter);
-                GoapPlanJob job = spawnedCharacter.jobComponent.CreateKnockoutJob(_targetCharacter);
-                spawnedCharacter.combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
-                spawnedCharacter.jobComponent.SetFinalJobAssignment(job);
-                spawnedCharacter.SetDestroyMarkerOnDeath(true);
-            }
-        }
-        //for (int i = 0; i < chosenMinionMonsters.Count; i++) {
-        //    SpellData minionMonsterPlayerSkll = chosenMinionMonsters[i];
-        //    minionMonsterPlayerSkll.ActivateAbility(entrances[UnityEngine.Random.Range(0, entrances.Count)], ref spawnedCharacter);
-        //    GoapPlanJob job = spawnedCharacter.jobComponent.CreateKnockoutJob(_targetCharacter);
-        //    spawnedCharacter.jobComponent.SetFinalJobAssignment(job);
-        //    spawnedCharacter.SetDestroyMarkerOnDeath(true);
-        //    //entrances.RemoveAt(0);
-        //}
-        PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.KNOCKOUT).OnExecuteSpellActionAffliction();
-
-        if (spawnedCharacter != null) {
-            spawnedCharacter.CenterOnCharacter();
-        } else if (chosenSummons.Count > 0) {
-            chosenSummons[0].CenterOnCharacter();
-        }
-    }
-    private void Kill() {
-        entrances.Clear();
-        //HexTile targetHex = _targetCharacter.gridTileLocation.collectionOwner.GetNearestHexTile();
-        Character spawnedCharacter = null;
-        //LocationGridTile mainEntrance = targetHex.GetCenterLocationGridTile();
-        //entrances.Add(mainEntrance);
-        entrances.AddRange(_targetCharacter.gridTileLocation.GetTilesInRadius(3, includeTilesInDifferentStructure: true, includeImpassable: false));
-
-        //int totalEntrances = chosenSummons.Count + chosenMinionMonsters.Count;
-        //for (int i = 0; i < entrances.Count; i++) {
-        //    if (entrances.Count == totalEntrances) {
-        //        break;
-        //    }
-        //    for (int j = 0; j < entrances[i].neighbourList.Count; j++) {
-        //        LocationGridTile newEntrance = entrances[i].neighbourList[j];
-        //        //if (newEntrance.objHere == null && newEntrance.charactersHere.Count == 0 && newEntrance.structure != null) {
-        //        if (!entrances.Contains(newEntrance)) {
-        //            entrances.Add(newEntrance);
-        //            if (entrances.Count == totalEntrances) {
-        //                break;
-        //            }
-        //        }
-        //    }
-        //}
-
-        for (int i = 0; i < chosenSummons.Count; i++) {
-            Summon summon = chosenSummons[i] as Summon;
-            TryPlaceSummon(summon, entrances[UnityEngine.Random.Range(0, entrances.Count)]);
-            GoapPlanJob job = summon.jobComponent.CreateDemonKillJob(_targetCharacter);
-            summon.combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
-            summon.jobComponent.SetFinalJobAssignment(job);
-            summon.SetDestroyMarkerOnDeath(true);
-            //entrances.RemoveAt(0);
-        }
-        foreach (KeyValuePair<SpellData, int> item in chosenMinionMonsters) {
-            for (int i = 0; i < item.Value; i++) {
-                SpellData minionMonsterPlayerSkll = item.Key;
-                minionMonsterPlayerSkll.ActivateAbility(entrances[UnityEngine.Random.Range(0, entrances.Count)], ref spawnedCharacter);
-                GoapPlanJob job = spawnedCharacter.jobComponent.CreateDemonKillJob(_targetCharacter);
-                spawnedCharacter.combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
-                spawnedCharacter.jobComponent.SetFinalJobAssignment(job);
-                spawnedCharacter.SetDestroyMarkerOnDeath(true);
-            }
-        }
-        //for (int i = 0; i < chosenMinionMonsters.Count; i++) {
-        //    SpellData minionMonsterPlayerSkll = chosenMinionMonsters[i];
-        //    minionMonsterPlayerSkll.ActivateAbility(entrances[UnityEngine.Random.Range(0, entrances.Count)], ref spawnedCharacter);
-        //    GoapPlanJob job = spawnedCharacter.jobComponent.CreateKillJob(_targetCharacter);
-        //    spawnedCharacter.jobComponent.SetFinalJobAssignment(job);
-        //    spawnedCharacter.SetDestroyMarkerOnDeath(true);
-        //    //entrances.RemoveAt(0);
-        //}
-        PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.KILL).OnExecuteSpellActionAffliction();
-
-        if (spawnedCharacter != null) {
-            spawnedCharacter.CenterOnCharacter();
-        } else if (chosenSummons.Count > 0) {
-            chosenSummons[0].CenterOnCharacter();
-        }
-    }
     private void TryPlaceSummon(Summon summon, LocationGridTile locationTile) {
         summon.SetHomeRegion(locationTile.structure.location);
         CharacterManager.Instance.PlaceSummon(summon, locationTile);
         Messenger.Broadcast(Signals.PLAYER_PLACED_SUMMON, summon);
         PlayerManager.Instance.player.playerSkillComponent.RemoveSummon(summon, true);
     }
-    //private void SetSummon(Summon summon) {
-    //    this.summon = summon;
-    //    if(this.summon != null) {
-    //        summonIcon.sprite = CharacterManager.Instance.GetSummonSettings(summon.summonType).summonPortrait;
-    //        string text = summon.name + " (" + summon.summonType.SummonName() + ")";
-    //        text += "\nLevel: " + summon.level.ToString();
-    //        text += "\nDescription: " + PlayerManager.Instance.player.GetSummonDescription(summon.summonType);
-    //        summonText.text = text;
-    //    }
-    //}
 }

@@ -5114,8 +5114,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (isNormalCharacter) {
                 AddPlayerAction(SPELL_TYPE.AFFLICT);
                 AddPlayerAction(SPELL_TYPE.ZAP);
-                AddPlayerAction(SPELL_TYPE.KNOCKOUT);
-                AddPlayerAction(SPELL_TYPE.KILL);
                 AddPlayerAction(SPELL_TYPE.TRIGGER_FLAW);
             }
             AddPlayerAction(SPELL_TYPE.SEIZE_CHARACTER);
