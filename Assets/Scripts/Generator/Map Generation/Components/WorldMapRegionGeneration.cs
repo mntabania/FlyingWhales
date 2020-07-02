@@ -5,70 +5,58 @@ using UnityEngine;
 using UtilityScripts;
 
 public class WorldMapRegionGeneration : MapGenerationComponent {
-
-	private List<WorldMapTemplate> worldMapTemplates = new List<WorldMapTemplate>() {
-		new WorldMapTemplate() {
-			regions = new Dictionary<int, RegionTemplate[]>() {
-				{0, new[] {
-						new RegionTemplate(5, 6),
-						new RegionTemplate(5, 6),
-					}
-				},
-				{1, new[] {
-						new RegionTemplate(3, 6),
-						new RegionTemplate(4, 6),
-						new RegionTemplate(3, 6),
-					}
-				}
-			}
-		}, 
-		new WorldMapTemplate() {
-			regions = new Dictionary<int, RegionTemplate[]>() {
-				{0, new[] {
-						new RegionTemplate(3, 6),
-						new RegionTemplate(4, 6),
-						new RegionTemplate(3, 6),
-					}
-				},
-				{1, new[] {
-						new RegionTemplate(5, 6),
-						new RegionTemplate(5, 6),
-					}
-				}
-			}
-		}, 
-		new WorldMapTemplate() {
-			regions = new Dictionary<int, RegionTemplate[]>() {
-				{0, new[] {
-						new RegionTemplate(6, 6),
-						new RegionTemplate(4, 6),
-					}
-				},
-				{1, new[] {
-						new RegionTemplate(3, 6),
-						new RegionTemplate(3, 6),
-						new RegionTemplate(4, 6),
-					}
-				}
-			}
-		}
-	};
+	
+	// private List<WorldMapTemplate> worldMapTemplates = new List<WorldMapTemplate>() {
+	// 	new WorldMapTemplate() {
+	// 		regions = new Dictionary<int, RegionTemplate[]>() {
+	// 			{0, new[] {
+	// 					new RegionTemplate(5, 6),
+	// 					new RegionTemplate(5, 6),
+	// 				}
+	// 			},
+	// 			{1, new[] {
+	// 					new RegionTemplate(3, 6),
+	// 					new RegionTemplate(4, 6),
+	// 					new RegionTemplate(3, 6),
+	// 				}
+	// 			}
+	// 		}
+	// 	}, 
+	// 	new WorldMapTemplate() {
+	// 		regions = new Dictionary<int, RegionTemplate[]>() {
+	// 			{0, new[] {
+	// 					new RegionTemplate(3, 6),
+	// 					new RegionTemplate(4, 6),
+	// 					new RegionTemplate(3, 6),
+	// 				}
+	// 			},
+	// 			{1, new[] {
+	// 					new RegionTemplate(5, 6),
+	// 					new RegionTemplate(5, 6),
+	// 				}
+	// 			}
+	// 		}
+	// 	}, 
+	// 	new WorldMapTemplate() {
+	// 		regions = new Dictionary<int, RegionTemplate[]>() {
+	// 			{0, new[] {
+	// 					new RegionTemplate(6, 6),
+	// 					new RegionTemplate(4, 6),
+	// 				}
+	// 			},
+	// 			{1, new[] {
+	// 					new RegionTemplate(3, 6),
+	// 					new RegionTemplate(3, 6),
+	// 					new RegionTemplate(4, 6),
+	// 				}
+	// 			}
+	// 		}
+	// 	}
+	// };
 	
 	public override IEnumerator Execute(MapGenerationData data) {
 		LevelLoaderManager.Instance.UpdateLoadingInfo("Generating regions...");
-		WorldMapTemplate chosenTemplate;
-		if (WorldConfigManager.Instance.isDemoWorld) {
-			chosenTemplate = new WorldMapTemplate() {
-				regions = new Dictionary<int, RegionTemplate[]>() {
-					{0, new [] {
-						new RegionTemplate(8, 10), 
-						}
-					}	
-				}
-			};
-		} else {
-			chosenTemplate = CollectionUtilities.GetRandomElement(worldMapTemplates);
-		}
+		WorldMapTemplate chosenTemplate = data.chosenWorldMapTemplate;
 		yield return MapGenerator.Instance.StartCoroutine(DivideToRegions(chosenTemplate, data));
 	}
 	private IEnumerator DivideToRegions(WorldMapTemplate mapTemplate, MapGenerationData data) {
@@ -133,6 +121,9 @@ public class WorldMapRegionGeneration : MapGenerationComponent {
 }
 
 public struct WorldMapTemplate {
+	public int regionCount;
+	public int worldMapWidth;
+	public int worldMapHeight;
 	public Dictionary<int, RegionTemplate[]> regions; //key is row
 }
 public struct RegionTemplate {

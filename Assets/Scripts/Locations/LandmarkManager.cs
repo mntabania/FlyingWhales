@@ -292,8 +292,8 @@ public partial class LandmarkManager : MonoBehaviour {
         }
         throw new System.Exception($"No npcSettlement data for type {locationType}");
     }
-    public NPCSettlement CreateNewSettlement(Region region, LOCATION_TYPE locationType, int citizenCount, params HexTile[] tiles) {
-        NPCSettlement newNpcSettlement = new NPCSettlement(region, locationType, citizenCount);
+    public NPCSettlement CreateNewSettlement(Region region, LOCATION_TYPE locationType, params HexTile[] tiles) {
+        NPCSettlement newNpcSettlement = new NPCSettlement(region, locationType);
         newNpcSettlement.AddTileToSettlement(tiles);
         Messenger.Broadcast(Signals.AREA_CREATED, newNpcSettlement);
         allSettlements.Add(newNpcSettlement);

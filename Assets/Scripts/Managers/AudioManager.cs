@@ -102,8 +102,8 @@ public class AudioManager : MonoBehaviour {
         Messenger.AddListener<string>(Signals.STARTED_LOADING_SCENE, OnSceneStartedLoading);
     }
     public void OnGameLoaded() {
-        Messenger.AddListener<Region>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
-        Messenger.AddListener<Region>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
+        // Messenger.AddListener<Region>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
+        // Messenger.AddListener<Region>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
         Messenger.AddListener<Quest>(Signals.QUEST_SHOWN, OnQuestShown);
         Messenger.AddListener<QuestStep>(Signals.QUEST_STEP_COMPLETED, OnQuestStepCompleted);
         Messenger.AddListener<QuestStep>(Signals.QUEST_STEP_FAILED, OnQuestStepFailed);
@@ -114,7 +114,7 @@ public class AudioManager : MonoBehaviour {
         Messenger.AddListener<ISelectable>(Signals.SELECTABLE_LEFT_CLICKED, WorldSelectableLeftClicked);
         Messenger.AddListener<Quest>(Signals.QUEST_ACTIVATED, OnQuestActivated);
         Messenger.AddListener<Quest>(Signals.QUEST_DEACTIVATED, OnQuestDeactivated);
-        SetCameraParent(InnerMapCameraMove.Instance);
+        // SetCameraParent(InnerMapCameraMove.Instance);
     }
     #endregion
 
@@ -228,7 +228,7 @@ public class AudioManager : MonoBehaviour {
     private void WorldSelectableLeftClicked(ISelectable selectable) {
         worldSelectableClick.Play();
     }
-    private void SetCameraParent(BaseCameraMove cameraMove) {
+    public void SetCameraParent(BaseCameraMove cameraMove) {
         transform.SetParent(cameraMove.transform);
         transform.localPosition = Vector3.zero;
     }

@@ -194,6 +194,19 @@ public class FactionManager : MonoBehaviour {
         }
         return null;
     }
+    public List<Faction> GetMajorFactionWithRace(RACE race) {
+        List<Faction> factions = null;
+        for (int i = 0; i < allFactions.Count; i++) {
+            Faction faction = allFactions[i];
+            if (faction.race == race && faction.isMajorFaction) {
+                if (factions == null) {
+                    factions = new List<Faction>();
+                }
+                factions.Add(faction);
+            }
+        }
+        return factions;
+    }
     #endregion
 
     #region Relationships
@@ -265,6 +278,7 @@ public class FactionManager : MonoBehaviour {
         }
     }
     #endregion
+
 }
 
 [System.Serializable]

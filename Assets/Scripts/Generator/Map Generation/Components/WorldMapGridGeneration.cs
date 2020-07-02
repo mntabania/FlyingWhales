@@ -1,23 +1,159 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UtilityScripts;
+using Object = UnityEngine.Object;
 
 public class WorldMapGridGeneration : MapGenerationComponent {
 
+	/// <summary>
+	/// Dictionary of world templates, grouped by the number of regions.
+	/// </summary>
+	private Dictionary<int, List<WorldMapTemplate>> worldMapTemplates = new Dictionary<int, List<WorldMapTemplate>>() {
+		//1 region
+		{ 1, new List<WorldMapTemplate>() 
+			{
+				new WorldMapTemplate() 
+				{
+					regionCount = 1,
+					worldMapWidth = 8,
+					worldMapHeight = 10,
+					regions = new Dictionary<int, RegionTemplate[]>() {
+						{ 0, new [] {
+								new RegionTemplate(8, 10), 
+							}
+						}	
+					}	
+				}	
+			}
+		},
+		//2 regions
+		{ 2, new List<WorldMapTemplate>()
+			{
+				new WorldMapTemplate()
+				{
+					regionCount = 2,
+					worldMapWidth = 8,
+					worldMapHeight = 10,
+					regions = new Dictionary<int, RegionTemplate[]>() {
+						{ 0, new [] {
+								new RegionTemplate(4, 10),
+								new RegionTemplate(4, 10),  
+							}
+						}	
+					}	
+				}
+			}
+		},
+		//3 regions
+		{ 3, new List<WorldMapTemplate>()
+			{
+				new WorldMapTemplate()
+				{
+					regionCount = 3,
+					worldMapWidth = 15,
+					worldMapHeight = 8,
+					regions = new Dictionary<int, RegionTemplate[]>() {
+						{ 0, new [] {
+								new RegionTemplate(5, 8),
+								new RegionTemplate(5, 8),
+								new RegionTemplate(5, 8),  
+							}
+						}	
+					}	
+				}
+			}
+		},
+		//4 regions
+		{ 4, new List<WorldMapTemplate>()
+			{
+				new WorldMapTemplate()
+				{
+					regionCount = 4,
+					worldMapWidth = 16,
+					worldMapHeight = 12,
+					regions = new Dictionary<int, RegionTemplate[]>() {
+						{ 0, new [] {
+								new RegionTemplate(8, 6),
+								new RegionTemplate(8, 6),
+							}
+						},
+						{ 1, new [] {
+								new RegionTemplate(8, 6),
+								new RegionTemplate(8, 6),
+							}
+						}
+					}	
+				}
+			}
+		},
+		//5 regions
+		{ 5, new List<WorldMapTemplate>()
+			{
+				new WorldMapTemplate()
+				{
+					regionCount = 5,
+					worldMapWidth = 10,
+					worldMapHeight = 12,
+					regions = new Dictionary<int, RegionTemplate[]>() {
+						{0, new[] {
+								new RegionTemplate(5, 6),
+								new RegionTemplate(5, 6),
+							}
+						},
+						{1, new[] {
+								new RegionTemplate(3, 6),
+								new RegionTemplate(4, 6),
+								new RegionTemplate(3, 6),
+							}
+						}
+					}
+				}
+			}
+		},
+		//6 regions
+		{ 6, new List<WorldMapTemplate>()
+			{
+				new WorldMapTemplate()
+				{
+					regionCount = 6,
+					worldMapWidth = 10,
+					worldMapHeight = 12,
+					regions = new Dictionary<int, RegionTemplate[]>() {
+						{0, new[] {
+								new RegionTemplate(3, 6),
+								new RegionTemplate(4, 6),
+								new RegionTemplate(3, 6),
+							}
+						},
+						{1, new[] {
+								new RegionTemplate(3, 6),
+								new RegionTemplate(4, 6),
+								new RegionTemplate(3, 6),
+							}
+						}
+					}
+				}
+			}
+		},
+	};
+	
 	public override IEnumerator Execute(MapGenerationData data) {
 		LevelLoaderManager.Instance.UpdateLoadingInfo("Generating world map...");
+		int regionCount = WorldSettings.Instance.worldSettingsData.numOfRegions;
 		if (WorldConfigManager.Instance.isDemoWorld) {
-			data.regionCount = 1;
-			data.width = 8;
-			data.height = 10;
-		} else {
-			data.regionCount = 5;
-			data.width = 10;
-			data.height = 12;
+			regionCount = 1;
 		}
-		
-		Debug.Log($"Width: {data.width.ToString()} Height: {data.height.ToString()} Region Count: {data.regionCount.ToString()}");
-		yield return MapGenerator.Instance.StartCoroutine(GenerateGrid(data));
+		if (worldMapTemplates.ContainsKey(regionCount)) {
+			List<WorldMapTemplate> choices = worldMapTemplates[regionCount];
+			WorldMapTemplate chosenTemplate = CollectionUtilities.GetRandomElement(choices);
+			data.chosenWorldMapTemplate = chosenTemplate;
+			Debug.Log($"Width: {data.width.ToString()} Height: {data.height.ToString()} Region Count: {data.regionCount.ToString()}");
+			yield return MapGenerator.Instance.StartCoroutine(GenerateGrid(data));	
+		} else {
+			throw new Exception($"No provided world map template for {WorldSettings.Instance.worldSettingsData.numOfRegions.ToString()} regions.");	
+		}
 	}
 	private IEnumerator GenerateGrid(MapGenerationData data) {
 		GridMap.Instance.SetupInitialData(data.width, data.height);

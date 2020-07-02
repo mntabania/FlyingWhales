@@ -106,6 +106,9 @@ public class CharacterMarkerNameplate : PooledObject {
     #endregion
 
     #region Utilities
+    public void UpdateActiveState() {
+        SetGameObjectActiveState(InnerMapManager.Instance.currentlyShowingLocation == _parentMarker.character.currentRegion);
+    }
     /// <summary>
     /// Set the active state of this game object.
     /// </summary>

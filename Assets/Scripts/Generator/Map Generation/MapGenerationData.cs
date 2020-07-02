@@ -14,6 +14,7 @@ public class MapGenerationData {
 	//batching values
 	public static int WorldMapTileGenerationBatches = 200;
 	public static int WorldMapOuterGridGenerationBatches = 200;
+	public static int WorldMapElevationRefinementBatches = 400;
 	public static int WorldMapFeatureGenerationBatches = 200;
 	public static int WorldMapHabitabilityGenerationBatches = 300;
 	public static int InnerMapTileGenerationBatches = 500;
@@ -22,12 +23,13 @@ public class MapGenerationData {
 	public static int InnerMapElevationBatches = 200; 
 	
 	//world map
+	public WorldMapTemplate chosenWorldMapTemplate;
 	public const float xOffset = 2.56f;
 	public const float yOffset = 1.93f;
 	public const int tileSize = 1;
-	public int width;
-	public int height;
-	public int regionCount;
+	public int width => chosenWorldMapTemplate.worldMapWidth;
+	public int height => chosenWorldMapTemplate.worldMapHeight;
+	public int regionCount => chosenWorldMapTemplate.regionCount;
 	public int[,] habitabilityValues;
 	public BaseLandmark portal;
 	public LocationStructure portalStructure;
@@ -39,6 +41,12 @@ public class MapGenerationData {
 	#region Family Trees
 	public void InitializeFamilyTrees() {
 		familyTreeDatabase = new FamilyTreeDatabase();
+	}
+	#endregion
+
+	#region Habitability
+	public int GetHabitabilityValue(HexTile hexTile) {
+		return habitabilityValues[hexTile.xCoordinate, hexTile.yCoordinate];
 	}
 	#endregion
 }

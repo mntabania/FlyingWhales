@@ -7,13 +7,13 @@ using UtilityScripts;
 public class WorldMapLandmarkGeneration : MapGenerationComponent {
 
 	public override IEnumerator Execute(MapGenerationData data) {
-		CreateMonsterLairs(WorldConfigManager.Instance.isDemoWorld ? 1 : 3, WorldConfigManager.Instance.isDemoWorld ? 100 : 75);
+		CreateMonsterLairs(GetLoopCount(LANDMARK_TYPE.MONSTER_LAIR, data), GetChance(LANDMARK_TYPE.MONSTER_LAIR, data));
 		yield return null;
-		CreateAbandonedMines(WorldConfigManager.Instance.isDemoWorld ? 0 : 2, WorldConfigManager.Instance.isDemoWorld ? 0 : 50);
+		CreateAbandonedMines(GetLoopCount(LANDMARK_TYPE.ABANDONED_MINE, data), GetChance(LANDMARK_TYPE.ABANDONED_MINE, data));
 		yield return null;
-		CreateTemples(WorldConfigManager.Instance.isDemoWorld ? 1 : 2, WorldConfigManager.Instance.isDemoWorld ? 100 : 35);
+		CreateTemples(GetLoopCount(LANDMARK_TYPE.ANCIENT_RUIN, data), GetChance(LANDMARK_TYPE.ANCIENT_RUIN, data));
 		yield return null;
-		CreateMageTowers(WorldConfigManager.Instance.isDemoWorld ? 0 : 2, WorldConfigManager.Instance.isDemoWorld ? 0 : 35);
+		CreateMageTowers(GetLoopCount(LANDMARK_TYPE.MAGE_TOWER, data), GetChance(LANDMARK_TYPE.MAGE_TOWER, data));
 		yield return null;
 	}
 
@@ -34,7 +34,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 				if (choices.Count > 0) {
 					HexTile chosenTile = CollectionUtilities.GetRandomElement(choices);
 					LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.MONSTER_LAIR);
-					LandmarkManager.Instance.CreateNewSettlement(chosenTile.region, LOCATION_TYPE.DUNGEON, 0,
+					LandmarkManager.Instance.CreateNewSettlement(chosenTile.region, LOCATION_TYPE.DUNGEON,
 						chosenTile);
 					if (WorldConfigManager.Instance.isDemoWorld) {
 						//make sure that chosen tiles for demo are flat and featureless  
@@ -60,7 +60,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 				if (choices.Count > 0) {
 					HexTile chosenTile = CollectionUtilities.GetRandomElement(choices);
 					LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.ABANDONED_MINE);
-					LandmarkManager.Instance.CreateNewSettlement(chosenTile.region, LOCATION_TYPE.DUNGEON, 0,
+					LandmarkManager.Instance.CreateNewSettlement(chosenTile.region, LOCATION_TYPE.DUNGEON,
 						chosenTile);
 					createdCount++;
 				} else {
@@ -87,7 +87,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 				if (choices.Count > 0) {
 					HexTile chosenTile = CollectionUtilities.GetRandomElement(choices);
 					LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.ANCIENT_RUIN);
-					LandmarkManager.Instance.CreateNewSettlement(chosenTile.region, LOCATION_TYPE.DUNGEON, 0,
+					LandmarkManager.Instance.CreateNewSettlement(chosenTile.region, LOCATION_TYPE.DUNGEON,
 						chosenTile);
 					if (WorldConfigManager.Instance.isDemoWorld) {
 						//make sure that chosen tiles for demo are flat and featureless  
@@ -112,7 +112,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 				if (choices.Count > 0) {
 					HexTile chosenTile = CollectionUtilities.GetRandomElement(choices);
 					LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.MAGE_TOWER);
-					LandmarkManager.Instance.CreateNewSettlement(chosenTile.region, LOCATION_TYPE.DUNGEON, 0,
+					LandmarkManager.Instance.CreateNewSettlement(chosenTile.region, LOCATION_TYPE.DUNGEON,
 						chosenTile);
 					createdCount++;
 				} else {
@@ -121,5 +121,74 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 			}
 		}
 		Debug.Log($"Created {createdCount.ToString()} Mage Towers");
+	}
+
+	private int GetLoopCount(LANDMARK_TYPE landmarkType, MapGenerationData data) {
+		switch (landmarkType) {
+			case LANDMARK_TYPE.MONSTER_LAIR:
+				if (WorldConfigManager.Instance.isDemoWorld) {
+					return 1;
+				}
+				if (data.regionCount == 1) {
+					return 1;
+				} else if (data.regionCount == 2 || data.regionCount == 3) {
+					return 2;
+				} else {
+					return 3;
+				}
+			case LANDMARK_TYPE.ABANDONED_MINE:
+				if (WorldConfigManager.Instance.isDemoWorld) {
+					return 0;
+				}
+				bool monsterLairWasBuilt =
+					LandmarkManager.Instance.GetLandmarkOfType(LANDMARK_TYPE.MONSTER_LAIR) != null;
+				if (data.regionCount == 1) {
+					return monsterLairWasBuilt ? 0 : 1;
+				} else if (data.regionCount == 2 || data.regionCount == 3) {
+					return monsterLairWasBuilt ? 1 : 2;
+				} else {
+					return monsterLairWasBuilt ? 2 : 3;
+				}
+			case LANDMARK_TYPE.ANCIENT_RUIN:
+				if (WorldConfigManager.Instance.isDemoWorld) {
+					return 1;
+				}
+				if (data.regionCount == 1) {
+					return 1;
+				} else if (data.regionCount == 2 || data.regionCount == 3) {
+					return 2;
+				} else {
+					return 3;
+				}
+			case LANDMARK_TYPE.MAGE_TOWER:
+				if (WorldConfigManager.Instance.isDemoWorld) {
+					return 0;
+				}
+				bool templeWasBuilt =
+					LandmarkManager.Instance.GetLandmarkOfType(LANDMARK_TYPE.ANCIENT_RUIN) != null;
+				if (data.regionCount == 1) {
+					return templeWasBuilt ? 0 : 1;
+				} else if (data.regionCount == 2 || data.regionCount == 3) {
+					return templeWasBuilt ? 1 : 2;
+				} else {
+					return 3;
+				}
+			default:
+				return 0;
+		}
+	}
+	private int GetChance(LANDMARK_TYPE landmarkType, MapGenerationData data) {
+		switch (landmarkType) {
+			case LANDMARK_TYPE.MONSTER_LAIR:
+				return WorldConfigManager.Instance.isDemoWorld ? 100 : 75;
+			case LANDMARK_TYPE.ABANDONED_MINE:
+				return WorldConfigManager.Instance.isDemoWorld ? 0 : 50;
+			case LANDMARK_TYPE.ANCIENT_RUIN:
+				return WorldConfigManager.Instance.isDemoWorld ? 100 : 35;
+			case LANDMARK_TYPE.MAGE_TOWER:
+				return WorldConfigManager.Instance.isDemoWorld ? 0 : 35;
+			default:
+				return 0;
+		}
 	}
 }

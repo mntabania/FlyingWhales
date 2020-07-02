@@ -10,7 +10,6 @@ public class SaveDataArea {
     public int id;
     //public bool isDead;
     [FormerlySerializedAs("areaType")] public LOCATION_TYPE locationType;
-    public int citizenCount;
     public int regionID;
     //public int coreTileID;
     //public ColorSave areaColor;
@@ -33,7 +32,6 @@ public class SaveDataArea {
         id = npcSettlement.id;
         //isDead = npcSettlement.isDead;
         locationType = npcSettlement.locationType;
-        citizenCount = npcSettlement.citizenCount;
         regionID = npcSettlement.region.id;
         //coreTileID = npcSettlement.coreTile.id;
         //areaColor = npcSettlement.areaColor;

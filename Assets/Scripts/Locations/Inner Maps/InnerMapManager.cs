@@ -245,6 +245,9 @@ namespace Inner_Maps {
             ShowInnerMap(location);
         }
         public void ShowInnerMap(Region location, bool centerCameraOnMapCenter = true, bool instantCenter = true) {
+            if (GameManager.Instance.gameHasStarted == false) {
+                return;
+            }
             if (location.locationType == LOCATION_TYPE.DEMONIC_INTRUSION) {
                 UIManager.Instance.portalPopup.SetActive(true);
                 return;

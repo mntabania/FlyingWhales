@@ -785,6 +785,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         SetCollidersState(true);
         visionCollider.Initialize();
         character.movementComponent.UpdateSpeed();
+        _nameplate.UpdateActiveState();
     }
     public void PlaceMarkerAt(LocationGridTile tile, bool addToLocation = true) {
         this.gameObject.transform.SetParent(tile.parentMap.objectsParent);

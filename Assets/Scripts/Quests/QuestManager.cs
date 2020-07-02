@@ -31,13 +31,15 @@ namespace Quests {
         #region Initialization
         public void InitializeAfterGameLoaded() {
             _activeQuests = new List<Quest>();
-            CheckEliminateAllVillagersQuest();
             Messenger.AddListener<List<Character>, DemonicStructure>(Signals.CHARACTERS_ATTACKING_DEMONIC_STRUCTURE, 
                 OnCharactersAttackingDemonicStructure);
             Messenger.AddListener<LocationStructure, Character, GoapPlanJob>(Signals.DEMONIC_STRUCTURE_DISCOVERED, OnDemonicStructureDiscovered);
             Messenger.AddListener<List<Character>>(Signals.ANGELS_ATTACKING_DEMONIC_STRUCTURE, 
                 OnAngelsAttackingDemonicStructure);
             Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "CenterButton");
+        }
+        public void InitializeAfterLoadoutPicked(){
+            CheckEliminateAllVillagersQuest();
         }
         #endregion
 

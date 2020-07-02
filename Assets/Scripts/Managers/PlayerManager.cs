@@ -55,7 +55,10 @@ public class PlayerManager : MonoBehaviour {
         LandmarkManager.Instance.OwnSettlement(player.playerFaction, existingPlayerNpcSettlement);
 
         PlayerUI.Instance.UpdateUI();
-        //player.LoadPlayerData(SaveManager.Instance.currentSaveDataPlayer);
+        // if (WorldConfigManager.Instance.isDemoWorld) {
+        //     player.LoadPlayerData(SaveManager.Instance.currentSaveDataPlayer);    
+        // }
+        
     }
     //public void InitializePlayer(SaveDataPlayer data) {
     //    player = new Player(data);

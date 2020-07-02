@@ -201,10 +201,9 @@ public class PlayerUI : MonoBehaviour {
         Messenger.AddListener<int>(Signals.PLAYER_ADJUSTED_MANA, OnManaAdjusted);
         InitialUpdateKillCountCharacterItems();
         UpdateIntel();
-        CreateInitialSpells();
-        _buildListUI.Initialize();
-        cultistsList.Initialize();
-        // CreateSummonsForTesting();
+        // CreateInitialSpells();
+        // _buildListUI.Initialize();
+        // cultistsList.Initialize();
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         itemsToggle.gameObject.SetActive(true);
         artifactsToggle.gameObject.SetActive(true);
@@ -215,6 +214,11 @@ public class PlayerUI : MonoBehaviour {
         artifactsToggle.gameObject.SetActive(false);        
 #endif
         OnThreatUpdated();
+    }
+    public void InitializeAfterLoadOutPicked() {
+        CreateInitialSpells();
+        _buildListUI.Initialize();
+        cultistsList.Initialize();
     }
 
     #region Listeners

@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Inner_Maps;
+using Quests;
 using Ruinarch;
 using UnityEngine;
 using UnityEngine.UI;
@@ -33,13 +35,21 @@ public class SkillTreeSelector : MonoBehaviour {
         PlayerSkillManager.Instance.SetSelectedArchetype(GetSelectedArchetype());
         Messenger.Broadcast(Signals.START_GAME_AFTER_LOADOUT_SELECT);
         PlayerManager.Instance.player.LoadPlayerData(SaveManager.Instance.currentSaveDataPlayer);
-        MainMenuManager.Instance.StartNewGame();
+        // MainMenuManager.Instance.StartNewGame();
+        PlayerUI.Instance.InitializeAfterLoadOutPicked();
+        QuestManager.Instance.InitializeAfterLoadoutPicked();
+        GameManager.Instance.StartProgression();
+        UIManager.Instance.initialWorldSetupMenu.Hide();
+        
+        WorldMapCameraMove.Instance.CenterCameraOn(WorldConfigManager.Instance.mapGenerationData.portal.tileLocation.gameObject);
+        InnerMapManager.Instance.TryShowLocationMap(WorldConfigManager.Instance.mapGenerationData.portal.tileLocation.region);
+        InnerMapCameraMove.Instance.CenterCameraOnTile(WorldConfigManager.Instance.mapGenerationData.portal.tileLocation);
     }
 
     private PLAYER_ARCHETYPE GetSelectedArchetype() {
         for (int i = 0; i < archetypeToggles.Length; i++) {
             if (archetypeToggles[i].isOn) {
-                return (PLAYER_ARCHETYPE) System.Enum.Parse(typeof(PLAYER_ARCHETYPE), UtilityScripts.Utilities.NotNormalizedConversionStringToEnum(archetypeToggles[i].gameObject.name);
+                return (PLAYER_ARCHETYPE) System.Enum.Parse(typeof(PLAYER_ARCHETYPE), UtilityScripts.Utilities.NotNormalizedConversionStringToEnum(archetypeToggles[i].gameObject.name));
             }
         }
         return PLAYER_ARCHETYPE.Normal;

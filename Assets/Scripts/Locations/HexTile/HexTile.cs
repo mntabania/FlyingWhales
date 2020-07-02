@@ -707,7 +707,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
 
     #region Monobehaviour Functions
     private void LeftClick() {
-        if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing() || WorldMapCameraMove.Instance.isDragging) {
+        if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing() || 
+            WorldMapCameraMove.Instance.isDragging || GameManager.Instance.gameHasStarted == false) {
             return;
         }
         Messenger.Broadcast(Signals.TILE_LEFT_CLICKED, this);
@@ -723,7 +724,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         MouseOver();
     }
     private void RightClick() {
-        if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing()) {
+        if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing() ||
+            GameManager.Instance.gameHasStarted == false) {
             return;
         }
         Messenger.Broadcast(Signals.TILE_RIGHT_CLICKED, this);
@@ -735,6 +737,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         } else if (baseToOpen is HextileInfoUI) {
             SetBordersState(true, false, Color.red);
         }
+        if (GameManager.showAllTilesTooltip) {
+            ShowTileInfo();    
+        }
         Messenger.Broadcast(Signals.TILE_HOVERED_OVER, this);
     }
     private void MouseExit() {
@@ -744,10 +749,14 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         } else if (baseToOpen is HextileInfoUI) {
             SetBordersState(false, false, Color.red);
         }
+        if (GameManager.showAllTilesTooltip) {
+            UIManager.Instance.HideSmallInfo();    
+        }
         Messenger.Broadcast(Signals.TILE_HOVERED_OUT, this);
     }
     private void DoubleLeftClick() {
-        if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing()) {
+        if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing() || 
+            GameManager.Instance.gameHasStarted == false) {
             return;
         }
         if (region != null) {
@@ -815,7 +824,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     }
     public void ShowTileInfo() {
         string summary = $"{ToString()}";
+        summary += $"\nBiome: {biomeType.ToString()}";
         summary += $"\nElevation: {elevationType.ToString()}";
+        summary += $"\nHabitability: {WorldConfigManager.Instance.mapGenerationData.GetHabitabilityValue(this).ToString()}";
         summary += "\nFeatures:";
         for (int i = 0; i < featureComponent.features.Count; i++) {
             TileFeature feature = featureComponent.features[i];

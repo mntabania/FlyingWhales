@@ -59,7 +59,7 @@ public class BuildLair : GoapAction {
         LocationGridTile targetTile = otherData[0] as LocationGridTile;
         HexTile targetHex = targetTile.collectionOwner.partOfHextile.hexTileOwner;
         LandmarkManager.Instance.CreateNewLandmarkOnTile(targetHex, LANDMARK_TYPE.MONSTER_LAIR);
-        NPCSettlement settlement = LandmarkManager.Instance.CreateNewSettlement(targetHex.region, LOCATION_TYPE.DUNGEON, 0, targetHex);
+        NPCSettlement settlement = LandmarkManager.Instance.CreateNewSettlement(targetHex.region, LOCATION_TYPE.DUNGEON, targetHex);
 
         LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(targetHex.region, STRUCTURE_TYPE.MONSTER_LAIR);
         settlement.GenerateStructures(structure);

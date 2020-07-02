@@ -58,23 +58,17 @@ public class MapGenerator : MonoBehaviour {
                 break;
             }
         }
-        LevelLoaderManager.Instance.UpdateLoadingBar(1f, 0.5f);
         componentWatch.Stop();
-        yield return new WaitForSeconds(0.5f);
         if (componentFailed) {
             //reload scene
             Debug.LogWarning("A component in world generation failed! Reloading scene...");
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         } else {
+            LevelLoaderManager.Instance.UpdateLoadingBar(1f, 0.5f);
+            yield return new WaitForSeconds(0.5f);
             loadingWatch.Stop();
             Debug.Log(
                 $"{loadingDetails}\nTotal loading time is {loadingWatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
-
-            LevelLoaderManager.Instance.SetLoadingState(false);
-            WorldMapCameraMove.Instance.CenterCameraOn(data.portal.tileLocation.gameObject);
-            InnerMapManager.Instance.TryShowLocationMap(data.portal.tileLocation.region);
-            InnerMapCameraMove.Instance.CenterCameraOnTile(data.portal.tileLocation);
-            AudioManager.Instance.TransitionToWorld();
 
             for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
                 Faction faction = FactionManager.Instance.allFactions[i];
@@ -100,13 +94,23 @@ public class MapGenerator : MonoBehaviour {
                     }
                 }
             }
+            
+            WorldConfigManager.Instance.mapGenerationData = data;
+            WorldMapCameraMove.Instance.CenterCameraOn(data.portal.tileLocation.gameObject);
+            // InnerMapManager.Instance.TryShowLocationMap(data.portal.tileLocation.region);
+            // InnerMapCameraMove.Instance.CenterCameraOnTile(data.portal.tileLocation);
+            AudioManager.Instance.TransitionToWorld();
+            
+            UIManager.Instance.initialWorldSetupMenu.Show();
+            LevelLoaderManager.Instance.SetLoadingState(false);
+            
             Messenger.Broadcast(Signals.GAME_LOADED);
             yield return new WaitForSeconds(1f);
-            // PlayerManager.Instance.player.IncreaseArtifactSlot();
-            //PlayerManager.Instance.player.IncreaseSummonSlot();
-            GameManager.Instance.StartProgression();
-            //UIManager.Instance.SetSpeedTogglesState(false);
-            //PlayerUI.Instance.ShowStartingMinionPicker();
+            
+            
+            
+            // GameManager.Instance.StartProgression();
+            
         }
     }
     private IEnumerator InitializeWorldCoroutine(Save data) {

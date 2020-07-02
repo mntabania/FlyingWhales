@@ -8,7 +8,6 @@ namespace Locations.Settlements {
     public class BaseSettlement {
         public int id { get; }
         public LOCATION_TYPE locationType { get; private set; }
-        public int citizenCount { get; private set; }
         public string name { get; private set; }
         public Faction owner { get; private set; }
         public Faction previousOwner { get; private set; }
@@ -18,10 +17,9 @@ namespace Locations.Settlements {
         public List<IPointOfInterest> firesInSettlement { get; }
         public List<LocationStructure> allStructures { get; protected set; }
         
-        protected BaseSettlement(LOCATION_TYPE locationType, int citizenCount) {
+        protected BaseSettlement(LOCATION_TYPE locationType) {
             id = UtilityScripts.Utilities.SetID(this);
             SetName(RandomNameGenerator.GenerateCityName(RACE.HUMANS));
-            this.citizenCount = citizenCount;
             tiles = new List<HexTile>();
             residents = new List<Character>();
             structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
@@ -33,7 +31,6 @@ namespace Locations.Settlements {
         protected BaseSettlement(SaveDataArea saveDataArea) {
             SetName(RandomNameGenerator.GenerateCityName(RACE.HUMANS));
             id = UtilityScripts.Utilities.SetID(this, saveDataArea.id);
-            citizenCount = saveDataArea.citizenCount;
             tiles = new List<HexTile>();
             residents = new List<Character>();
             structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
@@ -53,9 +50,6 @@ namespace Locations.Settlements {
         #endregion
         
         #region Residents
-        public void SetInitialResidentCount(int count) {
-            citizenCount = count;
-        }
         public virtual bool AddResident(Character character, LocationStructure chosenHome = null, bool ignoreCapacity = true) {
             if (!residents.Contains(character)) {
                 if (!ignoreCapacity) {

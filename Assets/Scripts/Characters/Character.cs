@@ -1597,6 +1597,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         RandomNameGenerator.RemoveNameAsAvailable(gender, race, fullname);
     }
     public void CenterOnCharacter() {
+        if (GameManager.Instance.gameHasStarted == false) {
+            return;
+        }
         if (marker) {
             if (currentParty != null && currentParty.icon != null && currentParty.icon.isTravellingOutside) {
                 if (InnerMapManager.Instance.isAnInnerMapShowing) {

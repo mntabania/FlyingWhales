@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Traits;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,7 +9,10 @@ public class CultistsListUI : PopupMenuBase {
     [SerializeField] private ScrollRect listScrollRect;
     [SerializeField] private GameObject listItemPrefab;
     [SerializeField] private Toggle cultistsToggle;
-
+    private void Awake() {
+        cultistsToggle.gameObject.SetActive(false);
+        Close();
+    }
     public void Initialize() {
         //check if player can build a defiler,
         if (PlayerManager.Instance.player.playerSkillComponent.CanBuildDemonicStructure(SPELL_TYPE.DEFILER)) {

@@ -61,8 +61,10 @@ public class InnerMapCameraMove : BaseCameraMove {
         SetCameraBordersForMap(location.innerMap);
         ConstrainCameraBounds(innerMapsCamera);
         innerMapsCamera.depth = 2;
+        AudioManager.Instance.SetCameraParent(this);
     }
     private void OnInnerMapClosed(Region location) {
+        AudioManager.Instance.SetCameraParent(WorldMapCameraMove.Instance);
         gameObject.SetActive(false);
         SetCameraControlState(false);
         innerMapsCamera.depth = 0;

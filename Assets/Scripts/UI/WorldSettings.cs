@@ -24,6 +24,8 @@ public class WorldSettings : MonoBehaviour {
     public RuinarchToggle noThreatModeToggle;
     public RuinarchToggle chaosVictoryModeToggle;
 
+    public GameObject invalidMessage;
+
     private List<RaceWorldOptionItem> raceWorldOptionItems;
     private List<BiomeWorldOptionItem> biomeWorldOptionItems;
     private List<string> numOfRegions;
@@ -163,8 +165,13 @@ public class WorldSettings : MonoBehaviour {
         worldSettingsData.SetChaosVictoryMode(state);
     }
     public void OnClickContinue() {
-        Close();
-        MainMenuManager.Instance.StartNewGame();
+        if (worldSettingsData.AreSettingsValid()) {
+            Close();
+            MainMenuManager.Instance.StartNewGame();    
+        } else {
+            //show invalid message
+            invalidMessage.gameObject.SetActive(true);
+        }
     }
     #endregion
 }

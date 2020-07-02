@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
@@ -13,7 +14,10 @@ public class BuildListUI : PopupMenuBase {
     [SerializeField] private ScrollRect buildingsScrollRect;
     [SerializeField] private GameObject spellItemPrefab;
     private SpellItem[] buildItems;
-
+    private void Awake() {
+        buildToggle.interactable = false;
+        Close();
+    }
     public override void Open() {
         base.Open();
         UpdateBuildList();
@@ -27,13 +31,14 @@ public class BuildListUI : PopupMenuBase {
     public void Initialize() {
         PopulateBuildingList();
         Messenger.AddListener(Signals.UPDATE_BUILD_LIST, UpdateBuildList);
+        buildToggle.interactable = true;
     }
     
     public void PopulateBuildingList() {
-        buildItems = new SpellItem[PlayerSkillManager.Instance.allDemonicStructureSkillsData.Values.Count];
-        for (int i = 0; i < PlayerSkillManager.Instance.allDemonicStructureSkillsData.Values.Count; i++) {
-            DemonicStructurePlayerSkill demonicStructurePlayerSkill =
-                PlayerSkillManager.Instance.allDemonicStructureSkillsData.Values.ElementAt(i);
+        buildItems = new SpellItem[PlayerManager.Instance.player.playerSkillComponent.demonicStructuresSkills.Count];
+        for (int i = 0; i < PlayerManager.Instance.player.playerSkillComponent.demonicStructuresSkills.Count; i++) {
+            SPELL_TYPE structureSpell = PlayerManager.Instance.player.playerSkillComponent.demonicStructuresSkills[i];
+            DemonicStructurePlayerSkill demonicStructurePlayerSkill = PlayerSkillManager.Instance.GetDemonicStructureSkillData(structureSpell);
             GameObject spellNameplate = ObjectPoolManager.Instance.InstantiateObjectFromPool(spellItemPrefab.name,
                 Vector3.zero, Quaternion.identity, buildingsScrollRect.content);
             SpellItem spellItem = spellNameplate.GetComponent<SpellItem>();

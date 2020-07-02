@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Locations.Settlements {
     public class PlayerSettlement : BaseSettlement{
         
-        public PlayerSettlement() : base(LOCATION_TYPE.DEMONIC_INTRUSION, 0) { }
+        public PlayerSettlement() : base(LOCATION_TYPE.DEMONIC_INTRUSION) { }
         protected PlayerSettlement(SaveDataArea saveDataArea) : base(saveDataArea) { }
 
 

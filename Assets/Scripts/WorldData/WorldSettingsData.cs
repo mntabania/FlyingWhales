@@ -51,4 +51,18 @@ public class WorldSettingsData {
     public void ClearBiomes() {
         biomes.Clear();
     }
+
+    public bool AreSettingsValid() {
+        if (races.Count == 1) {
+            //if only 1 race was toggled.
+            //check that that races needed biome is also available
+            RACE race = races[0];
+            if (race == RACE.HUMANS) {
+                return biomes.Contains(BIOMES.DESERT) || biomes.Contains(BIOMES.GRASSLAND);
+            } else if (race == RACE.ELVES) {
+                return biomes.Contains(BIOMES.FOREST) || biomes.Contains(BIOMES.SNOW);
+            }
+        }
+        return true;
+    }
 }

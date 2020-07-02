@@ -22,7 +22,8 @@ public class WorldConfigManager : MonoBehaviour {
     [Header("Testing")] 
     [SerializeField] private bool _unlimitedCast;
     [SerializeField] private bool _disableLogs;
-    
+    public MapGenerationData mapGenerationData;
+
     #region Getters
     public bool isDemoWorld => _isDemoWorld;
     public List<SPELL_TYPE> availableSpellsInDemoBuild => _availableSpellsInDemoBuild;

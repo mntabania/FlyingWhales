@@ -765,6 +765,9 @@ public class UIManager : MonoBehaviour {
     [Header("Character Info")]
     [SerializeField] internal CharacterInfoUI characterInfoUI;
     public void ShowCharacterInfo(Character character, bool centerOnCharacter = false) {
+        if (GameManager.Instance.gameHasStarted == false) {
+            return;
+        }
         if(character.isNormalCharacter) {
             if (tempDisableShowInfoUI) {
                 SetTempDisableShowInfoUI(false);
@@ -1387,5 +1390,9 @@ public class UIManager : MonoBehaviour {
     public void ShowEndDemoScreen(string summary) {
         _demoUI.ShowSummaryThenEndScreen(summary);
     }
+    #endregion
+
+    #region Initial World Setup
+    public InitialWorldSetupMenu initialWorldSetupMenu;
     #endregion
 }
