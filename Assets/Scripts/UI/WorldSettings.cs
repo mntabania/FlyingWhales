@@ -162,6 +162,7 @@ public class WorldSettings : MonoBehaviour {
         worldSettingsData.SetChaosVictoryMode(state);
     }
     public void OnClickContinue() {
+        Close();
         MainMenuManager.Instance.StartNewGame();
     }
     #endregion

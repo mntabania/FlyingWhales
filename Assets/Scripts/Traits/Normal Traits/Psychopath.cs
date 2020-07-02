@@ -34,7 +34,7 @@ namespace Traits {
             base.OnAddTrait(sourceCharacter);
             if (sourceCharacter is Character) {
                 character = sourceCharacter as Character;
-                character.needsComponent.SetHappiness(50f);
+                character.needsComponent.SetHappiness(50f, bypassPsychopathChecking: true);
                 character.needsComponent.AdjustDoNotGetBored(1);
                 CopyOpinionAndSetAllOpinionToZero();
                 //if (victim1Requirement == null) { // || victim2Requirement == null
@@ -310,7 +310,7 @@ namespace Traits {
                 return false;
             }
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM, INTERACTION_TYPE.RITUAL_KILLING, targetVictim, character);
-            if (character.homeStructure?.residents == null || character.homeStructure.residents.Count > 1) {
+            if (character.homeStructure == null || character.homeStructure.residents.Count > 1) {
                 LocationGridTile outsideSettlementTile = character.currentRegion.GetRandomOutsideSettlementLocationGridTileWithPathTo(character);
                 if(outsideSettlementTile != null) {
                     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { outsideSettlementTile.structure, outsideSettlementTile });

@@ -604,10 +604,12 @@ public class CharacterNeedsComponent {
         }
         //OnHappinessAdjusted();
     }
-    public void SetHappiness(float amount) {
-        if (_owner.traitContainer.HasTrait("Psychopath")) {
-            //Psychopath's Happiness is always fixed at 50 and is not changed by anything.
-            return;
+    public void SetHappiness(float amount, bool bypassPsychopathChecking = false) {
+        if (!bypassPsychopathChecking) {
+            if (_owner.traitContainer.HasTrait("Psychopath")) {
+                //Psychopath's Happiness is always fixed at 50 and is not changed by anything.
+                return;
+            }
         }
         bool wasBored = isBored;
         bool wasSulking = isSulking;
