@@ -1,8 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using Inner_Maps;
-using Locations.Settlements;
 using UtilityScripts;
 
 public class InvadeBehaviour : CharacterBehaviourComponent {

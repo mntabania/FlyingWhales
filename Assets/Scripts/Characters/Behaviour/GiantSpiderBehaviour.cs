@@ -41,11 +41,7 @@ public class GiantSpiderBehaviour : CharacterBehaviourComponent {
             Character targetCharacter = character.behaviourComponent.currentAbductTarget;
             if (targetCharacter != null) {
                 //create job to abduct target character.
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MONSTER_ABDUCT,
-                    INTERACTION_TYPE.DROP, targetCharacter, character);
-                job.SetCannotBePushedBack(true);
-                job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { character.homeStructure });
-                producedJob = job;
+                return character.jobComponent.TriggerMonsterAbduct(targetCharacter, out producedJob);
                 ////try to go to abduct target
                 //if (PathfindingManager.Instance.HasPath(character.gridTileLocation, targetCharacter.gridTileLocation)) {
                 //    character.behaviourComponent.SetDigForAbductionPath(null);
@@ -62,7 +58,7 @@ public class GiantSpiderBehaviour : CharacterBehaviourComponent {
                 //    AstarPath.StartPath(p);
                 //    character.behaviourComponent.SetDigForAbductionPath(p);    
                 //}    
-                return true;
+                // return true;
             }
         } else {
             //Try and eat a webbed character at this spiders home cave
@@ -71,17 +67,13 @@ public class GiantSpiderBehaviour : CharacterBehaviourComponent {
                     character.homeStructure.GetCharactersThatMeetCriteria(c => c.traitContainer.HasTrait("Webbed"));
                 if (webbedCharacters.Count > 0) {
                     Character webbedCharacter = CollectionUtilities.GetRandomElement(webbedCharacters);
-                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MONSTER_ABDUCT,
-                        INTERACTION_TYPE.EAT_ALIVE, webbedCharacter, character);
-                    // job.SetCannotBePushedBack(true);
-                    producedJob = job;
-                    return true;
+                    return character.jobComponent.TriggerEatAlive(webbedCharacter, out producedJob);
                 }
             }
         }
         return false;
     }
-    
+
     //private void OnPathComplete(Path path, Character character) {
     //    //current abduct path was set to null because path towards target character is already possible, do not process this
     //    if (character.behaviourComponent.currentAbductDigPath == null) { return; } 

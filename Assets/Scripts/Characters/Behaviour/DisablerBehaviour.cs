@@ -74,18 +74,36 @@ public class DisablerBehaviour : CharacterBehaviourComponent {
     }
     #endregion
 
+    
     private List<Character> GetInvaderToFollowChoices(Character disabler) {
         List<Character> choices = null;
+        //prioritize finding invaders without followers yet
         for (int i = 0; i < PlayerManager.Instance.player.playerFaction.characters.Count; i++) {
             Character character = PlayerManager.Instance.player.playerFaction.characters[i];
             if (character.currentRegion == disabler.currentRegion && 
-                character.behaviourComponent.HasBehaviour(typeof(InvadeBehaviour)) && character.isDead == false) {
+                character.behaviourComponent.HasBehaviour(typeof(InvadeBehaviour)) && character.isDead == false && 
+                character.behaviourComponent.followerCount <= 0) {
                 if (choices == null) {
                     choices = new List<Character>();
                 }
                 choices.Add(character);
             }
         }
+
+        if (choices == null) {
+            //if no invaders were found, check invaders that already have followers
+            for (int i = 0; i < PlayerManager.Instance.player.playerFaction.characters.Count; i++) {
+                Character character = PlayerManager.Instance.player.playerFaction.characters[i];
+                if (character.currentRegion == disabler.currentRegion && 
+                    character.behaviourComponent.HasBehaviour(typeof(InvadeBehaviour)) && character.isDead == false) {
+                    if (choices == null) {
+                        choices = new List<Character>();
+                    }
+                    choices.Add(character);
+                }
+            }
+        }
+        
         return choices;
     }
     private List<Character> GetDisableTargetInVisionOfInvader(Character disabler) {

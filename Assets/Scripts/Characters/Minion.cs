@@ -130,6 +130,7 @@ public class Minion {
             Messenger.Broadcast(Signals.CHARACTER_DEATH, character);
 
             Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, character as IPointOfInterest, "target is already dead");
+            character.behaviourComponent.OnDeath();
             character.CancelAllJobs();
             // StopInvasionProtocol(PlayerManager.Instance.player.currentNpcSettlementBeingInvaded);
 
@@ -355,6 +356,7 @@ public class Minion {
         character.ConstructInitialGoapAdvertisementActions();
         character.marker.InitialPlaceMarkerAt(tile);
         character.SetIsDead(false);
+        character.behaviourComponent.OnSummon(tile);
 
         SubscribeListeners();
         SetIsSummoned(true);

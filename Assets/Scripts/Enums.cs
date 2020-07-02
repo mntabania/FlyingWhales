@@ -1422,7 +1422,8 @@ public enum JOB_TYPE { NONE, UNDERMINE, ENERGY_RECOVERY_URGENT, FULLNESS_RECOVER
         , BRAWL, PLACE_TRAP, SPREAD_RUMOR, CONFIRM_RUMOR, OPEN_CHEST, TEND_FARM, VISIT_DIFFERENT_REGION, BERSERK_ATTACK, MINE, DIG_THROUGH, SPAWN_LAIR, ABSORB_LIFE, ABSORB_POWER
         , SPAWN_SKELETON, RAISE_CORPSE, HUNT_PREY, DROP_ITEM, BERSERK_STROLL, RETURN_HOME_URGENT, SABOTAGE_NEIGHBOUR, SHARE_NEGATIVE_INFO
         , DECREASE_MOOD,
-        DISABLE
+        DISABLE,
+        MONSTER_EAT
 }
 public enum JOB_OWNER { CHARACTER, LOCATION, QUEST, }
 public enum Cardinal_Direction { North, South, East, West };
@@ -2157,6 +2158,7 @@ public static class Extensions {
                 priority = 100;
                 break;
             case JOB_TYPE.MONSTER_ABDUCT:
+            case JOB_TYPE.MONSTER_EAT:
                 priority = 90;
                 break;
             // case JOB_TYPE.SNUFF_TORNADO:

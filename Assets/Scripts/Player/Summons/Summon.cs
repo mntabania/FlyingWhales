@@ -152,6 +152,7 @@ public class Summon : Character {
             traitContainer.AddTrait(this, dead, gainedFromDoing: deathFromAction);
             Messenger.Broadcast(Signals.CHARACTER_DEATH, this as Character);
 
+            behaviourComponent.OnDeath();
             CancelAllJobs();
 
             //Debug.Log(GameManager.Instance.TodayLogString() + this.name + " died of " + cause);
@@ -194,6 +195,7 @@ public class Summon : Character {
         SubscribeToSignals();
         Messenger.RemoveListener(Signals.HOUR_STARTED, () => needsComponent.DecreaseNeeds()); //do not make summons decrease needs
         movementComponent.UpdateSpeed();
+        behaviourComponent.OnSummon(tile);
     }
     protected virtual void AfterDeath(LocationGridTile deathTileLocation) {
         if (marker == null && destroyMarkerOnDeath && (behaviourComponent.isInvading || behaviourComponent.isDefending || behaviourComponent.isHarassing)) {
