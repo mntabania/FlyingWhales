@@ -1462,6 +1462,25 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         }
         return characters;
     }
+    public int GetNumOfCharactersInsideHexWithSameRaceAndClass(RACE race, string className) {
+        int count = 0;
+        LocationGridTile lowerLeftCornerTile = innerMapHexTile.gridTileCollections[0].tilesInTerritory[0];
+        int xMin = lowerLeftCornerTile.localPlace.x;
+        int yMin = lowerLeftCornerTile.localPlace.y;
+        int xMax = xMin + (InnerMapManager.BuildingSpotSize.x * 2);
+        int yMax = yMin + (InnerMapManager.BuildingSpotSize.y * 2);
+
+        for (int i = 0; i < region.charactersAtLocation.Count; i++) {
+            Character character = region.charactersAtLocation[i];
+            if(character.race == race && character.characterClass.className == className) {
+                if (character.gridTileLocation.localPlace.x >= xMin && character.gridTileLocation.localPlace.x <= xMax
+                    && character.gridTileLocation.localPlace.y >= yMin && character.gridTileLocation.localPlace.y <= yMax) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
     public LocationGridTile GetCenterLocationGridTile() {
         LocationGridTile lowerLeftCornerTile = innerMapHexTile.gridTileCollections[0].tilesInTerritory[0];
         int xMin = lowerLeftCornerTile.localPlace.x;

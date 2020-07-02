@@ -18,12 +18,14 @@ public class BehaviourComponent {
     public List<Character> invadeNonCombatantTargetList { get; private set; }
     public NPCSettlement assignedTargetSettlement { get; private set; }
     public NPCSettlement attackVillageTarget { get; private set; }
+    public HexTile attackHexTarget { get; private set; }
     public HexTile assignedTargetHex { get; private set; }
     public DemonicStructure attackDemonicStructureTarget { get; private set; }
     public bool isHarassing { get; private set; }
     public bool isDefending { get; private set; }
     public bool isInvading { get; private set; }
     public bool isAttackingDemonicStructure { get; private set; }
+    public bool hasLayedAnEgg { get; private set; }
     public string defaultBehaviourSetName { get; private set; }
     
     //douse fire
@@ -545,8 +547,18 @@ public class BehaviourComponent {
     public void SetAttackVillageTarget(NPCSettlement npcSettlement) {
         attackVillageTarget = npcSettlement;
     }
+    public void SetAttackHexTarget(HexTile hex) {
+        attackHexTarget = hex;
+    }
+    public void ClearAttackVillageData() {
+        SetAttackHexTarget(null);
+        SetAttackVillageTarget(null);
+        if (HasBehaviour(typeof(AttackVillageBehaviour))) {
+            RemoveBehaviourComponent(typeof(AttackVillageBehaviour));
+        }
+    }
     #endregion
-    
+
     #region Abduction
     //public void SetDigForAbductionPath(ABPath path) {
     //    currentAbductDigPath = path;
@@ -651,6 +663,19 @@ public class BehaviourComponent {
     private void CheckIfInvaderToFollowDied(Character character) {
         if (character == invaderToFollow) {
             SetInvaderToFollow(null);
+        }
+    }
+    #endregion
+
+    #region Infestor
+    public void SetHasLayedAnEgg(bool state) {
+        if(hasLayedAnEgg != state) {
+            hasLayedAnEgg = state;
+            if (hasLayedAnEgg) {
+                GameDate dueDate = GameManager.Instance.Today();
+                dueDate.AddDays(2);
+                SchedulingManager.Instance.AddEntry(dueDate, () => SetHasLayedAnEgg(false), owner);
+            }
         }
     }
     #endregion
@@ -761,5 +786,4 @@ public class BehaviourComponent {
         }
     }
     #endregion
-    
 }
