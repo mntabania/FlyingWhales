@@ -34,7 +34,8 @@ public class CharacterManager : MonoBehaviour {
         Defender_Behaviour = "Defender Behaviour",
         Invader_Behaviour = "Invader Behaviour",
         Disabler_Behaviour = "Disabler Behaviour",
-        Abductor_Behaviour = "Abductor Behaviour";
+        Abductor_Behaviour = "Abductor Behaviour",
+        Arsonist_Behaviour = "Arsonist Behaviour";
     public const int MAX_HISTORY_LOGS = 300;
 
     
@@ -186,6 +187,13 @@ public class CharacterManager : MonoBehaviour {
             new []{
                 typeof(MovementProcessing),
                 typeof(AbductorBehaviour),
+                typeof(DefaultExtraCatcher),
+            }
+        },
+        { Arsonist_Behaviour,
+            new []{
+                typeof(MovementProcessing),
+                typeof(ArsonistBehaviour),
                 typeof(DefaultExtraCatcher),
             }
         },

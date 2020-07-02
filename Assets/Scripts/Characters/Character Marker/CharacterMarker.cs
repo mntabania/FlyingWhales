@@ -34,7 +34,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
 
     [Header("Animation")]
     public Animator animator;
-    [SerializeField] private CharacterMarkerAnimationListener animationListener;
+    [FormerlySerializedAs("animationListener")] [SerializeField] private CharacterMarkerAnimationListener _animationListener;
     [SerializeField] private string currentAnimation;
     [SerializeField] private RuntimeAnimatorController defaultController;
     [SerializeField] private RuntimeAnimatorController monsterController;
@@ -80,6 +80,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             }
         } 
     }
+    public CharacterMarkerAnimationListener animationListener => _animationListener;
     public int sortingOrder => mainImg.sortingOrder;
     private LocationGridTile _previousGridTile;
     public bool useCanTraverse;
@@ -684,7 +685,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
         if (triggerName == "Attack") {
             //start coroutine to call
-            animationListener.StartAttackExecution();
+            _animationListener.StartAttackExecution();
         }
     }
     public void SetAnimationBool(string name, bool value) {

@@ -62,14 +62,19 @@ public class CharacterMarkerAnimationListener : MonoBehaviour {
             }
         }
     }
-    private void CreateProjectile(IDamageable target, CombatState state) {
+    public void CreateProjectile(IDamageable target, CombatState state, Action<IDamageable, CombatState> onHitAction = null) {
         if (target == null || target.currentHP <= 0) {
             return;
         }
         //Create projectile here and set the on hit action to combat state OnAttackHit
         Projectile projectile = CombatManager.Instance.CreateNewProjectile(parentMarker.character.combatComponent.elementalDamage.type, parentMarker.character.currentRegion.innerMap.objectsParent, parentMarker.projectileParent.transform.position);
-        projectile.SetTarget(target.projectileReceiver.transform, target, state);
-        projectile.onHitAction = OnProjectileHit;
+        projectile.SetTarget(target.projectileReceiver.transform, target, state, parentMarker.character);
+        if (onHitAction != null) {
+            projectile.onHitAction = onHitAction;
+        } else {
+            projectile.onHitAction = OnProjectileHit;    
+        }
+        
         AudioManager.Instance.CreateAudioObject(AudioManager.Instance.GetRandomBowAndArrowAudio(),
             parentMarker.character.gridTileLocation, 1, false);
     }

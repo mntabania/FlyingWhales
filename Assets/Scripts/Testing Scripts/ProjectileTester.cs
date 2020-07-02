@@ -20,6 +20,6 @@ public class ProjectileTester : MonoBehaviour {
         // randomPrefab = projectilePrefabs[3];
         GameObject projectileGO = GameObject.Instantiate(randomPrefab, position, Quaternion.identity);
         Projectile projectile = projectileGO.GetComponent<Projectile>();
-        projectile.SetTarget(target, null, null);
+        projectile.SetTarget(target, null, null, null);
     }
 }
