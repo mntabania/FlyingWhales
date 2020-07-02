@@ -30,14 +30,19 @@ public class SkillTreeSelector : MonoBehaviour {
     public void OnClickContinue() {
         // Hide();
         continueBtn.interactable = false;
+        PlayerSkillManager.Instance.SetSelectedArchetype(GetSelectedArchetype());
+        Messenger.Broadcast(Signals.START_GAME_AFTER_LOADOUT_SELECT);
+        PlayerManager.Instance.player.LoadPlayerData(SaveManager.Instance.currentSaveDataPlayer);
+        MainMenuManager.Instance.StartNewGame();
+    }
+
+    private PLAYER_ARCHETYPE GetSelectedArchetype() {
         for (int i = 0; i < archetypeToggles.Length; i++) {
             if (archetypeToggles[i].isOn) {
-                PlayerSkillManager.Instance.SetSelectedArchetype((PLAYER_ARCHETYPE) System.Enum.Parse(typeof(PLAYER_ARCHETYPE), UtilityScripts.Utilities.NotNormalizedConversionStringToEnum(archetypeToggles[i].gameObject.name)));
-                break;
+                return (PLAYER_ARCHETYPE) System.Enum.Parse(typeof(PLAYER_ARCHETYPE), UtilityScripts.Utilities.NotNormalizedConversionStringToEnum(archetypeToggles[i].gameObject.name);
             }
         }
-        Messenger.Broadcast(Signals.START_GAME_AFTER_LOADOUT_SELECT);
-        MainMenuManager.Instance.StartNewGame();
+        return PLAYER_ARCHETYPE.Normal;
     }
 
     private void OnScreenResolutionChanged() {
