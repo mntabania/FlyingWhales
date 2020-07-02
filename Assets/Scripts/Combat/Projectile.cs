@@ -42,13 +42,13 @@ public class Projectile : PooledObject {
     }
     #endregion
 
-    public void SetTarget(Transform target, IDamageable targetObject, CombatState createdBy) {
+    public void SetTarget(Transform target, IDamageable targetObject, CombatState createdBy, Character shooter) {
         // Vector3 diff = target.position - transform.position;
         // diff.Normalize();
         // float rot_z = Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg;
         // transform.rotation = Quaternion.Euler(0f, 0f, rot_z - 90);
         _hasHit = false;
-        name = $"Projectile from {createdBy.stateComponent.character.name} targeting {targetObject.name}";
+        name = $"Projectile from {shooter.name} targeting {targetObject.name}";
         this.targetObject = targetObject;
         this.createdBy = createdBy;
         _timeAlive = 0f;

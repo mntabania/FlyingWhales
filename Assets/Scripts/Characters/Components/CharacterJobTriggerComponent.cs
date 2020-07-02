@@ -1923,4 +1923,14 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    return true;
     }
     #endregion
+
+    #region Arson
+    public bool TriggerArson(TileObject target, out JobQueueItem producedJob) {
+	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ARSON,
+		    INTERACTION_TYPE.BURN, target, _owner);
+	    producedJob = job;
+	    return true;
+    }
+    #endregion
+    
 }

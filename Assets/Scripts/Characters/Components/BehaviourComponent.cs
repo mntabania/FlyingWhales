@@ -64,6 +64,9 @@ public class BehaviourComponent {
     public bool hasEatenInTheNight { get; private set; }
     
     //arsonist
+    public bool canArson => _currentArsonCooldown >= _arsonCooldownPeriod;
+    private int _currentArsonCooldown;
+    private readonly int _arsonCooldownPeriod;
     public List<HexTile> arsonVillageTarget { get; private set; }
     
     private COMBAT_MODE combatModeBeforeHarassRaidInvade;
@@ -83,6 +86,10 @@ public class BehaviourComponent {
         //Disabler
         _disableCooldownPeriod = GameManager.ticksPerHour * 2; //2 hours
         _currentDisableCooldown = _disableCooldownPeriod;
+        
+        //Arson
+        _arsonCooldownPeriod = GameManager.ticksPerHour * 2; //2 hours
+        _currentArsonCooldown = _arsonCooldownPeriod;
         
         PopulateInitialBehaviourComponents();
     }
@@ -736,6 +743,46 @@ public class BehaviourComponent {
             resetDate.AddDays(1);
             resetDate.SetTicks(1);
             SchedulingManager.Instance.AddEntry(resetDate, () => SetHasEatenInTheNight(false), owner);
+        }
+    }
+    #endregion
+
+    #region Arsonist
+    public void SetArsonistVillageTarget(List<HexTile> target) {
+        arsonVillageTarget = target;
+    }
+    private void StartArsonistCooldown() {
+        _currentArsonCooldown = 0;
+        Messenger.AddListener(Signals.TICK_ENDED, PerTickArsonistCooldown);
+    }
+    private void PerTickArsonistCooldown() {
+        if (_currentArsonCooldown >= _arsonCooldownPeriod) {
+            Messenger.RemoveListener(Signals.TICK_ENDED, PerTickArsonistCooldown);    
+        }
+        _currentArsonCooldown++;
+    }
+    public void OnBecomeArsonist() {
+        Messenger.AddListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfArsonistDidBurn);
+        Messenger.AddListener<Character>(Signals.START_FLEE, OnArsonistStartedFleeing);
+    }
+    public void OnNoLongerArsonist() {
+        Messenger.RemoveListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfArsonistDidBurn);
+        Messenger.RemoveListener<Character>(Signals.START_FLEE, OnArsonistStartedFleeing);
+    }
+    private void CheckIfArsonistDidBurn(Character character, GoapPlanJob job) {
+        if (character == owner && job.jobType == JOB_TYPE.ARSON) {
+            //clear target village data after 3 hours after first successful arson job.
+            GameDate expiry = GameManager.Instance.Today();
+            expiry.AddTicks(GameManager.Instance.GetTicksBasedOnHour(3));
+            SchedulingManager.Instance.AddEntry(expiry, () => SetArsonistVillageTarget(null), owner);
+            SchedulingManager.Instance.AddEntry(expiry, StartArsonistCooldown, owner);
+        }
+    }
+    private void OnArsonistStartedFleeing(Character character) {
+        if (character == owner) {
+            //once arson starts fleeing, clear target village and start cooldown.
+            SetArsonistVillageTarget(null);
+            StartArsonistCooldown();
         }
     }
     #endregion
