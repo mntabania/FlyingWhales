@@ -62,4 +62,13 @@ public class MainMenuManager : MonoBehaviour {
     private void UpdateExp() {
         expText.text = SaveManager.Instance.currentSaveDataPlayer.exp.ToString();
     }
+    public void StartNewGame() {
+        //SaveManager.Instance.SetCurrentSave(null);
+        //newGameButton.interactable = false;
+        //loadGameButton.interactable = false;
+        AudioManager.Instance.TransitionToLoading();
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Initializing data...");
+        LevelLoaderManager.Instance.UpdateLoadingBar(0.1f, 3f);
+        LoadMainGameScene();
+    }
 }

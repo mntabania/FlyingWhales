@@ -37,7 +37,7 @@ public class SkillTreeSelector : MonoBehaviour {
             }
         }
         Messenger.Broadcast(Signals.START_GAME_AFTER_LOADOUT_SELECT);
-        MainMenuUI.Instance.StartNewGame();
+        MainMenuManager.Instance.StartNewGame();
     }
 
     private void OnScreenResolutionChanged() {

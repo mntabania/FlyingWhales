@@ -72,13 +72,15 @@ public class MainMenuUI : MonoBehaviour {
         if (WorldConfigManager.Instance.isDemoWorld) {
             newGameButton.interactable = false;
             loadGameButton.interactable = false;
-            StartNewGame();
+            //WorldSettings.Instance.Open();
+            MainMenuManager.Instance.StartNewGame();
         } else {
-            bg.DOFade(0f, 1f).OnComplete(OnCompleteBGTween);
-            newGameButton.interactable = false;
-            loadGameButton.interactable = false;
-            HideMenuButtons();
-            titleTween.OnValueChangedAnimation(false);
+            //bg.DOFade(0f, 1f).OnComplete(OnCompleteBGTween);
+            //newGameButton.interactable = false;
+            //loadGameButton.interactable = false;
+            //HideMenuButtons();
+            //titleTween.OnValueChangedAnimation(false);
+            WorldSettings.Instance.Open();
         }
     }
     private void OnCompleteBGTween() {
@@ -86,7 +88,8 @@ public class MainMenuUI : MonoBehaviour {
         researchButton.gameObject.SetActive(true);
     }
     public void OnClickInvade() {
-        StartNewGame();
+        //StartNewGame();
+        WorldSettings.Instance.Open();
     }
     public void OnClickResearch() {
         _skillTreeSelector.Show();
@@ -99,14 +102,5 @@ public class MainMenuUI : MonoBehaviour {
     }
     public void OnClickSettings() {
         SettingsManager.Instance.OpenSettings();
-    }
-    public void StartNewGame() {
-        //SaveManager.Instance.SetCurrentSave(null);
-        newGameButton.interactable = false;
-        loadGameButton.interactable = false;
-        AudioManager.Instance.TransitionToLoading();
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Initializing data...");
-        LevelLoaderManager.Instance.UpdateLoadingBar(0.1f, 3f);
-        MainMenuManager.Instance.LoadMainGameScene();
     }
 }

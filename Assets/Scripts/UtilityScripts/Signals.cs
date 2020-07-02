@@ -255,6 +255,8 @@ public static class Signals {
     public static string SKILL_SLOT_ITEM_CLICKED = "OnSkillSlotItemClicked";
     public static string START_GAME_AFTER_LOADOUT_SELECT = "OnStartGameAfterLoadoutSelect";
     public static string UPDATE_BUILD_LIST = "UpdateBuildList";
+    public static string RACE_WORLD_OPTION_ITEM_CLICKED = "OnRaceWorldOptionItemClicked";
+    public static string BIOME_WORLD_OPTION_ITEM_CLICKED = "OnBiomeWorldOptionItemClicked";
     #endregion
 
     #region Quest Signals
