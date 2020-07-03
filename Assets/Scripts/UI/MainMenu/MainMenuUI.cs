@@ -24,8 +24,8 @@ public class MainMenuUI : MonoBehaviour {
     [SerializeField] private Button invadeButton;
     [SerializeField] private Button researchButton;
     
-    [Header("Archetypes")]
-    [SerializeField] private SkillTreeSelector _skillTreeSelector;
+    //[Header("Archetypes")]
+    //[SerializeField] private SkillTreeSelector _skillTreeSelector;
     
     [Header("Demo")]
     [SerializeField] private Button startButton;
@@ -89,10 +89,10 @@ public class MainMenuUI : MonoBehaviour {
     }
     public void OnClickInvade() {
         //StartNewGame();
-        WorldSettings.Instance.Open();
+        //WorldSettings.Instance.Open();
     }
     public void OnClickResearch() {
-        _skillTreeSelector.Show();
+        //_skillTreeSelector.Show();
     }
     public void OnClickLoadGame() {
         newGameButton.interactable = false;

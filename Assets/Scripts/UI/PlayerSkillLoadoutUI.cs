@@ -38,13 +38,13 @@ public class PlayerSkillLoadoutUI : MonoBehaviour {
         miscsSkillSlotItems = new GroupedSkillSlotItems();
         loadoutChoices = new List<SPELL_TYPE>();
 
-        Messenger.AddListener<SkillSlotItem>(Signals.SKILL_SLOT_ITEM_CLICKED, OnClickSkillSlotItem);
+        Messenger.AddListener<SkillSlotItem, PLAYER_ARCHETYPE>(Signals.SKILL_SLOT_ITEM_CLICKED, OnClickSkillSlotItem);
         Messenger.AddListener(Signals.START_GAME_AFTER_LOADOUT_SELECT, OnStartGameAfterLoadoutSelect);
 
         spellsTab.isOn = true;
     }
     public void OnDestroy() {
-        Messenger.RemoveListener<SkillSlotItem>(Signals.SKILL_SLOT_ITEM_CLICKED, OnClickSkillSlotItem);
+        Messenger.RemoveListener<SkillSlotItem, PLAYER_ARCHETYPE>(Signals.SKILL_SLOT_ITEM_CLICKED, OnClickSkillSlotItem);
         Messenger.RemoveListener(Signals.START_GAME_AFTER_LOADOUT_SELECT, OnStartGameAfterLoadoutSelect);
     }
 
@@ -103,7 +103,7 @@ public class PlayerSkillLoadoutUI : MonoBehaviour {
             for (int i = 0; i < fixedSkills.Count; i++) {
                 SPELL_TYPE fixedSkill = fixedSkills[i];
                 SkillSlotItem skillSlotItem = CreateNewSkillSlotItem(parent);
-                skillSlotItem.SetSkillSlotItem(fixedSkill, true);
+                skillSlotItem.SetSkillSlotItem(loadout.archetype, fixedSkill, true);
                 skillSlotItem.SetOnHoverEnterAction(OnHoverEnterSkillSlotItem);
                 skillSlotItem.SetOnHoverExitAction(OnHoverExitSkillSlotItem);
                 //skillSlotItem.SetInteractable(false);
@@ -116,7 +116,7 @@ public class PlayerSkillLoadoutUI : MonoBehaviour {
                 skillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(extraSkills[i]);
             }
             SkillSlotItem skillSlotItem = CreateNewSkillSlotItem(parent);
-            skillSlotItem.SetSkillSlotItem(skillData, false);
+            skillSlotItem.SetSkillSlotItem(loadout.archetype, skillData, false);
             skillSlotItem.SetOnHoverEnterAction(OnHoverEnterSkillSlotItem);
             skillSlotItem.SetOnHoverExitAction(OnHoverExitSkillSlotItem);
             //skillSlotItem.SetInteractable(true);
@@ -131,7 +131,8 @@ public class PlayerSkillLoadoutUI : MonoBehaviour {
         go.transform.localPosition = Vector3.zero;
         return go.GetComponent<SkillSlotItem>();
     }
-    private void OnClickSkillSlotItem(SkillSlotItem slotItem) {
+    private void OnClickSkillSlotItem(SkillSlotItem slotItem, PLAYER_ARCHETYPE archetype) {
+        if (archetype != loadout.archetype) { return; }
         pickedSlotItem = slotItem;
         loadoutChoices.Clear();
         if (spellsTab.isOn) {
@@ -186,7 +187,7 @@ public class PlayerSkillLoadoutUI : MonoBehaviour {
     }
     private void OnConfirmSkill(PlayerSkillData skillData) {
         if(pickedSlotItem) {
-            pickedSlotItem.SetSkillSlotItem(skillData, false);
+            pickedSlotItem.SetSkillSlotItem(loadout.archetype, skillData, false);
         }
     }
     private void OnHoverEnterSkill(PlayerSkillData skillData) {

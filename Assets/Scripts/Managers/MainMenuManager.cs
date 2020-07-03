@@ -15,7 +15,7 @@ public class MainMenuManager : MonoBehaviour {
 
     //public ParentPlayerSkillTreeUI[] parentPlayerSkillTrees;
 
-    public TextMeshProUGUI expText;
+    //public TextMeshProUGUI expText;
 
     [ContextMenu("Get Combinations")]
     public void GetCombinations() {
@@ -48,7 +48,7 @@ public class MainMenuManager : MonoBehaviour {
         //for (int i = 0; i < parentPlayerSkillTrees.Length; i++) {
         //    parentPlayerSkillTrees[i].LoadSkillTree();
         //}
-        UpdateExp();
+        //UpdateExp();
         //loadGameButton.interactable = SaveManager.Instance.currentSave != null;
     }
 
@@ -57,11 +57,11 @@ public class MainMenuManager : MonoBehaviour {
         LevelLoaderManager.Instance.LoadLevel("Game");
     }
     public void OnUnlockPlayerSkill() {
-        UpdateExp();
+        //UpdateExp();
     }
-    private void UpdateExp() {
-        expText.text = SaveManager.Instance.currentSaveDataPlayer.exp.ToString();
-    }
+    //private void UpdateExp() {
+    //    expText.text = SaveManager.Instance.currentSaveDataPlayer.exp.ToString();
+    //}
     public void StartNewGame() {
         //SaveManager.Instance.SetCurrentSave(null);
         //newGameButton.interactable = false;

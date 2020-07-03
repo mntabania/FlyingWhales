@@ -29,14 +29,16 @@ public class SkillSlotItem : MonoBehaviour {
     private Action<PlayerSkillData> onHoverEnter;
     private Action<PlayerSkillData> onHoverExit;
     private bool isFixed;
+    private PLAYER_ARCHETYPE archetype;
 
-    public void SetSkillSlotItem(PlayerSkillData skillData, bool isFixed) {
+    public void SetSkillSlotItem(PLAYER_ARCHETYPE archetype, PlayerSkillData skillData, bool isFixed) {
         this.skillData = skillData;
         this.isFixed = isFixed;
+        this.archetype = archetype;
         UpdateSkillSlotItem();
     }
-    public void SetSkillSlotItem(SPELL_TYPE skillType, bool isFixed) {
-        SetSkillSlotItem(PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(skillType), isFixed);
+    public void SetSkillSlotItem(PLAYER_ARCHETYPE archetype, SPELL_TYPE skillType, bool isFixed) {
+        SetSkillSlotItem(archetype, PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(skillType), isFixed);
     }
     public void SetOnHoverEnterAction(Action<PlayerSkillData> onHoverEnter) {
         this.onHoverEnter = onHoverEnter;
@@ -83,7 +85,7 @@ public class SkillSlotItem : MonoBehaviour {
         fixedIcon.gameObject.SetActive(isFixed);
     }
     private void ClearData() {
-        SetSkillSlotItem(null, isFixed);
+        SetSkillSlotItem(archetype, null, isFixed);
     }
     private void UpdateText() {
         if(skillData != null) {
@@ -98,7 +100,7 @@ public class SkillSlotItem : MonoBehaviour {
     }
     public void OnClickThis() {
         if (isFixed) { return; }
-        Messenger.Broadcast(Signals.SKILL_SLOT_ITEM_CLICKED, this);
+        Messenger.Broadcast(Signals.SKILL_SLOT_ITEM_CLICKED, this, archetype);
     }
     public void OnClickMinus() {
         if (isFixed) { return; }
