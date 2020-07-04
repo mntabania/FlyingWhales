@@ -5,6 +5,7 @@ using UnityEngine;
 public interface IRelationshipData {
     List<RELATIONSHIP_TYPE> relationships { get; }
     OpinionData opinions { get; }
+    AwarenessData awareness { get; }
     string targetName { get; }
     GENDER targetGender { get; }
     void AddRelationship(RELATIONSHIP_TYPE relType);

@@ -478,7 +478,7 @@ public class CharacterInfoUI : InfoUIBase {
         summary = $"{summary}{("\nCan Witness: " + activeCharacter.canWitness)}";
         summary = $"{summary}{("\nCan Be Attacked: " + activeCharacter.canBeAttacked)}";
         summary = $"{summary}{("\nCan Perform: " + activeCharacter.canPerform)}";
-        summary = $"{summary}{("\nIs Missing: " + activeCharacter.isMissing)}";
+        //summary = $"{summary}{("\nIs Missing: " + activeCharacter.isMissing)}";
         summary = $"{summary}{("\nIs Running: " + activeCharacter.movementComponent.isRunning)}";
         summary = $"{summary}{("\nPOI State: " + activeCharacter.state.ToString())}";
         summary = $"{summary}{("\n" + activeCharacter.needsComponent.GetNeedsSummary())}";

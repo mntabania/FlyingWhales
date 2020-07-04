@@ -1599,6 +1599,7 @@ public enum PLAYER_SKILL_STATE { Locked, Unlocked, Learned, }
 public enum REACTABLE_EFFECT { Neutral, Positive, Negative, }
 public enum STRUCTURE_TAG { Dangerous, Treasure, Monster_Spawner, Shelter, Physical_Power_Up, Magic_Power_Up, Counterattack, Resource }
 public enum LOG_TYPE { None, Action, Assumption, Witness, Informed }
+public enum AWARENESS_STATE { None, Available, Missing, Presumed_Dead }
 
 #region Crime Subcategories
 [System.AttributeUsage(System.AttributeTargets.Field)]

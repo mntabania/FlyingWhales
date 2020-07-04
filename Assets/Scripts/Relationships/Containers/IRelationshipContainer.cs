@@ -65,6 +65,11 @@ public interface IRelationshipContainer {
     string GetRelationshipNameWith(int target);
     #endregion
 
+    #region Awareness
+    void SetAwarenessState(Character character, AWARENESS_STATE state);
+    AWARENESS_STATE GetAwarenessState(Character character);
+    #endregion
+
     OpinionData GetOpinionData(int id);
     IRelationshipData GetRelationshipDataWith(int id);
     int GetTotalOpinion(int id);

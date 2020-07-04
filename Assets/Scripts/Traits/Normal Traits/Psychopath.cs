@@ -280,7 +280,7 @@ namespace Traits {
             }
         }
         private bool IsCharacterNotApplicableAsVictim(Character target) {
-            return target.currentRegion != character.currentRegion || target.isBeingSeized || target.isDead || target.isMissing;
+            return target.currentRegion != character.currentRegion || target.isBeingSeized || target.isDead/* || target.isMissing*/;
         }
         public bool CreateHuntVictimJob() {
             if (character.jobQueue.HasJob(JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM)) {

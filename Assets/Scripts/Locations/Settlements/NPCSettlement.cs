@@ -224,7 +224,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         for (int i = 0; i < residents.Count; i++) {
             Character resident = residents[i];
             log += $"\n\n-{resident.name}";
-            if(resident.isDead || resident.isMissing || resident.isBeingSeized) {
+            if(resident.isDead /*|| resident.isMissing*/ || resident.isBeingSeized) {
                 log += "\nEither dead or missing or seized, will not be part of candidates for ruler";
                 continue;
             }

@@ -68,7 +68,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public Party ownParty { get; protected set; }
     public Party currentParty { get; protected set; }
     public Dictionary<RESOURCE, int> storedResources { get; protected set; }
-    public int currentMissingTicks { get; protected set; }
     public bool hasUnresolvedCrime { get; protected set; }
     public bool isConversing { get; protected set; }
     public bool isInLimbo { get; protected set; }
@@ -136,8 +135,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public RumorComponent rumorComponent { get; private set; }
     public AssumptionComponent assumptionComponent { get; private set; }
     public MovementComponent movementComponent { get; private set; }
+    public StateAwarenessComponent stateAwarenessComponent { get; private set; }
 
-    
+
     #region getters / setters
     public override string relatableName => _firstName;
     public virtual string name => _firstName;
@@ -253,7 +253,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public Transform worldObject => marker.transform;
     public bool isStillConsideredAlive => minion == null /*&& !(this is Summon)*/ && !faction.isPlayerFaction;
     public Character isBeingCarriedBy => IsInOwnParty() ? null : currentParty.owner;
-    public bool isMissing => currentMissingTicks > CharacterManager.Instance.CHARACTER_MISSING_THRESHOLD;
     public bool isBeingSeized => PlayerManager.Instance.player != null && PlayerManager.Instance.player.seizeComponent.seizedPOI == this;
     public bool isLycanthrope => lycanData != null;
     /// <summary>
@@ -333,6 +332,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         rumorComponent = new RumorComponent(this);
         assumptionComponent = new AssumptionComponent(this);
         movementComponent = new MovementComponent(this);
+        stateAwarenessComponent = new StateAwarenessComponent(this);
 
         needsComponent.ResetSleepTicks();
     }
@@ -479,8 +479,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.AddListener<IPointOfInterest>(Signals.BEFORE_SEIZING_POI, OnBeforeSeizingPOI);
         //Messenger.AddListener<Character>(Signals.ON_SEIZE_CHARACTER, OnSeizeOtherCharacter);
         //Messenger.AddListener<TileObject>(Signals.ON_SEIZE_TILE_OBJECT, OnSeizeTileObject);
-        Messenger.AddListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
-        Messenger.AddListener<Character>(Signals.CHARACTER_NO_LONGER_MISSING, OnCharacterNoLongerMissing);
         Messenger.AddListener<IPointOfInterest>(Signals.STOP_CURRENT_ACTION_TARGETING_POI, OnStopCurrentActionTargetingPOI);
         Messenger.AddListener<IPointOfInterest, Character>(Signals.STOP_CURRENT_ACTION_TARGETING_POI_EXCEPT_ACTOR, OnStopCurrentActionTargetingPOIExceptActor);
         Messenger.AddListener<LocationStructure>(Signals.STRUCTURE_DESTROYED, OnStructureDestroyed);
@@ -490,6 +488,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //Messenger.AddListener<ActualGoapNode>(Signals.ACTION_PERFORMED, OnCharacterPerformedAction);
         needsComponent.SubscribeToSignals();
         jobComponent.SubscribeToListeners();
+        stateAwarenessComponent.SubscribeSignals();
     }
     public virtual void UnsubscribeSignals() {
         if (!hasSubscribedToSignals) {
@@ -515,8 +514,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.RemoveListener<IPointOfInterest>(Signals.BEFORE_SEIZING_POI, OnBeforeSeizingPOI);
         //Messenger.RemoveListener<Character>(Signals.ON_SEIZE_CHARACTER, OnSeizeOtherCharacter);
         //Messenger.RemoveListener<TileObject>(Signals.ON_SEIZE_TILE_OBJECT, OnSeizeTileObject);
-        Messenger.RemoveListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
-        Messenger.RemoveListener<Character>(Signals.CHARACTER_NO_LONGER_MISSING, OnCharacterNoLongerMissing);
+        //Messenger.RemoveListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
+        //Messenger.RemoveListener<Character>(Signals.CHARACTER_NO_LONGER_MISSING, OnCharacterNoLongerMissing);
         Messenger.RemoveListener<IPointOfInterest>(Signals.STOP_CURRENT_ACTION_TARGETING_POI, OnStopCurrentActionTargetingPOI);
         Messenger.RemoveListener<IPointOfInterest, Character>(Signals.STOP_CURRENT_ACTION_TARGETING_POI_EXCEPT_ACTOR, OnStopCurrentActionTargetingPOIExceptActor);
         Messenger.RemoveListener<LocationStructure>(Signals.STRUCTURE_DESTROYED, OnStructureDestroyed);
@@ -525,6 +524,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //Messenger.RemoveListener<ActualGoapNode>(Signals.ACTION_PERFORMED, OnCharacterPerformedAction);
         needsComponent.UnsubscribeToSignals();
         jobComponent.UnsubscribeListeners();
+        stateAwarenessComponent.UnsubscribeSignals();
     }
     #endregion
 
@@ -2629,6 +2629,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (isNormalCharacter) {
                 behaviourComponent.UpdateDefaultBehaviourSet();
             }
+            if(homeSettlement != null && gridTileLocation != null && gridTileLocation.collectionOwner.isPartOfParentRegionMap && gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile == homeSettlement) {
+                stateAwarenessComponent.StopMissingTimer();
+            } else if(homeSettlement == null) {
+                stateAwarenessComponent.StartMissingTimer();
+            } else if(homeSettlement != null && gridTileLocation != null && gridTileLocation.collectionOwner.isPartOfParentRegionMap && gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile != homeSettlement){
+                stateAwarenessComponent.StartMissingTimer();
+            }
         }
     }
     private void OnStructureDestroyed(LocationStructure structure) {
@@ -2799,7 +2806,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         needsComponent.DailyGoapProcesses();
     }
     public virtual void OnTickStartedWhileSeized() {
-        CheckMissing();
+         stateAwarenessComponent.PerTick();
     }
     protected virtual void OnTickStarted() {
         //What happens every start of tick
@@ -2811,7 +2818,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //if (!isDead && !isInCombat) {
         //    HPRecovery(0.0025f);
         //}
-        CheckMissing();
+        stateAwarenessComponent.PerTick();
         ProcessTraitsOnTickStarted();
         StartTickGoapPlanGeneration();
     }
@@ -3053,7 +3060,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             List<Character> positiveCharacters = new List<Character>();
             for (int i = 0; i < charactersWithRel.Count; i++) {
                 Character character = charactersWithRel[i];
-                if(character.isDead || character.isMissing || homeStructure == character.homeStructure) {
+                if(character.isDead /*|| character.isMissing*/ || homeStructure == character.homeStructure) {
                     continue;
                 }
                 if (relationshipContainer.HasOpinionLabelWithCharacter(character, RelationshipManager.Acquaintance, 
@@ -3654,7 +3661,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void OnPlacePOI() { /*FOR INTERFACE ONLY*/ }
     public void OnDestroyPOI() { /*FOR INTERFACE ONLY*/ }
     public virtual bool IsStillConsideredPartOfAwarenessByCharacter(Character character) {
-        if(character.currentRegion == currentRegion && !isBeingSeized && !isMissing) {
+        if(character.currentRegion == currentRegion && !isBeingSeized/* && !isMissing*/) {
             if (!isDead && currentParty.icon.isTravellingOutside) {
                 return false;
             }
@@ -5018,48 +5025,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #region IDamageable
     public bool CanBeDamaged() {
         return true;
-    }
-    #endregion
-
-    #region Missing
-    public void CheckMissing() {
-        if (!isDead) {
-            if (marker && gridTileLocation != null && isAtHomeRegion && gridTileLocation.collectionOwner.isPartOfParentRegionMap 
-                && gridTileLocation.IsPartOfSettlement()) {
-                if (currentMissingTicks > CharacterManager.Instance.CHARACTER_MISSING_THRESHOLD) {
-                    currentMissingTicks = 0;
-                    Messenger.Broadcast(Signals.CHARACTER_NO_LONGER_MISSING, this);
-                }
-            } else {
-                //If not home region, increment missing ticks
-                if (currentMissingTicks <= CharacterManager.Instance.CHARACTER_MISSING_THRESHOLD) {
-                    currentMissingTicks++;
-                    if (currentMissingTicks > CharacterManager.Instance.CHARACTER_MISSING_THRESHOLD) {
-                        Messenger.Broadcast(Signals.CHARACTER_MISSING, this);
-                    }
-                }
-            }
-        }
-    }
-    private void OnCharacterMissing(Character missingCharacter) {
-        if(missingCharacter != this) {
-            string opinionLabel = relationshipContainer.GetOpinionLabel(missingCharacter);
-            if(opinionLabel == RelationshipManager.Friend) {
-                needsComponent.AdjustHope(-5f);
-            }else if (opinionLabel == RelationshipManager.Close_Friend) {
-                needsComponent.AdjustHope(-10f);
-            }
-        }
-    }
-    private void OnCharacterNoLongerMissing(Character missingCharacter) {
-        if (missingCharacter != this) {
-            string opinionLabel = relationshipContainer.GetOpinionLabel(missingCharacter);
-            if (opinionLabel == RelationshipManager.Friend) {
-                needsComponent.AdjustHope(5f);
-            } else if (opinionLabel == RelationshipManager.Close_Friend) {
-                needsComponent.AdjustHope(10f);
-            }
-        }
     }
     #endregion
 

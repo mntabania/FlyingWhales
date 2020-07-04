@@ -113,7 +113,7 @@ public class SuicidalBehaviour : CharacterBehaviourComponent {
                                 } else if (targetStructure == character.homeStructure) {
                                     targetStructure = null;
                                     positiveRelatables.RemoveAt(index);
-                                } else if (chosenRelatable.isDead || chosenRelatable.isMissing) {
+                                } else if (chosenRelatable.isDead /*|| chosenRelatable.isMissing*/) {
                                     targetStructure = null;
                                     positiveRelatables.RemoveAt(index);
                                 } else if (character.movementComponent.HasPathToEvenIfDiffRegion(targetStructure.GetRandomTile()) == false) {
