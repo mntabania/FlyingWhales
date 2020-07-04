@@ -33,6 +33,9 @@ public class ThreatComponent {
             //https://trello.com/c/WOZJmvzQ/1238-threat-does-not-increase-until-tutorial-is-over
             return;
         }
+        if (WorldSettings.Instance.worldSettingsData.noThreatMode) {
+            return;
+        }
 
         if (threat != MAX_THREAT) {
             int supposedThreat = threat + amount;

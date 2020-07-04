@@ -43,10 +43,12 @@ namespace Traits {
         }
         public override string GetNameInUI(ITraitable traitable) {
             Dictionary<string, int> stacks = traitable.traitContainer.stacks;
-            if (isStacking && stacks.ContainsKey(name) && stacks[name] > 1) {
+            if (isStacking && stacks.ContainsKey(name)) {
                 int num = stacks[name];
                 if (num > stackLimit) { num = stackLimit; }
-                return $"{name} (x{num})";
+                if(num > 1) {
+                    return $"{name} (x{num})";
+                }
             }
             return name;
         }

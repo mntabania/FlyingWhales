@@ -30101,12 +30101,12 @@ PrefabInstance:
     - target: {fileID: 6186091219942898611, guid: 39888b675721e8e488059363d0de61d1,
         type: 3}
       propertyPath: _unlimitedCast
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6186091219942898611, guid: 39888b675721e8e488059363d0de61d1,
         type: 3}
       propertyPath: _unlockAllSkills
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 39888b675721e8e488059363d0de61d1, type: 3}
