@@ -17,10 +17,10 @@ public class PlayerSkillManager : MonoBehaviour {
     [SerializeField] private bool _unlimitedCast;
 
 #if UNITY_EDITOR
-    public bool unlimitedCast => _unlimitedCast;
+    public bool unlimitedCast => _unlimitedCast || WorldSettings.Instance.worldSettingsData.omnipotentMode;
     public bool unlockAllSkills => _unlockAllSkills;
 #else
-    public bool unlimitedCast => false;
+    public bool unlimitedCast => false || WorldSettings.Instance.worldSettingsData.omnipotentMode;
     public bool unlockAllSkills => false;
 #endif
 

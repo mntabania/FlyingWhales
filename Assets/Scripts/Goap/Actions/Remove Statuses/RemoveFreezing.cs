@@ -35,7 +35,7 @@ public class RemoveFreezing : GoapAction {
     public void AfterRemoveSuccess(ActualGoapNode goapNode) {
         //**Effect 1**: Remove Poisoned Trait from target table
         goapNode.poiTarget.traitContainer.RemoveStatusAndStacks(goapNode.poiTarget, "Freezing");
-        goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Frozen");
+        goapNode.poiTarget.traitContainer.RemoveStatusAndStacks(goapNode.poiTarget, "Frozen");
 
         //**Effect 2**: Remove Tool from Actor's inventory
         TileObject ember = goapNode.actor.GetItem(TILE_OBJECT_TYPE.WATER_FLASK);
