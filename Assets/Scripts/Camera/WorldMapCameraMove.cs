@@ -93,14 +93,12 @@ public class WorldMapCameraMove : BaseCameraMove {
                 //} else {
                 //    mainCamera.orthographicSize = fov;
                 //}
-                CalculateCameraBounds(mainCamera);
+                // CalculateCameraBounds(mainCamera);
                 Messenger.Broadcast(Signals.ZOOM_WORLD_MAP_CAMERA, mainCamera);
             }
         }
     }
     #endregion
-
-    
 
     #region Listeners
     private void OnMenuOpened(InfoUIBase openedBase) { }

@@ -359,8 +359,10 @@ public class UIManager : MonoBehaviour {
         if (!IsSmallInfoShowing()) {
             smallInfoGO.transform.SetParent(this.transform);
             smallInfoGO.SetActive(true);
-            StartCoroutine(ReLayout(smallInfoBGParentLG));
-            StartCoroutine(ReLayout(smallInfoVerticalLG));
+            if (gameObject.activeInHierarchy) {
+                StartCoroutine(ReLayout(smallInfoBGParentLG));
+                StartCoroutine(ReLayout(smallInfoVerticalLG));    
+            }
         }
         PositionTooltip(smallInfoGO, smallInfoRT, smallInfoBGRT);
         Profiler.EndSample();
@@ -380,8 +382,10 @@ public class UIManager : MonoBehaviour {
         
         if (!IsSmallInfoShowing()) {
             smallInfoGO.SetActive(true);
-            StartCoroutine(ReLayout(smallInfoBGParentLG));
-            StartCoroutine(ReLayout(smallInfoVerticalLG));
+            if (gameObject.activeInHierarchy) {
+                StartCoroutine(ReLayout(smallInfoBGParentLG));
+                StartCoroutine(ReLayout(smallInfoVerticalLG));    
+            }
         }
     }
     private IEnumerator ReLayout(LayoutGroup layoutGroup) {

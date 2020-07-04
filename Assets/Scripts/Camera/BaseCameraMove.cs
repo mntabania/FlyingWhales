@@ -231,21 +231,18 @@ public abstract class BaseCameraMove : MonoBehaviour{
     #endregion
     
     #region Bounds
-    public void CalculateCameraBounds(Camera camera) {
+    protected void CalculateCameraBounds(Camera camera) {
         if (GridMap.Instance.map == null) {
             return;
         }
-        HexTile rightMostTile = GridMap.Instance.map[GridMap.Instance.width - 1, GridMap.Instance.height / 2];
-        HexTile topMostTile = GridMap.Instance.map[GridMap.Instance.width/2, GridMap.Instance.height - 1];
-
-        float vertExtent = camera.orthographicSize;
-        float horzExtent = vertExtent * Screen.width / Screen.height;
-
+        HexTile topRightTile = GridMap.Instance.map[GridMap.Instance.width - 1, GridMap.Instance.height - 1];
+        Vector3 topRightTilePosition = topRightTile.transform.position;
+        
         Bounds newBounds = new Bounds {
-            extents = new Vector3(Mathf.Abs(rightMostTile.transform.position.x),
-                Mathf.Abs(topMostTile.transform.position.y), 0f)
+            extents = new Vector3(Mathf.Abs(topRightTilePosition.x),
+                Mathf.Abs(topRightTilePosition.y), 0f)
         };
-        SetCameraBounds(newBounds, horzExtent, vertExtent);
+        SetCameraBounds(newBounds);
     }
     protected void ConstrainCameraBounds(Camera camera) {
         float xLowerBound = MIN_X;
@@ -276,16 +273,16 @@ public abstract class BaseCameraMove : MonoBehaviour{
         }
         return false;
     }
-    private void SetCameraBounds(Bounds bounds, float horzExtent, float vertExtent) {
+    private void SetCameraBounds(Bounds bounds) {
         float halfOfHexagon = 256f / 100f;
-        // MIN_X = bounds.min.x + horzExtent - (halfOfHexagon * ((float)borderCount));
-        // MAX_X = bounds.max.x - horzExtent + (halfOfHexagon * (borderCount)); //removed -1 because of UI
-        // MIN_Y = bounds.min.y + vertExtent - (halfOfHexagon * ((float)borderCount - 2));
-        // MAX_Y = bounds.max.y - vertExtent + (halfOfHexagon * (borderCount - 2));
-        MIN_X = bounds.min.x + horzExtent - (halfOfHexagon);
-        MAX_X = bounds.max.x - horzExtent + (halfOfHexagon); //removed -1 because of UI
-        MIN_Y = bounds.min.y + vertExtent - (halfOfHexagon * 1.5f);
-        MAX_Y = bounds.max.y - vertExtent + (halfOfHexagon * 1.5f);
+        // MIN_X = bounds.min.x + horzExtent - (halfOfHexagon * 1.5f);
+        // MAX_X = bounds.max.x - horzExtent + (halfOfHexagon * 1.5f); //removed -1 because of UI
+        // MIN_Y = bounds.min.y + vertExtent - (halfOfHexagon * 1.5f);
+        // MAX_Y = bounds.max.y - vertExtent + (halfOfHexagon * 1.5f);
+        MIN_X = bounds.min.x + (halfOfHexagon * 2f);
+        MAX_X = bounds.max.x - (halfOfHexagon * 2f);
+        MIN_Y = bounds.min.y + halfOfHexagon;
+        MAX_Y = bounds.max.y - halfOfHexagon;
     }
     #endregion
 

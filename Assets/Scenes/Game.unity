@@ -50126,8 +50126,8 @@ MonoBehaviour:
   MAX_X: 0
   MIN_Y: 0
   MAX_Y: 0
-  _minFov: 5
-  _maxFov: 10
+  _minFov: 7
+  _maxFov: 14
   cameraPanSpeed: 50
   isDragging: 0
   edgeBoundary: 5
@@ -50141,8 +50141,8 @@ MonoBehaviour:
   smoothFollowSpeed: 0.5
   _raycaster: {fileID: 930355347}
   allowZoom: 1
-  _zoomSpeed: 15
-  sensitivity: 20
+  _zoomSpeed: 35
+  sensitivity: 30
 --- !u!1 &932256817
 GameObject:
   m_ObjectHideFlags: 0
