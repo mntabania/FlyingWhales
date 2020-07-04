@@ -23,9 +23,11 @@ public class WorldConfigManager : MonoBehaviour {
     [SerializeField] private bool _disableLogs;
     public MapGenerationData mapGenerationData;
 
+    private List<SPELL_TYPE> _allSpells;
+    
     #region Getters
     public bool isDemoWorld => _isDemoWorld;
-    public List<SPELL_TYPE> availableSpellsInDemoBuild => _availableSpellsInDemoBuild;
+    public List<SPELL_TYPE> availableSpellsInDemoBuild => _allSpells; //_availableSpellsInDemoBuild;
     public List<TutorialManager.Tutorial> demoTutorials => _demoTutorials;
 #if UNITY_EDITOR
     public bool disableLogs => _disableLogs;
@@ -40,6 +42,7 @@ public class WorldConfigManager : MonoBehaviour {
         }
         if (Instance == null) {
             Instance = this;
+            _allSpells = UtilityScripts.CollectionUtilities.GetEnumValues<SPELL_TYPE>().ToList();
         } else if (Instance != this) {
             Destroy(Instance.gameObject);
         }

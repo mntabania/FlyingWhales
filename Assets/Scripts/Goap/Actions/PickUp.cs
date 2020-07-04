@@ -48,7 +48,7 @@ public class PickUp : GoapAction {
         }
         if(target is TileObject targetTileObject) {
             if(targetTileObject.characterOwner == null) {
-                if (job != null && job.jobType == JOB_TYPE.TAKE_ITEM) {
+                if (job != null && (job.jobType == JOB_TYPE.TAKE_ITEM || job.jobType == JOB_TYPE.HAUL)) {
                     cost += 10;
                     costLog += $" +10(No personal owner, Take Item Job)";
                 } else if(actor.homeSettlement != null && targetTileObject.gridTileLocation != null && targetTileObject.gridTileLocation.collectionOwner.isPartOfParentRegionMap

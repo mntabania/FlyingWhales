@@ -102,9 +102,16 @@ public class MapGenerator : MonoBehaviour {
             AudioManager.Instance.TransitionToWorld();
             
             UIManager.Instance.initialWorldSetupMenu.Show();
-            LevelLoaderManager.Instance.SetLoadingState(false);
+            if (WorldConfigManager.Instance.isDemoWorld) {
+                Messenger.Broadcast(Signals.GAME_LOADED);
+                UIManager.Instance.initialWorldSetupMenu.loadOutMenu.OnClickContinue();
+                LevelLoaderManager.Instance.SetLoadingState(false);
+            } else {
+                LevelLoaderManager.Instance.SetLoadingState(false);
+                Messenger.Broadcast(Signals.GAME_LOADED);
+            }
             
-            Messenger.Broadcast(Signals.GAME_LOADED);
+            
             yield return new WaitForSeconds(1f);
             
             

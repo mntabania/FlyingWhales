@@ -7,8 +7,8 @@ namespace Traits {
 
         public IPointOfInterest owner { get; private set; } //poi that has the poison
 
-        private float pukeChance = 5f;
-        private float septicChance = 2.5f;
+        private float pukeChance = 4f;
+        private float septicChance = 1.5f;
 
         public Plagued() {
             name = "Plagued";

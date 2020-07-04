@@ -72,7 +72,7 @@ namespace Traits {
                             && !characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.TAKE_ITEM)) {
                             int chance = 100;
                             if (characterThatWillDoJob.HasItem(item.name)) {
-                                chance = 25;
+                                chance = 10;
                             }
                             if (UnityEngine.Random.Range(0, 100) < chance) {
                                 characterThatWillDoJob.jobComponent.CreateTakeItemJob(item);

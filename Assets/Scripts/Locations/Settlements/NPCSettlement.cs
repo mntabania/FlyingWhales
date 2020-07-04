@@ -21,6 +21,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public Character ruler { get; private set; }
     public List<JobQueueItem> forcedCancelJobsOnTickEnded { get; }
     public bool isUnderSiege { get; private set; }
+    public bool isPlagued { get; private set; }
 
     //structures
     public List<JobQueueItem> availableJobs { get; }
@@ -33,8 +34,8 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     private readonly WeightedDictionary<Character> newRulerDesignationWeights;
     private int newRulerDesignationChance;
     private int _isBeingHarassedCount;
-    //private int _isBeingRaidedCount;
     private int _isBeingInvadedCount;
+    private string _plaguedExpiryKey;
 
     #region getters
     public JobTriggerComponent jobTriggerComponent => settlementJobTriggerComponent;
@@ -55,13 +56,14 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         jobManager = new LocationJobManager(this);
         jobPriorityComponent = new SettlementJobPriorityComponent(this);
         settlementJobTriggerComponent = new SettlementJobTriggerComponent(this);
-
+        _plaguedExpiryKey = string.Empty;
     }
     public NPCSettlement(SaveDataArea saveDataArea) : base (saveDataArea){
         region = GridMap.Instance.GetRegionByID(saveDataArea.regionID);
         newRulerDesignationWeights = new WeightedDictionary<Character>();
         ResetNewRulerDesignationChance();
         LoadStructures(saveDataArea);
+        _plaguedExpiryKey = string.Empty;
     }
 
     #region Listeners
@@ -105,6 +107,21 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             Debug.Log($"{GameManager.Instance.TodayLogString()}{name} Under Siege state changed to {isUnderSiege.ToString()}");
             Messenger.Broadcast(Signals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, this, isUnderSiege);
         }
+    }
+    public void SetIsPlagued(bool state) {
+        if (state) {
+            if (string.IsNullOrEmpty(_plaguedExpiryKey) == false) {
+                //if has schedule to expire plagued status, reset expiry date.
+                SchedulingManager.Instance.RemoveSpecificEntry(_plaguedExpiryKey);
+            }
+            GameDate expiryDate = GameManager.Instance.Today();
+            expiryDate.AddDays(2);
+            _plaguedExpiryKey = SchedulingManager.Instance.AddEntry(expiryDate, () => SetIsPlagued(false), this);    
+        }
+
+        isPlagued = state;
+        Debug.Log($"{GameManager.Instance.TodayLogString()}{name} Plagued state changed to {isPlagued.ToString()}");
+        
     }
     public void IncreaseIsBeingHarassedCount() {
         _isBeingHarassedCount++;
