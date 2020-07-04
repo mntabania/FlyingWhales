@@ -22,6 +22,7 @@ public class SpellItem : NameplateItem<SpellData> {
         Messenger.AddListener<SpellData>(Signals.SPELL_COOLDOWN_STARTED, OnSpellCooldownStarted);
         Messenger.AddListener<SpellData>(Signals.SPELL_COOLDOWN_FINISHED, OnSpellCooldownFinished);
         Messenger.AddListener<SpellData>(Signals.ON_EXECUTE_SPELL, OnExecuteSpell);
+        Messenger.AddListener<SpellData>(Signals.CHARGES_ADJUSTED, OnChargesAdjusted);
     }
     public void UpdateData() {
         mainLbl.text = spellData.name;
@@ -75,6 +76,12 @@ public class SpellItem : NameplateItem<SpellData> {
             UpdateInteractableState();
         }
     }
+    private void OnChargesAdjusted(SpellData spellData) {
+        if (this.spellData == spellData) {
+            UpdateData();
+            UpdateInteractableState();
+        }
+    }
     #endregion
     
     public void OnToggleSpell(bool state) {
@@ -110,5 +117,6 @@ public class SpellItem : NameplateItem<SpellData> {
         Messenger.RemoveListener<SpellData>(Signals.SPELL_COOLDOWN_STARTED, OnSpellCooldownStarted);
         Messenger.RemoveListener<SpellData>(Signals.SPELL_COOLDOWN_FINISHED, OnSpellCooldownFinished);
         Messenger.RemoveListener<SpellData>(Signals.ON_EXECUTE_SPELL, OnExecuteSpell);
+        Messenger.RemoveListener<SpellData>(Signals.CHARGES_ADJUSTED, OnChargesAdjusted);
     }
 }

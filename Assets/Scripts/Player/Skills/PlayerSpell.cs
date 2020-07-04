@@ -376,6 +376,7 @@ public class SpellData : IPlayerSkill {
     }
     public void AdjustCharges(int amount) {
         charges += amount;
+        Messenger.Broadcast(Signals.CHARGES_ADJUSTED, this);
     }
     public void SetManaCost(int amount) {
         manaCost = amount;
