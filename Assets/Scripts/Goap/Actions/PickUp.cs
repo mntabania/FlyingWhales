@@ -48,15 +48,31 @@ public class PickUp : GoapAction {
         }
         if(target is TileObject targetTileObject) {
             if(targetTileObject.characterOwner == null) {
-                cost += UtilityScripts.Utilities.Rng.Next(80, 121);
-                costLog += $" +{cost}(No personal owner)";
+                if (job != null && job.jobType == JOB_TYPE.TAKE_ITEM) {
+                    cost += 10;
+                    costLog += $" +10(No personal owner, Take Item Job)";
+                } else if(actor.homeSettlement != null && targetTileObject.gridTileLocation != null && targetTileObject.gridTileLocation.collectionOwner.isPartOfParentRegionMap
+                    && targetTileObject.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile == actor.homeSettlement) {
+                    int randomCost = UtilityScripts.Utilities.Rng.Next(80, 91);
+                    cost += randomCost;
+                    costLog += $" +{randomCost}(No personal owner, object inside actor home settlement)";
+                } else if (!actor.isFactionless && !actor.isFriendlyFactionless && targetTileObject.gridTileLocation != null && targetTileObject.gridTileLocation.collectionOwner.isPartOfParentRegionMap
+                     && targetTileObject.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile != null
+                     && targetTileObject.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile.owner == actor.faction) {
+                    int randomCost = UtilityScripts.Utilities.Rng.Next(100, 121);
+                    cost += randomCost;
+                    costLog += $" +{randomCost}(No personal owner, object inside actor's faction owned settlement)";
+                } else {
+                    cost += 2000;
+                    costLog += $" +2000(No personal owner)";
+                }
             } else {
                 if(targetTileObject.IsOwnedBy(actor)) {
                     cost += UtilityScripts.Utilities.Rng.Next(20, 61);
                     costLog += $" +{cost}(Personal owner is actor)";
                 } else {
                     if(actor.traitContainer.HasTrait("Kleptomaniac") || !actor.relationshipContainer.HasRelationshipWith(targetTileObject.characterOwner) || (job != null && job.jobType == JOB_TYPE.HAUL)) {
-                        cost += UtilityScripts.Utilities.Rng.Next(80, 121);
+                        cost += UtilityScripts.Utilities.Rng.Next(80, 91);
                         costLog += $" +{cost}(Kleptomaniac/No rel with owner)";
                     } else {
                         cost += 2000;
