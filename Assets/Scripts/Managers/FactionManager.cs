@@ -22,7 +22,7 @@ public class FactionManager : MonoBehaviour {
 
     public readonly string[] exclusiveIdeologyTraitRequirements = new string[] { "Worker", "Combatant", "Royalty" };
     public readonly FACTION_IDEOLOGY[][] categorizedFactionIdeologies = new FACTION_IDEOLOGY[][] { 
-        new FACTION_IDEOLOGY[] { FACTION_IDEOLOGY.INCLUSIVE, FACTION_IDEOLOGY.EXCLUSIVE },
+        new FACTION_IDEOLOGY[] { FACTION_IDEOLOGY.INCLUSIVE }, //, FACTION_IDEOLOGY.EXCLUSIVE
         new FACTION_IDEOLOGY[] { FACTION_IDEOLOGY.MILITARIST, FACTION_IDEOLOGY.ECONOMIST },
         new FACTION_IDEOLOGY[] { FACTION_IDEOLOGY.NATURE_WORSHIP, FACTION_IDEOLOGY.DIVINE_WORSHIP, FACTION_IDEOLOGY.DEMON_WORSHIP },
     };

@@ -21,7 +21,9 @@ public class FactionIdeologyComponent {
         FACTION_IDEOLOGY[][] categorizedIdeologies = FactionManager.Instance.categorizedFactionIdeologies;
         for (int i = 0; i < currentIdeologies.Length; i++) {
             FactionIdeology ideology = currentIdeologies[i];
-            ideology = FactionManager.Instance.CreateIdeology(categorizedIdeologies[i][UnityEngine.Random.Range(0, categorizedIdeologies[i].Length)]);
+            FACTION_IDEOLOGY categorizedIdeology =
+                categorizedIdeologies[i][Random.Range(0, categorizedIdeologies[i].Length)];
+            ideology = FactionManager.Instance.CreateIdeology(categorizedIdeology);
             ideology.SetRequirements(owner);
             currentIdeologies[i] = ideology;
         }

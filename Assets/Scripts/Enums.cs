@@ -2050,9 +2050,6 @@ public static class Extensions {
             case JOB_TYPE.BURY:
                 priority = 870;
                 break;
-            case JOB_TYPE.TAKE_ITEM:
-                priority = 860;
-                break;
             case JOB_TYPE.BUILD_BLUEPRINT:
             case JOB_TYPE.PLACE_BLUEPRINT:
             case JOB_TYPE.SPAWN_LAIR:
@@ -2093,6 +2090,9 @@ public static class Extensions {
                 break;
             case JOB_TYPE.MOVE_CHARACTER:
                 priority = 520;
+                break;
+            case JOB_TYPE.TAKE_ITEM:
+                priority = 510;
                 break;
             case JOB_TYPE.ENERGY_RECOVERY_NORMAL:
             case JOB_TYPE.FULLNESS_RECOVERY_NORMAL:
