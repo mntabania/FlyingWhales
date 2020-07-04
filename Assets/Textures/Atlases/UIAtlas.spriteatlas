@@ -46,7 +46,7 @@ SpriteAtlas:
     - {fileID: 102900000, guid: ff095aad844e46e488c1fae9e2f9b3e2, type: 3}
     - {fileID: 102900000, guid: b422e43e82f411843a77c74a9708c2aa, type: 3}
     - {fileID: 102900000, guid: 081cbc1d8bd888147aa1d93cd708500d, type: 3}
-    totalSpriteSurfaceArea: 4561324
+    totalSpriteSurfaceArea: 7055522
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -63,6 +63,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 81ff0670c11f02d498cd9e0741890861, type: 3}
   - {fileID: 21300000, guid: 5d00af705dc1d2f4e90cefc5eb53b3c6, type: 3}
   - {fileID: 21300000, guid: 3111228042913c0409f873d144280dd8, type: 3}
+  - {fileID: 21300000, guid: f59ad880a71de0d42a123c69550b1139, type: 3}
   - {fileID: 21300000, guid: baa28b90c4ef8854c8578a5ad5cf48cf, type: 3}
   - {fileID: 21300000, guid: 507710a0bfe21854686e9815d989cb94, type: 3}
   - {fileID: 21300000, guid: 1b71e4a07e951b847946063b916275e7, type: 3}
@@ -121,6 +122,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 289de14257e60d54fb65f5b2271c259c, type: 3}
   - {fileID: 21300000, guid: 0e325b52703224645ba0f180f97ab884, type: 3}
   - {fileID: 21300000, guid: e551cb52afd081a4cbd63246155d090e, type: 3}
+  - {fileID: 21300000, guid: 3ad825620f90e104ba9787f50b283e46, type: 3}
   - {fileID: 21300000, guid: 2c4a3672a3927ef44ae2651f51c8d4e1, type: 3}
   - {fileID: 21300000, guid: 86a96f72c1cce7649bb762a22e2cab3e, type: 3}
   - {fileID: 21300000, guid: 829480822428a804bb71934c18462482, type: 3}
@@ -160,6 +162,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 1ef9ad83e9c4f3f428a35ea40a496a2c, type: 3}
   - {fileID: 21300000, guid: 1ce44093ae51a584e984858199645d8b, type: 3}
   - {fileID: 21300000, guid: 369021931454c8a42977c57b5ef4bc1d, type: 3}
+  - {fileID: 21300000, guid: 488a4da384bb75c47a50881df2203771, type: 3}
   - {fileID: 21300000, guid: cb1018b3a45817e43bfa822a2cc249c8, type: 3}
   - {fileID: 21300000, guid: b5902ab3379b0714bb733237819df90e, type: 3}
   - {fileID: 21300000, guid: c82033c36c6745a429fc00aae9ea3954, type: 3}
@@ -478,6 +481,7 @@ SpriteAtlas:
   - faction_ui_resident_default
   - minion_tab_spells_hover
   - button_minion_action_default
+  - world_options_activeradiobutton
   - minion_icon_defender
   - button_invade_clicked
   - scroll_button_left_off
@@ -536,6 +540,7 @@ SpriteAtlas:
   - minion_tab_spells_default
   - minion_tab_action_disabled
   - tab_relations_default
+  - world_options_bg
   - loadout_button_disabled
   - button_minions_clicked
   - button_overview_disabled
@@ -575,6 +580,7 @@ SpriteAtlas:
   - minion_tab_spells_active
   - button_back_default
   - 1x_button_clicked
+  - world_options_container
   - minion_tab_traits_active
   - button_overview_hover
   - faction_ui_resident_crown
