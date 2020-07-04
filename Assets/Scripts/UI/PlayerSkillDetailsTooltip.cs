@@ -104,9 +104,9 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
             chargesText.SetText($"{charges.ToString()}");
         }
 
-        manaCostText.SetText("N/A");
+        manaCostText.text = "N/A";
         if (manaCost != -1) {
-            manaCostText.text += $"{manaCost.ToString()}";
+            manaCostText.text = $"{manaCost.ToString()}";
         }
 
         string cdText = cooldown == -1 ? "N/A" : $"{GameManager.GetTimeAsWholeDuration(cooldown).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(cooldown)}";
@@ -114,7 +114,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
 
     }
     private void UpdateData(SpellData spellData) {
-        titleText.SetText(spellData.name);
+        titleText.text = spellData.name;
         descriptionText.SetText(spellData.description);
         threatText.SetText("" + spellData.threat);
         threatPerHourText.SetText("" + spellData.threatPerHour);
@@ -129,16 +129,16 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
             chargesText.SetText($"{charges.ToString()}/{spellData.maxCharges.ToString()}");
         }
 
-        manaCostText.SetText("N/A");
+        manaCostText.text = "N/A";
         if (manaCost != -1) {
-            manaCostText.SetText(HasEnoughMana() ? "<color=\"green\">" : "<color=\"red\">");
+            manaCostText.text = (HasEnoughMana() ? "<color=\"green\">" : "<color=\"red\">");
             manaCostText.text += $"{manaCost.ToString()}</color>" ;
         }
 
         string cdText = cooldown == -1 ? "N/A" : $"{GameManager.GetTimeAsWholeDuration(cooldown).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(cooldown)}";
         cooldownText.SetText(cdText);
 
-        additionalText.SetText(string.Empty);
+        additionalText.text = string.Empty;
         if (UIManager.Instance.characterInfoUI.isShowing) {
             if (UIManager.Instance.characterInfoUI.activeCharacter.traitContainer.HasTrait("Blessed")) {
                 additionalText.text += $"<color=\"red\">Blessed Villagers are protected from your powers.</color>\n";    

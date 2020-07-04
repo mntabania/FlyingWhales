@@ -11,7 +11,7 @@ using UnityEngine.UI;
 
 public class QuestStepItem : PooledObject {
     
-    [SerializeField] private RuinarchText _stepLbl;
+    [SerializeField] private TextMeshProUGUI _stepLbl;
     [SerializeField] private Toggle _completedToggle;
     [SerializeField] private Image _toggleImage;
     [SerializeField] private EventLabel _eventLabel;
@@ -47,7 +47,7 @@ public class QuestStepItem : PooledObject {
         }
     }
     private void UpdateDescription() {
-        _stepLbl.SetText(_step.hasHoverAction ? $"<link=\"1\"><#FFFB00>{_step.stepDescription}</color></link>" : _step.stepDescription);
+        _stepLbl.text = _step.hasHoverAction ? $"<link=\"1\"><#FFFB00>{_step.stepDescription}</color></link>" : _step.stepDescription;
     }
     private void OnStepCompleted(QuestStep step) {
         if (_step == step) {

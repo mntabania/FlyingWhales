@@ -420,6 +420,7 @@ public static class Signals {
     public static string CHAOS_ORB_SPAWNED = "OnChaosOrbSpawned";
     public static string CHAOS_ORB_DESPAWNED = "OnChaosOrbDespawned";
     public static string CHAOS_ORB_CLICKED = "OnChaosOrbClicked";
+    public static string CHARGES_ADJUSTED = "OnChargesAdjusted";
     #endregion
 
     #region Interaction
