@@ -189,7 +189,7 @@ public class NonActionEventsComponent {
             strLog += "\n\nCharacter has Plague, 25% chance to infect the Target";
             int roll = UnityEngine.Random.Range(0, 100);
             strLog += $"\nRoll: {roll}";
-            if (roll < 25) {
+            if (roll < 35) {
                 target.interruptComponent.TriggerInterrupt(INTERRUPT.Plagued, target);
                 // target.traitContainer.AddTrait(target, "Plagued", owner);
             }
@@ -197,7 +197,7 @@ public class NonActionEventsComponent {
             strLog += "\n\nTarget has Plague, 25% chance to infect the Character";
             int roll = UnityEngine.Random.Range(0, 100);
             strLog += $"\nRoll: {roll}";
-            if (roll < 25) {
+            if (roll < 35) {
                 owner.interruptComponent.TriggerInterrupt(INTERRUPT.Plagued, owner);
                 // owner.traitContainer.AddTrait(owner, "Plagued", target);
             }

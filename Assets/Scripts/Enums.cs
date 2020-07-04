@@ -1007,6 +1007,7 @@ public enum INTERACTION_TYPE {
     BURN,
     LAY_EGG,
     TAKE_SHELTER,
+    IS_PLAGUED
 }
 
 public enum INTERACTION_CATEGORY {
@@ -1575,7 +1576,8 @@ public enum FACTION_IDEOLOGY { INCLUSIVE = 0, EXCLUSIVE = 1, MILITARIST = 2, ECO
 public enum BEHAVIOUR_COMPONENT_ATTRIBUTE { WITHIN_HOME_SETTLEMENT_ONLY, ONCE_PER_DAY, DO_NOT_SKIP_PROCESSING, } //, OUTSIDE_SETTLEMENT_ONLY
 public enum EXCLUSIVE_IDEOLOGY_CATEGORIES { RACE, GENDER, TRAIT, }
 public enum EMOTION { None, Fear, Approval, Embarassment, Disgust, Anger, Betrayal, Concern, Disappointment, Scorn, Sadness, Threatened,
-    Arousal, Disinterest, Despair, Shock, Resentment, Disapproval, Gratefulness, Rage
+    Arousal, Disinterest, Despair, Shock, Resentment, Disapproval, Gratefulness, Rage,
+    Plague_Hysteria
 }
 public enum PLAYER_ARCHETYPE { Normal, Ravager, Lich, Puppet_Master, }
 public enum ELEMENTAL_TYPE { Normal, Fire, Poison, Water, Ice, Electric, Earth, Wind, }

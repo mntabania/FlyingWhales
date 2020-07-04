@@ -32,6 +32,12 @@ namespace Interrupts {
             if (witness.traitContainer.HasTrait("Coward")) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor, status);
             }
+
+            if (status == REACTION_STATUS.WITNESSED && actor.homeSettlement != null && actor.homeSettlement is NPCSettlement settlement) {
+                //When a resident has been witnessed to die due to Septic Shock, the Settlement will be flagged as Plagued
+                settlement.SetIsPlagued(true);
+            }
+            
             return response;
         }
         #endregion

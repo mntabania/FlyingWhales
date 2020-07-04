@@ -16,7 +16,7 @@
         return 10;
     }
     public override string ReactionToActor(Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionOfTarget(node, status);
+        string response = base.ReactionToActor(witness, node, status);
         Character actor = node.actor;
         Character target = node.poiTarget as Character;
         if (witness.traitContainer.HasTrait("Cultist") == false) {
