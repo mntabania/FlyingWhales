@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: af6b250ddb9365c4a924f945cd5f95b6, type: 3}
-  m_Name: Activate Tile Object
+  m_Name: Activate
   m_EditorClassIdentifier: 
   skill: 61
   manaCost: 10
