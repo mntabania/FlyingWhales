@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
 using UnityEngine;
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
 using Pathfinding;
-using UnityEngine.WSA;
 using UtilityScripts;
 
 public class BehaviourComponent {

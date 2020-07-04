@@ -29,7 +29,7 @@ public class PlayerNotificationItem : PooledObject {
     public void Initialize(Log log, bool hasExpiry = true, System.Action<PlayerNotificationItem> onDestroyAction = null) {
         shownLog = log;
         tickShown = GameManager.Instance.Today().tick;
-        logLbl.SetText($"[{GameManager.ConvertTickToTime(tickShown)}] {UtilityScripts.Utilities.LogReplacer(log)}");
+        logLbl.text = $"[{GameManager.ConvertTickToTime(tickShown)}] {UtilityScripts.Utilities.LogReplacer(log)}";
         logItem.SetLog(log);
         //logEnvelopContent.Execute();
         //mainEnvelopContent.Execute();
